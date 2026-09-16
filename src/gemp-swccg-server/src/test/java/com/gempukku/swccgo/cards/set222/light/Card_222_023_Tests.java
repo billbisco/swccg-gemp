@@ -9,9 +9,11 @@ import com.gempukku.swccgo.common.Phase;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Uniqueness;
+import com.gempukku.swccgo.common.Zone;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.game.PhysicalCardImpl;
 import com.gempukku.swccgo.logic.modifiers.MayNotBeFiredModifier;
 import org.junit.Test;
 
@@ -33,6 +35,8 @@ public class Card_222_023_Tests {
                     put("luke", "1_019");
                     put("trooper2", "1_028");
                     put("cantina", "1_128");
+                    put("mara", "217_40");
+                    put("saber", "211_33");
                 }},
                 new HashMap<>() {{
                     put("ig88", "4_101");
@@ -164,5 +168,48 @@ public class Card_222_023_Tests {
                 && scn.DSCardActionAvailable(blaster, "Fire");
         assertFalse("Second weapon must not fire after Pulse Cannon; actions=" + scn.GetDSAvailableActions(),
                 blasterFireOffered);
+    }
+
+    @Test
+    public void ImReadyForAnythingLostDeploysMaraWithJediLightsaber() {
+        var scn = GetScenario();
+
+        var irfa = scn.GetLSCard("irfa");
+        var mara = scn.GetLSCard("mara");
+        var saber = scn.GetLSCard("saber");
+        var site = scn.GetLSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLSHand(irfa, mara, saber);
+        scn.LSActivateForceCheat(8);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+
+        assertTrue(scn.LSPlayLostInterruptAvailable(irfa));
+        assertTrue(scn.LSCardActionAvailable(irfa, "a lightsaber"));
+        assertFalse(scn.LSCardActionAvailable(irfa, "Anakin"));
+        scn.LSPlayLostInterrupt(irfa);
+        scn.PassAllResponses();
+        chooseLsIfOffered(scn, mara);
+        chooseLsIfOffered(scn, saber);
+        if (scn.LSDecisionAvailable("Choose where to deploy")) {
+            scn.LSChooseCard(site);
+        }
+        scn.PassAllResponses();
+        if (scn.LSHasCardChoiceAvailable(mara)) {
+            scn.LSChooseCard(mara);
+        }
+        scn.PassAllResponses();
+        if (scn.DSDecisionAvailable("Choose Deploy action or Pass")) {
+            scn.DSPass();
+        }
+
+        assertEquals(Zone.AT_LOCATION, mara.getZone());
+        assertTrue(scn.IsAttachedTo(mara, saber));
+    }
+
+    private void chooseLsIfOffered(VirtualTableScenario scn, PhysicalCardImpl card) {
+        if (scn.LSHasCardChoiceAvailable(card)) {
+            scn.LSChooseCard(card);
+        }
     }
 }
