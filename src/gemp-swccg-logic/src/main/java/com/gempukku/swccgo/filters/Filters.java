@@ -8199,6 +8199,11 @@ public class Filters {
                     return false;
                 }
 
+                // Relocate is not embarking or disembarking.
+                if (Filters.or(Filters.aboardAnyStarship, Filters.aboardAnyVehicle).accepts(gameState, modifiersQuerying, physicalCard)) {
+                    return false;
+                }
+
                 // Check locations accepted by filter
                 Collection<PhysicalCard> otherLocations;
                 if(allowSameLocation) {
@@ -8250,6 +8255,10 @@ public class Filters {
                 }
                 // 3) Check if escorting a captive
                 if (!allowEscort && Filters.escort.accepts(gameState, modifiersQuerying, physicalCard)) {
+                    return false;
+                }
+                // Relocate is not embarking or disembarking.
+                if (Filters.or(Filters.aboardAnyStarship, Filters.aboardAnyVehicle).accepts(gameState, modifiersQuerying, physicalCard)) {
                     return false;
                 }
                 return true;
@@ -8334,6 +8343,11 @@ public class Filters {
 
                 // 3) Check if escorting a captive
                 if (!allowEscort && Filters.escort.accepts(gameState, modifiersQuerying, cardToMove)) {
+                    return false;
+                }
+
+                // Relocate is not embarking or disembarking.
+                if (!isOnWeatherVane && Filters.or(Filters.aboardAnyStarship, Filters.aboardAnyVehicle).accepts(gameState, modifiersQuerying, cardToMove)) {
                     return false;
                 }
 
