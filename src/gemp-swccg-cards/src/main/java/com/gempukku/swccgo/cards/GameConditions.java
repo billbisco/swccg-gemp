@@ -5190,6 +5190,9 @@ public class GameConditions {
         if (battleState.getBattleDamageRemaining(game, playerId) == 0)
             return false;
 
+        if (game.getModifiersQuerying().cannotSatisfyBattleDamage(game.getGameState(), card))
+            return false;
+
         if (Filters.and(Filters.character, Filters.participatingInBattle, Filters.not(Filters.mustBeForfeitedBeforeOtherCharacters)).accepts(game, card)
                 && Filters.canSpot(battleState.getCardsParticipating(playerId), game, Filters.mustBeForfeitedBeforeOtherCharacters)) {
             return false;
@@ -5215,7 +5218,8 @@ public class GameConditions {
 
         if ((battleState.getAttritionRemaining(game, playerId) == 0
                 || game.getModifiersQuerying().cannotSatisfyAttrition(game.getGameState(), card))
-                && battleState.getBattleDamageRemaining(game, playerId) == 0)
+                && (battleState.getBattleDamageRemaining(game, playerId) == 0
+                || game.getModifiersQuerying().cannotSatisfyBattleDamage(game.getGameState(), card)))
             return false;
 
         if (Filters.and(Filters.character, Filters.participatingInBattle, Filters.not(Filters.mustBeForfeitedBeforeOtherCharacters)).accepts(game, card)
