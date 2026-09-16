@@ -37,6 +37,8 @@ public class Card_6_157_Tests {
                     put("gold1", "9_068");
                     put("hcf", "13_021");
                     put("tibrin", "6_087");
+                    put("leia", "1_17");
+                    put("boushh", "110_001");
                 }},
                 new HashMap<>() {{
                     put("nsp", "6_157");
@@ -174,6 +176,31 @@ public class Card_6_157_Tests {
     }
 
     @Test
+    public void NoneShallPassBlocksNonUniqueRebelTitleAfterBounce() {
+        // Printed NSP clause: that Rebel title may not deploy this turn, even if non-unique.
+        // Unique-title engine rules are not what this tests (see Luke tests).
+        var scn = GetScenario();
+        var trooper1 = scn.GetLSFiller(1);
+        var trooper2 = scn.GetLSFiller(2);
+        var nsp = scn.GetDSCard("nsp");
+        var site = scn.GetLSStartingLocation();
+
+        scn.MoveCardsToLSHand(trooper1, trooper2);
+        scn.MoveCardsToDSHand(nsp);
+        scn.StartGame();
+
+        scn.LSActivateForceCheat(10);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+
+        assertTrue(scn.LSDeployAvailable(trooper1));
+        playNoneShallPassAfterDeploy(scn, trooper1, site, nsp);
+
+        assertEquals(Zone.HAND, trooper1.getZone());
+        assertFalse(scn.LSDeployAvailable(trooper1));
+        assertFalse(scn.LSDeployAvailable(trooper2));
+    }
+
+    @Test
     public void NoneShallPassBlocksOtherPersonaOfTargetedRebel() {
         var scn = GetScenario();
 
@@ -266,5 +293,34 @@ public class Card_6_157_Tests {
         assertFalse("Second Luke must not be deployable this turn", scn.LSDeployAvailable(lukeJedi));
         assertTrue("Persona replace of the just-deployed Luke must still be offered; actions=" + scn.GetLSAvailableActions(),
                 scn.LSActionAvailable("Persona replace") || scn.LSCardPlayAvailable(lukeJedi));
+    }
+
+    @Test
+    public void PersonaPlayedThisTurnBlocksOtherTitleAfterUniqueLeavesTable() {
+        // Engine uniqueness: a unique title already played this turn may not deploy again.
+        // Set For Stun has no "may not deploy this turn" clause; it only returns the character
+        // to hand. Hutt Smooch / None Shall Pass are the cards with that printed clause
+        // (same title). After the unique leaves table, other titles of that persona are still
+        // blocked by persona-played-this-turn, not by bounce-card text.
+        var scn = GetScenario();
+        var leia = scn.GetLSCard("leia");
+        var boushh = scn.GetLSCard("boushh");
+        var site = scn.GetLSStartingLocation();
+
+        scn.MoveCardsToLSHand(leia, boushh);
+        scn.StartGame();
+        scn.LSActivateForceCheat(20);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+
+        deployAndPass(scn, leia, site);
+        assertFalse("Leia Organa must not redeploy this turn", scn.LSDeployAvailable(leia));
+        assertFalse("Boushh must not deploy this turn while Leia is on table", scn.LSDeployAvailable(boushh));
+
+        scn.MoveCardsToLSHand(leia);
+        recoverToLSDeploy(scn);
+
+        assertEquals(Zone.HAND, leia.getZone());
+        assertFalse("Leia Organa must still not redeploy this turn after returning to hand", scn.LSDeployAvailable(leia));
+        assertFalse("Boushh must not deploy this turn after Leia persona was already deployed", scn.LSDeployAvailable(boushh));
     }
 }
