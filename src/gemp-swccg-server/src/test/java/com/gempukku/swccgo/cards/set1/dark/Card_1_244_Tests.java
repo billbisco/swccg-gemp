@@ -12,7 +12,6 @@ import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.common.Zone;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -161,7 +160,6 @@ public class Card_1_244_Tests {
     }
 
     @Test
-    @Ignore("Leftover lose can complete inside DSDecided before the test can shuffle Reserve; not caused by Friendly Fire / Oh Switch Off.")
     public void EmergencyDeploymentShuffleOfRevealedCardsEndsRemainingDeploysAndDoesNotLoseThem() {
         // AR: shuffling a revealed card ends the reveal. Remaining cards stay in Reserve
         // (not leftover-lost) and must not be offered to deploy.
@@ -194,9 +192,15 @@ public class Card_1_244_Tests {
             scn.LSPass();
         }
 
-        // Shuffle while the deploy choice is open, then decline. Leftover then sees the
-        // permuted Reserve and must not lose remaining revealed cards.
+        assertTrue("Expected deploy choice; got: " + decisionText(scn),
+                scn.DSDecisionAvailable("Choose card to deploy"));
+        int shuffleCountBefore = scn.gameState().getCardPileShuffleCount(scn.DS, Zone.RESERVE_DECK);
+        // The act of shuffling ends the reveal even if remaining cards happen to stay in
+        // the same order. Decline leftover deploys after the shuffle.
         scn.gameState().shufflePile(scn.DS, Zone.RESERVE_DECK);
+        assertTrue("Expected shuffle count to increase; before=" + shuffleCountBefore
+                        + " after=" + scn.gameState().getCardPileShuffleCount(scn.DS, Zone.RESERVE_DECK),
+                scn.gameState().getCardPileShuffleCount(scn.DS, Zone.RESERVE_DECK) > shuffleCountBefore);
         if (scn.DSDecisionAvailable("Choose card to deploy")) {
             scn.DSDecided("");
         }
