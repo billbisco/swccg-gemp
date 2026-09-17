@@ -469,7 +469,7 @@ public abstract class AbstractVehicle extends AbstractDeployable {
         if (game.getModifiersQuerying().isMovesLikeStarfighterAtCloudSectors(game.getGameState(), self))
             combinedFilter = Filters.or(combinedFilter, filter2);
 
-        return combinedFilter;
+        return Filters.and(combinedFilter, Filters.destinationDoesNotViolateUniquenessOfCardsAboard(self));
     }
 
     /**
