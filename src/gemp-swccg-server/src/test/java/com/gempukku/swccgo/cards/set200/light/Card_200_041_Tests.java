@@ -66,7 +66,7 @@ public class Card_200_041_Tests {
     }
 
     @Test
-    public void IMustBeAllowedToSpeakVOffersUsedPileSearchWhenBoushhDeploysUndercoverToTatooine() {
+    public void IMustBeAllowedToSpeakVDoesNotOfferUsedPileSearchWhenBoushhDeploysUndercoverToTatooine() {
         var scn = GetScenario();
 
         var imbats = scn.GetLSCard("imbats");
@@ -82,7 +82,7 @@ public class Card_200_041_Tests {
         advanceToSearchWindow(scn);
 
         assertTrue(boushh.isUndercover());
-        assertTrue("I Must Be Allowed To Speak must offer Used Pile search after deploying Boushh (Leia) undercover",
+        assertFalse("I Must Be Allowed To Speak does not see undercover Boushh",
                 searchAvailable(scn));
     }
 
