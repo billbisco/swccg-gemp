@@ -18,12 +18,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class Card_213_033_Tests {
     protected VirtualTableScenario GetScenario() {
         return new VirtualTableScenario(
                 new HashMap<>() {{
+                    put("pao", "214_17");
                 }},
                 new HashMap<>() {{
                     put("blaster", "213_033");
@@ -117,5 +120,39 @@ public class Card_213_033_Tests {
         scn.PassAllResponses();
 
         assertTrue(scn.DSDecisionAvailable("activate 1 Force"));
+    }
+
+    @Test
+    public void BlackSunBlasterMissThenRevertDoesNotCrash() {
+        var scn = GetScenario();
+
+        var blaster = scn.GetDSCard("blaster");
+        var vigo = scn.GetDSCard("vigo");
+        var pao = scn.GetLSCard("pao");
+        var trooper = scn.GetLSFiller(1);
+        var site = scn.GetLSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, vigo, pao, trooper, scn.GetDSFiller(1), scn.GetLSFiller(2));
+        scn.AttachCardsTo(vigo, blaster);
+
+        scn.SkipToDSTurn(Phase.BATTLE);
+        scn.PrepareDSDestiny(0);
+
+        scn.DSInitiateBattle(site);
+        scn.PassAllResponses();
+        assertTrue(scn.AwaitingDSWeaponsSegmentActions());
+        scn.DSUseCardAction(blaster, "Fire");
+        scn.DSChooseCard(pao);
+        scn.PassWeaponFireWithDestinyDraw();
+        assertFalse(pao.isHit());
+
+        scn.IssueRevert("Start of Dark Side Player's battle phase #1");
+
+        pao = scn.GetPostRevertCard(pao);
+        site = scn.GetPostRevertCard(site);
+        assertNotNull(scn.GetCurrentDecision());
+        assertFalse(pao.isHit());
+        assertTrue(scn.DSCanInitiateBattle(site) || scn.AwaitingDSBattlePhaseActions() || scn.IsActiveBattle());
     }
 }
