@@ -19,7 +19,7 @@ import com.gempukku.swccgo.logic.decisions.DecisionResultInvalidException;
 import com.gempukku.swccgo.logic.decisions.IntegerAwaitingDecision;
 import com.gempukku.swccgo.logic.effects.PlayoutDecisionEffect;
 import com.gempukku.swccgo.logic.effects.UseForceEffect;
-import com.gempukku.swccgo.logic.effects.choose.DeployCardsFromReserveDeckAndLoseTheRestEffect;
+import com.gempukku.swccgo.logic.effects.choose.DeployCardsFromRevealedReserveDeckEffect;
 import com.gempukku.swccgo.logic.timing.EffectResult;
 
 import java.util.Collections;
@@ -70,7 +70,7 @@ public class Card14_071 extends AbstractDroid {
                                                     @Override
                                                     protected void cardsRevealed(List<PhysicalCard> cards) {
                                                         action.appendEffect(
-                                                                new DeployCardsFromReserveDeckAndLoseTheRestEffect(action, cards,
+                                                                new DeployCardsFromRevealedReserveDeckEffect(action, cards,
                                                                         Filters.battle_droid, true));
                                                     }
                                                 }
