@@ -552,6 +552,7 @@ public class DefaultActionsEnvironment implements ActionsEnvironment {
     public List<Action> getOptionalAfterActions(String playerId, Collection<? extends EffectResult> effectResults) {
         GatherOptionalAfterActions gatherAfterActions = new GatherOptionalAfterActions(playerId, effectResults);
         _swccgGame.getGameState().iterateCardsWithOptionalActions(gatherAfterActions, playerId, true);
+        _swccgGame.getGameState().iterateStackedCombatCardInterrupts(gatherAfterActions, playerId);
 
         List<Action> allActions = new LinkedList<Action>();
 
