@@ -10961,7 +10961,7 @@ public class Filters {
     public static final Filter mayNotBeBattled = new Filter() {
         @Override
         public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard) {
-            return modifiersQuerying.mayBeBattled(gameState, physicalCard);
+            return modifiersQuerying.mayNotBeBattled(gameState, physicalCard);
         }
     };
     /**
