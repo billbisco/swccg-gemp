@@ -448,7 +448,7 @@ button.draft-not-available {
 }
 
 
-/* ===== Slice 1: Deck-builder + Play primary chrome (LOTR-inspired) ===== */
+/* ===== Slice 1 / 1.1: Deck-builder + Play primary chrome (LOTR-inspired) ===== */
 
 .hall-primary-bar {
     z-index: 5;
@@ -457,23 +457,116 @@ button.draft-not-available {
 .hall-primary-actions .hall-play-button,
 a.hall-play-button,
 button.hall-play-button {
-    min-width: 150px;
-    min-height: 42px;
+    min-width: 168px;
+    min-height: 44px;
     font-size: 15px !important;
     font-weight: bold;
     text-align: center;
     text-decoration: none;
     box-sizing: border-box;
+    border-radius: 6px !important;
+    border: 1px solid #aaaaaa !important;
+    color: #ffffff !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
 .hall-primary-actions a.hall-play-button .ui-button-text,
 .hall-primary-actions button.hall-play-button .ui-button-text {
     padding: 0.55em 1.1em;
     font-size: 15px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Deck-builder: cool steel / rebel blue */
+a.hall-play-button-deckbuilder,
+button.hall-play-button-deckbuilder,
+.hall-primary-actions a.hall-play-button-deckbuilder.ui-button,
+.hall-primary-actions a.hall-play-button-deckbuilder.ui-state-default {
+    background: #1a3355 linear-gradient(#3a6ea5, #142433) !important;
+    border-color: #7eb6e8 !important;
+}
+
+a.hall-play-button-deckbuilder:hover,
+a.hall-play-button-deckbuilder:focus,
+.hall-primary-actions a.hall-play-button-deckbuilder.ui-state-hover,
+.hall-primary-actions a.hall-play-button-deckbuilder.ui-state-focus {
+    background: #1a3355 linear-gradient(#5a94c8, #1a3355) !important;
+    border-color: #b7d7f5 !important;
+}
+
+/* Play: SWCCG crawl gold (LOTR table-create-button analogue) */
+button.hall-play-button-play,
+.hall-primary-actions button.hall-play-button-play.ui-button,
+.hall-primary-actions button.hall-play-button-play.ui-state-default {
+    background: #554400 linear-gradient(#845826, #1c1c1c) !important;
+    border-color: #ffe81f !important;
+}
+
+button.hall-play-button-play:hover,
+button.hall-play-button-play:focus,
+.hall-primary-actions button.hall-play-button-play.ui-state-hover,
+.hall-primary-actions button.hall-play-button-play.ui-state-focus {
+    background: #554400 linear-gradient(#bf8a4a, #1c1c1c) !important;
+    border-color: #fff3a0 !important;
 }
 
 .hall-play-button-label {
     display: inline-block;
+}
+
+/* CSS-only icons via ::before (survives jQuery UI .button() wrapping) */
+a.hall-play-button-deckbuilder .ui-button-text::before,
+a.hall-play-button-deckbuilder::before,
+button.hall-play-button-play .ui-button-text::before,
+button.hall-play-button-play::before {
+    content: "";
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    margin-right: 8px;
+    vertical-align: -3px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+
+a.hall-play-button-deckbuilder .ui-button-text::before,
+a.hall-play-button-deckbuilder::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23e8f2ff'%3E%3Cpath d='M14.7 6.3a1 1 0 0 1 0 1.4l-8 8a1 1 0 0 1-1.4 0l-2-2a1 1 0 1 1 1.4-1.4L6 13.6l7.3-7.3a1 1 0 0 1 1.4 0z'/%3E%3Cpath d='M17 3l4 4-2.5 1.5L15.5 5.5 17 3z'/%3E%3Cpath d='M3 20h7v2H3z'/%3E%3C/svg%3E");
+}
+
+button.hall-play-button-play .ui-button-text::before,
+button.hall-play-button-play::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffe81f'%3E%3Crect x='3' y='4' width='14' height='16' rx='2'/%3E%3Crect x='7' y='6' width='14' height='16' rx='2' fill='%23c9b61a'/%3E%3Ccircle cx='14' cy='14' r='2.2' fill='%231c1c1c'/%3E%3C/svg%3E");
+}
+
+/* Avoid double icon if both element and .ui-button-text match */
+a.hall-play-button-deckbuilder.ui-button::before,
+button.hall-play-button-play.ui-button::before {
+    content: none;
+}
+
+.join-context {
+    margin: 0 0 12px 0;
+}
+
+.join-result {
+    margin: 4px 0 8px 0;
+    padding: 8px 10px;
+    border: 1px solid #aa3333;
+    border-radius: 4px;
+    background: rgba(80, 0, 0, 0.35);
+    color: #ff8080;
+    font-size: 13px;
+}
+
+.join-table-form .play-form-heading {
+    margin-bottom: 6px;
 }
 
 body.play-flow-open {
