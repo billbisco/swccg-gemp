@@ -970,6 +970,9 @@ var GempSwccgHallUI = Class.extend({
             return;
         }
         this.joinPending = pending;
+        // Slice 1.5e / LOTR JoinTable.showPopup: refresh decks on every Join open
+        // (processLibraryDecks re-syncs join dropdown when overlay is visible).
+        this.updateDecks();
         var syncResult = this.syncJoinDecksFromCreateSelect(pending.requiredSide);
         this.joinResultDiv.hide().empty();
 
@@ -1115,6 +1118,9 @@ var GempSwccgHallUI = Class.extend({
         if (this.playOverlay == null) {
             return;
         }
+        // Slice 1.5e / LOTR CreateTable.showPopup: every Play open re-fetches /deck/list
+        // so decks built in deckBuild.html (new tab) after hall init appear without hard refresh.
+        this.updateDecks();
         this.showPlaySelection();
         this.playOverlay.css("display", "flex");
         $("body").addClass("play-flow-open");
@@ -1286,6 +1292,9 @@ var GempSwccgHallUI = Class.extend({
         if (this.leagueResultDiv != null) {
             this.leagueResultDiv.removeClass("result-error result-success").text("Ready.");
         }
+        // Slice 1.5e belt-and-suspenders: refresh even if Play overlay already refreshed
+        // (processLibraryDecks re-syncs league dropdowns when this panel is visible).
+        this.updateDecks();
         this.syncLeagueDecksFromCreateSelect();
         this.refreshLeagueDropdownAndList();
         this.playLeaguePanel.show();
@@ -1604,12 +1613,15 @@ var GempSwccgHallUI = Class.extend({
                 that.closePlayOverlay();
             }, {
                 "409": function (xhr, status, error) {
-                    var msg = (xhr && xhr.responseText) ? xhr.responseText : "Could not create league table.";
+                    // Collection / HallException usually arrives as XML <error> on success; bare 409 has empty body.
+                    var msg = that.extractCreateTableErrorMessage(xhr,
+                        "Could not create league table (conflict). If this is a sealed/draft league, use only cards from that league collection.");
                     that.showLeagueCreateResult(msg, true);
                     $(that.leagueCreateButton).button("enable");
                 },
                 "400": function (xhr) {
-                    var msg = (xhr && xhr.responseText) ? xhr.responseText : "Could not create league table.";
+                    var msg = that.extractCreateTableErrorMessage(xhr,
+                        "Could not create league table (bad request). Check your deck and league selection.");
                     that.showLeagueCreateResult(msg, true);
                     $(that.leagueCreateButton).button("enable");
                 },
@@ -1618,6 +1630,36 @@ var GempSwccgHallUI = Class.extend({
                     $(that.leagueCreateButton).button("enable");
                 }
             });
+    },
+
+    // Prefer server body / XML error message; fall back to a sealed-aware default when body is empty.
+    extractCreateTableErrorMessage:function(xhr, fallback) {
+        if (xhr == null) {
+            return fallback;
+        }
+        var text = xhr.responseText;
+        if (text != null && text !== "") {
+            // Try XML <error message="..."> (dataType xml may still leave responseText)
+            try {
+                var xml = xhr.responseXML;
+                if (xml != null && xml.documentElement != null && xml.documentElement.tagName == "error") {
+                    var m = xml.documentElement.getAttribute("message");
+                    if (m != null && m !== "") {
+                        return m;
+                    }
+                }
+            } catch (e) { /* ignore parse */ }
+            // Strip trivial HTML/XML wrappers if present
+            var stripped = String(text).replace(/^\s+|\s+$/g, "");
+            if (stripped.indexOf("<") === 0) {
+                var match = /message\s*=\s*["']([^"']+)["']/.exec(stripped);
+                if (match && match[1]) {
+                    return match[1];
+                }
+            }
+            return stripped;
+        }
+        return fallback;
     },
 
     showLeagueCreateResult:function(text, isError) {
@@ -1861,6 +1903,10 @@ var GempSwccgHallUI = Class.extend({
         }).html(text);  
     },
 
+    // Fetches player + library decks into decksSelect (GET /deck/list + library).
+    // Called at hall init and on every Play / Join / League-panel open (LOTR DeckManager parity)
+    // so decks saved in deckBuild.html after hall load appear without a hard refresh.
+    // No client-side format/sealed filter — SelectDeck-style: show all; server validates on createTable.
     updateDecks:function () {
         var that = this;
         this.deckOptions = [];
