@@ -27,6 +27,19 @@ var GempSwccgHallUI = Class.extend({
     pocketValue:null,
     hallChannelId: null,
 
+    // Slice 1: Deck-builder + Play primary chrome / overlay
+    deckBuilderButton:null,
+    playButton:null,
+    playOverlay:null,
+    playSelectionPanel:null,
+    playFormPanel:null,
+    playFormTitle:null,
+    playFormFields:null,
+    playCasualChoice:null,
+    playAiChoice:null,
+    playBackButton:null,
+    playMode:null, // "casual" | "ai" 
+
     init:function (div, url, chat) {
         this.div = div;
         this.comm = new GempSwccgCommunication(url, function (xhr, ajaxOptions, thrownError) {
@@ -51,7 +64,7 @@ var GempSwccgHallUI = Class.extend({
         var height = $(div).height();
 
         this.tablesDiv = $("<div></div>");
-        this.tablesDiv.css({overflow:"auto", left:"0px", top:"0px", width:width + "px", height:(height - 30) + "px"});
+        this.tablesDiv.css({overflow:"auto", left:"0px", top:"0px", width:width + "px", height:(height - 56) + "px"});
         
         var hallSettingsStr = $.cookie("hallSettings");
         if (hallSettingsStr == null)
@@ -66,107 +79,80 @@ var GempSwccgHallUI = Class.extend({
 
         this.div.append(this.tablesDiv);
 
-        this.buttonsDiv = $("<div></div>");
-        this.buttonsDiv.css({left:"0px", top:(height - 30) + "px", width:width + "px", align:"right", backgroundColor:"#000000", "border-top-width":"1px", "border-top-color":"#ffffff", "border-top-style":"solid", "box-sizing":"border-box", padding:"4px 6px", display:"grid", "grid-template-columns":"1fr auto", "column-gap":"8px", "align-items":"center"});
+        this.buttonsDiv = $("<div class='hall-primary-bar'></div>");
+        this.buttonsDiv.css({left:"0px", top:(height - 56) + "px", width:width + "px", backgroundColor:"#000000", "border-top-width":"1px", "border-top-color":"#ffffff", "border-top-style":"solid", "box-sizing":"border-box", padding:"6px 8px", display:"grid", "grid-template-columns":"1fr auto", "column-gap":"10px", "align-items":"center"});
 
         var that = this;
 
-        this.controlsLeft = $("<div></div>");
-        this.controlsLeft.css({display:"flex", "flex-wrap":"wrap", "align-items":"center", gap:"6px", flex:"1 1 auto", "min-width":"0"});
+        this.controlsLeft = $("<div class='hall-primary-actions'></div>");
+        this.controlsLeft.css({display:"flex", "flex-wrap":"wrap", "align-items":"center", gap:"10px", flex:"1 1 auto", "min-width":"0"});
 
-        this.controlsRight = $("<div></div>");
-        this.controlsRight.css({display:"flex", "align-items":"center", gap:"6px", "justify-self":"end", "white-space":"nowrap"});
+        this.controlsRight = $("<div class='hall-primary-meta'></div>");
+        this.controlsRight.css({display:"flex", "align-items":"center", gap:"8px", "justify-self":"end", "white-space":"nowrap"});
 
         this.buttonsDiv.append(this.controlsLeft);
         this.buttonsDiv.append(this.controlsRight);
 
-        this.controlsLeft.append("<a href='deckBuild.html' target='_blank'>Deck Builder</a>");
-        this.controlsLeft.append(" | ");
-
-//        this.buttonsDiv.append("<a href='merchant.html'>Merchant</a>");
-//        this.buttonsDiv.append(" | ");
+        // Large primary actions (LOTR-style): Deck-builder + Play
+        this.deckBuilderButton = $("<a id='deckbuilder-button' class='hall-play-button' href='deckBuild.html' target='_blank'><span class='hall-play-button-label'><b>Deck-builder</b></span></a>");
+        this.playButton = $("<button type='button' id='open-table-button' class='hall-play-button'><span class='hall-play-button-label'><b>Play</b></span></button>");
+        this.controlsLeft.append(this.deckBuilderButton);
+        this.controlsLeft.append(this.playButton);
+        $(this.playButton).button().click(function () {
+            that.openPlayOverlay();
+        });
+        // jQuery UI button() on an <a> keeps the link behavior
+        $(this.deckBuilderButton).button();
 
         this.pocketDiv = $("<div class='pocket'></div>");
         this.pocketDiv.css({width:95, height:18});
+        this.controlsRight.append(this.pocketDiv);
 
-        this.supportedFormatsSelect = $("<select style='width: 175px'></select>");
+        // Create-table form controls live in the Play overlay (not the always-visible strip)
+        this.supportedFormatsSelect = $("<select class='play-form-select' style='width: 175px'></select>");
         this.supportedFormatsSelect.hide();
 
-        this.createTableButton = $("<button>Create table</button>");
-        $(this.createTableButton).button().click(
-            function () {
-                var format = that.supportedFormatsSelect.val();
-                var deck = that.decksSelect.val();
-                var sampleDeck = that.decksSelect[0][that.decksSelect[0].selectedIndex].getAttribute("data-sample-deck")
-                var tableDesc = that.tableDescInput.val();
-                var isPrivate = false;
-                if(document.getElementById('isPrivateCheckbox1')!=null)
-                    isPrivate = document.getElementById('isPrivateCheckbox1').checked;
-                var playVsAi = that.opponentSelect.val() === "ai";
-                var aiSkill = that.aiSkillSelect.val();
-                var aiDeckName = that.aiDeckSelect.val();
-                var aiDeckSample = that.aiDeckSelect.find(":selected").attr("data-sample-deck");
-                if (deck != null) {
-                    $(that.createTableButton).button("disable");
-                    that.comm.createTable(format, deck, sampleDeck, tableDesc, isPrivate, playVsAi, aiSkill, aiDeckName, aiDeckSample, function (xml) {
-                        if (xml != null) {
-                            var root = xml.documentElement;
-                            if (root.tagName == "error") {
-                                var message = root.getAttribute("message");
-                                that.chat.appendMessage(message, "warningMessage");
-                            }
-                            else if (root.tagName == "response") {
-                                var message = root.getAttribute("message");
-                                that.chat.appendMessage(message, "warningMessage");
-                                that.showDialog("Info", message, 320);
-                            }
-                        }
-                        
-                        // Re-enable the button after a short delay to prevent accidental double-clicks
-                        setTimeout(function() {
-                            $(that.createTableButton).button("enable");
-                        }, 2000);
-                    });
-                }
-            });
+        this.createTableButton = $("<button type='button' class='play-submit-button'>Create table</button>");
+        $(this.createTableButton).button().click(function () {
+            that.submitCreateTable();
+        });
         this.createTableButton.hide();
 
-        this.isPrivateCheckbox = $("<label><input type='checkbox' id='isPrivateCheckbox1'>Private game</input></label>");
+        this.isPrivateCheckbox = $("<label class='play-private-label'><input type='checkbox' id='isPrivateCheckbox1'> Private game</input></label>");
 
-        this.decksSelect = $("<select style='width: 300px'></select>");
+        this.decksSelect = $("<select class='play-form-select' style='width: 300px'></select>");
         this.decksSelect.hide();
         this.decksSelect.change(function () { that.updateAiDecksForSelection(); });
 
+        // Kept as hidden state for the shared createTable API (submenu picks human vs AI)
         this.opponentSelect = $("<select style='width: 110px'></select>");
         this.opponentSelect.append("<option value='human'>vs Human</option>");
         this.opponentSelect.append("<option value='ai'>vs Bot</option>");
+        this.opponentSelect.hide();
         this.opponentSelect.change(function () { that.updateAiDecksForSelection(); });
 
-        this.aiSkillSelect = $("<select style='width: 120px'></select>");
+        this.aiSkillSelect = $("<select class='play-form-select' style='width: 160px'></select>");
         this.aiSkillSelect.append("<option value='BEGINNER'>Beginner (OzzelBot)</option>");
         this.aiSkillSelect.append("<option value='ADVANCED'>Advanced (YodaBot)</option>");
         this.aiSkillSelect.append("<option value='RANDO'>Elite (Rando_Cal)</option>");
 
-        this.aiDeckSelect = $("<select style='width: 250px'></select>");
+        this.aiDeckSelect = $("<select class='play-form-select' style='width: 280px'></select>");
 
-        this.aiControlsDiv = $("<span style='white-space:nowrap;'></span>");
-        this.aiControlsDiv.append(this.aiSkillSelect);
-        this.aiControlsDiv.append(" ");
-        this.aiControlsDiv.append(this.aiDeckSelect);
-        // Hide by default; only show when vs Bot is selected
+        this.aiControlsDiv = $("<div class='play-ai-controls'></div>");
+        var aiSkillRow = $("<div class='play-form-row'></div>");
+        aiSkillRow.append("<span class='play-form-label'>Bot skill</span>");
+        aiSkillRow.append(this.aiSkillSelect);
+        var aiDeckRow = $("<div class='play-form-row'></div>");
+        aiDeckRow.append("<span class='play-form-label'>Bot deck</span>");
+        aiDeckRow.append(this.aiDeckSelect);
+        this.aiControlsDiv.append(aiSkillRow);
+        this.aiControlsDiv.append(aiDeckRow);
         this.aiControlsDiv.hide();
 
-        this.tableDescInput = $("<input id='tableDescInput' type='text' maxlength='50' style='width: 150px;' placeHolder='Description (optional)'>");
+        this.tableDescInput = $("<input id='tableDescInput' class='play-form-input' type='text' maxlength='50' style='width: 220px;' placeHolder='Description (optional)'>");
 
-        this.controlsLeft.append(this.supportedFormatsSelect);
-        this.controlsLeft.append(this.decksSelect);
-        this.controlsLeft.append(this.opponentSelect);
-        this.controlsLeft.append(this.aiControlsDiv);
-        this.controlsLeft.append(this.tableDescInput);
-        this.controlsLeft.append(this.isPrivateCheckbox);
-        this.controlsRight.append(this.createTableButton);
-        this.controlsRight.append(this.pocketDiv);
-        
+        this.buildPlayOverlay();
+
         this.adminTab = $("#admin-tab");
         this.adminTab.hide();
         
@@ -407,6 +393,185 @@ var GempSwccgHallUI = Class.extend({
         $.cookie("hallSettings", newHallSettings, { expires:365 });
     },
 
+    buildPlayOverlay:function() {
+        var that = this;
+
+        // Prefer markup in hall.html when present; otherwise build the overlay at runtime
+        var existing = $("#create-table-popup");
+        if (existing.length > 0) {
+            this.playOverlay = existing;
+            this.playOverlay.empty();
+        } else {
+            this.playOverlay = $("<div id='create-table-popup' class='play-flow' style='display:none'></div>");
+            $("body").append(this.playOverlay);
+        }
+
+        var backdrop = $("<div class='play-flow-backdrop' aria-hidden='true'></div>");
+        backdrop.click(function () { that.closePlayOverlay(); });
+
+        var panel = $("<div class='play-flow-panel' role='dialog' aria-modal='true' aria-label='Play'></div>");
+
+        var header = $("<div class='play-flow-header'></div>");
+        this.playBackButton = $("<button type='button' id='create-table-back-button' class='play-back-button'>&lt; Back</button>");
+        this.playBackButton.click(function () {
+            if (that.playFormPanel.is(":visible")) {
+                that.showPlaySelection();
+            } else {
+                that.closePlayOverlay();
+            }
+        });
+        header.append(this.playBackButton);
+        header.append($("<button type='button' class='play-close-button' title='Close'>×</button>").click(function () {
+            that.closePlayOverlay();
+        }));
+        panel.append(header);
+
+        this.playSelectionPanel = $("<div id='create-table-selection' class='play-selection'></div>");
+        this.playCasualChoice = $("<button type='button' id='create-unranked-table-button' class='play-choice-button'><span class='play-choice-title'>Open Casual Table</span><span class='play-subtitle'>A 1-on-1 game against another player.</span></button>");
+        this.playAiChoice = $("<button type='button' id='create-bot-table-button' class='play-choice-button'><span class='play-choice-title'>Play Against AI</span><span class='play-subtitle'>A practice game against a computer opponent.</span></button>");
+        this.playCasualChoice.click(function () { that.showPlayForm("casual"); });
+        this.playAiChoice.click(function () { that.showPlayForm("ai"); });
+        this.playSelectionPanel.append(this.playCasualChoice);
+        this.playSelectionPanel.append(this.playAiChoice);
+        // League / Tournament deferred (Slice later)
+        panel.append(this.playSelectionPanel);
+
+        this.playFormPanel = $("<div id='create-table-form' class='table-form' style='display:none'></div>");
+        this.playFormTitle = $("<h2 class='play-form-heading'>Open Casual Table</h2>");
+        this.playFormPanel.append(this.playFormTitle);
+
+        this.playFormFields = $("<div class='inner-table-form'></div>");
+
+        var formatRow = $("<div class='play-form-row'></div>");
+        formatRow.append("<span class='play-form-label'>Format</span>");
+        formatRow.append(this.supportedFormatsSelect);
+
+        var deckRow = $("<div class='play-form-row'></div>");
+        deckRow.append("<span class='play-form-label'>Your deck</span>");
+        deckRow.append(this.decksSelect);
+
+        var descRow = $("<div class='play-form-row'></div>");
+        descRow.append("<span class='play-form-label'>Description</span>");
+        descRow.append(this.tableDescInput);
+
+        var privateRow = $("<div class='play-form-row play-form-row-check'></div>");
+        privateRow.append(this.isPrivateCheckbox);
+
+        var submitRow = $("<div class='play-form-row play-form-actions'></div>");
+        submitRow.append(this.createTableButton);
+
+        this.playFormFields.append(formatRow);
+        this.playFormFields.append(deckRow);
+        this.playFormFields.append(this.aiControlsDiv);
+        this.playFormFields.append(descRow);
+        this.playFormFields.append(privateRow);
+        this.playFormFields.append(submitRow);
+        this.playFormPanel.append(this.playFormFields);
+        panel.append(this.playFormPanel);
+
+        this.playOverlay.append(backdrop);
+        this.playOverlay.append(panel);
+    },
+
+    openPlayOverlay:function() {
+        if (this.playOverlay == null) {
+            return;
+        }
+        this.showPlaySelection();
+        this.playOverlay.css("display", "flex");
+        $("body").addClass("play-flow-open");
+        this.playBackButton.focus();
+    },
+
+    closePlayOverlay:function() {
+        if (this.playOverlay == null) {
+            return;
+        }
+        this.playOverlay.hide();
+        $("body").removeClass("play-flow-open");
+        this.playMode = null;
+    },
+
+    showPlaySelection:function() {
+        this.playMode = null;
+        this.playFormPanel.hide();
+        this.playSelectionPanel.show();
+        this.playBackButton.html("&lt; Back");
+        // AI choice visibility follows server flag
+        if (this.aiTablesEnabled) {
+            this.playAiChoice.show();
+        } else {
+            this.playAiChoice.hide();
+        }
+    },
+
+    showPlayForm:function(mode) {
+        this.playMode = mode;
+        this.playSelectionPanel.hide();
+        this.playFormPanel.show();
+
+        if (mode === "ai") {
+            this.playFormTitle.text("Play Against AI");
+            this.opponentSelect.val("ai");
+            // Private does not apply to bot games meaningfully; keep control but typically unused
+        } else {
+            this.playFormTitle.text("Open Casual Table");
+            this.opponentSelect.val("human");
+        }
+        this.updateAiDecksForSelection();
+        this.updateCreateTableLabel();
+        // Ensure selects are visible inside the form once hall has loaded formats/decks
+        if (this.supportedFormatsInitialized) {
+            this.supportedFormatsSelect.css("display", "");
+            this.decksSelect.css("display", "");
+            this.createTableButton.css("display", "");
+        }
+    },
+
+    submitCreateTable:function() {
+        var that = this;
+        var format = that.supportedFormatsSelect.val();
+        var deck = that.decksSelect.val();
+        var sampleDeck = that.decksSelect[0][that.decksSelect[0].selectedIndex].getAttribute("data-sample-deck");
+        var tableDesc = that.tableDescInput.val();
+        var isPrivate = false;
+        if (document.getElementById('isPrivateCheckbox1') != null)
+            isPrivate = document.getElementById('isPrivateCheckbox1').checked;
+        var playVsAi = that.opponentSelect.val() === "ai";
+        var aiSkill = that.aiSkillSelect.val();
+        var aiDeckName = that.aiDeckSelect.val();
+        var aiDeckSample = that.aiDeckSelect.find(":selected").attr("data-sample-deck");
+        if (deck != null) {
+            $(that.createTableButton).button("disable");
+            that.comm.createTable(format, deck, sampleDeck, tableDesc, isPrivate, playVsAi, aiSkill, aiDeckName, aiDeckSample, function (xml) {
+                if (xml != null) {
+                    var root = xml.documentElement;
+                    if (root.tagName == "error") {
+                        var message = root.getAttribute("message");
+                        that.chat.appendMessage(message, "warningMessage");
+                    }
+                    else if (root.tagName == "response") {
+                        var message = root.getAttribute("message");
+                        that.chat.appendMessage(message, "warningMessage");
+                        that.showDialog("Info", message, 320);
+                        that.closePlayOverlay();
+                    }
+                    else {
+                        that.closePlayOverlay();
+                    }
+                } else {
+                    // Null/empty response = create accepted; return to hall tables
+                    that.closePlayOverlay();
+                }
+
+                // Re-enable the button after a short delay to prevent accidental double-clicks
+                setTimeout(function() {
+                    $(that.createTableButton).button("enable");
+                }, 2000);
+            });
+        }
+    },
+
     refreshLayout:function() {
         if (this.div == null) {
             return;
@@ -420,7 +585,7 @@ var GempSwccgHallUI = Class.extend({
         this.buttonsDiv.css({left:"0px", width:width + "px", align:"right", backgroundColor:"#000000", "border-top-width":"1px", "border-top-color":"#ffffff", "border-top-style":"solid"});
         var buttonsHeight = this.buttonsDiv.outerHeight();
         if (buttonsHeight == null || buttonsHeight <= 0) {
-            buttonsHeight = 30;
+            buttonsHeight = 56;
         }
         this.tablesDiv.css({overflow:"auto", left:"0px", top:"0px", width:width + "px", height:(height - buttonsHeight) + "px"});
         this.buttonsDiv.css({top:(height - buttonsHeight) + "px"});
@@ -705,9 +870,12 @@ var GempSwccgHallUI = Class.extend({
 
         var aiOption = this.opponentSelect.find("option[value='ai']");
         if (enabled) {
-            this.opponentSelect.show();
+            // opponentSelect stays hidden; Play submenu chooses AI vs Casual
             if (aiOption.length === 0) {
                 this.opponentSelect.append("<option value='ai'>vs Bot</option>");
+            }
+            if (this.playAiChoice != null) {
+                this.playAiChoice.show();
             }
         } else {
             if (aiOption.length > 0) {
@@ -716,8 +884,13 @@ var GempSwccgHallUI = Class.extend({
             if (this.opponentSelect.val() === "ai") {
                 this.opponentSelect.val("human");
             }
-            this.opponentSelect.hide();
             this.aiControlsDiv.hide();
+            if (this.playAiChoice != null) {
+                this.playAiChoice.hide();
+            }
+            if (this.playMode === "ai") {
+                this.showPlaySelection();
+            }
         }
         this.updateAiDecksForSelection();
     },

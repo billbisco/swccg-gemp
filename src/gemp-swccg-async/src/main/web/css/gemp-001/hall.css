@@ -447,3 +447,164 @@ button.draft-not-available {
     border: 1px solid #555 !important;
 }
 
+
+/* ===== Slice 1: Deck-builder + Play primary chrome (LOTR-inspired) ===== */
+
+.hall-primary-bar {
+    z-index: 5;
+}
+
+.hall-primary-actions .hall-play-button,
+a.hall-play-button,
+button.hall-play-button {
+    min-width: 150px;
+    min-height: 42px;
+    font-size: 15px !important;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    box-sizing: border-box;
+}
+
+.hall-primary-actions a.hall-play-button .ui-button-text,
+.hall-primary-actions button.hall-play-button .ui-button-text {
+    padding: 0.55em 1.1em;
+    font-size: 15px;
+}
+
+.hall-play-button-label {
+    display: inline-block;
+}
+
+body.play-flow-open {
+    overflow: hidden;
+}
+
+.play-flow {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.play-flow-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.72);
+}
+
+.play-flow-panel {
+    position: relative;
+    z-index: 1;
+    width: min(520px, calc(100vw - 32px));
+    max-height: calc(100vh - 48px);
+    overflow: auto;
+    background: #1a1a1a;
+    border: 1px solid #888;
+    border-radius: 8px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.65);
+    color: #ffffff;
+    padding: 14px 16px 18px;
+}
+
+.play-flow-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.play-back-button,
+.play-close-button {
+    background: #333;
+    color: #fff;
+    border: 1px solid #777;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 4px 10px;
+}
+
+.play-close-button {
+    font-size: 18px;
+    line-height: 1;
+    padding: 2px 10px;
+}
+
+.play-selection {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.play-choice-button {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    width: 100%;
+    text-align: left;
+    background: #2a2a2a;
+    color: #fff;
+    border: 1px solid #666;
+    border-radius: 6px;
+    padding: 14px 16px;
+    cursor: pointer;
+}
+
+.play-choice-button:hover {
+    background: #3a3a3a;
+    border-color: #999;
+}
+
+.play-choice-title {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.play-subtitle {
+    font-size: 12px;
+    color: #cfcfcf;
+}
+
+.play-form-heading {
+    margin: 0 0 12px 0;
+    font-size: 18px;
+}
+
+.inner-table-form,
+.play-ai-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.play-form-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.play-form-label {
+    min-width: 90px;
+    font-weight: bold;
+    color: #e0e0e0;
+}
+
+.play-form-select,
+.play-form-input {
+    flex: 1 1 200px;
+    max-width: 100%;
+}
+
+.play-form-actions {
+    margin-top: 6px;
+    justify-content: flex-end;
+}
+
+.play-private-label {
+    color: #ffffff;
+}
