@@ -959,3 +959,92 @@ body.play-flow-open {
 .hall-connection-popup a {
     color: #E88104;
 }
+
+
+/* ===== Slice 1.5: Play ▸ Open League Table (LOTR CreateLeagueTable layout) =====
+   Mirrored from PlayersCouncil/gemp-lotr:
+   - gemp-lotr-async/src/main/web/hall.html (#create-league-table / #play-league-panel / #play-league-list)
+   - gemp-lotr-async/src/main/web/css/gemp-001/tables.css (#play-league-panel, .play-next-steps)
+*/
+.play-flow.play-flow-league .play-flow-panel {
+    width: min(720px, calc(100vw - 24px));
+    max-height: calc(100vh - 32px);
+}
+
+#league-table-options {
+    margin-bottom: 12px;
+}
+
+#play-league-panel,
+.play-league-join-panel {
+    border: 1px solid #666;
+    max-height: 42vh;
+    overflow-y: auto;
+    padding: 10px;
+    margin-top: 4px;
+}
+
+.play-next-steps {
+    border: 1px solid #567;
+    padding: 0.5em 0.8em;
+    margin-bottom: 0.6em;
+}
+
+.play-next-steps.play-error {
+    border-color: #a55;
+    color: #f2c4c4;
+}
+
+.play-next-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+    margin: 0.4em 0;
+}
+
+.page-hint {
+    font-size: 12px;
+    color: #cfcfcf;
+    margin: 0 0 8px 0;
+}
+
+.play-league-list .play-league-row {
+    border-bottom: 1px solid #444;
+    padding: 6px 0;
+}
+
+.play-league-list .play-league-row-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.play-league-list .play-league-row-name {
+    font-size: 110%;
+    font-weight: bold;
+    flex: 1 1 auto;
+}
+
+.play-league-list .play-league-row-dates {
+    font-size: 90%;
+    color: #cfcfcf;
+    white-space: nowrap;
+}
+
+.play-league-list .play-league-member-badge {
+    font-size: 85%;
+    color: #7eb6e8;
+    border: 1px solid #567;
+    border-radius: 3px;
+    padding: 1px 6px;
+}
+
+.play-league-list .play-league-drawer {
+    margin-top: 6px;
+}
+
+.table-blurb {
+    margin: 0 0 10px 0;
+    line-height: 1.4;
+}
