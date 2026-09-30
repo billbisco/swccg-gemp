@@ -211,8 +211,14 @@ var GempSwccgHallUI = Class.extend({
     playFormFields:null,
     playCasualChoice:null,
     playAiChoice:null,
+    playLeagueChoice:null,
+    playTournamentChoice:null,
+    playTournamentPanel:null,
+    playLeagueEmpty:null,
     playBackButton:null,
-    playMode:null, // "casual" | "ai" 
+    playMode:null, // "casual" | "ai" | "league" | "tournament"
+    leagueTypesLoaded:false,
+    privateGamesAllowed:false,
 
     // Slice 1.1: Join table / queue deck picker overlay
     joinOverlay:null,
@@ -609,31 +615,40 @@ var GempSwccgHallUI = Class.extend({
         var backdrop = $("<div class='play-flow-backdrop' aria-hidden='true'></div>");
         backdrop.click(function () { that.closePlayOverlay(); });
 
-        var panel = $("<div class='play-flow-panel' role='dialog' aria-modal='true' aria-label='Play'></div>");
+        var panel = $("<div class='play-flow-panel' role='dialog' aria-modal='true' aria-label='Create Table'></div>");
 
         var header = $("<div class='play-flow-header'></div>");
         this.playBackButton = $("<button type='button' id='create-table-back-button' class='play-back-button'>&lt; Back</button>");
         this.playBackButton.click(function () {
-            if (that.playFormPanel.is(":visible")) {
+            if (that.playFormPanel.is(":visible") || (that.playTournamentPanel != null && that.playTournamentPanel.is(":visible"))) {
                 that.showPlaySelection();
             } else {
                 that.closePlayOverlay();
             }
         });
         header.append(this.playBackButton);
+        header.append($("<span class='play-flow-title'>Create Table</span>"));
         header.append($("<button type='button' class='play-close-button' title='Close'>×</button>").click(function () {
             that.closePlayOverlay();
         }));
         panel.append(header);
 
+        // Slice 1.4: LOTR-mirrored 4-way Create Table selection (Bot, Casual, League, Tournament)
+
         this.playSelectionPanel = $("<div id='create-table-selection' class='play-selection'></div>");
-        this.playCasualChoice = $("<button type='button' id='create-unranked-table-button' class='play-choice-button'><span class='play-choice-title'>Open Casual Table</span><span class='play-subtitle'>A 1-on-1 game against another player.</span></button>");
-        this.playAiChoice = $("<button type='button' id='create-bot-table-button' class='play-choice-button'><span class='play-choice-title'>Play Against AI</span><span class='play-subtitle'>A practice game against a computer opponent.</span></button>");
-        this.playCasualChoice.click(function () { that.showPlayForm("casual"); });
+        this.playAiChoice = $("<button type='button' id='create-bot-table-button' class='play-choice-button'><span class='play-choice-title'><span class='bigger-icon icon-bot' aria-hidden='true'></span><span>Play Against Bots (Beta)</span></span><span class='play-subtitle'>A practice game against a computer opponent.</span></button>");
+        this.playCasualChoice = $("<button type='button' id='create-unranked-table-button' class='play-choice-button'><span class='play-choice-title'><span class='bigger-icon icon-unranked' aria-hidden='true'></span><span>Open Casual Table</span></span><span class='play-subtitle'>A 1-on-1 game against another player.</span></button>");
+        this.playLeagueChoice = $("<button type='button' id='create-league-table-button' class='play-choice-button'><span class='play-choice-title'><span class='bigger-icon icon-league' aria-hidden='true'></span><span>Open League Table</span></span><span class='play-subtitle'>Join a multi-week league and participate in themed Sealed or Constructed events of all kinds.</span></button>");
+        this.playTournamentChoice = $("<button type='button' id='create-tournament-button' class='play-choice-button'><span class='play-choice-title'><span class='bigger-icon icon-tournament' aria-hidden='true'></span><span>Create Tournament</span></span><span class='play-subtitle'>Host an event that other players sign up for.</span></button>");
         this.playAiChoice.click(function () { that.showPlayForm("ai"); });
-        this.playSelectionPanel.append(this.playCasualChoice);
+        this.playCasualChoice.click(function () { that.showPlayForm("casual"); });
+        this.playLeagueChoice.click(function () { that.showPlayForm("league"); });
+        this.playTournamentChoice.click(function () { that.showTournamentInfo(); });
+        // LOTR order: Bot, Casual, League, Tournament
         this.playSelectionPanel.append(this.playAiChoice);
-        // League / Tournament deferred (Slice later)
+        this.playSelectionPanel.append(this.playCasualChoice);
+        this.playSelectionPanel.append(this.playLeagueChoice);
+        this.playSelectionPanel.append(this.playTournamentChoice);
         panel.append(this.playSelectionPanel);
 
         this.playFormPanel = $("<div id='create-table-form' class='table-form' style='display:none'></div>");
@@ -667,7 +682,19 @@ var GempSwccgHallUI = Class.extend({
         this.playFormFields.append(privateRow);
         this.playFormFields.append(submitRow);
         this.playFormPanel.append(this.playFormFields);
+
+        this.playLeagueEmpty = $("<div class='play-league-empty' style='display:none'></div>");
+        this.playLeagueEmpty.append("<p class='play-subtitle'>You are not in any active league that offers a table format right now.</p>");
+        this.playLeagueEmpty.append("<p class='play-subtitle'>Join a league from the <b>Events</b> tab (league results / join), then return here to open a league table.</p>");
+        this.playFormPanel.append(this.playLeagueEmpty);
+
         panel.append(this.playFormPanel);
+
+        this.playTournamentPanel = $("<div id='create-tournament-info' class='table-form play-tournament-info' style='display:none'></div>");
+        this.playTournamentPanel.append("<h2 class='play-form-heading'>Create Tournament</h2>");
+        this.playTournamentPanel.append("<p class='play-subtitle'>SWCCG GEMP has no player-facing host-tournament API (unlike LOTR). Tournaments are server-scheduled queues — join them from the Game Hall when a queue is listed above.</p>");
+        this.playTournamentPanel.append("<p class='play-subtitle'>This button stays visible to mirror the LOTR Play menu; hosting is not available from the client.</p>");
+        panel.append(this.playTournamentPanel);
 
         this.playOverlay.append(backdrop);
         this.playOverlay.append(panel);
@@ -1015,11 +1042,17 @@ var GempSwccgHallUI = Class.extend({
         this.playOverlay.hide();
         $("body").removeClass("play-flow-open");
         this.playMode = null;
+        if (this.playTournamentPanel != null) {
+            this.playTournamentPanel.hide();
+        }
     },
 
     showPlaySelection:function() {
         this.playMode = null;
         this.playFormPanel.hide();
+        if (this.playTournamentPanel != null) {
+            this.playTournamentPanel.hide();
+        }
         this.playSelectionPanel.show();
         this.playBackButton.html("&lt; Back");
         // AI choice visibility follows server flag
@@ -1028,29 +1061,145 @@ var GempSwccgHallUI = Class.extend({
         } else {
             this.playAiChoice.hide();
         }
+        // Restore private checkbox visibility for next form open
+        if (this.privateGamesAllowed) {
+            this.isPrivateCheckbox.show();
+        } else {
+            this.isPrivateCheckbox.hide();
+        }
+    },
+
+    showTournamentInfo:function() {
+        this.playMode = "tournament";
+        this.playSelectionPanel.hide();
+        this.playFormPanel.hide();
+        this.playTournamentPanel.show();
     },
 
     showPlayForm:function(mode) {
         this.playMode = mode;
         this.playSelectionPanel.hide();
+        if (this.playTournamentPanel != null) {
+            this.playTournamentPanel.hide();
+        }
         this.playFormPanel.show();
 
         if (mode === "ai") {
-            this.playFormTitle.text("Play Against AI");
+            this.playFormTitle.text("Play Against Bots (Beta)");
             this.opponentSelect.val("ai");
-            // Private does not apply to bot games meaningfully; keep control but typically unused
+            if (this.privateGamesAllowed) {
+                this.isPrivateCheckbox.show();
+            }
+            this.playLeagueEmpty.hide();
+            this.playFormFields.show();
+        } else if (mode === "league") {
+            this.playFormTitle.text("Open League Table");
+            this.opponentSelect.val("human");
+            // Server rejects private league tables and bot league games
+            if (document.getElementById('isPrivateCheckbox1') != null) {
+                document.getElementById('isPrivateCheckbox1').checked = false;
+            }
+            this.isPrivateCheckbox.hide();
         } else {
             this.playFormTitle.text("Open Casual Table");
             this.opponentSelect.val("human");
+            if (this.privateGamesAllowed) {
+                this.isPrivateCheckbox.show();
+            }
+            this.playLeagueEmpty.hide();
+            this.playFormFields.show();
         }
+
+        this.filterFormatsForPlayMode(mode);
         this.updateAiDecksForSelection();
         this.updateCreateTableLabel();
+
+        if (mode === "league") {
+            var leagueCount = this.countLeagueFormatOptions();
+            if (leagueCount === 0) {
+                this.playFormFields.hide();
+                this.playLeagueEmpty.show();
+            } else {
+                this.playLeagueEmpty.hide();
+                this.playFormFields.show();
+            }
+        }
+
         // Ensure selects are visible inside the form once hall has loaded formats/decks
-        if (this.supportedFormatsInitialized) {
+        if (this.supportedFormatsInitialized && (mode !== "league" || this.countLeagueFormatOptions() > 0)) {
             this.supportedFormatsSelect.css("display", "");
             this.decksSelect.css("display", "");
             this.createTableButton.css("display", "");
         }
+    },
+
+    countLeagueFormatOptions:function() {
+        var n = 0;
+        this.supportedFormatsSelect.find("option").each(function () {
+            if ($(this).attr("data-league") === "1" && !$(this).prop("disabled")) {
+                n++;
+            }
+        });
+        return n;
+    },
+
+    filterFormatsForPlayMode:function(mode) {
+        var that = this;
+        var firstEnabled = null;
+        this.supportedFormatsSelect.find("option").each(function () {
+            var opt = $(this);
+            var isLeague = opt.attr("data-league") === "1";
+            var enable;
+            if (mode === "league") {
+                enable = isLeague;
+            } else {
+                // Casual + AI: hall formats only (hide league types)
+                enable = !isLeague;
+            }
+            // jQuery 1.6.2: .prop exists (1.6+); disable non-matching options
+            opt.prop("disabled", !enable);
+            if (enable && firstEnabled == null) {
+                firstEnabled = opt.attr("value");
+            }
+        });
+        if (firstEnabled != null) {
+            this.supportedFormatsSelect.val(firstEnabled);
+        }
+    },
+
+    tagLeagueFormats:function() {
+        var that = this;
+        if (this.leagueTypesLoaded || this.comm == null) {
+            return;
+        }
+        this.comm.getLeagues(function (xml) {
+            if (xml == null) {
+                return;
+            }
+            var root = xml.documentElement;
+            if (root == null || root.tagName != "leagues") {
+                return;
+            }
+            var leagues = root.getElementsByTagName("league");
+            var types = {};
+            for (var i = 0; i < leagues.length; i++) {
+                var type = leagues[i].getAttribute("type");
+                if (type != null && type.length > 0) {
+                    types[type] = true;
+                }
+            }
+            that.supportedFormatsSelect.find("option").each(function () {
+                var val = $(this).attr("value");
+                if (types[val]) {
+                    $(this).attr("data-league", "1");
+                }
+            });
+            that.leagueTypesLoaded = true;
+            // If league form is open, refresh filter / empty state
+            if (that.playMode === "league") {
+                that.showPlayForm("league");
+            }
+        }, {});
     },
 
     submitCreateTable:function() {
@@ -1063,6 +1212,11 @@ var GempSwccgHallUI = Class.extend({
         if (document.getElementById('isPrivateCheckbox1') != null)
             isPrivate = document.getElementById('isPrivateCheckbox1').checked;
         var playVsAi = that.opponentSelect.val() === "ai";
+        // League tables: server rejects private + bot; force safe values client-side too
+        if (that.playMode === "league") {
+            isPrivate = false;
+            playVsAi = false;
+        }
         var aiSkill = that.aiSkillSelect.val();
         var aiDeckName = that.aiDeckSelect.val();
         var aiDeckSample = that.aiDeckSelect.find(":selected").attr("data-sample-deck");
@@ -1457,8 +1611,12 @@ var GempSwccgHallUI = Class.extend({
                 this.pocketValue = currency; // kept for merchant; no longer shown on primary bar
 
             var privateGamesEnabled = root.getAttribute("privateGamesEnabledBoolean");
-            if (privateGamesEnabled=="true") {
-               this.isPrivateCheckbox.show();
+            this.privateGamesAllowed = (privateGamesEnabled == "true");
+            if (this.privateGamesAllowed) {
+               // Do not force-show while league form is open (private rejected server-side)
+               if (this.playMode !== "league") {
+                   this.isPrivateCheckbox.show();
+               }
             }
             else {
                if(document.getElementById('isPrivateCheckbox1')!=null)
@@ -1752,6 +1910,8 @@ var GempSwccgHallUI = Class.extend({
                     this.supportedFormatsSelect.append("<option value='" + type + "'>" + format + "</option>");
                 }
                 this.supportedFormatsInitialized = true;
+                // Mark league-type options via /league list (hall emits both as plain <format>)
+                this.tagLeagueFormats();
             }
 
             var layoutChanged = false;
