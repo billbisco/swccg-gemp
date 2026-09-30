@@ -2,6 +2,7 @@
 // gemp-lotr-async/src/main/web/js/gemp-022/hallUi.js (HallConnectionIndicator).
 // States: connecting / connected / reconnecting / disconnected. Hover/focus/click opens details popup.
 // Wired into SWCCG's existing getHall/updateHall/hallErrorMap (no full LOTR poll rewrite).
+// NOTE: SWCCG hall.html ships jQuery 1.6.2 — use .bind() not .on() (added in 1.7).
 var HallConnectionIndicator = Class.extend({
 	root: null,
 	button: null,
@@ -38,38 +39,39 @@ var HallConnectionIndicator = Class.extend({
 		this.live = root.find(".hall-connection-live");
 		this.popup = root.find(".hall-connection-popup");
 		this.signin = root.find(".hall-connection-signin");
-		this.signin.on("click", function () {
+		this.signin.bind("click", function () {
 			this.href = HallConnectionIndicator.loginUrl();
 		});
 
-		root.on("mouseenter", function () {
+		root.bind("mouseenter", function () {
 			that.open(false);
 		});
-		root.on("mouseleave", function () {
+		root.bind("mouseleave", function () {
 			if (!that.pinned && !that.keyboardFocusInside())
 				that.close();
 		});
-		root.on("focusin", function () {
+		root.bind("focusin", function () {
 			if (that.keyboardFocusInside())
 				that.open(false);
 		});
-		root.on("focusout", function (event) {
+		root.bind("focusout", function (event) {
 			if (!that.pinned && !(event.relatedTarget && $.contains(root[0], event.relatedTarget)))
 				that.close();
 		});
-		this.button.on("click", function () {
+		this.button.bind("click", function () {
 			if (that.pinned)
 				that.close();
 			else
 				that.open(true);
 		});
-		root.on("keydown", function (event) {
-			if (event.key === "Escape" && that.isOpen()) {
+		root.bind("keydown", function (event) {
+			var isEsc = event.key === "Escape" || event.keyCode === 27;
+			if (isEsc && that.isOpen()) {
 				that.close();
 				that.button.trigger("focus");
 			}
 		});
-		$(document).on("click", function (event) {
+		$(document).bind("click", function (event) {
 			if (that.pinned && root.length && !$.contains(root[0], event.target) && root[0] !== event.target)
 				that.close();
 		});
@@ -144,7 +146,7 @@ var HallConnectionIndicator = Class.extend({
 			message.append(" ", $("<a class='hall-connection-reload'></a>")
 				.attr("href", window.location.href)
 				.text("Reload the page")
-				.on("click", function (event) {
+				.bind("click", function (event) {
 					event.preventDefault();
 					window.location.reload();
 				}));
@@ -152,7 +154,7 @@ var HallConnectionIndicator = Class.extend({
 			message.append(" ", $("<a class='hall-connection-login'></a>")
 				.attr("href", HallConnectionIndicator.loginUrl())
 				.text(this.state === "loggedout" ? "Log in or register" : "Go to the main page to log in")
-				.on("click", function () {
+				.bind("click", function () {
 					this.href = HallConnectionIndicator.loginUrl();
 				}));
 		}
