@@ -1,3 +1,169 @@
+// Slice 1.3: Hall connection readout — mirrored from PlayersCouncil/gemp-lotr
+// gemp-lotr-async/src/main/web/js/gemp-022/hallUi.js (HallConnectionIndicator).
+// States: connecting / connected / reconnecting / disconnected. Hover/focus/click opens details popup.
+// Wired into SWCCG's existing getHall/updateHall/hallErrorMap (no full LOTR poll rewrite).
+var HallConnectionIndicator = Class.extend({
+	root: null,
+	button: null,
+	label: null,
+	live: null,
+	popup: null,
+
+	state: null,
+	lastUpdate: null,
+	detail: null,
+	pinned: false,
+
+	LABELS: {
+		connecting: "Connecting",
+		connected: "Connected",
+		reconnecting: "Reconnecting",
+		disconnected: "Disconnected",
+		loggedout: "Not logged in"
+	},
+
+	STATUS: {
+		connecting: "Connecting to the Game Hall…",
+		connected: "Connected: the Game Hall is updating live.",
+		reconnecting: "Reconnecting: the Game Hall lost contact with the server and is retrying.",
+		disconnected: "Disconnected: the Game Hall is not updating.",
+		loggedout: "Not logged in: log in to see the Game Hall's tables and chat and to play."
+	},
+
+	init: function (root) {
+		var that = this;
+		this.root = root;
+		this.button = root.find(".hall-connection-readout");
+		this.label = root.find(".hall-connection-label");
+		this.live = root.find(".hall-connection-live");
+		this.popup = root.find(".hall-connection-popup");
+		this.signin = root.find(".hall-connection-signin");
+		this.signin.on("click", function () {
+			this.href = HallConnectionIndicator.loginUrl();
+		});
+
+		root.on("mouseenter", function () {
+			that.open(false);
+		});
+		root.on("mouseleave", function () {
+			if (!that.pinned && !that.keyboardFocusInside())
+				that.close();
+		});
+		root.on("focusin", function () {
+			if (that.keyboardFocusInside())
+				that.open(false);
+		});
+		root.on("focusout", function (event) {
+			if (!that.pinned && !(event.relatedTarget && $.contains(root[0], event.relatedTarget)))
+				that.close();
+		});
+		this.button.on("click", function () {
+			if (that.pinned)
+				that.close();
+			else
+				that.open(true);
+		});
+		root.on("keydown", function (event) {
+			if (event.key === "Escape" && that.isOpen()) {
+				that.close();
+				that.button.trigger("focus");
+			}
+		});
+		$(document).on("click", function (event) {
+			if (that.pinned && root.length && !$.contains(root[0], event.target) && root[0] !== event.target)
+				that.close();
+		});
+
+		this.set("connecting");
+	},
+
+	keyboardFocusInside: function () {
+		var active = document.activeElement;
+		if (active == null || !this.root.length || !$.contains(this.root[0], active))
+			return false;
+		try {
+			return active.matches(":focus-visible");
+		} catch (e) {
+			return true;
+		}
+	},
+
+	isOpen: function () {
+		return this.popup.length > 0 && !this.popup.prop("hidden");
+	},
+
+	open: function (pin) {
+		this.pinned = this.pinned || pin;
+		this.render();
+		this.popup.prop("hidden", false);
+		this.button.attr("aria-expanded", "true");
+	},
+
+	close: function () {
+		this.pinned = false;
+		this.popup.prop("hidden", true);
+		this.button.attr("aria-expanded", "false");
+	},
+
+	set: function (state, detail) {
+		var changed = state !== this.state;
+		this.state = state;
+		this.detail = detail || null;
+		this.root.attr("data-state", state);
+		this.label.text(this.LABELS[state] || state);
+		if (this.signin != null)
+			this.signin.prop("hidden", state !== "loggedout");
+		if (changed) {
+			var spoken = state === "loggedout" ? "Not logged in." : "Game Hall " + (this.LABELS[state] || state).toLowerCase() + ".";
+			if (state === "disconnected" && this.detail != null && this.detail.message)
+				spoken += " " + this.detail.message;
+			this.live.text(spoken);
+		}
+		this.render();
+	},
+
+	updated: function (detail, serverTime) {
+		this.lastUpdate = serverTime || null;
+		if (this.state === "connected" && detail == null)
+			detail = this.detail;
+		this.set("connected", detail);
+	},
+
+	render: function () {
+		if (!this.popup.length)
+			return;
+		this.popup.find(".hall-connection-popup-status").text(this.STATUS[this.state] || "");
+		this.popup.find(".hall-connection-popup-updated").text("Last update: "
+			+ (this.lastUpdate == null ? "none yet" : this.lastUpdate + " (server time)"))
+			.prop("hidden", this.state === "loggedout" && this.lastUpdate == null);
+
+		var message = this.popup.find(".hall-connection-popup-message").empty();
+		if (this.detail != null && this.detail.message)
+			message.append($("<span></span>").text(this.detail.message));
+		if (this.detail != null && this.detail.action === "reload") {
+			message.append(" ", $("<a class='hall-connection-reload'></a>")
+				.attr("href", window.location.href)
+				.text("Reload the page")
+				.on("click", function (event) {
+					event.preventDefault();
+					window.location.reload();
+				}));
+		} else if (this.detail != null && this.detail.action === "login") {
+			message.append(" ", $("<a class='hall-connection-login'></a>")
+				.attr("href", HallConnectionIndicator.loginUrl())
+				.text(this.state === "loggedout" ? "Log in or register" : "Go to the main page to log in")
+				.on("click", function () {
+					this.href = HallConnectionIndicator.loginUrl();
+				}));
+		}
+		message.prop("hidden", message.is(":empty"));
+	}
+});
+
+HallConnectionIndicator.loginUrl = function () {
+	return "/gemp-swccg/";
+};
+
 var GempSwccgHallUI = Class.extend({
     div:null,
     comm:null,
@@ -26,6 +192,12 @@ var GempSwccgHallUI = Class.extend({
     pocketDiv:null,
     pocketValue:null,
     hallChannelId: null,
+
+    // Slice 1.3: LOTR-mirrored connection + Server Time on primary bar
+    connection:null,
+    connectionDiv:null,
+    serverTimeDiv:null,
+    serverTimeValue:null,
 
     // Slice 1: Deck-builder + Play primary chrome / overlay
     deckBuilderButton:null,
@@ -88,21 +260,29 @@ var GempSwccgHallUI = Class.extend({
 
         this.div.append(this.tablesDiv);
 
-        this.buttonsDiv = $("<div class='hall-primary-bar'></div>");
-        this.buttonsDiv.css({left:"0px", top:(height - 56) + "px", width:width + "px", backgroundColor:"#000000", "border-top-width":"1px", "border-top-color":"#ffffff", "border-top-style":"solid", "box-sizing":"border-box", padding:"6px 8px", display:"grid", "grid-template-columns":"1fr auto", "column-gap":"10px", "align-items":"center"});
+        // Slice 1.3 primary bar — three zones mirrored from LOTR hall.html .buttons-gutter:
+        // left #hall-connection | centered Deck-builder+Play | right .server-time (with "Server Time" label)
+        this.buttonsDiv = $("<div class='hall-primary-bar flex-horiz'></div>");
+        this.buttonsDiv.css({left:"0px", top:(height - 56) + "px", width:width + "px", backgroundColor:"#000000", "border-top-width":"1px", "border-top-color":"#ffffff", "border-top-style":"solid", "box-sizing":"border-box", padding:"6px 8px", display:"flex", "flex-direction":"row", "align-items":"center", "justify-content":"center", gap:"4px"});
 
         var that = this;
 
-        this.controlsLeft = $("<div class='hall-primary-actions'></div>");
-        this.controlsLeft.css({display:"flex", "flex-wrap":"wrap", "align-items":"center", gap:"10px", flex:"1 1 auto", "min-width":"0"});
+        // Left: connection readout (markup mirrors PlayersCouncil/gemp-lotr hall.html #hall-connection)
+        this.connectionDiv = $("<div id='hall-connection' class='hall-connection' data-state='connecting'></div>");
+        var connBtn = $("<button type='button' class='hall-connection-readout' aria-expanded='false' aria-controls='hall-connection-popup'></button>");
+        connBtn.append("<span class='hall-connection-dot' aria-hidden='true'></span>");
+        connBtn.append("<span class='hall-connection-label'>Connecting</span>");
+        this.connectionDiv.append(connBtn);
+        this.connectionDiv.append("<a class='hall-connection-signin' href='/gemp-swccg/' hidden>Log in</a>");
+        this.connectionDiv.append("<span class='hall-connection-live visually-hidden' role='status' aria-live='polite'></span>");
+        var connPopup = $("<div id='hall-connection-popup' class='hall-connection-popup' hidden></div>");
+        connPopup.append("<div class='hall-connection-popup-status'></div>");
+        connPopup.append("<div class='hall-connection-popup-updated'></div>");
+        connPopup.append("<div class='hall-connection-popup-message' hidden></div>");
+        this.connectionDiv.append(connPopup);
 
-        this.controlsRight = $("<div class='hall-primary-meta'></div>");
-        this.controlsRight.css({display:"flex", "align-items":"center", gap:"8px", "justify-self":"end", "white-space":"nowrap"});
-
-        this.buttonsDiv.append(this.controlsLeft);
-        this.buttonsDiv.append(this.controlsRight);
-
-        // Large primary actions (LOTR-style): Deck-builder + Play with real SVG icons
+        // Center: Deck-builder + Play (LOTR icons from Slice 1.1.2/1.1.3 kept)
+        this.controlsLeft = $("<div class='hall-primary-actions flex-horiz'></div>");
         this.deckBuilderButton = $("<a id='deckbuilder-button' class='hall-play-button hall-play-button-deckbuilder' href='deckBuild.html' target='_blank'><span class='bigger-icon icon-deckbuilder' aria-hidden='true'></span><span class='hall-play-button-label'><b>Deck-builder</b></span></a>");
         this.playButton = $("<button type='button' id='open-table-button' class='hall-play-button hall-play-button-play'><span class='bigger-icon icon-play' aria-hidden='true'></span><span class='hall-play-button-label'><b>Play</b></span></button>");
         this.controlsLeft.append(this.deckBuilderButton);
@@ -110,12 +290,20 @@ var GempSwccgHallUI = Class.extend({
         $(this.playButton).button().click(function () {
             that.openPlayOverlay();
         });
-        // jQuery UI button() on an <a> keeps the link behavior
         $(this.deckBuilderButton).button();
 
-        this.pocketDiv = $("<div class='pocket'></div>");
-        this.pocketDiv.css({width:95, height:18});
-        this.controlsRight.append(this.pocketDiv);
+        // Right: Server Time (LOTR .server-time pattern + explicit "Server Time" label per Bill)
+        this.serverTimeDiv = $("<div class='server-time hall-server-time'></div>");
+        this.serverTimeDiv.append("<div class='hall-server-time-label'>Server Time</div>");
+        this.serverTimeValue = $("<div class='hall-server-time-value'></div>");
+        this.serverTimeDiv.append(this.serverTimeValue);
+
+        this.buttonsDiv.append(this.connectionDiv);
+        this.buttonsDiv.append(this.controlsLeft);
+        this.buttonsDiv.append(this.serverTimeDiv);
+
+        this.connection = new HallConnectionIndicator(this.connectionDiv);
+        // Currency / pocket removed from primary bar (still tracked for merchant elsewhere via pocketValue)
 
         // Create-table form controls live in the Play overlay (not the always-visible strip)
         this.supportedFormatsSelect = $("<select class='play-form-select' style='width: 175px'></select>");
@@ -917,7 +1105,7 @@ var GempSwccgHallUI = Class.extend({
     },
 
     hallResized:function (width, height) {
-        this.buttonsDiv.css({left:"0px", width:width + "px", align:"right", backgroundColor:"#000000", "border-top-width":"1px", "border-top-color":"#ffffff", "border-top-style":"solid"});
+        this.buttonsDiv.css({left:"0px", width:width + "px", backgroundColor:"#000000", "border-top-width":"1px", "border-top-color":"#ffffff", "border-top-style":"solid", display:"flex", "flex-direction":"row", "align-items":"center", "justify-content":"center"});
         var buttonsHeight = this.buttonsDiv.outerHeight();
         if (buttonsHeight == null || buttonsHeight <= 0) {
             buttonsHeight = 56;
@@ -948,15 +1136,23 @@ var GempSwccgHallUI = Class.extend({
         var that = this;
         return {
             "0": function() {
+                if (that.connection)
+                    that.connection.set("disconnected", {message: "Unable to connect to server.", action: "reload"});
                 that.showErrorDialog("Server connection error", "Unable to connect to server. Either server is down or there is a problem with your internet connection.", true, false);
             },
             "401":function() {
+                if (that.connection)
+                    that.connection.set("disconnected", {message: "You are not logged in.", action: "login"});
                 that.showErrorDialog("Authentication error", "You are not logged in", false, true);
             },
             "409":function() {
+                if (that.connection)
+                    that.connection.set("disconnected", {message: "Game Hall opened in another window.", action: "reload"});
                 that.showErrorDialog("Concurrent access error", "You are accessing Game Hall from another browser or window. Close this window or if you wish to access Game Hall from here, click \"Refresh page\".", true, false);
             },
             "410":function() {
+                if (that.connection)
+                    that.connection.set("disconnected", {message: "Removed from Game Hall due to inactivity.", action: "reload"});
                 that.showErrorDialog("Inactivity error", "You were inactive for too long and have been removed from the Game Hall. If you wish to re-enter, click \"Refresh page\".", true, false);
             }
         };
@@ -1255,10 +1451,8 @@ var GempSwccgHallUI = Class.extend({
             this.hallChannelId = root.getAttribute("channelNumber");
 
             var currency = parseInt(root.getAttribute("currency"));
-            if (currency != this.pocketValue) {
-                this.pocketValue = currency;
-                this.pocketDiv.html(formatPrice(currency));
-            }
+            if (!isNaN(currency))
+                this.pocketValue = currency; // kept for merchant; no longer shown on primary bar
 
             var privateGamesEnabled = root.getAttribute("privateGamesEnabledBoolean");
             if (privateGamesEnabled=="true") {
@@ -1281,8 +1475,17 @@ var GempSwccgHallUI = Class.extend({
                 $("#motd").html("<b>MOTD:</b> " + motd);
 
             var serverTime = root.getAttribute("serverTime");
-            if (serverTime != null)
+            if (serverTime != null) {
+                // top info strip (legacy)
                 $(".serverTime").text("Server time: " + serverTime);
+                // primary bar right (LOTR .server-time: date<br>time) under explicit "Server Time" label
+                if (this.serverTimeValue)
+                    this.serverTimeValue.html(serverTime.replace(" ", "<br>"));
+                if (this.connection)
+                    this.connection.updated(null, serverTime);
+            } else if (this.connection) {
+                this.connection.updated(null, this.connection.lastUpdate);
+            }
 
             var queues = root.getElementsByTagName("queue");
             for (var i = 0; i < queues.length; i++) {
