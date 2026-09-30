@@ -638,7 +638,8 @@ var GempSwccgHallUI = Class.extend({
             }
         });
         header.append(this.playBackButton);
-        header.append($("<span class='play-flow-title'>Create Table</span>"));
+        this.playFlowTitle = $("<span class='play-flow-title'>Create Table</span>");
+        header.append(this.playFlowTitle);
         header.append($("<button type='button' class='play-close-button' title='Close'>×</button>").click(function () {
             that.closePlayOverlay();
         }));
@@ -701,46 +702,77 @@ var GempSwccgHallUI = Class.extend({
 
         panel.append(this.playFormPanel);
 
-        // Slice 1.5: full LOTR-style Open League Table + Join Leagues list
-        this.playLeaguePanel = $("<div id='create-league-table' class='table-form play-league-panel-root' style='display:none'></div>");
+        // Slice 1.5b: LOTR CreateLeagueTable parity (hall.html #create-league-table + tables.css)
+        this.playLeaguePanel = $("<div id='create-league-table' class='table-form play-league-panel-root flex-vert' style='display:none'></div>");
 
         var leagueOptions = $("<div id='league-table-options' class='inner-table-form'></div>");
-        leagueOptions.append("<h2 class='play-form-heading'>Open League Table</h2>");
-        leagueOptions.append("<p class='play-subtitle table-blurb'>League games are ranked and count toward standings. Join a league below (or from the Events tab), then open a table here. Limited (Sealed/Draft) leagues need their issued cards before you can play.</p>");
+        leagueOptions.append("<h1 class='play-form-heading play-league-heading'>Open League Table <span class='info-toggle' data-for='help-league' role='button' tabindex='0' title='What is this?' aria-expanded='false'>i</span></h1>");
+        leagueOptions.append("<div id='help-league' class='info-text' style='display:none'>League games are ranked: each win or loss counts toward the league's standings, within the league's limits on games per serie and per opponent. They always use the Competitive timer and cannot be private or invite-only.</div>");
 
-        this.leagueFormatSelect = $("<select id='league-format' class='play-form-select' style='width: 300px'></select>");
-        var leagueFmtRow = $("<div class='play-form-row'></div>");
-        leagueFmtRow.append("<span class='play-form-label'>League</span>");
+        var blurb = $("<div class='flex-vert table-blurb'></div>");
+        blurb.append(document.createTextNode("Leagues are multi-week or multi-month events where players compete in many matches across days to improve their skills and hone their craft."));
+        blurb.append($("<br/>"));
+        blurb.append($("<br/>"));
+        blurb.append(document.createTextNode("Join leagues below or using the Events tab at the top of the main hall. If you enter a Limited league (Sealed or Draft), you will need to receive your cards and construct a new deck using those cards before you can participate."));
+        leagueOptions.append(blurb);
+
+        this.leagueFormatSelect = $("<select id='league-format' class='flex-fill play-form-select'></select>");
+        var leagueFmtRow = $("<div class='flex-horiz play-form-row'></div>");
+        leagueFmtRow.append("<div class='label-column'>League: </div>");
         leagueFmtRow.append(this.leagueFormatSelect);
         leagueOptions.append(leagueFmtRow);
 
-        this.leagueDecksSelect = $("<select id='league-deck' class='play-form-select' style='width: 300px'></select>");
-        var leagueDeckRow = $("<div class='play-form-row'></div>");
-        leagueDeckRow.append("<span class='play-form-label'>Your deck</span>");
+        var playerDeckBlock = $("<div class='player-deck flex-vert'></div>");
+        this.leagueDecksSelect = $("<select id='league-deck' class='player-deck-dropdown flex-fill play-form-select'></select>");
+        var leagueDeckRow = $("<div class='flex-horiz play-form-row'></div>");
+        leagueDeckRow.append("<div class='label-column'>Deck: </div>");
         leagueDeckRow.append(this.leagueDecksSelect);
-        leagueOptions.append(leagueDeckRow);
+        playerDeckBlock.append(leagueDeckRow);
 
-        this.leagueCreateButton = $("<button type='button' id='submit-league-table-button' class='play-submit-button'>Create Table</button>");
+        // SWCCG has getLibraryDecks / sample decks — wire Select Library Deck like LOTR SelectDeck
+        this.leagueLibraryDecksSelect = $("<select id='league-library-deck' class='library-deck-dropdown flex-fill play-form-select'></select>");
+        var leagueLibRow = $("<div class='flex-horiz play-form-row'></div>");
+        leagueLibRow.append("<div class='label-column'>Select Library Deck: <span class='info-toggle' data-for='help-library-league' role='button' tabindex='0' title='What is this?' aria-expanded='false'>i</span></div>");
+        leagueLibRow.append(this.leagueLibraryDecksSelect);
+        playerDeckBlock.append(leagueLibRow);
+        playerDeckBlock.append("<div id='help-library-league' class='info-text' style='display:none'>The Deck Library contains sample decks you can use, including starter decks, past championship decks, and more.</div>");
+        leagueOptions.append(playerDeckBlock);
+
+        this.leagueDecksSelect.change(function () {
+            if (that.leagueDecksSelect.val()) {
+                that.leagueLibraryDecksSelect.val("");
+            }
+        });
+        this.leagueLibraryDecksSelect.change(function () {
+            if (that.leagueLibraryDecksSelect.val()) {
+                that.leagueDecksSelect.val("");
+            }
+        });
+
+        this.leagueCreateButton = $("<button type='button' id='submit-league-table-button' class='table-create-button'>Create Table</button>");
         $(this.leagueCreateButton).button().click(function () {
             that.submitLeagueTable();
         });
-        var leagueSubmitRow = $("<div class='play-form-row play-form-actions'></div>");
-        leagueSubmitRow.append(this.leagueCreateButton);
-        leagueOptions.append(leagueSubmitRow);
+        leagueOptions.append(this.leagueCreateButton);
 
-        this.leagueResultDiv = $("<div id='league-result' class='join-result' style='display:none' role='status'></div>");
-        leagueOptions.append(this.leagueResultDiv);
+        var resultRow = $("<div id='league-result-label' class='flex-horiz result-label'></div>");
+        resultRow.append("<div class='label'><b>Result:</b></div>");
+        this.leagueResultDiv = $("<div id='league-result' class='flex-fill result-box' role='status' aria-live='polite'>Ready.</div>");
+        resultRow.append(this.leagueResultDiv);
+        leagueOptions.append(resultRow);
 
         this.playLeaguePanel.append(leagueOptions);
 
-        this.playLeaguePanel.append("<h2 class='play-form-heading'>Join Leagues</h2>");
+        this.playLeaguePanel.append("<h1 class='play-form-heading'>Join Leagues</h1>");
         var playLeagueInner = $("<div id='play-league-panel' class='inner-table-form play-league-join-panel'></div>");
         this.playLeagueNextSteps = $("<div id='play-league-next-steps' class='play-next-steps' style='display:none'></div>");
         playLeagueInner.append(this.playLeagueNextSteps);
-        playLeagueInner.append("<div class='page-hint play-subtitle'>All times are server time (UTC / GMT). Open a league for its details, standings and Join button.</div>");
+        playLeagueInner.append("<div class='page-hint'>All times are server time (UTC / GMT). Open a league for its details, standings and Join button.</div>");
         this.playLeagueList = $("<div id='play-league-list' class='event-list play-league-list'></div>");
         playLeagueInner.append(this.playLeagueList);
         this.playLeaguePanel.append(playLeagueInner);
+
+        this.bindLeagueInfoToggles(this.playLeaguePanel);
 
         panel.append(this.playLeaguePanel);
 
@@ -1105,6 +1137,47 @@ var GempSwccgHallUI = Class.extend({
         this.playOverlay.removeClass("play-flow-league");
     },
 
+    setPlayFlowTitle:function(suffix) {
+        if (this.playFlowTitle == null) {
+            return;
+        }
+        if (suffix == null || suffix === "") {
+            this.playFlowTitle.text("Create Table");
+        } else {
+            this.playFlowTitle.text("Create Table ▸ " + suffix);
+        }
+    },
+
+    bindLeagueInfoToggles:function(root) {
+        // jQuery 1.6.2: .click / .bind only (no .on)
+        $(root).find(".info-toggle").each(function () {
+            var toggle = $(this);
+            if (!toggle.attr("role")) {
+                toggle.attr("role", "button");
+            }
+            if (!toggle.attr("tabindex")) {
+                toggle.attr("tabindex", "0");
+            }
+            toggle.unbind("click.leagueInfo").bind("click.leagueInfo", function (event) {
+                if (event && event.preventDefault) {
+                    event.preventDefault();
+                }
+                var id = toggle.attr("data-for");
+                if (!id) {
+                    return;
+                }
+                var target = $("#" + id);
+                if (target.is(":visible")) {
+                    target.hide();
+                    toggle.attr("aria-expanded", "false");
+                } else {
+                    target.show();
+                    toggle.attr("aria-expanded", "true");
+                }
+            });
+        });
+    },
+
     showPlaySelection:function() {
         this.playMode = null;
         this.playFormPanel.hide();
@@ -1116,6 +1189,7 @@ var GempSwccgHallUI = Class.extend({
         }
         this.playOverlay.removeClass("play-flow-league");
         this.playSelectionPanel.show();
+        this.setPlayFlowTitle(null);
         this.playBackButton.html("&lt; Back");
         // AI choice visibility follows server flag
         if (this.aiTablesEnabled) {
@@ -1139,6 +1213,7 @@ var GempSwccgHallUI = Class.extend({
             this.playLeaguePanel.hide();
         }
         this.playOverlay.removeClass("play-flow-league");
+        this.setPlayFlowTitle("Tournament");
         this.playTournamentPanel.show();
     },
 
@@ -1160,6 +1235,7 @@ var GempSwccgHallUI = Class.extend({
         this.playFormPanel.show();
 
         if (mode === "ai") {
+            this.setPlayFlowTitle("Bots");
             this.playFormTitle.text("Play Against Bots (Beta)");
             this.opponentSelect.val("ai");
             if (this.privateGamesAllowed) {
@@ -1170,6 +1246,7 @@ var GempSwccgHallUI = Class.extend({
             }
             this.playFormFields.show();
         } else {
+            this.setPlayFlowTitle("Casual");
             this.playFormTitle.text("Open Casual Table");
             this.opponentSelect.val("human");
             if (this.privateGamesAllowed) {
@@ -1193,7 +1270,7 @@ var GempSwccgHallUI = Class.extend({
         }
     },
 
-    // Slice 1.5 — LOTR CreateLeagueTable: Open League Table form + Join Leagues list
+    // Slice 1.5b — LOTR CreateLeagueTable parity: Open League Table + Join Leagues
     showLeaguePanel:function() {
         this.playMode = "league";
         this.playSelectionPanel.hide();
@@ -1202,11 +1279,12 @@ var GempSwccgHallUI = Class.extend({
             this.playTournamentPanel.hide();
         }
         this.playOverlay.addClass("play-flow-league");
+        this.setPlayFlowTitle("League");
         if (this.playLeagueNextSteps != null) {
             this.playLeagueNextSteps.hide().empty();
         }
         if (this.leagueResultDiv != null) {
-            this.leagueResultDiv.hide().empty();
+            this.leagueResultDiv.removeClass("result-error result-success").text("Ready.");
         }
         this.syncLeagueDecksFromCreateSelect();
         this.refreshLeagueDropdownAndList();
@@ -1217,31 +1295,74 @@ var GempSwccgHallUI = Class.extend({
         if (this.leagueDecksSelect == null || this.decksSelect == null) {
             return;
         }
-        var prev = this.leagueDecksSelect.val();
-        var select = this.leagueDecksSelect;
-        select.empty();
+        var prevPlayer = this.leagueDecksSelect.val();
+        var prevLib = this.leagueLibraryDecksSelect != null ? this.leagueLibraryDecksSelect.val() : null;
+        var playerSelect = this.leagueDecksSelect;
+        var libSelect = this.leagueLibraryDecksSelect;
+        playerSelect.empty();
+        if (libSelect != null) {
+            libSelect.empty();
+            libSelect.append($("<option></option>").attr("value", "").text("Choose a Deck Library deck"));
+        }
+        var playerCount = 0;
         this.decksSelect.find("option").each(function () {
             var src = $(this);
+            var sample = src.attr("data-sample-deck");
+            var isSample = (sample === "true" || sample === true);
             var opt = $("<option></option>");
             opt.attr("value", src.attr("value"));
-            var sample = src.attr("data-sample-deck");
-            if (sample != null)
+            if (sample != null) {
                 opt.attr("data-sample-deck", sample);
+            }
             var side = src.attr("data-side");
-            if (side != null)
+            if (side != null) {
                 opt.attr("data-side", side);
-            opt.text(src.text());
-            select.append(opt);
+            }
+            var label = src.text();
+            if (isSample && libSelect != null) {
+                // strip "Sample: " prefix for library dropdown (LOTR uses Deck.formatDeck)
+                if (label.indexOf("Sample: ") === 0) {
+                    label = label.substring(8);
+                }
+                opt.text(label);
+                libSelect.append(opt);
+            } else if (!isSample) {
+                opt.text(label);
+                playerSelect.append(opt);
+                playerCount++;
+            }
         });
-        if (prev != null) {
-            var found = false;
-            select.find("option").each(function () {
-                if ($(this).attr("value") === prev) {
-                    found = true;
+        if (playerCount == 0) {
+            playerSelect.append($("<option></option>").attr("value", "").text("You have no decks yet"));
+        } else {
+            // placeholder like LOTR SelectDeck
+            playerSelect.prepend($("<option></option>").attr("value", "").text("Choose one of your decks"));
+        }
+        if (prevPlayer != null && prevPlayer !== "") {
+            var foundP = false;
+            playerSelect.find("option").each(function () {
+                if ($(this).attr("value") === prevPlayer) {
+                    foundP = true;
                 }
             });
-            if (found) {
-                select.val(prev);
+            if (foundP) {
+                playerSelect.val(prevPlayer);
+            } else if (playerCount > 0) {
+                playerSelect.val(playerSelect.find("option").eq(1).attr("value"));
+            }
+        } else if (playerCount > 0) {
+            playerSelect.val(playerSelect.find("option").eq(1).attr("value"));
+        }
+        if (libSelect != null && prevLib != null && prevLib !== "") {
+            var foundL = false;
+            libSelect.find("option").each(function () {
+                if ($(this).attr("value") === prevLib) {
+                    foundL = true;
+                }
+            });
+            if (foundL) {
+                libSelect.val(prevLib);
+                playerSelect.val("");
             }
         }
     },
@@ -1446,16 +1567,23 @@ var GempSwccgHallUI = Class.extend({
             this.showLeagueCreateResult("You must select a league. If you are not enrolled in one, join one below.", true);
             return;
         }
-        if (this.leagueDecksSelect == null || this.leagueDecksSelect[0].selectedIndex < 0) {
+        var deck = null;
+        var sampleDeck = "false";
+        var libVal = (this.leagueLibraryDecksSelect != null) ? this.leagueLibraryDecksSelect.val() : null;
+        if (libVal != null && libVal !== "") {
+            deck = libVal;
+            sampleDeck = "true";
+        } else if (this.leagueDecksSelect != null) {
+            deck = this.leagueDecksSelect.val();
+            if (deck != null && deck !== "" && this.leagueDecksSelect[0].selectedIndex >= 0) {
+                var attr = this.leagueDecksSelect[0][this.leagueDecksSelect[0].selectedIndex].getAttribute("data-sample-deck");
+                sampleDeck = attr != null ? attr : "false";
+            }
+        }
+        if (deck == null || deck === "") {
             this.showLeagueCreateResult("You must select a deck. Remember that if this is a sealed or draft league, you may only use cards issued by this league.", true);
             return;
         }
-        var deck = this.leagueDecksSelect.val();
-        if (deck == null || deck === "") {
-            this.showLeagueCreateResult("You must select a deck.", true);
-            return;
-        }
-        var sampleDeck = this.leagueDecksSelect[0][this.leagueDecksSelect[0].selectedIndex].getAttribute("data-sample-deck");
         $(this.leagueCreateButton).button("disable");
         // League tables: human, not private (server rejects otherwise)
         this.comm.createTable(format, deck, sampleDeck, "", false, false, null, null, null,
@@ -1496,11 +1624,12 @@ var GempSwccgHallUI = Class.extend({
         if (this.leagueResultDiv == null) {
             return;
         }
-        this.leagueResultDiv.text(text);
+        this.leagueResultDiv.text(text != null ? text : "Ready.");
+        this.leagueResultDiv.removeClass("warningMessage result-error result-success");
         if (isError) {
-            this.leagueResultDiv.addClass("warningMessage");
-        } else {
-            this.leagueResultDiv.removeClass("warningMessage");
+            this.leagueResultDiv.addClass("result-error warningMessage");
+        } else if (text != null && text !== "Ready.") {
+            this.leagueResultDiv.addClass("result-success");
         }
         this.leagueResultDiv.show();
     },
@@ -1785,6 +1914,9 @@ var GempSwccgHallUI = Class.extend({
             var syncResult = this.syncJoinDecksFromCreateSelect(req);
             var canJoin = !(syncResult && syncResult.hasPlaceholder) && syncResult && syncResult.count > 0;
             this.setJoinSubmitEnabled(canJoin);
+        }
+        if (this.playLeaguePanel != null && this.playLeaguePanel.is(":visible")) {
+            this.syncLeagueDecksFromCreateSelect();
         }
     },
 

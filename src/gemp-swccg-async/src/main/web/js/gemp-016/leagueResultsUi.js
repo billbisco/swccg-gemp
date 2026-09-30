@@ -30,13 +30,15 @@ var LeagueResultsUI = Class.extend({
             function (xhr, ajaxOptions, thrownError) {
             });
 
+        // zIndex above .play-flow (10000): Join Yes/No was invisible behind Create Table overlay (Slice 1.5 FAIL)
         this.questionDialog = $("<div></div>")
             .dialog({
                 autoOpen:false,
                 closeOnEscape:true,
                 resizable:false,
                 modal:true,
-                title:"League operation"
+                title:"League operation",
+                zIndex:11050
             });
 
         this.formatDialog = $("<div></div>")
@@ -45,7 +47,8 @@ var LeagueResultsUI = Class.extend({
                 closeOnEscape:true,
                 resizable:false,
                 modal:true,
-                title:"Format description"
+                title:"Format description",
+                zIndex:11050
             });
 
         this.joinCallback = joinCallback || null;
@@ -66,11 +69,14 @@ var LeagueResultsUI = Class.extend({
             });
     },
 
-    // options: {idPrefix: "..."} — unique tab ids when rendering into Play list drawers
+    // options: {idPrefix, showName, hideId, compactJoin} — list-mode drawers mirror LOTR compact Cost/Join block
     loadedLeague:function (xml, leagueExtraInfoCssId, options) {
         var that = this;
         options = options || {};
         var tabPrefix = options.idPrefix || "league";
+        var showName = options.showName !== false;
+        var hideId = options.hideId === true;
+        var compactJoin = options.compactJoin === true;
         log(xml);
         var root = xml.documentElement;
         if (root.tagName == 'league') {
@@ -90,20 +96,29 @@ var LeagueResultsUI = Class.extend({
             var invitationOnly = league.getAttribute("invitationOnly");
             var registrationInfo = league.getAttribute("registrationInfo");
             var lockedDeckType = league.getAttribute("lockedDeckType");
+            var costStr = formatPrice(cost);
 
-            $(leagueExtraInfoCssId).append("<div class='leagueName'>" + leagueName + "</div>");
-            $(leagueExtraInfoCssId).append("<div class='leagueID'>League ID: " + leagueType + "</div>");
+            // LOTR-style compact join block: Cost / membership+Join, then series lines (keep results tabs below)
+            var joinBlock = $("<div class='league-join-block'></div>");
+            if (compactJoin) {
+                joinBlock.addClass("league-join-block-compact");
+            }
+
+            if (showName) {
+                joinBlock.append("<div class='leagueName'>" + leagueName + "</div>");
+            }
+            if (!hideId) {
+                joinBlock.append("<div class='leagueID'>League ID: " + leagueType + "</div>");
+            }
 
             if (invitationOnly == "true") {
                 if (registrationInfo != "" && registrationInfo != "null")
-                    $(leagueExtraInfoCssId).append("<div>Registration info: "+registrationInfo);
+                    joinBlock.append("<div>Registration info: "+registrationInfo+"</div>");
                 else
-                    $(leagueExtraInfoCssId).append("<div>Registration for this league by invitation only.</div>");
-
+                    joinBlock.append("<div>Registration for this league by invitation only.</div>");
             } else {
-                var costStr = formatPrice(cost);
-                $(leagueExtraInfoCssId).append("<div class='leagueCost'><b>Cost:</b> " + costStr + "</div>");
-            };
+                joinBlock.append("<div class='leagueCost'><b>Cost:</b> " + costStr + "</div>");
+            }
 
             if (member == "true") {
                 var memberDiv = $("<div class='leagueMembership'>You are already a member of this league. </div>");
@@ -125,10 +140,10 @@ var LeagueResultsUI = Class.extend({
                     var grayedButton = $("<button disabled='disabled' class='draft-not-available'>Draft Available " + getDateString(start) + "</button>");
                     memberDiv.append(grayedButton);
                 }
-                $(leagueExtraInfoCssId).append(memberDiv);
+                joinBlock.append(memberDiv);
             }
             else if (joinable == "true" && invitationOnly != "true") {
-                var joinBut = $("<button>Join league</button>").button();
+                var joinBut = $("<button type='button'>Join league</button>").button();
 
                 var joinFunc = (function (leagueCode, costString) {
                     return function () {
@@ -145,11 +160,13 @@ var LeagueResultsUI = Class.extend({
                 joinBut.click(joinFunc);
                 var joinDiv = $("<div class='leagueMembership'>You're not a member of this league. </div>");
                 joinDiv.append(joinBut);
-                $(leagueExtraInfoCssId).append(joinDiv);
+                joinBlock.append(joinDiv);
             } else if (joinable == "true" && invitationOnly == "true") {
                 var joinDiv = $("<div class='leagueMembership'>You're not a member of this league. </div>");
-                $(leagueExtraInfoCssId).append(joinDiv);
+                joinBlock.append(joinDiv);
             }
+
+            $(leagueExtraInfoCssId).append(joinBlock);
 
             var tabDiv = $("<div width='100%'></div>");
             var tabNavigation = $("<ul></ul>");
@@ -206,7 +223,12 @@ var LeagueResultsUI = Class.extend({
                     (function (ft) {
                         return function () {
                             that.formatDialog.html("");
+                            that.formatDialog.dialog("option", "zIndex", 11050);
                             that.formatDialog.dialog("open");
+                            try {
+                                that.formatDialog.dialog("widget").css("z-index", 11050);
+                                $(".ui-widget-overlay").last().css("z-index", 11040);
+                            } catch (ignored) {}
                             that.communication.getFormat(ft,
                                 function (html) {
                                     that.formatDialog.html(html);
@@ -363,7 +385,12 @@ var LeagueResultsUI = Class.extend({
                         }
                         that.communication.getLeague(type, function (xml) {
                             that.drawerSerial++;
-                            that.loadedLeague(xml, cssid, {idPrefix: that.idPrefix + "D" + that.drawerSerial + "-"});
+                            that.loadedLeague(xml, cssid, {
+                                idPrefix: that.idPrefix + "D" + that.drawerSerial + "-",
+                                showName: false,
+                                hideId: true,
+                                compactJoin: true
+                            });
                             $drawer.slideDown();
                             btn.button("option", "label", "- Details");
                         });
@@ -420,8 +447,17 @@ var LeagueResultsUI = Class.extend({
         var horSpace = 230;
         var vertSpace = 100;
 
-        this.questionDialog.dialog({width:Math.min(horSpace, windowWidth), height:Math.min(vertSpace, windowHeight)});
+        this.questionDialog.dialog({
+            width:Math.min(horSpace, windowWidth),
+            height:Math.min(vertSpace, windowHeight),
+            zIndex:11050
+        });
+        // Ensure overlay + dialog stack above Create Table play-flow (z-index 10000)
         this.questionDialog.dialog("open");
+        try {
+            this.questionDialog.dialog("widget").css("z-index", 11050);
+            $(".ui-widget-overlay").last().css("z-index", 11040);
+        } catch (ignored) {}
     },
 
     createStandingsTable:function (standings) {
