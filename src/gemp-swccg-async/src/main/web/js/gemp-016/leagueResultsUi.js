@@ -143,7 +143,7 @@ var LeagueResultsUI = Class.extend({
                 joinBlock.append(memberDiv);
             }
             else if (joinable == "true" && invitationOnly != "true") {
-                var joinBut = $("<button type='button'>Join league</button>").button();
+                var joinBut = $("<button type='button' class='league-join-button'>Join league</button>").button();
 
                 var joinFunc = (function (leagueCode, costString) {
                     return function () {
@@ -158,7 +158,9 @@ var LeagueResultsUI = Class.extend({
                     };
                 })(leagueType, costStr);
                 joinBut.click(joinFunc);
-                var joinDiv = $("<div class='leagueMembership'>You're not a member of this league. </div>");
+                // Slice 1.5c: label span + league-join-button so CSS can nowrap / stack on narrow
+                var joinDiv = $("<div class='leagueMembership'></div>");
+                joinDiv.append($("<span class='league-membership-label'>You're not a member of this league. </span>"));
                 joinDiv.append(joinBut);
                 joinBlock.append(joinDiv);
             } else if (joinable == "true" && invitationOnly == "true") {
