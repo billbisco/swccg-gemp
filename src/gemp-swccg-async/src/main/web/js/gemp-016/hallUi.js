@@ -215,6 +215,15 @@ var GempSwccgHallUI = Class.extend({
     playTournamentChoice:null,
     playTournamentPanel:null,
     playLeagueEmpty:null,
+    playLeaguePanel:null,
+    leagueFormatSelect:null,
+    leagueDecksSelect:null,
+    leagueCreateButton:null,
+    leagueResultDiv:null,
+    playLeagueNextSteps:null,
+    playLeagueList:null,
+    playLeagueUI:null,
+    leagueCache:null, // [{type,name,member,start,end}, ...]
     playBackButton:null,
     playMode:null, // "casual" | "ai" | "league" | "tournament"
     leagueTypesLoaded:false,
@@ -620,7 +629,9 @@ var GempSwccgHallUI = Class.extend({
         var header = $("<div class='play-flow-header'></div>");
         this.playBackButton = $("<button type='button' id='create-table-back-button' class='play-back-button'>&lt; Back</button>");
         this.playBackButton.click(function () {
-            if (that.playFormPanel.is(":visible") || (that.playTournamentPanel != null && that.playTournamentPanel.is(":visible"))) {
+            if (that.playFormPanel.is(":visible")
+                    || (that.playTournamentPanel != null && that.playTournamentPanel.is(":visible"))
+                    || (that.playLeaguePanel != null && that.playLeaguePanel.is(":visible"))) {
                 that.showPlaySelection();
             } else {
                 that.closePlayOverlay();
@@ -642,7 +653,7 @@ var GempSwccgHallUI = Class.extend({
         this.playTournamentChoice = $("<button type='button' id='create-tournament-button' class='play-choice-button'><span class='play-choice-title'><span class='bigger-icon icon-tournament' aria-hidden='true'></span><span>Create Tournament</span></span><span class='play-subtitle'>Host an event that other players sign up for.</span></button>");
         this.playAiChoice.click(function () { that.showPlayForm("ai"); });
         this.playCasualChoice.click(function () { that.showPlayForm("casual"); });
-        this.playLeagueChoice.click(function () { that.showPlayForm("league"); });
+        this.playLeagueChoice.click(function () { that.showLeaguePanel(); });
         this.playTournamentChoice.click(function () { that.showTournamentInfo(); });
         // LOTR order: Bot, Casual, League, Tournament
         this.playSelectionPanel.append(this.playAiChoice);
@@ -689,6 +700,49 @@ var GempSwccgHallUI = Class.extend({
         this.playFormPanel.append(this.playLeagueEmpty);
 
         panel.append(this.playFormPanel);
+
+        // Slice 1.5: full LOTR-style Open League Table + Join Leagues list
+        this.playLeaguePanel = $("<div id='create-league-table' class='table-form play-league-panel-root' style='display:none'></div>");
+
+        var leagueOptions = $("<div id='league-table-options' class='inner-table-form'></div>");
+        leagueOptions.append("<h2 class='play-form-heading'>Open League Table</h2>");
+        leagueOptions.append("<p class='play-subtitle table-blurb'>League games are ranked and count toward standings. Join a league below (or from the Events tab), then open a table here. Limited (Sealed/Draft) leagues need their issued cards before you can play.</p>");
+
+        this.leagueFormatSelect = $("<select id='league-format' class='play-form-select' style='width: 300px'></select>");
+        var leagueFmtRow = $("<div class='play-form-row'></div>");
+        leagueFmtRow.append("<span class='play-form-label'>League</span>");
+        leagueFmtRow.append(this.leagueFormatSelect);
+        leagueOptions.append(leagueFmtRow);
+
+        this.leagueDecksSelect = $("<select id='league-deck' class='play-form-select' style='width: 300px'></select>");
+        var leagueDeckRow = $("<div class='play-form-row'></div>");
+        leagueDeckRow.append("<span class='play-form-label'>Your deck</span>");
+        leagueDeckRow.append(this.leagueDecksSelect);
+        leagueOptions.append(leagueDeckRow);
+
+        this.leagueCreateButton = $("<button type='button' id='submit-league-table-button' class='play-submit-button'>Create Table</button>");
+        $(this.leagueCreateButton).button().click(function () {
+            that.submitLeagueTable();
+        });
+        var leagueSubmitRow = $("<div class='play-form-row play-form-actions'></div>");
+        leagueSubmitRow.append(this.leagueCreateButton);
+        leagueOptions.append(leagueSubmitRow);
+
+        this.leagueResultDiv = $("<div id='league-result' class='join-result' style='display:none' role='status'></div>");
+        leagueOptions.append(this.leagueResultDiv);
+
+        this.playLeaguePanel.append(leagueOptions);
+
+        this.playLeaguePanel.append("<h2 class='play-form-heading'>Join Leagues</h2>");
+        var playLeagueInner = $("<div id='play-league-panel' class='inner-table-form play-league-join-panel'></div>");
+        this.playLeagueNextSteps = $("<div id='play-league-next-steps' class='play-next-steps' style='display:none'></div>");
+        playLeagueInner.append(this.playLeagueNextSteps);
+        playLeagueInner.append("<div class='page-hint play-subtitle'>All times are server time (UTC / GMT). Open a league for its details, standings and Join button.</div>");
+        this.playLeagueList = $("<div id='play-league-list' class='event-list play-league-list'></div>");
+        playLeagueInner.append(this.playLeagueList);
+        this.playLeaguePanel.append(playLeagueInner);
+
+        panel.append(this.playLeaguePanel);
 
         this.playTournamentPanel = $("<div id='create-tournament-info' class='table-form play-tournament-info' style='display:none'></div>");
         this.playTournamentPanel.append("<h2 class='play-form-heading'>Create Tournament</h2>");
@@ -1045,6 +1099,10 @@ var GempSwccgHallUI = Class.extend({
         if (this.playTournamentPanel != null) {
             this.playTournamentPanel.hide();
         }
+        if (this.playLeaguePanel != null) {
+            this.playLeaguePanel.hide();
+        }
+        this.playOverlay.removeClass("play-flow-league");
     },
 
     showPlaySelection:function() {
@@ -1053,6 +1111,10 @@ var GempSwccgHallUI = Class.extend({
         if (this.playTournamentPanel != null) {
             this.playTournamentPanel.hide();
         }
+        if (this.playLeaguePanel != null) {
+            this.playLeaguePanel.hide();
+        }
+        this.playOverlay.removeClass("play-flow-league");
         this.playSelectionPanel.show();
         this.playBackButton.html("&lt; Back");
         // AI choice visibility follows server flag
@@ -1073,15 +1135,28 @@ var GempSwccgHallUI = Class.extend({
         this.playMode = "tournament";
         this.playSelectionPanel.hide();
         this.playFormPanel.hide();
+        if (this.playLeaguePanel != null) {
+            this.playLeaguePanel.hide();
+        }
+        this.playOverlay.removeClass("play-flow-league");
         this.playTournamentPanel.show();
     },
 
     showPlayForm:function(mode) {
+        // Slice 1.5: league uses its own full panel
+        if (mode === "league") {
+            this.showLeaguePanel();
+            return;
+        }
         this.playMode = mode;
         this.playSelectionPanel.hide();
         if (this.playTournamentPanel != null) {
             this.playTournamentPanel.hide();
         }
+        if (this.playLeaguePanel != null) {
+            this.playLeaguePanel.hide();
+        }
+        this.playOverlay.removeClass("play-flow-league");
         this.playFormPanel.show();
 
         if (mode === "ai") {
@@ -1090,23 +1165,19 @@ var GempSwccgHallUI = Class.extend({
             if (this.privateGamesAllowed) {
                 this.isPrivateCheckbox.show();
             }
-            this.playLeagueEmpty.hide();
-            this.playFormFields.show();
-        } else if (mode === "league") {
-            this.playFormTitle.text("Open League Table");
-            this.opponentSelect.val("human");
-            // Server rejects private league tables and bot league games
-            if (document.getElementById('isPrivateCheckbox1') != null) {
-                document.getElementById('isPrivateCheckbox1').checked = false;
+            if (this.playLeagueEmpty != null) {
+                this.playLeagueEmpty.hide();
             }
-            this.isPrivateCheckbox.hide();
+            this.playFormFields.show();
         } else {
             this.playFormTitle.text("Open Casual Table");
             this.opponentSelect.val("human");
             if (this.privateGamesAllowed) {
                 this.isPrivateCheckbox.show();
             }
-            this.playLeagueEmpty.hide();
+            if (this.playLeagueEmpty != null) {
+                this.playLeagueEmpty.hide();
+            }
             this.playFormFields.show();
         }
 
@@ -1114,24 +1185,326 @@ var GempSwccgHallUI = Class.extend({
         this.updateAiDecksForSelection();
         this.updateCreateTableLabel();
 
-        if (mode === "league") {
-            var leagueCount = this.countLeagueFormatOptions();
-            if (leagueCount === 0) {
-                this.playFormFields.hide();
-                this.playLeagueEmpty.show();
-            } else {
-                this.playLeagueEmpty.hide();
-                this.playFormFields.show();
-            }
-        }
-
         // Ensure selects are visible inside the form once hall has loaded formats/decks
-        if (this.supportedFormatsInitialized && (mode !== "league" || this.countLeagueFormatOptions() > 0)) {
+        if (this.supportedFormatsInitialized) {
             this.supportedFormatsSelect.css("display", "");
             this.decksSelect.css("display", "");
             this.createTableButton.css("display", "");
         }
     },
+
+    // Slice 1.5 — LOTR CreateLeagueTable: Open League Table form + Join Leagues list
+    showLeaguePanel:function() {
+        this.playMode = "league";
+        this.playSelectionPanel.hide();
+        this.playFormPanel.hide();
+        if (this.playTournamentPanel != null) {
+            this.playTournamentPanel.hide();
+        }
+        this.playOverlay.addClass("play-flow-league");
+        if (this.playLeagueNextSteps != null) {
+            this.playLeagueNextSteps.hide().empty();
+        }
+        if (this.leagueResultDiv != null) {
+            this.leagueResultDiv.hide().empty();
+        }
+        this.syncLeagueDecksFromCreateSelect();
+        this.refreshLeagueDropdownAndList();
+        this.playLeaguePanel.show();
+    },
+
+    syncLeagueDecksFromCreateSelect:function() {
+        if (this.leagueDecksSelect == null || this.decksSelect == null) {
+            return;
+        }
+        var prev = this.leagueDecksSelect.val();
+        var select = this.leagueDecksSelect;
+        select.empty();
+        this.decksSelect.find("option").each(function () {
+            var src = $(this);
+            var opt = $("<option></option>");
+            opt.attr("value", src.attr("value"));
+            var sample = src.attr("data-sample-deck");
+            if (sample != null)
+                opt.attr("data-sample-deck", sample);
+            var side = src.attr("data-side");
+            if (side != null)
+                opt.attr("data-side", side);
+            opt.text(src.text());
+            select.append(opt);
+        });
+        if (prev != null) {
+            var found = false;
+            select.find("option").each(function () {
+                if ($(this).attr("value") === prev) {
+                    found = true;
+                }
+            });
+            if (found) {
+                select.val(prev);
+            }
+        }
+    },
+
+    refreshLeagueDropdownAndList:function() {
+        var that = this;
+        if (this.comm == null) {
+            return;
+        }
+        this.comm.getLeagues(function (xml) {
+            that.applyLeagueCache(xml);
+            that.populateLeagueDropdown(null);
+            that.ensurePlayLeagueListUI();
+        }, {
+            "0": function () {
+                that.populateLeagueDropdown(null);
+                that.ensurePlayLeagueListUI();
+            }
+        });
+    },
+
+    applyLeagueCache:function(xml) {
+        this.leagueCache = [];
+        if (xml == null) {
+            return;
+        }
+        var root = xml.documentElement;
+        if (root == null || root.tagName != "leagues") {
+            return;
+        }
+        var leagues = root.getElementsByTagName("league");
+        var types = {};
+        for (var i = 0; i < leagues.length; i++) {
+            var type = leagues[i].getAttribute("type");
+            var name = leagues[i].getAttribute("name");
+            var member = leagues[i].getAttribute("member") == "true";
+            var start = leagues[i].getAttribute("start");
+            var end = leagues[i].getAttribute("end");
+            if (type != null && type.length > 0) {
+                this.leagueCache.push({type: type, name: name, member: member, start: start, end: end});
+                types[type] = true;
+            }
+        }
+        // Keep casual/ai format tags in sync
+        if (this.supportedFormatsSelect != null) {
+            this.supportedFormatsSelect.find("option").each(function () {
+                var val = $(this).attr("value");
+                if (types[val]) {
+                    $(this).attr("data-league", "1");
+                }
+            });
+            this.leagueTypesLoaded = true;
+        }
+    },
+
+    // Mirror LOTR FormatManager.registerLeagueDropdownUpdate: only enrolled leagues
+    populateLeagueDropdown:function(preferType) {
+        if (this.leagueFormatSelect == null) {
+            return;
+        }
+        var current = preferType != null ? preferType : this.leagueFormatSelect.val();
+        this.leagueFormatSelect.empty();
+        var count = 0;
+        var cache = this.leagueCache || [];
+        for (var i = 0; i < cache.length; i++) {
+            var league = cache[i];
+            if (!league.member) {
+                continue;
+            }
+            var opt = $("<option></option>");
+            opt.attr("value", league.type);
+            opt.text(league.name != null ? league.name : league.type);
+            this.leagueFormatSelect.append(opt);
+            count++;
+        }
+        if (count == 0) {
+            var empty = $("<option></option>");
+            empty.attr("disabled", "disabled");
+            empty.attr("value", "");
+            empty.text("You have not joined a league yet; join one below");
+            this.leagueFormatSelect.append(empty);
+            this.leagueFormatSelect.val("");
+        } else if (current != null && current !== "") {
+            var found = false;
+            this.leagueFormatSelect.find("option").each(function () {
+                if ($(this).attr("value") === current) {
+                    found = true;
+                }
+            });
+            if (found) {
+                this.leagueFormatSelect.val(current);
+            }
+        }
+    },
+
+    ensurePlayLeagueListUI:function() {
+        var that = this;
+        if (this.playLeagueList == null) {
+            return;
+        }
+        if (this.playLeagueUI == null) {
+            this.playLeagueUI = new LeagueResultsUI("/gemp-swccg-server",
+                function (leagueCode) { that.leagueJoined(leagueCode); },
+                {
+                    list: this.playLeagueList,
+                    autoLoad: true,
+                    idPrefix: "playLeague",
+                    onJoinError: function (leagueCode, message) {
+                        that.showLeagueNextStepsMessage("Could not join the league: " + message, true);
+                    }
+                });
+        } else {
+            this.playLeagueUI.loadResults();
+        }
+    },
+
+    leagueJoined:function(leagueCode) {
+        var that = this;
+        // Refresh membership + select the new league; offer next steps
+        this.comm.getLeagues(function (xml) {
+            that.applyLeagueCache(xml);
+            that.populateLeagueDropdown(leagueCode);
+            that.showLeagueNextSteps(leagueCode);
+        }, {
+            "0": function () {
+                that.populateLeagueDropdown(leagueCode);
+                that.showLeagueNextSteps(leagueCode);
+            }
+        });
+    },
+
+    showLeagueNextStepsMessage:function(text, isError) {
+        if (this.playLeagueNextSteps == null) {
+            return;
+        }
+        this.playLeagueNextSteps.empty();
+        if (isError) {
+            this.playLeagueNextSteps.addClass("play-error");
+        } else {
+            this.playLeagueNextSteps.removeClass("play-error");
+        }
+        this.playLeagueNextSteps.append($("<div></div>").text(text));
+        this.playLeagueNextSteps.show();
+    },
+
+    showLeagueNextSteps:function(leagueCode) {
+        var that = this;
+        var name = leagueCode;
+        var cache = this.leagueCache || [];
+        for (var i = 0; i < cache.length; i++) {
+            if (cache[i].type === leagueCode && cache[i].name) {
+                name = cache[i].name;
+                break;
+            }
+        }
+        this.showLeagueNextStepsMessage("You joined " + name + ". Next:", false);
+        var buttons = $("<div class='play-next-buttons'></div>");
+        buttons.append($("<button type='button'></button>").text("Create a table in this league").button().click(function () {
+            that.populateLeagueDropdown(leagueCode);
+            that.leagueFormatSelect.focus();
+            var form = $("#league-table-options")[0];
+            if (form && form.scrollIntoView) {
+                form.scrollIntoView(true);
+            }
+        }));
+        this.playLeagueNextSteps.append(buttons);
+
+        // Draft / limited next-steps (SWCCG soloDraft.html + deckBuild.html)
+        this.comm.getLeague(leagueCode, function (xml) {
+            var root = xml && xml.documentElement;
+            if (root == null || root.tagName != "league") {
+                return;
+            }
+            if (root.getAttribute("draftable") == "true") {
+                buttons.append($("<button type='button'></button>").text("Go to draft").button().click(function () {
+                    var win = window.open("soloDraft.html?leagueType=" + encodeURIComponent(leagueCode), "_blank");
+                    if (win) {
+                        win.focus();
+                    }
+                }));
+            }
+            var limited = false;
+            var series = root.getElementsByTagName("serie");
+            for (var i = 0; i < series.length; i++) {
+                if (series[i].getAttribute("limited") == "true") {
+                    limited = true;
+                }
+            }
+            if (limited) {
+                buttons.append($("<a class='ui-button ui-widget ui-corner-all' href='deckBuild.html' target='_blank'></a>")
+                    .text("Open the deck builder"));
+                that.playLeagueNextSteps.append($("<div class='page-hint play-subtitle'></div>").text(
+                    "This league issues its own cards: in the deck builder, choose the league's collection to open your packs and build a deck from them. League tables only accept such decks."));
+            }
+        }, {});
+    },
+
+    submitLeagueTable:function() {
+        var that = this;
+        var format = this.leagueFormatSelect != null ? this.leagueFormatSelect.val() : null;
+        if (format == null || format === "") {
+            this.showLeagueCreateResult("You must select a league. If you are not enrolled in one, join one below.", true);
+            return;
+        }
+        if (this.leagueDecksSelect == null || this.leagueDecksSelect[0].selectedIndex < 0) {
+            this.showLeagueCreateResult("You must select a deck. Remember that if this is a sealed or draft league, you may only use cards issued by this league.", true);
+            return;
+        }
+        var deck = this.leagueDecksSelect.val();
+        if (deck == null || deck === "") {
+            this.showLeagueCreateResult("You must select a deck.", true);
+            return;
+        }
+        var sampleDeck = this.leagueDecksSelect[0][this.leagueDecksSelect[0].selectedIndex].getAttribute("data-sample-deck");
+        $(this.leagueCreateButton).button("disable");
+        // League tables: human, not private (server rejects otherwise)
+        this.comm.createTable(format, deck, sampleDeck, "", false, false, null, null, null,
+            function (xml) {
+                $(that.leagueCreateButton).button("enable");
+                if (xml != null) {
+                    var root = xml.documentElement;
+                    if (root.tagName == "error") {
+                        that.showLeagueCreateResult(root.getAttribute("message") || "Could not create league table.", true);
+                        return;
+                    }
+                    if (root.tagName == "response") {
+                        that.showLeagueCreateResult(root.getAttribute("message") || "Table created.", false);
+                        that.closePlayOverlay();
+                        return;
+                    }
+                }
+                that.closePlayOverlay();
+            }, {
+                "409": function (xhr, status, error) {
+                    var msg = (xhr && xhr.responseText) ? xhr.responseText : "Could not create league table.";
+                    that.showLeagueCreateResult(msg, true);
+                    $(that.leagueCreateButton).button("enable");
+                },
+                "400": function (xhr) {
+                    var msg = (xhr && xhr.responseText) ? xhr.responseText : "Could not create league table.";
+                    that.showLeagueCreateResult(msg, true);
+                    $(that.leagueCreateButton).button("enable");
+                },
+                "0": function () {
+                    that.showLeagueCreateResult("Network error creating table.", true);
+                    $(that.leagueCreateButton).button("enable");
+                }
+            });
+    },
+
+    showLeagueCreateResult:function(text, isError) {
+        if (this.leagueResultDiv == null) {
+            return;
+        }
+        this.leagueResultDiv.text(text);
+        if (isError) {
+            this.leagueResultDiv.addClass("warningMessage");
+        } else {
+            this.leagueResultDiv.removeClass("warningMessage");
+        }
+        this.leagueResultDiv.show();
+    },
+
 
     countLeagueFormatOptions:function() {
         var n = 0;
@@ -1195,9 +1568,9 @@ var GempSwccgHallUI = Class.extend({
                 }
             });
             that.leagueTypesLoaded = true;
-            // If league form is open, refresh filter / empty state
+            // If league panel is open, refresh enrolled dropdown
             if (that.playMode === "league") {
-                that.showPlayForm("league");
+                that.refreshLeagueDropdownAndList();
             }
         }, {});
     },
