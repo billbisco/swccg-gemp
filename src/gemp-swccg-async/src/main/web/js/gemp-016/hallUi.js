@@ -40,6 +40,15 @@ var GempSwccgHallUI = Class.extend({
     playBackButton:null,
     playMode:null, // "casual" | "ai" 
 
+    // Slice 1.1: Join table / queue deck picker overlay
+    joinOverlay:null,
+    joinDecksSelect:null,
+    joinSubmitButton:null,
+    joinResultDiv:null,
+    joinContextDiv:null,
+    joinTitleEl:null,
+    joinPending:null, // {kind:"table"|"queue", id, formatName, contextLabel}
+
     init:function (div, url, chat) {
         this.div = div;
         this.comm = new GempSwccgCommunication(url, function (xhr, ajaxOptions, thrownError) {
@@ -94,8 +103,8 @@ var GempSwccgHallUI = Class.extend({
         this.buttonsDiv.append(this.controlsRight);
 
         // Large primary actions (LOTR-style): Deck-builder + Play
-        this.deckBuilderButton = $("<a id='deckbuilder-button' class='hall-play-button' href='deckBuild.html' target='_blank'><span class='hall-play-button-label'><b>Deck-builder</b></span></a>");
-        this.playButton = $("<button type='button' id='open-table-button' class='hall-play-button'><span class='hall-play-button-label'><b>Play</b></span></button>");
+        this.deckBuilderButton = $("<a id='deckbuilder-button' class='hall-play-button hall-play-button-deckbuilder' href='deckBuild.html' target='_blank'><span class='hall-play-button-label'><b>Deck-builder</b></span></a>");
+        this.playButton = $("<button type='button' id='open-table-button' class='hall-play-button hall-play-button-play'><span class='hall-play-button-label'><b>Play</b></span></button>");
         this.controlsLeft.append(this.deckBuilderButton);
         this.controlsLeft.append(this.playButton);
         $(this.playButton).button().click(function () {
@@ -152,6 +161,7 @@ var GempSwccgHallUI = Class.extend({
         this.tableDescInput = $("<input id='tableDescInput' class='play-form-input' type='text' maxlength='50' style='width: 220px;' placeHolder='Description (optional)'>");
 
         this.buildPlayOverlay();
+        this.buildJoinOverlay();
 
         this.adminTab = $("#admin-tab");
         this.adminTab.hide();
@@ -473,6 +483,237 @@ var GempSwccgHallUI = Class.extend({
         this.playOverlay.append(panel);
     },
 
+
+    buildJoinOverlay:function() {
+        var that = this;
+        var existing = $("#join-table-popup");
+        if (existing.length > 0) {
+            this.joinOverlay = existing;
+            this.joinOverlay.empty();
+        } else {
+            this.joinOverlay = $("<div id='join-table-popup' class='play-flow' style='display:none'></div>");
+            $("body").append(this.joinOverlay);
+        }
+
+        var backdrop = $("<div class='play-flow-backdrop' aria-hidden='true'></div>");
+        backdrop.click(function () { that.closeJoinOverlay(); });
+
+        var panel = $("<div class='play-flow-panel' role='dialog' aria-modal='true' aria-label='Join'></div>");
+
+        var header = $("<div class='play-flow-header'></div>");
+        header.append($("<button type='button' class='play-back-button'>&lt; Back</button>").click(function () {
+            that.closeJoinOverlay();
+        }));
+        header.append($("<button type='button' class='play-close-button' title='Close'>×</button>").click(function () {
+            that.closeJoinOverlay();
+        }));
+        panel.append(header);
+
+        var form = $("<div class='table-form join-table-form'></div>");
+        this.joinTitleEl = $("<h2 class='play-form-heading'>Join Table</h2>");
+        form.append(this.joinTitleEl);
+
+        this.joinContextDiv = $("<div class='play-subtitle join-context'></div>");
+        form.append(this.joinContextDiv);
+
+        this.joinDecksSelect = $("<select class='play-form-select' style='width: 300px'></select>");
+
+        var deckRow = $("<div class='play-form-row'></div>");
+        deckRow.append("<span class='play-form-label'>Your deck</span>");
+        deckRow.append(this.joinDecksSelect);
+        form.append(deckRow);
+
+        this.joinResultDiv = $("<div class='join-result warningMessage' style='display:none'></div>");
+        form.append(this.joinResultDiv);
+
+        var submitRow = $("<div class='play-form-row play-form-actions'></div>");
+        this.joinSubmitButton = $("<button type='button' class='play-submit-button'>Join table</button>");
+        $(this.joinSubmitButton).button().click(function () {
+            that.submitJoin();
+        });
+        submitRow.append(this.joinSubmitButton);
+        form.append(submitRow);
+
+        panel.append(form);
+        this.joinOverlay.append(backdrop);
+        this.joinOverlay.append(panel);
+    },
+
+    syncJoinDecksFromCreateSelect:function() {
+        if (this.joinDecksSelect == null || this.decksSelect == null) {
+            return;
+        }
+        var prev = this.joinDecksSelect.val();
+        var select = this.joinDecksSelect;
+        select.empty();
+        this.decksSelect.find("option").each(function () {
+            var src = $(this);
+            var opt = $("<option></option>");
+            opt.attr("value", src.attr("value"));
+            var sample = src.attr("data-sample-deck");
+            if (sample != null)
+                opt.attr("data-sample-deck", sample);
+            var side = src.attr("data-side");
+            if (side != null)
+                opt.attr("data-side", side);
+            opt.text(src.text());
+            select.append(opt);
+        });
+        if (prev != null) {
+            select.val(prev);
+        }
+    },
+
+    openJoinTablePopup:function(tableId, formatName, playersStr) {
+        this.openJoinPopup({
+            kind: "table",
+            id: tableId,
+            formatName: formatName || "",
+            contextLabel: this.buildJoinContextLabel(formatName, playersStr, null)
+        });
+    },
+
+    openJoinQueuePopup:function(queueId, formatName, queueName) {
+        this.openJoinPopup({
+            kind: "queue",
+            id: queueId,
+            formatName: formatName || "",
+            contextLabel: this.buildJoinContextLabel(formatName, null, queueName)
+        });
+    },
+
+    buildJoinContextLabel:function(formatName, playersStr, queueName) {
+        var parts = [];
+        if (formatName)
+            parts.push("Format: <b>" + $("<div>").text(formatName).html() + "</b>");
+        if (playersStr)
+            parts.push("Waiting: <b>" + $("<div>").text(playersStr).html() + "</b>");
+        if (queueName)
+            parts.push("Queue: <b>" + $("<div>").text(queueName).html() + "</b>");
+        return parts.join(" · ");
+    },
+
+    openJoinPopup:function(pending) {
+        if (this.joinOverlay == null) {
+            return;
+        }
+        this.joinPending = pending;
+        this.syncJoinDecksFromCreateSelect();
+        this.joinResultDiv.hide().empty();
+
+        var isQueue = pending.kind === "queue";
+        this.joinTitleEl.text(isQueue ? "Join Queue" : "Join Table");
+        var button = $(this.joinSubmitButton);
+        var label = isQueue ? "Join queue" : "Join table";
+        if (button.hasClass("ui-button")) {
+            button.button("option", "label", label);
+            button.button("enable");
+        } else {
+            button.text(label);
+        }
+
+        if (pending.contextLabel) {
+            this.joinContextDiv.html(pending.contextLabel).show();
+        } else {
+            this.joinContextDiv.hide().empty();
+        }
+
+        this.joinOverlay.css("display", "flex");
+        $("body").addClass("play-flow-open");
+        this.joinDecksSelect.focus();
+    },
+
+    closeJoinOverlay:function() {
+        if (this.joinOverlay == null) {
+            return;
+        }
+        this.joinOverlay.hide();
+        this.joinPending = null;
+        this.joinResultDiv.hide().empty();
+        if (this.playOverlay == null || !this.playOverlay.is(":visible")) {
+            $("body").removeClass("play-flow-open");
+        }
+    },
+
+    showJoinError:function(message) {
+        if (this.joinResultDiv == null) {
+            this.chat.appendMessage(message, "warningMessage");
+            return;
+        }
+        this.joinResultDiv.text(message).show();
+    },
+
+    submitJoin:function() {
+        var that = this;
+        if (this.joinPending == null) {
+            return;
+        }
+        var selectEl = this.joinDecksSelect[0];
+        if (selectEl == null || selectEl.selectedIndex < 0 || selectEl.options.length === 0) {
+            this.showJoinError("You must select a deck.");
+            return;
+        }
+        var deck = this.joinDecksSelect.val();
+        if (deck == null || deck === "") {
+            this.showJoinError("You must select a deck.");
+            return;
+        }
+        var sampleDeck = selectEl[selectEl.selectedIndex].getAttribute("data-sample-deck");
+        var pending = this.joinPending;
+        var button = $(this.joinSubmitButton);
+        if (button.hasClass("ui-button")) {
+            button.button("disable");
+        }
+
+        var onDone = function() {
+            setTimeout(function() {
+                if (button.hasClass("ui-button")) {
+                    button.button("enable");
+                }
+            }, 1500);
+        };
+
+        var errorMap = {
+            "0": function() { that.showJoinError("Server unavailable or connection problem."); onDone(); },
+            "400": function(xhr) {
+                var message = xhr.getResponseHeader("message");
+                that.showJoinError(message != null ? message : "Bad request. Check your deck and try again.");
+                onDone();
+            },
+            "401": function() { that.showJoinError("You are not logged in."); onDone(); },
+            "403": function() { that.showJoinError("You do not have permission to join."); onDone(); },
+            "404": function() { that.showJoinError("Table or queue not found."); onDone(); },
+            "410": function() { that.showJoinError("Session expired. Refresh the page."); onDone(); },
+            "500": function() { that.showJoinError("Server error. Try again."); onDone(); }
+        };
+
+        var handleXml = function(xml) {
+            onDone();
+            if (xml != null) {
+                var root = xml.documentElement;
+                if (root != null && root.tagName == "error") {
+                    var message = root.getAttribute("message");
+                    that.showJoinError(message != null ? message : "Unable to join.");
+                    that.chat.appendMessage(message, "warningMessage");
+                    return;
+                }
+                if (root != null && root.tagName == "response") {
+                    var msg = root.getAttribute("message");
+                    if (msg)
+                        that.chat.appendMessage(msg, "warningMessage");
+                }
+            }
+            that.closeJoinOverlay();
+        };
+
+        if (pending.kind === "queue") {
+            that.comm.joinQueue(pending.id, deck, sampleDeck, handleXml, errorMap);
+        } else {
+            that.comm.joinTable(pending.id, deck, sampleDeck, handleXml, errorMap);
+        }
+    },
+
+
     openPlayOverlay:function() {
         if (this.playOverlay == null) {
             return;
@@ -720,6 +961,9 @@ var GempSwccgHallUI = Class.extend({
             this.generateDeckRow(otherDecks, "Sample: [UNKNOWN] ", "true", "other");
         }
         this.decksSelect.css("display", "");
+        if (this.joinOverlay != null && this.joinOverlay.is(":visible")) {
+            this.syncJoinDecksFromCreateSelect();
+        }
     },
 
     generateDeckRow:function (decks, prefix, sampleDeck, side) {
@@ -955,17 +1199,12 @@ var GempSwccgHallUI = Class.extend({
                     if (joined != "true" && queue.getAttribute("joinable") == "true") {
                         var but = $("<button>Join queue</button>");
                         $(but).button().click((
-                            function(queueId) {
+                            function(queueId, fmt, qname) {
                                 return function () {
-                                    var deck = that.decksSelect.val();
-                                    var sampleDeck = that.decksSelect[0][that.decksSelect[0].selectedIndex].getAttribute("data-sample-deck")
-                                    if (deck != null)
-                                        that.comm.joinQueue(queueId, deck, sampleDeck, function (xml) {
-                                            that.processResponse(xml);
-                                        });
+                                    that.openJoinQueuePopup(queueId, fmt, qname);
                                 };
                             }
-                            )(id));
+                            )(id, queue.getAttribute("format"), queue.getAttribute("queue")));
                         actionsField.append(but);
                     } else if (joined == "true") {
                         var but = $("<button>Leave queue</button>");
@@ -1104,16 +1343,11 @@ var GempSwccgHallUI = Class.extend({
 
                             var but = $("<button>Join table</button>");
                             $(but).button().click((
-                                function(tableId) {
+                                function(tableId, fmt, owners) {
                                     return function() {
-                                        var deck = that.decksSelect.val();
-                                        var sampleDeck = that.decksSelect[0][that.decksSelect[0].selectedIndex].getAttribute("data-sample-deck")
-                                        if (deck != null)
-                                            that.comm.joinTable(tableId, deck, sampleDeck, function (xml) {
-                                                that.processResponse(xml);
-                                            });
+                                        that.openJoinTablePopup(tableId, fmt, owners);
                                     };
-                                })(id));
+                                })(id, formatName, playersStr));
                             lastField.append(but);
                         }
                     } else if (status == "PLAYING") {

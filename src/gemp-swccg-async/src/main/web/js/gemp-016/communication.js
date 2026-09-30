@@ -631,7 +631,7 @@ var GempSwccgCommunication = Class.extend({
             dataType:"xml"
         });
     },
-    joinQueue:function (queueId, deckName, callback, errorMap) {
+    joinQueue:function (queueId, deckName, sampleDeck, callback, errorMap) {
         $.ajax({
             type:"POST",
             url:this.url + "/hall/queue/" + queueId,
