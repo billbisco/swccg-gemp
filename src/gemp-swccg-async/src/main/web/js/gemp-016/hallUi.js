@@ -102,9 +102,9 @@ var GempSwccgHallUI = Class.extend({
         this.buttonsDiv.append(this.controlsLeft);
         this.buttonsDiv.append(this.controlsRight);
 
-        // Large primary actions (LOTR-style): Deck-builder + Play
-        this.deckBuilderButton = $("<a id='deckbuilder-button' class='hall-play-button hall-play-button-deckbuilder' href='deckBuild.html' target='_blank'><span class='hall-play-button-label'><b>Deck-builder</b></span></a>");
-        this.playButton = $("<button type='button' id='open-table-button' class='hall-play-button hall-play-button-play'><span class='hall-play-button-label'><b>Play</b></span></button>");
+        // Large primary actions (LOTR-style): Deck-builder + Play with real SVG icons
+        this.deckBuilderButton = $("<a id='deckbuilder-button' class='hall-play-button hall-play-button-deckbuilder' href='deckBuild.html' target='_blank'><span class='bigger-icon icon-deckbuilder' aria-hidden='true'></span><span class='hall-play-button-label'><b>Deck-builder</b></span></a>");
+        this.playButton = $("<button type='button' id='open-table-button' class='hall-play-button hall-play-button-play'><span class='bigger-icon icon-play' aria-hidden='true'></span><span class='hall-play-button-label'><b>Play</b></span></button>");
         this.controlsLeft.append(this.deckBuilderButton);
         this.controlsLeft.append(this.playButton);
         $(this.playButton).button().click(function () {
@@ -539,50 +539,116 @@ var GempSwccgHallUI = Class.extend({
         this.joinOverlay.append(panel);
     },
 
-    syncJoinDecksFromCreateSelect:function() {
+    parseHostSideFromPlayersStr:function(playersStr) {
+        // Server embeds host side as "name (DARK)" / "name (LIGHT: Archetype)" / "(DARK)" when hidden.
+        if (playersStr == null || playersStr === "")
+            return null;
+        if (/\(LIGHT/i.test(playersStr))
+            return "light";
+        if (/\(DARK/i.test(playersStr))
+            return "dark";
+        return null;
+    },
+
+    oppositeForceSide:function(side) {
+        if (side === "light")
+            return "dark";
+        if (side === "dark")
+            return "light";
+        return null;
+    },
+
+    // requiredSide: "light"|"dark" to filter join decks; null/undefined = show all (queues).
+    syncJoinDecksFromCreateSelect:function(requiredSide) {
         if (this.joinDecksSelect == null || this.decksSelect == null) {
-            return;
+            return { count: 0, hasPlaceholder: false };
         }
         var prev = this.joinDecksSelect.val();
         var select = this.joinDecksSelect;
         select.empty();
+        var matchCount = 0;
         this.decksSelect.find("option").each(function () {
             var src = $(this);
+            var side = src.attr("data-side");
+            if (requiredSide != null && requiredSide !== "" && side !== requiredSide)
+                return;
             var opt = $("<option></option>");
             opt.attr("value", src.attr("value"));
             var sample = src.attr("data-sample-deck");
             if (sample != null)
                 opt.attr("data-sample-deck", sample);
-            var side = src.attr("data-side");
             if (side != null)
                 opt.attr("data-side", side);
             opt.text(src.text());
             select.append(opt);
+            matchCount++;
         });
-        if (prev != null) {
-            select.val(prev);
+        var hasPlaceholder = false;
+        if (requiredSide != null && requiredSide !== "" && matchCount === 0) {
+            var ph = $("<option></option>");
+            ph.attr("value", "");
+            ph.attr("disabled", "disabled");
+            ph.attr("selected", "selected");
+            ph.text("No opposite-side decks found");
+            select.append(ph);
+            hasPlaceholder = true;
+        } else {
+            var prevOk = false;
+            if (prev != null && prev !== "") {
+                select.find("option").each(function () {
+                    if ($(this).attr("value") === prev) {
+                        prevOk = true;
+                        return false;
+                    }
+                });
+            }
+            if (prevOk) {
+                select.val(prev);
+            } else if (matchCount > 0) {
+                // Prefer first opposite-side (or any) deck when opening / refreshing
+                select.prop("selectedIndex", 0);
+            }
+        }
+        return { count: matchCount, hasPlaceholder: hasPlaceholder };
+    },
+
+    setJoinSubmitEnabled:function(enabled) {
+        var button = $(this.joinSubmitButton);
+        if (button == null || button.length === 0)
+            return;
+        if (button.hasClass("ui-button")) {
+            button.button(enabled ? "enable" : "disable");
+        } else {
+            button.prop("disabled", !enabled);
         }
     },
 
     openJoinTablePopup:function(tableId, formatName, playersStr) {
+        var hostSide = this.parseHostSideFromPlayersStr(playersStr);
+        var requiredSide = this.oppositeForceSide(hostSide);
         this.openJoinPopup({
             kind: "table",
             id: tableId,
             formatName: formatName || "",
-            contextLabel: this.buildJoinContextLabel(formatName, playersStr, null)
+            hostSide: hostSide,
+            requiredSide: requiredSide,
+            contextLabel: this.buildJoinContextLabel(formatName, playersStr, null, hostSide, requiredSide)
         });
     },
 
     openJoinQueuePopup:function(queueId, formatName, queueName) {
+        // Queues have no host side — show all decks (unfiltered).
         this.openJoinPopup({
             kind: "queue",
             id: queueId,
             formatName: formatName || "",
-            contextLabel: this.buildJoinContextLabel(formatName, null, queueName)
+            hostSide: null,
+            requiredSide: null,
+            contextLabel: this.buildJoinContextLabel(formatName, null, queueName, null, null)
         });
     },
 
-    buildJoinContextLabel:function(formatName, playersStr, queueName) {
+    buildJoinContextLabel:function(formatName, playersStr, queueName, hostSide, requiredSide) {
         var parts = [];
         if (formatName)
             parts.push("Format: <b>" + $("<div>").text(formatName).html() + "</b>");
@@ -590,6 +656,9 @@ var GempSwccgHallUI = Class.extend({
             parts.push("Waiting: <b>" + $("<div>").text(playersStr).html() + "</b>");
         if (queueName)
             parts.push("Queue: <b>" + $("<div>").text(queueName).html() + "</b>");
+        if (hostSide != null && requiredSide != null) {
+            parts.push("Host: <b>" + hostSide.toUpperCase() + "</b> · you must play <b>" + requiredSide.toUpperCase() + "</b>");
+        }
         return parts.join(" · ");
     },
 
@@ -598,7 +667,7 @@ var GempSwccgHallUI = Class.extend({
             return;
         }
         this.joinPending = pending;
-        this.syncJoinDecksFromCreateSelect();
+        var syncResult = this.syncJoinDecksFromCreateSelect(pending.requiredSide);
         this.joinResultDiv.hide().empty();
 
         var isQueue = pending.kind === "queue";
@@ -607,9 +676,16 @@ var GempSwccgHallUI = Class.extend({
         var label = isQueue ? "Join queue" : "Join table";
         if (button.hasClass("ui-button")) {
             button.button("option", "label", label);
-            button.button("enable");
         } else {
             button.text(label);
+        }
+
+        var canJoin = !(syncResult && syncResult.hasPlaceholder) && syncResult && syncResult.count > 0;
+        this.setJoinSubmitEnabled(canJoin);
+        if (syncResult && syncResult.hasPlaceholder) {
+            this.showJoinError("No opposite-side decks found. Build or import a " +
+                (pending.requiredSide ? pending.requiredSide.toUpperCase() : "matching") +
+                " deck, then try again.");
         }
 
         if (pending.contextLabel) {
@@ -655,8 +731,26 @@ var GempSwccgHallUI = Class.extend({
         }
         var deck = this.joinDecksSelect.val();
         if (deck == null || deck === "") {
-            this.showJoinError("You must select a deck.");
+            if (this.joinPending != null && this.joinPending.requiredSide != null) {
+                this.showJoinError("No opposite-side decks found. You must play " +
+                    this.joinPending.requiredSide.toUpperCase() + ".");
+            } else {
+                this.showJoinError("You must select a deck.");
+            }
             return;
+        }
+        var selectedOpt = selectEl.options[selectEl.selectedIndex];
+        if (selectedOpt != null && selectedOpt.disabled) {
+            this.showJoinError("No opposite-side decks found.");
+            return;
+        }
+        if (this.joinPending != null && this.joinPending.requiredSide != null) {
+            var optSide = selectedOpt != null ? selectedOpt.getAttribute("data-side") : null;
+            if (optSide != null && optSide !== this.joinPending.requiredSide) {
+                this.showJoinError("That deck is the wrong Force side. You must play " +
+                    this.joinPending.requiredSide.toUpperCase() + ".");
+                return;
+            }
         }
         var sampleDeck = selectEl[selectEl.selectedIndex].getAttribute("data-sample-deck");
         var pending = this.joinPending;
@@ -962,7 +1056,10 @@ var GempSwccgHallUI = Class.extend({
         }
         this.decksSelect.css("display", "");
         if (this.joinOverlay != null && this.joinOverlay.is(":visible")) {
-            this.syncJoinDecksFromCreateSelect();
+            var req = (this.joinPending != null) ? this.joinPending.requiredSide : null;
+            var syncResult = this.syncJoinDecksFromCreateSelect(req);
+            var canJoin = !(syncResult && syncResult.hasPlaceholder) && syncResult && syncResult.count > 0;
+            this.setJoinSubmitEnabled(canJoin);
         }
     },
 
