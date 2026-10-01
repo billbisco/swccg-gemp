@@ -1554,14 +1554,26 @@ var GempSwccgHallUI = Class.extend({
                 }));
             }
             var limited = false;
+            var collectionCode = null;
             var series = root.getElementsByTagName("serie");
             for (var i = 0; i < series.length; i++) {
                 if (series[i].getAttribute("limited") == "true") {
                     limited = true;
+                    if (collectionCode == null) {
+                        var ct = series[i].getAttribute("collectionType");
+                        if (ct) {
+                            collectionCode = ct;
+                        }
+                    }
                 }
             }
             if (limited) {
-                buttons.append($("<a href='deckBuild.html' target='_blank' rel='noopener'></a>")
+                var deckHref = "deckBuild.html?product=" + encodeURIComponent("all");
+                if (collectionCode) {
+                    deckHref = "deckBuild.html?collection=" + encodeURIComponent(collectionCode)
+                        + "&product=" + encodeURIComponent("all");
+                }
+                buttons.append($("<a href='" + deckHref + "' target='_blank' rel='noopener'></a>")
                     .text("Open the deck builder").button());
                 that.playLeagueNextSteps.append($("<div class='page-hint play-subtitle'></div>").text(
                     "This league issues its own cards: in the deck builder, choose the league's collection to open your packs and build a deck from them. League tables only accept such decks."));

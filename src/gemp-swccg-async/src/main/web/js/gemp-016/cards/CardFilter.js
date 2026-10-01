@@ -331,6 +331,7 @@ var CardFilter = Class.extend({
         this.productLabel = $("<label for='productSelect' class='filterLabel'>Product:</label>");
         this.productSelect = $("<select id='productSelect' class='filterInput'>"
             + "<option value='card'>Cards</option>"
+            + "<option value='all'>Cards / Packs / Boxes</option>"
             + "<option value='foil'>Foil Cards</option>"
             + "<option value='nonFoil'>Non-foil Cards</option>"
             + "<option value='virtualAI'>Virtual AI Cards</option>"

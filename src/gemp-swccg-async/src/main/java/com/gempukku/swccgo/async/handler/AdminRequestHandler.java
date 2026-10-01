@@ -716,6 +716,7 @@ public class AdminRequestHandler extends SwccgoServerRequestHandler implements U
                 serieElem.setAttribute("end", String.valueOf(serie.getEnd()));
                 serieElem.setAttribute("format", _formatLibrary.getFormat(serie.getFormat()).getName());
                 serieElem.setAttribute("collection", serie.getCollectionType().getFullName());
+                serieElem.setAttribute("collectionType", serie.getCollectionType().getCode());
                 serieElem.setAttribute("limited", String.valueOf(serie.isLimited()));
 
                 leagueElem.appendChild(serieElem);
@@ -825,6 +826,7 @@ public class AdminRequestHandler extends SwccgoServerRequestHandler implements U
                 serieElem.setAttribute("end", String.valueOf(serie.getEnd()));
                 serieElem.setAttribute("format", _formatLibrary.getFormat(serie.getFormat()).getName());
                 serieElem.setAttribute("collection", serie.getCollectionType().getFullName());
+                serieElem.setAttribute("collectionType", serie.getCollectionType().getCode());
                 serieElem.setAttribute("limited", String.valueOf(serie.isLimited()));
 
                 leagueElem.appendChild(serieElem);
@@ -950,6 +952,7 @@ public class AdminRequestHandler extends SwccgoServerRequestHandler implements U
                 serieElem.setAttribute("end", String.valueOf(serie.getEnd()));
                 serieElem.setAttribute("format", _formatLibrary.getFormat(serie.getFormat()).getName());
                 serieElem.setAttribute("collection", serie.getCollectionType().getFullName());
+                serieElem.setAttribute("collectionType", serie.getCollectionType().getCode());
                 serieElem.setAttribute("limited", String.valueOf(serie.isLimited()));
 
                 leagueElem.appendChild(serieElem);
