@@ -1561,8 +1561,8 @@ var GempSwccgHallUI = Class.extend({
                 }
             }
             if (limited) {
-                buttons.append($("<a class='ui-button ui-widget ui-corner-all' href='deckBuild.html' target='_blank'></a>")
-                    .text("Open the deck builder"));
+                buttons.append($("<a href='deckBuild.html' target='_blank' rel='noopener'></a>")
+                    .text("Open the deck builder").button());
                 that.playLeagueNextSteps.append($("<div class='page-hint play-subtitle'></div>").text(
                     "This league issues its own cards: in the deck builder, choose the league's collection to open your packs and build a deck from them. League tables only accept such decks."));
             }
