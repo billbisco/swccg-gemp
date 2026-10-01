@@ -30,6 +30,8 @@ import java.util.*;
 
 public class SwccgoServerRequestHandler {
     public static final int WEEKLY_GOLD = 1500;
+    /** New-player starting currency: 10 gold + 10 silver (amount = gold*100 + silver). */
+    public static final int SIGNUP_CURRENCY = 1010;
     protected PlayerDAO _playerDao;
     protected LoggedUserHolder _loggedUserHolder;
     private final TransferDAO _transferDAO;
@@ -61,8 +63,9 @@ public class SwccgoServerRequestHandler {
                 if (lastReward == null) {
                     if (_playerDao.updateLastReward(player, null, latestMonday)) {
 
-                        // Add initial signup reward Jedi Pack and Rebel Leader pack to collection
-                        // _collectionManager.addCurrencyToPlayerCollection(true, "Signup reward", player, CollectionType.MY_CARDS, 2500);
+                        // Add initial signup reward: 10 gold + 10 silver, plus Jedi Pack and Rebel Leader pack.
+                        // Only runs when lastLoginReward is null (brand-new players), not on every login.
+                        _collectionManager.addCurrencyToPlayerCollection(true, "Signup reward", player, CollectionType.MY_CARDS, SIGNUP_CURRENCY);
                         _collectionManager.addItemsToPlayerCollection(true, "Free Jedi Pack and Rebel Leader Pack", player, CollectionType.MY_CARDS,
                                 Arrays.asList(CardCollection.Item.createItem(ProductName.JEDI_PACK, 1), CardCollection.Item.createItem(ProductName.REBEL_LEADER_PACK, 1)));
                     }
