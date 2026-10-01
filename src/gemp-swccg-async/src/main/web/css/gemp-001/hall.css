@@ -1165,14 +1165,35 @@ button.table-create-button,
 }
 
 .play-next-steps {
-    border: 1px solid #567;
-    padding: 0.5em 0.8em;
+    /* Outer container for stacked per-league next-steps boxes */
+    border: none;
+    padding: 0;
     margin-bottom: 0.6em;
 }
 
 .play-next-steps.play-error {
-    border-color: #a55;
+    border: 1px solid #a55;
+    padding: 0.5em 0.8em;
     color: #f2c4c4;
+}
+
+.play-next-steps-league {
+    border: 1px solid #567;
+    padding: 0.5em 0.8em;
+    margin-bottom: 0.5em;
+}
+
+.play-next-steps-league:last-child {
+    margin-bottom: 0;
+}
+
+.play-next-steps-league.play-next-steps-fresh {
+    border-color: #6a8;
+}
+
+.play-next-steps-header {
+    font-weight: bold;
+    margin-bottom: 0.2em;
 }
 
 .play-next-buttons {
