@@ -75,15 +75,25 @@ var CardFilter = Class.extend({
     sortLabel:null,
     sortSelect:null,
 
-    init:function (elem, pageElem, getCollectionFunc, clearCollectionFunc, addCardFunc, finishCollectionFunc) {
+    // When true, skip the first getCollection in init (deep-link collection pending).
+    deferInitialCollection:false,
+    // When true, getCollection becomes a no-op once (product apply without fetch).
+    _suppressGetCollection:false,
+
+    init:function (elem, pageElem, getCollectionFunc, clearCollectionFunc, addCardFunc, finishCollectionFunc, deferInitialCollection) {
         this.getCollectionFunc = getCollectionFunc;
         this.clearCollectionFunc = clearCollectionFunc;
         this.addCardFunc = addCardFunc;
         this.finishCollectionFunc = finishCollectionFunc;
+        this.deferInitialCollection = !!deferInitialCollection;
+        this._suppressGetCollection = false;
 
         this.buildUi(elem, pageElem);
         this.filter = this.calculateDeckFilter();
-        this.getCollection();
+        // Deep-link collection: defer first paint until applyDeepLinkCollection selects the league.
+        if (!this.deferInitialCollection) {
+            this.getCollection();
+        }
     },
 
     buildUi:function (elem, pageElem) {
@@ -1043,6 +1053,10 @@ var CardFilter = Class.extend({
     },
 
     getCollection:function () {
+        if (this._suppressGetCollection) {
+            this._suppressGetCollection = false;
+            return;
+        }
         var that = this;
         this.getCollectionFunc(this.filter, this.start, this.count, function (xml) {
             that.displayCollection(xml);
