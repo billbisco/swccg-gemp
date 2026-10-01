@@ -641,20 +641,6 @@ public class FireWeaponActionBuilder {
 
     /**
      * Proximity for weapons that fire at the same site: present cards, stacked "as if present" cards,
-     * and between-sites cards (e.g. Laser Gate) that may be targeted as if present from either bounding site.
-     */
-    private Filter getSameSiteWeaponProximityFilter() {
-        Filter presentAt = Filters.presentAt(Filters.wherePresent(_weaponOrCardWithPermanentWeapon));
-        Filter betweenSitesAsIfPresent = Filters.and(
-                Filters.canBeTargetedByWeaponAsIfPresent,
-                Filters.deployedBetweenSitesIncluding(Filters.wherePresent(_weaponOrCardWithPermanentWeapon)));
-        return Filters.or(presentAt,
-                Filters.and(Filters.stackedOn(_weaponOrCardWithPermanentWeapon, presentAt), Filters.canBeTargetedByWeaponAsIfPresent),
-                betweenSitesAsIfPresent);
-    }
-
-    /**
-     * Proximity for weapons that fire at the same site: present cards, stacked "as if present" cards,
      * and between-sites cards (Laser Gate) that may be targeted as if present from either bounding site.
      */
     private Filter getSameSiteWeaponProximityFilter() {
