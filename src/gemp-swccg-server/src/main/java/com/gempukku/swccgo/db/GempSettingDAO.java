@@ -43,6 +43,23 @@ public interface GempSettingDAO {
 
     void setAiTablesEnabled(boolean enabled);
 
+
+    /**
+     * Gets whether the server is in operational (startup) mode.
+     * Default when unset: false (safe — tables not creatable until admin enters Startup Mode once).
+     */
+    boolean operationalModeEnabled();
+
+    void setOperationalModeEnabled(boolean enabled);
+
+    /**
+     * Gets whether the server is in shutdown mode.
+     * Default when unset: false.
+     */
+    boolean shutdownModeEnabled();
+
+    void setShutdownModeEnabled(boolean enabled);
+
     void setFlag(String name, boolean enabled);
     boolean toggleFlag(String name);
     boolean getFlag(String name);

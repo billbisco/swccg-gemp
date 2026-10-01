@@ -16,6 +16,8 @@ public class DbGempSettingDAO implements GempSettingDAO {
     public static String BonusAbilitiesEnabledFlag = "bonusAbilitiesEnabled";
     public static String NewAccountRegistrationEnabled = "newAccountRegistrationEnabled";
     public static String AiTablesEnabledFlag = "aiTablesEnabled";
+    public static String OperationalModeFlag = "operationalMode";
+    public static String ShutdownModeFlag = "shutdownMode";
 
     /**
      * Creates a gemp_setting data access object that access the database.
@@ -73,6 +75,28 @@ public class DbGempSettingDAO implements GempSettingDAO {
     @Override
     public void setAiTablesEnabled(boolean enabled) {
         setFlag(AiTablesEnabledFlag, enabled);
+    }
+
+
+    @Override
+    public boolean operationalModeEnabled() {
+        // Fresh DB: false — admin must Enter Startup Mode once (then persists).
+        return getFlagOrDefault(OperationalModeFlag, false);
+    }
+
+    @Override
+    public void setOperationalModeEnabled(boolean enabled) {
+        setFlag(OperationalModeFlag, enabled);
+    }
+
+    @Override
+    public boolean shutdownModeEnabled() {
+        return getFlagOrDefault(ShutdownModeFlag, false);
+    }
+
+    @Override
+    public void setShutdownModeEnabled(boolean enabled) {
+        setFlag(ShutdownModeFlag, enabled);
     }
 
     @Override
