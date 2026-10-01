@@ -717,6 +717,10 @@ var GempSwccgHallUI = Class.extend({
         leagueOptions.append(blurb);
 
         this.leagueFormatSelect = $("<select id='league-format' class='flex-fill play-form-select'></select>");
+        // Persist next-steps when switching enrolled leagues (restore path, not fresh join)
+        this.leagueFormatSelect.change(function () {
+            that.restoreLeagueNextSteps();
+        });
         var leagueFmtRow = $("<div class='flex-horiz play-form-row'></div>");
         leagueFmtRow.append("<div class='label-column'>League: </div>");
         leagueFmtRow.append(this.leagueFormatSelect);
@@ -1385,10 +1389,13 @@ var GempSwccgHallUI = Class.extend({
             that.applyLeagueCache(xml);
             that.populateLeagueDropdown(null);
             that.ensurePlayLeagueListUI();
+            // Re-entry: restore next-steps for selected enrolled league (cleared on panel open)
+            that.restoreLeagueNextSteps();
         }, {
             "0": function () {
                 that.populateLeagueDropdown(null);
                 that.ensurePlayLeagueListUI();
+                that.restoreLeagueNextSteps();
             }
         });
     },
@@ -1490,17 +1497,32 @@ var GempSwccgHallUI = Class.extend({
 
     leagueJoined:function(leagueCode) {
         var that = this;
-        // Refresh membership + select the new league; offer next steps
+        // Refresh membership + select the new league; offer next steps (fresh-join copy)
         this.comm.getLeagues(function (xml) {
             that.applyLeagueCache(xml);
             that.populateLeagueDropdown(leagueCode);
-            that.showLeagueNextSteps(leagueCode);
+            that.showLeagueNextSteps(leagueCode, true);
         }, {
             "0": function () {
                 that.populateLeagueDropdown(leagueCode);
-                that.showLeagueNextSteps(leagueCode);
+                that.showLeagueNextSteps(leagueCode, true);
             }
         });
+    },
+
+    // Restore next-steps for currently selected enrolled league (panel re-entry / dropdown change)
+    restoreLeagueNextSteps:function() {
+        if (this.leagueFormatSelect == null) {
+            return;
+        }
+        var code = this.leagueFormatSelect.val();
+        if (code == null || code === "") {
+            if (this.playLeagueNextSteps != null) {
+                this.playLeagueNextSteps.hide().empty();
+            }
+            return;
+        }
+        this.showLeagueNextSteps(code, false);
     },
 
     showLeagueNextStepsMessage:function(text, isError) {
@@ -1517,8 +1539,19 @@ var GempSwccgHallUI = Class.extend({
         this.playLeagueNextSteps.show();
     },
 
-    showLeagueNextSteps:function(leagueCode) {
+    showLeagueNextSteps:function(leagueCode, freshJoin) {
         var that = this;
+        if (leagueCode == null || leagueCode === "") {
+            if (this.playLeagueNextSteps != null) {
+                this.playLeagueNextSteps.hide().empty();
+            }
+            return;
+        }
+        // freshJoin true (default / leagueJoined): "You joined NAME. Next:"
+        // freshJoin false (restore on re-entry / dropdown change): "Next for NAME:"
+        if (freshJoin !== false) {
+            freshJoin = true;
+        }
         var name = leagueCode;
         var cache = this.leagueCache || [];
         for (var i = 0; i < cache.length; i++) {
@@ -1527,7 +1560,8 @@ var GempSwccgHallUI = Class.extend({
                 break;
             }
         }
-        this.showLeagueNextStepsMessage("You joined " + name + ". Next:", false);
+        var header = freshJoin ? ("You joined " + name + ". Next:") : ("Next for " + name + ":");
+        this.showLeagueNextStepsMessage(header, false);
         var buttons = $("<div class='play-next-buttons'></div>");
         buttons.append($("<button type='button'></button>").text("Create a table in this league").button().click(function () {
             that.populateLeagueDropdown(leagueCode);
