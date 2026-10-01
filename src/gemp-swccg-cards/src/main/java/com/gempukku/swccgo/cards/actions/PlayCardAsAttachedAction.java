@@ -73,8 +73,11 @@ public class PlayCardAsAttachedAction extends AbstractPlayCardAction {
             // Captured starships remain inactive for TO_BE_DEPLOYED_ON even with INCLUDE_CAPTIVE.
             effectiveSpotOverrides = SpotOverride.INCLUDE_ALL;
         }
+        String chooseWhere = playCardOption.getZone() == com.gempukku.swccgo.common.Zone.BETWEEN_SITES
+                ? "Choose a site to " + _text.toLowerCase() + " " + GameUtils.getCardLink(_cardToPlay) + " between"
+                : "Choose where to " + _text.toLowerCase() + " " + GameUtils.getCardLink(_cardToPlay) + " as attached";
         appendTargeting(
-                new TargetCardOnTableEffect(_that, getPerformingPlayer(), "Choose where to " + _text.toLowerCase() + " " + GameUtils.getCardLink(_cardToPlay) + " as attached", effectiveSpotOverrides, TargetingReason.TO_BE_DEPLOYED_ON, deployTargetFilter) {
+                new TargetCardOnTableEffect(_that, getPerformingPlayer(), chooseWhere, effectiveSpotOverrides, TargetingReason.TO_BE_DEPLOYED_ON, deployTargetFilter) {
                     @Override
                     protected void cardTargeted(int targetGroupId, PhysicalCard target) {
                         _target = target;
@@ -141,7 +144,8 @@ public class PlayCardAsAttachedAction extends AbstractPlayCardAction {
             if (!_cardPlayed) {
                 _cardPlayed = true;
 
-                _playCardEffect = new DeploySingleCardEffect(_that, _cardToPlay, false, _target, null, _reactActionOption, _playCardOption.getId(), _reshuffle);
+                boolean betweenSites = _playCardOption.getZone() == com.gempukku.swccgo.common.Zone.BETWEEN_SITES;
+                _playCardEffect = new DeploySingleCardEffect(_that, _cardToPlay, false, _target, null, _reactActionOption, _playCardOption.getId(), _reshuffle, betweenSites);
                 return _playCardEffect;
             }
         }
