@@ -717,7 +717,7 @@ var GempSwccgHallUI = Class.extend({
         leagueOptions.append(blurb);
 
         this.leagueFormatSelect = $("<select id='league-format' class='flex-fill play-form-select'></select>");
-        // Persist next-steps when switching enrolled leagues (restore path, not fresh join)
+        // Rebuild full multi next-steps on dropdown change (membership-driven; does not drop other leagues)
         this.leagueFormatSelect.change(function () {
             that.restoreLeagueNextSteps();
         });
@@ -1497,38 +1497,29 @@ var GempSwccgHallUI = Class.extend({
 
     leagueJoined:function(leagueCode) {
         var that = this;
-        // Refresh membership + select the new league; offer next steps (fresh-join copy)
+        // Refresh membership + select the new league; rebuild ALL enrolled next-steps
         this.comm.getLeagues(function (xml) {
             that.applyLeagueCache(xml);
             that.populateLeagueDropdown(leagueCode);
-            that.showLeagueNextSteps(leagueCode, true);
+            that.renderAllLeagueNextSteps(leagueCode);
         }, {
             "0": function () {
                 that.populateLeagueDropdown(leagueCode);
-                that.showLeagueNextSteps(leagueCode, true);
+                that.renderAllLeagueNextSteps(leagueCode);
             }
         });
     },
 
-    // Restore next-steps for currently selected enrolled league (panel re-entry / dropdown change)
+    // Rebuild next-steps for EVERY enrolled league (panel re-entry / dropdown change)
     restoreLeagueNextSteps:function() {
-        if (this.leagueFormatSelect == null) {
-            return;
-        }
-        var code = this.leagueFormatSelect.val();
-        if (code == null || code === "") {
-            if (this.playLeagueNextSteps != null) {
-                this.playLeagueNextSteps.hide().empty();
-            }
-            return;
-        }
-        this.showLeagueNextSteps(code, false);
+        this.renderAllLeagueNextSteps(null);
     },
 
     showLeagueNextStepsMessage:function(text, isError) {
         if (this.playLeagueNextSteps == null) {
             return;
         }
+        this._leagueNextStepsGen = (this._leagueNextStepsGen || 0) + 1;
         this.playLeagueNextSteps.empty();
         if (isError) {
             this.playLeagueNextSteps.addClass("play-error");
@@ -1539,18 +1530,40 @@ var GempSwccgHallUI = Class.extend({
         this.playLeagueNextSteps.show();
     },
 
-    showLeagueNextSteps:function(leagueCode, freshJoin) {
-        var that = this;
-        if (leagueCode == null || leagueCode === "") {
-            if (this.playLeagueNextSteps != null) {
-                this.playLeagueNextSteps.hide().empty();
-            }
+    // Multi-league: one stacked box per enrolled (member:true) league at top of Join Leagues.
+    // freshJoinCode: that league gets "You joined NAME. Next:"; others "Next for NAME:".
+    renderAllLeagueNextSteps:function(freshJoinCode) {
+        if (this.playLeagueNextSteps == null) {
             return;
         }
-        // freshJoin true (default / leagueJoined): "You joined NAME. Next:"
-        // freshJoin false (restore on re-entry / dropdown change): "Next for NAME:"
-        if (freshJoin !== false) {
-            freshJoin = true;
+        this._leagueNextStepsGen = (this._leagueNextStepsGen || 0) + 1;
+        var gen = this._leagueNextStepsGen;
+        this.playLeagueNextSteps.removeClass("play-error");
+        this.playLeagueNextSteps.empty();
+        var cache = this.leagueCache || [];
+        var members = [];
+        for (var i = 0; i < cache.length; i++) {
+            if (cache[i].member && cache[i].type) {
+                members.push(cache[i].type);
+            }
+        }
+        if (members.length === 0) {
+            this.playLeagueNextSteps.hide();
+            return;
+        }
+        for (var j = 0; j < members.length; j++) {
+            var code = members[j];
+            var fresh = (freshJoinCode != null && freshJoinCode !== "" && code === freshJoinCode);
+            this.appendLeagueNextStepsBlock(this.playLeagueNextSteps, code, fresh, gen);
+        }
+        this.playLeagueNextSteps.show();
+    },
+
+    // One per-league next-steps block (Create table always; draft / deck builder when applicable)
+    appendLeagueNextStepsBlock:function(container, leagueCode, freshJoin, gen) {
+        var that = this;
+        if (leagueCode == null || leagueCode === "") {
+            return;
         }
         var name = leagueCode;
         var cache = this.leagueCache || [];
@@ -1561,40 +1574,53 @@ var GempSwccgHallUI = Class.extend({
             }
         }
         var header = freshJoin ? ("You joined " + name + ". Next:") : ("Next for " + name + ":");
-        this.showLeagueNextStepsMessage(header, false);
+        var block = $("<div class='play-next-steps-league'></div>");
+        if (freshJoin) {
+            block.addClass("play-next-steps-fresh");
+        }
+        block.append($("<div class='play-next-steps-header'></div>").text(header));
         var buttons = $("<div class='play-next-buttons'></div>");
-        buttons.append($("<button type='button'></button>").text("Create a table in this league").button().click(function () {
-            that.populateLeagueDropdown(leagueCode);
-            that.leagueFormatSelect.focus();
-            var form = $("#league-table-options")[0];
-            if (form && form.scrollIntoView) {
-                form.scrollIntoView(true);
-            }
-        }));
-        this.playLeagueNextSteps.append(buttons);
+        // Capture code for this block (Create table targets THIS league)
+        (function (codeForBlock) {
+            buttons.append($("<button type='button'></button>").text("Create a table in this league").button().click(function () {
+                that.populateLeagueDropdown(codeForBlock);
+                that.leagueFormatSelect.focus();
+                var form = $("#league-table-options")[0];
+                if (form && form.scrollIntoView) {
+                    form.scrollIntoView(true);
+                }
+            }));
+        })(leagueCode);
+        block.append(buttons);
+        container.append(block);
 
-        // Draft / limited next-steps (SWCCG soloDraft.html + deckBuild.html)
+        // Draft / limited next-steps (SWCCG soloDraft.html + deckBuild.html); gen guards stale async
         this.comm.getLeague(leagueCode, function (xml) {
+            if (gen != null && that._leagueNextStepsGen !== gen) {
+                return;
+            }
             var root = xml && xml.documentElement;
             if (root == null || root.tagName != "league") {
                 return;
             }
             if (root.getAttribute("draftable") == "true") {
-                buttons.append($("<button type='button'></button>").text("Go to draft").button().click(function () {
-                    var win = window.open("soloDraft.html?leagueType=" + encodeURIComponent(leagueCode), "_blank");
-                    if (win) {
-                        win.focus();
-                    }
-                }));
+                (function (codeForDraft) {
+                    buttons.append($("<button type='button'></button>").text("Go to draft").button().click(function () {
+                        var win = window.open("soloDraft.html?leagueType=" + encodeURIComponent(codeForDraft), "_blank");
+                        if (win) {
+                            win.focus();
+                        }
+                    }));
+                })(leagueCode);
             }
             var limited = false;
             var collectionCode = null;
             var series = root.getElementsByTagName("serie");
-            for (var i = 0; i < series.length; i++) {
-                if (series[i].getAttribute("limited") == "true") {
+            for (var si = 0; si < series.length; si++) {
+                if (series[si].getAttribute("limited") == "true") {
                     limited = true;
                     if (collectionCode == null) {
-                        var ct = series[i].getAttribute("collectionType");
+                        var ct = series[si].getAttribute("collectionType");
                         if (ct) {
                             collectionCode = ct;
                         }
@@ -1609,10 +1635,19 @@ var GempSwccgHallUI = Class.extend({
                 }
                 buttons.append($("<a href='" + deckHref + "' target='_blank' rel='noopener'></a>")
                     .text("Open the deck builder").button());
-                that.playLeagueNextSteps.append($("<div class='page-hint play-subtitle'></div>").text(
+                block.append($("<div class='page-hint play-subtitle'></div>").text(
                     "This league issues its own cards: in the deck builder, choose the league's collection to open your packs and build a deck from them. League tables only accept such decks."));
             }
         }, {});
+    },
+
+    // Compat: single-league callers → multi render (freshJoin highlights that code)
+    showLeagueNextSteps:function(leagueCode, freshJoin) {
+        if (freshJoin !== false && leagueCode != null && leagueCode !== "") {
+            this.renderAllLeagueNextSteps(leagueCode);
+        } else {
+            this.renderAllLeagueNextSteps(null);
+        }
     },
 
     submitLeagueTable:function() {
