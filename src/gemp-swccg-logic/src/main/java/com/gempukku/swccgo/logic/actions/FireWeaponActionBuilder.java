@@ -647,7 +647,9 @@ public class FireWeaponActionBuilder {
         Filter presentAt = Filters.presentAt(Filters.wherePresent(_weaponOrCardWithPermanentWeapon));
         Filter betweenSitesAsIfPresent = Filters.and(
                 Filters.canBeTargetedByWeaponAsIfPresent,
-                Filters.betweenSitesNextToWherePresent(_weaponOrCardWithPermanentWeapon));
+                Filters.or(
+                        Filters.betweenSitesNextToWherePresent(_weaponOrCardWithPermanentWeapon),
+                        Filters.deployedBetweenSitesIncluding(Filters.wherePresent(_weaponOrCardWithPermanentWeapon))));
         return Filters.or(presentAt,
                 Filters.and(Filters.stackedOn(_weaponOrCardWithPermanentWeapon, presentAt), Filters.canBeTargetedByWeaponAsIfPresent),
                 betweenSitesAsIfPresent);
