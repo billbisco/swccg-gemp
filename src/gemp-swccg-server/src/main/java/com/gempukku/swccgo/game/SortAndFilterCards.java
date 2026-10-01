@@ -70,10 +70,11 @@ public class SortAndFilterCards {
             String[] sets, CardCategory cardCategory, CardType cardType, CardSubtype cardSubtype, List<String> titleWords, List<String> loreWords, List<String> gametextWords, Set<Icon> icons,
             Set<Persona> personas, String[] filterParams) {
         if (isPack(blueprintId)) {
-            if (product == null || "pack".equals(product))
+            if (product == null || "all".equals(product) || "pack".equals(product))
                 return true;
         } else {
             if (product == null
+                    || "all".equals(product)
                     || "card".equals(product)
                     || ("foil".equals(product) && isFoil(blueprintId))
                     || ("nonFoil".equals(product) && !isFoil(blueprintId))

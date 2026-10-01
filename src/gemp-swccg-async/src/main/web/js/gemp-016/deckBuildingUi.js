@@ -40,6 +40,8 @@ var GempSwccgDeckBuildingUI = Class.extend({
     cardFilter:null,
 
     collectionType:null,
+    _deepLinkCollection:null,
+    _deepLinkProduct:null,
     
     autoZoom: null,
     cardInfoDialog: null,
@@ -329,18 +331,60 @@ var GempSwccgDeckBuildingUI = Class.extend({
 
         this.cardInfoDialog = new CardInfoDialog(window.innerWidth, window.innerHeight);
 
-        this.getCollectionTypes();
+        this.applyDeckBuildDeepLinkProduct();
+
+        this.getCollectionTypes(false);
 
         this.cardFilter.getCollection();
 
         this.checkDeckStatsDirty();
     },
 
+    parseDeckBuildQueryParams:function () {
+        // jQuery 1.6-safe query parse (no URLSearchParams)
+        var params = {};
+        var search = window.location.search;
+        if (!search || search.length < 2) {
+            return params;
+        }
+        var parts = search.substring(1).split("&");
+        for (var i = 0; i < parts.length; i++) {
+            var pair = parts[i].split("=");
+            if (!pair[0]) {
+                continue;
+            }
+            var key = decodeURIComponent(pair[0].replace(/\+/g, " "));
+            var val = pair.length > 1 ? decodeURIComponent(pair[1].replace(/\+/g, " ")) : "";
+            params[key] = val;
+        }
+        return params;
+    },
+
+    applyDeckBuildDeepLinkProduct:function () {
+        var params = this.parseDeckBuildQueryParams();
+        this._deepLinkCollection = params.collection || null;
+        this._deepLinkProduct = params.product || null;
+        if (!this._deepLinkProduct) {
+            return;
+        }
+        var product = this._deepLinkProduct;
+        var matched = false;
+        $("#productSelect option").each(function () {
+            if ($(this).prop("value") === product) {
+                matched = true;
+                return false;
+            }
+        });
+        if (matched) {
+            $("#productSelect").val(product).change();
+        }
+    },
+
     getCollectionType:function () {
         return $("#collectionSelect option:selected").prop("value");
     },
 
-    getCollectionTypes:function () {
+    getCollectionTypes:function (isRetry) {
         var that = this;
         this.comm.getCollectionTypes(
                 function (xml) {
@@ -349,10 +393,48 @@ var GempSwccgDeckBuildingUI = Class.extend({
                         var collections = root.getElementsByTagName("collection");
                         for (var i = 0; i < collections.length; i++) {
                             var collection = collections[i];
-                            $("#collectionSelect").append("<option value='" + collection.getAttribute("type") + "'>" + collection.getAttribute("name") + "</option>");
+                            var type = collection.getAttribute("type");
+                            var already = false;
+                            $("#collectionSelect option").each(function () {
+                                if ($(this).prop("value") === type) {
+                                    already = true;
+                                    return false;
+                                }
+                            });
+                            if (!already) {
+                                $("#collectionSelect").append("<option value='" + type + "'>" + collection.getAttribute("name") + "</option>");
+                            }
                         }
+                        that.applyDeepLinkCollection(isRetry === true);
                     }
                 });
+    },
+
+    applyDeepLinkCollection:function (isRetry) {
+        var that = this;
+        if (!this._deepLinkCollection) {
+            return;
+        }
+        var code = this._deepLinkCollection;
+        var matched = false;
+        $("#collectionSelect option").each(function () {
+            if ($(this).prop("value") === code) {
+                matched = true;
+                return false;
+            }
+        });
+        if (matched) {
+            $("#collectionSelect").val(code);
+            this.collectionType = code;
+            this.cardFilter.getCollection();
+            return;
+        }
+        // Race right after join: collection may not be listed yet — retry once
+        if (!isRetry) {
+            setTimeout(function () {
+                that.getCollectionTypes(true);
+            }, 1500);
+        }
     },
 
     loadDeckList:function () {
