@@ -7,24 +7,31 @@ import com.gempukku.swccgo.communication.GameStateListener;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgCardBlueprint;
 import com.gempukku.swccgo.game.state.GameState;
+import com.gempukku.swccgo.logic.decisions.ArbitraryCardsSelectionDecision;
 import com.gempukku.swccgo.logic.decisions.AwaitingDecision;
 import com.gempukku.swccgo.logic.timing.GameStats;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 /**
- * Cheapest correct GEMP hooks for InformationSetTracker: destiny draws and interrupts.
+ * GEMP hooks for InformationSetTracker: destiny, interrupts, and reveals this seat
+ * was actually shown.
  *
- * <p>Attaches via {@link com.gempukku.swccgo.game.SwccgGame#addGameStateListener}. Destiny
- * draws are public to both seats; opponent-owned draws/interrupts also land in
- * {@code opponentRevealed}. Never encodes unrevealed opponent hand/deck identities.
+ * <p>Attaches via {@link com.gempukku.swccgo.game.SwccgGame#addGameStateListener}. Opponent
+ * examine/peek decisions are recorded only when {@code decisionRequired}'s player id is
+ * this seat (the cards were shown here). Public sabacc reveals and a face-up top of the
+ * opponent reserve are recorded for both seats. Unrevealed opponent hand identities are
+ * never scraped from {@code cardCreated} or from the other seat's decisions.
  *
- * <p>Not hooked here (documented as extractionGaps): examine-from-hand, sabacc reveals,
- * reserve-deck shuffle notifications, Used/Lost pile identity scrapes beyond destiny.
+ * <p>Not hooked here: reserve-deck shuffle notifications. Face-down Used bodies are not
+ * treated as known unless this seat is shown them (examine) or the pile is turned face up
+ * (that scrape lives on the encoder, own seat only).
  */
 public final class InformationSetGameStateListener implements GameStateListener {
 
@@ -32,6 +39,8 @@ public final class InformationSetGameStateListener implements GameStateListener 
     private int destinyEvents;
     private int interruptEvents;
     private int opponentRevealEvents;
+    private final Set<Integer> consumedDecisionIds = new HashSet<>();
+    private final Set<Integer> recordedSabaccCards = new HashSet<>();
 
     public InformationSetGameStateListener(InformationSetTracker tracker) {
         this.tracker = Objects.requireNonNull(tracker, "tracker");
@@ -64,7 +73,7 @@ public final class InformationSetGameStateListener implements GameStateListener 
         if (card == null) {
             return;
         }
-        Map<String, Object> row = cardRow(card, "DESTINY", destinyText);
+        Map<String, Object> row = cardRow(card, "DESTINY", destinyText, "IN_USED_UNTIL_SHUFFLE");
         if (row == null) {
             return;
         }
@@ -82,7 +91,7 @@ public final class InformationSetGameStateListener implements GameStateListener 
         if (card == null) {
             return;
         }
-        Map<String, Object> row = cardRow(card, "INTERRUPT_PLAYED", null);
+        Map<String, Object> row = cardRow(card, "INTERRUPT_PLAYED", null, "IN_USED_UNTIL_SHUFFLE");
         if (row == null) {
             return;
         }
@@ -99,7 +108,68 @@ public final class InformationSetGameStateListener implements GameStateListener 
         return owner != null && !owner.equals(tracker.getPlayerId());
     }
 
-    private static Map<String, Object> cardRow(PhysicalCard card, String how, String destinyText) {
+    private void noteOpponentReveal(PhysicalCard card, String how, String recycleHint) {
+        if (card == null || !isOpponentOwned(card)) {
+            return;
+        }
+        Map<String, Object> row = cardRow(card, how, null, recycleHint);
+        if (row == null) {
+            return;
+        }
+        opponentRevealEvents++;
+        tracker.recordSeen(row);
+        tracker.recordDestinyRecycle(row);
+        tracker.recordOpponentRevealed(row);
+    }
+
+    private static boolean isHiddenOrShownRevealZone(Zone zone) {
+        if (zone == null) {
+            return false;
+        }
+        if (!zone.isPublic() || zone.isFaceDown()) {
+            return true;
+        }
+        return zone == Zone.REVEALED_SABACC_HAND;
+    }
+
+    private static String howForShownZone(Zone zone) {
+        if (zone == null) {
+            return "EXAMINE";
+        }
+        switch (zone) {
+            case HAND:
+                return "EXAMINE_HAND";
+            case SABACC_HAND:
+                return "EXAMINE_SABACC";
+            case REVEALED_SABACC_HAND:
+                return "SABACC_REVEAL";
+            case RESERVE_DECK:
+            case TOP_OF_RESERVE_DECK:
+                return "PEEK_RESERVE";
+            case FORCE_PILE:
+            case TOP_OF_FORCE_PILE:
+            case FROZEN_PILE:
+            case TOP_OF_FROZEN_PILE:
+                return "PEEK_FORCE";
+            case USED_PILE:
+            case TOP_OF_USED_PILE:
+                return "EXAMINE_USED";
+            case LOST_PILE:
+            case TOP_OF_LOST_PILE:
+                return "EXAMINE_LOST";
+            default:
+                return "EXAMINE_" + zone.name();
+        }
+    }
+
+    private static String recycleHintForZone(Zone zone) {
+        if (zone == Zone.HAND || zone == Zone.SABACC_HAND || zone == Zone.REVEALED_SABACC_HAND) {
+            return "SEEN_NOT_RECYCLED";
+        }
+        return "IN_USED_UNTIL_SHUFFLE";
+    }
+
+    private static Map<String, Object> cardRow(PhysicalCard card, String how, String destinyText, String recycleHint) {
         String blueprintId;
         try {
             blueprintId = card.getBlueprintId(true);
@@ -150,7 +220,7 @@ public final class InformationSetGameStateListener implements GameStateListener 
         if (zone != null) {
             row.put("zone", zone.name());
         }
-        row.put("recycleHint", "IN_USED_UNTIL_SHUFFLE");
+        row.put("recycleHint", recycleHint != null ? recycleHint : "IN_USED_UNTIL_SHUFFLE");
         return row;
     }
 
@@ -159,7 +229,14 @@ public final class InformationSetGameStateListener implements GameStateListener 
     @Override
     public void cardCreated(PhysicalCard card, GameState gameState, boolean restoreSnapshot) {
         // Initial state dump and in-play creates are covered by InformationSetEncoder.publicInPlay.
-        // Do not scrape hand identities here (own hand comes from GameState; opponent hand is private).
+        // Opponent hand / unrevealed sabacc must not be scraped here.
+        if (card == null || card.getZone() != Zone.REVEALED_SABACC_HAND || !isOpponentOwned(card)) {
+            return;
+        }
+        if (!recordedSabaccCards.add(System.identityHashCode(card))) {
+            return;
+        }
+        noteOpponentReveal(card, "SABACC_REVEAL", "SEEN_NOT_RECYCLED");
     }
 
     @Override
@@ -184,6 +261,18 @@ public final class InformationSetGameStateListener implements GameStateListener 
 
     @Override
     public void cardTurnedOver(PhysicalCard card, GameState gameState) {
+        // Top of reserve turned face up is public. Turning it back down is not a new identity.
+        if (card == null || gameState == null || !isOpponentOwned(card)) {
+            return;
+        }
+        String owner = card.getOwner();
+        try {
+            if (owner != null && gameState.isTopCardOfReserveDeckRevealed(owner)) {
+                noteOpponentReveal(card, "PEEK_RESERVE", "IN_USED_UNTIL_SHUFFLE");
+            }
+        } catch (RuntimeException ignored) {
+            // flag unavailable
+        }
     }
 
     @Override
@@ -241,6 +330,8 @@ public final class InformationSetGameStateListener implements GameStateListener 
 
     @Override
     public void revealSabaccHands() {
+        // Identities arrive on the following cardCreated once the zone is REVEALED_SABACC_HAND.
+        // Recording here would still see private SABACC_HAND zones.
     }
 
     @Override
@@ -267,7 +358,7 @@ public final class InformationSetGameStateListener implements GameStateListener 
     @Override
     public void cardAffectedByCard(String playerPerforming, PhysicalCard card,
                                    Collection<PhysicalCard> affectedCard, GameState gameState) {
-        // Examine / peek effects sometimes surface here; not reliably identity-complete. Gap.
+        // Animation only; identities come from the decision shown to this seat.
     }
 
     @Override
@@ -276,5 +367,30 @@ public final class InformationSetGameStateListener implements GameStateListener 
 
     @Override
     public void decisionRequired(String playerId, AwaitingDecision awaitingDecision) {
+        if (awaitingDecision == null || playerId == null || !playerId.equals(tracker.getPlayerId())) {
+            // The other seat's decisions can contain their unrevealed hand. Never read those.
+            return;
+        }
+        int decisionId = awaitingDecision.getAwaitingDecisionId();
+        if (decisionId != 0 && !consumedDecisionIds.add(decisionId)) {
+            return;
+        }
+        if (!(awaitingDecision instanceof ArbitraryCardsSelectionDecision)) {
+            return;
+        }
+        Collection<PhysicalCard> shown = ((ArbitraryCardsSelectionDecision) awaitingDecision).getShownCards();
+        if (shown == null) {
+            return;
+        }
+        for (PhysicalCard card : shown) {
+            if (card == null || !isOpponentOwned(card)) {
+                continue;
+            }
+            Zone zone = card.getZone();
+            if (!isHiddenOrShownRevealZone(zone)) {
+                continue;
+            }
+            noteOpponentReveal(card, howForShownZone(zone), recycleHintForZone(zone));
+        }
     }
 }
