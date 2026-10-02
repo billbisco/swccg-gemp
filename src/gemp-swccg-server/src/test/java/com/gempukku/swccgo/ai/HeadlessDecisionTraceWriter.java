@@ -90,6 +90,9 @@ public final class HeadlessDecisionTraceWriter implements Closeable {
         row.put("playerId", ctx.playerId);
         row.put("side", ctx.side);
         row.put("aiSkill", ctx.aiSkill);
+        if (ctx.format != null && !ctx.format.isEmpty()) {
+            row.put("format", ctx.format);
+        }
         row.put("turn", ctx.turn);
         row.put("phase", ctx.phase != null ? ctx.phase.name() : null);
         row.put("decisionType", ctx.decisionType);
@@ -116,6 +119,56 @@ public final class HeadlessDecisionTraceWriter implements Closeable {
         if (linesWritten % 50 == 0) {
             writer.flush();
         }
+    }
+
+    /**
+     * One JSONL header line per game so learners see format/deck context even when
+     * scanning only the first line of a game's decisions.
+     */
+    public synchronized void writeGameHeader(String gameId, Integer gameIndex, String format,
+                                             String darkDeck, String lightDeck,
+                                             String darkAi, String lightAi) throws IOException {
+        Map<String, Object> row = new LinkedHashMap<>();
+        row.put("type", "header");
+        row.put("schemaVersion", 1);
+        row.put("ts", System.currentTimeMillis());
+        row.put("gameId", gameId);
+        if (gameIndex != null) {
+            row.put("gameIndex", gameIndex);
+        }
+        row.put("format", format != null ? format : "");
+        row.put("darkDeck", darkDeck != null ? darkDeck : "");
+        row.put("lightDeck", lightDeck != null ? lightDeck : "");
+        row.put("darkAi", darkAi != null ? darkAi : "");
+        row.put("lightAi", lightAi != null ? lightAi : "");
+        writer.write(GSON.toJson(row));
+        writer.newLine();
+        linesWritten++;
+        writer.flush();
+    }
+
+    /** One JSONL outcome line after the game ends (winner + format). */
+    public synchronized void writeGameOutcome(String gameId, Integer gameIndex, String format,
+                                              boolean finished, boolean cancelled, String winner,
+                                              String stopper, int decisionCount) throws IOException {
+        Map<String, Object> row = new LinkedHashMap<>();
+        row.put("type", "outcome");
+        row.put("schemaVersion", 1);
+        row.put("ts", System.currentTimeMillis());
+        row.put("gameId", gameId);
+        if (gameIndex != null) {
+            row.put("gameIndex", gameIndex);
+        }
+        row.put("format", format != null ? format : "");
+        row.put("finished", finished);
+        row.put("cancelled", cancelled);
+        row.put("winner", winner);
+        row.put("stopper", stopper != null ? stopper : "");
+        row.put("decisionCount", decisionCount);
+        writer.write(GSON.toJson(row));
+        writer.newLine();
+        linesWritten++;
+        writer.flush();
     }
 
     @Override
@@ -192,7 +245,7 @@ public final class HeadlessDecisionTraceWriter implements Closeable {
     }
 
     public static TraceContext fromDecision(String gameId, Integer gameIndex, int decisionIndex,
-                                            String playerId, String aiSkill,
+                                            String playerId, String aiSkill, String format,
                                             AwaitingDecision decision, GameState gs,
                                             String chosen, boolean accepted, String invalidReason) {
         TraceContext ctx = new TraceContext();
@@ -203,6 +256,7 @@ public final class HeadlessDecisionTraceWriter implements Closeable {
         ctx.playerId = playerId;
         ctx.side = sideOf(playerId);
         ctx.aiSkill = aiSkill;
+        ctx.format = format;
         ctx.chosen = chosen;
         ctx.accepted = accepted;
         ctx.invalidReason = invalidReason;
@@ -318,6 +372,8 @@ public final class HeadlessDecisionTraceWriter implements Closeable {
         public String playerId;
         public String side;
         public String aiSkill;
+        /** GEMP format code, e.g. premiere_anh or open. */
+        public String format;
         public int turn = -1;
         public Phase phase;
         public String decisionType;
