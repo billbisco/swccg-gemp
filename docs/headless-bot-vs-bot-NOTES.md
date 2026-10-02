@@ -99,7 +99,7 @@ gameIndex,darkAi,lightAi,winner,darkDecisions,lightDecisions,darkTurns,lightTurn
 
 ## LINEAR policy (gym-cli stub)
 
-`LinearPolicyAi` loads `linear.v1` and greedily scores legal actions from the current InformationSet packed vector (plus a small bag-hash when `bagHashDim` > 0). It does not train. A zeros `W` plays the first legal answer. `BEGINNER` is unchanged.
+`LinearPolicyAi` loads `linear.v1` and greedily scores legal actions from the current InformationSet packed vector (plus a small bag-hash when `bagHashDim` > 0). It does not train. A zeros or omitted `W` is still a legal stub: `decide` adds a tiny anti-stall prior (not skill) so the earliest answer is not always activate 0. Real actions score 0, non-zero activate / positive integerNorm up to +0.05, pass -0.05, and activate-0 / zero-integer -0.10. Any non-zero weight turns that prior off. `BEGINNER` is unchanged.
 
 ```bash
 cd /workspace/swccg-gemp/src
