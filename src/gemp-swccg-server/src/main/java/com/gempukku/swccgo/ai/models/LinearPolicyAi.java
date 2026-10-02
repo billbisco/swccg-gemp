@@ -51,12 +51,20 @@ import java.util.regex.Pattern;
  *   <li>optional-response windows (decision text contains "optional") and a
  *       legal pass: pass scores +1 so it wins. Not a judgment about the
  *       response.</li>
- *   <li>the same move-like or activate label (embark, disembark, transfer,
- *       ship-dock, docking, move, shuttle, land, take off, enter, exit, activate, …) at most once per phase;
- *       a repeat scores -3×{@value #ANTI_STALL} and loses to pass.</li>
+ *   <li>a repeated move-like label that is still a candidate scores
+ *       -3×{@value #ANTI_STALL}, which is below pass.</li>
  * </ul>
- * Any non-zero weight disables the prior, including the optional-pass and
- * once-per-phase limits, so a learned pack can still take those actions.
+ * Any non-zero weight disables that soft prior, including optional-pass, so a
+ * learned score can override it. The once-per-phase hard cap is separate and
+ * is not gated on all-zero {@code W}.
+ *
+ * <p>Hard cap (anti-stall, not skill): the same move-like or activate label
+ * (embark, disembark, transfer, ship-dock, docking, move, shuttle, land,
+ * take off, enter, exit, activate, …) may be taken at most once per phase.
+ * While any other legal action exists, a repeat is ineligible. Learned scores
+ * cannot buy a second copy. If every candidate is a repeat, the cap does not
+ * empty the decision. Zeros packs keep the same outcomes, because the soft
+ * prior already ranked a repeat below every other zeros action.
  * This class does not train and is not distilled from AdvancedAi / YodaBot.
  * Hall / table bots must not load it.
  *
@@ -91,15 +99,18 @@ public final class LinearPolicyAi implements SwccgAiController {
     public static final int INTERACT_FEAT_DIM = AF_ONES;
 
     /**
-     * Anti-stall magnitude for an all-zero / omitted {@code W}. Not skill.
-     * Any non-zero weight disables the prior so a learned pack is unchanged.
+     * Soft anti-stall magnitude for an all-zero / omitted {@code W}. Not skill.
+     * Any non-zero weight disables this prior. It does not gate the
+     * once-per-phase hard cap on move-like labels.
      */
     public static final float ANTI_STALL = 0.05f;
 
     /**
-     * Move-like and activate labels a zeros seat may take at most once per phase.
-     * The second copy loses to Pass. Not skill: it only breaks reversible loops
-     * such as Embark/Disembark and Transfer to other starship. Matched on the lowercased action text.
+     * Move-like and activate labels taken at most once per phase.
+     * Anti-stall, not skill: a repeat is ineligible while another legal action
+     * exists, whether or not {@code W} is all zeros. Breaks reversible loops
+     * such as Embark/Disembark and Transfer to other starship. Matched on the
+     * lowercased action text.
      */
     private static final Pattern LIMITED_ONCE_PER_PHASE = Pattern.compile(
             "^(?:move|embark|disembark|shuttle|activate|take off|land|enter|exit|relocate|transfer|ship-dock|docking)\\b.*");
@@ -224,40 +235,52 @@ public final class LinearPolicyAi implements SwccgAiController {
             Candidate c = candidates.get(i);
             feats[i] = actionFeatures(c.text, c.blueprintId, c.pass, c.integerNorm, c.indexNorm);
         }
-        if (allZero(weights)) {
-            syncStallPhase(gameState);
-        }
+        // Phase memory feeds the hard cap. Not gated on all-zero W.
+        syncStallPhase(gameState);
         int best = selectIndex(packed, bag, candidates, feats,
                 decision != null ? decision.getText() : null);
         if (best < 0 || best >= candidates.size()) {
             best = 0;
         }
-        if (allZero(weights)) {
-            noteStallChoice(candidates.get(best));
-        }
+        noteStallChoice(candidates.get(best));
         return candidates.get(best).raw;
     }
 
     /**
-     * Greedy index, plus the anti-stall prior when {@code weights} are all zero.
-     * Equal adjusted scores keep the earliest candidate.
+     * Greedy index. The soft anti-stall prior applies only when {@code weights}
+     * are all zero. The once-per-phase hard cap always drops a repeated
+     * move-like label when another legal action exists. Equal adjusted scores
+     * keep the earliest remaining candidate.
      */
     private int selectIndex(float[] packed, float[] bag, List<Candidate> candidates, float[][] feats,
                             String decisionText) {
         boolean antiStall = allZero(weights);
         boolean optional = antiStall && isOptionalResponse(decisionText);
+        boolean anyUncapped = false;
+        for (int a = 0; a < candidates.size(); a++) {
+            if (!isLimitedRepeat(candidates.get(a).text)) {
+                anyUncapped = true;
+                break;
+            }
+        }
         int best = 0;
         double bestScore = Double.NEGATIVE_INFINITY;
+        boolean found = false;
         for (int a = 0; a < candidates.size(); a++) {
+            Candidate c = candidates.get(a);
+            // Hard cap. Anti-stall, not skill. Not gated on all-zero W.
+            if (anyUncapped && isLimitedRepeat(c.text)) {
+                continue;
+            }
             double score = scoreOf(packed, bag, feats[a], weights, bias);
             if (antiStall) {
-                Candidate c = candidates.get(a);
                 score += antiStallPrior(c.text, c.pass, c.integerNorm,
                         isLimitedRepeat(c.text), optional);
             }
-            if (score > bestScore) {
+            if (!found || score > bestScore) {
                 bestScore = score;
                 best = a;
+                found = true;
             }
         }
         return best;
@@ -319,11 +342,14 @@ public final class LinearPolicyAi implements SwccgAiController {
     }
 
     /**
-     * Tie-break for a zeros pack. Not skill.
+     * Soft tie-break for a zeros pack. Not skill. Disabled when any weight
+     * is non-zero, so a learned score can override it. The once-per-phase
+     * hard cap is applied before this prior and is not disabled with it.
      * Optional-response pass outranks every other zeros score. A repeated
-     * move/activate label scores below pass. Activate-0 still loses to a
-     * non-zero activate and to a first real action. An ordinary pass still
-     * loses to the first real action, so a phase is not skipped up front.
+     * move/activate label that is still a candidate scores below pass.
+     * Activate-0 still loses to a non-zero activate and to a first real action.
+     * An ordinary pass still loses to the first real action, so a phase is
+     * not skipped up front.
      */
     static double antiStallPrior(String text, boolean pass, float integerNorm,
                                  boolean repeatedLimited, boolean optionalResponse) {

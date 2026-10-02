@@ -159,14 +159,34 @@ public class LinearPolicyAiTest {
         AwaitingDecision optional = actionChoice("Use 1 Force - Optional responses", "Cancel your Alter");
         assertEquals("optional response is passed", "", LinearPolicyAi.zeros().decide("~OzzelBot", optional, null));
 
-        // A non-zero weight disables the prior, so the same labels may repeat and optional windows may be answered.
+        // A non-zero weight disables the soft prior, so optional windows may be answered.
+        // The once-per-phase hard cap still refuses a second copy of the same move label.
         float[] nudgedW = new float[FeatureLayoutV1.PACKED_DIM + LinearPolicyAi.DEFAULT_BAG_HASH_DIM + LinearPolicyAi.ACTION_FEAT_DIM];
         nudgedW[0] = 0.01f;
         LinearPolicyAi learned = new LinearPolicyAi(nudgedW, 0f, FeatureLayoutV1.PACKED_DIM,
                 LinearPolicyAi.DEFAULT_BAG_HASH_DIM, LinearPolicyAi.ACTION_FEAT_DIM, "nudge-repeat");
         assertEquals("0", learned.decide("~OzzelBot", optional, null));
         assertEquals("0", learned.decide("~OzzelBot", embark, null));
-        assertEquals("0", learned.decide("~OzzelBot", embark, null));
+        assertEquals("second Embark is capped even with non-zero W", "", learned.decide("~OzzelBot", embark, null));
+    }
+
+    @Test
+    public void nonzeroWeightsThatPreferEmbarkDoNotTakeASecondEmbark() {
+        int embarkBucket = LinearPolicyAi.bucket("embark", LinearPolicyAi.AF_TEXT_BUCKETS);
+        int otherBucket = LinearPolicyAi.bucket("deploy luke", LinearPolicyAi.AF_TEXT_BUCKETS);
+        assertTrue("text buckets must differ so the weight prefers Embark only", embarkBucket != otherBucket);
+
+        float[] weights = new float[FeatureLayoutV1.PACKED_DIM + LinearPolicyAi.DEFAULT_BAG_HASH_DIM
+                + LinearPolicyAi.ACTION_FEAT_DIM];
+        int actionBase = FeatureLayoutV1.PACKED_DIM + LinearPolicyAi.DEFAULT_BAG_HASH_DIM;
+        weights[actionBase + LinearPolicyAi.AF_TEXT_HASH + embarkBucket] = 1f;
+        assertTrue(!LinearPolicyAi.allZero(weights));
+
+        LinearPolicyAi ai = new LinearPolicyAi(weights, 0f, FeatureLayoutV1.PACKED_DIM,
+                LinearPolicyAi.DEFAULT_BAG_HASH_DIM, LinearPolicyAi.ACTION_FEAT_DIM, "prefer-embark");
+        AwaitingDecision choice = actionChoice("Choose Move action or Pass", "Embark", "Deploy Luke");
+        assertEquals("learned score takes the first Embark", "0", ai.decide("~OzzelBot", choice, null));
+        assertEquals("second Embark loses to the other legal action", "1", ai.decide("~OzzelBot", choice, null));
     }
 
     @Test
@@ -212,13 +232,17 @@ public class LinearPolicyAiTest {
                 0, LinearPolicyAi.greedyIndex(p1, bag, actions, new float[width16], 0f));
     }
 
-    private static AwaitingDecision actionChoice(String decisionText, String actionText) {
+    private static AwaitingDecision actionChoice(String decisionText, String... actionTexts) {
         AwaitingDecision decision = mock(AwaitingDecision.class);
         when(decision.getDecisionType()).thenReturn(AwaitingDecisionType.CARD_ACTION_CHOICE);
         when(decision.getText()).thenReturn(decisionText);
         Map<String, String[]> params = new LinkedHashMap<>();
-        params.put("actionText", new String[] {actionText});
-        params.put("actionId", new String[] {"1"});
+        params.put("actionText", actionTexts);
+        String[] ids = new String[actionTexts.length];
+        for (int i = 0; i < actionTexts.length; i++) {
+            ids[i] = Integer.toString(i + 1);
+        }
+        params.put("actionId", ids);
         when(decision.getDecisionParameters()).thenReturn(params);
         return decision;
     }
