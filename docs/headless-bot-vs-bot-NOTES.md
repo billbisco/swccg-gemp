@@ -224,3 +224,17 @@ Command:
 cd /workspace/swccg-gemp/src
 mvn -pl gemp-swccg-server -am   -Dtest=HeadlessBotVsBotBatchTest#batchSelfPlay_writesCsv   -Dheadless.games=1 -Dheadless.traces=true   -Dheadless.traces.path=target/headless-decision-traces.jsonl   test
 ```
+
+## Baseline ladder (2026-10-02 America/Caracas)
+
+Targeted `HeadlessBotVsBotBatchTest#batchSelfPlay_writesCsv` runs completed with no
+failures. Seat mapping is `~OzzelBot` = Dark and `~AckbarBot` = Light.
+
+| Matchup | N | Wins (side / AI) | Avg decisions (Dark / Light) | Avg turns (Dark / Light) | Wall time |
+|---|---:|---|---:|---:|---:|
+| Beginner vs Advanced | 10 | Dark `~OzzelBot`/Beginner 5; Light `~AckbarBot`/Advanced 5 | 498.1 / 499.1 | 6.40 / 5.80 | 62.655 s |
+| Beginner vs Beginner | 20 | Dark `~OzzelBot`/Beginner 12; Light `~AckbarBot`/Beginner 8 | 484.3 / 486.9 | 6.05 / 5.80 | 134.045 s |
+
+All 30 games finished (`failures=0`). CSV snapshots from these runs are saved outside
+the repo at `/workspace/headless-batch-beginner-vs-advanced.csv` and
+`/workspace/headless-batch-beginner-vs-beginner.csv`.
