@@ -62,6 +62,13 @@ public final class HeadlessBotVsBotRunner {
         public long maxMillis = 180_000L;
         public boolean verbose = false;
         public int progressEveryN = 250;
+        /** Optional batch index (1-based) written into decision traces. */
+        public Integer gameIndex = null;
+        /**
+         * When non-null, each AI decision is appended as one JSONL line.
+         * Caller owns open/close (batch shares one writer across games).
+         */
+        public HeadlessDecisionTraceWriter traceWriter = null;
     }
 
     public static final class Result {
@@ -275,6 +282,9 @@ public final class HeadlessBotVsBotRunner {
                         byPlayer.put(playerId, byPlayer.getOrDefault(playerId, 0) + 1);
                         progressed = true;
 
+                        recordTrace(cfg, gameId, decisionCount, playerId, decision,
+                                game.getGameState(), answer, true, null);
+
                         if (cfg.verbose && (decisionCount % Math.max(1, cfg.progressEveryN) == 0)) {
                             GameState gs = game.getGameState();
                             System.out.println(String.format(Locale.ROOT,
@@ -297,6 +307,8 @@ public final class HeadlessBotVsBotRunner {
                                 + " type=" + decision.getDecisionType()
                                 + " answer=" + truncate(answer, 60);
                         failures.add(note);
+                        recordTrace(cfg, gameId, decisionCount + 1, playerId, decision,
+                                game.getGameState(), answer, false, note);
                         if (cfg.verbose) {
                             System.out.println(note);
                         }
@@ -356,6 +368,31 @@ public final class HeadlessBotVsBotRunner {
                 stopper,
                 failures,
                 byPlayer);
+    }
+
+    private static void recordTrace(Config cfg, String gameId, int decisionIndex, String playerId,
+                                    AwaitingDecision decision, GameState gs, String answer,
+                                    boolean accepted, String invalidReason) {
+        if (cfg == null || cfg.traceWriter == null) {
+            return;
+        }
+        String skill;
+        if (DS_PLAYER.equals(playerId)) {
+            skill = cfg.darkAi != null ? cfg.darkAi.name() : null;
+        } else if (LS_PLAYER.equals(playerId)) {
+            skill = cfg.lightAi != null ? cfg.lightAi.name() : null;
+        } else {
+            skill = null;
+        }
+        try {
+            cfg.traceWriter.record(HeadlessDecisionTraceWriter.fromDecision(
+                    gameId, cfg.gameIndex, decisionIndex, playerId, skill,
+                    decision, gs, answer, accepted, invalidReason));
+        } catch (Exception ex) {
+            // Tracing must never abort a game; surface once via stderr.
+            System.err.println("[headless] trace write failed: " + ex.getClass().getSimpleName()
+                    + ": " + ex.getMessage());
+        }
     }
 
     private static String truncate(String s, int max) {

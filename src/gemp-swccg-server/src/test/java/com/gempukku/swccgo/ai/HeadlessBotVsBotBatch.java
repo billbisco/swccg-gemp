@@ -38,6 +38,13 @@ public final class HeadlessBotVsBotBatch {
         public Path outputCsv = Paths.get("target", "headless-bot-vs-bot-batch.csv");
         /** Reuse card/format libraries across games (faster for N&gt;1). Default true. */
         public boolean reuseLibraries = true;
+        /**
+         * When true, write per-decision JSONL traces via {@link HeadlessDecisionTraceWriter}.
+         * Default false so CSV-only batches stay unchanged.
+         */
+        public boolean writeTraces = false;
+        /** JSONL path when {@link #writeTraces} is true. Default under target/. */
+        public Path tracesPath = Paths.get(HeadlessDecisionTraceWriter.DEFAULT_PATH);
     }
 
     public static final class GameRow {
@@ -87,13 +94,18 @@ public final class HeadlessBotVsBotBatch {
     public static final class BatchResult {
         public final List<GameRow> rows;
         public final Path csvPath;
+        public final Path tracesPath;
+        public final long traceLines;
         public final int finishedCount;
         public final int errorCount;
         public final long totalElapsedMs;
 
-        BatchResult(List<GameRow> rows, Path csvPath, int finishedCount, int errorCount, long totalElapsedMs) {
+        BatchResult(List<GameRow> rows, Path csvPath, Path tracesPath, long traceLines,
+                    int finishedCount, int errorCount, long totalElapsedMs) {
             this.rows = rows;
             this.csvPath = csvPath;
+            this.tracesPath = tracesPath;
+            this.traceLines = traceLines;
             this.finishedCount = finishedCount;
             this.errorCount = errorCount;
             this.totalElapsedMs = totalElapsedMs;
@@ -106,6 +118,8 @@ public final class HeadlessBotVsBotBatch {
                     + ", errors=" + errorCount
                     + ", totalElapsedMs=" + totalElapsedMs
                     + ", csv=" + csvPath
+                    + ", traces=" + tracesPath
+                    + ", traceLines=" + traceLines
                     + '}';
         }
     }
@@ -131,45 +145,65 @@ public final class HeadlessBotVsBotBatch {
         int errors = 0;
         long batchStarted = System.currentTimeMillis();
 
-        for (int i = 1; i <= cfg.games; i++) {
-            HeadlessBotVsBotRunner.Config gameCfg = new HeadlessBotVsBotRunner.Config();
-            gameCfg.darkAi = cfg.darkAi;
-            gameCfg.lightAi = cfg.lightAi;
-            gameCfg.formatName = cfg.formatName;
-            gameCfg.maxDecisions = cfg.maxDecisions;
-            gameCfg.maxMillis = cfg.maxMillis;
-            gameCfg.verbose = cfg.verbose;
-            gameCfg.progressEveryN = cfg.progressEveryN;
+        HeadlessDecisionTraceWriter traceWriter = null;
+        Path tracesPath = null;
+        long traceLines = 0;
+        if (cfg.writeTraces) {
+            tracesPath = (cfg.tracesPath != null ? cfg.tracesPath
+                    : Paths.get(HeadlessDecisionTraceWriter.DEFAULT_PATH)).toAbsolutePath().normalize();
+            traceWriter = new HeadlessDecisionTraceWriter(tracesPath);
+            System.out.println("[batch] writing decision traces: " + tracesPath);
+        }
 
-            GameRow row;
-            try {
-                HeadlessBotVsBotRunner.Result result = HeadlessBotVsBotRunner.playOneGame(
-                        gameCfg, sharedCards, sharedFormats);
-                row = toRow(i, cfg.darkAi, cfg.lightAi, result, null);
-                if (result.finished) {
-                    finished++;
-                } else {
+        try {
+            for (int i = 1; i <= cfg.games; i++) {
+                HeadlessBotVsBotRunner.Config gameCfg = new HeadlessBotVsBotRunner.Config();
+                gameCfg.darkAi = cfg.darkAi;
+                gameCfg.lightAi = cfg.lightAi;
+                gameCfg.formatName = cfg.formatName;
+                gameCfg.maxDecisions = cfg.maxDecisions;
+                gameCfg.maxMillis = cfg.maxMillis;
+                gameCfg.verbose = cfg.verbose;
+                gameCfg.progressEveryN = cfg.progressEveryN;
+                gameCfg.gameIndex = i;
+                gameCfg.traceWriter = traceWriter;
+
+                GameRow row;
+                try {
+                    HeadlessBotVsBotRunner.Result result = HeadlessBotVsBotRunner.playOneGame(
+                            gameCfg, sharedCards, sharedFormats);
+                    row = toRow(i, cfg.darkAi, cfg.lightAi, result, null);
+                    if (result.finished) {
+                        finished++;
+                    } else {
+                        errors++;
+                    }
+                } catch (RuntimeException ex) {
                     errors++;
+                    String msg = ex.getClass().getSimpleName() + ": " + Objects.toString(ex.getMessage(), "");
+                    row = new GameRow(i, cfg.darkAi, cfg.lightAi, "", 0, 0, -1, -1, 0, truncate(msg, 200), null);
+                    if (cfg.verbose) {
+                        System.out.println("[batch] game " + i + " threw: " + msg);
+                    }
                 }
-            } catch (RuntimeException ex) {
-                errors++;
-                String msg = ex.getClass().getSimpleName() + ": " + Objects.toString(ex.getMessage(), "");
-                row = new GameRow(i, cfg.darkAi, cfg.lightAi, "", 0, 0, -1, -1, 0, truncate(msg, 200), null);
-                if (cfg.verbose) {
-                    System.out.println("[batch] game " + i + " threw: " + msg);
-                }
-            }
 
-            rows.add(row);
-            System.out.println(String.format(Locale.ROOT,
-                    "[batch] game %d/%d finished=%s winner=%s darkDec=%d lightDec=%d elapsedMs=%d error=%s",
-                    i, cfg.games,
-                    row.result != null && row.result.finished,
-                    row.winner,
-                    row.darkDecisions,
-                    row.lightDecisions,
-                    row.elapsedMs,
-                    row.error == null || row.error.isEmpty() ? "-" : truncate(row.error, 80)));
+                rows.add(row);
+                System.out.println(String.format(Locale.ROOT,
+                        "[batch] game %d/%d finished=%s winner=%s darkDec=%d lightDec=%d elapsedMs=%d error=%s",
+                        i, cfg.games,
+                        row.result != null && row.result.finished,
+                        row.winner,
+                        row.darkDecisions,
+                        row.lightDecisions,
+                        row.elapsedMs,
+                        row.error == null || row.error.isEmpty() ? "-" : truncate(row.error, 80)));
+            }
+        } finally {
+            if (traceWriter != null) {
+                traceLines = traceWriter.getLinesWritten();
+                traceWriter.close();
+                System.out.println("[batch] wrote traces: " + tracesPath + " lines=" + traceLines);
+            }
         }
 
         Path csvPath = null;
@@ -179,7 +213,8 @@ public final class HeadlessBotVsBotBatch {
             System.out.println("[batch] wrote CSV: " + csvPath);
         }
 
-        return new BatchResult(rows, csvPath, finished, errors, System.currentTimeMillis() - batchStarted);
+        return new BatchResult(rows, csvPath, tracesPath, traceLines, finished, errors,
+                System.currentTimeMillis() - batchStarted);
     }
 
     public static GameRow toRow(int gameIndex, HeadlessBotVsBotRunner.AiSkill darkAi,
@@ -290,9 +325,17 @@ public final class HeadlessBotVsBotBatch {
                 cfg.maxMillis = Long.parseLong(arg.substring("--maxMillis=".length()));
             } else if (arg.startsWith("--format=")) {
                 cfg.formatName = arg.substring("--format=".length());
+            } else if (arg.equals("--traces") || arg.equals("--traces=true")) {
+                cfg.writeTraces = true;
+            } else if (arg.equals("--traces=false") || arg.equals("--no-traces")) {
+                cfg.writeTraces = false;
+            } else if (arg.startsWith("--tracesPath=")) {
+                cfg.writeTraces = true;
+                cfg.tracesPath = Paths.get(arg.substring("--tracesPath=".length()));
             } else if (arg.equals("--help") || arg.equals("-h")) {
                 System.out.println("Usage: HeadlessBotVsBotBatch --games=5 --dark=BEGINNER --light=BEGINNER "
-                        + "--csv=target/out.csv [--verbose] [--maxDecisions=25000] [--maxMillis=180000]");
+                        + "--csv=target/out.csv [--traces] [--tracesPath=target/traces.jsonl] "
+                        + "[--verbose] [--maxDecisions=25000] [--maxMillis=180000]");
                 return;
             }
         }

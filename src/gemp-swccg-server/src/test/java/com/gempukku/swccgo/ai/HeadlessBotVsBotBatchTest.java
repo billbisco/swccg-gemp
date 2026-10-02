@@ -45,6 +45,9 @@ public class HeadlessBotVsBotBatchTest {
         cfg.verbose = Boolean.parseBoolean(System.getProperty("headless.verbose", "false"));
         cfg.maxDecisions = Integer.getInteger("headless.maxDecisions", 25_000);
         cfg.maxMillis = Long.getLong("headless.maxMillis", 180_000L);
+        cfg.writeTraces = Boolean.parseBoolean(System.getProperty("headless.traces", "false"));
+        cfg.tracesPath = Paths.get(System.getProperty("headless.traces.path",
+                HeadlessDecisionTraceWriter.DEFAULT_PATH));
 
         HeadlessBotVsBotBatch.BatchResult batch = HeadlessBotVsBotBatch.runBatch(cfg);
         System.out.println("=== Batch " + dark + " vs " + light + " ===");
@@ -57,6 +60,38 @@ public class HeadlessBotVsBotBatchTest {
         assertTrue("CSV should start with header",
                 csvText.startsWith(HeadlessBotVsBotBatch.CSV_HEADER));
         assertEquals("row count should match games", games, batch.rows.size());
+
+        if (cfg.writeTraces) {
+            assertTrue("traces JSONL should exist: " + batch.tracesPath,
+                    Files.isRegularFile(batch.tracesPath));
+            assertTrue("traces should be non-empty", batch.traceLines > 0);
+            java.util.List<String> lines = Files.readAllLines(batch.tracesPath,
+                    java.nio.charset.StandardCharsets.UTF_8);
+            assertEquals("file lines should match writer count", batch.traceLines, lines.size());
+            com.google.gson.Gson gson = new com.google.gson.Gson();
+            int sample = Math.min(3, lines.size());
+            System.out.println("--- Sample JSONL (" + sample + ") ---");
+            for (int i = 0; i < sample; i++) {
+                String line = lines.get(i);
+                System.out.println(line.length() > 400 ? line.substring(0, 400) + "..." : line);
+                assertTrue("line should be JSON object", line.startsWith("{"));
+                @SuppressWarnings("unchecked")
+                java.util.Map<String, Object> obj = gson.fromJson(line, java.util.Map.class);
+                assertTrue("parsed object non-null", obj != null && !obj.isEmpty());
+                assertTrue("should include decisionType", obj.containsKey("decisionType"));
+                assertTrue("should include chosen", obj.containsKey("chosen"));
+            }
+            // Rough sanity: ~one line per accepted decision across finished games
+            int totalDecisions = 0;
+            for (HeadlessBotVsBotBatch.GameRow row : batch.rows) {
+                if (row.result != null) {
+                    totalDecisions += row.result.decisionCount;
+                }
+            }
+            System.out.println("traceLines=" + batch.traceLines + " acceptedDecisions=" + totalDecisions);
+            assertTrue("trace lines should be at least accepted decisions",
+                    batch.traceLines >= totalDecisions);
+        }
 
         // Soft: prefer all finished; fail with clear summary if any did not.
         if (batch.errorCount > 0) {
@@ -106,6 +141,11 @@ public class HeadlessBotVsBotBatchTest {
         cfg.verbose = Boolean.parseBoolean(System.getProperty("headless.verbose", "false"));
         cfg.maxDecisions = Integer.getInteger("headless.maxDecisions", 25_000);
         cfg.maxMillis = Long.getLong("headless.maxMillis", 180_000L);
+        cfg.writeTraces = Boolean.parseBoolean(System.getProperty("headless.traces", "false"));
+        if (cfg.writeTraces) {
+            cfg.tracesPath = Paths.get(System.getProperty("headless.traces.path",
+                    "target/headless-decision-traces-" + light.name().toLowerCase(Locale.ROOT) + ".jsonl"));
+        }
 
         HeadlessBotVsBotBatch.BatchResult batch = HeadlessBotVsBotBatch.runBatch(cfg);
         System.out.println("=== Optional batch " + dark + " vs " + light + " ===");
