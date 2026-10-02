@@ -1,7 +1,11 @@
 package com.gempukku.swccgo.ai.features;
 
 import com.gempukku.swccgo.ai.HeadlessDecisionTraceWriter;
+import com.gempukku.swccgo.ai.models.LinearPolicyAi;
 import com.gempukku.swccgo.common.CardCategory;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.gempukku.swccgo.common.Phase;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Zone;
@@ -203,7 +207,22 @@ public class InformationSetV1Test {
         assertTrue(line.contains("Sorry About The Mess"));
         assertTrue(line.contains("\"ownHand\""));
         assertTrue(line.contains("\"packed\""));
+        assertTrue(line.contains("\"bagHash\""));
         assertFalse(line.contains(SECRET_OPP_TITLE));
+
+        JsonObject row = JsonParser.parseString(line.trim()).getAsJsonObject();
+        JsonArray logged = row.getAsJsonObject("state").getAsJsonArray("bagHash");
+        assertEquals(LinearPolicyAi.DEFAULT_BAG_HASH_DIM, logged.size());
+        InformationSetV1 set = InformationSetEncoder.from(gs, LIGHT, decision, new InformationSetTracker(LIGHT), "open");
+        float[] expected = LinearPolicyAi.bagHash(set, LinearPolicyAi.DEFAULT_BAG_HASH_DIM);
+        boolean any = false;
+        for (int i = 0; i < expected.length; i++) {
+            assertEquals(expected[i], logged.get(i).getAsFloat(), 0f);
+            if (expected[i] != 0f) {
+                any = true;
+            }
+        }
+        assertTrue("hand blueprint should land in a bag-hash bucket", any);
         Files.deleteIfExists(out);
     }
 
