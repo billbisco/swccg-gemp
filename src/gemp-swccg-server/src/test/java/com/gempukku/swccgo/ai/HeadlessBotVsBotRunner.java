@@ -332,7 +332,8 @@ public final class HeadlessBotVsBotRunner {
         AiRegistry.register(gameId, LS_PLAYER, lightAi);
 
         HeadlessDecisionTraceWriter.TraceLevel effectiveLevel = resolveTraceLevel(cfg);
-        if (effectiveLevel == HeadlessDecisionTraceWriter.TraceLevel.FEATURES) {
+        boolean linearSeat = cfg.darkAi == AiSkill.LINEAR || cfg.lightAi == AiSkill.LINEAR;
+        if (effectiveLevel == HeadlessDecisionTraceWriter.TraceLevel.FEATURES || linearSeat) {
             if (cfg.darkTracker == null) {
                 cfg.darkTracker = new InformationSetTracker(DS_PLAYER);
             }
@@ -348,6 +349,12 @@ public final class HeadlessBotVsBotRunner {
             // Destiny + interrupt hooks into each seat's tracker (never seeds opponent decklist).
             game.addGameStateListener(DS_PLAYER, new InformationSetGameStateListener(cfg.darkTracker));
             game.addGameStateListener(LS_PLAYER, new InformationSetGameStateListener(cfg.lightTracker));
+            if (darkAi instanceof com.gempukku.swccgo.ai.models.LinearPolicyAi) {
+                ((com.gempukku.swccgo.ai.models.LinearPolicyAi) darkAi).setTracker(cfg.darkTracker);
+            }
+            if (lightAi instanceof com.gempukku.swccgo.ai.models.LinearPolicyAi) {
+                ((com.gempukku.swccgo.ai.models.LinearPolicyAi) lightAi).setTracker(cfg.lightTracker);
+            }
         }
 
         if (cfg.traceWriter != null) {

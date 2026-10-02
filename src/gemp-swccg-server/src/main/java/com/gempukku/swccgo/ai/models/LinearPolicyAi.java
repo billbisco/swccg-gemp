@@ -3,6 +3,7 @@ package com.gempukku.swccgo.ai.models;
 import com.gempukku.swccgo.ai.SwccgAiController;
 import com.gempukku.swccgo.ai.features.FeatureLayoutV1;
 import com.gempukku.swccgo.ai.features.InformationSetEncoder;
+import com.gempukku.swccgo.ai.features.InformationSetTracker;
 import com.gempukku.swccgo.ai.features.InformationSetV1;
 import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.logic.decisions.AwaitingDecision;
@@ -66,6 +67,7 @@ public final class LinearPolicyAi implements SwccgAiController {
     private final int bagHashDim;
     private final int actionFeatDim;
     private final String sourceLabel;
+    private InformationSetTracker tracker;
 
     public LinearPolicyAi(float[] weights, float bias, int packedDim, int bagHashDim, int actionFeatDim,
                           String sourceLabel) {
@@ -144,12 +146,17 @@ public final class LinearPolicyAi implements SwccgAiController {
         return bagHashDim;
     }
 
+    /** Match-scoped seen/destiny/reveal memory. Null keeps those bags empty. */
+    public void setTracker(InformationSetTracker tracker) {
+        this.tracker = tracker;
+    }
+
     @Override
     public String decide(String playerId, AwaitingDecision decision, GameState gameState) {
         float[] packed = new float[packedDim];
         float[] bag = new float[bagHashDim];
         if (gameState != null && playerId != null && !playerId.isBlank()) {
-            InformationSetV1 set = InformationSetEncoder.from(gameState, playerId, decision, null, "");
+            InformationSetV1 set = InformationSetEncoder.from(gameState, playerId, decision, tracker, "");
             int n = Math.min(packed.length, set.packed.length);
             System.arraycopy(set.packed, 0, packed, 0, n);
             if (bagHashDim > 0) {
