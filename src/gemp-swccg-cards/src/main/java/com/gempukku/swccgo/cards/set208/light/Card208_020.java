@@ -109,7 +109,7 @@ public class Card208_020 extends AbstractUsedInterrupt {
         if (TriggerConditions.isBattleDestinyDrawingJustCompletedForPlayer(game, effectResult, opponent)
                 && GameConditions.didDrawMoreThanBattleDestinies(game, opponent, 2)
                 && GameConditions.canCancelOpponentsPreviouslyDrawnBattleDestiny(game, playerId)) {
-            final int numToRemain = game.getGameState().getBattleState().getNumBattleDestinyDrawn(opponent) - 1;
+            final int numToRemain = game.getGameState().getBattleState().getNumUncanceledBattleDestinyDrawn(opponent) - 1;
             if (numToRemain > 0) {
 
                 final PlayInterruptAction action = new PlayInterruptAction(game, self);
