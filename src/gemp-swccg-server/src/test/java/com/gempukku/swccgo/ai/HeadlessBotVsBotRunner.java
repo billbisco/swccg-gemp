@@ -2,6 +2,7 @@ package com.gempukku.swccgo.ai;
 
 import com.gempukku.swccgo.ai.models.AdvancedAi;
 import com.gempukku.swccgo.ai.models.BeginnerAi;
+import com.gempukku.swccgo.ai.models.ConfigurableHeuristicAi;
 import com.gempukku.swccgo.ai.models.rando.RandoCalAi;
 import com.gempukku.swccgo.common.Phase;
 import com.gempukku.swccgo.db.DeckSerialization;
@@ -111,6 +112,13 @@ public final class HeadlessBotVsBotRunner {
         public Path replayDir = null;
         /** Convenience: when true and {@link #replayDir} is null, use {@code target/headless-replays}. */
         public boolean recordReplay = false;
+        /**
+         * Optional heuristic.v1 weights.json for Dark. When set, Dark uses
+         * {@link ConfigurableHeuristicAi} instead of the builtin {@link #darkAi} skill.
+         */
+        public Path darkWeightsPath = null;
+        /** Optional heuristic.v1 weights.json for Light (same semantics as darkWeightsPath). */
+        public Path lightWeightsPath = null;
     }
 
     public static final class Result {
@@ -198,6 +206,21 @@ public final class HeadlessBotVsBotRunner {
     }
 
     public static SwccgAiController createAi(AiSkill skill) {
+        return createAi(skill, null);
+    }
+
+    /**
+     * When {@code weightsPath} is non-null, load a {@link ConfigurableHeuristicAi} from that
+     * heuristic.v1 weights.json (skill is ignored except as a fallback label).
+     */
+    public static SwccgAiController createAi(AiSkill skill, Path weightsPath) {
+        if (weightsPath != null) {
+            try {
+                return new ConfigurableHeuristicAi(weightsPath);
+            } catch (Exception e) {
+                throw new IllegalStateException("Failed to load heuristic weights from " + weightsPath, e);
+            }
+        }
         switch (skill == null ? AiSkill.BEGINNER : skill) {
             case ADVANCED:
                 return new AdvancedAi();
@@ -274,8 +297,8 @@ public final class HeadlessBotVsBotRunner {
             replayWriter.attach(game, Arrays.asList(DS_PLAYER, LS_PLAYER));
         }
 
-        SwccgAiController darkAi = createAi(cfg.darkAi);
-        SwccgAiController lightAi = createAi(cfg.lightAi);
+        SwccgAiController darkAi = createAi(cfg.darkAi, cfg.darkWeightsPath);
+        SwccgAiController lightAi = createAi(cfg.lightAi, cfg.lightWeightsPath);
         darkAi.setGame(game);
         lightAi.setGame(game);
 

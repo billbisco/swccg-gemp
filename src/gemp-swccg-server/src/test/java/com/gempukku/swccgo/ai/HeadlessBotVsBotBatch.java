@@ -55,6 +55,10 @@ public final class HeadlessBotVsBotBatch {
          */
         public Path replayDir = null;
         public boolean recordReplay = false;
+        /** Optional Dark heuristic.v1 weights.json (overrides builtin darkAi skill). */
+        public Path darkWeightsPath = null;
+        /** Optional Light heuristic.v1 weights.json (overrides builtin lightAi skill). */
+        public Path lightWeightsPath = null;
     }
 
     public static final class GameRow {
@@ -185,6 +189,8 @@ public final class HeadlessBotVsBotBatch {
                 gameCfg.progressEveryN = cfg.progressEveryN;
                 gameCfg.gameIndex = i;
                 gameCfg.traceWriter = traceWriter;
+                gameCfg.darkWeightsPath = cfg.darkWeightsPath;
+                gameCfg.lightWeightsPath = cfg.lightWeightsPath;
                 if (cfg.recordReplay || cfg.replayDir != null) {
                     gameCfg.recordReplay = true;
                     gameCfg.replayDir = cfg.replayDir != null
@@ -349,6 +355,10 @@ public final class HeadlessBotVsBotBatch {
                 cfg.darkAi = parseAi(arg.substring("--dark=".length()));
             } else if (arg.startsWith("--light=")) {
                 cfg.lightAi = parseAi(arg.substring("--light=".length()));
+            } else if (arg.startsWith("--dark-weights=")) {
+                cfg.darkWeightsPath = Paths.get(arg.substring("--dark-weights=".length()));
+            } else if (arg.startsWith("--light-weights=")) {
+                cfg.lightWeightsPath = Paths.get(arg.substring("--light-weights=".length()));
             } else if (arg.startsWith("--csv=")) {
                 cfg.outputCsv = Paths.get(arg.substring("--csv=".length()));
             } else if (arg.equals("--no-csv")) {

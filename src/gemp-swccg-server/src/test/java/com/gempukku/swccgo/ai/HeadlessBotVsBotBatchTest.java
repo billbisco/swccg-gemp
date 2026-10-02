@@ -64,6 +64,14 @@ public class HeadlessBotVsBotBatchTest {
         } else if (cfg.recordReplay) {
             cfg.replayDir = Paths.get("target", "headless-replays");
         }
+        String darkW = System.getProperty("headless.dark.weights");
+        if (darkW != null && !darkW.isEmpty()) {
+            cfg.darkWeightsPath = Paths.get(darkW);
+        }
+        String lightW = System.getProperty("headless.light.weights");
+        if (lightW != null && !lightW.isEmpty()) {
+            cfg.lightWeightsPath = Paths.get(lightW);
+        }
 
         HeadlessBotVsBotBatch.BatchResult batch = HeadlessBotVsBotBatch.runBatch(cfg);
         System.out.println("=== Batch " + dark + " vs " + light + " ===");
