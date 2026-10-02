@@ -528,6 +528,16 @@ public interface ZoneManipulation extends TestBase{
     }
 
     /**
+     * Directly stacks one or more cards face-down on a target card.
+     */
+    default void StackCardsFaceDownOn(PhysicalCardImpl on, PhysicalCardImpl...cards) {
+        Arrays.stream(cards).forEach(card -> {
+            RemoveCardZone(card);
+            gameState().stackCard(card, on, true, false, false);
+        });
+    }
+
+    /**
      * Directly stacks one or more cards on a target card, regardless of legality or costs.
      * @param on Which card the given cards should be stacked on.
      * @param faceDown true to stack face down (combat cards), false to stack face up
