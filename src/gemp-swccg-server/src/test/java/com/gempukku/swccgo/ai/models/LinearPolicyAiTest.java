@@ -137,4 +137,47 @@ public class LinearPolicyAiTest {
         assertTrue(linear instanceof LinearPolicyAi);
         assertEquals("linear.v1", ((LinearPolicyAi) linear).policyKind());
     }
+
+    @Test
+    public void zerosPassOptionalResponsesAndDoNotRepeatMoveOrActivate() {
+        LinearPolicyAi ai = LinearPolicyAi.zeros();
+        AwaitingDecision embark = actionChoice("Choose Move action or Pass", "Embark");
+        AwaitingDecision disembark = actionChoice("Choose Move action or Pass", "Disembark");
+        assertEquals("0", ai.decide("~OzzelBot", embark, null));
+        assertEquals("0", ai.decide("~OzzelBot", disembark, null));
+        assertEquals("second Embark loses to pass", "", ai.decide("~OzzelBot", embark, null));
+        assertEquals("second Disembark loses to pass", "", ai.decide("~OzzelBot", disembark, null));
+
+        AwaitingDecision transfer = actionChoice("Perform a ship-docked action or Pass", "Transfer to other starship");
+        assertEquals("0", ai.decide("~OzzelBot", transfer, null));
+        assertEquals("second Transfer loses to pass", "", ai.decide("~OzzelBot", transfer, null));
+
+        AwaitingDecision activate = actionChoice("Choose Activate action or Pass", "Activate Force");
+        assertEquals("0", ai.decide("~OzzelBot", activate, null));
+        assertEquals("second Activate Force loses to pass", "", ai.decide("~OzzelBot", activate, null));
+
+        AwaitingDecision optional = actionChoice("Use 1 Force - Optional responses", "Cancel your Alter");
+        assertEquals("optional response is passed", "", LinearPolicyAi.zeros().decide("~OzzelBot", optional, null));
+
+        // A non-zero weight disables the prior, so the same labels may repeat and optional windows may be answered.
+        float[] nudgedW = new float[FeatureLayoutV1.PACKED_DIM + LinearPolicyAi.DEFAULT_BAG_HASH_DIM + LinearPolicyAi.ACTION_FEAT_DIM];
+        nudgedW[0] = 0.01f;
+        LinearPolicyAi learned = new LinearPolicyAi(nudgedW, 0f, FeatureLayoutV1.PACKED_DIM,
+                LinearPolicyAi.DEFAULT_BAG_HASH_DIM, LinearPolicyAi.ACTION_FEAT_DIM, "nudge-repeat");
+        assertEquals("0", learned.decide("~OzzelBot", optional, null));
+        assertEquals("0", learned.decide("~OzzelBot", embark, null));
+        assertEquals("0", learned.decide("~OzzelBot", embark, null));
+    }
+
+    private static AwaitingDecision actionChoice(String decisionText, String actionText) {
+        AwaitingDecision decision = mock(AwaitingDecision.class);
+        when(decision.getDecisionType()).thenReturn(AwaitingDecisionType.CARD_ACTION_CHOICE);
+        when(decision.getText()).thenReturn(decisionText);
+        Map<String, String[]> params = new LinkedHashMap<>();
+        params.put("actionText", new String[] {actionText});
+        params.put("actionId", new String[] {"1"});
+        when(decision.getDecisionParameters()).thenReturn(params);
+        return decision;
+    }
+
 }

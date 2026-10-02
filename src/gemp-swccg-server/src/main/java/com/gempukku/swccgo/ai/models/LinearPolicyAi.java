@@ -35,17 +35,26 @@ import java.util.regex.Pattern;
  * <p>{@code W} all zeros (or omitted) is a legal stub. {@link #greedyIndex} is a
  * pure argmax and still keeps the earliest tie, which on an activate decision
  * is 0 Force. Choosing 0 fails the activate cost and the same action is offered
- * again, so a zeros pack livelocks. {@link #decide} therefore adds a tiny
- * anti-stall prior, not a skill and not a learned tactic, only when every
- * weight is exactly 0:
+ * again, so a zeros pack livelocks. A live WC96 game also livelocks by
+ * alternating free reversible moves (Embark / Disembark, or Transfer between docked starships) for the whole move
+ * phase. {@link #decide} therefore adds a tiny anti-stall prior, not a skill
+ * and not a learned tactic, only when every weight is exactly 0:
  * <ul>
  *   <li>real actions: 0</li>
  *   <li>non-zero activate / positive {@code integerNorm}: up to +{@value #ANTI_STALL}</li>
- *   <li>pass: -{@value #ANTI_STALL} (penalized, but less than the stall)</li>
+ *   <li>pass: -{@value #ANTI_STALL} (penalized, but less than activate-0)</li>
  *   <li>"activate 0" / zero-integer: -2×{@value #ANTI_STALL}</li>
+ *   <li>optional-response windows (decision text contains "optional") and a
+ *       legal pass: pass scores +1 so it wins. Not a judgment about the
+ *       response.</li>
+ *   <li>the same move-like or activate label (embark, disembark, transfer,
+ *       ship-dock, docking, move, shuttle, land, take off, enter, exit, activate, …) at most once per phase;
+ *       a repeat scores -3×{@value #ANTI_STALL} and loses to pass.</li>
  * </ul>
- * Any non-zero weight disables the prior. This class does not train and is not
- * distilled from AdvancedAi / YodaBot. Hall / table bots must not load it.
+ * Any non-zero weight disables the prior, including the optional-pass and
+ * once-per-phase limits, so a learned pack can still take those actions.
+ * This class does not train and is not distilled from AdvancedAi / YodaBot.
+ * Hall / table bots must not load it.
  *
  * <p>Action features ({@value #ACTION_FEAT_DIM}):
  * <ul>
@@ -77,6 +86,14 @@ public final class LinearPolicyAi implements SwccgAiController {
      */
     public static final float ANTI_STALL = 0.05f;
 
+    /**
+     * Move-like and activate labels a zeros seat may take at most once per phase.
+     * The second copy loses to Pass. Not skill: it only breaks reversible loops
+     * such as Embark/Disembark and Transfer to other starship. Matched on the lowercased action text.
+     */
+    private static final Pattern LIMITED_ONCE_PER_PHASE = Pattern.compile(
+            "^(?:move|embark|disembark|shuttle|activate|take off|land|enter|exit|relocate|transfer|ship-dock|docking)\\b.*");
+
     private static final int INTEGER_ENUM_CAP = 24;
     private static final Pattern ZERO_ACTIVATE = Pattern.compile(
             "^(?:integer\\s+0+|activate\\s+0+)(?:\\b.*)?$");
@@ -90,6 +107,9 @@ public final class LinearPolicyAi implements SwccgAiController {
     private final int actionFeatDim;
     private final String sourceLabel;
     private InformationSetTracker tracker;
+    /** Anti-stall only. Cleared when the phase changes. Not a tactic. */
+    private String stallPhaseKey = "";
+    private final LinkedHashSet<String> stallLimitedTexts = new LinkedHashSet<>();
 
     public LinearPolicyAi(float[] weights, float bias, int packedDim, int bagHashDim, int actionFeatDim,
                           String sourceLabel) {
@@ -194,9 +214,16 @@ public final class LinearPolicyAi implements SwccgAiController {
             Candidate c = candidates.get(i);
             feats[i] = actionFeatures(c.text, c.blueprintId, c.pass, c.integerNorm, c.indexNorm);
         }
-        int best = selectIndex(packed, bag, candidates, feats);
+        if (allZero(weights)) {
+            syncStallPhase(gameState);
+        }
+        int best = selectIndex(packed, bag, candidates, feats,
+                decision != null ? decision.getText() : null);
         if (best < 0 || best >= candidates.size()) {
-            return candidates.get(0).raw;
+            best = 0;
+        }
+        if (allZero(weights)) {
+            noteStallChoice(candidates.get(best));
         }
         return candidates.get(best).raw;
     }
@@ -205,15 +232,18 @@ public final class LinearPolicyAi implements SwccgAiController {
      * Greedy index, plus the anti-stall prior when {@code weights} are all zero.
      * Equal adjusted scores keep the earliest candidate.
      */
-    private int selectIndex(float[] packed, float[] bag, List<Candidate> candidates, float[][] feats) {
+    private int selectIndex(float[] packed, float[] bag, List<Candidate> candidates, float[][] feats,
+                            String decisionText) {
         boolean antiStall = allZero(weights);
+        boolean optional = antiStall && isOptionalResponse(decisionText);
         int best = 0;
         double bestScore = Double.NEGATIVE_INFINITY;
         for (int a = 0; a < candidates.size(); a++) {
             double score = scoreOf(packed, bag, feats[a], weights, bias);
             if (antiStall) {
                 Candidate c = candidates.get(a);
-                score += antiStallPrior(c.text, c.pass, c.integerNorm);
+                score += antiStallPrior(c.text, c.pass, c.integerNorm,
+                        isLimitedRepeat(c.text), optional);
             }
             if (score > bestScore) {
                 bestScore = score;
@@ -221,6 +251,49 @@ public final class LinearPolicyAi implements SwccgAiController {
             }
         }
         return best;
+    }
+
+    private void syncStallPhase(GameState gameState) {
+        String phase = phaseKey(gameState);
+        if (!phase.equals(stallPhaseKey)) {
+            stallPhaseKey = phase;
+            stallLimitedTexts.clear();
+        }
+    }
+
+    private void noteStallChoice(Candidate chosen) {
+        if (chosen == null || chosen.pass) {
+            return;
+        }
+        String text = normalize(chosen.text);
+        if (LIMITED_ONCE_PER_PHASE.matcher(text).matches()) {
+            stallLimitedTexts.add(text);
+        }
+    }
+
+    private boolean isLimitedRepeat(String text) {
+        String normalized = normalize(text);
+        return LIMITED_ONCE_PER_PHASE.matcher(normalized).matches()
+                && stallLimitedTexts.contains(normalized);
+    }
+
+    private static String phaseKey(GameState gameState) {
+        if (gameState == null || gameState.getCurrentPhase() == null) {
+            return "";
+        }
+        return gameState.getCurrentPhase().name();
+    }
+
+    /** Engine window title, e.g. "Optional responses" or "Use 1 Force - Optional responses". */
+    static boolean isOptionalResponse(String decisionText) {
+        if (decisionText == null) {
+            return false;
+        }
+        return decisionText.toLowerCase(Locale.ROOT).contains("optional");
+    }
+
+    private static String normalize(String text) {
+        return text == null ? "" : text.toLowerCase(Locale.ROOT).trim();
     }
 
     static boolean allZero(float[] w) {
@@ -236,12 +309,23 @@ public final class LinearPolicyAi implements SwccgAiController {
     }
 
     /**
-     * Tie-break for a zeros pack. Not skill: it only stops activate-0 from
-     * winning every tie. Pass is penalized, but less than a zero-integer stall,
-     * so a phase can still be passed. Non-zero activate and real actions win.
+     * Tie-break for a zeros pack. Not skill.
+     * Optional-response pass outranks every other zeros score. A repeated
+     * move/activate label scores below pass. Activate-0 still loses to a
+     * non-zero activate and to a first real action. An ordinary pass still
+     * loses to the first real action, so a phase is not skipped up front.
      */
-    static double antiStallPrior(String text, boolean pass, float integerNorm) {
+    static double antiStallPrior(String text, boolean pass, float integerNorm,
+                                 boolean repeatedLimited, boolean optionalResponse) {
         String normalized = text == null ? "" : text.toLowerCase(Locale.ROOT).trim();
+        if (optionalResponse && (pass || isPassText(normalized))) {
+            // Larger than ANTI_STALL so pass beats every other zeros action.
+            // Disabled entirely when any weight is non-zero.
+            return 1d;
+        }
+        if (repeatedLimited) {
+            return -3d * ANTI_STALL;
+        }
         if (ZERO_ACTIVATE.matcher(normalized).matches()) {
             return -2d * ANTI_STALL;
         }
