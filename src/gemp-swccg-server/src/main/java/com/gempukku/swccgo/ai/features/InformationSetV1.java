@@ -30,6 +30,8 @@ public final class InformationSetV1 {
     public final Map<String, Integer> ownDeckPrior = new LinkedHashMap<>();
     public final List<Map<String, Object>> ownHand = new ArrayList<>();
     public final List<Map<String, Object>> publicInPlay = new ArrayList<>();
+    /** Own Used/Lost cards whose identities are public right now (face-up pile or visible top). */
+    public final List<Map<String, Object>> ownPublicPiles = new ArrayList<>();
     public final List<Map<String, Object>> seenHistory = new ArrayList<>();
     public final List<Map<String, Object>> destinyRecycleAggregate = new ArrayList<>();
     public final List<Map<String, Object>> opponentRevealed = new ArrayList<>();
@@ -64,6 +66,7 @@ public final class InformationSetV1 {
         row.put("deckPrior", prior);
         row.put("ownHand", ownHand);
         row.put("publicInPlay", publicInPlay);
+        row.put("ownPublicPiles", ownPublicPiles);
         row.put("seenHistory", seenHistory);
         row.put("destinyRecycleAggregate", destinyRecycleAggregate);
         row.put("opponentRevealed", opponentRevealed);

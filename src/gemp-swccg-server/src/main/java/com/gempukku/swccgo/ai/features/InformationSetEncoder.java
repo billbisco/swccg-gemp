@@ -26,10 +26,9 @@ import java.util.Map;
  *
  * <p>Gaps for this slice (documented on {@link InformationSetV1#extractionGaps}):
  * <ul>
- *   <li>Examine-from-hand / sabacc / peek effects are not hooked (only destiny + interrupt).</li>
  *   <li>Own reserve shuffle is not notified on {@code GameStateListener}.</li>
- *   <li>High-destiny remaining estimate ignores Used/Lost identity scrapes and Reserve order.</li>
- *   <li>Proxies stay stubbed at zero.</li>
+ *   <li>Face-down Used-pile bodies are not identities (only the public top, or the whole pile when turned face up).</li>
+ *   <li>Reserve order stays unknown. Proxies stay stubbed at zero.</li>
  * </ul>
  */
 public final class InformationSetEncoder {
@@ -96,6 +95,7 @@ public final class InformationSetEncoder {
         fillDecisionFields(set, decision);
         fillOwnHand(set, gameState, playerId);
         fillPublicInPlayAndBoard(set, gameState, playerId, opponentId);
+        fillOwnPublicPiles(set, gameState, playerId);
         fillScalars(set, gameState, darkId, lightId, playerId, opponentId, deciderIsDark, tracker);
         encodePacked(set);
         return set;
@@ -267,6 +267,62 @@ public final class InformationSetEncoder {
         }
     }
 
+    /**
+     * Public own Used/Lost identities. Lost is face up unless turned over; Used is face down
+     * except the top card, unless the used piles have been turned face up.
+     * Opponent piles are never copied (no hand, no face-down bodies).
+     */
+    private static void fillOwnPublicPiles(InformationSetV1 set, GameState gameState, String playerId) {
+        List<Map<String, Object>> rows = new ArrayList<>();
+        for (PhysicalCard card : publicOwnPileCards(gameState, playerId)) {
+            Map<String, Object> row = cardBag(card, playerId, false);
+            if (row == null) {
+                continue;
+            }
+            Zone zone = card.getZone();
+            row.put("zone", zone != null ? zone.name() : "PILE");
+            row.put("publicPile", Boolean.TRUE);
+            rows.add(row);
+        }
+        rows.sort(Comparator.comparing(r -> String.valueOf(r.getOrDefault("blueprintId", ""))));
+        set.ownPublicPiles.clear();
+        set.ownPublicPiles.addAll(rows);
+    }
+
+    private static List<PhysicalCard> publicOwnPileCards(GameState gameState, String playerId) {
+        List<PhysicalCard> out = new ArrayList<>();
+        if (playerId == null) {
+            return out;
+        }
+        try {
+            boolean usedFaceUp = gameState.isUsedPilesTurnedOver();
+            addPublicPileCards(out, gameState.getUsedPile(playerId), usedFaceUp);
+            boolean lostFaceUp = !gameState.isLostPileTurnedOver(playerId);
+            addPublicPileCards(out, gameState.getLostPile(playerId), lostFaceUp);
+        } catch (RuntimeException ignored) {
+            // leave whatever was collected
+        }
+        return out;
+    }
+
+    private static void addPublicPileCards(List<PhysicalCard> out, List<PhysicalCard> pile, boolean wholePilePublic) {
+        if (pile == null || pile.isEmpty()) {
+            return;
+        }
+        if (wholePilePublic) {
+            for (PhysicalCard card : pile) {
+                if (card != null) {
+                    out.add(card);
+                }
+            }
+            return;
+        }
+        PhysicalCard top = pile.get(0);
+        if (top != null) {
+            out.add(top);
+        }
+    }
+
     private static void fillScalars(InformationSetV1 set, GameState gameState,
                                     String darkId, String lightId, String playerId, String opponentId,
                                     boolean deciderIsDark, InformationSetTracker tracker) {
@@ -378,23 +434,24 @@ public final class InformationSetEncoder {
         if (!hooked) {
             set.extractionGaps.add("destinyListenerNotHooked");
             set.extractionGaps.add("opponentRevealedNotAutoScraped");
-        } else {
             set.extractionGaps.add("examinePeekNotHooked");
             set.extractionGaps.add("sabaccRevealNotHooked");
         }
         set.extractionGaps.add("ownReserveShuffleNotHooked");
         set.extractionGaps.add("proxiesUnfilled");
-        set.extractionGaps.add("ownHighDestinyRemainingEstIgnoresUsedLost");
+        set.extractionGaps.add("buriedOwnUsedIdentitiesNotPublic");
     }
 
     /**
-     * Own remaining multiset estimate: starting prior minus known own hand and public
-     * in-play owned copies. Does not subtract Used/Lost identities or Reserve order.
+     * Own remaining multiset estimate: starting prior minus known own hand, public
+     * in-play owned copies, and currently public Used/Lost identities.
+     * Does not subtract face-down Used-pile bodies or Reserve order.
      */
     private static Map<String, Integer> estimateOwnRemaining(InformationSetV1 set) {
         Map<String, Integer> remaining = new LinkedHashMap<>(set.ownDeckPrior);
         subtractOwnedCounts(remaining, set.ownHand);
         subtractOwnedCounts(remaining, set.publicInPlay);
+        subtractOwnedCounts(remaining, set.ownPublicPiles);
         return remaining;
     }
 

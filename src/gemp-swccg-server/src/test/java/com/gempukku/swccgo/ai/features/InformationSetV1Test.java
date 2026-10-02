@@ -8,8 +8,10 @@ import com.gempukku.swccgo.common.Zone;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgCardBlueprint;
 import com.gempukku.swccgo.game.state.GameState;
+import com.gempukku.swccgo.logic.decisions.ArbitraryCardsSelectionDecision;
 import com.gempukku.swccgo.logic.decisions.AwaitingDecision;
 import com.gempukku.swccgo.logic.decisions.AwaitingDecisionType;
+import com.gempukku.swccgo.logic.decisions.DecisionResultInvalidException;
 import org.junit.Test;
 
 import java.nio.charset.StandardCharsets;
@@ -263,7 +265,9 @@ public class InformationSetV1Test {
 
         InformationSetV1 encoded = InformationSetEncoder.from(mockGameStateWithHands(), LIGHT, null, tracker, "open");
         assertFalse(encoded.extractionGaps.contains("destinyListenerNotHooked"));
-        assertTrue(encoded.extractionGaps.contains("examinePeekNotHooked"));
+        assertFalse(encoded.extractionGaps.contains("examinePeekNotHooked"));
+        assertFalse(encoded.extractionGaps.contains("sabaccRevealNotHooked"));
+        assertTrue(encoded.extractionGaps.contains("buriedOwnUsedIdentitiesNotPublic"));
         assertEquals(1, encoded.opponentRevealed.size());
 
     }
@@ -300,6 +304,113 @@ public class InformationSetV1Test {
         assertEquals("INTERRUPT_PLAYED", set.opponentRevealed.get(0).get("how"));
         assertEquals("1_200", set.opponentRevealed.get(0).get("blueprintId"));
         assertEquals(1, listener.getInterruptEvents());
+    }
+
+    @Test
+    public void examinedOpponentHandIsRecordedButOtherSeatsDecisionIsNot() {
+        InformationSetTracker tracker = new InformationSetTracker(LIGHT);
+        InformationSetGameStateListener listener = new InformationSetGameStateListener(tracker);
+
+        PhysicalCard oppHand = mockCard("secret_opp_bp", SECRET_OPP_TITLE, CardCategory.INTERRUPT,
+                Side.DARK, DARK, Zone.HAND, 5f);
+        ArbitraryCardsSelectionDecision shownToUs = new ArbitraryCardsSelectionDecision(
+                "Opponent's hand", Collections.singletonList(oppHand), Collections.<PhysicalCard>emptyList(), 0, 0) {
+            @Override
+            public void decisionMade(String result) throws DecisionResultInvalidException {
+            }
+        };
+        listener.decisionRequired(LIGHT, shownToUs);
+
+        assertEquals(1, tracker.seenHistorySize());
+        assertEquals(1, tracker.opponentRevealedSize());
+        assertEquals(1, tracker.aggregateSize());
+        assertEquals(64, tracker.getSeenHistoryCap());
+        InformationSetV1 set = new InformationSetV1();
+        tracker.copyInto(set);
+        assertEquals("EXAMINE_HAND", set.opponentRevealed.get(0).get("how"));
+        assertEquals("secret_opp_bp", set.opponentRevealed.get(0).get("blueprintId"));
+        assertEquals("SEEN_NOT_RECYCLED", set.seenHistory.get(0).get("recycleHint"));
+        assertFalse(set.seededFromExactOpponentDeck);
+
+        InformationSetTracker other = new InformationSetTracker(LIGHT);
+        InformationSetGameStateListener otherListener = new InformationSetGameStateListener(other);
+        otherListener.decisionRequired(DARK, shownToUs);
+        assertEquals(0, other.opponentRevealedSize());
+        assertEquals(0, other.seenHistorySize());
+        InformationSetV1 hidden = new InformationSetV1();
+        other.copyInto(hidden);
+        assertFalse(hidden.toMap().toString().contains(SECRET_OPP_TITLE));
+        assertFalse(hidden.seededFromExactOpponentDeck);
+    }
+
+    @Test
+    public void revealedSabaccHandIsRecordedAndUnrevealedSabaccIsNot() {
+        InformationSetTracker tracker = new InformationSetTracker(LIGHT);
+        InformationSetGameStateListener listener = new InformationSetGameStateListener(tracker);
+        GameState gs = mockGameStateWithHands();
+
+        PhysicalCard revealed = mockCard("8_008", "Sabacc Opponent Card", CardCategory.INTERRUPT,
+                Side.DARK, DARK, Zone.REVEALED_SABACC_HAND, 2f);
+        listener.cardCreated(revealed, gs, false);
+        listener.cardCreated(revealed, gs, true);
+
+        PhysicalCard hidden = mockCard("secret_sabacc_bp", SECRET_OPP_TITLE, CardCategory.INTERRUPT,
+                Side.DARK, DARK, Zone.SABACC_HAND, 3f);
+        listener.cardCreated(hidden, gs, false);
+
+        assertEquals(1, tracker.opponentRevealedSize());
+        assertEquals(1, tracker.seenHistorySize());
+        assertEquals(1, tracker.aggregateSize());
+        InformationSetV1 set = new InformationSetV1();
+        tracker.copyInto(set);
+        assertEquals("SABACC_REVEAL", set.opponentRevealed.get(0).get("how"));
+        assertEquals("8_008", set.opponentRevealed.get(0).get("blueprintId"));
+        assertFalse(set.toMap().toString().contains(SECRET_OPP_TITLE));
+        assertFalse(set.seededFromExactOpponentDeck);
+    }
+
+    @Test
+    public void publicUsedAndLostIdentitiesTightenRemainingEstimate() {
+        GameState gs = mockGameStateWithHands();
+        PhysicalCard lost = mockCard("2_001", "Public Lost", CardCategory.INTERRUPT,
+                Side.LIGHT, LIGHT, Zone.LOST_PILE, 6f);
+        PhysicalCard usedTop = mockCard("4_003", "Public Used Top", CardCategory.INTERRUPT,
+                Side.LIGHT, LIGHT, Zone.TOP_OF_USED_PILE, 5f);
+        PhysicalCard usedBuried = mockCard("4_002", "Buried Used", CardCategory.INTERRUPT,
+                Side.LIGHT, LIGHT, Zone.USED_PILE, 7f);
+        PhysicalCard oppLost = mockCard("opp_lost_bp", SECRET_OPP_TITLE, CardCategory.INTERRUPT,
+                Side.DARK, DARK, Zone.LOST_PILE, 6f);
+
+        when(gs.getLostPile(LIGHT)).thenReturn(Collections.singletonList(lost));
+        when(gs.getLostPile(DARK)).thenReturn(Collections.singletonList(oppLost));
+        when(gs.getUsedPile(LIGHT)).thenReturn(java.util.Arrays.asList(usedTop, usedBuried));
+        when(gs.isLostPileTurnedOver(LIGHT)).thenReturn(false);
+        when(gs.isLostPileTurnedOver(DARK)).thenReturn(false);
+        when(gs.isUsedPilesTurnedOver()).thenReturn(false);
+
+        InformationSetTracker tracker = new InformationSetTracker(LIGHT);
+        Map<String, Integer> prior = new LinkedHashMap<>();
+        prior.put("2_001", 1);
+        prior.put("4_002", 1);
+        prior.put("4_003", 1);
+        tracker.setOwnDeckPrior(prior);
+        Map<String, Float> hints = new LinkedHashMap<>();
+        hints.put("2_001", 6f);
+        hints.put("4_002", 7f);
+        hints.put("4_003", 5f);
+        tracker.setOwnBlueprintDestinyHints(hints);
+
+        InformationSetV1 set = InformationSetEncoder.from(gs, LIGHT, null, tracker, "premiere_anh");
+        assertFalse(set.seededFromExactOpponentDeck);
+        assertEquals(1f, set.scalars.get("ownHighDestinyRemainingEst"), 0.01f);
+        assertEquals(1f, set.scalars.get("ownRemainingEstimateUnique"), 0.01f);
+        String piles = String.valueOf(set.ownPublicPiles);
+        assertTrue(piles.contains("2_001"));
+        assertTrue(piles.contains("4_003"));
+        assertFalse(piles.contains("4_002"));
+        assertFalse(set.toMap().toString().contains(SECRET_OPP_TITLE));
+        assertTrue(set.extractionGaps.contains("buriedOwnUsedIdentitiesNotPublic"));
+        assertFalse(set.extractionGaps.contains("ownHighDestinyRemainingEstIgnoresUsedLost"));
     }
 
     private static GameState mockGameStateWithHands() {
