@@ -23,7 +23,7 @@ import java.util.Objects;
 public final class HeadlessBotVsBotBatch {
 
     public static final String CSV_HEADER =
-            "gameIndex,darkAi,lightAi,winner,darkDecisions,lightDecisions,darkTurns,lightTurns,elapsedMs,format,darkDeck,lightDeck,error";
+            "gameIndex,darkAi,lightAi,winner,darkDecisions,lightDecisions,darkTurns,lightTurns,elapsedMs,format,darkDeck,lightDeck,error,darkLifeForce,lightLifeForce";
 
     public static final class BatchConfig {
         public int games = 5;
@@ -59,9 +59,12 @@ public final class HeadlessBotVsBotBatch {
          */
         public Path replayDir = null;
         public boolean recordReplay = false;
-        /** Optional Dark heuristic.v1 weights.json (overrides builtin darkAi skill). */
+        /**
+         * Optional Dark weights. heuristic.v1 unless {@link #darkAi} is LINEAR, then linear.v1.
+         * LINEAR with a null path plays a zeros pack.
+         */
         public Path darkWeightsPath = null;
-        /** Optional Light heuristic.v1 weights.json (overrides builtin lightAi skill). */
+        /** Optional Light weights (same semantics as darkWeightsPath). */
         public Path lightWeightsPath = null;
     }
 
@@ -111,7 +114,9 @@ public final class HeadlessBotVsBotBatch {
                     csv(format),
                     csv(darkDeck),
                     csv(lightDeck),
-                    csv(error != null ? error : ""));
+                    csv(error != null ? error : ""),
+                    Integer.toString(result != null ? result.darkLifeForce : -1),
+                    Integer.toString(result != null ? result.lightLifeForce : -1));
         }
     }
 
@@ -375,6 +380,7 @@ public final class HeadlessBotVsBotBatch {
      */
     public static void main(String[] args) throws IOException {
         BatchConfig cfg = new BatchConfig();
+        Path linearWeights = null;
         for (String arg : args) {
             if (arg.startsWith("--games=")) {
                 cfg.games = Integer.parseInt(arg.substring("--games=".length()));
@@ -386,6 +392,8 @@ public final class HeadlessBotVsBotBatch {
                 cfg.darkWeightsPath = Paths.get(arg.substring("--dark-weights=".length()));
             } else if (arg.startsWith("--light-weights=")) {
                 cfg.lightWeightsPath = Paths.get(arg.substring("--light-weights=".length()));
+            } else if (arg.startsWith("--linear-weights=")) {
+                linearWeights = Paths.get(arg.substring("--linear-weights=".length()));
             } else if (arg.startsWith("--csv=")) {
                 cfg.outputCsv = Paths.get(arg.substring("--csv=".length()));
             } else if (arg.equals("--no-csv")) {
@@ -427,10 +435,19 @@ public final class HeadlessBotVsBotBatch {
             } else if (arg.equals("--help") || arg.equals("-h")) {
                 System.out.println("Usage: HeadlessBotVsBotBatch --games=5 --dark=BEGINNER --light=BEGINNER "
                         + "--csv=target/out.csv [--decks=open40|wc96] [--format=open|premiere_anh] "
+                        + "[--dark=LINEAR --linear-weights=linear.json] "
                         + "[--replay] [--replayDir=target/headless-replays] "
                         + "[--traces] [--tracesPath=target/traces.jsonl] "
                         + "[--verbose] [--maxDecisions=25000] [--maxMillis=180000]");
                 return;
+            }
+        }
+        if (linearWeights != null) {
+            if (cfg.darkAi == HeadlessBotVsBotRunner.AiSkill.LINEAR && cfg.darkWeightsPath == null) {
+                cfg.darkWeightsPath = linearWeights;
+            }
+            if (cfg.lightAi == HeadlessBotVsBotRunner.AiSkill.LINEAR && cfg.lightWeightsPath == null) {
+                cfg.lightWeightsPath = linearWeights;
             }
         }
 

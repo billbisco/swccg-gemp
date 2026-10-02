@@ -20,6 +20,7 @@ import static org.junit.Assert.fail;
  *   -Dtest=HeadlessBotVsBotBatchTest \
  *   -Dheadless.games=5 \
  *   -Dheadless.dark=BEGINNER -Dheadless.light=BEGINNER \
+ *   -Dheadless.dark=LINEAR -Dheadless.linear.weights=/path/linear.json \
  *   test
  * </pre>
  *
@@ -71,6 +72,16 @@ public class HeadlessBotVsBotBatchTest {
         String lightW = System.getProperty("headless.light.weights");
         if (lightW != null && !lightW.isEmpty()) {
             cfg.lightWeightsPath = Paths.get(lightW);
+        }
+        String linearW = System.getProperty("headless.linear.weights");
+        if (linearW != null && !linearW.isEmpty()) {
+            Path linearPath = Paths.get(linearW);
+            if (dark == HeadlessBotVsBotRunner.AiSkill.LINEAR && cfg.darkWeightsPath == null) {
+                cfg.darkWeightsPath = linearPath;
+            }
+            if (light == HeadlessBotVsBotRunner.AiSkill.LINEAR && cfg.lightWeightsPath == null) {
+                cfg.lightWeightsPath = linearPath;
+            }
         }
 
         HeadlessBotVsBotBatch.BatchResult batch = HeadlessBotVsBotBatch.runBatch(cfg);

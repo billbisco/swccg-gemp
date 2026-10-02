@@ -176,10 +176,11 @@ public final class HeadlessDecisionTraceWriter implements Closeable {
         writer.flush();
     }
 
-    /** One JSONL outcome line after the game ends (winner + format). */
+    /** One JSONL outcome line after the game ends (winner, format, final life force). */
     public synchronized void writeGameOutcome(String gameId, Integer gameIndex, String format,
                                               boolean finished, boolean cancelled, String winner,
-                                              String stopper, int decisionCount) throws IOException {
+                                              String stopper, int decisionCount,
+                                              int darkLifeForce, int lightLifeForce) throws IOException {
         Map<String, Object> row = new LinkedHashMap<>();
         row.put("type", "outcome");
         row.put("schemaVersion", 1);
@@ -194,6 +195,10 @@ public final class HeadlessDecisionTraceWriter implements Closeable {
         row.put("winner", winner);
         row.put("stopper", stopper != null ? stopper : "");
         row.put("decisionCount", decisionCount);
+        row.put("darkLF", darkLifeForce);
+        row.put("lightLF", lightLifeForce);
+        row.put("darkLifeForce", darkLifeForce);
+        row.put("lightLifeForce", lightLifeForce);
         writer.write(GSON.toJson(row));
         writer.newLine();
         linesWritten++;

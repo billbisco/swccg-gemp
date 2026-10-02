@@ -76,7 +76,9 @@ public final class HeadlessBotVsBotRunner {
     public enum AiSkill {
         BEGINNER,
         ADVANCED,
-        RANDO
+        RANDO,
+        /** Gym-cli linear.v1 policy. Zeros pack when no weights path is set. */
+        LINEAR
     }
 
     public static final class Config {
@@ -125,11 +127,11 @@ public final class HeadlessBotVsBotRunner {
         /** Convenience: when true and {@link #replayDir} is null, use {@code target/headless-replays}. */
         public boolean recordReplay = false;
         /**
-         * Optional heuristic.v1 weights.json for Dark. When set, Dark uses
-         * {@link ConfigurableHeuristicAi} instead of the builtin {@link #darkAi} skill.
+         * Optional weights file for Dark. {@code heuristic.v1} when {@link #darkAi} is not
+         * {@link AiSkill#LINEAR}; {@code linear.v1} when it is. Null LINEAR uses a zeros pack.
          */
         public Path darkWeightsPath = null;
-        /** Optional heuristic.v1 weights.json for Light (same semantics as darkWeightsPath). */
+        /** Optional weights file for Light (same semantics as darkWeightsPath). */
         public Path lightWeightsPath = null;
     }
 
@@ -222,10 +224,20 @@ public final class HeadlessBotVsBotRunner {
     }
 
     /**
-     * When {@code weightsPath} is non-null, load a {@link ConfigurableHeuristicAi} from that
-     * heuristic.v1 weights.json (skill is ignored except as a fallback label).
+     * {@link AiSkill#LINEAR} loads {@code linear.v1} from {@code weightsPath}, or a zeros pack
+     * when the path is null. Any other skill with a non-null path loads heuristic.v1
+     * {@link ConfigurableHeuristicAi}. {@link AiSkill#BEGINNER} with a null path stays BeginnerAi.
      */
     public static SwccgAiController createAi(AiSkill skill, Path weightsPath) {
+        AiSkill resolved = skill == null ? AiSkill.BEGINNER : skill;
+        if (resolved == AiSkill.LINEAR) {
+            try {
+                return weightsPath != null ? com.gempukku.swccgo.ai.models.LinearPolicyAi.load(weightsPath)
+                        : com.gempukku.swccgo.ai.models.LinearPolicyAi.zeros();
+            } catch (Exception e) {
+                throw new IllegalStateException("Failed to load linear.v1 weights from " + weightsPath, e);
+            }
+        }
         if (weightsPath != null) {
             try {
                 return new ConfigurableHeuristicAi(weightsPath);
@@ -233,11 +245,13 @@ public final class HeadlessBotVsBotRunner {
                 throw new IllegalStateException("Failed to load heuristic weights from " + weightsPath, e);
             }
         }
-        switch (skill == null ? AiSkill.BEGINNER : skill) {
+        switch (resolved) {
             case ADVANCED:
                 return new AdvancedAi();
             case RANDO:
                 return new RandoCalAi();
+            case LINEAR:
+                return com.gempukku.swccgo.ai.models.LinearPolicyAi.zeros();
             case BEGINNER:
             default:
                 return new BeginnerAi();
@@ -532,6 +546,9 @@ public final class HeadlessBotVsBotRunner {
             }
             if (cfg.traceWriter != null) {
                 try {
+                    GameState outcomeGs = game.getGameState();
+                    int outcomeDarkLf = outcomeGs != null ? outcomeGs.getPlayerLifeForce(DS_PLAYER) : -1;
+                    int outcomeLightLf = outcomeGs != null ? outcomeGs.getPlayerLifeForce(LS_PLAYER) : -1;
                     cfg.traceWriter.writeGameOutcome(
                             gameId,
                             cfg.gameIndex,
@@ -540,7 +557,9 @@ public final class HeadlessBotVsBotRunner {
                             game.isCancelled(),
                             game.getWinner(),
                             stopper,
-                            decisionCount);
+                            decisionCount,
+                            outcomeDarkLf,
+                            outcomeLightLf);
                 } catch (Exception ex) {
                     System.err.println("[headless] trace outcome failed: " + ex.getClass().getSimpleName()
                             + ": " + ex.getMessage());
