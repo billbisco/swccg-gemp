@@ -46,6 +46,10 @@ public final class HeadlessBotVsBotBatch {
         /** JSONL path when {@link #writeTraces} is true. Default under target/. */
         public Path tracesPath = Paths.get(HeadlessDecisionTraceWriter.DEFAULT_PATH);
         /**
+         * COMPACT or FEATURES. Default follows {@code -Dheadless.traceLevel} when unset here.
+         */
+        public HeadlessDecisionTraceWriter.TraceLevel traceLevel = null;
+        /**
          * Deck pack: {@link HeadlessBotVsBotRunner#DECK_OPEN40} or
          * {@link HeadlessBotVsBotRunner#DECK_WC96}.
          */
@@ -187,8 +191,11 @@ public final class HeadlessBotVsBotBatch {
         if (cfg.writeTraces) {
             tracesPath = (cfg.tracesPath != null ? cfg.tracesPath
                     : Paths.get(HeadlessDecisionTraceWriter.DEFAULT_PATH)).toAbsolutePath().normalize();
-            traceWriter = new HeadlessDecisionTraceWriter(tracesPath);
-            System.out.println("[batch] writing decision traces: " + tracesPath);
+            HeadlessDecisionTraceWriter.TraceLevel level = cfg.traceLevel != null
+                    ? cfg.traceLevel
+                    : HeadlessDecisionTraceWriter.levelFromSystemProperties();
+            traceWriter = new HeadlessDecisionTraceWriter(tracesPath, level);
+            System.out.println("[batch] writing decision traces: " + tracesPath + " level=" + level);
         }
 
         try {
@@ -204,6 +211,11 @@ public final class HeadlessBotVsBotBatch {
                 gameCfg.progressEveryN = cfg.progressEveryN;
                 gameCfg.gameIndex = i;
                 gameCfg.traceWriter = traceWriter;
+                if (traceWriter != null) {
+                    gameCfg.traceLevel = traceWriter.getTraceLevel();
+                } else if (cfg.traceLevel != null) {
+                    gameCfg.traceLevel = cfg.traceLevel;
+                }
                 gameCfg.darkWeightsPath = cfg.darkWeightsPath;
                 gameCfg.lightWeightsPath = cfg.lightWeightsPath;
                 if (cfg.recordReplay || cfg.replayDir != null) {

@@ -1,14 +1,37 @@
 package com.gempukku.swccgo.ai.features;
 
+import com.gempukku.swccgo.common.CardCategory;
+import com.gempukku.swccgo.common.Phase;
+import com.gempukku.swccgo.common.Side;
+import com.gempukku.swccgo.common.Zone;
+import com.gempukku.swccgo.game.PhysicalCard;
+import com.gempukku.swccgo.game.SwccgCardBlueprint;
+import com.gempukku.swccgo.game.state.GameState;
+import com.gempukku.swccgo.logic.decisions.AwaitingDecision;
+import com.gempukku.swccgo.logic.decisions.AwaitingDecisionType;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
- * Packs an {@link InformationSetV1} into float32[128].
+ * Builds and packs {@link InformationSetV1} from a live {@link GameState}.
  *
- * <p>This is not a {@code GameState} encoder. It does not read hands, piles, or
- * destiny from the rules engine. It also does not score actions or train a policy.
- * Normalization below is a stable stub (documented divisors), not the final
- * tactical formula set.
+ * <p>Legal information only: own hand identities, both life-force and pile <em>sizes</em>,
+ * public in-play cards, and tracker bags. Never encodes opponent hand blueprint ids/titles
+ * or Reserve/Used order. Never accepts an exact opponent decklist.
+ *
+ * <p>Gaps for this slice (documented on {@link InformationSetV1#extractionGaps}):
+ * <ul>
+ *   <li>Destiny / reveal listeners are not hooked — {@code seenHistory} and
+ *       {@code destinyRecycleAggregate} only reflect what the caller already pushed into
+ *       the tracker.</li>
+ *   <li>Opponent revealed set is tracker-only (plays are not auto-scraped yet).</li>
+ *   <li>Proxies and high-destiny remaining estimate stay stubbed at zero.</li>
+ * </ul>
  */
 public final class InformationSetEncoder {
 
@@ -27,7 +50,56 @@ public final class InformationSetEncoder {
             "phaseIndex", "publicInPlayCount", "comboPieceCountInHand"
     };
 
+    /** Soft cap so FEATURES JSONL lines stay bounded. */
+    private static final int PUBLIC_IN_PLAY_CAP = 96;
+
     private InformationSetEncoder() {
+    }
+
+    /**
+     * Walk {@code gameState} for the deciding seat and pack float32[128].
+     *
+     * @param tracker optional match-scoped memory; when null, bags for seen/destiny/reveals stay empty
+     */
+    public static InformationSetV1 from(GameState gameState, String playerId, AwaitingDecision decision,
+                                        InformationSetTracker tracker, String format) {
+        if (gameState == null) {
+            throw new IllegalArgumentException("gameState required");
+        }
+        if (playerId == null || playerId.isBlank()) {
+            throw new IllegalArgumentException("playerId required");
+        }
+
+        InformationSetV1 set = new InformationSetV1();
+        set.format = format != null ? format : "";
+        set.playerId = playerId;
+        set.seededFromExactOpponentDeck = false;
+
+        Side side = safeSide(gameState, playerId);
+        set.side = side != null ? side.name() : "DARK";
+
+        Phase phase = gameState.getCurrentPhase();
+        set.phase = phase != null ? phase.name() : "BETWEEN_TURNS";
+
+        if (tracker != null) {
+            if (!playerId.equals(tracker.getPlayerId())) {
+                throw new IllegalArgumentException("tracker playerId mismatch: tracker="
+                        + tracker.getPlayerId() + " decider=" + playerId);
+            }
+            tracker.copyInto(set);
+        }
+
+        String darkId = gameState.getDarkPlayer();
+        String lightId = gameState.getLightPlayer();
+        String opponentId = gameState.getOpponent(playerId);
+        boolean deciderIsDark = darkId != null && darkId.equals(playerId);
+
+        fillDecisionFields(set, decision);
+        fillOwnHand(set, gameState, playerId);
+        fillPublicInPlayAndBoard(set, gameState, playerId, opponentId);
+        fillScalars(set, gameState, darkId, lightId, playerId, opponentId, deciderIsDark, tracker);
+        encodePacked(set);
+        return set;
     }
 
     public static float[] encodePacked(InformationSetV1 set) {
@@ -87,6 +159,416 @@ public final class InformationSetEncoder {
         }
         System.arraycopy(packed, 0, set.packed, 0, FeatureLayoutV1.PACKED_DIM);
         return packed;
+    }
+
+    private static void fillDecisionFields(InformationSetV1 set, AwaitingDecision decision) {
+        if (decision == null) {
+            set.decisionType = "EMPTY";
+            return;
+        }
+        AwaitingDecisionType type = decision.getDecisionType();
+        set.decisionType = type != null ? type.name() : "EMPTY";
+        String text = decision.getText() != null ? decision.getText() : "";
+        String textLower = text.toLowerCase(Locale.ROOT);
+        Map<String, String[]> params = decision.getDecisionParameters();
+
+        int optionCount = 0;
+        if (params != null) {
+            optionCount = maxAlignedOptionCount(params);
+            String[] noPass = params.get("noPass");
+            boolean must = noPass != null && noPass.length > 0 && Boolean.parseBoolean(noPass[0]);
+            set.mustChoose = must;
+            set.passAvailable = !must;
+            if (type == AwaitingDecisionType.INTEGER) {
+                set.activateMin = parseIntParam(params.get("min"), 0);
+                set.activateMax = parseIntParam(params.get("max"), 0);
+            }
+        }
+        set.optionCount = optionCount;
+        set.isActivateDecision = type == AwaitingDecisionType.INTEGER
+                && (textLower.contains("activate") || textLower.contains("force"));
+
+        set.flags[5] = set.mustChoose;
+        set.flags[6] = set.passAvailable;
+        set.flags[7] = set.isActivateDecision;
+    }
+
+    private static void fillOwnHand(InformationSetV1 set, GameState gameState, String playerId) {
+        List<PhysicalCard> hand;
+        try {
+            hand = gameState.getHand(playerId);
+        } catch (RuntimeException ex) {
+            return;
+        }
+        if (hand == null) {
+            return;
+        }
+        List<Map<String, Object>> rows = new ArrayList<>(hand.size());
+        for (PhysicalCard card : hand) {
+            Map<String, Object> row = cardBag(card, playerId, true);
+            if (row != null) {
+                rows.add(row);
+            }
+        }
+        rows.sort(Comparator.comparing(r -> String.valueOf(r.getOrDefault("blueprintId", ""))));
+        set.ownHand.clear();
+        set.ownHand.addAll(rows);
+    }
+
+    private static void fillPublicInPlayAndBoard(InformationSetV1 set, GameState gameState,
+                                                 String playerId, String opponentId) {
+        float[] board = set.boardCounts;
+        List<Map<String, Object>> inPlay = new ArrayList<>();
+        List<PhysicalCard> all;
+        try {
+            all = gameState.getAllPermanentCards();
+        } catch (RuntimeException ex) {
+            return;
+        }
+        if (all == null) {
+            return;
+        }
+        for (PhysicalCard card : all) {
+            if (card == null) {
+                continue;
+            }
+            Zone zone = card.getZone();
+            if (zone == null || !zone.isInPlay()) {
+                continue;
+            }
+            SwccgCardBlueprint blueprint = card.getBlueprint();
+            if (blueprint == null) {
+                continue;
+            }
+            CardCategory category = blueprint.getCardCategory();
+            String owner = card.getOwner();
+            boolean deciderOwned = playerId.equals(owner);
+            boolean opponentOwned = opponentId != null && opponentId.equals(owner);
+            bumpBoard(board, category, deciderOwned, opponentOwned);
+
+            if (inPlay.size() < PUBLIC_IN_PLAY_CAP) {
+                Map<String, Object> row = cardBag(card, playerId, false);
+                if (row != null) {
+                    row.put("zone", zone.name());
+                    inPlay.add(row);
+                }
+            }
+        }
+        inPlay.sort(Comparator.comparing(r -> String.valueOf(r.getOrDefault("blueprintId", ""))));
+        set.publicInPlay.clear();
+        set.publicInPlay.addAll(inPlay);
+
+        try {
+            List<PhysicalCard> locations = gameState.getLocationsInOrder();
+            if (locations != null) {
+                set.scalars.put("locationCount", (float) locations.size());
+            }
+        } catch (RuntimeException ignored) {
+            // leave unset
+        }
+    }
+
+    private static void fillScalars(InformationSetV1 set, GameState gameState,
+                                    String darkId, String lightId, String playerId, String opponentId,
+                                    boolean deciderIsDark, InformationSetTracker tracker) {
+        int darkTurn = safeTurn(gameState, darkId);
+        int lightTurn = safeTurn(gameState, lightId);
+        int darkLF = safeLF(gameState, darkId);
+        int lightLF = safeLF(gameState, lightId);
+        int darkHand = safeHandSizeOnly(gameState, darkId);
+        int lightHand = safeHandSizeOnly(gameState, lightId);
+        int darkReserve = safeReserve(gameState, darkId);
+        int lightReserve = safeReserve(gameState, lightId);
+        int darkForce = safeForcePile(gameState, darkId);
+        int lightForce = safeForcePile(gameState, lightId);
+        int darkUsed = safePileSize(gameState, darkId, true);
+        int lightUsed = safePileSize(gameState, lightId, true);
+        int darkLost = safePileSize(gameState, darkId, false);
+        int lightLost = safePileSize(gameState, lightId, false);
+        float darkGen = safeForceGen(gameState, darkId);
+        float lightGen = safeForceGen(gameState, lightId);
+
+        int deciderTurn = deciderIsDark ? darkTurn : lightTurn;
+        int opponentTurn = deciderIsDark ? lightTurn : darkTurn;
+        int deciderLF = deciderIsDark ? darkLF : lightLF;
+        int opponentLF = deciderIsDark ? lightLF : darkLF;
+        int deciderHand = deciderIsDark ? darkHand : lightHand;
+        int opponentHand = deciderIsDark ? lightHand : darkHand;
+        int deciderReserve = deciderIsDark ? darkReserve : lightReserve;
+        int opponentReserve = deciderIsDark ? lightReserve : darkReserve;
+        int deciderForce = deciderIsDark ? darkForce : lightForce;
+        int opponentForce = deciderIsDark ? lightForce : darkForce;
+        int deciderUsed = deciderIsDark ? darkUsed : lightUsed;
+        int opponentUsed = deciderIsDark ? lightUsed : darkUsed;
+        int deciderLost = deciderIsDark ? darkLost : lightLost;
+        int opponentLost = deciderIsDark ? lightLost : darkLost;
+        float deciderGen = deciderIsDark ? darkGen : lightGen;
+        float opponentGen = deciderIsDark ? lightGen : darkGen;
+
+        put(set, "darkTurn", darkTurn);
+        put(set, "lightTurn", lightTurn);
+        put(set, "deciderTurn", deciderTurn);
+        put(set, "opponentTurn", opponentTurn);
+        put(set, "darkLF", darkLF);
+        put(set, "lightLF", lightLF);
+        put(set, "deciderLF", deciderLF);
+        put(set, "opponentLF", opponentLF);
+        put(set, "lfDiff", deciderLF - opponentLF);
+        put(set, "darkForceGen", darkGen);
+        put(set, "lightForceGen", lightGen);
+        put(set, "deciderForceGen", deciderGen);
+        put(set, "opponentForceGen", opponentGen);
+        put(set, "darkHandSize", darkHand);
+        put(set, "lightHandSize", lightHand);
+        put(set, "deciderHandSize", deciderHand);
+        put(set, "opponentHandSize", opponentHand);
+        put(set, "darkReserveSize", darkReserve);
+        put(set, "darkForcePileSize", darkForce);
+        put(set, "darkUsedSize", darkUsed);
+        put(set, "darkLostSize", darkLost);
+        put(set, "lightReserveSize", lightReserve);
+        put(set, "lightForcePileSize", lightForce);
+        put(set, "lightUsedSize", lightUsed);
+        put(set, "lightLostSize", lightLost);
+        put(set, "deciderReserveSize", deciderReserve);
+        put(set, "deciderForcePileSize", deciderForce);
+        put(set, "deciderUsedSize", deciderUsed);
+        put(set, "deciderLostSize", deciderLost);
+        put(set, "opponentReserveSize", opponentReserve);
+        put(set, "opponentForcePileSize", opponentForce);
+        put(set, "opponentUsedSize", opponentUsed);
+        put(set, "opponentLostSize", opponentLost);
+        put(set, "optionCount", set.optionCount);
+        put(set, "activateMin", set.activateMin);
+        put(set, "activateMax", set.activateMax);
+        put(set, "shufflesSinceLastSeenOwn", tracker != null ? tracker.getShufflesOwnReserve() : 0);
+        put(set, "ownSeenDestinyCount", set.destinyRecycleAggregate.size());
+        put(set, "oppRevealedCount", set.opponentRevealed.size());
+        put(set, "ownRemainingEstimateUnique", set.ownDeckPrior.size());
+        put(set, "ownHighDestinyRemainingEst", 0);
+        put(set, "phaseIndex", Math.max(0, FeatureLayoutV1.phaseIndex(set.phase)));
+        put(set, "publicInPlayCount", set.publicInPlay.size());
+        put(set, "comboPieceCountInHand", 0);
+
+        try {
+            set.flags[0] = gameState.isDuringForceDrain();
+            set.flags[1] = gameState.isDuringForceDrainInitiatedBy(playerId);
+            set.flags[2] = gameState.isDuringBattle();
+        } catch (RuntimeException ignored) {
+            // leave false
+        }
+        try {
+            set.flags[3] = gameState.getObjectivePlayed(playerId) != null;
+            if (opponentId != null) {
+                set.flags[4] = gameState.getObjectivePlayed(opponentId) != null;
+            }
+        } catch (RuntimeException ignored) {
+            // leave false
+        }
+
+        set.extractionGaps.add("destinyListenerNotHooked");
+        set.extractionGaps.add("opponentRevealedNotAutoScraped");
+        set.extractionGaps.add("proxiesUnfilled");
+        set.extractionGaps.add("ownHighDestinyRemainingEstStub");
+    }
+
+    private static Map<String, Object> cardBag(PhysicalCard card, String deciderId, boolean isHand) {
+        if (card == null) {
+            return null;
+        }
+        SwccgCardBlueprint blueprint = card.getBlueprint();
+        Map<String, Object> row = new LinkedHashMap<>();
+        String blueprintId;
+        try {
+            blueprintId = card.getBlueprintId(true);
+        } catch (RuntimeException ex) {
+            blueprintId = null;
+        }
+        if (blueprintId == null || blueprintId.isEmpty()) {
+            return null;
+        }
+        row.put("blueprintId", blueprintId);
+        String title = card.getTitle();
+        if (title != null) {
+            row.put("title", title);
+        }
+        if (blueprint != null) {
+            CardCategory category = blueprint.getCardCategory();
+            if (category != null) {
+                row.put("category", category.name());
+            }
+            Float destiny = blueprint.getDestiny();
+            if (destiny != null) {
+                row.put("destiny", destiny.doubleValue());
+            }
+            Side ownerSide = blueprint.getSide();
+            if (ownerSide != null) {
+                row.put("ownerSide", ownerSide.name());
+            }
+        }
+        String owner = card.getOwner();
+        row.put("isDeciderOwned", deciderId != null && deciderId.equals(owner));
+        if (isHand) {
+            row.put("zone", Zone.HAND.name());
+        }
+        return row;
+    }
+
+    private static void bumpBoard(float[] board, CardCategory category, boolean deciderOwned, boolean opponentOwned) {
+        if (category == null || (!deciderOwned && !opponentOwned)) {
+            return;
+        }
+        int offset;
+        switch (category) {
+            case CHARACTER:
+                offset = 0;
+                break;
+            case STARSHIP:
+                offset = 1;
+                break;
+            case VEHICLE:
+                offset = 2;
+                break;
+            case WEAPON:
+                offset = 3;
+                break;
+            case DEVICE:
+                offset = 4;
+                break;
+            case EFFECT:
+                offset = 5;
+                break;
+            case INTERRUPT:
+                offset = 6;
+                break;
+            case LOCATION:
+                offset = 7;
+                break;
+            default:
+                return;
+        }
+        int base = deciderOwned ? 0 : 8;
+        int idx = base + offset;
+        if (idx >= 0 && idx < board.length) {
+            board[idx] += 1f;
+        }
+    }
+
+    private static void put(InformationSetV1 set, String key, float value) {
+        set.scalars.put(key, value);
+    }
+
+    private static Side safeSide(GameState gameState, String playerId) {
+        try {
+            return gameState.getSide(playerId);
+        } catch (RuntimeException ex) {
+            return null;
+        }
+    }
+
+    private static int safeTurn(GameState gameState, String playerId) {
+        if (playerId == null) {
+            return 0;
+        }
+        try {
+            return gameState.getPlayersLatestTurnNumber(playerId);
+        } catch (RuntimeException ex) {
+            return 0;
+        }
+    }
+
+    private static int safeLF(GameState gameState, String playerId) {
+        if (playerId == null) {
+            return 0;
+        }
+        try {
+            return gameState.getPlayerLifeForce(playerId);
+        } catch (RuntimeException ex) {
+            return 0;
+        }
+    }
+
+    /**
+     * Hand <em>size</em> only. Uses {@link List#size()} and never iterates card identities
+     * for the opponent seat.
+     */
+    private static int safeHandSizeOnly(GameState gameState, String playerId) {
+        if (playerId == null) {
+            return 0;
+        }
+        try {
+            List<PhysicalCard> hand = gameState.getHand(playerId);
+            return hand != null ? hand.size() : 0;
+        } catch (RuntimeException ex) {
+            return 0;
+        }
+    }
+
+    private static int safeReserve(GameState gameState, String playerId) {
+        if (playerId == null) {
+            return 0;
+        }
+        try {
+            return gameState.getReserveDeckSize(playerId);
+        } catch (RuntimeException ex) {
+            return 0;
+        }
+    }
+
+    private static int safeForcePile(GameState gameState, String playerId) {
+        if (playerId == null) {
+            return 0;
+        }
+        try {
+            return gameState.getForcePileSize(playerId);
+        } catch (RuntimeException ex) {
+            return 0;
+        }
+    }
+
+    private static int safePileSize(GameState gameState, String playerId, boolean used) {
+        if (playerId == null) {
+            return 0;
+        }
+        try {
+            List<PhysicalCard> pile = used ? gameState.getUsedPile(playerId) : gameState.getLostPile(playerId);
+            return pile != null ? pile.size() : 0;
+        } catch (RuntimeException ex) {
+            return 0;
+        }
+    }
+
+    private static float safeForceGen(GameState gameState, String playerId) {
+        if (playerId == null) {
+            return 0f;
+        }
+        try {
+            return gameState.getPlayersTotalForceGeneration(playerId);
+        } catch (RuntimeException ex) {
+            return 0f;
+        }
+    }
+
+    private static int maxAlignedOptionCount(Map<String, String[]> params) {
+        int n = 0;
+        for (String key : new String[]{"actionId", "cardId", "blueprintId", "actionText", "results", "cardText"}) {
+            String[] vals = params.get(key);
+            if (vals != null && vals.length > n) {
+                n = vals.length;
+            }
+        }
+        return n;
+    }
+
+    private static int parseIntParam(String[] vals, int fallback) {
+        if (vals == null || vals.length == 0 || vals[0] == null || vals[0].isEmpty()) {
+            return fallback;
+        }
+        try {
+            return Integer.parseInt(vals[0].trim());
+        } catch (NumberFormatException ex) {
+            return fallback;
+        }
     }
 
     private static float normalizeScalar(String label, float raw) {
