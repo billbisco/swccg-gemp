@@ -169,6 +169,49 @@ public class LinearPolicyAiTest {
         assertEquals("0", learned.decide("~OzzelBot", embark, null));
     }
 
+    @Test
+    public void packedInteractionFlipsTheChosenAction() {
+        // Identical features except bit 0. That bit pairs with packed slot 0
+        // (0 % INTERACT_FEAT_DIM == 0). Direct action weights alone cannot flip.
+        int bit = 0;
+        float[] featA = new float[LinearPolicyAi.ACTION_FEAT_DIM];
+        float[] featB = new float[LinearPolicyAi.ACTION_FEAT_DIM];
+        featA[bit] = 1f;
+        featA[LinearPolicyAi.AF_ONES] = 1f;
+        featB[LinearPolicyAi.AF_ONES] = 1f;
+        float[][] actions = new float[][] {featA, featB};
+
+        float[] p1 = new float[FeatureLayoutV1.PACKED_DIM];
+        p1[bit] = 1f;
+        float[] p2 = new float[FeatureLayoutV1.PACKED_DIM];
+        p2[bit] = -1f;
+
+        int width16 = FeatureLayoutV1.PACKED_DIM + LinearPolicyAi.DEFAULT_BAG_HASH_DIM
+                + LinearPolicyAi.ACTION_FEAT_DIM;
+        float[] interact = new float[width16];
+        interact[bit] = 1f;
+        float[] bag = new float[LinearPolicyAi.DEFAULT_BAG_HASH_DIM];
+        assertEquals("P1 prefers the action with the bit set",
+                0, LinearPolicyAi.greedyIndex(p1, bag, actions, interact, 0f));
+        assertEquals("P2 prefers the action with the bit clear",
+                1, LinearPolicyAi.greedyIndex(p2, bag, actions, interact, 0f));
+
+        int width0 = FeatureLayoutV1.PACKED_DIM + LinearPolicyAi.ACTION_FEAT_DIM;
+        float[] interactNoBag = new float[width0];
+        interactNoBag[bit] = 1f;
+        assertEquals(0, LinearPolicyAi.greedyIndex(p1, new float[0], actions, interactNoBag, 0f));
+        assertEquals(1, LinearPolicyAi.greedyIndex(p2, new float[0], actions, interactNoBag, 0f));
+
+        float[] directOnly = new float[width0];
+        directOnly[FeatureLayoutV1.PACKED_DIM + bit] = 1f;
+        assertEquals("direct weight does not depend on packed",
+                0, LinearPolicyAi.greedyIndex(p1, new float[0], actions, directOnly, 0f));
+        assertEquals(0, LinearPolicyAi.greedyIndex(p2, new float[0], actions, directOnly, 0f));
+
+        assertEquals("zeros still tie to the earliest action",
+                0, LinearPolicyAi.greedyIndex(p1, bag, actions, new float[width16], 0f));
+    }
+
     private static AwaitingDecision actionChoice(String decisionText, String actionText) {
         AwaitingDecision decision = mock(AwaitingDecision.class);
         when(decision.getDecisionType()).thenReturn(AwaitingDecisionType.CARD_ACTION_CHOICE);

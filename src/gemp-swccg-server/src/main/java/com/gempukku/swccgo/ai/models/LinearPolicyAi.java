@@ -28,9 +28,13 @@ import java.util.regex.Pattern;
 /**
  * Gym-cli linear policy over {@link InformationSetV1#packed}.
  *
- * <p>Score for action {@code a} is
- * {@code bias + dot(W, concat(packed[packedDim], bagHash[bagHashDim], actionFeat[actionFeatDim]))}.
- * Choice is greedy argmax. Ties keep the earliest legal candidate.
+ * <p>Score for action {@code a} is {@code bias}, plus a direct dot of the last
+ * {@code actionFeatDim} weights with {@code actionFeat(a)}, plus a state interaction
+ * stored in the same {@code W} (length still packed + bag + action):
+ * {@code W[i] * packed[i] * actionFeat[i % INTERACT_FEAT_DIM]} for each packed slot,
+ * and the same pairing for each bag-hash slot. {@code INTERACT_FEAT_DIM} is every
+ * action feature except the constant 1, which is identical on every action and
+ * cannot change the argmax. Choice is greedy argmax. Ties keep the earliest legal candidate.
  *
  * <p>{@code W} all zeros (or omitted) is a legal stub. {@link #greedyIndex} is a
  * pure argmax and still keeps the earliest tie, which on an activate decision
@@ -79,6 +83,12 @@ public final class LinearPolicyAi implements SwccgAiController {
     public static final int AF_BP_HASH = 19;
     public static final int AF_BP_BUCKETS = 4;
     public static final int AF_ONES = 23;
+    /**
+     * Action features that may be multiplied by a packed or bag-hash state value.
+     * Excludes {@link #AF_ONES}: that feature is 1 on every action, so pairing a
+     * state weight with it would add the same number to every score.
+     */
+    public static final int INTERACT_FEAT_DIM = AF_ONES;
 
     /**
      * Anti-stall magnitude for an all-zero / omitted {@code W}. Not skill.
@@ -342,6 +352,8 @@ public final class LinearPolicyAi implements SwccgAiController {
     /**
      * Greedy index. Equal scores keep the lowest index.
      * {@code bagHash} may be empty when the pack is packed-only ({@code bagHashDim == 0}).
+     * Packed and bag weights change this index only through {@link #scoreOf}'s
+     * per-action interaction, not as a constant added to every action.
      */
     public static int greedyIndex(float[] packed, float[] bagHash, float[][] actionFeats, float[] w, float bias) {
         if (actionFeats == null || actionFeats.length == 0) {
@@ -359,6 +371,14 @@ public final class LinearPolicyAi implements SwccgAiController {
         return best;
     }
 
+    /**
+     * {@code bias + direct actionFeat weights + packed/bag interaction}.
+     * Prefix weights are not added raw: packed slot {@code i} contributes
+     * {@code W[i] * packed[i] * actionFeat[i % INTERACT_FEAT_DIM]}, and each
+     * bag-hash slot is paired the same way. The constant-ones feature is only
+     * in the direct block, so a packed weight can change which action wins.
+     * Walking order still matches {@code W} layout packed, then bag, then action.
+     */
     public static double scoreOf(float[] packed, float[] bagHash, float[] actionFeat, float[] w, float bias) {
         double score = bias;
         int p = 0;
@@ -366,19 +386,19 @@ public final class LinearPolicyAi implements SwccgAiController {
             return score;
         }
         if (packed != null) {
-            for (float v : packed) {
+            for (int i = 0; i < packed.length; i++) {
                 if (p >= w.length) {
                     return score;
                 }
-                score += w[p++] * v;
+                score += w[p++] * packed[i] * actionFeatAt(actionFeat, i % INTERACT_FEAT_DIM);
             }
         }
         if (bagHash != null) {
-            for (float v : bagHash) {
+            for (int i = 0; i < bagHash.length; i++) {
                 if (p >= w.length) {
                     return score;
                 }
-                score += w[p++] * v;
+                score += w[p++] * bagHash[i] * actionFeatAt(actionFeat, i % INTERACT_FEAT_DIM);
             }
         }
         if (actionFeat != null) {
@@ -390,6 +410,13 @@ public final class LinearPolicyAi implements SwccgAiController {
             }
         }
         return score;
+    }
+
+    private static float actionFeatAt(float[] actionFeat, int index) {
+        if (actionFeat == null || index < 0 || index >= actionFeat.length) {
+            return 0f;
+        }
+        return actionFeat[index];
     }
 
     public static float[] actionFeatures(String text, String blueprintId, boolean pass,
