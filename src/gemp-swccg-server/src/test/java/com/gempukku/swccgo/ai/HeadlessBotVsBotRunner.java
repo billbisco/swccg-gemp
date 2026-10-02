@@ -1,5 +1,7 @@
 package com.gempukku.swccgo.ai;
 
+import com.gempukku.swccgo.ai.features.DecklistMultisets;
+import com.gempukku.swccgo.ai.features.InformationSetGameStateListener;
 import com.gempukku.swccgo.ai.features.InformationSetTracker;
 import com.gempukku.swccgo.ai.models.AdvancedAi;
 import com.gempukku.swccgo.ai.models.BeginnerAi;
@@ -323,8 +325,15 @@ public final class HeadlessBotVsBotRunner {
             if (cfg.lightTracker == null) {
                 cfg.lightTracker = new InformationSetTracker(LS_PLAYER);
             }
-            cfg.darkTracker.setOwnDeckPrior(multiset(darkDeck.getCards()));
-            cfg.lightTracker.setOwnDeckPrior(multiset(lightDeck.getCards()));
+            cfg.darkTracker.setOwnDeckPrior(DecklistMultisets.fromBlueprintIds(darkDeck.getCards()));
+            cfg.lightTracker.setOwnDeckPrior(DecklistMultisets.fromBlueprintIds(lightDeck.getCards()));
+            cfg.darkTracker.setOwnBlueprintDestinyHints(
+                    DecklistMultisets.destinyHints(cfg.darkTracker.getOwnDeckPriorView(), cardLibrary));
+            cfg.lightTracker.setOwnBlueprintDestinyHints(
+                    DecklistMultisets.destinyHints(cfg.lightTracker.getOwnDeckPriorView(), cardLibrary));
+            // Destiny + interrupt hooks into each seat's tracker (never seeds opponent decklist).
+            game.addGameStateListener(DS_PLAYER, new InformationSetGameStateListener(cfg.darkTracker));
+            game.addGameStateListener(LS_PLAYER, new InformationSetGameStateListener(cfg.lightTracker));
         }
 
         if (cfg.traceWriter != null) {
@@ -659,17 +668,7 @@ public final class HeadlessBotVsBotRunner {
     }
 
     private static Map<String, Integer> multiset(List<String> cards) {
-        Map<String, Integer> out = new LinkedHashMap<>();
-        if (cards == null) {
-            return out;
-        }
-        for (String bp : cards) {
-            if (bp == null || bp.isEmpty()) {
-                continue;
-            }
-            out.merge(bp, 1, Integer::sum);
-        }
-        return out;
+        return DecklistMultisets.fromBlueprintIds(cards);
     }
 
     private static String truncate(String s, int max) {

@@ -205,6 +205,103 @@ public class InformationSetV1Test {
         Files.deleteIfExists(out);
     }
 
+
+    @Test
+    public void ownDeckPriorPresentAndOpponentDeckAbsent() {
+        InformationSetTracker tracker = new InformationSetTracker(LIGHT);
+        Map<String, Integer> prior = DecklistMultisets.fromBlueprintIds(
+                Arrays.asList("1_140", "1_140", "1_304", "2_001"));
+        tracker.setOwnDeckPrior(prior);
+        Map<String, Float> hints = new LinkedHashMap<>();
+        hints.put("1_140", 4f);
+        hints.put("1_304", 5f);
+        hints.put("2_001", 6f);
+        tracker.setOwnBlueprintDestinyHints(hints);
+
+        GameState gs = mockGameStateWithHands();
+        InformationSetV1 set = InformationSetEncoder.from(gs, LIGHT, null, tracker, "premiere_anh");
+
+        assertEquals(2, set.ownDeckPrior.get("1_140").intValue());
+        assertEquals(1, set.ownDeckPrior.get("1_304").intValue());
+        assertFalse(set.seededFromExactOpponentDeck);
+        Map<String, Object> json = set.toMap();
+        assertFalse(json.containsKey(FeatureLayoutV1.FORBIDDEN_OPPONENT_DECK_KEY));
+        assertFalse(String.valueOf(json).contains(SECRET_OPP_TITLE));
+        // Remaining unique after subtracting own hand (1_140) and in-play Luke (1_304)
+        assertTrue(set.scalars.get("ownRemainingEstimateUnique") >= 1f);
+        // High destiny remaining uses hints on leftover prior copies (2_001 fate 6)
+        assertTrue(set.scalars.get("ownHighDestinyRemainingEst") >= 1f);
+        // No listener attached in this unit path — gap stays honest.
+        assertTrue(set.extractionGaps.contains("destinyListenerNotHooked"));
+    }
+
+    @Test
+    public void simulatedDestinyRevealLandsInOpponentRevealedAndSeenHistory() {
+        InformationSetTracker tracker = new InformationSetTracker(LIGHT);
+        InformationSetGameStateListener listener = new InformationSetGameStateListener(tracker);
+        assertTrue(tracker.isEventsHooked());
+
+        PhysicalCard oppDestiny = mockCard("9_999", "Opponent Destiny Card", CardCategory.INTERRUPT,
+                Side.DARK, DARK, Zone.USED_PILE, 6f);
+        when(oppDestiny.getDestinyValueToUse()).thenReturn(6f);
+
+        listener.destinyDrawn(oppDestiny, mockGameStateWithHands(), "Battle destiny");
+
+        assertEquals(1, tracker.seenHistorySize());
+        assertEquals(1, tracker.aggregateSize());
+        assertEquals(1, tracker.opponentRevealedSize());
+        assertEquals(1, listener.getDestinyEvents());
+        assertEquals(1, listener.getOpponentRevealEvents());
+
+        InformationSetV1 set = new InformationSetV1();
+        tracker.copyInto(set);
+        assertEquals("9_999", set.seenHistory.get(0).get("blueprintId"));
+        assertEquals("DESTINY", set.seenHistory.get(0).get("how"));
+        assertEquals(6.0, ((Number) set.seenHistory.get(0).get("destinyValue")).doubleValue(), 0.01);
+        assertEquals("9_999", set.opponentRevealed.get(0).get("blueprintId"));
+        assertFalse(set.toMap().containsKey(FeatureLayoutV1.FORBIDDEN_OPPONENT_DECK_KEY));
+
+        InformationSetV1 encoded = InformationSetEncoder.from(mockGameStateWithHands(), LIGHT, null, tracker, "open");
+        assertFalse(encoded.extractionGaps.contains("destinyListenerNotHooked"));
+        assertTrue(encoded.extractionGaps.contains("examinePeekNotHooked"));
+        assertEquals(1, encoded.opponentRevealed.size());
+
+    }
+
+    @Test
+    public void ownDestinyDoesNotEnterOpponentRevealed() {
+        InformationSetTracker tracker = new InformationSetTracker(LIGHT);
+        InformationSetGameStateListener listener = new InformationSetGameStateListener(tracker);
+
+        PhysicalCard ownDestiny = mockCard("1_140", "Sorry About The Mess", CardCategory.INTERRUPT,
+                Side.LIGHT, LIGHT, Zone.USED_PILE, 4f);
+        when(ownDestiny.getDestinyValueToUse()).thenReturn(4f);
+        listener.destinyDrawn(ownDestiny, mockGameStateWithHands(), "Weapon destiny");
+
+        assertEquals(1, tracker.seenHistorySize());
+        assertEquals(1, tracker.aggregateSize());
+        assertEquals(0, tracker.opponentRevealedSize());
+        assertEquals(0, listener.getOpponentRevealEvents());
+    }
+
+    @Test
+    public void opponentInterruptPlayedIsRevealed() {
+        InformationSetTracker tracker = new InformationSetTracker(LIGHT);
+        InformationSetGameStateListener listener = new InformationSetGameStateListener(tracker);
+
+        PhysicalCard oppInt = mockCard("1_200", "Dark Interrupt", CardCategory.INTERRUPT,
+                Side.DARK, DARK, Zone.USED_PILE, 3f);
+        listener.interruptPlayed(oppInt, mockGameStateWithHands());
+
+        assertEquals(1, tracker.seenHistorySize());
+        assertEquals(1, tracker.opponentRevealedSize());
+        InformationSetV1 set = new InformationSetV1();
+        tracker.copyInto(set);
+        assertEquals("INTERRUPT_PLAYED", set.opponentRevealed.get(0).get("how"));
+        assertEquals("1_200", set.opponentRevealed.get(0).get("blueprintId"));
+        assertEquals(1, listener.getInterruptEvents());
+    }
+
     private static GameState mockGameStateWithHands() {
         GameState gs = mock(GameState.class);
         when(gs.getDarkPlayer()).thenReturn(DARK);
@@ -259,6 +356,7 @@ public class InformationSetV1Test {
         when(card.getTitle()).thenReturn(title);
         when(card.getOwner()).thenReturn(owner);
         when(card.getZone()).thenReturn(zone);
+        when(card.getDestinyValueToUse()).thenReturn(destiny);
         return card;
     }
 }

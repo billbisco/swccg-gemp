@@ -2,6 +2,7 @@ package com.gempukku.swccgo.ai.features;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -10,19 +11,21 @@ import java.util.Map;
 /**
  * Match-scoped memory for one seat's legal information.
  *
- * <p>Does not listen to {@code GameState} yet. Callers (tests, later the gym driver)
- * push events. There is no API that accepts the opponent's exact decklist.
+ * <p>Callers push events manually or via {@link InformationSetGameStateListener}.
+ * There is no API that accepts the opponent's exact decklist.
  */
 public final class InformationSetTracker {
 
     private final String playerId;
     private final int seenHistoryCap;
     private final Map<String, Integer> ownDeckPrior = new LinkedHashMap<>();
+    private final Map<String, Float> ownBlueprintDestiny = new LinkedHashMap<>();
     private final Deque<Map<String, Object>> seenHistory = new ArrayDeque<>();
     private final List<Map<String, Object>> destinyRecycleAggregate = new ArrayList<>();
     private final List<Map<String, Object>> opponentRevealed = new ArrayList<>();
     private int droppedSeenEvents;
     private int shufflesOwnReserve;
+    private boolean eventsHooked;
 
     public InformationSetTracker(String playerId) {
         this(playerId, FeatureLayoutV1.SEEN_HISTORY_CAP);
@@ -56,6 +59,31 @@ public final class InformationSetTracker {
         if (blueprintMultiset != null) {
             ownDeckPrior.putAll(blueprintMultiset);
         }
+    }
+
+    /** Printed destiny for own prior blueprints (optional; enables remaining high-destiny estimate). */
+    public void setOwnBlueprintDestinyHints(Map<String, Float> destinyByBlueprint) {
+        ownBlueprintDestiny.clear();
+        if (destinyByBlueprint != null) {
+            ownBlueprintDestiny.putAll(destinyByBlueprint);
+        }
+    }
+
+    public Map<String, Integer> getOwnDeckPriorView() {
+        return Collections.unmodifiableMap(ownDeckPrior);
+    }
+
+    public Map<String, Float> getOwnBlueprintDestinyView() {
+        return Collections.unmodifiableMap(ownBlueprintDestiny);
+    }
+
+    /** Set when a {@link InformationSetGameStateListener} is attached for this seat. */
+    public void markEventsHooked() {
+        eventsHooked = true;
+    }
+
+    public boolean isEventsHooked() {
+        return eventsHooked;
     }
 
     /**

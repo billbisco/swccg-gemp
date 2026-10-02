@@ -26,11 +26,10 @@ import java.util.Map;
  *
  * <p>Gaps for this slice (documented on {@link InformationSetV1#extractionGaps}):
  * <ul>
- *   <li>Destiny / reveal listeners are not hooked — {@code seenHistory} and
- *       {@code destinyRecycleAggregate} only reflect what the caller already pushed into
- *       the tracker.</li>
- *   <li>Opponent revealed set is tracker-only (plays are not auto-scraped yet).</li>
- *   <li>Proxies and high-destiny remaining estimate stay stubbed at zero.</li>
+ *   <li>Examine-from-hand / sabacc / peek effects are not hooked (only destiny + interrupt).</li>
+ *   <li>Own reserve shuffle is not notified on {@code GameStateListener}.</li>
+ *   <li>High-destiny remaining estimate ignores Used/Lost identity scrapes and Reserve order.</li>
+ *   <li>Proxies stay stubbed at zero.</li>
  * </ul>
  */
 public final class InformationSetEncoder {
@@ -344,8 +343,17 @@ public final class InformationSetEncoder {
         put(set, "shufflesSinceLastSeenOwn", tracker != null ? tracker.getShufflesOwnReserve() : 0);
         put(set, "ownSeenDestinyCount", set.destinyRecycleAggregate.size());
         put(set, "oppRevealedCount", set.opponentRevealed.size());
-        put(set, "ownRemainingEstimateUnique", set.ownDeckPrior.size());
-        put(set, "ownHighDestinyRemainingEst", 0);
+
+        Map<String, Integer> remaining = estimateOwnRemaining(set);
+        int remainingUnique = 0;
+        for (Integer c : remaining.values()) {
+            if (c != null && c > 0) {
+                remainingUnique++;
+            }
+        }
+        put(set, "ownRemainingEstimateUnique", remainingUnique);
+        float highDestEst = estimateOwnHighDestinyRemaining(set, tracker, remaining);
+        put(set, "ownHighDestinyRemainingEst", highDestEst);
         put(set, "phaseIndex", Math.max(0, FeatureLayoutV1.phaseIndex(set.phase)));
         put(set, "publicInPlayCount", set.publicInPlay.size());
         put(set, "comboPieceCountInHand", 0);
@@ -366,10 +374,74 @@ public final class InformationSetEncoder {
             // leave false
         }
 
-        set.extractionGaps.add("destinyListenerNotHooked");
-        set.extractionGaps.add("opponentRevealedNotAutoScraped");
+        boolean hooked = tracker != null && tracker.isEventsHooked();
+        if (!hooked) {
+            set.extractionGaps.add("destinyListenerNotHooked");
+            set.extractionGaps.add("opponentRevealedNotAutoScraped");
+        } else {
+            set.extractionGaps.add("examinePeekNotHooked");
+            set.extractionGaps.add("sabaccRevealNotHooked");
+        }
+        set.extractionGaps.add("ownReserveShuffleNotHooked");
         set.extractionGaps.add("proxiesUnfilled");
-        set.extractionGaps.add("ownHighDestinyRemainingEstStub");
+        set.extractionGaps.add("ownHighDestinyRemainingEstIgnoresUsedLost");
+    }
+
+    /**
+     * Own remaining multiset estimate: starting prior minus known own hand and public
+     * in-play owned copies. Does not subtract Used/Lost identities or Reserve order.
+     */
+    private static Map<String, Integer> estimateOwnRemaining(InformationSetV1 set) {
+        Map<String, Integer> remaining = new LinkedHashMap<>(set.ownDeckPrior);
+        subtractOwnedCounts(remaining, set.ownHand);
+        subtractOwnedCounts(remaining, set.publicInPlay);
+        return remaining;
+    }
+
+    private static void subtractOwnedCounts(Map<String, Integer> remaining, List<Map<String, Object>> cards) {
+        if (cards == null) {
+            return;
+        }
+        for (Map<String, Object> card : cards) {
+            if (card == null) {
+                continue;
+            }
+            Object owned = card.get("isDeciderOwned");
+            if (owned instanceof Boolean && !((Boolean) owned)) {
+                continue;
+            }
+            // ownHand rows omit isDeciderOwned false; treat missing as own when from ownHand caller
+            Object bp = card.get("blueprintId");
+            if (!(bp instanceof String) || ((String) bp).isEmpty()) {
+                continue;
+            }
+            Integer cur = remaining.get(bp);
+            if (cur == null) {
+                continue;
+            }
+            if (cur <= 1) {
+                remaining.remove(bp);
+            } else {
+                remaining.put((String) bp, cur - 1);
+            }
+        }
+    }
+
+    private static float estimateOwnHighDestinyRemaining(InformationSetV1 set, InformationSetTracker tracker,
+                                                         Map<String, Integer> remaining) {
+        Map<String, Float> hints = tracker != null ? tracker.getOwnBlueprintDestinyView() : Map.of();
+        if (hints.isEmpty()) {
+            // Fall back: count known high destinies still visible on own hand / in-play only (lower bound 0).
+            return 0f;
+        }
+        float high = 0f;
+        for (Map.Entry<String, Integer> e : remaining.entrySet()) {
+            Float dest = hints.get(e.getKey());
+            if (dest != null && dest >= 5f && e.getValue() != null && e.getValue() > 0) {
+                high += e.getValue();
+            }
+        }
+        return high;
     }
 
     private static Map<String, Object> cardBag(PhysicalCard card, String deciderId, boolean isHand) {
