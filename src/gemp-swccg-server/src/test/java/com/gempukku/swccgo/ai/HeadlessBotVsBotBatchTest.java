@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Locale;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -48,6 +49,21 @@ public class HeadlessBotVsBotBatchTest {
         cfg.writeTraces = Boolean.parseBoolean(System.getProperty("headless.traces", "false"));
         cfg.tracesPath = Paths.get(System.getProperty("headless.traces.path",
                 HeadlessDecisionTraceWriter.DEFAULT_PATH));
+        cfg.deckPack = System.getProperty("headless.decks", HeadlessBotVsBotRunner.DECK_OPEN40);
+        if (HeadlessBotVsBotRunner.DECK_WC96.equalsIgnoreCase(cfg.deckPack)
+                || "wc96-anh".equalsIgnoreCase(cfg.deckPack)) {
+            cfg.deckPack = HeadlessBotVsBotRunner.DECK_WC96;
+        }
+        cfg.formatName = System.getProperty("headless.format",
+                HeadlessBotVsBotRunner.DECK_WC96.equals(cfg.deckPack) ? "premiere_anh" : "open");
+        cfg.recordReplay = Boolean.parseBoolean(System.getProperty("headless.replay", "false"));
+        String replayDirProp = System.getProperty("headless.replay.dir");
+        if (replayDirProp != null && !replayDirProp.isEmpty()) {
+            cfg.recordReplay = true;
+            cfg.replayDir = Paths.get(replayDirProp);
+        } else if (cfg.recordReplay) {
+            cfg.replayDir = Paths.get("target", "headless-replays");
+        }
 
         HeadlessBotVsBotBatch.BatchResult batch = HeadlessBotVsBotBatch.runBatch(cfg);
         System.out.println("=== Batch " + dark + " vs " + light + " ===");
@@ -91,6 +107,28 @@ public class HeadlessBotVsBotBatchTest {
             System.out.println("traceLines=" + batch.traceLines + " acceptedDecisions=" + totalDecisions);
             assertTrue("trace lines should be at least accepted decisions",
                     batch.traceLines >= totalDecisions);
+        }
+
+        if (cfg.recordReplay) {
+            assertTrue("replayDir should be set", batch.replayDir != null);
+            assertTrue("at least one game should write replay files", batch.replayGames > 0);
+            // Spot-check first finished game's xml.gz exists and is non-trivial
+            boolean foundGz = false;
+            for (HeadlessBotVsBotBatch.GameRow row : batch.rows) {
+                if (row.result == null || row.result.replayFiles == null) {
+                    continue;
+                }
+                for (Path p : row.result.replayFiles.values()) {
+                    assertTrue("replay file exists: " + p, Files.isRegularFile(p));
+                    assertTrue("replay file non-empty: " + p, Files.size(p) > 100);
+                    foundGz = true;
+                    System.out.println("Replay sample: " + p + " bytes=" + Files.size(p));
+                    if (row.result.replayMetaPath != null) {
+                        System.out.println("Replay meta: " + row.result.replayMetaPath);
+                    }
+                }
+            }
+            assertTrue("expected at least one xml.gz", foundGz);
         }
 
         // Soft: prefer all finished; fail with clear summary if any did not.
@@ -152,6 +190,64 @@ public class HeadlessBotVsBotBatchTest {
         System.out.println(batch);
         assertTrue(Files.isRegularFile(batch.csvPath));
         assertEquals("optional matchup should finish all games", games, batch.finishedCount);
+    }
+
+    /**
+     * WC96 Dark vs Light with real GEMP xml.gz replay.
+     * Enabled by default when {@code headless.wc96Replay=true} (also the primary acceptance path).
+     */
+    @Test
+    public void wc96Anh_beginnerVsBeginner_writesReplay() throws Exception {
+        if (!Boolean.parseBoolean(System.getProperty("headless.wc96Replay",
+                System.getProperty("headless.decks", "").equalsIgnoreCase("wc96") ? "true" : "false"))) {
+            // Allow explicit run via -Dheadless.wc96Replay=true or -Dheadless.decks=wc96 on main test.
+            System.out.println("Skipping WC96 replay test (pass -Dheadless.wc96Replay=true)");
+            return;
+        }
+        Path replayDir = Paths.get(System.getProperty("headless.replay.dir",
+                "target/headless-replays-wc96")).toAbsolutePath().normalize();
+        Path csv = Paths.get(System.getProperty("headless.csv",
+                "target/headless-bot-vs-bot-wc96.csv"));
+
+        HeadlessBotVsBotBatch.BatchConfig cfg = new HeadlessBotVsBotBatch.BatchConfig();
+        cfg.games = Integer.getInteger("headless.games", 1);
+        cfg.darkAi = parseAi(System.getProperty("headless.dark", "BEGINNER"));
+        cfg.lightAi = parseAi(System.getProperty("headless.light", "BEGINNER"));
+        cfg.deckPack = HeadlessBotVsBotRunner.DECK_WC96;
+        cfg.formatName = System.getProperty("headless.format", "premiere_anh");
+        cfg.outputCsv = csv;
+        cfg.recordReplay = true;
+        cfg.replayDir = replayDir;
+        cfg.writeTraces = Boolean.parseBoolean(System.getProperty("headless.traces", "true"));
+        cfg.tracesPath = Paths.get(System.getProperty("headless.traces.path",
+                "target/headless-decision-traces-wc96.jsonl"));
+        cfg.verbose = Boolean.parseBoolean(System.getProperty("headless.verbose", "true"));
+        cfg.maxDecisions = Integer.getInteger("headless.maxDecisions", 25_000);
+        cfg.maxMillis = Long.getLong("headless.maxMillis", 300_000L);
+
+        HeadlessBotVsBotBatch.BatchResult batch = HeadlessBotVsBotBatch.runBatch(cfg);
+        System.out.println("=== WC96 ANH Beginner vs Beginner + replay ===");
+        System.out.println(batch);
+        assertEquals("WC96 game(s) should finish", cfg.games, batch.finishedCount);
+        assertTrue("replay games written", batch.replayGames >= 1);
+
+        HeadlessBotVsBotBatch.GameRow row = batch.rows.get(0);
+        assertTrue(row.result != null && row.result.finished);
+        assertTrue(!row.result.replayFiles.isEmpty());
+        for (Map.Entry<String, Path> e : row.result.replayFiles.entrySet()) {
+            assertTrue(Files.isRegularFile(e.getValue()));
+            long sz = Files.size(e.getValue());
+            System.out.println("WC96 replay " + e.getKey() + " -> " + e.getValue() + " bytes=" + sz);
+            assertTrue("xml.gz should be substantial", sz > 500);
+            String id = row.result.recordingIds.get(e.getKey());
+            System.out.println("  open locally: game.html?replayId=" + e.getKey() + "$" + id);
+            System.out.println("  drop file under <application.root>/replays/" + e.getKey() + "/"
+                    + id + ".xml.gz");
+        }
+        assertTrue(row.result.replayMetaPath != null && Files.isRegularFile(row.result.replayMetaPath));
+        System.out.println("meta.json: " + row.result.replayMetaPath);
+        System.out.println("winner=" + row.winner + " darkDeck=" + row.result.darkDeckName
+                + " lightDeck=" + row.result.lightDeckName + " format=" + row.result.formatName);
     }
 
     private static HeadlessBotVsBotRunner.AiSkill parseAi(String name) {

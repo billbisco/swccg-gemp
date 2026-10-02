@@ -45,6 +45,16 @@ public final class HeadlessBotVsBotBatch {
         public boolean writeTraces = false;
         /** JSONL path when {@link #writeTraces} is true. Default under target/. */
         public Path tracesPath = Paths.get(HeadlessDecisionTraceWriter.DEFAULT_PATH);
+        /**
+         * Deck pack: {@link HeadlessBotVsBotRunner#DECK_OPEN40} or
+         * {@link HeadlessBotVsBotRunner#DECK_WC96}.
+         */
+        public String deckPack = HeadlessBotVsBotRunner.DECK_OPEN40;
+        /**
+         * When non-null, write GEMP xml.gz replays under this directory (one subdir per game).
+         */
+        public Path replayDir = null;
+        public boolean recordReplay = false;
     }
 
     public static final class GameRow {
@@ -99,9 +109,12 @@ public final class HeadlessBotVsBotBatch {
         public final int finishedCount;
         public final int errorCount;
         public final long totalElapsedMs;
+        public final Path replayDir;
+        public final int replayGames;
 
         BatchResult(List<GameRow> rows, Path csvPath, Path tracesPath, long traceLines,
-                    int finishedCount, int errorCount, long totalElapsedMs) {
+                    int finishedCount, int errorCount, long totalElapsedMs,
+                    Path replayDir, int replayGames) {
             this.rows = rows;
             this.csvPath = csvPath;
             this.tracesPath = tracesPath;
@@ -109,6 +122,8 @@ public final class HeadlessBotVsBotBatch {
             this.finishedCount = finishedCount;
             this.errorCount = errorCount;
             this.totalElapsedMs = totalElapsedMs;
+            this.replayDir = replayDir;
+            this.replayGames = replayGames;
         }
 
         @Override
@@ -120,6 +135,8 @@ public final class HeadlessBotVsBotBatch {
                     + ", csv=" + csvPath
                     + ", traces=" + tracesPath
                     + ", traceLines=" + traceLines
+                    + ", replayDir=" + replayDir
+                    + ", replayGames=" + replayGames
                     + '}';
         }
     }
@@ -161,12 +178,19 @@ public final class HeadlessBotVsBotBatch {
                 gameCfg.darkAi = cfg.darkAi;
                 gameCfg.lightAi = cfg.lightAi;
                 gameCfg.formatName = cfg.formatName;
+                gameCfg.deckPack = cfg.deckPack;
                 gameCfg.maxDecisions = cfg.maxDecisions;
                 gameCfg.maxMillis = cfg.maxMillis;
                 gameCfg.verbose = cfg.verbose;
                 gameCfg.progressEveryN = cfg.progressEveryN;
                 gameCfg.gameIndex = i;
                 gameCfg.traceWriter = traceWriter;
+                if (cfg.recordReplay || cfg.replayDir != null) {
+                    gameCfg.recordReplay = true;
+                    gameCfg.replayDir = cfg.replayDir != null
+                            ? cfg.replayDir
+                            : Paths.get("target", "headless-replays").toAbsolutePath().normalize();
+                }
 
                 GameRow row;
                 try {
@@ -213,8 +237,22 @@ public final class HeadlessBotVsBotBatch {
             System.out.println("[batch] wrote CSV: " + csvPath);
         }
 
+        int replayGames = 0;
+        Path replayDirOut = null;
+        if (cfg.recordReplay || cfg.replayDir != null) {
+            replayDirOut = cfg.replayDir != null
+                    ? cfg.replayDir.toAbsolutePath().normalize()
+                    : Paths.get("target", "headless-replays").toAbsolutePath().normalize();
+            for (GameRow row : rows) {
+                if (row.result != null && row.result.replayFiles != null && !row.result.replayFiles.isEmpty()) {
+                    replayGames++;
+                }
+            }
+            System.out.println("[batch] replays under " + replayDirOut + " gamesWithReplay=" + replayGames);
+        }
+
         return new BatchResult(rows, csvPath, tracesPath, traceLines, finished, errors,
-                System.currentTimeMillis() - batchStarted);
+                System.currentTimeMillis() - batchStarted, replayDirOut, replayGames);
     }
 
     public static GameRow toRow(int gameIndex, HeadlessBotVsBotRunner.AiSkill darkAi,
@@ -332,9 +370,28 @@ public final class HeadlessBotVsBotBatch {
             } else if (arg.startsWith("--tracesPath=")) {
                 cfg.writeTraces = true;
                 cfg.tracesPath = Paths.get(arg.substring("--tracesPath=".length()));
+            } else if (arg.startsWith("--decks=")) {
+                cfg.deckPack = arg.substring("--decks=".length());
+                if (HeadlessBotVsBotRunner.DECK_WC96.equalsIgnoreCase(cfg.deckPack)
+                        || "wc96-anh".equalsIgnoreCase(cfg.deckPack)) {
+                    cfg.deckPack = HeadlessBotVsBotRunner.DECK_WC96;
+                    if ("open".equals(cfg.formatName)) {
+                        cfg.formatName = "premiere_anh";
+                    }
+                }
+            } else if (arg.equals("--replay") || arg.equals("--replay=true")) {
+                cfg.recordReplay = true;
+            } else if (arg.equals("--replay=false") || arg.equals("--no-replay")) {
+                cfg.recordReplay = false;
+                cfg.replayDir = null;
+            } else if (arg.startsWith("--replayDir=")) {
+                cfg.recordReplay = true;
+                cfg.replayDir = Paths.get(arg.substring("--replayDir=".length()));
             } else if (arg.equals("--help") || arg.equals("-h")) {
                 System.out.println("Usage: HeadlessBotVsBotBatch --games=5 --dark=BEGINNER --light=BEGINNER "
-                        + "--csv=target/out.csv [--traces] [--tracesPath=target/traces.jsonl] "
+                        + "--csv=target/out.csv [--decks=open40|wc96] [--format=open|premiere_anh] "
+                        + "[--replay] [--replayDir=target/headless-replays] "
+                        + "[--traces] [--tracesPath=target/traces.jsonl] "
                         + "[--verbose] [--maxDecisions=25000] [--maxMillis=180000]");
                 return;
             }

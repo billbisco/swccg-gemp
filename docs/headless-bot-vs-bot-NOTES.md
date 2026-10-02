@@ -238,3 +238,87 @@ failures. Seat mapping is `~OzzelBot` = Dark and `~AckbarBot` = Light.
 All 30 games finished (`failures=0`). CSV snapshots from these runs are saved outside
 the repo at `/workspace/headless-batch-beginner-vs-advanced.csv` and
 `/workspace/headless-batch-beginner-vs-beginner.csv`.
+
+## WC96 decks + GEMP xml.gz replay (2026-10-02)
+
+### Decks
+
+| Pack token (`headless.decks` / `--decks=`) | Format | Contents |
+|---|---|---|
+| `open40` (default) | `open` | Librarian Open 40 Beginner Dark/Light |
+| `wc96` | `premiere_anh` | Librarian **P-ANH 1996 World Champion** Dark/Light |
+
+### Replay export (`HeadlessReplayWriter`)
+
+Does **not** call `GameRecorder.recordGame` (needs mediator + always writes MariaDB history).
+Instead: attach `GameCommunicationChannel` listeners on `DefaultSwccgGame`, serialize with
+`EventSerializer`, write deflated `xml.gz` + sibling `meta.json`.
+
+Layout (same as Hall `GameRecorder`):
+
+```
+<replayDir>/game-0001/~OzzelBot/<recordingId>.xml.gz
+<replayDir>/game-0001/~AckbarBot/<recordingId>.xml.gz
+<replayDir>/game-0001/meta.json
+```
+
+Properties:
+
+| Property | Default | Meaning |
+|----------|---------|---------|
+| `headless.decks` | `open40` | `open40` or `wc96` |
+| `headless.format` | auto | Override format code (`premiere_anh` for WC96) |
+| `headless.replay` | `false` | Write xml.gz replays |
+| `headless.replay.dir` | `target/headless-replays` | Replay root directory |
+| `headless.wc96Replay` | `false` | Run dedicated WC96+replay JUnit |
+
+### How to run — one WC96 Beginner vs Beginner with replay
+
+```bash
+cd /workspace/swccg-gemp/src
+mvn -pl gemp-swccg-server -am -DfailIfNoTests=false \
+  -Dtest=HeadlessBotVsBotBatchTest#wc96Anh_beginnerVsBeginner_writesReplay \
+  -Dheadless.wc96Replay=true \
+  -Dheadless.games=1 \
+  -Dheadless.dark=BEGINNER \
+  -Dheadless.light=BEGINNER \
+  -Dheadless.replay.dir=/workspace/gemp-swccg-trainer/runs/wc96-demo/replays \
+  -Dheadless.traces=true \
+  -Dheadless.traces.path=/workspace/gemp-swccg-trainer/runs/wc96-demo/traces/game-0001.jsonl \
+  -Dheadless.csv=/workspace/gemp-swccg-trainer/runs/wc96-demo/game.csv \
+  -Dheadless.verbose=true \
+  test
+```
+
+Or via the generic batch test:
+
+```bash
+mvn -pl gemp-swccg-server -am \
+  -Dtest=HeadlessBotVsBotBatchTest#batchSelfPlay_writesCsv \
+  -Dheadless.games=1 -Dheadless.decks=wc96 -Dheadless.replay=true \
+  -Dheadless.replay.dir=target/headless-replays-wc96 \
+  test
+```
+
+### How to open the replay in a local GEMP viewer
+
+1. Note `recordingId` from `meta.json` (or the filename without `.xml.gz`).
+2. Copy (or symlink) the file into your local GEMP `application.root`:
+
+   ```bash
+   # Example: Dark seat POV
+   mkdir -p "$GEMP_APP_ROOT/replays/~OzzelBot"
+   cp <replayDir>/game-0001/~OzzelBot/<recordingId>.xml.gz \
+      "$GEMP_APP_ROOT/replays/~OzzelBot/"
+   ```
+
+3. With local GEMP web running, open:
+
+   ```
+   game.html?replayId=~OzzelBot$<recordingId>
+   ```
+
+   Light seat: `game.html?replayId=~AckbarBot$<recordingId>` (use that seat’s file/id).
+
+`ReplayRequestHandler` serves files from `replays/<playerId>/<id>.xml.gz` and does **not**
+require a game-history DB row.
