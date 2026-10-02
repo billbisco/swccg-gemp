@@ -1,5 +1,8 @@
 package com.gempukku.swccgo.ai;
 
+import com.gempukku.swccgo.ai.features.InformationSetEncoder;
+import com.gempukku.swccgo.ai.features.InformationSetTracker;
+import com.gempukku.swccgo.ai.features.InformationSetV1;
 import com.gempukku.swccgo.common.Phase;
 import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.logic.decisions.AwaitingDecision;
@@ -30,11 +33,18 @@ import java.util.Set;
  * <ul>
  *   <li>{@code headless.traces} — {@code true}/{@code false} (default false)</li>
  *   <li>{@code headless.traces.path} — output path (default {@code target/headless-decision-traces.jsonl})</li>
+ *   <li>{@code headless.traceLevel} — {@code COMPACT} (default) or {@code FEATURES}
+ *       (embeds InformationSetV1 bags + packed[128] under {@code state})</li>
  * </ul>
  */
 public final class HeadlessDecisionTraceWriter implements Closeable {
 
     public static final String DEFAULT_PATH = "target/headless-decision-traces.jsonl";
+
+    public enum TraceLevel {
+        COMPACT,
+        FEATURES
+    }
 
     /** Param keys useful for training; UI-only fluff is omitted. */
     private static final Set<String> OPTION_KEYS = new java.util.LinkedHashSet<>(Arrays.asList(
@@ -52,16 +62,26 @@ public final class HeadlessDecisionTraceWriter implements Closeable {
 
     private final Path path;
     private final BufferedWriter writer;
+    private final TraceLevel traceLevel;
     private long linesWritten;
 
     public HeadlessDecisionTraceWriter(Path path) throws IOException {
+        this(path, levelFromSystemProperties());
+    }
+
+    public HeadlessDecisionTraceWriter(Path path, TraceLevel traceLevel) throws IOException {
         this.path = path.toAbsolutePath().normalize();
+        this.traceLevel = traceLevel != null ? traceLevel : TraceLevel.COMPACT;
         Path parent = this.path.getParent();
         if (parent != null) {
             Files.createDirectories(parent);
         }
         this.writer = Files.newBufferedWriter(this.path, StandardCharsets.UTF_8,
                 StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
+    }
+
+    public TraceLevel getTraceLevel() {
+        return traceLevel;
     }
 
     public Path getPath() {
@@ -111,6 +131,15 @@ public final class HeadlessDecisionTraceWriter implements Closeable {
         row.put("lightLF", ctx.lightLF);
         row.put("darkHand", ctx.darkHand);
         row.put("lightHand", ctx.lightHand);
+
+        if (traceLevel == TraceLevel.FEATURES || ctx.informationSet != null) {
+            row.put("type", "step");
+            row.put("schemaVersionFeatures", 1);
+            row.put("traceLevel", "FEATURES");
+            if (ctx.informationSet != null) {
+                row.put("state", ctx.informationSet.toMap());
+            }
+        }
 
         writer.write(GSON.toJson(row));
         writer.newLine();
@@ -248,6 +277,15 @@ public final class HeadlessDecisionTraceWriter implements Closeable {
                                             String playerId, String aiSkill, String format,
                                             AwaitingDecision decision, GameState gs,
                                             String chosen, boolean accepted, String invalidReason) {
+        return fromDecision(gameId, gameIndex, decisionIndex, playerId, aiSkill, format,
+                decision, gs, chosen, accepted, invalidReason, TraceLevel.COMPACT, null);
+    }
+
+    public static TraceContext fromDecision(String gameId, Integer gameIndex, int decisionIndex,
+                                            String playerId, String aiSkill, String format,
+                                            AwaitingDecision decision, GameState gs,
+                                            String chosen, boolean accepted, String invalidReason,
+                                            TraceLevel level, InformationSetTracker tracker) {
         TraceContext ctx = new TraceContext();
         ctx.timestampMs = System.currentTimeMillis();
         ctx.decisionIndex = decisionIndex;
@@ -283,6 +321,14 @@ public final class HeadlessDecisionTraceWriter implements Closeable {
             } else {
                 ctx.turn = -1;
             }
+            if (level == TraceLevel.FEATURES) {
+                try {
+                    ctx.informationSet = InformationSetEncoder.from(gs, playerId, decision, tracker, format);
+                } catch (RuntimeException ex) {
+                    System.err.println("[headless] FEATURES encode failed: " + ex.getClass().getSimpleName()
+                            + ": " + ex.getMessage());
+                }
+            }
         }
         return ctx;
     }
@@ -293,6 +339,18 @@ public final class HeadlessDecisionTraceWriter implements Closeable {
 
     public static Path pathFromSystemProperties() {
         return java.nio.file.Paths.get(System.getProperty("headless.traces.path", DEFAULT_PATH));
+    }
+
+    public static TraceLevel levelFromSystemProperties() {
+        String raw = System.getProperty("headless.traceLevel", "COMPACT");
+        if (raw == null || raw.isBlank()) {
+            return TraceLevel.COMPACT;
+        }
+        try {
+            return TraceLevel.valueOf(raw.trim().toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException ex) {
+            return TraceLevel.COMPACT;
+        }
     }
 
     private static int safeHandSize(GameState gs, String playerId) {
@@ -388,6 +446,8 @@ public final class HeadlessDecisionTraceWriter implements Closeable {
         public int lightLF = -1;
         public int darkHand = -1;
         public int lightHand = -1;
+        /** Populated when traceLevel=FEATURES. */
+        public InformationSetV1 informationSet;
     }
 
     /** Parse helper for docs / tests. */

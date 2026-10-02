@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.ai;
 
+import com.gempukku.swccgo.ai.features.InformationSetTracker;
 import com.gempukku.swccgo.ai.models.AdvancedAi;
 import com.gempukku.swccgo.ai.models.BeginnerAi;
 import com.gempukku.swccgo.ai.models.ConfigurableHeuristicAi;
@@ -105,6 +106,15 @@ public final class HeadlessBotVsBotRunner {
          * Caller owns open/close (batch shares one writer across games).
          */
         public HeadlessDecisionTraceWriter traceWriter = null;
+        /**
+         * Trace richness. Default COMPACT. FEATURES embeds InformationSetV1 under {@code state}.
+         * Overridden by the writer's level when the writer was opened from system properties.
+         */
+        public HeadlessDecisionTraceWriter.TraceLevel traceLevel = HeadlessDecisionTraceWriter.TraceLevel.COMPACT;
+        /** Match-scoped Dark-seat tracker (own prior + destiny/reveals). Created if null when FEATURES. */
+        public InformationSetTracker darkTracker = null;
+        /** Match-scoped Light-seat tracker. Created if null when FEATURES. */
+        public InformationSetTracker lightTracker = null;
         /**
          * When non-null, attach {@link HeadlessReplayWriter} and write xml.gz under this dir
          * after the game (no Hall / no GameHistoryService).
@@ -304,6 +314,18 @@ public final class HeadlessBotVsBotRunner {
 
         AiRegistry.register(gameId, DS_PLAYER, darkAi);
         AiRegistry.register(gameId, LS_PLAYER, lightAi);
+
+        HeadlessDecisionTraceWriter.TraceLevel effectiveLevel = resolveTraceLevel(cfg);
+        if (effectiveLevel == HeadlessDecisionTraceWriter.TraceLevel.FEATURES) {
+            if (cfg.darkTracker == null) {
+                cfg.darkTracker = new InformationSetTracker(DS_PLAYER);
+            }
+            if (cfg.lightTracker == null) {
+                cfg.lightTracker = new InformationSetTracker(LS_PLAYER);
+            }
+            cfg.darkTracker.setOwnDeckPrior(multiset(darkDeck.getCards()));
+            cfg.lightTracker.setOwnDeckPrior(multiset(lightDeck.getCards()));
+        }
 
         if (cfg.traceWriter != null) {
             try {
@@ -605,15 +627,49 @@ public final class HeadlessBotVsBotRunner {
         } else {
             skill = null;
         }
+        HeadlessDecisionTraceWriter.TraceLevel level = resolveTraceLevel(cfg);
+        InformationSetTracker tracker = null;
+        if (level == HeadlessDecisionTraceWriter.TraceLevel.FEATURES) {
+            if (DS_PLAYER.equals(playerId)) {
+                tracker = cfg.darkTracker;
+            } else if (LS_PLAYER.equals(playerId)) {
+                tracker = cfg.lightTracker;
+            }
+        }
         try {
             cfg.traceWriter.record(HeadlessDecisionTraceWriter.fromDecision(
                     gameId, cfg.gameIndex, decisionIndex, playerId, skill, cfg.formatName,
-                    decision, gs, answer, accepted, invalidReason));
+                    decision, gs, answer, accepted, invalidReason, level, tracker));
         } catch (Exception ex) {
             // Tracing must never abort a game; surface once via stderr.
             System.err.println("[headless] trace write failed: " + ex.getClass().getSimpleName()
                     + ": " + ex.getMessage());
         }
+    }
+
+    private static HeadlessDecisionTraceWriter.TraceLevel resolveTraceLevel(Config cfg) {
+        if (cfg != null && cfg.traceWriter != null
+                && cfg.traceWriter.getTraceLevel() == HeadlessDecisionTraceWriter.TraceLevel.FEATURES) {
+            return HeadlessDecisionTraceWriter.TraceLevel.FEATURES;
+        }
+        if (cfg != null && cfg.traceLevel == HeadlessDecisionTraceWriter.TraceLevel.FEATURES) {
+            return HeadlessDecisionTraceWriter.TraceLevel.FEATURES;
+        }
+        return HeadlessDecisionTraceWriter.levelFromSystemProperties();
+    }
+
+    private static Map<String, Integer> multiset(List<String> cards) {
+        Map<String, Integer> out = new LinkedHashMap<>();
+        if (cards == null) {
+            return out;
+        }
+        for (String bp : cards) {
+            if (bp == null || bp.isEmpty()) {
+                continue;
+            }
+            out.merge(bp, 1, Integer::sum);
+        }
+        return out;
     }
 
     private static String truncate(String s, int max) {

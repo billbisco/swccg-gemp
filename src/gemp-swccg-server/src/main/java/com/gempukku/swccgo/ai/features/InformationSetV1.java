@@ -24,12 +24,16 @@ public final class InformationSetV1 {
     public int activateMin;
     public int activateMax;
     public int seenHistoryCap = FeatureLayoutV1.SEEN_HISTORY_CAP;
+    /** Always false in legal encoding; gym must not seed the opposing list. */
+    public boolean seededFromExactOpponentDeck = false;
 
     public final Map<String, Integer> ownDeckPrior = new LinkedHashMap<>();
     public final List<Map<String, Object>> ownHand = new ArrayList<>();
+    public final List<Map<String, Object>> publicInPlay = new ArrayList<>();
     public final List<Map<String, Object>> seenHistory = new ArrayList<>();
     public final List<Map<String, Object>> destinyRecycleAggregate = new ArrayList<>();
     public final List<Map<String, Object>> opponentRevealed = new ArrayList<>();
+    public final List<String> extractionGaps = new ArrayList<>();
     public final float[] packed = new float[FeatureLayoutV1.PACKED_DIM];
 
     /** Scalar inputs consumed by the encoder. Keys are layout labels, not JSON extras. */
@@ -53,14 +57,19 @@ public final class InformationSetV1 {
         row.put("activateMin", activateMin);
         row.put("activateMax", activateMax);
         row.put("seenHistoryCap", seenHistoryCap);
+        row.put("seededFromExactOpponentDeck", seededFromExactOpponentDeck);
         Map<String, Object> prior = new LinkedHashMap<>();
         prior.put("source", "startingDecklist");
         prior.put("blueprintMultiset", ownDeckPrior);
         row.put("deckPrior", prior);
         row.put("ownHand", ownHand);
+        row.put("publicInPlay", publicInPlay);
         row.put("seenHistory", seenHistory);
         row.put("destinyRecycleAggregate", destinyRecycleAggregate);
         row.put("opponentRevealed", opponentRevealed);
+        if (!extractionGaps.isEmpty()) {
+            row.put("extractionGaps", extractionGaps);
+        }
         List<Float> packedList = new ArrayList<>(packed.length);
         for (float v : packed) {
             packedList.add(v);
@@ -68,6 +77,9 @@ public final class InformationSetV1 {
         row.put("packed", packedList);
         if (row.containsKey(FeatureLayoutV1.FORBIDDEN_OPPONENT_DECK_KEY)) {
             throw new IllegalStateException("exact opponent deck leaked into InformationSetV1");
+        }
+        if (seededFromExactOpponentDeck) {
+            throw new IllegalStateException("seededFromExactOpponentDeck must stay false");
         }
         return row;
     }
