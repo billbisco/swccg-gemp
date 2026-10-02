@@ -18,15 +18,30 @@ import static org.junit.Assert.fail;
 public class HeadlessBotVsBotSpikeTest {
 
     @Test
-    public void beginnerVsBeginner_playsToCompletionOrDocumentsStopper() {
+    public void beginnerVsBeginner_playsToCompletionOrDocumentsStopper() throws Exception {
         HeadlessBotVsBotRunner.Config cfg = new HeadlessBotVsBotRunner.Config();
         cfg.darkAi = HeadlessBotVsBotRunner.AiSkill.BEGINNER;
         cfg.lightAi = HeadlessBotVsBotRunner.AiSkill.BEGINNER;
         cfg.verbose = Boolean.parseBoolean(System.getProperty("headless.verbose", "true"));
         cfg.maxDecisions = Integer.getInteger("headless.maxDecisions", 25_000);
         cfg.maxMillis = Long.getLong("headless.maxMillis", 180_000L);
+        cfg.gameIndex = 1;
 
-        HeadlessBotVsBotRunner.Result result = HeadlessBotVsBotRunner.playOneGame(cfg);
+        HeadlessDecisionTraceWriter traces = null;
+        if (HeadlessDecisionTraceWriter.enabledFromSystemProperties()) {
+            traces = new HeadlessDecisionTraceWriter(HeadlessDecisionTraceWriter.pathFromSystemProperties());
+            cfg.traceWriter = traces;
+        }
+
+        HeadlessBotVsBotRunner.Result result;
+        try {
+            result = HeadlessBotVsBotRunner.playOneGame(cfg);
+        } finally {
+            if (traces != null) {
+                traces.close();
+                System.out.println("[spike] traces: " + traces);
+            }
+        }
         System.out.println("=== Beginner vs Beginner ===");
         System.out.println(result);
         if (!result.failureNotes.isEmpty()) {

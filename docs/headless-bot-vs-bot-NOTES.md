@@ -6,7 +6,8 @@ Branch: `feature/headless-bot-vs-bot`
 
 Run **two in-process `SwccgAiController`s** (no Hall HTTP, no UI client) until a game ends,
 logging winner, turns, decision counts, and failures. Batch path runs N games and writes CSV
-for bot measurement.
+for bot measurement. Optional **JSONL decision traces** capture compact per-decision rows for
+later policy training / eval.
 
 ## How to run — single game (spike)
 
@@ -25,6 +26,8 @@ Useful properties:
 | `headless.maxDecisions` | `25000` | Abort if exceeded |
 | `headless.maxMillis` | `180000` | Wall-clock abort (3 min) |
 | `headless.alsoRando` | `false` | Also run Beginner vs RandoCalAi (spike or batch) |
+| `headless.traces` | `false` | Append per-decision JSONL traces |
+| `headless.traces.path` | `target/headless-decision-traces.jsonl` | Trace output path |
 
 Example Beginner vs Rando (single game):
 
@@ -66,6 +69,8 @@ Batch properties:
 | `headless.maxMillis` | `180000` | Per-game wall-clock abort |
 | `headless.alsoAdvanced` | `false` | Extra optional batch: Beginner vs Advanced (uses `headless.games`, default CSV `target/headless-bot-vs-bot-batch-advanced.csv`) |
 | `headless.alsoRando` | `false` | Extra optional batch: Beginner vs Rando |
+| `headless.traces` | `false` | Write per-decision JSONL traces |
+| `headless.traces.path` | `target/headless-decision-traces.jsonl` | Trace output path |
 
 Larger measurement run example:
 
@@ -91,13 +96,46 @@ gameIndex,darkAi,lightAi,winner,darkDecisions,lightDecisions,darkTurns,lightTurn
 
 The decision loop is **not duplicated**: batch calls `HeadlessBotVsBotRunner.playOneGame` (shared libraries reused across games when `reuseLibraries=true`).
 
+## How to run — decision traces (JSONL)
+
+Enable with `-Dheadless.traces=true`. One JSON object per line (JSONL), shared across the batch
+when using `HeadlessBotVsBotBatch`. Default path: `target/headless-decision-traces.jsonl`.
+
+```bash
+cd /workspace/swccg-gemp/src
+mvn -pl gemp-swccg-server -am   -Dtest=HeadlessBotVsBotBatchTest#batchSelfPlay_writesCsv   -Dheadless.games=1   -Dheadless.dark=BEGINNER   -Dheadless.light=BEGINNER   -Dheadless.traces=true   -Dheadless.traces.path=target/headless-decision-traces.jsonl   test
+```
+
+Trace properties:
+
+| Property | Default | Meaning |
+|----------|---------|---------|
+| `headless.traces` | `false` | Enable JSONL decision traces |
+| `headless.traces.path` | `target/headless-decision-traces.jsonl` | Output path (under module cwd / `target/`) |
+
+Each line includes (compact — titles/ids, not full game state):
+
+- `gameId`, `gameIndex`, `decisionIndex`, `ts`
+- `playerId`, `side` (`DARK`/`LIGHT`), `aiSkill`
+- `turn`, `phase`
+- `decisionType`, `decisionId`, optional truncated `decisionText`
+- `options` — capped list of `{actionId,cardId,blueprintId,text}` plus small scalars (`min`/`max`/…)
+- `optionCount`, `chosen`, `accepted` (false on invalid AI answers)
+- `darkLF`, `lightLF`, `darkHand`, `lightHand`
+
+**Gaps / not yet traced:** full board layout, reserve deck tops, force piles beyond LF totals,
+AI internal scores, seed/shuffle state. Start with decisionType + options + choice + LF/hand.
+
+CSV batch path is unchanged when traces are off (default).
+
 ## Files
 
 | Path | Role |
 |------|------|
 | `gemp-swccg-server/.../ai/HeadlessBotVsBotRunner.java` | Shared driver: decks, register AIs, decision loop |
+| `gemp-swccg-server/.../ai/HeadlessDecisionTraceWriter.java` | Compact JSONL per-decision traces |
 | `gemp-swccg-server/.../ai/HeadlessBotVsBotSpikeTest.java` | Single-game JUnit spike |
-| `gemp-swccg-server/.../ai/HeadlessBotVsBotBatch.java` | Batch runner + CSV writer |
+| `gemp-swccg-server/.../ai/HeadlessBotVsBotBatch.java` | Batch runner + CSV writer (+ optional traces) |
 | `gemp-swccg-server/.../ai/HeadlessBotVsBotBatchTest.java` | Batch JUnit entry (Surefire-configurable N / matchup) |
 | `docs/headless-bot-vs-bot-NOTES.md` | This file |
 
@@ -136,8 +174,8 @@ The decision loop is **not duplicated**: batch calls `HeadlessBotVsBotRunner.pla
 
 1. Move runner/batch to `src/main` (or a thin `gemp-swccg-selfplay` module) for a real CLI jar.
 2. Fix or parameterize `MAX_AI_CHAIN` so Hall `playVsAi` can seat two bots the same way.
-3. Capture decision traces (decision type, scored options, chosen answer) for imitation /
-   RL datasets — do **not** block on MCP/LLM for self-play.
+3. ~~Capture decision traces~~ — JSONL via `HeadlessDecisionTraceWriter` (`headless.traces=true`).
+   Next: richer features / AI scores / board snapshots if needed for imitation / RL.
 4. Optional: validate decks with format checker before start; add more librarian archetypes.
 5. Stability: track repeated invalid answers / stuck phases; auto-forfeit after N stalls.
 6. Seed control / deterministic shuffle if the engine exposes it.
@@ -168,3 +206,21 @@ mvn -pl gemp-swccg-server -am -DfailIfNoTests=false -Dtest=HeadlessBotVsBotSpike
 - [x] `mvn test` targeted spike green (Beginner vs Beginner finished)
 - [x] Notes: how to run, learnings, next steps
 - [x] Batch self-play: N games + CSV (Beginner vs Beginner; Advanced/Rando via props)
+- [x] Per-decision JSONL traces (compact options + choice + LF/hand; system-property gated)
+
+## Decision-trace verification (2026-10-02 America/Caracas)
+
+```
+Beginner vs Beginner, N=1, headless.traces=true
+finished=true winner=~OzzelBot
+acceptedDecisions=846 traceLines=846 (1:1)
+avg ~527 bytes/line, max ~2557
+CSV path unchanged when traces off
+```
+
+Command:
+
+```bash
+cd /workspace/swccg-gemp/src
+mvn -pl gemp-swccg-server -am   -Dtest=HeadlessBotVsBotBatchTest#batchSelfPlay_writesCsv   -Dheadless.games=1 -Dheadless.traces=true   -Dheadless.traces.path=target/headless-decision-traces.jsonl   test
+```
