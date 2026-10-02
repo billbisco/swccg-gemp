@@ -61,8 +61,10 @@ Batch properties:
 | Property | Default | Meaning |
 |----------|---------|---------|
 | `headless.games` | `5` | Number of games (CI-friendly; raise for measurement) |
-| `headless.dark` | `BEGINNER` | Dark AI: `BEGINNER`, `ADVANCED`, `RANDO` |
+| `headless.dark` | `BEGINNER` | Dark AI: `BEGINNER`, `ADVANCED`, `RANDO`, `LINEAR` |
 | `headless.light` | `BEGINNER` | Light AI: same enum |
+| `headless.linear.weights` | (unset) | `linear.v1` JSON used by a seat whose skill is `LINEAR` and has no per-seat weights. Missing file → zeros pack. |
+| `headless.dark.weights` / `headless.light.weights` | (unset) | Per-seat file. `heuristic.v1` unless that seat is `LINEAR`, then `linear.v1`. |
 | `headless.csv` | `target/headless-bot-vs-bot-batch.csv` | Output CSV path |
 | `headless.verbose` | `false` | Per-decision progress (noisy for batch) |
 | `headless.maxDecisions` | `25000` | Per-game abort |
@@ -88,11 +90,29 @@ mvn -pl gemp-swccg-server -am \
 CSV columns:
 
 ```
-gameIndex,darkAi,lightAi,winner,darkDecisions,lightDecisions,darkTurns,lightTurns,elapsedMs,error
+gameIndex,darkAi,lightAi,winner,darkDecisions,lightDecisions,darkTurns,lightTurns,elapsedMs,format,darkDeck,lightDeck,error,darkLifeForce,lightLifeForce
 ```
 
 - `winner` — player id (`~OzzelBot` / `~AckbarBot`) or empty if unfinished
 - `error` — empty on success; otherwise stopper / first failure note / thrown exception
+- `darkLifeForce` / `lightLifeForce` — final life force for both seats (`-1` if the game row has no result). JSONL `type=outcome` lines also carry `darkLF` and `lightLF`.
+
+## LINEAR policy (gym-cli stub)
+
+`LinearPolicyAi` loads `linear.v1` and greedily scores legal actions from the current InformationSet packed vector (plus a small bag-hash when `bagHashDim` > 0). It does not train. A zeros `W` plays the first legal answer. `BEGINNER` is unchanged.
+
+```bash
+cd /workspace/swccg-gemp/src
+mvn -pl gemp-swccg-server -am \
+  -Dtest=HeadlessBotVsBotBatchTest#batchSelfPlay_writesCsv \
+  -Dheadless.games=1 \
+  -Dheadless.dark=LINEAR \
+  -Dheadless.light=BEGINNER \
+  -Dheadless.linear.weights=/path/to/linear.json \
+  test
+```
+
+Omit `-Dheadless.linear.weights` to use the zeros pack. Do not point `LINEAR` at a `heuristic.v1` weights file.
 
 The decision loop is **not duplicated**: batch calls `HeadlessBotVsBotRunner.playOneGame` (shared libraries reused across games when `reuseLibraries=true`).
 
