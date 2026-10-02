@@ -16,8 +16,8 @@
  *
  * <p>Headless FEATURES traces: {@code -Dheadless.traces=true -Dheadless.traceLevel=FEATURES}
  * seeds own deck prior per seat, attaches destiny/interrupt listeners, and embeds {@code state}
- * (InformationSetV1 bags + packed) on each decision line. {@code seededFromExactOpponentDeck}
- * stays false.
+ * (InformationSetV1 bags + packed, plus {@code bagHash} from {@code LinearPolicyAi.bagHash})
+ * on each decision line. {@code seededFromExactOpponentDeck} stays false.
  *
  * <p>Still missing (do not treat this package as a trained bot):
  * <ul>

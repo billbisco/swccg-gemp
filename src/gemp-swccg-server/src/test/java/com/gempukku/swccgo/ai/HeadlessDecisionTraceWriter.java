@@ -3,6 +3,7 @@ package com.gempukku.swccgo.ai;
 import com.gempukku.swccgo.ai.features.InformationSetEncoder;
 import com.gempukku.swccgo.ai.features.InformationSetTracker;
 import com.gempukku.swccgo.ai.features.InformationSetV1;
+import com.gempukku.swccgo.ai.models.LinearPolicyAi;
 import com.gempukku.swccgo.common.Phase;
 import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.logic.decisions.AwaitingDecision;
@@ -34,7 +35,8 @@ import java.util.Set;
  *   <li>{@code headless.traces} — {@code true}/{@code false} (default false)</li>
  *   <li>{@code headless.traces.path} — output path (default {@code target/headless-decision-traces.jsonl})</li>
  *   <li>{@code headless.traceLevel} — {@code COMPACT} (default) or {@code FEATURES}
- *       (embeds InformationSetV1 bags + packed[128] under {@code state})</li>
+ *       (embeds InformationSetV1 bags + packed[128] under {@code state}, plus
+ *       {@code state.bagHash}, the 16-d vector {@link LinearPolicyAi#bagHash} uses)</li>
  * </ul>
  */
 public final class HeadlessDecisionTraceWriter implements Closeable {
@@ -137,7 +139,9 @@ public final class HeadlessDecisionTraceWriter implements Closeable {
             row.put("schemaVersionFeatures", 1);
             row.put("traceLevel", "FEATURES");
             if (ctx.informationSet != null) {
-                row.put("state", ctx.informationSet.toMap());
+                Map<String, Object> state = ctx.informationSet.toMap();
+                state.put("bagHash", bagHashList(ctx.informationSet));
+                row.put("state", state);
             }
         }
 
@@ -209,6 +213,21 @@ public final class HeadlessDecisionTraceWriter implements Closeable {
     public void close() throws IOException {
         writer.flush();
         writer.close();
+    }
+
+    /**
+     * Same 16-d summary {@link LinearPolicyAi} scores with when {@code bagHashDim}
+     * is {@link LinearPolicyAi#DEFAULT_BAG_HASH_DIM}. Counts blueprintId (else title)
+     * from own hand, public in-play, own public piles, opponent revealed, and seen
+     * history, then divides by the max bucket.
+     */
+    static List<Float> bagHashList(InformationSetV1 set) {
+        float[] hash = LinearPolicyAi.bagHash(set, LinearPolicyAi.DEFAULT_BAG_HASH_DIM);
+        List<Float> out = new ArrayList<>(hash.length);
+        for (float v : hash) {
+            out.add(v);
+        }
+        return out;
     }
 
     /** Build options summary + optionCount from an awaiting decision. */

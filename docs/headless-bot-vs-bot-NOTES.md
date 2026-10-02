@@ -99,7 +99,7 @@ gameIndex,darkAi,lightAi,winner,darkDecisions,lightDecisions,darkTurns,lightTurn
 
 ## LINEAR policy (gym-cli stub)
 
-`LinearPolicyAi` loads `linear.v1` and greedily scores legal actions from the current InformationSet packed vector (plus a small bag-hash when `bagHashDim` > 0). It does not train. A zeros or omitted `W` is still a legal stub: `decide` adds a tiny anti-stall prior (not skill). Real actions score 0, non-zero activate / positive integerNorm up to +0.05, pass -0.05, and activate-0 / zero-integer -0.10. On top of that, still only for an all-zero `W`:
+`LinearPolicyAi` loads `linear.v1` and greedily scores legal actions from the current InformationSet packed vector (plus a 16-d bag-hash when `bagHashDim` > 0). FEATURES traces log that same vector as `state.bagHash` (`LinearPolicyAi.bagHash`: blueprint counts from own hand, public in-play, own public piles, opponent revealed, and seen history, divided by the max bucket). It does not train. A zeros or omitted `W` is still a legal stub: `decide` adds a tiny anti-stall prior (not skill). Real actions score 0, non-zero activate / positive integerNorm up to +0.05, pass -0.05, and activate-0 / zero-integer -0.10. On top of that, still only for an all-zero `W`:
 
 - a decision whose text contains "optional" passes when pass is legal (pass scores +1);
 - each move-like or activate label (`Embark`, `Disembark`, `Transfer …`, `Ship-dock`, `Docking …`, `Move …`, `Shuttle`, `Land`, `Take off`, `Enter …`, `Exit …`, `Activate …`) is taken at most once per phase. A repeat scores -0.15 and loses to pass. That stops the WC96 livelocks where a zeros seat alternates Embark/Disembark or `Transfer to other starship` for the whole move phase.
