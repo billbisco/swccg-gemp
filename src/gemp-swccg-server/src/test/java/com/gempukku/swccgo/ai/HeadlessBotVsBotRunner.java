@@ -305,6 +305,22 @@ public final class HeadlessBotVsBotRunner {
         AiRegistry.register(gameId, DS_PLAYER, darkAi);
         AiRegistry.register(gameId, LS_PLAYER, lightAi);
 
+        if (cfg.traceWriter != null) {
+            try {
+                cfg.traceWriter.writeGameHeader(
+                        gameId,
+                        cfg.gameIndex,
+                        cfg.formatName,
+                        deckPair.darkName,
+                        deckPair.lightName,
+                        cfg.darkAi != null ? cfg.darkAi.name() : "",
+                        cfg.lightAi != null ? cfg.lightAi.name() : "");
+            } catch (Exception ex) {
+                System.err.println("[headless] trace header failed: " + ex.getClass().getSimpleName()
+                        + ": " + ex.getMessage());
+            }
+        }
+
         int decisionCount = 0;
         int invalidCount = 0;
         String stopper = null;
@@ -483,6 +499,22 @@ public final class HeadlessBotVsBotRunner {
                     System.err.println("[headless] " + note);
                 }
             }
+            if (cfg.traceWriter != null) {
+                try {
+                    cfg.traceWriter.writeGameOutcome(
+                            gameId,
+                            cfg.gameIndex,
+                            cfg.formatName,
+                            game.isFinished(),
+                            game.isCancelled(),
+                            game.getWinner(),
+                            stopper,
+                            decisionCount);
+                } catch (Exception ex) {
+                    System.err.println("[headless] trace outcome failed: " + ex.getClass().getSimpleName()
+                            + ": " + ex.getMessage());
+                }
+            }
             AiRegistry.unregisterGame(gameId);
         }
 
@@ -575,7 +607,7 @@ public final class HeadlessBotVsBotRunner {
         }
         try {
             cfg.traceWriter.record(HeadlessDecisionTraceWriter.fromDecision(
-                    gameId, cfg.gameIndex, decisionIndex, playerId, skill,
+                    gameId, cfg.gameIndex, decisionIndex, playerId, skill, cfg.formatName,
                     decision, gs, answer, accepted, invalidReason));
         } catch (Exception ex) {
             // Tracing must never abort a game; surface once via stderr.

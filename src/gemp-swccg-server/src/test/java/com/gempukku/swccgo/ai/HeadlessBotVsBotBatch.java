@@ -23,7 +23,7 @@ import java.util.Objects;
 public final class HeadlessBotVsBotBatch {
 
     public static final String CSV_HEADER =
-            "gameIndex,darkAi,lightAi,winner,darkDecisions,lightDecisions,darkTurns,lightTurns,elapsedMs,error";
+            "gameIndex,darkAi,lightAi,winner,darkDecisions,lightDecisions,darkTurns,lightTurns,elapsedMs,format,darkDeck,lightDeck,error";
 
     public static final class BatchConfig {
         public int games = 5;
@@ -91,6 +91,9 @@ public final class HeadlessBotVsBotBatch {
         }
 
         public String toCsvLine() {
+            String format = result != null && result.formatName != null ? result.formatName : "";
+            String darkDeck = result != null && result.darkDeckName != null ? result.darkDeckName : "";
+            String lightDeck = result != null && result.lightDeckName != null ? result.lightDeckName : "";
             return String.join(",",
                     Integer.toString(gameIndex),
                     csv(darkAi != null ? darkAi.name() : ""),
@@ -101,6 +104,9 @@ public final class HeadlessBotVsBotBatch {
                     Integer.toString(darkTurns),
                     Integer.toString(lightTurns),
                     Long.toString(elapsedMs),
+                    csv(format),
+                    csv(darkDeck),
+                    csv(lightDeck),
                     csv(error != null ? error : ""));
         }
     }
@@ -152,6 +158,15 @@ public final class HeadlessBotVsBotBatch {
         BatchConfig cfg = config == null ? new BatchConfig() : config;
         if (cfg.games < 1) {
             throw new IllegalArgumentException("games must be >= 1, got " + cfg.games);
+        }
+
+        // WC96 packs are Premiere - A New Hope; never silently run them as Open.
+        if (cfg.deckPack != null
+                && (HeadlessBotVsBotRunner.DECK_WC96.equalsIgnoreCase(cfg.deckPack)
+                    || "wc96-anh".equalsIgnoreCase(cfg.deckPack)
+                    || "p-anh-1996".equalsIgnoreCase(cfg.deckPack))
+                && (cfg.formatName == null || cfg.formatName.isEmpty() || "open".equals(cfg.formatName))) {
+            cfg.formatName = "premiere_anh";
         }
 
         SwccgCardBlueprintLibrary sharedCards = null;
@@ -344,7 +359,7 @@ public final class HeadlessBotVsBotBatch {
 
     /**
      * CLI: --games=N --dark=BEGINNER --light=ADVANCED --csv=path [--verbose]
-     * [--maxDecisions=N] [--maxMillis=N] [--format=open]
+     * [--maxDecisions=N] [--maxMillis=N] [--format=premiere_anh|open]
      */
     public static void main(String[] args) throws IOException {
         BatchConfig cfg = new BatchConfig();
