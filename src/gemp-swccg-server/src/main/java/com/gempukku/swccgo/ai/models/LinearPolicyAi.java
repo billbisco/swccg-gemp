@@ -23,6 +23,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Gym-cli linear policy over {@link InformationSetV1#packed}.
@@ -31,9 +32,20 @@ import java.util.Map;
  * {@code bias + dot(W, concat(packed[packedDim], bagHash[bagHashDim], actionFeat[actionFeatDim]))}.
  * Choice is greedy argmax. Ties keep the earliest legal candidate.
  *
- * <p>{@code W} all zeros is a legal stub: it plays the first legal answer.
- * This class does not train and is not distilled from AdvancedAi / YodaBot.
- * Hall / table bots must not load it.
+ * <p>{@code W} all zeros (or omitted) is a legal stub. {@link #greedyIndex} is a
+ * pure argmax and still keeps the earliest tie, which on an activate decision
+ * is 0 Force. Choosing 0 fails the activate cost and the same action is offered
+ * again, so a zeros pack livelocks. {@link #decide} therefore adds a tiny
+ * anti-stall prior, not a skill and not a learned tactic, only when every
+ * weight is exactly 0:
+ * <ul>
+ *   <li>real actions: 0</li>
+ *   <li>non-zero activate / positive {@code integerNorm}: up to +{@value #ANTI_STALL}</li>
+ *   <li>pass: -{@value #ANTI_STALL} (penalized, but less than the stall)</li>
+ *   <li>"activate 0" / zero-integer: -2×{@value #ANTI_STALL}</li>
+ * </ul>
+ * Any non-zero weight disables the prior. This class does not train and is not
+ * distilled from AdvancedAi / YodaBot. Hall / table bots must not load it.
  *
  * <p>Action features ({@value #ACTION_FEAT_DIM}):
  * <ul>
@@ -59,7 +71,17 @@ public final class LinearPolicyAi implements SwccgAiController {
     public static final int AF_BP_BUCKETS = 4;
     public static final int AF_ONES = 23;
 
+    /**
+     * Anti-stall magnitude for an all-zero / omitted {@code W}. Not skill.
+     * Any non-zero weight disables the prior so a learned pack is unchanged.
+     */
+    public static final float ANTI_STALL = 0.05f;
+
     private static final int INTEGER_ENUM_CAP = 24;
+    private static final Pattern ZERO_ACTIVATE = Pattern.compile(
+            "^(?:integer\\s+0+|activate\\s+0+)(?:\\b.*)?$");
+    private static final Pattern NONZERO_ACTIVATE = Pattern.compile(
+            "^(?:integer\\s+[1-9]\\d*|activate\\s+[1-9]\\d*)(?:\\b.*)?$");
 
     private final float[] weights;
     private final float bias;
@@ -172,11 +194,65 @@ public final class LinearPolicyAi implements SwccgAiController {
             Candidate c = candidates.get(i);
             feats[i] = actionFeatures(c.text, c.blueprintId, c.pass, c.integerNorm, c.indexNorm);
         }
-        int best = greedyIndex(packed, bag, feats, weights, bias);
+        int best = selectIndex(packed, bag, candidates, feats);
         if (best < 0 || best >= candidates.size()) {
             return candidates.get(0).raw;
         }
         return candidates.get(best).raw;
+    }
+
+    /**
+     * Greedy index, plus the anti-stall prior when {@code weights} are all zero.
+     * Equal adjusted scores keep the earliest candidate.
+     */
+    private int selectIndex(float[] packed, float[] bag, List<Candidate> candidates, float[][] feats) {
+        boolean antiStall = allZero(weights);
+        int best = 0;
+        double bestScore = Double.NEGATIVE_INFINITY;
+        for (int a = 0; a < candidates.size(); a++) {
+            double score = scoreOf(packed, bag, feats[a], weights, bias);
+            if (antiStall) {
+                Candidate c = candidates.get(a);
+                score += antiStallPrior(c.text, c.pass, c.integerNorm);
+            }
+            if (score > bestScore) {
+                bestScore = score;
+                best = a;
+            }
+        }
+        return best;
+    }
+
+    static boolean allZero(float[] w) {
+        if (w == null || w.length == 0) {
+            return true;
+        }
+        for (float v : w) {
+            if (v != 0f) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Tie-break for a zeros pack. Not skill: it only stops activate-0 from
+     * winning every tie. Pass is penalized, but less than a zero-integer stall,
+     * so a phase can still be passed. Non-zero activate and real actions win.
+     */
+    static double antiStallPrior(String text, boolean pass, float integerNorm) {
+        String normalized = text == null ? "" : text.toLowerCase(Locale.ROOT).trim();
+        if (ZERO_ACTIVATE.matcher(normalized).matches()) {
+            return -2d * ANTI_STALL;
+        }
+        if (pass || isPassText(normalized)) {
+            return -ANTI_STALL;
+        }
+        if (integerNorm > 0f || NONZERO_ACTIVATE.matcher(normalized).matches()) {
+            float scale = integerNorm > 0f ? integerNorm : 1f;
+            return ANTI_STALL * scale;
+        }
+        return 0d;
     }
 
     /**
