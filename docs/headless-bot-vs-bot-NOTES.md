@@ -5,27 +5,28 @@ Branch: `feature/headless-bot-vs-bot`
 ## Goal
 
 Run **two in-process `SwccgAiController`s** (no Hall HTTP, no UI client) until a game ends,
-logging winner, turns, decision counts, and failures.
+logging winner, turns, decision counts, and failures. Batch path runs N games and writes CSV
+for bot measurement.
 
-## How to run
+## How to run — single game (spike)
 
 From repo `src/` (Maven reactor root):
 
 ```bash
 cd /workspace/swccg-gemp/src
-mvn -pl gemp-swccg-server -am -Dtest=HeadlessBotVsBotSpikeTest test
+mvn -pl gemp-swccg-server -am -DfailIfNoTests=false -Dtest=HeadlessBotVsBotSpikeTest test
 ```
 
 Useful properties:
 
 | Property | Default | Meaning |
 |----------|---------|---------|
-| `headless.verbose` | `true` | Progress every N decisions |
+| `headless.verbose` | `true` (spike) / `false` (batch) | Progress every N decisions |
 | `headless.maxDecisions` | `25000` | Abort if exceeded |
 | `headless.maxMillis` | `180000` | Wall-clock abort (3 min) |
-| `headless.alsoRando` | `false` | Also run Beginner vs RandoCalAi |
+| `headless.alsoRando` | `false` | Also run Beginner vs RandoCalAi (spike or batch) |
 
-Example Beginner vs Rando:
+Example Beginner vs Rando (single game):
 
 ```bash
 mvn -pl gemp-swccg-server -am \
@@ -34,12 +35,70 @@ mvn -pl gemp-swccg-server -am \
   test
 ```
 
+## How to run — batch self-play (CSV)
+
+Default: **5 games**, Beginner vs Beginner, CSV under the server module `target/`:
+
+```bash
+cd /workspace/swccg-gemp/src
+mvn -pl gemp-swccg-server -am \
+  -Dtest=HeadlessBotVsBotBatchTest \
+  -Dheadless.games=5 \
+  -Dheadless.dark=BEGINNER \
+  -Dheadless.light=BEGINNER \
+  test
+```
+
+CSV path (from Maven cwd = `gemp-swccg-server/`):
+
+`target/headless-bot-vs-bot-batch.csv`
+
+Batch properties:
+
+| Property | Default | Meaning |
+|----------|---------|---------|
+| `headless.games` | `5` | Number of games (CI-friendly; raise for measurement) |
+| `headless.dark` | `BEGINNER` | Dark AI: `BEGINNER`, `ADVANCED`, `RANDO` |
+| `headless.light` | `BEGINNER` | Light AI: same enum |
+| `headless.csv` | `target/headless-bot-vs-bot-batch.csv` | Output CSV path |
+| `headless.verbose` | `false` | Per-decision progress (noisy for batch) |
+| `headless.maxDecisions` | `25000` | Per-game abort |
+| `headless.maxMillis` | `180000` | Per-game wall-clock abort |
+| `headless.alsoAdvanced` | `false` | Extra optional batch: Beginner vs Advanced (uses `headless.games`, default CSV `target/headless-bot-vs-bot-batch-advanced.csv`) |
+| `headless.alsoRando` | `false` | Extra optional batch: Beginner vs Rando |
+
+Larger measurement run example:
+
+```bash
+mvn -pl gemp-swccg-server -am \
+  -Dtest=HeadlessBotVsBotBatchTest#batchSelfPlay_writesCsv \
+  -Dheadless.games=50 \
+  -Dheadless.dark=BEGINNER \
+  -Dheadless.light=ADVANCED \
+  -Dheadless.csv=target/beginner-vs-advanced-50.csv \
+  -Dheadless.maxMillis=300000 \
+  test
+```
+
+CSV columns:
+
+```
+gameIndex,darkAi,lightAi,winner,darkDecisions,lightDecisions,darkTurns,lightTurns,elapsedMs,error
+```
+
+- `winner` — player id (`~OzzelBot` / `~AckbarBot`) or empty if unfinished
+- `error` — empty on success; otherwise stopper / first failure note / thrown exception
+
+The decision loop is **not duplicated**: batch calls `HeadlessBotVsBotRunner.playOneGame` (shared libraries reused across games when `reuseLibraries=true`).
+
 ## Files
 
 | Path | Role |
 |------|------|
-| `gemp-swccg-server/.../ai/HeadlessBotVsBotRunner.java` | Driver: decks, register AIs, decision loop |
-| `gemp-swccg-server/.../ai/HeadlessBotVsBotSpikeTest.java` | JUnit entry |
+| `gemp-swccg-server/.../ai/HeadlessBotVsBotRunner.java` | Shared driver: decks, register AIs, decision loop |
+| `gemp-swccg-server/.../ai/HeadlessBotVsBotSpikeTest.java` | Single-game JUnit spike |
+| `gemp-swccg-server/.../ai/HeadlessBotVsBotBatch.java` | Batch runner + CSV writer |
+| `gemp-swccg-server/.../ai/HeadlessBotVsBotBatchTest.java` | Batch JUnit entry (Surefire-configurable N / matchup) |
 | `docs/headless-bot-vs-bot-NOTES.md` | This file |
 
 ## Key code paths
@@ -70,16 +129,18 @@ mvn -pl gemp-swccg-server -am \
 - Peter’s MCP is unrelated (LLM client only); not used.
 - For production Hall bot-vs-bot later: either raise/reset `MAX_AI_CHAIN` for pure-AI tables,
   or extract the spike loop into a shared `AiGameDriver` used by Hall and batch runners.
+- Batch reuse of `SwccgCardBlueprintLibrary` / `SwccgoFormatLibrary` across games cuts startup
+  cost vs constructing libraries per game.
 
 ## Next steps (self-play / training)
 
-1. Extract `HeadlessBotVsBotRunner` to `src/main` (or a thin `gemp-swccg-selfplay` module) and
-   add a batch CLI: N games, seed control, CSV of winners / turns / decisions / LF.
+1. Move runner/batch to `src/main` (or a thin `gemp-swccg-selfplay` module) for a real CLI jar.
 2. Fix or parameterize `MAX_AI_CHAIN` so Hall `playVsAi` can seat two bots the same way.
 3. Capture decision traces (decision type, scored options, chosen answer) for imitation /
    RL datasets — do **not** block on MCP/LLM for self-play.
 4. Optional: validate decks with format checker before start; add more librarian archetypes.
 5. Stability: track repeated invalid answers / stuck phases; auto-forfeit after N stalls.
+6. Seed control / deterministic shuffle if the engine exposes it.
 
 ## First successful run (2026-10-02 America/Caracas)
 
@@ -98,7 +159,7 @@ Command used:
 
 ```bash
 cd /workspace/swccg-gemp/src
-mvn -pl gemp-swccg-server -am -Dtest=HeadlessBotVsBotSpikeTest test
+mvn -pl gemp-swccg-server -am -DfailIfNoTests=false -Dtest=HeadlessBotVsBotSpikeTest test
 ```
 
 ## Success criteria checklist
@@ -106,3 +167,4 @@ mvn -pl gemp-swccg-server -am -Dtest=HeadlessBotVsBotSpikeTest test
 - [x] Code registers two AIs on one game and drives toward completion
 - [x] `mvn test` targeted spike green (Beginner vs Beginner finished)
 - [x] Notes: how to run, learnings, next steps
+- [x] Batch self-play: N games + CSV (Beginner vs Beginner; Advanced/Rando via props)

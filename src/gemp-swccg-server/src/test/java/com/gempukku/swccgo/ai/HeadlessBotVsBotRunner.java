@@ -141,6 +141,16 @@ public final class HeadlessBotVsBotRunner {
     }
 
     public static Result playOneGame(Config config) {
+        return playOneGame(config, null, null);
+    }
+
+    /**
+     * Same as {@link #playOneGame(Config)} but optionally reuses card/format libraries
+     * across a batch (pass non-null libraries from {@link HeadlessBotVsBotBatch}).
+     */
+    public static Result playOneGame(Config config,
+                                     SwccgCardBlueprintLibrary sharedCardLibrary,
+                                     SwccgoFormatLibrary sharedFormatLibrary) {
         Config cfg = config == null ? new Config() : config;
         String gameId = "headless-" + UUID.randomUUID();
         long started = System.currentTimeMillis();
@@ -149,8 +159,10 @@ public final class HeadlessBotVsBotRunner {
         byPlayer.put(DS_PLAYER, 0);
         byPlayer.put(LS_PLAYER, 0);
 
-        SwccgCardBlueprintLibrary cardLibrary = new SwccgCardBlueprintLibrary();
-        SwccgoFormatLibrary formatLibrary = new SwccgoFormatLibrary(cardLibrary);
+        SwccgCardBlueprintLibrary cardLibrary = sharedCardLibrary != null
+                ? sharedCardLibrary : new SwccgCardBlueprintLibrary();
+        SwccgoFormatLibrary formatLibrary = sharedFormatLibrary != null
+                ? sharedFormatLibrary : new SwccgoFormatLibrary(cardLibrary);
 
         SwccgDeck darkDeck = DeckSerialization.buildDeckFromContents(
                 "Open 40 card - Beginner Dark", OPEN40_BEGINNER_DARK, cardLibrary);
