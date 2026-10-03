@@ -1,6 +1,8 @@
 package com.gempukku.swccgo.cards.set13.dark;
 
+import com.gempukku.swccgo.common.CardType;
 import com.gempukku.swccgo.common.Icon;
+import com.gempukku.swccgo.common.Keyword;
 import com.gempukku.swccgo.common.Phase;
 import com.gempukku.swccgo.common.Zone;
 import com.gempukku.swccgo.framework.StartingSetup;
@@ -30,6 +32,7 @@ public class Card_13_88_Tests {
 					put("ebb", "13_88");
 					put("maul", "11_54"); // Darth Maul (Dark Jedi)
 					put("monnok", "2_135");
+					put("barrier", "1_249");
 				}},
 				40,
 				40,
@@ -50,11 +53,15 @@ public class Card_13_88_Tests {
 		scn.StartGame();
 
 		assertEquals(5f, ebb.getBlueprint().getDestiny(), 0.001f);
+		scn.BlueprintCardTypeCheck(ebb.getBlueprint(), new ArrayList<>() {{
+			add(CardType.INTERRUPT);
+		}});
 		scn.BlueprintIconCheck(ebb.getBlueprint(), new ArrayList<>() {{
 			add(Icon.REFLECTIONS_III);
 			add(Icon.INTERRUPT);
 			add(Icon.EPISODE_I);
 		}});
+		scn.BlueprintKeywordCheck(ebb.getBlueprint(), new ArrayList<Keyword>());
 	}
 
 	@Test
@@ -78,26 +85,21 @@ public class Card_13_88_Tests {
 	}
 
 	@Test
-	public void TheEbbOfBattleActivateOneForcePlayableWithEmptyReserveActivationFails() {
+	public void TheEbbOfBattleActivateOneForceNotPlayableWithEmptyReserve() {
 		var scn = GetScenario();
 		var ebb = scn.GetDSCard("ebb");
 		scn.StartGame();
 		scn.MoveCardsToDSHand(ebb);
 
-		// Reach Control with a normal Activate first; then empty Reserve so ActivateForce will fail
 		scn.SkipToPhase(Phase.CONTROL);
-		while (scn.GetDSReserveDeckCount() > 0) {
-			scn.MoveCardsToTopOfDSLostPile(scn.GetTopOfDSReserveDeck());
+		int reserve = scn.GetDSReserveDeckCount();
+		if (reserve > 0) {
+			scn.DSActivateForceCheat(reserve);
 		}
 		assertEquals(0, scn.GetDSReserveDeckCount());
-		int forceBefore = scn.GetDSForcePileCount();
-
-		assertTrue(scn.DSCardPlayAvailable(ebb));
-		scn.DSPlayCard(ebb);
-		scn.PassAllResponses();
-
-		assertEquals(Zone.TOP_OF_USED_PILE, ebb.getZone());
-		assertEquals(forceBefore, scn.GetDSForcePileCount());
+		scn.SkipToPhase(Phase.DEPLOY);
+		assertFalse(scn.DSCardPlayAvailable(ebb, "Activate 1 Force"));
+		assertFalse(scn.DSCardPlayAvailable(ebb));
 	}
 
 	@Test
@@ -135,7 +137,7 @@ public class Card_13_88_Tests {
 		scn.LSForceDrainAt(dsSite);
 
 		// Cancel-from-combat-card action must not be available from hand
-		assertFalse(scn.DSCardPlayAvailable(ebb, "Reveal combat card"));
+		assertFalse(scn.DSCardPlayAvailable(ebb, "Reveal and lose combat card"));
 		assertFalse(scn.DSCardPlayAvailable(ebb, "Cancel Force drain"));
 		scn.PassForceDrainStartResponses();
 		scn.PassForceDrainEndResponses();
@@ -168,13 +170,30 @@ public class Card_13_88_Tests {
 		assertTrue(scn.LSForceDrainAvailable(dsSite));
 		scn.LSForceDrainAt(dsSite);
 
-		assertTrue(scn.DSCardPlayAvailable(ebb, "Reveal combat card"));
-		scn.DSPlayCard(ebb, "Reveal combat card");
+		assertTrue(scn.DSCardPlayAvailable(ebb, "Reveal and lose combat card"));
+		scn.DSPlayCard(ebb, "Reveal and lose combat card");
 		scn.PassAllResponses();
 
 		assertEquals(Zone.TOP_OF_LOST_PILE, ebb.getZone());
 		assertFalse(scn.IsActiveForceDrain());
 		assertEquals(lsLifeBefore, scn.GetLSLifeForceRemaining());
+	}
+
+	@Test
+	public void TheEbbOfBattleActivateNotAvailableWhenStackedAsCombatCard() {
+		var scn = GetScenario();
+		var ebb = scn.GetDSCard("ebb");
+		var maul = scn.GetDSCard("maul");
+		var lsSite = scn.GetLSStartingLocation();
+
+		scn.StartGame();
+		scn.MoveCardsToLocation(lsSite, maul);
+		scn.RemoveCardZone(ebb);
+		scn.gameState().stackCard(ebb, maul, true, false, false);
+		ebb.setCombatCard(true);
+
+		scn.SkipToPhase(Phase.CONTROL);
+		assertFalse(scn.DSCardPlayAvailable(ebb, "Activate 1 Force"));
 	}
 
 	@Test
@@ -194,6 +213,35 @@ public class Card_13_88_Tests {
 
 		scn.SkipToPhase(Phase.CONTROL);
 		assertFalse(scn.DSCardPlayAvailable(monnok));
+	}
+
+	@Test
+	public void TheEbbOfBattleDoesNotLetStackedImperialBarrierPlayOnJustDeployed() {
+		var scn = GetScenario();
+		var barrier = scn.GetDSCard("barrier");
+		var maul = scn.GetDSCard("maul");
+		var luke = scn.GetLSCard("luke");
+		var lsSite = scn.GetLSStartingLocation();
+
+		scn.StartGame();
+		scn.MoveCardsToLocation(lsSite, maul);
+		scn.RemoveCardZone(barrier);
+		scn.gameState().stackCard(barrier, maul, true, false, false);
+		barrier.setCombatCard(true);
+		assertEquals(Zone.STACKED_FACE_DOWN, barrier.getZone());
+		assertTrue(barrier.isCombatCard());
+
+		scn.MoveCardsToLSHand(luke);
+		scn.LSActivateForceCheat(6);
+		scn.SkipToLSTurn(Phase.DEPLOY);
+		assertTrue(scn.LSCardPlayAvailable(luke));
+		scn.LSPlayCard(luke);
+		if (scn.LSHasCardChoiceAvailable(lsSite)) {
+			scn.LSChooseCard(lsSite);
+		}
+
+		assertFalse("Imperial Barrier stacked as a combat card cannot play on just deployed",
+				scn.DSCardPlayAvailable(barrier));
 	}
 
 	@Test
@@ -217,7 +265,7 @@ public class Card_13_88_Tests {
 		assertTrue(scn.LSForceDrainAvailable(dsSite));
 		scn.LSForceDrainAt(dsSite);
 
-		assertFalse(scn.DSCardPlayAvailable(ebb, "Reveal combat card"));
+		assertFalse(scn.DSCardPlayAvailable(ebb, "Reveal and lose combat card"));
 		scn.PassForceDrainStartResponses();
 		scn.PassForceDrainEndResponses();
 	}
@@ -245,7 +293,7 @@ public class Card_13_88_Tests {
 		scn.LSForceDrainAt(dsSite);
 
 		// Not under Dark Jedi — Action3 must not be available to either player
-		assertFalse(scn.DSCardPlayAvailable(ebb, "Reveal combat card"));
+		assertFalse(scn.DSCardPlayAvailable(ebb, "Reveal and lose combat card"));
 		// LS may not hold the current decision here; DS Action3 gate is the VHD check
 		if (scn.IsActiveForceDrain()) {
 			scn.PassForceDrainStartResponses();

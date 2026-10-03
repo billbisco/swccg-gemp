@@ -70,19 +70,17 @@ public class Card4_137 extends AbstractUsedInterrupt {
                     @Override
                     protected void cardTargeted(final int targetGroupId, final PhysicalCard targetedImperial) {
                         action.addAnimationGroup(targetedImperial);
-                        // Allow response(s). Re-read the target after responses in case I Have A Bad Feeling About This retargets.
+                        // Lose is a cost (Noble Sacrifice). Sense cancel still pays it.
+                        // Capture the cap while the Imperial is on table; I Have A Bad Feeling About This
+                        // can still retarget the play window, but the paid cost is this Imperial.
+                        final float activationCap = ApologyAcceptedGetActivationCap(game, playerId, targetedImperial);
+                        final boolean allowsZero = ApologyAcceptedAllowsZeroActivation(game, playerId, targetedImperial);
+                        action.appendCost(
+                                new LoseCardFromTableEffect(action, targetedImperial));
                         action.allowResponses("Make " + GameUtils.getCardLink(targetedImperial) + " lost and activate Force",
                                 new RespondablePlayCardEffect(action) {
                                     @Override
                                     protected void performActionResults(Action targetingAction) {
-                                        final PhysicalCard finalTarget = action.getPrimaryTargetCard(targetGroupId);
-                                        if (finalTarget == null) {
-                                            return;
-                                        }
-                                        final float activationCap = ApologyAcceptedGetActivationCap(game, playerId, finalTarget);
-                                        final boolean allowsZero = ApologyAcceptedAllowsZeroActivation(game, playerId, finalTarget);
-                                        action.appendEffect(
-                                                new LoseCardFromTableEffect(action, finalTarget));
                                         ApologyAcceptedAppendActivateForce(action, game, playerId, activationCap, allowsZero);
                                     }
                                 }
@@ -140,19 +138,12 @@ public class Card4_137 extends AbstractUsedInterrupt {
     }
 
     /**
-     * True if forfeit is 0 or any survived lost-battle's battle damage is 0 (either side of "either").
+     * True when the activation cap can be 0: forfeit 0. A lost battle has
+     * base battle damage equal to the power difference (AR Winner And Loser),
+     * so 0 damage on a lost-battle record is not a second empty-Reserve path.
      */
     static boolean ApologyAcceptedAllowsZeroActivation(SwccgGame game, String playerId, PhysicalCard imperial) {
-        float forfeit = game.getModifiersQuerying().getForfeit(game.getGameState(), imperial);
-        if (forfeit == 0f) {
-            return true;
-        }
-        for (BattleThisTurnRecord record : game.getModifiersQuerying().getBattlesLostThisTurn(playerId)) {
-            if (record.wasParticipant(imperial.getCardId()) && record.getBattleDamageFor(playerId) == 0f) {
-                return true;
-            }
-        }
-        return false;
+        return game.getModifiersQuerying().getForfeit(game.getGameState(), imperial) == 0f;
     }
 
     static boolean ApologyAcceptedIsPlayableGivenForce(SwccgGame game, String playerId, Filter eligibleImperialFilter) {

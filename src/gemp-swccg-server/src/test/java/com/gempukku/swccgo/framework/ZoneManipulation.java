@@ -70,6 +70,14 @@ public interface ZoneManipulation extends TestBase{
     }
 
     /**
+     * Places a location using an explicit layout placement (left/right of a given site).
+     */
+    default void MoveLocationToTable(PhysicalCardImpl card, LocationPlacement placement) {
+        RemoveCardZone(card);
+        gameState().addLocationToTable(game(), card, placement);
+    }
+
+    /**
      * Moves one or more cards to a given location, on their owner's side of that location.  This is equivalent to
      * deploying to a location, except that no costs, requirements, or other rules will be respected.
      * This is unrelated to transporting a card during the Move phase.
@@ -502,15 +510,43 @@ public interface ZoneManipulation extends TestBase{
     }
 
     /**
+     * Places a non-location card in the location row between two adjacent sites.
+     */
+    default void PlaceBetweenSites(PhysicalCardImpl leftSite, PhysicalCardImpl rightSite, PhysicalCardImpl card) {
+        RemoveCardZone(card);
+        gameState().addBetweenSiteCardToTable(card, leftSite, rightSite);
+    }
+
+    /**
      * Directly stacks one or more cards on a target card, regardless of legality or costs.  This is often used once
      * a card has already proven to stack properly for expedience in follow-up tests.
      * @param on Which card the given cards should be stacked on.
      * @param cards One or more cards to stack
      */
     default void StackCardsOn(PhysicalCardImpl on, PhysicalCardImpl...cards) {
+        StackCardsOn(on, false, cards);
+    }
+
+    /**
+     * Directly stacks one or more cards face-down on a target card.
+     */
+    default void StackCardsFaceDownOn(PhysicalCardImpl on, PhysicalCardImpl...cards) {
         Arrays.stream(cards).forEach(card -> {
             RemoveCardZone(card);
-            gameState().stackCard(card, on, false, false, false);
+            gameState().stackCard(card, on, true, false, false);
+        });
+    }
+
+    /**
+     * Directly stacks one or more cards on a target card, regardless of legality or costs.
+     * @param on Which card the given cards should be stacked on.
+     * @param faceDown true to stack face down (combat cards), false to stack face up
+     * @param cards One or more cards to stack
+     */
+    default void StackCardsOn(PhysicalCardImpl on, boolean faceDown, PhysicalCardImpl...cards) {
+        Arrays.stream(cards).forEach(card -> {
+            RemoveCardZone(card);
+            gameState().stackCard(card, on, faceDown, false, false);
         });
     }
 
