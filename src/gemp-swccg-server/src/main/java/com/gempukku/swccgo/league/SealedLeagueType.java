@@ -6,16 +6,16 @@ package com.gempukku.swccgo.league;
  */
 public enum SealedLeagueType {
 
-    PREMIERE_ANH_SEALED("premiere_anh_sealed", "sealed", "Premiere-A New Hope Sealed"),
+    PREMIERE_ANH_SEALED("premiere_anh_sealed", "premiere_anh_sealed", "Premiere - A New Hope Sealed"),
     HOTH_DAGOBAH_CC_SEALED("hoth_dagobah_cc_sealed", "sealed", "Hoth-Dagobah-Cloud City Sealed"),
     JP_SEALED("jp_sealed", "jp_sealed", "Jabba's Palace Sealed"),
-    ENDOR_DSII_SEALED("endor_dsII_sealed", "sealed", "Endor-Death Star II Sealed"),
-    REFLECTIONS_SEALED("reflections_sealed", "sealed", "Reflections Sealed"),
-    EPISODE_I_SEALED("episode_i_sealed", "sealed", "Episode I Sealed"),
-    ALL_OF_THE_JEDI_SEALED("all_of_the_jedi_sealed", "sealed", "All of the Jedi Sealed"),
-    NOVELTY_SEALED("novelty_sealed","sealed", "Space Sealed"),
-    WATTOS_CUBE_WITH_OBJECTIVE_PACKS("wattos_cube_with_objective", "cube", "Watto's Cube Objective"),
-    WATTOS_CUBE_WITH_FIXED("wattos_cube_with_fixed", "cube", "Watto's Cube Fixed"),
+    ENDOR_DSII_SEALED("endor_dsII_sealed", "endor_dsII_sealed", "Endor - Death Star II Sealed"),
+    REFLECTIONS_SEALED("reflections_sealed", "reflections_sealed", "Reflections Sealed"),
+    EPISODE_I_SEALED("episode_i_sealed", "episode_i_sealed", "Episode I Sealed"),
+    ALL_OF_THE_JEDI_SEALED("all_of_the_jedi_sealed", "all_of_the_jedi_sealed", "All Of The Jedi Sealed"),
+    NOVELTY_SEALED("novelty_sealed","novelty_sealed", "Novelty - Space Sealed"),
+    WATTOS_CUBE_WITH_OBJECTIVE_PACKS("wattos_cube_with_objective", "wattos_cube_with_objective", "Watto's Cube with objective packs Cube"),
+    WATTOS_CUBE_WITH_FIXED("wattos_cube_with_fixed", "wattos_cube_with_fixed", "Watto's Cube with fixed pack Cube"),
     ;
 
     public static SealedLeagueType getLeagueType(String sealedCode) {

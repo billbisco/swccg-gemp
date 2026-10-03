@@ -11,7 +11,6 @@ import com.gempukku.swccgo.logic.effects.DrawDestinyEffect;
 import com.gempukku.swccgo.logic.effects.RespondablePlayingCardEffect;
 import com.gempukku.swccgo.logic.timing.*;
 import com.gempukku.swccgo.logic.timing.results.DestinyDrawnResult;
-import com.gempukku.swccgo.logic.timing.results.LostFromTableResult;
 import com.google.common.base.Objects;
 
 import java.util.*;
@@ -552,7 +551,6 @@ public class DefaultActionsEnvironment implements ActionsEnvironment {
     public List<Action> getOptionalAfterActions(String playerId, Collection<? extends EffectResult> effectResults) {
         GatherOptionalAfterActions gatherAfterActions = new GatherOptionalAfterActions(playerId, effectResults);
         _swccgGame.getGameState().iterateCardsWithOptionalActions(gatherAfterActions, playerId, true);
-        _swccgGame.getGameState().iterateStackedCombatCardInterrupts(gatherAfterActions, playerId);
 
         List<Action> allActions = new LinkedList<Action>();
 
@@ -589,31 +587,6 @@ public class DefaultActionsEnvironment implements ActionsEnvironment {
     @Override
     public void addActionToStack(Action action) {
         _actionStack.stackAction(action);
-    }
-
-    @Override
-    public boolean isJustLostFromTableBeingRespondedTo(PhysicalCard card) {
-        if (card == null) {
-            return false;
-        }
-        int permanentCardId = card.getPermanentCardId();
-        for (Action action : _actionStack.getActions()) {
-            if (action instanceof PlayOutEffectResults) {
-                for (EffectResult effectResult : ((PlayOutEffectResults) action).getEffectResults()) {
-                    if (effectResult.getType() == EffectResult.Type.LOST_FROM_TABLE
-                            || effectResult.getType() == EffectResult.Type.FORFEITED_TO_LOST_PILE_FROM_TABLE
-                            || effectResult.getType() == EffectResult.Type.CANCELED_ON_TABLE) {
-                        if (effectResult instanceof LostFromTableResult) {
-                            PhysicalCard lostCard = ((LostFromTableResult) effectResult).getCard();
-                            if (lostCard != null && lostCard.getPermanentCardId() == permanentCardId) {
-                                return true;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return false;
     }
 
 

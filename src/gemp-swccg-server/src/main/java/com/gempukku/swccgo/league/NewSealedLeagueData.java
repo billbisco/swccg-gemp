@@ -95,8 +95,11 @@ public class NewSealedLeagueData implements LeagueData {
     }
 
     private boolean excludePackDuplicates(SealedLeagueType sealedLeagueType) {
-        //exclude duplicates from cube
-        if(sealedLeagueType.getFormatCode().equals("cube"))
+        //exclude duplicates from cube (generic cube or dedicated Watto's Cube formats)
+        String formatCode = sealedLeagueType.getFormatCode();
+        if(formatCode.equals("cube")
+                || formatCode.equals("wattos_cube_with_objective")
+                || formatCode.equals("wattos_cube_with_fixed"))
             return true;
 
         return false;

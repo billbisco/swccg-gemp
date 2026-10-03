@@ -5144,7 +5144,7 @@ public class GameConditions {
         if (battleState == null)
             return false;
 
-        if (battleState.getNumBattleDestinyDrawn(game.getOpponent(playerId)) == 0)
+        if (battleState.getNumUncanceledBattleDestinyDrawn(game.getOpponent(playerId)) == 0)
             return false;
 
         if (battleState.isReachedDamageSegment())

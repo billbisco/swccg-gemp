@@ -15,7 +15,7 @@ import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.TriggerConditions;
 import com.gempukku.swccgo.logic.actions.PlayInterruptAction;
 import com.gempukku.swccgo.logic.effects.RespondablePlayCardEffect;
-import com.gempukku.swccgo.logic.effects.choose.DeployCardsFromRevealedReserveDeckEffect;
+import com.gempukku.swccgo.logic.effects.choose.DeployRevealedCardsFromReserveDeckEffect;
 import com.gempukku.swccgo.logic.timing.Action;
 import com.gempukku.swccgo.logic.timing.EffectResult;
 
@@ -63,11 +63,11 @@ public class Card8_144 extends AbstractUsedInterrupt {
                                             @Override
                                             protected void cardsRevealed(List<PhysicalCard> cards) {
                                                 action.appendEffect(
-                                                        new DeployCardsFromRevealedReserveDeckEffect(action, cards,
+                                                        new DeployRevealedCardsFromReserveDeckEffect(action, cards,
                                                                 Filters.or(Filters.scout, Filters.speeder_bike),
                                                                 Filters.battleLocation,
                                                                 true,
-                                                                DeployCardsFromRevealedReserveDeckEffect.LeftoverMode.LEAVE_ON_TOP));
+                                                                DeployRevealedCardsFromReserveDeckEffect.LeftoverMode.LEAVE_ON_TOP));
                                             }
                                         }
                                 );

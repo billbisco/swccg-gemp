@@ -188,7 +188,7 @@ public abstract class AbstractNonLocationPlaysToTable extends AbstractSwccgCardB
                 PlayCardAction playCardAction = null;
 
                 // If the play option is to play to a location or attach to a card, then get use the filter for where card can be played
-                if (playToZone == Zone.AT_LOCATION || playToZone == Zone.ATTACHED) {
+                if (playToZone == Zone.AT_LOCATION || playToZone == Zone.ATTACHED || playToZone == Zone.BETWEEN_SITES) {
                     Filter completeTargetFilter = Filters.and(deployTargetFilter, getValidDeployTargetFilter(playerId, game, self, sourceCard, playCardOption, forFree, changeInCost, deploymentRestrictionsOption, deployAsCaptiveOption, reactActionOption, false, false));
 
                     // Determine the spot override to use when playing the card using this play card option
@@ -254,7 +254,7 @@ public abstract class AbstractNonLocationPlaysToTable extends AbstractSwccgCardB
                             playCardAction = new PlayCardAsAttachedAction(sourceCard, self, playCardOption, forFree, changeInCost, reactActionOption, spotOverrides, Filters.in(validDeployOnTargets));
                         }
                     }
-                    else if (playToZone == Zone.ATTACHED) {
+                    else if (playToZone == Zone.ATTACHED || playToZone == Zone.BETWEEN_SITES) {
                         // Check that a valid target to deploy to as attached can be found
                         if (Filters.canSpot(game, self, spotOverrides, TargetingReason.TO_BE_DEPLOYED_ON, completeTargetFilter)) {
                             playCardAction = new PlayCardAsAttachedAction(sourceCard, self, playCardOption, forFree, changeInCost, reactActionOption, spotOverrides, completeTargetFilter);
@@ -449,13 +449,16 @@ public abstract class AbstractNonLocationPlaysToTable extends AbstractSwccgCardB
     protected Filter getValidDeployTargetFilter(String playerId, final SwccgGame game, final PhysicalCard self, PhysicalCard sourceCard, PlayCardOption playCardOption, boolean forFree, float changeInCost, DeploymentRestrictionsOption deploymentRestrictionsOption, DeployAsCaptiveOption deployAsCaptiveOption, ReactActionOption reactActionOption, boolean isSimDeployAttached, boolean ignorePresenceOrForceIcons) {
         Zone playToZone = playCardOption != null ? playCardOption.getZone() : null;
 
-        if (playToZone != null && playToZone != Zone.ATTACHED && playToZone != Zone.AT_LOCATION)
+        if (playToZone != null && playToZone != Zone.ATTACHED && playToZone != Zone.AT_LOCATION && playToZone != Zone.BETWEEN_SITES)
             return Filters.none;
 
         // Filter cards that this card is not prohibited from being at or deploying to
         Filter filter = Filters.and(Filters.not(Filters.holosite), Filters.notProhibitedFromTarget(self), Filters.notProhibitedFromDeployingTo(self, deploymentRestrictionsOption));
         if (playToZone == Zone.ATTACHED) {
             filter = Filters.and(filter, Filters.notProhibitedFromCarrying(self), Filters.canBeTargetedBy(self));
+        }
+        if (playToZone == Zone.BETWEEN_SITES) {
+            filter = Filters.and(filter, Filters.canBeTargetedBy(self));
         }
 
         // Filter locations to deploy as 'react' to
@@ -793,6 +796,65 @@ public abstract class AbstractNonLocationPlaysToTable extends AbstractSwccgCardB
      * @param self the card
      * @return the actions
      */
+
+    private boolean shouldOfferMayDeployForFree(SwccgGame game, PhysicalCard self) {
+        return game.getModifiersQuerying().mayDeployForFree(game.getGameState(), self)
+                && !game.getModifiersQuerying().grantedDeployForFree(game.getGameState(), self, null)
+                && !game.getModifiersQuerying().deploysForFree(game.getGameState(), self);
+    }
+
+    private void appendMayDeployForFreeLabel(PlayCardAction freeAction) {
+        String text = freeAction.getText();
+        if (text != null && !text.toLowerCase().contains("for free")) {
+            freeAction.setText(text + " for free");
+        }
+    }
+
+    private void appendMayDeployForceCostLabel(SwccgGame game, PhysicalCard self, PlayCardAction paidAction) {
+        String text = paidAction.getText();
+        if (text == null) {
+            return;
+        }
+        String lower = text.toLowerCase();
+        if (lower.contains("for free") || lower.contains(" force")) {
+            return;
+        }
+        int forceCost = Math.max(0, Math.round(game.getModifiersQuerying().getDeployCost(game.getGameState(), self)));
+        paidAction.setText(text + " for " + forceCost + " Force");
+    }
+
+    /**
+     * Rebuilds the action list so optional free-deploy play actions are first, then regular/paid play actions
+     * (labeled with the Force cost), then any remaining non-play actions.
+     */
+    private List<Action> orderMayDeployFreeThenPaid(List<PlayCardAction> freeActions, List<Action> paidOrOtherActions, SwccgGame game, PhysicalCard self) {
+        List<Action> result = new LinkedList<Action>();
+        List<Action> paidPlayActions = new LinkedList<Action>();
+        List<Action> otherActions = new LinkedList<Action>();
+
+        if (paidOrOtherActions != null) {
+            for (Action action : paidOrOtherActions) {
+                if (action instanceof PlayCardAction) {
+                    appendMayDeployForceCostLabel(game, self, (PlayCardAction) action);
+                    paidPlayActions.add(action);
+                }
+                else {
+                    otherActions.add(action);
+                }
+            }
+        }
+
+        if (freeActions != null) {
+            for (PlayCardAction freeAction : freeActions) {
+                appendMayDeployForFreeLabel(freeAction);
+                result.add(freeAction);
+            }
+        }
+        result.addAll(paidPlayActions);
+        result.addAll(otherActions);
+        return result;
+    }
+
     @Override
     public List<Action> getTopLevelActions(String playerId, SwccgGame game, PhysicalCard self) {
         List<Action> actions = super.getTopLevelActions(playerId, game, self);
@@ -802,7 +864,16 @@ public abstract class AbstractNonLocationPlaysToTable extends AbstractSwccgCardB
                 && ((self.getZone() != Zone.STACKED && self.getZone() != Zone.STACKED_FACE_DOWN) || game.getModifiersQuerying().mayDeployAsIfFromHand(game.getGameState(), self))) {
             boolean forFree = isCardTypeAlwaysPlayedForFree() || game.getGameState().getCurrentPhase() == Phase.PLAY_STARTING_CARDS;
             List<PlayCardAction> playCardActions = getPlayCardActions(playerId, game, self, self, forFree, 0, null, null, null, null, null, false, 0, Filters.any, null);
-            if (playCardActions != null) {
+            // "may deploy for free" (e.g. It Can Wait / Kiss A Wookiee): offer free + paid like Battle Plan / Wise Advice
+            if (!forFree && shouldOfferMayDeployForFree(game, self)) {
+                List<PlayCardAction> freePlayCardActions = getPlayCardActions(playerId, game, self, self, true, 0, null, null, null, null, null, false, 0, Filters.any, null);
+                List<Action> paidAsActions = new LinkedList<Action>();
+                if (playCardActions != null) {
+                    paidAsActions.addAll(playCardActions);
+                }
+                actions.addAll(orderMayDeployFreeThenPaid(freePlayCardActions, paidAsActions, game, self));
+            }
+            else if (playCardActions != null) {
                 actions.addAll(playCardActions);
             }
         }

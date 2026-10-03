@@ -2112,7 +2112,13 @@ public class TriggerConditions {
                 return false;
 
             EnhanceForceDrainResult result = (EnhanceForceDrainResult) effectResult;
-            return Filters.and(weaponFilter).accepts(game.getGameState(), game.getModifiersQuerying(), result.getWeapon());
+            if (result.getWeapon() != null) {
+                return Filters.and(weaponFilter).accepts(game.getGameState(), game.getModifiersQuerying(), result.getWeapon());
+            }
+            if (result.getPermanentWeapon() != null) {
+                return Filters.and(weaponFilter).accepts(game.getGameState(), game.getModifiersQuerying(), result.getPermanentWeapon());
+            }
+            return false;
         }
         return false;
     }
@@ -2703,12 +2709,7 @@ public class TriggerConditions {
         if (!justPlacedOutOfPlayFromOffTable(game, effectResult, filter)) {
             return false;
         }
-        PlacedCardOutOfPlayFromOffTableResult result = (PlacedCardOutOfPlayFromOffTableResult) effectResult;
-        Zone previousZone = result.getPreviousZone();
-        if (previousZone != Zone.LOST_PILE && previousZone != Zone.TOP_OF_LOST_PILE) {
-            return false;
-        }
-        return game.getActionsEnvironment().isJustLostFromTableBeingRespondedTo(result.getCard());
+        return ((PlacedCardOutOfPlayFromOffTableResult) effectResult).isWhileJustLostFromTable();
     }
 
     /**

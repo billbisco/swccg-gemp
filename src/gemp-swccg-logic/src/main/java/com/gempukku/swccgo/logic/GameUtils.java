@@ -348,4 +348,48 @@ public class GameUtils {
 
         return zone;
     }
+
+    /**
+     * Per AR "Looking At A Deck, Pile, Or Stack": if YOUR card is stacked face-down on (or under)
+     * another of YOUR cards (or any location), you may examine it unless a card/rule prohibits.
+     * Ownership of the stacked card and of the card it is stacked on (or any location) gates access;
+     * AR examples such as Insignificant Rebellion / I Feel The Conflict are covered by that ownership check.
+     * Hatred cards: AR special exception — owners may examine their face-down Hatred cards at any time.
+     * Not a game action; does not reveal identity to opponent/spectators.
+     *
+     * @param gameState the game state (reserved for future prohibition checks; may be null)
+     * @param viewerId the player who would examine the card
+     * @param card the stacked card
+     * @return true if viewerId may examine the face-down stacked card
+     */
+    public static boolean canExamineFaceDownStackedCard(GameState gameState, String viewerId, PhysicalCard card) {
+        if (viewerId == null || card == null) {
+            return false;
+        }
+        if (card.getZone() != Zone.STACKED_FACE_DOWN) {
+            return false;
+        }
+        if (!viewerId.equals(card.getOwner())) {
+            return false;
+        }
+
+        PhysicalCard stackedOn = card.getStackedOn();
+        if (stackedOn == null) {
+            return false;
+        }
+
+        // AR Hatred exception: owner may examine their face-down Hatred cards at any time
+        if (card.isHatredCard()) {
+            return true;
+        }
+
+        // Stacked on any location
+        if (stackedOn.getBlueprint() != null
+                && stackedOn.getBlueprint().getCardCategory() == CardCategory.LOCATION) {
+            return true;
+        }
+
+        // Stacked on (or under) another of the viewer's cards
+        return viewerId.equals(stackedOn.getOwner());
+    }
 }
