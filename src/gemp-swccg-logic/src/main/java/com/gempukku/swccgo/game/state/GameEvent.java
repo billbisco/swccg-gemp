@@ -214,16 +214,21 @@ public class GameEvent {
     }
 
     public GameEvent card(PhysicalCard physicalCard, GameState gameState, boolean alwaysShowCardFront) {
-        GameEvent gameEvent = cardId(physicalCard.getCardId()).blueprintId(physicalCard.getBlueprintId(gameState, alwaysShowCardFront));
-        gameEvent = gameEvent.testingText(physicalCard.getTestingText(gameState, alwaysShowCardFront, false));
-        gameEvent = gameEvent.backSideTestingText(physicalCard.getTestingText(gameState, alwaysShowCardFront, true));
-        gameEvent = gameEvent.horizontal(GameUtils.serializeAsHorizontal(physicalCard, alwaysShowCardFront));
+        String blueprintId = physicalCard.getBlueprintId(gameState, alwaysShowCardFront);
+        boolean hiddenIdentity = GameUtils.isGenericCardBack(blueprintId);
+        GameEvent gameEvent = cardId(physicalCard.getCardId()).blueprintId(blueprintId);
+        if (!hiddenIdentity) {
+            gameEvent = gameEvent.testingText(physicalCard.getTestingText(gameState, alwaysShowCardFront, false));
+            gameEvent = gameEvent.backSideTestingText(physicalCard.getTestingText(gameState, alwaysShowCardFront, true));
+        }
+        gameEvent = gameEvent.horizontal(GameUtils.serializeAsHorizontal(physicalCard, gameState, alwaysShowCardFront));
         gameEvent = gameEvent.participantId(physicalCard.getOwner()).zone(physicalCard.getZone()).zoneOwnerId(physicalCard.getZoneOwner());
         gameEvent = gameEvent.locationIndex(physicalCard.getLocationZoneIndex()).inverted(physicalCard.isInverted()).sideways(physicalCard.isSideways());
         gameEvent = gameEvent.frozen(physicalCard.isFrozen()).suspendedOrTurnedOff(physicalCard.isSuspended() || physicalCard.isBinaryOff() || physicalCard.isMissing());
         gameEvent = gameEvent.collapsed(physicalCard.isCollapsed()).phase(gameState.getCurrentPhase().toString());
 
-        // Get the system name (or starship/vehicle persona or card id) related to this location
+        // Get the system name (or starship/vehicle persona or card id) related to this location.
+        // Skip when the client only receives a generic card back so a sniffer cannot tell a site from an Effect.
         PhysicalCard systemSource = physicalCard;
         if (physicalCard.getZone() == Zone.BETWEEN_SITES) {
             PhysicalCard left = gameState.getBetweenSiteLeft(physicalCard);
@@ -231,7 +236,7 @@ public class GameEvent {
                 systemSource = left;
             }
         }
-        if (systemSource.getBlueprint().getCardCategory() == CardCategory.LOCATION) {
+        if (!hiddenIdentity && systemSource.getBlueprint().getCardCategory() == CardCategory.LOCATION) {
             if (systemSource.getPartOfSystem() != null) {
                 gameEvent = gameEvent.systemName(systemSource.getPartOfSystem());
             } else if (systemSource.getSystemOrbited() != null) {
