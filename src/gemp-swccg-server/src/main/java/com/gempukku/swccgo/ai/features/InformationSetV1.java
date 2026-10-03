@@ -32,6 +32,11 @@ public final class InformationSetV1 {
     public final List<Map<String, Object>> publicInPlay = new ArrayList<>();
     /** Own Used/Lost cards whose identities are public right now (face-up pile or visible top). */
     public final List<Map<String, Object>> ownPublicPiles = new ArrayList<>();
+    /**
+     * Face-up cards stacked on a public card. Face-down stacks are sizes only
+     * (see packed table facts), never identities.
+     */
+    public final List<Map<String, Object>> publicFaceUpStacks = new ArrayList<>();
     public final List<Map<String, Object>> seenHistory = new ArrayList<>();
     public final List<Map<String, Object>> destinyRecycleAggregate = new ArrayList<>();
     public final List<Map<String, Object>> opponentRevealed = new ArrayList<>();
@@ -67,6 +72,7 @@ public final class InformationSetV1 {
         row.put("ownHand", ownHand);
         row.put("publicInPlay", publicInPlay);
         row.put("ownPublicPiles", ownPublicPiles);
+        row.put("publicFaceUpStacks", publicFaceUpStacks);
         row.put("seenHistory", seenHistory);
         row.put("destinyRecycleAggregate", destinyRecycleAggregate);
         row.put("opponentRevealed", opponentRevealed);

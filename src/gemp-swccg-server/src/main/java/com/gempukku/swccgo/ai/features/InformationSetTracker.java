@@ -26,6 +26,8 @@ public final class InformationSetTracker {
     private int droppedSeenEvents;
     private int shufflesOwnReserve;
     private boolean eventsHooked;
+    private int decisionsThisGame;
+    private boolean decisionsThisGameSet;
 
     public InformationSetTracker(String playerId) {
         this(playerId, FeatureLayoutV1.SEEN_HISTORY_CAP);
@@ -124,6 +126,24 @@ public final class InformationSetTracker {
 
     public int getShufflesOwnReserve() {
         return shufflesOwnReserve;
+    }
+
+    /**
+     * Decisions already taken in this game. GameState has no such counter;
+     * the headless runner is the source. {@link #hasDecisionsThisGame()}
+     * stays false until that runner calls this.
+     */
+    public void setDecisionsThisGame(int count) {
+        decisionsThisGame = Math.max(0, count);
+        decisionsThisGameSet = true;
+    }
+
+    public int getDecisionsThisGame() {
+        return decisionsThisGame;
+    }
+
+    public boolean hasDecisionsThisGame() {
+        return decisionsThisGameSet;
     }
 
     public void copyInto(InformationSetV1 target) {

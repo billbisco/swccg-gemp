@@ -166,13 +166,15 @@ public final class HeadlessBotVsBotRunner {
         public final String darkDeckName;
         public final String lightDeckName;
         public final String formatName;
+        /** Seat with a pending decision when a maxDecisions/maxMillis cap hit. Empty otherwise. */
+        public final String decidingPlayer;
 
         Result(String gameId, boolean finished, boolean cancelled, String winner, String winReasonSummary,
                int decisionCount, int invalidAnswerCount, int darkTurnNumber, int lightTurnNumber,
                Phase lastPhase, int darkLifeForce, int lightLifeForce, long elapsedMillis,
                String stopper, List<String> failureNotes, Map<String, Integer> decisionsByPlayer,
                Map<String, String> recordingIds, Map<String, Path> replayFiles, Path replayMetaPath,
-               String darkDeckName, String lightDeckName, String formatName) {
+               String darkDeckName, String lightDeckName, String formatName, String decidingPlayer) {
             this.gameId = gameId;
             this.finished = finished;
             this.cancelled = cancelled;
@@ -195,6 +197,7 @@ public final class HeadlessBotVsBotRunner {
             this.darkDeckName = darkDeckName;
             this.lightDeckName = lightDeckName;
             this.formatName = formatName;
+            this.decidingPlayer = decidingPlayer != null ? decidingPlayer : "";
         }
 
         @Override
@@ -403,6 +406,7 @@ public final class HeadlessBotVsBotRunner {
         int decisionCount = 0;
         int invalidCount = 0;
         String stopper = null;
+        String decidingPlayer = "";
         Map<String, String> recordingIds = new LinkedHashMap<>();
         Map<String, Path> replayFiles = new LinkedHashMap<>();
         Path replayMetaPath = null;
@@ -413,11 +417,13 @@ public final class HeadlessBotVsBotRunner {
             while (!game.isFinished() && !game.isCancelled()) {
                 if (decisionCount >= cfg.maxDecisions) {
                     stopper = "maxDecisions=" + cfg.maxDecisions;
+                    decidingPlayer = pendingDecider(userFeedback);
                     break;
                 }
                 long elapsed = System.currentTimeMillis() - started;
                 if (elapsed >= cfg.maxMillis) {
                     stopper = "maxMillis=" + cfg.maxMillis;
+                    decidingPlayer = pendingDecider(userFeedback);
                     break;
                 }
 
@@ -455,6 +461,7 @@ public final class HeadlessBotVsBotRunner {
                     }
 
                     ai.setGame(game);
+                    noteDecisionsThisGame(cfg, playerId, decisionCount);
                     String answer;
                     try {
                         answer = ai.decide(playerId, decision, game.getGameState());
@@ -593,7 +600,8 @@ public final class HeadlessBotVsBotRunner {
                             stopper,
                             decisionCount,
                             outcomeDarkLf,
-                            outcomeLightLf);
+                            outcomeLightLf,
+                            decidingPlayer);
                 } catch (Exception ex) {
                     System.err.println("[headless] trace outcome failed: " + ex.getClass().getSimpleName()
                             + ": " + ex.getMessage());
@@ -631,7 +639,8 @@ public final class HeadlessBotVsBotRunner {
                 replayMetaPath,
                 deckPair.darkName,
                 deckPair.lightName,
-                cfg.formatName);
+                cfg.formatName,
+                decidingPlayer);
     }
 
     private static final class DeckPair {
@@ -645,6 +654,38 @@ public final class HeadlessBotVsBotRunner {
             this.light = light;
             this.darkName = darkName;
             this.lightName = lightName;
+        }
+    }
+
+    /**
+     * The seat that would have to decide when the loop stops for a cap.
+     * One pending player is that seat. Zero or several is empty: the score
+     * must not guess.
+     */
+    static String pendingDecider(DefaultUserFeedback userFeedback) {
+        if (userFeedback == null) {
+            return "";
+        }
+        java.util.Set<String> pending = userFeedback.getUsersPendingDecision();
+        if (pending == null || pending.size() != 1) {
+            return "";
+        }
+        String player = pending.iterator().next();
+        if (DS_PLAYER.equals(player) || LS_PLAYER.equals(player)) {
+            return player;
+        }
+        return "";
+    }
+
+    private static void noteDecisionsThisGame(Config cfg, String playerId, int decisionCount) {
+        InformationSetTracker tracker = null;
+        if (DS_PLAYER.equals(playerId)) {
+            tracker = cfg.darkTracker;
+        } else if (LS_PLAYER.equals(playerId)) {
+            tracker = cfg.lightTracker;
+        }
+        if (tracker != null) {
+            tracker.setDecisionsThisGame(decisionCount);
         }
     }
 
