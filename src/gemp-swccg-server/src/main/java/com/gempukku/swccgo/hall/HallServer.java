@@ -111,6 +111,11 @@ public class HallServer extends AbstractServer {
         _inGameStatisticsEnabled = _gempSettingDAO.inGameStatisticsEnabled();
         _bonusAbilitiesEnabled = _gempSettingDAO.bonusAbilitiesEnabled();
         _aiTablesEnabled = _gempSettingDAO.aiTablesEnabled();
+        // Persist Startup/Shutdown across restarts (same pattern as privateGames).
+        // Fresh DB defaults: operational=false, shutdown=false — tables not creatable
+        // until admin clicks Enter Startup Mode once; thereafter the choice survives restarts.
+        _operational = _gempSettingDAO.operationalModeEnabled();
+        _shutdown = _gempSettingDAO.shutdownModeEnabled();
         _adminService = adminService;
         _tournamentPrizeSchemeRegistry = tournamentPrizeSchemeRegistry;
         _pairingMechanismRegistry = pairingMechanismRegistry;
@@ -198,6 +203,8 @@ public class HallServer extends AbstractServer {
             if (!_operational || _shutdown) {
                 _operational = true;
                 _shutdown = false;
+                _gempSettingDAO.setOperationalModeEnabled(true);
+                _gempSettingDAO.setShutdownModeEnabled(false);
                 cancelWaitingTables();
                 cancelTournamentQueues();
                 _chatServer.sendSystemMessageToAllChatRooms(
@@ -214,6 +221,7 @@ public class HallServer extends AbstractServer {
         try {
             if (!_shutdown) {
                 _shutdown = true;
+                _gempSettingDAO.setShutdownModeEnabled(true);
                 cancelWaitingTables();
                 cancelTournamentQueues();
                 _chatServer.sendSystemMessageToAllChatRooms(

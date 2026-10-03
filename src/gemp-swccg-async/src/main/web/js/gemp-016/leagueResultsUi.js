@@ -1,20 +1,44 @@
+/**
+ * Current leagues and one league's full detail.
+ *
+ *   new LeagueResultsUI(url)                       // legacy Events tab: #leagueResults / #myLeagueResults
+ *   new LeagueResultsUI(url, joinCallback, {list: $container})
+ *       // list mode (Play > League Join list): rows into $container with unique id prefixes so they share
+ *       // no element ids with the Events tab.  Options:
+ *       //   list:        container for the rows (required for list mode)
+ *       //   autoLoad:    false = do not fetch from the constructor (default true)
+ *       //   idPrefix:    prefix for drawer / tab ids (default "playLeague")
+ *       //   onJoinError: function (leagueCode, message, status) for failed joins
+ *
+ * joinCallback(leagueCode), if given, runs after a successful join from any render of this object.
+ *
+ * Slice 1.5: list mode ported from LOTR leagueResultsUi (without EventDrawer — SWCCG uses simple
+ * Details slideToggle drawers like the classic Events tab).
+ */
 var LeagueResultsUI = Class.extend({
     communication:null,
     questionDialog:null,
     formatDialog:null,
+    joinCallback:null,
+    options:null,
+    list:null,
+    idPrefix:null,
+    drawerSerial:0,
 
-    init:function (url) {
+    init:function (url, joinCallback, options) {
         this.communication = new GempSwccgCommunication(url,
             function (xhr, ajaxOptions, thrownError) {
             });
 
+        // zIndex above .play-flow (10000): Join Yes/No was invisible behind Create Table overlay (Slice 1.5 FAIL)
         this.questionDialog = $("<div></div>")
             .dialog({
                 autoOpen:false,
                 closeOnEscape:true,
                 resizable:false,
                 modal:true,
-                title:"League operation"
+                title:"League operation",
+                zIndex:11050
             });
 
         this.formatDialog = $("<div></div>")
@@ -23,10 +47,18 @@ var LeagueResultsUI = Class.extend({
                 closeOnEscape:true,
                 resizable:false,
                 modal:true,
-                title:"Format description"
+                title:"Format description",
+                zIndex:11050
             });
 
-        this.loadResults();
+        this.joinCallback = joinCallback || null;
+        this.options = options || {};
+        this.list = this.options.list || null;
+        this.idPrefix = this.options.idPrefix || "playLeague";
+        this.drawerSerial = 0;
+
+        if (this.options.autoLoad !== false)
+            this.loadResults();
     },
 
     loadResults:function () {
@@ -37,8 +69,14 @@ var LeagueResultsUI = Class.extend({
             });
     },
 
-    loadedLeague:function (xml, leagueExtraInfoCssId) {
+    // options: {idPrefix, showName, hideId, compactJoin} — list-mode drawers mirror LOTR compact Cost/Join block
+    loadedLeague:function (xml, leagueExtraInfoCssId, options) {
         var that = this;
+        options = options || {};
+        var tabPrefix = options.idPrefix || "league";
+        var showName = options.showName !== false;
+        var hideId = options.hideId === true;
+        var compactJoin = options.compactJoin === true;
         log(xml);
         var root = xml.documentElement;
         if (root.tagName == 'league') {
@@ -58,20 +96,29 @@ var LeagueResultsUI = Class.extend({
             var invitationOnly = league.getAttribute("invitationOnly");
             var registrationInfo = league.getAttribute("registrationInfo");
             var lockedDeckType = league.getAttribute("lockedDeckType");
+            var costStr = formatPrice(cost);
 
-            $(leagueExtraInfoCssId).append("<div class='leagueName'>" + leagueName + "</div>");
-            $(leagueExtraInfoCssId).append("<div class='leagueID'>League ID: " + leagueType + "</div>");
+            // LOTR-style compact join block: Cost / membership+Join, then series lines (keep results tabs below)
+            var joinBlock = $("<div class='league-join-block'></div>");
+            if (compactJoin) {
+                joinBlock.addClass("league-join-block-compact");
+            }
+
+            if (showName) {
+                joinBlock.append("<div class='leagueName'>" + leagueName + "</div>");
+            }
+            if (!hideId) {
+                joinBlock.append("<div class='leagueID'>League ID: " + leagueType + "</div>");
+            }
 
             if (invitationOnly == "true") {
                 if (registrationInfo != "" && registrationInfo != "null")
-                    $(leagueExtraInfoCssId).append("<div>Registration info: "+registrationInfo);
+                    joinBlock.append("<div>Registration info: "+registrationInfo+"</div>");
                 else
-                    $(leagueExtraInfoCssId).append("<div>Registration for this league by invitation only.</div>");
-
+                    joinBlock.append("<div>Registration for this league by invitation only.</div>");
             } else {
-                var costStr = formatPrice(cost);
-                $(leagueExtraInfoCssId).append("<div class='leagueCost'><b>Cost:</b> " + costStr + "</div>");
-            };
+                joinBlock.append("<div class='leagueCost'><b>Cost:</b> " + costStr + "</div>");
+            }
 
             if (member == "true") {
                 var memberDiv = $("<div class='leagueMembership'>You are already a member of this league. </div>");
@@ -83,21 +130,20 @@ var LeagueResultsUI = Class.extend({
                     var draftBut = $("<button>--> Go to draft <--</button>").button();
                     var draftFunc = (function (leagueCode) {
                         return function() {
-                            location.href = "/gemp-swccg/soloDraft.html?leagueType="+leagueCode;
+                            location.href = "soloDraft.html?leagueType="+leagueCode;
                         };
                     })(leagueType);
                     draftBut.click(draftFunc);
                     memberDiv.append(draftBut);
                 } else if (isSoloDraft == "true") {
                     // Solo draft league but not yet draftable (hasn't started yet)
-                    // Show grayed out button with availability date
                     var grayedButton = $("<button disabled='disabled' class='draft-not-available'>Draft Available " + getDateString(start) + "</button>");
                     memberDiv.append(grayedButton);
                 }
-                $(leagueExtraInfoCssId).append(memberDiv);
+                joinBlock.append(memberDiv);
             }
             else if (joinable == "true" && invitationOnly != "true") {
-                var joinBut = $("<button>Join league</button>").button();
+                var joinBut = $("<button type='button' class='league-join-button'>Join league</button>").button();
 
                 var joinFunc = (function (leagueCode, costString) {
                     return function () {
@@ -105,40 +151,43 @@ var LeagueResultsUI = Class.extend({
                             function () {
                                 that.communication.joinLeague(leagueCode, function () {
                                     that.loadResults();
-                                }, {
-                                    "409":function () {
-                                        alert("You don't have enough funds to join this league.");
-                                    }
-                                });
+                                    if (that.joinCallback != null)
+                                        that.joinCallback(leagueCode);
+                                }, that.joinErrorMap(leagueCode));
                             });
                     };
                 })(leagueType, costStr);
-
                 joinBut.click(joinFunc);
-                var joinDiv = $("<div class='leagueMembership'>You're not a member of this league. </div>");
+                // Slice 1.5c: label span + league-join-button so CSS can nowrap / stack on narrow
+                var joinDiv = $("<div class='leagueMembership'></div>");
+                joinDiv.append($("<span class='league-membership-label'>You're not a member of this league. </span>"));
                 joinDiv.append(joinBut);
-                $(leagueExtraInfoCssId).append(joinDiv);
+                joinBlock.append(joinDiv);
             } else if (joinable == "true" && invitationOnly == "true") {
                 var joinDiv = $("<div class='leagueMembership'>You're not a member of this league. </div>");
-                $(leagueExtraInfoCssId).append(joinDiv);
+                joinBlock.append(joinDiv);
             }
+
+            $(leagueExtraInfoCssId).append(joinBlock);
 
             var tabDiv = $("<div width='100%'></div>");
             var tabNavigation = $("<ul></ul>");
             tabDiv.append(tabNavigation);
 
-            // Overall tab
-            var tabContent = $("<div id='leagueoverall'></div>");
+            var overallId = tabPrefix + "overall";
+            var matchesId = tabPrefix + "matches";
+
+            var tabContent = $("<div id='" + overallId + "'></div>");
 
             var standings = league.getElementsByTagName("leagueStanding");
             if (standings.length > 0)
                 tabContent.append(this.createStandingsTable(standings));
             tabDiv.append(tabContent);
 
-            tabNavigation.append("<li><a href='#leagueoverall'>Overall results</a></li>");
-            tabNavigation.append("<li><a href='#leaguematches'>Your league matches</a></li>");
+            tabNavigation.append("<li><a href='#" + overallId + "'>Overall results</a></li>");
+            tabNavigation.append("<li><a href='#" + matchesId + "'>Your league matches</a></li>");
 
-            var matchResults = $("<div id='leaguematches'></div>");
+            var matchResults = $("<div id='" + matchesId + "'></div>");
             tabDiv.append(matchResults);
 
             var series = league.getElementsByTagName("serie");
@@ -154,7 +203,8 @@ var LeagueResultsUI = Class.extend({
 
                 matchResults.append(matchGroup);
 
-                var tabContent = $("<div id='leagueserie" + j + "'></div>");
+                var serieTabId = tabPrefix + "serie" + j;
+                var tabContentSerie = $("<div id='" + serieTabId + "'></div>");
 
                 var serieName = serie.getAttribute("type");
                 var serieStart = serie.getAttribute("start");
@@ -175,7 +225,12 @@ var LeagueResultsUI = Class.extend({
                     (function (ft) {
                         return function () {
                             that.formatDialog.html("");
+                            that.formatDialog.dialog("option", "zIndex", 11050);
                             that.formatDialog.dialog("open");
+                            try {
+                                that.formatDialog.dialog("widget").css("z-index", 11050);
+                                $(".ui-widget-overlay").last().css("z-index", 11040);
+                            } catch (ignored) {}
                             that.communication.getFormat(ft,
                                 function (html) {
                                     that.formatDialog.html(html);
@@ -185,14 +240,14 @@ var LeagueResultsUI = Class.extend({
                 $(leagueExtraInfoCssId).append(formatDiv);
                 $(leagueExtraInfoCssId).append("<div><b>Collection:</b> " + collection + "</div>");
 
-                tabContent.append("<div>Maximum ranked matches in serie: " + maxMatches + "</div>");
+                tabContentSerie.append("<div>Maximum ranked matches in serie: " + maxMatches + "</div>");
 
-                var standings = serie.getElementsByTagName("standing");
-                if (standings.length > 0)
-                    tabContent.append(this.createStandingsTable(standings));
-                tabDiv.append(tabContent);
+                var serieStandings = serie.getElementsByTagName("standing");
+                if (serieStandings.length > 0)
+                    tabContentSerie.append(this.createStandingsTable(serieStandings));
+                tabDiv.append(tabContentSerie);
 
-                tabNavigation.append("<li><a href='#leagueserie" + j + "'>Serie " + (j + 1) + "</a></li>");
+                tabNavigation.append("<li><a href='#" + serieTabId + "'>Serie " + (j + 1) + "</a></li>");
             }
 
             tabDiv.tabs();
@@ -205,78 +260,170 @@ var LeagueResultsUI = Class.extend({
         var that = this;
         log(xml);
         var root = xml.documentElement;
-        if (root.tagName == 'leagues') {
-            $("#myLeagueResults").html("");
-            $("#leagueResults").html("");
-            var myLeaguesCount = 0;
+        if (root.tagName != 'leagues')
+            return;
 
-            var leagues = root.getElementsByTagName("league");
-            for (var i = 0; i < leagues.length; i++) {
-                var league = leagues[i];
-                console.log(league);
-                var leagueName = league.getAttribute("name");
-                var leagueMember = league.getAttribute("member");
-                var leagueType = league.getAttribute("type");
-                var start = league.getAttribute("start");
-                var end = league.getAttribute("end");
-                var leagueExtraInfoCssId = "league-"+i+"-extra-info";
+        // ---- list mode (Play > Join Leagues): own container, no Events tab ids ----
+        if (this.list != null) {
+            this.renderListMode(root);
+            return;
+        }
 
-                if (leagueMember == "true") {
-                    myLeaguesCount = myLeaguesCount + 1;
+        // ---- legacy Events tab ----
+        $("#myLeagueResults").html("");
+        $("#leagueResults").html("");
+        var myLeaguesCount = 0;
 
-                    /* ALL Leagues */
-                    $("#myLeagueResults").append("<div id='my-league-"+i+"-name' class='leagueName'>" + leagueName + "</div>");
+        var leagues = root.getElementsByTagName("league");
+        for (var i = 0; i < leagues.length; i++) {
+            var league = leagues[i];
+            console.log(league);
+            var leagueName = league.getAttribute("name");
+            var leagueMember = league.getAttribute("member");
+            var leagueType = league.getAttribute("type");
+            var start = league.getAttribute("start");
+            var end = league.getAttribute("end");
+            var leagueExtraInfoCssId = "league-"+i+"-extra-info";
 
-                    var duration = '<span class="leagueDurationStart">' + getDateString(start) + '</span> to <span class="leagueDurationStop">' + getDateString(end) + '</span>';
-                    $("#myLeagueResults").append("<div id='my-league-"+i+"-duration' class='leagueDuration'><b>Duration (GMT+0):</b> " + duration + "</div>");
+            if (leagueMember == "true") {
+                myLeaguesCount = myLeaguesCount + 1;
 
-                    var myDetailsBut = $('<button id="my-league-'+i+'-see-details-button" class="leagueSeeDetails">Display league details</button>').button();
-                    $("#myLeagueResults").append(myDetailsBut);
-                    $("#myLeagueResults").append("<div id='my-"+leagueExtraInfoCssId+"' class='leagueExtraInfo' style='display:none;'></div>");
-                    $("#myLeagueResults").append("<hr class='leagueHr' />");
+                $("#myLeagueResults").append("<div id='my-league-"+i+"-name' class='leagueName'>" + leagueName + "</div>");
 
-                    myDetailsBut.click(
-                        (function (type, cssid, t) {
-                            return function () {
-                                that.communication.getLeague(type, function (xml) {
-                                    that.loadedLeague(xml, cssid);
-                                    $(cssid).slideToggle();
-                                    console.log("Showing MY details for: "+cssid);
-                                });
-                            };
-                        })(leagueType, "#my-"+leagueExtraInfoCssId, "")); // myDetailsBut.click
+                var duration = '<span class="leagueDurationStart">' + getDateString(start) + '</span> to <span class="leagueDurationStop">' + getDateString(end) + '</span>';
+                $("#myLeagueResults").append("<div id='my-league-"+i+"-duration' class='leagueDuration'><b>Duration (GMT+0):</b> " + duration + "</div>");
 
-                } else {
+                var myDetailsBut = $('<button id="my-league-'+i+'-see-details-button" class="leagueSeeDetails">Display league details</button>').button();
+                $("#myLeagueResults").append(myDetailsBut);
+                $("#myLeagueResults").append("<div id='my-"+leagueExtraInfoCssId+"' class='leagueExtraInfo' style='display:none;'></div>");
+                $("#myLeagueResults").append("<hr class='leagueHr' />");
 
-                    /* ALL Leagues */
-                    $("#leagueResults").append("<div id='league-"+i+"-name' class='leagueName'>" + leagueName + "</div>");
+                myDetailsBut.click(
+                    (function (type, cssid, t) {
+                        return function () {
+                            that.communication.getLeague(type, function (xml) {
+                                that.loadedLeague(xml, cssid);
+                                $(cssid).slideToggle();
+                                console.log("Showing MY details for: "+cssid);
+                            });
+                        };
+                    })(leagueType, "#my-"+leagueExtraInfoCssId, ""));
 
-                    var duration = '<span class="leagueDurationStart">' + getDateString(start) + '</span> to <span class="leagueDurationStop">' + getDateString(end) + '</span>';
-                    $("#leagueResults").append("<div id='league-"+i+"-duration' class='leagueDuration'><b>Duration (GMT+0):</b> " + duration + "</div>");
+            } else {
 
-                    var detailsBut = $('<button id="league-'+i+'-see-details-button" class="leagueSeeDetails">Display league details</button>').button();
-                    $("#leagueResults").append(detailsBut);
-                    $("#leagueResults").append("<div id='"+leagueExtraInfoCssId+"' class='leagueExtraInfo' style='display:none;'></div>");
-                    $("#leagueResults").append("<hr class='leagueHr' />");
+                $("#leagueResults").append("<div id='league-"+i+"-name' class='leagueName'>" + leagueName + "</div>");
 
-                    detailsBut.click(
-                        (function (type, cssid) {
-                            return function () {
-                                that.communication.getLeague(type, function (xml) {
-                                    that.loadedLeague(xml, cssid);
-                                    $(cssid).slideToggle();
-                                    console.log("Showing ALL details for: "+cssid);
-                                });
-                            };
-                        })(leagueType, "#"+leagueExtraInfoCssId)); // detailsBut.click
+                var durationAll = '<span class="leagueDurationStart">' + getDateString(start) + '</span> to <span class="leagueDurationStop">' + getDateString(end) + '</span>';
+                $("#leagueResults").append("<div id='league-"+i+"-duration' class='leagueDuration'><b>Duration (GMT+0):</b> " + durationAll + "</div>");
 
-                } // leagueMember
+                var detailsBut = $('<button id="league-'+i+'-see-details-button" class="leagueSeeDetails">Display league details</button>').button();
+                $("#leagueResults").append(detailsBut);
+                $("#leagueResults").append("<div id='"+leagueExtraInfoCssId+"' class='leagueExtraInfo' style='display:none;'></div>");
+                $("#leagueResults").append("<hr class='leagueHr' />");
 
-            } // for
-            if (myLeaguesCount == 0) {
-                $("#myLeagueResults").html("You are not currently part of any leagues. Join one by expanding the league info in the <strong>All Leagues</strong> section and joining a league.");
+                detailsBut.click(
+                    (function (type, cssid) {
+                        return function () {
+                            that.communication.getLeague(type, function (xml) {
+                                that.loadedLeague(xml, cssid);
+                                $(cssid).slideToggle();
+                                console.log("Showing ALL details for: "+cssid);
+                            });
+                        };
+                    })(leagueType, "#"+leagueExtraInfoCssId));
+
             }
-        } // root.tagName leagues
+
+        }
+        if (myLeaguesCount == 0) {
+            $("#myLeagueResults").html("You are not currently part of any leagues. Join one by expanding the league info in the <strong>All Leagues</strong> section and joining a league.");
+        }
+    },
+
+    // Play panel join list: one row per league with + Details / Join inside the drawer
+    renderListMode:function (root) {
+        var that = this;
+        this.list.empty();
+        var leagues = root.getElementsByTagName("league");
+        if (leagues.length == 0) {
+            this.list.append($("<i></i>").text("There are no current leagues at the moment."));
+            return;
+        }
+        for (var i = 0; i < leagues.length; i++) {
+            var league = leagues[i];
+            var leagueName = league.getAttribute("name");
+            var leagueType = league.getAttribute("type");
+            var start = league.getAttribute("start");
+            var end = league.getAttribute("end");
+            var member = league.getAttribute("member");
+
+            var rowId = this.idPrefix + "-row-" + i;
+            var drawerId = this.idPrefix + "-drawer-" + i;
+            var row = $("<div class='play-league-row event-row'></div>").attr("id", rowId);
+            var header = $("<div class='play-league-row-header event-row-header'></div>");
+
+            var detailsBut = $("<button type='button' class='leagueSeeDetails play-league-details-btn'>+ Details</button>").button();
+            header.append(detailsBut);
+            header.append($("<span class='leagueName play-league-row-name'></span>").text(leagueName));
+            if (member == "true") {
+                header.append($("<span class='play-league-member-badge'></span>").text("Joined"));
+            }
+            var duration = getDateString(start) + " to " + getDateString(end);
+            header.append($("<span class='leagueDuration play-league-row-dates'></span>").text(duration));
+            row.append(header);
+
+            var drawer = $("<div class='leagueExtraInfo play-league-drawer' style='display:none;'></div>").attr("id", drawerId);
+            row.append(drawer);
+            this.list.append(row);
+
+            detailsBut.click(
+                (function (type, cssid, btn) {
+                    return function () {
+                        var $drawer = $(cssid);
+                        if ($drawer.is(":visible")) {
+                            $drawer.slideUp();
+                            btn.button("option", "label", "+ Details");
+                            return;
+                        }
+                        that.communication.getLeague(type, function (xml) {
+                            that.drawerSerial++;
+                            that.loadedLeague(xml, cssid, {
+                                idPrefix: that.idPrefix + "D" + that.drawerSerial + "-",
+                                showName: false,
+                                hideId: true,
+                                compactJoin: true
+                            });
+                            $drawer.slideDown();
+                            btn.button("option", "label", "- Details");
+                        });
+                    };
+                })(leagueType, "#" + drawerId, detailsBut));
+        }
+    },
+
+    joinErrorMap:function (leagueCode) {
+        var report = this.options && this.options.onJoinError;
+        if (typeof report != "function") {
+            return {
+                "409":function () {
+                    alert("You don't have enough funds to join this league.");
+                }
+            };
+        }
+        return {
+            "409":function () {
+                report(leagueCode, "You don't have enough funds to join this league.", 409);
+            },
+            "0":function (xhr, status, error) {
+                report(leagueCode, error || status || "Network error", 0);
+            },
+            "500":function () {
+                report(leagueCode, "Server error joining the league.", 500);
+            },
+            "400":function () {
+                report(leagueCode, "Could not join the league.", 400);
+            }
+        };
     },
 
     displayBuyAction:function (text, yesFunc) {
@@ -302,8 +449,17 @@ var LeagueResultsUI = Class.extend({
         var horSpace = 230;
         var vertSpace = 100;
 
-        this.questionDialog.dialog({width:Math.min(horSpace, windowWidth), height:Math.min(vertSpace, windowHeight)});
+        this.questionDialog.dialog({
+            width:Math.min(horSpace, windowWidth),
+            height:Math.min(vertSpace, windowHeight),
+            zIndex:11050
+        });
+        // Ensure overlay + dialog stack above Create Table play-flow (z-index 10000)
         this.questionDialog.dialog("open");
+        try {
+            this.questionDialog.dialog("widget").css("z-index", 11050);
+            $(".ui-widget-overlay").last().css("z-index", 11040);
+        } catch (ignored) {}
     },
 
     createStandingsTable:function (standings) {

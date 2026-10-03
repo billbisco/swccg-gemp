@@ -40,6 +40,9 @@ var GempSwccgDeckBuildingUI = Class.extend({
     cardFilter:null,
 
     collectionType:null,
+    _deepLinkCollection:null,
+    _deepLinkProduct:null,
+    _collectionFetchGen:0,
     
     autoZoom: null,
     cardInfoDialog: null,
@@ -52,12 +55,30 @@ var GempSwccgDeckBuildingUI = Class.extend({
 
         this.collectionType = "default";
 
+        // Parse deep-link query params BEFORE CardFilter so we can defer default fetches.
+        var deepLinkParams = this.parseDeckBuildQueryParams();
+        this._deepLinkCollection = deepLinkParams.collection || null;
+        this._deepLinkProduct = deepLinkParams.product || null;
+        this._collectionFetchGen = 0;
+
+        var deferInitialCollection = !!this._deepLinkCollection;
+
         this.cardFilter = new CardFilter($("#collectionDiv"), $("#collectionDiv"),
                 function (filter, start, count, callback) {
-                    that.comm.getCollection(that.collectionType, filter, start, count, function (xml) {
+                    // Ignore-stale guard: late default responses must not overwrite a newer league fetch.
+                    that._collectionFetchGen += 1;
+                    var fetchGen = that._collectionFetchGen;
+                    var requestedType = that.collectionType;
+                    that.comm.getCollection(requestedType, filter, start, count, function (xml) {
+                        if (fetchGen !== that._collectionFetchGen) {
+                            return;
+                        }
                         callback(xml);
                     }, {
                         "404":function () {
+                            if (fetchGen !== that._collectionFetchGen) {
+                                return;
+                            }
                             alert("You don't have collection of that type.");
                         }
                     });
@@ -70,7 +91,8 @@ var GempSwccgDeckBuildingUI = Class.extend({
                 },
                 function () {
                     that.finishCollection();
-                });
+                },
+                deferInitialCollection);
         
         this.autoZoom = new AutoZoom("autoZoomInDeckbuilder");
 
@@ -329,18 +351,83 @@ var GempSwccgDeckBuildingUI = Class.extend({
 
         this.cardInfoDialog = new CardInfoDialog(window.innerWidth, window.innerHeight);
 
-        this.getCollectionTypes();
+        // Product-only deep-link: apply now. Collection deep-link: defer product+collection
+        // until getCollectionTypes → applyDeepLinkCollection (avoids default-fetch race).
+        if (!this._deepLinkCollection) {
+            this.applyDeckBuildDeepLinkProduct();
+            this.cardFilter.getCollection();
+        }
 
-        this.cardFilter.getCollection();
+        this.getCollectionTypes(false);
 
         this.checkDeckStatsDirty();
+    },
+
+    parseDeckBuildQueryParams:function () {
+        // jQuery 1.6-safe query parse (no URLSearchParams)
+        var params = {};
+        var search = window.location.search;
+        if (!search || search.length < 2) {
+            return params;
+        }
+        var parts = search.substring(1).split("&");
+        for (var i = 0; i < parts.length; i++) {
+            var pair = parts[i].split("=");
+            if (!pair[0]) {
+                continue;
+            }
+            var key = decodeURIComponent(pair[0].replace(/\+/g, " "));
+            var val = pair.length > 1 ? decodeURIComponent(pair[1].replace(/\+/g, " ")) : "";
+            params[key] = val;
+        }
+        return params;
+    },
+
+    applyDeckBuildDeepLinkProduct:function () {
+        // Product-only path (no collection deep-link). Collection path applies product in applyDeepLinkCollection.
+        if (!this._deepLinkProduct) {
+            return;
+        }
+        var product = this._deepLinkProduct;
+        var matched = false;
+        $("#productSelect option").each(function () {
+            if ($(this).prop("value") === product) {
+                matched = true;
+                return false;
+            }
+        });
+        if (matched) {
+            $("#productSelect").val(product).change();
+        }
+    },
+
+    // Set Product UI + filter / enablement without issuing a getCollection fetch.
+    applyDeepLinkProductWithoutFetch:function () {
+        if (!this._deepLinkProduct || !this.cardFilter) {
+            return;
+        }
+        var product = this._deepLinkProduct;
+        var matched = false;
+        $("#productSelect option").each(function () {
+            if ($(this).prop("value") === product) {
+                matched = true;
+                return false;
+            }
+        });
+        if (!matched) {
+            return;
+        }
+        this.cardFilter._suppressGetCollection = true;
+        $("#productSelect").val(product).change();
+        // If .change() did not call getCollection (filter unchanged), clear the suppress flag.
+        this.cardFilter._suppressGetCollection = false;
     },
 
     getCollectionType:function () {
         return $("#collectionSelect option:selected").prop("value");
     },
 
-    getCollectionTypes:function () {
+    getCollectionTypes:function (isRetry) {
         var that = this;
         this.comm.getCollectionTypes(
                 function (xml) {
@@ -349,10 +436,50 @@ var GempSwccgDeckBuildingUI = Class.extend({
                         var collections = root.getElementsByTagName("collection");
                         for (var i = 0; i < collections.length; i++) {
                             var collection = collections[i];
-                            $("#collectionSelect").append("<option value='" + collection.getAttribute("type") + "'>" + collection.getAttribute("name") + "</option>");
+                            var type = collection.getAttribute("type");
+                            var already = false;
+                            $("#collectionSelect option").each(function () {
+                                if ($(this).prop("value") === type) {
+                                    already = true;
+                                    return false;
+                                }
+                            });
+                            if (!already) {
+                                $("#collectionSelect").append("<option value='" + type + "'>" + collection.getAttribute("name") + "</option>");
+                            }
                         }
+                        that.applyDeepLinkCollection(isRetry === true);
                     }
                 });
+    },
+
+    applyDeepLinkCollection:function (isRetry) {
+        var that = this;
+        if (!this._deepLinkCollection) {
+            return;
+        }
+        var code = this._deepLinkCollection;
+        var matched = false;
+        $("#collectionSelect option").each(function () {
+            if ($(this).prop("value") === code) {
+                matched = true;
+                return false;
+            }
+        });
+        if (matched) {
+            // Order: select collection option → set Product (UI+filter, no fetch) →
+            // then same path as manual collection change (one getCollection).
+            $("#collectionSelect").val(code);
+            this.applyDeepLinkProductWithoutFetch();
+            $("#collectionSelect").val(code).change();
+            return;
+        }
+        // Race right after join: collection may not be listed yet — retry once
+        if (!isRetry) {
+            setTimeout(function () {
+                that.getCollectionTypes(true);
+            }, 1500);
+        }
     },
 
     loadDeckList:function () {

@@ -143,6 +143,7 @@ public class LeagueRequestHandler extends SwccgoServerRequestHandler implements 
             serieElem.setAttribute("formatType", serie.getFormat());
             serieElem.setAttribute("format", _formatLibrary.getFormat(serie.getFormat()).getName());
             serieElem.setAttribute("collection", serie.getCollectionType().getFullName());
+            serieElem.setAttribute("collectionType", serie.getCollectionType().getCode());
             serieElem.setAttribute("limited", String.valueOf(serie.isLimited()));
 
             Element matchesElem = doc.createElement("matches");
