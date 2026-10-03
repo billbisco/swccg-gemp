@@ -168,6 +168,14 @@ public final class HeadlessBotVsBotBatch {
         if (cfg.games < 1) {
             throw new IllegalArgumentException("games must be >= 1, got " + cfg.games);
         }
+        if (cfg.darkAi == HeadlessBotVsBotRunner.AiSkill.HEURISTIC && cfg.darkWeightsPath == null) {
+            throw new IllegalArgumentException(
+                    "HEURISTIC dark seat requires --dark-weights=heuristic.v1.json");
+        }
+        if (cfg.lightAi == HeadlessBotVsBotRunner.AiSkill.HEURISTIC && cfg.lightWeightsPath == null) {
+            throw new IllegalArgumentException(
+                    "HEURISTIC light seat requires --light-weights=heuristic.v1.json");
+        }
 
         // WC96 packs are Premiere - A New Hope; never silently run them as Open.
         if (cfg.deckPack != null
@@ -435,7 +443,8 @@ public final class HeadlessBotVsBotBatch {
             } else if (arg.equals("--help") || arg.equals("-h")) {
                 System.out.println("Usage: HeadlessBotVsBotBatch --games=5 --dark=BEGINNER --light=BEGINNER "
                         + "--csv=target/out.csv [--decks=open40|wc96] [--format=open|premiere_anh] "
-                        + "[--dark=LINEAR --linear-weights=linear.json] "
+                        + "[--dark=LINEAR --light=ADVANCED --linear-weights=linear.json] "
+                        + "[--dark=LINEAR --light=HEURISTIC --dark-weights=linear.json --light-weights=heuristic.json] "
                         + "[--replay] [--replayDir=target/headless-replays] "
                         + "[--traces] [--tracesPath=target/traces.jsonl] "
                         + "[--verbose] [--maxDecisions=25000] [--maxMillis=180000]");
