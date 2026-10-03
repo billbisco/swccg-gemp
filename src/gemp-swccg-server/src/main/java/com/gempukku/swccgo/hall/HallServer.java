@@ -68,7 +68,9 @@ public class HallServer extends AbstractServer {
 
     private String _motd;
 
-    private boolean _operational;
+    // Always true after process start so leftover/docker restarts do not require
+    // the Admin "Enter Startup Mode" button. Shutdown still works until next restart.
+    private boolean _operational = true;
     private boolean _shutdown;
     private boolean _privateGamesEnabled;
     private boolean _inGameStatisticsEnabled;
@@ -160,6 +162,10 @@ public class HallServer extends AbstractServer {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
         _chatServer.setGameHallKeepAlive(this::isConnectedToRunningGame);
+        // Force operational after any setting load (env/test may persist flags in DB
+        // with a false default). Restart must always be able to create tables.
+        _operational = true;
+        _shutdown = false;
     }
 
     /**
