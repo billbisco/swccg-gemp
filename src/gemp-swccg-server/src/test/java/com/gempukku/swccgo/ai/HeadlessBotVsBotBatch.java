@@ -23,7 +23,7 @@ import java.util.Objects;
 public final class HeadlessBotVsBotBatch {
 
     public static final String CSV_HEADER =
-            "gameIndex,darkAi,lightAi,winner,darkDecisions,lightDecisions,darkTurns,lightTurns,elapsedMs,format,darkDeck,lightDeck,error,darkLifeForce,lightLifeForce";
+            "gameIndex,darkAi,lightAi,winner,darkDecisions,lightDecisions,darkTurns,lightTurns,elapsedMs,format,darkDeck,lightDeck,error,darkLifeForce,lightLifeForce,decidingPlayer";
 
     public static final class BatchConfig {
         public int games = 5;
@@ -126,7 +126,8 @@ public final class HeadlessBotVsBotBatch {
                     csv(lightDeck),
                     csv(error != null ? error : ""),
                     Integer.toString(result != null ? result.darkLifeForce : -1),
-                    Integer.toString(result != null ? result.lightLifeForce : -1));
+                    Integer.toString(result != null ? result.lightLifeForce : -1),
+                    csv(result != null && result.decidingPlayer != null ? result.decidingPlayer : ""));
         }
     }
 

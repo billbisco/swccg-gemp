@@ -4,11 +4,18 @@ import com.gempukku.swccgo.common.CardCategory;
 import com.gempukku.swccgo.common.Phase;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Zone;
+import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgCardBlueprint;
+import com.gempukku.swccgo.game.SwccgGame;
+import com.gempukku.swccgo.game.state.AttackState;
+import com.gempukku.swccgo.game.state.BattleState;
 import com.gempukku.swccgo.game.state.GameState;
+import com.gempukku.swccgo.game.state.SabaccState;
 import com.gempukku.swccgo.logic.decisions.AwaitingDecision;
 import com.gempukku.swccgo.logic.decisions.AwaitingDecisionType;
+import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
+import com.gempukku.swccgo.logic.timing.GuiUtils;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -55,7 +62,7 @@ public final class InformationSetEncoder {
     }
 
     /**
-     * Walk {@code gameState} for the deciding seat and pack float32[128].
+     * Walk {@code gameState} for the deciding seat and pack {@link FeatureLayoutV1#PACKED_DIM} floats.
      *
      * @param tracker optional match-scoped memory; when null, bags for seen/destiny/reveals stay empty
      */
@@ -97,6 +104,7 @@ public final class InformationSetEncoder {
         fillPublicInPlayAndBoard(set, gameState, playerId, opponentId);
         fillOwnPublicPiles(set, gameState, playerId);
         fillScalars(set, gameState, darkId, lightId, playerId, opponentId, deciderIsDark, tracker);
+        fillTableFacts(set, gameState, darkId, lightId, playerId, opponentId, deciderIsDark, tracker);
         encodePacked(set);
         return set;
     }
@@ -153,8 +161,15 @@ public final class InformationSetEncoder {
         packed[FeatureLayoutV1.OPP_REVEALED_NORM] = clamp01(set.opponentRevealed.size() / 80f);
         Float high = set.scalars.get("ownHighDestinyRemainingEst");
         packed[FeatureLayoutV1.HIGH_DESTINY_REMAINING] = high == null ? 0f : clamp01(high / 40f);
-        for (int i = FeatureLayoutV1.PAD_START; i < FeatureLayoutV1.PACKED_DIM; i++) {
+        for (int i = FeatureLayoutV1.PAD_START; i < FeatureLayoutV1.TABLE_START; i++) {
             packed[i] = 0f;
+        }
+        if (FeatureLayoutV1.TABLE_LABELS.length != FeatureLayoutV1.TABLE_COUNT) {
+            throw new IllegalStateException("table label count drifted from FeatureLayoutV1");
+        }
+        for (int i = 0; i < FeatureLayoutV1.TABLE_LABELS.length; i++) {
+            Float raw = set.scalars.get(FeatureLayoutV1.TABLE_LABELS[i]);
+            packed[FeatureLayoutV1.TABLE_START + i] = raw == null ? 0f : normalizeTable(FeatureLayoutV1.TABLE_LABELS[i], raw);
         }
         System.arraycopy(packed, 0, set.packed, 0, FeatureLayoutV1.PACKED_DIM);
         return packed;
@@ -190,6 +205,7 @@ public final class InformationSetEncoder {
         set.flags[5] = set.mustChoose;
         set.flags[6] = set.passAvailable;
         set.flags[7] = set.isActivateDecision;
+        fillPromptShape(set, decision, params);
     }
 
     private static void fillOwnHand(InformationSetV1 set, GameState gameState, String playerId) {
@@ -245,10 +261,12 @@ public final class InformationSetEncoder {
             boolean opponentOwned = opponentId != null && opponentId.equals(owner);
             bumpBoard(board, category, deciderOwned, opponentOwned);
 
+            noteOrientation(set, gameState, card, playerId, opponentId);
             if (inPlay.size() < PUBLIC_IN_PLAY_CAP) {
                 Map<String, Object> row = cardBag(card, playerId, false);
                 if (row != null) {
                     row.put("zone", zone.name());
+                    annotateWhere(row, card, gameState);
                     inPlay.add(row);
                 }
             }
@@ -760,6 +778,43 @@ public final class InformationSetEncoder {
         return bucket;
     }
 
+    /**
+     * Table facts use the same [0, 1] clip as other scalars.
+     * A UI sentinel of -1 (no battle, no senate, hidden sabacc total, no power
+     * indicator) stays 0 so it is not a negative weight input.
+     * Counts use /80. Power-like totals use /40. This is not a clock.
+     */
+    private static float normalizeTable(String label, float raw) {
+        if (label.endsWith("Immune") || label.startsWith("prompt") && !label.endsWith("Count")
+                && !label.equals("promptMin") && !label.equals("promptMax")
+                && !label.endsWith("ParamCount") && !label.contains("Selectable")
+                && !label.contains("Preselected") && !label.contains("Horizontal")) {
+            return raw > 0f ? 1f : 0f;
+        }
+        if ("promptYourTurn".equals(label) || "promptAutoPassEligible".equals(label)
+                || "promptNoLongDelay".equals(label) || "promptRevertEligible".equals(label)
+                || "promptAsButtons".equals(label) || "promptReturnAnyChange".equals(label)
+                || "promptHasDefault".equals(label)
+                || label.endsWith("Immune")) {
+            return raw > 0f ? 1f : 0f;
+        }
+        if (raw < 0f) {
+            return 0f;
+        }
+        if ("decisionCountThisGame".equals(label)) {
+            return clamp01(raw / 8000f);
+        }
+        if (label.startsWith("overflow") && label.contains("Power")) {
+            return clamp01(raw / 200f);
+        }
+        if (label.contains("Power") || label.contains("Total") || label.contains("Destiny")
+                || label.contains("Damage") || label.contains("Attrition")
+                || label.contains("Race") || label.contains("Politics")) {
+            return clamp01(raw / 40f);
+        }
+        return clamp01(raw / 80f);
+    }
+
     private static float clamp01(float value) {
         if (value < 0f) {
             return 0f;
@@ -769,4 +824,579 @@ public final class InformationSetEncoder {
         }
         return value;
     }
+
+    /**
+     * Public table facts that were not in the original 45 scalars.
+     * Frozen Force is {@link GameState#getFrozenForceSize}, not life force.
+     * Sabacc totals follow {@link GuiUtils}: own total during sabacc, opponent
+     * total only after hands are revealed or a final total is stored.
+     * Location power is the first {@link FeatureLayoutV1#LOCATION_POWER_SLOTS}
+     * top locations in zone-index order; later locations fold into overflow sums.
+     * Face-down stacks contribute a size only.
+     * Decision count comes from the headless runner via the tracker. GameState
+     * has no decision counter. Clocks and chat are not encoded.
+     */
+    private static void fillTableFacts(InformationSetV1 set, GameState gameState,
+                                       String darkId, String lightId, String playerId, String opponentId,
+                                       boolean deciderIsDark, InformationSetTracker tracker) {
+        int darkFrozen = safeFrozenForce(gameState, darkId);
+        int lightFrozen = safeFrozenForce(gameState, lightId);
+        put(set, "darkFrozenForce", darkFrozen);
+        put(set, "lightFrozenForce", lightFrozen);
+        put(set, "deciderFrozenForce", deciderIsDark ? darkFrozen : lightFrozen);
+        put(set, "opponentFrozenForce", deciderIsDark ? lightFrozen : darkFrozen);
+
+        int darkSabaccN = safeListSize(safeSabaccHand(gameState, darkId));
+        int lightSabaccN = safeListSize(safeSabaccHand(gameState, lightId));
+        put(set, "darkSabaccHandSize", darkSabaccN);
+        put(set, "lightSabaccHandSize", lightSabaccN);
+        put(set, "deciderSabaccHandSize", deciderIsDark ? darkSabaccN : lightSabaccN);
+        put(set, "opponentSabaccHandSize", deciderIsDark ? lightSabaccN : darkSabaccN);
+
+        int darkOop = safeListSize(safeOutOfPlay(gameState, darkId));
+        int lightOop = safeListSize(safeOutOfPlay(gameState, lightId));
+        put(set, "darkOutOfPlay", darkOop);
+        put(set, "lightOutOfPlay", lightOop);
+        put(set, "deciderOutOfPlay", deciderIsDark ? darkOop : lightOop);
+        put(set, "opponentOutOfPlay", deciderIsDark ? lightOop : darkOop);
+
+        int[] faceDown = faceDownStackSizes(gameState, darkId, lightId);
+        put(set, "darkFaceDownStackSize", faceDown[0]);
+        put(set, "lightFaceDownStackSize", faceDown[1]);
+        put(set, "deciderFaceDownStackSize", deciderIsDark ? faceDown[0] : faceDown[1]);
+        put(set, "opponentFaceDownStackSize", deciderIsDark ? faceDown[1] : faceDown[0]);
+        int darkSideDown = sideOfTableFaceDownSize(gameState, darkId);
+        int lightSideDown = sideOfTableFaceDownSize(gameState, lightId);
+        put(set, "darkSideOfTableFaceDownSize", darkSideDown);
+        put(set, "lightSideOfTableFaceDownSize", lightSideDown);
+
+        fillFaceUpStacks(set, gameState, playerId);
+
+        if (tracker != null && tracker.hasDecisionsThisGame()) {
+            put(set, "decisionCountThisGame", tracker.getDecisionsThisGame());
+        } else {
+            put(set, "decisionCountThisGame", 0);
+            set.extractionGaps.add("decisionCountOnlyFromHeadlessRunner");
+        }
+
+        SwccgGame game = safeGame(gameState);
+        if (game == null) {
+            putMissingModifierFacts(set);
+            set.extractionGaps.add("modifierTotalsNeedGame");
+            return;
+        }
+        try {
+            put(set, "deciderSabaccTotal", publicSabaccTotal(gameState, game, playerId, playerId));
+            put(set, "opponentSabaccTotal", publicSabaccTotal(gameState, game, opponentId, playerId));
+            put(set, "deciderRaceTotal", GuiUtils.getHighestRaceTotal(game, playerId));
+            put(set, "opponentRaceTotal", opponentId == null ? -1f : GuiUtils.getHighestRaceTotal(game, opponentId));
+            put(set, "deciderPoliticsTotal", GuiUtils.getPoliticsTotal(game, playerId));
+            put(set, "opponentPoliticsTotal", opponentId == null ? -1f : GuiUtils.getPoliticsTotal(game, opponentId));
+            fillLocationPower(set, gameState, game, playerId, opponentId);
+            fillBattleBox(set, gameState, game, playerId, opponentId);
+            fillAttackTotals(set, gameState, game, playerId);
+            fillDuelAndLightsaber(set, gameState, game, playerId, opponentId);
+        } catch (RuntimeException ex) {
+            putMissingModifierFacts(set);
+            set.extractionGaps.add("modifierTotalsThrew");
+        }
+    }
+
+    private static void putMissingModifierFacts(InformationSetV1 set) {
+        for (String key : new String[]{
+                "deciderSabaccTotal", "opponentSabaccTotal",
+                "deciderRaceTotal", "opponentRaceTotal",
+                "deciderPoliticsTotal", "opponentPoliticsTotal",
+                "overflowLocationCount", "overflowDeciderPower", "overflowOpponentPower",
+                "deciderBattlePower", "opponentBattlePower",
+                "deciderBattleDestiny", "opponentBattleDestiny",
+                "deciderBattleDamage", "opponentBattleDamage",
+                "deciderBattleAttrition", "opponentBattleAttrition",
+                "deciderBattleImmune", "opponentBattleImmune",
+                "deciderAttackTotal", "opponentAttackTotal",
+                "deciderDuelTotal", "opponentDuelTotal",
+                "deciderLightsaberTotal", "opponentLightsaberTotal"
+        }) {
+            if (!set.scalars.containsKey(key)) {
+                put(set, key, key.endsWith("Immune") ? 0f : -1f);
+            }
+        }
+        for (int i = 0; i < FeatureLayoutV1.LOCATION_POWER_SLOTS; i++) {
+            String d = "loc" + i + "DeciderPower";
+            String o = "loc" + i + "OpponentPower";
+            if (!set.scalars.containsKey(d)) {
+                put(set, d, -1f);
+            }
+            if (!set.scalars.containsKey(o)) {
+                put(set, o, -1f);
+            }
+        }
+    }
+
+    /** -1 when the total is not public to this decider. Never reads a hidden opponent hand's values. */
+    private static float publicSabaccTotal(GameState gameState, SwccgGame game, String subjectId, String deciderId) {
+        if (subjectId == null || game == null) {
+            return -1f;
+        }
+        if (!gameState.isDuringSabacc()) {
+            return -1f;
+        }
+        SabaccState sabacc = gameState.getSabaccState();
+        if (sabacc == null || !sabacc.isInitialCardsDrawn()) {
+            return -1f;
+        }
+        boolean own = subjectId.equals(deciderId);
+        Float finalTotal = sabacc.getFinalSabaccTotal(subjectId);
+        if (!own && !sabacc.isHandsRevealed() && finalTotal == null) {
+            return -1f;
+        }
+        return GuiUtils.getSabaccTotal(game, subjectId);
+    }
+
+    private static void fillLocationPower(InformationSetV1 set, GameState gameState, SwccgGame game,
+                                          String playerId, String opponentId) {
+        for (int i = 0; i < FeatureLayoutV1.LOCATION_POWER_SLOTS; i++) {
+            put(set, "loc" + i + "DeciderPower", -1f);
+            put(set, "loc" + i + "OpponentPower", -1f);
+        }
+        put(set, "overflowLocationCount", 0);
+        put(set, "overflowDeciderPower", 0);
+        put(set, "overflowOpponentPower", 0);
+        List<PhysicalCard> locations;
+        try {
+            locations = gameState.getTopLocations();
+        } catch (RuntimeException ex) {
+            return;
+        }
+        if (locations == null || locations.isEmpty()) {
+            return;
+        }
+        List<PhysicalCard> ordered = new ArrayList<>();
+        for (PhysicalCard location : locations) {
+            if (location != null) {
+                ordered.add(location);
+            }
+        }
+        ordered.sort(Comparator.comparingInt(PhysicalCard::getLocationZoneIndex));
+        ModifiersQuerying querying = game.getModifiersQuerying();
+        float overflowDecider = 0f;
+        float overflowOpponent = 0f;
+        int overflow = 0;
+        for (int i = 0; i < ordered.size(); i++) {
+            PhysicalCard location = ordered.get(i);
+            float deciderPower = powerAt(game, gameState, querying, location, playerId);
+            float opponentPower = opponentId == null ? -1f : powerAt(game, gameState, querying, location, opponentId);
+            if (i < FeatureLayoutV1.LOCATION_POWER_SLOTS) {
+                put(set, "loc" + i + "DeciderPower", deciderPower);
+                put(set, "loc" + i + "OpponentPower", opponentPower);
+            } else {
+                overflow++;
+                if (deciderPower > 0f) {
+                    overflowDecider += deciderPower;
+                }
+                if (opponentPower > 0f) {
+                    overflowOpponent += opponentPower;
+                }
+            }
+        }
+        put(set, "overflowLocationCount", overflow);
+        put(set, "overflowDeciderPower", overflowDecider);
+        put(set, "overflowOpponentPower", overflowOpponent);
+        if (overflow > 0) {
+            set.extractionGaps.add("locationPowerOverflowPast" + FeatureLayoutV1.LOCATION_POWER_SLOTS);
+        }
+    }
+
+    private static float powerAt(SwccgGame game, GameState gameState, ModifiersQuerying querying,
+                                 PhysicalCard location, String playerId) {
+        if (playerId == null || location == null) {
+            return -1f;
+        }
+        boolean present = Filters.canSpot(game, null, Filters.and(
+                Filters.owner(playerId),
+                Filters.or(Filters.character, Filters.starship, Filters.vehicle),
+                Filters.at(location)));
+        if (!present) {
+            return -1f;
+        }
+        return querying.getTotalPowerAtLocation(gameState, location, playerId, false, false);
+    }
+
+    private static void fillBattleBox(InformationSetV1 set, GameState gameState, SwccgGame game,
+                                      String playerId, String opponentId) {
+        put(set, "deciderBattlePower", GuiUtils.getBattleTotalPower(game, playerId));
+        put(set, "opponentBattlePower", opponentId == null ? -1f : GuiUtils.getBattleTotalPower(game, opponentId));
+        BattleState battle = gameState.getBattleState();
+        if (battle == null) {
+            put(set, "deciderBattleDestiny", -1f);
+            put(set, "opponentBattleDestiny", -1f);
+        } else {
+            put(set, "deciderBattleDestiny", battle.getTotalBattleDestiny(game, playerId));
+            put(set, "opponentBattleDestiny", opponentId == null ? -1f : battle.getTotalBattleDestiny(game, opponentId));
+        }
+        put(set, "deciderBattleDamage", GuiUtils.getBattleDamageRemaining(game, playerId));
+        put(set, "opponentBattleDamage", opponentId == null ? 0f : GuiUtils.getBattleDamageRemaining(game, opponentId));
+        put(set, "deciderBattleAttrition", GuiUtils.getBattleAttritionRemaining(game, playerId));
+        put(set, "opponentBattleAttrition", opponentId == null ? 0f : GuiUtils.getBattleAttritionRemaining(game, opponentId));
+        put(set, "deciderBattleImmune", GuiUtils.isImmuneToRemainingAttrition(game, playerId) ? 1f : 0f);
+        put(set, "opponentBattleImmune", opponentId != null && GuiUtils.isImmuneToRemainingAttrition(game, opponentId) ? 1f : 0f);
+    }
+
+    private static void fillAttackTotals(InformationSetV1 set, GameState gameState, SwccgGame game, String playerId) {
+        float attacker = GuiUtils.getAttackAttackerTotal(game);
+        float defender = GuiUtils.getAttackDefenderTotal(game);
+        AttackState attack = gameState.getAttackState();
+        String attackerOwner = attack != null ? attack.getAttackerOwner() : null;
+        if (attackerOwner == null || attacker < 0f) {
+            put(set, "deciderAttackTotal", attacker < 0f ? -1f : attacker);
+            put(set, "opponentAttackTotal", defender);
+            if (attackerOwner == null) {
+                put(set, "deciderAttackTotal", -1f);
+                put(set, "opponentAttackTotal", -1f);
+            }
+            return;
+        }
+        if (attackerOwner.equals(playerId)) {
+            put(set, "deciderAttackTotal", attacker);
+            put(set, "opponentAttackTotal", defender);
+        } else {
+            put(set, "deciderAttackTotal", defender);
+            put(set, "opponentAttackTotal", attacker);
+        }
+    }
+
+    private static void fillDuelAndLightsaber(InformationSetV1 set, GameState gameState, SwccgGame game,
+                                              String playerId, String opponentId) {
+        ModifiersQuerying querying = game.getModifiersQuerying();
+        if (gameState.isDuringDuel()) {
+            put(set, "deciderDuelTotal", querying.getDuelTotal(gameState, playerId));
+            put(set, "opponentDuelTotal", opponentId == null ? -1f : querying.getDuelTotal(gameState, opponentId));
+        } else {
+            put(set, "deciderDuelTotal", -1f);
+            put(set, "opponentDuelTotal", -1f);
+        }
+        if (gameState.isDuringLightsaberCombat()) {
+            put(set, "deciderLightsaberTotal", querying.getLightsaberCombatTotal(gameState, playerId));
+            put(set, "opponentLightsaberTotal", opponentId == null ? -1f : querying.getLightsaberCombatTotal(gameState, opponentId));
+        } else {
+            put(set, "deciderLightsaberTotal", -1f);
+            put(set, "opponentLightsaberTotal", -1f);
+        }
+    }
+
+    private static void noteOrientation(InformationSetV1 set, GameState gameState, PhysicalCard card,
+                                       String playerId, String opponentId) {
+        if (card == null) {
+            return;
+        }
+        String owner = card.getOwner();
+        boolean deciderOwned = playerId != null && playerId.equals(owner);
+        boolean opponentOwned = opponentId != null && opponentId.equals(owner);
+        if (!deciderOwned && !opponentOwned) {
+            return;
+        }
+        String prefix = deciderOwned ? "decider" : "opponent";
+        if (card.isFrozen()) {
+            bump(set, prefix + "FrozenCount");
+        }
+        if (card.isSideways()) {
+            bump(set, prefix + "SidewaysCount");
+        }
+        if (cardIsInBattle(gameState, card)) {
+            bump(set, prefix + "InBattleCount");
+        }
+        PhysicalCard attachedTo = card.getAttachedTo();
+        if (attachedTo != null) {
+            bump(set, prefix + "AttachedCount");
+        }
+        PhysicalCard stackedOn = card.getStackedOn();
+        if (stackedOn != null && card.getZone() != Zone.STACKED_FACE_DOWN) {
+            bump(set, prefix + "StackedOnCount");
+        }
+    }
+
+    private static boolean cardIsInBattle(GameState gameState, PhysicalCard card) {
+        if (gameState == null || card == null) {
+            return false;
+        }
+        try {
+            return gameState.isDuringBattle() && gameState.isParticipatingInBattle(card);
+        } catch (RuntimeException ex) {
+            return false;
+        }
+    }
+
+    private static void bump(InformationSetV1 set, String key) {
+        Float cur = set.scalars.get(key);
+        put(set, key, (cur == null ? 0f : cur) + 1f);
+    }
+
+    private static void annotateWhere(Map<String, Object> row, PhysicalCard card, GameState gameState) {
+        PhysicalCard attachedTo = card.getAttachedTo();
+        if (attachedTo == null) {
+            row.put("attachSlot", "NONE");
+        } else {
+            row.put("attachSlot", attachSlot(card));
+            row.put("attachedToCategory", categoryName(attachedTo));
+        }
+        PhysicalCard stackedOn = card.getStackedOn();
+        if (stackedOn != null && card.getZone() != Zone.STACKED_FACE_DOWN) {
+            row.put("stackedOnCategory", categoryName(stackedOn));
+        }
+        row.put("frozen", card.isFrozen());
+        row.put("sideways", card.isSideways());
+        row.put("inBattle", cardIsInBattle(gameState, card));
+        PhysicalCard at = card.getAtLocation();
+        if (at == null) {
+            at = card.getCardAttachedToAtLocation();
+        }
+        row.put("locationSlot", locationSlot(gameState, at));
+    }
+
+    private static String attachSlot(PhysicalCard card) {
+        if (card.isPilotOf()) {
+            return "PILOT";
+        }
+        if (card.isPassengerOf()) {
+            return "PASSENGER";
+        }
+        if (card.isInCargoHoldAsVehicle()) {
+            return "VEHICLE";
+        }
+        if (card.isInCargoHoldAsStarfighterOrTIE()) {
+            return "STARFIGHTER";
+        }
+        if (card.isInCargoHoldAsCapitalStarship()) {
+            return "CAPITAL";
+        }
+        return "OTHER";
+    }
+
+    private static String categoryName(PhysicalCard card) {
+        if (card == null || card.getBlueprint() == null || card.getBlueprint().getCardCategory() == null) {
+            return "UNKNOWN";
+        }
+        return card.getBlueprint().getCardCategory().name();
+    }
+
+    /** Index in the bounded location-power vector, or -1 if this location is past the cap or unknown. */
+    private static int locationSlot(GameState gameState, PhysicalCard at) {
+        if (gameState == null || at == null) {
+            return -1;
+        }
+        List<PhysicalCard> locations;
+        try {
+            locations = gameState.getTopLocations();
+        } catch (RuntimeException ex) {
+            return -1;
+        }
+        if (locations == null) {
+            return -1;
+        }
+        List<PhysicalCard> ordered = new ArrayList<>();
+        for (PhysicalCard location : locations) {
+            if (location != null) {
+                ordered.add(location);
+            }
+        }
+        ordered.sort(Comparator.comparingInt(PhysicalCard::getLocationZoneIndex));
+        int limit = Math.min(FeatureLayoutV1.LOCATION_POWER_SLOTS, ordered.size());
+        for (int i = 0; i < limit; i++) {
+            if (ordered.get(i) == at || ordered.get(i).getCardId() == at.getCardId()) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private static void fillFaceUpStacks(InformationSetV1 set, GameState gameState, String playerId) {
+        List<Map<String, Object>> rows = new ArrayList<>();
+        List<PhysicalCard> stacked;
+        try {
+            stacked = gameState.getAllStackedCards();
+        } catch (RuntimeException ex) {
+            stacked = null;
+        }
+        if (stacked == null) {
+            set.publicFaceUpStacks.clear();
+            return;
+        }
+        for (PhysicalCard card : stacked) {
+            if (card == null || card.getZone() != Zone.STACKED) {
+                continue;
+            }
+            if (rows.size() >= 32) {
+                break;
+            }
+            Map<String, Object> row = cardBag(card, playerId, false);
+            if (row == null) {
+                continue;
+            }
+            row.put("zone", Zone.STACKED.name());
+            PhysicalCard on = card.getStackedOn();
+            if (on != null) {
+                row.put("stackedOnCategory", categoryName(on));
+            }
+            rows.add(row);
+        }
+        rows.sort(Comparator.comparing(r -> String.valueOf(r.getOrDefault("blueprintId", ""))));
+        set.publicFaceUpStacks.clear();
+        set.publicFaceUpStacks.addAll(rows);
+    }
+
+    /** Sizes only. Does not read blueprint ids or titles of face-down stacked cards. */
+    private static int[] faceDownStackSizes(GameState gameState, String darkId, String lightId) {
+        int dark = 0;
+        int light = 0;
+        List<PhysicalCard> stacked;
+        try {
+            stacked = gameState.getAllStackedCards();
+        } catch (RuntimeException ex) {
+            return new int[]{0, 0};
+        }
+        if (stacked == null) {
+            return new int[]{0, 0};
+        }
+        for (PhysicalCard card : stacked) {
+            if (card == null || card.getZone() != Zone.STACKED_FACE_DOWN) {
+                continue;
+            }
+            String owner = card.getZoneOwner();
+            if (owner == null) {
+                owner = card.getOwner();
+            }
+            if (darkId != null && darkId.equals(owner)) {
+                dark++;
+            } else if (lightId != null && lightId.equals(owner)) {
+                light++;
+            }
+        }
+        return new int[]{dark, light};
+    }
+
+    private static int sideOfTableFaceDownSize(GameState gameState, String playerId) {
+        if (playerId == null) {
+            return 0;
+        }
+        List<PhysicalCard> pile;
+        try {
+            pile = gameState.getSideOfTableFaceDown(playerId);
+        } catch (RuntimeException ex) {
+            return 0;
+        }
+        if (pile == null) {
+            return 0;
+        }
+        int n = 0;
+        for (PhysicalCard card : pile) {
+            if (card != null && card.getZone() == Zone.SIDE_OF_TABLE_FACE_DOWN_NOT_IN_PLAY) {
+                n++;
+            }
+        }
+        return n;
+    }
+
+    private static void fillPromptShape(InformationSetV1 set, AwaitingDecision decision, Map<String, String[]> params) {
+        put(set, "promptMin", 0);
+        put(set, "promptMax", 0);
+        put(set, "promptYourTurn", 0);
+        put(set, "promptAutoPassEligible", 0);
+        put(set, "promptNoLongDelay", 0);
+        put(set, "promptRevertEligible", 0);
+        put(set, "promptAsButtons", 0);
+        put(set, "promptReturnAnyChange", 0);
+        put(set, "promptSelectableCount", 0);
+        put(set, "promptPreselectedCount", 0);
+        put(set, "promptHorizontalCount", 0);
+        put(set, "promptHasDefault", 0);
+        put(set, "promptParamCount", 0);
+        if (decision == null || params == null) {
+            return;
+        }
+        // timeoutValue is a clock. Do not encode it.
+        int keys = 0;
+        for (String key : params.keySet()) {
+            if (key != null && !"timeoutValue".equals(key)) {
+                keys++;
+            }
+        }
+        put(set, "promptParamCount", keys);
+        put(set, "promptMin", parseIntParam(params.get("min"), 0));
+        put(set, "promptMax", parseIntParam(params.get("max"), 0));
+        put(set, "promptYourTurn", truthy(params.get("yourTurn")) ? 1f : 0f);
+        put(set, "promptAutoPassEligible", truthy(params.get("autoPassEligible")) ? 1f : 0f);
+        put(set, "promptNoLongDelay", truthy(params.get("noLongDelay")) ? 1f : 0f);
+        put(set, "promptRevertEligible", truthy(params.get("revertEligible")) ? 1f : 0f);
+        put(set, "promptAsButtons", truthy(params.get("asButtons")) ? 1f : 0f);
+        put(set, "promptReturnAnyChange", truthy(params.get("returnAnyChange")) ? 1f : 0f);
+        put(set, "promptSelectableCount", countTrue(params.get("selectable")));
+        put(set, "promptPreselectedCount", countTrue(params.get("preselected")));
+        put(set, "promptHorizontalCount", countTrue(params.get("horizontal")));
+        boolean hasDefault = params.containsKey("defaultValue") || params.containsKey("defaultIndex");
+        put(set, "promptHasDefault", hasDefault ? 1f : 0f);
+    }
+
+    private static boolean truthy(String[] vals) {
+        return vals != null && vals.length > 0 && vals[0] != null && Boolean.parseBoolean(vals[0]);
+    }
+
+    private static int countTrue(String[] vals) {
+        if (vals == null) {
+            return 0;
+        }
+        int n = 0;
+        for (String val : vals) {
+            if (val != null && Boolean.parseBoolean(val)) {
+                n++;
+            }
+        }
+        return n;
+    }
+
+    private static SwccgGame safeGame(GameState gameState) {
+        try {
+            return gameState.getGame();
+        } catch (RuntimeException ex) {
+            return null;
+        }
+    }
+
+    private static int safeFrozenForce(GameState gameState, String playerId) {
+        if (playerId == null) {
+            return 0;
+        }
+        try {
+            return gameState.getFrozenForceSize(playerId);
+        } catch (RuntimeException ex) {
+            return 0;
+        }
+    }
+
+    private static List<PhysicalCard> safeSabaccHand(GameState gameState, String playerId) {
+        if (playerId == null) {
+            return null;
+        }
+        try {
+            return gameState.getSabaccHand(playerId);
+        } catch (RuntimeException ex) {
+            return null;
+        }
+    }
+
+    private static List<PhysicalCard> safeOutOfPlay(GameState gameState, String playerId) {
+        if (playerId == null) {
+            return null;
+        }
+        try {
+            return gameState.getOutOfPlayPile(playerId);
+        } catch (RuntimeException ex) {
+            return null;
+        }
+    }
+
+    private static int safeListSize(List<PhysicalCard> cards) {
+        return cards == null ? 0 : cards.size();
+    }
+
+
 }

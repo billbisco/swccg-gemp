@@ -60,7 +60,7 @@ public class InformationSetV1Test {
         assertEquals(1f, packed[FeatureLayoutV1.phaseIndex("CONTROL")], 0f);
         assertEquals(0f, packed[FeatureLayoutV1.phaseIndex("BATTLE")], 0f);
         assertEquals(1f, packed[FeatureLayoutV1.DECISION_ONE_HOT + FeatureLayoutV1.decisionIndex("CARD_ACTION_CHOICE")], 0f);
-        for (int i = FeatureLayoutV1.PAD_START; i < packed.length; i++) {
+        for (int i = FeatureLayoutV1.PAD_START; i < FeatureLayoutV1.TABLE_START; i++) {
             assertEquals(0f, packed[i], 0f);
         }
         Map<String, Object> json = set.toMap();
@@ -430,6 +430,55 @@ public class InformationSetV1Test {
         assertFalse(set.toMap().toString().contains(SECRET_OPP_TITLE));
         assertTrue(set.extractionGaps.contains("buriedOwnUsedIdentitiesNotPublic"));
         assertFalse(set.extractionGaps.contains("ownHighDestinyRemainingEstIgnoresUsedLost"));
+    }
+
+    @Test
+    public void tableFactsAppendAfterPadAndDoNotMoveOldSlots() {
+        assertEquals(128, FeatureLayoutV1.TABLE_START);
+        assertTrue(FeatureLayoutV1.TABLE_COUNT > 0);
+        assertEquals(FeatureLayoutV1.TABLE_START + FeatureLayoutV1.TABLE_COUNT, FeatureLayoutV1.PACKED_DIM);
+        InformationSetV1 set = new InformationSetV1();
+        set.phase = "BATTLE";
+        set.scalars.put("darkFrozenForce", 4f);
+        set.scalars.put("deciderLF", 28f);
+        float[] packed = InformationSetEncoder.encodePacked(set);
+        assertEquals(FeatureLayoutV1.PACKED_DIM, packed.length);
+        for (int i = FeatureLayoutV1.PAD_START; i < FeatureLayoutV1.TABLE_START; i++) {
+            assertEquals(0f, packed[i], 0f);
+        }
+        int frozen = FeatureLayoutV1.TABLE_START; // darkFrozenForce is the first table label
+        assertEquals("darkFrozenForce", FeatureLayoutV1.TABLE_LABELS[0]);
+        assertEquals(4f / 80f, packed[frozen], 0.0001f);
+        // Life force stays in the original scalar block, not the frozen-force slot.
+        assertTrue(packed[FeatureLayoutV1.SCALARS] != packed[frozen]);
+    }
+
+    @Test
+    public void promptShapeEncodesCardSelectionBoundsNotClocks() {
+        GameState gs = mockGameStateWithHands();
+        AwaitingDecision decision = mock(AwaitingDecision.class);
+        when(decision.getDecisionType()).thenReturn(AwaitingDecisionType.CARD_SELECTION);
+        when(decision.getText()).thenReturn("Choose cards");
+        Map<String, String[]> params = new LinkedHashMap<>();
+        params.put("min", new String[]{"1"});
+        params.put("max", new String[]{"2"});
+        params.put("cardId", new String[]{"10", "11", "12"});
+        params.put("timeoutValue", new String[]{"30000"});
+        params.put("yourTurn", new String[]{"true"});
+        when(decision.getDecisionParameters()).thenReturn(params);
+
+        InformationSetTracker tracker = new InformationSetTracker(LIGHT);
+        tracker.setDecisionsThisGame(80);
+        InformationSetV1 set = InformationSetEncoder.from(gs, LIGHT, decision, tracker, "premiere_anh");
+        assertEquals(1f, set.scalars.get("promptMin"), 0.01f);
+        assertEquals(2f, set.scalars.get("promptMax"), 0.01f);
+        assertEquals(1f, set.scalars.get("promptYourTurn"), 0.01f);
+        // timeoutValue is a clock and is not a counted prompt key
+        assertEquals(4f, set.scalars.get("promptParamCount"), 0.01f);
+        assertEquals(80f, set.scalars.get("decisionCountThisGame"), 0.01f);
+        assertFalse(set.toMap().toString().contains("timeoutValue"));
+        assertFalse(set.extractionGaps.contains("decisionCountOnlyFromHeadlessRunner"));
+        assertTrue(set.extractionGaps.contains("modifierTotalsNeedGame"));
     }
 
     private static GameState mockGameStateWithHands() {

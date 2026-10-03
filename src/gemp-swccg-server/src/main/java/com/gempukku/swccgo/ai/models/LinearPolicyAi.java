@@ -107,75 +107,21 @@ public final class LinearPolicyAi implements SwccgAiController {
      * First decision-kind feature. Kinds sit after the constant 1 so the
      * packed/bag interaction ({@link #INTERACT_FEAT_DIM}) stays the features
      * that are not identical on every action. Kind weights are direct only.
+     * The keyword tables live on {@link ActionFeatureOffsets} so this class
+     * and {@link LinearActionFeatures} do not initialize each other.
      */
-    public static final int AF_KIND = 24;
-    /**
-     * AdvancedAi action-table keywords, {@code ACTION_WEIGHTS} then
-     * {@code ACTION_PENALTIES}. Strings only. The numeric scores stay in
-     * {@link AdvancedAi}; this policy does not copy them. Choice-table
-     * strings are {@link #CHOICE_KIND_KEYWORDS}, after this block.
-     */
-    public static final String[] DECISION_KIND_KEYWORDS = {
-            "force drain",
-            "initiate battle",
-            "battle",
-            "weapon",
-            "fire",
-            "deploy",
-            "play",
-            "move",
-            "activate",
-            "retrieve",
-            "draw",
-            "steal",
-            "capture",
-            "download",
-            "search",
-            "react",
-            "cancel",
-            "take into hand",
-            "pass",
-            "forfeit",
-            "lose",
-            "place in lost pile",
-            "place in used pile",
-            "return to hand",
-            "sacrifice",
-            "revert"
-    };
-    public static final int AF_KIND_COUNT = DECISION_KIND_KEYWORDS.length;
+    public static final int AF_KIND = ActionFeatureOffsets.AF_KIND;
+    /** Same array as {@link ActionFeatureOffsets#DECISION_KIND_KEYWORDS}. */
+    public static final String[] DECISION_KIND_KEYWORDS = ActionFeatureOffsets.DECISION_KIND_KEYWORDS;
+    public static final int AF_KIND_COUNT = ActionFeatureOffsets.AF_KIND_COUNT;
     /**
      * First choice-table feature. Sits after the action-keyword block
-     * (indices 24..49) so those keyword features do not move.
-     * Strings are AdvancedAi {@code CHOICE_WEIGHTS} then {@code CHOICE_PENALTIES}.
-     * The numeric scores stay in {@link AdvancedAi}; this policy does not copy them.
-     * Not a per-card-name embedding.
+     * so those keyword features do not move. Not a per-card-name embedding.
      */
-    public static final int AF_CHOICE = AF_KIND + AF_KIND_COUNT;
-    public static final String[] CHOICE_KIND_KEYWORDS = {
-            "draw",
-            "retrieve",
-            "deploy",
-            "battle destiny",
-            "weapon destiny",
-            "activate",
-            "force drain",
-            "initiate",
-            "capture",
-            "steal",
-            "download",
-            "use",
-            "yes",
-            "lose",
-            "forfeit",
-            "lost pile",
-            "used pile",
-            "return to hand",
-            "neither",
-            "cancel",
-            "pass"
-    };
-    public static final int AF_CHOICE_COUNT = CHOICE_KIND_KEYWORDS.length;
+    public static final int AF_CHOICE = ActionFeatureOffsets.AF_CHOICE;
+    /** Same array as {@link ActionFeatureOffsets#CHOICE_KIND_KEYWORDS}. */
+    public static final String[] CHOICE_KIND_KEYWORDS = ActionFeatureOffsets.CHOICE_KIND_KEYWORDS;
+    public static final int AF_CHOICE_COUNT = ActionFeatureOffsets.AF_CHOICE_COUNT;
     public static final int ACTION_FEAT_DIM = LinearActionFeatures.GROUNDED_DIM;
     /**
      * Action features that may be multiplied by a packed or bag-hash state value.

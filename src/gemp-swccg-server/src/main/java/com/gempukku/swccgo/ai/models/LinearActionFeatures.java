@@ -46,7 +46,7 @@ import java.util.Set;
 public final class LinearActionFeatures {
 
     /** First grounded slot. Choice-table features occupy the indices just before this. */
-    public static final int GROUNDED_START = LinearPolicyAi.AF_CHOICE + LinearPolicyAi.AF_CHOICE_COUNT;
+    public static final int GROUNDED_START = ActionFeatureOffsets.GROUNDED_START;
 
     public static final CardType[] TYPES = CardType.values();
     public static final CardSubtype[] SUBTYPES = CardSubtype.values();
