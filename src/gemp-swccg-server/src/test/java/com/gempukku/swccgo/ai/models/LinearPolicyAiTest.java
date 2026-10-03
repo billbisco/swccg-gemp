@@ -239,14 +239,30 @@ public class LinearPolicyAiTest {
         assertEquals(1f, battle[kind("battle")], 0f);
         assertEquals(0f, battle[kind("deploy")], 0f);
         assertEquals(1f, battle[LinearPolicyAi.AF_ONES], 0f);
-        assertEquals(50, LinearPolicyAi.ACTION_FEAT_DIM);
+        assertEquals(LinearActionFeatures.GROUNDED_DIM, LinearPolicyAi.ACTION_FEAT_DIM);
         assertEquals(26, LinearPolicyAi.AF_KIND_COUNT);
+        assertEquals(21, LinearPolicyAi.AF_CHOICE_COUNT);
+        assertEquals(50, LinearPolicyAi.AF_CHOICE);
+        assertEquals(71, LinearActionFeatures.GROUNDED_START);
+        assertTrue(LinearPolicyAi.ACTION_FEAT_DIM > 200);
+        assertTrue(LinearPolicyAi.ACTION_FEAT_DIM < 280);
         assertEquals("force drain", LinearPolicyAi.DECISION_KIND_KEYWORDS[0]);
         assertEquals("pass", LinearPolicyAi.DECISION_KIND_KEYWORDS[18]);
         assertEquals("revert", LinearPolicyAi.DECISION_KIND_KEYWORDS[25]);
         float[] passFeat = LinearPolicyAi.actionFeatures("Pass", "", true, 0f, 0f);
         assertEquals(1f, passFeat[LinearPolicyAi.AF_PASS], 0f);
         assertEquals(1f, passFeat[kind("pass")], 0f);
+        assertEquals(1f, passFeat[choice("pass")], 0f);
+        float[] draw = LinearPolicyAi.actionFeatures("Draw two cards", "", false, 0f, 0f);
+        assertEquals(1f, draw[kind("draw")], 0f);
+        assertEquals(1f, draw[choice("draw")], 0f);
+        assertEquals(0f, draw[choice("yes")], 0f);
+        float[] weaponDestiny = LinearPolicyAi.actionFeatures("weapon destiny", "", false, 0f, 0f);
+        assertEquals("kind weapon stays where it was", 1f, weaponDestiny[kind("weapon")], 0f);
+        assertEquals(1f, weaponDestiny[choice("weapon destiny")], 0f);
+        assertEquals(0f, weaponDestiny[choice("battle destiny")], 0f);
+        // Card identity is still a hash bucket, not a per-name slot.
+        assertEquals(LinearPolicyAi.AF_TEXT_BUCKETS + LinearPolicyAi.AF_BP_BUCKETS, 20);
     }
 
     @Test
@@ -281,6 +297,16 @@ public class LinearPolicyAiTest {
         for (int i = 0; i < kinds.length; i++) {
             if (kinds[i].equals(keyword)) {
                 return LinearPolicyAi.AF_KIND + i;
+            }
+        }
+        throw new IllegalArgumentException(keyword);
+    }
+
+    private static int choice(String keyword) {
+        String[] choices = LinearPolicyAi.CHOICE_KIND_KEYWORDS;
+        for (int i = 0; i < choices.length; i++) {
+            if (choices[i].equals(keyword)) {
+                return LinearPolicyAi.AF_CHOICE + i;
             }
         }
         throw new IllegalArgumentException(keyword);

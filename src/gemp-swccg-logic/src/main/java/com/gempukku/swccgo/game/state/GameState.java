@@ -3170,6 +3170,11 @@ public class GameState implements Snapshotable<GameState> {
         return Collections.unmodifiableList(_hands.get(playerId));
     }
 
+    /** Cards currently on the table. Read-only. */
+    public List<PhysicalCard> getCardsInPlay() {
+        return Collections.unmodifiableList(_inPlay);
+    }
+
     public List<PhysicalCard> getSabaccHand(String playerId) {
         return Collections.unmodifiableList(_sabaccHands.get(playerId));
     }

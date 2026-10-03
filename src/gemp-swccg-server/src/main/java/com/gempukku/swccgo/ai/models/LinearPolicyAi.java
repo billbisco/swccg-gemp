@@ -79,13 +79,17 @@ import java.util.regex.Pattern;
  *   <li>3..18 text-hash one-hot (16 buckets)</li>
  *   <li>19..22 blueprintId hash one-hot (4 buckets)</li>
  *   <li>23 constant 1</li>
- *   <li>24.. onward decision-kind indicators, one per
+ *   <li>24..49 decision-kind indicators, one per
  *       {@link #DECISION_KIND_KEYWORDS} entry (AdvancedAi action table,
- *       weights then penalties, including pass). A kind is 1 when the
- *       lowercased action text contains that keyword, the same test as
- *       {@code HeuristicAiBase.scoreKeywords}. Kinds are not mutually
- *       exclusive. Scores are not stored here.</li>
+ *       weights then penalties, including pass). Unchanged by the choice block.</li>
+ *   <li>50.. onward choice-table indicators, one per
+ *       {@link #CHOICE_KIND_KEYWORDS} entry (AdvancedAi {@code CHOICE_WEIGHTS}
+ *       then {@code CHOICE_PENALTIES}). Not one weight per card name. Card
+ *       identity stays the text-hash and blueprint-hash buckets.</li>
  * </ul>
+ * A kind or choice bit is 1 when the lowercased action text contains that
+ * keyword, the same test as {@code HeuristicAiBase.scoreKeywords}. Bits are
+ * not mutually exclusive. Scores are not stored in the feature vector.
  */
 public final class LinearPolicyAi implements SwccgAiController {
 
@@ -108,7 +112,8 @@ public final class LinearPolicyAi implements SwccgAiController {
     /**
      * AdvancedAi action-table keywords, {@code ACTION_WEIGHTS} then
      * {@code ACTION_PENALTIES}. Strings only. The numeric scores stay in
-     * {@link AdvancedAi}; this policy does not copy them.
+     * {@link AdvancedAi}; this policy does not copy them. Choice-table
+     * strings are {@link #CHOICE_KIND_KEYWORDS}, after this block.
      */
     public static final String[] DECISION_KIND_KEYWORDS = {
             "force drain",
@@ -139,7 +144,39 @@ public final class LinearPolicyAi implements SwccgAiController {
             "revert"
     };
     public static final int AF_KIND_COUNT = DECISION_KIND_KEYWORDS.length;
-    public static final int ACTION_FEAT_DIM = AF_KIND + AF_KIND_COUNT;
+    /**
+     * First choice-table feature. Sits after the action-keyword block
+     * (indices 24..49) so those keyword features do not move.
+     * Strings are AdvancedAi {@code CHOICE_WEIGHTS} then {@code CHOICE_PENALTIES}.
+     * The numeric scores stay in {@link AdvancedAi}; this policy does not copy them.
+     * Not a per-card-name embedding.
+     */
+    public static final int AF_CHOICE = AF_KIND + AF_KIND_COUNT;
+    public static final String[] CHOICE_KIND_KEYWORDS = {
+            "draw",
+            "retrieve",
+            "deploy",
+            "battle destiny",
+            "weapon destiny",
+            "activate",
+            "force drain",
+            "initiate",
+            "capture",
+            "steal",
+            "download",
+            "use",
+            "yes",
+            "lose",
+            "forfeit",
+            "lost pile",
+            "used pile",
+            "return to hand",
+            "neither",
+            "cancel",
+            "pass"
+    };
+    public static final int AF_CHOICE_COUNT = CHOICE_KIND_KEYWORDS.length;
+    public static final int ACTION_FEAT_DIM = LinearActionFeatures.GROUNDED_DIM;
     /**
      * Action features that may be multiplied by a packed or bag-hash state value.
      * Excludes {@link #AF_ONES}: that feature is 1 on every action, so pairing a
@@ -282,7 +319,8 @@ public final class LinearPolicyAi implements SwccgAiController {
         float[][] feats = new float[candidates.size()][];
         for (int i = 0; i < candidates.size(); i++) {
             Candidate c = candidates.get(i);
-            feats[i] = actionFeatures(c.text, c.blueprintId, c.pass, c.integerNorm, c.indexNorm);
+            feats[i] = actionFeatures(c.text, c.blueprintId, c.cardId, c.pass, c.integerNorm, c.indexNorm,
+                    gameState, playerId);
         }
         // Phase memory feeds the hard cap. Not gated on all-zero W.
         syncStallPhase(gameState);
@@ -522,6 +560,18 @@ public final class LinearPolicyAi implements SwccgAiController {
                 feat[AF_KIND + k] = 1f;
             }
         }
+        for (int k = 0; k < CHOICE_KIND_KEYWORDS.length; k++) {
+            if (kindText.contains(CHOICE_KIND_KEYWORDS[k])) {
+                feat[AF_CHOICE + k] = 1f;
+            }
+        }
+        return feat;
+    }
+
+    public static float[] actionFeatures(String text, String blueprintId, String cardId, boolean pass,
+                                         float integerNorm, float indexNorm, GameState gameState, String playerId) {
+        float[] feat = actionFeatures(text, blueprintId, pass, integerNorm, indexNorm);
+        LinearActionFeatures.fill(feat, text, blueprintId, cardId, gameState, playerId);
         return feat;
     }
 
@@ -601,9 +651,12 @@ public final class LinearPolicyAi implements SwccgAiController {
         String[] ids = params != null ? params.get("actionId") : null;
         String[] blueprints = params != null ? params.get("blueprintId") : null;
         int n = texts != null ? texts.length : (ids != null ? ids.length : 0);
+        String[] cardIds = params != null ? params.get("cardId") : null;
         for (int i = 0; i < n; i++) {
             String text = at(texts, i);
-            out.add(new Candidate(Integer.toString(i), text, at(blueprints, i), isPassText(text), 0f, norm(i, Math.max(n, 1))));
+            Candidate cand = new Candidate(Integer.toString(i), text, at(blueprints, i), isPassText(text), 0f, norm(i, Math.max(n, 1)));
+            cand.cardId = at(cardIds, i);
+            out.add(cand);
         }
         boolean noPass = params != null && boolFirst(params.get("noPass"));
         if (type == AwaitingDecisionType.CARD_ACTION_CHOICE && !noPass) {
@@ -664,8 +717,10 @@ public final class LinearPolicyAi implements SwccgAiController {
         if (min <= 1 && max >= 1) {
             for (int order = 0; order < selectableIdx.size(); order++) {
                 int i = selectableIdx.get(order);
-                out.add(new Candidate(cardIds[i], at(texts, i), at(blueprints, i), false, 0f,
-                        norm(order, selectableIdx.size())));
+                Candidate picked = new Candidate(cardIds[i], at(texts, i), at(blueprints, i), false, 0f,
+                        norm(order, selectableIdx.size()));
+                picked.cardId = cardIds[i];
+                out.add(picked);
             }
             return;
         }
@@ -833,6 +888,7 @@ public final class LinearPolicyAi implements SwccgAiController {
         final String raw;
         final String text;
         final String blueprintId;
+        String cardId;
         final boolean pass;
         final float integerNorm;
         final float indexNorm;
@@ -841,6 +897,7 @@ public final class LinearPolicyAi implements SwccgAiController {
             this.raw = raw != null ? raw : "";
             this.text = text != null ? text : "";
             this.blueprintId = blueprintId != null ? blueprintId : "";
+            this.cardId = "";
             this.pass = pass;
             this.integerNorm = integerNorm;
             this.indexNorm = indexNorm;

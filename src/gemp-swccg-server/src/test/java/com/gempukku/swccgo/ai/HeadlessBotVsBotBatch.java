@@ -46,6 +46,16 @@ public final class HeadlessBotVsBotBatch {
         /** JSONL path when {@link #writeTraces} is true. Default under target/. */
         public Path tracesPath = Paths.get(HeadlessDecisionTraceWriter.DEFAULT_PATH);
         /**
+         * How many games in the batch get a decision trace. 0 means every game.
+         * Default 2 so a batch does not write a full jsonl for every game.
+         */
+        public int traceGames = 2;
+        /**
+         * Cap on jsonl lines (headers plus decisions) for the whole batch.
+         * 0 means no line cap. Default keeps a small sample for the trainer.
+         */
+        public int traceDecisions = 100;
+        /**
          * COMPACT or FEATURES. Default follows {@code -Dheadless.traceLevel} when unset here.
          */
         public HeadlessDecisionTraceWriter.TraceLevel traceLevel = null;
@@ -208,7 +218,11 @@ public final class HeadlessBotVsBotBatch {
                     ? cfg.traceLevel
                     : HeadlessDecisionTraceWriter.levelFromSystemProperties();
             traceWriter = new HeadlessDecisionTraceWriter(tracesPath, level);
-            System.out.println("[batch] writing decision traces: " + tracesPath + " level=" + level);
+            if (cfg.traceDecisions > 0) {
+                traceWriter.setMaxLines(cfg.traceDecisions);
+            }
+            System.out.println("[batch] writing decision traces: " + tracesPath + " level=" + level
+                    + " traceGames=" + cfg.traceGames + " traceLinesCap=" + cfg.traceDecisions);
         }
 
         try {
@@ -223,8 +237,11 @@ public final class HeadlessBotVsBotBatch {
                 gameCfg.verbose = cfg.verbose;
                 gameCfg.progressEveryN = cfg.progressEveryN;
                 gameCfg.gameIndex = i;
-                gameCfg.traceWriter = traceWriter;
-                if (traceWriter != null) {
+                boolean traceThisGame = traceWriter != null
+                        && (cfg.traceGames <= 0 || i <= cfg.traceGames)
+                        && (cfg.traceDecisions <= 0 || traceWriter.getLinesWritten() < cfg.traceDecisions);
+                gameCfg.traceWriter = traceThisGame ? traceWriter : null;
+                if (traceThisGame) {
                     gameCfg.traceLevel = traceWriter.getTraceLevel();
                 } else if (cfg.traceLevel != null) {
                     gameCfg.traceLevel = cfg.traceLevel;
@@ -423,6 +440,10 @@ public final class HeadlessBotVsBotBatch {
             } else if (arg.startsWith("--tracesPath=")) {
                 cfg.writeTraces = true;
                 cfg.tracesPath = Paths.get(arg.substring("--tracesPath=".length()));
+            } else if (arg.startsWith("--traceGames=")) {
+                cfg.traceGames = Integer.parseInt(arg.substring("--traceGames=".length()));
+            } else if (arg.startsWith("--traceDecisions=")) {
+                cfg.traceDecisions = Integer.parseInt(arg.substring("--traceDecisions=".length()));
             } else if (arg.startsWith("--decks=")) {
                 cfg.deckPack = arg.substring("--decks=".length());
                 if (HeadlessBotVsBotRunner.DECK_WC96.equalsIgnoreCase(cfg.deckPack)
@@ -446,7 +467,7 @@ public final class HeadlessBotVsBotBatch {
                         + "[--dark=LINEAR --light=ADVANCED --linear-weights=linear.json] "
                         + "[--dark=LINEAR --light=HEURISTIC --dark-weights=linear.json --light-weights=heuristic.json] "
                         + "[--replay] [--replayDir=target/headless-replays] "
-                        + "[--traces] [--tracesPath=target/traces.jsonl] "
+                        + "[--traces] [--tracesPath=target/traces.jsonl] [--traceGames=2] [--traceDecisions=100] "
                         + "[--verbose] [--maxDecisions=25000] [--maxMillis=180000]");
                 return;
             }

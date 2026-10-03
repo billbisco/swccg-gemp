@@ -3,6 +3,7 @@ package com.gempukku.swccgo.ai;
 import com.gempukku.swccgo.ai.features.InformationSetEncoder;
 import com.gempukku.swccgo.ai.features.InformationSetTracker;
 import com.gempukku.swccgo.ai.features.InformationSetV1;
+import com.gempukku.swccgo.ai.models.LinearActionFeatures;
 import com.gempukku.swccgo.ai.models.LinearPolicyAi;
 import com.gempukku.swccgo.common.Phase;
 import com.gempukku.swccgo.game.state.GameState;
@@ -66,6 +67,8 @@ public final class HeadlessDecisionTraceWriter implements Closeable {
     private final BufferedWriter writer;
     private final TraceLevel traceLevel;
     private long linesWritten;
+    /** 0 = no cap. Further records are dropped so a batch cannot grow a full jsonl. */
+    private int maxLines;
 
     public HeadlessDecisionTraceWriter(Path path) throws IOException {
         this(path, levelFromSystemProperties());
@@ -94,12 +97,20 @@ public final class HeadlessDecisionTraceWriter implements Closeable {
         return linesWritten;
     }
 
+    public void setMaxLines(int maxLines) {
+        this.maxLines = Math.max(0, maxLines);
+    }
+
+    private boolean atLineCap() {
+        return maxLines > 0 && linesWritten >= maxLines;
+    }
+
     /**
      * Record one decision attempt. Call after {@code ai.decide} and after
      * {@code decision.decisionMade} (or on invalid) so {@code accepted} is known.
      */
     public synchronized void record(TraceContext ctx) throws IOException {
-        if (ctx == null) {
+        if (ctx == null || atLineCap()) {
             return;
         }
         Map<String, Object> row = new LinkedHashMap<>();
@@ -161,6 +172,9 @@ public final class HeadlessDecisionTraceWriter implements Closeable {
     public synchronized void writeGameHeader(String gameId, Integer gameIndex, String format,
                                              String darkDeck, String lightDeck,
                                              String darkAi, String lightAi) throws IOException {
+        if (atLineCap()) {
+            return;
+        }
         Map<String, Object> row = new LinkedHashMap<>();
         row.put("type", "header");
         row.put("schemaVersion", 1);
@@ -346,6 +360,12 @@ public final class HeadlessDecisionTraceWriter implements Closeable {
                 ctx.turn = -1;
             }
             if (level == TraceLevel.FEATURES) {
+                try {
+                    LinearActionFeatures.annotateItems(ctx.options, gs, playerId);
+                } catch (RuntimeException ex) {
+                    System.err.println("[headless] grounded features failed: " + ex.getClass().getSimpleName()
+                            + ": " + ex.getMessage());
+                }
                 try {
                     ctx.informationSet = InformationSetEncoder.from(gs, playerId, decision, tracker, format);
                 } catch (RuntimeException ex) {
