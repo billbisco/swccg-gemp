@@ -78,7 +78,13 @@ public final class HeadlessBotVsBotRunner {
         ADVANCED,
         RANDO,
         /** Gym-cli linear.v1 policy. Zeros pack when no weights path is set. */
-        LINEAR
+        LINEAR,
+        /**
+         * {@link com.gempukku.swccgo.ai.models.ConfigurableHeuristicAi} from a
+         * heuristic.v1 weights file. The path is required. Not BeginnerAi and
+         * not AdvancedAi / YodaBot.
+         */
+        HEURISTIC
     }
 
     public static final class Config {
@@ -225,8 +231,12 @@ public final class HeadlessBotVsBotRunner {
 
     /**
      * {@link AiSkill#LINEAR} loads {@code linear.v1} from {@code weightsPath}, or a zeros pack
-     * when the path is null. Any other skill with a non-null path loads heuristic.v1
-     * {@link ConfigurableHeuristicAi}. {@link AiSkill#BEGINNER} with a null path stays BeginnerAi.
+     * when the path is null. {@link AiSkill#ADVANCED} is always {@link AdvancedAi} (YodaBot),
+     * even if a weights path is set, so one game can seat Yoda beside a heuristic pack.
+     * {@link AiSkill#HEURISTIC} requires a heuristic.v1 file and loads
+     * {@link ConfigurableHeuristicAi}. {@link AiSkill#BEGINNER} (and RANDO) with a non-null
+     * path still loads that file, which is how the older gym workers pass weights.
+     * {@link AiSkill#BEGINNER} with a null path stays BeginnerAi.
      */
     public static SwccgAiController createAi(AiSkill skill, Path weightsPath) {
         AiSkill resolved = skill == null ? AiSkill.BEGINNER : skill;
@@ -236,6 +246,20 @@ public final class HeadlessBotVsBotRunner {
                         : com.gempukku.swccgo.ai.models.LinearPolicyAi.zeros();
             } catch (Exception e) {
                 throw new IllegalStateException("Failed to load linear.v1 weights from " + weightsPath, e);
+            }
+        }
+        if (resolved == AiSkill.ADVANCED) {
+            return new AdvancedAi();
+        }
+        if (resolved == AiSkill.HEURISTIC) {
+            if (weightsPath == null) {
+                throw new IllegalArgumentException(
+                        "HEURISTIC requires a heuristic.v1 weights file");
+            }
+            try {
+                return new ConfigurableHeuristicAi(weightsPath);
+            } catch (Exception e) {
+                throw new IllegalStateException("Failed to load heuristic weights from " + weightsPath, e);
             }
         }
         if (weightsPath != null) {
@@ -252,6 +276,9 @@ public final class HeadlessBotVsBotRunner {
                 return new RandoCalAi();
             case LINEAR:
                 return com.gempukku.swccgo.ai.models.LinearPolicyAi.zeros();
+            case HEURISTIC:
+                throw new IllegalArgumentException(
+                        "HEURISTIC requires a heuristic.v1 weights file");
             case BEGINNER:
             default:
                 return new BeginnerAi();
