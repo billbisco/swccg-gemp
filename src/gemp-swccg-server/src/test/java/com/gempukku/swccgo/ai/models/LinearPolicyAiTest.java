@@ -232,6 +232,60 @@ public class LinearPolicyAiTest {
                 0, LinearPolicyAi.greedyIndex(p1, bag, actions, new float[width16], 0f));
     }
 
+    @Test
+    public void decisionKindsFollowAdvancedContainsAndDoNotInventScores() {
+        float[] battle = LinearPolicyAi.actionFeatures("Initiate battle", "", false, 0f, 0f);
+        assertEquals(1f, battle[kind("initiate battle")], 0f);
+        assertEquals(1f, battle[kind("battle")], 0f);
+        assertEquals(0f, battle[kind("deploy")], 0f);
+        assertEquals(1f, battle[LinearPolicyAi.AF_ONES], 0f);
+        assertEquals(50, LinearPolicyAi.ACTION_FEAT_DIM);
+        assertEquals(26, LinearPolicyAi.AF_KIND_COUNT);
+        assertEquals("force drain", LinearPolicyAi.DECISION_KIND_KEYWORDS[0]);
+        assertEquals("pass", LinearPolicyAi.DECISION_KIND_KEYWORDS[18]);
+        assertEquals("revert", LinearPolicyAi.DECISION_KIND_KEYWORDS[25]);
+        float[] passFeat = LinearPolicyAi.actionFeatures("Pass", "", true, 0f, 0f);
+        assertEquals(1f, passFeat[LinearPolicyAi.AF_PASS], 0f);
+        assertEquals(1f, passFeat[kind("pass")], 0f);
+    }
+
+    @Test
+    public void nonzeroWeightsCannotRepeatActivateZeroOrIntegerZero() {
+        float[] weights = new float[FeatureLayoutV1.PACKED_DIM + LinearPolicyAi.DEFAULT_BAG_HASH_DIM
+                + LinearPolicyAi.ACTION_FEAT_DIM];
+        weights[0] = 0.01f;
+        assertTrue(!LinearPolicyAi.allZero(weights));
+        LinearPolicyAi ai = new LinearPolicyAi(weights, 0f, FeatureLayoutV1.PACKED_DIM,
+                LinearPolicyAi.DEFAULT_BAG_HASH_DIM, LinearPolicyAi.ACTION_FEAT_DIM, "nonzero-cap");
+
+        AwaitingDecision activate = actionChoice("Choose one", "Activate 0", "Activate 1");
+        assertEquals("first activate 0 is still legal", "0", ai.decide("~AckbarBot", activate, null));
+        assertEquals("second activate 0 is capped", "1", ai.decide("~AckbarBot", activate, null));
+
+        LinearPolicyAi amounts = new LinearPolicyAi(weights.clone(), 0f, FeatureLayoutV1.PACKED_DIM,
+                LinearPolicyAi.DEFAULT_BAG_HASH_DIM, LinearPolicyAi.ACTION_FEAT_DIM, "nonzero-integer");
+        AwaitingDecision amount = mock(AwaitingDecision.class);
+        when(amount.getDecisionType()).thenReturn(AwaitingDecisionType.INTEGER);
+        when(amount.getText()).thenReturn("Choose amount of Force to activate");
+        Map<String, String[]> amountParams = new LinkedHashMap<>();
+        amountParams.put("min", new String[] {"0"});
+        amountParams.put("max", new String[] {"1"});
+        amountParams.put("defaultValue", new String[] {"0"});
+        when(amount.getDecisionParameters()).thenReturn(amountParams);
+        assertEquals("0", amounts.decide("~AckbarBot", amount, null));
+        assertEquals("1", amounts.decide("~AckbarBot", amount, null));
+    }
+
+    private static int kind(String keyword) {
+        String[] kinds = LinearPolicyAi.DECISION_KIND_KEYWORDS;
+        for (int i = 0; i < kinds.length; i++) {
+            if (kinds[i].equals(keyword)) {
+                return LinearPolicyAi.AF_KIND + i;
+            }
+        }
+        throw new IllegalArgumentException(keyword);
+    }
+
     private static AwaitingDecision actionChoice(String decisionText, String... actionTexts) {
         AwaitingDecision decision = mock(AwaitingDecision.class);
         when(decision.getDecisionType()).thenReturn(AwaitingDecisionType.CARD_ACTION_CHOICE);

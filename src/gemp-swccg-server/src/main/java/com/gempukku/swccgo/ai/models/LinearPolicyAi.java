@@ -58,13 +58,16 @@ import java.util.regex.Pattern;
  * learned score can override it. The once-per-phase hard cap is separate and
  * is not gated on all-zero {@code W}.
  *
- * <p>Hard cap (anti-stall, not skill): the same move-like or activate label
- * (embark, disembark, transfer, ship-dock, docking, move, shuttle, land,
- * take off, enter, exit, activate, …) may be taken at most once per phase.
- * While any other legal action exists, a repeat is ineligible. Learned scores
- * cannot buy a second copy. If every candidate is a repeat, the cap does not
- * empty the decision. Zeros packs keep the same outcomes, because the soft
- * prior already ranked a repeat below every other zeros action.
+ * <p>Hard cap (training wheels, not a permanent skill ceiling): the same
+ * move-like label may be taken at most once per phase. That includes
+ * activate 0 and a zero integer, embark / disembark, and ship transfer
+ * (also shuttle, land, take off, enter, exit, relocate, docking, and any
+ * other label matched by {@link #LIMITED_ONCE_PER_PHASE}). While any other
+ * legal action exists, a repeat is ineligible. The cap applies to seeded
+ * and learned packs, not only the all-zeros pack. Learned scores cannot buy
+ * a second copy. If every candidate is a repeat, the cap does not empty the
+ * decision. Zeros packs keep the same outcomes, because the soft prior
+ * already ranked a repeat below every other zeros action.
  * This class does not train and is not distilled from AdvancedAi / YodaBot.
  * Hall / table bots must not load it.
  *
@@ -76,12 +79,17 @@ import java.util.regex.Pattern;
  *   <li>3..18 text-hash one-hot (16 buckets)</li>
  *   <li>19..22 blueprintId hash one-hot (4 buckets)</li>
  *   <li>23 constant 1</li>
+ *   <li>24.. onward decision-kind indicators, one per
+ *       {@link #DECISION_KIND_KEYWORDS} entry (AdvancedAi action table,
+ *       weights then penalties, including pass). A kind is 1 when the
+ *       lowercased action text contains that keyword, the same test as
+ *       {@code HeuristicAiBase.scoreKeywords}. Kinds are not mutually
+ *       exclusive. Scores are not stored here.</li>
  * </ul>
  */
 public final class LinearPolicyAi implements SwccgAiController {
 
     public static final String POLICY_KIND = "linear.v1";
-    public static final int ACTION_FEAT_DIM = 24;
     public static final int DEFAULT_BAG_HASH_DIM = 16;
     public static final int AF_PASS = 0;
     public static final int AF_INTEGER = 1;
@@ -91,6 +99,47 @@ public final class LinearPolicyAi implements SwccgAiController {
     public static final int AF_BP_HASH = 19;
     public static final int AF_BP_BUCKETS = 4;
     public static final int AF_ONES = 23;
+    /**
+     * First decision-kind feature. Kinds sit after the constant 1 so the
+     * packed/bag interaction ({@link #INTERACT_FEAT_DIM}) stays the features
+     * that are not identical on every action. Kind weights are direct only.
+     */
+    public static final int AF_KIND = 24;
+    /**
+     * AdvancedAi action-table keywords, {@code ACTION_WEIGHTS} then
+     * {@code ACTION_PENALTIES}. Strings only. The numeric scores stay in
+     * {@link AdvancedAi}; this policy does not copy them.
+     */
+    public static final String[] DECISION_KIND_KEYWORDS = {
+            "force drain",
+            "initiate battle",
+            "battle",
+            "weapon",
+            "fire",
+            "deploy",
+            "play",
+            "move",
+            "activate",
+            "retrieve",
+            "draw",
+            "steal",
+            "capture",
+            "download",
+            "search",
+            "react",
+            "cancel",
+            "take into hand",
+            "pass",
+            "forfeit",
+            "lose",
+            "place in lost pile",
+            "place in used pile",
+            "return to hand",
+            "sacrifice",
+            "revert"
+    };
+    public static final int AF_KIND_COUNT = DECISION_KIND_KEYWORDS.length;
+    public static final int ACTION_FEAT_DIM = AF_KIND + AF_KIND_COUNT;
     /**
      * Action features that may be multiplied by a packed or bag-hash state value.
      * Excludes {@link #AF_ONES}: that feature is 1 on every action, so pairing a
@@ -106,11 +155,11 @@ public final class LinearPolicyAi implements SwccgAiController {
     public static final float ANTI_STALL = 0.05f;
 
     /**
-     * Move-like and activate labels taken at most once per phase.
-     * Anti-stall, not skill: a repeat is ineligible while another legal action
-     * exists, whether or not {@code W} is all zeros. Breaks reversible loops
-     * such as Embark/Disembark and Transfer to other starship. Matched on the
-     * lowercased action text.
+     * Training wheels, not a permanent skill ceiling. Move-like labels
+     * (embark, disembark, ship transfer, activate, and the rest of this
+     * pattern) plus activate 0 / a zero integer, at most once per phase,
+     * whether or not {@code W} is all zeros. A repeat is ineligible while
+     * another legal action exists. Matched on the lowercased action text.
      */
     private static final Pattern LIMITED_ONCE_PER_PHASE = Pattern.compile(
             "^(?:move|embark|disembark|shuttle|activate|take off|land|enter|exit|relocate|transfer|ship-dock|docking)\\b.*");
@@ -299,15 +348,25 @@ public final class LinearPolicyAi implements SwccgAiController {
             return;
         }
         String text = normalize(chosen.text);
-        if (LIMITED_ONCE_PER_PHASE.matcher(text).matches()) {
+        if (isOncePerPhaseLabel(text)) {
             stallLimitedTexts.add(text);
         }
     }
 
     private boolean isLimitedRepeat(String text) {
         String normalized = normalize(text);
+        return isOncePerPhaseLabel(normalized) && stallLimitedTexts.contains(normalized);
+    }
+
+    /**
+     * Move-like labels plus activate 0 / a zero integer. Training wheels:
+     * the cap is not a skill and is not a ceiling the learner is allowed to
+     * buy out of while another legal action exists.
+     */
+    static boolean isOncePerPhaseLabel(String text) {
+        String normalized = normalize(text);
         return LIMITED_ONCE_PER_PHASE.matcher(normalized).matches()
-                && stallLimitedTexts.contains(normalized);
+                || ZERO_ACTIVATE.matcher(normalized).matches();
     }
 
     private static String phaseKey(GameState gameState) {
@@ -457,6 +516,12 @@ public final class LinearPolicyAi implements SwccgAiController {
             feat[AF_BP_HASH + bucket(blueprintId, AF_BP_BUCKETS)] = 1f;
         }
         feat[AF_ONES] = 1f;
+        String kindText = text == null ? "" : text.toLowerCase(Locale.ROOT);
+        for (int k = 0; k < DECISION_KIND_KEYWORDS.length; k++) {
+            if (kindText.contains(DECISION_KIND_KEYWORDS[k])) {
+                feat[AF_KIND + k] = 1f;
+            }
+        }
         return feat;
     }
 
