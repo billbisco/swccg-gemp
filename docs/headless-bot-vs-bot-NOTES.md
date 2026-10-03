@@ -61,8 +61,10 @@ Batch properties:
 | Property | Default | Meaning |
 |----------|---------|---------|
 | `headless.games` | `5` | Number of games (CI-friendly; raise for measurement) |
-| `headless.dark` | `BEGINNER` | Dark AI: `BEGINNER`, `ADVANCED`, `RANDO` |
+| `headless.dark` | `BEGINNER` | Dark AI: `BEGINNER`, `ADVANCED`, `RANDO`, `LINEAR` |
 | `headless.light` | `BEGINNER` | Light AI: same enum |
+| `headless.linear.weights` | (unset) | `linear.v1` JSON used by a seat whose skill is `LINEAR` and has no per-seat weights. Missing file → zeros pack. |
+| `headless.dark.weights` / `headless.light.weights` | (unset) | Per-seat file. `heuristic.v1` unless that seat is `LINEAR`, then `linear.v1`. |
 | `headless.csv` | `target/headless-bot-vs-bot-batch.csv` | Output CSV path |
 | `headless.verbose` | `false` | Per-decision progress (noisy for batch) |
 | `headless.maxDecisions` | `25000` | Per-game abort |
@@ -88,11 +90,34 @@ mvn -pl gemp-swccg-server -am \
 CSV columns:
 
 ```
-gameIndex,darkAi,lightAi,winner,darkDecisions,lightDecisions,darkTurns,lightTurns,elapsedMs,error
+gameIndex,darkAi,lightAi,winner,darkDecisions,lightDecisions,darkTurns,lightTurns,elapsedMs,format,darkDeck,lightDeck,error,darkLifeForce,lightLifeForce
 ```
 
 - `winner` — player id (`~OzzelBot` / `~AckbarBot`) or empty if unfinished
 - `error` — empty on success; otherwise stopper / first failure note / thrown exception
+- `darkLifeForce` / `lightLifeForce` — final life force for both seats (`-1` if the game row has no result). JSONL `type=outcome` lines also carry `darkLF` and `lightLF`.
+
+## LINEAR policy (gym-cli stub)
+
+`LinearPolicyAi` loads `linear.v1` and greedily scores legal actions from the current InformationSet packed vector (plus a 16-d bag-hash when `bagHashDim` > 0). FEATURES traces log that same vector as `state.bagHash` (`LinearPolicyAi.bagHash`: blueprint counts from own hand, public in-play, own public piles, opponent revealed, and seen history, divided by the max bucket). It does not train. A zeros or omitted `W` is still a legal stub: `decide` adds a tiny anti-stall prior (not skill). Real actions score 0, non-zero activate / positive integerNorm up to +0.05, pass -0.05, and activate-0 / zero-integer -0.10. On top of that, still only for an all-zero `W`:
+
+- a decision whose text contains "optional" passes when pass is legal (pass scores +1);
+- each move-like or activate label (`Embark`, `Disembark`, `Transfer …`, `Ship-dock`, `Docking …`, `Move …`, `Shuttle`, `Land`, `Take off`, `Enter …`, `Exit …`, `Activate …`) is taken at most once per phase. A repeat scores -0.15 and loses to pass. That stops the WC96 livelocks where a zeros seat alternates Embark/Disembark or `Transfer to other starship` for the whole move phase.
+
+Any non-zero weight turns the whole prior off, so a learned pack can still repeat those actions or answer an optional window. `BEGINNER` is unchanged.
+
+```bash
+cd /workspace/swccg-gemp/src
+mvn -pl gemp-swccg-server -am \
+  -Dtest=HeadlessBotVsBotBatchTest#batchSelfPlay_writesCsv \
+  -Dheadless.games=1 \
+  -Dheadless.dark=LINEAR \
+  -Dheadless.light=BEGINNER \
+  -Dheadless.linear.weights=/path/to/linear.json \
+  test
+```
+
+Omit `-Dheadless.linear.weights` to use the zeros pack. Do not point `LINEAR` at a `heuristic.v1` weights file.
 
 The decision loop is **not duplicated**: batch calls `HeadlessBotVsBotRunner.playOneGame` (shared libraries reused across games when `reuseLibraries=true`).
 

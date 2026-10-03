@@ -218,6 +218,14 @@ public abstract class ArbitraryCardsSelectionDecision extends AbstractAwaitingDe
     }
 
     /**
+     * Cards shown to the player making this decision (selectable or not).
+     * Information-set extraction uses this to record only what this seat was shown.
+     */
+    public Collection<PhysicalCard> getShownCards() {
+        return _physicalCards == null ? Collections.<PhysicalCard>emptyList() : _physicalCards;
+    }
+
+    /**
      * Gets the card by index.
      * @param index the index
      * @return the card
