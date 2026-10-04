@@ -758,7 +758,7 @@ body.play-flow-open {
 .play-ai-controls {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 16px;
 }
 
 .play-form-row {
@@ -1039,7 +1039,7 @@ body.play-flow-open .ui-widget-overlay {
     min-width: max(280px, 20%);
     margin: 0 auto;
     align-items: stretch;
-    gap: 0.4em;
+    gap: 16px;
 }
 
 #league-table-options {
@@ -1310,7 +1310,7 @@ button.table-create-button,
 }
 
 #create-league-table .player-deck {
-    gap: 0.4em;
+    gap: 16px;
     margin: 0.2em 0;
 }
 
