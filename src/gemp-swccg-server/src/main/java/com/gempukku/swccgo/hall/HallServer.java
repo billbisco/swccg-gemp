@@ -1198,11 +1198,12 @@ public class HallServer extends AbstractServer {
         }
         String aiPlayerId = awaitingTable.hasAi() ? awaitingTable.getAiPlayerId() : null;
         String aiSkill = awaitingTable.hasAi() ? awaitingTable.getAiSkill() : null;
-        createGame(league, leagueSerie, tableId, participants, listener, awaitingTable.getSwccgoFormat(),
+        String gameId = createGame(league, leagueSerie, tableId, participants, listener, awaitingTable.getSwccgoFormat(),
                 getTournamentName(awaitingTable), league != null ? null : awaitingTable.getTableDesc(), allowSpectators,
                 true, !awaitingTable.isPrivate(), (league == null) && !awaitingTable.isPrivate(), allowTimerExtensions,
                 decisionTimeoutSeconds, timePerPlayerMinutes, awaitingTable.isPrivate(), aiPlayerId, aiSkill,
                 maxPlayerTimeSeconds);
+        awaitingTable.setStartedGameId(gameId);
         _awaitingTables.remove(tableId);
         removeWaitingTablesWithPlayers(players);
     }
@@ -1235,19 +1236,19 @@ public class HallServer extends AbstractServer {
         }
     }
 
-    private void createGame(League league, LeagueSeriesData leagueSerie, String tableId,
+    private String createGame(League league, LeagueSeriesData leagueSerie, String tableId,
             SwccgGameParticipant[] participants, GameResultListener listener, SwccgFormat swccgFormat,
             String tournamentName, String tableDesc, boolean allowSpectators, boolean allowCancelling,
             boolean allowSpectatorsToViewChat, boolean allowSpectatorsToChat, boolean allowExtendGameTimer,
             int decisionTimeoutSeconds, int timePerPlayerMinutes, boolean isPrivate, String aiPlayerId,
             String aiSkill) {
-        createGame(league, leagueSerie, tableId, participants, listener, swccgFormat, tournamentName, tableDesc,
+        return createGame(league, leagueSerie, tableId, participants, listener, swccgFormat, tournamentName, tableDesc,
                 allowSpectators, allowCancelling, allowSpectatorsToViewChat, allowSpectatorsToChat,
                 allowExtendGameTimer, decisionTimeoutSeconds, timePerPlayerMinutes, isPrivate, aiPlayerId, aiSkill,
                 null);
     }
 
-    private void createGame(League league, LeagueSeriesData leagueSerie, String tableId,
+    private String createGame(League league, LeagueSeriesData leagueSerie, String tableId,
             SwccgGameParticipant[] participants, GameResultListener listener, SwccgFormat swccgFormat,
             String tournamentName, String tableDesc, boolean allowSpectators, boolean allowCancelling,
             boolean allowSpectatorsToViewChat, boolean allowSpectatorsToChat, boolean allowExtendGameTimer,
@@ -1289,6 +1290,7 @@ public class HallServer extends AbstractServer {
         swccgGameMediator.addGameResultListener(_notifyHallListeners);
         _runningTables.put(tableId, new RunningTable(swccgGameMediator, swccgFormat.getName(), tournamentName,
                 tableDesc, league, leagueSerie));
+        return swccgGameMediator.getGameId();
     }
 
     private class NotifyHallListenersGameResultListener implements GameResultListener {
