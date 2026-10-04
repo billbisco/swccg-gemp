@@ -1029,7 +1029,9 @@ body.play-flow-open .ui-widget-overlay {
 
 #create-league-table h1,
 #create-league-table .play-league-heading,
-.play-league-panel-root h1 {
+.play-league-panel-root h1,
+#create-bot-table h1,
+#create-unranked-table h1 {
     text-align: center;
     font-size: 1.35rem;
     margin: 0.6rem 0 0.4rem 0;

@@ -357,7 +357,7 @@ public class HallServer extends AbstractServer {
                 throw new HallException("Bot games cannot be invite-only");
             }
 
-            boolean isPrivateGame = isPrivate && privateGamesAllowed();
+            boolean isPrivateGame = isPrivate;
             boolean inviteOnlyGame = isInviteOnly && !playVsAi;
             HallGameTimer gameTimer = (league == null && !playVsAi) ? HallGameTimer.fromCode(timerCode) : null;
 
@@ -380,9 +380,6 @@ public class HallServer extends AbstractServer {
 
             // AI Logic
             if (playVsAi) {
-                if (!aiTablesEnabled()) {
-                    throw new HallException("Bot tables are currently disabled");
-                }
                 if (aiDeckName == null || aiDeckName.isEmpty()) {
                     throw new HallException("AI deck must be selected");
                 }
@@ -664,8 +661,12 @@ public class HallServer extends AbstractServer {
                     && !_leagueService.isPlayerInLeague(awaitingTable.getLeague(), player))
                 throw new HallException("You're not in that league");
 
-            if (awaitingTable.isInviteOnly() && !awaitingTable.getTableDesc().equals(player.getName()))
-                throw new HallException("You may not join this invite-only game");
+            if (awaitingTable.isInviteOnly()) {
+                String invitee = awaitingTable.getTableDesc();
+                boolean isInvitee = invitee != null && invitee.equalsIgnoreCase(player.getName());
+                if (!isInvitee && !player.hasType(Player.Type.ADMIN))
+                    throw new HallException("This table is invite-only; only the invited player can join it.");
+            }
 
             verifyNotExceedingMaxTables(player, false);
 
