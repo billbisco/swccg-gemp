@@ -19,7 +19,7 @@ public interface DeckDAO {
 
     List<SwccgDeck> getAllDecksForPlayer(Player player);
 
-    void updateDeckIndex(Player player, String name, String validFormats, String formatsRevision, String sourceCollection);
+    void updateDeckIndex(Player player, String name, String formatIndex, String sourceCollection);
 
     SwccgDeck buildDeckFromContents(String deckName, String contents);
 }
