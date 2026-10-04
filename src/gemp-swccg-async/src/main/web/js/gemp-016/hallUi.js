@@ -256,6 +256,8 @@ var GempSwccgHallUI = Class.extend({
     leagueCache:null, // [{type,name,member,start,end}, ...]
     playBackButton:null,
     playMode:null, // "casual" | "ai" | "league" | "tournament"
+    openedGameIds:null,
+    pendingBotWin:null,
     leagueTypesLoaded:false,
     privateGamesAllowed:false,
 
@@ -2317,15 +2319,16 @@ var GempSwccgHallUI = Class.extend({
                 return;
             }
         }
-        var playVsAi = that.opponentSelect.val() === "ai";
+        var playVsAi = that.playMode === "ai";
         if (that.playMode === "league") {
             isPrivate = false;
             playVsAi = false;
             isInviteOnly = false;
         }
-        if (that.playMode === "ai") {
+        if (playVsAi) {
             isPrivate = false;
             isInviteOnly = false;
+            that.opponentSelect.val("ai");
         }
         var aiSkill = that.aiSkillSelect.val();
         var aiDeckName = null;
@@ -2343,40 +2346,107 @@ var GempSwccgHallUI = Class.extend({
         var keepOpen = that.keepOpenCheckbox != null && that.keepOpenCheckbox.find("input").is(":checked");
         that.clearPlayFormResult();
         $(that.createTableButton).button("disable");
-        that.comm.createTable(format, deck, sampleDeck, tableDesc, isPrivate, playVsAi, aiSkill, aiDeckName, aiDeckSample, timer, isInviteOnly, function (xml) {
-            if (xml != null) {
-                var root = xml.documentElement;
-                if (root.tagName == "error") {
-                    var message = root.getAttribute("message");
-                    that.chat.appendMessage(message, "warningMessage");
-                    that.showPlayFormResult(message, true);
-                }
-                else if (root.tagName == "response") {
-                    var message = root.getAttribute("message");
-                    that.chat.appendMessage(message, "warningMessage");
-                    that.showDialog("Info", message, 320);
-                    if (keepOpen)
-                        that.showPlayFormResult(message || "Table created.", false);
-                    else
-                        that.closePlayOverlay();
-                }
-                else {
-                    if (keepOpen)
-                        that.showPlayFormResult(playVsAi ? "Bot game started." : "Table created.", false);
-                    else
-                        that.closePlayOverlay();
-                }
-            } else {
-                if (keepOpen)
-                    that.showPlayFormResult(playVsAi ? "Bot game started." : "Table created.", false);
-                else
-                    that.closePlayOverlay();
-            }
+        var gameWin = null;
+        if (playVsAi)
+            gameWin = window.open("about:blank", "_blank");
+        that.pendingBotWin = gameWin;
 
+        var enableCreate = function() {
             setTimeout(function() {
                 $(that.createTableButton).button("enable");
             }, 2000);
+        };
+        var finishOk = function(started) {
+            if (keepOpen)
+                that.showPlayFormResult(started || playVsAi ? "Bot game started." : "Table created.", false);
+            else
+                that.closePlayOverlay();
+            enableCreate();
+        };
+        var finishErr = function(message) {
+            that.closePendingBotWin();
+            if (message) {
+                that.chat.appendMessage(message, "warningMessage");
+                that.showPlayFormResult(message, true);
+            }
+            enableCreate();
+        };
+        var onCreateError = function(xhr) {
+            finishErr(that.extractCreateTableErrorMessage(xhr, "Could not create table."));
+        };
+
+        that.comm.createTable(format, deck, sampleDeck, tableDesc, isPrivate, playVsAi, aiSkill, aiDeckName, aiDeckSample, timer, isInviteOnly, function (xml) {
+            var started = false;
+            if (xml != null && xml.documentElement != null) {
+                var root = xml.documentElement;
+                if (root.tagName == "error") {
+                    finishErr(root.getAttribute("message"));
+                    return;
+                }
+                if (root.tagName == "response") {
+                    var gameId = root.getAttribute("gameId");
+                    var message = root.getAttribute("message");
+                    if (gameId)
+                        started = that.openStartedGame(gameId, gameWin);
+                    if (message) {
+                        that.chat.appendMessage(message, "warningMessage");
+                        that.showDialog("Info", message, 320);
+                    }
+                    finishOk(started);
+                    return;
+                }
+            }
+            finishOk(false);
+        }, {
+            "0": onCreateError,
+            "400": onCreateError,
+            "401": onCreateError,
+            "403": onCreateError,
+            "409": onCreateError,
+            "500": onCreateError,
+            "502": onCreateError,
+            "503": onCreateError
         });
+    },
+
+    closePendingBotWin:function() {
+        var win = this.pendingBotWin;
+        this.pendingBotWin = null;
+        if (win && !win.closed)
+            win.close();
+    },
+
+    openStartedGame:function(gameId, existingWin) {
+        if (gameId == null || gameId === "") {
+            if (existingWin && !existingWin.closed)
+                existingWin.close();
+            return false;
+        }
+        if (this.openedGameIds == null)
+            this.openedGameIds = {};
+        if (this.openedGameIds[gameId]) {
+            if (existingWin && !existingWin.closed && existingWin !== this.pendingBotWin)
+                existingWin.close();
+            return true;
+        }
+        this.openedGameIds[gameId] = true;
+        var win = existingWin;
+        if ((!win || win.closed) && this.pendingBotWin && !this.pendingBotWin.closed)
+            win = this.pendingBotWin;
+        this.pendingBotWin = null;
+        var participantId = getUrlParam("participantId");
+        var url = "/gemp-swccg/game.html?gameId=" + encodeURIComponent(gameId);
+        if (participantId != null)
+            url += "&participantId=" + encodeURIComponent(participantId);
+        if (win && !win.closed) {
+            win.location.href = url;
+            win.focus();
+        } else {
+            var opened = window.open(url, "_blank");
+            if (opened)
+                opened.focus();
+        }
+        return true;
     },
 
     refreshLayout:function() {
@@ -2684,16 +2754,11 @@ var GempSwccgHallUI = Class.extend({
         this.aiTablesEnabled = enabled;
 
         var aiOption = this.opponentSelect.find("option[value='ai']");
-        // LOTR always shows Play Against Bots as the first Create Table option.
         if (this.playAiChoice != null) {
             this.playAiChoice.show();
         }
-        if (enabled) {
-            if (aiOption.length === 0) {
-                this.opponentSelect.append("<option value='ai'>vs Bot</option>");
-            }
-        } else if (aiOption.length > 0 && this.playMode !== "ai") {
-            aiOption.remove();
+        if (aiOption.length === 0) {
+            this.opponentSelect.append("<option value='ai'>vs Bot</option>");
         }
         this.updateAiDecksForSelection();
     },
@@ -2993,12 +3058,7 @@ var GempSwccgHallUI = Class.extend({
 
             var games = root.getElementsByTagName("newGame");
             for (var i=0; i<games.length; i++) {
-                var waitingGameId = games[i].getAttribute("id");
-                var participantId = getUrlParam("participantId");
-                var participantIdAppend = "";
-                if (participantId != null)
-                    participantIdAppend = "&participantId=" + participantId;
-                window.open("/gemp-swccg/game.html?gameId=" + waitingGameId + participantIdAppend, "_blank");
+                that.openStartedGame(games[i].getAttribute("id"), null);
             }
             
             if (games.length > 0) {

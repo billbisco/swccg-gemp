@@ -373,6 +373,21 @@ public class HallRequestHandler extends SwccgoServerRequestHandler implements Ur
                     return;
                 }
 
+                if (playVsAi) {
+                    String gameId = table.getStartedGameId();
+                    if (gameId == null || gameId.isEmpty()) {
+                        responseWriter.writeXmlResponse(marshalException(new HallException("Bot game did not start.")));
+                        return;
+                    }
+                    var documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+                    var doc = documentBuilder.newDocument();
+                    Element response = doc.createElement("response");
+                    response.setAttribute("gameId", gameId);
+                    doc.appendChild(response);
+                    responseWriter.writeXmlResponse(doc);
+                    return;
+                }
+
                 responseWriter.writeXmlResponse(null);
             } catch (HallException e) {
                 responseWriter.writeXmlResponse(marshalException(e));

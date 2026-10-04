@@ -22,6 +22,7 @@ public class AwaitingTable {
     private SwccgDeck _aiDeck;
     private String _aiPlayerId;
     private String _aiSkill;
+    private String _startedGameId;
 
     private int _capacity = 2;
 
@@ -115,5 +116,13 @@ public class AwaitingTable {
 
     public String getAiSkill() {
         return _aiSkill;
+    }
+
+    public void setStartedGameId(String gameId) {
+        _startedGameId = gameId;
+    }
+
+    public String getStartedGameId() {
+        return _startedGameId;
     }
 }
