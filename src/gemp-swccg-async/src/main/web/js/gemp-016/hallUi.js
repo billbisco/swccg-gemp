@@ -182,6 +182,30 @@ var GempSwccgHallUI = Class.extend({
     deckOptions:[],
     tableDescInput:null,
     createTableButton:null,
+    playerDeckSelect:null,
+    libraryDeckSelect:null,
+    playerDeckLabel:null,
+    libraryDeckLabel:null,
+    botPlayerDeckSelect:null,
+    botLibraryDeckSelect:null,
+    timerSelect:null,
+    isInviteOnlyCheckbox:null,
+    inviteeInput:null,
+    invitePicker:null,
+    inviteRow:null,
+    inviteeRow:null,
+    descRow:null,
+    timerRow:null,
+    privateRow:null,
+    keepOpenCheckbox:null,
+    defaultFlowCheckbox:null,
+    aiSkillRow:null,
+    botPlayerDeckRow:null,
+    botLibraryDeckRow:null,
+    playerDeckRow:null,
+    libraryDeckRow:null,
+    playFormResult:null,
+    hallPlayerNames:null,
 
     tablesDiv:null,
     buttonsDiv:null,
@@ -264,6 +288,20 @@ var GempSwccgHallUI = Class.extend({
             }
         });
         this.chat = chat;
+        this.hallPlayerNames = [];
+        var thatChat = this;
+        this.chat.playerListener = function (players) {
+            var names = [];
+            var i;
+            for (i = 0; i < (players || []).length; i++) {
+                var bare = thatChat.bareHallPlayerName(players[i]);
+                if (bare)
+                    names.push(bare);
+            }
+            thatChat.hallPlayerNames = names;
+            if (thatChat.invitePicker)
+                thatChat.invitePicker.setPlayers(names);
+        };
 
         var width = $(div).width();
         var height = $(div).height();
@@ -344,11 +382,22 @@ var GempSwccgHallUI = Class.extend({
         });
         this.createTableButton.hide();
 
-        this.isPrivateCheckbox = $("<label class='play-private-label'><input type='checkbox' id='isPrivateCheckbox1'> Private game</input></label>");
+        this.isPrivateCheckbox = $("<label class='play-private-label'><input type='checkbox' id='isPrivateCheckbox1'> Private Mode</input></label>");
 
         this.decksSelect = $("<select class='play-form-select' style='width: 300px'></select>");
         this.decksSelect.hide();
-        this.decksSelect.change(function () { that.updateAiDecksForSelection(); });
+
+        this.playerDeckSelect = $("<select class='play-form-select'></select>");
+        this.libraryDeckSelect = $("<select class='play-form-select'></select>");
+        this.botPlayerDeckSelect = $("<select class='play-form-select'></select>");
+        this.botLibraryDeckSelect = $("<select class='play-form-select'></select>");
+        this.aiDeckSelect = $("<select class='play-form-select' style='width: 280px'></select>");
+        this.aiDeckSelect.hide();
+
+        this.bindExclusiveDeckPair(this.playerDeckSelect, this.libraryDeckSelect, function () {
+            that.updateBotDeckSelects();
+        });
+        this.bindExclusiveDeckPair(this.botPlayerDeckSelect, this.botLibraryDeckSelect, null);
 
         // Kept as hidden state for the shared createTable API (submenu picks human vs AI)
         this.opponentSelect = $("<select style='width: 110px'></select>");
@@ -362,18 +411,41 @@ var GempSwccgHallUI = Class.extend({
         this.aiSkillSelect.append("<option value='ADVANCED'>Advanced (YodaBot)</option>");
         this.aiSkillSelect.append("<option value='RANDO'>Elite (Rando_Cal)</option>");
 
-        this.aiDeckSelect = $("<select class='play-form-select' style='width: 280px'></select>");
-
         this.aiControlsDiv = $("<div class='play-ai-controls'></div>");
-        var aiSkillRow = $("<div class='play-form-row'></div>");
-        aiSkillRow.append("<span class='play-form-label'>Bot skill</span>");
-        aiSkillRow.append(this.aiSkillSelect);
-        var aiDeckRow = $("<div class='play-form-row'></div>");
-        aiDeckRow.append("<span class='play-form-label'>Bot deck</span>");
-        aiDeckRow.append(this.aiDeckSelect);
-        this.aiControlsDiv.append(aiSkillRow);
-        this.aiControlsDiv.append(aiDeckRow);
+        this.aiSkillRow = $("<div class='play-form-row'></div>");
+        this.aiSkillRow.append("<span class='play-form-label'>Bot skill</span>");
+        this.aiSkillRow.append(this.aiSkillSelect);
+        this.aiControlsDiv.append(this.aiSkillRow);
         this.aiControlsDiv.hide();
+
+        this.timerSelect = $("<select class='play-form-select'></select>");
+        this.timerSelect.append("<option value='default'>Default (45m/6m)</option>");
+        this.timerSelect.append("<option value='blitz'>Blitz! (25m/3m)</option>");
+        this.timerSelect.append("<option value='WC'>Championship (20m/10m)</option>");
+        this.timerSelect.append("<option value='slow'>Slow (80m/10m)</option>");
+        this.timerSelect.append("<option value='glacial'>Glacial (1d/1d)</option>");
+        var lastTimer = $.cookie("unranked-table-last-timer");
+        if (lastTimer)
+            this.timerSelect.val(lastTimer);
+        this.timerSelect.change(function () {
+            $.cookie("unranked-table-last-timer", that.timerSelect.val(), { expires:365 });
+        });
+
+        this.isInviteOnlyCheckbox = $("<label class='play-private-label'><input type='checkbox' id='isInviteOnlyCheckbox'> Invite Only</input></label>");
+        this.inviteeInput = $("<input id='inviteeInput' class='play-form-input' type='text' maxlength='50' placeholder='Player to invite'>");
+        this.isInviteOnlyCheckbox.find("input").change(function () {
+            that.syncInviteeRowVisibility();
+        });
+
+        this.keepOpenCheckbox = $("<label class='play-private-label'><input type='checkbox' id='keepWindowOpenCheckbox'> Keep this Window Open</input></label>");
+        this.defaultFlowCheckbox = $("<label class='play-private-label'><input type='checkbox' id='defaultFlowCheckbox'> Open this Flow by Default</input></label>");
+        this.defaultFlowCheckbox.find("input").change(function () {
+            if (this.checked) {
+                $.cookie("play-default-flow", that.playMode, { expires:365 });
+            } else if ($.cookie("play-default-flow") === that.playMode) {
+                $.cookie("play-default-flow", "", { expires:365 });
+            }
+        });
 
         this.tableDescInput = $("<input id='tableDescInput' class='play-form-input' type='text' maxlength='50' style='width: 220px;' placeHolder='Description (optional)'>");
 
@@ -684,27 +756,88 @@ var GempSwccgHallUI = Class.extend({
         formatRow.append("<span class='play-form-label'>Format</span>");
         formatRow.append(this.supportedFormatsSelect);
 
-        var deckRow = $("<div class='play-form-row'></div>");
-        deckRow.append("<span class='play-form-label'>Your deck</span>");
-        deckRow.append(this.decksSelect);
+        this.botPlayerDeckRow = $("<div class='play-form-row'></div>");
+        this.botPlayerDeckRow.append("<span class='play-form-label'>Bot Deck from your Decks</span>");
+        this.botPlayerDeckRow.append(this.botPlayerDeckSelect);
 
-        var descRow = $("<div class='play-form-row'></div>");
-        descRow.append("<span class='play-form-label'>Description</span>");
-        descRow.append(this.tableDescInput);
+        this.botLibraryDeckRow = $("<div class='play-form-row'></div>");
+        this.botLibraryDeckRow.append("<span class='play-form-label'>Bot Deck from Library</span>");
+        this.botLibraryDeckRow.append(this.botLibraryDeckSelect);
 
-        var privateRow = $("<div class='play-form-row play-form-row-check'></div>");
-        privateRow.append(this.isPrivateCheckbox);
+        this.playerDeckRow = $("<div class='play-form-row'></div>");
+        this.playerDeckLabel = $("<span class='play-form-label'>Your Deck</span>");
+        this.playerDeckRow.append(this.playerDeckLabel);
+        this.playerDeckRow.append(this.playerDeckSelect);
+
+        this.libraryDeckRow = $("<div class='play-form-row'></div>");
+        this.libraryDeckLabel = $("<span class='play-form-label'>Library Deck</span>");
+        this.libraryDeckRow.append(this.libraryDeckLabel);
+        this.libraryDeckRow.append(this.libraryDeckSelect);
+
+        this.descRow = $("<div class='play-form-row'></div>");
+        this.descRow.append("<span class='play-form-label'>Description</span>");
+        this.descRow.append(this.tableDescInput);
+
+        this.timerRow = $("<div class='play-form-row'></div>");
+        this.timerRow.append("<span class='play-form-label'>Game Timer</span>");
+        this.timerRow.append(this.timerSelect);
+
+        this.inviteRow = $("<div class='play-form-row play-form-row-check'></div>");
+        this.inviteRow.append(this.isInviteOnlyCheckbox);
+
+        this.inviteeRow = $("<div class='play-form-row'></div>");
+        this.inviteeRow.append("<span class='play-form-label'>Invitee</span>");
+        this.inviteeRow.append(this.inviteeInput);
+        this.inviteeRow.hide();
+
+        this.privateRow = $("<div class='play-form-row play-form-row-check'></div>");
+        this.privateRow.append(this.isPrivateCheckbox);
+
+        var keepOpenRow = $("<div class='play-form-row play-form-row-check'></div>");
+        keepOpenRow.append(this.keepOpenCheckbox);
+
+        var defaultFlowRow = $("<div class='play-form-row play-form-row-check'></div>");
+        defaultFlowRow.append(this.defaultFlowCheckbox);
+
+        this.playFormResult = $("<div class='play-form-result' role='status' aria-live='polite'></div>");
 
         var submitRow = $("<div class='play-form-row play-form-actions'></div>");
         submitRow.append(this.createTableButton);
 
         this.playFormFields.append(formatRow);
-        this.playFormFields.append(deckRow);
         this.playFormFields.append(this.aiControlsDiv);
-        this.playFormFields.append(descRow);
-        this.playFormFields.append(privateRow);
+        this.playFormFields.append(this.botPlayerDeckRow);
+        this.playFormFields.append(this.botLibraryDeckRow);
+        this.playFormFields.append(this.playerDeckRow);
+        this.playFormFields.append(this.libraryDeckRow);
+        this.playFormFields.append(this.descRow);
+        this.playFormFields.append(this.timerRow);
+        this.playFormFields.append(this.inviteRow);
+        this.playFormFields.append(this.inviteeRow);
+        this.playFormFields.append(this.privateRow);
+        this.playFormFields.append(keepOpenRow);
+        this.playFormFields.append(defaultFlowRow);
+        this.playFormFields.append(this.playFormResult);
         this.playFormFields.append(submitRow);
         this.playFormPanel.append(this.playFormFields);
+
+        this.invitePicker = new PlayerPicker(this.inviteeInput, {
+            search:function (prefix, limit, done, failed) {
+                that.comm.searchHallPlayers(prefix, limit, function (json) {
+                    var names = (json && json.players) ? json.players : [];
+                    done(names);
+                }, {
+                    "0":function () { failed(); },
+                    "401":function () { failed(); },
+                    "403":function () { failed(); },
+                    "500":function () { failed(); }
+                });
+            },
+            players:function () { return that.hallPlayerNames || []; },
+            self:function () { return (that.userInfo && that.userInfo.name) ? that.userInfo.name : ""; }
+        });
+        if (this.hallPlayerNames && this.hallPlayerNames.length)
+            this.invitePicker.setPlayers(this.hallPlayerNames);
 
         this.playLeagueEmpty = $("<div class='play-league-empty' style='display:none'></div>");
         this.playLeagueEmpty.append("<p class='play-subtitle'>You are not in any active league that offers a table format right now.</p>");
@@ -749,7 +882,7 @@ var GempSwccgHallUI = Class.extend({
         // Hidden for sealed / draft / cube (issued-card leagues); shown for constructed.
         this.leagueLibraryDecksSelect = $("<select id='league-library-deck' class='library-deck-dropdown flex-fill play-form-select'></select>");
         this.leagueLibraryRow = $("<div class='flex-horiz play-form-row'></div>");
-        this.leagueLibraryRow.append("<div class='label-column'>Select Library Deck: <span class='info-toggle' data-for='help-library-league' role='button' tabindex='0' title='What is this?' aria-expanded='false'>i</span></div>");
+        this.leagueLibraryRow.append("<div class='label-column'>Library Deck: <span class='info-toggle' data-for='help-library-league' role='button' tabindex='0' title='What is this?' aria-expanded='false'>i</span></div>");
         this.leagueLibraryRow.append(this.leagueLibraryDecksSelect);
         playerDeckBlock.append(this.leagueLibraryRow);
         this.leagueLibraryHelp = $("<div id='help-library-league' class='info-text' style='display:none'>The Deck Library contains sample decks you can use, including starter decks, past championship decks, and more.</div>");
@@ -1152,7 +1285,14 @@ var GempSwccgHallUI = Class.extend({
         if (this.playOverlay == null) {
             return;
         }
-        this.showPlaySelection();
+        var flow = $.cookie("play-default-flow");
+        if (flow === "ai" && this.aiTablesEnabled) {
+            this.showPlayForm("ai");
+        } else if (flow === "casual") {
+            this.showPlayForm("casual");
+        } else {
+            this.showPlaySelection();
+        }
         this.playOverlay.css("display", "flex");
         $("body").addClass("play-flow-open");
         this.playBackButton.focus();
@@ -1234,12 +1374,6 @@ var GempSwccgHallUI = Class.extend({
         } else {
             this.playAiChoice.hide();
         }
-        // Restore private checkbox visibility for next form open
-        if (this.privateGamesAllowed) {
-            this.isPrivateCheckbox.show();
-        } else {
-            this.isPrivateCheckbox.hide();
-        }
     },
 
     showTournamentInfo:function() {
@@ -1275,9 +1409,8 @@ var GempSwccgHallUI = Class.extend({
             this.setPlayFlowTitle("Bots");
             this.playFormTitle.text("Play Against Bots (Beta)");
             this.opponentSelect.val("ai");
-            if (this.privateGamesAllowed) {
-                this.isPrivateCheckbox.show();
-            }
+            if (this.libraryDeckLabel)
+                this.libraryDeckLabel.text("Your Deck from Library");
             if (this.playLeagueEmpty != null) {
                 this.playLeagueEmpty.hide();
             }
@@ -1286,14 +1419,17 @@ var GempSwccgHallUI = Class.extend({
             this.setPlayFlowTitle("Casual");
             this.playFormTitle.text("Open Casual Table");
             this.opponentSelect.val("human");
-            if (this.privateGamesAllowed) {
-                this.isPrivateCheckbox.show();
-            }
+            if (this.libraryDeckLabel)
+                this.libraryDeckLabel.text("Library Deck");
             if (this.playLeagueEmpty != null) {
                 this.playLeagueEmpty.hide();
             }
             this.playFormFields.show();
         }
+
+        this.applyCasualBotFieldVisibility();
+        this.syncDefaultFlowCheckbox();
+        this.clearPlayFormResult();
 
         this.filterFormatsForPlayMode(mode);
         var fmt = this.supportedFormatsSelect.val();
@@ -1301,11 +1437,219 @@ var GempSwccgHallUI = Class.extend({
         this.updateAiDecksForSelection();
         this.updateCreateTableLabel();
 
-        // Ensure selects are visible inside the form once hall has loaded formats/decks
         if (this.supportedFormatsInitialized) {
             this.supportedFormatsSelect.css("display", "");
-            this.decksSelect.css("display", "");
             this.createTableButton.css("display", "");
+        }
+    },
+
+    applyCasualBotFieldVisibility:function() {
+        var ai = this.playMode === "ai";
+        if (this.aiControlsDiv) {
+            if (ai && this.aiTablesEnabled)
+                this.aiControlsDiv.show();
+            else
+                this.aiControlsDiv.hide();
+        }
+        if (this.botPlayerDeckRow)
+            ai ? this.botPlayerDeckRow.show() : this.botPlayerDeckRow.hide();
+        if (this.botLibraryDeckRow)
+            ai ? this.botLibraryDeckRow.show() : this.botLibraryDeckRow.hide();
+        if (this.descRow)
+            ai ? this.descRow.hide() : this.descRow.show();
+        if (this.timerRow)
+            ai ? this.timerRow.hide() : this.timerRow.show();
+        if (this.inviteRow)
+            ai ? this.inviteRow.hide() : this.inviteRow.show();
+        if (this.privateRow) {
+            if (ai || !this.privateGamesAllowed)
+                this.privateRow.hide();
+            else
+                this.privateRow.show();
+        }
+        this.syncInviteeRowVisibility();
+    },
+
+    syncInviteeRowVisibility:function() {
+        if (this.inviteeRow == null)
+            return;
+        var inviteOn = this.playMode === "casual"
+            && this.isInviteOnlyCheckbox != null
+            && this.isInviteOnlyCheckbox.find("input").is(":checked");
+        if (inviteOn) {
+            this.inviteeRow.show();
+            if (this.descRow)
+                this.descRow.hide();
+        } else {
+            this.inviteeRow.hide();
+            if (this.descRow && this.playMode === "casual")
+                this.descRow.show();
+        }
+    },
+
+    syncDefaultFlowCheckbox:function() {
+        if (this.defaultFlowCheckbox == null)
+            return;
+        var flow = $.cookie("play-default-flow");
+        this.defaultFlowCheckbox.find("input").prop("checked", flow === this.playMode);
+    },
+
+    clearPlayFormResult:function() {
+        if (this.playFormResult == null)
+            return;
+        this.playFormResult.removeClass("result-error result-success").text("");
+    },
+
+    showPlayFormResult:function(message, isError) {
+        if (this.playFormResult == null)
+            return;
+        this.playFormResult.removeClass("result-error result-success")
+            .addClass(isError ? "result-error" : "result-success")
+            .text(message || "");
+    },
+
+    bareHallPlayerName:function(raw) {
+        if (raw == null)
+            return "";
+        var s = String(raw).replace(/&[a-zA-Z0-9#]+;/g, "");
+        s = s.replace(/^[*+]+/, "");
+        s = $.trim(s);
+        if (s === "")
+            return "";
+        var parts = s.split(/\s+/);
+        return parts[parts.length - 1];
+    },
+
+    bindExclusiveDeckPair:function(playerSelect, librarySelect, onChange) {
+        var that = this;
+        playerSelect.change(function () {
+            if (playerSelect.val())
+                librarySelect.val("");
+            if (typeof onChange == "function")
+                onChange();
+        });
+        librarySelect.change(function () {
+            if (librarySelect.val())
+                playerSelect.val("");
+            if (typeof onChange == "function")
+                onChange();
+        });
+    },
+
+    selectedDeckFromPair:function(playerSelect, librarySelect) {
+        var libVal = librarySelect != null ? librarySelect.val() : null;
+        if (libVal != null && libVal !== "") {
+            var libOpt = librarySelect.find(":selected");
+            return {
+                name:libVal,
+                sample:"true",
+                side:libOpt.attr("data-side")
+            };
+        }
+        var playerVal = playerSelect != null ? playerSelect.val() : null;
+        if (playerVal != null && playerVal !== "") {
+            var playerOpt = playerSelect.find(":selected");
+            return {
+                name:playerVal,
+                sample:"false",
+                side:playerOpt.attr("data-side")
+            };
+        }
+        return null;
+    },
+
+    selectHasValue:function(select, value) {
+        var found = false;
+        if (select == null)
+            return false;
+        select.find("option").each(function () {
+            if ($(this).attr("value") === value)
+                found = true;
+        });
+        return found;
+    },
+
+    fillDeckSelect:function(select, sampleOnly, requiredSide, placeholder, selectDefault) {
+        if (select == null)
+            return 0;
+        var prev = select.val();
+        select.empty();
+        select.append($("<option></option>").attr("value", "").text(placeholder));
+        var count = 0;
+        var i;
+        for (i = 0; i < this.deckOptions.length; i++) {
+            var opt = this.deckOptions[i];
+            if (sampleOnly && !opt.sample)
+                continue;
+            if (!sampleOnly && opt.sample)
+                continue;
+            if (requiredSide != null && requiredSide !== "" && opt.side !== requiredSide && opt.side !== "other")
+                continue;
+            var option = $("<option></option>");
+            option.attr("value", opt.name);
+            option.attr("data-sample-deck", opt.sample ? "true" : "false");
+            option.attr("data-side", opt.side);
+            var label = opt.label;
+            if (sampleOnly && label.indexOf("Sample: ") === 0)
+                label = label.substring(8);
+            option.text(label);
+            select.append(option);
+            count++;
+        }
+        if (count == 0 && !sampleOnly) {
+            select.empty();
+            var emptyLabel = requiredSide != null ? "No opposite-side decks found" : "You have no decks yet";
+            select.append($("<option></option>").attr("value", "").text(emptyLabel));
+            return 0;
+        }
+        if (prev != null && prev !== "") {
+            var found = false;
+            select.find("option").each(function () {
+                if ($(this).attr("value") === prev)
+                    found = true;
+            });
+            if (found) {
+                select.val(prev);
+                return count;
+            }
+        }
+        if (selectDefault && count > 0)
+            select.val(select.find("option").eq(1).attr("value"));
+        return count;
+    },
+
+    fillSplitDeckSelects:function() {
+        this.fillDeckSelect(this.playerDeckSelect, false, null, "Choose one of your decks", true);
+        this.fillDeckSelect(this.libraryDeckSelect, true, null, "Select a Library Deck", false);
+        this.updateBotDeckSelects();
+    },
+
+    oppositeSide:function(side) {
+        if (side === "dark")
+            return "light";
+        if (side === "light")
+            return "dark";
+        return null;
+    },
+
+    updateBotDeckSelects:function() {
+        var required = this.oppositeSide(this.getSelectedDeckSide());
+        var prevBotPlayer = this.botPlayerDeckSelect != null ? this.botPlayerDeckSelect.val() : null;
+        var prevBotLib = this.botLibraryDeckSelect != null ? this.botLibraryDeckSelect.val() : null;
+        var playerCount = this.fillDeckSelect(this.botPlayerDeckSelect, false, required, "Choose one of your decks", false);
+        var libCount = this.fillDeckSelect(this.botLibraryDeckSelect, true, required, "Select a Library Deck", false);
+        if (prevBotLib != null && prevBotLib !== "" && this.selectHasValue(this.botLibraryDeckSelect, prevBotLib)) {
+            this.botLibraryDeckSelect.val(prevBotLib);
+            this.botPlayerDeckSelect.val("");
+        } else if (prevBotPlayer != null && prevBotPlayer !== "" && this.selectHasValue(this.botPlayerDeckSelect, prevBotPlayer)) {
+            this.botPlayerDeckSelect.val(prevBotPlayer);
+            this.botLibraryDeckSelect.val("");
+        } else if (playerCount > 0) {
+            this.botPlayerDeckSelect.val(this.botPlayerDeckSelect.find("option").eq(1).attr("value"));
+            this.botLibraryDeckSelect.val("");
+        } else if (libCount > 0) {
+            this.botLibraryDeckSelect.val(this.botLibraryDeckSelect.find("option").eq(1).attr("value"));
+            this.botPlayerDeckSelect.val("");
         }
     },
 
@@ -1341,7 +1685,7 @@ var GempSwccgHallUI = Class.extend({
         playerSelect.empty();
         if (libSelect != null) {
             libSelect.empty();
-            libSelect.append($("<option></option>").attr("value", "").text("Choose a Deck Library deck"));
+            libSelect.append($("<option></option>").attr("value", "").text("Select a Library Deck"));
         }
         var playerCount = 0;
         this.decksSelect.find("option").each(function () {
@@ -1741,7 +2085,7 @@ var GempSwccgHallUI = Class.extend({
         }
         $(this.leagueCreateButton).button("disable");
         // League tables: human, not private (server rejects otherwise)
-        this.comm.createTable(format, deck, sampleDeck, "", false, false, null, null, null,
+        this.comm.createTable(format, deck, sampleDeck, "", false, false, null, null, null, null, false,
             function (xml) {
                 $(that.leagueCreateButton).button("enable");
                 if (xml != null) {
@@ -1904,50 +2248,87 @@ var GempSwccgHallUI = Class.extend({
     submitCreateTable:function() {
         var that = this;
         var format = that.supportedFormatsSelect.val();
-        var deck = that.decksSelect.val();
-        var sampleDeck = that.decksSelect[0][that.decksSelect[0].selectedIndex].getAttribute("data-sample-deck");
+        var playerDeck = that.selectedDeckFromPair(that.playerDeckSelect, that.libraryDeckSelect);
+        if (playerDeck == null || playerDeck.name == null || playerDeck.name === "") {
+            that.showPlayFormResult("You must select a deck.", true);
+            return;
+        }
+        var deck = playerDeck.name;
+        var sampleDeck = playerDeck.sample;
         var tableDesc = that.tableDescInput.val();
         var isPrivate = false;
         if (document.getElementById('isPrivateCheckbox1') != null)
             isPrivate = document.getElementById('isPrivateCheckbox1').checked;
+        var isInviteOnly = false;
+        if (that.playMode === "casual" && that.isInviteOnlyCheckbox != null)
+            isInviteOnly = that.isInviteOnlyCheckbox.find("input").is(":checked");
+        if (isInviteOnly) {
+            tableDesc = that.invitePicker != null ? that.invitePicker.val() : "";
+            if (tableDesc == null || $.trim(tableDesc) === "") {
+                that.showPlayFormResult("If set to invite-only, you must name a player to invite.", true);
+                return;
+            }
+        }
         var playVsAi = that.opponentSelect.val() === "ai";
-        // League tables: server rejects private + bot; force safe values client-side too
         if (that.playMode === "league") {
             isPrivate = false;
             playVsAi = false;
+            isInviteOnly = false;
+        }
+        if (that.playMode === "ai") {
+            isPrivate = false;
+            isInviteOnly = false;
         }
         var aiSkill = that.aiSkillSelect.val();
-        var aiDeckName = that.aiDeckSelect.val();
-        var aiDeckSample = that.aiDeckSelect.find(":selected").attr("data-sample-deck");
-        if (deck != null) {
-            $(that.createTableButton).button("disable");
-            that.comm.createTable(format, deck, sampleDeck, tableDesc, isPrivate, playVsAi, aiSkill, aiDeckName, aiDeckSample, function (xml) {
-                if (xml != null) {
-                    var root = xml.documentElement;
-                    if (root.tagName == "error") {
-                        var message = root.getAttribute("message");
-                        that.chat.appendMessage(message, "warningMessage");
-                    }
-                    else if (root.tagName == "response") {
-                        var message = root.getAttribute("message");
-                        that.chat.appendMessage(message, "warningMessage");
-                        that.showDialog("Info", message, 320);
-                        that.closePlayOverlay();
-                    }
-                    else {
-                        that.closePlayOverlay();
-                    }
-                } else {
-                    // Null/empty response = create accepted; return to hall tables
-                    that.closePlayOverlay();
-                }
-
-                // Re-enable the button after a short delay to prevent accidental double-clicks
-                setTimeout(function() {
-                    $(that.createTableButton).button("enable");
-                }, 2000);
-            });
+        var aiDeckName = null;
+        var aiDeckSample = null;
+        if (playVsAi) {
+            var botDeck = that.selectedDeckFromPair(that.botPlayerDeckSelect, that.botLibraryDeckSelect);
+            if (botDeck == null || botDeck.name == null || botDeck.name === "") {
+                that.showPlayFormResult("You must select a bot deck.", true);
+                return;
+            }
+            aiDeckName = botDeck.name;
+            aiDeckSample = botDeck.sample;
         }
+        var timer = (that.playMode === "casual" && that.timerSelect != null) ? that.timerSelect.val() : null;
+        var keepOpen = that.keepOpenCheckbox != null && that.keepOpenCheckbox.find("input").is(":checked");
+        that.clearPlayFormResult();
+        $(that.createTableButton).button("disable");
+        that.comm.createTable(format, deck, sampleDeck, tableDesc, isPrivate, playVsAi, aiSkill, aiDeckName, aiDeckSample, timer, isInviteOnly, function (xml) {
+            if (xml != null) {
+                var root = xml.documentElement;
+                if (root.tagName == "error") {
+                    var message = root.getAttribute("message");
+                    that.chat.appendMessage(message, "warningMessage");
+                    that.showPlayFormResult(message, true);
+                }
+                else if (root.tagName == "response") {
+                    var message = root.getAttribute("message");
+                    that.chat.appendMessage(message, "warningMessage");
+                    that.showDialog("Info", message, 320);
+                    if (keepOpen)
+                        that.showPlayFormResult(message || "Table created.", false);
+                    else
+                        that.closePlayOverlay();
+                }
+                else {
+                    if (keepOpen)
+                        that.showPlayFormResult(playVsAi ? "Bot game started." : "Table created.", false);
+                    else
+                        that.closePlayOverlay();
+                }
+            } else {
+                if (keepOpen)
+                    that.showPlayFormResult(playVsAi ? "Bot game started." : "Table created.", false);
+                else
+                    that.closePlayOverlay();
+            }
+
+            setTimeout(function() {
+                $(that.createTableButton).button("enable");
+            }, 2000);
+        });
     },
 
     refreshLayout:function() {
@@ -2076,6 +2457,7 @@ var GempSwccgHallUI = Class.extend({
                 if (that.playLeaguePanel != null && that.playLeaguePanel.is(":visible")) {
                     that.syncLeagueDecksFromCreateSelect();
                 }
+                that.fillSplitDeckSelects();
                 that.updateAiDecksForSelection();
                 return;
             }
@@ -2167,6 +2549,7 @@ var GempSwccgHallUI = Class.extend({
             var otherDecks = root.getElementsByTagName("otherDeck");
             this.generateDeckRow(otherDecks, "[UNKNOWN] ", "false", "other");
         }
+        this.fillSplitDeckSelects();
     },
 
     processLibraryDecks:function (xml) {
@@ -2179,10 +2562,10 @@ var GempSwccgHallUI = Class.extend({
             var otherDecks = root.getElementsByTagName("otherDeck");
             this.generateDeckRow(otherDecks, "Sample: [UNKNOWN] ", "true", "other");
         }
-        this.decksSelect.css("display", "");
         if (this.playLeaguePanel != null && this.playLeaguePanel.is(":visible")) {
             this.syncLeagueDecksFromCreateSelect();
         }
+        this.fillSplitDeckSelects();
     },
 
     generateDeckRow:function (decks, prefix, sampleDeck, side, targetSelect, requiredSide) {
@@ -2215,12 +2598,10 @@ var GempSwccgHallUI = Class.extend({
     },
 
     getSelectedDeckSide:function() {
-
-        var opt = this.decksSelect.find(":selected");
-        if (opt == null || opt.length == 0)
+        var picked = this.selectedDeckFromPair(this.playerDeckSelect, this.libraryDeckSelect);
+        if (picked == null)
             return null;
-        var side = opt.attr("data-side");
-        return side;
+        return picked.side;
     },
 
     updateCreateTableLabel:function() {
@@ -2242,92 +2623,10 @@ var GempSwccgHallUI = Class.extend({
     },
 
     updateAiDecksForSelection:function() {
-        var layoutChanged = this.updateCreateTableLabel();
-        if (!this.aiTablesEnabled) {
-            if (this.aiControlsDiv.css("display") != "none") {
-                this.aiControlsDiv.hide();
-                layoutChanged = true;
-            }
-            if (layoutChanged) {
-                this.refreshLayout();
-            }
-            return;
-        }
-        var playingVsAi = this.opponentSelect.val() === "ai";
-        if (!playingVsAi) {
-            if (this.aiControlsDiv.css("display") != "none") {
-                this.aiControlsDiv.hide();
-                layoutChanged = true;
-            }
-            if (layoutChanged) {
-                this.refreshLayout();
-            }
-            return;
-        }
-        if (this.aiControlsDiv.css("display") == "none") {
-            this.aiControlsDiv.show();
-            layoutChanged = true;
-        }
-        this.aiControlsDiv.show();
-
-        var playerSide = this.getSelectedDeckSide();
-        var shouldRebuild = false;
-
-        if (this.aiDeckSelect.children().length === 0) {
-            shouldRebuild = true;
-        }
-        if (this.lastAiDeckPlayerSide !== playerSide) {
-            shouldRebuild = true;
-        }
-        if (!shouldRebuild) {
-            if (layoutChanged) {
-                this.refreshLayout();
-            }
-            return;
-        }
-
-        var previousSelection = this.aiDeckSelect.val();
-        var previousSample = this.aiDeckSelect.find(":selected").attr("data-sample-deck");
-        this.aiDeckSelect.html("");
-        this.lastAiDeckPlayerSide = playerSide;
-
-        var added = false;
-        for (var i = 0; i < this.deckOptions.length; i++) {
-            var opt = this.deckOptions[i];
-            if (playerSide != null) {
-                if (opt.side === "dark" && playerSide === "dark")
-                    continue;
-                if (opt.side === "light" && playerSide === "light")
-                    continue;
-            }
-            var option = $("<option></option>");
-            option.attr("value", opt.name);
-            option.attr("data-side", opt.side);
-            option.attr("data-sample-deck", opt.sample ? "true" : "false");
-            option.text(opt.label);
-            this.aiDeckSelect.append(option);
-            added = true;
-        }
-
-        if (!added) {
-            var placeholder = $("<option disabled selected>No opposite-side decks found</option>");
-            this.aiDeckSelect.append(placeholder);
-        } else if (previousSelection != null) {
-            var restored = false;
-            this.aiDeckSelect.find("option").each(function() {
-                var option = $(this);
-                if (option.attr("value") === previousSelection &&
-                        option.attr("data-sample-deck") === previousSample) {
-                    option.prop("selected", true);
-                    restored = true;
-                    return false;
-                }
-            });
-            if (!restored) {
-                this.aiDeckSelect.val(previousSelection);
-            }
-        }
-        this.refreshLayout();
+        this.updateCreateTableLabel();
+        if (this.playMode === "ai")
+            this.updateBotDeckSelects();
+        this.applyCasualBotFieldVisibility();
     },
 
     setAiTablesEnabled:function(enabled) {
@@ -2387,17 +2686,11 @@ var GempSwccgHallUI = Class.extend({
 
             var privateGamesEnabled = root.getAttribute("privateGamesEnabledBoolean");
             this.privateGamesAllowed = (privateGamesEnabled == "true");
-            if (this.privateGamesAllowed) {
-               // Do not force-show while league form is open (private rejected server-side)
-               if (this.playMode !== "league") {
-                   this.isPrivateCheckbox.show();
-               }
-            }
-            else {
+            if (!this.privateGamesAllowed) {
                if(document.getElementById('isPrivateCheckbox1')!=null)
                    document.getElementById('isPrivateCheckbox1').checked = false;
-               this.isPrivateCheckbox.hide();
             }
+            this.applyCasualBotFieldVisibility();
 
             var aiTablesEnabled = root.getAttribute("aiTablesEnabledBoolean");
             if (aiTablesEnabled != null && aiTablesEnabled.length > 0) {
@@ -2695,10 +2988,6 @@ var GempSwccgHallUI = Class.extend({
             var layoutChanged = false;
             if (this.supportedFormatsSelect.css("display") == "none") {
                 this.supportedFormatsSelect.css("display", "");
-                layoutChanged = true;
-            }
-            if (this.decksSelect.css("display") == "none") {
-                this.decksSelect.css("display", "");
                 layoutChanged = true;
             }
             if (this.createTableButton.css("display") == "none") {

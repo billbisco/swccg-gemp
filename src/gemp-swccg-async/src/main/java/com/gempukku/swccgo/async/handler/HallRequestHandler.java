@@ -46,6 +46,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -88,6 +89,8 @@ public class HallRequestHandler extends SwccgoServerRequestHandler implements Ur
             getFormats(request, responseWriter);
         } else if (uri.startsWith("/format/") && request.method() == HttpMethod.GET) {
             getFormat(request, uri.substring(8), responseWriter);
+        } else if (uri.equals("/players") && request.method() == HttpMethod.GET) {
+            searchHallPlayers(request, responseWriter);
         } else if (uri.startsWith("/queue/") && request.method() == HttpMethod.POST) {
             if (uri.endsWith("/leave")) {
                 leaveQueue(request, uri.substring(7, uri.length() - 6), responseWriter);
@@ -312,6 +315,9 @@ public class HallRequestHandler extends SwccgoServerRequestHandler implements Ur
             boolean sampleDeck = (sampleDeckVal != null ? Boolean.valueOf(sampleDeckVal) : false);
             String isPrivateVal = getFormParameterSafely(postDecoder, "isPrivate");
             boolean isPrivate = (isPrivateVal != null ? Boolean.valueOf(isPrivateVal) : false);
+            String isInviteOnlyVal = getFormParameterSafely(postDecoder, "isInviteOnly");
+            boolean isInviteOnly = (isInviteOnlyVal != null ? Boolean.valueOf(isInviteOnlyVal) : false);
+            String timer = getFormParameterSafely(postDecoder, "timer");
             boolean playVsAi = Boolean.parseBoolean(getFormParameterSafely(postDecoder, "playVsAi"));
             String aiSkill = getFormParameterSafely(postDecoder, "aiSkill");
             String aiDeckName = getFormParameterSafely(postDecoder, "aiDeckName");
@@ -328,19 +334,13 @@ public class HallRequestHandler extends SwccgoServerRequestHandler implements Ur
 
             String tableDesc = getFormParameterSafely(postDecoder, "tableDesc");
 
-            //if the private games doesn't have anything in the description they can't create the game
-            if(isPrivate && tableDesc.isEmpty()) {
-                responseWriter.writeXmlResponse(marshalException(new HallException("Private games must have your intended opponent in the description")));
-                return;
-            }
-
             Player resourceOwner = getResourceOwnerSafely(request, participantId);
 
             // Librarian is needed for sample decks AND for AI decks (AI decks come from librarian)
             Player librarian = (sampleDeck || playVsAi) ? getLibrarian() : null;
             
             try {
-                var table = _hallServer.createNewTable(format, resourceOwner, deckName, sampleDeck, tableDesc, isPrivate, librarian, playVsAi, aiSkill, aiDeckName, aiDeckSample);
+                var table = _hallServer.createNewTable(format, resourceOwner, deckName, sampleDeck, tableDesc, isPrivate, librarian, playVsAi, aiSkill, aiDeckName, aiDeckSample, timer, isInviteOnly);
 
                 // If this is a league that locks in the first deck used, then we will warn the player if
                 // A: they haven't locked in so that they can be aware that this will lock in, or
@@ -387,6 +387,38 @@ public class HallRequestHandler extends SwccgoServerRequestHandler implements Ur
         finally {
             postDecoder.destroy();
         }
+    }
+
+    private void searchHallPlayers(HttpRequest request, ResponseWriter responseWriter) throws Exception {
+        QueryStringDecoder queryDecoder = new QueryStringDecoder(request.uri());
+        String participantId = getQueryParameterSafely(queryDecoder, "participantId");
+        Player resourceOwner = getResourceOwnerSafely(request, participantId);
+        String prefix = getQueryParameterSafely(queryDecoder, "prefix");
+        if (prefix == null) {
+            prefix = "";
+        }
+        if (prefix.length() > 40) {
+            prefix = prefix.substring(0, 40);
+        }
+        int limit = 10;
+        String limitVal = getQueryParameterSafely(queryDecoder, "limit");
+        if (limitVal != null && !limitVal.isEmpty()) {
+            try {
+                limit = Integer.parseInt(limitVal);
+            } catch (NumberFormatException ignored) {
+                limit = 10;
+            }
+        }
+        if (limit < 1) {
+            limit = 1;
+        }
+        if (limit > 20) {
+            limit = 20;
+        }
+        List<String> names = _hallServer.findPlayerNamesByPrefix(prefix, limit, resourceOwner.getName());
+        Map<String, Object> payload = new HashMap<String, Object>();
+        payload.put("players", names);
+        responseWriter.writeJsonResponse(JSON.toJSONString(payload));
     }
 
     private void dropFromTournament(HttpRequest request, String tournamentId, ResponseWriter responseWriter) throws Exception {

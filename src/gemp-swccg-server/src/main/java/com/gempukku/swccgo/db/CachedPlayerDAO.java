@@ -126,6 +126,11 @@ public class CachedPlayerDAO implements PlayerDAO, Cached {
     }
 
     @Override
+    public List<String> findPlayerNamesByPrefix(String prefix, int limit) {
+        return _delegate.findPlayerNamesByPrefix(prefix, limit);
+    }
+
+    @Override
     public boolean setPlayerFlag(String playerName, Player.Type flag, boolean status) throws SQLException {
         final boolean success = _delegate.setPlayerFlag(playerName, flag, status);
         if (success) {

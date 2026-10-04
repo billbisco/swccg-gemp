@@ -107,6 +107,12 @@ public class SwccgoServer extends AbstractServer {
     }
 
     public SwccgGameMediator createNewGame(SwccgFormat swccgFormat, League league, String tournamentName, final SwccgGameParticipant[] participants, boolean allowSpectators, boolean cancelIfNoActions, boolean allowCancelling, boolean allowSpectatorsToViewChat, boolean allowSpectatorsToChat, boolean allowExtendGameTimer, int decisionTimeoutSeconds, int timePerPlayerMinutes, boolean isPrivate, boolean inGameStatisticsOn, boolean bonusAbilitiesEnabled) {
+        return createNewGame(swccgFormat, league, tournamentName, participants, allowSpectators, cancelIfNoActions,
+                allowCancelling, allowSpectatorsToViewChat, allowSpectatorsToChat, allowExtendGameTimer,
+                decisionTimeoutSeconds, timePerPlayerMinutes, isPrivate, inGameStatisticsOn, bonusAbilitiesEnabled, null);
+    }
+
+    public SwccgGameMediator createNewGame(SwccgFormat swccgFormat, League league, String tournamentName, final SwccgGameParticipant[] participants, boolean allowSpectators, boolean cancelIfNoActions, boolean allowCancelling, boolean allowSpectatorsToViewChat, boolean allowSpectatorsToChat, boolean allowExtendGameTimer, int decisionTimeoutSeconds, int timePerPlayerMinutes, boolean isPrivate, boolean inGameStatisticsOn, boolean bonusAbilitiesEnabled, Integer maxPlayerTimeSecondsOverride) {
         _lock.writeLock().lock();
         try {
             if (participants.length < 2)
@@ -133,8 +139,11 @@ public class SwccgoServer extends AbstractServer {
             /*
              * This is the game timer.
              * A standard game is 60 minutes, or: timePerPlayerMinutes * 60;
+             * Casual hall Game Timer presets pass maxPlayerTimeSecondsOverride (bank seconds).
              */
-            int maxPlayerTime = timePerPlayerMinutes * swccgFormat.getDefaultGameTimerMinutes();
+            int maxPlayerTime = maxPlayerTimeSecondsOverride != null
+                    ? maxPlayerTimeSecondsOverride.intValue()
+                    : timePerPlayerMinutes * swccgFormat.getDefaultGameTimerMinutes();
             SwccgGameMediator swccgGameMediator = new SwccgGameMediator(gameId, swccgFormat, league, participants, _swccgCardBlueprintLibrary,
                         maxPlayerTime, allowSpectators, cancelIfNoActions, allowCancelling, allowExtendGameTimer, decisionTimeoutSeconds, isPrivate,
                         bonusAbilitiesEnabled&&(tournamentName==null||tournamentName.equals("Casual")));

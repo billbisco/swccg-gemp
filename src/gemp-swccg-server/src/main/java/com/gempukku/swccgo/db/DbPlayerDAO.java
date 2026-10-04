@@ -170,6 +170,31 @@ public class DbPlayerDAO implements PlayerDAO {
     }
 
     @Override
+    public List<String> findPlayerNamesByPrefix(String prefix, int limit) {
+        if (prefix == null || prefix.isEmpty() || limit <= 0) {
+            return Collections.emptyList();
+        }
+        String escaped = prefix.replace("!", "!!").replace("%", "!%").replace("_", "!_") + "%";
+        try (Connection conn = _dbAccess.getDataSource().getConnection()) {
+            try (PreparedStatement statement = conn.prepareStatement(
+                    "select name from player where name like ? escape '!' " + _notDeactivated
+                            + " order by name limit ?")) {
+                statement.setString(1, escaped);
+                statement.setInt(2, limit);
+                try (ResultSet rs = statement.executeQuery()) {
+                    List<String> names = new LinkedList<>();
+                    while (rs.next()) {
+                        names.add(rs.getString(1));
+                    }
+                    return names;
+                }
+            }
+        } catch (SQLException exp) {
+            throw new RuntimeException("Unable to search players by prefix", exp);
+        }
+    }
+
+    @Override
     public List<Player> findPlayersWithFlag(Player.Type flag) {
         try {
             List<Player> players = new LinkedList<Player>();
