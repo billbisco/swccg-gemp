@@ -614,7 +614,7 @@ body.play-flow-open {
 .play-flow-panel {
     position: relative;
     z-index: 1;
-    width: min(520px, calc(100vw - 32px));
+    width: min(620px, calc(100vw - 32px));
     max-height: calc(100vh - 48px);
     overflow: auto;
     /* LOTR play-dialog textured bg (dark-hive loop) */
@@ -765,7 +765,7 @@ body.play-flow-open {
 }
 
 .play-form-label {
-    min-width: 90px;
+    min-width: 190px;
     font-weight: bold;
     color: #e0e0e0;
 }
@@ -1319,4 +1319,62 @@ button.table-create-button,
         flex-direction: column;
         align-items: flex-start;
     }
+}
+
+/* PlayerPicker (LOTR hall picker, jQuery UI 1.8 autocomplete) */
+.player-picker {
+    display: flex;
+    flex: 1 1 200px;
+    min-width: 0;
+    align-items: stretch;
+}
+
+.player-picker-input {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.player-picker-toggle {
+    flex: 0 0 auto;
+    min-width: 28px;
+    margin-left: 2px;
+    background: #333;
+    color: #fff;
+    border: 1px solid #888;
+    cursor: pointer;
+}
+
+.ui-autocomplete.player-picker-menu {
+    z-index: 11060 !important;
+    max-height: 240px;
+    overflow-y: auto;
+    background: #222;
+    color: #fff;
+    border: 1px solid #888;
+}
+
+.player-picker-heading {
+    font-weight: bold;
+    color: #aaa;
+    padding: 4px 8px;
+    font-size: 11px;
+    cursor: default;
+}
+
+.player-picker-note {
+    font-weight: normal;
+    font-style: italic;
+}
+
+.play-form-result {
+    min-height: 1.2em;
+    color: #cfcfcf;
+}
+
+.play-form-result.result-error {
+    color: #ff8080;
+}
+
+.play-form-result.result-success {
+    color: #9fd49f;
 }

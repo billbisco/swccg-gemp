@@ -97,6 +97,11 @@ public interface PlayerDAO {
      */
     List<Player> findPlayersWithFlag(Player.Type flag);
 
+    /**
+     * Names of active players whose name starts with prefix (case-insensitive), at most limit entries.
+     */
+    List<String> findPlayerNamesByPrefix(String prefix, int limit);
+
 
     /**
      * Permanently ban the specified player.

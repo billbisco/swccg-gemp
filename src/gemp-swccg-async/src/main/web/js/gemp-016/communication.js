@@ -707,7 +707,7 @@ var GempSwccgCommunication = Class.extend({
             dataType:"xml"
         });
     },
-    createTable:function (format, deckName, sampleDeck, tableDesc, isPrivate, playVsAi, aiSkill, aiDeckName, aiDeckSample, callback, errorMap) {
+    createTable:function (format, deckName, sampleDeck, tableDesc, isPrivate, playVsAi, aiSkill, aiDeckName, aiDeckSample, timer, isInviteOnly, callback, errorMap) {
         $.ajax({
             type:"POST",
             url:this.url + "/hall",
@@ -722,10 +722,26 @@ var GempSwccgCommunication = Class.extend({
                 aiSkill:aiSkill,
                 aiDeckName:aiDeckName,
                 aiDeckSample:aiDeckSample,
+                timer:timer,
+                isInviteOnly:isInviteOnly,
                 participantId:getUrlParam("participantId")},
             success:this.deliveryCheck(callback),
             error:this.errorCheck(errorMap),
             dataType:"xml"
+        });
+    },
+    searchHallPlayers:function (prefix, limit, callback, errorMap) {
+        $.ajax({
+            type:"GET",
+            url:this.url + "/hall/players",
+            cache:false,
+            data:{
+                prefix:prefix,
+                limit:limit,
+                participantId:getUrlParam("participantId")},
+            success:this.deliveryCheck(callback),
+            error:this.errorCheck(errorMap),
+            dataType:"json"
         });
     },
     setShutdownMode:function (enabled, callback, errorMap) {

@@ -283,6 +283,14 @@ public class HallServer extends AbstractServer {
     public AwaitingTable createNewTable(String type, Player player, String deckName, boolean sampleDeck, String tableDesc,
             boolean isPrivate, Player librarian, boolean playVsAi, String aiSkill, String aiDeckName, boolean aiDeckSample)
             throws HallException {
+        return createNewTable(type, player, deckName, sampleDeck, tableDesc, isPrivate, librarian, playVsAi, aiSkill,
+                aiDeckName, aiDeckSample, null, false);
+    }
+
+    public AwaitingTable createNewTable(String type, Player player, String deckName, boolean sampleDeck, String tableDesc,
+            boolean isPrivate, Player librarian, boolean playVsAi, String aiSkill, String aiDeckName, boolean aiDeckSample,
+            String timerCode, boolean isInviteOnly)
+            throws HallException {
         if (_shutdown)
             throw new HallException(
                     "Server is in shutdown mode. No games may be started. Server will be restarted after all games have finished.");
@@ -333,17 +341,40 @@ public class HallServer extends AbstractServer {
                 verifyNotPlayingLeagueGame(player, side, league);
             }
 
-            if (isPrivate && league != null) {
-                throw new HallException("League games cannot be private");
+            if ((isPrivate || isInviteOnly) && league != null) {
+                throw new HallException("League games cannot be private or invite-only");
             }
             if (isPrivate && format.isPlaytesting()) {
                 throw new HallException("Playtesting games cannot be private");
             }
+            if (isInviteOnly && format.isPlaytesting()) {
+                throw new HallException("Playtesting games cannot be invite-only");
+            }
             if (playVsAi && league != null) {
                 throw new HallException("League games cannot be played against the bot");
             }
+            if (playVsAi && isInviteOnly) {
+                throw new HallException("Bot games cannot be invite-only");
+            }
 
             boolean isPrivateGame = isPrivate && privateGamesAllowed();
+            boolean inviteOnlyGame = isInviteOnly && !playVsAi;
+            HallGameTimer gameTimer = (league == null && !playVsAi) ? HallGameTimer.fromCode(timerCode) : null;
+
+            if (inviteOnlyGame) {
+                String inviteeName = tableDesc == null ? "" : tableDesc.trim();
+                if (inviteeName.isEmpty()) {
+                    throw new HallException("If set to invite-only, you must name a player to invite");
+                }
+                if (inviteeName.equalsIgnoreCase(player.getName())) {
+                    throw new HallException("You cannot invite yourself; name another player.");
+                }
+                Player invitee = _playerDAO.getPlayer(inviteeName);
+                if (invitee == null) {
+                    throw new HallException("There is no player named '" + inviteeName + "'");
+                }
+                tableDesc = invitee.getName();
+            }
 
             SwccgDeck aiDeck = null;
 
@@ -386,7 +417,7 @@ public class HallServer extends AbstractServer {
              */
             String tableId = new SwccgUuid().generateNewTableId();
             AwaitingTable table = new AwaitingTable(format, collectionType, league, leagueSerie, tableDesc,
-                    isPrivateGame);
+                    isPrivateGame, inviteOnlyGame, gameTimer);
             _awaitingTables.put(tableId, table);
 
             if (playVsAi) {
@@ -463,6 +494,24 @@ public class HallServer extends AbstractServer {
 
     public boolean privateGamesAllowed() {
         return _privateGamesEnabled;
+    }
+
+    /**
+     * Active player names whose name starts with prefix, excluding excludeName (the caller).
+     */
+    public List<String> findPlayerNamesByPrefix(String prefix, int limit, String excludeName) {
+        List<String> names = _playerDAO.findPlayerNamesByPrefix(prefix, limit);
+        if (excludeName == null || excludeName.isEmpty()) {
+            return names;
+        }
+        List<String> filtered = new ArrayList<String>();
+        for (String name : names) {
+            if (name != null && name.equalsIgnoreCase(excludeName)) {
+                continue;
+            }
+            filtered.add(name);
+        }
+        return filtered;
     }
 
     public boolean inGameStatisticsEnabled() {
@@ -615,8 +664,8 @@ public class HallServer extends AbstractServer {
                     && !_leagueService.isPlayerInLeague(awaitingTable.getLeague(), player))
                 throw new HallException("You're not in that league");
 
-            if (awaitingTable.isPrivate() && !awaitingTable.getTableDesc().equals(player.getName()))
-                throw new HallException("You may not join this private game");
+            if (awaitingTable.isInviteOnly() && !awaitingTable.getTableDesc().equals(player.getName()))
+                throw new HallException("You may not join this invite-only game");
 
             verifyNotExceedingMaxTables(player, false);
 
@@ -1135,18 +1184,24 @@ public class HallServer extends AbstractServer {
         boolean allowSpectators = !awaitingTable.isPrivate();
         boolean allowTimerExtensions = true;
         int timePerPlayerMinutes = 60;
+        Integer maxPlayerTimeSeconds = null;
         if (league != null) {
             decisionTimeoutSeconds = league.getDecisionTimeoutSeconds();
             allowSpectators = league.getAllowSpectators();
             allowTimerExtensions = league.getAllowTimeExtensions();
             timePerPlayerMinutes = league.getTimePerPlayerMinutes();
+        } else if (awaitingTable.getGameTimer() != null) {
+            HallGameTimer timer = awaitingTable.getGameTimer();
+            decisionTimeoutSeconds = timer.getDecisionTimeoutSeconds();
+            maxPlayerTimeSeconds = timer.getBankSeconds();
         }
         String aiPlayerId = awaitingTable.hasAi() ? awaitingTable.getAiPlayerId() : null;
         String aiSkill = awaitingTable.hasAi() ? awaitingTable.getAiSkill() : null;
         createGame(league, leagueSerie, tableId, participants, listener, awaitingTable.getSwccgoFormat(),
                 getTournamentName(awaitingTable), league != null ? null : awaitingTable.getTableDesc(), allowSpectators,
                 true, !awaitingTable.isPrivate(), (league == null) && !awaitingTable.isPrivate(), allowTimerExtensions,
-                decisionTimeoutSeconds, timePerPlayerMinutes, awaitingTable.isPrivate(), aiPlayerId, aiSkill);
+                decisionTimeoutSeconds, timePerPlayerMinutes, awaitingTable.isPrivate(), aiPlayerId, aiSkill,
+                maxPlayerTimeSeconds);
         _awaitingTables.remove(tableId);
         removeWaitingTablesWithPlayers(players);
     }
@@ -1185,10 +1240,22 @@ public class HallServer extends AbstractServer {
             boolean allowSpectatorsToViewChat, boolean allowSpectatorsToChat, boolean allowExtendGameTimer,
             int decisionTimeoutSeconds, int timePerPlayerMinutes, boolean isPrivate, String aiPlayerId,
             String aiSkill) {
+        createGame(league, leagueSerie, tableId, participants, listener, swccgFormat, tournamentName, tableDesc,
+                allowSpectators, allowCancelling, allowSpectatorsToViewChat, allowSpectatorsToChat,
+                allowExtendGameTimer, decisionTimeoutSeconds, timePerPlayerMinutes, isPrivate, aiPlayerId, aiSkill,
+                null);
+    }
+
+    private void createGame(League league, LeagueSeriesData leagueSerie, String tableId,
+            SwccgGameParticipant[] participants, GameResultListener listener, SwccgFormat swccgFormat,
+            String tournamentName, String tableDesc, boolean allowSpectators, boolean allowCancelling,
+            boolean allowSpectatorsToViewChat, boolean allowSpectatorsToChat, boolean allowExtendGameTimer,
+            int decisionTimeoutSeconds, int timePerPlayerMinutes, boolean isPrivate, String aiPlayerId,
+            String aiSkill, Integer maxPlayerTimeSecondsOverride) {
         SwccgGameMediator swccgGameMediator = _swccgoServer.createNewGame(swccgFormat, league, tournamentName,
                 participants, allowSpectators, league == null, allowCancelling, allowSpectatorsToViewChat,
                 allowSpectatorsToChat, allowExtendGameTimer, decisionTimeoutSeconds, timePerPlayerMinutes, isPrivate,
-                _inGameStatisticsEnabled, _bonusAbilitiesEnabled);
+                _inGameStatisticsEnabled, _bonusAbilitiesEnabled, maxPlayerTimeSecondsOverride);
         if (listener != null) {
             swccgGameMediator.addGameResultListener(listener);
         }

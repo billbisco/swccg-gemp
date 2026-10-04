@@ -17,6 +17,8 @@ public class AwaitingTable {
     private String _tableDesc;
     private Map<String, SwccgGameParticipant> _players = new HashMap<String, SwccgGameParticipant>();
     private boolean _isPrivate;
+    private boolean _isInviteOnly;
+    private HallGameTimer _gameTimer;
     private SwccgDeck _aiDeck;
     private String _aiPlayerId;
     private String _aiSkill;
@@ -24,16 +26,31 @@ public class AwaitingTable {
     private int _capacity = 2;
 
     public AwaitingTable(SwccgFormat swccgFormat, CollectionType collectionType, League league, LeagueSeriesData leagueSeries, String tableDesc, boolean isPrivate) {
+        this(swccgFormat, collectionType, league, leagueSeries, tableDesc, isPrivate, false, null);
+    }
+
+    public AwaitingTable(SwccgFormat swccgFormat, CollectionType collectionType, League league, LeagueSeriesData leagueSeries,
+            String tableDesc, boolean isPrivate, boolean isInviteOnly, HallGameTimer gameTimer) {
         _swccgFormat = swccgFormat;
         _collectionType = collectionType;
         _league = league;
         _leagueSeries = leagueSeries;
         _tableDesc = tableDesc;
         _isPrivate = isPrivate;
+        _isInviteOnly = isInviteOnly;
+        _gameTimer = gameTimer;
     }
 
     public boolean isPrivate() {
         return _isPrivate;
+    }
+
+    public boolean isInviteOnly() {
+        return _isInviteOnly;
+    }
+
+    public HallGameTimer getGameTimer() {
+        return _gameTimer;
     }
 
     public boolean addPlayer(SwccgGameParticipant player) {
