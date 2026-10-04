@@ -7,19 +7,19 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class SwccgoFormatLibrary {
     private Map<String, SwccgFormat> _allFormats = new LinkedHashMap<String, SwccgFormat>();
     private Map<String, SwccgFormat> _hallFormats = new LinkedHashMap<String, SwccgFormat>();
-    private String _formatsRevision;
+    private Map<String, String> _formatStamps = new HashMap<String, String>();
 
     public SwccgoFormatLibrary(SwccgCardBlueprintLibrary library) {
         try {
@@ -46,10 +46,20 @@ public class SwccgoFormatLibrary {
                     final DefaultSwccgFormat format = new DefaultSwccgFormat(library, name, downloadBattlegroundRule, jpSealedRule, playtesting);
                     format.setCode(formatCode);
 
+                    Boolean skipFormatPool = (Boolean) formatDef.get("skipFormatPool");
+                    if (skipFormatPool != null && skipFormatPool)
+                        format.setSkipFormatPool(true);
+
+                    Long minDeckSize = (Long) formatDef.get("minDeckSize");
+                    Long maxDeckSize = (Long) formatDef.get("maxDeckSize");
                     Long deckSize = (Long) formatDef.get("deckSize");
-                    if (deckSize == null)
-                        deckSize = 60L;
-                    format.setRequiredDeckSize(deckSize.intValue());
+                    if (minDeckSize != null && maxDeckSize != null) {
+                        format.setDeckSizeRange(minDeckSize.intValue(), maxDeckSize.intValue());
+                    } else {
+                        if (deckSize == null)
+                            deckSize = 60L;
+                        format.setRequiredDeckSize(deckSize.intValue());
+                    }
 
                     Long defaultGameTimerMinutes = (Long) formatDef.get("defaultGameTimerMinutes");
                     if (defaultGameTimerMinutes == null)
@@ -58,8 +68,10 @@ public class SwccgoFormatLibrary {
 
 
                     JSONArray sets = (JSONArray) formatDef.get("set");
-                    for (Object set : sets)
-                        format.addValidSet(((Number) set).intValue());
+                    if (sets != null) {
+                        for (Object set : sets)
+                            format.addValidSet(((Number) set).intValue());
+                    }
 
                     JSONArray validCards = (JSONArray) formatDef.get("valid");
                     if (validCards != null)
@@ -103,42 +115,34 @@ public class SwccgoFormatLibrary {
                         hallFormat = true;
                     if (hallFormat)
                         _hallFormats.put(formatCode, format);
+
+                    _formatStamps.put(formatCode, hashRules(format.rulesStampSource()));
                 }
             } catch (ParseException exp) {
                 throw new RuntimeException("Problem loading Swccg formats", exp);
             } finally {
                 reader.close();
             }
-            _formatsRevision = hashFormatsResource();
         } catch (IOException exp) {
             throw new RuntimeException("Problem loading Swccg formats", exp);
         }
     }
 
-    public String getFormatsRevision() {
-        return _formatsRevision;
+    public String stampFor(String formatCode) {
+        return _formatStamps.get(formatCode);
     }
 
-    private static String hashFormatsResource() {
-        try (InputStream in = SwccgoFormatLibrary.class.getResourceAsStream("/swccgFormats.json")) {
-            if (in == null) {
-                throw new RuntimeException("Missing swccgFormats.json");
-            }
-            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-            byte[] chunk = new byte[4096];
-            int n;
-            while ((n = in.read(chunk)) >= 0) {
-                buffer.write(chunk, 0, n);
-            }
+    private static String hashRules(String source) {
+        try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(buffer.toByteArray());
+            byte[] hash = digest.digest(source.getBytes(StandardCharsets.UTF_8));
             StringBuilder hex = new StringBuilder(16);
             for (int i = 0; i < 8; i++) {
                 hex.append(String.format("%02x", hash[i]));
             }
             return hex.toString();
         } catch (Exception exp) {
-            throw new RuntimeException("Problem hashing Swccg formats", exp);
+            throw new RuntimeException("Problem hashing format rules", exp);
         }
     }
 
