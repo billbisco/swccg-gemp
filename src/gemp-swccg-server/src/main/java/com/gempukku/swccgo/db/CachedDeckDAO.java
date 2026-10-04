@@ -7,6 +7,7 @@ import org.apache.commons.collections4.map.LRUMap;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -85,5 +86,26 @@ public class CachedDeckDAO implements DeckDAO, Cached {
         _delegate.saveDeckForPlayer(player, name, deck);
         _playerDeckNames.remove(constructPlayerDeckNamesKey(player));
         _decks.put(constructDeckKey(player, name), deck);
+    }
+
+    @Override
+    public List<SwccgDeck> getAllDecksForPlayer(Player player) {
+        List<SwccgDeck> decks = _delegate.getAllDecksForPlayer(player);
+        for (SwccgDeck deck : decks) {
+            _decks.put(constructDeckKey(player, deck.getDeckName()), deck);
+        }
+        return decks;
+    }
+
+    @Override
+    public void updateDeckIndex(Player player, String name, String validFormats, String formatsRevision,
+            String sourceCollection) {
+        _delegate.updateDeckIndex(player, name, validFormats, formatsRevision, sourceCollection);
+        SwccgDeck cached = _decks.get(constructDeckKey(player, name));
+        if (cached != null) {
+            cached.setValidFormats(validFormats);
+            cached.setFormatsRevision(formatsRevision);
+            cached.setSourceCollection(sourceCollection);
+        }
     }
 }

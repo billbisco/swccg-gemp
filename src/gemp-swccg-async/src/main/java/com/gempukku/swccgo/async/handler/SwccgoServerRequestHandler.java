@@ -35,7 +35,7 @@ public class SwccgoServerRequestHandler {
     protected PlayerDAO _playerDao;
     protected LoggedUserHolder _loggedUserHolder;
     private final TransferDAO _transferDAO;
-    private final CollectionsManager _collectionManager;
+    protected final CollectionsManager _collectionManager;
     protected DeckDAO _deckDao;
     protected GempSettingDAO _gempSettingDAO;
 

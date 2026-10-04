@@ -3,6 +3,7 @@ package com.gempukku.swccgo.db;
 import com.gempukku.swccgo.game.Player;
 import com.gempukku.swccgo.logic.vo.SwccgDeck;
 
+import java.util.List;
 import java.util.Set;
 
 public interface DeckDAO {
@@ -15,6 +16,10 @@ public interface DeckDAO {
     SwccgDeck renameDeck(Player player, String oldName, String newName);
 
     Set<String> getPlayerDeckNames(Player player);
+
+    List<SwccgDeck> getAllDecksForPlayer(Player player);
+
+    void updateDeckIndex(Player player, String name, String validFormats, String formatsRevision, String sourceCollection);
 
     SwccgDeck buildDeckFromContents(String deckName, String contents);
 }
