@@ -7,8 +7,11 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.security.MessageDigest;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -16,6 +19,7 @@ import java.util.Map;
 public class SwccgoFormatLibrary {
     private Map<String, SwccgFormat> _allFormats = new LinkedHashMap<String, SwccgFormat>();
     private Map<String, SwccgFormat> _hallFormats = new LinkedHashMap<String, SwccgFormat>();
+    private String _formatsRevision;
 
     public SwccgoFormatLibrary(SwccgCardBlueprintLibrary library) {
         try {
@@ -40,6 +44,7 @@ public class SwccgoFormatLibrary {
                         playtesting = false;
 
                     final DefaultSwccgFormat format = new DefaultSwccgFormat(library, name, downloadBattlegroundRule, jpSealedRule, playtesting);
+                    format.setCode(formatCode);
 
                     Long deckSize = (Long) formatDef.get("deckSize");
                     if (deckSize == null)
@@ -104,8 +109,36 @@ public class SwccgoFormatLibrary {
             } finally {
                 reader.close();
             }
+            _formatsRevision = hashFormatsResource();
         } catch (IOException exp) {
             throw new RuntimeException("Problem loading Swccg formats", exp);
+        }
+    }
+
+    public String getFormatsRevision() {
+        return _formatsRevision;
+    }
+
+    private static String hashFormatsResource() {
+        try (InputStream in = SwccgoFormatLibrary.class.getResourceAsStream("/swccgFormats.json")) {
+            if (in == null) {
+                throw new RuntimeException("Missing swccgFormats.json");
+            }
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+            byte[] chunk = new byte[4096];
+            int n;
+            while ((n = in.read(chunk)) >= 0) {
+                buffer.write(chunk, 0, n);
+            }
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(buffer.toByteArray());
+            StringBuilder hex = new StringBuilder(16);
+            for (int i = 0; i < 8; i++) {
+                hex.append(String.format("%02x", hash[i]));
+            }
+            return hex.toString();
+        } catch (Exception exp) {
+            throw new RuntimeException("Problem hashing Swccg formats", exp);
         }
     }
 

@@ -34,4 +34,28 @@ public class SwccgFormatsJsonTests {
             assertNotNull(ewok.get("tenetsLink"));
         }
     }
+
+    @Test
+    public void PremiereAnhSealedUsesConstructedPremiereAnhSetPool() throws Exception {
+        JSONParser parser = new JSONParser();
+        try (InputStreamReader reader = new InputStreamReader(
+                SwccgoFormatLibrary.class.getResourceAsStream("/swccgFormats.json"), StandardCharsets.UTF_8)) {
+            JSONArray formats = (JSONArray) parser.parse(reader);
+            JSONArray constructed = null;
+            JSONArray sealed = null;
+            for (Object formatDefObj : formats) {
+                JSONObject formatDef = (JSONObject) formatDefObj;
+                if ("premiere_anh".equals(formatDef.get("code"))) {
+                    constructed = (JSONArray) formatDef.get("set");
+                }
+                if ("premiere_anh_sealed".equals(formatDef.get("code"))) {
+                    sealed = (JSONArray) formatDef.get("set");
+                }
+            }
+            assertNotNull("premiere_anh must exist", constructed);
+            assertNotNull("premiere_anh_sealed must exist", sealed);
+            assertEquals("Premiere-ANH Sealed must use the constructed Premiere-ANH set pool", constructed, sealed);
+            assertEquals(5, sealed.size());
+        }
+    }
 }
