@@ -20,6 +20,9 @@ public class DefaultSwccgFormat implements SwccgFormat {
     private boolean _jpSealedRule;
     private boolean _playtesting;
     private int _requiredDeckSize = 60;
+    private int _minDeckSize = 60;
+    private int _maxDeckSize = 60;
+    private boolean _skipFormatPool;
     private int _defaultGameTimerMinutes = 60;
     private List<String> _bannedIcons = new ArrayList<String>();
     private List<String> _bannedCards = new ArrayList<String>();
@@ -117,8 +120,35 @@ public class DefaultSwccgFormat implements SwccgFormat {
         return _requiredDeckSize;
     }
 
+    @Override
+    public int getMinimumDeckSize() {
+        return _minDeckSize;
+    }
+
+    @Override
+    public int getMaximumDeckSize() {
+        return _maxDeckSize;
+    }
+
+    @Override
+    public boolean skipsFormatPool() {
+        return _skipFormatPool;
+    }
+
     protected void setRequiredDeckSize(int requiredDeckSize) {
         _requiredDeckSize = requiredDeckSize;
+        _minDeckSize = requiredDeckSize;
+        _maxDeckSize = requiredDeckSize;
+    }
+
+    protected void setDeckSizeRange(int minDeckSize, int maxDeckSize) {
+        _minDeckSize = minDeckSize;
+        _maxDeckSize = maxDeckSize;
+        _requiredDeckSize = maxDeckSize;
+    }
+
+    protected void setSkipFormatPool(boolean skipFormatPool) {
+        _skipFormatPool = skipFormatPool;
     }
 
     @Override
@@ -217,6 +247,9 @@ public class DefaultSwccgFormat implements SwccgFormat {
         if (!_validSets.isEmpty() && !isValidInSets(blueprintId))
             throw new DeckInvalidException("Deck contains card, <span class=\"validate-invalid-card-set\">" + fullName + "</span>, from set banned in this format.");
 
+        if (_skipFormatPool)
+            return;
+
         // Banned icons
         for (String iconName : _bannedIcons) {
             Icon icon = Icon.getIconFromName(iconName);
@@ -241,6 +274,42 @@ public class DefaultSwccgFormat implements SwccgFormat {
         for (String bannedBlueprintId : _bannedCards) {
             if (bannedBlueprintId.equals(blueprintId) || (allAlternates != null && allAlternates.contains(bannedBlueprintId)))
                 throw new DeckInvalidException("Deck contains a copy of banned card: <span class=\"validate-invalid-card\">" + fullName + "</span>");
+        }
+    }
+
+    String rulesStampSource() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(_code).append('|')
+                .append(_minDeckSize).append('|').append(_maxDeckSize).append('|')
+                .append(_skipFormatPool).append('|')
+                .append(_downloadBattlegroundRule).append('|')
+                .append(_jpSealedRule).append('|')
+                .append(_playtesting).append('|');
+        appendJoined(sb, _validSets);
+        sb.append('|');
+        appendJoined(sb, _bannedCards);
+        sb.append('|');
+        appendJoined(sb, _restrictedCards);
+        sb.append('|');
+        appendJoined(sb, _bannedIcons);
+        sb.append('|');
+        appendJoined(sb, _bannedRarity);
+        sb.append('|');
+        appendJoined(sb, _validCards);
+        return sb.toString();
+    }
+
+    private static void appendJoined(StringBuilder sb, List<?> values) {
+        List<String> sorted = new ArrayList<String>();
+        for (Object value : values) {
+            sorted.add(String.valueOf(value));
+        }
+        Collections.sort(sorted);
+        for (int i = 0; i < sorted.size(); i++) {
+            if (i > 0) {
+                sb.append(',');
+            }
+            sb.append(sorted.get(i));
         }
     }
 
@@ -414,14 +483,21 @@ public class DefaultSwccgFormat implements SwccgFormat {
                 processCardCounts(blueprintId, cardCountByName, cardCountByBaseBlueprintId);
 
             // Restricted cards
-            for (String blueprintId : _restrictedCards) {
-                Integer count = cardCountByBaseBlueprintId.get(blueprintId);
-                if (count != null && count > 1)
-                    throw new DeckInvalidException("Deck contains more than one copy of an restricted card: " + GameUtils.getFullName(_library.getSwccgoCardBlueprint(blueprintId)));
+            if (!_skipFormatPool) {
+                for (String blueprintId : _restrictedCards) {
+                    Integer count = cardCountByBaseBlueprintId.get(blueprintId);
+                    if (count != null && count > 1)
+                        throw new DeckInvalidException("Deck contains more than one copy of an restricted card: " + GameUtils.getFullName(_library.getSwccgoCardBlueprint(blueprintId)));
+                }
             }
 
-            if (deck.getCards().size() != _requiredDeckSize)
-                throw new DeckInvalidException("Deck contains <span class=\"validate-deck-size\">" + deck.getCards().size() + "</span> cards, however <span class=\"validate-required-deck-size\">" + _requiredDeckSize + "</span> cards are required.");
+            int deckSize = deck.getCards().size();
+            if (deckSize < _minDeckSize || deckSize > _maxDeckSize) {
+                if (_minDeckSize == _maxDeckSize) {
+                    throw new DeckInvalidException("Deck contains <span class=\"validate-deck-size\">" + deckSize + "</span> cards, however <span class=\"validate-required-deck-size\">" + _minDeckSize + "</span> cards are required.");
+                }
+                throw new DeckInvalidException("Deck contains <span class=\"validate-deck-size\">" + deckSize + "</span> cards, however <span class=\"validate-required-deck-size\">" + _minDeckSize + "-" + _maxDeckSize + "</span> cards are required.");
+            }
 
         } catch (IllegalArgumentException exp) {
             throw new DeckInvalidException("Deck contains unrecognizable card");
