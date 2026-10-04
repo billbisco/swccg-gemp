@@ -15,6 +15,9 @@ public class SwccgDeck {
     private String _deckName;
     private List<String> _cards = new ArrayList<String>();
     private List<String> _cardsOutsideDeck = new ArrayList<String>();
+    private String _validFormats;
+    private String _formatsRevision;
+    private String _sourceCollection;
 
     /**
      * Create a SwccgDeck object with the specified deck name.
@@ -42,6 +45,30 @@ public class SwccgDeck {
 
     public List<String> getCardsOutsideDeck() {
         return Collections.unmodifiableList(_cardsOutsideDeck);
+    }
+
+    public String getValidFormats() {
+        return _validFormats;
+    }
+
+    public void setValidFormats(String validFormats) {
+        _validFormats = validFormats;
+    }
+
+    public String getFormatsRevision() {
+        return _formatsRevision;
+    }
+
+    public void setFormatsRevision(String formatsRevision) {
+        _formatsRevision = formatsRevision;
+    }
+
+    public String getSourceCollection() {
+        return _sourceCollection;
+    }
+
+    public void setSourceCollection(String sourceCollection) {
+        _sourceCollection = sourceCollection;
     }
 
     public Side getSide(SwccgCardBlueprintLibrary _library) {

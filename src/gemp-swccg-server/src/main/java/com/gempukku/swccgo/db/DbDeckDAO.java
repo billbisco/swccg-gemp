@@ -8,12 +8,16 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class DbDeckDAO implements DeckDAO {
     private DbAccess _dbAccess;
     private SwccgCardBlueprintLibrary _library;
+    private volatile boolean _schemaReady;
 
     public DbDeckDAO(DbAccess dbAccess, SwccgCardBlueprintLibrary library) {
         _dbAccess = dbAccess;
@@ -25,6 +29,7 @@ public class DbDeckDAO implements DeckDAO {
     }
 
     public synchronized void saveDeckForPlayer(Player player, String name, SwccgDeck deck) {
+        ensureSchema();
         boolean newDeck = getPlayerDeck(player.getId(), name) == null;
         storeDeckToDB(player.getId(), name, deck, newDeck);
     }
@@ -76,18 +81,77 @@ public class DbDeckDAO implements DeckDAO {
         }
     }
 
-    private SwccgDeck getPlayerDeck(int playerId, String name) {
+    public synchronized List<SwccgDeck> getAllDecksForPlayer(Player player) {
+        ensureSchema();
         try {
             Connection connection = _dbAccess.getDataSource().getConnection();
             try {
-                PreparedStatement statement = connection.prepareStatement("select contents from deck where player_id=? and name=?");
+                PreparedStatement statement = connection.prepareStatement(
+                        "select name, contents, valid_formats, formats_revision, source_collection from deck where player_id=?");
+                try {
+                    statement.setInt(1, player.getId());
+                    ResultSet rs = statement.executeQuery();
+                    try {
+                        List<SwccgDeck> result = new ArrayList<SwccgDeck>();
+                        while (rs.next()) {
+                            result.add(deckFromRow(rs.getString(1), rs.getString(2),
+                                    rs.getString(3), rs.getString(4), rs.getString(5)));
+                        }
+                        return result;
+                    } finally {
+                        rs.close();
+                    }
+                } finally {
+                    statement.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException exp) {
+            throw new RuntimeException("Unable to load player decks from DB", exp);
+        }
+    }
+
+    public synchronized void updateDeckIndex(Player player, String name, String validFormats, String formatsRevision,
+            String sourceCollection) {
+        ensureSchema();
+        try {
+            Connection connection = _dbAccess.getDataSource().getConnection();
+            try {
+                PreparedStatement statement = connection.prepareStatement(
+                        "update deck set valid_formats=?, formats_revision=?, source_collection=? where player_id=? and name=?");
+                try {
+                    statement.setString(1, validFormats);
+                    statement.setString(2, formatsRevision);
+                    statement.setString(3, sourceCollection);
+                    statement.setInt(4, player.getId());
+                    statement.setString(5, name);
+                    statement.execute();
+                } finally {
+                    statement.close();
+                }
+            } finally {
+                connection.close();
+            }
+        } catch (SQLException exp) {
+            throw new RuntimeException("Unable to update deck format index", exp);
+        }
+    }
+
+    private SwccgDeck getPlayerDeck(int playerId, String name) {
+        ensureSchema();
+        try {
+            Connection connection = _dbAccess.getDataSource().getConnection();
+            try {
+                PreparedStatement statement = connection.prepareStatement(
+                        "select contents, valid_formats, formats_revision, source_collection from deck where player_id=? and name=?");
                 try {
                     statement.setInt(1, playerId);
                     statement.setString(2, name);
                     ResultSet rs = statement.executeQuery();
                     try {
                         if (rs.next())
-                            return buildDeckFromContents(name, rs.getString(1));
+                            return deckFromRow(name, rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4));
 
                         return null;
                     } finally {
@@ -105,13 +169,25 @@ public class DbDeckDAO implements DeckDAO {
         }
     }
 
+    private SwccgDeck deckFromRow(String name, String contents, String validFormats, String formatsRevision,
+            String sourceCollection) {
+        SwccgDeck deck = buildDeckFromContents(name, contents);
+        if (deck == null) {
+            return null;
+        }
+        deck.setValidFormats(validFormats);
+        deck.setFormatsRevision(formatsRevision);
+        deck.setSourceCollection(sourceCollection);
+        return deck;
+    }
+
     private void storeDeckToDB(int playerId, String name, SwccgDeck deck, boolean newDeck) {
         String contents = DeckSerialization.buildContentsFromDeck(deck);
         try {
             if (newDeck)
-                storeDeckInDB(playerId, name, contents);
+                storeDeckInDB(playerId, name, contents, deck);
             else
-                updateDeckInDB(playerId, name, contents);
+                updateDeckInDB(playerId, name, contents, deck);
         } catch (SQLException exp) {
             throw new RuntimeException("Unable to store player deck to DB", exp);
         }
@@ -137,14 +213,18 @@ public class DbDeckDAO implements DeckDAO {
         }
     }
 
-    private void storeDeckInDB(int playerId, String name, String contents) throws SQLException {
+    private void storeDeckInDB(int playerId, String name, String contents, SwccgDeck deck) throws SQLException {
         Connection connection = _dbAccess.getDataSource().getConnection();
         try {
-            PreparedStatement statement = connection.prepareStatement("insert into deck (player_id, name, contents) values (?, ?, ?)");
+            PreparedStatement statement = connection.prepareStatement(
+                    "insert into deck (player_id, name, contents, valid_formats, formats_revision, source_collection) values (?, ?, ?, ?, ?, ?)");
             try {
                 statement.setInt(1, playerId);
                 statement.setString(2, name);
                 statement.setString(3, contents);
+                statement.setString(4, deck.getValidFormats());
+                statement.setString(5, deck.getFormatsRevision());
+                statement.setString(6, deck.getSourceCollection());
                 statement.execute();
             } finally {
                 statement.close();
@@ -154,20 +234,53 @@ public class DbDeckDAO implements DeckDAO {
         }
     }
 
-    private void updateDeckInDB(int playerId, String name, String contents) throws SQLException {
+    private void updateDeckInDB(int playerId, String name, String contents, SwccgDeck deck) throws SQLException {
         Connection connection = _dbAccess.getDataSource().getConnection();
         try {
-            PreparedStatement statement = connection.prepareStatement("update deck set contents=? where player_id=? and name=?");
+            PreparedStatement statement = connection.prepareStatement(
+                    "update deck set contents=?, valid_formats=?, formats_revision=?, source_collection=? where player_id=? and name=?");
             try {
                 statement.setString(1, contents);
-                statement.setInt(2, playerId);
-                statement.setString(3, name);
+                statement.setString(2, deck.getValidFormats());
+                statement.setString(3, deck.getFormatsRevision());
+                statement.setString(4, deck.getSourceCollection());
+                statement.setInt(5, playerId);
+                statement.setString(6, name);
                 statement.execute();
             } finally {
                 statement.close();
             }
         } finally {
             connection.close();
+        }
+    }
+
+    private void ensureSchema() {
+        if (_schemaReady) {
+            return;
+        }
+        synchronized (this) {
+            if (_schemaReady) {
+                return;
+            }
+            try {
+                Connection connection = _dbAccess.getDataSource().getConnection();
+                try {
+                    Statement statement = connection.createStatement();
+                    try {
+                        statement.execute("ALTER TABLE deck ADD COLUMN IF NOT EXISTS valid_formats TEXT CHARACTER SET utf8 COLLATE utf8_bin NULL");
+                        statement.execute("ALTER TABLE deck ADD COLUMN IF NOT EXISTS formats_revision VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_bin NULL");
+                        statement.execute("ALTER TABLE deck ADD COLUMN IF NOT EXISTS source_collection VARCHAR(80) CHARACTER SET utf8 COLLATE utf8_bin NULL");
+                    } finally {
+                        statement.close();
+                    }
+                } finally {
+                    connection.close();
+                }
+                _schemaReady = true;
+            } catch (SQLException exp) {
+                throw new RuntimeException("Unable to add deck format index columns", exp);
+            }
         }
     }
 }

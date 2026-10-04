@@ -14,6 +14,7 @@ import java.util.*;
 
 public class DefaultSwccgFormat implements SwccgFormat {
     private SwccgCardBlueprintLibrary _library;
+    private String _code;
     private String _name;
     private boolean _downloadBattlegroundRule;
     private boolean _jpSealedRule;
@@ -50,6 +51,15 @@ public class DefaultSwccgFormat implements SwccgFormat {
         for (int i = 301; i < (301 + CardCounts.VIRTUAL_PREMIUM_SETS_CARD_COUNTS.length); i++) {
             _rarity.put(i, rarityReader.getSetRarity(String.valueOf(i)));
         }
+    }
+
+    public void setCode(String code) {
+        _code = code;
+    }
+
+    @Override
+    public String getCode() {
+        return _code;
     }
 
     @Override

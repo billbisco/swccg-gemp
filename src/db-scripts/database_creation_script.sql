@@ -43,6 +43,9 @@ CREATE  TABLE IF NOT EXISTS `gemp-swccg`.`deck` (
   `name` VARCHAR(45) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NOT NULL DEFAULT 'Default' ,
   `type` VARCHAR(45) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NOT NULL DEFAULT 'Default' ,
   `contents` TEXT CHARACTER SET 'utf8' COLLATE 'utf8_bin' NOT NULL ,
+  `valid_formats` TEXT CHARACTER SET 'utf8' COLLATE 'utf8_bin' NULL ,
+  `formats_revision` VARCHAR(64) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NULL ,
+  `source_collection` VARCHAR(80) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NULL ,
   PRIMARY KEY (`id`) ,
   UNIQUE INDEX `player_deck` (`player_id` ASC, `name` ASC) ,
   INDEX `player_id` (`id` ASC) )
