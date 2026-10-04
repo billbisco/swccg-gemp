@@ -304,13 +304,19 @@ var GempSwccgCommunication = Class.extend({
             dataType:"xml"
         });
     },
-    getDecks:function (callback, errorMap) {
+    getDecks:function (callback, errorMap, format, collection) {
+        var data = {
+            participantId:getUrlParam("participantId")
+        };
+        if (format)
+            data.format = format;
+        if (collection)
+            data.collection = collection;
         $.ajax({
             type:"GET",
             url:this.url + "/deck/list",
             cache:false,
-            data:{
-                participantId:getUrlParam("participantId")},
+            data:data,
             success:this.deliveryCheck(callback),
             error:this.errorCheck(errorMap),
             dataType:"xml"
@@ -333,11 +339,19 @@ var GempSwccgCommunication = Class.extend({
             dataType:"xml"
         });
     },
-    getLibraryDecks:function (callback, errorMap) {
+    getLibraryDecks:function (callback, errorMap, format, collection) {
+        var data = {
+            participantId:getUrlParam("participantId")
+        };
+        if (format)
+            data.format = format;
+        if (collection)
+            data.collection = collection;
         $.ajax({
             type:"GET",
             url:this.url + "/deck/libraryList",
             cache:false,
+            data:data,
             success:this.deliveryCheck(callback),
             error:this.errorCheck(errorMap),
             dataType:"xml"
@@ -481,7 +495,7 @@ var GempSwccgCommunication = Class.extend({
             dataType:"xml"
         });
     },
-    saveDeck:function (deckName, contents, callback, errorMap) {
+    saveDeck:function (deckName, contents, callback, errorMap, collectionType) {
         $.ajax({
             type:"POST",
             url:this.url + "/deck",
@@ -490,7 +504,8 @@ var GempSwccgCommunication = Class.extend({
             data:{
                 participantId:getUrlParam("participantId"),
                 deckName:deckName,
-                deckContents:contents},
+                deckContents:contents,
+                collectionType:collectionType || "default"},
             success:this.deliveryCheck(callback),
             error:this.errorCheck(errorMap),
             dataType:"xml"

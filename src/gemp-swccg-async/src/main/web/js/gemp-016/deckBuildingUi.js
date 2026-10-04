@@ -861,7 +861,7 @@ var GempSwccgDeckBuildingUI = Class.extend({
                 "400":function () {
                     alert("Invalid deck.  More defensive shields in outside of deck area than what starting effect allows.");
                 }
-            });
+            }, this.collectionType);
     },
 
     addCardToContainer:function (blueprintId, testingText, backSideTestingText, horizontal, zone, container, tokens) {
