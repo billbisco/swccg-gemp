@@ -400,7 +400,6 @@ var GempSwccgHallUI = Class.extend({
         this.hallResized(width, height);
 
         this.getHall();
-        this.updateDecks();
     },
 
 
@@ -1146,9 +1145,6 @@ var GempSwccgHallUI = Class.extend({
         if (this.playOverlay == null) {
             return;
         }
-        // Slice 1.5e / LOTR CreateTable.showPopup: every Play open re-fetches /deck/list
-        // so decks built in deckBuild.html (new tab) after hall init appear without hard refresh.
-        this.updateDecks();
         this.showPlaySelection();
         this.playOverlay.css("display", "flex");
         $("body").addClass("play-flow-open");
@@ -1813,7 +1809,16 @@ var GempSwccgHallUI = Class.extend({
                 firstEnabled = opt.attr("value");
             }
         });
-        if (firstEnabled != null) {
+        var preferred = "anything_goes";
+        var preferredEnabled = false;
+        this.supportedFormatsSelect.find("option").each(function () {
+            var opt = $(this);
+            if (!opt.prop("disabled") && opt.attr("value") === preferred)
+                preferredEnabled = true;
+        });
+        if (mode !== "league" && preferredEnabled) {
+            this.supportedFormatsSelect.val(preferred);
+        } else if (firstEnabled != null) {
             this.supportedFormatsSelect.val(firstEnabled);
         }
     },
