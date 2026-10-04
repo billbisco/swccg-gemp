@@ -823,7 +823,9 @@ public class HallServer extends AbstractServer {
 
                 boolean hidePlayerId = table.getLeague() != null && !table.getLeague().getShowPlayerNames();
                 visitor.visitTable(tableInformation.getKey(), null, false, HallInfoVisitor.TableStatus.WAITING,
-                        "Waiting", table.getSwccgoFormat().getName(), getTournamentName(table),
+                        "Waiting", table.getSwccgoFormat().getName(), table.getSwccgoFormat().getCode(),
+                        table.getCollectionType() != null ? table.getCollectionType().getCode() : "default",
+                        getTournamentName(table),
                         table.getLeague() != null ? null : table.getTableDesc(), players, null,
                         table.getPlayerNames().contains(player.getName()), null, hidePlayerId, _library,
                         table.getSwccgoFormat().isPlaytesting() && !playtestingVisible, true, true);
@@ -848,7 +850,10 @@ public class HallServer extends AbstractServer {
                                         && (!swccgGameMediator.getFormat().isPlaytesting() || playtestingVisible))
                                         || (!swccgGameMediator.getFormat().isPlaytesting() && visibleToCommentator)),
                                 HallInfoVisitor.TableStatus.PLAYING, swccgGameMediator.getGameStatus(),
-                                runningTable.getFormatName(), runningTable.getTournamentName(),
+                                runningTable.getFormatName(),
+                                swccgGameMediator.getFormat() != null ? swccgGameMediator.getFormat().getCode() : null,
+                                null,
+                                runningTable.getTournamentName(),
                                 runningTable.getTableDesc(), swccgGameMediator.getPlayersPlaying(), deckArchetypeMap,
                                 swccgGameMediator.isPlayerPlaying(player.getName()), swccgGameMediator.getWinner(),
                                 false, _library, swccgGameMediator.getFormat().isPlaytesting() && !playtestingVisible,
@@ -879,7 +884,10 @@ public class HallServer extends AbstractServer {
                     }
                     visitor.visitTable(nonPlayingGame.getKey(), swccgGameMediator.getGameId(), false,
                             HallInfoVisitor.TableStatus.FINISHED, swccgGameMediator.getGameStatus(),
-                            runningTable.getFormatName(), runningTable.getTournamentName(), runningTable.getTableDesc(),
+                            runningTable.getFormatName(),
+                            swccgGameMediator.getFormat() != null ? swccgGameMediator.getFormat().getCode() : null,
+                            null,
+                            runningTable.getTournamentName(), runningTable.getTableDesc(),
                             swccgGameMediator.getPlayersPlaying(), deckArchetypeMap,
                             swccgGameMediator.isPlayerPlaying(player.getName()), swccgGameMediator.getWinner(), false,
                             _library, swccgGameMediator.getFormat().isPlaytesting() && !playtestingVisible,

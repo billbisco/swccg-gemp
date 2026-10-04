@@ -4,6 +4,7 @@ import com.gempukku.swccgo.async.HttpProcessingException;
 import com.gempukku.swccgo.async.ResponseWriter;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.game.*;
+import com.gempukku.swccgo.game.formats.DeckFormatIndex;
 import com.gempukku.swccgo.game.formats.DefaultSwccgFormat;
 import com.gempukku.swccgo.game.formats.SwccgoFormatLibrary;
 import com.gempukku.swccgo.logic.GameUtils;
@@ -214,6 +215,9 @@ public class DeckRequestHandler extends SwccgoServerRequestHandler implements Ur
             String participantId = getFormParameterSafely(postDecoder, "participantId");
             String deckName = getFormParameterSafely(postDecoder, "deckName");
             String contents = getFormParameterSafely(postDecoder, "deckContents");
+            String collectionType = getFormParameterSafely(postDecoder, "collectionType");
+            if (collectionType == null || collectionType.isEmpty())
+                collectionType = "default";
 
             Player resourceOwner = getResourceOwnerSafely(request, participantId);
 
@@ -227,6 +231,9 @@ public class DeckRequestHandler extends SwccgoServerRequestHandler implements Ur
                 throw new HttpProcessingException(400);
             }
 
+            swccgDeck.setSourceCollection(collectionType);
+            swccgDeck.setValidFormats(DeckFormatIndex.computeValidFormats(swccgDeck, _formatLibrary));
+            swccgDeck.setFormatsRevision(_formatLibrary.getFormatsRevision());
             _deckDao.saveDeckForPlayer(resourceOwner, deckName, swccgDeck);
 
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -347,115 +354,130 @@ public class DeckRequestHandler extends SwccgoServerRequestHandler implements Ur
         QueryStringDecoder queryDecoder = new QueryStringDecoder(request.uri());
         String participantId = getQueryParameterSafely(queryDecoder, "participantId");
         Player resourceOwner = getResourceOwnerSafely(request, participantId);
+        String format = getQueryParameterSafely(queryDecoder, "format");
+        String collection = getQueryParameterSafely(queryDecoder, "collection");
+        writeFilteredDeckList(resourceOwner, format, collection, true, resourceOwner, responseWriter);
+    }
 
+    private void listLibraryDecks(HttpRequest request, ResponseWriter responseWriter) throws Exception {
+        QueryStringDecoder queryDecoder = new QueryStringDecoder(request.uri());
+        String participantId = getQueryParameterSafely(queryDecoder, "participantId");
+        Player requestingPlayer = null;
+        try {
+            requestingPlayer = getResourceOwnerSafely(request, participantId);
+        } catch (HttpProcessingException ignored) {
+        }
+        String format = getQueryParameterSafely(queryDecoder, "format");
+        String collection = getQueryParameterSafely(queryDecoder, "collection");
+        writeFilteredDeckList(getLibrarian(), format, collection, false, requestingPlayer, responseWriter);
+    }
+
+    private void writeFilteredDeckList(Player deckOwner, String format, String collection, boolean persistIndex,
+            Player requestingPlayer, ResponseWriter responseWriter) throws Exception {
         List<String> darkDeckNames = new ArrayList<String>();
         List<String> lightDeckNames = new ArrayList<String>();
         List<String> otherDeckNames = new ArrayList<String>();
 
-        List<String> deckNames = new ArrayList<String>(_deckDao.getPlayerDeckNames(resourceOwner));
+        boolean includePlaytesting = requestingPlayer != null
+                && (requestingPlayer.hasType(Player.Type.ADMIN) || requestingPlayer.hasType(Player.Type.PLAYTESTER));
+        if (format != null && !format.isEmpty()) {
+            SwccgFormat requestedFormat = _formatLibrary.getFormat(format);
+            if (requestedFormat != null && requestedFormat.isPlaytesting() && !includePlaytesting) {
+                writeDeckListXml(darkDeckNames, lightDeckNames, otherDeckNames, responseWriter);
+                return;
+            }
+        }
 
-        // For each deck determine if it is a Dark deck, Light deck, or other deck
-        for (String deckName : deckNames) {
-            SwccgDeck deck = _deckDao.getDeckForPlayer(resourceOwner, deckName);
-            if(deck == null)
+        boolean leagueCollection = !DeckFormatIndex.isConstructedCollection(collection);
+        if (leagueCollection && !persistIndex) {
+            writeDeckListXml(darkDeckNames, lightDeckNames, otherDeckNames, responseWriter);
+            return;
+        }
+
+        CardCollection leagueCards = null;
+        if (leagueCollection) {
+            leagueCards = _collectionManager.getPlayerCollection(deckOwner, collection);
+        }
+
+        List<SwccgDeck> decks = _deckDao.getAllDecksForPlayer(deckOwner);
+        for (SwccgDeck deck : decks) {
+            if (deck == null)
+                continue;
+            ensureDeckIndex(deckOwner, deck, true);
+            if (format != null && !format.isEmpty() && !DeckFormatIndex.containsFormat(deck.getValidFormats(), format))
+                continue;
+            if (!collectionAllowsDeck(deck, collection, leagueCards, persistIndex, deckOwner))
                 continue;
 
             Side side = deck.getSide(_library);
             if (side == Side.DARK)
-                darkDeckNames.add(deckName);
+                darkDeckNames.add(deck.getDeckName());
             else if (side == Side.LIGHT)
-                lightDeckNames.add(deckName);
+                lightDeckNames.add(deck.getDeckName());
             else
-                otherDeckNames.add(deckName);
+                otherDeckNames.add(deck.getDeckName());
         }
 
-        // Sort the deck names
         Collections.sort(darkDeckNames);
         Collections.sort(lightDeckNames);
         Collections.sort(otherDeckNames);
-
-        // Build the XML response
-        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-        Document doc = documentBuilder.newDocument();
-
-        // Dark decks
-        Element decksElem = doc.createElement("decks");
-        for (String darkDeckName : darkDeckNames) {
-            Element deckElem = doc.createElement("darkDeck");
-            deckElem.appendChild(doc.createTextNode(darkDeckName));
-            decksElem.appendChild(deckElem);
-        }
-        // Light decks
-        for (String lightDeckName : lightDeckNames) {
-            Element deckElem = doc.createElement("lightDeck");
-            deckElem.appendChild(doc.createTextNode(lightDeckName));
-            decksElem.appendChild(deckElem);
-        }
-        // Other decks
-        for (String otherDeckName : otherDeckNames) {
-            Element deckElem = doc.createElement("otherDeck");
-            deckElem.appendChild(doc.createTextNode(otherDeckName));
-            decksElem.appendChild(deckElem);
-        }
-        doc.appendChild(decksElem);
-
-        // Write the XML response
-        responseWriter.writeXmlResponse(doc);
+        writeDeckListXml(darkDeckNames, lightDeckNames, otherDeckNames, responseWriter);
     }
 
-    private void listLibraryDecks(HttpRequest request, ResponseWriter responseWriter) throws Exception {
-        List<String> darkDeckNames = new ArrayList<String>();
-        List<String> lightDeckNames = new ArrayList<String>();
-        List<String> otherDeckNames = new ArrayList<String>();
-
-        Player resourceOwner = getLibrarian();
-        List<String> deckNames = new ArrayList<String>(_deckDao.getPlayerDeckNames(resourceOwner));
-
-        // For each deck determine if it is a Dark deck, Light deck, or other deck
-        for (String deckName : deckNames) {
-            SwccgDeck deck = _deckDao.getDeckForPlayer(resourceOwner, deckName);
-            Side side = deck.getSide(_library);
-            if (side == Side.DARK)
-                darkDeckNames.add(deckName);
-            else if (side == Side.LIGHT)
-                lightDeckNames.add(deckName);
-            else
-                otherDeckNames.add(deckName);
+    private void ensureDeckIndex(Player owner, SwccgDeck deck, boolean persist) {
+        String revision = _formatLibrary.getFormatsRevision();
+        if (deck.getValidFormats() != null && revision.equals(deck.getFormatsRevision()))
+            return;
+        String valid = DeckFormatIndex.computeValidFormats(deck, _formatLibrary);
+        deck.setValidFormats(valid);
+        deck.setFormatsRevision(revision);
+        if (persist) {
+            _deckDao.updateDeckIndex(owner, deck.getDeckName(), valid, revision, deck.getSourceCollection());
         }
+    }
 
-        // Sort the deck names
-        Collections.sort(darkDeckNames);
-        Collections.sort(lightDeckNames);
-        Collections.sort(otherDeckNames);
+    private boolean collectionAllowsDeck(SwccgDeck deck, String collection, CardCollection leagueCards,
+            boolean persistTag, Player owner) {
+        if (DeckFormatIndex.isConstructedCollection(collection))
+            return true;
+        String source = deck.getSourceCollection();
+        if (collection.equals(source))
+            return true;
+        if (!DeckFormatIndex.isConstructedCollection(source))
+            return false;
+        if (leagueCards == null || !DeckFormatIndex.deckOwnedInCollection(deck, leagueCards))
+            return false;
+        if (persistTag) {
+            deck.setSourceCollection(collection);
+            _deckDao.updateDeckIndex(owner, deck.getDeckName(), deck.getValidFormats(), deck.getFormatsRevision(),
+                    collection);
+        }
+        return true;
+    }
 
-        // Build the XML response
+    private void writeDeckListXml(List<String> darkDeckNames, List<String> lightDeckNames, List<String> otherDeckNames,
+            ResponseWriter responseWriter) throws ParserConfigurationException {
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
         Document doc = documentBuilder.newDocument();
 
-        // Dark decks
         Element decksElem = doc.createElement("decks");
         for (String darkDeckName : darkDeckNames) {
             Element deckElem = doc.createElement("darkDeck");
             deckElem.appendChild(doc.createTextNode(darkDeckName));
             decksElem.appendChild(deckElem);
         }
-        // Light decks
         for (String lightDeckName : lightDeckNames) {
             Element deckElem = doc.createElement("lightDeck");
             deckElem.appendChild(doc.createTextNode(lightDeckName));
             decksElem.appendChild(deckElem);
         }
-        // Other decks
         for (String otherDeckName : otherDeckNames) {
             Element deckElem = doc.createElement("otherDeck");
             deckElem.appendChild(doc.createTextNode(otherDeckName));
             decksElem.appendChild(deckElem);
         }
         doc.appendChild(decksElem);
-
-        // Write the XML response
         responseWriter.writeXmlResponse(doc);
     }
 
