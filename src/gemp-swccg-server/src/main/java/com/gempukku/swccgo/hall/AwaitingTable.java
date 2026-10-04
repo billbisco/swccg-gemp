@@ -23,6 +23,7 @@ public class AwaitingTable {
     private String _aiPlayerId;
     private String _aiSkill;
     private String _startedGameId;
+    private final long _createdAt = System.currentTimeMillis();
 
     private int _capacity = 2;
 
@@ -124,5 +125,9 @@ public class AwaitingTable {
 
     public String getStartedGameId() {
         return _startedGameId;
+    }
+
+    public long getCreatedAt() {
+        return _createdAt;
     }
 }

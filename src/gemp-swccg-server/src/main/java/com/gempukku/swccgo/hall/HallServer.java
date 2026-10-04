@@ -850,6 +850,7 @@ public class HallServer extends AbstractServer {
         _hallDataAccessLock.readLock().lock();
         try {
             visitor.serverTime(DateUtils.getStringDateWithHour());
+            visitor.serverTimeMs(System.currentTimeMillis());
             if (_shutdown) {
                 visitor.motd(
                         "Server is in shutdown mode. No games may be started. Server will be restarted after all games have finished.");
@@ -878,7 +879,8 @@ public class HallServer extends AbstractServer {
                         getTournamentName(table),
                         table.getLeague() != null ? null : table.getTableDesc(), players, null,
                         table.getPlayerNames().contains(player.getName()), null, hidePlayerId, _library,
-                        table.getSwccgoFormat().isPlaytesting() && !playtestingVisible, true, true);
+                        table.getSwccgoFormat().isPlaytesting() && !playtestingVisible, true, true,
+                        table.getCreatedAt());
             }
 
             // Then non-finished
@@ -913,7 +915,7 @@ public class HallServer extends AbstractServer {
                                         || (swccgGameMediator.getFormat().isPlaytesting() && !playtestingVisible)
                                         || !swccgGameMediator.isAllowSpectators(),
 
-                                swccgGameMediator.isPrivate());
+                                swccgGameMediator.isPrivate(), runningTable.getStartedAt());
                     } else {
                         finishedTables.put(runningGame.getKey(), runningTable);
                     }
@@ -947,7 +949,7 @@ public class HallServer extends AbstractServer {
                                     || (swccgGameMediator.getFormat().isPlaytesting() && !playtestingVisible)
                                     || !swccgGameMediator.isAllowSpectators(),
 
-                            swccgGameMediator.isPrivate());
+                            swccgGameMediator.isPrivate(), 0L);
                 }
             }
 

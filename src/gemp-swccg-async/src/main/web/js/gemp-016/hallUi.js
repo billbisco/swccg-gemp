@@ -275,6 +275,8 @@ var GempSwccgHallUI = Class.extend({
     deckLoadGen:0,
     joinDeckLoadGen:0,
     lastServerTime:null,
+    serverClockOffset:0,
+    AGE_REFRESH_MS:1000,
 
     init:function (div, url, chat) {
         this.div = div;
@@ -372,6 +374,10 @@ var GempSwccgHallUI = Class.extend({
         this.buttonsDiv.append(this.serverTimeDiv);
 
         this.connection = new HallConnectionIndicator(this.connectionDiv);
+        // Waiting/playing table clocks tick locally from ageAt; one interval, no extra hall polls.
+        setInterval(function () {
+            that.refreshTableAges();
+        }, this.AGE_REFRESH_MS);
         // Currency / pocket removed from primary bar (still tracked for merchant elsewhere via pocketValue)
 
         // Create-table form controls live in the Play overlay (not the always-visible strip)
@@ -916,16 +922,7 @@ var GempSwccgHallUI = Class.extend({
         this.setLeagueLibraryDeckVisible(false);
         leagueOptions.append(playerDeckBlock);
 
-        this.leagueDecksSelect.change(function () {
-            if (that.leagueDecksSelect.val()) {
-                that.leagueLibraryDecksSelect.val("");
-            }
-        });
-        this.leagueLibraryDecksSelect.change(function () {
-            if (that.leagueLibraryDecksSelect.val()) {
-                that.leagueDecksSelect.val("");
-            }
-        });
+        this.bindExclusiveDeckPair(this.leagueDecksSelect, this.leagueLibraryDecksSelect, null);
 
         this.leagueCreateButton = $("<button type='button' id='submit-league-table-button' class='table-create-button'>Create Table</button>");
         $(this.leagueCreateButton).button().click(function () {
@@ -1139,6 +1136,7 @@ var GempSwccgHallUI = Class.extend({
         this.joinOverlay.css("display", "flex");
         $("body").addClass("play-flow-open");
         this.joinPlayerDeckSelect.focus();
+        this.refreshExclusiveDeckPairHighlight(this.joinPlayerDeckSelect, this.joinLibraryDeckSelect);
         this.loadJoinDecks(pending.formatCode, pending.collectionCode, pending.requiredSide);
     },
 
@@ -1153,6 +1151,7 @@ var GempSwccgHallUI = Class.extend({
                     this.joinLibraryDeckSelect.val("");
             }
         }
+        this.refreshExclusiveDeckPairHighlight(this.joinPlayerDeckSelect, this.joinLibraryDeckSelect);
     },
 
     resolveJoinLibraryVisible:function(format, callback) {
@@ -1260,6 +1259,7 @@ var GempSwccgHallUI = Class.extend({
         } else {
             this.setJoinSubmitEnabled(true);
         }
+        this.refreshExclusiveDeckPairHighlight(playerSelect, libSelect);
     },
 
     closeJoinOverlay:function() {
@@ -1620,15 +1620,37 @@ var GempSwccgHallUI = Class.extend({
         playerSelect.change(function () {
             if (playerSelect.val())
                 librarySelect.val("");
+            that.refreshExclusiveDeckPairHighlight(playerSelect, librarySelect);
             if (typeof onChange == "function")
                 onChange();
         });
         librarySelect.change(function () {
             if (librarySelect.val())
                 playerSelect.val("");
+            that.refreshExclusiveDeckPairHighlight(playerSelect, librarySelect);
             if (typeof onChange == "function")
                 onChange();
         });
+    },
+
+    refreshExclusiveDeckPairHighlight:function(playerSelect, librarySelect) {
+        if (playerSelect == null || librarySelect == null)
+            return;
+        var playerRow = playerSelect.closest(".play-form-row");
+        var libraryRow = librarySelect.closest(".play-form-row");
+        playerRow.removeClass("play-form-row--selected play-form-row--dim");
+        libraryRow.removeClass("play-form-row--selected play-form-row--dim");
+        var playerVal = playerSelect.val();
+        var libraryVal = librarySelect.val();
+        var libraryVisible = libraryRow.length > 0 && libraryRow.is(":visible");
+        if (playerVal) {
+            playerRow.addClass("play-form-row--selected");
+            if (libraryVisible)
+                libraryRow.addClass("play-form-row--dim");
+        } else if (libraryVal && libraryVisible) {
+            libraryRow.addClass("play-form-row--selected");
+            playerRow.addClass("play-form-row--dim");
+        }
     },
 
     selectedDeckFromPair:function(playerSelect, librarySelect) {
@@ -1717,6 +1739,7 @@ var GempSwccgHallUI = Class.extend({
         this.fillDeckSelect(this.playerDeckSelect, false, null, "Choose one of your decks", true);
         this.fillDeckSelect(this.libraryDeckSelect, true, null, "Select a Library Deck", false);
         this.updateBotDeckSelects();
+        this.refreshExclusiveDeckPairHighlight(this.playerDeckSelect, this.libraryDeckSelect);
     },
 
     oppositeSide:function(side) {
@@ -1746,6 +1769,7 @@ var GempSwccgHallUI = Class.extend({
             this.botLibraryDeckSelect.val(this.botLibraryDeckSelect.find("option").eq(1).attr("value"));
             this.botPlayerDeckSelect.val("");
         }
+        this.refreshExclusiveDeckPairHighlight(this.botPlayerDeckSelect, this.botLibraryDeckSelect);
     },
 
     // Slice 1.5b — LOTR CreateLeagueTable parity: Open League Table + Join Leagues
@@ -1847,6 +1871,7 @@ var GempSwccgHallUI = Class.extend({
                 playerSelect.val("");
             }
         }
+        this.refreshExclusiveDeckPairHighlight(playerSelect, libSelect);
     },
 
     leagueUsesIssuedCards:function (xml) {
@@ -1881,6 +1906,7 @@ var GempSwccgHallUI = Class.extend({
                 }
             }
         }
+        this.refreshExclusiveDeckPairHighlight(this.leagueDecksSelect, this.leagueLibraryDecksSelect);
     },
 
     refreshLeagueDropdownAndList:function() {
@@ -2823,6 +2849,46 @@ var GempSwccgHallUI = Class.extend({
         myAudio.play();
     },
 
+    formatAge:function(ageMs) {
+        var total = Math.floor(Math.max(0, ageMs) / 1000);
+        var two = function (n) {
+            return (n < 10 ? "0" : "") + n;
+        };
+        var hours = Math.floor(total / 3600);
+        var minutes = Math.floor(total / 60) % 60;
+        var seconds = total % 60;
+        return (hours > 0 ? hours + ":" + two(minutes) : two(minutes)) + ":" + two(seconds);
+    },
+
+    formatServerEpoch:function(ms) {
+        var d = new Date(ms);
+        var two = function (n) {
+            return (n < 10 ? "0" : "") + n;
+        };
+        return d.getUTCFullYear() + "-" + two(d.getUTCMonth() + 1) + "-" + two(d.getUTCDate())
+            + " " + two(d.getUTCHours()) + ":" + two(d.getUTCMinutes()) + ":" + two(d.getUTCSeconds());
+    },
+
+    renderTableAge:function(span) {
+        var createdAt = +span.attr("data-created-at");
+        if (isNaN(createdAt))
+            return;
+        var ageMs = Date.now() + this.serverClockOffset - createdAt;
+        span.text(this.formatAge(ageMs));
+        if (span.attr("data-title-for") !== String(createdAt)) {
+            span.attr("data-title-for", createdAt);
+            var prefix = span.attr("data-age-kind") == "playing" ? "Started " : "Open since ";
+            span.attr("title", prefix + this.formatServerEpoch(createdAt) + " (server time)");
+        }
+    },
+
+    refreshTableAges:function() {
+        var that = this;
+        $(".table-age", this.tablesDiv).each(function () {
+            that.renderTableAge($(this));
+        });
+    },
+
     processHall:function (xml) {
         var that = this;
 
@@ -2847,6 +2913,10 @@ var GempSwccgHallUI = Class.extend({
             var motd = root.getAttribute("motd");
             if (motd != null)
                 $("#motd").html("<b>MOTD:</b> " + motd);
+
+            var serverTimeMs = parseInt(root.getAttribute("serverTimeMs"), 10);
+            if (!isNaN(serverTimeMs))
+                this.serverClockOffset = serverTimeMs - Date.now();
 
             var serverTime = root.getAttribute("serverTime");
             if (serverTime != null) {
@@ -2990,7 +3060,20 @@ var GempSwccgHallUI = Class.extend({
 
                     row.append("<td>" + formatName + "</td>");
                     row.append("<td>" + tournamentName + "</td>");
-                    row.append("<td>" + statusDescription + "</td>");
+                    var statusCell = $("<td></td>");
+                    if (statusDescription)
+                        statusCell.text(statusDescription);
+                    var ageAt = parseInt(table.getAttribute("ageAt"), 10);
+                    if ((status == "WAITING" || status == "PLAYING") && !isNaN(ageAt) && ageAt > 0) {
+                        if (statusDescription)
+                            statusCell.append(" ");
+                        var ageSpan = $("<span class='table-age'></span>").attr("data-created-at", ageAt);
+                        if (status == "PLAYING")
+                            ageSpan.attr("data-age-kind", "playing");
+                        statusCell.append(ageSpan);
+                        this.renderTableAge(ageSpan);
+                    }
+                    row.append(statusCell);
 
                     var playersStr = "";
                     for (var playerI = 0; playerI < players.length; playerI++) {
@@ -3104,6 +3187,7 @@ var GempSwccgHallUI = Class.extend({
             $(".count", $(".eventHeader.waitingTables")).html("(" + ($("tr", $("table.waitingTables")).length - 1) + ")");
             $(".count", $(".eventHeader.playingTables")).html("(" + ($("tr", $("table.playingTables")).length - 1) + ")");
             $(".count", $(".eventHeader.finishedTables")).html("(" + ($("tr", $("table.finishedTables")).length - 1) + ")");
+            this.refreshTableAges();
 
             var games = root.getElementsByTagName("newGame");
             for (var i=0; i<games.length; i++) {
