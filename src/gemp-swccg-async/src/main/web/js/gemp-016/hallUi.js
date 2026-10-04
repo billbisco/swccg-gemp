@@ -784,20 +784,20 @@ var GempSwccgHallUI = Class.extend({
         formatRow.append("<span class='play-form-label'>Format</span>");
         formatRow.append(this.supportedFormatsSelect);
 
-        this.botPlayerDeckRow = $("<div class='play-form-row'></div>");
+        this.botPlayerDeckRow = $("<div class='play-form-row play-form-deck-row'></div>");
         this.botPlayerDeckRow.append("<span class='play-form-label'>Bot Deck from your Decks</span>");
         this.botPlayerDeckRow.append(this.botPlayerDeckSelect);
 
-        this.botLibraryDeckRow = $("<div class='play-form-row'></div>");
+        this.botLibraryDeckRow = $("<div class='play-form-row play-form-deck-row'></div>");
         this.botLibraryDeckRow.append("<span class='play-form-label'>Bot Deck from Library</span>");
         this.botLibraryDeckRow.append(this.botLibraryDeckSelect);
 
-        this.playerDeckRow = $("<div class='play-form-row'></div>");
+        this.playerDeckRow = $("<div class='play-form-row play-form-deck-row'></div>");
         this.playerDeckLabel = $("<span class='play-form-label'>Your Deck</span>");
         this.playerDeckRow.append(this.playerDeckLabel);
         this.playerDeckRow.append(this.playerDeckSelect);
 
-        this.libraryDeckRow = $("<div class='play-form-row'></div>");
+        this.libraryDeckRow = $("<div class='play-form-row play-form-deck-row'></div>");
         this.libraryDeckLabel = $("<span class='play-form-label'>Library Deck</span>");
         this.libraryDeckRow.append(this.libraryDeckLabel);
         this.libraryDeckRow.append(this.libraryDeckSelect);
@@ -905,7 +905,7 @@ var GempSwccgHallUI = Class.extend({
 
         var playerDeckBlock = $("<div class='player-deck flex-vert'></div>");
         this.leagueDecksSelect = $("<select id='league-deck' class='player-deck-dropdown flex-fill play-form-select'></select>");
-        var leagueDeckRow = $("<div class='flex-horiz play-form-row'></div>");
+        var leagueDeckRow = $("<div class='flex-horiz play-form-row play-form-deck-row'></div>");
         leagueDeckRow.append("<div class='label-column'>Deck: </div>");
         leagueDeckRow.append(this.leagueDecksSelect);
         playerDeckBlock.append(leagueDeckRow);
@@ -913,7 +913,7 @@ var GempSwccgHallUI = Class.extend({
         // SWCCG has getLibraryDecks / sample decks — wire Select Library Deck like LOTR SelectDeck.
         // Hidden for sealed / draft / cube (issued-card leagues); shown for constructed.
         this.leagueLibraryDecksSelect = $("<select id='league-library-deck' class='library-deck-dropdown flex-fill play-form-select'></select>");
-        this.leagueLibraryRow = $("<div class='flex-horiz play-form-row'></div>");
+        this.leagueLibraryRow = $("<div class='flex-horiz play-form-row play-form-deck-row'></div>");
         this.leagueLibraryRow.append("<div class='label-column'>Library Deck: <span class='info-toggle' data-for='help-library-league' role='button' tabindex='0' title='What is this?' aria-expanded='false'>i</span></div>");
         this.leagueLibraryRow.append(this.leagueLibraryDecksSelect);
         playerDeckBlock.append(this.leagueLibraryRow);
