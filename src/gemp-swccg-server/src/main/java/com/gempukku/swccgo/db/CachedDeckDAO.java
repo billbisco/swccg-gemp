@@ -98,13 +98,11 @@ public class CachedDeckDAO implements DeckDAO, Cached {
     }
 
     @Override
-    public void updateDeckIndex(Player player, String name, String validFormats, String formatsRevision,
-            String sourceCollection) {
-        _delegate.updateDeckIndex(player, name, validFormats, formatsRevision, sourceCollection);
+    public void updateDeckIndex(Player player, String name, String formatIndex, String sourceCollection) {
+        _delegate.updateDeckIndex(player, name, formatIndex, sourceCollection);
         SwccgDeck cached = _decks.get(constructDeckKey(player, name));
         if (cached != null) {
-            cached.setValidFormats(validFormats);
-            cached.setFormatsRevision(formatsRevision);
+            cached.setFormatIndex(formatIndex);
             cached.setSourceCollection(sourceCollection);
         }
     }

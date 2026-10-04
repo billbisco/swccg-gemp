@@ -8,51 +8,107 @@ import com.gempukku.swccgo.logic.vo.SwccgDeck;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
- * Save-time index of which format codes a deck currently passes.
- * Encoded as |code|code| so substring matches cannot confuse premiere with premiere_anh.
+ * Per-format cache on a deck row: one TEXT blob of triples {@code |code:stamp:P|} or {@code |code:stamp:F|}.
+ * Stamp is the format's current rules hash. Missing code is unknown; {@code F} with a matching stamp is a known fail.
  */
 public final class DeckFormatIndex {
     public static final String DELIM = "|";
+    private static final Pattern TRIPLE = Pattern.compile("^([a-zA-Z0-9_]+):([0-9a-fA-F]{16}):([PF])$");
+
+    public static final class FormatCheck {
+        public final String code;
+        public final String stamp;
+        public final boolean passed;
+
+        public FormatCheck(String code, String stamp, boolean passed) {
+            this.code = code;
+            this.stamp = stamp;
+            this.passed = passed;
+        }
+    }
 
     private DeckFormatIndex() {
     }
 
-    public static String encode(List<String> codes) {
-        if (codes == null || codes.isEmpty()) {
+    public static Map<String, FormatCheck> decode(String encoded) {
+        Map<String, FormatCheck> result = new LinkedHashMap<String, FormatCheck>();
+        if (encoded == null || encoded.isEmpty()) {
+            return result;
+        }
+        String[] parts = encoded.split("\\|");
+        for (String part : parts) {
+            if (part == null || part.isEmpty()) {
+                continue;
+            }
+            Matcher matcher = TRIPLE.matcher(part);
+            if (!matcher.matches()) {
+                continue;
+            }
+            String code = matcher.group(1);
+            result.put(code, new FormatCheck(code, matcher.group(2).toLowerCase(), "P".equals(matcher.group(3))));
+        }
+        return result;
+    }
+
+    public static String encode(Map<String, FormatCheck> checks) {
+        if (checks == null || checks.isEmpty()) {
             return DELIM;
         }
+        List<String> codes = new ArrayList<String>(checks.keySet());
+        Collections.sort(codes);
         StringBuilder sb = new StringBuilder(DELIM);
         for (String code : codes) {
-            if (code != null && !code.isEmpty()) {
-                sb.append(code).append(DELIM);
+            FormatCheck check = checks.get(code);
+            if (check == null || check.code == null || check.stamp == null) {
+                continue;
             }
+            sb.append(check.code).append(':').append(check.stamp.toLowerCase()).append(':')
+                    .append(check.passed ? 'P' : 'F').append(DELIM);
         }
         return sb.toString();
     }
 
-    public static boolean containsFormat(String encoded, String formatCode) {
-        if (encoded == null || formatCode == null || formatCode.isEmpty()) {
-            return false;
-        }
-        return encoded.contains(DELIM + formatCode + DELIM);
+    public static String upsert(String encoded, String formatCode, String stamp, boolean passed) {
+        Map<String, FormatCheck> checks = decode(encoded);
+        checks.put(formatCode, new FormatCheck(formatCode, stamp, passed));
+        return encode(checks);
     }
 
-    public static String computeValidFormats(SwccgDeck deck, SwccgoFormatLibrary formats) {
-        List<String> codes = new ArrayList<String>();
-        for (Map.Entry<String, SwccgFormat> entry : formats.getAllFormats().entrySet()) {
-            try {
-                entry.getValue().validateDeck(deck);
-                codes.add(entry.getKey());
-            } catch (DeckInvalidException ignored) {
-            } catch (RuntimeException ignored) {
-            }
+    public static boolean needsCheck(String encoded, String formatCode, String currentStamp) {
+        if (formatCode == null || formatCode.isEmpty() || currentStamp == null || currentStamp.isEmpty()) {
+            return false;
         }
-        Collections.sort(codes);
-        return encode(codes);
+        FormatCheck check = decode(encoded).get(formatCode);
+        return check == null || !currentStamp.equalsIgnoreCase(check.stamp);
+    }
+
+    public static boolean isFreshPass(String encoded, String formatCode, String currentStamp) {
+        if (formatCode == null || formatCode.isEmpty() || currentStamp == null) {
+            return false;
+        }
+        FormatCheck check = decode(encoded).get(formatCode);
+        return check != null && currentStamp.equalsIgnoreCase(check.stamp) && check.passed;
+    }
+
+    public static boolean evaluateAndIndex(SwccgDeck deck, SwccgFormat format, String currentStamp) {
+        boolean passed;
+        try {
+            format.validateDeck(deck);
+            passed = true;
+        } catch (DeckInvalidException ignored) {
+            passed = false;
+        } catch (RuntimeException ignored) {
+            passed = false;
+        }
+        deck.setFormatIndex(upsert(deck.getFormatIndex(), format.getCode(), currentStamp, passed));
+        return passed;
     }
 
     public static boolean isConstructedCollection(String collectionCode) {

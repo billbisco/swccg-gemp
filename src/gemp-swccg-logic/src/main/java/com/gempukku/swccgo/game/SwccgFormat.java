@@ -24,6 +24,9 @@ public interface SwccgFormat {
     List<String> getRestrictedCards();
     List<String> getValidCards();
     int getRequiredDeckSize();
+    int getMinimumDeckSize();
+    int getMaximumDeckSize();
+    boolean skipsFormatPool();
     int getDefaultGameTimerMinutes();
     List<SwccgCardBlueprint> getAllCardBlueprintsValidInFormat();
 }

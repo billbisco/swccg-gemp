@@ -112,20 +112,18 @@ public class DbDeckDAO implements DeckDAO {
         }
     }
 
-    public synchronized void updateDeckIndex(Player player, String name, String validFormats, String formatsRevision,
-            String sourceCollection) {
+    public synchronized void updateDeckIndex(Player player, String name, String formatIndex, String sourceCollection) {
         ensureSchema();
         try {
             Connection connection = _dbAccess.getDataSource().getConnection();
             try {
                 PreparedStatement statement = connection.prepareStatement(
-                        "update deck set valid_formats=?, formats_revision=?, source_collection=? where player_id=? and name=?");
+                        "update deck set valid_formats=?, formats_revision=null, source_collection=? where player_id=? and name=?");
                 try {
-                    statement.setString(1, validFormats);
-                    statement.setString(2, formatsRevision);
-                    statement.setString(3, sourceCollection);
-                    statement.setInt(4, player.getId());
-                    statement.setString(5, name);
+                    statement.setString(1, formatIndex);
+                    statement.setString(2, sourceCollection);
+                    statement.setInt(3, player.getId());
+                    statement.setString(4, name);
                     statement.execute();
                 } finally {
                     statement.close();
@@ -169,14 +167,13 @@ public class DbDeckDAO implements DeckDAO {
         }
     }
 
-    private SwccgDeck deckFromRow(String name, String contents, String validFormats, String formatsRevision,
+    private SwccgDeck deckFromRow(String name, String contents, String formatIndex, String formatsRevision,
             String sourceCollection) {
         SwccgDeck deck = buildDeckFromContents(name, contents);
         if (deck == null) {
             return null;
         }
-        deck.setValidFormats(validFormats);
-        deck.setFormatsRevision(formatsRevision);
+        deck.setFormatIndex(formatIndex);
         deck.setSourceCollection(sourceCollection);
         return deck;
     }
@@ -222,8 +219,8 @@ public class DbDeckDAO implements DeckDAO {
                 statement.setInt(1, playerId);
                 statement.setString(2, name);
                 statement.setString(3, contents);
-                statement.setString(4, deck.getValidFormats());
-                statement.setString(5, deck.getFormatsRevision());
+                statement.setString(4, deck.getFormatIndex());
+                statement.setString(5, null);
                 statement.setString(6, deck.getSourceCollection());
                 statement.execute();
             } finally {
@@ -241,8 +238,8 @@ public class DbDeckDAO implements DeckDAO {
                     "update deck set contents=?, valid_formats=?, formats_revision=?, source_collection=? where player_id=? and name=?");
             try {
                 statement.setString(1, contents);
-                statement.setString(2, deck.getValidFormats());
-                statement.setString(3, deck.getFormatsRevision());
+                statement.setString(2, deck.getFormatIndex());
+                statement.setString(3, null);
                 statement.setString(4, deck.getSourceCollection());
                 statement.setInt(5, playerId);
                 statement.setString(6, name);
