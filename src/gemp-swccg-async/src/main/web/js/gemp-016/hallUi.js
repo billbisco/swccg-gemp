@@ -263,7 +263,10 @@ var GempSwccgHallUI = Class.extend({
 
     // Slice 1.1: Join table / queue deck picker overlay
     joinOverlay:null,
-    joinDecksSelect:null,
+    joinPlayerDeckSelect:null,
+    joinLibraryDeckSelect:null,
+    joinLibraryDeckRow:null,
+    _joinLibraryDeckVisible:true,
     joinSubmitButton:null,
     joinResultDiv:null,
     joinContextDiv:null,
@@ -996,12 +999,19 @@ var GempSwccgHallUI = Class.extend({
         this.joinContextDiv = $("<div class='play-subtitle join-context'></div>");
         form.append(this.joinContextDiv);
 
-        this.joinDecksSelect = $("<select class='play-form-select' style='width: 300px'></select>");
+        this.joinPlayerDeckSelect = $("<select class='play-form-select'></select>");
+        this.joinLibraryDeckSelect = $("<select class='play-form-select'></select>");
+        this.bindExclusiveDeckPair(this.joinPlayerDeckSelect, this.joinLibraryDeckSelect, null);
 
         var deckRow = $("<div class='play-form-row'></div>");
-        deckRow.append("<span class='play-form-label'>Your deck</span>");
-        deckRow.append(this.joinDecksSelect);
+        deckRow.append("<span class='play-form-label'>Your Deck</span>");
+        deckRow.append(this.joinPlayerDeckSelect);
         form.append(deckRow);
+
+        this.joinLibraryDeckRow = $("<div class='play-form-row'></div>");
+        this.joinLibraryDeckRow.append("<span class='play-form-label'>Library Deck</span>");
+        this.joinLibraryDeckRow.append(this.joinLibraryDeckSelect);
+        form.append(this.joinLibraryDeckRow);
 
         this.joinResultDiv = $("<div class='join-result warningMessage' style='display:none'></div>");
         form.append(this.joinResultDiv);
@@ -1099,13 +1109,16 @@ var GempSwccgHallUI = Class.extend({
         this.joinPending = pending;
         this.joinResultDiv.hide().empty();
         this.setJoinSubmitEnabled(false);
-        this.joinDecksSelect.empty();
+        this.setJoinLibraryVisible(true);
+        this.joinPlayerDeckSelect.empty();
+        this.joinLibraryDeckSelect.empty();
         var loading = $("<option></option>");
         loading.attr("value", "");
         loading.attr("disabled", "disabled");
         loading.attr("selected", "selected");
         loading.text("Loading decks...");
-        this.joinDecksSelect.append(loading);
+        this.joinPlayerDeckSelect.append(loading);
+        this.joinLibraryDeckSelect.append($("<option></option>").attr("value", "").text("Select a Library Deck"));
 
         var isQueue = pending.kind === "queue";
         this.joinTitleEl.text(isQueue ? "Join Queue" : "Join Table");
@@ -1125,8 +1138,39 @@ var GempSwccgHallUI = Class.extend({
 
         this.joinOverlay.css("display", "flex");
         $("body").addClass("play-flow-open");
-        this.joinDecksSelect.focus();
+        this.joinPlayerDeckSelect.focus();
         this.loadJoinDecks(pending.formatCode, pending.collectionCode, pending.requiredSide);
+    },
+
+    setJoinLibraryVisible:function(visible) {
+        this._joinLibraryDeckVisible = !!visible;
+        if (this.joinLibraryDeckRow != null) {
+            if (visible) {
+                this.joinLibraryDeckRow.show();
+            } else {
+                this.joinLibraryDeckRow.hide();
+                if (this.joinLibraryDeckSelect != null)
+                    this.joinLibraryDeckSelect.val("");
+            }
+        }
+    },
+
+    resolveJoinLibraryVisible:function(format, callback) {
+        if (this.joinPending != null && this.joinPending.kind === "queue") {
+            callback(true);
+            return;
+        }
+        if (format == null || format === "" || this.selectHasValue(this.supportedFormatsSelect, format)) {
+            callback(true);
+            return;
+        }
+        var that = this;
+        this.comm.getLeague(format, function (xml) {
+            callback(!that.leagueUsesIssuedCards(xml));
+        }, {
+            "0": function() { callback(true); },
+            "404": function() { callback(true); }
+        });
     },
 
     loadJoinDecks:function(format, collection, requiredSide) {
@@ -1140,58 +1184,80 @@ var GempSwccgHallUI = Class.extend({
                 that.showJoinError("Could not load decks. Try again.");
             }
         };
-        this.comm.getDecks(function (xml) {
+        var fetchDecks = function(showLibrary) {
             if (gen !== that.joinDeckLoadGen)
                 return;
-            that.comm.getLibraryDecks(function (xml2) {
+            that.setJoinLibraryVisible(showLibrary);
+            that.comm.getDecks(function (xml) {
                 if (gen !== that.joinDeckLoadGen)
                     return;
-                that.applyJoinDeckXml(xml, xml2, requiredSide);
+                if (!showLibrary) {
+                    that.applyJoinDeckXml(xml, null, requiredSide, false);
+                    return;
+                }
+                that.comm.getLibraryDecks(function (xml2) {
+                    if (gen !== that.joinDeckLoadGen)
+                        return;
+                    that.applyJoinDeckXml(xml, xml2, requiredSide, true);
+                }, errorMap, format, collection);
             }, errorMap, format, collection);
-        }, errorMap, format, collection);
+        };
+        this.resolveJoinLibraryVisible(format, fetchDecks);
     },
 
-    applyJoinDeckXml:function(playerXml, libraryXml, requiredSide) {
+    applyJoinDeckXml:function(playerXml, libraryXml, requiredSide, showLibrary) {
         if (this.joinOverlay == null || !this.joinOverlay.is(":visible") || this.joinPending == null) {
             return;
         }
-        this.joinDecksSelect.empty();
-        var count = 0;
+        if (showLibrary == null)
+            showLibrary = this._joinLibraryDeckVisible !== false;
+        var playerSelect = this.joinPlayerDeckSelect;
+        var libSelect = this.joinLibraryDeckSelect;
+        playerSelect.empty();
+        libSelect.empty();
+        libSelect.append($("<option></option>").attr("value", "").text("Select a Library Deck"));
+        var playerCount = 0;
+        var libCount = 0;
         if (playerXml != null) {
             var root = playerXml.documentElement;
             if (root != null && root.tagName == "decks") {
-                count += this.generateDeckRow(root.getElementsByTagName("darkDeck"), "[DARK] ", "false", "dark", this.joinDecksSelect, requiredSide);
-                count += this.generateDeckRow(root.getElementsByTagName("lightDeck"), "[LIGHT] ", "false", "light", this.joinDecksSelect, requiredSide);
-                count += this.generateDeckRow(root.getElementsByTagName("otherDeck"), "[UNKNOWN] ", "false", "other", this.joinDecksSelect, requiredSide);
+                playerCount += this.generateDeckRow(root.getElementsByTagName("darkDeck"), "[DARK] ", "false", "dark", playerSelect, requiredSide);
+                playerCount += this.generateDeckRow(root.getElementsByTagName("lightDeck"), "[LIGHT] ", "false", "light", playerSelect, requiredSide);
+                playerCount += this.generateDeckRow(root.getElementsByTagName("otherDeck"), "[UNKNOWN] ", "false", "other", playerSelect, requiredSide);
             }
         }
-        if (libraryXml != null) {
+        if (showLibrary && libraryXml != null) {
             var libRoot = libraryXml.documentElement;
             if (libRoot != null && libRoot.tagName == "decks") {
-                count += this.generateDeckRow(libRoot.getElementsByTagName("darkDeck"), "Sample: [DARK] ", "true", "dark", this.joinDecksSelect, requiredSide);
-                count += this.generateDeckRow(libRoot.getElementsByTagName("lightDeck"), "Sample: [LIGHT] ", "true", "light", this.joinDecksSelect, requiredSide);
-                count += this.generateDeckRow(libRoot.getElementsByTagName("otherDeck"), "Sample: [UNKNOWN] ", "true", "other", this.joinDecksSelect, requiredSide);
+                libCount += this.generateDeckRow(libRoot.getElementsByTagName("darkDeck"), "[DARK] ", "true", "dark", libSelect, requiredSide);
+                libCount += this.generateDeckRow(libRoot.getElementsByTagName("lightDeck"), "[LIGHT] ", "true", "light", libSelect, requiredSide);
+                libCount += this.generateDeckRow(libRoot.getElementsByTagName("otherDeck"), "[UNKNOWN] ", "true", "other", libSelect, requiredSide);
             }
         }
+        if (playerCount === 0) {
+            var emptyLabel = (requiredSide != null && requiredSide !== "") ? "No opposite-side decks found" : "You have no decks yet";
+            playerSelect.empty();
+            playerSelect.append($("<option></option>").attr("value", "").text(emptyLabel));
+        } else {
+            playerSelect.prepend($("<option></option>").attr("value", "").text("Choose one of your decks"));
+            playerSelect.val(playerSelect.find("option").eq(1).attr("value"));
+            libSelect.val("");
+        }
+        if (playerCount === 0 && showLibrary && libCount > 0)
+            libSelect.val(libSelect.find("option").eq(1).attr("value"));
+
         this.joinResultDiv.hide().empty();
-        if (count === 0) {
-            var ph = $("<option></option>");
-            ph.attr("value", "");
-            ph.attr("disabled", "disabled");
-            ph.attr("selected", "selected");
+        var total = playerCount + (showLibrary ? libCount : 0);
+        if (total === 0) {
             if (requiredSide != null && requiredSide !== "") {
-                ph.text("No opposite-side decks found");
                 this.showJoinError("No opposite-side decks found. Build or import a " +
                     requiredSide.toUpperCase() +
                     " deck legal for this event, then try again.");
             } else {
-                ph.text("No decks found");
                 this.showJoinError("No decks found for this format. Build or import a deck, then try again.");
             }
-            this.joinDecksSelect.append(ph);
             this.setJoinSubmitEnabled(false);
         } else {
-            this.joinDecksSelect.prop("selectedIndex", 0);
             this.setJoinSubmitEnabled(true);
         }
     },
@@ -1222,35 +1288,18 @@ var GempSwccgHallUI = Class.extend({
         if (this.joinPending == null) {
             return;
         }
-        var selectEl = this.joinDecksSelect[0];
-        if (selectEl == null || selectEl.selectedIndex < 0 || selectEl.options.length === 0) {
+        var picked = this.selectedDeckFromPair(this.joinPlayerDeckSelect, this.joinLibraryDeckSelect);
+        if (picked == null || picked.name == null || picked.name === "") {
             this.showJoinError("You must select a deck.");
             return;
         }
-        var deck = this.joinDecksSelect.val();
-        if (deck == null || deck === "") {
-            if (this.joinPending != null && this.joinPending.requiredSide != null) {
-                this.showJoinError("No opposite-side decks found. You must play " +
-                    this.joinPending.requiredSide.toUpperCase() + ".");
-            } else {
-                this.showJoinError("You must select a deck.");
-            }
+        if (this.joinPending.requiredSide != null && picked.side != null && picked.side !== this.joinPending.requiredSide) {
+            this.showJoinError("That deck is the wrong Force side. You must play " +
+                this.joinPending.requiredSide.toUpperCase() + ".");
             return;
         }
-        var selectedOpt = selectEl.options[selectEl.selectedIndex];
-        if (selectedOpt != null && selectedOpt.disabled) {
-            this.showJoinError("No opposite-side decks found.");
-            return;
-        }
-        if (this.joinPending != null && this.joinPending.requiredSide != null) {
-            var optSide = selectedOpt != null ? selectedOpt.getAttribute("data-side") : null;
-            if (optSide != null && optSide !== this.joinPending.requiredSide) {
-                this.showJoinError("That deck is the wrong Force side. You must play " +
-                    this.joinPending.requiredSide.toUpperCase() + ".");
-                return;
-            }
-        }
-        var sampleDeck = selectEl[selectEl.selectedIndex].getAttribute("data-sample-deck");
+        var deck = picked.name;
+        var sampleDeck = picked.sample;
         var pending = this.joinPending;
         var button = $(this.joinSubmitButton);
         if (button.hasClass("ui-button")) {
