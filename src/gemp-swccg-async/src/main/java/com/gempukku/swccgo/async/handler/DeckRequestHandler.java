@@ -232,8 +232,7 @@ public class DeckRequestHandler extends SwccgoServerRequestHandler implements Ur
             }
 
             swccgDeck.setSourceCollection(collectionType);
-            swccgDeck.setValidFormats(DeckFormatIndex.computeValidFormats(swccgDeck, _formatLibrary));
-            swccgDeck.setFormatsRevision(_formatLibrary.getFormatsRevision());
+            swccgDeck.setFormatIndex("|");
             _deckDao.saveDeckForPlayer(resourceOwner, deckName, swccgDeck);
 
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -403,9 +402,11 @@ public class DeckRequestHandler extends SwccgoServerRequestHandler implements Ur
         for (SwccgDeck deck : decks) {
             if (deck == null)
                 continue;
-            ensureDeckIndex(deckOwner, deck, true);
-            if (format != null && !format.isEmpty() && !DeckFormatIndex.containsFormat(deck.getValidFormats(), format))
-                continue;
+            if (format != null && !format.isEmpty()) {
+                ensureDeckIndex(deckOwner, deck, true, format);
+                if (!DeckFormatIndex.isFreshPass(deck.getFormatIndex(), format, _formatLibrary.stampFor(format)))
+                    continue;
+            }
             if (!collectionAllowsDeck(deck, collection, leagueCards, persistIndex, deckOwner))
                 continue;
 
@@ -424,15 +425,16 @@ public class DeckRequestHandler extends SwccgoServerRequestHandler implements Ur
         writeDeckListXml(darkDeckNames, lightDeckNames, otherDeckNames, responseWriter);
     }
 
-    private void ensureDeckIndex(Player owner, SwccgDeck deck, boolean persist) {
-        String revision = _formatLibrary.getFormatsRevision();
-        if (deck.getValidFormats() != null && revision.equals(deck.getFormatsRevision()))
+    private void ensureDeckIndex(Player owner, SwccgDeck deck, boolean persist, String formatCode) {
+        SwccgFormat format = _formatLibrary.getFormat(formatCode);
+        String stamp = _formatLibrary.stampFor(formatCode);
+        if (format == null || stamp == null)
             return;
-        String valid = DeckFormatIndex.computeValidFormats(deck, _formatLibrary);
-        deck.setValidFormats(valid);
-        deck.setFormatsRevision(revision);
+        if (!DeckFormatIndex.needsCheck(deck.getFormatIndex(), formatCode, stamp))
+            return;
+        DeckFormatIndex.evaluateAndIndex(deck, format, stamp);
         if (persist) {
-            _deckDao.updateDeckIndex(owner, deck.getDeckName(), valid, revision, deck.getSourceCollection());
+            _deckDao.updateDeckIndex(owner, deck.getDeckName(), deck.getFormatIndex(), deck.getSourceCollection());
         }
     }
 
@@ -449,8 +451,7 @@ public class DeckRequestHandler extends SwccgoServerRequestHandler implements Ur
             return false;
         if (persistTag) {
             deck.setSourceCollection(collection);
-            _deckDao.updateDeckIndex(owner, deck.getDeckName(), deck.getValidFormats(), deck.getFormatsRevision(),
-                    collection);
+            _deckDao.updateDeckIndex(owner, deck.getDeckName(), deck.getFormatIndex(), collection);
         }
         return true;
     }

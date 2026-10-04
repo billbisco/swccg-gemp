@@ -15,8 +15,7 @@ public class SwccgDeck {
     private String _deckName;
     private List<String> _cards = new ArrayList<String>();
     private List<String> _cardsOutsideDeck = new ArrayList<String>();
-    private String _validFormats;
-    private String _formatsRevision;
+    private String _formatIndex;
     private String _sourceCollection;
 
     /**
@@ -47,20 +46,12 @@ public class SwccgDeck {
         return Collections.unmodifiableList(_cardsOutsideDeck);
     }
 
-    public String getValidFormats() {
-        return _validFormats;
+    public String getFormatIndex() {
+        return _formatIndex;
     }
 
-    public void setValidFormats(String validFormats) {
-        _validFormats = validFormats;
-    }
-
-    public String getFormatsRevision() {
-        return _formatsRevision;
-    }
-
-    public void setFormatsRevision(String formatsRevision) {
-        _formatsRevision = formatsRevision;
+    public void setFormatIndex(String formatIndex) {
+        _formatIndex = formatIndex;
     }
 
     public String getSourceCollection() {

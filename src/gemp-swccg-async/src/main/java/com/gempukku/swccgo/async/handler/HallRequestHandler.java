@@ -493,8 +493,12 @@ public class HallRequestHandler extends SwccgoServerRequestHandler implements Ur
         result.append("<div id=\""+formatCssId+"-content\" class=\"format-details\" style=\"display:none;\">");
         result.append("<ul id=\""+formatCssId+"-details\" class=\"format-details\">");
 
-        Integer deckSize = swccgFormat.getRequiredDeckSize();
-        result.append("<li class=\"format-detail\"><span id=\""+formatCssId+"-format-deck-size\">Deck size:</span> <span id=\""+formatCssId+"-format-deck-size-content\" class=\"format-deck-size\">" + deckSize +"</span></li>");
+        String deckSizeLabel;
+        if (swccgFormat.getMinimumDeckSize() != swccgFormat.getMaximumDeckSize())
+            deckSizeLabel = swccgFormat.getMinimumDeckSize() + "-" + swccgFormat.getMaximumDeckSize();
+        else
+            deckSizeLabel = String.valueOf(swccgFormat.getRequiredDeckSize());
+        result.append("<li class=\"format-detail\"><span id=\""+formatCssId+"-format-deck-size\">Deck size:</span> <span id=\""+formatCssId+"-format-deck-size-content\" class=\"format-deck-size\">" + deckSizeLabel +"</span></li>");
 
         Integer defaultGameTimerMinutes = swccgFormat.getDefaultGameTimerMinutes();
         result.append("<li class=\"format-detail\"><span id=\""+formatCssId+"-format-default-game-timer-minutes\">Default Game Timer Minutes:</span> <span id=\""+formatCssId+"-format-default-game-timer-minutes-content\" class=\"format-default-game-timer-minutes\">" + defaultGameTimerMinutes +"</span></li>");
