@@ -218,6 +218,10 @@ var GempSwccgHallUI = Class.extend({
     playLeaguePanel:null,
     leagueFormatSelect:null,
     leagueDecksSelect:null,
+    leagueLibraryDecksSelect:null,
+    leagueLibraryRow:null,
+    leagueLibraryHelp:null,
+    _leagueLibraryDeckVisible:false,
     leagueCreateButton:null,
     leagueResultDiv:null,
     playLeagueNextSteps:null,
@@ -741,13 +745,16 @@ var GempSwccgHallUI = Class.extend({
         leagueDeckRow.append(this.leagueDecksSelect);
         playerDeckBlock.append(leagueDeckRow);
 
-        // SWCCG has getLibraryDecks / sample decks — wire Select Library Deck like LOTR SelectDeck
+        // SWCCG has getLibraryDecks / sample decks — wire Select Library Deck like LOTR SelectDeck.
+        // Hidden for sealed / draft / cube (issued-card leagues); shown for constructed.
         this.leagueLibraryDecksSelect = $("<select id='league-library-deck' class='library-deck-dropdown flex-fill play-form-select'></select>");
-        var leagueLibRow = $("<div class='flex-horiz play-form-row'></div>");
-        leagueLibRow.append("<div class='label-column'>Select Library Deck: <span class='info-toggle' data-for='help-library-league' role='button' tabindex='0' title='What is this?' aria-expanded='false'>i</span></div>");
-        leagueLibRow.append(this.leagueLibraryDecksSelect);
-        playerDeckBlock.append(leagueLibRow);
-        playerDeckBlock.append("<div id='help-library-league' class='info-text' style='display:none'>The Deck Library contains sample decks you can use, including starter decks, past championship decks, and more.</div>");
+        this.leagueLibraryRow = $("<div class='flex-horiz play-form-row'></div>");
+        this.leagueLibraryRow.append("<div class='label-column'>Select Library Deck: <span class='info-toggle' data-for='help-library-league' role='button' tabindex='0' title='What is this?' aria-expanded='false'>i</span></div>");
+        this.leagueLibraryRow.append(this.leagueLibraryDecksSelect);
+        playerDeckBlock.append(this.leagueLibraryRow);
+        this.leagueLibraryHelp = $("<div id='help-library-league' class='info-text' style='display:none'>The Deck Library contains sample decks you can use, including starter decks, past championship decks, and more.</div>");
+        playerDeckBlock.append(this.leagueLibraryHelp);
+        this.setLeagueLibraryDeckVisible(false);
         leagueOptions.append(playerDeckBlock);
 
         this.leagueDecksSelect.change(function () {
@@ -1327,7 +1334,8 @@ var GempSwccgHallUI = Class.extend({
             return;
         }
         var prevPlayer = this.leagueDecksSelect.val();
-        var prevLib = this.leagueLibraryDecksSelect != null ? this.leagueLibraryDecksSelect.val() : null;
+        var showLibrary = this._leagueLibraryDeckVisible;
+        var prevLib = (showLibrary && this.leagueLibraryDecksSelect != null) ? this.leagueLibraryDecksSelect.val() : null;
         var playerSelect = this.leagueDecksSelect;
         var libSelect = this.leagueLibraryDecksSelect;
         playerSelect.empty();
@@ -1350,7 +1358,7 @@ var GempSwccgHallUI = Class.extend({
                 opt.attr("data-side", side);
             }
             var label = src.text();
-            if (isSample && libSelect != null) {
+            if (isSample && libSelect != null && showLibrary) {
                 // strip "Sample: " prefix for library dropdown (LOTR uses Deck.formatDeck)
                 if (label.indexOf("Sample: ") === 0) {
                     label = label.substring(8);
@@ -1384,7 +1392,7 @@ var GempSwccgHallUI = Class.extend({
         } else if (playerCount > 0) {
             playerSelect.val(playerSelect.find("option").eq(1).attr("value"));
         }
-        if (libSelect != null && prevLib != null && prevLib !== "") {
+        if (showLibrary && libSelect != null && prevLib != null && prevLib !== "") {
             var foundL = false;
             libSelect.find("option").each(function () {
                 if ($(this).attr("value") === prevLib) {
@@ -1394,6 +1402,40 @@ var GempSwccgHallUI = Class.extend({
             if (foundL) {
                 libSelect.val(prevLib);
                 playerSelect.val("");
+            }
+        }
+    },
+
+    leagueUsesIssuedCards:function (xml) {
+        var root = xml && xml.documentElement;
+        if (root == null || root.tagName != "league") {
+            return true;
+        }
+        if (root.getAttribute("isSoloDraft") == "true") {
+            return true;
+        }
+        var series = root.getElementsByTagName("serie");
+        for (var si = 0; si < series.length; si++) {
+            if (series[si].getAttribute("limited") == "true") {
+                return true;
+            }
+        }
+        return false;
+    },
+
+    setLeagueLibraryDeckVisible:function (visible) {
+        this._leagueLibraryDeckVisible = !!visible;
+        if (this.leagueLibraryRow != null) {
+            if (visible) {
+                this.leagueLibraryRow.show();
+            } else {
+                this.leagueLibraryRow.hide();
+                if (this.leagueLibraryDecksSelect != null) {
+                    this.leagueLibraryDecksSelect.val("");
+                }
+                if (this.leagueLibraryHelp != null) {
+                    this.leagueLibraryHelp.hide();
+                }
             }
         }
     },
@@ -1681,7 +1723,8 @@ var GempSwccgHallUI = Class.extend({
         }
         var deck = null;
         var sampleDeck = "false";
-        var libVal = (this.leagueLibraryDecksSelect != null) ? this.leagueLibraryDecksSelect.val() : null;
+        var libVal = (this._leagueLibraryDeckVisible && this.leagueLibraryDecksSelect != null)
+            ? this.leagueLibraryDecksSelect.val() : null;
         if (libVal != null && libVal !== "") {
             deck = libVal;
             sampleDeck = "true";
@@ -2017,7 +2060,8 @@ var GempSwccgHallUI = Class.extend({
 
     // Fetches player + library decks into decksSelect (GET /deck/list + library).
     // Optional format/collection query params filter on the server (cached valid_formats).
-    updateDecks:function (format, collection) {
+    // skipLibrary: sealed / draft / cube league tables do not offer sample decks.
+    updateDecks:function (format, collection, skipLibrary) {
         var that = this;
         var gen = (this.deckLoadGen || 0) + 1;
         this.deckLoadGen = gen;
@@ -2028,6 +2072,13 @@ var GempSwccgHallUI = Class.extend({
             if (gen !== that.deckLoadGen)
                 return;
             that.processDecks(xml);
+            if (skipLibrary) {
+                if (that.playLeaguePanel != null && that.playLeaguePanel.is(":visible")) {
+                    that.syncLeagueDecksFromCreateSelect();
+                }
+                that.updateAiDecksForSelection();
+                return;
+            }
             that.comm.getLibraryDecks(function (xml2) {
                 if (gen !== that.deckLoadGen)
                     return;
@@ -2072,17 +2123,25 @@ var GempSwccgHallUI = Class.extend({
         }
         var type = this.leagueFormatSelect.val();
         if (type == null || type === "") {
+            this.setLeagueLibraryDeckVisible(false);
             this.syncLeagueDecksFromCreateSelect();
             return;
         }
         this.comm.getLeague(type, function (xml) {
+            var issued = that.leagueUsesIssuedCards(xml);
+            that.setLeagueLibraryDeckVisible(!issued);
             var serie = that.currentSerieFromLeagueXml(xml);
             var format = serie != null ? serie.getAttribute("formatType") : null;
             var collection = serie != null ? serie.getAttribute("collectionType") : null;
-            that.updateDecks(format, collection);
+            that.updateDecks(format, collection, issued);
         }, {
             "0": function () {
-                that.updateDecks();
+                that.setLeagueLibraryDeckVisible(false);
+                that.updateDecks(null, null, true);
+            },
+            "404": function () {
+                that.setLeagueLibraryDeckVisible(false);
+                that.updateDecks(null, null, true);
             }
         });
     },
