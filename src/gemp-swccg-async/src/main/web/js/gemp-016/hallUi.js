@@ -1000,12 +1000,12 @@ var GempSwccgHallUI = Class.extend({
         this.joinLibraryDeckSelect = $("<select class='play-form-select'></select>");
         this.bindExclusiveDeckPair(this.joinPlayerDeckSelect, this.joinLibraryDeckSelect, null);
 
-        var deckRow = $("<div class='play-form-row'></div>");
+        var deckRow = $("<div class='play-form-row play-form-deck-row'></div>");
         deckRow.append("<span class='play-form-label'>Your Deck</span>");
         deckRow.append(this.joinPlayerDeckSelect);
         form.append(deckRow);
 
-        this.joinLibraryDeckRow = $("<div class='play-form-row'></div>");
+        this.joinLibraryDeckRow = $("<div class='play-form-row play-form-deck-row'></div>");
         this.joinLibraryDeckRow.append("<span class='play-form-label'>Library Deck</span>");
         this.joinLibraryDeckRow.append(this.joinLibraryDeckSelect);
         form.append(this.joinLibraryDeckRow);
