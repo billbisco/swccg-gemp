@@ -78,12 +78,17 @@ public class HallCommunicationChannel implements LongPollableResource {
                     }
 
                     @Override
+                    public void serverTimeMs(long serverTimeMs) {
+                        hallChannelVisitor.serverTimeMs(serverTimeMs);
+                    }
+
+                    @Override
                     public void motd(String motd) {
                         newMotd.setValue(motd);
                     }
 
                     @Override
-                    public void visitTable(String tableId, String gameId, boolean watchable, TableStatus status, String statusDescription, String formatName, String formatCode, String collectionCode, String tournamentName, String tableDesc, List<SwccgGameParticipant> players, Map<String, String> deckArchetypeMap, boolean playing, String winner, boolean hidePlayerId, SwccgCardBlueprintLibrary library, boolean hideDesc, boolean hideDecks, boolean hideWinner) {
+                    public void visitTable(String tableId, String gameId, boolean watchable, TableStatus status, String statusDescription, String formatName, String formatCode, String collectionCode, String tournamentName, String tableDesc, List<SwccgGameParticipant> players, Map<String, String> deckArchetypeMap, boolean playing, String winner, boolean hidePlayerId, SwccgCardBlueprintLibrary library, boolean hideDesc, boolean hideDecks, boolean hideWinner, long ageAt) {
 
                         List<String> playerInfo = new LinkedList<String>();
 
@@ -119,6 +124,8 @@ public class HallCommunicationChannel implements LongPollableResource {
                         props.put("playing", String.valueOf(playing));
                         if (winner != null)
                             props.put("winner", hideWinner?"":winner);
+                        if (ageAt > 0)
+                            props.put("ageAt", String.valueOf(ageAt));
 
                         tablesOnServer.put(tableId, props);
                     }

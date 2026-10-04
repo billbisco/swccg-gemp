@@ -249,7 +249,7 @@ public class SwccgGameMediator {
         final Phase currentPhase = _swccgoGame.getGameState().getCurrentPhase();
         if (currentPhase == Phase.PLAY_STARTING_CARDS)
             return "Preparation";
-        return "Life Force: " + getPlayerLifeForce();
+        return "Force: " + getPlayerLifeForce();
     }
 
     public boolean isFinished() {

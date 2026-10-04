@@ -11,6 +11,7 @@ public class RunningTable {
     private String _tableDesc;
     private League _league;
     private LeagueSeriesData _leagueSerie;
+    private final long _startedAt = System.currentTimeMillis();
 
     public RunningTable(SwccgGameMediator swccgGameMediator, String formatName, String tournamentName, String tableDesc, League league, LeagueSeriesData leagueSerie) {
         _swccgGameMediator = swccgGameMediator;
@@ -43,5 +44,9 @@ public class RunningTable {
 
     public LeagueSeriesData getLeagueSerie() {
         return _leagueSerie;
+    }
+
+    public long getStartedAt() {
+        return _startedAt;
     }
 }

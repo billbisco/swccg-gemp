@@ -916,6 +916,11 @@ public class HallRequestHandler extends SwccgoServerRequestHandler implements Ur
         }
 
         @Override
+        public void serverTimeMs(long serverTimeMs) {
+            _hall.setAttribute("serverTimeMs", String.valueOf(serverTimeMs));
+        }
+
+        @Override
         public void motdChanged(String motd) {
             _hall.setAttribute("motd", motd);
         }

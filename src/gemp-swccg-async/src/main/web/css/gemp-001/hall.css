@@ -764,6 +764,23 @@ body.play-flow-open {
     gap: 8px;
 }
 
+.play-form-row--selected {
+    outline: 3px solid #d4af37;
+    outline-offset: 2px;
+    background-color: rgba(212, 175, 55, 0.18);
+    border-radius: 4px;
+}
+
+.play-form-row--dim {
+    opacity: 0.42;
+}
+
+.table-age {
+    color: #bbbbbb;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
 .play-form-label {
     min-width: 190px;
     font-weight: bold;
