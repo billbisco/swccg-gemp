@@ -134,7 +134,79 @@ var GempSwccgSoloDraftUI = Class.extend({
         };
         this.infoDialog.swipe(swipeOptions);
 
+        this.bindEventDeckbuilderLink();
         this.getDraftState();
+    },
+
+    eventDeckbuilderHref:function (xml) {
+        // Same URL as hallUi "Open the deck builder": collection from the first limited serie, product=all.
+        var collectionCode = null;
+        var root = xml && xml.documentElement;
+        if (root != null && root.tagName == "league") {
+            var series = root.getElementsByTagName("serie");
+            for (var si = 0; si < series.length; si++) {
+                if (series[si].getAttribute("limited") == "true") {
+                    var ct = series[si].getAttribute("collectionType");
+                    if (ct) {
+                        collectionCode = ct;
+                        break;
+                    }
+                }
+            }
+            if (!collectionCode && series.length > 0) {
+                collectionCode = series[0].getAttribute("collectionType");
+            }
+        }
+        if (!collectionCode) {
+            collectionCode = this.leagueType;
+        }
+        if (collectionCode) {
+            return "deckBuild.html?collection=" + encodeURIComponent(collectionCode)
+                + "&product=" + encodeURIComponent("all");
+        }
+        return "deckBuild.html?product=" + encodeURIComponent("all");
+    },
+
+    bindEventDeckbuilderLink:function () {
+        var that = this;
+        var button = $("#deckbuilderButton");
+        if (button.length == 0) {
+            return;
+        }
+        this._deckbuilderHrefReady = false;
+        this._pendingDeckbuilderOpen = false;
+        var fallback = this.eventDeckbuilderHref(null);
+        button.attr("href", fallback);
+        if (!this.leagueType) {
+            this._deckbuilderHrefReady = true;
+            return;
+        }
+        var markReady = function (href) {
+            button.attr("href", href);
+            that._deckbuilderHrefReady = true;
+            if (that._pendingDeckbuilderOpen) {
+                that._pendingDeckbuilderOpen = false;
+                window.location.href = href;
+            }
+        };
+        this.comm.getLeague(this.leagueType, function (xml) {
+            markReady(that.eventDeckbuilderHref(xml) || fallback);
+        }, {
+            "0": function () {
+                markReady(fallback);
+            },
+            "404": function () {
+                markReady(fallback);
+            }
+        });
+        button.unbind("click.eventDeck").bind("click.eventDeck", function (event) {
+            if (that._deckbuilderHrefReady) {
+                return true;
+            }
+            event.preventDefault();
+            that._pendingDeckbuilderOpen = true;
+            return false;
+        });
     },
 
     normalizeSide:function (side) {
