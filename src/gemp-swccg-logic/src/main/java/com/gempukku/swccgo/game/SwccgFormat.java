@@ -12,6 +12,7 @@ public interface SwccgFormat {
     boolean hasJpSealedRule();
     boolean isPlaytesting();
     String getName();
+    String getCode();
     void validateCard(String cardId, boolean skipIfNotExists) throws DeckInvalidException;
     void validateDeck(SwccgDeck deck) throws DeckInvalidException;
     List<Integer> getValidSets();
