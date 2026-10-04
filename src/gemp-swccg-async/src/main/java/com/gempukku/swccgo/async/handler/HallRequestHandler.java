@@ -326,12 +326,6 @@ public class HallRequestHandler extends SwccgoServerRequestHandler implements Ur
                     ? true
                     : Boolean.valueOf(aiDeckSampleVal);
 
-            //if they tried creating a private game while they are disabled, let them know instead of creating the table
-            if(isPrivate&&!_hallServer.privateGamesAllowed()) {
-                    responseWriter.writeXmlResponse(marshalException(new HallException("Private games are currently disabled")));
-                    return;
-            }
-
             String tableDesc = getFormParameterSafely(postDecoder, "tableDesc");
 
             Player resourceOwner = getResourceOwnerSafely(request, participantId);

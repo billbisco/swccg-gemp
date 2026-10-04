@@ -231,6 +231,8 @@ var GempSwccgHallUI = Class.extend({
     playOverlay:null,
     playSelectionPanel:null,
     playFormPanel:null,
+    playBotPanel:null,
+    playBotFieldsHost:null,
     playFormTitle:null,
     playFormFields:null,
     playCasualChoice:null,
@@ -382,7 +384,7 @@ var GempSwccgHallUI = Class.extend({
         });
         this.createTableButton.hide();
 
-        this.isPrivateCheckbox = $("<label class='play-private-label'><input type='checkbox' id='isPrivateCheckbox1'> Private Mode</input></label>");
+        this.isPrivateCheckbox = $("<label class='play-private-label'><input type='checkbox' id='isPrivateCheckbox1'> Private Mode</label>");
 
         this.decksSelect = $("<select class='play-form-select' style='width: 300px'></select>");
         this.decksSelect.hide();
@@ -431,14 +433,14 @@ var GempSwccgHallUI = Class.extend({
             $.cookie("unranked-table-last-timer", that.timerSelect.val(), { expires:365 });
         });
 
-        this.isInviteOnlyCheckbox = $("<label class='play-private-label'><input type='checkbox' id='isInviteOnlyCheckbox'> Invite Only</input></label>");
+        this.isInviteOnlyCheckbox = $("<label class='play-private-label'><input type='checkbox' id='isInviteOnlyCheckbox'> Invite Only</label>");
         this.inviteeInput = $("<input id='inviteeInput' class='play-form-input' type='text' maxlength='50' placeholder='Player to invite'>");
         this.isInviteOnlyCheckbox.find("input").change(function () {
             that.syncInviteeRowVisibility();
         });
 
-        this.keepOpenCheckbox = $("<label class='play-private-label'><input type='checkbox' id='keepWindowOpenCheckbox'> Keep this Window Open</input></label>");
-        this.defaultFlowCheckbox = $("<label class='play-private-label'><input type='checkbox' id='defaultFlowCheckbox'> Open this Flow by Default</input></label>");
+        this.keepOpenCheckbox = $("<label class='play-private-label'><input type='checkbox' id='keepWindowOpenCheckbox'> Keep this Window Open</label>");
+        this.defaultFlowCheckbox = $("<label class='play-private-label'><input type='checkbox' id='defaultFlowCheckbox'> Open this Flow by Default</label>");
         this.defaultFlowCheckbox.find("input").change(function () {
             if (this.checked) {
                 $.cookie("play-default-flow", that.playMode, { expires:365 });
@@ -713,6 +715,7 @@ var GempSwccgHallUI = Class.extend({
         this.playBackButton = $("<button type='button' id='create-table-back-button' class='play-back-button'>&lt; Back</button>");
         this.playBackButton.click(function () {
             if (that.playFormPanel.is(":visible")
+                    || (that.playBotPanel != null && that.playBotPanel.is(":visible"))
                     || (that.playTournamentPanel != null && that.playTournamentPanel.is(":visible"))
                     || (that.playLeaguePanel != null && that.playLeaguePanel.is(":visible"))) {
                 that.showPlaySelection();
@@ -746,9 +749,23 @@ var GempSwccgHallUI = Class.extend({
         this.playSelectionPanel.append(this.playTournamentChoice);
         panel.append(this.playSelectionPanel);
 
-        this.playFormPanel = $("<div id='create-table-form' class='table-form' style='display:none'></div>");
-        this.playFormTitle = $("<h2 class='play-form-heading'>Open Casual Table</h2>");
+        this.playFormPanel = $("<div id='create-unranked-table' class='table-form' style='display:none'></div>");
+        this.playFormTitle = $("<h1 class='play-form-heading'>Open Casual Table</h1>");
         this.playFormPanel.append(this.playFormTitle);
+
+        this.playBotPanel = $("<div id='create-bot-table' class='table-form' style='display:none'></div>");
+        this.playBotPanel.append("<h1 class='play-form-heading'>Open Bot Table</h1>");
+        var botBlurb = $("<div class='flex-vert table-blurb'></div>");
+        botBlurb.append(document.createTextNode("Welcome to the future! Here you may open a match against a computer opponent. This is an experimental feature, and so can go wrong in many ways."));
+        botBlurb.append(document.createTextNode(" Remember:"));
+        var botList = $("<ul></ul>");
+        botList.append("<li>Bots will concede if they get confused or have an error.</li>");
+        botList.append("<li>Bots will sometimes make dumb decisions that a human never would.</li>");
+        botBlurb.append(botList);
+        botBlurb.append(document.createTextNode("Please report a bug for any matches where you encounter a crash or other concession by the bot. Don't bother reporting bad gameplay; we already know they are dumb. :)"));
+        this.playBotPanel.append(botBlurb);
+        this.playBotFieldsHost = $("<div id='bot-table-options' class='inner-table-form'></div>");
+        this.playBotPanel.append(this.playBotFieldsHost);
 
         this.playFormFields = $("<div class='inner-table-form'></div>");
 
@@ -792,6 +809,8 @@ var GempSwccgHallUI = Class.extend({
 
         this.privateRow = $("<div class='play-form-row play-form-row-check'></div>");
         this.privateRow.append(this.isPrivateCheckbox);
+        this.privateRow.append("<span class='info-toggle' data-for='help-unranked-private' role='button' tabindex='0' title='What is this?' aria-expanded='false'>i</span>");
+        this.privateHelp = $("<div id='help-unranked-private' class='info-text' style='display:none'>If checked, nobody can join your game to watch from the sidelines (except administrators).</div>");
 
         var keepOpenRow = $("<div class='play-form-row play-form-row-check'></div>");
         keepOpenRow.append(this.keepOpenCheckbox);
@@ -815,6 +834,7 @@ var GempSwccgHallUI = Class.extend({
         this.playFormFields.append(this.inviteRow);
         this.playFormFields.append(this.inviteeRow);
         this.playFormFields.append(this.privateRow);
+        this.playFormFields.append(this.privateHelp);
         this.playFormFields.append(keepOpenRow);
         this.playFormFields.append(defaultFlowRow);
         this.playFormFields.append(this.playFormResult);
@@ -845,6 +865,7 @@ var GempSwccgHallUI = Class.extend({
         this.playFormPanel.append(this.playLeagueEmpty);
 
         panel.append(this.playFormPanel);
+        panel.append(this.playBotPanel);
 
         // Slice 1.5b: LOTR CreateLeagueTable parity (hall.html #create-league-table + tables.css)
         this.playLeaguePanel = $("<div id='create-league-table' class='table-form play-league-panel-root flex-vert' style='display:none'></div>");
@@ -925,6 +946,8 @@ var GempSwccgHallUI = Class.extend({
         this.playLeaguePanel.append(playLeagueInner);
 
         this.bindLeagueInfoToggles(this.playLeaguePanel);
+        this.bindLeagueInfoToggles(this.playFormFields);
+        this.bindLeagueInfoToggles(this.playBotPanel);
 
         panel.append(this.playLeaguePanel);
 
@@ -1286,7 +1309,7 @@ var GempSwccgHallUI = Class.extend({
             return;
         }
         var flow = $.cookie("play-default-flow");
-        if (flow === "ai" && this.aiTablesEnabled) {
+        if (flow === "ai") {
             this.showPlayForm("ai");
         } else if (flow === "casual") {
             this.showPlayForm("casual");
@@ -1305,6 +1328,9 @@ var GempSwccgHallUI = Class.extend({
         this.playOverlay.hide();
         $("body").removeClass("play-flow-open");
         this.playMode = null;
+        if (this.playBotPanel != null) {
+            this.playBotPanel.hide();
+        }
         if (this.playTournamentPanel != null) {
             this.playTournamentPanel.hide();
         }
@@ -1358,6 +1384,9 @@ var GempSwccgHallUI = Class.extend({
     showPlaySelection:function() {
         this.playMode = null;
         this.playFormPanel.hide();
+        if (this.playBotPanel != null) {
+            this.playBotPanel.hide();
+        }
         if (this.playTournamentPanel != null) {
             this.playTournamentPanel.hide();
         }
@@ -1365,25 +1394,33 @@ var GempSwccgHallUI = Class.extend({
             this.playLeaguePanel.hide();
         }
         this.playOverlay.removeClass("play-flow-league");
+        this.parkPlayFormFields();
         this.playSelectionPanel.show();
         this.setPlayFlowTitle(null);
         this.playBackButton.html("&lt; Back");
-        // AI choice visibility follows server flag
-        if (this.aiTablesEnabled) {
+        // LOTR always offers Play Against Bots as the first Create Table option.
+        if (this.playAiChoice != null) {
             this.playAiChoice.show();
-        } else {
-            this.playAiChoice.hide();
         }
+    },
+
+    parkPlayFormFields:function() {
+        if (this.playFormFields != null && this.playFormPanel != null)
+            this.playFormPanel.append(this.playFormFields);
     },
 
     showTournamentInfo:function() {
         this.playMode = "tournament";
         this.playSelectionPanel.hide();
         this.playFormPanel.hide();
+        if (this.playBotPanel != null) {
+            this.playBotPanel.hide();
+        }
         if (this.playLeaguePanel != null) {
             this.playLeaguePanel.hide();
         }
         this.playOverlay.removeClass("play-flow-league");
+        this.parkPlayFormFields();
         this.setPlayFlowTitle("Tournament");
         this.playTournamentPanel.show();
     },
@@ -1403,28 +1440,31 @@ var GempSwccgHallUI = Class.extend({
             this.playLeaguePanel.hide();
         }
         this.playOverlay.removeClass("play-flow-league");
-        this.playFormPanel.show();
+
+        if (this.playLeagueEmpty != null) {
+            this.playLeagueEmpty.hide();
+        }
+        this.playFormFields.show();
 
         if (mode === "ai") {
-            this.setPlayFlowTitle("Bots");
-            this.playFormTitle.text("Play Against Bots (Beta)");
+            this.setPlayFlowTitle("Bot");
             this.opponentSelect.val("ai");
             if (this.libraryDeckLabel)
                 this.libraryDeckLabel.text("Your Deck from Library");
-            if (this.playLeagueEmpty != null) {
-                this.playLeagueEmpty.hide();
-            }
-            this.playFormFields.show();
+            this.playFormPanel.hide();
+            if (this.playBotFieldsHost != null)
+                this.playBotFieldsHost.append(this.playFormFields);
+            this.playBotPanel.show();
         } else {
             this.setPlayFlowTitle("Casual");
             this.playFormTitle.text("Open Casual Table");
             this.opponentSelect.val("human");
             if (this.libraryDeckLabel)
                 this.libraryDeckLabel.text("Library Deck");
-            if (this.playLeagueEmpty != null) {
-                this.playLeagueEmpty.hide();
-            }
-            this.playFormFields.show();
+            if (this.playBotPanel != null)
+                this.playBotPanel.hide();
+            this.playFormPanel.append(this.playFormFields);
+            this.playFormPanel.show();
         }
 
         this.applyCasualBotFieldVisibility();
@@ -1446,7 +1486,7 @@ var GempSwccgHallUI = Class.extend({
     applyCasualBotFieldVisibility:function() {
         var ai = this.playMode === "ai";
         if (this.aiControlsDiv) {
-            if (ai && this.aiTablesEnabled)
+            if (ai)
                 this.aiControlsDiv.show();
             else
                 this.aiControlsDiv.hide();
@@ -1462,10 +1502,14 @@ var GempSwccgHallUI = Class.extend({
         if (this.inviteRow)
             ai ? this.inviteRow.hide() : this.inviteRow.show();
         if (this.privateRow) {
-            if (ai || !this.privateGamesAllowed)
+            if (ai)
                 this.privateRow.hide();
             else
                 this.privateRow.show();
+        }
+        if (this.privateHelp) {
+            if (ai)
+                this.privateHelp.hide();
         }
         this.syncInviteeRowVisibility();
     },
@@ -1658,9 +1702,13 @@ var GempSwccgHallUI = Class.extend({
         this.playMode = "league";
         this.playSelectionPanel.hide();
         this.playFormPanel.hide();
+        if (this.playBotPanel != null) {
+            this.playBotPanel.hide();
+        }
         if (this.playTournamentPanel != null) {
             this.playTournamentPanel.hide();
         }
+        this.parkPlayFormFields();
         this.playOverlay.addClass("play-flow-league");
         this.setPlayFlowTitle("League");
         if (this.playLeagueNextSteps != null) {
@@ -2608,7 +2656,7 @@ var GempSwccgHallUI = Class.extend({
         if (this.createTableButton == null || this.opponentSelect == null) {
             return false;
         }
-        var label = this.opponentSelect.val() === "ai" ? "Start Bot Game" : "Create table";
+        var label = "Create Table";
         var button = $(this.createTableButton);
         var currentLabel = button.hasClass("ui-button") ? button.button("option", "label") : button.text();
         if (currentLabel === label) {
@@ -2636,28 +2684,16 @@ var GempSwccgHallUI = Class.extend({
         this.aiTablesEnabled = enabled;
 
         var aiOption = this.opponentSelect.find("option[value='ai']");
+        // LOTR always shows Play Against Bots as the first Create Table option.
+        if (this.playAiChoice != null) {
+            this.playAiChoice.show();
+        }
         if (enabled) {
-            // opponentSelect stays hidden; Play submenu chooses AI vs Casual
             if (aiOption.length === 0) {
                 this.opponentSelect.append("<option value='ai'>vs Bot</option>");
             }
-            if (this.playAiChoice != null) {
-                this.playAiChoice.show();
-            }
-        } else {
-            if (aiOption.length > 0) {
-                aiOption.remove();
-            }
-            if (this.opponentSelect.val() === "ai") {
-                this.opponentSelect.val("human");
-            }
-            this.aiControlsDiv.hide();
-            if (this.playAiChoice != null) {
-                this.playAiChoice.hide();
-            }
-            if (this.playMode === "ai") {
-                this.showPlaySelection();
-            }
+        } else if (aiOption.length > 0 && this.playMode !== "ai") {
+            aiOption.remove();
         }
         this.updateAiDecksForSelection();
     },
@@ -2686,10 +2722,6 @@ var GempSwccgHallUI = Class.extend({
 
             var privateGamesEnabled = root.getAttribute("privateGamesEnabledBoolean");
             this.privateGamesAllowed = (privateGamesEnabled == "true");
-            if (!this.privateGamesAllowed) {
-               if(document.getElementById('isPrivateCheckbox1')!=null)
-                   document.getElementById('isPrivateCheckbox1').checked = false;
-            }
             this.applyCasualBotFieldVisibility();
 
             var aiTablesEnabled = root.getAttribute("aiTablesEnabledBoolean");
