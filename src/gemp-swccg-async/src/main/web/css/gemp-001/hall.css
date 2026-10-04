@@ -592,6 +592,10 @@ button.hall-play-button-play:focus,
     margin-bottom: 6px;
 }
 
+.join-table-form .play-form-deck-row + .play-form-deck-row {
+    margin-top: 16px;
+}
+
 body.play-flow-open {
     overflow: hidden;
 }
