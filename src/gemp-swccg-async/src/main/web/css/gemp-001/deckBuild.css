@@ -10,6 +10,10 @@ body {
     opacity: 0.2;
 }
 
+body.foil-none .foilOverlay {
+    display: none !important;
+}
+
 .testingTextOverlay {
     width: inherit;
     background-color: #ffff00;

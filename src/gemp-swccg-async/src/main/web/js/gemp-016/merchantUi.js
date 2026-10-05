@@ -22,6 +22,9 @@ var GempSwccgMerchantUI = Class.extend({
     init:function (cardListElem, cardFilterElem) {
         var that = this;
 
+        if (typeof Card !== "undefined" && Card.applyFoilPresentation)
+            Card.applyFoilPresentation();
+
         this.comm = new GempSwccgCommunication("/gemp-swccg-server", that.processError);
 
         this.cardFilter = new CardFilter(cardFilterElem, cardFilterElem,

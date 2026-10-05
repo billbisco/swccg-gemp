@@ -51,6 +51,9 @@ var GempSwccgDeckBuildingUI = Class.extend({
     init:function () {
         var that = this;
 
+        if (typeof Card !== "undefined" && Card.applyFoilPresentation)
+            Card.applyFoilPresentation();
+
         this.comm = new GempSwccgCommunication("/gemp-swccg-server", that.processError);
 
         this.collectionType = "default";

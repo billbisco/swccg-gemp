@@ -120,6 +120,19 @@ var GempSwccgGameUI = Class.extend({
     settingsMimicDecisionDelayEnabled: false,
     settingsMimicDecisionDelayTime: 1,
     settingsCardActionsSilent: false,
+    animationSpeedValue: 0,
+
+    timerAudioMuted: false,
+    timerMuteToggle: null,
+    timerAlertRules: [{below: 600, every: 30}, {below: 300, every: 10}, {below: 60, every: 1}],
+    timerLastTickSeconds: null,
+    decisionTime: 0,
+    totalTime: 0,
+    decisionLimit: 0,
+    lastClockValues: {},
+    gameEnded: false,
+    countdownIntervalId: 0,
+    decisionLastRemaining: null,
 
     windowWidth: null,
     windowHeight: null,
@@ -467,8 +480,10 @@ var GempSwccgGameUI = Class.extend({
             this.gameStateElem.append("<div class='player'>" + (i + 1) + ". " + this.allPlayerIds[i] + "<div id='clock" + i + "' class='clock'></div><div class='phase'></div>"
                 + "<div class='playerStats'><div id='hand" + i + "' class='" + handClass + "'></div><div id='sabaccHand" + i + "' class='" + sabaccHandClass + "'></div><div id='showStats" + i + "' class='showStats'></div><div id='outOfPlay" + i + "' class='" + outOfPlayClass + "'></div><div id='forceGeneration" + i + "' class='" + forceGenerationClass + "'></div><div id='politicsTotal" + i + "' class='" + politicsTotalClass + "'></div><div id='raceTotal" + i + "' class='" + raceTotalClass + "'></div></div></div>");
         }
+        this.gameStateElem.append("<div id='clock-1' class='decisionClock'></div>");
 
         $("#main").append(this.gameStateElem);
+        this.initializeTimerUI();
 
         //        for (var i = 0; i < this.allPlayerIds.length; i++) {
         //            var showBut = $("<div class='slimButton'>+</div>").button().click(
@@ -834,6 +849,7 @@ var GempSwccgGameUI = Class.extend({
 
     addBottomLeftTabPane: function () {
         var that = this;
+        this.loadTimerSettings();
         var tabsLabels = "<li><a href='#chatBox' class='slimTab'>Chat</a></li>";
         var tabsBodies = "<div id='chatBox' class='slimPanel'></div>";
 
@@ -846,9 +862,7 @@ var GempSwccgGameUI = Class.extend({
             tabsBodies += "<div id='playersInRoomBox' class='slimPanel'></div>";
         }
         
-        if(!this.autoZoom.isTouchDevice) {
-            tabsLabels += "<li id='auto-zoom-li'></li>";
-        }
+        tabsLabels += "<li id='auto-zoom-li'></li>";
         
         var tabsStr = "<div id='bottomLeftTabs' style='border-radius: 0px'><ul>" + tabsLabels + "</ul>" + tabsBodies + "</div>";
 
@@ -860,6 +874,8 @@ var GempSwccgGameUI = Class.extend({
             $("<span>Auto-zoom: </span>").appendTo("#auto-zoom-li");
             this.autoZoom.autoZoomToggle.appendTo("#auto-zoom-li");
         }
+        $("<span class='timer-control'> Timer: </span>").appendTo("#auto-zoom-li");
+        $("<button type='button' id='timer-mute-toggle' class='timer-control' title='Mute timer sounds'>Mute timer sounds</button>").appendTo("#auto-zoom-li");
 
         this.chatBoxDiv = $("#chatBox");
 
@@ -907,6 +923,42 @@ var GempSwccgGameUI = Class.extend({
         $("#settingsBox").append(backgroundSettingsToAppend);
         gameBackgroundSettingChange();
 
+        var foilSettings = "<label for='foilPresentation'>Foil presentation: </label><select id='foilPresentation'>";
+        foilSettings += "<option value='static'>Static layer</option>";
+        foilSettings += "<option value='animated'>Animated layer</option>";
+        foilSettings += "<option value='none'>None</option></select><br /><br />";
+        $("#settingsBox").append(foilSettings);
+        $("#foilPresentation").val(Card.getFoilPresentation());
+        Card.applyFoilPresentation();
+        $("#foilPresentation").bind("change", function () {
+            saveToCookie("foilPresentation", "" + $("#foilPresentation").val());
+            Card.applyFoilPresentation();
+            that.persistGameSettings();
+        });
+
+        $("#settingsBox").append("<div class='setting-row'><label for='animation-slider'>Animation speed</label><div id='animation-slider'></div></div>");
+        var animSpeed = parseInt(loadFromCookie("animation-speed", "0"), 10);
+        if (isNaN(animSpeed))
+            animSpeed = 0;
+        that.animationSpeedValue = animSpeed;
+        that.animations.replaySpeed = Math.pow(2, -1 * animSpeed);
+        $("#animation-slider").slider({
+            min: -4,
+            max: 4,
+            range: "min",
+            value: animSpeed,
+            slide: function (event, ui) {
+                that.animationSpeedValue = ui.value;
+                that.animations.replaySpeed = Math.pow(2, -1 * ui.value);
+                saveToCookie("animation-speed", ui.value);
+            },
+            change: function (event, ui) {
+                that.animationSpeedValue = ui.value;
+                that.animations.replaySpeed = Math.pow(2, -1 * ui.value);
+                that.persistGameSettings();
+            }
+        });
+
 
         if (!this.spectatorMode && !this.replayMode) {
 
@@ -931,7 +983,7 @@ var GempSwccgGameUI = Class.extend({
                 that.settingsAutoPassYourTurnEnabled = selected;
                 $("#autoPassYourTurnCountdown").prop("hidden", !that.settingsAutoPassYourTurnEnabled);
                 $("#autoPassYourTurnCountdownLabel").prop("hidden", !that.settingsAutoPassYourTurnEnabled);
-                $.cookie("autoPassYourTurnEnabled", "" + selected, { expires: 365 });
+                that.persistGameSettings();
             });
 
             $("#autoPassYourTurnCountdown").prop("hidden", !this.settingsAutoPassYourTurnEnabled);
@@ -961,7 +1013,7 @@ var GempSwccgGameUI = Class.extend({
                 else {
                     that.settingsAutoPassYourTurnCountdown = autoPassYourTurnCountdown;
                 }
-                $.cookie("autoPassYourTurnCountdown", "" + that.settingsAutoPassYourTurnCountdown, { expires: 365 });
+                that.persistGameSettings();
             });
 
             //
@@ -985,7 +1037,7 @@ var GempSwccgGameUI = Class.extend({
                 that.settingsAutoPassOpponentsTurnEnabled = selected;
                 $("#autoPassOpponentsTurnCountdown").prop("hidden", !that.settingsAutoPassOpponentsTurnEnabled);
                 $("#autoPassOpponentsTurnCountdownLabel").prop("hidden", !that.settingsAutoPassOpponentsTurnEnabled);
-                $.cookie("autoPassOpponentsTurnEnabled", "" + selected, { expires: 365 });
+                that.persistGameSettings();
             });
 
             $("#autoPassOpponentsTurnCountdown").prop("hidden", !this.settingsAutoPassOpponentsTurnEnabled);
@@ -1015,7 +1067,7 @@ var GempSwccgGameUI = Class.extend({
                 else {
                     that.settingsAutoPassOpponentsTurnCountdown = autoPassOpponentsTurnCountdown;
                 }
-                $.cookie("autoPassOpponentsTurnCountdown", "" + that.settingsAutoPassOpponentsTurnCountdown, { expires: 365 });
+                that.persistGameSettings();
             });
 
             //
@@ -1039,7 +1091,7 @@ var GempSwccgGameUI = Class.extend({
                 that.settingsMimicDecisionDelayEnabled = selected;
                 $("#mimicDecisionDelayTime").prop("hidden", !that.settingsMimicDecisionDelayEnabled);
                 $("#mimicDecisionDelayTimeLabel").prop("hidden", !that.settingsMimicDecisionDelayEnabled);
-                $.cookie("mimicDecisionDelayEnabled", "" + selected, { expires: 365 });
+                that.persistGameSettings();
             });
 
             $("#mimicDecisionDelayTime").prop("hidden", !this.settingsMimicDecisionDelayEnabled);
@@ -1064,12 +1116,12 @@ var GempSwccgGameUI = Class.extend({
             $("#mimicDecisionDelayTime").bind("change", function () {
                 var mimicDecisionDelayTime = $("#mimicDecisionDelayTime").prop("value");
                 if (!(mimicDecisionDelayTime >= 1 && mimicDecisionDelayTime <= 2)) {
-                    that.mimicDecisionDelayTimeCookie = 1;
+                    that.settingsMimicDecisionDelayTime = 1;
                 }
                 else {
-                    that.mimicDecisionDelayTimeCookie = mimicDecisionDelayTime;
+                    that.settingsMimicDecisionDelayTime = mimicDecisionDelayTime;
                 }
-                $.cookie("mimicDecisionDelayTime", "" + that.mimicDecisionDelayTimeCookie, { expires: 365 });
+                that.persistGameSettings();
             });
 
             //
@@ -1086,7 +1138,7 @@ var GempSwccgGameUI = Class.extend({
             $("#autoAccept").bind("change", function () {
                 var selected = $("#autoAccept").prop("checked");
                 that.settingsAutoAccept = selected;
-                $.cookie("autoAccept", "" + selected, { expires: 365 });
+                that.persistGameSettings();
             });
 
             //
@@ -1104,7 +1156,7 @@ var GempSwccgGameUI = Class.extend({
             $("#alwaysDropDown").bind("change", function () {
                 var selected = $("#alwaysDropDown").prop("checked");
                 that.settingsAlwaysDropDown = selected;
-                $.cookie("alwaysDropDown", "" + selected, { expires: 365 });
+                that.persistGameSettings();
             });
 
 
@@ -1122,8 +1174,15 @@ var GempSwccgGameUI = Class.extend({
             $("#cardActionsSilent").bind("change", function () {
                 var selected = $("#cardActionsSilent").prop("checked");
                 that.settingsCardActionsSilent = selected;
-                $.cookie("cardActionsSilent", "" + selected, { expires: 365 });
+                that.persistGameSettings();
             });
+
+            var timerAlertHtml = "<div id='timerAlertSettings' class='timer-control'><div>Timer alert sound intervals</div>";
+            timerAlertHtml += "<div class='timerAlertRule'>Below <input class='timerAlertBelow' type='number' min='0' max='999' /> min, every <input class='timerAlertEvery' type='number' min='0' max='600' /> s</div>";
+            timerAlertHtml += "<div class='timerAlertRule'>Below <input class='timerAlertBelow' type='number' min='0' max='999' /> min, every <input class='timerAlertEvery' type='number' min='0' max='600' /> s</div>";
+            timerAlertHtml += "<div class='timerAlertRule'>Below <input class='timerAlertBelow' type='number' min='0' max='999' /> min, every <input class='timerAlertEvery' type='number' min='0' max='600' /> s</div>";
+            timerAlertHtml += "<div class='timerAlertHint'>(0 seconds disables a row)</div></div>";
+            $("#settingsBox").append(timerAlertHtml);
 
             //$("#settingsBox").append("<br />Phases to auto-pass if no actions to perform<br />");
             //$("#settingsBox").append("<input id='autoPassACTIVATE' type='checkbox' value='selected' /><label for='autoPassACTIVATE'>Activate</label> ");
@@ -1213,6 +1272,7 @@ var GempSwccgGameUI = Class.extend({
                     that.toggleMuteObservers(false);
                 });
         }
+        this.persistGameSettings();
     },
 
     toggleMuteObservers: function (muteObservers) {
@@ -1988,6 +2048,7 @@ var GempSwccgGameUI = Class.extend({
     decisionFunction: function (decisionId, result) {
         var that = this;
         this.stopAnimatingTitle();
+        this.stopTimerTick();
         this.communication.gameDecisionMade(decisionId, result,
             this.channelNumber,
             function (xml) {
@@ -2200,16 +2261,29 @@ var GempSwccgGameUI = Class.extend({
                     for (var i = 0; i < clocks.length; i++) {
                         var clock = clocks[i];
                         var participantId = clock.getAttribute("participantId");
-                        var index = this.getPlayerIndex(participantId);
-
                         var value = parseInt(clock.childNodes[0].nodeValue);
 
-                        var sign = (value < 0) ? "-" : "";
-                        value = Math.abs(value);
-                        var minutes = Math.floor(value / 60);
-                        var seconds = value % 60;
+                        if (participantId == "decisionLimit") {
+                            this.decisionLimit = value;
+                            this.renderDecisionClock();
+                            continue;
+                        }
+                        if (participantId == "decisionClock") {
+                            this.decisionTime = value;
+                            this.renderDecisionClock();
+                            continue;
+                        }
 
-                        $("#clock" + index).text(sign + minutes + ":" + ((seconds < 10) ? ("0" + seconds) : seconds));
+                        var index = this.getPlayerIndex(participantId);
+                        if (index == -1)
+                            continue;
+
+                        this.lastClockValues[participantId] = value;
+                        if (this.bottomPlayerId == participantId) {
+                            this.totalTime = value;
+                            this.updateTimerVisual(value);
+                        }
+                        $("#clock" + index).text(this.parseTime(value));
                     }
                 }
             }
@@ -2940,9 +3014,17 @@ var GempSwccgGameUI = Class.extend({
     */
     playSound: function(soundId, checkForFocus = true) {
         var myAudio = document.getElementById(soundId);
+        if (myAudio == null)
+            return;
         if(!checkForFocus || (!document.hasFocus() || document.hidden || document.msHidden || document.webkitHidden))
         {
-            myAudio.play();
+            try {
+                myAudio.currentTime = 0;
+                var promise = myAudio.play();
+                if (promise !== undefined)
+                    promise.catch(function () {});
+            } catch (e) {
+            }
         }
     },
 
@@ -3505,6 +3587,288 @@ var GempSwccgGameUI = Class.extend({
         if (this.duelOrLightsaberCombatLocationIndex != null && this.duelOrLightsaberCombatLocationIndex > index) {
             this.duelOrLightsaberCombatLocationIndex--;
         }
+    },
+
+    persistGameSettings: function () {
+        saveToCookie("foilPresentation", Card.getFoilPresentation());
+        saveToCookie("animation-speed", "" + this.animationSpeedValue);
+        var bg = $("#gameBackgroundSetting").val();
+        if (bg)
+            saveToCookie("gameBackgroundSetting", bg);
+        if (this.autoZoom)
+            saveToCookie(this.autoZoom.cookieName, "" + this.autoZoom.showPreviewImage);
+        if (!this.replayMode) {
+            saveToCookie("autoPassYourTurnEnabled", "" + this.settingsAutoPassYourTurnEnabled);
+            saveToCookie("autoPassYourTurnCountdown", "" + this.settingsAutoPassYourTurnCountdown);
+            saveToCookie("autoPassOpponentsTurnEnabled", "" + this.settingsAutoPassOpponentsTurnEnabled);
+            saveToCookie("autoPassOpponentsTurnCountdown", "" + this.settingsAutoPassOpponentsTurnCountdown);
+            saveToCookie("mimicDecisionDelayEnabled", "" + this.settingsMimicDecisionDelayEnabled);
+            saveToCookie("mimicDecisionDelayTime", "" + this.settingsMimicDecisionDelayTime);
+            saveToCookie("autoAccept", "" + this.settingsAutoAccept);
+            saveToCookie("alwaysDropDown", "" + this.settingsAlwaysDropDown);
+            saveToCookie("cardActionsSilent", "" + this.settingsCardActionsSilent);
+        }
+        saveToCookie("timerAudioMuted", "" + this.timerAudioMuted);
+        var serialized = [];
+        for (var j = 0; j < this.timerAlertRules.length; j++)
+            serialized.push(this.timerAlertRules[j].below + ":" + this.timerAlertRules[j].every);
+        saveToCookie("timerAlertRules", serialized.join(","));
+    },
+
+    loadTimerSettings: function () {
+        this.timerAudioMuted = loadFromCookie("timerAudioMuted", "false") === "true";
+        var stored = loadFromCookie("timerAlertRules", "600:30,300:10,60:1");
+        var parsed = [];
+        var parts = ("" + stored).split(",");
+        for (var i = 0; i < parts.length; i++) {
+            var pair = parts[i].split(":");
+            var below = parseInt(pair[0]);
+            var every = parseInt(pair[1]);
+            if (!isNaN(below) && !isNaN(every))
+                parsed.push({below: below, every: every});
+        }
+        if (parsed.length > 0)
+            this.timerAlertRules = parsed;
+    },
+
+    parseTime: function (value) {
+        var sign = (value < 0) ? "-" : "";
+        value = Math.abs(value);
+        var hours = Math.floor(value / 3600);
+        var minutes = Math.floor(value / 60) % 60;
+        var seconds = value % 60;
+        if (hours > 0)
+            return sign + hours + ":" + ((minutes < 10) ? ("0" + minutes) : minutes) + ":" + ((seconds < 10) ? ("0" + seconds) : seconds);
+        return sign + minutes + ":" + ((seconds < 10) ? ("0" + seconds) : seconds);
+    },
+
+    timerAlertsApply: function () {
+        return this.spectatorMode === false && !this.replayMode;
+    },
+
+    initializeTimerUI: function () {
+        if (!this.timerAlertsApply()) {
+            $(".timer-control").remove();
+            return;
+        }
+        if (this.timerMuteToggle == null) {
+            this.initializeTimerMuteToggle();
+            this.initializeTimerAlertSettings();
+            $(".timer-control").show();
+        }
+    },
+
+    getOwnClockElem: function () {
+        if (this.allPlayerIds == null)
+            return null;
+        var index = this.getPlayerIndex(this.bottomPlayerId);
+        if (index < 0)
+            return null;
+        return $("#clock" + index);
+    },
+
+    startTimerTick: function () {
+        var that = this;
+        this.stopTimerTick();
+        if (this.gameEnded || !this.timerAlertsApply())
+            return;
+        this.timerLastTickSeconds = this.totalTime;
+        this.decisionLastRemaining = this.decisionRemaining();
+        this.countdownIntervalId = window.setInterval(function () {
+            if (that.gameEnded) {
+                that.stopTimerTick();
+                return;
+            }
+            that.totalTime -= 1;
+            that.decisionTime += 1;
+            if (that.allPlayerIds == null)
+                return;
+            var decisionRemaining = that.decisionRemaining();
+            if (that.totalTime <= -1 || (decisionRemaining != null && decisionRemaining <= -1)) {
+                that.lastClockValues[that.bottomPlayerId] = that.totalTime;
+                that.renderDecisionClock();
+                var ownClock = that.getOwnClockElem();
+                if (ownClock != null)
+                    ownClock.text(that.parseTime(that.totalTime));
+                that.markExpiredTimers();
+                that.stopTimerTick();
+                return;
+            }
+            that.renderDecisionClock();
+            var clock = that.getOwnClockElem();
+            if (clock != null)
+                clock.text(that.parseTime(that.totalTime));
+            that.updateTimerVisual(that.totalTime);
+            that.fireTimerCues(that.timerLastTickSeconds, that.totalTime);
+            that.timerLastTickSeconds = that.totalTime;
+            var remaining = that.decisionRemaining();
+            that.fireDecisionCues(that.decisionLastRemaining, remaining);
+            that.decisionLastRemaining = remaining;
+        }, 1000);
+    },
+
+    decisionRemaining: function () {
+        if (!this.decisionLimit || this.decisionLimit <= 0)
+            return null;
+        return this.decisionLimit - this.decisionTime;
+    },
+
+    renderDecisionClock: function () {
+        var clock = $("#clock-1");
+        if (clock.length == 0)
+            return;
+        if (!this.timerAlertsApply() || !this.decisionLimit || this.decisionLimit <= 0
+                || (!this.countdownIntervalId && this.decisionTime <= 0)) {
+            clock.removeClass("has-limit timer-warn timer-danger timer-expired").text("");
+            return;
+        }
+        var text = this.parseTime(this.decisionTime) + " / " + this.parseTime(this.decisionLimit);
+        clock.addClass("has-limit").text(text);
+        if (!this.timerAlertsApply() || this.gameEnded)
+            return;
+        var remaining = this.decisionRemaining();
+        clock.removeClass("timer-warn timer-danger");
+        if (remaining != null && remaining > 0)
+            clock.removeClass("timer-expired");
+        if (remaining != null) {
+            if (remaining < 30)
+                clock.addClass("timer-danger");
+            else if (remaining < 60 || remaining < this.decisionLimit / 4)
+                clock.addClass("timer-warn");
+        }
+    },
+
+    fireDecisionCues: function (previousRemaining, remaining) {
+        if (!this.timerAlertsApply() || previousRemaining == null || remaining == null || remaining >= previousRemaining)
+            return;
+        var cue = false;
+        for (var s = remaining; s < previousRemaining; s++) {
+            if (s == 60 || s == 30 || s == 10 || (s > 0 && s < 10)) {
+                cue = true;
+                break;
+            }
+        }
+        if (!cue)
+            return;
+        this.pulseClock($("#clock-1"));
+        if (!this.timerAudioMuted)
+            this.playSound("timerAlert", false);
+    },
+
+    markExpiredTimers: function () {
+        if (this.allPlayerIds == null)
+            return;
+        for (var participantId in this.lastClockValues) {
+            if (!this.lastClockValues.hasOwnProperty(participantId))
+                continue;
+            var index = this.getPlayerIndex(participantId);
+            if (index >= 0 && this.lastClockValues[participantId] <= 0)
+                $("#clock" + index).removeClass("timer-warn timer-danger timer-pulse").addClass("timer-expired");
+        }
+        if (this.decisionLimit > 0 && this.decisionTime >= this.decisionLimit)
+            $("#clock-1").removeClass("timer-warn timer-danger timer-pulse").addClass("timer-expired");
+    },
+
+    stopTimerTick: function () {
+        if (this.countdownIntervalId) {
+            clearInterval(this.countdownIntervalId);
+            this.countdownIntervalId = 0;
+        }
+        this.timerLastTickSeconds = null;
+    },
+
+    updateTimerVisual: function (secondsLeft) {
+        if (!this.timerAlertsApply())
+            return;
+        var clock = this.getOwnClockElem();
+        if (clock == null || this.gameEnded)
+            return;
+        clock.addClass("timer-own");
+        clock.removeClass("timer-warn timer-danger");
+        if (secondsLeft > 0)
+            clock.removeClass("timer-expired");
+        if (secondsLeft < 300)
+            clock.addClass("timer-danger");
+        else if (secondsLeft < 600)
+            clock.addClass("timer-warn");
+    },
+
+    pulseClock: function (clock) {
+        if (clock == null || clock.length == 0)
+            return;
+        clock.removeClass("timer-pulse");
+        void clock[0].offsetWidth;
+        clock.addClass("timer-pulse");
+    },
+
+    fireTimerCues: function (previous, current) {
+        if (!this.timerAlertsApply() || previous == null || current >= previous)
+            return;
+        var crossedMinute = false;
+        for (var s = current; s < previous; s++) {
+            if (s % 60 == 0 && s > 0) {
+                crossedMinute = true;
+                break;
+            }
+        }
+        if (crossedMinute) {
+            this.pulseClock(this.getOwnClockElem());
+            return;
+        }
+        var rule = null;
+        for (var i = 0; i < this.timerAlertRules.length; i++) {
+            var candidate = this.timerAlertRules[i];
+            if (current < candidate.below && candidate.every > 0 && (rule == null || candidate.below < rule.below))
+                rule = candidate;
+        }
+        if (rule != null && current > 0 && current % rule.every == 0) {
+            this.pulseClock(this.getOwnClockElem());
+            if (!this.timerAudioMuted)
+                this.playSound("timerAlert", false);
+        }
+    },
+
+    initializeTimerMuteToggle: function () {
+        var that = this;
+        var onIcon = "ui-icon-volume-on";
+        var offIcon = "ui-icon-volume-off";
+        this.loadTimerSettings();
+        this.timerMuteToggle = $("#timer-mute-toggle").button({
+            icons: {primary: this.timerAudioMuted ? offIcon : onIcon},
+            text: false
+        }).toggleClass("muted", this.timerAudioMuted);
+        this.timerMuteToggle.click(function () {
+            that.timerAudioMuted = !that.timerAudioMuted;
+            that.timerMuteToggle.button("option", "icons", {primary: that.timerAudioMuted ? offIcon : onIcon})
+                .toggleClass("muted", that.timerAudioMuted)
+                .attr("title", that.timerAudioMuted ? "Timer sounds are muted" : "Mute timer sounds");
+            that.persistGameSettings();
+        });
+    },
+
+    initializeTimerAlertSettings: function () {
+        var that = this;
+        this.loadTimerSettings();
+        var belowInputs = $("#timerAlertSettings .timerAlertBelow");
+        var everyInputs = $("#timerAlertSettings .timerAlertEvery");
+        for (var r = 0; r < belowInputs.length; r++) {
+            var rule = this.timerAlertRules[r] || {below: 0, every: 0};
+            $(belowInputs[r]).val(Math.round(rule.below / 60));
+            $(everyInputs[r]).val(rule.every);
+        }
+        $("#timerAlertSettings input").bind("change", function () {
+            var rules = [];
+            var belows = $("#timerAlertSettings .timerAlertBelow");
+            var everys = $("#timerAlertSettings .timerAlertEvery");
+            for (var i = 0; i < belows.length; i++) {
+                var below = parseInt($(belows[i]).val()) * 60;
+                var every = parseInt($(everys[i]).val());
+                if (!isNaN(below) && !isNaN(every) && below > 0 && every > 0)
+                    rules.push({below: below, every: every});
+            }
+            that.timerAlertRules = rules;
+            that.persistGameSettings();
+        });
     },
 
     clearSelection: function () {

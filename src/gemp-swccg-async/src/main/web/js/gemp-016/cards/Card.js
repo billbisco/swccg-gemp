@@ -45,6 +45,30 @@ class Card {
         //Thus we start searching at the 2nd character
         return bpid.includes("*", 2); 
     }
+
+    static FoilStaticImage = "https://res.starwarsccg.org/cards/holo.jpg";
+    static FoilAnimatedImage = "images/foil.gif";
+
+    // static | animated | none. Default matches today's SWCCG holo overlay.
+    static getFoilPresentation() {
+        var foil = loadFromCookie("foilPresentation", "static");
+        if (foil !== "static" && foil !== "animated" && foil !== "none") {
+            foil = (foil === "true") ? "animated" : "static";
+            saveToCookie("foilPresentation", foil);
+        }
+        return foil;
+    }
+
+    static getFoilOverlaySrc() {
+        return Card.getFoilPresentation() === "animated" ? Card.FoilAnimatedImage : Card.FoilStaticImage;
+    }
+
+    static applyFoilPresentation() {
+        var pres = Card.getFoilPresentation();
+        saveToCookie("foilPresentation", pres);
+        $("body").removeClass("foil-static foil-animated foil-none").addClass("foil-" + pres);
+        $(".foilOverlay img").attr("src", Card.getFoilOverlaySrc());
+    }
     
     static GetAlternateImage(bpid) {
         return bpid.includes("^", 2);
@@ -331,7 +355,7 @@ class Card {
         }
 
         if (foil) {
-            var foilDiv = $("<div class='foilOverlay'><img src='https://res.starwarsccg.org/cards/holo.jpg' width='100%' height='100%'></div>");
+            var foilDiv = $("<div class='foilOverlay'><img src='" + Card.getFoilOverlaySrc() + "' width='100%' height='100%'></div>");
             cardDiv.append(foilDiv);
         }
 
@@ -378,7 +402,7 @@ class Card {
             cardDiv.append("<div class='fullcard' style='position:absolute'><img src='" + image + "' width='497' height='357'></div>");
 
             if (foil) {
-                var foilDiv = $("<div class='foilOverlay' style='position:absolute;width:497px;height:357px'><img src='https://res.starwarsccg.org/cards/holo.jpg' width='100%' height='100%'></div>");
+                var foilDiv = $("<div class='foilOverlay' style='position:absolute;width:497px;height:357px'><img src='" + Card.getFoilOverlaySrc() + "' width='100%' height='100%'></div>");
                 cardDiv.append(foilDiv);
             }
 
@@ -401,7 +425,7 @@ class Card {
             cardDiv.append("<div class='fullcard' style='position:absolute'><img src='" + image + "' width='357' height='497'></div>");
 
             if (foil) {
-                var foilDiv = $("<div class='foilOverlay' style='position:absolute;width:357px;height:497px'><img src='https://res.starwarsccg.org/cards/holo.jpg' width='100%' height='100%'></div>");
+                var foilDiv = $("<div class='foilOverlay' style='position:absolute;width:357px;height:497px'><img src='" + Card.getFoilOverlaySrc() + "' width='100%' height='100%'></div>");
                 cardDiv.append(foilDiv);
             }
 
@@ -432,7 +456,7 @@ class Card {
         }
 
         if (foil) {
-            var foilDiv = $("<div class='foilOverlay' style='position:absolute;left:0px;top:0px;width:100%;height:100%'><img src='https://res.starwarsccg.org/gemp/holo.jpg' width='100%' height='100%'></div>");
+            var foilDiv = $("<div class='foilOverlay' style='position:absolute;left:0px;top:0px;width:100%;height:100%'><img src='" + Card.getFoilOverlaySrc() + "' width='100%' height='100%'></div>");
             cardDiv.append(foilDiv);
         }
 

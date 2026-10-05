@@ -242,6 +242,10 @@ body {
     opacity: 0.20;
 }
 
+body.foil-none .foilOverlay {
+    display: none !important;
+}
+
 .frozenOverlay {
     opacity: 0.70;
 }
@@ -402,6 +406,109 @@ body {
 .clock {
     float: right;
     font-size: 100%;
+}
+
+.clock.timer-own {
+    font-weight: bold;
+    color: #ffffff;
+    background-color: #000000;
+    padding: 0 6px;
+    border-radius: 4px;
+    transition: background-color 0.5s;
+}
+
+.clock.timer-warn, .decisionClock.timer-warn {
+    background-color: #d9760a;
+}
+
+.clock.timer-danger, .decisionClock.timer-danger {
+    background-color: #c62828;
+}
+
+.clock.timer-pulse, .decisionClock.timer-pulse {
+    animation: timer-pulse 0.8s ease-out 1;
+}
+
+.clock.timer-expired, .decisionClock.timer-expired {
+    background-color: #c62828;
+    color: #ffffff;
+    font-weight: bold;
+    animation: none;
+}
+
+@keyframes timer-pulse {
+    0%   { transform: scale(1); }
+    30%  { transform: scale(1.35); }
+    100% { transform: scale(1); }
+}
+
+.decisionClock {
+    font-size: 120%;
+    display: none;
+    padding: 0 6px;
+    border-radius: 4px;
+    margin-top: 2px;
+}
+
+.decisionClock.has-limit {
+    display: inline-block;
+}
+
+.setting-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin: 6px 0;
+}
+
+.setting-row #animation-slider {
+    flex: 1 1 auto;
+    margin: 0 8px;
+}
+
+.timerAlertRule {
+    margin: 0 0 0 8px;
+}
+
+#timerAlertSettings .timerAlertBelow,
+#timerAlertSettings .timerAlertEvery {
+    width: 5em;
+}
+
+#timerAlertSettings .timerAlertHint {
+    font-size: 80%;
+    margin-left: 8px;
+}
+
+.timer-control {
+    display: none;
+}
+
+#auto-zoom-li {
+    margin-left: auto;
+}
+
+#timer-mute-toggle, #auto-zoom-toggle {
+    width: 25px;
+    height: 20px;
+}
+
+#timer-mute-toggle.muted .ui-icon {
+    overflow: visible;
+}
+
+#timer-mute-toggle.muted .ui-icon::after {
+    content: "\2715";
+    text-indent: 0;
+    position: absolute;
+    right: -4px;
+    top: 3px;
+    color: #ff3b3b;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 1;
+    pointer-events: none;
+    text-shadow: 0 0 2px #000, 0 0 2px #000;
 }
 
 .alertButtons .ui-button-text-only .ui-button-text {
