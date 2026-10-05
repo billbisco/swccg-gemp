@@ -20,7 +20,9 @@ public interface HallInfoVisitor {
     void visitTable(String tableId, String gameId, boolean watchable, TableStatus status, String statusDescription, String formatName, String formatCode, String collectionCode, String tournamentName, String tableDesc, List<SwccgGameParticipant> playerIds, Map<String, String> deckArchetypeMap, boolean playing, String winner, boolean hidePlayer, SwccgCardBlueprintLibrary library, boolean hideDesc, boolean hideDecks, boolean hideWinner, long ageAt);
 
     void visitTournamentQueue(String tournamentQueueKey, int cost, String collectionName, String formatName, String tournamentQueueName, String tournamentPrizes,
-                                     String pairingDescription, String startCondition, int playerCount, boolean playerSignedUp, boolean joinable);
+                                     String pairingDescription, String startCondition, int playerCount, boolean playerSignedUp, boolean joinable,
+                                     String formatCode, boolean playerMade, boolean isHost, boolean startable, boolean canCancel,
+                                     String playersCsv, int maxPlayers, boolean readyCheck, boolean privateEvent, long createdAt);
 
     void visitTournament(String tournamentKey, String collectionName, String formatName, String tournamentName, String pairingDescription, String tournamentStage, int round, int playerCount, boolean playerInCompetition);
 

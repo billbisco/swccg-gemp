@@ -114,6 +114,11 @@ public class TournamentService {
         return result;
     }
 
+    public void registerInMemoryTournament(Tournament tournament) {
+        if (tournament != null)
+            _tournamentById.put(tournament.getTournamentId(), tournament);
+    }
+
     public Tournament getTournamentById(String tournamentId) {
         Tournament tournament = _tournamentById.get(tournamentId);
         if (tournament == null) {

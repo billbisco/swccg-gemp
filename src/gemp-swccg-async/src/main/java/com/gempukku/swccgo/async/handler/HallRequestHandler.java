@@ -94,6 +94,12 @@ public class HallRequestHandler extends SwccgoServerRequestHandler implements Ur
         } else if (uri.startsWith("/queue/") && request.method() == HttpMethod.POST) {
             if (uri.endsWith("/leave")) {
                 leaveQueue(request, uri.substring(7, uri.length() - 6), responseWriter);
+            } else if (uri.endsWith("/start")) {
+                startQueue(request, uri.substring(7, uri.length() - 6), responseWriter);
+            } else if (uri.endsWith("/ready")) {
+                readyQueue(request, uri.substring(7, uri.length() - 6), responseWriter);
+            } else if (uri.endsWith("/cancel")) {
+                cancelQueue(request, uri.substring(7, uri.length() - 7), responseWriter);
             } else {
                 joinQueue(request, uri.substring(7), responseWriter);
             }
@@ -452,18 +458,77 @@ public class HallRequestHandler extends SwccgoServerRequestHandler implements Ur
             String deckName = getFormParameterSafely(postDecoder, "deckName");
             String sampleDeckVal = getFormParameterSafely(postDecoder, "sampleDeck");
             boolean sampleDeck = sampleDeckVal != null ? Boolean.valueOf(sampleDeckVal) : false;
+            String lightDeckName = getFormParameterSafely(postDecoder, "lightDeckName");
+            String darkDeckName = getFormParameterSafely(postDecoder, "darkDeckName");
+            boolean lightSample = Boolean.parseBoolean(getFormParameterSafely(postDecoder, "lightSampleDeck"));
+            boolean darkSample = Boolean.parseBoolean(getFormParameterSafely(postDecoder, "darkSampleDeck"));
 
             Player resourceOwner = getResourceOwnerSafely(request, participantId);
-            Player librarian = sampleDeck ? getLibrarian() : null;
 
             try {
-                _hallServer.joinQueue(queueId, resourceOwner, deckName, sampleDeck, librarian);
+                if (lightDeckName != null && darkDeckName != null && !lightDeckName.isEmpty() && !darkDeckName.isEmpty()) {
+                    Player lightLibrarian = lightSample ? getLibrarian() : null;
+                    Player darkLibrarian = darkSample ? getLibrarian() : null;
+                    _hallServer.joinPlayerMadeQueue(queueId, resourceOwner, lightDeckName, lightSample,
+                            darkDeckName, darkSample, lightLibrarian, darkLibrarian);
+                } else {
+                    Player librarian = sampleDeck ? getLibrarian() : null;
+                    _hallServer.joinQueue(queueId, resourceOwner, deckName, sampleDeck, librarian);
+                }
                 responseWriter.writeXmlResponse(null);
             } catch (HallException e) {
                 responseWriter.writeXmlResponse(marshalException(e));
             }
         }
         finally {
+            postDecoder.destroy();
+        }
+    }
+
+    private void startQueue(HttpRequest request, String queueId, ResponseWriter responseWriter) throws Exception {
+        HttpPostRequestDecoder postDecoder = new HttpPostRequestDecoder(request);
+        try {
+            String participantId = getFormParameterSafely(postDecoder, "participantId");
+            Player resourceOwner = getResourceOwnerSafely(request, participantId);
+            try {
+                _hallServer.startPlayerMadeQueue(queueId, resourceOwner);
+                responseWriter.writeXmlResponse(null);
+            } catch (HallException e) {
+                responseWriter.writeXmlResponse(marshalException(e));
+            }
+        } finally {
+            postDecoder.destroy();
+        }
+    }
+
+    private void readyQueue(HttpRequest request, String queueId, ResponseWriter responseWriter) throws Exception {
+        HttpPostRequestDecoder postDecoder = new HttpPostRequestDecoder(request);
+        try {
+            String participantId = getFormParameterSafely(postDecoder, "participantId");
+            Player resourceOwner = getResourceOwnerSafely(request, participantId);
+            try {
+                _hallServer.confirmPlayerMadeReady(queueId, resourceOwner);
+                responseWriter.writeXmlResponse(null);
+            } catch (HallException e) {
+                responseWriter.writeXmlResponse(marshalException(e));
+            }
+        } finally {
+            postDecoder.destroy();
+        }
+    }
+
+    private void cancelQueue(HttpRequest request, String queueId, ResponseWriter responseWriter) throws Exception {
+        HttpPostRequestDecoder postDecoder = new HttpPostRequestDecoder(request);
+        try {
+            String participantId = getFormParameterSafely(postDecoder, "participantId");
+            Player resourceOwner = getResourceOwnerSafely(request, participantId);
+            try {
+                _hallServer.cancelPlayerMadeQueue(queueId, resourceOwner);
+                responseWriter.writeXmlResponse(null);
+            } catch (HallException e) {
+                responseWriter.writeXmlResponse(marshalException(e));
+            }
+        } finally {
             postDecoder.destroy();
         }
     }

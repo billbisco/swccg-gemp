@@ -660,6 +660,84 @@ var GempSwccgCommunication = Class.extend({
             dataType:"xml"
         });
     },
+    joinPlayerMadeQueue:function (queueId, lightDeckName, lightSampleDeck, darkDeckName, darkSampleDeck, callback, errorMap) {
+        $.ajax({
+            type:"POST",
+            url:this.url + "/hall/queue/" + queueId,
+            cache:false,
+            data:{
+                lightDeckName:lightDeckName,
+                lightSampleDeck:lightSampleDeck,
+                darkDeckName:darkDeckName,
+                darkSampleDeck:darkSampleDeck,
+                participantId:getUrlParam("participantId")},
+            success:this.deliveryCheck(callback),
+            error:this.errorCheck(errorMap),
+            dataType:"xml"
+        });
+    },
+    createTournament:function (params, callback, errorMap) {
+        var data = {
+            type: params.type || "constructed",
+            formatCode: params.formatCode,
+            pairing: params.pairing,
+            totalGames: params.totalGames,
+            maxPlayers: params.maxPlayers,
+            readyCheckSeconds: params.readyCheckSeconds,
+            privateEvent: params.privateEvent,
+            titlePrefix: params.titlePrefix,
+            lightDeckName: params.lightDeckName,
+            lightSampleDeck: params.lightSampleDeck,
+            darkDeckName: params.darkDeckName,
+            darkSampleDeck: params.darkSampleDeck,
+            participantId:getUrlParam("participantId")
+        };
+        $.ajax({
+            type:"POST",
+            url:this.url + "/tournament/create",
+            cache:false,
+            data:data,
+            success:this.deliveryCheck(callback),
+            error:this.errorCheck(errorMap),
+            dataType:"xml"
+        });
+    },
+    startQueue:function (queueId, callback, errorMap) {
+        $.ajax({
+            type:"POST",
+            url:this.url + "/hall/queue/" + queueId + "/start",
+            cache:false,
+            data:{
+                participantId:getUrlParam("participantId")},
+            success:this.deliveryCheck(callback),
+            error:this.errorCheck(errorMap),
+            dataType:"xml"
+        });
+    },
+    readyQueue:function (queueId, callback, errorMap) {
+        $.ajax({
+            type:"POST",
+            url:this.url + "/hall/queue/" + queueId + "/ready",
+            cache:false,
+            data:{
+                participantId:getUrlParam("participantId")},
+            success:this.deliveryCheck(callback),
+            error:this.errorCheck(errorMap),
+            dataType:"xml"
+        });
+    },
+    cancelQueue:function (queueId, callback, errorMap) {
+        $.ajax({
+            type:"POST",
+            url:this.url + "/hall/queue/" + queueId + "/cancel",
+            cache:false,
+            data:{
+                participantId:getUrlParam("participantId")},
+            success:this.deliveryCheck(callback),
+            error:this.errorCheck(errorMap),
+            dataType:"xml"
+        });
+    },
     leaveQueue:function (queueId, errorMap) {
         $.ajax({
             type:"POST",

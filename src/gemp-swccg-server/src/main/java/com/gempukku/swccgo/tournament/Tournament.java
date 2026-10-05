@@ -37,6 +37,10 @@ public interface Tournament {
 
     public void reportGameFinished(String winner, String loser, String winnerSide, String loserSide);
 
+    default void reportGameFinished(String winner, String loser, String winnerSide, String loserSide, TournamentGameScore score) {
+        reportGameFinished(winner, loser, winnerSide, loserSide);
+    }
+
     public void playerChosenCard(String playerName, String cardId);
     public void playerSummittedDeck(String player, SwccgDeck deck);
     public SwccgDeck getPlayerDeck(String player);

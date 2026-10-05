@@ -48,7 +48,7 @@ public abstract class AbstractTournamentQueue implements TournamentQueue {
     }
 
     @Override
-    public final synchronized void joinPlayer(CollectionsManager collectionsManager, Player player, SwccgDeck deck) {
+    public synchronized void joinPlayer(CollectionsManager collectionsManager, Player player, SwccgDeck deck) {
         if (!_players.contains(player.getName()) && isJoinable()) {
             if (_cost <= 0 || collectionsManager.removeCurrencyFromPlayerCollection("Joined "+getTournamentQueueName()+" queue", player, _currencyCollection, _cost)) {
                 _players.add(player.getName());
@@ -59,7 +59,7 @@ public abstract class AbstractTournamentQueue implements TournamentQueue {
     }
 
     @Override
-    public final synchronized void leavePlayer(CollectionsManager collectionsManager, Player player) {
+    public synchronized void leavePlayer(CollectionsManager collectionsManager, Player player) {
         if (_players.contains(player.getName())) {
             if (_cost > 0)
                 collectionsManager.addCurrencyToPlayerCollection(true, "Return for leaving "+getTournamentQueueName()+" queue", player, _currencyCollection, _cost);
