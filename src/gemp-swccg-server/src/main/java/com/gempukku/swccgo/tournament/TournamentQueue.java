@@ -76,6 +76,14 @@ public interface TournamentQueue {
         return false;
     }
 
+    default int getReadyCheckSecsRemaining() {
+        return -1;
+    }
+
+    default boolean hasConfirmedReady(String player) {
+        return false;
+    }
+
     default void requestStart(String player) {
     }
 

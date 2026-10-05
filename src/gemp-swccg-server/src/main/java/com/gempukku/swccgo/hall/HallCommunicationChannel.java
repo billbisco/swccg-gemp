@@ -134,7 +134,8 @@ public class HallCommunicationChannel implements LongPollableResource {
                     public void visitTournamentQueue(String tournamentQueueKey, int cost, String collectionName, String formatName, String tournamentQueueName,
                                                      String tournamentPrizes, String pairingDescription, String startCondition, int playerCount, boolean playerSignedUp, boolean joinable,
                                                      String formatCode, boolean playerMade, boolean isHost, boolean startable, boolean canCancel,
-                                                     String playersCsv, int maxPlayers, boolean readyCheck, boolean privateEvent, long createdAt) {
+                                                     String playersCsv, int maxPlayers, boolean readyCheck, boolean privateEvent, long createdAt,
+                                                     int readyCheckSecsRemaining, boolean confirmedReadyCheck) {
                         Map<String, String> props = new HashMap<String, String>();
                         props.put("cost", String.valueOf(cost));
                         props.put("collection", collectionName);
@@ -156,6 +157,8 @@ public class HallCommunicationChannel implements LongPollableResource {
                             props.put("players", playersCsv != null ? playersCsv : "");
                             props.put("maxPlayers", String.valueOf(maxPlayers));
                             props.put("readyCheck", String.valueOf(readyCheck));
+                            props.put("readyCheckSecsRemaining", String.valueOf(readyCheckSecsRemaining));
+                            props.put("confirmedReadyCheck", String.valueOf(confirmedReadyCheck));
                             props.put("privateEvent", String.valueOf(privateEvent));
                             if (createdAt > 0)
                                 props.put("ageAt", String.valueOf(createdAt));

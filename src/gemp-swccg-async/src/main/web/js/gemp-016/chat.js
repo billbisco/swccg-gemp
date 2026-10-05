@@ -224,6 +224,11 @@ var ChatBoxUI = Class.extend({
                     this.latestMsgIdRcvd = msgId;
 
                     var msgClass = "chatMessage";
+                    if (from && from.indexOf("TournamentSystem") == 0) {
+                        if (this.tournamentCallback)
+                            this.tournamentCallback(from, text);
+                        from = "TournamentSystem";
+                    }
                     if (from == "System") {
                         msgClass = "systemMessage";
                     }

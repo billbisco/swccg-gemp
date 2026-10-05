@@ -297,6 +297,22 @@ var GempSwccgHallUI = Class.extend({
             }
         });
         this.chat = chat;
+        this.readyChecks = {};
+        this.readyModals = {};
+        this.offeredGames = {};
+        this.signedUpEvents = {};
+        this.inTournament = false;
+        var thatHall = this;
+        this.chat.tournamentCallback = function(from, message) {
+            var thisName = (thatHall.userInfo && thatHall.userInfo.name) ? thatHall.userInfo.name : null;
+            if (from == "TournamentSystem" && thatHall.inTournament) {
+                thatHall.showDialog("Tournament Update", message, 400);
+            } else if (from && from.indexOf("TournamentSystemTo:") == 0) {
+                var users = from.substring("TournamentSystemTo:".length).split(";");
+                if (thisName != null && $.inArray(thisName, users) >= 0)
+                    thatHall.showDialog("Tournament Update", message, 400);
+            }
+        };
         this.hallPlayerNames = [];
         var thatChat = this;
         this.chat.playerListener = function (players) {
@@ -749,10 +765,10 @@ var GempSwccgHallUI = Class.extend({
         this.playCasualChoice = $("<button type='button' id='create-unranked-table-button' class='play-choice-button'><span class='play-choice-title'><span class='bigger-icon icon-unranked' aria-hidden='true'></span><span>Open Casual Table</span></span><span class='play-subtitle'>A 1-on-1 game against another player.</span></button>");
         this.playLeagueChoice = $("<button type='button' id='create-league-table-button' class='play-choice-button'><span class='play-choice-title'><span class='bigger-icon icon-league' aria-hidden='true'></span><span>Open League Table</span></span><span class='play-subtitle'>Join a multi-week league and participate in themed Sealed or Constructed events of all kinds.</span></button>");
         this.playTournamentChoice = $("<button type='button' id='create-tournament-button' class='play-choice-button'><span class='play-choice-title'><span class='bigger-icon icon-tournament' aria-hidden='true'></span><span>Create Tournament</span></span><span class='play-subtitle'>Host an event that other players sign up for.</span></button>");
-        this.playAiChoice.click(function () { that.showPlayForm("ai"); });
-        this.playCasualChoice.click(function () { that.showPlayForm("casual"); });
-        this.playLeagueChoice.click(function () { that.showLeaguePanel(); });
-        this.playTournamentChoice.click(function () { that.showTournamentInfo(); });
+        this.playAiChoice.button().click(function () { that.showPlayForm("ai"); });
+        this.playCasualChoice.button().click(function () { that.showPlayForm("casual"); });
+        this.playLeagueChoice.button().click(function () { that.showLeaguePanel(); });
+        this.playTournamentChoice.button().click(function () { that.showTournamentInfo(); });
         // LOTR order: Bot, Casual, League, Tournament
         this.playSelectionPanel.append(this.playAiChoice);
         this.playSelectionPanel.append(this.playCasualChoice);
@@ -2906,12 +2922,65 @@ var GempSwccgHallUI = Class.extend({
         if (win && !win.closed) {
             win.location.href = url;
             win.focus();
-        } else {
-            var opened = window.open(url, "_blank");
-            if (opened)
-                opened.focus();
+            return true;
         }
-        return true;
+        return this.openOrOffer("game:" + gameId, url, "Your game is ready",
+            "Your game has started, but your browser blocked the new window.", "Open game");
+    },
+
+    openOrOffer:function(key, url, title, text, label) {
+        var win = null;
+        try {
+            win = window.open(url, "_blank");
+        } catch (e) {
+            win = null;
+        }
+        if (win != null && !win.closed) {
+            try {
+                win.focus();
+            } catch (e) {
+            }
+            return true;
+        }
+        this.showReadyModal(key, url, title, text, label);
+        return false;
+    },
+
+    showReadyModal:function(key, url, title, text, label) {
+        if (this.readyModals[key] != null)
+            return;
+        var that = this;
+        var content = $("<div class='hall-ready-modal'></div>");
+        content.append($("<p></p>").text(text));
+        var link = $("<a class='hall-ready-open' target='_blank'></a>").attr("href", url).text(label);
+        content.append($("<p class='hall-ready-actions'></p>").append(link));
+        this.readyModals[key] = content;
+        content.dialog({
+            title: title,
+            modal: true,
+            resizable: false,
+            closeOnEscape: false,
+            width: 360,
+            closeText: "",
+            dialogClass: "hall-ready-dialog",
+            open: function () {
+                $(this).closest(".ui-dialog").find(".ui-dialog-titlebar-close").hide();
+            },
+            close: function () {
+                if (that.readyModals[key] === content)
+                    delete that.readyModals[key];
+                content.dialog("destroy").remove();
+            }
+        });
+        link.button().click(function () {
+            content.dialog("close");
+        });
+    },
+
+    closeReadyModal:function(key) {
+        var content = this.readyModals[key];
+        if (content != null)
+            content.dialog("close");
     },
 
     refreshLayout:function() {
@@ -3235,8 +3304,12 @@ var GempSwccgHallUI = Class.extend({
     },
     
     playSound: function(soundObj) {
-        var myAudio = document.getElementById(soundObj);
-        myAudio.play();
+        try {
+            var myAudio = document.getElementById(soundObj);
+            if (myAudio)
+                myAudio.play();
+        } catch (e) {
+        }
     },
 
     formatAge:function(ageMs) {
@@ -3277,6 +3350,30 @@ var GempSwccgHallUI = Class.extend({
         $(".table-age", this.tablesDiv).each(function () {
             that.renderTableAge($(this));
         });
+        this.refreshReadyCheckLabels();
+    },
+
+    refreshReadyCheckLabels:function() {
+        if (this.readyChecks == null)
+            return;
+        for (var id in this.readyChecks) {
+            if (!this.readyChecks.hasOwnProperty(id))
+                continue;
+            var check = this.readyChecks[id];
+            this.tickReadyCheck(check);
+            var secs = Math.max(0, Math.round((check.deadline - Date.now()) / 1000));
+            var row = $(".queue" + id, this.tablesDiv);
+            $("button", row).each(function () {
+                var button = $(this);
+                if (!button.hasClass("ui-button"))
+                    return;
+                var label = button.button("option", "label") || "";
+                if (label.indexOf("READY CHECK") == 0)
+                    button.button("option", "label", "READY CHECK - " + secs + " s");
+                else if (label.indexOf("Waiting for others") == 0)
+                    button.button("option", "label", "Waiting for others - " + secs + " s");
+            });
+        }
     },
 
     renderPlayerMadeQueueRow:function(queue, id, action) {
@@ -3368,20 +3465,22 @@ var GempSwccgHallUI = Class.extend({
             })(id));
             lastField.append(cancelBut);
         }
-        if (readyCheck && joined && !isHost) {
-            var readyBut = $("<button>Ready</button>");
-            $(readyBut).button().click((function(queueId) {
+        var secs = parseInt(queue.getAttribute("readyCheckSecsRemaining"), 10);
+        if (isNaN(secs))
+            secs = readyCheck ? 0 : -1;
+        if (joined && secs > -1) {
+            var checkBut = $("<button type='button'></button>").text("READY CHECK - " + secs + " s");
+            checkBut.button().click((function(queueId) {
                 return function() {
-                    that.comm.readyQueue(queueId, function (xml) {
-                        that.processResponse(xml);
-                    }, {
-                        "0": function() { that.chat.appendMessage("Could not confirm ready.", "warningMessage"); }
-                    });
+                    that.confirmReadyCheck(queueId);
                 };
             })(id));
-            lastField.append(readyBut);
+            if (queue.getAttribute("confirmedReadyCheck") == "true")
+                checkBut.button("option", "label", "Waiting for others - " + secs + " s").button("disable");
+            lastField.append(checkBut);
         }
         row.append(lastField);
+        this.updateReadyCheck(queue);
 
         if (action == "add") {
             $("table.waitingTables", this.tablesDiv).append(row);
@@ -3392,6 +3491,132 @@ var GempSwccgHallUI = Class.extend({
                 $(".queue" + id, this.tablesDiv).remove();
                 $("table.waitingTables", this.tablesDiv).append(row);
             }
+        }
+    },
+
+    markSignedUp:function(kind, id, signed) {
+        if (this.signedUpEvents == null)
+            this.signedUpEvents = {};
+        var key = kind + ":" + id;
+        if (signed)
+            this.signedUpEvents[key] = true;
+        else
+            delete this.signedUpEvents[key];
+    },
+
+    refreshInTournament:function() {
+        this.inTournament = false;
+        if (this.signedUpEvents == null)
+            return;
+        for (var key in this.signedUpEvents) {
+            if (this.signedUpEvents.hasOwnProperty(key)) {
+                this.inTournament = true;
+                return;
+            }
+        }
+    },
+
+    updateReadyCheck:function(queue) {
+        var id = queue.getAttribute("id");
+        var secs = parseInt(queue.getAttribute("readyCheckSecsRemaining"), 10);
+        if (isNaN(secs))
+            secs = -1;
+        if (queue.getAttribute("signedUp") != "true" || !(secs > -1)) {
+            this.endReadyCheck(id);
+            return;
+        }
+        if (this.readyChecks == null)
+            this.readyChecks = {};
+        var check = this.readyChecks[id];
+        if (check == null)
+            check = this.readyChecks[id] = {shown: false, dialog: null, deadline: 0, timer: null};
+        check.deadline = Date.now() + secs * 1000;
+        if (queue.getAttribute("confirmedReadyCheck") == "true") {
+            check.shown = true;
+            this.closeReadyCheckDialog(check);
+            return;
+        }
+        if (!check.shown) {
+            check.shown = true;
+            this.showReadyCheckDialog(id, queue.getAttribute("queue"), check);
+            this.playSound("gamestart");
+        }
+        this.tickReadyCheck(check);
+    },
+
+    showReadyCheckDialog:function(queueId, queueName, check) {
+        var that = this;
+        var content = $("<div class='hall-ready-check'></div>");
+        content.append($("<p></p>").text("Ready Check started for the ").append($("<b></b>").text(queueName)).append(" tournament."));
+        content.append($("<p></p>").text("Confirm you are present within ")
+            .append($("<span class='hall-ready-check-secs'></span>"))
+            .append(" seconds."));
+        check.dialog = content;
+        content.dialog({
+            title: "Ready Check",
+            modal: true,
+            resizable: false,
+            closeOnEscape: true,
+            width: 360,
+            closeText: "",
+            buttons: [
+                {
+                    text: "Ready",
+                    "class": "hall-ready-check-confirm",
+                    click: function () {
+                        that.confirmReadyCheck(queueId);
+                    }
+                },
+                {
+                    text: "OK",
+                    click: function () {
+                        $(this).dialog("close");
+                    }
+                }
+            ],
+            close: function () {
+                if (check.timer != null)
+                    clearInterval(check.timer);
+                check.timer = null;
+                check.dialog = null;
+                content.dialog("destroy").remove();
+            }
+        });
+        check.timer = setInterval(function () {
+            that.tickReadyCheck(check);
+        }, 1000);
+        this.tickReadyCheck(check);
+    },
+
+    tickReadyCheck:function(check) {
+        if (check.dialog != null)
+            check.dialog.find(".hall-ready-check-secs").text(Math.max(0, Math.round((check.deadline - Date.now()) / 1000)));
+    },
+
+    confirmReadyCheck:function(queueId) {
+        var that = this;
+        var check = this.readyChecks ? this.readyChecks[queueId] : null;
+        if (check != null)
+            this.closeReadyCheckDialog(check);
+        this.comm.readyQueue(queueId, function (xml) {
+            that.processResponse(xml);
+        }, {
+            "0": function() { that.chat.appendMessage("Could not confirm ready.", "warningMessage"); }
+        });
+    },
+
+    closeReadyCheckDialog:function(check) {
+        if (check.dialog != null)
+            check.dialog.dialog("close");
+    },
+
+    endReadyCheck:function(queueId) {
+        if (this.readyChecks == null)
+            return;
+        var check = this.readyChecks[queueId];
+        if (check != null) {
+            this.closeReadyCheckDialog(check);
+            delete this.readyChecks[queueId];
         }
     },
 
@@ -3445,12 +3670,14 @@ var GempSwccgHallUI = Class.extend({
                 var action = queue.getAttribute("action");
                 if (action == "add" || action == "update") {
                     if (queue.getAttribute("playerMade") == "true") {
+                        this.markSignedUp("queue", id, queue.getAttribute("signedUp") == "true");
                         this.renderPlayerMadeQueueRow(queue, id, action);
                         this.animateRowUpdate(".queue" + id);
                     } else {
                     var actionsField = $("<td></td>");
 
                     var joined = queue.getAttribute("signedUp");
+                    this.markSignedUp("queue", id, joined == "true");
                     if (joined != "true" && queue.getAttribute("joinable") == "true") {
                         var but = $("<button>Join queue</button>");
                         $(but).button().click((
@@ -3497,6 +3724,8 @@ var GempSwccgHallUI = Class.extend({
                     }
                 } else if (action == "remove") {
                     $(".queue" + id, this.tablesDiv).remove();
+                    this.markSignedUp("queue", id, false);
+                    this.endReadyCheck(id);
                 }
             }
 
@@ -3509,6 +3738,7 @@ var GempSwccgHallUI = Class.extend({
                     var actionsField = $("<td></td>");
 
                     var joined = tournament.getAttribute("signedUp");
+                    this.markSignedUp("tournament", id, joined == "true");
                     if (joined == "true") {
                         var but = $("<button>Drop from tournament</button>");
                         $(but).button().click((
@@ -3544,6 +3774,7 @@ var GempSwccgHallUI = Class.extend({
                     this.animateRowUpdate(".tournament" + id);
                 } else if (action == "remove") {
                     $(".tournament" + id, this.tablesDiv).remove();
+                    this.markSignedUp("tournament", id, false);
                 }
             }
 
@@ -3628,19 +3859,27 @@ var GempSwccgHallUI = Class.extend({
                             if (participantId != null)
                                 participantIdAppend = "&participantId=" + participantId;
 
-                            lastField.append("<a href='game.html?gameId=" + gameId + participantIdAppend + "' target='_blank' rel='noopener noreferrer'>Play the game</a>");
+                            lastField.append($("<a class='hall-row-link' target='_blank' rel='noopener noreferrer'></a>")
+                                .attr("href", "game.html?gameId=" + gameId + participantIdAppend)
+                                .text("Play the game")
+                                .button());
                         } else if (watchable == "true") {
                             var participantId = getUrlParam("participantId");
                             var participantIdAppend = "";
                             if (participantId != null)
                                 participantIdAppend = "&participantId=" + participantId;
 
-                            lastField.append("<a href='game.html?gameId=" + gameId + participantIdAppend + "' target='_blank' rel='noopener noreferrer'>Watch game</a>");
+                            lastField.append($("<a class='hall-row-link' target='_blank' rel='noopener noreferrer'></a>")
+                                .attr("href", "game.html?gameId=" + gameId + participantIdAppend)
+                                .text("Watch game")
+                                .button());
                         }
                     } else if (status == "FINISHED") {
                         if (winner != null) {
                             lastField.append(winner);
                         }
+                        if (gameId)
+                            this.closeReadyModal("game:" + gameId);
                     }
 
                     row.append(lastField);
@@ -3701,13 +3940,21 @@ var GempSwccgHallUI = Class.extend({
             this.refreshTableAges();
 
             var games = root.getElementsByTagName("newGame");
+            var started = false;
+            if (this.offeredGames == null)
+                this.offeredGames = {};
             for (var i=0; i<games.length; i++) {
-                that.openStartedGame(games[i].getAttribute("id"), null);
+                var gameId = games[i].getAttribute("id");
+                if (gameId == null || this.offeredGames[gameId])
+                    continue;
+                this.offeredGames[gameId] = true;
+                started = true;
+                that.openStartedGame(gameId, null);
             }
-            
-            if (games.length > 0) {
+            if (started) {
                 this.playSound("gamestart");
             }
+            this.refreshInTournament();
 
             if (!this.supportedFormatsInitialized) {
                 var formats = root.getElementsByTagName("format");
