@@ -20,8 +20,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class PlayerConstructedTournament implements Tournament {
-    private static final long WAIT_BETWEEN_GAMES_MS = 15 * 1000L;
-    private static final long WAIT_BETWEEN_ROUNDS_MS = 60 * 1000L;
+    public static final long PAIRING_WAIT_MS = 60 * 1000L;
 
     private final String _tournamentId;
     private final String _tournamentName;
@@ -80,7 +79,6 @@ public class PlayerConstructedTournament implements Tournament {
             _randomTiebreak.put(player, _random.nextLong());
             _playerByes.put(player, 0);
         }
-        _nextTask = new PairPlayers(0);
     }
 
     public boolean isPrivateEvent() {
@@ -269,7 +267,7 @@ public class PlayerConstructedTournament implements Tournament {
                 }
                 long wait = waitBeforeNextPairing();
                 String label = nextPairingLabel();
-                tournamentCallback.broadcastMessage("Tournament " + _tournamentName + " " + label);
+                tournamentCallback.broadcastMessage("Tournament " + _tournamentName + " " + label, activePlayers());
                 _nextTask = new PairPlayers(wait);
                 changed = true;
             }
@@ -295,19 +293,11 @@ public class PlayerConstructedTournament implements Tournament {
     }
 
     private long waitBeforeNextPairing() {
-        if (_gameNumber == 0)
-            return 0;
-        if (PlayerMadeQueue.PAIRING_MATCH_PLAY.equals(_pairing))
-            return _matchPlayGame2 ? WAIT_BETWEEN_GAMES_MS : WAIT_BETWEEN_ROUNDS_MS;
-        return (_gameNumber % 2 == 1) ? WAIT_BETWEEN_GAMES_MS : WAIT_BETWEEN_ROUNDS_MS;
+        return PAIRING_WAIT_MS;
     }
 
     private String nextPairingLabel() {
-        if (PlayerMadeQueue.PAIRING_MATCH_PLAY.equals(_pairing))
-            return _matchPlayGame2 ? "will start game 2 of the match shortly" : "will start the next match shortly";
-        if (_gameNumber % 2 == 1)
-            return "will re-pair for game " + (_gameNumber + 1) + " shortly";
-        return "will start game " + (_gameNumber + 1) + " shortly";
+        return "will start round " + (_gameNumber + 1) + " in 1 minute.";
     }
 
     private void doPairing(TournamentCallback tournamentCallback) {
@@ -325,7 +315,8 @@ public class PlayerConstructedTournament implements Tournament {
 
         if (result.cannotContinue) {
             tournamentCallback.broadcastMessage("Tournament " + _tournamentName
-                    + " ended early: remaining players cannot be paired without repeating the same opponent on the same side.");
+                    + " ended early: remaining players cannot be paired without repeating the same opponent on the same side.",
+                    activePlayers());
             finish(tournamentCallback);
             return;
         }
@@ -345,7 +336,7 @@ public class PlayerConstructedTournament implements Tournament {
         }
 
         if (!result.byes.isEmpty()) {
-            tournamentCallback.broadcastMessage("Bye awarded to: " + StringUtils.join(result.byes, ", "));
+            tournamentCallback.broadcastMessage("Bye awarded to: " + StringUtils.join(result.byes, ", "), activePlayers());
             for (String bye : result.byes)
                 awardBye(bye);
         }
@@ -458,8 +449,9 @@ public class PlayerConstructedTournament implements Tournament {
 
     private void finish(TournamentCallback tournamentCallback) {
         _stage = Stage.FINISHED;
-        tournamentCallback.broadcastMessage("Tournament " + _tournamentName + " is finished");
         _currentStandings = null;
+        List<ConstructedPlayerStanding> rows = constructedStandingsSnapshot();
+        tournamentCallback.broadcastMessage(ConstructedFinishTable.html(_tournamentName, rows), new ArrayList<String>(_players));
     }
 
     private List<String> activePlayers() {

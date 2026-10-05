@@ -19,7 +19,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class DefaultTournament implements Tournament {
     // 10 minutes
     private int _deckBuildTime = 10 * 60 * 1000;
-    private long _waitForPairingsTime = 1000 * 60 * 2;
+    private long _waitForPairingsTime = 1000 * 60;
 
     private PairingMechanism _pairingMechanism;
     private TournamentPrizes _tournamentPrizes;
@@ -258,7 +258,7 @@ public class DefaultTournament implements Tournament {
                         if (_pairingMechanism.isFinished(_tournamentRound, _players, _droppedPlayers)) {
                             finishTournament(tournamentCallback, collectionsManager);
                         } else {
-                            tournamentCallback.broadcastMessage("Tournament " + _tournamentName + " will start round "+(_tournamentRound+1)+" in 2 minutes");
+                            tournamentCallback.broadcastMessage("Tournament " + _tournamentName + " will start round "+(_tournamentRound+1)+" in 1 minute.");
                             _nextTask = new PairPlayers();
                         }
                         result = true;

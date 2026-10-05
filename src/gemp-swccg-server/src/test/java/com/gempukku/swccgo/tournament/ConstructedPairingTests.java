@@ -117,4 +117,38 @@ public class ConstructedPairingTests {
         Collections.sort(list, ConstructedPairing.standingsComparator());
         assertEquals("Cal", list.get(0).getPlayerName());
     }
+
+    @Test
+    public void pairingWaitIsFlatOneMinute() {
+        assertEquals(60 * 1000L, PlayerConstructedTournament.PAIRING_WAIT_MS);
+    }
+
+    @Test
+    public void sabaccIsBlankWhenPrimaryTiebreakersDiffer() {
+        ConstructedPlayerStanding a = new ConstructedPlayerStanding("Ann", 2, 2, 10, 5, 3, 9L);
+        ConstructedPlayerStanding b = new ConstructedPlayerStanding("Ben", 2, 2, 8, 5, 3, 1L);
+        List<ConstructedPlayerStanding> all = Arrays.asList(a, b);
+        assertEquals("Blank", ConstructedFinishTable.sabaccCell(a, all));
+        assertEquals("Blank", ConstructedFinishTable.sabaccCell(b, all));
+    }
+
+    @Test
+    public void sabaccPicksRandomWinnerOnlyWhenVpDiffLostAndHandAreEven() {
+        ConstructedPlayerStanding a = new ConstructedPlayerStanding("Ann", 2, 2, 10, 5, 3, 9L);
+        ConstructedPlayerStanding b = new ConstructedPlayerStanding("Ben", 2, 2, 10, 5, 3, 1L);
+        ConstructedPlayerStanding c = new ConstructedPlayerStanding("Cal", 1, 2, 10, 5, 3, 99L);
+        a.setStanding(1);
+        b.setStanding(1);
+        c.setStanding(3);
+        List<ConstructedPlayerStanding> all = Arrays.asList(a, b, c);
+        assertEquals("Won", ConstructedFinishTable.sabaccCell(a, all));
+        assertEquals("Lost", ConstructedFinishTable.sabaccCell(b, all));
+        assertEquals("Blank", ConstructedFinishTable.sabaccCell(c, all));
+        String html = ConstructedFinishTable.html("Friday Night", all);
+        assertTrue(html.contains("Friday Night"));
+        assertTrue(html.contains("<th>Sabacc</th>"));
+        assertTrue(html.contains(">Won<"));
+        assertTrue(html.contains(">Lost<"));
+        assertTrue(html.contains(">Blank<"));
+    }
 }

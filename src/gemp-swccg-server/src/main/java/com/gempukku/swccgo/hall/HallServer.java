@@ -1130,7 +1130,9 @@ public class HallServer extends AbstractServer {
                         tournamentQueue.getMaxPlayers(),
                         tournamentQueue.isReadyCheckActive(),
                         tournamentQueue.isPrivateEvent(),
-                        tournamentQueue.getCreatedAt());
+                        tournamentQueue.getCreatedAt(),
+                        tournamentQueue.getReadyCheckSecsRemaining(),
+                        tournamentQueue.hasConfirmedReady(player.getName()));
             }
 
             for (Map.Entry<String, Tournament> tournamentEntry : _runningTournaments.entrySet()) {
@@ -1711,8 +1713,35 @@ public class HallServer extends AbstractServer {
 
         @Override
         public void broadcastMessage(String message) {
+            sendTournamentMessage("TournamentSystem", message);
+        }
+
+        @Override
+        public void broadcastMessage(String message, Collection<String> toWhom) {
+            if (toWhom == null || toWhom.isEmpty()) {
+                broadcastMessage(message);
+                return;
+            }
+            StringBuilder from = new StringBuilder("TournamentSystemTo:");
+            boolean first = true;
+            for (String user : toWhom) {
+                if (user == null || user.isEmpty())
+                    continue;
+                if (!first)
+                    from.append(";");
+                first = false;
+                from.append(user);
+            }
+            if (first) {
+                broadcastMessage(message);
+                return;
+            }
+            sendTournamentMessage(from.toString(), message);
+        }
+
+        private void sendTournamentMessage(String from, String message) {
             try {
-                _hallChat.sendMessage("TournamentSystem", message, true);
+                _hallChat.sendMessage(from, message, true);
             } catch (PrivateInformationException exp) {
                 // Ignore, sent as admin
             } catch (ChatCommandErrorException e) {

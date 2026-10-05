@@ -22,7 +22,8 @@ public interface HallInfoVisitor {
     void visitTournamentQueue(String tournamentQueueKey, int cost, String collectionName, String formatName, String tournamentQueueName, String tournamentPrizes,
                                      String pairingDescription, String startCondition, int playerCount, boolean playerSignedUp, boolean joinable,
                                      String formatCode, boolean playerMade, boolean isHost, boolean startable, boolean canCancel,
-                                     String playersCsv, int maxPlayers, boolean readyCheck, boolean privateEvent, long createdAt);
+                                     String playersCsv, int maxPlayers, boolean readyCheck, boolean privateEvent, long createdAt,
+                                     int readyCheckSecsRemaining, boolean confirmedReadyCheck);
 
     void visitTournament(String tournamentKey, String collectionName, String formatName, String tournamentName, String pairingDescription, String tournamentStage, int round, int playerCount, boolean playerInCompetition);
 

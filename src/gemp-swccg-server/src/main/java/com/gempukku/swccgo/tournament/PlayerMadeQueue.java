@@ -187,7 +187,6 @@ public class PlayerMadeQueue extends AbstractTournamentQueue implements Tourname
         if (_readyCheckSeconds > 0) {
             _readyCheckDeadline = System.currentTimeMillis() + (_readyCheckSeconds * 1000L);
             _readyPlayers.clear();
-            _readyPlayers.add(_host);
         } else {
             _started = true;
         }
@@ -212,6 +211,19 @@ public class PlayerMadeQueue extends AbstractTournamentQueue implements Tourname
     @Override
     public synchronized boolean isReadyCheckActive() {
         return _readyCheckDeadline > 0 && !_started && !_cancelled;
+    }
+
+    @Override
+    public synchronized int getReadyCheckSecsRemaining() {
+        if (!isReadyCheckActive())
+            return -1;
+        long remaining = _readyCheckDeadline - System.currentTimeMillis();
+        return (int) Math.max(0, remaining / 1000L);
+    }
+
+    @Override
+    public synchronized boolean hasConfirmedReady(String player) {
+        return player != null && _readyPlayers.contains(player);
     }
 
     @Override
@@ -246,7 +258,6 @@ public class PlayerMadeQueue extends AbstractTournamentQueue implements Tourname
             if (_readyCheckSeconds > 0) {
                 _readyCheckDeadline = System.currentTimeMillis() + (_readyCheckSeconds * 1000L);
                 _readyPlayers.clear();
-                _readyPlayers.add(_host);
             } else {
                 _started = true;
                 return startNow(tournamentQueueCallback);
