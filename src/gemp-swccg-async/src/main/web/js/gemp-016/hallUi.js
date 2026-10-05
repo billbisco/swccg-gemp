@@ -1638,6 +1638,9 @@ var GempSwccgHallUI = Class.extend({
         this.setPlayFlowTitle("Tournament");
         this.populateTournamentFormats();
         this.syncTournamentPairingUi();
+        var fmt = this.tournamentFormatSelect != null ? this.tournamentFormatSelect.val() : null;
+        if (fmt)
+            this.updateDecks(fmt, "default");
         this.fillTournamentDeckSelects();
         this.playTournamentPanel.show();
     },
