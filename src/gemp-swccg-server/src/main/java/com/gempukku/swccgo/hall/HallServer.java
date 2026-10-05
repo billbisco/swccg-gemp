@@ -359,7 +359,7 @@ public class HallServer extends AbstractServer {
 
             boolean isPrivateGame = isPrivate;
             boolean inviteOnlyGame = isInviteOnly && !playVsAi;
-            HallGameTimer gameTimer = (league == null && !playVsAi) ? HallGameTimer.fromCode(timerCode) : null;
+            HallGameTimer gameTimer = (league == null) ? HallGameTimer.fromCode(timerCode) : null;
 
             if (inviteOnlyGame) {
                 String inviteeName = tableDesc == null ? "" : tableDesc.trim();

@@ -130,6 +130,7 @@ var GempSwccgGameUI = Class.extend({
     totalTime: 0,
     decisionLimit: 0,
     lastClockValues: {},
+    ownDecisionPending: false,
     gameEnded: false,
     countdownIntervalId: 0,
     decisionLastRemaining: null,
@@ -2278,6 +2279,9 @@ var GempSwccgGameUI = Class.extend({
                         if (index == -1)
                             continue;
 
+                        var prev = this.lastClockValues[participantId];
+                        if (prev != null && value > prev + 2 && (value - prev) < 25 * 60)
+                            value = prev;
                         this.lastClockValues[participantId] = value;
                         if (this.bottomPlayerId == participantId) {
                             this.totalTime = value;
@@ -2287,6 +2291,10 @@ var GempSwccgGameUI = Class.extend({
                     }
                 }
             }
+
+            this.ownDecisionPending = hasDecision;
+            if (!this.replayMode)
+                this.startTimerTick();
 
             if (!hasDecision) {
                 this.animations.updateGameState(animate);
@@ -3669,8 +3677,11 @@ var GempSwccgGameUI = Class.extend({
 
     startTimerTick: function () {
         var that = this;
-        this.stopTimerTick();
-        if (this.gameEnded || !this.timerAlertsApply())
+        if (this.gameEnded || !this.timerAlertsApply()) {
+            this.stopTimerTick();
+            return;
+        }
+        if (this.countdownIntervalId)
             return;
         this.timerLastTickSeconds = this.totalTime;
         this.decisionLastRemaining = this.decisionRemaining();
@@ -3679,31 +3690,46 @@ var GempSwccgGameUI = Class.extend({
                 that.stopTimerTick();
                 return;
             }
-            that.totalTime -= 1;
-            that.decisionTime += 1;
             if (that.allPlayerIds == null)
                 return;
-            var decisionRemaining = that.decisionRemaining();
-            if (that.totalTime <= -1 || (decisionRemaining != null && decisionRemaining <= -1)) {
+            if (that.ownDecisionPending) {
+                that.totalTime -= 1;
+                that.decisionTime += 1;
                 that.lastClockValues[that.bottomPlayerId] = that.totalTime;
+                var decisionRemaining = that.decisionRemaining();
+                if (that.totalTime <= -1 || (decisionRemaining != null && decisionRemaining <= -1)) {
+                    that.renderDecisionClock();
+                    var ownClock = that.getOwnClockElem();
+                    if (ownClock != null)
+                        ownClock.text(that.parseTime(that.totalTime));
+                    that.markExpiredTimers();
+                    that.stopTimerTick();
+                    return;
+                }
                 that.renderDecisionClock();
-                var ownClock = that.getOwnClockElem();
-                if (ownClock != null)
-                    ownClock.text(that.parseTime(that.totalTime));
-                that.markExpiredTimers();
-                that.stopTimerTick();
-                return;
+                var clock = that.getOwnClockElem();
+                if (clock != null)
+                    clock.text(that.parseTime(that.totalTime));
+                that.updateTimerVisual(that.totalTime);
+                that.fireTimerCues(that.timerLastTickSeconds, that.totalTime);
+                that.timerLastTickSeconds = that.totalTime;
+                var remaining = that.decisionRemaining();
+                that.fireDecisionCues(that.decisionLastRemaining, remaining);
+                that.decisionLastRemaining = remaining;
+            } else {
+                for (var participantId in that.lastClockValues) {
+                    if (!that.lastClockValues.hasOwnProperty(participantId))
+                        continue;
+                    if (participantId == that.bottomPlayerId)
+                        continue;
+                    that.lastClockValues[participantId] -= 1;
+                    var index = that.getPlayerIndex(participantId);
+                    if (index >= 0)
+                        $("#clock" + index).text(that.parseTime(that.lastClockValues[participantId]));
+                    if (that.lastClockValues[participantId] <= 0)
+                        that.markExpiredTimers();
+                }
             }
-            that.renderDecisionClock();
-            var clock = that.getOwnClockElem();
-            if (clock != null)
-                clock.text(that.parseTime(that.totalTime));
-            that.updateTimerVisual(that.totalTime);
-            that.fireTimerCues(that.timerLastTickSeconds, that.totalTime);
-            that.timerLastTickSeconds = that.totalTime;
-            var remaining = that.decisionRemaining();
-            that.fireDecisionCues(that.decisionLastRemaining, remaining);
-            that.decisionLastRemaining = remaining;
         }, 1000);
     },
 
