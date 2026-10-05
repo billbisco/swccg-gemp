@@ -588,12 +588,30 @@ button.hall-play-button-play:focus,
     font-size: 13px;
 }
 
+.join-table-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+}
+
 .join-table-form .play-form-heading {
     margin-bottom: 6px;
 }
 
+.join-dual-deck,
+.join-single-deck {
+    display: flex;
+    flex-direction: column;
+}
+
 .join-table-form .play-form-deck-row + .play-form-deck-row {
     margin-top: 16px;
+}
+
+.join-table-form .play-form-actions {
+    justify-content: stretch;
+    margin-top: 4px;
 }
 
 body.play-flow-open {
