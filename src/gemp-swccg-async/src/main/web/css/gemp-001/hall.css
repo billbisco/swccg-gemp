@@ -33,6 +33,10 @@ body {
     opacity: 0.2;
 }
 
+body.foil-none .foilOverlay {
+    display: none !important;
+}
+
 .cardHint {
     display: inline;
     color: #6f6fff;

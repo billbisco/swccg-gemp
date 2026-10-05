@@ -57,7 +57,7 @@ class CardDisplay {
 		}).appendTo(this.baseDiv);
 		
 		$('<img>', {
-			src: CardDisplay.FoilImage
+			src: (typeof Card !== "undefined" && Card.getFoilOverlaySrc) ? Card.getFoilOverlaySrc() : CardDisplay.FoilImage
 		}).appendTo(this.foilDiv);
 
 		// Optional playtest placeholder text
@@ -142,6 +142,9 @@ class CardDisplay {
 		this.foilDiv.css({
 			display: foil ? "initial" : "none"
 		});
+		if (foil && typeof Card !== "undefined" && Card.getFoilOverlaySrc) {
+			this.foilDiv.find("img").attr("src", Card.getFoilOverlaySrc());
+		}
 
 		this.testingTextDiv.css({
 			display: testingText ? "initial" : "none"

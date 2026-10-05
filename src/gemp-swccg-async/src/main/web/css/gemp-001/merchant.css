@@ -6,6 +6,10 @@ body {
     border: 0px solid #000000;
 }
 
+body.foil-none .foilOverlay {
+    display: none !important;
+}
+
 .foilOverlay {
     opacity: 0.2;
 }

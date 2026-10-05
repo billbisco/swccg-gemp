@@ -42,9 +42,7 @@ var GameAnimations = Class.extend({
     },
 
     getAnimationLength:function (origValue) {
-        if (this.game.replayMode)
-            return origValue * this.replaySpeed;
-        return origValue;
+        return origValue * this.replaySpeed;
     },
 
     cardActivated:function (element, animate) {
@@ -1589,6 +1587,8 @@ var GameAnimations = Class.extend({
         var that = this;
         $("#main").queue(
             function (next) {
+                if (!that.game.replayMode && that.game.startTimerTick)
+                    that.game.startTimerTick();
                 var decisionType = decision.getAttribute("decisionType");
                 if (decisionType == "EMPTY") {
                     that.game.emptyDecision(decision);

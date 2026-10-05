@@ -29,6 +29,9 @@ var GempSwccgSoloDraftUI = Class.extend({
     init:function (url) {
         var that = this;
 
+        if (typeof Card !== "undefined" && Card.applyFoilPresentation)
+            Card.applyFoilPresentation();
+
         this.comm = new GempSwccgCommunication(url,
                                 function (xhr, ajaxOptions, thrownError) {
                                 });

@@ -1276,12 +1276,7 @@ public class SwccgGameMediator {
             if (warning != null)
                 visitor.visitGameEvent(new GameEvent(GameEvent.Type.W).message(warning));
 
-            Map<String, Integer> secondsLeft = new HashMap<String, Integer>();
-            for (Map.Entry<String, Integer> playerClock : _playerClocks.entrySet()) {
-                String playerClockName = playerClock.getKey();
-                secondsLeft.put(playerClockName, _maxSecondsForGamePerPlayer + _secondsGameTimerExtended - playerClock.getValue() - getCurrentUserPendingTime(playerClockName));
-            }
-            visitor.visitClock(secondsLeft);
+            visitor.visitClock(getSecondsLeftMap(playerName));
         } finally {
             _readLock.unlock();
         }
@@ -1317,12 +1312,7 @@ public class SwccgGameMediator {
             for (GameEvent gameEvent : participantCommunicationChannel.consumeGameEvents())
                 visitor.visitGameEvent(gameEvent);
 
-            Map<String, Integer> secondsLeft = new HashMap<String, Integer>();
-            for (Map.Entry<String, Integer> playerClock : _playerClocks.entrySet()) {
-                String playerId = playerClock.getKey();
-                secondsLeft.put(playerId, _maxSecondsForGamePerPlayer + _secondsGameTimerExtended - playerClock.getValue() - getCurrentUserPendingTime(playerId));
-            }
-            visitor.visitClock(secondsLeft);
+            visitor.visitClock(getSecondsLeftMap(playerName));
         } finally {
             _readLock.unlock();
         }
@@ -1411,6 +1401,22 @@ public class SwccgGameMediator {
         long queryTime = _decisionQuerySentTimes.get(participantId);
         long currentTime = System.currentTimeMillis();
         return (int) ((currentTime - queryTime) / 1000);
+    }
+
+    private Map<String, Integer> getSecondsLeftMap(String viewerName) {
+        Map<String, Integer> secondsLeft = new HashMap<String, Integer>();
+        for (Map.Entry<String, Integer> playerClock : _playerClocks.entrySet()) {
+            String playerClockName = playerClock.getKey();
+            secondsLeft.put(playerClockName, _maxSecondsForGamePerPlayer + _secondsGameTimerExtended - playerClock.getValue() - getCurrentUserPendingTime(playerClockName));
+        }
+        if (_disablePlayerDecisionTimer) {
+            secondsLeft.put("decisionLimit", 0);
+            secondsLeft.put("decisionClock", 0);
+        } else {
+            secondsLeft.put("decisionLimit", _playerDecisionTimeoutPeriod / 1000);
+            secondsLeft.put("decisionClock", getCurrentUserPendingTime(viewerName));
+        }
+        return secondsLeft;
     }
 
     public int getLifeForceRemaining(String playerId) {

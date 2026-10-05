@@ -280,6 +280,8 @@ var GempSwccgHallUI = Class.extend({
 
     init:function (div, url, chat) {
         this.div = div;
+        if (typeof Card !== "undefined" && Card.applyFoilPresentation)
+            Card.applyFoilPresentation();
         this.comm = new GempSwccgCommunication(url, function (xhr, ajaxOptions, thrownError) {
             if (thrownError != "abort") {
                 if (xhr != null) {
