@@ -1323,7 +1323,8 @@ public class SwccgGameMediator {
         // Copy to avoid ConcurrentModification when AI decisions resolve immediately
         Set<String> users = new HashSet<String>(_userFeedback.getUsersPendingDecision());
         for (String user : users) {
-            _decisionQuerySentTimes.put(user, currentTime);
+            if (!_decisionQuerySentTimes.containsKey(user))
+                _decisionQuerySentTimes.put(user, currentTime);
             maybeLetAiPlay(user);
         }
     }
@@ -1367,6 +1368,7 @@ public class SwccgGameMediator {
 
             _userFeedback.participantDecided(playerId);
             decision.decisionMade(answer);
+            addTimeSpentOnDecisionToUserClock(playerId);
 
             // Check if AI has any chat messages to send
             String chatMessage = ai.getChatMessage();

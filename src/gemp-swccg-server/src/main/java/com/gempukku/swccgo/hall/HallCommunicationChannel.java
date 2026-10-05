@@ -237,7 +237,7 @@ public class HallCommunicationChannel implements LongPollableResource {
             Map<String, String> tournamentProps = tournamentQueueOnClient.getValue();
             Map<String, String> tournamentLatestProps = tournamentQueuesOnServer.get(tournamentQueueId);
             if (tournamentLatestProps != null) {
-                if (!tournamentProps.equals(tournamentLatestProps))
+                if (!queuePropsEqual(tournamentProps, tournamentLatestProps))
                     hallChannelVisitor.updateTournamentQueue(tournamentQueueId, tournamentLatestProps);
             } else {
                 hallChannelVisitor.removeTournamentQueue(tournamentQueueId);
@@ -247,6 +247,18 @@ public class HallCommunicationChannel implements LongPollableResource {
         for (Map.Entry<String, Map<String, String>> tournamentQueueOnServer : tournamentQueuesOnServer.entrySet())
             if (!_tournamentQueuePropsOnClient.containsKey(tournamentQueueOnServer.getKey()))
                 hallChannelVisitor.addTournamentQueue(tournamentQueueOnServer.getKey(), tournamentQueueOnServer.getValue());
+    }
+
+    private boolean queuePropsEqual(Map<String, String> left, Map<String, String> right) {
+        if (left == right)
+            return true;
+        if (left == null || right == null)
+            return false;
+        Map<String, String> a = new HashMap<String, String>(left);
+        Map<String, String> b = new HashMap<String, String>(right);
+        a.remove("readyCheckSecsRemaining");
+        b.remove("readyCheckSecsRemaining");
+        return a.equals(b);
     }
 
     private void notifyAboutTournaments(HallChannelVisitor hallChannelVisitor, Map<String, Map<String, String>> tournamentsOnServer) {

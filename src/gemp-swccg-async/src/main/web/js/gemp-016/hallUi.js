@@ -275,7 +275,7 @@ var GempSwccgHallUI = Class.extend({
     deckLoadGen:0,
     joinDeckLoadGen:0,
     lastServerTime:null,
-    serverClockOffset:0,
+    serverClockOffset:null,
     AGE_REFRESH_MS:1000,
 
     init:function (div, url, chat) {
@@ -392,7 +392,7 @@ var GempSwccgHallUI = Class.extend({
         this.buttonsDiv.append(this.serverTimeDiv);
 
         this.connection = new HallConnectionIndicator(this.connectionDiv);
-        // Waiting/playing table clocks tick locally from ageAt; one interval, no extra hall polls.
+        // Server Time and waiting/playing table clocks tick locally every second.
         setInterval(function () {
             that.refreshTableAges();
         }, this.AGE_REFRESH_MS);
@@ -3338,8 +3338,15 @@ var GempSwccgHallUI = Class.extend({
         var createdAt = +span.attr("data-created-at");
         if (isNaN(createdAt))
             return;
-        var ageMs = Date.now() + this.serverClockOffset - createdAt;
-        span.text(this.formatAge(ageMs));
+        var shown = parseInt(span.attr("data-shown-seconds"), 10);
+        if (!isNaN(shown)) {
+            shown += 1;
+        } else {
+            var offset = this.serverClockOffset == null ? 0 : this.serverClockOffset;
+            shown = Math.floor(Math.max(0, Date.now() + offset - createdAt) / 1000);
+        }
+        span.attr("data-shown-seconds", shown);
+        span.text(this.formatAge(shown * 1000));
         if (span.attr("data-title-for") !== String(createdAt)) {
             span.attr("data-title-for", createdAt);
             var prefix = span.attr("data-age-kind") == "playing" ? "Started " : "Open since ";
@@ -3347,8 +3354,38 @@ var GempSwccgHallUI = Class.extend({
         }
     },
 
+    refreshServerTime:function() {
+        if (this.serverClockOffset == null)
+            return;
+        var text = this.formatServerEpoch(Date.now() + this.serverClockOffset);
+        this.lastServerTime = text;
+        $(".serverTime").text("Server time: " + text);
+        if (this.serverTimeValue)
+            this.serverTimeValue.html(text.replace(" ", "<br>"));
+    },
+
+    adoptClockSpan:function(oldRow, newRow) {
+        var oldSpan = $(".table-age", oldRow);
+        var newSpan = $(".table-age", newRow);
+        if (!oldSpan.length || !newSpan.length)
+            return;
+        if (oldSpan.attr("data-created-at") !== newSpan.attr("data-created-at"))
+            return;
+        var shown = oldSpan.attr("data-shown-seconds");
+        if (shown != null) {
+            newSpan.attr("data-shown-seconds", shown);
+            newSpan.text(oldSpan.text());
+        }
+        var title = oldSpan.attr("title");
+        if (title) {
+            newSpan.attr("title", title);
+            newSpan.attr("data-title-for", oldSpan.attr("data-title-for"));
+        }
+    },
+
     refreshTableAges:function() {
         var that = this;
+        this.refreshServerTime();
         $(".table-age", this.tablesDiv).each(function () {
             that.renderTableAge($(this));
         });
@@ -3487,10 +3524,12 @@ var GempSwccgHallUI = Class.extend({
         if (action == "add") {
             $("table.waitingTables", this.tablesDiv).append(row);
         } else if (action == "update") {
+            var existingQueue = $(".queue" + id, this.tablesDiv);
             if ($(".queue" + id, $("table.waitingTables")).length > 0) {
-                $(".queue" + id, this.tablesDiv).replaceWith(row);
+                this.adoptClockSpan(existingQueue, row);
+                existingQueue.replaceWith(row);
             } else {
-                $(".queue" + id, this.tablesDiv).remove();
+                existingQueue.remove();
                 $("table.waitingTables", this.tablesDiv).append(row);
             }
         }
@@ -3648,22 +3687,16 @@ var GempSwccgHallUI = Class.extend({
                 $("#motd").html("<b>MOTD:</b> " + motd);
 
             var serverTimeMs = parseInt(root.getAttribute("serverTimeMs"), 10);
-            if (!isNaN(serverTimeMs))
-                this.serverClockOffset = serverTimeMs - Date.now();
-
-            var serverTime = root.getAttribute("serverTime");
-            if (serverTime != null) {
-                this.lastServerTime = serverTime;
-                // top info strip (legacy)
-                $(".serverTime").text("Server time: " + serverTime);
-                // primary bar right (LOTR .server-time: date<br>time) under explicit "Server Time" label
-                if (this.serverTimeValue)
-                    this.serverTimeValue.html(serverTime.replace(" ", "<br>"));
-                if (this.connection)
-                    this.connection.updated(null, serverTime);
-            } else if (this.connection) {
-                this.connection.updated(null, this.connection.lastUpdate);
+            if (!isNaN(serverTimeMs)) {
+                var newOffset = serverTimeMs - Date.now();
+                if (this.serverClockOffset == null || Math.abs(newOffset - this.serverClockOffset) > 2000) {
+                    this.serverClockOffset = newOffset;
+                    $(".table-age", this.tablesDiv).removeAttr("data-shown-seconds");
+                }
             }
+            this.refreshServerTime();
+            if (this.connection)
+                this.connection.updated(null, this.lastServerTime || this.connection.lastUpdate);
 
             var queues = root.getElementsByTagName("queue");
             for (var i = 0; i < queues.length; i++) {
@@ -3898,27 +3931,29 @@ var GempSwccgHallUI = Class.extend({
                                 .append(row);
                         }
                     } else if (action == "update") {
+                        var existingTable = $(".table" + id, this.tablesDiv);
+                        this.adoptClockSpan(existingTable, row);
                         if (status == "WAITING") {
                             if ($(".table" + id, $("table.waitingTables")).length > 0) {
-                                $(".table" + id, this.tablesDiv).replaceWith(row);
+                                existingTable.replaceWith(row);
                             } else {
-                                $(".table" + id, this.tablesDiv).remove();
+                                existingTable.remove();
                                 $("table.waitingTables", this.tablesDiv)
                                     .append(row);
                             }
                         } else if (status == "PLAYING") {
                             if ($(".table" + id, $("table.playingTables")).length > 0) {
-                                $(".table" + id, this.tablesDiv).replaceWith(row);
+                                existingTable.replaceWith(row);
                             } else {
-                                $(".table" + id, this.tablesDiv).remove();
+                                existingTable.remove();
                                 $("table.playingTables", this.tablesDiv)
                                     .append(row);
                             }
                         } else if (status == "FINISHED") {
                             if ($(".table" + id, $("table.finishedTables")).length > 0) {
-                                $(".table" + id, this.tablesDiv).replaceWith(row);
+                                existingTable.replaceWith(row);
                             } else {
-                                $(".table" + id, this.tablesDiv).remove();
+                                existingTable.remove();
                                 $("table.finishedTables", this.tablesDiv)
                                     .append(row);
                             }

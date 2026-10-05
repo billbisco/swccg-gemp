@@ -410,8 +410,6 @@ body.foil-none .foilOverlay {
 
 .clock.timer-own {
     font-weight: bold;
-    color: #ffffff;
-    background-color: #000000;
     padding: 0 6px;
     border-radius: 4px;
     transition: background-color 0.5s;
