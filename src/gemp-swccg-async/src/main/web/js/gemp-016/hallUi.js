@@ -1161,7 +1161,7 @@ var GempSwccgHallUI = Class.extend({
         form.append(this.joinResultDiv);
 
         var submitRow = $("<div class='play-form-row play-form-actions'></div>");
-        this.joinSubmitButton = $("<button type='button' class='play-submit-button'>Join table</button>");
+        this.joinSubmitButton = $("<button type='button' class='play-submit-button table-create-button'>Join table</button>");
         $(this.joinSubmitButton).button().click(function () {
             that.submitJoin();
         });
@@ -1269,10 +1269,18 @@ var GempSwccgHallUI = Class.extend({
         this.joinTitleEl.text(isDual ? "Join Tournament" : (isQueue ? "Join Queue" : "Join Table"));
         var button = $(this.joinSubmitButton);
         var label = isDual ? "Join tournament" : (isQueue ? "Join queue" : "Join table");
-        if (this.joinSingleDeckBlock != null)
-            this.joinSingleDeckBlock.toggle(!isDual);
-        if (this.joinDualDeckBlock != null)
-            this.joinDualDeckBlock.toggle(!!isDual);
+        if (this.joinSingleDeckBlock != null) {
+            if (isDual)
+                this.joinSingleDeckBlock.hide();
+            else
+                this.joinSingleDeckBlock.css("display", "flex");
+        }
+        if (this.joinDualDeckBlock != null) {
+            if (isDual)
+                this.joinDualDeckBlock.css("display", "flex");
+            else
+                this.joinDualDeckBlock.hide();
+        }
         if (button.hasClass("ui-button")) {
             button.button("option", "label", label);
         } else {
