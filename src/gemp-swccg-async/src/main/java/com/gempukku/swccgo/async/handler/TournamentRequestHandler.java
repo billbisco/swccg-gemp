@@ -5,21 +5,28 @@ import com.gempukku.swccgo.async.ResponseWriter;
 import com.gempukku.swccgo.competitive.PlayerStanding;
 import com.gempukku.swccgo.game.CardCollection;
 import com.gempukku.swccgo.game.DefaultCardCollection;
+import com.gempukku.swccgo.game.Player;
 import com.gempukku.swccgo.game.SortAndFilterCards;
 import com.gempukku.swccgo.game.SwccgCardBlueprintLibrary;
 import com.gempukku.swccgo.game.formats.SwccgoFormatLibrary;
+import com.gempukku.swccgo.hall.HallException;
+import com.gempukku.swccgo.hall.HallServer;
 import com.gempukku.swccgo.logic.GameUtils;
 import com.gempukku.swccgo.logic.vo.SwccgDeck;
+import com.gempukku.swccgo.tournament.ConstructedPlayerStanding;
+import com.gempukku.swccgo.tournament.PlayerMadeQueue;
 import com.gempukku.swccgo.tournament.Tournament;
 import com.gempukku.swccgo.tournament.TournamentService;
 import org.apache.commons.text.StringEscapeUtils;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.lang.reflect.Type;
 import java.text.DecimalFormat;
 import java.util.List;
@@ -30,6 +37,7 @@ public class TournamentRequestHandler extends SwccgoServerRequestHandler impleme
     private SwccgoFormatLibrary _formatLibrary;
     private SwccgCardBlueprintLibrary _library;
     private SortAndFilterCards _sortAndFilterCards;
+    private HallServer _hallServer;
 
     public TournamentRequestHandler(Map<Type, Object> context) {
         super(context);
@@ -38,12 +46,15 @@ public class TournamentRequestHandler extends SwccgoServerRequestHandler impleme
         _formatLibrary = extractObject(context, SwccgoFormatLibrary.class);
         _library = extractObject(context, SwccgCardBlueprintLibrary.class);
         _sortAndFilterCards = new SortAndFilterCards();
+        _hallServer = extractObject(context, HallServer.class);
     }
 
     @Override
     public void handleRequest(String uri, HttpRequest request, Map<Type, Object> context, ResponseWriter responseWriter, String remoteIp) throws Exception {
         if ("".equals(uri) && request.method() == HttpMethod.GET) {
             getCurrentTournaments(request, responseWriter);
+        } else if (uri.equals("/create") && request.method() == HttpMethod.POST) {
+            createPlayerMadeTournament(request, responseWriter);
         } else if (uri.equals("/history") && request.method() == HttpMethod.GET) {
             getTournamentHistory(request, responseWriter);
         } else if (uri.startsWith("/") && uri.endsWith("/html") && uri.contains("/deck/") && request.method() == HttpMethod.GET) {
@@ -93,6 +104,68 @@ public class TournamentRequestHandler extends SwccgoServerRequestHandler impleme
         standingElem.setAttribute("gamesPlayed", String.valueOf(standing.getGamesPlayed()));
         DecimalFormat format = new DecimalFormat("##0.00%");
         standingElem.setAttribute("opponentWin", format.format(standing.getOpponentWin()));
+        if (standing instanceof ConstructedPlayerStanding) {
+            ConstructedPlayerStanding constructed = (ConstructedPlayerStanding) standing;
+            standingElem.setAttribute("differential", String.valueOf(constructed.getDifferential()));
+            standingElem.setAttribute("lostPile", String.valueOf(constructed.getLostPile()));
+            standingElem.setAttribute("hand", String.valueOf(constructed.getHandCards()));
+        }
+    }
+
+    private void createPlayerMadeTournament(HttpRequest request, ResponseWriter responseWriter) throws Exception {
+        HttpPostRequestDecoder postDecoder = new HttpPostRequestDecoder(request);
+        try {
+            String participantId = getFormParameterSafely(postDecoder, "participantId");
+            Player resourceOwner = getResourceOwnerSafely(request, participantId);
+            String type = getFormParameterSafely(postDecoder, "type");
+            if (type != null && !"constructed".equalsIgnoreCase(type))
+                throw new HallException("Only Constructed player-hosted tournaments are available right now");
+
+            String formatCode = getFormParameterSafely(postDecoder, "formatCode");
+            String pairing = getFormParameterSafely(postDecoder, "pairing");
+            if (pairing == null)
+                pairing = PlayerMadeQueue.PAIRING_SWISS;
+            String titlePrefix = getFormParameterSafely(postDecoder, "titlePrefix");
+            String lightDeckName = getFormParameterSafely(postDecoder, "lightDeckName");
+            String darkDeckName = getFormParameterSafely(postDecoder, "darkDeckName");
+            boolean lightSample = Boolean.parseBoolean(getFormParameterSafely(postDecoder, "lightSampleDeck"));
+            boolean darkSample = Boolean.parseBoolean(getFormParameterSafely(postDecoder, "darkSampleDeck"));
+            boolean privateEvent = Boolean.parseBoolean(getFormParameterSafely(postDecoder, "privateEvent"));
+            int totalGames = parseIntParam(getFormParameterSafely(postDecoder, "totalGames"), 2);
+            int maxPlayers = parseIntParam(getFormParameterSafely(postDecoder, "maxPlayers"), 128);
+            int readyCheckSeconds = parseIntParam(getFormParameterSafely(postDecoder, "readyCheckSeconds"), 0);
+
+            Player lightLibrarian = lightSample ? getLibrarian() : null;
+            Player darkLibrarian = darkSample ? getLibrarian() : null;
+            _hallServer.createPlayerMadeQueue(resourceOwner, titlePrefix, formatCode, pairing, totalGames, maxPlayers,
+                    readyCheckSeconds, privateEvent, lightDeckName, lightSample, darkDeckName, darkSample,
+                    lightLibrarian, darkLibrarian);
+            responseWriter.writeXmlResponse(null);
+        } catch (HallException e) {
+            responseWriter.writeXmlResponse(marshalException(e));
+        } finally {
+            postDecoder.destroy();
+        }
+    }
+
+    private static int parseIntParam(String value, int fallback) {
+        if (value == null || value.isEmpty())
+            return fallback;
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            return fallback;
+        }
+    }
+
+    private Document marshalException(HallException e) throws ParserConfigurationException {
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+        Document doc = documentBuilder.newDocument();
+        Element error = doc.createElement("error");
+        error.setAttribute("message", e.getMessage());
+        doc.appendChild(error);
+        return doc;
     }
 
     private void getTournamentDeck(HttpRequest request, String tournamentId, String playerName, ResponseWriter responseWriter) throws Exception {

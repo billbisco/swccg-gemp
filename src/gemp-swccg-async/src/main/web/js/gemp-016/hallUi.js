@@ -955,9 +955,127 @@ var GempSwccgHallUI = Class.extend({
 
         this.playTournamentPanel = $("<div id='create-tournament-info' class='table-form play-tournament-info' style='display:none'></div>");
         this.playTournamentPanel.append("<h2 class='play-form-heading'>Create Tournament</h2>");
-        this.playTournamentPanel.append("<p class='play-subtitle'>SWCCG GEMP has no player-facing host-tournament API (unlike LOTR). Tournaments are server-scheduled queues — join them from the Game Hall when a queue is listed above.</p>");
-        this.playTournamentPanel.append("<p class='play-subtitle'>This button stays visible to mirror the LOTR Play menu; hosting is not available from the client.</p>");
+        var tFields = $("<div class='inner-table-form'></div>");
+
+        var typeRow = $("<div class='play-form-row'></div>");
+        typeRow.append("<span class='play-form-label'>Type</span>");
+        this.tournamentTypeSelect = $("<select id='tournament-type' class='play-form-select'></select>");
+        this.tournamentTypeSelect.append("<option value='constructed' selected='selected'>Constructed</option>");
+        this.tournamentTypeSelect.append("<option value='sealed' disabled='disabled'>Sealed (coming later)</option>");
+        this.tournamentTypeSelect.append("<option value='solodraft' disabled='disabled'>Solo Draft (coming later)</option>");
+        this.tournamentTypeSelect.append("<option value='livedraft' disabled='disabled'>Live Draft (coming later)</option>");
+        typeRow.append(this.tournamentTypeSelect);
+        tFields.append(typeRow);
+
+        var tFormatRow = $("<div class='play-form-row'></div>");
+        tFormatRow.append("<span class='play-form-label'>Format</span>");
+        this.tournamentFormatSelect = $("<select id='tournament-format' class='play-form-select'></select>");
+        tFormatRow.append(this.tournamentFormatSelect);
+        tFields.append(tFormatRow);
+
+        var pairRow = $("<div class='play-form-row'></div>");
+        pairRow.append("<span class='play-form-label'>Pairing</span>");
+        this.tournamentPairingSelect = $("<select id='tournament-pairing' class='play-form-select'></select>");
+        this.tournamentPairingSelect.append("<option value='swiss'>Swiss</option>");
+        this.tournamentPairingSelect.append("<option value='matchPlay'>Single Elimination Match Play</option>");
+        pairRow.append(this.tournamentPairingSelect);
+        tFields.append(pairRow);
+
+        this.tournamentGamesRow = $("<div class='play-form-row'></div>");
+        this.tournamentGamesRow.append("<span class='play-form-label'>Total Games <span class='info-toggle' data-for='help-tournament-games' role='button' tabindex='0' title='What is this?' aria-expanded='false'>i</span></span>");
+        this.tournamentGamesSelect = $("<select id='tournament-total-games' class='play-form-select'></select>");
+        var gi;
+        for (gi = 2; gi <= 14; gi += 2)
+            this.tournamentGamesSelect.append("<option value='" + gi + "'" + (gi === 2 ? " selected='selected'" : "") + ">" + gi + "</option>");
+        this.tournamentGamesRow.append(this.tournamentGamesSelect);
+        tFields.append(this.tournamentGamesRow);
+        tFields.append("<div id='help-tournament-games' class='info-text' style='display:none'>SWCCG Tournaments need to have an equal amount of Dark Side and Light Side games played by each player to be fair.</div>");
+
+        var maxRow = $("<div class='play-form-row'></div>");
+        maxRow.append("<span class='play-form-label'>Max players</span>");
+        this.tournamentMaxSelect = $("<select id='tournament-max-players' class='play-form-select'></select>");
+        this.tournamentMaxSelect.append("<option value='2'>2</option>");
+        this.tournamentMaxSelect.append("<option value='4'>4</option>");
+        this.tournamentMaxSelect.append("<option value='8'>8</option>");
+        this.tournamentMaxSelect.append("<option value='16'>16</option>");
+        this.tournamentMaxSelect.append("<option value='32'>32</option>");
+        this.tournamentMaxSelect.append("<option value='64'>64</option>");
+        this.tournamentMaxSelect.append("<option value='128' selected='selected'>128</option>");
+        maxRow.append(this.tournamentMaxSelect);
+        tFields.append(maxRow);
+
+        var readyRow = $("<div class='play-form-row'></div>");
+        readyRow.append("<span class='play-form-label'>Ready check</span>");
+        this.tournamentReadySelect = $("<select id='tournament-ready-check' class='play-form-select'></select>");
+        this.tournamentReadySelect.append("<option value='0' selected='selected'>Off</option>");
+        this.tournamentReadySelect.append("<option value='30'>30 seconds</option>");
+        this.tournamentReadySelect.append("<option value='60'>60 seconds</option>");
+        this.tournamentReadySelect.append("<option value='120'>2 minutes</option>");
+        readyRow.append(this.tournamentReadySelect);
+        tFields.append(readyRow);
+
+        var titleRow = $("<div class='play-form-row'></div>");
+        titleRow.append("<span class='play-form-label'>Title prefix</span>");
+        this.tournamentTitleInput = $("<input type='text' id='tournament-title-prefix' class='play-form-select' maxlength='80' placeholder=\"optional, e.g. Bill's Friday Night SWCCG\" />");
+        titleRow.append(this.tournamentTitleInput);
+        tFields.append(titleRow);
+
+        this.tournamentPrivateRow = $("<div class='play-form-row play-form-row-check'></div>");
+        this.tournamentPrivateCheckbox = $("<input type='checkbox' id='tournament-private' />");
+        this.tournamentPrivateRow.append(this.tournamentPrivateCheckbox);
+        this.tournamentPrivateRow.append("<span class='play-form-label'>Private (no spectators)</span>");
+        tFields.append(this.tournamentPrivateRow);
+
+        this.tournamentLightPlayerSelect = $("<select class='play-form-select'></select>");
+        this.tournamentLightLibrarySelect = $("<select class='play-form-select'></select>");
+        this.bindExclusiveDeckPair(this.tournamentLightPlayerSelect, this.tournamentLightLibrarySelect, null);
+        this.tournamentLightPlayerRow = $("<div class='play-form-row play-form-deck-row'></div>");
+        this.tournamentLightPlayerRow.append("<span class='play-form-label'>Your Light Deck</span>");
+        this.tournamentLightPlayerRow.append(this.tournamentLightPlayerSelect);
+        tFields.append(this.tournamentLightPlayerRow);
+        this.tournamentLightLibraryRow = $("<div class='play-form-row play-form-deck-row'></div>");
+        this.tournamentLightLibraryRow.append("<span class='play-form-label'>Library Light Deck</span>");
+        this.tournamentLightLibraryRow.append(this.tournamentLightLibrarySelect);
+        tFields.append(this.tournamentLightLibraryRow);
+
+        this.tournamentDarkPlayerSelect = $("<select class='play-form-select'></select>");
+        this.tournamentDarkLibrarySelect = $("<select class='play-form-select'></select>");
+        this.bindExclusiveDeckPair(this.tournamentDarkPlayerSelect, this.tournamentDarkLibrarySelect, null);
+        this.tournamentDarkPlayerRow = $("<div class='play-form-row play-form-deck-row'></div>");
+        this.tournamentDarkPlayerRow.append("<span class='play-form-label'>Your Dark Deck</span>");
+        this.tournamentDarkPlayerRow.append(this.tournamentDarkPlayerSelect);
+        tFields.append(this.tournamentDarkPlayerRow);
+        this.tournamentDarkLibraryRow = $("<div class='play-form-row play-form-deck-row'></div>");
+        this.tournamentDarkLibraryRow.append("<span class='play-form-label'>Library Dark Deck</span>");
+        this.tournamentDarkLibraryRow.append(this.tournamentDarkLibrarySelect);
+        tFields.append(this.tournamentDarkLibraryRow);
+
+        this.tournamentResultDiv = $("<div class='play-form-result' role='status' aria-live='polite'></div>");
+        tFields.append(this.tournamentResultDiv);
+
+        var tSubmitRow = $("<div class='play-form-row play-form-actions'></div>");
+        this.tournamentCreateButton = $("<button type='button' id='submit-tournament-button' class='table-create-button'>Create Tournament</button>");
+        tSubmitRow.append(this.tournamentCreateButton);
+        tFields.append(tSubmitRow);
+
+        this.playTournamentPanel.append(tFields);
+        this.bindLeagueInfoToggles(this.playTournamentPanel);
         panel.append(this.playTournamentPanel);
+
+        var thatTourney = this;
+        this.tournamentPairingSelect.change(function () {
+            thatTourney.syncTournamentPairingUi();
+        });
+        this.tournamentMaxSelect.change(function () {
+            thatTourney.prefillTournamentGamesFromMax();
+        });
+        this.tournamentFormatSelect.change(function () {
+            var fmt = thatTourney.tournamentFormatSelect.val();
+            thatTourney.updateDecks(fmt, "default");
+        });
+        $(this.tournamentCreateButton).button().click(function () {
+            thatTourney.submitCreateTournament();
+        });
 
         this.playOverlay.append(backdrop);
         this.playOverlay.append(panel);
@@ -1000,15 +1118,44 @@ var GempSwccgHallUI = Class.extend({
         this.joinLibraryDeckSelect = $("<select class='play-form-select'></select>");
         this.bindExclusiveDeckPair(this.joinPlayerDeckSelect, this.joinLibraryDeckSelect, null);
 
+        this.joinSingleDeckBlock = $("<div class='join-single-deck'></div>");
         var deckRow = $("<div class='play-form-row play-form-deck-row'></div>");
         deckRow.append("<span class='play-form-label'>Your Deck</span>");
         deckRow.append(this.joinPlayerDeckSelect);
-        form.append(deckRow);
+        this.joinSingleDeckBlock.append(deckRow);
 
         this.joinLibraryDeckRow = $("<div class='play-form-row play-form-deck-row'></div>");
         this.joinLibraryDeckRow.append("<span class='play-form-label'>Library Deck</span>");
         this.joinLibraryDeckRow.append(this.joinLibraryDeckSelect);
-        form.append(this.joinLibraryDeckRow);
+        this.joinSingleDeckBlock.append(this.joinLibraryDeckRow);
+        form.append(this.joinSingleDeckBlock);
+
+        this.joinDualDeckBlock = $("<div class='join-dual-deck' style='display:none'></div>");
+        this.joinLightPlayerSelect = $("<select class='play-form-select'></select>");
+        this.joinLightLibrarySelect = $("<select class='play-form-select'></select>");
+        this.bindExclusiveDeckPair(this.joinLightPlayerSelect, this.joinLightLibrarySelect, null);
+        this.joinDarkPlayerSelect = $("<select class='play-form-select'></select>");
+        this.joinDarkLibrarySelect = $("<select class='play-form-select'></select>");
+        this.bindExclusiveDeckPair(this.joinDarkPlayerSelect, this.joinDarkLibrarySelect, null);
+
+        var lightPlayerRow = $("<div class='play-form-row play-form-deck-row'></div>");
+        lightPlayerRow.append("<span class='play-form-label'>Your Light Deck</span>");
+        lightPlayerRow.append(this.joinLightPlayerSelect);
+        this.joinDualDeckBlock.append(lightPlayerRow);
+        this.joinLightLibraryRow = $("<div class='play-form-row play-form-deck-row'></div>");
+        this.joinLightLibraryRow.append("<span class='play-form-label'>Library Light Deck</span>");
+        this.joinLightLibraryRow.append(this.joinLightLibrarySelect);
+        this.joinDualDeckBlock.append(this.joinLightLibraryRow);
+
+        var darkPlayerRow = $("<div class='play-form-row play-form-deck-row'></div>");
+        darkPlayerRow.append("<span class='play-form-label'>Your Dark Deck</span>");
+        darkPlayerRow.append(this.joinDarkPlayerSelect);
+        this.joinDualDeckBlock.append(darkPlayerRow);
+        this.joinDarkLibraryRow = $("<div class='play-form-row play-form-deck-row'></div>");
+        this.joinDarkLibraryRow.append("<span class='play-form-label'>Library Dark Deck</span>");
+        this.joinDarkLibraryRow.append(this.joinDarkLibrarySelect);
+        this.joinDualDeckBlock.append(this.joinDarkLibraryRow);
+        form.append(this.joinDualDeckBlock);
 
         this.joinResultDiv = $("<div class='join-result warningMessage' style='display:none'></div>");
         form.append(this.joinResultDiv);
@@ -1117,10 +1264,15 @@ var GempSwccgHallUI = Class.extend({
         this.joinPlayerDeckSelect.append(loading);
         this.joinLibraryDeckSelect.append($("<option></option>").attr("value", "").text("Select a Library Deck"));
 
-        var isQueue = pending.kind === "queue";
-        this.joinTitleEl.text(isQueue ? "Join Queue" : "Join Table");
+        var isQueue = pending.kind === "queue" || pending.kind === "playerTournament";
+        var isDual = pending.kind === "playerTournament";
+        this.joinTitleEl.text(isDual ? "Join Tournament" : (isQueue ? "Join Queue" : "Join Table"));
         var button = $(this.joinSubmitButton);
-        var label = isQueue ? "Join queue" : "Join table";
+        var label = isDual ? "Join tournament" : (isQueue ? "Join queue" : "Join table");
+        if (this.joinSingleDeckBlock != null)
+            this.joinSingleDeckBlock.toggle(!isDual);
+        if (this.joinDualDeckBlock != null)
+            this.joinDualDeckBlock.toggle(!!isDual);
         if (button.hasClass("ui-button")) {
             button.button("option", "label", label);
         } else {
@@ -1135,7 +1287,10 @@ var GempSwccgHallUI = Class.extend({
 
         this.joinOverlay.css("display", "flex");
         $("body").addClass("play-flow-open");
-        this.joinPlayerDeckSelect.focus();
+        if (isDual)
+            this.joinLightPlayerSelect.focus();
+        else
+            this.joinPlayerDeckSelect.focus();
         this.refreshExclusiveDeckPairHighlight(this.joinPlayerDeckSelect, this.joinLibraryDeckSelect);
         this.loadJoinDecks(pending.formatCode, pending.collectionCode, pending.requiredSide);
     },
@@ -1246,6 +1401,10 @@ var GempSwccgHallUI = Class.extend({
             libSelect.val(libSelect.find("option").eq(1).attr("value"));
 
         this.joinResultDiv.hide().empty();
+        if (this.joinPending != null && this.joinPending.kind === "playerTournament") {
+            this.fillJoinDualDeckSelects(playerXml, libraryXml, showLibrary);
+            return;
+        }
         var total = playerCount + (showLibrary ? libCount : 0);
         if (total === 0) {
             if (requiredSide != null && requiredSide !== "") {
@@ -1288,6 +1447,11 @@ var GempSwccgHallUI = Class.extend({
         if (this.joinPending == null) {
             return;
         }
+        var pending = this.joinPending;
+        if (pending.kind === "playerTournament") {
+            this.submitPlayerMadeJoin(pending);
+            return;
+        }
         var picked = this.selectedDeckFromPair(this.joinPlayerDeckSelect, this.joinLibraryDeckSelect);
         if (picked == null || picked.name == null || picked.name === "") {
             this.showJoinError("You must select a deck.");
@@ -1300,7 +1464,6 @@ var GempSwccgHallUI = Class.extend({
         }
         var deck = picked.name;
         var sampleDeck = picked.sample;
-        var pending = this.joinPending;
         var button = $(this.joinSubmitButton);
         if (button.hasClass("ui-button")) {
             button.button("disable");
@@ -1473,7 +1636,222 @@ var GempSwccgHallUI = Class.extend({
         this.playOverlay.removeClass("play-flow-league");
         this.parkPlayFormFields();
         this.setPlayFlowTitle("Tournament");
+        this.populateTournamentFormats();
+        this.syncTournamentPairingUi();
+        this.fillTournamentDeckSelects();
         this.playTournamentPanel.show();
+    },
+
+    populateTournamentFormats:function() {
+        if (this.tournamentFormatSelect == null || this.supportedFormatsSelect == null)
+            return;
+        var prev = this.tournamentFormatSelect.val();
+        this.tournamentFormatSelect.empty();
+        var that = this;
+        this.supportedFormatsSelect.find("option").each(function () {
+            var opt = $(this);
+            var value = opt.attr("value");
+            var label = opt.text();
+            if (value == null || value === "")
+                return;
+            if (/sealed|draft|cube/i.test(label) || /sealed|draft|cube/i.test(value))
+                return;
+            that.tournamentFormatSelect.append($("<option></option>").attr("value", value).text(label));
+        });
+        if (that.selectHasValue(that.tournamentFormatSelect, "anything_goes"))
+            that.tournamentFormatSelect.val("anything_goes");
+        else if (prev && that.selectHasValue(that.tournamentFormatSelect, prev))
+            that.tournamentFormatSelect.val(prev);
+        else
+            that.tournamentFormatSelect.val(that.tournamentFormatSelect.find("option").eq(0).attr("value"));
+    },
+
+    recommendedTournamentGames:function(playerCount) {
+        var n = parseInt(playerCount, 10);
+        if (isNaN(n) || n <= 2)
+            return 2;
+        if (n <= 4)
+            return 4;
+        if (n <= 8)
+            return 6;
+        if (n <= 16)
+            return 8;
+        if (n <= 32)
+            return 10;
+        if (n <= 64)
+            return 12;
+        return 14;
+    },
+
+    prefillTournamentGamesFromMax:function() {
+        if (this.tournamentGamesSelect == null || this.tournamentMaxSelect == null)
+            return;
+        if (this.tournamentPairingSelect != null && this.tournamentPairingSelect.val() === "matchPlay")
+            return;
+        var rec = this.recommendedTournamentGames(this.tournamentMaxSelect.val());
+        this.tournamentGamesSelect.val(String(rec));
+    },
+
+    syncTournamentPairingUi:function() {
+        var matchPlay = this.tournamentPairingSelect != null && this.tournamentPairingSelect.val() === "matchPlay";
+        if (this.tournamentGamesRow != null) {
+            if (matchPlay)
+                this.tournamentGamesRow.hide();
+            else
+                this.tournamentGamesRow.show();
+        }
+        if (!matchPlay)
+            this.prefillTournamentGamesFromMax();
+    },
+
+    fillTournamentDeckSelects:function() {
+        if (this.tournamentLightPlayerSelect == null)
+            return;
+        this.fillDeckSelect(this.tournamentLightPlayerSelect, false, "light", "Choose one of your Light decks", true);
+        this.fillDeckSelect(this.tournamentLightLibrarySelect, true, "light", "Select a Library Light Deck", false);
+        this.fillDeckSelect(this.tournamentDarkPlayerSelect, false, "dark", "Choose one of your Dark decks", true);
+        this.fillDeckSelect(this.tournamentDarkLibrarySelect, true, "dark", "Select a Library Dark Deck", false);
+        this.refreshExclusiveDeckPairHighlight(this.tournamentLightPlayerSelect, this.tournamentLightLibrarySelect);
+        this.refreshExclusiveDeckPairHighlight(this.tournamentDarkPlayerSelect, this.tournamentDarkLibrarySelect);
+    },
+
+    fillJoinDualDeckSelects:function(playerXml, libraryXml, showLibrary) {
+        var fillSide = function(playerSelect, libSelect, side, playerXml, libraryXml, showLibrary, generate) {
+            playerSelect.empty();
+            libSelect.empty();
+            libSelect.append($("<option></option>").attr("value", "").text("Select a Library Deck"));
+            var tag = side === "light" ? "lightDeck" : "darkDeck";
+            var prefix = side === "light" ? "[LIGHT] " : "[DARK] ";
+            var playerCount = 0;
+            var libCount = 0;
+            if (playerXml != null && playerXml.documentElement != null)
+                playerCount = generate(playerXml.documentElement.getElementsByTagName(tag), prefix, "false", side, playerSelect, side);
+            if (showLibrary && libraryXml != null && libraryXml.documentElement != null)
+                libCount = generate(libraryXml.documentElement.getElementsByTagName(tag), prefix, "true", side, libSelect, side);
+            if (playerCount === 0) {
+                playerSelect.append($("<option></option>").attr("value", "").text("No " + side + " decks found"));
+            } else {
+                playerSelect.prepend($("<option></option>").attr("value", "").text("Choose one of your decks"));
+                playerSelect.val(playerSelect.find("option").eq(1).attr("value"));
+                libSelect.val("");
+            }
+            if (playerCount === 0 && showLibrary && libCount > 0)
+                libSelect.val(libSelect.find("option").eq(1).attr("value"));
+            return playerCount + (showLibrary ? libCount : 0);
+        };
+        var generate = $.proxy(this.generateDeckRow, this);
+        var lightTotal = fillSide(this.joinLightPlayerSelect, this.joinLightLibrarySelect, "light", playerXml, libraryXml, showLibrary, generate);
+        var darkTotal = fillSide(this.joinDarkPlayerSelect, this.joinDarkLibrarySelect, "dark", playerXml, libraryXml, showLibrary, generate);
+        this.refreshExclusiveDeckPairHighlight(this.joinLightPlayerSelect, this.joinLightLibrarySelect);
+        this.refreshExclusiveDeckPairHighlight(this.joinDarkPlayerSelect, this.joinDarkLibrarySelect);
+        if (lightTotal === 0 || darkTotal === 0) {
+            this.showJoinError("You need both a Light Side deck and a Dark Side deck legal for this format.");
+            this.setJoinSubmitEnabled(false);
+        } else {
+            this.setJoinSubmitEnabled(true);
+        }
+    },
+
+    submitPlayerMadeJoin:function(pending) {
+        var that = this;
+        var light = this.selectedDeckFromPair(this.joinLightPlayerSelect, this.joinLightLibrarySelect);
+        var dark = this.selectedDeckFromPair(this.joinDarkPlayerSelect, this.joinDarkLibrarySelect);
+        if (light == null || dark == null) {
+            this.showJoinError("Select both a Light Side deck and a Dark Side deck.");
+            return;
+        }
+        if (light.side != null && light.side !== "light") {
+            this.showJoinError("The Light Side selection must be a Light Side deck.");
+            return;
+        }
+        if (dark.side != null && dark.side !== "dark") {
+            this.showJoinError("The Dark Side selection must be a Dark Side deck.");
+            return;
+        }
+        var button = $(this.joinSubmitButton);
+        if (button.hasClass("ui-button"))
+            button.button("disable");
+        var onDone = function() {
+            setTimeout(function() {
+                if (button.hasClass("ui-button"))
+                    button.button("enable");
+            }, 1500);
+        };
+        var errorMap = {
+            "0": function() { that.showJoinError("Server unavailable or connection problem."); onDone(); },
+            "400": function(xhr) {
+                var message = xhr.getResponseHeader("message");
+                that.showJoinError(message != null ? message : "Bad request. Check your decks and try again.");
+                onDone();
+            },
+            "401": function() { that.showJoinError("You are not logged in."); onDone(); },
+            "404": function() { that.showJoinError("Tournament not found."); onDone(); },
+            "500": function() { that.showJoinError("Server error. Try again."); onDone(); }
+        };
+        this.comm.joinPlayerMadeQueue(pending.id, light.name, light.sample, dark.name, dark.sample, function (xml) {
+            onDone();
+            if (xml != null && xml.documentElement != null && xml.documentElement.tagName == "error") {
+                that.showJoinError(xml.documentElement.getAttribute("message") || "Unable to join.");
+                return;
+            }
+            that.closeJoinOverlay();
+        }, errorMap);
+    },
+
+    submitCreateTournament:function() {
+        var that = this;
+        var light = this.selectedDeckFromPair(this.tournamentLightPlayerSelect, this.tournamentLightLibrarySelect);
+        var dark = this.selectedDeckFromPair(this.tournamentDarkPlayerSelect, this.tournamentDarkLibrarySelect);
+        if (light == null || dark == null) {
+            this.showTournamentError("Select both a Light Side deck and a Dark Side deck.");
+            return;
+        }
+        var pairing = this.tournamentPairingSelect.val() || "swiss";
+        var params = {
+            type: "constructed",
+            formatCode: this.tournamentFormatSelect.val(),
+            pairing: pairing,
+            totalGames: this.tournamentGamesSelect.val() || "2",
+            maxPlayers: this.tournamentMaxSelect.val() || "128",
+            readyCheckSeconds: this.tournamentReadySelect.val() || "0",
+            privateEvent: this.tournamentPrivateCheckbox != null && this.tournamentPrivateCheckbox.is(":checked") ? "true" : "false",
+            titlePrefix: this.tournamentTitleInput != null ? this.tournamentTitleInput.val() : "",
+            lightDeckName: light.name,
+            lightSampleDeck: light.sample,
+            darkDeckName: dark.name,
+            darkSampleDeck: dark.sample
+        };
+        var button = $(this.tournamentCreateButton);
+        if (button.hasClass("ui-button"))
+            button.button("disable");
+        var onDone = function() {
+            setTimeout(function() {
+                if (button.hasClass("ui-button"))
+                    button.button("enable");
+            }, 1500);
+        };
+        this.comm.createTournament(params, function (xml) {
+            onDone();
+            if (xml != null && xml.documentElement != null && xml.documentElement.tagName == "error") {
+                that.showTournamentError(xml.documentElement.getAttribute("message") || "Unable to create tournament.");
+                return;
+            }
+            that.closePlayOverlay();
+        }, {
+            "0": function() { that.showTournamentError("Server unavailable or connection problem."); onDone(); },
+            "400": function() { that.showTournamentError("Bad request. Check your decks and options."); onDone(); },
+            "401": function() { that.showTournamentError("You are not logged in."); onDone(); },
+            "500": function() { that.showTournamentError("Server error. Try again."); onDone(); }
+        });
+    },
+
+    showTournamentError:function(message) {
+        if (this.tournamentResultDiv == null) {
+            this.chat.appendMessage(message, "warningMessage");
+            return;
+        }
+        this.tournamentResultDiv.text(message);
+        this.chat.appendMessage(message, "warningMessage");
     },
 
     showPlayForm:function(mode) {
@@ -1740,6 +2118,7 @@ var GempSwccgHallUI = Class.extend({
         this.fillDeckSelect(this.libraryDeckSelect, true, null, "Select a Library Deck", false);
         this.updateBotDeckSelects();
         this.refreshExclusiveDeckPairHighlight(this.playerDeckSelect, this.libraryDeckSelect);
+        this.fillTournamentDeckSelects();
     },
 
     oppositeSide:function(side) {
@@ -2889,6 +3268,122 @@ var GempSwccgHallUI = Class.extend({
         });
     },
 
+    renderPlayerMadeQueueRow:function(queue, id, action) {
+        var that = this;
+        var formatName = queue.getAttribute("format") || "";
+        var queueName = queue.getAttribute("queue") || "";
+        var statusText = queue.getAttribute("start") || "Waiting for players";
+        var playersStr = queue.getAttribute("players") || "";
+        var joined = queue.getAttribute("signedUp") == "true";
+        var joinable = queue.getAttribute("joinable") == "true";
+        var isHost = queue.getAttribute("isHost") == "true";
+        var startable = queue.getAttribute("startable") == "true";
+        var canCancel = queue.getAttribute("canCancel") == "true";
+        var readyCheck = queue.getAttribute("readyCheck") == "true";
+        var formatCode = queue.getAttribute("formatCode");
+        var playerCount = queue.getAttribute("playerCount") || "0";
+        var maxPlayers = queue.getAttribute("maxPlayers") || "";
+        if (maxPlayers)
+            statusText = statusText + " (" + playerCount + "/" + maxPlayers + ")";
+
+        var row = $("<tr class='queue" + id + "'></tr>");
+        row.append("<td>" + formatName + "</td>");
+        row.append("<td>" + queueName + "</td>");
+        var statusCell = $("<td></td>");
+        statusCell.text(statusText);
+        var ageAt = parseInt(queue.getAttribute("ageAt"), 10);
+        if (!isNaN(ageAt) && ageAt > 0) {
+            statusCell.append(" ");
+            var ageSpan = $("<span class='table-age'></span>").attr("data-created-at", ageAt);
+            statusCell.append(ageSpan);
+            this.renderTableAge(ageSpan);
+        }
+        row.append(statusCell);
+        row.append("<td>" + playersStr + "</td>");
+
+        var lastField = $("<td></td>");
+        if (joinable && !joined) {
+            var joinBut = $("<button>Join</button>");
+            $(joinBut).button().click((function(queueId, fmt, qname, fmtCode) {
+                return function () {
+                    that.openJoinPopup({
+                        kind: "playerTournament",
+                        id: queueId,
+                        formatName: fmt,
+                        formatCode: fmtCode,
+                        collectionCode: null,
+                        hostSide: null,
+                        requiredSide: null,
+                        contextLabel: that.buildJoinContextLabel(fmt, null, qname, null, null)
+                    });
+                };
+            })(id, formatName, queueName, formatCode));
+            lastField.append(joinBut);
+        }
+        if (joined) {
+            var leaveBut = $("<button>Leave</button>");
+            $(leaveBut).button().click((function(queueId) {
+                return function() {
+                    that.comm.leaveQueue(queueId, function (xml) {
+                        that.processResponse(xml);
+                    });
+                };
+            })(id));
+            lastField.append(leaveBut);
+        }
+        if (startable) {
+            var startBut = $("<button>Start</button>");
+            $(startBut).button().click((function(queueId) {
+                return function() {
+                    that.comm.startQueue(queueId, function (xml) {
+                        that.processResponse(xml);
+                    }, {
+                        "0": function() { that.chat.appendMessage("Could not start tournament.", "warningMessage"); }
+                    });
+                };
+            })(id));
+            lastField.append(startBut);
+        }
+        if (canCancel) {
+            var cancelBut = $("<button>Cancel</button>");
+            $(cancelBut).button().click((function(queueId) {
+                return function() {
+                    that.comm.cancelQueue(queueId, function (xml) {
+                        that.processResponse(xml);
+                    }, {
+                        "0": function() { that.chat.appendMessage("Could not cancel tournament.", "warningMessage"); }
+                    });
+                };
+            })(id));
+            lastField.append(cancelBut);
+        }
+        if (readyCheck && joined && !isHost) {
+            var readyBut = $("<button>Ready</button>");
+            $(readyBut).button().click((function(queueId) {
+                return function() {
+                    that.comm.readyQueue(queueId, function (xml) {
+                        that.processResponse(xml);
+                    }, {
+                        "0": function() { that.chat.appendMessage("Could not confirm ready.", "warningMessage"); }
+                    });
+                };
+            })(id));
+            lastField.append(readyBut);
+        }
+        row.append(lastField);
+
+        if (action == "add") {
+            $("table.waitingTables", this.tablesDiv).append(row);
+        } else if (action == "update") {
+            if ($(".queue" + id, $("table.waitingTables")).length > 0) {
+                $(".queue" + id, this.tablesDiv).replaceWith(row);
+            } else {
+                $(".queue" + id, this.tablesDiv).remove();
+                $("table.waitingTables", this.tablesDiv).append(row);
+            }
+        }
+    },
+
     processHall:function (xml) {
         var that = this;
 
@@ -2938,6 +3433,10 @@ var GempSwccgHallUI = Class.extend({
                 var id = queue.getAttribute("id");
                 var action = queue.getAttribute("action");
                 if (action == "add" || action == "update") {
+                    if (queue.getAttribute("playerMade") == "true") {
+                        this.renderPlayerMadeQueueRow(queue, id, action);
+                        this.animateRowUpdate(".queue" + id);
+                    } else {
                     var actionsField = $("<td></td>");
 
                     var joined = queue.getAttribute("signedUp");
@@ -2984,6 +3483,7 @@ var GempSwccgHallUI = Class.extend({
                     }
 
                     this.animateRowUpdate(".queue" + id);
+                    }
                 } else if (action == "remove") {
                     $(".queue" + id, this.tablesDiv).remove();
                 }
@@ -3208,6 +3708,7 @@ var GempSwccgHallUI = Class.extend({
                 this.supportedFormatsInitialized = true;
                 // Mark league-type options via /league list (hall emits both as plain <format>)
                 this.tagLeagueFormats();
+                this.populateTournamentFormats();
             }
 
             var layoutChanged = false;

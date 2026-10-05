@@ -132,7 +132,9 @@ public class HallCommunicationChannel implements LongPollableResource {
 
                     @Override
                     public void visitTournamentQueue(String tournamentQueueKey, int cost, String collectionName, String formatName, String tournamentQueueName,
-                                                     String tournamentPrizes, String pairingDescription, String startCondition, int playerCount, boolean playerSignedUp, boolean joinable) {
+                                                     String tournamentPrizes, String pairingDescription, String startCondition, int playerCount, boolean playerSignedUp, boolean joinable,
+                                                     String formatCode, boolean playerMade, boolean isHost, boolean startable, boolean canCancel,
+                                                     String playersCsv, int maxPlayers, boolean readyCheck, boolean privateEvent, long createdAt) {
                         Map<String, String> props = new HashMap<String, String>();
                         props.put("cost", String.valueOf(cost));
                         props.put("collection", collectionName);
@@ -144,6 +146,20 @@ public class HallCommunicationChannel implements LongPollableResource {
                         props.put("start", startCondition);
                         props.put("signedUp", String.valueOf(playerSignedUp));
                         props.put("joinable", String.valueOf(joinable));
+                        if (formatCode != null)
+                            props.put("formatCode", formatCode);
+                        if (playerMade) {
+                            props.put("playerMade", "true");
+                            props.put("isHost", String.valueOf(isHost));
+                            props.put("startable", String.valueOf(startable));
+                            props.put("canCancel", String.valueOf(canCancel));
+                            props.put("players", playersCsv != null ? playersCsv : "");
+                            props.put("maxPlayers", String.valueOf(maxPlayers));
+                            props.put("readyCheck", String.valueOf(readyCheck));
+                            props.put("privateEvent", String.valueOf(privateEvent));
+                            if (createdAt > 0)
+                                props.put("ageAt", String.valueOf(createdAt));
+                        }
 
                         tournamentQueuesOnServer.put(tournamentQueueKey, props);
                     }

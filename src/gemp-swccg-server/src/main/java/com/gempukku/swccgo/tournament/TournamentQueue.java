@@ -35,4 +35,57 @@ public interface TournamentQueue {
     public boolean isPlayerSignedUp(String player);
 
     public boolean isJoinable();
+
+    default boolean isPlayerMade() {
+        return false;
+    }
+
+    default boolean isHost(String player) {
+        return false;
+    }
+
+    default boolean isStartable(String player) {
+        return false;
+    }
+
+    default boolean canCancel(String player) {
+        return false;
+    }
+
+    default String getSignedUpPlayersCsv() {
+        return "";
+    }
+
+    default int getMaxPlayers() {
+        return 0;
+    }
+
+    default int getReadyCheckSeconds() {
+        return 0;
+    }
+
+    default boolean isPrivateEvent() {
+        return false;
+    }
+
+    default long getCreatedAt() {
+        return 0;
+    }
+
+    default boolean isReadyCheckActive() {
+        return false;
+    }
+
+    default void requestStart(String player) {
+    }
+
+    default void confirmReady(String player) {
+    }
+
+    default void cancel(String player) {
+    }
+
+    default void joinPlayer(CollectionsManager collectionsManager, Player player, SwccgDeck lightDeck, SwccgDeck darkDeck) {
+        joinPlayer(collectionsManager, player, lightDeck);
+    }
 }

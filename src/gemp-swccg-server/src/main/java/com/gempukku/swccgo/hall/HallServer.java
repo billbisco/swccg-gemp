@@ -619,6 +619,9 @@ public class HallServer extends AbstractServer {
                 swccgDeck = validateUserAndDeck(_formatLibrary.getFormat(tournamentQueue.getFormat()), player, deckName,
                         tournamentQueue.getCollectionType(), sampleDeck, librarian);
 
+            if (tournamentQueue.isPlayerMade())
+                throw new HallException("This tournament needs both a Light Side and a Dark Side deck");
+
             tournamentQueue.joinPlayer(_collectionsManager, player, swccgDeck);
 
             hallChanged();
@@ -627,6 +630,154 @@ public class HallServer extends AbstractServer {
         } finally {
             _hallDataAccessLock.writeLock().unlock();
         }
+    }
+
+    public boolean joinPlayerMadeQueue(String queueId, Player player, String lightDeckName, boolean lightSample,
+            String darkDeckName, boolean darkSample, Player lightLibrarian, Player darkLibrarian) throws HallException {
+        if (_shutdown)
+            throw new HallException(
+                    "Server is in shutdown mode. No games may be started. Server will be restarted after all games have finished.");
+        if (!_operational)
+            throw new HallException("Server is not yet in operational mode. Games may not be started yet.");
+
+        _hallDataAccessLock.writeLock().lock();
+        try {
+            TournamentQueue tournamentQueue = _tournamentQueues.get(queueId);
+            if (tournamentQueue == null)
+                throw new HallException(
+                        "Tournament queue already finished accepting players, try again in a few seconds");
+            if (!tournamentQueue.isPlayerMade())
+                throw new HallException("This queue does not take two decks");
+            if (tournamentQueue.isPlayerSignedUp(player.getName()))
+                throw new HallException("You have already joined that queue");
+            if (!tournamentQueue.isJoinable())
+                throw new HallException("That tournament is no longer accepting players");
+
+            SwccgFormat format = _formatLibrary.getFormat(tournamentQueue.getFormat());
+            SwccgDeck lightDeck = validateUserAndDeck(format, player, lightDeckName,
+                    tournamentQueue.getCollectionType(), lightSample, lightLibrarian);
+            SwccgDeck darkDeck = validateUserAndDeck(format, player, darkDeckName,
+                    tournamentQueue.getCollectionType(), darkSample, darkLibrarian);
+            if (lightDeck.getSide(_library) != Side.LIGHT)
+                throw new HallException("Your Light Side selection must be a Light Side deck");
+            if (darkDeck.getSide(_library) != Side.DARK)
+                throw new HallException("Your Dark Side selection must be a Dark Side deck");
+
+            tournamentQueue.joinPlayer(_collectionsManager, player, lightDeck, darkDeck);
+            hallChanged();
+            return true;
+        } finally {
+            _hallDataAccessLock.writeLock().unlock();
+        }
+    }
+
+    public void startPlayerMadeQueue(String queueId, Player player) throws HallException {
+        _hallDataAccessLock.writeLock().lock();
+        try {
+            TournamentQueue tournamentQueue = _tournamentQueues.get(queueId);
+            if (tournamentQueue == null)
+                throw new HallException("That tournament is no longer waiting for players");
+            if (!tournamentQueue.isStartable(player.getName()))
+                throw new HallException("Only the host can start, and at least 2 players must be signed up");
+            tournamentQueue.requestStart(player.getName());
+            hallChanged();
+        } finally {
+            _hallDataAccessLock.writeLock().unlock();
+        }
+    }
+
+    public void confirmPlayerMadeReady(String queueId, Player player) throws HallException {
+        _hallDataAccessLock.writeLock().lock();
+        try {
+            TournamentQueue tournamentQueue = _tournamentQueues.get(queueId);
+            if (tournamentQueue == null)
+                throw new HallException("That tournament is no longer waiting for players");
+            tournamentQueue.confirmReady(player.getName());
+            hallChanged();
+        } finally {
+            _hallDataAccessLock.writeLock().unlock();
+        }
+    }
+
+    public void cancelPlayerMadeQueue(String queueId, Player player) throws HallException {
+        _hallDataAccessLock.writeLock().lock();
+        try {
+            TournamentQueue tournamentQueue = _tournamentQueues.get(queueId);
+            if (tournamentQueue == null)
+                throw new HallException("That tournament is no longer waiting for players");
+            if (!tournamentQueue.canCancel(player.getName()))
+                throw new HallException("Only the host can cancel a waiting tournament");
+            tournamentQueue.cancel(player.getName());
+            hallChanged();
+        } finally {
+            _hallDataAccessLock.writeLock().unlock();
+        }
+    }
+
+    public void createPlayerMadeQueue(Player host, String titlePrefix, String formatCode, String pairing,
+            int totalGames, int maxPlayers, int readyCheckSeconds, boolean privateEvent,
+            String lightDeckName, boolean lightSample, String darkDeckName, boolean darkSample,
+            Player lightLibrarian, Player darkLibrarian) throws HallException {
+        if (_shutdown)
+            throw new HallException(
+                    "Server is in shutdown mode. No games may be started. Server will be restarted after all games have finished.");
+        if (!_operational)
+            throw new HallException("Server is not yet in operational mode. Games may not be started yet.");
+        if (host == null)
+            throw new HallException("You must be logged in to host a tournament");
+
+        SwccgFormat format = _formatLibrary.getHallFormats().get(formatCode);
+        if (format == null)
+            format = _formatLibrary.getFormat(formatCode);
+        if (format == null)
+            throw new HallException("This format is not supported: " + formatCode);
+        if (format.isPlaytesting()
+                && !(host.hasType(Player.Type.ADMIN) || host.hasType(Player.Type.PLAYTESTER)))
+            throw new HallException("You are not allowed to host a playtesting format");
+        if (format.hasJpSealedRule())
+            throw new HallException("Sealed formats are not available for Constructed tournaments yet");
+
+        if (!PlayerMadeQueue.PAIRING_SWISS.equals(pairing) && !PlayerMadeQueue.PAIRING_MATCH_PLAY.equals(pairing))
+            throw new HallException("Choose Swiss or Single Elimination Match Play");
+
+        _hallDataAccessLock.writeLock().lock();
+        try {
+            SwccgDeck lightDeck = validateUserAndDeck(format, host, lightDeckName, _allCardsCollectionType,
+                    lightSample, lightLibrarian);
+            SwccgDeck darkDeck = validateUserAndDeck(format, host, darkDeckName, _allCardsCollectionType,
+                    darkSample, darkLibrarian);
+            if (lightDeck.getSide(_library) != Side.LIGHT)
+                throw new HallException("Your Light Side selection must be a Light Side deck");
+            if (darkDeck.getSide(_library) != Side.DARK)
+                throw new HallException("Your Dark Side selection must be a Dark Side deck");
+
+            String queueId = "ptq-" + new SwccgUuid().generateNewTableId();
+            String displayName = buildPlayerMadeTournamentName(titlePrefix, pairing, format.getName());
+            int games = PlayerMadeQueue.PAIRING_MATCH_PLAY.equals(pairing) ? 2
+                    : ConstructedPairing.clampTotalGames(totalGames);
+            PlayerMadeQueue queue = new PlayerMadeQueue(queueId, displayName, host.getName(), format.getCode(),
+                    pairing, games, maxPlayers, readyCheckSeconds, privateEvent,
+                    _tournamentPrizeSchemeRegistry.getTournamentPrizes("none"));
+            queue.joinPlayer(_collectionsManager, host, lightDeck, darkDeck);
+            _tournamentQueues.put(queueId, queue);
+            hallChanged();
+        } finally {
+            _hallDataAccessLock.writeLock().unlock();
+        }
+    }
+
+    private static String buildPlayerMadeTournamentName(String titlePrefix, String pairing, String formatName) {
+        String kind = PlayerMadeQueue.PAIRING_MATCH_PLAY.equals(pairing)
+                ? "Match Play Tournament" : "Swiss Tournament";
+        String base = kind + " - Constructed - " + formatName;
+        if (titlePrefix == null)
+            return base;
+        String prefix = titlePrefix.trim();
+        if (prefix.isEmpty())
+            return base;
+        if (prefix.endsWith(":"))
+            return prefix + " " + base;
+        return prefix + ": " + base;
     }
 
     /**
@@ -956,14 +1107,30 @@ public class HallServer extends AbstractServer {
             for (Map.Entry<String, TournamentQueue> tournamentQueueEntry : _tournamentQueues.entrySet()) {
                 String tournamentQueueKey = tournamentQueueEntry.getKey();
                 TournamentQueue tournamentQueue = tournamentQueueEntry.getValue();
+                String formatName = tournamentQueue.getFormat();
+                try {
+                    if (_formatLibrary.getFormat(tournamentQueue.getFormat()) != null)
+                        formatName = _formatLibrary.getFormat(tournamentQueue.getFormat()).getName();
+                } catch (Exception ignored) {
+                }
                 visitor.visitTournamentQueue(tournamentQueueKey, tournamentQueue.getCost(),
                         tournamentQueue.getCollectionType().getFullName(),
-                        _formatLibrary.getFormat(tournamentQueue.getFormat()).getName(),
+                        formatName,
                         tournamentQueue.getTournamentQueueName(),
                         tournamentQueue.getPrizesDescription(), tournamentQueue.getPairingDescription(),
                         tournamentQueue.getStartCondition(),
                         tournamentQueue.getPlayerCount(), tournamentQueue.isPlayerSignedUp(player.getName()),
-                        tournamentQueue.isJoinable());
+                        tournamentQueue.isJoinable(),
+                        tournamentQueue.getFormat(),
+                        tournamentQueue.isPlayerMade(),
+                        tournamentQueue.isHost(player.getName()),
+                        tournamentQueue.isStartable(player.getName()),
+                        tournamentQueue.canCancel(player.getName()),
+                        tournamentQueue.getSignedUpPlayersCsv(),
+                        tournamentQueue.getMaxPlayers(),
+                        tournamentQueue.isReadyCheckActive(),
+                        tournamentQueue.isPrivateEvent(),
+                        tournamentQueue.getCreatedAt());
             }
 
             for (Map.Entry<String, Tournament> tournamentEntry : _runningTournaments.entrySet()) {
@@ -1474,6 +1641,7 @@ public class HallServer extends AbstractServer {
     private class HallTournamentQueueCallback implements TournamentQueueCallback {
         @Override
         public void createTournament(Tournament tournament) {
+            _tournamentService.registerInMemoryTournament(tournament);
             _runningTournaments.put(tournament.getTournamentId(), tournament);
         }
     }
@@ -1500,15 +1668,29 @@ public class HallServer extends AbstractServer {
             _hallDataAccessLock.writeLock().lock();
             try {
                 if (_operational && !_shutdown) {
-                    HallServer.this.createGame(null, null, new SwccgUuid().generateNewTableId(), participants,
+                    boolean privateEvent = _tournament instanceof PlayerConstructedTournament
+                            && ((PlayerConstructedTournament) _tournament).isPrivateEvent();
+                    final SwccgGameMediator[] captured = new SwccgGameMediator[1];
+                    String tableId = new SwccgUuid().generateNewTableId();
+                    HallServer.this.createGame(null, null, tableId, participants,
                             new GameResultListener() {
                                 @Override
                                 public void gameFinished(String winnerPlayerId, String winReason,
                                         Map<String, String> loserPlayerIdsWithReasons, String winnerSide,
                                         String loserSide) {
-                                    _tournament.reportGameFinished(winnerPlayerId,
-                                            loserPlayerIdsWithReasons.keySet().iterator().next(), winnerSide,
-                                            loserSide);
+                                    String loser = loserPlayerIdsWithReasons.keySet().iterator().next();
+                                    TournamentGameScore score = null;
+                                    SwccgGameMediator mediator = captured[0];
+                                    if (mediator != null) {
+                                        score = TournamentGameScore.fromPiles(
+                                                mediator.getLifeForceRemaining(winnerPlayerId),
+                                                mediator.getHandCount(winnerPlayerId),
+                                                mediator.getLostPileCount(winnerPlayerId),
+                                                mediator.getHandCount(loser),
+                                                mediator.getLostPileCount(loser),
+                                                winReason);
+                                    }
+                                    _tournament.reportGameFinished(winnerPlayerId, loser, winnerSide, loserSide, score);
                                 }
 
                                 @Override
@@ -1516,8 +1698,11 @@ public class HallServer extends AbstractServer {
                                     createGameInternal(participants, allowSpectators);
                                 }
                             }, _formatLibrary.getFormat(_tournament.getFormat()), _tournament.getTournamentName(), null,
-                            allowSpectators, false, false, false, false, _decisionTimeoutSeconds, _timePerPlayerMinutes,
-                            false, null, null);
+                            allowSpectators && !privateEvent, false, false, false, false, _decisionTimeoutSeconds,
+                            _timePerPlayerMinutes, privateEvent, null, null);
+                    RunningTable table = _runningTables.get(tableId);
+                    if (table != null)
+                        captured[0] = table.getSwccgoGameMediator();
                 }
             } finally {
                 _hallDataAccessLock.writeLock().unlock();

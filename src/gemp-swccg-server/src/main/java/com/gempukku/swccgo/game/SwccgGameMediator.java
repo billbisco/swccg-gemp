@@ -1413,6 +1413,26 @@ public class SwccgGameMediator {
         return (int) ((currentTime - queryTime) / 1000);
     }
 
+    public int getLifeForceRemaining(String playerId) {
+        if (_swccgoGame == null || _swccgoGame.getGameState() == null || playerId == null)
+            return 0;
+        return _swccgoGame.getGameState().getPlayerLifeForce(playerId);
+    }
+
+    public int getHandCount(String playerId) {
+        if (_swccgoGame == null || _swccgoGame.getGameState() == null || playerId == null)
+            return 0;
+        List<PhysicalCard> hand = _swccgoGame.getGameState().getHand(playerId);
+        return hand == null ? 0 : hand.size();
+    }
+
+    public int getLostPileCount(String playerId) {
+        if (_swccgoGame == null || _swccgoGame.getGameState() == null || playerId == null)
+            return 0;
+        List<PhysicalCard> lost = _swccgoGame.getGameState().getLostPile(playerId);
+        return lost == null ? 0 : lost.size();
+    }
+
     private String getPlayerLifeForce() {
         if(_isPrivate)
             return "";
