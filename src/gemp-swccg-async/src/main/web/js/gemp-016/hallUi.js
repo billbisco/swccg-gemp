@@ -1047,16 +1047,16 @@ var GempSwccgHallUI = Class.extend({
         var readyRow = $("<div class='play-form-row'></div>");
         readyRow.append("<span class='play-form-label'>Ready check</span>");
         this.tournamentReadySelect = $("<select id='tournament-ready-check' class='play-form-select'></select>");
-        this.tournamentReadySelect.append("<option value='0' selected='selected'>Off</option>");
-        this.tournamentReadySelect.append("<option value='30'>30 seconds</option>");
-        this.tournamentReadySelect.append("<option value='60'>60 seconds</option>");
-        this.tournamentReadySelect.append("<option value='120'>2 minutes</option>");
+        this.tournamentReadySelect.append("<option value='0'>Off</option>");
+        this.tournamentReadySelect.append("<option value='30'>30 seconds to Confirm</option>");
+        this.tournamentReadySelect.append("<option value='60' selected='selected'>60 seconds to Confirm</option>");
+        this.tournamentReadySelect.append("<option value='120'>2 minutes to Confirm</option>");
         readyRow.append(this.tournamentReadySelect);
         tFields.append(readyRow);
 
         var titleRow = $("<div class='play-form-row'></div>");
         titleRow.append("<span class='play-form-label'>Title prefix</span>");
-        this.tournamentTitleInput = $("<input type='text' id='tournament-title-prefix' class='play-form-select' maxlength='80' placeholder=\"optional, e.g. Bill's Friday Night SWCCG\" />");
+        this.tournamentTitleInput = $("<input type='text' id='tournament-title-prefix' class='play-form-select' maxlength='80' placeholder=\"optional, e.g. cstyx's Friday Night SWCCG\" />");
         titleRow.append(this.tournamentTitleInput);
         tFields.append(titleRow);
 
@@ -2121,7 +2121,7 @@ var GempSwccgHallUI = Class.extend({
             pairing: pairing,
             totalGames: this.tournamentGamesSelect.val() || "4",
             maxPlayers: String(this.clampTournamentPlayerCountInput()),
-            readyCheckSeconds: this.tournamentReadySelect.val() || "0",
+            readyCheckSeconds: this.tournamentReadySelect.val() || "60",
             privateEvent: this.tournamentPrivateCheckbox != null && this.tournamentPrivateCheckbox.is(":checked") ? "true" : "false",
             titlePrefix: this.tournamentTitleInput != null ? this.tournamentTitleInput.val() : "",
             lightDeckName: light.name,
