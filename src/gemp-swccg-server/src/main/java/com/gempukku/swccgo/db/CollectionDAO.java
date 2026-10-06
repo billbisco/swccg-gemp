@@ -12,4 +12,12 @@ public interface CollectionDAO {
     public CardCollection getPlayerCollection(int playerId, String type) throws SQLException, IOException;
 
     public void setPlayerCollection(int playerId, String type, CardCollection collection) throws SQLException, IOException;
+
+    /**
+     * Runs work on one connection/transaction when the store supports it.
+     * Default is to run work with no extra transaction.
+     */
+    default void runInTransaction(Runnable work) {
+        work.run();
+    }
 }

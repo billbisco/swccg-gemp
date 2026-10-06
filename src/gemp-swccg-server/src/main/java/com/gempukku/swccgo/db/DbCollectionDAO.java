@@ -21,7 +21,8 @@ public class DbCollectionDAO implements CollectionDAO {
     }
 
     public Map<Integer, CardCollection> getPlayerCollectionsByType(String type) throws SQLException, IOException {
-        Connection connection = _dbAccess.getDataSource().getConnection();
+        Connection connection = CollectionTxn.currentOrNew(_dbAccess);
+        boolean close = !CollectionTxn.isCurrent(connection);
         try {
             PreparedStatement statement = connection.prepareStatement("select player_id, collection from collection where type=?");
             try {
@@ -42,12 +43,14 @@ public class DbCollectionDAO implements CollectionDAO {
                 statement.close();
             }
         } finally {
-            connection.close();
+            if (close)
+                connection.close();
         }
     }
 
     public CardCollection getPlayerCollection(int playerId, String type) throws SQLException, IOException {
-        Connection connection = _dbAccess.getDataSource().getConnection();
+        Connection connection = CollectionTxn.currentOrNew(_dbAccess);
+        boolean close = !CollectionTxn.isCurrent(connection);
         try {
             PreparedStatement statement = connection.prepareStatement("select collection from collection where player_id=? and type=?");
             try {
@@ -68,7 +71,8 @@ public class DbCollectionDAO implements CollectionDAO {
                 statement.close();
             }
         } finally {
-            connection.close();
+            if (close)
+                connection.close();
         }
     }
 
@@ -86,21 +90,15 @@ public class DbCollectionDAO implements CollectionDAO {
     }
 
     public void setPlayerCollection(int playerId, String type, CardCollection collection) throws SQLException, IOException {
-        CardCollection oldCollection = getPlayerCollection(playerId, type);
-
-        Connection connection = _dbAccess.getDataSource().getConnection();
+        Connection connection = CollectionTxn.currentOrNew(_dbAccess);
+        boolean close = !CollectionTxn.isCurrent(connection);
         try {
-            String sql;
-            if (oldCollection == null)
-                sql = "insert into collection (collection, player_id, type) values (?, ?, ?)";
-            else
-                sql = "update collection set collection=? where player_id=? and type=?";
-
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            _collectionSerializer.serializeCollection(collection, baos);
+            String sql = "insert into collection (collection, player_id, type) values (?, ?, ?) " +
+                    "on duplicate key update collection=values(collection)";
             PreparedStatement statement = connection.prepareStatement(sql);
             try {
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                _collectionSerializer.serializeCollection(collection, baos);
-
                 statement.setBlob(1, new ByteArrayInputStream(baos.toByteArray()));
                 statement.setInt(2, playerId);
                 statement.setString(3, type);
@@ -109,7 +107,13 @@ public class DbCollectionDAO implements CollectionDAO {
                 statement.close();
             }
         } finally {
-            connection.close();
+            if (close)
+                connection.close();
         }
+    }
+
+    @Override
+    public void runInTransaction(Runnable work) {
+        CollectionTxn.run(_dbAccess, work);
     }
 }

@@ -27,7 +27,8 @@ CREATE  TABLE IF NOT EXISTS `gemp-swccg`.`collection` (
   `player_id` INT(11) NOT NULL ,
   `collection` MEDIUMBLOB NOT NULL ,
   `type` VARCHAR(45) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NOT NULL ,
-  PRIMARY KEY (`id`) )
+  PRIMARY KEY (`id`) ,
+  UNIQUE KEY `uq_collection_player_type` (`player_id`,`type`) )
 ENGINE = InnoDB
 AUTO_INCREMENT = 5788
 DEFAULT CHARACTER SET = utf8
