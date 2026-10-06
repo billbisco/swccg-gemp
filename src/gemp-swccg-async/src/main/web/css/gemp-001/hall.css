@@ -132,7 +132,7 @@ body.foil-none .foilOverlay {
 }
 
 .delivery-page {
-    overflow: auto;
+    overflow: hidden;
     position: absolute;
     left: 0;
     right: 0;
