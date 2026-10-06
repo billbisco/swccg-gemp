@@ -82,6 +82,7 @@ body.foil-none .foilOverlay {
     border-radius: 2px;
 }
 
+.ui-dialog .ui-dialog-content.delivery-dialog,
 .ui-dialog-content.delivery-dialog,
 .delivery-dialog {
     overflow: hidden;
@@ -95,8 +96,8 @@ body.foil-none .foilOverlay {
     right: 0;
     top: 0;
     z-index: 6;
-    height: 28px;
-    line-height: 28px;
+    height: 24px;
+    line-height: 24px;
     text-align: center;
     color: #ffffff;
     font-size: 14px;
@@ -135,7 +136,7 @@ body.foil-none .foilOverlay {
     position: absolute;
     left: 0;
     right: 0;
-    top: 28px;
+    top: 24px;
     bottom: 0;
 }
 
