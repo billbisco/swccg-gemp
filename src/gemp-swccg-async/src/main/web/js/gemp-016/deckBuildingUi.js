@@ -76,12 +76,14 @@ var GempSwccgDeckBuildingUI = Class.extend({
                         if (fetchGen !== that._collectionFetchGen) {
                             return;
                         }
+                        that.updateOpenAllPacksButton(xml, requestedType);
                         callback(xml);
                     }, {
                         "404":function () {
                             if (fetchGen !== that._collectionFetchGen) {
                                 return;
                             }
+                            that.setOpenAllPacksVisible(false);
                             alert("You don't have collection of that type.");
                         }
                     });
@@ -104,12 +106,11 @@ var GempSwccgDeckBuildingUI = Class.extend({
         this.manageDecksDiv = $("<div id='manageDecks'></div>");
 
         var collectionSelect = $("<select id='collectionSelect'></select>");
-        collectionSelect.css({"float":"right", width:"120px"});
         collectionSelect.append("<option value='default'>All cards</option>");
         collectionSelect.append("<option value='permanent'>My cards</option>");
         this.manageDecksDiv.append(collectionSelect);
-        this.openAllPacksBut = $("<button type='button' title='Open all packs that have no choice'>Open all packs</button>").button();
-        this.openAllPacksBut.css({"float":"right", "margin-right":"6px"});
+        this.openAllPacksBut = $("<button type='button' id='openAllPacksBut' title='Open all packs that have no choice'>Open all packs</button>");
+        this.openAllPacksBut.hide();
         this.manageDecksDiv.append(this.openAllPacksBut);
         this.openAllPacksBut.click(function () {
             var collectionType = that.getCollectionType();
@@ -277,6 +278,8 @@ var GempSwccgDeckBuildingUI = Class.extend({
         $("#collectionSelect").change(
                 function () {
                     that.collectionType = that.getCollectionType();
+                    if (that.collectionType === "default" || that.collectionType === "permanent")
+                        that.setOpenAllPacksVisible(false);
                     that.cardFilter.getCollection();
                 });
 
@@ -447,6 +450,25 @@ var GempSwccgDeckBuildingUI = Class.extend({
 
     getCollectionType:function () {
         return $("#collectionSelect option:selected").prop("value");
+    },
+
+    updateOpenAllPacksButton:function (xml, collectionType) {
+        if (collectionType == null || collectionType === "default" || collectionType === "permanent") {
+            this.setOpenAllPacksVisible(false);
+            return;
+        }
+        var root = xml != null ? xml.documentElement : null;
+        var n = root != null ? parseInt(root.getAttribute("openablePacks"), 10) : 0;
+        this.setOpenAllPacksVisible(!isNaN(n) && n > 0);
+    },
+
+    setOpenAllPacksVisible:function (show) {
+        if (this.openAllPacksBut == null)
+            return;
+        if (show)
+            this.openAllPacksBut.show();
+        else
+            this.openAllPacksBut.hide();
     },
 
     getCollectionTypes:function (isRetry) {
