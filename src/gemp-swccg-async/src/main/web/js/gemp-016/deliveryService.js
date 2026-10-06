@@ -23,11 +23,9 @@ function deliveryService(xml) {
         var state = deliveryState[collectionName];
         state.items = mergeDeliveryItems(state.items, incoming);
         sortDeliveryItems(state.items);
-        state.pages = paginateDeliveryTiles(state.items, DELIVERY_TILES_PER_PAGE);
-        if (state.pageIndex >= state.pages.length)
-            state.pageIndex = Math.max(0, state.pages.length - 1);
 
         openSizeDialog(deliveryDialogs[collectionName]);
+        paginateDeliveryState(collectionName);
         renderDeliveryDialog(collectionName);
     }
 }
@@ -48,6 +46,7 @@ function ensureDeliveryDialog(collectionName) {
     deliveryState[collectionName] = {items: [], pages: [], pageIndex: 0};
 
     dialog.bind("dialogresize", function () {
+        paginateDeliveryState(collectionName);
         renderDeliveryDialog(collectionName);
     });
     dialog.bind("dialogclose", function () {
@@ -133,6 +132,28 @@ function sortDeliveryItems(items) {
             return 1;
         return String(a.blueprintId).localeCompare(String(b.blueprintId));
     });
+}
+
+function deliveryPageTileCount(dialog) {
+    var pad = 4;
+    var pagerH = 24;
+    var width = dialog.width();
+    var height = dialog.height() - pagerH;
+    if (!width || width < DELIVERY_MIN_CARD_WIDTH + pad * 2)
+        width = $(window).width() * 0.8 - 24;
+    if (!height || height < DELIVERY_MIN_CARD_HEIGHT + pad * 2)
+        height = $(window).height() * 0.8 - 60;
+    var cols = Math.max(1, Math.floor((width - pad) / (DELIVERY_MIN_CARD_WIDTH + pad)));
+    var rows = Math.max(1, Math.floor((height - pad) / (DELIVERY_MIN_CARD_HEIGHT + pad)));
+    return Math.max(DELIVERY_TILES_PER_PAGE, cols * rows);
+}
+
+function paginateDeliveryState(collectionName) {
+    var dialog = deliveryDialogs[collectionName];
+    var state = deliveryState[collectionName];
+    state.pages = paginateDeliveryTiles(state.items, deliveryPageTileCount(dialog));
+    if (state.pageIndex >= state.pages.length)
+        state.pageIndex = Math.max(0, state.pages.length - 1);
 }
 
 function paginateDeliveryTiles(items, pageSize) {
