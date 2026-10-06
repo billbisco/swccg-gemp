@@ -211,7 +211,7 @@ function renderDeliveryDialog(collectionName) {
 function layoutDeliveryTiles(inner, cardDivs) {
     var minW = DELIVERY_MIN_CARD_WIDTH;
     var minH = DELIVERY_MIN_CARD_HEIGHT;
-    var pad = 6;
+    var pad = 4;
     var width = inner.parent().width();
     if (!width || width < minW + pad * 2)
         width = $(window).width() * 0.8 - 24;
