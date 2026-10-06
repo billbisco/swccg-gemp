@@ -23,6 +23,9 @@ import com.gempukku.swccgo.db.vo.League;
 import com.gempukku.swccgo.draft.Draft;
 import com.gempukku.swccgo.draft.DraftChannelVisitor;
 import com.gempukku.swccgo.draft.DraftFinishedException;
+import com.gempukku.swccgo.draft2.SoloDraftDefinitions;
+import com.gempukku.swccgo.league.SealedLeagueProduct;
+import com.gempukku.swccgo.packagedProduct.PackagedProductStorage;
 import com.gempukku.swccgo.game.*;
 import com.gempukku.swccgo.game.formats.SwccgoFormatLibrary;
 import com.gempukku.swccgo.league.LeagueSeriesData;
@@ -63,6 +66,10 @@ public class HallServer extends AbstractServer {
     private BotStatsDAO _botStatsDAO;
     private AdminService _adminService;
     private TournamentPrizeSchemeRegistry _tournamentPrizeSchemeRegistry;
+    private PackagedProductStorage _packStorage;
+    private SoloDraftDefinitions _soloDraftDefinitions;
+    private final SealedLeagueProduct _sealedLeagueProduct = new SealedLeagueProduct();
+    private final TournamentCollectionRegistry _tournamentCollections = new TournamentCollectionRegistry();
 
     private CollectionType _allCardsCollectionType = CollectionType.ALL_CARDS;
 
@@ -97,7 +104,8 @@ public class HallServer extends AbstractServer {
             PlayerDAO playerDAO, IpBanDAO ipBanDAO, GempSettingDAO gempSettingDAO,
             BotStatsDAO botStatsDAO, AdminService adminService,
             TournamentPrizeSchemeRegistry tournamentPrizeSchemeRegistry,
-            PairingMechanismRegistry pairingMechanismRegistry) {
+            PairingMechanismRegistry pairingMechanismRegistry,
+            PackagedProductStorage packStorage, SoloDraftDefinitions soloDraftDefinitions) {
         _swccgoServer = swccgoServer;
         _chatServer = chatServer;
         _leagueService = leagueService;
@@ -121,6 +129,8 @@ public class HallServer extends AbstractServer {
         _adminService = adminService;
         _tournamentPrizeSchemeRegistry = tournamentPrizeSchemeRegistry;
         _pairingMechanismRegistry = pairingMechanismRegistry;
+        _packStorage = packStorage;
+        _soloDraftDefinitions = soloDraftDefinitions;
         _hallChat = _chatServer.createChatRoom(ChatServer.GAME_HALL_ROOM_NAME, true, 15, null, true, false);
         _hallChat.addChatCommandCallback("ban",
                 new ChatCommandCallback() {
@@ -619,10 +629,13 @@ public class HallServer extends AbstractServer {
                 swccgDeck = validateUserAndDeck(_formatLibrary.getFormat(tournamentQueue.getFormat()), player, deckName,
                         tournamentQueue.getCollectionType(), sampleDeck, librarian);
 
-            if (tournamentQueue.isPlayerMade())
+            if (tournamentQueue.isPlayerMade() && tournamentQueue.isRequiresDeck())
                 throw new HallException("This tournament needs both a Light Side and a Dark Side deck");
 
-            tournamentQueue.joinPlayer(_collectionsManager, player, swccgDeck);
+            if (tournamentQueue.isPlayerMade())
+                tournamentQueue.joinPlayer(_collectionsManager, player, null, null);
+            else
+                tournamentQueue.joinPlayer(_collectionsManager, player, swccgDeck);
 
             hallChanged();
 
@@ -652,6 +665,12 @@ public class HallServer extends AbstractServer {
                 throw new HallException("You have already joined that queue");
             if (!tournamentQueue.isJoinable())
                 throw new HallException("That tournament is no longer accepting players");
+
+            if (!tournamentQueue.isRequiresDeck()) {
+                tournamentQueue.joinPlayer(_collectionsManager, player, null, null);
+                hallChanged();
+                return true;
+            }
 
             SwccgFormat format = _formatLibrary.getFormat(tournamentQueue.getFormat());
             SwccgDeck lightDeck = validateUserAndDeck(format, player, lightDeckName,
@@ -714,10 +733,60 @@ public class HallServer extends AbstractServer {
         }
     }
 
+    public void lockTournamentDecks(String tournamentId, Player player, String lightDeckName, boolean lightSample,
+            String darkDeckName, boolean darkSample, Player lightLibrarian, Player darkLibrarian) throws HallException {
+        _hallDataAccessLock.writeLock().lock();
+        try {
+            Tournament tournament = _runningTournaments.get(tournamentId);
+            if (!(tournament instanceof PlayerConstructedTournament))
+                throw new HallException("That tournament is not accepting decks");
+            PlayerConstructedTournament constructed = (PlayerConstructedTournament) tournament;
+            if (constructed.getTournamentStage() != Tournament.Stage.DECK_BUILDING)
+                throw new HallException("Deck building is not open for that tournament");
+            if (!constructed.isPlayerInCompetition(player.getName()))
+                throw new HallException("You are not in that tournament");
+            SwccgFormat format = _formatLibrary.getFormat(constructed.getFormat());
+            SwccgDeck lightDeck = validateUserAndDeck(format, player, lightDeckName,
+                    constructed.getCollectionType(), lightSample, lightLibrarian);
+            SwccgDeck darkDeck = validateUserAndDeck(format, player, darkDeckName,
+                    constructed.getCollectionType(), darkSample, darkLibrarian);
+            if (lightDeck.getSide(_library) != Side.LIGHT)
+                throw new HallException("Your Light Side selection must be a Light Side deck");
+            if (darkDeck.getSide(_library) != Side.DARK)
+                throw new HallException("Your Dark Side selection must be a Dark Side deck");
+            constructed.lockDecks(player.getName(), lightDeck, darkDeck);
+            hallChanged();
+        } finally {
+            _hallDataAccessLock.writeLock().unlock();
+        }
+    }
+
+    public CollectionType getTournamentCollectionType(String code) {
+        return _tournamentCollections.get(code);
+    }
+
+    public String getTournamentSoloDraftType(String code) {
+        return _tournamentCollections.getSoloDraftType(code);
+    }
+
+    public List<CollectionType> getTournamentCollectionsForPlayer(String playerName) {
+        return _tournamentCollections.collectionsForPlayer(playerName);
+    }
+
     public void createPlayerMadeQueue(Player host, String titlePrefix, String formatCode, String pairing,
             int totalGames, int maxPlayers, int readyCheckSeconds, boolean privateEvent,
             String lightDeckName, boolean lightSample, String darkDeckName, boolean darkSample,
             Player lightLibrarian, Player darkLibrarian) throws HallException {
+        createPlayerMadeQueue(host, titlePrefix, formatCode, pairing, totalGames, maxPlayers, readyCheckSeconds,
+                privateEvent, lightDeckName, lightSample, darkDeckName, darkSample, lightLibrarian, darkLibrarian,
+                TournamentProduct.TYPE_CONSTRUCTED, null, null, 0);
+    }
+
+    public void createPlayerMadeQueue(Player host, String titlePrefix, String formatCode, String pairing,
+            int totalGames, int maxPlayers, int readyCheckSeconds, boolean privateEvent,
+            String lightDeckName, boolean lightSample, String darkDeckName, boolean darkSample,
+            Player lightLibrarian, Player darkLibrarian, String eventType, String draftMode,
+            String productCode, int packCount) throws HallException {
         if (_shutdown)
             throw new HallException(
                     "Server is in shutdown mode. No games may be started. Server will be restarted after all games have finished.");
@@ -725,6 +794,21 @@ public class HallServer extends AbstractServer {
             throw new HallException("Server is not yet in operational mode. Games may not be started yet.");
         if (host == null)
             throw new HallException("You must be logged in to host a tournament");
+
+        String type = TournamentProduct.normalizeType(eventType);
+        if (type == null)
+            throw new HallException("Choose Constructed, Sealed, Draft, or Cube");
+        String mode = TournamentProduct.normalizeMode(draftMode);
+        TournamentProduct product = null;
+        if (TournamentProduct.isLimitedType(type)) {
+            product = TournamentProduct.get(productCode != null ? productCode : formatCode);
+            if (product == null || !type.equals(product.getKind()))
+                throw new HallException("Choose a " + type + " format");
+            formatCode = product.getFormatCode();
+            if (TournamentProduct.TYPE_CUBE.equals(type) && TournamentProduct.MODE_LIVE.equals(mode)
+                    && maxPlayers > product.getLiveMaxPlayers())
+                maxPlayers = product.getLiveMaxPlayers();
+        }
 
         SwccgFormat format = _formatLibrary.getHallFormats().get(formatCode);
         if (format == null)
@@ -734,31 +818,41 @@ public class HallServer extends AbstractServer {
         if (format.isPlaytesting()
                 && !(host.hasType(Player.Type.ADMIN) || host.hasType(Player.Type.PLAYTESTER)))
             throw new HallException("You are not allowed to host a playtesting format");
-        if (format.hasJpSealedRule())
-            throw new HallException("Sealed formats are not available for Constructed tournaments yet");
+        if (TournamentProduct.TYPE_CONSTRUCTED.equals(type) && format.hasJpSealedRule())
+            throw new HallException("Sealed formats are not available for Constructed tournaments");
 
         if (!PlayerMadeQueue.PAIRING_SWISS.equals(pairing) && !PlayerMadeQueue.PAIRING_MATCH_PLAY.equals(pairing))
             throw new HallException("Choose Swiss or Single Elimination Match Play");
 
         _hallDataAccessLock.writeLock().lock();
         try {
-            SwccgDeck lightDeck = validateUserAndDeck(format, host, lightDeckName, _allCardsCollectionType,
-                    lightSample, lightLibrarian);
-            SwccgDeck darkDeck = validateUserAndDeck(format, host, darkDeckName, _allCardsCollectionType,
-                    darkSample, darkLibrarian);
-            if (lightDeck.getSide(_library) != Side.LIGHT)
-                throw new HallException("Your Light Side selection must be a Light Side deck");
-            if (darkDeck.getSide(_library) != Side.DARK)
-                throw new HallException("Your Dark Side selection must be a Dark Side deck");
-
             String queueId = "ptq-" + new SwccgUuid().generateNewTableId();
-            String displayName = buildPlayerMadeTournamentName(titlePrefix, pairing, format.getName());
+            String typeLabel = product != null ? product.getDisplayName() : ("Constructed - " + format.getName());
+            String displayName = buildPlayerMadeTournamentName(titlePrefix, pairing, typeLabel);
             int games = PlayerMadeQueue.PAIRING_MATCH_PLAY.equals(pairing) ? 2
                     : ConstructedPairing.clampTotalGames(totalGames);
+            CollectionType collectionType = CollectionType.ALL_CARDS;
+            if (product != null)
+                collectionType = new CollectionType(queueId, product.getDisplayName());
             PlayerMadeQueue queue = new PlayerMadeQueue(queueId, displayName, host.getName(), format.getCode(),
                     pairing, games, maxPlayers, readyCheckSeconds, privateEvent,
-                    _tournamentPrizeSchemeRegistry.getTournamentPrizes("none"));
-            queue.joinPlayer(_collectionsManager, host, lightDeck, darkDeck);
+                    _tournamentPrizeSchemeRegistry.getTournamentPrizes("none"), type, mode, product, packCount,
+                    collectionType, _sealedLeagueProduct, _packStorage, _soloDraftDefinitions, _tournamentCollections);
+            if (product == null) {
+                SwccgDeck lightDeck = validateUserAndDeck(format, host, lightDeckName, _allCardsCollectionType,
+                        lightSample, lightLibrarian);
+                SwccgDeck darkDeck = validateUserAndDeck(format, host, darkDeckName, _allCardsCollectionType,
+                        darkSample, darkLibrarian);
+                if (lightDeck.getSide(_library) != Side.LIGHT)
+                    throw new HallException("Your Light Side selection must be a Light Side deck");
+                if (darkDeck.getSide(_library) != Side.DARK)
+                    throw new HallException("Your Dark Side selection must be a Dark Side deck");
+                queue.joinPlayer(_collectionsManager, host, lightDeck, darkDeck);
+            } else {
+                _tournamentCollections.register(collectionType, java.util.Collections.singletonList(host.getName()),
+                        product.isJsonCube() ? product.getCubeDraftType() : null);
+                queue.joinPlayer(_collectionsManager, host, null, null);
+            }
             _tournamentQueues.put(queueId, queue);
             hallChanged();
         } finally {
@@ -769,7 +863,7 @@ public class HallServer extends AbstractServer {
     private static String buildPlayerMadeTournamentName(String titlePrefix, String pairing, String formatName) {
         String kind = PlayerMadeQueue.PAIRING_MATCH_PLAY.equals(pairing)
                 ? "Match Play Tournament" : "Swiss Tournament";
-        String base = kind + " - Constructed - " + formatName;
+        String base = kind + " - " + formatName;
         if (titlePrefix == null)
             return base;
         String prefix = titlePrefix.trim();
@@ -1113,6 +1207,8 @@ public class HallServer extends AbstractServer {
                         formatName = _formatLibrary.getFormat(tournamentQueue.getFormat()).getName();
                 } catch (Exception ignored) {
                 }
+                String collectionCode = tournamentQueue.getCollectionType() != null
+                        ? tournamentQueue.getCollectionType().getCode() : null;
                 visitor.visitTournamentQueue(tournamentQueueKey, tournamentQueue.getCost(),
                         tournamentQueue.getCollectionType().getFullName(),
                         formatName,
@@ -1132,18 +1228,35 @@ public class HallServer extends AbstractServer {
                         tournamentQueue.isPrivateEvent(),
                         tournamentQueue.getCreatedAt(),
                         tournamentQueue.getReadyCheckSecsRemaining(),
-                        tournamentQueue.hasConfirmedReady(player.getName()));
+                        tournamentQueue.hasConfirmedReady(player.getName()),
+                        tournamentQueue.getEventType(),
+                        tournamentQueue.getDraftMode(),
+                        tournamentQueue.getProductCode(),
+                        collectionCode,
+                        tournamentQueue.isRequiresDeck());
             }
 
             for (Map.Entry<String, Tournament> tournamentEntry : _runningTournaments.entrySet()) {
                 String tournamentKey = tournamentEntry.getKey();
                 Tournament tournament = tournamentEntry.getValue();
+                boolean decksLocked = false;
+                long deckBuildEndsAt = 0;
+                String cubeSoloType = null;
+                if (tournament instanceof PlayerConstructedTournament) {
+                    PlayerConstructedTournament constructed = (PlayerConstructedTournament) tournament;
+                    decksLocked = constructed.hasLockedDecks(player.getName());
+                    deckBuildEndsAt = constructed.getDeckBuildEndsAt();
+                    cubeSoloType = constructed.getCubeSoloType();
+                }
+                String collectionCode = tournament.getCollectionType() != null
+                        ? tournament.getCollectionType().getCode() : null;
                 visitor.visitTournament(tournamentKey, tournament.getCollectionType().getFullName(),
                         _formatLibrary.getFormat(tournament.getFormat()).getName(), tournament.getTournamentName(),
                         tournament.getPlayOffSystem(),
                         tournament.getTournamentStage().getHumanReadable(),
                         tournament.getCurrentRound(), tournament.getPlayersInCompetitionCount(),
-                        tournament.isPlayerInCompetition(player.getName()));
+                        tournament.isPlayerInCompetition(player.getName()),
+                        collectionCode, decksLocked, deckBuildEndsAt, cubeSoloType, tournament.getFormat());
             }
         } finally {
             _hallDataAccessLock.readLock().unlock();

@@ -135,7 +135,8 @@ public class HallCommunicationChannel implements LongPollableResource {
                                                      String tournamentPrizes, String pairingDescription, String startCondition, int playerCount, boolean playerSignedUp, boolean joinable,
                                                      String formatCode, boolean playerMade, boolean isHost, boolean startable, boolean canCancel,
                                                      String playersCsv, int maxPlayers, boolean readyCheck, boolean privateEvent, long createdAt,
-                                                     int readyCheckSecsRemaining, boolean confirmedReadyCheck) {
+                                                     int readyCheckSecsRemaining, boolean confirmedReadyCheck,
+                                                     String eventType, String draftMode, String productCode, String collectionCode, boolean requiresDeck) {
                         Map<String, String> props = new HashMap<String, String>();
                         props.put("cost", String.valueOf(cost));
                         props.put("collection", collectionName);
@@ -162,6 +163,15 @@ public class HallCommunicationChannel implements LongPollableResource {
                             props.put("privateEvent", String.valueOf(privateEvent));
                             if (createdAt > 0)
                                 props.put("ageAt", String.valueOf(createdAt));
+                            if (eventType != null)
+                                props.put("eventType", eventType);
+                            if (draftMode != null)
+                                props.put("draftMode", draftMode);
+                            if (productCode != null)
+                                props.put("productCode", productCode);
+                            if (collectionCode != null)
+                                props.put("collectionCode", collectionCode);
+                            props.put("requiresDeck", String.valueOf(requiresDeck));
                         }
 
                         tournamentQueuesOnServer.put(tournamentQueueKey, props);
@@ -169,7 +179,8 @@ public class HallCommunicationChannel implements LongPollableResource {
 
                     @Override
                     public void visitTournament(String tournamentKey, String collectionName, String formatName, String tournamentName, String pairingDescription,
-                                                String tournamentStage, int round, int playerCount, boolean playerInCompetition) {
+                                                String tournamentStage, int round, int playerCount, boolean playerInCompetition,
+                                                String collectionCode, boolean decksLocked, long deckBuildEndsAt, String cubeSoloType, String formatCode) {
                         Map<String, String> props = new HashMap<String, String>();
                         props.put("collection", collectionName);
                         props.put("format", formatName);
@@ -179,6 +190,15 @@ public class HallCommunicationChannel implements LongPollableResource {
                         props.put("round", String.valueOf(round));
                         props.put("playerCount", String.valueOf(playerCount));
                         props.put("signedUp", String.valueOf(playerInCompetition));
+                        if (collectionCode != null)
+                            props.put("collectionCode", collectionCode);
+                        props.put("decksLocked", String.valueOf(decksLocked));
+                        if (deckBuildEndsAt > 0)
+                            props.put("deckBuildEndsAt", String.valueOf(deckBuildEndsAt));
+                        if (cubeSoloType != null)
+                            props.put("cubeSoloType", cubeSoloType);
+                        if (formatCode != null)
+                            props.put("formatCode", formatCode);
 
                         tournamentsOnServer.put(tournamentKey, props);
                     }

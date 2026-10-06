@@ -3,8 +3,19 @@ package com.gempukku.swccgo.tournament;
 import com.gempukku.swccgo.collection.CollectionsManager;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.db.vo.CollectionType;
+import com.gempukku.swccgo.draft.DefaultDraft;
+import com.gempukku.swccgo.draft.Draft;
+import com.gempukku.swccgo.draft.DraftPack;
+import com.gempukku.swccgo.draft.SharedCubeDraft;
+import com.gempukku.swccgo.draft.SoloBoosterDraft;
+import com.gempukku.swccgo.draft2.SoloDraft;
+import com.gempukku.swccgo.draft2.SoloDraftDefinitions;
+import com.gempukku.swccgo.game.CardCollection;
+import com.gempukku.swccgo.game.DefaultCardCollection;
 import com.gempukku.swccgo.game.Player;
+import com.gempukku.swccgo.league.SealedLeagueProduct;
 import com.gempukku.swccgo.logic.vo.SwccgDeck;
+import com.gempukku.swccgo.packagedProduct.PackagedProductStorage;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -28,6 +39,14 @@ public class PlayerMadeQueue extends AbstractTournamentQueue implements Tourname
     private final int _readyCheckSeconds;
     private final boolean _privateEvent;
     private final long _createdAt;
+    private final String _eventType;
+    private final String _draftMode;
+    private final TournamentProduct _product;
+    private final int _packCount;
+    private final SealedLeagueProduct _sealedProduct;
+    private final PackagedProductStorage _packStorage;
+    private final SoloDraftDefinitions _soloDraftDefinitions;
+    private final TournamentCollectionRegistry _collectionRegistry;
     private final Map<String, SwccgDeck> _lightDecks = new LinkedHashMap<String, SwccgDeck>();
     private final Map<String, SwccgDeck> _darkDecks = new LinkedHashMap<String, SwccgDeck>();
     private final Set<String> _readyPlayers = new HashSet<String>();
@@ -38,7 +57,20 @@ public class PlayerMadeQueue extends AbstractTournamentQueue implements Tourname
     public PlayerMadeQueue(String queueId, String tournamentQueueName, String host, String format,
                            String pairing, int totalGames, int maxPlayers, int readyCheckSeconds,
                            boolean privateEvent, TournamentPrizes tournamentPrizes) {
-        super(0, true, CollectionType.ALL_CARDS, tournamentPrizes, null, format);
+        this(queueId, tournamentQueueName, host, format, pairing, totalGames, maxPlayers, readyCheckSeconds,
+                privateEvent, tournamentPrizes, TournamentProduct.TYPE_CONSTRUCTED, null, null, 0,
+                CollectionType.ALL_CARDS, null, null, null, null);
+    }
+
+    public PlayerMadeQueue(String queueId, String tournamentQueueName, String host, String format,
+                           String pairing, int totalGames, int maxPlayers, int readyCheckSeconds,
+                           boolean privateEvent, TournamentPrizes tournamentPrizes, String eventType,
+                           String draftMode, TournamentProduct product, int packCount,
+                           CollectionType collectionType, SealedLeagueProduct sealedProduct,
+                           PackagedProductStorage packStorage, SoloDraftDefinitions soloDraftDefinitions,
+                           TournamentCollectionRegistry collectionRegistry) {
+        super(0, product == null || TournamentProduct.TYPE_CONSTRUCTED.equals(eventType),
+                collectionType == null ? CollectionType.ALL_CARDS : collectionType, tournamentPrizes, null, format);
         _queueId = queueId;
         _tournamentQueueName = tournamentQueueName;
         _host = host;
@@ -48,6 +80,14 @@ public class PlayerMadeQueue extends AbstractTournamentQueue implements Tourname
         _readyCheckSeconds = readyCheckSeconds;
         _privateEvent = privateEvent;
         _createdAt = System.currentTimeMillis();
+        _eventType = eventType == null ? TournamentProduct.TYPE_CONSTRUCTED : eventType;
+        _draftMode = draftMode;
+        _product = product;
+        _packCount = packCount;
+        _sealedProduct = sealedProduct;
+        _packStorage = packStorage;
+        _soloDraftDefinitions = soloDraftDefinitions;
+        _collectionRegistry = collectionRegistry;
     }
 
     public String getQueueId() {
@@ -147,18 +187,39 @@ public class PlayerMadeQueue extends AbstractTournamentQueue implements Tourname
         return _createdAt;
     }
 
+    public String getEventType() {
+        return _eventType;
+    }
+
+    public String getDraftMode() {
+        return _draftMode;
+    }
+
+    public String getProductCode() {
+        return _product == null ? "" : _product.getCode();
+    }
+
+    public boolean isLimited() {
+        return TournamentProduct.isLimitedType(_eventType);
+    }
+
     @Override
     public synchronized void joinPlayer(CollectionsManager collectionsManager, Player player, SwccgDeck lightDeck, SwccgDeck darkDeck) {
         if (!isJoinable())
             return;
         if (_players.contains(player.getName()))
             return;
-        if (lightDeck == null || darkDeck == null)
+        if (!isLimited() && (lightDeck == null || darkDeck == null))
             return;
         _players.add(player.getName());
-        _lightDecks.put(player.getName(), lightDeck);
-        _darkDecks.put(player.getName(), darkDeck);
-        _playerDecks.put(player.getName(), lightDeck);
+        if (lightDeck != null)
+            _lightDecks.put(player.getName(), lightDeck);
+        if (darkDeck != null)
+            _darkDecks.put(player.getName(), darkDeck);
+        if (lightDeck != null)
+            _playerDecks.put(player.getName(), lightDeck);
+        if (_collectionRegistry != null && getCollectionType() != null)
+            _collectionRegistry.addPlayer(getCollectionType().getCode(), player.getName());
     }
 
     @Override
@@ -233,7 +294,7 @@ public class PlayerMadeQueue extends AbstractTournamentQueue implements Tourname
             return true;
         }
         if (_started) {
-            return startNow(tournamentQueueCallback);
+            return startNow(tournamentQueueCallback, collectionsManager);
         }
         if (_readyCheckDeadline > 0 && System.currentTimeMillis() >= _readyCheckDeadline) {
             if (_readyPlayers.size() >= 2) {
@@ -249,7 +310,7 @@ public class PlayerMadeQueue extends AbstractTournamentQueue implements Tourname
                     _playerDecks.remove(player);
                 }
                 _started = true;
-                return startNow(tournamentQueueCallback);
+                return startNow(tournamentQueueCallback, collectionsManager);
             }
             _readyCheckDeadline = 0;
             _readyPlayers.clear();
@@ -260,23 +321,96 @@ public class PlayerMadeQueue extends AbstractTournamentQueue implements Tourname
                 _readyPlayers.clear();
             } else {
                 _started = true;
-                return startNow(tournamentQueueCallback);
+                return startNow(tournamentQueueCallback, collectionsManager);
             }
         }
         return false;
     }
 
-    private boolean startNow(TournamentQueueCallback tournamentQueueCallback) {
+    private boolean startNow(TournamentQueueCallback tournamentQueueCallback, CollectionsManager collectionsManager) {
         if (_players.size() < 2) {
             _started = false;
             _readyCheckDeadline = 0;
             return false;
         }
-        PlayerConstructedTournament tournament = new PlayerConstructedTournament(
-                _queueId, _tournamentQueueName, _format, _pairing, _totalGames, _privateEvent,
-                new ArrayList<String>(_players), _lightDecks, _darkDecks);
+        PlayerConstructedTournament tournament;
+        if (isLimited() && _product != null)
+            tournament = startLimited(collectionsManager);
+        else
+            tournament = new PlayerConstructedTournament(
+                    _queueId, _tournamentQueueName, _format, _pairing, _totalGames, _privateEvent,
+                    new ArrayList<String>(_players), _lightDecks, _darkDecks);
         tournamentQueueCallback.createTournament(tournament);
         return true;
+    }
+
+    private PlayerConstructedTournament startLimited(CollectionsManager collectionsManager) {
+        CollectionType collectionType = getCollectionType();
+        List<String> players = new ArrayList<String>(_players);
+        if (_collectionRegistry != null)
+            _collectionRegistry.register(collectionType, players,
+                    _product.isJsonCube() ? _product.getCubeDraftType() : null);
+
+        if (TournamentProduct.TYPE_SEALED.equals(_eventType)) {
+            CardCollection kit = _product.sealedKit(_sealedProduct);
+            for (String player : players)
+                collectionsManager.addPlayerCollection(true, "Sealed tournament product", player, collectionType, kit);
+            return PlayerConstructedTournament.limited(_queueId, _tournamentQueueName, _format, _pairing, _totalGames,
+                    _privateEvent, players, collectionType, PlayerConstructedTournament.Stage.DECK_BUILDING, null);
+        }
+
+        CardCollection keep = _product.draftKeep(_sealedProduct);
+        if (_product.isJsonCube()) {
+            CubeDraftPools pools = CubeDraftPools.load(_product.getCubeDraftType());
+            keep = pools.startingKeep();
+            if (TournamentProduct.MODE_SOLO.equals(_draftMode)) {
+                issueCubeSolo(collectionsManager, collectionType, players, keep);
+                return PlayerConstructedTournament.limited(_queueId, _tournamentQueueName, _format, _pairing, _totalGames,
+                        _privateEvent, players, collectionType, PlayerConstructedTournament.Stage.DRAFT, null)
+                        .cubeSolo(_product.getCubeDraftType());
+            }
+            int packs = _packCount > 0 ? _packCount : 6;
+            Draft draft = SharedCubeDraft.jsonCube(collectionsManager, collectionType, keep,
+                    pools.lightCards, pools.darkCards, packs, new HashSet<String>(players));
+            return PlayerConstructedTournament.limited(_queueId, _tournamentQueueName, _format, _pairing, _totalGames,
+                    _privateEvent, players, collectionType, PlayerConstructedTournament.Stage.DRAFT, draft);
+        }
+
+        List<String> packs = _product.packsForCount(_packCount);
+        DraftPack draftPack = new DraftPack(keep, packs);
+        Draft draft;
+        if (TournamentProduct.MODE_SOLO.equals(_draftMode))
+            draft = new SoloBoosterDraft(collectionsManager, collectionType, _packStorage, draftPack, new HashSet<String>(players));
+        else if (_product.isWattoCube())
+            draft = SharedCubeDraft.watto(collectionsManager, collectionType, _packStorage, keep, packs, new HashSet<String>(players));
+        else
+            draft = new DefaultDraft(collectionsManager, collectionType, _packStorage, draftPack, new HashSet<String>(players));
+        return PlayerConstructedTournament.limited(_queueId, _tournamentQueueName, _format, _pairing, _totalGames,
+                _privateEvent, players, collectionType, PlayerConstructedTournament.Stage.DRAFT, draft);
+    }
+
+    private void issueCubeSolo(CollectionsManager collectionsManager, CollectionType collectionType,
+                               List<String> players, CardCollection keep) {
+        SoloDraft soloDraft = _soloDraftDefinitions == null ? null : _soloDraftDefinitions.getSoloDraft(_product.getCubeDraftType());
+        for (String player : players) {
+            long seed = System.nanoTime() ^ player.hashCode();
+            CardCollection starting = keep;
+            if (soloDraft != null && soloDraft.initializeNewCollection(seed) != null) {
+                DefaultCardCollection merged = new DefaultCardCollection(keep);
+                for (Map.Entry<String, CardCollection.Item> item : soloDraft.initializeNewCollection(seed).getAll().entrySet())
+                    merged.addItem(item.getKey(), item.getValue().getCount());
+                starting = merged;
+            }
+            DefaultCardCollection collection = new DefaultCardCollection(starting);
+            Map<String, Object> extra = new HashMap<String, Object>();
+            extra.put("seed", seed);
+            extra.put("stage", 0);
+            extra.put("stageCount", soloDraft == null ? 0 : soloDraft.stageCount());
+            extra.put("finished", Boolean.FALSE);
+            extra.put("soloDraftType", _product.getCubeDraftType());
+            collection.setExtraInformation(extra);
+            collectionsManager.addPlayerCollection(true, "Cube solo draft", player, collectionType, collection);
+        }
     }
 
     public static Side requiredSide(SwccgDeck deck, com.gempukku.swccgo.game.SwccgCardBlueprintLibrary library, Side expected) {

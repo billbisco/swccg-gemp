@@ -180,7 +180,7 @@ var GempSwccgSoloDraftUI = Class.extend({
         this._pendingDeckbuilderOpen = false;
         var fallback = this.eventDeckbuilderHref(null);
         button.attr("href", fallback);
-        if (!this.leagueType) {
+        if (!this.leagueType || (this.leagueType && this.leagueType.indexOf("ptq-") == 0)) {
             this._deckbuilderHrefReady = true;
             return;
         }

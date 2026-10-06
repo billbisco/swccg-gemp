@@ -108,6 +108,25 @@ var GempSwccgDeckBuildingUI = Class.extend({
         collectionSelect.append("<option value='default'>All cards</option>");
         collectionSelect.append("<option value='permanent'>My cards</option>");
         this.manageDecksDiv.append(collectionSelect);
+        this.openAllPacksBut = $("<button type='button' title='Open all packs that have no choice'>Open all packs</button>").button();
+        this.openAllPacksBut.css({"float":"right", "margin-right":"6px"});
+        this.manageDecksDiv.append(this.openAllPacksBut);
+        this.openAllPacksBut.click(function () {
+            var collectionType = that.getCollectionType();
+            if (collectionType == null || collectionType === "default" || collectionType === "permanent") {
+                alert("Open all packs is for sealed and draft collections.");
+                return;
+            }
+            if (!confirm("Open every pack that has no choice? Selection packs stay closed."))
+                return;
+            that.comm.openAllPacks(collectionType, function () {
+                that.cardFilter.getCollection();
+            }, {
+                "404": function () {
+                    alert("That collection was not found.");
+                }
+            });
+        });
         
         var newDeckBut = $("<button title='New deck'><span class='ui-icon ui-icon-document'></span></button>").button();
         this.manageDecksDiv.append(newDeckBut);
