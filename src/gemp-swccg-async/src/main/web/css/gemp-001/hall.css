@@ -924,7 +924,7 @@ body.play-flow-open {
     max-width: 100%;
     align-items: stretch;
     box-sizing: border-box;
-    height: 22px;
+    height: 19px;
     border: 1px solid #666;
     border-color: #666666 #888888 #888888 #666666;
     background-color: #222222;
@@ -943,9 +943,9 @@ body.play-flow-open {
     margin: 0;
     background: transparent;
     color: #ffffff;
-    font-size: inherit;
-    line-height: 1.2;
-    padding: 1px 10px;
+    font-size: 13.333px;
+    line-height: 17px;
+    padding: 0 10px;
     -moz-appearance: textfield;
 }
 
