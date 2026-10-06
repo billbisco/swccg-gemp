@@ -228,8 +228,38 @@ button.admin-button, input.admin-button {
 
 .hall-tab {
     height: 90%;
-    background: #00FF00;
+    background: #000000;
     overflow:hidden;
+}
+
+/* Admin sub-tabs: full-width even row (do not use flex-horiz on #adminMain; that
+   shrinks the nav to a left cluster). Gold hover/sheen stays on body .ui-state-hover. */
+#adminMain #admin-tabs,
+#adminMain .sub-tabs {
+    width: 100%;
+}
+
+#adminMain .ui-tabs-nav,
+#adminMain #admin-tabs > ol {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-evenly;
+    box-sizing: border-box;
+    float: none;
+}
+
+#adminMain .ui-tabs-nav li {
+    float: none;
+    flex: 1 1 0;
+    margin: 0 2px 1px 0;
+    text-align: center;
+}
+
+#adminMain .ui-tabs-nav li a {
+    float: none;
+    display: block;
+    text-align: center;
 }
 
 .hall-tab .ui-tabs-panel {
