@@ -1,7 +1,7 @@
 var deliveryDialogs = {};
 var deliveryState = {};
 
-var DELIVERY_COPIES_PER_PAGE = 540;
+var DELIVERY_TILES_PER_PAGE = 120;
 var DELIVERY_MIN_CARD_WIDTH = 70;
 var DELIVERY_MIN_CARD_HEIGHT = 98;
 
@@ -23,7 +23,7 @@ function deliveryService(xml) {
         var state = deliveryState[collectionName];
         state.items = mergeDeliveryItems(state.items, incoming);
         sortDeliveryItems(state.items);
-        state.pages = paginateDeliveryCopies(state.items, DELIVERY_COPIES_PER_PAGE);
+        state.pages = paginateDeliveryTiles(state.items, DELIVERY_TILES_PER_PAGE);
         if (state.pageIndex >= state.pages.length)
             state.pageIndex = Math.max(0, state.pages.length - 1);
 
@@ -135,19 +135,15 @@ function sortDeliveryItems(items) {
     });
 }
 
-function paginateDeliveryCopies(items, pageSize) {
+function paginateDeliveryTiles(items, pageSize) {
     var pages = [];
     var page = [];
-    var copies = 0;
     for (var i = 0; i < items.length; i++) {
-        var count = parseInt(items[i].count, 10) || 1;
-        if (page.length > 0 && copies + count > pageSize) {
+        if (page.length >= pageSize) {
             pages.push(page);
             page = [];
-            copies = 0;
         }
         page.push(items[i]);
-        copies += count;
     }
     if (page.length > 0)
         pages.push(page);
