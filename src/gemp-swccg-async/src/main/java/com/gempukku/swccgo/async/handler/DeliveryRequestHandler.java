@@ -64,6 +64,8 @@ public class DeliveryRequestHandler extends SwccgoServerRequestHandler implement
                         SwccgCardBlueprint blueprint = _library.getSwccgoCardBlueprint(blueprintId);
                         if (blueprint != null) {
                             card.setAttribute("horizontal", String.valueOf(blueprint.isHorizontal()));
+                            if (blueprint.getTitle() != null)
+                                card.setAttribute("title", blueprint.getTitle());
                         }
                         collectionTypeElem.appendChild(card);
                     } else {

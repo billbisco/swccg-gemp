@@ -1536,6 +1536,10 @@ var GempSwccgCommunication = Class.extend({
                 participantId:getUrlParam("participantId")},
             success:this.deliveryCheck(callback),
             error:this.errorCheck(errorMap),
+            complete:function () {
+                if (errorMap != null && errorMap.complete != null)
+                    errorMap.complete();
+            },
             dataType:"xml"
         });
     },
