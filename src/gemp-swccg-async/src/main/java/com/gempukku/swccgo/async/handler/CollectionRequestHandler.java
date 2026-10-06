@@ -110,6 +110,16 @@ public class CollectionRequestHandler extends SwccgoServerRequestHandler impleme
 
         Element collectionElem = doc.createElement("collection");
         collectionElem.setAttribute("count", String.valueOf(filteredResult.size()));
+        int openablePacks = 0;
+        for (CardCollection.Item item : items) {
+            if (item.getType() != CardCollection.Item.Type.PACK)
+                continue;
+            String packId = item.getBlueprintId();
+            if (packId != null && packId.startsWith("(S)"))
+                continue;
+            openablePacks += item.getCount();
+        }
+        collectionElem.setAttribute("openablePacks", String.valueOf(openablePacks));
         doc.appendChild(collectionElem);
 
         for (int i = start; i < start + count; i++) {

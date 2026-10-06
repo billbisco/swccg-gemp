@@ -3824,7 +3824,9 @@ var GempSwccgHallUI = Class.extend({
         var check = this.readyChecks[id];
         if (check == null)
             check = this.readyChecks[id] = {shown: false, dialog: null, deadline: 0, timer: null};
-        check.deadline = Date.now() + secs * 1000;
+        var fromServer = Date.now() + secs * 1000;
+        if (check.deadline <= 0 || fromServer < check.deadline)
+            check.deadline = fromServer;
         if (queue.getAttribute("confirmedReadyCheck") == "true") {
             check.shown = true;
             this.closeReadyCheckDialog(check);
@@ -3845,6 +3847,7 @@ var GempSwccgHallUI = Class.extend({
         content.append($("<p></p>").text("Confirm you are present within ")
             .append($("<span class='hall-ready-check-secs'></span>"))
             .append(" seconds."));
+        content.append($("<p></p>").text("Players who do not click Ready are dropped when the timer ends. If fewer than two remain, the tournament is cancelled."));
         check.dialog = content;
         content.dialog({
             title: "Ready Check",

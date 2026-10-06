@@ -297,23 +297,25 @@ public class PlayerMadeQueue extends AbstractTournamentQueue implements Tourname
             return startNow(tournamentQueueCallback, collectionsManager);
         }
         if (_readyCheckDeadline > 0 && System.currentTimeMillis() >= _readyCheckDeadline) {
-            if (_readyPlayers.size() >= 2) {
-                List<String> drop = new ArrayList<String>();
-                for (String player : _players) {
-                    if (!_readyPlayers.contains(player))
-                        drop.add(player);
-                }
-                for (String player : drop) {
-                    _players.remove(player);
-                    _lightDecks.remove(player);
-                    _darkDecks.remove(player);
-                    _playerDecks.remove(player);
-                }
+            List<String> drop = new ArrayList<String>();
+            for (String player : _players) {
+                if (!_readyPlayers.contains(player))
+                    drop.add(player);
+            }
+            for (String player : drop) {
+                _players.remove(player);
+                _lightDecks.remove(player);
+                _darkDecks.remove(player);
+                _playerDecks.remove(player);
+            }
+            _readyCheckDeadline = 0;
+            if (_players.size() >= 2) {
                 _started = true;
                 return startNow(tournamentQueueCallback, collectionsManager);
             }
-            _readyCheckDeadline = 0;
-            _readyPlayers.clear();
+            _cancelled = true;
+            leaveAllPlayers(collectionsManager);
+            return true;
         }
         if (!_started && _players.size() >= _maxPlayers && _readyCheckDeadline == 0) {
             if (_readyCheckSeconds > 0) {
