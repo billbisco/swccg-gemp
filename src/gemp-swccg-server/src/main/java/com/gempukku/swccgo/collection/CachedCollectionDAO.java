@@ -53,4 +53,9 @@ public class CachedCollectionDAO implements CollectionDAO, Cached {
         _delegate.setPlayerCollection(playerId, type, collection);
         _playerCollections.put(constructCacheKey(playerId, type), collection);
     }
+
+    @Override
+    public void runInTransaction(Runnable work) {
+        _delegate.runInTransaction(work);
+    }
 }
