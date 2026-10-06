@@ -233,19 +233,48 @@ function layoutDeliveryTiles(inner, cardDivs) {
     var minW = DELIVERY_MIN_CARD_WIDTH;
     var minH = DELIVERY_MIN_CARD_HEIGHT;
     var pad = 4;
-    var width = inner.parent().width();
+    var viewport = inner.parent();
+    var width = viewport.width();
+    var height = viewport.height();
     if (!width || width < minW + pad * 2)
         width = $(window).width() * 0.8 - 24;
+    if (!height || height < minH + pad * 2)
+        height = $(window).height() * 0.8 - 60;
+
+    var cols = Math.max(1, Math.floor((width - pad) / (minW + pad)));
+    var fittedRows = Math.max(1, Math.floor((height - pad) / (minH + pad)));
+    var actualRows = Math.max(1, Math.ceil(cardDivs.length / cols));
+    var rows = Math.min(actualRows, fittedRows);
+
+    var availW = width - pad * 2 - (cols - 1) * pad;
+    var cardW = Math.max(minW, Math.floor(availW / cols));
+    var extraW = Math.max(0, availW - cardW * cols);
+
+    var cardH = minH;
+    var extraH = 0;
+    if (actualRows >= fittedRows) {
+        var availH = height - pad * 2 - (rows - 1) * pad;
+        cardH = Math.max(minH, Math.floor(availH / rows));
+        extraH = Math.max(0, availH - cardH * rows);
+    }
+
+    var col = 0;
+    var row = 0;
     var x = pad;
     var y = pad;
     for (var i = 0; i < cardDivs.length; i++) {
-        if (x + minW + pad > width && x > pad) {
+        if (col >= cols) {
+            y += cardH + (row < extraH ? 1 : 0) + pad;
+            row++;
+            col = 0;
             x = pad;
-            y += minH + pad;
         }
-        layoutCardElem(cardDivs[i], x, y, minW, minH, 10);
+        var w = cardW + (col < extraW ? 1 : 0);
+        var h = cardH + (row < extraH ? 1 : 0);
+        layoutCardElem(cardDivs[i], x, y, w, h, 10);
         layoutTokens(cardDivs[i]);
-        x += minW + pad;
+        x += w + pad;
+        col++;
     }
-    inner.css({position: "relative", height: (y + minH + pad) + "px"});
+    inner.css({position: "relative", width: width + "px", height: height + "px"});
 }
