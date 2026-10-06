@@ -103,6 +103,8 @@ public class HallRequestHandler extends SwccgoServerRequestHandler implements Ur
             } else {
                 joinQueue(request, uri.substring(7), responseWriter);
             }
+        } else if (uri.startsWith("/tournament/") && uri.endsWith("/lockDecks") && request.method() == HttpMethod.POST) {
+            lockTournamentDecks(request, uri.substring(12, uri.length() - 10), responseWriter);
         } else if (uri.startsWith("/tournament/") && uri.endsWith("/deck") && request.method() == HttpMethod.POST) {
             submitTournamentDeck(request, uri.substring(12, uri.length() - 5), responseWriter);
         } else if (uri.startsWith("/tournament/") && uri.endsWith("/leave") && request.method() == HttpMethod.POST) {
@@ -113,6 +115,27 @@ public class HallRequestHandler extends SwccgoServerRequestHandler implements Ur
             joinTable(request, uri.substring(1), responseWriter);
         } else {
             responseWriter.writeError(404);
+        }
+    }
+
+    private void lockTournamentDecks(HttpRequest request, String tournamentId, ResponseWriter responseWriter) throws Exception {
+        HttpPostRequestDecoder postDecoder = new HttpPostRequestDecoder(request);
+        try {
+            String participantId = getFormParameterSafely(postDecoder, "participantId");
+            String lightDeckName = getFormParameterSafely(postDecoder, "lightDeckName");
+            String darkDeckName = getFormParameterSafely(postDecoder, "darkDeckName");
+            boolean lightSample = Boolean.parseBoolean(getFormParameterSafely(postDecoder, "lightSampleDeck"));
+            boolean darkSample = Boolean.parseBoolean(getFormParameterSafely(postDecoder, "darkSampleDeck"));
+            Player resourceOwner = getResourceOwnerSafely(request, participantId);
+            try {
+                _hallServer.lockTournamentDecks(tournamentId, resourceOwner, lightDeckName, lightSample,
+                        darkDeckName, darkSample, lightSample ? getLibrarian() : null, darkSample ? getLibrarian() : null);
+                responseWriter.writeXmlResponse(null);
+            } catch (HallException e) {
+                responseWriter.writeXmlResponse(marshalException(e));
+            }
+        } finally {
+            postDecoder.destroy();
         }
     }
 
@@ -247,30 +270,25 @@ public class HallRequestHandler extends SwccgoServerRequestHandler implements Ur
     }
 
     private void getDraft(HttpRequest request, String tournamentId, ResponseWriter responseWriter) throws Exception {
-        HttpPostRequestDecoder postDecoder = new HttpPostRequestDecoder(request);
+        QueryStringDecoder queryDecoder = new QueryStringDecoder(request.uri());
+        String participantId = getQueryParameterSafely(queryDecoder, "participantId");
+        Player resourceOwner = getResourceOwnerSafely(request, participantId);
+
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+
+        Document doc = documentBuilder.newDocument();
+
+        Element draft = doc.createElement("draft");
+
         try {
-            String participantId = getFormParameterSafely(postDecoder, "participantId");
-            Player resourceOwner = getResourceOwnerSafely(request, participantId);
+            _hallServer.singupForDraft(tournamentId, resourceOwner, new SerializeDraftVisitor(doc, draft));
 
-            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+            doc.appendChild(draft);
 
-            Document doc = documentBuilder.newDocument();
-
-            Element draft = doc.createElement("draft");
-
-            try {
-                _hallServer.singupForDraft(tournamentId, resourceOwner, new SerializeDraftVisitor(doc, draft));
-
-                doc.appendChild(draft);
-
-                responseWriter.writeXmlResponse(doc);
-            } catch (DraftFinishedException exp) {
-                responseWriter.writeError(204);
-            }
-        }
-        finally {
-            postDecoder.destroy();
+            responseWriter.writeXmlResponse(doc);
+        } catch (DraftFinishedException exp) {
+            responseWriter.writeError(204);
         }
     }
 

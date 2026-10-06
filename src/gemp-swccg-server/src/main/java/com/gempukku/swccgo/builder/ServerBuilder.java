@@ -116,7 +116,9 @@ public class ServerBuilder {
                         extract(objectMap, BotStatsDAO.class),
                         extract(objectMap, AdminService.class),
                         tournamentPrizeSchemeRegistry,
-                        pairingMechanismRegistry
+                        pairingMechanismRegistry,
+                        extract(objectMap, PackagedProductStorage.class),
+                        extract(objectMap, SoloDraftDefinitions.class)
                 ));
     }
 

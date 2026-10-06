@@ -23,9 +23,11 @@ public interface HallInfoVisitor {
                                      String pairingDescription, String startCondition, int playerCount, boolean playerSignedUp, boolean joinable,
                                      String formatCode, boolean playerMade, boolean isHost, boolean startable, boolean canCancel,
                                      String playersCsv, int maxPlayers, boolean readyCheck, boolean privateEvent, long createdAt,
-                                     int readyCheckSecsRemaining, boolean confirmedReadyCheck);
+                                     int readyCheckSecsRemaining, boolean confirmedReadyCheck,
+                                     String eventType, String draftMode, String productCode, String collectionCode, boolean requiresDeck);
 
-    void visitTournament(String tournamentKey, String collectionName, String formatName, String tournamentName, String pairingDescription, String tournamentStage, int round, int playerCount, boolean playerInCompetition);
+    void visitTournament(String tournamentKey, String collectionName, String formatName, String tournamentName, String pairingDescription, String tournamentStage, int round, int playerCount, boolean playerInCompetition,
+                         String collectionCode, boolean decksLocked, long deckBuildEndsAt, String cubeSoloType, String formatCode);
 
     void runningPlayerGame(String gameId);
 }

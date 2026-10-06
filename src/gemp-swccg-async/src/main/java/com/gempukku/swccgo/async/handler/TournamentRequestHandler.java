@@ -53,6 +53,8 @@ public class TournamentRequestHandler extends SwccgoServerRequestHandler impleme
     public void handleRequest(String uri, HttpRequest request, Map<Type, Object> context, ResponseWriter responseWriter, String remoteIp) throws Exception {
         if ("".equals(uri) && request.method() == HttpMethod.GET) {
             getCurrentTournaments(request, responseWriter);
+        } else if (uri.equals("/products") && request.method() == HttpMethod.GET) {
+            getTournamentProducts(responseWriter);
         } else if (uri.equals("/create") && request.method() == HttpMethod.POST) {
             createPlayerMadeTournament(request, responseWriter);
         } else if (uri.equals("/history") && request.method() == HttpMethod.GET) {
@@ -64,6 +66,34 @@ public class TournamentRequestHandler extends SwccgoServerRequestHandler impleme
         } else {
             responseWriter.writeError(404);
         }
+    }
+
+    private void getTournamentProducts(ResponseWriter responseWriter) throws Exception {
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+        Document doc = documentBuilder.newDocument();
+        Element products = doc.createElement("products");
+        for (com.gempukku.swccgo.tournament.TournamentProduct product : com.gempukku.swccgo.tournament.TournamentProduct.list(null)) {
+            Element elem = doc.createElement("product");
+            elem.setAttribute("code", product.getCode());
+            elem.setAttribute("kind", product.getKind());
+            elem.setAttribute("name", product.getDisplayName());
+            elem.setAttribute("formatCode", product.getFormatCode());
+            elem.setAttribute("liveMax", String.valueOf(product.getLiveMaxPlayers()));
+            elem.setAttribute("defaultPacks", String.valueOf(product.defaultPackCount()));
+            elem.setAttribute("jsonCube", String.valueOf(product.isJsonCube()));
+            elem.setAttribute("wattoCube", String.valueOf(product.isWattoCube()));
+            StringBuilder choices = new StringBuilder();
+            for (Integer choice : product.packChoices()) {
+                if (choices.length() > 0)
+                    choices.append(",");
+                choices.append(choice);
+            }
+            elem.setAttribute("packChoices", choices.toString());
+            products.appendChild(elem);
+        }
+        doc.appendChild(products);
+        responseWriter.writeXmlResponse(doc);
     }
 
     private void getTournamentInfo(HttpRequest request, String tournamentId, ResponseWriter responseWriter) throws Exception {
@@ -118,10 +148,11 @@ public class TournamentRequestHandler extends SwccgoServerRequestHandler impleme
             String participantId = getFormParameterSafely(postDecoder, "participantId");
             Player resourceOwner = getResourceOwnerSafely(request, participantId);
             String type = getFormParameterSafely(postDecoder, "type");
-            if (type != null && !"constructed".equalsIgnoreCase(type))
-                throw new HallException("Only Constructed player-hosted tournaments are available right now");
-
             String formatCode = getFormParameterSafely(postDecoder, "formatCode");
+            String productCode = getFormParameterSafely(postDecoder, "productCode");
+            if (productCode == null || productCode.isEmpty())
+                productCode = formatCode;
+            String draftMode = getFormParameterSafely(postDecoder, "draftMode");
             String pairing = getFormParameterSafely(postDecoder, "pairing");
             if (pairing == null)
                 pairing = PlayerMadeQueue.PAIRING_SWISS;
@@ -131,15 +162,16 @@ public class TournamentRequestHandler extends SwccgoServerRequestHandler impleme
             boolean lightSample = Boolean.parseBoolean(getFormParameterSafely(postDecoder, "lightSampleDeck"));
             boolean darkSample = Boolean.parseBoolean(getFormParameterSafely(postDecoder, "darkSampleDeck"));
             boolean privateEvent = Boolean.parseBoolean(getFormParameterSafely(postDecoder, "privateEvent"));
-            int totalGames = parseIntParam(getFormParameterSafely(postDecoder, "totalGames"), 2);
-            int maxPlayers = parseIntParam(getFormParameterSafely(postDecoder, "maxPlayers"), 128);
+            int totalGames = parseIntParam(getFormParameterSafely(postDecoder, "totalGames"), 4);
+            int maxPlayers = parseIntParam(getFormParameterSafely(postDecoder, "maxPlayers"), 4);
             int readyCheckSeconds = parseIntParam(getFormParameterSafely(postDecoder, "readyCheckSeconds"), 0);
+            int packCount = parseIntParam(getFormParameterSafely(postDecoder, "packCount"), 0);
 
             Player lightLibrarian = lightSample ? getLibrarian() : null;
             Player darkLibrarian = darkSample ? getLibrarian() : null;
             _hallServer.createPlayerMadeQueue(resourceOwner, titlePrefix, formatCode, pairing, totalGames, maxPlayers,
                     readyCheckSeconds, privateEvent, lightDeckName, lightSample, darkDeckName, darkSample,
-                    lightLibrarian, darkLibrarian);
+                    lightLibrarian, darkLibrarian, type, draftMode, productCode, packCount);
             responseWriter.writeXmlResponse(null);
         } catch (HallException e) {
             responseWriter.writeXmlResponse(marshalException(e));

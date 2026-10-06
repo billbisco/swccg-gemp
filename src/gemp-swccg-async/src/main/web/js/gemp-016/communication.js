@@ -680,6 +680,9 @@ var GempSwccgCommunication = Class.extend({
         var data = {
             type: params.type || "constructed",
             formatCode: params.formatCode,
+            productCode: params.productCode,
+            draftMode: params.draftMode,
+            packCount: params.packCount,
             pairing: params.pairing,
             totalGames: params.totalGames,
             maxPlayers: params.maxPlayers,
@@ -1510,6 +1513,84 @@ var GempSwccgCommunication = Class.extend({
             success:this.deliveryCheck(callback),
             error:this.errorCheck(errorMap),
             dataType:"html"
+        });
+    },
+    getTournamentProducts:function (callback, errorMap) {
+        $.ajax({
+            type:"GET",
+            url:this.url + "/tournament/products",
+            cache:false,
+            data:{
+                participantId:getUrlParam("participantId")},
+            success:this.deliveryCheck(callback),
+            error:this.errorCheck(errorMap),
+            dataType:"xml"
+        });
+    },
+    openAllPacks:function (collectionType, callback, errorMap) {
+        $.ajax({
+            type:"POST",
+            url:this.url + "/collection/" + collectionType + "/openAll",
+            cache:false,
+            data:{
+                participantId:getUrlParam("participantId")},
+            success:this.deliveryCheck(callback),
+            error:this.errorCheck(errorMap),
+            dataType:"xml"
+        });
+    },
+    lockTournamentDecks:function (tournamentId, lightDeckName, lightSampleDeck, darkDeckName, darkSampleDeck, callback, errorMap) {
+        $.ajax({
+            type:"POST",
+            url:this.url + "/hall/tournament/" + tournamentId + "/lockDecks",
+            cache:false,
+            data:{
+                lightDeckName:lightDeckName,
+                lightSampleDeck:lightSampleDeck,
+                darkDeckName:darkDeckName,
+                darkSampleDeck:darkSampleDeck,
+                participantId:getUrlParam("participantId")},
+            success:this.deliveryCheck(callback),
+            error:this.errorCheck(errorMap),
+            dataType:"xml"
+        });
+    },
+    getHallDraft:function (tournamentId, callback, errorMap) {
+        $.ajax({
+            type:"GET",
+            url:this.url + "/hall/draft/" + tournamentId,
+            cache:false,
+            data:{
+                participantId:getUrlParam("participantId")},
+            success:callback,
+            error:this.errorCheck(errorMap),
+            dataType:"xml"
+        });
+    },
+    updateHallDraft:function (tournamentId, channelNumber, callback, errorMap) {
+        $.ajax({
+            type:"POST",
+            url:this.url + "/hall/draft/" + tournamentId + "/update",
+            cache:false,
+            data:{
+                channelNumber:channelNumber,
+                participantId:getUrlParam("participantId")},
+            success:callback,
+            error:this.errorCheck(errorMap),
+            dataType:"xml"
+        });
+    },
+    pickHallDraft:function (tournamentId, blueprintId, callback, errorMap) {
+        $.ajax({
+            type:"POST",
+            url:this.url + "/hall/draft/" + tournamentId + "/pick",
+            cache:false,
+            data:{
+                blueprintId:blueprintId,
+                participantId:getUrlParam("participantId")},
+            success:callback,
+            error:this.errorCheck(errorMap),
+            dataType:"xml"
         });
     },
     getDraft:function (leagueType, callback, errorMap) {

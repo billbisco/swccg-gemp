@@ -96,4 +96,16 @@ public interface TournamentQueue {
     default void joinPlayer(CollectionsManager collectionsManager, Player player, SwccgDeck lightDeck, SwccgDeck darkDeck) {
         joinPlayer(collectionsManager, player, lightDeck);
     }
+
+    default String getEventType() {
+        return "constructed";
+    }
+
+    default String getDraftMode() {
+        return "";
+    }
+
+    default String getProductCode() {
+        return "";
+    }
 }

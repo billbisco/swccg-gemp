@@ -57,10 +57,36 @@ public class PlayerConstructedTournament implements Tournament {
     private List<PlayerStanding> _currentStandings;
     private final ReadWriteLock _lock = new ReentrantReadWriteLock();
     private final Random _random = new Random();
+    private CollectionType _collectionType = CollectionType.ALL_CARDS;
+    private Draft _draft;
+    private long _deckBuildStart;
+    private String _cubeSoloType;
 
     public PlayerConstructedTournament(String tournamentId, String tournamentName, String format, String pairing,
                                        int totalGames, boolean privateEvent, List<String> players,
                                        Map<String, SwccgDeck> lightDecks, Map<String, SwccgDeck> darkDecks) {
+        this(tournamentId, tournamentName, format, pairing, totalGames, privateEvent, players, lightDecks, darkDecks,
+                CollectionType.ALL_CARDS, Stage.PLAYING_GAMES, null);
+    }
+
+    public static PlayerConstructedTournament limited(String tournamentId, String tournamentName, String format,
+                                                      String pairing, int totalGames, boolean privateEvent,
+                                                      List<String> players, CollectionType collectionType,
+                                                      Stage stage, Draft draft) {
+        return new PlayerConstructedTournament(tournamentId, tournamentName, format, pairing, totalGames, privateEvent,
+                players, new HashMap<String, SwccgDeck>(), new HashMap<String, SwccgDeck>(),
+                collectionType, stage, draft);
+    }
+
+    public PlayerConstructedTournament cubeSolo(String cubeSoloType) {
+        _cubeSoloType = cubeSoloType;
+        return this;
+    }
+
+    private PlayerConstructedTournament(String tournamentId, String tournamentName, String format, String pairing,
+                                        int totalGames, boolean privateEvent, List<String> players,
+                                        Map<String, SwccgDeck> lightDecks, Map<String, SwccgDeck> darkDecks,
+                                        CollectionType collectionType, Stage stage, Draft draft) {
         _tournamentId = tournamentId;
         _tournamentName = tournamentName;
         _format = format;
@@ -69,6 +95,11 @@ public class PlayerConstructedTournament implements Tournament {
         _privateEvent = privateEvent;
         _lightDecks = new HashMap<String, SwccgDeck>(lightDecks);
         _darkDecks = new HashMap<String, SwccgDeck>(darkDecks);
+        _collectionType = collectionType == null ? CollectionType.ALL_CARDS : collectionType;
+        _stage = stage;
+        _draft = draft;
+        if (_stage == Stage.DECK_BUILDING)
+            _deckBuildStart = System.currentTimeMillis();
         for (String player : players) {
             _players.add(player);
             _points.put(player, 0);
@@ -97,7 +128,25 @@ public class PlayerConstructedTournament implements Tournament {
 
     @Override
     public CollectionType getCollectionType() {
-        return CollectionType.ALL_CARDS;
+        return _collectionType;
+    }
+
+    public String getCubeSoloType() {
+        return _cubeSoloType;
+    }
+
+    public long getDeckBuildEndsAt() {
+        if (_stage != Stage.DECK_BUILDING)
+            return 0;
+        return _deckBuildStart + TournamentProduct.DECK_BUILD_MS;
+    }
+
+    public boolean isLimited() {
+        return _collectionType != null && !CollectionType.ALL_CARDS.equals(_collectionType);
+    }
+
+    public boolean hasLockedDecks(String player) {
+        return _lightDecks.get(player) != null && _darkDecks.get(player) != null;
     }
 
     @Override
@@ -181,10 +230,28 @@ public class PlayerConstructedTournament implements Tournament {
 
     @Override
     public void playerChosenCard(String playerName, String cardId) {
+        if (_draft != null)
+            _draft.playerChosenCard(playerName, cardId);
     }
 
     @Override
     public void playerSummittedDeck(String player, SwccgDeck deck) {
+    }
+
+    public void lockDecks(String player, SwccgDeck lightDeck, SwccgDeck darkDeck) {
+        _lock.writeLock().lock();
+        try {
+            if (_stage != Stage.DECK_BUILDING)
+                return;
+            if (!_players.contains(player) || _droppedPlayers.contains(player))
+                return;
+            if (lightDeck != null)
+                _lightDecks.put(player, lightDeck);
+            if (darkDeck != null)
+                _darkDecks.put(player, darkDeck);
+        } finally {
+            _lock.writeLock().unlock();
+        }
     }
 
     @Override
@@ -213,7 +280,7 @@ public class PlayerConstructedTournament implements Tournament {
 
     @Override
     public Draft getDraft() {
-        return null;
+        return _draft;
     }
 
     @Override
@@ -258,6 +325,42 @@ public class PlayerConstructedTournament implements Tournament {
         _lock.writeLock().lock();
         try {
             boolean changed = false;
+            if (_stage == Stage.DRAFT) {
+                if (_draft != null) {
+                    _draft.advanceDraft(tournamentCallback);
+                    if (_draft.isFinished()) {
+                        tournamentCallback.broadcastMessage("Drafting in tournament " + _tournamentName
+                                + " is finished, starting deck building (30 minutes).", activePlayers());
+                        _draft = null;
+                        _stage = Stage.DECK_BUILDING;
+                        _deckBuildStart = System.currentTimeMillis();
+                        changed = true;
+                    }
+                } else if (_cubeSoloType != null && allCubeSoloFinished(collectionsManager)) {
+                    tournamentCallback.broadcastMessage("Drafting in tournament " + _tournamentName
+                            + " is finished, starting deck building (30 minutes).", activePlayers());
+                    _stage = Stage.DECK_BUILDING;
+                    _deckBuildStart = System.currentTimeMillis();
+                    changed = true;
+                }
+            }
+            if (_stage == Stage.DECK_BUILDING) {
+                boolean timeUp = _deckBuildStart + TournamentProduct.DECK_BUILD_MS < System.currentTimeMillis();
+                boolean allLocked = allActiveHaveDecks();
+                if (timeUp || allLocked) {
+                    dropUnlockedPlayers();
+                    if (getPlayersInCompetitionCount() < 2) {
+                        tournamentCallback.broadcastMessage("Tournament " + _tournamentName
+                                + " cancelled: fewer than 2 players locked both decks.", new ArrayList<String>(_players));
+                        finish(tournamentCallback);
+                        return true;
+                    }
+                    _stage = Stage.PLAYING_GAMES;
+                    tournamentCallback.broadcastMessage("Deck building in tournament " + _tournamentName
+                            + " is finished, pairing games.", activePlayers());
+                    changed = true;
+                }
+            }
             if (_nextTask == null && _stage == Stage.PLAYING_GAMES && _currentlyPlayingPlayers.isEmpty()) {
                 if (PlayerMadeQueue.PAIRING_MATCH_PLAY.equals(_pairing) && !_matchPlayGame2 && !_matchPairs.isEmpty())
                     resolveMatchPlayLosers();
@@ -281,6 +384,41 @@ public class PlayerConstructedTournament implements Tournament {
         } finally {
             _lock.writeLock().unlock();
         }
+    }
+
+    private boolean allActiveHaveDecks() {
+        for (String player : activePlayers()) {
+            if (_lightDecks.get(player) == null || _darkDecks.get(player) == null)
+                return false;
+        }
+        return !activePlayers().isEmpty();
+    }
+
+    private void dropUnlockedPlayers() {
+        List<String> drop = new ArrayList<String>();
+        for (String player : activePlayers()) {
+            if (_lightDecks.get(player) == null || _darkDecks.get(player) == null)
+                drop.add(player);
+        }
+        _droppedPlayers.addAll(drop);
+    }
+
+    private boolean allCubeSoloFinished(CollectionsManager collectionsManager) {
+        if (_collectionType == null)
+            return false;
+        boolean any = false;
+        for (String player : activePlayers()) {
+            com.gempukku.swccgo.game.CardCollection collection =
+                    collectionsManager.getPlayerCollection(player, _collectionType.getCode());
+            if (collection == null)
+                return false;
+            Object finished = collection.getExtraInformation() == null
+                    ? null : collection.getExtraInformation().get("finished");
+            if (!isTrue(finished))
+                return false;
+            any = true;
+        }
+        return any;
     }
 
     private boolean isComplete() {
@@ -471,6 +609,12 @@ public class PlayerConstructedTournament implements Tournament {
                 result.add((ConstructedPlayerStanding) standing);
         }
         return result;
+    }
+
+    private static boolean isTrue(Object value) {
+        if (value instanceof Boolean)
+            return (Boolean) value;
+        return value != null && "true".equalsIgnoreCase(String.valueOf(value));
     }
 
     private static int n(Map<String, Integer> map, String key) {

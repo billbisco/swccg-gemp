@@ -979,9 +979,9 @@ var GempSwccgHallUI = Class.extend({
         typeRow.append("<span class='play-form-label'>Type</span>");
         this.tournamentTypeSelect = $("<select id='tournament-type' class='play-form-select'></select>");
         this.tournamentTypeSelect.append("<option value='constructed' selected='selected'>Constructed</option>");
-        this.tournamentTypeSelect.append("<option value='sealed' disabled='disabled'>Sealed (coming later)</option>");
-        this.tournamentTypeSelect.append("<option value='solodraft' disabled='disabled'>Solo Draft (coming later)</option>");
-        this.tournamentTypeSelect.append("<option value='livedraft' disabled='disabled'>Live Draft (coming later)</option>");
+        this.tournamentTypeSelect.append("<option value='sealed'>Sealed</option>");
+        this.tournamentTypeSelect.append("<option value='draft'>Draft</option>");
+        this.tournamentTypeSelect.append("<option value='cube'>Cube</option>");
         typeRow.append(this.tournamentTypeSelect);
         tFields.append(typeRow);
 
@@ -990,6 +990,27 @@ var GempSwccgHallUI = Class.extend({
         this.tournamentFormatSelect = $("<select id='tournament-format' class='play-form-select'></select>");
         tFormatRow.append(this.tournamentFormatSelect);
         tFields.append(tFormatRow);
+
+        this.tournamentProductRow = $("<div class='play-form-row' style='display:none'></div>");
+        this.tournamentProductRow.append("<span class='play-form-label'>Product</span>");
+        this.tournamentProductSelect = $("<select id='tournament-product' class='play-form-select'></select>");
+        this.tournamentProductRow.append(this.tournamentProductSelect);
+        tFields.append(this.tournamentProductRow);
+
+        this.tournamentModeRow = $("<div class='play-form-row' style='display:none'></div>");
+        this.tournamentModeRow.append("<span class='play-form-label'>Mode</span>");
+        this.tournamentModeSelect = $("<select id='tournament-draft-mode' class='play-form-select'></select>");
+        this.tournamentModeSelect.append("<option value='solo' selected='selected'>Solo</option>");
+        this.tournamentModeSelect.append("<option value='live'>Live</option>");
+        this.tournamentModeRow.append(this.tournamentModeSelect);
+        tFields.append(this.tournamentModeRow);
+
+        this.tournamentPacksRow = $("<div class='play-form-row' style='display:none'></div>");
+        this.tournamentPacksRow.append("<span class='play-form-label'>Packs per side <span class='info-toggle' data-for='help-tournament-packs' role='button' tabindex='0' title='What is this?' aria-expanded='false'>i</span></span>");
+        this.tournamentPacksSelect = $("<select id='tournament-pack-count' class='play-form-select'></select>");
+        this.tournamentPacksRow.append(this.tournamentPacksSelect);
+        tFields.append(this.tournamentPacksRow);
+        tFields.append("<div id='help-tournament-packs' class='info-text' style='display:none'>Recommended pack count is selected by default. Cube uses 9-card packs. Live Cube has no AI seats.</div>");
 
         var pairRow = $("<div class='play-form-row'></div>");
         pairRow.append("<span class='play-form-label'>Pairing</span>");
@@ -1004,7 +1025,7 @@ var GempSwccgHallUI = Class.extend({
         this.tournamentGamesSelect = $("<select id='tournament-total-games' class='play-form-select'></select>");
         var gi;
         for (gi = 2; gi <= 14; gi += 2)
-            this.tournamentGamesSelect.append("<option value='" + gi + "'" + (gi === 2 ? " selected='selected'" : "") + ">" + gi + "</option>");
+            this.tournamentGamesSelect.append("<option value='" + gi + "'" + (gi === 4 ? " selected='selected'" : "") + ">" + gi + "</option>");
         this.tournamentGamesRow.append(this.tournamentGamesSelect);
         tFields.append(this.tournamentGamesRow);
         tFields.append("<div id='help-tournament-games' class='info-text' style='display:none'>SWCCG Tournaments need to have an equal amount of Dark Side and Light Side games played by each player to be fair.</div>");
@@ -1013,12 +1034,12 @@ var GempSwccgHallUI = Class.extend({
         maxRow.append("<span class='play-form-label'>Max players</span>");
         this.tournamentMaxSelect = $("<select id='tournament-max-players' class='play-form-select'></select>");
         this.tournamentMaxSelect.append("<option value='2'>2</option>");
-        this.tournamentMaxSelect.append("<option value='4'>4</option>");
+        this.tournamentMaxSelect.append("<option value='4' selected='selected'>4</option>");
         this.tournamentMaxSelect.append("<option value='8'>8</option>");
         this.tournamentMaxSelect.append("<option value='16'>16</option>");
         this.tournamentMaxSelect.append("<option value='32'>32</option>");
         this.tournamentMaxSelect.append("<option value='64'>64</option>");
-        this.tournamentMaxSelect.append("<option value='128' selected='selected'>128</option>");
+        this.tournamentMaxSelect.append("<option value='128'>128</option>");
         maxRow.append(this.tournamentMaxSelect);
         tFields.append(maxRow);
 
@@ -1087,6 +1108,15 @@ var GempSwccgHallUI = Class.extend({
         this.tournamentMaxSelect.change(function () {
             thatTourney.prefillTournamentGamesFromMax();
         });
+        this.tournamentTypeSelect.change(function () {
+            thatTourney.syncTournamentTypeUi();
+        });
+        this.tournamentProductSelect.change(function () {
+            thatTourney.syncTournamentProductUi();
+        });
+        this.tournamentModeSelect.change(function () {
+            thatTourney.syncTournamentProductUi();
+        });
         this.tournamentFormatSelect.change(function () {
             var fmt = thatTourney.tournamentFormatSelect.val();
             thatTourney.updateDecks(fmt, "default");
@@ -1094,6 +1124,7 @@ var GempSwccgHallUI = Class.extend({
         $(this.tournamentCreateButton).button().click(function () {
             thatTourney.submitCreateTournament();
         });
+        this.loadTournamentProducts();
 
         this.playOverlay.append(backdrop);
         this.playOverlay.append(panel);
@@ -1271,7 +1302,11 @@ var GempSwccgHallUI = Class.extend({
         this.joinPending = pending;
         this.joinResultDiv.hide().empty();
         this.setJoinSubmitEnabled(false);
-        this.setJoinLibraryVisible(true);
+        this.setJoinLibraryVisible(pending.kind !== "lockDecks");
+        if (this.joinLightLibraryRow != null)
+            pending.kind === "lockDecks" ? this.joinLightLibraryRow.hide() : this.joinLightLibraryRow.show();
+        if (this.joinDarkLibraryRow != null)
+            pending.kind === "lockDecks" ? this.joinDarkLibraryRow.hide() : this.joinDarkLibraryRow.show();
         this.joinPlayerDeckSelect.empty();
         this.joinLibraryDeckSelect.empty();
         var loading = $("<option></option>");
@@ -1282,11 +1317,11 @@ var GempSwccgHallUI = Class.extend({
         this.joinPlayerDeckSelect.append(loading);
         this.joinLibraryDeckSelect.append($("<option></option>").attr("value", "").text("Select a Library Deck"));
 
-        var isQueue = pending.kind === "queue" || pending.kind === "playerTournament";
-        var isDual = pending.kind === "playerTournament";
-        this.joinTitleEl.text(isDual ? "Join Tournament" : (isQueue ? "Join Queue" : "Join Table"));
+        var isQueue = pending.kind === "queue" || pending.kind === "playerTournament" || pending.kind === "lockDecks";
+        var isDual = pending.kind === "playerTournament" || pending.kind === "lockDecks";
+        this.joinTitleEl.text(pending.kind === "lockDecks" ? "Lock Tournament Decks" : (isDual ? "Join Tournament" : (isQueue ? "Join Queue" : "Join Table")));
         var button = $(this.joinSubmitButton);
-        var label = isDual ? "Join tournament" : (isQueue ? "Join queue" : "Join table");
+        var label = pending.kind === "lockDecks" ? "Lock decks" : (isDual ? "Join tournament" : (isQueue ? "Join queue" : "Join table"));
         if (this.joinSingleDeckBlock != null) {
             if (isDual)
                 this.joinSingleDeckBlock.hide();
@@ -1427,8 +1462,8 @@ var GempSwccgHallUI = Class.extend({
             libSelect.val(libSelect.find("option").eq(1).attr("value"));
 
         this.joinResultDiv.hide().empty();
-        if (this.joinPending != null && this.joinPending.kind === "playerTournament") {
-            this.fillJoinDualDeckSelects(playerXml, libraryXml, showLibrary);
+        if (this.joinPending != null && (this.joinPending.kind === "playerTournament" || this.joinPending.kind === "lockDecks")) {
+            this.fillJoinDualDeckSelects(playerXml, libraryXml, this.joinPending.kind !== "lockDecks" && showLibrary);
             return;
         }
         var total = playerCount + (showLibrary ? libCount : 0);
@@ -1474,7 +1509,7 @@ var GempSwccgHallUI = Class.extend({
             return;
         }
         var pending = this.joinPending;
-        if (pending.kind === "playerTournament") {
+        if (pending.kind === "playerTournament" || pending.kind === "lockDecks") {
             this.submitPlayerMadeJoin(pending);
             return;
         }
@@ -1663,6 +1698,7 @@ var GempSwccgHallUI = Class.extend({
         this.parkPlayFormFields();
         this.setPlayFlowTitle("Tournament");
         this.populateTournamentFormats();
+        this.syncTournamentTypeUi();
         this.syncTournamentPairingUi();
         var fmt = this.tournamentFormatSelect != null ? this.tournamentFormatSelect.val() : null;
         if (fmt)
@@ -1671,8 +1707,59 @@ var GempSwccgHallUI = Class.extend({
         this.playTournamentPanel.show();
     },
 
+    loadTournamentProducts:function() {
+        var that = this;
+        if (this.comm == null)
+            return;
+        this.comm.getTournamentProducts(function (xml) {
+            that.tournamentProducts = [];
+            if (xml == null || xml.documentElement == null)
+                return;
+            var nodes = xml.documentElement.getElementsByTagName("product");
+            for (var i = 0; i < nodes.length; i++) {
+                var node = nodes[i];
+                that.tournamentProducts.push({
+                    code: node.getAttribute("code"),
+                    kind: node.getAttribute("kind"),
+                    name: node.getAttribute("name"),
+                    formatCode: node.getAttribute("formatCode"),
+                    liveMax: parseInt(node.getAttribute("liveMax"), 10) || 128,
+                    defaultPacks: parseInt(node.getAttribute("defaultPacks"), 10) || 1,
+                    jsonCube: node.getAttribute("jsonCube") == "true",
+                    wattoCube: node.getAttribute("wattoCube") == "true",
+                    packChoices: node.getAttribute("packChoices") || ""
+                });
+            }
+            that.syncTournamentTypeUi();
+        }, {
+            "0": function() {}
+        });
+    },
+
+    tournamentTypeValue:function() {
+        return this.tournamentTypeSelect != null ? (this.tournamentTypeSelect.val() || "constructed") : "constructed";
+    },
+
+    isLimitedTournamentType:function() {
+        var type = this.tournamentTypeValue();
+        return type === "sealed" || type === "draft" || type === "cube";
+    },
+
+    selectedTournamentProduct:function() {
+        if (this.tournamentProducts == null || this.tournamentProductSelect == null)
+            return null;
+        var code = this.tournamentProductSelect.val();
+        for (var i = 0; i < this.tournamentProducts.length; i++) {
+            if (this.tournamentProducts[i].code === code)
+                return this.tournamentProducts[i];
+        }
+        return null;
+    },
+
     populateTournamentFormats:function() {
         if (this.tournamentFormatSelect == null || this.supportedFormatsSelect == null)
+            return;
+        if (this.isLimitedTournamentType())
             return;
         var prev = this.tournamentFormatSelect.val();
         this.tournamentFormatSelect.empty();
@@ -1693,6 +1780,94 @@ var GempSwccgHallUI = Class.extend({
             that.tournamentFormatSelect.val(prev);
         else
             that.tournamentFormatSelect.val(that.tournamentFormatSelect.find("option").eq(0).attr("value"));
+    },
+
+    populateTournamentProducts:function() {
+        if (this.tournamentProductSelect == null)
+            return;
+        var type = this.tournamentTypeValue();
+        var prev = this.tournamentProductSelect.val();
+        this.tournamentProductSelect.empty();
+        var products = this.tournamentProducts || [];
+        for (var i = 0; i < products.length; i++) {
+            var product = products[i];
+            if (product.kind !== type)
+                continue;
+            this.tournamentProductSelect.append($("<option></option>").attr("value", product.code).text(product.name));
+        }
+        if (prev && this.selectHasValue(this.tournamentProductSelect, prev))
+            this.tournamentProductSelect.val(prev);
+        else
+            this.tournamentProductSelect.val(this.tournamentProductSelect.find("option").eq(0).attr("value"));
+    },
+
+    syncTournamentTypeUi:function() {
+        var limited = this.isLimitedTournamentType();
+        var type = this.tournamentTypeValue();
+        if (this.tournamentProductRow != null)
+            limited ? this.tournamentProductRow.show() : this.tournamentProductRow.hide();
+        if (this.tournamentModeRow != null)
+            (type === "draft" || type === "cube") ? this.tournamentModeRow.show() : this.tournamentModeRow.hide();
+        if (this.tournamentPacksRow != null)
+            (type === "draft" || type === "cube") ? this.tournamentPacksRow.show() : this.tournamentPacksRow.hide();
+        var deckDisplay = limited ? "none" : "";
+        if (this.tournamentLightPlayerRow != null) this.tournamentLightPlayerRow.css("display", deckDisplay);
+        if (this.tournamentLightLibraryRow != null) this.tournamentLightLibraryRow.css("display", deckDisplay);
+        if (this.tournamentDarkPlayerRow != null) this.tournamentDarkPlayerRow.css("display", deckDisplay);
+        if (this.tournamentDarkLibraryRow != null) this.tournamentDarkLibraryRow.css("display", deckDisplay);
+        if (limited)
+            this.populateTournamentProducts();
+        else
+            this.populateTournamentFormats();
+        this.syncTournamentProductUi();
+    },
+
+    syncTournamentProductUi:function() {
+        var product = this.selectedTournamentProduct();
+        var type = this.tournamentTypeValue();
+        if (this.tournamentFormatSelect != null && product != null && product.formatCode)
+            this.tournamentFormatSelect.val(product.formatCode);
+        if (this.tournamentPacksSelect != null && (type === "draft" || type === "cube")) {
+            var prev = this.tournamentPacksSelect.val();
+            this.tournamentPacksSelect.empty();
+            var choices = product && product.packChoices ? product.packChoices.split(",") : ["4", "6", "8"];
+            var def = product ? String(product.defaultPacks) : "6";
+            for (var i = 0; i < choices.length; i++) {
+                var value = $.trim(choices[i]);
+                if (!value)
+                    continue;
+                this.tournamentPacksSelect.append($("<option></option>").attr("value", value).text(value));
+            }
+            if (this.selectHasValue(this.tournamentPacksSelect, def))
+                this.tournamentPacksSelect.val(def);
+            else if (prev && this.selectHasValue(this.tournamentPacksSelect, prev))
+                this.tournamentPacksSelect.val(prev);
+        }
+        this.clampTournamentMaxForLiveCube();
+        if (this.tournamentFormatSelect != null && this.tournamentFormatSelect.val())
+            this.updateDecks(this.tournamentFormatSelect.val(), "default");
+    },
+
+    clampTournamentMaxForLiveCube:function() {
+        if (this.tournamentMaxSelect == null)
+            return;
+        var product = this.selectedTournamentProduct();
+        var live = this.tournamentModeSelect != null && this.tournamentModeSelect.val() === "live";
+        var cap = 128;
+        if (live && product != null && this.tournamentTypeValue() === "cube")
+            cap = product.liveMax || cap;
+        var current = parseInt(this.tournamentMaxSelect.val(), 10) || 4;
+        this.tournamentMaxSelect.find("option").each(function () {
+            var value = parseInt($(this).attr("value"), 10);
+            if (value > cap)
+                $(this).attr("disabled", "disabled");
+            else
+                $(this).removeAttr("disabled");
+        });
+        if (current > cap) {
+            this.tournamentMaxSelect.val(String(cap));
+            this.prefillTournamentGamesFromMax();
+        }
     },
 
     recommendedTournamentGames:function(playerCount) {
@@ -1817,7 +1992,10 @@ var GempSwccgHallUI = Class.extend({
             "404": function() { that.showJoinError("Tournament not found."); onDone(); },
             "500": function() { that.showJoinError("Server error. Try again."); onDone(); }
         };
-        this.comm.joinPlayerMadeQueue(pending.id, light.name, light.sample, dark.name, dark.sample, function (xml) {
+        var submitFn = pending.kind === "lockDecks"
+            ? function(cb, errors) { that.comm.lockTournamentDecks(pending.id, light.name, light.sample, dark.name, dark.sample, cb, errors); }
+            : function(cb, errors) { that.comm.joinPlayerMadeQueue(pending.id, light.name, light.sample, dark.name, dark.sample, cb, errors); };
+        submitFn(function (xml) {
             onDone();
             if (xml != null && xml.documentElement != null && xml.documentElement.tagName == "error") {
                 that.showJoinError(xml.documentElement.getAttribute("message") || "Unable to join.");
@@ -1827,21 +2005,87 @@ var GempSwccgHallUI = Class.extend({
         }, errorMap);
     },
 
+    openLimitedTournamentTab:function(kind, tournamentId, collectionCode, cubeSoloType) {
+        var url;
+        if (kind === "draft") {
+            if (cubeSoloType)
+                url = "/gemp-swccg/soloDraft.html?leagueType=" + encodeURIComponent(collectionCode || cubeSoloType);
+            else
+                url = "/gemp-swccg/draft.html?tournamentId=" + encodeURIComponent(tournamentId)
+                    + (collectionCode ? "&collection=" + encodeURIComponent(collectionCode) : "");
+        } else {
+            url = "/gemp-swccg/deckBuild.html?collection=" + encodeURIComponent(collectionCode || "")
+                + "&product=" + encodeURIComponent("all");
+        }
+        window.open(url, "_blank");
+    },
+
+    maybePromptLimitedStart:function(tournamentId, stage, collectionCode, cubeSoloType, name) {
+        if (this.promptedLimited == null)
+            this.promptedLimited = {};
+        if (stage !== "Drafting" && stage !== "Deck building")
+            return;
+        var key = tournamentId + ":" + stage;
+        if (this.promptedLimited[key])
+            return;
+        this.promptedLimited[key] = true;
+        var that = this;
+        var kind = stage === "Drafting" ? "draft" : "deck";
+        var label = stage === "Drafting" ? "Open draft" : "Open deck builder";
+        var content = $("<div></div>");
+        content.append($("<p></p>").text((name || "Your tournament") + " is in " + stage.toLowerCase() + "."));
+        content.dialog({
+            title: stage,
+            modal: true,
+            resizable: false,
+            width: 360,
+            closeText: "",
+            buttons: [
+                {
+                    text: label,
+                    click: function () {
+                        that.openLimitedTournamentTab(kind, tournamentId, collectionCode, cubeSoloType);
+                        $(this).dialog("close");
+                    }
+                },
+                {
+                    text: "Later",
+                    click: function () {
+                        $(this).dialog("close");
+                    }
+                }
+            ],
+            close: function () {
+                content.dialog("destroy").remove();
+            }
+        });
+    },
+
     submitCreateTournament:function() {
         var that = this;
-        var light = this.selectedDeckFromPair(this.tournamentLightPlayerSelect, this.tournamentLightLibrarySelect);
-        var dark = this.selectedDeckFromPair(this.tournamentDarkPlayerSelect, this.tournamentDarkLibrarySelect);
-        if (light == null || dark == null) {
+        var type = this.tournamentTypeValue();
+        var limited = this.isLimitedTournamentType();
+        var light = limited ? {name: "", sample: "false"} : this.selectedDeckFromPair(this.tournamentLightPlayerSelect, this.tournamentLightLibrarySelect);
+        var dark = limited ? {name: "", sample: "false"} : this.selectedDeckFromPair(this.tournamentDarkPlayerSelect, this.tournamentDarkLibrarySelect);
+        if (!limited && (light == null || dark == null)) {
             this.showTournamentError("Select both a Light Side deck and a Dark Side deck.");
+            return;
+        }
+        var product = this.selectedTournamentProduct();
+        if (limited && product == null) {
+            this.showTournamentError("Choose a " + type + " product.");
             return;
         }
         var pairing = this.tournamentPairingSelect.val() || "swiss";
         var params = {
-            type: "constructed",
-            formatCode: this.tournamentFormatSelect.val(),
+            type: type,
+            formatCode: product != null ? product.formatCode : this.tournamentFormatSelect.val(),
+            productCode: product != null ? product.code : "",
+            draftMode: (type === "draft" || type === "cube") ? (this.tournamentModeSelect.val() || "solo") : "",
+            packCount: (type === "draft" || type === "cube") ? (this.tournamentPacksSelect.val() || "0") : "0",
             pairing: pairing,
-            totalGames: this.tournamentGamesSelect.val() || "2",
-            maxPlayers: this.tournamentMaxSelect.val() || "128",
+            totalGames: this.tournamentGamesSelect.val() || "4",
+            maxPlayers: this.tournamentMaxSelect.val() || "4",
             readyCheckSeconds: this.tournamentReadySelect.val() || "0",
             privateEvent: this.tournamentPrivateCheckbox != null && this.tournamentPrivateCheckbox.is(":checked") ? "true" : "false",
             titlePrefix: this.tournamentTitleInput != null ? this.tournamentTitleInput.val() : "",
@@ -3451,8 +3695,17 @@ var GempSwccgHallUI = Class.extend({
         var lastField = $("<td></td>");
         if (joinable && !joined) {
             var joinBut = $("<button>Join</button>");
-            $(joinBut).button().click((function(queueId, fmt, qname, fmtCode) {
+            var requiresDeck = queue.getAttribute("requiresDeck") != "false";
+            $(joinBut).button().click((function(queueId, fmt, qname, fmtCode, needsDeck) {
                 return function () {
+                    if (!needsDeck) {
+                        that.comm.joinPlayerMadeQueue(queueId, "", false, "", false, function (xml) {
+                            that.processResponse(xml);
+                        }, {
+                            "0": function() { that.chat.appendMessage("Could not join tournament.", "warningMessage"); }
+                        });
+                        return;
+                    }
                     that.openJoinPopup({
                         kind: "playerTournament",
                         id: queueId,
@@ -3464,7 +3717,7 @@ var GempSwccgHallUI = Class.extend({
                         contextLabel: that.buildJoinContextLabel(fmt, null, qname, null, null)
                     });
                 };
-            })(id, formatName, queueName, formatCode));
+            })(id, formatName, queueName, formatCode, requiresDeck));
             lastField.append(joinBut);
         }
         if (joined) {
@@ -3774,7 +4027,47 @@ var GempSwccgHallUI = Class.extend({
 
                     var joined = tournament.getAttribute("signedUp");
                     this.markSignedUp("tournament", id, joined == "true");
+                    var stage = tournament.getAttribute("stage") || "";
+                    var collectionCode = tournament.getAttribute("collectionCode");
+                    var cubeSoloType = tournament.getAttribute("cubeSoloType");
+                    var decksLocked = tournament.getAttribute("decksLocked") == "true";
                     if (joined == "true") {
+                        if (stage === "Drafting") {
+                            var draftBut = $("<button>Open draft</button>");
+                            $(draftBut).button().click((function(tournamentId, collection, cubeType) {
+                                return function () {
+                                    that.openLimitedTournamentTab("draft", tournamentId, collection, cubeType);
+                                };
+                            })(id, collectionCode, cubeSoloType));
+                            actionsField.append(draftBut);
+                        }
+                        if (stage === "Deck building") {
+                            var unpackBut = $("<button>Open deck builder</button>");
+                            $(unpackBut).button().click((function(collection) {
+                                return function () {
+                                    that.openLimitedTournamentTab("deck", null, collection, null);
+                                };
+                            })(collectionCode));
+                            actionsField.append(unpackBut);
+                            if (!decksLocked) {
+                                var lockBut = $("<button>Lock decks</button>");
+                                $(lockBut).button().click((function(tournamentId, fmt, fmtCode, collection) {
+                                    return function () {
+                                        that.openJoinPopup({
+                                            kind: "lockDecks",
+                                            id: tournamentId,
+                                            formatName: fmt,
+                                            formatCode: fmtCode,
+                                            collectionCode: collection,
+                                            hostSide: null,
+                                            requiredSide: null,
+                                            contextLabel: "Lock Light and Dark decks for this tournament."
+                                        });
+                                    };
+                                })(id, tournament.getAttribute("format"), tournament.getAttribute("formatCode"), collectionCode));
+                                actionsField.append(lockBut);
+                            }
+                        }
                         var but = $("<button>Drop from tournament</button>");
                         $(but).button().click((
                             function(tournamentId) {
@@ -3786,6 +4079,7 @@ var GempSwccgHallUI = Class.extend({
                             }
                             )(id));
                         actionsField.append(but);
+                        that.maybePromptLimitedStart(id, stage, collectionCode, cubeSoloType, tournament.getAttribute("name"));
                     }
 
                     var row = $("<tr class='tournament" + id + "'><td>" + tournament.getAttribute("format") + "</td>" +

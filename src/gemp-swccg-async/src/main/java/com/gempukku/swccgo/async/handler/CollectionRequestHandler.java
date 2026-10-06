@@ -12,6 +12,7 @@ import com.gempukku.swccgo.db.vo.CollectionType;
 import com.gempukku.swccgo.db.vo.League;
 import com.gempukku.swccgo.game.*;
 import com.gempukku.swccgo.game.formats.SwccgoFormatLibrary;
+import com.gempukku.swccgo.hall.HallServer;
 import com.gempukku.swccgo.league.LeagueSeriesData;
 import com.gempukku.swccgo.league.LeagueService;
 import com.gempukku.swccgo.logic.GameUtils;
@@ -39,6 +40,7 @@ public class CollectionRequestHandler extends SwccgoServerRequestHandler impleme
     private SwccgCardBlueprintLibrary _library;
     private SwccgoFormatLibrary _formatLibrary;
     private SortAndFilterCards _sortAndFilterCards;
+    private HallServer _hallServer;
 
     public CollectionRequestHandler(Map<Type, Object> context) {
         super(context);
@@ -64,12 +66,15 @@ public class CollectionRequestHandler extends SwccgoServerRequestHandler impleme
         _library = extractObject(context, SwccgCardBlueprintLibrary.class);
         _formatLibrary = extractObject(context, SwccgoFormatLibrary.class);
         _sortAndFilterCards = new SortAndFilterCards();
+        _hallServer = extractObject(context, HallServer.class);
     }
 
     @Override
     public void handleRequest(String uri, HttpRequest request, Map<Type, Object> context, ResponseWriter responseWriter, String remoteIp) throws Exception {
             if (uri.equals("") && request.method() == HttpMethod.GET) {
                 getCollectionTypes(request, responseWriter);
+            } else if (uri.startsWith("/") && uri.endsWith("/openAll") && request.method() == HttpMethod.POST) {
+                openAllPacks(request, uri.substring(1, uri.length() - 8), responseWriter);
             } else if (uri.startsWith("/") && request.method() == HttpMethod.POST) {
                 openPack(request, uri.substring(1), responseWriter);
             } else if (uri.startsWith("playerCollectionStats") && request.method() == HttpMethod.GET) {
@@ -227,17 +232,75 @@ public class CollectionRequestHandler extends SwccgoServerRequestHandler impleme
                 collectionsElem.appendChild(collectionElem);
             }
         }
+        if (_hallServer != null) {
+            for (CollectionType collectionType : _hallServer.getTournamentCollectionsForPlayer(resourceOwner.getName())) {
+                Element collectionElem = doc.createElement("collection");
+                collectionElem.setAttribute("type", collectionType.getCode());
+                collectionElem.setAttribute("name", collectionType.getFullName());
+                collectionsElem.appendChild(collectionElem);
+            }
+        }
 
         doc.appendChild(collectionsElem);
 
         responseWriter.writeXmlResponse(doc);
     }
 
+    private void openAllPacks(HttpRequest request, String collectionType, ResponseWriter responseWriter) throws Exception {
+        HttpPostRequestDecoder postDecoder = new HttpPostRequestDecoder(request);
+        try {
+            String participantId = getFormParameterSafely(postDecoder, "participantId");
+            Player resourceOwner = getResourceOwnerSafely(request, participantId);
+            CollectionType collectionTypeObj = createCollectionType(collectionType);
+            if (collectionTypeObj == null)
+                throw new HttpProcessingException(404);
+            CardCollection collection = _collectionsManager.getPlayerCollection(resourceOwner, collectionTypeObj.getCode());
+            if (collection == null)
+                throw new HttpProcessingException(404);
+            int opened = 0;
+            boolean progress = true;
+            while (progress) {
+                progress = false;
+                collection = _collectionsManager.getPlayerCollection(resourceOwner, collectionTypeObj.getCode());
+                if (collection == null)
+                    break;
+                for (CardCollection.Item item : new java.util.ArrayList<CardCollection.Item>(collection.getAll().values())) {
+                    if (item.getType() != CardCollection.Item.Type.PACK)
+                        continue;
+                    String packId = item.getBlueprintId();
+                    if (packId.startsWith("(S)"))
+                        continue;
+                    int count = item.getCount();
+                    for (int i = 0; i < count; i++) {
+                        CardCollection contents = _collectionsManager.openPackInPlayerCollection(resourceOwner, collectionTypeObj, null, _packStorage, packId);
+                        if (contents == null)
+                            break;
+                        opened++;
+                        progress = true;
+                    }
+                }
+            }
+            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+            Document doc = documentBuilder.newDocument();
+            Element result = doc.createElement("openAll");
+            result.setAttribute("opened", String.valueOf(opened));
+            doc.appendChild(result);
+            responseWriter.writeXmlResponse(doc);
+        } finally {
+            postDecoder.destroy();
+        }
+    }
+
     private CollectionType createCollectionType(String collectionType) {
         if (collectionType.equals("permanent"))
             return CollectionType.MY_CARDS;
-
-        return _leagueService.getCollectionTypeByCode(collectionType);
+        CollectionType leagueType = _leagueService.getCollectionTypeByCode(collectionType);
+        if (leagueType != null)
+            return leagueType;
+        if (_hallServer != null)
+            return _hallServer.getTournamentCollectionType(collectionType);
+        return null;
     }
 
     private void appendCardSide(Element card, SwccgCardBlueprint blueprint) {

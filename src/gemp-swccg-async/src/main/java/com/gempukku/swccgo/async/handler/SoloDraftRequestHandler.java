@@ -12,6 +12,7 @@ import com.gempukku.swccgo.game.CardCollection;
 import com.gempukku.swccgo.game.Player;
 import com.gempukku.swccgo.game.SwccgCardBlueprint;
 import com.gempukku.swccgo.game.SwccgCardBlueprintLibrary;
+import com.gempukku.swccgo.hall.HallServer;
 import com.gempukku.swccgo.league.LeagueData;
 import com.gempukku.swccgo.league.LeagueService;
 import com.gempukku.swccgo.league.NewSoloDraftLeagueData;
@@ -35,6 +36,7 @@ public class SoloDraftRequestHandler extends SwccgoServerRequestHandler implemen
     private SoloDraftDefinitions _soloDraftDefinitions;
     private LeagueService _leagueService;
     private SwccgCardBlueprintLibrary _library;
+    private HallServer _hallServer;
 
     public SoloDraftRequestHandler(Map<Type, Object> context) {
         super(context);
@@ -42,6 +44,7 @@ public class SoloDraftRequestHandler extends SwccgoServerRequestHandler implemen
         _soloDraftDefinitions = extractObject(context, SoloDraftDefinitions.class);
         _collectionsManager = extractObject(context, CollectionsManager.class);
         _library = extractObject(context, SwccgCardBlueprintLibrary.class);
+        _hallServer = extractObject(context, HallServer.class);
     }
 
     @Override
@@ -58,36 +61,20 @@ public class SoloDraftRequestHandler extends SwccgoServerRequestHandler implemen
     private void getAvailablePicks(HttpRequest request, String leagueType, ResponseWriter responseWriter) throws Exception {
         QueryStringDecoder queryDecoder = new QueryStringDecoder(request.getUri());
         String participantId = getQueryParameterSafely(queryDecoder, "participantId");
-
-        League league = findLeagueByType(leagueType);
-
-        if (league == null)
-            throw new HttpProcessingException(404);
-
-        LeagueData leagueData = league.getLeagueData(_soloDraftDefinitions);
-        int leagueStart = leagueData.getSeries().get(0).getStart();
-
-        if (!leagueData.isSoloDraftLeague() || DateUtils.getCurrentDate() < leagueStart)
-            throw new HttpProcessingException(404);
-
-        NewSoloDraftLeagueData soloDraftLeagueData = (NewSoloDraftLeagueData) leagueData;
-        CollectionType collectionType = soloDraftLeagueData.getCollectionType();
-
         Player resourceOwner = getResourceOwnerSafely(request, participantId);
 
-        CardCollection collection = _collectionsManager.getPlayerCollection(resourceOwner, collectionType.getCode());
+        DraftSession session = resolveDraftSession(leagueType, resourceOwner, false);
+        if (session == null)
+            throw new HttpProcessingException(404);
 
+        CardCollection collection = session.collection;
         Iterable<SoloDraft.DraftChoice> availableChoices;
-        soloDraftLeagueData.repairExtraInformation(collection, resourceOwner);
-
-        boolean finished = (Boolean) collection.getExtraInformation().get("finished");
-        int stage = ((Number) collection.getExtraInformation().get("stage")).intValue();
-        int stages = ((Number) collection.getExtraInformation().get("stageCount")).intValue();
+        boolean finished = extraFlag(collection, "finished");
+        int stage = extraInt(collection, "stage");
+        int stages = extraInt(collection, "stageCount");
         if (!finished) {
-            long playerSeed = ((Number) collection.getExtraInformation().get("seed")).longValue();
-
-            SoloDraft soloDraft = soloDraftLeagueData.getSoloDraft();
-            availableChoices = soloDraft.getAvailableChoices(playerSeed, stage, collection, null);
+            long playerSeed = extraLong(collection, "seed");
+            availableChoices = session.soloDraft.getAvailableChoices(playerSeed, stage, collection, null);
         } else {
             availableChoices = Collections.emptyList();
         }
@@ -122,34 +109,22 @@ public class SoloDraftRequestHandler extends SwccgoServerRequestHandler implemen
         HttpPostRequestDecoder postDecoder = new HttpPostRequestDecoder(request);
         String participantId = getFormParameterSafely(postDecoder, "participantId");
         String selectedChoiceId = getFormParameterSafely(postDecoder, "choiceId");
-
-        League league = findLeagueByType(leagueType);
-
-        if (league == null)
-            throw new HttpProcessingException(404);
-
-        LeagueData leagueData = league.getLeagueData(_soloDraftDefinitions);
-        int leagueStart = leagueData.getSeries().get(0).getStart();
-
-        if (!leagueData.isSoloDraftLeague() || DateUtils.getCurrentDate() < leagueStart)
-            throw new HttpProcessingException(404);
-
-        NewSoloDraftLeagueData soloDraftLeagueData = (NewSoloDraftLeagueData) leagueData;
-        CollectionType collectionType = soloDraftLeagueData.getCollectionType();
-
         Player resourceOwner = getResourceOwnerSafely(request, participantId);
 
-        CardCollection collection = _collectionsManager.getPlayerCollection(resourceOwner, collectionType.getCode());
-        soloDraftLeagueData.repairExtraInformation(collection, resourceOwner);
-        boolean finished = (Boolean) collection.getExtraInformation().get("finished");
-        if (finished)
+        DraftSession session = resolveDraftSession(leagueType, resourceOwner, true);
+        if (session == null)
             throw new HttpProcessingException(404);
 
-        int stage = ((Number) collection.getExtraInformation().get("stage")).intValue();
-        int stages = ((Number) collection.getExtraInformation().get("stageCount")).intValue();
-        long playerSeed = ((Number) collection.getExtraInformation().get("seed")).longValue();
+        CardCollection collection = session.collection;
+        if (extraFlag(collection, "finished"))
+            throw new HttpProcessingException(404);
 
-        SoloDraft soloDraft = soloDraftLeagueData.getSoloDraft();
+        int stage = extraInt(collection, "stage");
+        int stages = extraInt(collection, "stageCount");
+        long playerSeed = extraLong(collection, "seed");
+        SoloDraft soloDraft = session.soloDraft;
+        CollectionType collectionType = session.collectionType;
+
         Iterable<SoloDraft.DraftChoice> possibleChoices = soloDraft.getAvailableChoices(playerSeed, stage, collection, null);
         SoloDraft.DraftChoice draftChoice = getSelectedDraftChoice(selectedChoiceId, possibleChoices);
         if (draftChoice == null)
@@ -235,5 +210,88 @@ public class SoloDraftRequestHandler extends SwccgoServerRequestHandler implemen
                 return availableChoice;
         }
         return null;
+    }
+
+    private DraftSession resolveDraftSession(String code, Player player, boolean forPick) throws Exception {
+        League league = findLeagueByType(code);
+        if (league != null) {
+            LeagueData leagueData = league.getLeagueData(_soloDraftDefinitions);
+            int leagueStart = leagueData.getSeries().get(0).getStart();
+            if (!leagueData.isSoloDraftLeague() || DateUtils.getCurrentDate() < leagueStart)
+                return null;
+            NewSoloDraftLeagueData soloDraftLeagueData = (NewSoloDraftLeagueData) leagueData;
+            CollectionType collectionType = soloDraftLeagueData.getCollectionType();
+            CardCollection collection = _collectionsManager.getPlayerCollection(player, collectionType.getCode());
+            if (collection == null)
+                return null;
+            soloDraftLeagueData.repairExtraInformation(collection, player);
+            return new DraftSession(collectionType, soloDraftLeagueData.getSoloDraft(), collection);
+        }
+        if (_hallServer == null)
+            return null;
+        CollectionType collectionType = _hallServer.getTournamentCollectionType(code);
+        if (collectionType == null)
+            return null;
+        CardCollection collection = _collectionsManager.getPlayerCollection(player, collectionType.getCode());
+        if (collection == null)
+            return null;
+        String draftType = _hallServer.getTournamentSoloDraftType(code);
+        if (draftType == null && collection.getExtraInformation() != null)
+            draftType = String.valueOf(collection.getExtraInformation().get("soloDraftType"));
+        if (draftType == null || "null".equals(draftType))
+            return null;
+        SoloDraft soloDraft = _soloDraftDefinitions.getSoloDraft(draftType);
+        if (soloDraft == null)
+            return null;
+        if (forPick && extraFlag(collection, "finished"))
+            return null;
+        return new DraftSession(collectionType, soloDraft, collection);
+    }
+
+    private static boolean extraFlag(CardCollection collection, String key) {
+        if (collection == null || collection.getExtraInformation() == null)
+            return false;
+        Object value = collection.getExtraInformation().get(key);
+        if (value instanceof Boolean)
+            return (Boolean) value;
+        return value != null && "true".equalsIgnoreCase(String.valueOf(value));
+    }
+
+    private static int extraInt(CardCollection collection, String key) {
+        if (collection == null || collection.getExtraInformation() == null)
+            return 0;
+        Object value = collection.getExtraInformation().get(key);
+        if (value instanceof Number)
+            return ((Number) value).intValue();
+        try {
+            return Integer.parseInt(String.valueOf(value));
+        } catch (Exception ignored) {
+            return 0;
+        }
+    }
+
+    private static long extraLong(CardCollection collection, String key) {
+        if (collection == null || collection.getExtraInformation() == null)
+            return 0;
+        Object value = collection.getExtraInformation().get(key);
+        if (value instanceof Number)
+            return ((Number) value).longValue();
+        try {
+            return Long.parseLong(String.valueOf(value));
+        } catch (Exception ignored) {
+            return 0;
+        }
+    }
+
+    private static final class DraftSession {
+        private final CollectionType collectionType;
+        private final SoloDraft soloDraft;
+        private final CardCollection collection;
+
+        private DraftSession(CollectionType collectionType, SoloDraft soloDraft, CardCollection collection) {
+            this.collectionType = collectionType;
+            this.soloDraft = soloDraft;
+            this.collection = collection;
+        }
     }
 }
