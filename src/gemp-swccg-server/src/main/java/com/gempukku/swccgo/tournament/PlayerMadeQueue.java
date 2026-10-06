@@ -132,9 +132,7 @@ public class PlayerMadeQueue extends AbstractTournamentQueue implements Tourname
     public String getStartCondition() {
         if (_readyCheckDeadline > 0)
             return "Ready check";
-        if (PAIRING_MATCH_PLAY.equals(_pairing))
-            return "Host starts · max " + _maxPlayers;
-        return "Host starts · " + _totalGames + " games · max " + _maxPlayers;
+        return "When " + _maxPlayers + " players join or when start is requested";
     }
 
     @Override
