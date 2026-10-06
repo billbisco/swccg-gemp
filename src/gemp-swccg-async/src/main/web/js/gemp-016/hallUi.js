@@ -1031,16 +1031,17 @@ var GempSwccgHallUI = Class.extend({
         tFields.append("<div id='help-tournament-games' class='info-text' style='display:none'>SWCCG Tournaments need to have an equal amount of Dark Side and Light Side games played by each player to be fair.</div>");
 
         var maxRow = $("<div class='play-form-row'></div>");
-        maxRow.append("<span class='play-form-label'>Max players</span>");
-        this.tournamentMaxSelect = $("<select id='tournament-max-players' class='play-form-select'></select>");
-        this.tournamentMaxSelect.append("<option value='2'>2</option>");
-        this.tournamentMaxSelect.append("<option value='4' selected='selected'>4</option>");
-        this.tournamentMaxSelect.append("<option value='8'>8</option>");
-        this.tournamentMaxSelect.append("<option value='16'>16</option>");
-        this.tournamentMaxSelect.append("<option value='32'>32</option>");
-        this.tournamentMaxSelect.append("<option value='64'>64</option>");
-        this.tournamentMaxSelect.append("<option value='128'>128</option>");
-        maxRow.append(this.tournamentMaxSelect);
+        maxRow.append("<span class='play-form-label'>Number of Players</span>");
+        this.tournamentPlayerCountInput = $("<input type='number' id='tournament-player-count' class='play-form-number' min='2' max='128' step='1' value='4' />");
+        var playerCountWrap = $("<div class='play-form-number-wrap'></div>");
+        playerCountWrap.append(this.tournamentPlayerCountInput);
+        var playerCountSpinners = $("<span class='play-form-number-spinners'></span>");
+        this.tournamentPlayerCountUp = $("<button type='button' class='play-form-number-up' aria-label='Increase number of players'>▲</button>");
+        this.tournamentPlayerCountDown = $("<button type='button' class='play-form-number-down' aria-label='Decrease number of players'>▼</button>");
+        playerCountSpinners.append(this.tournamentPlayerCountUp);
+        playerCountSpinners.append(this.tournamentPlayerCountDown);
+        playerCountWrap.append(playerCountSpinners);
+        maxRow.append(playerCountWrap);
         tFields.append(maxRow);
 
         var readyRow = $("<div class='play-form-row'></div>");
@@ -1105,8 +1106,17 @@ var GempSwccgHallUI = Class.extend({
         this.tournamentPairingSelect.change(function () {
             thatTourney.syncTournamentPairingUi();
         });
-        this.tournamentMaxSelect.change(function () {
+        var onPlayerCountChange = function () {
+            thatTourney.clampTournamentPlayerCountInput();
             thatTourney.prefillTournamentGamesFromMax();
+        };
+        this.tournamentPlayerCountInput.change(onPlayerCountChange);
+        this.tournamentPlayerCountInput.blur(onPlayerCountChange);
+        this.tournamentPlayerCountUp.click(function () {
+            thatTourney.nudgeTournamentPlayerCount(1);
+        });
+        this.tournamentPlayerCountDown.click(function () {
+            thatTourney.nudgeTournamentPlayerCount(-1);
         });
         this.tournamentTypeSelect.change(function () {
             thatTourney.syncTournamentTypeUi();
@@ -1848,24 +1858,49 @@ var GempSwccgHallUI = Class.extend({
             this.updateDecks(this.tournamentFormatSelect.val(), "default");
     },
 
-    clampTournamentMaxForLiveCube:function() {
-        if (this.tournamentMaxSelect == null)
-            return;
+    tournamentPlayerCountCap:function() {
         var product = this.selectedTournamentProduct();
         var live = this.tournamentModeSelect != null && this.tournamentModeSelect.val() === "live";
         var cap = 128;
         if (live && product != null && this.tournamentTypeValue() === "cube")
             cap = product.liveMax || cap;
-        var current = parseInt(this.tournamentMaxSelect.val(), 10) || 4;
-        this.tournamentMaxSelect.find("option").each(function () {
-            var value = parseInt($(this).attr("value"), 10);
-            if (value > cap)
-                $(this).attr("disabled", "disabled");
-            else
-                $(this).removeAttr("disabled");
-        });
-        if (current > cap) {
-            this.tournamentMaxSelect.val(String(cap));
+        return cap;
+    },
+
+    tournamentPlayerCount:function() {
+        var n = parseInt(this.tournamentPlayerCountInput.val(), 10);
+        if (isNaN(n))
+            n = 4;
+        var cap = this.tournamentPlayerCountCap();
+        if (n < 2)
+            n = 2;
+        if (n > cap)
+            n = cap;
+        return n;
+    },
+
+    clampTournamentPlayerCountInput:function() {
+        if (this.tournamentPlayerCountInput == null)
+            return this.tournamentPlayerCount();
+        var n = this.tournamentPlayerCount();
+        this.tournamentPlayerCountInput.val(String(n));
+        return n;
+    },
+
+    nudgeTournamentPlayerCount:function(delta) {
+        var n = this.tournamentPlayerCount() + delta;
+        this.tournamentPlayerCountInput.val(String(n));
+        this.clampTournamentPlayerCountInput();
+        this.prefillTournamentGamesFromMax();
+    },
+
+    clampTournamentMaxForLiveCube:function() {
+        if (this.tournamentPlayerCountInput == null)
+            return;
+        var cap = this.tournamentPlayerCountCap();
+        this.tournamentPlayerCountInput.attr("max", String(cap));
+        if (this.tournamentPlayerCount() > cap) {
+            this.clampTournamentPlayerCountInput();
             this.prefillTournamentGamesFromMax();
         }
     },
@@ -1888,11 +1923,11 @@ var GempSwccgHallUI = Class.extend({
     },
 
     prefillTournamentGamesFromMax:function() {
-        if (this.tournamentGamesSelect == null || this.tournamentMaxSelect == null)
+        if (this.tournamentGamesSelect == null || this.tournamentPlayerCountInput == null)
             return;
         if (this.tournamentPairingSelect != null && this.tournamentPairingSelect.val() === "matchPlay")
             return;
-        var rec = this.recommendedTournamentGames(this.tournamentMaxSelect.val());
+        var rec = this.recommendedTournamentGames(this.tournamentPlayerCount());
         this.tournamentGamesSelect.val(String(rec));
     },
 
@@ -2085,7 +2120,7 @@ var GempSwccgHallUI = Class.extend({
             packCount: (type === "draft" || type === "cube") ? (this.tournamentPacksSelect.val() || "0") : "0",
             pairing: pairing,
             totalGames: this.tournamentGamesSelect.val() || "4",
-            maxPlayers: this.tournamentMaxSelect.val() || "4",
+            maxPlayers: String(this.clampTournamentPlayerCountInput()),
             readyCheckSeconds: this.tournamentReadySelect.val() || "0",
             privateEvent: this.tournamentPrivateCheckbox != null && this.tournamentPrivateCheckbox.is(":checked") ? "true" : "false",
             titlePrefix: this.tournamentTitleInput != null ? this.tournamentTitleInput.val() : "",
@@ -3672,10 +3707,6 @@ var GempSwccgHallUI = Class.extend({
         var canCancel = queue.getAttribute("canCancel") == "true";
         var readyCheck = queue.getAttribute("readyCheck") == "true";
         var formatCode = queue.getAttribute("formatCode");
-        var playerCount = queue.getAttribute("playerCount") || "0";
-        var maxPlayers = queue.getAttribute("maxPlayers") || "";
-        if (maxPlayers)
-            statusText = statusText + " (" + playerCount + "/" + maxPlayers + ")";
 
         var row = $("<tr class='queue" + id + "'></tr>");
         row.append("<td>" + formatName + "</td>");

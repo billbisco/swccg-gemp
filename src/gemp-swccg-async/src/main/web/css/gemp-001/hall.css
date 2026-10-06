@@ -918,6 +918,64 @@ body.play-flow-open {
     max-width: 100%;
 }
 
+.play-form-number-wrap {
+    display: inline-flex;
+    align-items: stretch;
+    border: 1px solid #666;
+    background: #1a1a1a;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.play-form-number {
+    width: 3.4em;
+    flex: none;
+    max-width: 4em;
+    text-align: center;
+    border: 0;
+    background: transparent;
+    color: #e0e0e0;
+    font-size: 14px;
+    padding: 4px 2px;
+    -moz-appearance: textfield;
+}
+
+.play-form-number::-webkit-inner-spin-button,
+.play-form-number::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.play-form-number-spinners {
+    display: flex;
+    flex-direction: column;
+    width: 1.35em;
+    border-left: 1px solid #555;
+}
+
+.play-form-number-up,
+.play-form-number-down {
+    flex: 1 1 auto;
+    margin: 0;
+    padding: 0;
+    line-height: 1;
+    font-size: 8px;
+    border: 0;
+    background: #2c2c2c;
+    color: #eee;
+    cursor: pointer;
+}
+
+.play-form-number-up {
+    border-bottom: 1px solid #555;
+}
+
+.play-form-number-up:hover,
+.play-form-number-down:hover {
+    background: #3a3a3a;
+    color: #ffd76a;
+}
+
 .play-form-actions {
     margin-top: 6px;
     justify-content: flex-end;
