@@ -635,7 +635,26 @@ function layoutTokens(cardElem) {
             for (var token in tokens)
                 if (tokens.hasOwnProperty(token)) {
                     if (token == "count") {
-                        var tokenElem = $("<div class='cardCount token'>" + tokens[token] + "</div>").css({position:"absolute", left:((width - 20) / 2) + "px", top:((height - 18) / 2) + "px"});
+                        var countValue = parseInt(tokens[token], 10);
+                        var cardData = cardElem.data("card");
+                        var deliveryBadge = cardData != null && cardData.deliveryCountBadge;
+                        if (deliveryBadge && (isNaN(countValue) || countValue <= 1))
+                            continue;
+                        var label = isNaN(countValue) ? String(tokens[token]) : String(countValue);
+                        var boxWidth = Math.max(20, 8 * label.length + 6);
+                        var left;
+                        var top;
+                        if (deliveryBadge) {
+                            left = Math.max(0, width - boxWidth - 2);
+                            top = Math.max(0, height - 20);
+                        } else {
+                            left = (width - boxWidth) / 2;
+                            top = (height - 18) / 2;
+                        }
+                        var tokenElem = $("<div class='cardCount token'>" + label + "</div>");
+                        if (deliveryBadge)
+                            tokenElem.addClass("deliveryCorner");
+                        tokenElem.css({position:"absolute", left:left + "px", top:top + "px", width:boxWidth + "px"});
                         tokenOverlay.append(tokenElem);
                     }
                 }

@@ -113,20 +113,7 @@ var GempSwccgDeckBuildingUI = Class.extend({
         this.openAllPacksBut.hide();
         this.manageDecksDiv.append(this.openAllPacksBut);
         this.openAllPacksBut.click(function () {
-            var collectionType = that.getCollectionType();
-            if (collectionType == null || collectionType === "default" || collectionType === "permanent") {
-                alert("Open all packs is for sealed and draft collections.");
-                return;
-            }
-            if (!confirm("Open every pack that has no choice? Selection packs stay closed."))
-                return;
-            that.comm.openAllPacks(collectionType, function () {
-                that.cardFilter.getCollection();
-            }, {
-                "404": function () {
-                    alert("That collection was not found.");
-                }
-            });
+            that.startOpenAllPacks(false);
         });
         
         var newDeckBut = $("<button title='New deck'><span class='ui-icon ui-icon-document'></span></button>").button();
@@ -452,8 +439,84 @@ var GempSwccgDeckBuildingUI = Class.extend({
         return $("#collectionSelect option:selected").prop("value");
     },
 
+    startOpenAllPacks:function (fromLeftoverDialog) {
+        var collectionType = this.getCollectionType();
+        if (collectionType == null || collectionType === "default") {
+            alert("Open all packs is not available for All cards.");
+            return;
+        }
+        if (this._openAllInFlight)
+            return;
+        if (!fromLeftoverDialog) {
+            if (!confirm("Open every pack that has no choice? Selection packs stay closed."))
+                return;
+        }
+        this.runOpenAllPacks(collectionType);
+    },
+
+    runOpenAllPacks:function (collectionType) {
+        var that = this;
+        this._openAllInFlight = true;
+        this.openAllPacksBut.prop("disabled", true);
+        this.comm.openAllPacks(collectionType, function (xml) {
+            that.finishOpenAllPacksRequest();
+            that.cardFilter.getCollection();
+            that.maybeAskOpenNextBatch(xml, collectionType);
+        }, {
+            "404": function () {
+                that.finishOpenAllPacksRequest();
+                alert("That collection was not found.");
+            },
+            "503": function () {
+                that.finishOpenAllPacksRequest();
+                alert("The server is busy opening packs. Try again in a moment.");
+            },
+            complete: function () {
+                that.finishOpenAllPacksRequest();
+            }
+        });
+    },
+
+    finishOpenAllPacksRequest:function () {
+        this._openAllInFlight = false;
+        if (this.openAllPacksBut != null)
+            this.openAllPacksBut.prop("disabled", false);
+    },
+
+    maybeAskOpenNextBatch:function (xml, collectionType) {
+        var root = xml != null ? xml.documentElement : null;
+        if (root == null || root.tagName != "openAll")
+            return;
+        var opened = parseInt(root.getAttribute("opened"), 10);
+        var remaining = parseInt(root.getAttribute("remaining"), 10);
+        if (isNaN(opened) || isNaN(remaining) || remaining <= 0)
+            return;
+        var total = opened + remaining;
+        var that = this;
+        var dialog = $("<div></div>").text(
+            "Opened " + opened + " of " + total + " packs. " + remaining + " left. Open the next batch?");
+        dialog.dialog({
+            title: "Open all packs",
+            modal: true,
+            closeOnEscape: true,
+            resizable: false,
+            buttons: {
+                Yes: function () {
+                    $(this).dialog("close");
+                    that.startOpenAllPacks(true);
+                },
+                No: function () {
+                    $(this).dialog("close");
+                }
+            },
+            close: function () {
+                $(this).dialog("destroy").remove();
+            }
+        });
+    },
+
     updateOpenAllPacksButton:function (xml, collectionType) {
-        if (collectionType == null || collectionType === "default" || collectionType === "permanent") {
+        if (collectionType == null || collectionType === "default") {
             this.setOpenAllPacksVisible(false);
             return;
         }

@@ -202,6 +202,74 @@ public class CollectionsManager {
         }
     }
 
+    /**
+     * Opens auto-openable packs in one write lock: in-memory loop, one save,
+     * one transfer-from, one transfer-to (which notifies). Cap is card-yielding packs.
+     */
+    public OpenAllPacks.Result openAllOpenablePacks(Player player, CollectionType collectionType,
+                                                    PackagedProductStorage packagedProductStorage) {
+        _readWriteLock.writeLock().lock();
+        try {
+            final CardCollection playerCollection = getPlayerCollection(player, collectionType.getCode());
+            if (playerCollection == null)
+                return null;
+            MutableCardCollection mutableCardCollection = new DefaultCardCollection(playerCollection);
+            Map<String, Integer> before = itemCounts(mutableCardCollection);
+            int currencyBefore = mutableCardCollection.getCurrency();
+
+            OpenAllPacks.Result result = OpenAllPacks.open(mutableCardCollection, packagedProductStorage, OpenAllPacks.DEFAULT_CAP);
+
+            Map<String, Integer> after = itemCounts(mutableCardCollection);
+            int currencyAfter = mutableCardCollection.getCurrency();
+            DefaultCardCollection consumed = decreasedItems(before, after);
+            DefaultCardCollection produced = increasedItems(before, after);
+            int currencyFrom = Math.max(0, currencyBefore - currencyAfter);
+            int currencyTo = Math.max(0, currencyAfter - currencyBefore);
+
+            if (result.opened > 0 || !consumed.getAll().isEmpty() || !produced.getAll().isEmpty()
+                    || currencyFrom > 0 || currencyTo > 0) {
+                setPlayerCollection(player, collectionType.getCode(), mutableCardCollection);
+                String reason = "Opened pack";
+                _transferDAO.addTransferFrom(player.getName(), reason, collectionType.getFullName(), currencyFrom, consumed);
+                _transferDAO.addTransferTo(true, player.getName(), reason, collectionType.getFullName(), currencyTo, produced);
+            }
+            return result;
+        } finally {
+            _readWriteLock.writeLock().unlock();
+        }
+    }
+
+    private static Map<String, Integer> itemCounts(CardCollection collection) {
+        Map<String, Integer> counts = new LinkedHashMap<String, Integer>();
+        for (CardCollection.Item item : collection.getAll().values())
+            counts.put(item.getBlueprintId(), item.getCount());
+        return counts;
+    }
+
+    private static DefaultCardCollection decreasedItems(Map<String, Integer> before, Map<String, Integer> after) {
+        DefaultCardCollection result = new DefaultCardCollection();
+        for (Map.Entry<String, Integer> entry : before.entrySet()) {
+            Integer next = after.get(entry.getKey());
+            int remaining = next != null ? next.intValue() : 0;
+            int delta = entry.getValue() - remaining;
+            if (delta > 0)
+                result.addItem(entry.getKey(), delta);
+        }
+        return result;
+    }
+
+    private static DefaultCardCollection increasedItems(Map<String, Integer> before, Map<String, Integer> after) {
+        DefaultCardCollection result = new DefaultCardCollection();
+        for (Map.Entry<String, Integer> entry : after.entrySet()) {
+            Integer prev = before.get(entry.getKey());
+            int previous = prev != null ? prev.intValue() : 0;
+            int delta = entry.getValue() - previous;
+            if (delta > 0)
+                result.addItem(entry.getKey(), delta);
+        }
+        return result;
+    }
+
     private CardCollection cardCollectionFromBlueprintId(int count, String blueprintId) {
         DefaultCardCollection result = new DefaultCardCollection();
         result.addItem(blueprintId, count);

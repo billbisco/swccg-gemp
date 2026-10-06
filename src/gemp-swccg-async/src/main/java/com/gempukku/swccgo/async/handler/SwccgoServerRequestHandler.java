@@ -99,8 +99,11 @@ public class SwccgoServerRequestHandler {
     }
 
     protected final void processDeliveryServiceNotification(HttpRequest request, Map<String, String> headersToAdd) {
-        String logged = getLoggedUser(request);
-        if (logged != null && _transferDAO.hasUndeliveredPackages(logged))
+        processDeliveryServiceNotificationForPlayer(getLoggedUser(request), headersToAdd);
+    }
+
+    protected final void processDeliveryServiceNotificationForPlayer(String playerName, Map<String, String> headersToAdd) {
+        if (playerName != null && _transferDAO.hasUndeliveredPackages(playerName))
             headersToAdd.put("Delivery-Service-Package", "true");
     }
 

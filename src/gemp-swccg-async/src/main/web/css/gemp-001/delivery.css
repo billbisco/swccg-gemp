@@ -1,0 +1,56 @@
+.delivery-dialog {
+    overflow: hidden;
+}
+
+.delivery-pager {
+    height: 28px;
+    line-height: 28px;
+    text-align: center;
+    color: #ffffff;
+    font-size: 14px;
+}
+
+.delivery-pager .delivery-page-label {
+    display: inline-block;
+    min-width: 110px;
+    margin: 0 8px;
+}
+
+.delivery-page-arrow {
+    height: 22px;
+    min-width: 28px;
+    padding: 0 8px;
+    cursor: pointer;
+    color: #ffffff;
+    background: #333 linear-gradient(#555, #222);
+    border: 1px solid #888;
+    border-radius: 3px;
+}
+
+.delivery-page-arrow:hover:not(:disabled) {
+    border-color: #d4af37;
+    background: #554400 linear-gradient(#bf8a4a, #1c1c1c);
+}
+
+.delivery-page-arrow:disabled {
+    opacity: 0.4;
+    cursor: default;
+}
+
+.delivery-page {
+    overflow: auto;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 28px;
+    bottom: 0;
+}
+
+.delivery-page-inner {
+    position: relative;
+}
+
+.cardCount.deliveryCorner {
+    opacity: 0.85;
+    border-radius: 2px;
+}

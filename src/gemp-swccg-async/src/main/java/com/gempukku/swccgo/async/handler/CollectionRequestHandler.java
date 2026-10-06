@@ -24,6 +24,9 @@ import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.lang.reflect.Type;
@@ -31,8 +34,32 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class CollectionRequestHandler extends SwccgoServerRequestHandler implements UriRequestHandler {
+    private static final Logger _log = LogManager.getLogger(CollectionRequestHandler.class);
+    private static final ExecutorService OPEN_ALL_EXECUTOR = createOpenAllExecutor();
+
+    private static ExecutorService createOpenAllExecutor() {
+        ThreadFactory threadFactory = new ThreadFactory() {
+            private final AtomicInteger _n = new AtomicInteger(1);
+            @Override
+            public Thread newThread(Runnable runnable) {
+                Thread thread = new Thread(runnable, "open-all-" + _n.getAndIncrement());
+                thread.setDaemon(true);
+                return thread;
+            }
+        };
+        return new ThreadPoolExecutor(1, 4, 60L, TimeUnit.SECONDS,
+                new LinkedBlockingQueue<Runnable>(32), threadFactory, new ThreadPoolExecutor.AbortPolicy());
+    }
+
     private HashMap<String, SetRarity> _rarities;
     private LeagueService _leagueService;
     private CollectionsManager _collectionsManager;
@@ -258,47 +285,52 @@ public class CollectionRequestHandler extends SwccgoServerRequestHandler impleme
 
     private void openAllPacks(HttpRequest request, String collectionType, ResponseWriter responseWriter) throws Exception {
         HttpPostRequestDecoder postDecoder = new HttpPostRequestDecoder(request);
+        final Player resourceOwner;
+        final CollectionType collectionTypeObj;
         try {
             String participantId = getFormParameterSafely(postDecoder, "participantId");
-            Player resourceOwner = getResourceOwnerSafely(request, participantId);
-            CollectionType collectionTypeObj = createCollectionType(collectionType);
-            if (collectionTypeObj == null)
+            resourceOwner = getResourceOwnerSafely(request, participantId);
+            collectionTypeObj = createCollectionType(collectionType);
+            if (collectionTypeObj == null || "default".equals(collectionTypeObj.getCode()))
                 throw new HttpProcessingException(404);
-            CardCollection collection = _collectionsManager.getPlayerCollection(resourceOwner, collectionTypeObj.getCode());
-            if (collection == null)
-                throw new HttpProcessingException(404);
-            int opened = 0;
-            boolean progress = true;
-            while (progress) {
-                progress = false;
-                collection = _collectionsManager.getPlayerCollection(resourceOwner, collectionTypeObj.getCode());
-                if (collection == null)
-                    break;
-                for (CardCollection.Item item : new java.util.ArrayList<CardCollection.Item>(collection.getAll().values())) {
-                    if (item.getType() != CardCollection.Item.Type.PACK)
-                        continue;
-                    String packId = item.getBlueprintId();
-                    if (packId.startsWith("(S)"))
-                        continue;
-                    int count = item.getCount();
-                    for (int i = 0; i < count; i++) {
-                        CardCollection contents = _collectionsManager.openPackInPlayerCollection(resourceOwner, collectionTypeObj, null, _packStorage, packId);
-                        if (contents == null)
-                            break;
-                        opened++;
-                        progress = true;
-                    }
-                }
-            }
-            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-            Document doc = documentBuilder.newDocument();
-            Element result = doc.createElement("openAll");
-            result.setAttribute("opened", String.valueOf(opened));
-            doc.appendChild(result);
-            responseWriter.writeXmlResponse(doc);
         } finally {
             postDecoder.destroy();
+        }
+
+        try {
+            OPEN_ALL_EXECUTOR.execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        com.gempukku.swccgo.collection.OpenAllPacks.Result opened =
+                                _collectionsManager.openAllOpenablePacks(resourceOwner, collectionTypeObj, _packStorage);
+                        if (opened == null) {
+                            responseWriter.writeError(404);
+                            return;
+                        }
+                        _log.info("Open all packs player=" + resourceOwner.getName()
+                                + " collection=" + collectionTypeObj.getCode()
+                                + " opened=" + opened.opened + " remaining=" + opened.remaining);
+                        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+                        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+                        Document doc = documentBuilder.newDocument();
+                        Element result = doc.createElement("openAll");
+                        result.setAttribute("opened", String.valueOf(opened.opened));
+                        result.setAttribute("remaining", String.valueOf(opened.remaining));
+                        result.setAttribute("cap", String.valueOf(com.gempukku.swccgo.collection.OpenAllPacks.DEFAULT_CAP));
+                        doc.appendChild(result);
+                        Map<String, String> headers = new HashMap<String, String>();
+                        processDeliveryServiceNotificationForPlayer(resourceOwner.getName(), headers);
+                        responseWriter.writeXmlResponse(doc, headers);
+                    } catch (Exception exp) {
+                        _log.error("Open all packs failed", exp);
+                        responseWriter.writeError(500);
+                    }
+                }
+            });
+        } catch (RejectedExecutionException exp) {
+            _log.warn("Open all packs rejected, queue full", exp);
+            responseWriter.writeError(503);
         }
     }
 
