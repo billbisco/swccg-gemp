@@ -232,8 +232,8 @@ button.admin-button, input.admin-button {
     overflow:hidden;
 }
 
-/* Admin sub-tabs: full-width even row (do not use flex-horiz on #adminMain; that
-   shrinks the nav to a left cluster). Gold hover/sheen stays on body .ui-state-hover. */
+/* Admin sub-tabs: compact left-aligned row, leftover space on the right.
+   Do not put flex-horiz on #adminMain (that clusters the nav as a left column). */
 #adminMain #admin-tabs,
 #adminMain .sub-tabs {
     width: 100%;
@@ -241,25 +241,20 @@ button.admin-button, input.admin-button {
 
 #adminMain .ui-tabs-nav,
 #adminMain #admin-tabs > ol {
-    display: flex;
-    flex-direction: row;
+    display: block;
     width: 100%;
-    justify-content: space-evenly;
-    box-sizing: border-box;
-    float: none;
 }
 
 #adminMain .ui-tabs-nav li {
-    float: none;
-    flex: 1 1 0;
-    margin: 0 2px 1px 0;
-    text-align: center;
+    float: left;
+    width: auto;
 }
 
 #adminMain .ui-tabs-nav li a {
-    float: none;
+    float: left;
     display: block;
-    text-align: center;
+    width: auto;
+    white-space: nowrap;
 }
 
 .hall-tab .ui-tabs-panel {
