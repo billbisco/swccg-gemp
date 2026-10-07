@@ -46,7 +46,7 @@ class Card {
         return bpid.includes("*", 2); 
     }
 
-    static FoilStaticImage = "https://res.starwarsccg.org/cards/holo.jpg";
+    static FoilStaticImage = Card.resUrl("https://res.starwarsccg.org/cards/holo.jpg");
     static FoilAnimatedImage = "images/foil.gif";
 
     // static | animated | none. Default matches today's SWCCG holo overlay.
@@ -124,7 +124,7 @@ class Card {
         }
         this.attachedCards = new Array();
         if (this.bareBlueprint == "rules") {
-            this.imageUrl = "https://res.starwarsccg.org/cards/rules.png";
+            this.imageUrl = Card.resUrl("https://res.starwarsccg.org/cards/rules.png");
             return;
         }
 
@@ -280,12 +280,24 @@ class Card {
         return false;
     }
 
+    static resOrigin() {
+        if (typeof window !== "undefined" && window.SWCCG_RES_ORIGIN)
+            return window.SWCCG_RES_ORIGIN;
+        return "https://swccg.com";
+    }
+
+    static resUrl(url) {
+        if (url == null)
+            return url;
+        return String(url).replace("https://res.starwarsccg.org", Card.resOrigin());
+    }
+
     static getImageUrl(blueprintId) {
         if (fixedImages[blueprintId] != null)
-            return fixedImages[blueprintId];
+            return Card.resUrl(fixedImages[blueprintId]);
 
         if (packBlueprints[blueprintId] != null)
-            return packBlueprints[blueprintId];
+            return Card.resUrl(packBlueprints[blueprintId]);
 
         return null;
     }
@@ -350,7 +362,7 @@ class Card {
         var cardDiv = $("<div class='card'><img src='" + image + "' width='100%' height='100%'>" + ((text != null) ? text : "") + "</div>");
 
         if (incomplete) {
-            var incompleteDiv = $("<div class='incompleteOverlay'><img src='https://res.starwarsccg.org/gemp/incompleteCard.png' width='100%' height='100%'></div>");
+            var incompleteDiv = $("<div class='incompleteOverlay'><img src='" + Card.resUrl("https://res.starwarsccg.org/gemp/incompleteCard.png") + "' width='100%' height='100%'></div>");
             cardDiv.append(incompleteDiv);
         }
 
@@ -359,13 +371,13 @@ class Card {
             cardDiv.append(foilDiv);
         }
 
-        var frozenDiv = $("<div class='frozenOverlay'><img src='https://res.starwarsccg.org/cards/carbonite.gif' width='100%' height='100%'></div>");
+        var frozenDiv = $("<div class='frozenOverlay'><img src='" + Card.resUrl("https://res.starwarsccg.org/cards/carbonite.gif") + "' width='100%' height='100%'></div>");
         cardDiv.append(frozenDiv);
 
-        var suspendedDiv = $("<div class='suspendedOverlay'><img src='https://res.starwarsccg.org/gemp/gray.jpg' width='100%' height='100%'></div>");
+        var suspendedDiv = $("<div class='suspendedOverlay'><img src='" + Card.resUrl("https://res.starwarsccg.org/gemp/gray.jpg") + "' width='100%' height='100%'></div>");
         cardDiv.append(suspendedDiv);
 
-        var collapsedDiv = $("<div class='collapsedOverlay'><img src='https://res.starwarsccg.org/gemp/collapsed.jpg' width='100%' height='100%'></div>");
+        var collapsedDiv = $("<div class='collapsedOverlay'><img src='" + Card.resUrl("https://res.starwarsccg.org/gemp/collapsed.jpg") + "' width='100%' height='100%'></div>");
         cardDiv.append(collapsedDiv);
 
         if (tokens === undefined || tokens) {
@@ -385,7 +397,7 @@ class Card {
             cardDiv.append(testingTextDiv);
         }
 
-        var borderDiv = $("<div class='borderOverlay'><img class='actionArea' src='https://res.starwarsccg.org/gemp/pixel.png' width='100%' height='100%'></div>");
+        var borderDiv = $("<div class='borderOverlay'><img class='actionArea' src='" + Card.resUrl("https://res.starwarsccg.org/gemp/pixel.png") + "' width='100%' height='100%'></div>");
         if (noBorder)
             borderDiv.addClass("noBorder");
         cardDiv.append(borderDiv);
@@ -413,10 +425,10 @@ class Card {
             }
 
             if (noBorder) {
-                var borderDiv = $("<div class='borderOverlay,noBorder' style='position:absolute;width:497px;height:357px;border-width:0px'><img class='actionArea' src='https://res.starwarsccg.org/gemp/pixel.png' width='100%' height='100%'></div>");
+                var borderDiv = $("<div class='borderOverlay,noBorder' style='position:absolute;width:497px;height:357px;border-width:0px'><img class='actionArea' src='" + Card.resUrl("https://res.starwarsccg.org/gemp/pixel.png") + "' width='100%' height='100%'></div>");
                 cardDiv.append(borderDiv);
             } else {
-                var borderDiv = $("<div class='borderOverlay' style='position:absolute;width:465px;height:325px;border-width:16px'><img class='actionArea' src='https://res.starwarsccg.org/gemp/pixel.png' width='100%' height='100%'></div>");
+                var borderDiv = $("<div class='borderOverlay' style='position:absolute;width:465px;height:325px;border-width:16px'><img class='actionArea' src='" + Card.resUrl("https://res.starwarsccg.org/gemp/pixel.png") + "' width='100%' height='100%'></div>");
                 cardDiv.append(borderDiv);
             }
 
@@ -436,10 +448,10 @@ class Card {
             }
 
             if (noBorder) {
-                var borderDiv = $("<div class='borderOverlay,noBorder' style='position:absolute;width:357px;height:497px;border-width:0px'><img class='actionArea' src='https://res.starwarsccg.org/gemp/pixel.png' width='100%' height='100%'></div>");
+                var borderDiv = $("<div class='borderOverlay,noBorder' style='position:absolute;width:357px;height:497px;border-width:0px'><img class='actionArea' src='" + Card.resUrl("https://res.starwarsccg.org/gemp/pixel.png") + "' width='100%' height='100%'></div>");
                 cardDiv.append(borderDiv);
             } else {
-                var borderDiv = $("<div class='borderOverlay' style='position:absolute;width:325px;height:465px;border-width:16px'><img class='actionArea' src='https://res.starwarsccg.org/gemp/pixel.png' width='100%' height='100%'></div>");
+                var borderDiv = $("<div class='borderOverlay' style='position:absolute;width:325px;height:465px;border-width:16px'><img class='actionArea' src='" + Card.resUrl("https://res.starwarsccg.org/gemp/pixel.png") + "' width='100%' height='100%'></div>");
                 cardDiv.append(borderDiv);
             }
         }
@@ -451,7 +463,7 @@ class Card {
         var cardDiv = $("<div class='card'><img src='" + image + "' width='100%' height='100%'></div>");
 
         if (incomplete) {
-            var incompleteDiv = $("<div class='incompleteOverlay' style='position:absolute;left:0px;top:0px;width:100%;height:100%'><img src='https://res.starwarsccg.org/gemp/incompleteCard.png' width='100%' height='100%'></div>");
+            var incompleteDiv = $("<div class='incompleteOverlay' style='position:absolute;left:0px;top:0px;width:100%;height:100%'><img src='" + Card.resUrl("https://res.starwarsccg.org/gemp/incompleteCard.png") + "' width='100%' height='100%'></div>");
             cardDiv.append(incompleteDiv);
         }
 
@@ -466,7 +478,7 @@ class Card {
             cardDiv.append(testingTextDiv);
         }
 
-        var borderDiv = $("<div class='borderOverlay' style='position:absolute;left:0px;top:0px;width:100%;height:100%;border-width:" + borderWidth + "px;box-sizing:border-box'><img class='actionArea' src='https://res.starwarsccg.org/gemp/pixel.png' width='100%' height='100%'></div>");
+        var borderDiv = $("<div class='borderOverlay' style='position:absolute;left:0px;top:0px;width:100%;height:100%;border-width:" + borderWidth + "px;box-sizing:border-box'><img class='actionArea' src='" + Card.resUrl("https://res.starwarsccg.org/gemp/pixel.png") + "' width='100%' height='100%'></div>");
         cardDiv.append(borderDiv);
 
         return cardDiv;

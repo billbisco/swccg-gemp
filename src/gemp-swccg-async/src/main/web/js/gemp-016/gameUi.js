@@ -194,7 +194,7 @@ var GempSwccgGameUI = Class.extend({
             replayDiv.append(fasterBut);
             replayDiv.append("<br/>");
 
-            var replayBut = $("<img id='replayButton' src='https://res.starwarsccg.org/gemp/play.png' width='64' height='64'>").button();
+            var replayBut = $("<img id='replayButton' src='https://swccg.com/gemp/play.png' width='64' height='64'>").button();
             replayDiv.append(replayBut);
 
             $("#main").append(replayDiv);
@@ -2134,10 +2134,10 @@ var GempSwccgGameUI = Class.extend({
                 function() {
                     if (that.replayPlay) {
                         that.replayPlay = false;
-                        $("#replayButton").attr("src", "https://res.starwarsccg.org/gemp/play.png");
+                        $("#replayButton").attr("src", "https://swccg.com/gemp/play.png");
                     } else {
                         that.replayPlay = true;
-                        $("#replayButton").attr("src", "https://res.starwarsccg.org/gemp/pause.png");
+                        $("#replayButton").attr("src", "https://swccg.com/gemp/pause.png");
                         that.playNextReplayEvent();
                     }
                 });
