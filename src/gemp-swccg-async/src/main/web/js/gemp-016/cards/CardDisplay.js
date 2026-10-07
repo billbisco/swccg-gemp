@@ -22,8 +22,8 @@ class CardDisplay {
 	backside = null;
 
 
-	static FoilImage	= "https://res.starwarsccg.org/cards/holo.jpg";
-	static PixelOverlay = "https://res.starwarsccg.org/gemp/pixel.png";
+	static FoilImage	= Card.resUrl("https://res.starwarsccg.org/cards/holo.jpg");
+	static PixelOverlay = Card.resUrl("https://res.starwarsccg.org/gemp/pixel.png");
 	
 	static TargetLong  = 1039;
 	static TargetShort = 745;
