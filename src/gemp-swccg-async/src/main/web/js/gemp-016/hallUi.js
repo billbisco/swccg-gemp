@@ -239,7 +239,13 @@ var GempSwccgHallUI = Class.extend({
     playAiChoice:null,
     playLeagueChoice:null,
     playTournamentChoice:null,
+    playTournamentSelectionPanel:null,
+    playConstructedChoice:null,
+    playSealedChoice:null,
+    playDraftChoice:null,
+    playCubeChoice:null,
     playTournamentPanel:null,
+    playTournamentHeading:null,
     playLeagueEmpty:null,
     playLeaguePanel:null,
     leagueFormatSelect:null,
@@ -743,9 +749,11 @@ var GempSwccgHallUI = Class.extend({
         var header = $("<div class='play-flow-header'></div>");
         this.playBackButton = $("<button type='button' id='create-table-back-button' class='play-back-button'>&lt; Back</button>");
         this.playBackButton.click(function () {
-            if (that.playFormPanel.is(":visible")
+            if (that.playTournamentPanel != null && that.playTournamentPanel.is(":visible")) {
+                that.showTournamentInfo();
+            } else if (that.playFormPanel.is(":visible")
                     || (that.playBotPanel != null && that.playBotPanel.is(":visible"))
-                    || (that.playTournamentPanel != null && that.playTournamentPanel.is(":visible"))
+                    || (that.playTournamentSelectionPanel != null && that.playTournamentSelectionPanel.is(":visible"))
                     || (that.playLeaguePanel != null && that.playLeaguePanel.is(":visible"))) {
                 that.showPlaySelection();
             } else {
@@ -777,6 +785,21 @@ var GempSwccgHallUI = Class.extend({
         this.playSelectionPanel.append(this.playLeagueChoice);
         this.playSelectionPanel.append(this.playTournamentChoice);
         panel.append(this.playSelectionPanel);
+
+        this.playTournamentSelectionPanel = $("<div id='create-tournament-selection' class='play-selection' style='display:none'></div>");
+        this.playConstructedChoice = $("<button type='button' id='create-constructed-tournament-button' class='play-choice-button'><span class='play-choice-title'><span class='bigger-icon icon-constructed' aria-hidden='true'></span><span>Constructed</span></span><span class='play-subtitle'>Host an event where players bring their own Light and Dark decks.</span></button>");
+        this.playSealedChoice = $("<button type='button' id='create-sealed-tournament-button' class='play-choice-button'><span class='play-choice-title'><span class='bigger-icon icon-sealed' aria-hidden='true'></span><span>Sealed</span></span><span class='play-subtitle'>Players open a product, build decks from those cards, and play.</span></button>");
+        this.playDraftChoice = $("<button type='button' id='create-draft-tournament-button' class='play-choice-button'><span class='play-choice-title'><span class='bigger-icon icon-draft' aria-hidden='true'></span><span>Draft</span></span><span class='play-subtitle'>Players draft cards in order, build decks, and play.</span></button>");
+        this.playCubeChoice = $("<button type='button' id='create-cube-tournament-button' class='play-choice-button'><span class='play-choice-title'><span class='bigger-icon icon-cube' aria-hidden='true'></span><span>Cube</span></span><span class='play-subtitle'>Players draft from a cube, build decks, and play.</span></button>");
+        this.playConstructedChoice.button().click(function () { that.showTournamentForm("constructed"); });
+        this.playSealedChoice.button().click(function () { that.showTournamentForm("sealed"); });
+        this.playDraftChoice.button().click(function () { that.showTournamentForm("draft"); });
+        this.playCubeChoice.button().click(function () { that.showTournamentForm("cube"); });
+        this.playTournamentSelectionPanel.append(this.playConstructedChoice);
+        this.playTournamentSelectionPanel.append(this.playSealedChoice);
+        this.playTournamentSelectionPanel.append(this.playDraftChoice);
+        this.playTournamentSelectionPanel.append(this.playCubeChoice);
+        panel.append(this.playTournamentSelectionPanel);
 
         this.playFormPanel = $("<div id='create-unranked-table' class='table-form' style='display:none'></div>");
         this.playFormTitle = $("<h1 class='play-form-heading'>Open Casual Table</h1>");
@@ -972,10 +995,11 @@ var GempSwccgHallUI = Class.extend({
         panel.append(this.playLeaguePanel);
 
         this.playTournamentPanel = $("<div id='create-tournament-info' class='table-form play-tournament-info' style='display:none'></div>");
-        this.playTournamentPanel.append("<h2 class='play-form-heading'>Create Tournament</h2>");
+        this.playTournamentHeading = $("<h2 class='play-form-heading'>Create Tournament</h2>");
+        this.playTournamentPanel.append(this.playTournamentHeading);
         var tFields = $("<div class='inner-table-form'></div>");
 
-        var typeRow = $("<div class='play-form-row'></div>");
+        var typeRow = $("<div class='play-form-row' style='display:none'></div>");
         typeRow.append("<span class='play-form-label'>Type</span>");
         this.tournamentTypeSelect = $("<select id='tournament-type' class='play-form-select'></select>");
         this.tournamentTypeSelect.append("<option value='constructed' selected='selected'>Constructed</option>");
@@ -983,6 +1007,7 @@ var GempSwccgHallUI = Class.extend({
         this.tournamentTypeSelect.append("<option value='draft'>Draft</option>");
         this.tournamentTypeSelect.append("<option value='cube'>Cube</option>");
         typeRow.append(this.tournamentTypeSelect);
+        this.tournamentTypeRow = typeRow;
         tFields.append(typeRow);
 
         var tFormatRow = $("<div class='play-form-row'></div>");
@@ -1619,6 +1644,9 @@ var GempSwccgHallUI = Class.extend({
         if (this.playTournamentPanel != null) {
             this.playTournamentPanel.hide();
         }
+        if (this.playTournamentSelectionPanel != null) {
+            this.playTournamentSelectionPanel.hide();
+        }
         if (this.playLeaguePanel != null) {
             this.playLeaguePanel.hide();
         }
@@ -1675,6 +1703,9 @@ var GempSwccgHallUI = Class.extend({
         if (this.playTournamentPanel != null) {
             this.playTournamentPanel.hide();
         }
+        if (this.playTournamentSelectionPanel != null) {
+            this.playTournamentSelectionPanel.hide();
+        }
         if (this.playLeaguePanel != null) {
             this.playLeaguePanel.hide();
         }
@@ -1701,12 +1732,42 @@ var GempSwccgHallUI = Class.extend({
         if (this.playBotPanel != null) {
             this.playBotPanel.hide();
         }
+        if (this.playTournamentPanel != null) {
+            this.playTournamentPanel.hide();
+        }
         if (this.playLeaguePanel != null) {
             this.playLeaguePanel.hide();
         }
         this.playOverlay.removeClass("play-flow-league");
         this.parkPlayFormFields();
         this.setPlayFlowTitle("Tournament");
+        if (this.playTournamentSelectionPanel != null)
+            this.playTournamentSelectionPanel.show();
+    },
+
+    showTournamentForm:function(type) {
+        this.playMode = "tournament";
+        this.playSelectionPanel.hide();
+        this.playFormPanel.hide();
+        if (this.playBotPanel != null) {
+            this.playBotPanel.hide();
+        }
+        if (this.playTournamentSelectionPanel != null) {
+            this.playTournamentSelectionPanel.hide();
+        }
+        if (this.playLeaguePanel != null) {
+            this.playLeaguePanel.hide();
+        }
+        this.playOverlay.removeClass("play-flow-league");
+        this.parkPlayFormFields();
+        if (this.tournamentTypeSelect != null)
+            this.tournamentTypeSelect.val(type || "constructed");
+        if (this.tournamentTypeRow != null)
+            this.tournamentTypeRow.hide();
+        var label = this.tournamentTypeLabel(type);
+        this.setPlayFlowTitle(label);
+        if (this.playTournamentHeading != null)
+            this.playTournamentHeading.text("Create " + label + " Tournament");
         this.populateTournamentFormats();
         this.syncTournamentTypeUi();
         this.syncTournamentPairingUi();
@@ -1715,6 +1776,16 @@ var GempSwccgHallUI = Class.extend({
             this.updateDecks(fmt, "default");
         this.fillTournamentDeckSelects();
         this.playTournamentPanel.show();
+    },
+
+    tournamentTypeLabel:function(type) {
+        if (type === "sealed")
+            return "Sealed";
+        if (type === "draft")
+            return "Draft";
+        if (type === "cube")
+            return "Cube";
+        return "Constructed";
     },
 
     loadTournamentProducts:function() {
@@ -2173,6 +2244,9 @@ var GempSwccgHallUI = Class.extend({
         if (this.playTournamentPanel != null) {
             this.playTournamentPanel.hide();
         }
+        if (this.playTournamentSelectionPanel != null) {
+            this.playTournamentSelectionPanel.hide();
+        }
         if (this.playLeaguePanel != null) {
             this.playLeaguePanel.hide();
         }
@@ -2469,6 +2543,9 @@ var GempSwccgHallUI = Class.extend({
         }
         if (this.playTournamentPanel != null) {
             this.playTournamentPanel.hide();
+        }
+        if (this.playTournamentSelectionPanel != null) {
+            this.playTournamentSelectionPanel.hide();
         }
         this.parkPlayFormFields();
         this.playOverlay.addClass("play-flow-league");
