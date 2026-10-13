@@ -57,34 +57,6 @@ public class Card6_046 extends AbstractAlien {
         addKeywords(Keyword.SCOUT);
     }
 
-    /**
-     * Action proxy: the acting Yarkora grants each of your Yarkoras on table one optional -1
-     * on this specific destiny draw only (not a nested Sense or later draw).
-     */
-    static ActionProxy YarkoraCreateSubtractActionProxy(final String playerId, final DrawDestinyState drawDestinyState,
-                                                        final PhysicalCard actingYarkora) {
-        return new AbstractActionProxy() {
-            @Override
-            public List<TriggerAction> getOptionalAfterTriggers(String playerId2, SwccgGame game, EffectResult effectResult) {
-                List<TriggerAction> actions = new LinkedList<TriggerAction>();
-                if (!playerId2.equals(playerId)
-                        || !TriggerConditions.isDestinyJustDrawn(game, effectResult, drawDestinyState)) {
-                    return actions;
-                }
-                for (PhysicalCard yarkora : Filters.filterActive(game, actingYarkora, Filters.and(Filters.owner(playerId), Filters.Yarkora))) {
-                    final OptionalGameTextTriggerAction subtractAction =
-                            new OptionalGameTextTriggerAction(yarkora, playerId, actingYarkora.getCardId());
-                    subtractAction.setText("Subtract 1 from destiny (" + GameUtils.getFullName(yarkora) + ")");
-                    subtractAction.setActionMsg("Subtract 1 from destiny using " + GameUtils.getCardLink(yarkora));
-                    subtractAction.appendEffect(
-                            new ModifyDestinyEffect(subtractAction, -1, true));
-                    actions.add(subtractAction);
-                }
-                return actions;
-            }
-        };
-    }
-
     @Override
     protected List<TopLevelGameTextAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
         Filter targetFilter = Filters.and(Filters.undercover_spy, Filters.atSameSite(self));
@@ -92,69 +64,97 @@ public class Card6_046 extends AbstractAlien {
 
         // Check condition(s)
         if (GameConditions.isOnceDuringYourPhase(game, self, playerId, gameTextSourceCardId, Phase.CONTROL)
-                && GameConditions.canTarget(game, self, spotOverride, targetFilter)) {
+            && GameConditions.canTarget(game, self, spotOverride, targetFilter)) {
 
             final TopLevelGameTextAction action = new TopLevelGameTextAction(self, gameTextSourceCardId);
             action.setText("Break a spy's cover");
             // Update usage limit(s)
             action.appendUsage(
-                    new OncePerPhaseEffect(action));
+                new OncePerPhaseEffect(action));
             // Choose target(s)
             action.appendTargeting(
-                    new TargetCardOnTableEffect(action, playerId, "Target undercover spy", spotOverride, targetFilter) {
-                        @Override
-                        protected void cardTargeted(final int targetGroupId, final PhysicalCard cardTargeted) {
-                            action.addAnimationGroup(cardTargeted);
-                            // Allow response(s)
-                            action.allowResponses("'Break cover' of " + GameUtils.getCardLink(cardTargeted),
-                                    new UnrespondableEffect(action) {
-                                        @Override
-                                        protected void performActionResults(Action targetingAction) {
-                                            // Perform result(s)
-                                            action.appendEffect(
-                                                    new DrawDestinyEffect(action, playerId) {
-                                                        @Override
-                                                        protected Collection<PhysicalCard> getGameTextAbilityManeuverOrDefenseValueTargeted() {
-                                                            return Collections.singletonList(cardTargeted);
-                                                        }
+                new TargetCardOnTableEffect(action, playerId, "Target undercover spy", spotOverride, targetFilter) {
+                    @Override
+                    protected void cardTargeted(final int targetGroupId, final PhysicalCard cardTargeted) {
+                        action.addAnimationGroup(cardTargeted);
+                        // Allow response(s)
+                        action.allowResponses("'Break cover' of " + GameUtils.getCardLink(cardTargeted),
+                            new UnrespondableEffect(action) {
+                                @Override
+                                protected void performActionResults(Action targetingAction) {
+                                    // Perform result(s)
+                                    action.appendEffect(
+                                        new DrawDestinyEffect(action, playerId) {
+                                            @Override
+                                            protected Collection<PhysicalCard> getGameTextAbilityManeuverOrDefenseValueTargeted() {
+                                                return Collections.singletonList(cardTargeted);
+                                            }
 
-                                                        @Override
-                                                        protected List<ActionProxy> getDrawDestinyActionProxies(SwccgGame game, final DrawDestinyState drawDestinyState) {
-                                                            return Collections.singletonList(
-                                                                    YarkoraCreateSubtractActionProxy(playerId, drawDestinyState, self));
-                                                        }
+                                            @Override
+                                            protected List<ActionProxy> getDrawDestinyActionProxies(SwccgGame game, final DrawDestinyState drawDestinyState) {
+                                                //acting Yarkora grants each of your Yarkoras on table one optional -1 on this specific destiny draw only
+                                                return Collections.singletonList(
+                                                    YarkoraCreateSubtractActionProxy(playerId, drawDestinyState, self));
+                                            }
 
-                                                        @Override
-                                                        protected void destinyDraws(SwccgGame game, List<PhysicalCard> destinyCardDraws, List<Float> destinyDrawValues, Float totalDestiny) {
-                                                            GameState gameState = game.getGameState();
-                                                            if (totalDestiny == null) {
-                                                                gameState.sendMessage("Result: Failed due to failed destiny draw");
-                                                                return;
-                                                            }
+                                            @Override
+                                            protected void destinyDraws(SwccgGame game, List<PhysicalCard> destinyCardDraws, List<Float> destinyDrawValues, Float totalDestiny) {
+                                                GameState gameState = game.getGameState();
+                                                if (totalDestiny == null) {
+                                                    gameState.sendMessage("Result: Failed due to failed destiny draw");
+                                                    return;
+                                                }
 
-                                                            float ability = game.getModifiersQuerying().getAbility(game.getGameState(), cardTargeted);
-                                                            gameState.sendMessage("Destiny: " + GuiUtils.formatAsString(totalDestiny));
-                                                            gameState.sendMessage("Ability: " + GuiUtils.formatAsString(ability));
+                                                float ability = game.getModifiersQuerying().getAbility(game.getGameState(), cardTargeted);
+                                                gameState.sendMessage("Destiny: " + GuiUtils.formatAsString(totalDestiny));
+                                                gameState.sendMessage("Ability: " + GuiUtils.formatAsString(ability));
 
-                                                            if (totalDestiny == ability) {
-                                                                gameState.sendMessage("Result: Succeeded");
-                                                                action.appendEffect(
-                                                                        new BreakCoverEffect(action, cardTargeted));
-                                                            }
-                                                            else {
-                                                                gameState.sendMessage("Result: Failed");
-                                                            }
-                                                        }
-                                                    }
-                                            );
+                                                if (totalDestiny == ability) {
+                                                    gameState.sendMessage("Result: Succeeded");
+                                                    action.appendEffect(
+                                                        new BreakCoverEffect(action, cardTargeted));
+                                                }
+                                                else {
+                                                    gameState.sendMessage("Result: Failed");
+                                                }
+                                            }
                                         }
-                                    }
-                            );
-                        }
+                                    );
+                                }
+                            }
+                        );
                     }
+                }
             );
             return Collections.singletonList(action);
         }
         return null;
     }
+
+    static ActionProxy YarkoraCreateSubtractActionProxy(final String playerId, final DrawDestinyState drawDestinyState,
+                                                        final PhysicalCard actingYarkora) {
+        return new AbstractActionProxy() {
+            @Override
+            public List<TriggerAction> getOptionalAfterTriggers(String playerId2, SwccgGame game, EffectResult effectResult) {
+                List<TriggerAction> actions = new LinkedList<TriggerAction>();
+
+                // Check condition(s)
+                if (TriggerConditions.isDestinyJustDrawn(game, effectResult, drawDestinyState)
+                    && playerId2.equals(playerId)) {
+                    for (PhysicalCard yarkora : Filters.filterActive(game, actingYarkora, Filters.and(Filters.owner(playerId), Filters.Yarkora))) {
+                        final OptionalGameTextTriggerAction subtractAction =
+                            new OptionalGameTextTriggerAction(yarkora, playerId, actingYarkora.getCardId());
+                        subtractAction.setText("Subtract 1 from destiny (" + GameUtils.getFullName(yarkora) + ")");
+                        subtractAction.setActionMsg("Subtract 1 from destiny");
+                        // Perform result(s)
+                        subtractAction.appendEffect(
+                            new ModifyDestinyEffect(subtractAction, -1, true));
+                        actions.add(subtractAction);
+                    }
+                }
+                return actions;
+            }
+        };
+    }
+
 }
