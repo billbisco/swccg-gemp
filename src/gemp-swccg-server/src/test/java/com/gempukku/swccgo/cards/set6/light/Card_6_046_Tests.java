@@ -11,10 +11,6 @@ import com.gempukku.swccgo.common.Species;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
-import com.gempukku.swccgo.game.PhysicalCardImpl;
-import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
-import com.gempukku.swccgo.logic.effects.PutUndercoverEffect;
-import com.gempukku.swccgo.logic.modifiers.CancelsGameTextModifier;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -24,657 +20,407 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-/**
- * VHD tests for 6_46 Yarkora.
- * Doc: control-phase vs Undercover spy; cumulative -1 destiny per Yarkora; cover broken if destiny = ability.
- * Prefer real Undercover (2_129) when deploy path works; PutUndercoverEffect used only to finish cover after attach.
- */
 public class Card_6_046_Tests {
 
-	protected VirtualTableScenario GetScenario() {
-		return new VirtualTableScenario(
-				new HashMap<>() {{
-					put("yarkora", "6_46");
-					put("yarkora2", "6_46");
-					put("saelt", "6_37");
-					put("momaw", "1_20");
-					put("ls_undercover", "2_40");
-					put("trooper", "1_28");
-					put("fives", "203_2");
-					put("luke", "1_19");
-				}},
-				new HashMap<>() {{
-					put("garindan", "1_177");
-					put("undercover", "2_129");
-					put("vader", "1_168");
-				}},
-				20,
-				20,
-				StartingSetup.DefaultLSGroundLocation,
-				StartingSetup.DefaultDSGroundLocation,
-				StartingSetup.NoLSStartingInterrupts,
-				StartingSetup.NoDSStartingInterrupts,
-				StartingSetup.NoLSShields,
-				StartingSetup.NoDSShields,
-				VirtualTableScenario.Open
-		);
-	}
+    protected VirtualTableScenario GetScenario() {
+        return new VirtualTableScenario(
+            new HashMap<>() {{
+                put("yarkora", "6_46");
+                put("yarkora2", "6_46");
+                put("saelt", "6_37"); //species: yarkora
+                put("momaw", "1_20"); //spy
+                put("fives", "203_2");
+            }},
+            new HashMap<>() {{
+                put("garindan", "1_177"); //spy
+                put("e3", "5_097"); //E-3PO (protocol droid)
+                put("eChuTa", "5_138"); //to cancel game text
+            }},
+            20,
+            20,
+            StartingSetup.DefaultLSGroundLocation,
+            StartingSetup.DefaultDSGroundLocation,
+            StartingSetup.NoLSStartingInterrupts,
+            StartingSetup.NoDSStartingInterrupts,
+            StartingSetup.NoLSShields,
+            StartingSetup.NoDSShields,
+            VirtualTableScenario.Open
+        );
+    }
 
-	private void SafePassOptionalResponses(VirtualTableScenario scn) {
-		for (int i = 0; i < 30; i++) {
-			var decision = scn.GetCurrentDecision();
-			if (decision == null) {
-				return;
-			}
-			String text = decision.getText();
-			if (text == null) {
-				return;
-			}
-			String lower = text.toLowerCase();
-			if (lower.contains("optional")) {
-				scn.PassResponses("optional");
-			} else if (lower.contains("required")) {
-				scn.PassResponses("required");
-			} else {
-				return;
-			}
-		}
-	}
+    @Test
+    public void YarkoraStatsAndKeywordsAreCorrect() {
+        /**
+         * Title: Yarkora
+         * Uniqueness: Restricted 3
+         * Side: Light
+         * Type: Character
+         * Destiny: 3
+         * Deploy: 2
+         * Power: 1
+         * Ability: 1
+         * Forfeit: 2
+         * Icons: Alien, Jabba's Palace
+         * Game Text: If at same site as an Undercover spy during your control phase, may draw destiny.
+         *          Each of your Yarkoras on table may cumulatively subtract one from that destiny.
+         *          Spy's 'cover is broken' if destiny = spy's ability.
+         * Lore: Mysterious, secretive aliens. Tend to be found as couriers, scouts and t'bac farmers.
+         *          Some have helped the Alliance's efforts at counter-espionage.
+         * Set: Jabba's Palace
+         * Rarity: C
+         */
 
-	/**
-	 * Deploy real Undercover on Garindan when possible; otherwise attach and finish with PutUndercoverEffect
-	 * after Undercover card is on the spy (still uses 2_129 on table).
-	 */
-	private void MakeGarindanUndercoverAt(VirtualTableScenario scn, PhysicalCardImpl site) {
-		var garindan = scn.GetDSCard("garindan");
-		var undercover = scn.GetDSCard("undercover");
+        var scn = GetScenario();
+        var card = scn.GetLSCard("yarkora").getBlueprint();
+        assertEquals("Yarkora", card.getTitle());
+        assertFalse(card.hasVirtualSuffix());
+        assertEquals(Uniqueness.RESTRICTED_3, card.getUniqueness());
+        assertEquals(Side.LIGHT, card.getSide());
+        assertEquals(3, card.getDestiny(), scn.epsilon);
+        assertEquals(2, card.getDeployCost(), scn.epsilon);
+        assertEquals(1, card.getPower(), scn.epsilon);
+        assertEquals(1, card.getAbility(), scn.epsilon);
+        assertEquals(2, card.getForfeit(), scn.epsilon);
+        assertEquals(Species.YARKORA, card.getSpecies());
+        scn.BlueprintCardTypeCheck(card, new ArrayList<>() {{
+            add(CardType.ALIEN);
+        }});
+        scn.BlueprintKeywordCheck(card, new ArrayList<>() {{
+            add(Keyword.SCOUT);
+        }});
+        scn.BlueprintIconCheck(card, new ArrayList<>() {{
+            add(Icon.ALIEN);
+            add(Icon.JABBAS_PALACE);
+        }});
+        assertEquals(ExpansionSet.JABBAS_PALACE, card.getExpansionSet());
+        assertEquals(Rarity.C, card.getRarity());
+    }
 
-		scn.MoveCardsToLocation(site, garindan);
-		scn.MoveCardsToDSHand(undercover);
+    @Test
+    public void YarkoraCanTargetOpponentUndercoverSpy() {
+        var scn = GetScenario();
+        var yarkora = scn.GetLSCard("yarkora");
+        var site = scn.GetLSStartingLocation();
+        var garindan = scn.GetDSCard("garindan");
 
-		scn.SkipToDSTurn(Phase.DEPLOY);
-		boolean deployed = false;
-		try {
-			if (scn.DSDeployAvailable(undercover)) {
-				scn.DSDeployCard(undercover);
-				if (scn.DSHasCardChoiceAvailable(garindan)) {
-					scn.DSChooseCard(garindan);
-				}
-				scn.PassCardPlayResponses();
-				SafePassOptionalResponses(scn);
-				scn.PassAllResponses();
-				deployed = garindan.isUndercover();
-			}
-		} catch (RuntimeException ex) {
-			deployed = false;
-		}
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, yarkora, garindan);
+        scn.MakeCardGoUndercover(garindan);
 
-		if (!deployed) {
-			// Keep real Undercover (2_129) attached; finish cover via PutUndercoverEffect with a real Action.
-			scn.AttachCardsTo(garindan, undercover);
-			var action = new TopLevelGameTextAction(undercover, undercover.getOwner(), undercover.getCardId());
-			scn.DSExecuteAdHocEffect(undercover, new PutUndercoverEffect(action, garindan));
-			SafePassOptionalResponses(scn);
-			scn.PassAllResponses();
-		}
-		assertTrue("Garindan should be undercover with Undercover (2_129) involved", garindan.isUndercover());
-	}
+        scn.SkipToLSTurn(Phase.CONTROL);
+        assertTrue(garindan.isUndercover());
+        assertTrue(scn.LSCardActionAvailable(yarkora, "Break a spy's cover"));
+    }
 
+    @Test
+    public void YarkoraCanTargetOwnUndercoverSpy() {
+        var scn = GetScenario();
+        var yarkora = scn.GetLSCard("yarkora");
+        var momaw = scn.GetLSCard("momaw");
+        var site = scn.GetLSStartingLocation();
 
-	/** Pass pre-draw windows, take up to maxSubtracts Yarkora -1 optionals, then finish destiny. */
-	private int YarkoraTakeSubtractsAndFinishDestiny(VirtualTableScenario scn, int maxSubtracts) {
-		scn.PassResponses("COST_TO_DRAW_DESTINY_CARD");
-		scn.PassResponses("ABOUT_TO_DRAW_DESTINY_CARD");
-		int taken = 0;
-		for (int i = 0; i < 40 && taken < maxSubtracts; i++) {
-			// Prefer LS subtract whenever available (even if DS is current decider)
-			if (scn.LSAnyDecisionsAvailable()) {
-				java.util.List<String> actions = scn.LSGetADParamAsList("actionText");
-				boolean hasSubtract = actions != null && actions.stream().anyMatch(
-						a -> a != null && a.toLowerCase().contains("subtract 1"));
-				if (hasSubtract) {
-					scn.LSChooseAction("Subtract 1");
-					taken++;
-					continue;
-				}
-			}
-			var decision = scn.GetCurrentDecision();
-			if (decision == null) {
-				break;
-			}
-			String text = decision.getText() != null ? decision.getText() : "";
-			String lower = text.toLowerCase();
-			// Pass the non-LS (or LS-without-subtract) player one at a time — do not PassResponses both
-			if (lower.contains("destiny_drawn") || lower.contains("optional") || lower.contains("about_to_draw") || lower.contains("cost_to_draw")) {
-				String decider = scn.GetDecidingPlayer();
-				if (decider != null) {
-					scn.PlayerPass(decider);
-				} else {
-					break;
-				}
-				continue;
-			}
-			scn.PassResponses();
-		}
-		scn.PassResponses("DESTINY_DRAWN");
-		scn.PassResponses("COMPLETE_DESTINY_DRAW");
-		scn.PassResponses("DRAWING_DESTINY_COMPLETE");
-		SafePassOptionalResponses(scn);
-		scn.PassAllResponses();
-		return taken;
-	}
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, yarkora, momaw);
+        scn.MakeCardGoUndercover(momaw);
 
-	/**
-	 * Put LS spy Momaw undercover via LS Undercover (2_40). Printed text targets an Undercover spy
-	 * at same site, so a Light Side spy is a legal cover-break target.
-	 */
-	private void MakeMomawUndercoverAt(VirtualTableScenario scn, PhysicalCardImpl site) {
-		var momaw = scn.GetLSCard("momaw");
-		var undercover = scn.GetLSCard("ls_undercover");
+        scn.SkipToLSTurn(Phase.CONTROL);
+        assertTrue(momaw.isUndercover());
+        assertTrue(scn.LSCardActionAvailable(yarkora, "Break a spy's cover"));
+    }
 
-		scn.MoveCardsToLocation(site, momaw);
-		scn.MoveCardsToLSHand(undercover);
+    @Test
+    public void YarkoraCannotTargetOutsideControlPhase() {
+        var scn = GetScenario();
+        var yarkora = scn.GetLSCard("yarkora");
+        var site = scn.GetLSStartingLocation();
+        var garindan = scn.GetDSCard("garindan");
 
-		scn.SkipToLSTurn(Phase.DEPLOY);
-		boolean deployed = false;
-		try {
-			if (scn.LSDeployAvailable(undercover)) {
-				scn.LSDeployCard(undercover);
-				if (scn.LSHasCardChoiceAvailable(momaw)) {
-					scn.LSChooseCard(momaw);
-				}
-				scn.PassCardPlayResponses();
-				SafePassOptionalResponses(scn);
-				scn.PassAllResponses();
-				deployed = momaw.isUndercover();
-			}
-		} catch (RuntimeException ex) {
-			deployed = false;
-		}
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, yarkora, garindan);
+        scn.MakeCardGoUndercover(garindan);
 
-		if (!deployed) {
-			scn.AttachCardsTo(momaw, undercover);
-			var action = new TopLevelGameTextAction(undercover, undercover.getOwner(), undercover.getCardId());
-			scn.LSExecuteAdHocEffect(undercover, new PutUndercoverEffect(action, momaw));
-			SafePassOptionalResponses(scn);
-			scn.PassAllResponses();
-		}
-		assertTrue("Momaw should be undercover with LS Undercover (2_40)", momaw.isUndercover());
-	}
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        assertTrue(garindan.isUndercover());
+        assertFalse(scn.LSCardActionAvailable(yarkora, "Break a spy's cover"));
+    }
 
-	@Test
-	public void YarkoraStatsAndKeywordsAreCorrect() {
-		var scn = GetScenario();
-		var card = scn.GetLSCard("yarkora").getBlueprint();
-		assertEquals("Yarkora", card.getTitle());
-		assertEquals(Uniqueness.RESTRICTED_3, card.getUniqueness());
-		assertEquals(Side.LIGHT, card.getSide());
-		assertEquals(3, card.getDestiny(), scn.epsilon);
-		assertEquals(2, card.getDeployCost(), scn.epsilon);
-		assertEquals(1, card.getPower(), scn.epsilon);
-		assertEquals(1, card.getAbility(), scn.epsilon);
-		assertEquals(2, card.getForfeit(), scn.epsilon);
-		assertEquals(Species.YARKORA, card.getSpecies());
-		scn.BlueprintCardTypeCheck(card, new ArrayList<>() {{
-			add(CardType.ALIEN);
-		}});
-		scn.BlueprintKeywordCheck(card, new ArrayList<>() {{
-			add(Keyword.SCOUT);
-		}});
-		scn.BlueprintIconCheck(card, new ArrayList<>() {{
-			add(Icon.ALIEN);
-			add(Icon.JABBAS_PALACE);
-		}});
-		assertEquals(ExpansionSet.JABBAS_PALACE, card.getExpansionSet());
-		assertEquals(Rarity.C, card.getRarity());
-	}
+    @Test
+    public void YarkoraCannotTargetSpyAtDifferentSite() {
+        var scn = GetScenario();
+        var yarkora = scn.GetLSCard("yarkora");
+        var site = scn.GetLSStartingLocation();
+        var garindan = scn.GetDSCard("garindan");
+        var site2 = scn.GetDSStartingLocation();
 
-	@Test
-	public void YarkoraCannotTargetOutsideControlPhase() {
-		var scn = GetScenario();
-		var yarkora = scn.GetLSCard("yarkora");
-		var site = scn.GetLSStartingLocation();
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, yarkora);
 
-		scn.StartGame();
-		scn.MoveCardsToLocation(site, yarkora);
-		MakeGarindanUndercoverAt(scn, site);
+        scn.MoveCardsToLocation(site2, garindan);
+        scn.MakeCardGoUndercover(garindan);
 
-		scn.SkipToLSTurn(Phase.DEPLOY);
-		assertFalse("Yarkora cover-break not available outside control phase",
-				scn.LSCardActionAvailable(yarkora, "Break a spy's cover"));
-	}
+        scn.SkipToLSTurn(Phase.CONTROL);
+        assertTrue(garindan.isUndercover());
+        assertFalse(scn.LSCardActionAvailable(yarkora, "Break a spy's cover"));
+    }
 
-	@Test
-	public void YarkoraBreaksCoverOfLightSideUndercoverSpy() {
-		var scn = GetScenario();
-		var yarkora = scn.GetLSCard("yarkora");
-		var momaw = scn.GetLSCard("momaw");
-		var site = scn.GetLSStartingLocation();
+    @Test
+    public void YarkoraBreaksCoverWhenDestinyEqualsAbility() {
+        var scn = GetScenario();
+        var yarkora = scn.GetLSCard("yarkora");
+        var garindan = scn.GetDSCard("garindan");
+        var site = scn.GetLSStartingLocation();
 
-		scn.StartGame();
-		scn.MoveCardsToLocation(site, yarkora);
-		MakeMomawUndercoverAt(scn, site);
-		assertTrue(momaw.isUndercover());
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, yarkora, garindan);
+        scn.MakeCardGoUndercover(garindan);
 
-		scn.SkipToLSTurn(Phase.CONTROL);
-		assertTrue("Printed text targets an Undercover spy, including a Light Side spy",
-				scn.LSCardActionAvailable(yarkora, "Break a spy's cover"));
+        scn.SkipToLSTurn(Phase.CONTROL);
+        assertTrue(garindan.isUndercover());
+        scn.PrepareLSDestiny(1); // Garindan ability 1
+        scn.LSUseCardAction(yarkora, "Break a spy's cover");
+        scn.LSChooseCard(garindan);
+        scn.PassAllResponses();
 
-		scn.PrepareLSDestiny(3); // Momaw ability 3
-		scn.LSUseCardAction(yarkora, "Break a spy's cover");
-		scn.LSChooseCard(momaw);
-		scn.PassDestinyDrawResponses();
-		SafePassOptionalResponses(scn);
-		scn.PassAllResponses();
+        assertTrue(scn.AwaitingDSControlPhaseActions());
+        assertFalse(garindan.isUndercover());
+    }
 
-		assertFalse("Cover should be broken when destiny equals the Light Side spy's ability",
-				momaw.isUndercover());
-	}
+    @Test
+    public void YarkoraDoesNotBreakCoverWhenDestinyLessThanAbility() {
+        var scn = GetScenario();
+        var yarkora = scn.GetLSCard("yarkora");
+        var garindan = scn.GetDSCard("garindan");
+        var site = scn.GetLSStartingLocation();
 
-	@Test
-	public void YarkoraBreaksCoverWhenDestinyEqualsAbility() {
-		var scn = GetScenario();
-		var yarkora = scn.GetLSCard("yarkora");
-		var garindan = scn.GetDSCard("garindan");
-		var site = scn.GetLSStartingLocation();
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, yarkora, garindan);
+        scn.MakeCardGoUndercover(garindan);
 
-		scn.StartGame();
-		scn.MoveCardsToLocation(site, yarkora);
-		MakeGarindanUndercoverAt(scn, site);
+        scn.SkipToLSTurn(Phase.CONTROL);
+        assertTrue(garindan.isUndercover());
+        scn.PrepareLSDestiny(0); // Garindan ability 1
+        scn.LSUseCardAction(yarkora, "Break a spy's cover");
+        scn.LSChooseCard(garindan);
+        scn.PassAllResponses();
 
-		scn.SkipToLSTurn(Phase.CONTROL);
-		assertTrue(scn.LSCardActionAvailable(yarkora, "Break a spy's cover"));
+        assertTrue(scn.AwaitingDSControlPhaseActions());
+        assertTrue(garindan.isUndercover());
+    }
 
-		scn.PrepareLSDestiny(1); // Garindan ability 1
-		scn.LSUseCardAction(yarkora, "Break a spy's cover");
-		scn.LSChooseCard(garindan);
-		scn.PassDestinyDrawResponses();
-		SafePassOptionalResponses(scn);
-		scn.PassAllResponses();
+    @Test
+    public void YarkoraDoesNotBreakCoverWhenDestinyMoreThanAbility() {
+        var scn = GetScenario();
+        var yarkora = scn.GetLSCard("yarkora");
+        var garindan = scn.GetDSCard("garindan");
+        var site = scn.GetLSStartingLocation();
 
-		assertFalse("Cover should be broken when destiny equals ability", garindan.isUndercover());
-	}
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, yarkora, garindan);
+        scn.MakeCardGoUndercover(garindan);
 
-	@Test
-	public void YarkoraDoesNotBreakCoverWhenDestinyNotEqual() {
-		var scn = GetScenario();
-		var yarkora = scn.GetLSCard("yarkora");
-		var garindan = scn.GetDSCard("garindan");
-		var site = scn.GetLSStartingLocation();
+        scn.SkipToLSTurn(Phase.CONTROL);
+        assertTrue(garindan.isUndercover());
+        scn.PrepareLSDestiny(2); // Garindan ability 1
+        scn.LSUseCardAction(yarkora, "Break a spy's cover");
+        scn.LSChooseCard(garindan);
+        scn.PassAllResponses();
 
-		scn.StartGame();
-		scn.MoveCardsToLocation(site, yarkora);
-		MakeGarindanUndercoverAt(scn, site);
+        assertTrue(scn.AwaitingDSControlPhaseActions());
+        assertTrue(garindan.isUndercover());
+    }
 
-		scn.SkipToLSTurn(Phase.CONTROL);
-		scn.PrepareLSDestiny(3);
-		scn.LSUseCardAction(yarkora, "Break a spy's cover");
-		scn.LSChooseCard(garindan);
-		scn.PassDestinyDrawResponses();
-		SafePassOptionalResponses(scn);
-		scn.PassAllResponses();
+    @Test
+    public void YarkoraMaySubtractOneFromBreakCoverDestiny() {
+        //test1: yarkora can subtract 1 after seeing destiny draw
+        //test2: yarkora cannot subtract a second time
+        //test2: yarkora subtract changes destiny draw to result in breaking cover
+        var scn = GetScenario();
+        var yarkora = scn.GetLSCard("yarkora");
+        var garindan = scn.GetDSCard("garindan");
+        var site = scn.GetLSStartingLocation();
 
-		assertTrue("Cover remains when destiny != ability", garindan.isUndercover());
-	}
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, yarkora, garindan);
+        scn.MakeCardGoUndercover(garindan);
 
-	@Test
-	public void YarkoraMaySubtractOnlyOncePerBreakCoverAttempt() {
-		var scn = GetScenario();
-		var yarkora = scn.GetLSCard("yarkora");
-		var garindan = scn.GetDSCard("garindan");
-		var site = scn.GetLSStartingLocation();
+        scn.SkipToLSTurn(Phase.CONTROL);
+        scn.PrepareLSDestiny(2); // 2 -1 = Garindan ability 1
+        scn.LSUseCardAction(yarkora, "Break a spy's cover");
+        scn.LSChooseCard(garindan);
 
-		scn.StartGame();
-		scn.MoveCardsToLocation(site, yarkora);
-		MakeGarindanUndercoverAt(scn, site);
+        scn.PassResponses("COST_TO_DRAW_DESTINY_CARD");
+        scn.PassResponses("ABOUT_TO_DRAW_DESTINY_CARD");
 
-		scn.SkipToLSTurn(Phase.CONTROL);
-		scn.PrepareLSDestiny(3);
-		scn.LSUseCardAction(yarkora, "Break a spy's cover");
-		scn.LSChooseCard(garindan);
+        scn.DSPass(); //DESTINY_DRAWN - Optional responses
+        assertTrue(scn.LSCardActionAvailable(yarkora, "Subtract 1")); //test1
+        scn.LSUseCardAction(yarkora, "Subtract 1");
 
-		scn.PassResponses("COST_TO_DRAW_DESTINY_CARD");
-		scn.PassResponses("ABOUT_TO_DRAW_DESTINY_CARD");
-		boolean tookFirst = false;
-		for (int i = 0; i < 20 && !tookFirst; i++) {
-			if (scn.LSAnyDecisionsAvailable()) {
-				java.util.List<String> actions = scn.LSGetADParamAsList("actionText");
-				if (actions != null && actions.stream().anyMatch(a -> a != null && a.toLowerCase().contains("subtract 1"))) {
-					scn.LSChooseAction("Subtract 1");
-					tookFirst = true;
-					break;
-				}
-			}
-			var decision = scn.GetCurrentDecision();
-			if (decision == null) {
-				break;
-			}
-			String lower = decision.getText() != null ? decision.getText().toLowerCase() : "";
-			if (lower.contains("optional") || lower.contains("destiny_drawn") || lower.contains("about_to_draw") || lower.contains("cost_to_draw")) {
-				String decider = scn.GetDecidingPlayer();
-				if (decider != null) {
-					scn.PlayerPass(decider);
-				} else {
-					break;
-				}
-			} else {
-				break;
-			}
-		}
-		assertTrue("One Yarkora should be able to subtract once", tookFirst);
-		if (scn.LSAnyDecisionsAvailable()) {
-			java.util.List<String> actions = scn.LSGetADParamAsList("actionText");
-			boolean second = actions != null && actions.stream().anyMatch(a -> a != null && a.toLowerCase().contains("subtract 1"));
-			assertFalse("The same Yarkora must not subtract a second time on this attempt", second);
-		}
-		scn.PassResponses("DESTINY_DRAWN");
-		scn.PassResponses("COMPLETE_DESTINY_DRAW");
-		scn.PassResponses("DRAWING_DESTINY_COMPLETE");
-		SafePassOptionalResponses(scn);
-		scn.PassAllResponses();
-		assertTrue("Destiny 3-1=2 is not ability 1, so cover remains", garindan.isUndercover());
-	}
+        scn.DSPass();
+        assertFalse(scn.LSCardActionAvailable(yarkora, "Subtract 1")); //test2
+        scn.LSPass();
 
-	@Test
-	public void YarkoraCumulativeSubtractAllowsBreakCover() {
-		var scn = GetScenario();
-		var yarkora = scn.GetLSCard("yarkora");
-		var yarkora2 = scn.GetLSCard("yarkora2");
-		var garindan = scn.GetDSCard("garindan");
-		var site = scn.GetLSStartingLocation();
+        scn.PassAllResponses();
 
-		scn.StartGame();
-		scn.MoveCardsToLocation(site, yarkora, yarkora2);
-		MakeGarindanUndercoverAt(scn, site);
+        assertTrue(scn.AwaitingDSControlPhaseActions());
+        assertFalse(garindan.isUndercover()); //test3
+    }
 
-		scn.SkipToLSTurn(Phase.CONTROL);
-		scn.PrepareLSDestiny(3); // 3 -1 -1 = 1 == ability
-		scn.LSUseCardAction(yarkora, "Break a spy's cover");
-		scn.LSChooseCard(garindan);
+    @Test
+    public void YarkoraSubtractIsCumulative() {
+        var scn = GetScenario();
+        var yarkora = scn.GetLSCard("yarkora");
+        var yarkora2 = scn.GetLSCard("yarkora2");
+        var garindan = scn.GetDSCard("garindan");
+        var site = scn.GetLSStartingLocation();
+        var site2 = scn.GetDSStartingLocation();
 
-		int taken = YarkoraTakeSubtractsAndFinishDestiny(scn, 2);
-		assertTrue("Expected two Yarkora subtract optionals, took " + taken, taken >= 2);
-		assertFalse("Two Yarkoras -1 each should make destiny 3 become 1 and break cover",
-				garindan.isUndercover());
-	}
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, yarkora, garindan);
+        scn.MoveCardsToLocation(site2, yarkora2);
+        scn.MakeCardGoUndercover(garindan);
 
-	@Test
-	public void YarkoraSubtractsApplyIndividuallySoFivesCanTakeAFive() {
-		var scn = GetScenario();
-		var yarkora = scn.GetLSCard("yarkora");
-		var yarkora2 = scn.GetLSCard("yarkora2");
-		var fives = scn.GetLSCard("fives");
-		var garindan = scn.GetDSCard("garindan");
-		var site = scn.GetLSStartingLocation();
+        scn.SkipToLSTurn(Phase.CONTROL);
+        scn.PrepareLSDestiny(3); // 3 -1 -1 = Garindan ability 1
+        scn.LSUseCardAction(yarkora, "Break a spy's cover");
+        scn.LSChooseCard(garindan);
 
-		scn.StartGame();
-		scn.MoveCardsToLocation(site, yarkora, yarkora2, fives);
-		MakeGarindanUndercoverAt(scn, site);
+        scn.PassResponses("COST_TO_DRAW_DESTINY_CARD");
+        scn.PassResponses("ABOUT_TO_DRAW_DESTINY_CARD");
 
-		scn.SkipToLSTurn(Phase.CONTROL);
-		scn.PrepareLSDestiny(6);
-		var drawnSix = scn.GetTopOfLSReserveDeck();
-		scn.LSUseCardAction(yarkora, "Break a spy's cover");
-		scn.LSChooseCard(garindan);
+        scn.DSPass(); //DESTINY_DRAWN - Optional responses
+        assertTrue(scn.LSCardActionAvailable(yarkora, "Subtract 1"));
+        assertTrue(scn.LSCardActionAvailable(yarkora2, "Subtract 1"));
+        scn.LSUseCardAction(yarkora, "Subtract 1");
 
-		scn.PassResponses("COST_TO_DRAW_DESTINY_CARD");
-		scn.PassResponses("ABOUT_TO_DRAW_DESTINY_CARD");
+        scn.DSPass();
+        assertFalse(scn.LSCardActionAvailable(yarkora, "Subtract 1"));
+        assertTrue(scn.LSCardActionAvailable(yarkora2, "Subtract 1"));
+        scn.LSUseCardAction(yarkora2, "Subtract 1");
 
-		boolean firstSubtract = false;
-		boolean fivesTook = false;
-		boolean secondSubtract = false;
-		for (int i = 0; i < 50; i++) {
-			if (scn.LSAnyDecisionsAvailable()) {
-				java.util.List<String> actions = scn.LSGetADParamAsList("actionText");
-				if (actions != null) {
-					boolean hasFives = actions.stream().anyMatch(a -> a != null
-							&& a.toLowerCase().contains("take") && a.toLowerCase().contains("destiny"));
-					boolean hasSubtract = actions.stream().anyMatch(a -> a != null
-							&& a.toLowerCase().contains("subtract 1"));
-					if (!firstSubtract && hasSubtract) {
-						scn.LSChooseAction("Subtract 1");
-						firstSubtract = true;
-						continue;
-					}
-					if (firstSubtract && !fivesTook && hasFives) {
-						scn.LSChooseAction("Take destiny");
-						fivesTook = true;
-						continue;
-					}
-					if (firstSubtract && fivesTook && !secondSubtract && hasSubtract) {
-						scn.LSChooseAction("Subtract 1");
-						secondSubtract = true;
-						continue;
-					}
-				}
-			}
-			var decision = scn.GetCurrentDecision();
-			if (decision == null) {
-				break;
-			}
-			String lower = decision.getText() != null ? decision.getText().toLowerCase() : "";
-			if (lower.contains("optional") || lower.contains("destiny_drawn") || lower.contains("about_to_draw")
-					|| lower.contains("cost_to_draw")) {
-				String decider = scn.GetDecidingPlayer();
-				if (decider != null) {
-					scn.PlayerPass(decider);
-				} else {
-					break;
-				}
-			} else {
-				break;
-			}
-		}
+        scn.PassAllResponses();
 
-		assertTrue("First Yarkora -1 must apply before Fives", firstSubtract);
-		assertTrue("After 6-1, Fives must be able to take the just-drawn 5 into hand", fivesTook);
-		assertTrue("Second Yarkora -1 must still apply after Fives takes the card", secondSubtract);
-		scn.PassResponses("DESTINY_DRAWN");
-		scn.PassResponses("COMPLETE_DESTINY_DRAW");
-		scn.PassResponses("DRAWING_DESTINY_COMPLETE");
-		SafePassOptionalResponses(scn);
-		scn.PassAllResponses();
+        assertTrue(scn.AwaitingDSControlPhaseActions());
+        assertFalse(garindan.isUndercover());
+    }
 
-		assertTrue("Drawn 6 should be in hand after Fives takes the intermediate 5",
-				drawnSix.getZone() == com.gempukku.swccgo.common.Zone.HAND);
-		assertTrue("Final destiny 4 is not Garindan ability 1, so cover remains",
-				garindan.isUndercover());
-	}
+    @Test
+    public void YarkoraSubtractsAreIndependentActions() {
+        //intermediate destiny states exist between multiple subtracts which allows fives to take
+        //an action on destiny = 5 (even though starting destiny is 6 and final destiny is 4)
+        var scn = GetScenario();
+        var yarkora = scn.GetLSCard("yarkora");
+        var yarkora2 = scn.GetLSCard("yarkora2");
+        var fives = scn.GetLSCard("fives");
+        var garindan = scn.GetDSCard("garindan");
+        var site = scn.GetLSStartingLocation();
 
-	@Test
-	public void YarkoraSaeltAlsoMaySubtract() {
-		var scn = GetScenario();
-		var yarkora = scn.GetLSCard("yarkora");
-		var saelt = scn.GetLSCard("saelt");
-		var trooper = scn.GetLSCard("trooper");
-		var garindan = scn.GetDSCard("garindan");
-		var site = scn.GetLSStartingLocation();
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, yarkora, yarkora2, garindan, fives);
+        scn.MakeCardGoUndercover(garindan);
 
-		scn.StartGame();
-		scn.MoveCardsToLocation(site, yarkora, saelt, trooper);
-		MakeGarindanUndercoverAt(scn, site);
+        scn.SkipToLSTurn(Phase.CONTROL);
+        scn.PrepareLSDestiny(6);
+        assertEquals(0,scn.GetLSHandCount());
+        scn.LSUseCardAction(yarkora, "Break a spy's cover");
+        scn.LSChooseCard(garindan);
 
-		scn.SkipToLSTurn(Phase.CONTROL);
-		scn.PrepareLSDestiny(3); // 3 -1 (Yarkora) -1 (Saelt) = 1
-		scn.LSUseCardAction(yarkora, "Break a spy's cover");
-		scn.LSChooseCard(garindan);
+        scn.PassResponses("COST_TO_DRAW_DESTINY_CARD");
+        scn.PassResponses("ABOUT_TO_DRAW_DESTINY_CARD");
 
-		scn.PassResponses("COST_TO_DRAW_DESTINY_CARD");
-		scn.PassResponses("ABOUT_TO_DRAW_DESTINY_CARD");
-		for (int i = 0; i < 20; i++) {
-			if (scn.LSAnyDecisionsAvailable()) {
-				java.util.List<String> actions = scn.LSGetADParamAsList("actionText");
-				if (actions != null && actions.stream().anyMatch(a -> a != null && a.toLowerCase().contains("subtract 1"))) {
-					break;
-				}
-			}
-			var decision = scn.GetCurrentDecision();
-			if (decision == null) {
-				break;
-			}
-			String lower = decision.getText() != null ? decision.getText().toLowerCase() : "";
-			if (lower.contains("optional") || lower.contains("destiny_drawn") || lower.contains("about_to_draw") || lower.contains("cost_to_draw")) {
-				String decider = scn.GetDecidingPlayer();
-				if (decider != null) {
-					scn.PlayerPass(decider);
-				} else {
-					break;
-				}
-			} else {
-				break;
-			}
-		}
+        scn.DSPass(); //DESTINY_DRAWN - Optional responses
+        assertTrue(scn.LSCardActionAvailable(yarkora, "Subtract 1"));
+        assertTrue(scn.LSCardActionAvailable(yarkora2, "Subtract 1"));
+        assertFalse(scn.LSCardActionAvailable(fives, "into hand")); //still destiny 6
+        scn.LSUseCardAction(yarkora, "Subtract 1");
 
-		assertTrue(scn.LSCardActionAvailable(yarkora, "Subtract 1"));
-		assertTrue(scn.LSCardActionAvailable(saelt, "Subtract 1"));
-		assertFalse(scn.LSCardActionAvailable(trooper, "Subtract 1"));
+        scn.DSPass();
+        assertFalse(scn.LSCardActionAvailable(yarkora, "Subtract 1"));
+        assertTrue(scn.LSCardActionAvailable(yarkora2, "Subtract 1"));
+        assertTrue(scn.LSCardActionAvailable(fives, "into hand")); //destiny 5
+        scn.LSUseCardAction(fives, "into hand");
 
-		int taken = 0;
-		for (int i = 0; i < 40 && taken < 2; i++) {
-			if (scn.LSAnyDecisionsAvailable()) {
-				java.util.List<String> actions = scn.LSGetADParamAsList("actionText");
-				boolean hasSubtract = actions != null && actions.stream().anyMatch(
-						a -> a != null && a.toLowerCase().contains("subtract 1"));
-				if (hasSubtract) {
-					scn.LSChooseAction("Subtract 1");
-					taken++;
-					continue;
-				}
-			}
-			var decision = scn.GetCurrentDecision();
-			if (decision == null) {
-				break;
-			}
-			String lower = decision.getText() != null ? decision.getText().toLowerCase() : "";
-			if (lower.contains("destiny_drawn") || lower.contains("optional") || lower.contains("about_to_draw") || lower.contains("cost_to_draw")) {
-				String decider = scn.GetDecidingPlayer();
-				if (decider != null) {
-					scn.PlayerPass(decider);
-				} else {
-					break;
-				}
-				continue;
-			}
-			break;
-		}
-		scn.PassResponses("DESTINY_DRAWN");
-		scn.PassResponses("COMPLETE_DESTINY_DRAW");
-		scn.PassResponses("DRAWING_DESTINY_COMPLETE");
-		SafePassOptionalResponses(scn);
-		scn.PassAllResponses();
-		assertTrue("Yarkora and Saelt should each subtract once; took " + taken, taken >= 2);
-		assertFalse("3 -1 -1 = 1 equals ability, cover broken", garindan.isUndercover());
-	}
+        scn.DSPass();
+        assertFalse(scn.LSCardActionAvailable(yarkora, "Subtract 1"));
+        assertTrue(scn.LSCardActionAvailable(yarkora2, "Subtract 1"));
+        assertFalse(scn.LSCardActionAvailable(fives, "into hand"));
+        scn.LSUseCardAction(yarkora2, "Subtract 1");
 
-	@Test
-	public void YarkoraCanceledCopyStillGetsGrantedSubtract() {
-		// Acting Yarkora grants "each of your Yarkoras on table may subtract 1".
-		// A canceled copy still gets that grant.
-		var scn = GetScenario();
-		var yarkora = scn.GetLSCard("yarkora");
-		var yarkora2 = scn.GetLSCard("yarkora2");
-		var garindan = scn.GetDSCard("garindan");
-		var site = scn.GetLSStartingLocation();
+        scn.PassAllResponses();
 
-		scn.StartGame();
-		scn.MoveCardsToLocation(site, yarkora, yarkora2);
-		MakeGarindanUndercoverAt(scn, site);
+        assertTrue(scn.AwaitingDSControlPhaseActions());
+        assertEquals(1,scn.GetLSHandCount()); //destiny was drawn into hand
+        assertTrue(garindan.isUndercover()); //destiny draw of 4 did not break cover
+    }
 
-		scn.SkipToLSTurn(Phase.CONTROL);
-		yarkora2.setGameTextCanceled(true);
-		scn.game().getModifiersEnvironment().addUntilEndOfTurnModifier(
-				new CancelsGameTextModifier(yarkora2, yarkora2));
-		assertTrue("Yarkora 2 game text should be canceled",
-				yarkora2.isGameTextCanceled()
-						|| scn.game().getModifiersQuerying().isGameTextCanceled(scn.game().getGameState(), yarkora2));
-		assertTrue(scn.LSCardActionAvailable(yarkora, "Break a spy's cover"));
-		scn.PrepareLSDestiny(3); // 3 -1 -1 = 1
-		scn.LSUseCardAction(yarkora, "Break a spy's cover");
-		scn.LSChooseCard(garindan);
+    @Test
+    public void YarkoraGrantsSubtractBySpecies() {
+        //test 1: yarkora grants a non-title yarkora (Saelt-Marae) a subtract action
+        //test 2: yarkora does not grant a non-yarkora title/species (rebel trooper) a subtract action
+        var scn = GetScenario();
+        var yarkora = scn.GetLSCard("yarkora");
+        var saelt = scn.GetLSCard("saelt");
+        var trooper = scn.GetLSFiller(1);
+        var garindan = scn.GetDSCard("garindan");
+        var site = scn.GetLSStartingLocation();
 
-		int taken = YarkoraTakeSubtractsAndFinishDestiny(scn, 2);
-		assertTrue("Canceled copy must still receive the granted subtract; took " + taken, taken >= 2);
-		assertFalse("Two subtracts should break cover", garindan.isUndercover());
-	}
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, yarkora, garindan, saelt, trooper);
+        scn.MakeCardGoUndercover(garindan);
 
-	@Test
-	public void YarkoraSubtractIsNotOfferedOnALaterDestiny() {
-		// Proxy is pinned to the cover-break DrawDestinyState. After that draw, a later battle
-		// destiny (both sides have ability 4+) must not offer Yarkora -1.
-		var scn = GetScenario();
-		var yarkora = scn.GetLSCard("yarkora");
-		var luke = scn.GetLSCard("luke");
-		var garindan = scn.GetDSCard("garindan");
-		var vader = scn.GetDSCard("vader");
-		var site = scn.GetLSStartingLocation();
+        scn.SkipToLSTurn(Phase.CONTROL);
+        scn.PrepareLSDestiny(3); // 3 -1 (Yarkora) -1 (Saelt) = 1
+        scn.LSUseCardAction(yarkora, "Break a spy's cover");
+        scn.LSChooseCard(garindan);
 
-		scn.StartGame();
-		scn.MoveCardsToLocation(site, yarkora, luke, vader);
-		MakeGarindanUndercoverAt(scn, site);
+        scn.PassResponses("COST_TO_DRAW_DESTINY_CARD");
+        scn.PassResponses("ABOUT_TO_DRAW_DESTINY_CARD");
 
-		scn.SkipToLSTurn(Phase.CONTROL);
-		scn.PrepareLSDestiny(1);
-		scn.LSUseCardAction(yarkora, "Break a spy's cover");
-		scn.LSChooseCard(garindan);
-		scn.PassDestinyDrawResponses();
-		SafePassOptionalResponses(scn);
-		scn.PassAllResponses();
-		assertFalse(garindan.isUndercover());
+        scn.DSPass(); //DESTINY_DRAWN - Optional responses
+        assertTrue(scn.LSCardActionAvailable(yarkora, "Subtract 1"));
+        assertTrue(scn.LSCardActionAvailable(saelt, "Subtract 1")); //test1
+        assertFalse(scn.LSCardActionAvailable(trooper, "Subtract 1")); //test2
+    }
 
-		scn.SkipToDSTurn(Phase.BATTLE);
-		scn.DSInitiateBattle(site);
-		scn.SkipToPowerSegment();
-		assertTrue("LS must be able to draw battle destiny so the subtract check is meaningful",
-				scn.GetLSBattleDestinyCount() >= 1);
-		assertTrue("DS must be able to draw battle destiny so the subtract check is meaningful",
-				scn.GetDSBattleDestinyCount() >= 1);
+    @Test
+    public void YarkoraGrantsSubtractToYarkoraWithCanceledGameText() {
+        //shows other yarkora are using a granted action - not their own
+        var scn = GetScenario();
+        var yarkora = scn.GetLSCard("yarkora");
+        var yarkora2 = scn.GetLSCard("yarkora2");
+        var garindan = scn.GetDSCard("garindan");
+        var e3 = scn.GetDSCard("e3");
+        var eChuTa = scn.GetDSCard("eChuTa");
+        var site = scn.GetLSStartingLocation();
 
-		if (scn.DecisionAvailable(scn.DS, "battle destiny?")) {
-			scn.PlayerChooseYes(scn.DS);
-			scn.PassDestinyDrawResponses();
-		}
-		scn.PassResponses("BATTLE_DESTINY_DRAWS_COMPLETE_FOR_PLAYER");
+        scn.StartGame();
+        scn.MoveCardsToDSHand(eChuTa);
 
-		assertTrue("LS should be asked to draw battle destiny",
-				scn.DecisionAvailable(scn.LS, "battle destiny?"));
-		scn.PlayerChooseYes(scn.LS);
-		scn.PassResponses("COST_TO_DRAW_DESTINY_CARD");
-		scn.PassResponses("ABOUT_TO_DRAW_DESTINY_CARD");
+        scn.MoveCardsToLocation(site, yarkora, yarkora2, garindan, e3);
+        scn.MakeCardGoUndercover(garindan);
 
-		boolean sawDestinyDrawn = false;
-		boolean hasSubtract = false;
-		java.util.List<String> lsActions = null;
-		for (int i = 0; i < 20; i++) {
-			if (scn.LSAnyDecisionsAvailable()) {
-				lsActions = scn.LSGetADParamAsList("actionText");
-				if (lsActions != null && lsActions.stream().anyMatch(
-						a -> a != null && a.toLowerCase().contains("subtract 1"))) {
-					hasSubtract = true;
-					break;
-				}
-			}
-			var decision = scn.GetCurrentDecision();
-			if (decision == null) {
-				break;
-			}
-			String lower = decision.getText() != null ? decision.getText().toLowerCase() : "";
-			if (lower.contains("destiny_drawn") || lower.contains("optional")
-					|| lower.contains("complete_destiny") || lower.contains("drawing_destiny")) {
-				if (lower.contains("destiny_drawn")) {
-					sawDestinyDrawn = true;
-				}
-				String decider = scn.GetDecidingPlayer();
-				if (decider != null) {
-					scn.PlayerPass(decider);
-				} else {
-					break;
-				}
-			} else {
-				break;
-			}
-		}
-		assertTrue("Must reach the after-destiny window of a real battle destiny draw", sawDestinyDrawn);
-		assertFalse("Yarkora subtract must not appear on a later battle destiny; actions=" + lsActions,
-				hasSubtract);
-	}
+        scn.SkipToLSTurn(Phase.ACTIVATE);
+        scn.LSPass();
+        scn.LSChooseYes(); //(are you sure?)
+
+            //cancel yarkora2's game text for rest of this turn
+        scn.DSPlayCard(eChuTa, "Insult");
+        scn.DSChooseCard(e3);
+        scn.DSChooseCard(yarkora2);
+        scn.PassAllResponses();
+
+        scn.SkipToPhase(Phase.CONTROL);
+        scn.PrepareLSDestiny(3);
+        assertTrue(scn.LSCardActionAvailable(yarkora, "Break a spy's cover"));
+        assertFalse(scn.LSCardActionAvailable(yarkora2, "Break a spy's cover")); //game text canceled!
+        scn.LSUseCardAction(yarkora, "Break a spy's cover");
+        scn.LSChooseCard(garindan);
+
+        scn.PassResponses("COST_TO_DRAW_DESTINY_CARD");
+        scn.PassResponses("ABOUT_TO_DRAW_DESTINY_CARD");
+
+        scn.DSPass(); //DESTINY_DRAWN - Optional responses
+        assertTrue(scn.LSCardActionAvailable(yarkora, "Subtract 1"));
+        assertTrue(scn.LSCardActionAvailable(yarkora2, "Subtract 1")); //(even though own game text canceled)
+    }
+
 }
