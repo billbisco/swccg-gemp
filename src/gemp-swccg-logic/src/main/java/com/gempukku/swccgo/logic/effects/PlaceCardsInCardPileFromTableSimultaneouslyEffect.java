@@ -381,8 +381,8 @@ class PlaceCardsInCardPileFromTableSimultaneouslyEffect extends AbstractSubActio
 
     @Override
     protected boolean wasActionCarriedOut() {
-        // Attached cards (e.g. Stolen Data Tapes #944) may be prevented from leaving
-        // without failing the cost of placing the original cards in the pile.
+        // attached cards may be prevented from leaving without failing the
+        // cost of placing the original cards in the pile.
         for (PhysicalCard card : _originalCardsToPlaceInCardPile) {
             if (_preventedCards.contains(card)) {
                 return false;

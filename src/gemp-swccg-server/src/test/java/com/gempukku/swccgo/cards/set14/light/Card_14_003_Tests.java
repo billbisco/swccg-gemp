@@ -213,7 +213,6 @@ public class Card_14_003_Tests {
 
     @Test
     public void ArtooBraveLittleDroidCanCancelBattleDestinyWithStolenDataTapes() {
-        //shows fixed: https://github.com/PlayersCommittee/gemp-swccg-public/issues/944
         //with stolen data tapes on artoo:
         //test1: can take action after just drawn battle destiny to cancel it
         //test2: artoo goes to used pile
