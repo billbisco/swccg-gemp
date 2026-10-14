@@ -313,7 +313,9 @@ public class SwccgGameMediator {
      * @return the card information
      */
     public String produceCardInfo(Player player, int cardId) {
-        _readLock.lock();
+        // Write lock, not read lock: modifier queries change ModifiersLogic's skip set, so two of them on different threads
+        // can leave a modifier in it, lost for the rest of the game.
+        _writeLock.lock();
         try {
             StringBuilder sb = new StringBuilder();
             GameState gameState = _swccgoGame.getGameState();
@@ -1026,7 +1028,7 @@ public class SwccgGameMediator {
             return sb.toString();
 
         } finally {
-            _readLock.unlock();
+            _writeLock.unlock();
         }
     }
 
