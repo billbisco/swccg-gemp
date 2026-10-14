@@ -24,6 +24,8 @@ import com.gempukku.swccgo.logic.timing.EffectResult;
 import com.gempukku.swccgo.logic.timing.SnapshotData;
 import com.gempukku.swccgo.logic.timing.Snapshotable;
 import com.gempukku.swccgo.logic.timing.TargetingActionUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,10 +33,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 /**
  * This class manages all modifiers in the game by implementing the adding/removing functions of ModifiersEnvironment
@@ -44,6 +48,7 @@ import java.util.Set;
  * are those which require access to the private lists and maps, in a way that would be troublesome to expose.
  */
 public class ModifiersLogic implements ModifiersEnvironment, ModifiersState, ModifiersQuerying, Snapshotable<ModifiersLogic> {
+    private static final Logger _log = LogManager.getLogger(ModifiersLogic.class);
 
     /**
      * @return Returns the concrete implementation of the ModifiersQuerying.  This is used within the myriad interfaces
@@ -84,9 +89,13 @@ public class ModifiersLogic implements ModifiersEnvironment, ModifiersState, Mod
     private List<Modifier> _untilStartOfTurnModifiers = new LinkedList<Modifier>();
     private Map<String, List<Modifier>> _untilStartOfPlayersNextTurnModifiers = new HashMap<String, List<Modifier>>();
 
-    private Set<Modifier> _skipSet = new HashSet<Modifier>();
-    private int _skipSetQueryDepth;
-    private final List<String> _skipSetNotEmptyWhenIdle = new LinkedList<String>();
+    // The modifiers being evaluated by the query in progress: nested queries skip them. Empty between queries.
+    // Linked: ModifierQueryCache iterates it, in time proportional to its size.
+    private Set<Modifier> _skipSet = new LinkedHashSet<Modifier>();
+    private boolean _skipSetLeakReported;
+
+    // Short-lived cache of query results (perf/modifier-recursion): see ModifierQueryCache.
+    private final ModifierQueryCache _queryCache = new ModifierQueryCache(_skipSet);
 
     private Map<Phase, Map<String, LimitCounter>> _endOfPhaseLimitCounters = new HashMap<Phase, Map<String, LimitCounter>>();
     private Map<Phase, Map<String, LimitCounter>> _startOfPhaseLimitCounters = new HashMap<Phase, Map<String, LimitCounter>>();
@@ -251,11 +260,9 @@ public class ModifiersLogic implements ModifiersEnvironment, ModifiersState, Mod
             snapshot._untilStartOfPlayersNextTurnModifiers.put(playerId, snapshotList);
         }
         snapshot._untilStartOfTurnModifiers.addAll(_untilStartOfTurnModifiers);
-        // Recursion guard for in-flight modifier evaluation only. Persisting it
-        // in a snapshot (or restoring a mid-evaluation skip) permanently disables
-        // those modifiers for the rest of the game (lost-modifier / AOBS).
-        recordSkipSetIfNotEmpty("generateSnapshot");
-        snapshot._skipSet.clear();
+        // _skipSet is not copied: it only holds the modifiers of a query in progress. A modifier left in it by mistake would
+        // otherwise stay lost after the snapshot is restored.
+        reportSkipSetLeak();
         for (Phase phase : _endOfPhaseLimitCounters.keySet()) {
             Map<String, LimitCounter> snapshotMap = new HashMap<String, LimitCounter>();
             snapshot._endOfPhaseLimitCounters.put(phase, snapshotMap);
@@ -2787,13 +2794,18 @@ public class ModifiersLogic implements ModifiersEnvironment, ModifiersState, Mod
     }
 
     public Collection<Modifier> getModifiersAffecting(GameState gameState, PhysicalCard card) {
+        // Evaluates the conditions of every modifier in the game: one query scope for the whole scan.
+        return withQueryCache(() -> computeModifiersAffecting(gameState, card));
+    }
 
+    private Collection<Modifier> computeModifiersAffecting(GameState gameState, PhysicalCard card) {
+        _queryCache.noteSkipSetTests(null); // affectsCardWithSkipSet, for modifiers of any type
         Set<Modifier> result = new HashSet<Modifier>();
         for (List<Modifier> modifiers : _modifiers.values()) {
             for (Modifier modifier : modifiers) {
                 Condition condition = modifier.getCondition();
                 Condition additionalCondition = modifier.getAdditionalCondition(gameState, query(), card);
-                if ((condition == null || condition.isFulfilled(gameState, query())) && (additionalCondition == null || additionalCondition.isFulfilled(gameState, query())))
+                if (isConditionFulfilled(gameState, modifier, condition) && (additionalCondition == null || additionalCondition.isFulfilled(gameState, query())))
                     if (modifier.getSource(gameState) == null || modifier.isPersistent() || !isGameTextCanceled(gameState, modifier.getSource(gameState), false, modifier.isEvenIfUnpilotedInPlay()))
                         if (modifier.getSource(gameState) == null || modifier.isPersistent() || modifier.getLocationSidePlayer() == null || !isLocationGameTextCanceledForPlayer(gameState, modifier.getSource(gameState), modifier.getLocationSidePlayer()))
                             if (modifier.getSource(gameState) == null || modifier.isPersistent() || !modifier.isFromPermanentPilot() || hasPermanentPilot(gameState, modifier.getSource(gameState)))
@@ -2811,7 +2823,7 @@ public class ModifiersLogic implements ModifiersEnvironment, ModifiersState, Mod
                 for (Modifier modifier : alwaysOnModifiers) {
                     Condition condition = modifier.getCondition();
                     Condition additionalCondition = modifier.getAdditionalCondition(gameState, query(), card);
-                    if ((condition == null || condition.isFulfilled(gameState, query())) && (additionalCondition == null || additionalCondition.isFulfilled(gameState, query())))
+                    if (isConditionFulfilled(gameState, modifier, condition) && (additionalCondition == null || additionalCondition.isFulfilled(gameState, query())))
                         if (affectsCardWithSkipSet(gameState, card, modifier))
                             if (!foundCumulativeConflict(gameState, result, modifier))
                                 result.add(modifier);
@@ -2886,63 +2898,34 @@ public class ModifiersLogic implements ModifiersEnvironment, ModifiersState, Mod
         return false;
     }
 
-    private boolean affectsCardWithSkipSet(GameState gameState, PhysicalCard physicalCard, Modifier modifier) {
-        enterSkipSetQuery();
-        try {
-            if (!_skipSet.contains(modifier) && physicalCard != null) {
-                _skipSet.add(modifier);
-                try {
-                    return modifier.affectsCard(gameState, query(), physicalCard);
-                } finally {
-                    _skipSet.remove(modifier);
-                }
-            } else {
-                return false;
-            }
-        } finally {
-            leaveSkipSetQuery("after affectsCardWithSkipSet");
-        }
-    }
-
-    private void enterSkipSetQuery() {
-        _skipSetQueryDepth++;
-    }
-
-    private void leaveSkipSetQuery(String where) {
-        _skipSetQueryDepth--;
-        if (_skipSetQueryDepth == 0) {
-            recordSkipSetIfNotEmpty(where);
-        }
-    }
-
     /**
-     * skipSet is a recursion guard and must be empty between queries. A leftover
-     * entry is the lost-modifier symptom (that modifier is treated as absent).
+     * Logs (once) when _skipSet is not empty while no query is in progress (snapshots are taken between actions): the
+     * modifiers left in it are skipped by every later query, i.e. lost for the rest of the game.
      */
-    private void recordSkipSetIfNotEmpty(String where) {
-        if (_skipSet.isEmpty()) {
+    private void reportSkipSetLeak() {
+        if (_skipSet.isEmpty() || _skipSetLeakReported)
             return;
-        }
-        StringBuilder sb = new StringBuilder("skipSet not empty ");
-        sb.append(where).append(":");
+        _skipSetLeakReported = true;
         GameState gameState = _swccgGame != null ? _swccgGame.getGameState() : null;
+        StringBuilder sb = new StringBuilder();
         for (Modifier modifier : _skipSet) {
-            sb.append(" ").append(modifier.getClass().getSimpleName());
             PhysicalCard source = modifier.getSource(gameState);
-            if (source != null) {
-                sb.append("(").append(GameUtils.getFullName(source)).append(")");
-            }
+            sb.append(' ').append(modifier.getModifierType()).append(source != null ? " (" + GameUtils.getFullName(source) + ")" : "");
         }
-        String msg = sb.toString();
-        _skipSetNotEmptyWhenIdle.add(msg);
-        System.err.println("lost-modifier diagnostic: " + msg);
+        _log.warn("Modifiers left in the skip set between actions, lost for the rest of the game:" + sb);
     }
 
-    /**
-     * Times skipSet was not empty when a query was idle. Empty in a healthy game.
-     */
-    public List<String> getSkipSetNotEmptyWhenIdleDiagnostics() {
-        return Collections.unmodifiableList(_skipSetNotEmptyWhenIdle);
+    private boolean affectsCardWithSkipSet(GameState gameState, PhysicalCard physicalCard, Modifier modifier) {
+        if (!_skipSet.contains(modifier) && physicalCard != null) {
+            _skipSet.add(modifier);
+            try {
+                return modifier.affectsCard(gameState, query(), physicalCard);
+            } finally {
+                _skipSet.remove(modifier);
+            }
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -2975,15 +2958,42 @@ public class ModifiersLogic implements ModifiersEnvironment, ModifiersState, Mod
     }
 
     public List<Modifier> getKeywordModifiersAffectingCard(GameState gameState, ModifierType modifierType, Keyword keyword, PhysicalCard card) {
-        enterSkipSetQuery();
-        try {
-            return getKeywordModifiersAffectingCardWithSkipSet(gameState, modifierType, keyword, card);
-        } finally {
-            leaveSkipSetQuery("after modifier query");
-        }
+        // The caller may change the list: the cache keeps its own copy and hands out copies of it.
+        return _queryCache.query(ModifierQueryCache.modifiersKey(modifierType, keyword, card), gameState, card, LinkedList::new,
+                () -> computeKeywordModifiersAffectingCard(gameState, modifierType, keyword, card));
     }
 
-    private List<Modifier> getKeywordModifiersAffectingCardWithSkipSet(GameState gameState, ModifierType modifierType, Keyword keyword, PhysicalCard card) {
+    /**
+     * Gets the state of the card: same result as Cards.getCardState, reused while a query scope is open (see ModifierQueryCache).
+     */
+    @Override
+    public CardState getCardState(GameState gameState, PhysicalCard physicalCard, boolean includeExcludedFromBattle, boolean includeUndercover, boolean includeCaptives,
+            boolean includeConcealed, boolean includeWeaponsForStealing, boolean includeMissing, boolean includeBinaryOff, boolean includeSuspended) {
+        int flags = (includeExcludedFromBattle ? 1 : 0) | (includeUndercover ? 2 : 0) | (includeCaptives ? 4 : 0) | (includeConcealed ? 8 : 0)
+                | (includeWeaponsForStealing ? 16 : 0) | (includeMissing ? 32 : 0) | (includeBinaryOff ? 64 : 0) | (includeSuspended ? 128 : 0);
+        return _queryCache.query(ModifierQueryCache.cardStateKey(flags, physicalCard), gameState, physicalCard, null,
+                () -> ModifiersQuerying.super.getCardState(gameState, physicalCard, includeExcludedFromBattle, includeUndercover, includeCaptives,
+                        includeConcealed, includeWeaponsForStealing, includeMissing, includeBinaryOff, includeSuspended));
+    }
+
+    /**
+     * Checks the modifier's condition (null: no condition), reused while a query scope is open (see ModifierQueryCache): the
+     * condition does not depend on the card being queried.
+     */
+    private boolean isConditionFulfilled(GameState gameState, Modifier modifier, Condition condition) {
+        if (condition == null)
+            return true;
+        // Only called within a query scope (or while another thread holds it), so this never opens one.
+        return _queryCache.query(ModifierQueryCache.conditionKey(modifier), gameState, modifier, null, () -> condition.isFulfilled(gameState, query()));
+    }
+
+    @Override
+    public <T> T withQueryCache(Supplier<T> readOnlyComputation) {
+        return _queryCache.withScope(readOnlyComputation);
+    }
+
+    private List<Modifier> computeKeywordModifiersAffectingCard(GameState gameState, ModifierType modifierType, Keyword keyword, PhysicalCard card) {
+        _queryCache.noteSkipSetTests(modifierType);
         // Get always on modifiers
         List<? extends Modifier> alwaysOnModifiers = null;
         if (card != null && _alwaysOnModifiersMap.containsKey(card.getPermanentCardId())) {
@@ -3005,7 +3015,7 @@ public class ModifiersLogic implements ModifiersEnvironment, ModifiersState, Mod
                                     if (modifier.getSource(gameState) == null || modifier.isPersistent() || !(isGameTextCanceled(gameState, modifier.getSource(gameState)) || modifier.getSource(gameState).isSuspended())) {
                                         Condition condition = modifier.getCondition();
                                         Condition additionalCondition = modifier.getAdditionalCondition(gameState, query(), card);
-                                        if ((condition == null || condition.isFulfilled(gameState, query())) && (additionalCondition == null || additionalCondition.isFulfilled(gameState, query())))
+                                        if (isConditionFulfilled(gameState, modifier, condition) && (additionalCondition == null || additionalCondition.isFulfilled(gameState, query())))
                                             if (!foundCumulativeConflict(gameState, liveModifiers, modifier))
                                                 liveModifiers.add(modifier);
                                     }
@@ -3028,11 +3038,11 @@ public class ModifiersLogic implements ModifiersEnvironment, ModifiersState, Mod
                                     if (modifier.getSource(gameState) == null || modifier.isPersistent() || modifier.getLocationSidePlayer() == null || !isLocationGameTextCanceledForPlayer(gameState, modifier.getSource(gameState), modifier.getLocationSidePlayer())) {
                                         // For some modifier types, the affects card checking is faster than the condition checking, so for those check the affects card first
                                         boolean checkAffectsCardFirst = (modifierType == ModifierType.GIVE_ICON || modifierType == ModifierType.CANCEL_FORCE_ICON || modifierType == ModifierType.CANCEL_FORCE_ICONS || modifierType == ModifierType.CANCEL_ICONS || modifierType == ModifierType.EQUALIZE_FORCE_ICONS || modifierType == ModifierType.MAY_NOT_ADD_ICON
-                                            || modifierType == ModifierType.SUSPEND_CARD || modifierType == ModifierType.POWER);
+                                                || modifierType == ModifierType.SUSPEND_CARD || modifierType == ModifierType.POWER);
                                         if (!checkAffectsCardFirst || card == null || modifier.affectsCard(gameState, query(), card)) {
                                             Condition condition = modifier.getCondition();
                                             Condition additionalCondition = modifier.getAdditionalCondition(gameState, query(), card);
-                                            if ((condition == null || condition.isFulfilled(gameState, query())) && (additionalCondition == null || additionalCondition.isFulfilled(gameState, query())))
+                                            if (isConditionFulfilled(gameState, modifier, condition) && (additionalCondition == null || additionalCondition.isFulfilled(gameState, query())))
                                                 if (modifier.getSource(gameState) == null || modifier.isPersistent() || modifier.getSource(gameState).getZone() == Zone.STACKED || modifier.getSource(gameState).getZone() == Zone.OUT_OF_PLAY || modifier.isWhileInactiveInPlay() == !gameState.isCardInPlayActive(modifier.getSource(gameState), false, true, false, false, false, false, false, false))
                                                     if (modifier.getSource(gameState) == null || modifier.isPersistent() || !modifier.isFromPermanentPilot() || hasPermanentPilot(gameState, modifier.getSource(gameState)))
                                                         if (modifier.getSource(gameState) == null || modifier.isPersistent() || !modifier.isFromPermanentAstromech() || hasPermanentAstromech(gameState, modifier.getSource(gameState)))

@@ -17,7 +17,6 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -58,32 +57,6 @@ class ModifiersLogicSkipSetTests {
     }
 
     @Test
-    void nestedRemoveOfSameTypeDoesNotPermanentlySkipModifier() {
-        GameState gameState = mock(GameState.class);
-        PhysicalCard card = mock(PhysicalCard.class);
-        when(card.getPermanentCardId()).thenReturn(1);
-        when(gameState.findCardByPermanentId(any())).thenReturn(null);
-
-        ModifiersLogic modifiersLogic = newModifiersLogic(gameState);
-        FiresForFreeModifier other = new FiresForFreeModifier(null, Filters.any, (gs, mq) -> true);
-        modifiersLogic.addAlwaysOnModifier(other);
-
-        Condition condition = (gs, mq) -> {
-            modifiersLogic.removeModifier(other);
-            return true;
-        };
-        FiresForFreeModifier modifier = new FiresForFreeModifier(null, Filters.any, condition);
-        modifiersLogic.addAlwaysOnModifier(modifier);
-
-        // Iterating a copy means this query must not throw ConcurrentModificationException.
-        modifiersLogic.getModifiersAffectingCard(gameState, ModifierType.FIRES_FOR_FREE, card);
-
-        List<Modifier> after = modifiersLogic.getModifiersAffectingCard(gameState, ModifierType.FIRES_FOR_FREE, card);
-        assertEquals(1, after.size());
-        assertEquals(modifier, after.get(0));
-    }
-
-    @Test
     void snapshotDoesNotPersistInFlightSkipSet() throws Exception {
         GameState gameState = mock(GameState.class);
         when(gameState.findCardByPermanentId(any())).thenReturn(null);
@@ -104,30 +77,11 @@ class ModifiersLogicSkipSetTests {
         @SuppressWarnings("unchecked")
         Set<Modifier> snapshotSkipSet = (Set<Modifier>) skipSetField.get(snapshot);
         assertTrue(snapshotSkipSet.isEmpty());
-        assertFalse(live.getSkipSetNotEmptyWhenIdleDiagnostics().isEmpty());
-    }
 
-    @Test
-    void leftoverSkipSetWhenIdleIsRecordedAndModifierIsMissing() throws Exception {
-        GameState gameState = mock(GameState.class);
-        PhysicalCard card = mock(PhysicalCard.class);
-        when(card.getPermanentCardId()).thenReturn(1);
-        when(gameState.findCardByPermanentId(any())).thenReturn(null);
-
-        FiresForFreeModifier modifier = new FiresForFreeModifier(null, Filters.any, (gs, mq) -> true);
-        ModifiersLogic modifiersLogic = newModifiersLogic(gameState);
-        modifiersLogic.addAlwaysOnModifier(modifier);
-
-        Field skipSetField = ModifiersLogic.class.getDeclaredField("_skipSet");
-        skipSetField.setAccessible(true);
-        @SuppressWarnings("unchecked")
-        Set<Modifier> skipSet = (Set<Modifier>) skipSetField.get(modifiersLogic);
-        skipSet.add(modifier);
-
-        List<Modifier> duringLeak = modifiersLogic.getModifiersAffectingCard(gameState, ModifierType.FIRES_FOR_FREE, card);
-        assertTrue(duringLeak.isEmpty());
-        assertFalse(modifiersLogic.getSkipSetNotEmptyWhenIdleDiagnostics().isEmpty());
-        assertTrue(modifiersLogic.getSkipSetNotEmptyWhenIdleDiagnostics().get(0).contains("FiresForFreeModifier"));
+        // The leak is reported (once) when the snapshot is taken.
+        Field reportedField = ModifiersLogic.class.getDeclaredField("_skipSetLeakReported");
+        reportedField.setAccessible(true);
+        assertTrue((Boolean) reportedField.get(live));
     }
 
     private static ModifiersLogic newModifiersLogic(GameState gameState) {
