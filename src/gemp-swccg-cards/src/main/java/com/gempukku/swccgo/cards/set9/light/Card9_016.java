@@ -31,7 +31,7 @@ public class Card9_016 extends AbstractRebel {
     public Card9_016() {
         super(Side.LIGHT, 2, 2, 2, 2, 4, "Green Leader", Uniqueness.UNIQUE, ExpansionSet.DEATH_STAR_II, Rarity.R);
         setLore("Leader. Assigned to fly fighter screen for General Calrissian at Endor.");
-        setGameText("Adds 2 to power of anything he pilots. When piloting Green Squadron 1, draws on battle destiny if not able to otherwise. Adds 3 to total weapon destiny of any starfighter he pilots firing at a starfighter with lower maneuver.");
+        setGameText("Adds 2 to power of anything he pilots. When piloting Green Squadron 1, draws one battle destiny if not able to otherwise. Adds 3 to total weapon destiny of any starfighter he pilots firing at a starfighter with lower maneuver.");
         addPersona(Persona.GREEN_LEADER);
         addIcons(Icon.DEATH_STAR_II, Icon.PILOT, Icon.WARRIOR);
         addKeywords(Keyword.LEADER, Keyword.GREEN_SQUADRON);

@@ -43,10 +43,10 @@ public class Card219_048 extends AbstractObjective {
     public Card219_048() {
         super(Side.LIGHT, 0, "Zero Hour", ExpansionSet.SET_19, Rarity.V);
         setFrontOfDoubleSidedCard(true);
-        setGameText("Deploy Lothal system and a Lothal site." +
+        setGameText("Deploy Lothal system and a Lothal site. " +
                 "For remainder of game, Menace Fades and Projection Of A Skywalker are canceled. " +
                 "Harc, Jedi (except Ahsoka and Kanan), and your [Episode I] (and [Episode VII]) cards with ability are deploy +2. " +
-                "Chopper, Ezra, Hera, Kanan, Sabine, and Zeb gain Phoenix Squadron. Once per turn, may [download] a Lothal site." +
+                "Chopper, Ezra, Hera, Kanan, Sabine, and Zeb gain Phoenix Squadron. Once per turn, may [download] a Lothal site. " +
                 "Flip this card if Rebels control three Lothal locations (or you occupy three Lothal locations with Phoenix Squadron characters) and opponent controls no Lothal locations.");
         addIcons(Icon.VIRTUAL_SET_19);
     }

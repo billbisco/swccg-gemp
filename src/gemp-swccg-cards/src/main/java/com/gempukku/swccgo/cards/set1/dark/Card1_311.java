@@ -31,7 +31,7 @@ import java.util.List;
 public class Card1_311 extends AbstractCharacterWeapon {
     public Card1_311() {
         super(Side.DARK, 2, "Assault Rifle", Uniqueness.UNRESTRICTED, ExpansionSet.PREMIERE, Rarity.R2);
-        setLore("BlasTech model DLT-19 'heavy blaster rifle.' Enhanced with extra power packagedProduct and greater range.");
+        setLore("BlasTech model DLT-19 'heavy blaster rifle.' Enhanced with extra power packs and greater range.");
         setGameText("Use 3 Force to deploy on your warrior. May target a character, creature or vehicle at same or adjacent site using 2 Force. Draw destiny. Target hit if destiny +1 > defense value.");
         addKeywords(Keyword.BLASTER_RIFLE);
     }

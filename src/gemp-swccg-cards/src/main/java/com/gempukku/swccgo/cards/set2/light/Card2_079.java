@@ -34,7 +34,7 @@ import java.util.List;
 public class Card2_079 extends AbstractCharacterWeapon {
     public Card2_079() {
         super(Side.LIGHT, 5, "Luke's Hunting Rifle", Uniqueness.UNIQUE, ExpansionSet.A_NEW_HOPE, Rarity.U1);
-        setLore("Czerka 6-2Aug2. Extended barrel provides long-range targeting without expensive laser sight. Sturdy construction, but no match for a Tusken Raider's gaderffi stick.");
+        setLore("Czerka 6-2Aug2. Extended barrel provides long-range targeting without expensive laser sight. Sturdy construction, but no match for a Tusken Raider's gaderffii stick.");
         setGameText("Use 1 Force to deploy on Luke or Owen Lars, 3 on your non-droid character. May target a character or creature using 1 Force. Draw destiny. Subtract 1 if targeting a character. Add 2 if targeting a creature. Target hit if total destiny > defense value.");
         addIcons(Icon.A_NEW_HOPE);
         addKeywords(Keyword.RIFLE);

@@ -34,7 +34,7 @@ public class Card211_040 extends AbstractSite {
     public Card211_040() {
         super(Side.LIGHT, Title.Antechamber, Title.Takodana, Uniqueness.UNIQUE, ExpansionSet.SET_11, Rarity.V);
         setLocationLightSideGameText("Once per game, may [download] an [Episode VII] alien here.");
-        setLocationDarkSideGameText("For drain -1 here.  While you control, Dobra Doompa is suspended.");
+        setLocationDarkSideGameText("Force drain -1 here.  While you control, Dobra Doompa is suspended.");
         addKeyword(Keyword.MAZS_CASTLE_LOCATION);
         addIcon(Icon.LIGHT_FORCE, 2);
         addIcon(Icon.DARK_FORCE, 1);

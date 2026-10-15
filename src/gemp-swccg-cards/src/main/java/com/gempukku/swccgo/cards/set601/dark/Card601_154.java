@@ -39,7 +39,7 @@ public class Card601_154 extends AbstractCharacterWeapon {
     public Card601_154() {
         super(Side.DARK, 2, "Dark Jedi Lightsaber", Uniqueness.UNRESTRICTED, ExpansionSet.LEGACY, Rarity.V);
         setVirtualSuffix(true);
-        setLore("Multifaceted jewels focus light into a deadly blade. Projects a meterlong beam of pure energy. A lightsaber is constructed personally by a Jedi as a part of training.");
+        setLore("Multifaceted jewels focus light into a deadly blade. Projects a meter-long beam of pure energy. A lightsaber is constructed personally by a Jedi as a part of training.");
         setGameText("Deploy on Aurra Sing or Sidious. May add 1 to Force drain at an [Episode I] site where present. May target a character or creature for free. Draw two destiny. Add number of Jedi present. Target hit, and its forfeit = 0, if total destiny > defense value.");
         addKeywords(Keyword.LIGHTSABER);
         addIcons(Icon.LEGACY_BLOCK_5);

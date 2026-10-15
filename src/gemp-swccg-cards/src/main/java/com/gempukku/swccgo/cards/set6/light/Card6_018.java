@@ -27,7 +27,7 @@ import java.util.List;
 public class Card6_018 extends AbstractAlien {
     public Card6_018() {
         super(Side.LIGHT, 2, 2, 1, 2, 3, "H'nemthe", Uniqueness.UNRESTRICTED, ExpansionSet.JABBAS_PALACE, Rarity.C);
-        setLore("Starfaring explorers. H'nemthe have a reputation for being sly and unforgiving. Many abandoned their homeworld after the Empire invaded. The females ritually kill their males.");
+        setLore("Starfaring explorers. H'nemthe have a reputation for being sly and unforgiving. Many abandoned their homeworld after the Empire invaded. The females ritually kill their mates.");
         setGameText("Adds 2 to power of anything she pilots. Adds 2 to deploy cost of each opponent's male Imperial when that Imperial is deploying to same or adjacent site.");
         addIcons(Icon.JABBAS_PALACE, Icon.PILOT);
         addKeywords(Keyword.FEMALE);

@@ -41,7 +41,7 @@ public class Card219_048_BACK extends AbstractObjective {
         setGameText("While this side up, if you Force drained at a battleground this turn, your other Force drains at battlegrounds are +1. " +
                 "Once per turn during battle, may add or subtract X from a just drawn battle destiny (or opponent's weapon destiny), " +
                 "where X = number of battlegrounds you occupy with Phoenix Squadron characters. " +
-                "At Lothal system, the number of battle destiny draws may not be limited for either player." +
+                "At Lothal system, the number of battle destiny draws may not be limited for either player. " +
                 "Flip this card if opponent controls more Lothal locations than you.");
         addIcons(Icon.VIRTUAL_SET_19);
     }

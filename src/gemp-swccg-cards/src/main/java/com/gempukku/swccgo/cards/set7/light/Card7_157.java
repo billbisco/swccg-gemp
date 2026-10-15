@@ -34,7 +34,7 @@ import java.util.List;
 public class Card7_157 extends AbstractCharacterWeapon {
     public Card7_157() {
         super(Side.LIGHT, 4, "Disruptor Pistol", Uniqueness.UNRESTRICTED, ExpansionSet.SPECIAL_EDITION, Rarity.F);
-        setLore("Illegal weapon easily purchased by Rebel suppliers on the black market. Rechargeable energy packagedProduct make it a cost-effective weapon.");
+        setLore("Illegal weapon easily purchased by Rebel suppliers on the black market. Rechargeable energy packs make it a cost-effective weapon.");
         setGameText("Use 2 Force to deploy on your warrior (1 on your non-unique warrior). May target a character or creature using 2 Force (for free if on your non-unique warrior). Draw Destiny. Target lost if destiny > defense value.");
         addIcons(Icon.SPECIAL_EDITION);
     }

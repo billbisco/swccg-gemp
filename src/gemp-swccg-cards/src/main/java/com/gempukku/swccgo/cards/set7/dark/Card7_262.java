@@ -37,7 +37,7 @@ import java.util.List;
 public class Card7_262 extends AbstractUsedInterrupt {
     public Card7_262() {
         super(Side.DARK, 5, Title.Short_Range_Fighters, Uniqueness.UNIQUE, ExpansionSet.SPECIAL_EDITION, Rarity.R);
-        setLore("Imperial batlestations keep squadrons of TIE/Ins on constant patrol.");
+        setLore("Imperial battlestations keep squadrons of TIE/Ins on constant patrol.");
         setGameText("Once per game, target one non-unique starfighter on table. Draw destiny. If destiny < X, retrieve X Force, where X = number of copies of that card you have on table. (Immune to Sense.) OR Take one non-unique starfighter into hand from Reserve Deck; reshuffle.");
         addIcons(Icon.SPECIAL_EDITION);
     }

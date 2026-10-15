@@ -44,7 +44,7 @@ public class Card6_135 extends AbstractAlien {
     public Card6_135() {
         super(Side.DARK, 2, 3, 2, 2, 3, Title.Wittin, Uniqueness.UNIQUE, ExpansionSet.JABBAS_PALACE, Rarity.R);
         setLore("Male Jawa. Leader of a large tribe of Jawas. Plotting with Jabba to take control of a neighboring tribe's territory.");
-        setGameText("Deploys only on Tatooine. Your Jawa Pack is not unique(•), is doubled, deploys free (or for 6 Force from each player) and cummulatively affects your Jawas' forfeit. While at Audience Chamber or Jawa Camp, all your other Jawas are power +2.");
+        setGameText("Deploys only on Tatooine. Your Jawa Pack is not unique(•), is doubled, deploys free (or for 6 Force from each player) and cumulatively affects your Jawas' forfeit. While at Audience Chamber or Jawa Camp, all your other Jawas are power +2.");
         addIcons(Icon.JABBAS_PALACE, Icon.WARRIOR);
         addKeywords(Keyword.LEADER, Keyword.MALE);
         setSpecies(Species.JAWA);

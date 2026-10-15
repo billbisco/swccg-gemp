@@ -34,7 +34,7 @@ import java.util.List;
 public class Card12_096 extends AbstractCharacterWeapon {
     public Card12_096() {
         super(Side.LIGHT, 4, "Panaka's Blaster", Uniqueness.UNIQUE, ExpansionSet.CORUSCANT, Rarity.R);
-        setLore("Naboo blaster personally modified by Captain Panaka. Boosted by extra power packagedProduct that allow it to maintain sustained fire in tense situations.");
+        setLore("Naboo blaster personally modified by Captain Panaka. Boosted by extra power packs that allow it to maintain sustained fire in tense situations.");
         setGameText("Deploy on Panaka. May target a character, creature, or vehicle for free. Draw destiny. Target hit if destiny +2 > defense value. When this blaster hits a character or vehicle in battle, your total power here is +3 for remainder of battle.");
         addIcons(Icon.CORUSCANT, Icon.EPISODE_I);
         addKeywords(Keyword.BLASTER);

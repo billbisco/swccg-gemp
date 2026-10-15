@@ -44,7 +44,7 @@ public class Card6_022 extends AbstractAlien {
     public Card6_022() {
         super(Side.LIGHT, 2, 3, 2, 2, 3, Title.Kalit, Uniqueness.UNIQUE, ExpansionSet.JABBAS_PALACE, Rarity.R);
         setLore("Jawa leader. Seeking to peacefully settle a long-standing disagreement with his rival, Wittin. Wants Jabba to mediate their talks.");
-        setGameText("Deploys only on Tatooine. Your Jawa Siesta is not unique(•), is doubled, deploys free (or for 6 Force from each player) and cummulatively affects your Jawas' forfeit. While at Audience Chamber or Jawa Camp, all your other Jawas are power +2.");
+        setGameText("Deploys only on Tatooine. Your Jawa Siesta is not unique(•), is doubled, deploys free (or for 6 Force from each player) and cumulatively affects your Jawas' forfeit. While at Audience Chamber or Jawa Camp, all your other Jawas are power +2.");
         addIcons(Icon.JABBAS_PALACE);
         addKeywords(Keyword.LEADER);
         setSpecies(Species.JAWA);

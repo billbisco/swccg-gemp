@@ -37,7 +37,7 @@ public class Card201_021 extends AbstractCharacterWeapon {
     public Card201_021() {
         super(Side.LIGHT, 1, "Mace Windu's Lightsaber", Uniqueness.UNIQUE, ExpansionSet.SET_1, Rarity.V);
         setLore("Elegant sword of pure energy. 'This is the weapon of a Jedi Knight. Not as clumsy or as random as a blaster. A lightsaber can be dangerous to an unskilled user.'");
-        setGameText("Deploy on Mace. May add 1 to Force drain where present. Mace may add 1 to his duel total. May target a character or creature for free. Draw two destiny. Target hit, and it forfeit = 0, if total destiny > defense value.");
+        setGameText("Deploy on Mace. May add 1 to Force drain where present. Mace may add 1 to his duel total. May target a character or creature for free. Draw two destiny. Target hit, and its forfeit = 0, if total destiny > defense value.");
         addIcons(Icon.EPISODE_I, Icon.VIRTUAL_SET_1);
         addKeywords(Keyword.LIGHTSABER);
         setMatchingCharacterFilter(Filters.Mace);

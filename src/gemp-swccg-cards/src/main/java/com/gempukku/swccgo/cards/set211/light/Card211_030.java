@@ -34,7 +34,7 @@ public class Card211_030 extends AbstractLostOrStartingInterrupt {
     public Card211_030() {
         super(Side.LIGHT, 4, "Rendezvous Point On Tatooine", Uniqueness.UNRESTRICTED, ExpansionSet.SET_11, Rarity.V);
         setLore("'When we find Jabba the Hutt and that bounty hunter, we'll contact you.'");
-        setGameText("LOST: [download] a Tatooine battleground." +
+        setGameText("LOST: [download] a Tatooine battleground. " +
                 "STARTING: If your Jabba's Palace site on table, deploy Seeking An Audience and up to 2 Effects that deploy on table and are always immune to Alter. Place Interrupt in hand.");
         addIcons(Icon.CLOUD_CITY, Icon.VIRTUAL_SET_11);
         setVirtualSuffix(true);
