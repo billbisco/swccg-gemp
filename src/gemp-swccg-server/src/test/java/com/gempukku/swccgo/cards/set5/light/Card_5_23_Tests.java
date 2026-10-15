@@ -12,7 +12,6 @@ import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.common.Zone;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
-import com.gempukku.swccgo.logic.GameUtils;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -618,7 +617,8 @@ public class Card_5_23_Tests {
 		assertEquals("5_23", frozenAssets.getBlueprintId(scn.gameState(), false));
 		// Frozen Force under it stays face down.
 		var topFrozenForce = scn.gameState().getTopFrozenForce(scn.DS);
-		assertTrue(GameUtils.isGenericCardBack(topFrozenForce.getBlueprintId(scn.gameState(), false)));
+		String frozenForceBlueprint = topFrozenForce.getBlueprintId(scn.gameState(), false);
+		assertTrue("-1_1".equals(frozenForceBlueprint) || "-1_2".equals(frozenForceBlueprint));
 	}
 
 	@Test
