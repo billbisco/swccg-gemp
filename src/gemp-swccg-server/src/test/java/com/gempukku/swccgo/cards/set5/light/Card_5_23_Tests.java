@@ -12,6 +12,7 @@ import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.common.Zone;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.logic.GameUtils;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -41,6 +42,7 @@ public class Card_5_23_Tests {
 				new HashMap<>() {{
 					put("boba", "5_91");
 					put("vader", "1_168");
+					put("alter", "1_234");
 				}},
 				20,
 				20,
@@ -345,6 +347,7 @@ public class Card_5_23_Tests {
 				new HashMap<>() {{
 					put("boba", "5_91");
 					put("vader", "1_168");
+					put("alter", "1_234");
 				}},
 				20,
 				20,
@@ -447,6 +450,7 @@ public class Card_5_23_Tests {
 				new HashMap<>() {{
 					put("slipSliding", "5_154");
 					put("vader", "1_168");
+					put("alter", "1_234");
 					put("boba", "5_91");
 				}},
 				20,
@@ -504,6 +508,7 @@ public class Card_5_23_Tests {
 				new HashMap<>() {{
 					put("slipSliding", "5_154");
 					put("vader", "1_168");
+					put("alter", "1_234");
 					put("boba", "5_91");
 				}},
 				20,
@@ -592,5 +597,92 @@ public class Card_5_23_Tests {
 		assertInZone(Zone.LOST_PILE, frozenAssets);
 		assertEquals(frozenAssets, scn.GetTopOfLSLostPile());
 		assertTrue(scn.GetLSLostPile().contains(leia));
+	}
+
+	@Test
+	public void FrozenAssetsOnFrozenPileIsFaceUp() {
+		var scn = GetScenario();
+		var frozenAssets = scn.GetLSCard("frozenAssets");
+		var vader = scn.GetDSCard("vader");
+		var boba = scn.GetDSCard("boba");
+
+		scn.StartGame();
+		scn.MoveCardsToLSHand(frozenAssets);
+		scn.MoveCardsToTopOfDSForcePile(vader, boba);
+
+		scn.SkipToLSTurn(Phase.DEPLOY);
+		scn.LSPlayCard(frozenAssets, "Force Pile");
+		scn.PassAllResponses();
+
+		assertEquals(frozenAssets, scn.gameState().getTopOfFrozenPile(scn.DS));
+		assertEquals("5_23", frozenAssets.getBlueprintId(scn.gameState(), false));
+		// Frozen Force under it stays face down.
+		var topFrozenForce = scn.gameState().getTopFrozenForce(scn.DS);
+		assertTrue(GameUtils.isGenericCardBack(topFrozenForce.getBlueprintId(scn.gameState(), false)));
+	}
+
+	@Test
+	public void FrozenAssetsOnFrozenPileCanBeAltered() {
+		var scn = GetScenario();
+		var frozenAssets = scn.GetLSCard("frozenAssets");
+		var alter = scn.GetDSCard("alter");
+		var vader = scn.GetDSCard("vader");
+		var site = scn.GetDSStartingLocation();
+
+		scn.StartGame();
+		scn.MoveCardsToLSHand(frozenAssets);
+		scn.MoveCardsToDSHand(alter);
+		scn.MoveCardsToLocation(site, vader);
+
+		scn.SkipToLSTurn(Phase.DEPLOY);
+		int frozenExpected = scn.GetDSForcePileCount();
+		assertTrue(frozenExpected > 0);
+		scn.LSPlayCard(frozenAssets, "Force Pile");
+		scn.PassAllResponses();
+		assertEquals(frozenAssets, scn.gameState().getTopOfFrozenPile(scn.DS));
+
+		scn.SkipToDSTurn(Phase.DEPLOY);
+		int usableBefore = scn.GetDSForcePileCount();
+		scn.PrepareDSDestiny(2);
+		assertTrue(scn.DSCardPlayAvailable(alter));
+		scn.DSPlayCard(alter);
+		scn.DSChooseCard(frozenAssets);
+		scn.DSChooseCard(vader);
+		scn.PassAllResponses();
+
+		assertInZone(Zone.LOST_PILE, frozenAssets);
+		assertEquals(0, scn.gameState().getFrozenForceSize(scn.DS));
+		assertFalse(scn.gameState().hasFrozenAssetsMarker(scn.DS));
+		assertEquals(usableBefore + frozenExpected, scn.GetDSForcePileCount());
+	}
+
+	@Test
+	public void FrozenAssetsOnFrozenPileStaysWhenAlterDestinyFails() {
+		var scn = GetScenario();
+		var frozenAssets = scn.GetLSCard("frozenAssets");
+		var alter = scn.GetDSCard("alter");
+		var vader = scn.GetDSCard("vader");
+		var site = scn.GetDSStartingLocation();
+
+		scn.StartGame();
+		scn.MoveCardsToLSHand(frozenAssets);
+		scn.MoveCardsToDSHand(alter);
+		scn.MoveCardsToLocation(site, vader);
+
+		scn.SkipToLSTurn(Phase.DEPLOY);
+		int frozenExpected = scn.GetDSForcePileCount();
+		scn.LSPlayCard(frozenAssets, "Force Pile");
+		scn.PassAllResponses();
+
+		scn.SkipToDSTurn(Phase.DEPLOY);
+		scn.PrepareDSDestiny(7);
+		assertTrue(scn.DSCardPlayAvailable(alter));
+		scn.DSPlayCard(alter);
+		scn.DSChooseCard(frozenAssets);
+		scn.DSChooseCard(vader);
+		scn.PassAllResponses();
+
+		assertEquals(frozenAssets, scn.gameState().getTopOfFrozenPile(scn.DS));
+		assertEquals(frozenExpected, scn.gameState().getFrozenForceSize(scn.DS));
 	}
 }
