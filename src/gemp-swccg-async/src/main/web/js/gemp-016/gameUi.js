@@ -780,9 +780,13 @@ var GempSwccgGameUI = Class.extend({
             var width = topDiv.width();
             var height = topDiv.height();
             var zIndex = parseInt(topDiv.css("zIndex"), 10) || 0;
-            topDiv.css({zIndex: zIndex + 1});
+            if (zIndex < 1) {
+                zIndex = 1;
+                topDiv.css({zIndex: zIndex});
+            }
             $(this).show();
-            layoutCardElem($(this), pos.left - Math.floor(width * 0.45), pos.top, width, height, zIndex);
+            // Just under the top Force Pile card, so that card stays in front.
+            layoutCardElem($(this), pos.left - Math.floor(width * 0.45), pos.top, width, height, zIndex - 1);
         });
     },
 
