@@ -633,6 +633,15 @@ public abstract class AbstractSwccgCardBlueprint implements SwccgCardBlueprint {
     }
 
     /**
+     * Gets the printed influence value.
+     * @return the influence
+     */
+    @Override
+    public float getInfluence() {
+        return 0;
+    }
+
+    /**
      * Determines if this has a landspeed attribute.
      * @return true if has attribute, otherwise false
      */
