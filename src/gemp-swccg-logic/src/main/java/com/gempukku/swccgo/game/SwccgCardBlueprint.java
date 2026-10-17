@@ -366,6 +366,14 @@ public interface SwccgCardBlueprint {
     float getPolitics();
 
     /**
+     * Gets the printed influence value. Characters default to 0 when none is printed.
+     * @return the influence value
+     */
+    default float getInfluence() {
+        return 0;
+    }
+
+    /**
      * Determines if this has a landspeed attribute.
      * @return true if has attribute, otherwise false
      */

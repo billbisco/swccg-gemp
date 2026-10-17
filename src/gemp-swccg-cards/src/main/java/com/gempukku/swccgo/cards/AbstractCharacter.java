@@ -32,6 +32,7 @@ public abstract class AbstractCharacter extends AbstractDeployable {
     private Float _power;
     private float _ability;
     private float _politics;
+    private float _influence;
     private float _landspeed;
     private Float _forfeit;
     private Float _armor;
@@ -192,6 +193,23 @@ public abstract class AbstractCharacter extends AbstractDeployable {
      */
     protected final void setPolitics(float politics) {
         _politics = politics;
+    }
+
+    /**
+     * Gets the printed influence value.
+     * @return the influence
+     */
+    @Override
+    public final float getInfluence() {
+        return _influence;
+    }
+
+    /**
+     * Sets the printed influence value.
+     * @param influence the influence value
+     */
+    protected final void setInfluence(float influence) {
+        _influence = influence;
     }
 
     /**
