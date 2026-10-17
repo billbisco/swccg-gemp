@@ -15,6 +15,7 @@ import com.gempukku.swccgo.game.SwccgBuiltInCardBlueprint;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.logic.GameUtils;
+import com.gempukku.swccgo.logic.Heroic;
 import com.gempukku.swccgo.logic.conditions.Condition;
 import com.gempukku.swccgo.logic.conditions.FalseCondition;
 import com.gempukku.swccgo.logic.conditions.TrueCondition;
@@ -342,6 +343,7 @@ public class FireWeaponActionBuilder {
                 for (TargetingReason targetingReason : targetingReasons) {
                     newTargetFilterable = Filters.and(newTargetFilterable, Filters.canBeTargetedBy(_weaponOrCardWithPermanentWeapon, _permanentWeapon, targetingReason));
                 }
+                newTargetFilterable = Heroic.restrictWeaponTargets(_game, _weaponOrCardWithPermanentWeapon, newTargetFilterable);
 
                 // Check if Force can be used to target
                 if (_repeatedFiring) {
@@ -434,6 +436,7 @@ public class FireWeaponActionBuilder {
                         for (TargetingReason targetingReason2 : targetingReasons) {
                             filterToAddToMap = Filters.and(filterToAddToMap, Filters.canBeTargetedBy(_weaponOrCardWithPermanentWeapon, _permanentWeapon, targetingReason2));
                         }
+                        filterToAddToMap = Heroic.restrictWeaponTargets(_game, _weaponOrCardWithPermanentWeapon, filterToAddToMap);
 
                         Filterable targetFilterable = _targetFiltersMap.get(targetingReason);
                         if (targetFilterable == null) {
