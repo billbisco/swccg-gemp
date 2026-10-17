@@ -41,11 +41,11 @@ public class Card222_014 extends AbstractObjective {
     public Card222_014() {
         super(Side.DARK, 0, Title.The_Shield_Will_Be_Down_In_Moments, ExpansionSet.SET_22, Rarity.V);
         setFrontOfDoubleSidedCard(true);
-        setGameText("Deploy 5th Marker, [Set 17] 4th Marker, 1st Marker, and [Set 9] Prepare For A Surface Attack." +
+        setGameText("Deploy 5th Marker, [Set 17] 4th Marker, 1st Marker, and [Set 9] Prepare For A Surface Attack. " +
                 "For remainder of game, you may not deploy Rebel Base Occupation, Sunsdown, or Dark Jedi (except Vader). " +
-                "AT-AT cannons may not fire during your control phase. Echo Base Sensors is canceled." +
+                "AT-AT cannons may not fire during your control phase. Echo Base Sensors is canceled. " +
                 "While this side up, once per turn, may [download] a Hoth location. " +
-                "Opponent loses no more than 1 Force to You May Start Your Landing." +
+                "Opponent loses no more than 1 Force to You May Start Your Landing. " +
                 "Flip this card if Main Power Generators 'blown away.'");
         addIcons(Icon.HOTH, Icon.VIRTUAL_SET_22);
     }

@@ -40,7 +40,7 @@ public class Card5_153 extends AbstractUsedInterrupt {
     public Card5_153() {
         super(Side.DARK, 5, Title.Shocking_Revelation, Uniqueness.UNIQUE, ExpansionSet.CLOUD_CITY, Rarity.C);
         setLore("'Well, don't blame me. I'm an interpreter. I'm not supposed to know a power socket from a computer terminal.'");
-        setGameText("Target a location. Scomp links there cannot be used for remainder of turn. OR If opponent is about to scan or otherwise look through your hand (unless using Grimtassh), opponent continues but must lose 4 Force plus the card allowing the scan.");
+        setGameText("Target a location. Scomp links there cannot be used for remainder of turn. OR If opponent is about to scan or otherwise look through your hand (unless using Grimtaash), opponent continues but must lose 4 Force plus the card allowing the scan.");
         addIcons(Icon.CLOUD_CITY);
     }
 

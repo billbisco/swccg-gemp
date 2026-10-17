@@ -38,7 +38,7 @@ public class Card213_051 extends AbstractUsedOrLostInterrupt {
     public Card213_051() {
         super(Side.LIGHT, 4, "He's The Best Smuggler Around", Uniqueness.UNIQUE, ExpansionSet.SET_13, Rarity.V);
         setLore("");
-        setGameText("USED: Take Lando, L3-37, or Kessel Run, into hand from Reserve Deck; reshuffle. OR If you just placed a Coaxium card on Used pile randomly retrieve 1 Force." +
+        setGameText("USED: Take Lando, L3-37, or Kessel Run, into hand from Reserve Deck; reshuffle. OR If you just placed a Coaxium card on Used pile randomly retrieve 1 Force. " +
                 "LOST: Once per game, may place a card stacked on [Set D] A Useless Gesture in your Lost Pile.)");
         addIcons(Icon.VIRTUAL_SET_13);
     }

@@ -33,7 +33,7 @@ import java.util.List;
 public class Card1_221 extends AbstractNormalEffect {
     public Card1_221() {
         super(Side.DARK, 4, PlayCardZoneOption.ATTACHED, Title.Ket_Maliss, Uniqueness.UNRESTRICTED, ExpansionSet.PREMIERE, Rarity.C2);
-        setLore("Assassins are highly valued by Jabba the Hutt and other gangsters. Prince Xizor's 'shadow killer,' has unknown but undoubtably lethal business in Mos Eisley.");
+        setLore("Assassins are highly valued by Jabba the Hutt and other gangsters. Prince Xizor's 'shadow killer,' has unknown but undoubtedly lethal business in Mos Eisley.");
         setGameText("Deploy on any non-warrior character (except droids) to give that character [Warrior] skill. OR Deploy on any warrior. That character is power +1. (Immune to Alter.)");
         addKeywords(Keyword.DEPLOYS_ON_CHARACTERS);
         addImmuneToCardTitle(Title.Alter);

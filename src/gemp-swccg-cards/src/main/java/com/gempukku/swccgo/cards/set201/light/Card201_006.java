@@ -42,7 +42,7 @@ public class Card201_006 extends AbstractDroid {
         super(Side.LIGHT, 2, 2, 1, 4, "R2-D2 (Artoo-Detoo)", Uniqueness.UNIQUE, ExpansionSet.SET_1, Rarity.V);
         setAlternateDestiny(5);
         setVirtualSuffix(true);
-        setLore("Fiesty. Loyal. Heroic. Insecure. Rebel spy. Excels at trouble. Incorrigible counterpart of a mindless philosopher. Has picked up a slight flutter. A bit eccentric.");
+        setLore("Feisty. Loyal. Heroic. Insecure. Rebel spy. Excels at trouble. Incorrigible counterpart of a mindless philosopher. Has picked up a slight flutter. A bit eccentric.");
         setGameText("While aboard a starfighter, adds 2 to power, maneuver, and hyperspeed. " +
                 "While present with a Scomp link, adds one [Light Side] icon here and, during battles at same and related interior sites, once per turn may use 1 Force to subtract 1 from a just drawn destiny.");
         addPersona(Persona.R2D2);

@@ -30,7 +30,7 @@ import java.util.List;
 public class Card6_147 extends AbstractNormalEffect {
     public Card6_147() {
         super(Side.DARK, 4, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.Resistance, Uniqueness.UNIQUE, ExpansionSet.JABBAS_PALACE, Rarity.U);
-        setLore("Oola had to choose between giving in to Jabba's constant advances or resisting him and inciting his wraith.");
+        setLore("Oola had to choose between giving in to Jabba's constant advances or resisting him and inciting his wrath.");
         setGameText("Deploy on your side of table. While you occupy at least three battlegrounds or opponent occupies no battlegrounds, you lose no more than 2 Force from each Force drain or 'insert' card. (Immune to Alter.)");
         addIcons(Icon.JABBAS_PALACE);
         addImmuneToCardTitle(Title.Alter);

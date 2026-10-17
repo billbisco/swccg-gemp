@@ -901,7 +901,7 @@
       "LOCATION"
     ],
     "cardSubtype": "SITE",
-    "locationDarkSideGameText": "If you control, Force drain +1 here (+2 if a Gaderffi Stick is present).",
+    "locationDarkSideGameText": "If you control, Force drain +1 here (+2 if a Gaderffii Stick is present).",
     "deployCost": 0,
     "destiny": 0,
     "icons": [
@@ -9470,8 +9470,8 @@
     "cardTypes": [
       "ALIEN"
     ],
-    "lore": "Gangster and leader in control of Tatooine. The amound of credits Jabba earns from Podracing is said to be vast, but only Bib Fortuna knows the exact number.",
-    "gameText": "While at Podrace Arena, once during your control phase may 'wager'. Both players draw destiny and add 2 if they have won a Podrace. Loser (lowest total) lose 1 force. If you just won the wager, and Bib Fortuna is present, you may retrieve 1 force.",
+    "lore": "Gangster and leader in control of Tatooine. The amount of credits Jabba earns from Podracing is said to be vast, but only Bib Fortuna knows the exact number.",
+    "gameText": "While at Podrace Arena, once during your control phase may 'wager'. Both players draw destiny and add 2 if they have won a Podrace. Loser (lowest total) loses 1 force. If you just won the wager, and Bib Fortuna is present, you may retrieve 1 force.",
     "deployCost": 3,
     "destiny": 3,
     "power": 3,
@@ -14788,7 +14788,7 @@
       "EFFECT"
     ],
     "cardSubtype": "NORMAL",
-    "lore": "After surviving Tarkin's extortion, kidnapping, threats of execution and the assault of the Interceptor droid, Princess Leia was asleep when her rescuers came.",
+    "lore": "After surviving Tarkin's extortion, kidnapping, threats of execution and the assault of the Interrogator droid, Princess Leia was asleep when her rescuers came.",
     "gameText": "Deploy on a site under 'nighttime conditions.' One at a time, target each non-droid character here and draw destiny. If destiny > ability, character 'sleeps' (power, forfeit and ability = 0, 'game text' is canceled, and may not pilot, drive, or move). At the end of your next turn, lose effect and restore targets (if on table) to normal.",
     "destiny": 4,
     "icons": [
@@ -15020,7 +15020,7 @@
       "EFFECT"
     ],
     "cardSubtype": "NORMAL",
-    "lore": "Assassins are highly valued by Jabba the Hutt and other gangsters. Prince Xizor's 'shadow killer,' has unknown but undoubtably lethal business in Mos Eisley.",
+    "lore": "Assassins are highly valued by Jabba the Hutt and other gangsters. Prince Xizor's 'shadow killer,' has unknown but undoubtedly lethal business in Mos Eisley.",
     "gameText": "Deploy on any non-warrior character (except droids) to give that character [Warrior] skill. OR Deploy on any warrior. That character is power +1. (Immune to Alter.)",
     "destiny": 4,
     "icons": [
@@ -17563,7 +17563,7 @@
       "WEAPON"
     ],
     "cardSubtype": "CHARACTER",
-    "lore": "BlasTech model DLT-19 'heavy blaster rifle.' Enhanced with extra power packagedProduct and greater range.",
+    "lore": "BlasTech model DLT-19 'heavy blaster rifle.' Enhanced with extra power packs and greater range.",
     "gameText": "Use 3 Force to deploy on your warrior. May target a character, creature or vehicle at same or adjacent site using 2 Force. Draw destiny. Target hit if destiny +1 > defense value.",
     "destiny": 2,
     "icons": [
@@ -17723,7 +17723,7 @@
       "WEAPON"
     ],
     "cardSubtype": "CHARACTER",
-    "lore": "A BlasTech DH-17 blaster pistol. Uses power packagedProduct and high-energy blaster gases. Shoots bolts of explosive coherent light energy.",
+    "lore": "A BlasTech DH-17 blaster pistol. Uses power packs and high-energy blaster gases. Shoots bolts of explosive coherent light energy.",
     "gameText": "Use 1 Force to deploy on your warrior. May target a character, creature or vehicle using 1 Force. Draw destiny. Target hit if destiny > defense value.",
     "destiny": 3,
     "icons": [
@@ -18561,7 +18561,7 @@
     ],
     "cardSubtype": "LOST",
     "lore": "A fully-trained Sith warrior has more weapons at his disposal than just a lightsaber.",
-    "gameText": "Once per game, choose: During battle, use 2 Force to target your Dark Jedi and opponent's character or equal or lesser ability present. Both targets are excluded from battle. OR Exchange two cards from hand with any one card from Force Pile; reshuffle.",
+    "gameText": "Once per game, choose: During battle, use 2 Force to target your Dark Jedi and opponent's character of equal or lesser ability present. Both targets are excluded from battle. OR Exchange two cards from hand with any one card from Force Pile; reshuffle.",
     "destiny": 5,
     "icons": [
       {
@@ -20413,7 +20413,7 @@
       "IMPERIAL"
     ],
     "lore": "Leader",
-    "gameText": "[Pilot] 3. Once per game may [upload] a TIE Defender. While piloting, opponent may not cancel or substitute battle destiny draws here. While piloting an Imperial starfighter, it is maneuver +2 and he draws on battle destiny if unable to otherwise.",
+    "gameText": "[Pilot] 3. Once per game may [upload] a TIE Defender. While piloting, opponent may not cancel or substitute battle destiny draws here. While piloting an Imperial starfighter, it is maneuver +2 and he draws one battle destiny if unable to otherwise.",
     "deployCost": 3,
     "destiny": 1,
     "power": 3,
@@ -21217,7 +21217,7 @@
     ],
     "cardSubtype": "NORMAL",
     "lore": "Jabba has won the service of many of his guards and other henchbeings through games of chance.",
-    "gameText": "If you have deployed a [Jabba's Place] site, deploy on table. May [download] Nal Hutta. You may not deploy systems except Nal Hutta and Tatooine. Cancels The Camp. During battle, may lose 1 Force; your battle destiny modifiers affect your total battle destiny instead. Once per game, may retrieve a non-[Maintenance] alien or [Independent] starship into hand. [Immune to Alter.]",
+    "gameText": "If you have deployed a [Jabba's Palace] site, deploy on table. May [download] Nal Hutta. You may not deploy systems except Nal Hutta and Tatooine. Cancels The Camp. During battle, may lose 1 Force; your battle destiny modifiers affect your total battle destiny instead. Once per game, may retrieve a non-[Maintenance] alien or [Independent] starship into hand. [Immune to Alter.]",
     "destiny": 4,
     "icons": [
       {
@@ -22200,7 +22200,7 @@
       "REPUBLIC"
     ],
     "lore": "Trade Federation.",
-    "gameText": "Any stolen lightsaber may deploy on Grievous. Once per game, Grievous may steal a lightsaber from opponent's Lost Pile. Unless alone, may lose 1 Force to return Grevious (and your cards on him) to hand from a site you control. Immune to attrition < 4.",
+    "gameText": "Any stolen lightsaber may deploy on Grievous. Once per game, Grievous may steal a lightsaber from opponent's Lost Pile. Unless alone, may lose 1 Force to return Grievous (and your cards on him) to hand from a site you control. Immune to attrition < 4.",
     "deployCost": 5,
     "destiny": 1,
     "power": 6,
@@ -23705,7 +23705,7 @@
     "cardTypes": [
       "REBEL"
     ],
-    "gameText": "Luke Skywalker, The Emperor's Prize is a Dark Side card and does not count toward your deck limit. Reveal to opponent when deploying your Starting Effect. Deploys to Death Star II: Throne Room only at start of game as a frozen captive if Bring Him Before Me on table and Your Destiny is suspended; otherwise place out of play. For remainder of game, may not be placed in Reserve Deck. Luke Skywalker, The Emperor's Prize is a persona of Luke only while on table. While this side up, Bring Him Before Me may not flip. May not be escorted. Flip this card if Vader present and not escorting a captive. Place out of play if released or about to leave table.",
+    "gameText": "Immediately 'thaw' Luke (Luke is non-frozen, captured, and seized by Vader). While this side up, subtracts 3 from attempts to cross Luke over (even while a captive). Place out of play if released or about to leave table.",
     "deployCost": 0,
     "destiny": 7,
     "power": 6,
@@ -29526,7 +29526,7 @@
     ],
     "cardSubtype": "USED_OR_LOST",
     "lore": "",
-    "gameText": "USED: If opponent's character is about to be lost, place all 'Hatred' cards (if any) on that character in owner's Used Pile. LOST: Lose Vader or an Inquistor from hand to take up to two Inquisitors into hand from Reserve Deck; reshuffle.",
+    "gameText": "USED: If opponent's character is about to be lost, place all 'Hatred' cards (if any) on that character in owner's Used Pile. LOST: Lose Vader or an Inquisitor from hand to take up to two Inquisitors into hand from Reserve Deck; reshuffle.",
     "destiny": 5,
     "icons": [
       {
@@ -30123,7 +30123,7 @@
     "cardTypes": [
       "OBJECTIVE"
     ],
-    "gameText": "May immediately re-circulate and shuffle your Reserve Deck.While this side up, if your gangster leader in battle at same site as your non-unique blaster, may add one destiny to total power. If Maul alone, during your draw phase may peek at the cards in your Force PileFlip this card at end of turn. If you are about to flip this card and you occupy three battlegrounds, opponent loses 1 Force.",
+    "gameText": "May immediately re-circulate and shuffle your Reserve Deck. While this side up, if your gangster leader in battle at same site as your non-unique blaster, may add one destiny to total power. If Maul alone, during your draw phase may peek at the cards in your Force Pile. Flip this card at end of turn. If you are about to flip this card and you occupy three battlegrounds, opponent loses 1 Force.",
     "destiny": 7,
     "icons": [
       {
@@ -30482,7 +30482,7 @@
       "INTERRUPT"
     ],
     "cardSubtype": "USED_OR_LOST",
-    "gameText": "USED: Cancel Sense.LOST: Target an Effect, Political Effect or Utinni Effect, and one of your characters on table. Draw destiny. If destiny < character's ability, target Effect is canceled. OR If a battle was just initiated as a site where opponent has four or more characters, draw destiny. If destiny < numbers of opponent's character at that site, opponent chooses one to be lost (you lose no Force to Do, Or Do Not). (Immune to opponent's Objective).",
+    "gameText": "USED: Cancel Sense. LOST: Target an Effect, Political Effect or Utinni Effect, and one of your characters on table. Draw destiny. If destiny < character's ability, target Effect is canceled. OR If a battle was just initiated at a site where opponent has four or more characters, draw destiny. If destiny < number of opponent's characters at that site, opponent chooses one to be lost (you lose no Force to Do, Or Do Not). (Immune to opponent's Objective).",
     "destiny": 4,
     "icons": [
       {
@@ -31663,7 +31663,7 @@
       "WEAPON"
     ],
     "cardSubtype": "DEATH_STAR",
-    "lore": "The Death Star has more firepower than the combined might the entire Imperial fleet. Enormous generators power the devastating planetdestroying weapon.",
+    "lore": "The Death Star has more firepower than the combined might the entire Imperial fleet. Enormous generators power the devastating planet-destroying weapon.",
     "gameText": "Deploy on Death Star. May not target planet systems (except Alderaan). Commence Primary Ignition may not be canceled. May target a capital starship at Death Star system, or at a system it orbits, for free. Draw destiny. Target hit if destiny +2 > defense value.",
     "destiny": 3,
     "icons": [
@@ -36492,7 +36492,7 @@
     "cardTypes": [
       "OBJECTIVE"
     ],
-    "gameText": "Deploy 5th Marker, [Set 17] 4th Marker, 1st Marker, and [Set 9] Prepare For A Surface Attack.For remainder of game, you may not deploy Rebel Base Occupation, Sunsdown, or Dark Jedi (except Vader). AT-AT cannons may not fire during your control phase. Echo Base Sensors is canceled.While this side up, once per turn, may [download] a Hoth location. Opponent loses no more than 1 Force to You May Start Your Landing.Flip this card if Main Power Generators 'blown away.'",
+    "gameText": "Deploy 5th Marker, [Set 17] 4th Marker, 1st Marker, and [Set 9] Prepare For A Surface Attack. For remainder of game, you may not deploy Rebel Base Occupation, Sunsdown, or Dark Jedi (except Vader). AT-AT cannons may not fire during your control phase. Echo Base Sensors is canceled. While this side up, once per turn, may [download] a Hoth location. Opponent loses no more than 1 Force to You May Start Your Landing. Flip this card if Main Power Generators 'blown away.'",
     "destiny": 0,
     "icons": [
       {
@@ -36778,7 +36778,7 @@
     "cardTypes": [
       "OBJECTIVE"
     ],
-    "gameText": "Deploy 5th Marker, [Set 17] 4th Marker, 1st Marker, and [Set 9] Prepare For A Surface Attack.For remainder of game, you may not deploy Rebel Base Occupation, Sunsdown, or Dark Jedi (except Vader). AT-AT cannons may not fire during your control phase. Echo Base Sensors is canceled.While this side up, once per turn, may [download] a Hoth location. Opponent loses no more than 1 Force to You May Start Your Landing.Flip this card if Main Power Generators 'blown away.'",
+    "gameText": "Deploy 5th Marker, [Set 17] 4th Marker, 1st Marker, and [Set 9] Prepare For A Surface Attack. For remainder of game, you may not deploy Rebel Base Occupation, Sunsdown, or Dark Jedi (except Vader). AT-AT cannons may not fire during your control phase. Echo Base Sensors is canceled. While this side up, once per turn, may [download] a Hoth location. Opponent loses no more than 1 Force to You May Start Your Landing. Flip this card if Main Power Generators 'blown away.'",
     "destiny": 0,
     "icons": [
       {
@@ -40660,7 +40660,7 @@
       "ALIEN"
     ],
     "lore": "Leader of a Tusken Raider tribe. Unafraid of machines. Skilled hunter and marksman. Raids moisture farms for water. Roams the Jundland Wastes in search of unwary travelers.",
-    "gameText": "Deploys only on on Tatooine. When at same site as another Tusken Raider, may draw one battle destiny if not able to otherwise.",
+    "gameText": "Deploys only on Tatooine. When at same site as another Tusken Raider, may draw one battle destiny if not able to otherwise.",
     "deployCost": 3,
     "destiny": 3,
     "power": 1,
@@ -41118,7 +41118,7 @@
     ],
     "cardSubtype": "NORMAL",
     "lore": "'Luke, at that speed will you be able to pull out in time?'",
-    "gameText": "Deploy on Death Star:Trench. Opponent must make maneuver check for starfighters leaving the trench. For each starfighter, owner draws destiny. If destiny + maneuver < 5, starfighter is lost.",
+    "gameText": "Deploy on Death Star: Trench. Opponent must make maneuver check for starfighters leaving the trench. For each starfighter, owner draws destiny. If destiny + maneuver < 5, starfighter is lost.",
     "destiny": 4,
     "icons": [
       {
@@ -42314,7 +42314,7 @@
       "WEAPON"
     ],
     "cardSubtype": "CHARACTER",
-    "lore": "Built from scavenged parts, Jawa blaster are not required to adhere to any design standards. An etching on this stock warns 'datinni greb zroom.'",
+    "lore": "Built from scavenged parts, Jawa blasters are not required to adhere to any design standards. An etching on this stock warns 'datinni greb zroom.'",
     "gameText": "Deploy on your Jawa. May target a character or creature for free. Draw destiny. If destiny -1 > defense value, target hit. If destiny = 0, Jawa Blaster 'explodes' (weapon and character firing it are lost).",
     "destiny": 4,
     "icons": [
@@ -42378,7 +42378,7 @@
       "WEAPON"
     ],
     "cardSubtype": "DEATH_STAR",
-    "lore": "The Death Star has more firepower than the combined might the entire Imperial fleet. Enormous generators power the devastating planetdestroying weapon.",
+    "lore": "The Death Star has more firepower than the combined might the entire Imperial fleet. Enormous generators power the devastating planet-destroying weapon.",
     "gameText": "Deploy on Death Star system at parsec 0. May target a capital starship at Death Star system, or at a system it orbits, using 4 Force. Draw two destiny. Target hit if total destiny > defense value.",
     "destiny": 3,
     "icons": [
@@ -43855,7 +43855,7 @@
       "INTERRUPT"
     ],
     "cardSubtype": "USED",
-    "lore": "AT-AT weapons are rarely quick enough to score a direct hit on a fastmoving snowspeeder. They are more likely to wing a craft, causing a forced landing.",
+    "lore": "AT-AT weapons are rarely quick enough to score a direct hit on a fast-moving snowspeeder. They are more likely to wing a craft, causing a forced landing.",
     "gameText": "If you have a piloted AT-AT present at a site, target opponent's non-creature vehicle present at same or adjacent exterior site. Draw destiny. If AT-AT has a vehicle weapon, add 1 to destiny draw. Target 'crashes' if total destiny > 3.",
     "destiny": 4,
     "icons": [
@@ -47086,7 +47086,7 @@
     ],
     "cardSubtype": "NORMAL",
     "lore": "'Always with you what cannot be done.'",
-    "gameText": "Deploy on table. Sense and Alter are now Lost Interrupts. Also, when and player makes a destiny draw for Sense or Alter, and that destiny draw is successful, that player loses 2 Force. (Immune to Alter.)",
+    "gameText": "Deploy on table. Sense and Alter are now Lost Interrupts. Also, when any player makes a destiny draw for Sense or Alter, and that destiny draw is successful, that player loses 2 Force. (Immune to Alter.)",
     "destiny": 4,
     "icons": [
       {
@@ -50422,7 +50422,7 @@
     ],
     "cardSubtype": "USED_OR_LOST",
     "lore": "A shining example of Imperial honor and bravery.",
-    "gameText": "USED: If an opponent's weapon just 'hit' an Imperial present with a a captive being escorted, the captive is 'hit' instead. LOST: During a battle at site, you may forfeit any or all captives present.",
+    "gameText": "USED: If an opponent's weapon just 'hit' an Imperial present with a captive being escorted, the captive is 'hit' instead. LOST: During a battle at site, you may forfeit any or all captives present.",
     "destiny": 5,
     "icons": [
       {
@@ -50646,7 +50646,7 @@
     ],
     "cardSubtype": "USED",
     "lore": "'Well, don't blame me. I'm an interpreter. I'm not supposed to know a power socket from a computer terminal.'",
-    "gameText": "Target a location. Scomp links there cannot be used for remainder of turn. OR If opponent is about to scan or otherwise look through your hand (unless using Grimtassh), opponent continues but must lose 4 Force plus the card allowing the scan.",
+    "gameText": "Target a location. Scomp links there cannot be used for remainder of turn. OR If opponent is about to scan or otherwise look through your hand (unless using Grimtaash), opponent continues but must lose 4 Force plus the card allowing the scan.",
     "destiny": 5,
     "icons": [
       {
@@ -53350,7 +53350,7 @@
       "ALIEN"
     ],
     "lore": "Male Jawa. Leader of a large tribe of Jawas. Plotting with Jabba to take control of a neighboring tribe's territory.",
-    "gameText": "Deploys only on Tatooine. Your Jawa Pack is not unique(•), is doubled, deploys free (or for 6 Force from each player) and cummulatively affects your Jawas' forfeit. While at Audience Chamber or Jawa Camp, all your other Jawas are power +2.",
+    "gameText": "Deploys only on Tatooine. Your Jawa Pack is not unique(•), is doubled, deploys free (or for 6 Force from each player) and cumulatively affects your Jawas' forfeit. While at Audience Chamber or Jawa Camp, all your other Jawas are power +2.",
     "deployCost": 3,
     "destiny": 2,
     "power": 2,
@@ -53432,7 +53432,7 @@
     "cardTypes": [
       "ALIEN"
     ],
-    "lore": "Native to Endor, Yuzzum compete with Ewoks for food and resources. Possess thick, wooly coats. Hunt in packagedProduct. Have a musical language, making them excellent musicians.",
+    "lore": "Native to Endor, Yuzzum compete with Ewoks for food and resources. Possess thick, wooly coats. Hunt in packs. Have a musical language, making them excellent musicians.",
     "gameText": "Deploys only on Endor or to same site as a bounty hunter. Power +2 when present with an Ewok. During your control phase, if a bounty hunter or Rodian present, may search Reserve Deck, take one We Have A Prisoner into hand and reshuffle.",
     "deployCost": 2,
     "destiny": 3,
@@ -53745,7 +53745,7 @@
       "EFFECT"
     ],
     "cardSubtype": "NORMAL",
-    "lore": "Oola had to choose between giving in to Jabba's constant advances or resisting him and inciting his wraith.",
+    "lore": "Oola had to choose between giving in to Jabba's constant advances or resisting him and inciting his wrath.",
     "gameText": "Deploy on your side of table. While you occupy at least three battlegrounds or opponent occupies no battlegrounds, you lose no more than 2 Force from each Force drain or 'insert' card. (Immune to Alter.)",
     "destiny": 4,
     "icons": [
@@ -55768,7 +55768,7 @@
       "ALIEN"
     ],
     "lore": "Rodian Musician. Plays slitherhorn. Grew up in the streets of Mos Eisley. 'Frocked' jawas and stole ronto steaks as a child. Information broker. Was part of the Shawpee gang.",
-    "gameText": "Power +2 at Mos Eisley. Opponent's Jawas are power -1 here. Once during each of your control phases, may peak at top X cards of your Force Pile, reorder however you wish and replace, where X = number of other musicians at same site.",
+    "gameText": "Power +2 at Mos Eisley. Opponent's Jawas are power -1 here. Once during each of your control phases, may peek at top X cards of your Force Pile, reorder however you wish and replace, where X = number of other musicians at same site.",
     "deployCost": 2,
     "destiny": 3,
     "power": 2,
@@ -56671,7 +56671,7 @@
       "ALIEN"
     ],
     "lore": "Tusken Raider who tends to the banthas used by URoRRuR'R'R's tribe. Expert in wielding a gaffi stick. Attacked Luke Skywalker in the Jundland Wastes.",
-    "gameText": "Deploys only on Tatooine. Power +3 while armed with a Gaderffi Stick. Where present, each of your banthas is power and forfeit +2 unless a Weequay is at a related site. When 'riding' a bantha, adds one battle destiny.",
+    "gameText": "Deploys only on Tatooine. Power +3 while armed with a Gaderffii Stick. Where present, each of your banthas is power and forfeit +2 unless a Weequay is at a related site. When 'riding' a bantha, adds one battle destiny.",
     "deployCost": 2,
     "destiny": 3,
     "power": 1,
@@ -58628,7 +58628,7 @@
       "INTERRUPT"
     ],
     "cardSubtype": "USED",
-    "lore": "Imperial batlestations keep squadrons of TIE/Ins on constant patrol.",
+    "lore": "Imperial battlestations keep squadrons of TIE/Ins on constant patrol.",
     "gameText": "Once per game, target one non-unique starfighter on table. Draw destiny. If destiny < X, retrieve X Force, where X = number of copies of that card you have on table. (Immune to Sense.) OR Take one non-unique starfighter into hand from Reserve Deck; reshuffle.",
     "destiny": 5,
     "icons": [

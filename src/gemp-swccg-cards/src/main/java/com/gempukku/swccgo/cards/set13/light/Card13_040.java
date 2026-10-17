@@ -34,7 +34,7 @@ public class Card13_040 extends AbstractCharacterWeapon {
     public Card13_040() {
         super(Side.LIGHT, 5, "Qui-Gon's Lightsaber", Uniqueness.UNIQUE, ExpansionSet.REFLECTIONS_III, Rarity.PM);
         setLore("This lightsaber bore silent witness to the death of two great warriors in the same day. One a Jedi, one a Sith.");
-        setGameText("Deploy on Qui-Gon or [Episode I] Obi-Wan. Adds 1 to this character's lightsaber combat total. May target a character for free. Draw two destiny. Target hit, and it forfeit = 0, if total destiny > defense value (if hit target is a Dark Jedi, opponent also loses 1 Force).");
+        setGameText("Deploy on Qui-Gon or [Episode I] Obi-Wan. Adds 1 to this character's lightsaber combat total. May target a character for free. Draw two destiny. Target hit, and its forfeit = 0, if total destiny > defense value (if hit target is a Dark Jedi, opponent also loses 1 Force).");
         addPersona(Persona.QUIGON_JINNS_LIGHTSABER);
         addIcons(Icon.REFLECTIONS_III, Icon.EPISODE_I);
         addKeywords(Keyword.LIGHTSABER);

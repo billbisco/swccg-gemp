@@ -31,7 +31,7 @@ import java.util.List;
 public class Card1_152 extends AbstractCharacterWeapon {
     public Card1_152() {
         super(Side.LIGHT, 3, "Blaster", Uniqueness.UNRESTRICTED, ExpansionSet.PREMIERE, Rarity.C2);
-        setLore("A Merr-Sonn Model 44 blaster pistol. Uses power packagedProduct and high-energy blaster gases to shoot bolts of explosive coherent light energy.");
+        setLore("A Merr-Sonn Model 44 blaster pistol. Uses power packs and high-energy blaster gases to shoot bolts of explosive coherent light energy.");
         setGameText("Use 1 Force to deploy on your warrior. May target a character, creature or vehicle using 1 Force. Draw destiny. Target hit if destiny > defense value.");
         addKeywords(Keyword.BLASTER);
     }

@@ -39,7 +39,7 @@ import java.util.List;
 public class Card13_012 extends AbstractUsedInterrupt {
     public Card13_012() {
         super(Side.LIGHT, 6, "Darth Maul's Demise", Uniqueness.UNIQUE, ExpansionSet.REFLECTIONS_III, Rarity.PM);
-        setLore("Despite coming face to face with the first Sith to be seen in a millenia, the young Padawan was still a force to be reckoned with.");
+        setLore("Despite coming face to face with the first Sith to be seen in a millennia, the young Padawan was still a force to be reckoned with.");
         setGameText("If your [Episode I] Jedi just defeated Maul in lightsaber combat, draw destiny. Add 2 if Qui-Gon out of play. If total > 6, place Maul out of play and you may search your Lost Pile and take any one card into hand. (Immune to Sense.)");
         addIcons(Icon.EPISODE_I, Icon.REFLECTIONS_III);
     }

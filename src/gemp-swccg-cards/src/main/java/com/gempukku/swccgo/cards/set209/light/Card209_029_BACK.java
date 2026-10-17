@@ -51,7 +51,7 @@ public class Card209_029_BACK extends AbstractObjective {
         super(Side.LIGHT, 7, Title.Until_We_Win_Or_The_Chances_Are_Spent, ExpansionSet.SET_9, Rarity.V);
         setGameText("While this side up, your spies are defense value +2 (and power +1 if with Stardust) and are immune to Undercover. " +
                 "While Stardust on your spy, opponent may not cancel your Force drains at battlegrounds. " +
-                "Once per turn, may place a Rebel in your Lost Pile out of play to make a regular move with your Rebel spy during your control phase or cancel an attempt to target your non-Undercover Rebel spy with a weapon." +
+                "Once per turn, may place a Rebel in your Lost Pile out of play to make a regular move with your Rebel spy during your control phase or cancel an attempt to target your non-Undercover Rebel spy with a weapon. " +
                 "Flip this card if you do not occupy two Scarif locations (unless Rogue One at a Scarif site you occupy).");
         addIcons(Icon.PREMIUM, Icon.VIRTUAL_SET_9);
     }

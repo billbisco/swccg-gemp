@@ -38,7 +38,7 @@ public class Card601_222 extends AbstractRebel {
         super(Side.LIGHT, 2, 2, 2, 2, 4, Title.Hobbie, Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
         setVirtualSuffix(true);
         setLore("Defected from the Empire with Biggs Darklighter. Aided in mutiny aboard the transport Rand Ecliptic. Served in the Ecliptic Evaders. Luke's wingman at the Battle of Hoth.");
-        setGameText("[Pilot] 2. While piloting Rogue 4 (or any X-wing), draws on battle destiny if unable to otherwise. Permanent weapon is Rogue Blaster (may target a character or creature for free; draw destiny; target hit, and its forfeit = 0, if destiny + 1 > defense value).");
+        setGameText("[Pilot] 2. While piloting Rogue 4 (or any X-wing), draws one battle destiny if unable to otherwise. Permanent weapon is Rogue Blaster (may target a character or creature for free; draw destiny; target hit, and its forfeit = 0, if destiny + 1 > defense value).");
         addIcons(Icon.HOTH, Icon.PILOT, Icon.WARRIOR, Icon.PERMANENT_WEAPON, Icon.LEGACY_BLOCK_7);
         addKeywords(Keyword.ROGUE_SQUADRON);
         setMatchingVehicleFilter(Filters.Rogue_4);

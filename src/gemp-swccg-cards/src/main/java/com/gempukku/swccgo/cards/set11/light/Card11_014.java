@@ -34,7 +34,7 @@ public class Card11_014 extends AbstractDroid {
     public Card11_014() {
         super(Side.LIGHT, 3, 2, 1, 3, "Threepio With His Parts Showing", Uniqueness.UNIQUE, ExpansionSet.TATOOINE, Rarity.R);
         setAlternateImageSuffix(true);
-        setLore("Protocol droid designed by Anakin in order to help his mother. C-3P0 was not to be sold when Anakin left with Qui-Gon Jinn for Coruscant.");
+        setLore("Protocol droid designed by Anakin in order to help his mother. C-3PO was not to be sold when Anakin left with Qui-Gon Jinn for Coruscant.");
         setGameText("If in a battle with Shmi at a site, once per battle may place top card of your Used Pile on top of your Reserve Deck. Once per turn may place a card from hand on Used Pile to draw top card from Reserve Deck.");
         addPersona(Persona.C3PO);
         addIcons(Icon.TATOOINE, Icon.EPISODE_I);

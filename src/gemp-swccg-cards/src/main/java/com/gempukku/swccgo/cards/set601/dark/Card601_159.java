@@ -38,7 +38,7 @@ public class Card601_159 extends AbstractNormalEffect {
     public Card601_159() {
         super(Side.DARK, 4, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.Ket_Maliss, Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
         setVirtualSuffix(true);
-        setLore("Assassins are highly valued by Jabba the Hutt and other gangsters. Prince Xizor's 'shadow killer,' has unknown but undoubtably lethal business in Mos Eisley.");
+        setLore("Assassins are highly valued by Jabba the Hutt and other gangsters. Prince Xizor's 'shadow killer,' has unknown but undoubtedly lethal business in Mos Eisley.");
         setGameText("Deploy on table.  Unless Emperor Palpatine on table, Black Sun agents are defense value +1 and forfeit +2.  Once per turn, may use 1 Force to deploy one Beedo, Dannik Jerriko, Greedo, Hem Dazon, Reegesk, or a docking bay from Reserve Deck; reshuffle. (Immune to Alter.)");
         addIcons(Icon.LEGACY_BLOCK_1);
         addImmuneToCardTitle(Title.Alter);
