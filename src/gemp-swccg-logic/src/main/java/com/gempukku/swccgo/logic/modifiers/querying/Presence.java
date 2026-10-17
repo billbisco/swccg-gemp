@@ -156,7 +156,8 @@ public interface Presence extends BaseQuery, Keywords {
         if (card.getBlueprint().getCardCategory()==CardCategory.DEFENSIVE_SHIELD
                 || card.getBlueprint().getCardCategory()==CardCategory.EFFECT
                 || card.getBlueprint().getCardCategory()==CardCategory.EPIC_EVENT
-                || card.getBlueprint().getCardCategory()==CardCategory.JEDI_TEST) {
+                || card.getBlueprint().getCardCategory()==CardCategory.JEDI_TEST
+                || card.getBlueprint().getCardCategory()==CardCategory.MISSION) {
             PhysicalCard atLocation = card.getAtLocation();
             if (atLocation!=null) {
                 if (atLocation.getBlueprint().getCardCategory()==CardCategory.LOCATION)
