@@ -68,7 +68,26 @@ public enum ExpansionSet {
 
     PLAYTESTING("Playtesting", 501),
 
-    LEGACY("Legacy", 601);
+    LEGACY("Legacy", 601),
+
+    VIRTUAL_SHIELDS("Virtual Shields", 1200),
+    VIRTUAL_BLOCK_1("Virtual Block 1", 1210),
+    VIRTUAL_BLOCK_2("Virtual Block 2", 1220),
+    VIRTUAL_BLOCK_3("Virtual Block 3", 1230),
+    VIRTUAL_BLOCK_4("Virtual Block 4: Expanded Universe", 1240),
+    VIRTUAL_BLOCK_5("Virtual Block 5", 1250),
+    VIRTUAL_BLOCK_6_1("Virtual Block 6.1: Reflections IV", 1261),
+    VIRTUAL_BLOCK_6_2("Virtual Block 6.2", 1262),
+    VIRTUAL_BLOCK_6_3("Virtual Block 6.3: Mercenaries", 1263),
+    VIRTUAL_BLOCK_7_1("Virtual Block 7.1", 1271),
+    VIRTUAL_BLOCK_7_2("Virtual Block 7.2: Ultimate Freedom", 1272),
+    VIRTUAL_BLOCK_7_3("Virtual Block 7.3", 1273),
+    VIRTUAL_BLOCK_7_4("Virtual Block 7.4", 1274),
+    VIRTUAL_BLOCK_8_1("Virtual Block 8.1", 1281),
+    VIRTUAL_BLOCK_8_2("Virtual Block 8.2", 1282),
+    VIRTUAL_BLOCK_8_3("Virtual Block 8.3", 1283),
+    VIRTUAL_BLOCK_9_1("Virtual Block 9.1", 1291),
+    VIRTUAL_BLOCK_9_2("Virtual Block 9.2", 1292);
 
     private String _humanReadable;
     private int _setNumber;
