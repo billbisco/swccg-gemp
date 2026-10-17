@@ -301,6 +301,9 @@ public class CardDataExporter {
         if (blueprint.hasPoliticsAttribute()) {
             data.put("politics", blueprint.getPolitics());
         }
+        if (blueprint.getInfluence() > 0) {
+            data.put("influence", blueprint.getInfluence());
+        }
         if (blueprint.hasSpecialDefenseValueAttribute()) {
             data.put("defenseValue", blueprint.getSpecialDefenseValue());
         }
