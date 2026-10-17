@@ -167,13 +167,28 @@ public class MissionTests {
     }
 
     @Test
+    public void NormalMissionNotOfferedDuringOpponentsDeployPhase() {
+        var scn = GetScenario();
+        scn.StartGame();
+        var mission = putInHand(scn, 9001, scn.LS, new TestNormalMission());
+
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.DSPass();
+        assertTrue(scn.AwaitingLSDeployPhaseActions());
+        assertFalse(scn.LSDeployAvailable(mission));
+    }
+
+    @Test
     public void CriticalMissionNotOfferedIfStartedWithObjective() {
         var scn = GetScenario(StartingSetup.ThereIsGoodInHimObjective);
         scn.StartGame();
-        var mission = putInHand(scn, 9002, scn.LS, new TestCriticalMission(Side.LIGHT, "Test Critical Mission"));
+        var critical = putInHand(scn, 9002, scn.LS, new TestCriticalMission(Side.LIGHT, "Test Critical Mission"));
+        var normal = putInHand(scn, 9001, scn.LS, new TestNormalMission());
 
         skipToLSDeploy(scn);
-        assertFalse(scn.LSDeployAvailable(mission));
+        assertTrue(scn.AwaitingLSDeployPhaseActions());
+        assertFalse(scn.LSDeployAvailable(critical));
+        assertTrue(scn.LSDeployAvailable(normal));
     }
 
     @Test

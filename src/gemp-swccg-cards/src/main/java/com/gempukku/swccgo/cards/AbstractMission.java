@@ -10,7 +10,6 @@ import com.gempukku.swccgo.common.PlayCardZoneOption;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Uniqueness;
-import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.DeploymentRestrictionsOption;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.PlayCardOption;
@@ -69,7 +68,7 @@ public abstract class AbstractMission extends AbstractNonLocationPlaysToTable {
         if (game.getGameState().hasPlayedCriticalMission(playerId)) {
             return false;
         }
-        return Filters.findFirstFromAllOnTable(game, Filters.and(CardType.MISSION, CardSubtype.CRITICAL, Filters.your(playerId))) == null;
+        return true;
     }
 
     @Override
