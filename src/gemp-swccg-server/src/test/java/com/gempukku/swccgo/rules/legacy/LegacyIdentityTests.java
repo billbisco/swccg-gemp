@@ -1,6 +1,7 @@
 package com.gempukku.swccgo.rules.legacy;
 
 import com.gempukku.swccgo.common.LegacyIds;
+import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.game.DeckInvalidException;
 import com.gempukku.swccgo.game.SwccgCardBlueprint;
@@ -10,6 +11,11 @@ import com.gempukku.swccgo.game.formats.SwccgoFormatLibrary;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
@@ -25,6 +31,20 @@ public class LegacyIdentityTests {
     public static void loadLibrary() {
         library = new SwccgCardBlueprintLibrary();
         formats = new SwccgoFormatLibrary(library);
+    }
+
+    @Test
+    public void LightPrintingsAliasTheLightPcIdsNotTheDarkSameTitle() {
+        assertEquals("601_254", library.getBaseBlueprintId("1291_75"));
+        assertEquals("601_238", library.getBaseBlueprintId("1271_43"));
+        assertNotNull(library.getSwccgoCardBlueprint("1291_75"));
+        assertNotNull(library.getSwccgoCardBlueprint("1271_43"));
+        assertEquals(library.getSwccgoCardBlueprint("601_254").getClass(),
+                library.getSwccgoCardBlueprint("1291_75").getClass());
+        assertEquals(library.getSwccgoCardBlueprint("601_238").getClass(),
+                library.getSwccgoCardBlueprint("1271_43").getClass());
+        assertEquals(Side.LIGHT, library.getSwccgoCardBlueprint("1291_75").getSide());
+        assertEquals(Side.LIGHT, library.getSwccgoCardBlueprint("1271_43").getSide());
     }
 
     @Test
@@ -67,23 +87,77 @@ public class LegacyIdentityTests {
     }
 
     @Test
-    public void LeaveThemToMeHostPrintingLoadsReflectionsIIIBlueprint() throws DeckInvalidException {
-        SwccgCardBlueprint host = library.getSwccgoCardBlueprint("1261_24");
-        SwccgCardBlueprint refIii = library.getSwccgoCardBlueprint("1261_21");
+    public void DoTheyHaveACodeClearanceHostPrintingLoadsImplementedClass() throws DeckInvalidException {
+        SwccgCardBlueprint host = library.getSwccgoCardBlueprint("1261_23");
+        SwccgCardBlueprint pc = library.getSwccgoCardBlueprint("601_34");
         assertNotNull(host);
-        assertNotNull(refIii);
-        assertEquals(refIii.getClass(), host.getClass());
-        assertEquals("1261_21", library.getBaseBlueprintId("1261_24"));
-        assertEquals(refIii.getTitle(), host.getTitle());
-        assertEquals(Uniqueness.UNIQUE, refIii.getUniqueness());
+        assertNotNull(pc);
+        assertEquals(pc.getClass(), host.getClass());
+        assertEquals("601_34", library.getBaseBlueprintId("1261_23"));
+        assertEquals("601_34", library.getBaseBlueprintId("1261_26"));
+        assertEquals(pc.getTitle(), host.getTitle());
+        assertEquals(Uniqueness.UNIQUE, pc.getUniqueness());
         assertEquals(Uniqueness.UNIQUE, host.getUniqueness());
 
         SwccgFormat legacy = formats.getFormat("legacy");
-        legacy.validateCard("1261_21", false);
-        legacy.validateCard("1261_24", false);
-        Set<String> alternates = library.getAllAlternates("1261_21");
+        legacy.validateCard("601_34", false);
+        legacy.validateCard("1261_23", false);
+        Set<String> alternates = library.getAllAlternates("601_34");
         assertNotNull(alternates);
-        assertTrue(alternates.contains("1261_24"));
+        assertTrue(alternates.contains("1261_23"));
+        assertTrue(alternates.contains("1261_26"));
+    }
+
+    @Test
+    public void FanfareTatooineHostPrintingLoadsImplementedClass() throws DeckInvalidException {
+        SwccgCardBlueprint host = library.getSwccgoCardBlueprint("1272_9");
+        SwccgCardBlueprint pc = library.getSwccgoCardBlueprint("601_35");
+        assertNotNull(host);
+        assertNotNull(pc);
+        assertEquals(pc.getClass(), host.getClass());
+        assertEquals("601_35", library.getBaseBlueprintId("1272_9"));
+        assertEquals("601_35", library.getBaseBlueprintId("1200_5"));
+        assertEquals(pc.getTitle(), host.getTitle());
+
+        SwccgFormat legacy = formats.getFormat("legacy");
+        legacy.validateCard("601_35", false);
+        legacy.validateCard("1272_9", false);
+        Set<String> alternates = library.getAllAlternates("601_35");
+        assertNotNull(alternates);
+        assertTrue(alternates.contains("1272_9"));
+        assertTrue(alternates.contains("1200_5"));
+    }
+
+    @Test
+    public void EveryLegacyMappingLineResolvesToALoadableClass() throws Exception {
+        List<String> lines = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(
+                LegacyIdentityTests.class.getResourceAsStream("/blueprintMapping.txt"), StandardCharsets.UTF_8))) {
+            boolean inBlock = false;
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.contains("BEGIN legacy")) {
+                    inBlock = true;
+                    continue;
+                }
+                if (line.contains("END legacy")) {
+                    break;
+                }
+                if (inBlock && !line.startsWith("#") && line.contains(",")) {
+                    lines.add(line.trim());
+                }
+            }
+        }
+        assertFalse(lines.isEmpty());
+        for (String line : lines) {
+            String[] parts = line.split(",", 2);
+            String from = parts[0];
+            String to = parts[1];
+            assertEquals(line, to, library.getBaseBlueprintId(from));
+            assertEquals("rhs must be a class, not another alias: " + line, to, library.getBaseBlueprintId(to));
+            assertNotNull(from + " -> " + to, library.getSwccgoCardBlueprint(to));
+            assertNotNull(from, library.getSwccgoCardBlueprint(from));
+        }
     }
 
     @Test
