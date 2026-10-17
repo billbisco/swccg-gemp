@@ -37,7 +37,7 @@ public class Card208_018 extends AbstractLostInterrupt {
         super(Side.LIGHT, 4, Title.Corellian_Slip, Uniqueness.UNRESTRICTED, ExpansionSet.SET_8, Rarity.V);
         setVirtualSuffix(true);
         setLore("First perfected by Corellian starship battle tacticians, this dangerous counter-maneuver has saved numerous hot-shot pilots in life-or-death situations.");
-        setGameText("During battle, target opponent's starfighter with your snub fighter. Starfighter's gametext (except related to any capacity and the ability and identify of any permanent pilots) is canceled. OR If your pilot of ability < 3 was just lost from aboard a snub fighter, take pilot into hand.");
+        setGameText("During battle, target opponent's starfighter with your snub fighter. Starfighter's gametext (except related to any capacity and the ability and identity of any permanent pilots) is canceled. OR If your pilot of ability < 3 was just lost from aboard a snub fighter, take pilot into hand.");
         addIcons(Icon.A_NEW_HOPE, Icon.VIRTUAL_SET_8);
     }
 

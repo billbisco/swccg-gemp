@@ -42,7 +42,7 @@ public class Card2_014 extends AbstractDroid {
     public Card2_014() {
         super(Side.LIGHT, 2, 3, 1, 4, "R2-D2 (Artoo-Detoo)", Uniqueness.UNIQUE, ExpansionSet.A_NEW_HOPE, Rarity.R2);
         setAlternateDestiny(5);
-        setLore("Fiesty. Loyal. Heroic. Insecure. Rebel spy. Excels at trouble. Incorrigible counterpart of a mindless philosopher. Has picked up a slight flutter. A bit eccentric.");
+        setLore("Feisty. Loyal. Heroic. Insecure. Rebel spy. Excels at trouble. Incorrigible counterpart of a mindless philosopher. Has picked up a slight flutter. A bit eccentric.");
         setGameText("While aboard any starfighter, adds 2 to power, maneuver and hyperspeed (3 on Red 5). If at a Scomp link when opponent draws destiny of: 1-3, you may activate one Force; 4-6, you may draw top card from Reserve Deck.");
         addPersona(Persona.R2D2);
         addModelType(ModelType.ASTROMECH);

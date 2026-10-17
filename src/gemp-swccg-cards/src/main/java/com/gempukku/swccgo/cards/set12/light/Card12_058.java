@@ -34,7 +34,7 @@ public class Card12_058 extends AbstractUsedInterrupt {
     public Card12_058() {
         super(Side.LIGHT, 5, "Free Ride & Endor Celebration", Uniqueness.UNIQUE, ExpansionSet.CORUSCANT, Rarity.R);
         addComboCardTitles(Title.Free_Ride, Title.Endor_Celebration);
-        setGameText("Cancel Tatooine Occupation, Cloud City Occupation, Rebel Base Occupation. (Immune to Sense.) OR Peak at one card randomly selected from opponent's hand. If that card is a speeder bike, AT-ST, or skiff, steal it into hand.");
+        setGameText("Cancel Tatooine Occupation, Cloud City Occupation, Rebel Base Occupation. (Immune to Sense.) OR Peek at one card randomly selected from opponent's hand. If that card is a speeder bike, AT-ST, or skiff, steal it into hand.");
         addIcons(Icon.CORUSCANT);
     }
 

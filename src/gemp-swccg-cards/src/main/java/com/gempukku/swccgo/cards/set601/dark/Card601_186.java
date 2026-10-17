@@ -39,7 +39,7 @@ public class Card601_186 extends AbstractImperial {
     public Card601_186() {
         super(Side.DARK, 1, 3, 3, 3, 5, "Maarek Stele, The Emperor's Reach", Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
         setLore("Leader");
-        setGameText("[Pilot] 3. Once per game may [upload] a TIE Defender. While piloting, opponent may not cancel or substitute battle destiny draws here. While piloting an Imperial starfighter, it is maneuver +2 and he draws on battle destiny if unable to otherwise.");
+        setGameText("[Pilot] 3. Once per game may [upload] a TIE Defender. While piloting, opponent may not cancel or substitute battle destiny draws here. While piloting an Imperial starfighter, it is maneuver +2 and he draws one battle destiny if unable to otherwise.");
         addIcons(Icon.DEATH_STAR_II, Icon.PILOT, Icon.WARRIOR, Icon.LEGACY_BLOCK_6);
         addKeyword(Keyword.LEADER);
         addPersona(Persona.MAAREK_STELE);

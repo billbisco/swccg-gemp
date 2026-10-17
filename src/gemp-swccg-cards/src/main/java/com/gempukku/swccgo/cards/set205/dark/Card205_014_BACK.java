@@ -37,7 +37,7 @@ import java.util.List;
 public class Card205_014_BACK extends AbstractRebel {
     public Card205_014_BACK() {
         super(Side.DARK, 7, 0, 6, 6, 0, "Luke Skywalker, The Emperor's Prize", Uniqueness.UNIQUE, ExpansionSet.SET_5, Rarity.V);
-        setGameText("Luke Skywalker, The Emperor's Prize is a Dark Side card and does not count toward your deck limit. Reveal to opponent when deploying your Starting Effect. Deploys to Death Star II: Throne Room only at start of game as a frozen captive if Bring Him Before Me on table and Your Destiny is suspended; otherwise place out of play. For remainder of game, may not be placed in Reserve Deck. Luke Skywalker, The Emperor's Prize is a persona of Luke only while on table. While this side up, Bring Him Before Me may not flip. May not be escorted. Flip this card if Vader present and not escorting a captive. Place out of play if released or about to leave table.");
+        setGameText("Immediately 'thaw' Luke (Luke is non-frozen, captured, and seized by Vader). While this side up, subtracts 3 from attempts to cross Luke over (even while a captive). Place out of play if released or about to leave table.");
         setDoesNotCountTowardDeckLimit(true);
         addPersona(Persona.LUKE);
         setCharacterPersonaOnlyWhileOnTable(true);

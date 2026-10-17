@@ -27,7 +27,7 @@ import java.util.List;
 public class Card14_063 extends AbstractVehicleWeapon {
     public Card14_063() {
         super(Side.LIGHT, 4, Title.Booma, Uniqueness.UNRESTRICTED, ExpansionSet.THEED_PALACE, Rarity.C);
-        setLore("Lunched from fambaa-mounted catapults. Gungan 'energy balls' are used to disable a variety of mechanized threats. Effectiveness is enhanced by the skill of the user.");
+        setLore("Launched from fambaa-mounted catapults. Gungan 'energy balls' are used to disable a variety of mechanized threats. Effectiveness is enhanced by the skill of the user.");
         setGameText("Deploy on your Fambaa. Twice during battle may draw destiny. If destiny < total number of opponent's characters and vehicles present, one of them is lost (opponent's choice).");
         addIcons(Icon.THEED_PALACE, Icon.EPISODE_I);
     }

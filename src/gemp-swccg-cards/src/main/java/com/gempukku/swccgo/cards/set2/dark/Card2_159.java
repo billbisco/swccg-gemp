@@ -29,7 +29,7 @@ import java.util.List;
 public class Card2_159 extends AbstractCharacterWeapon {
     public Card2_159() {
         super(Side.DARK, 4, Title.Jawa_Blaster, Uniqueness.UNRESTRICTED, ExpansionSet.A_NEW_HOPE, Rarity.C2);
-        setLore("Built from scavenged parts, Jawa blaster are not required to adhere to any design standards. An etching on this stock warns 'datinni greb zroom.'");
+        setLore("Built from scavenged parts, Jawa blasters are not required to adhere to any design standards. An etching on this stock warns 'datinni greb zroom.'");
         setGameText("Deploy on your Jawa. May target a character or creature for free. Draw destiny. If destiny -1 > defense value, target hit. If destiny = 0, Jawa Blaster 'explodes' (weapon and character firing it are lost).");
         addIcons(Icon.A_NEW_HOPE);
         addKeywords(Keyword.BLASTER, Keyword.JAWA_WEAPON);

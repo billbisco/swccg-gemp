@@ -41,7 +41,7 @@ public class Card5_145 extends AbstractUsedOrLostInterrupt {
     public Card5_145() {
         super(Side.DARK, 5, "Human Shield", Uniqueness.UNRESTRICTED, ExpansionSet.CLOUD_CITY, Rarity.C);
         setLore("A shining example of Imperial honor and bravery.");
-        setGameText("USED: If an opponent's weapon just 'hit' an Imperial present with a a captive being escorted, the captive is 'hit' instead. LOST: During a battle at site, you may forfeit any or all captives present.");
+        setGameText("USED: If an opponent's weapon just 'hit' an Imperial present with a captive being escorted, the captive is 'hit' instead. LOST: During a battle at site, you may forfeit any or all captives present.");
         addIcons(Icon.CLOUD_CITY);
     }
 

@@ -44,9 +44,9 @@ public class Card222_027 extends AbstractObjective {
         setGameText("Deploy Hoth system and 1st Marker. " +
                 "For remainder of game, Hoth Energy Shield does not extend beyond 1st Marker. " +
                 "You may not deploy Ice Storm, [Special Edition] Leia, systems, or characters of ability > 4. " +
-                "Echo Base Garrison is immune to Alter. Once per turn, may [download] Echo Command Center or a marker site." +
+                "Echo Base Garrison is immune to Alter. Once per turn, may [download] Echo Command Center or a marker site. " +
                 "While this side up, your Force drains are +1 at Hoth system. " +
-                "During your control phase, if you occupy two battleground marker sites, retrieve 1 Force." +
+                "During your control phase, if you occupy two battleground marker sites, retrieve 1 Force. " +
                 "Flip this card if opponent occupies your Hoth location.");
         addIcons(Icon.HOTH, Icon.VIRTUAL_SET_22);
     }

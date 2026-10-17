@@ -38,7 +38,7 @@ import java.util.List;
 public class Card9_081 extends AbstractStarfighter {
     public Card9_081() {
         super(Side.LIGHT, 3, 3, 3, null, 4, 5, 5, "Red Squadron 1", Uniqueness.UNIQUE, ExpansionSet.DEATH_STAR_II, Rarity.R);
-        setLore("Flown by Wedge Antilles as Red 2 at the Battle of Yavin. Redesignated at Endor. Rugged Incom fighter. Victory markers show it role in the attack on the first Death Star.");
+        setLore("Flown by Wedge Antilles as Red 2 at the Battle of Yavin. Redesignated at Endor. Rugged Incom fighter. Victory markers show its role in the attack on the first Death Star.");
         setGameText("May add 1 pilot. [Death Star II] Wedge deploys -2 aboard (for free if deploying to Endor). When Wedge piloting, immune to attrition < 5 and adds 6 to total when targeted by Tallon Roll.");
         addPersona(Persona.RED_2);
         addIcons(Icon.DEATH_STAR_II, Icon.NAV_COMPUTER, Icon.SCOMP_LINK);

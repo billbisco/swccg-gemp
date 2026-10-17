@@ -45,7 +45,7 @@ public class Card223_004 extends AbstractAlien {
         setLore("Female Togruta.");
         setGameText("While your [Skywalker] Epic Event on table, Ahsoka ignores its deployment restrictions and, once per turn, " +
                 "may subtract 1 from a non-weapon destiny draw targeting your character's ability or defense value. " +
-                "Characters Ahsoka 'hits' are forfeit = 0. Immune to attrition < 5..");
+                "Characters Ahsoka 'hits' are forfeit = 0. Immune to attrition < 5.");
         addIcons(Icon.PILOT, Icon.WARRIOR, Icon.VIRTUAL_SET_23);
         addKeywords(Keyword.FEMALE);
         setSpecies(Species.TOGRUTA);

@@ -31,7 +31,7 @@ public class Card2_108 extends AbstractAlien {
     public Card2_108() {
         super(Side.DARK, 3, 3, 1, 1, 4, Title.URoRRuRRR, Uniqueness.UNIQUE, ExpansionSet.A_NEW_HOPE, Rarity.U2);
         setLore("Leader of a Tusken Raider tribe. Unafraid of machines. Skilled hunter and marksman. Raids moisture farms for water. Roams the Jundland Wastes in search of unwary travelers.");
-        setGameText("Deploys only on on Tatooine. When at same site as another Tusken Raider, may draw one battle destiny if not able to otherwise.");
+        setGameText("Deploys only on Tatooine. When at same site as another Tusken Raider, may draw one battle destiny if not able to otherwise.");
         addIcons(Icon.A_NEW_HOPE);
         addKeywords(Keyword.LEADER);
         setSpecies(Species.TUSKEN_RAIDER);

@@ -34,7 +34,7 @@ public class Card211_038 extends AbstractSite {
     public Card211_038() {
         super(Side.LIGHT, Title.Mazs_Castle, Title.Takodana, Uniqueness.UNIQUE, ExpansionSet.SET_11, Rarity.V);
         setLocationDarkSideGameText("If you control, opponent must use 1 Force to use their Takodana: Maz's Castle game text.");
-        setLocationLightSideGameText("Oce per turn, may [download] a Maz's Castle site.");
+        setLocationLightSideGameText("Once per turn, may [download] a Maz's Castle site.");
         addIcon(Icon.DARK_FORCE, 1);
         addIcon(Icon.LIGHT_FORCE, 2);
         addIcons(Icon.VIRTUAL_SET_11, Icon.EXTERIOR_SITE, Icon.PLANET, Icon.EPISODE_VII, Icon.VIRTUAL_SET_11);
