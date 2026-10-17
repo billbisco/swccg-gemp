@@ -10,6 +10,7 @@ import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.filters.LegacyFilters;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.game.PhysicalCardImpl;
 import com.gempukku.swccgo.logic.modifiers.InfluenceModifier;
 import com.gempukku.swccgo.logic.modifiers.PoliticsModifier;
 import com.gempukku.swccgo.logic.modifiers.ResetInfluenceModifier;
@@ -151,19 +152,19 @@ public class InfluenceTests {
     @Test
     public void HighestPrintedInfluenceIgnoresModifiers() {
         var scn = GetScenario();
-        var trooper = scn.GetDSCard("trooper");
-        var lott = scn.GetDSCard("lott");
         var site = scn.GetDSStartingLocation();
 
         scn.StartGame();
-        scn.MoveCardsToLocation(site, trooper, lott);
-        scn.ApplyAdHocModifier(new InfluenceModifier(trooper, 5));
+
+        PhysicalCardImpl character = new PhysicalCardImpl(
+                0, "test_influence", "-1_2", scn.DS, new TestInfluenceCharacter(2), null);
+        scn.gameState().playCardToLocation(character, site, scn.DS);
+        scn.ApplyAdHocModifier(new InfluenceModifier(character, 3));
         scn.SkipToPhase(Phase.CONTROL);
 
-        assertEquals(5f, mq(scn).getInfluence(scn.gameState(), trooper), 0);
-        assertEquals(0f, mq(scn).getHighestPrintedInfluenceAtLocation(scn.gameState(), site), 0);
-        assertEquals(0f, trooper.getBlueprint().getInfluence(), 0);
-        assertEquals(0f, lott.getBlueprint().getInfluence(), 0);
+        assertEquals(5f, mq(scn).getInfluence(scn.gameState(), character), 0);
+        assertEquals(2f, mq(scn).getHighestPrintedInfluenceAtLocation(scn.gameState(), site), 0);
+        assertEquals(2f, character.getBlueprint().getInfluence(), 0);
     }
 
     @Test
