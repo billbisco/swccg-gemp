@@ -43,6 +43,7 @@ public class RuleSet {
         new ExcludeBattleParticipantsRule(_actionsEnvironment).applyRule();
         new ExpandLocationGameTextRule(_actionsEnvironment).applyRule();
         new HabitatRule(_actionsEnvironment).applyRule();
+        new HeroicRule(_modifiersEnvironment).applyRule();
         new HitCardOutsideOfAttackOrBattleRule(_actionsEnvironment).applyRule();
         new FrozenCaptiveRule(_modifiersEnvironment).applyRule();
         new InsertCardRevealedRule(_actionsEnvironment).applyRule();
