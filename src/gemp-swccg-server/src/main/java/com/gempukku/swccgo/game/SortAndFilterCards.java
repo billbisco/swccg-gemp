@@ -179,6 +179,9 @@ public class SortAndFilterCards {
                 if (filterValue.startsWith("LOCATION")) {
                     return CardCategory.LOCATION;
                 }
+                if (filterValue.startsWith("MISSION")) {
+                    return CardCategory.MISSION;
+                }
                 if (filterValue.startsWith("OBJECTIVE")) {
                     return CardCategory.OBJECTIVE;
                 }
@@ -264,6 +267,9 @@ public class SortAndFilterCards {
                 }
                 if (filterValue.startsWith("LOCATION")) {
                     return CardType.LOCATION;
+                }
+                if (filterValue.startsWith("MISSION")) {
+                    return CardType.MISSION;
                 }
                 if (filterValue.startsWith("OBJECTIVE")) {
                     return CardType.OBJECTIVE;
