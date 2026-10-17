@@ -170,4 +170,14 @@ public class LegacyIdentityTests {
         assertTrue(legacy.getValidSets().contains(1281));
         assertTrue(legacy.getValidSets().contains(1292));
     }
+
+    @Test
+    public void AnythingGoesValidatesALegacyBlockCard() throws DeckInvalidException {
+        SwccgFormat anythingGoes = formats.getFormat("anything_goes");
+        for (int set : new int[] {1200, 1210, 1220, 1230, 1240, 1250, 1261, 1262, 1263, 1271, 1272, 1273, 1274, 1281, 1282, 1283, 1291, 1292}) {
+            assertTrue(set + " missing from Anything Goes", anythingGoes.getValidSets().contains(set));
+        }
+        assertFalse(formats.getFormat("open").getValidSets().contains(1240));
+        anythingGoes.validateCard("1281_5", false);
+    }
 }
