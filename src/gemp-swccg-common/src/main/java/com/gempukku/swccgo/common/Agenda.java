@@ -12,7 +12,11 @@ public enum Agenda implements Filterable {
     REBELLION("Rebellion"),
     TAXATION("Taxation"),
     TRADE("Trade"),
-    WEALTH("Wealth");
+    WEALTH("Wealth"),
+    LOGISTICS("Logistics"),
+    LAW("Law"),
+    RULE("Rule"),
+    INTELLIGENCE("Intelligence");
 
     private String _humanReadable;
 
