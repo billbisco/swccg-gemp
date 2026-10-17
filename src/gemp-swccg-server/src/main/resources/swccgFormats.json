@@ -3,6 +3,7 @@
     "comment": "Anything Goes is the default Casual/AI format. Structure only; 40-60 cards; Legacy plus non-Legacy.",
     "name":"Anything Goes",
     "code":"anything_goes",
+    "loreHeroicRule":true,
     "skipFormatPool":true,
     "minDeckSize":40,
     "maxDeckSize":60,
@@ -91,6 +92,7 @@
   {
     "name":"Legacy",
     "code":"legacy",
+    "loreHeroicRule":true,
     "set":[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 601, 1200, 1210, 1220, 1230, 1240, 1250, 1261, 1262, 1263, 1271, 1272, 1273, 1274, 1281, 1282, 1283, 1291, 1292],
     "tenetsLink": "https://www.starwarsccg.org/legacy/"
   },

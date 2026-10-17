@@ -9,6 +9,7 @@ import java.util.List;
  */
 public interface SwccgFormat {
     boolean hasDownloadBattlegroundRule();
+    boolean hasLoreHeroicRule();
     boolean hasJpSealedRule();
     boolean isPlaytesting();
     String getName();
