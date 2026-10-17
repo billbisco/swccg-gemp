@@ -16,6 +16,7 @@ public enum CardCategory implements Filterable {
     INTERRUPT("Interrupt"),
     JEDI_TEST("Jedi Test"),
     LOCATION("Location"),
+    MISSION("Mission"),
     OBJECTIVE("Objective"),
     PODRACER("Podracer"),
     STARSHIP("Starship"),

@@ -12,6 +12,7 @@ public enum CardSubtype implements Filterable {
     CHARACTER("Character"),
     COMBAT("Combat"),
     CREATURE("Creature"),
+    CRITICAL("Critical"),
     DEATH_STAR("Death Star"),
     DEATH_STAR_II("Death Star II"),
     IMMEDIATE("Immediate"),
