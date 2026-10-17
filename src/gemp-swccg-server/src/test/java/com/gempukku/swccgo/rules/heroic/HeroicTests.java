@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.rules.heroic;
 
+import com.gempukku.swccgo.cards.AbstractCharacterWeapon;
 import com.gempukku.swccgo.cards.AbstractRebel;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
@@ -7,16 +8,30 @@ import com.gempukku.swccgo.common.Keyword;
 import com.gempukku.swccgo.common.Phase;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
+import com.gempukku.swccgo.common.Statistic;
+import com.gempukku.swccgo.common.TargetingReason;
 import com.gempukku.swccgo.common.Uniqueness;
+import com.gempukku.swccgo.common.Zone;
+import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.PhysicalCardImpl;
+import com.gempukku.swccgo.game.SwccgCardBlueprint;
+import com.gempukku.swccgo.game.SwccgCardBlueprintLibrary;
+import com.gempukku.swccgo.game.SwccgGame;
+import com.gempukku.swccgo.logic.actions.FireWeaponAction;
+import com.gempukku.swccgo.logic.actions.FireWeaponActionBuilder;
 import com.gempukku.swccgo.logic.modifiers.KeywordModifier;
 import com.gempukku.swccgo.logic.modifiers.MayNotBeTargetedByWeaponsModifier;
 import org.junit.Test;
 
+import java.lang.reflect.Field;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -29,6 +44,25 @@ public class HeroicTests {
             super(Side.LIGHT, 2, 3, 3, 3, 5, "Test Heroic Rebel", Uniqueness.UNRESTRICTED, ExpansionSet.PREMIERE, Rarity.C1);
             addIcons(Icon.WARRIOR);
             addKeywords(Keyword.HEROIC);
+        }
+    }
+
+    /** Line A hits only Heroic characters. Line B hits only non-Heroic characters. */
+    private static class TestTwoLineWeapon extends AbstractCharacterWeapon {
+        TestTwoLineWeapon() {
+            super(Side.DARK, 1, "Test Two Line Weapon", Uniqueness.UNRESTRICTED, ExpansionSet.PREMIERE, Rarity.C1);
+        }
+
+        @Override
+        protected List<FireWeaponAction> getGameTextFireWeaponActions(String playerId, SwccgGame game, PhysicalCard self, boolean forFree, int extraForceRequired, PhysicalCard sourceCard, boolean repeatedFiring, Filter targetedAsCharacter, Float defenseValueAsCharacter, Filter fireAtTargetFilter, boolean ignorePerAttackOrBattleLimit) {
+            FireWeaponActionBuilder actionBuilder = FireWeaponActionBuilder.startBuildPrep(playerId, game, sourceCard, self, forFree, extraForceRequired, repeatedFiring, targetedAsCharacter, defenseValueAsCharacter, fireAtTargetFilter, ignorePerAttackOrBattleLimit)
+                    .targetUsingForce(Filters.and(Filters.character, Keyword.HEROIC), 1, TargetingReason.TO_BE_HIT)
+                    .targetUsingForce(Filters.and(Filters.character, Filters.not(Filters.and(Keyword.HEROIC))), 1, TargetingReason.TO_BE_HIT)
+                    .finishBuildPrep();
+            if (actionBuilder != null) {
+                return Collections.singletonList(actionBuilder.buildFireWeaponWithHitAction(1, Statistic.DEFENSE_VALUE));
+            }
+            return null;
         }
     }
 
@@ -59,6 +93,23 @@ public class HeroicTests {
 
     private void grantHeroic(VirtualTableScenario scn, PhysicalCardImpl card) {
         scn.ApplyAdHocModifier(new KeywordModifier(card, Keyword.HEROIC));
+    }
+
+    @SuppressWarnings("unchecked")
+    private PhysicalCardImpl attachTwoLineWeapon(VirtualTableScenario scn, PhysicalCardImpl bearer) {
+        String blueprintId = "2000_9001";
+        try {
+            Field field = SwccgCardBlueprintLibrary.class.getDeclaredField("_blueprintMap");
+            field.setAccessible(true);
+            Map<String, SwccgCardBlueprint> map = (Map<String, SwccgCardBlueprint>) field.get(VirtualTableScenario._cardLibrary);
+            map.put(blueprintId, new TestTwoLineWeapon());
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException(e);
+        }
+        PhysicalCardImpl weapon = (PhysicalCardImpl) scn.gameState().createPhysicalCard("Dark Side Player", VirtualTableScenario._cardLibrary, blueprintId);
+        scn.gameState().addCardToZone(weapon, Zone.HAND, "Dark Side Player", true, false, false);
+        scn.AttachCardsTo(bearer, weapon);
+        return weapon;
     }
 
     private int lastTotalWeaponDestiny(VirtualTableScenario scn) {
@@ -213,6 +264,50 @@ public class HeroicTests {
         scn.PassAllResponses();
 
         assertEquals(4, lastTotalWeaponDestiny(scn));
+
+        var control = GetScenario();
+        var nonHeroic = control.GetLSFiller(1);
+        var controlTrooper = control.GetDSCard("trooper");
+        var controlBlaster = control.GetDSCard("blaster");
+        var controlSite = control.GetDSStartingLocation();
+
+        control.StartGame();
+        control.MoveCardsToLocation(controlSite, nonHeroic, controlTrooper);
+        control.AttachCardsTo(controlTrooper, controlBlaster);
+        control.DSActivateForceCheat(4);
+        control.DSStartBattleAndSkipToWeaponsSegment(controlSite);
+        control.PrepareDSDestiny(3);
+
+        control.DSUseCardAction(controlBlaster, "Fire");
+        if (control.DSHasCardChoiceAvailable(nonHeroic)) {
+            control.DSChooseCard(nonHeroic);
+        }
+        control.PassAllResponses();
+
+        assertEquals(3, lastTotalWeaponDestiny(control));
+    }
+
+    @Test
+    public void TwoLineWeaponDoesNotOfferNonHeroicWhileHeroicMatchesOtherLine() {
+        var scn = GetScenario();
+        var luke = scn.GetLSCard("luke");
+        var rebel = scn.GetLSFiller(1);
+        var trooper = scn.GetDSCard("trooper");
+        var site = scn.GetDSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, luke, rebel, trooper);
+        var weapon = attachTwoLineWeapon(scn, trooper);
+        grantHeroic(scn, luke);
+        scn.DSActivateForceCheat(4);
+        scn.DSStartBattleAndSkipToWeaponsSegment(site);
+
+        assertTrue("Fire not offered. actions=" + scn.GetDSAvailableActions(),
+                scn.DSCardActionAvailable(weapon, "Fire"));
+        scn.DSUseCardAction(weapon, "Fire");
+
+        assertTrue(scn.DSHasCardChoiceAvailable(luke));
+        assertTrue(scn.DSHasCardChoiceNotAvailable(rebel));
     }
 
     @Test
