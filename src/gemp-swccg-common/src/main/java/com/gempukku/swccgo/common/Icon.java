@@ -122,6 +122,7 @@ public enum Icon implements Filterable {
     SCOMP_LINK("Scomp Link"),
     SEPARATIST("Separatist"),
     SETUP("Setup"),
+    SCOUNDREL("Scoundrel"),
     SIDIOUS("Sidious"),
     SKYWALKER("Skywalker"),
     TRADE_FEDERATION("Trade Federation"),
