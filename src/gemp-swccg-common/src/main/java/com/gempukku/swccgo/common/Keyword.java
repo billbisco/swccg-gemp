@@ -78,6 +78,7 @@ public enum Keyword implements Filterable {
     GUARD("Guard",true, true),
     GUNNER("Gunner", true, true),
     HANDMAIDEN("Handmaiden", true, true),
+    HEROIC("Heroic", true, true),
     HOLOGRAM("Hologram", true),
     HOLOSITE("Holosite", true),
     IMPERIAL_COUNCIL_MEMBER("Imperial Council member", true, true),
