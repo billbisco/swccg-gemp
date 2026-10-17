@@ -119,6 +119,8 @@ public class GameState implements Snapshotable<GameState> {
 
     private boolean _darkSidePlayerDeployedAhchToDagobahLocation;
     private boolean _lightSidePlayerDeployedAhchToDagobahLocation;
+    private boolean _darkSidePlayerPlayedCriticalMission;
+    private boolean _lightSidePlayerPlayedCriticalMission;
 
     private PhysicalCard _darkSideObjective;
     private PhysicalCard _lightSideObjective;
@@ -350,6 +352,8 @@ public class GameState implements Snapshotable<GameState> {
         snapshot._lightSidePlayerDeployedDeathStarLocation = _lightSidePlayerDeployedDeathStarLocation;
         snapshot._darkSidePlayerDeployedAhchToDagobahLocation = _darkSidePlayerDeployedAhchToDagobahLocation;
         snapshot._lightSidePlayerDeployedAhchToDagobahLocation = _lightSidePlayerDeployedAhchToDagobahLocation;
+        snapshot._darkSidePlayerPlayedCriticalMission = _darkSidePlayerPlayedCriticalMission;
+        snapshot._lightSidePlayerPlayedCriticalMission = _lightSidePlayerPlayedCriticalMission;
         snapshot._darkSideObjective = snapshotData.getDataForSnapshot(_darkSideObjective);
         snapshot._lightSideObjective = snapshotData.getDataForSnapshot(_lightSideObjective);
         snapshot._darkSideStartingInterrupt = snapshotData.getDataForSnapshot(_darkSideStartingInterrupt);
@@ -4967,6 +4971,20 @@ public class GameState implements Snapshotable<GameState> {
             _darkSidePlayerDeployedAhchToDagobahLocation = true;
         else
             _lightSidePlayerDeployedAhchToDagobahLocation = true;
+    }
+
+    public boolean hasPlayedCriticalMission(String playerId) {
+        if (playerId.equals(_darkSidePlayer))
+            return _darkSidePlayerPlayedCriticalMission;
+        else
+            return _lightSidePlayerPlayedCriticalMission;
+    }
+
+    public void setPlayedCriticalMission(String playerId) {
+        if (playerId.equals(_darkSidePlayer))
+            _darkSidePlayerPlayedCriticalMission = true;
+        else
+            _lightSidePlayerPlayedCriticalMission = true;
     }
 
     public PhysicalCard getObjectivePlayed(String playerId) {

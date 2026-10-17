@@ -293,6 +293,7 @@ var CardFilter = Class.extend({
             + "<option value='LOCATION_SECTOR'>Location - Sector</option>"
             + "<option value='LOCATION_SITE'>Location - Site</option>"
             + "<option value='LOCATION_SYSTEM'>Location - System</option>"
+            + "<option value='MISSION'>Mission</option>"
             + "<option value='OBJECTIVE'>Objective</option>"
             + "<option value='PODRACER'>Podracer</option>"
             + "<option value='STARSHIP'>Starship</option>"

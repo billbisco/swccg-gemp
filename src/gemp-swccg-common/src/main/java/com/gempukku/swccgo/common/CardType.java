@@ -20,6 +20,7 @@ public enum CardType implements Filterable {
     JEDI_MASTER("Jedi Master"),
     JEDI_TEST("Jedi Test"),
     LOCATION("Location"),
+    MISSION("Mission"),
     NEW_REPUBLIC("New Republic"),
     OBJECTIVE("Objective"),
     PODRACER("Podracer"),
