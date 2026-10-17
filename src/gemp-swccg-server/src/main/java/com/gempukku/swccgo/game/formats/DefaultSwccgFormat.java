@@ -227,6 +227,7 @@ public class DefaultSwccgFormat implements SwccgFormat {
 
     @Override
     public void validateCard(String blueprintId, boolean skipIfNotExists) throws DeckInvalidException {
+        String listedBlueprintId = blueprintId;
         blueprintId = _library.getBaseBlueprintId(blueprintId);
         SwccgCardBlueprint blueprint = _library.getSwccgoCardBlueprint(blueprintId);
         if (blueprint == null) {
@@ -241,10 +242,10 @@ public class DefaultSwccgFormat implements SwccgFormat {
         if (blueprint.getCardCategory() == CardCategory.GAME_AID)
             throw new DeckInvalidException("Deck contains card type, from card <span class=\"validate-invalid-card-type\">" + fullName + "</span>, not permitted in this format.");
 
-        if (_validCards.contains(blueprintId))
+        if (_validCards.contains(blueprintId) || _validCards.contains(listedBlueprintId))
             return;
 
-        if (!_validSets.isEmpty() && !isValidInSets(blueprintId))
+        if (!_validSets.isEmpty() && !isValidInSets(listedBlueprintId) && !isValidInSets(blueprintId))
             throw new DeckInvalidException("Deck contains card, <span class=\"validate-invalid-card-set\">" + fullName + "</span>, from set banned in this format.");
 
         if (_skipFormatPool)
@@ -359,8 +360,7 @@ public class DefaultSwccgFormat implements SwccgFormat {
                 if (star >= 0)
                     baseBlueprintId = baseBlueprintId.substring(0, star);
 
-                boolean legacyById = baseBlueprintId.startsWith("601_")
-                        || "601_39".equals(baseBlueprintId) || "601_1".equals(baseBlueprintId);
+                boolean legacyById = LegacyIds.isLegacyBlueprint(baseBlueprintId);
                 boolean legacyByMeta = card.isLegacy() || card.getExpansionSet() == ExpansionSet.LEGACY;
                 boolean isLegacyVirtualSE = (legacyById || legacyByMeta)
                         && (Title.Anger_Fear_Aggression.equals(title) || "Knowledge And Defense".equals(title));
