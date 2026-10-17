@@ -36,7 +36,7 @@ import java.util.List;
 public class Card9_015 extends AbstractRebel {
     public Card9_015() {
         super(Side.LIGHT, 3, 2, 2, 2, 3, "Gray Squadron Y-wing Pilot", Uniqueness.RESTRICTED_3, ExpansionSet.DEATH_STAR_II, Rarity.C);
-        setLore("Veteran pilots of the reliable Koensayr starfigher were assigned by Ackbar to a key role at Endor. Both the pilots and their venerable Y-wings were up to the task.");
+        setLore("Veteran pilots of the reliable Koensayr starfighter were assigned by Ackbar to a key role at Endor. Both the pilots and their venerable Y-wings were up to the task.");
         setGameText("Adds 2 to power of anything he pilots. When piloting a Y-wing, draws one battle destiny if not able to otherwise. When a starship he pilots fires an ion cannon, once per turn, may draw two weapon destiny and choose one.");
         addIcons(Icon.DEATH_STAR_II, Icon.PILOT);
         addKeywords(Keyword.GRAY_SQUADRON);

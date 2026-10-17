@@ -38,7 +38,7 @@ public class Card7_199 extends AbstractAlien {
     public Card7_199() {
         super(Side.DARK, 3, 2, 1, 2, 2, "RR'uruurrr", Uniqueness.UNIQUE, ExpansionSet.SPECIAL_EDITION, Rarity.R);
         setLore("Tusken Raider who tends to the banthas used by URoRRuR'R'R's tribe. Expert in wielding a gaffi stick. Attacked Luke Skywalker in the Jundland Wastes.");
-        setGameText("Deploys only on Tatooine. Power +3 while armed with a Gaderffi Stick. Where present, each of your banthas is power and forfeit +2 unless a Weequay is at a related site. When 'riding' a bantha, adds one battle destiny.");
+        setGameText("Deploys only on Tatooine. Power +3 while armed with a Gaderffii Stick. Where present, each of your banthas is power and forfeit +2 unless a Weequay is at a related site. When 'riding' a bantha, adds one battle destiny.");
         addIcons(Icon.SPECIAL_EDITION, Icon.WARRIOR);
         setSpecies(Species.TUSKEN_RAIDER);
     }

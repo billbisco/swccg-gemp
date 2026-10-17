@@ -40,7 +40,7 @@ public class Card203_027 extends AbstractRepublic {
         super(Side.DARK, 1, 5, 6, 4, 7, "General Grievous", Uniqueness.UNIQUE, ExpansionSet.SET_3, Rarity.V);
         setArmor(5);
         setLore("Trade Federation.");
-        setGameText("Any stolen lightsaber may deploy on Grievous. Once per game, Grievous may steal a lightsaber from opponent's Lost Pile. Unless alone, may lose 1 Force to return Grevious (and your cards on him) to hand from a site you control. Immune to attrition < 4.");
+        setGameText("Any stolen lightsaber may deploy on Grievous. Once per game, Grievous may steal a lightsaber from opponent's Lost Pile. Unless alone, may lose 1 Force to return Grievous (and your cards on him) to hand from a site you control. Immune to attrition < 4.");
         addKeywords(Keyword.GENERAL);
         addPersona(Persona.GRIEVOUS);
         addIcons(Icon.EPISODE_I, Icon.SEPARATIST, Icon.VIRTUAL_SET_3);

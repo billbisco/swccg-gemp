@@ -56,7 +56,7 @@ public class Card222_027_BACK extends AbstractObjective {
         setGameText("While this side up, cancels Hoth Sentry, Sunsdown, and the game text of your Admiral's Orders and unique (•) characters (except gunners, pilots, and troopers) on table. " +
                 "Cards 'hit' by your artillery or vehicle weapons may not be used to satisfy attrition. " +
                 "If you just initiated battle, may peek at top X cards of your Used Pile, " +
-                "where X = number of Hoth battlegrounds you occupy; take one into hand and shuffle your Used Pile." +
+                "where X = number of Hoth battlegrounds you occupy; take one into hand and shuffle your Used Pile. " +
                 "Flip this card if opponent does not occupy your Hoth location.");
         addIcons(Icon.HOTH, Icon.VIRTUAL_SET_22);
     }

@@ -31,7 +31,7 @@ public class Card4_021 extends AbstractNormalEffect {
     public Card4_021() {
         super(Side.LIGHT, 4, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.Do_Or_Do_Not, Uniqueness.UNIQUE, ExpansionSet.DAGOBAH, Rarity.C);
         setLore("A Jedi may choose to intervene in the natural course of events, but must accept responsibility for the consequences.");
-        setGameText("Deploy on table. Sense and Alter are now Lost Interrupts. Also, when and player makes a destiny draw for Sense or Alter, and that destiny draw is successful, that player loses 2 Force. (Immune to Alter.)");
+        setGameText("Deploy on table. Sense and Alter are now Lost Interrupts. Also, when any player makes a destiny draw for Sense or Alter, and that destiny draw is successful, that player loses 2 Force. (Immune to Alter.)");
         addIcons(Icon.DAGOBAH);
         addImmuneToCardTitle(Title.Alter);
     }

@@ -39,7 +39,7 @@ import java.util.List;
 public class Card601_253 extends AbstractStarfighter {
     public Card601_253() {
         super(Side.LIGHT, 2, 4, 6, null, 5, 5, 6, "Wedge In Red Squadron 1", Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
-        setLore("Flown by Wedge Antilles as Red 2 at the Battle of Yavin. Redesignated at Endor. Rugged Incom fighter. Victory markers show it role in the attack on the first Death Star.");
+        setLore("Flown by Wedge Antilles as Red 2 at the Battle of Yavin. Redesignated at Endor. Rugged Incom fighter. Victory markers show its role in the attack on the first Death Star.");
         setGameText("Permanent pilot is •Wedge, who provides ability of 3. During a battle with opponent's [Independent] starship, may add one destiny to total power or attrition. Immune to Come With Me, Tallon Roll, and attrition < 4.");
         addPersona(Persona.RED_2);
         addIcons(Icon.DEATH_STAR_II, Icon.PILOT, Icon.NAV_COMPUTER, Icon.SCOMP_LINK, Icon.LEGACY_BLOCK_6);

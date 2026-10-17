@@ -39,7 +39,7 @@ public class Card109_001 extends AbstractRebel {
     public Card109_001() {
         super(Side.LIGHT, 1, 5, 6, 2, 5, "Chewie With Blaster Rifle", Uniqueness.UNIQUE, ExpansionSet.ENHANCED_CLOUD_CITY, Rarity.PM);
         setLore("Wookiee smuggler. 'Wraaaaaarw!'");
-        setGameText("Adds 3 to power of any freighter he pilots. Adds one battle destiny if with C-3P0. Permanent weapon is blaster rifle (may target a character or creature for free; draw destiny; target hit, and its forfeit = 0, if destiny > defense value).");
+        setGameText("Adds 3 to power of any freighter he pilots. Adds one battle destiny if with C-3PO. Permanent weapon is blaster rifle (may target a character or creature for free; draw destiny; target hit, and its forfeit = 0, if destiny > defense value).");
         addPersona(Persona.CHEWIE);
         addIcons(Icon.PREMIUM, Icon.PILOT, Icon.WARRIOR, Icon.PERMANENT_WEAPON);
         addKeywords(Keyword.SMUGGLER);

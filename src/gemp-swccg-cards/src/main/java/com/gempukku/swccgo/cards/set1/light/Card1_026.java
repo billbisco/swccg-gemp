@@ -29,7 +29,7 @@ import java.util.List;
 public class Card1_026 extends AbstractRebel {
     public Card1_026() {
         super(Side.LIGHT, 3, 2, 0, 1, 1, Title.Rebel_Guard, Uniqueness.UNRESTRICTED, ExpansionSet.PREMIERE, Rarity.C2);
-        setLore("Galen Torg was selected for honor guard duty during ceremony following the Battle of Yavin. He is typical of the hard-working, unsung heros in the Rebel Alliance.");
+        setLore("Galen Torg was selected for honor guard duty during ceremony following the Battle of Yavin. He is typical of the hard-working, unsung heroes in the Rebel Alliance.");
         setGameText("Power +4 when defending a battle. Cannot move.");
         addKeyword(Keyword.GUARD);
     }

@@ -40,7 +40,7 @@ public class Card8_037 extends AbstractNormalEffect {
     public Card8_037() {
         super(Side.LIGHT, 5, PlayCardZoneOption.ATTACHED, Title.Count_Me_In, Uniqueness.UNIQUE, ExpansionSet.ENDOR, Rarity.R);
         setLore("Leia couldn't let Han out of her sight.");
-        setGameText("Deploy on Leia if That's One on table. I Know is a Used Interrupt. Once per battle, when Leia is battling with Han and Chewie and you are about to draw a card for battle or weapon destiny, you may instead us Leia's ability number.");
+        setGameText("Deploy on Leia if That's One on table. I Know is a Used Interrupt. Once per battle, when Leia is battling with Han and Chewie and you are about to draw a card for battle or weapon destiny, you may instead use Leia's ability number.");
         addKeywords(Keyword.DEPLOYS_ON_CHARACTERS);
         addIcons(Icon.ENDOR);
     }

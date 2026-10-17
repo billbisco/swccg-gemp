@@ -39,7 +39,7 @@ public class Card201_013 extends AbstractUsedOrLostInterrupt {
         super(Side.LIGHT, 5, "Hear Me Baby, Hold Together", Uniqueness.UNRESTRICTED, ExpansionSet.SET_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("Smuggler and Rebel starships use black market armor plating and deflector shields to withstand enemy fire. Expensive but life-saving modifications.");
-        setGameText("USED: Play a Defensive Shield from under your Starting Effect. [Immune to Sense] OR Cancel Counter Assault, [Set 0] Defensive Fire, or Hidden Weapons. Or Make a just drawn Overload destiny = 1/2. LOST: Cancel Cease Fire! or I Have Your Now.");
+        setGameText("USED: Play a Defensive Shield from under your Starting Effect. [Immune to Sense] OR Cancel Counter Assault, [Set 0] Defensive Fire, or Hidden Weapons. Or Make a just drawn Overload destiny = 1/2. LOST: Cancel Cease Fire! or I Have You Now.");
         addIcons(Icon.VIRTUAL_SET_1);
     }
 

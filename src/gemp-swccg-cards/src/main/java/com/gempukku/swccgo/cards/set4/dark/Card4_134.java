@@ -31,7 +31,7 @@ public class Card4_134 extends AbstractNormalEffect {
     public Card4_134() {
         super(Side.DARK, 4, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.There_Is_No_Try, Uniqueness.UNIQUE, ExpansionSet.DAGOBAH, Rarity.C);
         setLore("'Always with you what cannot be done.'");
-        setGameText("Deploy on table. Sense and Alter are now Lost Interrupts. Also, when and player makes a destiny draw for Sense or Alter, and that destiny draw is successful, that player loses 2 Force. (Immune to Alter.)");
+        setGameText("Deploy on table. Sense and Alter are now Lost Interrupts. Also, when any player makes a destiny draw for Sense or Alter, and that destiny draw is successful, that player loses 2 Force. (Immune to Alter.)");
         addIcons(Icon.DAGOBAH);
         addImmuneToCardTitle(Title.Alter);
     }

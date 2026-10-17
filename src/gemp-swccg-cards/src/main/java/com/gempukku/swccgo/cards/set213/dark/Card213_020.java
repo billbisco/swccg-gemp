@@ -36,7 +36,7 @@ public class Card213_020 extends AbstractUsedOrLostInterrupt {
     public Card213_020() {
         super(Side.DARK, 5, "I've Been Searching For You For Some Time", Uniqueness.UNRESTRICTED, ExpansionSet.SET_13, Rarity.V);
         setLore("");
-        setGameText("USED: If opponent's character is about to be lost, place all 'Hatred' cards (if any) on that character in owner's Used Pile. LOST: Lose Vader or an Inquistor from hand to take up to two Inquisitors into hand from Reserve Deck; reshuffle.");
+        setGameText("USED: If opponent's character is about to be lost, place all 'Hatred' cards (if any) on that character in owner's Used Pile. LOST: Lose Vader or an Inquisitor from hand to take up to two Inquisitors into hand from Reserve Deck; reshuffle.");
         addIcons(Icon.VIRTUAL_SET_13);
     }
 

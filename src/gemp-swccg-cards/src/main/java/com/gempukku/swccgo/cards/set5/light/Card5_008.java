@@ -34,7 +34,7 @@ import java.util.List;
 public class Card5_008 extends AbstractAlien {
     public Card5_008() {
         super(Side.LIGHT, 2, 2, 1, 1, 2, Title.Tibanna_Gas_Miner, Uniqueness.UNRESTRICTED, ExpansionSet.CLOUD_CITY, Rarity.C);
-        setLore("Long-time Cloud City resident Willow Hood. Employed by a mining company which is sympathetic to the Rebels and sells them Tibanna gas at a discount.");
+        setLore("Long-time Cloud City resident Willrow Hood. Employed by a mining company which is sympathetic to the Rebels and sells them Tibanna gas at a discount.");
         setGameText("When at a site, adds 1 to your Force drains at related cloud sectors. Also, during your activate phase, if at a Cloud City site and you control Bespin: Cloud City, may cumulatively activate 1 Force for every cloud sector on Bespin.");
         addIcons(Icon.CLOUD_CITY);
         addKeywords(Keyword.GAS_MINER);

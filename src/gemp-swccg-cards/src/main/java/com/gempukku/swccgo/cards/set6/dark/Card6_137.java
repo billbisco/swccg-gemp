@@ -36,7 +36,7 @@ import java.util.List;
 public class Card6_137 extends AbstractAlien {
     public Card6_137() {
         super(Side.DARK, 3, 2, 2, 1, 2, "Yuzzum", Uniqueness.RESTRICTED_3, ExpansionSet.JABBAS_PALACE, Rarity.C);
-        setLore("Native to Endor, Yuzzum compete with Ewoks for food and resources. Possess thick, wooly coats. Hunt in packagedProduct. Have a musical language, making them excellent musicians.");
+        setLore("Native to Endor, Yuzzum compete with Ewoks for food and resources. Possess thick, wooly coats. Hunt in packs. Have a musical language, making them excellent musicians.");
         setGameText("Deploys only on Endor or to same site as a bounty hunter. Power +2 when present with an Ewok. During your control phase, if a bounty hunter or Rodian present, may search Reserve Deck, take one We Have A Prisoner into hand and reshuffle.");
         addIcons(Icon.JABBAS_PALACE, Icon.WARRIOR);
         addKeywords(Keyword.MUSICIAN);

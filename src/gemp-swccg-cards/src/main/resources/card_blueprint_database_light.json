@@ -1330,7 +1330,7 @@
       "REBEL"
     ],
     "lore": "Wookiee smuggler. 'Wraaaaaarw!'",
-    "gameText": "Adds 3 to power of any freighter he pilots. Adds one battle destiny if with C-3P0. Permanent weapon is blaster rifle (may target a character or creature for free; draw destiny; target hit, and its forfeit = 0, if destiny > defense value).",
+    "gameText": "Adds 3 to power of any freighter he pilots. Adds one battle destiny if with C-3PO. Permanent weapon is blaster rifle (may target a character or creature for free; draw destiny; target hit, and its forfeit = 0, if destiny > defense value).",
     "deployCost": 5,
     "destiny": 1,
     "power": 6,
@@ -3535,7 +3535,7 @@
     "cardTypes": [
       "DROID"
     ],
-    "lore": "Protocol droid designed by Anakin in order to help his mother. C-3P0 was not to be sold when Anakin left with Qui-Gon Jinn for Coruscant.",
+    "lore": "Protocol droid designed by Anakin in order to help his mother. C-3PO was not to be sold when Anakin left with Qui-Gon Jinn for Coruscant.",
     "gameText": "If in a battle with Shmi at a site, once per battle may place top card of your Used Pile on top of your Reserve Deck. Once per turn may place a card from hand on Used Pile to draw top card from Reserve Deck.",
     "deployCost": 2,
     "destiny": 3,
@@ -3578,7 +3578,7 @@
     "cardTypes": [
       "DROID"
     ],
-    "lore": "Protocol droid designed by Anakin in order to help his mother. C-3P0 was not to be sold when Anakin left with Qui-Gon Jinn for Coruscant.",
+    "lore": "Protocol droid designed by Anakin in order to help his mother. C-3PO was not to be sold when Anakin left with Qui-Gon Jinn for Coruscant.",
     "gameText": "If in a battle with Shmi at a site, once per battle may place top card of your Used Pile on top of your Reserve Deck. Once per turn may place a card from hand on Used Pile to draw top card from Reserve Deck.",
     "deployCost": 2,
     "destiny": 3,
@@ -7229,7 +7229,7 @@
       "INTERRUPT"
     ],
     "cardSubtype": "USED",
-    "gameText": "Cancel Tatooine Occupation, Cloud City Occupation, Rebel Base Occupation. (Immune to Sense.) OR Peak at one card randomly selected from opponent's hand. If that card is a speeder bike, AT-ST, or skiff, steal it into hand.",
+    "gameText": "Cancel Tatooine Occupation, Cloud City Occupation, Rebel Base Occupation. (Immune to Sense.) OR Peek at one card randomly selected from opponent's hand. If that card is a speeder bike, AT-ST, or skiff, steal it into hand.",
     "destiny": 5,
     "icons": [
       {
@@ -8942,7 +8942,7 @@
       "WEAPON"
     ],
     "cardSubtype": "CHARACTER",
-    "lore": "Naboo blaster personally modified by Captain Panaka. Boosted by extra power packagedProduct that allow it to maintain sustained fire in tense situations.",
+    "lore": "Naboo blaster personally modified by Captain Panaka. Boosted by extra power packs that allow it to maintain sustained fire in tense situations.",
     "gameText": "Deploy on Panaka. May target a character, creature, or vehicle for free. Draw destiny. Target hit if destiny +2 > defense value. When this blaster hits a character or vehicle in battle, your total power here is +3 for remainder of battle.",
     "destiny": 4,
     "icons": [
@@ -9041,7 +9041,7 @@
       "INTERRUPT"
     ],
     "cardSubtype": "USED",
-    "lore": "Despite coming face to face with the first Sith to be seen in a millenia, the young Padawan was still a force to be reckoned with.",
+    "lore": "Despite coming face to face with the first Sith to be seen in a millennia, the young Padawan was still a force to be reckoned with.",
     "gameText": "If your [Episode I] Jedi just defeated Maul in lightsaber combat, draw destiny. Add 2 if Qui-Gon out of play. If total > 6, place Maul out of play and you may search your Lost Pile and take any one card into hand. (Immune to Sense.)",
     "destiny": 6,
     "icons": [
@@ -10118,7 +10118,7 @@
     ],
     "cardSubtype": "CHARACTER",
     "lore": "This lightsaber bore silent witness to the death of two great warriors in the same day. One a Jedi, one a Sith.",
-    "gameText": "Deploy on Qui-Gon or [Episode I] Obi-Wan. Adds 1 to this character's lightsaber combat total. May target a character for free. Draw two destiny. Target hit, and it forfeit = 0, if total destiny > defense value (if hit target is a Dark Jedi, opponent also loses 1 Force).",
+    "gameText": "Deploy on Qui-Gon or [Episode I] Obi-Wan. Adds 1 to this character's lightsaber combat total. May target a character for free. Draw two destiny. Target hit, and its forfeit = 0, if total destiny > defense value (if hit target is a Dark Jedi, opponent also loses 1 Force).",
     "destiny": 5,
     "icons": [
       {
@@ -13173,7 +13173,7 @@
       "WEAPON"
     ],
     "cardSubtype": "VEHICLE",
-    "lore": "Lunched from fambaa-mounted catapults. Gungan 'energy balls' are used to disable a variety of mechanized threats. Effectiveness is enhanced by the skill of the user.",
+    "lore": "Launched from fambaa-mounted catapults. Gungan 'energy balls' are used to disable a variety of mechanized threats. Effectiveness is enhanced by the skill of the user.",
     "gameText": "Deploy on your Fambaa. Twice during battle may draw destiny. If destiny < total number of opponent's characters and vehicles present, one of them is lost (opponent's choice).",
     "destiny": 4,
     "icons": [
@@ -15399,7 +15399,7 @@
       "WEAPON"
     ],
     "cardSubtype": "CHARACTER",
-    "lore": "A Merr-Sonn Model 44 blaster pistol. Uses power packagedProduct and high-energy blaster gases to shoot bolts of explosive coherent light energy.",
+    "lore": "A Merr-Sonn Model 44 blaster pistol. Uses power packs and high-energy blaster gases to shoot bolts of explosive coherent light energy.",
     "gameText": "Use 1 Force to deploy on your warrior. May target a character, creature or vehicle using 1 Force. Draw destiny. Target hit if destiny > defense value.",
     "destiny": 3,
     "icons": [
@@ -16091,7 +16091,7 @@
     "cardTypes": [
       "REBEL"
     ],
-    "lore": "Galen Torg was selected for honor guard duty during ceremony following the Battle of Yavin. He is typical of the hard-working, unsung heros in the Rebel Alliance.",
+    "lore": "Galen Torg was selected for honor guard duty during ceremony following the Battle of Yavin. He is typical of the hard-working, unsung heroes in the Rebel Alliance.",
     "gameText": "Power +4 when defending a battle. Cannot move.",
     "deployCost": 2,
     "destiny": 3,
@@ -18281,7 +18281,7 @@
       "REBEL"
     ],
     "lore": "Defected from the Empire with Biggs Darklighter. Aided in mutiny aboard the transport Rand Ecliptic. Served in the Ecliptic Evaders. Luke's wingman at the Battle of Hoth.",
-    "gameText": "[Pilot] 2. While piloting Rogue 4 (or any X-wing), draws on battle destiny if unable to otherwise. Permanent weapon is Rogue Blaster (may target a character or creature for free; draw destiny; target hit, and its forfeit = 0, if destiny + 1 > defense value).",
+    "gameText": "[Pilot] 2. While piloting Rogue 4 (or any X-wing), draws one battle destiny if unable to otherwise. Permanent weapon is Rogue Blaster (may target a character or creature for free; draw destiny; target hit, and its forfeit = 0, if destiny + 1 > defense value).",
     "deployCost": 2,
     "destiny": 2,
     "power": 2,
@@ -20856,7 +20856,7 @@
       "STARSHIP"
     ],
     "cardSubtype": "STARFIGHTER",
-    "lore": "Flown by Wedge Antilles as Red 2 at the Battle of Yavin. Redesignated at Endor. Rugged Incom fighter. Victory markers show it role in the attack on the first Death Star.",
+    "lore": "Flown by Wedge Antilles as Red 2 at the Battle of Yavin. Redesignated at Endor. Rugged Incom fighter. Victory markers show its role in the attack on the first Death Star.",
     "gameText": "Permanent pilot is •Wedge, who provides ability of 3. During a battle with opponent's [Independent] starship, may add one destiny to total power or attrition. Immune to Come With Me, Tallon Roll, and attrition < 4.",
     "deployCost": 4,
     "destiny": 2,
@@ -21283,7 +21283,7 @@
     ],
     "cardSubtype": "USED_OR_LOST",
     "lore": "Smuggler and Rebel starships use black market armor plating and deflector shields to withstand enemy fire. Expensive but life-saving modifications.",
-    "gameText": "USED: Play a Defensive Shield from under your Starting Effect. [Immune to Sense] OR Cancel Counter Assault, [Set 0] Defensive Fire, or Hidden Weapons. Or Make a just drawn Overload destiny = 1/2. LOST: Cancel Cease Fire! or I Have Your Now.",
+    "gameText": "USED: Play a Defensive Shield from under your Starting Effect. [Immune to Sense] OR Cancel Counter Assault, [Set 0] Defensive Fire, or Hidden Weapons. Or Make a just drawn Overload destiny = 1/2. LOST: Cancel Cease Fire! or I Have You Now.",
     "destiny": 5,
     "icons": [
       {
@@ -21686,7 +21686,7 @@
     ],
     "cardSubtype": "CHARACTER",
     "lore": "Elegant sword of pure energy. 'This is the weapon of a Jedi Knight. Not as clumsy or as random as a blaster. A lightsaber can be dangerous to an unskilled user.'",
-    "gameText": "Deploy on Mace. May add 1 to Force drain where present. Mace may add 1 to his duel total. May target a character or creature for free. Draw two destiny. Target hit, and it forfeit = 0, if total destiny > defense value.",
+    "gameText": "Deploy on Mace. May add 1 to Force drain where present. Mace may add 1 to his duel total. May target a character or creature for free. Draw two destiny. Target hit, and its forfeit = 0, if total destiny > defense value.",
     "destiny": 1,
     "icons": [
       {
@@ -21917,7 +21917,7 @@
     "cardTypes": [
       "DROID"
     ],
-    "lore": "Fiesty. Loyal. Heroic. Insecure. Rebel spy. Excels at trouble. Incorrigible counterpart of a mindless philosopher. Has picked up a slight flutter. A bit eccentric.",
+    "lore": "Feisty. Loyal. Heroic. Insecure. Rebel spy. Excels at trouble. Incorrigible counterpart of a mindless philosopher. Has picked up a slight flutter. A bit eccentric.",
     "gameText": "While aboard a starfighter, adds 2 to power, maneuver, and hyperspeed. While present with a Scomp link, adds one [Light Side] icon here and, during battles at same and related interior sites, once per turn may use 1 Force to subtract 1 from a just drawn destiny.",
     "deployCost": 2,
     "destiny": 2,
@@ -22792,7 +22792,7 @@
     "cardTypes": [
       "OBJECTIVE"
     ],
-    "gameText": "Deploy Tatooine (with Tantive IV, non-[Reflections II] R2-D2, and Stolen Data Tapes there) and Dune Sea. For remainder of game, you may not deploy Sandwhirl, Strike Planning, Admiral's Orders or [Episode I] Jedi. While this side up, you Force drains at Tatooine system are -2. Once per turn, may [download] Alderaan or a Tatooine battleground site. Until the start of your first turn, Tantive IV may be forfeited to satisfy to satisfy all battle damage against you. Flip this card if Stolen Data Tapes 'delivered' and Rebels control two battlegrounds (a site and a system).",
+    "gameText": "Deploy Tatooine (with Tantive IV, non-[Reflections II] R2-D2, and Stolen Data Tapes there) and Dune Sea. For remainder of game, you may not deploy Sandwhirl, Strike Planning, Admiral's Orders or [Episode I] Jedi. While this side up, your Force drains at Tatooine system are -2. Once per turn, may [download] Alderaan or a Tatooine battleground site. Until the start of your first turn, Tantive IV may be forfeited to satisfy to satisfy all battle damage against you. Flip this card if Stolen Data Tapes 'delivered' and Rebels control two battlegrounds (a site and a system).",
     "destiny": 0,
     "icons": [
       {
@@ -26224,7 +26224,7 @@
       "WEAPON"
     ],
     "cardSubtype": "CHARACTER",
-    "lore": "Czerka 6-2Aug2. Extended barrel provides long-range targeting without expensive laser sight. Sturdy construction, but no match for a Tusken Raider's gaderffi stick.",
+    "lore": "Czerka 6-2Aug2. Extended barrel provides long-range targeting without expensive laser sight. Sturdy construction, but no match for a Tusken Raider's gaderffii stick.",
     "gameText": "Deploy on your alien or Rebel. May target a character or creature for free. Draw destiny. Target hit if destiny +2 > defense value. If hit by Luke or Owen, target's forfeit = 0 and you retrieve 1 Force. Once during your move phase, may fire at a Jawa or Undercover spy.",
     "destiny": 5,
     "icons": [
@@ -26259,7 +26259,7 @@
     "cardTypes": [
       "REBEL"
     ],
-    "gameText": "If a battle was just initiated here, may peek at the top card of any Reserve Deck; return it or place it on top of owner's Force Pile. If just lost, may [upload] or retrieve Baze. Once per game, your may re-circulate.",
+    "gameText": "If a battle was just initiated here, may peek at the top card of any Reserve Deck; return it or place it on top of owner's Force Pile. If just lost, may [upload] or retrieve Baze. Once per game, you may re-circulate.",
     "deployCost": 4,
     "destiny": 2,
     "power": 4,
@@ -26904,7 +26904,7 @@
     ],
     "cardSubtype": "LOST",
     "lore": "First perfected by Corellian starship battle tacticians, this dangerous counter-maneuver has saved numerous hot-shot pilots in life-or-death situations.",
-    "gameText": "During battle, target opponent's starfighter with your snub fighter. Starfighter's gametext (except related to any capacity and the ability and identify of any permanent pilots) is canceled. OR If your pilot of ability < 3 was just lost from aboard a snub fighter, take pilot into hand.",
+    "gameText": "During battle, target opponent's starfighter with your snub fighter. Starfighter's gametext (except related to any capacity and the ability and identity of any permanent pilots) is canceled. OR If your pilot of ability < 3 was just lost from aboard a snub fighter, take pilot into hand.",
     "destiny": 4,
     "icons": [
       {
@@ -28628,7 +28628,7 @@
     "cardTypes": [
       "OBJECTIVE"
     ],
-    "gameText": "While this side up, your spies are defense value +2 (and power +1 if with Stardust) and are immune to Undercover. While Stardust on your spy, opponent may not cancel your Force drains at battlegrounds. Once per turn, may place a Rebel in your Lost Pile out of play to make a regular move with your Rebel spy during your control phase or cancel an attempt to target your non-Undercover Rebel spy with a weapon.Flip this card if you do not occupy two Scarif locations (unless Rogue One at a Scarif site you occupy).",
+    "gameText": "While this side up, your spies are defense value +2 (and power +1 if with Stardust) and are immune to Undercover. While Stardust on your spy, opponent may not cancel your Force drains at battlegrounds. Once per turn, may place a Rebel in your Lost Pile out of play to make a regular move with your Rebel spy during your control phase or cancel an attempt to target your non-Undercover Rebel spy with a weapon. Flip this card if you do not occupy two Scarif locations (unless Rogue One at a Scarif site you occupy).",
     "destiny": 7,
     "icons": [
       {
@@ -30293,7 +30293,7 @@
     ],
     "cardSubtype": "LOST_OR_STARTING",
     "lore": "'When we find Jabba the Hutt and that bounty hunter, we'll contact you.'",
-    "gameText": "LOST: [download] a Tatooine battleground.STARTING: If your Jabba's Palace site on table, deploy Seeking An Audience and up to 2 Effects that deploy on table and are always immune to Alter. Place Interrupt in hand.",
+    "gameText": "LOST: [download] a Tatooine battleground. STARTING: If your Jabba's Palace site on table, deploy Seeking An Audience and up to 2 Effects that deploy on table and are always immune to Alter. Place Interrupt in hand.",
     "destiny": 4,
     "icons": [
       {
@@ -30643,7 +30643,7 @@
     ],
     "cardSubtype": "SITE",
     "locationDarkSideGameText": "If you control, opponent must use 1 Force to use their Takodana: Maz's Castle game text.",
-    "locationLightSideGameText": "Oce per turn, may [download] a Maz's Castle site.",
+    "locationLightSideGameText": "Once per turn, may [download] a Maz's Castle site.",
     "deployCost": 0,
     "destiny": 0,
     "icons": [
@@ -30738,7 +30738,7 @@
       "LOCATION"
     ],
     "cardSubtype": "SITE",
-    "locationDarkSideGameText": "For drain -1 here.  While you control, Dobra Doompa is suspended.",
+    "locationDarkSideGameText": "Force drain -1 here.  While you control, Dobra Doompa is suspended.",
     "locationLightSideGameText": "Once per game, may [download] an [Episode VII] alien here.",
     "deployCost": 0,
     "destiny": 0,
@@ -32157,7 +32157,7 @@
     ],
     "cardSubtype": "USED_OR_LOST",
     "lore": "",
-    "gameText": "USED: Take Lando, L3-37, or Kessel Run, into hand from Reserve Deck; reshuffle. OR If you just placed a Coaxium card on Used pile randomly retrieve 1 Force.LOST: Once per game, may place a card stacked on [Set D] A Useless Gesture in your Lost Pile.)",
+    "gameText": "USED: Take Lando, L3-37, or Kessel Run, into hand from Reserve Deck; reshuffle. OR If you just placed a Coaxium card on Used pile randomly retrieve 1 Force. LOST: Once per game, may place a card stacked on [Set D] A Useless Gesture in your Lost Pile.)",
     "destiny": 4,
     "icons": [
       {
@@ -32458,7 +32458,7 @@
       "INTERRUPT"
     ],
     "cardSubtype": "USED_OR_LOST",
-    "gameText": "USED: Cancel Sense.LOST: Target an Effect, Political Effect or Utinni Effect, and one of your characters on table. Draw destiny. If destiny < character's ability, target Effect is canceled. OR If a battle was just initiated as a site where opponent has four or more characters, draw destiny. If destiny < numbers of opponent's character at that site, opponent chooses one to be lost (you lose no Force to There is no Try). (Immune to opponent's Objective).",
+    "gameText": "USED: Cancel Sense. LOST: Target an Effect, Political Effect or Utinni Effect, and one of your characters on table. Draw destiny. If destiny < character's ability, target Effect is canceled. OR If a battle was just initiated at a site where opponent has four or more characters, draw destiny. If destiny < number of opponent's characters at that site, opponent chooses one to be lost (you lose no Force to There is no Try). (Immune to opponent's Objective).",
     "destiny": 4,
     "icons": [
       {
@@ -37777,7 +37777,7 @@
     "cardTypes": [
       "OBJECTIVE"
     ],
-    "gameText": "Deploy Lothal system and a Lothal site.For remainder of game, Menace Fades and Projection Of A Skywalker are canceled. Harc, Jedi (except Ahsoka and Kanan), and your [Episode I] (and [Episode VII]) cards with ability are deploy +2. Chopper, Ezra, Hera, Kanan, Sabine, and Zeb gain Phoenix Squadron. Once per turn, may [download] a Lothal site.Flip this card if Rebels control three Lothal locations (or you occupy three Lothal locations with Phoenix Squadron characters) and opponent controls no Lothal locations.",
+    "gameText": "Deploy Lothal system and a Lothal site. For remainder of game, Menace Fades and Projection Of A Skywalker are canceled. Harc, Jedi (except Ahsoka and Kanan), and your [Episode I] (and [Episode VII]) cards with ability are deploy +2. Chopper, Ezra, Hera, Kanan, Sabine, and Zeb gain Phoenix Squadron. Once per turn, may [download] a Lothal site. Flip this card if Rebels control three Lothal locations (or you occupy three Lothal locations with Phoenix Squadron characters) and opponent controls no Lothal locations.",
     "destiny": 0,
     "icons": [
       {
@@ -37803,7 +37803,7 @@
     "cardTypes": [
       "OBJECTIVE"
     ],
-    "gameText": "While this side up, if you Force drained at a battleground this turn, your other Force drains at battlegrounds are +1. Once per turn during battle, may add or subtract X from a just drawn battle destiny (or opponent's weapon destiny), where X = number of battlegrounds you occupy with Phoenix Squadron characters. At Lothal system, the number of battle destiny draws may not be limited for either player.Flip this card if opponent controls more Lothal locations than you.",
+    "gameText": "While this side up, if you Force drained at a battleground this turn, your other Force drains at battlegrounds are +1. Once per turn during battle, may add or subtract X from a just drawn battle destiny (or opponent's weapon destiny), where X = number of battlegrounds you occupy with Phoenix Squadron characters. At Lothal system, the number of battle destiny draws may not be limited for either player. Flip this card if opponent controls more Lothal locations than you.",
     "destiny": 7,
     "icons": [
       {
@@ -39944,7 +39944,7 @@
     "cardTypes": [
       "OBJECTIVE"
     ],
-    "gameText": "Deploy Hoth system and 1st Marker. For remainder of game, Hoth Energy Shield does not extend beyond 1st Marker. You may not deploy Ice Storm, [Special Edition] Leia, systems, or characters of ability > 4. Echo Base Garrison is immune to Alter. Once per turn, may [download] Echo Command Center or a marker site.While this side up, your Force drains are +1 at Hoth system. During your control phase, if you occupy two battleground marker sites, retrieve 1 Force.Flip this card if opponent occupies your Hoth location.",
+    "gameText": "Deploy Hoth system and 1st Marker. For remainder of game, Hoth Energy Shield does not extend beyond 1st Marker. You may not deploy Ice Storm, [Special Edition] Leia, systems, or characters of ability > 4. Echo Base Garrison is immune to Alter. Once per turn, may [download] Echo Command Center or a marker site. While this side up, your Force drains are +1 at Hoth system. During your control phase, if you occupy two battleground marker sites, retrieve 1 Force. Flip this card if opponent occupies your Hoth location.",
     "destiny": 0,
     "icons": [
       {
@@ -39974,7 +39974,7 @@
     "cardTypes": [
       "OBJECTIVE"
     ],
-    "gameText": "While this side up, cancels Hoth Sentry, Sunsdown, and the game text of your Admiral's Orders and unique (•) characters (except gunners, pilots, and troopers) on table. Cards 'hit' by your artillery or vehicle weapons may not be used to satisfy attrition. If you just initiated battle, may peek at top X cards of your Used Pile, where X = number of Hoth battlegrounds you occupy; take one into hand and shuffle your Used Pile.Flip this card if opponent does not occupy your Hoth location.",
+    "gameText": "While this side up, cancels Hoth Sentry, Sunsdown, and the game text of your Admiral's Orders and unique (•) characters (except gunners, pilots, and troopers) on table. Cards 'hit' by your artillery or vehicle weapons may not be used to satisfy attrition. If you just initiated battle, may peek at top X cards of your Used Pile, where X = number of Hoth battlegrounds you occupy; take one into hand and shuffle your Used Pile. Flip this card if opponent does not occupy your Hoth location.",
     "destiny": 7,
     "icons": [
       {
@@ -40492,7 +40492,7 @@
       "ALIEN"
     ],
     "lore": "Female Togruta.",
-    "gameText": "While your [Skywalker] Epic Event on table, Ahsoka ignores its deployment restrictions and, once per turn, may subtract 1 from a non-weapon destiny draw targeting your character's ability or defense value. Characters Ahsoka 'hits' are forfeit = 0. Immune to attrition < 5..",
+    "gameText": "While your [Skywalker] Epic Event on table, Ahsoka ignores its deployment restrictions and, once per turn, may subtract 1 from a non-weapon destiny draw targeting your character's ability or defense value. Characters Ahsoka 'hits' are forfeit = 0. Immune to attrition < 5.",
     "deployCost": 5,
     "destiny": 1,
     "power": 5,
@@ -40540,7 +40540,7 @@
       "INTERRUPT"
     ],
     "cardSubtype": "USED",
-    "gameText": "Destiny +2 if 3 Wookiees and/or Ewoks on table. Take a Ewok or Wookiee of power < 6 into hand from reserve deck; reshuffle. OR Deploy a Bowcaster or Ewok Weapon from your lost pile. OR Add one battle destiny at same site as Part of the Tribe.",
+    "gameText": "Destiny +2 if 3 Wookiees and/or Ewoks on table. Take an Ewok or Wookiee of power < 6 into hand from reserve deck; reshuffle. OR Deploy a Bowcaster or Ewok Weapon from your lost pile. OR Add one battle destiny at same site as Part of the Tribe.",
     "destiny": 4,
     "icons": [
       {
@@ -43702,7 +43702,7 @@
     "cardTypes": [
       "DROID"
     ],
-    "lore": "Fiesty. Loyal. Heroic. Insecure. Rebel spy. Excels at trouble. Incorrigible counterpart of a mindless philosopher. Has picked up a slight flutter. A bit eccentric.",
+    "lore": "Feisty. Loyal. Heroic. Insecure. Rebel spy. Excels at trouble. Incorrigible counterpart of a mindless philosopher. Has picked up a slight flutter. A bit eccentric.",
     "gameText": "While aboard any starfighter, adds 2 to power, maneuver and hyperspeed (3 on Red 5). If at a Scomp link when opponent draws destiny of: 1-3, you may activate one Force; 4-6, you may draw top card from Reserve Deck.",
     "deployCost": 3,
     "destiny": 2,
@@ -44660,7 +44660,7 @@
       "EFFECT"
     ],
     "cardSubtype": "IMMEDIATE",
-    "lore": "Moisture farmers like Own Lars must be on the lookout for repeated (and blatant) ploys by Jawas.",
+    "lore": "Moisture farmers like Owen Lars must be on the lookout for repeated (and blatant) ploys by Jawas.",
     "gameText": "Use 3 Force to deploy on table and stack one just-played interrupt here. To play any new Interrupt of the same name, player must first stack it here and use +1 Force for each Interrupt in stack, even if Interrupt is normally free. (Immune to Control.)",
     "destiny": 3,
     "icons": [
@@ -46076,7 +46076,7 @@
       "WEAPON"
     ],
     "cardSubtype": "CHARACTER",
-    "lore": "Czerka 6-2Aug2. Extended barrel provides long-range targeting without expensive laser sight. Sturdy construction, but no match for a Tusken Raider's gaderffi stick.",
+    "lore": "Czerka 6-2Aug2. Extended barrel provides long-range targeting without expensive laser sight. Sturdy construction, but no match for a Tusken Raider's gaderffii stick.",
     "gameText": "Use 1 Force to deploy on Luke or Owen Lars, 3 on your non-droid character. May target a character or creature using 1 Force. Draw destiny. Subtract 1 if targeting a character. Add 2 if targeting a creature. Target hit if total destiny > defense value.",
     "destiny": 5,
     "icons": [
@@ -49051,7 +49051,7 @@
       "WEAPON"
     ],
     "cardSubtype": "ARTILLERY",
-    "lore": "Modified Golan Arms DForfeit: 9 anti-infantry battery. Proton-shielded control cylinder capped by one or more rotating turret-mounted laser cannons.",
+    "lore": "Modified Golan Arms DF.9 anti-infantry battery. Proton-shielded control cylinder capped by one or more rotating turret-mounted laser cannons.",
     "gameText": "Deploy on any exterior planet site. Your warrior present may target a creature, character or vehicle at same or adjacent site using 2 Force. Draw destiny. Add 2 if targeting a creature or character. Target hit if total destiny > defense value.",
     "deployCost": 3,
     "destiny": 4,
@@ -49355,7 +49355,7 @@
       "DEVICE"
     ],
     "lore": "Experienced pilots keep a well equipped toolkit. Horizontal boosters, alluvial dampers and hydrospanners aid in performing high-tech repairs aboard starships.",
-    "gameText": "Use 1 Force to deploy on one of you characters, vehicles or starships (free on Falcon or Han). While aboard a vehicle or starship, you may use 1 Force to cancel any Interrupt or Effect of any kind which targets that vehicle or starship.",
+    "gameText": "Use 1 Force to deploy on one of your characters, vehicles or starships (free on Falcon or Han). While aboard a vehicle or starship, you may use 1 Force to cancel any Interrupt or Effect of any kind which targets that vehicle or starship.",
     "destiny": 4,
     "icons": [
       {
@@ -49683,7 +49683,7 @@
     ],
     "cardSubtype": "NORMAL",
     "lore": "A Jedi may choose to intervene in the natural course of events, but must accept responsibility for the consequences.",
-    "gameText": "Deploy on table. Sense and Alter are now Lost Interrupts. Also, when and player makes a destiny draw for Sense or Alter, and that destiny draw is successful, that player loses 2 Force. (Immune to Alter.)",
+    "gameText": "Deploy on table. Sense and Alter are now Lost Interrupts. Also, when any player makes a destiny draw for Sense or Alter, and that destiny draw is successful, that player loses 2 Force. (Immune to Alter.)",
     "destiny": 4,
     "icons": [
       {
@@ -54197,7 +54197,7 @@
     "cardTypes": [
       "ALIEN"
     ],
-    "lore": "Long-time Cloud City resident Willow Hood. Employed by a mining company which is sympathetic to the Rebels and sells them Tibanna gas at a discount.",
+    "lore": "Long-time Cloud City resident Willrow Hood. Employed by a mining company which is sympathetic to the Rebels and sells them Tibanna gas at a discount.",
     "gameText": "When at a site, adds 1 to your Force drains at related cloud sectors. Also, during your activate phase, if at a Cloud City site and you control Bespin: Cloud City, may cumulatively activate 1 Force for every cloud sector on Bespin.",
     "deployCost": 2,
     "destiny": 2,
@@ -55085,7 +55085,7 @@
     "cardTypes": [
       "ALIEN"
     ],
-    "lore": "Starfaring explorers. H'nemthe have a reputation for being sly and unforgiving. Many abandoned their homeworld after the Empire invaded. The females ritually kill their males.",
+    "lore": "Starfaring explorers. H'nemthe have a reputation for being sly and unforgiving. Many abandoned their homeworld after the Empire invaded. The females ritually kill their mates.",
     "gameText": "Adds 2 to power of anything she pilots. Adds 2 to deploy cost of each opponent's male Imperial when that Imperial is deploying to same or adjacent site.",
     "deployCost": 2,
     "destiny": 2,
@@ -55270,7 +55270,7 @@
       "ALIEN"
     ],
     "lore": "Jawa leader. Seeking to peacefully settle a long-standing disagreement with his rival, Wittin. Wants Jabba to mediate their talks.",
-    "gameText": "Deploys only on Tatooine. Your Jawa Siesta is not unique(•), is doubled, deploys free (or for 6 Force from each player) and cummulatively affects your Jawas' forfeit. While at Audience Chamber or Jawa Camp, all your other Jawas are power +2.",
+    "gameText": "Deploys only on Tatooine. Your Jawa Siesta is not unique(•), is doubled, deploys free (or for 6 Force from each player) and cumulatively affects your Jawas' forfeit. While at Audience Chamber or Jawa Camp, all your other Jawas are power +2.",
     "deployCost": 3,
     "destiny": 2,
     "power": 2,
@@ -55579,7 +55579,7 @@
       "DROID"
     ],
     "lore": "Counterpart to C-3PO. Spy. Obstinate, headstrong and always full of surprises. R2-D2 was an integral part of Luke Skywalker's rescue plans.",
-    "gameText": "During each of your control phases, may take one Hero Of A Thousand Devices or A Gift into hand from Reserve Deck; reshuffle. If at a battleground site with C-3P0, may subtract 1 from each opponent's battle destiny at same and related sites.",
+    "gameText": "During each of your control phases, may take one Hero Of A Thousand Devices or A Gift into hand from Reserve Deck; reshuffle. If at a battleground site with C-3PO, may subtract 1 from each opponent's battle destiny at same and related sites.",
     "deployCost": 4,
     "destiny": 1,
     "power": 1,
@@ -60435,7 +60435,7 @@
       "WEAPON"
     ],
     "cardSubtype": "CHARACTER",
-    "lore": "Illegal weapon easily purchased by Rebel suppliers on the black market. Rechargeable energy packagedProduct make it a cost-effective weapon.",
+    "lore": "Illegal weapon easily purchased by Rebel suppliers on the black market. Rechargeable energy packs make it a cost-effective weapon.",
     "gameText": "Use 2 Force to deploy on your warrior (1 on your non-unique warrior). May target a character or creature using 2 Force (for free if on your non-unique warrior). Draw Destiny. Target lost if destiny > defense value.",
     "destiny": 4,
     "icons": [
@@ -64817,7 +64817,7 @@
     ],
     "cardSubtype": "NORMAL",
     "lore": "Leia couldn't let Han out of her sight.",
-    "gameText": "Deploy on Leia if That's One on table. I Know is a Used Interrupt. Once per battle, when Leia is battling with Han and Chewie and you are about to draw a card for battle or weapon destiny, you may instead us Leia's ability number.",
+    "gameText": "Deploy on Leia if That's One on table. I Know is a Used Interrupt. Once per battle, when Leia is battling with Han and Chewie and you are about to draw a card for battle or weapon destiny, you may instead use Leia's ability number.",
     "destiny": 5,
     "icons": [
       {
@@ -67061,7 +67061,7 @@
     "cardTypes": [
       "REBEL"
     ],
-    "lore": "Veteran pilots of the reliable Koensayr starfigher were assigned by Ackbar to a key role at Endor. Both the pilots and their venerable Y-wings were up to the task.",
+    "lore": "Veteran pilots of the reliable Koensayr starfighter were assigned by Ackbar to a key role at Endor. Both the pilots and their venerable Y-wings were up to the task.",
     "gameText": "Adds 2 to power of anything he pilots. When piloting a Y-wing, draws one battle destiny if not able to otherwise. When a starship he pilots fires an ion cannon, once per turn, may draw two weapon destiny and choose one.",
     "deployCost": 2,
     "destiny": 3,
@@ -67102,7 +67102,7 @@
       "REBEL"
     ],
     "lore": "Leader. Assigned to fly fighter screen for General Calrissian at Endor.",
-    "gameText": "Adds 2 to power of anything he pilots. When piloting Green Squadron 1, draws on battle destiny if not able to otherwise. Adds 3 to total weapon destiny of any starfighter he pilots firing at a starfighter with lower maneuver.",
+    "gameText": "Adds 2 to power of anything he pilots. When piloting Green Squadron 1, draws one battle destiny if not able to otherwise. Adds 3 to total weapon destiny of any starfighter he pilots firing at a starfighter with lower maneuver.",
     "deployCost": 2,
     "destiny": 2,
     "power": 2,
@@ -69701,8 +69701,8 @@
       "STARSHIP"
     ],
     "cardSubtype": "CAPITAL",
-    "lore": "Medium transport with boosted hyperdrive. Armor and capacity diminished. Crew trained for reconnaissance and swift intergalatic transport.",
-    "gameText": "Deploys and moves like a starfigher. May add 1 pilot and 6 passengers. Has ship-docking capability. Permanent pilot provides ability of 2. May use Covert Landing like a shuttle or starfighter.",
+    "lore": "Medium transport with boosted hyperdrive. Armor and capacity diminished. Crew trained for reconnaissance and swift intergalactic transport.",
+    "gameText": "Deploys and moves like a starfighter. May add 1 pilot and 6 passengers. Has ship-docking capability. Permanent pilot provides ability of 2. May use Covert Landing like a shuttle or starfighter.",
     "deployCost": 3,
     "destiny": 3,
     "power": 1,
@@ -69966,7 +69966,7 @@
       "STARSHIP"
     ],
     "cardSubtype": "STARFIGHTER",
-    "lore": "Flown by Wedge Antilles as Red 2 at the Battle of Yavin. Redesignated at Endor. Rugged Incom fighter. Victory markers show it role in the attack on the first Death Star.",
+    "lore": "Flown by Wedge Antilles as Red 2 at the Battle of Yavin. Redesignated at Endor. Rugged Incom fighter. Victory markers show its role in the attack on the first Death Star.",
     "gameText": "May add 1 pilot. [Death Star II] Wedge deploys -2 aboard (for free if deploying to Endor). When Wedge piloting, immune to attrition < 5 and adds 6 to total when targeted by Tallon Roll.",
     "deployCost": 3,
     "destiny": 3,

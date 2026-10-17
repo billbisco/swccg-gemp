@@ -31,7 +31,7 @@ import java.util.List;
 public class Card1_317 extends AbstractCharacterWeapon {
     public Card1_317() {
         super(Side.DARK, 3, "Imperial Blaster", Uniqueness.UNRESTRICTED, ExpansionSet.PREMIERE, Rarity.C2);
-        setLore("A BlasTech DH-17 blaster pistol. Uses power packagedProduct and high-energy blaster gases. Shoots bolts of explosive coherent light energy.");
+        setLore("A BlasTech DH-17 blaster pistol. Uses power packs and high-energy blaster gases. Shoots bolts of explosive coherent light energy.");
         setGameText("Use 1 Force to deploy on your warrior. May target a character, creature or vehicle using 1 Force. Draw destiny. Target hit if destiny > defense value.");
         addKeywords(Keyword.DH17_BLASTER);
     }

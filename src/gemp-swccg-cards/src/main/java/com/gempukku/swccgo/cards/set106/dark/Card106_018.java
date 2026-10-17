@@ -29,7 +29,7 @@ import java.util.List;
 public class Card106_018 extends AbstractSite {
     public Card106_018() {
         super(Side.DARK, Title.Tusken_Canyon, Title.Tatooine, Uniqueness.UNIQUE, ExpansionSet.OTSD, Rarity.PM);
-        setLocationDarkSideGameText("If you control, Force drain +1 here (+2 if a Gaderffi Stick is present).");
+        setLocationDarkSideGameText("If you control, Force drain +1 here (+2 if a Gaderffii Stick is present).");
         addIcon(Icon.DARK_FORCE, 1);
         addIcon(Icon.LIGHT_FORCE, 1);
         addIcons(Icon.PREMIUM, Icon.EXTERIOR_SITE, Icon.PLANET);
