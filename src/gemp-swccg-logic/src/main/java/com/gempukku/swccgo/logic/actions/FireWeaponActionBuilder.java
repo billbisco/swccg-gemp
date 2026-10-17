@@ -15,6 +15,7 @@ import com.gempukku.swccgo.game.SwccgBuiltInCardBlueprint;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.logic.GameUtils;
+import com.gempukku.swccgo.logic.Heroic;
 import com.gempukku.swccgo.logic.conditions.Condition;
 import com.gempukku.swccgo.logic.conditions.FalseCondition;
 import com.gempukku.swccgo.logic.conditions.TrueCondition;
@@ -296,8 +297,8 @@ public class FireWeaponActionBuilder {
                     ? Filters.or(Filters.participatingInBattle, Filters.canBeTargetedByWeaponAsIfPresent)
                     : Filters.any;
 
+            List<Filterable> unrestrictedLineFilters = new ArrayList<Filterable>();
             for (int i = 0; i < _targetFilterList.size(); ++i) {
-                boolean isValid = false;
                 Filter proximityFilter = _proximityFilterList.get(i);
 
                 // Can only fire into an attack if it is that player's non-creature attack on a creature
@@ -342,6 +343,15 @@ public class FireWeaponActionBuilder {
                 for (TargetingReason targetingReason : targetingReasons) {
                     newTargetFilterable = Filters.and(newTargetFilterable, Filters.canBeTargetedBy(_weaponOrCardWithPermanentWeapon, _permanentWeapon, targetingReason));
                 }
+                unrestrictedLineFilters.add(newTargetFilterable);
+            }
+            // Heroic search is weapon-wide: a Heroic matching only line A still blocks line B.
+            final Filterable weaponWideTargets = Heroic.orFilters(unrestrictedLineFilters);
+
+            for (int i = 0; i < _targetFilterList.size(); ++i) {
+                boolean isValid = false;
+                Filterable newTargetFilterable = Heroic.restrictWeaponTargets(_game, _weaponOrCardWithPermanentWeapon, unrestrictedLineFilters.get(i), weaponWideTargets);
+                Set<TargetingReason> targetingReasons = _targetingReasonList.get(i);
 
                 // Check if Force can be used to target
                 if (_repeatedFiring) {
@@ -434,6 +444,7 @@ public class FireWeaponActionBuilder {
                         for (TargetingReason targetingReason2 : targetingReasons) {
                             filterToAddToMap = Filters.and(filterToAddToMap, Filters.canBeTargetedBy(_weaponOrCardWithPermanentWeapon, _permanentWeapon, targetingReason2));
                         }
+                        filterToAddToMap = Heroic.restrictWeaponTargets(_game, _weaponOrCardWithPermanentWeapon, filterToAddToMap, weaponWideTargets);
 
                         Filterable targetFilterable = _targetFiltersMap.get(targetingReason);
                         if (targetFilterable == null) {
