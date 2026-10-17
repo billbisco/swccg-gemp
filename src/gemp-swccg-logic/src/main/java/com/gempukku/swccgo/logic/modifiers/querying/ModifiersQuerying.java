@@ -18,7 +18,7 @@ package com.gempukku.swccgo.logic.modifiers.querying;
 public interface ModifiersQuerying extends BaseQuery, Ability, Armor, Attacks, Attributes, Battle, BattleDestiny, Captives,
         Cards, CardTraits, Defense, Deploy, Destiny, Duels, EpicEvents, Flags, Force, ForceDrains, Forfeit, GameText,
         Hyperspeed, Icons, JediTests, Keywords, Landspeed, Limits, Locations, Maneuver, MovementCosts, MovementRestrictions,
-        Piles, Piloting, Podracing, Politics, Power, Presence, Prohibited, Reacts, Sabacc, Ferocity, LocationControl,
+        Piles, Piloting, Podracing, Politics, Influence, Power, Presence, Prohibited, Reacts, Sabacc, Ferocity, LocationControl,
         Targeting, Values, Weapons, MayDeploy,
         ModifiersState {
 
