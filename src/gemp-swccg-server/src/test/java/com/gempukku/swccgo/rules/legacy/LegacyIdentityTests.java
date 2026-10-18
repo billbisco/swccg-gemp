@@ -1,6 +1,10 @@
 package com.gempukku.swccgo.rules.legacy;
 
+import com.gempukku.swccgo.cards.AbstractInterrupt;
+import com.gempukku.swccgo.common.ExpansionSet;
+import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.LegacyIds;
+import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.game.DeckInvalidException;
@@ -179,5 +183,73 @@ public class LegacyIdentityTests {
         }
         assertFalse(formats.getFormat("open").getValidSets().contains(1240));
         anythingGoes.validateCard("1281_5", false);
+    }
+
+    @Test
+    public void TwelveXxSetsMapToThePrintedBlockIcon() {
+        assertEquals(Icon.LEGACY_BLOCK_D, ExpansionSet.VIRTUAL_SHIELDS.getLegacyBlockIcon());
+        assertEquals(Icon.LEGACY_BLOCK_1, ExpansionSet.VIRTUAL_BLOCK_1.getLegacyBlockIcon());
+        assertEquals(Icon.LEGACY_BLOCK_2, ExpansionSet.VIRTUAL_BLOCK_2.getLegacyBlockIcon());
+        assertEquals(Icon.LEGACY_BLOCK_3, ExpansionSet.VIRTUAL_BLOCK_3.getLegacyBlockIcon());
+        assertEquals(Icon.LEGACY_BLOCK_4, ExpansionSet.VIRTUAL_BLOCK_4.getLegacyBlockIcon());
+        assertEquals(Icon.LEGACY_BLOCK_5, ExpansionSet.VIRTUAL_BLOCK_5.getLegacyBlockIcon());
+        assertEquals(Icon.LEGACY_BLOCK_6, ExpansionSet.VIRTUAL_BLOCK_6_1.getLegacyBlockIcon());
+        assertEquals(Icon.LEGACY_BLOCK_6, ExpansionSet.VIRTUAL_BLOCK_6_2.getLegacyBlockIcon());
+        assertEquals(Icon.LEGACY_BLOCK_6, ExpansionSet.VIRTUAL_BLOCK_6_3.getLegacyBlockIcon());
+        assertEquals(Icon.LEGACY_BLOCK_7, ExpansionSet.VIRTUAL_BLOCK_7_1.getLegacyBlockIcon());
+        assertEquals(Icon.LEGACY_BLOCK_7, ExpansionSet.VIRTUAL_BLOCK_7_2.getLegacyBlockIcon());
+        assertEquals(Icon.LEGACY_BLOCK_7, ExpansionSet.VIRTUAL_BLOCK_7_3.getLegacyBlockIcon());
+        assertEquals(Icon.LEGACY_BLOCK_7, ExpansionSet.VIRTUAL_BLOCK_7_4.getLegacyBlockIcon());
+        assertEquals(Icon.LEGACY_BLOCK_8, ExpansionSet.VIRTUAL_BLOCK_8_1.getLegacyBlockIcon());
+        assertEquals(Icon.LEGACY_BLOCK_8, ExpansionSet.VIRTUAL_BLOCK_8_2.getLegacyBlockIcon());
+        assertEquals(Icon.LEGACY_BLOCK_8, ExpansionSet.VIRTUAL_BLOCK_8_3.getLegacyBlockIcon());
+        assertEquals(Icon.LEGACY_BLOCK_9, ExpansionSet.VIRTUAL_BLOCK_9_1.getLegacyBlockIcon());
+        assertEquals(Icon.LEGACY_BLOCK_9, ExpansionSet.VIRTUAL_BLOCK_9_2.getLegacyBlockIcon());
+        for (ExpansionSet set : ExpansionSet.values()) {
+            if (set.getSetNumber() >= 1200 && set.getSetNumber() <= 1292) {
+                assertTrue(set.name(), set.isLegacyBlockSet());
+                assertNotNull(set.name(), set.getLegacyBlockIcon());
+            }
+            else {
+                assertFalse(set.name(), set.isLegacyBlockSet());
+                assertEquals(set.name(), null, set.getLegacyBlockIcon());
+            }
+        }
+    }
+
+    @Test
+    public void TwelveXxBlueprintIsLegacyAndCarriesBlockIconWithoutPerCardCalls() {
+        SwccgCardBlueprint block1 = new TestBlockInterrupt(ExpansionSet.VIRTUAL_BLOCK_1);
+        assertTrue(block1.isLegacy());
+        assertEquals(1, block1.getIconCount(Icon.LEGACY_BLOCK_1));
+        assertEquals(0, block1.getIconCount(Icon.LEGACY_BLOCK_D));
+
+        SwccgCardBlueprint shields = new TestBlockInterrupt(ExpansionSet.VIRTUAL_SHIELDS);
+        assertTrue(shields.isLegacy());
+        assertEquals(1, shields.getIconCount(Icon.LEGACY_BLOCK_D));
+
+        SwccgCardBlueprint block9 = new TestBlockInterrupt(ExpansionSet.VIRTUAL_BLOCK_9_2);
+        assertTrue(block9.isLegacy());
+        assertEquals(1, block9.getIconCount(Icon.LEGACY_BLOCK_9));
+    }
+
+    @Test
+    public void NonTwelveXxBlueprintIsNotAutoMarkedLegacy() {
+        SwccgCardBlueprint premiere = new TestBlockInterrupt(ExpansionSet.PREMIERE);
+        assertFalse(premiere.isLegacy());
+        assertEquals(0, premiere.getIconCount(Icon.LEGACY_BLOCK_1));
+
+        SwccgCardBlueprint pcLegacySet = new TestBlockInterrupt(ExpansionSet.LEGACY);
+        assertFalse(pcLegacySet.isLegacy());
+        assertEquals(0, pcLegacySet.getIconCount(Icon.LEGACY_BLOCK_1));
+    }
+
+    /**
+     * Tiny 12xx (or other-set) interrupt used only to prove the shared-base derivation.
+     */
+    private static final class TestBlockInterrupt extends AbstractInterrupt {
+        TestBlockInterrupt(ExpansionSet expansionSet) {
+            super(Side.DARK, 4f, "Test Block Interrupt", Uniqueness.UNIQUE, expansionSet, Rarity.V);
+        }
     }
 }
