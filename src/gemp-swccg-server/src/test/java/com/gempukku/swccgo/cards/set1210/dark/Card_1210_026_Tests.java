@@ -28,6 +28,9 @@ public class Card_1210_026_Tests {
                 }},
                 new HashMap<>() {{
                     put("urrur", "1210_26");
+                    put("urorru", "1210_25");
+                    put("gaffi", "1_315");
+                    put("farm", "1_292");
                 }},
                 10, 10,
                 StartingSetup.DefaultLSGroundLocation,
@@ -62,6 +65,7 @@ public class Card_1210_026_Tests {
             add(Icon.ALIEN);
             add(Icon.WARRIOR);
             add(Icon.SPECIAL_EDITION);
+            add(Icon.LEGACY_BLOCK_1);
         }});
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_1, card.getExpansionSet());
         assertEquals(Rarity.V, card.getRarity());
@@ -84,5 +88,28 @@ public class Card_1210_026_Tests {
 
         assertAtLocation(site, urrur);
         assertEquals(Zone.AT_LOCATION, urrur.getZone());
+    }
+
+    @Test
+    public void UrRurDeploysTuskenWeaponFromReserveWhileWithURoRRu() {
+        var scn = GetScenario();
+        var urrur = scn.GetDSCard("urrur");
+        var urorru = scn.GetDSCard("urorru");
+        var gaffi = scn.GetDSCard("gaffi");
+        var site = scn.GetDSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, urrur, urorru);
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.MoveCardsToTopOfDSReserveDeck(gaffi);
+        assertTrue(scn.DSCardActionAvailable(urrur, "Tusken weapon"));
+        scn.DSUseCardAction(urrur, "Tusken weapon");
+        assertTrue(scn.DSDecisionAvailable("Choose card"));
+        scn.DSChooseCard(gaffi);
+        assertTrue(scn.DSDecisionAvailable("Choose"));
+        scn.DSChooseCard(urrur);
+        scn.PassAllResponses();
+
+        assertTrue(scn.IsAttachedTo(urrur, gaffi));
     }
 }

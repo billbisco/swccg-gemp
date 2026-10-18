@@ -138,7 +138,7 @@ public class Card1210_162 extends AbstractLostInterrupt {
             PhysicalCard firingCard = weaponFiringState != null ? weaponFiringState.getCardFiring() : null;
             if (firingCard != null
                     && GameConditions.canSpot(game, self, SpotOverride.INCLUDE_UNDERCOVER,
-                    Filters.and(Filters.your(self), Filters.spy, Filters.atSameLocation(firingCard)))) {
+                    Filters.and(Filters.your(self), Filters.spy, Filters.atSameSite(firingCard)))) {
 
                 final PlayInterruptAction action = new PlayInterruptAction(game, self, CardSubtype.LOST);
                 action.setText("Cancel weapon targeting");

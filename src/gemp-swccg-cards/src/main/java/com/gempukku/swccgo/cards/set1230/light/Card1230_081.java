@@ -51,7 +51,7 @@ public class Card1230_081 extends AbstractAlien {
 
     @Override
     protected List<RequiredGameTextTriggerAction> getGameTextRequiredAfterTriggers(SwccgGame game, EffectResult effectResult, final PhysicalCard self, int gameTextSourceCardId) {
-        GameTextActionId gameTextActionId = GameTextActionId.TANUS_SPIJEK_V__OPPONENT_LOSES_FORCE;
+        GameTextActionId gameTextActionId = GameTextActionId.LEGACY__TANUS_SPIJEK_V__OPPONENT_LOSES_FORCE;
         String opponent = game.getOpponent(self.getOwner());
 
         // Check condition(s)

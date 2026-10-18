@@ -2,8 +2,10 @@ package com.gempukku.swccgo.cards.set1210.light;
 
 import com.gempukku.swccgo.cards.AbstractImmediateEffect;
 import com.gempukku.swccgo.cards.GameConditions;
+import com.gempukku.swccgo.cards.effects.usage.OncePerBattleEffect;
 import com.gempukku.swccgo.cards.effects.usage.OncePerTurnEffect;
 import com.gempukku.swccgo.common.ExpansionSet;
+import com.gempukku.swccgo.common.GameTextActionId;
 import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Phase;
 import com.gempukku.swccgo.common.PlayCardOptionId;
@@ -65,14 +67,20 @@ public class Card1210_127 extends AbstractImmediateEffect {
     protected List<TopLevelGameTextAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
         List<TopLevelGameTextAction> actions = new LinkedList<TopLevelGameTextAction>();
 
+        GameTextActionId addPowerActionId = GameTextActionId.LEGACY__I_CANT_BELIEVE_HES_GONE_V__ADD_POWER;
+
         // Check condition(s)
-        if (GameConditions.isDuringBattle(game)
+        if (GameConditions.isOncePerBattle(game, self, playerId, gameTextSourceCardId, addPowerActionId)
+                && GameConditions.isDuringBattle(game)
                 && GameConditions.canUseForce(game, playerId, 1)) {
             final PhysicalCard battleLocation = game.getGameState().getBattleLocation();
             if (battleLocation != null) {
-                final TopLevelGameTextAction action = new TopLevelGameTextAction(self, gameTextSourceCardId);
+                final TopLevelGameTextAction action = new TopLevelGameTextAction(self, playerId, gameTextSourceCardId, addPowerActionId);
                 action.setText("Add 5 to total power");
                 action.setActionMsg("Add 5 to your total power at the battle location for remainder of turn");
+                // Update usage limit(s)
+                action.appendUsage(
+                        new OncePerBattleEffect(action));
                 // Pay cost(s)
                 action.appendCost(
                         new UseForceEffect(action, playerId, 1));

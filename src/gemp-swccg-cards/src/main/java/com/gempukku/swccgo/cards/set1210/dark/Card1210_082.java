@@ -3,6 +3,7 @@ package com.gempukku.swccgo.cards.set1210.dark;
 import com.gempukku.swccgo.cards.AbstractCreatureVehicle;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.conditions.HasAboardCondition;
+import com.gempukku.swccgo.cards.effects.usage.OncePerPhaseEffect;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.GameTextActionId;
 import com.gempukku.swccgo.common.Icon;
@@ -65,15 +66,18 @@ public class Card1210_082 extends AbstractCreatureVehicle {
 
     @Override
     protected List<TopLevelGameTextAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
-        GameTextActionId gameTextActionId = GameTextActionId.URORRURRRS_BANTHA_V__DEPLOY_URORRURRR;
+        GameTextActionId gameTextActionId = GameTextActionId.LEGACY__URORRURRRS_BANTHA_V__DEPLOY_URORRURRR;
 
         // Check condition(s)
-        if (GameConditions.isDuringYourPhase(game, self, Phase.DEPLOY)
+        if (GameConditions.isOnceDuringYourPhase(game, self, playerId, gameTextSourceCardId, gameTextActionId, Phase.DEPLOY)
                 && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, gameTextActionId)) {
 
             final TopLevelGameTextAction action = new TopLevelGameTextAction(self, playerId, gameTextSourceCardId, gameTextActionId);
             action.setText("Deploy URoRRuR'R'R from Reserve Deck");
             action.setActionMsg("Deploy URoRRuR'R'R here from Reserve Deck");
+            // Update usage limit(s)
+            action.appendUsage(
+                    new OncePerPhaseEffect(action));
             // Perform result(s)
             action.appendEffect(
                     new DeployCardToLocationFromReserveDeckEffect(action, Filters.URoRRuRRR, Filters.here(self), true));

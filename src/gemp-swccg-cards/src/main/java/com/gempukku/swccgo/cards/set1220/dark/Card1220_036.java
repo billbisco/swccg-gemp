@@ -3,6 +3,7 @@ package com.gempukku.swccgo.cards.set1220.dark;
 import com.gempukku.swccgo.cards.AbstractNormalEffect;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.conditions.PlayersTurnCondition;
+import com.gempukku.swccgo.cards.effects.usage.OncePerPhaseEffect;
 import com.gempukku.swccgo.cards.effects.usage.OncePerTurnEffect;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.GameTextActionId;
@@ -17,13 +18,17 @@ import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
+import com.gempukku.swccgo.logic.TriggerConditions;
+import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
 import com.gempukku.swccgo.logic.effects.LoseForceEffect;
 import com.gempukku.swccgo.logic.effects.choose.DeployCardFromReserveDeckEffect;
 import com.gempukku.swccgo.logic.effects.choose.DeployCardToSystemFromReserveDeckEffect;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.modifiers.SuspendsCardModifier;
+import com.gempukku.swccgo.logic.timing.EffectResult;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -56,26 +61,32 @@ public class Card1220_036 extends AbstractNormalEffect {
         List<TopLevelGameTextAction> actions = new LinkedList<TopLevelGameTextAction>();
         String opponent = game.getOpponent(playerId);
 
-        GameTextActionId gameTextActionId = GameTextActionId.IM_SORRY_V__DEPLOY_FLOATING_REFINERY_CLOUD_SECTOR_OR_TIE;
+        GameTextActionId gameTextActionId = GameTextActionId.LEGACY__IM_SORRY_V__DEPLOY_FLOATING_REFINERY_CLOUD_SECTOR_OR_TIE;
 
         // Check condition(s)
-        if (GameConditions.isDuringYourPhase(game, self, Phase.DEPLOY)
+        if (GameConditions.isOnceDuringYourPhase(game, self, playerId, gameTextSourceCardId, gameTextActionId, Phase.DEPLOY)
                 && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, gameTextActionId)) {
 
             final TopLevelGameTextAction deployRefinery = new TopLevelGameTextAction(self, playerId, gameTextSourceCardId, gameTextActionId);
             deployRefinery.setText("Deploy Floating Refinery from Reserve Deck");
+            deployRefinery.appendUsage(
+                    new OncePerPhaseEffect(deployRefinery));
             deployRefinery.appendEffect(
                     new DeployCardFromReserveDeckEffect(deployRefinery, Filters.Floating_Refinery, true));
             actions.add(deployRefinery);
 
             final TopLevelGameTextAction deploySector = new TopLevelGameTextAction(self, playerId, gameTextSourceCardId, gameTextActionId);
             deploySector.setText("Deploy cloud sector to Bespin from Reserve Deck");
+            deploySector.appendUsage(
+                    new OncePerPhaseEffect(deploySector));
             deploySector.appendEffect(
                     new DeployCardToSystemFromReserveDeckEffect(deploySector, Filters.cloud_sector, Title.Bespin, true));
             actions.add(deploySector);
 
             final TopLevelGameTextAction deployTIE = new TopLevelGameTextAction(self, playerId, gameTextSourceCardId, gameTextActionId);
             deployTIE.setText("Deploy Obsidian squadron TIE from Reserve Deck");
+            deployTIE.appendUsage(
+                    new OncePerPhaseEffect(deployTIE));
             deployTIE.appendEffect(
                     new DeployCardFromReserveDeckEffect(deployTIE, Filters.and(Filters.TIE, Keyword.OBSIDIAN_SQUADRON), true));
             actions.add(deployTIE);
@@ -97,5 +108,29 @@ public class Card1220_036 extends AbstractNormalEffect {
             actions.add(action);
         }
         return actions;
+    }
+
+    @Override
+    protected List<RequiredGameTextTriggerAction> getGameTextRequiredAfterTriggers(SwccgGame game, EffectResult effectResult, final PhysicalCard self, int gameTextSourceCardId) {
+        String playerId = self.getOwner();
+        String opponent = game.getOpponent(playerId);
+
+        // Check if reached end of turn and the lose-1 was not performed yet.
+        if (TriggerConditions.isEndOfYourTurn(game, effectResult, playerId)
+                && GameConditions.isOncePerTurn(game, self, playerId, gameTextSourceCardId)
+                && GameConditions.controlsWith(game, self, playerId, 2, Filters.cloud_sector, Filters.TIE)) {
+
+            final RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
+            action.setPerformingPlayer(playerId);
+            action.setText("Make opponent lose 1 Force");
+            // Update usage limit(s)
+            action.appendUsage(
+                    new OncePerTurnEffect(action));
+            // Perform result(s)
+            action.appendEffect(
+                    new LoseForceEffect(action, opponent, 1));
+            return Collections.singletonList(action);
+        }
+        return null;
     }
 }

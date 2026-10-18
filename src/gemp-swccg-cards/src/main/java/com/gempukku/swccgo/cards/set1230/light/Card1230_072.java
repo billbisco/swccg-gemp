@@ -3,6 +3,7 @@ package com.gempukku.swccgo.cards.set1230.light;
 import com.gempukku.swccgo.cards.AbstractAlien;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.conditions.OnTableCondition;
+import com.gempukku.swccgo.cards.effects.usage.OncePerPhaseEffect;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.GameTextActionId;
 import com.gempukku.swccgo.common.Icon;
@@ -73,15 +74,18 @@ public class Card1230_072 extends AbstractAlien {
 
     @Override
     protected List<TopLevelGameTextAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
-        GameTextActionId gameTextActionId = GameTextActionId.LAUDICA_V__DEPLOY_MATCHING_EFFECT;
+        GameTextActionId gameTextActionId = GameTextActionId.LEGACY__LAUDICA_V__DEPLOY_MATCHING_EFFECT;
 
         // Check condition(s)
-        if (GameConditions.isDuringYourPhase(game, self, Phase.DEPLOY)
+        if (GameConditions.isOnceDuringYourPhase(game, self, playerId, gameTextSourceCardId, gameTextActionId, Phase.DEPLOY)
                 && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, gameTextActionId)) {
 
             final TopLevelGameTextAction action = new TopLevelGameTextAction(self, playerId, gameTextSourceCardId, gameTextActionId);
             action.setText("Deploy Effect from Reserve Deck");
             action.setActionMsg("Deploy an Effect with 'matching' in game text on table from Reserve Deck");
+            // Update usage limit(s)
+            action.appendUsage(
+                    new OncePerPhaseEffect(action));
             // Perform result(s)
             action.appendEffect(
                     new DeployCardFromReserveDeckEffect(action, Filters.and(Filters.Effect, Filters.gameTextContains("matching")), true));

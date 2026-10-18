@@ -57,16 +57,19 @@ public class Card1210_026 extends AbstractAlien {
     protected List<TopLevelGameTextAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
         List<TopLevelGameTextAction> actions = new LinkedList<TopLevelGameTextAction>();
 
-        GameTextActionId gameTextActionId = GameTextActionId.UR_RU_R_V__DEPLOY_TUSKEN_WEAPON;
+        GameTextActionId gameTextActionId = GameTextActionId.LEGACY__UR_RU_R_V__DEPLOY_TUSKEN_WEAPON;
 
         // Check condition(s)
-        if (GameConditions.isDuringYourPhase(game, self, Phase.DEPLOY)
+        if (GameConditions.isOnceDuringYourPhase(game, self, playerId, gameTextSourceCardId, gameTextActionId, Phase.DEPLOY)
                 && GameConditions.isWith(game, self, Filters.URoRRuRRR)
                 && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, gameTextActionId)) {
 
             final TopLevelGameTextAction action = new TopLevelGameTextAction(self, playerId, gameTextSourceCardId, gameTextActionId);
             action.setText("Deploy Tusken weapon from Reserve Deck");
             action.setActionMsg("Deploy a weapon with 'Tusken' in lore here from Reserve Deck");
+            // Update usage limit(s)
+            action.appendUsage(
+                    new OncePerPhaseEffect(action));
             // Perform result(s)
             action.appendEffect(
                     new DeployCardToLocationFromReserveDeckEffect(action, Filters.and(Filters.weapon, Filters.loreContains("Tusken")), Filters.here(self), true));

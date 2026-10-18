@@ -62,6 +62,7 @@ public class Card_1230_081_Tests {
         scn.BlueprintIconCheck(card, new ArrayList<>() {{
             add(Icon.ALIEN);
             add(Icon.JABBAS_PALACE);
+            add(Icon.LEGACY_BLOCK_3);
         }});
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_3, card.getExpansionSet());
         assertEquals(Rarity.V, card.getRarity());
@@ -78,20 +79,18 @@ public class Card_1230_081_Tests {
         scn.MoveCardsToLocation(site, trooper);
         scn.MoveCardsToLSHand(tanus);
         scn.SkipToLSTurn(Phase.DEPLOY);
+        assertTrue(scn.AwaitingLSDeployPhaseActions());
 
-        assertTrue(scn.LSDeployAvailable(tanus));
-        scn.LSDeployCard(tanus);
-        if (scn.LSHasCardChoiceAvailable(site)) {
-            scn.LSChooseCard(site);
-        }
+        int dsForceBefore = scn.GetDSForcePileCount();
+        assertTrue(scn.LSCardPlayAvailable(tanus));
+        scn.LSPlayCard(tanus);
+        scn.LSChooseCard(site);
         scn.PassAllResponses();
-        if (scn.GetCurrentDecision() != null
-                && scn.GetCurrentDecision().getText().toLowerCase().contains("lose")
-                && scn.GetTopOfDSForcePile() != null) {
-            scn.DSChooseCard(scn.GetTopOfDSForcePile());
-            scn.PassAllResponses();
-        }
+        assertTrue(scn.DSDecisionAvailable("Choose Force to lose"));
+        scn.DSChooseCard(scn.GetTopOfDSForcePile());
+        scn.PassAllResponses();
 
         assertAtLocation(site, tanus);
+        assertEquals(dsForceBefore - 1, scn.GetDSForcePileCount());
     }
 }

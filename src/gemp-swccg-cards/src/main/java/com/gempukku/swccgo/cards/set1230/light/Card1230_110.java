@@ -47,7 +47,7 @@ public class Card1230_110 extends AbstractUsedOrStartingInterrupt {
 
     @Override
     protected List<PlayInterruptAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self) {
-        GameTextActionId gameTextActionId = GameTextActionId.THE_SIGNAL_V__UPLOAD_CHARACTER_WEAPON;
+        GameTextActionId gameTextActionId = GameTextActionId.LEGACY__THE_SIGNAL_V__UPLOAD_CHARACTER_WEAPON;
 
         // Check condition(s)
         if (GameConditions.canTakeCardsIntoHandFromReserveDeck(game, playerId, self, gameTextActionId)

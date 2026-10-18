@@ -28,6 +28,7 @@ public class Card_1210_127_Tests {
                 new HashMap<>() {{
                     put("icbhg", "1210_127");
                     put("obi", "1_21");
+                    put("luke", "1_19");
                 }},
                 new HashMap<>() {{
                     put("trooper", "1_194");
@@ -61,6 +62,7 @@ public class Card_1210_127_Tests {
         scn.BlueprintIconCheck(card, new ArrayList<>() {{
             add(Icon.TATOOINE);
             add(Icon.EFFECT);
+            add(Icon.LEGACY_BLOCK_1);
         }});
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_1, card.getExpansionSet());
         assertEquals(Rarity.V, card.getRarity());
@@ -96,5 +98,56 @@ public class Card_1210_127_Tests {
 
         assertFalse(scn.LSCardPlayAvailable(icbhg));
         assertEquals(Zone.HAND, icbhg.getZone());
+    }
+
+    @Test
+    public void ICantBelieveHesGoneAddsFiveTotalPowerOncePerBattle() {
+        var scn = GetScenario();
+        var icbhg = scn.GetLSCard("icbhg");
+        var obi = scn.GetLSCard("obi");
+        var luke = scn.GetLSCard("luke");
+        var trooper = scn.GetDSCard("trooper");
+        var site = scn.GetLSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveOutOfPlay(obi);
+        scn.MoveCardsToLSSideOfTable(icbhg);
+        scn.MoveCardsToLocation(site, luke, trooper);
+        scn.LSActivateForceCheat(2);
+        scn.SkipToLSTurn(Phase.BATTLE);
+        assertTrue(scn.AwaitingLSBattlePhaseActions());
+        scn.LSInitiateBattle(site);
+        scn.PassAllResponses();
+        assertTrue(scn.AwaitingLSWeaponsSegmentActions());
+        assertTrue(scn.LSCardActionAvailable(icbhg, "Add 5"));
+        scn.LSUseCardAction(icbhg, "Add 5");
+        scn.PassForceUseResponses();
+        scn.PassWeaponsSegmentActions();
+        scn.SkipBattleDestinyDraws(false);
+
+        assertEquals(scn.GetPower(luke) + 5, scn.GetLSTotalPower());
+    }
+
+    @Test
+    public void ICantBelieveHesGoneActivatesOneWhenLukeIsACaptive() {
+        var scn = GetScenario();
+        var icbhg = scn.GetLSCard("icbhg");
+        var obi = scn.GetLSCard("obi");
+        var luke = scn.GetLSCard("luke");
+        var trooper = scn.GetDSCard("trooper");
+        var site = scn.GetLSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveOutOfPlay(obi);
+        scn.MoveCardsToLSSideOfTable(icbhg);
+        scn.MoveCardsToLocation(site, luke, trooper);
+        scn.CaptureCardWith(trooper, luke);
+        scn.SkipToLSTurn(Phase.CONTROL);
+        int forceBefore = scn.GetLSForcePileCount();
+        assertTrue(scn.LSCardActionAvailable(icbhg, "Activate 1"));
+        scn.LSUseCardAction(icbhg, "Activate 1");
+        scn.PassAllResponses();
+
+        assertEquals(forceBefore + 1, scn.GetLSForcePileCount());
     }
 }

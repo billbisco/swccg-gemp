@@ -5,6 +5,7 @@ import com.gempukku.swccgo.common.CardType;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Keyword;
+import com.gempukku.swccgo.common.Phase;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Uniqueness;
@@ -17,8 +18,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static com.gempukku.swccgo.framework.Assertions.assertAtLocation;
+import static com.gempukku.swccgo.framework.Assertions.assertInHand;
 import static com.gempukku.swccgo.framework.Assertions.assertInZone;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class Card_1230_100_Tests {
@@ -31,6 +34,8 @@ public class Card_1230_100_Tests {
                 new HashMap<>() {{
                     put("trooper", "1_194");
                     put("blaster", "1_317");
+                    put("gravel", "1_247");
+                    put("moseisley", "1_295");
                 }},
                 10, 10,
                 StartingSetup.DefaultLSGroundLocation,
@@ -61,6 +66,7 @@ public class Card_1230_100_Tests {
         scn.BlueprintIconCheck(card, new ArrayList<>() {{
             add(Icon.JABBAS_PALACE);
             add(Icon.INTERRUPT);
+            add(Icon.LEGACY_BLOCK_3);
         }});
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_3, card.getExpansionSet());
         assertEquals(Rarity.V, card.getRarity());
@@ -80,27 +86,57 @@ public class Card_1230_100_Tests {
         scn.AttachCardsTo(trooper, blaster);
         scn.MoveCardsToLSHand(retort);
         scn.DSActivateForceCheat(4);
-        scn.DSStartBattleAndSkipToWeaponsSegment(site);
-
+        scn.SkipToDSTurn(Phase.BATTLE);
+        assertTrue(scn.AwaitingDSBattlePhaseActions());
+        scn.DSInitiateBattle(site);
+        scn.PassAllResponses();
+        assertTrue(scn.AwaitingDSWeaponsSegmentActions());
         assertTrue(scn.DSCardActionAvailable(blaster, "Fire"));
         scn.DSUseCardAction(blaster, "Fire");
-        if (scn.DSHasCardChoiceAvailable(laudica)) {
-            scn.DSChooseCard(laudica);
-        }
-        scn.PassForceUseResponses();
-        for (int i = 0; i < 15 && !scn.LSPlayUsedInterruptAvailable(retort); i++) {
-            var decision = scn.GetCurrentDecision();
-            if (decision == null || !decision.getText().toLowerCase().contains("optional")) {
-                break;
-            }
-            scn.PlayerPass(scn.GetDecidingPlayer());
-        }
-
+        scn.DSChooseCard(laudica);
+        scn.LSPass();
+        scn.DSPass();
         assertTrue(scn.LSPlayUsedInterruptAvailable(retort));
         scn.LSPlayUsedInterrupt(retort);
         scn.PassAllResponses();
 
         assertAtLocation(site, laudica);
+        assertFalse(laudica.isHit());
         assertInZone(Zone.USED_PILE, retort);
+    }
+
+    @Test
+    public void CorellianRetortRetrievesJustLostCorellianIntoHand() {
+        var scn = GetScenario();
+        var retort = scn.GetLSCard("retort");
+        var laudica = scn.GetLSCard("laudica");
+        var gravel = scn.GetDSCard("gravel");
+        var moseisley = scn.GetDSCard("moseisley");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(moseisley);
+        scn.MoveCardsToLocation(moseisley, laudica);
+        scn.MoveCardsToLSHand(retort);
+        scn.MoveCardsToDSHand(gravel);
+        scn.SkipToDSTurn(Phase.CONTROL);
+        scn.PrepareDSDestiny(5);
+
+        assertTrue(scn.DSCardPlayAvailable(gravel));
+        scn.DSPlayCard(gravel);
+        assertTrue(scn.DSDecisionAvailable("Choose"));
+        scn.DSChooseCard(laudica);
+        scn.PassCardAndForceUseResponses();
+        scn.PassResponses("COST_TO_DRAW_DESTINY");
+        scn.PassResponses("ABOUT_TO_DRAW_DESTINY");
+        scn.PassResponses("DESTINY_DRAWN");
+        scn.PassResponses("COMPLETE_DESTINY_DRAW");
+        scn.PassResponses("DRAWING_DESTINY_COMPLETE");
+        scn.PassResponses("ABOUT_TO_BE_LOST");
+        assertTrue(scn.LSPlayLostInterruptAvailable(retort));
+        scn.LSPlayLostInterrupt(retort);
+        scn.PassAllResponses();
+
+        assertInHand(laudica);
+        assertInZone(Zone.LOST_PILE, retort);
     }
 }

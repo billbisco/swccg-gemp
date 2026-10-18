@@ -46,22 +46,21 @@ public class Card1210_064 extends AbstractUsedOrStartingInterrupt {
     protected List<PlayInterruptAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self) {
         List<PlayInterruptAction> actions = new LinkedList<PlayInterruptAction>();
 
-        GameTextActionId gameTextActionId = GameTextActionId.LOOK_SIR_DROIDS_V__UPLOAD_DROID;
+        GameTextActionId gameTextActionId = GameTextActionId.LEGACY__LOOK_SIR_DROIDS_V__UPLOAD_DROID;
 
         // Check condition(s)
         if (GameConditions.canTakeCardsIntoHandFromReserveDeck(game, playerId, self, gameTextActionId)) {
 
             final PlayInterruptAction action = new PlayInterruptAction(game, self, gameTextActionId, CardSubtype.USED);
             action.setText("Take droid into hand from Reserve Deck");
-            action.setActionMsg("Take a non-[Permanent Weapon] droid into hand from Reserve Deck");
+            action.setActionMsg("Take a non-[Droid with Presence], non-[Permanent Weapon] droid into hand from Reserve Deck");
             // Allow response(s)
             action.allowResponses(
                     new RespondablePlayCardEffect(action) {
                         @Override
                         protected void performActionResults(Action targetingAction) {
-                            // Presence Droid icon is not in GEMP (E9); search is non-[Permanent Weapon] droid only.
                             action.appendEffect(
-                                    new TakeCardIntoHandFromReserveDeckEffect(action, playerId, Filters.and(Filters.droid, Filters.not(Icon.PERMANENT_WEAPON)), true));
+                                    new TakeCardIntoHandFromReserveDeckEffect(action, playerId, Filters.and(Filters.droid, Filters.not(Icon.PRESENCE), Filters.not(Icon.PERMANENT_WEAPON)), true));
                         }
                     }
             );
@@ -109,7 +108,7 @@ public class Card1210_064 extends AbstractUsedOrStartingInterrupt {
                                     PhysicalCard location = myLocations.iterator().next();
                                     if (game.getModifiersQuerying().getIconCount(game.getGameState(), location, Icon.DARK_FORCE) < 3) {
                                         action.appendEffect(
-                                                new DeployCardFromReserveDeckEffect(action, Filters.or(Filters.titleContains("Central Office"), Filters.Mos_Eisley), true, true));
+                                                new DeployCardFromReserveDeckEffect(action, Filters.or(Filters.title("ISB Central Office"), Filters.Mos_Eisley), true, true));
                                     }
                                 }
                             }

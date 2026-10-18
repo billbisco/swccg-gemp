@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class Card_1210_025_Tests {
@@ -23,10 +24,13 @@ public class Card_1210_025_Tests {
         return new VirtualTableScenario(
                 new HashMap<>() {{
                     put("luke", "1_19");
+                    put("pistol", "1_154");
                 }},
                 new HashMap<>() {{
                     put("urorru", "1210_25");
                     put("tusken", "1_196");
+                    put("trooper", "1_194");
+                    put("handcard", "1_317");
                 }},
                 10, 10,
                 StartingSetup.DefaultLSGroundLocation,
@@ -62,6 +66,7 @@ public class Card_1210_025_Tests {
         scn.BlueprintIconCheck(card, new ArrayList<>() {{
             add(Icon.ALIEN);
             add(Icon.A_NEW_HOPE);
+            add(Icon.LEGACY_BLOCK_1);
         }});
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_1, card.getExpansionSet());
         assertEquals(Rarity.V, card.getRarity());
@@ -79,5 +84,57 @@ public class Card_1210_025_Tests {
         scn.SkipToPhase(Phase.CONTROL);
 
         assertEquals(5, scn.GetForfeit(tusken));
+    }
+
+    @Test
+    public void URoRRuRRRSubtractsTwoFromOpponentsWeaponDestinyHere() {
+        var scn = GetScenario();
+        var urorru = scn.GetDSCard("urorru");
+        var tusken = scn.GetDSCard("tusken");
+        var luke = scn.GetLSCard("luke");
+        var pistol = scn.GetLSCard("pistol");
+        var site = scn.GetDSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, urorru, tusken, luke);
+        scn.AttachCardsTo(luke, pistol);
+        scn.PrepareLSDestiny(1);
+        scn.LSActivateForceCheat(2);
+        scn.SkipToLSTurn(Phase.BATTLE);
+        assertTrue(scn.AwaitingLSBattlePhaseActions());
+        scn.LSInitiateBattle(site);
+        scn.PassAllResponses();
+        assertTrue(scn.AwaitingLSWeaponsSegmentActions());
+        assertTrue(scn.LSCardActionAvailable(pistol, "Fire"));
+        scn.LSUseCardAction(pistol, "Fire");
+        scn.LSChooseCard(tusken);
+        scn.PassAllResponses();
+
+        assertFalse(tusken.isHit());
+    }
+
+    @Test
+    public void URoRRuRRRPlacesCardOnForcePileToDraw() {
+        var scn = GetScenario();
+        var urorru = scn.GetDSCard("urorru");
+        var tusken = scn.GetDSCard("tusken");
+        var handcard = scn.GetDSCard("handcard");
+        var trooper = scn.GetDSCard("trooper");
+        var site = scn.GetDSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, urorru, tusken);
+        scn.MoveCardsToDSHand(handcard, trooper);
+        scn.SkipToDSTurn(Phase.CONTROL);
+        int forceBefore = scn.GetDSForcePileCount();
+        int handBefore = scn.GetDSHandCount();
+        assertTrue(scn.DSCardActionAvailable(urorru, "Place card on Force Pile"));
+        scn.DSUseCardAction(urorru, "Place card on Force Pile");
+        assertTrue(scn.DSDecisionAvailable("Choose card"));
+        scn.DSChooseCard(handcard);
+        scn.PassAllResponses();
+
+        assertEquals(forceBefore + 1, scn.GetDSForcePileCount());
+        assertEquals(handBefore, scn.GetDSHandCount());
     }
 }

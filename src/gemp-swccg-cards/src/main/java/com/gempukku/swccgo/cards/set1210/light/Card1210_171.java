@@ -51,7 +51,7 @@ public class Card1210_171 extends AbstractCharacterWeapon {
 
     @Override
     protected Filter getGameTextValidToUseWeaponFilter(final SwccgGame game, final PhysicalCard self) {
-        return Filters.or(Filters.Leia, Filters.and(Filters.not(Filters.droid), Filters.undercover_spy));
+        return Filters.or(Filters.Leia, Filters.and(Filters.not(Filters.droid), Filters.spy));
     }
 
     @Override

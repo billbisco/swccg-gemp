@@ -29,6 +29,7 @@ public class Card_1210_082_Tests {
                 }},
                 new HashMap<>() {{
                     put("bantha", "1210_82");
+                    put("urorru", "1210_25");
                 }},
                 10, 10,
                 StartingSetup.DefaultLSGroundLocation,
@@ -66,6 +67,7 @@ public class Card_1210_082_Tests {
         scn.BlueprintIconCheck(card, new ArrayList<>() {{
             add(Icon.VEHICLE);
             add(Icon.SPECIAL_EDITION);
+            add(Icon.LEGACY_BLOCK_1);
         }});
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_1, card.getExpansionSet());
         assertEquals(Rarity.V, card.getRarity());
@@ -88,5 +90,27 @@ public class Card_1210_082_Tests {
 
         assertAtLocation(site, bantha);
         assertEquals(Zone.AT_LOCATION, bantha.getZone());
+    }
+
+    @Test
+    public void URoRRuRRRsBanthaDeploysURoRRuFromReserveOncePerPhase() {
+        var scn = GetScenario();
+        var bantha = scn.GetDSCard("bantha");
+        var urorru = scn.GetDSCard("urorru");
+        var site = scn.GetDSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, bantha);
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.MoveCardsToTopOfDSReserveDeck(urorru);
+        assertTrue(scn.DSCardActionAvailable(bantha, "Deploy URoRRu"));
+        scn.DSUseCardAction(bantha, "Deploy URoRRu");
+        assertTrue(scn.DSDecisionAvailable("Choose card"));
+        scn.DSChooseCard(urorru);
+        assertTrue(scn.DSDecisionAvailable("Choose"));
+        scn.DSChooseCard(site);
+        scn.PassAllResponses();
+
+        assertAtLocation(site, urorru);
     }
 }

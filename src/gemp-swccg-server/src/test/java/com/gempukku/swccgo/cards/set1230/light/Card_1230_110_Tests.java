@@ -28,6 +28,7 @@ public class Card_1230_110_Tests {
                 new HashMap<>() {{
                     put("signal", "1230_110");
                     put("blaster", "1_156");
+                    put("insight", "9_47");
                 }},
                 new HashMap<>() {{
                     put("trooper", "1_194");
@@ -61,6 +62,7 @@ public class Card_1230_110_Tests {
         scn.BlueprintIconCheck(card, new ArrayList<>() {{
             add(Icon.JABBAS_PALACE);
             add(Icon.INTERRUPT);
+            add(Icon.LEGACY_BLOCK_3);
         }});
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_3, card.getExpansionSet());
         assertEquals(Rarity.V, card.getRarity());
@@ -73,25 +75,46 @@ public class Card_1230_110_Tests {
         var blaster = scn.GetLSCard("blaster");
 
         scn.StartGame();
-        if (scn.LSDecisionAvailable("Choose starting interrupt")) {
-            scn.LSPass();
-        }
-        if (scn.DSDecisionAvailable("Choose starting interrupt")) {
-            scn.DSPass();
-        }
-        // Skip while Signal is still in Reserve so extra interrupt windows cannot stall SkipTo.
+        assertTrue(scn.LSDecisionAvailable("Choose starting interrupt"));
+        scn.LSPass();
         scn.SkipToLSTurn(Phase.CONTROL);
         scn.MoveCardsToLSHand(signal);
         scn.MoveCardsToTopOfLSReserveDeck(blaster);
         scn.SkipToPhase(Phase.BATTLE);
+        int forceBefore = scn.GetLSForcePileCount();
         assertTrue(scn.AwaitingLSBattlePhaseActions());
         assertTrue(scn.LSCardPlayAvailable(signal, "character weapon"));
         scn.LSPlayCard(signal, "character weapon");
         scn.PassAllResponses();
+        assertTrue(scn.LSDecisionAvailable("Choose card"));
         scn.LSChooseCard(blaster);
         scn.PassAllResponses();
 
         assertInHand(blaster);
         assertInZone(Zone.USED_PILE, signal);
+        assertEquals(forceBefore - 1, scn.GetLSForcePileCount());
+    }
+
+    @Test
+    public void TheSignalStartingTakesJediEffectIntoHand() {
+        var scn = GetScenario();
+        var signal = scn.GetLSCard("signal");
+        var insight = scn.GetLSCard("insight");
+
+        scn.StartGame();
+        assertTrue(scn.LSDecisionAvailable("Choose starting interrupt"));
+        scn.LSChooseCard(signal);
+        scn.PassAllResponses();
+        assertTrue(scn.LSDecisionAvailable("Deploy"));
+        scn.LSChooseNo();
+        scn.PassAllResponses();
+
+        assertInHand(insight);
+        Zone leftover = signal.getZone();
+        assertTrue("Signal is placed in Reserve Deck, then starting-hand draw may take it, zone=" + leftover,
+                leftover == Zone.RESERVE_DECK
+                        || leftover == Zone.TOP_OF_RESERVE_DECK
+                        || leftover == Zone.FORCE_PILE
+                        || leftover == Zone.HAND);
     }
 }
