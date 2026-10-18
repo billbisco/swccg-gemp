@@ -45,7 +45,7 @@ public class Card1230_113 extends AbstractStarfighter {
         addKeywords(Keyword.RED_SQUADRON, Keyword.HEROIC);
         addModelType(ModelType.X_WING);
         setPilotCapacity(1);
-        setMatchingPilotFilter(Filters.or(Filters.Corran_Horn, Filters.Keir_Santage));
+        setMatchingPilotFilter(Filters.Keir_Santage);
     }
 
     @Override
@@ -75,13 +75,13 @@ public class Card1230_113 extends AbstractStarfighter {
 
     @Override
     protected List<TopLevelGameTextAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
-        GameTextActionId gameTextActionId = GameTextActionId.RED_SQUADRON_7_V__PLACE_EFFECT_IN_USED_PILE;
+        GameTextActionId gameTextActionId = GameTextActionId.LEGACY__RED_SQUADRON_7_V__PLACE_EFFECT_IN_USED_PILE;
         Filter effectFilter = Filters.and(Filters.Effect, Filters.atSameLocation(self),
                 Filters.not(Filters.immune_to_Alter));
 
         if (GameConditions.isOncePerGame(game, self, gameTextActionId)
                 && GameConditions.isAtLocation(game, self, Filters.system)
-                && GameConditions.canTarget(game, self, effectFilter)) {
+                && GameConditions.canSpot(game, self, effectFilter)) {
             final TopLevelGameTextAction action = new TopLevelGameTextAction(self, playerId, gameTextSourceCardId, gameTextActionId);
             action.setText("Place an Effect in Used Pile");
             action.appendUsage(new OncePerGameEffect(action));

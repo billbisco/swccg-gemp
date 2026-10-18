@@ -53,7 +53,9 @@ public class Card1250_004 extends AbstractRepublic {
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
         List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new PoliticsModifier(self, Filters.Sidious, new AtCondition(self, Filters.Galactic_Senate), 2));
+        PoliticsModifier politics = new PoliticsModifier(self, Filters.Sidious, new AtCondition(self, Filters.Galactic_Senate), 2);
+        politics.setCumulative(true);
+        modifiers.add(politics);
         return modifiers;
     }
 
@@ -61,7 +63,7 @@ public class Card1250_004 extends AbstractRepublic {
     protected List<TopLevelGameTextAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
         List<TopLevelGameTextAction> actions = new LinkedList<TopLevelGameTextAction>();
 
-        GameTextActionId expandId = GameTextActionId.CORUSCANT_GUARD_V__TAKE_EXPAND_THE_EMPIRE;
+        GameTextActionId expandId = GameTextActionId.LEGACY__CORUSCANT_GUARD_V__TAKE_EXPAND_THE_EMPIRE;
         if (GameConditions.isOnceDuringYourPhase(game, self, playerId, gameTextSourceCardId, expandId, Phase.CONTROL)
                 && GameConditions.isAtLocation(game, self, Filters.Galactic_Senate)
                 && GameConditions.canTakeCardsIntoHandFromReserveDeck(game, playerId, self, expandId)) {
@@ -69,11 +71,12 @@ public class Card1250_004 extends AbstractRepublic {
             action.setText("Take Expand The Empire into hand");
             action.appendUsage(new OncePerPhaseEffect(action));
             action.appendCost(new PlaceCardInUsedPileFromTableEffect(action, self));
-            action.appendEffect(new TakeCardIntoHandFromReserveDeckEffect(action, playerId, Filters.Expand_The_Empire, true));
+            action.appendEffect(new TakeCardIntoHandFromReserveDeckEffect(action, playerId,
+                    Filters.and(Filters.Expand_The_Empire, Icon.LEGACY_BLOCK_5), true));
             actions.add(action);
         }
 
-        GameTextActionId forcePileId = GameTextActionId.OTHER_CARD_ACTION_1;
+        GameTextActionId forcePileId = GameTextActionId.LEGACY__CORUSCANT_GUARD_V__TAKE_CARD_FROM_FORCE_PILE;
         if (GameConditions.isOnceDuringYourPhase(game, self, playerId, gameTextSourceCardId, forcePileId, Phase.CONTROL)
                 && GameConditions.isAtLocation(game, self, Filters.Galactic_Senate)
                 && GameConditions.canTakeCardsIntoHandFromForcePile(game, playerId, self, forcePileId)) {

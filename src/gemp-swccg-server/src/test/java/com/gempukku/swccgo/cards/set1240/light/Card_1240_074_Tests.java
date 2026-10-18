@@ -71,6 +71,7 @@ public class Card_1240_074_Tests {
             add(Icon.ALIEN);
             add(Icon.WARRIOR);
             add(Icon.JABBAS_PALACE);
+            add(Icon.LEGACY_BLOCK_4);
         }});
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_4, card.getExpansionSet());
         assertEquals(Rarity.V, card.getRarity());
@@ -95,5 +96,79 @@ public class Card_1240_074_Tests {
         scn.DSUseCardAction(blaster, "Fire");
         assertTrue(scn.DSHasCardChoiceAvailable(doallyn));
         assertTrue(scn.DSHasCardChoiceNotAvailable(luke));
+    }
+
+    @Test
+    public void SergeantDoallynIsImmuneToAttritionLessThanFour() {
+        var scn = GetScenario();
+        var doallyn = scn.GetLSCard("doallyn");
+        var site = scn.GetLSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, doallyn);
+
+        assertEquals(4, scn.game().getModifiersQuerying().getImmunityToAttritionLessThan(scn.gameState(), doallyn), scn.epsilon);
+    }
+
+    @Test
+    public void SergeantDoallynVibroAxDeploysForFreeOnHim() {
+        var scn = GetAxScenario();
+        var doallyn = scn.GetLSCard("doallyn");
+        var ax = scn.GetLSCard("ax");
+        var site = scn.GetLSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, doallyn);
+
+        assertEquals(0, deployCostTo(scn, ax, doallyn), scn.epsilon);
+    }
+
+    @Test
+    public void SergeantDoallynVibroAxFiresForFree() throws DecisionResultInvalidException {
+        var scn = GetAxScenario();
+        var doallyn = scn.GetLSCard("doallyn");
+        var ax = scn.GetLSCard("ax");
+        var trooper = scn.GetDSCard("trooper");
+        var site = scn.GetDSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, doallyn, trooper);
+        scn.AttachCardsTo(doallyn, ax);
+        scn.LSActivateForceCheat(4);
+        scn.LSStartBattleAndSkipToWeaponsSegment(site);
+
+        int force = scn.GetLSForcePileCount();
+        assertTrue(scn.LSCardActionAvailable(ax, "Fire"));
+        scn.LSUseCardAction(ax, "Fire");
+        assertTrue(scn.LSHasCardChoiceAvailable(trooper));
+        scn.LSChooseCard(trooper);
+        scn.PassAllResponses();
+        assertEquals(force, scn.GetLSForcePileCount());
+    }
+
+    private VirtualTableScenario GetAxScenario() {
+        return new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("doallyn", "1240_74");
+                    put("ax", "6_90");
+                }},
+                new HashMap<>() {{
+                    put("trooper", "1_194");
+                }},
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+    }
+
+    private float deployCostTo(VirtualTableScenario scn, com.gempukku.swccgo.game.PhysicalCardImpl card,
+                               com.gempukku.swccgo.game.PhysicalCardImpl target) {
+        return scn.game().getModifiersQuerying().getDeployCost(
+                scn.gameState(), card, card, target, false, null, false, 0, null, false);
     }
 }

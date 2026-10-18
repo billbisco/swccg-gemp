@@ -49,7 +49,7 @@ public class Card1240_014 extends AbstractDroid {
         if (TriggerConditions.justDeployed(game, effectResult, self)) {
             PhysicalCard startingEffect = Filters.findFirstActive(game, self, Filters.and(Filters.your(self), Filters.Starting_Effect));
             if (startingEffect != null) {
-                Filter filter = Filters.and(Filters.Defensive_Shield, Filters.playable(self));
+                Filter filter = Filters.Defensive_Shield;
                 if (GameConditions.hasStackedCards(game, startingEffect, filter)) {
                     final OptionalGameTextTriggerAction action = new OptionalGameTextTriggerAction(self, gameTextSourceCardId);
                     action.setText("Play a Defensive Shield");
@@ -71,7 +71,7 @@ public class Card1240_014 extends AbstractDroid {
     @Override
     protected List<TopLevelGameTextAction> getGameTextTopLevelActions(String playerId, SwccgGame game, PhysicalCard self, int gameTextSourceCardId) {
         if (GameConditions.canUseForce(game, playerId, 1)
-                && GameConditions.isPresentAt(game, self, Filters.and(Filters.site, Filters.canBeConvertedByRaisingYourLocationToTop(playerId)))) {
+                && GameConditions.isAtLocation(game, self, Filters.and(Filters.site, Filters.canBeConvertedByRaisingYourLocationToTop(playerId)))) {
             final PhysicalCard location = game.getModifiersQuerying().getLocationThatCardIsPresentAt(game.getGameState(), self);
             if (location != null) {
                 final TopLevelGameTextAction action = new TopLevelGameTextAction(self, gameTextSourceCardId);

@@ -4,9 +4,11 @@ import com.gempukku.swccgo.common.CardType;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Keyword;
+import com.gempukku.swccgo.common.Phase;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Uniqueness;
+import com.gempukku.swccgo.common.Zone;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import com.gempukku.swccgo.logic.decisions.DecisionResultInvalidException;
@@ -16,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class Card_1240_014_Tests {
@@ -63,6 +66,7 @@ public class Card_1240_014_Tests {
             add(Icon.DROID);
             add(Icon.NAV_COMPUTER);
             add(Icon.SPECIAL_EDITION);
+            add(Icon.LEGACY_BLOCK_4);
         }});
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_4, card.getExpansionSet());
         assertEquals(Rarity.V, card.getRarity());
@@ -87,5 +91,63 @@ public class Card_1240_014_Tests {
         scn.LSUseCardAction(blaster, "Fire");
         assertTrue(scn.LSHasCardChoiceAvailable(r2a5));
         assertTrue(scn.LSHasCardChoiceNotAvailable(trooper));
+    }
+
+    @Test
+    public void R2A5AtAConvertedSiteMayUseOneForceToRaiseYourSite() {
+        var scn = GetConvertScenario();
+        var r2a5 = scn.GetDSCard("r2a5");
+        var lsCantina = scn.GetLSCard("lsCantina");
+        var dsCantina = scn.GetDSCard("dsCantina");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(dsCantina);
+        scn.MoveLocationToTable(lsCantina);
+        assertEquals(Zone.CONVERTED_LOCATIONS, dsCantina.getZone());
+        scn.MoveCardsToLocation(lsCantina, r2a5);
+        scn.SkipToDSTurn(Phase.CONTROL);
+        scn.DSActivateForceCheat(2);
+
+        assertTrue(scn.DSCardActionAvailable(r2a5, "Raise"));
+        int force = scn.GetDSForcePileCount();
+        scn.DSUseCardAction(r2a5, "Raise");
+        scn.PassAllResponses();
+        assertEquals(force - 1, scn.GetDSForcePileCount());
+        assertEquals(Zone.LOCATIONS, dsCantina.getZone());
+    }
+
+    @Test
+    public void R2A5DoesNotOfferRaiseAtAnUnconvertedSite() {
+        var scn = GetScenario();
+        var r2a5 = scn.GetDSCard("r2a5");
+        var site = scn.GetDSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, r2a5);
+        scn.DSActivateForceCheat(2);
+        scn.SkipToDSTurn(Phase.CONTROL);
+
+        assertFalse(scn.DSCardActionAvailable(r2a5, "Raise"));
+    }
+
+    private VirtualTableScenario GetConvertScenario() {
+        return new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("luke", "1_19");
+                    put("lsCantina", "1_128");
+                }},
+                new HashMap<>() {{
+                    put("r2a5", "1240_14");
+                    put("dsCantina", "1_290");
+                }},
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
     }
 }

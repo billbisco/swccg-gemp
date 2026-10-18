@@ -58,7 +58,7 @@ public class Card1240_011 extends AbstractImperial {
         if (TriggerConditions.justDeployed(game, effectResult, self)) {
             PhysicalCard startingEffect = Filters.findFirstActive(game, self, Filters.and(Filters.your(self), Filters.Starting_Effect));
             if (startingEffect != null) {
-                Filter filter = Filters.and(Filters.Defensive_Shield, Filters.playable(self));
+                Filter filter = Filters.Defensive_Shield;
                 if (GameConditions.hasStackedCards(game, startingEffect, filter)) {
                     final OptionalGameTextTriggerAction action = new OptionalGameTextTriggerAction(self, gameTextSourceCardId);
                     action.setText("Play a Defensive Shield");
