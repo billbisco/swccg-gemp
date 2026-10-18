@@ -72,7 +72,7 @@ public class Card1281_036 extends AbstractNormalEffect {
 
     @Override
     protected List<TopLevelGameTextAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
-        GameTextActionId gameTextActionId = GameTextActionId.OTHER_CARD_ACTION_1;
+        GameTextActionId gameTextActionId = GameTextActionId.LEGACY__SCOUNDRELS_INGENUITY__DRAW_DESTINY;
 
         if (GameConditions.isOnceDuringYourPhase(game, self, playerId, gameTextSourceCardId, gameTextActionId, Phase.CONTROL)) {
             final TopLevelGameTextAction action = new TopLevelGameTextAction(self, playerId, gameTextSourceCardId, gameTextActionId);
@@ -91,9 +91,11 @@ public class Card1281_036 extends AbstractNormalEffect {
                             gameState.sendMessage("Destiny: " + GuiUtils.formatAsString(totalDestiny));
                             if (totalDestiny > 3) {
                                 gameState.sendMessage("Result: Succeeded");
+                                PhysicalCard host = self.getAttachedTo();
+                                Filter locations = Filters.sameOrRelatedLocation(host != null ? host : self);
                                 action.appendEffect(
                                         new AddUntilEndOfTurnModifierEffect(action,
-                                                new ForceDrainModifier(self, Filters.sameOrRelatedLocation(self), 1, playerId),
+                                                new ForceDrainModifier(self, locations, 1, playerId),
                                                 "Force drains at same and related locations are +1"));
                             }
                             else {

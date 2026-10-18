@@ -3,6 +3,7 @@ package com.gempukku.swccgo.cards.set1281.light;
 import com.gempukku.swccgo.cards.AbstractNormalEffect;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.effects.AddBattleDestinyEffect;
+import com.gempukku.swccgo.cards.effects.DrawsNoMoreThanBattleDestinyEffect;
 import com.gempukku.swccgo.cards.effects.usage.OncePerTurnEffect;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.GameTextActionId;
@@ -18,12 +19,10 @@ import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
-import com.gempukku.swccgo.logic.effects.AddUntilEndOfBattleModifierEffect;
 import com.gempukku.swccgo.logic.effects.LoseForceEffect;
 import com.gempukku.swccgo.logic.modifiers.DefenseValueModifier;
 import com.gempukku.swccgo.logic.modifiers.ImmuneToAttritionLessThanModifier;
 import com.gempukku.swccgo.logic.modifiers.ImmunityToAttritionChangeModifier;
-import com.gempukku.swccgo.logic.modifiers.MayNotDrawMoreThanBattleDestinyModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 
 import java.util.Collections;
@@ -76,10 +75,11 @@ public class Card1281_034 extends AbstractNormalEffect {
 
     @Override
     protected List<TopLevelGameTextAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
-        GameTextActionId gameTextActionId = GameTextActionId.OTHER_CARD_ACTION_1;
+        GameTextActionId gameTextActionId = GameTextActionId.LEGACY__SCOUNDRELS_BRAVADO__ADD_BATTLE_DESTINY;
 
         if (GameConditions.isOncePerTurn(game, self, playerId, gameTextSourceCardId, gameTextActionId)
-                && GameConditions.isDuringBattle(game)) {
+                && GameConditions.isDuringBattle(game)
+                && GameConditions.canAddBattleDestinyDraws(game, self)) {
 
             final TopLevelGameTextAction action = new TopLevelGameTextAction(self, playerId, gameTextSourceCardId, gameTextActionId);
             action.setText("Add a battle destiny");
@@ -87,10 +87,7 @@ public class Card1281_034 extends AbstractNormalEffect {
             action.appendUsage(new OncePerTurnEffect(action));
             action.appendCost(new LoseForceEffect(action, playerId, 1, true));
             action.appendEffect(new AddBattleDestinyEffect(action, 1, playerId));
-            action.appendEffect(
-                    new AddUntilEndOfBattleModifierEffect(action,
-                            new MayNotDrawMoreThanBattleDestinyModifier(self, 2, playerId),
-                            "You draw no more than two battle destiny there"));
+            action.appendEffect(new DrawsNoMoreThanBattleDestinyEffect(action, playerId, 2));
             return Collections.singletonList(action);
         }
         return null;

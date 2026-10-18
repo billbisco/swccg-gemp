@@ -29,16 +29,28 @@ import com.gempukku.swccgo.logic.effects.choose.DeployCardFromLostPileEffect;
 import com.gempukku.swccgo.logic.effects.choose.DeployStackedCardEffect;
 import com.gempukku.swccgo.logic.effects.choose.PlaceCardOutOfPlayFromLostPileEffect;
 import com.gempukku.swccgo.logic.effects.choose.StackCardsFromReserveDeckEffect;
+import com.gempukku.swccgo.logic.effects.StackOneCardFromForcePileEffect;
+import com.gempukku.swccgo.logic.effects.StackOneCardFromHandEffect;
 import com.gempukku.swccgo.logic.effects.choose.StackOneCardFromLostPileEffect;
 import com.gempukku.swccgo.logic.effects.choose.StackOneCardFromPileEffect;
 import com.gempukku.swccgo.logic.modifiers.MayNotBeFlippedModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
+import com.gempukku.swccgo.logic.timing.Action;
 import com.gempukku.swccgo.logic.timing.EffectResult;
+import com.gempukku.swccgo.logic.timing.PassthruEffect;
+import com.gempukku.swccgo.logic.timing.results.CancelCardOnTableResult;
+import com.gempukku.swccgo.logic.timing.results.ForfeitedCardToUsedPileFromTableResult;
 import com.gempukku.swccgo.logic.timing.results.LostFromTableResult;
+import com.gempukku.swccgo.logic.timing.results.PlacedCardOutOfPlayFromTableResult;
+import com.gempukku.swccgo.logic.timing.results.PutCardInForcePileFromTableResult;
+import com.gempukku.swccgo.logic.timing.results.PutCardInReserveDeckFromTableResult;
 import com.gempukku.swccgo.logic.timing.results.PutCardInUsedPileFromTableResult;
+import com.gempukku.swccgo.logic.timing.results.ReturnedCardToHandFromTableResult;
+import com.gempukku.swccgo.logic.timing.results.StackedFromTableResult;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -62,7 +74,7 @@ public class Card1281_037 extends AbstractNormalEffect {
 
     @Override
     protected Filter getGameTextValidTargetFilterToRemainAttachedTo(final SwccgGame game, final PhysicalCard self) {
-        return Filters.title("Infiltration");
+        return Filters.or(Filters.title("Infiltration"), Filters.title("Unlikely Allies"));
     }
 
     @Override
@@ -80,7 +92,7 @@ public class Card1281_037 extends AbstractNormalEffect {
         Filter scoundrelEffect = Filters.and(Icon.SCOUNDREL, Filters.Effect);
 
         if (TriggerConditions.justDeployed(game, effectResult, self)) {
-            GameTextActionId stackId = GameTextActionId.SCOUNDRELS_LUCK__STACK_SCOUNDREL_CARDS_FROM_RESERVE_DECK;
+            GameTextActionId stackId = GameTextActionId.LEGACY__SCOUNDRELS_LUCK__STACK_SCOUNDREL_CARDS_FROM_RESERVE_DECK;
             RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId, stackId);
             action.setPerformingPlayer(playerId);
             action.setText("Stack three [Scoundrel] cards from Reserve Deck");
@@ -88,20 +100,14 @@ public class Card1281_037 extends AbstractNormalEffect {
             actions.add(action);
         }
 
-        if (TriggerConditions.justLost(game, effectResult, scoundrelEffect)) {
-            PhysicalCard cardLost = ((LostFromTableResult) effectResult).getCard();
-            RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
-            action.setText("Stack " + GameUtils.getFullName(cardLost) + " here");
-            action.appendEffect(new StackOneCardFromLostPileEffect(action, cardLost, self, true, false, true));
-            actions.add(action);
-        }
-
-        if (TriggerConditions.justPlacedInUsedPileFromTable(game, effectResult, scoundrelEffect)) {
-            PhysicalCard card = ((PutCardInUsedPileFromTableResult) effectResult).getCard();
-            RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
-            action.setText("Stack " + GameUtils.getFullName(card) + " here");
-            action.appendEffect(new StackOneCardFromPileEffect(action, playerId, card, self, true, false, false));
-            actions.add(action);
+        if (TriggerConditions.leavesTable(game, effectResult, scoundrelEffect)) {
+            PhysicalCard leftTable = getCardThatLeftTable(effectResult);
+            if (leftTable != null && leftTable.getStackedOn() != self) {
+                RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
+                action.setText("Stack " + GameUtils.getFullName(leftTable) + " here");
+                stackScoundrelEffectHere(action, leftTable, self);
+                actions.add(action);
+            }
         }
 
         if (TriggerConditions.isStartOfYourTurn(game, effectResult, playerId)) {
@@ -135,7 +141,7 @@ public class Card1281_037 extends AbstractNormalEffect {
         List<TopLevelGameTextAction> actions = new LinkedList<TopLevelGameTextAction>();
         Filter scoundrelEffect = Filters.and(Icon.SCOUNDREL, Filters.Effect);
 
-        GameTextActionId deployFromHere = GameTextActionId.OTHER_CARD_ACTION_1;
+        GameTextActionId deployFromHere = GameTextActionId.LEGACY__SCOUNDRELS_LUCK__DEPLOY_SCOUNDREL_EFFECT;
         if (GameConditions.isDuringYourTurn(game, playerId)
                 && GameConditions.isOnceDuringYourTurn(game, self, playerId, gameTextSourceCardId, deployFromHere)
                 && GameConditions.hasStackedCards(game, self, Filters.and(scoundrelEffect, Filters.deployable(self, null, false, 0)))) {
@@ -147,7 +153,7 @@ public class Card1281_037 extends AbstractNormalEffect {
             actions.add(action);
         }
 
-        GameTextActionId weaponId = GameTextActionId.SCOUNDRELS_LUCK__DEPLOY_CHARACTER_WEAPON_FROM_LOST_PILE;
+        GameTextActionId weaponId = GameTextActionId.LEGACY__SCOUNDRELS_LUCK__DEPLOY_CHARACTER_WEAPON_FROM_LOST_PILE;
         if (GameConditions.isOnceDuringYourTurn(game, self, playerId, gameTextSourceCardId, weaponId)
                 && GameConditions.canDeployCardFromLostPile(game, playerId, self, weaponId)) {
             TopLevelGameTextAction action = new TopLevelGameTextAction(self, playerId, gameTextSourceCardId, weaponId);
@@ -169,5 +175,53 @@ public class Card1281_037 extends AbstractNormalEffect {
                 return Filters.countActive(game, self, Filters.and(Filters.scoundrel, Filters.not(Filters.droid), Filters.presentAt(Filters.battleground))) >= 2;
             }
         };
+    }
+
+    private PhysicalCard getCardThatLeftTable(EffectResult effectResult) {
+        if (effectResult.getType() == EffectResult.Type.LOST_FROM_TABLE || effectResult.getType() == EffectResult.Type.FORFEITED_TO_LOST_PILE_FROM_TABLE)
+            return ((LostFromTableResult) effectResult).getCard();
+        if (effectResult.getType() == EffectResult.Type.FORFEITED_TO_USED_PILE_FROM_TABLE)
+            return ((ForfeitedCardToUsedPileFromTableResult) effectResult).getCard();
+        if (effectResult.getType() == EffectResult.Type.CANCELED_ON_TABLE)
+            return ((CancelCardOnTableResult) effectResult).getCard();
+        if (effectResult.getType() == EffectResult.Type.STACKED_FROM_TABLE)
+            return ((StackedFromTableResult) effectResult).getCard();
+        if (effectResult.getType() == EffectResult.Type.RETURNED_TO_HAND_FROM_TABLE)
+            return ((ReturnedCardToHandFromTableResult) effectResult).getCard();
+        if (effectResult.getType() == EffectResult.Type.PUT_IN_RESERVE_DECK_FROM_TABLE)
+            return ((PutCardInReserveDeckFromTableResult) effectResult).getCard();
+        if (effectResult.getType() == EffectResult.Type.PUT_IN_FORCE_PILE_FROM_TABLE)
+            return ((PutCardInForcePileFromTableResult) effectResult).getCard();
+        if (effectResult.getType() == EffectResult.Type.PUT_IN_USED_PILE_FROM_TABLE)
+            return ((PutCardInUsedPileFromTableResult) effectResult).getCard();
+        if (effectResult.getType() == EffectResult.Type.PLACED_OUT_OF_PLAY_FROM_TABLE)
+            return ((PlacedCardOutOfPlayFromTableResult) effectResult).getCard();
+        return null;
+    }
+
+    private void stackScoundrelEffectHere(Action action, PhysicalCard card, PhysicalCard self) {
+        Zone zone = GameUtils.getZoneFromZoneTop(card.getZone());
+        if (zone == Zone.LOST_PILE) {
+            action.appendEffect(new StackOneCardFromLostPileEffect(action, card, self, true, false, true));
+        }
+        else if (zone == Zone.HAND) {
+            action.appendEffect(new StackOneCardFromHandEffect(action, card, self, true));
+        }
+        else if (zone == Zone.FORCE_PILE) {
+            action.appendEffect(new StackOneCardFromForcePileEffect(action, card, self, true));
+        }
+        else if (zone == Zone.OUT_OF_PLAY || zone == Zone.STACKED || zone == Zone.STACKED_FACE_DOWN) {
+            action.appendEffect(
+                    new PassthruEffect(action) {
+                        @Override
+                        protected void doPlayEffect(SwccgGame game) {
+                            game.getGameState().removeCardsFromZone(Collections.singleton(card));
+                            game.getGameState().stackCard(card, self, true, false, false);
+                        }
+                    });
+        }
+        else {
+            action.appendEffect(new StackOneCardFromPileEffect(action, self.getOwner(), card, self, true, false, false));
+        }
     }
 }

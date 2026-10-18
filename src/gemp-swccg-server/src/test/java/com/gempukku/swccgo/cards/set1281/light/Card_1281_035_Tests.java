@@ -26,11 +26,13 @@ public class Card_1281_035_Tests {
                 new HashMap<>() {{
                     put("charm", "1281_35");
                     put("lando", "601_50");
+                    put("leia", "1_17");
                     put("peek1", "1_11");
                     put("peek2", "1_19");
                     put("peek3", "1_27");
                 }},
                 new HashMap<>() {{
+                    put("vader", "1_168");
                     put("trooper", "1_194");
                 }},
                 10,
@@ -64,13 +66,14 @@ public class Card_1281_035_Tests {
         scn.BlueprintIconCheck(card, new ArrayList<>() {{
             add(Icon.EFFECT);
             add(Icon.SCOUNDREL);
+            add(Icon.LEGACY_BLOCK_8);
         }});
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_8_1, card.getExpansionSet());
         assertEquals(Rarity.V, card.getRarity());
     }
 
     @Test
-    public void ScoundrelsCharmPeeksAtTopThreeOfForcePileAndTakesOneIntoHand() {
+    public void ScoundrelsCharmPeeksAtTopThreeOfForcePileTakesOneAndReshufflesOncePerTurn() {
         var scn = GetScenario();
         var charm = scn.GetLSCard("charm");
         var lando = scn.GetLSCard("lando");
@@ -92,5 +95,114 @@ public class Card_1281_035_Tests {
         scn.PassAllResponses();
 
         assertEquals(Zone.HAND, peek1.getZone());
+        assertTrue(peek2.getZone() == Zone.FORCE_PILE || peek2.getZone() == Zone.TOP_OF_FORCE_PILE);
+        assertTrue(peek3.getZone() == Zone.FORCE_PILE || peek3.getZone() == Zone.TOP_OF_FORCE_PILE);
+        scn.SkipToPhase(Phase.BATTLE);
+        assertFalse(scn.LSCardActionAvailable(charm, "Peek at top 3 cards of Force Pile"));
+    }
+
+    @Test
+    public void ScoundrelsCharmAddsOneToOpponentsJustDrawnDestiny() {
+        var scn = GetScenario();
+        var charm = scn.GetLSCard("charm");
+        var lando = scn.GetLSCard("lando");
+        var vader = scn.GetDSCard("vader");
+        var site = scn.GetLSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, lando, vader);
+        scn.AttachCardsTo(lando, charm);
+        scn.SkipToDSTurn(Phase.BATTLE);
+        scn.EnsureLSForcePile(2);
+        scn.DSInitiateBattle(site);
+        scn.PassAllResponses();
+        drawDsBattleDestinyAndStopAtLsDrawn(scn, 1);
+        assertTrue("Add missing. ds=" + scn.DSGetDecision() + " ls=" + scn.LSGetDecision()
+                        + " actions=" + scn.GetLSAvailableActions(),
+                scn.LSCardActionAvailable(charm, "Add 1 to opponent's destiny"));
+        scn.LSUseCardAction(charm, "Add 1 to opponent's destiny");
+        scn.PassForceUseResponses();
+        while (scn.LSDecisionAvailable("optional")) {
+            scn.LSPass();
+        }
+        scn.PassAllResponses();
+        String addLog = String.join(" | ", scn.gameState().getLastMessages());
+        assertTrue("Charm add missing, log=" + addLog, addLog.contains("adds 1 to make the battle destiny"));
+        assertEquals("ds=" + scn.DSGetDecision() + " ls=" + scn.LSGetDecision() + " log=" + addLog,
+                3, scn.GetDSTotalDestiny());
+        assertFalse(scn.LSCardActionAvailable(charm, "Add 1 to opponent's destiny"));
+        assertFalse(scn.LSCardActionAvailable(charm, "Subtract 1 from opponent's destiny"));
+    }
+
+    @Test
+    public void ScoundrelsCharmSubtractsOneFromOpponentsJustDrawnDestiny() {
+        var scn = GetScenario();
+        var charm = scn.GetLSCard("charm");
+        var lando = scn.GetLSCard("lando");
+        var vader = scn.GetDSCard("vader");
+        var site = scn.GetLSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, lando, vader);
+        scn.AttachCardsTo(lando, charm);
+        scn.SkipToDSTurn(Phase.BATTLE);
+        scn.EnsureLSForcePile(2);
+        scn.DSInitiateBattle(site);
+        scn.PassAllResponses();
+        drawDsBattleDestinyAndStopAtLsDrawn(scn, 5);
+        assertTrue(scn.LSCardActionAvailable(charm, "Subtract 1 from opponent's destiny"));
+        scn.LSUseCardAction(charm, "Subtract 1 from opponent's destiny");
+        scn.PassForceUseResponses();
+        while (scn.LSDecisionAvailable("optional")) {
+            scn.LSPass();
+        }
+        scn.PassAllResponses();
+        String subLog = String.join(" | ", scn.gameState().getLastMessages());
+        assertTrue("Charm subtract missing, log=" + subLog, subLog.contains("subtracts 1 to make the battle destiny"));
+        assertEquals("ds=" + scn.DSGetDecision() + " ls=" + scn.LSGetDecision() + " log=" + subLog,
+                5, scn.GetDSTotalDestiny());
+    }
+
+    @Test
+    public void ScoundrelsCharmDoesNotOfferOnOwnDestiny() {
+        var scn = GetScenario();
+        var charm = scn.GetLSCard("charm");
+        var lando = scn.GetLSCard("lando");
+        var leia = scn.GetLSCard("leia");
+        var trooper = scn.GetDSCard("trooper");
+        var site = scn.GetLSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, lando, leia, trooper);
+        scn.AttachCardsTo(lando, charm);
+        scn.SkipToLSTurn(Phase.BATTLE);
+        scn.LSInitiateBattle(site);
+        scn.PassAllResponses();
+        scn.SkipToPowerSegment();
+        scn.PassAllResponses();
+        assertTrue("expected LS battle destiny prompt, ds=" + scn.DSGetDecision() + " ls=" + scn.LSGetDecision(),
+                scn.LSDecisionAvailable("battle destiny?"));
+        scn.PrepareLSDestiny(2);
+        scn.LSChooseYes();
+        scn.DSPass();
+        scn.LSPass();
+        scn.DSPass();
+        scn.LSPass();
+        scn.DSPass();
+        assertFalse(scn.LSCardActionAvailable(charm, "Add 1 to opponent's destiny"));
+        assertFalse(scn.LSCardActionAvailable(charm, "Subtract 1 from opponent's destiny"));
+    }
+
+    private void drawDsBattleDestinyAndStopAtLsDrawn(VirtualTableScenario scn, int destiny) {
+        scn.PrepareDSDestiny(destiny);
+        scn.SkipToPowerSegment();
+        scn.PassAllResponses();
+        assertTrue("expected battle destiny prompt, ds=" + scn.DSGetDecision() + " ls=" + scn.LSGetDecision(),
+                scn.DSDecisionAvailable("battle destiny?"));
+        scn.DSChooseYes();
+        scn.LSPass();
+        scn.DSPass();
+        scn.LSPass();
+        scn.DSPass();
     }
 }

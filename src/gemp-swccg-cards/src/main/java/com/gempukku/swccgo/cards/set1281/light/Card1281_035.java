@@ -62,7 +62,7 @@ public class Card1281_035 extends AbstractNormalEffect {
     @Override
     protected List<TopLevelGameTextAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
         List<TopLevelGameTextAction> actions = new LinkedList<TopLevelGameTextAction>();
-        GameTextActionId gameTextActionId = GameTextActionId.OTHER_CARD_ACTION_1;
+        GameTextActionId gameTextActionId = GameTextActionId.LEGACY__SCOUNDRELS_CHARM__PEEK_AT_FORCE_PILE;
 
         if (GameConditions.isOncePerTurn(game, self, playerId, gameTextSourceCardId, gameTextActionId)
                 && game.getGameState().getForcePileSize(playerId) > 0) {
@@ -82,7 +82,7 @@ public class Card1281_035 extends AbstractNormalEffect {
     protected List<OptionalGameTextTriggerAction> getGameTextOptionalAfterTriggers(final String playerId, SwccgGame game, EffectResult effectResult, final PhysicalCard self, int gameTextSourceCardId) {
         List<OptionalGameTextTriggerAction> actions = new LinkedList<OptionalGameTextTriggerAction>();
         String opponent = game.getOpponent(playerId);
-        GameTextActionId gameTextActionId = GameTextActionId.OTHER_CARD_ACTION_2;
+        GameTextActionId gameTextActionId = GameTextActionId.LEGACY__SCOUNDRELS_CHARM__MODIFY_DESTINY;
 
         if (TriggerConditions.isDestinyJustDrawnBy(game, effectResult, opponent)
                 && GameConditions.isOncePerTurn(game, self, playerId, gameTextSourceCardId, gameTextActionId)
