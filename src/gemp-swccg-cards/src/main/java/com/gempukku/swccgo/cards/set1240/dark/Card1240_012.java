@@ -45,7 +45,7 @@ public class Card1240_012 extends AbstractImperial {
         setLore("This Imperial Intelligence leader has a proven track record for predicting Rebel fleet movements. His coordination of starship maneuvers has saved many vulnerable bases.");
         setGameText("Imperial Council Member. Agenda: logistics. Once per turn, if at Conference Room, may target an opponent's starship on table with power < total influence here. Opponent must use +2 Force to move target (or initiate battle there) this turn.");
         addIcons(Icon.PILOT, Icon.A_NEW_HOPE);
-        addKeywords(Keyword.IMPERIAL_COUNCIL_MEMBER);
+        addKeywords(Keyword.IMPERIAL_COUNCIL_MEMBER, Keyword.LEADER);
     }
 
     @Override

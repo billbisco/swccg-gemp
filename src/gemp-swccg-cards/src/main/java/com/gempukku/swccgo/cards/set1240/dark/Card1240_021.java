@@ -3,6 +3,7 @@ package com.gempukku.swccgo.cards.set1240.dark;
 import com.gempukku.swccgo.cards.AbstractPoliticalEffect;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.effects.usage.OncePerTurnEffect;
+import com.gempukku.swccgo.cards.evaluators.TotalInfluenceAtConferenceRoomEvaluator;
 import com.gempukku.swccgo.common.Agenda;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.GameTextActionId;
@@ -66,7 +67,7 @@ public class Card1240_021 extends AbstractPoliticalEffect {
             action.setText("Subtract influence from a starship");
             action.appendUsage(
                     new OncePerTurnEffect(action));
-            final float amount = totalInfluenceAtConferenceRoom(game, playerId);
+            final float amount = TotalInfluenceAtConferenceRoomEvaluator.get(game, self, playerId);
             action.appendTargeting(
                     new TargetCardOnTableEffect(action, playerId, "Choose a starship", starship) {
                         @Override
@@ -90,13 +91,5 @@ public class Card1240_021 extends AbstractPoliticalEffect {
             actions.add(action);
         }
         return actions;
-    }
-
-    private float totalInfluenceAtConferenceRoom(SwccgGame game, String owner) {
-        PhysicalCard room = Filters.findFirstActive(game, null, Filters.Death_Star_Conference_Room);
-        if (room == null) {
-            return 0;
-        }
-        return game.getModifiersQuerying().getTotalInfluenceAtLocation(game.getGameState(), owner, room);
     }
 }

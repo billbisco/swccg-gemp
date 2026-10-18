@@ -2,6 +2,7 @@ package com.gempukku.swccgo.cards.set1272.dark;
 
 import com.gempukku.swccgo.cards.AbstractUsedInterrupt;
 import com.gempukku.swccgo.cards.GameConditions;
+import com.gempukku.swccgo.cards.evaluators.TotalInfluenceAtConferenceRoomEvaluator;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.GameTextActionId;
 import com.gempukku.swccgo.common.Keyword;
@@ -12,16 +13,13 @@ import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
-import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.logic.actions.PlayInterruptAction;
 import com.gempukku.swccgo.logic.effects.AddUntilEndOfBattleModifierEffect;
 import com.gempukku.swccgo.logic.effects.RespondablePlayCardEffect;
 import com.gempukku.swccgo.logic.effects.UseForceEffect;
 import com.gempukku.swccgo.logic.effects.choose.DeployCardFromReserveDeckEffect;
 import com.gempukku.swccgo.logic.effects.choose.TakeCardIntoHandFromReserveDeckEffect;
-import com.gempukku.swccgo.logic.evaluators.Evaluator;
 import com.gempukku.swccgo.logic.modifiers.TotalPowerModifier;
-import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 import com.gempukku.swccgo.logic.timing.Action;
 
 import java.util.LinkedList;
@@ -45,7 +43,7 @@ public class Card1272_008 extends AbstractUsedInterrupt {
     protected List<PlayInterruptAction> getGameTextTopLevelActions(final String playerId, final SwccgGame game, final PhysicalCard self) {
         List<PlayInterruptAction> actions = new LinkedList<PlayInterruptAction>();
 
-        GameTextActionId takeActionId = GameTextActionId.DARK_COLLABORATION__TAKE_COUNCIL_MEMBER_OR_BEWIL;
+        GameTextActionId takeActionId = GameTextActionId.LEGACY__DARK_COLLABORATION_V__TAKE_COUNCIL_MEMBER_OR_BEWIL;
         if (GameConditions.canUseForceToPlayInterrupt(game, playerId, self, 1)
                 && GameConditions.canTakeCardsIntoHandFromReserveDeck(game, playerId, self, takeActionId)) {
 
@@ -59,13 +57,13 @@ public class Card1272_008 extends AbstractUsedInterrupt {
                         protected void performActionResults(Action targetingAction) {
                             action.appendEffect(
                                     new TakeCardIntoHandFromReserveDeckEffect(action, playerId,
-                                            Filters.or(Keyword.IMPERIAL_COUNCIL_MEMBER, Filters.titleContains("Bewil")), true, true));
+                                            Filters.or(Keyword.IMPERIAL_COUNCIL_MEMBER, Filters.titleContains("Bewil")), true));
                         }
                     });
             actions.add(action);
         }
 
-        GameTextActionId deployActionId = GameTextActionId.DARK_COLLABORATION__DEPLOY_ISB_SITE;
+        GameTextActionId deployActionId = GameTextActionId.LEGACY__DARK_COLLABORATION_V__DEPLOY_ISB_SITE;
         if (GameConditions.canUseForceToPlayInterrupt(game, playerId, self, 1)
                 && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, deployActionId, true, false)) {
 
@@ -93,22 +91,7 @@ public class Card1272_008 extends AbstractUsedInterrupt {
                     new RespondablePlayCardEffect(action) {
                         @Override
                         protected void performActionResults(Action targetingAction) {
-                            Evaluator amount = new Evaluator() {
-                                @Override
-                                public float evaluateExpression(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard cardAffected) {
-                                    PhysicalCard room = Filters.findFirstActive(game, self, Filters.Death_Star_Conference_Room);
-                                    if (room == null) {
-                                        return 0;
-                                    }
-                                    float influence = modifiersQuerying.getTotalInfluenceAtLocation(gameState, playerId, room);
-                                    return Math.min(6, influence);
-                                }
-
-                                @Override
-                                public float evaluateExpression(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard cardAffected, PhysicalCard otherCard) {
-                                    return evaluateExpression(gameState, modifiersQuerying, cardAffected);
-                                }
-                            };
+                            float amount = Math.min(6, TotalInfluenceAtConferenceRoomEvaluator.get(game, self, playerId));
                             action.appendEffect(
                                     new AddUntilEndOfBattleModifierEffect(action,
                                             new TotalPowerModifier(self, Filters.battleLocation, amount, playerId),

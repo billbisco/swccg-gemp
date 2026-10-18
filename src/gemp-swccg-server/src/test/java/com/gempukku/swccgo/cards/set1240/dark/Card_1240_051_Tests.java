@@ -83,8 +83,10 @@ public class Card_1240_051_Tests {
             add(Icon.INTERIOR_SITE);
             add(Icon.MOBILE);
             add(Icon.SCOMP_LINK);
+            add(Icon.DARK_FORCE);
+            add(Icon.LEGACY_BLOCK_4);
         }});
-        assertEquals(0, card.getIconCount(Icon.DARK_FORCE));
+        assertEquals(1, card.getIconCount(Icon.DARK_FORCE));
         assertEquals(0, card.getIconCount(Icon.LIGHT_FORCE));
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_4, card.getExpansionSet());
         assertEquals(Rarity.V, card.getRarity());
@@ -129,8 +131,8 @@ public class Card_1240_051_Tests {
         assertTrue(senseDrawWhileCancelingSetForStun(false).contains("as a 1 for"));
         String boosted = senseDrawWhileCancelingSetForStun(true);
         assertTrue(boosted, boosted.contains("as a 3 for"));
-        // Set For Stun's own destiny (Stormtrooper, printed 1) is not increased.
-        assertTrue(boosted, boosted.contains("as a 1 for"));
+        // Set For Stun's own prepared destiny 2 is not increased to 4.
+        assertTrue(boosted, boosted.contains("as a 2 for"));
         assertFalse(boosted, boosted.contains("as a 4 for"));
     }
 
@@ -157,48 +159,29 @@ public class Card_1240_051_Tests {
         if (influenceGreaterThanFive) {
             scn.ApplyAdHocModifier(new InfluenceModifier(aloo, 1));
         }
+        scn.SkipToDSTurn(Phase.CONTROL);
+        scn.EnsureDSForcePile(2);
         scn.PrepareLSDestiny(1);
         scn.PrepareDSDestiny(2);
-        scn.SkipToDSTurn(Phase.CONTROL);
 
         assertEquals(influenceGreaterThanFive ? 6 : 5,
                 scn.game().getModifiersQuerying().getTotalInfluenceAtLocation(scn.gameState(), scn.DS, room), scn.epsilon);
         assertTrue(scn.DSCardPlayAvailable(stun));
         scn.DSPlayCard(stun);
         scn.DSChooseCard(pilot);
-        scn.LSPass();
+        scn.PassForceUseResponses();
         scn.DSPass();
 
-        assertTrue("Sense was not offered. log=" + String.join("\n", scn.gameState().getLastMessages())
-                        + " decision=" + scn.LSGetDecision(),
-                scn.LSCardPlayAvailable(sense) || scn.LSPlayUsedInterruptAvailable(sense));
-        if (scn.LSPlayUsedInterruptAvailable(sense))
-            scn.LSPlayCard(sense);
-        else
-            scn.LSUseCardAction(sense);
-        if (scn.LSHasCardChoiceAvailable(pilot))
-            scn.LSChooseCard(pilot);
-
-        scn.DSPass();
-        scn.LSPass();
-        if (scn.DSDecisionAvailable("COST_TO_DRAW") || scn.DSDecisionAvailable("Optional"))
-            scn.DSPass();
-        if (scn.LSDecisionAvailable("COST_TO_DRAW") || scn.LSDecisionAvailable("Optional"))
-            scn.LSPass();
-        if (scn.DSDecisionAvailable("ABOUT_TO_DRAW_DESTINY"))
-            scn.DSPass();
-        if (scn.LSDecisionAvailable("ABOUT_TO_DRAW_DESTINY"))
-            scn.LSPass();
+        assertTrue("Sense was not offered. ls=" + scn.LSGetDecision() + " ds=" + scn.DSGetDecision()
+                        + " lsActions=" + scn.GetLSAvailableActions(),
+                scn.LSCardActionAvailable(sense) || scn.LSActionAvailable("cancel"));
+        scn.LSChooseAction("cancel");
+        scn.LSChooseCard(pilot);
+        scn.PassAllResponses();
 
         String log = String.join("\n", scn.gameState().getLastMessages());
         assertTrue("Expected a Sense destiny draw. decision=" + scn.LSGetDecision() + " / " + scn.DSGetDecision() + "\n" + log,
                 log.contains("as a "));
-
-        if (influenceGreaterThanFive) {
-            // Sense fails (3 is not < ability 2), so Set For Stun still draws destiny 2.
-            scn.PassAllResponses();
-            log = String.join("\n", scn.gameState().getLastMessages());
-        }
         return log;
     }
 
@@ -224,9 +207,13 @@ public class Card_1240_051_Tests {
         field.setAccessible(true);
         Map<String, SwccgCardBlueprint> map = (Map<String, SwccgCardBlueprint>) field.get(VirtualTableScenario._cardLibrary);
         map.put(blueprintId, new TestVirtualBlock4LaserGate());
-        PhysicalCardImpl gate = (PhysicalCardImpl) scn.gameState().createPhysicalCard(scn.DS, VirtualTableScenario._cardLibrary, blueprintId);
-        scn.gameState().addCardToZone(gate, Zone.HAND, scn.DS, true, false, false);
-        return gate;
+        try {
+            PhysicalCardImpl gate = (PhysicalCardImpl) scn.gameState().createPhysicalCard(scn.DS, VirtualTableScenario._cardLibrary, blueprintId);
+            scn.gameState().addCardToZone(gate, Zone.HAND, scn.DS, true, false, false);
+            return gate;
+        } finally {
+            map.remove(blueprintId);
+        }
     }
 
     private static final class TestVirtualBlock4LaserGate extends AbstractDevice {

@@ -65,7 +65,10 @@ public class Card1220_004 extends AbstractImperial {
 
             final RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
             action.setText("Opponent loses 3 Force to 'react' away");
-            int available = gameState.getForcePileSize(opponent) + gameState.getReserveDeckSize(opponent);
+            int available = gameState.getForcePileSize(opponent)
+                    + gameState.getReserveDeckSize(opponent)
+                    + gameState.getUsedPile(opponent).size()
+                    + gameState.getHand(opponent).size();
             if (available >= 3) {
                 action.appendEffect(
                         new LoseForceEffect(action, opponent, 3, true));
@@ -81,7 +84,7 @@ public class Card1220_004 extends AbstractImperial {
 
     @Override
     protected List<TopLevelGameTextAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
-        GameTextActionId gameTextActionId = GameTextActionId.CAPTAIN_BEWIL__UPLOAD_INTERRUPT_FROM_FORCE_PILE;
+        GameTextActionId gameTextActionId = GameTextActionId.LEGACY__CAPTAIN_BEWIL_V__UPLOAD_INTERRUPT_FROM_FORCE_PILE;
 
         if (GameConditions.isDuringYourTurn(game, playerId)
                 && GameConditions.isAtLocation(game, self, Filters.Death_Star_Conference_Room)

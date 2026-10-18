@@ -69,6 +69,7 @@ public class Card_1230_018_Tests {
         scn.BlueprintIconCheck(card, new ArrayList<>() {{
             add(Icon.IMPERIAL);
             add(Icon.DEATH_STAR_II);
+            add(Icon.LEGACY_BLOCK_3);
         }});
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_3, card.getExpansionSet());
         assertEquals(Rarity.V, card.getRarity());
@@ -101,14 +102,14 @@ public class Card_1230_018_Tests {
         scn.StartGame();
         scn.MoveLocationToTable(room);
         scn.MoveLocationToTable(bay);
-        assertEquals(0, scn.GetDSIconsOnLocation(room));
-        assertEquals(0, scn.GetIconCount(room, Icon.DARK_FORCE));
-
-        scn.MoveCardsToLocation(room, aloo);
+        assertEquals(1, scn.GetDSIconsOnLocation(room));
         assertEquals(1, scn.GetIconCount(room, Icon.DARK_FORCE));
 
+        scn.MoveCardsToLocation(room, aloo);
+        assertEquals(2, scn.GetIconCount(room, Icon.DARK_FORCE));
+
         scn.MoveCardsToLocation(bay, aloo);
-        assertEquals(0, scn.GetIconCount(room, Icon.DARK_FORCE));
+        assertEquals(1, scn.GetIconCount(room, Icon.DARK_FORCE));
     }
 
     @Test

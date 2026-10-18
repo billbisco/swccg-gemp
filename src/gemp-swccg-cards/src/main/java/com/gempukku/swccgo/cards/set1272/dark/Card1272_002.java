@@ -40,6 +40,7 @@ public class Card1272_002 extends AbstractImperial {
         setLore("Imperial council member. ISB leader.");
         setGameText("Agenda: intelligence. While with an ISB agent or Imperial Council Member, may not be targeted by weapons. During your deploy phase, may exchange an Imperial in hand with an Imperial of ability < 5 in Lost Pile. Immune to attrition < 3.");
         addIcons(Icon.WARRIOR);
+        addKeywords(Keyword.LEADER);
     }
 
     @Override
@@ -61,7 +62,7 @@ public class Card1272_002 extends AbstractImperial {
 
     @Override
     protected List<TopLevelGameTextAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
-        GameTextActionId gameTextActionId = GameTextActionId.ISB_CENTRAL_COMMANDER__EXCHANGE_IMPERIAL;
+        GameTextActionId gameTextActionId = GameTextActionId.LEGACY__ISB_CENTRAL_COMMANDER__EXCHANGE_IMPERIAL;
 
         if (GameConditions.isDuringYourPhase(game, playerId, Phase.DEPLOY)
                 && GameConditions.hasInHand(game, playerId, Filters.Imperial)

@@ -66,17 +66,12 @@ public class Card1240_007 extends AbstractImperial {
         if (type == DestinyType.EPIC_EVENT_DESTINY || type == DestinyType.EPIC_EVENT_AND_WEAPON_DESTINY) {
             return null;
         }
-        if (drawn.getCard() == null) {
-            return null;
-        }
-
         PhysicalCard here = game.getModifiersQuerying().getLocationThatCardIsAt(game.getGameState(), self);
         if (here == null) {
             return null;
         }
         float influence = game.getModifiersQuerying().getTotalInfluenceAtLocation(game.getGameState(), playerId, here);
-        float destiny = drawn.getCard().getDestinyValueToUse();
-        if (!(destiny < influence)) {
+        if (!isDrawnDestinyLessThan(game, drawn, playerId, type, influence)) {
             return null;
         }
 
@@ -106,5 +101,26 @@ public class Card1240_007 extends AbstractImperial {
         }
 
         return actions.isEmpty() ? null : actions;
+    }
+
+    private boolean isDrawnDestinyLessThan(SwccgGame game, DestinyDrawnResult drawn, String playerId, DestinyType type, float influence) {
+        if (GameConditions.isDestinyValueLessThan(game, influence)) {
+            return true;
+        }
+        PhysicalCard drawnCard = drawn.getCard();
+        if (drawnCard == null) {
+            return false;
+        }
+        float value;
+        if (type == DestinyType.BATTLE_DESTINY) {
+            value = game.getModifiersQuerying().getBattleDestiny(game.getGameState(), drawnCard, playerId);
+        }
+        else if (type == DestinyType.WEAPON_DESTINY) {
+            value = game.getModifiersQuerying().getWeaponDestiny(game.getGameState(), drawnCard, playerId);
+        }
+        else {
+            value = game.getModifiersQuerying().getDestiny(game.getGameState(), drawnCard);
+        }
+        return value < influence;
     }
 }

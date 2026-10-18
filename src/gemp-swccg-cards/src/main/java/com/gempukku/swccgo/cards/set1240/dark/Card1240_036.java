@@ -8,6 +8,7 @@ import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.GameTextActionId;
 import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Keyword;
+import com.gempukku.swccgo.common.Phase;
 import com.gempukku.swccgo.common.PlayCardOptionId;
 import com.gempukku.swccgo.common.PlayCardZoneOption;
 import com.gempukku.swccgo.common.Rarity;
@@ -19,12 +20,16 @@ import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.game.state.GameState;
+import com.gempukku.swccgo.logic.TriggerConditions;
+import com.gempukku.swccgo.logic.actions.CancelCardActionBuilder;
+import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
+import com.gempukku.swccgo.logic.effects.TargetCardOnTableEffect;
+import com.gempukku.swccgo.logic.effects.UnrespondableEffect;
 import com.gempukku.swccgo.logic.effects.UseForceEffect;
 import com.gempukku.swccgo.logic.effects.choose.DeployCardFromReserveDeckEffect;
 import com.gempukku.swccgo.logic.effects.choose.DeployStackedCardEffect;
 import com.gempukku.swccgo.logic.evaluators.Evaluator;
-import com.gempukku.swccgo.logic.modifiers.CancelsGameTextModifier;
 import com.gempukku.swccgo.logic.modifiers.IconModifier;
 import com.gempukku.swccgo.logic.modifiers.InfluenceModifier;
 import com.gempukku.swccgo.logic.modifiers.KeywordModifier;
@@ -32,7 +37,11 @@ import com.gempukku.swccgo.logic.modifiers.MayNotDeployModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.modifiers.PlaceInUsedPileWhenCanceledModifier;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
+import com.gempukku.swccgo.logic.timing.Action;
+import com.gempukku.swccgo.logic.timing.Effect;
+import com.gempukku.swccgo.logic.timing.EffectResult;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -63,7 +72,6 @@ public class Card1240_036 extends AbstractNormalEffect {
         Filter bannedAliens = Filters.and(Filters.alien, Filters.not(Filters.or(Filters.bounty_hunter, Filters.Mara_Jade)));
 
         List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new CancelsGameTextModifier(self, Filters.Revolution));
         modifiers.add(new MayNotDeployModifier(self, bannedAliens, playerId));
         modifiers.add(new MayNotDeployModifier(self, Icon.EPISODE_I, playerId));
         modifiers.add(new KeywordModifier(self, yourLeaders, Keyword.IMPERIAL_COUNCIL_MEMBER));
@@ -91,10 +99,10 @@ public class Card1240_036 extends AbstractNormalEffect {
     protected List<TopLevelGameTextAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
         List<TopLevelGameTextAction> actions = new LinkedList<TopLevelGameTextAction>();
 
-        GameTextActionId deployFromReserveId = GameTextActionId.THERE_IS_NO_TRY__DEPLOY_LASER_GATE_OR_POLITICAL_EFFECT;
+        GameTextActionId deployFromReserveId = GameTextActionId.LEGACY__THERE_IS_NO_TRY_V__DEPLOY_LASER_GATE_OR_POLITICAL_EFFECT;
         if (GameConditions.isOncePerTurn(game, self, playerId, gameTextSourceCardId, deployFromReserveId)
                 && GameConditions.canUseForce(game, playerId, 1)
-                && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, deployFromReserveId)) {
+                && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, deployFromReserveId, true, false)) {
 
             final TopLevelGameTextAction action = new TopLevelGameTextAction(self, gameTextSourceCardId, deployFromReserveId);
             action.setText("Deploy Laser Gate or Political Effect");
@@ -107,13 +115,49 @@ public class Card1240_036 extends AbstractNormalEffect {
             actions.add(action);
         }
 
-        GameTextActionId deployStackedId = GameTextActionId.OTHER_CARD_ACTION_2;
+        GameTextActionId deployStackedId = GameTextActionId.LEGACY__THERE_IS_NO_TRY_V__DEPLOY_CARD_FROM_POLITICAL_EFFECT;
         Filter yourPoliticalEffectWithStacked = Filters.and(Filters.your(self), Filters.Political_Effect, Filters.hasStacked(Filters.any));
-        if (GameConditions.canSpot(game, self, yourPoliticalEffectWithStacked)) {
+        if (GameConditions.isDuringYourPhase(game, playerId, Phase.DEPLOY)
+                && GameConditions.canSpot(game, self, yourPoliticalEffectWithStacked)) {
             final TopLevelGameTextAction action = new TopLevelGameTextAction(self, gameTextSourceCardId, deployStackedId);
             action.setText("Deploy a card stacked on a Political Effect");
-            action.appendEffect(
-                    new DeployStackedCardEffect(action, Filters.findFirstActive(game, self, yourPoliticalEffectWithStacked), Filters.any, false));
+            action.appendTargeting(
+                    new TargetCardOnTableEffect(action, playerId, "Choose a Political Effect", yourPoliticalEffectWithStacked) {
+                        @Override
+                        protected void cardTargeted(int targetGroupId, final PhysicalCard politicalEffect) {
+                            action.allowResponses(
+                                    new UnrespondableEffect(action) {
+                                        @Override
+                                        protected void performActionResults(Action targetingAction) {
+                                            action.appendEffect(
+                                                    new DeployStackedCardEffect(action, politicalEffect, Filters.any, false));
+                                        }
+                                    });
+                        }
+                    });
+            actions.add(action);
+        }
+        return actions;
+    }
+
+    @Override
+    protected List<RequiredGameTextTriggerAction> getGameTextRequiredBeforeTriggers(final SwccgGame game, Effect effect, final PhysicalCard self, int gameTextSourceCardId) {
+        if (TriggerConditions.isPlayingCard(game, effect, Filters.Revolution)
+                && GameConditions.canCancelCardBeingPlayed(game, self, effect)) {
+            RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
+            CancelCardActionBuilder.buildCancelCardBeingPlayedAction(action, effect);
+            return Collections.singletonList(action);
+        }
+        return null;
+    }
+
+    @Override
+    protected List<RequiredGameTextTriggerAction> getGameTextRequiredAfterTriggers(SwccgGame game, final EffectResult effectResult, final PhysicalCard self, int gameTextSourceCardId) {
+        List<RequiredGameTextTriggerAction> actions = new LinkedList<RequiredGameTextTriggerAction>();
+        if (TriggerConditions.isTableChanged(game, effectResult)
+                && GameConditions.canTargetToCancel(game, self, Filters.Revolution)) {
+            final RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
+            CancelCardActionBuilder.buildCancelCardAction(action, Filters.Revolution, Title.Revolution);
             actions.add(action);
         }
         return actions;

@@ -67,6 +67,7 @@ public class Card_1240_012_Tests {
         }});
         scn.BlueprintKeywordCheck(card, new ArrayList<>() {{
             add(Keyword.IMPERIAL_COUNCIL_MEMBER);
+            add(Keyword.LEADER);
         }});
         scn.BlueprintPersonaCheck(card, new ArrayList<>() {{
         }});
@@ -74,6 +75,7 @@ public class Card_1240_012_Tests {
             add(Icon.IMPERIAL);
             add(Icon.PILOT);
             add(Icon.A_NEW_HOPE);
+            add(Icon.LEGACY_BLOCK_4);
         }});
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_4, card.getExpansionSet());
         assertEquals(Rarity.V, card.getRarity());
@@ -111,8 +113,7 @@ public class Card_1240_012_Tests {
         assertEquals(5, scn.game().getModifiersQuerying().getTotalInfluenceAtLocation(scn.gameState(), scn.DS, room), scn.epsilon);
         // The open Move-phase decision was built at influence 1. Pass so the next window rebuilds actions.
         scn.DSPass();
-        if (scn.LSDecisionAvailable("Move action") || scn.LSDecisionAvailable("action"))
-            scn.LSPass();
+        scn.LSPass();
         assertTrue("decision=" + scn.DSGetDecision(), scn.DSCardActionAvailable(evax, "Make opponent use +2 Force"));
 
         scn.DSUseCardAction(evax, "Make opponent use +2 Force");

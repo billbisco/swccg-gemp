@@ -35,6 +35,7 @@ public class Card1240_051 extends AbstractSite {
         setGameText("Dark: While you occupy two non-Death Star battlegrounds and your total influence here is > 5, you lose no Force to Visage of the Emperor. Light: While opponent has total influence > 5 here, your Sense and Alter destiny draws are +2. [Virtual Block 4] Laser Gate is Immune to Sabotage.");
         setLocationDarkSideGameText("While you occupy two non-Death Star battlegrounds and your total influence here is > 5, you lose no Force to Visage of the Emperor.");
         setLocationLightSideGameText("While opponent has total influence > 5 here, your Sense and Alter destiny draws are +2.");
+        addIcon(Icon.DARK_FORCE, 1);
         addIcons(Icon.A_NEW_HOPE, Icon.INTERIOR_SITE, Icon.MOBILE, Icon.SCOMP_LINK);
     }
 

@@ -78,6 +78,7 @@ public class Card_1220_004_Tests {
             add(Icon.IMPERIAL);
             add(Icon.WARRIOR);
             add(Icon.CLOUD_CITY);
+            add(Icon.LEGACY_BLOCK_2);
         }});
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_2, card.getExpansionSet());
         assertEquals(Rarity.V, card.getRarity());
@@ -109,5 +110,83 @@ public class Card_1220_004_Tests {
         scn.DSUseCardAction(bewil, "Take Interrupt into hand from Force Pile");
         scn.DSChooseCard(interrupt);
         assertEquals(Zone.HAND, interrupt.getZone());
+    }
+
+    @Test
+    public void CaptainBewilInterruptTakeIsNotOfferedDuringOpponentsTurn() {
+        var scn = GetScenario();
+        var bewil = scn.GetDSCard("bewil");
+        var aloo = scn.GetDSCard("aloo");
+        var evax = scn.GetDSCard("evax");
+        var room = scn.GetDSCard("room");
+        var interrupt = scn.GetDSCard("interrupt");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(room);
+        scn.MoveCardsToLocation(room, bewil, aloo, evax);
+        scn.MoveCardsToTopOfDSForcePile(interrupt);
+        scn.SkipToLSTurn(Phase.CONTROL);
+
+        assertTrue(scn.AwaitingLSControlPhaseActions());
+        assertTrue(scn.game().getModifiersQuerying().getTotalInfluenceAtLocation(scn.gameState(), scn.DS, room) > 3);
+        assertFalse(scn.DSCardActionAvailable(bewil, "Take Interrupt into hand from Force Pile"));
+    }
+
+    @Test
+    public void CaptainBewilMakesOpponentLoseThreeForceFromUsedPileToReactAway() {
+        var scn = GetReactScenario();
+        var bewil = scn.GetDSCard("bewil");
+        var room = scn.GetDSCard("room");
+        var arcona = scn.GetLSCard("arcona");
+        var cantina = scn.GetLSCard("cantina");
+        var trooper = scn.GetDSCard("trooper");
+        var adjacent = scn.GetDSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveLocationToTable(room);
+        scn.MoveLocationToTable(cantina);
+        scn.MoveCardsToLocation(room, bewil);
+        scn.MoveCardsToLocation(cantina, arcona, trooper);
+        scn.SkipToDSTurn(Phase.BATTLE);
+        scn.DrainLSForcePileTo(1);
+        for (var card : new java.util.ArrayList<>(scn.GetLSReserveDeck())) {
+            scn.MoveCardToZone(scn.LS, (com.gempukku.swccgo.game.PhysicalCardImpl) card, Zone.USED_PILE);
+        }
+        assertEquals(1, scn.GetLSForcePileCount());
+        assertEquals(0, scn.GetLSReserveDeckCount());
+        assertTrue(scn.gameState().getUsedPile(scn.LS).size() >= 3);
+        assertTrue(scn.AwaitingDSBattlePhaseActions());
+
+        assertTrue(scn.DSCanInitiateBattle());
+        scn.DSInitiateBattle(cantina);
+        assertTrue(scn.LSCardActionAvailable(arcona));
+        scn.LSUseCardAction(arcona);
+        scn.LSChooseCard(adjacent);
+        scn.PassAllResponses();
+        assertTrue("Used-pile Force must pay the react cost. decision=" + scn.LSGetDecision(),
+                scn.LSDecisionAvailable("Choose Force to lose"));
+    }
+
+    private VirtualTableScenario GetReactScenario() {
+        return new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("arcona", "2_001");
+                    put("cantina", "1_128");
+                }},
+                new HashMap<>() {{
+                    put("bewil", "1220_4");
+                    put("room", "1240_51");
+                    put("trooper", "1_194");
+                }},
+                10,
+                10,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
     }
 }

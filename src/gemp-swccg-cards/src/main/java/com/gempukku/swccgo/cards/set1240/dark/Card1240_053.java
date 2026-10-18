@@ -11,6 +11,7 @@ import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
+import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
@@ -45,25 +46,7 @@ public class Card1240_053 extends AbstractSite {
         addIcon(Icon.DARK_FORCE, 2);
         addIcon(Icon.LIGHT_FORCE, 1);
         addIcons(Icon.SPECIAL_EDITION, Icon.EXTERIOR_SITE, Icon.PLANET);
-    }
-
-    @Override
-    public boolean mayNotBePartOfSystem(SwccgGame game, String system) {
-        if (!isRestrictedSystem(system)) {
-            return false;
-        }
-        String current = game.getGameState().getCurrentPlayerId();
-        return current != null && current.equals(game.getLightPlayer());
-    }
-
-    private boolean isRestrictedSystem(String system) {
-        return Title.Bespin.equals(system)
-                || Title.Dagobah.equals(system)
-                || Title.Endor.equals(system)
-                || Title.Hoth.equals(system)
-                || Title.Kashyyyk.equals(system)
-                || Title.Ralltiir.equals(system)
-                || Title.Yavin_4.equals(system);
+        addMayNotBePartOfSystem(Title.Bespin, Title.Dagobah, Title.Endor, Title.Hoth, Title.Kashyyyk, Title.Ralltiir, Title.Yavin_4);
     }
 
     @Override
@@ -85,7 +68,7 @@ public class Card1240_053 extends AbstractSite {
         };
 
         List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new TotalWeaponDestinyModifier(self, Filters.any, Filters.any, highestPrinted, Filters.here(self)));
+        modifiers.add(new TotalWeaponDestinyModifier(self, Filters.and(Filters.your(playerOnDarkSideOfLocation), Filters.here(self)), Filters.your(playerOnDarkSideOfLocation), highestPrinted, Filters.any));
         modifiers.add(new TotalBattleDestinyModifier(self, Filters.here(self), highestPrinted, playerOnDarkSideOfLocation));
         return modifiers;
     }
@@ -94,9 +77,11 @@ public class Card1240_053 extends AbstractSite {
     protected List<TopLevelGameTextAction> getGameTextDarkSideTopLevelActions(final String playerOnDarkSideOfLocation, final SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
         GameTextActionId gameTextActionId = GameTextActionId.OTHER_CARD_ACTION_1;
 
+        Filter councilMemberHere = Filters.and(Filters.your(playerOnDarkSideOfLocation), Filters.character,
+                Keyword.IMPERIAL_COUNCIL_MEMBER, Filters.here(self), Filters.abilityMoreThan(0));
         if (GameConditions.isDuringBattleAt(game, Filters.relatedSite(self))
                 && GameConditions.isOncePerBattle(game, self, playerOnDarkSideOfLocation, gameTextSourceCardId, gameTextActionId)
-                && GameConditions.canTarget(game, self, Filters.and(Filters.your(playerOnDarkSideOfLocation), Filters.character, Keyword.IMPERIAL_COUNCIL_MEMBER, Filters.here(self), Filters.abilityMoreThan(0)))) {
+                && GameConditions.canTarget(game, self, councilMemberHere)) {
 
             final TopLevelGameTextAction action = new TopLevelGameTextAction(self, playerOnDarkSideOfLocation, gameTextSourceCardId, gameTextActionId);
             action.setText("Apply a Council Member's ability");
@@ -104,7 +89,7 @@ public class Card1240_053 extends AbstractSite {
                     new OncePerBattleEffect(action));
             action.appendTargeting(
                     new TargetCardOnTableEffect(action, playerOnDarkSideOfLocation, "Choose an Imperial Council Member",
-                            Filters.and(Filters.your(playerOnDarkSideOfLocation), Keyword.IMPERIAL_COUNCIL_MEMBER, Filters.here(self))) {
+                            councilMemberHere) {
                         @Override
                         protected void cardTargeted(int targetGroupId, final PhysicalCard targetedCard) {
                             action.allowResponses(

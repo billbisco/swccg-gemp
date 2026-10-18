@@ -69,12 +69,14 @@ public class Card_1272_002_Tests {
             add(CardType.IMPERIAL);
         }});
         scn.BlueprintKeywordCheck(card, new ArrayList<>() {{
+            add(Keyword.LEADER);
         }});
         scn.BlueprintPersonaCheck(card, new ArrayList<>() {{
         }});
         scn.BlueprintIconCheck(card, new ArrayList<>() {{
             add(Icon.IMPERIAL);
             add(Icon.WARRIOR);
+            add(Icon.LEGACY_BLOCK_7);
         }});
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_7_2, card.getExpansionSet());
         assertEquals(Rarity.C, card.getRarity());
@@ -130,9 +132,6 @@ public class Card_1272_002_Tests {
         assertTrue("Yularen (ability 2) should be selectable in Lost Pile", selectable(scn, yularen));
         assertFalse("Vader (ability 6) should be shown but not selectable", selectable(scn, vader));
         scn.DSChooseCard(yularen);
-        // One matching Imperial in hand is selected automatically.
-        if (hand.getZone() != Zone.LOST_PILE && scn.DSHasCardChoiceAvailable(hand))
-            scn.DSChooseCard(hand);
         scn.PassAllResponses();
 
         assertEquals(Zone.HAND, yularen.getZone());
