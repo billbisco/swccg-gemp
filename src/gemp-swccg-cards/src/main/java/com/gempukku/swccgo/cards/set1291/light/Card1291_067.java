@@ -2,35 +2,51 @@ package com.gempukku.swccgo.cards.set1291.light;
 
 import com.gempukku.swccgo.cards.AbstractMission;
 import com.gempukku.swccgo.cards.GameConditions;
-import com.gempukku.swccgo.cards.conditions.HasStackedCondition;
+import com.gempukku.swccgo.cards.conditions.InPlayDataSetCondition;
+import com.gempukku.swccgo.cards.effects.SetWhileInPlayDataEffect;
 import com.gempukku.swccgo.cards.effects.usage.OncePerTurnEffect;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.GameTextActionId;
 import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Keyword;
+import com.gempukku.swccgo.common.Persona;
 import com.gempukku.swccgo.common.PlayCardOptionId;
 import com.gempukku.swccgo.common.PlayCardZoneOption;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
+import com.gempukku.swccgo.common.SpotOverride;
 import com.gempukku.swccgo.common.Uniqueness;
+import com.gempukku.swccgo.common.Zone;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.game.DeployAsCaptiveOption;
+import com.gempukku.swccgo.game.DeploymentRestrictionsOption;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
+import com.gempukku.swccgo.game.state.WhileInPlayData;
 import com.gempukku.swccgo.logic.TriggerConditions;
+import com.gempukku.swccgo.cards.actions.PlayCharacterAction;
 import com.gempukku.swccgo.logic.actions.OptionalGameTextTriggerAction;
+import com.gempukku.swccgo.logic.actions.PlayCardAction;
 import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
 import com.gempukku.swccgo.logic.conditions.AndCondition;
 import com.gempukku.swccgo.logic.conditions.Condition;
+import com.gempukku.swccgo.logic.effects.LoseCardFromTableEffect;
 import com.gempukku.swccgo.logic.effects.PlaceCardInUsedPileFromTableEffect;
 import com.gempukku.swccgo.logic.effects.ReleaseCaptivesEffect;
+import com.gempukku.swccgo.logic.effects.StackActionEffect;
+import com.gempukku.swccgo.logic.effects.choose.ChooseCardOnTableEffect;
+import com.gempukku.swccgo.logic.effects.choose.DeployCardFromPileEffect;
 import com.gempukku.swccgo.logic.effects.choose.TakeCardIntoHandFromReserveDeckEffect;
 import com.gempukku.swccgo.logic.modifiers.AttritionModifier;
 import com.gempukku.swccgo.logic.modifiers.KeywordModifier;
+import com.gempukku.swccgo.logic.modifiers.MayNotBeTransferredModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.timing.EffectResult;
+import com.gempukku.swccgo.logic.timing.PassthruEffect;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -60,35 +76,79 @@ public class Card1291_067 extends AbstractMission {
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
         String opponent = game.getOpponent(self.getOwner());
-        Condition reward = new AndCondition(new HasStackedCondition(self, Filters.any),
-                new com.gempukku.swccgo.cards.conditions.OnTableCondition(self, Filters.and(Filters.ObiWan, Filters.with(self, Filters.or(Filters.Anakin, Filters.Amidala)))));
+        Filter obiPresentWith = Filters.and(Filters.ObiWan, Filters.or(Filters.presentWith(self, Filters.Anakin), Filters.presentWith(self, Filters.Amidala)));
+        Condition reward = new AndCondition(new InPlayDataSetCondition(self),
+                new com.gempukku.swccgo.cards.conditions.OnTableCondition(self, obiPresentWith));
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new KeywordModifier(self, Filters.Geonosis_Petranaki_Arena, Keyword.PRISON));
         modifiers.add(new AttritionModifier(self, reward, 2, opponent));
+        modifiers.add(new MayNotBeTransferredModifier(self, Filters.and(Filters.Amidala, Filters.imprisonedIn(Filters.Geonosis_Petranaki_Arena))));
         return modifiers;
     }
 
     @Override
     protected List<TopLevelGameTextAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
-        GameTextActionId gameTextActionId = GameTextActionId.RESCUE_ON_GEONOSIS__TAKE_AMIDALA;
-        if (GameConditions.isOncePerTurn(game, self, playerId, gameTextSourceCardId, gameTextActionId)
-                && GameConditions.canTakeCardsIntoHandFromReserveDeck(game, playerId, self, gameTextActionId)) {
-            TopLevelGameTextAction action = new TopLevelGameTextAction(self, playerId, gameTextSourceCardId, gameTextActionId);
+        List<TopLevelGameTextAction> actions = new LinkedList<TopLevelGameTextAction>();
+        GameTextActionId takeId = GameTextActionId.LEGACY__RESCUE_ON_GEONOSIS__TAKE_AMIDALA;
+        if (GameConditions.isOncePerTurn(game, self, playerId, gameTextSourceCardId, takeId)
+                && GameConditions.canTakeCardsIntoHandFromReserveDeck(game, playerId, self, takeId)) {
+            TopLevelGameTextAction action = new TopLevelGameTextAction(self, playerId, gameTextSourceCardId, takeId);
             action.setText("Take Amidala into hand from Reserve Deck");
             action.appendUsage(new OncePerTurnEffect(action));
             action.appendEffect(new TakeCardIntoHandFromReserveDeckEffect(action, playerId, Filters.Amidala, true));
-            return Collections.singletonList(action);
+            actions.add(action);
         }
-        return null;
+        GameTextActionId imprisonId = GameTextActionId.LEGACY__RESCUE_ON_GEONOSIS__DEPLOY_AMIDALA_IMPRISONED;
+        if (GameConditions.canSpotLocation(game, Filters.Geonosis_Petranaki_Arena)) {
+            if (GameConditions.hasInHand(game, playerId, Filters.Amidala)) {
+                TopLevelGameTextAction fromHand = new TopLevelGameTextAction(self, playerId, gameTextSourceCardId);
+                fromHand.setText("Deploy Amidala imprisoned from hand");
+                fromHand.appendEffect(new PassthruEffect(fromHand) {
+                    @Override
+                    protected void doPlayEffect(SwccgGame game) {
+                        PhysicalCard amidala = null;
+                        for (PhysicalCard card : game.getGameState().getHand(playerId)) {
+                            if (Filters.Amidala.accepts(game, card)) {
+                                amidala = card;
+                                break;
+                            }
+                        }
+                        if (amidala == null) {
+                            return;
+                        }
+                        PlayCardAction play = new PlayCharacterAction(game, self, amidala, true, 0,
+                                DeployAsCaptiveOption.deployAsImprisonedCaptive(), null, Filters.Geonosis_Petranaki_Arena);
+                        fromHand.appendEffect(new StackActionEffect(fromHand, play));
+                    }
+                });
+                actions.add(fromHand);
+            }
+            if (GameConditions.canDeployCardFromLostPile(game, playerId, self, imprisonId, Persona.AMIDALA)) {
+                TopLevelGameTextAction fromLost = new TopLevelGameTextAction(self, playerId, gameTextSourceCardId, imprisonId);
+                fromLost.setText("Deploy Amidala imprisoned from Lost Pile");
+                fromLost.appendEffect(new DeployCardFromPileEffect(fromLost, playerId, Zone.LOST_PILE, Filters.Amidala, Filters.Geonosis_Petranaki_Arena, null, null, null, true, null, 0, null, DeploymentRestrictionsOption.ignoreLocationDeploymentRestrictions(), DeployAsCaptiveOption.deployAsImprisonedCaptive(), false, false));
+                actions.add(fromLost);
+            }
+        }
+        return actions.isEmpty() ? null : actions;
     }
 
     @Override
     protected List<OptionalGameTextTriggerAction> getGameTextOptionalAfterTriggers(String playerId, SwccgGame game, EffectResult effectResult, PhysicalCard self, int gameTextSourceCardId) {
+        Collection<PhysicalCard> captives = Filters.filterActive(game, self, SpotOverride.INCLUDE_CAPTIVE,
+                Filters.and(Filters.captive, Filters.at(Filters.Geonosis_Petranaki_Arena)));
         if (TriggerConditions.forceDrainInitiatedBy(game, effectResult, playerId, Filters.Geonosis_Petranaki_Arena)
-                && GameConditions.canSpot(game, self, Filters.and(Filters.captive, Filters.at(Filters.Geonosis_Petranaki_Arena)))) {
-            OptionalGameTextTriggerAction action = new OptionalGameTextTriggerAction(self, gameTextSourceCardId);
+                && !captives.isEmpty()) {
+            final OptionalGameTextTriggerAction action = new OptionalGameTextTriggerAction(self, gameTextSourceCardId);
             action.setText("Release a captive (Mission complete)");
-            action.appendEffect(new ReleaseCaptivesEffect(action, Filters.filterActive(game, self, Filters.and(Filters.captive, Filters.at(Filters.Geonosis_Petranaki_Arena)))));
+            action.appendEffect(
+                    new ChooseCardOnTableEffect(action, playerId, "Choose captive to release", captives) {
+                        @Override
+                        protected void cardSelected(PhysicalCard selectedCard) {
+                            action.appendEffect(new ReleaseCaptivesEffect(action, Collections.singleton(selectedCard)));
+                            action.appendEffect(new SetWhileInPlayDataEffect(action, self, new WhileInPlayData(true)));
+                        }
+                    });
             return Collections.singletonList(action);
         }
         return null;
@@ -96,15 +156,30 @@ public class Card1291_067 extends AbstractMission {
 
     @Override
     protected List<RequiredGameTextTriggerAction> getGameTextRequiredAfterTriggers(SwccgGame game, EffectResult effectResult, PhysicalCard self, int gameTextSourceCardId) {
-        String opponent = game.getOpponent(self.getOwner());
-        if (TriggerConditions.isTableChanged(game, effectResult)
-                && GameConditions.controls(game, opponent, Filters.Geonosis_Petranaki_Arena)) {
-            RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
-            action.setSingletonTrigger(true);
-            action.setText("Place in Used Pile");
-            action.appendEffect(new PlaceCardInUsedPileFromTableEffect(action, self));
-            return Collections.singletonList(action);
+        if (!TriggerConditions.isTableChanged(game, effectResult)) {
+            return null;
         }
-        return null;
+        List<RequiredGameTextTriggerAction> actions = new LinkedList<RequiredGameTextTriggerAction>();
+        String opponent = game.getOpponent(self.getOwner());
+        boolean complete = self.getWhileInPlayData() != null;
+        PhysicalCard amidala = Filters.findFirstFromAllOnTable(game, Filters.Amidala);
+        if (!complete && amidala != null
+                && !Filters.imprisonedIn(Filters.Geonosis_Petranaki_Arena).accepts(game, amidala)) {
+            RequiredGameTextTriggerAction lose = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
+            lose.setSingletonTrigger(true);
+            lose.setText("Amidala lost (not imprisoned at Petranaki Arena)");
+            lose.appendEffect(new LoseCardFromTableEffect(lose, amidala));
+            actions.add(lose);
+        }
+        boolean amidalaOnTable = GameConditions.canSpot(game, self, SpotOverride.INCLUDE_CAPTIVE, Filters.Amidala);
+        if (GameConditions.controls(game, opponent, Filters.Geonosis_Petranaki_Arena)
+                || (complete && !amidalaOnTable)) {
+            RequiredGameTextTriggerAction ttt = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
+            ttt.setSingletonTrigger(true);
+            ttt.setText("Place in Used Pile");
+            ttt.appendEffect(new PlaceCardInUsedPileFromTableEffect(ttt, self));
+            actions.add(ttt);
+        }
+        return actions.isEmpty() ? null : actions;
     }
 }

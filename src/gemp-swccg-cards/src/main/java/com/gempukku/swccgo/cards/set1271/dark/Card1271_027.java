@@ -13,6 +13,7 @@ import com.gempukku.swccgo.common.PlayCardOptionId;
 import com.gempukku.swccgo.common.PlayCardZoneOption;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
+import com.gempukku.swccgo.common.SpotOverride;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
@@ -20,7 +21,6 @@ import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.GameUtils;
 import com.gempukku.swccgo.logic.TriggerConditions;
-import com.gempukku.swccgo.logic.actions.OptionalGameTextTriggerAction;
 import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
 import com.gempukku.swccgo.logic.effects.LoseForceEffect;
@@ -56,12 +56,12 @@ public class Card1271_027 extends AbstractMission {
 
     @Override
     protected Filter getGameTextValidDeployTargetFilter(SwccgGame game, PhysicalCard self, PlayCardOptionId playCardOptionId, boolean asReact) {
-        return Filters.title("ISB Central Office");
+        return Filters.titleContains("ISB Central Office");
     }
 
     @Override
     protected Filter getGameTextValidTargetFilterToRemainAttachedTo(final SwccgGame game, final PhysicalCard self) {
-        return Filters.title("ISB Central Office");
+        return Filters.titleContains("ISB Central Office");
     }
 
     @Override
@@ -78,32 +78,27 @@ public class Card1271_027 extends AbstractMission {
     @Override
     protected List<RequiredGameTextTriggerAction> getGameTextRequiredAfterTriggers(SwccgGame game, EffectResult effectResult, PhysicalCard self, int gameTextSourceCardId) {
         String opponent = game.getOpponent(self.getOwner());
+        List<RequiredGameTextTriggerAction> actions = new LinkedList<RequiredGameTextTriggerAction>();
         if (TriggerConditions.isTableChanged(game, effectResult)
                 && GameConditions.controls(game, opponent, Filters.here(self))
-                && GameConditions.canSpot(game, self, Filters.and(Filters.captive, Filters.here(self)))) {
+                && GameConditions.canSpot(game, self, SpotOverride.INCLUDE_CAPTIVE, Filters.and(Filters.captive, Filters.here(self)))) {
             RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
             action.setText("Release captives");
-            action.appendEffect(new ReleaseCaptivesEffect(action, Filters.filterActive(game, self, Filters.and(Filters.captive, Filters.here(self)))));
-            return Collections.singletonList(action);
+            action.appendEffect(new ReleaseCaptivesEffect(action, Filters.filterActive(game, self, SpotOverride.INCLUDE_CAPTIVE, Filters.and(Filters.captive, Filters.here(self)))));
+            actions.add(action);
         }
-        return null;
-    }
-
-    @Override
-    protected List<OptionalGameTextTriggerAction> getGameTextOptionalAfterTriggers(final String playerId, SwccgGame game, EffectResult effectResult, final PhysicalCard self, int gameTextSourceCardId) {
-        String opponent = game.getOpponent(playerId);
-        GameTextActionId gameTextActionId = GameTextActionId.IN_THE_HANDS_OF_THE_ISB__DELIVER_CAPTIVE;
+        GameTextActionId gameTextActionId = GameTextActionId.LEGACY__IN_THE_HANDS_OF_THE_ISB__DELIVER_CAPTIVE;
         if (TriggerConditions.captiveDeliveredToPrisonBy(game, effectResult, Filters.ISB_agent, Filters.here(self))) {
             PhysicalCard captive = ((DeliveredCaptiveToPrisonResult) effectResult).getCaptive();
             if (GameConditions.isOncePerCaptive(game, self, captive, gameTextActionId)) {
-                OptionalGameTextTriggerAction action = new OptionalGameTextTriggerAction(self, gameTextSourceCardId, gameTextActionId);
+                RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId, gameTextActionId);
                 action.setText("Make opponent lose 4 Force");
                 action.appendUsage(new OncePerCaptiveEffect(action, captive));
                 action.appendEffect(new LoseForceEffect(action, opponent, 4));
-                return Collections.singletonList(action);
+                actions.add(action);
             }
         }
-        return null;
+        return actions.isEmpty() ? null : actions;
     }
 
     @Override

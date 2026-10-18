@@ -350,11 +350,57 @@ public interface GameProcedures extends Actions, Decisions, GameProperties, Pile
 
         if(DecisionAvailable(decider, text)) {
             PlayerPass(decider);
-
-            if(DecisionAvailable(offPlayer, text)) {
-                PlayerPass(offPlayer);
-            }
         }
+        if(DecisionAvailable(offPlayer, text)) {
+            PlayerPass(offPlayer);
+        }
+    }
+
+    /**
+     * Passes a Dark Side decision containing the given text when DS is holding a window the test does not want.
+     * Light-side after-triggers (Force drain optionals, required unstack) sit behind DS's optional responses.
+     */
+    default void PassDSResponses(String text) {
+        if (DecisionAvailable(DS, text)) {
+            PlayerPass(DS);
+        }
+    }
+
+    /**
+     * From DS Activate, enter Control so TABLE_CHANGED required triggers appear.
+     * If a required window is already open, leave it.
+     */
+    default void EnterControlOrKeepRequired() {
+        if (AwaitingDSActivatePhaseActions()) {
+            DSActivateMaxForceAndPass();
+        }
+    }
+
+    /**
+     * Takes a required or top-level action whose text contains {@code text}, from either player.
+     */
+    default void TakeNamedAction(String text) {
+        if (DSActionAvailable(text)) {
+            DSChooseAction(text);
+            return;
+        }
+        if (LSActionAvailable(text)) {
+            LSChooseAction(text);
+            return;
+        }
+        if (DSDecisionAvailable(text)) {
+            PlayerPass(DS);
+            return;
+        }
+        if (LSDecisionAvailable(text)) {
+            PlayerPass(LS);
+            return;
+        }
+        String decision = GetCurrentDecision() == null ? "none" : GetCurrentDecision().getText();
+        throw new AssertionError("No '" + text + "'; phase=" + gameState().getCurrentPhase()
+                + " decision=" + decision
+                + " DS actions=" + GetDSAvailableActions()
+                + " LS actions=" + GetLSAvailableActions());
     }
 
     /**

@@ -59,7 +59,12 @@ public class Card1271_025 extends AbstractMission {
         modifiers.add(new MayNotDeployModifier(self, Filters.and(Filters.starship, Filters.or(Icon.INDEPENDENT, Icon.TRADE_FEDERATION)), playerId));
         modifiers.add(new MayNotHavePowerReducedModifier(self, Filters.Executor, flagshipOpsOnExecutor, playerId));
         modifiers.add(new MayNotHavePowerReducedModifier(self, Filters.Executor, flagshipOpsOnExecutor, game.getOpponent(playerId)));
-        modifiers.add(new ResetForceDrainModifier(self, Filters.battleground_system, flagshipOpsOnExecutor, 3));
+        modifiers.add(new ResetForceDrainModifier(self, Filters.battleground_system, flagshipOpsOnExecutor, 3) {
+            @Override
+            public boolean isForPlayer(String player) {
+                return playerId.equals(player);
+            }
+        });
         modifiers.add(new MayDeployWithoutReplacementModifier(self, Filters.and(Filters.your(self), Filters.TIE_Assault_Squadron), flagshipOpsOnExecutor, 3));
         modifiers.add(new DrawsBattleDestinyIfUnableToOtherwiseModifier(self, tieWithCapital, flagshipOpsOnExecutor, 1));
         return modifiers;
@@ -97,7 +102,7 @@ public class Card1271_025 extends AbstractMission {
 
     @Override
     protected List<TopLevelGameTextAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
-        GameTextActionId gameTextActionId = GameTextActionId.GALACTIC_DOMINATION__DEPLOY_EXECUTOR_SITE_OR_SYSTEM;
+        GameTextActionId gameTextActionId = GameTextActionId.LEGACY__GALACTIC_DOMINATION__DEPLOY_EXECUTOR_SITE_OR_SYSTEM;
         if (GameConditions.isOncePerTurn(game, self, playerId, gameTextSourceCardId, gameTextActionId)
                 && GameConditions.canUseForce(game, playerId, 1)
                 && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, gameTextActionId)) {

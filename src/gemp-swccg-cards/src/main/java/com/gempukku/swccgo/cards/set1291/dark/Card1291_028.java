@@ -4,8 +4,10 @@ import com.gempukku.swccgo.cards.AbstractMission;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.evaluators.MaxLimitEvaluator;
 import com.gempukku.swccgo.cards.evaluators.OnTableEvaluator;
+import com.gempukku.swccgo.common.DestinyType;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
+import com.gempukku.swccgo.common.Phase;
 import com.gempukku.swccgo.common.PlayCardOptionId;
 import com.gempukku.swccgo.common.PlayCardZoneOption;
 import com.gempukku.swccgo.common.Rarity;
@@ -15,19 +17,31 @@ import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
+import com.gempukku.swccgo.game.state.GameState;
+import com.gempukku.swccgo.game.state.WhileInPlayData;
 import com.gempukku.swccgo.logic.TriggerConditions;
 import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
+import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
+import com.gempukku.swccgo.logic.effects.DrawDestinyEffect;
 import com.gempukku.swccgo.logic.effects.PlaceCardInUsedPileFromTableEffect;
 import com.gempukku.swccgo.logic.effects.PutStackedCardsInUsedPileEffect;
+import com.gempukku.swccgo.logic.effects.TargetCardOnTableEffect;
+import com.gempukku.swccgo.logic.effects.UnrespondableEffect;
+import com.gempukku.swccgo.logic.effects.choose.StackOneCardFromLostPileEffect;
 import com.gempukku.swccgo.logic.modifiers.EachBattleDestinyModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
+import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
+import com.gempukku.swccgo.logic.timing.Action;
 import com.gempukku.swccgo.logic.timing.EffectResult;
+import com.gempukku.swccgo.logic.timing.PassthruEffect;
 import com.gempukku.swccgo.logic.timing.results.ForceDrainInitiatedResult;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Set: Virtual Block 9.1
@@ -51,27 +65,126 @@ public class Card1291_028 extends AbstractMission {
         return Filters.title("War Has Begun");
     }
 
+    private Filter alignedSystems(final PhysicalCard self) {
+        return new Filter() {
+            @Override
+            public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard) {
+                if (!Filters.system.accepts(gameState, modifiersQuerying, physicalCard)) {
+                    return false;
+                }
+                WhileInPlayData data = self.getWhileInPlayData();
+                return data != null && data.getTextValues().contains(String.valueOf(physicalCard.getCardId()));
+            }
+        };
+    }
+
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
-        Filter aligned = Filters.and(Filters.system, Filters.hasStacked(Filters.any));
         List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new EachBattleDestinyModifier(self, Filters.any, new MaxLimitEvaluator(new OnTableEvaluator(self, aligned), 2), self.getOwner()));
+        modifiers.add(new EachBattleDestinyModifier(self, Filters.any, new MaxLimitEvaluator(new OnTableEvaluator(self, alignedSystems(self)), 2), self.getOwner()));
         return modifiers;
+    }
+
+    @Override
+    protected List<TopLevelGameTextAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
+        if (!GameConditions.isDuringYourPhase(game, playerId, Phase.CONTROL)
+                || !GameConditions.canDrawDestiny(game, playerId)) {
+            return null;
+        }
+        Filter eligible = new Filter() {
+            @Override
+            public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard) {
+                if (!Filters.system.accepts(gameState, modifiersQuerying, physicalCard)) {
+                    return false;
+                }
+                if (alignedSystems(self).accepts(gameState, modifiersQuerying, physicalCard)) {
+                    return false;
+                }
+                return GameConditions.occupies(game, playerId, Filters.relatedSite(physicalCard));
+            }
+        };
+        if (!GameConditions.canTarget(game, self, eligible)) {
+            return null;
+        }
+        final TopLevelGameTextAction action = new TopLevelGameTextAction(self, playerId, gameTextSourceCardId);
+        action.setText("Draw destiny to align a system");
+        action.appendTargeting(
+                new TargetCardOnTableEffect(action, playerId, "Choose system to align", eligible) {
+                    @Override
+                    protected void cardTargeted(int targetGroupId, final PhysicalCard system) {
+                        action.allowResponses("Draw destiny to align " + system.getTitle(),
+                                new UnrespondableEffect(action) {
+                                    @Override
+                                    protected void performActionResults(Action targetingAction) {
+                                        action.appendEffect(
+                                                new DrawDestinyEffect(action, playerId, 1, DestinyType.DESTINY) {
+                                                    @Override
+                                                    protected void destinyDraws(SwccgGame game, List<PhysicalCard> destinyCardDraws, List<Float> destinyDrawValues, Float totalDestiny) {
+                                                        GameState gameState = game.getGameState();
+                                                        float draw = 0;
+                                                        if (destinyDrawValues != null) {
+                                                            for (Float value : destinyDrawValues) {
+                                                                if (value != null) {
+                                                                    draw += value;
+                                                                }
+                                                            }
+                                                        }
+                                                        float x = Filters.countActive(game, self, alignedSystems(self));
+                                                        float y = Filters.countActive(game, self, Filters.and(Filters.unique, Filters.character, Filters.icon(Icon.SEPARATIST)));
+                                                        if (draw + x + y <= 7) {
+                                                            gameState.sendMessage("Result: Failed");
+                                                            return;
+                                                        }
+                                                        PhysicalCard top = gameState.getTopOfLostPile(playerId);
+                                                        if (top == null) {
+                                                            gameState.sendMessage("Result: No card in Lost Pile");
+                                                            return;
+                                                        }
+                                                        gameState.sendMessage("Result: Succeeded");
+                                                        action.appendEffect(new StackOneCardFromLostPileEffect(action, top, system, false, false, false));
+                                                        action.appendEffect(new PassthruEffect(action) {
+                                                            @Override
+                                                            protected void doPlayEffect(SwccgGame game) {
+                                                                Set<String> aligned = new HashSet<String>();
+                                                                if (self.getWhileInPlayData() != null) {
+                                                                    aligned.addAll(self.getWhileInPlayData().getTextValues());
+                                                                }
+                                                                aligned.add(String.valueOf(system.getCardId()));
+                                                                self.setWhileInPlayData(new WhileInPlayData(aligned));
+                                                            }
+                                                        });
+                                                    }
+                                                });
+                                    }
+                                });
+                    }
+                });
+        return Collections.singletonList(action);
     }
 
     @Override
     protected List<RequiredGameTextTriggerAction> getGameTextRequiredAfterTriggers(SwccgGame game, EffectResult effectResult, PhysicalCard self, int gameTextSourceCardId) {
         String opponent = game.getOpponent(self.getOwner());
-        Filter aligned = Filters.and(Filters.system, Filters.hasStacked(Filters.any));
+        Filter aligned = alignedSystems(self);
         if (TriggerConditions.forceDrainInitiatedBy(game, effectResult, opponent, aligned)) {
             PhysicalCard system = ((ForceDrainInitiatedResult) effectResult).getLocation();
             Collection<PhysicalCard> stacked = Filters.filterStacked(game, Filters.stackedOn(system));
             RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
             action.setText("Place stacked cards in Used Pile");
             action.appendEffect(new PutStackedCardsInUsedPileEffect(action, opponent, stacked, true));
-            if (!GameConditions.canSpot(game, self, Filters.and(Filters.system, Filters.hasStacked(Filters.any), Filters.not(Filters.sameCardId(system))))) {
-                action.appendEffect(new PlaceCardInUsedPileFromTableEffect(action, self));
-            }
+            action.appendEffect(new PassthruEffect(action) {
+                @Override
+                protected void doPlayEffect(SwccgGame game) {
+                    if (self.getWhileInPlayData() != null) {
+                        Set<String> alignedIds = new HashSet<String>(self.getWhileInPlayData().getTextValues());
+                        alignedIds.remove(String.valueOf(system.getCardId()));
+                        self.setWhileInPlayData(alignedIds.isEmpty() ? null : new WhileInPlayData(alignedIds));
+                    }
+                    if (self.getWhileInPlayData() == null || self.getWhileInPlayData().getTextValues().isEmpty()) {
+                        action.appendEffect(new PlaceCardInUsedPileFromTableEffect(action, self));
+                    }
+                }
+            });
             return Collections.singletonList(action);
         }
         return null;

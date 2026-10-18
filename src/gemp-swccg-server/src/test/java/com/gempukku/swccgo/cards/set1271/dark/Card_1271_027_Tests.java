@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.set1271.dark;
 
+import com.gempukku.swccgo.cards.legacy.MissionTestSupport;
 import com.gempukku.swccgo.common.CardSubtype;
 import com.gempukku.swccgo.common.CardType;
 import com.gempukku.swccgo.common.ExpansionSet;
@@ -12,6 +13,8 @@ import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.common.Zone;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.game.PhysicalCardImpl;
+import com.gempukku.swccgo.logic.modifiers.KeywordModifier;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -28,9 +31,14 @@ public class Card_1271_027_Tests {
         return new VirtualTableScenario(
                 new HashMap<>() {{
                     put("luke", "1_19");
+                    put("leia", "1_17");
+                    put("yoda", "4_2");
                 }},
                 new HashMap<>() {{
                     put("isb", "1271_27");
+                    put("trooper", "1_194");
+                    put("isard", "200_92");
+                    put("bay", "1_285");
                 }},
                 10, 10,
                 StartingSetup.DefaultLSGroundLocation,
@@ -41,6 +49,10 @@ public class Card_1271_027_Tests {
                 StartingSetup.NoDSShields,
                 VirtualTableScenario.Open
         );
+    }
+
+    private PhysicalCardImpl officeOnTable(VirtualTableScenario scn) {
+        return MissionTestSupport.putLocationOnTable(scn, 9201, scn.DS, MissionTestSupport.isbCentralOffice());
     }
 
     @Test
@@ -59,8 +71,102 @@ public class Card_1271_027_Tests {
             add(Icon.SETUP);
             add(Icon.SPECIAL_EDITION);
             add(Icon.MISSION);
+            add(Icon.LEGACY_BLOCK_7);
         }});
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_7_1, card.getExpansionSet());
         assertEquals(Rarity.V, card.getRarity());
+    }
+
+    @Test
+    public void InTheHandsOfTheISBDeploysOnISBCentralOffice() {
+        var scn = GetScenario();
+        var isb = scn.GetDSCard("isb");
+        scn.StartGame();
+        var office = officeOnTable(scn);
+        scn.MoveCardsToHand(isb);
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        assertTrue(scn.DSDeployAvailable(isb));
+        scn.DSDeployCard(isb);
+        scn.DSChooseCard(office);
+        scn.PassAllResponses();
+        assertTrue(scn.IsAttachedTo(office, isb));
+    }
+
+    @Test
+    public void InTheHandsOfTheISBMakesTheSiteAPrison() {
+        var scn = GetScenario();
+        var isb = scn.GetDSCard("isb");
+        scn.StartGame();
+        var office = officeOnTable(scn);
+        scn.AttachCardsTo(office, isb);
+        assertTrue(scn.HasKeyword(office, Keyword.PRISON));
+    }
+
+    @Test
+    public void InTheHandsOfTheISBRequiresAbility6ForOpponentBattleDestiny() {
+        var scn = GetScenario();
+        var isb = scn.GetDSCard("isb");
+        var trooper = scn.GetDSCard("trooper");
+        var luke = scn.GetLSCard("luke");
+        scn.StartGame();
+        var office = officeOnTable(scn);
+        scn.AttachCardsTo(office, isb);
+        scn.MoveCardsToLocation(office, trooper);
+        scn.MoveCardsToLocation(office, luke);
+        scn.SkipToDSTurn(Phase.BATTLE);
+        scn.DSInitiateBattle(office);
+        scn.PassAllResponses();
+        assertEquals(0, scn.GetLSBattleDestinyCount());
+    }
+
+    @Test
+    public void InTheHandsOfTheISBAllowsBattleDestinyWhenAbilityIs6() {
+        var scn = GetScenario();
+        var isb = scn.GetDSCard("isb");
+        var vader = scn.GetDSCard("isard");
+        var luke = scn.GetLSCard("luke");
+        var yoda = scn.GetLSCard("yoda");
+        scn.StartGame();
+        var office = officeOnTable(scn);
+        scn.AttachCardsTo(office, isb);
+        scn.MoveCardsToLocation(office, vader);
+        scn.MoveCardsToLocation(office, luke, yoda);
+        scn.SkipToDSTurn(Phase.BATTLE);
+        scn.DSInitiateBattle(office);
+        scn.PassAllResponses();
+        assertEquals(1, scn.GetLSBattleDestinyCount());
+    }
+
+    @Test
+    public void InTheHandsOfTheISBReleasesCaptivesWhenOpponentControls() {
+        var scn = GetScenario();
+        var isb = scn.GetDSCard("isb");
+        var trooper = scn.GetDSCard("trooper");
+        var luke = scn.GetLSCard("luke");
+        var leia = scn.GetLSCard("leia");
+        scn.StartGame();
+        var office = officeOnTable(scn);
+        scn.AttachCardsTo(office, isb);
+        scn.gameState().imprisonCharacter(scn.game(), leia, office);
+        scn.MoveCardsToLocation(office, luke);
+        scn.EnterControlOrKeepRequired();
+        scn.PassAllResponses();
+        assertFalse(leia.isCaptive());
+    }
+
+    @Test
+    public void InTheHandsOfTheISBAgentsMayEscortCaptives() {
+        var scn = GetScenario();
+        var isb = scn.GetDSCard("isb");
+        var trooper = scn.GetDSCard("trooper");
+        var leia = scn.GetLSCard("leia");
+        scn.StartGame();
+        var office = officeOnTable(scn);
+        scn.AttachCardsTo(office, isb);
+        scn.ApplyAdHocModifier(new KeywordModifier(isb, trooper, Keyword.ISB_AGENT));
+        scn.MoveCardsToLocation(office, trooper);
+        scn.CaptureCardWith(trooper, leia);
+        assertTrue(leia.isCaptive());
+        assertEquals(trooper, leia.getEscort());
     }
 }

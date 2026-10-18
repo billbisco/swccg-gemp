@@ -80,7 +80,7 @@ public class Card1271_046 extends AbstractMission {
 
     @Override
     protected List<TopLevelGameTextAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
-        GameTextActionId gameTextActionId = GameTextActionId.RESTORE_FREEDOM__DEPLOY_LOCATION;
+        GameTextActionId gameTextActionId = GameTextActionId.LEGACY__RESTORE_FREEDOM__DEPLOY_LOCATION;
         if (GameConditions.isOncePerTurn(game, self, playerId, gameTextSourceCardId, gameTextActionId)
                 && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, gameTextActionId)) {
             TopLevelGameTextAction action = new TopLevelGameTextAction(self, playerId, gameTextSourceCardId, gameTextActionId);
@@ -126,11 +126,10 @@ public class Card1271_046 extends AbstractMission {
                             }
                             gameState.sendMessage("Result: Succeeded");
                             action.appendEffect(
-                                    new PassthruEffect(action) {
+                                    new com.gempukku.swccgo.logic.effects.choose.ChoosePlayerBySideEffect(action, playerId) {
                                         @Override
-                                        protected void doPlayEffect(SwccgGame game) {
-                                            PhysicalCard fromYours = game.getGameState().getTopOfReserveDeck(playerId);
-                                            final PhysicalCard top = (fromYours != null) ? fromYours : game.getGameState().getTopOfReserveDeck(game.getOpponent(playerId));
+                                        protected void playerChosen(SwccgGame game, final String playerChosen) {
+                                            PhysicalCard top = game.getGameState().getTopOfReserveDeck(playerChosen);
                                             if (top != null) {
                                                 action.appendEffect(new StackOneCardFromPileEffect(action, playerId, top, system, false, false, false));
                                                 action.appendEffect(new PassthruEffect(action) {

@@ -47,9 +47,10 @@ public class Card1271_026 extends AbstractMission {
         String playerId = self.getOwner();
         Filter aceSystems = Filters.and(Filters.battleground_system,
                 Filters.sameLocationAs(self, Filters.and(Filters.your(self), Filters.starfighter,
-                        Filters.hasPiloting(self, Filters.and(Filters.Imperial, Filters.abilityEqualTo(2))))));
+                        Filters.hasPiloting(self, Filters.and(Filters.Imperial, Filters.abilityEqualTo(2))))),
+                noForceDrainBonusExceptSystemCard(self, playerId));
         Filter starfightersWithPilot = Filters.and(Filters.your(self), Filters.starfighter, Filters.hasPiloting(self, Filters.character));
-        Filter yourStarfighters = Filters.and(Filters.your(self), Filters.starfighter);
+        Filter yourStarfighters = Filters.and(Filters.your(self), Filters.starfighter, withoutPrintedAstromechCapacity());
 
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new ForceDrainModifier(self, aceSystems, 1, playerId));
@@ -82,7 +83,7 @@ public class Card1271_026 extends AbstractMission {
 
     @Override
     protected List<TopLevelGameTextAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
-        GameTextActionId gameTextActionId = GameTextActionId.IMPERIAL_ACES__DEPLOY_TIE_FIGHTER_CONSTRUCTION_FACILITY;
+        GameTextActionId gameTextActionId = GameTextActionId.LEGACY__IMPERIAL_ACES__DEPLOY_TIE_FIGHTER_CONSTRUCTION_FACILITY;
         if (GameConditions.isOncePerTurn(game, self, playerId, gameTextSourceCardId, gameTextActionId)
                 && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, gameTextActionId)) {
             TopLevelGameTextAction action = new TopLevelGameTextAction(self, playerId, gameTextSourceCardId, gameTextActionId);
@@ -92,5 +93,36 @@ public class Card1271_026 extends AbstractMission {
             return Collections.singletonList(action);
         }
         return null;
+    }
+
+    static Filter withoutPrintedAstromechCapacity() {
+        return new Filter() {
+            @Override
+            public boolean accepts(com.gempukku.swccgo.game.state.GameState gameState, com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard) {
+                try {
+                    return physicalCard.getBlueprint().getAstromechCapacity() == 0;
+                } catch (UnsupportedOperationException e) {
+                    return false;
+                }
+            }
+        };
+    }
+
+    static Filter noForceDrainBonusExceptSystemCard(final PhysicalCard self, final String playerId) {
+        return new Filter() {
+            @Override
+            public boolean accepts(com.gempukku.swccgo.game.state.GameState gameState, com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying modifiersQuerying, PhysicalCard location) {
+                for (com.gempukku.swccgo.logic.modifiers.Modifier modifier : modifiersQuerying.getModifiersAffectingCard(gameState, com.gempukku.swccgo.logic.modifiers.ModifierType.FORCE_DRAIN_AMOUNT, location)) {
+                    if (!modifier.isForPlayer(playerId)) {
+                        continue;
+                    }
+                    PhysicalCard source = modifier.getSource(gameState);
+                    if (source != null && source != location && source != self) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        };
     }
 }

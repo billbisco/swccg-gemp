@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.set1291.dark;
 
+import com.gempukku.swccgo.cards.legacy.MissionTestSupport;
 import com.gempukku.swccgo.common.CardSubtype;
 import com.gempukku.swccgo.common.CardType;
 import com.gempukku.swccgo.common.ExpansionSet;
@@ -28,9 +29,14 @@ public class Card_1291_028_Tests {
         return new VirtualTableScenario(
                 new HashMap<>() {{
                     put("luke", "1_19");
+                    put("xwing", "1_146");
+                    put("tatooine", "1_127");
                 }},
                 new HashMap<>() {{
                     put("rally", "1291_28");
+                    put("dooku", "200_76");
+                    put("trooper", "1_194");
+                    put("junk", "1_304");
                 }},
                 10, 10,
                 StartingSetup.DefaultLSGroundLocation,
@@ -59,8 +65,82 @@ public class Card_1291_028_Tests {
             add(Icon.EPISODE_I);
             add(Icon.SEPARATIST);
             add(Icon.MISSION);
+            add(Icon.LEGACY_BLOCK_9);
         }});
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_9_1, card.getExpansionSet());
         assertEquals(Rarity.V, card.getRarity());
+    }
+
+    @Test
+    public void RallyToOurCauseDeploysOnWarHasBegun() {
+        var scn = GetScenario();
+        var rally = scn.GetDSCard("rally");
+        scn.StartGame();
+        var host = MissionTestSupport.putOnTable(scn, 9600, scn.DS, MissionTestSupport.warHasBegun());
+        scn.MoveCardsToHand(rally);
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        assertTrue(scn.DSDeployAvailable(rally));
+        scn.DSDeployCard(rally);
+        scn.DSChooseCard(host);
+        scn.PassAllResponses();
+        assertTrue(scn.IsAttachedTo(host, rally));
+    }
+
+    @Test
+    public void RallyToOurCauseAlignsASystemDuringControlPhase() {
+        var scn = GetScenario();
+        var rally = scn.GetDSCard("rally");
+        var tatooine = scn.GetLSCard("tatooine");
+        var dooku = scn.GetDSCard("dooku");
+        var junk = scn.GetDSCard("junk");
+        var trooper = scn.GetDSCard("trooper");
+        scn.StartGame();
+        var host = MissionTestSupport.putOnTable(scn, 9600, scn.DS, MissionTestSupport.warHasBegun());
+        scn.AttachCardsTo(host, rally);
+        scn.MoveLocationToTable(tatooine);
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), trooper, dooku);
+        scn.MoveCardsToTopOfOwnLostPile(junk);
+        scn.SkipToDSTurn(Phase.CONTROL);
+        scn.PrepareDSDestiny(7);
+        assertTrue(scn.DSActionAvailable("Draw destiny to align a system"));
+        scn.DSUseCardAction(rally, "Draw destiny to align a system");
+        scn.DSChooseCard(tatooine);
+        scn.PassAllResponses();
+        assertFalse(scn.GetStackedCards(tatooine).isEmpty());
+    }
+
+    @Test
+    public void RallyToOurCauseTurnTheTideOnOpponentDrainAtAlignedSystem() {
+        var scn = GetScenario();
+        var rally = scn.GetDSCard("rally");
+        var tatooine = scn.GetLSCard("tatooine");
+        var xwing = scn.GetLSCard("xwing");
+        var junk = scn.GetDSCard("junk");
+        var dooku = scn.GetDSCard("dooku");
+        var trooper = scn.GetDSCard("trooper");
+        scn.StartGame();
+        var host = MissionTestSupport.putOnTable(scn, 9600, scn.DS, MissionTestSupport.warHasBegun());
+        scn.AttachCardsTo(host, rally);
+        scn.MoveLocationToTable(tatooine);
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), trooper, dooku);
+        scn.MoveCardsToTopOfOwnLostPile(junk);
+        scn.SkipToDSTurn(Phase.CONTROL);
+        scn.PrepareDSDestiny(7);
+        assertTrue(scn.DSActionAvailable("Draw destiny to align a system"));
+        scn.DSUseCardAction(rally, "Draw destiny to align a system");
+        scn.DSChooseCard(tatooine);
+        scn.PassAllResponses();
+        assertFalse(scn.GetStackedCards(tatooine).isEmpty());
+        scn.DSPass();
+        scn.PassAllResponses();
+        scn.MoveCardsToLocation(tatooine, xwing);
+        scn.SkipToLSTurn(Phase.CONTROL);
+        assertTrue(scn.LSForceDrainAvailable(tatooine));
+        scn.LSForceDrainAt(tatooine);
+        scn.PassForceDrainStartResponses();
+        scn.PassResponses("required");
+        scn.PassAllResponses();
+        assertTrue(scn.GetStackedCards(tatooine).isEmpty());
+        assertInZone(Zone.USED_PILE, rally);
     }
 }

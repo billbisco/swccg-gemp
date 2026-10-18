@@ -38,7 +38,7 @@ import java.util.List;
 public class Card1271_045 extends AbstractMission {
     public Card1271_045() {
         super(Side.LIGHT, 2, "Rebel Aces", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_1, Rarity.V, false);
-        setGameText("Deploy on table. Your Sandwhirl is canceled. At battleground systems where you have a Rebel of ability = 2 piloting a starfighter, and you have no Force drain bonus (except from the system card itself), your Force drains are +1. Your starfighters with a pilot character aboard are immune to attrition < 4. Once per turn, may deploy Close Air Support from Reserve Deck; reshuffle. Your Rebel starfighters without astromech capacit (except Falcon or Artoo-Detoo In Red 5) gain 'May add 1 astromech.'");
+        setGameText("Deploy on table. Your Sandwhirl is canceled. At battleground systems where you have a Rebel of ability = 2 piloting a starfighter, and you have no Force drain bonus (except from the system card itself), your Force drains are +1. Your starfighters with a pilot character aboard are immune to attrition < 4. Once per turn, may deploy Close Air Support from Reserve Deck; reshuffle. Your Rebel starfighters without astromech capacity (except Falcon or Artoo-Detoo In Red 5) gain 'May add 1 astromech.'");
         addIcons(Icon.SETUP, Icon.DEATH_STAR_II);
     }
 
@@ -47,9 +47,10 @@ public class Card1271_045 extends AbstractMission {
         String playerId = self.getOwner();
         Filter aceSystems = Filters.and(Filters.battleground_system,
                 Filters.sameLocationAs(self, Filters.and(Filters.your(self), Filters.starfighter,
-                        Filters.hasPiloting(self, Filters.and(Filters.Rebel, Filters.abilityEqualTo(2))))));
+                        Filters.hasPiloting(self, Filters.and(Filters.Rebel, Filters.abilityEqualTo(2))))),
+                noForceDrainBonusExceptSystemCard(self, playerId));
         Filter starfightersWithPilot = Filters.and(Filters.your(self), Filters.starfighter, Filters.hasPiloting(self, Filters.character));
-        Filter rebelStarfighters = Filters.and(Filters.your(self), Filters.Rebel_starfighter,
+        Filter rebelStarfighters = Filters.and(Filters.your(self), Filters.Rebel_starfighter, withoutPrintedAstromechCapacity(),
                 Filters.except(Filters.or(Filters.Falcon, Filters.title("Artoo-Detoo In Red 5"))));
 
         List<Modifier> modifiers = new LinkedList<Modifier>();
@@ -85,7 +86,7 @@ public class Card1271_045 extends AbstractMission {
 
     @Override
     protected List<TopLevelGameTextAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
-        GameTextActionId gameTextActionId = GameTextActionId.REBEL_ACES__DEPLOY_CLOSE_AIR_SUPPORT;
+        GameTextActionId gameTextActionId = GameTextActionId.LEGACY__REBEL_ACES__DEPLOY_CLOSE_AIR_SUPPORT;
         if (GameConditions.isOncePerTurn(game, self, playerId, gameTextSourceCardId, gameTextActionId)
                 && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, gameTextActionId)) {
             TopLevelGameTextAction action = new TopLevelGameTextAction(self, playerId, gameTextSourceCardId, gameTextActionId);
@@ -95,5 +96,36 @@ public class Card1271_045 extends AbstractMission {
             return Collections.singletonList(action);
         }
         return null;
+    }
+
+    static Filter withoutPrintedAstromechCapacity() {
+        return new Filter() {
+            @Override
+            public boolean accepts(com.gempukku.swccgo.game.state.GameState gameState, com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard) {
+                try {
+                    return physicalCard.getBlueprint().getAstromechCapacity() == 0;
+                } catch (UnsupportedOperationException e) {
+                    return false;
+                }
+            }
+        };
+    }
+
+    static Filter noForceDrainBonusExceptSystemCard(final PhysicalCard self, final String playerId) {
+        return new Filter() {
+            @Override
+            public boolean accepts(com.gempukku.swccgo.game.state.GameState gameState, com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying modifiersQuerying, PhysicalCard location) {
+                for (com.gempukku.swccgo.logic.modifiers.Modifier modifier : modifiersQuerying.getModifiersAffectingCard(gameState, com.gempukku.swccgo.logic.modifiers.ModifierType.FORCE_DRAIN_AMOUNT, location)) {
+                    if (!modifier.isForPlayer(playerId)) {
+                        continue;
+                    }
+                    PhysicalCard source = modifier.getSource(gameState);
+                    if (source != null && source != location && source != self) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        };
     }
 }
