@@ -208,6 +208,11 @@ public class Card_1240_036_Tests {
         scn.PassAllResponses();
         assertTrue(blown.getZone() == com.gempukku.swccgo.common.Zone.SIDE_OF_TABLE
                 || blown.getZone() == com.gempukku.swccgo.common.Zone.AT_LOCATION);
+        if (scn.LSGetDecision() != null && scn.DSGetDecision() == null) {
+            scn.LSPass();
+        }
+        assertTrue("DS must be deciding Control actions so the once-per-turn check can fail. decision=" + scn.DSGetDecision(),
+                scn.AwaitingDSControlPhaseActions());
         assertFalse(scn.DSCardActionAvailable(effect, "Deploy Laser Gate or Political Effect"));
     }
 

@@ -29,6 +29,7 @@ public class Card_1230_018_Tests {
                 new HashMap<>() {{
                     put("aloo", "1230_18");
                     put("evax", "1240_12");
+                    put("janus", "1240_7");
                     put("room", "1240_51");
                     put("bay", "1_291");
                 }},
@@ -63,6 +64,7 @@ public class Card_1230_018_Tests {
             add(CardType.IMPERIAL);
         }});
         scn.BlueprintKeywordCheck(card, new ArrayList<>() {{
+            add(Keyword.IMPERIAL_COUNCIL_MEMBER);
         }});
         scn.BlueprintPersonaCheck(card, new ArrayList<>() {{
         }});
@@ -129,6 +131,26 @@ public class Card_1230_018_Tests {
 
         scn.MoveCardsToLocation(bay, evax);
         assertTrue(scn.HasKeyword(evax, Keyword.IMPERIAL_COUNCIL_MEMBER));
+        assertEquals(2, scn.game().getModifiersQuerying().getNumBattleDestinyDraws(scn.gameState(), scn.DS, false, true));
+    }
+
+    @Test
+    public void SimAlooAddsBattleDestinyWhileWithJanus() {
+        var scn = GetScenario();
+        var aloo = scn.GetDSCard("aloo");
+        var janus = scn.GetDSCard("janus");
+        var luke = scn.GetLSCard("luke");
+        var bay = scn.GetDSCard("bay");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(bay);
+        scn.MoveCardsToLocation(bay, aloo, luke);
+        scn.SkipToDSTurn(Phase.BATTLE);
+        scn.DSInitiateBattle(bay);
+        assertEquals(1, scn.game().getModifiersQuerying().getNumBattleDestinyDraws(scn.gameState(), scn.DS, false, true));
+
+        scn.MoveCardsToLocation(bay, janus);
+        assertTrue(scn.HasKeyword(janus, Keyword.IMPERIAL_COUNCIL_MEMBER));
         assertEquals(2, scn.game().getModifiersQuerying().getNumBattleDestinyDraws(scn.gameState(), scn.DS, false, true));
     }
 }

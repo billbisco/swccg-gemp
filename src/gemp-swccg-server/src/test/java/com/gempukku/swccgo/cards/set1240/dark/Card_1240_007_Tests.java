@@ -4,6 +4,7 @@ import com.gempukku.swccgo.common.Agenda;
 import com.gempukku.swccgo.common.CardType;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
+import com.gempukku.swccgo.common.Keyword;
 import com.gempukku.swccgo.common.Phase;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
@@ -59,6 +60,7 @@ public class Card_1240_007_Tests {
             add(CardType.IMPERIAL);
         }});
         scn.BlueprintKeywordCheck(card, new ArrayList<>() {{
+            add(Keyword.IMPERIAL_COUNCIL_MEMBER);
         }});
         scn.BlueprintPersonaCheck(card, new ArrayList<>() {{
         }});
@@ -72,7 +74,7 @@ public class Card_1240_007_Tests {
     }
 
     @Test
-    public void JanusGreejatusHasLogisticsAndRuleAndNoCouncilKeyword() {
+    public void JanusGreejatusHasLogisticsAndRuleAndCouncilKeyword() {
         var scn = GetScenario();
         var janus = scn.GetDSCard("janus");
         var room = scn.GetDSCard("room");
@@ -83,7 +85,7 @@ public class Card_1240_007_Tests {
 
         assertTrue(scn.game().getModifiersQuerying().hasAgenda(scn.gameState(), janus, Agenda.LOGISTICS));
         assertTrue(scn.game().getModifiersQuerying().hasAgenda(scn.gameState(), janus, Agenda.RULE));
-        assertFalse(scn.HasKeyword(janus, com.gempukku.swccgo.common.Keyword.IMPERIAL_COUNCIL_MEMBER));
+        assertTrue(scn.HasKeyword(janus, Keyword.IMPERIAL_COUNCIL_MEMBER));
         assertEquals(2, scn.game().getModifiersQuerying().getTotalInfluenceAtLocation(scn.gameState(), scn.DS, room), scn.epsilon);
     }
 

@@ -120,14 +120,18 @@ public class Card_1220_004_Tests {
         var evax = scn.GetDSCard("evax");
         var room = scn.GetDSCard("room");
         var interrupt = scn.GetDSCard("interrupt");
+        var luke = scn.GetLSCard("luke");
 
         scn.StartGame();
         scn.MoveLocationToTable(room);
-        scn.MoveCardsToLocation(room, bewil, aloo, evax);
+        scn.MoveCardsToLocation(room, bewil, aloo, evax, luke);
         scn.MoveCardsToTopOfDSForcePile(interrupt);
-        scn.SkipToLSTurn(Phase.CONTROL);
-
-        assertTrue(scn.AwaitingLSControlPhaseActions());
+        scn.SkipToLSTurn(Phase.BATTLE);
+        assertTrue(scn.LSCanInitiateBattle(room));
+        scn.LSInitiateBattle(room);
+        scn.LSPass();
+        assertTrue("DS must be deciding so the negative check can fail. decision=" + scn.DSGetDecision(),
+                scn.DSGetDecision() != null);
         assertTrue(scn.game().getModifiersQuerying().getTotalInfluenceAtLocation(scn.gameState(), scn.DS, room) > 3);
         assertFalse(scn.DSCardActionAvailable(bewil, "Take Interrupt into hand from Force Pile"));
     }
@@ -165,6 +169,54 @@ public class Card_1220_004_Tests {
         scn.PassAllResponses();
         assertTrue("Used-pile Force must pay the react cost. decision=" + scn.LSGetDecision(),
                 scn.LSDecisionAvailable("Choose Force to lose"));
+    }
+
+    @Test
+    public void CaptainBewilCancelsReactAwayWhenOpponentHasFewerThanThreeForce() {
+        var scn = GetReactScenario();
+        var bewil = scn.GetDSCard("bewil");
+        var room = scn.GetDSCard("room");
+        var arcona = scn.GetLSCard("arcona");
+        var cantina = scn.GetLSCard("cantina");
+        var trooper = scn.GetDSCard("trooper");
+        var adjacent = scn.GetDSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveLocationToTable(room);
+        scn.MoveLocationToTable(cantina);
+        scn.MoveCardsToLocation(room, bewil);
+        scn.MoveCardsToLocation(cantina, arcona, trooper);
+        scn.SkipToDSTurn(Phase.BATTLE);
+        assertTrue(scn.AwaitingDSBattlePhaseActions());
+        // Arcona needs 1 Force in Force Pile to pay the react move. Dump every other
+        // Life Force so the total is < 3 and Bewil cancels instead of charging 3.
+        scn.DrainLSForcePileTo(1);
+        java.util.List<com.gempukku.swccgo.game.PhysicalCardImpl> extras = new java.util.ArrayList<>();
+        for (var card : scn.GetLSReserveDeck()) {
+            extras.add((com.gempukku.swccgo.game.PhysicalCardImpl) card);
+        }
+        for (var card : scn.GetLSHand()) {
+            extras.add((com.gempukku.swccgo.game.PhysicalCardImpl) card);
+        }
+        for (var card : scn.gameState().getUsedPile(scn.LS)) {
+            extras.add((com.gempukku.swccgo.game.PhysicalCardImpl) card);
+        }
+        for (var card : extras) {
+            scn.gameState().removeCardsFromZone(java.util.Collections.singletonList(card), true, true);
+            scn.gameState().addCardToZone(card, Zone.OUT_OF_PLAY, scn.LS, true, true);
+        }
+        assertEquals(1, scn.GetLSForcePileCount());
+        assertEquals(0, scn.GetLSReserveDeckCount());
+        assertEquals(0, scn.gameState().getUsedPile(scn.LS).size());
+        assertEquals(0, scn.GetLSHandCount());
+        assertTrue(scn.AwaitingDSBattlePhaseActions());
+        scn.DSInitiateBattle(cantina);
+        assertTrue(scn.LSCardActionAvailable(arcona));
+        scn.LSUseCardAction(arcona);
+        scn.LSChooseCard(adjacent);
+        scn.PassAllResponses();
+        assertEquals(cantina, arcona.getAtLocation());
+        assertFalse(scn.LSDecisionAvailable("Choose Force to lose"));
     }
 
     private VirtualTableScenario GetReactScenario() {

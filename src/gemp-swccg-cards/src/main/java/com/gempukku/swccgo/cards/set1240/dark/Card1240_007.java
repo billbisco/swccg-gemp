@@ -8,6 +8,7 @@ import com.gempukku.swccgo.common.DestinyType;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.GameTextActionId;
 import com.gempukku.swccgo.common.Icon;
+import com.gempukku.swccgo.common.Keyword;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Uniqueness;
@@ -41,6 +42,7 @@ public class Card1240_007 extends AbstractImperial {
         setLore("Imperial council member. Very cruel at heart. Has lusted for power his entire life. Predictable and controllable.");
         setGameText("Agendas: logistics, rule. Once per turn, if at Conference Room and you just drew a non-Epic Event destiny < your total Influence here, may use 2 Force to cancel and redraw that destiny or use 4 Force to add 2 to that destiny.");
         addIcons(Icon.DEATH_STAR_II);
+        addKeywords(Keyword.IMPERIAL_COUNCIL_MEMBER);
     }
 
     @Override
@@ -71,7 +73,7 @@ public class Card1240_007 extends AbstractImperial {
             return null;
         }
         float influence = game.getModifiersQuerying().getTotalInfluenceAtLocation(game.getGameState(), playerId, here);
-        if (!isDrawnDestinyLessThan(game, drawn, playerId, type, influence)) {
+        if (!GameConditions.isDestinyValueLessThan(game, influence)) {
             return null;
         }
 
@@ -101,26 +103,5 @@ public class Card1240_007 extends AbstractImperial {
         }
 
         return actions.isEmpty() ? null : actions;
-    }
-
-    private boolean isDrawnDestinyLessThan(SwccgGame game, DestinyDrawnResult drawn, String playerId, DestinyType type, float influence) {
-        if (GameConditions.isDestinyValueLessThan(game, influence)) {
-            return true;
-        }
-        PhysicalCard drawnCard = drawn.getCard();
-        if (drawnCard == null) {
-            return false;
-        }
-        float value;
-        if (type == DestinyType.BATTLE_DESTINY) {
-            value = game.getModifiersQuerying().getBattleDestiny(game.getGameState(), drawnCard, playerId);
-        }
-        else if (type == DestinyType.WEAPON_DESTINY) {
-            value = game.getModifiersQuerying().getWeaponDestiny(game.getGameState(), drawnCard, playerId);
-        }
-        else {
-            value = game.getModifiersQuerying().getDestiny(game.getGameState(), drawnCard);
-        }
-        return value < influence;
     }
 }

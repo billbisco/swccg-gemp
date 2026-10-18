@@ -40,7 +40,7 @@ public class Card1272_002 extends AbstractImperial {
         setLore("Imperial council member. ISB leader.");
         setGameText("Agenda: intelligence. While with an ISB agent or Imperial Council Member, may not be targeted by weapons. During your deploy phase, may exchange an Imperial in hand with an Imperial of ability < 5 in Lost Pile. Immune to attrition < 3.");
         addIcons(Icon.WARRIOR);
-        addKeywords(Keyword.LEADER);
+        addKeywords(Keyword.LEADER, Keyword.IMPERIAL_COUNCIL_MEMBER);
     }
 
     @Override

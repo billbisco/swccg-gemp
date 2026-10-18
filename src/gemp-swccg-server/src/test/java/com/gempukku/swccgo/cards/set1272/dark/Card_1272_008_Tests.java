@@ -29,6 +29,7 @@ public class Card_1272_008_Tests {
                 new HashMap<>() {{
                     put("collab", "1272_8");
                     put("evax", "1240_12");
+                    put("janus", "1240_7");
                     put("aloo", "1230_18");
                     put("yularen", "1240_4");
                     put("commander", "1272_2");
@@ -94,6 +95,28 @@ public class Card_1272_008_Tests {
         scn.DSChooseCard(evax);
         scn.PassAllResponses();
         assertEquals(Zone.HAND, evax.getZone());
+    }
+
+    @Test
+    public void DarkCollaborationTakesJanusIntoHand() {
+        var scn = GetScenario();
+        var collab = scn.GetDSCard("collab");
+        var janus = scn.GetDSCard("janus");
+
+        scn.StartGame();
+        scn.MoveCardsToHand(collab);
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.EnsureDSForcePile(1);
+        scn.MoveCardsToTopOfDSReserveDeck(janus);
+        assertTrue(scn.DSCardActionAvailable(collab, "Take Council Member"));
+        scn.DSUseCardAction(collab, "Take Council Member");
+        scn.PassAllResponses();
+        scn.PassCardAndForceUseResponses();
+        assertTrue("expected Janus in Reserve search, decision=" + scn.DSGetDecision(),
+                scn.DSHasCardChoiceAvailable(janus));
+        scn.DSChooseCard(janus);
+        scn.PassAllResponses();
+        assertEquals(Zone.HAND, janus.getZone());
     }
 
     @Test

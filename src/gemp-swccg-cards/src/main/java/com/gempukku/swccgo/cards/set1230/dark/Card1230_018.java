@@ -36,6 +36,7 @@ public class Card1230_018 extends AbstractImperial {
         setLore("Imperial council member. Senior political advisor to Emperor Palpatine. Never speaks. Like his master, shows remarkable patience and wisdom.");
         setGameText("Agendas: law, rule. While at Conference Room, adds one [Dark Side Force]. While with another Imperial Council Member, adds one battle destiny. Immune to attrition < 4.");
         addIcons(Icon.DEATH_STAR_II);
+        addKeywords(Keyword.IMPERIAL_COUNCIL_MEMBER);
     }
 
     @Override

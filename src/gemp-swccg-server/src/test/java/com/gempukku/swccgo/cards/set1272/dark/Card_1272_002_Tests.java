@@ -70,6 +70,7 @@ public class Card_1272_002_Tests {
         }});
         scn.BlueprintKeywordCheck(card, new ArrayList<>() {{
             add(Keyword.LEADER);
+            add(Keyword.IMPERIAL_COUNCIL_MEMBER);
         }});
         scn.BlueprintPersonaCheck(card, new ArrayList<>() {{
         }});
