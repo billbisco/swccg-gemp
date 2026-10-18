@@ -158,13 +158,19 @@ public class Card_1281_034_Tests {
                 scn.gameState().isDuringBattle());
         assertEquals(force - 1, scn.GetLSForcePileCount());
         assertEquals(5, scn.GetLSBattleDestinyCount());
+        if (scn.LSGetDecision() == null && scn.DSGetDecision() != null) {
+            scn.DSPass();
+        }
+        assertTrue("once-per-turn must be checked in a card-action window. ls=" + scn.LSGetDecision()
+                        + " ds=" + scn.DSGetDecision(),
+                scn.AwaitingLSWeaponsSegmentActions());
+        assertFalse(scn.LSCardActionAvailable(bravado, "Add a battle destiny"));
         scn.SkipToPowerSegment();
         assertTrue("expected LS battle destiny prompt, ds=" + scn.DSGetDecision() + " ls=" + scn.LSGetDecision()
                         + " text=" + (scn.LSGetDecision() == null ? "null" : scn.LSGetDecision().getText()),
                 scn.LSDecisionAvailable("battle destiny"));
         String capPrompt = scn.LSGetDecision().getText();
         assertTrue("expected limited to 2, prompt=" + capPrompt, capPrompt.contains("limited to 2"));
-        assertFalse(scn.LSCardActionAvailable(bravado, "Add a battle destiny"));
     }
 
     @Test

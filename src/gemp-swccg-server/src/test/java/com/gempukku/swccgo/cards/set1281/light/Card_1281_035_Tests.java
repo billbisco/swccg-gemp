@@ -97,7 +97,14 @@ public class Card_1281_035_Tests {
         assertEquals(Zone.HAND, peek1.getZone());
         assertTrue(peek2.getZone() == Zone.FORCE_PILE || peek2.getZone() == Zone.TOP_OF_FORCE_PILE);
         assertTrue(peek3.getZone() == Zone.FORCE_PILE || peek3.getZone() == Zone.TOP_OF_FORCE_PILE);
-        scn.SkipToPhase(Phase.BATTLE);
+        String peekLog = String.join(" | ", scn.gameState().getLastMessages());
+        assertTrue("expected Force Pile reshuffle, log=" + peekLog, peekLog.toLowerCase().contains("shuffle"));
+        if (scn.LSGetDecision() == null && scn.DSGetDecision() != null) {
+            scn.DSPass();
+        }
+        assertTrue("once-per-turn must be checked in a card-action window. ls=" + scn.LSGetDecision()
+                        + " ds=" + scn.DSGetDecision(),
+                scn.AwaitingLSControlPhaseActions());
         assertFalse(scn.LSCardActionAvailable(charm, "Peek at top 3 cards of Force Pile"));
     }
 
@@ -117,6 +124,8 @@ public class Card_1281_035_Tests {
         scn.DSInitiateBattle(site);
         scn.PassAllResponses();
         drawDsBattleDestinyAndStopAtLsDrawn(scn, 1);
+        int forceBeforeAdd = scn.GetLSForcePileCount();
+        assertTrue(forceBeforeAdd >= 1);
         assertTrue("Add missing. ds=" + scn.DSGetDecision() + " ls=" + scn.LSGetDecision()
                         + " actions=" + scn.GetLSAvailableActions(),
                 scn.LSCardActionAvailable(charm, "Add 1 to opponent's destiny"));
@@ -130,6 +139,7 @@ public class Card_1281_035_Tests {
         assertTrue("Charm add missing, log=" + addLog, addLog.contains("adds 1 to make the battle destiny"));
         assertEquals("ds=" + scn.DSGetDecision() + " ls=" + scn.LSGetDecision() + " log=" + addLog,
                 3, scn.GetDSTotalDestiny());
+        assertEquals(forceBeforeAdd - 1, scn.GetLSForcePileCount());
         assertFalse(scn.LSCardActionAvailable(charm, "Add 1 to opponent's destiny"));
         assertFalse(scn.LSCardActionAvailable(charm, "Subtract 1 from opponent's destiny"));
     }
@@ -150,6 +160,8 @@ public class Card_1281_035_Tests {
         scn.DSInitiateBattle(site);
         scn.PassAllResponses();
         drawDsBattleDestinyAndStopAtLsDrawn(scn, 5);
+        int forceBeforeSub = scn.GetLSForcePileCount();
+        assertTrue(forceBeforeSub >= 1);
         assertTrue(scn.LSCardActionAvailable(charm, "Subtract 1 from opponent's destiny"));
         scn.LSUseCardAction(charm, "Subtract 1 from opponent's destiny");
         scn.PassForceUseResponses();
@@ -161,6 +173,7 @@ public class Card_1281_035_Tests {
         assertTrue("Charm subtract missing, log=" + subLog, subLog.contains("subtracts 1 to make the battle destiny"));
         assertEquals("ds=" + scn.DSGetDecision() + " ls=" + scn.LSGetDecision() + " log=" + subLog,
                 5, scn.GetDSTotalDestiny());
+        assertEquals(forceBeforeSub - 1, scn.GetLSForcePileCount());
     }
 
     @Test

@@ -73,6 +73,7 @@ public class Card_1281_037_Tests {
                     put("lando", "601_50");
                     put("han", "1_11");
                     put("blaster", "1_152");
+                    put("grenade", "3_073");
                 }},
                 extraDS,
                 10,
@@ -140,6 +141,30 @@ public class Card_1281_037_Tests {
                 + " ds=" + ds
                 + " dsText=" + (ds == null ? "null" : ds.getText())
                 + " actions=" + scn.GetLSAvailableActions();
+    }
+
+    private boolean isLsCardChoiceSelectable(VirtualTableScenario scn, PhysicalCardImpl card) {
+        String[] selectable = scn.LSGetADParam("selectable");
+        String[] blueprintIds = scn.LSGetADParam("blueprintId");
+        if (blueprintIds != null) {
+            for (int i = 0; i < blueprintIds.length; i++) {
+                if (card.getBlueprintId(true).equals(blueprintIds[i])) {
+                    return selectable == null || Boolean.parseBoolean(selectable[i]);
+                }
+            }
+        }
+        String[] ids = scn.LSGetADParam("cardId");
+        if (ids != null) {
+            for (int i = 0; i < ids.length; i++) {
+                try {
+                    if (Integer.parseInt(ids[i]) == card.getCardId()) {
+                        return selectable == null || Boolean.parseBoolean(selectable[i]);
+                    }
+                } catch (NumberFormatException ignored) {
+                }
+            }
+        }
+        return false;
     }
 
     private void beginLsDeploy(VirtualTableScenario scn, PhysicalCardImpl luck) {
@@ -448,12 +473,13 @@ public class Card_1281_037_Tests {
         var ingenuity = scn.GetLSCard("ingenuity");
         var lando = scn.GetLSCard("lando");
         var blaster = scn.GetLSCard("blaster");
+        var grenade = scn.GetLSCard("grenade");
         var site = scn.GetLSStartingLocation();
 
         scn.StartGame();
         var junk = scn.GetLSFiller(1);
         scn.MoveCardsToLocation(site, lando);
-        scn.MoveCardsToTopOfLSLostPile(junk, blaster);
+        scn.MoveCardsToTopOfLSLostPile(junk, blaster, grenade);
         setupLuckStacked(scn, luck, bravado, charm, ingenuity);
         assertTrue("expected LS deploy after stacking, ls=" + scn.LSGetDecision()
                         + " actions=" + scn.GetLSAvailableActions(),
@@ -465,16 +491,24 @@ public class Card_1281_037_Tests {
         scn.LSChooseCard(junk);
         scn.PassAllResponses();
         assertTrue("expected blaster from Lost Pile, " + lsDump(scn), scn.LSHasCardChoiceAvailable(blaster));
+        assertFalse("Concussion Grenade must not be selectable, " + lsDump(scn),
+                isLsCardChoiceSelectable(scn, grenade));
         scn.LSChooseCard(blaster);
         if (scn.LSHasCardChoiceAvailable(lando)) {
             scn.LSChooseCard(lando);
         }
         scn.PassAllResponses();
-        if (scn.AwaitingDSDeployPhaseActions()) {
+        if (scn.LSGetDecision() != null && scn.DSGetDecision() == null && !scn.AwaitingLSDeployPhaseActions()) {
+            scn.LSPass();
+        }
+        if (scn.AwaitingDSDeployPhaseActions() && scn.LSGetDecision() == null) {
             scn.DSPass();
         }
         assertTrue(scn.IsAttachedTo(lando, blaster));
         assertEquals(Zone.OUT_OF_PLAY, junk.getZone());
+        assertTrue("once-per-turn must be checked in a card-action window. decision=" + scn.LSGetDecision(),
+                scn.AwaitingLSDeployPhaseActions());
+        assertFalse(scn.LSCardActionAvailable(luck, "Deploy character weapon from Lost Pile"));
     }
 
     @Test
