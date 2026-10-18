@@ -62,8 +62,7 @@ public class Card1273_022 extends AbstractRebel {
         List<OptionalGameTextTriggerAction> actions = new LinkedList<OptionalGameTextTriggerAction>();
         GameTextActionId weaponActionId = GameTextActionId.LEGACY__DACK_RALTER_V__MODIFY_WEAPON_DESTINY;
         if (GameConditions.isDuringBattle(game)
-                && (TriggerConditions.isAboutToCompleteWeaponDestinyDraw(game, effectResult)
-                    || TriggerConditions.isWeaponDestinyJustDrawn(game, effectResult))
+                && TriggerConditions.isAboutToCompleteWeaponDestinyDraw(game, effectResult)
                 && game.getGameState().getWeaponFiringState() != null) {
             PhysicalCard weaponUser = game.getGameState().getWeaponFiringState().getCardFiringWeapon();
             if (weaponUser == self

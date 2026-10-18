@@ -163,8 +163,14 @@ public class Card_1273_022_Tests {
             scn.DSPass();
         }
         scn.LSChooseAction("Add 1 to total weapon destiny");
+        assertFalse("Dack weapon optional must be once per firing; dump=" + dump
+                        + " after ls=" + scn.LSGetDecision()
+                        + " actions=" + scn.GetLSAvailableActions(),
+                scn.GetLSAvailableActions().toString().contains("Add 1 to total weapon destiny"));
         scn.PassWeaponFireWithDestinyDraw();
         scn.PassAllResponses();
+        assertFalse("Dack weapon optional must not return after the firing; actions=" + scn.GetLSAvailableActions(),
+                scn.GetLSAvailableActions().toString().contains("Add 1 to total weapon destiny"));
         assertTrue("Stormtrooper must be hit by destiny 1 + Dack +1; zone=" + trooper.getZone(), trooper.isHit());
         assertEquals(0, scn.GetPower(trooper), scn.epsilon);
     }

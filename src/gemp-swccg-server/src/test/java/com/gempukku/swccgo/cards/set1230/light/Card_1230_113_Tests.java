@@ -159,6 +159,35 @@ public class Card_1230_113_Tests {
     }
 
     @Test
+    public void RedSquadron7DoesNotPlaceImmuneToAlterEffect() {
+        var scn = GetPilotScenario();
+        var red7 = scn.GetLSCard("red7");
+        var keir = scn.GetLSCard("keir");
+        var revolution = scn.GetLSCard("revolution");
+        var haven = scn.GetLSCard("haven");
+        var yavin = scn.GetLSCard("yavin");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(yavin);
+        scn.MoveCardsToLocation(yavin, red7);
+        scn.BoardAsPilot(red7, keir);
+        scn.AttachCardsTo(yavin, revolution, haven);
+        scn.SkipToLSTurn(Phase.CONTROL);
+        scn.PassAllResponses();
+        if (scn.AwaitingDSControlPhaseActions()) {
+            scn.DSPass();
+        }
+
+        assertTrue("Place Effect must be offered for the non-immune Effect; ls=" + scn.LSGetDecision()
+                        + " actions=" + scn.GetLSAvailableActions(),
+                scn.GetLSAvailableActions().toString().contains("Place an Effect"));
+        scn.LSChooseAction("Place an Effect");
+        assertTrue(scn.LSHasCardChoiceAvailable(revolution));
+        assertTrue("Haven is immune to Alter and must not be offered",
+                scn.LSHasCardChoiceNotAvailable(haven));
+    }
+
+    @Test
     public void RedSquadron7DoesNotPlaceEffectWhenAtASite() {
         var scn = GetPilotScenario();
         var red7 = scn.GetLSCard("red7");
@@ -183,6 +212,7 @@ public class Card_1230_113_Tests {
                     put("keir", "9_19");
                     put("corran", "10_5");
                     put("revolution", "1_62");
+                    put("haven", "5_24");
                     put("yavin", "1_135");
                 }},
                 new HashMap<>() {{

@@ -117,6 +117,40 @@ public class Card_1240_014_Tests {
     }
 
     @Test
+    public void R2A5WhenDeployedMayPlayDefensiveShieldFromStartingEffect() {
+        var scn = GetShieldScenario();
+        var r2a5 = scn.GetDSCard("r2a5");
+        var starting = scn.GetDSCard("starting");
+        var shield = scn.GetDSCard("shield");
+        var site = scn.GetDSStartingLocation();
+
+        scn.StartGame();
+        scn.StackCardsOn(starting, shield);
+        scn.MoveCardsToHand(r2a5);
+        scn.DSActivateMaxForceAndPass();
+        scn.PassControlActions();
+        scn.DSActivateForceCheat(5);
+
+        assertTrue(scn.AwaitingDSDeployPhaseActions());
+        assertTrue(scn.DSCardPlayAvailable(r2a5));
+        scn.DSPlayCard(r2a5);
+        scn.DSChooseCard(site);
+        scn.PassResponses("Use");
+        while (scn.LSDecisionAvailable("optional")) {
+            scn.LSPass();
+        }
+        assertTrue("Defensive Shield must be offered on deploy; startingZone=" + starting.getZone()
+                        + " shieldZone=" + shield.getZone()
+                        + " decision=" + (scn.DSGetDecision() == null ? "null" : scn.DSGetDecision().getText())
+                        + " actions=" + scn.GetDSAvailableActions(),
+                scn.GetDSAvailableActions().toString().contains("Defensive Shield"));
+        scn.DSChooseAction("Defensive Shield");
+        scn.DSChooseCard(shield);
+        scn.PassAllResponses();
+        assertTrue(shield.getZone().isInPlay());
+    }
+
+    @Test
     public void R2A5DoesNotOfferRaiseAtAnUnconvertedSite() {
         var scn = GetScenario();
         var r2a5 = scn.GetDSCard("r2a5");
@@ -128,6 +162,27 @@ public class Card_1240_014_Tests {
         scn.SkipToDSTurn(Phase.CONTROL);
 
         assertFalse(scn.DSCardActionAvailable(r2a5, "Raise"));
+    }
+
+    private VirtualTableScenario GetShieldScenario() {
+        return new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("luke", "1_19");
+                }},
+                new HashMap<>() {{
+                    put("r2a5", "1240_14");
+                    put("starting", "13_69");
+                    put("shield", "13_81");
+                }},
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
     }
 
     private VirtualTableScenario GetConvertScenario() {

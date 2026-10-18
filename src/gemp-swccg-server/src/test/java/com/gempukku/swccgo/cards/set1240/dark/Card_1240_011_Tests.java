@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class Card_1240_011_Tests {
@@ -108,6 +109,22 @@ public class Card_1240_011_Tests {
     }
 
     @Test
+    public void MynKyneughForcePikeIsMatchingWeapon() {
+        var scn = GetPikeScenario();
+        var myn = scn.GetDSCard("myn");
+        var pike = scn.GetDSCard("pike");
+        var blaster = scn.GetDSCard("blaster");
+        var site = scn.GetDSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, myn);
+        scn.AttachCardsTo(myn, pike);
+
+        assertTrue(scn.game().getModifiersQuerying().isMatchingPair(scn.gameState(), myn, pike));
+        assertFalse(scn.game().getModifiersQuerying().isMatchingPair(scn.gameState(), myn, blaster));
+    }
+
+    @Test
     public void MynKyneughForcePikeFiresForFree() throws DecisionResultInvalidException {
         var scn = GetPikeScenario();
         var myn = scn.GetDSCard("myn");
@@ -128,6 +145,31 @@ public class Card_1240_011_Tests {
         scn.DSChooseCard(luke);
         scn.PassAllResponses();
         assertEquals(force, scn.GetDSForcePileCount());
+    }
+
+    @Test
+    public void MynKyneughForcePikeTotalWeaponDestinyIsPlusOne() throws DecisionResultInvalidException {
+        var scn = GetPikeScenario();
+        var myn = scn.GetDSCard("myn");
+        var pike = scn.GetDSCard("pike");
+        var guard = scn.GetLSCard("guard");
+        var site = scn.GetLSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, myn, guard);
+        scn.AttachCardsTo(myn, pike);
+        scn.DSActivateForceCheat(4);
+        scn.PrepareDSDestiny(0);
+        scn.DSStartBattleAndSkipToWeaponsSegment(site);
+
+        assertTrue(scn.DSCardActionAvailable(pike, "Fire"));
+        scn.DSUseCardAction(pike, "Fire");
+        assertTrue(scn.DSHasCardChoiceAvailable(guard));
+        scn.DSChooseCard(guard);
+        scn.PassWeaponFireWithDestinyDraw();
+        scn.PassAllResponses();
+        assertTrue("Force Pike destiny 0 + printed +1 + Myn +1 must hit defense 1; zone=" + guard.getZone(),
+                guard.isHit());
     }
 
     @Test
@@ -168,10 +210,12 @@ public class Card_1240_011_Tests {
         return new VirtualTableScenario(
                 new HashMap<>() {{
                     put("luke", "1_19");
+                    put("guard", "1_26");
                 }},
                 new HashMap<>() {{
                     put("myn", "1240_11");
                     put("pike", "9_179");
+                    put("blaster", "1_317");
                 }},
                 10, 10,
                 StartingSetup.DefaultLSGroundLocation,
