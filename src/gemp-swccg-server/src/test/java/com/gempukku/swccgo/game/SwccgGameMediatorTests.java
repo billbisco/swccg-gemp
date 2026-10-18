@@ -22,6 +22,7 @@ class SwccgGameMediatorTests {
         SwccgGameParticipant darkParp = new SwccgGameParticipant(DS_PLAYER, new SwccgDeck("fish"));
         SwccgGameMediator subject = new SwccgGameMediator("1",
                 mock(SwccgFormat.class),
+                null,
                 new SwccgGameParticipant[]{lightParp, darkParp},
                 mock(SwccgCardBlueprintLibrary.class),
                 50,
@@ -30,7 +31,8 @@ class SwccgGameMediatorTests {
                 true,
                 true,
                 30000,
-                true
+                true,
+                false
         );
 
         Player lsPlayer = new Player(1, DS_PLAYER, "3",

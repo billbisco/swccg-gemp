@@ -3,7 +3,7 @@ package com.gempukku.swccgo.async.handler;
 import com.gempukku.swccgo.async.ResponseWriter;
 import com.gempukku.swccgo.common.ApplicationConfiguration;
 
-import io.netty.handler.codec.http.HttpHeaders;
+import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpRequest;
 
 import java.io.File;
@@ -11,7 +11,7 @@ import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.Map;
 
-import static io.netty.handler.codec.http.HttpHeaders.Names.IF_NONE_MATCH;
+import static io.netty.handler.codec.http.HttpHeaderNames.IF_NONE_MATCH;
 
 public class WebRequestHandler implements UriRequestHandler {
     private String _root;
@@ -54,7 +54,7 @@ public class WebRequestHandler implements UriRequestHandler {
             return;
         }
 
-        responseWriter.writeFile(file, Collections.singletonMap(HttpHeaders.Names.ETAG, etag));
+        responseWriter.writeFile(file, Collections.singletonMap(HttpHeaderNames.ETAG.toString(), etag));
     }
 
     private boolean clientHasCurrentVersion(HttpRequest request, String etag) {
