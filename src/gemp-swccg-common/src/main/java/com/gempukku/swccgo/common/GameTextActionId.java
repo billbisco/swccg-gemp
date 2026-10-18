@@ -1130,6 +1130,10 @@ public enum GameTextActionId {
     LEGACY__RYCAR_RYJERD_V__UPLOAD_CARD(true, true),
     LEGACY__REBEL_LEADERSHIP_V__DEPLOY_WAR_ROOM(true, true),
 
+    LEGACY__HIDDEN_LANDING_SITE_V__DEPLOY_INCOM(true, true),
+    LEGACY__HIDDEN_BASE_V__DOWNLOAD_BATTLEGROUND_SYSTEM(true),
+    LEGACY__HIDDEN_BASE_V__DEPLOY_REBEL_CELL_SITE_OR_CHARACTER(true),
+
     ;
 
     private boolean _searchCardPile;

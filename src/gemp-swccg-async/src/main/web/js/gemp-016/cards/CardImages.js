@@ -4950,6 +4950,7 @@ const fixedImages = {
 "1240_105":"https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Light/large/rebelcellsituationroom.gif",
 "1240_106":"https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Light/large/yavin4jediacademy.gif",
 "1240_107":"https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Light/large/hiddenbase.gif",
+"1240_107_BACK":"https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Light/large/systemswillslipthroughyourfingers.gif",
 "1240_108":"https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Light/large/watchyourstep.gif",
 "1240_109":"https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Light/large/red8.gif",
 "1240_110":"https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Light/large/yt1300transport.gif",
