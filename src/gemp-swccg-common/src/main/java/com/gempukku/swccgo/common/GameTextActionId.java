@@ -1129,6 +1129,9 @@ public enum GameTextActionId {
     LEGACY__CELL_2187_V__DEPLOY_R2D2(true, true),
     LEGACY__RYCAR_RYJERD_V__UPLOAD_CARD(true, true),
     LEGACY__REBEL_LEADERSHIP_V__DEPLOY_WAR_ROOM(true, true),
+    ARTOO_V__DEPLOY_TRASH_COMPACTOR(true, true),
+    CORUSCANT_GUARD_V__TAKE_EXPAND_THE_EMPIRE(true),
+    RED_SQUADRON_7_V__PLACE_EFFECT_IN_USED_PILE(false, true),
 
     ;
 
