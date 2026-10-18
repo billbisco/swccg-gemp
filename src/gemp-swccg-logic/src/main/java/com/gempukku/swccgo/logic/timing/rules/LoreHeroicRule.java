@@ -15,14 +15,14 @@ import java.util.Set;
 
 /**
  * Lore "Heroic" is the Heroic characteristic only when the format option is on
- * (Legacy and Anything Goes). The list is blueprint ids, kept next to the rule.
- * R2-D2 (Artoo-Detoo), its (V), and that (V)'s alternate image.
+ * (Legacy and Anything Goes). The list is printings whose lore says Heroic (R7).
  */
 public class LoreHeroicRule implements Rule {
-    static final Set<String> LORE_HEROIC_BLUEPRINT_IDS = Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(
+    public static final Set<String> LORE_HEROIC_BLUEPRINT_IDS = Collections.unmodifiableSet(new HashSet<String>(Arrays.asList(
             "2_14",
             "201_6",
-            "201_6^"
+            "201_6^",
+            "1210_109" // printings whose lore says Heroic (R7)
     )));
 
     private final ModifiersEnvironment _modifiersEnvironment;

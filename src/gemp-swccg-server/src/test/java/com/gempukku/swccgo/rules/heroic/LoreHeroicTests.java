@@ -6,6 +6,7 @@ import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import com.gempukku.swccgo.game.PhysicalCardImpl;
+import com.gempukku.swccgo.logic.timing.rules.LoreHeroicRule;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -42,6 +43,11 @@ public class LoreHeroicTests {
     @Test
     public void R2D2AlternateImageIsHeroicWhenLoreHeroicRuleIsOn() {
         assertHeroicPrinting("legacy", "201_6^");
+    }
+
+    @Test
+    public void LoreHeroicListIncludesLegacyR2D2VPrinting() {
+        assertTrue(LoreHeroicRule.LORE_HEROIC_BLUEPRINT_IDS.contains("1210_109"));
     }
 
     @Test
