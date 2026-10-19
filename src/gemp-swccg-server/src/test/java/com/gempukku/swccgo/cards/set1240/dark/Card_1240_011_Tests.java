@@ -149,6 +149,8 @@ public class Card_1240_011_Tests {
 
     @Test
     public void MynKyneughForcePikeTotalWeaponDestinyIsPlusOne() throws DecisionResultInvalidException {
+        // Force Pike hits if (total destiny + 1) > defense. Destiny 0 + Myn +1 logs 1;
+        // 1+1 > Rebel Guard defense 1 hits. Without Myn, 0+1 is not > 1.
         var scn = GetPikeScenario();
         var myn = scn.GetDSCard("myn");
         var pike = scn.GetDSCard("pike");
@@ -159,17 +161,18 @@ public class Card_1240_011_Tests {
         scn.MoveCardsToLocation(site, myn, guard);
         scn.AttachCardsTo(myn, pike);
         scn.DSActivateForceCheat(4);
-        scn.PrepareDSDestiny(0);
         scn.DSStartBattleAndSkipToWeaponsSegment(site);
+        scn.PrepareDSDestiny(0);
 
+        assertEquals(1, scn.GetDefense(guard));
         assertTrue(scn.DSCardActionAvailable(pike, "Fire"));
         scn.DSUseCardAction(pike, "Fire");
         assertTrue(scn.DSHasCardChoiceAvailable(guard));
         scn.DSChooseCard(guard);
         scn.PassWeaponFireWithDestinyDraw();
         scn.PassAllResponses();
-        assertTrue("Force Pike destiny 0 + printed +1 + Myn +1 must hit defense 1; zone=" + guard.getZone(),
-                guard.isHit());
+        assertEquals(1, lastTotalWeaponDestiny(scn));
+        assertTrue(guard.isHit());
     }
 
     @Test
@@ -204,6 +207,23 @@ public class Card_1240_011_Tests {
         scn.DSChooseCard(shield);
         scn.PassAllResponses();
         assertTrue(shield.getZone().isInPlay());
+    }
+
+    private int lastTotalWeaponDestiny(VirtualTableScenario scn) {
+        Integer last = null;
+        String log = String.join("\n", scn.gameState().getLastMessages());
+        for (String msg : scn.gameState().getLastMessages()) {
+            String lower = msg.toLowerCase();
+            for (String prefix : new String[] {"total weapon destiny is ", "total destiny: "}) {
+                int idx = lower.lastIndexOf(prefix);
+                if (idx >= 0) {
+                    String rest = msg.substring(idx + prefix.length()).trim();
+                    last = (int) Float.parseFloat(rest.split("[^0-9.]")[0]);
+                }
+            }
+        }
+        assertTrue("Expected a total weapon destiny log, got: " + log, last != null);
+        return last;
     }
 
     private VirtualTableScenario GetPikeScenario() {

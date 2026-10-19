@@ -120,6 +120,8 @@ public class Card_1273_022_Tests {
 
     @Test
     public void DackRalterDuringBattleMayAddOneToWeaponDestinyAndHitTargetsArePowerMinusTwo() throws DecisionResultInvalidException {
+        // Blaster hits if destiny > defense. Prepared 1 + Dack +1 logs 2 and hits
+        // Stormtrooper defense 1. Taking the optional twice would log 3.
         var scn = GetWeaponScenario();
         var dack = scn.GetLSCard("dack");
         var blaster = scn.GetLSCard("lsBlaster");
@@ -130,48 +132,41 @@ public class Card_1273_022_Tests {
         scn.MoveCardsToLocation(site, dack, trooper);
         scn.AttachCardsTo(dack, blaster);
         scn.LSActivateForceCheat(4);
-        scn.PrepareLSDestiny(1);
         scn.LSStartBattleAndSkipToWeaponsSegment(site);
+        scn.PrepareLSDestiny(1);
 
         assertEquals(1, scn.GetPower(trooper));
+        assertEquals(1, scn.GetDefense(trooper));
         assertTrue(scn.LSCardActionAvailable(blaster, "Fire"));
         scn.LSUseCardAction(blaster, "Fire");
         assertTrue(scn.LSHasCardChoiceAvailable(trooper));
         scn.LSChooseCard(trooper);
-        scn.PassResponses("Use");
-        StringBuilder dump = new StringBuilder();
-        for (int i = 0; i < 12; i++) {
-            String ls = scn.LSGetDecision() == null ? "null" : scn.LSGetDecision().getText();
-            String ds = scn.DSGetDecision() == null ? "null" : scn.DSGetDecision().getText();
-            dump.append("[").append(i).append(" ls=").append(ls).append(" ds=").append(ds)
-                    .append(" actions=").append(scn.GetLSAvailableActions()).append("]");
+
+        int dackTaken = 0;
+        for (int i = 0; i < 40; i++) {
+            if (i > 0 && scn.AwaitingLSWeaponsSegmentActions()) {
+                break;
+            }
             if (scn.GetLSAvailableActions().toString().contains("Add 1 to total weapon destiny")) {
-                break;
+                assertTrue(scn.GetLSAvailableActions().toString().contains("Add 1 to total weapon destiny"));
+                scn.LSChooseAction("Add 1 to total weapon destiny");
+                dackTaken++;
+                continue;
             }
-            if ("null".equals(ls) && "null".equals(ds)) {
-                break;
-            }
-            if (scn.DSDecisionAvailable("optional")) {
+            if (scn.DSAnyDecisionsAvailable()) {
                 scn.DSPass();
-            } else {
-                scn.PassResponses();
+                continue;
             }
+            if (scn.LSAnyDecisionsAvailable()) {
+                scn.LSPass();
+                continue;
+            }
+            throw new AssertionError("No pending decision while firing Dack's blaster after " + i
+                    + " steps; Dack taken=" + dackTaken);
         }
-        assertTrue("Dack weapon optional must be offered as destiny is drawn; dump=" + dump,
-                scn.GetLSAvailableActions().toString().contains("Add 1 to total weapon destiny"));
-        while (scn.DSDecisionAvailable("optional")) {
-            scn.DSPass();
-        }
-        scn.LSChooseAction("Add 1 to total weapon destiny");
-        assertFalse("Dack weapon optional must be once per firing; dump=" + dump
-                        + " after ls=" + scn.LSGetDecision()
-                        + " actions=" + scn.GetLSAvailableActions(),
-                scn.GetLSAvailableActions().toString().contains("Add 1 to total weapon destiny"));
-        scn.PassWeaponFireWithDestinyDraw();
-        scn.PassAllResponses();
-        assertFalse("Dack weapon optional must not return after the firing; actions=" + scn.GetLSAvailableActions(),
-                scn.GetLSAvailableActions().toString().contains("Add 1 to total weapon destiny"));
-        assertTrue("Stormtrooper must be hit by destiny 1 + Dack +1; zone=" + trooper.getZone(), trooper.isHit());
+        assertEquals(1, dackTaken);
+        assertEquals(2, lastTotalWeaponDestiny(scn));
+        assertTrue(trooper.isHit());
         assertEquals(0, scn.GetPower(trooper), scn.epsilon);
     }
 
@@ -238,6 +233,23 @@ public class Card_1273_022_Tests {
                 StartingSetup.NoDSShields,
                 VirtualTableScenario.Open
         );
+    }
+
+    private int lastTotalWeaponDestiny(VirtualTableScenario scn) {
+        Integer last = null;
+        String log = String.join("\n", scn.gameState().getLastMessages());
+        for (String msg : scn.gameState().getLastMessages()) {
+            String lower = msg.toLowerCase();
+            for (String prefix : new String[] {"total weapon destiny is ", "total destiny: "}) {
+                int idx = lower.lastIndexOf(prefix);
+                if (idx >= 0) {
+                    String rest = msg.substring(idx + prefix.length()).trim();
+                    last = (int) Float.parseFloat(rest.split("[^0-9.]")[0]);
+                }
+            }
+        }
+        assertTrue("Expected a total weapon destiny log, got: " + log, last != null);
+        return last;
     }
 
     private VirtualTableScenario GetWeaponScenario() {
