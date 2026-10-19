@@ -71,7 +71,7 @@ public class StandingsProducer {
             leagueStandings.add(standing);
         }
 
-        Collections.sort(leagueStandings, LEAGUE_STANDING_COMPARATOR);
+        leagueStandings.sort(LEAGUE_STANDING_COMPARATOR);
 
         int standing = 0;
         int position = 1;

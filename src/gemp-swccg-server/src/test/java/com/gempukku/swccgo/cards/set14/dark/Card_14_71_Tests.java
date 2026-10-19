@@ -12,6 +12,7 @@ import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.common.Zone;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.game.PhysicalCardImpl;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -118,8 +119,25 @@ public class Card_14_71_Tests {
         scn.MoveCardsToLocation(lsHallway, luke, threeb3);
 
         scn.SkipToLSTurn(Phase.BATTLE);
+        // Top up Force first so EnsureForcePile cannot pull the reveal pair off the top.
+        scn.EnsureDSForcePile(2);
         // junk then bd1 on top (bd1 is topmost)
         scn.MoveCardsToTopOfOwnReserveDeck(junk, bd1);
+        while (scn.GetDSForcePileCount() < 2) {
+            PhysicalCardImpl filler = null;
+            if (!scn.GetDSUsedPile().isEmpty()) {
+                filler = (PhysicalCardImpl) scn.GetDSUsedPile().get(0);
+            } else {
+                for (var card : scn.GetDSReserveDeck()) {
+                    if (card != junk && card != bd1) {
+                        filler = (PhysicalCardImpl) card;
+                        break;
+                    }
+                }
+            }
+            assertTrue("Need a filler to restore Force Pile without taking junk/bd1", filler != null);
+            scn.MoveCardsToTopOfDSForcePile(filler);
+        }
         scn.LSInitiateBattle(lsHallway);
 
         assertTrue("Expected 3B3-21 reveal action; decision=" + decisionText(scn),

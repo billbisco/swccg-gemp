@@ -1801,6 +1801,7 @@ public class Card_1_188_Tests {
             break;
         }
         assertTrue(scn.AwaitingDSMovePhaseActions());
+        scn.PrepareLSDestiny(1);
         assertTrue("VCSD should be able to move to the asteroid sector", scn.DSCardActionAvailable(vcsd, "sector"));
         scn.DSUseCardAction(vcsd, "sector");
         scn.DSChooseCard(bigOne);
@@ -1812,7 +1813,8 @@ public class Card_1_188_Tests {
 
         // The target reaches the carried package by a real sector move. The Utinni
         // relocates back to Kessel and Mouse returns to hand on that delivery.
-        scn.SkipToLSTurn(Phase.MOVE);
+        // Already on LS Control (SkipToPhase from DS Move); stay on this turn.
+        scn.SkipToPhase(Phase.MOVE);
         for (int i = 0; i < 12 && !scn.AwaitingLSMovePhaseActions(); i++) {
             if (scn.DSAnyDecisionsAvailable() && !scn.LSAnyDecisionsAvailable()) {
                 scn.DSPass();
@@ -1821,6 +1823,7 @@ public class Card_1_188_Tests {
             break;
         }
         assertTrue(scn.AwaitingLSMovePhaseActions());
+        scn.PrepareDSDestiny(1);
         assertTrue("A-wing should be able to move to the asteroid sector", scn.LSCardActionAvailable(awing, "sector"));
         scn.LSUseCardAction(awing, "sector");
         scn.LSChooseCard(bigOne);
@@ -1829,8 +1832,14 @@ public class Card_1_188_Tests {
         assertInHand(mouse);
 
         // Target returns to the related system, completing Rycar's Run and retrieving X.
+        // Asteroid destiny is drawn at the end of Control (not on the sector move).
+        // Stack destiny 1 after Activate so VCSD (armor 5) and the A-wing (maneuver 5) survive.
         scn.SkipToDSTurn();
-        scn.SkipToLSTurn(Phase.MOVE);
+        scn.SkipToPhase(Phase.CONTROL);
+        scn.PrepareLSDestiny(1);
+        scn.SkipToLSTurn(Phase.CONTROL);
+        scn.PrepareDSDestiny(1);
+        scn.SkipToPhase(Phase.MOVE);
         for (int i = 0; i < 12 && !scn.AwaitingLSMovePhaseActions(); i++) {
             if (scn.DSAnyDecisionsAvailable() && !scn.LSAnyDecisionsAvailable()) {
                 scn.DSPass();
@@ -1839,6 +1848,9 @@ public class Card_1_188_Tests {
             break;
         }
         assertTrue(scn.AwaitingLSMovePhaseActions());
+        assertTrue("A-wing should still be at Big One", scn.CardsAtLocation(bigOne, awing));
+        scn.PrepareDSDestiny(1);
+        assertTrue("A-wing should be able to move to the related system", scn.LSCardActionAvailable(awing, "sector"));
         scn.LSUseCardAction(awing, "sector");
         scn.LSChooseCard(kessel);
         scn.PassAllResponses();

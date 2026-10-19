@@ -21,7 +21,7 @@ public class SnapshotData {
         Snapshotable dataToReturn = snapshotableMap.get(data);
         if (dataToReturn == null) {
             try {
-                dataToReturn = data.getClass().newInstance();
+                dataToReturn = data.getClass().getDeclaredConstructor().newInstance();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
