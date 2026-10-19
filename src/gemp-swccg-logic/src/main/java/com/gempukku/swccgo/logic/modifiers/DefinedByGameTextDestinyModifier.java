@@ -23,6 +23,16 @@ public class DefinedByGameTextDestinyModifier extends AbstractModifier {
         _evaluator = new ConstantEvaluator(modifierAmount);
     }
 
+    /**
+     * Creates a modifier to define the initial printed destiny of a card from an evaluator.
+     * @param source the source of the modifier
+     * @param evaluator the evaluator that calculates the printed destiny
+     */
+    public DefinedByGameTextDestinyModifier(PhysicalCard source, Evaluator evaluator) {
+        super(source, null, source, null, ModifierType.PRINTED_DESTINY, true);
+        _evaluator = evaluator;
+    }
+
     @Override
     public float getPrintedValueDefinedByGameText(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard card) {
         return _evaluator.evaluateExpression(gameState, modifiersQuerying, card);
