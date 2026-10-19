@@ -1497,7 +1497,7 @@ var GempSwccgCommunication = Class.extend({
                 login:login,
                 password:password,
                 // Signup honeypot (hidden field in registrationForm.html); empty for real people.
-                website:($("#website").val() || ""),
+                hp_field:($("#hp_field").val() || ""),
                 participantId:getUrlParam("participantId")},
             success:this.deliveryCheckStatus(callback),
             error:this.errorCheck(errorMap),

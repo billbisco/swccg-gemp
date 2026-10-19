@@ -97,6 +97,11 @@ public class CachedPlayerDAO implements PlayerDAO, Cached {
     }
 
     @Override
+    public java.util.Map<Integer, String> getLegacyPasswordHashes() throws SQLException {
+        return _delegate.getLegacyPasswordHashes();
+    }
+
+    @Override
     public int countPlayersCreatedFromIpSince(String ip, long sinceMillis) throws SQLException {
         return _delegate.countPlayersCreatedFromIpSince(ip, sinceMillis);
     }

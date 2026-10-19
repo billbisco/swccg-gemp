@@ -18,6 +18,22 @@ public class PasswordHasherTests {
     }
 
     @Test
+    public void wrappedLegacyHashVerifiesTheOriginalPasswordAndNeedsRehash() {
+        String legacy = PasswordHasher.legacySha256("password");
+        String wrapped = hasher.wrapLegacy(legacy);
+        assertTrue(wrapped.startsWith("pbkdf2-sha256-legacy$1000$"));
+        assertFalse(wrapped.contains(legacy), "the unsalted digest is not kept");
+        assertTrue(wrapped.length() <= 255);
+        assertTrue(hasher.verify("password", wrapped));
+        assertFalse(hasher.verify("Password", wrapped));
+        assertFalse(hasher.verify(legacy, wrapped), "knowing the old digest is not enough");
+        assertTrue(hasher.needsRehash(wrapped));
+        assertFalse(PasswordHasher.isLegacySha256(wrapped));
+        assertNotEquals(wrapped, hasher.wrapLegacy(legacy), "salted");
+        assertThrows(IllegalArgumentException.class, () -> hasher.wrapLegacy("!reset"));
+    }
+
+    @Test
     public void samePasswordGetsDifferentSalts() {
         assertNotEquals(hasher.hash("hunter22"), hasher.hash("hunter22"));
     }
