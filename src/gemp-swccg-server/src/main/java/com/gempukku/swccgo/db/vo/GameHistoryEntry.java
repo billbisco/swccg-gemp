@@ -22,6 +22,9 @@ public class GameHistoryEntry {
     private Date _startTime;
     private Date _endTime;
 
+    private String _winnerSide;
+    private String _leagueType;
+
     public GameHistoryEntry(String winner, String winReason, String winnerRecording, String loser, String loseReason, String loserRecording, String formatName, String tournament, String winnerDeckName, String winnerDeckArchetype, String loserDeckName, String loserDeckArchetype, Date startTime, Date endTime) {
         _winner = winner;
         _winReason = winReason;
@@ -37,6 +40,13 @@ public class GameHistoryEntry {
         _loserDeckArchetype = loserDeckArchetype;
         _startTime = startTime;
         _endTime = endTime;
+    }
+
+    /** As above, plus the winner's side ("Dark", "Light" or "None") and the league type code ("" outside leagues). */
+    public GameHistoryEntry(String winner, String winReason, String winnerRecording, String loser, String loseReason, String loserRecording, String formatName, String tournament, String winnerDeckName, String winnerDeckArchetype, String loserDeckName, String loserDeckArchetype, Date startTime, Date endTime, String winnerSide, String leagueType) {
+        this(winner, winReason, winnerRecording, loser, loseReason, loserRecording, formatName, tournament, winnerDeckName, winnerDeckArchetype, loserDeckName, loserDeckArchetype, startTime, endTime);
+        _winnerSide = winnerSide;
+        _leagueType = leagueType;
     }
 
     public String getLoser() {
@@ -93,5 +103,28 @@ public class GameHistoryEntry {
 
     public Date getStartTime() {
         return _startTime;
+    }
+
+    public String getWinnerSide() {
+        return _winnerSide;
+    }
+
+    public String getLeagueType() {
+        return _leagueType;
+    }
+
+    /**
+     * The side the given player played, from the winner's side: "Dark" or "Light", or null when it was not recorded
+     * (cancelled games, or a player who is in neither seat).
+     */
+    public String getSideOf(String playerName) {
+        if (!"Dark".equals(_winnerSide) && !"Light".equals(_winnerSide))
+            return null;
+        String other = "Dark".equals(_winnerSide) ? "Light" : "Dark";
+        if (playerName != null && playerName.equals(_winner))
+            return _winnerSide;
+        if (playerName != null && playerName.equals(_loser))
+            return other;
+        return null;
     }
 }
