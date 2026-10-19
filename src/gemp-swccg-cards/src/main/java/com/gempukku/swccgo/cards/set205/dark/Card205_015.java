@@ -34,6 +34,7 @@ public class Card205_015 extends AbstractImperial {
         setLore("Imperial council member. Senior political advisor to Emperor Palpatine. Never speaks. Like his master, shows remarkable patience and wisdom.");
         setGameText("If Emperor on table, destiny +2 when drawn for destiny. While at Death Star II: Throne Room, your total battle destiny during battles anywhere is +X, where X = number of Dark Jedi here or cards stacked on Insignificant Rebellion.");
         addIcons(Icon.DEATH_STAR_II, Icon.VIRTUAL_SET_5);
+        addKeywords(com.gempukku.swccgo.common.Keyword.IMPERIAL_COUNCIL_MEMBER);
     }
 
     @Override

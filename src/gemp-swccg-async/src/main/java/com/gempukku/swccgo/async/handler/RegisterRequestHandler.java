@@ -4,12 +4,16 @@ import com.gempukku.swccgo.async.HttpProcessingException;
 import com.gempukku.swccgo.async.ResponseWriter;
 import com.gempukku.swccgo.db.LoginInvalidException;
 import com.gempukku.swccgo.db.RegisterNotAllowedException;
+import com.gempukku.swccgo.service.AuthService;
+import com.gempukku.swccgo.security.SignupGuard;
+import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.cookie.CookieHeaderNames;
 import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
 
 import java.lang.reflect.Type;
-import java.net.InetSocketAddress;
+import java.util.Collections;
 import java.util.Map;
 
 public class RegisterRequestHandler extends SwccgoServerRequestHandler implements UriRequestHandler {
@@ -24,15 +28,39 @@ public class RegisterRequestHandler extends SwccgoServerRequestHandler implement
             try {
                 String login = getFormParameterSafely(postDecoder, "login");
                 String password = getFormParameterSafely(postDecoder, "password");
+
+                // Finishing an admin reset: only with the ticket issued when the player logged in
+                // with their one-time code. Without it, a reset account is just a taken name.
+                String resetTicket = getCookieValue(request, AuthService.RESET_COOKIE);
+                if (resetTicket != null && _authService.hasValidResetTicket(resetTicket, login)) {
+                    AuthService.ResetOutcome outcome = _authService.completeReset(resetTicket, login, password);
+                    if (outcome == AuthService.ResetOutcome.WEAK_PASSWORD)
+                        throw new HttpProcessingException(400, weakPasswordMessage());
+                    if (outcome != AuthService.ResetOutcome.OK)
+                        throw new HttpProcessingException(400);
+                    // 202 = "password reset, please log in" in the existing client.
+                    responseWriter.writeError(202, Collections.singletonMap(HttpHeaderNames.SET_COOKIE.toString(),
+                            encodeProtectedCookie(AuthService.RESET_COOKIE, "", 0, CookieHeaderNames.SameSite.Strict)));
+                    return;
+                }
+
+                // Honeypot: a hidden "website" field humans never fill. Pretend it worked, create nothing.
+                if (SignupGuard.isHoneypotTripped(getFormParameterSafely(postDecoder, "website"))) {
+                    responseWriter.writeXmlResponse(null);
+                    return;
+                }
+
                 try {
                     if (!_gempSettingDAO.newAccountRegistrationEnabled()) {
                         throw new RegisterNotAllowedException();
                     }
-                    if (_playerDao.registerPlayer(login, password, remoteIp)) {
+                    if (_authService.register(login, password, remoteIp)) {
                         responseWriter.writeXmlResponse(null, logUserReturningHeaders(remoteIp, login));
                     } else {
                         throw new HttpProcessingException(403);
                     }
+                } catch (AuthService.WeakPasswordException exp) {
+                    throw new HttpProcessingException(400, weakPasswordMessage());
                 } catch (LoginInvalidException exp) {
                     throw new HttpProcessingException(400);
                 } catch (RegisterNotAllowedException exp) {
@@ -45,5 +73,9 @@ public class RegisterRequestHandler extends SwccgoServerRequestHandler implement
         } else {
             responseWriter.writeError(404);
         }
+    }
+
+    private static String weakPasswordMessage() {
+        return "Password must be at least " + com.gempukku.swccgo.security.PasswordPolicy.MIN_LENGTH + " characters.";
     }
 }
