@@ -1,0 +1,15 @@
+# /etc/swccg-backup/backup.conf (sourced by swccg-nightly-backup.sh)
+BACKUP_ROOT=/var/backups/swccg
+KEEP_DAYS=14
+AGE_RECIPIENTS_FILE=/etc/swccg-backup/age-recipients.txt
+GEMP_DB_CONTAINER=gemp_swccg_db_1
+WIKI_DB_CONTAINER=swccg_wiki_db
+WIKI_DIR=/opt/swccg-wiki
+# Regenerable caches dumped schema-only (set empty to dump everything)
+WIKI_EXCLUDE_DATA="wiki.l10n_cache wiki.objectcache wiki.searchindex wiki.querycache wiki.querycachetwo wiki.querycache_info wiki.job wiki.module_deps"
+# Forum hook: set FORUM_ENABLED=1 and define forum_backup() { stamp="$1"; ...; } here.
+FORUM_ENABLED=0
+# Off-site copy to Backblaze B2 bucket swccg-backups (native API, write-only key, bucket default
+# retention COMPLIANCE 30d set by Chief). Credentials: /etc/swccg-ops/b2-backup-writer.env (root 600).
+B2_UPLOAD_ENABLED=1
+B2_ENV_FILE=/etc/swccg-ops/b2-backup-writer.env

@@ -27,6 +27,11 @@ public class SignupGuardTests {
     }
 
     @Test
+    public void honeypotFieldIsNotAnAutofillName() {
+        assertEquals("hp_field", SignupGuard.HONEYPOT_FIELD);
+    }
+
+    @Test
     public void honeypotTripsOnlyWhenFilled() {
         assertFalse(SignupGuard.isHoneypotTripped(null));
         assertFalse(SignupGuard.isHoneypotTripped(""));
