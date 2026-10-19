@@ -144,10 +144,16 @@ Per-account lockout can be triggered by someone else (≤ 15 min); accepted trad
 - Later logins require the same GEMP id. If two legacy GEMP accounts map to one wiki name (see Alpha3's
   `report_username_case_collisions.sql`), only the first linked one gets in; the other is refused
   (`gempauth-link-mismatch`) and an admin resolves it with `linkGempAccount.php`.
-- Existing local wiki accounts that are not linked (Admin, Holocron Claude, Datacard Grok, Comlink Cursor, Abuse filter, …):
-  typed with their exact wiki name they never consult GEMP. If a GEMP canonical name maps onto one of them
-  (e.g. typed `ADMIN`, GEMP says `Admin`), the login is refused (`gempauth-link-mismatch`) and the local account is untouched.
-  Residual: in that case-variant case the typed password has already been sent to GEMP over the private network.
+- Existing local wiki accounts that are not linked (Admin, Holocron Claude, Datacard Grok, Comlink Cursor, Abuse filter, …)
+  never consult GEMP, whatever case is typed:
+  - exact wiki name → the wiki's own password check (GempAuth abstains);
+  - a case variant (`ADMIN`, `aDMIN` for `Admin`) → refused on the wiki (`gempauth-local-case-variant`)
+    **before** GEMP is called, so the password is never sent. The lookup is
+    `LOWER(CONVERT(user_name USING utf8mb4)) = lower(typed)` on MariaDB/MySQL (`user_name` is `VARBINARY`,
+    where plain `LOWER()` does nothing), value passed through `addQuotes()`.
+  - After GEMP answers OK, the wiki checks again that GEMP's canonical name does not map onto an unlinked
+    account (`gempauth-link-mismatch`).
+- Case variants of a **linked** account are fine: GEMP is asked and its canonical name selects the account.
 
 ## 8. Versioning
 
