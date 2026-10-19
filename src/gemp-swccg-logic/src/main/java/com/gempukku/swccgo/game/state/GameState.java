@@ -34,6 +34,7 @@ public class GameState implements Snapshotable<GameState> {
     private static Logger _log = LogManager.getLogger(GameState.class);
     private static final int LAST_MESSAGE_STORED_COUNT = 25000;
     private SwccgGame _game;
+    private final Random _shuffleRandom = GameUtils.createShuffleRandom();
     private PlayerOrder _playerOrder;
 
     private Map<String, List<PhysicalCard>> _reserveDecks = new HashMap<String, List<PhysicalCard>>();
@@ -606,7 +607,7 @@ public class GameState implements Snapshotable<GameState> {
 
         // Shuffle the Reserve Deck and then make sure that top card is not a double-sided card
         List<PhysicalCard> reserveDeck = _reserveDecks.get(playerId);
-        Collections.shuffle(reserveDeck);
+        Collections.shuffle(reserveDeck, _shuffleRandom);
         PhysicalCard topCard = reserveDeck.get(0);
         for (int i=0; i < reserveDeck.size(); ++i) {
             if (!topCard.getBlueprint().isFrontOfDoubleSidedCard()) {
@@ -5217,7 +5218,7 @@ public class GameState implements Snapshotable<GameState> {
             int minTimesToShuffle = (cardsInPile.size() / 30) + 1;
             int timesShuffled = 0;
             do {
-                Collections.shuffle(cardsInPile);
+                Collections.shuffle(cardsInPile, _shuffleRandom);
                 timesShuffled++;
                 topCard = cardsInPile.get(0);
             } while (timesShuffled < minTimesToShuffle || topCard.isInserted());

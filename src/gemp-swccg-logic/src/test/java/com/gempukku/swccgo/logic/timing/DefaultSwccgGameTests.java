@@ -32,7 +32,7 @@ class DefaultSwccgGameTests {
         playerDecks.put(lsPlayer, deck);
         playerDecks.put(dsPlayer, deck);
 
-        game = new DefaultSwccgGame(format, playerDecks, mock(UserFeedback.class), mock(SwccgCardBlueprintLibrary.class));
+        game = new DefaultSwccgGame(format, playerDecks, mock(UserFeedback.class), mock(SwccgCardBlueprintLibrary.class), new HashMap<>(), false);
     }
 
     @Test

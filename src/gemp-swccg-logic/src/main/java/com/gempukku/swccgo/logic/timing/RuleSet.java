@@ -44,6 +44,9 @@ public class RuleSet {
         new ExpandLocationGameTextRule(_actionsEnvironment).applyRule();
         new HabitatRule(_actionsEnvironment).applyRule();
         new HeroicRule(_modifiersEnvironment).applyRule();
+        if (game.getFormat().hasLoreHeroicRule()) {
+            new LoreHeroicRule(_modifiersEnvironment).applyRule();
+        }
         new HitCardOutsideOfAttackOrBattleRule(_actionsEnvironment).applyRule();
         new FrozenCaptiveRule(_modifiersEnvironment).applyRule();
         new InsertCardRevealedRule(_actionsEnvironment).applyRule();

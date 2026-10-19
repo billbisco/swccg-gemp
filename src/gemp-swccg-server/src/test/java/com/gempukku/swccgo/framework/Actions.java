@@ -150,13 +150,19 @@ public interface Actions extends Decisions, Choices {
      * @param card The card which is being used (played, deployed, activated, etc).
      * @param text Substring of the action text for the card action to play
      */
-    default void DSUseCardAction(PhysicalCardImpl card, String text) { DSDecided(GetCardActionId(DS, card, text)); }
+    default void DSUseCardAction(PhysicalCardImpl card, String text) {
+        assertTrue("No '" + text + "' action on " + card, DSCardActionAvailable(card, text));
+        DSDecided(GetCardActionId(DS, card, text));
+    }
     /**
      * Causes the Light Side player to execute an available action on the given card.
      * @param card The card which is being used (played, deployed, activated, etc).
      * @param text Substring of the action text for the card action to play
      */
-    default void LSUseCardAction(PhysicalCardImpl card, String text) { LSDecided(GetCardActionId(LS, card, text)); }
+    default void LSUseCardAction(PhysicalCardImpl card, String text) {
+        assertTrue("No '" + text + "' action on " + card, LSCardActionAvailable(card, text));
+        LSDecided(GetCardActionId(LS, card, text));
+    }
 
 
     /**
