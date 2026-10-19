@@ -2,14 +2,15 @@ package com.gempukku.swccgo.async.handler;
 
 import com.gempukku.swccgo.async.HttpProcessingException;
 import com.gempukku.swccgo.async.ResponseWriter;
-import com.gempukku.swccgo.game.Player;
-import com.mysql.cj.util.StringUtils;
+import com.gempukku.swccgo.service.AuthService;
+import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.cookie.CookieHeaderNames;
 import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
 
 import java.lang.reflect.Type;
-import java.util.Date;
+import java.util.Collections;
 import java.util.Map;
 
 public class LoginRequestHandler extends SwccgoServerRequestHandler implements UriRequestHandler {
@@ -25,31 +26,31 @@ public class LoginRequestHandler extends SwccgoServerRequestHandler implements U
                 String login = getFormParameterSafely(postDecoder, "login");
                 String password = getFormParameterSafely(postDecoder, "password");
 
-                Player player = _playerDao.loginPlayer(login, password);
-
-                //No user found, which is to say either user does not exist or user failed to provide credentials
-                if(player == null)
-                    throw new HttpProcessingException(401);
-
-                //User was found, but they had a blank password, which means they have had their password reset
-                // and need to be sent through the registration flow so that their password is typed in twice.
-                if (StringUtils.isNullOrEmpty(player.getPassword()))
-                    throw new HttpProcessingException(202);
-
-                //User has a permaban or tempban state
-                if (!player.hasType(Player.Type.UNBANNED)) {
-                    final Date bannedUntil = player.getBannedUntil();
-
-                    //Permabanned
-                    if(bannedUntil == null)
+                AuthService.AuthResult result = _authService.verifyCredentials(login, password, remoteIp);
+                switch (result.getStatus()) {
+                    case OK:
+                        // Use the stored name, not what was typed, so "bill" logs in as "Bill".
+                        responseWriter.writeXmlResponse(null, logUserReturningHeaders(remoteIp, result.getCanonicalName()));
+                        return;
+                    case RESET_REQUIRED:
+                        // The password was a valid one-time reset code. Hand the browser a short-lived
+                        // HttpOnly ticket; the existing "choose a new password" form posts to /register,
+                        // which only accepts the reset when this ticket is present.
+                        String ticket = _authService.createResetTicket(result.getPlayer());
+                        responseWriter.writeError(202, Collections.singletonMap(HttpHeaderNames.SET_COOKIE.toString(),
+                                encodeProtectedCookie(AuthService.RESET_COOKIE, ticket, 15 * 60, CookieHeaderNames.SameSite.Strict)));
+                        return;
+                    case BANNED:
                         throw new HttpProcessingException(403);
-
-                    //Tempbanned
-                    if (bannedUntil.after(new Date()))
+                    case TEMP_BANNED:
                         throw new HttpProcessingException(409);
+                    case THROTTLED:
+                        throw new HttpProcessingException(429);
+                    case DEACTIVATED:
+                    case INVALID:
+                    default:
+                        throw new HttpProcessingException(401);
                 }
-
-                responseWriter.writeXmlResponse(null, logUserReturningHeaders(remoteIp, login));
             }
             finally {
                 postDecoder.destroy();
