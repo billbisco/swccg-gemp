@@ -95,7 +95,7 @@ public class Card_1272_018_Tests {
     }
 
     @Test
-    public void TarffulOccupyOnForestDepthsIsNotControlWhenTarffulIsNotThere() {
+    public void TarffulOccupyOnForestDepthsIsTreatedAsControlWhileTarffulIsElsewhere() {
         var scn = GetScenario();
         var tarfful = scn.GetLSCard("tarfful");
         var forest = scn.GetLSCard("forest");
@@ -108,7 +108,34 @@ public class Card_1272_018_Tests {
         scn.MoveCardsToLocation(forest, luke, trooper);
         scn.MoveCardsToLocation(site, tarfful);
         scn.SkipToLSTurn(Phase.CONTROL);
+        assertTrue(scn.LSForceDrainAvailable(forest));
+    }
+
+    @Test
+    public void OccupyOnForestDepthsIsNotControlWithoutTarffulOnTable() {
+        var scn = GetScenario();
+        var forest = scn.GetLSCard("forest");
+        var luke = scn.GetLSCard("luke");
+        var trooper = scn.GetDSCard("trooper");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(forest);
+        scn.MoveCardsToLocation(forest, luke, trooper);
+        scn.SkipToLSTurn(Phase.CONTROL);
         assertFalse(scn.LSForceDrainAvailable(forest));
+    }
+
+    @Test
+    public void TarffulOccupyAsControlIsOnlyForestDepths() {
+        var scn = GetScenario();
+        var tarfful = scn.GetLSCard("tarfful");
+        var trooper = scn.GetDSCard("trooper");
+        var site = scn.GetLSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, tarfful, trooper);
+        scn.SkipToLSTurn(Phase.CONTROL);
+        assertFalse(scn.LSForceDrainAvailable(site));
     }
 
     @Test

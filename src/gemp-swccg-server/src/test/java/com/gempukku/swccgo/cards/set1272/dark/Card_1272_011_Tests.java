@@ -35,6 +35,8 @@ public class Card_1272_011_Tests {
                     put("sector", "1240_53");
                     put("agent", "1_194");
                     put("agent2", "1_194");
+                    put("agent3", "1_194");
+                    put("agent4", "1_194");
                     put("commander", "1272_2");
                 }},
                 10, 10,
@@ -109,6 +111,33 @@ public class Card_1272_011_Tests {
         assertAtLocation(sector, agent);
         assertAtLocation(sector, agent2);
         assertEquals(force - 1, scn.GetDSForcePileCount());
+    }
+
+    @Test
+    public void CorulagISBLogisticsOfficeRelocatesNoMoreThanThreeISBAgents() {
+        var scn = GetScenario();
+        var office = scn.GetDSCard("office");
+        var sector = scn.GetDSCard("sector");
+        var agent = scn.GetDSCard("agent");
+        var agent2 = scn.GetDSCard("agent2");
+        var agent3 = scn.GetDSCard("agent3");
+        var agent4 = scn.GetDSCard("agent4");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(office);
+        scn.MoveLocationToTable(sector);
+        scn.MoveCardsToLocation(office, agent, agent2, agent3, agent4);
+        scn.ApplyAdHocModifier(new KeywordModifier(office, Filters.or(Filters.sameCardId(agent), Filters.sameCardId(agent2),
+                Filters.sameCardId(agent3), Filters.sameCardId(agent4)), Keyword.ISB_AGENT));
+        scn.DSActivateForceCheat(2);
+        scn.SkipToDSTurn(Phase.MOVE);
+
+        assertTrue(scn.DSCardActionAvailable(office, "Relocate ISB agents"));
+        scn.DSUseCardAction(office, "Relocate ISB agents");
+        scn.DSChooseCard(office);
+        scn.DSChooseCard(sector);
+        assertTrue(scn.DSHasCardChoiceAvailable(agent4));
+        assertEquals(3, scn.DSGetChoiceMax());
     }
 
     @Test

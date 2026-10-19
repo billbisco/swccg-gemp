@@ -2,7 +2,6 @@ package com.gempukku.swccgo.cards.set1272.light;
 
 import com.gempukku.swccgo.cards.AbstractAlien;
 import com.gempukku.swccgo.cards.GameConditions;
-import com.gempukku.swccgo.cards.conditions.AtCondition;
 import com.gempukku.swccgo.cards.effects.takeandputcards.StackCardFromHandEffect;
 import com.gempukku.swccgo.cards.effects.usage.OncePerGameEffect;
 import com.gempukku.swccgo.common.ExpansionSet;
@@ -49,8 +48,7 @@ public class Card1272_018 extends AbstractAlien {
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
         List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new TreatsOccupyAsControlModifier(self, Filters.titleContains("Forest Depths"),
-                new AtCondition(self, Filters.titleContains("Forest Depths"))));
+        modifiers.add(new TreatsOccupyAsControlModifier(self, Filters.titleContains("Forest Depths")));
         modifiers.add(new KeywordModifier(self, Filters.and(Filters.Wookiee, Filters.not(Filters.unique), Filters.here(self)), Keyword.HEROIC));
         return modifiers;
     }

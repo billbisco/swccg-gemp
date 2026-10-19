@@ -21,6 +21,7 @@ import java.util.HashMap;
 import static com.gempukku.swccgo.framework.Assertions.assertInZone;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class Card_1262_025_Tests {
@@ -187,8 +188,10 @@ public class Card_1262_025_Tests {
         scn.LSChooseYes();
         scn.PassResponses("COST_TO_DRAW_DESTINY_CARD");
         scn.PassResponses("ABOUT_TO_DRAW_DESTINY_CARD");
-        assertTrue(scn.LSDecisionAvailable("DESTINY_DRAWN") || scn.DSDecisionAvailable("DESTINY_DRAWN"));
-        assertFalse(scn.LSDecisionAvailable("Cancel destiny"));
+        assertTrue(scn.DSDecisionAvailable("DESTINY_DRAWN"));
+        scn.DSPass();
+        assertNotNull(scn.LSGetDecision());
+        assertFalse(scn.LSCardPlayAvailable(approach, "Cancel destiny"));
     }
 
     private void playForceLightningAtLuke(VirtualTableScenario scn, PhysicalCardImpl lightning,

@@ -30,6 +30,7 @@ public class Card_1274_015_Tests {
                     put("mace", "1274_15");
                     put("obi", "1_21");
                     put("yoda", "4_2");
+                    put("depa", "12_4");
                     put("blaster", "1_152");
                     put("luke", "1_19");
                     put("junk", "1_17");
@@ -98,6 +99,8 @@ public class Card_1274_015_Tests {
         assertEquals(2, scn.GetDestiny(mace));
         scn.MoveCardsToLocation(site, yoda);
         assertEquals(3, scn.GetDestiny(mace));
+        scn.MoveCardsToLocation(site, scn.GetLSCard("depa"));
+        assertEquals(3, scn.GetDestiny(mace));
     }
 
     @Test
@@ -159,9 +162,28 @@ public class Card_1274_015_Tests {
         assertTrue(scn.LSCardActionAvailable(mace, "Retrieve 1 Force"));
         scn.LSUseCardAction(mace, "Retrieve 1 Force");
         scn.PassAllResponses();
-        assertTrue(junk.getZone() == Zone.USED_PILE || junk.getZone() == Zone.TOP_OF_USED_PILE
-                || junk.getZone() == Zone.HAND);
+        assertTrue(junk.getZone() == Zone.USED_PILE || junk.getZone() == Zone.TOP_OF_USED_PILE);
         assertTrue(vader.getZone() == Zone.LOST_PILE || vader.getZone() == Zone.TOP_OF_LOST_PILE);
+    }
+
+    @Test
+    public void MaceWinduDoesNotRetrieveWhenANonDarkJediIsLost() {
+        var scn = GetScenario();
+        var mace = scn.GetLSCard("mace");
+        var luke = scn.GetLSCard("luke");
+        var trooper = scn.GetDSCard("trooper");
+        var site = scn.GetLSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, mace, luke, trooper);
+        scn.SkipToLSTurn(Phase.BATTLE);
+        scn.LSInitiateBattle(site);
+        scn.PassAllResponses();
+        scn.SkipToEndOfPowerSegment(false);
+        scn.PassAllResponses();
+        assertTrue(scn.AwaitingDSBattleDamagePayment());
+        scn.DSChooseCard(trooper);
+        assertFalse(scn.LSCardActionAvailable(mace, "Retrieve 1 Force"));
     }
 
     @Test
