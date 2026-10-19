@@ -1,6 +1,6 @@
 # GEMP ⇄ wiki auth API contract — `GEMP-AUTH-V1`
 
-Status: **draft for review** (Alpha4, 2026-10-19). Wiki side: `ops/wiki-config/extensions/GempAuth` (swccg-wiki).
+Status: **draft for review** (Alpha4, 2026-10-19; rev 2: stacked on Alpha3's `security/a-password-hashing`, PR #284). Wiki side: `ops/wiki-config/extensions/GempAuth` (swccg-wiki).
 GEMP side: `gemp-swccg-async/.../async/internal/` (swccg-gemp). Coordinate changes with Alpha3 (GEMP password/session owner).
 
 ## 1. Purpose and scope
@@ -70,41 +70,64 @@ Request body (UTF-8 JSON, ≤ 4096 bytes):
 ```json
 { "username": "bill", "password": "…", "client_ip": "203.0.113.7" }
 ```
-- `username` (required, 1–64 chars): **exactly as typed**; GEMP names are case-sensitive (`utf8_bin`).
+- `username` (required, 1–64 chars): as typed. GEMP matches names **case-insensitively** (PR #284).
 - `password` (required, 1–1024 chars).
-- `client_ip` (optional): the end user's IP as MediaWiki sees it (after the `$wgCdnServersNoPurge` fix). Used only for rate limiting and the GEMP log line. Format `[0-9A-Fa-f:.]{2,45}`, else 400.
+- `client_ip` (**required**): the end user's IP as MediaWiki resolves it (`WebRequest::getIP()` through the
+  trusted proxy in `$wgCdnServersNoPurge`). It is inside the body, so it is covered by the HMAC (§3: the body's
+  SHA-256 is in the canonical string). GEMP passes it to `AuthService` for the per-IP throttle and never uses
+  the TCP peer (always the wiki container). Format `[0-9A-Fa-f:.]{2,45}`; missing or malformed → 400.
 
-GEMP checks credentials through `PlayerDAO.loginPlayer(username, password)` — the same call the game login uses —
-so Alpha3's bcrypt/Argon2id lazy-rehash work applies automatically. **Contract requirements on that DAO work:**
-it must keep returning `null` for wrong password / unknown / deactivated, keep `getPassword()` empty for
-admin-reset accounts (or replace that signal — tell Alpha4), and must not log passwords.
+GEMP checks credentials with `com.gempukku.swccgo.service.AuthService.verifyCredentials(login, password, client_ip)`,
+the same instance (from `ServerBuilder`'s object map) the game login uses: one hash format (PBKDF2, legacy
+SHA-256 rehashed on success), one reset-code check, one ban check and one throttle shared with play.swccg.com.
 
-Responses (all `application/json`, `Cache-Control: no-store`, signed as in §3):
+Status mapping. **Only `OK` logs in**; every other status is a refusal:
 
-| HTTP | Body | Meaning | Wiki behaviour |
+| `AuthService.Status` | HTTP | Body | Wiki behaviour (message key) |
 |---|---|---|---|
-| 200 | `{"ok":true,"user":{"id":42,"name":"bill","admin":false}}` | Valid, usable login. `name` is GEMP's canonical name. | Pass; wiki name = MediaWiki canonical form of `name`; auto-create + link on first login |
-| 200 | `{"ok":false,"error":"invalid_credentials"}` | Wrong password, unknown, deactivated, or bot account (indistinguishable on purpose) | "Incorrect username or password" |
-| 200 | `{"ok":false,"error":"password_reset_required"}` | Admin-reset account (blank stored password). **Never accepted**, whatever password was sent. | Tell user to set a new password on GEMP |
-| 200 | `{"ok":false,"error":"banned"}` | Permanent ban | Refuse with ban message |
-| 200 | `{"ok":false,"error":"temp_banned","until":1760003600}` | Temporary ban until Unix seconds | Refuse with date |
-| 429 | `{"ok":false,"error":"rate_limited","retry_after":120}` | See §5 | Refuse, show wait |
-| 400 | `{"ok":false,"error":"bad_request"}` | Malformed JSON / fields | `unavailable` |
-| 401 | `{"ok":false,"error":"bad_signature" \| "stale_timestamp" \| "replayed_nonce"}` | Auth between services failed | `unavailable`; check secret/clock |
-| 404 / 405 / 413 | `not_found` / `method_not_allowed` / `body_too_large` | | `unavailable` |
-| 503 | `{"ok":false,"error":"unavailable"}` | DB error etc. | `unavailable` |
+| `OK` | 200 | `{"ok":true,"user":{"id":42,"name":"Bill","admin":false}}` — `name` is `getCanonicalName()` (stored case) | Pass; wiki name = MediaWiki canonical form of `name` (not what was typed); auto-create + link on first login |
+| `INVALID` | 200 | `{"ok":false,"error":"invalid_credentials"}` | "Incorrect username or password" (`wrongpassword`) |
+| `RESET_REQUIRED` | 200 | `{"ok":false,"error":"reset_required"}` | The password was a valid one-time reset code. **Never a login.** Tell the user to finish the reset on GEMP (`gempauth-reset-required`) |
+| `BANNED` | 200 | `{"ok":false,"error":"banned"}` | `gempauth-banned` |
+| `TEMP_BANNED` | 200 | `{"ok":false,"error":"temp_banned","until":1760003600}` (`bannedUntil`, Unix seconds) | `gempauth-temp-banned` with the date |
+| `DEACTIVATED` | 200 | `{"ok":false,"error":"deactivated"}` | `gempauth-deactivated` |
+| `THROTTLED` | 200 | `{"ok":false,"error":"throttled"}` | `gempauth-throttled` (wiki assumes 5 min) |
+| — (bot account `~…`) | 200 | `invalid_credentials` (not looked up) | `wrongpassword` |
+| — (§5 endpoint limit) | 429 | `{"ok":false,"error":"throttled","retry_after":120}` | `gempauth-throttled` with the wait |
 
-## 5. Rate limiting (GEMP side, in-memory, per process)
+`INVALID` covers unknown names, wrong passwords and blank stored hashes (an old-style admin reset never
+verifies in `AuthService`). `DEACTIVATED`/`BANNED`/`TEMP_BANNED` are only returned after a correct password,
+so they do not reveal anything to someone without it. An `OK` without a player is treated as `invalid_credentials`.
+
+Transport errors (wiki shows `gempauth-unavailable`):
+
+| HTTP | Body |
+|---|---|
+| 400 | `bad_request` (malformed JSON or fields, missing `client_ip`) |
+| 401 | `bad_signature` \| `stale_timestamp` \| `replayed_nonce` (check secret/clock) |
+| 404 / 405 / 413 | `not_found` / `method_not_allowed` / `body_too_large` |
+| 503 | `unavailable` (DB error etc.) |
+
+All responses are `application/json`, `Cache-Control: no-store`, signed as in §3. Unknown `error` codes are
+treated by the wiki as `unavailable` (so the old v1-draft `password_reset_required` / `rate_limited` are gone).
+
+## 5. Rate limiting
+
+Two layers, both in memory, per GEMP process:
+
+1. **`AuthService`'s `LoginThrottle`** (Alpha3, shared with the game login): 10 failures per account in 5 minutes
+   and 50 failures per IP in 15 minutes → `THROTTLED`. Uses the signed `client_ip`.
+2. **This endpoint (second layer)**, checked before `AuthService` is called (a limited request does no
+   hashing and no DB work) → HTTP 429 `throttled`:
 
 | Key | Limit | Counts |
 |---|---|---|
-| Account (username, case-folded) | 10 per 15 min | failed attempts only; reset on success |
-| End-user IP (`client_ip`, or `-` if absent) | 30 per 5 min | all attempts |
+| Account (username, case-folded) | 10 per 15 min | `invalid_credentials` only; cleared on success |
+| End-user IP (`client_ip`) | 30 per 5 min | all attempts |
 | Global (the wiki as a caller) | 600 per min | all attempts |
 
-Limits are checked before the DB lookup; a limited request does not touch the DB. The wiki adds its own layers
-(`$wgPasswordAttemptThrottle`, ConfirmEdit `badlogin` captcha, `$wgAccountCreationThrottle`).
-Note: per-account lockout can be triggered by someone else (DoS of one account for ≤ 15 min); accepted trade-off.
+The wiki adds its own layers (`$wgPasswordAttemptThrottle`, ConfirmEdit `badlogin` captcha, nginx account-POST limit).
+Per-account lockout can be triggered by someone else (≤ 15 min); accepted trade-off.
 
 ## 6. Logging rules (both sides)
 
@@ -115,10 +138,16 @@ Note: per-account lockout can be triggered by someone else (DoS of one account f
 
 ## 7. Wiki account mapping
 
-- MediaWiki canonical name: first letter upper-cased, `_` → space. The typed name must map to the same wiki name as GEMP's canonical `name`, else refused (`gempauth-name-mismatch`).
+- Wiki name = MediaWiki canonical form (first letter upper-cased, `_` → space) of GEMP's `getCanonicalName()`,
+  not of what was typed. Typing `BILL` logs in as wiki `Bill` when GEMP's stored name is `Bill`.
 - First successful login auto-creates the wiki account and stores the GEMP id in user option `gempauth-id` (not a registered preference, so users cannot set it via the API).
-- Later logins require the same GEMP id. GEMP `bill` and `Bill` both map to wiki `Bill`: only the first linked one gets in; the other is refused (`gempauth-link-mismatch`) and an admin resolves it with `linkGempAccount.php`.
-- Existing local wiki accounts that are not linked (Admin, Holocron Claude, Datacard Grok, Comlink Cursor, Abuse filter, …) never consult GEMP: their passwords are never sent to GEMP and a GEMP account with the same name cannot take them over.
+- Later logins require the same GEMP id. If two legacy GEMP accounts map to one wiki name (see Alpha3's
+  `report_username_case_collisions.sql`), only the first linked one gets in; the other is refused
+  (`gempauth-link-mismatch`) and an admin resolves it with `linkGempAccount.php`.
+- Existing local wiki accounts that are not linked (Admin, Holocron Claude, Datacard Grok, Comlink Cursor, Abuse filter, …):
+  typed with their exact wiki name they never consult GEMP. If a GEMP canonical name maps onto one of them
+  (e.g. typed `ADMIN`, GEMP says `Admin`), the login is refused (`gempauth-link-mismatch`) and the local account is untouched.
+  Residual: in that case-variant case the typed password has already been sent to GEMP over the private network.
 
 ## 8. Versioning
 

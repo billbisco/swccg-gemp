@@ -1,14 +1,13 @@
 package com.gempukku.swccgo.async.internal;
 
-import com.gempukku.swccgo.db.PlayerDAO;
 import com.gempukku.swccgo.game.Player;
+import com.gempukku.swccgo.service.AuthService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -17,8 +16,9 @@ import java.util.regex.Pattern;
  * Transport-independent core of POST /internal/v1/verify (contract: docs/wiki-auth-api.md).
  *
  * Checks, in order: method/path, size, HMAC signature, timestamp skew, nonce replay,
- * rate limits, then GEMP credentials via {@link PlayerDAO#loginPlayer}. Password hashing stays
- * inside PlayerDAO, so the bcrypt/Argon2 upgrade there applies here with no change.
+ * this endpoint's own rate limits (a second layer), then GEMP credentials via
+ * {@link AuthService#verifyCredentials} -- the same call, hash format, rehash path, throttle and
+ * ban checks as the game login. Only {@link AuthService.Status#OK} logs in.
  *
  * Never logs the request body or the password.
  */
@@ -31,18 +31,18 @@ public class WikiAuthService {
 
     private static final Logger LOG = LogManager.getLogger(WikiAuthService.class);
 
-    private final PlayerDAO _playerDao;
+    private final AuthService _authService;
     private final InternalAuthSigner _signer;
     private final NonceCache _nonces = new NonceCache(2 * MAX_SKEW_SECONDS * 1000, 100_000);
     // Failed attempts per GEMP account (case-folded): 10 per 15 minutes.
     final KeyedRateLimiter _userFailures = new KeyedRateLimiter(10, 15 * 60_000L);
-    // All attempts per end-user IP as reported by the wiki: 30 per 5 minutes.
+    // All attempts per end-user IP (client_ip from the signed body): 30 per 5 minutes.
     final KeyedRateLimiter _ipAttempts = new KeyedRateLimiter(30, 5 * 60_000L);
     // All attempts overall (a runaway or compromised caller): 600 per minute.
     final KeyedRateLimiter _global = new KeyedRateLimiter(600, 60_000L);
 
-    public WikiAuthService(PlayerDAO playerDao, InternalAuthSigner signer) {
-        _playerDao = playerDao;
+    public WikiAuthService(AuthService authService, InternalAuthSigner signer) {
+        _authService = authService;
         _signer = signer;
     }
 
@@ -104,16 +104,16 @@ public class WikiAuthService {
         }
         if (username == null || password == null || username.isEmpty() || username.length() > 64
                 || password.isEmpty() || password.length() > 1024
-                || (clientIp != null && !IP.matcher(clientIp).matches()))
+                || clientIp == null || !IP.matcher(clientIp).matches())
             return result(400, error("bad_request"), nonce);
 
         String userKey = username.toLowerCase(Locale.ROOT);
-        String ipKey = clientIp == null ? "-" : clientIp;
+        String ipKey = clientIp;
         long retry = Math.max(_global.retryAfterSeconds("all", nowMillis),
                 Math.max(_ipAttempts.retryAfterSeconds(ipKey, nowMillis), _userFailures.retryAfterSeconds(userKey, nowMillis)));
         if (retry > 0) {
             LOG.info("wiki-auth: rate limited user=" + safe(username) + " ip=" + ipKey);
-            JSONObject err = error("rate_limited");
+            JSONObject err = error("throttled");
             err.put("retry_after", retry);
             return result(429, err, nonce);
         }
@@ -123,30 +123,26 @@ public class WikiAuthService {
         String outcome;
         JSONObject response;
         try {
-            Player player = Player.isBot(username) ? null : _playerDao.loginPlayer(username, password);
-            if (player == null) {
-                outcome = "invalid_credentials";
-                response = error(outcome);
-            } else if (player.getPassword() == null || player.getPassword().isEmpty()) {
-                // Admin-reset account: PlayerDAO.loginPlayer matches ANY password here. Never accept it.
-                outcome = "password_reset_required";
-                response = error(outcome);
-            } else if (!player.hasType(Player.Type.UNBANNED) && player.getBannedUntil() == null) {
-                outcome = "banned";
-                response = error(outcome);
-            } else if (!player.hasType(Player.Type.UNBANNED) && player.getBannedUntil().after(new Date(nowMillis))) {
-                outcome = "temp_banned";
-                response = error(outcome);
-                response.put("until", player.getBannedUntil().getTime() / 1000);
-            } else {
-                outcome = "ok";
+            // The end user's IP comes from the signed body (the wiki resolves it through its trusted
+            // proxy); never the TCP peer, which is always the wiki container.
+            AuthService.AuthResult auth = Player.isBot(username) ? null
+                    : _authService.verifyCredentials(username, password, clientIp);
+            AuthService.Status status = auth == null ? AuthService.Status.INVALID : auth.getStatus();
+            outcome = reasonFor(status);
+            if (status == AuthService.Status.OK && auth.getCanonicalName() != null && auth.getPlayer() != null) {
                 response = new JSONObject();
                 response.put("ok", true);
                 JSONObject user = new JSONObject();
-                user.put("id", player.getId());
-                user.put("name", player.getName());
-                user.put("admin", player.hasType(Player.Type.ADMIN));
+                user.put("id", auth.getPlayer().getId());
+                user.put("name", auth.getCanonicalName());
+                user.put("admin", auth.getPlayer().hasType(Player.Type.ADMIN));
                 response.put("user", user);
+            } else {
+                if ("ok".equals(outcome))
+                    outcome = "invalid_credentials"; // OK without a player: never log in
+                response = error(outcome);
+                if (status == AuthService.Status.TEMP_BANNED && auth.getBannedUntil() != null)
+                    response.put("until", auth.getBannedUntil().getTime() / 1000);
             }
         } catch (Exception e) {
             LOG.error("wiki-auth: lookup failed for user=" + safe(username) + ": " + e.getClass().getSimpleName());
@@ -159,6 +155,22 @@ public class WikiAuthService {
             _userFailures.record(userKey, nowMillis);
         LOG.info("wiki-auth: verify user=" + safe(username) + " ip=" + ipKey + " result=" + outcome);
         return result(200, response, nonce);
+    }
+
+    /** Wire reason codes (docs/wiki-auth-api.md section 4). Anything unknown is not-OK. */
+    static String reasonFor(AuthService.Status status) {
+        if (status == null)
+            return "invalid_credentials";
+        switch (status) {
+            case OK: return "ok";
+            case RESET_REQUIRED: return "reset_required";
+            case BANNED: return "banned";
+            case TEMP_BANNED: return "temp_banned";
+            case DEACTIVATED: return "deactivated";
+            case THROTTLED: return "throttled";
+            case INVALID:
+            default: return "invalid_credentials";
+        }
     }
 
     private Result result(int status, JSONObject json, String nonce) {

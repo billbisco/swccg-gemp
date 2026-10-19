@@ -1,6 +1,6 @@
 package com.gempukku.swccgo.async.internal;
 
-import com.gempukku.swccgo.db.PlayerDAO;
+import com.gempukku.swccgo.service.AuthService;
 import com.gempukku.swccgo.game.Player;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.embedded.EmbeddedChannel;
@@ -30,8 +30,9 @@ class InternalAuthHttpHandlerTest {
 
     @Test
     void endToEndThroughNetty() throws Exception {
-        PlayerDAO dao = mock(PlayerDAO.class);
-        when(dao.loginPlayer("bill", "pw-123456")).thenReturn(new Player(7, "bill", "h", "u", null, null, null, null));
+        AuthService dao = mock(AuthService.class);
+        when(dao.verifyCredentials("bill", "pw-123456", "203.0.113.7"))
+                .thenReturn(AuthResults.of(AuthService.Status.OK, new Player(7, "Bill", "h", "u", null, null, null, null)));
         WikiAuthService service = new WikiAuthService(dao, signer);
 
         FullHttpResponse ok = send(new EmbeddedChannel(new InternalAuthHttpHandler(service)),
@@ -40,6 +41,7 @@ class InternalAuthHttpHandlerTest {
         assertEquals("no-store", ok.headers().get(HttpHeaderNames.CACHE_CONTROL));
         byte[] body = io.netty.buffer.ByteBufUtil.getBytes(ok.content());
         assertTrue(new String(body, StandardCharsets.UTF_8).contains("\"ok\":true"));
+        assertTrue(new String(body, StandardCharsets.UTF_8).contains("\"name\":\"Bill\""));
         assertTrue(signer.verify(InternalAuthSigner.responseCanonical("netty-nonce-000001", 200, body), ok.headers().get("X-Gemp-Signature")));
 
         FullHttpResponse other = send(new EmbeddedChannel(new InternalAuthHttpHandler(service)),
@@ -47,9 +49,11 @@ class InternalAuthHttpHandlerTest {
         assertEquals(404, other.status().code());
 
         FullHttpResponse unsigned = send(new EmbeddedChannel(new InternalAuthHttpHandler(service)),
-                "/internal/v1/verify", "{\"username\":\"bill\",\"password\":\"pw-123456\"}", "netty-nonce-000003", false);
+                "/internal/v1/verify", "{\"username\":\"bill\",\"password\":\"pw-123456\",\"client_ip\":\"203.0.113.7\"}", "netty-nonce-000003", false);
         assertEquals(401, unsigned.status().code());
-        verify(dao, times(1)).loginPlayer(anyString(), anyString());
+        // the TCP peer of an EmbeddedChannel is "embedded"; GEMP must use the signed client_ip
+        verify(dao, times(1)).verifyCredentials(anyString(), anyString(), anyString());
+        verify(dao).verifyCredentials("bill", "pw-123456", "203.0.113.7");
     }
 
     @Test

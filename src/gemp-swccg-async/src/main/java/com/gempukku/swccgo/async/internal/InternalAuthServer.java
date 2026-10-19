@@ -1,6 +1,6 @@
 package com.gempukku.swccgo.async.internal;
 
-import com.gempukku.swccgo.db.PlayerDAO;
+import com.gempukku.swccgo.service.AuthService;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
@@ -28,15 +28,15 @@ public final class InternalAuthServer {
     }
 
     /** @return the bound channel, or null when disabled. */
-    public static Channel startIfConfigured(EventLoopGroup boss, EventLoopGroup workers, PlayerDAO playerDao) throws InterruptedException {
+    public static Channel startIfConfigured(EventLoopGroup boss, EventLoopGroup workers, AuthService authService) throws InterruptedException {
         int port = parsePort(System.getenv("INTERNAL_AUTH_PORT"));
         String secret = System.getenv("GEMP_INTERNAL_AUTH_SECRET");
-        if (port <= 0 || secret == null || secret.isEmpty()) {
+        if (port <= 0 || secret == null || secret.isEmpty() || authService == null) {
             LOG.info("wiki-auth internal listener disabled (INTERNAL_AUTH_PORT / GEMP_INTERNAL_AUTH_SECRET not set)");
             return null;
         }
         InternalAuthSigner signer = new InternalAuthSigner(secret, System.getenv("GEMP_INTERNAL_AUTH_SECRET_PREVIOUS"));
-        WikiAuthService service = new WikiAuthService(playerDao, signer);
+        WikiAuthService service = new WikiAuthService(authService, signer);
         ServerBootstrap b = new ServerBootstrap();
         b.group(boss, workers)
                 .channel(NioServerSocketChannel.class)
