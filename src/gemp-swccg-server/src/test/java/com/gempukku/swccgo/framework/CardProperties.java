@@ -37,7 +37,11 @@ public interface CardProperties extends TestBase {
      * @return All cards currently attached to the given card.
      */
     default List<PhysicalCardImpl> GetAttachedCards(PhysicalCardImpl card) {
-        return (List<PhysicalCardImpl>)(List<?>)gameState().getAttachedCards(card);
+        List<PhysicalCardImpl> attached = new ArrayList<>();
+        for (PhysicalCard c : gameState().getAttachedCards(card)) {
+            attached.add((PhysicalCardImpl) c);
+        }
+        return attached;
     }
 
     /**
@@ -45,7 +49,11 @@ public interface CardProperties extends TestBase {
      * @return All cards currently stacked on the given card.
      */
     default List<PhysicalCardImpl> GetStackedCards(PhysicalCardImpl card) {
-        return (List<PhysicalCardImpl>)(List<?>)gameState().getStackedCards(card);
+        List<PhysicalCardImpl> stacked = new ArrayList<>();
+        for (PhysicalCard c : gameState().getStackedCards(card)) {
+            stacked.add((PhysicalCardImpl) c);
+        }
+        return stacked;
     }
 
 

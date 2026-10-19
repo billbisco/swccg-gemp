@@ -16,6 +16,7 @@ public class MultipleComparator<T> implements Comparator<T> {
      * Creates a comparator that sorts using the specified comparators until a difference is found.
      * @param comparators the comparators
      */
+    @SafeVarargs
     public MultipleComparator(Comparator<T>... comparators) {
         Collections.addAll(_comparators, comparators);
     }
