@@ -20,6 +20,7 @@ import java.util.HashMap;
 
 import static com.gempukku.swccgo.framework.Assertions.assertInZone;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class Card_1262_025_Tests {
@@ -162,6 +163,32 @@ public class Card_1262_025_Tests {
         scn.PassAllResponses();
         scn.SkipBattleDestinyDraws(false);
         assertTrue(scn.GetDSTotalPower() < 9);
+    }
+
+    @Test
+    public void DarkApproachDoesNotCancelBattleDestinyDuringPowerSegment() {
+        var scn = GetScenario();
+        var approach = scn.GetLSCard("approach");
+        var luke = scn.GetLSCard("luke");
+        var trooper = scn.GetDSCard("trooper");
+        var site = scn.GetDSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, luke, trooper);
+        scn.MoveCardsToLSHand(approach);
+        scn.SkipToDSTurn(Phase.BATTLE);
+        scn.PrepareLSDestiny(3);
+        scn.DSInitiateBattle(site);
+        scn.PassWeaponsSegmentActions();
+        scn.PassPowerSegmentActions();
+        scn.PassResponses("BEFORE_BATTLE_DESTINY_DRAWS");
+        scn.PassResponses("BATTLE_DESTINY_DRAWS_COMPLETE_FOR_PLAYER");
+        assertTrue(scn.LSDecisionAvailable("battle destiny?"));
+        scn.LSChooseYes();
+        scn.PassResponses("COST_TO_DRAW_DESTINY_CARD");
+        scn.PassResponses("ABOUT_TO_DRAW_DESTINY_CARD");
+        assertTrue(scn.LSDecisionAvailable("DESTINY_DRAWN") || scn.DSDecisionAvailable("DESTINY_DRAWN"));
+        assertFalse(scn.LSDecisionAvailable("Cancel destiny"));
     }
 
     private void playForceLightningAtLuke(VirtualTableScenario scn, PhysicalCardImpl lightning,
