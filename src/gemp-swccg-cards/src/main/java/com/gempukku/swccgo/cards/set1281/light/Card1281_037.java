@@ -2,7 +2,7 @@ package com.gempukku.swccgo.cards.set1281.light;
 
 import com.gempukku.swccgo.cards.AbstractNormalEffect;
 import com.gempukku.swccgo.cards.GameConditions;
-import com.gempukku.swccgo.cards.effects.usage.OncePerTurnEffect;
+import com.gempukku.swccgo.cards.effects.usage.NumTimesPerTurnEffect;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.GameTextActionId;
 import com.gempukku.swccgo.common.Icon;
@@ -35,6 +35,7 @@ import com.gempukku.swccgo.logic.effects.choose.StackOneCardFromLostPileEffect;
 import com.gempukku.swccgo.logic.effects.choose.StackOneCardFromPileEffect;
 import com.gempukku.swccgo.logic.modifiers.MayNotBeFlippedModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
+import com.gempukku.swccgo.logic.modifiers.ModifyGameTextType;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 import com.gempukku.swccgo.logic.timing.Action;
 import com.gempukku.swccgo.logic.timing.EffectResult;
@@ -141,25 +142,28 @@ public class Card1281_037 extends AbstractNormalEffect {
         List<TopLevelGameTextAction> actions = new LinkedList<TopLevelGameTextAction>();
         Filter scoundrelEffect = Filters.and(Icon.SCOUNDREL, Filters.Effect);
 
+        int timesPerTurn = GameConditions.hasGameTextModification(game, self, ModifyGameTextType.LEGACY__SCOUNDRELS_LUCK__ONCE_IS_TWICE) ? 2 : 1;
+
         GameTextActionId deployFromHere = GameTextActionId.LEGACY__SCOUNDRELS_LUCK__DEPLOY_SCOUNDREL_EFFECT;
         if (GameConditions.isDuringYourTurn(game, playerId)
-                && GameConditions.isOnceDuringYourTurn(game, self, playerId, gameTextSourceCardId, deployFromHere)
+                && GameConditions.isNumTimesPerTurn(game, self, playerId, timesPerTurn, gameTextSourceCardId, deployFromHere)
                 && GameConditions.hasStackedCards(game, self, Filters.and(scoundrelEffect, Filters.deployable(self, null, false, 0)))) {
             TopLevelGameTextAction action = new TopLevelGameTextAction(self, playerId, gameTextSourceCardId, deployFromHere);
             action.setText("Deploy a [Scoundrel] Effect from here");
             action.setActionMsg("Deploy a [Scoundrel] Effect stacked on " + GameUtils.getCardLink(self));
-            action.appendUsage(new OncePerTurnEffect(action));
+            action.appendUsage(new NumTimesPerTurnEffect(action, timesPerTurn));
             action.appendEffect(new DeployStackedCardEffect(action, self, scoundrelEffect, false));
             actions.add(action);
         }
 
         GameTextActionId weaponId = GameTextActionId.LEGACY__SCOUNDRELS_LUCK__DEPLOY_CHARACTER_WEAPON_FROM_LOST_PILE;
-        if (GameConditions.isOnceDuringYourTurn(game, self, playerId, gameTextSourceCardId, weaponId)
+        if (GameConditions.isDuringYourTurn(game, playerId)
+                && GameConditions.isNumTimesPerTurn(game, self, playerId, timesPerTurn, gameTextSourceCardId, weaponId)
                 && GameConditions.canDeployCardFromLostPile(game, playerId, self, weaponId)) {
             TopLevelGameTextAction action = new TopLevelGameTextAction(self, playerId, gameTextSourceCardId, weaponId);
             action.setText("Deploy character weapon from Lost Pile");
             action.setActionMsg("Place a card from Lost Pile out of play to deploy a character weapon (except a grenade) from Lost Pile");
-            action.appendUsage(new OncePerTurnEffect(action));
+            action.appendUsage(new NumTimesPerTurnEffect(action, timesPerTurn));
             action.appendCost(new PlaceCardOutOfPlayFromLostPileEffect(action, playerId, playerId, Filters.any, false));
             action.appendEffect(new DeployCardFromLostPileEffect(action, Filters.and(Filters.character_weapon, Filters.except(Filters.Concussion_Grenade)), false));
             actions.add(action);

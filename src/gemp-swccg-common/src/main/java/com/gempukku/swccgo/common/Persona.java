@@ -97,6 +97,7 @@ public enum Persona implements Filterable {
     KHURGEE("Khurgee"),
     KRENNIC("Krennic"),
     KURUK("Kuruk"),
+    KYLE_KATARN("Kyle Katarn"),
     KYLO("Kylo"),
     L3_37("L3-37"),
     LADY_VADER("Lady Vader"),
