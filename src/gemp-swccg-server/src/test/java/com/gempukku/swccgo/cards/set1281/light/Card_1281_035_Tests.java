@@ -11,6 +11,7 @@ import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.common.Zone;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.logic.modifiers.AddsBattleDestinyModifier;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -98,10 +99,8 @@ public class Card_1281_035_Tests {
         assertTrue(peek2.getZone() == Zone.FORCE_PILE || peek2.getZone() == Zone.TOP_OF_FORCE_PILE);
         assertTrue(peek3.getZone() == Zone.FORCE_PILE || peek3.getZone() == Zone.TOP_OF_FORCE_PILE);
         String peekLog = String.join(" | ", scn.gameState().getLastMessages());
-        assertTrue("expected Force Pile reshuffle, log=" + peekLog, peekLog.toLowerCase().contains("shuffle"));
-        if (scn.LSGetDecision() == null && scn.DSGetDecision() != null) {
-            scn.DSPass();
-        }
+        assertTrue("expected Force Pile reshuffle, log=" + peekLog, peekLog.toLowerCase().contains("shuffles force pile"));
+        recoverLsPhaseActions(scn);
         assertTrue("once-per-turn must be checked in a card-action window. ls=" + scn.LSGetDecision()
                         + " ds=" + scn.DSGetDecision(),
                 scn.AwaitingLSControlPhaseActions());
@@ -119,11 +118,20 @@ public class Card_1281_035_Tests {
         scn.StartGame();
         scn.MoveCardsToLocation(site, lando, vader);
         scn.AttachCardsTo(lando, charm);
+        scn.ApplyAdHocModifier(new AddsBattleDestinyModifier(vader, 1, scn.DS, true));
         scn.SkipToDSTurn(Phase.BATTLE);
         scn.EnsureLSForcePile(2);
         scn.DSInitiateBattle(site);
         scn.PassAllResponses();
-        drawDsBattleDestinyAndStopAtLsDrawn(scn, 1);
+        scn.PrepareDSDestiny(2);
+        scn.PrepareDSDestiny(1);
+        scn.SkipToPowerSegment();
+        scn.PassAllResponses();
+        assertTrue("expected battle destiny prompt, ds=" + scn.DSGetDecision() + " ls=" + scn.LSGetDecision(),
+                scn.DSDecisionAvailable("battle destiny?"));
+        assertEquals(2, scn.GetDSBattleDestinyCount());
+        scn.DSChooseYes();
+        stopAtLsDestinyDrawn(scn);
         int forceBeforeAdd = scn.GetLSForcePileCount();
         assertTrue(forceBeforeAdd >= 1);
         assertTrue("Add missing. ds=" + scn.DSGetDecision() + " ls=" + scn.LSGetDecision()
@@ -131,15 +139,14 @@ public class Card_1281_035_Tests {
                 scn.LSCardActionAvailable(charm, "Add 1 to opponent's destiny"));
         scn.LSUseCardAction(charm, "Add 1 to opponent's destiny");
         scn.PassForceUseResponses();
-        while (scn.LSDecisionAvailable("optional")) {
-            scn.LSPass();
-        }
-        scn.PassAllResponses();
         String addLog = String.join(" | ", scn.gameState().getLastMessages());
         assertTrue("Charm add missing, log=" + addLog, addLog.contains("adds 1 to make the battle destiny"));
-        assertEquals("ds=" + scn.DSGetDecision() + " ls=" + scn.LSGetDecision() + " log=" + addLog,
-                3, scn.GetDSTotalDestiny());
         assertEquals(forceBeforeAdd - 1, scn.GetLSForcePileCount());
+        finishCurrentDestinyDraw(scn);
+        stopAtLsDestinyDrawn(scn);
+        assertTrue("second DS destiny must be an LS card-action window. ds=" + scn.DSGetDecision()
+                        + " ls=" + scn.LSGetDecision() + " actions=" + scn.GetLSAvailableActions(),
+                scn.LSGetDecision() != null);
         assertFalse(scn.LSCardActionAvailable(charm, "Add 1 to opponent's destiny"));
         assertFalse(scn.LSCardActionAvailable(charm, "Subtract 1 from opponent's destiny"));
     }
@@ -165,9 +172,7 @@ public class Card_1281_035_Tests {
         assertTrue(scn.LSCardActionAvailable(charm, "Subtract 1 from opponent's destiny"));
         scn.LSUseCardAction(charm, "Subtract 1 from opponent's destiny");
         scn.PassForceUseResponses();
-        while (scn.LSDecisionAvailable("optional")) {
-            scn.LSPass();
-        }
+        scn.PassResponses("optional");
         scn.PassAllResponses();
         String subLog = String.join(" | ", scn.gameState().getLastMessages());
         assertTrue("Charm subtract missing, log=" + subLog, subLog.contains("subtracts 1 to make the battle destiny"));
@@ -197,11 +202,10 @@ public class Card_1281_035_Tests {
                 scn.LSDecisionAvailable("battle destiny?"));
         scn.PrepareLSDestiny(2);
         scn.LSChooseYes();
-        scn.DSPass();
-        scn.LSPass();
-        scn.DSPass();
-        scn.LSPass();
-        scn.DSPass();
+        stopAtLsDestinyDrawn(scn);
+        assertTrue("own destiny must be an LS card-action window. ds=" + scn.DSGetDecision()
+                        + " ls=" + scn.LSGetDecision() + " actions=" + scn.GetLSAvailableActions(),
+                scn.LSGetDecision() != null);
         assertFalse(scn.LSCardActionAvailable(charm, "Add 1 to opponent's destiny"));
         assertFalse(scn.LSCardActionAvailable(charm, "Subtract 1 from opponent's destiny"));
     }
@@ -213,9 +217,32 @@ public class Card_1281_035_Tests {
         assertTrue("expected battle destiny prompt, ds=" + scn.DSGetDecision() + " ls=" + scn.LSGetDecision(),
                 scn.DSDecisionAvailable("battle destiny?"));
         scn.DSChooseYes();
-        scn.LSPass();
+        stopAtLsDestinyDrawn(scn);
+    }
+
+    private void stopAtLsDestinyDrawn(VirtualTableScenario scn) {
+        scn.PassResponses("COST_TO_DRAW_DESTINY_CARD");
+        scn.PassResponses("ABOUT_TO_DRAW_DESTINY_CARD");
+        scn.DSPass();
+        assertTrue("expected LS destiny-drawn window, ds=" + scn.DSGetDecision() + " ls=" + scn.LSGetDecision()
+                        + " actions=" + scn.GetLSAvailableActions(),
+                scn.LSGetDecision() != null);
+    }
+
+    private void finishCurrentDestinyDraw(VirtualTableScenario scn) {
+        assertTrue("expected DS leftover optional after Charm, ds=" + scn.DSGetDecision() + " ls=" + scn.LSGetDecision(),
+                scn.DSDecisionAvailable("optional"));
         scn.DSPass();
         scn.LSPass();
+        scn.PassResponses("DESTINY_DRAWN");
+        scn.PassResponses("COMPLETE_DESTINY_DRAW");
+        scn.PassResponses("DRAWING_DESTINY_COMPLETE");
+    }
+
+    private void recoverLsPhaseActions(VirtualTableScenario scn) {
+        scn.PassAllResponses();
         scn.DSPass();
+        assertTrue("expected LS phase actions, ds=" + scn.DSGetDecision() + " ls=" + scn.LSGetDecision(),
+                scn.AwaitingLSControlPhaseActions());
     }
 }
