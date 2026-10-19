@@ -130,8 +130,7 @@ public class Card_1220_004_Tests {
         assertTrue(scn.LSCanInitiateBattle(room));
         scn.LSInitiateBattle(room);
         scn.LSPass();
-        assertTrue("DS must be deciding so the negative check can fail. decision=" + scn.DSGetDecision(),
-                scn.DSGetDecision() != null);
+        assertTrue(scn.DSGetDecision() != null);
         assertTrue(scn.game().getModifiersQuerying().getTotalInfluenceAtLocation(scn.gameState(), scn.DS, room) > 3);
         assertFalse(scn.DSCardActionAvailable(bewil, "Take Interrupt into hand from Force Pile"));
     }

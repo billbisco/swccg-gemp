@@ -102,12 +102,6 @@
         <plugins>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>${surefire.version}</version>
-                <configuration>
-                    <systemPropertyVariables>
-                        <gemp.shuffleSeed>${gemp.shuffleSeed}</gemp.shuffleSeed>
-                    </systemPropertyVariables>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>

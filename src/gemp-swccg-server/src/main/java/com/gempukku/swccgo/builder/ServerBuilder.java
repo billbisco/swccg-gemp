@@ -18,6 +18,7 @@ import com.gempukku.swccgo.packagedProduct.PackagedProductStorage;
 import com.gempukku.swccgo.service.AdminService;
 import com.gempukku.swccgo.service.AuthService;
 import com.gempukku.swccgo.service.LoginThrottle;
+import com.gempukku.swccgo.security.LegacyHashMigration;
 import com.gempukku.swccgo.security.PasswordHasher;
 import com.gempukku.swccgo.security.PasswordSettings;
 import com.gempukku.swccgo.service.LoggedUserHolder;
@@ -68,11 +69,14 @@ public class ServerBuilder {
                         extract(objectMap, CollectionsManager.class),
                         extract(objectMap, SoloDraftDefinitions.class)));
 
+        PasswordHasher passwordHasher = new PasswordHasher(PasswordSettings.iterations());
         objectMap.put(AuthService.class,
                 new AuthService(
                         extract(objectMap, PlayerDAO.class),
-                        new PasswordHasher(PasswordSettings.iterations()),
+                        passwordHasher,
                         new LoginThrottle()));
+        // Wrap any unsalted SHA-256 hashes left in the DB (idempotent, background).
+        LegacyHashMigration.runInBackground(extract(objectMap, PlayerDAO.class), passwordHasher);
 
         objectMap.put(AdminService.class,
                 new AdminService(

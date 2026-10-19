@@ -1104,7 +1104,7 @@ public class HallServer extends AbstractServer {
             } else if (_motd != null) {
                 visitor.motd(_motd);
             } else {
-                _motd = "Follow the PC on Twitter @swccg to stay informed of Star Wars CCG news and events.";
+                _motd = "Welcome to GEMP-SWCCG! See the Events tab for current leagues and tournaments.";
                 visitor.motd(_motd);
             }
 

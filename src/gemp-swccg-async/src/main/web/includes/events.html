@@ -1,0 +1,82 @@
+<script type="text/javascript">
+    $(document).ready(
+        function () {
+            var comm = new GempSwccgCommunication("/gemp-swccg-server", function () {
+            });
+            var calendar = null;
+
+            // Current leagues: one row each, + Details opens that league's drawer (LeagueResultsUI list mode).
+            var leagueUI = new LeagueResultsUI("/gemp-swccg-server", function () {
+                if (calendar != null)
+                    calendar.load();
+            }, {list: $("#eventLeagueList"), idPrefix: "eventsLeague", eventLinks: true});
+
+            var liveTournaments = new GempTournamentList(comm, $("#eventTournamentList"), "Running tournaments");
+            var finishedTournaments = new GempTournamentList(comm, $("#eventTournamentHistory"), "Finished in the last 7 days");
+            comm.getLiveTournaments(function (xml) {
+                liveTournaments.render(GempTournamentList.parse(xml), "There are no running tournaments at the moment.");
+            });
+            comm.getHistoryTournaments(function (xml) {
+                finishedTournaments.render(GempTournamentList.parse(xml), "No tournament finished in the last 7 days.");
+            });
+
+            // Clicking a league on the calendar shows its details under the calendar; "Go to League" opens it on the
+            // Leagues sub-tab.
+            calendar = new EventCalendarUI(comm, $("#eventCalendar"), {
+                details: $("#eventDetails"),
+                leagueUI: leagueUI,
+                onLeague: function (leagueType) {
+                    GempLinks.open("#league-" + leagueType);
+                }
+            });
+            calendar.load();
+
+            $("#eventsMain").tabs();
+
+            // #league-<type> / #tournament-<id> hall links (hallLinks.js) open that event's drawer
+            window.GempEventsPage = {
+                showLeague: function (leagueType) {
+                    leagueUI.showLeague(leagueType);
+                },
+                showTournament: function (tournamentId) {
+                    if (liveTournaments.rows != null && liveTournaments.rows[tournamentId]) {
+                        liveTournaments.show(tournamentId);
+                    } else if (finishedTournaments.rows != null && finishedTournaments.rows[tournamentId]) {
+                        finishedTournaments.show(tournamentId);
+                    } else if (liveTournaments.rows == null || finishedTournaments.rows == null) {
+                        // the lists are still loading: ask again once both are there
+                        setTimeout(function () {
+                            window.GempEventsPage.showTournament(tournamentId);
+                        }, 200);
+                    } else {
+                        liveTournaments.show(tournamentId);
+                    }
+                }
+            };
+        });
+</script>
+
+<div id="eventsMain" class="hall-page events-page">
+    <ul>
+        <li><a href="#events-calendar">Calendar</a></li>
+        <li><a href="#events-leagues">Leagues</a></li>
+        <li><a href="#events-tournaments">Tournaments</a></li>
+    </ul>
+    <div id="events-calendar">
+        <div class="event-tab-intro">Current leagues by day. Click a league to see its details below.</div>
+        <div id="eventCalendar"></div>
+        <hr class="event-section-rule"/>
+        <div id="eventDetails"><div class="calendar-details-placeholder">Click a league above to see its details.</div></div>
+    </div>
+    <div id="events-leagues">
+        <div class="event-tab-intro">All times are server time (UTC). Joined leagues are marked; open a league for its
+            series, formats, standings and your matches.</div>
+        <div id="eventLeagueList" class="event-list"></div>
+    </div>
+    <div id="events-tournaments">
+        <div class="event-tab-intro">All times are server time (UTC).</div>
+        <div id="eventTournamentList" class="event-list"></div>
+        <hr class="event-section-rule"/>
+        <div id="eventTournamentHistory" class="event-list"></div>
+    </div>
+</div>

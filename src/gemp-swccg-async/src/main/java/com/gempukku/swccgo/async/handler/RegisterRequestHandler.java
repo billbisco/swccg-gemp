@@ -44,8 +44,8 @@ public class RegisterRequestHandler extends SwccgoServerRequestHandler implement
                     return;
                 }
 
-                // Honeypot: a hidden "website" field humans never fill. Pretend it worked, create nothing.
-                if (SignupGuard.isHoneypotTripped(getFormParameterSafely(postDecoder, "website"))) {
+                // Honeypot: a hidden "hp_field" field humans never fill (named so browser autofill leaves it alone). Pretend it worked, create nothing.
+                if (SignupGuard.isHoneypotTripped(getFormParameterSafely(postDecoder, SignupGuard.HONEYPOT_FIELD))) {
                     responseWriter.writeXmlResponse(null);
                     return;
                 }

@@ -10,6 +10,9 @@ import com.gempukku.swccgo.security.PasswordPolicy;
 import com.gempukku.swccgo.security.ResetCodes;
 import com.gempukku.swccgo.security.SignupGuard;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.nio.charset.StandardCharsets;
@@ -34,6 +37,7 @@ import java.util.function.LongSupplier;
  * {@link #completeReset} sets the new password and burns the code.</p>
  */
 public class AuthService {
+    private static final Logger LOG = LogManager.getLogger(AuthService.class);
 
     public enum Status {
         /** Name and password are right and the account may play. */
@@ -166,7 +170,12 @@ public class AuthService {
 
         if (_hasher.needsRehash(stored)) {
             // Lazy upgrade. Compare-and-set so a reset that raced this login is not undone.
-            _playerDAO.updatePasswordHash(player.getId(), stored, _hasher.hash(password));
+            // Never fatal: the password was right, so a failed upgrade must not block the login.
+            try {
+                _playerDAO.updatePasswordHash(player.getId(), stored, _hasher.hash(password));
+            } catch (Exception exp) {
+                LOG.warn("Password rehash failed for player id " + player.getId() + "; will retry on next login", exp);
+            }
         }
 
         if (player.hasType(Player.Type.DEACTIVATED))
@@ -248,9 +257,10 @@ public class AuthService {
         }
         if (player == null || player.getId() != t.playerId || _playerDAO.getPasswordResetCode(t.playerId) == null)
             return ResetOutcome.INVALID_TICKET;
-        _playerDAO.deletePasswordResetCode(t.playerId);
         if (!_playerDAO.updatePasswordHash(t.playerId, player.getPassword(), _hasher.hash(newPassword)))
             return ResetOutcome.INVALID_TICKET;
+        // Burn the code only once the new hash is stored, so a failed write leaves the code usable.
+        _playerDAO.deletePasswordResetCode(t.playerId);
         _throttle.recordSuccess(t.playerName, null);
         return ResetOutcome.OK;
     }
