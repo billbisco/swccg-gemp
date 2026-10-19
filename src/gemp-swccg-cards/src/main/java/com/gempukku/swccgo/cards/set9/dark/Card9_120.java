@@ -41,6 +41,7 @@ public class Card9_120 extends AbstractImperial {
         setLore("Imperial council member. Senior political advisor to Emperor Palpatine. Never speaks. Like his master, shows remarkable patience and wisdom.");
         setGameText("Deploys -3 to Emperor's site. When with Emperor, adds one battle destiny. Once per turn, you may use 1 Force to peek at top card of opponent's Reserve Deck; may place that card on bottom of that Reserve Deck. Immune to attrition < 4.");
         addIcons(Icon.DEATH_STAR_II);
+        addKeywords(com.gempukku.swccgo.common.Keyword.IMPERIAL_COUNCIL_MEMBER);
     }
 
     @Override
