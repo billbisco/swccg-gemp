@@ -39,6 +39,8 @@ public class LothalLayout extends AbstractSystemLayout {
                         // A) Interior sites
                         new LocationGroup("Interior sites", Filters.and(Filters.interior_site,
                                 Filters.not(Filters.exterior_site), Filters.partOfSystem(systemName))),
+                        // A2) Interior/Exterior sites at the exterior/interior boundary (generic-layout rule)
+                        new LocationGroup("Interior/Exterior sites", Filters.and(Filters.interior_site, Filters.exterior_site, Filters.partOfSystem(systemName))),
                         //  B) Capital City
                         new LocationGroup("Capital City", Filters.Lothal_Capital_City),
                         //  C) Exterior sites (except Jedi Temple)

@@ -44,9 +44,13 @@ public class CoruscantLayout extends AbstractSystemLayout {
                         new LocationGroup("500 Republica", Filters._500_Republica),
                         //  C) Private Platform
                         new LocationGroup("Private Platform", Filters.Private_Platform),
-                        //  D) Exterior sites
-                        new LocationGroup("Exterior sites", Filters.and(Filters.exterior_site, Filters.not(Filters.or(Filters.interior_site,
-                                Filters.Xizors_Palace_site, Filters.Private_Platform)), Filters.partOfSystem(systemName))),
+                        //  D) Exterior sites (non-buffer interior/exterior sites lay out as exterior)
+                        new LocationGroup("Exterior sites", Filters.and(Filters.or(
+                                Filters.and(Filters.exterior_site, Filters.not(Filters.or(Filters.interior_site,
+                                        Filters.Xizors_Palace_site, Filters.Private_Platform))),
+                                Filters.and(LocationLayoutFilters.nonBufferInteriorExteriorSite(),
+                                        Filters.not(Filters.or(Filters.Xizors_Palace_site, Filters.Private_Platform)))),
+                                Filters.partOfSystem(systemName))),
                         //  E) Xizor's Palace
                         new LocationGroup("Xizor's Palace", Filters.Xizors_Palace),
                         //  F) Uplink Station
