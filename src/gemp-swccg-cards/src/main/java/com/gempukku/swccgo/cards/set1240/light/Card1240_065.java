@@ -2,6 +2,8 @@ package com.gempukku.swccgo.cards.set1240.light;
 
 import com.gempukku.swccgo.cards.AbstractAdmiralsOrder;
 import com.gempukku.swccgo.cards.conditions.OccupiesCondition;
+import com.gempukku.swccgo.cards.evaluators.AddEvaluator;
+import com.gempukku.swccgo.cards.evaluators.CardMatchesEvaluator;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Rarity;
@@ -45,9 +47,10 @@ public class Card1240_065 extends AbstractAdmiralsOrder {
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new ForceGenerationModifier(self, systemsOccupiedByPlayer, 1, playerId));
         modifiers.add(new ForceGenerationModifier(self, systemsOccupiedByOpponent, 1, opponent));
-        modifiers.add(new PowerModifier(self, corellianPiloted, 1));
-        modifiers.add(new PowerModifier(self, Filters.and(corellianPiloted, Filters.hasPiloting(self, Filters.and(Filters.Corellian, Filters.smuggler))), 1));
-        modifiers.add(new PowerModifier(self, Filters.and(corellianPiloted, Filters.hasPiloting(self, Filters.and(Filters.Corellian, Filters.gambler))), 1));
+        modifiers.add(new PowerModifier(self, corellianPiloted,
+                new AddEvaluator(1,
+                        new CardMatchesEvaluator(0, 1, Filters.hasPiloting(self, Filters.and(Filters.Corellian, Filters.smuggler))),
+                        new CardMatchesEvaluator(0, 1, Filters.hasPiloting(self, Filters.and(Filters.Corellian, Filters.gambler))))));
         modifiers.add(new MayNotHavePowerReducedModifier(self, corellianPiloted, opponent));
         modifiers.add(new ImmuneToAttritionLessThanModifier(self, corellianPiloted, 4));
         modifiers.add(new ForceDrainModifier(self, Filters.and(Filters.battleground_site, Filters.relatedSiteTo(self, Filters.Corellia_system)),

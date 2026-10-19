@@ -63,6 +63,7 @@ public class Card_1240_104_Tests {
             add(Icon.SPECIAL_EDITION);
             add(Icon.DARK_FORCE);
             add(Icon.LIGHT_FORCE);
+            add(Icon.LEGACY_BLOCK_4);
         }});
         assertEquals(1, card.getIconCount(Icon.DARK_FORCE));
         assertEquals(1, card.getIconCount(Icon.LIGHT_FORCE));
@@ -104,11 +105,55 @@ public class Card_1240_104_Tests {
         scn.LSDeployCard(perimeter);
         assertTrue(scn.LSHasCardChoiceAvailable(hls));
         scn.LSChooseCard(hls);
-        if (scn.LSDecisionAvailable("On which side")) {
-            scn.LSChoose("Left");
-        }
+        assertTrue(scn.LSDecisionAvailable("On which side"));
+        scn.LSChoose("Left");
         scn.PassAllResponses();
         assertEquals(Zone.LOCATIONS, perimeter.getZone());
         assertEquals("Tatooine", perimeter.getPartOfSystem());
+    }
+
+    @Test
+    public void RebelCellPerimeterHothArtilleryIsPoweredForfeitPlus2AndFiresForFree() {
+        var scn = new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("hls", "1240_102");
+                    put("perimeter", "1240_104");
+                    put("atgar", "3_72");
+                    put("atgar2", "3_72");
+                }},
+                new HashMap<>() {{
+                    put("trooper", "1_194");
+                }},
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+        var hls = scn.GetLSCard("hls");
+        var perimeter = scn.GetLSCard("perimeter");
+        var atgar = scn.GetLSCard("atgar");
+        var atgar2 = scn.GetLSCard("atgar2");
+        var other = scn.GetLSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveLocationToTable(hls);
+        scn.MoveLocationToTable(perimeter);
+        scn.MoveCardsToLocation(perimeter, atgar);
+        scn.MoveCardsToLocation(other, atgar2);
+
+        assertTrue(scn.game().getModifiersQuerying().isPowered(scn.gameState(), atgar));
+        assertFalse(scn.game().getModifiersQuerying().isPowered(scn.gameState(), atgar2));
+        assertEquals(4, scn.GetForfeit(atgar));
+        assertEquals(2, scn.GetForfeit(atgar2));
+        assertEquals(0, scn.game().getModifiersQuerying().getFireWeaponCost(scn.gameState(), atgar, null, null, 2), scn.epsilon);
+        assertEquals(2, scn.game().getModifiersQuerying().getFireWeaponCost(scn.gameState(), atgar2, null, null, 2), scn.epsilon);
+        assertFalse(scn.game().getModifiersQuerying().getModifiersAffectingCard(
+                scn.gameState(), com.gempukku.swccgo.logic.modifiers.ModifierType.FORFEITED_TO_USED_PILE, atgar).isEmpty());
+        assertTrue(scn.game().getModifiersQuerying().getModifiersAffectingCard(
+                scn.gameState(), com.gempukku.swccgo.logic.modifiers.ModifierType.FORFEITED_TO_USED_PILE, atgar2).isEmpty());
     }
 }

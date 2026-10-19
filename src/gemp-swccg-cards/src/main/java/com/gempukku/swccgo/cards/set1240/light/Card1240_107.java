@@ -51,8 +51,12 @@ public class Card1240_107 extends AbstractObjective {
     @Override
     protected ObjectiveDeployedTriggerAction getGameTextWhenDeployedAction(final String playerId, SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
         final ObjectiveDeployedTriggerAction action = new ObjectiveDeployedTriggerAction(self);
+        Filter startingSystem = Filters.and(Filters.battleground_system, Filters.planet_system,
+                Filters.not(Filters.or(Filters.title(Title.Bespin), Filters.title(Title.Coruscant),
+                        Filters.title(Title.Dagobah), Filters.title(Title.Dantooine),
+                        Filters.title(Title.Endor), Filters.title(Title.Hoth))));
         action.appendRequiredEffect(
-                new DeployCardFromReserveDeckEffect(action, Filters.battleground_system, true, false) {
+                new DeployCardFromReserveDeckEffect(action, startingSystem, true, false) {
                     @Override
                     public String getChoiceText() {
                         return "Choose battleground system to deploy";
@@ -135,10 +139,10 @@ public class Card1240_107 extends AbstractObjective {
             actions.add(action);
         }
 
-        GameTextActionId cellActionId = GameTextActionId.LEGACY__HIDDEN_BASE_V__DEPLOY_REBEL_CELL_SITE_OR_CHARACTER;
-        if (GameConditions.isOncePerTurn(game, self, playerId, gameTextSourceCardId, cellActionId)
-                && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, cellActionId)) {
-            TopLevelGameTextAction siteAction = new TopLevelGameTextAction(self, gameTextSourceCardId, cellActionId);
+        GameTextActionId siteActionId = GameTextActionId.LEGACY__HIDDEN_BASE_V__DEPLOY_REBEL_CELL_SITE;
+        if (GameConditions.isOncePerTurn(game, self, playerId, gameTextSourceCardId, siteActionId)
+                && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, siteActionId)) {
+            TopLevelGameTextAction siteAction = new TopLevelGameTextAction(self, gameTextSourceCardId, siteActionId);
             siteAction.setText("Deploy Rebel Cell site from Reserve Deck");
             siteAction.setActionMsg("Deploy a Rebel Cell site from Reserve Deck");
             siteAction.appendUsage(
@@ -146,8 +150,12 @@ public class Card1240_107 extends AbstractObjective {
             siteAction.appendEffect(
                     new DeployCardFromReserveDeckEffect(siteAction, Filters.and(Filters.site, Filters.titleContains("Rebel Cell")), true));
             actions.add(siteAction);
+        }
 
-            TopLevelGameTextAction characterAction = new TopLevelGameTextAction(self, gameTextSourceCardId, cellActionId);
+        GameTextActionId characterActionId = GameTextActionId.LEGACY__HIDDEN_BASE_V__DEPLOY_CHARACTER_TO_REBEL_CELL_SITE;
+        if (GameConditions.isOncePerTurn(game, self, playerId, gameTextSourceCardId, characterActionId)
+                && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, characterActionId)) {
+            TopLevelGameTextAction characterAction = new TopLevelGameTextAction(self, gameTextSourceCardId, characterActionId);
             characterAction.setText("Deploy character of ability 2 or 3 to a Rebel Cell site");
             characterAction.setActionMsg("Deploy a character of ability 2 or 3 to a Rebel Cell site from Reserve Deck");
             characterAction.appendUsage(

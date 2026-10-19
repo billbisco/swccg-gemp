@@ -1,6 +1,7 @@
 package com.gempukku.swccgo.cards.set1240.light;
 
 import com.gempukku.swccgo.cards.AbstractSite;
+import com.gempukku.swccgo.cards.conditions.ControlsCondition;
 import com.gempukku.swccgo.cards.conditions.OccupiesCondition;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
@@ -10,7 +11,9 @@ import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
+import com.gempukku.swccgo.logic.conditions.UnlessCondition;
 import com.gempukku.swccgo.logic.modifiers.ForceDrainsMayNotBeModifiedByModifier;
+import com.gempukku.swccgo.logic.modifiers.MayFireOnlyOncePerBattleModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 
 import java.util.LinkedList;
@@ -43,6 +46,15 @@ public class Card1240_103 extends AbstractSite {
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new ForceDrainsMayNotBeModifiedByModifier(self, Filters.and(Filters.opponents(playerOnLightSideOfLocation), Filters.Objective),
                 new OccupiesCondition(playerOnLightSideOfLocation, self), playerOnLightSideOfLocation));
+        return modifiers;
+    }
+
+    @Override
+    protected List<Modifier> getGameTextDarkSideWhileActiveModifiers(String playerOnDarkSideOfLocation, SwccgGame game, PhysicalCard self) {
+        List<Modifier> modifiers = new LinkedList<Modifier>();
+        modifiers.add(new MayFireOnlyOncePerBattleModifier(self,
+                Filters.and(Filters.your(playerOnDarkSideOfLocation), Filters.weapon, Filters.at(Filters.titleContains("Rebel Cell"))),
+                new UnlessCondition(new ControlsCondition(playerOnDarkSideOfLocation, self))));
         return modifiers;
     }
 }

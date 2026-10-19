@@ -63,6 +63,7 @@ public class Card_1240_105_Tests {
             add(Icon.A_NEW_HOPE);
             add(Icon.DARK_FORCE);
             add(Icon.LIGHT_FORCE);
+            add(Icon.LEGACY_BLOCK_4);
         }});
         assertEquals(1, card.getIconCount(Icon.DARK_FORCE));
         assertEquals(1, card.getIconCount(Icon.LIGHT_FORCE));
@@ -114,15 +115,133 @@ public class Card_1240_105_Tests {
         assertEquals("Yavin 4", hls.getPartOfSystem());
         assertTrue(scn.LSDeployAvailable(room));
         scn.LSDeployCard(room);
-        if (scn.LSDecisionAvailable("Choose a location")) {
+        if (!scn.LSDecisionAvailable("On which side")) {
             scn.LSChooseCard(hls);
         }
-        if (scn.LSDecisionAvailable("On which side")) {
-            scn.LSChoose("Left");
-        }
+        assertTrue(scn.LSDecisionAvailable("On which side"));
+        scn.LSChoose("Left");
         scn.PassAllResponses();
         assertEquals(Zone.LOCATIONS, room.getZone());
         assertEquals("Yavin 4", room.getPartOfSystem());
+    }
+
+    @Test
+    public void RebelCellSituationRoomDeploysToTatooineWithHiddenLandingSite() {
+        var scn = GetScenario();
+        var hls = scn.GetLSCard("hls");
+        var room = scn.GetLSCard("room");
+
+        scn.StartGame();
+        scn.MoveCardsToLSHand(hls, room);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+
+        assertTrue(scn.LSDeployAvailable(hls));
+        scn.LSDeployLocation(hls);
+        scn.PassAllResponses();
+        scn.DSPass();
+        assertTrue(scn.AwaitingLSDeployPhaseActions());
+
+        assertTrue(scn.LSDeployAvailable(room));
+        scn.LSDeployCard(room);
+        scn.LSChooseCard(hls);
+        assertTrue(scn.LSDecisionAvailable("On which side"));
+        scn.LSChoose("Left");
+        scn.PassAllResponses();
+        assertEquals(Zone.LOCATIONS, room.getZone());
+        assertEquals("Tatooine", room.getPartOfSystem());
+    }
+
+    @Test
+    public void RebelCellSituationRoomAddsPowerAtRelatedSystemPerYourCharacter() {
+        var scn = new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("hls", "1240_102");
+                    put("room", "1240_105");
+                    put("tat", "1_127");
+                    put("luke", "1_19");
+                    put("biggs", "1_3");
+                }},
+                new HashMap<>() {{
+                    put("trooper", "1_194");
+                }},
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+        var hls = scn.GetLSCard("hls");
+        var room = scn.GetLSCard("room");
+        var tat = scn.GetLSCard("tat");
+        var luke = scn.GetLSCard("luke");
+        var biggs = scn.GetLSCard("biggs");
+        var trooper = scn.GetDSCard("trooper");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(tat);
+        scn.MoveLocationToTable(hls);
+        scn.MoveLocationToTable(room);
+
+        float p0 = scn.game().getModifiersQuerying().getTotalPowerAtLocation(scn.gameState(), tat, scn.LS, false, false);
+        scn.MoveCardsToLocation(room, luke);
+        float p1 = scn.game().getModifiersQuerying().getTotalPowerAtLocation(scn.gameState(), tat, scn.LS, false, false);
+        scn.MoveCardsToLocation(room, biggs);
+        float p2 = scn.game().getModifiersQuerying().getTotalPowerAtLocation(scn.gameState(), tat, scn.LS, false, false);
+        scn.MoveCardsToOpponentLocation(room, trooper);
+        float pOpp = scn.game().getModifiersQuerying().getTotalPowerAtLocation(scn.gameState(), tat, scn.LS, false, false);
+
+        assertEquals(Math.round(p0) + 1, Math.round(p1));
+        assertEquals(Math.round(p0) + 2, Math.round(p2));
+        assertEquals(Math.round(p2), Math.round(pOpp));
+    }
+
+    @Test
+    public void RebelCellSituationRoomOnTatooineIsNotInsideCantinaGroup() {
+        var scn = new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("hls", "1240_102");
+                    put("room", "1240_105");
+                    put("cantina", "1_128");
+                    put("db94", "1_129");
+                    put("mos", "1_133");
+                }},
+                new HashMap<>() {{
+                    put("trooper", "1_194");
+                }},
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+        var hls = scn.GetLSCard("hls");
+        var room = scn.GetLSCard("room");
+        var cantina = scn.GetLSCard("cantina");
+        var db94 = scn.GetLSCard("db94");
+        var mos = scn.GetLSCard("mos");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(cantina);
+        scn.MoveLocationToTable(db94);
+        scn.MoveLocationToTable(mos);
+        scn.MoveLocationToTable(hls);
+        scn.MoveLocationToTable(room);
+
+        var order = scn.gameState().getLocationsInOrder();
+        int cantinaIdx = order.indexOf(cantina);
+        int mosIdx = order.indexOf(mos);
+        int roomIdx = order.indexOf(room);
+        int low = Math.min(cantinaIdx, mosIdx);
+        int high = Math.max(cantinaIdx, mosIdx);
+        assertTrue(roomIdx >= 0);
+        assertFalse(roomIdx > low && roomIdx < high);
+        assertEquals("Tatooine", room.getPartOfSystem());
     }
 
     StartingSetup HiddenBaseVObjective = new StartingSetup() {

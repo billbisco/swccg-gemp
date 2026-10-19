@@ -1,6 +1,7 @@
 package com.gempukku.swccgo.cards.set1240.light;
 
 import com.gempukku.swccgo.cards.AbstractNormalEffect;
+import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.conditions.OnTableCondition;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
@@ -14,16 +15,17 @@ import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
-import com.gempukku.swccgo.game.state.GameState;
-import com.gempukku.swccgo.logic.conditions.Condition;
+import com.gempukku.swccgo.logic.TriggerConditions;
+import com.gempukku.swccgo.logic.actions.CancelCardActionBuilder;
+import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
 import com.gempukku.swccgo.logic.conditions.UnlessCondition;
 import com.gempukku.swccgo.logic.modifiers.DeployCostToLocationModifier;
 import com.gempukku.swccgo.logic.modifiers.ForceGenerationImmuneToCancelModifier;
 import com.gempukku.swccgo.logic.modifiers.GenerateNoForceModifier;
 import com.gempukku.swccgo.logic.modifiers.MayNotDeployModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
-import com.gempukku.swccgo.logic.modifiers.SuspendsCardModifier;
-import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
+import com.gempukku.swccgo.logic.timing.Effect;
+import com.gempukku.swccgo.logic.timing.EffectResult;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -41,18 +43,24 @@ public class Card1240_091 extends AbstractNormalEffect {
         addImmuneToCardTitle(Title.Alter);
     }
 
-    private static Filter virtualSuffix() {
-        return new Filter() {
-            @Override
-            public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard) {
-                return physicalCard.getBlueprint().hasVirtualSuffix();
-            }
-        };
+    private boolean choseRebelPair(SwccgGame game, PhysicalCard self) {
+        PhysicalCard hiddenBase = Filters.findFirstActive(game, self, Filters.and(Filters.Hidden_Base, Icon.LEGACY_BLOCK_4));
+        return hiddenBase != null && hiddenBase.getWhileInPlayData() != null
+                && "Rebel".equals(hiddenBase.getWhileInPlayData().getTextValue());
+    }
+
+    private Filter cardsToCancel(SwccgGame game, PhysicalCard self) {
+        Filter always = Filters.or(Filters.Organized_Attack, Filters.S_foils, Filters.Revolution,
+                Filters.and(Filters.Ellorrs_Madak, Icon.LEGACY_BLOCK_4));
+        if (choseRebelPair(game, self)) {
+            return always;
+        }
+        return Filters.or(always, Filters.Your_Destiny);
     }
 
     @Override
     protected Filter getGameTextValidDeployTargetFilter(SwccgGame game, PhysicalCard self, PlayCardOptionId playCardOptionId, boolean asReact) {
-        return Filters.and(Filters.Hidden_Base, virtualSuffix());
+        return Filters.and(Filters.Hidden_Base, Icon.LEGACY_BLOCK_4);
     }
 
     @Override
@@ -60,21 +68,8 @@ public class Card1240_091 extends AbstractNormalEffect {
         String playerId = self.getOwner();
         String opponent = game.getOpponent(playerId);
         Filter rebelCellSites = Filters.titleContains("Rebel Cell");
-        Condition choseRebelPair = new Condition() {
-            @Override
-            public boolean isFulfilled(GameState gameState, ModifiersQuerying modifiersQuerying) {
-                PhysicalCard hiddenBase = Filters.findFirstActive(gameState.getGame(), self, Filters.and(Filters.Hidden_Base, virtualSuffix()));
-                return hiddenBase != null && hiddenBase.getWhileInPlayData() != null
-                        && "Rebel".equals(hiddenBase.getWhileInPlayData().getTextValue());
-            }
-        };
 
         List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new SuspendsCardModifier(self, Filters.Organized_Attack));
-        modifiers.add(new SuspendsCardModifier(self, Filters.S_foils));
-        modifiers.add(new SuspendsCardModifier(self, Filters.Revolution));
-        modifiers.add(new SuspendsCardModifier(self, Filters.Your_Destiny, new UnlessCondition(choseRebelPair)));
-        modifiers.add(new SuspendsCardModifier(self, Filters.and(Filters.Ellorrs_Madak, virtualSuffix())));
         modifiers.add(new MayNotDeployModifier(self, Filters.or(Filters.operative, Icon.MAINTENANCE), playerId));
         modifiers.add(new ForceGenerationImmuneToCancelModifier(self, Filters.Endor_system, Filters.any));
         modifiers.add(new DeployCostToLocationModifier(self, Filters.and(Filters.opponents(self),
@@ -82,5 +77,30 @@ public class Card1240_091 extends AbstractNormalEffect {
                 new UnlessCondition(new OnTableCondition(self, Filters.Leave_Them_To_Me)), 2, rebelCellSites));
         modifiers.add(new GenerateNoForceModifier(self, Filters.titleContains("Rebel Cell - Hidden Landing Site"), opponent));
         return modifiers;
+    }
+
+    @Override
+    protected List<RequiredGameTextTriggerAction> getGameTextRequiredBeforeTriggers(SwccgGame game, Effect effect, PhysicalCard self, int gameTextSourceCardId) {
+        Filter toCancel = cardsToCancel(game, self);
+        if (TriggerConditions.isPlayingCard(game, effect, toCancel)
+                && GameConditions.canCancelCardBeingPlayed(game, self, effect)) {
+            RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
+            CancelCardActionBuilder.buildCancelCardBeingPlayedAction(action, effect);
+            return java.util.Collections.singletonList(action);
+        }
+        return null;
+    }
+
+    @Override
+    protected List<RequiredGameTextTriggerAction> getGameTextRequiredAfterTriggers(SwccgGame game, EffectResult effectResult, PhysicalCard self, int gameTextSourceCardId) {
+        List<RequiredGameTextTriggerAction> actions = new LinkedList<RequiredGameTextTriggerAction>();
+        Filter toCancel = cardsToCancel(game, self);
+        if (TriggerConditions.isTableChanged(game, effectResult)
+                && GameConditions.canTargetToCancel(game, self, toCancel)) {
+            RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
+            CancelCardActionBuilder.buildCancelCardAction(action, toCancel, "card");
+            actions.add(action);
+        }
+        return actions;
     }
 }

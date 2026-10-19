@@ -65,6 +65,7 @@ public class Card_1240_102_Tests {
             add(Icon.TATOOINE);
             add(Icon.DARK_FORCE);
             add(Icon.LIGHT_FORCE);
+            add(Icon.LEGACY_BLOCK_4);
         }});
         assertEquals(1, card.getIconCount(Icon.DARK_FORCE));
         assertEquals(2, card.getIconCount(Icon.LIGHT_FORCE));
@@ -150,6 +151,174 @@ public class Card_1240_102_Tests {
         scn.LSChooseCard(incom);
         scn.DSPass();
         scn.LSPass();
+        scn.PassAllResponses();
+        assertEquals(Zone.ATTACHED, incom.getZone());
+        assertEquals(hls, incom.getAttachedTo());
+    }
+
+    @Test
+    public void RebelCellHiddenLandingSiteStarfightersDeployLandedForMinus1Force() {
+        var scn = GetScenario();
+        var hls = scn.GetLSCard("hls");
+        var xwing = scn.GetLSCard("xwing");
+
+        scn.StartGame();
+        scn.MoveCardsToLSHand(hls, xwing);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        deployHlsAndReturnToLsDeploy(scn, hls);
+
+        int forceBefore = scn.GetLSForcePileCount();
+        assertTrue(scn.LSDeployAvailable(xwing));
+        scn.LSDeployCard(xwing);
+        scn.LSChooseCard(hls);
+        scn.PassAllResponses();
+        assertEquals(Zone.AT_LOCATION, xwing.getZone());
+        assertEquals(hls, xwing.getAtLocation());
+        assertEquals(forceBefore - 1, scn.GetLSForcePileCount());
+    }
+
+    @Test
+    public void RebelCellHiddenLandingSiteIncomFromReserveIsOncePerGame() {
+        var scn = GetScenario();
+        var hls = scn.GetLSCard("hls");
+        var incom = scn.GetLSCard("incom");
+
+        scn.StartGame();
+        scn.MoveCardsToLSHand(hls);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        deployHlsAndReturnToLsDeploy(scn, hls);
+
+        scn.MoveCardsToTopOfLSReserveDeck(incom);
+        scn.EnsureLSForcePile(2);
+        assertTrue(scn.LSCardActionAvailable(hls, "Deploy Incom Corporation from Reserve Deck"));
+        scn.LSUseCardAction(hls, "Deploy Incom Corporation from Reserve Deck");
+        scn.PassAllResponses();
+        scn.LSChooseCard(incom);
+        scn.DSPass();
+        scn.LSPass();
+        scn.PassAllResponses();
+        assertEquals(Zone.ATTACHED, incom.getZone());
+
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        scn.EnsureLSForcePile(2);
+        assertTrue(scn.AwaitingLSDeployPhaseActions());
+        assertFalse(scn.LSCardActionAvailable(hls, "Deploy Incom Corporation from Reserve Deck"));
+    }
+
+    @Test
+    public void RebelCellHiddenLandingSiteDoesNotDeployToHoth() {
+        var scn = new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("hls", "1240_102");
+                    put("hoth", "3_55");
+                }},
+                new HashMap<>() {{
+                    put("trooper", "1_194");
+                }},
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+        var hls = scn.GetLSCard("hls");
+        var hoth = scn.GetLSCard("hoth");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(hoth);
+        scn.MoveCardsToLSHand(hls);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+
+        assertTrue(scn.LSDeployAvailable(hls));
+        scn.LSDeployLocation(hls);
+        scn.PassAllResponses();
+        assertEquals(Zone.LOCATIONS, hls.getZone());
+        assertEquals("Tatooine", hls.getPartOfSystem());
+        assertFalse("Hoth".equals(hls.getPartOfSystem()));
+    }
+
+    @Test
+    public void RebelCellHiddenLandingSiteImmuneToPremiumNoEscapeNotReflectionsShield() {
+        var scn = new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("hls", "1240_102");
+                }},
+                new HashMap<>() {{
+                    put("premium", "112_16");
+                    put("shield", "13_78");
+                    put("trooper", "1_194");
+                }},
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+        var hls = scn.GetLSCard("hls");
+        var premium = scn.GetDSCard("premium");
+        var shield = scn.GetDSCard("shield");
+
+        scn.StartGame();
+        scn.MoveCardsToLSHand(hls);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        deployHlsAndReturnToLsDeploy(scn, hls);
+        scn.MoveCardsToDSSideOfTable(premium, shield);
+
+        assertFalse(scn.game().getModifiersQuerying().canBeTargetedBy(scn.gameState(), hls, premium));
+        assertTrue(scn.game().getModifiersQuerying().canBeTargetedBy(scn.gameState(), hls, shield));
+    }
+
+    @Test
+    public void RebelCellHiddenLandingSiteImmuneToRevolution() {
+        var scn = new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("hls", "1240_102");
+                    put("revolution", "1_62");
+                }},
+                new HashMap<>() {{
+                    put("trooper", "1_194");
+                }},
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+        var hls = scn.GetLSCard("hls");
+        var revolution = scn.GetLSCard("revolution");
+
+        scn.StartGame();
+        scn.MoveCardsToLSHand(hls);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        deployHlsAndReturnToLsDeploy(scn, hls);
+        scn.MoveCardsToLSSideOfTable(revolution);
+
+        assertFalse(scn.game().getModifiersQuerying().canBeTargetedBy(scn.gameState(), hls, revolution));
+    }
+
+    @Test
+    public void RebelCellHiddenLandingSiteDeploysIncomCorporationFromHand() {
+        var scn = GetScenario();
+        var hls = scn.GetLSCard("hls");
+        var incom = scn.GetLSCard("incom");
+
+        scn.StartGame();
+        scn.MoveCardsToLSHand(hls, incom);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        deployHlsAndReturnToLsDeploy(scn, hls);
+
+        assertTrue(scn.LSDeployAvailable(incom));
+        scn.LSDeployCard(incom);
+        scn.LSChooseCard(hls);
         scn.PassAllResponses();
         assertEquals(Zone.ATTACHED, incom.getZone());
         assertEquals(hls, incom.getAttachedTo());

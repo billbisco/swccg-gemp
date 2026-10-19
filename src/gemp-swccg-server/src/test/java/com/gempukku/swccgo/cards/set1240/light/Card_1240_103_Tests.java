@@ -63,6 +63,7 @@ public class Card_1240_103_Tests {
             add(Icon.SPECIAL_EDITION);
             add(Icon.DARK_FORCE);
             add(Icon.LIGHT_FORCE);
+            add(Icon.LEGACY_BLOCK_4);
         }});
         assertEquals(1, card.getIconCount(Icon.DARK_FORCE));
         assertEquals(1, card.getIconCount(Icon.LIGHT_FORCE));
@@ -104,11 +105,121 @@ public class Card_1240_103_Tests {
         scn.LSDeployCard(station);
         assertTrue(scn.LSHasCardChoiceAvailable(hls));
         scn.LSChooseCard(hls);
-        if (scn.LSDecisionAvailable("On which side")) {
-            scn.LSChoose("Left");
-        }
+        assertTrue(scn.LSDecisionAvailable("On which side"));
+        scn.LSChoose("Left");
         scn.PassAllResponses();
         assertEquals(Zone.LOCATIONS, station.getZone());
         assertEquals("Tatooine", station.getPartOfSystem());
+    }
+
+    @Test
+    public void RebelCellMonitoringStationWeaponsFireOnlyOnceUnlessDarkControls() {
+        var scn = new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("hls", "1240_102");
+                    put("station", "1240_103");
+                    put("perimeter", "1240_104");
+                    put("luke", "1_19");
+                    put("chewie", "1_3");
+                }},
+                new HashMap<>() {{
+                    put("maul", "12_101");
+                    put("saber", "13_75");
+                    put("trooper", "1_194");
+                }},
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+        var hls = scn.GetLSCard("hls");
+        var station = scn.GetLSCard("station");
+        var perimeter = scn.GetLSCard("perimeter");
+        var luke = scn.GetLSCard("luke");
+        var chewie = scn.GetLSCard("chewie");
+        var maul = scn.GetDSCard("maul");
+        var saber = scn.GetDSCard("saber");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(hls);
+        scn.MoveLocationToTable(station);
+        scn.MoveLocationToTable(perimeter);
+        scn.AttachCardsTo(maul, saber);
+        scn.MoveCardsToLocation(perimeter, maul, luke);
+        scn.MoveCardsToLocation(station, chewie);
+
+        scn.SkipToDSTurn(Phase.BATTLE);
+        scn.DSInitiateBattle(perimeter);
+        scn.PrepareDSDestiny(7);
+        scn.PrepareDSDestiny(6);
+        assertTrue(scn.DSCardActionAvailable(saber));
+        scn.DSUseCardAction(saber);
+        scn.DSChooseCard(luke);
+        scn.PassAllResponses();
+        if (scn.DSDecisionAvailable("Reduce")) {
+            scn.DSDecided(0);
+            scn.PassAllResponses();
+        }
+        scn.LSPass();
+        assertFalse(scn.DSCardActionAvailable(saber));
+    }
+
+    @Test
+    public void RebelCellMonitoringStationAllowsFireTwiceWhenDarkControls() {
+        var scn = new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("hls", "1240_102");
+                    put("station", "1240_103");
+                    put("perimeter", "1240_104");
+                    put("luke", "1_19");
+                }},
+                new HashMap<>() {{
+                    put("maul", "12_101");
+                    put("saber", "13_75");
+                    put("trooper", "1_194");
+                }},
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+        var hls = scn.GetLSCard("hls");
+        var station = scn.GetLSCard("station");
+        var perimeter = scn.GetLSCard("perimeter");
+        var luke = scn.GetLSCard("luke");
+        var maul = scn.GetDSCard("maul");
+        var saber = scn.GetDSCard("saber");
+        var trooper = scn.GetDSCard("trooper");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(hls);
+        scn.MoveLocationToTable(station);
+        scn.MoveLocationToTable(perimeter);
+        scn.AttachCardsTo(maul, saber);
+        scn.MoveCardsToLocation(perimeter, maul, luke);
+        scn.MoveCardsToLocation(station, trooper);
+
+        scn.SkipToDSTurn(Phase.BATTLE);
+        scn.DSInitiateBattle(perimeter);
+        scn.PrepareDSDestiny(7);
+        scn.PrepareDSDestiny(6);
+        assertTrue(scn.DSCardActionAvailable(saber));
+        scn.DSUseCardAction(saber);
+        scn.DSChooseCard(luke);
+        scn.PassAllResponses();
+        if (scn.DSDecisionAvailable("Reduce")) {
+            scn.DSDecided(0);
+            scn.PassAllResponses();
+        }
+        scn.LSPass();
+        assertTrue(scn.DSCardActionAvailable(saber));
     }
 }

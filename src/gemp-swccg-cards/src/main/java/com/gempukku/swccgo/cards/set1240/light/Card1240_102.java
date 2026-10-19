@@ -18,13 +18,14 @@ import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
 import com.gempukku.swccgo.logic.effects.UseForceEffect;
 import com.gempukku.swccgo.logic.effects.choose.DeployCardToLocationFromReserveDeckEffect;
 import com.gempukku.swccgo.logic.modifiers.DeployCostToLocationModifier;
+import com.gempukku.swccgo.logic.modifiers.ImmuneToCardMatchingFilterModifier;
 import com.gempukku.swccgo.logic.modifiers.ImmuneToTitleModifier;
-import com.gempukku.swccgo.logic.modifiers.LandsForFreeModifier;
+import com.gempukku.swccgo.logic.modifiers.LandsFreeToLocationModifier;
 import com.gempukku.swccgo.logic.modifiers.MayDeployAsLandedToLocationModifier;
 import com.gempukku.swccgo.logic.modifiers.MayDeployToTargetModifier;
 import com.gempukku.swccgo.logic.modifiers.MayNotDeployModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
-import com.gempukku.swccgo.logic.modifiers.TakesOffForFreeModifier;
+import com.gempukku.swccgo.logic.modifiers.TakesOffFreeFromLocationModifier;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -62,8 +63,8 @@ public class Card1240_102 extends AbstractSite {
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new MayDeployAsLandedToLocationModifier(self, Filters.and(Filters.your(playerOnLightSideOfLocation), Filters.starfighter), self));
         modifiers.add(new DeployCostToLocationModifier(self, Filters.and(Filters.your(playerOnLightSideOfLocation), Filters.starfighter), -1, self, true));
-        modifiers.add(new TakesOffForFreeModifier(self, Filters.and(Filters.your(playerOnLightSideOfLocation), Filters.starfighter, Filters.at(self))));
-        modifiers.add(new LandsForFreeModifier(self, Filters.and(Filters.your(playerOnLightSideOfLocation), Filters.starfighter, Filters.at(self))));
+        modifiers.add(new TakesOffFreeFromLocationModifier(self, Filters.and(Filters.your(playerOnLightSideOfLocation), Filters.starfighter), self));
+        modifiers.add(new LandsFreeToLocationModifier(self, Filters.and(Filters.your(playerOnLightSideOfLocation), Filters.starfighter), self));
         modifiers.add(new MayDeployToTargetModifier(self, Filters.title("Incom Corporation"), self));
         return modifiers;
     }
@@ -75,7 +76,8 @@ public class Card1240_102 extends AbstractSite {
         modifiers.add(new MayNotDeployModifier(self, Filters.sameTitle(self), playerOnDarkSideOfLocation));
         modifiers.add(new MayNotDeployModifier(self, Filters.sameTitle(self), opponent));
         modifiers.add(new ImmuneToTitleModifier(self, Filters.titleContains("Rebel Cell"), Title.Revolution));
-        modifiers.add(new ImmuneToTitleModifier(self, Filters.titleContains("Rebel Cell"), Title.No_Escape));
+        modifiers.add(new ImmuneToCardMatchingFilterModifier(self, Filters.titleContains("Rebel Cell"),
+                Filters.and(Filters.title(Title.No_Escape), Icon.PREMIUM)));
         return modifiers;
     }
 
