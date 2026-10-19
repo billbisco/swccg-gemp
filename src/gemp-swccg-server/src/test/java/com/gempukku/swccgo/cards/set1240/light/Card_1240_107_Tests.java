@@ -10,6 +10,7 @@ import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Zone;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.game.PhysicalCardImpl;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -187,6 +188,7 @@ public class Card_1240_107_Tests {
                     put("hls", "1240_102");
                     put("uncharted", "1240_91");
                     put("corellia", "2_61");
+                    put("alderaan", "1_126");
                 }},
                 new HashMap<>() {{
                     put("trooper", "1_194");
@@ -202,21 +204,19 @@ public class Card_1240_107_Tests {
         );
         var hiddenbase = scn.GetLSCard("hiddenbase");
         var corellia = scn.GetLSCard("corellia");
+        var alderaan = scn.GetLSCard("alderaan");
 
         scn.StartGame();
         scn.SkipToLSTurn(Phase.DEPLOY);
-        scn.MoveCardsToTopOfLSReserveDeck(corellia);
+        scn.MoveCardsToTopOfLSReserveDeck(corellia, alderaan);
 
         assertTrue(scn.LSCardActionAvailable(hiddenbase, "Deploy battleground system from Reserve Deck"));
         scn.LSUseCardAction(hiddenbase, "Deploy battleground system from Reserve Deck");
-        if (scn.LSHasCardChoiceAvailable(corellia)) {
-            scn.LSChooseCard(corellia);
-        }
+        assertTrue(scn.LSHasCardChoiceAvailable(corellia));
+        scn.LSChooseCard(corellia);
         scn.PassAllResponses();
         assertEquals(Zone.LOCATIONS, corellia.getZone());
-        if (!scn.AwaitingLSDeployPhaseActions()) {
-            scn.DSPass();
-        }
+        scn.DSPass();
         assertTrue(scn.AwaitingLSDeployPhaseActions());
         assertFalse(scn.LSCardActionAvailable(hiddenbase, "Deploy battleground system from Reserve Deck"));
     }
@@ -230,6 +230,8 @@ public class Card_1240_107_Tests {
                     put("uncharted", "1240_91");
                     put("station", "1240_103");
                     put("biggs", "1_3");
+                    put("luke", "1_19");
+                    put("leia", "1_17");
                 }},
                 new HashMap<>() {{
                     put("trooper", "1_194");
@@ -246,40 +248,70 @@ public class Card_1240_107_Tests {
         var hiddenbase = scn.GetLSCard("hiddenbase");
         var station = scn.GetLSCard("station");
         var biggs = scn.GetLSCard("biggs");
+        var luke = scn.GetLSCard("luke");
+        var leia = scn.GetLSCard("leia");
         var hls = scn.GetLSCard("hls");
 
         scn.StartGame();
         scn.SkipToLSTurn(Phase.DEPLOY);
-        scn.MoveCardsToTopOfLSReserveDeck(station, biggs);
+        scn.MoveCardsToTopOfLSReserveDeck(station, biggs, luke, leia);
 
         assertTrue(scn.LSCardActionAvailable(hiddenbase, "Deploy Rebel Cell site from Reserve Deck"));
         scn.LSUseCardAction(hiddenbase, "Deploy Rebel Cell site from Reserve Deck");
-        if (scn.LSHasCardChoiceAvailable(station)) {
-            scn.LSChooseCard(station);
-        }
-        if (scn.LSHasCardChoiceAvailable(hls)) {
-            scn.LSChooseCard(hls);
-        }
-        if (scn.LSDecisionAvailable("On which side")) {
-            scn.LSChoose("Left");
-        }
+        assertTrue(scn.LSHasCardChoiceAvailable(station));
+        scn.LSChooseCard(station);
+        assertTrue(scn.LSDecisionAvailable("On which side"));
+        scn.LSChoose("Left");
         scn.PassAllResponses();
         assertEquals(Zone.LOCATIONS, station.getZone());
-        if (!scn.AwaitingLSDeployPhaseActions()) {
-            scn.DSPass();
-        }
+        scn.DSPass();
         assertTrue(scn.AwaitingLSDeployPhaseActions());
 
         assertTrue(scn.LSCardActionAvailable(hiddenbase, "Deploy character of ability 2 or 3 to a Rebel Cell site"));
         scn.LSUseCardAction(hiddenbase, "Deploy character of ability 2 or 3 to a Rebel Cell site");
-        if (scn.LSHasCardChoiceAvailable(biggs)) {
-            scn.LSChooseCard(biggs);
-        }
-        if (scn.LSHasCardChoiceAvailable(hls)) {
-            scn.LSChooseCard(hls);
-        }
+        assertTrue(scn.LSHasCardChoiceAvailable(biggs));
+        assertTrue(scn.LSHasCardChoiceAvailable(leia));
+        scn.LSChooseCard(biggs);
+        assertTrue(scn.LSHasCardChoiceAvailable(hls));
+        scn.LSChooseCard(hls);
         scn.PassAllResponses();
         assertEquals(Zone.AT_LOCATION, biggs.getZone());
+    }
+
+    @Test
+    public void HiddenBaseDoesNotDeployAbility4CharacterToRebelCellSite() {
+        var scn = new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("yavin", "1_135");
+                    put("hls", "1240_102");
+                    put("uncharted", "1240_91");
+                    put("luke", "1_19");
+                    put("biggs", "1_3");
+                }},
+                new HashMap<>() {{
+                    put("trooper", "1_194");
+                }},
+                10, 10,
+                HiddenBaseVObjective,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+        var hiddenbase = scn.GetLSCard("hiddenbase");
+        var luke = scn.GetLSCard("luke");
+        var biggs = scn.GetLSCard("biggs");
+
+        scn.StartGame();
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        scn.MoveCardsToTopOfLSReserveDeck(luke, biggs);
+
+        assertTrue(scn.LSCardActionAvailable(hiddenbase, "Deploy character of ability 2 or 3 to a Rebel Cell site"));
+        scn.LSUseCardAction(hiddenbase, "Deploy character of ability 2 or 3 to a Rebel Cell site");
+        assertTrue(lsReserveSearchSelectable(scn, biggs));
+        assertFalse(lsReserveSearchSelectable(scn, luke));
     }
 
     @Test
@@ -435,5 +467,255 @@ public class Card_1240_107_Tests {
         scn.MoveCardsToOpponentLocation(station, trooper2);
         scn.SkipToLSTurn(Phase.CONTROL);
         assertEquals("Hidden Base", hiddenbase.getBlueprint().getTitle());
+    }
+
+    @Test
+    public void HiddenBaseDoesNotFlipWhenOpponentControlsARebelCellSite() {
+        var scn = new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("yavin", "1_135");
+                    put("hls", "1240_102");
+                    put("uncharted", "1240_91");
+                    put("station", "1240_103");
+                    put("perimeter", "1240_104");
+                    put("room", "1240_105");
+                    put("luke", "1_19");
+                    put("biggs", "1_3");
+                    put("leia", "1_17");
+                }},
+                new HashMap<>() {{
+                    put("trooper", "1_194");
+                }},
+                10, 10,
+                HiddenBaseVObjective,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+        var hiddenbase = scn.GetLSCard("hiddenbase");
+        var hls = scn.GetLSCard("hls");
+        var station = scn.GetLSCard("station");
+        var perimeter = scn.GetLSCard("perimeter");
+        var room = scn.GetLSCard("room");
+        var luke = scn.GetLSCard("luke");
+        var biggs = scn.GetLSCard("biggs");
+        var leia = scn.GetLSCard("leia");
+        var trooper = scn.GetDSCard("trooper");
+
+        scn.StartGame();
+        var stationPlacement = scn.gameState().getLocationPlacement(scn.game(), station, "Yavin 4", null);
+        scn.MoveLocationToTable(station, stationPlacement.getFirst());
+        var perimeterPlacement = scn.gameState().getLocationPlacement(scn.game(), perimeter, "Yavin 4", null);
+        scn.MoveLocationToTable(perimeter, perimeterPlacement.getFirst());
+        var roomPlacement = scn.gameState().getLocationPlacement(scn.game(), room, "Yavin 4", null);
+        scn.MoveLocationToTable(room, roomPlacement.getFirst());
+        scn.MoveCardsToLocation(hls, luke);
+        scn.MoveCardsToLocation(station, biggs);
+        scn.MoveCardsToLocation(perimeter, leia);
+        scn.MoveCardsToOpponentLocation(room, trooper);
+        scn.SkipToPhase(Phase.CONTROL);
+
+        assertEquals("Hidden Base", hiddenbase.getBlueprint().getTitle());
+    }
+
+    @Test
+    public void HiddenBasePairBanPersistsAfterFlip() {
+        var scn = new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("yavin", "1_135");
+                    put("hls", "1240_102");
+                    put("uncharted", "1240_91");
+                    put("station", "1240_103");
+                    put("perimeter", "1240_104");
+                    put("luke", "1_19");
+                    put("biggs", "1_3");
+                    put("leia", "1_17");
+                    put("boshek", "1_4");
+                }},
+                new HashMap<>() {{
+                    put("trooper", "1_194");
+                }},
+                10, 10,
+                HiddenBaseVObjective,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+        var hiddenbase = scn.GetLSCard("hiddenbase");
+        var hls = scn.GetLSCard("hls");
+        var station = scn.GetLSCard("station");
+        var perimeter = scn.GetLSCard("perimeter");
+        var luke = scn.GetLSCard("luke");
+        var biggs = scn.GetLSCard("biggs");
+        var leia = scn.GetLSCard("leia");
+        var boshek = scn.GetLSCard("boshek");
+
+        scn.StartGame();
+        var stationPlacement = scn.gameState().getLocationPlacement(scn.game(), station, "Yavin 4", null);
+        scn.MoveLocationToTable(station, stationPlacement.getFirst());
+        var perimeterPlacement = scn.gameState().getLocationPlacement(scn.game(), perimeter, "Yavin 4", null);
+        scn.MoveLocationToTable(perimeter, perimeterPlacement.getFirst());
+        scn.MoveCardsToLocation(hls, luke);
+        scn.MoveCardsToLocation(station, biggs);
+        scn.MoveCardsToLocation(perimeter, leia);
+        scn.SkipToPhase(Phase.CONTROL);
+        assertEquals("Systems Will Slip Through Your Fingers", hiddenbase.getBlueprint().getTitle());
+
+        scn.MoveCardsToLSHand(boshek);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        assertFalse(scn.LSCardPlayAvailable(boshek));
+    }
+
+    @Test
+    public void HiddenBaseBackAdds2ToImmunity() {
+        var scn = new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("yavin", "1_135");
+                    put("hls", "1240_102");
+                    put("uncharted", "1240_91");
+                    put("station", "1240_103");
+                    put("perimeter", "1240_104");
+                    put("luke", "1_19");
+                    put("biggs", "1_3");
+                    put("leia", "1_17");
+                    put("falcon", "1_143");
+                    put("han", "1_11");
+                }},
+                new HashMap<>() {{
+                    put("trooper", "1_194");
+                }},
+                10, 10,
+                HiddenBaseVObjective,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+        var yavin = scn.GetLSCard("yavin");
+        var hls = scn.GetLSCard("hls");
+        var station = scn.GetLSCard("station");
+        var perimeter = scn.GetLSCard("perimeter");
+        var luke = scn.GetLSCard("luke");
+        var biggs = scn.GetLSCard("biggs");
+        var leia = scn.GetLSCard("leia");
+        var falcon = scn.GetLSCard("falcon");
+        var han = scn.GetLSCard("han");
+
+        scn.StartGame();
+        var stationPlacement = scn.gameState().getLocationPlacement(scn.game(), station, "Yavin 4", null);
+        scn.MoveLocationToTable(station, stationPlacement.getFirst());
+        var perimeterPlacement = scn.gameState().getLocationPlacement(scn.game(), perimeter, "Yavin 4", null);
+        scn.MoveLocationToTable(perimeter, perimeterPlacement.getFirst());
+        scn.MoveCardsToLocation(hls, luke);
+        scn.MoveCardsToLocation(station, biggs);
+        scn.MoveCardsToLocation(perimeter, leia);
+        scn.MoveCardsToLocation(yavin, falcon);
+        scn.BoardAsPilot(falcon, han);
+
+        float before = scn.game().getModifiersQuerying().getImmunityToAttritionLessThan(scn.gameState(), falcon);
+        scn.SkipToPhase(Phase.CONTROL);
+        float after = scn.game().getModifiersQuerying().getImmunityToAttritionLessThan(scn.gameState(), falcon);
+        assertEquals(5, Math.round(before));
+        assertEquals(7, Math.round(after));
+    }
+
+    @Test
+    public void HiddenBaseBackLosesOneForceToCancelDrainOncePerTurn() {
+        var scn = new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("yavin", "1_135");
+                    put("hls", "1240_102");
+                    put("uncharted", "1240_91");
+                    put("station", "1240_103");
+                    put("perimeter", "1240_104");
+                    put("luke", "1_19");
+                    put("biggs", "1_3");
+                    put("leia", "1_17");
+                }},
+                new HashMap<>() {{
+                    put("trooper", "1_194");
+                    put("trooper2", "1_194");
+                    put("plaza", "7_270");
+                }},
+                10, 10,
+                HiddenBaseVObjective,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+        var hiddenbase = scn.GetLSCard("hiddenbase");
+        var hls = scn.GetLSCard("hls");
+        var station = scn.GetLSCard("station");
+        var perimeter = scn.GetLSCard("perimeter");
+        var luke = scn.GetLSCard("luke");
+        var biggs = scn.GetLSCard("biggs");
+        var leia = scn.GetLSCard("leia");
+        var trooper = scn.GetDSCard("trooper");
+        var trooper2 = scn.GetDSCard("trooper2");
+        var plaza = scn.GetDSCard("plaza");
+        var dsStart = scn.GetDSStartingLocation();
+
+        scn.StartGame();
+        var stationPlacement = scn.gameState().getLocationPlacement(scn.game(), station, "Yavin 4", null);
+        scn.MoveLocationToTable(station, stationPlacement.getFirst());
+        var perimeterPlacement = scn.gameState().getLocationPlacement(scn.game(), perimeter, "Yavin 4", null);
+        scn.MoveLocationToTable(perimeter, perimeterPlacement.getFirst());
+        scn.MoveLocationToTable(plaza);
+        scn.MoveCardsToLocation(hls, luke);
+        scn.MoveCardsToLocation(station, biggs);
+        scn.MoveCardsToLocation(perimeter, leia);
+        scn.MoveCardsToLocation(dsStart, trooper);
+        scn.MoveCardsToLocation(plaza, trooper2);
+        scn.SkipToPhase(Phase.CONTROL);
+        assertEquals("Systems Will Slip Through Your Fingers", hiddenbase.getBlueprint().getTitle());
+        assertTrue(scn.AwaitingDSControlPhaseActions());
+
+        while (scn.GetLSForcePileCount() > 0) {
+            scn.MoveCardsToTopOfLSUsedPile(scn.GetTopOfLSForcePile());
+        }
+        int lifeBefore = scn.GetLSLifeForceRemaining();
+        scn.DSForceDrainAt(dsStart);
+        scn.DSPass();
+        assertTrue(scn.LSActionAvailable("Cancel Force drain"));
+        scn.LSChooseAction("Cancel Force drain");
+        scn.PassAllResponses();
+        assertTrue(scn.LSDecisionAvailable("Choose Force to lose"));
+        scn.LSChooseCard(scn.GetTopOfLSReserveDeck());
+        scn.PassResponses("optional");
+        assertEquals(lifeBefore - 1, scn.GetLSLifeForceRemaining());
+        assertFalse(scn.IsActiveForceDrain());
+        assertTrue(scn.AwaitingLSControlPhaseActions());
+        scn.LSPass();
+        assertTrue(scn.AwaitingDSControlPhaseActions());
+
+        scn.DSForceDrainAt(plaza);
+        scn.DSPass();
+        assertFalse(scn.GetLSAvailableActions().stream().anyMatch(t -> t.contains("Cancel Force drain")));
+    }
+
+    private boolean lsReserveSearchSelectable(VirtualTableScenario scn, PhysicalCardImpl card) {
+        String[] blueprintIds = scn.LSGetADParam("blueprintId");
+        String[] selectable = scn.LSGetADParam("selectable");
+        if (blueprintIds == null || selectable == null) {
+            return false;
+        }
+        String id = card.getBlueprintId(true);
+        for (int i = 0; i < blueprintIds.length; i++) {
+            if (id.equals(blueprintIds[i]) && "true".equals(selectable[i])) {
+                return true;
+            }
+        }
+        return false;
     }
 }

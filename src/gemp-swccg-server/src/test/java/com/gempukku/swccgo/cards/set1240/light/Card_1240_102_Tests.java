@@ -323,4 +323,57 @@ public class Card_1240_102_Tests {
         assertEquals(Zone.ATTACHED, incom.getZone());
         assertEquals(hls, incom.getAttachedTo());
     }
+
+    @Test
+    public void RebelCellHiddenLandingSiteStarfightersTakeOffAndLandForFree() {
+        var scn = new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("hls", "1240_102");
+                    put("xwing", "1_146");
+                    put("tat", "1_127");
+                }},
+                new HashMap<>() {{
+                    put("trooper", "1_194");
+                }},
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+        var hls = scn.GetLSCard("hls");
+        var xwing = scn.GetLSCard("xwing");
+        var tat = scn.GetLSCard("tat");
+        var farm = scn.GetLSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveLocationToTable(tat);
+        scn.MoveLocationToTable(hls);
+        scn.MoveCardsToLocation(hls, xwing);
+
+        float takeOffFromHls = scn.game().getModifiersQuerying().getTakeOffCost(scn.gameState(), xwing, hls, tat, false, 0);
+        float takeOffFromFarm = scn.game().getModifiersQuerying().getTakeOffCost(scn.gameState(), xwing, farm, tat, false, 0);
+        float landToHls = scn.game().getModifiersQuerying().getLandingCost(scn.gameState(), xwing, tat, hls, false, 0);
+        float landToFarm = scn.game().getModifiersQuerying().getLandingCost(scn.gameState(), xwing, tat, farm, false, 0);
+        assertEquals(0, Math.round(takeOffFromHls));
+        assertEquals(1, Math.round(takeOffFromFarm));
+        assertEquals(0, Math.round(landToHls));
+        assertEquals(1, Math.round(landToFarm));
+    }
+
+    @Test
+    public void RebelCellHiddenLandingSiteDoesNotDeployToSubjugatedPlanet() {
+        var scn = GetScenario();
+        var hls = scn.GetLSCard("hls");
+
+        scn.StartGame();
+        scn.gameState().setSubjugatedPlanet("Tatooine");
+        scn.MoveCardsToLSHand(hls);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+
+        assertFalse(scn.LSDeployAvailable(hls));
+    }
 }

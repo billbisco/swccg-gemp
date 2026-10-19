@@ -160,10 +160,6 @@ public class Card_1240_103_Tests {
         scn.DSUseCardAction(saber);
         scn.DSChooseCard(luke);
         scn.PassAllResponses();
-        if (scn.DSDecisionAvailable("Reduce")) {
-            scn.DSDecided(0);
-            scn.PassAllResponses();
-        }
         scn.LSPass();
         assertFalse(scn.DSCardActionAvailable(saber));
     }
@@ -215,11 +211,165 @@ public class Card_1240_103_Tests {
         scn.DSUseCardAction(saber);
         scn.DSChooseCard(luke);
         scn.PassAllResponses();
-        if (scn.DSDecisionAvailable("Reduce")) {
-            scn.DSDecided(0);
-            scn.PassAllResponses();
-        }
         scn.LSPass();
         assertTrue(scn.DSCardActionAvailable(saber));
     }
+
+    @Test
+    public void RebelCellMonitoringStationPermanentWeaponFiresOnceUnlessDarkControls() {
+        var scn = new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("hls", "1240_102");
+                    put("station", "1240_103");
+                    put("perimeter", "1240_104");
+                    put("luke", "1_19");
+                    put("chewie", "1_3");
+                }},
+                new HashMap<>() {{
+                    put("dengar", "200_79");
+                    put("trooper", "1_194");
+                }},
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+        var hls = scn.GetLSCard("hls");
+        var station = scn.GetLSCard("station");
+        var perimeter = scn.GetLSCard("perimeter");
+        var luke = scn.GetLSCard("luke");
+        var chewie = scn.GetLSCard("chewie");
+        var dengar = scn.GetDSCard("dengar");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(hls);
+        scn.MoveLocationToTable(station);
+        scn.MoveLocationToTable(perimeter);
+        scn.MoveCardsToLocation(perimeter, dengar, luke);
+        scn.MoveCardsToLocation(station, chewie);
+
+        scn.SkipToDSTurn(Phase.BATTLE);
+        scn.DSInitiateBattle(perimeter);
+        scn.PrepareDSDestiny(7);
+        scn.PrepareDSDestiny(6);
+        assertTrue(scn.DSCardActionAvailable(dengar));
+        scn.DSUseCardAction(dengar);
+        scn.DSChooseCard(luke);
+        scn.PassAllResponses();
+        scn.LSPass();
+        assertFalse(scn.DSCardActionAvailable(dengar));
+    }
+
+    @Test
+    public void RebelCellMonitoringStationPermanentWeaponFiresTwiceWhenDarkControls() {
+        var scn = new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("hls", "1240_102");
+                    put("station", "1240_103");
+                    put("perimeter", "1240_104");
+                    put("luke", "1_19");
+                }},
+                new HashMap<>() {{
+                    put("dengar", "200_79");
+                    put("trooper", "1_194");
+                }},
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+        var hls = scn.GetLSCard("hls");
+        var station = scn.GetLSCard("station");
+        var perimeter = scn.GetLSCard("perimeter");
+        var luke = scn.GetLSCard("luke");
+        var dengar = scn.GetDSCard("dengar");
+        var trooper = scn.GetDSCard("trooper");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(hls);
+        scn.MoveLocationToTable(station);
+        scn.MoveLocationToTable(perimeter);
+        scn.MoveCardsToLocation(perimeter, dengar, luke);
+        scn.MoveCardsToLocation(station, trooper);
+
+        scn.SkipToDSTurn(Phase.BATTLE);
+        scn.DSInitiateBattle(perimeter);
+        scn.PrepareDSDestiny(7);
+        scn.PrepareDSDestiny(6);
+        assertTrue(scn.DSCardActionAvailable(dengar));
+        scn.DSUseCardAction(dengar);
+        scn.DSChooseCard(luke);
+        scn.PassAllResponses();
+        scn.LSPass();
+        assertTrue(scn.DSCardActionAvailable(dengar));
+    }
+
+    @Test
+    public void RebelCellMonitoringStationOccupiedDrainsMayNotBeModifiedByOpponentsObjective() {
+        var scn = new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("hls", "1240_102");
+                    put("station", "1240_103");
+                    put("tat", "1_127");
+                    put("luke", "1_19");
+                    put("biggs", "1_3");
+                }},
+                new HashMap<>() {{
+                    put("trooper", "1_194");
+                }},
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                OccupationOutsideDeck,
+                VirtualTableScenario.Open
+        );
+        var hls = scn.GetLSCard("hls");
+        var station = scn.GetLSCard("station");
+        var tat = scn.GetLSCard("tat");
+        var luke = scn.GetLSCard("luke");
+        var biggs = scn.GetLSCard("biggs");
+        var occupation = scn.GetDSCard("occupation");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(tat);
+        scn.MoveLocationToTable(hls);
+        scn.MoveLocationToTable(station);
+        scn.MoveCardsToLocation(hls, luke);
+        scn.MoveCardsToDSSideOfTable(occupation);
+        scn.gameState().flipCard(scn.game(), occupation, true);
+        assertEquals("Imperial Control", occupation.getBlueprint().getTitle());
+
+        assertFalse(scn.game().getModifiersQuerying().isForceDrainModifierCanceled(
+                scn.gameState(), hls, occupation, scn.DS, scn.LS, -1));
+        scn.MoveCardsToLocation(station, biggs);
+        assertTrue(scn.game().getModifiersQuerying().isForceDrainModifierCanceled(
+                scn.gameState(), hls, occupation, scn.DS, scn.LS, -1));
+        scn.MoveOutOfPlay(biggs);
+        assertFalse(scn.game().getModifiersQuerying().isForceDrainModifierCanceled(
+                scn.gameState(), hls, occupation, scn.DS, scn.LS, -1));
+    }
+
+    StartingSetup OccupationOutsideDeck = new StartingSetup() {
+        @Override
+        public HashMap<String, String> Cards() {
+            return new HashMap<>() {{
+                put("occupation", "7_298");
+            }};
+        }
+
+        @Override
+        public void Setup(VirtualTableScenario scn) {
+        }
+    };
 }

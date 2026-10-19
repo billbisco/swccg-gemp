@@ -136,6 +136,8 @@ public class VirtualTableScenario implements TestBase, Actions, AdHocEffects, Ba
 
         InitializeGameWithDecks(decks, format);
 
+        LSCards.putAll(lshields);
+        DSCards.putAll(dshields);
         ResetGameState(LSCards, DSCards);
 
 

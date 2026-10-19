@@ -53,7 +53,9 @@ public class Card1240_103 extends AbstractSite {
     protected List<Modifier> getGameTextDarkSideWhileActiveModifiers(String playerOnDarkSideOfLocation, SwccgGame game, PhysicalCard self) {
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new MayFireOnlyOncePerBattleModifier(self,
-                Filters.and(Filters.your(playerOnDarkSideOfLocation), Filters.weapon, Filters.at(Filters.titleContains("Rebel Cell"))),
+                Filters.and(Filters.your(playerOnDarkSideOfLocation),
+                        Filters.or(Filters.weapon, Filters.hasPermanentWeapon),
+                        Filters.at(Filters.titleContains("Rebel Cell"))),
                 new UnlessCondition(new ControlsCondition(playerOnDarkSideOfLocation, self))));
         return modifiers;
     }

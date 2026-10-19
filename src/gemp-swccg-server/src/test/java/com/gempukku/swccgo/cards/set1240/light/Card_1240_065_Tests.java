@@ -187,4 +187,145 @@ public class Card_1240_065_Tests {
         float withOccupy = scn.game().getModifiersQuerying().getForceDrainAmount(scn.gameState(), city, scn.LS);
         assertEquals(Math.round(withoutOccupy) + 1, Math.round(withOccupy));
     }
+
+    @Test
+    public void NoQuestionsAskedCorellianPilotIsPowerPlus1() {
+        var scn = new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("nqa", "1240_65");
+                    put("xwing", "1_146");
+                    put("commander", "2_17");
+                    put("corellia", "2_61");
+                }},
+                new HashMap<>() {{
+                    put("trooper", "1_194");
+                }},
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+        var nqa = scn.GetLSCard("nqa");
+        var xwing = scn.GetLSCard("xwing");
+        var commander = scn.GetLSCard("commander");
+        var corellia = scn.GetLSCard("corellia");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(corellia);
+        scn.MoveCardsToLocation(corellia, xwing);
+        scn.BoardAsPilot(xwing, commander);
+
+        int before = scn.GetPower(xwing);
+        scn.MoveCardsToLSSideOfTable(nqa);
+        assertEquals(before + 1, scn.GetPower(xwing));
+    }
+
+    @Test
+    public void NoQuestionsAskedCorellianSmugglerPilotedStarshipIsPowerPlus2() {
+        var scn = new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("nqa", "1240_65");
+                    put("xwing", "1_146");
+                    put("wedge", "2_23");
+                    put("corellia", "2_61");
+                }},
+                new HashMap<>() {{
+                    put("trooper", "1_194");
+                }},
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+        var nqa = scn.GetLSCard("nqa");
+        var xwing = scn.GetLSCard("xwing");
+        var wedge = scn.GetLSCard("wedge");
+        var corellia = scn.GetLSCard("corellia");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(corellia);
+        scn.MoveCardsToLocation(corellia, xwing);
+        scn.BoardAsPilot(xwing, wedge);
+
+        int before = scn.GetPower(xwing);
+        scn.MoveCardsToLSSideOfTable(nqa);
+        assertEquals(before + 2, scn.GetPower(xwing));
+    }
+
+    @Test
+    public void NoQuestionsAskedOpponentMayNotReducePower() {
+        var scn = new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("nqa", "1240_65");
+                    put("xwing", "1_146");
+                    put("han", "1_11");
+                    put("corellia", "2_61");
+                }},
+                new HashMap<>() {{
+                    put("trooper", "1_194");
+                }},
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+        var nqa = scn.GetLSCard("nqa");
+        var xwing = scn.GetLSCard("xwing");
+        var han = scn.GetLSCard("han");
+        var corellia = scn.GetLSCard("corellia");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(corellia);
+        scn.MoveCardsToLocation(corellia, xwing);
+        scn.BoardAsPilot(xwing, han);
+        scn.MoveCardsToLSSideOfTable(nqa);
+
+        assertTrue(scn.game().getModifiersQuerying().isProhibitedFromHavingPowerReduced(scn.gameState(), xwing, scn.DS));
+    }
+
+    @Test
+    public void NoQuestionsAskedAddsDarkForceGenerationAtOccupiedSystems() {
+        var scn = new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("nqa", "1240_65");
+                    put("tat", "1_127");
+                }},
+                new HashMap<>() {{
+                    put("tie", "1_304");
+                    put("trooper", "1_194");
+                }},
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+        var nqa = scn.GetLSCard("nqa");
+        var tat = scn.GetLSCard("tat");
+        var tie = scn.GetDSCard("tie");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(tat);
+        scn.MoveCardsToOpponentLocation(tat, tie);
+
+        float before = scn.game().getModifiersQuerying().getForceGenerationFromLocation(scn.gameState(), tat, scn.DS);
+        scn.MoveCardsToLSSideOfTable(nqa);
+        float after = scn.game().getModifiersQuerying().getForceGenerationFromLocation(scn.gameState(), tat, scn.DS);
+        assertEquals(Math.round(before) + 1, Math.round(after));
+    }
 }
