@@ -171,6 +171,7 @@ public class Card_1230_110_Tests {
         takeJediEffectAndDeclineDeploy(scn, insight);
         takeJediEffectAndDeclineDeploy(scn, twilight);
         takeJediEffectAndDeclineDeploy(scn, honor);
+        assertFalse(scn.LSDecisionAvailable("Choose card"));
 
         int taken = 0;
         if (insight.getZone() == Zone.HAND || insight.getZone() == Zone.SIDE_OF_TABLE) taken++;
