@@ -128,4 +128,33 @@ public class Card_1240_012_Tests {
         assertEquals(1, scn.game().getModifiersQuerying().getInitiateBattleCost(scn.gameState(), tatooine, scn.LS, true), scn.epsilon);
         assertEquals(3, scn.game().getModifiersQuerying().getInitiateBattleCost(scn.gameState(), dantooine, scn.LS, true), scn.epsilon);
     }
+
+    @Test
+    public void OfficerEvaxMakeOpponentUsePlusTwoForceIsOncePerTurn() {
+        var scn = GetScenario();
+        var evax = scn.GetDSCard("evax");
+        var aloo = scn.GetDSCard("aloo");
+        var commander = scn.GetDSCard("commander");
+        var room = scn.GetDSCard("room");
+        var tatooine = scn.GetDSCard("tatooine");
+        var ywing = scn.GetLSCard("ywing");
+        var pilot = scn.GetLSCard("pilot");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(room);
+        scn.MoveLocationToTable(tatooine);
+        scn.MoveCardsToLocation(tatooine, ywing);
+        scn.BoardAsPilot(ywing, pilot);
+        scn.MoveCardsToLocation(room, evax, aloo, commander);
+        scn.SkipToDSTurn(Phase.MOVE);
+
+        assertTrue(scn.AwaitingDSMovePhaseActions());
+        assertTrue(scn.DSCardActionAvailable(evax, "Make opponent use +2 Force"));
+        scn.DSUseCardAction(evax, "Make opponent use +2 Force");
+        scn.DSChooseCard(ywing);
+        scn.PassAllResponses();
+        scn.LSPass();
+        assertTrue(scn.AwaitingDSMovePhaseActions());
+        assertFalse(scn.DSCardActionAvailable(evax, "Make opponent use +2 Force"));
+    }
 }

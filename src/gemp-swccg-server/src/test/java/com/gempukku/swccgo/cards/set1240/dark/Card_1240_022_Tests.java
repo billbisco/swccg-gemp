@@ -102,6 +102,9 @@ public class Card_1240_022_Tests {
         scn.DSChooseCard(luke);
         scn.PassAllResponses();
         assertEquals(forfeitBefore - 1, scn.GetForfeit(luke));
+        scn.LSPass();
+        assertTrue(scn.AwaitingDSControlPhaseActions());
+        assertFalse(scn.DSCardActionAvailable(crush, "Subtract influence from a character"));
     }
 
     @Test

@@ -86,6 +86,7 @@ public class Card_1272_008_Tests {
         scn.SkipToDSTurn(Phase.DEPLOY);
         scn.EnsureDSForcePile(1);
         scn.MoveCardsToTopOfDSReserveDeck(evax);
+        int forceBefore = scn.GetDSForcePileCount();
         assertTrue(scn.DSCardActionAvailable(collab, "Take Council Member"));
         scn.DSUseCardAction(collab, "Take Council Member");
         scn.PassAllResponses();
@@ -95,6 +96,7 @@ public class Card_1272_008_Tests {
         scn.DSChooseCard(evax);
         scn.PassAllResponses();
         assertEquals(Zone.HAND, evax.getZone());
+        assertEquals(forceBefore - 1, scn.GetDSForcePileCount());
     }
 
     @Test
@@ -130,6 +132,7 @@ public class Card_1272_008_Tests {
         scn.SkipToDSTurn(Phase.DEPLOY);
         scn.EnsureDSForcePile(1);
         scn.MoveCardsToTopOfDSReserveDeck(bewil);
+        int forceBefore = scn.GetDSForcePileCount();
         assertTrue(scn.DSCardActionAvailable(collab, "Take Council Member"));
         scn.DSUseCardAction(collab, "Take Council Member");
         scn.PassAllResponses();
@@ -139,6 +142,7 @@ public class Card_1272_008_Tests {
         scn.DSChooseCard(bewil);
         scn.PassAllResponses();
         assertEquals(Zone.HAND, bewil.getZone());
+        assertEquals(forceBefore - 1, scn.GetDSForcePileCount());
     }
 
     @Test
@@ -154,6 +158,7 @@ public class Card_1272_008_Tests {
         scn.SkipToDSTurn(Phase.DEPLOY);
         scn.EnsureDSForcePile(1);
         scn.MoveCardsToTopOfDSReserveDeck(office);
+        int forceBefore = scn.GetDSForcePileCount();
         assertTrue(scn.DSCardActionAvailable(collab, "Deploy an ISB site"));
         scn.DSUseCardAction(collab, "Deploy an ISB site");
         scn.PassAllResponses();
@@ -167,6 +172,7 @@ public class Card_1272_008_Tests {
         scn.DSChoose("Left");
         scn.PassAllResponses();
         assertTrue(office.getZone() == Zone.LOCATIONS || office.getZone() == Zone.AT_LOCATION);
+        assertEquals(forceBefore - 1, scn.GetDSForcePileCount());
     }
 
     @Test

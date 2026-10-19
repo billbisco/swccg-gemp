@@ -140,6 +140,30 @@ public class Card_1272_002_Tests {
         assertTrue(vader.getZone() == Zone.LOST_PILE || vader.getZone() == Zone.TOP_OF_LOST_PILE);
     }
 
+    @Test
+    public void IsbCentralCommanderExchangeIsNotOfferedDuringMoveOrControl() {
+        var scn = GetScenario();
+        var commander = scn.GetDSCard("commander");
+        var hand = scn.GetDSCard("hand");
+        var yularen = scn.GetDSCard("yularen");
+        var vader = scn.GetDSCard("vader");
+        var site = scn.GetDSCard("site");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(site);
+        scn.MoveCardsToLocation(site, commander);
+        scn.MoveCardsToDSHand(hand);
+        scn.MoveCardsToTopOfDSLostPile(yularen, vader);
+
+        scn.SkipToDSTurn(Phase.CONTROL);
+        assertTrue(scn.AwaitingDSControlPhaseActions());
+        assertFalse(scn.DSCardActionAvailable(commander, "Exchange an Imperial"));
+
+        scn.SkipToPhase(Phase.MOVE);
+        assertTrue(scn.AwaitingDSMovePhaseActions());
+        assertFalse(scn.DSCardActionAvailable(commander, "Exchange an Imperial"));
+    }
+
     private boolean selectable(VirtualTableScenario scn, com.gempukku.swccgo.game.PhysicalCardImpl card) {
         String[] blueprintIds = scn.GetADParam(scn.DS, "blueprintId");
         String[] cardIds = scn.GetADParam(scn.DS, "cardId");
