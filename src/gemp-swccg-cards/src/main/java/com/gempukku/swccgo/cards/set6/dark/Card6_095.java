@@ -116,7 +116,7 @@ public class Card6_095 extends AbstractAlien {
             actions.add(action);
         }
 
-        for (OptionalGameTextTriggerAction a : this.<OptionalGameTextTriggerAction>getMindScannedActions(playerId, game, self, effectResult, null, MINDSCAN_ACTION_TYPE.GAME_TEXT_OPTIONAL_AFTER_TRIGGERS)) {
+        for(OptionalGameTextTriggerAction a:(List<OptionalGameTextTriggerAction>) getMindScannedActions(playerId, game, self, effectResult, null, MINDSCAN_ACTION_TYPE.GAME_TEXT_OPTIONAL_AFTER_TRIGGERS)) {
             actions.add(a);
         }
 
@@ -126,16 +126,16 @@ public class Card6_095 extends AbstractAlien {
 
     @Override
     protected List<TopLevelGameTextAction> getGameTextTopLevelActions(final String playerId, final SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
-        return getMindScannedActions(playerId, game, self, null, null, MINDSCAN_ACTION_TYPE.GAME_TEXT_TOP_LEVEL_ACTIONS);
+        return (List<TopLevelGameTextAction>) getMindScannedActions(playerId, game, self, null, null, MINDSCAN_ACTION_TYPE.GAME_TEXT_TOP_LEVEL_ACTIONS);
     }
 
     @Override
     protected List<OptionalGameTextTriggerAction> getGameTextLeavesTableOptionalTriggers(final String playerId, SwccgGame game, EffectResult effectResult, final PhysicalCard self, int gameTextSourceCardId) {
-        return getMindScannedActions(playerId, game, self, effectResult, null, MINDSCAN_ACTION_TYPE.GAME_TEXT_LEAVES_TABLE_OPTIONAL_TRIGGERS);
+        return (List<OptionalGameTextTriggerAction>) getMindScannedActions(playerId, game, self, effectResult, null, MINDSCAN_ACTION_TYPE.GAME_TEXT_LEAVES_TABLE_OPTIONAL_TRIGGERS);
     }
 
     protected List<RequiredGameTextTriggerAction> getGameTextRequiredBeforeTriggers(SwccgGame game, Effect effect, PhysicalCard self, int gameTextSourceCardId) {
-        return getMindScannedActions(null, game, self, null, effect, MINDSCAN_ACTION_TYPE.GAME_TEXT_REQUIRED_BEFORE_TRIGGERS);
+        return (List<RequiredGameTextTriggerAction>) getMindScannedActions(null, game, self, null, effect, MINDSCAN_ACTION_TYPE.GAME_TEXT_REQUIRED_BEFORE_TRIGGERS);
     }
 
     protected List<RequiredGameTextTriggerAction> getGameTextRequiredBeforeTriggersWhenInactiveInPlay(SwccgGame game, Effect effect, PhysicalCard self, int gameTextSourceCardId) {
@@ -143,7 +143,7 @@ public class Card6_095 extends AbstractAlien {
     }
 
     protected List<OptionalGameTextTriggerAction> getGameTextOptionalBeforeTriggers(String playerId, SwccgGame game, Effect effect, PhysicalCard self, int gameTextSourceCardId) {
-        return getMindScannedActions(playerId, game, self, null, effect, MINDSCAN_ACTION_TYPE.GAME_TEXT_OPTIONAL_BEFORE_TRIGGERS);
+        return (List<OptionalGameTextTriggerAction>) getMindScannedActions(playerId, game, self, null, effect, MINDSCAN_ACTION_TYPE.GAME_TEXT_OPTIONAL_BEFORE_TRIGGERS);
     }
 
 
@@ -152,7 +152,7 @@ public class Card6_095 extends AbstractAlien {
     }
 
     protected List<OptionalGameTextTriggerAction> getOpponentsCardGameTextOptionalBeforeTriggers(String playerId, SwccgGame game, Effect effect, PhysicalCard self, int gameTextSourceCardId) {
-        return getMindScannedActions(playerId, game, self, null, effect, MINDSCAN_ACTION_TYPE.OPPONENTS_CARD_GAME_TEXT_OPTIONAL_BEFORE_TRIGGERS);
+        return (List<OptionalGameTextTriggerAction>) getMindScannedActions(playerId, game, self, null, effect, MINDSCAN_ACTION_TYPE.OPPONENTS_CARD_GAME_TEXT_OPTIONAL_BEFORE_TRIGGERS);
     }
 
 
@@ -162,7 +162,7 @@ public class Card6_095 extends AbstractAlien {
 
 
     protected List<RequiredGameTextTriggerAction> getGameTextRequiredAfterTriggers(SwccgGame game, EffectResult effectResult, PhysicalCard self, int gameTextSourceCardId) {
-        return getMindScannedActions(null, game, self, effectResult, null, MINDSCAN_ACTION_TYPE.GAME_TEXT_REQUIRED_AFTER_TRIGGERS);
+        return (List<RequiredGameTextTriggerAction>) getMindScannedActions(null, game, self, effectResult, null, MINDSCAN_ACTION_TYPE.GAME_TEXT_REQUIRED_AFTER_TRIGGERS);
     }
 
 
@@ -177,12 +177,12 @@ public class Card6_095 extends AbstractAlien {
 
     @Override
     protected List<TopLevelGameTextAction> getOpponentsCardGameTextTopLevelActions(String playerId, SwccgGame game, PhysicalCard self, int gameTextSourceCardId) {
-        return getMindScannedActions(playerId, game, self, null, null, MINDSCAN_ACTION_TYPE.OPPONENTS_CARD_GAME_TEXT_TOP_LEVEL_ACTIONS);
+        return (List<TopLevelGameTextAction>) getMindScannedActions(playerId, game, self, null, null, MINDSCAN_ACTION_TYPE.OPPONENTS_CARD_GAME_TEXT_TOP_LEVEL_ACTIONS);
     }
 
     @Override
     protected List<OptionalGameTextTriggerAction> getOpponentsCardGameTextOptionalAfterTriggers(String playerId, SwccgGame game, EffectResult effectResult, PhysicalCard self, int gameTextSourceCardId) {
-        return getMindScannedActions(playerId, game, self, effectResult, null, MINDSCAN_ACTION_TYPE.OPPONENTS_CARD_GAME_TEXT_OPTIONAL_AFTER_TRIGGERS);
+        return (List<OptionalGameTextTriggerAction>) getMindScannedActions(playerId, game, self, effectResult, null, MINDSCAN_ACTION_TYPE.OPPONENTS_CARD_GAME_TEXT_OPTIONAL_AFTER_TRIGGERS);
     }
 
     private enum MINDSCAN_ACTION_TYPE {
@@ -200,11 +200,11 @@ public class Card6_095 extends AbstractAlien {
     };
 
     @SuppressWarnings("unchecked")
-    private <T> List<T> getMindScannedActions(String playerId, SwccgGame game, PhysicalCard self, EffectResult effectResult, Effect effect, MINDSCAN_ACTION_TYPE actionType) {
-        List<?> actions = new ArrayList<>();
-        if (game.getModifiersQuerying().hasMindscannedCharacter(game.getGameState(), self) && !game.getModifiersQuerying().mindscannedCharacterGameTextWasCanceled(game.getGameState(), self)) {
+    private List getMindScannedActions(String playerId, SwccgGame game, PhysicalCard self, EffectResult effectResult, Effect effect, MINDSCAN_ACTION_TYPE actionType){
+        List actions = new ArrayList();
+        if(game.getModifiersQuerying().hasMindscannedCharacter(game.getGameState(), self) && !game.getModifiersQuerying().mindscannedCharacterGameTextWasCanceled(game.getGameState(), self)) {
             SwccgCardBlueprint blueprint = game.getModifiersQuerying().getMindscannedCharacterBlueprint(game.getGameState(), self);
-            switch (actionType) {
+            switch(actionType) {
                 case OPTIONAL_AFTER_ACTIONS:
                     actions = blueprint.getOptionalAfterActions(playerId, game, effectResult, self);
                     break;
@@ -240,6 +240,6 @@ public class Card6_095 extends AbstractAlien {
                     break;
             }
         }
-        return actions == null ? new ArrayList<>() : (List<T>) actions;
+        return actions;
     }
 }
