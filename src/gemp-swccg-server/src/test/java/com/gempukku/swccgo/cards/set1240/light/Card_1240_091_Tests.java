@@ -389,6 +389,83 @@ public class Card_1240_091_Tests {
         assertEquals(Zone.TOP_OF_LOST_PILE, destiny.getZone());
     }
 
+    private VirtualTableScenario FlipScenario(StartingSetup objective) {
+        return new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("yavin", "1_135");
+                    put("hls", "1240_102");
+                    put("uncharted", "1240_91");
+                    put("station", "1240_103");
+                    put("perimeter", "1240_104");
+                    put("luke", "1_19");
+                    put("biggs", "1_3");
+                    put("leia", "1_17");
+                }},
+                new HashMap<>() {{
+                    put("trooper", "1_194");
+                    put("destiny", "9_134");
+                }},
+                10, 10,
+                objective,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+    }
+
+    private void OccupyThreeRebelCellSites(VirtualTableScenario scn) {
+        var hls = scn.GetLSCard("hls");
+        var station = scn.GetLSCard("station");
+        var perimeter = scn.GetLSCard("perimeter");
+        var stationPlacement = scn.gameState().getLocationPlacement(scn.game(), station, "Yavin 4", null);
+        scn.MoveLocationToTable(station, stationPlacement.getFirst());
+        var perimeterPlacement = scn.gameState().getLocationPlacement(scn.game(), perimeter, "Yavin 4", null);
+        scn.MoveLocationToTable(perimeter, perimeterPlacement.getFirst());
+        scn.MoveCardsToLocation(hls, scn.GetLSCard("luke"));
+        scn.MoveCardsToLocation(station, scn.GetLSCard("biggs"));
+        scn.MoveCardsToLocation(perimeter, scn.GetLSCard("leia"));
+    }
+
+    @Test
+    public void UnchartedSettlementsYourDestinyStaysAfterHiddenBaseFlipsWhenRebelPairChosen() {
+        var scn = FlipScenario(HiddenBaseVObjective);
+        var hiddenbase = scn.GetLSCard("hiddenbase");
+        var uncharted = scn.GetLSCard("uncharted");
+        var destiny = scn.GetDSCard("destiny");
+
+        scn.StartGame();
+        OccupyThreeRebelCellSites(scn);
+        scn.MoveCardsToDSSideOfTable(destiny);
+        scn.SkipToPhase(Phase.CONTROL);
+        assertEquals("Systems Will Slip Through Your Fingers", hiddenbase.getBlueprint().getTitle());
+        assertEquals(Zone.ATTACHED, uncharted.getZone());
+
+        scn.SkipToLSTurn(Phase.CONTROL);
+        assertEquals("Systems Will Slip Through Your Fingers", hiddenbase.getBlueprint().getTitle());
+        assertEquals(Zone.SIDE_OF_TABLE, destiny.getZone());
+    }
+
+    @Test
+    public void UnchartedSettlementsCancelsYourDestinyAfterHiddenBaseFlipsWhenNonRebelPairChosen() {
+        var scn = FlipScenario(HiddenBaseAlienPairObjective);
+        var hiddenbase = scn.GetLSCard("hiddenbase");
+        var uncharted = scn.GetLSCard("uncharted");
+        var destiny = scn.GetDSCard("destiny");
+
+        scn.StartGame();
+        OccupyThreeRebelCellSites(scn);
+        scn.SkipToPhase(Phase.CONTROL);
+        assertEquals("Systems Will Slip Through Your Fingers", hiddenbase.getBlueprint().getTitle());
+        assertEquals(Zone.ATTACHED, uncharted.getZone());
+
+        scn.MoveCardsToDSSideOfTable(destiny);
+        scn.SkipToLSTurn(Phase.CONTROL);
+        assertEquals(Zone.TOP_OF_LOST_PILE, destiny.getZone());
+    }
+
     @Test
     public void UnchartedSettlementsMayNotDeployMaintenanceCards() {
         var scn = new VirtualTableScenario(

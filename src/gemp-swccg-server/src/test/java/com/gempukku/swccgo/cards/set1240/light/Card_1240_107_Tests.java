@@ -704,6 +704,173 @@ public class Card_1240_107_Tests {
         assertFalse(scn.GetLSAvailableActions().stream().anyMatch(t -> t.contains("Cancel Force drain")));
     }
 
+    private VirtualTableScenario IncomKoensayrScenario() {
+        return new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("yavin", "1_135");
+                    put("hls", "1240_102");
+                    put("uncharted", "1240_91");
+                    put("station", "1240_103");
+                    put("perimeter", "1240_104");
+                    put("luke", "1_19");
+                    put("biggs", "1_3");
+                    put("leia", "1_17");
+                    put("warRoom", "1_139");
+                    put("incom", "7_66");
+                    put("ralltiir", "2_65");
+                    put("koensayr", "7_67");
+                    put("awing", "9_62");
+                    put("awing2", "9_62");
+                }},
+                new HashMap<>() {{
+                    put("trooper", "1_194");
+                }},
+                10, 10,
+                HiddenBaseVObjective,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+    }
+
+    private void SetUpIncomKoensayr(VirtualTableScenario scn, boolean occupyThreeRebelCellSites) {
+        var yavin = scn.GetLSCard("yavin");
+        var warRoom = scn.GetLSCard("warRoom");
+        var ralltiir = scn.GetLSCard("ralltiir");
+        if (occupyThreeRebelCellSites) {
+            var station = scn.GetLSCard("station");
+            var perimeter = scn.GetLSCard("perimeter");
+            var stationPlacement = scn.gameState().getLocationPlacement(scn.game(), station, "Yavin 4", null);
+            scn.MoveLocationToTable(station, stationPlacement.getFirst());
+            var perimeterPlacement = scn.gameState().getLocationPlacement(scn.game(), perimeter, "Yavin 4", null);
+            scn.MoveLocationToTable(perimeter, perimeterPlacement.getFirst());
+            scn.MoveCardsToLocation(scn.GetLSCard("hls"), scn.GetLSCard("luke"));
+            scn.MoveCardsToLocation(station, scn.GetLSCard("biggs"));
+            scn.MoveCardsToLocation(perimeter, scn.GetLSCard("leia"));
+        }
+        var warRoomPlacement = scn.gameState().getLocationPlacement(scn.game(), warRoom, "Yavin 4", null);
+        scn.MoveLocationToTable(warRoom, warRoomPlacement.getFirst());
+        scn.MoveLocationToTable(ralltiir);
+        scn.AttachCardsTo(warRoom, scn.GetLSCard("incom"));
+        scn.AttachCardsTo(ralltiir, scn.GetLSCard("koensayr"));
+        scn.MoveCardsToLocation(yavin, scn.GetLSCard("awing"));
+        scn.MoveCardsToTopOfLSLostPile(scn.GetLSCard("awing2"));
+    }
+
+    @Test
+    public void HiddenBaseBackWidensIncomAndKoensayrToNonUniqueAwing() {
+        var scn = IncomKoensayrScenario();
+        var hiddenbase = scn.GetLSCard("hiddenbase");
+        var koensayr = scn.GetLSCard("koensayr");
+        var awing = scn.GetLSCard("awing");
+        var awing2 = scn.GetLSCard("awing2");
+
+        scn.StartGame();
+        SetUpIncomKoensayr(scn, true);
+        scn.SkipToPhase(Phase.CONTROL);
+        assertEquals("Systems Will Slip Through Your Fingers", hiddenbase.getBlueprint().getTitle());
+
+        // A-wing: non-unique, ability-1 permanent pilot, neither X-wing nor Y-wing. Printed power 3; Incom +1.
+        assertEquals(4, scn.GetPower(awing), scn.epsilon);
+
+        scn.SkipToLSTurn(Phase.CONTROL);
+        assertEquals("Systems Will Slip Through Your Fingers", hiddenbase.getBlueprint().getTitle());
+        assertTrue(scn.LSCardActionAvailable(koensayr, "Retrieve a Y-wing"));
+        scn.LSUseCardAction(koensayr, "Retrieve a Y-wing");
+        scn.PassAllResponses();
+        assertTrue("decision=" + scn.LSGetDecision(), scn.LSDecisionAvailable("Choose card"));
+        assertFalse(scn.LSDecisionAvailable("Verify"));
+        scn.LSChooseCard(awing2);
+        scn.PassAllResponses();
+        assertEquals(Zone.TOP_OF_USED_PILE, awing2.getZone());
+    }
+
+    @Test
+    public void HiddenBaseFrontDoesNotWidenIncomOrKoensayr() {
+        var scn = IncomKoensayrScenario();
+        var hiddenbase = scn.GetLSCard("hiddenbase");
+        var koensayr = scn.GetLSCard("koensayr");
+        var awing = scn.GetLSCard("awing");
+        var awing2 = scn.GetLSCard("awing2");
+
+        scn.StartGame();
+        SetUpIncomKoensayr(scn, false);
+        scn.SkipToPhase(Phase.CONTROL);
+        assertEquals("Hidden Base", hiddenbase.getBlueprint().getTitle());
+        assertEquals(3, scn.GetPower(awing), scn.epsilon);
+
+        scn.SkipToLSTurn(Phase.CONTROL);
+        assertTrue(scn.LSCardActionAvailable(koensayr, "Retrieve a Y-wing"));
+        scn.LSUseCardAction(koensayr, "Retrieve a Y-wing");
+        scn.PassAllResponses();
+        assertTrue("A-wing must not match printed Y-wing retrieve, decision=" + scn.LSGetDecision(),
+                scn.LSDecisionAvailable("Verify"));
+        scn.LSPass();
+        scn.DSPass();
+        assertEquals(Zone.TOP_OF_LOST_PILE, awing2.getZone());
+    }
+
+    @Test
+    public void HiddenBaseBackMayNotCancelDrainAtYourOwnLocation() {
+        var scn = new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("yavin", "1_135");
+                    put("hls", "1240_102");
+                    put("uncharted", "1240_91");
+                    put("station", "1240_103");
+                    put("perimeter", "1240_104");
+                    put("luke", "1_19");
+                    put("biggs", "1_3");
+                    put("leia", "1_17");
+                    put("cantina", "1_128");
+                }},
+                new HashMap<>() {{
+                    put("trooper", "1_194");
+                }},
+                10, 10,
+                HiddenBaseVObjective,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+        var hiddenbase = scn.GetLSCard("hiddenbase");
+        var hls = scn.GetLSCard("hls");
+        var station = scn.GetLSCard("station");
+        var perimeter = scn.GetLSCard("perimeter");
+        var luke = scn.GetLSCard("luke");
+        var biggs = scn.GetLSCard("biggs");
+        var leia = scn.GetLSCard("leia");
+        var cantina = scn.GetLSCard("cantina");
+        var trooper = scn.GetDSCard("trooper");
+
+        scn.StartGame();
+        var stationPlacement = scn.gameState().getLocationPlacement(scn.game(), station, "Yavin 4", null);
+        scn.MoveLocationToTable(station, stationPlacement.getFirst());
+        var perimeterPlacement = scn.gameState().getLocationPlacement(scn.game(), perimeter, "Yavin 4", null);
+        scn.MoveLocationToTable(perimeter, perimeterPlacement.getFirst());
+        scn.MoveLocationToTable(cantina);
+        scn.MoveCardsToLocation(hls, luke);
+        scn.MoveCardsToLocation(station, biggs);
+        scn.MoveCardsToLocation(perimeter, leia);
+        scn.MoveCardsToLocation(cantina, trooper);
+        scn.SkipToPhase(Phase.CONTROL);
+        assertEquals("Systems Will Slip Through Your Fingers", hiddenbase.getBlueprint().getTitle());
+        assertTrue(scn.AwaitingDSControlPhaseActions());
+
+        // Cantina is Light's own location, so the drain there is not at an opponent's location.
+        assertEquals(scn.LS, cantina.getOwner());
+        scn.DSForceDrainAt(cantina);
+        scn.DSPass();
+        assertTrue(scn.IsActiveForceDrain());
+        assertFalse(scn.GetLSAvailableActions().stream().anyMatch(t -> t.contains("Cancel Force drain")));
+    }
+
     private boolean lsReserveSearchSelectable(VirtualTableScenario scn, PhysicalCardImpl card) {
         String[] blueprintIds = scn.LSGetADParam("blueprintId");
         String[] selectable = scn.LSGetADParam("selectable");

@@ -25,6 +25,7 @@ import com.gempukku.swccgo.logic.modifiers.ForceDrainModifier;
 import com.gempukku.swccgo.logic.modifiers.ImmuneToAttritionLessThanModifier;
 import com.gempukku.swccgo.logic.modifiers.ImmunityToAttritionChangeModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
+import com.gempukku.swccgo.logic.modifiers.WidenIncomKoensayrScopeModifier;
 import com.gempukku.swccgo.logic.timing.EffectResult;
 
 import java.util.Collections;
@@ -58,6 +59,7 @@ public class Card1240_107_BACK extends AbstractObjective {
         modifiers.add(new ForceDrainModifier(self, Filters.battleground_system, 1, playerId));
         modifiers.add(new ImmuneToAttritionLessThanModifier(self, Filters.and(affected, Filters.not(alreadyHasImmunity)), 4));
         modifiers.add(new ImmunityToAttritionChangeModifier(self, Filters.and(affected, alreadyHasImmunity), 2));
+        modifiers.add(new WidenIncomKoensayrScopeModifier(self));
         return modifiers;
     }
 

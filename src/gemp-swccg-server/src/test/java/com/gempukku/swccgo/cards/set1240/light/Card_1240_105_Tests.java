@@ -119,9 +119,7 @@ public class Card_1240_105_Tests {
         assertEquals("Yavin 4", hls.getPartOfSystem());
         assertTrue(scn.LSDeployAvailable(room));
         scn.LSDeployCard(room);
-        if (!scn.LSDecisionAvailable("On which side")) {
-            scn.LSChooseCard(hls);
-        }
+        // Yavin 4 is the only planet with a Hidden Landing Site, so there is no target choice.
         assertTrue(scn.LSDecisionAvailable("On which side"));
         scn.LSChoose("Left");
         scn.PassAllResponses();

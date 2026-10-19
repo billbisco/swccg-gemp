@@ -44,7 +44,9 @@ public class Card1240_091 extends AbstractNormalEffect {
     }
 
     private boolean choseRebelPair(SwccgGame game, PhysicalCard self) {
-        PhysicalCard hiddenBase = Filters.findFirstActive(game, self, Filters.and(Filters.Hidden_Base, Icon.LEGACY_BLOCK_4));
+        // Read the pair from the objective this is deployed on, whichever side is up
+        // (after the flip its title is Systems Will Slip Through Your Fingers).
+        PhysicalCard hiddenBase = self.getAttachedTo();
         return hiddenBase != null && hiddenBase.getWhileInPlayData() != null
                 && "Rebel".equals(hiddenBase.getWhileInPlayData().getTextValue());
     }
