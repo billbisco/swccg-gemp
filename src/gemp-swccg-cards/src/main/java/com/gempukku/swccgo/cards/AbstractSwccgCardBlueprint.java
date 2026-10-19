@@ -76,6 +76,13 @@ public abstract class AbstractSwccgCardBlueprint implements SwccgCardBlueprint {
         _uniqueness = uniqueness;
         _expansionSet = expansionSet;
         _rarity = rarity;
+        if (expansionSet != null && expansionSet.isLegacyBlockSet()) {
+            _isLegacy = true;
+            Icon blockIcon = expansionSet.getLegacyBlockIcon();
+            if (blockIcon != null) {
+                addIcon(blockIcon);
+            }
+        }
     }
 
     @Override
