@@ -531,7 +531,8 @@ public interface Actions extends Decisions, Choices {
         String[] cardIds = GetADParam(playerId, "cardId");
         String[] actionTexts = GetADParam(playerId, "actionText");
         if (cardIds == null || actionTexts == null) {
-            return null;
+            throw new IllegalStateException(playerId + " has no card-action decision; pending="
+                    + GetAwaitingDecision(playerId));
         }
 
         for (int i = 0; i < cardIds.length; i++) {
