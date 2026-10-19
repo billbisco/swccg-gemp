@@ -160,4 +160,13 @@ public class AuthServiceTests {
         now.addAndGet(5L * 60 * 1000 + 1);
         assertEquals(AuthService.Status.OK, auth.verifyCredentials("Bill", "rightpass", IP).getStatus());
     }
+
+    @Test
+    public void registrationStopsAtThreeAccountsPerIpPerDay() throws Exception {
+        assertTrue(auth.register("One", "password1", IP));
+        assertTrue(auth.register("Two", "password1", IP));
+        assertTrue(auth.register("Three", "password1", IP));
+        assertThrows(com.gempukku.swccgo.db.RegisterNotAllowedException.class, () -> auth.register("Four", "password1", IP));
+        assertTrue(auth.register("Four", "password1", "198.51.100.1"), "another IP is unaffected");
+    }
 }

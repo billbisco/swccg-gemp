@@ -97,6 +97,11 @@ public class CachedPlayerDAO implements PlayerDAO, Cached {
     }
 
     @Override
+    public int countPlayersCreatedFromIpSince(String ip, long sinceMillis) throws SQLException {
+        return _delegate.countPlayersCreatedFromIpSince(ip, sinceMillis);
+    }
+
+    @Override
     public void storePasswordResetCode(int playerId, String codeHash, long expiresAt, String createdBy) throws SQLException {
         _delegate.storePasswordResetCode(playerId, codeHash, expiresAt, createdBy);
     }
