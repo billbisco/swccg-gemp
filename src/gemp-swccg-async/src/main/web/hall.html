@@ -11,6 +11,7 @@
     <link rel="stylesheet" type="text/css" href="css/jquery.contextMenu.css">
     <link rel="stylesheet" type="text/css" href="js/jquery/styles/jquery.spinnercontrol.css">
     <link rel="stylesheet" type="text/css" href="css/gemp-001/muted-users.css">
+    <link rel="stylesheet" type="text/css" href="css/gemp-001/hallPages.css?v=20261019a">
 
     <script type="text/javascript" src="js/jquery/jquery-1.6.2.js"></script>
     <script type="text/javascript" src="js/jquery/jquery-ui-1.8.16.custom.min.js"></script>
@@ -38,12 +39,15 @@
 
     <script type="text/javascript" src="js/gemp-016/playerPicker.js?v=20261004f"></script>
     <script type="text/javascript" src="js/gemp-016/hallUi.js?v=20261006l"></script>
-    <script type="text/javascript" src="js/gemp-016/leagueResultsUi.js?v=6274498"></script>
+    <script type="text/javascript" src="js/gemp-016/leagueResultsUi.js?v=20261019a"></script>
     <script type="text/javascript" src="js/gemp-016/tournamentResultsUi.js"></script>
     <script type="text/javascript" src="js/gemp-016/statsUi.js"></script>
     <script type="text/javascript" src="js/gemp-016/playerStatsUi.js"></script>
     <script type="text/javascript" src="js/gemp-016/collectionStatsUi.js"></script>
     <script type="text/javascript" src="js/gemp-016/gameHistoryUi.js"></script>
+    <script type="text/javascript" src="js/gemp-016/hallLinks.js?v=20261019a"></script>
+    <script type="text/javascript" src="js/gemp-016/eventsUi.js?v=20261019a"></script>
+    <script type="text/javascript" src="js/gemp-016/historyUi.js?v=20261019a"></script>
     <script type="text/javascript" src="js/gemp-016/deckBuildingUi.js"></script>
     <script type="text/javascript" src="js/gemp-016/gameUi.js"></script>
     <script type="text/javascript" src="js/gemp-016/gameAnimations.js"></script>
@@ -72,23 +76,9 @@
 
                 $("#tabs").tabs();
 
-                /*
-                 * jquery tabs is aggressive and will remove the links in an ahref.
-                 * These hacks override the click and target it to the desired url in a new tab
-                 */
-                $("#social-link-slack a"  ).click(function (e) { e.preventDefault(); window.open("https://join.slack.com/t/starwarsccg/shared_invite/zt-2977epob7-eOwx3mgN0w14gxiwcXGU1w", "_blank"); });
-                $("#social-link-discord a").click(function (e) { e.preventDefault(); window.open("https://discord.gg/nEEnXCZ", "_blank"); });
-                $("#social-link-youtube a").click(function (e) { e.preventDefault(); window.open("https://www.youtube.com/channel/UCwzN9PSUyCvxzbvCRfScS6Q", "_blank"); });
-                $("#social-link-twitch a" ).click(function (e) { e.preventDefault(); window.open("https://www.twitch.tv/swccgpc", "_blank"); });
-                /*
-                 * These hacks change the links in the ahref back to the intended destination,
-                 * instead of using the tabs system.
-                 * This enables support for right-click open-in-new-tab ability.
-                 */
-                $("#social-link-slack a"  ).attr("href", "https://join.slack.com/t/starwarsccg/shared_invite/zt-2977epob7-eOwx3mgN0w14gxiwcXGU1w");
-                $("#social-link-discord a").attr("href", "https://discord.gg/nEEnXCZ");
-                $("#social-link-youtube a").attr("href", "https://www.youtube.com/channel/UCwzN9PSUyCvxzbvCRfScS6Q");
-                $("#social-link-twitch a" ).attr("href", "https://www.twitch.tv/swccgpc");
+                // Hall links (hallLinks.js): #events, #history, #league-<type>, ... open their tab; switching tabs
+                // writes the tab's link into the address bar.
+                GempLinks.start();
 
                 $(window).resize(function () {
                     resizeHall();
@@ -209,67 +199,25 @@
 <body>
     <div id="tabs" width="100%">
         <ul>
-            <li><a href="#gameHall">Game Hall</a></li>
-            <li><a href="includes/gameHistory.html">Game History</a></li>
-            <!-- <li><a href="includes/instruction.html">Instructions</a></li>   -->
-            <!--<li><a href="includes/tournamentResults.html">Tournaments</a></li> -->
-            <li><a href="includes/leagueResults.html">Leagues</a></li>
-            <!--        <                <script type="text/javascript">
-                            document.write('<li><a href="includes/leagueRules.html?_=' + (new Date().getTime()) + '">League Rules (updated)</a></li>');
-                        </script> -->
-            <li><a href="/gemp-swccg-server/hall/formats/html">Format Rules</a></li>
-            <!-- <li><a href="includes/contribute.html">Contribute</a></li>    -->
-            <li><a href="includes/yourStats.html">Your stats</a></li>
-            <li><a href="includes/stats.html">Server stats</a></li>
-            <li><a href="includes/yourCollectionStats.html">Your collection stats</a></li>
+            <li id="tab-game-hall"><a href="#gameHall">Game Hall</a></li>
+            <li id="tab-events"><a href="includes/events.html?v=20261019a">Events</a></li>
+            <li id="tab-history"><a href="includes/history.html?v=20261019a">History</a></li>
+            <li id="tab-formats"><a href="/gemp-swccg-server/hall/formats/html">Format Rules</a></li>
+            <li id="tab-your-stats"><a href="includes/yourStats.html">Your stats</a></li>
+            <li id="tab-server-stats"><a href="includes/stats.html">Server stats</a></li>
+            <li id="tab-collection-stats"><a href="includes/yourCollectionStats.html">Your collection stats</a></li>
             <li id="admin-tab"><a href="includes/admin.html?v=20261006b">Admin</a></li>
-            <!-- social links -->
-            <li id="social-link-slack" class="social-link"><a
-                    href="https://join.slack.com/t/starwarsccg/shared_invite/zt-2977epob7-eOwx3mgN0w14gxiwcXGU1w"
-                    target="_blank"><img loading="lazy" src="https://swccg.com/social/slack-white.svg"
-                        onmouseover="this.src='https://swccg.com/social/slack.svg'"
-                        onmouseout="this.src='https://swccg.com/social/slack-white.svg'"
-                        onerror="this.onerror=null; this.src='https://swccg.com/wp/wp-content/uploads/2019/04/New-Project-7.png'"
-                        width="12" height="12" title="starwarsccg.slack.com" alt="starwarsccg.slack.com"></a></li>
-            <li id="social-link-discord" class="social-link"><a href="https://discord.gg/nEEnXCZ" target="_blank"><img
-                        loading="lazy" src="https://swccg.com/social/discord-white.svg"
-                        onmouseover="this.src='https://swccg.com/social/discord.svg'"
-                        onmouseout="this.src='https://swccg.com/social/discord-white.svg'"
-                        onerror="this.onerror=null; this.src='https://swccg.com/wp/wp-content/uploads/2019/04/discord-165x120.png'"
-                        width="16" height="12" title="Discord" alt="Discord"></a></li>
-            <li id="social-link-youtube" class="social-link"><a
-                    href="https://www.youtube.com/channel/UCwzN9PSUyCvxzbvCRfScS6Q" target="_blank"><img loading="lazy"
-                        src="https://swccg.com/social/youtube-white.svg"
-                        onmouseover="this.src='https://swccg.com/social/youtube.svg'"
-                        onmouseout="this.src='https://swccg.com/social/youtube-white.svg'"
-                        onerror="this.onerror=null; this.src='https://swccg.com/wp/wp-content/uploads/2019/04/New-Project-4.png'"
-                        width="18" height="12" title="Youtube" alt="Youtube"></a></li>
-            <li id="social-link-twitch" class="social-link"><a href="https://www.twitch.tv/swccgpc" target="_blank"><img
-                        loading="lazy" src="https://swccg.com/social/twitch-white.svg"
-                        onmouseover="this.src='https://swccg.com/social/twitch.svg'"
-                        onmouseout="this.src='https://swccg.com/social/twitch-white.svg'"
-                        onerror="this.onerror=null; this.src='https://swccg.com/wp/wp-content/uploads/2019/06/twitch.png'"
-                        width="12" height="12" title="twitch" alt="twitch"></a></li>
-            <!-- / social links -->
-
-            <!--                <script type="text/javascript">
-                    document.write('<li><a href="includes/changeLog.html?_=' + (new Date().getTime()) + '">Change Log</a></li>');
-                </script>   -->
         </ul>
         <div id="gameHall">
             <div id="latestNews">
                 <div class="linkMenu">
-                    <a href="https://forum.starwarsccg.org/viewtopic.php?t=75666" target="_blank">GEMP Guide & FAQ</a>
+                    <a href="#events/calendar" class="hall-link">Event Calendar</a>
+                    <a href="#history" class="hall-link">My Game History</a>
+                    <a href="deckBuild.html" target="_blank">Deck Builder</a>
                     <a href="merchant.html">Merchant</a>
-                    <a href="https://github.com/PlayersCommittee/gemp-swccg-public/issues" target="_blank">Report Bugs</a>
-                    <a href="https://forum.starwarsccg.org/viewtopic.php?t=78855" target="_blank">Report Behavior</a>
-                    <a href="https://gemp.starwarsccg.org/gemp-swccg/epic-duel/newgui.html">Public Beta: New UI</a>
-                    <a href="https://forum.starwarsccg.org/viewtopic.php?t=64301" target="_blank">Missing Card List</a>
-                    <a href="https://www.starwarsccg.org/rules/" target="_blank">SWCCG Game Rules</a>
-                    <a href="https://forum.starwarsccg.org/viewtopic.php?t=68091" target="_blank">Sealed Format Tutorial</a>
-                    <a href="https://www.starwarsccg.org/cube/" target="_blank">Cube Info</a>
-                    <a href="https://forum.starwarsccg.org/viewtopic.php?t=70203" target="_blank">Changelog</a>
-                    <a href="https://forum.starwarsccg.org/viewforum.php?f=964" target="_blank">Other GEMP Info</a>
+                    <a href="https://wiki.swccg.com/" target="_blank">SWCCG Wiki</a>
+                    <a href="https://github.com/billbisco/swccg-gemp/issues" target="_blank">Report Bugs</a>
+                    <a href="epic-duel/newgui.html">Public Beta: New UI</a>
                 </div>
                 <div class="flexPadding"></div>
                 <div class="timeDiv">

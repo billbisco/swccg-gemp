@@ -335,6 +335,87 @@ public class DbGameHistoryDAO implements GameHistoryDAO {
     }
 
     @Override
+    public List<GameHistoryEntry> getGameHistoryForPlayer(Player player, GameHistoryFilter filter, int start, int count) {
+        GameHistoryQuery query = GameHistoryQuery.forPlayer(player.getName(), filter);
+        try (Connection connection = _dbAccess.getDataSource().getConnection();
+             PreparedStatement statement = connection.prepareStatement(query.selectSql())) {
+            int index = bind(statement, query.parameters());
+            statement.setInt(index++, start);
+            statement.setInt(index, count);
+            try (ResultSet rs = statement.executeQuery()) {
+                List<GameHistoryEntry> result = new ArrayList<>();
+                while (rs.next()) {
+                    result.add(new GameHistoryEntry(rs.getString(1), rs.getString(3), rs.getString(5), rs.getString(2),
+                            rs.getString(4), rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9),
+                            rs.getString(10), rs.getString(11), rs.getString(12), new Date(rs.getLong(13)),
+                            new Date(rs.getLong(14)), rs.getString(15), rs.getString(16)));
+                }
+                return result;
+            }
+        } catch (SQLException exp) {
+            throw new RuntimeException("Unable to get filtered game history", exp);
+        }
+    }
+
+    @Override
+    public int getGameHistoryForPlayerCount(Player player, GameHistoryFilter filter) {
+        GameHistoryQuery query = GameHistoryQuery.forPlayer(player.getName(), filter);
+        try (Connection connection = _dbAccess.getDataSource().getConnection();
+             PreparedStatement statement = connection.prepareStatement(query.countSql())) {
+            bind(statement, query.parameters());
+            try (ResultSet rs = statement.executeQuery()) {
+                return rs.next() ? rs.getInt(1) : -1;
+            }
+        } catch (SQLException exp) {
+            throw new RuntimeException("Unable to count filtered game history", exp);
+        }
+    }
+
+    @Override
+    public List<String> getGameHistoryFormats(Player player) {
+        try (Connection connection = _dbAccess.getDataSource().getConnection();
+             PreparedStatement statement = connection.prepareStatement(GameHistoryQuery.formatsSql())) {
+            statement.setString(1, player.getName());
+            statement.setString(2, player.getName());
+            return readStrings(statement);
+        } catch (SQLException exp) {
+            throw new RuntimeException("Unable to get game history formats", exp);
+        }
+    }
+
+    @Override
+    public List<String> getGameHistoryEvents(Player player, int limit) {
+        try (Connection connection = _dbAccess.getDataSource().getConnection();
+             PreparedStatement statement = connection.prepareStatement(GameHistoryQuery.eventsSql())) {
+            statement.setString(1, player.getName());
+            statement.setString(2, player.getName());
+            statement.setInt(3, limit);
+            return readStrings(statement);
+        } catch (SQLException exp) {
+            throw new RuntimeException("Unable to get game history events", exp);
+        }
+    }
+
+    private static int bind(PreparedStatement statement, List<Object> parameters) throws SQLException {
+        int index = 1;
+        for (Object parameter : parameters) {
+            if (parameter instanceof Long)
+                statement.setLong(index++, (Long) parameter);
+            else
+                statement.setString(index++, String.valueOf(parameter));
+        }
+        return index;
+    }
+
+    private static List<String> readStrings(PreparedStatement statement) throws SQLException {
+        try (ResultSet rs = statement.executeQuery()) {
+            List<String> result = new ArrayList<>();
+            while (rs.next())
+                result.add(rs.getString(1));
+            return result;
+        }
+    }
+
     public List<LeagueDecklistEntry> getLeagueDecklists(String leagueId) {
         try {
             try (Connection connection = _dbAccess.getDataSource().getConnection()) {

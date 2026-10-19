@@ -12,6 +12,10 @@
  *
  * joinCallback(leagueCode), if given, runs after a successful join from any render of this object.
  *
+ * showLeague(leagueCode) (list mode) opens that league's drawer and scrolls to it; asked before the list has loaded,
+ * it waits for the list.  Drawers rendered with options.eventLinks carry the hall links of the league (hallLinks.js):
+ * its own #league-<code> link and its games on the History tab.
+ *
  * Slice 1.5: list mode ported from LOTR leagueResultsUi (without EventDrawer — SWCCG uses simple
  * Details slideToggle drawers like the classic Events tab).
  */
@@ -24,6 +28,9 @@ var LeagueResultsUI = Class.extend({
     list:null,
     idPrefix:null,
     drawerSerial:0,
+    rows:null,
+    pendingShow:null,
+    afterRender:null,
 
     init:function (url, joinCallback, options) {
         this.communication = new GempSwccgCommunication(url,
@@ -77,6 +84,7 @@ var LeagueResultsUI = Class.extend({
         var showName = options.showName !== false;
         var hideId = options.hideId === true;
         var compactJoin = options.compactJoin === true;
+        var eventLinks = options.eventLinks === true;
         log(xml);
         var root = xml.documentElement;
         if (root.tagName == 'league') {
@@ -169,6 +177,16 @@ var LeagueResultsUI = Class.extend({
             }
 
             $(leagueExtraInfoCssId).append(joinBlock);
+
+            if (eventLinks && window.GempLinks) {
+                var links = $("<div class='event-links'></div>");
+                links.append($("<a class='event-link'></a>").attr("href", "#league-" + leagueType).text("Link to this league"));
+                links.append($("<a class='event-link'></a>")
+                    .attr("href", "#history?" + GempLinks.buildQuery({event: leagueName}))
+                    .text("My games in this league"));
+                links.append($("<a class='event-link' target='_blank' href='deckBuild.html'></a>").text("Deck Builder"));
+                $(leagueExtraInfoCssId).append(links);
+            }
 
             var tabDiv = $("<div width='100%'></div>");
             var tabNavigation = $("<ul></ul>");
@@ -344,9 +362,11 @@ var LeagueResultsUI = Class.extend({
     renderListMode:function (root) {
         var that = this;
         this.list.empty();
+        this.rows = {};
         var leagues = root.getElementsByTagName("league");
         if (leagues.length == 0) {
             this.list.append($("<i></i>").text("There are no current leagues at the moment."));
+            this.listRendered();
             return;
         }
         for (var i = 0; i < leagues.length; i++) {
@@ -359,7 +379,7 @@ var LeagueResultsUI = Class.extend({
 
             var rowId = this.idPrefix + "-row-" + i;
             var drawerId = this.idPrefix + "-drawer-" + i;
-            var row = $("<div class='play-league-row event-row'></div>").attr("id", rowId);
+            var row = $("<div class='play-league-row event-row'></div>").attr("id", rowId).attr("data-league-type", leagueType);
             var header = $("<div class='play-league-row-header event-row-header'></div>");
 
             var detailsBut = $("<button type='button' class='leagueSeeDetails play-league-details-btn'>+ Details</button>").button();
@@ -375,6 +395,7 @@ var LeagueResultsUI = Class.extend({
             var drawer = $("<div class='leagueExtraInfo play-league-drawer' style='display:none;'></div>").attr("id", drawerId);
             row.append(drawer);
             this.list.append(row);
+            this.rows[leagueType] = {row: row, button: detailsBut, drawer: drawer};
 
             detailsBut.click(
                 (function (type, cssid, btn) {
@@ -391,7 +412,8 @@ var LeagueResultsUI = Class.extend({
                                 idPrefix: that.idPrefix + "D" + that.drawerSerial + "-",
                                 showName: false,
                                 hideId: true,
-                                compactJoin: true
+                                compactJoin: true,
+                                eventLinks: that.options.eventLinks === true
                             });
                             $drawer.slideDown();
                             btn.button("option", "label", "- Details");
@@ -399,6 +421,38 @@ var LeagueResultsUI = Class.extend({
                     };
                 })(leagueType, "#" + drawerId, detailsBut));
         }
+        this.listRendered();
+    },
+
+    listRendered:function () {
+        if (this.pendingShow != null) {
+            var code = this.pendingShow;
+            this.pendingShow = null;
+            this.showLeague(code);
+        }
+        if (typeof this.afterRender == "function")
+            this.afterRender();
+    },
+
+    // List mode: open the league's drawer (once the list is there) and bring it into view.
+    showLeague:function (leagueCode) {
+        if (this.rows == null) {
+            this.pendingShow = leagueCode;
+            return;
+        }
+        var entry = this.rows[leagueCode];
+        if (entry == null) {
+            if (this.list != null && this.list.find(".event-missing").length == 0)
+                this.list.prepend($("<div class='event-missing'></div>")
+                    .text("That league is not running any more, or the link is wrong."));
+            return;
+        }
+        this.list.find(".event-row").removeClass("event-row-selected");
+        entry.row.addClass("event-row-selected");
+        if (!entry.drawer.is(":visible"))
+            entry.button.click();
+        var top = entry.row.offset() ? entry.row.offset().top : 0;
+        $("html, body").scrollTop(Math.max(0, top - 80));
     },
 
     joinErrorMap:function (leagueCode) {
