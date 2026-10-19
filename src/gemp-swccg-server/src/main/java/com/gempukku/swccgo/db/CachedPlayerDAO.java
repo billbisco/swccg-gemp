@@ -84,13 +84,36 @@ public class CachedPlayerDAO implements PlayerDAO, Cached {
     }
 
     @Override
-    public Player loginPlayer(String playerName, String password) throws SQLException {
-        Player player = _delegate.loginPlayer(playerName, password);
-        if (player != null) {
-            _playerById.put(player.getId(), player);
-            _playerByName.put(player.getName(), player);
-        }
-        return player;
+    public Player findPlayerForLogin(String login) throws SQLException {
+        // Never cached: credential checks must see the current password hash.
+        return _delegate.findPlayerForLogin(login);
+    }
+
+    @Override
+    public boolean updatePasswordHash(int playerId, String expectedCurrentHash, String newHash) throws SQLException {
+        boolean success = _delegate.updatePasswordHash(playerId, expectedCurrentHash, newHash);
+        removePlayerFromCacheById(playerId);
+        return success;
+    }
+
+    @Override
+    public int countPlayersCreatedFromIpSince(String ip, long sinceMillis) throws SQLException {
+        return _delegate.countPlayersCreatedFromIpSince(ip, sinceMillis);
+    }
+
+    @Override
+    public void storePasswordResetCode(int playerId, String codeHash, long expiresAt, String createdBy) throws SQLException {
+        _delegate.storePasswordResetCode(playerId, codeHash, expiresAt, createdBy);
+    }
+
+    @Override
+    public PasswordResetCode getPasswordResetCode(int playerId) throws SQLException {
+        return _delegate.getPasswordResetCode(playerId);
+    }
+
+    @Override
+    public void deletePasswordResetCode(int playerId) throws SQLException {
+        _delegate.deletePasswordResetCode(playerId);
     }
 
     @Override
@@ -194,8 +217,16 @@ public class CachedPlayerDAO implements PlayerDAO, Cached {
     private void removePlayerFromCacheByName(String playerName) {
         Player player = _playerByName.get(playerName);
         if (player != null) {
-            _playerById.get(player.getId());
+            _playerById.remove(player.getId());
             _playerByName.remove(playerName);
+        }
+        _similarAccountsByName.clear();
+    }
+
+    private void removePlayerFromCacheById(int playerId) {
+        Player player = _playerById.remove(playerId);
+        if (player != null) {
+            _playerByName.remove(player.getName());
         }
         _similarAccountsByName.clear();
     }

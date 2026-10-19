@@ -204,7 +204,7 @@ COLLATE = utf8_bin;
 CREATE  TABLE IF NOT EXISTS `gemp-swccg`.`player` (
   `id` INT(11) NOT NULL AUTO_INCREMENT ,
   `name` VARCHAR(10) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NOT NULL ,
-  `password` VARCHAR(64) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NOT NULL ,
+  `password` VARCHAR(255) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NOT NULL ,
   `type` VARCHAR(15) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NOT NULL DEFAULT 'u' ,
   `last_login_reward` INT(11) NULL DEFAULT NULL ,
   `banned_until` DECIMAL(20,0) NULL DEFAULT NULL ,
@@ -215,6 +215,22 @@ CREATE  TABLE IF NOT EXISTS `gemp-swccg`.`player` (
   UNIQUE INDEX `name_UNIQUE` (`name` ASC) )
 ENGINE = InnoDB
 AUTO_INCREMENT = 3811
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+
+-- -----------------------------------------------------
+-- Table `gemp-swccg`.`player_password_reset`
+-- One-time admin reset codes (hash only), one per player.
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `gemp-swccg`.`player_password_reset` (
+  `player_id` INT(11) NOT NULL ,
+  `code_hash` CHAR(64) CHARACTER SET 'ascii' COLLATE 'ascii_bin' NOT NULL ,
+  `expires_at` BIGINT NOT NULL ,
+  `created_by` VARCHAR(10) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NULL DEFAULT NULL ,
+  `created_at` BIGINT NOT NULL ,
+  PRIMARY KEY (`player_id`) )
+ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_bin;
 

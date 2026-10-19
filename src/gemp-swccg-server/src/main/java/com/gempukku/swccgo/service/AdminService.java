@@ -11,25 +11,33 @@ public class AdminService {
     private PlayerDAO _playerDAO;
     private LoggedUserHolder _loggedUserHolder;
     private IpBanDAO _ipBanDAO;
+    private AuthService _authService;
 
-    public AdminService(PlayerDAO playerDAO, IpBanDAO ipBanDAO, LoggedUserHolder loggedUserHolder) {
+    public AdminService(PlayerDAO playerDAO, IpBanDAO ipBanDAO, LoggedUserHolder loggedUserHolder, AuthService authService) {
         _playerDAO = playerDAO;
         _ipBanDAO = ipBanDAO;
         _loggedUserHolder = loggedUserHolder;
+        _authService = authService;
     }
 
     public boolean setUserFlag(String login, Player.Type flag, boolean status) throws SQLException {
         return _playerDAO.setPlayerFlag(login, flag, status);
     }
 
-    public boolean resetUserPassword(String login) throws SQLException {
-        boolean success = _playerDAO.setPlayerFlag(login, Player.Type.DEACTIVATED, false);
-        success = success && _playerDAO.resetUserPassword(login);
-        if(!success)
-            return false;
-
+    /**
+     * Admin password reset. The old password stops working and a one-time code (24h, single use)
+     * is returned for the admin to give the player privately. The player logs in with the code
+     * and is then asked for a new password.
+     * @return the code, or null if the player was not found
+     */
+    public String resetUserPassword(String login, String adminName) throws SQLException {
+        if (!_playerDAO.setPlayerFlag(login, Player.Type.DEACTIVATED, false))
+            return null;
+        String code = _authService.issueResetCode(login, adminName);
+        if (code == null)
+            return null;
         _loggedUserHolder.forceLogoutUser(login);
-        return true;
+        return code;
     }
 
     public boolean deactivateUser(String login) throws SQLException {

@@ -124,6 +124,10 @@ for h in response.headers:
 if "Set-Cookie" not in response.headers:
   print("Set-Cookie header not found... Login failed. Bailing out.")
   exit(1)
+# The server marks the session cookie Secure (HTTPS in production). This test talks plain HTTP to
+# 127.0.0.1, and requests never sends a Secure cookie over HTTP, so relax the flag client-side.
+for cookie in session.cookies:
+  cookie.secure = False
 print("")
 
 
