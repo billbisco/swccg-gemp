@@ -1,4 +1,11 @@
 <script type="text/javascript">
+	function escapeHtml(value) {
+		if (value === null || value === undefined)
+			return "";
+		return String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+			.replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+	}
+
 	$("#userModMain").ready(
 		function () {
 			$("#reset-button").button().click(
@@ -104,18 +111,18 @@
 			var form = $("<div id='banMultipleForm' style='overflow-x:scroll; width:min(120%,1350px); margin-left: max(-50%, -150px);'></div>");
 
 			var table = $("<table class='tables'></table>");
-			table.append("<tr style='position:sticky'><th></th><th>Id</th><th>Name</th><th>Password (hash)</th><th>Create IP</th><th>Login IP</th><th>User status</th></tr>");
+			table.append("<tr style='position:sticky'><th></th><th>Id</th><th>Name</th><th>Create IP</th><th>Login IP</th><th>User status</th></tr>");
 
 			var players = root.getElementsByTagName("player");
 			for (var j=0; j<players.length; j++) {
 				var player = players[j];
 				var id=player.getAttribute("id");
 				var name=player.getAttribute("name");
-				var password = player.getAttribute("password");
 				var createIp = player.getAttribute("createIp");
 				var loginIp = player.getAttribute("loginIp");
 				var status = player.getAttribute("status");
-				table.append("<tr><td style='position:sticky;left:0;z-index:2;background-color:#121212;'><input type='checkbox' name='login' value='"+name+"'></td><td style='position:sticky;left:20px;z-index:2;background-color:#121212;'>"+id+"</td><td style='position:sticky;left:77px;z-index:2;background-color:#121212;'>"+name+"</td><td>"+password+"</td><td>"+createIp+"</td><td>"+loginIp+"</td><td>"+status+"</td></tr>");
+				// Every value is escaped: IPs and names come from the database and once came from request headers.
+				table.append("<tr><td style='position:sticky;left:0;z-index:2;background-color:#121212;'><input type='checkbox' name='login' value='"+escapeHtml(name)+"'></td><td style='position:sticky;left:20px;z-index:2;background-color:#121212;'>"+escapeHtml(id)+"</td><td style='position:sticky;left:77px;z-index:2;background-color:#121212;'>"+escapeHtml(name)+"</td><td>"+escapeHtml(createIp)+"</td><td>"+escapeHtml(loginIp)+"</td><td>"+escapeHtml(status)+"</td></tr>");
 			}
 			form.append(table);
 			
