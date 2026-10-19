@@ -132,17 +132,6 @@ public class Card_1281_037_Tests {
         return hunt;
     }
 
-    private String lsDump(VirtualTableScenario scn) {
-        var ls = scn.LSGetDecision();
-        var ds = scn.DSGetDecision();
-        return "ls=" + ls
-                + " lsText=" + (ls == null ? "null" : ls.getText())
-                + " lsParams=" + (ls == null ? "null" : ls.getDecisionParameters())
-                + " ds=" + ds
-                + " dsText=" + (ds == null ? "null" : ds.getText())
-                + " actions=" + scn.GetLSAvailableActions();
-    }
-
     private boolean isLsCardChoiceSelectable(VirtualTableScenario scn, PhysicalCardImpl card) {
         String[] selectable = scn.LSGetADParam("selectable");
         String[] blueprintIds = scn.LSGetADParam("blueprintId");
@@ -179,14 +168,6 @@ public class Card_1281_037_Tests {
         assertTrue(scn.LSHasCardChoiceAvailable(infiltration));
         scn.LSChooseCard(infiltration);
         scn.PassAllResponses();
-        while (scn.DSDecisionAvailable("optional") || scn.LSDecisionAvailable("optional")) {
-            if (scn.DSDecisionAvailable("optional")) {
-                scn.DSPass();
-            }
-            if (scn.LSDecisionAvailable("optional")) {
-                scn.LSPass();
-            }
-        }
     }
 
     private PhysicalCardImpl setupLuckStacked(VirtualTableScenario scn, PhysicalCardImpl luck,
@@ -201,48 +182,28 @@ public class Card_1281_037_Tests {
 
     private void completeStackThreeFromReserve(VirtualTableScenario scn, PhysicalCardImpl luck,
                                                PhysicalCardImpl bravado, PhysicalCardImpl charm, PhysicalCardImpl ingenuity) {
-        if (scn.GetLSAvailableActions().toString().contains("Stack three")) {
+        if (scn.GetStackedCards(luck).size() < 3) {
+            assertTrue(scn.GetLSAvailableActions().toString().contains("Stack three"));
             scn.LSChooseAction("Stack three");
-            while (scn.LSDecisionAvailable("optional")) {
-                scn.LSPass();
-            }
+            scn.PassAllResponses();
         }
-        assertEquals("expected 3 stacked, ls=" + scn.LSGetDecision()
-                        + " ds=" + scn.DSGetDecision()
-                        + " dsText=" + (scn.DSGetDecision() == null ? "null" : scn.DSGetDecision().getText())
-                        + " lsText=" + (scn.LSGetDecision() == null ? "null" : scn.LSGetDecision().getText())
-                        + " lsActions=" + scn.GetLSAvailableActions()
-                        + " dsActions=" + scn.GetDSAvailableActions()
-                        + " stacked=" + scn.GetStackedCards(luck),
-                3, scn.GetStackedCards(luck).size());
+        assertEquals(3, scn.GetStackedCards(luck).size());
         assertTrue(scn.GetStackedCards(luck).contains(bravado));
         assertTrue(scn.GetStackedCards(luck).contains(charm));
         assertTrue(scn.GetStackedCards(luck).contains(ingenuity));
-        if (scn.AwaitingDSDeployPhaseActions()) {
-            scn.DSPass();
-        }
     }
 
     private void leaveTableAndExpectRestack(VirtualTableScenario scn, PhysicalCardImpl card, PhysicalCardImpl luck,
                                             Function<Action, StandardEffect> leave) {
         scn.SkipToPhase(Phase.MOVE);
-        assertTrue("expected LS action window, ls=" + scn.LSGetDecision(), scn.LSGetDecision() != null);
+        assertTrue(scn.LSGetDecision() != null);
         int index = scn.GetLSAvailableActions().size();
         TopLevelGameTextAction action = new TopLevelGameTextAction(card, scn.LS, card.getCardId());
         action.appendEffect(leave.apply(action));
         ((CardActionSelectionDecision) scn.LSGetDecision()).addAction(action);
         scn.PlayerDecided(scn.LS, String.valueOf(index));
         scn.PassAllResponses();
-        if (scn.GetLSAvailableActions().toString().contains("Stack")) {
-            scn.LSChooseAction("Stack");
-            scn.PassAllResponses();
-        }
-        assertTrue("expected " + card.getTitle() + " stacked on Luck, zone=" + card.getZone()
-                        + " stackedOn=" + card.getStackedOn()
-                        + " ls=" + scn.LSGetDecision() + " ds=" + scn.DSGetDecision()
-                        + " actions=" + scn.GetLSAvailableActions()
-                        + " stacked=" + scn.GetStackedCards(luck),
-                scn.GetStackedCards(luck).contains(card));
+        assertTrue(scn.GetStackedCards(luck).contains(card));
     }
 
     @Test
@@ -293,32 +254,30 @@ public class Card_1281_037_Tests {
         var charm = scn.GetLSCard("charm");
         var ingenuity = scn.GetLSCard("ingenuity");
         var lando = scn.GetLSCard("lando");
+        var han = scn.GetLSCard("han");
         var site = scn.GetLSStartingLocation();
 
         scn.StartGame();
-        scn.MoveCardsToLocation(site, lando);
+        scn.MoveCardsToLocation(site, lando, han);
+        scn.ApplyAdHocModifier(new KeywordModifier(han, Keyword.SCOUNDREL));
         setupLuckStacked(scn, luck, bravado, charm, ingenuity);
-        assertTrue("expected LS deploy after stacking, ls=" + scn.LSGetDecision()
-                        + " actions=" + scn.GetLSAvailableActions(),
-                scn.AwaitingLSDeployPhaseActions());
+        assertTrue(scn.AwaitingDSDeployPhaseActions());
+        scn.DSPass();
+        assertTrue(scn.AwaitingLSDeployPhaseActions());
 
         assertTrue(scn.LSCardActionAvailable(luck, "Deploy a [Scoundrel] Effect from here"));
         scn.LSUseCardAction(luck, "Deploy a [Scoundrel] Effect from here");
         scn.PassAllResponses();
-        assertTrue("expected stacked Bravado, " + lsDump(scn),
-                scn.LSHasCardChoiceAvailable(bravado));
+        assertTrue(scn.LSHasCardChoiceAvailable(bravado));
         scn.LSChooseCard(bravado);
-        if (scn.LSHasCardChoiceAvailable(lando)) {
-            scn.LSChooseCard(lando);
-        }
+        assertTrue(scn.LSHasCardChoiceAvailable(lando));
+        assertTrue(scn.LSHasCardChoiceAvailable(han));
+        scn.LSChooseCard(lando);
         scn.PassAllResponses();
-        if (scn.AwaitingDSDeployPhaseActions()) {
-            scn.DSPass();
-        }
+        assertTrue(scn.AwaitingDSDeployPhaseActions());
+        scn.DSPass();
 
-        assertTrue("expected Bravado on Lando, zone=" + bravado.getZone()
-                        + " attachedTo=" + bravado.getAttachedTo() + " " + lsDump(scn),
-                scn.IsAttachedTo(lando, bravado));
+        assertTrue(scn.IsAttachedTo(lando, bravado));
         assertFalse(scn.LSCardActionAvailable(luck, "Deploy a [Scoundrel] Effect from here"));
     }
 
@@ -363,13 +322,6 @@ public class Card_1281_037_Tests {
         assertTrue(scn.HasKeyword(lando, Keyword.SCOUNDREL));
         assertTrue(scn.HasKeyword(han, Keyword.SCOUNDREL));
         setupLuckStacked(scn, luck, bravado, charm, ingenuity);
-        if (scn.GetLSAvailableActions().toString().contains("Flip")) {
-            scn.LSChooseAction("Flip");
-            while (scn.LSDecisionAvailable("optional")) {
-                scn.LSPass();
-            }
-        }
-
         assertEquals(Title.Hunt_Down_And_Destroy_The_Jedi, hunt.getBlueprint().getTitle());
         assertFalse(GameConditions.canBeFlipped(scn.game(), hunt));
     }
@@ -436,16 +388,7 @@ public class Card_1281_037_Tests {
         scn.AttachCardsTo(lando, bravado);
         scn.SkipToLSTurn();
         scn.PassAllResponses();
-        if (scn.GetLSAvailableActions().toString().contains("Stack all")) {
-            scn.LSChooseAction("Stack all");
-            scn.PassAllResponses();
-        }
-        assertTrue("expected start-of-turn restack, zone=" + bravado.getZone()
-                        + " stackedOn=" + bravado.getStackedOn()
-                        + " ls=" + scn.LSGetDecision() + " ds=" + scn.DSGetDecision()
-                        + " actions=" + scn.GetLSAvailableActions()
-                        + " stacked=" + scn.GetStackedCards(luck),
-                scn.GetStackedCards(luck).contains(bravado));
+        assertTrue(scn.GetStackedCards(luck).contains(bravado));
     }
 
     @Test
@@ -472,42 +415,37 @@ public class Card_1281_037_Tests {
         var charm = scn.GetLSCard("charm");
         var ingenuity = scn.GetLSCard("ingenuity");
         var lando = scn.GetLSCard("lando");
+        var han = scn.GetLSCard("han");
         var blaster = scn.GetLSCard("blaster");
         var grenade = scn.GetLSCard("grenade");
         var site = scn.GetLSStartingLocation();
 
         scn.StartGame();
         var junk = scn.GetLSFiller(1);
-        scn.MoveCardsToLocation(site, lando);
+        scn.MoveCardsToLocation(site, lando, han);
         scn.MoveCardsToTopOfLSLostPile(junk, blaster, grenade);
         setupLuckStacked(scn, luck, bravado, charm, ingenuity);
-        assertTrue("expected LS deploy after stacking, ls=" + scn.LSGetDecision()
-                        + " actions=" + scn.GetLSAvailableActions(),
-                scn.AwaitingLSDeployPhaseActions());
+        assertTrue(scn.AwaitingDSDeployPhaseActions());
+        scn.DSPass();
+        assertTrue(scn.AwaitingLSDeployPhaseActions());
         assertTrue(scn.LSCardActionAvailable(luck, "Deploy character weapon from Lost Pile"));
         scn.LSUseCardAction(luck, "Deploy character weapon from Lost Pile");
         scn.PassAllResponses();
-        assertTrue("expected junk out of play, " + lsDump(scn), scn.LSHasCardChoiceAvailable(junk));
+        assertTrue(scn.LSHasCardChoiceAvailable(junk));
         scn.LSChooseCard(junk);
         scn.PassAllResponses();
-        assertTrue("expected blaster from Lost Pile, " + lsDump(scn), scn.LSHasCardChoiceAvailable(blaster));
-        assertFalse("Concussion Grenade must not be selectable, " + lsDump(scn),
-                isLsCardChoiceSelectable(scn, grenade));
+        assertTrue(scn.LSHasCardChoiceAvailable(blaster));
+        assertFalse(isLsCardChoiceSelectable(scn, grenade));
         scn.LSChooseCard(blaster);
-        if (scn.LSHasCardChoiceAvailable(lando)) {
-            scn.LSChooseCard(lando);
-        }
+        assertTrue(scn.LSHasCardChoiceAvailable(lando));
+        assertTrue(scn.LSHasCardChoiceAvailable(han));
+        scn.LSChooseCard(lando);
         scn.PassAllResponses();
-        if (scn.LSGetDecision() != null && scn.DSGetDecision() == null && !scn.AwaitingLSDeployPhaseActions()) {
-            scn.LSPass();
-        }
-        if (scn.AwaitingDSDeployPhaseActions() && scn.LSGetDecision() == null) {
-            scn.DSPass();
-        }
         assertTrue(scn.IsAttachedTo(lando, blaster));
         assertEquals(Zone.OUT_OF_PLAY, junk.getZone());
-        assertTrue("once-per-turn must be checked in a card-action window. decision=" + scn.LSGetDecision(),
-                scn.AwaitingLSDeployPhaseActions());
+        assertTrue(scn.AwaitingDSDeployPhaseActions());
+        scn.DSPass();
+        assertTrue(scn.AwaitingLSDeployPhaseActions());
         assertFalse(scn.LSCardActionAvailable(luck, "Deploy character weapon from Lost Pile"));
     }
 
