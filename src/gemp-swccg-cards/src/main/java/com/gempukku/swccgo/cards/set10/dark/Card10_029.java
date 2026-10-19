@@ -167,7 +167,7 @@ public class Card10_029 extends AbstractObjective {
                 && GameConditions.canSpot(game, self, SpotOverride.INCLUDE_EXCLUDED_FROM_BATTLE, Filters.and(xizorFilter, atBattlegroundSite))) {
             Filter lukeFilter = GameConditions.hasGameTextModification(game, self, ModifyGameTextType.REFLECTIONS_II_OBJECTIVE__TARGETS_REY_INSTEAD_OF_LUKE) ? Filters.Rey
                     : GameConditions.hasGameTextModification(game, self, ModifyGameTextType.REFLECTIONS_II_OBJECTIVE__TARGETS_ANAKIN_INSTEAD_OF_LUKE) ? Filters.Anakin
-                    : GameConditions.hasGameTextModification(game, self, ModifyGameTextType.REFLECTIONS_II_OBJECTIVE__TARGETS_KYLE_INSTEAD_OF_LUKE) ? Filters.persona(Persona.KYLE_KATARN)
+                    : GameConditions.hasGameTextModification(game, self, ModifyGameTextType.LEGACY__REFLECTIONS_II_OBJECTIVE__TARGETS_KYLE_INSTEAD_OF_LUKE) ? Filters.persona(Persona.KYLE_KATARN)
                     : Filters.Luke;
             if (!GameConditions.canSpot(game, self, SpotOverride.INCLUDE_EXCLUDED_FROM_BATTLE, Filters.and(lukeFilter, atBattlegroundSite))) {
 

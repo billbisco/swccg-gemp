@@ -64,7 +64,6 @@ public enum ModifyGameTextType {
     REBEL_TECH__DOUBLE_BONUS_TO_ATTACK_RUN("Attack Run bonus doubled"),
     RECOIL_IN_FEAR__MAY_NOT_BE_PLAYED_EXCEPT_TO_CANCEL_INTERRUPT("May not be played (except to cancel opponent's Interrupt)"),
     REFLECTIONS_II_OBJECTIVE__TARGETS_ANAKIN_INSTEAD_OF_LUKE("Targets Anakin instead of Luke"),
-    REFLECTIONS_II_OBJECTIVE__TARGETS_KYLE_INSTEAD_OF_LUKE("Targets Kyle Katarn instead of Luke"),
     REFLECTIONS_II_OBJECTIVE__TARGETS_REY_INSTEAD_OF_LUKE("Targets Rey instead of Luke"),
     RESCUE_THE_PRINCESS__CANNOT_BE_PLACED_OUT_OF_PLAY("Cannot be placed out of play"),
     RYCARS_RUN__RETRIEVE_FORCE_INTO_HAND("Take any or all force retrieved into hand"),
@@ -122,6 +121,7 @@ public enum ModifyGameTextType {
     LEGACY__CORUSCANT_ICON_SITES__MAY_NOT_CANCEL_FORCE_DRAIN_BONUSES("May not cancel Force drain bonuses"),
     LEGACY__OR_BE_DESTROYED__FORCE_LOSS("Force loss must come from Reserve Deck (if possible) and may not be reduced below 2"),
     LEGACY__MORE_DANGEROUS_THAN_YOU_REALIZE__REQUIRES_THREE_SITES_TO_FLIP_BACK("Opponent must control three Dantooine locations to flip it back"),
+    LEGACY__REFLECTIONS_II_OBJECTIVE__TARGETS_KYLE_INSTEAD_OF_LUKE("Targets Kyle Katarn instead of Luke"),
     LEGACY__SCOUNDRELS_LUCK__ONCE_IS_TWICE("'Once' on Scoundrel's Luck treated as 'twice'"),
 
     ;

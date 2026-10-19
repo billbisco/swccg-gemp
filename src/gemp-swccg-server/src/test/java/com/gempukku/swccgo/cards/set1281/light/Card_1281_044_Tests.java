@@ -282,15 +282,25 @@ public class Card_1281_044_Tests {
         scn.MoveOutOfPlay(xizor);
 
         scn.StartGame();
-        var lsSite = scn.GetLSCard("undercity");
+        var street = scn.GetLSCard("street");
+        var undercity = scn.GetLSCard("undercity");
+        scn.MoveLocationToTable(street);
         scn.MoveCardsToDSSideOfTable(agents);
-        scn.MoveCardsToLocation(lsSite, xizor, kyle);
+        agents.setObjectiveDeploymentComplete(true);
+        scn.MoveCardsToLocation(street, xizor, kyle);
         scn.SkipToLSTurn(Phase.CONTROL);
 
         assertEquals(Zone.SIDE_OF_TABLE, agents.getZone());
         assertTrue(scn.game().getModifiersQuerying().hasGameTextModification(
-                scn.gameState(), agents, ModifyGameTextType.REFLECTIONS_II_OBJECTIVE__TARGETS_KYLE_INSTEAD_OF_LUKE));
+                scn.gameState(), agents, ModifyGameTextType.LEGACY__REFLECTIONS_II_OBJECTIVE__TARGETS_KYLE_INSTEAD_OF_LUKE));
+        // Xizor at a battleground site and Kyle (as 'Luke') at a battleground site: Agents Of Black Sun does not flip.
         assertEquals("Agents Of Black Sun", agents.getBlueprint().getTitle());
+
+        // Kyle leaves the battleground (Undercity has no Dark Side icon): Agents Of Black Sun flips.
+        scn.MoveCardsToLocation(undercity, kyle);
+        scn.SkipToPhase(Phase.MOVE);
+        scn.PassAllResponses();
+        assertEquals("Vengeance Of The Dark Prince", agents.getBlueprint().getTitle());
     }
 
     @Test

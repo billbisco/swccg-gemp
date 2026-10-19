@@ -104,17 +104,28 @@ public class Card_1281_033_Tests {
         var elis = scn.GetDSCard("elis");
         var site = scn.GetLSStartingLocation();
 
+        var jawa = scn.GetLSCard("jawa");
+        var bast = scn.GetDSCard("bast");
+        var dsSite = scn.GetDSStartingLocation();
+
         scn.StartGame();
-        scn.MoveCardsToLSSideOfTable(redeemed);
+        scn.MoveCardsToLocation(site, jawa);
+        scn.MoveCardsToLocation(dsSite, bast);
         scn.MoveCardsToLSHand(nabrun);
         scn.MoveCardsToDSHand(elis);
+        scn.LSActivateForceCheat(8);
+        scn.DSActivateForceCheat(8);
+
+        // Without Redeemed Apprentice on table, both Interrupts are playable.
         scn.SkipToLSTurn(Phase.MOVE);
-
-        assertFalse(scn.LSPlayUsedInterruptAvailable(nabrun));
-
+        assertTrue(scn.LSCardPlayAvailable(nabrun));
         scn.SkipToDSTurn(Phase.MOVE);
-        assertFalse(scn.DSPlayUsedInterruptAvailable(elis));
-        assertEquals(Zone.SIDE_OF_TABLE, redeemed.getZone());
-        assertEquals(site, scn.GetLSStartingLocation());
+        assertTrue(scn.DSCardPlayAvailable(elis));
+
+        scn.MoveCardsToLSSideOfTable(redeemed);
+        scn.SkipToLSTurn(Phase.MOVE);
+        assertFalse(scn.LSCardPlayAvailable(nabrun));
+        scn.SkipToDSTurn(Phase.MOVE);
+        assertFalse(scn.DSCardPlayAvailable(elis));
     }
 }

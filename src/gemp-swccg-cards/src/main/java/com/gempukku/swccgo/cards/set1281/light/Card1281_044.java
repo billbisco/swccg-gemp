@@ -98,7 +98,7 @@ public class Card1281_044 extends AbstractObjective {
         action.appendEffect(
                 new AddUntilEndOfGameModifierEffect(action,
                         new ModifyGameTextModifier(self, Filters.and(Filters.opponents(playerId), Filters.Objective, Icon.REFLECTIONS_II),
-                                ModifyGameTextType.REFLECTIONS_II_OBJECTIVE__TARGETS_KYLE_INSTEAD_OF_LUKE), null));
+                                ModifyGameTextType.LEGACY__REFLECTIONS_II_OBJECTIVE__TARGETS_KYLE_INSTEAD_OF_LUKE), null));
         return action;
     }
 
