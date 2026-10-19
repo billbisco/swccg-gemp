@@ -121,6 +121,32 @@ public class Card_1210_162_Tests {
     }
 
     @Test
+    public void SabotageMakesWeaponLostWhenDestinyMinusSpiesDropsBelowTargetDestiny() {
+        var scn = GetScenario();
+        var sabotage = scn.GetLSCard("sabotage");
+        var spy = scn.GetLSCard("spy");
+        var trooper = scn.GetDSCard("trooper");
+        var blaster = scn.GetDSCard("blaster");
+        var site = scn.GetLSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, trooper, spy);
+        scn.AttachCardsTo(trooper, blaster);
+        scn.MoveCardsToLSHand(sabotage);
+        scn.SkipToLSTurn(Phase.CONTROL);
+        scn.PrepareLSDestiny(3);
+
+        assertTrue(scn.LSCardPlayAvailable(sabotage));
+        scn.LSPlayCard(sabotage);
+        assertTrue(scn.LSDecisionAvailable("Choose"));
+        scn.LSChooseCard(blaster);
+        scn.PassAllResponses();
+
+        assertInZone(Zone.LOST_PILE, blaster);
+        assertInZone(Zone.LOST_PILE, sabotage);
+    }
+
+    @Test
     public void SabotageCancelsPermanentWeaponTargetingAtSameSiteAsYourSpy() {
         var scn = GetScenario();
         var sabotage = scn.GetLSCard("sabotage");

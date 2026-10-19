@@ -19,6 +19,7 @@ import java.util.HashMap;
 
 import static com.gempukku.swccgo.framework.Assertions.assertInZone;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class Card_1230_072_Tests {
@@ -154,5 +155,11 @@ public class Card_1230_072_Tests {
         scn.PassAllResponses();
 
         assertInZone(Zone.SIDE_OF_TABLE, squadron);
+        if (scn.AwaitingDSDeployPhaseActions()) {
+            scn.DSPass();
+        }
+        if (scn.AwaitingLSDeployPhaseActions()) {
+            assertFalse(scn.LSCardActionAvailable(laudica, "Deploy Effect"));
+        }
     }
 }

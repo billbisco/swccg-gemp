@@ -18,6 +18,7 @@ import java.util.HashMap;
 
 import static com.gempukku.swccgo.framework.Assertions.assertAtLocation;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class Card_1210_026_Tests {
@@ -25,12 +26,14 @@ public class Card_1210_026_Tests {
         return new VirtualTableScenario(
                 new HashMap<>() {{
                     put("luke", "1_19");
+                    put("blaster", "1_156");
                 }},
                 new HashMap<>() {{
                     put("urrur", "1210_26");
                     put("urorru", "1210_25");
                     put("gaffi", "1_315");
                     put("farm", "1_292");
+                    put("moseisley", "1_295");
                 }},
                 10, 10,
                 StartingSetup.DefaultLSGroundLocation,
@@ -111,5 +114,66 @@ public class Card_1210_026_Tests {
         scn.PassAllResponses();
 
         assertTrue(scn.IsAttachedTo(urrur, gaffi));
+    }
+
+    @Test
+    public void UrRurMovesAsARegularMoveDuringDeployPhase() {
+        var scn = GetScenario();
+        var urrur = scn.GetDSCard("urrur");
+        var moseisley = scn.GetDSCard("moseisley");
+        var site = scn.GetDSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveLocationToTable(moseisley);
+        scn.MoveCardsToLocation(site, urrur);
+        scn.SkipToDSTurn(Phase.DEPLOY);
+
+        assertTrue(scn.DSCardActionAvailable(urrur, "Move as a regular move"));
+        scn.DSUseCardAction(urrur, "Move as a regular move");
+        if (scn.DSHasCardChoiceAvailable(moseisley)) {
+            scn.DSChooseCard(moseisley);
+        }
+        else if (scn.DSDecisionAvailable("Choose")) {
+            scn.DSChooseAnyCard();
+        }
+        scn.PassAllResponses();
+
+        assertTrue(urrur.getAtLocation() != site);
+    }
+
+    @Test
+    public void UrRurAddsTwoToTuskenWeaponDestiny() {
+        var scn = GetScenario();
+        var urrur = scn.GetDSCard("urrur");
+        var gaffi = scn.GetDSCard("gaffi");
+        var luke = scn.GetLSCard("luke");
+        var blaster = scn.GetLSCard("blaster");
+        var site = scn.GetDSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, urrur, luke);
+        scn.AttachCardsTo(urrur, gaffi);
+        scn.AttachCardsTo(luke, blaster);
+        scn.SkipToDSTurn(Phase.BATTLE);
+        assertTrue(scn.AwaitingDSBattlePhaseActions());
+        scn.PrepareDSDestiny(2);
+        scn.PrepareDSDestiny(2);
+        scn.DSInitiateBattle(site);
+        assertTrue(scn.DSActionAvailable("Fire") || scn.DSDecisionAvailable("Fire")
+                || scn.DSCardActionAvailable(gaffi));
+        if (scn.DSCardActionAvailable(gaffi)) {
+            scn.DSUseCardAction(gaffi);
+        }
+        else if (scn.DSActionAvailable("Fire")) {
+            scn.DSChooseAction("Fire");
+        }
+        if (scn.DSHasCardChoiceAvailable(luke)) {
+            scn.DSChooseCard(luke);
+        }
+        scn.PassAllResponses();
+
+        if (scn.AwaitingLSWeaponsSegmentActions()) {
+            assertFalse(scn.LSCardActionAvailable(blaster, "Fire"));
+        }
     }
 }

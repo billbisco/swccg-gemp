@@ -108,11 +108,35 @@ public class Card_1210_171_Tests {
         assertTrue(scn.AwaitingLSWeaponsSegmentActions());
         scn.PrepareLSDestiny(5);
         assertTrue(scn.LSCardActionAvailable(blaster, "Fire"));
+        int force = scn.GetLSForcePileCount();
         scn.LSUseCardAction(blaster, "Fire");
         scn.LSChooseCard(trooper);
         scn.PassAllResponses();
 
+        assertEquals(force, scn.GetLSForcePileCount());
         assertInZone(Zone.LOST_PILE, trooper);
+    }
+
+    @Test
+    public void LeiasSportingBlasterDeploysOnANonDroidUndercoverSpy() {
+        var scn = GetScenario();
+        var blaster = scn.GetLSCard("blaster");
+        var boushh = scn.GetLSCard("boushh");
+        var site = scn.GetLSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, boushh);
+        scn.MakeCardGoUndercover(boushh);
+        scn.MoveCardsToLSHand(blaster);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+
+        assertTrue(boushh.isUndercover());
+        assertTrue(scn.LSDeployAvailable(blaster));
+        scn.LSDeployCard(blaster);
+        scn.LSChooseCard(boushh);
+        scn.PassAllResponses();
+
+        assertTrue(scn.IsAttachedTo(boushh, blaster));
     }
 
     @Test

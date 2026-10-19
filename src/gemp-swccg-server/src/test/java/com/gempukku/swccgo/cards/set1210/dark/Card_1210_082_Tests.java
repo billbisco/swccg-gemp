@@ -19,6 +19,7 @@ import java.util.HashMap;
 
 import static com.gempukku.swccgo.framework.Assertions.assertAtLocation;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class Card_1210_082_Tests {
@@ -112,5 +113,42 @@ public class Card_1210_082_Tests {
         scn.PassAllResponses();
 
         assertAtLocation(site, urorru);
+        if (scn.AwaitingLSDeployPhaseActions()) {
+            scn.LSPass();
+        }
+        if (scn.AwaitingDSDeployPhaseActions()) {
+            assertFalse(scn.DSCardActionAvailable(bantha, "Deploy URoRRu"));
+        }
+    }
+
+    @Test
+    public void URoRRuRRRsBanthaHasAbilityOneHalf() {
+        var scn = GetScenario();
+        var bantha = scn.GetDSCard("bantha");
+        var site = scn.GetDSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, bantha);
+
+        assertEquals(0.5f, scn.game().getModifiersQuerying().getAbility(scn.gameState(), bantha), 0.01f);
+    }
+
+    @Test
+    public void URoRRuRRRsBanthaAddsOneBattleDestinyWithURoRRuAboard() {
+        var scn = GetScenario();
+        var bantha = scn.GetDSCard("bantha");
+        var urorru = scn.GetDSCard("urorru");
+        var luke = scn.GetLSCard("luke");
+        var site = scn.GetDSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, bantha, luke);
+        scn.BoardAsPassenger(bantha, urorru);
+        scn.SkipToDSTurn(Phase.BATTLE);
+        assertTrue(scn.AwaitingDSBattlePhaseActions());
+        scn.DSInitiateBattle(site);
+        scn.PassAllResponses();
+
+        assertEquals(1, scn.GetDSBattleDestinyCount());
     }
 }

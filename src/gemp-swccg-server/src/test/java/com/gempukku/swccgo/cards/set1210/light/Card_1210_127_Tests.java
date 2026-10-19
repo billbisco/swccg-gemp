@@ -79,10 +79,12 @@ public class Card_1210_127_Tests {
         scn.MoveOutOfPlay(obi);
         scn.SkipToLSTurn(Phase.DEPLOY);
 
+        int force = scn.GetLSForcePileCount();
         assertTrue(scn.LSCardPlayAvailable(icbhg));
         scn.LSPlayCard(icbhg);
         scn.PassAllResponses();
 
+        assertEquals(force - 1, scn.GetLSForcePileCount());
         assertInZone(Zone.SIDE_OF_TABLE, icbhg);
         assertEquals(Zone.OUT_OF_PLAY, obi.getZone());
     }
@@ -122,6 +124,9 @@ public class Card_1210_127_Tests {
         assertTrue(scn.LSCardActionAvailable(icbhg, "Add 5"));
         scn.LSUseCardAction(icbhg, "Add 5");
         scn.PassForceUseResponses();
+        if (scn.AwaitingLSWeaponsSegmentActions()) {
+            assertFalse(scn.LSCardActionAvailable(icbhg, "Add 5"));
+        }
         scn.PassWeaponsSegmentActions();
         scn.SkipBattleDestinyDraws(false);
 

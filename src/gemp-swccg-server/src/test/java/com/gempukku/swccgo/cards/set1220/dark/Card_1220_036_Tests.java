@@ -19,6 +19,7 @@ import java.util.HashMap;
 
 import static com.gempukku.swccgo.framework.Assertions.assertInZone;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class Card_1220_036_Tests {
@@ -35,7 +36,7 @@ public class Card_1220_036_Tests {
                     put("bespin", "5_164");
                     put("tie1", "1_304");
                     put("tie2", "1_304");
-                    put("obsidian", "9_159");
+                    put("obsidian", "5_176");
                 }},
                 10, 10,
                 StartingSetup.DefaultLSGroundLocation,
@@ -110,7 +111,96 @@ public class Card_1220_036_Tests {
         scn.DSChooseCard(refinery);
         scn.PassAllResponses();
 
-        assertTrue(scn.IsAttachedTo(clouds1, refinery) || refinery.getZone() == Zone.ATTACHED);
+        assertTrue(scn.IsAttachedTo(clouds1, refinery));
+        if (scn.AwaitingLSDeployPhaseActions()) {
+            scn.LSPass();
+        }
+        if (scn.AwaitingDSDeployPhaseActions()) {
+            assertFalse(scn.DSCardActionAvailable(imsorry, "Floating Refinery"));
+            assertFalse(scn.DSCardActionAvailable(imsorry, "cloud sector"));
+            assertFalse(scn.DSCardActionAvailable(imsorry, "Obsidian squadron TIE"));
+        }
+    }
+
+    @Test
+    public void ImSorrySuspendsFloatingRefineryOnOpponentsTurn() {
+        var scn = GetScenario();
+        var imsorry = scn.GetDSCard("imsorry");
+        var refinery = scn.GetDSCard("refinery");
+        var clouds1 = scn.GetDSCard("clouds1");
+        var bespin = scn.GetDSCard("bespin");
+
+        scn.StartGame();
+        scn.SkipToLSTurn(Phase.CONTROL);
+        scn.MoveLocationToTable(bespin);
+        scn.MoveLocationToTable(clouds1);
+        scn.MoveCardsToDSSideOfTable(imsorry);
+        scn.AttachCardsTo(clouds1, refinery);
+        scn.SkipToPhase(Phase.DEPLOY);
+        assertTrue(refinery.isSuspended());
+        scn.SkipToDSTurn(Phase.ACTIVATE);
+        assertFalse(refinery.isSuspended());
+    }
+
+    @Test
+    public void ImSorryDeploysCloudSectorToBespinFromReserve() {
+        var scn = GetScenario();
+        var imsorry = scn.GetDSCard("imsorry");
+        var clouds2 = scn.GetDSCard("clouds2");
+        var bespin = scn.GetDSCard("bespin");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(bespin);
+        scn.MoveCardsToDSSideOfTable(imsorry);
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.MoveCardsToTopOfDSReserveDeck(clouds2);
+
+        assertTrue(scn.DSCardActionAvailable(imsorry, "cloud sector"));
+        scn.DSUseCardAction(imsorry, "cloud sector");
+        if (scn.DSHasCardChoiceAvailable(clouds2)) {
+            scn.DSChooseCard(clouds2);
+        }
+        else if (scn.DSDecisionAvailable("Reserve Deck")) {
+            scn.DSChooseAnyCard();
+        }
+        scn.PassAllResponses();
+        if (scn.DSDecisionAvailable("On which side") || scn.DSDecisionAvailable("which side")) {
+            scn.DSChoose("Left");
+            scn.PassAllResponses();
+        }
+
+        assertEquals(Zone.LOCATIONS, clouds2.getZone());
+    }
+
+    @Test
+    public void ImSorryDeploysObsidianSquadronTIEFromReserve() {
+        var scn = GetScenario();
+        var imsorry = scn.GetDSCard("imsorry");
+        var obsidian = scn.GetDSCard("obsidian");
+        var clouds1 = scn.GetDSCard("clouds1");
+        var bespin = scn.GetDSCard("bespin");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(bespin);
+        scn.MoveLocationToTable(clouds1);
+        scn.MoveCardsToDSSideOfTable(imsorry);
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.MoveCardsToTopOfDSReserveDeck(obsidian);
+
+        assertTrue(scn.DSCardActionAvailable(imsorry, "Obsidian squadron TIE"));
+        scn.DSUseCardAction(imsorry, "Obsidian squadron TIE");
+        assertTrue(scn.DSHasCardChoiceAvailable(obsidian));
+        scn.DSChooseCard(obsidian);
+        scn.PassAllResponses();
+        if (scn.DSHasCardChoiceAvailable(clouds1)) {
+            scn.DSChooseCard(clouds1);
+        }
+        else if (scn.DSHasCardChoiceAvailable(bespin)) {
+            scn.DSChooseCard(bespin);
+        }
+        scn.PassAllResponses();
+
+        assertTrue(obsidian.getZone() == Zone.AT_LOCATION || obsidian.getAtLocation() != null);
     }
 
     @Test

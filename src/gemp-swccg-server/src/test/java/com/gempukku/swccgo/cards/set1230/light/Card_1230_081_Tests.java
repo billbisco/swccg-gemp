@@ -17,6 +17,7 @@ import java.util.HashMap;
 
 import static com.gempukku.swccgo.framework.Assertions.assertAtLocation;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class Card_1230_081_Tests {
@@ -24,9 +25,11 @@ public class Card_1230_081_Tests {
         return new VirtualTableScenario(
                 new HashMap<>() {{
                     put("tanus", "1230_81");
+                    put("luke", "1_19");
                 }},
                 new HashMap<>() {{
                     put("trooper", "1_194");
+                    put("storm2", "1_179");
                 }},
                 10, 10,
                 StartingSetup.DefaultLSGroundLocation,
@@ -92,5 +95,79 @@ public class Card_1230_081_Tests {
 
         assertAtLocation(site, tanus);
         assertEquals(dsForceBefore - 1, scn.GetDSForcePileCount());
+    }
+
+    @Test
+    public void TanusSpijekOpponentLosesOneForcePerDarkSideCharacterPresent() {
+        var scn = GetScenario();
+        var tanus = scn.GetLSCard("tanus");
+        var trooper = scn.GetDSCard("trooper");
+        var storm2 = scn.GetDSCard("storm2");
+        var site = scn.GetLSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, trooper, storm2);
+        scn.MoveCardsToLSHand(tanus);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+
+        int dsForceBefore = scn.GetDSForcePileCount();
+        scn.LSPlayCard(tanus);
+        scn.LSChooseCard(site);
+        scn.PassAllResponses();
+        assertTrue(scn.DSDecisionAvailable("Choose Force to lose"));
+        scn.DSChooseCard(scn.GetTopOfDSForcePile());
+        scn.PassAllResponses();
+        if (scn.DSDecisionAvailable("Choose Force to lose")) {
+            scn.DSChooseCard(scn.GetTopOfDSForcePile());
+            scn.PassAllResponses();
+        }
+
+        assertEquals(dsForceBefore - 2, scn.GetDSForcePileCount());
+    }
+
+    @Test
+    public void TanusSpijekLoseForceIsOncePerGame() {
+        var scn = GetScenario();
+        var tanus = scn.GetLSCard("tanus");
+        var trooper = scn.GetDSCard("trooper");
+        var site = scn.GetLSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, trooper);
+        scn.MoveCardsToLSHand(tanus);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        scn.LSPlayCard(tanus);
+        scn.LSChooseCard(site);
+        scn.PassAllResponses();
+        assertTrue(scn.DSDecisionAvailable("Choose Force to lose"));
+        scn.DSChooseCard(scn.GetTopOfDSForcePile());
+        scn.PassAllResponses();
+
+        scn.MoveCardsToTopOfLSLostPile(tanus);
+        scn.MoveCardsToLSHand(tanus);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        scn.LSPlayCard(tanus);
+        scn.LSChooseCard(site);
+        scn.PassAllResponses();
+
+        assertFalse(scn.DSDecisionAvailable("Choose Force to lose"));
+        assertAtLocation(site, tanus);
+    }
+
+    @Test
+    public void TanusSpijekDrawsOneBattleDestinyIfUnableToOtherwise() {
+        var scn = GetScenario();
+        var tanus = scn.GetLSCard("tanus");
+        var trooper = scn.GetDSCard("trooper");
+        var site = scn.GetLSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, tanus, trooper);
+        scn.SkipToLSTurn(Phase.BATTLE);
+        assertTrue(scn.AwaitingLSBattlePhaseActions());
+        scn.LSInitiateBattle(site);
+        scn.PassAllResponses();
+
+        assertEquals(1, scn.GetLSBattleDestinyCount());
     }
 }

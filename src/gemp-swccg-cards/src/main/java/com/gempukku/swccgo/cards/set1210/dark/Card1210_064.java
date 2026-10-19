@@ -108,7 +108,7 @@ public class Card1210_064 extends AbstractUsedOrStartingInterrupt {
                                     PhysicalCard location = myLocations.iterator().next();
                                     if (game.getModifiersQuerying().getIconCount(game.getGameState(), location, Icon.DARK_FORCE) < 3) {
                                         action.appendEffect(
-                                                new DeployCardFromReserveDeckEffect(action, Filters.or(Filters.title("ISB Central Office"), Filters.Mos_Eisley), true, true));
+                                                new DeployCardFromReserveDeckEffect(action, Filters.or(Filters.title("Coruscant: ISB Central Office"), Filters.Mos_Eisley), true, true));
                                     }
                                 }
                             }
