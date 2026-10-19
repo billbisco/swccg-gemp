@@ -238,7 +238,11 @@ public class SwccgoServerRequestHandler {
         _playerDao.updateLastLoginIp(login, remoteIp);
 
         String sessionId = _loggedUserHolder.logUser(login);
+        // HttpOnly: page scripts (and any injected script) cannot read the session.
+        // SameSite=Lax: other sites cannot make the browser send it on POSTs (CSRF).
+        // Secure: HTTPS only (see secureCookies()).
         return Collections.singletonMap(
-                HttpHeaderNames.SET_COOKIE.toString(), ServerCookieEncoder.STRICT.encode("loggedUser", sessionId));
+                HttpHeaderNames.SET_COOKIE.toString(),
+                encodeProtectedCookie("loggedUser", sessionId, Long.MIN_VALUE, CookieHeaderNames.SameSite.Lax));
     }
 }

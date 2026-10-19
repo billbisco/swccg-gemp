@@ -358,7 +358,7 @@ public class DbPlayerDAO implements PlayerDAO {
     }
 
     /**
-     * Find all accounts that share various factors with the given player.  Looks for matching passwords and matching
+     * Find all accounts that share various factors with the given player.  Looks for matching
      * creation/login IP addresses.
      * This is intended to be used progressively, so that the return value is fed back into the function until no further
      * accounts are found.  This is to find similar accounts, and accounts similar to those accounts, and so on until
@@ -388,27 +388,21 @@ public class DbPlayerDAO implements PlayerDAO {
                 return similarPlayers;
             }
 
-            //Build the where clause fragments for ip address comparison
-            StringBuilder whereIP = new StringBuilder(" IN (");
-            for (String ipAddr : ipAddresses) {
-                whereIP.append("'").append(ipAddr).append("', ");
-            }
-            whereIP.setLength(whereIP.length() - 2);
-            whereIP.append(")");
-
-            //Build the where clause fragments for password comparison
-            StringBuilder wherePassword = new StringBuilder(" IN (");
-            for (String ipAddr : ipAddresses) {
-                wherePassword.append("'").append(ipAddr).append("', ");
-            }
-            wherePassword.setLength(wherePassword.length() - 2);
-            wherePassword.append(")");
-
-            String sql = _selectPlayer + " WHERE password" + wherePassword +
-                    " OR (create_ip" + whereIP + " or last_ip" + whereIP + ")" +
-                    " LIMIT 200";
+            // Bind every IP as a parameter. These values came from request headers in the past, so they
+            // must never be spliced into the SQL text. (Password matching was dropped: salted hashes
+            // never match across accounts, and comparing legacy hashes only leaks password reuse.)
+            List<String> ips = new ArrayList<>(ipAddresses);
+            String placeholders = String.join(", ", Collections.nCopies(ips.size(), "?"));
+            String sql = _selectPlayer + " WHERE create_ip IN (" + placeholders + ") OR last_ip IN (" + placeholders + ")"
+                    + " LIMIT 200";
 
             try (PreparedStatement statement = conn.prepareStatement(sql)) {
+                int idx = 1;
+                for (int pass = 0; pass < 2; pass++) {
+                    for (String ip : ips) {
+                        statement.setString(idx++, ip);
+                    }
+                }
                 try (ResultSet rs = statement.executeQuery()) {
                     while (rs.next()) {
                         similarPlayers.add(getPlayerFromResultSet(rs));
