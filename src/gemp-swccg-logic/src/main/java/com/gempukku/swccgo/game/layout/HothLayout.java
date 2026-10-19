@@ -44,8 +44,10 @@ public class HothLayout extends AbstractSystemLayout {
                         //  A) Interior sites
                         new LocationGroup("Interior sites", Filters.and(Filters.interior_site, Filters.not(Filters.or(Filters.exterior_site,
                                 Filters.marker_site)), Filters.partOfSystem(systemName))),
-                        //  B) Interior/Exterior sites
-                        new LocationGroup("Interior/Exterior sites", Filters.and(Filters.interior_site, Filters.exterior_site, Filters.partOfSystem(systemName))),
+                        //  B) Interior/Exterior sites (buffer sites only)
+                        new LocationGroup("Interior/Exterior sites", Filters.and(LocationLayoutFilters.bufferInteriorExteriorSite(), Filters.partOfSystem(systemName))),
+                        //  B2) Exterior sites (non-buffer interior/exterior sites lay out as exterior)
+                        new LocationGroup("Exterior sites", Filters.and(LocationLayoutFilters.nonBufferInteriorExteriorSite(), Filters.partOfSystem(systemName))),
                         //  C) 1st Marker
                         new LocationGroup("1st Marker", Filters.First_Marker),
                         //  D) 2nd Marker

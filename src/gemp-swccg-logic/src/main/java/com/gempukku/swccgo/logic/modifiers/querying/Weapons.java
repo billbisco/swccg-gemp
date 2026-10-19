@@ -155,7 +155,14 @@ public interface Weapons extends BaseQuery, Icons {
      * @param weapon the weapon
      * @return true or false
      */
+    default boolean mayFireOnlyOncePerBattle(GameState gameState, PhysicalCard weapon) {
+        return !getModifiersAffectingCard(gameState, ModifierType.MAY_FIRE_ONLY_ONCE_PER_BATTLE, weapon).isEmpty();
+    }
+
     default boolean mayBeFiredTwicePerBattle(GameState gameState, PhysicalCard weapon) {
+        if (mayFireOnlyOncePerBattle(gameState, weapon)) {
+            return false;
+        }
         return !getModifiersAffectingCard(gameState, ModifierType.MAY_FIRE_TWICE_PER_BATTLE, weapon).isEmpty();
     }
 
@@ -167,6 +174,9 @@ public interface Weapons extends BaseQuery, Icons {
      * @return true or false
      */
     default boolean mayFireWeaponTwicePerBattle(GameState gameState, PhysicalCard weaponUser, PhysicalCard weapon) {
+        if (mayFireOnlyOncePerBattle(gameState, weapon)) {
+            return false;
+        }
         for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.MAY_FIRE_A_WEAPON_TWICE_PER_BATTLE, weaponUser)) {
             if (modifier.isAffectedTarget(gameState, query(), weapon)) {
                 return true;
@@ -347,6 +357,9 @@ public interface Weapons extends BaseQuery, Icons {
      * @return true or false
      */
     default boolean mayFireWeaponRepeatedly(GameState gameState, PhysicalCard weapon) {
+        if (mayFireOnlyOncePerBattle(gameState, weapon)) {
+            return false;
+        }
         return (!getModifiersAffectingCard(gameState, ModifierType.MAY_FIRE_REPEATEDLY_FOR_COST, weapon).isEmpty());
     }
 
@@ -363,6 +376,9 @@ public interface Weapons extends BaseQuery, Icons {
      * @return true or false
      */
     default boolean mayFireWeaponRepeatedlyAtSameTarget(GameState gameState, PhysicalCard weapon) {
+        if (mayFireOnlyOncePerBattle(gameState, weapon)) {
+            return false;
+        }
         return (!getModifiersAffectingCard(gameState, ModifierType.MAY_FIRE_REPEATEDLY_AT_SAME_TARGET_FOR_COST, weapon).isEmpty());
     }
 

@@ -38,12 +38,14 @@ public class Yavin4Layout extends AbstractSystemLayout {
                 new LocationReversibleGroupOrder(
                         //  A) Interior sites
                         new LocationGroup("Interior sites", Filters.and(Filters.interior_site, Filters.not(Filters.exterior_site), Filters.partOfSystem(systemName))),
-                        //  B) Interior/Exterior sites
-                        new LocationGroup("Interior/Exterior sites", Filters.and(Filters.interior_site, Filters.exterior_site, Filters.partOfSystem(systemName))),
+                        //  B) Interior/Exterior sites (buffer sites only)
+                        new LocationGroup("Interior/Exterior sites", Filters.and(LocationLayoutFilters.bufferInteriorExteriorSite(), Filters.partOfSystem(systemName))),
                         //  C) Massassi Headquarters
                         new LocationGroup("Massassi Headquarters", Filters.Massassi_Headquarters),
-                        //  D) Exterior sites
-                        new LocationGroup("Exterior sites", Filters.and(Filters.exterior_site, Filters.not(Filters.or(Filters.interior_site, Filters.Massassi_Headquarters)),
+                        //  D) Exterior sites (non-buffer interior/exterior sites lay out as exterior)
+                        new LocationGroup("Exterior sites", Filters.and(Filters.or(
+                                Filters.and(Filters.exterior_site, Filters.not(Filters.or(Filters.interior_site, Filters.Massassi_Headquarters))),
+                                Filters.and(LocationLayoutFilters.nonBufferInteriorExteriorSite(), Filters.not(Filters.Massassi_Headquarters))),
                                 Filters.partOfSystem(systemName)))));
 
         //  2) Clouds

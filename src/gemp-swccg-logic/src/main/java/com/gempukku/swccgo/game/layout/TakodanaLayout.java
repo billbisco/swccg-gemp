@@ -37,7 +37,9 @@ public class TakodanaLayout extends AbstractSystemLayout {
         _groupOrders.add(
                 new LocationReversibleGroupOrder(
                         // A) Exterior sites:
-                        new LocationGroup("Exterior Sites", Filters.and(Filters.exterior_site, Filters.not(Filters.or(Filters.interior_site, Filters.Mazs_Castle_Location)))),
+                        new LocationGroup("Exterior Sites", Filters.and(Filters.or(
+                                Filters.and(Filters.exterior_site, Filters.not(Filters.or(Filters.interior_site, Filters.Mazs_Castle_Location))),
+                                Filters.and(LocationLayoutFilters.nonBufferInteriorExteriorSite(), Filters.not(Filters.Mazs_Castle_Location))))),
                         new LocationGroup("Maz's Castle", Filters.Mazs_Castle),
                         new LocationGroup("Interior sites", Filters.and(Filters.interior_site))));
         _groupOrders.add(

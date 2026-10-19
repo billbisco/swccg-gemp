@@ -46,9 +46,13 @@ public class TatooineLayout extends AbstractSystemLayout {
                         new LocationGroup("Docking bay 94", Filters.Docking_Bay_94),
                         //  C) Mos Eisley
                         new LocationGroup("Mos Eisley", Filters.Mos_Eisley),
-                        //  D) Exterior sites
-                        new LocationGroup("Exterior sites", Filters.and(Filters.exterior_site, Filters.not(Filters.or(Filters.interior_site,
-                                Filters.Mos_Eisley, Filters.Jabbas_Palace_site)), Filters.partOfSystem(systemName))),
+                        //  D) Exterior sites (non-buffer interior/exterior sites lay out as exterior)
+                        new LocationGroup("Exterior sites", Filters.and(Filters.or(
+                                Filters.and(Filters.exterior_site, Filters.not(Filters.or(Filters.interior_site,
+                                        Filters.Mos_Eisley, Filters.Jabbas_Palace_site))),
+                                Filters.and(LocationLayoutFilters.nonBufferInteriorExteriorSite(),
+                                        Filters.not(Filters.or(Filters.Mos_Eisley, Filters.Jabbas_Palace_site)))),
+                                Filters.partOfSystem(systemName))),
                         //  E) Jabba's Palace
                         new LocationGroup("Jabba's Palace", Filters.Jabbas_Palace),
                         //  F) Entrance Cavern

@@ -41,7 +41,9 @@ public class JakkuLayout extends AbstractSystemLayout {
                         new LocationGroup("Niima Outpost Shipyard", Filters.Niima_Outpost_Shipyard),
                         //  C) Exterior sites
                         new LocationGroup("Exterior sites", Filters.and(Filters.exterior_site, Filters.not(Filters.or(Filters.interior_site,
-                                Filters.Niima_Outpost_Shipyard)), Filters.partOfSystem(systemName)))));
+                                Filters.Niima_Outpost_Shipyard)), Filters.partOfSystem(systemName))),
+                        //  D) Interior/Exterior sites at the exterior/interior boundary (generic-layout rule)
+                        new LocationGroup("Interior/Exterior sites", Filters.and(Filters.interior_site, Filters.exterior_site, Filters.partOfSystem(systemName)))));
 
         //  2) Clouds
         //  3) Planet
