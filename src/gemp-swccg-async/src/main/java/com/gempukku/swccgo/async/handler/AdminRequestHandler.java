@@ -163,7 +163,6 @@ public class AdminRequestHandler extends SwccgoServerRequestHandler implements U
                     Element playerElem = doc.createElement("player");
                     playerElem.setAttribute("id", String.valueOf(similarPlayer.getId()));
                     playerElem.setAttribute("name", similarPlayer.getName());
-                    playerElem.setAttribute("password", similarPlayer.getPassword());
                     playerElem.setAttribute("status", getStatus(similarPlayer));
                     playerElem.setAttribute("createIp", similarPlayer.getCreateIp());
                     playerElem.setAttribute("loginIp", similarPlayer.getLastIp());
@@ -217,7 +216,7 @@ public class AdminRequestHandler extends SwccgoServerRequestHandler implements U
     }
 
     private void resetUserPassword(HttpRequest request, ResponseWriter responseWriter) throws Exception {
-        validateAdmin(request);
+        Player admin = validateAdmin(request);
 
         HttpPostRequestDecoder postDecoder = new HttpPostRequestDecoder(request);
         try {
@@ -226,11 +225,13 @@ public class AdminRequestHandler extends SwccgoServerRequestHandler implements U
             if (login == null)
                 throw new HttpProcessingException(404);
 
-            if (!_adminService.resetUserPassword(login))
+            String code = _adminService.resetUserPassword(login, admin.getName());
+            if (code == null)
                 throw new HttpProcessingException(404);
 
             clearCache();
-            responseWriter.writeHtmlResponse("OK");
+            // The one-time code is shown to the admin once. It is stored only as a hash.
+            responseWriter.writeHtmlResponse(code);
         }
         finally {
             postDecoder.destroy();
@@ -1271,11 +1272,12 @@ public class AdminRequestHandler extends SwccgoServerRequestHandler implements U
      * @param request the request
      * @throws HttpProcessingException an exception
      */
-    private void validateAdmin(HttpRequest request) throws HttpProcessingException {
+    private Player validateAdmin(HttpRequest request) throws HttpProcessingException {
         Player player = getResourceOwnerSafely(request, null);
 
         if (!player.hasType(Player.Type.ADMIN))
             throw new HttpProcessingException(403);
+        return player;
     }
 
     /**

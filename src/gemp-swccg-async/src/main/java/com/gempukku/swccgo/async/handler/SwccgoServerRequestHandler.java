@@ -13,7 +13,11 @@ import com.gempukku.swccgo.game.CardCollection;
 import com.gempukku.swccgo.game.Player;
 import com.gempukku.swccgo.packagedProduct.ProductName;
 import com.gempukku.swccgo.service.LoggedUserHolder;
+import com.gempukku.swccgo.common.ApplicationConfiguration;
+import com.gempukku.swccgo.service.AuthService;
 import io.netty.handler.codec.http.cookie.Cookie;
+import io.netty.handler.codec.http.cookie.CookieHeaderNames;
+import io.netty.handler.codec.http.cookie.DefaultCookie;
 import io.netty.handler.codec.http.cookie.ServerCookieDecoder;
 import io.netty.handler.codec.http.cookie.ServerCookieEncoder;
 import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
@@ -38,6 +42,7 @@ public class SwccgoServerRequestHandler {
     protected final CollectionsManager _collectionManager;
     protected DeckDAO _deckDao;
     protected GempSettingDAO _gempSettingDAO;
+    protected AuthService _authService;
 
     public SwccgoServerRequestHandler(Map<Type, Object> context) {
         _playerDao = extractObject(context, PlayerDAO.class);
@@ -46,6 +51,7 @@ public class SwccgoServerRequestHandler {
         _collectionManager = extractObject(context, CollectionsManager.class);
         _deckDao = extractObject(context, DeckDAO.class);
         _gempSettingDAO = extractObject(context, GempSettingDAO.class);
+        _authService = extractObject(context, AuthService.class);
     }
 
     private boolean isTest() {
@@ -79,6 +85,43 @@ public class SwccgoServerRequestHandler {
                 }
             }
         }
+    }
+
+    /** Value of the named request cookie, or null. */
+    protected static String getCookieValue(HttpRequest request, String name) {
+        String cookieHeader = request.headers().get(HttpHeaderNames.COOKIE);
+        if (cookieHeader == null)
+            return null;
+        for (Cookie cookie : ServerCookieDecoder.STRICT.decode(cookieHeader)) {
+            if (cookie.name().equals(name))
+                return cookie.value();
+        }
+        return null;
+    }
+
+    /**
+     * Whether cookies get the Secure flag. Production is HTTPS-only behind nginx; browsers also accept
+     * Secure cookies on http://localhost, so the default (true) works for local dev too.
+     * Set {@code session.cookie.secure=false} only for a plain-HTTP non-localhost test host.
+     */
+    static boolean secureCookies() {
+        String value = ApplicationConfiguration.getProperty("session.cookie.secure");
+        return value == null || !value.trim().equalsIgnoreCase("false");
+    }
+
+    /**
+     * Encodes a cookie with HttpOnly, SameSite and (by default) Secure set.
+     * @param maxAgeSeconds max age, or Long.MIN_VALUE for a browser-session cookie; 0 deletes it
+     */
+    protected static String encodeProtectedCookie(String name, String value, long maxAgeSeconds, CookieHeaderNames.SameSite sameSite) {
+        DefaultCookie cookie = new DefaultCookie(name, value);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(secureCookies());
+        cookie.setSameSite(sameSite);
+        cookie.setPath("/");
+        if (maxAgeSeconds != Long.MIN_VALUE)
+            cookie.setMaxAge(maxAgeSeconds);
+        return ServerCookieEncoder.STRICT.encode(cookie);
     }
 
     private String getLoggedUser(HttpRequest request) {
@@ -195,7 +238,11 @@ public class SwccgoServerRequestHandler {
         _playerDao.updateLastLoginIp(login, remoteIp);
 
         String sessionId = _loggedUserHolder.logUser(login);
+        // HttpOnly: page scripts (and any injected script) cannot read the session.
+        // SameSite=Lax: other sites cannot make the browser send it on POSTs (CSRF).
+        // Secure: HTTPS only (see secureCookies()).
         return Collections.singletonMap(
-                HttpHeaderNames.SET_COOKIE.toString(), ServerCookieEncoder.STRICT.encode("loggedUser", sessionId));
+                HttpHeaderNames.SET_COOKIE.toString(),
+                encodeProtectedCookie("loggedUser", sessionId, Long.MIN_VALUE, CookieHeaderNames.SameSite.Lax));
     }
 }

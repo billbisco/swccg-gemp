@@ -4,6 +4,7 @@ import com.gempukku.swccgo.async.handler.UriRequestHandler;
 import com.gempukku.swccgo.common.ApplicationConfiguration;
 
 import com.gempukku.swccgo.db.IpBanDAO;
+import com.gempukku.swccgo.security.ClientIpResolver;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.*;
 import org.apache.logging.log4j.LogManager;
@@ -46,6 +47,8 @@ public class SwccgoHttpRequestHandler extends SimpleChannelInboundHandler<FullHt
     private final UriRequestHandler _uriRequestHandler;
 
     private final IpBanDAO _ipBanDAO;
+    private static final ClientIpResolver _clientIpResolver =
+            new ClientIpResolver(ApplicationConfiguration.getProperty("proxy.trusted"));
 
     public SwccgoHttpRequestHandler(Map<Type, Object> objects, UriRequestHandler uriRequestHandler) {
         _objects = objects;
@@ -80,10 +83,10 @@ public class SwccgoHttpRequestHandler extends SimpleChannelInboundHandler<FullHt
         if (uri.contains("?"))
             uri = uri.substring(0, uri.indexOf("?"));
 
-        String ip = httpRequest.headers().get("X-Forwarded-For");
-
-        if(ip == null)
-            ip = ((InetSocketAddress) ctx.channel().remoteAddress()).getAddress().getHostAddress();
+        // Only trust X-Forwarded-For from our own proxy, and only a well-formed IP literal.
+        String ip = _clientIpResolver.resolve(
+                ((InetSocketAddress) ctx.channel().remoteAddress()).getAddress().getHostAddress(),
+                httpRequest.headers().get("X-Forwarded-For"));
 
         final RequestInformation requestInformation = new RequestInformation(httpRequest.uri(),
                 ip,

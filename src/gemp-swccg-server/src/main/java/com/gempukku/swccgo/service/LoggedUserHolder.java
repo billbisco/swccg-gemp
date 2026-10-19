@@ -3,6 +3,7 @@ package com.gempukku.swccgo.service;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
+import java.security.SecureRandom;
 import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -56,6 +57,7 @@ public class LoggedUserHolder {
             for (String sessionId : sessionIds) {
                 _sessionIdsToUsers.remove(sessionId);
                 _usersToSessionIds.remove(userName, sessionId);
+                _lastAccess.remove(sessionId);
             }
         } finally {
             _readWriteLock.writeLock().unlock();
@@ -64,18 +66,51 @@ public class LoggedUserHolder {
 
     private final char[] _chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
 
+    /** Cryptographically strong; java.util.Random session IDs could be predicted from earlier ones. */
+    private final SecureRandom _random = new SecureRandom();
+    /** 32 chars from 62 symbols, about 190 bits. */
+    static final int SESSION_ID_LENGTH = 32;
+
     private String insertValueForUser(String userName) {
-        Random rnd = new Random();
         String sessionId;
         do {
-            StringBuilder result = new StringBuilder();
-            for (int i = 0; i < 20; i++)
-                result.append(_chars[rnd.nextInt(_chars.length)]);
+            StringBuilder result = new StringBuilder(SESSION_ID_LENGTH);
+            for (int i = 0; i < SESSION_ID_LENGTH; i++)
+                result.append(_chars[_random.nextInt(_chars.length)]);
             sessionId = result.toString();
         } while (_sessionIdsToUsers.containsKey(sessionId));
         _sessionIdsToUsers.put(sessionId, userName);
         _usersToSessionIds.put(userName, sessionId);
         return sessionId;
+    }
+
+    /**
+     * Drops every session idle longer than the expiry. (This used to check only the first entry per
+     * minute, so under real traffic sessions effectively never expired.) Caller holds the write lock.
+     * @return how many sessions were removed
+     */
+    int expireSessions(long currentTime) {
+        int removed = 0;
+        synchronized (_lastAccess) {
+            Iterator<Map.Entry<String, Long>> iterator = _lastAccess.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Map.Entry<String, Long> lastAccess = iterator.next();
+                if (lastAccess.getValue() + _loggedUserExpireLength < currentTime) {
+                    String sessionId = lastAccess.getKey();
+                    final String userName = _sessionIdsToUsers.remove(sessionId);
+                    if (userName != null)
+                        _usersToSessionIds.remove(userName, sessionId);
+                    iterator.remove();
+                    removed++;
+                }
+            }
+        }
+        return removed;
+    }
+
+    /** Test hook: pretend a session was last used at the given time. */
+    void setLastAccessForTest(String sessionId, long time) {
+        _lastAccess.put(sessionId, time);
     }
 
     private class ClearExpiredRunnable implements Runnable {
@@ -84,19 +119,7 @@ public class LoggedUserHolder {
             while (true) {
                 _readWriteLock.writeLock().lock();
                 try {
-                    long currentTime = System.currentTimeMillis();
-                    Iterator<Map.Entry<String, Long>> iterator = _lastAccess.entrySet().iterator();
-                    if (iterator.hasNext()) {
-                        Map.Entry<String, Long> lastAccess = iterator.next();
-                        long expireAt = lastAccess.getValue() + _loggedUserExpireLength;
-                        if (expireAt < currentTime) {
-                            String sessionId = lastAccess.getKey();
-                            final String userName = _sessionIdsToUsers.remove(sessionId);
-                            if (userName != null)
-                                _usersToSessionIds.remove(userName, sessionId);
-                            iterator.remove();
-                        }
-                    }
+                    expireSessions(System.currentTimeMillis());
                 } finally {
                     _readWriteLock.writeLock().unlock();
                 }
