@@ -105,6 +105,53 @@ public enum ExpansionSet {
         return _setNumber;
     }
 
+    /**
+     * True for the published Virtual Block / Virtual Shields sheets (sets 1200–1292).
+     * Set 601 (PC implementation ids) is Legacy by per-card {@code setAsLegacy}, not by this flag.
+     */
+    public boolean isLegacyBlockSet() {
+        return _setNumber >= 1200 && _setNumber <= 1292;
+    }
+
+    /**
+     * Block icon for a 12xx sheet: 1200→D, 121x→1 … 125x→5, 126x→6, 127x→7, 128x→8, 129x→9.
+     * Null for every other expansion.
+     */
+    public Icon getLegacyBlockIcon() {
+        switch (_setNumber) {
+            case 1200:
+                return Icon.LEGACY_BLOCK_D;
+            case 1210:
+                return Icon.LEGACY_BLOCK_1;
+            case 1220:
+                return Icon.LEGACY_BLOCK_2;
+            case 1230:
+                return Icon.LEGACY_BLOCK_3;
+            case 1240:
+                return Icon.LEGACY_BLOCK_4;
+            case 1250:
+                return Icon.LEGACY_BLOCK_5;
+            case 1261:
+            case 1262:
+            case 1263:
+                return Icon.LEGACY_BLOCK_6;
+            case 1271:
+            case 1272:
+            case 1273:
+            case 1274:
+                return Icon.LEGACY_BLOCK_7;
+            case 1281:
+            case 1282:
+            case 1283:
+                return Icon.LEGACY_BLOCK_8;
+            case 1291:
+            case 1292:
+                return Icon.LEGACY_BLOCK_9;
+            default:
+                return null;
+        }
+    }
+
     public static ExpansionSet getSetFromNumber(Integer setNumber) {
         for (ExpansionSet expansionSet : values()) {
             if (Integer.valueOf(expansionSet.getSetNumber()).equals(setNumber)) {
