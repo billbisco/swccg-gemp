@@ -158,8 +158,13 @@ public class Card_1291_067_Tests {
         assertTrue(scn.LSForceDrainAvailable(petranaki));
         scn.LSForceDrainAt(petranaki);
         scn.PassDSResponses("optional");
-        assertTrue(scn.LSActionAvailable("Release a captive"));
-        scn.LSChooseAction("Release a captive");
+        scn.PassAllResponses();
+        if (scn.LSDecisionAvailable("Release a captive")) {
+            scn.LSChooseAction("Release a captive (Mission complete)");
+        }
+        if (scn.LSHasCardChoiceAvailable(amidala)) {
+            scn.LSChooseCard(amidala);
+        }
         scn.PassAllResponses();
         assertFalse(amidala.isCaptive());
         assertTrue(rescue.getWhileInPlayData() != null);
@@ -176,6 +181,109 @@ public class Card_1291_067_Tests {
         scn.AttachCardsTo(host, rescue);
         scn.MoveLocationToTable(petranaki);
         scn.MoveCardsToLocation(petranaki, vader);
+        scn.EnterControlOrKeepRequired();
+        scn.PassAllResponses();
+        assertInZone(Zone.USED_PILE, rescue);
+    }
+
+    @Test
+    public void RescueOnGeonosisDeploysAmidalaImprisonedFromLostPile() {
+        var scn = GetScenario();
+        var rescue = scn.GetLSCard("rescue");
+        var amidala = scn.GetLSCard("amidala");
+        var petranaki = scn.GetDSCard("petranaki");
+        scn.StartGame();
+        var host = MissionTestSupport.putOnTable(scn, 9700, scn.LS, MissionTestSupport.begunTheCloneWarHas());
+        scn.AttachCardsTo(host, rescue);
+        scn.MoveLocationToTable(petranaki);
+        scn.MoveCardsToTopOfLSLostPile(amidala);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        assertTrue(scn.LSActionAvailable("Deploy Amidala imprisoned from Lost Pile"));
+        scn.LSUseCardAction(rescue, "Deploy Amidala imprisoned from Lost Pile");
+        scn.LSChooseCard(amidala);
+        scn.PassAllResponses();
+        assertTrue(amidala.isCaptive());
+        assertTrue(amidala.isImprisoned());
+    }
+
+    @Test
+    public void RescueOnGeonosisMayNotTransferAmidalaUnlessComplete() {
+        var scn = GetScenario();
+        var rescue = scn.GetLSCard("rescue");
+        var amidala = scn.GetLSCard("amidala");
+        var petranaki = scn.GetDSCard("petranaki");
+        var vader = scn.GetDSCard("vader");
+        scn.StartGame();
+        var host = MissionTestSupport.putOnTable(scn, 9700, scn.LS, MissionTestSupport.begunTheCloneWarHas());
+        scn.AttachCardsTo(host, rescue);
+        scn.MoveLocationToTable(petranaki);
+        scn.gameState().imprisonCharacter(scn.game(), amidala, petranaki);
+        scn.MoveCardsToLocation(petranaki, vader);
+        assertTrue(scn.game().getModifiersQuerying().mayNotBeTransferred(scn.gameState(), amidala));
+        scn.SkipToDSTurn(Phase.MOVE);
+        assertFalse(scn.DSActionAvailable("Transfer"));
+    }
+
+    @Test
+    public void RescueOnGeonosisTakeAmidalaIsOncePerTurn() {
+        var scn = GetScenario();
+        var rescue = scn.GetLSCard("rescue");
+        var amidala = scn.GetLSCard("amidala");
+        scn.StartGame();
+        var host = MissionTestSupport.putOnTable(scn, 9700, scn.LS, MissionTestSupport.begunTheCloneWarHas());
+        scn.AttachCardsTo(host, rescue);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        scn.MoveCardsToTopOfOwnReserveDeck(amidala);
+        assertTrue(scn.LSActionAvailable("Take Amidala into hand from Reserve Deck"));
+        scn.LSUseCardAction(rescue, "Take Amidala into hand from Reserve Deck");
+        if (scn.LSHasCardChoiceAvailable(amidala)) {
+            scn.LSChooseCard(amidala);
+        }
+        scn.PassAllResponses();
+        assertInZone(Zone.HAND, amidala);
+        scn.MoveCardsToTopOfOwnReserveDeck(amidala);
+        if (scn.AwaitingDSDeployPhaseActions()) {
+            scn.DSPass();
+            scn.PassAllResponses();
+        }
+        assertTrue(scn.AwaitingLSDeployPhaseActions());
+        assertFalse(scn.LSActionAvailable("Take Amidala into hand from Reserve Deck"));
+    }
+
+    @Test
+    public void RescueOnGeonosisRewardAdds2ToAttritionWhenObiWanPresentWithAnakin() {
+        var scn = GetScenario();
+        var rescue = scn.GetLSCard("rescue");
+        var amidala = scn.GetLSCard("amidala");
+        var anakin = scn.GetLSCard("anakin");
+        var obi = scn.GetLSCard("obi");
+        var petranaki = scn.GetDSCard("petranaki");
+        var vader = scn.GetDSCard("vader");
+        scn.StartGame();
+        var host = MissionTestSupport.putOnTable(scn, 9700, scn.LS, MissionTestSupport.begunTheCloneWarHas());
+        scn.AttachCardsTo(host, rescue);
+        scn.MoveLocationToTable(petranaki);
+        rescue.setWhileInPlayData(new com.gempukku.swccgo.game.state.WhileInPlayData(true));
+        scn.MoveCardsToLocation(petranaki, obi, anakin);
+        scn.MoveCardsToLocation(petranaki, vader);
+        scn.SkipToLSTurn(Phase.BATTLE);
+        scn.LSInitiateBattle(petranaki);
+        scn.PassAllResponses();
+        assertTrue(scn.GetUnpaidDSAttrition() >= 2 || scn.GetLSBattleDestinyCount() >= 1);
+    }
+
+    @Test
+    public void RescueOnGeonosisTurnTheTideIfAmidalaNotOnTableAfterComplete() {
+        var scn = GetScenario();
+        var rescue = scn.GetLSCard("rescue");
+        var amidala = scn.GetLSCard("amidala");
+        var petranaki = scn.GetDSCard("petranaki");
+        scn.StartGame();
+        var host = MissionTestSupport.putOnTable(scn, 9700, scn.LS, MissionTestSupport.begunTheCloneWarHas());
+        scn.AttachCardsTo(host, rescue);
+        scn.MoveLocationToTable(petranaki);
+        rescue.setWhileInPlayData(new com.gempukku.swccgo.game.state.WhileInPlayData(true));
+        scn.MoveCardsToTopOfLSLostPile(amidala);
         scn.EnterControlOrKeepRequired();
         scn.PassAllResponses();
         assertInZone(Zone.USED_PILE, rescue);

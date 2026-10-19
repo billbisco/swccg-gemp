@@ -14,12 +14,15 @@ import com.gempukku.swccgo.common.Zone;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.logic.modifiers.DestinyModifier;
+import com.gempukku.swccgo.logic.modifiers.ForfeitModifier;
 import com.gempukku.swccgo.logic.modifiers.PowerModifier;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.gempukku.swccgo.framework.Assertions.assertAtLocation;
 import static com.gempukku.swccgo.framework.Assertions.assertInZone;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -46,6 +49,7 @@ public class Card_1271_025_Tests {
                     put("executor", "9_157");
                     put("ops", "9_125");
                     put("tie", "1_304");
+                    put("squadron", "2_153");
                     put("slave", "5_177");
                     put("docking", "7_282");
                     put("trooper", "1_194");
@@ -263,5 +267,119 @@ public class Card_1271_025_Tests {
         scn.DSInitiateBattle(dantooine);
         scn.PassAllResponses();
         assertEquals(1, scn.GetDSBattleDestinyCount());
+    }
+
+    @Test
+    public void GalacticDominationCapsSquadronDestinyPowerAndForfeitAddsAt2() {
+        var scn = GetScenario();
+        var domination = scn.GetDSCard("domination");
+        var squadron = scn.GetDSCard("squadron");
+        var dantooine = scn.GetDSCard("dantooine");
+        scn.StartGame();
+        scn.MoveCardsToHand(domination);
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.DSDeployCard(domination);
+        scn.PassAllResponses();
+        scn.MoveLocationToTable(dantooine);
+        scn.MoveCardsToLocation(dantooine, squadron);
+        int printedPower = scn.GetPower(squadron);
+        int printedDestiny = scn.GetDestiny(squadron);
+        int printedForfeit = scn.GetForfeit(squadron);
+        scn.ApplyAdHocModifier(new PowerModifier(domination, Filters.sameCardId(squadron), 5));
+        scn.ApplyAdHocModifier(new DestinyModifier(domination, Filters.sameCardId(squadron), 5));
+        scn.ApplyAdHocModifier(new ForfeitModifier(domination, Filters.sameCardId(squadron), 5));
+        assertEquals(printedPower + 2, scn.GetPower(squadron));
+        assertEquals(printedDestiny + 2, scn.GetDestiny(squadron));
+        assertEquals(printedForfeit + 2, scn.GetForfeit(squadron));
+    }
+
+    @Test
+    public void GalacticDominationDoesNotResetOpponentsBattlegroundDrains() {
+        var scn = GetScenario();
+        var domination = scn.GetDSCard("domination");
+        var dantooine = scn.GetDSCard("dantooine");
+        var executor = scn.GetDSCard("executor");
+        var ops = scn.GetDSCard("ops");
+        var xwing = scn.GetLSCard("xwing");
+        scn.StartGame();
+        scn.MoveCardsToHand(domination);
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.DSDeployCard(domination);
+        scn.PassAllResponses();
+        scn.MoveLocationToTable(dantooine);
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), executor);
+        scn.AttachCardsTo(executor, ops);
+        scn.MoveCardsToLocation(dantooine, xwing);
+        scn.SkipToLSTurn(Phase.CONTROL);
+        assertTrue(scn.LSForceDrainAvailable(dantooine));
+        scn.LSForceDrainAt(dantooine);
+        scn.PassForceDrainStartResponses();
+        assertEquals(1, scn.GetForceDrainTotal());
+    }
+
+    @Test
+    public void GalacticDominationDeploysTIEAssaultSquadronWithoutReplacementAt3() {
+        var scn = GetScenario();
+        var domination = scn.GetDSCard("domination");
+        var dantooine = scn.GetDSCard("dantooine");
+        var executor = scn.GetDSCard("executor");
+        var ops = scn.GetDSCard("ops");
+        var squadron = scn.GetDSCard("squadron");
+        scn.StartGame();
+        scn.MoveCardsToHand(domination, squadron);
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.DSDeployCard(domination);
+        scn.PassAllResponses();
+        scn.MoveLocationToTable(dantooine);
+        scn.MoveCardsToLocation(dantooine, executor);
+        scn.AttachCardsTo(executor, ops);
+        assertTrue(scn.AwaitingLSDeployPhaseActions());
+        scn.LSPass();
+        scn.PassAllResponses();
+        scn.DSActivateForceCheat(5);
+        assertTrue(scn.DSDeployAvailable(squadron));
+        int force = scn.GetDSForcePileCount();
+        scn.DSDeployCard(squadron);
+        scn.DSChooseCard(dantooine);
+        scn.PassAllResponses();
+        assertAtLocation(dantooine, squadron);
+        assertEquals(force - 3, scn.GetDSForcePileCount());
+    }
+
+    @Test
+    public void GalacticDominationReserveDeployIsOncePerTurn() {
+        var scn = GetScenario();
+        var domination = scn.GetDSCard("domination");
+        var endor = scn.GetDSCard("endor");
+        var dantooine = scn.GetDSCard("dantooine");
+        scn.StartGame();
+        scn.MoveCardsToHand(domination);
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.DSDeployCard(domination);
+        scn.PassAllResponses();
+        assertTrue(scn.AwaitingLSDeployPhaseActions());
+        scn.LSPass();
+        scn.PassAllResponses();
+        scn.MoveCardsToTopOfOwnReserveDeck(endor);
+        assertTrue(scn.DSActionAvailable("Deploy Executor site or battleground system"));
+        scn.DSUseCardAction(domination, "Deploy Executor site or battleground system");
+        scn.PassAllResponses();
+        if (scn.DSHasCardChoiceAvailable(endor)) {
+            scn.DSChooseCard(endor);
+        }
+        else if (scn.DSDecisionAvailable("Reserve Deck")) {
+            scn.DSChooseAnyCard();
+        }
+        scn.PassAllResponses();
+        if (scn.DSDecisionAvailable("On which side")) {
+            scn.DSChoose("Left");
+        }
+        scn.PassAllResponses();
+        scn.MoveCardsToTopOfOwnReserveDeck(dantooine);
+        if (scn.AwaitingLSDeployPhaseActions()) {
+            scn.LSPass();
+        }
+        assertTrue(scn.AwaitingDSDeployPhaseActions());
+        assertFalse(scn.DSActionAvailable("Deploy Executor site or battleground system"));
     }
 }

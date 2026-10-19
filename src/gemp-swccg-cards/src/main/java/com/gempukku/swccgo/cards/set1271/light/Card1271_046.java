@@ -3,6 +3,7 @@ package com.gempukku.swccgo.cards.set1271.light;
 import com.gempukku.swccgo.cards.AbstractMission;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.effects.usage.OncePerTurnEffect;
+import com.gempukku.swccgo.cards.evaluators.AddEvaluator;
 import com.gempukku.swccgo.cards.evaluators.OccupiesEvaluator;
 import com.gempukku.swccgo.cards.evaluators.OnTableEvaluator;
 import com.gempukku.swccgo.common.DestinyType;
@@ -103,13 +104,10 @@ public class Card1271_046 extends AbstractMission {
                     new DrawDestinyEffect(action, playerId, 1, DestinyType.DESTINY) {
                         @Override
                         protected List<Modifier> getDrawDestinyModifiers(SwccgGame game, DrawDestinyState drawDestinyState) {
-                            Modifier addSites = new TotalDestinyModifier(self, drawDestinyState.getId(),
-                                    new OnTableEvaluator(self, Filters.Yavin_4_site));
-                            Modifier extraIfOccupy = new TotalDestinyModifier(self, drawDestinyState.getId(),
-                                    new OccupiesEvaluator(playerId, Filters.Yavin_4_site));
                             List<Modifier> modifiers = new LinkedList<Modifier>();
-                            modifiers.add(addSites);
-                            modifiers.add(extraIfOccupy);
+                            modifiers.add(new TotalDestinyModifier(self, drawDestinyState.getId(),
+                                    new AddEvaluator(new OnTableEvaluator(self, Filters.Yavin_4_site),
+                                            new OccupiesEvaluator(playerId, Filters.Yavin_4_site))));
                             return modifiers;
                         }
 

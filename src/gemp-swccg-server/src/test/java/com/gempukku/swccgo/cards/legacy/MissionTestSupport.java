@@ -1,11 +1,13 @@
 package com.gempukku.swccgo.cards.legacy;
 
+import com.gempukku.swccgo.cards.AbstractImperial;
 import com.gempukku.swccgo.cards.AbstractMission;
 import com.gempukku.swccgo.cards.AbstractNormalEffect;
 import com.gempukku.swccgo.cards.AbstractSite;
 import com.gempukku.swccgo.cards.AbstractSystem;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
+import com.gempukku.swccgo.common.Keyword;
 import com.gempukku.swccgo.common.PlayCardZoneOption;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
@@ -50,6 +52,14 @@ public final class MissionTestSupport {
         };
     }
 
+    public static AbstractImperial isbAgent() {
+        return new AbstractImperial(Side.DARK, 1, 1, 1, 1, 2, "ISB Test Agent", Uniqueness.UNRESTRICTED, ExpansionSet.PREMIERE, Rarity.C1) {
+            {
+                addKeywords(Keyword.ISB_AGENT);
+            }
+        };
+    }
+
     public static AbstractSystem muunilinstSystem() {
         return new AbstractSystem(Side.DARK, "Muunilinst", 4, ExpansionSet.PREMIERE, Rarity.C1) {
             {
@@ -61,13 +71,52 @@ public final class MissionTestSupport {
     }
 
     public static AbstractSite muunilinstSite(String title) {
-        return new AbstractSite(Side.DARK, title, "Muunilinst", Uniqueness.UNIQUE, ExpansionSet.PREMIERE, Rarity.C1) {
+        return muunilinstSite(Side.DARK, title);
+    }
+
+    public static AbstractSite muunilinstSite(Side side, String title) {
+        return new AbstractSite(side, title, "Muunilinst", Uniqueness.UNIQUE, ExpansionSet.PREMIERE, Rarity.C1) {
             {
                 addIcon(Icon.DARK_FORCE, 1);
                 addIcon(Icon.LIGHT_FORCE, 1);
                 addIcons(Icon.EXTERIOR_SITE, Icon.PLANET);
             }
         };
+    }
+
+    public static AbstractNormalEffect tieFighterConstructionFacility() {
+        return new AbstractNormalEffect(Side.DARK, 3, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "TIE Fighter Construction Facility", Uniqueness.UNIQUE, ExpansionSet.PREMIERE, Rarity.C1) {
+        };
+    }
+
+    public static AbstractNormalEffect closeAirSupport() {
+        return new AbstractNormalEffect(Side.LIGHT, 3, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Close Air Support", Uniqueness.UNIQUE, ExpansionSet.PREMIERE, Rarity.C1) {
+        };
+    }
+
+    public static AbstractNormalEffect arenaPillars() {
+        return new AbstractNormalEffect(Side.DARK, 3, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Arena Pillars", Uniqueness.UNIQUE, ExpansionSet.PREMIERE, Rarity.C1) {
+        };
+    }
+
+    public static AbstractNormalEffect vb2SpecialDelivery() {
+        return new AbstractNormalEffect(Side.DARK, 4, PlayCardZoneOption.ATTACHED, "Special Delivery", Uniqueness.UNIQUE, ExpansionSet.PREMIERE, Rarity.C1) {
+            {
+                addIcons(Icon.LEGACY_BLOCK_2);
+                addKeywords(Keyword.DEPLOYS_ON_SITE);
+            }
+
+            @Override
+            protected com.gempukku.swccgo.filters.Filter getGameTextValidDeployTargetFilter(com.gempukku.swccgo.game.SwccgGame game, com.gempukku.swccgo.game.PhysicalCard self, com.gempukku.swccgo.common.PlayCardOptionId playCardOptionId, boolean asReact) {
+                return com.gempukku.swccgo.filters.Filters.prison;
+            }
+        };
+    }
+
+    public static PhysicalCardImpl putInReserve(VirtualTableScenario scn, int id, String owner, SwccgCardBlueprint blueprint) {
+        PhysicalCardImpl card = create(scn, id, owner, blueprint);
+        scn.gameState().addCardToZone(card, Zone.RESERVE_DECK, owner, true, false, false);
+        return card;
     }
 
     public static AbstractMission testCritical(Side side, String title) {
@@ -105,6 +154,9 @@ public final class MissionTestSupport {
         String title = blueprint.getTitle();
         if (title != null && title.startsWith("Muunilinst")) {
             ensurePlanetLayout(scn, "Muunilinst", 4);
+        }
+        if (title != null && title.startsWith("Coruscant")) {
+            ensurePlanetLayout(scn, "Coruscant", 0);
         }
         PhysicalCardImpl card = create(scn, id, owner, blueprint);
         scn.MoveLocationToTable(card);

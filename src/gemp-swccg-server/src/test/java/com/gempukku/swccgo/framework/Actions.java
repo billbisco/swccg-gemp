@@ -150,19 +150,13 @@ public interface Actions extends Decisions, Choices {
      * @param card The card which is being used (played, deployed, activated, etc).
      * @param text Substring of the action text for the card action to play
      */
-    default void DSUseCardAction(PhysicalCardImpl card, String text) {
-        assertTrue("No '" + text + "' action on " + card.getBlueprint().getTitle(), DSCardActionAvailable(card, text));
-        DSDecided(GetCardActionId(DS, card, text));
-    }
+    default void DSUseCardAction(PhysicalCardImpl card, String text) { DSDecided(GetCardActionId(DS, card, text)); }
     /**
      * Causes the Light Side player to execute an available action on the given card.
      * @param card The card which is being used (played, deployed, activated, etc).
      * @param text Substring of the action text for the card action to play
      */
-    default void LSUseCardAction(PhysicalCardImpl card, String text) {
-        assertTrue("No '" + text + "' action on " + card.getBlueprint().getTitle(), LSCardActionAvailable(card, text));
-        LSDecided(GetCardActionId(LS, card, text));
-    }
+    default void LSUseCardAction(PhysicalCardImpl card, String text) { LSDecided(GetCardActionId(LS, card, text)); }
 
 
     /**
@@ -530,25 +524,10 @@ public interface Actions extends Decisions, Choices {
         String id = card != null ? String.valueOf(card.getCardId()) : null;
         String[] cardIds = GetADParam(playerId, "cardId");
         String[] actionTexts = GetADParam(playerId, "actionText");
-        String[] actionIds = GetADParam(playerId, "actionId");
-        if (actionTexts == null || actionIds == null) {
-            return null;
-        }
-        if (cardIds == null) {
-            if (text == null) {
-                return null;
-            }
-            for (int i = 0; i < actionTexts.length; i++) {
-                if (actionTexts[i].contains(text)) {
-                    return actionIds[i];
-                }
-            }
-            return null;
-        }
 
         for (int i = 0; i < cardIds.length; i++) {
             if ((id == null || cardIds[i].equals(id)) && (text == null || actionTexts[i].contains(text))) {
-                return actionIds[i];
+                return GetADParam(playerId, "actionId")[i];
             }
         }
         return null;

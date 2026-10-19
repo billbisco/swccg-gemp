@@ -143,4 +143,62 @@ public class Card_1291_028_Tests {
         assertTrue(scn.GetStackedCards(tatooine).isEmpty());
         assertInZone(Zone.USED_PILE, rally);
     }
+
+    @Test
+    public void RallyToOurCauseCannotRedrawTheSameSystemThisControlPhase() {
+        var scn = GetScenario();
+        var rally = scn.GetDSCard("rally");
+        var tatooine = scn.GetLSCard("tatooine");
+        var dooku = scn.GetDSCard("dooku");
+        var junk = scn.GetDSCard("junk");
+        var trooper = scn.GetDSCard("trooper");
+        scn.StartGame();
+        var host = MissionTestSupport.putOnTable(scn, 9600, scn.DS, MissionTestSupport.warHasBegun());
+        scn.AttachCardsTo(host, rally);
+        scn.MoveLocationToTable(tatooine);
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), trooper, dooku);
+        scn.MoveCardsToTopOfOwnLostPile(junk);
+        scn.SkipToDSTurn(Phase.CONTROL);
+        scn.PrepareDSDestiny(1);
+        assertTrue(scn.DSActionAvailable("Draw destiny to align a system"));
+        scn.DSUseCardAction(rally, "Draw destiny to align a system");
+        scn.DSChooseCard(tatooine);
+        scn.PassAllResponses();
+        assertTrue(scn.GetStackedCards(tatooine).isEmpty());
+        if (scn.AwaitingLSControlPhaseActions()) {
+            scn.LSPass();
+            scn.PassAllResponses();
+        }
+        assertTrue(scn.AwaitingDSControlPhaseActions());
+        assertFalse(scn.DSActionAvailable("Draw destiny to align a system"));
+    }
+
+    @Test
+    public void RallyToOurCauseRewardAddsBattleDestinyLimitedTo2() {
+        var scn = GetScenario();
+        var rally = scn.GetDSCard("rally");
+        var tatooine = scn.GetLSCard("tatooine");
+        var dooku = scn.GetDSCard("dooku");
+        var junk = scn.GetDSCard("junk");
+        var trooper = scn.GetDSCard("trooper");
+        var xwing = scn.GetLSCard("xwing");
+        scn.StartGame();
+        var host = MissionTestSupport.putOnTable(scn, 9600, scn.DS, MissionTestSupport.warHasBegun());
+        scn.AttachCardsTo(host, rally);
+        scn.MoveLocationToTable(tatooine);
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), trooper, dooku);
+        scn.MoveCardsToTopOfOwnLostPile(junk);
+        scn.SkipToDSTurn(Phase.CONTROL);
+        scn.PrepareDSDestiny(7);
+        scn.DSUseCardAction(rally, "Draw destiny to align a system");
+        scn.DSChooseCard(tatooine);
+        scn.PassAllResponses();
+        assertFalse(scn.GetStackedCards(tatooine).isEmpty());
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), xwing);
+        scn.SkipToDSTurn(Phase.BATTLE);
+        scn.DSInitiateBattle(scn.GetDSStartingLocation());
+        scn.PrepareDSDestiny(1);
+        scn.SkipToEndOfPowerSegment(true);
+        assertEquals(2, scn.GetDSTotalDestiny());
+    }
 }

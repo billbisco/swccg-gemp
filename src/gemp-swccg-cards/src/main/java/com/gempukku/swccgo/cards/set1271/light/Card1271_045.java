@@ -15,6 +15,7 @@ import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
+import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.logic.TriggerConditions;
 import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
@@ -23,6 +24,8 @@ import com.gempukku.swccgo.logic.modifiers.AstromechCapacityModifier;
 import com.gempukku.swccgo.logic.modifiers.ForceDrainModifier;
 import com.gempukku.swccgo.logic.modifiers.ImmuneToAttritionLessThanModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
+import com.gempukku.swccgo.logic.modifiers.ModifierType;
+import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 import com.gempukku.swccgo.logic.timing.Effect;
 import com.gempukku.swccgo.logic.timing.EffectResult;
 
@@ -101,7 +104,7 @@ public class Card1271_045 extends AbstractMission {
     static Filter withoutPrintedAstromechCapacity() {
         return new Filter() {
             @Override
-            public boolean accepts(com.gempukku.swccgo.game.state.GameState gameState, com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard) {
+            public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard) {
                 try {
                     return physicalCard.getBlueprint().getAstromechCapacity() == 0;
                 } catch (UnsupportedOperationException e) {
@@ -114,9 +117,12 @@ public class Card1271_045 extends AbstractMission {
     static Filter noForceDrainBonusExceptSystemCard(final PhysicalCard self, final String playerId) {
         return new Filter() {
             @Override
-            public boolean accepts(com.gempukku.swccgo.game.state.GameState gameState, com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying modifiersQuerying, PhysicalCard location) {
-                for (com.gempukku.swccgo.logic.modifiers.Modifier modifier : modifiersQuerying.getModifiersAffectingCard(gameState, com.gempukku.swccgo.logic.modifiers.ModifierType.FORCE_DRAIN_AMOUNT, location)) {
+            public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard location) {
+                for (Modifier modifier : modifiersQuerying.getModifiersAffectingCard(gameState, ModifierType.FORCE_DRAIN_AMOUNT, location)) {
                     if (!modifier.isForPlayer(playerId)) {
+                        continue;
+                    }
+                    if (modifier.getForceDrainModifier(playerId, gameState, modifiersQuerying, location) <= 0) {
                         continue;
                     }
                     PhysicalCard source = modifier.getSource(gameState);

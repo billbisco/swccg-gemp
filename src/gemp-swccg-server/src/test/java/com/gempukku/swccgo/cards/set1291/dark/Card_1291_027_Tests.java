@@ -2,6 +2,7 @@ package com.gempukku.swccgo.cards.set1291.dark;
 
 import com.gempukku.swccgo.cards.legacy.MissionTestSupport;
 import com.gempukku.swccgo.common.CardSubtype;
+import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.CardType;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
@@ -151,5 +152,50 @@ public class Card_1291_027_Tests {
         scn.EnterControlOrKeepRequired();
         scn.PassAllResponses();
         assertInZone(Zone.USED_PILE, defense);
+    }
+
+    @Test
+    public void DefenseOfMuunilinstDoesNotCompleteWhenOpponentControlsAMuunilinstLocation() {
+        var scn = GetScenario();
+        var defense = scn.GetDSCard("defense");
+        var trooper = scn.GetDSCard("trooper");
+        var vader = scn.GetDSCard("vader");
+        var ds61 = scn.GetDSCard("ds61");
+        var luke = scn.GetLSCard("luke");
+        scn.StartGame();
+        var host = MissionTestSupport.putOnTable(scn, 9400, scn.DS, MissionTestSupport.warHasBegun());
+        scn.AttachCardsTo(host, defense);
+        var locs = muunilinst(scn);
+        scn.MoveCardsToLocation(locs[0], trooper);
+        scn.MoveCardsToLocation(locs[1], vader);
+        scn.MoveCardsToLocation(locs[2], ds61);
+        scn.MoveCardsToLocation(locs[0], luke);
+        scn.EnterControlOrKeepRequired();
+        scn.PassAllResponses();
+        assertTrue(scn.GetStackedCards(defense).isEmpty());
+        assertInZone(Zone.SIDE_OF_TABLE, defense);
+    }
+
+    @Test
+    public void DefenseOfMuunilinstRewardRaisesConvertedMuunilinstSite() {
+        var scn = GetScenario();
+        var defense = scn.GetDSCard("defense");
+        var junk = scn.GetDSCard("junk");
+        scn.StartGame();
+        var host = MissionTestSupport.putOnTable(scn, 9400, scn.DS, MissionTestSupport.warHasBegun());
+        scn.AttachCardsTo(host, defense);
+        scn.StackCardsFaceDownOn(defense, junk);
+        var dsPlaza = MissionTestSupport.putLocationOnTable(scn, 9410, scn.DS, MissionTestSupport.muunilinstSite(Side.DARK, "Muunilinst: Plaza"));
+        var lsPlaza = MissionTestSupport.putInHand(scn, 9411, scn.LS, MissionTestSupport.muunilinstSite(Side.LIGHT, "Muunilinst: Plaza"));
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        assertTrue(scn.LSDeployAvailable(lsPlaza));
+        scn.LSDeployCard(lsPlaza);
+        scn.PassAllResponses();
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        assertTrue(scn.DSActionAvailable("Raise converted Muunilinst site"));
+        scn.DSUseCardAction(defense, "Raise converted Muunilinst site");
+        scn.DSChooseCard(lsPlaza);
+        scn.PassAllResponses();
+        assertEquals(Zone.LOCATIONS, dsPlaza.getZone());
     }
 }

@@ -88,7 +88,7 @@ public class Card1271_027 extends AbstractMission {
             actions.add(action);
         }
         GameTextActionId gameTextActionId = GameTextActionId.LEGACY__IN_THE_HANDS_OF_THE_ISB__DELIVER_CAPTIVE;
-        if (TriggerConditions.captiveDeliveredToPrisonBy(game, effectResult, Filters.ISB_agent, Filters.here(self))) {
+        if (TriggerConditions.captiveDeliveredToPrisonBy(game, effectResult, Filters.ISB_agent, Filters.sameLocation(self))) {
             PhysicalCard captive = ((DeliveredCaptiveToPrisonResult) effectResult).getCaptive();
             if (GameConditions.isOncePerCaptive(game, self, captive, gameTextActionId)) {
                 RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId, gameTextActionId);
@@ -115,7 +115,6 @@ public class Card1271_027 extends AbstractMission {
                 final TopLevelGameTextAction action = new TopLevelGameTextAction(self, playerId, gameTextSourceCardId);
                 action.setText("Relocate ISB agent to a site you control");
                 action.appendUsage(new OncePerPhaseEffect(action));
-                action.appendCost(new UseForceEffect(action, playerId, 2));
                 action.appendTargeting(
                         new TargetCardOnTableEffect(action, playerId, "Choose ISB agent", isbWithIsardHere) {
                             @Override
@@ -124,6 +123,7 @@ public class Card1271_027 extends AbstractMission {
                                         new TargetCardOnTableEffect(action, playerId, "Choose site you control", siteYouControl) {
                                             @Override
                                             protected void cardTargeted(int siteGroupId, final PhysicalCard site) {
+                                                action.appendCost(new UseForceEffect(action, playerId, 2));
                                                 action.allowResponses("Relocate " + GameUtils.getCardLink(agent),
                                                         new UnrespondableEffect(action) {
                                                             @Override
@@ -146,7 +146,6 @@ public class Card1271_027 extends AbstractMission {
                     && GameConditions.canSpotLocation(game, relatedDockingBay)) {
                 final TopLevelGameTextAction action = new TopLevelGameTextAction(self, playerId, gameTextSourceCardId);
                 action.setText("Relocate escort and captive to related docking bay");
-                action.appendCost(new UseForceEffect(action, playerId, 1));
                 action.appendTargeting(
                         new TargetCardOnTableEffect(action, playerId, "Choose escorting ISB agent", escorting) {
                             @Override
@@ -156,6 +155,7 @@ public class Card1271_027 extends AbstractMission {
                                         new TargetCardOnTableEffect(action, playerId, "Choose related docking bay", bay) {
                                             @Override
                                             protected void cardTargeted(int bayGroupId, final PhysicalCard bayCard) {
+                                                action.appendCost(new UseForceEffect(action, playerId, 1));
                                                 action.allowResponses("Relocate " + GameUtils.getCardLink(escort),
                                                         new UnrespondableEffect(action) {
                                                             @Override

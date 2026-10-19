@@ -2,6 +2,7 @@ package com.gempukku.swccgo.cards.set1291.light;
 
 import com.gempukku.swccgo.cards.AbstractMission;
 import com.gempukku.swccgo.cards.GameConditions;
+import com.gempukku.swccgo.cards.conditions.InPlayDataNotSetCondition;
 import com.gempukku.swccgo.cards.conditions.InPlayDataSetCondition;
 import com.gempukku.swccgo.cards.effects.SetWhileInPlayDataEffect;
 import com.gempukku.swccgo.cards.effects.usage.OncePerTurnEffect;
@@ -26,7 +27,6 @@ import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.game.state.WhileInPlayData;
 import com.gempukku.swccgo.logic.TriggerConditions;
 import com.gempukku.swccgo.cards.actions.PlayCharacterAction;
-import com.gempukku.swccgo.logic.actions.OptionalGameTextTriggerAction;
 import com.gempukku.swccgo.logic.actions.PlayCardAction;
 import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
@@ -82,7 +82,8 @@ public class Card1291_067 extends AbstractMission {
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new KeywordModifier(self, Filters.Geonosis_Petranaki_Arena, Keyword.PRISON));
         modifiers.add(new AttritionModifier(self, reward, 2, opponent));
-        modifiers.add(new MayNotBeTransferredModifier(self, Filters.and(Filters.Amidala, Filters.imprisonedIn(Filters.Geonosis_Petranaki_Arena))));
+        modifiers.add(new MayNotBeTransferredModifier(self, Filters.and(Filters.Amidala, Filters.imprisonedIn(Filters.Geonosis_Petranaki_Arena)),
+                new InPlayDataNotSetCondition(self)));
         return modifiers;
     }
 
@@ -134,12 +135,14 @@ public class Card1291_067 extends AbstractMission {
     }
 
     @Override
-    protected List<OptionalGameTextTriggerAction> getGameTextOptionalAfterTriggers(String playerId, SwccgGame game, EffectResult effectResult, PhysicalCard self, int gameTextSourceCardId) {
+    protected List<RequiredGameTextTriggerAction> getGameTextRequiredAfterTriggers(SwccgGame game, EffectResult effectResult, PhysicalCard self, int gameTextSourceCardId) {
+        List<RequiredGameTextTriggerAction> actions = new LinkedList<RequiredGameTextTriggerAction>();
+        String playerId = self.getOwner();
         Collection<PhysicalCard> captives = Filters.filterActive(game, self, SpotOverride.INCLUDE_CAPTIVE,
                 Filters.and(Filters.captive, Filters.at(Filters.Geonosis_Petranaki_Arena)));
         if (TriggerConditions.forceDrainInitiatedBy(game, effectResult, playerId, Filters.Geonosis_Petranaki_Arena)
                 && !captives.isEmpty()) {
-            final OptionalGameTextTriggerAction action = new OptionalGameTextTriggerAction(self, gameTextSourceCardId);
+            final RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
             action.setText("Release a captive (Mission complete)");
             action.appendEffect(
                     new ChooseCardOnTableEffect(action, playerId, "Choose captive to release", captives) {
@@ -149,17 +152,11 @@ public class Card1291_067 extends AbstractMission {
                             action.appendEffect(new SetWhileInPlayDataEffect(action, self, new WhileInPlayData(true)));
                         }
                     });
-            return Collections.singletonList(action);
+            actions.add(action);
         }
-        return null;
-    }
-
-    @Override
-    protected List<RequiredGameTextTriggerAction> getGameTextRequiredAfterTriggers(SwccgGame game, EffectResult effectResult, PhysicalCard self, int gameTextSourceCardId) {
         if (!TriggerConditions.isTableChanged(game, effectResult)) {
-            return null;
+            return actions.isEmpty() ? null : actions;
         }
-        List<RequiredGameTextTriggerAction> actions = new LinkedList<RequiredGameTextTriggerAction>();
         String opponent = game.getOpponent(self.getOwner());
         boolean complete = self.getWhileInPlayData() != null;
         PhysicalCard amidala = Filters.findFirstFromAllOnTable(game, Filters.Amidala);

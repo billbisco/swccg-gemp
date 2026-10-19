@@ -20,6 +20,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.gempukku.swccgo.framework.Assertions.assertAtLocation;
 import static com.gempukku.swccgo.framework.Assertions.assertInZone;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -38,7 +39,8 @@ public class Card_1271_027_Tests {
                     put("isb", "1271_27");
                     put("trooper", "1_194");
                     put("isard", "200_92");
-                    put("bay", "1_285");
+                    put("bay", "12_166");
+                    put("storm2", "1_179");
                 }},
                 10, 10,
                 StartingSetup.DefaultLSGroundLocation,
@@ -53,6 +55,10 @@ public class Card_1271_027_Tests {
 
     private PhysicalCardImpl officeOnTable(VirtualTableScenario scn) {
         return MissionTestSupport.putLocationOnTable(scn, 9201, scn.DS, MissionTestSupport.isbCentralOffice());
+    }
+
+    private PhysicalCardImpl isbAgentOnTable(VirtualTableScenario scn) {
+        return MissionTestSupport.putInHand(scn, 9202, scn.DS, MissionTestSupport.isbAgent());
     }
 
     @Test
@@ -168,5 +174,93 @@ public class Card_1271_027_Tests {
         scn.CaptureCardWith(trooper, leia);
         assertTrue(leia.isCaptive());
         assertEquals(trooper, leia.getEscort());
+    }
+
+    @Test
+    public void InTheHandsOfTheISBMakesOpponentLose4ForceOncePerCaptivityOnDelivery() {
+        var scn = GetScenario();
+        var isb = scn.GetDSCard("isb");
+        var leia = scn.GetLSCard("leia");
+        scn.StartGame();
+        var office = officeOnTable(scn);
+        scn.AttachCardsTo(office, isb);
+        var agent = isbAgentOnTable(scn);
+        scn.MoveCardsToLocation(office, agent);
+        assertTrue(scn.HasKeyword(agent, Keyword.ISB_AGENT));
+        scn.CaptureCardWith(agent, leia);
+        int lsForce = scn.GetLSLifeForceRemaining();
+        scn.SkipToPhase(Phase.MOVE);
+        assertTrue(scn.DSActionAvailable("Deliver captive to prison"));
+        scn.DSChooseAction("Deliver captive to prison");
+        if (scn.DSDecisionAvailable("Make opponent lose 4")) {
+            scn.DSChooseAction("Make opponent lose 4 Force");
+        }
+        scn.PassAllResponses();
+        if (scn.AwaitingLSForceLossPayment()) {
+            scn.LSPayRemainingForceLossFromReserveDeck();
+        }
+        assertTrue(leia.isImprisoned());
+        assertEquals(lsForce - 4, scn.GetLSLifeForceRemaining());
+        scn.SkipToLSTurn(Phase.CONTROL);
+        scn.PassAllResponses();
+        scn.SkipToDSTurn(Phase.MOVE);
+        assertFalse(scn.DSActionAvailable("Deliver captive to prison"));
+    }
+
+    @Test
+    public void InTheHandsOfTheISBRelocatesEscortAndCaptiveToRelatedDockingBay() {
+        var scn = GetScenario();
+        var isb = scn.GetDSCard("isb");
+        var leia = scn.GetLSCard("leia");
+        var bay = scn.GetDSCard("bay");
+        scn.StartGame();
+        scn.MoveLocationToTable(bay);
+        var office = officeOnTable(scn);
+        scn.AttachCardsTo(office, isb);
+        var agent = isbAgentOnTable(scn);
+        scn.MoveCardsToLocation(office, agent);
+        assertTrue(scn.HasKeyword(agent, Keyword.ISB_AGENT));
+        scn.CaptureCardWith(agent, leia);
+        scn.SkipToDSTurn(Phase.MOVE);
+        if (scn.AwaitingLSMovePhaseActions()) {
+            scn.LSPass();
+        }
+        scn.DSActivateForceCheat(2);
+        assertTrue(scn.AwaitingDSMovePhaseActions());
+        assertTrue(scn.DSActionAvailable("Relocate escort and captive to related docking bay"));
+        scn.DSUseCardAction(isb, "Relocate escort and captive to related docking bay");
+        scn.DSChooseCard(agent);
+        scn.DSChooseCard(bay);
+        scn.PassAllResponses();
+        assertAtLocation(bay, agent);
+        assertTrue(leia.isCaptive());
+        assertEquals(agent, leia.getEscort());
+    }
+
+    @Test
+    public void InTheHandsOfTheISBRelocatesIsardPresentAgentToASiteYouControl() {
+        var scn = GetScenario();
+        var isb = scn.GetDSCard("isb");
+        var isard = scn.GetDSCard("isard");
+        var storm2 = scn.GetDSCard("storm2");
+        scn.StartGame();
+        var office = officeOnTable(scn);
+        scn.AttachCardsTo(office, isb);
+        var agent = isbAgentOnTable(scn);
+        scn.MoveCardsToLocation(office, agent, isard);
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), storm2);
+        assertTrue(scn.HasKeyword(agent, Keyword.ISB_AGENT));
+        scn.SkipToDSTurn(Phase.MOVE);
+        if (scn.AwaitingLSMovePhaseActions()) {
+            scn.LSPass();
+        }
+        scn.DSActivateForceCheat(3);
+        assertTrue(scn.AwaitingDSMovePhaseActions());
+        assertTrue(scn.DSActionAvailable("Relocate ISB agent to a site you control"));
+        scn.DSUseCardAction(isb, "Relocate ISB agent to a site you control");
+        scn.DSChooseCard(agent);
+        scn.DSChooseCard(scn.GetDSStartingLocation());
+        scn.PassAllResponses();
+        assertAtLocation(scn.GetDSStartingLocation(), agent);
     }
 }

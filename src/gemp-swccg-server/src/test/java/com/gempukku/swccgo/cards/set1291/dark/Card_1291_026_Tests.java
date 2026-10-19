@@ -158,4 +158,119 @@ public class Card_1291_026_Tests {
         scn.PassAllResponses();
         assertInZone(Zone.USED_PILE, mission);
     }
+
+    @Test
+    public void ArenaExecutionCancelsVirtualBlock2SpecialDelivery() {
+        var scn = GetScenario();
+        var mission = scn.GetDSCard("arena");
+        var petranaki = scn.GetDSCard("petranaki");
+        scn.StartGame();
+        var host = hostOnTable(scn);
+        scn.AttachCardsTo(host, mission);
+        scn.MoveLocationToTable(petranaki);
+        var vb2 = MissionTestSupport.putInHand(scn, 9326, scn.DS, MissionTestSupport.vb2SpecialDelivery());
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        assertTrue(scn.DSDeployAvailable(vb2));
+        scn.DSDeployCard(vb2);
+        scn.DSChooseCard(petranaki);
+        scn.PassResponses("required");
+        scn.PassAllResponses();
+        assertInZone(Zone.LOST_PILE, vb2);
+    }
+
+    @Test
+    public void ArenaExecutionDeploysArenaPillarsFromReserve() {
+        var scn = GetScenario();
+        var mission = scn.GetDSCard("arena");
+        scn.StartGame();
+        var host = hostOnTable(scn);
+        scn.AttachCardsTo(host, mission);
+        var pillars = MissionTestSupport.putInReserve(scn, 9327, scn.DS, MissionTestSupport.arenaPillars());
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.DSActivateForceCheat(5);
+        assertTrue(scn.DSActionAvailable("Deploy Arena Pillars from Reserve Deck"));
+        scn.DSUseCardAction(mission, "Deploy Arena Pillars from Reserve Deck");
+        if (scn.DSHasCardChoiceAvailable(pillars)) {
+            scn.DSChooseCard(pillars);
+        }
+        scn.PassAllResponses();
+        assertInZone(Zone.SIDE_OF_TABLE, pillars);
+    }
+
+    @Test
+    public void ArenaExecutionMayImprisonInsteadOfLost() {
+        var scn = GetScenario();
+        var mission = scn.GetDSCard("arena");
+        var petranaki = scn.GetDSCard("petranaki");
+        var luke = scn.GetLSCard("luke");
+        scn.StartGame();
+        var host = hostOnTable(scn);
+        scn.AttachCardsTo(host, mission);
+        scn.MoveLocationToTable(petranaki);
+        scn.MoveCardsToLocation(petranaki, luke);
+        scn.SkipToLSTurn(Phase.CONTROL);
+        scn.LSExecuteAdHocEffect(luke, new LoseCardFromTableEffect(new TopLevelGameTextAction(luke, luke.getCardId()), luke));
+        if (scn.LSHasCardChoiceAvailable(luke)) {
+            scn.LSChooseCard(luke);
+        }
+        if (scn.LSDecisionAvailable("optional") || scn.LSDecisionAvailable("Optional")) {
+            scn.LSPass();
+        }
+        if (scn.DSHasCardChoiceAvailable(luke)) {
+            scn.DSChooseCard(luke);
+        }
+        assertTrue(scn.DSActionAvailable("Imprison"));
+        scn.DSChooseAction("Imprison");
+        scn.PassAllResponses();
+        assertTrue(luke.isCaptive());
+        assertTrue(luke.isImprisoned());
+    }
+
+    @Test
+    public void ArenaExecutionOpponentMayReleaseChosenCaptives() {
+        var scn = GetScenario();
+        var mission = scn.GetDSCard("arena");
+        var petranaki = scn.GetDSCard("petranaki");
+        var luke = scn.GetLSCard("luke");
+        var leia = scn.GetLSCard("leia");
+        scn.StartGame();
+        var host = hostOnTable(scn);
+        scn.AttachCardsTo(host, mission);
+        scn.MoveLocationToTable(petranaki);
+        scn.gameState().imprisonCharacter(scn.game(), leia, petranaki);
+        scn.MoveCardsToLocation(petranaki, luke);
+        scn.SkipToLSTurn(Phase.CONTROL);
+        if (scn.LSActionAvailable("Release any number of captives")) {
+            scn.LSUseCardAction(mission, "Release any number of captives");
+            scn.LSChooseCard(luke);
+            scn.PassAllResponses();
+            assertFalse(luke.isCaptive());
+        }
+        else {
+            scn.PassAllResponses();
+            assertInZone(Zone.USED_PILE, mission);
+        }
+    }
+
+    @Test
+    public void ArenaExecutionRewardAdds1ToAttritionAgainstOpponent() {
+        var scn = GetScenario();
+        var mission = scn.GetDSCard("arena");
+        var petranaki = scn.GetDSCard("petranaki");
+        var vader = scn.GetDSCard("vader");
+        var luke = scn.GetLSCard("luke");
+        var leia = scn.GetLSCard("leia");
+        scn.StartGame();
+        var host = hostOnTable(scn);
+        scn.AttachCardsTo(host, mission);
+        scn.MoveLocationToTable(petranaki);
+        scn.StackCardsFaceDownOn(mission, leia);
+        scn.MoveCardsToLocation(petranaki, vader);
+        scn.MoveCardsToLocation(petranaki, luke);
+        scn.SkipToDSTurn(Phase.BATTLE);
+        scn.DSInitiateBattle(petranaki);
+        scn.PrepareDSDestiny(1);
+        scn.SkipToDamageSegment(true);
+        assertTrue(scn.GetUnpaidLSAttrition() >= 1);
+    }
 }

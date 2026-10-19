@@ -38,10 +38,8 @@ import com.gempukku.swccgo.logic.timing.results.ForceDrainInitiatedResult;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Set: Virtual Block 9.1
@@ -100,6 +98,9 @@ public class Card1291_028 extends AbstractMission {
                 if (alignedSystems(self).accepts(gameState, modifiersQuerying, physicalCard)) {
                     return false;
                 }
+                if (drawnThisPhase(self, physicalCard)) {
+                    return false;
+                }
                 return GameConditions.occupies(game, playerId, Filters.relatedSite(physicalCard));
             }
         };
@@ -116,6 +117,12 @@ public class Card1291_028 extends AbstractMission {
                                 new UnrespondableEffect(action) {
                                     @Override
                                     protected void performActionResults(Action targetingAction) {
+                                        action.appendEffect(new PassthruEffect(action) {
+                                            @Override
+                                            protected void doPlayEffect(SwccgGame game) {
+                                                markDrawnThisPhase(self, system);
+                                            }
+                                        });
                                         action.appendEffect(
                                                 new DrawDestinyEffect(action, playerId, 1, DestinyType.DESTINY) {
                                                     @Override
@@ -145,12 +152,7 @@ public class Card1291_028 extends AbstractMission {
                                                         action.appendEffect(new PassthruEffect(action) {
                                                             @Override
                                                             protected void doPlayEffect(SwccgGame game) {
-                                                                Set<String> aligned = new HashSet<String>();
-                                                                if (self.getWhileInPlayData() != null) {
-                                                                    aligned.addAll(self.getWhileInPlayData().getTextValues());
-                                                                }
-                                                                aligned.add(String.valueOf(system.getCardId()));
-                                                                self.setWhileInPlayData(new WhileInPlayData(aligned));
+                                                                ensureData(self).getTextValues().add(String.valueOf(system.getCardId()));
                                                             }
                                                         });
                                                     }
@@ -162,8 +164,37 @@ public class Card1291_028 extends AbstractMission {
         return Collections.singletonList(action);
     }
 
+    private WhileInPlayData ensureData(PhysicalCard self) {
+        if (self.getWhileInPlayData() == null) {
+            self.setWhileInPlayData(new WhileInPlayData());
+        }
+        return self.getWhileInPlayData();
+    }
+
+    private boolean drawnThisPhase(PhysicalCard self, PhysicalCard system) {
+        WhileInPlayData data = self.getWhileInPlayData();
+        return data != null && data.getPhysicalCards().contains(system);
+    }
+
+    private void markDrawnThisPhase(PhysicalCard self, PhysicalCard system) {
+        List<PhysicalCard> drawn = ensureData(self).getPhysicalCards();
+        if (!drawn.contains(system)) {
+            drawn.add(system);
+        }
+    }
+
+    private void clearDrawnThisPhase(PhysicalCard self) {
+        WhileInPlayData data = self.getWhileInPlayData();
+        if (data != null) {
+            data.getPhysicalCards().clear();
+        }
+    }
+
     @Override
     protected List<RequiredGameTextTriggerAction> getGameTextRequiredAfterTriggers(SwccgGame game, EffectResult effectResult, PhysicalCard self, int gameTextSourceCardId) {
+        if (TriggerConditions.isStartOfYourPhase(game, self, effectResult, Phase.CONTROL)) {
+            clearDrawnThisPhase(self);
+        }
         String opponent = game.getOpponent(self.getOwner());
         Filter aligned = alignedSystems(self);
         if (TriggerConditions.forceDrainInitiatedBy(game, effectResult, opponent, aligned)) {
@@ -176,9 +207,7 @@ public class Card1291_028 extends AbstractMission {
                 @Override
                 protected void doPlayEffect(SwccgGame game) {
                     if (self.getWhileInPlayData() != null) {
-                        Set<String> alignedIds = new HashSet<String>(self.getWhileInPlayData().getTextValues());
-                        alignedIds.remove(String.valueOf(system.getCardId()));
-                        self.setWhileInPlayData(alignedIds.isEmpty() ? null : new WhileInPlayData(alignedIds));
+                        self.getWhileInPlayData().getTextValues().remove(String.valueOf(system.getCardId()));
                     }
                     if (self.getWhileInPlayData() == null || self.getWhileInPlayData().getTextValues().isEmpty()) {
                         action.appendEffect(new PlaceCardInUsedPileFromTableEffect(action, self));

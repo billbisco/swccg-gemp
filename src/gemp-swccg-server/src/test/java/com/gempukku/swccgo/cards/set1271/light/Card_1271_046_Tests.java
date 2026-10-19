@@ -96,7 +96,9 @@ public class Card_1271_046_Tests {
     public void RestoreFreedomNotOfferedWithObjectiveStart() {
         var scn = GetScenario(StartingSetup.ThereIsGoodInHimObjective);
         var restore = scn.GetLSCard("restore");
+        var yavin = scn.GetLSCard("yavin");
         scn.StartGame();
+        scn.MoveLocationToTable(yavin);
         scn.MoveCardsToHand(restore);
         scn.SkipToLSTurn(Phase.DEPLOY);
         assertTrue(scn.AwaitingLSDeployPhaseActions());
@@ -213,5 +215,126 @@ public class Card_1271_046_Tests {
         scn.PassAllResponses();
         assertTrue(scn.GetStackedCards(bespin).isEmpty());
         assertInZone(Zone.USED_PILE, junk);
+    }
+
+    @Test
+    public void RestoreFreedomLiberationFailsWhenTotalDestinyIsAtMost6() {
+        var scn = GetScenario();
+        var restore = scn.GetLSCard("restore");
+        var yavin = scn.GetLSCard("yavin");
+        var throne = scn.GetLSCard("throne");
+        var bespin = scn.GetLSCard("bespin");
+        var xwing = scn.GetLSCard("xwing");
+        scn.StartGame();
+        scn.MoveLocationToTable(yavin);
+        scn.MoveLocationToTable(throne);
+        scn.MoveCardsToHand(restore);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        scn.LSDeployCard(restore);
+        scn.LSChooseCard(yavin);
+        scn.PassAllResponses();
+        scn.MoveLocationToTable(bespin);
+        scn.MoveCardsToLocation(bespin, xwing);
+        scn.SkipToLSTurn(Phase.CONTROL);
+        scn.PrepareLSDestiny(5);
+        scn.LSForceDrainAt(bespin);
+        scn.PassDSResponses("optional");
+        assertTrue(scn.LSActionAvailable("Draw destiny to liberate"));
+        scn.LSChooseAction("Draw destiny to liberate");
+        scn.PassAllResponses();
+        assertTrue(scn.GetStackedCards(bespin).isEmpty());
+    }
+
+    @Test
+    public void RestoreFreedomLiberationSucceedsWhenOccupiedYavin4SiteAdds2() {
+        var scn = GetScenario();
+        var restore = scn.GetLSCard("restore");
+        var yavin = scn.GetLSCard("yavin");
+        var throne = scn.GetLSCard("throne");
+        var bespin = scn.GetLSCard("bespin");
+        var xwing = scn.GetLSCard("xwing");
+        var luke = scn.GetLSCard("luke");
+        scn.StartGame();
+        scn.MoveLocationToTable(yavin);
+        scn.MoveLocationToTable(throne);
+        scn.MoveCardsToHand(restore);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        scn.LSDeployCard(restore);
+        scn.LSChooseCard(yavin);
+        scn.PassAllResponses();
+        scn.MoveLocationToTable(bespin);
+        scn.MoveCardsToLocation(bespin, xwing);
+        scn.MoveCardsToLocation(throne, luke);
+        scn.SkipToLSTurn(Phase.CONTROL);
+        scn.PrepareLSDestiny(5);
+        scn.LSForceDrainAt(bespin);
+        scn.PassDSResponses("optional");
+        assertTrue(scn.LSActionAvailable("Draw destiny to liberate"));
+        scn.LSChooseAction("Draw destiny to liberate");
+        scn.PassAllResponses();
+        assertTrue(scn.LSDecisionAvailable("Choose player"));
+        scn.LSChoose("Light side");
+        scn.PassAllResponses();
+        assertFalse(scn.GetStackedCards(bespin).isEmpty());
+    }
+
+    @Test
+    public void RestoreFreedomAddsPowerAndBattleDestinyAtLiberatedLocations() {
+        var scn = GetScenario();
+        var restore = scn.GetLSCard("restore");
+        var yavin = scn.GetLSCard("yavin");
+        var bespin = scn.GetLSCard("bespin");
+        var xwing = scn.GetLSCard("xwing");
+        var luke = scn.GetLSCard("luke");
+        var tie = scn.GetDSCard("tie");
+        scn.StartGame();
+        scn.MoveLocationToTable(yavin);
+        scn.MoveCardsToHand(restore);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        scn.LSDeployCard(restore);
+        scn.LSChooseCard(yavin);
+        scn.PassAllResponses();
+        scn.MoveLocationToTable(bespin);
+        scn.StackCardsOn(bespin, luke);
+        luke.setLiberationCard(true);
+        scn.MoveCardsToLocation(bespin, xwing);
+        scn.MoveCardsToLocation(bespin, tie);
+        int printed = scn.GetPower(xwing);
+        scn.SkipToLSTurn(Phase.BATTLE);
+        scn.LSInitiateBattle(bespin);
+        scn.PassAllResponses();
+        assertEquals(printed + 3, scn.GetLSTotalPower());
+        assertEquals(1, scn.GetLSBattleDestinyCount());
+    }
+
+    @Test
+    public void RestoreFreedomOpponentDrainsAtLiberatedSystemAreNotPlus1() {
+        var scn = GetScenario();
+        var restore = scn.GetLSCard("restore");
+        var yavin = scn.GetLSCard("yavin");
+        var bespin = scn.GetLSCard("bespin");
+        var xwing = scn.GetLSCard("xwing");
+        var tie = scn.GetDSCard("tie");
+        var junk = scn.GetLSCard("luke");
+        scn.StartGame();
+        scn.MoveLocationToTable(yavin);
+        scn.MoveCardsToHand(restore);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        scn.LSDeployCard(restore);
+        scn.LSChooseCard(yavin);
+        scn.PassAllResponses();
+        scn.MoveLocationToTable(bespin);
+        scn.StackCardsOn(bespin, junk);
+        junk.setLiberationCard(true);
+        scn.MoveCardsToLocation(bespin, tie);
+        scn.SkipToDSTurn(Phase.CONTROL);
+        assertTrue(scn.DSForceDrainAvailable(bespin));
+        scn.DSForceDrainAt(bespin);
+        scn.PassResponses("required");
+        scn.PassForceDrainStartResponses();
+        int drain = scn.GetForceDrainTotal();
+        assertTrue("Opponent drain at a liberated system is not +1", drain <= 1);
+        assertTrue(junk.getZone() == Zone.USED_PILE || junk.getZone() == Zone.TOP_OF_USED_PILE
+                || scn.GetStackedCards(bespin).isEmpty());
     }
 }

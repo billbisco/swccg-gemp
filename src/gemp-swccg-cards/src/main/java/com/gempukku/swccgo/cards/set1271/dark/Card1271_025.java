@@ -22,12 +22,17 @@ import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
 import com.gempukku.swccgo.logic.conditions.Condition;
 import com.gempukku.swccgo.logic.effects.UseForceEffect;
 import com.gempukku.swccgo.logic.effects.choose.DeployCardFromReserveDeckEffect;
+import com.gempukku.swccgo.logic.evaluators.ConstantEvaluator;
+import com.gempukku.swccgo.logic.modifiers.DestinyIncreaseLimitModifier;
 import com.gempukku.swccgo.logic.modifiers.DrawsBattleDestinyIfUnableToOtherwiseModifier;
-import com.gempukku.swccgo.logic.modifiers.MayDeployWithoutReplacementModifier;
+import com.gempukku.swccgo.logic.modifiers.ForfeitIncreaseLimitModifier;
+import com.gempukku.swccgo.logic.modifiers.MayDeployToLocationModifier;
 import com.gempukku.swccgo.logic.modifiers.MayNotDeployModifier;
 import com.gempukku.swccgo.logic.modifiers.MayNotHavePowerReducedModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
+import com.gempukku.swccgo.logic.modifiers.PowerIncreaseLimitModifier;
 import com.gempukku.swccgo.logic.modifiers.ResetForceDrainModifier;
+import com.gempukku.swccgo.logic.modifiers.UseCalculationForDeployCostModifier;
 import com.gempukku.swccgo.logic.timing.Effect;
 import com.gempukku.swccgo.logic.timing.EffectResult;
 
@@ -65,8 +70,14 @@ public class Card1271_025 extends AbstractMission {
                 return playerId.equals(player);
             }
         });
-        modifiers.add(new MayDeployWithoutReplacementModifier(self, Filters.and(Filters.your(self), Filters.TIE_Assault_Squadron), flagshipOpsOnExecutor, 3));
+        Filter tieAssault = Filters.and(Filters.your(self), Filters.TIE_Assault_Squadron);
+        modifiers.add(new MayDeployToLocationModifier(self, tieAssault, flagshipOpsOnExecutor, Filters.system));
+        modifiers.add(new UseCalculationForDeployCostModifier(self, tieAssault, flagshipOpsOnExecutor, new ConstantEvaluator(3)));
         modifiers.add(new DrawsBattleDestinyIfUnableToOtherwiseModifier(self, tieWithCapital, flagshipOpsOnExecutor, 1));
+        Filter yourSquadrons = Filters.and(Filters.your(self), Filters.squadron);
+        modifiers.add(new DestinyIncreaseLimitModifier(self, yourSquadrons, 2));
+        modifiers.add(new PowerIncreaseLimitModifier(self, yourSquadrons, 2));
+        modifiers.add(new ForfeitIncreaseLimitModifier(self, yourSquadrons, 2));
         return modifiers;
     }
 

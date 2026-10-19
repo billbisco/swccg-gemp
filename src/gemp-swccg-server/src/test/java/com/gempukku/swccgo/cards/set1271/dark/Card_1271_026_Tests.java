@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.set1271.dark;
 
+import com.gempukku.swccgo.cards.legacy.MissionTestSupport;
 import com.gempukku.swccgo.common.CardSubtype;
 import com.gempukku.swccgo.common.CardType;
 import com.gempukku.swccgo.common.ExpansionSet;
@@ -218,5 +219,56 @@ public class Card_1271_026_Tests {
         scn.PassResponses("required");
         scn.PassAllResponses();
         assertInZone(Zone.LOST_PILE, tallon);
+    }
+
+    @Test
+    public void ImperialAcesKeepsDrainBonusWhenOpponentHasANegativeDrainModifier() {
+        var scn = GetScenario();
+        var aces = scn.GetDSCard("aces");
+        var dantooine = scn.GetDSCard("dantooine");
+        var tie = scn.GetDSCard("tie");
+        var ds61 = scn.GetDSCard("ds61");
+        var luke = scn.GetLSCard("luke");
+        scn.StartGame();
+        scn.MoveCardsToHand(aces);
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.DSDeployCard(aces);
+        scn.PassAllResponses();
+        scn.MoveLocationToTable(dantooine);
+        scn.MoveCardsToLocation(dantooine, tie);
+        scn.BoardAsPilot(tie, ds61);
+        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), luke);
+        scn.ApplyAdHocModifier(new ForceDrainModifier(luke, Filters.sameCardId(dantooine), -1, scn.DS));
+        scn.SkipToDSTurn(Phase.CONTROL);
+        assertTrue(scn.DSForceDrainAvailable(dantooine));
+        scn.DSForceDrainAt(dantooine);
+        scn.PassForceDrainStartResponses();
+        assertEquals(1, scn.GetForceDrainTotal());
+    }
+
+    @Test
+    public void ImperialAcesDeploysTIEFighterConstructionFacilityFromReserve() {
+        var scn = GetScenario();
+        var aces = scn.GetDSCard("aces");
+        scn.StartGame();
+        scn.MoveCardsToHand(aces);
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.DSDeployCard(aces);
+        scn.PassAllResponses();
+        assertTrue(scn.AwaitingLSDeployPhaseActions());
+        scn.LSPass();
+        scn.PassAllResponses();
+        var facility = MissionTestSupport.putInReserve(scn, 9126, scn.DS, MissionTestSupport.tieFighterConstructionFacility());
+        scn.DSActivateForceCheat(5);
+        assertTrue(scn.DSActionAvailable("Deploy TIE Fighter Construction Facility from Reserve Deck"));
+        scn.DSUseCardAction(aces, "Deploy TIE Fighter Construction Facility from Reserve Deck");
+        if (scn.DSHasCardChoiceAvailable(facility)) {
+            scn.DSChooseCard(facility);
+        }
+        scn.PassAllResponses();
+        assertInZone(Zone.SIDE_OF_TABLE, facility);
+        if (scn.AwaitingDSDeployPhaseActions()) {
+            assertFalse(scn.DSActionAvailable("Deploy TIE Fighter Construction Facility from Reserve Deck"));
+        }
     }
 }

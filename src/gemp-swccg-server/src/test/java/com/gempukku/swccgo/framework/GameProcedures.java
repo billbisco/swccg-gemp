@@ -350,9 +350,10 @@ public interface GameProcedures extends Actions, Decisions, GameProperties, Pile
 
         if(DecisionAvailable(decider, text)) {
             PlayerPass(decider);
-        }
-        if(DecisionAvailable(offPlayer, text)) {
-            PlayerPass(offPlayer);
+
+            if(DecisionAvailable(offPlayer, text)) {
+                PlayerPass(offPlayer);
+            }
         }
     }
 
@@ -374,33 +375,6 @@ public interface GameProcedures extends Actions, Decisions, GameProperties, Pile
         if (AwaitingDSActivatePhaseActions()) {
             DSActivateMaxForceAndPass();
         }
-    }
-
-    /**
-     * Takes a required or top-level action whose text contains {@code text}, from either player.
-     */
-    default void TakeNamedAction(String text) {
-        if (DSActionAvailable(text)) {
-            DSChooseAction(text);
-            return;
-        }
-        if (LSActionAvailable(text)) {
-            LSChooseAction(text);
-            return;
-        }
-        if (DSDecisionAvailable(text)) {
-            PlayerPass(DS);
-            return;
-        }
-        if (LSDecisionAvailable(text)) {
-            PlayerPass(LS);
-            return;
-        }
-        String decision = GetCurrentDecision() == null ? "none" : GetCurrentDecision().getText();
-        throw new AssertionError("No '" + text + "'; phase=" + gameState().getCurrentPhase()
-                + " decision=" + decision
-                + " DS actions=" + GetDSAvailableActions()
-                + " LS actions=" + GetLSAvailableActions());
     }
 
     /**

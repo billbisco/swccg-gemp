@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.set1271.light;
 
+import com.gempukku.swccgo.cards.legacy.MissionTestSupport;
 import com.gempukku.swccgo.common.CardSubtype;
 import com.gempukku.swccgo.common.CardType;
 import com.gempukku.swccgo.common.ExpansionSet;
@@ -37,6 +38,8 @@ public class Card_1271_045_Tests {
                     put("gold5", "1_142");
                     put("luke", "1_19");
                     put("desert", "6_085");
+                    put("falcon", "1_143");
+                    put("red5", "111_2");
                 }},
                 new HashMap<>() {{
                     put("trooper", "1_194");
@@ -196,5 +199,74 @@ public class Card_1271_045_Tests {
         scn.MoveCardsToLocation(yavin, xwing, gold5);
         assertEquals(1, scn.game().getModifiersQuerying().getAstromechCapacity(scn.gameState(), xwing));
         assertEquals(1, scn.game().getModifiersQuerying().getAstromechCapacity(scn.gameState(), gold5));
+    }
+
+    @Test
+    public void RebelAcesKeepsDrainBonusWhenOpponentHasANegativeDrainModifier() {
+        var scn = GetScenario();
+        var aces = scn.GetLSCard("aces");
+        var yavin = scn.GetLSCard("yavin");
+        var xwing = scn.GetLSCard("xwing");
+        var jek = scn.GetLSCard("jek");
+        var trooper = scn.GetDSCard("trooper");
+        scn.StartGame();
+        scn.MoveCardsToHand(aces);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        scn.LSDeployCard(aces);
+        scn.PassAllResponses();
+        scn.MoveLocationToTable(yavin);
+        scn.MoveCardsToLocation(yavin, xwing);
+        scn.BoardAsPilot(xwing, jek);
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), trooper);
+        scn.ApplyAdHocModifier(new ForceDrainModifier(trooper, Filters.sameCardId(yavin), -1, scn.LS));
+        scn.SkipToLSTurn(Phase.CONTROL);
+        assertTrue(scn.LSForceDrainAvailable(yavin));
+        scn.LSForceDrainAt(yavin);
+        scn.PassForceDrainStartResponses();
+        assertEquals(1, scn.GetForceDrainTotal());
+    }
+
+    @Test
+    public void RebelAcesDoesNotAddAstromechCapacityToFalconOrArtooDetooInRed5() {
+        var scn = GetScenario();
+        var aces = scn.GetLSCard("aces");
+        var yavin = scn.GetLSCard("yavin");
+        var falcon = scn.GetLSCard("falcon");
+        var red5 = scn.GetLSCard("red5");
+        scn.StartGame();
+        scn.MoveCardsToHand(aces);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        scn.LSDeployCard(aces);
+        scn.PassAllResponses();
+        scn.MoveLocationToTable(yavin);
+        scn.MoveCardsToLocation(yavin, falcon, red5);
+        assertEquals(0, scn.game().getModifiersQuerying().getAstromechCapacity(scn.gameState(), falcon));
+        assertEquals(0, scn.game().getModifiersQuerying().getAstromechCapacity(scn.gameState(), red5));
+    }
+
+    @Test
+    public void RebelAcesDeploysCloseAirSupportFromReserve() {
+        var scn = GetScenario();
+        var aces = scn.GetLSCard("aces");
+        scn.StartGame();
+        scn.MoveCardsToHand(aces);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        scn.LSDeployCard(aces);
+        scn.PassAllResponses();
+        assertTrue(scn.AwaitingDSDeployPhaseActions());
+        scn.DSPass();
+        scn.PassAllResponses();
+        var close = MissionTestSupport.putInReserve(scn, 9145, scn.LS, MissionTestSupport.closeAirSupport());
+        scn.LSActivateForceCheat(5);
+        assertTrue(scn.LSActionAvailable("Deploy Close Air Support from Reserve Deck"));
+        scn.LSUseCardAction(aces, "Deploy Close Air Support from Reserve Deck");
+        if (scn.LSHasCardChoiceAvailable(close)) {
+            scn.LSChooseCard(close);
+        }
+        scn.PassAllResponses();
+        assertInZone(Zone.SIDE_OF_TABLE, close);
+        if (scn.AwaitingLSDeployPhaseActions()) {
+            assertFalse(scn.LSActionAvailable("Deploy Close Air Support from Reserve Deck"));
+        }
     }
 }
