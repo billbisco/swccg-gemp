@@ -208,22 +208,9 @@ public class Card_1281_036_Tests {
     private void finishIngenuityDrawBackToControl(VirtualTableScenario scn) {
         scn.PassDestinyDrawResponses();
         scn.PassAllResponses();
-        while (scn.DSDecisionAvailable("optional") || scn.LSDecisionAvailable("optional")) {
-            if (scn.DSDecisionAvailable("optional")) {
-                scn.DSPass();
-            }
-            if (scn.LSDecisionAvailable("optional")) {
-                scn.LSPass();
-            }
-        }
-        if (scn.AwaitingDSControlPhaseActions()) {
-            scn.DSPass();
-        }
-        assertTrue("expected LS control after Ingenuity draw, ls=" + scn.LSGetDecision()
-                        + " ds=" + scn.DSGetDecision()
-                        + " actions=" + scn.GetLSAvailableActions()
-                        + " log=" + String.join(" | ", scn.gameState().getLastMessages()),
-                scn.AwaitingLSControlPhaseActions());
+        assertTrue(scn.AwaitingDSControlPhaseActions());
+        scn.DSPass();
+        assertTrue(scn.AwaitingLSControlPhaseActions());
     }
 
     @Test
