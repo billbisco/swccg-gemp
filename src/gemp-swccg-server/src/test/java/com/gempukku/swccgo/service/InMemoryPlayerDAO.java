@@ -78,6 +78,8 @@ class InMemoryPlayerDAO implements PlayerDAO {
             if (p.getName().equalsIgnoreCase(playerName))
                 throw new LoginInvalidException();
         addWithStoredHash(playerName, _hasher.hash(password), "u", null);
+        if (remoteAddr != null)
+            signupsByIp.merge(remoteAddr, 1, Integer::sum);
         return true;
     }
 
@@ -101,6 +103,13 @@ class InMemoryPlayerDAO implements PlayerDAO {
         replace(p, newHash, p.getType());
         hashUpdates++;
         return true;
+    }
+
+    final Map<String, Integer> signupsByIp = new HashMap<>();
+
+    @Override
+    public int countPlayersCreatedFromIpSince(String ip, long sinceMillis) {
+        return signupsByIp.getOrDefault(ip, 0);
     }
 
     @Override

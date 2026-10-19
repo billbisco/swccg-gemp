@@ -5,6 +5,7 @@ import com.gempukku.swccgo.async.ResponseWriter;
 import com.gempukku.swccgo.db.LoginInvalidException;
 import com.gempukku.swccgo.db.RegisterNotAllowedException;
 import com.gempukku.swccgo.service.AuthService;
+import com.gempukku.swccgo.security.SignupGuard;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpRequest;
@@ -40,6 +41,12 @@ public class RegisterRequestHandler extends SwccgoServerRequestHandler implement
                     // 202 = "password reset, please log in" in the existing client.
                     responseWriter.writeError(202, Collections.singletonMap(HttpHeaderNames.SET_COOKIE.toString(),
                             encodeProtectedCookie(AuthService.RESET_COOKIE, "", 0, CookieHeaderNames.SameSite.Strict)));
+                    return;
+                }
+
+                // Honeypot: a hidden "website" field humans never fill. Pretend it worked, create nothing.
+                if (SignupGuard.isHoneypotTripped(getFormParameterSafely(postDecoder, "website"))) {
+                    responseWriter.writeXmlResponse(null);
                     return;
                 }
 

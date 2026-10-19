@@ -8,6 +8,7 @@ import com.gempukku.swccgo.game.Player;
 import com.gempukku.swccgo.security.PasswordHasher;
 import com.gempukku.swccgo.security.PasswordPolicy;
 import com.gempukku.swccgo.security.ResetCodes;
+import com.gempukku.swccgo.security.SignupGuard;
 
 import java.security.MessageDigest;
 import java.security.SecureRandom;
@@ -89,6 +90,7 @@ public class AuthService {
     private final PlayerDAO _playerDAO;
     private final PasswordHasher _hasher;
     private final LoginThrottle _throttle;
+    private final SignupGuard _signupGuard;
     private final LongSupplier _clock;
     private final SecureRandom _random = new SecureRandom();
     private final Map<String, ResetTicket> _resetTickets = new ConcurrentHashMap<>();
@@ -108,10 +110,15 @@ public class AuthService {
     }
 
     public AuthService(PlayerDAO playerDAO, PasswordHasher hasher, LoginThrottle throttle) {
-        this(playerDAO, hasher, throttle, System::currentTimeMillis);
+        this(playerDAO, hasher, throttle, SignupGuard.fromConfiguration(), System::currentTimeMillis);
     }
 
     public AuthService(PlayerDAO playerDAO, PasswordHasher hasher, LoginThrottle throttle, LongSupplier clock) {
+        this(playerDAO, hasher, throttle, new SignupGuard(SignupGuard.DEFAULT_MAX_PER_IP_PER_DAY, null), clock);
+    }
+
+    public AuthService(PlayerDAO playerDAO, PasswordHasher hasher, LoginThrottle throttle, SignupGuard signupGuard, LongSupplier clock) {
+        _signupGuard = signupGuard;
         _playerDAO = playerDAO;
         _hasher = hasher;
         _throttle = throttle;
@@ -249,13 +256,17 @@ public class AuthService {
     }
 
     /**
-     * Registers a new account after applying the password policy.
+     * Registers a new account after applying the password policy and the per-IP signup limit
+     * (RegisterNotAllowedException when the IP already made its quota today).
      * @throws WeakPasswordException if the password breaks {@link PasswordPolicy}
      */
     public boolean register(String login, String password, String remoteIp)
             throws SQLException, LoginInvalidException, RegisterNotAllowedException, WeakPasswordException {
         if (!PasswordPolicy.isAcceptable(password))
             throw new WeakPasswordException();
+        if (remoteIp != null && !_signupGuard.allows(remoteIp,
+                _playerDAO.countPlayersCreatedFromIpSince(remoteIp, _clock.getAsLong() - SignupGuard.WINDOW_MILLIS)))
+            throw new RegisterNotAllowedException();
         return _playerDAO.registerPlayer(login, password, remoteIp);
     }
 

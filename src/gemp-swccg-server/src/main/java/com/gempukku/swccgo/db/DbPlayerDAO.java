@@ -115,6 +115,21 @@ public class DbPlayerDAO implements PlayerDAO {
     }
 
     @Override
+    public int countPlayersCreatedFromIpSince(String ip, long sinceMillis) throws SQLException {
+        try (Connection conn = _dbAccess.getDataSource().getConnection()) {
+            try (PreparedStatement statement = conn.prepareStatement(
+                    "SELECT COUNT(*) FROM player WHERE create_ip=? AND account_creation_date >= NOW() - INTERVAL ? SECOND")) {
+                // Window computed by the DB against its own NOW(), so DB/JVM time zones cannot skew it.
+                statement.setString(1, ip);
+                statement.setLong(2, Math.max(0, (System.currentTimeMillis() - sinceMillis) / 1000));
+                try (ResultSet rs = statement.executeQuery()) {
+                    return rs.next() ? rs.getInt(1) : 0;
+                }
+            }
+        }
+    }
+
+    @Override
     public void storePasswordResetCode(int playerId, String codeHash, long expiresAt, String createdBy) throws SQLException {
         try (Connection conn = _dbAccess.getDataSource().getConnection()) {
             try (PreparedStatement statement = conn.prepareStatement(
