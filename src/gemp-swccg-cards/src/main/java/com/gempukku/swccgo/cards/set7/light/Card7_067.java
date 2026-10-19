@@ -25,6 +25,7 @@ import com.gempukku.swccgo.logic.modifiers.ModifyGameTextModifier;
 import com.gempukku.swccgo.logic.modifiers.ModifyGameTextType;
 import com.gempukku.swccgo.logic.modifiers.NotUniqueModifier;
 import com.gempukku.swccgo.logic.modifiers.SuspendsCardModifier;
+import com.gempukku.swccgo.logic.modifiers.WidenIncomKoensayrScopeModifier;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -62,7 +63,7 @@ public class Card7_067 extends AbstractNormalEffect {
                     new OncePerPhaseEffect(action));
             // Perform result(s)
             action.appendEffect(
-                    new RetrieveCardEffect(action, playerId, Filters.Y_wing));
+                    new RetrieveCardEffect(action, playerId, WidenIncomKoensayrScopeModifier.affectedShips(game, self, Filters.Y_wing)));
             return Collections.singletonList(action);
         }
         return null;
