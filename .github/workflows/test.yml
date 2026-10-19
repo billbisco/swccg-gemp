@@ -59,6 +59,15 @@ jobs:
           name: web-jar
           path: src/gemp-swccg-async/target
 
+      - name: Pre-pull MariaDB base image
+        run: |
+          for i in 1 2 3; do
+            docker pull public.ecr.aws/docker/library/mariadb:11 && exit 0
+            sleep $((i*15))
+          done
+          docker pull mariadb:11
+          docker tag mariadb:11 public.ecr.aws/docker/library/mariadb:11
+
       - name: Build Docker stack
         working-directory: src
         run: |

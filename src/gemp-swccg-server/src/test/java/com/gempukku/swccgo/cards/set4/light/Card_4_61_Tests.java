@@ -83,12 +83,15 @@ public class Card_4_61_Tests {
         scn.MoveCardsToLSHand(crazy);
         scn.MoveLocationToTable(kessel);
         scn.MoveLocationToTable(asteroid);
-        scn.MoveCardsToLocation(asteroid, corvette, tie);
 
         scn.SkipToLSTurn(Phase.CONTROL);
         scn.LSPass();
         scn.SkipToDSTurn(Phase.CONTROL);
-        scn.DSPass();
+        scn.MoveCardsToLocation(asteroid, corvette, tie);
+        scn.EnsureLSForcePile(2);
+        if (scn.AwaitingDSControlPhaseActions()) {
+            scn.DSPass();
+        }
 
         assertTrue(scn.LSCardPlayAvailable(crazy));
         scn.LSPlayCard(crazy);
@@ -182,6 +185,7 @@ public class Card_4_61_Tests {
         scn.AttachCardsTo(xwing, cannon);
 
         scn.SkipToLSTurn(Phase.CONTROL);
+        scn.EnsureLSForcePile(3);
         scn.LSActivateForceCheat(3);
         assertTrue(scn.LSCardPlayAvailable(crazy));
         scn.LSPlayCard(crazy);
@@ -249,10 +253,12 @@ public class Card_4_61_Tests {
         scn.MoveCardsToLSHand(crazy);
         scn.MoveLocationToTable(kessel);
         scn.MoveLocationToTable(asteroid);
-        scn.MoveCardsToLocation(asteroid, corvette, tie);
 
         scn.SkipToPhase(Phase.CONTROL);
-        scn.DSPass();
+        scn.MoveCardsToLocation(asteroid, corvette, tie);
+        if (scn.AwaitingDSControlPhaseActions()) {
+            scn.DSPass();
+        }
 
         scn.PrepareLSDestiny(2);
         scn.LSUseCardAction(tie, "asteroid");

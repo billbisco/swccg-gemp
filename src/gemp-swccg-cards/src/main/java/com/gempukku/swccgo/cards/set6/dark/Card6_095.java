@@ -199,6 +199,7 @@ public class Card6_095 extends AbstractAlien {
         GAME_TEXT_REQUIRED_BEFORE_TRIGGERS
     };
 
+    @SuppressWarnings("unchecked")
     private List getMindScannedActions(String playerId, SwccgGame game, PhysicalCard self, EffectResult effectResult, Effect effect, MINDSCAN_ACTION_TYPE actionType){
         List actions = new ArrayList();
         if(game.getModifiersQuerying().hasMindscannedCharacter(game.getGameState(), self) && !game.getModifiersQuerying().mindscannedCharacterGameTextWasCanceled(game.getGameState(), self)) {

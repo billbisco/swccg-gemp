@@ -188,7 +188,7 @@ public class SwccgoServerRequestHandler {
 
     protected <T> T extractObject(Map<Type, Object> context, Class<T> clazz) {
         Object value = context.get(clazz);
-        return (T) value;
+        return clazz.cast(value);
     }
 
     protected Map<String, String> logUserReturningHeaders(String remoteIp, String login) throws SQLException {
