@@ -39,6 +39,7 @@ public class Card9_110 extends AbstractImperial {
         setLore("Imperial council member. Very cruel at heart. Has lusted for power his entire life. Predictable and controllable.");
         setGameText("Deploys -3 to Emperor's site. When with Emperor at a battleground site, adds 1 to your Force drains here. Once per turn, you may use 1 Force to place a card from hand to bottom of Used Pile and draw top card of Reserve Deck. Immune to attrition < 3.");
         addIcons(Icon.DEATH_STAR_II);
+        addKeywords(com.gempukku.swccgo.common.Keyword.IMPERIAL_COUNCIL_MEMBER);
     }
 
     @Override

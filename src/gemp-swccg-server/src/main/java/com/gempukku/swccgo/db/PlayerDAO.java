@@ -45,13 +45,46 @@ public interface PlayerDAO {
     boolean registerPlayer(String playerName, String password, String remoteAddr) throws SQLException, LoginInvalidException, RegisterNotAllowedException;
 
     /**
-     * Performs login of the player.
-     * @param playerName the player name
-     * @param password the password
-     * @return the player if successful, otherwise null
+     * Finds the account a login name refers to, ignoring case and including deactivated accounts.
+     * An exact (case-sensitive) match wins. Otherwise the single case-insensitive match is returned.
+     * If several legacy accounts differ only by case and none matches exactly, returns null.
+     * Credential checks belong in {@link com.gempukku.swccgo.service.AuthService}, not here.
+     * @param login the name as typed
+     * @return the player, or null
      * @throws SQLException an SQL exception
      */
-    Player loginPlayer(String playerName, String password) throws SQLException;
+    Player findPlayerForLogin(String login) throws SQLException;
+
+    /**
+     * Replaces the stored password hash, but only if it still equals expectedCurrentHash
+     * (so a concurrent reset or password change is never overwritten by a login rehash).
+     * @param playerId the player ID
+     * @param expectedCurrentHash the hash read before verifying
+     * @param newHash the new stored hash
+     * @return true if updated
+     * @throws SQLException an SQL exception
+     */
+    boolean updatePasswordHash(int playerId, String expectedCurrentHash, String newHash) throws SQLException;
+
+    /**
+     * Counts accounts created from this IP at or after the given time (for the per-IP signup limit).
+     */
+    int countPlayersCreatedFromIpSince(String ip, long sinceMillis) throws SQLException;
+
+    /**
+     * Stores (or replaces) the one-time reset code hash for a player.
+     */
+    void storePasswordResetCode(int playerId, String codeHash, long expiresAt, String createdBy) throws SQLException;
+
+    /**
+     * @return the player's pending reset code, or null
+     */
+    PasswordResetCode getPasswordResetCode(int playerId) throws SQLException;
+
+    /**
+     * Deletes the player's reset code (after use, or when superseded).
+     */
+    void deletePasswordResetCode(int playerId) throws SQLException;
 
     /**
      * Updates the IP address that the player last used to login.
@@ -73,7 +106,8 @@ public interface PlayerDAO {
     boolean updateLastReward(Player player, Integer previousReward, int currentReward) throws SQLException;
 
     /**
-     * Resets the player's password so it can be changed on next login.
+     * Puts the account into the reset state: the old password stops working, and only a valid
+     * one-time reset code (see {@link #storePasswordResetCode}) lets the player set a new one.
      * @param playerName the player name
      * @return true if successful, otherwise false
      * @throws SQLException an SQL exception

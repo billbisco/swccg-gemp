@@ -23,6 +23,7 @@ import com.gempukku.swccgo.logic.effects.CancelCardOnTableEffect;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.modifiers.PowerModifier;
 import com.gempukku.swccgo.logic.modifiers.ReplaceAbility1PermanentPilotsModifier;
+import com.gempukku.swccgo.logic.modifiers.WidenIncomKoensayrScopeModifier;
 import com.gempukku.swccgo.logic.timing.EffectResult;
 
 import java.util.Collections;
@@ -52,7 +53,7 @@ public class Card7_066 extends AbstractNormalEffect {
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
         Filter filter = Filters.and(Filters.your(self), Filters.hasPermanentPilot,
-                Filters.or(Filters.T_16, Filters.T_47, Filters.Z_95, Filters.X_wing), Filters.except(Filters.squadron));
+                WidenIncomKoensayrScopeModifier.affectedShips(game, self, Filters.or(Filters.T_16, Filters.T_47, Filters.Z_95, Filters.X_wing)), Filters.except(Filters.squadron));
 
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new ReplaceAbility1PermanentPilotsModifier(self, filter, 2));

@@ -16,6 +16,10 @@ import com.gempukku.swccgo.merchant.MerchantService;
 import com.gempukku.swccgo.packagedProduct.DraftPackStorage;
 import com.gempukku.swccgo.packagedProduct.PackagedProductStorage;
 import com.gempukku.swccgo.service.AdminService;
+import com.gempukku.swccgo.service.AuthService;
+import com.gempukku.swccgo.service.LoginThrottle;
+import com.gempukku.swccgo.security.PasswordHasher;
+import com.gempukku.swccgo.security.PasswordSettings;
 import com.gempukku.swccgo.service.LoggedUserHolder;
 import com.gempukku.swccgo.tournament.*;
 
@@ -64,11 +68,18 @@ public class ServerBuilder {
                         extract(objectMap, CollectionsManager.class),
                         extract(objectMap, SoloDraftDefinitions.class)));
 
+        objectMap.put(AuthService.class,
+                new AuthService(
+                        extract(objectMap, PlayerDAO.class),
+                        new PasswordHasher(PasswordSettings.iterations()),
+                        new LoginThrottle()));
+
         objectMap.put(AdminService.class,
                 new AdminService(
                         extract(objectMap, PlayerDAO.class),
                         extract(objectMap, IpBanDAO.class),
-                        extract(objectMap, LoggedUserHolder.class)
+                        extract(objectMap, LoggedUserHolder.class),
+                        extract(objectMap, AuthService.class)
                 ));
 
         TournamentPrizeSchemeRegistry tournamentPrizeSchemeRegistry = new TournamentPrizeSchemeRegistry();
