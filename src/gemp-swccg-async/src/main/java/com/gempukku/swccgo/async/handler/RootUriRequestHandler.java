@@ -1,5 +1,7 @@
 package com.gempukku.swccgo.async.handler;
 
+import com.gempukku.swccgo.security.OriginPolicy;
+
 import com.gempukku.polling.LongPollingSystem;
 import com.gempukku.swccgo.async.HttpProcessingException;
 import com.gempukku.swccgo.async.ResponseWriter;
@@ -34,12 +36,12 @@ public class RootUriRequestHandler implements UriRequestHandler {
     private final TournamentRequestHandler _tournamentRequestHandler;
     private SoloDraftRequestHandler _soloDraftRequestHandler;
 
-    private final Pattern originPattern;
+    private final OriginPolicy _originPolicy;
 
     public RootUriRequestHandler(Map<Type, Object> context, LongPollingSystem longPollingSystem) {
         _webRequestHandler = new WebRequestHandler(ApplicationConfiguration.getProperty("web.path"));
         String originAllowedPattern = ApplicationConfiguration.getProperty("origin.allowed.pattern");
-        originPattern = Pattern.compile(originAllowedPattern);
+        _originPolicy = new OriginPolicy(originAllowedPattern);
 
         _hallRequestHandler = new HallRequestHandler(context, longPollingSystem);
         _deckRequestHandler = new DeckRequestHandler(context);
@@ -70,11 +72,9 @@ public class RootUriRequestHandler implements UriRequestHandler {
         } else if (uri.equals(_serverContextPath)) {
             _statusRequestHandler.handleRequest(uri.substring(_serverContextPath.length()), request, context, responseWriter, remoteIp);
         } else {
-            String origin = request.headers().get("Origin");
-            if (origin != null) {
-                if (!originPattern.matcher(origin).matches())
-                    throw new HttpProcessingException(403);
-            }
+            // CSRF: state-changing requests must come from one of our own sites (Origin, else Referer).
+            if (!_originPolicy.allows(request.method().name(), request.headers().get("Origin"), request.headers().get("Referer")))
+                throw new HttpProcessingException(403);
 
             // These APIs are protected by same Origin protection
             if (uri.startsWith(_serverContextPath + "hall")) {

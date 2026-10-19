@@ -163,7 +163,6 @@ public class AdminRequestHandler extends SwccgoServerRequestHandler implements U
                     Element playerElem = doc.createElement("player");
                     playerElem.setAttribute("id", String.valueOf(similarPlayer.getId()));
                     playerElem.setAttribute("name", similarPlayer.getName());
-                    playerElem.setAttribute("password", similarPlayer.getPassword());
                     playerElem.setAttribute("status", getStatus(similarPlayer));
                     playerElem.setAttribute("createIp", similarPlayer.getCreateIp());
                     playerElem.setAttribute("loginIp", similarPlayer.getLastIp());
