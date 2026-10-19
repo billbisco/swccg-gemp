@@ -35,6 +35,10 @@ public class SwccgoFormatLibrary {
                     if (downloadBattlegroundRule == null)
                         downloadBattlegroundRule = false;
 
+                    Boolean loreHeroicRule = (Boolean) formatDef.get("loreHeroicRule");
+                    if (loreHeroicRule == null)
+                        loreHeroicRule = false;
+
                     Boolean jpSealedRule = (Boolean) formatDef.get("jpSealedRule");
                     if (jpSealedRule == null)
                         jpSealedRule = false;
@@ -43,7 +47,7 @@ public class SwccgoFormatLibrary {
                     if (playtesting == null)
                         playtesting = false;
 
-                    final DefaultSwccgFormat format = new DefaultSwccgFormat(library, name, downloadBattlegroundRule, jpSealedRule, playtesting);
+                    final DefaultSwccgFormat format = new DefaultSwccgFormat(library, name, downloadBattlegroundRule, loreHeroicRule, jpSealedRule, playtesting);
                     format.setCode(formatCode);
 
                     Boolean skipFormatPool = (Boolean) formatDef.get("skipFormatPool");
