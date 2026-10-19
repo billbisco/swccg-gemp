@@ -130,7 +130,35 @@ public class Card_1281_032_Tests {
     }
 
     @Test
-    public void ImperialNavigationChartsDoesNotGoToUsedPileWhileStillAttached() {
+    public void ImperialNavigationChartsStealsWhenYouInitiateAForceDrainHere() {
+        var scn = GetScenario();
+        var charts = scn.GetLSCard("charts");
+        var rest = scn.GetLSCard("rest");
+        var narshaddaa = scn.GetLSCard("narshaddaa");
+        var lando = scn.GetLSCard("lando");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(narshaddaa);
+        scn.MoveLocationToTable(rest);
+        scn.AttachCardsTo(rest, charts);
+        scn.MoveCardsToLocation(rest, lando);
+        scn.SkipToLSTurn(Phase.CONTROL);
+
+        assertFalse(scn.LSCardActionAvailable(charts, "Steal"));
+        assertTrue(scn.LSForceDrainAvailable(rest));
+        scn.LSForceDrainAt(rest);
+        scn.DSPass();
+
+        assertTrue(scn.LSCardActionAvailable(charts, "Steal"));
+        scn.LSUseCardAction(charts, "Steal");
+        scn.PassAllResponses();
+
+        assertEquals(Zone.SIDE_OF_TABLE, charts.getZone());
+        assertEquals(scn.LS, charts.getOwner());
+    }
+
+    @Test
+    public void ImperialNavigationChartsGoesToUsedPileWhileAttachedIfOpponentControlsThree() {
         var scn = GetScenario();
         var charts = scn.GetLSCard("charts");
         var rest = scn.GetLSCard("rest");
@@ -147,15 +175,18 @@ public class Card_1281_032_Tests {
         scn.MoveLocationToTable(street);
         scn.MoveLocationToTable(undercity);
         scn.AttachCardsTo(rest, charts);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        assertEquals(Zone.ATTACHED, charts.getZone());
+
         scn.MoveCardsToLocation(rest, trooper);
         scn.MoveCardsToLocation(street, trooper2);
         scn.MoveCardsToLocation(undercity, trooper3);
-        scn.SkipToDSTurn(Phase.CONTROL);
+        scn.LSPass();
+        scn.DSPass();
+        scn.LSChooseAction("Place in Used Pile");
+        scn.PassAllResponses();
 
-        assertEquals(Zone.ATTACHED, charts.getZone());
-        assertTrue(scn.DSCardActionAvailable(charts, "Steal"));
-        assertFalse(scn.DSDecisionAvailable("Place in Used Pile"));
-        assertFalse(scn.LSDecisionAvailable("Place in Used Pile"));
+        assertInZone(Zone.USED_PILE, charts);
     }
 
     @Test

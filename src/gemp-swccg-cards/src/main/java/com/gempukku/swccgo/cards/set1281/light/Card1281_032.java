@@ -22,7 +22,6 @@ import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
 import com.gempukku.swccgo.logic.effects.PlaceCardInUsedPileFromTableEffect;
 import com.gempukku.swccgo.logic.effects.RelocateCardToSideOfTableEffect;
 import com.gempukku.swccgo.logic.timing.EffectResult;
-import com.gempukku.swccgo.logic.timing.PassthruEffect;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -56,17 +55,7 @@ public class Card1281_032 extends AbstractNormalEffect {
     }
 
     @Override
-    protected List<TopLevelGameTextAction> getOpponentsCardGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
-        return stealIfControlsThree(playerId, game, self, gameTextSourceCardId);
-    }
-
-    @Override
     protected List<OptionalGameTextTriggerAction> getGameTextOptionalAfterTriggers(final String playerId, SwccgGame game, EffectResult effectResult, final PhysicalCard self, int gameTextSourceCardId) {
-        return stealIfWonBattleOrDrainedHere(playerId, game, effectResult, self, gameTextSourceCardId);
-    }
-
-    @Override
-    protected List<OptionalGameTextTriggerAction> getOpponentsCardGameTextOptionalAfterTriggers(final String playerId, SwccgGame game, EffectResult effectResult, final PhysicalCard self, int gameTextSourceCardId) {
         return stealIfWonBattleOrDrainedHere(playerId, game, effectResult, self, gameTextSourceCardId);
     }
 
@@ -76,7 +65,6 @@ public class Card1281_032 extends AbstractNormalEffect {
         String opponent = game.getOpponent(owner);
 
         if (TriggerConditions.isTableChanged(game, effectResult)
-                && (self.getZone() == Zone.SIDE_OF_TABLE || self.isStolen())
                 && GameConditions.controls(game, opponent, 3, Filters.partOfSystem(Title.Nar_Shaddaa))) {
             RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
             action.setSingletonTrigger(true);
@@ -114,16 +102,10 @@ public class Card1281_032 extends AbstractNormalEffect {
     }
 
     private boolean alreadyOnYourSideOfTable(PhysicalCard self, String playerId) {
-        return playerId.equals(self.getOwner()) && self.getZone() == Zone.SIDE_OF_TABLE;
+        return self.getZone() == Zone.SIDE_OF_TABLE;
     }
 
-    private PassthruEffect stealToSideOfTable(final com.gempukku.swccgo.logic.timing.Action action, final PhysicalCard self, final String playerId) {
-        return new PassthruEffect(action) {
-            @Override
-            protected void doPlayEffect(SwccgGame game) {
-                self.setOwner(playerId);
-                action.appendEffect(new RelocateCardToSideOfTableEffect(action, self, playerId));
-            }
-        };
+    private RelocateCardToSideOfTableEffect stealToSideOfTable(final com.gempukku.swccgo.logic.timing.Action action, final PhysicalCard self, final String playerId) {
+        return new RelocateCardToSideOfTableEffect(action, self, playerId);
     }
 }
