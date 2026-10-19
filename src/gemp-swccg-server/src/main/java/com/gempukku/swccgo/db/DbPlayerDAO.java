@@ -1,10 +1,9 @@
 package com.gempukku.swccgo.db;
 
 import com.gempukku.swccgo.game.Player;
-import com.mysql.cj.util.StringUtils;
+import com.gempukku.swccgo.security.PasswordHasher;
+import com.gempukku.swccgo.security.PasswordSettings;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -17,14 +16,22 @@ import java.util.*;
 public class DbPlayerDAO implements PlayerDAO {
     private final String _selectPlayer = "select id, name, password, type, last_login_reward, banned_until, create_ip, last_ip from player";
     private final String _notDeactivated = " and not type like '%" + Player.Type.DEACTIVATED + "%'";
+    /** Stored in place of a hash while an account waits for a reset code. Never matches any password. */
+    public static final String RESET_MARKER = "!reset";
     private DbAccess _dbAccess;
+    private final PasswordHasher _passwordHasher;
 
     /**
      * Creates a player data access object that access the database.
      * @param dbAccess the database access
      */
     public DbPlayerDAO(DbAccess dbAccess) {
+        this(dbAccess, new PasswordHasher(PasswordSettings.iterations()));
+    }
+
+    public DbPlayerDAO(DbAccess dbAccess, PasswordHasher passwordHasher) {
         _dbAccess = dbAccess;
+        _passwordHasher = passwordHasher;
     }
 
     @Override
@@ -52,22 +59,8 @@ public class DbPlayerDAO implements PlayerDAO {
 
     @Override
     public synchronized boolean registerPlayer(String playerName, String password, String remoteAddr) throws SQLException, LoginInvalidException, RegisterNotAllowedException {
-
-        Player player = getPlayer(playerName);
-        if(player != null && StringUtils.isNullOrEmpty(player.getPassword())) {
-            //This player has had their password reset and just needs to get it re-defined.
-
-            try (Connection conn = _dbAccess.getDataSource().getConnection()) {
-                try (PreparedStatement statement = conn.prepareStatement(
-                        "UPDATE player SET password=? WHERE name=?")) {
-                    statement.setString(1, encodePassword(password));
-                    statement.setString(2, playerName);
-                    statement.executeUpdate();
-                    return true;
-                }
-            }
-        }
-
+        // Accounts in the reset state are no longer re-claimed here. That old path let anyone who knew
+        // the name set a new password; a reset is now finished only with a one-time code (AuthService).
         if (!validateNewUser(playerName)) {
             return false;
         }
@@ -76,7 +69,7 @@ public class DbPlayerDAO implements PlayerDAO {
             try (PreparedStatement statement = conn.prepareStatement(
                     "INSERT INTO player (name, password, type, create_ip) VALUES (?, ?, ?, ?)")) {
                 statement.setString(1, playerName);
-                statement.setString(2, encodePassword(password));
+                statement.setString(2, _passwordHasher.hash(password));
                 statement.setString(3, Player.Type.UNBANNED.getValue());
                 statement.setString(4, remoteAddr);
                 statement.execute();
@@ -86,18 +79,78 @@ public class DbPlayerDAO implements PlayerDAO {
     }
 
     @Override
-    public synchronized Player loginPlayer(String playerName, String password) throws SQLException {
+    public Player findPlayerForLogin(String login) throws SQLException {
+        if (login == null || login.isEmpty() || login.length() > 64)
+            return null;
         try (Connection conn = _dbAccess.getDataSource().getConnection()) {
-            try (PreparedStatement statement1 = conn.prepareStatement(
-                    _selectPlayer + " WHERE name=? AND (password='' OR password=?)" + _notDeactivated)) {
-                statement1.setString(1, playerName);
-                statement1.setString(2, encodePassword(password));
-                try (ResultSet rs = statement1.executeQuery()) {
-                    if (rs.next()) {
-                        return getPlayerFromResultSet(rs);
-                    } else
-                        return null;
+            try (PreparedStatement statement = conn.prepareStatement(
+                    _selectPlayer + " WHERE LOWER(name)=LOWER(?) LIMIT 10")) {
+                statement.setString(1, login);
+                try (ResultSet rs = statement.executeQuery()) {
+                    List<Player> matches = new ArrayList<>();
+                    while (rs.next()) {
+                        matches.add(getPlayerFromResultSet(rs));
+                    }
+                    for (Player match : matches) {
+                        if (match.getName().equals(login))
+                            return match;
+                    }
+                    return matches.size() == 1 ? matches.get(0) : null;
                 }
+            }
+        }
+    }
+
+    @Override
+    public boolean updatePasswordHash(int playerId, String expectedCurrentHash, String newHash) throws SQLException {
+        try (Connection conn = _dbAccess.getDataSource().getConnection()) {
+            try (PreparedStatement statement = conn.prepareStatement(
+                    "UPDATE player SET password=? WHERE id=? AND password=?")) {
+                statement.setString(1, newHash);
+                statement.setInt(2, playerId);
+                statement.setString(3, expectedCurrentHash);
+                return statement.executeUpdate() == 1;
+            }
+        }
+    }
+
+    @Override
+    public void storePasswordResetCode(int playerId, String codeHash, long expiresAt, String createdBy) throws SQLException {
+        try (Connection conn = _dbAccess.getDataSource().getConnection()) {
+            try (PreparedStatement statement = conn.prepareStatement(
+                    "REPLACE INTO player_password_reset (player_id, code_hash, expires_at, created_by, created_at) VALUES (?, ?, ?, ?, ?)")) {
+                statement.setInt(1, playerId);
+                statement.setString(2, codeHash);
+                statement.setLong(3, expiresAt);
+                statement.setString(4, createdBy);
+                statement.setLong(5, System.currentTimeMillis());
+                statement.executeUpdate();
+            }
+        }
+    }
+
+    @Override
+    public PasswordResetCode getPasswordResetCode(int playerId) throws SQLException {
+        try (Connection conn = _dbAccess.getDataSource().getConnection()) {
+            try (PreparedStatement statement = conn.prepareStatement(
+                    "SELECT code_hash, expires_at FROM player_password_reset WHERE player_id=?")) {
+                statement.setInt(1, playerId);
+                try (ResultSet rs = statement.executeQuery()) {
+                    if (rs.next())
+                        return new PasswordResetCode(playerId, rs.getString(1), rs.getLong(2));
+                    return null;
+                }
+            }
+        }
+    }
+
+    @Override
+    public void deletePasswordResetCode(int playerId) throws SQLException {
+        try (Connection conn = _dbAccess.getDataSource().getConnection()) {
+            try (PreparedStatement statement = conn.prepareStatement(
+                    "DELETE FROM player_password_reset WHERE player_id=?")) {
+                statement.setInt(1, playerId);
+                statement.executeUpdate();
             }
         }
     }
@@ -135,8 +188,9 @@ public class DbPlayerDAO implements PlayerDAO {
     @Override
     public synchronized boolean resetUserPassword(String playerName) throws SQLException {
         try (Connection conn = _dbAccess.getDataSource().getConnection()) {
-            try (PreparedStatement statement = conn.prepareStatement("UPDATE player SET password='' WHERE name=?")) {
-                statement.setString(1, playerName);
+            try (PreparedStatement statement = conn.prepareStatement("UPDATE player SET password=? WHERE name=?")) {
+                statement.setString(1, RESET_MARKER);
+                statement.setString(2, playerName);
                 return statement.executeUpdate() == 1;
             }
         }
@@ -418,7 +472,8 @@ public class DbPlayerDAO implements PlayerDAO {
             return false;
         }
 
-        if(getPlayerFromDBByName(playerName, true) != null)
+        // Names are unique ignoring case, so "Bill" cannot be registered next to "bill".
+        if (isNameTakenIgnoringCase(playerName))
             throw new LoginInvalidException();
 
         //Deactivating the automatic rejection.  Practically everyone has the same server IP as their origin, so
@@ -442,36 +497,16 @@ public class DbPlayerDAO implements PlayerDAO {
         return true;
     }
 
-    /**
-     * Encodes the password using SHA-256 hash.
-     * @param password the password
-     * @return the encoded password
-     */
-    private String encodePassword(String password) {
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            digest.reset();
-            return convertToHexString(digest.digest(password.getBytes(StandardCharsets.UTF_8)));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * Converts the byte array to a string of hex characters.
-     * @param bytes the type array
-     * @return the string of hex characters
-     */
-    private String convertToHexString(byte[] bytes) {
-        StringBuilder hexString = new StringBuilder();
-        for (int i = 0; i < bytes.length; i++) {
-            String hex = Integer.toHexString(0xFF & bytes[i]);
-            if (hex.length() == 1) {
-                hexString.append('0');
+    private boolean isNameTakenIgnoringCase(String playerName) throws SQLException {
+        try (Connection conn = _dbAccess.getDataSource().getConnection()) {
+            try (PreparedStatement statement = conn.prepareStatement(
+                    "select 1 from player where LOWER(name)=LOWER(?) limit 1")) {
+                statement.setString(1, playerName);
+                try (ResultSet rs = statement.executeQuery()) {
+                    return rs.next();
+                }
             }
-            hexString.append(hex);
         }
-        return hexString.toString();
     }
 
     /**

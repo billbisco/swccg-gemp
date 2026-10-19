@@ -365,8 +365,26 @@ public class CollectionsConcurrencyTests {
         }
 
         @Override
-        public Player loginPlayer(String playerName, String password) {
+        public Player findPlayerForLogin(String login) {
             return null;
+        }
+
+        @Override
+        public boolean updatePasswordHash(int playerId, String expectedCurrentHash, String newHash) {
+            return false;
+        }
+
+        @Override
+        public void storePasswordResetCode(int playerId, String codeHash, long expiresAt, String createdBy) {
+        }
+
+        @Override
+        public com.gempukku.swccgo.db.PasswordResetCode getPasswordResetCode(int playerId) {
+            return null;
+        }
+
+        @Override
+        public void deletePasswordResetCode(int playerId) {
         }
 
         @Override
