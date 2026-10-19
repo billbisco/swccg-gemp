@@ -89,9 +89,8 @@ public class Card_4_61_Tests {
         scn.SkipToDSTurn(Phase.CONTROL);
         scn.MoveCardsToLocation(asteroid, corvette, tie);
         scn.EnsureLSForcePile(2);
-        if (scn.AwaitingDSControlPhaseActions()) {
-            scn.DSPass();
-        }
+        assertTrue(scn.AwaitingDSControlPhaseActions());
+        scn.DSPass();
 
         assertTrue(scn.LSCardPlayAvailable(crazy));
         scn.LSPlayCard(crazy);
@@ -256,9 +255,8 @@ public class Card_4_61_Tests {
 
         scn.SkipToPhase(Phase.CONTROL);
         scn.MoveCardsToLocation(asteroid, corvette, tie);
-        if (scn.AwaitingDSControlPhaseActions()) {
-            scn.DSPass();
-        }
+        assertTrue(scn.AwaitingDSControlPhaseActions());
+        scn.DSPass();
 
         scn.PrepareLSDestiny(2);
         scn.LSUseCardAction(tie, "asteroid");

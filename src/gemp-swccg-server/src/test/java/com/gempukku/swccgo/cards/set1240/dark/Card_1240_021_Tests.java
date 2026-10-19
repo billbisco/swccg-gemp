@@ -177,11 +177,8 @@ public class Card_1240_021_Tests {
         assertEquals(forfeitBefore - x, scn.GetForfeit(ywing));
         assertEquals(immunityBefore - x,
                 scn.game().getModifiersQuerying().getImmunityToAttritionLessThan(scn.gameState(), ywing), scn.epsilon);
-        if (scn.LSGetDecision() != null && scn.DSGetDecision() == null) {
-            scn.LSPass();
-        }
-        assertTrue("DS must be deciding Control actions so the once-per-turn check can fail. decision=" + scn.DSGetDecision(),
-                scn.AwaitingDSControlPhaseActions());
+        scn.LSPass();
+        assertTrue(scn.AwaitingDSControlPhaseActions());
         assertFalse(scn.DSCardActionAvailable(blown, "Subtract influence from a starship"));
     }
 }
