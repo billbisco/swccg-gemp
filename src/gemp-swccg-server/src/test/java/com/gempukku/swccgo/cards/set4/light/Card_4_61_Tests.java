@@ -52,25 +52,27 @@ public class Card_4_61_Tests {
         return scn.LSGetDecision() != null && scn.LSCardActionAvailable(crazy, "Add 2");
     }
 
-    private void PassUntilAddTwoAvailable(VirtualTableScenario scn, PhysicalCardImpl crazy) {
-        for (int i = 0; i < 20; i++) {
-            if (AddTwoAvailable(scn, crazy)) {
-                return;
-            }
-            if (scn.DSGetDecision() != null
-                    && scn.DSGetDecision().getText() != null
-                    && scn.DSGetDecision().getText().toLowerCase().contains("optional response")) {
-                scn.DSPass();
-                continue;
-            }
-            if (scn.LSGetDecision() != null
-                    && scn.LSGetDecision().getText() != null
-                    && scn.LSGetDecision().getText().toLowerCase().contains("optional response")) {
-                scn.LSPass();
-                continue;
-            }
-            return;
-        }
+    private void DSPassResponse(VirtualTableScenario scn, String trigger) {
+        assertTrue(scn.LSGetDecision() == null);
+        assertTrue(scn.DSDecisionAvailable(trigger + " - Optional responses"));
+        scn.DSPass();
+    }
+
+    private void LSPassResponse(VirtualTableScenario scn, String trigger) {
+        assertTrue(scn.DSGetDecision() == null);
+        assertTrue(scn.LSDecisionAvailable(trigger + " - Optional responses"));
+        scn.LSPass();
+    }
+
+    private void PassBothResponses(VirtualTableScenario scn, String trigger) {
+        DSPassResponse(scn, trigger);
+        LSPassResponse(scn, trigger);
+    }
+
+    private void PassDestinyDrawUntilAddTwoAvailable(VirtualTableScenario scn) {
+        PassBothResponses(scn, "COST_TO_DRAW_DESTINY_CARD");
+        PassBothResponses(scn, "ABOUT_TO_DRAW_DESTINY_CARD");
+        DSPassResponse(scn, "DESTINY_DRAWN");
     }
 
     private void PlayTheydBeCrazyOnTieDuringDsControl(VirtualTableScenario scn) {
@@ -135,7 +137,7 @@ public class Card_4_61_Tests {
         scn.PrepareLSDestiny(2);
         assertTrue(scn.LSCardActionAvailable(tie, "asteroid"));
         scn.LSUseCardAction(tie, "asteroid");
-        PassUntilAddTwoAvailable(scn, crazy);
+        PassDestinyDrawUntilAddTwoAvailable(scn);
         assertTrue(AddTwoAvailable(scn, crazy));
         scn.LSUseCardAction(crazy, "Add 2");
         scn.PassAllResponses();
@@ -156,7 +158,7 @@ public class Card_4_61_Tests {
 
         scn.PrepareLSDestiny(2);
         scn.LSUseCardAction(tie, "asteroid");
-        PassUntilAddTwoAvailable(scn, crazy);
+        PassDestinyDrawUntilAddTwoAvailable(scn);
         assertTrue(AddTwoAvailable(scn, crazy));
         scn.LSPass();
         scn.PassAllResponses();
@@ -201,10 +203,11 @@ public class Card_4_61_Tests {
         assertTrue(scn.LSCardActionAvailable(cannon));
         scn.LSUseCardAction(cannon);
         scn.LSChooseCard(tie);
-        if (scn.LSDecisionAvailable("Choose number for X")) {
-            scn.LSDecided(0);
-        }
-        PassUntilAddTwoAvailable(scn, crazy);
+        assertTrue(scn.LSDecisionAvailable("Choose number for X"));
+        scn.LSDecided(0);
+        PassBothResponses(scn, "Use 0 Force");
+        PassBothResponses(scn, "Fire X-wing Laser Cannon");
+        PassDestinyDrawUntilAddTwoAvailable(scn);
         assertTrue(AddTwoAvailable(scn, crazy));
         scn.LSUseCardAction(crazy, "Add 2");
         scn.PassAllResponses();
