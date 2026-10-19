@@ -67,6 +67,11 @@ public interface PlayerDAO {
     boolean updatePasswordHash(int playerId, String expectedCurrentHash, String newHash) throws SQLException;
 
     /**
+     * Counts accounts created from this IP at or after the given time (for the per-IP signup limit).
+     */
+    int countPlayersCreatedFromIpSince(String ip, long sinceMillis) throws SQLException;
+
+    /**
      * Stores (or replaces) the one-time reset code hash for a player.
      */
     void storePasswordResetCode(int playerId, String codeHash, long expiresAt, String createdBy) throws SQLException;

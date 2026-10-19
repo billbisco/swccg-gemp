@@ -375,6 +375,11 @@ public class CollectionsConcurrencyTests {
         }
 
         @Override
+        public int countPlayersCreatedFromIpSince(String ip, long sinceMillis) {
+            return 0;
+        }
+
+        @Override
         public void storePasswordResetCode(int playerId, String codeHash, long expiresAt, String createdBy) {
         }
 
