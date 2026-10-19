@@ -29,6 +29,7 @@ public class Card_1210_171_Tests {
                     put("blaster", "1210_171");
                     put("leia", "1_17");
                     put("boushh", "110_1");
+                    put("momaw", "1_20");
                 }},
                 new HashMap<>() {{
                     put("trooper", "1_194");
@@ -121,22 +122,22 @@ public class Card_1210_171_Tests {
     public void LeiasSportingBlasterDeploysOnANonDroidUndercoverSpy() {
         var scn = GetScenario();
         var blaster = scn.GetLSCard("blaster");
-        var boushh = scn.GetLSCard("boushh");
+        var momaw = scn.GetLSCard("momaw");
         var site = scn.GetLSStartingLocation();
 
         scn.StartGame();
-        scn.MoveCardsToLocation(site, boushh);
-        scn.MakeCardGoUndercover(boushh);
+        scn.MoveCardsToLocation(site, momaw);
+        scn.MakeCardGoUndercover(momaw);
         scn.MoveCardsToLSHand(blaster);
         scn.SkipToLSTurn(Phase.DEPLOY);
 
-        assertTrue(boushh.isUndercover());
+        assertTrue(momaw.isUndercover());
         assertTrue(scn.LSDeployAvailable(blaster));
         scn.LSDeployCard(blaster);
-        scn.LSChooseCard(boushh);
+        scn.LSChooseCard(momaw);
         scn.PassAllResponses();
 
-        assertTrue(scn.IsAttachedTo(boushh, blaster));
+        assertTrue(scn.IsAttachedTo(momaw, blaster));
     }
 
     @Test

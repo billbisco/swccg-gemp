@@ -120,25 +120,21 @@ public class Card_1210_026_Tests {
     public void UrRurMovesAsARegularMoveDuringDeployPhase() {
         var scn = GetScenario();
         var urrur = scn.GetDSCard("urrur");
-        var moseisley = scn.GetDSCard("moseisley");
+        var farm = scn.GetDSCard("farm");
         var site = scn.GetDSStartingLocation();
 
         scn.StartGame();
-        scn.MoveLocationToTable(moseisley);
+        scn.MoveLocationToTable(farm);
         scn.MoveCardsToLocation(site, urrur);
         scn.SkipToDSTurn(Phase.DEPLOY);
 
+        assertTrue(scn.IsAdjacentTo(site, farm));
         assertTrue(scn.DSCardActionAvailable(urrur, "Move as a regular move"));
         scn.DSUseCardAction(urrur, "Move as a regular move");
-        if (scn.DSHasCardChoiceAvailable(moseisley)) {
-            scn.DSChooseCard(moseisley);
-        }
-        else if (scn.DSDecisionAvailable("Choose")) {
-            scn.DSChooseAnyCard();
-        }
+        scn.PassForceUseResponses();
         scn.PassAllResponses();
 
-        assertTrue(urrur.getAtLocation() != site);
+        assertAtLocation(farm, urrur);
     }
 
     @Test
@@ -149,6 +145,7 @@ public class Card_1210_026_Tests {
         var luke = scn.GetLSCard("luke");
         var blaster = scn.GetLSCard("blaster");
         var site = scn.GetDSStartingLocation();
+        var destiny2 = scn.GetDSDestiny(2);
 
         scn.StartGame();
         scn.MoveCardsToLocation(site, urrur, luke);
@@ -156,24 +153,41 @@ public class Card_1210_026_Tests {
         scn.AttachCardsTo(luke, blaster);
         scn.SkipToDSTurn(Phase.BATTLE);
         assertTrue(scn.AwaitingDSBattlePhaseActions());
+        scn.PrepareDSDestiny(3);
         scn.PrepareDSDestiny(2);
-        scn.PrepareDSDestiny(2);
-        scn.DSInitiateBattle(site);
-        assertTrue(scn.DSActionAvailable("Fire") || scn.DSDecisionAvailable("Fire")
-                || scn.DSCardActionAvailable(gaffi));
-        if (scn.DSCardActionAvailable(gaffi)) {
-            scn.DSUseCardAction(gaffi);
-        }
-        else if (scn.DSActionAvailable("Fire")) {
-            scn.DSChooseAction("Fire");
-        }
-        if (scn.DSHasCardChoiceAvailable(luke)) {
-            scn.DSChooseCard(luke);
-        }
+        assertTrue(scn.DSCanInitiateBattle(site));
+        scn.DSUseCardAction(site, "Initiate battle");
+        scn.PassForceUseResponses();
+        scn.LSPass();
+        assertTrue(scn.DSDecisionAvailable("Battle just initiated"));
+        assertTrue(scn.DSCardActionAvailable(gaffi, "Fire"));
+        scn.DSUseCardAction(gaffi, "Fire");
+        assertTrue(scn.DSHasCardChoiceAvailable(luke));
+        scn.DSChooseCard(luke);
+        scn.PassWeaponFireWithDestinyDraw(2);
+        scn.PassAllResponses();
+        scn.PassResponses("Battle just initiated");
         scn.PassAllResponses();
 
-        if (scn.AwaitingLSWeaponsSegmentActions()) {
-            assertFalse(scn.LSCardActionAvailable(blaster, "Fire"));
+        assertEquals(9, lastLoggedDestinyTotal(scn));
+        assertTrue(destiny2.getZone() == Zone.USED_PILE || destiny2.getZone() == Zone.LOST_PILE);
+        assertTrue(scn.AwaitingDSWeaponsSegmentActions());
+        scn.DSPass();
+        assertTrue(scn.AwaitingLSWeaponsSegmentActions());
+        assertFalse(scn.LSCardActionAvailable(blaster, "Fire"));
+    }
+
+    private int lastLoggedDestinyTotal(VirtualTableScenario scn) {
+        Integer last = null;
+        for (String msg : scn.gameState().getLastMessages()) {
+            String lower = msg.toLowerCase();
+            int idx = lower.lastIndexOf("destiny: ");
+            if (idx >= 0) {
+                String rest = msg.substring(idx + "destiny: ".length()).trim();
+                last = (int) Float.parseFloat(rest.split("[^0-9.]")[0]);
+            }
         }
+        assertTrue(last != null);
+        return last;
     }
 }

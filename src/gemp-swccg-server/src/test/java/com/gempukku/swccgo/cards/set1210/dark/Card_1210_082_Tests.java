@@ -113,12 +113,9 @@ public class Card_1210_082_Tests {
         scn.PassAllResponses();
 
         assertAtLocation(site, urorru);
-        if (scn.AwaitingLSDeployPhaseActions()) {
-            scn.LSPass();
-        }
-        if (scn.AwaitingDSDeployPhaseActions()) {
-            assertFalse(scn.DSCardActionAvailable(bantha, "Deploy URoRRu"));
-        }
+        scn.LSPass();
+        assertTrue(scn.AwaitingDSDeployPhaseActions());
+        assertFalse(scn.DSCardActionAvailable(bantha, "Deploy URoRRu"));
     }
 
     @Test

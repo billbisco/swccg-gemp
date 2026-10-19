@@ -155,11 +155,8 @@ public class Card_1230_072_Tests {
         scn.PassAllResponses();
 
         assertInZone(Zone.SIDE_OF_TABLE, squadron);
-        if (scn.AwaitingDSDeployPhaseActions()) {
-            scn.DSPass();
-        }
-        if (scn.AwaitingLSDeployPhaseActions()) {
-            assertFalse(scn.LSCardActionAvailable(laudica, "Deploy Effect"));
-        }
+        scn.DSPass();
+        assertTrue(scn.AwaitingLSDeployPhaseActions());
+        assertFalse(scn.LSCardActionAvailable(laudica, "Deploy Effect"));
     }
 }

@@ -124,9 +124,10 @@ public class Card_1210_127_Tests {
         assertTrue(scn.LSCardActionAvailable(icbhg, "Add 5"));
         scn.LSUseCardAction(icbhg, "Add 5");
         scn.PassForceUseResponses();
-        if (scn.AwaitingLSWeaponsSegmentActions()) {
-            assertFalse(scn.LSCardActionAvailable(icbhg, "Add 5"));
-        }
+        scn.PassAllResponses();
+        scn.DSPass();
+        assertTrue(scn.AwaitingLSWeaponsSegmentActions());
+        assertFalse(scn.LSCardActionAvailable(icbhg, "Add 5"));
         scn.PassWeaponsSegmentActions();
         scn.SkipBattleDestinyDraws(false);
 

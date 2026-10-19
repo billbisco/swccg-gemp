@@ -12,6 +12,7 @@ import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.common.Zone;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.game.PhysicalCardImpl;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ import java.util.HashMap;
 import static com.gempukku.swccgo.framework.Assertions.assertInHand;
 import static com.gempukku.swccgo.framework.Assertions.assertInZone;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class Card_1230_110_Tests {
@@ -130,14 +132,6 @@ public class Card_1230_110_Tests {
         assertTrue(scn.LSDecisionAvailable("Deploy"));
         scn.LSChooseYes();
         scn.PassAllResponses();
-        if (scn.LSDecisionAvailable("Deploy")) {
-            scn.LSChooseNo();
-            scn.PassAllResponses();
-        }
-        if (scn.LSDecisionAvailable("Deploy")) {
-            scn.LSChooseNo();
-            scn.PassAllResponses();
-        }
 
         assertInZone(Zone.SIDE_OF_TABLE, insight);
     }
@@ -150,6 +144,7 @@ public class Card_1230_110_Tests {
                     put("insight", "9_47");
                     put("twilight", "9_46");
                     put("honor", "9_33");
+                    put("way", "9_45");
                 }},
                 new HashMap<>() {{
                     put("trooper", "1_194");
@@ -167,39 +162,34 @@ public class Card_1230_110_Tests {
         var insight = scn.GetLSCard("insight");
         var twilight = scn.GetLSCard("twilight");
         var honor = scn.GetLSCard("honor");
+        var way = scn.GetLSCard("way");
 
         scn.StartGame();
         assertTrue(scn.LSDecisionAvailable("Choose starting interrupt"));
         scn.LSChooseCard(signal);
         scn.PassAllResponses();
-        for (int i = 0; i < 8; i++) {
-            if (scn.LSHasCardChoiceAvailable(insight)) {
-                scn.LSChooseCard(insight);
-                scn.PassAllResponses();
-                continue;
-            }
-            if (scn.LSHasCardChoiceAvailable(twilight)) {
-                scn.LSChooseCard(twilight);
-                scn.PassAllResponses();
-                continue;
-            }
-            if (scn.LSHasCardChoiceAvailable(honor)) {
-                scn.LSChooseCard(honor);
-                scn.PassAllResponses();
-                continue;
-            }
-            if (scn.LSDecisionAvailable("Deploy")) {
-                scn.LSChooseNo();
-                scn.PassAllResponses();
-                continue;
-            }
-            break;
-        }
+        takeJediEffectAndDeclineDeploy(scn, insight);
+        takeJediEffectAndDeclineDeploy(scn, twilight);
+        takeJediEffectAndDeclineDeploy(scn, honor);
 
         int taken = 0;
         if (insight.getZone() == Zone.HAND || insight.getZone() == Zone.SIDE_OF_TABLE) taken++;
         if (twilight.getZone() == Zone.HAND || twilight.getZone() == Zone.SIDE_OF_TABLE) taken++;
         if (honor.getZone() == Zone.HAND || honor.getZone() == Zone.SIDE_OF_TABLE) taken++;
-        assertTrue(taken >= 2);
+        if (way.getZone() == Zone.HAND || way.getZone() == Zone.SIDE_OF_TABLE) taken++;
+        assertEquals(3, taken);
+        assertTrue(way.getZone() == Zone.RESERVE_DECK
+                || way.getZone() == Zone.TOP_OF_RESERVE_DECK
+                || way.getZone() == Zone.FORCE_PILE);
+        assertFalse(way.getZone() == Zone.HAND || way.getZone() == Zone.SIDE_OF_TABLE);
+    }
+
+    private void takeJediEffectAndDeclineDeploy(VirtualTableScenario scn, PhysicalCardImpl card) {
+        assertTrue(scn.LSDecisionAvailable("Choose card"));
+        scn.LSChooseCard(card);
+        scn.PassAllResponses();
+        assertTrue(scn.LSDecisionAvailable("Deploy"));
+        scn.LSChooseNo();
+        scn.PassAllResponses();
     }
 }

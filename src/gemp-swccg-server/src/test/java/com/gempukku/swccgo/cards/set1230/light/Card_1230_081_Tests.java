@@ -117,10 +117,9 @@ public class Card_1230_081_Tests {
         assertTrue(scn.DSDecisionAvailable("Choose Force to lose"));
         scn.DSChooseCard(scn.GetTopOfDSForcePile());
         scn.PassAllResponses();
-        if (scn.DSDecisionAvailable("Choose Force to lose")) {
-            scn.DSChooseCard(scn.GetTopOfDSForcePile());
-            scn.PassAllResponses();
-        }
+        assertTrue(scn.DSDecisionAvailable("Choose Force to lose"));
+        scn.DSChooseCard(scn.GetTopOfDSForcePile());
+        scn.PassAllResponses();
 
         assertEquals(dsForceBefore - 2, scn.GetDSForcePileCount());
     }

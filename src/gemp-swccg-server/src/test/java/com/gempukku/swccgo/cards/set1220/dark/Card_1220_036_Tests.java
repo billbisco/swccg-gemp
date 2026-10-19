@@ -17,6 +17,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.gempukku.swccgo.framework.Assertions.assertAtLocation;
 import static com.gempukku.swccgo.framework.Assertions.assertInZone;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -112,14 +113,11 @@ public class Card_1220_036_Tests {
         scn.PassAllResponses();
 
         assertTrue(scn.IsAttachedTo(clouds1, refinery));
-        if (scn.AwaitingLSDeployPhaseActions()) {
-            scn.LSPass();
-        }
-        if (scn.AwaitingDSDeployPhaseActions()) {
-            assertFalse(scn.DSCardActionAvailable(imsorry, "Floating Refinery"));
-            assertFalse(scn.DSCardActionAvailable(imsorry, "cloud sector"));
-            assertFalse(scn.DSCardActionAvailable(imsorry, "Obsidian squadron TIE"));
-        }
+        scn.LSPass();
+        assertTrue(scn.AwaitingDSDeployPhaseActions());
+        assertFalse(scn.DSCardActionAvailable(imsorry, "Floating Refinery"));
+        assertFalse(scn.DSCardActionAvailable(imsorry, "cloud sector"));
+        assertFalse(scn.DSCardActionAvailable(imsorry, "Obsidian squadron TIE"));
     }
 
     @Test
@@ -149,27 +147,25 @@ public class Card_1220_036_Tests {
         var clouds2 = scn.GetDSCard("clouds2");
         var bespin = scn.GetDSCard("bespin");
 
+        var clouds1 = scn.GetDSCard("clouds1");
+
         scn.StartGame();
         scn.MoveLocationToTable(bespin);
         scn.MoveCardsToDSSideOfTable(imsorry);
+        scn.MoveOutOfPlay(clouds1);
         scn.SkipToDSTurn(Phase.DEPLOY);
         scn.MoveCardsToTopOfDSReserveDeck(clouds2);
 
         assertTrue(scn.DSCardActionAvailable(imsorry, "cloud sector"));
         scn.DSUseCardAction(imsorry, "cloud sector");
-        if (scn.DSHasCardChoiceAvailable(clouds2)) {
-            scn.DSChooseCard(clouds2);
-        }
-        else if (scn.DSDecisionAvailable("Reserve Deck")) {
-            scn.DSChooseAnyCard();
-        }
         scn.PassAllResponses();
-        if (scn.DSDecisionAvailable("On which side") || scn.DSDecisionAvailable("which side")) {
-            scn.DSChoose("Left");
-            scn.PassAllResponses();
-        }
+        assertTrue(scn.DSDecisionAvailable("Reserve Deck"));
+        assertTrue(scn.DSHasCardChoiceAvailable(clouds2));
+        scn.DSChooseCard(clouds2);
+        scn.PassAllResponses();
 
         assertEquals(Zone.LOCATIONS, clouds2.getZone());
+        assertEquals("Bespin", clouds2.getPartOfSystem());
     }
 
     @Test
@@ -192,15 +188,11 @@ public class Card_1220_036_Tests {
         assertTrue(scn.DSHasCardChoiceAvailable(obsidian));
         scn.DSChooseCard(obsidian);
         scn.PassAllResponses();
-        if (scn.DSHasCardChoiceAvailable(clouds1)) {
-            scn.DSChooseCard(clouds1);
-        }
-        else if (scn.DSHasCardChoiceAvailable(bespin)) {
-            scn.DSChooseCard(bespin);
-        }
+        assertTrue(scn.DSHasCardChoiceAvailable(clouds1));
+        scn.DSChooseCard(clouds1);
         scn.PassAllResponses();
 
-        assertTrue(obsidian.getZone() == Zone.AT_LOCATION || obsidian.getAtLocation() != null);
+        assertAtLocation(clouds1, obsidian);
     }
 
     @Test
