@@ -1,0 +1,8 @@
+[Unit]
+Description=swccg nightly encrypted backup (GEMP DB, wiki DB+config, server config)
+After=docker.service
+[Service]
+Type=oneshot
+Nice=10
+IOSchedulingClass=idle
+ExecStart=/usr/local/sbin/swccg-nightly-backup.sh

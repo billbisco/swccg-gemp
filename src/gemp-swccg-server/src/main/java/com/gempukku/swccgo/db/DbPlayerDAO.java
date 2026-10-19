@@ -115,6 +115,21 @@ public class DbPlayerDAO implements PlayerDAO {
     }
 
     @Override
+    public java.util.Map<Integer, String> getLegacyPasswordHashes() throws SQLException {
+        java.util.Map<Integer, String> result = new java.util.LinkedHashMap<>();
+        try (Connection conn = _dbAccess.getDataSource().getConnection()) {
+            try (PreparedStatement statement = conn.prepareStatement(
+                    "SELECT id, password FROM player WHERE CHAR_LENGTH(password)=64 AND password REGEXP '^[0-9a-f]{64}$'")) {
+                try (ResultSet rs = statement.executeQuery()) {
+                    while (rs.next())
+                        result.put(rs.getInt(1), rs.getString(2));
+                }
+            }
+        }
+        return result;
+    }
+
+    @Override
     public int countPlayersCreatedFromIpSince(String ip, long sinceMillis) throws SQLException {
         try (Connection conn = _dbAccess.getDataSource().getConnection()) {
             try (PreparedStatement statement = conn.prepareStatement(

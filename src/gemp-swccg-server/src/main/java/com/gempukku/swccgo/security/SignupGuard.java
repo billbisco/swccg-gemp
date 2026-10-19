@@ -11,6 +11,9 @@ import java.util.Set;
  * carrier NAT) are exempt. Needs the real client IP, see {@link ClientIpResolver}.
  */
 public class SignupGuard {
+    /** Hidden signup form field. Not "website"/"url"/"email", which browser and password-manager autofill may fill. */
+    public static final String HONEYPOT_FIELD = "hp_field";
+
     public static final int DEFAULT_MAX_PER_IP_PER_DAY = 3;
     public static final long WINDOW_MILLIS = 24L * 60 * 60 * 1000;
 
@@ -57,7 +60,7 @@ public class SignupGuard {
     }
 
     /**
-     * Honeypot: the signup form has a hidden "website" field people never see. Bots that fill
+     * Honeypot: the signup form has a hidden {@link #HONEYPOT_FIELD} field people never see. Bots that fill
      * every field give themselves away; the caller pretends success and creates nothing.
      */
     public static boolean isHoneypotTripped(String honeypotValue) {

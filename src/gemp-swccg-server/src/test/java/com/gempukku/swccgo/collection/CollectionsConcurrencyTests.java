@@ -380,6 +380,11 @@ public class CollectionsConcurrencyTests {
         }
 
         @Override
+        public java.util.Map<Integer, String> getLegacyPasswordHashes() {
+            return java.util.Collections.emptyMap();
+        }
+
+        @Override
         public void storePasswordResetCode(int playerId, String codeHash, long expiresAt, String createdBy) {
         }
 

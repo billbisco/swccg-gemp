@@ -72,6 +72,12 @@ public interface PlayerDAO {
     int countPlayersCreatedFromIpSince(String ip, long sinceMillis) throws SQLException;
 
     /**
+     * Player id -> stored hash for every account still holding an unsalted SHA-256 hash
+     * (for {@link com.gempukku.swccgo.security.LegacyHashMigration}).
+     */
+    java.util.Map<Integer, String> getLegacyPasswordHashes() throws SQLException;
+
+    /**
      * Stores (or replaces) the one-time reset code hash for a player.
      */
     void storePasswordResetCode(int playerId, String codeHash, long expiresAt, String createdBy) throws SQLException;
