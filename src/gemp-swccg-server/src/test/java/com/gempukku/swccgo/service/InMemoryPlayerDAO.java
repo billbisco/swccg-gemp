@@ -26,6 +26,8 @@ class InMemoryPlayerDAO implements PlayerDAO {
     private final PasswordHasher _hasher;
     private int _nextId = 1;
     int hashUpdates;
+    /** Makes updatePasswordHash throw, to test failure handling. */
+    boolean failHashUpdates;
 
     InMemoryPlayerDAO(PasswordHasher hasher) {
         _hasher = hasher;
@@ -96,7 +98,9 @@ class InMemoryPlayerDAO implements PlayerDAO {
     }
 
     @Override
-    public boolean updatePasswordHash(int playerId, String expectedCurrentHash, String newHash) {
+    public boolean updatePasswordHash(int playerId, String expectedCurrentHash, String newHash) throws java.sql.SQLException {
+        if (failHashUpdates)
+            throw new java.sql.SQLException("simulated DB failure");
         Player p = _players.get(playerId);
         if (p == null || !p.getPassword().equals(expectedCurrentHash))
             return false;
@@ -106,6 +110,15 @@ class InMemoryPlayerDAO implements PlayerDAO {
     }
 
     final Map<String, Integer> signupsByIp = new HashMap<>();
+
+    @Override
+    public Map<Integer, String> getLegacyPasswordHashes() {
+        Map<Integer, String> result = new java.util.LinkedHashMap<>();
+        for (Player p : _players.values())
+            if (com.gempukku.swccgo.security.PasswordHasher.isLegacySha256(p.getPassword()))
+                result.put(p.getId(), p.getPassword());
+        return result;
+    }
 
     @Override
     public int countPlayersCreatedFromIpSince(String ip, long sinceMillis) {

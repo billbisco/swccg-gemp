@@ -87,6 +87,21 @@ public class AuthServiceTests {
     }
 
     @Test
+    public void legacyMigrationWrapsEveryUnsaltedHashAndIsIdempotent() throws Exception {
+        dao.addWithStoredHash("Old1", PasswordHasher.legacySha256("password1"), "u", null);
+        dao.addWithStoredHash("Old2", PasswordHasher.legacySha256("password2"), "u", null);
+        dao.addWithStoredHash("New", hasher.hash("password3"), "u", null);
+        dao.addWithStoredHash("Reset", InMemoryPlayerDAO.RESET_MARKER, "u", null);
+
+        assertEquals(2, com.gempukku.swccgo.security.LegacyHashMigration.run(dao, hasher));
+        assertTrue(dao.getLegacyPasswordHashes().isEmpty(), "no unsalted hash left");
+        assertEquals(InMemoryPlayerDAO.RESET_MARKER, dao.storedHash("Reset"), "reset marker untouched");
+        assertEquals(0, com.gempukku.swccgo.security.LegacyHashMigration.run(dao, hasher), "second run is a no-op");
+        assertEquals(AuthService.Status.OK, auth.verifyCredentials("Old1", "password1", IP).getStatus());
+        assertEquals(AuthService.Status.OK, auth.verifyCredentials("Old2", "password2", IP).getStatus());
+    }
+
+    @Test
     public void adminResetKillsOldPasswordAndCodeLetsOwnerSetANewOne() throws Exception {
         Player bill = dao.addWithStoredHash("Bill", hasher.hash("oldpassword"), "u", null);
 
@@ -151,14 +166,65 @@ public class AuthServiceTests {
     }
 
     @Test
-    public void tenFailuresLockTheAccountForFiveMinutesEvenWithTheRightPassword() throws Exception {
+    public void tenFailuresFromOneIpLockThatAccountOnThatIpForFiveMinutes() throws Exception {
         dao.addWithStoredHash("Bill", hasher.hash("rightpass"), "u", null);
         for (int i = 0; i < 10; i++)
-            assertEquals(AuthService.Status.INVALID, auth.verifyCredentials("Bill", "guess" + i, "198.51.100." + i).getStatus());
+            assertEquals(AuthService.Status.INVALID, auth.verifyCredentials("Bill", "guess" + i, IP).getStatus());
 
         assertEquals(AuthService.Status.THROTTLED, auth.verifyCredentials("bill", "rightpass", IP).getStatus());
-        now.addAndGet(5L * 60 * 1000 + 1);
+        assertEquals(AuthService.Status.OK, auth.verifyCredentials("Bill", "rightpass", "198.51.100.200").getStatus(),
+                "the owner on another IP is not locked out by someone else's guesses");
+        // that success cleared the account's counters everywhere
         assertEquals(AuthService.Status.OK, auth.verifyCredentials("Bill", "rightpass", IP).getStatus());
+    }
+
+    @Test
+    public void distributedGuessingHitsTheHigherPerAccountCeiling() throws Exception {
+        dao.addWithStoredHash("Bill", hasher.hash("rightpass"), "u", null);
+        for (int i = 0; i < LoginThrottle.DEFAULT_MAX_ACCOUNT_FAILURES; i++)
+            auth.verifyCredentials("Bill", "guess" + i, "198.51." + (i / 200) + "." + (i % 200));
+
+        assertEquals(AuthService.Status.THROTTLED, auth.verifyCredentials("Bill", "rightpass", "192.0.2.1").getStatus());
+        now.addAndGet(LoginThrottle.DEFAULT_LOCK_MILLIS + 1);
+        assertEquals(AuthService.Status.OK, auth.verifyCredentials("Bill", "rightpass", "192.0.2.1").getStatus());
+    }
+
+    @Test
+    public void failedRehashDoesNotBlockACorrectLogin() throws Exception {
+        dao.addWithStoredHash("Bill", PasswordHasher.legacySha256("oldpass"), "u", null);
+        dao.failHashUpdates = true;
+
+        assertEquals(AuthService.Status.OK, auth.verifyCredentials("Bill", "oldpass", IP).getStatus());
+        assertTrue(PasswordHasher.isLegacySha256(dao.storedHash("Bill")), "still legacy; retried next login");
+
+        dao.failHashUpdates = false;
+        assertEquals(AuthService.Status.OK, auth.verifyCredentials("Bill", "oldpass", IP).getStatus());
+        assertTrue(dao.storedHash("Bill").startsWith("pbkdf2-sha256$"));
+    }
+
+    @Test
+    public void resetCodeSurvivesAFailedPasswordWrite() throws Exception {
+        dao.addWithStoredHash("Bill", hasher.hash("oldpassword"), "u", null);
+        String code = auth.issueResetCode("Bill", "AdminAl");
+        String ticket = auth.createResetTicket(auth.verifyCredentials("Bill", code, IP).getPlayer());
+
+        dao.failHashUpdates = true;
+        assertThrows(java.sql.SQLException.class, () -> auth.completeReset(ticket, "Bill", "brand-new-pass"));
+        dao.failHashUpdates = false;
+
+        assertEquals(AuthService.Status.RESET_REQUIRED, auth.verifyCredentials("Bill", code, IP).getStatus(),
+                "code still usable because the new password was never stored");
+    }
+
+    @Test
+    public void wrappedLegacyAccountLogsInAndIsUpgradedToPlainPbkdf2() throws Exception {
+        dao.addWithStoredHash("Bill", PasswordHasher.legacySha256("oldpass"), "u", null);
+        assertEquals(1, com.gempukku.swccgo.security.LegacyHashMigration.run(dao, hasher));
+        assertTrue(dao.storedHash("Bill").startsWith("pbkdf2-sha256-legacy$"));
+
+        assertEquals(AuthService.Status.OK, auth.verifyCredentials("Bill", "oldpass", IP).getStatus());
+        assertTrue(dao.storedHash("Bill").startsWith("pbkdf2-sha256$"), "plain PBKDF2 after login");
+        assertEquals(AuthService.Status.INVALID, auth.verifyCredentials("Bill", "wrongpass", IP).getStatus());
     }
 
     @Test
