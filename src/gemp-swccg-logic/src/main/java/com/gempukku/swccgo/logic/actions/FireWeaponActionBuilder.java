@@ -206,6 +206,9 @@ public class FireWeaponActionBuilder {
                 if (_numTimesAllowedToFirePerBattle < 2 && modifiersQuerying.mayBeFiredTwicePerBattle(gameState, _weaponOrCardWithPermanentWeapon)) {
                     _numTimesAllowedToFirePerBattle = 2;
                 }
+                if (modifiersQuerying.mayFireOnlyOncePerBattle(gameState, _weaponOrCardWithPermanentWeapon)) {
+                    _numTimesAllowedToFirePerBattle = 1;
+                }
 
                 if (_numTimesAllowedToFirePerBattle < 2) {
                     if (_permanentWeapon == null && !_weaponOrCardWithPermanentWeapon.getBlueprint().isFiredByCharacterPresentOrHere()) {

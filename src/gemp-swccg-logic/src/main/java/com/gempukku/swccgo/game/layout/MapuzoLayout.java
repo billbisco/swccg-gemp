@@ -40,6 +40,8 @@ public class MapuzoLayout extends AbstractSystemLayout {
                         //  B) Interior sites (except Underground Corridor)
                         new LocationGroup("Interior sites", Filters.and(Filters.interior_site,
                                 Filters.not(Filters.or(Filters.exterior_site, Filters.Underground_Corridor)), Filters.partOfSystem(systemName))),
+                        //  B2) Interior/Exterior sites at the exterior/interior boundary (generic-layout rule)
+                        new LocationGroup("Interior/Exterior sites", Filters.and(Filters.interior_site, Filters.exterior_site, Filters.partOfSystem(systemName))),
                         //  C) Exterior sites
                         new LocationGroup("Exterior sites", Filters.and(Filters.exterior_site, Filters.not(Filters.interior_site), Filters.partOfSystem(systemName)))));
         //  2) Clouds

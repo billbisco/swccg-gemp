@@ -43,13 +43,17 @@ public class NabooLayout extends AbstractSystemLayout {
                         //  B) Interior sites
                         new LocationGroup("Interior sites", Filters.and(Filters.interior_site, Filters.not(Filters.or(Filters.exterior_site,
                                 Filters.underwater_site, Filters.Theed_Palace_Throne_Room)), Filters.partOfSystem(systemName))),
-                        //  C) Interior/Exterior sites
-                        new LocationGroup("Interior/Exterior sites", Filters.and(Filters.interior_site, Filters.exterior_site, Filters.partOfSystem(systemName))),
+                        //  C) Interior/Exterior sites (buffer sites only)
+                        new LocationGroup("Interior/Exterior sites", Filters.and(LocationLayoutFilters.bufferInteriorExteriorSite(), Filters.partOfSystem(systemName))),
                         //  D) Theed Palace Courtyard
                         new LocationGroup("Theed Palace Courtyard", Filters.Theed_Palace_Courtyard),
-                        //  E) Exterior sites
-                        new LocationGroup("Exterior sites", Filters.and(Filters.exterior_site, Filters.not(Filters.or(Filters.interior_site,
-                                Filters.Theed_Palace_Courtyard)), Filters.partOfSystem(systemName))),
+                        //  E) Exterior sites (non-buffer interior/exterior sites lay out as exterior)
+                        new LocationGroup("Exterior sites", Filters.and(Filters.or(
+                                Filters.and(Filters.exterior_site, Filters.not(Filters.or(Filters.interior_site,
+                                        Filters.Theed_Palace_Courtyard))),
+                                Filters.and(LocationLayoutFilters.nonBufferInteriorExteriorSite(),
+                                        Filters.not(Filters.Theed_Palace_Courtyard))),
+                                Filters.partOfSystem(systemName))),
                         //  F) Underwater sites
                         new LocationGroup("Underwater sites", Filters.and(Filters.underwater_site, Filters.partOfSystem(systemName)))));
 

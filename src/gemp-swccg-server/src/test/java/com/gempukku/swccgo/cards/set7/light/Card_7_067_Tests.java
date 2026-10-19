@@ -28,6 +28,8 @@ public class Card_7_067_Tests {
                     put("xwing", "1_146");
                     put("red1", "1_144");
                     put("speeder", "3_69");
+                    put("xwingSquadron", "7_150");
+                    put("corvette", "1_140");
                 }},
                 new HashMap<>() {{
                     put("trooper", "1_194");
@@ -161,5 +163,55 @@ public class Card_7_067_Tests {
         scn.LSPass();
         scn.DSPass();
         assertEquals(Zone.TOP_OF_LOST_PILE, red1.getZone());
+    }
+
+    @Test
+    public void KoensayrManufacturingWithWidenCannotRetrieveXwingAssaultSquadron() {
+        var scn = GetScenario();
+        var koensayr = scn.GetLSCard("koensayr");
+        var ralltiir = scn.GetLSCard("ralltiir");
+        var xwingSquadron = scn.GetLSCard("xwingSquadron");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(ralltiir);
+        scn.AttachCardsTo(ralltiir, koensayr);
+        scn.ApplyAdHocModifier(new WidenIncomKoensayrScopeModifier(ralltiir));
+        scn.MoveCardsToTopOfLSLostPile(xwingSquadron);
+        scn.SkipToLSTurn(Phase.CONTROL);
+
+        assertTrue(WidenIncomKoensayrScopeModifier.isActive(scn.game(), koensayr));
+        assertTrue(scn.LSCardActionAvailable(koensayr, "Retrieve a Y-wing"));
+        scn.LSUseCardAction(koensayr, "Retrieve a Y-wing");
+        scn.PassAllResponses();
+        assertTrue("squadron X-wing Assault Squadron must not match, decision=" + scn.LSGetDecision(),
+                scn.LSDecisionAvailable("Verify"));
+        scn.LSPass();
+        scn.DSPass();
+        assertEquals(Zone.TOP_OF_LOST_PILE, xwingSquadron.getZone());
+    }
+
+    @Test
+    public void KoensayrManufacturingWithWidenCannotRetrieveCorellianCorvette() {
+        var scn = GetScenario();
+        var koensayr = scn.GetLSCard("koensayr");
+        var ralltiir = scn.GetLSCard("ralltiir");
+        var corvette = scn.GetLSCard("corvette");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(ralltiir);
+        scn.AttachCardsTo(ralltiir, koensayr);
+        scn.ApplyAdHocModifier(new WidenIncomKoensayrScopeModifier(ralltiir));
+        scn.MoveCardsToTopOfLSLostPile(corvette);
+        scn.SkipToLSTurn(Phase.CONTROL);
+
+        assertTrue(WidenIncomKoensayrScopeModifier.isActive(scn.game(), koensayr));
+        assertTrue(scn.LSCardActionAvailable(koensayr, "Retrieve a Y-wing"));
+        scn.LSUseCardAction(koensayr, "Retrieve a Y-wing");
+        scn.PassAllResponses();
+        assertTrue("non-unique corvette must not match, decision=" + scn.LSGetDecision(),
+                scn.LSDecisionAvailable("Verify"));
+        scn.LSPass();
+        scn.DSPass();
+        assertEquals(Zone.TOP_OF_LOST_PILE, corvette.getZone());
     }
 }
