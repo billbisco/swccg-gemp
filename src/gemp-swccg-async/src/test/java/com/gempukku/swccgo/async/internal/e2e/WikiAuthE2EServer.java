@@ -91,8 +91,11 @@ public final class WikiAuthE2EServer {
         ch.closeFuture().sync();
     }
 
+    private static int seq = 0;
+
     private static int register(AuthService auth, PlayerDAO dao, String name, String password) throws Exception {
-        if (!auth.register(name, password, SEED_IP))
+        // One IP per player: AuthService enforces a per-IP daily signup limit (#286).
+        if (!auth.register(name, password, "198.51.100." + (100 + seq++)))
             throw new IllegalStateException("could not register " + name);
         Player p = dao.findPlayerForLogin(name);
         return p.getId();
