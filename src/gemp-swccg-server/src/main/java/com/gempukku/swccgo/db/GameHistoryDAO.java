@@ -14,6 +14,18 @@ public interface GameHistoryDAO {
 
     public int getGameHistoryForPlayerCount(Player player);
 
+    /** The player's games matching the filter, newest first. */
+    public List<GameHistoryEntry> getGameHistoryForPlayer(Player player, GameHistoryFilter filter, int start, int count);
+
+    /** How many of the player's games match the filter. */
+    public int getGameHistoryForPlayerCount(Player player, GameHistoryFilter filter);
+
+    /** Formats the player has games in, most played first. */
+    public List<String> getGameHistoryFormats(Player player);
+
+    /** Leagues and tournaments the player has games in, most recent first. */
+    public List<String> getGameHistoryEvents(Player player, int limit);
+
     public int getActivePlayersCount();
 
     public int getActivePlayersCount(long from, long duration);
