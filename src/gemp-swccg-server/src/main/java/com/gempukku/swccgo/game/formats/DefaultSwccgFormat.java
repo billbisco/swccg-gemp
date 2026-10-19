@@ -17,6 +17,7 @@ public class DefaultSwccgFormat implements SwccgFormat {
     private String _code;
     private String _name;
     private boolean _downloadBattlegroundRule;
+    private boolean _loreHeroicRule;
     private boolean _jpSealedRule;
     private boolean _playtesting;
     private int _requiredDeckSize = 60;
@@ -34,10 +35,11 @@ public class DefaultSwccgFormat implements SwccgFormat {
     private List<SwccgCardBlueprint> _allCardBlueprints;
     private String _tenetsLink;
 
-    public DefaultSwccgFormat(SwccgCardBlueprintLibrary library, String name, boolean downloadBattlegroundRule, boolean jpSealedRule, boolean playtesting) {
+    public DefaultSwccgFormat(SwccgCardBlueprintLibrary library, String name, boolean downloadBattlegroundRule, boolean loreHeroicRule, boolean jpSealedRule, boolean playtesting) {
         _library = library;
         _name = name;
         _downloadBattlegroundRule = downloadBattlegroundRule;
+        _loreHeroicRule = loreHeroicRule;
         _jpSealedRule = jpSealedRule;
         _playtesting = playtesting;
 
@@ -73,6 +75,11 @@ public class DefaultSwccgFormat implements SwccgFormat {
     @Override
     public boolean hasDownloadBattlegroundRule() {
         return _downloadBattlegroundRule;
+    }
+
+    @Override
+    public boolean hasLoreHeroicRule() {
+        return _loreHeroicRule;
     }
 
     @Override
@@ -284,6 +291,7 @@ public class DefaultSwccgFormat implements SwccgFormat {
                 .append(_minDeckSize).append('|').append(_maxDeckSize).append('|')
                 .append(_skipFormatPool).append('|')
                 .append(_downloadBattlegroundRule).append('|')
+                .append(_loreHeroicRule).append('|')
                 .append(_jpSealedRule).append('|')
                 .append(_playtesting).append('|');
         appendJoined(sb, _validSets);
