@@ -193,10 +193,8 @@ public class Card_1271_025_Tests {
         assertTrue(scn.DSActionAvailable("Deploy Executor site or battleground system"));
         scn.DSUseCardAction(domination, "Deploy Executor site or battleground system");
         scn.PassAllResponses();
+        assertTrue(scn.DSHasCardChoiceAvailable(endor));
         scn.DSChooseCard(endor);
-        if (scn.DSDecisionAvailable("On which side")) {
-            scn.DSChoose("Left");
-        }
         scn.PassAllResponses();
         assertInZone(Zone.LOCATIONS, endor);
     }
@@ -364,22 +362,42 @@ public class Card_1271_025_Tests {
         assertTrue(scn.DSActionAvailable("Deploy Executor site or battleground system"));
         scn.DSUseCardAction(domination, "Deploy Executor site or battleground system");
         scn.PassAllResponses();
-        if (scn.DSHasCardChoiceAvailable(endor)) {
-            scn.DSChooseCard(endor);
-        }
-        else if (scn.DSDecisionAvailable("Reserve Deck")) {
-            scn.DSChooseAnyCard();
-        }
-        scn.PassAllResponses();
-        if (scn.DSDecisionAvailable("On which side")) {
-            scn.DSChoose("Left");
-        }
+        assertTrue(scn.DSHasCardChoiceAvailable(endor));
+        scn.DSChooseCard(endor);
         scn.PassAllResponses();
         scn.MoveCardsToTopOfOwnReserveDeck(dantooine);
-        if (scn.AwaitingLSDeployPhaseActions()) {
-            scn.LSPass();
-        }
+        assertTrue(scn.AwaitingLSDeployPhaseActions());
+        scn.LSPass();
+        scn.PassAllResponses();
         assertTrue(scn.AwaitingDSDeployPhaseActions());
         assertFalse(scn.DSActionAvailable("Deploy Executor site or battleground system"));
+    }
+
+    @Test
+    public void GalacticDominationFlagshipOperationsGateDoesNotApplyWithoutFlagshipOperations() {
+        var scn = GetScenario();
+        var domination = scn.GetDSCard("domination");
+        var dantooine = scn.GetDSCard("dantooine");
+        var executor = scn.GetDSCard("executor");
+        var squadron = scn.GetDSCard("squadron");
+        var tie = scn.GetDSCard("tie");
+        scn.StartGame();
+        scn.MoveCardsToHand(domination, squadron);
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.DSDeployCard(domination);
+        scn.PassAllResponses();
+        scn.MoveLocationToTable(dantooine);
+        scn.MoveCardsToLocation(dantooine, executor, tie);
+        assertTrue(scn.AwaitingLSDeployPhaseActions());
+        scn.LSPass();
+        scn.PassAllResponses();
+        scn.DSActivateForceCheat(5);
+        assertTrue(scn.AwaitingDSDeployPhaseActions());
+        assertFalse(scn.DSDeployAvailable(squadron));
+        scn.SkipToDSTurn(Phase.CONTROL);
+        assertTrue(scn.DSForceDrainAvailable(dantooine));
+        scn.DSForceDrainAt(dantooine);
+        scn.PassForceDrainStartResponses();
+        assertEquals(1, scn.GetForceDrainTotal());
     }
 }

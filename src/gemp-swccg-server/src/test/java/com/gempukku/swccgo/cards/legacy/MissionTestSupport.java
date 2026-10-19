@@ -60,14 +60,18 @@ public final class MissionTestSupport {
         };
     }
 
-    public static AbstractSystem muunilinstSystem() {
-        return new AbstractSystem(Side.DARK, "Muunilinst", 4, ExpansionSet.PREMIERE, Rarity.C1) {
+    public static AbstractSystem namedSystem(String title, int parsec) {
+        return new AbstractSystem(Side.DARK, title, parsec, ExpansionSet.PREMIERE, Rarity.C1) {
             {
                 addIcon(Icon.DARK_FORCE, 1);
                 addIcon(Icon.LIGHT_FORCE, 1);
                 addIcons(Icon.PLANET);
             }
         };
+    }
+
+    public static AbstractSystem muunilinstSystem() {
+        return namedSystem("Muunilinst", 4);
     }
 
     public static AbstractSite muunilinstSite(String title) {
@@ -157,6 +161,9 @@ public final class MissionTestSupport {
         }
         if (title != null && title.startsWith("Coruscant")) {
             ensurePlanetLayout(scn, "Coruscant", 0);
+        }
+        if (blueprint instanceof AbstractSystem) {
+            ensurePlanetLayout(scn, blueprint.getTitle(), blueprint.getParsec());
         }
         PhysicalCardImpl card = create(scn, id, owner, blueprint);
         scn.MoveLocationToTable(card);

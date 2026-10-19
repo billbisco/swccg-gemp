@@ -88,7 +88,7 @@ public class Card1271_027 extends AbstractMission {
             actions.add(action);
         }
         GameTextActionId gameTextActionId = GameTextActionId.LEGACY__IN_THE_HANDS_OF_THE_ISB__DELIVER_CAPTIVE;
-        if (TriggerConditions.captiveDeliveredToPrisonBy(game, effectResult, Filters.ISB_agent, Filters.sameLocation(self))) {
+        if (TriggerConditions.captiveDeliveredToPrisonBy(game, effectResult, Filters.ISB_agent, Filters.here(self))) {
             PhysicalCard captive = ((DeliveredCaptiveToPrisonResult) effectResult).getCaptive();
             if (GameConditions.isOncePerCaptive(game, self, captive, gameTextActionId)) {
                 RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId, gameTextActionId);

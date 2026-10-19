@@ -99,10 +99,9 @@ public class Card1291_026 extends AbstractMission {
             CancelCardActionBuilder.buildCancelCardAction(action, vb2SpecialDelivery(), Title.Special_Delivery);
             actions.add(action);
         }
-        if (GameConditions.isDuringOpponentsPhase(game, self, Phase.CONTROL)
-                && GameConditions.controls(game, opponent, Filters.Geonosis_Petranaki_Arena)
-                && (TriggerConditions.isTableChanged(game, effectResult)
-                || TriggerConditions.isStartOfOpponentsPhase(game, self, effectResult, Phase.CONTROL))) {
+        // End of opponent's Control so they can take the printed release action first.
+        if (TriggerConditions.isEndOfOpponentsPhase(game, self, effectResult, Phase.CONTROL)
+                && GameConditions.controls(game, opponent, Filters.Geonosis_Petranaki_Arena)) {
             RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
             action.setSingletonTrigger(true);
             action.setText("Place in Used Pile");

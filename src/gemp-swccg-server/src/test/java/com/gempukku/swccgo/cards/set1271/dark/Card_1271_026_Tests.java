@@ -262,13 +262,14 @@ public class Card_1271_026_Tests {
         scn.DSActivateForceCheat(5);
         assertTrue(scn.DSActionAvailable("Deploy TIE Fighter Construction Facility from Reserve Deck"));
         scn.DSUseCardAction(aces, "Deploy TIE Fighter Construction Facility from Reserve Deck");
-        if (scn.DSHasCardChoiceAvailable(facility)) {
-            scn.DSChooseCard(facility);
-        }
+        assertTrue(scn.DSHasCardChoiceAvailable(facility));
+        scn.DSChooseCard(facility);
         scn.PassAllResponses();
         assertInZone(Zone.SIDE_OF_TABLE, facility);
-        if (scn.AwaitingDSDeployPhaseActions()) {
-            assertFalse(scn.DSActionAvailable("Deploy TIE Fighter Construction Facility from Reserve Deck"));
-        }
+        assertTrue(scn.AwaitingLSDeployPhaseActions());
+        scn.LSPass();
+        scn.PassAllResponses();
+        assertTrue(scn.AwaitingDSDeployPhaseActions());
+        assertFalse(scn.DSActionAvailable("Deploy TIE Fighter Construction Facility from Reserve Deck"));
     }
 }

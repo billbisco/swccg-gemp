@@ -260,13 +260,14 @@ public class Card_1271_045_Tests {
         scn.LSActivateForceCheat(5);
         assertTrue(scn.LSActionAvailable("Deploy Close Air Support from Reserve Deck"));
         scn.LSUseCardAction(aces, "Deploy Close Air Support from Reserve Deck");
-        if (scn.LSHasCardChoiceAvailable(close)) {
-            scn.LSChooseCard(close);
-        }
+        assertTrue(scn.LSHasCardChoiceAvailable(close));
+        scn.LSChooseCard(close);
         scn.PassAllResponses();
         assertInZone(Zone.SIDE_OF_TABLE, close);
-        if (scn.AwaitingLSDeployPhaseActions()) {
-            assertFalse(scn.LSActionAvailable("Deploy Close Air Support from Reserve Deck"));
-        }
+        assertTrue(scn.AwaitingDSDeployPhaseActions());
+        scn.DSPass();
+        scn.PassAllResponses();
+        assertTrue(scn.AwaitingLSDeployPhaseActions());
+        assertFalse(scn.LSActionAvailable("Deploy Close Air Support from Reserve Deck"));
     }
 }

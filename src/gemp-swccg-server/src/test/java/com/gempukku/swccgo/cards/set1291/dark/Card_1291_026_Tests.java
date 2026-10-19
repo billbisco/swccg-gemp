@@ -155,6 +155,12 @@ public class Card_1291_026_Tests {
         scn.MoveLocationToTable(petranaki);
         scn.MoveCardsToLocation(petranaki, luke);
         scn.SkipToLSTurn(Phase.CONTROL);
+        assertTrue(scn.AwaitingLSControlPhaseActions());
+        scn.LSPass();
+        scn.PassAllResponses();
+        assertTrue(scn.AwaitingDSControlPhaseActions());
+        scn.DSPass();
+        scn.PassResponses("required");
         scn.PassAllResponses();
         assertInZone(Zone.USED_PILE, mission);
     }
@@ -190,9 +196,8 @@ public class Card_1291_026_Tests {
         scn.DSActivateForceCheat(5);
         assertTrue(scn.DSActionAvailable("Deploy Arena Pillars from Reserve Deck"));
         scn.DSUseCardAction(mission, "Deploy Arena Pillars from Reserve Deck");
-        if (scn.DSHasCardChoiceAvailable(pillars)) {
-            scn.DSChooseCard(pillars);
-        }
+        assertTrue(scn.DSHasCardChoiceAvailable(pillars));
+        scn.DSChooseCard(pillars);
         scn.PassAllResponses();
         assertInZone(Zone.SIDE_OF_TABLE, pillars);
     }
@@ -210,15 +215,6 @@ public class Card_1291_026_Tests {
         scn.MoveCardsToLocation(petranaki, luke);
         scn.SkipToLSTurn(Phase.CONTROL);
         scn.LSExecuteAdHocEffect(luke, new LoseCardFromTableEffect(new TopLevelGameTextAction(luke, luke.getCardId()), luke));
-        if (scn.LSHasCardChoiceAvailable(luke)) {
-            scn.LSChooseCard(luke);
-        }
-        if (scn.LSDecisionAvailable("optional") || scn.LSDecisionAvailable("Optional")) {
-            scn.LSPass();
-        }
-        if (scn.DSHasCardChoiceAvailable(luke)) {
-            scn.DSChooseCard(luke);
-        }
         assertTrue(scn.DSActionAvailable("Imprison"));
         scn.DSChooseAction("Imprison");
         scn.PassAllResponses();
@@ -240,16 +236,23 @@ public class Card_1291_026_Tests {
         scn.gameState().imprisonCharacter(scn.game(), leia, petranaki);
         scn.MoveCardsToLocation(petranaki, luke);
         scn.SkipToLSTurn(Phase.CONTROL);
-        if (scn.LSActionAvailable("Release any number of captives")) {
-            scn.LSUseCardAction(mission, "Release any number of captives");
-            scn.LSChooseCard(luke);
-            scn.PassAllResponses();
-            assertFalse(luke.isCaptive());
-        }
-        else {
-            scn.PassAllResponses();
-            assertInZone(Zone.USED_PILE, mission);
-        }
+        assertTrue(scn.AwaitingLSControlPhaseActions());
+        assertTrue(scn.LSActionAvailable("Release any number of captives"));
+        scn.LSUseCardAction(mission, "Release any number of captives");
+        assertTrue(scn.LSHasCardChoiceAvailable(leia));
+        scn.LSChooseCard(leia);
+        scn.PassAllResponses();
+        assertFalse(leia.isCaptive());
+        assertFalse(leia.isImprisoned());
+        assertTrue(scn.AwaitingDSControlPhaseActions());
+        scn.DSPass();
+        assertTrue(scn.AwaitingLSControlPhaseActions());
+        scn.LSPass();
+        scn.PassAllResponses();
+        scn.DSPass();
+        scn.PassResponses("required");
+        scn.PassAllResponses();
+        assertInZone(Zone.USED_PILE, mission);
     }
 
     @Test
@@ -269,8 +272,28 @@ public class Card_1291_026_Tests {
         scn.MoveCardsToLocation(petranaki, luke);
         scn.SkipToDSTurn(Phase.BATTLE);
         scn.DSInitiateBattle(petranaki);
-        scn.PrepareDSDestiny(1);
+        scn.PrepareDSDestiny(0);
         scn.SkipToDamageSegment(true);
-        assertTrue(scn.GetUnpaidLSAttrition() >= 1);
+        assertEquals(2, scn.GetUnpaidLSAttrition());
+    }
+
+    @Test
+    public void ArenaExecutionRewardDoesNotAddAttritionWhenMissionIsNotComplete() {
+        var scn = GetScenario();
+        var mission = scn.GetDSCard("arena");
+        var petranaki = scn.GetDSCard("petranaki");
+        var vader = scn.GetDSCard("vader");
+        var luke = scn.GetLSCard("luke");
+        scn.StartGame();
+        var host = hostOnTable(scn);
+        scn.AttachCardsTo(host, mission);
+        scn.MoveLocationToTable(petranaki);
+        scn.MoveCardsToLocation(petranaki, vader);
+        scn.MoveCardsToLocation(petranaki, luke);
+        scn.SkipToDSTurn(Phase.BATTLE);
+        scn.DSInitiateBattle(petranaki);
+        scn.PrepareDSDestiny(0);
+        scn.SkipToDamageSegment(true);
+        assertEquals(1, scn.GetUnpaidLSAttrition());
     }
 }

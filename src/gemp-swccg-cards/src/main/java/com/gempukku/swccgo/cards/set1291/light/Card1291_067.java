@@ -144,12 +144,12 @@ public class Card1291_067 extends AbstractMission {
                 && !captives.isEmpty()) {
             final RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
             action.setText("Release a captive (Mission complete)");
+            action.appendEffect(new SetWhileInPlayDataEffect(action, self, new WhileInPlayData(true)));
             action.appendEffect(
                     new ChooseCardOnTableEffect(action, playerId, "Choose captive to release", captives) {
                         @Override
                         protected void cardSelected(PhysicalCard selectedCard) {
                             action.appendEffect(new ReleaseCaptivesEffect(action, Collections.singleton(selectedCard)));
-                            action.appendEffect(new SetWhileInPlayDataEffect(action, self, new WhileInPlayData(true)));
                         }
                     });
             actions.add(action);

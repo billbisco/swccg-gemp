@@ -148,9 +148,6 @@ public class Card_1271_046_Tests {
         scn.LSUseCardAction(restore, "Deploy battleground system or interior Yavin 4 site");
         scn.PassAllResponses();
         scn.LSChooseCard(throne);
-        if (scn.LSDecisionAvailable("On which side")) {
-            scn.LSChoose("Left");
-        }
         scn.PassAllResponses();
         assertInZone(Zone.LOCATIONS, throne);
     }
@@ -175,7 +172,8 @@ public class Card_1271_046_Tests {
         scn.PrepareLSDestiny(7);
         assertTrue(scn.LSForceDrainAvailable(bespin));
         scn.LSForceDrainAt(bespin);
-        scn.PassDSResponses("optional");
+        assertTrue(scn.DSDecisionAvailable("optional"));
+        scn.DSPass();
         assertTrue(scn.LSActionAvailable("Draw destiny to liberate"));
         scn.LSChooseAction("Draw destiny to liberate");
         scn.PassAllResponses();
@@ -238,7 +236,8 @@ public class Card_1271_046_Tests {
         scn.SkipToLSTurn(Phase.CONTROL);
         scn.PrepareLSDestiny(5);
         scn.LSForceDrainAt(bespin);
-        scn.PassDSResponses("optional");
+        assertTrue(scn.DSDecisionAvailable("optional"));
+        scn.DSPass();
         assertTrue(scn.LSActionAvailable("Draw destiny to liberate"));
         scn.LSChooseAction("Draw destiny to liberate");
         scn.PassAllResponses();
@@ -268,7 +267,8 @@ public class Card_1271_046_Tests {
         scn.SkipToLSTurn(Phase.CONTROL);
         scn.PrepareLSDestiny(5);
         scn.LSForceDrainAt(bespin);
-        scn.PassDSResponses("optional");
+        assertTrue(scn.DSDecisionAvailable("optional"));
+        scn.DSPass();
         assertTrue(scn.LSActionAvailable("Draw destiny to liberate"));
         scn.LSChooseAction("Draw destiny to liberate");
         scn.PassAllResponses();

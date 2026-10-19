@@ -74,6 +74,7 @@ public class Card1271_025 extends AbstractMission {
         modifiers.add(new MayDeployToLocationModifier(self, tieAssault, flagshipOpsOnExecutor, Filters.system));
         modifiers.add(new UseCalculationForDeployCostModifier(self, tieAssault, flagshipOpsOnExecutor, new ConstantEvaluator(3)));
         modifiers.add(new DrawsBattleDestinyIfUnableToOtherwiseModifier(self, tieWithCapital, flagshipOpsOnExecutor, 1));
+        // Caps all sources, not only "your cards".
         Filter yourSquadrons = Filters.and(Filters.your(self), Filters.squadron);
         modifiers.add(new DestinyIncreaseLimitModifier(self, yourSquadrons, 2));
         modifiers.add(new PowerIncreaseLimitModifier(self, yourSquadrons, 2));

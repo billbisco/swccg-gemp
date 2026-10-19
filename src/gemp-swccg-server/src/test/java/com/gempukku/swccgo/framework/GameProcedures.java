@@ -358,26 +358,6 @@ public interface GameProcedures extends Actions, Decisions, GameProperties, Pile
     }
 
     /**
-     * Passes a Dark Side decision containing the given text when DS is holding a window the test does not want.
-     * Light-side after-triggers (Force drain optionals, required unstack) sit behind DS's optional responses.
-     */
-    default void PassDSResponses(String text) {
-        if (DecisionAvailable(DS, text)) {
-            PlayerPass(DS);
-        }
-    }
-
-    /**
-     * From DS Activate, enter Control so TABLE_CHANGED required triggers appear.
-     * If a required window is already open, leave it.
-     */
-    default void EnterControlOrKeepRequired() {
-        if (AwaitingDSActivatePhaseActions()) {
-            DSActivateMaxForceAndPass();
-        }
-    }
-
-    /**
      * When a card is played, there are various responses.  This causes both players to pass all of them.
      */
     default void PassCardAndForceUseResponses() {

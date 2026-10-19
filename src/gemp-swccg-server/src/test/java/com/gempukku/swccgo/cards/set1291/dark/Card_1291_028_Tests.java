@@ -31,6 +31,8 @@ public class Card_1291_028_Tests {
                     put("luke", "1_19");
                     put("xwing", "1_146");
                     put("tatooine", "1_127");
+                    put("alderaan", "1_122");
+                    put("yavin", "1_129");
                 }},
                 new HashMap<>() {{
                     put("rally", "1291_28");
@@ -156,7 +158,10 @@ public class Card_1291_028_Tests {
         var host = MissionTestSupport.putOnTable(scn, 9600, scn.DS, MissionTestSupport.warHasBegun());
         scn.AttachCardsTo(host, rally);
         scn.MoveLocationToTable(tatooine);
-        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), trooper, dooku);
+        var muunilinst = MissionTestSupport.putLocationOnTable(scn, 9601, scn.DS, MissionTestSupport.muunilinstSystem());
+        var plaza = MissionTestSupport.putLocationOnTable(scn, 9602, scn.DS, MissionTestSupport.muunilinstSite("Muunilinst: Plaza"));
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), dooku);
+        scn.MoveCardsToLocation(plaza, trooper);
         scn.MoveCardsToTopOfOwnLostPile(junk);
         scn.SkipToDSTurn(Phase.CONTROL);
         scn.PrepareDSDestiny(1);
@@ -165,10 +170,19 @@ public class Card_1291_028_Tests {
         scn.DSChooseCard(tatooine);
         scn.PassAllResponses();
         assertTrue(scn.GetStackedCards(tatooine).isEmpty());
-        if (scn.AwaitingLSControlPhaseActions()) {
-            scn.LSPass();
-            scn.PassAllResponses();
-        }
+        assertTrue(scn.AwaitingLSControlPhaseActions());
+        scn.LSPass();
+        scn.PassAllResponses();
+        assertTrue(scn.AwaitingDSControlPhaseActions());
+        assertTrue(scn.DSActionAvailable("Draw destiny to align a system"));
+        scn.DSUseCardAction(rally, "Draw destiny to align a system");
+        assertTrue(scn.DSHasCardChoiceAvailable(muunilinst));
+        assertFalse(scn.DSHasCardChoiceAvailable(tatooine));
+        scn.DSChooseCard(muunilinst);
+        scn.PassAllResponses();
+        assertTrue(scn.AwaitingLSControlPhaseActions());
+        scn.LSPass();
+        scn.PassAllResponses();
         assertTrue(scn.AwaitingDSControlPhaseActions());
         assertFalse(scn.DSActionAvailable("Draw destiny to align a system"));
     }
@@ -200,5 +214,35 @@ public class Card_1291_028_Tests {
         scn.PrepareDSDestiny(1);
         scn.SkipToEndOfPowerSegment(true);
         assertEquals(2, scn.GetDSTotalDestiny());
+    }
+
+    @Test
+    public void RallyToOurCauseRewardBattleDestinyBonusIsCappedAt2() {
+        var scn = GetScenario();
+        var rally = scn.GetDSCard("rally");
+        var dooku = scn.GetDSCard("dooku");
+        var trooper = scn.GetDSCard("trooper");
+        var xwing = scn.GetLSCard("xwing");
+        scn.StartGame();
+        var host = MissionTestSupport.putOnTable(scn, 9600, scn.DS, MissionTestSupport.warHasBegun());
+        scn.AttachCardsTo(host, rally);
+        var s1 = MissionTestSupport.putLocationOnTable(scn, 9610, scn.DS, MissionTestSupport.namedSystem("Align One", 1));
+        var s2 = MissionTestSupport.putLocationOnTable(scn, 9611, scn.DS, MissionTestSupport.namedSystem("Align Two", 2));
+        var s3 = MissionTestSupport.putLocationOnTable(scn, 9612, scn.DS, MissionTestSupport.namedSystem("Align Three", 3));
+        assertEquals(Zone.LOCATIONS, s1.getZone());
+        assertEquals(Zone.LOCATIONS, s2.getZone());
+        assertEquals(Zone.LOCATIONS, s3.getZone());
+        rally.setWhileInPlayData(new com.gempukku.swccgo.game.state.WhileInPlayData());
+        rally.getWhileInPlayData().getTextValues().add(String.valueOf(s1.getCardId()));
+        rally.getWhileInPlayData().getTextValues().add(String.valueOf(s2.getCardId()));
+        rally.getWhileInPlayData().getTextValues().add(String.valueOf(s3.getCardId()));
+        assertEquals(3, rally.getWhileInPlayData().getTextValues().size());
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), trooper, dooku);
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), xwing);
+        scn.SkipToDSTurn(Phase.BATTLE);
+        scn.DSInitiateBattle(scn.GetDSStartingLocation());
+        scn.PrepareDSDestiny(1);
+        scn.SkipToEndOfPowerSegment(true);
+        assertEquals(3, scn.GetDSTotalDestiny());
     }
 }

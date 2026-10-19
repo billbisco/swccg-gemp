@@ -107,10 +107,13 @@ public class Card_1291_027_Tests {
         var host = MissionTestSupport.putOnTable(scn, 9400, scn.DS, MissionTestSupport.warHasBegun());
         scn.AttachCardsTo(host, defense);
         var locs = muunilinst(scn);
-        scn.MoveCardsToLocation(locs[0], trooper);
-        scn.MoveCardsToLocation(locs[1], vader);
-        scn.MoveCardsToLocation(locs[2], ds61);
-        scn.EnterControlOrKeepRequired();
+        var site3 = MissionTestSupport.putLocationOnTable(scn, 9404, scn.DS, MissionTestSupport.muunilinstSite("Muunilinst: Hangar"));
+        scn.MoveCardsToLocation(locs[1], trooper);
+        scn.MoveCardsToLocation(locs[2], vader);
+        scn.MoveCardsToLocation(site3, ds61);
+        assertTrue(scn.AwaitingDSActivatePhaseActions());
+        scn.DSActivateMaxForceAndPass();
+        scn.PassResponses("required");
         scn.PassAllResponses();
         assertTrue(scn.LSDecisionAvailable("Choose Force to lose"));
         scn.LSChooseCard(scn.GetTopOfLSReserveDeck());
@@ -149,7 +152,9 @@ public class Card_1291_027_Tests {
         var locs = muunilinst(scn);
         scn.MoveCardsToLocation(locs[0], luke);
         scn.MoveCardsToLocation(locs[1], leia);
-        scn.EnterControlOrKeepRequired();
+        assertTrue(scn.AwaitingDSActivatePhaseActions());
+        scn.DSActivateMaxForceAndPass();
+        scn.PassResponses("required");
         scn.PassAllResponses();
         assertInZone(Zone.USED_PILE, defense);
     }
@@ -170,8 +175,9 @@ public class Card_1291_027_Tests {
         scn.MoveCardsToLocation(locs[1], vader);
         scn.MoveCardsToLocation(locs[2], ds61);
         scn.MoveCardsToLocation(locs[0], luke);
-        scn.EnterControlOrKeepRequired();
-        scn.PassAllResponses();
+        assertTrue(scn.AwaitingDSActivatePhaseActions());
+        scn.DSActivateMaxForceAndPass();
+        assertTrue(scn.AwaitingDSControlPhaseActions());
         assertTrue(scn.GetStackedCards(defense).isEmpty());
         assertInZone(Zone.SIDE_OF_TABLE, defense);
     }

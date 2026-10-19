@@ -18,6 +18,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.gempukku.swccgo.framework.Assertions.assertAtLocation;
 import static com.gempukku.swccgo.framework.Assertions.assertInZone;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -157,16 +158,9 @@ public class Card_1291_067_Tests {
         scn.SkipToLSTurn(Phase.CONTROL);
         assertTrue(scn.LSForceDrainAvailable(petranaki));
         scn.LSForceDrainAt(petranaki);
-        scn.PassDSResponses("optional");
-        scn.PassAllResponses();
-        if (scn.LSDecisionAvailable("Release a captive")) {
-            scn.LSChooseAction("Release a captive (Mission complete)");
-        }
-        if (scn.LSHasCardChoiceAvailable(amidala)) {
-            scn.LSChooseCard(amidala);
-        }
         scn.PassAllResponses();
         assertFalse(amidala.isCaptive());
+        assertAtLocation(petranaki, amidala);
         assertTrue(rescue.getWhileInPlayData() != null);
     }
 
@@ -181,7 +175,9 @@ public class Card_1291_067_Tests {
         scn.AttachCardsTo(host, rescue);
         scn.MoveLocationToTable(petranaki);
         scn.MoveCardsToLocation(petranaki, vader);
-        scn.EnterControlOrKeepRequired();
+        assertTrue(scn.AwaitingDSActivatePhaseActions());
+        scn.DSActivateMaxForceAndPass();
+        scn.PassResponses("required");
         scn.PassAllResponses();
         assertInZone(Zone.USED_PILE, rescue);
     }
@@ -213,15 +209,18 @@ public class Card_1291_067_Tests {
         var amidala = scn.GetLSCard("amidala");
         var petranaki = scn.GetDSCard("petranaki");
         var vader = scn.GetDSCard("vader");
+        var luke = scn.GetLSCard("luke");
         scn.StartGame();
         var host = MissionTestSupport.putOnTable(scn, 9700, scn.LS, MissionTestSupport.begunTheCloneWarHas());
         scn.AttachCardsTo(host, rescue);
         scn.MoveLocationToTable(petranaki);
         scn.gameState().imprisonCharacter(scn.game(), amidala, petranaki);
         scn.MoveCardsToLocation(petranaki, vader);
+        scn.MoveCardsToLocation(petranaki, luke);
         assertTrue(scn.game().getModifiersQuerying().mayNotBeTransferred(scn.gameState(), amidala));
         scn.SkipToDSTurn(Phase.MOVE);
-        assertFalse(scn.DSActionAvailable("Transfer"));
+        assertTrue(scn.AwaitingDSMovePhaseActions());
+        assertFalse(scn.DSActionAvailable("Take imprisoned captive into custody"));
     }
 
     @Test
@@ -236,16 +235,14 @@ public class Card_1291_067_Tests {
         scn.MoveCardsToTopOfOwnReserveDeck(amidala);
         assertTrue(scn.LSActionAvailable("Take Amidala into hand from Reserve Deck"));
         scn.LSUseCardAction(rescue, "Take Amidala into hand from Reserve Deck");
-        if (scn.LSHasCardChoiceAvailable(amidala)) {
-            scn.LSChooseCard(amidala);
-        }
+        assertTrue(scn.LSHasCardChoiceAvailable(amidala));
+        scn.LSChooseCard(amidala);
         scn.PassAllResponses();
         assertInZone(Zone.HAND, amidala);
         scn.MoveCardsToTopOfOwnReserveDeck(amidala);
-        if (scn.AwaitingDSDeployPhaseActions()) {
-            scn.DSPass();
-            scn.PassAllResponses();
-        }
+        assertTrue(scn.AwaitingDSDeployPhaseActions());
+        scn.DSPass();
+        scn.PassAllResponses();
         assertTrue(scn.AwaitingLSDeployPhaseActions());
         assertFalse(scn.LSActionAvailable("Take Amidala into hand from Reserve Deck"));
     }
@@ -264,12 +261,61 @@ public class Card_1291_067_Tests {
         scn.AttachCardsTo(host, rescue);
         scn.MoveLocationToTable(petranaki);
         rescue.setWhileInPlayData(new com.gempukku.swccgo.game.state.WhileInPlayData(true));
+        scn.gameState().imprisonCharacter(scn.game(), amidala, petranaki);
         scn.MoveCardsToLocation(petranaki, obi, anakin);
         scn.MoveCardsToLocation(petranaki, vader);
         scn.SkipToLSTurn(Phase.BATTLE);
         scn.LSInitiateBattle(petranaki);
+        scn.PrepareLSDestiny(1);
+        scn.SkipToDamageSegment(true);
+        assertEquals(4, scn.GetUnpaidDSAttrition());
+    }
+
+    @Test
+    public void RescueOnGeonosisRewardDoesNotAddAttritionWhenMissionIsNotComplete() {
+        var scn = GetScenario();
+        var rescue = scn.GetLSCard("rescue");
+        var anakin = scn.GetLSCard("anakin");
+        var obi = scn.GetLSCard("obi");
+        var petranaki = scn.GetDSCard("petranaki");
+        var vader = scn.GetDSCard("vader");
+        scn.StartGame();
+        var host = MissionTestSupport.putOnTable(scn, 9700, scn.LS, MissionTestSupport.begunTheCloneWarHas());
+        scn.AttachCardsTo(host, rescue);
+        scn.MoveLocationToTable(petranaki);
+        scn.MoveCardsToLocation(petranaki, obi, anakin);
+        scn.MoveCardsToLocation(petranaki, vader);
+        scn.SkipToLSTurn(Phase.BATTLE);
+        scn.LSInitiateBattle(petranaki);
+        scn.PrepareLSDestiny(1);
+        scn.SkipToDamageSegment(true);
+        assertEquals(2, scn.GetUnpaidDSAttrition());
+    }
+
+    @Test
+    public void RescueOnGeonosisMayTransferAmidalaWhenComplete() {
+        var scn = GetScenario();
+        var rescue = scn.GetLSCard("rescue");
+        var amidala = scn.GetLSCard("amidala");
+        var petranaki = scn.GetDSCard("petranaki");
+        var vader = scn.GetDSCard("vader");
+        var luke = scn.GetLSCard("luke");
+        scn.StartGame();
+        var host = MissionTestSupport.putOnTable(scn, 9700, scn.LS, MissionTestSupport.begunTheCloneWarHas());
+        scn.AttachCardsTo(host, rescue);
+        scn.MoveLocationToTable(petranaki);
+        rescue.setWhileInPlayData(new com.gempukku.swccgo.game.state.WhileInPlayData(true));
+        scn.gameState().imprisonCharacter(scn.game(), amidala, petranaki);
+        scn.MoveCardsToLocation(petranaki, vader);
+        scn.MoveCardsToLocation(petranaki, luke);
+        assertFalse(scn.game().getModifiersQuerying().mayNotBeTransferred(scn.gameState(), amidala));
+        scn.SkipToDSTurn(Phase.MOVE);
+        assertTrue(scn.AwaitingDSMovePhaseActions());
+        assertTrue(scn.DSActionAvailable("Take imprisoned captive into custody"));
+        scn.DSChooseAction("Take imprisoned captive into custody");
         scn.PassAllResponses();
-        assertTrue(scn.GetUnpaidDSAttrition() >= 2 || scn.GetLSBattleDestinyCount() >= 1);
+        assertEquals(vader, amidala.getEscort());
+        assertFalse(amidala.isImprisoned());
     }
 
     @Test
@@ -284,7 +330,9 @@ public class Card_1291_067_Tests {
         scn.MoveLocationToTable(petranaki);
         rescue.setWhileInPlayData(new com.gempukku.swccgo.game.state.WhileInPlayData(true));
         scn.MoveCardsToTopOfLSLostPile(amidala);
-        scn.EnterControlOrKeepRequired();
+        assertTrue(scn.AwaitingDSActivatePhaseActions());
+        scn.DSActivateMaxForceAndPass();
+        scn.PassResponses("required");
         scn.PassAllResponses();
         assertInZone(Zone.USED_PILE, rescue);
     }

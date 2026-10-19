@@ -3,7 +3,6 @@ package com.gempukku.swccgo.cards.set1291.dark;
 import com.gempukku.swccgo.cards.AbstractMission;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.evaluators.MaxLimitEvaluator;
-import com.gempukku.swccgo.cards.evaluators.OnTableEvaluator;
 import com.gempukku.swccgo.common.DestinyType;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
@@ -28,6 +27,7 @@ import com.gempukku.swccgo.logic.effects.PutStackedCardsInUsedPileEffect;
 import com.gempukku.swccgo.logic.effects.TargetCardOnTableEffect;
 import com.gempukku.swccgo.logic.effects.UnrespondableEffect;
 import com.gempukku.swccgo.logic.effects.choose.StackOneCardFromLostPileEffect;
+import com.gempukku.swccgo.logic.evaluators.BaseEvaluator;
 import com.gempukku.swccgo.logic.modifiers.EachBattleDestinyModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
@@ -79,7 +79,19 @@ public class Card1291_028 extends AbstractMission {
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
         List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new EachBattleDestinyModifier(self, Filters.any, new MaxLimitEvaluator(new OnTableEvaluator(self, alignedSystems(self)), 2), self.getOwner()));
+        modifiers.add(new EachBattleDestinyModifier(self, Filters.any, new MaxLimitEvaluator(new BaseEvaluator() {
+            @Override
+            public float evaluateExpression(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard cardAffected) {
+                int n = 0;
+                Filter aligned = alignedSystems(self);
+                for (PhysicalCard loc : gameState.getTopLocations()) {
+                    if (aligned.accepts(gameState, modifiersQuerying, loc)) {
+                        n++;
+                    }
+                }
+                return n;
+            }
+        }, 2), self.getOwner()));
         return modifiers;
     }
 

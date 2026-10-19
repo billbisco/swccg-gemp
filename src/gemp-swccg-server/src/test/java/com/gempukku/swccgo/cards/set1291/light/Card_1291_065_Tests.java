@@ -106,10 +106,13 @@ public class Card_1291_065_Tests {
         var host = MissionTestSupport.putOnTable(scn, 9500, scn.LS, MissionTestSupport.begunTheCloneWarHas());
         scn.AttachCardsTo(host, assault);
         var locs = muunilinst(scn);
-        scn.MoveCardsToLocation(locs[0], luke);
-        scn.MoveCardsToLocation(locs[1], leia);
-        scn.MoveCardsToLocation(locs[2], obi);
-        scn.EnterControlOrKeepRequired();
+        var site3 = MissionTestSupport.putLocationOnTable(scn, 9504, scn.LS, MissionTestSupport.muunilinstSite(Side.LIGHT, "Muunilinst: Hangar"));
+        scn.MoveCardsToLocation(locs[1], luke);
+        scn.MoveCardsToLocation(locs[2], leia);
+        scn.MoveCardsToLocation(site3, obi);
+        assertTrue(scn.AwaitingDSActivatePhaseActions());
+        scn.DSActivateMaxForceAndPass();
+        scn.PassResponses("required");
         scn.PassAllResponses();
         assertTrue(scn.DSDecisionAvailable("Choose Force to lose"));
         scn.DSChooseCard(scn.GetTopOfDSReserveDeck());
@@ -148,7 +151,9 @@ public class Card_1291_065_Tests {
         var locs = muunilinst(scn);
         scn.MoveCardsToLocation(locs[0], trooper);
         scn.MoveCardsToLocation(locs[1], vader);
-        scn.EnterControlOrKeepRequired();
+        assertTrue(scn.AwaitingDSActivatePhaseActions());
+        scn.DSActivateMaxForceAndPass();
+        scn.PassResponses("required");
         scn.PassAllResponses();
         assertInZone(Zone.USED_PILE, assault);
     }
@@ -169,8 +174,9 @@ public class Card_1291_065_Tests {
         scn.MoveCardsToLocation(locs[1], leia);
         scn.MoveCardsToLocation(locs[2], obi);
         scn.MoveCardsToLocation(locs[0], trooper);
-        scn.EnterControlOrKeepRequired();
-        scn.PassAllResponses();
+        assertTrue(scn.AwaitingDSActivatePhaseActions());
+        scn.DSActivateMaxForceAndPass();
+        assertTrue(scn.AwaitingDSControlPhaseActions());
         assertTrue(scn.GetStackedCards(assault).isEmpty());
         assertInZone(Zone.SIDE_OF_TABLE, assault);
     }
