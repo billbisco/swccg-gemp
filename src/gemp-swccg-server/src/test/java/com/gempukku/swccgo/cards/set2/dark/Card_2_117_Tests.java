@@ -100,6 +100,7 @@ public class Card_2_117_Tests {
         scn.AttachCardsTo(vcsd, tractor);
         scn.MoveCardsToDSHand(launchBay);
         scn.SkipToPhase(Phase.DEPLOY);
+        scn.EnsureDSForcePile(6);
         assertTrue("Launch Bay should deploy. Decision: " + decisionText(scn), scn.DSDeployAvailable(launchBay));
         scn.DSDeployCard(launchBay);
         scn.PassAllResponses();
@@ -117,6 +118,7 @@ public class Card_2_117_Tests {
     }
 
     private void initiateBesiegedBattle(VirtualTableScenario scn, PhysicalCardImpl besieged, PhysicalCardImpl... dsCharacters) {
+        scn.EnsureDSForcePile(2);
         assertTrue("Besieged battle not available. Decision: " + decisionText(scn),
                 scn.DSCardActionAvailable(besieged, "Initiate Besieged battle"));
         scn.DSUseCardAction(besieged, "Initiate Besieged battle");
@@ -176,6 +178,7 @@ public class Card_2_117_Tests {
         scn.MoveCardsToDSHand(launchBay);
 
         scn.SkipToPhase(Phase.DEPLOY);
+        scn.EnsureDSForcePile(6);
         assertFalse("Besieged should not deploy on an uncaptured starship. Decision: " + decisionText(scn),
                 scn.DSDeployAvailable(besieged));
 
@@ -383,6 +386,8 @@ public class Card_2_117_Tests {
         // Empty the ship through a real Besieged battle forfeit so table-changed fires
         // and StealCapturedStarshipWithNoCharactersRule can run.
         scn.SkipToPhase(Phase.BATTLE);
+        scn.PrepareDSDestiny(1);
+        scn.PrepareLSDestiny(1);
         initiateBesiegedBattle(scn, besieged, trooper1, trooper2, trooper3, trooper4);
         assertTrue(scn.IsParticipatingInBattle(trooper1, han));
 

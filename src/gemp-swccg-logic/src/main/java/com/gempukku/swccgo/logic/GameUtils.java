@@ -53,6 +53,18 @@ public class GameUtils {
     }
 
     /**
+     * Builds the RNG used for deck shuffles and random card picks.
+     * System property {@code gemp.shuffleSeed}: a number seeds the RNG; null or a non-number
+     * (including {@code random}) uses an unseeded {@link Random}.
+     */
+    public static Random createShuffleRandom() {
+        Long seed = Long.getLong("gemp.shuffleSeed");
+        return seed != null ? new Random(seed) : new Random();
+    }
+
+    private static final Random _shuffleRandom = createShuffleRandom();
+
+    /**
      * Gets the specified number of random cards from the specified card list.
      * @param cards the card list
      * @param count the number of random cards to get
@@ -60,7 +72,7 @@ public class GameUtils {
      */
     public static List<PhysicalCard> getRandomCards(Collection<PhysicalCard> cards, int count) {
         List<PhysicalCard> randomizedCards = new ArrayList<PhysicalCard>(cards);
-        Collections.shuffle(randomizedCards);
+        Collections.shuffle(randomizedCards, _shuffleRandom);
         return new LinkedList<>(randomizedCards.subList(0, Math.min(count, randomizedCards.size())));
     }
 
