@@ -4,7 +4,6 @@ import com.gempukku.swccgo.common.CardType;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Keyword;
-import com.gempukku.swccgo.common.Persona;
 import com.gempukku.swccgo.common.Phase;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
@@ -137,6 +136,7 @@ public class Card_7_005_Tests {
 
     @Test
     public void BothanSpyMakesDeathStarPlansTargetingSelfImmuneToAlter() {
+        //tests immunity both during initial play and after plans is deployed (active on table)
         var scn = GetScenario();
 
         var spy = scn.GetLSCard("spy");
@@ -164,7 +164,8 @@ public class Card_7_005_Tests {
         scn.LSChooseCard(ds_site);
         scn.LSChooseCard(spy);
 
-        assertTrue(scn.DSDecisionAvailable("Deploying"));
+        assertTrue(scn.DSDecisionAvailable("Deploying")); //Deploying Death Star Plans - Optional responses
+
         assertFalse(scn.DSCardPlayAvailable(alter));
         scn.PassAllResponses();
 
@@ -175,6 +176,7 @@ public class Card_7_005_Tests {
 
     @Test
     public void BothanSpyDoesNotMakeDeathStarPlansTargetingNonSelfImmuneToAlter() {
+        //tests immunity both during initial play and after plans is deployed (active on table)
         var scn = GetScenario();
 
         var spy = scn.GetLSCard("spy");
@@ -203,7 +205,7 @@ public class Card_7_005_Tests {
         scn.LSChooseCard(ds_site);
         scn.LSChooseCard(droid);
 
-        assertTrue(scn.DSDecisionAvailable("Deploying")); //Deploying •Death Star Plans - Optional responses
+        assertTrue(scn.DSDecisionAvailable("Deploying")); //Deploying Death Star Plans - Optional responses
         assertTrue(scn.DSCardPlayAvailable(alter));
         scn.PassAllResponses();
 
@@ -231,9 +233,6 @@ public class Card_7_005_Tests {
         scn.MoveCardsToLocation(yavin_db,spy);
 
         scn.SkipToLSTurn(Phase.CONTROL);
-
-            /// should not allow attempting to play Nabrun here?
-//        assertFalse(scn.LSCardPlayAvailable(nabrun));
 
         scn.LSPlayCard(nabrun);
         scn.LSChooseCard(yavin_db);
