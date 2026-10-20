@@ -446,6 +446,28 @@ DEFAULT CHARSET=utf8
 COLLATE=utf8_bin;
 
 
+-- -----------------------------------------------------
+-- Table `gemp-swccg`.`game_save`
+-- Saved games (save/resume). Server-side only; deleted 15 days after the last activity.
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `gemp-swccg`.`game_save` (
+  `game_id` VARCHAR(64) NOT NULL ,
+  `owner` VARCHAR(64) NOT NULL ,
+  `header` MEDIUMTEXT NOT NULL ,
+  `move_log` MEDIUMBLOB NOT NULL ,
+  `snapshot` MEDIUMBLOB NULL ,
+  `snapshot_log_size` INT(11) NOT NULL DEFAULT 0 ,
+  `snapshot_fingerprint` VARCHAR(64) NULL ,
+  `updated_at` BIGINT NOT NULL ,
+  PRIMARY KEY (`game_id`) ,
+  INDEX `idx_game_save_owner` (`owner`) ,
+  INDEX `idx_game_save_updated` (`updated_at`)
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8
+COLLATE=utf8_bin;
+
+
 
 
 
