@@ -13,6 +13,8 @@ import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import com.gempukku.swccgo.game.PhysicalCardImpl;
+import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
+import com.gempukku.swccgo.logic.effects.LoseCardFromTableEffect;
 import com.gempukku.swccgo.logic.modifiers.KeywordModifier;
 import org.junit.Test;
 
@@ -27,6 +29,7 @@ public class Card_217_020_Tests {
     protected VirtualTableScenario GetScenario() {
         return new VirtualTableScenario(
                 new HashMap<>() {{
+                    put("quigon", "11_10"); // Qui-Gon Jinn (Jedi)
                 }},
                 new HashMap<>() {{
                     put("rots", "217_20");
@@ -36,6 +39,7 @@ public class Card_217_020_Tests {
                     put("sidious", "14_78");
                     put("castle", "209_50");
                     put("bridge", "211_20");
+                    put("naboo", "12_169"); // Naboo system
                 }},
                 15,
                 15,
@@ -188,6 +192,85 @@ public class Card_217_020_Tests {
         assertEquals(3, scn.GetDestiny(dooku));
         assertEquals(3, scn.GetDestiny(sidious));
         assertEquals(1, scn.GetDestiny(vader));
+    }
+
+    @Test
+    public void RevengeOfTheSithOpponentLosesOneForceWhenJediLostAtSystemWithDarkJedi() {
+        var scn = GetScenario();
+
+        var rots = scn.GetDSCard("rots");
+        var vader = scn.GetDSCard("vader2");
+        var naboo = scn.GetDSCard("naboo");
+        var quigon = scn.GetLSCard("quigon");
+
+        scn.StartGame();
+        passStartingInterrupts(scn);
+        grantVaderApprentice(scn, rots);
+        scn.MoveLocationToTable(naboo);
+        scn.MoveCardsToLocation(naboo, vader, quigon);
+        scn.SkipToLSTurn(Phase.CONTROL);
+
+        int lsLostBefore = scn.GetLSLostPileCount();
+        scn.LSExecuteAdHocEffect(quigon, new LoseCardFromTableEffect(new TopLevelGameTextAction(quigon, quigon.getCardId()), quigon));
+        scn.PassAllResponses();
+
+        assertTrue("Jedi lost at a system with a Dark Jedi must make opponent lose 1 Force", scn.AwaitingLSForceLossPayment());
+        scn.LSPayForceLossFromReserveDeck();
+        scn.PassAllResponses();
+
+        assertEquals(lsLostBefore + 2, scn.GetLSLostPileCount()); // Qui-Gon plus 1 Force
+    }
+
+    @Test
+    public void RevengeOfTheSithOpponentLosesOneForceWhenJediLostAtSiteWithDarkJedi() {
+        var scn = GetScenario();
+
+        var rots = scn.GetDSCard("rots");
+        var vader = scn.GetDSCard("vader2");
+        var site = scn.GetDSStartingLocation();
+        var quigon = scn.GetLSCard("quigon");
+
+        scn.StartGame();
+        passStartingInterrupts(scn);
+        grantVaderApprentice(scn, rots);
+        scn.MoveCardsToLocation(site, vader, quigon);
+        scn.SkipToLSTurn(Phase.CONTROL);
+
+        int lsLostBefore = scn.GetLSLostPileCount();
+        scn.LSExecuteAdHocEffect(quigon, new LoseCardFromTableEffect(new TopLevelGameTextAction(quigon, quigon.getCardId()), quigon));
+        scn.PassAllResponses();
+
+        assertTrue(scn.AwaitingLSForceLossPayment());
+        scn.LSPayForceLossFromReserveDeck();
+        scn.PassAllResponses();
+
+        assertEquals(lsLostBefore + 2, scn.GetLSLostPileCount()); // Qui-Gon plus 1 Force
+    }
+
+    @Test
+    public void RevengeOfTheSithNoForceLossWhenJediLostAwayFromDarkJedi() {
+        var scn = GetScenario();
+
+        var rots = scn.GetDSCard("rots");
+        var vader = scn.GetDSCard("vader2");
+        var naboo = scn.GetDSCard("naboo");
+        var site = scn.GetDSStartingLocation();
+        var quigon = scn.GetLSCard("quigon");
+
+        scn.StartGame();
+        passStartingInterrupts(scn);
+        grantVaderApprentice(scn, rots);
+        scn.MoveLocationToTable(naboo);
+        scn.MoveCardsToLocation(site, vader);
+        scn.MoveCardsToLocation(naboo, quigon);
+        scn.SkipToLSTurn(Phase.CONTROL);
+
+        int lsLostBefore = scn.GetLSLostPileCount();
+        scn.LSExecuteAdHocEffect(quigon, new LoseCardFromTableEffect(new TopLevelGameTextAction(quigon, quigon.getCardId()), quigon));
+        scn.PassAllResponses();
+
+        assertFalse(scn.AwaitingLSForceLossPayment());
+        assertEquals(lsLostBefore + 1, scn.GetLSLostPileCount()); // only Qui-Gon
     }
 
     private void passStartingInterrupts(VirtualTableScenario scn) {
