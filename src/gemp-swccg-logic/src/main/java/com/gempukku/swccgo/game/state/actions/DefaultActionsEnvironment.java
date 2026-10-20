@@ -77,6 +77,14 @@ public class DefaultActionsEnvironment implements ActionsEnvironment {
      * @param swccgGame the game
      * @param actionStack the action stack
      */
+    /**
+     * Determines if no action is being carried out (nothing on the action stack).
+     * @return true or false
+     */
+    public boolean isActionStackEmpty() {
+        return _actionStack.isEmpty();
+    }
+
     public DefaultActionsEnvironment(SwccgGame swccgGame, ActionStack actionStack) {
         _swccgGame = swccgGame;
         _actionStack = actionStack;

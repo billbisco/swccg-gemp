@@ -58,6 +58,10 @@
                         <manifest>
                             <mainClass>com.gempukku.swccgo.async.SwccgoAsyncServer</mainClass>
                         </manifest>
+                        <manifestEntries>
+                            <!-- Game save snapshots (Kryo) read JDK collection internals. -->
+                            <Add-Opens>java.base/java.util java.base/java.lang java.base/java.util.concurrent java.base/java.util.concurrent.atomic java.base/java.util.regex java.base/java.lang.invoke</Add-Opens>
+                        </manifestEntries>
                     </archive>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
