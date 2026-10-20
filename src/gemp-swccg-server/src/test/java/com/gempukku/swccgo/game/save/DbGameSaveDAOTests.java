@@ -14,7 +14,8 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * Runs against a real MariaDB with the game_save table, only when -Dgemp.test.dbUrl is set
- * (for example jdbc:mysql://127.0.0.1:3306/gemp-swccg?user=root). Skipped otherwise.
+ * (for example jdbc:mysql://127.0.0.1:3306/gemp-swccg, with -Dgemp.test.dbUser and -Dgemp.test.dbPassword).
+ * Skipped otherwise. The Docker integration CI job runs it against the stack's database.
  */
 public class DbGameSaveDAOTests {
     private DbGameSaveDAO _dao;
@@ -25,6 +26,8 @@ public class DbGameSaveDAOTests {
         assumeTrue(url != null && !url.isEmpty());
         BasicDataSource ds = new BasicDataSource();
         ds.setUrl(url);
+        ds.setUsername(System.getProperty("gemp.test.dbUser", "root"));
+        ds.setPassword(System.getProperty("gemp.test.dbPassword", ""));
         _dao = new DbGameSaveDAO(new DbAccess(ds));
         _dao.delete("db-test-1");
         _dao.delete("db-test-2");

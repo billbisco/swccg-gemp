@@ -12,11 +12,12 @@ class InMemoryGameSaveDAO implements GameSaveDAO {
 
     private final Map<String, Row> _rows = new HashMap<>();
     boolean failSaves;
+    final java.util.Set<String> failSavesFor = new java.util.HashSet<>();
     int saves;
 
     @Override
     public void save(String gameId, String owner, GameSave save) {
-        if (failSaves) {
+        if (failSaves || failSavesFor.contains(gameId)) {
             throw new RuntimeException("database unavailable");
         }
         saves++;
