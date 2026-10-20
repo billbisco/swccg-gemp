@@ -88,7 +88,7 @@ public class Card4_110 extends AbstractCreature {
                                 protected void doPlayEffect(SwccgGame game) {
                                     Collection<PhysicalCard> mynocks = Filters.filterAllOnTable(game, Filters.and(Filters.mynock, Filters.attachedTo(host)));
                                     if (!mynocks.isEmpty()) {
-                                        PhysicalCard mynockToDetach = GameUtils.getRandomCards(mynocks, 1).get(0);
+                                        PhysicalCard mynockToDetach = GameUtils.getRandomCards(game, mynocks, 1).get(0);
                                         action.appendEffect(
                                                 new AddUntilEndOfTurnModifierEffect(action, new MayNotAttackModifier(self, mynockToDetach), null));
                                         action.appendEffect(

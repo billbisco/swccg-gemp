@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<deck>
+    <card blueprintId="2_1" horizontal="false" title="Arcona"/>
+    <card blueprintId="1_3" horizontal="false" title="Biggs Darklighter"/>
+    <card blueprintId="1_4" horizontal="false" title="BoShek"/>
+    <card blueprintId="1_5" horizontal="false" title="C-3PO (See-Threepio)"/>
+    <card blueprintId="1_6" horizontal="false" title="CZ-3 (Seezee-Three)"/>
+    <card blueprintId="2_3" horizontal="false" title="Chewbacca"/>
+    <card blueprintId="2_4" horizontal="false" title="Commander Evram Lajaie"/>
+    <card blueprintId="1_9" horizontal="false" title="Figrin D'an"/>
+    <card blueprintId="1_11" horizontal="false" title="Han Solo"/>
+    <card blueprintId="1_13" horizontal="false" title="Jek Porkins"/>
+    <card blueprintId="1_15" horizontal="false" title="Kal'Falnl C'ndros"/>
+    <card blueprintId="1_17" horizontal="false" title="Leia Organa"/>
+    <card blueprintId="1_19" horizontal="false" title="Luke Skywalker"/>
+    <card blueprintId="1_21" horizontal="false" title="Obi-Wan Kenobi"/>
+    <card blueprintId="1_22" horizontal="false" title="Owen Lars"/>
+    <card blueprintId="1_23" horizontal="false" title="Pops"/>
+    <card blueprintId="2_14" horizontal="false" title="R2-D2 (Artoo-Detoo)"/>
+    <card blueprintId="2_21" horizontal="false" title="Tiree"/>
+    <card blueprintId="2_23" horizontal="false" title="Wedge Antilles"/>
+    <card blueprintId="1_38" horizontal="false" title="Restraining Bolt"/>
+    <card blueprintId="2_33" horizontal="false" title="Grappling Hook"/>
+    <card blueprintId="1_66" horizontal="false" title="Traffic Control"/>
+    <card blueprintId="2_40" horizontal="false" title="Undercover"/>
+    <card blueprintId="1_70" horizontal="false" title="A Few Maneuvers"/>
+    <card blueprintId="2_45" horizontal="false" title="Blast The Door, Kid!"/>
+    <card blueprintId="2_49" horizontal="false" title="Grimtaash"/>
+    <card blueprintId="2_50" horizontal="false" title="Houjix"/>
+    <card blueprintId="1_87" horizontal="false" title="How Did We Get Into This Mess?"/>
+    <card blueprintId="1_88" horizontal="false" title="Hyper Escape"/>
+    <card blueprintId="1_90" horizontal="false" title="It Could Be Worse"/>
+    <card blueprintId="1_98" horizontal="false" title="Narrow Escape"/>
+    <card blueprintId="1_100" horizontal="false" title="Old Ben"/>
+    <card blueprintId="1_102" horizontal="false" title="Out Of Nowhere"/>
+    <card blueprintId="1_105" horizontal="false" title="Rebel Barrier"/>
+    <card blueprintId="1_109" horizontal="false" title="Sense"/>
+    <card blueprintId="2_57" horizontal="false" title="Sorry About The Mess"/>
+    <card blueprintId="1_115" horizontal="false" title="The Bith Shuffle"/>
+    <card blueprintId="1_119" horizontal="false" title="Warrior's Courage"/>
+    <card blueprintId="1_120" horizontal="false" title="We're Doomed"/>
+    <card blueprintId="1_121" horizontal="false" title="Alderaan"/>
+    <card blueprintId="2_64" horizontal="false" title="Kashyyyk"/>
+    <card blueprintId="1_127" horizontal="false" title="Tatooine"/>
+    <card blueprintId="1_128" horizontal="true" title="Tatooine: Cantina"/>
+    <card blueprintId="1_129" horizontal="true" title="Tatooine: Docking Bay 94"/>
+    <card blueprintId="1_130" horizontal="true" title="Tatooine: Dune Sea"/>
+    <card blueprintId="1_132" horizontal="true" title="Tatooine: Lars' Moisture Farm"/>
+    <card blueprintId="1_133" horizontal="true" title="Tatooine: Mos Eisley"/>
+    <card blueprintId="1_136" horizontal="true" title="Yavin 4: Docking Bay"/>
+    <card blueprintId="1_137" horizontal="true" title="Yavin 4: Jungle"/>
+    <card blueprintId="1_140" horizontal="false" title="Corellian Corvette"/>
+    <card blueprintId="1_140" horizontal="false" title="Corellian Corvette"/>
+    <card blueprintId="1_142" horizontal="false" title="Gold 5"/>
+    <card blueprintId="1_143" horizontal="false" title="Millennium Falcon"/>
+    <card blueprintId="2_70" horizontal="false" title="Red 2"/>
+    <card blueprintId="2_72" horizontal="false" title="Red 6"/>
+    <card blueprintId="103_2" horizontal="false" title="Red Leader In Red 1"/>
+    <card blueprintId="1_149" horizontal="false" title="Luke's X-34 Landspeeder"/>
+    <card blueprintId="1_152" horizontal="false" title="Blaster"/>
+    <card blueprintId="1_154" horizontal="false" title="Han's Heavy Blaster Pistol"/>
+    <card blueprintId="1_155" horizontal="false" title="Jedi Lightsaber"/>
+</deck>

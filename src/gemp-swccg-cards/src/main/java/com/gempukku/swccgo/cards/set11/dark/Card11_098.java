@@ -74,7 +74,7 @@ public class Card11_098 extends AbstractPodracer {
                     new PassthruEffect(action) {
                         @Override
                         protected void doPlayEffect(SwccgGame game) {
-                            PhysicalCard raceDestiny = GameUtils.getRandomCards(Filters.filter(game.getGameState().getStackedCards(self), game, Filters.raceDestinyForPlayer(playerId)), 1).get(0);
+                            PhysicalCard raceDestiny = GameUtils.getRandomCards(game, Filters.filter(game.getGameState().getStackedCards(self), game, Filters.raceDestinyForPlayer(playerId)), 1).get(0);
                             action.appendCost(
                                     new PutStackedCardInUsedPileEffect(action, playerId, raceDestiny, false));
                             // Perform result(s)

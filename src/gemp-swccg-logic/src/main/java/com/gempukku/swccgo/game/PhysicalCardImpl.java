@@ -1583,8 +1583,12 @@ public class PhysicalCardImpl implements PhysicalCard, Cloneable {
         return super.equals(o);
     }
 
+    /**
+     * Uses the permanent card id, so hash-ordered collections of cards iterate in the same order in every run.
+     * Equality stays identity; a revert snapshot copy shares the id, which the hash contract allows.
+     */
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return _permanentCardId;
     }
 }

@@ -99,7 +99,7 @@ public class SearchPartyAction extends AbstractTopLevelRuleAction {
                                                             Collection<PhysicalCard> missingCharacters = Filters.filterActive(game, null,
                                                                     SpotOverride.INCLUDE_MISSING_AND_UNDERCOVER, Filters.and(Filters.owner(missingCharacterOwner), Filters.missing, Filters.character, Filters.at(_site)));
                                                             if (!missingCharacters.isEmpty()) {
-                                                                PhysicalCard foundCharacter = GameUtils.getRandomCards(missingCharacters, 1).get(0);
+                                                                PhysicalCard foundCharacter = GameUtils.getRandomCards(game, missingCharacters, 1).get(0);
                                                                 _that.appendEffect(
                                                                         new FindMissingCharacterEffect(_that, foundCharacter, true));
 

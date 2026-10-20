@@ -64,7 +64,7 @@ public class PeekAtRandomCardsInOpponentsHandEffect extends AbstractStandardEffe
     protected FullEffectResult playEffectReturningResult(SwccgGame game) {
         String opponent = game.getOpponent(_playerId);
 
-        List<PhysicalCard> randomCards = GameUtils.getRandomCards(game.getGameState().getHand(opponent), _count);
+        List<PhysicalCard> randomCards = GameUtils.getRandomCards(game, game.getGameState().getHand(opponent), _count);
         String text = "Random card" + GameUtils.s(randomCards.size()) + " from opponent's hand";
 
         game.getUserFeedback().sendAwaitingDecision(_playerId,

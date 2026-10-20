@@ -64,7 +64,7 @@ public class RevealRandomCardsInOpponentsHandEffect extends AbstractStandardEffe
     protected FullEffectResult playEffectReturningResult(SwccgGame game) {
         String opponent = game.getOpponent(_playerId);
 
-        final List<PhysicalCard> randomCards = GameUtils.getRandomCards(game.getGameState().getHand(opponent), _count);
+        final List<PhysicalCard> randomCards = GameUtils.getRandomCards(game, game.getGameState().getHand(opponent), _count);
         if (!randomCards.isEmpty()) {
             game.getGameState().sendMessage(GameUtils.getCardLink(_action.getActionSource()) + " revealed " + GameUtils.getAppendedNames(randomCards) + " from " + opponent + "'s hand at random");
         }

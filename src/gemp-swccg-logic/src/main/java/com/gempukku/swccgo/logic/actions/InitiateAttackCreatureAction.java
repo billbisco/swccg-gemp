@@ -95,7 +95,7 @@ public class InitiateAttackCreatureAction extends AbstractTopLevelRuleAction {
                 _creatureChosen = true;
 
                 Collection<PhysicalCard> possibleCreaturesToAttack = Filters.filterActive(game, null, Filters.creatureAtLocationCanBeAttackedByPlayer(performingPlayer, _location));
-                _creature = GameUtils.getRandomCards(Filters.filter(possibleCreaturesToAttack, game, Filters.owner(_owner)), 1).get(0);
+                _creature = GameUtils.getRandomCards(game, Filters.filter(possibleCreaturesToAttack, game, Filters.owner(_owner)), 1).get(0);
             }
 
             if (!_attackInitiated) {

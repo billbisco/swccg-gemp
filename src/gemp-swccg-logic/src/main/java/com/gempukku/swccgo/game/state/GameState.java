@@ -34,7 +34,7 @@ public class GameState implements Snapshotable<GameState> {
     private static Logger _log = LogManager.getLogger(GameState.class);
     private static final int LAST_MESSAGE_STORED_COUNT = 25000;
     private SwccgGame _game;
-    private final Random _shuffleRandom = GameUtils.createShuffleRandom();
+    private Random _shuffleRandom = GameUtils.createShuffleRandom();
     private PlayerOrder _playerOrder;
 
     private Map<String, List<PhysicalCard>> _reserveDecks = new HashMap<String, List<PhysicalCard>>();
@@ -152,6 +152,8 @@ public class GameState implements Snapshotable<GameState> {
 
         // Set each field
         snapshot._game = _game;
+        // Revert keeps drawing from the same RNG, so a logged game replays the same way after a revert.
+        snapshot._shuffleRandom = _shuffleRandom;
         snapshot._playerOrder = _playerOrder;
         for (String playerId : _reserveDecks.keySet()) {
             List<PhysicalCard> snapshotList = new LinkedList<PhysicalCard>();
@@ -374,6 +376,22 @@ public class GameState implements Snapshotable<GameState> {
 
     public GameState(SwccgGame game) {
         _game = game;
+    }
+
+    /**
+     * Gets the game's RNG, used for deck shuffles and random card picks.
+     * @return the RNG
+     */
+    public Random getRandom() {
+        return _shuffleRandom;
+    }
+
+    /**
+     * Seeds the game's RNG. Call before the game starts so the opening shuffles use the seed.
+     * @param seed the seed
+     */
+    public void setRandomSeed(long seed) {
+        _shuffleRandom = new Random(seed);
     }
 
     public void init(PlayerOrder playerOrder, String darkSidePlayer, String lightSidePlayer, Map<String, List<String>> cards, Map<String, List<String>> outsideOfDeckCards, SwccgCardBlueprintLibrary library) {

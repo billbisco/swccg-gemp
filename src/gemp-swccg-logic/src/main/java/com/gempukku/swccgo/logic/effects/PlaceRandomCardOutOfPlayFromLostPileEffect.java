@@ -42,7 +42,7 @@ public class PlaceRandomCardOutOfPlayFromLostPileEffect extends AbstractSubActio
                     @Override
                     protected void doPlayEffect(SwccgGame game) {
                         // Perform result(s)
-                        Collection<PhysicalCard> randomCards = GameUtils.getRandomCards(game.getGameState().getCardPile(_cardPileOwner, _cardPile), 1);
+                        Collection<PhysicalCard> randomCards = GameUtils.getRandomCards(game, game.getGameState().getCardPile(_cardPileOwner, _cardPile), 1);
                         if (!randomCards.isEmpty()) {
                             subAction.appendEffect(
                                     new PlaceCardOutOfPlayFromOffTableEffect(subAction, randomCards.iterator().next()));

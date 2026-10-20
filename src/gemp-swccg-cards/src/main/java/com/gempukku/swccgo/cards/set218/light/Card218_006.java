@@ -55,7 +55,7 @@ public class Card218_006 extends AbstractUsedOrLostInterrupt {
             List<PhysicalCard> hand = new LinkedList<>(Filters.filter(game.getGameState().getHand(playerId), game, Filters.not(self)));
 
             if (!hand.isEmpty()) {
-                Collections.shuffle(hand);
+                Collections.shuffle(hand, game.getGameState().getRandom());
                 final PhysicalCard toReveal = hand.get(0);
 
                 final PlayInterruptAction action = new PlayInterruptAction(game, self, gameTextActionId, CardSubtype.USED);
