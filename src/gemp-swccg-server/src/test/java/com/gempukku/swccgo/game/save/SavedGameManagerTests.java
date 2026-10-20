@@ -197,6 +197,32 @@ public class SavedGameManagerTests {
     }
 
     @Test
+    public void SavedGameAtTheCapNeverDropsAGameThatCouldNotBeSaved() throws Exception {
+        //test1: if the longest-idle game can't be saved, it stays live and the next idle game is evicted instead
+        //test2: if no idle game can be saved, the new game is refused and nothing is dropped
+        SavedGameManager m = manager(2);
+        _dao.failSaves = true;
+        start(m, "a", "guest-a", 1);
+        _clock.advance(Duration.ofMinutes(1));
+        start(m, "b", "guest-b", 2);
+        _clock.advance(Duration.ofMinutes(40));
+        m.tick();
+        _dao.failSaves = false;
+        _dao.failSavesFor.add("a");
+        start(m, "c", "guest-c", 3);
+        assertTrue(m.isLive("a")); //test1
+        assertFalse(m.isLive("b")); //test1
+        assertTrue(_dao.has("b")); //test1
+
+        _clock.advance(Duration.ofMinutes(40));
+        _dao.failSavesFor.add("c");
+        assertThrows(SavedGameManager.BusyException.class, () -> start(m, "d", "guest-d", 4)); //test2
+        assertTrue(m.isLive("a")); //test2
+        assertTrue(m.isLive("c")); //test2
+        assertFalse(_dao.has("a")); //test2
+    }
+
+    @Test
     public void SavedGameIsDeletedAfter15DaysWithoutPlay() throws Exception {
         //test1: a save is kept for 15 days after the last answer
         //test2: and deleted at 15 days, for guests and signed-up players alike

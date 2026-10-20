@@ -181,7 +181,7 @@ public class SavedGameManager {
         long now = _clock.millis();
         for (LiveGame game : new ArrayList<>(_live.values())) {
             if (now - game._lastActivity >= _settings.unloadIdle().toMillis()) {
-                unload(game, false);
+                unload(game);
             }
         }
         int deleted = _dao.deleteLastPlayedAtOrBefore(now - _settings.retention().toMillis());
@@ -193,7 +193,7 @@ public class SavedGameManager {
     /** Saves every live game (server shutdown). */
     public synchronized void shutdown() {
         for (LiveGame game : new ArrayList<>(_live.values())) {
-            unload(game, false);
+            unload(game);
         }
     }
 
@@ -205,7 +205,11 @@ public class SavedGameManager {
         return _live.containsKey(gameId);
     }
 
-    /** At the cap, evicts the longest-idle game idle at least capEvictIdle. Revisit later. */
+    /**
+     * At the cap, evicts the longest-idle game idle at least capEvictIdle, but only once it is saved. A game whose
+     * save fails is never dropped; the next qualifying game is tried, and if none can be saved the caller is busy.
+     * Revisit later.
+     */
     private void makeRoom() throws BusyException {
         if (_live.size() < _settings.maxLiveGames()) {
             return;
@@ -213,26 +217,25 @@ public class SavedGameManager {
         long now = _clock.millis();
         List<LiveGame> byIdle = new ArrayList<>(_live.values());
         byIdle.sort((a, b) -> Long.compare(a._lastActivity, b._lastActivity));
-        LiveGame longestIdle = byIdle.get(0);
-        if (now - longestIdle._lastActivity < _settings.capEvictIdle().toMillis()) {
-            throw new BusyException();
-        }
-        unload(longestIdle, true);
-    }
-
-    /**
-     * Saves a game and drops it from memory. If the save fails the game stays in memory (and is retried next tick),
-     * unless it is being evicted at the cap.
-     */
-    private void unload(LiveGame game, boolean evenIfSaveFails) {
-        game._recorder.snapshotIfQuiet(game._root);
-        boolean saved = persist(game);
-        if (saved || evenIfSaveFails) {
-            _live.remove(game._gameId);
-            if (!saved) {
-                LOG.warn("Evicted game " + game._gameId + " without a save");
+        for (LiveGame game : byIdle) {
+            if (now - game._lastActivity < _settings.capEvictIdle().toMillis()) {
+                break;
+            }
+            if (unload(game)) {
+                return;
             }
         }
+        throw new BusyException();
+    }
+
+    /** Saves a game and drops it from memory. If the save fails the game stays in memory and is retried next tick. */
+    private boolean unload(LiveGame game) {
+        game._recorder.snapshotIfQuiet(game._root);
+        if (!persist(game)) {
+            return false;
+        }
+        _live.remove(game._gameId);
+        return true;
     }
 
     /** Snapshots the game at the first quiet point of each turn. */
