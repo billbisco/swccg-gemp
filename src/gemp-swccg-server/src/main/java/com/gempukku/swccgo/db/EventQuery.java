@@ -18,7 +18,7 @@ import java.util.List;
 public final class EventQuery {
     static final String LEAGUE_COLUMNS = "name, type, class, parameters, status, cost, allowSpectators, allowTimeExtensions, "
             + "showPlayerNames, decisionTimeoutSeconds, timePerPlayerMinutes, invitationOnly, registrationInfo, lockedDeckType, "
-            + "start, end";
+            + "start, end, schedule_id";
     static final String TOURNAMENT_COLUMNS = "tournament_id, draft_type, name, format, collection, stage, pairing, round, prizes, start";
     /** One day in milliseconds: {@code FLOOR(start / 86400000)} is the tournament's UTC day counted from the epoch. */
     static final long DAY_MS = 86400000L;
@@ -75,6 +75,15 @@ public final class EventQuery {
         return new EventQuery("select lp.league_type, count(*) from league_participation lp "
                 + "join league l on l.type = lp.league_type where l.end >= ? and l.end < ? group by lp.league_type",
                 List.of(from, to));
+    }
+
+    /**
+     * The leagues a league schedule created with the given start day: the scheduler's idempotency check (it never
+     * creates a second league for the same schedule and start day).
+     */
+    public static EventQuery leaguesOfScheduleStarting(int scheduleId, int start) {
+        return new EventQuery("select " + LEAGUE_COLUMNS + " from league where schedule_id = ? and start = ?",
+                List.of(scheduleId, start));
     }
 
     /** The distinct yyyyMM months ({@code end DIV 100}) of the leagues that ended before the day given. */
