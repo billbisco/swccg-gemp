@@ -85,6 +85,12 @@ var GempLinks = {
         {pattern: /^#(?:account\/history|history)\?(.*)$/, tab: "account", sub: "history", run: function (m) {
             if (window.GempHistoryPage)
                 GempHistoryPage.applyLink(GempLinks.parseQuery(m[1]));
+        }},
+        // a league schedule in League Admin (the calendar's "Scheduled (not yet created)" bars send admins here)
+        {pattern: /^#admin\/league\/schedule-(\d+)$/, tab: "admin", sub: "league", run: function (m) {
+            window.leagueAdminPendingSchedule = parseInt(m[1], 10);
+            if (window.GempLeagueAdminPage)
+                GempLeagueAdminPage.openPendingSchedule();
         }}
     ],
 

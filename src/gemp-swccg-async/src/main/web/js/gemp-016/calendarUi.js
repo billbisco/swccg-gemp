@@ -451,9 +451,9 @@ var EventCalendarUI = Class.extend({
         var head = $("<div class='calendar-details-head'></div>");
         head.append($("<span class='calendar-details-name'></span>").text(event.name || ""));
         // the "Go to" button sits right by the name so it is in the same place for every event
-        if (event.kind != "projected") {
+        if (event.kind != "projected" || this.options.onProjected) {
             head.append($("<button type='button' class='calendar-details-go'></button>")
-                .text(event.kind == "tournament" ? "Go to tournament" : "Go to league")
+                .text(event.kind == "tournament" ? "Go to tournament" : (event.kind == "projected" ? "Open schedule" : "Go to league"))
                 .button()
                 .click(function () { that.openEvent(event); }));
         }
@@ -549,6 +549,8 @@ var EventCalendarUI = Class.extend({
             action = {label: "Go to League", click: function () { that.openEvent(event); }};
         else if (event.kind == "tournament" && this.options.onTournament)
             action = {label: "Go to Tournament", click: function () { that.openEvent(event); }};
+        else if (event.kind == "projected" && this.options.onProjected)
+            action = {label: "Open Schedule", click: function () { that.openEvent(event); }};
 
         var extras = [];
         if (event.kind != "league" && event.kind != "tournament")
