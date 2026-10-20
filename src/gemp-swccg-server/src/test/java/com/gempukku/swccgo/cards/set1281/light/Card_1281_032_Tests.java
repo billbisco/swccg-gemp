@@ -231,4 +231,33 @@ public class Card_1281_032_Tests {
 
         assertInZone(Zone.USED_PILE, charts);
     }
+
+    @Test
+    public void ImperialNavigationChartsStealsWhenYouJustWonABattleHere() {
+        var scn = GetScenario();
+        var charts = scn.GetLSCard("charts");
+        var rest = scn.GetLSCard("rest");
+        var narshaddaa = scn.GetLSCard("narshaddaa");
+        var lando = scn.GetLSCard("lando");
+        var leia = scn.GetLSCard("leia");
+        var trooper = scn.GetDSCard("trooper");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(narshaddaa);
+        scn.MoveLocationToTable(rest);
+        scn.AttachCardsTo(rest, charts);
+        scn.MoveCardsToLocation(rest, lando, leia, trooper);
+        scn.SkipToLSTurn(Phase.BATTLE);
+
+        assertFalse(scn.LSCardActionAvailable(charts, "Steal"));
+        scn.LSInitiateBattle(rest);
+        scn.SkipToDamageSegment(false);
+        assertTrue(scn.LSWonBattle());
+        assertTrue(scn.LSCardActionAvailable(charts, "Steal"));
+        scn.LSUseCardAction(charts, "Steal");
+        scn.PassAllResponses();
+
+        assertEquals(Zone.SIDE_OF_TABLE, charts.getZone());
+        assertEquals(scn.LS, charts.getOwner());
+    }
 }
