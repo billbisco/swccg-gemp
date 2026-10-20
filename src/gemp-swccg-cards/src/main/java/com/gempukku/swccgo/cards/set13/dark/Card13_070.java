@@ -1,6 +1,6 @@
 package com.gempukku.swccgo.cards.set13.dark;
 
-import com.gempukku.swccgo.cards.AbstractLostInterrupt;
+import com.gempukku.swccgo.cards.AbstractUsedInterrupt;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
@@ -30,10 +30,10 @@ import java.util.List;
 /**
  * Set: Reflections III
  * Type: Interrupt
- * Subtype: Lost
+ * Subtype: Used
  * Title: Force Push
  */
-public class Card13_070 extends AbstractLostInterrupt {
+public class Card13_070 extends AbstractUsedInterrupt {
     public Card13_070() {
         super(Side.DARK, 5, "Force Push", Uniqueness.UNIQUE, ExpansionSet.REFLECTIONS_III, Rarity.PM);
         setLore("A fully-trained Sith warrior has more weapons at his disposal than just a lightsaber.");
@@ -43,12 +43,11 @@ public class Card13_070 extends AbstractLostInterrupt {
 
     @Override
     protected List<PlayInterruptAction> getGameTextTopLevelActions(final String playerId, final SwccgGame game, final PhysicalCard self) {
-        // Opponent's Jedi with >=1 combat card, present with your Dark Jedi
         Filter jediFilter = Filters.and(
-                Filters.opponents(self),
-                Filters.Jedi,
-                Filters.hasStacked(Filters.combatCard),
-                Filters.presentWith(self, Filters.and(Filters.your(self), Filters.Dark_Jedi))
+            Filters.opponents(self),
+            Filters.Jedi,
+            Filters.hasStacked(Filters.combatCard),
+            Filters.presentWith(self, Filters.and(Filters.your(self), Filters.Dark_Jedi))
         );
 
         if (!GameConditions.canTarget(game, self, jediFilter)) {
@@ -60,56 +59,56 @@ public class Card13_070 extends AbstractLostInterrupt {
         action.setText("Reveal a combat card");
         // Choose target(s)
         action.appendTargeting(
-                new TargetCardOnTableEffect(action, playerId, "Choose Jedi", jediFilter) {
-                    @Override
-                    protected void cardTargeted(final int targetGroupId, PhysicalCard targetedCard) {
-                        action.addAnimationGroup(targetedCard);
-                        // Allow response(s)
-                        action.allowResponses("Reveal one of " + GameUtils.getCardLink(targetedCard) + "'s combat cards",
-                                new RespondablePlayCardEffect(action) {
-                                    @Override
-                                    protected void performActionResults(Action targetingAction) {
-                                        final PhysicalCard finalTarget = action.getPrimaryTargetCard(targetGroupId);
-                                        if (finalTarget == null) {
-                                            return;
-                                        }
-
-                                        Collection<PhysicalCard> stackedCombatCards = Filters.filter(
-                                                game.getGameState().getStackedCards(finalTarget), game, Filters.combatCard);
-                                        if (stackedCombatCards.isEmpty()) {
-                                            return;
-                                        }
-
-                                        final PhysicalCard revealedCombatCard = GameUtils.getRandomCards(stackedCombatCards, 1).iterator().next();
-
-                                        // Reveal to both players (card-local; no shared stacked-reveal hierarchy)
-                                        action.appendEffect(
-                                                new ShowCardOnScreenEffect(action, revealedCombatCard));
-                                        action.appendEffect(
-                                                new RefreshPrintedDestinyValuesEffect(action, revealedCombatCard) {
-                                                    @Override
-                                                    protected void refreshedPrintedDestinyValues() {
-                                                        float destiny = revealedCombatCard.getDestinyValueToUse();
-                                                        game.getGameState().sendMessage("Revealed " + GameUtils.getCardLink(revealedCombatCard)
-                                                                + " (destiny " + GuiUtils.formatAsString(destiny) + ")");
-
-                                                        if (destiny > 4) {
-                                                            game.getGameState().sendMessage("Result: Destiny > 4 - place combat card on Reserve Deck");
-                                                            action.appendEffect(
-                                                                    new PutStackedCardInReserveDeckEffect(action, playerId, revealedCombatCard, false));
-                                                        } else {
-                                                            game.getGameState().sendMessage("Result: Destiny <= 4 - lose 1 Force; combat card remains stacked");
-                                                            action.appendEffect(
-                                                                    new LoseForceEffect(action, playerId, 1));
-                                                        }
-                                                    }
-                                                }
-                                        );
-                                    }
+            new TargetCardOnTableEffect(action, playerId, "Choose Jedi", jediFilter) {
+                @Override
+                protected void cardTargeted(final int targetGroupId, PhysicalCard targetedCard) {
+                    action.addAnimationGroup(targetedCard);
+                    // Allow response(s)
+                    action.allowResponses("Reveal one of " + GameUtils.getCardLink(targetedCard) + "'s combat cards",
+                        new RespondablePlayCardEffect(action) {
+                            @Override
+                            protected void performActionResults(Action targetingAction) {
+                                final PhysicalCard finalTarget = action.getPrimaryTargetCard(targetGroupId);
+                                if (finalTarget == null) {
+                                    return;
                                 }
-                        );
-                    }
+
+                                Collection<PhysicalCard> stackedCombatCards = Filters.filter(
+                                    game.getGameState().getStackedCards(finalTarget), game, Filters.combatCard);
+                                if (stackedCombatCards.isEmpty()) {
+                                    return;
+                                }
+
+                                final PhysicalCard revealedCombatCard = GameUtils.getRandomCards(stackedCombatCards, 1).getFirst();
+
+                                // show briefly to both players (could be replaced with a full reveal effect that emits a result)
+                                action.appendEffect(
+                                    new ShowCardOnScreenEffect(action, revealedCombatCard));
+                                action.appendEffect(
+                                    new RefreshPrintedDestinyValuesEffect(action, revealedCombatCard) {
+                                        @Override
+                                        protected void refreshedPrintedDestinyValues() {
+                                            float destiny = revealedCombatCard.getDestinyValueToUse();
+                                            game.getGameState().sendMessage("Revealed " + GameUtils.getCardLink(revealedCombatCard)
+                                                + " (destiny " + GuiUtils.formatAsString(destiny) + ")");
+
+                                            if (destiny > 4) {
+                                                game.getGameState().sendMessage("Result: Destiny > 4 - place combat card on Reserve Deck");
+                                                action.appendEffect(
+                                                    new PutStackedCardInReserveDeckEffect(action, playerId, revealedCombatCard, false));
+                                            } else {
+                                                game.getGameState().sendMessage("Result: Destiny <= 4 - lose 1 Force; combat card remains stacked");
+                                                action.appendEffect(
+                                                    new LoseForceEffect(action, playerId, 1));
+                                            }
+                                        }
+                                    }
+                                );
+                            }
+                        }
+                    );
                 }
+            }
         );
         return Collections.singletonList(action);
     }
