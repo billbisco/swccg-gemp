@@ -1,574 +1,877 @@
 <script type="text/javascript">
-	function gatherData(formElem) {
-		var data = {};
-		var inputs = $("input[type='text'], input[type='number'], input[type='checkbox'], option:selected", formElem).each(
-			function () {
-				
-				var input = $(this);
-				var name = null;
-				var value = null;
-				
-				var type = input.prop("type");
+// League Admin (LOTR includes/admin/leagueAdmin.html, adapted to this server).
+//
+// One form for every league type (Sealed, Draft, Constructed) with a type bar, (i) help on each field, a serie
+// editor, Preview (the server's /admin/league/<type>/preview, shown as text) and Create, over the current leagues
+// (GET /league, /league/<type>) with each league's series and standings and a "Copy to form" that reruns a league,
+// and Add players to league (/admin/league/addplayers).
+//
+// Not here yet (no endpoint on this server): editing or deleting a league, league schedules (slice 5: the
+// "League schedules" block below is the placeholder for it), the event calendar as the editing entry point (slice 4),
+// markdown descriptions, prize tiers, and the admin player lookup.
+//
+// Everything the server sends (league names, codes, player names, error messages) is put on the page as text.
+$(function () {
+	var page = $("#league-admin-page");
+	var resultdiv = $("#league-result");
 
-				if (input.prop("tagName") == "OPTION") {
-					name = input.parents("select").attr("name");
-					value = input.attr("value");
-				}
-				else if (input.prop("tagName") == "INPUT") {
-					if(input.prop("type") == "checkbox") {
-						name = input.attr("name");
-						value = input.prop("checked");
-					}
-					else if(input.prop("type") == "text" || input.prop("type") == "number") {
-						name = input.attr("name");
-						value = input.val();
-					}
-				}
-				
-				if (name != null && value != null) {
-					if (data[name] == null)
-						data[name] = new Array();
-					data[name].push(value);
-				}
+	var TYPE_LABELS = {SEALED: "Sealed", SOLODRAFT: "Draft", CONSTRUCTED: "Constructed"};
+	var DEFAULT_COST = 500;          // silver
+	var DEFAULT_DURATION = 7;        // days per serie
+	var DEFAULT_MATCHES = 10;        // ranked matches per serie
+
+	// The sealed and draft league types this server knows (SealedLeagueType with a product in SealedLeagueProduct;
+	// swccgDrafts.json without "legacy").  There is no endpoint that lists them, so they are kept here, as the old
+	// League Admin page kept them.
+	var SEALED_TYPES = [
+		["premiere_anh_sealed", "Premiere - A New Hope Sealed"],
+		["jp_sealed", "Jabba's Palace Sealed"],
+		["endor_dsII_sealed", "Endor - Death Star II Sealed"],
+		["reflections_sealed", "Reflections Sealed"],
+		["episode_i_sealed", "Episode I Sealed"],
+		["all_of_the_jedi_sealed", "All Of The Jedi Sealed"],
+		["novelty_sealed", "Novelty - Space Sealed"],
+		["wattos_cube_with_objective", "Watto's Cube with objective packs (Cube)"],
+		["wattos_cube_with_fixed", "Watto's Cube with fixed pack (Cube)"]
+	];
+	var DRAFT_TYPES = [
+		["basic_premds2_draft", "Premiere - Death Star II Draft"],
+		["basic_premv13_draft", "Premiere - Virtual Set 13 Draft"],
+		["holocron_premv25_draft", "Premiere - Virtual Set 25 Draft"],
+		["c7obj_draft", "Cube v7 + Objectives Draft"]
+	];
+	// Constructed formats come from the hall's own format list (the <format> elements of GET /hall, kept by hallUi.js
+	// in its Play form); this list only stands in while the hall has not loaded them.
+	var CONSTRUCTED_FALLBACK = [
+		["premiere", "Premiere"], ["premiere_anh", "Premiere - A New Hope"], ["premiere_hoth", "Premiere - Hoth"],
+		["premiere_dagobah", "Premiere - Dagobah"], ["premiere_cc", "Premiere - Cloud City"],
+		["premiere_cc_m", "Premiere - Cloud City (Modified)"], ["premiere_jp", "Premiere - Jabba's Palace"],
+		["premiere_se", "Premiere - Special Edition"], ["premiere_endor", "Premiere - Endor"],
+		["premiere_ds2", "Premiere - Death Star II"], ["premiere_jpsd", "Premiere - JPSD"],
+		["premiere_ref2", "Premiere - Reflections II"], ["premiere_ref2_m", "Premiere - Reflections II (Modified)"],
+		["premiere_tatooine", "Premiere - Tatooine"], ["premiere_set3", "Premiere - Virtual Set 3"],
+		["classic_no_virtual", "Classic (no v-cards)"], ["classic_no_virtual_m", "Classic (no v-cards) (Modified)"],
+		["classic", "Classic"], ["open_no_shields_no_virtual", "Open (no shields / no v-cards)"],
+		["open_no_shields", "Open (no shields)"], ["open_no_virtual", "Decipher Cards Only"],
+		["open_no_virtual_m", "Decipher Cards Only (Modified)"], ["open40card", "Open (40 cards)"],
+		["open_45_card", "Open (45 cards)"], ["scavenger_premiere_ds2", "Scavenger"], ["legacy", "Legacy"],
+		["jawa", "Jawa"], ["ewok", "Ewok"], ["utinni", "Utinni! (Jawas Only)"], ["open", "Open"],
+		["playtesting", "Playtesting"]
+	];
+
+	var state = {
+		type: "SEALED",
+		costTouched: false,
+		leagues: []           // the current leagues as GET /league lists them
+	};
+	var selectCounter = 0;
+
+	var esc = function (text) {
+		return $("<div></div>").text(text == null ? "" : String(text)).html();
+	};
+	var toInt = function (value, fallback) {
+		var n = parseInt(value, 10);
+		return isNaN(n) ? fallback : n;
+	};
+	var pad2 = function (n) {
+		return (n < 10 ? "0" : "") + n;
+	};
+	var todayIso = function () {
+		var d = new Date();
+		return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate());
+	};
+	// yyyymmdd (what the server uses for league dates) <-> yyyy-mm-dd (what a date field uses)
+	var iso = function (date8) {
+		var s = String(date8 == null ? "" : date8);
+		return s.length == 8 ? s.substring(0, 4) + "-" + s.substring(4, 6) + "-" + s.substring(6, 8) : s;
+	};
+	var daysBetween = function (start8, end8) {
+		var a = String(start8), b = String(end8);
+		if (a.length != 8 || b.length != 8)
+			return null;
+		var da = Date.UTC(+a.substring(0, 4), +a.substring(4, 6) - 1, +a.substring(6, 8));
+		var db = Date.UTC(+b.substring(0, 4), +b.substring(4, 6) - 1, +b.substring(6, 8));
+		return Math.round((db - da) / 86400000);
+	};
+	var isMultiSerie = function (type) {
+		return type == "CONSTRUCTED";
+	};
+	var serieKind = function (type) {
+		return type == "SEALED" ? "sealed" : (type == "SOLODRAFT" ? "draft" : "format");
+	};
+	var setResult = function (box, text, kind) {
+		box.text(text).removeClass("result-success result-error");
+		if (kind)
+			box.addClass("result-" + kind);
+	};
+
+	// ---- (i) help toggles: one mechanism for the whole page ----
+	page.on("click", ".info-toggle", function () {
+		var target = $("#" + $(this).data("for"));
+		target.prop("hidden", !target.prop("hidden"));
+	});
+
+	// =====================================================================================
+	// Preview dialog
+	// =====================================================================================
+	var previewDialog = $("<div class='league-preview'></div>")
+			.dialog({
+				autoOpen: false,
+				closeOnEscape: true,
+				resizable: true,
+				modal: true,
+				title: "League preview",
+				closeText: "",
+				width: 560
 			});
-		return data;
-	}
-	
-	function displayPreview(xml, previewDialog) {
-		var root = xml.documentElement;
-		if (root.tagName == 'league') {
-			var league = root;
 
-			var leagueName = league.getAttribute("name");
-			var cost = parseInt(league.getAttribute("cost"));
-			var allowTimeExtensions = league.getAttribute("allowTimeExtensions") === "true";
-			var allowSpectators = league.getAttribute("allowSpectators") === "true";
-			var showPlayerNames = league.getAttribute("showPlayerNames") === "true";
-			var invitationOnly = league.getAttribute("invitationOnly") === "true";
-			var registrationInfo = league.getAttribute("registrationInfo");
-			var decisionTimeoutSeconds = league.getAttribute("decisionTimeoutSeconds");
-			var timePerPlayerMinutes = league.getAttribute("timePerPlayerMinutes");
-			var lockedDeckType = league.getAttribute("lockedDeckType");
+	// The registration info is a link (the server wraps a starwarsccg.org URL in an anchor itself); anything else is
+	// shown as text.
+	var registrationInfoNode = function (info) {
+		var text = String(info == null ? "" : info);
+		var wrapped = /^<a href='([^']*)'[^>]*>([^<]*)<\/a>$/.exec(text);
+		var url = wrapped ? wrapped[1] : text;
+		if (/^https?:\/\/[^\s'"<>]+$/i.test(url))
+			return $("<a target='_blank' rel='noopener noreferrer'></a>").attr("href", url).text(wrapped ? wrapped[2] : url);
+		return $("<span></span>").text(text);
+	};
 
-			previewDialog.append("<div class='leagueName'>" + leagueName + "</div>");
+	var yesNo = function (value) {
+		return String(value) === "true";
+	};
 
-			if (invitationOnly) {
-				if (registrationInfo != null && registrationInfo != "")
-					previewDialog.append("<div>Registration info: " + registrationInfo);
-				else
-					previewDialog.append("<div>Registration for this league by invitation only.</div>");
+	// xml is the <league> document the /admin/league/<type>/preview endpoints return
+	var renderLeaguePreview = function (container, xml) {
+		var league = xml.documentElement;
+		if (league == null || league.tagName != "league") {
+			container.append($("<div></div>").text("The server sent no league to preview."));
+			return;
+		}
+		var attr = function (name) {
+			return league.getAttribute(name);
+		};
 
-			} else {
-				var costStr = formatPrice(cost);
-				previewDialog.append("<div class='leagueCost'>Open entry. <b>Cost:</b> " + costStr + "</div>");
-			};
-			
-			previewDialog.append("<div>");
-			
-			previewDialog.append("" + timePerPlayerMinutes + " minutes per player ");
-			
-			if(allowTimeExtensions) {
-				previewDialog.append(" (with extensions allowed). ");
+		container.append($("<div class='leagueName'></div>").text(attr("name")));
+		container.append($("<div></div>").html("<b>Runs:</b> ").append(document.createTextNode(iso(attr("start")) + ", listed until " + iso(attr("end")))));
+		if (yesNo(attr("invitationOnly"))) {
+			var invite = $("<div></div>").html("<b>Invite only.</b> ");
+			if (attr("registrationInfo"))
+				invite.append(document.createTextNode("Registration info: ")).append(registrationInfoNode(attr("registrationInfo")));
+			container.append(invite);
+		} else {
+			container.append($("<div class='leagueCost'></div>").html("Open entry. <b>Cost:</b> " + formatPrice(toInt(attr("cost"), 0))));
+			if (attr("registrationInfo"))
+				container.append($("<div></div>").text("Registration info: ").append(registrationInfoNode(attr("registrationInfo"))));
+		}
+
+		var settings = [];
+		settings.push(attr("timePerPlayerMinutes") + " minutes per player (time extensions " + (yesNo(attr("allowTimeExtensions")) ? "allowed" : "not allowed") + ")");
+		settings.push(attr("decisionTimeoutSeconds") + " second decision timeout");
+		settings.push(yesNo(attr("allowSpectators")) ? "spectators permitted" : "spectators denied");
+		settings.push(yesNo(attr("showPlayerNames")) ? "player names public on tables" : "anonymous tables");
+		if (attr("lockedDeckType") === "when_first_played")
+			settings.push("decks locked after the first game");
+		container.append($("<div class='preview-settings'></div>").text(settings.join("; ") + "."));
+
+		var series = league.getElementsByTagName("serie");
+		for (var j = 0; j < series.length; j++) {
+			var serie = series[j];
+			container.append($("<div class='serieName'></div>").text(serie.getAttribute("type") + " - " + iso(serie.getAttribute("start")) + " to " + iso(serie.getAttribute("end"))));
+			container.append($("<div></div>").html("<b>Format:</b> ").append(document.createTextNode((serie.getAttribute("limited") == "true" ? "Limited " : "Constructed ") + serie.getAttribute("format"))));
+			container.append($("<div></div>").html("<b>Collection:</b> ").append(document.createTextNode(serie.getAttribute("collection"))));
+			container.append($("<div></div>").text("Maximum ranked matches in serie: " + serie.getAttribute("maxMatches")));
+		}
+	};
+
+	var openLeaguePreview = function (xml) {
+		previewDialog.html("");
+		renderLeaguePreview(previewDialog, xml);
+		previewDialog.dialog("open");
+	};
+
+	// =====================================================================================
+	// Format selects: hidden #format-cache-* selects hold the option lists; every visible select clones from them
+	// =====================================================================================
+	var fillCache = function (id, pairs) {
+		var cache = $("#" + id).empty();
+		for (var i = 0; i < pairs.length; i++)
+			cache.append($("<option/>").attr("value", pairs[i][0]).text(pairs[i][1]));
+	};
+
+	// the hall's format list: every <format> of GET /hall that is not a league the player is in
+	var hallFormats = function () {
+		var pairs = [];
+		if (window.hall && hall.supportedFormatsSelect) {
+			hall.supportedFormatsSelect.find("option").each(function () {
+				var opt = $(this);
+				if (opt.attr("data-league") !== "1" && opt.attr("value"))
+					pairs.push([opt.attr("value"), opt.text()]);
+			});
+		}
+		return pairs;
+	};
+
+	var fillCaches = function () {
+		fillCache("format-cache-sealed", SEALED_TYPES);
+		fillCache("format-cache-draft", DRAFT_TYPES);
+		var formats = hallFormats();
+		fillCache("format-cache-format", formats.length > 0 ? formats : CONSTRUCTED_FALLBACK);
+		$("#constructed-formats-note").toggle(formats.length == 0);
+	};
+
+	var populateFormatSelect = function (select, kind, value) {
+		select.attr("data-kind", kind);
+		var cache = $("#format-cache-" + kind);
+		select.empty().append(cache.find("option").clone());
+		if (value != null && value !== "" && select.find("option").filter(function () { return this.value === String(value); }).length == 0) {
+			// keep a code this page does not list (a copied league of a format no longer in the hall) instead of silently swapping it
+			select.append($("<option/>").attr("value", value).text(value + " (not in the hall's list)"));
+		}
+		if (value != null && value !== "")
+			select.val(String(value));
+		if (select.val() == null && select.find("option").length > 0)
+			select[0].selectedIndex = 0;
+	};
+
+	// =====================================================================================
+	// Serie editor: one row (Sealed/Draft) or a list of rows (Constructed)
+	// =====================================================================================
+	var defaultSerie = function () {
+		return {format: "", duration: DEFAULT_DURATION, matches: DEFAULT_MATCHES};
+	};
+
+	var buildSerieRow = function (type, serie, multi) {
+		var row = $("<div class='serie-row flex-horiz'></div>");
+		if (multi)
+			row.append("<span class='serie-index'></span>");
+		var select = $("<select class='serie-format' id='fmt-select-" + (++selectCounter) + "'></select>");
+		populateFormatSelect(select, serieKind(type), serie.format);
+		row.append(select);
+		var durationLabel = $("<label class='field-inline'>Days: </label>");
+		durationLabel.append($("<input type='number' min='1' class='serie-duration'>").val(serie.duration));
+		row.append(durationLabel);
+		var matchesLabel = $("<label class='field-inline'>Max matches: </label>");
+		matchesLabel.append($("<input type='number' min='1' class='serie-matches'>").val(serie.matches));
+		row.append(matchesLabel);
+		if (multi) {
+			row.append($("<button type='button' class='serie-remove'>Remove</button>").button().click(function () {
+				var editor = row.closest(".serie-editor");
+				row.remove();
+				refreshSerieRows(editor);
+			}));
+		}
+		return row;
+	};
+
+	var refreshSerieRows = function (editor) {
+		var rows = editor.find(".serie-row");
+		rows.each(function (index) {
+			$(this).find(".serie-index").text((index + 1) + ".");
+		});
+		editor.find(".serie-remove").button("option", "disabled", rows.length <= 1);
+	};
+
+	// Rebuilds the editor for a league type with the given series (or one default serie).
+	var renderSerieEditor = function (editor, type, series) {
+		var multi = isMultiSerie(type);
+		editor.empty().attr("data-type", type);
+		var list = (series && series.length > 0) ? series : [defaultSerie()];
+		if (!multi)
+			list = [list[0]];
+		var rows = $("<div class='serie-rows'></div>");
+		for (var i = 0; i < list.length; i++)
+			rows.append(buildSerieRow(type, list[i], multi));
+		editor.append(rows);
+		if (multi) {
+			editor.append($("<button type='button' class='serie-add'>Add serie</button>").button().click(function () {
+				rows.append(buildSerieRow(type, defaultSerie(), true));
+				refreshSerieRows(editor);
+			}));
+		}
+		refreshSerieRows(editor);
+	};
+
+	var readSerieEditor = function (editor) {
+		var series = [];
+		editor.find(".serie-row").each(function () {
+			var row = $(this);
+			series.push({
+				format: row.find(".serie-format").val() || "",
+				duration: toInt(row.find(".serie-duration").val(), DEFAULT_DURATION),
+				matches: toInt(row.find(".serie-matches").val(), DEFAULT_MATCHES)
+			});
+		});
+		return series;
+	};
+
+	// =====================================================================================
+	// Type selector
+	// =====================================================================================
+	var applyTypeVisibility = function () {
+		var type = state.type;
+		$("#league-collection-row, #help-collection-row").toggle(type == "CONSTRUCTED");
+		$("#league-lock-row, #help-lock-row").toggle(type == "CONSTRUCTED");
+		$("#oneoff-title").text(isMultiSerie(type) ? "Series" : "Format");
+		$("#help-series-sealed").toggle(type == "SEALED");
+		$("#help-series-draft").toggle(type == "SOLODRAFT");
+		$("#help-series-constructed").toggle(type == "CONSTRUCTED");
+		$(".type-btn").removeClass("type-selected").filter("[data-type='" + type + "']").addClass("type-selected");
+		$("#league-save-button").button("option", "label", "Create " + TYPE_LABELS[type].toLowerCase() + " league");
+	};
+
+	// Switches the league type. Common fields are kept; only the type-specific serie rows are rebuilt.
+	var selectType = function (type, series) {
+		state.type = type;
+		applyTypeVisibility();
+		renderSerieEditor($("#oneoff-series"), type, series);
+	};
+
+	$(".type-btn").button().click(function () {
+		var type = $(this).data("type");
+		if (type != state.type)
+			selectType(type, null);
+	});
+
+	$("#league-cost").on("input", function () { state.costTouched = true; });
+
+	// =====================================================================================
+	// Common block
+	// =====================================================================================
+	var readCommon = function () {
+		var startIso = $("#league-start").val() || "";
+		return {
+			name: $.trim($("#league-name").val()),
+			cost: toInt($("#league-cost").val(), DEFAULT_COST),
+			startIso: startIso,
+			start8: startIso.replace(/-/g, ""),
+			inviteOnly: $("#league-invite-only").prop("checked"),
+			registrationInfo: $.trim($("#league-registration").val()),
+			allowTimeExtensions: $("#league-time-extensions").prop("checked"),
+			allowSpectators: $("#league-spectators").prop("checked"),
+			showPlayerNames: $("#league-show-names").prop("checked"),
+			decisionTimeoutSeconds: toInt($("#league-decision-timeout").val(), 300),
+			timePerPlayerMinutes: toInt($("#league-time-per-player").val(), 50),
+			collection: $("#league-collection").val() || "default",
+			lockedDeckType: $("#league-lock").val() || ""
+		};
+	};
+
+	var setCollection = function (code) {
+		var select = $("#league-collection");
+		if (code == null || code === "")
+			code = "default";
+		if (select.find("option").filter(function () { return this.value === code; }).length == 0)
+			select.append($("<option/>").attr("value", code).text(code));
+		select.val(code);
+	};
+
+	// Clears everything back to a fresh "New league".
+	var startOver = function () {
+		state.costTouched = false;
+		$("#league-form-title").text("New league");
+		$("#league-name").val("");
+		$("#league-cost").val(DEFAULT_COST);
+		$("#league-start").val(todayIso());
+		$("#league-invite-only").prop("checked", false);
+		$("#league-registration").val("");
+		$("#league-time-extensions").prop("checked", false);
+		$("#league-spectators").prop("checked", true);
+		$("#league-show-names").prop("checked", false);
+		$("#league-decision-timeout").val(300);
+		$("#league-time-per-player").val(50);
+		setCollection("default");
+		$("#league-lock").val("");
+		selectType("SEALED", null);
+		setResult(resultdiv, "Ready.");
+	};
+
+	$("#league-reset-button").button().click(startOver);
+
+	// ---- a current league copied into the form (this server cannot edit a league; this reruns one) ----
+	var typeOfFormat = function (formatType, limited) {
+		for (var i = 0; i < SEALED_TYPES.length; i++)
+			if (SEALED_TYPES[i][0] === formatType)
+				return "SEALED";
+		for (var j = 0; j < DRAFT_TYPES.length; j++)
+			if (DRAFT_TYPES[j][0] === formatType)
+				return "SOLODRAFT";
+		return limited ? "SEALED" : "CONSTRUCTED";
+	};
+
+	var copyLeagueToForm = function (league) {
+		startOver();
+		var attr = function (name) {
+			return league.getAttribute(name);
+		};
+		var series = [];
+		var serieElems = league.getElementsByTagName("serie");
+		for (var i = 0; i < serieElems.length; i++) {
+			var s = serieElems[i];
+			var days = daysBetween(s.getAttribute("start"), s.getAttribute("end"));
+			series.push({
+				format: s.getAttribute("formatType") || "",
+				duration: days != null && days >= 0 ? days + 1 : DEFAULT_DURATION,
+				matches: toInt(s.getAttribute("maxMatches"), DEFAULT_MATCHES)
+			});
+		}
+		var first = serieElems.length > 0 ? serieElems[0] : null;
+		var type = first != null ? typeOfFormat(first.getAttribute("formatType"), first.getAttribute("limited") == "true") : "CONSTRUCTED";
+
+		$("#league-name").val(attr("name") || "");
+		$("#league-cost").val(toInt(attr("cost"), DEFAULT_COST));
+		state.costTouched = true;
+		$("#league-invite-only").prop("checked", yesNo(attr("invitationOnly")));
+		// the server stores a starwarsccg.org link wrapped in an anchor; the form takes the bare link back
+		var info = attr("registrationInfo") || "";
+		var wrapped = /^<a href='([^']*)'[^>]*>[^<]*<\/a>$/.exec(info);
+		$("#league-registration").val(wrapped ? wrapped[1] : info);
+		$("#league-time-extensions").prop("checked", yesNo(attr("allowTimeExtensions")));
+		$("#league-spectators").prop("checked", yesNo(attr("allowSpectators")));
+		$("#league-show-names").prop("checked", yesNo(attr("showPlayerNames")));
+		$("#league-decision-timeout").val(toInt(attr("decisionTimeoutSeconds"), 300));
+		$("#league-time-per-player").val(toInt(attr("timePerPlayerMinutes"), 50));
+		if (type == "CONSTRUCTED" && first != null)
+			setCollection(first.getAttribute("collectionType"));
+		$("#league-lock").val(attr("lockedDeckType") || "");
+		selectType(type, series);
+		$("#league-form-title").text("New league (copied from " + (attr("name") || attr("type")) + ")");
+		setResult(resultdiv, "Copied '" + (attr("name") || "") + "' into the form. Pick a start date; the copy is created as a new league.");
+		$("#league-form")[0].scrollIntoView({block: "start", behavior: "smooth"});
+	};
+
+	// =====================================================================================
+	// Submitting
+	// =====================================================================================
+	var validateCommon = function (common, series) {
+		if (!common.name) {
+			setResult(resultdiv, "Please give the league a name.", "error");
+			return false;
+		}
+		if (common.start8.length != 8) {
+			setResult(resultdiv, "Please pick a start date.", "error");
+			return false;
+		}
+		for (var i = 0; i < series.length; i++) {
+			if (!series[i].format) {
+				setResult(resultdiv, "Please pick a format for every serie.", "error");
+				return false;
 			}
-			else {
-				previewDialog.append(" (time extensions not allowed). ");
-			}
-			
-			previewDialog.append("" + decisionTimeoutSeconds + " second decision timeout. ");
-			
-			if(allowSpectators) {
-				previewDialog.append("Spectators permitted. ");
-			}
-			else {
-				previewDialog.append("Spectators denied. ");
-			}
-			
-			if(showPlayerNames) {
-				previewDialog.append("Player names public on tables. ");
-			}
-			else {
-				previewDialog.append("Anonymous tables. ");
-			}
-
-			if(lockedDeckType === "when_first_played") {
-				previewDialog.append("<b>Decks locked after first game.</b> ");
-			}
-			
-			previewDialog.append("</div>");
-
-			var series = league.getElementsByTagName("serie");
-			for (var j = 0; j < series.length; j++) {
-
-				var serie = series[j];
-				var serieName = serie.getAttribute("type");
-				var serieStart = serie.getAttribute("start");
-				var serieEnd = serie.getAttribute("end");
-				var maxMatches = serie.getAttribute("maxMatches");
-				var format = serie.getAttribute("format");
-				var collection = serie.getAttribute("collection");
-				var limited = serie.getAttribute("limited");
-
-				var serieText = serieName + " - " + getDateString(serieStart) + " to " + getDateString(serieEnd);
-				previewDialog.append("<div class='serieName'>" + serieText + "</div>");
-
-				previewDialog.append("<div><b>Format:</b> " + ((limited == "true") ? "Limited" : "Constructed") + " " + format + "</div>");
-				previewDialog.append("<div><b>Collection:</b> " + collection + "</div>");
-
-				previewDialog.append("<div>Maximum ranked matches in series: " + maxMatches + "</div>");
+			if (series[i].duration < 1 || series[i].matches < 1) {
+				setResult(resultdiv, "Each serie needs at least one day and one match.", "error");
+				return false;
 			}
 		}
-	}
-	
-	function leagueErrorMap(outputControl, callback=null) {
-		return {
-			"0":function() {
-				outputControl.html("0: Server has been shut down or there was a problem with your internet connection.", "warningMessage");
-				if(callback!=null)
-					callback();
-			},
-			"400":function(xhr, status, request) {
-				var message = xhr.getResponseHeader("message");
-				if(message != null) {
-					outputControl.html("400; malformed input: " + message);
-				}
-				else {
-					outputControl.html("400: One of the provided parameters was malformed.  Double-check your input and try again.");
-				}
-				if(callback!=null)
-					callback();
-			},
-			"401":function() {
-				outputControl.html("401: You are not logged in.");
-				if(callback!=null)
-					callback();
-			},
-			"403": function() {
-				outputControl.html("403: You do not have permission to perform such actions.");
-				if(callback!=null)
-					callback();
-			},
-			"404": function() {
-				outputControl.html("404: Info not found.  Check that your input is correct with removed whitespace and try again.");
-				if(callback!=null)
-					callback();
-			},
-			"410": function() {
-				outputControl.html("410: You have been inactive for too long and were logged out. Refresh the page if you wish to reestablish connection.");
-				if(callback!=null)
-					callback();
-			},
-			"500": function() {
-				outputControl.html("500: Server error. One of the provided parameters was probably malformed.  Double-check your input and try again.");
-				if(callback!=null)
-					callback();
+		if (common.decisionTimeoutSeconds < 1 || common.timePerPlayerMinutes < 1) {
+			setResult(resultdiv, "The decision timeout and the time per player must be at least 1.", "error");
+			return false;
+		}
+		return true;
+	};
+
+	var submitLeague = function (preview) {
+		var common = readCommon();
+		var series = readSerieEditor($("#oneoff-series"));
+		if (!validateCommon(common, series))
+			return;
+		setResult(resultdiv, "Processing...");
+		var err = leagueErrorMap(resultdiv, preview ? function () { previewDialog.dialog("close"); } : null);
+		var onDone = function (xml) {
+			if (preview) {
+				openLeaguePreview(xml);
+				setResult(resultdiv, "Preview shown; nothing was created.", "success");
+			} else {
+				setResult(resultdiv, "League '" + common.name + "' created.", "success");
+				loadLeagues();
 			}
 		};
-	}
-	
-	function submitFormToAddress(url, formElem, success, error) {
-		var data = {};
+		// the server reads booleans as the words true / false
+		var b = function (flag) {
+			return flag ? "true" : "false";
+		};
+		var s0 = series[0] || defaultSerie();
+		if (state.type == "SEALED") {
+			(preview ? hall.comm.previewSealedLeague : hall.comm.addSealedLeague).call(hall.comm,
+				common.name, common.cost, common.start8, s0.format, s0.duration, s0.matches,
+				b(common.allowTimeExtensions), b(common.allowSpectators), b(common.showPlayerNames),
+				b(common.inviteOnly), common.registrationInfo, common.decisionTimeoutSeconds, common.timePerPlayerMinutes,
+				onDone, err);
+		} else if (state.type == "SOLODRAFT") {
+			(preview ? hall.comm.previewSoloDraftLeague : hall.comm.addSoloDraftLeague).call(hall.comm,
+				common.name, common.cost, common.start8, s0.format, s0.duration, s0.matches,
+				b(common.allowTimeExtensions), b(common.allowSpectators), b(common.showPlayerNames),
+				b(common.inviteOnly), common.registrationInfo, common.decisionTimeoutSeconds, common.timePerPlayerMinutes,
+				onDone, err);
+		} else {
+			var formats = series.map(function (s) { return s.format; });
+			var durations = series.map(function (s) { return s.duration; });
+			var matches = series.map(function (s) { return s.matches; });
+			(preview ? hall.comm.previewConstructedLeague : hall.comm.addConstructedLeague).call(hall.comm,
+				common.name, common.cost, common.start8, common.collection,
+				b(common.allowTimeExtensions), b(common.allowSpectators), b(common.showPlayerNames),
+				b(common.inviteOnly), common.registrationInfo, common.decisionTimeoutSeconds, common.timePerPlayerMinutes,
+				common.lockedDeckType, formats, durations, matches,
+				onDone, err);
+		}
+	};
 
-		var inputs = $("input[type='text'], option:selected", formElem).each(
-				function () {
-					var input = $(this);
-					var name = null;
-					var value = null;
-					if (input.prop("tagName") == "INPUT") {
-						name = input.attr("name");
-						value = input.val();
-					} else if (input.prop("tagName") == "OPTION") {
-						name = input.parents("select").attr("name");
-						value = input.attr("value");
-					}
-					if (name != null && value != null) {
-						if (data[name] == null)
-							data[name] = new Array();
-						data[name].push(value);
-					}
-				});
+	$("#league-preview-button").button().click(function () { submitLeague(true); });
+	$("#league-save-button").button().click(function () {
+		var common = readCommon();
+		if (common.name && !confirm("Create the league '" + common.name + "' now? Players will see it in the hall at once."))
+			return;
+		submitLeague(false);
+	});
 
-		var checkboxInputs = $("input[type='checkbox'], option:selected", formElem).each(
-				function () {
-					var input = $(this);
-					var name = null;
-					var value = null;
-					if(input.prop("checked") == true) {
-						name = input.attr("name");
-						value = "on";
-					}
-					if (name != null && value != null) {
-						if (data[name] == null)
-							data[name] = new Array();
-						data[name].push(value);
-					}
-				});
-
-		$.ajax({
-			type:"POST",
-			url:url,
-			cache:false,
-			data:data,
-			traditional:true,
-			success:success,
-			error:error,
-			dataType:"xml"
-		});
-	}
-
-	$("#leagueAdmin").ready(
-			function () {
-				var previewDialog = $("<div></div>")
-						.dialog({
-							autoOpen:false,
-							closeOnEscape:true,
-							resizable:true,
-							modal:true,
-							title:"League Preview"
-						});
-
-				$("#previewSealed").button().click(
-						function () {
-							var data = gatherData($("#addSealedForm"));
-							$("#sealed-league-result").html("Processing...");
-							
-							hall.comm.previewSealedLeague(
-								data.name[0],
-                data.cost[0],
-                data.start[0],
-                data.format[0],
-                data.serieDuration[0],
-                data.maxMatches[0],
-                data.allowTimeExtensions[0],
-                data.allowSpectators[0],
-                data.showPlayerNames[0],
-                data.invitationOnly[0],
-                data.registrationInfo[0],
-                data.decisionTimeoutSeconds[0],
-                data.timePerPlayerMinutes[0],
-                function(xml) {
-                	previewDialog.html("");
-                	displayPreview(xml, previewDialog);
-                	$("#sealed-league-result").html("OK");
-                }, leagueErrorMap($("#sealed-league-result"), function() {
-                  	previewDialog.dialog("close");
-                  }));
-							
-							previewDialog.html("Processing...");
-							previewDialog.dialog("open");
-						});
-				
-				$("#submitSealed").button().click(
-						function () {
-							var data = gatherData($("#addSealedForm"));
-							$("#sealed-league-result").html("Processing...");
-							
-							hall.comm.addSealedLeague(
-								data.name[0],
-                data.cost[0],
-                data.start[0],
-                data.format[0],
-                data.serieDuration[0],
-                data.maxMatches[0],
-                data.allowTimeExtensions[0],
-                data.allowSpectators[0],
-                data.showPlayerNames[0],
-                data.invitationOnly[0],
-                data.registrationInfo[0],
-                data.decisionTimeoutSeconds[0],
-                data.timePerPlayerMinutes[0], 
-                function() {
-                	$("#sealed-league-result").html("OK");
-                }, leagueErrorMap($("#sealed-league-result")));
-						});
-
-				$("#previewSoloDraft").button().click(
-						function () {
-							var data = gatherData($("#addSoloDraftForm"));
-							$("#solo-draft-league-result").html("Processing...");
-
-							hall.comm.previewSoloDraftLeague(
-								data.name[0],
-                data.cost[0],
-                data.start[0],
-                data.format[0],
-                data.serieDuration[0],
-                data.maxMatches[0],
-                data.allowTimeExtensions[0],
-                data.allowSpectators[0],
-                data.showPlayerNames[0],
-                data.invitationOnly[0],
-                data.registrationInfo[0],
-                data.decisionTimeoutSeconds[0],
-                data.timePerPlayerMinutes[0],
-                function(xml) {
-                	previewDialog.html("");
-                	displayPreview(xml, previewDialog);
-                	$("#solo-draft-league-result").html("OK");
-                }, leagueErrorMap($("#solo-draft-league-result"), function() {
-                  	previewDialog.dialog("close");
-                  }));
-
-					previewDialog.html("Processing...");
-					previewDialog.dialog("open");
-				});
-
-				$("#submitSoloDraft").button().click(
-						function () {
-							var data = gatherData($("#addSoloDraftForm"));
-							$("#solo-draft-league-result").html("Processing...");
-
-							hall.comm.addSoloDraftLeague(
-								data.name[0],
-                data.cost[0],
-                data.start[0],
-                data.format[0],
-                data.serieDuration[0],
-                data.maxMatches[0],
-                data.allowTimeExtensions[0],
-                data.allowSpectators[0],
-                data.showPlayerNames[0],
-                data.invitationOnly[0],
-                data.registrationInfo[0],
-                data.decisionTimeoutSeconds[0],
-                data.timePerPlayerMinutes[0],
-                function() {
-                	$("#solo-draft-league-result").html("OK");
-                }, leagueErrorMap($("#solo-draft-league-result")));
-						});
-
-				$("#addConstructedSeries").button().click(
-						function () {
-							$(".seriesData").last().clone().appendTo(".series");
-						});
-				
-				$("#previewConstructed").button().click(
-						function () {
-							var data = gatherData($("#addConstructedForm"));
-							$("#constructed-league-result").html("Processing...");
-							
-							hall.comm.previewConstructedLeague(
-								data.name[0],
-                data.cost[0],
-                data.start[0],
-                data.collectionType[0],
-                data.allowTimeExtensions[0],
-                data.allowSpectators[0],
-                data.showPlayerNames[0],
-                data.invitationOnly[0],
-                data.registrationInfo[0],
-                data.decisionTimeoutSeconds[0],
-                data.timePerPlayerMinutes[0],
-                data.lockedDeckType[0],
-                //Per-serie data sends the full array
-                data.format,
-                data.serieDuration,
-                data.maxMatches,
-                function(xml) {
-                		previewDialog.html("");
-                		displayPreview(xml, previewDialog);
-                		$("#constructed-league-result").html("OK");
-                	}, leagueErrorMap($("#constructed-league-result"), function() {
-                  	previewDialog.dialog("close");
-                  }));
-							
-							previewDialog.html("Processing...");
-							previewDialog.dialog("open");
-						});
-				
-				$("#submitConstructed").button().click(
-						function () {
-							var data = gatherData($("#addConstructedForm"));
-							$("#constructed-league-result").html("Processing...");
-							
-							hall.comm.addConstructedLeague(
-								data.name[0],
-                data.cost[0],
-                data.start[0],
-                data.collectionType[0],
-                data.allowTimeExtensions[0],
-                data.allowSpectators[0],
-                data.showPlayerNames[0],
-                data.invitationOnly[0],
-                data.registrationInfo[0],
-                data.decisionTimeoutSeconds[0],
-                data.timePerPlayerMinutes[0],
-                data.lockedDeckType[0],
-                //Per-serie data sends the full array
-                data.format,
-                data.serieDuration,
-                data.maxMatches,
-                function(xml) {
-                		$("#constructed-league-result").html("OK");
-                	}, leagueErrorMap($("#constructed-league-result")));
-						});
-
-				$("#add-players-button").button().click(
-						function() {
-							$("#league-add-result").html("Processing...");
-							
-							hall.comm.addPlayersToLeague(
-								$("#league-to-add").val(),
-								$("#players-to-add").val().split(/\n/),
-                function(xml) {
-                		$("#league-add-result").html("OK");
-                	}, leagueErrorMap($("#league-add-result")));
-						
-						});
+	// =====================================================================================
+	// Current leagues: GET /league lists them; /league/<type> has the series and standings
+	// =====================================================================================
+	var leagueDetails = function (card, leagueType) {
+		var box = card.find(".league-details");
+		if (box.length > 0) {
+			box.remove();
+			card.find(".league-details-button").button("option", "label", "Details");
+			return;
+		}
+		box = $("<div class='league-details'></div>").append($("<span class='league-loading'></span>").text("Loading..."));
+		card.append(box);
+		card.find(".league-details-button").button("option", "label", "Hide details");
+		hall.comm.getLeague(leagueType, function (xml) {
+			box.empty();
+			var league = xml.documentElement;
+			if (league == null || league.tagName != "league") {
+				box.append($("<span class='league-error'></span>").text("The server sent no details for this league."));
+				return;
+			}
+			var series = league.getElementsByTagName("serie");
+			for (var i = 0; i < series.length; i++) {
+				var s = series[i];
+				var line = $("<div class='serie-line'></div>");
+				line.append($("<b></b>").text(s.getAttribute("type")));
+				line.append(document.createTextNode(" " + iso(s.getAttribute("start")) + " to " + iso(s.getAttribute("end"))
+					+ ": " + (s.getAttribute("limited") == "true" ? "Limited " : "Constructed ") + s.getAttribute("format")
+					+ " (" + s.getAttribute("formatType") + "), " + s.getAttribute("collection")
+					+ ", up to " + s.getAttribute("maxMatches") + " ranked matches"));
+				box.append(line);
+			}
+			var standings = league.getElementsByTagName("leagueStanding");
+			if (standings.length == 0) {
+				box.append($("<div class='serie-line'></div>").text("No ranked games have been played yet."));
+			} else {
+				var table = $("<table class='standings'><tr><th>Player</th><th>Place</th><th>Points</th><th>Games</th><th>Opp. win %</th></tr></table>");
+				for (var j = 0; j < standings.length; j++) {
+					var st = standings[j];
+					var tr = $("<tr></tr>");
+					tr.append($("<td></td>").text(st.getAttribute("player")));
+					tr.append($("<td></td>").text(st.getAttribute("standing")));
+					tr.append($("<td></td>").text(st.getAttribute("points")));
+					tr.append($("<td></td>").text(st.getAttribute("gamesPlayed")));
+					tr.append($("<td></td>").text(st.getAttribute("opponentWin")));
+					table.append(tr);
+				}
+				box.append($("<div class='serie-line'></div>").text("League standings (" + standings.length + " player" + (standings.length == 1 ? "" : "s") + " with a ranked game):"));
+				box.append(table);
+			}
+			var copy = $("<button type='button'>Copy to form</button>").button().click(function () {
+				copyLeagueToForm(league);
 			});
+			box.append($("<div class='serie-line'></div>").append(copy));
+		}, leagueErrorMap(box));
+	};
+
+	var renderLeagues = function (xml) {
+		var list = $("#league-list").empty();
+		var root = xml != null ? xml.documentElement : null;
+		var leagues = (root != null && root.tagName == "leagues") ? root.getElementsByTagName("league") : [];
+		state.leagues = [];
+		if (leagues.length == 0) {
+			list.append($("<div class='league-empty'></div>").text("No league is running or coming up."));
+			return;
+		}
+		var today8 = todayIso().replace(/-/g, "");
+		for (var i = 0; i < leagues.length; i++) {
+			(function (league) {
+				var type = league.getAttribute("type") || "";
+				var name = league.getAttribute("name") || type;
+				var start = league.getAttribute("start") || "";
+				var end = league.getAttribute("end") || "";
+				state.leagues.push({type: type, name: name});
+				var card = $("<div class='league-card'></div>").toggleClass("league-over", end !== "" && end < today8);
+
+				var line1 = $("<div class='league-line'></div>");
+				line1.append($("<span class='league-title'></span>").text(name));
+				var status = start > today8 ? "starts " + iso(start) : (end !== "" && end < today8 ? "over, listed until " + iso(end) : "running");
+				line1.append($("<span class='league-meta'></span>").text(status));
+				var buttons = $("<span class='league-buttons'></span>");
+				buttons.append($("<button type='button' class='league-details-button'>Details</button>").button().click(function () {
+					leagueDetails(card, type);
+				}));
+				buttons.append($("<button type='button'>Add players</button>").button().click(function () {
+					$("#league-to-add").val(type);
+					$("#add-players-section")[0].scrollIntoView({block: "start", behavior: "smooth"});
+					$("#players-to-add").focus();
+				}));
+				line1.append(buttons);
+				card.append(line1);
+
+				var line2 = $("<div class='league-meta'></div>");
+				line2.append(document.createTextNode(iso(start) + " to " + iso(end)));
+				line2.append("<span class='sep'>&middot;</span>");
+				line2.append(document.createTextNode("code "));
+				line2.append($("<span class='league-code' title='The league ID for Add players and the deck check'></span>").text(type));
+				card.append(line2);
+				list.append(card);
+			})(leagues[i]);
+		}
+	};
+
+	var loadLeagues = function () {
+		hall.comm.getLeagues(renderLeagues, leagueErrorMap($("#league-list")));
+	};
+
+	$("#league-list-refresh").button().click(loadLeagues);
+
+	// =====================================================================================
+	// Add players to league
+	// =====================================================================================
+	$("#add-league-players-button").button().click(function () {
+		var box = $("#league-add-result");
+		var leagueType = $.trim($("#league-to-add").val());
+		var players = $("#players-to-add").val().split(/\r?\n/).map($.trim).filter(function (p) { return p !== ""; });
+		if (!leagueType) {
+			setResult(box, "Enter the league ID (its code in the list above).", "error");
+			return;
+		}
+		if (players.length == 0) {
+			setResult(box, "Enter at least one player name.", "error");
+			return;
+		}
+		setResult(box, "Processing...");
+		hall.comm.addPlayersToLeague(leagueType, players, function () {
+			setResult(box, "Added " + players.length + " player" + (players.length == 1 ? "" : "s") + " to league " + leagueType + ".", "success");
+		}, leagueErrorMap(box));
+	});
+
+	// =====================================================================================
+	// Go
+	// =====================================================================================
+	fillCaches();
+	startOver();
+	loadLeagues();
+	// the league list and (once the hall has them) the constructed formats are fetched again on coming back to the page
+	if (window.GempHallTabs)
+		GempHallTabs.onReturn(page, function () {
+			if (hallFormats().length > 0 && $("#constructed-formats-note").is(":visible"))
+				fillCaches();
+			loadLeagues();
+		});
+});
+
+// Errors of the league admin requests, written as text into outputControl (a server's "message" header is its own
+// text, shown as such).
+function leagueErrorMap(outputControl, callback) {
+	var say = function (text) {
+		outputControl.text(text).removeClass("result-success").addClass("result-error");
+		if (callback != null)
+			callback();
+	};
+	return {
+		"0": function () {
+			say("0: Server has been shut down or there was a problem with your internet connection.");
+		},
+		"400": function (xhr) {
+			var message = xhr.getResponseHeader("message");
+			say(message != null ? "400: malformed input: " + message
+				: "400: One of the provided parameters was malformed. Double-check your input and try again.");
+		},
+		"401": function () {
+			say("401: You are not logged in.");
+		},
+		"403": function () {
+			say("403: You do not have permission to perform such actions.");
+		},
+		"404": function () {
+			say("404: Info not found. Check that your input is correct with removed whitespace and try again.");
+		},
+		"409": function () {
+			say("409: The server refused the request (a conflict with the league's state).");
+		},
+		"410": function () {
+			say("410: You have been inactive for too long and were logged out. Refresh the page if you wish to re-establish connection.");
+		},
+		"500": function (xhr) {
+			var message = xhr.getResponseHeader("message");
+			say(message != null ? "500: " + message
+				: "500: Server error. One of the provided parameters was probably malformed. Double-check your input and try again.");
+		}
+	};
+}
 </script>
 
+<div class="admin-page" id="leagueAdmin">
+	<div id="league-admin-page" class="league-form">
 
-<div class="page" id="leagueAdmin">
-	<div>
-		<h1>Add Sealed League</h1>
+		<h1>League Admin</h1>
 
-		<div id="addSealedForm">
-			Name: <input type="text" name="name"/><br/>
-			Cost (in silver): <input type="number" name="cost" value="500"/><br/>
-			Start (YYYYMMDD): <input type="number" name="start" required/><br/>
-			Format:
-			<select id="sealed-format" name="format">
-				<option value="premiere_anh_sealed">Premiere - A New Hope; 'Sealed'</option>
-				<option value="jp_sealed">Jabba's Palace; 'Sealed'</option>
-				<option value="endor_dsII_sealed">Endor - Death Star II; 'Sealed'</option>
-				<option value="reflections_sealed">Reflections; 'Sealed'</option>
-				<option value="episode_i_sealed">Episode I; 'Sealed'</option>
-				<option value="all_of_the_jedi_sealed">All Of The Jedi; 'Sealed'</option>
-				<option value="novelty_sealed">Novelty - Space Sealed; 'Sealed'</option>
-				<option value="wattos_cube_with_objective">Watto's Cube with objective packs; 'Cube'</option>
-				<option value="wattos_cube_with_fixed">Watto's Cube with fixed pack; 'Cube'</option>
-			</select><br/>
-			Serie duration in days: <input type="number" name="serieDuration" value="7"/><br/>
-			Maximum matches per serie: <input type="number" name="maxMatches" value="10"/><br/>
-			Allow Time Extensions: <input type="checkbox" name="allowTimeExtensions"/><br/>
-			Allow Spectators <input type="checkbox" name="allowSpectators" checked/><br/>
-			Show Player Names in Hall <input type="checkbox" name="showPlayerNames"/><br/>
-			Invite only: <input type="checkbox" name="invitationOnly" value="on"/><br/>
-			Registration info link: <input type="text" name="registrationInfo"/><br/>
-			Decision Timeout (seconds) <input type="number" name="decisionTimeoutSeconds" min="1" value=300 style="min-width: 4em"><br/>
-			Time Per Player (minutes) <input type="number" name="timePerPlayerMinutes" min="1" value=50 style="min-width: 4em"><br/>
-			<button id="previewSealed" class="admin-button">Preview sealed league</button>
-			<button id="submitSealed" class="admin-button">Add sealed league</button>
-			<span id="sealed-league-result" style="display:inline-block;">Ready.</span>
+		<!-- A. Current leagues -->
+		<h2>Current leagues</h2>
+		<div class="page-hint">Every league that is running or still listed. <b>Details</b> shows its series and standings; <b>Copy to form</b> there fills the form below to run it again.</div>
+		<div id="league-list" class="league-list"></div>
+		<div><button type="button" id="league-list-refresh">Refresh</button></div>
+
+		<!-- The event calendar (slice 4) and league schedules (slice 5) sit here in the LOTR page. -->
+		<h2>League schedules <span class="info-toggle" data-for="help-schedules">i</span></h2>
+		<div id="help-schedules" class="info-text" hidden>
+			A schedule creates leagues on its own: the same settings, an ordered rotation of formats, and a cadence. Each league is
+			created a few days before it starts so players can sign up.
 		</div>
-	</div>
-
-	<br><br><hr><br>
-
-	<div>
-		<h1>Add Solo Draft League</h1>
-
-		<div id="addSoloDraftForm">
-			Name: <input type="text" name="name"/><br/>
-			Cost (in silver): <input type="number" name="cost" value="500"/><br/>
-			Start (YYYYMMDD): <input type="number" name="start" required/><br/>
-			Format:
-			<select name="format">
-				<option value="basic_premds2_draft">Premiere - Death Star II Draft</option>
-				<option value="basic_premv13_draft">Premiere - Virtual Set 13 Draft</option>
-				<option value="holocron_premv25_draft">Premiere - Virtual Set 25 Draft</option>
-				<option value="c7obj_draft">Cube v7 + Objectives Draft</option>
-			</select><br/>
-			Serie duration in days: <input type="number" name="serieDuration" value="7"/><br/>
-			Maximum matches per serie: <input type="number" name="maxMatches" value="10"/><br/>
-			Allow Time Extensions: <input type="checkbox" name="allowTimeExtensions"/><br/>
-			Allow Spectators <input type="checkbox" name="allowSpectators" checked/><br/>
-			Show Player Names in Hall <input type="checkbox" name="showPlayerNames"/><br/>
-			Invite only: <input type="checkbox" name="invitationOnly" value="on"/><br/>
-			Registration info link: <input type="text" name="registrationInfo"/><br/>
-			Decision Timeout (seconds) <input type="number" name="decisionTimeoutSeconds" min="1" value=300 style="min-width: 4em"><br/>
-			Time Per Player (minutes) <input type="number" name="timePerPlayerMinutes" min="1" value=50 style="min-width: 4em"><br/>
-			<button id="previewSoloDraft" class="admin-button">Preview solo draft league</button>
-			<button id="submitSoloDraft" class="admin-button">Add solo draft league</button>
-			<span id="solo-draft-league-result" style="display:inline-block;">Ready.</span>
+		<div id="schedule-list" class="admin-placeholder">
+			Recurring leagues are not available on this server yet; they come with the league schedules work (slice 5 of the hall
+			port). Until then every league is created by hand with the form below.
 		</div>
-	</div>
 
-	<br><br><hr><br>
-
-	<div>
-		<h1>Add Constructed League</h1>
-
-		<div id="addConstructedForm" >
-			Name: <input type="text" name="name"><br/>
-			Cost (in silver): <input type="number" name="cost" value="500"><br/>
-			Start (YYYYMMDD): <input type="number" name="start" required><br/>
-			Collection:
-			<select name="collectionType">
-				<option value="default">All cards</option>
-				<option value="permanent">My cards</option>
-			</select><br/>
-			Allow Time Extensions: <input type="checkbox" name="allowTimeExtensions"><br/>
-			Allow Spectators <input type="checkbox" name="allowSpectators" checked><br/>
-			Show Player Names in Hall <input type="checkbox" name="showPlayerNames"><br/>
-			Invite only: <input type="checkbox" name="invitationOnly"><br/>
-			Deck lock-in:
-			<select name="lockedDeckType">
-				<option value="">No deck locking</option>
-				<option value="when_first_played">Lock decks after first game</option>
-			</select><br/>
-			Registration info link: <input type="text" name="registrationInfo"><br/>
-			Decision Timeout (seconds) <input type="number" name="decisionTimeoutSeconds" min="1" value=300 style="min-width: 4em"><br/>
-			Time Per Player (minutes) <input type="number" name="timePerPlayerMinutes" min="1" value=50 style="min-width: 4em"><br/>
-			<div class="series">
-				<div class="seriesData">
-					<h3>Serie definition:</h3>
-					Format:
-					<select name="format">
-						<option value="premiere">Premiere</option>
-						<option value="premiere_anh">Premiere - A New Hope</option>
-						<option value="premiere_hoth">Premiere - Hoth</option>
-						<option value="premiere_dagobah">Premiere - Dagobah</option>
-						<option value="premiere_cc">Premiere - Cloud City</option>
-						<option value="premiere_cc_m">Premiere - Cloud City (modified)</option>
-						<option value="premiere_jp">Premiere - Jabba's Palace</option>
-						<option value="premiere_se">Premiere - Special Edition</option>
-						<option value="premiere_endor">Premiere - Endor</option>
-						<option value="premiere_ds2">Premiere - Death Star II</option>
-						<option value="premiere_jpsd">Premiere - JPSD</option>
-						<option value="premiere_ref2">Premiere - Reflections II</option>
-						<option value="premiere_ref2_m">Premiere - Reflections II (Modified)</option>
-						<option value="premiere_tatooine">Premiere - Tatooine</option>
-						<option value="premiere_set3">Premiere - Virtual Set 3</option>
-						<option value="classic_no_virtual">Classic (no v-cards)</option>
-						<option value="classic_no_virtual_m">Classic (no v-cards) (Modified)</option>
-						<option value="classic">Classic</option>
-						<option value="open_no_shields_no_virtual">Open (no shields / no v-cards)</option>
-						<option value="open_no_shields">Open (no shields)</option>
-						<option value="open_no_virtual">Open (no v-cards)</option>
-						<option value="open_no_virtual_m">Decipher Cards Only (modified)</option>
-						<option value="open40card">Open (40 cards)</option>
-						<option value="open_45_card">Open (45 cards)</option>
-						<option value="scavenger_premiere_ds2">Scavenger</option>
-						<option value="limited_resources">Limited Resources</option>
-						<option value="legacy">Legacy</option>
-						<option value="jawa">Jawa</option>
-						<option value="utinni">Utinni! (Jawas Only)</option>
-						<option value="open">Open</option>
-						<option value="playtesting">Playtesting</option>
-					</select><br/>
-					Serie duration in days: <input type="text" name="serieDuration" value="7"><br/>
-					Maximum matches in series: <input type="text" name="maxMatches" value="10"><br/>
+		<!-- C. The league form -->
+		<div class="mode-header flex-horiz">
+			<h2 id="league-form-title">New league</h2>
+			<button type="button" id="league-reset-button">Start over</button>
+		</div>
+		<div id="league-form">
+			<div class="form-section first">
+				<div class="league-type-bar">
+					<button type="button" class="type-btn" data-type="SEALED">Sealed</button>
+					<button type="button" class="type-btn" data-type="SOLODRAFT">Draft</button>
+					<button type="button" class="type-btn" data-type="CONSTRUCTED">Constructed</button>
 				</div>
 			</div>
-			<button id="addConstructedSeries" class="admin-button">Add Another Serie</button>
-			<br/>
-			<button id="previewConstructed" class="admin-button">Preview Constructed League</button>
-			<button id="submitConstructed" class="admin-button">Add Constructed League</button>
-			<span id="constructed-league-result" style="display:inline-block;">Ready.</span>
-		</form>
-	</div>
-	
-	<br><br><hr><br>
-	
-	<div>
-		<h1>Add Players to League</h1>
 
-		<div>
-			League ID:<br/><input type="text" id="league-to-add"><br/>
-			Players (1 per line):<br/><textarea rows="5" cols="20" id="players-to-add"></textarea><br/>
-			<button id="add-players-button" class="admin-button">Add Players to League</button>
-			<span id="league-add-result" style="display:inline-block;">Ready.</span>
+			<!-- common block -->
+			<div class="form-section">
+				<div id="league-name-row" class="flex-horiz field-row">
+					<div class="label-column">Name</div>
+					<input type="text" id="league-name" class="flex-fill" maxlength="45">
+				</div>
+
+				<div class="flex-horiz field-row">
+					<div class="label-column">Cost (silver) <span class="info-toggle" data-for="help-cost">i</span></div>
+					<input type="number" min="0" id="league-cost" value="500" class="flex-fill">
+				</div>
+				<div id="help-cost" class="info-text" hidden>What a player pays to join, in silver (100 silver = 1 gold). 0 makes the league free.</div>
+
+				<div class="flex-horiz field-row">
+					<div class="label-column">Start date <span class="info-toggle" data-for="help-start">i</span></div>
+					<input type="date" id="league-start" class="flex-fill">
+				</div>
+				<div id="help-start" class="info-text" hidden>The day the first serie opens for play (server time). Players can sign up as soon as the league exists, and the league stays listed for two days after its last serie ends.</div>
+
+				<div class="flex-horiz field-row">
+					<div class="label-column">Invite only <span class="info-toggle" data-for="help-invite">i</span></div>
+					<input type="checkbox" id="league-invite-only">
+				</div>
+				<div id="help-invite" class="info-text" hidden>Players cannot join by themselves; add them with "Add players to league" at the bottom of this page. The registration info below tells them how to get in.</div>
+
+				<div class="flex-horiz field-row">
+					<div class="label-column">Registration info link <span class="info-toggle" data-for="help-registration">i</span></div>
+					<input type="text" id="league-registration" class="flex-fill" placeholder="optional, e.g. https://www.starwarsccg.org/...">
+				</div>
+				<div id="help-registration" class="info-text" hidden>Shown to players on the league's page. A starwarsccg.org address becomes a link; anything else is shown as text.</div>
+
+				<div class="flex-horiz field-row">
+					<div class="label-column">Allow time extensions</div>
+					<input type="checkbox" id="league-time-extensions">
+				</div>
+
+				<div class="flex-horiz field-row">
+					<div class="label-column">Allow spectators</div>
+					<input type="checkbox" id="league-spectators" checked>
+				</div>
+
+				<div class="flex-horiz field-row">
+					<div class="label-column">Show player names in hall <span class="info-toggle" data-for="help-names">i</span></div>
+					<input type="checkbox" id="league-show-names">
+				</div>
+				<div id="help-names" class="info-text" hidden>Off: league tables in the hall do not say who is sitting at them until the game starts.</div>
+
+				<div class="flex-horiz field-row">
+					<div class="label-column">Decision timeout</div>
+					<label class="field-inline"><input type="number" min="1" id="league-decision-timeout" value="300"> seconds</label>
+				</div>
+
+				<div class="flex-horiz field-row">
+					<div class="label-column">Time per player</div>
+					<label class="field-inline"><input type="number" min="1" id="league-time-per-player" value="50"> minutes</label>
+				</div>
+
+				<div id="league-collection-row" class="flex-horiz field-row">
+					<div class="label-column">Collection <span class="info-toggle" data-for="help-collection">i</span></div>
+					<select id="league-collection" class="flex-fill">
+						<option value="default">All cards</option>
+						<option value="permanent">My cards</option>
+					</select>
+				</div>
+				<div id="help-collection" class="info-text" hidden>"All cards" lets players build from every card in the game; "My cards" restricts them to the cards they own.</div>
+
+				<div id="league-lock-row" class="flex-horiz field-row">
+					<div class="label-column">Deck lock-in <span class="info-toggle" data-for="help-lock">i</span></div>
+					<select id="league-lock" class="flex-fill">
+						<option value="">No deck locking</option>
+						<option value="when_first_played">Lock decks after first game</option>
+					</select>
+				</div>
+				<div id="help-lock" class="info-text" hidden>With locking, the first deck a player uses for each side is the one they must keep for the whole league; admins can read the locked decks from the league's page.</div>
+			</div>
+
+			<!-- the serie(s) -->
+			<div id="oneoff-block" class="form-section">
+				<div class="section-title"><span id="oneoff-title">Format</span> <span class="info-toggle" data-for="help-series">i</span></div>
+				<div id="help-series" class="info-text" hidden>
+					<span id="help-series-sealed">A sealed league has one serie per pack of its product: the days and the match limit apply to each. Players open their packs when they join.</span>
+					<span id="help-series-draft">A draft league has one serie; players draft their pool from the hall once it has started. The days and the match limit apply to the serie.</span>
+					<span id="help-series-constructed">Each serie runs for the given number of days, one after the other, in its own format; only the first "max matches" ranked games count per player in each.</span>
+				</div>
+				<div id="constructed-formats-note" class="info-text" style="display:none">The hall's format list has not loaded, so the formats offered here are this page's own copy.</div>
+				<div id="oneoff-series" class="serie-editor"></div>
+			</div>
+
+			<div class="flex-horiz form-buttons">
+				<button type="button" id="league-preview-button">Preview</button>
+				<button type="button" id="league-save-button">Create league</button>
+			</div>
+			<div id="league-result-label" class="flex-horiz result-label">
+				<div class="label"><b>Result:</b></div>
+				<div id="league-result" class="flex-fill result-box">Ready.</div>
+			</div>
+		</div>
+
+		<!-- hidden option caches, cloned into every format select -->
+		<select id="format-cache-sealed" style="display:none"></select>
+		<select id="format-cache-draft" style="display:none"></select>
+		<select id="format-cache-format" style="display:none"></select>
+
+		<!-- D. Add players to league -->
+		<div id="add-players-section" class="league-form">
+			<h2>Add players to league</h2>
+			<p class="page-hint">
+				For invite-only leagues (the players are added without paying the cost), though it may have uses elsewhere.
+				The league ID is the code shown under each league above; the list's <b>Add players</b> button fills it in.
+			</p>
+
+			<div class="flex-horiz field-row">
+				<div class="label-column">League ID</div>
+				<input type="text" id="league-to-add" class="flex-fill">
+			</div>
+
+			<div class="flex-horiz">
+				<div class="label-column">Players (1 per line)</div>
+				<textarea rows="5" cols="20" id="players-to-add" class="flex-fill"></textarea>
+			</div>
+
+			<div class="flex-horiz form-buttons">
+				<button type="button" id="add-league-players-button">Add players to league</button>
+			</div>
+
+			<div id="league-add-result-label" class="flex-horiz result-label">
+				<div class="label"><b>Result:</b></div>
+				<div id="league-add-result" class="flex-fill result-box">Ready.</div>
+			</div>
 		</div>
 	</div>
 </div>
