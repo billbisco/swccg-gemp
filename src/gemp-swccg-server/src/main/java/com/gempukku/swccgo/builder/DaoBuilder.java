@@ -35,6 +35,7 @@ public class DaoBuilder {
         objectMap.put(MerchantDAO.class, merchantDao);
 
         objectMap.put(LeagueDAO.class, new DbLeagueDAO(dbAccess));
+        objectMap.put(LeagueScheduleDAO.class, new DbLeagueScheduleDAO(dbAccess));
         objectMap.put(GameHistoryDAO.class, new DbGameHistoryDAO(dbAccess));
 
         DbDeckDAO dbDeckDao = new DbDeckDAO(dbAccess, library);

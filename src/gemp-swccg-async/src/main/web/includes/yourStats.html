@@ -1,9 +1,15 @@
 <script type="text/javascript">
-    $(document).ready(
-            function () {
-                var ui = new PlayerStatsUI("/gemp-swccg-server");
-            });
-
+    // My Account › My Stats (LOTR includes/account/yourStats.html): PlayerStatsUI fills #playerStats from
+    // GET /playerStats.  Coming back after a while fetches them again (GempHallTabs.onReturn, gameHall.js).
+    $("#playerStatsPage").ready(
+        function () {
+            var ui = new PlayerStatsUI("/gemp-swccg-server");
+            if (window.GempHallTabs)
+                GempHallTabs.onReturn($("#playerStatsPage"), function () { ui.loadPlayerStats(); });
+        });
 </script>
-All times are GMT based.
-<div id="playerStats"></div>
+<div id="playerStatsPage" class="stats-page">
+    <h1>My Stats</h1>
+    <p class="stats-note">Your wins and losses by format and deck. All times are GMT based.</p>
+    <div id="playerStats"></div>
+</div>

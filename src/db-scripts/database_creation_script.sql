@@ -134,9 +134,39 @@ CREATE  TABLE IF NOT EXISTS `gemp-swccg`.`league` (
   `invitationOnly` BIT DEFAULT 0,
   `lockedDeckType` VARCHAR(50) CHARACTER SET 'utf8' COLLATE 'utf8_bin' DEFAULT NULL,
   `registrationInfo` TEXT,
-  PRIMARY KEY (`id`) )
+  `schedule_id` INT(11) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) ,
+  INDEX `league_schedule_start` (`schedule_id`, `start`) )
 ENGINE = InnoDB
 AUTO_INCREMENT = 32
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+
+-- -----------------------------------------------------
+-- Table `gemp-swccg`.`league_schedule`
+-- Recurring league definitions the server turns into league rows (see update_league_schedule.sql for the
+-- column notes).  league.schedule_id points back at the row that created a league.
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `gemp-swccg`.`league_schedule` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT ,
+  `name` VARCHAR(45) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NOT NULL ,
+  `league_type` VARCHAR(45) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NOT NULL ,
+  `template` TEXT CHARACTER SET 'utf8' COLLATE 'utf8_bin' NOT NULL ,
+  `events` TEXT CHARACTER SET 'utf8' COLLATE 'utf8_bin' NOT NULL ,
+  `name_pattern` VARCHAR(255) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NOT NULL DEFAULT '{series} - {event}' ,
+  `next_event_date` INT(11) NOT NULL ,
+  `next_event_index` INT(11) NOT NULL DEFAULT 0 ,
+  `interval_months` DECIMAL(6,3) NOT NULL DEFAULT 1.000 ,
+  `lead_days` INT(11) NOT NULL DEFAULT 7 ,
+  `enabled` BIT(1) NOT NULL DEFAULT b'0' ,
+  `last_created_league_type` VARCHAR(45) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NULL ,
+  `last_run` DATETIME NULL ,
+  `last_error` VARCHAR(1000) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NULL ,
+  `created_by` VARCHAR(45) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NULL ,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+  PRIMARY KEY (`id`) )
+ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_bin;
 
@@ -230,6 +260,30 @@ CREATE  TABLE IF NOT EXISTS `gemp-swccg`.`player_password_reset` (
   `created_by` VARCHAR(10) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NULL DEFAULT NULL ,
   `created_at` BIGINT NOT NULL ,
   PRIMARY KEY (`player_id`) )
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+
+-- -----------------------------------------------------
+-- Table `gemp-swccg`.`scheduled_tournament`
+-- Read by DbTournamentDAO (getUnstartedScheduledTournamentQueues / updateScheduledTournamentStarted) since the
+-- 2020 snapshot, but never created by this script.  Columns as the original GEMP schema this code was written
+-- against; `start` is epoch milliseconds, `started` flips to 1 once the hall has opened the queue.
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `gemp-swccg`.`scheduled_tournament` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT ,
+  `tournament_id` VARCHAR(45) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NOT NULL ,
+  `name` VARCHAR(255) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NOT NULL ,
+  `format` VARCHAR(45) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NOT NULL ,
+  `start` DECIMAL(20,0) NOT NULL ,
+  `cost` DECIMAL(10,0) NOT NULL ,
+  `playoff` VARCHAR(45) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NOT NULL ,
+  `prizes` VARCHAR(45) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NOT NULL ,
+  `minimum_players` DECIMAL(3,0) NOT NULL ,
+  `started` DECIMAL(1,0) NOT NULL DEFAULT '0' ,
+  PRIMARY KEY (`id`) ,
+  INDEX `started` (`started` ASC) )
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_bin;

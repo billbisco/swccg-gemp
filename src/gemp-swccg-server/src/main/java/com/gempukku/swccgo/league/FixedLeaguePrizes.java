@@ -16,10 +16,18 @@ import java.util.*;
  * Defines the prizes used for leagues.
  */
 public class FixedLeaguePrizes implements LeaguePrizes {
+    /**
+     * The three prize pools, read once per card library.  Building them reads every set's rarity file and looks
+     * every card up in the library; a LeagueData does that in its constructor, and the league schedules build a
+     * LeagueData for each occurrence they project (an admin page lists dozens), so the pools are shared.  The
+     * library never changes after start-up, and the pools are never written after they are built.
+     */
+    private static final Map<SwccgCardBlueprintLibrary, List<List<String>>> POOLS_BY_LIBRARY = Collections.synchronizedMap(new WeakHashMap<>());
+
     private SwccgCardBlueprintLibrary _library;
-    private List<String> _commonsAndFixed = new ArrayList<String>();
-    private List<String> _uncommonsAndPreview = new ArrayList<String>();
-    private List<String> _raresAndPremiums = new ArrayList<String>();
+    private List<String> _commonsAndFixed;
+    private List<String> _uncommonsAndPreview;
+    private List<String> _raresAndPremiums;
 
     /**
      * Creates the prizes used for leagues.
@@ -27,6 +35,25 @@ public class FixedLeaguePrizes implements LeaguePrizes {
      */
     public FixedLeaguePrizes(SwccgCardBlueprintLibrary library) {
         _library = library;
+        List<List<String>> pools;
+        synchronized (POOLS_BY_LIBRARY) {
+            pools = POOLS_BY_LIBRARY.get(library);
+            if (pools == null) {
+                _commonsAndFixed = new ArrayList<String>();
+                _uncommonsAndPreview = new ArrayList<String>();
+                _raresAndPremiums = new ArrayList<String>();
+                readPools();
+                pools = List.of(Collections.unmodifiableList(_commonsAndFixed), Collections.unmodifiableList(_uncommonsAndPreview),
+                        Collections.unmodifiableList(_raresAndPremiums));
+                POOLS_BY_LIBRARY.put(library, pools);
+            }
+        }
+        _commonsAndFixed = pools.get(0);
+        _uncommonsAndPreview = pools.get(1);
+        _raresAndPremiums = pools.get(2);
+    }
+
+    private void readPools() {
         RarityReader rarityReader = new RarityReader();
         for (int i = 1; i < (1 + CardCounts.FULL_SETS_CARD_COUNTS.length); i++) {
             addCardsToPrizePools(rarityReader.getSetRarity(String.valueOf(i)));

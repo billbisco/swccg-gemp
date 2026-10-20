@@ -1,8 +1,28 @@
 <script type="text/javascript">
-    $(document).ready(
-            function () {
-                var ui = new GameHistoryUI("/gemp-swccg-server");
-            });
+    $("#gameHistory").ready(
+        function () {
+            // build once, even if the sub-tab's content is fetched again
+            if ($("#gameHistory").data("gameHistoryUI") == null) {
+                // a #account/history?.. hall link (hallLinks.js) names the filters and page to open on; without one the
+                // page opens on the filters it last showed, else on all games
+                var hash = window.location.hash;
+                var remembered = window.GempLinks ? GempLinks.lastLinks["account/history"] : null;
+                var isHistoryLink = function (h) {
+                    return /^#(account\/history|history)\?/.test(h || "");
+                };
+                var link = isHistoryLink(hash) ? hash : (isHistoryLink(remembered) ? remembered : null);
+                var ui = new GameHistoryUI("/gemp-swccg-server", {container: $("#gameHistory"), link: link});
+                $("#gameHistory").data("gameHistoryUI", ui);
+                window.GempHistoryPage = ui;
+                // coming back to the sub-tab after a while re-fetches the page shown, keeping its page and filters
+                // (GempHallTabs.onReturn, gameHall.js)
+                if (window.GempHallTabs)
+                    GempHallTabs.onReturn($("#gameHistory"), function () { ui.refresh(); });
+            }
+        });
 
 </script>
-<div id="gameHistory"></div>
+<div class="game-history-article">
+    <h1>My Game History</h1>
+    <div id="gameHistory"></div>
+</div>

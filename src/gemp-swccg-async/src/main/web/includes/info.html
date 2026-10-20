@@ -1,0 +1,94 @@
+<script type="text/javascript">
+    // Server Info tab (LOTR includes/info.html).  Links: #info/stats, #info/changelog, #info/contribute, #info/about
+    // (hallLinks.js).
+    $("#infoMain").ready(
+        function () {
+            $("#infoMain").tabs().addClass("ui-tabs-vertical ui-helper-clearfix");
+            $("#info-tabs > ol > li").removeClass("ui-corner-top").addClass("ui-corner-left");
+
+            var ui = new StatsUI("/gemp-swccg-server", $("#statsParameters"), $("#stats"));
+            $(".getStats", $("#statsParameters")).click();
+            // coming back to Server Stats after a while re-fetches the stats last displayed (GempHallTabs.onReturn,
+            // gameHall.js); the date / period fields keep whatever the viewer has typed
+            if (window.GempHallTabs)
+                GempHallTabs.onReturn($("#server-stats"), function () { ui.refresh(); });
+        });
+</script>
+
+<div id="infoMain" class="hall-tab flex-horiz">
+    <div id="info-tabs" class="sub-tabs">
+        <ol>
+            <li><a href="#server-stats">Server Stats</a></li>
+            <li><a href="includes/info/changeLog.html?v=20261020c">Change Log</a></li>
+            <li><a href="includes/info/contribute.html?v=20261020c">Contribute</a></li>
+            <li><a href="#info-about">About</a></li>
+        </ol>
+    </div>
+
+    <div id="server-stats">
+        <div class="stats-page">
+            <h1>Server Stats</h1>
+            <p class="stats-note">All dates are server time (UTC).</p>
+            <form id="statsParameters" class="stats-parameters" onsubmit="return false;">
+                <label>Start date:
+                    <input class="startDay" type="text" value="" size="10" maxlength="10" placeholder="yyyy-mm-dd" autocomplete="off">
+                </label>
+                <label>Period:
+                    <select class="period">
+                        <option value="month">month</option>
+                        <option value="week">week</option>
+                        <option value="day">day</option>
+                    </select>
+                </label>
+                <input class="getStats" type="submit" value="Display Stats">
+                <span class="stats-status" role="status" aria-live="polite"></span>
+            </form>
+            <div id="stats">
+                <div class="period">Stats for <span id="startDateSpan"></span> - <span id="endDateSpan"></span></div>
+                <div class="activePlayers">Active players: <span id="activePlayersStat"></span></div>
+                <div class="gamesCount">All games count: <span id="gamesCountStat"></span></div>
+                <h2 class="stats-caption">Casual Games by Format</h2>
+                <div id="casualStatsTable" class="stats-table"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="info-about">
+        <div class="article">
+            <h1>About</h1>
+            <p>
+                GEMP is a general-purpose game engine for trading card games. This instance plays the Star Wars
+                Customizable Card Game; another plays the
+                <a href="https://play.lotrtcgpc.net/" target="_blank" rel="noopener noreferrer">Lord of the Rings
+                    TCG</a>, and this hall's layout is adapted from that one.
+            </p>
+            <p>
+                GEMP was originally built to emulate Legend of the Five Rings, which is where the name comes from:
+                <i>Gempukku</i>, a coming-of-age ceremony in Japanese, was meant to mirror the Apprentice program for
+                Magic: the Gathering.
+            </p>
+            <p>
+                MarcinS created GEMP and started the project in August 2011. The Star Wars CCG version was built on it
+                by volunteers from the SWCCG community and has been maintained by them since.
+            </p>
+            <p>
+                GEMP is written with a Java and MySQL back end and a framework-less JavaScript front end.
+                <a href="https://github.com/billbisco/swccg-gemp" target="_blank" rel="noopener noreferrer">The code is
+                    on GitHub</a>, with the
+                <a href="https://github.com/billbisco/swccg-gemp/graphs/contributors" target="_blank" rel="noopener noreferrer">list
+                    of everyone who has contributed to it</a> and the
+                <a href="https://github.com/billbisco/swccg-gemp/issues" target="_blank" rel="noopener noreferrer">open
+                    bugs and requests</a>.
+            </p>
+            <p>
+                Card images and rules text are the property of Lucasfilm Ltd and Decipher, Inc. This site is not
+                produced, endorsed, supported or affiliated with either.
+            </p>
+            <h2>Trying things out</h2>
+            <p>
+                <a href="epic-duel/newgui.html" target="_blank">Public Beta: New UI</a> is an experimental game
+                interface. It is not finished, and games played there count like any other.
+            </p>
+        </div>
+    </div>
+</div>
