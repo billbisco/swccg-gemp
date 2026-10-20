@@ -5,7 +5,8 @@
 <head>
     <title>Gemp-Swccg</title>
 
-    <link rel="stylesheet" type="text/css" href="css/dark-hive/jquery-ui-1.8.16.custom.css">
+    <link rel="stylesheet" type="text/css" href="js/jquery/jquery-ui-1.13.2.custom/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="css/gemp-001/jquery-ui-1.13-compat.css?v=20261020a">
     <link rel="stylesheet" type="text/css" href="css/gemp-001/hall.css?v=20261006l">
     <link rel="stylesheet" type="text/css" href="css/gemp-001/delivery.css?v=20261006h">
     <link rel="stylesheet" type="text/css" href="css/jquery.contextMenu.css">
@@ -13,8 +14,11 @@
     <link rel="stylesheet" type="text/css" href="css/gemp-001/muted-users.css">
     <link rel="stylesheet" type="text/css" href="css/gemp-001/hallPages.css?v=20261019a">
 
-    <script type="text/javascript" src="js/jquery/jquery-1.6.2.js"></script>
-    <script type="text/javascript" src="js/jquery/jquery-ui-1.8.16.custom.min.js"></script>
+    <!-- The hall runs on jQuery 3.6 + Migrate 1.4.1 + jQuery UI 1.13 (as the LOTR hall does); the other pages stay on
+         jQuery 1.6.2 + jQuery UI 1.8, so JS shared with them must work on both. -->
+    <script type="text/javascript" src="js/jquery/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="js/jquery/jquery-migrate-1.4.1.js"></script>
+    <script type="text/javascript" src="js/jquery/jquery-ui-1.13.2.custom/jquery-ui.min.js"></script>
     <script type="text/javascript" src="js/jquery/jquery.cookie.js"></script>
     <script type="text/javascript" src="js/jquery/jquery.spinnercontrol.js"></script>
     <script type="text/javascript" src="js/jquery/jquery.layout.js"></script>
@@ -37,15 +41,15 @@
     <script type="text/javascript" src="js/gemp-016/cards/CardImages.js"></script>
     <script type="text/javascript" src="js/gemp-016/cards/PackImages.js"></script>
 
-    <script type="text/javascript" src="js/gemp-016/playerPicker.js?v=20261004f"></script>
-    <script type="text/javascript" src="js/gemp-016/hallUi.js?v=20261006l"></script>
+    <script type="text/javascript" src="js/gemp-016/playerPicker.js?v=20261020a"></script>
+    <script type="text/javascript" src="js/gemp-016/hallUi.js?v=20261020a"></script>
     <script type="text/javascript" src="js/gemp-016/leagueResultsUi.js?v=20261019a"></script>
     <script type="text/javascript" src="js/gemp-016/tournamentResultsUi.js"></script>
     <script type="text/javascript" src="js/gemp-016/statsUi.js"></script>
     <script type="text/javascript" src="js/gemp-016/playerStatsUi.js"></script>
     <script type="text/javascript" src="js/gemp-016/collectionStatsUi.js"></script>
     <script type="text/javascript" src="js/gemp-016/gameHistoryUi.js"></script>
-    <script type="text/javascript" src="js/gemp-016/hallLinks.js?v=20261019a"></script>
+    <script type="text/javascript" src="js/gemp-016/hallLinks.js?v=20261020a"></script>
     <script type="text/javascript" src="js/gemp-016/eventsUi.js?v=20261019a"></script>
     <script type="text/javascript" src="js/gemp-016/historyUi.js?v=20261019a"></script>
     <script type="text/javascript" src="js/gemp-016/deckBuildingUi.js"></script>
@@ -99,7 +103,7 @@
                         var tar = $(event.target);
 
                         if (tar.hasClass("cardHint")) {
-                            var blueprintId = tar.attr("value");
+                            var blueprintId = tar[0].getAttribute("value");
                             var testingText = tar.attr("data-testingText");
                             var backSideTestingText = tar.attr("data-backSideTestingText");
                             var card = new Card(blueprintId, testingText, backSideTestingText, "SPECIAL", "hint", "");
@@ -129,7 +133,7 @@
                             event.stopPropagation();
                             return false;
                         } else if (tar.hasClass("prizeHint")) {
-                            var prizeDescription = tar.attr("value");
+                            var prizeDescription = tar[0].getAttribute("value");
 
                             infoDialog.text(prizeDescription);
 
@@ -206,7 +210,7 @@
             <li id="tab-your-stats"><a href="includes/yourStats.html">Your stats</a></li>
             <li id="tab-server-stats"><a href="includes/stats.html">Server stats</a></li>
             <li id="tab-collection-stats"><a href="includes/yourCollectionStats.html">Your collection stats</a></li>
-            <li id="admin-tab"><a href="includes/admin.html?v=20261006b">Admin</a></li>
+            <li id="admin-tab"><a href="includes/admin.html?v=20261020a">Admin</a></li>
         </ul>
         <div id="gameHall">
             <div id="latestNews">

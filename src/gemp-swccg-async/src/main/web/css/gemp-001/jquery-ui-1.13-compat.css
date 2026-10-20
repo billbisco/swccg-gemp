@@ -1,0 +1,126 @@
+/*
+ * Hall only: keeps the jQuery UI 1.8 look on jQuery UI 1.13.  Loaded after jquery-ui.css and before hall.css.
+ *
+ * jQuery UI 1.8's .button() put the label in an inner <span class="ui-button-text"> and padded that span; 1.13 puts
+ * the label straight in the button and pads the button.  hall.css styles the 1.8 span, so these rules give 1.13
+ * buttons the same size, padding and font as before.  Other pages stay on 1.8 and do not load this file.
+ */
+
+/* ---- Defaults, at the specificity of jQuery UI's own rules, so hall.css and hallPages.css still win over them as
+   they did over jQuery UI 1.8's. ---- */
+
+/* 1.13 adds vertical-align: middle; 1.8 left buttons on the baseline (keeps table section header heights). */
+.ui-button {
+    vertical-align: baseline;
+}
+
+/* Text buttons made by .button(): 1.8's inner span had font-size 70% and padding .2em .5em (hall.css) and
+   line-height 1.4.  Buttons written as plain markup with ui-button classes (muted users dialog) carry
+   ui-state-default, which 1.13's .button() never adds; they look the same on both versions and are left alone. */
+.ui-button:where(:not(.ui-button-icon-only):not(.ui-state-default)) {
+    padding: .2em .5em;
+    line-height: 1.4;
+    margin: .143em;                /* 1.8: margin .1em of the unshrunk button font */
+}
+
+/* The font size needs one element in the selector to beat jQuery UI's ".ui-widget button { font-size: 1em }". */
+:is(a, button, div, span).ui-button:where(:not(.ui-button-icon-only):not(.ui-state-default)) {
+    font-size: .77em;              /* 70% of the 1.1em .ui-widget size */
+}
+
+.ui-widget :is(a, button, div, span).ui-button:where(:not(.ui-button-icon-only):not(.ui-state-default)) {
+    font-size: .7em;               /* inside a widget the button itself was 1em (".ui-widget .ui-widget") */
+}
+
+/* Icon-only buttons (section toggles, chat buttons): no padding, size set inline by the code, as in 1.8. */
+.ui-button:where(.ui-button-icon-only:not(.ui-dialog-titlebar-close)) {
+    padding: 0;
+    margin: .1em;
+}
+
+/* 1.13 makes icon-only buttons border-box; 1.8 left <div>/<a> buttons content-box (<button> is border-box anyway). */
+.ui-button:where(.ui-button-icon-only:not(button):not(input)) {
+    box-sizing: content-box;
+    line-height: 2.2;              /* 1.8's hidden label sat lower; keeps the section header height */
+}
+
+.ui-button-icon-only .ui-icon {
+    top: 50%;
+}
+
+/* 1.8 stacked dialogs and overlays from z-index 1000; 1.13 uses .ui-front at 100, under the connection popup (200). */
+.ui-front {
+    z-index: 1000;
+}
+
+/* ---- hall.css rules written for 1.8's label span, moved onto the 1.13 button (body raises them over hall.css). ---- */
+
+/* Watch game / Play the game links: 1.8 text was 70% of the 12px link size. */
+body .hall-row-link.ui-button {
+    font-size: 8.4px;
+}
+
+/* Admin buttons and buttons in .page tables kept the button's own font size. */
+body button.admin-button.ui-button,
+body .page td button.ui-button {
+    font-size: inherit;
+}
+
+body button.admin-button.ui-button,
+body .page td button.ui-button {
+    margin: .1em;                  /* .1em of the unshrunk font, as in 1.8 */
+}
+
+/* Admin buttons: the button had 4px padding (hall.css, or inline in the admin pages) and the label span .2em .5em. */
+body button.admin-button.ui-button,
+body .page td button.ui-button[style*="padding:4px"] {
+    padding: calc(4px + .2em) calc(4px + .5em) !important;
+}
+
+/* Bottom bar Deck-builder / Play. */
+body .hall-primary-actions a.hall-play-button.ui-button,
+body .hall-primary-actions button.hall-play-button.ui-button {
+    padding: 0.55em 1.1em;
+    font-size: 15px;
+    line-height: 1.4;
+    margin: .1em;
+}
+
+/* Dialog close: 1.8 drew a bare icon and boxed it only on hover; 1.13 makes it a themed button (and focuses it when
+   the dialog has nothing else to focus).  Show the box on hover or keyboard focus only. */
+body .ui-dialog .ui-dialog-titlebar-close.ui-button:not(:hover):not(:focus-visible) {
+    background: transparent;
+    border-color: transparent;
+}
+
+/* Dialog button pane: 1.8 margin .5em .4em .5em 0 of the unshrunk font. */
+body .ui-dialog .ui-dialog-buttonpane button.ui-button {
+    margin: .714em .571em .714em 0;
+}
+
+/* Play overlay choices. */
+body .play-choice-button.ui-button {
+    flex-direction: column;
+    align-items: flex-start;
+    box-sizing: border-box;
+    padding: 14px 16px;
+}
+
+/* Full-width Join table button: 1.8 padded both the button (.55em 1em) and its label span. */
+body .table-create-button.ui-button {
+    margin: calc(.6 * 1.05rem) 0 calc(.2 * 1.05rem) 0;
+    font-size: .735rem !important;
+    padding: calc(.55 * 1.05rem + .2 * .735rem) calc(1.05rem + .5 * .735rem) !important;
+    line-height: 1.4;
+}
+
+/* League Create Table: its label span had its own size (1.05rem) and padding (.35em .8em). */
+body #submit-league-table-button.ui-button {
+    font-size: 1.05rem !important;
+    padding: .9em 1.8em !important;
+    line-height: 1.4;
+}
+
+body .league-join-block-compact .leagueMembership .ui-button.league-join-button {
+    white-space: nowrap;
+}

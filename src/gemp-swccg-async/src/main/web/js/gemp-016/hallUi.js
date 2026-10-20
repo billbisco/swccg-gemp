@@ -2,7 +2,7 @@
 // gemp-lotr-async/src/main/web/js/gemp-022/hallUi.js (HallConnectionIndicator).
 // States: connecting / connected / reconnecting / disconnected. Hover/focus/click opens details popup.
 // Wired into SWCCG's existing getHall/updateHall/hallErrorMap (no full LOTR poll rewrite).
-// NOTE: SWCCG hall.html ships jQuery 1.6.2 — use .bind() not .on() (added in 1.7).
+// NOTE: hall.html runs jQuery 3.6, but the other pages still load this file on jQuery 1.6.2 — use .bind() not .on().
 var HallConnectionIndicator = Class.extend({
 	root: null,
 	button: null,
@@ -1346,8 +1346,8 @@ var GempSwccgHallUI = Class.extend({
         this.joinLibraryDeckSelect.empty();
         var loading = $("<option></option>");
         loading.attr("value", "");
-        loading.attr("disabled", "disabled");
-        loading.attr("selected", "selected");
+        loading.prop("disabled", true);
+        loading.prop("selected", true);
         loading.text("Loading decks...");
         this.joinPlayerDeckSelect.append(loading);
         this.joinLibraryDeckSelect.append($("<option></option>").attr("value", "").text("Select a Library Deck"));
