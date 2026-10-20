@@ -44,6 +44,11 @@
 					tourneyUI.showTournament(tournamentId);
 					if (window.GempLinks)
 						GempLinks.setLink("#tournament-" + tournamentId);
+				},
+				// a "Scheduled (not yet created)" league (league admins only): its schedule in League Admin
+				onProjected: function (scheduleId) {
+					if (window.GempLinks)
+						GempLinks.open("#admin/league/schedule-" + scheduleId);
 				}
 			});
 			calendar.show();

@@ -1476,6 +1476,96 @@ var GempSwccgCommunication = Class.extend({
         });
     },
     
+    // ---- league schedules (League Admin): recurring leagues the server creates on its own ----
+
+    getLeagueSchedules:function (callback, errorMap) {
+        $.ajax({
+            type:"GET",
+            url:this.url + "/admin/league/schedules",
+            cache:false,
+            data:{
+                participantId:getUrlParam("participantId")
+            },
+            success:callback,
+            error:this.errorCheck(errorMap),
+            dataType:"json"
+        });
+    },
+
+    // definition: {id, name, leagueType, template (JSON string), events (JSON string), namePattern, nextEventDate
+    // (yyyy-mm-dd), nextEventIndex, intervalMonths, leadDays, enabled}.  preview = true stores nothing and returns
+    // the upcoming occurrences and the next league; otherwise the stored schedule comes back.
+    saveLeagueSchedule:function (preview, definition, callback, errorMap) {
+        $.ajax({
+            type:"POST",
+            url:this.url + "/admin/league/schedule/" + (preview ? "preview" : "save"),
+            cache:false,
+            data:{
+                participantId:getUrlParam("participantId"),
+                id:definition.id,
+                name:definition.name,
+                leagueType:definition.leagueType,
+                template:definition.template,
+                events:definition.events,
+                namePattern:definition.namePattern,
+                nextEventDate:definition.nextEventDate,
+                nextEventIndex:definition.nextEventIndex,
+                intervalMonths:definition.intervalMonths,
+                leadDays:definition.leadDays,
+                enabled:definition.enabled ? "true" : "false"
+            },
+            success:callback,
+            error:this.errorCheck(errorMap),
+            dataType:"json"
+        });
+    },
+
+    enableLeagueSchedule:function (id, enabled, callback, errorMap) {
+        $.ajax({
+            type:"POST",
+            url:this.url + "/admin/league/schedule/enable",
+            cache:false,
+            data:{
+                participantId:getUrlParam("participantId"),
+                id:id,
+                enabled:enabled ? "true" : "false"
+            },
+            success:callback,
+            error:this.errorCheck(errorMap),
+            dataType:"json"
+        });
+    },
+
+    deleteLeagueSchedule:function (id, callback, errorMap) {
+        $.ajax({
+            type:"POST",
+            url:this.url + "/admin/league/schedule/delete",
+            cache:false,
+            data:{
+                participantId:getUrlParam("participantId"),
+                id:id
+            },
+            success:this.deliveryCheck(callback),
+            error:this.errorCheck(errorMap),
+            dataType:"html"
+        });
+    },
+
+    runLeagueSchedule:function (id, callback, errorMap) {
+        $.ajax({
+            type:"POST",
+            url:this.url + "/admin/league/schedule/run",
+            cache:false,
+            data:{
+                participantId:getUrlParam("participantId"),
+                id:id
+            },
+            success:callback,
+            error:this.errorCheck(errorMap),
+            dataType:"json"
+        });
+    },
+
     leagueDeckCheck:function (leagueId, callback, errorMap) {
         $.ajax({
             type:"POST",
