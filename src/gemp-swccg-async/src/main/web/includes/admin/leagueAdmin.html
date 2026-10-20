@@ -6,11 +6,16 @@
 // (GET /league, /league/<type>) with each league's series and standings and a "Copy to form" that reruns a league,
 // and Add players to league (/admin/league/addplayers).
 //
-// Not here yet (no endpoint on this server): editing or deleting a league, league schedules (slice 5: the
-// "League schedules" block below is the placeholder for it), the event calendar as the editing entry point (slice 4),
-// markdown descriptions, prize tiers, and the admin player lookup.
+// League schedules (LOTR's "Repeat on a schedule"): ticking the box turns the same form into a schedule - a series
+// name, a league name pattern, a cadence, lead days, an enabled flag and a rotation of events (each with its own
+// serie editor) over the common fields.  The server stores it (/admin/league/schedule/save), lists it with its next
+// occurrences (/admin/league/schedules) and creates the leagues on its own; the cards above the form edit, preview,
+// enable or disable, run or delete one.  A schedule is off until an admin turns it on.
 //
-// Everything the server sends (league names, codes, player names, error messages) is put on the page as text.
+// Not here yet (no endpoint on this server): editing or deleting a league, markdown descriptions, prize tiers, and the
+// admin player lookup.
+//
+// Everything the server sends (league names, codes, schedule names, error messages) is put on the page as text.
 $(function () {
 	var page = $("#league-admin-page");
 	var resultdiv = $("#league-result");
@@ -62,7 +67,17 @@ $(function () {
 	var state = {
 		type: "SEALED",
 		costTouched: false,
-		leagues: []           // the current leagues as GET /league lists them
+		leagues: [],          // the current leagues as GET /league lists them
+		schedules: [],        // the league schedules as GET /admin/league/schedules lists them
+		editingSchedule: null, // the schedule object while an existing schedule is loaded into the form
+		templateExtras: {}    // template keys of a loaded schedule this form does not manage, written back on save
+	};
+	// the template keys the form manages itself; anything else found in a loaded schedule is carried over untouched
+	var MANAGED_TEMPLATE_KEYS = ["cost", "collectionType", "lockedDeckType", "allowTimeExtensions", "allowSpectators", "showPlayerNames",
+		"invitationOnly", "registrationInfo", "decisionTimeoutSeconds", "timePerPlayerMinutes", "series", "name", "start", "code"];
+	var DEFAULT_NAME_PATTERN = "{series} - {event}";
+	var isScheduling = function () {
+		return $("#league-repeat").prop("checked");
 	};
 	var selectCounter = 0;
 
@@ -185,7 +200,85 @@ $(function () {
 
 	var openLeaguePreview = function (xml) {
 		previewDialog.html("");
+		previewDialog.dialog("option", "title", "League preview");
 		renderLeaguePreview(previewDialog, xml);
+		previewDialog.dialog("open");
+	};
+
+	// The same league as the schedule endpoints describe it (JSON with yyyy-mm-dd dates); everything as text.
+	var renderLeaguePreviewJson = function (container, league) {
+		container.append($("<div class='leagueName'></div>").text(league.name));
+		container.append($("<div></div>").html("<b>Runs:</b> ").append(document.createTextNode(league.start + ", listed until " + league.end)));
+		if (league.invitationOnly) {
+			var invite = $("<div></div>").html("<b>Invite only.</b> ");
+			if (league.registrationInfo)
+				invite.append(document.createTextNode("Registration info: ")).append(registrationInfoNode(league.registrationInfo));
+			container.append(invite);
+		} else {
+			container.append($("<div class='leagueCost'></div>").html("Open entry. <b>Cost:</b> " + formatPrice(toInt(league.cost, 0))));
+			if (league.registrationInfo)
+				container.append($("<div></div>").text("Registration info: ").append(registrationInfoNode(league.registrationInfo)));
+		}
+		var settings = [];
+		settings.push(league.timePerPlayerMinutes + " minutes per player (time extensions " + (league.allowTimeExtensions ? "allowed" : "not allowed") + ")");
+		settings.push(league.decisionTimeoutSeconds + " second decision timeout");
+		settings.push(league.allowSpectators ? "spectators permitted" : "spectators denied");
+		settings.push(league.showPlayerNames ? "player names public on tables" : "anonymous tables");
+		if (league.lockedDeckType === "when_first_played")
+			settings.push("decks locked after the first game");
+		container.append($("<div class='preview-settings'></div>").text(settings.join("; ") + "."));
+		var series = league.series || [];
+		for (var j = 0; j < series.length; j++) {
+			var serie = series[j];
+			container.append($("<div class='serieName'></div>").text(serie.name + " - " + serie.start + " to " + serie.end));
+			container.append($("<div></div>").html("<b>Format:</b> ").append(document.createTextNode((serie.limited ? "Limited " : "Constructed ") + serie.format)));
+			container.append($("<div></div>").html("<b>Collection:</b> ").append(document.createTextNode(serie.collection)));
+			container.append($("<div></div>").text("Maximum ranked matches in serie: " + serie.maxMatches));
+		}
+	};
+
+	// The next occurrences of a schedule as a list (the server's upcoming[]: leagueName, start, end, createdOn, error).
+	var upcomingList = function (upcoming, cssClass) {
+		var list = $("<ul></ul>").addClass(cssClass || "schedule-upcoming");
+		if (upcoming.length == 0)
+			list.append($("<li></li>").text("No upcoming leagues."));
+		for (var i = 0; i < upcoming.length; i++) {
+			var u = upcoming[i];
+			var item = $("<li></li>");
+			item.append(document.createTextNode(u.start + " to " + u.end + ": "));
+			item.append($("<b></b>").text(u.leagueName));
+			item.append(document.createTextNode(" (created " + u.createdOn + ")"));
+			if (u.error)
+				item.append(" ").append($("<span class='schedule-error'></span>").text("\u26a0 " + u.error));
+			list.append(item);
+		}
+		return list;
+	};
+
+	var openSchedulePreview = function (json, definition) {
+		previewDialog.html("");
+		previewDialog.dialog("option", "title", "Schedule preview");
+		previewDialog.append("<div class='leagueName'>Upcoming leagues</div>");
+		previewDialog.append(upcomingList(json.upcoming || [], "preview-upcoming"));
+		if (json.nextLeague) {
+			previewDialog.append("<div class='serieName'>Next league as it will be created</div>");
+			renderLeaguePreviewJson(previewDialog, json.nextLeague);
+		}
+		var technical = {};
+		try {
+			technical.template = JSON.parse(definition.template);
+			technical.events = JSON.parse(definition.events);
+		} catch (e) {
+			technical = {template: definition.template, events: definition.events};
+		}
+		var toggle = $("<div class='tech-toggle'></div>").text("\u25b8 Definition (technical)");
+		var pre = $("<pre class='tech-json' hidden></pre>").text(JSON.stringify(technical, null, 2));
+		toggle.click(function () {
+			var open = pre.prop("hidden");
+			pre.prop("hidden", !open);
+			toggle.text((open ? "\u25be" : "\u25b8") + " Definition (technical)");
+		});
+		previewDialog.append(toggle).append(pre);
 		previewDialog.dialog("open");
 	};
 
@@ -316,7 +409,6 @@ $(function () {
 		$("#help-series-draft").toggle(type == "SOLODRAFT");
 		$("#help-series-constructed").toggle(type == "CONSTRUCTED");
 		$(".type-btn").removeClass("type-selected").filter("[data-type='" + type + "']").addClass("type-selected");
-		$("#league-save-button").button("option", "label", "Create " + TYPE_LABELS[type].toLowerCase() + " league");
 	};
 
 	// Switches the league type. Common fields are kept; only the type-specific serie rows are rebuilt.
@@ -324,6 +416,15 @@ $(function () {
 		state.type = type;
 		applyTypeVisibility();
 		renderSerieEditor($("#oneoff-series"), type, series);
+		$("#rotation-rows .rotation-row").each(function () {
+			var row = $(this);
+			// format codes are type-specific, so only durations and match limits survive a type switch
+			var existing = readSerieEditor(row.find(".serie-editor")).map(function (s) {
+				return {format: "", duration: s.duration, matches: s.matches};
+			});
+			renderSerieEditor(row.find(".serie-editor"), type, existing.length > 0 ? existing : null);
+		});
+		applyMode();
 	};
 
 	$(".type-btn").button().click(function () {
@@ -333,6 +434,153 @@ $(function () {
 	});
 
 	$("#league-cost").on("input", function () { state.costTouched = true; });
+
+	// =====================================================================================
+	// Rotation (schedule events): each event names the serie(s) of one league of the schedule
+	// =====================================================================================
+	var refreshRotation = function () {
+		var rows = $("#rotation-rows .rotation-row");
+		rows.each(function (index) {
+			var row = $(this);
+			row.find(".rotation-index").text((index + 1) + ".");
+			row.find(".rot-up").button("option", "disabled", index == 0);
+			row.find(".rot-down").button("option", "disabled", index == rows.length - 1);
+			row.find(".rot-remove").button("option", "disabled", rows.length <= 1);
+			row.toggleClass("is-next", row.find(".rotation-next").prop("checked"));
+		});
+		if (rows.length > 0 && rows.find(".rotation-next:checked").length == 0) {
+			rows.first().find(".rotation-next").prop("checked", true);
+			rows.first().addClass("is-next");
+		}
+	};
+
+	var selectedLabel = function (select) {
+		var option = select.find("option:selected");
+		return option.length > 0 ? option.text() : "";
+	};
+
+	var addRotationRow = function (name, series, extras) {
+		var row = $("<div class='rotation-row schedule-event'></div>");
+		row.data("extras", extras || {});
+		var head = $("<div class='rotation-head flex-horiz'></div>");
+		head.append("<span class='rotation-index'></span>");
+		head.append($("<input type='text' class='rotation-name flex-fill' maxlength='45' placeholder='Event name'>").val(name || ""));
+		head.append("<label class='rotation-next-label' title='The next league created by this schedule is this event'><input type='radio' name='rotation-next' class='rotation-next'> next</label>");
+		var buttons = $("<div class='rotation-buttons'></div>");
+		buttons.append($("<button type='button' class='rot-up'>Up</button>").button().click(function () {
+			var prev = row.prev(".rotation-row");
+			if (prev.length > 0) prev.before(row);
+			refreshRotation();
+		}));
+		buttons.append($("<button type='button' class='rot-down'>Down</button>").button().click(function () {
+			var next = row.next(".rotation-row");
+			if (next.length > 0) next.after(row);
+			refreshRotation();
+		}));
+		buttons.append($("<button type='button' class='rot-remove'>Remove</button>").button().click(function () {
+			row.remove();
+			refreshRotation();
+		}));
+		head.append(buttons);
+		row.append(head);
+		var editor = $("<div class='serie-editor'></div>");
+		renderSerieEditor(editor, state.type, series);
+		row.append(editor);
+		$("#rotation-rows").append(row);
+		if (!name)
+			seedRotationName(row);
+		refreshRotation();
+		return row;
+	};
+
+	// An event name defaults to the display name of its first format while the admin has not typed one.
+	var seedRotationName = function (row) {
+		var nameInput = row.find(".rotation-name");
+		if (nameInput.val() !== "")
+			return;
+		var label = selectedLabel(row.find(".serie-format").first());
+		if (label) {
+			nameInput.val(label);
+			nameInput.data("autoName", label);
+		}
+	};
+
+	$("#rotation-rows").on("change", ".serie-format", function () {
+		var row = $(this).closest(".rotation-row");
+		var nameInput = row.find(".rotation-name");
+		if (nameInput.val() === "" || nameInput.val() === nameInput.data("autoName")) {
+			var label = selectedLabel(row.find(".serie-format").first());
+			nameInput.val(label);
+			nameInput.data("autoName", label);
+		}
+	});
+	$("#rotation-rows").on("change", ".rotation-next", refreshRotation);
+
+	$("#rotation-add").button().click(function () {
+		addRotationRow("", null, {});
+	});
+
+	var readRotation = function () {
+		var events = [];
+		$("#rotation-rows .rotation-row").each(function () {
+			var row = $(this);
+			var params = $.extend({}, row.data("extras") || {}, {series: readSerieEditor(row.find(".serie-editor"))});
+			events.push({name: $.trim(row.find(".rotation-name").val()), params: params});
+		});
+		return events;
+	};
+
+	var readNextEventIndex = function () {
+		var rows = $("#rotation-rows .rotation-row");
+		var index = rows.index(rows.filter(function () { return $(this).find(".rotation-next").prop("checked"); }).first());
+		return index < 0 ? 0 : index;
+	};
+
+	// =====================================================================================
+	// Mode handling (new league / new schedule / edit schedule)
+	// =====================================================================================
+	var applyMode = function () {
+		var scheduling = isScheduling();
+		var title, saveLabel;
+		if (scheduling && state.editingSchedule != null) {
+			title = "Editing schedule: " + state.editingSchedule.name;
+			saveLabel = "Save schedule";
+		} else if (scheduling) {
+			title = "New schedule";
+			saveLabel = "Create schedule";
+		} else {
+			title = "New league";
+			saveLabel = "Create " + TYPE_LABELS[state.type].toLowerCase() + " league";
+		}
+		$("#league-form-title").text(title);
+		$("#league-save-button").button("option", "label", saveLabel);
+		$("#league-repeat").prop("disabled", state.editingSchedule != null);
+		$("#schedule-block").toggle(scheduling);
+		$("#oneoff-block").toggle(!scheduling);
+		$("#league-name-row").toggle(!scheduling);
+		$("#league-start-label").text(scheduling ? "Next league starts" : "Start date");
+		$("#help-start").text(scheduling
+			? "The day the next league of this schedule begins (server time). Later leagues follow at the interval below; each is created the given number of days before it starts."
+			: "The day the first serie opens for play (server time). Players can sign up as soon as the league exists, and the league stays listed for two days after its last serie ends.");
+	};
+
+	$("#league-repeat").on("change", function () {
+		if (isScheduling()) {
+			if ($("#rotation-rows .rotation-row").length == 0) {
+				var seed = readSerieEditor($("#oneoff-series"));
+				addRotationRow("", seed, {});
+			}
+			if ($("#schedule-name").val() === "")
+				$("#schedule-name").val($("#league-name").val());
+		} else {
+			if ($("#league-name").val() === "")
+				$("#league-name").val($("#schedule-name").val());
+			var first = $("#rotation-rows .rotation-row").first();
+			if (first.length > 0)
+				renderSerieEditor($("#oneoff-series"), state.type, readSerieEditor(first.find(".serie-editor")));
+		}
+		applyMode();
+	});
 
 	// =====================================================================================
 	// Common block
@@ -368,7 +616,15 @@ $(function () {
 	// Clears everything back to a fresh "New league".
 	var startOver = function () {
 		state.costTouched = false;
-		$("#league-form-title").text("New league");
+		state.editingSchedule = null;
+		state.templateExtras = {};
+		$("#league-repeat").prop("checked", false);
+		$("#schedule-name").val("");
+		$("#schedule-name-pattern").val(DEFAULT_NAME_PATTERN);
+		$("#schedule-interval").val(1);
+		$("#schedule-lead-days").val(7);
+		$("#schedule-enabled").prop("checked", false);
+		$("#rotation-rows").empty();
 		$("#league-name").val("");
 		$("#league-cost").val(DEFAULT_COST);
 		$("#league-start").val(todayIso());
@@ -382,6 +638,7 @@ $(function () {
 		setCollection("default");
 		$("#league-lock").val("");
 		selectType("SEALED", null);
+		applyMode();
 		setResult(resultdiv, "Ready.");
 	};
 
@@ -443,8 +700,13 @@ $(function () {
 	// Submitting
 	// =====================================================================================
 	var validateCommon = function (common, series) {
-		if (!common.name) {
+		var scheduling = isScheduling();
+		if (!scheduling && !common.name) {
 			setResult(resultdiv, "Please give the league a name.", "error");
+			return false;
+		}
+		if (scheduling && !$.trim($("#schedule-name").val())) {
+			setResult(resultdiv, "Please give the schedule a series name.", "error");
 			return false;
 		}
 		if (common.start8.length != 8) {
@@ -514,13 +776,309 @@ $(function () {
 		}
 	};
 
-	$("#league-preview-button").button().click(function () { submitLeague(true); });
+	// =====================================================================================
+	// Schedules: the definition the server stores is the common block as a JSON template plus the rotation
+	// =====================================================================================
+	var buildScheduleDefinition = function (common) {
+		var template = $.extend({}, state.templateExtras, {
+			cost: common.cost,
+			allowTimeExtensions: common.allowTimeExtensions,
+			allowSpectators: common.allowSpectators,
+			showPlayerNames: common.showPlayerNames,
+			invitationOnly: common.inviteOnly,
+			registrationInfo: common.registrationInfo,
+			decisionTimeoutSeconds: common.decisionTimeoutSeconds,
+			timePerPlayerMinutes: common.timePerPlayerMinutes
+		});
+		if (state.type == "CONSTRUCTED") {
+			template.collectionType = common.collection || "default";
+			template.lockedDeckType = common.lockedDeckType || "";
+		}
+		delete template.series;
+		delete template.name;
+		delete template.start;
+		delete template.code;
+
+		return {
+			id: state.editingSchedule != null ? state.editingSchedule.id : "",
+			name: $.trim($("#schedule-name").val()),
+			leagueType: state.type,
+			template: JSON.stringify(template),
+			events: JSON.stringify(readRotation()),
+			namePattern: $("#schedule-name-pattern").val() || DEFAULT_NAME_PATTERN,
+			nextEventDate: common.startIso,
+			nextEventIndex: readNextEventIndex(),
+			intervalMonths: $("#schedule-interval").val(),
+			leadDays: toInt($("#schedule-lead-days").val(), 7),
+			enabled: $("#schedule-enabled").prop("checked")
+		};
+	};
+
+	var submitSchedule = function (preview) {
+		var common = readCommon();
+		var rows = $("#rotation-rows .rotation-row");
+		if (rows.length == 0) {
+			setResult(resultdiv, "Add at least one event to the rotation.", "error");
+			return;
+		}
+		var allSeries = [];
+		rows.each(function () {
+			allSeries = allSeries.concat(readSerieEditor($(this).find(".serie-editor")));
+		});
+		if (!validateCommon(common, allSeries))
+			return;
+		var definition = buildScheduleDefinition(common);
+		if (!preview && definition.enabled && !confirm("Save the schedule '" + definition.name + "' as enabled? It creates leagues on its own; one whose start is within "
+				+ definition.leadDays + " day" + (definition.leadDays == 1 ? "" : "s") + " is created right away."))
+			return;
+		setResult(resultdiv, "Processing...");
+		if (preview) {
+			hall.comm.saveLeagueSchedule(true, definition, function (json) {
+				setResult(resultdiv, "Preview shown; nothing was stored.", "success");
+				openSchedulePreview(json, definition);
+			}, leagueErrorMap(resultdiv, function () { previewDialog.dialog("close"); }));
+		} else {
+			hall.comm.saveLeagueSchedule(false, definition, function (json) {
+				state.editingSchedule = json;
+				var note = json.lastError ? " The server notes: " + json.lastError : "";
+				setResult(resultdiv, "Schedule '" + json.name + "' saved" + (json.enabled ? " and enabled." : " (disabled).") + note, json.lastError ? "error" : "success");
+				applyMode();
+				loadSchedules();
+				if (json.enabled)
+					loadLeagues();
+			}, leagueErrorMap(resultdiv));
+		}
+	};
+
+	$("#league-preview-button").button().click(function () {
+		if (isScheduling()) submitSchedule(true); else submitLeague(true);
+	});
 	$("#league-save-button").button().click(function () {
+		if (isScheduling()) {
+			submitSchedule(false);
+			return;
+		}
 		var common = readCommon();
 		if (common.name && !confirm("Create the league '" + common.name + "' now? Players will see it in the hall at once."))
 			return;
 		submitLeague(false);
 	});
+
+	// ---- edit an existing schedule ----
+	var fillScheduleForm = function (schedule) {
+		startOver();
+		state.editingSchedule = schedule;
+		state.costTouched = true;
+		var template = schedule.template || {};
+		var extras = {};
+		for (var key in template) {
+			if (Object.prototype.hasOwnProperty.call(template, key) && MANAGED_TEMPLATE_KEYS.indexOf(key) < 0)
+				extras[key] = template[key];
+		}
+		state.templateExtras = extras;
+
+		var type = TYPE_LABELS[schedule.leagueType] ? schedule.leagueType : "CONSTRUCTED";
+		$("#league-repeat").prop("checked", true);
+		$("#schedule-name").val(schedule.name || "");
+		$("#schedule-name-pattern").val(schedule.namePattern || DEFAULT_NAME_PATTERN);
+		$("#league-start").val(schedule.nextEventDate || todayIso());
+		$("#schedule-interval").val(schedule.intervalMonths != null ? schedule.intervalMonths : 1);
+		$("#schedule-lead-days").val(schedule.leadDays != null ? schedule.leadDays : 7);
+		$("#schedule-enabled").prop("checked", schedule.enabled === true);
+
+		$("#league-cost").val(template.cost != null ? toInt(template.cost, DEFAULT_COST) : DEFAULT_COST);
+		$("#league-invite-only").prop("checked", String(template.invitationOnly) === "true");
+		$("#league-registration").val(template.registrationInfo || "");
+		$("#league-time-extensions").prop("checked", String(template.allowTimeExtensions) === "true");
+		$("#league-spectators").prop("checked", template.allowSpectators == null || String(template.allowSpectators) === "true");
+		$("#league-show-names").prop("checked", String(template.showPlayerNames) === "true");
+		$("#league-decision-timeout").val(toInt(template.decisionTimeoutSeconds, 300));
+		$("#league-time-per-player").val(toInt(template.timePerPlayerMinutes, 50));
+		if (type == "CONSTRUCTED")
+			setCollection(template.collectionType);
+		$("#league-lock").val(template.lockedDeckType || "");
+		selectType(type, template.series || null);
+
+		$("#rotation-rows").empty();
+		var events = schedule.events || [];
+		for (var i = 0; i < events.length; i++) {
+			var params = events[i].params || {};
+			var eventExtras = {};
+			for (var pkey in params) {
+				if (Object.prototype.hasOwnProperty.call(params, pkey) && pkey != "series")
+					eventExtras[pkey] = params[pkey];
+			}
+			addRotationRow(events[i].name, params.series || template.series || null, eventExtras);
+		}
+		if (events.length == 0)
+			addRotationRow("", null, {});
+		var nextIndex = toInt(schedule.nextEventIndex, 0);
+		var rows = $("#rotation-rows .rotation-row");
+		rows.find(".rotation-next").prop("checked", false);
+		rows.eq(Math.max(0, Math.min(rows.length - 1, nextIndex))).find(".rotation-next").prop("checked", true);
+		refreshRotation();
+
+		applyMode();
+		setResult(resultdiv, "Loaded schedule '" + schedule.name + "'.");
+		$("#league-form")[0].scrollIntoView({block: "start", behavior: "smooth"});
+	};
+
+	// =====================================================================================
+	// Schedules list
+	// =====================================================================================
+	var cadenceText = function (intervalMonths) {
+		var n = parseFloat(intervalMonths);
+		if (isNaN(n)) return "";
+		if (n == 0.25) return "weekly";
+		if (n == 0.5) return "every 2 weeks";
+		if (n == 1) return "monthly";
+		return "every " + n + " months";
+	};
+
+	var scheduleErrorBox = function () {
+		return $("#schedule-result");
+	};
+
+	var renderSchedules = function (json) {
+		var list = $("#schedule-list").empty();
+		var schedules = (json && json.schedules) || [];
+		state.schedules = schedules;
+		if (schedules.length == 0) {
+			list.append($("<div class='league-empty'></div>").text("No league schedules yet. Tick \"Repeat on a schedule\" in the form below to create one."));
+			return;
+		}
+		for (var i = 0; i < schedules.length; i++) {
+			(function (schedule) {
+				var card = $("<div class='league-card schedule-card'></div>").toggleClass("schedule-disabled", !schedule.enabled).attr("id", "schedule-card-" + schedule.id);
+
+				var line1 = $("<div class='league-line'></div>");
+				line1.append($("<span class='league-title'></span>").text(schedule.name));
+				line1.append($("<span class='league-meta'></span>").text((TYPE_LABELS[schedule.leagueType] || schedule.leagueType || "") + (schedule.enabled ? ", enabled" : ", disabled")));
+				var buttons = $("<span class='league-buttons'></span>");
+				buttons.append($("<button type='button' class='schedule-edit'>Edit</button>").button().click(function () { fillScheduleForm(schedule); }));
+				buttons.append($("<button type='button' class='schedule-upcoming-button'>Upcoming</button>").button().click(function () {
+					var box = card.find(".schedule-upcoming");
+					box.prop("hidden", !box.prop("hidden"));
+				}));
+				buttons.append($("<button type='button' class='schedule-run'>Create next now</button>").button().click(function () {
+					var upcoming = schedule.upcoming || [];
+					if (!confirm("Create '" + (upcoming[0] ? upcoming[0].leagueName : "the next league") + "' right now and advance the schedule? Players will see it in the hall at once."))
+						return;
+					setResult(scheduleErrorBox(), "Processing...");
+					hall.comm.runLeagueSchedule(schedule.id, function (json) {
+						setResult(scheduleErrorBox(), "Created league '" + json.league.name + "' (code " + json.league.code + ").", "success");
+						loadSchedules();
+						loadLeagues();
+					}, leagueErrorMap(scheduleErrorBox()));
+				}));
+				buttons.append($("<button type='button' class='schedule-toggle'>" + (schedule.enabled ? "Disable" : "Enable") + "</button>").button().click(function () {
+					if (!schedule.enabled && !confirm("Enable the schedule '" + schedule.name + "'? It creates leagues on its own; one whose start is within "
+							+ schedule.leadDays + " day" + (schedule.leadDays == 1 ? "" : "s") + " is created right away."))
+						return;
+					setResult(scheduleErrorBox(), "Processing...");
+					hall.comm.enableLeagueSchedule(schedule.id, !schedule.enabled, function (json) {
+						var note = json.lastError ? " The server notes: " + json.lastError : "";
+						setResult(scheduleErrorBox(), "Schedule '" + json.name + "' " + (json.enabled ? "enabled." : "disabled.") + note, json.lastError ? "error" : "success");
+						loadSchedules();
+						if (json.enabled)
+							loadLeagues();
+					}, leagueErrorMap(scheduleErrorBox()));
+				}));
+				buttons.append($("<button type='button' class='schedule-delete'>Delete</button>").button().click(function () {
+					if (!confirm("Delete the schedule '" + schedule.name + "'? Leagues it already created are not affected."))
+						return;
+					hall.comm.deleteLeagueSchedule(schedule.id, function () {
+						setResult(scheduleErrorBox(), "Schedule '" + schedule.name + "' deleted.", "success");
+						if (state.editingSchedule != null && state.editingSchedule.id == schedule.id)
+							startOver();
+						loadSchedules();
+					}, leagueErrorMap(scheduleErrorBox()));
+				}));
+				line1.append(buttons);
+				card.append(line1);
+
+				var events = schedule.events || [];
+				var line2 = $("<div class='league-meta schedule-meta'></div>");
+				line2.append(document.createTextNode("Rotation: "));
+				for (var e = 0; e < events.length; e++) {
+					if (e > 0)
+						line2.append(document.createTextNode(" \u2192 "));
+					line2.append($(e == schedule.nextEventIndex ? "<b></b>" : "<span></span>").text(events[e].name || ("event " + (e + 1))));
+				}
+				line2.append("<span class='sep'>&middot;</span>");
+				line2.append(document.createTextNode("next " + (schedule.nextEventDate || "?")));
+				line2.append("<span class='sep'>&middot;</span>");
+				line2.append(document.createTextNode(cadenceText(schedule.intervalMonths)));
+				line2.append("<span class='sep'>&middot;</span>");
+				line2.append(document.createTextNode("created " + schedule.leadDays + " day" + (schedule.leadDays == 1 ? "" : "s") + " ahead"));
+				if (schedule.lastRun) {
+					line2.append("<span class='sep'>&middot;</span>");
+					line2.append(document.createTextNode("last run " + schedule.lastRun));
+				}
+				if (schedule.lastCreatedLeagueType) {
+					line2.append("<span class='sep'>&middot;</span>");
+					line2.append(document.createTextNode("last created "));
+					line2.append($("<span class='league-code'></span>").text(schedule.lastCreatedLeagueType));
+				}
+				card.append(line2);
+
+				if (schedule.lastError)
+					card.append($("<div class='schedule-error'></div>").text("\u26a0 " + schedule.lastError));
+
+				var upcoming = upcomingList(schedule.upcoming || []);
+				upcoming.prop("hidden", true);
+				card.append(upcoming);
+				list.append(card);
+			})(schedules[i]);
+		}
+	};
+
+	var loadSchedules = function () {
+		hall.comm.getLeagueSchedules(function (json) {
+			renderSchedules(json);
+			openPendingSchedule();
+		}, leagueErrorMap($("#schedule-list")));
+	};
+
+	$("#schedule-list-refresh").button().click(loadSchedules);
+	$("#schedule-new").button().click(function () {
+		startOver();
+		$("#league-repeat").prop("checked", true).trigger("change");
+		$("#league-form")[0].scrollIntoView({block: "start", behavior: "smooth"});
+		$("#schedule-name").focus();
+	});
+
+	// The Events calendar's "Scheduled (not yet created)" bars send an admin here (#admin/league/schedule-<id>,
+	// hallLinks.js) with the schedule to open; the id waits in window.leagueAdminPendingSchedule until the list is in.
+	var openPendingSchedule = function () {
+		var id = window.leagueAdminPendingSchedule;
+		if (id == null)
+			return;
+		for (var i = 0; i < state.schedules.length; i++) {
+			if (state.schedules[i].id == id) {
+				window.leagueAdminPendingSchedule = null;
+				fillScheduleForm(state.schedules[i]);
+				var card = $("#schedule-card-" + id);
+				card.addClass("schedule-highlight");
+				setTimeout(function () { card.removeClass("schedule-highlight"); }, 2000);
+				return;
+			}
+		}
+		if (state.schedules.length > 0 || $("#schedule-list .league-empty").length > 0) {
+			window.leagueAdminPendingSchedule = null;
+			setResult(scheduleErrorBox(), "Schedule #" + id + " no longer exists.", "error");
+		}
+	};
+
+	// hallLinks.js calls this when the page is already loaded and a schedule link is opened
+	window.GempLeagueAdminPage = {
+		openPendingSchedule: function () {
+			if (state.schedules.length > 0)
+				openPendingSchedule();
+			else
+				loadSchedules();
+		}
+	};
 
 	// =====================================================================================
 	// Current leagues: GET /league lists them; /league/<type> has the series and standings
@@ -657,12 +1215,15 @@ $(function () {
 	fillCaches();
 	startOver();
 	loadLeagues();
-	// the league list and (once the hall has them) the constructed formats are fetched again on coming back to the page
+	loadSchedules();
+	// the league and schedule lists and (once the hall has them) the constructed formats are fetched again on coming
+	// back to the page
 	if (window.GempHallTabs)
 		GempHallTabs.onReturn(page, function () {
 			if (hallFormats().length > 0 && $("#constructed-formats-note").is(":visible"))
 				fillCaches();
 			loadLeagues();
+			loadSchedules();
 		});
 });
 
@@ -692,8 +1253,9 @@ function leagueErrorMap(outputControl, callback) {
 		"404": function () {
 			say("404: Info not found. Check that your input is correct with removed whitespace and try again.");
 		},
-		"409": function () {
-			say("409: The server refused the request (a conflict with the league's state).");
+		"409": function (xhr) {
+			var message = xhr.getResponseHeader("message");
+			say(message != null ? "409: " + message : "409: The server refused the request (a conflict with the league's state).");
 		},
 		"410": function () {
 			say("410: You have been inactive for too long and were logged out. Refresh the page if you wish to re-establish connection.");
@@ -718,15 +1280,22 @@ function leagueErrorMap(outputControl, callback) {
 		<div id="league-list" class="league-list"></div>
 		<div><button type="button" id="league-list-refresh">Refresh</button></div>
 
-		<!-- The event calendar (slice 4) and league schedules (slice 5) sit here in the LOTR page. -->
+		<!-- B. League schedules -->
 		<h2>League schedules <span class="info-toggle" data-for="help-schedules">i</span></h2>
 		<div id="help-schedules" class="info-text" hidden>
-			A schedule creates leagues on its own: the same settings, an ordered rotation of formats, and a cadence. Each league is
-			created a few days before it starts so players can sign up.
+			A schedule creates leagues on its own: the same settings, an ordered rotation of events (each with its own format or
+			series), and a cadence. Each league is created a number of days before it starts so players can sign up. A schedule is
+			off until you enable it; the Events calendar shows what an enabled schedule will create as "Scheduled (not yet created)".
+			<b>Upcoming</b> lists the next leagues; <b>Create next now</b> makes the next one at once and moves the schedule on.
 		</div>
-		<div id="schedule-list" class="admin-placeholder">
-			Recurring leagues are not available on this server yet; they come with the league schedules work (slice 5 of the hall
-			port). Until then every league is created by hand with the form below.
+		<div id="schedule-list" class="league-list"></div>
+		<div class="flex-horiz form-buttons">
+			<button type="button" id="schedule-new">New schedule</button>
+			<button type="button" id="schedule-list-refresh">Refresh</button>
+		</div>
+		<div id="schedule-result-label" class="flex-horiz result-label">
+			<div class="label"><b>Result:</b></div>
+			<div id="schedule-result" class="flex-fill result-box">Ready.</div>
 		</div>
 
 		<!-- C. The league form -->
@@ -757,7 +1326,7 @@ function leagueErrorMap(outputControl, callback) {
 				<div id="help-cost" class="info-text" hidden>What a player pays to join, in silver (100 silver = 1 gold). 0 makes the league free.</div>
 
 				<div class="flex-horiz field-row">
-					<div class="label-column">Start date <span class="info-toggle" data-for="help-start">i</span></div>
+					<div class="label-column"><span id="league-start-label">Start date</span> <span class="info-toggle" data-for="help-start">i</span></div>
 					<input type="date" id="league-start" class="flex-fill">
 				</div>
 				<div id="help-start" class="info-text" hidden>The day the first serie opens for play (server time). Players can sign up as soon as the league exists, and the league stays listed for two days after its last serie ends.</div>
@@ -829,6 +1398,58 @@ function leagueErrorMap(outputControl, callback) {
 				</div>
 				<div id="constructed-formats-note" class="info-text" style="display:none">The hall's format list has not loaded, so the formats offered here are this page's own copy.</div>
 				<div id="oneoff-series" class="serie-editor"></div>
+			</div>
+
+			<!-- schedule toggle -->
+			<div id="league-repeat-row" class="form-section">
+				<label class="field-inline"><input type="checkbox" id="league-repeat"> Repeat on a schedule</label>
+			</div>
+
+			<!-- schedule block -->
+			<div id="schedule-block" class="form-section">
+				<div class="flex-horiz field-row">
+					<div class="label-column">Series name <span class="info-toggle" data-for="help-series-name">i</span></div>
+					<input type="text" id="schedule-name" class="flex-fill" maxlength="45" placeholder="Open, Reflections Sealed, Cube Draft...">
+				</div>
+				<div id="help-series-name" class="info-text" hidden>The name of the whole schedule; it fills <code>{series}</code> in the league name pattern below.</div>
+
+				<div class="flex-horiz field-row">
+					<div class="label-column">League name pattern <span class="info-toggle" data-for="help-pattern">i</span></div>
+					<input type="text" id="schedule-name-pattern" class="flex-fill" value="{series} - {event}">
+				</div>
+				<div id="help-pattern" class="info-text" hidden>
+					How each created league is named. Tokens: <code>{series}</code> the series name, <code>{event}</code> the event name,
+					<code>{month}</code> November, <code>{mon}</code> Nov, <code>{mm}</code> 11, <code>{year}</code> 2026, <code>{yy}</code> 26.
+					The result must be 45 characters or less, and a league with the same name must not still be running when the next
+					one is due, so a monthly schedule usually wants <code>{month} {year}</code> in it.
+				</div>
+
+				<div class="flex-horiz field-row">
+					<div class="label-column">Repeat every <span class="info-toggle" data-for="help-interval">i</span></div>
+					<label class="field-inline"><input type="number" min="0.25" step="0.25" id="schedule-interval" value="1" class="wide"> months</label>
+				</div>
+				<div id="help-interval" class="info-text" hidden>Whole months keep the day of the month (the 1st stays the 1st). 0.25 = weekly, 0.5 = every two weeks, 1.5 = a month and two weeks.</div>
+
+				<div class="flex-horiz field-row">
+					<div class="label-column">Create <span class="info-toggle" data-for="help-lead">i</span></div>
+					<label class="field-inline"><input type="number" min="0" id="schedule-lead-days" value="7"> days before start</label>
+				</div>
+				<div id="help-lead" class="info-text" hidden>Each league appears in the hall this many days before it starts, so players can sign up in advance. An occurrence whose start is already more than two days gone is skipped, never created.</div>
+
+				<div class="flex-horiz field-row">
+					<div class="label-column">Enabled <span class="info-toggle" data-for="help-enabled">i</span></div>
+					<input type="checkbox" id="schedule-enabled">
+				</div>
+				<div id="help-enabled" class="info-text" hidden>Off: the schedule is stored and can be previewed, but creates nothing. On: the server creates its leagues, starting right away with any that are within the lead time.</div>
+
+				<div class="section-title" style="margin-top:0.4em;">Rotation <span class="info-toggle" data-for="help-rotation">i</span></div>
+				<div id="help-rotation" class="info-text" hidden>
+					The events the schedule cycles through, in order; after the last one it starts again from the first. Each event has its own
+					format(s); everything else above (cost, timers, collection, lock-in) is shared by every event. The event marked "next" is
+					the one created next.
+				</div>
+				<div id="rotation-rows"></div>
+				<div><button type="button" id="rotation-add">Add event</button></div>
 			</div>
 
 			<div class="flex-horiz form-buttons">
