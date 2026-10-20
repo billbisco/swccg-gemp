@@ -146,7 +146,9 @@ public class Card601_087_BACK extends AbstractObjective {
                         PhysicalCard hitCharacter = game.findCardByPermanentId(permCardIdHitCharacter);
 
                         if (TriggerConditions.leavesTable(game, effectResult, Filters.samePermanentCardId(hitCharacter))) {
-                            RequiredGameTextTriggerAction action1 = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
+                            // Own action id: the leave-table that loses the Force can also be the table change that flips
+                            // this objective, and two singleton triggers with the same id collapse into one.
+                            RequiredGameTextTriggerAction action1 = new RequiredGameTextTriggerAction(self, gameTextSourceCardId, GameTextActionId.LEGACY__HUNT_DOWN_V__HIT_CHARACTER_LEAVES_TABLE_LOSE_2_FORCE);
                             action1.setPerformingPlayer(objective.getOwner());
                             action1.setSingletonTrigger(true);
                             action1.setText("Lose 2 Force");
