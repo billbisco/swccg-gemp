@@ -3618,6 +3618,12 @@ var GempSwccgHallUI = Class.extend({
         this.updateAiDecksForSelection();
     },
 
+    // A <td> holding a server-provided string as text.  Table descriptions, tournament titles and player names come
+    // from players, so a row must never be built by pasting them into HTML (LOTR's hall draws every cell this way).
+    cell: function(text) {
+        return $("<td></td>").text(text == null ? "" : text);
+    },
+
     animateRowUpdate: function(rowSelector) {
         $(rowSelector, this.tablesDiv)
             .css({borderTopColor:"#000000", borderLeftColor:"#000000", borderBottomColor:"#000000", borderRightColor:"#000000"})
@@ -3749,8 +3755,8 @@ var GempSwccgHallUI = Class.extend({
         var formatCode = queue.getAttribute("formatCode");
 
         var row = $("<tr class='queue" + id + "'></tr>");
-        row.append("<td>" + formatName + "</td>");
-        row.append("<td>" + queueName + "</td>");
+        row.append(this.cell(formatName));
+        row.append(this.cell(queueName));
         var statusCell = $("<td></td>");
         statusCell.text(statusText);
         var ageAt = parseInt(queue.getAttribute("ageAt"), 10);
@@ -3761,7 +3767,7 @@ var GempSwccgHallUI = Class.extend({
             this.renderTableAge(ageSpan);
         }
         row.append(statusCell);
-        row.append("<td>" + playersStr + "</td>");
+        row.append(this.cell(playersStr));
 
         var lastField = $("<td></td>");
         if (joinable && !joined) {
@@ -4063,15 +4069,16 @@ var GempSwccgHallUI = Class.extend({
                         actionsField.append(but);
                     }
 
-                    var row = $("<tr class='queue" + id + "'><td>" + queue.getAttribute("format") + "</td>" +
-                        "<td>" + queue.getAttribute("collection") + "</td>" +
-                        "<td>" + queue.getAttribute("queue") + "</td>" +
-                        "<td>" + queue.getAttribute("start") + "</td>" +
-                        "<td>" + queue.getAttribute("system") + "</td>" +
-                        "<td>" + queue.getAttribute("playerCount") + "</td>" +
-                        "<td align='right'>" + formatPrice(queue.getAttribute("cost")) + "</td>" +
-                        "<td>" + queue.getAttribute("prizes") + "</td>" +
-                        "</tr>");
+                    var row = $("<tr class='queue" + id + "'></tr>");
+                    row.append(this.cell(queue.getAttribute("format")));
+                    row.append(this.cell(queue.getAttribute("collection")));
+                    row.append(this.cell(queue.getAttribute("queue")));
+                    row.append(this.cell(queue.getAttribute("start")));
+                    row.append(this.cell(queue.getAttribute("system")));
+                    row.append(this.cell(queue.getAttribute("playerCount")));
+                    row.append($("<td align='right'></td>").html(formatPrice(queue.getAttribute("cost"))));
+                    // the prize description is written by an administrator, not by a player
+                    row.append($("<td></td>").html(queue.getAttribute("prizes") || ""));
 
                     row.append(actionsField);
 
@@ -4156,14 +4163,14 @@ var GempSwccgHallUI = Class.extend({
                         that.maybePromptLimitedStart(id, stage, collectionCode, cubeSoloType, tournament.getAttribute("name"));
                     }
 
-                    var row = $("<tr class='tournament" + id + "'><td>" + tournament.getAttribute("format") + "</td>" +
-                        "<td>" + tournament.getAttribute("collection") + "</td>" +
-                        "<td>" + tournament.getAttribute("name") + "</td>" +
-                        "<td>" + tournament.getAttribute("system") + "</td>" +
-                        "<td>" + tournament.getAttribute("stage") + "</td>" +
-                        "<td>" + tournament.getAttribute("round") + "</td>" +
-                        "<td>" + tournament.getAttribute("playerCount") + "</td>" +
-                        "</tr>");
+                    var row = $("<tr class='tournament" + id + "'></tr>");
+                    row.append(this.cell(tournament.getAttribute("format")));
+                    row.append(this.cell(tournament.getAttribute("collection")));
+                    row.append(this.cell(tournament.getAttribute("name")));
+                    row.append(this.cell(tournament.getAttribute("system")));
+                    row.append(this.cell(tournament.getAttribute("stage")));
+                    row.append(this.cell(tournament.getAttribute("round")));
+                    row.append(this.cell(tournament.getAttribute("playerCount")));
 
                     row.append(actionsField);
 
@@ -4203,8 +4210,8 @@ var GempSwccgHallUI = Class.extend({
 
                     var row = $("<tr class='table" + id + "'></tr>");
 
-                    row.append("<td>" + formatName + "</td>");
-                    row.append("<td>" + tournamentName + "</td>");
+                    row.append(this.cell(formatName));
+                    row.append(this.cell(tournamentName));
                     var statusCell = $("<td></td>");
                     if (statusDescription)
                         statusCell.text(statusDescription);
@@ -4226,7 +4233,7 @@ var GempSwccgHallUI = Class.extend({
                             playersStr += ", ";
                         playersStr += players[playerI];
                     }
-                    row.append("<td>" + playersStr + "</td>");
+                    row.append(this.cell(playersStr));
 
                     var lastField = $("<td></td>");
                     if (status == "WAITING") {
@@ -4279,7 +4286,7 @@ var GempSwccgHallUI = Class.extend({
                         }
                     } else if (status == "FINISHED") {
                         if (winner != null) {
-                            lastField.append(winner);
+                            lastField.text(winner);
                         }
                         if (gameId)
                             this.closeReadyModal("game:" + gameId);
