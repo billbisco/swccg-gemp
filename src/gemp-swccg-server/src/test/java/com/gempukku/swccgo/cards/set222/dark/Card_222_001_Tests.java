@@ -14,7 +14,6 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static com.gempukku.swccgo.framework.Assertions.assertAtLocation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -192,7 +191,6 @@ public class Card_222_001_Tests {
 
     @Test
     public void AFineAdditionToMyCollectionAction3MayUseDeployedVadersSaber() {
-        //test1:
         var scn = GetScenario();
 
         var site = scn.GetLSStartingLocation();
@@ -217,7 +215,7 @@ public class Card_222_001_Tests {
 
         assertTrue(scn.AwaitingLSDeployPhaseActions());
         assertTrue(scn.IsAttachedTo(grievous, vader_saber));
-        assertTrue(scn.IsCardActive(vader_saber)); /// FAILS HERE
+        assertTrue(scn.IsCardActive(vader_saber));
 
         scn.SkipToLSTurn();
         scn.SkipToDSTurn(Phase.CONTROL);
