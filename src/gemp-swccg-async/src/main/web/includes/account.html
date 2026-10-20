@@ -1,20 +1,209 @@
 <script type="text/javascript">
+    // My Account tab (LOTR includes/account.html).  Links: #account/overview, #account/history, #account/stats,
+    // #account/collection (hallLinks.js).  The sub-tab last opened is remembered (localStorage), unless a link names one.
     $("#accountMain").ready(
         function () {
-            $("#accountMain").tabs().addClass("ui-tabs-vertical ui-helper-clearfix");
+            var SUB_TAB_KEY = "gemp.account.subTab";
+            var savedTab = null;
+            try {
+                savedTab = window.localStorage.getItem(SUB_TAB_KEY);
+            } catch (e) {
+                // storage unavailable (private mode, blocked): start on My Account
+            }
+            var active = 0;
+            $("#account-tabs > ol > li > a").each(function (index) {
+                if (savedTab != null && $(this).attr("href") === savedTab)
+                    active = index;
+            });
+
+            $("#accountMain").tabs({
+                active: active,
+                activate: function (event, ui) {
+                    try {
+                        window.localStorage.setItem(SUB_TAB_KEY, ui.newTab.find("a").attr("href"));
+                    } catch (e) {
+                        // not remembered; nothing else depends on it
+                    }
+                }
+            }).addClass("ui-tabs-vertical ui-helper-clearfix");
             $("#account-tabs > ol > li").removeClass("ui-corner-top").addClass("ui-corner-left");
 
-            var name = (window.hall && hall.userInfo && hall.userInfo.name) || "";
-            $("#accountName").text(name);
-            if (window.hall && hall.pocketValue != null && typeof formatPrice == "function")
-                $("#accountPocket").html(formatPrice(hall.pocketValue));
-
-            $("#accountMutedButton").button().click(
-                function () {
-                    if (typeof showMutedUsersDialog == "function")
-                        showMutedUsersDialog();
+            AccountOverview.init();
+            AccountMuted.init();
+            // coming back to My Account after a while shows the currency and the muted list as they are now
+            // (GempHallTabs.onReturn, gameHall.js); a name being typed is left alone
+            if (window.GempHallTabs) {
+                GempHallTabs.onReturn($("#account-overview"), function () {
+                    AccountOverview.fill();
+                    AccountMuted.render();
                 });
+            }
         });
+
+    // My Account > the player's own details: name, roles and currency, from the player info the hall fetched
+    // (GET /playerStats/playerInfo) and the currency the hall's updates carry (hall.pocketValue).  Changing the
+    // password is not a thing a player can do here: the login page takes a one-time reset code an administrator issues.
+    var AccountOverview = {
+        ROLES: [
+            {flag: "a", name: "Administrator"},
+            {flag: "l", name: "League admin"},
+            {flag: "p", name: "Playtesting admin"},
+            {flag: "t", name: "Playtester"},
+            {flag: "m", name: "Commentary admin"},
+            {flag: "c", name: "Commentator"}
+        ],
+
+        init: function () {
+            this.fill();
+        },
+
+        fill: function () {
+            var that = this;
+            var info = (window.hall && hall.userInfo) || null;
+            if (info == null && window.hall && hall.comm && hall.comm.getPlayerInfo) {
+                // the tab opened before the hall had the player info (a link straight to it): ask once more
+                hall.comm.getPlayerInfo(function (json) {
+                    if (json && json.name)
+                        that.show(json);
+                }, {"0": function () {}, "401": function () {}, "500": function () {}});
+            }
+            this.show(info);
+        },
+
+        show: function (info) {
+            var name = (info && info.name) || (window.chat && chat.userName) || "";
+            $("#accountName").text(name);
+            $("#accountPlayer").text(name);
+
+            var roles = [];
+            var flags = (info && info.type) || "";
+            for (var i = 0; i < this.ROLES.length; i++) {
+                if (flags.indexOf(this.ROLES[i].flag) >= 0)
+                    roles.push(this.ROLES[i].name);
+            }
+            $("#accountRoles").text(roles.length ? roles.join(", ") : "Player");
+
+            var pocket = $("#pocketDiv");
+            if (window.hall && hall.pocketValue != null && typeof formatPrice == "function")
+                pocket.html(formatPrice(hall.pocketValue));
+            else
+                pocket.text("–");
+        }
+    };
+
+    // My Account > Muted players: the same list the chat's "Show Muted Users" dialog edits (hall-muted-users/, kept
+    // in this browser's localStorage).  Both read the list afresh when they open, and this section redraws when that
+    // dialog closes, so each shows the other's changes.
+    var AccountMuted = {
+        picker: null,
+
+        init: function () {
+            var that = this;
+            this.initPicker();
+            $("#mute-add-form").off("submit").on("submit", function (e) {
+                e.preventDefault();
+                that.add($.trim($("#mute-add-name").val() || ""), $.trim($("#mute-add-reason").val() || ""));
+            });
+            $(document).off("dialogclose.accountMuted").on("dialogclose.accountMuted", function (e) {
+                if ($(e.target).is("#mutedUserListDialog"))
+                    that.render();
+            });
+            this.render();
+        },
+
+        // "Mute a player" picks like the Casual table's invite field: the players in the hall from the ▾ list, or type
+        // 2+ letters to search every registered player (GET /hall/players).  One name.
+        initPicker: function () {
+            var that = this;
+            var input = $("#mute-add-name");
+            if (typeof PlayerPicker !== "function" || input.length === 0 || input.closest(".player-picker").length > 0)
+                return;
+            this.picker = new PlayerPicker(input, {
+                search: function (prefix, limit, done, failed) {
+                    if (!(window.hall && hall.comm && hall.comm.searchHallPlayers)) {
+                        failed();
+                        return;
+                    }
+                    // a failed search still offers the players in the hall, with no error dialog
+                    var failures = {};
+                    $.each(["0", "400", "401", "403", "404", "410", "500", "502", "503"], function (i, status) {
+                        failures[status] = function () { failed(); };
+                    });
+                    hall.comm.searchHallPlayers(prefix, limit, function (json) {
+                        done((json && json.players) || []);
+                    }, failures);
+                },
+                // the hall's user list (bare names), read whenever the list opens
+                players: function () {
+                    return (window.hall && hall.hallPlayerNames) || [];
+                },
+                self: function () {
+                    return (window.hall && hall.userInfo && hall.userInfo.name) || (window.chat && chat.userName) || "";
+                }
+            });
+        },
+
+        list: function () {
+            try {
+                return typeof getMutedUsers == "function" ? (getMutedUsers() || []) : [];
+            } catch (e) {
+                return [];
+            }
+        },
+
+        render: function () {
+            var that = this;
+            var list = this.list();
+            var ul = $("#mute-list").empty();
+            $("#mute-empty").prop("hidden", list.length !== 0);
+            $.each(list, function (i, user) {
+                var name = String(user && user.name != null ? user.name : "");
+                var remove = $("<button type='button' class='mute-remove'>Unmute</button>")
+                    .attr("aria-label", "Unmute " + name)
+                    .on("click", function () { that.remove(name); });
+                var li = $("<li></li>").append($("<span class='mute-name'></span>").text(name));
+                if (user && user.reason)
+                    li.append(" ").append($("<span class='mute-reason'></span>").text(user.reason));
+                ul.append(li.append(" ").append(remove));
+            });
+        },
+
+        add: function (name, reason) {
+            if (name === "") {
+                this.status("Type the name of the player to mute.");
+                return;
+            }
+            var self = (window.hall && hall.userInfo && hall.userInfo.name) || (window.chat && chat.userName) || "";
+            if (self !== "" && name.toLowerCase() === self.toLowerCase()) {
+                this.status("That is you.");
+                return;
+            }
+            if (typeof addMutedUser != "function" || !addMutedUser({name: name, reason: reason})) {
+                this.status(name + " is already muted.");
+                return;
+            }
+            this.changed();
+            this.status(name + " is muted.");
+            $("#mute-add-name").val("");
+            $("#mute-add-reason").val("");
+        },
+
+        remove: function (name) {
+            if (typeof removeMutedUser == "function")
+                removeMutedUser(name);
+            this.changed();
+            this.status(name + " is no longer muted.");
+        },
+
+        // the chat reads the list afresh for each message it draws (checkIfMessageShouldBeMuted), so nothing else to tell
+        changed: function () {
+            this.render();
+        },
+
+        status: function (text) {
+            $("#mute-status").text(text);
+        }
+    };
 </script>
 
 <div id="accountMain" class="hall-tab flex-horiz">
@@ -28,18 +217,43 @@
     </div>
 
     <div id="account-overview">
-        <div class="article">
-            <h1>My Account</h1>
-            <p>Player: <b id="accountName"></b></p>
-            <p>Credits: <span id="accountPocket"></span></p>
-            <p>
-                <button type="button" id="accountMutedButton">Muted players</button>
-                Messages from players you mute are hidden from the Game Hall chat on this browser.
-            </p>
-            <p>
-                <b>My Game History</b> lists your games, with filters and replay links. <b>My Stats</b> shows how you
-                have done by format, and <b>My Collection</b> what cards you own.
-            </p>
+        <div class="account-page">
+            <h1>My Account: <span id="accountName"></span></h1>
+
+            <section id="account-details" class="account-section">
+                <h2>Account</h2>
+                <dl class="account-facts">
+                    <dt>Player</dt>
+                    <dd id="accountPlayer"></dd>
+                    <dt>Roles</dt>
+                    <dd id="accountRoles"></dd>
+                    <dt>Currency</dt>
+                    <!-- what the hall's updates carry (hall.pocketValue); spent in the Merchant and on league entry -->
+                    <dd id="pocketDiv" class="account-pocket"></dd>
+                </dl>
+                <p class="account-help">
+                    Need a new password? An administrator can issue you a one-time reset code: log in with it in place
+                    of your password and you will be asked to choose a new one.
+                </p>
+            </section>
+
+            <section id="account-muted" class="account-section">
+                <h2>Muted players</h2>
+                <p class="account-help">
+                    Messages from players you mute are hidden from the Game Hall chat in this browser. The list is kept
+                    in this browser only; you can also open it from the chat's <b>Show Muted Users</b> button.
+                </p>
+                <form id="mute-add-form" class="ignore-add" autocomplete="off">
+                    <label for="mute-add-name">Mute a player:</label>
+                    <!-- PlayerPicker (playerPicker.js) adds the ▾ list of players in the hall and the type-to-search -->
+                    <input type="text" id="mute-add-name" maxlength="30" placeholder="Choose or type a player">
+                    <input type="text" id="mute-add-reason" maxlength="100" placeholder="Reason (optional)">
+                    <button type="submit">Mute</button>
+                </form>
+                <div id="mute-status" class="ignore-status" role="status" aria-live="polite"></div>
+                <ul id="mute-list" class="ignore-list"></ul>
+                <p id="mute-empty" class="account-help" hidden>You have not muted anyone.</p>
+            </section>
         </div>
     </div>
 </div>

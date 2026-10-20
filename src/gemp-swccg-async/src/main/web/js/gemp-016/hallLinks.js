@@ -30,8 +30,8 @@ var GempLinks = {
         {slug: "game-hall", aliases: ["hall", "gameHall"]},
         {slug: "help", panel: "#helpMain", subs: [
             {slug: "howtoplay", match: ["#help-howtoplay"]},
-            {slug: "manual", match: ["instruction.html"]},
-            {slug: "formats", match: ["formats/html"]},
+            {slug: "manual", match: ["help/manual"]},
+            {slug: "formats", match: ["formatRules"]},
             {slug: "leagues", match: ["leagueRules"]}
         ]},
         {slug: "events", panel: "#eventsMain", subs: [
@@ -40,7 +40,7 @@ var GempLinks = {
             {slug: "tournaments", match: ["#events-tournaments"]}
         ]},
         {slug: "info", aliases: ["server-info"], panel: "#infoMain", subs: [
-            {slug: "stats", match: ["stats.html"]},
+            {slug: "stats", match: ["#server-stats"]},
             {slug: "changelog", match: ["changeLog"]},
             {slug: "contribute", match: ["contribute"]},
             {slug: "about", match: ["#info-about"]}
