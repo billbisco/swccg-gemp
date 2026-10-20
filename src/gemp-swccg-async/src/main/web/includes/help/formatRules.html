@@ -1,0 +1,76 @@
+<div id="formats" class="fd-page">
+    <script>
+        // Help › Format Definitions (LOTR includes/help/formatRules.html).  The definitions themselves are the HTML the
+        // server builds from its format library (GET /hall/formats/html, HallRequestHandler.buildFormatHtml): one
+        // collapsible block per format, opened and closed by showFormat / toggleLabelArrow (gameHall.js).  The LOTR
+        // browser drawn from /hall/formats/json is a later slice.  Link: #help/formats.
+        $("#formats").ready(
+            function () {
+                var list = $("#formatDefinitions");
+                if (window.hall && hall.bindLeagueInfoToggles)
+                    hall.bindLeagueInfoToggles($("#formats"));
+
+                $.ajax({
+                    type: "GET",
+                    url: "/gemp-swccg-server/hall/formats/html",
+                    cache: false,
+                    dataType: "html",
+                    success: function (html) {
+                        list.html(html);
+                        $("#fd-tools").show();
+                    },
+                    error: function (xhr) {
+                        list.html("");
+                        $("<p class='load-error'></p>")
+                            .text(xhr && xhr.status === 401
+                                ? "Log in to see the format definitions."
+                                : "The format definitions could not be loaded. Try again later.")
+                            .appendTo(list);
+                    }
+                });
+
+                // every format block open, or every one closed; the arrow in front of each name follows
+                var setAll = function (open) {
+                    list.find("div.format-name").each(function () {
+                        var content = $("#" + $(this).attr("id") + "-content");
+                        var label = $(this).find("span.format-name-label");
+                        if (open) {
+                            content.show();
+                            label.addClass("format-name-label-downarrow");
+                        } else {
+                            content.hide();
+                            label.removeClass("format-name-label-downarrow");
+                        }
+                    });
+                };
+                $("#fd-expand-all").on("click", function () { setAll(true); });
+                $("#fd-collapse-all").on("click", function () { setAll(false); });
+            });
+    </script>
+    <div class="fd-intro">
+        <h1>Format Definitions</h1>
+        <p>A 'format' is a shorthand for what cards are legal to use and what deck-building rules apply. Every format
+            that can be played in the Game Hall is listed below; click a format's name to see its definition.
+            <span class="info-toggle" data-for="fd-help-lists" role="button" tabindex="0" title="What is this?" aria-expanded="false">i</span></p>
+        <div id="fd-help-lists" class="info-text" style="display:none">
+            <ul>
+                <li><b>Deck size</b>: how many cards a deck must have in this format.</li>
+                <li><b>Default game timer</b>: the time each player gets on their clock when a table is opened in this
+                    format, unless the table's creator changes it.</li>
+                <li><b>Valid sets</b>: the sets whose cards can be used. "All sets valid" means every set the game has
+                    had, Virtual sets included.</li>
+                <li><b>Banned</b> (X-listed) cards cannot be used at all; <b>restricted</b> (R-listed) cards are
+                    limited to one copy.</li>
+            </ul>
+            The <a href="https://wiki.swccg.com/" target="_blank" rel="noopener noreferrer">SWCCG Wiki</a> has the
+            full text of each format's rules.
+        </div>
+        <div id="fd-tools" class="fd-tools" style="display:none">
+            <button type="button" id="fd-expand-all">Expand all</button>
+            <button type="button" id="fd-collapse-all">Collapse all</button>
+        </div>
+    </div>
+    <div id="formatDefinitions" class="fd-layout">
+        <p class="fd-loading">Loading the format definitions…</p>
+    </div>
+</div>
