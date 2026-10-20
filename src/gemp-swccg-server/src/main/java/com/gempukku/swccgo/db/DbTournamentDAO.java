@@ -14,7 +14,11 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class DbTournamentDAO implements TournamentDAO {
     private DbAccess _dbAccess;
@@ -57,7 +61,7 @@ public class DbTournamentDAO implements TournamentDAO {
         try {
             Connection connection = _dbAccess.getDataSource().getConnection();
             try {
-                PreparedStatement statement = connection.prepareStatement("select draft_type, name, format, collection, stage, pairing, round, prizes from tournament where tournament_id=?");
+                PreparedStatement statement = connection.prepareStatement("select draft_type, name, format, collection, stage, pairing, round, prizes, start from tournament where tournament_id=?");
                 try {
                     statement.setString(1, tournamentId);
                     ResultSet rs = statement.executeQuery();
@@ -67,7 +71,7 @@ public class DbTournamentDAO implements TournamentDAO {
                             return new TournamentInfo(
                                     tournamentId, rs.getString(1), rs.getString(2), rs.getString(3),
                                     new CollectionType(collectionTypeStr[0], collectionTypeStr[1]), Tournament.Stage.valueOf(rs.getString(5)),
-                                    rs.getString(6), rs.getString(8), rs.getInt(7));
+                                    rs.getString(6), rs.getString(8), rs.getInt(7), rs.getLong(9));
                         } else
                             return null;
                     } finally {
@@ -95,10 +99,7 @@ public class DbTournamentDAO implements TournamentDAO {
                     try {
                         List<TournamentInfo> result = new ArrayList<TournamentInfo>();
                         while (rs.next()) {
-                            String[] collectionTypeStr = rs.getString(5).split(":", 2);
-                            result.add(new TournamentInfo(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4),
-                                    new CollectionType(collectionTypeStr[0], collectionTypeStr[1]), Tournament.Stage.valueOf(rs.getString(6)),
-                                    rs.getString(7), rs.getString(9), rs.getInt(8)));
+                            result.add(readTournament(rs));
                         }
                         return result;
                     } finally {
@@ -127,10 +128,7 @@ public class DbTournamentDAO implements TournamentDAO {
                     try {
                         List<TournamentInfo> result = new ArrayList<TournamentInfo>();
                          while (rs.next()) {
-                            String[] collectionTypeStr = rs.getString(5).split(":", 2);
-                            result.add(new TournamentInfo(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4),
-                                    new CollectionType(collectionTypeStr[0], collectionTypeStr[1]), Tournament.Stage.valueOf(rs.getString(6)),
-                                    rs.getString(7), rs.getString(9), rs.getInt(8)));
+                            result.add(readTournament(rs));
                         }
                         return result;
                     } finally {
@@ -186,6 +184,93 @@ public class DbTournamentDAO implements TournamentDAO {
             }
         } catch (SQLException exp) {
             throw new RuntimeException(exp);
+        }
+    }
+
+    /** One row of {@link EventQuery#TOURNAMENT_COLUMNS} (also the column order of the older selects above). */
+    private static TournamentInfo readTournament(ResultSet rs) throws SQLException {
+        String collection = rs.getString(5);
+        String[] collectionTypeStr = (collection == null ? "" : collection).split(":", 2);
+        return new TournamentInfo(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4),
+                new CollectionType(collectionTypeStr[0], collectionTypeStr.length > 1 ? collectionTypeStr[1] : collectionTypeStr[0]),
+                Tournament.Stage.valueOf(rs.getString(6)), rs.getString(7), rs.getString(9), rs.getInt(8), rs.getLong(10));
+    }
+
+    // ---- the Events tab (calendar and completed-event browser) ----
+
+    @Override
+    public List<TournamentInfo> getTournamentsStartingBetween(long from, long to) {
+        return loadTournaments(EventQuery.tournamentsStartingBetween(from, to));
+    }
+
+    @Override
+    public List<TournamentInfo> getFinishedTournamentsBetween(long from, long to) {
+        return loadTournaments(EventQuery.finishedTournamentsBetween(from, to));
+    }
+
+    @Override
+    public Map<String, Integer> getFinishedTournamentPlayerCountsBetween(long from, long to) {
+        EventQuery query = EventQuery.finishedTournamentPlayerCounts(from, to);
+        try (Connection conn = _dbAccess.getDataSource().getConnection();
+             PreparedStatement statement = conn.prepareStatement(query.sql())) {
+            query.bind(statement);
+            try (ResultSet rs = statement.executeQuery()) {
+                Map<String, Integer> counts = new HashMap<>();
+                while (rs.next())
+                    counts.put(rs.getString(1), rs.getInt(2));
+                return counts;
+            }
+        } catch (SQLException exp) {
+            throw new RuntimeException("Unable to count tournament players", exp);
+        }
+    }
+
+    @Override
+    public List<String> getFinishedTournamentMonths() {
+        EventQuery query = EventQuery.finishedTournamentDays();
+        try (Connection conn = _dbAccess.getDataSource().getConnection();
+             PreparedStatement statement = conn.prepareStatement(query.sql())) {
+            query.bind(statement);
+            try (ResultSet rs = statement.executeQuery()) {
+                Set<String> months = new HashSet<>();
+                while (rs.next())
+                    months.add(com.gempukku.swccgo.events.EventDates.monthKeyOfEpochDay(rs.getLong(1)));
+                return new ArrayList<>(months);
+            }
+        } catch (SQLException exp) {
+            throw new RuntimeException("Unable to list the months with finished tournaments", exp);
+        }
+    }
+
+    @Override
+    public Set<String> getTournamentsPlayedBetween(String player, long from, long to) {
+        EventQuery query = EventQuery.tournamentsPlayedBetween(player, from, to);
+        try (Connection conn = _dbAccess.getDataSource().getConnection();
+             PreparedStatement statement = conn.prepareStatement(query.sql())) {
+            query.bind(statement);
+            try (ResultSet rs = statement.executeQuery()) {
+                Set<String> ids = new HashSet<>();
+                while (rs.next())
+                    ids.add(rs.getString(1));
+                return ids;
+            }
+        } catch (SQLException exp) {
+            throw new RuntimeException("Unable to list the tournaments of " + player, exp);
+        }
+    }
+
+    private List<TournamentInfo> loadTournaments(EventQuery query) {
+        try (Connection conn = _dbAccess.getDataSource().getConnection();
+             PreparedStatement statement = conn.prepareStatement(query.sql())) {
+            query.bind(statement);
+            try (ResultSet rs = statement.executeQuery()) {
+                List<TournamentInfo> result = new ArrayList<>();
+                while (rs.next())
+                    result.add(readTournament(rs));
+                return result;
+            }
+        } catch (SQLException exp) {
+            throw new RuntimeException("Unable to load tournaments", exp);
         }
     }
 

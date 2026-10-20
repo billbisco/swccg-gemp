@@ -31,6 +31,8 @@ public class RootUriRequestHandler implements UriRequestHandler {
     private final RegisterRequestHandler _registerRequestHandler;
     private final ReplayRequestHandler _replayRequestHandler;
     private final GameHistoryRequestHandler _gameHistoryRequestHandler;
+    private final CalendarRequestHandler _calendarRequestHandler;
+    private final EventHistoryRequestHandler _eventHistoryRequestHandler;
     private final ServerStatsRequestHandler _serverStatsRequestHandler;
     private final PlayerStatsRequestHandler _playerStatsRequestHandler;
     private final TournamentRequestHandler _tournamentRequestHandler;
@@ -57,6 +59,8 @@ public class RootUriRequestHandler implements UriRequestHandler {
         _registerRequestHandler = new RegisterRequestHandler(context);
         _replayRequestHandler = new ReplayRequestHandler(context);
         _gameHistoryRequestHandler = new GameHistoryRequestHandler(context);
+        _calendarRequestHandler = new CalendarRequestHandler(context);
+        _eventHistoryRequestHandler = new EventHistoryRequestHandler(context);
         _serverStatsRequestHandler = new ServerStatsRequestHandler(context);
         _playerStatsRequestHandler = new PlayerStatsRequestHandler(context);
         _tournamentRequestHandler = new TournamentRequestHandler(context);
@@ -94,6 +98,12 @@ public class RootUriRequestHandler implements UriRequestHandler {
                         responseWriter, remoteIp);
             } else if (uri.startsWith(_serverContextPath + "gameHistory")) {
                 _gameHistoryRequestHandler.handleRequest(uri.substring(_serverContextPath.length() + 11), request,
+                        context, responseWriter, remoteIp);
+            } else if (uri.startsWith(_serverContextPath + "calendar")) {
+                _calendarRequestHandler.handleRequest(uri.substring(_serverContextPath.length() + 8), request,
+                        context, responseWriter, remoteIp);
+            } else if (uri.startsWith(_serverContextPath + "eventHistory")) {
+                _eventHistoryRequestHandler.handleRequest(uri.substring(_serverContextPath.length() + 12), request,
                         context, responseWriter, remoteIp);
             } else if (uri.startsWith(_serverContextPath + "stats")) {
                 _serverStatsRequestHandler.handleRequest(uri.substring(_serverContextPath.length() + 5), request,
