@@ -6,11 +6,15 @@ import com.gempukku.swccgo.async.ResponseWriter;
 import com.gempukku.swccgo.cache.CacheManager;
 import com.gempukku.swccgo.collection.CollectionsManager;
 import com.gempukku.swccgo.draft2.SoloDraftDefinitions;
-import com.gempukku.swccgo.db.LeagueDAO;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.gempukku.swccgo.db.LeagueDecklistEntry;
 import com.gempukku.swccgo.db.PlayerDAO;
 import com.gempukku.swccgo.db.vo.CollectionType;
 import com.gempukku.swccgo.db.vo.League;
+import com.gempukku.swccgo.db.vo.LeagueScheduleRow;
+import com.gempukku.swccgo.events.CalendarService;
+import com.gempukku.swccgo.events.EventDates;
 import com.gempukku.swccgo.game.CardCollection;
 import com.gempukku.swccgo.game.GameHistoryService;
 import com.gempukku.swccgo.game.Player;
@@ -49,11 +53,12 @@ public class AdminRequestHandler extends SwccgoServerRequestHandler implements U
     private final HallServer _hallServer;
     private final SwccgCardBlueprintLibrary _cardLibrary;
     private final SwccgoFormatLibrary _formatLibrary;
-    private final LeagueDAO _leagueDao;
     private final CollectionsManager _collectionManager;
     private final PlayerDAO _playerDAO;
     private final AdminService _adminService;
     private final GameHistoryService _gameHistoryService;
+    private final LeagueFactory _leagueFactory;
+    private final LeagueScheduleService _leagueScheduleService;
     private static final Logger _log = LogManager.getLogger(AdminRequestHandler.class);
 
     public AdminRequestHandler(Map<Type, Object> context) {
@@ -65,11 +70,12 @@ public class AdminRequestHandler extends SwccgoServerRequestHandler implements U
         _hallServer = extractObject(context, HallServer.class);
         _cardLibrary = extractObject(context, SwccgCardBlueprintLibrary.class);
         _formatLibrary = extractObject(context, SwccgoFormatLibrary.class);
-        _leagueDao = extractObject(context, LeagueDAO.class);
         _playerDAO = extractObject(context, PlayerDAO.class);
         _collectionManager = extractObject(context, CollectionsManager.class);
         _adminService = extractObject(context, AdminService.class);
         _gameHistoryService = extractObject(context, GameHistoryService.class);
+        _leagueFactory = extractObject(context, LeagueFactory.class);
+        _leagueScheduleService = extractObject(context, LeagueScheduleService.class);
     }
 
     @Override
@@ -83,17 +89,29 @@ public class AdminRequestHandler extends SwccgoServerRequestHandler implements U
         } else if (uri.equals("/motd/update") && request.method() == HttpMethod.POST) {
             setMotd(request, responseWriter);
         } else if (uri.equals("/league/sealed/preview") && request.method() == HttpMethod.POST) {
-            processSealedLeague(request, responseWriter, true);
+            processLeague(request, responseWriter, LeagueFactory.Kind.SEALED, true);
         } else if (uri.equals("/league/sealed/create") && request.method() == HttpMethod.POST) {
-            processSealedLeague(request, responseWriter, false);
+            processLeague(request, responseWriter, LeagueFactory.Kind.SEALED, false);
         } else if (uri.equals("/league/constructed/preview") && request.method() == HttpMethod.POST) {
-            processConstructedLeague(request, responseWriter, true);
+            processLeague(request, responseWriter, LeagueFactory.Kind.CONSTRUCTED, true);
         } else if (uri.equals("/league/constructed/create") && request.method() == HttpMethod.POST) {
-            processConstructedLeague(request, responseWriter, false);
+            processLeague(request, responseWriter, LeagueFactory.Kind.CONSTRUCTED, false);
         } else if (uri.equals("/league/solodraft/preview") && request.method() == HttpMethod.POST) {
-            processSoloDraftLeague(request, responseWriter, true);
+            processLeague(request, responseWriter, LeagueFactory.Kind.SOLODRAFT, true);
         } else if (uri.equals("/league/solodraft/create") && request.method() == HttpMethod.POST) {
-            processSoloDraftLeague(request, responseWriter, false);
+            processLeague(request, responseWriter, LeagueFactory.Kind.SOLODRAFT, false);
+        } else if (uri.equals("/league/schedules") && request.method() == HttpMethod.GET) {
+            getLeagueSchedules(request, responseWriter);
+        } else if (uri.equals("/league/schedule/save") && request.method() == HttpMethod.POST) {
+            saveLeagueSchedule(request, responseWriter, false);
+        } else if (uri.equals("/league/schedule/preview") && request.method() == HttpMethod.POST) {
+            saveLeagueSchedule(request, responseWriter, true);
+        } else if (uri.equals("/league/schedule/enable") && request.method() == HttpMethod.POST) {
+            enableLeagueSchedule(request, responseWriter);
+        } else if (uri.equals("/league/schedule/delete") && request.method() == HttpMethod.POST) {
+            deleteLeagueSchedule(request, responseWriter);
+        } else if (uri.equals("/league/schedule/run") && request.method() == HttpMethod.POST) {
+            runLeagueSchedule(request, responseWriter);
         } else if (uri.equals("/league/addplayers") && request.method() == HttpMethod.POST) {
             addPlayersToLeague(request, responseWriter, remoteIp);
         } else if (uri.equals("/collections/additems") && request.method() == HttpMethod.POST) {
@@ -623,109 +641,39 @@ public class AdminRequestHandler extends SwccgoServerRequestHandler implements U
     }
 
     /**
-     * Processes the passed parameters for a theoretical Sealed League.  Based on the preview parameter, this will
-     * either create the league for real, or just return the parsed values to the client so the admin can preview
-     * the input.
+     * Processes the parameters of a theoretical league of one kind (the Sealed, Draft and Constructed forms post the
+     * same common fields; the series differ).  Based on the preview parameter, this will either create the league
+     * for real, or just return the parsed values to the client so the admin can preview the input.  The definition
+     * is rendered and checked by the {@link LeagueFactory}, the same code the league schedules create leagues with.
      * @param request the request
      * @param responseWriter the response writer
+     * @param kind which form posted
      * @param preview If true, no league will be created and the client will have an XML payload returned representing
      *                what the league would be upon creation.  If false, the league will be created for real.
      * @throws Exception
      */
-    private void processSealedLeague(HttpRequest request, ResponseWriter responseWriter, boolean preview) throws Exception {
+    private void processLeague(HttpRequest request, ResponseWriter responseWriter, LeagueFactory.Kind kind, boolean preview) throws Exception {
         validateLeagueAdmin(request);
 
         HttpPostRequestDecoder postDecoder = new HttpPostRequestDecoder(request);
         try {
-            String name = getFormParameterSafely(postDecoder, "name");
-            String costStr = getFormParameterSafely(postDecoder, "cost");
-            String startStr = getFormParameterSafely(postDecoder, "start");
-            String format = getFormParameterSafely(postDecoder, "format");
-            String serieDurationStr = getFormParameterSafely(postDecoder, "serieDuration");
-            String maxMatchesStr = getFormParameterSafely(postDecoder, "maxMatches");
-            String allowTimeExtensionsStr = getFormParameterSafely(postDecoder, "allowTimeExtensions");
-            String allowSpectatorsStr = getFormParameterSafely(postDecoder, "allowSpectators");
-            String showPlayerNamesStr = getFormParameterSafely(postDecoder, "showPlayerNames");
-            String invitationOnlyStr = getFormParameterSafely(postDecoder, "invitationOnly");
-            String registrationInfo = getFormParameterSafely(postDecoder, "registrationInfo");
-            String decisionTimeoutStr = getFormParameterSafely(postDecoder, "decisionTimeoutSeconds");
-            String timePerPlayerStr = getFormParameterSafely(postDecoder, "timePerPlayerMinutes");
+            LeagueFactory.Definition definition = parseLeagueDefinition(kind, postDecoder);
 
-            Throw400IfStringNull("name", name);
-            int cost = Throw400IfNullOrNonInteger("cost", costStr);
-            int start = Throw400IfNullOrNonInteger("start", startStr);
-            if(startStr.length() != 8)
-                throw new HttpProcessingException(400, "Parameter 'start' must be exactly 8 digits long: YYYYMMDD");
-            Throw400IfStringNull("format", format);
-            int serieDuration = Throw400IfNullOrNonInteger("serieDuration", serieDurationStr);
-            int maxMatches = Throw400IfNullOrNonInteger("maxMatches", maxMatchesStr);
-            boolean allowTimeExtensions = Throw400IfNullOrNonBoolean("allowTimeExtensions", allowTimeExtensionsStr);
-            boolean allowSpectators = Throw400IfNullOrNonBoolean("allowSpectators", allowSpectatorsStr);
-            boolean showPlayerNames = Throw400IfNullOrNonBoolean("showPlayerNames", showPlayerNamesStr);
-            boolean invitationOnly = Throw400IfNullOrNonBoolean("invitationOnly", invitationOnlyStr);
-            //Throw400IfStringNull("registrationInfo", registrationInfo);
-            int decisionTimeoutSeconds = Throw400IfNullOrNonInteger("decisionTimeoutSeconds", decisionTimeoutStr);
-            int timePerPlayerMinutes = Throw400IfNullOrNonInteger("timePerPlayerMinutes", timePerPlayerStr);
-
-            if(registrationInfo.toLowerCase().contains("starwarsccg.org") && !registrationInfo.contains(" ")) {
-                registrationInfo = "<a href='" + registrationInfo + "' target='_blank'>" + registrationInfo + "</a>";
+            LeagueFactory.PreparedLeague prepared;
+            try {
+                prepared = _leagueFactory.prepare(definition);
+            } catch (LeagueDefinitionException exp) {
+                throw new HttpProcessingException(400, exp.getMessage());
             }
 
-            String code = String.valueOf(System.currentTimeMillis());
-
-            String parameters = format + "," + start + "," + serieDuration + "," + maxMatches + "," + code + "," + name;
-            LeagueData leagueData = new NewSealedLeagueData(_cardLibrary, _soloDraftDefinitions, parameters);
-            List<LeagueSeriesData> series = leagueData.getSeries();
-            int leagueStart = series.get(0).getStart();
-            int displayEnd = DateUtils.offsetDate(series.get(series.size() - 1).getEnd(), 2);
-
-            if(!preview) {
-                _leagueDao.addLeague(cost, name, code, leagueData.getClass().getName(), parameters, leagueStart, displayEnd,
-                        allowSpectators, allowTimeExtensions, showPlayerNames, invitationOnly, registrationInfo,
-                        decisionTimeoutSeconds, timePerPlayerMinutes, null);
-                _leagueService.clearCache();
-
+            if (!preview) {
+                String code = _leagueFactory.create(prepared, null);
+                _log.info("League '" + definition.name + "' (" + code + ") created by " + getResourceOwnerSafely(request, null).getName());
                 responseWriter.writeHtmlResponse("OK");
                 return;
             }
 
-            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-
-            Document doc = documentBuilder.newDocument();
-
-            Element leagueElem = doc.createElement("league");
-
-            leagueElem.setAttribute("name", name);
-            leagueElem.setAttribute("cost", String.valueOf(cost));
-            leagueElem.setAttribute("start", String.valueOf(series.get(0).getStart()));
-            leagueElem.setAttribute("allowTimeExtensions", String.valueOf(allowTimeExtensions));
-            leagueElem.setAttribute("allowSpectators", String.valueOf(allowSpectators));
-            leagueElem.setAttribute("showPlayerNames", String.valueOf(showPlayerNames));
-            leagueElem.setAttribute("invitationOnly", String.valueOf(invitationOnly));
-            leagueElem.setAttribute("registrationInfo", registrationInfo);
-            leagueElem.setAttribute("decisionTimeoutSeconds", String.valueOf(decisionTimeoutSeconds));
-            leagueElem.setAttribute("timePerPlayerMinutes", String.valueOf(timePerPlayerMinutes));
-
-            leagueElem.setAttribute("end", String.valueOf(displayEnd));
-
-            for (LeagueSeriesData serie : series) {
-                Element serieElem = doc.createElement("serie");
-                serieElem.setAttribute("type", serie.getName());
-                serieElem.setAttribute("maxMatches", String.valueOf(serie.getMaxMatches()));
-                serieElem.setAttribute("start", String.valueOf(serie.getStart()));
-                serieElem.setAttribute("end", String.valueOf(serie.getEnd()));
-                serieElem.setAttribute("format", _formatLibrary.getFormat(serie.getFormat()).getName());
-                serieElem.setAttribute("collection", serie.getCollectionType().getFullName());
-                serieElem.setAttribute("collectionType", serie.getCollectionType().getCode());
-                serieElem.setAttribute("limited", String.valueOf(serie.isLimited()));
-
-                leagueElem.appendChild(serieElem);
-            }
-
-            doc.appendChild(leagueElem);
-
-            responseWriter.writeXmlResponse(doc);
+            responseWriter.writeXmlResponse(buildLeaguePreviewXml(prepared));
         }
         finally {
             postDecoder.destroy();
@@ -733,237 +681,352 @@ public class AdminRequestHandler extends SwccgoServerRequestHandler implements U
     }
 
     /**
-     * Processes the passed parameters for a theoretical Solo Draft League.  Based on the preview parameter, this will
-     * either create the league for real, or just return the parsed values to the client so the admin can preview
-     * the input.
-     * @param request the request
-     * @param responseWriter the response writer
-     * @param preview If true, no league will be created and the client will have an XML payload returned representing
-     *                what the league would be upon creation.  If false, the league will be created for real.
-     * @throws Exception
+     * Reads the New-league form.  Sealed and Draft post one serie ({@code format}, {@code serieDuration},
+     * {@code maxMatches}); Constructed posts lists ({@code formats}, {@code serieDurations}, {@code maxMatches}) plus
+     * {@code collectionType} and {@code lockedDeckType}.
      */
-    private void processSoloDraftLeague(HttpRequest request, ResponseWriter responseWriter, boolean preview) throws Exception {
-        validateLeagueAdmin(request);
+    private LeagueFactory.Definition parseLeagueDefinition(LeagueFactory.Kind kind, HttpPostRequestDecoder postDecoder) throws Exception {
+        LeagueFactory.Definition d = new LeagueFactory.Definition();
+        d.kind = kind;
+        d.name = getFormParameterSafely(postDecoder, "name");
+        String costStr = getFormParameterSafely(postDecoder, "cost");
+        String startStr = getFormParameterSafely(postDecoder, "start");
+        String allowTimeExtensionsStr = getFormParameterSafely(postDecoder, "allowTimeExtensions");
+        String allowSpectatorsStr = getFormParameterSafely(postDecoder, "allowSpectators");
+        String showPlayerNamesStr = getFormParameterSafely(postDecoder, "showPlayerNames");
+        String invitationOnlyStr = getFormParameterSafely(postDecoder, "invitationOnly");
+        String registrationInfo = getFormParameterSafely(postDecoder, "registrationInfo");
+        String decisionTimeoutStr = getFormParameterSafely(postDecoder, "decisionTimeoutSeconds");
+        String timePerPlayerStr = getFormParameterSafely(postDecoder, "timePerPlayerMinutes");
 
-        HttpPostRequestDecoder postDecoder = new HttpPostRequestDecoder(request);
-        try {
-            String name = getFormParameterSafely(postDecoder, "name");
-            String costStr = getFormParameterSafely(postDecoder, "cost");
-            String startStr = getFormParameterSafely(postDecoder, "start");
-            String format = getFormParameterSafely(postDecoder, "format");
-            String serieDurationStr = getFormParameterSafely(postDecoder, "serieDuration");
-            String maxMatchesStr = getFormParameterSafely(postDecoder, "maxMatches");
-            String allowTimeExtensionsStr = getFormParameterSafely(postDecoder, "allowTimeExtensions");
-            String allowSpectatorsStr = getFormParameterSafely(postDecoder, "allowSpectators");
-            String showPlayerNamesStr = getFormParameterSafely(postDecoder, "showPlayerNames");
-            String invitationOnlyStr = getFormParameterSafely(postDecoder, "invitationOnly");
-            String registrationInfo = getFormParameterSafely(postDecoder, "registrationInfo");
-            String decisionTimeoutStr = getFormParameterSafely(postDecoder, "decisionTimeoutSeconds");
-            String timePerPlayerStr = getFormParameterSafely(postDecoder, "timePerPlayerMinutes");
+        Throw400IfStringNull("name", d.name);
+        d.cost = Throw400IfNullOrNonInteger("cost", costStr);
+        d.start = Throw400IfNullOrNonInteger("start", startStr);
+        if (startStr.length() != 8)
+            throw new HttpProcessingException(400, "Parameter 'start' must be exactly 8 digits long: YYYYMMDD");
+        d.allowTimeExtensions = Throw400IfNullOrNonBoolean("allowTimeExtensions", allowTimeExtensionsStr);
+        d.allowSpectators = Throw400IfNullOrNonBoolean("allowSpectators", allowSpectatorsStr);
+        d.showPlayerNames = Throw400IfNullOrNonBoolean("showPlayerNames", showPlayerNamesStr);
+        d.invitationOnly = Throw400IfNullOrNonBoolean("invitationOnly", invitationOnlyStr);
+        d.registrationInfo = registrationInfo == null ? "" : registrationInfo;
+        d.decisionTimeoutSeconds = Throw400IfNullOrNonInteger("decisionTimeoutSeconds", decisionTimeoutStr);
+        d.timePerPlayerMinutes = Throw400IfNullOrNonInteger("timePerPlayerMinutes", timePerPlayerStr);
 
-            Throw400IfStringNull("name", name);
-            int cost = Throw400IfNullOrNonInteger("cost", costStr);
-            int start = Throw400IfNullOrNonInteger("start", startStr);
-            if(startStr.length() != 8)
-                throw new HttpProcessingException(400, "Parameter 'start' must be exactly 8 digits long: YYYYMMDD");
-            Throw400IfStringNull("format", format);
-            int serieDuration = Throw400IfNullOrNonInteger("serieDuration", serieDurationStr);
-            int maxMatches = Throw400IfNullOrNonInteger("maxMatches", maxMatchesStr);
-            boolean allowTimeExtensions = Throw400IfNullOrNonBoolean("allowTimeExtensions", allowTimeExtensionsStr);
-            boolean allowSpectators = Throw400IfNullOrNonBoolean("allowSpectators", allowSpectatorsStr);
-            boolean showPlayerNames = Throw400IfNullOrNonBoolean("showPlayerNames", showPlayerNamesStr);
-            boolean invitationOnly = Throw400IfNullOrNonBoolean("invitationOnly", invitationOnlyStr);
-            //Throw400IfStringNull("registrationInfo", registrationInfo);
-            int decisionTimeoutSeconds = Throw400IfNullOrNonInteger("decisionTimeoutSeconds", decisionTimeoutStr);
-            int timePerPlayerMinutes = Throw400IfNullOrNonInteger("timePerPlayerMinutes", timePerPlayerStr);
-
-            if(registrationInfo.toLowerCase().contains("starwarsccg.org") && !registrationInfo.contains(" ")) {
-                registrationInfo = "<a href='" + registrationInfo + "' target='_blank'>" + registrationInfo + "</a>";
-            }
-
-            String code = String.valueOf(System.currentTimeMillis());
-
-            String parameters = format + "," + start + "," + serieDuration + "," + maxMatches + "," + code + "," + name;
-            LeagueData leagueData = new NewSoloDraftLeagueData(_cardLibrary, _soloDraftDefinitions, parameters);
-            List<LeagueSeriesData> series = leagueData.getSeries();
-            int leagueStart = series.get(0).getStart();
-            int displayEnd = DateUtils.offsetDate(series.get(series.size() - 1).getEnd(), 2);
-
-            if(!preview) {
-                _leagueDao.addLeague(cost, name, code, leagueData.getClass().getName(), parameters, leagueStart, displayEnd,
-                        allowSpectators, allowTimeExtensions, showPlayerNames, invitationOnly, registrationInfo,
-                        decisionTimeoutSeconds, timePerPlayerMinutes, null);
-                _leagueService.clearCache();
-
-                responseWriter.writeHtmlResponse("OK");
-                return;
-            }
-
-            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-
-            Document doc = documentBuilder.newDocument();
-
-            Element leagueElem = doc.createElement("league");
-
-            leagueElem.setAttribute("name", name);
-            leagueElem.setAttribute("cost", String.valueOf(cost));
-            leagueElem.setAttribute("start", String.valueOf(series.get(0).getStart()));
-            leagueElem.setAttribute("allowTimeExtensions", String.valueOf(allowTimeExtensions));
-            leagueElem.setAttribute("allowSpectators", String.valueOf(allowSpectators));
-            leagueElem.setAttribute("showPlayerNames", String.valueOf(showPlayerNames));
-            leagueElem.setAttribute("invitationOnly", String.valueOf(invitationOnly));
-            leagueElem.setAttribute("registrationInfo", registrationInfo);
-            leagueElem.setAttribute("decisionTimeoutSeconds", String.valueOf(decisionTimeoutSeconds));
-            leagueElem.setAttribute("timePerPlayerMinutes", String.valueOf(timePerPlayerMinutes));
-
-            leagueElem.setAttribute("end", String.valueOf(displayEnd));
-
-            for (LeagueSeriesData serie : series) {
-                Element serieElem = doc.createElement("serie");
-                serieElem.setAttribute("type", serie.getName());
-                serieElem.setAttribute("maxMatches", String.valueOf(serie.getMaxMatches()));
-                serieElem.setAttribute("start", String.valueOf(serie.getStart()));
-                serieElem.setAttribute("end", String.valueOf(serie.getEnd()));
-                serieElem.setAttribute("format", _formatLibrary.getFormat(serie.getFormat()).getName());
-                serieElem.setAttribute("collection", serie.getCollectionType().getFullName());
-                serieElem.setAttribute("collectionType", serie.getCollectionType().getCode());
-                serieElem.setAttribute("limited", String.valueOf(serie.isLimited()));
-
-                leagueElem.appendChild(serieElem);
-            }
-
-            doc.appendChild(leagueElem);
-
-            responseWriter.writeXmlResponse(doc);
-        }
-        finally {
-            postDecoder.destroy();
-        }
-    }
-
-    /**
-     * Processes the passed parameters for a theoretical Constructed League.  Based on the preview parameter, this will
-     * either create the league for real, or just return the parsed values to the client so the admin can preview
-     * the input.
-     * @param request the request
-     * @param responseWriter the response writer
-     * @param preview If true, no league will be created and the client will have an XML payload returned representing
-     *                what the league would be upon creation.  If false, the league will be created for real.
-     * @throws Exception
-     */
-    private void processConstructedLeague(HttpRequest request, ResponseWriter responseWriter, boolean preview) throws Exception {
-        validateLeagueAdmin(request);
-
-        HttpPostRequestDecoder postDecoder = new HttpPostRequestDecoder(request);
-        try {
-            String name = getFormParameterSafely(postDecoder, "name");
-            String costStr = getFormParameterSafely(postDecoder, "cost");
-            String startStr = getFormParameterSafely(postDecoder, "start");
+        if (kind == LeagueFactory.Kind.CONSTRUCTED) {
             String collectionType = getFormParameterSafely(postDecoder, "collectionType");
-            //Individual serie definitions
             List<String> formats = getFormMultipleParametersSafely(postDecoder, "formats");
             List<String> serieDurationsStr = getFormMultipleParametersSafely(postDecoder, "serieDurations");
             List<String> maxMatchesStr = getFormMultipleParametersSafely(postDecoder, "maxMatches");
-            String allowTimeExtensionsStr = getFormParameterSafely(postDecoder, "allowTimeExtensions");
-            String allowSpectatorsStr = getFormParameterSafely(postDecoder, "allowSpectators");
-            String showPlayerNamesStr = getFormParameterSafely(postDecoder, "showPlayerNames");
-            String invitationOnlyStr = getFormParameterSafely(postDecoder, "invitationOnly");
-            String registrationInfo = getFormParameterSafely(postDecoder, "registrationInfo");
-            String decisionTimeoutStr = getFormParameterSafely(postDecoder, "decisionTimeoutSeconds");
-            String timePerPlayerStr = getFormParameterSafely(postDecoder, "timePerPlayerMinutes");
             String lockedDeckTypeStr = getFormParameterSafely(postDecoder, "lockedDeckType");
 
-            Throw400IfStringNull("name", name);
-            int cost = Throw400IfNullOrNonInteger("cost", costStr);
-            int start = Throw400IfNullOrNonInteger("start", startStr);
-            if(startStr.length() != 8)
-                throw new HttpProcessingException(400, "Parameter 'start' must be exactly 8 digits long: YYYYMMDD");
             Throw400IfAnyStringNull("formats", formats);
             Throw400IfStringNull("collectionType", collectionType);
             List<Integer> serieDurations = Throw400IfAnyNullOrNonInteger("serieDurations", serieDurationsStr);
             List<Integer> maxMatches = Throw400IfAnyNullOrNonInteger("maxMatches", maxMatchesStr);
-            boolean allowTimeExtensions = Throw400IfNullOrNonBoolean("allowTimeExtensions", allowTimeExtensionsStr);
-            boolean allowSpectators = Throw400IfNullOrNonBoolean("allowSpectators", allowSpectatorsStr);
-            boolean showPlayerNames = Throw400IfNullOrNonBoolean("showPlayerNames", showPlayerNamesStr);
-            boolean invitationOnly = Throw400IfNullOrNonBoolean("invitationOnly", invitationOnlyStr);
-            //Throw400IfStringNull("registrationInfo", registrationInfo);
-            int decisionTimeoutSeconds = Throw400IfNullOrNonInteger("decisionTimeoutSeconds", decisionTimeoutStr);
-            int timePerPlayerMinutes = Throw400IfNullOrNonInteger("timePerPlayerMinutes", timePerPlayerStr);
-            LockedDeckType lockedDeckType = LockedDeckType.getLockedDeckType(lockedDeckTypeStr);
-            if (lockedDeckTypeStr != null && !lockedDeckTypeStr.isEmpty() && lockedDeckType == null)
-                throw new HttpProcessingException(400, "Parameter 'lockedDeckType' has an unknown value: " + lockedDeckTypeStr);
-
-            if(registrationInfo.toLowerCase().contains("starwarsccg.org") && !registrationInfo.contains(" ")) {
-                registrationInfo = "<a href='" + registrationInfo + "' target='_blank'>" + registrationInfo + "</a>";
-            }
-
-            String code = String.valueOf(System.currentTimeMillis());
-
-            StringBuilder sb = new StringBuilder();
-            sb.append(start).append(",").append(collectionType).append(",").append(formats.size());
-            for (int i = 0; i < formats.size(); ++i) {
-                sb.append(",").append(formats.get(i)).append(",").append(serieDurations.get(i)).append(",").append(
-                        maxMatches.get(i));
-            }
-
-            String parameters = sb.toString();
-            LeagueData leagueData = new NewConstructedLeagueData(_cardLibrary, _soloDraftDefinitions, parameters);
-            List<LeagueSeriesData> series = leagueData.getSeries();
-            int leagueStart = series.get(0).getStart();
-            int displayEnd = DateUtils.offsetDate(series.get(series.size() - 1).getEnd(), 2);
-
-            if(!preview) {
-                _leagueDao.addLeague(cost, name, code, leagueData.getClass().getName(), parameters, leagueStart, displayEnd,
-                        allowSpectators, allowTimeExtensions, showPlayerNames, invitationOnly, registrationInfo,
-                        decisionTimeoutSeconds, timePerPlayerMinutes, lockedDeckType);
-
-                _leagueService.clearCache();
-
-                responseWriter.writeHtmlResponse("OK");
-                return;
-            }
-
-            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-
-            Document doc = documentBuilder.newDocument();
-
-            Element leagueElem = doc.createElement("league");
-
-            leagueElem.setAttribute("name", name);
-            leagueElem.setAttribute("cost", String.valueOf(cost));
-            leagueElem.setAttribute("start", String.valueOf(series.get(0).getStart()));
-            leagueElem.setAttribute("end", String.valueOf(displayEnd));
-            leagueElem.setAttribute("collectionType", collectionType);
-            leagueElem.setAttribute("allowTimeExtensions", String.valueOf(allowTimeExtensions));
-            leagueElem.setAttribute("allowSpectators", String.valueOf(allowSpectators));
-            leagueElem.setAttribute("showPlayerNames", String.valueOf(showPlayerNames));
-            leagueElem.setAttribute("invitationOnly", String.valueOf(invitationOnly));
-            leagueElem.setAttribute("registrationInfo", registrationInfo);
-            leagueElem.setAttribute("decisionTimeoutSeconds", String.valueOf(decisionTimeoutSeconds));
-            leagueElem.setAttribute("timePerPlayerMinutes", String.valueOf(timePerPlayerMinutes));
-            leagueElem.setAttribute("lockedDeckType", lockedDeckType == null ? "" : lockedDeckType.getCode());
-
-            for (LeagueSeriesData serie : series) {
-                Element serieElem = doc.createElement("serie");
-                serieElem.setAttribute("type", serie.getName());
-                serieElem.setAttribute("maxMatches", String.valueOf(serie.getMaxMatches()));
-                serieElem.setAttribute("start", String.valueOf(serie.getStart()));
-                serieElem.setAttribute("end", String.valueOf(serie.getEnd()));
-                serieElem.setAttribute("format", _formatLibrary.getFormat(serie.getFormat()).getName());
-                serieElem.setAttribute("collection", serie.getCollectionType().getFullName());
-                serieElem.setAttribute("collectionType", serie.getCollectionType().getCode());
-                serieElem.setAttribute("limited", String.valueOf(serie.isLimited()));
-
-                leagueElem.appendChild(serieElem);
-            }
-
-            doc.appendChild(leagueElem);
-
-            responseWriter.writeXmlResponse(doc);
+            if (serieDurations.size() != formats.size() || maxMatches.size() != formats.size())
+                throw new HttpProcessingException(400, "Parameters 'formats', 'serieDurations' and 'maxMatches' must have one value per serie.");
+            d.collectionType = collectionType;
+            d.lockedDeckType = lockedDeckTypeStr == null ? "" : lockedDeckTypeStr;
+            for (int i = 0; i < formats.size(); ++i)
+                d.series.add(new LeagueFactory.Serie(formats.get(i), serieDurations.get(i), maxMatches.get(i)));
+        } else {
+            String format = getFormParameterSafely(postDecoder, "format");
+            String serieDurationStr = getFormParameterSafely(postDecoder, "serieDuration");
+            String maxMatchesStr = getFormParameterSafely(postDecoder, "maxMatches");
+            Throw400IfStringNull("format", format);
+            int serieDuration = Throw400IfNullOrNonInteger("serieDuration", serieDurationStr);
+            int maxMatches = Throw400IfNullOrNonInteger("maxMatches", maxMatchesStr);
+            d.series.add(new LeagueFactory.Serie(format, serieDuration, maxMatches));
         }
-        finally {
+        return d;
+    }
+
+    /** The {@code <league>} document the preview endpoints return (one shape for every kind). */
+    private Document buildLeaguePreviewXml(LeagueFactory.PreparedLeague prepared) throws Exception {
+        LeagueFactory.Definition d = prepared.definition();
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+        Document doc = documentBuilder.newDocument();
+
+        Element leagueElem = doc.createElement("league");
+        leagueElem.setAttribute("name", d.name);
+        leagueElem.setAttribute("cost", String.valueOf(d.cost));
+        leagueElem.setAttribute("start", String.valueOf(prepared.start()));
+        leagueElem.setAttribute("end", String.valueOf(prepared.displayEnd()));
+        leagueElem.setAttribute("collectionType", d.collectionType);
+        leagueElem.setAttribute("allowTimeExtensions", String.valueOf(d.allowTimeExtensions));
+        leagueElem.setAttribute("allowSpectators", String.valueOf(d.allowSpectators));
+        leagueElem.setAttribute("showPlayerNames", String.valueOf(d.showPlayerNames));
+        leagueElem.setAttribute("invitationOnly", String.valueOf(d.invitationOnly));
+        leagueElem.setAttribute("registrationInfo", prepared.registrationInfo());
+        leagueElem.setAttribute("decisionTimeoutSeconds", String.valueOf(d.decisionTimeoutSeconds));
+        leagueElem.setAttribute("timePerPlayerMinutes", String.valueOf(d.timePerPlayerMinutes));
+        leagueElem.setAttribute("lockedDeckType", prepared.lockedDeckType() == null ? "" : prepared.lockedDeckType().getCode());
+
+        for (LeagueSeriesData serie : prepared.series()) {
+            Element serieElem = doc.createElement("serie");
+            serieElem.setAttribute("type", serie.getName());
+            serieElem.setAttribute("maxMatches", String.valueOf(serie.getMaxMatches()));
+            serieElem.setAttribute("start", String.valueOf(serie.getStart()));
+            serieElem.setAttribute("end", String.valueOf(serie.getEnd()));
+            serieElem.setAttribute("format", _formatLibrary.getFormat(serie.getFormat()).getName());
+            serieElem.setAttribute("formatType", serie.getFormat());
+            serieElem.setAttribute("collection", serie.getCollectionType().getFullName());
+            serieElem.setAttribute("collectionType", serie.getCollectionType().getCode());
+            serieElem.setAttribute("limited", String.valueOf(serie.isLimited()));
+            leagueElem.appendChild(serieElem);
+        }
+
+        doc.appendChild(leagueElem);
+        return doc;
+    }
+
+    /** The same league, as the JSON the schedule endpoints return (series dates in yyyy-MM-dd form). */
+    private Map<String, Object> describeLeague(LeagueFactory.PreparedLeague prepared, String code) {
+        LeagueFactory.Definition d = prepared.definition();
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("code", code);
+        result.put("name", d.name);
+        result.put("type", d.kind.name());
+        result.put("cost", d.cost);
+        result.put("start", EventDates.isoDate(prepared.start()));
+        result.put("end", EventDates.isoDate(prepared.displayEnd()));
+        result.put("collectionType", d.collectionType);
+        result.put("allowTimeExtensions", d.allowTimeExtensions);
+        result.put("allowSpectators", d.allowSpectators);
+        result.put("showPlayerNames", d.showPlayerNames);
+        result.put("invitationOnly", d.invitationOnly);
+        result.put("registrationInfo", prepared.registrationInfo());
+        result.put("decisionTimeoutSeconds", d.decisionTimeoutSeconds);
+        result.put("timePerPlayerMinutes", d.timePerPlayerMinutes);
+        result.put("lockedDeckType", prepared.lockedDeckType() == null ? "" : prepared.lockedDeckType().getCode());
+        List<Map<String, Object>> series = new ArrayList<>();
+        for (LeagueSeriesData serie : prepared.series()) {
+            Map<String, Object> s = new LinkedHashMap<>();
+            s.put("name", serie.getName());
+            s.put("start", EventDates.isoDate(serie.getStart()));
+            s.put("end", EventDates.isoDate(serie.getEnd()));
+            s.put("formatType", serie.getFormat());
+            s.put("format", _formatLibrary.getFormat(serie.getFormat()) == null ? serie.getFormat() : _formatLibrary.getFormat(serie.getFormat()).getName());
+            s.put("collection", serie.getCollectionType().getFullName());
+            s.put("maxMatches", serie.getMaxMatches());
+            s.put("limited", serie.isLimited());
+            series.add(s);
+        }
+        result.put("series", series);
+        return result;
+    }
+
+    // ------------------------------------------------------------------------------------------------
+    // League schedules (/admin/league/schedules, /admin/league/schedule/*): recurring leagues the server creates on
+    // its own.  Ported from LOTR GEMP's AdminRequestHandler; every response is JSON, every value the client shows
+    // is text.
+    // ------------------------------------------------------------------------------------------------
+
+    private static final int SCHEDULE_UPCOMING_COUNT = 6;
+    private static final SimpleDateFormat SCHEDULE_TIME = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
+    private Map<String, Object> describeSchedule(LeagueSchedule schedule) {
+        Map<String, Object> obj = new LinkedHashMap<>();
+        obj.put("id", schedule.getId());
+        obj.put("name", schedule.getName());
+        obj.put("leagueType", schedule.getKind() == null ? null : schedule.getKind().name());
+        obj.put("template", schedule.getTemplate());
+        List<Map<String, Object>> events = new ArrayList<>();
+        for (LeagueSchedule.Event event : schedule.getEvents()) {
+            Map<String, Object> e = new LinkedHashMap<>();
+            e.put("name", event.name());
+            e.put("params", event.overrides());
+            events.add(e);
+        }
+        obj.put("events", events);
+        obj.put("namePattern", schedule.getNamePattern());
+        obj.put("nextEventDate", schedule.getNextEventDate() == null ? null : schedule.getNextEventDate().toString());
+        obj.put("nextEventIndex", schedule.getNextEventIndex());
+        obj.put("intervalMonths", schedule.getIntervalMonths());
+        obj.put("leadDays", schedule.getLeadDays());
+        obj.put("enabled", schedule.isEnabled());
+        obj.put("lastCreatedLeagueType", schedule.getLastCreatedLeagueType());
+        synchronized (SCHEDULE_TIME) {
+            obj.put("lastRun", schedule.getLastRun() == null ? null : SCHEDULE_TIME.format(schedule.getLastRun()));
+        }
+        obj.put("lastError", schedule.getLastError());
+        obj.put("createdBy", schedule.getCreatedBy());
+        obj.put("upcoming", describeProjection(_leagueScheduleService.projectNext(schedule, SCHEDULE_UPCOMING_COUNT)));
+        return obj;
+    }
+
+    private static List<Map<String, Object>> describeProjection(List<LeagueScheduleService.ProjectedEvent> projected) {
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (LeagueScheduleService.ProjectedEvent event : projected) {
+            Map<String, Object> e = new LinkedHashMap<>();
+            e.put("scheduleId", event.scheduleId());
+            e.put("scheduleName", event.scheduleName());
+            e.put("eventIndex", event.eventIndex());
+            e.put("eventName", event.eventName());
+            e.put("leagueName", event.leagueName());
+            e.put("start", event.start().toString());
+            e.put("end", event.end().toString());
+            e.put("createdOn", event.createdOn().toString());
+            e.put("error", event.error());
+            result.add(e);
+        }
+        return result;
+    }
+
+    private void writeJson(ResponseWriter responseWriter, Object value) {
+        responseWriter.writeJsonResponse(JSON.toJSONString(value, SerializerFeature.WriteMapNullValue));
+    }
+
+    /** GET /admin/league/schedules : every schedule with its next few occurrences. */
+    private void getLeagueSchedules(HttpRequest request, ResponseWriter responseWriter) throws Exception {
+        validateLeagueAdmin(request);
+
+        List<Map<String, Object>> schedules = new ArrayList<>();
+        for (LeagueSchedule schedule : _leagueScheduleService.getSchedules())
+            schedules.add(describeSchedule(schedule));
+
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("schedules", schedules);
+        writeJson(responseWriter, result);
+    }
+
+    /**
+     * Reads a schedule definition from the form.  Template and events arrive as JSON strings (the admin page edits
+     * them as such), which the service validates.
+     */
+    private LeagueScheduleRow parseScheduleDefinition(HttpPostRequestDecoder postDecoder, Player admin) throws Exception {
+        LeagueScheduleRow row = new LeagueScheduleRow();
+
+        String idStr = getFormParameterSafely(postDecoder, "id");
+        row.id = StringUtils.isBlank(idStr) ? 0 : Throw400IfNullOrNonInteger("id", idStr);
+        row.name = StringUtils.trim(getFormParameterSafely(postDecoder, "name"));
+        row.leagueType = getFormParameterSafely(postDecoder, "leagueType");
+        row.template = getFormParameterSafely(postDecoder, "template");
+        row.events = getFormParameterSafely(postDecoder, "events");
+        row.namePattern = getFormParameterSafely(postDecoder, "namePattern");
+        row.createdBy = admin.getName();
+
+        String nextEventDateStr = getFormParameterSafely(postDecoder, "nextEventDate");
+        Throw400IfStringNull("nextEventDate", nextEventDateStr);
+        java.time.LocalDate nextEventDate = CalendarService.parseDate(nextEventDateStr);
+        if (nextEventDate == null)
+            throw new HttpProcessingException(400, "Parameter 'nextEventDate' must be a date in yyyy-MM-dd form.");
+        row.nextEventDate = EventDates.toDateInt(nextEventDate);
+
+        String nextEventIndexStr = getFormParameterSafely(postDecoder, "nextEventIndex");
+        row.nextEventIndex = StringUtils.isBlank(nextEventIndexStr) ? 0 : Throw400IfNullOrNonInteger("nextEventIndex", nextEventIndexStr);
+
+        row.intervalMonths = Throw400IfNullOrNonNumber("intervalMonths", getFormParameterSafely(postDecoder, "intervalMonths"));
+
+        String leadDaysStr = getFormParameterSafely(postDecoder, "leadDays");
+        row.leadDays = StringUtils.isBlank(leadDaysStr) ? 7 : Throw400IfNullOrNonInteger("leadDays", leadDaysStr);
+
+        // off unless the form says so: a schedule that creates real leagues is opted into explicitly
+        String enabledStr = getFormParameterSafely(postDecoder, "enabled");
+        row.enabled = enabledStr != null && enabledStr.trim().equalsIgnoreCase("true");
+        return row;
+    }
+
+    /**
+     * POST /admin/league/schedule/save (create or update) and /admin/league/schedule/preview.  Validates the
+     * definition and either stores it (the response is the stored schedule) or, for a preview, returns what it
+     * would produce: the upcoming occurrences and the next league in full.  Nothing is stored by a preview.
+     */
+    private void saveLeagueSchedule(HttpRequest request, ResponseWriter responseWriter, boolean preview) throws Exception {
+        Player admin = validateLeagueAdmin(request);
+
+        HttpPostRequestDecoder postDecoder = new HttpPostRequestDecoder(request);
+        try {
+            LeagueScheduleRow row = parseScheduleDefinition(postDecoder, admin);
+            try {
+                if (preview) {
+                    _leagueScheduleService.validateDefinition(row);
+                    LeagueSchedule schedule = new LeagueSchedule(row);
+                    Map<String, Object> result = new LinkedHashMap<>();
+                    result.put("upcoming", describeProjection(_leagueScheduleService.projectNext(schedule, SCHEDULE_UPCOMING_COUNT)));
+                    LeagueFactory.Definition next = LeagueScheduleService.buildDefinition(schedule, schedule.getNextEventIndex(), schedule.getNextEventDate());
+                    result.put("nextLeague", describeLeague(_leagueFactory.prepare(next, "preview"), null));
+                    writeJson(responseWriter, result);
+                    return;
+                }
+
+                LeagueSchedule saved = _leagueScheduleService.saveSchedule(row);
+                _log.info("League schedule " + saved.getId() + " (" + saved.getName() + ") " + (row.id == 0 ? "created" : "updated") + " by " + admin.getName()
+                        + (saved.isEnabled() ? " (enabled)" : " (disabled)"));
+                writeJson(responseWriter, describeSchedule(saved));
+            } catch (LeagueDefinitionException exp) {
+                throw new HttpProcessingException(400, exp.getMessage());
+            } catch (IllegalArgumentException exp) {
+                throw new HttpProcessingException(400, exp.getMessage());
+            }
+        } finally {
+            postDecoder.destroy();
+        }
+    }
+
+    /** POST /admin/league/schedule/enable : {@code id}, {@code enabled} (true / false). */
+    private void enableLeagueSchedule(HttpRequest request, ResponseWriter responseWriter) throws Exception {
+        Player admin = validateLeagueAdmin(request);
+
+        HttpPostRequestDecoder postDecoder = new HttpPostRequestDecoder(request);
+        try {
+            int id = Throw400IfNullOrNonInteger("id", getFormParameterSafely(postDecoder, "id"));
+            boolean enabled = Throw400IfNullOrNonBoolean("enabled", getFormParameterSafely(postDecoder, "enabled"));
+            if (_leagueScheduleService.getSchedule(id) == null)
+                throw new HttpProcessingException(404, "No league schedule with id " + id);
+
+            LeagueSchedule schedule = _leagueScheduleService.setEnabled(id, enabled);
+            _log.info("League schedule " + id + " (" + schedule.getName() + ") " + (enabled ? "enabled" : "disabled") + " by " + admin.getName());
+            writeJson(responseWriter, describeSchedule(schedule));
+        } finally {
+            postDecoder.destroy();
+        }
+    }
+
+    /** POST /admin/league/schedule/delete : {@code id}.  Leagues the schedule created stay. */
+    private void deleteLeagueSchedule(HttpRequest request, ResponseWriter responseWriter) throws Exception {
+        Player admin = validateLeagueAdmin(request);
+
+        HttpPostRequestDecoder postDecoder = new HttpPostRequestDecoder(request);
+        try {
+            int id = Throw400IfNullOrNonInteger("id", getFormParameterSafely(postDecoder, "id"));
+            LeagueSchedule schedule = _leagueScheduleService.getSchedule(id);
+            if (schedule == null)
+                throw new HttpProcessingException(404, "No league schedule with id " + id);
+
+            _leagueScheduleService.deleteSchedule(id);
+            _log.info("League schedule " + id + " (" + schedule.getName() + ") deleted by " + admin.getName());
+            responseWriter.writeHtmlResponse("OK");
+        } finally {
+            postDecoder.destroy();
+        }
+    }
+
+    /**
+     * POST /admin/league/schedule/run : {@code id}.  Creates the schedule's next league immediately, ignoring the
+     * lead time and the enabled flag.  409 with the reason when it could not be created.
+     */
+    private void runLeagueSchedule(HttpRequest request, ResponseWriter responseWriter) throws Exception {
+        Player admin = validateLeagueAdmin(request);
+
+        HttpPostRequestDecoder postDecoder = new HttpPostRequestDecoder(request);
+        try {
+            int id = Throw400IfNullOrNonInteger("id", getFormParameterSafely(postDecoder, "id"));
+            if (_leagueScheduleService.getSchedule(id) == null)
+                throw new HttpProcessingException(404, "No league schedule with id " + id);
+
+            LeagueScheduleService.Created created = _leagueScheduleService.runNow(id);
+            LeagueSchedule schedule = _leagueScheduleService.getSchedule(id);
+            if (created == null)
+                throw new HttpProcessingException(409, schedule.getLastError() == null ? "The league could not be created." : schedule.getLastError());
+            _log.info("League schedule " + id + " (" + schedule.getName() + ") run by " + admin.getName() + ": created " + created.code());
+
+            Map<String, Object> result = new LinkedHashMap<>();
+            result.put("league", describeLeague(created.league(), created.code()));
+            result.put("schedule", describeSchedule(schedule));
+            writeJson(responseWriter, result);
+        } finally {
             postDecoder.destroy();
         }
     }
@@ -1252,6 +1315,21 @@ public class AdminRequestHandler extends SwccgoServerRequestHandler implements U
         return newValues;
     }
 
+    private double Throw400IfNullOrNonNumber(String paramName, String value) throws HttpProcessingException {
+        if(StringUtils.isEmpty(value)) {
+            throw new HttpProcessingException(400, "Parameter '" + paramName + "' cannot be blank.");
+        }
+        try {
+            double newValue = Double.parseDouble(value.trim());
+            if (Double.isNaN(newValue) || Double.isInfinite(newValue))
+                throw new NumberFormatException();
+            return newValue;
+        }
+        catch (NumberFormatException ex) {
+            throw new HttpProcessingException(400, "Parameter '" + paramName + "' must be a valid number.");
+        }
+    }
+
     private boolean Throw400IfNullOrNonBoolean(String paramName, String value) throws HttpProcessingException {
         if(StringUtils.isEmpty(value)) {
             throw new HttpProcessingException(400, "Parameter '" + paramName + "' cannot be blank.");
@@ -1285,11 +1363,12 @@ public class AdminRequestHandler extends SwccgoServerRequestHandler implements U
      * @param request the request
      * @throws HttpProcessingException an exception
      */
-    private void validateLeagueAdmin(HttpRequest request) throws HttpProcessingException {
+    private Player validateLeagueAdmin(HttpRequest request) throws HttpProcessingException {
         Player player = getResourceOwnerSafely(request, null);
 
         if (!player.hasType(Player.Type.ADMIN) && !player.hasType(Player.Type.LEAGUE_ADMIN))
             throw new HttpProcessingException(403);
+        return player;
     }
 
     /**

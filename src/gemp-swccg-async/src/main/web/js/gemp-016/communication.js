@@ -63,18 +63,41 @@ var GempSwccgCommunication = Class.extend({
         };
     },
 
-    getGameHistory:function (start, count, callback, errorMap) {
+    // filters (optional): {format, opponent, opponentExact, event, side, result, from, to}; empty values are left out
+    getGameHistory:function (start, count, callback, errorMap, filters) {
+        var data = {
+            start:start,
+            count:count,
+            participantId:getUrlParam("participantId") };
+        if (filters) {
+            $.each(["format", "opponent", "opponentExact", "event", "side", "result", "from", "to"], function (i, key) {
+                var value = filters[key];
+                if (value !== undefined && value !== null && value !== "" && value !== false)
+                    data[key] = value;
+            });
+        }
         $.ajax({
             type:"GET",
             url:this.url + "/gameHistory",
             cache:false,
-            data:{
-                start:start,
-                count:count,
-                participantId:getUrlParam("participantId") },
+            data:data,
             success:this.deliveryCheck(callback),
             error:this.errorCheck(errorMap),
             dataType:"xml"
+        });
+    },
+
+    // -> {formats: [...], events: [...]}
+    getGameHistoryFilters:function (callback, errorMap) {
+        $.ajax({
+            type:"GET",
+            url:this.url + "/gameHistory/filters",
+            cache:false,
+            data:{
+                participantId:getUrlParam("participantId") },
+            success:this.deliveryCheck(callback),
+            error:this.errorCheck(errorMap),
+            dataType:"json"
         });
     },
 
@@ -118,6 +141,62 @@ var GempSwccgCommunication = Class.extend({
             dataType:"xml"
         });
     },
+    // ---- Event calendar (GET /calendar?from=yyyy-MM-dd&to=yyyy-MM-dd -> {from, to, eventAdmin, events:[...]}) ----
+    getCalendar:function (from, to, callback, errorMap) {
+        $.ajax({
+            type:"GET",
+            url:this.url + "/calendar",
+            cache:false,
+            data:{
+                participantId:getUrlParam("participantId"),
+                from:from,
+                to:to
+            },
+            success:callback,
+            error:this.errorCheck(errorMap),
+            dataType:"json"
+        });
+    },
+
+    // ---- Completed event browser (Events tab; one kind, one month of finished events per call) ----
+    // kind is "league" or "tournament"; each Events sub-tab asks only for its own kind.
+    // GET /eventHistory/months?kind= -> {kind, months:["2026-09","2026-08",...]}, descending, only months with a
+    // completed event of that kind
+    getEventHistoryMonths:function (kind, callback, errorMap) {
+        $.ajax({
+            type:"GET",
+            url:this.url + "/eventHistory/months",
+            cache:false,
+            data:{
+                participantId:getUrlParam("participantId"),
+                kind:kind
+            },
+            success:callback,
+            error:this.errorCheck(errorMap),
+            dataType:"json"
+        });
+    },
+
+    // GET /eventHistory?month=YYYY-MM&kind= -> {month, kind, isAdmin, events:[{id, name, startDate, endDate, format,
+    // playerCount, rounds, adminLinks:[{label, text, url}]}]}.  isAdmin is decided by the server and is the only thing
+    // the client may gate admin extras on; adminLinks is present only when it is true.  Details are fetched with
+    // getLeague(id) / getTournament(id).
+    getEventHistory:function (month, kind, callback, errorMap) {
+        $.ajax({
+            type:"GET",
+            url:this.url + "/eventHistory",
+            cache:false,
+            data:{
+                participantId:getUrlParam("participantId"),
+                month:month,
+                kind:kind
+            },
+            success:callback,
+            error:this.errorCheck(errorMap),
+            dataType:"json"
+        });
+    },
+
     getLiveTournaments:function (callback, errorMap) {
         $.ajax({
             type:"GET",
@@ -1397,6 +1476,96 @@ var GempSwccgCommunication = Class.extend({
         });
     },
     
+    // ---- league schedules (League Admin): recurring leagues the server creates on its own ----
+
+    getLeagueSchedules:function (callback, errorMap) {
+        $.ajax({
+            type:"GET",
+            url:this.url + "/admin/league/schedules",
+            cache:false,
+            data:{
+                participantId:getUrlParam("participantId")
+            },
+            success:callback,
+            error:this.errorCheck(errorMap),
+            dataType:"json"
+        });
+    },
+
+    // definition: {id, name, leagueType, template (JSON string), events (JSON string), namePattern, nextEventDate
+    // (yyyy-mm-dd), nextEventIndex, intervalMonths, leadDays, enabled}.  preview = true stores nothing and returns
+    // the upcoming occurrences and the next league; otherwise the stored schedule comes back.
+    saveLeagueSchedule:function (preview, definition, callback, errorMap) {
+        $.ajax({
+            type:"POST",
+            url:this.url + "/admin/league/schedule/" + (preview ? "preview" : "save"),
+            cache:false,
+            data:{
+                participantId:getUrlParam("participantId"),
+                id:definition.id,
+                name:definition.name,
+                leagueType:definition.leagueType,
+                template:definition.template,
+                events:definition.events,
+                namePattern:definition.namePattern,
+                nextEventDate:definition.nextEventDate,
+                nextEventIndex:definition.nextEventIndex,
+                intervalMonths:definition.intervalMonths,
+                leadDays:definition.leadDays,
+                enabled:definition.enabled ? "true" : "false"
+            },
+            success:callback,
+            error:this.errorCheck(errorMap),
+            dataType:"json"
+        });
+    },
+
+    enableLeagueSchedule:function (id, enabled, callback, errorMap) {
+        $.ajax({
+            type:"POST",
+            url:this.url + "/admin/league/schedule/enable",
+            cache:false,
+            data:{
+                participantId:getUrlParam("participantId"),
+                id:id,
+                enabled:enabled ? "true" : "false"
+            },
+            success:callback,
+            error:this.errorCheck(errorMap),
+            dataType:"json"
+        });
+    },
+
+    deleteLeagueSchedule:function (id, callback, errorMap) {
+        $.ajax({
+            type:"POST",
+            url:this.url + "/admin/league/schedule/delete",
+            cache:false,
+            data:{
+                participantId:getUrlParam("participantId"),
+                id:id
+            },
+            success:this.deliveryCheck(callback),
+            error:this.errorCheck(errorMap),
+            dataType:"html"
+        });
+    },
+
+    runLeagueSchedule:function (id, callback, errorMap) {
+        $.ajax({
+            type:"POST",
+            url:this.url + "/admin/league/schedule/run",
+            cache:false,
+            data:{
+                participantId:getUrlParam("participantId"),
+                id:id
+            },
+            success:callback,
+            error:this.errorCheck(errorMap),
+            dataType:"json"
+        });
+    },
+
     leagueDeckCheck:function (leagueId, callback, errorMap) {
         $.ajax({
             type:"POST",

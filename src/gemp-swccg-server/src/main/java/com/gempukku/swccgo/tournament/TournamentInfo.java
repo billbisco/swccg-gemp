@@ -12,9 +12,18 @@ public class TournamentInfo {
     private int _tournamentRound;
     private String _pairingMechanism;
     private Tournament.Stage _tournamentStage;
+    private long _startTime;
 
     public TournamentInfo(String tournamentId, String draftType, String tournamentName, String tournamentFormat, CollectionType collectionType,
                           Tournament.Stage tournamentStage, String pairingMechanism, String prizesScheme, int tournamentRound) {
+        this(tournamentId, draftType, tournamentName, tournamentFormat, collectionType, tournamentStage, pairingMechanism, prizesScheme, tournamentRound, 0L);
+    }
+
+    /**
+     * @param startTime when the tournament started (epoch milliseconds, the {@code tournament.start} column), 0 when not read
+     */
+    public TournamentInfo(String tournamentId, String draftType, String tournamentName, String tournamentFormat, CollectionType collectionType,
+                          Tournament.Stage tournamentStage, String pairingMechanism, String prizesScheme, int tournamentRound, long startTime) {
         _tournamentId = tournamentId;
         _draftType = draftType;
         _tournamentName = tournamentName;
@@ -24,6 +33,12 @@ public class TournamentInfo {
         _tournamentRound = tournamentRound;
         _pairingMechanism = pairingMechanism;
         _tournamentStage = tournamentStage;
+        _startTime = startTime;
+    }
+
+    /** When the tournament started, in epoch milliseconds (UTC); 0 when it was not read. */
+    public long getStartTime() {
+        return _startTime;
     }
 
     public String getTournamentId() {

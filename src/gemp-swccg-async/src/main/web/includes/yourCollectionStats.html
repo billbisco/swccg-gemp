@@ -1,8 +1,16 @@
 <script type="text/javascript">
-    $(document).ready(
-            function () {
-                var ui = new CollectionStatsUI("/gemp-swccg-server");
-            });
-
+    // My Account › My Collection: CollectionStatsUI fills #playerCollectionStats from GET /playerCollectionStats.
+    // Coming back after a while fetches them again (GempHallTabs.onReturn, gameHall.js).
+    $("#collectionStatsPage").ready(
+        function () {
+            var ui = new CollectionStatsUI("/gemp-swccg-server");
+            if (window.GempHallTabs)
+                GempHallTabs.onReturn($("#collectionStatsPage"), function () { ui.loadCollectionStats(); });
+        });
 </script>
-<div id="playerCollectionStats"></div>
+<div id="collectionStatsPage" class="stats-page">
+    <h1>My Collection</h1>
+    <p class="stats-note">How much of each set is in <b>My Cards</b>. Open the <a href="deckBuild.html" target="_blank">Deck
+        Builder</a> to see the cards themselves.</p>
+    <div id="playerCollectionStats"></div>
+</div>
