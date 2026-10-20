@@ -18,7 +18,7 @@ import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.TriggerConditions;
 import com.gempukku.swccgo.logic.actions.OptionalGameTextTriggerAction;
-import com.gempukku.swccgo.logic.effects.DrawDestinyAndChooseInsteadEffect;
+import com.gempukku.swccgo.logic.effects.DrawDestinyAndChooserChoosesInsteadEffect;
 import com.gempukku.swccgo.logic.modifiers.AddsPowerToPilotedBySelfModifier;
 import com.gempukku.swccgo.logic.modifiers.DrawsBattleDestinyIfUnableToOtherwiseModifier;
 import com.gempukku.swccgo.logic.modifiers.ImmuneToAttritionLessThanModifier;
@@ -75,9 +75,9 @@ public class Card1281_027 extends AbstractAlien {
                 && GameConditions.isOncePerTurn(game, self, playerId, gameTextSourceCardId, gameTextActionId)
                 && GameConditions.canDrawDestinyAndChoose(game, 1)) {
             OptionalGameTextTriggerAction action = new OptionalGameTextTriggerAction(self, playerId, gameTextSourceCardId, gameTextActionId);
-            action.setText("Draw two weapon destinies and choose one");
+            action.setText("Opponent draws two weapon destinies; choose one");
             action.appendUsage(new OncePerTurnEffect(action));
-            action.appendEffect(new DrawDestinyAndChooseInsteadEffect(action, 2, 1));
+            action.appendEffect(new DrawDestinyAndChooserChoosesInsteadEffect(action, 2, 1, playerId));
             return Collections.singletonList(action);
         }
         return null;

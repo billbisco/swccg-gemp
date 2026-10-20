@@ -173,19 +173,23 @@ public class Card_1281_027_Tests {
     }
 
     @Test
-    public void HanSoloInnocentScoundrelOffersWeaponDestinyChooseWhenTargeted() {
+    public void HanSoloInnocentScoundrelOpponentDrawsTwoWeaponDestiniesAndHanPlayerChoosesOne() {
         var scn = GetScenario();
         var han = scn.GetLSCard("han");
         var trooper = scn.GetDSCard("trooper");
         var dsblaster = scn.GetDSCard("dsblaster");
         var site = scn.GetLSStartingLocation();
+        var lowDestiny = scn.GetDSDestiny(1);
+        var highDestiny = scn.GetDSDestiny(6);
 
         scn.StartGame();
         scn.MoveCardsToLocation(site, han, trooper);
         scn.AttachCardsTo(trooper, dsblaster);
         scn.DSActivateForceCheat(2);
         scn.DSStartBattleAndSkipToWeaponsSegment(site);
-        scn.PrepareDSDestiny(5);
+        // Top of Reserve: 6 (would hit: 6+1 > 5), then 1 (would miss: 1+1 < 5).
+        scn.MoveCardsToTopOfDSReserveDeck(lowDestiny);
+        scn.MoveCardsToTopOfDSReserveDeck(highDestiny);
 
         assertTrue(scn.DSCardActionAvailable(dsblaster, "Fire"));
         scn.DSUseCardAction(dsblaster, "Fire");
@@ -195,9 +199,56 @@ public class Card_1281_027_Tests {
         scn.PassResponses("COST_TO_DRAW_DESTINY_CARD");
         scn.DSPass();
 
-        assertTrue(scn.LSCardActionAvailable(han, "Draw two weapon destinies"));
-        scn.LSUseCardAction(han, "Draw two weapon destinies");
+        assertTrue(scn.LSCardActionAvailable(han, "Opponent draws two weapon destinies"));
+        scn.LSUseCardAction(han, "Opponent draws two weapon destinies");
         scn.PassAllResponses();
-        assertTrue(scn.DSDecisionAvailable("Choose 1 destiny") || scn.LSDecisionAvailable("Choose 1 destiny"));
+
+        // Han's player (not the drawer) chooses which destiny counts.
+        assertFalse(scn.DSDecisionAvailable("Choose 1 destiny"));
+        assertTrue(scn.LSDecisionAvailable("Choose 1 destiny"));
+        scn.LSChooseCard(lowDestiny);
+        scn.PassAllResponses();
+
+        assertFalse(han.isHit());
+    }
+
+    @Test
+    public void HanSoloInnocentScoundrelChosenWeaponDestinyIsTheOneUsed() {
+        var scn = GetScenario();
+        var han = scn.GetLSCard("han");
+        var trooper = scn.GetDSCard("trooper");
+        var dsblaster = scn.GetDSCard("dsblaster");
+        var site = scn.GetLSStartingLocation();
+        var lowDestiny = scn.GetDSDestiny(1);
+        var highDestiny = scn.GetDSDestiny(6);
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, han, trooper);
+        scn.AttachCardsTo(trooper, dsblaster);
+        scn.DSActivateForceCheat(2);
+        scn.DSStartBattleAndSkipToWeaponsSegment(site);
+        // Top of Reserve: 6 (would hit: 6+1 > 5), then 1 (would miss: 1+1 < 5).
+        scn.MoveCardsToTopOfDSReserveDeck(lowDestiny);
+        scn.MoveCardsToTopOfDSReserveDeck(highDestiny);
+
+        assertTrue(scn.DSCardActionAvailable(dsblaster, "Fire"));
+        scn.DSUseCardAction(dsblaster, "Fire");
+        scn.DSChooseCard(han);
+        scn.PassForceUseResponses();
+        scn.PassResponses("Fire ");
+        scn.PassResponses("COST_TO_DRAW_DESTINY_CARD");
+        scn.DSPass();
+
+        assertTrue(scn.LSCardActionAvailable(han, "Opponent draws two weapon destinies"));
+        scn.LSUseCardAction(han, "Opponent draws two weapon destinies");
+        scn.PassAllResponses();
+
+        // Han's player (not the drawer) chooses which destiny counts.
+        assertFalse(scn.DSDecisionAvailable("Choose 1 destiny"));
+        assertTrue(scn.LSDecisionAvailable("Choose 1 destiny"));
+        scn.LSChooseCard(highDestiny);
+        scn.PassAllResponses();
+
+        assertTrue(han.isHit());
     }
 }
