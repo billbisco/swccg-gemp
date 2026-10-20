@@ -9,6 +9,7 @@ import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.common.Zone;
+import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import com.gempukku.swccgo.logic.modifiers.ModifyGameTextType;
@@ -60,6 +61,10 @@ public class Card_1281_044_Tests {
                     put("han", "1281_27");
                     put("kyle", "1281_28");
                     put("leia", "1_17");
+                    put("figrin", "1_9"); // Figrin D'an: gambler
+                    put("karrde", "10_24"); // Talon Karrde: information broker
+                    put("kesselrun", "213_46"); // Kessel Run (V)
+                    put("dunesea", "1_130"); // Tatooine: Dune Sea (battleground site)
                     put("lando", "601_50");
                     put("ladyluck", "601_49");
                     put("nightfall", "1_56");
@@ -451,5 +456,111 @@ public class Card_1281_044_Tests {
         scn.PassAllResponses();
         scn.DSPass();
         assertTrue(scn.LSCardActionAvailable(luck, "Deploy a [Scoundrel] Effect from here"));
+    }
+
+    @Test
+    public void InfiltrationMakesGamblersAndInformationBrokersScoundrels() {
+        var scn = GetScenario();
+        var figrin = scn.GetLSCard("figrin");
+        var karrde = scn.GetLSCard("karrde");
+        var other = scn.GetLSFiller(1);
+        var rest = scn.GetLSCard("rest");
+        var street = scn.GetLSCard("street");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(rest);
+        scn.MoveLocationToTable(street);
+        scn.MoveCardsToLocation(rest, figrin, karrde, other);
+        scn.SkipToPhase(Phase.CONTROL);
+
+        assertTrue(scn.HasKeyword(figrin, Keyword.SCOUNDREL));
+        assertTrue(scn.HasKeyword(karrde, Keyword.SCOUNDREL));
+        assertFalse(scn.HasKeyword(other, Keyword.SCOUNDREL));
+        // Undercity Street: scoundrels may move to or from here using landspeed for free.
+        var mq = scn.game().getModifiersQuerying();
+        assertEquals(0, mq.getMoveUsingLandspeedCost(scn.gameState(), figrin, rest, street, false, 0), scn.epsilon);
+        assertEquals(0, mq.getMoveUsingLandspeedCost(scn.gameState(), karrde, rest, street, false, 0), scn.epsilon);
+        assertEquals(1, mq.getMoveUsingLandspeedCost(scn.gameState(), other, rest, street, false, 0), scn.epsilon);
+    }
+
+    /** Starts the game, 'steals' Imperial Navigation Charts so Infiltration flips to Unlikely Allies. */
+    private VirtualTableScenario StartOnUnlikelyAllies() {
+        var scn = GetScenario();
+        var infiltration = scn.GetLSCard("infiltration");
+        var charts = scn.GetLSCard("charts");
+        var rest = scn.GetLSCard("rest");
+        var street = scn.GetLSCard("street");
+        var undercity = scn.GetLSCard("undercity");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(rest);
+        scn.MoveLocationToTable(street);
+        scn.AttachCardsTo(rest, charts);
+        scn.MoveCardsToLocation(rest, scn.GetLSCard("lando"));
+        scn.MoveCardsToLocation(street, scn.GetLSCard("leia"));
+        scn.MoveCardsToLocation(undercity, scn.GetLSCard("kyle"));
+        scn.SkipToLSTurn(Phase.CONTROL);
+        scn.LSUseCardAction(charts, "Steal");
+        scn.PassAllResponses();
+        assertEquals("Unlikely Allies", infiltration.getBlueprint().getTitle());
+        return scn;
+    }
+
+    @Test
+    public void UnlikelyAlliesForceGenerationPlusOnePerBattlegroundOccupiedWithAScoundrelToAMaximumOfTwo() {
+        var scn = StartOnUnlikelyAllies();
+        var rest = scn.GetLSCard("rest");
+        var street = scn.GetLSCard("street");
+        var undercity = scn.GetLSCard("undercity");
+        var bg3 = scn.GetLSCard("dunesea");
+        var lando = scn.GetLSCard("lando");
+        var leia = scn.GetLSCard("leia");
+        var kyle = scn.GetLSCard("kyle");
+        var mq = scn.game().getModifiersQuerying();
+
+        assertTrue(Filters.battleground.accepts(scn.game(), rest));
+        assertTrue(Filters.battleground.accepts(scn.game(), street));
+        assertTrue(Filters.battleground.accepts(scn.game(), bg3));
+        assertFalse(Filters.battleground.accepts(scn.game(), undercity));
+        assertTrue(scn.HasKeyword(lando, Keyword.SCOUNDREL));
+        assertTrue(scn.HasKeyword(leia, Keyword.SCOUNDREL));
+        assertTrue(scn.HasKeyword(kyle, Keyword.SCOUNDREL));
+
+        scn.MoveLocationToTable(bg3);
+        // No battleground occupied with a scoundrel.
+        scn.MoveCardsToLocation(undercity, lando, leia, kyle);
+        scn.SkipToPhase(Phase.MOVE);
+        float none = mq.getTotalForceGeneration(scn.gameState(), scn.LS);
+
+        scn.MoveCardsToLocation(rest, lando);
+        scn.SkipToPhase(Phase.BATTLE);
+        assertEquals(none + 1, mq.getTotalForceGeneration(scn.gameState(), scn.LS), scn.epsilon);
+
+        scn.MoveCardsToLocation(street, leia);
+        scn.SkipToPhase(Phase.DEPLOY);
+        assertEquals(none + 2, mq.getTotalForceGeneration(scn.gameState(), scn.LS), scn.epsilon);
+
+        // A third battleground occupied with a scoundrel: still +2 (maximum).
+        scn.MoveCardsToLocation(bg3, kyle);
+        scn.SkipToPhase(Phase.BATTLE);
+        assertEquals(none + 2, mq.getTotalForceGeneration(scn.gameState(), scn.LS), scn.epsilon);
+    }
+
+    @Test
+    public void UnlikelyAlliesDoesNotFlipWhenChartsLeaveTableIfYouCompletedVirtualKesselRun() {
+        var scn = StartOnUnlikelyAllies();
+        var infiltration = scn.GetLSCard("infiltration");
+        var charts = scn.GetLSCard("charts");
+        var kesselrun = scn.GetLSCard("kesselrun");
+        assertTrue(kesselrun.getBlueprint().hasVirtualSuffix());
+
+        // Completing Kessel Run (V) needs a full run to Kessel and back; record the completion directly.
+        scn.game().getModifiersQuerying().completedUtinniEffect(scn.LS, kesselrun);
+        scn.MoveCardsToTopOfLSUsedPile(charts);
+        scn.SkipToPhase(Phase.DEPLOY);
+        scn.PassAllResponses();
+
+        assertInZone(Zone.USED_PILE, charts);
+        assertEquals("Unlikely Allies", infiltration.getBlueprint().getTitle());
     }
 }
