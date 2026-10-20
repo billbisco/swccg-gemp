@@ -1,7 +1,7 @@
 /**
  * Hall links: the one place that decides which hall tab (and sub-tab) is showing, so that every screen of the hall
  * has a link of its own and the other pages (deck builder, game pages) can link straight into it.
- * Adapted from the LOTR GEMP hall router for this hall's jQuery UI 1.8 tabs.
+ * Adapted from the LOTR GEMP hall router for this hall's jQuery UI 1.13 tabs.
  *
  *   #game-hall, #events, #history, #formats, #your-stats, #server-stats, #collection-stats, #admin    a tab
  *   #events/calendar, #events/leagues, #events/tournaments                                          an Events sub-tab
@@ -14,8 +14,8 @@
  * address bar with history.replaceState (no reload, no history entry).  A page that shows something more specific (a
  * league, a filtered history) writes its own link with GempLinks.setLink().
  *
- * Tabs are found by the id of their <li> ("tab-" + slug, or the tab's li) because jQuery UI 1.8 rewrites remote tab
- * hrefs.
+ * Tabs are found by the id of their <li> ("tab-" + slug, or the tab's li); a remote tab's panel by the li's
+ * aria-controls.
  */
 var GempLinks = {
     STORAGE_KEY: "gemp.swccg.hall.tab",
@@ -171,14 +171,15 @@ var GempLinks = {
         $(window).bind("hashchange.gempLinks", function () {
             that.go(window.location.hash, true);
         });
-        // A tab picked by hand while a link is still opening wins over the link.  (tabsselect fires during the click;
-        // tabsshow of a remote tab only fires once its page has loaded, long after the router's own select.)
-        $(document).bind("tabsselect.gempLinks", function (event) {
+        // A tab picked by hand while a link is still opening wins over the link.  (tabsbeforeactivate fires during the
+        // click; a remote tab's page loads after that, long after the router's own switch.)
+        $(document).bind("tabsbeforeactivate.gempLinks", function (event) {
             if (!that.switching && that.pending != null && that.isTabSet(event.target))
                 that.cancel();
         });
-        // A tab shown (top level or an Events sub-tab), by a click or by the router, updates the address bar.
-        $(document).bind("tabsshow.gempLinks", function (event) {
+        // A tab shown (top level or an Events sub-tab), by a click or by the router, updates the address bar; so does a
+        // remote tab's page finishing loading or setting up its sub-tabs, since the link then names the sub-tab.
+        $(document).bind("tabsactivate.gempLinks tabsload.gempLinks tabscreate.gempLinks", function (event) {
             if (that.isTabSet(event.target))
                 that.scheduleSync();
         });
@@ -274,19 +275,19 @@ var GempLinks = {
     // One step of opening a route: true once it is done (its handler scheduled), false to be called again.
     advance: function (route, token) {
         var main = $("#tabs");
-        if (!main.length || !main.data("tabs"))
+        if (!this.isTabs(main))
             return false;
         var tab = this.tab(route.tab);
         var li = this.topItem(tab);
         if (!this.visible(li))
             return false;          // hidden for now (Admin before the player info)
         var index = main.find("> ul > li").index(li);
-        if (main.tabs("option", "selected") !== index) {
+        if (main.tabs("option", "active") !== index) {
             this.select(main, index);
             return false;
         }
         var panel = $("#" + this.panelId(li));
-        if (li.hasClass("ui-state-processing") || (this.isRemote(li) && panel.children().length === 0))
+        if (li.hasClass("ui-tabs-loading") || (this.isRemote(li) && panel.children().length === 0))
             return false;          // the tab's page is still loading
 
         var sub = this.sub(tab, route.sub);
@@ -297,7 +298,7 @@ var GempLinks = {
             return true;
         }
         var nested = $(tab.panel);
-        if (!nested.length || !nested.data("tabs"))
+        if (!this.isTabs(nested))
             return false;          // the page has not set up its sub-tabs yet
         var subLi = nested.find("> ul > li").filter(function () {
             return $(this).find("a").attr("href") === sub.href;
@@ -305,25 +306,29 @@ var GempLinks = {
         if (!subLi.length)
             return true;
         var subIndex = nested.find("> ul > li").index(subLi);
-        if (nested.tabs("option", "selected") !== subIndex)
+        if (nested.tabs("option", "active") !== subIndex)
             this.select(nested, subIndex);
         this.schedule(route, token);
         return true;
     },
 
+    isTabs: function (element) {
+        return element.length > 0 && !!element.data("ui-tabs");
+    },
+
+    // jQuery UI 1.13 links each tab's li to its panel (local or remote) with aria-controls.
     panelId: function (li) {
-        var href = li.find("a").attr("href") || "";
-        return href.charAt(0) === "#" ? href.substring(1) : "";
+        return li.attr("aria-controls") || "";
     },
 
     isRemote: function (li) {
-        return !!$.data(li.find("a")[0], "load.tabs");
+        return (li.find("a").attr("href") || "").charAt(0) !== "#";
     },
 
     select: function (tabs, index) {
         this.switching = true;
         try {
-            tabs.tabs("select", index);
+            tabs.tabs("option", "active", index);
         } finally {
             this.switching = false;
         }
@@ -370,16 +375,16 @@ var GempLinks = {
     // {tab, sub} of what is showing.
     current: function () {
         var main = $("#tabs");
-        if (!main.length || !main.data("tabs"))
+        if (!this.isTabs(main))
             return null;
-        var li = main.find("> ul > li").eq(main.tabs("option", "selected"));
+        var li = main.find("> ul > li").eq(main.tabs("option", "active"));
         var tab = this.tabByItemId(li.attr("id") || "");
         if (tab == null)
             return null;
         var sub = null;
         var nested = tab.panel ? $(tab.panel) : $();
-        if (nested.length && nested.data("tabs")) {
-            var href = nested.find("> ul > li").eq(nested.tabs("option", "selected")).find("a").attr("href");
+        if (this.isTabs(nested)) {
+            var href = nested.find("> ul > li").eq(nested.tabs("option", "active")).find("a").attr("href");
             for (var i = 0; i < tab.subs.length; i++) {
                 if (tab.subs[i].href === href)
                     sub = tab.subs[i];
