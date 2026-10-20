@@ -141,7 +141,9 @@ public class LeagueRequestHandler extends SwccgoServerRequestHandler implements 
             serieElem.setAttribute("start", String.valueOf(serie.getStart()));
             serieElem.setAttribute("end", String.valueOf(serie.getEnd()));
             serieElem.setAttribute("formatType", serie.getFormat());
-            serieElem.setAttribute("format", _formatLibrary.getFormat(serie.getFormat()).getName());
+            // a finished league may use a format the library has since retired: show its code rather than fail
+            SwccgFormat serieFormat = _formatLibrary.getFormat(serie.getFormat());
+            serieElem.setAttribute("format", serieFormat == null ? serie.getFormat() : serieFormat.getName());
             serieElem.setAttribute("collection", serie.getCollectionType().getFullName());
             serieElem.setAttribute("collectionType", serie.getCollectionType().getCode());
             serieElem.setAttribute("limited", String.valueOf(serie.isLimited()));
@@ -250,12 +252,9 @@ public class LeagueRequestHandler extends SwccgoServerRequestHandler implements 
         responseWriter.writeHtmlResponse(_deckRenderer.AddDeckReadoutHeaderAndFooter(preamble, ls, ds));
     }
 
+    /** Running or finished: the Events tab opens the standings of completed leagues too.  Joining stays active-only. */
     public League getLeagueByType(String type) {
-        for (League league : _leagueService.getActiveLeagues()) {
-            if (league.getType().equals(type))
-                return league;
-        }
-        return null;
+        return _leagueService.getLeagueByTypeIncludingFinished(type);
     }
 
     private void setStandingAttributes(PlayerStanding standing, Element standingElem) {

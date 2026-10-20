@@ -1,6 +1,6 @@
 /**
  * PlayerPicker: choose ONE player from hall users or by typing to search registered players.
- * Port of LOTR GEMP playerPicker.js to jQuery 1.6.2 + jQuery UI 1.8.16 (Class.extend, .bind, no ES6).
+ * Port of LOTR GEMP playerPicker.js (Class.extend, .bind, no ES6); the hall runs it on jQuery UI 1.13.
  */
 var PlayerPicker = Class.extend({
     input:null,
@@ -61,30 +61,26 @@ var PlayerPicker = Class.extend({
             }
         });
         this.input.autocomplete("widget").addClass("player-picker-menu");
-        var widget = this.input.data("autocomplete");
-        if (widget) {
-            widget._renderMenu = function (ul, items) {
-                var self = this;
-                var heading = null;
-                $.each(items, function (index, item) {
-                    if (item.heading != null && item.heading !== heading) {
-                        heading = item.heading;
-                        $("<li class='player-picker-heading ui-menu-item' role='presentation'></li>").text(heading).appendTo(ul);
-                    }
-                    if (item.note) {
-                        $("<li class='player-picker-heading player-picker-note ui-menu-item' role='presentation'></li>").text(item.note).appendTo(ul);
-                        return;
-                    }
-                    self._renderItem(ul, item);
-                });
-            };
-            widget._renderItem = function (ul, item) {
-                return $("<li></li>")
-                    .data("item.autocomplete", item)
-                    .append($("<a></a>").text(item.label))
-                    .appendTo(ul);
-            };
-        }
+        // jQuery UI 1.13 (as LOTR's playerPicker.js): category headings and notes are not menu items.
+        var widget = this.input.autocomplete("instance");
+        this.input.autocomplete("widget").menu("option", "items", "> :not(.player-picker-heading)");
+        widget._renderMenu = function (ul, items) {
+            var heading = null;
+            $.each(items, function (index, item) {
+                if (item.heading != null && item.heading !== heading) {
+                    heading = item.heading;
+                    $("<li class='player-picker-heading' role='presentation'></li>").text(heading).appendTo(ul);
+                }
+                if (item.note) {
+                    $("<li class='player-picker-heading player-picker-note' role='presentation'></li>").text(item.note).appendTo(ul);
+                    return;
+                }
+                widget._renderItemData(ul, item);
+            });
+        };
+        widget._renderItem = function (ul, item) {
+            return $("<li></li>").append($("<div></div>").text(item.label)).appendTo(ul);
+        };
 
         this.toggle.bind("mousedown", function () {
             that.wasOpen = that.input.autocomplete("widget").is(":visible");

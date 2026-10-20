@@ -40,13 +40,26 @@ var ChatBoxUI = Class.extend({
             that.appendMessage("Unknown chat problem occurred (error=" + xhr.status + ")", "warningMessage");
         });
 
-        this.chatMessagesDiv = $("<div class='chatMessages'></div>");
-        this.div.append(this.chatMessagesDiv);
+        // The hall's chat is markup in hall.html (the shell ported from the LOTR hall): a message list, a typing box
+        // and a user list laid out with flexbox.  Everywhere else (the game window) this class builds and positions
+        // its own, as it always has.
+        this.staticLayout = $("#chatMessages", this.div).length > 0;
+        this.inputRow = $("#legacyChatInput", this.div);
+
+        if (this.staticLayout) {
+            this.chatMessagesDiv = $("#chatMessages", this.div);
+        } else {
+            this.chatMessagesDiv = $("<div class='chatMessages'></div>");
+            this.div.append(this.chatMessagesDiv);
+        }
 
         this.allPlayerIds = allPlayerIds || [];
 
         if (this.name != null) {
-            this.chatTalkDiv = $("<input type='text' class='chatTalk'>");
+            if (this.staticLayout)
+                this.chatTalkDiv = $("#chatTalk", this.div);
+            else
+                this.chatTalkDiv = $("<input type='text' class='chatTalk'>");
 
             if (showHideSystemButton) {
                 this.hideSystemButton = $("<button id='showSystemMessages'>Toggle system messages</button>").button(
@@ -95,24 +108,39 @@ var ChatBoxUI = Class.extend({
             }
 
             if (showList) {
-                this.chatListDiv = $("<div class='userList'></div>");
-                this.div.append(this.chatListDiv);
+                if (this.staticLayout)
+                    this.chatListDiv = $("#userList", this.div);
+                else
+                    this.chatListDiv = $("<div class='userList'></div>").appendTo(this.div);
             }
+            var buttonHost = this.staticLayout ? this.inputRow : this.div;
             if (this.hideSystemButton != null)
-                this.div.append(this.hideSystemButton);
+                buttonHost.append(this.hideSystemButton);
             if (this.lockButton != null)
-                this.div.append(this.lockButton);
-            this.div.append(this.chatTalkDiv);
+                buttonHost.append(this.lockButton);
+            if (!this.staticLayout)
+                this.div.append(this.chatTalkDiv);
 
             this.chatTalkDiv.bind("keypress", function (e) {
                 var code = (e.keyCode ? e.keyCode : e.which);
-                if (code == 13) {
+                // a textarea (the hall) keeps Shift+Enter for a new line
+                if (code == 13 && !e.shiftKey) {
+                    e.preventDefault();
                     var value = $(this).val();
                     if (value != "")
                         that.sendMessage(value);
                     $(this).val("");
+                    if (that.staticLayout)
+                        $(this).css("height", "");
                 }
             });
+            if (this.staticLayout) {
+                // the typing box grows with what is typed, up to the height hall.css allows
+                this.chatTalkDiv.bind("input", function () {
+                    this.style.height = "";
+                    this.style.height = (this.scrollHeight + this.offsetHeight - this.clientHeight) + "px";
+                });
+            }
         } else {
             this.talkBoxHeight = 0;
         }
@@ -149,6 +177,9 @@ var ChatBoxUI = Class.extend({
     },
 
     setBounds:function (x, y, width, height) {
+        if (this.staticLayout)
+            return;          // the hall's chat is laid out by hall.css
+
         var talkBoxPadding = 3;
 
         var userListWidth = 150;

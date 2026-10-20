@@ -1,0 +1,489 @@
+/* Admin tab (includes/admin.html and includes/admin/*.html).
+   The shell: a column of sub-tabs down the left side like the other grouped tabs (LOTR includes/admin.html), with
+   General Admin, League Admin, User Moderation, Playtesting Admin and Commentator Admin as its pages.
+   The League Admin page (LOTR includes/admin/leagueAdmin.html + css/gemp-001/leagueAdmin.css, adapted to this
+   server's league types and endpoints) has everything else in here. */
+
+/* ---- the shell ---- */
+
+/* hall.css lays the admin sub-tabs out as a row across the top; the LOTR shell stacks them on the left like Help,
+   Events, Server Info and My Account, so these undo that for #adminMain once it carries ui-tabs-vertical. */
+#adminMain.ui-tabs-vertical .ui-tabs-nav,
+#adminMain.ui-tabs-vertical #admin-tabs > ol {
+    display: block;
+    width: auto;
+    float: left;
+    max-width: 200px;
+}
+
+#adminMain.ui-tabs-vertical .ui-tabs-nav li {
+    float: none;
+    width: 100%;
+}
+
+#adminMain.ui-tabs-vertical .ui-tabs-nav li a {
+    float: none;
+    display: block;
+    width: auto;
+    white-space: nowrap;
+}
+
+#adminMain.ui-tabs-vertical > .sub-tabs {
+    flex: 0 0 200px;
+    width: auto;
+}
+
+/* the pages kept from the old admin panel (.page, centred) sit level with the top of the sub-tab column */
+#adminMain .ui-tabs-panel > .page {
+    margin-top: 1em;
+}
+
+/* ---- a page of the admin tab (the LOTR .article, left-aligned so wide forms and tables fit) ---- */
+.admin-page {
+    padding: 0 12px 2em;
+    color: #ffffff;
+    max-width: 64em;
+}
+
+.admin-page h1 {
+    font-size: 160%;
+    margin: 0.6em 0 0.4em;
+}
+
+.admin-page h2 {
+    font-size: 125%;
+    margin: 1.2em 0 0.3em;
+    color: #ffa84a;
+}
+
+.admin-page h2:first-child {
+    margin-top: 0.6em;
+}
+
+.admin-page p {
+    line-height: 1.4;
+}
+
+.admin-page a,
+.admin-page a:visited {
+    color: #E88104;
+}
+
+.admin-page .page-hint {
+    color: #bbbbbb;
+    font-size: 90%;
+    margin-bottom: 0.4em;
+}
+
+/* ---- (i) help toggles: .info-toggle / .info-text themselves are in hall.css ---- */
+.admin-page .info-text {
+    line-height: 1.4;
+}
+
+.admin-page .info-text code {
+    color: #dddddd;
+}
+
+/* ---- League Admin: the current leagues ---- */
+.league-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3em;
+    margin: 0.3em 0;
+}
+
+.league-card {
+    border: 1px solid #555;
+    border-radius: 4px;
+    padding: 0.5em 0.7em;
+    background: #1b1b1b;
+}
+
+.league-card.league-over {
+    opacity: 0.7;
+}
+
+.league-line {
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+    flex-wrap: wrap;
+}
+
+.league-line .league-title {
+    font-weight: bold;
+    font-size: 110%;
+}
+
+.league-line .league-buttons {
+    margin-left: auto;
+    display: flex;
+    gap: 0.2em;
+}
+
+.league-meta {
+    color: #bbbbbb;
+    font-size: 90%;
+}
+
+.league-meta .sep {
+    color: #666;
+    margin: 0 0.3em;
+}
+
+/* The league code has no URL: it is text an admin selects and pastes (Add players), so a click grabs all of it. */
+.league-code {
+    font-family: monospace;
+    font-size: 95%;
+    color: #dddddd;
+    user-select: all;
+    cursor: text;
+}
+
+.league-details {
+    margin: 0.4em 0 0.2em 0;
+    padding: 0.4em 0.6em;
+    border-top: 1px solid #333;
+    font-size: 92%;
+}
+
+.league-details .serie-line {
+    margin: 0.15em 0;
+}
+
+.league-details .serie-line b {
+    color: #dddddd;
+}
+
+.league-details table.standings {
+    border-collapse: collapse;
+    margin: 0.3em 0 0.2em 1em;
+}
+
+.league-details table.standings th,
+.league-details table.standings td {
+    padding: 0.1em 0.6em;
+    text-align: center;
+    border: 1px solid #444;
+}
+
+.league-details table.standings td:first-child {
+    text-align: left;
+}
+
+.league-details .league-loading,
+.league-list .league-empty {
+    color: #bbbbbb;
+    font-style: italic;
+}
+
+.league-list .league-error,
+.league-details .league-error {
+    color: #f08080;
+}
+
+/* ---- League Admin: league schedules (LOTR leagueAdmin.css: rotation rows, schedule cards, preview extras) ---- */
+.schedule-card.schedule-disabled {
+    opacity: 0.75;
+    border-style: dashed;
+}
+
+.schedule-card.schedule-highlight {
+    outline: 2px solid #9fd49f;
+}
+
+.schedule-meta .league-code {
+    user-select: all;
+}
+
+.schedule-error {
+    color: #f0a0a0;
+    font-size: 92%;
+    margin: 0.2em 0;
+}
+
+.schedule-upcoming,
+.preview-upcoming {
+    margin: 0.3em 0 0.3em 1.2em;
+    padding-left: 1em;
+    font-size: 92%;
+}
+
+.schedule-upcoming li,
+.preview-upcoming li {
+    margin: 0.1em 0;
+}
+
+#schedule-block input.wide {
+    width: 5em;
+}
+
+#rotation-rows .rotation-row {
+    background: #202020;
+    border: 1px solid #444;
+    border-radius: 4px;
+    padding: 0.4em 0.6em;
+    margin: 0.3em 0;
+}
+
+.rotation-head {
+    align-items: center;
+    gap: 0.5em;
+    flex-wrap: wrap;
+}
+
+.rotation-index {
+    color: #aaaaaa;
+    min-width: 1.4em;
+    text-align: right;
+}
+
+.rotation-name {
+    min-width: 12em;
+}
+
+.rotation-next-label {
+    color: #aaaaaa;
+    font-size: 90%;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2em;
+}
+
+.rotation-row.is-next {
+    border-color: #6a9;
+}
+
+.rotation-buttons {
+    margin-left: auto;
+    display: flex;
+    gap: 0.2em;
+}
+
+.rotation-row .serie-editor {
+    margin-top: 0.3em;
+}
+
+.tech-toggle {
+    margin-top: 0.8em;
+    color: #8ab;
+    cursor: pointer;
+    font-size: 90%;
+    user-select: none;
+}
+
+.tech-toggle:hover {
+    text-decoration: underline;
+}
+
+.tech-json {
+    font-family: monospace;
+    font-size: 80%;
+    background: #111;
+    border: 1px solid #333;
+    padding: 0.5em;
+    max-height: 20em;
+    overflow: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+/* ---- placeholders for the slices that are not here yet ---- */
+.admin-placeholder {
+    border: 1px dashed #556;
+    border-radius: 4px;
+    padding: 0.4em 0.7em;
+    margin: 0.3em 0;
+    color: #aab;
+    font-size: 90%;
+}
+
+/* ---- the league form (LOTR leagueAdmin.css) ---- */
+.league-form {
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
+    align-items: stretch;
+    gap: 0.4em;
+}
+
+#league-form {
+    border: 1px solid #444;
+    border-radius: 4px;
+    padding: 0.6em 0.8em 0.8em 0.8em;
+    background: #1b1b1b;
+}
+
+.mode-header {
+    align-items: center;
+    gap: 1em;
+}
+
+.mode-header h2 {
+    margin: 0;
+    flex-grow: 1;
+}
+
+.form-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35em;
+    padding: 0.5em 0;
+    border-top: 1px solid #333;
+}
+
+.form-section.first {
+    border-top: none;
+    padding-top: 0.2em;
+}
+
+.section-title {
+    font-weight: bold;
+    color: #cccccc;
+    margin-bottom: 0.1em;
+}
+
+.league-form .field-row {
+    align-items: center;
+    min-height: 1.7em;
+}
+
+.league-form .field-row input[type="checkbox"] {
+    margin: 0;
+}
+
+.league-form .label-column {
+    width: max(180px, 28%);
+}
+
+.field-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
+    white-space: nowrap;
+}
+
+.field-inline input[type="number"] {
+    width: 4.5em;
+}
+
+.field-inline input[type="number"].wide {
+    width: 6em;
+}
+
+.league-form input[type="date"] {
+    color-scheme: dark;
+}
+
+.league-warning {
+    background: #4a3d00;
+    border: 1px solid #b89a00;
+    color: #ffe680;
+    padding: 0.4em 0.6em;
+    border-radius: 3px;
+    margin: 0.3em 0;
+}
+
+/* ---- type selector ---- */
+.league-type-bar {
+    display: flex;
+    gap: 0;
+    flex-wrap: wrap;
+}
+
+.league-type-bar .type-btn {
+    margin: 0;
+    border-radius: 0;
+}
+
+.league-type-bar .type-btn:first-child {
+    border-radius: 4px 0 0 4px;
+}
+
+.league-type-bar .type-btn:last-child {
+    border-radius: 0 4px 4px 0;
+}
+
+.league-type-bar .type-btn.type-selected,
+.league-type-bar .type-btn.type-selected:hover {
+    background: #5a7fb0;
+    border-color: #7fa3d0;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+/* ---- serie editor (one row for Sealed / Draft, a list for Constructed) ---- */
+.serie-editor {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3em;
+}
+
+.serie-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25em;
+}
+
+.serie-row {
+    align-items: center;
+    gap: 0.6em;
+    flex-wrap: wrap;
+}
+
+.serie-row .serie-format {
+    flex-grow: 1;
+    min-width: 12em;
+}
+
+.serie-row .serie-index {
+    color: #888888;
+    min-width: 1.4em;
+    text-align: right;
+}
+
+.serie-editor .serie-add {
+    align-self: flex-start;
+}
+
+/* ---- buttons / result ---- */
+.form-buttons {
+    gap: 0.4em;
+    align-items: center;
+    flex-wrap: wrap;
+    padding-top: 0.5em;
+}
+
+/* ---- the preview dialog ---- */
+.league-preview .leagueName {
+    font-size: 150%;
+    font-weight: bolder;
+    margin-bottom: 0.2em;
+}
+
+.league-preview .serieName {
+    font-size: 115%;
+    font-weight: bolder;
+    margin-top: 0.6em;
+}
+
+.league-preview .preview-settings {
+    margin: 0.3em 0;
+    color: #dddddd;
+}
+
+.league-preview .preview-settings b {
+    color: #ffffff;
+}
+
+/* ---- add players ---- */
+#add-players-section {
+    margin-top: 1em;
+    padding-top: 0.5em;
+    border-top: 1px solid #444;
+}
+
+#add-players-section textarea {
+    min-height: 6em;
+}

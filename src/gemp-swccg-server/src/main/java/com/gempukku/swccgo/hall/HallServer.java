@@ -30,6 +30,7 @@ import com.gempukku.swccgo.game.*;
 import com.gempukku.swccgo.game.formats.SwccgoFormatLibrary;
 import com.gempukku.swccgo.league.LeagueSeriesData;
 import com.gempukku.swccgo.league.LeagueService;
+import com.gempukku.swccgo.league.LeagueScheduleService;
 import com.gempukku.swccgo.logic.GameUtils;
 import com.gempukku.swccgo.logic.timing.GameResultListener;
 import com.gempukku.swccgo.logic.vo.SwccgDeck;
@@ -65,6 +66,7 @@ public class HallServer extends AbstractServer {
     private GempSettingDAO _gempSettingDAO;
     private BotStatsDAO _botStatsDAO;
     private AdminService _adminService;
+    private final LeagueScheduleService _leagueScheduleService;
     private TournamentPrizeSchemeRegistry _tournamentPrizeSchemeRegistry;
     private PackagedProductStorage _packStorage;
     private SoloDraftDefinitions _soloDraftDefinitions;
@@ -105,8 +107,10 @@ public class HallServer extends AbstractServer {
             BotStatsDAO botStatsDAO, AdminService adminService,
             TournamentPrizeSchemeRegistry tournamentPrizeSchemeRegistry,
             PairingMechanismRegistry pairingMechanismRegistry,
-            PackagedProductStorage packStorage, SoloDraftDefinitions soloDraftDefinitions) {
+            PackagedProductStorage packStorage, SoloDraftDefinitions soloDraftDefinitions,
+            LeagueScheduleService leagueScheduleService) {
         _swccgoServer = swccgoServer;
+        _leagueScheduleService = leagueScheduleService;
         _chatServer = chatServer;
         _leagueService = leagueService;
         _tournamentService = tournamentService;
@@ -1104,7 +1108,7 @@ public class HallServer extends AbstractServer {
             } else if (_motd != null) {
                 visitor.motd(_motd);
             } else {
-                _motd = "Welcome to GEMP-SWCCG! See the Events tab for current leagues and tournaments.";
+                _motd = "Welcome to GEMP for Star Wars Customizeable Card Game! Start or Join games and have fun!";
                 visitor.motd(_motd);
             }
 
@@ -1721,6 +1725,11 @@ public class HallServer extends AbstractServer {
                 if (changed)
                     hallChanged();
             }
+
+            // Create the leagues of any enabled league schedule that are within their lead time (cheap: the real
+            // work runs at startup and then about hourly, see LeagueScheduleService.processDueSchedulesIfTime)
+            if (_leagueScheduleService != null)
+                _leagueScheduleService.processDueSchedulesIfTime();
 
             if (_tickCounter == 60 || forceRefresh) {
                 _tickCounter = 0;
