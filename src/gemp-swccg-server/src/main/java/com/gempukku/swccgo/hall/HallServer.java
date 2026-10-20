@@ -1108,7 +1108,7 @@ public class HallServer extends AbstractServer {
             } else if (_motd != null) {
                 visitor.motd(_motd);
             } else {
-                _motd = "Welcome to GEMP-SWCCG! See the Events tab for current leagues and tournaments.";
+                _motd = "Welcome to GEMP for Star Wars Customizeable Card Game! Start or Join games and have fun!";
                 visitor.motd(_motd);
             }
 
