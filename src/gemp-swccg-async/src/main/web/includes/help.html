@@ -1,0 +1,43 @@
+<script type="text/javascript">
+    $("#helpMain").ready(
+        function () {
+            $("#helpMain").tabs().addClass("ui-tabs-vertical ui-helper-clearfix");
+            $("#help-tabs > ol > li").removeClass("ui-corner-top").addClass("ui-corner-left");
+        });
+</script>
+
+<div id="helpMain" class="hall-tab flex-horiz">
+    <div id="help-tabs" class="sub-tabs">
+        <ol>
+            <li><a href="#help-howtoplay">How Do I Play?</a></li>
+            <li><a href="includes/instruction.html">Manual</a></li>
+            <li><a href="/gemp-swccg-server/hall/formats/html">Format Rules</a></li>
+            <li><a href="includes/leagueRules.html">What Are Leagues?</a></li>
+        </ol>
+    </div>
+
+    <div id="help-howtoplay">
+        <div class="article">
+            <h1>How do I play?</h1>
+            <p>
+                Gemp-Swccg plays the Star Wars Customizable Card Game in your browser: no cards to buy, no table to
+                clear, no clean-up afterwards.
+            </p>
+            <ul>
+                <li>New to the game? The <a href="https://wiki.swccg.com/" target="_blank" rel="noopener noreferrer">SWCCG
+                    Wiki</a> explains the rules, the cards and the formats.</li>
+                <li>Build a deck with the <a href="deckBuild.html" target="_blank">Deck Builder</a>, or pick one from the
+                    deck library when you open a table: it holds starter and sample decks you can play straight away.</li>
+                <li>Back in the <b>Game Hall</b>, press <b>Play</b> to open a table against another player or against a
+                    bot, to join a league table, or to host a tournament. Tables other players have opened are listed
+                    under <b>Waiting Tables</b>; press <b>Join table</b> on one.</li>
+                <li>The <b>Manual</b> beside this page walks through the hall, the deck builder and the game window.
+                    <b>Format Rules</b> lists what each format allows, and <b>What Are Leagues?</b> explains how league
+                    play is scored.</li>
+            </ul>
+            <p>
+                Found a problem? Use <b>Report a Bug</b> at the top of the Game Hall.
+            </p>
+        </div>
+    </div>
+</div>

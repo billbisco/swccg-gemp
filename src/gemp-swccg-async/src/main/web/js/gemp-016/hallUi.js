@@ -166,6 +166,138 @@ HallConnectionIndicator.loginUrl = function () {
 	return "/gemp-swccg/";
 };
 
+// The bar along the top edge of the chat: drag it (or focus it and use the Up / Down arrow keys) to make the chat
+// taller or shorter.  The height is kept in the chatResize cookie.
+// Ported from PlayersCouncil/gemp-lotr hallUi.js HallChatResizer.  The height is applied at most once per animation
+// frame, and while dragging nothing on the page takes the pointer or gets selected.
+var HallChatResizer = Class.extend({
+    chat: null,
+    handle: null,
+    drag: null,
+    frame: null,
+
+    COOKIE: "chatResize",
+    DEFAULT_HEIGHT: 300,
+    MIN_HEIGHT: 100,
+    // room the rest of the page keeps when the chat is made as tall as it goes
+    PAGE_RESERVE: 260,
+    KEY_STEP: 20,
+
+    init: function (chat) {
+        var that = this;
+        this.chat = chat;
+        if (!chat.length)
+            return;
+        this.handle = $("<div class='ui-resizable-handle ui-resizable-n hall-chat-resizer' role='separator' tabindex='0'></div>")
+            .attr("aria-orientation", "horizontal")
+            .attr("aria-label", "Resize the chat")
+            .attr("title", "Drag to resize the chat");
+        chat.prepend(this.handle);
+
+        // Without a stored height the chat takes its default, but never more than a third of a short window: on a
+        // laptop screen the tables would otherwise be squeezed into a couple of rows before anything is dragged.
+        var stored = parseInt($.cookie(this.COOKIE), 10);
+        this.apply(isNaN(stored) ? Math.min(this.DEFAULT_HEIGHT, Math.round($(window).height() / 3)) : stored);
+
+        this.handle.on("pointerdown", function (event) {
+            that.start(event.originalEvent || event);
+        });
+        this.handle.on("lostpointercapture", function () {
+            that.end();
+        });
+        this.handle.on("keydown", function (event) {
+            var step = event.key === "ArrowUp" ? that.KEY_STEP : event.key === "ArrowDown" ? -that.KEY_STEP : 0;
+            if (step === 0)
+                return;
+            event.preventDefault();
+            that.apply(that.chat.height() + step);
+            that.save();
+        });
+        $(window).on("resize.hallChatResize", function () {
+            that.apply(that.chat.height());
+        });
+    },
+
+    maxHeight: function () {
+        return Math.max(this.MIN_HEIGHT, $(window).height() - this.PAGE_RESERVE);
+    },
+
+    apply: function (height) {
+        var clamped = Math.round(Math.min(this.maxHeight(), Math.max(this.MIN_HEIGHT, height)));
+        this.chat.height(clamped);
+        this.handle.attr({"aria-valuemin": this.MIN_HEIGHT, "aria-valuemax": this.maxHeight(), "aria-valuenow": clamped});
+        return clamped;
+    },
+
+    save: function () {
+        $.cookie(this.COOKIE, this.chat.height(), {expires: 365});
+    },
+
+    start: function (event) {
+        if (this.drag != null || (event.button != null && event.button !== 0))
+            return;
+        var that = this;
+        // no text selection, no native drag
+        if (event.preventDefault)
+            event.preventDefault();
+        this.drag = {startY: event.clientY, y: event.clientY, startHeight: this.chat.height(), pointerId: event.pointerId};
+        try {
+            if (event.pointerId != null && this.handle[0].setPointerCapture)
+                this.handle[0].setPointerCapture(event.pointerId);
+        } catch (e) {
+            // capture is a nicety: the document listeners below do the work without it
+        }
+        $("body").addClass("hall-chat-resizing");
+        $(document)
+            .on("pointermove.hallChatResize", function (e) {
+                that.move(e.originalEvent || e);
+            })
+            .on("pointerup.hallChatResize pointercancel.hallChatResize", function (e) {
+                that.move(e.originalEvent || e);
+                that.end();
+            });
+    },
+
+    move: function (event) {
+        if (this.drag == null || event.clientY == null)
+            return;
+        var that = this;
+        this.drag.y = event.clientY;
+        if (this.frame == null) {
+            this.frame = window.requestAnimationFrame(function () {
+                that.frame = null;
+                that.applyDrag();
+            });
+        }
+    },
+
+    applyDrag: function () {
+        if (this.drag != null)
+            this.apply(this.drag.startHeight + (this.drag.startY - this.drag.y));
+    },
+
+    end: function () {
+        if (this.drag == null)
+            return;
+        if (this.frame != null) {
+            window.cancelAnimationFrame(this.frame);
+            this.frame = null;
+        }
+        this.applyDrag();
+        var pointerId = this.drag.pointerId;
+        this.drag = null;
+        $(document).off(".hallChatResize");
+        $("body").removeClass("hall-chat-resizing");
+        try {
+            if (pointerId != null && this.handle[0].hasPointerCapture && this.handle[0].hasPointerCapture(pointerId))
+                this.handle[0].releasePointerCapture(pointerId);
+        } catch (e) {
+            // already released
+        }
+        this.save();
+    }
+});
+
 var GempSwccgHallUI = Class.extend({
     div:null,
     comm:null,
@@ -336,68 +468,42 @@ var GempSwccgHallUI = Class.extend({
                 thatChat.invitePicker.setPlayers(names);
         };
 
-        var width = $(div).width();
-        var height = $(div).height();
+        // The hall's own chrome is markup in hall.html (the shell ported from the LOTR hall): the collapsible table
+        // sections, the main bar (connection readout, Deck-builder, Play, server clock) and the chat.  This class
+        // fills them in and wires them up; it no longer builds or positions them.
+        this.tablesDiv = $("#tablesDiv");
 
-        this.tablesDiv = $("<div></div>");
-        this.tablesDiv.css({overflow:"auto", left:"0px", top:"0px", width:width + "px", height:(height - 56) + "px"});
-        
-        var hallSettingsStr = $.cookie("hallSettings");
-        if (hallSettingsStr == null)
-            hallSettingsStr = "0|0|1|1|0";
-        var hallSettings = hallSettingsStr.split("|");
-
-        // TODO: Comment out for now      this.addQueuesTable(hallSettings[0] == "1");
-        // TODO: Comment out for now      this.addTournamentsTable(hallSettings[1] == "1");
-        this.addWaitingTablesTable(hallSettings[2] == "1");
-        this.addPlayingTablesTable(hallSettings[3] == "1");
-        this.addFinishedTablesTable(hallSettings[4] == "1");
-
-        this.div.append(this.tablesDiv);
-
-        // Slice 1.3 primary bar — three zones mirrored from LOTR hall.html .buttons-gutter:
-        // left #hall-connection | centered Deck-builder+Play | right .server-time (with "Server Time" label)
-        this.buttonsDiv = $("<div class='hall-primary-bar flex-horiz'></div>");
-        this.buttonsDiv.css({left:"0px", top:(height - 56) + "px", width:width + "px", backgroundColor:"#000000", "border-top-width":"1px", "border-top-color":"#ffffff", "border-top-style":"solid", "box-sizing":"border-box", padding:"6px 8px", display:"flex", "flex-direction":"row", "align-items":"center", "justify-content":"center", gap:"4px"});
+        var hallSettings = this.readHallSettings();
+        for (var slot = 0; slot < this.HALL_SETTINGS_SLOTS.length; slot++) {
+            var section = this.HALL_SETTINGS_SLOTS[slot];
+            if (section != null)
+                this.initTable(hallSettings[slot] == "1", section.header, section.content);
+        }
 
         var that = this;
 
-        // Left: connection readout (markup mirrors PlayersCouncil/gemp-lotr hall.html #hall-connection)
-        this.connectionDiv = $("<div id='hall-connection' class='hall-connection' data-state='connecting'></div>");
-        var connBtn = $("<button type='button' class='hall-connection-readout' aria-expanded='false' aria-controls='hall-connection-popup'></button>");
-        connBtn.append("<span class='hall-connection-dot' aria-hidden='true'></span>");
-        connBtn.append("<span class='hall-connection-label'>Connecting</span>");
-        this.connectionDiv.append(connBtn);
-        this.connectionDiv.append("<a class='hall-connection-signin' href='/gemp-swccg/' hidden>Log in</a>");
-        this.connectionDiv.append("<span class='hall-connection-live visually-hidden' role='status' aria-live='polite'></span>");
-        var connPopup = $("<div id='hall-connection-popup' class='hall-connection-popup' hidden></div>");
-        connPopup.append("<div class='hall-connection-popup-status'></div>");
-        connPopup.append("<div class='hall-connection-popup-updated'></div>");
-        connPopup.append("<div class='hall-connection-popup-message' hidden></div>");
-        this.connectionDiv.append(connPopup);
-
-        // Center: Deck-builder + Play (LOTR icons from Slice 1.1.2/1.1.3 kept)
-        this.controlsLeft = $("<div class='hall-primary-actions flex-horiz'></div>");
-        this.deckBuilderButton = $("<a id='deckbuilder-button' class='hall-play-button hall-play-button-deckbuilder' href='deckBuild.html' target='_blank'><span class='bigger-icon icon-deckbuilder' aria-hidden='true'></span><span class='hall-play-button-label'><b>Deck-builder</b></span></a>");
-        this.playButton = $("<button type='button' id='open-table-button' class='hall-play-button hall-play-button-play'><span class='bigger-icon icon-play' aria-hidden='true'></span><span class='hall-play-button-label'><b>Play</b></span></button>");
-        this.controlsLeft.append(this.deckBuilderButton);
-        this.controlsLeft.append(this.playButton);
+        // The main bar: connection readout at the left, Deck-builder and Play in the middle, the server clock at the
+        // right (LOTR hall.html .buttons-gutter).
+        this.connectionDiv = $("#hall-connection");
+        this.controlsLeft = $(".hall-primary-actions");
+        this.deckBuilderButton = $("#deckbuilder-button");
+        this.playButton = $("#open-table-button");
         $(this.playButton).button().click(function () {
             that.openPlayOverlay();
         });
         $(this.deckBuilderButton).button();
 
-        // Right: Server Time (LOTR .server-time pattern + explicit "Server Time" label per Bill)
-        this.serverTimeDiv = $("<div class='server-time hall-server-time'></div>");
-        this.serverTimeDiv.append("<div class='hall-server-time-label'>Server Time</div>");
-        this.serverTimeValue = $("<div class='hall-server-time-value'></div>");
-        this.serverTimeDiv.append(this.serverTimeValue);
+        this.serverTimeDiv = $(".hall-server-time");
+        this.serverTimeValue = $(".hall-server-time-value");
 
-        this.buttonsDiv.append(this.connectionDiv);
-        this.buttonsDiv.append(this.controlsLeft);
-        this.buttonsDiv.append(this.serverTimeDiv);
+        // The Game Hall sub-bar: Report a Bug, the SWCCG Wiki and the Merchant, as buttons.
+        $("#bug-button").button();
+        $("#wiki-button").button();
+        $("#merchant-button").button();
 
         this.connection = new HallConnectionIndicator(this.connectionDiv);
+        // Drag (or focus and arrow) the bar on top of the chat to make it taller or shorter.
+        this.chatResizer = new HallChatResizer($("#chat"));
         // Server Time and waiting/playing table clocks tick locally every second.
         setInterval(function () {
             that.refreshTableAges();
@@ -509,223 +615,91 @@ var GempSwccgHallUI = Class.extend({
             });
 
         this.updateCreateTableLabel();
-        this.div.append(this.buttonsDiv);
-        this.hallResized(width, height);
 
         this.getHall();
     },
 
 
-    addQueuesTable: function(displayed) {
-        var header = $("<div class='eventHeader queues'></div>");
+    // Cookie "hallSettings": one "1" / "0" per section, in this order, telling whether it was left open.  The order
+    // is the one the hall has always written, so cookies from before the shell was rebuilt still line up.
+    HALL_SETTINGS_DEFAULT: "0|0|1|1|0",
+    HALL_SETTINGS_SLOTS: [
+        {header: "queuesHeader", content: "queuesContent"},
+        {header: "tournamentsHeader", content: "tournamentsContent"},
+        {header: "waitingTablesHeader", content: "waitingTablesContent"},
+        {header: "playingTablesHeader", content: "playingTablesContent"},
+        {header: "finishedTablesHeader", content: "finishedTablesContent"}
+    ],
 
-        var content = $("<div></div>");
-
-        var toggleContent = $("<div>Toggle tournament queues</div>").button({
-            icons: {
-                primary: "ui-icon-circlesmall-minus"
-            },
-            text: false
-        });
-
-        var that = this;
-        var toggle = function() {
-            if (toggleContent.button("option", "icons")["primary"] == "ui-icon-circlesmall-minus")
-                toggleContent.button("option", "icons", {primary: "ui-icon-circlesmall-plus"});
-            else
-                toggleContent.button("option", "icons", {primary: "ui-icon-circlesmall-minus"});
-            content.toggle("blind", {}, 200);
-            that.updateHallSettings();
-        };
-        toggleContent.css({width: "13px", height: "15px"});
-        toggleContent.click(toggle);
-
-        header.append(toggleContent);
-        header.append(" Tournament queues");
-        header.append(" <span class='count'>(0)</span>");
-
-        var table = $("<table class='tables queues'></table>");
-        table.append("<tr><th width='10%'>Format</th><th width='8%'>Collection</th><th width='20%'>Queue name</th><th width='16%'>Starts</th><th width='10%'>System</th><th width='6%'>Players</th><th width='8%'>Cost</th><th width='12%'>Prizes</th><th width='10%'>Actions</th></tr>");
-        content.append(table);
-
-        this.tablesDiv.append(header);
-        this.tablesDiv.append(content);
-
-        if (!displayed) {
-            toggleContent.button("option", "icons", {primary: "ui-icon-circlesmall-plus"});
-            content.css({"display":"none"});
-        }
+    readHallSettings: function() {
+        return ($.cookie("hallSettings") || this.HALL_SETTINGS_DEFAULT).split("|");
     },
 
-    addTournamentsTable: function(displayed) {
-        var header = $("<div class='eventHeader tournaments'></div>");
+    // A collapsible section of the hall: the header in hall.html is a <button class="eventHeader"> (so Enter and
+    // Space work like a click, and screen readers hear whether it is open) in front of its content div.
+    initTable: function(displayed, headerID, contentID) {
+        var header = $("#" + headerID);
+        var content = $("#" + contentID);
+        var that = this;
+        if (!header.length || !content.length)
+            return;
 
-        var content = $("<div></div>");
+        if (header.find(".disclosureTriangle").length === 0)
+            header.prepend("<span class='disclosureTriangle' aria-hidden='true'></span>");
+        header.attr("aria-controls", contentID);
 
-        var toggleContent = $("<div>Toggle tournaments in progress</div>").button({
-            icons: {
-                primary: "ui-icon-circlesmall-minus"
-            },
-            text: false
+        header.off("click").on("click", function () {
+            content.toggleClass("hidden").toggle("blind", {}, 200);
+            header.toggleClass("expanded");
+            header.attr("aria-expanded", header.hasClass("expanded") ? "true" : "false");
+            that.updateHallSettings();
         });
 
-        var that = this;
-        var toggle = function() {
-            if (toggleContent.button("option", "icons")["primary"] == "ui-icon-circlesmall-minus")
-                toggleContent.button("option", "icons", {primary: "ui-icon-circlesmall-plus"});
-            else
-                toggleContent.button("option", "icons", {primary: "ui-icon-circlesmall-minus"});
-            content.toggle("blind", {}, 200);
-            that.updateHallSettings();
-        };
-        toggleContent.css({width: "13px", height: "15px"});
-        toggleContent.click(toggle);
-        header.append(toggleContent);
-        header.append(" Tournaments in progress");
-        header.append(" <span class='count'>(0)</span>");
-
-        var table = $("<table class='tables tournaments'></table>");
-        table.append("<tr><th width='10%'>Format</th><th width='10%'>Collection</th><th width='25%'>Tournament name</th><th width='15%'>System</th><th width='10%'>Stage</th><th width='10%'>Round</th><th width='10%'>Players</th><th width='10%'>Actions</th></tr>");
-        content.append(table);
-
-        this.tablesDiv.append(header);
-        this.tablesDiv.append(content);
-
-        if (!displayed) {
-            toggleContent.button("option", "icons", {primary: "ui-icon-circlesmall-plus"});
-            content.css({"display":"none"});
+        if (displayed) {
+            content.removeClass("hidden").show();
+            header.addClass("expanded");
+        } else {
+            content.addClass("hidden").hide();
+            header.removeClass("expanded");
         }
-    },
-
-    addWaitingTablesTable: function(displayed) {
-        var header = $("<div class='eventHeader waitingTables'></div>");
-
-        var content = $("<div></div>");
-
-        var toggleContent = $("<div>Toggle waiting tables</div>").button({
-            icons: {
-                primary: "ui-icon-circlesmall-minus"
-            },
-            text: false
-        });
-
-        var that = this;
-        var toggle = function() {
-            if (toggleContent.button("option", "icons")["primary"] == "ui-icon-circlesmall-minus")
-                toggleContent.button("option", "icons", {primary: "ui-icon-circlesmall-plus"});
-            else
-                toggleContent.button("option", "icons", {primary: "ui-icon-circlesmall-minus"});
-            content.toggle("blind", {}, 200);
-            that.updateHallSettings();
-        };
-        toggleContent.css({width: "13px", height: "15px"});
-        toggleContent.click(toggle);
-        header.append(toggleContent);
-        header.append(" Waiting tables");
-        header.append(" <span class='count'>(0)</span>");
-
-        var table = $("<table class='tables waitingTables'></table>");
-        table.append("<tr><th width='20%'>Format</th><th width='30%'>Tournament</th><th width='10%'>Status</th><th width='30%'>Players</th><th width='10%'>Actions</th></tr>");
-        content.append(table);
-
-        this.tablesDiv.append(header);
-        this.tablesDiv.append(content);
-
-        if (!displayed) {
-            toggleContent.button("option", "icons", {primary: "ui-icon-circlesmall-plus"});
-            content.css({"display":"none"});
-        }
-    },
-
-    addPlayingTablesTable: function(displayed) {
-        var header = $("<div class='eventHeader playingTables'></div>");
-
-        var content = $("<div></div>");
-
-        var toggleContent = $("<div>Toggle playing tables</div>").button({
-            icons: {
-                primary: "ui-icon-circlesmall-minus"
-            },
-            text: false
-        });
-
-        var that = this;
-        var toggle = function() {
-            if (toggleContent.button("option", "icons")["primary"] == "ui-icon-circlesmall-minus")
-                toggleContent.button("option", "icons", {primary: "ui-icon-circlesmall-plus"});
-            else
-                toggleContent.button("option", "icons", {primary: "ui-icon-circlesmall-minus"});
-            content.toggle("blind", {}, 200);
-            that.updateHallSettings();
-        };
-        toggleContent.css({width: "13px", height: "15px"});
-        toggleContent.click(toggle);
-        header.append(toggleContent);
-        header.append(" Playing tables");
-        header.append(" <span class='count'>(0)</span>");
-
-        var table = $("<table class='tables playingTables'></table>");
-        table.append("<tr><th width='20%'>Format</th><th width='30%'>Tournament</th><th width='10%'>Status</th><th width='30%'>Players</th><th width='10%'>Actions</th></tr>");
-        content.append(table);
-
-        this.tablesDiv.append(header);
-        this.tablesDiv.append(content);
-
-        if (!displayed) {
-            toggleContent.button("option", "icons", {primary: "ui-icon-circlesmall-plus"});
-            content.css({"display":"none"});
-        }
-    },
-
-    addFinishedTablesTable: function(displayed) {
-        var header = $("<div class='eventHeader finishedTables'></div>");
-
-        var content = $("<div></div>");
-
-        var toggleContent = $("<div>Toggle finished tables</div>").button({
-            icons: {
-                primary: "ui-icon-circlesmall-minus"
-            },
-            text: false
-        });
-
-        var that = this;
-        var toggle = function() {
-            if (toggleContent.button("option", "icons")["primary"] == "ui-icon-circlesmall-minus")
-                toggleContent.button("option", "icons", {primary: "ui-icon-circlesmall-plus"});
-            else
-                toggleContent.button("option", "icons", {primary: "ui-icon-circlesmall-minus"});
-            content.toggle("blind", {}, 200);
-            that.updateHallSettings();
-        };
-        toggleContent.css({width: "13px", height: "15px"});
-        toggleContent.click(toggle);
-        header.append(toggleContent);
-        header.append(" Finished tables");
-        header.append(" <span class='count'>(0)</span>");
-
-        var table = $("<table class='tables finishedTables'></table>");
-        table.append("<tr><th width='20%'>Format</th><th width='30%'>Tournament</th><th width='10%'>Status</th><th width='30%'>Players</th><th width='10%'>Winner</th></tr>");
-        content.append(table);
-
-        this.tablesDiv.append(header);
-        this.tablesDiv.append(content);
-
-        if (!displayed) {
-            toggleContent.button("option", "icons", {primary: "ui-icon-circlesmall-plus"});
-            content.css({"display":"none"});
-        }
+        header.attr("aria-expanded", displayed ? "true" : "false");
     },
 
     updateHallSettings: function() {
-        var icons = $(".ui-button-icon-primary", this.tablesDiv);
-        var getSettingValue =
-            function(index) {
-                return $(icons[index]).hasClass("ui-icon-circlesmall-minus") ? "1" : "0";
-            };
+        var settings = this.readHallSettings();
+        for (var i = 0; i < this.HALL_SETTINGS_SLOTS.length; i++) {
+            var content = $("#" + this.HALL_SETTINGS_SLOTS[i].content);
+            if (content.length)
+                settings[i] = content.hasClass("hidden") ? "0" : "1";
+        }
+        $.cookie("hallSettings", settings.join("|"), { expires:365 });
+    },
 
-        var newHallSettings = getSettingValue(0) + "|" + getSettingValue(1) + "|" + getSettingValue(2) + "|" + getSettingValue(3) + "|" + getSettingValue(4);
-        $.cookie("hallSettings", newHallSettings, { expires:365 });
+    // Tournaments in Progress and Recurring Events are server-run events this hall does not always have: their
+    // sections show only while the server is sending rows for them, so an ordinary hall is not full of empty
+    // headers.  (In the old hall those two sections were commented out altogether, which hid the rows as well.)
+    OPTIONAL_SECTIONS: [
+        {header: "tournamentsHeader", content: "tournamentsContent", table: "table.tournaments"},
+        {header: "queuesHeader", content: "queuesContent", table: "table.queues"}
+    ],
+
+    syncSectionVisibility: function() {
+        for (var i = 0; i < this.OPTIONAL_SECTIONS.length; i++) {
+            var section = this.OPTIONAL_SECTIONS[i];
+            var header = $("#" + section.header);
+            var content = $("#" + section.content);
+            if (!header.length)
+                continue;
+            var rows = $("tr", $(section.table, this.tablesDiv)).length - 1;
+            if (rows > 0) {
+                header.show();
+                if (header.hasClass("expanded"))
+                    content.show();
+            } else {
+                header.hide();
+                content.hide();
+            }
+        }
     },
 
     buildPlayOverlay:function() {
@@ -3341,23 +3315,12 @@ var GempSwccgHallUI = Class.extend({
             content.dialog("close");
     },
 
+    // The hall sizes itself: hall.html lays the shell out with flexbox, and the chat's height is the one the player
+    // dragged it to (HallChatResizer).  Both methods are kept because pages loaded into the hall's tabs call them.
     refreshLayout:function() {
-        if (this.div == null) {
-            return;
-        }
-        var width = $(this.div).width();
-        var height = $(this.div).height();
-        this.hallResized(width, height);
     },
 
     hallResized:function (width, height) {
-        this.buttonsDiv.css({left:"0px", width:width + "px", backgroundColor:"#000000", "border-top-width":"1px", "border-top-color":"#ffffff", "border-top-style":"solid", display:"flex", "flex-direction":"row", "align-items":"center", "justify-content":"center"});
-        var buttonsHeight = this.buttonsDiv.outerHeight();
-        if (buttonsHeight == null || buttonsHeight <= 0) {
-            buttonsHeight = 56;
-        }
-        this.tablesDiv.css({overflow:"auto", left:"0px", top:"0px", width:width + "px", height:(height - buttonsHeight) + "px"});
-        this.buttonsDiv.css({top:(height - buttonsHeight) + "px"});
     },
 
     getHall: function() {
@@ -4379,6 +4342,7 @@ var GempSwccgHallUI = Class.extend({
             $(".count", $(".eventHeader.waitingTables")).html("(" + ($("tr", $("table.waitingTables")).length - 1) + ")");
             $(".count", $(".eventHeader.playingTables")).html("(" + ($("tr", $("table.playingTables")).length - 1) + ")");
             $(".count", $(".eventHeader.finishedTables")).html("(" + ($("tr", $("table.finishedTables")).length - 1) + ")");
+            this.syncSectionVisibility();
             this.refreshTableAges();
 
             var games = root.getElementsByTagName("newGame");
@@ -4411,18 +4375,10 @@ var GempSwccgHallUI = Class.extend({
                 this.populateTournamentFormats();
             }
 
-            var layoutChanged = false;
-            if (this.supportedFormatsSelect.css("display") == "none") {
+            if (this.supportedFormatsSelect.css("display") == "none")
                 this.supportedFormatsSelect.css("display", "");
-                layoutChanged = true;
-            }
-            if (this.createTableButton.css("display") == "none") {
+            if (this.createTableButton.css("display") == "none")
                 this.createTableButton.css("display", "");
-                layoutChanged = true;
-            }
-            if (layoutChanged) {
-                this.refreshLayout();
-            }
 
             setTimeout(function () {
                 that.updateHall();

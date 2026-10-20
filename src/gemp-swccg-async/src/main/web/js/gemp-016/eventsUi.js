@@ -304,7 +304,7 @@ var GempTournamentList = Class.extend({
         drawer.append($("<div></div>").html("<b>Stage:</b> ").append(document.createTextNode(stage)));
         var links = $("<div class='event-links'></div>");
         links.append($("<a class='event-link'></a>").attr("href", "#tournament-" + id).text("Link to this tournament"));
-        links.append($("<a class='event-link'></a>").attr("href", "#history?" + GempLinks.buildQuery({event: name}))
+        links.append($("<a class='event-link'></a>").attr("href", "#account/history?" + GempLinks.buildQuery({event: name}))
             .text("My games in this tournament"));
         drawer.append(links);
         var standings = root.getElementsByTagName("tournamentStanding");

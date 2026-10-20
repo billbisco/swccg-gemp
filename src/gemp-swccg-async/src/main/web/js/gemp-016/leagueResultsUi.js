@@ -182,7 +182,7 @@ var LeagueResultsUI = Class.extend({
                 var links = $("<div class='event-links'></div>");
                 links.append($("<a class='event-link'></a>").attr("href", "#league-" + leagueType).text("Link to this league"));
                 links.append($("<a class='event-link'></a>")
-                    .attr("href", "#history?" + GempLinks.buildQuery({event: leagueName}))
+                    .attr("href", "#account/history?" + GempLinks.buildQuery({event: leagueName}))
                     .text("My games in this league"));
                 links.append($("<a class='event-link' target='_blank' href='deckBuild.html'></a>").text("Deck Builder"));
                 $(leagueExtraInfoCssId).append(links);

@@ -3,19 +3,24 @@
  * has a link of its own and the other pages (deck builder, game pages) can link straight into it.
  * Adapted from the LOTR GEMP hall router for this hall's jQuery UI 1.13 tabs.
  *
- *   #game-hall, #events, #history, #formats, #your-stats, #server-stats, #collection-stats, #admin    a tab
- *   #events/calendar, #events/leagues, #events/tournaments                                          an Events sub-tab
- *   #league-<type>                      Events > Leagues, with that league's details open
- *   #tournament-<id>                    Events > Tournaments, with that tournament's details open
- *   #history?opponent=..&format=..      History, filtered (keys: format, opponent, event, side, result, from, to, page)
+ *   #game-hall, #help, #events, #info, #account, #admin                                      a top tab
+ *   #help/formats, #events/calendar, #info/stats, #account/history, ...                      a sub-tab
+ *   #league-<type>                      Events > Current Leagues, with that league's details open
+ *   #tournament-<id>                    Events > Current Tournaments, with that tournament's details open
+ *   #account/history?opponent=..        My Game History, filtered (keys: format, opponent, event, side, result,
+ *                                       from, to, page)
+ *
+ * The links the hall had before the shell was rebuilt still work: #history, #your-stats, #collection-stats,
+ * #server-stats and #formats are rewritten to their new homes (OLD_LINKS below), so links in the deck builder, in
+ * event pages and in players' bookmarks keep opening the right page.
  *
  * On load the link wins; without one the tab the player last had open (localStorage) comes back, else the Game Hall.
  * A link followed later (hashchange) is handled the same way.  Switching tabs by hand writes that tab's link into the
  * address bar with history.replaceState (no reload, no history entry).  A page that shows something more specific (a
  * league, a filtered history) writes its own link with GempLinks.setLink().
  *
- * Tabs are found by the id of their <li> ("tab-" + slug, or the tab's li); a remote tab's panel by the li's
- * aria-controls.
+ * Tabs are found by the id of their <li> ("tab-" + slug, or the tab's li); a sub-tab by a distinctive piece of its
+ * anchor's href (its "match" strings), so a page can move its sub-pages around without the router following along.
  */
 var GempLinks = {
     STORAGE_KEY: "gemp.swccg.hall.tab",
@@ -23,18 +28,49 @@ var GempLinks = {
     // login is not handled here: every hall tab needs a logged-in player, as before.
     TABS: [
         {slug: "game-hall", aliases: ["hall", "gameHall"]},
-        {slug: "events", panel: "#eventsMain", subs: [
-            {slug: "calendar", href: "#events-calendar"},
-            {slug: "leagues", href: "#events-leagues"},
-            {slug: "tournaments", href: "#events-tournaments"}
+        {slug: "help", panel: "#helpMain", subs: [
+            {slug: "howtoplay", match: ["#help-howtoplay"]},
+            {slug: "manual", match: ["instruction.html"]},
+            {slug: "formats", match: ["formats/html"]},
+            {slug: "leagues", match: ["leagueRules"]}
         ]},
-        {slug: "history", aliases: ["game-history", "my-history"]},
-        {slug: "formats", aliases: ["format-rules"]},
-        {slug: "your-stats"},
-        {slug: "server-stats"},
-        {slug: "collection-stats"},
-        {slug: "admin", li: "#admin-tab"}
+        {slug: "events", panel: "#eventsMain", subs: [
+            {slug: "calendar", match: ["#events-calendar"]},
+            {slug: "leagues", match: ["#events-leagues"]},
+            {slug: "tournaments", match: ["#events-tournaments"]}
+        ]},
+        {slug: "info", aliases: ["server-info"], panel: "#infoMain", subs: [
+            {slug: "stats", match: ["stats.html"]},
+            {slug: "changelog", match: ["changeLog"]},
+            {slug: "contribute", match: ["contribute"]},
+            {slug: "about", match: ["#info-about"]}
+        ]},
+        {slug: "account", aliases: ["my-account"], panel: "#accountMain", subs: [
+            {slug: "overview", match: ["#account-overview"]},
+            {slug: "history", match: ["history.html"]},
+            {slug: "stats", match: ["yourStats"]},
+            {slug: "collection", match: ["yourCollectionStats"]}
+        ]},
+        {slug: "admin", li: "#admin-tab", panel: "#adminMain", subs: [
+            {slug: "general", match: ["generalAdmin"]},
+            {slug: "users", match: ["userAdmin"]},
+            {slug: "league", match: ["leagueAdmin"]},
+            {slug: "playtesting", match: ["playtestingAdmin"]},
+            {slug: "commentator", match: ["commentatorAdmin"]}
+        ]}
     ],
+
+    // Links the hall used before the shell was rebuilt, and where they live now.  A query string is kept.
+    OLD_LINKS: {
+        "history": "#account/history",
+        "game-history": "#account/history",
+        "my-history": "#account/history",
+        "your-stats": "#account/stats",
+        "collection-stats": "#account/collection",
+        "server-stats": "#info/stats",
+        "formats": "#help/formats",
+        "format-rules": "#help/formats"
+    },
 
     // Links to something inside a page; run(match, hash) is called once that page (and sub-tab) is showing.
     ROUTES: [
@@ -46,7 +82,7 @@ var GempLinks = {
             if (window.GempEventsPage)
                 GempEventsPage.showTournament(m[1]);
         }},
-        {pattern: /^#history\?(.*)$/, tab: "history", sub: null, run: function (m) {
+        {pattern: /^#(?:account\/history|history)\?(.*)$/, tab: "account", sub: "history", run: function (m) {
             if (window.GempHistoryPage)
                 GempHistoryPage.applyLink(GempLinks.parseQuery(m[1]));
         }}
@@ -130,11 +166,21 @@ var GempLinks = {
         return parts.join("&");
     },
 
+    // An old link ("#history", "#your-stats?x=1") rewritten to where that page lives now; the link itself otherwise.
+    rewriteOldLink: function (hash) {
+        var parts = /^#([A-Za-z-]+)(\?.*)?$/.exec(hash);
+        if (parts == null)
+            return hash;
+        var moved = this.OLD_LINKS[parts[1]];
+        return moved == null ? hash : moved + (parts[2] || "");
+    },
+
     // {tab, sub, run, match, hash} for a link this router knows, else null.
     parse: function (hash) {
         hash = String(hash == null ? "" : hash);
         if (hash.charAt(0) !== "#")
             hash = "#" + hash;
+        hash = this.rewriteOldLink(hash);
         for (var i = 0; i < this.ROUTES.length; i++) {
             var m = this.ROUTES[i].pattern.exec(hash);
             if (m)
@@ -161,12 +207,31 @@ var GempLinks = {
 
     // ---- start-up ----
 
+    // The tab the hall should open on (its index in the tab bar), for $("#main").tabs({active: ...}): the one the
+    // current link names, else the one the player last had open, else the Game Hall.  Calling it before the tabs are
+    // built keeps the hall from loading the Game Hall first and then switching away from it.
+    initialTabIndex: function () {
+        var route = this.parse(window.location.hash);
+        if (route == null) {
+            var saved = this.readSaved();
+            if (saved != null && this.tab(saved) != null)
+                route = this.parse(this.link(saved));
+        }
+        this.initial = route;
+        this.initialized = true;
+        var tab = route != null ? this.tab(route.tab) : null;
+        var li = tab != null ? this.topItem(tab) : $();
+        return this.visible(li) ? li.index() : 0;
+    },
+
     // Called once the hall's tab set exists.
     start: function () {
         var that = this;
         if (this.started)
             return;
         this.started = true;
+        if (!this.initialized)
+            this.initialTabIndex();
 
         $(window).bind("hashchange.gempLinks", function () {
             that.go(window.location.hash, true);
@@ -184,14 +249,8 @@ var GempLinks = {
                 that.scheduleSync();
         });
 
-        var route = this.parse(window.location.hash);
-        if (route == null) {
-            var saved = this.readSaved();
-            if (saved != null && this.tab(saved) != null)
-                route = this.parse(this.link(saved));
-        }
-        if (route != null)
-            this.go(route.hash, true);
+        if (this.initial != null)
+            this.go(this.initial.hash, true);
         else
             this.scheduleSync();
     },
@@ -199,7 +258,7 @@ var GempLinks = {
     isTabSet: function (element) {
         if (element == null)
             return false;
-        if (element.id === "tabs")
+        if (element.id === "main")
             return true;
         for (var i = 0; i < this.TABS.length; i++) {
             if (this.TABS[i].panel && element.id === this.TABS[i].panel.substring(1))
@@ -274,14 +333,14 @@ var GempLinks = {
 
     // One step of opening a route: true once it is done (its handler scheduled), false to be called again.
     advance: function (route, token) {
-        var main = $("#tabs");
+        var main = $("#main");
         if (!this.isTabs(main))
             return false;
         var tab = this.tab(route.tab);
         var li = this.topItem(tab);
         if (!this.visible(li))
             return false;          // hidden for now (Admin before the player info)
-        var index = main.find("> ul > li").index(li);
+        var index = this.items(main).index(li);
         if (main.tabs("option", "active") !== index) {
             this.select(main, index);
             return false;
@@ -300,16 +359,40 @@ var GempLinks = {
         var nested = $(tab.panel);
         if (!this.isTabs(nested))
             return false;          // the page has not set up its sub-tabs yet
-        var subLi = nested.find("> ul > li").filter(function () {
-            return $(this).find("a").attr("href") === sub.href;
-        }).first();
+        var subLi = this.subItem(nested, sub);
         if (!subLi.length)
             return true;
-        var subIndex = nested.find("> ul > li").index(subLi);
+        var subIndex = this.items(nested).index(subLi);
         if (nested.tabs("option", "active") !== subIndex)
             this.select(nested, subIndex);
         this.schedule(route, token);
         return true;
+    },
+
+    // The <li>s of a tabs widget.  jQuery UI takes the first ol / ul inside the element as its tab list, so it may
+    // sit in a wrapper (the hall's #tabs, the admin page's #admin-tabs) rather than be a child of the widget.
+    items: function (tabs) {
+        return tabs.find("ol, ul").first().children("li");
+    },
+
+    // A sub-tab's <li>: the one whose anchor's href carries one of the sub-tab's "match" strings.
+    subItem: function (nested, sub) {
+        var matches = sub.match || [];
+        return this.items(nested).filter(function () {
+            var href = $(this).find("a").attr("href") || "";
+            for (var i = 0; i < matches.length; i++) {
+                if (href.indexOf(matches[i]) >= 0)
+                    return true;
+            }
+            return false;
+        }).first();
+    },
+
+    // A page whose sub-tabs appear late (Admin, which hides the tabs the player may not use) can ask the router to
+    // try again now instead of waiting for the next poll.
+    poke: function () {
+        if (this.pending != null)
+            this.go(this.pending.hash, true);
     },
 
     isTabs: function (element) {
@@ -374,19 +457,19 @@ var GempLinks = {
 
     // {tab, sub} of what is showing.
     current: function () {
-        var main = $("#tabs");
+        var main = $("#main");
         if (!this.isTabs(main))
             return null;
-        var li = main.find("> ul > li").eq(main.tabs("option", "active"));
+        var li = this.items(main).eq(main.tabs("option", "active"));
         var tab = this.tabByItemId(li.attr("id") || "");
         if (tab == null)
             return null;
         var sub = null;
         var nested = tab.panel ? $(tab.panel) : $();
-        if (this.isTabs(nested)) {
-            var href = nested.find("> ul > li").eq(nested.tabs("option", "active")).find("a").attr("href");
+        if (tab.subs && this.isTabs(nested)) {
+            var activeLi = this.items(nested).eq(nested.tabs("option", "active"));
             for (var i = 0; i < tab.subs.length; i++) {
-                if (tab.subs[i].href === href)
+                if (activeLi.length && this.subItem(nested, tab.subs[i]).is(activeLi))
                     sub = tab.subs[i];
             }
         }
