@@ -32,9 +32,7 @@
 			}
 
 			var index = $("#admin-tabs li").index($('#admin-tabs li:visible').eq(0));
-			// "selected" was deprecated and removed from jQuery 1.10.
-			// Update this to "active" if we ever upgrade.
-			$("#adminMain").tabs({selected: index});
+			$("#adminMain").tabs("option", "active", index);
 		});
 	
 </script>
