@@ -89,6 +89,7 @@ public abstract class DrawDestinyEffect extends AbstractSubActionEffect {
     private int _chooseY;
     private boolean _takeOtherIntoHand;
     private boolean _mayTakeOtherIntoHandOrReturnToTopOfReserve;
+    private String _drawXChooserPlayerId;
     private Map<String, Float> _modifierSourceTitleMap = new HashMap<>();
     private boolean _combinedAttackHitCheckPlusOrMinusFolded;
 
@@ -446,6 +447,14 @@ public abstract class DrawDestinyEffect extends AbstractSubActionEffect {
         _mayTakeOtherIntoHandOrReturnToTopOfReserve = value;
     }
 
+    /**
+     * Sets the player who chooses the Y destinies during the current draw X / choose Y (default: the player drawing).
+     * @param playerId the choosing player, or null for the player drawing destiny
+     */
+    public void setDrawXChooser(String playerId) {
+        _drawXChooserPlayerId = playerId;
+    }
+
     public boolean canDrawAndChoose(SwccgGame game, int chooseY) {
         if (isDrawAndChoose())
             return false;
@@ -489,6 +498,7 @@ public abstract class DrawDestinyEffect extends AbstractSubActionEffect {
         _numSkippedSoFarWithinDrawX = 0;
         _drawXCardsToChooseFrom.clear();
         _drawXValuesToChooseFrom.clear();
+        _drawXChooserPlayerId = null;
         _choseY = true;
     }
 
@@ -1556,16 +1566,17 @@ public abstract class DrawDestinyEffect extends AbstractSubActionEffect {
                                 for (int i = 0; i < _drawXCardsToChooseFrom.size(); ++i) {
                                     cardTextMap.put(_drawXCardsToChooseFrom.get(i), "destiny = " + GuiUtils.formatAsString(_drawXValuesToChooseFrom.get(i)));
                                 }
-                                gameState.sendMessage(_performingPlayerId + " is choosing " + _chooseY + " destiny from those drawn");
+                                final String chooserPlayerId = _drawXChooserPlayerId != null ? _drawXChooserPlayerId : _performingPlayerId;
+                                gameState.sendMessage(chooserPlayerId + " is choosing " + _chooseY + " destiny from those drawn");
 
                                 subAction.appendEffect(
-                                        new PlayoutDecisionEffect(subAction, _performingPlayerId,
+                                        new PlayoutDecisionEffect(subAction, chooserPlayerId,
                                                 new ArbitraryCardsSelectionDecision("Choose " + numToChoose + " destiny", _drawXCardsToChooseFrom, _drawXCardsToChooseFrom, numToChoose, numToChoose, cardTextMap) {
                                                     @Override
                                                     public void decisionMade(String result) throws DecisionResultInvalidException {
                                                         final List<PhysicalCard> selectedCards = getSelectedCardsByResponse(result);
 
-                                                        StringBuilder msgText = new StringBuilder(_performingPlayerId);
+                                                        StringBuilder msgText = new StringBuilder(chooserPlayerId);
                                                         msgText.append(" chooses ");
                                                         for (PhysicalCard selectedCard : selectedCards) {
                                                             _destinyCardDraws.add(selectedCard);
