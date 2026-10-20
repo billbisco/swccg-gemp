@@ -71,49 +71,49 @@ public class Card222_001 extends AbstractLostInterrupt {
                                     new RespondablePlayCardEffect(action) {
                                         @Override
                                         protected void performActionResults(Action targetingAction) {
-                                            // Lost Interrupts go VOID then Lost Pile, which clears while-in-play data
-                                            // on this card. Record the grant on the saber, which stays in play.
+                                            // Perform result(s)
                                             final int saberPermCardId = selectedCard.getPermanentCardId();
                                             action.appendEffect(
-                                                    new AddUntilEndOfGameModifierEffect(action, new MayDeployToTargetModifier(self, selectedCard, Filters.Grievous), "")
+                                                new AddUntilEndOfGameModifierEffect(action, new MayDeployToTargetModifier(self, selectedCard, Filters.Grievous), null)
                                             );
                                             action.appendEffect(
-                                                    new DeployCardToTargetFromLostPileEffect(action, selectedCard, Filters.Grievous, false, false)
+                                                new DeployCardToTargetFromLostPileEffect(action, selectedCard, Filters.Grievous, false, false)
+                                            );
+                                            //Record the granted use on the saber, which stays in play
+                                            action.appendEffect(
+                                                new SetWhileInPlayDataEffect(action, selectedCard, new WhileInPlayData())
                                             );
                                             action.appendEffect(
-                                                    new SetWhileInPlayDataEffect(action, selectedCard, new WhileInPlayData())
+                                                new AddUntilEndOfGameModifierEffect(action,
+                                                    new MayUseWeaponModifier(self, Filters.Grievous,
+                                                        new InPlayDataSetCondition(selectedCard),
+                                                        Filters.and(Filters.samePermanentCardId(selectedCard), Filters.attachedTo(Filters.Grievous))),
+                                                    "grants Grievous use of " + GameUtils.getCardLink(selectedCard) + " until he is no longer carrying it")
                                             );
                                             action.appendEffect(
-                                                    new AddUntilEndOfGameModifierEffect(action,
-                                                            new MayUseWeaponModifier(self, Filters.Grievous,
-                                                                    new InPlayDataSetCondition(selectedCard),
-                                                                    Filters.and(Filters.samePermanentCardId(selectedCard), Filters.attachedTo(Filters.Grievous))),
-                                                            "Grievous may use " + GameUtils.getCardLink(selectedCard) + " until he is no longer carrying it")
-                                            );
-                                            action.appendEffect(
-                                                    new AddUntilEndOfGameActionProxyEffect(action,
-                                                            new AbstractActionProxy() {
-                                                                @Override
-                                                                public List<TriggerAction> getRequiredAfterTriggers(SwccgGame game, EffectResult effectResult) {
-                                                                    List<TriggerAction> actions = new LinkedList<TriggerAction>();
-                                                                    if (!TriggerConditions.isTableChanged(game, effectResult)) {
-                                                                        return actions;
-                                                                    }
-                                                                    PhysicalCard saber = game.findCardByPermanentId(saberPermCardId);
-                                                                    if (saber == null || saber.getWhileInPlayData() == null) {
-                                                                        return actions;
-                                                                    }
-                                                                    if (Filters.attachedTo(Filters.Grievous).accepts(game, saber)) {
-                                                                        return actions;
-                                                                    }
-                                                                    RequiredGameTextTriggerAction clear = new RequiredGameTextTriggerAction(saber, saber.getCardId());
-                                                                    clear.skipInitialMessageAndAnimation();
-                                                                    clear.setText("End Grievous saber grant");
-                                                                    clear.appendEffect(new SetWhileInPlayDataEffect(clear, saber, null));
-                                                                    actions.add(clear);
-                                                                    return actions;
-                                                                }
-                                                            })
+                                                new AddUntilEndOfGameActionProxyEffect(action,
+                                                    new AbstractActionProxy() {
+                                                        @Override
+                                                        public List<TriggerAction> getRequiredAfterTriggers(SwccgGame game, EffectResult effectResult) {
+                                                            List<TriggerAction> actions = new LinkedList<TriggerAction>();
+                                                            if (!TriggerConditions.isTableChanged(game, effectResult)) {
+                                                                return actions;
+                                                            }
+                                                            PhysicalCard saber = game.findCardByPermanentId(saberPermCardId);
+                                                            if (saber == null || saber.getWhileInPlayData() == null) {
+                                                                return actions;
+                                                            }
+                                                            if (Filters.attachedTo(Filters.Grievous).accepts(game, saber)) {
+                                                                return actions;
+                                                            }
+                                                            RequiredGameTextTriggerAction clear = new RequiredGameTextTriggerAction(saber, saber.getCardId());
+                                                            clear.skipInitialMessageAndAnimation();
+                                                            clear.setText("end Grievous saber grant");
+                                                            clear.appendEffect(new SetWhileInPlayDataEffect(clear, saber, null));
+                                                            actions.add(clear);
+                                                            return actions;
+                                                        }
+                                                    })
                                             );
                                         }
                                     }
