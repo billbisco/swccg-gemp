@@ -130,6 +130,23 @@ public class LeagueService {
         return null;
     }
 
+    /**
+     * The league with that type whether it is still running or has ended (the Events tab shows the standings of
+     * completed leagues), or null when there is none.  A finished league is read from the database each time; its
+     * matches and participants come through the same caches the active leagues use.  Joining goes through
+     * {@link #getLeagueByType}, which only knows active leagues, so an ended league cannot be joined this way.
+     */
+    public synchronized League getLeagueByTypeIncludingFinished(String type) {
+        League active = getLeagueByType(type);
+        if (active != null)
+            return active;
+        try {
+            return _leagueDao.loadLeagueByType(_library, type);
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException("Unable to load league " + type, e);
+        }
+    }
+
     public synchronized CollectionType getCollectionTypeByCode(String collectionTypeCode) {
         for (League league : getActiveLeagues()) {
             for (LeagueSeriesData leagueSeriesData : league.getLeagueData(_soloDraftDefinitions).getSeries()) {
