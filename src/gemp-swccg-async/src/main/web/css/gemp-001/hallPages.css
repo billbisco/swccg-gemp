@@ -1,4 +1,4 @@
-/* Events and History tabs and the hall links between pages (hallLinks.js, eventsUi.js, historyUi.js). */
+/* Events tab and the hall links between pages (hallLinks.js, eventsUi.js).  My Game History is styled in hall.css. */
 
 .hall-page {
     font-family: sans-serif;
@@ -194,91 +194,6 @@
 .calendar-details-placeholder {
     color: #aaa;
     font-style: italic;
-}
-
-/* ---- history ---- */
-
-.history-filters {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-end;
-    gap: 10px;
-    margin-bottom: 10px;
-}
-
-.history-filter {
-    display: flex;
-    flex-direction: column;
-    font-size: 11px;
-    color: #ccc;
-}
-
-.history-filter input, .history-filter select {
-    margin-top: 2px;
-    font-size: 12px;
-    max-width: 210px;
-}
-
-.history-summary {
-    margin: 6px 0;
-    color: #ddd;
-}
-
-.history-games {
-    border-collapse: collapse;
-}
-
-.history-games td, .history-games th {
-    padding: 3px 6px;
-}
-
-.history-games tr.history-won td {
-    background: rgba(40, 90, 40, 0.25);
-}
-
-.history-games tr.history-lost td {
-    background: rgba(110, 30, 30, 0.22);
-}
-
-.history-result {
-    font-weight: bold;
-}
-
-.history-result-w { color: #8fe08f; }
-.history-result-l { color: #ff8f8f; }
-
-a.history-side-dark {
-    color: #ff7b7b;
-    font-weight: bold;
-}
-
-a.history-side-light {
-    color: #8cc8ff;
-    font-weight: bold;
-}
-
-.history-games a.history-filter-link {
-    color: #e8e8e8;
-    text-decoration: underline dotted;
-}
-
-.history-event-link {
-    font-size: 11px;
-}
-
-.history-date, .history-length {
-    white-space: nowrap;
-}
-
-.history-pager {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin: 10px 0;
-}
-
-.history-page-number {
-    margin: 0 8px;
 }
 
 /* ---- hall links from the deck builder ---- */

@@ -63,18 +63,41 @@ var GempSwccgCommunication = Class.extend({
         };
     },
 
-    getGameHistory:function (start, count, callback, errorMap) {
+    // filters (optional): {format, opponent, opponentExact, event, side, result, from, to}; empty values are left out
+    getGameHistory:function (start, count, callback, errorMap, filters) {
+        var data = {
+            start:start,
+            count:count,
+            participantId:getUrlParam("participantId") };
+        if (filters) {
+            $.each(["format", "opponent", "opponentExact", "event", "side", "result", "from", "to"], function (i, key) {
+                var value = filters[key];
+                if (value !== undefined && value !== null && value !== "" && value !== false)
+                    data[key] = value;
+            });
+        }
         $.ajax({
             type:"GET",
             url:this.url + "/gameHistory",
             cache:false,
-            data:{
-                start:start,
-                count:count,
-                participantId:getUrlParam("participantId") },
+            data:data,
             success:this.deliveryCheck(callback),
             error:this.errorCheck(errorMap),
             dataType:"xml"
+        });
+    },
+
+    // -> {formats: [...], events: [...]}
+    getGameHistoryFilters:function (callback, errorMap) {
+        $.ajax({
+            type:"GET",
+            url:this.url + "/gameHistory/filters",
+            cache:false,
+            data:{
+                participantId:getUrlParam("participantId") },
+            success:this.deliveryCheck(callback),
+            error:this.errorCheck(errorMap),
+            dataType:"json"
         });
     },
 
