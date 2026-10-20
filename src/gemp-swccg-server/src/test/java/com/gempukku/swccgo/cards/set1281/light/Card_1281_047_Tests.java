@@ -31,6 +31,7 @@ public class Card_1281_047_Tests {
                 }},
                 new HashMap<>() {{
                     put("trooper", "1_194");
+                    put("tempest", "8_171"); // Tempest Scout: combat vehicle, armor 4
                 }},
                 10, 10,
                 StartingSetup.DefaultLSGroundLocation,
@@ -141,5 +142,59 @@ public class Card_1281_047_Tests {
 
         assertTrue(trooper.isHit());
         assertEquals(0, scn.GetForfeit(trooper));
+    }
+
+    @Test
+    public void KyleKatarnsBlasterRifleHitsAVehicleIfDestinyMinusTwoIsGreaterThanDefenseValue() {
+        var scn = GetScenario();
+        var rifle = scn.GetLSCard("rifle");
+        var kyle = scn.GetLSCard("kyle");
+        var trooper = scn.GetDSCard("trooper");
+        var tempest = scn.GetDSCard("tempest");
+        var site = scn.GetLSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, kyle, trooper, tempest);
+        scn.AttachCardsTo(kyle, rifle);
+        scn.LSActivateForceCheat(2);
+        scn.LSStartBattleAndSkipToWeaponsSegment(site);
+        scn.PrepareLSDestiny(7 /* 7 - 2 = 5 > 4 */);
+
+        assertEquals(4, scn.game().getModifiersQuerying().getDefenseValue(scn.gameState(), tempest), scn.epsilon);
+        // Two fire actions: vs. character/creature (first) and vs. vehicle (second).
+        assertEquals(2, scn.GetLSAvailableActions().stream().filter(a -> a.startsWith("Fire Kyle Katarn's Blaster Rifle")).count());
+        scn.LSDecided(scn.LSGetADParamAsList("actionId").get(scn.GetLSAvailableActions().lastIndexOf("Fire Kyle Katarn's Blaster Rifle")));
+        scn.LSChooseCard(tempest);
+        scn.PassWeaponFireWithDestinyDraw();
+        scn.PassAllResponses();
+
+        assertTrue(tempest.isHit());
+    }
+
+    @Test
+    public void KyleKatarnsBlasterRifleMissesAVehicleIfDestinyMinusTwoIsNotGreaterThanDefenseValue() {
+        var scn = GetScenario();
+        var rifle = scn.GetLSCard("rifle");
+        var kyle = scn.GetLSCard("kyle");
+        var trooper = scn.GetDSCard("trooper");
+        var tempest = scn.GetDSCard("tempest");
+        var site = scn.GetLSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, kyle, trooper, tempest);
+        scn.AttachCardsTo(kyle, rifle);
+        scn.LSActivateForceCheat(2);
+        scn.LSStartBattleAndSkipToWeaponsSegment(site);
+        scn.PrepareLSDestiny(5 /* 5 > 4, but 5 - 2 = 3 */);
+
+        assertEquals(4, scn.game().getModifiersQuerying().getDefenseValue(scn.gameState(), tempest), scn.epsilon);
+        // Two fire actions: vs. character/creature (first) and vs. vehicle (second).
+        assertEquals(2, scn.GetLSAvailableActions().stream().filter(a -> a.startsWith("Fire Kyle Katarn's Blaster Rifle")).count());
+        scn.LSDecided(scn.LSGetADParamAsList("actionId").get(scn.GetLSAvailableActions().lastIndexOf("Fire Kyle Katarn's Blaster Rifle")));
+        scn.LSChooseCard(tempest);
+        scn.PassWeaponFireWithDestinyDraw();
+        scn.PassAllResponses();
+
+        assertFalse(tempest.isHit());
     }
 }

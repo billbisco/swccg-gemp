@@ -27,6 +27,7 @@ public class Card_1281_045_Tests {
                 new HashMap<>() {{
                     put("errant", "1281_45");
                     put("corran", "10_5");
+                    put("mirax", "10_12"); // Mirax Terrik
                     put("lando", "601_50");
                     put("yavin", "1_135");
                 }},
@@ -165,5 +166,24 @@ public class Card_1281_045_Tests {
 
         assertTrue(scn.AwaitingLSDeployPhaseActions());
         assertFalse(scn.LSCardActionAvailable(errant, "Deploy a scoundrel aboard"));
+    }
+
+    @Test
+    public void ErrantVentureIsImmuneToAttritionLessThanSevenWhileATerrikPiloting() {
+        var scn = GetScenario();
+        var errant = scn.GetLSCard("errant");
+        var mirax = scn.GetLSCard("mirax");
+        var yavin = scn.GetLSCard("yavin");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(yavin);
+        scn.MoveCardsToLocation(yavin, errant);
+        scn.SkipToPhase(Phase.CONTROL);
+        assertEquals(0, scn.game().getModifiersQuerying().getImmunityToAttritionLessThan(scn.gameState(), errant), scn.epsilon);
+
+        scn.MoveCardsToLocation(yavin, mirax);
+        scn.BoardAsPilot(errant, mirax);
+        scn.SkipToPhase(Phase.MOVE);
+        assertEquals(7, scn.game().getModifiersQuerying().getImmunityToAttritionLessThan(scn.gameState(), errant), scn.epsilon);
     }
 }
