@@ -91,7 +91,7 @@ public class CreaturesAttackEachOtherRule implements Rule {
                                                     }
                                                 }
                                                 if (!creaturesToAttack.isEmpty()) {
-                                                    PhysicalCard randomCreature = GameUtils.getRandomCards(creaturesToAttack.keySet(), 1).get(0);
+                                                    PhysicalCard randomCreature = GameUtils.getRandomCards(game, creaturesToAttack.keySet(), 1).get(0);
                                                     PhysicalCard otherCreature = creaturesToAttack.get(randomCreature);
                                                     gameState.activatedCard(null, randomCreature);
                                                     gameState.activatedCard(null, otherCreature);

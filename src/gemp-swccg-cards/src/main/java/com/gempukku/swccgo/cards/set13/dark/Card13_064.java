@@ -130,7 +130,7 @@ public class Card13_064 extends AbstractLostInterrupt {
                                             if(finalTarget != null) {
                                                 Collection<PhysicalCard> stackedCombatCards = Filters.filter(game.getGameState().getStackedCards(finalTarget), game, Filters.combatCard);
                                                 if (!stackedCombatCards.isEmpty()) {
-                                                    PhysicalCard randomCombatCard = GameUtils.getRandomCards(stackedCombatCards, 1).getFirst();
+                                                    PhysicalCard randomCombatCard = GameUtils.getRandomCards(game, stackedCombatCards, 1).getFirst();
                                                     // Perform result(s)
                                                     action.appendEffect(
                                                             new PutStackedCardInUsedPileEffect(action, playerId, randomCombatCard, true));

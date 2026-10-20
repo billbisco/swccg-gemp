@@ -6,6 +6,7 @@ import com.gempukku.swccgo.common.Zone;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgCardBlueprint;
+import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.game.state.GameState;
 
 import java.util.*;
@@ -53,7 +54,7 @@ public class GameUtils {
     }
 
     /**
-     * Builds the RNG used for deck shuffles and random card picks.
+     * Builds the per-game RNG used for deck shuffles and random card picks.
      * System property {@code gemp.shuffleSeed}: a number seeds the RNG; null or a non-number
      * (including {@code random}) uses an unseeded {@link Random}.
      */
@@ -62,17 +63,17 @@ public class GameUtils {
         return seed != null ? new Random(seed) : new Random();
     }
 
-    private static final Random _shuffleRandom = createShuffleRandom();
-
     /**
-     * Gets the specified number of random cards from the specified card list.
+     * Gets the specified number of random cards from the specified card list, using the game's own RNG
+     * so a seeded game picks the same cards every time.
+     * @param game the game
      * @param cards the card list
      * @param count the number of random cards to get
      * @return a list of the random cards selected
      */
-    public static List<PhysicalCard> getRandomCards(Collection<PhysicalCard> cards, int count) {
+    public static List<PhysicalCard> getRandomCards(SwccgGame game, Collection<PhysicalCard> cards, int count) {
         List<PhysicalCard> randomizedCards = new ArrayList<PhysicalCard>(cards);
-        Collections.shuffle(randomizedCards, _shuffleRandom);
+        Collections.shuffle(randomizedCards, game.getGameState().getRandom());
         return new LinkedList<>(randomizedCards.subList(0, Math.min(count, randomizedCards.size())));
     }
 

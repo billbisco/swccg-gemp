@@ -90,7 +90,7 @@ public class Card6_001 extends AbstractDroid {
                                 Collection<PhysicalCard> captives = Filters.filterActive(game, self,
                                         SpotOverride.INCLUDE_CAPTIVE, Filters.and(Filters.captive, Filters.here(self)));
                                 if (!captives.isEmpty()) {
-                                    PhysicalCard captive = GameUtils.getRandomCards(captives, 1).get(0);
+                                    PhysicalCard captive = GameUtils.getRandomCards(game, captives, 1).get(0);
                                     action.appendEffect(
                                             new ReleaseCaptiveEffect(action, captive));
                                 }

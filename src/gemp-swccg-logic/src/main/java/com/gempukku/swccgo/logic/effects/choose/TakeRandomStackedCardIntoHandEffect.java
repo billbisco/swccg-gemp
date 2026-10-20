@@ -43,7 +43,7 @@ public class TakeRandomStackedCardIntoHandEffect extends AbstractSubActionEffect
                     @Override
                     protected void doPlayEffect(final SwccgGame game) {
                         // Determine the cards to choose from
-                        List<PhysicalCard> randomCards = GameUtils.getRandomCards(game.getGameState().getStackedCards(_stackedOn), 1);
+                        List<PhysicalCard> randomCards = GameUtils.getRandomCards(game, game.getGameState().getStackedCards(_stackedOn), 1);
                         if (!randomCards.isEmpty()) {
                             PhysicalCard card = randomCards.get(0);
                             String cardInfo = card.getZone().isFaceDown() ? "a card" : GameUtils.getCardLink(card);

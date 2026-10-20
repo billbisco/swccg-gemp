@@ -108,7 +108,7 @@ class PutRandomCardsFromHandInCardPileEffect extends AbstractSubActionEffect {
                     _downToSize -= 3;
                 }
                 if (_that.isPlayableInFull(game)) {
-                    List<PhysicalCard> randomCards = GameUtils.getRandomCards(game.getGameState().getHand(_handOwner), 1);
+                    List<PhysicalCard> randomCards = GameUtils.getRandomCards(game, game.getGameState().getHand(_handOwner), 1);
                     if (!randomCards.isEmpty()) {
                         final PhysicalCard card = randomCards.get(0);
                         String cardInfo = _hidden ? "a card" : GameUtils.getCardLink(card);

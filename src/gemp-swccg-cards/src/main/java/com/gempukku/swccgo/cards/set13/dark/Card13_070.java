@@ -79,7 +79,7 @@ public class Card13_070 extends AbstractUsedInterrupt {
                                     return;
                                 }
 
-                                final PhysicalCard revealedCombatCard = GameUtils.getRandomCards(stackedCombatCards, 1).getFirst();
+                                final PhysicalCard revealedCombatCard = GameUtils.getRandomCards(game, stackedCombatCards, 1).getFirst();
 
                                 // show briefly to both players (could be replaced with a full reveal effect that emits a result)
                                 action.appendEffect(

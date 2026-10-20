@@ -152,7 +152,7 @@ public class Card11_064 extends AbstractDroid {
                                 LinkedList<PhysicalCard> allDroidsHere = new LinkedList<PhysicalCard>();
                                 allDroidsHere.addAll(playerOneDroids);
                                 allDroidsHere.addAll(playerTwoDroids);
-                                Collections.shuffle(allDroidsHere);
+                                Collections.shuffle(allDroidsHere, gm.getGameState().getRandom());
 
                                 PhysicalCard toLose = allDroidsHere.getFirst();
                                 gm.getGameState().sendMessage("Randomly selected to lose " + toLose.getOwner() + "'s "+GameUtils.getCardLink(toLose));
