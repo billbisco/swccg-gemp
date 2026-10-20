@@ -236,6 +236,30 @@ COLLATE = utf8_bin;
 
 
 -- -----------------------------------------------------
+-- Table `gemp-swccg`.`scheduled_tournament`
+-- Read by DbTournamentDAO (getUnstartedScheduledTournamentQueues / updateScheduledTournamentStarted) since the
+-- 2020 snapshot, but never created by this script.  Columns as the original GEMP schema this code was written
+-- against; `start` is epoch milliseconds, `started` flips to 1 once the hall has opened the queue.
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `gemp-swccg`.`scheduled_tournament` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT ,
+  `tournament_id` VARCHAR(45) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NOT NULL ,
+  `name` VARCHAR(255) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NOT NULL ,
+  `format` VARCHAR(45) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NOT NULL ,
+  `start` DECIMAL(20,0) NOT NULL ,
+  `cost` DECIMAL(10,0) NOT NULL ,
+  `playoff` VARCHAR(45) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NOT NULL ,
+  `prizes` VARCHAR(45) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NOT NULL ,
+  `minimum_players` DECIMAL(3,0) NOT NULL ,
+  `started` DECIMAL(1,0) NOT NULL DEFAULT '0' ,
+  PRIMARY KEY (`id`) ,
+  INDEX `started` (`started` ASC) )
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_bin;
+
+
+-- -----------------------------------------------------
 -- Table `gemp-swccg`.`tournament`
 -- -----------------------------------------------------
 CREATE  TABLE IF NOT EXISTS `gemp-swccg`.`tournament` (
