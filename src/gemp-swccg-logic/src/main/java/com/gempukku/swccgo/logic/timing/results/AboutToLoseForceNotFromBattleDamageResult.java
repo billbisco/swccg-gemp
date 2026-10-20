@@ -29,6 +29,14 @@ public class AboutToLoseForceNotFromBattleDamageResult extends EffectResult impl
     }
 
     /**
+     * Gets the effect performing the Force loss.
+     * @return the Lose Force effect
+     */
+    public LoseForceEffect getLoseForceEffect() {
+        return _effect;
+    }
+
+    /**
      * Gets the source card of the Force loss.
      * @return the source card
      */

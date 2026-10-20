@@ -24,7 +24,7 @@ import com.gempukku.swccgo.logic.actions.TriggerAction;
 import com.gempukku.swccgo.logic.conditions.TrueCondition;
 import com.gempukku.swccgo.logic.effects.AddUntilEndOfTurnActionProxyEffect;
 import com.gempukku.swccgo.logic.effects.FlipCardEffect;
-import com.gempukku.swccgo.logic.effects.LoseForceEffect;
+import com.gempukku.swccgo.logic.effects.LoseForceTargetingCardEffect;
 import com.gempukku.swccgo.logic.effects.choose.DeployCardFromReserveDeckEffect;
 import com.gempukku.swccgo.logic.effects.choose.DeployCardsFromReserveDeckEffect;
 import com.gempukku.swccgo.logic.effects.choose.TakeCardIntoHandFromReserveDeckEffect;
@@ -163,7 +163,7 @@ public class Card601_087 extends AbstractObjective {
                             action1.setSingletonTrigger(true);
                             action1.setText("Lose 2 Force");
                             action1.setActionMsg("Lose 2 Force whenever a character hit by Galen's Lightsaber or Vader's Lightsaber leaves table");
-                            action1.appendEffect(new LoseForceEffect(action1, game.getOpponent(objective.getOwner()), 2));
+                            action1.appendEffect(new LoseForceTargetingCardEffect(action1, game.getOpponent(objective.getOwner()), 2, hitCharacter));
                             actions1.add(action1);
                         }
                         return actions1;
