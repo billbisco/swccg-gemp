@@ -1,4 +1,6 @@
 <script type="text/javascript">
+    // Help tab (LOTR includes/help.html): sub-tabs down the left side, each sub-page fetched once (GempHallTabs.loadOnce,
+    // gameHall.js).  Links: #help/howtoplay, #help/manual, #help/formats, #help/leagues (hallLinks.js).
     $("#helpMain").ready(
         function () {
             $("#helpMain").tabs().addClass("ui-tabs-vertical ui-helper-clearfix");
@@ -10,9 +12,9 @@
     <div id="help-tabs" class="sub-tabs">
         <ol>
             <li><a href="#help-howtoplay">How Do I Play?</a></li>
-            <li><a href="includes/instruction.html">Manual</a></li>
-            <li><a href="/gemp-swccg-server/hall/formats/html">Format Rules</a></li>
-            <li><a href="includes/leagueRules.html">What Are Leagues?</a></li>
+            <li><a href="includes/help/manual.html?v=20261020c">Manual</a></li>
+            <li><a href="includes/help/formatRules.html?v=20261020c">Format Definitions</a></li>
+            <li><a href="includes/help/leagueRules.html?v=20261020c">What Are Leagues?</a></li>
         </ol>
     </div>
 
@@ -20,23 +22,46 @@
         <div class="article">
             <h1>How do I play?</h1>
             <p>
-                Gemp-Swccg plays the Star Wars Customizable Card Game in your browser: no cards to buy, no table to
-                clear, no clean-up afterwards.
+                Gemp-Swccg plays the Star Wars Customizable Card Game in your browser against other players or against a
+                bot: no cards to buy, no table to clear, no clean-up afterwards. It enforces the rules and the card text
+                for you, so you can concentrate on the game.
             </p>
+            <p>
+                New to the game, or coming back after a while? The
+                <a href="https://wiki.swccg.com/" target="_blank" rel="noopener noreferrer">SWCCG Wiki</a> explains the
+                rules, the cards, the sets and the formats, and has starter decks and strategy articles.
+            </p>
+            <h2>Getting started on GEMP</h2>
+            <ol>
+                <li><b>Build a deck</b> with the <a href="deckBuild.html" target="_blank">Deck Builder</a> (the button at
+                    the bottom of the Game Hall), or skip this step: when you open a table you can also pick a ready-made
+                    deck from the <b>deck library</b>, which holds starter and sample decks for the common formats.
+                </li>
+                <li><b>Open a table.</b> Back in the <b>Game Hall</b>, press <b>Play</b> and choose <b>Play Against
+                    Bots</b> to practise against the computer, <b>Open Casual Table</b> for a game against another
+                    player in the format of your choice, <b>Open League Table</b> for a game that counts in a league you
+                    have joined, or <b>Create Tournament</b>.
+                </li>
+                <li><b>Or join one.</b> Tables other players have opened are listed under <b>Waiting Tables</b>; press
+                    <b>Join table</b> on one and pick your deck. Games in progress are under <b>Playing Tables</b>, where
+                    you can <b>Spectate</b> any game that is not private.
+                </li>
+                <li><b>Play.</b> The game opens in a new window. Cards you may play are highlighted; click one to play it,
+                    or <b>Pass</b> to move on. The <b>Manual</b> beside this page walks through the game window in
+                    detail.
+                </li>
+            </ol>
+            <h2>Where to look next</h2>
             <ul>
-                <li>New to the game? The <a href="https://wiki.swccg.com/" target="_blank" rel="noopener noreferrer">SWCCG
-                    Wiki</a> explains the rules, the cards and the formats.</li>
-                <li>Build a deck with the <a href="deckBuild.html" target="_blank">Deck Builder</a>, or pick one from the
-                    deck library when you open a table: it holds starter and sample decks you can play straight away.</li>
-                <li>Back in the <b>Game Hall</b>, press <b>Play</b> to open a table against another player or against a
-                    bot, to join a league table, or to host a tournament. Tables other players have opened are listed
-                    under <b>Waiting Tables</b>; press <b>Join table</b> on one.</li>
-                <li>The <b>Manual</b> beside this page walks through the hall, the deck builder and the game window.
-                    <b>Format Rules</b> lists what each format allows, and <b>What Are Leagues?</b> explains how league
-                    play is scored.</li>
+                <li><b>Manual</b>: the hall, the deck builder and the game window, step by step.</li>
+                <li><b>Format Definitions</b>: what each format allows (deck size, sets, banned and restricted
+                    cards).</li>
+                <li><b>What Are Leagues?</b>: how league play works, how to join one and how it is scored.</li>
+                <li><b>Events</b> (the tab at the top): the leagues and tournaments running now and their standings.</li>
             </ul>
             <p>
-                Found a problem? Use <b>Report a Bug</b> at the top of the Game Hall.
+                Found a problem with a card or with the site? Use <b>Report a Bug</b> at the top of the Game Hall; it
+                opens the project's issue list on GitHub.
             </p>
         </div>
     </div>
