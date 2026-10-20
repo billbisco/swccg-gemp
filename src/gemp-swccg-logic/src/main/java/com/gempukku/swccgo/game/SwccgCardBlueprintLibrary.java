@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,6 +25,8 @@ public class SwccgCardBlueprintLibrary {
     private final Map<String, SwccgCardBlueprint> _blueprintMap = new ConcurrentHashMap<String, SwccgCardBlueprint>();
     // Ids that have no card. ConcurrentHashMap can't hold null, so they are remembered here instead.
     private final Set<String> _unknownBlueprintIds = ConcurrentHashMap.newKeySet();
+    // Reverse of _blueprintMap, so a save can refer to a blueprint by id instead of copying it.
+    private Map<SwccgCardBlueprint, String> _blueprintIds = new IdentityHashMap<SwccgCardBlueprint, String>();
 
     private final Map<String, String> _blueprintMapping = new HashMap<String, String>();
     private final Map<String, Set<String>> _fullBlueprintMapping = new HashMap<String, Set<String>>();
@@ -137,7 +140,18 @@ public class SwccgCardBlueprintLibrary {
         blueprint = _blueprintMap.computeIfAbsent(blueprintId, this::getBlueprint);
         if (blueprint == null)
             _unknownBlueprintIds.add(blueprintId);
+        else
+            _blueprintIds.put(blueprint, blueprintId);
         return blueprint;
+    }
+
+    /**
+     * Gets the id a blueprint was loaded under.
+     * @param blueprint a blueprint returned by this library
+     * @return the blueprint id (ending in _BACK for a back side), or null if this library did not load it
+     */
+    public String getLoadedBlueprintId(SwccgCardBlueprint blueprint) {
+        return _blueprintIds.get(blueprint);
     }
 
     public String stripBlueprintModifiers(String blueprintId) {
