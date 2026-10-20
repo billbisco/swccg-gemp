@@ -1,65 +1,106 @@
+// Server Info › Server Stats.  Ported from the LOTR hall's statsUi.js: the date / period fields and the stats'
+// headings are in the page (includes/info.html), this fills them in from GET /stats (ServerStatsRequestHandler, XML:
+// active players, games count and the casual games per format for the period).
 var StatsUI = Class.extend({
     communication:null,
+    paramsDiv:null,
+    statsDiv:null,
+    shown:null,   // {startDay, period} of the stats on screen
 
-    init:function (url) {
+    init:function (url, paramControl, statControl) {
         this.communication = new GempSwccgCommunication(url,
             function (xhr, ajaxOptions, thrownError) {
             });
 
+        this.paramsDiv = paramControl;
+        this.statsDiv = statControl;
 
+        // the period shown first is the month up to today, not the month ahead of it
         var now = new Date();
-        var nowStr = now.getFullYear() + "-" + (1 + now.getMonth()) + "-" + now.getDate();
+        var d = now.getDate();
+        now.setMonth(now.getMonth() - 1);
+        if (now.getDate() != d) {
+            now.setDate(0);
+        }
+        var nowStr = now.getFullYear() + "-" + StatsUI.twoDigits(1 + now.getMonth()) + "-" + StatsUI.twoDigits(now.getDate());
 
-        $("#statsParameters").append("Start date: <input class='startDay' type='text' value='" + nowStr + "'>");
-        $("#statsParameters").append(" period: <select class='period'><option value='month'>month</option><option value='week'>week</option><option value='day'>day</option></select>");
-        $("#statsParameters").append(" <input class='getStats' type='button' value='Display stats'>");
+        $(".startDay", this.paramsDiv).val(nowStr);
 
         var that = this;
 
-        $(".getStats", $("#statsParameters")).click(
+        $(".getStats", this.paramsDiv).click(
             function () {
-                var startDay = $(".startDay", $("#statsParameters")).prop("value");
-                var period = $("option:selected", $(".period", $("#statsParameters"))).prop("value");
-
-                that.communication.getStats(startDay, period, that.loadedStats, {
-                    "400":function () {
-                        alert("Invalid parameter entered");
-                    }
-                })
+                var startDay = $.trim($(".startDay", that.paramsDiv).val());
+                var period = $("option:selected", $(".period", that.paramsDiv)).prop("value");
+                if (!/^\d{4}-\d{1,2}-\d{1,2}$/.test(startDay)) {
+                    that.status("Enter the start date as yyyy-mm-dd.");
+                    return false;
+                }
+                that.status("Loading…");
+                that.communication.getStats(startDay, period, function (xml) {
+                    that.shown = {startDay: startDay, period: period};
+                    that.status("");
+                    that.loadedStats(xml);
+                }, {
+                    "0":function () { that.status("Could not reach the server."); },
+                    "400":function () { that.status("That date is not valid; enter it as yyyy-mm-dd."); },
+                    "401":function () { that.status("You are not logged in."); },
+                    "500":function () { that.status("The stats could not be loaded. Try again later."); }
+                });
+                return false;
             });
     },
 
-    loadedStats:function (xml) {
+    status:function (text) {
+        $(".stats-status", this.paramsDiv).text(text);
+    },
+
+    // A data refresh (Server Info calls it when the viewer comes back): the stats on screen are fetched again for the
+    // same dates; the date / period fields are left as the viewer has them.  A failure keeps what is shown.
+    refresh:function () {
         var that = this;
+        if (this.shown == null)
+            return;
+        this.communication.getStats(this.shown.startDay, this.shown.period, function (xml) {
+            that.loadedStats(xml);
+        }, {"0": function () {}, "400": function () {}, "401": function () {}, "500": function () {}});
+    },
+
+    loadedStats:function (xml) {
         log(xml);
         var root = xml.documentElement;
-        if (root.tagName == 'stats') {
-            $("#stats").html("");
+        if (root.tagName != 'stats')
+            return;
 
-            var stats = root;
+        var statsDiv = this.statsDiv;
+        var text = function (id, value) {
+            $("#" + id, statsDiv).text(value == null ? "" : value);
+        };
+        text("startDateSpan", root.getAttribute("start"));
+        text("endDateSpan", root.getAttribute("end"));
+        text("activePlayersStat", root.getAttribute("activePlayers"));
+        text("gamesCountStat", root.getAttribute("gamesCount"));
 
-            var activePlayers = stats.getAttribute("activePlayers");
-            var gamesCount = stats.getAttribute("gamesCount");
-            var start = stats.getAttribute("start");
-            var end = stats.getAttribute("end");
-
-            $("#stats").append("<div class='period'>Stats for " + start + " - " + end + "</div>");
-            $("#stats").append("<div class='activePlayers'>Active players: " + activePlayers + "</div>");
-            $("#stats").append("<div class='gamesCount'>All games count: " + gamesCount + "</div>");
-
-            var formatStats = stats.getElementsByTagName("formatStat");
-            if (formatStats.length > 0) {
-                $("#stats").append("<div class='tableHeader'>Casual games per format</div>");
-
-                var table = $("<table class='tables'></table>");
-                table.append("<tr><th>Format name</th><th># of games</th><th>% of casual</th></tr>");
-                for (var i = 0; i < formatStats.length; i++) {
-                    var formatStat = formatStats[i];
-                    table.append("<tr><td>" + formatStat.getAttribute("format") + "</td><td>" + formatStat.getAttribute("count") + "</td><td>" + formatStat.getAttribute("perc") + "</td></tr>");
-                }
-
-                $("#stats").append(table);
-            }
+        var formatStats = root.getElementsByTagName("formatStat");
+        var container = $("#casualStatsTable", this.statsDiv).empty();
+        if (formatStats.length == 0) {
+            container.append($("<p class='stats-empty'></p>").text("No casual games in this period."));
+            return;
         }
+        var table = $("<table class='tables stats-format-table'></table>");
+        table.append("<tr><th>Format name</th><th># of games</th><th>% of casual</th></tr>");
+        for (var i = 0; i < formatStats.length; i++) {
+            var formatStat = formatStats[i];
+            var row = $("<tr></tr>");
+            row.append($("<td></td>").text(formatStat.getAttribute("format")));
+            row.append($("<td class='stats-number'></td>").text(formatStat.getAttribute("count")));
+            row.append($("<td class='stats-number'></td>").text(formatStat.getAttribute("perc")));
+            table.append(row);
+        }
+        container.append(table);
     }
 });
+
+StatsUI.twoDigits = function (n) {
+    return (n < 10 ? "0" : "") + n;
+};

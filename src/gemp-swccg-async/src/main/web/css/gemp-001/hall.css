@@ -550,6 +550,11 @@ body.hall-chat-resizing * {
     overflow-y: auto;
 }
 
+/* the column of sub-tabs keeps one width whichever page is showing, so the pages do not shift under it */
+.hall-tab.flex-horiz > .sub-tabs {
+    flex: 0 0 200px;
+}
+
 .ui-tabs-vertical ol.ui-tabs-nav {
     float: left;
     max-width: 200px;
@@ -602,6 +607,245 @@ body.hall-chat-resizing * {
 .lemph {
     color: #009f9f;
     font-weight: bold;
+}
+
+.article h1 {
+    font-size: 160%;
+    margin: 0.6em 0 0.4em;
+}
+
+.article h2 {
+    font-size: 125%;
+    margin: 1.2em 0 0.3em;
+    color: #ffa84a;
+}
+
+.article p {
+    line-height: 1.4;
+}
+
+.article table.tables {
+    width: auto;
+    min-width: 50%;
+    margin: 0.5em 0;
+    font-size: 90%;
+}
+
+.article .load-error {
+    color: #ffb0a0;
+}
+
+/* a picture in a help article, with its caption underneath (LOTR hall.css) */
+.helpimg {
+    display: block;
+    margin: auto;
+    padding: 1em;
+}
+
+.helpimg > img {
+    display: block;
+    margin: auto;
+    max-height: 300px;
+    max-width: 100%;
+    border-style: solid;
+}
+
+.helpimg > span {
+    text-align: center;
+    margin: auto;
+    display: block;
+    font-style: italic;
+    padding: 1em;
+}
+
+/* Help › Format Definitions: the server's format blocks under a short intro (LOTR formatDefinitions.css, trimmed) */
+.fd-page {
+    padding: 0 12px 2em;
+    color: #ffffff;
+}
+
+.fd-intro h1 {
+    font-size: 160%;
+    margin: 0.6em 0 0.4em;
+}
+
+.fd-intro p {
+    line-height: 1.4;
+    max-width: 60em;
+}
+
+.fd-intro a,
+.fd-intro a:visited {
+    color: #E88104;
+}
+
+.fd-tools {
+    display: flex;
+    gap: 0.4em;
+    margin: 0.5em 0 0;
+}
+
+.fd-loading,
+.changelog-legacy {
+    color: #bbbbbb;
+}
+
+.changelog-legacy {
+    font-size: 85%;
+    padding: 0.5em 0.8em;
+    border-left: 2px solid #567;
+}
+
+/* Server Info › Server Stats, My Account › My Stats and My Collection: a heading, a note and the tables */
+.stats-page {
+    padding: 0 12px 2em;
+    color: #ffffff;
+}
+
+.stats-page h1 {
+    font-size: 160%;
+    margin: 0.6em 0 0.4em;
+}
+
+.stats-page h2,
+.stats-page .stats-caption,
+.stats-page .playerStatHeader,
+.stats-page #stats .period {
+    font-size: 110%;
+    font-weight: bold;
+    margin: 0.8em 0 0.3em;
+    color: #ffa84a;
+}
+
+.stats-page #stats .period {
+    color: #ffffff;
+}
+
+.stats-note {
+    color: #bbbbbb;
+    font-size: 90%;
+    margin: 0 0 0.6em;
+}
+
+.stats-note a,
+.stats-note a:visited {
+    color: #E88104;
+}
+
+.stats-parameters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6em;
+    margin: 0 0 0.8em;
+}
+
+.stats-status {
+    color: #ffb0a0;
+}
+
+.stats-page table.tables {
+    width: auto;
+    min-width: 40%;
+    border-collapse: collapse;
+}
+
+.stats-page td.stats-number {
+    text-align: right;
+}
+
+.stats-empty {
+    color: #bbbbbb;
+    font-style: italic;
+}
+
+/* My Account > overview: the name, the currency on the right, then the sections (LOTR hall.css) */
+.account-page {
+    padding: 0 12px 2em;
+    color: #ffffff;
+}
+
+.account-page h1 {
+    font-size: 160%;
+    margin: 0.6em 0 0.4em;
+}
+
+.account-facts .account-pocket img {
+    vertical-align: middle;
+}
+
+.account-section {
+    clear: both;
+    margin-top: 1.5em;
+    max-width: 48em;
+}
+
+.account-section h2 {
+    font-size: 115%;
+    margin: 0 0 0.3em;
+    color: #ffa84a;
+}
+
+.account-facts {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.2em 1em;
+    margin: 0.4em 0;
+}
+
+.account-facts dt {
+    color: #bbbbbb;
+}
+
+.account-facts dd {
+    margin: 0;
+}
+
+.account-help {
+    color: #bbbbbb;
+    font-size: 90%;
+    line-height: 1.4;
+}
+
+.ignore-add {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4em;
+}
+
+/* the PlayerPicker (playerPicker.js) around #mute-add-name: a field of a name's width, not the whole row */
+.ignore-add .player-picker {
+    flex: 0 1 16em;
+}
+
+.ignore-status {
+    min-height: 1.2em;
+    margin: 0.3em 0;
+}
+
+.ignore-list {
+    list-style: none;
+    padding: 0;
+    margin: 0.3em 0;
+}
+
+.ignore-list li {
+    display: flex;
+    align-items: center;
+    gap: 1em;
+    padding: 0.2em 0.4em;
+    border-bottom: 1px solid #333333;
+}
+
+.ignore-list .mute-reason {
+    color: #bbbbbb;
+    font-size: 90%;
+    flex: 1 1 auto;
+}
+
+.ignore-list .mute-remove {
+    margin-left: auto;
 }
 
 /* A tab's page.  Pages whose sub-tabs run down the left side carry flex-horiz as well (Help, Events, Server Info,
