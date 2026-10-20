@@ -26,6 +26,14 @@ public class DbAccess {
     }
 
     /**
+     * Creates the database access class on an existing data source.
+     * @param dataSource the data source
+     */
+    public DbAccess(DataSource dataSource) {
+        _dataSource = dataSource;
+    }
+
+    /**
      * Gets the data source.
      * @return the data source
      */
