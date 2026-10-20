@@ -7,8 +7,8 @@
  *   #help/formats, #events/calendar, #info/stats, #account/history, ...                      a sub-tab
  *   #league-<type>                      Events > Current Leagues, with that league's details open
  *   #tournament-<id>                    Events > Current Tournaments, with that tournament's details open
- *   #account/history?opponent=..        My Game History, filtered (keys: format, opponent, event, side, result,
- *                                       from, to, page)
+ *   #account/history?opponent=..        My Game History, filtered (keys: format, opponent, opponentExact, event,
+ *                                       side, result, from, to, page)
  *
  * The links the hall had before the shell was rebuilt still work: #history, #your-stats, #collection-stats,
  * #server-stats and #formats are rewritten to their new homes (OLD_LINKS below), so links in the deck builder, in
@@ -47,7 +47,7 @@ var GempLinks = {
         ]},
         {slug: "account", aliases: ["my-account"], panel: "#accountMain", subs: [
             {slug: "overview", match: ["#account-overview"]},
-            {slug: "history", match: ["history.html"]},
+            {slug: "history", match: ["gameHistory"]},
             {slug: "stats", match: ["yourStats"]},
             {slug: "collection", match: ["yourCollectionStats"]}
         ]},

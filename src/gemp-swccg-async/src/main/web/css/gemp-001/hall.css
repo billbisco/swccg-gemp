@@ -1951,3 +1951,171 @@ a.hall-play-button-deckbuilder:hover,
 .hall-ready-actions {
     margin-top: 0.8em;
 }
+
+/* ===== My Account > My Game History (ported from PlayersCouncil/gemp-lotr hall.css, "tabs-account") ===== */
+/* Shared data table from commonUi.js renderTable(): sortable headers are buttons that look like header text; the
+   empty state is one full-width row. */
+table.gemp-table {
+    border-collapse: collapse;
+}
+
+table.gemp-table th {
+    text-align: left;
+    white-space: nowrap;
+}
+
+.gemp-table-sort {
+    background: none;
+    border: none;
+    color: inherit;
+    font: inherit;
+    font-weight: bold;
+    padding: 0;
+    cursor: pointer;
+    text-align: left;
+}
+
+.gemp-table-sort:hover,
+.gemp-table-sort:focus-visible {
+    text-decoration: underline;
+}
+
+.gemp-table-sort-mark {
+    font-size: 75%;
+}
+
+td.gemp-table-empty {
+    font-style: italic;
+    color: #bbbbbb;
+    text-align: center;
+    padding: 0.6em;
+}
+
+.game-history-article {
+    padding: 0 10px 1em;
+    max-width: 100%;
+}
+
+.game-history-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.4em 1em;
+    margin: 0.5em 0 1.8em;
+}
+
+.game-history-field {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 0.15em;
+}
+
+.game-history-field label {
+    font-size: 85%;
+    color: #cccccc;
+}
+
+.game-history-field select,
+.game-history-field input[type=text] {
+    min-width: 12em;
+}
+
+.game-history-buttons {
+    display: inline-flex;
+    gap: 0.4em;
+}
+
+.game-history-status {
+    margin: 0.4em 0;
+}
+
+.game-history-table {
+    overflow-x: auto;
+}
+
+.game-history-table table.gemp-table {
+    width: 100%;
+}
+
+/* header text centred, cell text centred except the name-like columns (Format, Event, My Deck) */
+.game-history-table table.gameHistory th,
+.game-history-table table.gameHistory td {
+    padding: 4px 7px;
+    text-align: center;
+}
+
+.game-history-table table.gameHistory td.gh-left {
+    text-align: left;
+}
+
+/* My Deck wraps early (anywhere, if a name has no spaces) so the other columns keep their room */
+.gh-deck-name {
+    max-width: 14em;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+/* the Replay link in the hall's standard link colours (unvisited / visited) */
+.game-history-table table.gameHistory a:link {
+    color: #E88104;
+}
+
+.game-history-table table.gameHistory a:visited {
+    color: #BF6B04;
+}
+
+.game-history-pager {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4em;
+    margin: 0.4em 0;
+}
+
+.game-history-pager .pager-info {
+    padding: 0 0.6em;
+}
+
+.gh-result {
+    font-weight: bold;
+}
+
+.gh-win {
+    color: #8fdc8f;
+}
+
+.gh-loss {
+    color: #ff9a8a;
+}
+
+.gh-when,
+.gh-duration {
+    white-space: nowrap;
+}
+
+/* SWCCG: the opponent, side, format and event in a row are links that filter on that value */
+.game-history-table table.gameHistory a.gh-filter-link,
+.game-history-table table.gameHistory a.gh-filter-link:visited {
+    color: inherit;
+    text-decoration: underline dotted;
+}
+
+.game-history-table table.gameHistory a.gh-filter-link:hover {
+    text-decoration: underline;
+}
+
+.game-history-table table.gameHistory a.gh-side-dark,
+.game-history-table table.gameHistory a.gh-side-dark:visited {
+    color: #ff7b7b;
+    font-weight: bold;
+}
+
+.game-history-table table.gameHistory a.gh-side-light,
+.game-history-table table.gameHistory a.gh-side-light:visited {
+    color: #8cc8ff;
+    font-weight: bold;
+}
+
+.gh-event-link {
+    font-size: 85%;
+}
