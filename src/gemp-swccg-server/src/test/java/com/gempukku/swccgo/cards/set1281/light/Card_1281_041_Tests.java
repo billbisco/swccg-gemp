@@ -27,10 +27,12 @@ public class Card_1281_041_Tests {
                     put("undercity", "1281_41");
                     put("narshaddaa", "200_58");
                     put("rest", "1281_39");
+                    put("guild", "1263_32"); // Spaceport Scoundrels Guild
                 }},
                 new HashMap<>() {{
                     put("boba", "5_91");
                     put("trooper", "1_194");
+                    put("noescape", "112_016"); // No Escape: Force generation +1 at opponent's generic sites
                 }},
                 10, 10,
                 StartingSetup.DefaultLSGroundLocation,
@@ -95,5 +97,37 @@ public class Card_1281_041_Tests {
         scn.MoveCardsToLocation(undercity, boba);
         scn.SkipToPhase(Phase.CONTROL);
         assertEquals(offPlanet + 1, scn.GetPower(boba));
+    }
+
+    @Test
+    public void NarShaddaaUndercityScoundrelsGuildIsImmuneToNoEscapeAndYourForceGenerationThereIsPlusOne() {
+        var scn = GetScenario();
+        var undercity = scn.GetLSCard("undercity");
+        var narshaddaa = scn.GetLSCard("narshaddaa");
+        var guild = scn.GetLSCard("guild");
+        var noescape = scn.GetDSCard("noescape");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(guild);
+        scn.MoveCardsToDSSideOfTable(noescape);
+        scn.SkipToPhase(Phase.CONTROL);
+
+        var mq = scn.game().getModifiersQuerying();
+        float lsBase = mq.getForceGenerationFromLocation(scn.gameState(), guild, scn.LS);
+        float dsWithNoEscape = mq.getForceGenerationFromLocation(scn.gameState(), guild, scn.DS);
+
+        // Control: No Escape adds 1 to the Dark Side's generation at the Guild (an opponent's generic site).
+        scn.MoveOutOfPlay(noescape);
+        scn.SkipToPhase(Phase.DEPLOY);
+        assertEquals(dsWithNoEscape - 1, mq.getForceGenerationFromLocation(scn.gameState(), guild, scn.DS), scn.epsilon);
+        scn.MoveCardsToDSSideOfTable(noescape);
+
+        scn.MoveLocationToTable(narshaddaa);
+        scn.MoveLocationToTable(undercity);
+        scn.SkipToPhase(Phase.BATTLE);
+
+        // With Undercity: the Guild is immune to No Escape, and the Light Side's generation there is +1.
+        assertEquals(dsWithNoEscape - 1, mq.getForceGenerationFromLocation(scn.gameState(), guild, scn.DS), scn.epsilon);
+        assertEquals(lsBase + 1, mq.getForceGenerationFromLocation(scn.gameState(), guild, scn.LS), scn.epsilon);
     }
 }

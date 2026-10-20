@@ -7,6 +7,7 @@ import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
+import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
@@ -37,8 +38,10 @@ public class Card1281_041 extends AbstractSite {
     @Override
     protected List<Modifier> getGameTextLightSideWhileActiveModifiers(String playerOnLightSideOfLocation, SwccgGame game, PhysicalCard self) {
         List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new ImmuneToTitleModifier(self, Filters.titleContains("Scoundrel's Guild"), Title.No_Escape));
-        modifiers.add(new ForceGenerationModifier(self, Filters.titleContains("Scoundrel's Guild"), 1, playerOnLightSideOfLocation));
+        // The site is titled "Spaceport Scoundrels Guild" (no apostrophe); the card text says "Scoundrel's Guild".
+        Filter scoundrelsGuild = Filters.or(Filters.titleContains("Scoundrels Guild"), Filters.titleContains("Scoundrel's Guild"));
+        modifiers.add(new ImmuneToTitleModifier(self, scoundrelsGuild, Title.No_Escape));
+        modifiers.add(new ForceGenerationModifier(self, scoundrelsGuild, 1, playerOnLightSideOfLocation));
         return modifiers;
     }
 
