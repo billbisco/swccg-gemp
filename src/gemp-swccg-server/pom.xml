@@ -96,18 +96,48 @@
             <artifactId>gson</artifactId>
             <version>2.10.1</version>
         </dependency>
+        <dependency>
+            <groupId>com.esotericsoftware</groupId>
+            <artifactId>kryo</artifactId>
+            <version>5.7.1</version>
+        </dependency>
+        <dependency>
+            <!-- Kryo 5.7.1's own version; without this, mockito's older one wins -->
+            <groupId>org.objenesis</groupId>
+            <artifactId>objenesis</artifactId>
+            <version>3.6</version>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <!-- Game save snapshots (Kryo) read JDK collection internals; same list as the web.jar manifest. -->
+                    <argLine>--add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util.concurrent=ALL-UNNAMED --add-opens java.base/java.util.concurrent.atomic=ALL-UNNAMED --add-opens java.base/java.util.regex=ALL-UNNAMED --add-opens java.base/java.lang.invoke=ALL-UNNAMED</argLine>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.1.0</version>
                 <executions>
+                    <execution>
+                        <!-- Kryo allowlist and build fingerprint for game saves (save/kryo-classes.txt, save/save-build.properties) -->
+                        <id>kryo-class-list</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>com.gempukku.swccgo.game.save.KryoClassListGenerator</mainClass>
+                            <arguments>
+                                <argument>${project.build.outputDirectory}/save</argument>
+                                <argument>${project.basedir}/../..</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
                     <execution>
                         <id>export-cards</id>
                         <goals>

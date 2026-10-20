@@ -4,7 +4,6 @@ import com.gempukku.swccgo.ai.SwccgAiController;
 import com.gempukku.swccgo.ai.models.AdvancedAi;
 import com.gempukku.swccgo.ai.models.BeginnerAi;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
-import com.gempukku.swccgo.logic.decisions.AwaitingDecision;
 import com.gempukku.swccgo.logic.timing.DefaultSwccgGame;
 import com.gempukku.swccgo.logic.timing.DefaultUserFeedback;
 import com.gempukku.swccgo.logic.vo.SwccgDeck;
@@ -33,9 +32,13 @@ class BotGame {
     }
 
     BotGame(long seed) {
+        this(seed, deck("/save/panh-precon-ls.txt", "LS precon"), deck("/save/panh-precon-ds.txt", "DS precon"));
+    }
+
+    BotGame(long seed, SwccgDeck lsDeck, SwccgDeck dsDeck) {
         Map<String, SwccgDeck> decks = new HashMap<>();
-        decks.put(LS, deck("/save/panh-precon-ls.txt", "LS precon"));
-        decks.put(DS, deck("/save/panh-precon-ds.txt", "DS precon"));
+        decks.put(LS, lsDeck);
+        decks.put(DS, dsDeck);
         feedback = new DefaultUserFeedback();
         Map<String, Integer> clocks = new HashMap<>();
         clocks.put(LS, 0);
@@ -44,6 +47,23 @@ class BotGame {
         feedback.setGame(game);
         game.getGameState().setRandomSeed(seed);
         game.startGame();
+    }
+
+    private BotGame(SaveRoot root) {
+        game = root.game();
+        feedback = root.feedback();
+    }
+
+    static BotGame of(SaveRoot root) {
+        return new BotGame(root);
+    }
+
+    static SwccgDeck lsDeck() {
+        return deck("/save/panh-precon-ls.txt", "LS precon");
+    }
+
+    static SwccgDeck dsDeck() {
+        return deck("/save/panh-precon-ds.txt", "DS precon");
     }
 
     static Map<String, SwccgAiController> bots(String ls, String ds) {
@@ -79,20 +99,13 @@ class BotGame {
         return answer(player, answer);
     }
 
-    /** Applies one answer, the same way the server does. */
+    /** Applies one answer, the same way a saved game is replayed. */
     Step answer(String player, String answer) {
-        AwaitingDecision decision = feedback.getAwaitingDecision(player);
-        feedback.participantDecided(player);
-        try {
-            decision.decisionMade(answer);
-        } catch (Exception e) {
-            feedback.sendAwaitingDecision(player, decision);
-        }
-        game.carryOutPendingActionsUntilDecisionNeeded();
+        DecisionApplier.apply(game, feedback, player, answer);
         return new Step(player, answer, GameStateHash.of(game));
     }
 
-    private static SwccgDeck deck(String resource, String name) {
+    static SwccgDeck deck(String resource, String name) {
         try (InputStream in = BotGame.class.getResourceAsStream(resource)) {
             SwccgDeck deck = new SwccgDeck(name);
             Matcher m = Pattern.compile("blueprintId=\"([^\"]+)\"").matcher(new String(in.readAllBytes(), StandardCharsets.UTF_8));
