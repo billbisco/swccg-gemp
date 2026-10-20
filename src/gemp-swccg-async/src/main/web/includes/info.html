@@ -1,0 +1,47 @@
+<script type="text/javascript">
+    $("#infoMain").ready(
+        function () {
+            $("#infoMain").tabs().addClass("ui-tabs-vertical ui-helper-clearfix");
+            $("#info-tabs > ol > li").removeClass("ui-corner-top").addClass("ui-corner-left");
+        });
+</script>
+
+<div id="infoMain" class="hall-tab flex-horiz">
+    <div id="info-tabs" class="sub-tabs">
+        <ol>
+            <li><a href="includes/stats.html">Server Stats</a></li>
+            <li><a href="includes/changeLog.html">Change Log</a></li>
+            <li><a href="includes/contribute.html">Contribute</a></li>
+            <li><a href="#info-about">About</a></li>
+        </ol>
+    </div>
+
+    <div id="info-about">
+        <div class="article">
+            <h1>About</h1>
+            <p>
+                GEMP is a general-purpose game engine for trading card games. This one plays the Star Wars
+                Customizable Card Game; there is also
+                <a href="https://play.lotrtcgpc.net/" target="_blank" rel="noopener noreferrer">one for the Lord of the
+                    Rings TCG</a>, whose code this hall's layout is adapted from.
+            </p>
+            <p>
+                GEMP was originally written by MarcinS, who started the project in 2011. The Star Wars CCG version is
+                maintained by the community;
+                <a href="https://github.com/billbisco/swccg-gemp" target="_blank" rel="noopener noreferrer">its code is
+                    on GitHub</a>, and so is the
+                <a href="https://github.com/billbisco/swccg-gemp/issues" target="_blank" rel="noopener noreferrer">list
+                    of open bugs and requests</a>.
+            </p>
+            <p>
+                Card images and rules text are the property of Lucasfilm Ltd and Decipher, Inc. This site is not
+                produced, endorsed, supported or affiliated with either.
+            </p>
+            <h2>Trying things out</h2>
+            <p>
+                <a href="epic-duel/newgui.html">Public Beta: New UI</a> is an experimental game interface. It is not
+                finished, and games played there count like any other.
+            </p>
+        </div>
+    </div>
+</div>

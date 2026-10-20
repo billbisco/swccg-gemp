@@ -1,13 +1,13 @@
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
-    <title>Gemp-Swccg</title>
+    <title>Gemp-Swccg - Main Hall</title>
 
     <link rel="stylesheet" type="text/css" href="js/jquery/jquery-ui-1.13.2.custom/jquery-ui.css">
     <link rel="stylesheet" type="text/css" href="css/gemp-001/jquery-ui-1.13-compat.css?v=20261020a">
-    <link rel="stylesheet" type="text/css" href="css/gemp-001/hall.css?v=20261006l">
+    <link rel="stylesheet" type="text/css" href="css/gemp-001/hall.css?v=20261020b">
+    <link rel="stylesheet" type="text/css" href="css/gemp-001/icons.css?v=20261020b">
     <link rel="stylesheet" type="text/css" href="css/gemp-001/delivery.css?v=20261006h">
     <link rel="stylesheet" type="text/css" href="css/jquery.contextMenu.css">
     <link rel="stylesheet" type="text/css" href="js/jquery/styles/jquery.spinnercontrol.css">
@@ -30,7 +30,7 @@
     <script type="text/javascript" src="js/gemp-016/logging.js"></script>
     <script type="text/javascript" src="js/gemp-016/hall-muted-users/muted-user.functions.js"></script>
     <script type="text/javascript" src="js/gemp-016/hall-muted-users/muted-user-list.dialog.js"></script>
-    <script type="text/javascript" src="js/gemp-016/chat.js?v=20261005c"></script>
+    <script type="text/javascript" src="js/gemp-016/chat.js?v=20261020b"></script>
     <script type="text/javascript" src="js/gemp-016/communication.js?v=20261006d"></script>
     <script type="text/javascript" src="js/gemp-016/deliveryService.js?v=20261006h"></script>
     <script type="text/javascript" src="js/gemp-016/commonUi.js"></script>
@@ -42,14 +42,14 @@
     <script type="text/javascript" src="js/gemp-016/cards/PackImages.js"></script>
 
     <script type="text/javascript" src="js/gemp-016/playerPicker.js?v=20261020a"></script>
-    <script type="text/javascript" src="js/gemp-016/hallUi.js?v=20261020a"></script>
+    <script type="text/javascript" src="js/gemp-016/hallUi.js?v=20261020b"></script>
     <script type="text/javascript" src="js/gemp-016/leagueResultsUi.js?v=20261019a"></script>
     <script type="text/javascript" src="js/gemp-016/tournamentResultsUi.js"></script>
     <script type="text/javascript" src="js/gemp-016/statsUi.js"></script>
     <script type="text/javascript" src="js/gemp-016/playerStatsUi.js"></script>
     <script type="text/javascript" src="js/gemp-016/collectionStatsUi.js"></script>
     <script type="text/javascript" src="js/gemp-016/gameHistoryUi.js"></script>
-    <script type="text/javascript" src="js/gemp-016/hallLinks.js?v=20261020a"></script>
+    <script type="text/javascript" src="js/gemp-016/hallLinks.js?v=20261020b"></script>
     <script type="text/javascript" src="js/gemp-016/eventsUi.js?v=20261019a"></script>
     <script type="text/javascript" src="js/gemp-016/historyUi.js?v=20261019a"></script>
     <script type="text/javascript" src="js/gemp-016/deckBuildingUi.js"></script>
@@ -59,135 +59,8 @@
 
     <audio id="gamestart" src="audio/coolsaber.mp3" type="audio/mpeg" preload="metadata"></audio>
 
-    <script type="text/javascript">
-        var chat;
-        var hall;
-
-        $(document).keydown(function (e) {
-            if (e.which === 8 && !$(e.target).is("input, textarea")) {
-                e.preventDefault();
-            }
-        });
-
-        $(document).ready(
-            function () {
-                chat = new ChatBoxUI("Game Hall", $("#chat"), "/gemp-swccg-server", true, null, false, true, [], true);
-                chat.setBounds(2, 2, 780 - 4, 200 - 4);
-                chat.showTimestamps = true;
-                chat.beginGameChat();
-
-                hall = new GempSwccgHallUI($("#hall"), "/gemp-swccg-server", chat);
-
-                $("#tabs").tabs();
-
-                // Hall links (hallLinks.js): #events, #history, #league-<type>, ... open their tab; switching tabs
-                // writes the tab's link into the address bar.
-                GempLinks.start();
-
-                $(window).resize(function () {
-                    resizeHall();
-                });
-
-                resizeHall();
-
-                var infoDialog = $("<div></div>")
-                    .dialog({
-                        autoOpen: false,
-                        closeOnEscape: true,
-                        resizable: false,
-                        title: "Card information"
-                    });
-
-                $("body").click(
-                    function (event) {
-                        var tar = $(event.target);
-
-                        if (tar.hasClass("cardHint")) {
-                            var blueprintId = tar[0].getAttribute("value");
-                            var testingText = tar.attr("data-testingText");
-                            var backSideTestingText = tar.attr("data-backSideTestingText");
-                            var card = new Card(blueprintId, testingText, backSideTestingText, "SPECIAL", "hint", "");
-
-                            infoDialog.html("");
-                            infoDialog.html("<div style='scroll: auto'></div>");
-                            var floatCardDiv = $("<div style='float: left;'></div>");
-                            floatCardDiv.append(Card.CreateFullCardDiv(card.imageUrl, card.testingText, card.backSideTestingText, card.foil, card.horizontal, false));
-                            infoDialog.append(floatCardDiv);
-
-                            var windowWidth = $(window).width();
-                            var windowHeight = $(window).height();
-
-                            var horSpace = 30;
-                            var vertSpace = 45;
-
-                            infoDialog.dialog({ title: "Card information" });
-                            if (card.horizontal) {
-                                // 500x360
-                                infoDialog.dialog({ width: Math.min(500 + horSpace, windowWidth), height: Math.min(360 + vertSpace, windowHeight) });
-                            } else {
-                                // 360x500
-                                infoDialog.dialog({ width: Math.min(360 + horSpace, windowWidth), height: Math.min(500 + vertSpace, windowHeight) });
-                            }
-                            infoDialog.dialog("open");
-
-                            event.stopPropagation();
-                            return false;
-                        } else if (tar.hasClass("prizeHint")) {
-                            var prizeDescription = tar[0].getAttribute("value");
-
-                            infoDialog.text(prizeDescription);
-
-                            infoDialog.dialog({ title: "Prizes details", width: 300, height: 150 });
-                            infoDialog.dialog("open");
-
-                            event.stopPropagation();
-                            return false;
-                        }
-
-                        return true;
-                    }); /* body click */
-            }); /* document ready */
-
-        function resizeHall() {
-            var width = $(window).width();
-            var height = $(window).height();
-
-            var innerWidth = width - 60;
-            var innerHeight = height - 100;
-
-            if (innerHeight < 520)
-                innerHeight = 520;
-            if (innerWidth < 740)
-                innerWidth = 740;
-
-            var middleHeight = (innerHeight - 60) / 2;
-
-            $("#latestNews").css({ width: innerWidth + "px", height: 30 + "px" });
-            $("#motd").css({ width: innerWidth + "px", height: 30 + "px" });
-            $("#hall").css({ width: innerWidth + "px", height: middleHeight + "px" });
-            $("#chat").css({ width: innerWidth + "px", height: middleHeight + "px" });
-
-            chat.setBounds(2, 2, innerWidth - 4, middleHeight - 4);
-            hall.hallResized(innerWidth, middleHeight);
-        } /* resizeHall */
-
-        /*
-         * Function to expand, or contract, formats on the "Format Rules" page.
-         */
-        function showFormat(t) {
-            console.log("id:", $(t).attr('id'));
-            var contentId = $(t).attr('id') + "-content";
-            console.log("contentId:", contentId);
-            $("#" + contentId).slideToggle();
-        } /* showFormat */
-
-        /*
-         * Function to change the arrow before the label: ▼ ▶
-         */
-        function toggleLabelArrow(t) {
-            $(t).toggleClass("format-name-label-downarrow");
-        } /* showFormat */
-    </script>
+    <!-- The hall's tab framework and page bootstrap (LOTR src/Hall/GameHall.js) -->
+    <script type="text/javascript" src="js/gemp-016/gameHall.js?v=20261020b"></script>
 
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-F898Z2M18G"></script>
@@ -201,48 +74,180 @@
 </head>
 
 <body>
-    <div id="tabs" width="100%">
+<div id="main">
+    <div id="tabs">
         <ul>
-            <li id="tab-game-hall"><a href="#gameHall">Game Hall</a></li>
-            <li id="tab-events"><a href="includes/events.html?v=20261019a">Events</a></li>
-            <li id="tab-history"><a href="includes/history.html?v=20261019a">History</a></li>
-            <li id="tab-formats"><a href="/gemp-swccg-server/hall/formats/html">Format Rules</a></li>
-            <li id="tab-your-stats"><a href="includes/yourStats.html">Your stats</a></li>
-            <li id="tab-server-stats"><a href="includes/stats.html">Server stats</a></li>
-            <li id="tab-collection-stats"><a href="includes/yourCollectionStats.html">Your collection stats</a></li>
-            <li id="admin-tab"><a href="includes/admin.html?v=20261020a">Admin</a></li>
+            <li id="tab-game-hall"><a href="#gameHall" class="custom-icon icon-hall">Game Hall</a></li>
+            <li id="tab-help"><a href="includes/help.html?v=20261020b" class="custom-icon icon-help">Help</a></li>
+            <li id="tab-events"><a href="includes/events.html?v=20261019a" class="custom-icon icon-events">Events</a></li>
+            <li id="tab-info"><a href="includes/info.html?v=20261020b" class="custom-icon icon-stats">Server Info</a></li>
+            <li id="tab-account"><a href="includes/account.html?v=20261020b" class="custom-icon icon-account">My Account</a></li>
+            <li id="admin-tab"><a href="includes/admin.html?v=20261020a" class="custom-icon icon-admin">Admin</a></li>
         </ul>
-        <div id="gameHall">
-            <div id="latestNews">
-                <div class="linkMenu">
-                    <a href="#events/calendar" class="hall-link">Event Calendar</a>
-                    <a href="#history" class="hall-link">My Game History</a>
-                    <a href="deckBuild.html" target="_blank">Deck Builder</a>
-                    <a href="merchant.html">Merchant</a>
-                    <a href="https://wiki.swccg.com/" target="_blank">SWCCG Wiki</a>
-                    <a href="https://github.com/billbisco/swccg-gemp/issues" target="_blank">Report Bugs</a>
-                    <a href="epic-duel/newgui.html">Public Beta: New UI</a>
+    </div>
+
+    <div id="gameHall">
+        <div id="gameHallMain" class="hall-tab flex-vert">
+            <div id="serverInfo" class="flex-vert">
+                <div id="infoButtons" class="flex-horiz">
+                    <!-- links styled as buttons (jQuery UI .button() in hallUi.js), not <button>s nested in <a>s -->
+                    <a id="bug-button" class="toolbar-button" href="https://github.com/billbisco/swccg-gemp/issues" target="_blank" rel="noopener noreferrer">
+                        <span class="custom-icon icon-bug"></span><span>Report a Bug</span>
+                    </a>
+
+                    <a id="wiki-button" class="toolbar-button" href="https://wiki.swccg.com/" target="_blank" rel="noopener noreferrer">
+                        <span class="custom-icon icon-wiki"></span><span>Browse the SWCCG Wiki</span>
+                    </a>
+
+                    <a id="merchant-button" class="toolbar-button" href="merchant.html" target="_blank" rel="noopener noreferrer">
+                        <span class="custom-icon icon-merchant"></span><span>Merchant</span>
+                    </a>
                 </div>
-                <div class="flexPadding"></div>
-                <div class="timeDiv">
-                    <div class="serverTime"></div>
-                    <div class="flexPadding"></div>
+                <div class="flex-horiz" id="messageArea">
+                    <div id="motd" class="motd"></div>
                 </div>
             </div>
-            <div id="motd" class="motd"></div>
-            <div id="hall" class="ui-widget-content" style="width:780px;height:260px;"></div>
-            <div id="chat" class="ui-widget-content" style="position:relative;width:780px;height:200px;"></div>
+
+            <div id="hall">
+                <div id="tablesDiv">
+                    <button type="button" id="waitingTablesHeader" class="eventHeader waitingTables" aria-expanded="true" aria-controls="waitingTablesContent">Waiting Tables<span class="count">(0)</span></button>
+                    <div id="waitingTablesContent" class="visibilityToggle">
+                        <table class="tables waitingTables">
+                            <tr>
+                                <th width="20%">Format</th>
+                                <th width="30%">Table Info</th>
+                                <th width="10%">Status</th>
+                                <th width="30%">Players</th>
+                                <th width="10%">Actions</th>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <button type="button" id="playingTablesHeader" class="eventHeader playingTables" aria-expanded="true" aria-controls="playingTablesContent">Playing Tables<span class="count">(0)</span></button>
+                    <div id="playingTablesContent" class="visibilityToggle">
+                        <table class="tables playingTables">
+                            <tr>
+                                <th width="20%">Format</th>
+                                <th width="30%">Table Info</th>
+                                <th width="10%">Status</th>
+                                <th width="30%">Players</th>
+                                <th width="10%">Actions</th>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <button type="button" id="finishedTablesHeader" class="eventHeader finishedTables" aria-expanded="false" aria-controls="finishedTablesContent">Finished Tables<span class="count">(0)</span></button>
+                    <div id="finishedTablesContent" class="visibilityToggle">
+                        <table class="tables finishedTables">
+                            <tr>
+                                <th width="20%">Format</th>
+                                <th width="30%">Table Info</th>
+                                <th width="10%">Status</th>
+                                <th width="30%">Players</th>
+                                <th width="10%">Winner</th>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- Server-run tournaments and queues: the headers show only while the server sends rows
+                         (hallUi.js syncSectionVisibility). -->
+                    <button type="button" id="tournamentsHeader" class="eventHeader tournaments" aria-expanded="true" aria-controls="tournamentsContent">Tournaments in Progress<span class="count">(0)</span></button>
+                    <div id="tournamentsContent" class="visibilityToggle">
+                        <table class="tables tournaments">
+                            <tr>
+                                <th width="10%">Format</th>
+                                <th width="10%">Collection</th>
+                                <th width="25%">Tournament Name</th>
+                                <th width="15%">System</th>
+                                <th width="10%">Stage</th>
+                                <th width="10%">Round</th>
+                                <th width="10%">Players</th>
+                                <th width="10%">Actions</th>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <button type="button" id="queuesHeader" class="eventHeader queues" aria-expanded="false" aria-controls="queuesContent">Recurring Events<span class="count">(0)</span></button>
+                    <div id="queuesContent" class="visibilityToggle">
+                        <table class="tables queues">
+                            <tr>
+                                <th width="10%">Format</th>
+                                <th width="8%">Collection</th>
+                                <th width="26%">Event Name</th>
+                                <th width="16%">Next Start</th>
+                                <th width="12%">System</th>
+                                <th width="6%">Players</th>
+                                <th width="8%">Cost</th>
+                                <th width="14%">Prizes</th>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+
+    <div class="buttons-gutter flex-horiz">
+        <!-- Hall connection readout (hallUi.js HallConnectionIndicator), at the left end opposite the server clock:
+             hover, focus, click or tap for details. -->
+        <div id="hall-connection" class="hall-connection" data-state="connecting">
+            <button type="button" class="hall-connection-readout" aria-expanded="false" aria-controls="hall-connection-popup">
+                <span class="hall-connection-dot" aria-hidden="true"></span><span class="hall-connection-label">Connecting</span>
+            </button>
+            <a class="hall-connection-signin" href="/gemp-swccg/" hidden>Log in</a>
+            <span class="hall-connection-live visually-hidden" role="status" aria-live="polite"></span>
+            <div id="hall-connection-popup" class="hall-connection-popup" hidden>
+                <div class="hall-connection-popup-status"></div>
+                <div class="hall-connection-popup-updated"></div>
+                <div class="hall-connection-popup-message" hidden></div>
+            </div>
+        </div>
+
+        <div class="buttons-gutter flex-horiz flex-fill hall-primary-actions">
+            <a id="deckbuilder-button" class="play-buttons hall-play-button hall-play-button-deckbuilder" href="deckBuild.html" target="_blank">
+                <span class="bigger-icon icon-deckbuilder" aria-hidden="true"></span>
+                <span class="hall-play-button-label"><b>Deck-builder</b></span>
+            </a>
+
+            <button type="button" id="open-table-button" class="play-buttons hall-play-button hall-play-button-play">
+                <span class="bigger-icon icon-play" aria-hidden="true"></span>
+                <span class="hall-play-button-label"><b>Play</b></span>
+            </button>
+        </div>
+
+        <div class="server-time hall-server-time flex-static">
+            <div class="hall-server-time-label">Server Time</div>
+            <div class="hall-server-time-value"></div>
+        </div>
+    </div>
+
+    <div id="chat" class="flex-horiz">
+        <div id="chatarea" class="flex-vert">
+            <div id="legacyChat" class="flex-vert">
+                <div id="chatMessages" class="chatMessages flex-vert"></div>
+                <div id="legacyChatInput" class="flex-horiz">
+                    <label for="chatTalk" class="visually-hidden">Message the game hall</label>
+                    <textarea id="chatTalk" class="chatTalk" placeholder="Message the game hall..."></textarea>
+                </div>
+            </div>
+        </div>
+        <div id="userListColumn" class="flex-vert">
+            <div id="userList" class="userList"></div>
+        </div>
+    </div>
+
     <div id="disclaimer">
         The information presented on this site about Star Wars CCG, both literal and graphical, is copyrighted by
-        Lucasfilm Ltd & Decipher, Inc.
+        Lucasfilm Ltd &amp; Decipher, Inc.
     </div>
-    <div id="mutedUserListDialog"></div>
-    <!-- Slice 1 Play overlay mount (filled by hallUi.js) -->
-    <div id="create-table-popup" class="play-flow" style="display:none"></div>
-    <!-- Slice 1.1 Join table/queue deck picker mount (filled by hallUi.js) -->
-    <div id="join-table-popup" class="play-flow" style="display:none"></div>
+</div>
+
+<div id="mutedUserListDialog"></div>
+<!-- Play overlay mount (filled by hallUi.js) -->
+<div id="create-table-popup" class="play-flow" style="display:none"></div>
+<!-- Join table/queue deck picker mount (filled by hallUi.js) -->
+<div id="join-table-popup" class="play-flow" style="display:none"></div>
+
 </body>
 
 </html>

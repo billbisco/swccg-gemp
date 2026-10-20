@@ -1,0 +1,45 @@
+<script type="text/javascript">
+    $("#accountMain").ready(
+        function () {
+            $("#accountMain").tabs().addClass("ui-tabs-vertical ui-helper-clearfix");
+            $("#account-tabs > ol > li").removeClass("ui-corner-top").addClass("ui-corner-left");
+
+            var name = (window.hall && hall.userInfo && hall.userInfo.name) || "";
+            $("#accountName").text(name);
+            if (window.hall && hall.pocketValue != null && typeof formatPrice == "function")
+                $("#accountPocket").html(formatPrice(hall.pocketValue));
+
+            $("#accountMutedButton").button().click(
+                function () {
+                    if (typeof showMutedUsersDialog == "function")
+                        showMutedUsersDialog();
+                });
+        });
+</script>
+
+<div id="accountMain" class="hall-tab flex-horiz">
+    <div id="account-tabs" class="sub-tabs">
+        <ol>
+            <li><a href="#account-overview">My Account</a></li>
+            <li><a href="includes/history.html?v=20261020b">My Game History</a></li>
+            <li><a href="includes/yourStats.html">My Stats</a></li>
+            <li><a href="includes/yourCollectionStats.html">My Collection</a></li>
+        </ol>
+    </div>
+
+    <div id="account-overview">
+        <div class="article">
+            <h1>My Account</h1>
+            <p>Player: <b id="accountName"></b></p>
+            <p>Credits: <span id="accountPocket"></span></p>
+            <p>
+                <button type="button" id="accountMutedButton">Muted players</button>
+                Messages from players you mute are hidden from the Game Hall chat on this browser.
+            </p>
+            <p>
+                <b>My Game History</b> lists your games, with filters and replay links. <b>My Stats</b> shows how you
+                have done by format, and <b>My Collection</b> what cards you own.
+            </p>
+        </div>
+    </div>
+</div>

@@ -1,14 +1,73 @@
-body {
+/* The hall is one full-height column: the tab bar and the open tab, then the main bar, the chat and the disclaimer
+   (hall.html #main; the shell is ported from the LOTR hall). */
+html, body {
     font-size: 12px;
     background-color: #000000;
+    height: calc(100% - 8px);
+}
+
+body {
     position: relative;
     margin: 8px;
 }
 
+#main {
+    height: 100%;
+    min-height: 100%;
+    max-height: 100%;
+    width: 100%;
+    max-width: 1400px;
+    display: flex;
+    flex-direction: column;
+    margin-left: auto;
+    margin-right: auto;
+    border: none;
+    padding: 0;
+}
+
+/* a section of the hall (Waiting Tables, Playing Tables, ...): a header button that opens and closes it */
 .eventHeader {
     font-size: 120%;
     font-weight: bolder;
-    background-color: #666666;
+    background-color: #555555;
+    color: #ffffff;
+    cursor: pointer;
+    padding: 4px;
+    margin: 2px;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+button.eventHeader {
+    font-size: 120%; /* beats jQuery UI's ".ui-widget button { font-size: 1em }" */
+    width: calc(100% - 4px);
+    text-align: left;
+    font-family: inherit;
+    border: none;
+}
+
+button.eventHeader:focus-visible {
+    outline: 2px solid #E88104;
+    outline-offset: 1px;
+}
+
+.disclosureTriangle {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: 4px;
+    margin-right: 4px;
+    vertical-align: middle;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-left: 8px solid #fff;
+    transition: transform 0.2s ease;
+}
+
+.eventHeader.expanded .disclosureTriangle {
+    transform: rotate(90deg);
 }
 
 .leagueName, #stats .period, .tournamentName, .playerStatHeader {
@@ -197,52 +256,100 @@ body.foil-none .foilOverlay {
 
 #disclaimer {
     color: #ffffff;
-    font-size: 80%;
+    font-size: 70%;
+    text-align: center;
+    flex: 0 0 auto;
 }
 
+/* ---- the top tab bar ---- */
 #tabs {
-
+    position: sticky;
+    flex: 0 0 auto;
 }
 
-#latestNews {
-    color: #ffffff;
-    font-size: 90%;
-    display: flex;
-    flex-direction: row;
-}
-
-.linkMenu {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    column-gap: 1.3em;
-    min-height: 30px;
-}
-
-.timeDiv {
-    display: flex;
-    flex-direction: column;
-    flex-basis: auto;
-    width: 220px;
-}
-
-.flexPadding {
+#main > .ui-tabs-panel {
+    /* wide pages (the admin tables) scroll sideways rather than being cut off */
+    overflow-x: auto;
+    overflow-y: hidden;
+    height: 100%;
+    position: relative;
     flex-grow: 1;
+    padding: 0;
+    border: 0 none #000000;
+    min-width: 50%;
+    width: 100%;
 }
 
-.serverTime {
-    border: 1px solid #ffffff;
-    width: 220px;
+/* ---- the Game Hall tab ---- */
+#gameHall {
+    overflow-y: auto;
+    width: 100%;
+}
+
+#gameHallMain {
+    flex-direction: column;
+    width: 100%;
+}
+
+#hall {
+    flex-grow: 3;
+    min-height: 0;
+}
+
+#tablesDiv {
+    overflow-y: auto;
+    overflow-x: hidden;
+    border-style: none;
+}
+
+/* the sub-bar above the tables: Report a Bug, the SWCCG Wiki, the Merchant, and the message of the day */
+#serverInfo {
+    align-items: stretch;
+    overflow: visible;
+    flex-shrink: 1;
+    padding: 7px;
+    position: sticky;
+    top: -14px;
+    background: linear-gradient(to top, #333333, #111111 40%, #111111);
+    border-radius: 6px;
+    border-color: #bf8a4a;
+    border-style: none none solid none;
+    z-index: 100;
+}
+
+#infoButtons {
+    flex-wrap: wrap;
+}
+
+.toolbar-button {
+    padding: .4em .8em;
+}
+
+#infoButtons a.ui-button,
+.buttons-gutter a.ui-button {
+    color: #eeeeee;
+    text-decoration: none;
+}
+
+#infoButtons a.ui-button:hover,
+#infoButtons a.ui-button:focus,
+.buttons-gutter a.ui-button:hover,
+.buttons-gutter a.ui-button:focus {
+    color: #ffffff;
+}
+
+#messageArea {
+    align-items: center;
 }
 
 .motd, div.motd a {
     font-size: 90%;
-    height: 30px;
-    width: 100%;
 }
 
 .motd {
     color: #ffe81f;
+    margin: 5px;
+    flex-grow: 1;
 }
 
 div.motd a {
@@ -274,18 +381,157 @@ button.admin-button, input.admin-button {
     padding:4px;
 }
 
-#gameHall {
-    
+/* ---- the main bar under the tables: connection readout | Deck-builder and Play | server clock ---- */
+.buttons-gutter {
+    flex: 0 0 auto;
+    height: 40px;
+    background-color: #333333;
+    border-top: 1px solid #aaaaaa;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    padding: 5px;
 }
 
-#hall {
-/*   margin: 30px;*/
+#main > .buttons-gutter > .hall-connection,
+#main > .buttons-gutter > .server-time {
+    flex: 1 1 0;
+    min-width: max-content;
 }
 
+/* the centre group is only a layout wrapper: the bar's own top border runs across the whole width */
+#main > .buttons-gutter > .buttons-gutter {
+    flex: 0 1 auto;
+    border-top: none;
+    padding: 0;
+    background: none;
+    justify-content: center;
+}
+
+.play-buttons {
+    width: 15rem;
+    border-color: #AAAAAA;
+    font-size: 1.3rem;
+}
+
+/* ---- the chat ---- */
 #chat {
-    position:relative;
-    width:780px;
-    height: 50%;
+    position: relative;
+    width: 100%;
+    height: 300px;
+    overflow: hidden;
+    background-color: #121212;
+    padding-top: 5px;
+    align-self: flex-end;
+    flex-shrink: 0;
+}
+
+#chat .ui-resizable-handle {
+    background-color: #777777;
+    height: 7px;
+    top: -1px;
+}
+
+#chat .ui-resizable-handle::after {
+    content: '';
+    width: 10%;
+    height: 10px;
+    background: #999999;
+    position: absolute;
+    bottom: -2px;
+    left: 45%;
+}
+
+/* the chat's resize bar (hallUi.js HallChatResizer) */
+#chat .hall-chat-resizer {
+    cursor: ns-resize;
+    z-index: 5;
+}
+
+#chat .hall-chat-resizer:focus-visible {
+    outline: 2px solid #E88104;
+    outline-offset: -1px;
+}
+
+/* while the chat is being resized nothing else takes the pointer, and nothing gets selected */
+body.hall-chat-resizing,
+body.hall-chat-resizing * {
+    cursor: ns-resize !important;
+    user-select: none;
+}
+
+#chatarea {
+    position: relative;
+    width: 100%;
+    min-height: 0;
+    overflow: hidden;
+    margin-top: 5px;
+    flex-grow: 1;
+}
+
+#legacyChat {
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+    min-height: 0;
+}
+
+#chatMessages {
+    flex: 1 1 0;
+    min-height: 0;
+    overflow-y: auto;
+    border-style: solid;
+    border-width: 3px;
+    border-color: #222222;
+    padding: 2px;
+}
+
+#legacyChatInput {
+    flex: 0 0 auto;
+    align-items: flex-end;
+    padding-bottom: 2px;
+}
+
+#chatTalk {
+    flex-grow: 1;
+    box-sizing: border-box;
+    resize: none;
+    /* one line of text at rest; grows with what is typed (chat.js) up to about four lines */
+    height: 2.25em;
+    min-height: 2.25em;
+    max-height: 6.5em;
+    padding: 0.35em 0.5em;
+    font: inherit;
+    line-height: 1.35;
+    color: #eeeeee;
+    background-color: #1c1c1c;
+    border: 1px solid #555555;
+    border-radius: 3px;
+}
+
+#chatTalk:focus {
+    border-color: #888888;
+    outline: none;
+}
+
+#legacyChatInput button {
+    flex: 0 0 auto;
+    margin-left: 3px;
+}
+
+#userListColumn {
+    min-width: fit-content;
+    max-width: 15em;
+    flex: 0 0 auto;
+}
+
+#userList {
+    flex-grow: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border-left: 1px solid #999999;
+    padding: 5px;
+    min-height: 0;
 }
 
 .page {
@@ -293,10 +539,80 @@ button.admin-button, input.admin-button {
     margin: 3em auto 20em auto;
 }
 
+/* ---- a tab's page with sub-tabs down its left side (Help, Server Info, My Account) ---- */
+.sub-tabs {
+    position: sticky;
+    top: 5px;
+    margin: 4px;
+}
+
+.sub-tabs .ui-tabs-panel {
+    overflow-y: auto;
+}
+
+.ui-tabs-vertical ol.ui-tabs-nav {
+    float: left;
+    max-width: 200px;
+}
+
+.ui-tabs-vertical ol.ui-tabs-nav li {
+    width: 100%;
+    border-bottom-width: 1px !important;
+    border-right-width: 0 !important;
+    margin: 0 -1px .2em 0;
+}
+
+.ui-tabs-vertical ol.ui-tabs-nav li a {
+    display: block;
+}
+
+.ui-tabs-vertical ol.ui-tabs-nav li.ui-tabs-active {
+    padding-bottom: 0;
+    padding-right: .1em;
+    border-right-width: 1px;
+}
+
+.hall-tab.flex-horiz > .ui-tabs-panel {
+    float: right;
+    min-width: 50%;
+    flex-grow: 1;
+}
+
+.ui-tabs-anchor {
+    width: 100%;
+}
+
+/* a page of text inside a tab (Help pages, About, league rules) */
+.article {
+    width: max(800px, 50%);
+    margin: 3em auto 20em auto;
+    font-size: 120%;
+    color: #ffffff;
+}
+
+.article li {
+    margin: 10px;
+}
+
+.article a,
+.article a:visited {
+    color: #E88104;
+}
+
+.lemph {
+    color: #009f9f;
+    font-weight: bold;
+}
+
+/* A tab's page.  Pages whose sub-tabs run down the left side carry flex-horiz as well (Help, Events, Server Info,
+   My Account); the admin page keeps its sub-tabs in a row across the top, so it is left as a block. */
 .hall-tab {
-    height: 90%;
-    background: #000000;
-    overflow:hidden;
+    background: linear-gradient(to top, #0b0b0b, #111111 80%);
+    width: calc(100% - 0.4em);
+    height: calc(100% - 1rem);
+    overflow-x: hidden;
+    gap: 5px;
+    flex-grow: 3;
 }
 
 /* Admin sub-tabs: compact left-aligned row, leftover space on the right.
@@ -325,9 +641,10 @@ button.admin-button, input.admin-button {
 }
 
 .hall-tab .ui-tabs-panel {
-    height: 85vh;
+    height: 100%;
+    box-sizing: border-box;
     overflow-x: auto;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 /*#ui-tabs-12 {
@@ -405,7 +722,7 @@ textarea, input {
 }
 
 .userList {
-    border-left: 1px solid #FFFFFF;
+    color: #ffffff;
 }
 
 tr.played {
@@ -545,10 +862,6 @@ button.draft-not-available {
 
 
 /* ===== Slice 1 / 1.1: Deck-builder + Play primary chrome (LOTR-inspired) ===== */
-
-.hall-primary-bar {
-    z-index: 5;
-}
 
 .hall-primary-actions .hall-play-button,
 a.hall-play-button,
@@ -1018,14 +1331,8 @@ body.play-flow-open {
    - gemp-lotr-async/src/main/web/hall.html (.buttons-gutter / #hall-connection / .server-time)
    - gemp-lotr-async/src/main/web/css/gemp-001/hall.css (.flex-horiz, .server-time, .hall-connection*,
      #main > .buttons-gutter centering: equal flex on left+right so buttons sit in the middle)
-   SWCCG adaptation: bar is .hall-primary-bar (JS-built); explicit "Server Time" label on the right.
+   SWCCG adaptation: the bar is hall.html's .buttons-gutter, with an explicit "Server Time" label on the right.
 */
-
-.flex-horiz {
-    display: flex;
-    flex-direction: row;
-    gap: 2px;
-}
 
 .visually-hidden {
     position: absolute !important;
@@ -1039,23 +1346,8 @@ body.play-flow-open {
     border: 0;
 }
 
-.hall-primary-bar {
-    z-index: 5;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-}
-
-/* LOTR pattern: left connection + right server-time take equal flex so center actions are truly centered */
-.hall-primary-bar > .hall-connection,
-.hall-primary-bar > .server-time {
-    flex: 1 1 0;
-    min-width: max-content;
-}
-
-.hall-primary-bar > .hall-primary-actions {
+/* the connection readout and the server clock take equal flex, so the buttons sit in the middle of the bar */
+.hall-primary-actions {
     flex: 0 1 auto;
     display: flex;
     flex-direction: row;
@@ -1066,7 +1358,6 @@ body.play-flow-open {
 }
 
 /* LOTR .server-time (gold) + SWCCG "Server Time" label */
-.hall-primary-bar .server-time,
 .server-time.hall-server-time {
     text-align: right;
     padding: 5px;
@@ -1211,10 +1502,10 @@ body.play-flow-open .ui-widget-overlay {
 }
 
 /* Flex helpers (LOTR hall.css) */
-.flex-horiz {
-    display: flex;
-    flex-direction: row;
-    gap: 2px;
+/* rows inside the Play / Join forms line their label and field up on the middle; the hall's own flex rows
+   (the chat, the main bar, the sub-bar) must keep stretching, so this is not on .flex-horiz itself */
+.play-flow .flex-horiz,
+.table-form .flex-horiz {
     align-items: center;
 }
 

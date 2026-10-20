@@ -1,0 +1,78 @@
+/* The hall's icons (ported from PlayersCouncil/gemp-lotr css/gemp-001/icons.css).
+   .custom-icon is a 20px icon in front of a label (the top tabs, the Game Hall sub-bar); .bigger-icon is the 35px
+   one on the Deck-builder / Play buttons and the Play menu.  The SVGs are drawn in black and turned white by the
+   filter, so one file serves every place an icon is used.  Credits: images/icons/credits.txt. */
+
+.custom-icon {
+	display: inline-block;
+	background-color: transparent;
+	background-repeat: no-repeat;
+	background-position: 0 0;
+	background-size: 20px;
+	border: none;
+	cursor: pointer;
+	height: 20px;
+	padding-left: 30px;      /* the label starts to the right of the icon */
+	vertical-align: middle;
+	filter: brightness(0) invert(1);
+}
+
+.bigger-icon {
+	background-color: transparent;
+	background-repeat: no-repeat;
+	background-position: 0 0;
+	background-size: 35px;
+	border: none;
+	cursor: pointer;
+	padding-left: 50px;
+	padding-top: 10px;
+	vertical-align: middle;
+	filter: brightness(0) invert(1);
+}
+
+/* a tab's icon sits inside the tab, left of its name */
+.ui-tabs .ui-tabs-nav li > a.custom-icon {
+	padding: 0.5em 1em 0.5em 35px;
+	background-position: 10px center;
+}
+
+/* ---- top tabs ---- */
+/* the crossed swords are wider than the other icons: drawn a little smaller so the tab's name clears them */
+.icon-hall {
+	background-image: url("../../images/icons/swords.svg");
+	background-size: 20px;
+}
+
+.icon-help {
+	background-image: url("../../images/icons/circle-question-solid.svg");
+}
+
+.icon-events {
+	background-image: url("../../images/icons/flag-solid.svg");
+}
+
+.icon-stats {
+	background-image: url("../../images/icons/chart-line-solid.svg");
+}
+
+.icon-account {
+	background-image: url("../../images/icons/gear-solid.svg");
+}
+
+.icon-admin {
+	background-image: url("../../images/icons/toolbox-solid.svg");
+}
+
+/* ---- the Game Hall sub-bar ---- */
+.icon-bug {
+	background-image: url("../../images/icons/bug-solid.svg");
+}
+
+.icon-wiki {
+	background-image: url("../../images/icons/book-open-solid.svg");
+}
+
+/* the Merchant is open here, so it keeps the plain shop icon (LOTR's is struck through) */
+.icon-merchant {
+	background-image: url("../../images/icons/store-solid.svg");
+}
