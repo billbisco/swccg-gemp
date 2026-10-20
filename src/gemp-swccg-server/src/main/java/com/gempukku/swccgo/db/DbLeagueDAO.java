@@ -22,9 +22,22 @@ public class DbLeagueDAO implements LeagueDAO {
     }
 
     public void addLeague(int cost, String name, String type, String clazz, String parameters, int start, int endTime, boolean allowSpectators, boolean allowTimeExtensions, boolean showPlayerNames, boolean invitationOnly, String registrationInfo, int decisionTimeoutSeconds, int timePerPlayerMinutes, LockedDeckType lockedDeckType) throws SQLException, IOException {
+        addLeague(cost, name, type, clazz, parameters, start, endTime, allowSpectators, allowTimeExtensions, showPlayerNames, invitationOnly, registrationInfo, decisionTimeoutSeconds, timePerPlayerMinutes, lockedDeckType, null);
+    }
+
+    @Override
+    public void addLeague(int cost, String name, String type, String clazz, String parameters, int start, int endTime, boolean allowSpectators, boolean allowTimeExtensions, boolean showPlayerNames, boolean invitationOnly, String registrationInfo, int decisionTimeoutSeconds, int timePerPlayerMinutes, LockedDeckType lockedDeckType, Integer scheduleId) throws SQLException, IOException {
         Connection conn = _dbAccess.getDataSource().getConnection();
         try {
-            PreparedStatement statement = conn.prepareStatement("insert into league (name, type, class, parameters, start, end, status, cost, allowSpectators, allowTimeExtensions, showPlayerNames, decisionTimeoutSeconds, timePerPlayerMinutes, invitationOnly, registrationInfo, lockedDeckType) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            // schedule_id is only named when there is one, so a hand-made league still saves on a database that has
+            // not had update_league_schedule.sql run on it yet (only the scheduler needs the column).
+            String columns = "name, type, class, parameters, start, end, status, cost, allowSpectators, allowTimeExtensions, showPlayerNames, decisionTimeoutSeconds, timePerPlayerMinutes, invitationOnly, registrationInfo, lockedDeckType";
+            String values = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
+            if (scheduleId != null) {
+                columns += ", schedule_id";
+                values += ", ?";
+            }
+            PreparedStatement statement = conn.prepareStatement("insert into league (" + columns + ") values (" + values + ")");
             try {
                 statement.setString(1, name);
                 statement.setString(2, type);
@@ -42,6 +55,8 @@ public class DbLeagueDAO implements LeagueDAO {
                 statement.setBoolean(14, invitationOnly);
                 statement.setString(15, registrationInfo);
                 statement.setString(16, lockedDeckType == null ? null : lockedDeckType.getCode());
+                if (scheduleId != null)
+                    statement.setInt(17, scheduleId);
                 statement.execute();
             } finally {
                 statement.close();
@@ -108,6 +123,11 @@ public class DbLeagueDAO implements LeagueDAO {
     }
 
     @Override
+    public List<League> loadLeaguesOfScheduleStarting(SwccgCardBlueprintLibrary library, int scheduleId, int start) throws SQLException {
+        return loadLeagues(library, EventQuery.leaguesOfScheduleStarting(scheduleId, start));
+    }
+
+    @Override
     public Map<String, Integer> getParticipantCountsForLeaguesEndingBetween(int from, int to) throws SQLException {
         EventQuery query = EventQuery.leagueParticipantCounts(from, to);
         try (Connection conn = _dbAccess.getDataSource().getConnection();
@@ -150,11 +170,17 @@ public class DbLeagueDAO implements LeagueDAO {
                     leagues.add(new League(library, rs.getInt(6), rs.getString(1), rs.getString(2), rs.getString(3),
                             rs.getString(4), rs.getInt(5), rs.getBoolean(7), rs.getBoolean(8), rs.getBoolean(9),
                             rs.getBoolean(12), rs.getString(13), rs.getInt(10), rs.getInt(11),
-                            LockedDeckType.getLockedDeckType(rs.getString(14)), rs.getInt(15), rs.getInt(16)));
+                            LockedDeckType.getLockedDeckType(rs.getString(14)), rs.getInt(15), rs.getInt(16), readScheduleId(rs, 17)));
                 }
                 return leagues;
             }
         }
+    }
+
+    /** league.schedule_id, null when the column is NULL. */
+    private static Integer readScheduleId(ResultSet rs, int column) throws SQLException {
+        int value = rs.getInt(column);
+        return rs.wasNull() ? null : value;
     }
 
     public void setStatus(League league, int newStatus) {

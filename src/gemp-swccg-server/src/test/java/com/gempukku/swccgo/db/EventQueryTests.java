@@ -115,4 +115,13 @@ public class EventQueryTests {
         Mockito.verify(statement).setInt(2, 20261101);
         Mockito.verifyNoMoreInteractions(statement);
     }
+
+    @Test
+    public void LeaguesOfScheduleStartingIsTheSchedulersIdempotencyCheck() {
+        EventQuery query = EventQuery.leaguesOfScheduleStarting(7, 20261101);
+
+        assertEquals("select " + EventQuery.LEAGUE_COLUMNS + " from league where schedule_id = ? and start = ?", query.sql());
+        assertEquals(List.of(7, 20261101), query.parameters());
+        assertTrue(EventQuery.LEAGUE_COLUMNS.endsWith("start, end, schedule_id"));
+    }
 }

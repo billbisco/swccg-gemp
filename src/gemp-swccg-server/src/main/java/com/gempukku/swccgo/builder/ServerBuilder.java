@@ -14,6 +14,8 @@ import com.gempukku.swccgo.game.SwccgCardBlueprintLibrary;
 import com.gempukku.swccgo.game.SwccgoServer;
 import com.gempukku.swccgo.game.formats.SwccgoFormatLibrary;
 import com.gempukku.swccgo.hall.HallServer;
+import com.gempukku.swccgo.league.LeagueFactory;
+import com.gempukku.swccgo.league.LeagueScheduleService;
 import com.gempukku.swccgo.league.LeagueService;
 import com.gempukku.swccgo.merchant.MerchantService;
 import com.gempukku.swccgo.packagedProduct.DraftPackStorage;
@@ -72,6 +74,24 @@ public class ServerBuilder {
                         extract(objectMap, CollectionsManager.class),
                         extract(objectMap, SoloDraftDefinitions.class)));
 
+        // League creation (the League Admin form and the league schedules both go through the factory) and the
+        // schedules that create leagues on their own
+        objectMap.put(LeagueFactory.class,
+                new LeagueFactory(
+                        extract(objectMap, SwccgCardBlueprintLibrary.class),
+                        extract(objectMap, SwccgoFormatLibrary.class),
+                        extract(objectMap, SoloDraftDefinitions.class),
+                        extract(objectMap, LeagueDAO.class),
+                        extract(objectMap, LeagueService.class)));
+
+        objectMap.put(LeagueScheduleService.class,
+                new LeagueScheduleService(
+                        extract(objectMap, LeagueScheduleDAO.class),
+                        extract(objectMap, LeagueFactory.class),
+                        extract(objectMap, LeagueService.class),
+                        extract(objectMap, LeagueDAO.class),
+                        extract(objectMap, SwccgCardBlueprintLibrary.class)));
+
         PasswordHasher passwordHasher = new PasswordHasher(PasswordSettings.iterations());
         objectMap.put(AuthService.class,
                 new AuthService(
@@ -112,7 +132,8 @@ public class ServerBuilder {
                         extract(objectMap, TournamentDAO.class),
                         extract(objectMap, SwccgCardBlueprintLibrary.class),
                         extract(objectMap, SwccgoFormatLibrary.class),
-                        extract(objectMap, SoloDraftDefinitions.class)));
+                        extract(objectMap, SoloDraftDefinitions.class),
+                        extract(objectMap, LeagueScheduleService.class)));
 
         EventHistoryService eventHistoryService = new EventHistoryService(
                 extract(objectMap, LeagueDAO.class),
@@ -156,7 +177,8 @@ public class ServerBuilder {
                         tournamentPrizeSchemeRegistry,
                         pairingMechanismRegistry,
                         extract(objectMap, PackagedProductStorage.class),
-                        extract(objectMap, SoloDraftDefinitions.class)
+                        extract(objectMap, SoloDraftDefinitions.class),
+                        extract(objectMap, LeagueScheduleService.class)
                 ));
     }
 

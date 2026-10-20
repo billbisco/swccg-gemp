@@ -12,6 +12,16 @@ import java.util.Map;
 public interface LeagueDAO {
     void addLeague(int cost, String name, String type, String clazz, String parameters, int start, int endTime, boolean allowSpectators, boolean allowTimeExtensions, boolean showPlayerNames, boolean invitationOnly, String registrationInfo, int decisionTimeoutSeconds, int timePerPlayerMinutes, LockedDeckType lockedDeckType) throws SQLException, IOException;
 
+    /**
+     * As {@link #addLeague(int, String, String, String, String, int, int, boolean, boolean, boolean, boolean, String, int, int, LockedDeckType)},
+     * recording which league schedule created the league.
+     * @param scheduleId the league_schedule row on whose behalf the league is created, or null for a hand-made league
+     */
+    void addLeague(int cost, String name, String type, String clazz, String parameters, int start, int endTime, boolean allowSpectators, boolean allowTimeExtensions, boolean showPlayerNames, boolean invitationOnly, String registrationInfo, int decisionTimeoutSeconds, int timePerPlayerMinutes, LockedDeckType lockedDeckType, Integer scheduleId) throws SQLException, IOException;
+
+    /** The leagues the given schedule created with that start day ({@code yyyyMMdd}); normally none or one. */
+    List<League> loadLeaguesOfScheduleStarting(SwccgCardBlueprintLibrary library, int scheduleId, int start) throws SQLException, IOException;
+
     List<League> loadActiveLeagues(SwccgCardBlueprintLibrary library, int currentTime) throws SQLException, IOException;
 
     void setStatus(League league, int newStatus);
