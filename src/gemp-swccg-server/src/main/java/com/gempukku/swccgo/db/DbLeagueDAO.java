@@ -10,7 +10,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DbLeagueDAO implements LeagueDAO {
     private DbAccess _dbAccess;
@@ -84,6 +86,74 @@ public class DbLeagueDAO implements LeagueDAO {
             }
         } finally {
             conn.close();
+        }
+    }
+
+    // ---- the Events tab (calendar and completed-event browser) ----
+
+    @Override
+    public League loadLeagueByType(SwccgCardBlueprintLibrary library, String type) throws SQLException {
+        List<League> leagues = loadLeagues(library, EventQuery.leagueByType(type));
+        return leagues.isEmpty() ? null : leagues.get(0);
+    }
+
+    @Override
+    public List<League> loadLeaguesOverlapping(SwccgCardBlueprintLibrary library, int from, int to) throws SQLException {
+        return loadLeagues(library, EventQuery.leaguesOverlapping(from, to));
+    }
+
+    @Override
+    public List<League> loadLeaguesEndingBetween(SwccgCardBlueprintLibrary library, int from, int to) throws SQLException {
+        return loadLeagues(library, EventQuery.leaguesEndingBetween(from, to));
+    }
+
+    @Override
+    public Map<String, Integer> getParticipantCountsForLeaguesEndingBetween(int from, int to) throws SQLException {
+        EventQuery query = EventQuery.leagueParticipantCounts(from, to);
+        try (Connection conn = _dbAccess.getDataSource().getConnection();
+             PreparedStatement statement = conn.prepareStatement(query.sql())) {
+            query.bind(statement);
+            try (ResultSet rs = statement.executeQuery()) {
+                Map<String, Integer> counts = new HashMap<>();
+                while (rs.next())
+                    counts.put(rs.getString(1), rs.getInt(2));
+                return counts;
+            }
+        }
+    }
+
+    @Override
+    public List<String> getLeagueEndMonths(int before) throws SQLException {
+        EventQuery query = EventQuery.leagueEndMonths(before);
+        try (Connection conn = _dbAccess.getDataSource().getConnection();
+             PreparedStatement statement = conn.prepareStatement(query.sql())) {
+            query.bind(statement);
+            try (ResultSet rs = statement.executeQuery()) {
+                List<String> months = new ArrayList<>();
+                while (rs.next()) {
+                    int yyyymm = rs.getInt(1);
+                    months.add(String.format("%04d-%02d", yyyymm / 100, yyyymm % 100));
+                }
+                return months;
+            }
+        }
+    }
+
+    /** Runs a query selecting {@link EventQuery#LEAGUE_COLUMNS} and maps every row to a League (with its stored start / end). */
+    private List<League> loadLeagues(SwccgCardBlueprintLibrary library, EventQuery query) throws SQLException {
+        try (Connection conn = _dbAccess.getDataSource().getConnection();
+             PreparedStatement statement = conn.prepareStatement(query.sql())) {
+            query.bind(statement);
+            try (ResultSet rs = statement.executeQuery()) {
+                List<League> leagues = new ArrayList<>();
+                while (rs.next()) {
+                    leagues.add(new League(library, rs.getInt(6), rs.getString(1), rs.getString(2), rs.getString(3),
+                            rs.getString(4), rs.getInt(5), rs.getBoolean(7), rs.getBoolean(8), rs.getBoolean(9),
+                            rs.getBoolean(12), rs.getString(13), rs.getInt(10), rs.getInt(11),
+                            LockedDeckType.getLockedDeckType(rs.getString(14)), rs.getInt(15), rs.getInt(16)));
+                }
+                return leagues;
+            }
         }
     }
 

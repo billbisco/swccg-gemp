@@ -24,9 +24,19 @@ public class League {
     private boolean _invitationOnly;
     private String _registrationInfo;
     private LockedDeckType _lockedDeckType;
+    private int _start;
+    private int _end;
 
 
     public League(SwccgCardBlueprintLibrary library, int cost, String name, String type, String clazz, String parameters, int status, boolean allowSpectators, boolean allowTimeExtensions, boolean showPlayerNames, boolean invitationOnly, String registrationInfo, int decisionTimeoutSeconds, int timePerPlayerMinutes, LockedDeckType lockedDeckType) {
+        this(library, cost, name, type, clazz, parameters, status, allowSpectators, allowTimeExtensions, showPlayerNames, invitationOnly, registrationInfo, decisionTimeoutSeconds, timePerPlayerMinutes, lockedDeckType, 0, 0);
+    }
+
+    /**
+     * @param start the league's stored start day ({@code yyyyMMdd}), 0 when not read
+     * @param end   the league's stored end day ({@code yyyyMMdd}), 0 when not read
+     */
+    public League(SwccgCardBlueprintLibrary library, int cost, String name, String type, String clazz, String parameters, int status, boolean allowSpectators, boolean allowTimeExtensions, boolean showPlayerNames, boolean invitationOnly, String registrationInfo, int decisionTimeoutSeconds, int timePerPlayerMinutes, LockedDeckType lockedDeckType, int start, int end) {
         _library = library;
         _cost = cost;
         _name = name;
@@ -42,6 +52,27 @@ public class League {
         _invitationOnly = invitationOnly;
         _registrationInfo = registrationInfo;
         _lockedDeckType = lockedDeckType;
+        _start = start;
+        _end = end;
+    }
+
+    /** The stored start day ({@code yyyyMMdd}) of the league row, or 0 when it was not read.  The series carry the dates the hall shows. */
+    public int getStart() {
+        return _start;
+    }
+
+    /** The stored end day ({@code yyyyMMdd}) of the league row, or 0 when it was not read. */
+    public int getEnd() {
+        return _end;
+    }
+
+    public String getParameters() {
+        return _parameters;
+    }
+
+    /** The LeagueData class that interprets the parameters (constructed, sealed or solo draft). */
+    public String getLeagueClass() {
+        return _clazz;
     }
 
     public int getCost() {
