@@ -15,12 +15,15 @@ import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.GameUtils;
 import com.gempukku.swccgo.logic.TriggerConditions;
-import com.gempukku.swccgo.logic.actions.OptionalGameTextTriggerAction;
+import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
 import com.gempukku.swccgo.logic.actions.PlayCardAction;
+import com.gempukku.swccgo.logic.effects.LoseForceEffect;
+import com.gempukku.swccgo.logic.effects.LoseForceTargetingCardEffect;
 import com.gempukku.swccgo.logic.effects.ReduceForceLossEffect;
 import com.gempukku.swccgo.logic.modifiers.MayNotPlayModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.timing.EffectResult;
+import com.gempukku.swccgo.logic.timing.results.AboutToLoseForceNotFromBattleDamageResult;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -62,15 +65,30 @@ public class Card1281_033 extends AbstractImmediateEffect {
     }
 
     @Override
-    protected List<OptionalGameTextTriggerAction> getGameTextOptionalAfterTriggers(final String playerId, SwccgGame game, EffectResult effectResult, final PhysicalCard self, int gameTextSourceCardId) {
+    protected List<RequiredGameTextTriggerAction> getGameTextRequiredAfterTriggers(SwccgGame game, EffectResult effectResult, final PhysicalCard self, int gameTextSourceCardId) {
         GameTextActionId gameTextActionId = GameTextActionId.LEGACY__REDEEMED_APPRENTICE__REDUCE_FORCE_LOSS;
+        String playerId = self.getOwner();
+        // Whenever you must lose Force from a [Virtual Block 4] objective targeting your non-Jedi character, reduce that loss by 1.
         if (TriggerConditions.isAboutToLoseForceFromCard(game, effectResult, playerId, Filters.and(Filters.Objective, Icon.LEGACY_BLOCK_4))
+                && isLossTargetingYourNonJediCharacter(game, effectResult, playerId)
                 && GameConditions.canReduceForceLoss(game)) {
-            OptionalGameTextTriggerAction action = new OptionalGameTextTriggerAction(self, playerId, gameTextSourceCardId, gameTextActionId);
+            RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId, gameTextActionId);
             action.setText("Reduce Force loss by 1");
             action.appendEffect(new ReduceForceLossEffect(action, playerId, 1));
             return Collections.singletonList(action);
         }
         return null;
+    }
+
+    private static boolean isLossTargetingYourNonJediCharacter(SwccgGame game, EffectResult effectResult, String playerId) {
+        if (!(effectResult instanceof AboutToLoseForceNotFromBattleDamageResult))
+            return false;
+        LoseForceEffect loseForceEffect = ((AboutToLoseForceNotFromBattleDamageResult) effectResult).getLoseForceEffect();
+        if (!(loseForceEffect instanceof LoseForceTargetingCardEffect))
+            return false;
+        PhysicalCard targetedCard = ((LoseForceTargetingCardEffect) loseForceEffect).getTargetedCard();
+        return targetedCard != null
+                && playerId.equals(targetedCard.getOwner())
+                && Filters.and(Filters.character, Filters.not(Filters.Jedi)).accepts(game, targetedCard);
     }
 }

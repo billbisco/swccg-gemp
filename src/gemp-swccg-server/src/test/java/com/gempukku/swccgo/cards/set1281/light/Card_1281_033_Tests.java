@@ -46,6 +46,29 @@ public class Card_1281_033_Tests {
         );
     }
 
+    protected VirtualTableScenario GetHuntDownScenario() {
+        return new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("redeemed", "1281_33");
+                    put("obiwan", "1_21");
+                }},
+                new HashMap<>() {{
+                    put("hunt", "1240_58"); // Hunt Down And Destroy The Jedi (V), a [Virtual Block 4] objective
+                    put("vader", "108_006"); // permanent weapon: Vader's Lightsaber
+                    put("sniper", "2_139");
+                    put("corridor", "1_284"); // Death Star: Detention Block Corridor (not a battleground)
+                }},
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+    }
+
     @Test
     public void RedeemedApprenticeStatsIconsAndKeywordsAreCorrect() {
         var scn = GetScenario();
@@ -127,5 +150,76 @@ public class Card_1281_033_Tests {
         assertFalse(scn.LSCardPlayAvailable(nabrun));
         scn.SkipToDSTurn(Phase.MOVE);
         assertFalse(scn.DSCardPlayAvailable(elis));
+    }
+
+    /**
+     * During DS's control phase, Vader (via Sniper) hits the target with Vader's Lightsaber. A character hit outside
+     * a battle is lost at once, so Hunt Down And Destroy The Jedi (V) makes LS lose Force: LS must choose exactly
+     * expectedLoss cards and its Life Force drops by that much.
+     */
+    private void assertLsLosesWhenVaderHitsAndTargetLeavesTable(boolean redeemedOnTable, String targetKey, int expectedLoss) {
+        var scn = GetHuntDownScenario();
+        var redeemed = scn.GetLSCard("redeemed");
+        var target = targetKey == null ? scn.GetLSFiller(1) : scn.GetLSCard(targetKey);
+        var hunt = scn.GetDSCard("hunt");
+        var vader = scn.GetDSCard("vader");
+        var sniper = scn.GetDSCard("sniper");
+        var site = scn.GetDSCard("corridor");
+        scn.MoveOutOfPlay(hunt);
+
+        scn.StartGame();
+        // Not a battleground site, so the objective stays on its front side (no flip mid-test).
+        scn.MoveLocationToTable(site);
+        scn.MoveCardsToDSSideOfTable(hunt);
+        hunt.setObjectiveDeploymentComplete(true);
+        if (redeemedOnTable) {
+            scn.MoveCardsToLSSideOfTable(redeemed);
+        }
+        // A second Light Side character, so the Sniper target is a real choice.
+        scn.MoveCardsToLocation(site, vader, target, scn.GetLSFiller(2));
+        scn.MoveCardsToDSHand(sniper);
+        scn.SkipToPhase(Phase.CONTROL);
+        scn.PrepareDSDestiny(6);
+        scn.PrepareDSDestiny(7);
+
+        int lifeForceBefore = scn.GetLSLifeForceRemaining();
+        scn.DSPlayCard(sniper);
+        scn.DSChooseCard(vader);
+        scn.LSPass(); // Playing Sniper - Optional responses
+        scn.DSPass();
+        scn.DSChooseCard(target);
+        scn.PassAllResponses();
+        // Two required responses to the hit: the objective's 'hit character leaves table' trigger and the rule that
+        // loses a character hit outside battle (no action text). DS resolves the objective's trigger first.
+        var requiredResponses = scn.GetDSAvailableActions();
+        assertEquals(2, requiredResponses.size());
+        assertTrue(requiredResponses.contains(null));
+        scn.DSDecided(String.valueOf(requiredResponses.indexOf(null) == 0 ? 1 : 0));
+        scn.PassAllResponses();
+
+        assertInZone(Zone.LOST_PILE, target);
+        assertEquals(Title.Hunt_Down_And_Destroy_The_Jedi, hunt.getBlueprint().getTitle());
+        for (int i = 0; i < expectedLoss; ++i) {
+            assertTrue(scn.LSDecisionAvailable("Choose Force to lose"));
+            scn.LSChooseCard(scn.GetTopOfLSReserveDeck());
+            scn.PassAllResponses();
+        }
+        assertFalse(scn.LSDecisionAvailable("Choose Force to lose"));
+        assertEquals(expectedLoss, lifeForceBefore - scn.GetLSLifeForceRemaining());
+    }
+
+    @Test
+    public void HuntDownVaderLightsaberHitNonJediLeavesTableLosesTwoWithoutRedeemedApprentice() {
+        assertLsLosesWhenVaderHitsAndTargetLeavesTable(false, null, 2);
+    }
+
+    @Test
+    public void RedeemedApprenticeReducesHuntDownLossForYourNonJediCharacterBy1() {
+        assertLsLosesWhenVaderHitsAndTargetLeavesTable(true, null, 1);
+    }
+
+    @Test
+    public void RedeemedApprenticeDoesNotReduceHuntDownLossForYourJedi() {
+        assertLsLosesWhenVaderHitsAndTargetLeavesTable(true, "obiwan", 2);
     }
 }
