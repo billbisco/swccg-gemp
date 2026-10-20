@@ -11,7 +11,6 @@ import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.common.Zone;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
-import com.gempukku.swccgo.game.PhysicalCardImpl;
 import com.gempukku.swccgo.logic.modifiers.ModifyGameTextType;
 import org.junit.Test;
 
@@ -34,60 +33,9 @@ public class Card_1281_044_Tests {
 
         @Override
         public void Setup(VirtualTableScenario scn) {
-            if (scn.LSDecisionAvailable("starting")) {
-                scn.LSChooseCard(scn.GetLSCard("infiltration"));
-            }
-            for (int i = 0; i < 30; i++) {
-                boolean progressed = false;
-                if (scn.LSDecisionAvailable("Nar Shaddaa")
-                        || scn.LSDecisionAvailable("Undercity")
-                        || scn.LSDecisionAvailable("Scoundrel's Luck")
-                        || scn.LSDecisionAvailable("Choose card to deploy from Reserve Deck")
-                        || scn.LSDecisionAvailable("Choose cards to stack")
-                        || scn.LSDecisionAvailable("Stack three")) {
-                    PhysicalCardImpl narshaddaa = scn.GetLSCard("narshaddaa");
-                    PhysicalCardImpl undercity = scn.GetLSCard("undercity");
-                    PhysicalCardImpl luck = scn.GetLSCard("luck");
-                    PhysicalCardImpl bravado = scn.GetLSCard("bravado");
-                    PhysicalCardImpl charm = scn.GetLSCard("charm");
-                    PhysicalCardImpl ingenuity = scn.GetLSCard("ingenuity");
-                    if (scn.LSHasCardChoiceAvailable(narshaddaa)) {
-                        scn.LSChooseCard(narshaddaa);
-                        progressed = true;
-                    }
-                    else if (scn.LSHasCardChoiceAvailable(undercity)) {
-                        scn.LSChooseCard(undercity);
-                        progressed = true;
-                    }
-                    else if (scn.LSHasCardChoiceAvailable(luck)) {
-                        scn.LSChooseCard(luck);
-                        progressed = true;
-                    }
-                    else if (scn.LSHasCardChoicesAvailable(bravado, charm, ingenuity)) {
-                        scn.LSChooseCards(bravado, charm, ingenuity);
-                        progressed = true;
-                    }
-                    else if (scn.LSHasCardChoiceAvailable(bravado)) {
-                        scn.LSChooseCard(bravado);
-                        progressed = true;
-                    }
-                    else if (scn.LSHasCardChoiceAvailable(charm)) {
-                        scn.LSChooseCard(charm);
-                        progressed = true;
-                    }
-                    else if (scn.LSHasCardChoiceAvailable(ingenuity)) {
-                        scn.LSChooseCard(ingenuity);
-                        progressed = true;
-                    }
-                }
-                else if (scn.LSDecisionAvailable("On which side")) {
-                    scn.LSChoose("Left");
-                    progressed = true;
-                }
-                if (!progressed) {
-                    break;
-                }
-            }
+            // Infiltration's starting deployments (Nar Shaddaa, Undercity, Scoundrel's Luck and its three stacked
+            // cards) each have a single valid choice in these decks, so the game resolves them with no decision.
+            assertFalse(scn.LSDecisionAvailable("Choose"));
         }
     };
 
