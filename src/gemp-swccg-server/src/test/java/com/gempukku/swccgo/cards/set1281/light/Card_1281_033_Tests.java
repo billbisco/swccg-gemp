@@ -222,4 +222,36 @@ public class Card_1281_033_Tests {
     public void RedeemedApprenticeDoesNotReduceHuntDownLossForYourJedi() {
         assertLsLosesWhenVaderHitsAndTargetLeavesTable(true, "obiwan", 2);
     }
+
+    @Test
+    public void RedeemedApprenticeDeploysAfterOpponentDrawsDestinyForElisHelrot() {
+        var scn = GetScenario();
+        var redeemed = scn.GetLSCard("redeemed");
+        var elis = scn.GetDSCard("elis");
+        var bast = scn.GetDSCard("bast");
+        var dsSite = scn.GetDSStartingLocation();
+        var lsSite = scn.GetLSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(dsSite, bast);
+        scn.MoveCardsToLSHand(redeemed);
+        scn.MoveCardsToDSHand(elis);
+        scn.DSActivateForceCheat(8);
+        scn.SkipToDSTurn(Phase.MOVE);
+        scn.PrepareDSDestiny(2);
+
+        assertTrue(scn.DSCardPlayAvailable(elis));
+        scn.DSPlayCard(elis);
+        scn.DSChooseCard(dsSite);
+        scn.DSChooseCard(lsSite);
+        scn.DSChooseCard(bast);
+        scn.PassResponses("COST_TO_DRAW_DESTINY_CARD");
+        scn.PassResponses("ABOUT_TO_DRAW_DESTINY_CARD");
+
+        assertTrue(scn.LSDecisionAvailable("for destiny"));
+        assertTrue(scn.GetLSAvailableActions().contains("Deploy due to Redeemed Apprentice"));
+        scn.LSChooseAction("Deploy due to");
+        scn.PassAllResponses();
+        assertInZone(Zone.SIDE_OF_TABLE, redeemed);
+    }
 }
