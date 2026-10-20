@@ -167,7 +167,7 @@ var GameHistoryPageUI = Class.extend({
         if (params.page && params.page > 1)
             query.page = params.page;
         var q = GempLinks.buildQuery(query);
-        return q ? "#history?" + q : "#history";
+        return q ? "#account/history?" + q : "#account/history";
     },
 
     sameAs: function (params) {
