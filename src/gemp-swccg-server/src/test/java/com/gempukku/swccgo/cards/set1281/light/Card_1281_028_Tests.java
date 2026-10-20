@@ -32,9 +32,13 @@ public class Card_1281_028_Tests {
                     put("rest", "1281_39");
                     put("street", "1281_40");
                     put("narshaddaa", "200_58");
+                    put("cantina", "1_128"); // Tatooine: Cantina
+                    put("db94", "1_129"); // Tatooine: Docking Bay 94 (adjacent to the Cantina here)
                 }},
                 new HashMap<>() {{
                     put("trooper", "1_194");
+                    put("zuckuss", "4_107"); // may move for free as a 'react'
+                    put("saber", "1_324"); // Vader's Lightsaber: deploys only on Vader
                 }},
                 10, 10,
                 StartingSetup.DefaultLSGroundLocation,
@@ -144,5 +148,104 @@ public class Card_1281_028_Tests {
 
         scn.SkipToLSTurn(Phase.CONTROL);
         assertFalse(scn.LSCardActionAvailable(kyle, "Make a regular move"));
+    }
+
+    private void KyleOrControlUsesStolenWeapon(String userKey, boolean expectFire) {
+        var scn = GetScenario();
+        var user = scn.GetLSCard(userKey);
+        var saber = scn.GetDSCard("saber");
+        var trooper = scn.GetDSCard("trooper");
+        var site = scn.GetLSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, user, trooper);
+        scn.AttachCardsTo(user, saber);
+        saber.setOwner(scn.LS); // 'stolen' by the Light Side
+        assertTrue(saber.isStolen());
+        scn.LSActivateForceCheat(2);
+        scn.LSStartBattleAndSkipToWeaponsSegment(site);
+
+        assertTrue(scn.AwaitingLSWeaponsSegmentActions());
+        assertTrue(scn.IsAttachedTo(user, saber));
+        assertEquals(expectFire, scn.LSCardActionAvailable(saber, "Fire"));
+    }
+
+    @Test
+    public void KyleKatarnMayUseAnyStolenWeapon() {
+        KyleOrControlUsesStolenWeapon("kyle", true);
+    }
+
+    @Test
+    public void OtherCharactersMayNotUseThatStolenWeapon() {
+        KyleOrControlUsesStolenWeapon("lando", false);
+    }
+
+    private void OpponentReactsToForceDrainAtSite(String drainerKey, boolean expectReact) {
+        var scn = GetScenario();
+        var drainer = scn.GetLSCard(drainerKey);
+        var cantina = scn.GetLSCard("cantina");
+        var db94 = scn.GetLSCard("db94");
+        var zuckuss = scn.GetDSCard("zuckuss");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(cantina);
+        scn.MoveLocationToTable(db94);
+        scn.MoveCardsToLocation(cantina, drainer);
+        scn.MoveCardsToLocation(db94, zuckuss);
+        scn.SkipToLSTurn(Phase.CONTROL);
+
+        assertTrue(scn.LSForceDrainAvailable(cantina));
+        scn.LSForceDrainAt(cantina);
+        // DS's response window to the Force drain (worded differently when DS has no actions).
+        assertTrue(scn.DSDecisionAvailable("Optional responses"));
+        assertEquals(expectReact, scn.DSCardActionAvailable(zuckuss, "react"));
+    }
+
+    @Test
+    public void OpponentMayReactToAForceDrainAtASiteWithoutKyle() {
+        OpponentReactsToForceDrainAtSite("lando", true);
+    }
+
+    @Test
+    public void KyleKatarnOpponentMayNotReactToSameSite() {
+        OpponentReactsToForceDrainAtSite("kyle", false);
+    }
+
+    /** Battle initiated at Docking Bay 94; Zuckuss (may move as a 'react') waits at the adjacent Cantina. */
+    private VirtualTableScenario BattleAdjacentToZuckuss(String bystanderKey) {
+        var scn = GetScenario();
+        var bystander = bystanderKey == null ? scn.GetLSFiller(1) : scn.GetLSCard(bystanderKey);
+        var lando = scn.GetLSCard("lando");
+        var cantina = scn.GetLSCard("cantina");
+        var db94 = scn.GetLSCard("db94");
+        var zuckuss = scn.GetDSCard("zuckuss");
+        var trooper = scn.GetDSCard("trooper");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(cantina);
+        scn.MoveLocationToTable(db94);
+        scn.MoveCardsToLocation(cantina, bystander, zuckuss);
+        scn.MoveCardsToLocation(db94, lando, trooper);
+        scn.SkipToLSTurn(Phase.BATTLE);
+
+        scn.LSInitiateBattle(db94);
+        assertTrue(scn.IsBattleStarted());
+        return scn;
+    }
+
+    @Test
+    public void OpponentMayReactFromASiteWithoutKyle() {
+        var scn = BattleAdjacentToZuckuss(null);
+        assertTrue(scn.DSDecisionAvailable("Battle just initiated"));
+        assertTrue(scn.DSCardActionAvailable(scn.GetDSCard("zuckuss"), "react"));
+    }
+
+    @Test
+    public void KyleKatarnOpponentMayNotReactFromSameSite() {
+        var scn = BattleAdjacentToZuckuss("kyle");
+        // DS has no 'react' (its only response), so the battle goes straight on to the weapons segment.
+        assertFalse(scn.DSDecisionAvailable("Battle just initiated"));
+        assertTrue(scn.AwaitingLSWeaponsSegmentActions());
+        assertEquals(scn.GetLSCard("cantina"), scn.GetDSCard("zuckuss").getAtLocation());
     }
 }
