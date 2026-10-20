@@ -7,6 +7,8 @@ import com.gempukku.swccgo.game.Player;
 import com.gempukku.swccgo.game.SwccgCardBlueprintLibrary;
 import com.gempukku.swccgo.game.SwccgFormat;
 import com.gempukku.swccgo.game.formats.SwccgoFormatLibrary;
+import com.gempukku.swccgo.league.LeagueSchedule;
+import com.gempukku.swccgo.league.LeagueScheduleService;
 import com.gempukku.swccgo.league.LeagueService;
 import com.gempukku.swccgo.league.LeagueSeriesData;
 import com.gempukku.swccgo.tournament.Tournament;
@@ -29,9 +31,9 @@ import java.util.Set;
  * assembly lives here, in the server module, so it can be unit-tested (the async module has no test tree).
  * <p>
  * Leagues are every league (running or over) whose span touches the range, with their series; tournaments are the
- * tournaments that started in the range, each a one-day event with its start time.  This server has no scheduled
- * tournaments or league schedules, so there are no "projected" events; {@code eventAdmin} is still reported so the
- * client is ready for them.
+ * tournaments that started in the range, each a one-day event with its start time; and, for league admins only, the
+ * leagues the enabled league schedules are projected to create ("Scheduled (not yet created)", kind
+ * {@code projected}).  This server has no scheduled tournaments.
  */
 public class CalendarService {
     private static final Logger _log = LogManager.getLogger(CalendarService.class);
@@ -45,16 +47,23 @@ public class CalendarService {
     private final SwccgCardBlueprintLibrary _library;
     private final SwccgoFormatLibrary _formatLibrary;
     private final SoloDraftDefinitions _soloDraftDefinitions;
+    private final LeagueScheduleService _leagueScheduleService;
+
+    /** How far before the range a projected league may start and still be shown (it may still be running). */
+    static final int PROJECTION_LOOK_BACK_DAYS = 120;
+    /** Projected occurrences per schedule per request, at most. */
+    static final int PROJECTION_LIMIT = 50;
 
     public CalendarService(LeagueDAO leagueDao, LeagueService leagueService, TournamentDAO tournamentDao,
                            SwccgCardBlueprintLibrary library, SwccgoFormatLibrary formatLibrary,
-                           SoloDraftDefinitions soloDraftDefinitions) {
+                           SoloDraftDefinitions soloDraftDefinitions, LeagueScheduleService leagueScheduleService) {
         _leagueDao = leagueDao;
         _leagueService = leagueService;
         _tournamentDao = tournamentDao;
         _library = library;
         _formatLibrary = formatLibrary;
         _soloDraftDefinitions = soloDraftDefinitions;
+        _leagueScheduleService = leagueScheduleService;
     }
 
     /** A day in yyyy-MM-dd form, or null when the text is missing or malformed (the handler's 400). */
@@ -91,6 +100,8 @@ public class CalendarService {
         var events = new ArrayList<Map<String, Object>>();
         addLeagues(events, from, to, viewer);
         addTournaments(events, from, to, viewer);
+        if (eventAdmin)
+            addProjectedLeagues(events, from, to);
 
         var result = new LinkedHashMap<String, Object>();
         result.put("from", from.toString());
@@ -139,7 +150,7 @@ public class CalendarService {
             event.put("inviteOnly", league.getInvitationOnly());
             event.put("cost", league.getCost());
             event.put("description", null);
-            event.put("scheduleId", null);
+            event.put("scheduleId", league.getScheduleId());
             event.put("joined", isInLeague(league, viewer));
 
             var serieList = new ArrayList<Map<String, Object>>();
@@ -202,6 +213,58 @@ public class CalendarService {
             event.put("joined", played.contains(tournament.getTournamentId()));
             event.put("queueOpen", false);
             events.add(event);
+        }
+    }
+
+    /**
+     * The leagues the enabled schedules would create whose span touches the range (LOTR CalendarRequestHandler's
+     * addProjectedLeagues).  Nothing is created; a projection whose definition is broken carries {@code error}.
+     */
+    private void addProjectedLeagues(List<Map<String, Object>> events, LocalDate from, LocalDate to) {
+        if (_leagueScheduleService == null)
+            return;
+        List<LeagueSchedule> schedules;
+        try {
+            schedules = _leagueScheduleService.getSchedules();
+        } catch (Exception exp) {
+            _log.warn("Could not load the league schedules for the calendar: " + exp.getMessage());
+            return;
+        }
+        for (LeagueSchedule schedule : schedules) {
+            if (!schedule.isEnabled())
+                continue;
+            // A projected league that started before the range but is still running should show too
+            LocalDate lookBack = from.minusDays(PROJECTION_LOOK_BACK_DAYS);
+            for (LeagueScheduleService.ProjectedEvent projected : _leagueScheduleService.project(schedule, lookBack, to, PROJECTION_LIMIT)) {
+                if (projected.end().isBefore(from))
+                    continue;
+                var event = new LinkedHashMap<String, Object>();
+                event.put("kind", "projected");
+                event.put("id", schedule.getId() + ":" + projected.eventIndex() + ":" + projected.start());
+                event.put("scheduleId", schedule.getId());
+                event.put("scheduleName", schedule.getName());
+                event.put("eventIndex", projected.eventIndex());
+                event.put("eventName", projected.eventName());
+                event.put("name", projected.leagueName());
+                event.put("leagueType", schedule.getKind() == null ? null : kindLabel(schedule.getKind().name()));
+                event.put("start", projected.start().toString());
+                event.put("end", projected.end().toString());
+                event.put("createdOn", projected.createdOn().toString());
+                event.put("error", projected.error());
+                events.add(event);
+            }
+        }
+    }
+
+    /** CONSTRUCTED / SEALED / SOLODRAFT as the league events spell their kind ("Constructed", "Sealed", "Solo draft"). */
+    static String kindLabel(String kind) {
+        switch (kind) {
+            case "SEALED":
+                return "Sealed";
+            case "SOLODRAFT":
+                return "Solo draft";
+            default:
+                return "Constructed";
         }
     }
 
