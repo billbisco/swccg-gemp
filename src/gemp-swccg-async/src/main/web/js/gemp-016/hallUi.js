@@ -3684,7 +3684,6 @@ var GempSwccgHallUI = Class.extend({
             return;
         var text = this.formatServerEpoch(Date.now() + this.serverClockOffset);
         this.lastServerTime = text;
-        $(".serverTime").text("Server time: " + text);
         if (this.serverTimeValue)
             this.serverTimeValue.html(text.replace(" ", "<br>"));
     },
