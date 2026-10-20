@@ -95,7 +95,7 @@ public class Card3_140 extends AbstractUsedInterrupt {
                                                                                 if (totalToCheck > 6) {
                                                                                     Collection<PhysicalCard> characters = Filters.filterActive(game, self, Filters.and(Filters.opponents(self), Filters.character, Filters.atSameSite(finalTarget)));
                                                                                     if (!characters.isEmpty()) {
-                                                                                        PhysicalCard randomCharacter = GameUtils.getRandomCards(characters, 1).get(0);
+                                                                                        PhysicalCard randomCharacter = GameUtils.getRandomCards(game, characters, 1).get(0);
                                                                                         gameState.sendMessage("Result: Succeeded (and random character " + GameUtils.getCardLink(randomCharacter) + " lost)");
                                                                                         gameState.cardAffectsCard(playerId, self, randomCharacter);
                                                                                         action.appendEffect(

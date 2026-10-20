@@ -136,7 +136,7 @@ public class Card2_054 extends AbstractUsedInterrupt {
                                             PhysicalCard finalBlasterRack = action.getPrimaryTargetCard(targetGroupId);
 
                                             // Perform result(s)
-                                            Collection<PhysicalCard> randomCards = GameUtils.getRandomCards(game.getGameState().getStackedCards(finalBlasterRack), 1);
+                                            Collection<PhysicalCard> randomCards = GameUtils.getRandomCards(game, game.getGameState().getStackedCards(finalBlasterRack), 1);
                                             if (!randomCards.isEmpty()) {
                                                 // Perform result(s)
                                                 action.appendEffect(

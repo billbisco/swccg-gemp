@@ -1,13 +1,14 @@
 package com.gempukku.swccgo.logic.timing;
 
-import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Map;
 
 /**
  * Defines data that is used while creating a snapshot.
  */
 public class SnapshotData {
-    private Map<Snapshotable, Snapshotable> snapshotableMap = new HashMap<Snapshotable, Snapshotable>();
+    // Identity: a copy is put in the map before its fields (and so its hashCode) are set.
+    private Map<Snapshotable, Snapshotable> snapshotableMap = new IdentityHashMap<Snapshotable, Snapshotable>();
 
     /**
      * Gets the snapshotable to store in the snapshot given a snapshotable. This will return the same snapshotable

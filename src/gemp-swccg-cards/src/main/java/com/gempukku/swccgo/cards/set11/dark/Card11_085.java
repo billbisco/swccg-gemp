@@ -102,7 +102,7 @@ public class Card11_085 extends AbstractUsedOrLostInterrupt {
                                             PhysicalCard finalPodracer = action.getPrimaryTargetCard(targetGroupId);
                                             // Perform result(s)
                                             if (finalPodracer != null) {
-                                                List<PhysicalCard> randomRaceDestiny = GameUtils.getRandomCards(Filters.filter(finalPodracer.getCardsStacked(), game, Filters.raceDestiny), 1);
+                                                List<PhysicalCard> randomRaceDestiny = GameUtils.getRandomCards(game, Filters.filter(finalPodracer.getCardsStacked(), game, Filters.raceDestiny), 1);
                                                 if (!randomRaceDestiny.isEmpty()) {
                                                     action.appendEffect(
                                                             new ReturnCardToHandFromOffTableEffect(action, randomRaceDestiny.get(0)));

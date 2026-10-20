@@ -40,7 +40,7 @@ public class StackRandomCardsFromHandEffect extends AbstractStandardEffect {
     protected FullEffectResult playEffectReturningResult(SwccgGame game) {
         if (isPlayableInFull(game)) {
             GameState gameState = game.getGameState();
-            final List<PhysicalCard> randomCards = GameUtils.getRandomCards(gameState.getHand(_zoneOwner), Math.min(_max, game.getGameState().getHand(_zoneOwner).size()));
+            final List<PhysicalCard> randomCards = GameUtils.getRandomCards(game, gameState.getHand(_zoneOwner), Math.min(_max, game.getGameState().getHand(_zoneOwner).size()));
             for (PhysicalCard randomCard : randomCards) {
                 gameState.removeCardsFromZone(Collections.singleton(randomCard));
                 game.getGameState().stackCard(randomCard, _stackOn, _faceDown, false, false);
