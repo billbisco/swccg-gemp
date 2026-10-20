@@ -141,6 +141,62 @@ var GempSwccgCommunication = Class.extend({
             dataType:"xml"
         });
     },
+    // ---- Event calendar (GET /calendar?from=yyyy-MM-dd&to=yyyy-MM-dd -> {from, to, eventAdmin, events:[...]}) ----
+    getCalendar:function (from, to, callback, errorMap) {
+        $.ajax({
+            type:"GET",
+            url:this.url + "/calendar",
+            cache:false,
+            data:{
+                participantId:getUrlParam("participantId"),
+                from:from,
+                to:to
+            },
+            success:callback,
+            error:this.errorCheck(errorMap),
+            dataType:"json"
+        });
+    },
+
+    // ---- Completed event browser (Events tab; one kind, one month of finished events per call) ----
+    // kind is "league" or "tournament"; each Events sub-tab asks only for its own kind.
+    // GET /eventHistory/months?kind= -> {kind, months:["2026-09","2026-08",...]}, descending, only months with a
+    // completed event of that kind
+    getEventHistoryMonths:function (kind, callback, errorMap) {
+        $.ajax({
+            type:"GET",
+            url:this.url + "/eventHistory/months",
+            cache:false,
+            data:{
+                participantId:getUrlParam("participantId"),
+                kind:kind
+            },
+            success:callback,
+            error:this.errorCheck(errorMap),
+            dataType:"json"
+        });
+    },
+
+    // GET /eventHistory?month=YYYY-MM&kind= -> {month, kind, isAdmin, events:[{id, name, startDate, endDate, format,
+    // playerCount, rounds, adminLinks:[{label, text, url}]}]}.  isAdmin is decided by the server and is the only thing
+    // the client may gate admin extras on; adminLinks is present only when it is true.  Details are fetched with
+    // getLeague(id) / getTournament(id).
+    getEventHistory:function (month, kind, callback, errorMap) {
+        $.ajax({
+            type:"GET",
+            url:this.url + "/eventHistory",
+            cache:false,
+            data:{
+                participantId:getUrlParam("participantId"),
+                month:month,
+                kind:kind
+            },
+            success:callback,
+            error:this.errorCheck(errorMap),
+            dataType:"json"
+        });
+    },
+
     getLiveTournaments:function (callback, errorMap) {
         $.ajax({
             type:"GET",
