@@ -28,6 +28,10 @@ import com.gempukku.swccgo.league.SealedLeagueProduct;
 import com.gempukku.swccgo.packagedProduct.PackagedProductStorage;
 import com.gempukku.swccgo.game.*;
 import com.gempukku.swccgo.game.formats.SwccgoFormatLibrary;
+import com.gempukku.swccgo.guest.GuestDecks;
+import com.gempukku.swccgo.guest.PlayNowBot;
+import com.gempukku.swccgo.guest.PlayNowGames;
+import com.gempukku.swccgo.guest.PlayNowSide;
 import com.gempukku.swccgo.league.LeagueSeriesData;
 import com.gempukku.swccgo.league.LeagueService;
 import com.gempukku.swccgo.league.LeagueScheduleService;
@@ -99,6 +103,11 @@ public class HallServer extends AbstractServer {
     private Map<String, TournamentQueue> _tournamentQueues = new LinkedHashMap<String, TournamentQueue>();
     private final ChatRoomMediator _hallChat;
     private final GameResultListener _notifyHallListeners = new NotifyHallListenersGameResultListener();
+
+    /** Format of every Play now game. */
+    public static final String PLAY_NOW_FORMAT = "premiere_anh";
+    private final PlayNowGames _playNowGames = new PlayNowGames();
+    private volatile int _maxPlayNowGames = 20;
 
     public HallServer(SwccgoServer swccgoServer, ChatServer chatServer, LeagueService leagueService,
             TournamentService tournamentService, SwccgCardBlueprintLibrary library,
@@ -443,6 +452,84 @@ public class HallServer extends AbstractServer {
         } finally {
             _hallDataAccessLock.writeLock().unlock();
         }
+    }
+
+    /** Play now is full: {@code maxConcurrentGames} games are in memory. */
+    public static class PlayNowBusyException extends HallException {
+        public PlayNowBusyException() {
+            super("All Play now tables are in use right now. Please try again in a few minutes.");
+        }
+    }
+
+    public PlayNowGames getPlayNowGames() {
+        return _playNowGames;
+    }
+
+    /** How many Play now games may be in memory at once ({@code guest.maxConcurrentGames}). */
+    public void setMaxPlayNowGames(int max) {
+        _maxPlayNowGames = max;
+    }
+
+    /**
+     * Starts a Play now game: the bundled P-ANH precon for the chosen side against a bot with the other precon.
+     * <ul>
+     * <li>A logged-in player ({@code account} set) plays under their username, and the game counts on their record
+     * like any bot game.</li>
+     * <li>A guest ({@code account} null) sits as "Light Side" or "Dark Side". Nothing is recorded: no bot stats,
+     * achievements, history or replay.</li>
+     * </ul>
+     * Either way the game is listed in the hall, logged-in players can watch it and chat in it, and it has no timers.
+     * @param owner the guest id, or the username
+     * @param ip the client IP (kept in memory for the per-IP guest limit)
+     * @return the game id
+     * @throws PlayNowBusyException if the Play now cap is reached
+     */
+    public String startPlayNowGame(String owner, Player account, PlayNowSide side, PlayNowBot bot, String ip)
+            throws HallException {
+        if (_shutdown)
+            throw new HallException(
+                    "Server is in shutdown mode. No games may be started. Server will be restarted after all games have finished.");
+        if (!_operational)
+            throw new HallException("Server is not yet in operational mode. Games may not be started yet.");
+
+        _hallDataAccessLock.writeLock().lock();
+        try {
+            if (account != null)
+                verifyNotExceedingMaxTables(account, true);
+            if (countLivePlayNowGames() >= _maxPlayNowGames)
+                throw new PlayNowBusyException();
+
+            String seatId = account != null ? account.getName() : side.getSeatName();
+            SwccgGameParticipant[] participants = new SwccgGameParticipant[]{
+                    new SwccgGameParticipant(seatId, GuestDecks.deck(side)),
+                    new SwccgGameParticipant(bot.getPlayerId(), GuestDecks.deck(side.opposite()))};
+            SwccgFormat format = _formatLibrary.getFormat(PLAY_NOW_FORMAT);
+            String tableId = new SwccgUuid().generateNewTableId();
+            String tableDesc = account != null ? "Play now" : "Play now (guest)";
+            String gameId = createGame(null, null, tableId, participants, null, format, getPlayNowTournamentName(),
+                    tableDesc, true, account != null, true, true, false, 300, 60, false, bot.getPlayerId(),
+                    bot.getSkill(), null, account != null);
+            _playNowGames.add(new PlayNowGames.Entry(gameId, owner, seatId, side, bot, ip, false));
+            hallChanged();
+            return gameId;
+        } finally {
+            _hallDataAccessLock.writeLock().unlock();
+        }
+    }
+
+    private static String getPlayNowTournamentName() {
+        return "Casual";
+    }
+
+    private int countLivePlayNowGames() {
+        int n = 0;
+        for (RunningTable table : _runningTables.values()) {
+            SwccgGameMediator mediator = table.getSwccgoGameMediator();
+            if (mediator != null && !mediator.isDestroyed() && !mediator.isFinished()
+                    && _playNowGames.get(mediator.getGameId()) != null)
+                n++;
+        }
+        return n;
     }
 
     private String normalizeAiSkill(String aiSkill) {
@@ -1542,26 +1629,42 @@ public class HallServer extends AbstractServer {
             boolean allowSpectatorsToViewChat, boolean allowSpectatorsToChat, boolean allowExtendGameTimer,
             int decisionTimeoutSeconds, int timePerPlayerMinutes, boolean isPrivate, String aiPlayerId,
             String aiSkill, Integer maxPlayerTimeSecondsOverride) {
+        return createGame(league, leagueSerie, tableId, participants, listener, swccgFormat, tournamentName, tableDesc,
+                allowSpectators, allowCancelling, allowSpectatorsToViewChat, allowSpectatorsToChat,
+                allowExtendGameTimer, decisionTimeoutSeconds, timePerPlayerMinutes, isPrivate, aiPlayerId, aiSkill,
+                maxPlayerTimeSecondsOverride, true);
+    }
+
+    /**
+     * @param recordResults false for a guest game: no bot stats, achievements, replay or game history
+     */
+    private String createGame(League league, LeagueSeriesData leagueSerie, String tableId,
+            SwccgGameParticipant[] participants, GameResultListener listener, SwccgFormat swccgFormat,
+            String tournamentName, String tableDesc, boolean allowSpectators, boolean allowCancelling,
+            boolean allowSpectatorsToViewChat, boolean allowSpectatorsToChat, boolean allowExtendGameTimer,
+            int decisionTimeoutSeconds, int timePerPlayerMinutes, boolean isPrivate, String aiPlayerId,
+            String aiSkill, Integer maxPlayerTimeSecondsOverride, boolean recordResults) {
         SwccgGameMediator swccgGameMediator = _swccgoServer.createNewGame(swccgFormat, league, tournamentName,
                 participants, allowSpectators, league == null, allowCancelling, allowSpectatorsToViewChat,
                 allowSpectatorsToChat, allowExtendGameTimer, decisionTimeoutSeconds, timePerPlayerMinutes, isPrivate,
-                _inGameStatisticsEnabled, _bonusAbilitiesEnabled, maxPlayerTimeSecondsOverride);
+                _inGameStatisticsEnabled, _bonusAbilitiesEnabled, maxPlayerTimeSecondsOverride, recordResults);
         if (listener != null) {
             swccgGameMediator.addGameResultListener(listener);
         }
         if (aiPlayerId != null) {
             AiRegistry.register(swccgGameMediator.getGameId(), aiPlayerId, createAiForSkill(aiSkill));
+            // Bot messages (welcome, commentary, ...) appear as player chat, not system messages
+            ChatRoomMediator gameChatRoom = _swccgoServer.getGameChatRoom(swccgGameMediator.getGameId());
+            if (gameChatRoom != null) {
+                swccgGameMediator.setChatRoom(gameChatRoom);
+            }
             // Add bot stats tracking for AI games (both result listener and real-time state listener)
-            if (_botStatsDAO != null) {
+            if (_botStatsDAO != null && recordResults) {
                 BotStatsGameResultListener botStatsListener = new BotStatsGameResultListener(
                     _botStatsDAO, _playerDAO, swccgGameMediator, aiPlayerId);
 
-                // Set the chat room so bot messages appear as player chat, not system messages
-                ChatRoomMediator gameChatRoom = _swccgoServer.getGameChatRoom(swccgGameMediator.getGameId());
                 if (gameChatRoom != null) {
                     botStatsListener.setChatRoom(gameChatRoom);
-                    // Also set on game mediator for AI turn messages (welcome, commentary, etc.)
-                    swccgGameMediator.setChatRoom(gameChatRoom);
                 }
 
                 swccgGameMediator.addGameResultListener(botStatsListener);
@@ -1685,6 +1788,7 @@ public class HallServer extends AbstractServer {
                 SwccgGameMediator swccgGameMediator = runningTable.getValue().getSwccgoGameMediator();
                 if (swccgGameMediator.isDestroyed()) {
                     _runningTables.remove(runningTable.getKey());
+                    _playNowGames.remove(swccgGameMediator.getGameId());
                     hallChanged();
                 }
             }

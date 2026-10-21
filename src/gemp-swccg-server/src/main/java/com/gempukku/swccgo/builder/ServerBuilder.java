@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.builder;
 
+import com.gempukku.swccgo.guest.GuestSettings;
 import com.gempukku.swccgo.chat.ChatServer;
 import com.gempukku.swccgo.collection.CollectionsManager;
 import com.gempukku.swccgo.collection.TransferDAO;
@@ -180,6 +181,10 @@ public class ServerBuilder {
                         extract(objectMap, SoloDraftDefinitions.class),
                         extract(objectMap, LeagueScheduleService.class)
                 ));
+
+        GuestSettings guestSettings = GuestSettings.fromConfiguration();
+        objectMap.put(GuestSettings.class, guestSettings);
+        extract(objectMap, HallServer.class).setMaxPlayNowGames(guestSettings.maxConcurrentGames());
     }
 
     private static <T> T extract(Map<Type, Object> objectMap, Class<T> clazz) {

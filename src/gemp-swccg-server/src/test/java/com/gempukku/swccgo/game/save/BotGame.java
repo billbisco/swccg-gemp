@@ -32,7 +32,7 @@ class BotGame {
     }
 
     BotGame(long seed) {
-        this(seed, deck("/save/panh-precon-ls.txt", "LS precon"), deck("/save/panh-precon-ds.txt", "DS precon"));
+        this(seed, deck("/guest/panh-precon-ls.txt", "LS precon"), deck("/guest/panh-precon-ds.txt", "DS precon"));
     }
 
     BotGame(long seed, SwccgDeck lsDeck, SwccgDeck dsDeck) {
@@ -59,11 +59,11 @@ class BotGame {
     }
 
     static SwccgDeck lsDeck() {
-        return deck("/save/panh-precon-ls.txt", "LS precon");
+        return deck("/guest/panh-precon-ls.txt", "LS precon");
     }
 
     static SwccgDeck dsDeck() {
-        return deck("/save/panh-precon-ds.txt", "DS precon");
+        return deck("/guest/panh-precon-ds.txt", "DS precon");
     }
 
     static Map<String, SwccgAiController> bots(String ls, String ds) {
