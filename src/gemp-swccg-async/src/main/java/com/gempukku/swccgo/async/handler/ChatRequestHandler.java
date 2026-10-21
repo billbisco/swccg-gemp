@@ -12,6 +12,8 @@ import com.gempukku.swccgo.chat.ChatRoomMediator;
 import com.gempukku.swccgo.chat.ChatServer;
 import com.gempukku.swccgo.game.ChatCommunicationChannel;
 import com.gempukku.swccgo.game.Player;
+import com.gempukku.swccgo.guest.GuestSeatPlayer;
+import com.gempukku.swccgo.guest.PlayNowGames;
 import org.apache.commons.text.StringEscapeUtils;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpRequest;
@@ -27,6 +29,8 @@ import java.net.URLDecoder;
 import java.util.*;
 
 public class ChatRequestHandler extends SwccgoServerRequestHandler implements UriRequestHandler {
+    private static final String GAME_ROOM_PREFIX = "Game";
+    private static final String SYSTEM = "System";
     private final ChatServer _chatServer;
     private final LongPollingSystem _longPollingSystem;
 
@@ -54,7 +58,7 @@ public class ChatRequestHandler extends SwccgoServerRequestHandler implements Ur
             String latestMsgIdRcvd = getFormParameterSafely(postDecoder, "latestMsgIdRcvd");
             String message = getFormParameterSafely(postDecoder, "message");
 
-            Player resourceOwner = getResourceOwnerSafely(request, participantId);
+            Player resourceOwner = resolveChatUser(request, participantId, room);
 
             ChatRoomMediator chatRoom = _chatServer.getChatRoom(room);
             if (chatRoom == null)
@@ -62,6 +66,9 @@ public class ChatRequestHandler extends SwccgoServerRequestHandler implements Ur
 
             try {
                 if (message != null && !message.trim().isEmpty()) {
+                    // Guests can read their game's chat but not write in it.
+                    if (GuestSeatPlayer.isGuest(resourceOwner))
+                        throw new HttpProcessingException(403);
                     chatRoom.sendMessage(resourceOwner.getName(), StringEscapeUtils.escapeHtml3(message), resourceOwner.hasType(Player.Type.ADMIN));
                     responseWriter.writeXmlResponse(null);
                 } else {
@@ -107,7 +114,7 @@ public class ChatRequestHandler extends SwccgoServerRequestHandler implements Ur
         public synchronized void processIfNotProcessed() {
             if (!_processed) {
                 try {
-                    List<ChatMessage> chatMessages = _chatRoom.getChatRoomListener(_playerId).consumeMessages(_latestMsgIdRcvd);
+                    List<ChatMessage> chatMessages = filterForMute(_room, _playerId, _chatRoom.getChatRoomListener(_playerId).consumeMessages(_latestMsgIdRcvd));
 
                     Collection<String> usersInRoom = _chatRoom.getUsersInRoom();
 
@@ -133,13 +140,14 @@ public class ChatRequestHandler extends SwccgoServerRequestHandler implements Ur
         QueryStringDecoder queryDecoder = new QueryStringDecoder(request.uri());
         String participantId = getQueryParameterSafely(queryDecoder, "participantId");
 
-        Player resourceOwner = getResourceOwnerSafely(request, participantId);
+        Player resourceOwner = resolveChatUser(request, participantId, room);
 
         ChatRoomMediator chatRoom = _chatServer.getChatRoom(room);
         if (chatRoom == null)
             throw new HttpProcessingException(404);
         try {
-            List<ChatMessage> chatMessages = chatRoom.joinUser(resourceOwner.getName(), resourceOwner.hasType(Player.Type.ADMIN), resourceOwner.hasType(Player.Type.PLAYTESTER));
+            List<ChatMessage> chatMessages = filterForMute(room, resourceOwner.getName(),
+                    chatRoom.joinUser(resourceOwner.getName(), resourceOwner.hasType(Player.Type.ADMIN), resourceOwner.hasType(Player.Type.PLAYTESTER)));
             Collection<String> usersInRoom = chatRoom.getUsersInRoom();
 
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -153,6 +161,32 @@ public class ChatRequestHandler extends SwccgoServerRequestHandler implements Ur
         } catch (PrivateInformationException exp) {
             throw new HttpProcessingException(403);
         }
+    }
+
+    /** In a game's room a guest acts as their seat; everywhere else a login is needed. */
+    private Player resolveChatUser(HttpRequest request, String participantId, String room) throws HttpProcessingException {
+        if (room.startsWith(GAME_ROOM_PREFIX))
+            return resolveGameParticipant(request, participantId, room.substring(GAME_ROOM_PREFIX.length()));
+        return getResourceOwnerSafely(request, participantId);
+    }
+
+    /**
+     * When the player of a Play now game has muted its chat, they only see System messages and the players'
+     * own messages; spectators' messages are dropped.
+     */
+    private List<ChatMessage> filterForMute(String room, String reader, List<ChatMessage> messages) {
+        if (_playNowGames == null || !room.startsWith(GAME_ROOM_PREFIX))
+            return messages;
+        PlayNowGames.Entry game = _playNowGames.get(room.substring(GAME_ROOM_PREFIX.length()));
+        if (game == null || !game.isChatMuted() || !game.getSeatId().equals(reader))
+            return messages;
+        List<ChatMessage> kept = new ArrayList<>();
+        for (ChatMessage m : messages) {
+            String from = m.getFrom();
+            if (SYSTEM.equals(from) || Player.isBot(from) || game.getSeatId().equals(from))
+                kept.add(m);
+        }
+        return kept;
     }
 
     private void serializeChatRoomData(String room, List<ChatMessage> chatMessages, Collection<String> usersInRoom, Document doc) {

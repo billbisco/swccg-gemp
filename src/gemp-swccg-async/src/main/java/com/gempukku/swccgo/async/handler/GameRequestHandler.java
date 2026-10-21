@@ -88,7 +88,7 @@ public class GameRequestHandler extends SwccgoServerRequestHandler implements Ur
                 decisionId = Integer.parseInt(decisionIdStr);
             String decisionValue = getFormParameterSafely(postDecoder, "decisionValue");
 
-            Player resourceOwner = getResourceOwnerSafely(request, participantId);
+            Player resourceOwner = resolveGameParticipant(request, participantId, gameId);
 
             SwccgGameMediator gameMediator = _swccgoServer.getGameById(gameId);
             if (gameMediator == null)
@@ -185,7 +185,7 @@ public class GameRequestHandler extends SwccgoServerRequestHandler implements Ur
         try {
             String participantId = getFormParameterSafely(postDecoder, "participantId");
 
-            Player resourceOwner = getResourceOwnerSafely(request, participantId);
+            Player resourceOwner = resolveGameParticipant(request, participantId, gameId);
 
             SwccgGameMediator gameMediator = _swccgoServer.getGameById(gameId);
             if (gameMediator == null)
@@ -249,7 +249,7 @@ public class GameRequestHandler extends SwccgoServerRequestHandler implements Ur
         } else {
             int cardId = Integer.parseInt(cardIdStr);
 
-            Player resourceOwner = getResourceOwnerSafely(request, participantId);
+            Player resourceOwner = resolveGameParticipant(request, participantId, gameId);
 
             SwccgGameMediator gameMediator = _swccgoServer.getGameById(gameId);
             if (gameMediator == null)
@@ -263,7 +263,7 @@ public class GameRequestHandler extends SwccgoServerRequestHandler implements Ur
         QueryStringDecoder queryDecoder = new QueryStringDecoder(request.uri());
         String participantId = getQueryParameterSafely(queryDecoder, "participantId");
 
-        Player resourceOwner = getResourceOwnerSafely(request, participantId);
+        Player resourceOwner = resolveGameParticipant(request, participantId, gameId);
 
         SwccgGameMediator gameMediator = _swccgoServer.getGameById(gameId);
 
