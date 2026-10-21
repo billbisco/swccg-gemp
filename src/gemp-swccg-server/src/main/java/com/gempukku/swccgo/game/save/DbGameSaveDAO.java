@@ -62,6 +62,19 @@ public class DbGameSaveDAO implements GameSaveDAO {
     }
 
     @Override
+    public GameSaveHeader loadHeader(String gameId) {
+        try (Connection connection = _dbAccess.getDataSource().getConnection();
+             PreparedStatement statement = connection.prepareStatement("SELECT header FROM game_save WHERE game_id = ?")) {
+            statement.setString(1, gameId);
+            try (ResultSet rs = statement.executeQuery()) {
+                return rs.next() ? GameSaveHeader.fromJson(rs.getString(1)) : null;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Unable to load the header of saved game " + gameId, e);
+        }
+    }
+
+    @Override
     public String getOwner(String gameId) {
         try (Connection connection = _dbAccess.getDataSource().getConnection();
              PreparedStatement statement = connection.prepareStatement("SELECT owner FROM game_save WHERE game_id = ?")) {

@@ -2,6 +2,15 @@ package com.gempukku.swccgo.hall;
 
 import com.gempukku.swccgo.*;
 import com.gempukku.swccgo.ai.AiRegistry;
+import com.gempukku.swccgo.game.save.GameSaveCodec;
+import com.gempukku.swccgo.game.save.GameSaveDAO;
+import com.gempukku.swccgo.game.save.GameSaveHeader;
+import com.gempukku.swccgo.game.save.GameSaveIncompatibleException;
+import com.gempukku.swccgo.game.save.SaveRoot;
+import com.gempukku.swccgo.game.save.SavedGameManager;
+import com.gempukku.swccgo.guest.GuestIdentity;
+import java.time.Clock;
+import java.util.function.Consumer;
 import com.gempukku.swccgo.ai.SwccgAiController;
 import com.gempukku.swccgo.ai.models.AdvancedAi;
 import com.gempukku.swccgo.ai.models.BeginnerAi;
@@ -104,10 +113,13 @@ public class HallServer extends AbstractServer {
     private final ChatRoomMediator _hallChat;
     private final GameResultListener _notifyHallListeners = new NotifyHallListenersGameResultListener();
 
+    private static final org.apache.logging.log4j.Logger LOG = org.apache.logging.log4j.LogManager.getLogger(HallServer.class);
+
     /** Format of every Play now game. */
     public static final String PLAY_NOW_FORMAT = "premiere_anh";
     private final PlayNowGames _playNowGames = new PlayNowGames();
     private volatile int _maxPlayNowGames = 20;
+    private volatile PlayNowSaves _playNowSaves;
 
     public HallServer(SwccgoServer swccgoServer, ChatServer chatServer, LeagueService leagueService,
             TournamentService tournamentService, SwccgCardBlueprintLibrary library,
@@ -496,8 +508,7 @@ public class HallServer extends AbstractServer {
         try {
             if (account != null)
                 verifyNotExceedingMaxTables(account, true);
-            if (countLivePlayNowGames() >= _maxPlayNowGames)
-                throw new PlayNowBusyException();
+            ensurePlayNowRoom();
 
             String seatId = account != null ? account.getName() : side.getSeatName();
             SwccgGameParticipant[] participants = new SwccgGameParticipant[]{
@@ -506,15 +517,195 @@ public class HallServer extends AbstractServer {
             SwccgFormat format = _formatLibrary.getFormat(PLAY_NOW_FORMAT);
             String tableId = new SwccgUuid().generateNewTableId();
             String tableDesc = account != null ? "Play now" : "Play now (guest)";
+            final PlayNowSaves saves = _playNowSaves;
             String gameId = createGame(null, null, tableId, participants, null, format, getPlayNowTournamentName(),
                     tableDesc, true, account != null, true, true, false, 300, 60, false, bot.getPlayerId(),
-                    bot.getSkill(), null, account != null);
+                    bot.getSkill(), null, account != null, mediator -> {
+                        if (saves != null) {
+                            long seed = saves.newSeed();
+                            mediator.setRandomSeed(seed);
+                            mediator.setSaveHooks(saves.hooksFor(mediator, owner,
+                                    PlayNowSaves.header(mediator.getGameId(), seatId, side, bot, seed)));
+                            mediator.addGameResultListener(saves.deleteSaveWhenOver(mediator.getGameId()));
+                        }
+                    });
             _playNowGames.add(new PlayNowGames.Entry(gameId, owner, seatId, side, bot, ip, false));
             hallChanged();
             return gameId;
         } finally {
             _hallDataAccessLock.writeLock().unlock();
         }
+    }
+
+    /** This Play now game is from an older version of the server and can't be continued. */
+    public static class PlayNowIncompatibleException extends HallException {
+        public PlayNowIncompatibleException() {
+            super("This game can't be continued after the last server update. Please start a new one.");
+        }
+    }
+
+    /**
+     * Turns on saving for Play now games (see {@link PlayNowSaves}): games are saved every turn, unloaded when
+     * idle and can be resumed.
+     */
+    public void enablePlayNowSaves(GameSaveDAO dao, GameSaveCodec codec, Clock clock, SavedGameManager.Settings settings) {
+        _playNowSaves = new PlayNowSaves(dao, codec, clock, settings, _swccgoServer, _playNowGames, _formatLibrary,
+                _library, _bonusAbilitiesEnabled, _botStatsDAO, _playerDAO);
+    }
+
+    /** The manager of Play now saves, or null when saving is off. */
+    public SavedGameManager getPlayNowSaveManager() {
+        PlayNowSaves saves = _playNowSaves;
+        return saves != null ? saves.getManager() : null;
+    }
+
+    /** Unloads idle Play now games and deletes old saves. Run about once a minute, outside the hall lock. */
+    public void tickPlayNowSaves() {
+        SavedGameManager manager = getPlayNowSaveManager();
+        if (manager != null)
+            manager.tick();
+    }
+
+    /** Saves every Play now game (server shutdown). */
+    public void savePlayNowGames() {
+        SavedGameManager manager = getPlayNowSaveManager();
+        if (manager != null)
+            manager.shutdown();
+    }
+
+    /** An owner's saved Play now games that are not in memory, most recently played first. */
+    public List<GameSaveHeader> getSavedPlayNowGames(String owner) {
+        SavedGameManager manager = getPlayNowSaveManager();
+        List<GameSaveHeader> result = new ArrayList<GameSaveHeader>();
+        if (manager == null || owner == null)
+            return result;
+        for (GameSaveHeader header : manager.getSavedGames(owner)) {
+            if (_playNowGames.get(header.gameId) == null)
+                result.add(header);
+        }
+        return result;
+    }
+
+    /**
+     * Puts an owner's Play now game back in play: from memory if it is still there, else from its save.
+     * @return the game id, or null if the owner has no such game
+     * @throws PlayNowBusyException if the Play now tables are full
+     * @throws PlayNowIncompatibleException if the save can't be continued on this version (the save is deleted)
+     */
+    public String resumePlayNowGame(String owner, String gameId, String ip) throws HallException {
+        if (_shutdown)
+            throw new HallException("Server is in shutdown mode. Games can be continued after the restart.");
+        PlayNowSaves saves = _playNowSaves;
+        _hallDataAccessLock.writeLock().lock();
+        try {
+            PlayNowGames.Entry live = _playNowGames.get(gameId);
+            if (live != null) {
+                SwccgGameMediator mediator = _swccgoServer.getGameById(gameId);
+                if (mediator != null && !mediator.isDestroyed())
+                    return live.getOwner().equals(owner) ? gameId : null;
+            }
+            if (saves == null || !owner.equals(saves.getManager().getSavedOwner(gameId)))
+                return null;
+            GameSaveHeader header = saves.getManager().getSavedHeader(gameId);
+            if (header == null)
+                return null;
+            ensurePlayNowRoom();
+
+            SavedGameManager.LiveGame loaded;
+            try {
+                loaded = saves.getManager().resume(gameId);
+            } catch (SavedGameManager.BusyException exp) {
+                throw new PlayNowBusyException();
+            } catch (GameSaveIncompatibleException exp) {
+                LOG.warn("Play now game " + gameId + " can't be continued: " + exp.getMessage());
+                saves.getManager().finished(gameId);
+                throw new PlayNowIncompatibleException();
+            }
+            if (loaded == null)
+                return null;
+            return putResumedGameInPlay(saves, owner, header, loaded.getRoot(), ip);
+        } finally {
+            _hallDataAccessLock.writeLock().unlock();
+        }
+    }
+
+    private String putResumedGameInPlay(PlayNowSaves saves, String owner, GameSaveHeader header, SaveRoot root, String ip) {
+        String gameId = header.gameId;
+        GameSaveHeader.Seat humanSeat = PlayNowSaves.humanSeat(header);
+        GameSaveHeader.Seat botSeat = PlayNowSaves.botSeat(header);
+        PlayNowSide side = PlayNowSide.fromDeckName(humanSeat.deckName);
+        PlayNowBot bot = PlayNowBot.fromCode(botSeat.bot);
+        boolean member = !GuestIdentity.isGuestId(owner);
+        SwccgFormat format = _formatLibrary.getFormat(header.formatCode);
+
+        // A table left over from before the game was unloaded
+        for (Map.Entry<String, RunningTable> table : new HashMap<String, RunningTable>(_runningTables).entrySet()) {
+            if (table.getValue().getSwccgoGameMediator().getGameId().equals(gameId))
+                _runningTables.remove(table.getKey());
+        }
+
+        SwccgGameParticipant[] participants = new SwccgGameParticipant[]{
+                new SwccgGameParticipant(humanSeat.playerId, humanSeat.toDeck()),
+                new SwccgGameParticipant(botSeat.playerId, botSeat.toDeck())};
+        SwccgGameMediator mediator = _swccgoServer.resumeGame(gameId, format, participants, root, true, member, true,
+                300, 60 * format.getDefaultGameTimerMinutes());
+        SwccgAiController ai = root.bots().get(botSeat.playerId);
+        AiRegistry.register(gameId, botSeat.playerId, ai != null ? ai : bot.newController());
+        ChatRoomMediator chatRoom = _swccgoServer.getGameChatRoom(gameId);
+        if (chatRoom != null)
+            mediator.setChatRoom(chatRoom);
+
+        PlayNowGames.Entry entry = new PlayNowGames.Entry(gameId, owner, humanSeat.playerId, side, bot, ip,
+                member && !humanSeat.playerId.equals(owner));
+        _playNowGames.add(entry);
+        saves.recordFor(mediator, entry);
+        mediator.setSaveHooks(saves.hooksFor(mediator, owner, null));
+        mediator.addGameResultListener(saves.deleteSaveWhenOver(gameId));
+        mediator.addGameResultListener(_notifyHallListeners);
+        _runningTables.put(new SwccgUuid().generateNewTableId(), new RunningTable(mediator, format.getName(),
+                getPlayNowTournamentName(), member ? "Play now" : "Play now (guest)", null, null));
+        mediator.resumeGame();
+        hallChanged();
+        return gameId;
+    }
+
+    /**
+     * A guest signed up: their Play now games (in memory and saved) now belong to the account, and from now on
+     * count on its record, marked "Started as guest".
+     */
+    public void adoptGuestGames(String guestId, String account) {
+        if (guestId == null || account == null)
+            return;
+        _hallDataAccessLock.writeLock().lock();
+        try {
+            SavedGameManager manager = getPlayNowSaveManager();
+            if (manager != null)
+                manager.changeOwner(guestId, account);
+            for (PlayNowGames.Entry entry : _playNowGames.adopt(guestId, account)) {
+                SwccgGameMediator mediator = _swccgoServer.getGameById(entry.getGameId());
+                if (mediator != null && !mediator.isDestroyed() && !mediator.isFinished() && _playNowSaves != null)
+                    _playNowSaves.recordFor(mediator, entry);
+                else if (mediator != null && !mediator.isDestroyed() && !mediator.isFinished())
+                    PlayNowSaves.recordWithoutSaves(_swccgoServer, _botStatsDAO, _playerDAO, mediator, entry);
+            }
+            hallChanged();
+        } finally {
+            _hallDataAccessLock.writeLock().unlock();
+        }
+    }
+
+    /** Frees a Play now slot if needed (unloading an idle game), else refuses. Call with the hall lock held. */
+    private void ensurePlayNowRoom() throws PlayNowBusyException {
+        SavedGameManager manager = getPlayNowSaveManager();
+        if (manager != null) {
+            try {
+                manager.ensureRoom();
+            } catch (SavedGameManager.BusyException exp) {
+                throw new PlayNowBusyException();
+            }
+        }
+        if (countLivePlayNowGames() >= _maxPlayNowGames)
+            throw new PlayNowBusyException();
     }
 
     private static String getPlayNowTournamentName() {
@@ -1644,6 +1835,22 @@ public class HallServer extends AbstractServer {
             boolean allowSpectatorsToViewChat, boolean allowSpectatorsToChat, boolean allowExtendGameTimer,
             int decisionTimeoutSeconds, int timePerPlayerMinutes, boolean isPrivate, String aiPlayerId,
             String aiSkill, Integer maxPlayerTimeSecondsOverride, boolean recordResults) {
+        return createGame(league, leagueSerie, tableId, participants, listener, swccgFormat, tournamentName, tableDesc,
+                allowSpectators, allowCancelling, allowSpectatorsToViewChat, allowSpectatorsToChat,
+                allowExtendGameTimer, decisionTimeoutSeconds, timePerPlayerMinutes, isPrivate, aiPlayerId, aiSkill,
+                maxPlayerTimeSecondsOverride, recordResults, null);
+    }
+
+    /**
+     * @param beforeStart run on the new game just before it starts (the bot is registered by then), or null
+     */
+    private String createGame(League league, LeagueSeriesData leagueSerie, String tableId,
+            SwccgGameParticipant[] participants, GameResultListener listener, SwccgFormat swccgFormat,
+            String tournamentName, String tableDesc, boolean allowSpectators, boolean allowCancelling,
+            boolean allowSpectatorsToViewChat, boolean allowSpectatorsToChat, boolean allowExtendGameTimer,
+            int decisionTimeoutSeconds, int timePerPlayerMinutes, boolean isPrivate, String aiPlayerId,
+            String aiSkill, Integer maxPlayerTimeSecondsOverride, boolean recordResults,
+            Consumer<SwccgGameMediator> beforeStart) {
         SwccgGameMediator swccgGameMediator = _swccgoServer.createNewGame(swccgFormat, league, tournamentName,
                 participants, allowSpectators, league == null, allowCancelling, allowSpectatorsToViewChat,
                 allowSpectatorsToChat, allowExtendGameTimer, decisionTimeoutSeconds, timePerPlayerMinutes, isPrivate,
@@ -1677,6 +1884,8 @@ public class HallServer extends AbstractServer {
                 }
             }
         }
+        if (beforeStart != null)
+            beforeStart.accept(swccgGameMediator);
         swccgGameMediator.startGame();
         swccgGameMediator.addGameResultListener(_notifyHallListeners);
         _runningTables.put(tableId, new RunningTable(swccgGameMediator, swccgFormat.getName(), tournamentName,
@@ -1788,7 +1997,10 @@ public class HallServer extends AbstractServer {
                 SwccgGameMediator swccgGameMediator = runningTable.getValue().getSwccgoGameMediator();
                 if (swccgGameMediator.isDestroyed()) {
                     _runningTables.remove(runningTable.getKey());
-                    _playNowGames.remove(swccgGameMediator.getGameId());
+                    // A Play now game may have been resumed under the same id since; keep that one's entry.
+                    SwccgGameMediator current = _swccgoServer.getGameById(swccgGameMediator.getGameId());
+                    if (current == null || current == swccgGameMediator)
+                        _playNowGames.remove(swccgGameMediator.getGameId());
                     hallChanged();
                 }
             }

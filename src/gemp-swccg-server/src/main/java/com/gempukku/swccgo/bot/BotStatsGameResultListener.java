@@ -55,6 +55,15 @@ public class BotStatsGameResultListener implements GameResultListener {
      */
     public BotStatsGameResultListener(BotStatsDAO botStatsDAO, PlayerDAO playerDAO,
                                       SwccgGameMediator gameMediator, String botPlayerId) {
+        this(botStatsDAO, playerDAO, gameMediator, botPlayerId, null);
+    }
+
+    /**
+     * @param accountName the account the human's result counts for when it isn't their seat id (a Play now guest
+     *                    who signed up mid-game sits as "Light Side" or "Dark Side"); null to use the seat id
+     */
+    public BotStatsGameResultListener(BotStatsDAO botStatsDAO, PlayerDAO playerDAO,
+                                      SwccgGameMediator gameMediator, String botPlayerId, String accountName) {
         _botStatsDAO = botStatsDAO;
         _playerDAO = playerDAO;
         _gameMediator = gameMediator;
@@ -70,7 +79,7 @@ public class BotStatsGameResultListener implements GameResultListener {
             if (!botPlayerId.equals(participantId)) {
                 humanPlayerId = participantId;
                 // Look up the player's database ID
-                Player player = playerDAO.getPlayer(participantId);
+                Player player = playerDAO.getPlayer(accountName != null ? accountName : participantId);
                 if (player != null) {
                     humanPlayerDbId = player.getId();
                     // Ensure the player has a stats record

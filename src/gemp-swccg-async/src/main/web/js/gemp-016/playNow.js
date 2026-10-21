@@ -51,6 +51,33 @@ var PlayNow = {
         return message != null && message.indexOf(" is the winner due to: ") > 0;
     },
 
+    /** One line about an unfinished game, e.g. "Light Side vs YodaBot, turn 7". */
+    describeGame: function (game) {
+        var side = PlayNow.SIDES.hasOwnProperty(game.side) ? PlayNow.SIDES[game.side] : "Your side";
+        var bot = game.bot == "yoda" ? "YodaBot" : (game.bot == "ozzel" ? "OzzelBot" : "the bot");
+        var text = side + " vs " + bot;
+        if (game.saved && game.turn > 0)
+            text += ", turn " + game.turn;
+        if (!game.saved)
+            text += " (in progress)";
+        return text;
+    },
+
+    /** Puts an unfinished game back in play; calls done(json) or failed(text). */
+    resume: function (gameId, done, failed) {
+        $.ajax({
+            type: "POST",
+            url: PlayNow.SERVER + "/guest/resume",
+            cache: false,
+            data: {gameId: gameId},
+            dataType: "json",
+            success: done,
+            error: function (xhr) {
+                failed(PlayNow.errorText(xhr.status, xhr.getResponseHeader("X-Guest-Error"), xhr.getResponseHeader("message")));
+            }
+        });
+    },
+
     /** Starts a game; calls done(json) or failed(text). */
     start: function (side, bot, done, failed) {
         $.ajax({

@@ -58,6 +58,8 @@ public final class SaveRecorder {
     public GameSave toSave(SaveRoot root, long now) {
         _log.markLast(GameStateHash.of(root.game()));
         _header.updatedAt = now;
+        _header.turn = root.game().getGameState().getPlayersLatestTurnNumber(root.game().getDarkPlayer())
+                + root.game().getGameState().getPlayersLatestTurnNumber(root.game().getLightPlayer());
         return new GameSave(_header, _log, _snapshot, _snapshotLogSize, _snapshotFingerprint);
     }
 

@@ -183,19 +183,25 @@ public class SwccgoServerRequestHandler {
     }
 
     /**
-     * Who is acting in a game: the logged-in user (as {@link #getResourceOwnerSafely}), or, with no login, a guest
-     * acting as their own seat in their own Play now game. Anything else is 401.
+     * Who is acting in a game.
+     * <ul>
+     * <li>The owner of a Play now game sitting as a guest seat acts as that seat: a guest (guestSession cookie, no
+     * login), or a guest who signed up and carries on under their account.</li>
+     * <li>A guest cookie opens nothing else: 401.</li>
+     * <li>Everyone else as {@link #getResourceOwnerSafely}.</li>
+     * </ul>
      */
     protected final Player resolveGameParticipant(HttpRequest request, String participantId, String gameId) throws HttpProcessingException {
-        if (getLoggedUser(request) == null && _playNowGames != null) {
-            String guestId = getGuestId(request);
-            if (guestId != null) {
-                String seat = _playNowGames.seatFor(gameId, guestId);
-                if (seat == null)
-                    throw new HttpProcessingException(401);
-                return new GuestSeatPlayer(seat);
-            }
+        String loggedUser = getLoggedUser(request);
+        String guestId = loggedUser == null ? getGuestId(request) : null;
+        String owner = loggedUser != null ? loggedUser : guestId;
+        if (owner != null && _playNowGames != null) {
+            PlayNowGames.Entry game = _playNowGames.get(gameId);
+            if (game != null && game.getOwner().equals(owner) && !game.getSeatId().equals(owner))
+                return new GuestSeatPlayer(game.getSeatId(), loggedUser);
         }
+        if (guestId != null)
+            throw new HttpProcessingException(401);
         return getResourceOwnerSafely(request, participantId);
     }
 
