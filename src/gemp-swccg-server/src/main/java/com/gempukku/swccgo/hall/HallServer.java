@@ -678,15 +678,24 @@ public class HallServer extends AbstractServer {
             return;
         _hallDataAccessLock.writeLock().lock();
         try {
+            // The stored saves move first, in one UPDATE. If that fails it throws before anything in memory has
+            // changed, so the games stay the guest's, exactly as they were.
             SavedGameManager manager = getPlayNowSaveManager();
             if (manager != null)
                 manager.changeOwner(guestId, account);
             for (PlayNowGames.Entry entry : _playNowGames.adopt(guestId, account)) {
                 SwccgGameMediator mediator = _swccgoServer.getGameById(entry.getGameId());
-                if (mediator != null && !mediator.isDestroyed() && !mediator.isFinished() && _playNowSaves != null)
-                    _playNowSaves.recordFor(mediator, entry);
-                else if (mediator != null && !mediator.isDestroyed() && !mediator.isFinished())
-                    PlayNowSaves.recordWithoutSaves(_swccgoServer, _botStatsDAO, _playerDAO, mediator, entry);
+                if (mediator == null || mediator.isDestroyed() || mediator.isFinished())
+                    continue;
+                // The game is the account's now. If its recording can't be set up, it plays on unrecorded.
+                try {
+                    if (_playNowSaves != null)
+                        _playNowSaves.recordFor(mediator, entry);
+                    else
+                        PlayNowSaves.recordWithoutSaves(_swccgoServer, _botStatsDAO, _playerDAO, mediator, entry);
+                } catch (RuntimeException exp) {
+                    LOG.error("Moved Play now game " + entry.getGameId() + " to " + account + ", but couldn't start recording it", exp);
+                }
             }
             hallChanged();
         } finally {

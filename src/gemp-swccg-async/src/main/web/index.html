@@ -22,7 +22,7 @@
     <script type="text/javascript" src="js/gemp-016/common.js"></script>
     <script type="text/javascript" src="js/gemp-016/logging.js"></script>
     <script type="text/javascript" src="js/gemp-016/chat.js"></script>
-    <script type="text/javascript" src="js/gemp-016/communication.js"></script>
+    <script type="text/javascript" src="js/gemp-016/communication.js?v=20261021b"></script>
     <script type="text/javascript" src="js/gemp-016/deliveryService.js?v=20261006h"></script>
     <script type="text/javascript" src="js/gemp-016/commonUi.js"></script>
     <script type="text/javascript" src="js/gemp-016/cards/CardFilter.js"></script>
@@ -62,11 +62,15 @@
             if (password != password2) {
                 $(".error").html("Passwords are different! Try again");
             } else {
-                comm.register(login, password, function (_, status) {
+                comm.register(login, password, function (_, status, request) {
                     if(status == "202") {
                         $(".error").html("Your password has successfully been reset!  Please refresh the page and log in.");
                     }
                     else {
+                        // A Play now game that couldn't be moved to the new account (the account itself is fine).
+                        var notice = request ? request.getResponseHeader("X-Guest-Notice") : null;
+                        if (notice)
+                            alert(notice);
                         location.href = "/gemp-swccg/hall.html";
                     }
                 },
