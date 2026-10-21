@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Play now - Gemp-Swccg</title>
+    <link rel="stylesheet" type="text/css" href="css/dark-hive/jquery-ui-1.8.16.custom.css">
+    <style>
+        body { background: #000; color: #ddd; font-family: Arial, sans-serif; margin: 0; }
+        #playNow { max-width: 520px; margin: 40px auto; padding: 24px; background: #1b1b1b; border: 1px solid #444; border-radius: 6px; }
+        #playNow h1 { font-size: 22px; margin-top: 0; }
+        #playNow fieldset { border: 1px solid #444; margin: 12px 0; }
+        #playNow label { display: block; margin: 6px 0; cursor: pointer; }
+        #playNowError { display: none; color: #ff9c9c; margin: 12px 0; }
+        #playNowStarting { display: none; margin: 12px 0; }
+        .playNowNote { font-size: 12px; color: #999; }
+    </style>
+    <script type="text/javascript" src="js/jquery/jquery-1.6.2.js"></script>
+    <script type="text/javascript" src="js/jquery/jquery-ui-1.8.16.custom.min.js"></script>
+    <script type="text/javascript" src="js/gemp-016/playNow.js"></script>
+    <script type="text/javascript" src="js/gemp-016/guestUi.js"></script>
+</head>
+<body>
+<div id="playNow">
+    <h1>Play Star Wars CCG now</h1>
+    <p>Play a Premiere precon deck against a bot. No account needed.</p>
+    <div id="playNowPicker">
+        <fieldset>
+            <legend>Your side</legend>
+            <label><input type="radio" name="side" value="light" checked> Light Side</label>
+            <label><input type="radio" name="side" value="dark"> Dark Side</label>
+        </fieldset>
+        <fieldset>
+            <legend>Opponent</legend>
+            <label><input type="radio" name="bot" value="ozzel" checked> OzzelBot (beginner)</label>
+            <label><input type="radio" name="bot" value="yoda"> YodaBot (advanced)</label>
+        </fieldset>
+        <button id="playNowButton">Play</button>
+    </div>
+    <div id="playNowStarting">Setting up your game...</div>
+    <div id="playNowError"></div>
+    <p class="playNowNote">Games against bots have no timers. Spectators may watch and give tips in chat; you can mute them in the game.</p>
+</div>
+</body>
+</html>

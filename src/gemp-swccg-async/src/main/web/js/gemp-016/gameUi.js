@@ -135,6 +135,10 @@ var GempSwccgGameUI = Class.extend({
     lastClockValues: {},
     ownDecisionPending: false,
     gameEnded: false,
+    // Play now game (game.html?playNow=1); guestMode when the player has no account (&guest=1)
+    playNowMode: false,
+    guestMode: false,
+    playNowEndShown: false,
     countdownIntervalId: 0,
     decisionLastRemaining: null,
 
@@ -151,6 +155,8 @@ var GempSwccgGameUI = Class.extend({
 
     init: function (url, replayMode) {
         this.replayMode = replayMode;
+        this.playNowMode = !replayMode && getUrlParam("playNow") == "1";
+        this.guestMode = this.playNowMode && getUrlParam("guest") == "1";
 
         log("ui initialized");
         var that = this;
@@ -161,7 +167,10 @@ var GempSwccgGameUI = Class.extend({
             function (xhr, ajaxOptions, thrownError) {
                 if (!that.replayMode && thrownError != "abort") {
                     if (xhr != null) {
-                        if (xhr.status == 401) {
+                        if (xhr.status == 401 && that.guestMode) {
+                            that.chatBox.appendMessage("This game isn't open in this browser any more. <a href='guest.html'>Start a new game</a>.", "warningMessage");
+                            return;
+                        } else if (xhr.status == 401) {
                             that.chatBox.appendMessage("Game problem - You're not logged in, go to the <a href='index.html'>main page</a> to log in", "warningMessage");
                             return;
                         } else {
@@ -479,6 +488,8 @@ var GempSwccgGameUI = Class.extend({
                 + "<div class='playerStats'><div id='hand" + i + "' class='" + handClass + "'></div><div id='sabaccHand" + i + "' class='" + sabaccHandClass + "'></div><div id='showStats" + i + "' class='showStats'></div><div id='outOfPlay" + i + "' class='" + outOfPlayClass + "'></div><div id='forceGeneration" + i + "' class='" + forceGenerationClass + "'></div><div id='politicsTotal" + i + "' class='" + politicsTotalClass + "'></div><div id='raceTotal" + i + "' class='" + raceTotalClass + "'></div></div></div>");
         }
         this.gameStateElem.append("<div id='clock-1' class='decisionClock'></div>");
+        if (this.playNowMode)
+            $(".clock, .decisionClock", this.gameStateElem).hide(); // bot games have no timers
 
         $("#main").append(this.gameStateElem);
         this.initializeTimerUI();
@@ -1357,7 +1368,15 @@ var GempSwccgGameUI = Class.extend({
         this.chatBox = new ChatBoxUI(chatRoomName, $("#chatBox"), this.communication.url, false, playerListener, false, true, this.allPlayerIds, false);
         this.chatBox.chatUpdateInterval = 3000;
 
-        if (!this.spectatorMode && !this.replayMode) {
+        if (this.guestMode && this.chatBox.chatTalkDiv != null) {
+            // Guests read the chat (spectators can coach them) but can't write in it.
+            this.chatBox.chatTalkDiv.hide();
+            this.chatBox.appendMessage("Spectators can give you tips here. <a href='index.html' target='_blank'>Create an account</a> to chat back.", "systemMessage");
+        }
+
+        if (this.playNowMode && !this.spectatorMode) {
+            this.addPlayNowOptions();
+        } else if (!this.spectatorMode && !this.replayMode) {
             $("#gameOptionsBox").append("<button id='concedeGame'>Concede game</button><br/>");
             $("#concedeGame").button().click(
                 function () {
@@ -1394,6 +1413,59 @@ var GempSwccgGameUI = Class.extend({
                 });
         }
         this.persistGameSettings();
+    },
+
+    /** Play now games have no timers and nobody to ask for a cancel: just Concede and the chat mute. */
+    addPlayNowOptions: function () {
+        var that = this;
+        $("#gameOptionsBox").append("<button id='concedeGame'>Concede game</button><br/><br/>");
+        $("#concedeGame").button().click(
+            function () {
+                that.communication.concede();
+            });
+        $("#gameOptionsBox").append("<button id='muteObserversBtn'>Mute spectators</button>");
+        $("#muteObserversBtn").button().click(
+            function () {
+                that.toggleMuteObservers(true);
+                PlayNow.mute(getUrlParam("gameId"), true);
+            });
+        $("#gameOptionsBox").append("<button id='unmuteObserversBtn'>Unmute spectators</button>");
+        $("#unmuteObserversBtn").button().click(
+            function () {
+                that.toggleMuteObservers(false);
+                PlayNow.mute(getUrlParam("gameId"), false);
+            });
+    },
+
+    /** End of a Play now game: offer another one (and, for a guest, an account). */
+    showPlayNowEnd: function (message) {
+        if (this.playNowEndShown)
+            return;
+        this.playNowEndShown = true;
+        var buttons = {
+            "Play again": function () {
+                location.href = "/gemp-swccg/guest.html";
+            }
+        };
+        if (this.guestMode) {
+            buttons["Create an account"] = function () {
+                location.href = "/gemp-swccg/";
+            };
+        } else {
+            buttons["Go to Game Hall"] = function () {
+                location.href = "/gemp-swccg/hall.html";
+            };
+        }
+        buttons["Stay here"] = function () {
+            $(this).dialog("close");
+        };
+        $("<div></div>").dialog({
+            title: "Game over",
+            resizable: false,
+            modal: true,
+            width: 380,
+            buttons: buttons
+        }).text($("<div>").html(message).text());
     },
 
     toggleMuteObservers: function (muteObservers) {
@@ -2198,7 +2270,10 @@ var GempSwccgGameUI = Class.extend({
                 that.showErrorDialog("Server connection error", "Unable to connect to server. Either server is down or there is a problem with your internet connection.", true, false, false);
             },
             "401": function () {
-                that.showErrorDialog("Authentication error", "You are not logged in", false, true, false);
+                if (that.guestMode)
+                    that.showErrorDialog("Game not found", "This game isn't open in this browser any more.", false, false, false, true);
+                else
+                    that.showErrorDialog("Authentication error", "You are not logged in", false, true, false);
             },
             "403": function () {
                 that.showErrorDialog("Game access forbidden", "This game is private and does not allow spectators.", false, false, true);
@@ -2212,8 +2287,16 @@ var GempSwccgGameUI = Class.extend({
         };
     },
 
-    showErrorDialog: function (title, text, reloadButton, mainPageButton, gameHallButton) {
+    showErrorDialog: function (title, text, reloadButton, mainPageButton, gameHallButton, playNowButton) {
         var buttons = {};
+        if (this.guestMode)
+            gameHallButton = false;
+        if (playNowButton) {
+            buttons["Start a new game"] =
+                function () {
+                    location.href = "/gemp-swccg/guest.html";
+                };
+        }
         if (reloadButton) {
             buttons["Refresh page"] =
                 function () {
@@ -2357,6 +2440,8 @@ var GempSwccgGameUI = Class.extend({
             this.animations.gameStats(gameEvent, animate);
         } else if (eventType == "M") {
             this.animations.message(gameEvent, animate);
+            if (this.playNowMode && PlayNow.isGameOverMessage(gameEvent.getAttribute("message")))
+                this.showPlayNowEnd(gameEvent.getAttribute("message"));
         } else if (eventType == "W") {
             this.animations.warning(gameEvent, animate);
         } else if (eventType == "CAC") {
