@@ -225,7 +225,8 @@ public class SwccgGameMediator {
         return System.currentTimeMillis() <= channel.getLastAccessed() + _playerDecisionTimeoutPeriod;
     }
 
-    private boolean isBotGame() {
+    /** A game with a bot seat. Bot games have no decision timeout, no game clock and no auto-cancel. */
+    public boolean isBotGame() {
         for (SwccgGameParticipant participant : _playersPlaying) {
             if (AiRegistry.isAi(_gameId, participant.getPlayerId())) {
                 return true;
@@ -1062,7 +1063,9 @@ public class SwccgGameMediator {
                 }
             }
 
-            if (_swccgoGame.getGameState() != null && _swccgoGame.getWinner() == null) {
+            // Bot games wait for the player indefinitely (like a video game); an idle one is saved and unloaded
+            // instead, where saves are on.
+            if (_swccgoGame.getGameState() != null && _swccgoGame.getWinner() == null && !isBotGame()) {
                 for (Map.Entry<String, Long> playerDecision : new HashMap<String, Long>(_decisionQuerySentTimes).entrySet()) {
                     String playerId = playerDecision.getKey();
                     long decisionSent = playerDecision.getValue();
@@ -1413,7 +1416,7 @@ public class SwccgGameMediator {
             String playerClockName = playerClock.getKey();
             secondsLeft.put(playerClockName, _maxSecondsForGamePerPlayer + _secondsGameTimerExtended - playerClock.getValue() - getCurrentUserPendingTime(playerClockName));
         }
-        if (_disablePlayerDecisionTimer) {
+        if (_disablePlayerDecisionTimer || isBotGame()) {
             secondsLeft.put("decisionLimit", 0);
             secondsLeft.put("decisionClock", 0);
         } else {
