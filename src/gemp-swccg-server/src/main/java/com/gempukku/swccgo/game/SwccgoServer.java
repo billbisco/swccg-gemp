@@ -92,7 +92,7 @@ public class SwccgoServer extends AbstractServer {
             swccgGameMediator.cleanup();
     }
 
-    private String getChatRoomName(String gameId) {
+    public static String getChatRoomName(String gameId) {
         return "Game" + gameId;
     }
 

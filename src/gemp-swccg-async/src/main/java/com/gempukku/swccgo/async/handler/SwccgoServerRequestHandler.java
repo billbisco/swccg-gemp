@@ -11,6 +11,9 @@ import com.gempukku.swccgo.db.PlayerDAO;
 import com.gempukku.swccgo.db.vo.CollectionType;
 import com.gempukku.swccgo.game.CardCollection;
 import com.gempukku.swccgo.game.Player;
+import com.gempukku.swccgo.guest.GuestIdentity;
+import com.gempukku.swccgo.guest.GuestSeatPlayer;
+import com.gempukku.swccgo.guest.PlayNowGames;
 import com.gempukku.swccgo.packagedProduct.ProductName;
 import com.gempukku.swccgo.service.LoggedUserHolder;
 import com.gempukku.swccgo.common.ApplicationConfiguration;
@@ -43,6 +46,7 @@ public class SwccgoServerRequestHandler {
     protected DeckDAO _deckDao;
     protected GempSettingDAO _gempSettingDAO;
     protected AuthService _authService;
+    protected PlayNowGames _playNowGames;
 
     public SwccgoServerRequestHandler(Map<Type, Object> context) {
         _playerDao = extractObject(context, PlayerDAO.class);
@@ -52,6 +56,7 @@ public class SwccgoServerRequestHandler {
         _deckDao = extractObject(context, DeckDAO.class);
         _gempSettingDAO = extractObject(context, GempSettingDAO.class);
         _authService = extractObject(context, AuthService.class);
+        _playNowGames = extractObject(context, PlayNowGames.class);
     }
 
     private boolean isTest() {
@@ -124,7 +129,7 @@ public class SwccgoServerRequestHandler {
         return ServerCookieEncoder.STRICT.encode(cookie);
     }
 
-    private String getLoggedUser(HttpRequest request) {
+    protected final String getLoggedUser(HttpRequest request) {
         ServerCookieDecoder cookieDecoder = ServerCookieDecoder.STRICT;
         String cookieHeader = request.headers().get(HttpHeaderNames.COOKIE);
         if (cookieHeader != null) {
@@ -169,6 +174,29 @@ public class SwccgoServerRequestHandler {
                 throw new HttpProcessingException(401);
         }
         return resourceOwner;
+    }
+
+    /** The guest id from a valid guestSession cookie, or null. A guest cookie is never a login. */
+    protected static String getGuestId(HttpRequest request) {
+        String token = getCookieValue(request, GuestIdentity.COOKIE);
+        return GuestIdentity.isToken(token) ? GuestIdentity.guestIdFor(token) : null;
+    }
+
+    /**
+     * Who is acting in a game: the logged-in user (as {@link #getResourceOwnerSafely}), or, with no login, a guest
+     * acting as their own seat in their own Play now game. Anything else is 401.
+     */
+    protected final Player resolveGameParticipant(HttpRequest request, String participantId, String gameId) throws HttpProcessingException {
+        if (getLoggedUser(request) == null && _playNowGames != null) {
+            String guestId = getGuestId(request);
+            if (guestId != null) {
+                String seat = _playNowGames.seatFor(gameId, guestId);
+                if (seat == null)
+                    throw new HttpProcessingException(401);
+                return new GuestSeatPlayer(seat);
+            }
+        }
+        return getResourceOwnerSafely(request, participantId);
     }
 
     protected final Player getLibrarian() throws HttpProcessingException {
