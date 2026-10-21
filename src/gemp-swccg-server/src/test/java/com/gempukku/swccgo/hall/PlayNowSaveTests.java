@@ -43,6 +43,7 @@ import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -373,5 +374,47 @@ public class PlayNowSaveTests {
         verify(_server.gameRecorder).recordGame(eq(game(gameId)), anyString(), eq("Casual"), anyMap(), eq(Map.of()));
         verify(_server.botStatsDAO, atLeastOnce()).createPlayerStats(luke.getId());
         assertFalse(_server.hallServer.getPlayNowGames().get(gameId).isStartedAsGuest());
+    }
+
+    @Test
+    public void AGuestGameStaysTheGuestsWhenMovingItToTheAccountFails() throws Exception {
+        _server.member(7, "luke");
+        String gameId = _server.hallServer.startPlayNowGame(GUEST, null, PlayNowSide.LIGHT, PlayNowBot.OZZEL, IP);
+        _dao.failChangeOwner = true;
+
+        //test1: the failure reaches the caller (signup turns it into a notice)
+        assertThrows(RuntimeException.class, () -> _server.hallServer.adoptGuestGames(GUEST, "luke"));
+
+        //test2: nothing moved: the live game and its save are still the guest's, and nothing is recorded for luke
+        PlayNowGames.Entry entry = _server.hallServer.getPlayNowGames().get(gameId);
+        assertEquals(GUEST, entry.getOwner());
+        assertFalse(entry.isStartedAsGuest());
+        assertEquals(GUEST, _dao.getOwner(gameId));
+        verify(_server.botStatsDAO, never()).createPlayerStats(anyInt());
+
+        //test3: it is still the guest's to put away and resume; luke has nothing
+        _dao.failChangeOwner = false;
+        _clock.advance(Duration.ofMinutes(16));
+        _server.hallServer.tickPlayNowSaves();
+        assertNull(game(gameId));
+        assertEquals(1, _server.hallServer.getSavedPlayNowGames(GUEST).size());
+        assertEquals(0, _server.hallServer.getSavedPlayNowGames("luke").size());
+        assertEquals(gameId, _server.hallServer.resumePlayNowGame(GUEST, gameId, IP));
+    }
+
+    @Test
+    public void AGuestGameStillMovesWhenItsRecordingCantStart() throws Exception {
+        _server.member(7, "luke");
+        String gameId = _server.hallServer.startPlayNowGame(GUEST, null, PlayNowSide.LIGHT, PlayNowBot.OZZEL, IP);
+        doThrow(new RuntimeException("bot stats unavailable")).when(_server.botStatsDAO).createPlayerStats(anyInt());
+
+        //test1: once the saves have moved, a failure setting up the recording doesn't undo or fail the move
+        _server.hallServer.adoptGuestGames(GUEST, "luke");
+        assertEquals("luke", _server.hallServer.getPlayNowGames().get(gameId).getOwner());
+        assertEquals("luke", _dao.getOwner(gameId));
+
+        //test2: the game plays on for luke
+        assertNotNull(game(gameId));
+        assertFalse(game(gameId).isFinished());
     }
 }

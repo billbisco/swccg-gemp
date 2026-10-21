@@ -61,5 +61,7 @@ class RecordingResponseWriter implements ResponseWriter {
     public void writeXmlResponse(Document document, Map<? extends CharSequence, String> addHeaders) {
         status = 200;
         xml = document;
+        if (addHeaders != null)
+            addHeaders.forEach((k, v) -> this.headers.put(k.toString(), v));
     }
 }

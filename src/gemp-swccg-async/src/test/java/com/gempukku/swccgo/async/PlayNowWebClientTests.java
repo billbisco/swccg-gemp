@@ -102,4 +102,15 @@ public class PlayNowWebClientTests {
             return false;
         }
     }
+
+    @Test
+    public void SignupShowsTheNoticeWhenAGuestGameCouldNotBeMoved() throws IOException {
+        //test9: the signup page passes the response on and shows the server's notice before going to the hall
+        assertTrue(read("js/gemp-016/communication.js").contains("callback(xml, request.status, request);"));
+        String html = read("index.html");
+        int notice = html.indexOf("getResponseHeader(\"X-Guest-Notice\")");
+        int hall = html.indexOf("location.href = \"/gemp-swccg/hall.html\"", notice);
+        assertTrue(notice > 0 && hall > notice);
+        assertTrue(html.contains("js/gemp-016/communication.js?v="));
+    }
 }

@@ -59,7 +59,7 @@ var GempSwccgCommunication = Class.extend({
             var delivery = request.getResponseHeader("Delivery-Service-Package");
             if (delivery == "true" && window.deliveryService != null)
                 that.getDelivery(window.deliveryService);
-            callback(xml, request.status);
+            callback(xml, request.status, request);
         };
     },
 

@@ -14,6 +14,7 @@ import com.gempukku.swccgo.game.Player;
 import com.gempukku.swccgo.guest.GuestIdentity;
 import com.gempukku.swccgo.guest.GuestSeatPlayer;
 import com.gempukku.swccgo.guest.PlayNowGames;
+import com.gempukku.swccgo.hall.HallServer;
 import com.gempukku.swccgo.packagedProduct.ProductName;
 import com.gempukku.swccgo.service.LoggedUserHolder;
 import com.gempukku.swccgo.common.ApplicationConfiguration;
@@ -266,6 +267,33 @@ public class SwccgoServerRequestHandler {
     protected <T> T extractObject(Map<Type, Object> context, Class<T> clazz) {
         Object value = context.get(clazz);
         return clazz.cast(value);
+    }
+
+    /** Response header with a plain-text notice for the player, on an otherwise successful response. */
+    public static final String GUEST_NOTICE_HEADER = "X-Guest-Notice";
+
+    /**
+     * Moves this browser's guest Play now games (if any) to the account. This never fails the request: the account
+     * already exists, so if the move fails the error is logged, the games stay the guest's, exactly as they were,
+     * and the player gets a notice instead.
+     * @param failureNotice what to tell the player if the move fails
+     * @return the response headers, with the notice added when the move failed
+     */
+    protected final Map<String, String> adoptGuestGamesSafely(HallServer hallServer, HttpRequest request, String account,
+                                                              Map<String, String> headers, String failureNotice) {
+        String guestId = getGuestId(request);
+        if (guestId == null || hallServer == null || account == null)
+            return headers;
+        try {
+            hallServer.adoptGuestGames(guestId, account);
+            return headers;
+        } catch (RuntimeException exp) {
+            org.apache.logging.log4j.LogManager.getLogger(SwccgoServerRequestHandler.class)
+                    .error("Couldn't move guest " + guestId + "'s Play now games to " + account, exp);
+            Map<String, String> withNotice = new HashMap<>(headers);
+            withNotice.put(GUEST_NOTICE_HEADER, failureNotice);
+            return withNotice;
+        }
     }
 
     protected Map<String, String> logUserReturningHeaders(String remoteIp, String login) throws SQLException {
