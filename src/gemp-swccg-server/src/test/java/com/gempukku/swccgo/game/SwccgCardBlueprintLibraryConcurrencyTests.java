@@ -117,4 +117,36 @@ public class SwccgCardBlueprintLibraryConcurrencyTests {
         assertTrue(library.getAllAlternates("1272_11").contains("501_27"));
         assertNotNull(library.getSwccgoCardBlueprint("501_27"));
     }
+
+    @Test
+    public void CardLibraryCanNameEveryBlueprintItLoadedFromManyThreads() throws Exception {
+        List<String> ids = idsToLoad();
+        int unnamed = 0;
+        int misnamed = 0;
+        List<String> examples = new ArrayList<>();
+        for (int round = 0; round < ROUNDS; round++) {
+            SwccgCardBlueprintLibrary library = new SwccgCardBlueprintLibrary();
+            List<Map<String, SwccgCardBlueprint>> seen = loadFromManyThreads(library, ids);
+
+            //test1: every blueprint any thread was handed can be named again, which is what a save needs
+            //test2: and it is named by the id it was loaded under
+            for (Map<String, SwccgCardBlueprint> got : seen) {
+                for (Map.Entry<String, SwccgCardBlueprint> entry : got.entrySet()) {
+                    if (entry.getValue() == null)
+                        continue;
+                    String name = library.getLoadedBlueprintId(entry.getValue());
+                    if (name == null)
+                        unnamed++;
+                    else if (!name.equals(entry.getKey()))
+                        misnamed++;
+                    else
+                        continue;
+                    if (examples.size() < 5)
+                        examples.add(entry.getKey() + "->" + name);
+                }
+            }
+        }
+        assertEquals("blueprints with no id, e.g. " + examples, 0, unnamed);
+        assertEquals("blueprints named by the wrong id, e.g. " + examples, 0, misnamed);
+    }
 }
