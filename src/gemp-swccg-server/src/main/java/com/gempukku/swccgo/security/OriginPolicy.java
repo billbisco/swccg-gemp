@@ -53,6 +53,18 @@ public final class OriginPolicy {
         return true;
     }
 
+    /**
+     * The stricter check for the guest (Play now) endpoints, which anyone can call without an account. Like
+     * {@link #allows}, but a state-changing request must carry an Origin or a Referer from an allowed site: one with
+     * neither is refused instead of being treated as a non-browser client.
+     */
+    public boolean allowsOnlyFromOurPages(String method, String origin, String referer) {
+        if (!allows(method, origin, referer))
+            return false;
+        boolean unsafe = !("GET".equals(method) || "HEAD".equals(method) || "OPTIONS".equals(method));
+        return !unsafe || origin != null || referer != null;
+    }
+
     static String originOf(String url) {
         try {
             URI u = new URI(url.trim());
