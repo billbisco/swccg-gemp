@@ -79,7 +79,14 @@ public class RootUriRequestHandler implements UriRequestHandler {
             _statusRequestHandler.handleRequest(uri.substring(_serverContextPath.length()), request, context, responseWriter, remoteIp);
         } else {
             // CSRF: state-changing requests must come from one of our own sites (Origin, else Referer).
-            if (!_originPolicy.allows(request.method().name(), request.headers().get("Origin"), request.headers().get("Referer")))
+            // The guest endpoints are open to anyone, so they also refuse a POST with neither header.
+            String method = request.method().name();
+            String origin = request.headers().get("Origin");
+            String referer = request.headers().get("Referer");
+            boolean allowed = uri.startsWith(_serverContextPath + "guest")
+                    ? _originPolicy.allowsOnlyFromOurPages(method, origin, referer)
+                    : _originPolicy.allows(method, origin, referer);
+            if (!allowed)
                 throw new HttpProcessingException(403);
 
             // These APIs are protected by same Origin protection
