@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
 
 // The class represents a library of all the Star Wars CCG cards
@@ -25,8 +26,11 @@ public class SwccgCardBlueprintLibrary {
     private final Map<String, SwccgCardBlueprint> _blueprintMap = new ConcurrentHashMap<String, SwccgCardBlueprint>();
     // Ids that have no card. ConcurrentHashMap can't hold null, so they are remembered here instead.
     private final Set<String> _unknownBlueprintIds = ConcurrentHashMap.newKeySet();
-    // Reverse of _blueprintMap, so a save can refer to a blueprint by id instead of copying it.
-    private Map<SwccgCardBlueprint, String> _blueprintIds = new IdentityHashMap<SwccgCardBlueprint, String>();
+    // Reverse of _blueprintMap, so a save can refer to a blueprint by id instead of copying it. Keyed by
+    // identity (each loaded blueprint is its own object) and synchronized, because it is filled from any
+    // thread. It is only read when a game is saved, so the lock is off the hot lookup path.
+    private final Map<SwccgCardBlueprint, String> _blueprintIds =
+            Collections.synchronizedMap(new IdentityHashMap<SwccgCardBlueprint, String>());
 
     private final Map<String, String> _blueprintMapping = new HashMap<String, String>();
     private final Map<String, Set<String>> _fullBlueprintMapping = new HashMap<String, Set<String>>();
@@ -137,10 +141,17 @@ public class SwccgCardBlueprintLibrary {
 
         // Builds the blueprint once even if several threads ask for it at the same time.
         // getBlueprint never touches _blueprintMap, so this compute never recurses into the map.
-        blueprint = _blueprintMap.computeIfAbsent(blueprintId, this::getBlueprint);
+        // The reverse id is recorded inside the same compute, before the blueprint is visible to anyone,
+        // so every blueprint this library hands out can be named by getLoadedBlueprintId.
+        blueprint = _blueprintMap.computeIfAbsent(blueprintId, this::loadAndRegister);
         if (blueprint == null)
             _unknownBlueprintIds.add(blueprintId);
-        else
+        return blueprint;
+    }
+
+    private SwccgCardBlueprint loadAndRegister(String blueprintId) {
+        SwccgCardBlueprint blueprint = getBlueprint(blueprintId);
+        if (blueprint != null)
             _blueprintIds.put(blueprint, blueprintId);
         return blueprint;
     }
