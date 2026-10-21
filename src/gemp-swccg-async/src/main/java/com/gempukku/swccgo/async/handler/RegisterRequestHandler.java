@@ -18,6 +18,9 @@ import java.util.Collections;
 import java.util.Map;
 
 public class RegisterRequestHandler extends SwccgoServerRequestHandler implements UriRequestHandler {
+    static final String SIGNUP_ADOPT_FAILED_NOTICE = "Your account was created, but we couldn't move your Play now game to it. "
+            + "The game is still saved for you as a guest: log out and open Play now in this browser to carry on.";
+
     private final HallServer _hallServer;
 
     public RegisterRequestHandler(Map<Type, Object> context) {
@@ -60,10 +63,9 @@ public class RegisterRequestHandler extends SwccgoServerRequestHandler implement
                     }
                     if (_authService.register(login, password, remoteIp)) {
                         // A guest who signs up keeps their Play now games; they count on the new account.
-                        String guestId = getGuestId(request);
-                        if (guestId != null && _hallServer != null)
-                            _hallServer.adoptGuestGames(guestId, login);
-                        responseWriter.writeXmlResponse(null, logUserReturningHeaders(remoteIp, login));
+                        // The account exists now, so a failed move never fails the signup.
+                        responseWriter.writeXmlResponse(null, adoptGuestGamesSafely(_hallServer, request, login,
+                                logUserReturningHeaders(remoteIp, login), SIGNUP_ADOPT_FAILED_NOTICE));
                     } else {
                         throw new HttpProcessingException(403);
                     }

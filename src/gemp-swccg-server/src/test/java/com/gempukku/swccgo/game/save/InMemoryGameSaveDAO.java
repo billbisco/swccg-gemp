@@ -14,6 +14,8 @@ public class InMemoryGameSaveDAO implements GameSaveDAO {
     public boolean failSaves;
     public final java.util.Set<String> failSavesFor = new java.util.HashSet<>();
     public int saves;
+    /** When set, moving saves to another owner fails like a database error. */
+    public boolean failChangeOwner;
 
     @Override
     public void save(String gameId, String owner, GameSave save) {
@@ -60,6 +62,9 @@ public class InMemoryGameSaveDAO implements GameSaveDAO {
 
     @Override
     public void changeOwner(String fromOwner, String toOwner) {
+        if (failChangeOwner) {
+            throw new RuntimeException("Unable to move saved games from " + fromOwner + " to " + toOwner);
+        }
         _rows.replaceAll((id, r) -> r.owner().equals(fromOwner) ? new Row(toOwner, r.header(), r.log(), r.snapshot(), r.snapshotLogSize(), r.fingerprint(), r.updatedAt()) : r);
     }
 
