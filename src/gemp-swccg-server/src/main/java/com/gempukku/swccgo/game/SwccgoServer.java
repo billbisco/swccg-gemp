@@ -113,6 +113,18 @@ public class SwccgoServer extends AbstractServer {
     }
 
     public SwccgGameMediator createNewGame(SwccgFormat swccgFormat, League league, String tournamentName, final SwccgGameParticipant[] participants, boolean allowSpectators, boolean cancelIfNoActions, boolean allowCancelling, boolean allowSpectatorsToViewChat, boolean allowSpectatorsToChat, boolean allowExtendGameTimer, int decisionTimeoutSeconds, int timePerPlayerMinutes, boolean isPrivate, boolean inGameStatisticsOn, boolean bonusAbilitiesEnabled, Integer maxPlayerTimeSecondsOverride) {
+        return createNewGame(swccgFormat, league, tournamentName, participants, allowSpectators, cancelIfNoActions,
+                allowCancelling, allowSpectatorsToViewChat, allowSpectatorsToChat, allowExtendGameTimer,
+                decisionTimeoutSeconds, timePerPlayerMinutes, isPrivate, inGameStatisticsOn, bonusAbilitiesEnabled,
+                maxPlayerTimeSecondsOverride, true);
+    }
+
+    /**
+     * Creates a game.
+     * @param recordGame false for a guest game: no replay, no game history and no in-game statistics, because the
+     *                   guest has no account to record them under
+     */
+    public SwccgGameMediator createNewGame(SwccgFormat swccgFormat, League league, String tournamentName, final SwccgGameParticipant[] participants, boolean allowSpectators, boolean cancelIfNoActions, boolean allowCancelling, boolean allowSpectatorsToViewChat, boolean allowSpectatorsToChat, boolean allowExtendGameTimer, int decisionTimeoutSeconds, int timePerPlayerMinutes, boolean isPrivate, boolean inGameStatisticsOn, boolean bonusAbilitiesEnabled, Integer maxPlayerTimeSecondsOverride, boolean recordGame) {
         _lock.writeLock().lock();
         try {
             if (participants.length < 2)
@@ -163,7 +175,7 @@ public class SwccgoServer extends AbstractServer {
                     });
             swccgGameMediator.sendMessageToPlayers("You're starting a game of " + swccgFormat.getName());
 
-            if (inGameStatisticsOn && !isPrivate)
+            if (inGameStatisticsOn && !isPrivate && recordGame)
                 swccgGameMediator.addInGameStatisticsListener(new GameStatisticsProcessor(_inGameStatisticsDAO, gameId));
 
             StringBuilder players = new StringBuilder();
@@ -177,22 +189,24 @@ public class SwccgoServer extends AbstractServer {
 
             swccgGameMediator.sendMessageToPlayers("Players in the game are: " + players);
 
-            final GameRecorder.GameRecordingInProgress gameRecordingInProgress = _gameRecorder.recordGame(swccgGameMediator, swccgFormat.getName(), tournamentName, deckNames);
-            swccgGameMediator.addGameResultListener(
-                    new GameResultListener() {
-                        @Override
-                        public void gameFinished(String winnerPlayerId, String winReason, Map<String, String> loserPlayerIdsWithReasons, String winnerSide, String loserSide) {
-                            final Map.Entry<String, String> loserEntry = loserPlayerIdsWithReasons.entrySet().iterator().next();
+            if (recordGame) {
+                final GameRecorder.GameRecordingInProgress gameRecordingInProgress = _gameRecorder.recordGame(swccgGameMediator, swccgFormat.getName(), tournamentName, deckNames);
+                swccgGameMediator.addGameResultListener(
+                        new GameResultListener() {
+                            @Override
+                            public void gameFinished(String winnerPlayerId, String winReason, Map<String, String> loserPlayerIdsWithReasons, String winnerSide, String loserSide) {
+                                final Map.Entry<String, String> loserEntry = loserPlayerIdsWithReasons.entrySet().iterator().next();
 
-                            gameRecordingInProgress.finishRecording(winnerPlayerId, winReason, loserEntry.getKey(), loserEntry.getValue());
-                        }
+                                gameRecordingInProgress.finishRecording(winnerPlayerId, winReason, loserEntry.getKey(), loserEntry.getValue());
+                            }
 
-                        @Override
-                        public void gameCancelled() {
-                            gameRecordingInProgress.finishRecording(participants[0].getPlayerId(), "Game cancelled due to error", participants[1].getPlayerId(), "Game cancelled due to error");
+                            @Override
+                            public void gameCancelled() {
+                                gameRecordingInProgress.finishRecording(participants[0].getPlayerId(), "Game cancelled due to error", participants[1].getPlayerId(), "Game cancelled due to error");
+                            }
                         }
-                    }
-            );
+                );
+            }
 
             _runningGames.put(gameId, swccgGameMediator);
             return swccgGameMediator;
