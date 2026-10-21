@@ -7,19 +7,26 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 // The class represents a library of all the Star Wars CCG cards
 // available in Gemp-Swccg.
 //
+// One library is shared by every thread on the server, and blueprints are loaded lazily on first use,
+// so the loaded blueprints are kept in concurrent maps and each id is built at most once. The alternate-id
+// mappings are only written in the constructor and are final, so they are safely published.
+//
 public class SwccgCardBlueprintLibrary {
-    private String[] _packageNames =
+    private final String[] _packageNames =
             new String[]{
                     ".light", ".dark"
             };
-    private Map<String, SwccgCardBlueprint> _blueprintMap = new HashMap<String, SwccgCardBlueprint>();
+    private final Map<String, SwccgCardBlueprint> _blueprintMap = new ConcurrentHashMap<String, SwccgCardBlueprint>();
+    // Ids that have no card. ConcurrentHashMap can't hold null, so they are remembered here instead.
+    private final Set<String> _unknownBlueprintIds = ConcurrentHashMap.newKeySet();
 
-    private Map<String, String> _blueprintMapping = new HashMap<String, String>();
-    private Map<String, Set<String>> _fullBlueprintMapping = new HashMap<String, Set<String>>();
+    private final Map<String, String> _blueprintMapping = new HashMap<String, String>();
+    private final Map<String, Set<String>> _fullBlueprintMapping = new HashMap<String, Set<String>>();
 
     public SwccgCardBlueprintLibrary() {
         try {
@@ -94,12 +101,7 @@ public class SwccgCardBlueprintLibrary {
             if (blueprintId.length()<previousLength-1)
                 return null;
 
-            if (_blueprintMap.containsKey(blueprintId))
-                return _blueprintMap.get(blueprintId);
-
-            SwccgCardBlueprint blueprint = getBlueprint(blueprintId);
-            _blueprintMap.put(blueprintId, blueprint);
-            return blueprint;
+            return getOrLoadBlueprint(blueprintId);
         }
         catch (IllegalArgumentException e) {
             e.printStackTrace();
@@ -115,17 +117,27 @@ public class SwccgCardBlueprintLibrary {
                 blueprintId = blueprintId + "_BACK";
             }
 
-            if (_blueprintMap.containsKey(blueprintId))
-                return _blueprintMap.get(blueprintId);
-
-            SwccgCardBlueprint blueprint = getBlueprint(blueprintId);
-            _blueprintMap.put(blueprintId, blueprint);
-            return blueprint;
+            return getOrLoadBlueprint(blueprintId);
         }
         catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private SwccgCardBlueprint getOrLoadBlueprint(String blueprintId) {
+        SwccgCardBlueprint blueprint = _blueprintMap.get(blueprintId);
+        if (blueprint != null)
+            return blueprint;
+        if (_unknownBlueprintIds.contains(blueprintId))
+            return null;
+
+        // Builds the blueprint once even if several threads ask for it at the same time.
+        // getBlueprint never touches _blueprintMap, so this compute never recurses into the map.
+        blueprint = _blueprintMap.computeIfAbsent(blueprintId, this::getBlueprint);
+        if (blueprint == null)
+            _unknownBlueprintIds.add(blueprintId);
+        return blueprint;
     }
 
     public String stripBlueprintModifiers(String blueprintId) {
