@@ -55,6 +55,15 @@ public class GameRecorder {
     }
 
     public GameRecordingInProgress recordGame(SwccgGameMediator swccgoGame, final String formatName, final String tournament, final Map<String, String> deckNames) {
+        return recordGame(swccgoGame, formatName, tournament, deckNames, Collections.<String, String>emptyMap());
+    }
+
+    /**
+     * @param accountNames seat id to account name, for seats that count for an account under another name (a guest
+     *                     who signed up mid-game); the replay and history are filed under the account
+     */
+    public GameRecordingInProgress recordGame(SwccgGameMediator swccgoGame, final String formatName, final String tournament, final Map<String, String> deckNames,
+                                              final Map<String, String> accountNames) {
         final Date startData = new Date();
         final Map<String, GameCommunicationChannel> recordingChannels = new HashMap<String, GameCommunicationChannel>();
         for (SwccgGameParticipant player : swccgoGame.getPlayersPlaying()) {
@@ -70,8 +79,18 @@ public class GameRecorder {
         return new GameRecordingInProgress() {
             @Override
             public void finishRecording(String winner, String winReason, String loser, String loseReason) {
-                Map<String, String> playerRecordingId = saveRecordedChannels(recordingChannels);
-                _gameHistoryService.addGameHistory(winner, loser, winReason, loseReason, playerRecordingId.get(winner), playerRecordingId.get(loser), formatName, tournament, deckNames.get(winner), deckNames.get(loser), mediator.getDeckArchetypeLabel(winner), mediator.getDeckArchetypeLabel(loser), mediator.getWinningSideString(), mediator.getDeckString(Side.DARK), mediator.getDeckString(Side.LIGHT), leagueType, sealedLeagueType, startData, new Date());
+                Map<String, GameCommunicationChannel> byAccount = new HashMap<String, GameCommunicationChannel>();
+                for (Map.Entry<String, GameCommunicationChannel> e : recordingChannels.entrySet())
+                    byAccount.put(accountName(e.getKey()), e.getValue());
+                Map<String, String> playerRecordingId = saveRecordedChannels(byAccount);
+                String winnerName = accountName(winner);
+                String loserName = accountName(loser);
+                _gameHistoryService.addGameHistory(winnerName, loserName, winReason, loseReason, playerRecordingId.get(winnerName), playerRecordingId.get(loserName), formatName, tournament, deckNames.get(winner), deckNames.get(loser), mediator.getDeckArchetypeLabel(winner), mediator.getDeckArchetypeLabel(loser), mediator.getWinningSideString(), mediator.getDeckString(Side.DARK), mediator.getDeckString(Side.LIGHT), leagueType, sealedLeagueType, startData, new Date());
+            }
+
+            private String accountName(String playerId) {
+                String account = accountNames.get(playerId);
+                return account != null ? account : playerId;
             }
         };
     }

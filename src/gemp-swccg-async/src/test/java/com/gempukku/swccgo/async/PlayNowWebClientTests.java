@@ -72,6 +72,16 @@ public class PlayNowWebClientTests {
     }
 
     @Test
+    public void GuestPageOffersResumeForUnfinishedGames() throws IOException {
+        //test8: the page lists unfinished games with a Resume button that asks the server to resume them
+        assertTrue(read("guest.html").contains("id=\"playNowGameList\""));
+        String js = read("js/gemp-016/guestUi.js");
+        assertTrue(js.contains("GuestUi.showGames(status.games"));
+        assertTrue(js.contains("PlayNow.resume(gameId"));
+        assertTrue(read("js/gemp-016/playNow.js").contains("/guest/resume"));
+    }
+
+    @Test
     public void PlayNowHelpersPassTheirNodeTests() throws Exception {
         //test7: runs src/test/js/playNowTests.js when node is installed (it is on the GitHub runners).
         Assumptions.assumeTrue(nodeAvailable(), "node not installed");

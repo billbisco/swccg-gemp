@@ -1,6 +1,16 @@
 package com.gempukku.swccgo.builder;
 
+import com.gempukku.swccgo.game.save.GameSaveCodec;
+import com.gempukku.swccgo.game.save.GameSaveDAO;
+import com.gempukku.swccgo.game.save.SaveBuild;
+import com.gempukku.swccgo.game.save.SavedGameManager;
 import com.gempukku.swccgo.guest.GuestSettings;
+import org.apache.logging.log4j.LogManager;
+import java.time.Clock;
+import java.time.Duration;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import com.gempukku.swccgo.guest.PlayNowGames;
 import com.gempukku.swccgo.chat.ChatServer;
 import com.gempukku.swccgo.collection.CollectionsManager;
@@ -187,6 +197,18 @@ public class ServerBuilder {
         objectMap.put(GuestSettings.class, guestSettings);
         extract(objectMap, HallServer.class).setMaxPlayNowGames(guestSettings.maxConcurrentGames());
         objectMap.put(PlayNowGames.class, extract(objectMap, HallServer.class).getPlayNowGames());
+        if (guestSettings.enabled()) {
+            // Play now games are saved every turn and can be resumed (only while Play now is on)
+            extract(objectMap, HallServer.class).enablePlayNowSaves(
+                    extract(objectMap, GameSaveDAO.class),
+                    new GameSaveCodec(extract(objectMap, SwccgCardBlueprintLibrary.class),
+                            extract(objectMap, SwccgoFormatLibrary.class), SaveBuild.current()),
+                    Clock.systemUTC(),
+                    new SavedGameManager.Settings(guestSettings.maxConcurrentGames(),
+                            Duration.ofMinutes(guestSettings.unloadIdleMinutes()),
+                            Duration.ofMinutes(guestSettings.capEvictIdleMinutes()),
+                            Duration.ofDays(guestSettings.saveRetentionDays())));
+        }
     }
 
     private static <T> T extract(Map<Type, Object> objectMap, Class<T> clazz) {
@@ -197,12 +219,29 @@ public class ServerBuilder {
     }
 
     public static void StartServers(Map<Type, Object> objectMap) {
+        final HallServer hallServer = extract(objectMap, HallServer.class);
+        if (hallServer.getPlayNowSaveManager() != null) {
+            ScheduledExecutorService saves = Executors.newSingleThreadScheduledExecutor(runnable -> {
+                Thread thread = new Thread(runnable, "play-now-saves");
+                thread.setDaemon(true);
+                return thread;
+            });
+            saves.scheduleWithFixedDelay(() -> {
+                try {
+                    hallServer.tickPlayNowSaves();
+                } catch (RuntimeException exp) {
+                    LogManager.getLogger(ServerBuilder.class).error("Play now save tick failed", exp);
+                }
+            }, 1, 1, TimeUnit.MINUTES);
+            Runtime.getRuntime().addShutdownHook(new Thread(hallServer::savePlayNowGames, "play-now-save-on-shutdown"));
+        }
         extract(objectMap, HallServer.class).startServer();
         extract(objectMap, SwccgoServer.class).startServer();
         extract(objectMap, ChatServer.class).startServer();
     }
 
     public static void StopServers(Map<Type, Object> objectMap) {
+        extract(objectMap, HallServer.class).savePlayNowGames();
         extract(objectMap, HallServer.class).stopServer();
         extract(objectMap, SwccgoServer.class).stopServer();
         extract(objectMap, ChatServer.class).stopServer();

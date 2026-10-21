@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.async.handler;
 
+import com.gempukku.swccgo.hall.HallServer;
 import com.gempukku.swccgo.async.HttpProcessingException;
 import com.gempukku.swccgo.async.ResponseWriter;
 import com.gempukku.swccgo.db.LoginInvalidException;
@@ -17,8 +18,11 @@ import java.util.Collections;
 import java.util.Map;
 
 public class RegisterRequestHandler extends SwccgoServerRequestHandler implements UriRequestHandler {
+    private final HallServer _hallServer;
+
     public RegisterRequestHandler(Map<Type, Object> context) {
         super(context);
+        _hallServer = extractObject(context, HallServer.class);
     }
 
     @Override
@@ -55,6 +59,10 @@ public class RegisterRequestHandler extends SwccgoServerRequestHandler implement
                         throw new RegisterNotAllowedException();
                     }
                     if (_authService.register(login, password, remoteIp)) {
+                        // A guest who signs up keeps their Play now games; they count on the new account.
+                        String guestId = getGuestId(request);
+                        if (guestId != null && _hallServer != null)
+                            _hallServer.adoptGuestGames(guestId, login);
                         responseWriter.writeXmlResponse(null, logUserReturningHeaders(remoteIp, login));
                     } else {
                         throw new HttpProcessingException(403);

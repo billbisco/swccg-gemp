@@ -52,6 +52,7 @@ public class DbGameSaveDAOTests {
     public void DbGameSaveDAOStoresAndReplacesSaves() {
         //test1: a save reads back exactly (header, log, snapshot)
         //test2: saving again replaces it; a save without a snapshot reads back without one
+        //test3: loadHeader reads just the header
         byte[] snapshot = new byte[300_000];
         new java.util.Random(1).nextBytes(snapshot);
         _dao.save("db-test-1", "guest-a", save("db-test-1", 1000, snapshot));
@@ -62,6 +63,8 @@ public class DbGameSaveDAOTests {
         assertArrayEquals(snapshot, back.getSnapshot()); //test1
         assertEquals(20, back.getSnapshotLogSize()); //test1
         assertEquals("guest-a", _dao.getOwner("db-test-1")); //test1
+        assertEquals(9, _dao.loadHeader("db-test-1").seed); //test3: the header alone reads back, for the Resume list
+        assertNull(_dao.loadHeader("db-test-none")); //test3
 
         _dao.save("db-test-1", "guest-a", save("db-test-1", 2000, null));
         assertNull(_dao.load("db-test-1").getSnapshot()); //test2

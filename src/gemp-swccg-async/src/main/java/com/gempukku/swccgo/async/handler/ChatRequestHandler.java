@@ -165,7 +165,8 @@ public class ChatRequestHandler extends SwccgoServerRequestHandler implements Ur
 
     /** In a game's room a guest acts as their seat; everywhere else a login is needed. */
     private Player resolveChatUser(HttpRequest request, String participantId, String room) throws HttpProcessingException {
-        if (room.startsWith(GAME_ROOM_PREFIX))
+        // Logged-in players chat as themselves, also in a Play now game they adopted as a guest.
+        if (room.startsWith(GAME_ROOM_PREFIX) && getLoggedUser(request) == null)
             return resolveGameParticipant(request, participantId, room.substring(GAME_ROOM_PREFIX.length()));
         return getResourceOwnerSafely(request, participantId);
     }
@@ -178,7 +179,7 @@ public class ChatRequestHandler extends SwccgoServerRequestHandler implements Ur
         if (_playNowGames == null || !room.startsWith(GAME_ROOM_PREFIX))
             return messages;
         PlayNowGames.Entry game = _playNowGames.get(room.substring(GAME_ROOM_PREFIX.length()));
-        if (game == null || !game.isChatMuted() || !game.getSeatId().equals(reader))
+        if (game == null || !game.isChatMuted() || !(game.getSeatId().equals(reader) || game.getOwner().equals(reader)))
             return messages;
         List<ChatMessage> kept = new ArrayList<>();
         for (ChatMessage m : messages) {

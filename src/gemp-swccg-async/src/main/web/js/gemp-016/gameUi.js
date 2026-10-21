@@ -167,7 +167,10 @@ var GempSwccgGameUI = Class.extend({
             function (xhr, ajaxOptions, thrownError) {
                 if (!that.replayMode && thrownError != "abort") {
                     if (xhr != null) {
-                        if (xhr.status == 401 && that.guestMode) {
+                        if (xhr.status == 404 && that.playNowMode) {
+                            that.chatBox.appendMessage("This game was saved and put away while nobody was playing. <a href='guest.html'>Resume it</a>.", "warningMessage");
+                            return;
+                        } else if (xhr.status == 401 && that.guestMode) {
                             that.chatBox.appendMessage("This game isn't open in this browser any more. <a href='guest.html'>Start a new game</a>.", "warningMessage");
                             return;
                         } else if (xhr.status == 401) {

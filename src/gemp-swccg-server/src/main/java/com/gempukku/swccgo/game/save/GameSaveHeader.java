@@ -43,6 +43,8 @@ public final class GameSaveHeader {
     public String buildCommit;
     public long createdAt;
     public long updatedAt;
+    /** Turns played so far (both players), as of the last save. Shown next to Resume. */
+    public int turn;
 
     private static final Gson GSON = new Gson();
 

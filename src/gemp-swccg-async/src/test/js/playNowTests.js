@@ -26,3 +26,9 @@ assert.ok(!PlayNow.isGameOverMessage("Light Side deploys Luke"));
 assert.ok(!PlayNow.isGameOverMessage(null));
 
 console.log("playNow ok");
+
+//test5: unfinished games are described for the Resume list.
+assert.strictEqual(PlayNow.describeGame({side: "dark", bot: "yoda", saved: true, turn: 7}), "Dark Side vs YodaBot, turn 7");
+assert.strictEqual(PlayNow.describeGame({side: "light", bot: "ozzel", saved: false}), "Light Side vs OzzelBot (in progress)");
+assert.strictEqual(PlayNow.describeGame({side: "light", bot: "ozzel", saved: true, turn: 0}), "Light Side vs OzzelBot");
+console.log("playNow resume ok");

@@ -6,6 +6,7 @@ import com.gempukku.swccgo.chat.ChatServer;
 import com.gempukku.swccgo.game.Player;
 import com.gempukku.swccgo.game.SwccgGameMediator;
 import com.gempukku.swccgo.game.SwccgoServer;
+import com.gempukku.swccgo.game.save.GameSaveHeader;
 import com.gempukku.swccgo.guest.GuestIdentity;
 import com.gempukku.swccgo.guest.GuestLimits;
 import com.gempukku.swccgo.guest.GuestSettings;
@@ -30,12 +31,14 @@ import java.util.Map;
  * Play now, under {@code /gemp-swccg-server/guest}:
  * <ul>
  * <li>{@code POST /start} (side, bot): starts a game for a guest or the logged-in player and returns its id.</li>
- * <li>{@code GET /status}: whether Play now is on, and the caller's unfinished games.</li>
+ * <li>{@code GET /status}: whether Play now is on, and the caller's unfinished games (in memory or saved).</li>
+ * <li>{@code POST /resume} (gameId): puts one of the caller's games back in play.</li>
  * <li>{@code POST /mute} (gameId, muted): the player mutes or unmutes spectator chat in their game.</li>
  * <li>{@code GET /play?side=&bot=}: a shareable link; redirects to guest.html.</li>
  * </ul>
  * Errors come back with a {@code message} header (shown to the player) and an {@code X-Guest-Error} code:
  * 503 {@code disabled} or {@code busy}, 429 {@code too_many_games} or {@code rate_limited} (with Retry-After),
+ * 409 {@code incompatible} (a save from an older version that can't be continued),
  * 400 {@code bad_request}, 401, 404. None of these responses may be indexed.
  */
 public class GuestRequestHandler extends SwccgoServerRequestHandler implements UriRequestHandler {
@@ -66,6 +69,8 @@ public class GuestRequestHandler extends SwccgoServerRequestHandler implements U
             start(request, responseWriter, remoteIp);
         } else if (path.equals("/status") && request.method() == HttpMethod.GET) {
             status(request, responseWriter);
+        } else if (path.equals("/resume") && request.method() == HttpMethod.POST) {
+            resume(request, responseWriter, remoteIp);
         } else if (path.equals("/mute") && request.method() == HttpMethod.POST) {
             mute(request, responseWriter);
         } else if (path.equals("/play") && request.method() == HttpMethod.GET) {
@@ -150,9 +155,92 @@ public class GuestRequestHandler extends SwccgoServerRequestHandler implements U
                 first = false;
                 appendGame(sb, game);
             }
+            for (GameSaveHeader saved : _hallServer.getSavedPlayNowGames(owner)) {
+                if (!first)
+                    sb.append(',');
+                first = false;
+                appendSavedGame(sb, saved);
+            }
         }
         sb.append("]}");
         json(responseWriter, sb.toString(), baseHeaders());
+    }
+
+    private static void appendSavedGame(StringBuilder sb, GameSaveHeader header) {
+        String seat = null;
+        String side = null;
+        String bot = null;
+        for (GameSaveHeader.Seat s : header.seats) {
+            if (s.bot == null) {
+                seat = s.playerId;
+                PlayNowSide playNowSide = PlayNowSide.fromDeckName(s.deckName);
+                side = playNowSide != null ? playNowSide.getCode() : null;
+            } else {
+                bot = s.bot;
+            }
+        }
+        sb.append("{\"gameId\":").append(quote(header.gameId))
+                .append(",\"participantId\":").append(quote(seat))
+                .append(",\"side\":").append(quote(side))
+                .append(",\"bot\":").append(quote(bot))
+                .append(",\"saved\":true")
+                .append(",\"turn\":").append(header.turn)
+                .append(",\"lastPlayed\":").append(header.updatedAt)
+                .append('}');
+    }
+
+    private void resume(HttpRequest request, ResponseWriter responseWriter, String remoteIp) throws Exception {
+        if (!_settings.enabled()) {
+            error(responseWriter, 503, "disabled", "Play now is not available right now.", 0);
+            return;
+        }
+        String gameId;
+        HttpPostRequestDecoder postDecoder = new HttpPostRequestDecoder(request);
+        try {
+            gameId = getFormParameterSafely(postDecoder, "gameId");
+        } finally {
+            postDecoder.destroy();
+        }
+        String loggedUser = getLoggedUser(request);
+        String owner = currentOwner(request);
+        if (owner == null || gameId == null) {
+            error(responseWriter, 404, "not_found", "Game not found.", 0);
+            return;
+        }
+        boolean guest = loggedUser == null;
+        PlayNowGames.Entry live = _playNowGames.get(gameId);
+        if (guest && live == null && _playNowGames.countGuestGamesFromIp(remoteIp) >= _settings.maxConcurrentPerIp()
+                && !_settings.ipAllowlist().contains(remoteIp)) {
+            error(responseWriter, 429, "too_many_games", "You already have the most games going at once. Finish one first.", 0);
+            return;
+        }
+        String resumed;
+        try {
+            resumed = _hallServer.resumePlayNowGame(owner, gameId, remoteIp);
+        } catch (HallServer.PlayNowBusyException exp) {
+            error(responseWriter, 503, "busy", exp.getMessage(), 0);
+            return;
+        } catch (HallServer.PlayNowIncompatibleException exp) {
+            error(responseWriter, 409, "incompatible", exp.getMessage(), 0);
+            return;
+        } catch (HallException exp) {
+            error(responseWriter, 503, "unavailable", exp.getMessage(), 0);
+            return;
+        }
+        PlayNowGames.Entry game = resumed != null ? _playNowGames.get(resumed) : null;
+        if (game == null) {
+            error(responseWriter, 404, "not_found", "Game not found.", 0);
+            return;
+        }
+        Map<String, String> headers = baseHeaders();
+        if (guest) {
+            // Each resume keeps the guest cookie alive as long as the save.
+            headers.put(HttpHeaderNames.SET_COOKIE.toString(), encodeProtectedCookie(GuestIdentity.COOKIE,
+                    getCookieValue(request, GuestIdentity.COOKIE), GuestIdentity.COOKIE_DAYS * 24L * 60 * 60, CookieHeaderNames.SameSite.Lax));
+        }
+        json(responseWriter, "{\"gameId\":" + quote(game.getGameId())
+                + ",\"participantId\":" + quote(game.getSeatId())
+                + ",\"guest\":" + guest + "}", headers);
     }
 
     static void appendGame(StringBuilder sb, PlayNowGames.Entry game) {
@@ -161,6 +249,7 @@ public class GuestRequestHandler extends SwccgoServerRequestHandler implements U
                 .append(",\"side\":").append(quote(game.getSide().getCode()))
                 .append(",\"bot\":").append(quote(game.getBot().getCode()))
                 .append(",\"chatMuted\":").append(game.isChatMuted())
+                .append(",\"saved\":false")
                 .append('}');
     }
 
