@@ -119,7 +119,7 @@
         function login() {
             var login = $("#login").val();
             var password = $("#password").val();
-            comm.login(login, password, function (_, status) {
+            comm.login(login, password, function (_, status, request) {
                     if(status == "202") {
                         registrationScreen();
                         $("#registerButton").html("Update Password");
@@ -127,6 +127,10 @@
                         $("#login").val(login);
                     }
                     else {
+                        // A Play now game that couldn't be moved to the account (the login itself is fine).
+                        var notice = request ? request.getResponseHeader("X-Guest-Notice") : null;
+                        if (notice)
+                            alert(notice);
                         location.href = "/gemp-swccg/hall.html";
                     }
                 },

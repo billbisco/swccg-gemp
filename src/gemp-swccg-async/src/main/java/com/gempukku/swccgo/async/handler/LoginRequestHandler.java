@@ -2,6 +2,7 @@ package com.gempukku.swccgo.async.handler;
 
 import com.gempukku.swccgo.async.HttpProcessingException;
 import com.gempukku.swccgo.async.ResponseWriter;
+import com.gempukku.swccgo.hall.HallServer;
 import com.gempukku.swccgo.service.AuthService;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpMethod;
@@ -14,8 +15,14 @@ import java.util.Collections;
 import java.util.Map;
 
 public class LoginRequestHandler extends SwccgoServerRequestHandler implements UriRequestHandler {
+    static final String LOGIN_ADOPT_FAILED_NOTICE = "You're logged in, but we couldn't move your Play now game to your account. "
+            + "The game is still saved for you as a guest: log out and open Play now in this browser to carry on.";
+
+    private final HallServer _hallServer;
+
     public LoginRequestHandler(Map<Type, Object> context) {
         super(context);
+        _hallServer = extractObject(context, HallServer.class);
     }
 
     @Override
@@ -30,7 +37,11 @@ public class LoginRequestHandler extends SwccgoServerRequestHandler implements U
                 switch (result.getStatus()) {
                     case OK:
                         // Use the stored name, not what was typed, so "bill" logs in as "Bill".
-                        responseWriter.writeXmlResponse(null, logUserReturningHeaders(remoteIp, result.getCanonicalName()));
+                        String account = result.getCanonicalName();
+                        // A guest who logs in to an existing account keeps their Play now games, as on signup.
+                        // A failed move never fails the login.
+                        responseWriter.writeXmlResponse(null, adoptGuestGamesSafely(_hallServer, request, account,
+                                logUserReturningHeaders(remoteIp, account), LOGIN_ADOPT_FAILED_NOTICE));
                         return;
                     case RESET_REQUIRED:
                         // The password was a valid one-time reset code. Hand the browser a short-lived

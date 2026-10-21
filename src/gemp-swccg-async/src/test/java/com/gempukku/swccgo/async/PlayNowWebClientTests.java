@@ -113,4 +113,14 @@ public class PlayNowWebClientTests {
         assertTrue(notice > 0 && hall > notice);
         assertTrue(html.contains("js/gemp-016/communication.js?v="));
     }
+
+    @Test
+    public void LoginShowsTheNoticeWhenAGuestGameCouldNotBeMoved() throws IOException {
+        //test10: the login page shows the server's notice before going to the hall
+        String html = read("index.html");
+        int login = html.indexOf("comm.login(login, password, function (_, status, request)");
+        int notice = html.indexOf("getResponseHeader(\"X-Guest-Notice\")", login);
+        int hall = html.indexOf("location.href = \"/gemp-swccg/hall.html\"", notice);
+        assertTrue(login > 0 && notice > login && hall > notice);
+    }
 }
