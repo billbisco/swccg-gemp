@@ -15,6 +15,8 @@
         #playNowError { display: none; color: #ff9c9c; margin: 12px 0; }
         #playNowStarting { display: none; margin: 12px 0; }
         .playNowNote { font-size: 12px; color: #999; }
+        .playNowGame { margin: 6px 0; }
+        .playNowGame button { margin-left: 8px; }
     </style>
     <script type="text/javascript" src="js/jquery/jquery-1.6.2.js"></script>
     <script type="text/javascript" src="js/jquery/jquery-ui-1.8.16.custom.min.js"></script>
@@ -25,6 +27,10 @@
 <div id="playNow">
     <h1>Play Star Wars CCG now</h1>
     <p>Play a Premiere precon deck against a bot. No account needed.</p>
+    <div id="playNowGames" style="display: none">
+        <h2 style="font-size: 16px">Your unfinished games</h2>
+        <div id="playNowGameList"></div>
+    </div>
     <div id="playNowPicker">
         <fieldset>
             <legend>Your side</legend>

@@ -43,7 +43,7 @@ public enum PlayNowSide {
         return _deckResource;
     }
 
-    String getDeckName() {
+    public String getDeckName() {
         return _deckName;
     }
 
@@ -52,6 +52,16 @@ public enum PlayNowSide {
     }
 
     /** @return the side, or null if the code is not "light" or "dark" */
+    /** The side whose bundled deck has this name, or null. */
+    public static PlayNowSide fromDeckName(String deckName) {
+        for (PlayNowSide side : values()) {
+            if (side.getDeckName().equals(deckName)) {
+                return side;
+            }
+        }
+        return null;
+    }
+
     public static PlayNowSide fromCode(String code) {
         if (code == null) {
             return null;

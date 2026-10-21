@@ -6,14 +6,14 @@ import java.util.List;
 import java.util.Map;
 
 /** GameSaveDAO kept in memory, storing the same bytes the database would. */
-class InMemoryGameSaveDAO implements GameSaveDAO {
+public class InMemoryGameSaveDAO implements GameSaveDAO {
     private record Row(String owner, String header, byte[] log, byte[] snapshot, int snapshotLogSize, String fingerprint, long updatedAt) {
     }
 
     private final Map<String, Row> _rows = new HashMap<>();
-    boolean failSaves;
-    final java.util.Set<String> failSavesFor = new java.util.HashSet<>();
-    int saves;
+    public boolean failSaves;
+    public final java.util.Set<String> failSavesFor = new java.util.HashSet<>();
+    public int saves;
 
     @Override
     public void save(String gameId, String owner, GameSave save) {
@@ -28,6 +28,12 @@ class InMemoryGameSaveDAO implements GameSaveDAO {
     public GameSave load(String gameId) {
         Row r = _rows.get(gameId);
         return r == null ? null : new GameSave(GameSaveHeader.fromJson(r.header()), DecisionLog.fromBytes(r.log()), r.snapshot(), r.snapshotLogSize(), r.fingerprint());
+    }
+
+    @Override
+    public GameSaveHeader loadHeader(String gameId) {
+        Row r = _rows.get(gameId);
+        return r == null ? null : GameSaveHeader.fromJson(r.header());
     }
 
     @Override

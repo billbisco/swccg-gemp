@@ -12,6 +12,9 @@ public interface GameSaveDAO {
     /** @return the save, or null */
     GameSave load(String gameId);
 
+    /** @return the header of a save (without its move log or snapshot), or null */
+    GameSaveHeader loadHeader(String gameId);
+
     /** @return the owner of a saved game, or null */
     String getOwner(String gameId);
 

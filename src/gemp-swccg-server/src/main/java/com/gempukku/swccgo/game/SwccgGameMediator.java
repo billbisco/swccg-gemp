@@ -34,6 +34,7 @@ import com.gempukku.swccgo.logic.modifiers.ModifierCollectorImpl;
 import com.gempukku.swccgo.logic.modifiers.ModifierType;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 import com.gempukku.swccgo.logic.timing.DefaultSwccgGame;
+import com.gempukku.swccgo.game.save.SaveRoot;
 import com.gempukku.swccgo.logic.timing.DefaultUserFeedback;
 import com.gempukku.swccgo.logic.timing.GameResultListener;
 import com.gempukku.swccgo.logic.timing.GuiUtils;
@@ -43,6 +44,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -85,6 +87,22 @@ public class SwccgGameMediator {
     private ReentrantReadWriteLock.WriteLock _writeLock = _lock.writeLock();
     private int _channelNextIndex;
     private volatile boolean _destroyed;
+    private volatile SaveHooks _saveHooks;
+
+    /**
+     * Keeps a saved copy of the game up to date (Play now games). Every call is made while this game's write lock
+     * (or, for {@link #touched}, its read lock) is held.
+     */
+    public interface SaveHooks {
+        /** The engine has set the game up; no answer has been made yet. */
+        void started();
+
+        /** An answer was applied and the game has run on to the next decision. */
+        void answered(String playerId, String answer);
+
+        /** A player looked at the game. */
+        void touched();
+    }
 
     public SwccgGameMediator(String gameId, SwccgFormat swccgFormat, League league, SwccgGameParticipant[] participants, SwccgCardBlueprintLibrary library, int maxSecondsForGamePerPlayer,
                              boolean allowSpectators, boolean cancelIfNoActions, boolean cancellable, boolean allowExtendGameTimer, int decisionTimeoutSeconds, boolean isPrivate, boolean useBonusAbilities) {
@@ -112,6 +130,52 @@ public class SwccgGameMediator {
         _userFeedback = new DefaultUserFeedback();
         _swccgoGame = new DefaultSwccgGame(swccgFormat, decks, _userFeedback, library, _playerClocks, useBonusAbilities);
         _userFeedback.setGame(_swccgoGame);
+    }
+
+    /**
+     * A mediator for a game loaded from a save. The game is already under way; call {@link #resumeGame()} instead
+     * of {@link #startGame()}.
+     */
+    public SwccgGameMediator(String gameId, League league, SwccgGameParticipant[] participants, SaveRoot root, int maxSecondsForGamePerPlayer,
+                             boolean allowSpectators, boolean cancelIfNoActions, boolean cancellable, boolean allowExtendGameTimer, int decisionTimeoutSeconds, boolean isPrivate) {
+        _gameId = gameId;
+        _maxSecondsForGamePerPlayer = maxSecondsForGamePerPlayer;
+        _allowSpectators = allowSpectators;
+        _cancelIfNoActions = cancelIfNoActions;
+        _cancellable = cancellable;
+        _allowExtendGameTimer = allowExtendGameTimer;
+        _playerDecisionTimeoutPeriod = decisionTimeoutSeconds * 1000;
+        _league = league;
+        _isPrivate = isPrivate;
+        _playersPlaying.addAll(Arrays.asList(participants));
+        _userFeedback = root.feedback();
+        _swccgoGame = root.game();
+        _playerClocks = root.game().getPlayerClocks();
+    }
+
+    public void setSaveHooks(SaveHooks saveHooks) {
+        _saveHooks = saveHooks;
+    }
+
+    /** Sets the game's random seed. Call before {@link #startGame()}. */
+    public void setRandomSeed(long seed) {
+        _swccgoGame.getGameState().setRandomSeed(seed);
+    }
+
+    /** The game, its decisions and its bots, for saving. Call with the write lock held. */
+    public SaveRoot getSaveRoot() {
+        Map<String, SwccgAiController> bots = new HashMap<String, SwccgAiController>();
+        for (SwccgGameParticipant participant : _playersPlaying) {
+            SwccgAiController ai = AiRegistry.get(_gameId, participant.getPlayerId());
+            if (ai != null)
+                bots.put(participant.getPlayerId(), ai);
+        }
+        return new SaveRoot((DefaultSwccgGame) _swccgoGame, _userFeedback, bots);
+    }
+
+    /** This game's write lock: held while the game changes. */
+    public ReentrantReadWriteLock.WriteLock getWriteLock() {
+        return _writeLock;
     }
 
     public boolean isPrivate() { return _isPrivate;};
@@ -1037,10 +1101,35 @@ public class SwccgGameMediator {
         _writeLock.lock();
         try {
             _swccgoGame.startGame();
+            SaveHooks hooks = _saveHooks;
+            if (hooks != null)
+                hooks.started();
             startClocksForUsersPendingDecision();
         } finally {
             _writeLock.unlock();
         }
+    }
+
+    /** Carries on a game loaded from a save: a bot whose turn it is plays on. */
+    public void resumeGame() {
+        _writeLock.lock();
+        try {
+            startClocksForUsersPendingDecision();
+        } finally {
+            _writeLock.unlock();
+        }
+    }
+
+    private void answered(String playerId, String answer) {
+        SaveHooks hooks = _saveHooks;
+        if (hooks != null)
+            hooks.answered(playerId, answer);
+    }
+
+    private void touched(String playerId) {
+        SaveHooks hooks = _saveHooks;
+        if (hooks != null && isPlayerPlaying(playerId))
+            hooks.touched();
     }
 
     public void cleanup() {
@@ -1193,6 +1282,7 @@ public class SwccgGameMediator {
                                 addTimeSpentOnDecisionToUserClock(playerName);
 
                                 _swccgoGame.carryOutPendingActionsUntilDecisionNeeded();
+                                answered(playerName, answer);
                                 startClocksForUsersPendingDecision();
 
                             } catch (DecisionResultInvalidException decisionResultInvalidException) {
@@ -1255,6 +1345,7 @@ public class SwccgGameMediator {
 
         _readLock.lock();
         try {
+            touched(playerName);
             GameCommunicationChannel communicationChannel = _communicationChannels.get(playerName);
             if (communicationChannel != null) {
                 if (communicationChannel.getChannelNumber() == channelNumber) {
@@ -1304,6 +1395,7 @@ public class SwccgGameMediator {
 
         _readLock.lock();
         try {
+            touched(playerName);
             int number = _channelNextIndex;
             _channelNextIndex++;
 
@@ -1393,6 +1485,7 @@ public class SwccgGameMediator {
             }
 
             _swccgoGame.carryOutPendingActionsUntilDecisionNeeded();
+            answered(playerId, answer);
             startClocksForUsersPendingDecision();
 
         } catch (DecisionResultInvalidException e) {

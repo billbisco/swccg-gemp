@@ -50,6 +50,35 @@ public class SavedGameManager {
         }
     }
 
+    /**
+     * How the manager reaches the running games. Unloading a game needs that game to itself: {@link #tryLock}
+     * never waits, so a game that is busy (a player's answer being applied) is skipped and tried again later.
+     */
+    public interface LiveGameHooks {
+        /** Gets the game's lock if it is free right now. */
+        boolean tryLock(String gameId);
+
+        void unlock(String gameId);
+
+        /** The game was saved and dropped from memory; take it off the server. Called with the lock held. */
+        void unloaded(String gameId);
+    }
+
+    private static final LiveGameHooks NO_HOOKS = new LiveGameHooks() {
+        @Override
+        public boolean tryLock(String gameId) {
+            return true;
+        }
+
+        @Override
+        public void unlock(String gameId) {
+        }
+
+        @Override
+        public void unloaded(String gameId) {
+        }
+    };
+
     /** A game in memory. */
     public static final class LiveGame {
         private final String _gameId;
@@ -90,6 +119,7 @@ public class SavedGameManager {
     private final Clock _clock;
     private final Settings _settings;
     private final Map<String, LiveGame> _live = new LinkedHashMap<>();
+    private volatile LiveGameHooks _hooks = NO_HOOKS;
 
     public SavedGameManager(GameSaveDAO dao, GameSaveCodec codec, GameResumer resumer, Clock clock, Settings settings) {
         _dao = dao;
@@ -97,6 +127,48 @@ public class SavedGameManager {
         _resumer = resumer;
         _clock = clock;
         _settings = settings;
+    }
+
+    public void setHooks(LiveGameHooks hooks) {
+        _hooks = hooks;
+    }
+
+    /**
+     * Makes sure one more game fits in memory, unloading an idle one if needed.
+     * @throws BusyException if no game can be evicted to make room
+     */
+    public synchronized void ensureRoom() throws BusyException {
+        makeRoom();
+    }
+
+    /** Someone is looking at the game: it is not idle. */
+    public synchronized void touch(String gameId) {
+        LiveGame game = _live.get(gameId);
+        if (game != null) {
+            game._lastActivity = _clock.millis();
+        }
+    }
+
+    /** The headers of an owner's saved games, most recently played first. */
+    public List<GameSaveHeader> getSavedGames(String owner) {
+        List<GameSaveHeader> result = new ArrayList<>();
+        for (String gameId : _dao.getGameIds(owner)) {
+            GameSaveHeader header = _dao.loadHeader(gameId);
+            if (header != null) {
+                result.add(header);
+            }
+        }
+        return result;
+    }
+
+    /** @return the header of a saved game, or null */
+    public GameSaveHeader getSavedHeader(String gameId) {
+        return _dao.loadHeader(gameId);
+    }
+
+    /** @return the owner of a saved game, or null */
+    public String getSavedOwner(String gameId) {
+        return _dao.getOwner(gameId);
     }
 
     /**
@@ -228,14 +300,26 @@ public class SavedGameManager {
         throw new BusyException();
     }
 
-    /** Saves a game and drops it from memory. If the save fails the game stays in memory and is retried next tick. */
+    /**
+     * Saves a game and drops it from memory. If the game is busy, or the save fails, it stays in memory and is
+     * retried next tick.
+     */
     private boolean unload(LiveGame game) {
-        game._recorder.snapshotIfQuiet(game._root);
-        if (!persist(game)) {
+        LiveGameHooks hooks = _hooks;
+        if (!hooks.tryLock(game._gameId)) {
             return false;
         }
-        _live.remove(game._gameId);
-        return true;
+        try {
+            game._recorder.snapshotIfQuiet(game._root);
+            if (!persist(game)) {
+                return false;
+            }
+            _live.remove(game._gameId);
+            hooks.unloaded(game._gameId);
+            return true;
+        } finally {
+            hooks.unlock(game._gameId);
+        }
     }
 
     /** Snapshots the game at the first quiet point of each turn. */

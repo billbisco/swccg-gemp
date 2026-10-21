@@ -619,6 +619,11 @@ public class DefaultSwccgGame implements SwccgGame {
         return _playerClocks.get(player);
     }
 
+    /** The players' game clocks (seconds used), shared with the mediator. */
+    public Map<String, Integer> getPlayerClocks() {
+        return _playerClocks;
+    }
+
     public boolean useBonusAbilities() {
         return _useBonusAbilities;
     }

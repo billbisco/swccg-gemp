@@ -9,6 +9,7 @@ import com.gempukku.swccgo.chat.ChatServer;
 import com.gempukku.swccgo.db.DeckDAO;
 import com.gempukku.swccgo.db.InGameStatisticsDAO;
 import com.gempukku.swccgo.db.vo.League;
+import com.gempukku.swccgo.game.save.SaveRoot;
 import com.gempukku.swccgo.logic.timing.GameResultListener;
 import com.gempukku.swccgo.logic.vo.SwccgDeck;
 import com.gempukku.util.SwccgUuid;
@@ -213,6 +214,86 @@ public class SwccgoServer extends AbstractServer {
         } finally {
             _lock.writeLock().unlock();
         }
+    }
+
+    /**
+     * Puts a game loaded from a save back on the server, under its old id. Nothing is recorded; see
+     * {@link #recordGame} for games that count on someone's record.
+     */
+    public SwccgGameMediator resumeGame(String gameId, SwccgFormat swccgFormat, final SwccgGameParticipant[] participants, SaveRoot root,
+                                        boolean allowSpectators, boolean allowCancelling, boolean allowSpectatorsToChat,
+                                        int decisionTimeoutSeconds, int maxPlayerTimeSeconds) {
+        _lock.writeLock().lock();
+        try {
+            if (_runningGames.containsKey(gameId))
+                throw new IllegalStateException("Game " + gameId + " is already running");
+            Set<String> allowedUsers = new HashSet<String>();
+            for (SwccgGameParticipant participant : participants) {
+                allowedUsers.add(participant.getPlayerId());
+            }
+            _chatServer.createChatRoom(getChatRoomName(gameId), false, 30, allowedUsers, allowSpectatorsToChat, swccgFormat.isPlaytesting());
+
+            SwccgGameMediator swccgGameMediator = new SwccgGameMediator(gameId, null, participants, root, maxPlayerTimeSeconds,
+                    allowSpectators, true, allowCancelling, false, decisionTimeoutSeconds, false);
+            swccgGameMediator.addGameResultListener(
+                    new GameResultListener() {
+                        @Override
+                        public void gameFinished(String winnerPlayerId, String winReason, Map<String, String> loserPlayerIdsWithReasons, String winnerSide, String loserSide) {
+                            _finishedGamesTime.put(gameId, new Date());
+                        }
+
+                        @Override
+                        public void gameCancelled() {
+                            _finishedGamesTime.put(gameId, new Date());
+                        }
+                    });
+            swccgGameMediator.sendMessageToPlayers("Welcome back. The game carries on from where it was saved.");
+            _runningGames.put(gameId, swccgGameMediator);
+            return swccgGameMediator;
+        } finally {
+            _lock.writeLock().unlock();
+        }
+    }
+
+    /** Takes a game off the server at once (a Play now game that was saved and unloaded). */
+    public void removeGame(String gameId) {
+        _lock.writeLock().lock();
+        try {
+            SwccgGameMediator mediator = _runningGames.remove(gameId);
+            if (mediator != null)
+                mediator.destroy();
+            AiRegistry.unregisterGame(gameId);
+            _gameDeathWarningsSent.remove(gameId);
+            _finishedGamesTime.remove(gameId);
+            _chatServer.destroyChatRoom(getChatRoomName(gameId));
+        } finally {
+            _lock.writeLock().unlock();
+        }
+    }
+
+    /**
+     * Records a game from now on (replay and game history), under account names: {@code accountNames} maps a seat
+     * to the account it counts for (a guest who signed up mid-game). Seats not in the map count under their own id.
+     */
+    public void recordGame(SwccgGameMediator mediator, String tournamentName, Map<String, String> accountNames) {
+        Map<String, String> deckNames = new HashMap<String, String>();
+        for (SwccgGameParticipant participant : mediator.getPlayersPlaying())
+            deckNames.put(participant.getPlayerId(), participant.getDeck().getDeckName());
+        final List<SwccgGameParticipant> players = mediator.getPlayersPlaying();
+        final GameRecorder.GameRecordingInProgress recording = _gameRecorder.recordGame(mediator, mediator.getFormat().getName(), tournamentName, deckNames, accountNames);
+        mediator.addGameResultListener(
+                new GameResultListener() {
+                    @Override
+                    public void gameFinished(String winnerPlayerId, String winReason, Map<String, String> loserPlayerIdsWithReasons, String winnerSide, String loserSide) {
+                        Map.Entry<String, String> loserEntry = loserPlayerIdsWithReasons.entrySet().iterator().next();
+                        recording.finishRecording(winnerPlayerId, winReason, loserEntry.getKey(), loserEntry.getValue());
+                    }
+
+                    @Override
+                    public void gameCancelled() {
+                        recording.finishRecording(players.get(0).getPlayerId(), "Game cancelled due to error", players.get(1).getPlayerId(), "Game cancelled due to error");
+                    }
+                });
     }
 
     public SwccgDeck getParticipantDeck(Player player, String deckName) {
