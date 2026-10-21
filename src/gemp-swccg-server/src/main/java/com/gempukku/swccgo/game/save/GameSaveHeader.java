@@ -45,6 +45,8 @@ public final class GameSaveHeader {
     public long updatedAt;
     /** Turns played so far (both players), as of the last save. Shown next to Resume. */
     public int turn;
+    /** Fingerprint of the Kryo class list the snapshot was written with; a snapshot is only read with the same list. */
+    public String kryoClassList;
 
     private static final Gson GSON = new Gson();
 

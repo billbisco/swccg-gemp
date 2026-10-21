@@ -44,7 +44,9 @@ public final class GameResumer {
 
     public Resumed resume(GameSave save) throws GameSaveIncompatibleException {
         List<DecisionLog.Entry> entries = save.getLog().getEntries();
-        if (save.getSnapshot() != null && Objects.equals(save.getSnapshotFingerprint(), _codec.getBuild().getClassFingerprint())) {
+        if (save.getSnapshot() != null && !Objects.equals(save.getHeader().kryoClassList, _codec.getBuild().getClassListFingerprint())) {
+            LOG.info("Snapshot of game " + save.getHeader().gameId + " was written with another class list, replaying the move log");
+        } else if (save.getSnapshot() != null && Objects.equals(save.getSnapshotFingerprint(), _codec.getBuild().getClassFingerprint())) {
             SaveRoot root = null;
             try {
                 root = _codec.read(save.getSnapshot());
