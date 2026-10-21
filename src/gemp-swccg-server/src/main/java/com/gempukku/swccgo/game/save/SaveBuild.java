@@ -16,11 +16,27 @@ public final class SaveBuild {
     private final List<String> _classNames;
     private final String _classFingerprint;
     private final String _buildCommit;
+    private final String _classListFingerprint;
 
     SaveBuild(List<String> classNames, String classFingerprint, String buildCommit) {
         _classNames = List.copyOf(classNames);
         _classFingerprint = classFingerprint;
         _buildCommit = buildCommit;
+        _classListFingerprint = fingerprintOf(_classNames);
+    }
+
+    /** SHA-256 (first 16 hex digits) of the class list, one name per line, in id order. */
+    static String fingerprintOf(List<String> classNames) {
+        try {
+            java.security.MessageDigest sha = java.security.MessageDigest.getInstance("SHA-256");
+            for (String name : classNames) {
+                sha.update(name.getBytes(StandardCharsets.UTF_8));
+                sha.update((byte) '\n');
+            }
+            return java.util.HexFormat.of().formatHex(sha.digest()).substring(0, 16);
+        } catch (java.security.NoSuchAlgorithmException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     /**
@@ -63,6 +79,11 @@ public final class SaveBuild {
     /** Identifies this exact build's classes; a snapshot is only read by a build with the same fingerprint. */
     public String getClassFingerprint() {
         return _classFingerprint;
+    }
+
+    /** Identifies the Kryo class list, and so every class id a snapshot uses. Recorded in each save's header. */
+    public String getClassListFingerprint() {
+        return _classListFingerprint;
     }
 
     public String getBuildCommit() {

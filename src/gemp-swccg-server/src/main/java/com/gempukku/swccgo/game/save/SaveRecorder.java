@@ -46,6 +46,7 @@ public final class SaveRecorder {
             _snapshot = _codec.write(root);
             _snapshotLogSize = _log.size();
             _snapshotFingerprint = _codec.getBuild().getClassFingerprint();
+            _header.kryoClassList = _codec.getBuild().getClassListFingerprint();
             return true;
         } catch (KryoException e) {
             // The move log alone can still rebuild the game.
