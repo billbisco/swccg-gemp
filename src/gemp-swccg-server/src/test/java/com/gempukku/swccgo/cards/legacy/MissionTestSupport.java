@@ -11,6 +11,7 @@ import com.gempukku.swccgo.common.Keyword;
 import com.gempukku.swccgo.common.PlayCardZoneOption;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
+import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.common.Zone;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
@@ -88,6 +89,20 @@ public final class MissionTestSupport {
         };
     }
 
+    /**
+     * Test-only Geonosis: Petranaki Arena for the given side (GEMP has no Light side Petranaki Arena yet).
+     * Used to exercise "raise your converted Petranaki Arena" game text.
+     */
+    public static AbstractSite geonosisPetranakiArena(Side side) {
+        return new AbstractSite(side, Title.Geonosis_Petranaki_Arena, Title.Geonosis, Uniqueness.UNIQUE, ExpansionSet.PREMIERE, Rarity.C1) {
+            {
+                addIcon(Icon.DARK_FORCE, 1);
+                addIcon(Icon.LIGHT_FORCE, 2);
+                addIcons(Icon.EXTERIOR_SITE, Icon.PLANET, Icon.EPISODE_I);
+            }
+        };
+    }
+
     public static AbstractNormalEffect tieFighterConstructionFacility() {
         return new AbstractNormalEffect(Side.DARK, 3, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "TIE Fighter Construction Facility", Uniqueness.UNIQUE, ExpansionSet.PREMIERE, Rarity.C1) {
         };
@@ -161,6 +176,9 @@ public final class MissionTestSupport {
         }
         if (title != null && title.startsWith("Coruscant")) {
             ensurePlanetLayout(scn, "Coruscant", 0);
+        }
+        if (title != null && title.startsWith(Title.Geonosis)) {
+            ensurePlanetLayout(scn, Title.Geonosis, 6);
         }
         if (blueprint instanceof AbstractSystem) {
             ensurePlanetLayout(scn, blueprint.getTitle(), blueprint.getParsec());

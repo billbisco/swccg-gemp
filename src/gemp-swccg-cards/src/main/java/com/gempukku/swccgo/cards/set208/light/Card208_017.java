@@ -14,6 +14,7 @@ import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.LegacyFilters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.game.state.DrawDestinyState;
@@ -67,7 +68,7 @@ public class Card208_017 extends AbstractEpicEventDeployable {
         GameTextActionId gameTextActionId = GameTextActionId.OTHER_CARD_ACTION_1;
 
         // Check condition(s)
-        if (TriggerConditions.forceDrainInitiatedBy(game, effectResult, playerId, Filters.and(Filters.battleground_system, Filters.except(Filters.liberated_system)))
+        if (TriggerConditions.forceDrainInitiatedBy(game, effectResult, playerId, LegacyFilters.canBeLiberated())
                 && GameConditions.canDrawDestiny(game, playerId)) {
             final PhysicalCard system = ((ForceDrainInitiatedResult) effectResult).getLocation();
 

@@ -4,6 +4,7 @@ import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.logic.conditions.Condition;
+import com.gempukku.swccgo.logic.modifiers.ModifierType;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 
 /**
@@ -23,6 +24,10 @@ public class InSenateMajorityCondition implements Condition {
     @Override
     public boolean isFulfilled(GameState gameState, ModifiersQuerying modifiersQuerying) {
         PhysicalCard card = gameState.findCardByPermanentId(_permCardId);
+
+        // Some cards treat characters elsewhere as being in a senate majority
+        if (!modifiersQuerying.getModifiersAffectingCard(gameState, ModifierType.TREATED_AS_IN_SENATE_MAJORITY, card).isEmpty())
+            return true;
 
         if (!Filters.at(Filters.Galactic_Senate).accepts(gameState, modifiersQuerying, card))
             return false;

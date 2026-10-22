@@ -13,6 +13,7 @@ import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.conditions.UnlessCondition;
 import com.gempukku.swccgo.logic.modifiers.ForceDrainModifier;
+import com.gempukku.swccgo.logic.modifiers.MayNotBeLiberatedModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 
 import java.util.LinkedList;
@@ -51,6 +52,7 @@ public class Card1291_015 extends AbstractSystem {
         modifiers.add(new ForceDrainModifier(self,
                 new UnlessCondition(new HereCondition(self, Filters.and(Filters.your(playerOnLightSideOfLocation), Filters.starship, Icon.CLONE_ARMY))),
                 -1, playerOnLightSideOfLocation));
+        modifiers.add(new MayNotBeLiberatedModifier(self, self));
         return modifiers;
     }
 }

@@ -1,6 +1,7 @@
 package com.gempukku.swccgo.cards.set1200.dark;
 
 import com.gempukku.swccgo.cards.AbstractDefensiveShield;
+import com.gempukku.swccgo.cards.evaluators.OneIfDeploysForZeroForceEvaluator;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.PlayCardZoneOption;
@@ -42,7 +43,7 @@ public class Card1200_003 extends AbstractDefensiveShield {
                 new HalfPrintedDeployCostRoundedUpEvaluator()));
         modifiers.add(new ExtraForceCostToDeployCardToLocationModifier(self,
                 Filters.and(Filters.opponents(self), Filters.hasAbilityOrHasPermanentPilotWithAbility),
-                new PrintedZeroDeployCostEvaluator()));
+                new OneIfDeploysForZeroForceEvaluator()));
         return modifiers;
     }
 
@@ -62,15 +63,4 @@ public class Card1200_003 extends AbstractDefensiveShield {
         }
     }
 
-    static class PrintedZeroDeployCostEvaluator extends BaseEvaluator {
-        @Override
-        public float evaluateExpression(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard cardAffected) {
-            return cardAffected.getBlueprint().getDeployCost() == 0 ? 1 : 0;
-        }
-
-        @Override
-        public float evaluateExpression(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard cardAffected, PhysicalCard otherCard) {
-            return evaluateExpression(gameState, modifiersQuerying, cardAffected);
-        }
-    }
 }
