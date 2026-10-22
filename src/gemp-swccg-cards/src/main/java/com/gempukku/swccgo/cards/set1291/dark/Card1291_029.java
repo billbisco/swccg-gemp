@@ -10,6 +10,7 @@ import com.gempukku.swccgo.common.GameTextActionId;
 import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
+import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.AbstractActionProxy;
@@ -28,7 +29,7 @@ import com.gempukku.swccgo.logic.effects.choose.DeployCardFromReserveDeckEffect;
 import com.gempukku.swccgo.logic.modifiers.ForfeitedToUsedPileModifier;
 import com.gempukku.swccgo.logic.modifiers.IconModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
-import com.gempukku.swccgo.logic.modifiers.ResetForfeitModifier;
+import com.gempukku.swccgo.logic.modifiers.ForfeitValueToUseWhenForfeitedModifier;
 import com.gempukku.swccgo.logic.timing.EffectResult;
 
 import java.util.Collection;
@@ -73,7 +74,8 @@ public class Card1291_029 extends AbstractObjective {
         String playerId = self.getOwner();
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new IconModifier(self, grantSeparatist(playerId), Icon.SEPARATIST));
-        modifiers.add(new ResetForfeitModifier(self, forfeitWeapons(playerId), 3));
+        // "using forfeit value = 3": also lets weapons with no forfeit attribute (e.g. character weapons) be forfeited
+        modifiers.add(new ForfeitValueToUseWhenForfeitedModifier(self, forfeitWeapons(playerId), 3));
         modifiers.add(new ForfeitedToUsedPileModifier(self, forfeitWeapons(playerId)));
         return modifiers;
     }
@@ -95,14 +97,14 @@ public class Card1291_029 extends AbstractObjective {
     protected ObjectiveDeployedTriggerAction getGameTextWhenDeployedAction(final String playerId, SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
         final ObjectiveDeployedTriggerAction action = new ObjectiveDeployedTriggerAction(self);
         action.appendRequiredEffect(
-                new DeployCardFromReserveDeckEffect(action, Filters.title("Separatist Council Room"), true, false) {
+                new DeployCardFromReserveDeckEffect(action, Filters.title(Title.Geonosis_Separatist_Council_Room), true, false) {
                     @Override
                     public String getChoiceText() {
                         return "Choose Separatist Council Room to deploy";
                     }
                 });
         action.appendRequiredEffect(
-                new DeployCardFromReserveDeckEffect(action, Filters.title("War Has Begun"), true, false) {
+                new DeployCardFromReserveDeckEffect(action, Filters.title(Title.War_Has_Begun), true, false) {
                     @Override
                     public String getChoiceText() {
                         return "Choose War Has Begun to deploy";

@@ -43,7 +43,8 @@ public interface Forfeit extends BaseQuery, Attributes, Destiny, Flags, Keywords
     }
 
     default boolean mayBeForfeitedInBattle(GameState gameState, PhysicalCard physicalCard) {
-        return (physicalCard.getBlueprint().hasForfeitAttribute() || physicalCard.isDejarikHologramAtHolosite())
+        return (physicalCard.getBlueprint().hasForfeitAttribute() || physicalCard.isDejarikHologramAtHolosite()
+                || !getModifiersAffectingCard(gameState, ModifierType.FORFEIT_VALUE_TO_USE, physicalCard).isEmpty())
                 && !hasKeyword(gameState, physicalCard, Keyword.MAY_NOT_BE_FORFEITED_IN_BATTLE);
     }
 
