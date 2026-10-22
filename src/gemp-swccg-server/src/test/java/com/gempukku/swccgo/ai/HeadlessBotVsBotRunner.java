@@ -1,5 +1,8 @@
 package com.gempukku.swccgo.ai;
 
+import com.gempukku.swccgo.ai.features.DecklistMultisets;
+import com.gempukku.swccgo.ai.features.InformationSetGameStateListener;
+import com.gempukku.swccgo.ai.features.InformationSetTracker;
 import com.gempukku.swccgo.ai.models.AdvancedAi;
 import com.gempukku.swccgo.ai.models.BeginnerAi;
 import com.gempukku.swccgo.ai.models.ConfigurableHeuristicAi;
@@ -73,7 +76,15 @@ public final class HeadlessBotVsBotRunner {
     public enum AiSkill {
         BEGINNER,
         ADVANCED,
-        RANDO
+        RANDO,
+        /** Gym-cli linear.v1 policy. Zeros pack when no weights path is set. */
+        LINEAR,
+        /**
+         * {@link com.gempukku.swccgo.ai.models.ConfigurableHeuristicAi} from a
+         * heuristic.v1 weights file. The path is required. Not BeginnerAi and
+         * not AdvancedAi / YodaBot.
+         */
+        HEURISTIC
     }
 
     public static final class Config {
@@ -106,6 +117,15 @@ public final class HeadlessBotVsBotRunner {
          */
         public HeadlessDecisionTraceWriter traceWriter = null;
         /**
+         * Trace richness. Default COMPACT. FEATURES embeds InformationSetV1 under {@code state}.
+         * Overridden by the writer's level when the writer was opened from system properties.
+         */
+        public HeadlessDecisionTraceWriter.TraceLevel traceLevel = HeadlessDecisionTraceWriter.TraceLevel.COMPACT;
+        /** Match-scoped Dark-seat tracker (own prior + destiny/reveals). Created if null when FEATURES. */
+        public InformationSetTracker darkTracker = null;
+        /** Match-scoped Light-seat tracker. Created if null when FEATURES. */
+        public InformationSetTracker lightTracker = null;
+        /**
          * When non-null, attach {@link HeadlessReplayWriter} and write xml.gz under this dir
          * after the game (no Hall / no GameHistoryService).
          */
@@ -113,11 +133,11 @@ public final class HeadlessBotVsBotRunner {
         /** Convenience: when true and {@link #replayDir} is null, use {@code target/headless-replays}. */
         public boolean recordReplay = false;
         /**
-         * Optional heuristic.v1 weights.json for Dark. When set, Dark uses
-         * {@link ConfigurableHeuristicAi} instead of the builtin {@link #darkAi} skill.
+         * Optional weights file for Dark. {@code heuristic.v1} when {@link #darkAi} is not
+         * {@link AiSkill#LINEAR}; {@code linear.v1} when it is. Null LINEAR uses a zeros pack.
          */
         public Path darkWeightsPath = null;
-        /** Optional heuristic.v1 weights.json for Light (same semantics as darkWeightsPath). */
+        /** Optional weights file for Light (same semantics as darkWeightsPath). */
         public Path lightWeightsPath = null;
     }
 
@@ -146,13 +166,15 @@ public final class HeadlessBotVsBotRunner {
         public final String darkDeckName;
         public final String lightDeckName;
         public final String formatName;
+        /** Seat with a pending decision when a maxDecisions/maxMillis cap hit. Empty otherwise. */
+        public final String decidingPlayer;
 
         Result(String gameId, boolean finished, boolean cancelled, String winner, String winReasonSummary,
                int decisionCount, int invalidAnswerCount, int darkTurnNumber, int lightTurnNumber,
                Phase lastPhase, int darkLifeForce, int lightLifeForce, long elapsedMillis,
                String stopper, List<String> failureNotes, Map<String, Integer> decisionsByPlayer,
                Map<String, String> recordingIds, Map<String, Path> replayFiles, Path replayMetaPath,
-               String darkDeckName, String lightDeckName, String formatName) {
+               String darkDeckName, String lightDeckName, String formatName, String decidingPlayer) {
             this.gameId = gameId;
             this.finished = finished;
             this.cancelled = cancelled;
@@ -175,6 +197,7 @@ public final class HeadlessBotVsBotRunner {
             this.darkDeckName = darkDeckName;
             this.lightDeckName = lightDeckName;
             this.formatName = formatName;
+            this.decidingPlayer = decidingPlayer != null ? decidingPlayer : "";
         }
 
         @Override
@@ -210,10 +233,38 @@ public final class HeadlessBotVsBotRunner {
     }
 
     /**
-     * When {@code weightsPath} is non-null, load a {@link ConfigurableHeuristicAi} from that
-     * heuristic.v1 weights.json (skill is ignored except as a fallback label).
+     * {@link AiSkill#LINEAR} loads {@code linear.v1} from {@code weightsPath}, or a zeros pack
+     * when the path is null. {@link AiSkill#ADVANCED} is always {@link AdvancedAi} (YodaBot),
+     * even if a weights path is set, so one game can seat Yoda beside a heuristic pack.
+     * {@link AiSkill#HEURISTIC} requires a heuristic.v1 file and loads
+     * {@link ConfigurableHeuristicAi}. {@link AiSkill#BEGINNER} (and RANDO) with a non-null
+     * path still loads that file, which is how the older gym workers pass weights.
+     * {@link AiSkill#BEGINNER} with a null path stays BeginnerAi.
      */
     public static SwccgAiController createAi(AiSkill skill, Path weightsPath) {
+        AiSkill resolved = skill == null ? AiSkill.BEGINNER : skill;
+        if (resolved == AiSkill.LINEAR) {
+            try {
+                return weightsPath != null ? com.gempukku.swccgo.ai.models.LinearPolicyAi.load(weightsPath)
+                        : com.gempukku.swccgo.ai.models.LinearPolicyAi.zeros();
+            } catch (Exception e) {
+                throw new IllegalStateException("Failed to load linear.v1 weights from " + weightsPath, e);
+            }
+        }
+        if (resolved == AiSkill.ADVANCED) {
+            return new AdvancedAi();
+        }
+        if (resolved == AiSkill.HEURISTIC) {
+            if (weightsPath == null) {
+                throw new IllegalArgumentException(
+                        "HEURISTIC requires a heuristic.v1 weights file");
+            }
+            try {
+                return new ConfigurableHeuristicAi(weightsPath);
+            } catch (Exception e) {
+                throw new IllegalStateException("Failed to load heuristic weights from " + weightsPath, e);
+            }
+        }
         if (weightsPath != null) {
             try {
                 return new ConfigurableHeuristicAi(weightsPath);
@@ -221,11 +272,16 @@ public final class HeadlessBotVsBotRunner {
                 throw new IllegalStateException("Failed to load heuristic weights from " + weightsPath, e);
             }
         }
-        switch (skill == null ? AiSkill.BEGINNER : skill) {
+        switch (resolved) {
             case ADVANCED:
                 return new AdvancedAi();
             case RANDO:
                 return new RandoCalAi();
+            case LINEAR:
+                return com.gempukku.swccgo.ai.models.LinearPolicyAi.zeros();
+            case HEURISTIC:
+                throw new IllegalArgumentException(
+                        "HEURISTIC requires a heuristic.v1 weights file");
             case BEGINNER:
             default:
                 return new BeginnerAi();
@@ -305,6 +361,32 @@ public final class HeadlessBotVsBotRunner {
         AiRegistry.register(gameId, DS_PLAYER, darkAi);
         AiRegistry.register(gameId, LS_PLAYER, lightAi);
 
+        HeadlessDecisionTraceWriter.TraceLevel effectiveLevel = resolveTraceLevel(cfg);
+        boolean linearSeat = cfg.darkAi == AiSkill.LINEAR || cfg.lightAi == AiSkill.LINEAR;
+        if (effectiveLevel == HeadlessDecisionTraceWriter.TraceLevel.FEATURES || linearSeat) {
+            if (cfg.darkTracker == null) {
+                cfg.darkTracker = new InformationSetTracker(DS_PLAYER);
+            }
+            if (cfg.lightTracker == null) {
+                cfg.lightTracker = new InformationSetTracker(LS_PLAYER);
+            }
+            cfg.darkTracker.setOwnDeckPrior(DecklistMultisets.fromBlueprintIds(darkDeck.getCards()));
+            cfg.lightTracker.setOwnDeckPrior(DecklistMultisets.fromBlueprintIds(lightDeck.getCards()));
+            cfg.darkTracker.setOwnBlueprintDestinyHints(
+                    DecklistMultisets.destinyHints(cfg.darkTracker.getOwnDeckPriorView(), cardLibrary));
+            cfg.lightTracker.setOwnBlueprintDestinyHints(
+                    DecklistMultisets.destinyHints(cfg.lightTracker.getOwnDeckPriorView(), cardLibrary));
+            // Destiny + interrupt hooks into each seat's tracker (never seeds opponent decklist).
+            game.addGameStateListener(DS_PLAYER, new InformationSetGameStateListener(cfg.darkTracker));
+            game.addGameStateListener(LS_PLAYER, new InformationSetGameStateListener(cfg.lightTracker));
+            if (darkAi instanceof com.gempukku.swccgo.ai.models.LinearPolicyAi) {
+                ((com.gempukku.swccgo.ai.models.LinearPolicyAi) darkAi).setTracker(cfg.darkTracker);
+            }
+            if (lightAi instanceof com.gempukku.swccgo.ai.models.LinearPolicyAi) {
+                ((com.gempukku.swccgo.ai.models.LinearPolicyAi) lightAi).setTracker(cfg.lightTracker);
+            }
+        }
+
         if (cfg.traceWriter != null) {
             try {
                 cfg.traceWriter.writeGameHeader(
@@ -324,6 +406,7 @@ public final class HeadlessBotVsBotRunner {
         int decisionCount = 0;
         int invalidCount = 0;
         String stopper = null;
+        String decidingPlayer = "";
         Map<String, String> recordingIds = new LinkedHashMap<>();
         Map<String, Path> replayFiles = new LinkedHashMap<>();
         Path replayMetaPath = null;
@@ -334,11 +417,13 @@ public final class HeadlessBotVsBotRunner {
             while (!game.isFinished() && !game.isCancelled()) {
                 if (decisionCount >= cfg.maxDecisions) {
                     stopper = "maxDecisions=" + cfg.maxDecisions;
+                    decidingPlayer = pendingDecider(userFeedback);
                     break;
                 }
                 long elapsed = System.currentTimeMillis() - started;
                 if (elapsed >= cfg.maxMillis) {
                     stopper = "maxMillis=" + cfg.maxMillis;
+                    decidingPlayer = pendingDecider(userFeedback);
                     break;
                 }
 
@@ -376,6 +461,7 @@ public final class HeadlessBotVsBotRunner {
                     }
 
                     ai.setGame(game);
+                    noteDecisionsThisGame(cfg, playerId, decisionCount);
                     String answer;
                     try {
                         answer = ai.decide(playerId, decision, game.getGameState());
@@ -501,6 +587,9 @@ public final class HeadlessBotVsBotRunner {
             }
             if (cfg.traceWriter != null) {
                 try {
+                    GameState outcomeGs = game.getGameState();
+                    int outcomeDarkLf = outcomeGs != null ? outcomeGs.getPlayerLifeForce(DS_PLAYER) : -1;
+                    int outcomeLightLf = outcomeGs != null ? outcomeGs.getPlayerLifeForce(LS_PLAYER) : -1;
                     cfg.traceWriter.writeGameOutcome(
                             gameId,
                             cfg.gameIndex,
@@ -509,7 +598,10 @@ public final class HeadlessBotVsBotRunner {
                             game.isCancelled(),
                             game.getWinner(),
                             stopper,
-                            decisionCount);
+                            decisionCount,
+                            outcomeDarkLf,
+                            outcomeLightLf,
+                            decidingPlayer);
                 } catch (Exception ex) {
                     System.err.println("[headless] trace outcome failed: " + ex.getClass().getSimpleName()
                             + ": " + ex.getMessage());
@@ -547,7 +639,8 @@ public final class HeadlessBotVsBotRunner {
                 replayMetaPath,
                 deckPair.darkName,
                 deckPair.lightName,
-                cfg.formatName);
+                cfg.formatName,
+                decidingPlayer);
     }
 
     private static final class DeckPair {
@@ -561,6 +654,38 @@ public final class HeadlessBotVsBotRunner {
             this.light = light;
             this.darkName = darkName;
             this.lightName = lightName;
+        }
+    }
+
+    /**
+     * The seat that would have to decide when the loop stops for a cap.
+     * One pending player is that seat. Zero or several is empty: the score
+     * must not guess.
+     */
+    static String pendingDecider(DefaultUserFeedback userFeedback) {
+        if (userFeedback == null) {
+            return "";
+        }
+        java.util.Set<String> pending = userFeedback.getUsersPendingDecision();
+        if (pending == null || pending.size() != 1) {
+            return "";
+        }
+        String player = pending.iterator().next();
+        if (DS_PLAYER.equals(player) || LS_PLAYER.equals(player)) {
+            return player;
+        }
+        return "";
+    }
+
+    private static void noteDecisionsThisGame(Config cfg, String playerId, int decisionCount) {
+        InformationSetTracker tracker = null;
+        if (DS_PLAYER.equals(playerId)) {
+            tracker = cfg.darkTracker;
+        } else if (LS_PLAYER.equals(playerId)) {
+            tracker = cfg.lightTracker;
+        }
+        if (tracker != null) {
+            tracker.setDecisionsThisGame(decisionCount);
         }
     }
 
@@ -605,15 +730,39 @@ public final class HeadlessBotVsBotRunner {
         } else {
             skill = null;
         }
+        HeadlessDecisionTraceWriter.TraceLevel level = resolveTraceLevel(cfg);
+        InformationSetTracker tracker = null;
+        if (level == HeadlessDecisionTraceWriter.TraceLevel.FEATURES) {
+            if (DS_PLAYER.equals(playerId)) {
+                tracker = cfg.darkTracker;
+            } else if (LS_PLAYER.equals(playerId)) {
+                tracker = cfg.lightTracker;
+            }
+        }
         try {
             cfg.traceWriter.record(HeadlessDecisionTraceWriter.fromDecision(
                     gameId, cfg.gameIndex, decisionIndex, playerId, skill, cfg.formatName,
-                    decision, gs, answer, accepted, invalidReason));
+                    decision, gs, answer, accepted, invalidReason, level, tracker));
         } catch (Exception ex) {
             // Tracing must never abort a game; surface once via stderr.
             System.err.println("[headless] trace write failed: " + ex.getClass().getSimpleName()
                     + ": " + ex.getMessage());
         }
+    }
+
+    private static HeadlessDecisionTraceWriter.TraceLevel resolveTraceLevel(Config cfg) {
+        if (cfg != null && cfg.traceWriter != null
+                && cfg.traceWriter.getTraceLevel() == HeadlessDecisionTraceWriter.TraceLevel.FEATURES) {
+            return HeadlessDecisionTraceWriter.TraceLevel.FEATURES;
+        }
+        if (cfg != null && cfg.traceLevel == HeadlessDecisionTraceWriter.TraceLevel.FEATURES) {
+            return HeadlessDecisionTraceWriter.TraceLevel.FEATURES;
+        }
+        return HeadlessDecisionTraceWriter.levelFromSystemProperties();
+    }
+
+    private static Map<String, Integer> multiset(List<String> cards) {
+        return DecklistMultisets.fromBlueprintIds(cards);
     }
 
     private static String truncate(String s, int max) {

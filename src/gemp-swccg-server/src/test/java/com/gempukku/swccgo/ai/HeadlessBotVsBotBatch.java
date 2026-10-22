@@ -23,7 +23,7 @@ import java.util.Objects;
 public final class HeadlessBotVsBotBatch {
 
     public static final String CSV_HEADER =
-            "gameIndex,darkAi,lightAi,winner,darkDecisions,lightDecisions,darkTurns,lightTurns,elapsedMs,format,darkDeck,lightDeck,error";
+            "gameIndex,darkAi,lightAi,winner,darkDecisions,lightDecisions,darkTurns,lightTurns,elapsedMs,format,darkDeck,lightDeck,error,darkLifeForce,lightLifeForce,decidingPlayer";
 
     public static final class BatchConfig {
         public int games = 5;
@@ -46,6 +46,20 @@ public final class HeadlessBotVsBotBatch {
         /** JSONL path when {@link #writeTraces} is true. Default under target/. */
         public Path tracesPath = Paths.get(HeadlessDecisionTraceWriter.DEFAULT_PATH);
         /**
+         * How many games in the batch get a decision trace. 0 means every game.
+         * Default 2 so a batch does not write a full jsonl for every game.
+         */
+        public int traceGames = 2;
+        /**
+         * Cap on jsonl lines (headers plus decisions) for the whole batch.
+         * 0 means no line cap. Default keeps a small sample for the trainer.
+         */
+        public int traceDecisions = 100;
+        /**
+         * COMPACT or FEATURES. Default follows {@code -Dheadless.traceLevel} when unset here.
+         */
+        public HeadlessDecisionTraceWriter.TraceLevel traceLevel = null;
+        /**
          * Deck pack: {@link HeadlessBotVsBotRunner#DECK_OPEN40} or
          * {@link HeadlessBotVsBotRunner#DECK_WC96}.
          */
@@ -55,9 +69,12 @@ public final class HeadlessBotVsBotBatch {
          */
         public Path replayDir = null;
         public boolean recordReplay = false;
-        /** Optional Dark heuristic.v1 weights.json (overrides builtin darkAi skill). */
+        /**
+         * Optional Dark weights. heuristic.v1 unless {@link #darkAi} is LINEAR, then linear.v1.
+         * LINEAR with a null path plays a zeros pack.
+         */
         public Path darkWeightsPath = null;
-        /** Optional Light heuristic.v1 weights.json (overrides builtin lightAi skill). */
+        /** Optional Light weights (same semantics as darkWeightsPath). */
         public Path lightWeightsPath = null;
     }
 
@@ -107,7 +124,10 @@ public final class HeadlessBotVsBotBatch {
                     csv(format),
                     csv(darkDeck),
                     csv(lightDeck),
-                    csv(error != null ? error : ""));
+                    csv(error != null ? error : ""),
+                    Integer.toString(result != null ? result.darkLifeForce : -1),
+                    Integer.toString(result != null ? result.lightLifeForce : -1),
+                    csv(result != null && result.decidingPlayer != null ? result.decidingPlayer : ""));
         }
     }
 
@@ -159,6 +179,14 @@ public final class HeadlessBotVsBotBatch {
         if (cfg.games < 1) {
             throw new IllegalArgumentException("games must be >= 1, got " + cfg.games);
         }
+        if (cfg.darkAi == HeadlessBotVsBotRunner.AiSkill.HEURISTIC && cfg.darkWeightsPath == null) {
+            throw new IllegalArgumentException(
+                    "HEURISTIC dark seat requires --dark-weights=heuristic.v1.json");
+        }
+        if (cfg.lightAi == HeadlessBotVsBotRunner.AiSkill.HEURISTIC && cfg.lightWeightsPath == null) {
+            throw new IllegalArgumentException(
+                    "HEURISTIC light seat requires --light-weights=heuristic.v1.json");
+        }
 
         // WC96 packs are Premiere - A New Hope; never silently run them as Open.
         if (cfg.deckPack != null
@@ -187,8 +215,15 @@ public final class HeadlessBotVsBotBatch {
         if (cfg.writeTraces) {
             tracesPath = (cfg.tracesPath != null ? cfg.tracesPath
                     : Paths.get(HeadlessDecisionTraceWriter.DEFAULT_PATH)).toAbsolutePath().normalize();
-            traceWriter = new HeadlessDecisionTraceWriter(tracesPath);
-            System.out.println("[batch] writing decision traces: " + tracesPath);
+            HeadlessDecisionTraceWriter.TraceLevel level = cfg.traceLevel != null
+                    ? cfg.traceLevel
+                    : HeadlessDecisionTraceWriter.levelFromSystemProperties();
+            traceWriter = new HeadlessDecisionTraceWriter(tracesPath, level);
+            if (cfg.traceDecisions > 0) {
+                traceWriter.setMaxLines(cfg.traceDecisions);
+            }
+            System.out.println("[batch] writing decision traces: " + tracesPath + " level=" + level
+                    + " traceGames=" + cfg.traceGames + " traceLinesCap=" + cfg.traceDecisions);
         }
 
         try {
@@ -203,7 +238,15 @@ public final class HeadlessBotVsBotBatch {
                 gameCfg.verbose = cfg.verbose;
                 gameCfg.progressEveryN = cfg.progressEveryN;
                 gameCfg.gameIndex = i;
-                gameCfg.traceWriter = traceWriter;
+                boolean traceThisGame = traceWriter != null
+                        && (cfg.traceGames <= 0 || i <= cfg.traceGames)
+                        && (cfg.traceDecisions <= 0 || traceWriter.getLinesWritten() < cfg.traceDecisions);
+                gameCfg.traceWriter = traceThisGame ? traceWriter : null;
+                if (traceThisGame) {
+                    gameCfg.traceLevel = traceWriter.getTraceLevel();
+                } else if (cfg.traceLevel != null) {
+                    gameCfg.traceLevel = cfg.traceLevel;
+                }
                 gameCfg.darkWeightsPath = cfg.darkWeightsPath;
                 gameCfg.lightWeightsPath = cfg.lightWeightsPath;
                 if (cfg.recordReplay || cfg.replayDir != null) {
@@ -363,6 +406,7 @@ public final class HeadlessBotVsBotBatch {
      */
     public static void main(String[] args) throws IOException {
         BatchConfig cfg = new BatchConfig();
+        Path linearWeights = null;
         for (String arg : args) {
             if (arg.startsWith("--games=")) {
                 cfg.games = Integer.parseInt(arg.substring("--games=".length()));
@@ -374,6 +418,8 @@ public final class HeadlessBotVsBotBatch {
                 cfg.darkWeightsPath = Paths.get(arg.substring("--dark-weights=".length()));
             } else if (arg.startsWith("--light-weights=")) {
                 cfg.lightWeightsPath = Paths.get(arg.substring("--light-weights=".length()));
+            } else if (arg.startsWith("--linear-weights=")) {
+                linearWeights = Paths.get(arg.substring("--linear-weights=".length()));
             } else if (arg.startsWith("--csv=")) {
                 cfg.outputCsv = Paths.get(arg.substring("--csv=".length()));
             } else if (arg.equals("--no-csv")) {
@@ -395,6 +441,10 @@ public final class HeadlessBotVsBotBatch {
             } else if (arg.startsWith("--tracesPath=")) {
                 cfg.writeTraces = true;
                 cfg.tracesPath = Paths.get(arg.substring("--tracesPath=".length()));
+            } else if (arg.startsWith("--traceGames=")) {
+                cfg.traceGames = Integer.parseInt(arg.substring("--traceGames=".length()));
+            } else if (arg.startsWith("--traceDecisions=")) {
+                cfg.traceDecisions = Integer.parseInt(arg.substring("--traceDecisions=".length()));
             } else if (arg.startsWith("--decks=")) {
                 cfg.deckPack = arg.substring("--decks=".length());
                 if (HeadlessBotVsBotRunner.DECK_WC96.equalsIgnoreCase(cfg.deckPack)
@@ -415,10 +465,20 @@ public final class HeadlessBotVsBotBatch {
             } else if (arg.equals("--help") || arg.equals("-h")) {
                 System.out.println("Usage: HeadlessBotVsBotBatch --games=5 --dark=BEGINNER --light=BEGINNER "
                         + "--csv=target/out.csv [--decks=open40|wc96] [--format=open|premiere_anh] "
+                        + "[--dark=LINEAR --light=ADVANCED --linear-weights=linear.json] "
+                        + "[--dark=LINEAR --light=HEURISTIC --dark-weights=linear.json --light-weights=heuristic.json] "
                         + "[--replay] [--replayDir=target/headless-replays] "
-                        + "[--traces] [--tracesPath=target/traces.jsonl] "
+                        + "[--traces] [--tracesPath=target/traces.jsonl] [--traceGames=2] [--traceDecisions=100] "
                         + "[--verbose] [--maxDecisions=25000] [--maxMillis=180000]");
                 return;
+            }
+        }
+        if (linearWeights != null) {
+            if (cfg.darkAi == HeadlessBotVsBotRunner.AiSkill.LINEAR && cfg.darkWeightsPath == null) {
+                cfg.darkWeightsPath = linearWeights;
+            }
+            if (cfg.lightAi == HeadlessBotVsBotRunner.AiSkill.LINEAR && cfg.lightWeightsPath == null) {
+                cfg.lightWeightsPath = linearWeights;
             }
         }
 
