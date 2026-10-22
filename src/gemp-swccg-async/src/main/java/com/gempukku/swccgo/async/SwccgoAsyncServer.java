@@ -2,6 +2,8 @@ package com.gempukku.swccgo.async;
 
 import com.gempukku.polling.LongPollingSystem;
 import com.gempukku.swccgo.async.handler.RootUriRequestHandler;
+import com.gempukku.swccgo.async.internal.InternalAuthServer;
+import com.gempukku.swccgo.service.AuthService;
 import com.gempukku.swccgo.common.ApplicationConfiguration;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
@@ -57,6 +59,10 @@ public class SwccgoAsyncServer {
                     })
                     .childOption(ChannelOption.SO_KEEPALIVE, true)
                     .childOption(ChannelOption.TCP_NODELAY, true);
+
+            // Private wiki -> GEMP login check on its own unpublished port (off unless configured).
+            InternalAuthServer.startIfConfigured(bossGroup, workerGroup,
+                    (AuthService) gempukkuServer.getContext().get(AuthService.class));
 
             ChannelFuture bind = b.bind(httpPort);
             bind.sync().channel().closeFuture().sync();
