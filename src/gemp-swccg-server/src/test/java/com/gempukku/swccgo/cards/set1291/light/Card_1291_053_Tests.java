@@ -40,6 +40,7 @@ public class Card_1291_053_Tests {
                     put("charm", "1281_35");
                     put("ingenuity", "1281_36");
                     put("lando", "601_50");
+                    put("kyle", "1281_28");
                     put("luke", "1_19");
                 }},
                 new HashMap<>() {{
@@ -266,6 +267,42 @@ public class Card_1291_053_Tests {
         scn.SkipToLSTurn(Phase.CONTROL);
 
         assertFalse(lsMayPlay(scn, more, "Transfer"));
+    }
+
+    @Test
+    public void ThisIsMoreLikeItVTransfersAScoundrelEffectToAnotherScoundrel() {
+        var scn = GetScenario();
+        var more = scn.GetLSCard("more");
+        var bravado = scn.GetLSCard("bravado");
+        var lando = scn.GetLSCard("lando");
+        var kyle = scn.GetLSCard("kyle");
+        var site = scn.GetLSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, lando, kyle);
+        assertTrue(scn.HasKeyword(lando, Keyword.SCOUNDREL));
+        assertTrue(scn.HasKeyword(kyle, Keyword.SCOUNDREL));
+        scn.AttachCardsTo(lando, bravado);
+        assertTrue(scn.IsAttachedTo(lando, bravado));
+        scn.MoveCardsToLSHand(more);
+        scn.SkipToLSTurn(Phase.CONTROL);
+        assertTrue(scn.AwaitingLSControlPhaseActions());
+
+        assertTrue(scn.LSCardActionAvailable(more, "Transfer a [Scoundrel] Effect to another scoundrel"));
+        scn.LSPlayCard(more, "Transfer a [Scoundrel] Effect to another scoundrel");
+        assertTrue(scn.LSDecisionAvailable("Choose [Scoundrel] Effect to transfer"));
+        assertTrue(scn.LSHasCardChoiceAvailable(bravado));
+        scn.LSChooseCard(bravado);
+        assertTrue(scn.LSDecisionAvailable("Choose scoundrel to transfer to"));
+        assertTrue(scn.LSHasCardChoiceAvailable(kyle));
+        assertFalse(scn.LSHasCardChoiceAvailable(lando));
+        scn.LSChooseCard(kyle);
+        scn.PassAllResponses();
+
+        assertTrue(scn.IsAttachedTo(kyle, bravado));
+        assertFalse(scn.IsAttachedTo(lando, bravado));
+        assertEquals(Zone.ATTACHED, bravado.getZone());
+        assertInZone(Zone.USED_PILE, more);
     }
 
     @Test

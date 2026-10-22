@@ -18,6 +18,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.gempukku.swccgo.framework.Assertions.assertAtLocation;
 import static com.gempukku.swccgo.framework.Assertions.assertInZone;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -61,6 +62,9 @@ public class Card_1283_021_Tests {
                     put("operative", "7_1");
                     put("boshek", "1_4");
                     put("quarter", "1283_24");
+                    put("yerka", "1210_143");
+                    put("cantina", "1_128");
+                    put("momaw", "1_20");
                 }},
                 new HashMap<>() {{
                     put("trooper", "1_194");
@@ -189,7 +193,25 @@ public class Card_1283_021_Tests {
         scn.gameState().reapplyAffectingForCard(scn.game(), bhbm);
         scn.AttachCardsTo(bhbm, destiny);
         scn.gameState().reapplyAffectingForCard(scn.game(), destiny);
-        AdvanceTableChangedTakingCancel(scn, destiny);
+
+        // The cards were placed directly on the table, so the next "table changed" check happens at the end of
+        // the Dark Side Activate phase. Pass both players through it.
+        assertTrue(scn.AwaitingDSActivatePhaseActions());
+        scn.DSPass();
+        assertTrue(scn.DSDecisionAvailable("You have not activated Force. Do you want to Pass?"));
+        scn.DSChooseYes();
+        assertTrue(scn.AwaitingLSActivatePhaseActions());
+        scn.LSPass();
+
+        // Underworld Contacts and Uncharted Settlements (V) each have a required trigger that cancels Your Destiny,
+        // so the current player (DS) is asked which fires first. Underworld Contacts' own trigger must be offered.
+        assertTrue(scn.DSDecisionAvailable("END_OF_PHASE - Required responses"));
+        assertTrue(scn.GetDSAvailableActions().contains("Cancel Your Destiny"));
+        assertTrue(scn.DSGetADParamAsList("blueprintId").contains(combo.getBlueprintId(true)));
+        scn.DSChooseAction("Cancel Your Destiny");
+
+        assertTrue(scn.DSDecisionAvailable("Cancel Your Destiny - Optional responses"));
+        scn.PassAllResponses();
 
         assertInZone(Zone.LOST_PILE, destiny);
     }
@@ -295,45 +317,168 @@ public class Card_1283_021_Tests {
         assertEquals(2, scn.GetUnpaidDSAttrition());
     }
 
-    private void AdvanceTableChangedTakingCancel(VirtualTableScenario scn, PhysicalCardImpl destiny) {
-        for (int i = 0; i < 20; i++) {
-            if (destiny.getZone() == Zone.LOST_PILE || destiny.getZone() == Zone.TOP_OF_LOST_PILE) {
-                return;
-            }
-            var decision = scn.GetCurrentDecision();
-            if (decision == null) {
-                return;
-            }
-            String lower = decision.getText().toLowerCase();
-            if (lower.contains("cancel") || lower.contains("your destiny")) {
-                if (scn.LSHasCardChoiceAvailable(destiny)) {
-                    scn.LSChooseCard(destiny);
-                    continue;
-                }
-                if (scn.DSHasCardChoiceAvailable(destiny)) {
-                    scn.DSChooseCard(destiny);
-                    continue;
-                }
-            }
-            var actions = scn.GetAvailableActions(scn.GetDecidingPlayer());
-            if (actions.toString().contains("Cancel") || actions.toString().contains("Your Destiny")) {
-                scn.PlayerDecided(scn.GetDecidingPlayer(), "0");
-                continue;
-            }
-            if (lower.contains("required")) {
-                scn.PlayerDecided(scn.GetDecidingPlayer(), "0");
-                continue;
-            }
-            if (lower.contains("optional")) {
-                scn.PassResponses("optional");
-            } else if (lower.contains("action")) {
-                scn.PassResponses("action");
-            } else {
-                scn.PlayerDecided(scn.GetDecidingPlayer(), "0");
-            }
-        }
+    /**
+     * Dark Side deploys Vader from hand to the Cantina (where Light Side has no characters) during its deploy phase.
+     * Yerka Mig (V) is then lost by its own game text because opponent controls the Cantina.
+     */
+    private void DarkSideTakesControlOfCantinaMakingYerkaLost(VirtualTableScenario scn) {
+        var cantina = scn.GetLSCard("cantina");
+        var yerka = scn.GetLSCard("yerka");
+        var vader = scn.GetDSCard("vader");
+
+        scn.MoveCardsToDSHand(vader);
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.EnsureDSForcePile(8);
+
+        assertTrue(scn.IsAttachedTo(cantina, yerka));
+        assertTrue(scn.AwaitingDSDeployPhaseActions());
+        assertTrue(scn.DSDeployAvailable(vader));
+        scn.DSDeployCard(vader);
+        assertTrue(scn.DSDecisionAvailable("Choose where to deploy"));
+        assertTrue(scn.DSHasCardChoiceAvailable(cantina));
+        scn.DSChooseCard(cantina);
+        assertTrue(scn.LSDecisionAvailable("Use 6 Force - Optional responses"));
+        scn.LSPass();
+        assertTrue(scn.DSDecisionAvailable("Use 6 Force - Optional responses"));
+        scn.DSPass();
+        assertAtLocation(cantina, vader);
+        // Yerka Mig (V)'s own required trigger makes it lost as soon as opponent controls the Cantina.
+        assertTrue(scn.LSDecisionAvailable("ABOUT_TO_BE_LOST_FROM_TABLE - Optional responses"));
+        scn.LSPass();
+        assertTrue(scn.DSDecisionAvailable("ABOUT_TO_BE_LOST_FROM_TABLE - Optional responses"));
+        scn.DSPass();
+        assertInZone(Zone.LOST_PILE, yerka);
     }
 
+    @Test
+    public void UnderworldContactsMayPlaceJustLostYerkaMigVInUsedPile() {
+        var scn = GetHiddenBaseScenario();
+        var combo = scn.GetLSCard("combo");
+        var hiddenbase = scn.GetLSCard("hiddenbase");
+        var cantina = scn.GetLSCard("cantina");
+        var yerka = scn.GetLSCard("yerka");
+
+        scn.StartGame();
+        scn.AttachCardsTo(hiddenbase, combo);
+        scn.MoveLocationToTable(cantina);
+        scn.AttachCardsTo(cantina, yerka);
+        DarkSideTakesControlOfCantinaMakingYerkaLost(scn);
+
+        assertTrue(scn.LSDecisionAvailable("Just lost"));
+        assertTrue(scn.LSDecisionAvailable("Optional responses"));
+        assertTrue(scn.LSCardActionAvailable(combo, "Place Yerka Mig (V) in Used Pile"));
+        scn.LSUseCardAction(combo, "Place Yerka Mig (V) in Used Pile");
+        scn.PassAllResponses();
+
+        assertInZone(Zone.USED_PILE, yerka);
+    }
+
+    @Test
+    public void JustLostYerkaMigVStaysInLostPileWithoutUnderworldContacts() {
+        var scn = GetHiddenBaseScenario();
+        var combo = scn.GetLSCard("combo");
+        var cantina = scn.GetLSCard("cantina");
+        var yerka = scn.GetLSCard("yerka");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(cantina);
+        scn.AttachCardsTo(cantina, yerka);
+        DarkSideTakesControlOfCantinaMakingYerkaLost(scn);
+
+        assertFalse(scn.LSCardActionAvailable(combo, "Place Yerka Mig (V) in Used Pile"));
+        assertFalse(scn.LSActionAvailable("in Used Pile"));
+        scn.PassAllResponses();
+
+        assertInZone(Zone.LOST_PILE, yerka);
+    }
+
+    /**
+     * Light Side deploys the given character from hand to the Cantina during its deploy phase and both players pass
+     * the Force-use and play responses, stopping at Light Side's "just deployed" optional response window (if any).
+     */
+    private void DeployFromHandToCantina(VirtualTableScenario scn, PhysicalCardImpl character, int deployCost) {
+        var cantina = scn.GetLSCard("cantina");
+
+        assertTrue(scn.AwaitingLSDeployPhaseActions());
+        assertTrue(scn.LSDeployAvailable(character));
+        scn.LSDeployCard(character);
+        assertTrue(scn.LSDecisionAvailable("Choose where to deploy"));
+        assertTrue(scn.LSHasCardChoiceAvailable(cantina));
+        scn.LSChooseCard(cantina);
+        assertTrue(scn.DSDecisionAvailable("Use " + deployCost + " Force - Optional responses"));
+        scn.DSPass();
+        assertTrue(scn.LSDecisionAvailable("Use " + deployCost + " Force - Optional responses"));
+        scn.LSPass();
+        assertTrue(scn.DSDecisionAvailable("PLAY - Optional responses"));
+        scn.DSPass();
+        assertAtLocation(cantina, character);
+    }
+
+    /**
+     * With Yerka Mig (V) on the Cantina and only aliens providing Light Side ability, deploys BoShek and then Momaw
+     * Nadon (both unique aliens) to the Cantina in the same deploy phase, retrieving with Yerka Mig (V) after the
+     * first deploy. Returns whether Yerka Mig (V)'s retrieval was offered again after the second deploy.
+     */
+    private boolean RetrieveOfferedForSecondUniqueAlienDeployedThisTurn(VirtualTableScenario scn) {
+        var cantina = scn.GetLSCard("cantina");
+        var yerka = scn.GetLSCard("yerka");
+        var boshek = scn.GetLSCard("boshek");
+        var momaw = scn.GetLSCard("momaw");
+        var revolution = scn.GetLSCard("revolution");
+        var operative = scn.GetLSCard("operative");
+
+        scn.MoveLocationToTable(cantina);
+        scn.AttachCardsTo(cantina, yerka);
+        scn.MoveCardsToTopOfLSLostPile(revolution, operative);
+        scn.MoveCardsToLSHand(boshek, momaw);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        scn.EnsureLSForcePile(10);
+
+        DeployFromHandToCantina(scn, boshek, 4);
+        assertTrue(scn.LSDecisionAvailable("just deployed - Optional responses"));
+        assertTrue(scn.LSCardActionAvailable(yerka, "Retrieve 1 Force"));
+        scn.LSUseCardAction(yerka, "Retrieve 1 Force");
+        scn.PassAllResponses();
+        assertEquals(1, scn.GetLSLostPileCount());
+
+        assertTrue(scn.AwaitingDSDeployPhaseActions());
+        scn.DSPass();
+        DeployFromHandToCantina(scn, momaw, 2);
+        return scn.LSCardActionAvailable(yerka, "Retrieve 1 Force");
+    }
+
+    @Test
+    public void UnderworldContactsLimitsYerkaMigVRetrievalToOncePerTurn() {
+        var scn = GetHiddenBaseScenario();
+        var combo = scn.GetLSCard("combo");
+        var hiddenbase = scn.GetLSCard("hiddenbase");
+
+        scn.StartGame();
+        scn.AttachCardsTo(hiddenbase, combo);
+
+        assertFalse(RetrieveOfferedForSecondUniqueAlienDeployedThisTurn(scn));
+        scn.PassAllResponses();
+        assertTrue(scn.AwaitingDSDeployPhaseActions());
+        assertEquals(1, scn.GetLSLostPileCount());
+    }
+
+    @Test
+    public void YerkaMigVRetrievesForEachUniqueAlienDeployedWithoutUnderworldContacts() {
+        var scn = GetHiddenBaseScenario();
+        var yerka = scn.GetLSCard("yerka");
+
+        scn.StartGame();
+
+        assertTrue(RetrieveOfferedForSecondUniqueAlienDeployedThisTurn(scn));
+        scn.LSUseCardAction(yerka, "Retrieve 1 Force");
+        scn.PassAllResponses();
+        assertEquals(0, scn.GetLSLostPileCount());
+    }
+
+    /**
+     * Hidden Base (V) / Systems Will Slip Through Your Fingers (V). The objective deploys Yavin 4, Hidden Landing
+     * Site and Uncharted Settlements (V) by itself; the only decision Light Side is asked is which pair it may deploy.
+     */
     StartingSetup HiddenBaseVObjective = new StartingSetup() {
         @Override
         public HashMap<String, String> Cards() {
@@ -344,37 +489,13 @@ public class Card_1283_021_Tests {
 
         @Override
         public void Setup(VirtualTableScenario scn) {
-            if (scn.LSDecisionAvailable("starting")) {
-                scn.LSChooseCard(scn.GetLSCard("hiddenbase"));
-            }
-            for (int i = 0; i < 20; i++) {
-                boolean progressed = false;
-                if (scn.LSDecisionAvailable("battleground")
-                        || scn.LSDecisionAvailable("Choose card to deploy from Reserve Deck")) {
-                    scn.LSChooseCard(scn.GetLSCard("yavin"));
-                    progressed = true;
-                }
-                else if (scn.LSDecisionAvailable("On which side")) {
-                    scn.LSChoose("Left");
-                    progressed = true;
-                }
-                else if (scn.LSDecisionAvailable("Hidden Landing Site")) {
-                    scn.LSChooseCard(scn.GetLSCard("hls"));
-                    progressed = true;
-                }
-                else if (scn.LSDecisionAvailable("Uncharted Settlements")) {
-                    scn.LSChooseCard(scn.GetLSCard("uncharted"));
-                    progressed = true;
-                }
-                else if (scn.LSDecisionAvailable("Choose pair")
-                        || scn.LSDecisionAvailable("Choose pair you may deploy")) {
-                    scn.LSChoose("Alien / Independent starship");
-                    progressed = true;
-                }
-                if (!progressed) {
-                    break;
-                }
-            }
+            assertTrue(scn.LSDecisionAvailable("Choose pair you may deploy"));
+            scn.LSChoose("Alien / Independent starship");
+
+            assertInZone(Zone.LOCATIONS, scn.GetLSCard("yavin"));
+            assertInZone(Zone.LOCATIONS, scn.GetLSCard("hls"));
+            assertTrue(scn.IsAttachedTo(scn.GetLSCard("hiddenbase"), scn.GetLSCard("uncharted")));
+            assertTrue(scn.AwaitingDSActivatePhaseActions());
         }
     };
 }

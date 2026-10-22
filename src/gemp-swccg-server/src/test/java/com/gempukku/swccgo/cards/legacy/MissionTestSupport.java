@@ -11,6 +11,7 @@ import com.gempukku.swccgo.common.Keyword;
 import com.gempukku.swccgo.common.PlayCardZoneOption;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
+import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.common.Zone;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
@@ -88,6 +89,7 @@ public final class MissionTestSupport {
         };
     }
 
+
     public static AbstractNormalEffect tieFighterConstructionFacility() {
         return new AbstractNormalEffect(Side.DARK, 3, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "TIE Fighter Construction Facility", Uniqueness.UNIQUE, ExpansionSet.PREMIERE, Rarity.C1) {
         };
@@ -161,6 +163,9 @@ public final class MissionTestSupport {
         }
         if (title != null && title.startsWith("Coruscant")) {
             ensurePlanetLayout(scn, "Coruscant", 0);
+        }
+        if (title != null && title.startsWith(Title.Geonosis)) {
+            ensurePlanetLayout(scn, Title.Geonosis, 6);
         }
         if (blueprint instanceof AbstractSystem) {
             ensurePlanetLayout(scn, blueprint.getTitle(), blueprint.getParsec());

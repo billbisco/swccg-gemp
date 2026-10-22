@@ -18,6 +18,7 @@ import com.gempukku.swccgo.logic.GameUtils;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
 import com.gempukku.swccgo.logic.effects.TargetCardOnTableEffect;
 import com.gempukku.swccgo.logic.effects.UnrespondableEffect;
+import com.gempukku.swccgo.logic.modifiers.ImprisonedCaptivesReleasedMayEscapeModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.modifiers.PowerModifier;
 import com.gempukku.swccgo.logic.timing.Action;
@@ -47,6 +48,7 @@ public class Card1291_017 extends AbstractSite {
     protected List<Modifier> getGameTextDarkSideWhileActiveModifiers(String playerOnDarkSideOfLocation, SwccgGame game, PhysicalCard self) {
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new PowerModifier(self, Filters.and(Filters.or(Filters.Dooku, Filters.Jango_Fett), Filters.here(self)), 1));
+        modifiers.add(new ImprisonedCaptivesReleasedMayEscapeModifier(self, self));
         return modifiers;
     }
 

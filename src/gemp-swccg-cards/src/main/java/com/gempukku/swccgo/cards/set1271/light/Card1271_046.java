@@ -18,6 +18,7 @@ import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.LegacyFilters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.game.state.DrawDestinyState;
@@ -95,7 +96,7 @@ public class Card1271_046 extends AbstractMission {
 
     @Override
     protected List<OptionalGameTextTriggerAction> getGameTextOptionalAfterTriggers(final String playerId, SwccgGame game, EffectResult effectResult, final PhysicalCard self, int gameTextSourceCardId) {
-        if (TriggerConditions.forceDrainInitiatedBy(game, effectResult, playerId, Filters.and(Filters.battleground_system, Filters.except(Filters.or(Filters.Yavin_4_system, Filters.liberated_system))))
+        if (TriggerConditions.forceDrainInitiatedBy(game, effectResult, playerId, Filters.and(LegacyFilters.canBeLiberated(), Filters.except(Filters.Yavin_4_system)))
                 && GameConditions.canDrawDestiny(game, playerId)) {
             final PhysicalCard system = ((ForceDrainInitiatedResult) effectResult).getLocation();
             final OptionalGameTextTriggerAction action = new OptionalGameTextTriggerAction(self, gameTextSourceCardId);

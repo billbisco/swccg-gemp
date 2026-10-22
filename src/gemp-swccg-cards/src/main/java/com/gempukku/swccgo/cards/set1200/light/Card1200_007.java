@@ -13,9 +13,13 @@ import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
+import com.gempukku.swccgo.logic.TriggerConditions;
+import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
+import com.gempukku.swccgo.logic.effects.UseValueForTotalBattleDestinyWhenAllCanceledEffect;
 import com.gempukku.swccgo.logic.effects.choose.ChooseStackedCardEffect;
 import com.gempukku.swccgo.logic.effects.choose.PlayStackedDefensiveShieldEffect;
+import com.gempukku.swccgo.logic.timing.EffectResult;
 
 import java.util.Collections;
 import java.util.List;
@@ -56,6 +60,25 @@ public class Card1200_007 extends AbstractDefensiveShield {
                             action.appendEffect(new PlayStackedDefensiveShieldEffect(action, self, selectedCard));
                         }
                     });
+            return Collections.singletonList(action);
+        }
+        return null;
+    }
+
+    @Override
+    protected List<RequiredGameTextTriggerAction> getGameTextRequiredAfterTriggers(SwccgGame game, EffectResult effectResult, PhysicalCard self, int gameTextSourceCardId) {
+        String playerId = self.getOwner();
+
+        // "Substituted battle destinies do not count against battle destiny limits" is how the engine already draws
+        // destiny (DrawDestinyEffect counts a substituted draw toward the number drawn, not toward the limit).
+        // "If all your battle destinies were canceled (and not redrawn) use 1 for your total battle destiny instead."
+        if (TriggerConditions.isBattleDestinyDrawingJustCompletedForBothPlayers(game, effectResult)
+                && UseValueForTotalBattleDestinyWhenAllCanceledEffect.allBattleDestiniesCanceled(game.getGameState(), playerId)) {
+            RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
+            action.setText("Use 1 for total battle destiny");
+            action.setActionMsg("Use 1 for " + playerId + "'s total battle destiny");
+            action.appendEffect(
+                    new UseValueForTotalBattleDestinyWhenAllCanceledEffect(action, playerId, 1));
             return Collections.singletonList(action);
         }
         return null;
