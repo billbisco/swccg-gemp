@@ -1,0 +1,13 @@
+# Optional override: enables the private wiki -> GEMP login check (docs/wiki-auth-api.md).
+# Use:  docker compose -f docker-compose.yml -f docker-compose.wiki-auth.yml up -d build
+# Needs, once on the host:  docker network create --internal swccg-auth
+# and in .env (untracked):  INTERNAL_AUTH_PORT=8090  GEMP_INTERNAL_AUTH_SECRET=<openssl rand -base64 48>
+# Do NOT add 8090 to `ports:`; it must stay unpublished. nginx never proxies it.
+services:
+  build:
+    networks:
+      swccg-auth: {}
+
+networks:
+  swccg-auth:
+    external: true
