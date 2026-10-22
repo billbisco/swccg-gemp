@@ -31,6 +31,7 @@ public class Card_1291_017_Tests {
                 new HashMap<>() {{
                     put("luke", "1_19");
                     put("leia", "1_17");
+                    put("lspetranaki", "1291_58");
                 }},
                 new HashMap<>() {{
                     put("petranaki", "1291_17");
@@ -188,7 +189,8 @@ public class Card_1291_017_Tests {
      */
     private PhysicalCardImpl convertLightPetranakiWithDarkCopy(VirtualTableScenario scn) {
         var petranaki = scn.GetDSCard("petranaki");
-        var lsPetranaki = MissionTestSupport.putLocationOnTable(scn, 9317, scn.LS, MissionTestSupport.geonosisPetranakiArena(Side.LIGHT));
+        var lsPetranaki = scn.GetLSCard("lspetranaki");
+        scn.MoveLocationToTable(lsPetranaki);
         assertEquals(Zone.LOCATIONS, lsPetranaki.getZone());
         scn.MoveCardsToHand(petranaki);
         scn.SkipToDSTurn(Phase.DEPLOY);

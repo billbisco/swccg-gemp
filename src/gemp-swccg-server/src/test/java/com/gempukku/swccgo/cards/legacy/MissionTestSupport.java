@@ -89,19 +89,6 @@ public final class MissionTestSupport {
         };
     }
 
-    /**
-     * Test-only Geonosis: Petranaki Arena for the given side (GEMP has no Light side Petranaki Arena yet).
-     * Used to exercise "raise your converted Petranaki Arena" game text.
-     */
-    public static AbstractSite geonosisPetranakiArena(Side side) {
-        return new AbstractSite(side, Title.Geonosis_Petranaki_Arena, Title.Geonosis, Uniqueness.UNIQUE, ExpansionSet.PREMIERE, Rarity.C1) {
-            {
-                addIcon(Icon.DARK_FORCE, 1);
-                addIcon(Icon.LIGHT_FORCE, 2);
-                addIcons(Icon.EXTERIOR_SITE, Icon.PLANET, Icon.EPISODE_I);
-            }
-        };
-    }
 
     public static AbstractNormalEffect tieFighterConstructionFacility() {
         return new AbstractNormalEffect(Side.DARK, 3, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "TIE Fighter Construction Facility", Uniqueness.UNIQUE, ExpansionSet.PREMIERE, Rarity.C1) {
