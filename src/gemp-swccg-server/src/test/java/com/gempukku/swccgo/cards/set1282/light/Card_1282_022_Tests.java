@@ -116,9 +116,9 @@ public class Card_1282_022_Tests {
 
         assertTrue(scn.LSCardPlayAvailable(slip, "Watch Your Back"));
         scn.LSPlayCard(slip, "Watch Your Back");
-        if (scn.LSHasCardChoiceAvailable(watch)) {
-            scn.LSChooseCard(watch);
-        }
+        assertTrue(scn.LSDecisionAvailable("Choose card to cancel"));
+        assertTrue(scn.LSHasCardChoiceAvailable(watch));
+        scn.LSChooseCard(watch);
         scn.PassAllResponses();
 
         assertInZone(Zone.LOST_PILE, watch);

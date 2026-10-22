@@ -3,6 +3,7 @@ package com.gempukku.swccgo.cards.set1283.light;
 import com.gempukku.swccgo.cards.AbstractNormalEffect;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.conditions.OnTableCondition;
+import com.gempukku.swccgo.cards.effects.SetWhileInPlayDataEffect;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.PlayCardOptionId;
@@ -17,19 +18,23 @@ import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.game.state.WhileInPlayData;
+import com.gempukku.swccgo.logic.GameUtils;
 import com.gempukku.swccgo.logic.TriggerConditions;
 import com.gempukku.swccgo.logic.actions.CancelCardActionBuilder;
+import com.gempukku.swccgo.logic.actions.OptionalGameTextTriggerAction;
 import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
-import com.gempukku.swccgo.cards.effects.SetWhileInPlayDataEffect;
+import com.gempukku.swccgo.logic.effects.PutCardFromLostPileInUsedPileEffect;
 import com.gempukku.swccgo.logic.evaluators.BaseEvaluator;
 import com.gempukku.swccgo.logic.modifiers.AttritionModifier;
 import com.gempukku.swccgo.logic.modifiers.GenerateNoForceModifier;
 import com.gempukku.swccgo.logic.modifiers.MayDeployToLocationModifier;
 import com.gempukku.swccgo.logic.modifiers.MayNotDeployModifier;
+import com.gempukku.swccgo.logic.modifiers.MayRetrieveForceWithCardOnlyOncePerTurnModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 import com.gempukku.swccgo.logic.timing.Effect;
 import com.gempukku.swccgo.logic.timing.EffectResult;
+import com.gempukku.swccgo.logic.timing.results.LostFromTableResult;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -66,6 +71,7 @@ public class Card1283_021 extends AbstractNormalEffect {
         modifiers.add(new MayNotDeployModifier(self, Filters.or(Filters.Ellorrs_Madak, Filters.Revolution, Filters.operative), playerId));
         modifiers.add(new GenerateNoForceModifier(self, Filters.titleContains("Rebel Cell - Hidden Landing Site"), opponent));
         modifiers.add(new MayDeployToLocationModifier(self, yerkaV, Filters.titleContains("Rebel Cell")));
+        modifiers.add(new MayRetrieveForceWithCardOnlyOncePerTurnModifier(self, yerkaV));
         modifiers.add(new AttritionModifier(self, Filters.any,
                 new OnTableCondition(self, Filters.title("Systems Will Slip Through Your Fingers")),
                 new RebelCellOccupiedWithAlienEvaluator(self, playerId), opponent, true));
@@ -103,6 +109,25 @@ public class Card1283_021 extends AbstractNormalEffect {
             actions.add(action);
         }
         return actions;
+    }
+
+    @Override
+    protected List<OptionalGameTextTriggerAction> getGameTextOptionalAfterTriggers(final String playerId, SwccgGame game, EffectResult effectResult, final PhysicalCard self, int gameTextSourceCardId) {
+        Filter yerkaV = Filters.and(Filters.your(playerId), Filters.title("Yerka Mig"), Icon.LEGACY_BLOCK_1);
+
+        // Check condition(s)
+        if (TriggerConditions.justLost(game, effectResult, yerkaV)) {
+            final PhysicalCard justLostCard = ((LostFromTableResult) effectResult).getCard();
+
+            final OptionalGameTextTriggerAction action = new OptionalGameTextTriggerAction(self, gameTextSourceCardId);
+            action.setText("Place " + GameUtils.getFullName(justLostCard) + " in Used Pile");
+            action.setActionMsg("Place " + GameUtils.getCardLink(justLostCard) + " in Used Pile");
+            // Perform result(s)
+            action.appendEffect(
+                    new PutCardFromLostPileInUsedPileEffect(action, playerId, justLostCard, true));
+            return Collections.singletonList(action);
+        }
+        return null;
     }
 
     private static class RebelCellOccupiedWithAlienEvaluator extends BaseEvaluator {

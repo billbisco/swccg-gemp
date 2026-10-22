@@ -12,6 +12,7 @@ import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.common.Zone;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.game.PhysicalCardImpl;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -30,6 +31,8 @@ public class Card_1291_052_Tests {
                 }},
                 new HashMap<>() {{
                     put("workshop", "6_163");
+                    put("slaving", "601_15");
+                    put("dockingbay", "7_276");
                     put("trooper", "1_194");
                 }},
                 10, 10,
@@ -125,5 +128,69 @@ public class Card_1291_052_Tests {
         int before = scn.GetPower(cody);
         scn.AttachCardsTo(site, learn);
         assertEquals(before + 1, scn.GetPower(cody));
+    }
+
+    private boolean marksDarkSideGameTextCanceled(VirtualTableScenario scn, PhysicalCardImpl location, PhysicalCardImpl learn) {
+        return scn.game().getModifiersQuerying().getCardsMarkingGameTextCanceledForPlayer(scn.gameState(), location, scn.DS).contains(learn);
+    }
+
+    private float lsForceGeneration(VirtualTableScenario scn, PhysicalCardImpl location) {
+        return scn.game().getModifiersQuerying().getForceGenerationFromLocation(scn.gameState(), location, scn.LS);
+    }
+
+    /**
+     * Positive control for the two exception tests below: an ordinary opponent's non-battleground planet site
+     * (Jabba's Palace: Droid Workshop, 1 Dark icon only) has its Dark side game text canceled.
+     */
+    @Test
+    public void MuchToLearnYouStillHaveCancelsOpponentGameTextAtOrdinaryNonBattlegroundPlanetSite() {
+        var scn = GetScenario();
+        var learn = scn.GetLSCard("learn");
+        var workshop = scn.GetDSCard("workshop");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(workshop);
+        assertFalse(scn.HasKeyword(workshop, Keyword.DOCKING_BAY));
+        assertFalse(marksDarkSideGameTextCanceled(scn, workshop, learn));
+        float genBefore = lsForceGeneration(scn, workshop);
+        scn.AttachCardsTo(workshop, learn);
+        assertTrue(marksDarkSideGameTextCanceled(scn, workshop, learn));
+        assertEquals(Math.round(genBefore) + 1, Math.round(lsForceGeneration(scn, workshop)));
+    }
+
+    @Test
+    public void MuchToLearnYouStillHaveDoesNotCancelGameTextAtOpponentsKashyyykLocation() {
+        var scn = GetScenario();
+        var learn = scn.GetLSCard("learn");
+        var slaving = scn.GetDSCard("slaving");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(slaving);
+        // Kashyyyk: Slaving Camp Headquarters is an opponent's non-battleground planet site (2 Dark icons, no Light icon)
+        assertEquals(2, scn.GetIconCount(slaving, Icon.DARK_FORCE));
+        assertEquals(0, scn.GetIconCount(slaving, Icon.LIGHT_FORCE));
+        assertEquals("Kashyyyk", slaving.getPartOfSystem());
+        float genBefore = lsForceGeneration(scn, slaving);
+        scn.AttachCardsTo(slaving, learn);
+        assertFalse(marksDarkSideGameTextCanceled(scn, slaving, learn));
+        assertEquals(Math.round(genBefore), Math.round(lsForceGeneration(scn, slaving)));
+    }
+
+    @Test
+    public void MuchToLearnYouStillHaveDoesNotCancelGameTextAtOpponentsDockingBay() {
+        var scn = GetScenario();
+        var learn = scn.GetLSCard("learn");
+        var dockingBay = scn.GetDSCard("dockingbay");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(dockingBay);
+        // Coruscant: Docking Bay is an opponent's non-battleground planet site (1 Dark icon only) that is a docking bay
+        assertEquals(1, scn.GetIconCount(dockingBay, Icon.DARK_FORCE));
+        assertEquals(0, scn.GetIconCount(dockingBay, Icon.LIGHT_FORCE));
+        assertTrue(scn.HasKeyword(dockingBay, Keyword.DOCKING_BAY));
+        float genBefore = lsForceGeneration(scn, dockingBay);
+        scn.AttachCardsTo(dockingBay, learn);
+        assertFalse(marksDarkSideGameTextCanceled(scn, dockingBay, learn));
+        assertEquals(Math.round(genBefore), Math.round(lsForceGeneration(scn, dockingBay)));
     }
 }

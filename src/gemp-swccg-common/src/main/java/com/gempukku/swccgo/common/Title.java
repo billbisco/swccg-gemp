@@ -477,6 +477,8 @@ public interface Title {
     String General_Dodonna = "General Dodonna";
     String Geonosis = "Geonosis";
     String Geonosis_Petranaki_Arena = "Geonosis: Petranaki Arena";
+    String Geonosis_Separatist_Council_Room = "Geonosis: Separatist Council Room";
+    String War_Has_Begun = "War Has Begun";
     String Get_Alongside_That_One = "Get Alongside That One";
     String Ghhhk = "Ghhhk";
     String Ghost = "Ghost";

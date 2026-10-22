@@ -10,6 +10,7 @@ import com.gempukku.swccgo.logic.GameUtils;
 import com.gempukku.swccgo.logic.actions.SubAction;
 import com.gempukku.swccgo.logic.decisions.MultipleChoiceAwaitingDecision;
 import com.gempukku.swccgo.logic.effects.choose.ChooseCardOnTableEffect;
+import com.gempukku.swccgo.logic.modifiers.ModifierType;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 import com.gempukku.swccgo.logic.timing.AbstractSubActionEffect;
 import com.gempukku.swccgo.logic.timing.Action;
@@ -46,7 +47,10 @@ class ReleaseOneCaptiveEffect extends AbstractSubActionEffect {
         final GameState gameState = game.getGameState();
         final ModifiersQuerying modifiersQuerying = game.getModifiersQuerying();
         final PhysicalCard location = game.getModifiersQuerying().getLocationThatCardIsAt(gameState, _captiveToRelease);
-        final boolean isImprisonedOrFrozen = _captiveToRelease.isImprisoned() || _captiveToRelease.isFrozen();
+        // Some cards let an imprisoned captive released at that location 'Escape' instead of having to 'Rally'
+        final boolean mustRally = _captiveToRelease.isFrozen()
+                || (_captiveToRelease.isImprisoned()
+                && (location == null || modifiersQuerying.getModifiersAffectingCard(gameState, ModifierType.IMPRISONED_CAPTIVES_RELEASED_MAY_ESCAPE, location).isEmpty()));
 
         final SubAction subAction = new SubAction(_action);
 
@@ -72,7 +76,7 @@ class ReleaseOneCaptiveEffect extends AbstractSubActionEffect {
                             subAction.appendEffect(
                                     new ReleaseWithEscapeEffect(subAction, _captiveToRelease));
                         }
-                        else if (isImprisonedOrFrozen) {
+                        else if (mustRally) {
                             // Release with 'Rally' is only option
 
                             // Choose where the captive will rally to
