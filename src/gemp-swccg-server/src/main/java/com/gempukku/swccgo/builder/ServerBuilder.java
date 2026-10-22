@@ -29,6 +29,8 @@ import com.gempukku.swccgo.hall.HallServer;
 import com.gempukku.swccgo.league.LeagueFactory;
 import com.gempukku.swccgo.league.LeagueScheduleService;
 import com.gempukku.swccgo.league.LeagueService;
+import com.gempukku.swccgo.metrics.MetricsDAO;
+import com.gempukku.swccgo.metrics.MetricsService;
 import com.gempukku.swccgo.merchant.MerchantService;
 import com.gempukku.swccgo.packagedProduct.DraftPackStorage;
 import com.gempukku.swccgo.packagedProduct.PackagedProductStorage;
@@ -162,6 +164,9 @@ public class ServerBuilder {
                         extract(objectMap, CollectionsManager.class),
                         extract(objectMap, MerchantDAO.class)));
 
+        objectMap.put(MetricsService.class,
+                new MetricsService(extract(objectMap, MetricsDAO.class)));
+
         objectMap.put(ChatServer.class, new ChatServer());
 
         objectMap.put(SwccgoServer.class,
@@ -235,6 +240,19 @@ public class ServerBuilder {
             }, 1, 1, TimeUnit.MINUTES);
             Runtime.getRuntime().addShutdownHook(new Thread(hallServer::savePlayNowGames, "play-now-save-on-shutdown"));
         }
+        MetricsService metricsService = extract(objectMap, MetricsService.class);
+        ScheduledExecutorService metricsJobs = Executors.newSingleThreadScheduledExecutor(runnable -> {
+            Thread thread = new Thread(runnable, "metrics-maintenance");
+            thread.setDaemon(true);
+            return thread;
+        });
+        metricsJobs.scheduleWithFixedDelay(() -> {
+            try {
+                metricsService.processDueJobsIfTime();
+            } catch (RuntimeException exp) {
+                LogManager.getLogger(ServerBuilder.class).error("Metrics maintenance failed", exp);
+            }
+        }, 1, 1, TimeUnit.HOURS);
         extract(objectMap, HallServer.class).startServer();
         extract(objectMap, SwccgoServer.class).startServer();
         extract(objectMap, ChatServer.class).startServer();

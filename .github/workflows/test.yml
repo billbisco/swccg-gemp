@@ -129,13 +129,16 @@ jobs:
           set -a
           source .env
           set +a
-          mvn -B -pl gemp-swccg-server -am test -Dtest=DbGameSaveDAOTests \
+          mvn -B -pl gemp-swccg-server -am test -Dtest=DbGameSaveDAOTests,DbMetricsDAOTests \
             -Dsurefire.failIfNoSpecifiedTests=false \
             "-Dgemp.test.dbUrl=jdbc:mysql://127.0.0.1:${DB_PORT}/${MYSQL_DATABASE}" \
             "-Dgemp.test.dbUser=${MYSQL_USER}" "-Dgemp.test.dbPassword=${MYSQL_PASSWORD}"
           report=gemp-swccg-server/target/surefire-reports/TEST-com.gempukku.swccgo.game.save.DbGameSaveDAOTests.xml
           grep -q 'tests="2"' "$report"
           grep -q 'skipped="0"' "$report"
+          metrics=gemp-swccg-server/target/surefire-reports/TEST-com.gempukku.swccgo.metrics.DbMetricsDAOTests.xml
+          grep -q 'tests="1"' "$metrics"
+          grep -q 'skipped="0"' "$metrics"
 
       - name: Run integration tests
         working-directory: src

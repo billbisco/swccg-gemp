@@ -14,6 +14,8 @@ import com.gempukku.swccgo.tournament.TournamentPlayerDAO;
 import java.lang.reflect.Type;
 import com.gempukku.swccgo.game.save.DbGameSaveDAO;
 import com.gempukku.swccgo.game.save.GameSaveDAO;
+import com.gempukku.swccgo.metrics.DbMetricsDAO;
+import com.gempukku.swccgo.metrics.MetricsDAO;
 
 import java.util.Map;
 
@@ -33,6 +35,7 @@ public class DaoBuilder {
         objectMap.put(InGameStatisticsDAO.class, new DbInGameStatisticsDAO(dbAccess));
         objectMap.put(BotStatsDAO.class, new DbBotStatsDAO(dbAccess));
         objectMap.put(GameSaveDAO.class, new DbGameSaveDAO(dbAccess));
+        objectMap.put(MetricsDAO.class, new DbMetricsDAO(dbAccess));
 
         DbMerchantDAO dbMerchantDao = new DbMerchantDAO(dbAccess);
         CachedMerchantDAO merchantDao = new CachedMerchantDAO(dbMerchantDao);
