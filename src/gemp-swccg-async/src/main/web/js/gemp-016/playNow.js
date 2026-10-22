@@ -20,6 +20,12 @@ var PlayNow = {
                 result.side = value;
             if (key == "bot" && PlayNow.BOTS.hasOwnProperty(value))
                 result.bot = value;
+            if (key == "difficulty" && result.bot == null) {
+                if (value == "beginner")
+                    result.bot = "ozzel";
+                if (value == "harder" || value == "hard" || value == "advanced")
+                    result.bot = "yoda";
+            }
         }
         return result;
     },
