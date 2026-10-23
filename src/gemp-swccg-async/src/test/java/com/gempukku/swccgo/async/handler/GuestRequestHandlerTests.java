@@ -188,5 +188,50 @@ public class GuestRequestHandlerTests {
         RecordingResponseWriter junk = new RecordingResponseWriter();
         handler.handleRequest("/play", Requests.get("/x?side=%3Cscript%3E", null), f.context, junk, "1.2.3.4");
         assertEquals("/gemp-swccg/guest.html", junk.headers.get("Location"));
+
+        RecordingResponseWriter fromPicker = new RecordingResponseWriter();
+        handler.handleRequest("/play",
+                Requests.get("/gemp-swccg-server/guest/play?side=light&difficulty=harder", null), f.context, fromPicker, "1.2.3.4");
+        assertEquals("/gemp-swccg/guest.html?side=light&bot=yoda", fromPicker.headers.get("Location"));
+    }
+
+    @Test
+    public void GetStartFromThePickerOpensTheGame() throws Exception {
+        //test12: swccg.com Start is a GET with side+difficulty; the response is a 302 into the seat.
+        GuestHandlerFixture f = new GuestHandlerFixture(GuestHandlerFixture.enabled());
+        GuestRequestHandler handler = new GuestRequestHandler(f.context);
+        RecordingResponseWriter beginner = new RecordingResponseWriter();
+        handler.handleRequest("/start",
+                Requests.get("/gemp-swccg-server/guest/start?side=light&difficulty=beginner", null),
+                f.context, beginner, "1.2.3.4");
+        assertEquals(302, beginner.status);
+        assertEquals("/gemp-swccg/game.html?gameId=g1&participantId=Light%20Side&playNow=1&guest=1",
+                beginner.headers.get("Location"));
+        assertNotNull(beginner.headers.get("set-cookie"));
+        verify(f.hall).startPlayNowGame(anyString(), nullable(Player.class),
+                eq(PlayNowSide.LIGHT), eq(PlayNowBot.OZZEL), eq("1.2.3.4"));
+
+        RecordingResponseWriter harder = new RecordingResponseWriter();
+        handler.handleRequest("/start",
+                Requests.get("/gemp-swccg-server/guest/start?side=dark&difficulty=harder", null),
+                f.context, harder, "5.6.7.8");
+        assertEquals(302, harder.status);
+        assertEquals("/gemp-swccg/game.html?gameId=g2&participantId=Dark%20Side&playNow=1&guest=1",
+                harder.headers.get("Location"));
+        verify(f.hall).startPlayNowGame(anyString(), nullable(Player.class),
+                eq(PlayNowSide.DARK), eq(PlayNowBot.YODA), eq("5.6.7.8"));
+    }
+
+    @Test
+    public void GetStartAcceptsAdvancedAsYodaBot() throws Exception {
+        GuestHandlerFixture f = new GuestHandlerFixture(GuestHandlerFixture.enabled());
+        GuestRequestHandler handler = new GuestRequestHandler(f.context);
+        RecordingResponseWriter rw = new RecordingResponseWriter();
+        handler.handleRequest("/start",
+                Requests.get("/gemp-swccg-server/guest/start?side=light&difficulty=advanced", null),
+                f.context, rw, "1.2.3.4");
+        assertEquals(302, rw.status);
+        verify(f.hall).startPlayNowGame(anyString(), nullable(Player.class),
+                eq(PlayNowSide.LIGHT), eq(PlayNowBot.YODA), eq("1.2.3.4"));
     }
 }

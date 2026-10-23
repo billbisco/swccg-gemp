@@ -7,6 +7,9 @@ assert.deepStrictEqual(PlayNow.parseChoice("?side=dark&bot=yoda"), {side: "dark"
 assert.deepStrictEqual(PlayNow.parseChoice("?side=LIGHT&bot=ozzel"), {side: "light", bot: "ozzel"});
 assert.deepStrictEqual(PlayNow.parseChoice("?side=<script>&bot=rando"), {side: null, bot: null});
 assert.deepStrictEqual(PlayNow.parseChoice(""), {side: null, bot: null});
+assert.deepStrictEqual(PlayNow.parseChoice("?side=light&difficulty=beginner"), {side: "light", bot: "ozzel"});
+assert.deepStrictEqual(PlayNow.parseChoice("?side=dark&difficulty=harder"), {side: "dark", bot: "yoda"});
+assert.deepStrictEqual(PlayNow.parseChoice("?side=dark&bot=ozzel&difficulty=harder"), {side: "dark", bot: "ozzel"});
 
 //test2: the game link carries Play now mode, and guest mode only for guests.
 assert.strictEqual(PlayNow.gameUrl("g1", "Light Side", true),

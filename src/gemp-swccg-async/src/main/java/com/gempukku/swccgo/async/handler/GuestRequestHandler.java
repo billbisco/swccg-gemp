@@ -23,6 +23,7 @@ import io.netty.handler.codec.http.cookie.CookieHeaderNames;
 import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
 
 import java.lang.reflect.Type;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -30,11 +31,14 @@ import java.util.Map;
 /**
  * Play now, under {@code /gemp-swccg-server/guest}:
  * <ul>
- * <li>{@code POST /start} (side, bot): starts a game for a guest or the logged-in player and returns its id.</li>
+ * <li>{@code GET /start} (side, difficulty): swccg.com Start; mints a guest, starts a P-ANH precon vs the bot,
+ * and 302s to game.html. {@code difficulty=beginner} is OzzelBot; {@code harder} (or {@code advanced}) is YodaBot.
+ * {@code bot=ozzel|yoda} is also accepted. Chat is on.</li>
+ * <li>{@code POST /start} (side, bot): starts a game for a guest or the logged-in player and returns its id as JSON.</li>
  * <li>{@code GET /status}: whether Play now is on, and the caller's unfinished games (in memory or saved).</li>
  * <li>{@code POST /resume} (gameId): puts one of the caller's games back in play.</li>
  * <li>{@code POST /mute} (gameId, muted): the player mutes or unmutes spectator chat in their game.</li>
- * <li>{@code GET /play?side=&bot=}: a shareable link; redirects to guest.html.</li>
+ * <li>{@code GET /play?side=&bot=}: a shareable link; redirects to guest.html. Also accepts {@code difficulty=}.</li>
  * </ul>
  * Errors come back with a {@code message} header (shown to the player) and an {@code X-Guest-Error} code:
  * 503 {@code disabled} or {@code busy}, 429 {@code too_many_games} or {@code rate_limited} (with Retry-After),
@@ -65,7 +69,7 @@ public class GuestRequestHandler extends SwccgoServerRequestHandler implements U
     @Override
     public void handleRequest(String uri, HttpRequest request, Map<Type, Object> context, ResponseWriter responseWriter, String remoteIp) throws Exception {
         String path = new QueryStringDecoder(uri).path();
-        if (path.equals("/start") && request.method() == HttpMethod.POST) {
+        if (path.equals("/start") && (request.method() == HttpMethod.POST || request.method() == HttpMethod.GET)) {
             start(request, responseWriter, remoteIp);
         } else if (path.equals("/status") && request.method() == HttpMethod.GET) {
             status(request, responseWriter);
@@ -85,17 +89,27 @@ public class GuestRequestHandler extends SwccgoServerRequestHandler implements U
             error(responseWriter, 503, "disabled", "Play now is not available right now.", 0);
             return;
         }
+        boolean redirectToGame = request.method() == HttpMethod.GET;
         PlayNowSide side;
         PlayNowBot bot;
-        HttpPostRequestDecoder postDecoder = new HttpPostRequestDecoder(request);
-        try {
-            side = PlayNowSide.fromCode(getFormParameterSafely(postDecoder, "side"));
-            bot = PlayNowBot.fromCode(getFormParameterSafely(postDecoder, "bot"));
-        } finally {
-            postDecoder.destroy();
+        if (redirectToGame) {
+            QueryStringDecoder query = new QueryStringDecoder(request.uri());
+            side = PlayNowSide.fromCode(getQueryParameterSafely(query, "side"));
+            bot = PlayNowBot.fromChoice(getQueryParameterSafely(query, "bot"),
+                    getQueryParameterSafely(query, "difficulty"));
+        } else {
+            HttpPostRequestDecoder postDecoder = new HttpPostRequestDecoder(request);
+            try {
+                side = PlayNowSide.fromCode(getFormParameterSafely(postDecoder, "side"));
+                bot = PlayNowBot.fromChoice(getFormParameterSafely(postDecoder, "bot"),
+                        getFormParameterSafely(postDecoder, "difficulty"));
+            } finally {
+                postDecoder.destroy();
+            }
         }
         if (side == null || bot == null) {
-            error(responseWriter, 400, "bad_request", "Pick a side (light or dark) and a bot (ozzel or yoda).", 0);
+            error(responseWriter, 400, "bad_request",
+                    "Pick a side (light or dark) and beginner or harder.", 0);
             return;
         }
 
@@ -133,9 +147,26 @@ public class GuestRequestHandler extends SwccgoServerRequestHandler implements U
             error(responseWriter, 503, "unavailable", exp.getMessage(), 0);
             return;
         }
+        String seatId = _playNowGames.get(gameId).getSeatId();
+        if (redirectToGame) {
+            headers.put("Location", gamePage(gameId, seatId, account == null));
+            responseWriter.writeError(302, headers);
+            return;
+        }
         json(responseWriter, "{\"gameId\":" + quote(gameId)
-                + ",\"participantId\":" + quote(_playNowGames.get(gameId).getSeatId())
+                + ",\"participantId\":" + quote(seatId)
                 + ",\"guest\":" + (account == null) + "}", headers);
+    }
+
+    /** Same path game.html uses for a Play now seat. */
+    static String gamePage(String gameId, String participantId, boolean guest) {
+        return "/gemp-swccg/game.html?gameId=" + encodeQuery(gameId)
+                + "&participantId=" + encodeQuery(participantId)
+                + "&playNow=1" + (guest ? "&guest=1" : "");
+    }
+
+    private static String encodeQuery(String value) {
+        return URLEncoder.encode(value, StandardCharsets.UTF_8).replace("+", "%20");
     }
 
     private void status(HttpRequest request, ResponseWriter responseWriter) {
@@ -288,7 +319,8 @@ public class GuestRequestHandler extends SwccgoServerRequestHandler implements U
     private void play(HttpRequest request, ResponseWriter responseWriter) {
         QueryStringDecoder query = new QueryStringDecoder(request.uri());
         PlayNowSide side = PlayNowSide.fromCode(getQueryParameterSafely(query, "side"));
-        PlayNowBot bot = PlayNowBot.fromCode(getQueryParameterSafely(query, "bot"));
+        PlayNowBot bot = PlayNowBot.fromChoice(getQueryParameterSafely(query, "bot"),
+                getQueryParameterSafely(query, "difficulty"));
         StringBuilder location = new StringBuilder("/gemp-swccg/guest.html");
         String sep = "?";
         if (side != null) {

@@ -53,4 +53,28 @@ public enum PlayNowBot {
         }
         return null;
     }
+
+    /**
+     * swccg.com Start sends {@code difficulty=beginner|harder}. {@code advanced} is the same as harder.
+     * @return the bot, or null if the value is not one of those
+     */
+    public static PlayNowBot fromDifficulty(String difficulty) {
+        if (difficulty == null) {
+            return null;
+        }
+        String d = difficulty.trim().toLowerCase(Locale.ROOT);
+        if (d.equals("beginner")) {
+            return OZZEL;
+        }
+        if (d.equals("harder") || d.equals("hard") || d.equals("advanced")) {
+            return YODA;
+        }
+        return null;
+    }
+
+    /** {@code bot=} wins when it is one of ours; otherwise {@code difficulty=}. */
+    public static PlayNowBot fromChoice(String bot, String difficulty) {
+        PlayNowBot fromBot = fromCode(bot);
+        return fromBot != null ? fromBot : fromDifficulty(difficulty);
+    }
 }
