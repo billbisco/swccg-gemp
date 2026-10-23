@@ -1216,6 +1216,9 @@ public enum GameTextActionId {
     LEGACY__COMMANDER_VANDEN_WILLARD_V__TAKE_LEIA(true, true),
     LEGACY__COLONEL_FEYN_GOSPIC_V__TAKE_CARD(true),
     LEGACY__GENERAL_DODONNA_V__TAKE_CARD(true),
+    LEGACY__BLACK_2_V__TAKE_PRIDE_OF_THE_EMPIRE(true),
+    LEGACY__GOLD_1_V__TAKE_FORCE_PILE_CARD,
+    LEGACY__RED_5_V__DEPLOY_ABOARD(true),
     ;
 
     private boolean _searchCardPile;
