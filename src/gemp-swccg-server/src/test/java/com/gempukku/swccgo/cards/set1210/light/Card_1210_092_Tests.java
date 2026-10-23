@@ -93,6 +93,34 @@ public class Card_1210_092_Tests {
     }
 
     @Test
+    public void C3PODrawsDestinyToSubtractFromOpponentsTotalPowerWhileInBattleAtSiteWithR2D2() {
+        var scn = GetScenario();
+        var c3po = scn.GetLSCard("c3po");
+        var r2 = scn.GetLSCard("r2");
+        var rebel = scn.GetLSCard("rebel");
+        var stormtrooper = scn.GetDSCard("stormtrooper");
+        var site = scn.GetLSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, c3po, r2, rebel, stormtrooper);
+        scn.SkipToDSTurn(Phase.BATTLE);
+        scn.DSInitiateBattle(site);
+        assertTrue(scn.AwaitingDSWeaponsSegmentActions());
+        scn.DSPass();
+        assertTrue(scn.AwaitingLSWeaponsSegmentActions());
+        int dsPowerBefore = scn.GetDSTotalPower();
+        assertTrue(scn.LSCardActionAvailable(c3po, "Draw destiny to reduce opponent's total power"));
+        scn.PrepareLSDestiny(3);
+        scn.LSUseCardAction(c3po, "Draw destiny to reduce opponent's total power");
+        scn.PassResponses("Determine costs");
+        scn.PassResponses("About to draw");
+        scn.PassResponses("Just drew");
+        scn.PassDestinyDrawResponses();
+        scn.PassAllResponses();
+        assertEquals(Math.max(0, dsPowerBefore - 3), scn.GetDSTotalPower());
+    }
+
+    @Test
     public void C3POPlacesNonImmuneToAlterEffectsInUsedPileOncePerGame() {
         var scn = GetScenario();
         var c3po = scn.GetLSCard("c3po");
