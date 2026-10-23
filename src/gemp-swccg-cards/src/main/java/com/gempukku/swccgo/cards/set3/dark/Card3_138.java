@@ -21,6 +21,7 @@ import com.gempukku.swccgo.logic.effects.LoseCardFromTableEffect;
 import com.gempukku.swccgo.logic.effects.RespondablePlayCardEffect;
 import com.gempukku.swccgo.logic.effects.TargetCardOnTableEffect;
 import com.gempukku.swccgo.logic.effects.TriggeringResultEffect;
+import com.gempukku.swccgo.logic.modifiers.ModifyGameTextType;
 import com.gempukku.swccgo.logic.timing.Action;
 import com.gempukku.swccgo.logic.timing.GuiUtils;
 import com.gempukku.swccgo.logic.timing.results.TrampleDestinySuccessfulResult;
@@ -46,8 +47,10 @@ public class Card3_138 extends AbstractUsedInterrupt {
 
     @Override
     protected List<PlayInterruptAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self) {
-        Filter filter = Filters.and(Filters.opponents(self), Filters.or(Filters.character, Filters.crashed_vehicle, Filters.and(Filters.unpiloted, Filters.vehicle, Filters.hasNoArmor)),
-                Filters.presentAt(Filters.and(Filters.site, Filters.wherePresent(self, Filters.and(Filters.your(self), Filters.piloted, Filters.or(Filters.AT_AT, Filters.AT_ST))))));
+        Filter dewbackMaySubstitute = Filters.and(Filters.Dewback, Filters.hasGameTextModification(ModifyGameTextType.LEGACY__TRAMPLE__DEWBACK_MAY_SUBSTITUTE_FOR_PILOTED_ATAT));
+        Filter trampler = Filters.and(Filters.your(self), Filters.or(Filters.and(Filters.piloted, Filters.or(Filters.AT_AT, Filters.AT_ST)), dewbackMaySubstitute));
+        Filter filter = Filters.and(Filters.opponents(self), Filters.or(Filters.character, Filters.crashed_vehicle, Filters.and(Filters.unpiloted, Filters.vehicle, Filters.hasNoArmor), dewbackMaySubstitute),
+                Filters.presentAt(Filters.and(Filters.site, Filters.wherePresent(self, trampler))));
 
         TargetingReason targetingReason = TargetingReason.TO_BE_LOST;
 
