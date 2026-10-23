@@ -126,6 +126,8 @@ public enum ModifyGameTextType {
     LEGACY__TALLON_ROLL__REBEL_MAY_BE_INDEPENDENT_OR_REPUBLIC("'Rebel' may be treated as '[Independent Starship]' or '[Republic]'"),
     LEGACY__SCUM_AND_VILLAINY__IGNORES_CREATURE_VEHICLES("Ignores creature vehicles"),
     LEGACY__TRAMPLE__DEWBACK_MAY_SUBSTITUTE_FOR_PILOTED_ATAT("May be targeted by Trample instead of a piloted AT-AT"),
+    LEGACY__ARTOO_V__DEATH_STAR_PLANS_IGNORES_OBJECTIVE_DRAWS_ONE("Ignores objective game text, but only draws one destiny"),
+    LEGACY__OWEN_LARS_V__OPPONENT_ACTIVATES_NO_FORCE_FROM_BERU_STEW("Opponent activates no Force from Beru Stew"),
 
     ;
 
