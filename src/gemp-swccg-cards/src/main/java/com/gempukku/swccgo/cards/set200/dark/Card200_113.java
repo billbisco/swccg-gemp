@@ -23,6 +23,7 @@ import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
 import com.gempukku.swccgo.logic.effects.CancelCardOnTableEffect;
 import com.gempukku.swccgo.logic.effects.LoseForceEffect;
+import com.gempukku.swccgo.logic.modifiers.ModifyGameTextType;
 import com.gempukku.swccgo.logic.timing.EffectResult;
 
 import java.util.Collections;
@@ -55,7 +56,7 @@ public class Card200_113 extends AbstractNormalEffect {
 
         // Check condition(s)
         if (GameConditions.isOnceDuringYourPhase(game, self, playerId, gameTextSourceCardId, gameTextActionId, Phase.CONTROL)) {
-            int numForce = Filters.countTopLocationsOnTable(game, Filters.and(Filters.battleground_system, Filters.not(Filters.hasAttached(self)), Filters.withinParsecsOf(self, 2), Filters.controlsWith(playerId, self, Filters.Star_Destroyer)));
+            int numForce = countTarkinDoctrineBattlegrounds(game, self, playerId);
             if (numForce > 0) {
 
                 final TopLevelGameTextAction action = new TopLevelGameTextAction(self, gameTextSourceCardId, gameTextActionId);
@@ -84,7 +85,7 @@ public class Card200_113 extends AbstractNormalEffect {
         // Check condition(s)
         if (TriggerConditions.isEndOfYourPhase(game, self, effectResult, Phase.CONTROL)
                 && GameConditions.isOnceDuringYourPhase(game, self, playerId, gameTextSourceCardId, gameTextActionId, Phase.CONTROL)) {
-            int numForce = Filters.countTopLocationsOnTable(game, Filters.and(Filters.battleground_system, Filters.not(Filters.hasAttached(self)), Filters.withinParsecsOf(self, 2), Filters.controlsWith(playerId, self, Filters.Star_Destroyer)));
+            int numForce = countTarkinDoctrineBattlegrounds(game, self, playerId);
             if (numForce > 0) {
 
                 RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId, gameTextActionId);
@@ -116,5 +117,13 @@ public class Card200_113 extends AbstractNormalEffect {
             actions.add(action);
         }
         return actions;
+    }
+
+    private int countTarkinDoctrineBattlegrounds(SwccgGame game, PhysicalCard self, String playerId) {
+        Filter parsecLimit = Filters.withinParsecsOf(self, 2);
+        if (game.getModifiersQuerying().hasGameTextModification(game.getGameState(), self, ModifyGameTextType.LEGACY__TARKIN_DOCTRINE__IGNORES_PARSEC_LIMIT)) {
+            parsecLimit = Filters.any;
+        }
+        return Filters.countTopLocationsOnTable(game, Filters.and(Filters.battleground_system, Filters.not(Filters.hasAttached(self)), parsecLimit, Filters.controlsWith(playerId, self, Filters.Star_Destroyer)));
     }
 }
