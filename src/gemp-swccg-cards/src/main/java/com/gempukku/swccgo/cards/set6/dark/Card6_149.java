@@ -17,6 +17,8 @@ import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
+import com.gempukku.swccgo.game.state.GameState;
+import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 import com.gempukku.swccgo.logic.TriggerConditions;
 import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
 import com.gempukku.swccgo.logic.effects.RetrieveForceEffect;
@@ -24,6 +26,7 @@ import com.gempukku.swccgo.logic.modifiers.DeployCostModifier;
 import com.gempukku.swccgo.logic.modifiers.ImmuneToTitleModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.modifiers.ModifierType;
+import com.gempukku.swccgo.logic.modifiers.ModifyGameTextType;
 import com.gempukku.swccgo.logic.timing.EffectResult;
 
 import java.util.Collection;
@@ -51,14 +54,33 @@ public class Card6_149 extends AbstractNormalEffect {
         return Filters.or(Filters.Audience_Chamber, Filters.in(scumAndVillainyMayDeployAttached));
     }
 
+    /**
+     * Aliens and [Independent] starships (and their pilots) provide ability. Bantha (V) lets creature vehicles be ignored;
+     * that modification lives on Scum, so it is checked at fulfillment time.
+     */
+    static Filter abilityProviders(final PhysicalCard self) {
+        final int permId = self.getPermanentCardId();
+        return Filters.or(Filters.alien, Filters.and(Icon.INDEPENDENT, Filters.starship),
+                Filters.piloting(Filters.and(Icon.INDEPENDENT, Filters.starship)),
+                new Filter() {
+                    @Override
+                    public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard) {
+                        if (!Filters.creature_vehicle.accepts(gameState, modifiersQuerying, physicalCard)) {
+                            return false;
+                        }
+                        PhysicalCard scum = gameState.findCardByPermanentId(permId);
+                        return scum != null && modifiersQuerying.hasGameTextModification(gameState, scum, ModifyGameTextType.LEGACY__SCUM_AND_VILLAINY__IGNORES_CREATURE_VEHICLES);
+                    }
+                });
+    }
+
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
         String playerId = self.getOwner();
 
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new DeployCostModifier(self, Filters.and(Filters.your(playerId), Filters.or(Filters.alien, Filters.starship)),
-                new AllAbilityOnTableProvidedByCondition(self, playerId, Filters.or(Filters.alien, Filters.and(Icon.INDEPENDENT, Filters.starship),
-                        Filters.piloting(Filters.and(Icon.INDEPENDENT, Filters.starship)))), -1));
+                new AllAbilityOnTableProvidedByCondition(self, playerId, abilityProviders(self)), -1));
         return modifiers;
     }
 
@@ -68,8 +90,7 @@ public class Card6_149 extends AbstractNormalEffect {
 
         // Check condition(s)
         if (TriggerConditions.battleInitiated(game, effectResult, playerId)
-                && GameConditions.isAllAbilityOnTableProvidedBy(game, self, playerId, Filters.or(Filters.alien,
-                Filters.and(Icon.INDEPENDENT, Filters.starship), Filters.piloting(Filters.and(Icon.INDEPENDENT, Filters.starship))))) {
+                && GameConditions.isAllAbilityOnTableProvidedBy(game, self, playerId, abilityProviders(self))) {
 
             final RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
             action.setText("Retrieve 2 Force");
