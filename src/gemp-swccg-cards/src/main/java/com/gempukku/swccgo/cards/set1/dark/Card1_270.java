@@ -4,6 +4,7 @@ import com.gempukku.swccgo.cards.AbstractUsedInterrupt;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.common.CardSubtype;
 import com.gempukku.swccgo.common.ExpansionSet;
+import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.TargetingReason;
@@ -46,8 +47,12 @@ public class Card1_270 extends AbstractUsedInterrupt {
     @Override
     protected List<PlayInterruptAction> getGameTextTopLevelActions(final String playerId, final SwccgGame game, final PhysicalCard self) {
         final String opponent = game.getOpponent(playerId);
-        Filter opponentsStarfighterFilter = Filters.and(Filters.opponents(self), Filters.Rebel_starfighter, Filters.presentAt(Filters.system_or_sector), Filters.canBeTargetedBy(self, TargetingReason.TO_BE_LOST));
-        final Filter yourStarfighterFilter = Filters.and(Filters.your(self), CardSubtype.STARFIGHTER, Filters.piloted, Filters.TIE_ln, Filters.presentWith(self, opponentsStarfighterFilter));
+        Filter rebelOpponents = Filters.and(Filters.opponents(self), Filters.Rebel_starfighter, Filters.presentAt(Filters.system_or_sector), Filters.canBeTargetedBy(self, TargetingReason.TO_BE_LOST));
+        Filter independentOrRepublicOpponents = Filters.and(Filters.opponents(self), CardSubtype.STARFIGHTER, Filters.or(Icon.INDEPENDENT, Icon.REPUBLIC), Filters.presentAt(Filters.system_or_sector), Filters.canBeTargetedBy(self, TargetingReason.TO_BE_LOST));
+        Filter yourTIEBase = Filters.and(Filters.your(self), CardSubtype.STARFIGHTER, Filters.piloted, Filters.TIE_ln);
+        final Filter yourStarfighterFilter = Filters.or(
+                Filters.and(yourTIEBase, Filters.presentWith(self, rebelOpponents)),
+                Filters.and(yourTIEBase, Filters.hasGameTextModification(ModifyGameTextType.LEGACY__TALLON_ROLL__REBEL_MAY_BE_INDEPENDENT_OR_REPUBLIC), Filters.presentWith(self, independentOrRepublicOpponents)));
 
         // Check condition(s)
         if (GameConditions.canTarget(game, self, yourStarfighterFilter)) {
@@ -59,9 +64,12 @@ public class Card1_270 extends AbstractUsedInterrupt {
                     new TargetCardOnTableEffect(action, playerId, "Choose your starfighter", yourStarfighterFilter) {
                         @Override
                         protected void cardTargeted(final int targetGroupId1, final PhysicalCard yourStarfighter) {
+                            Filter opponentAfterTIE = Filters.and(Filters.opponents(self), Filters.presentWith(yourStarfighter), Filters.canBeTargetedBy(self, TargetingReason.TO_BE_LOST),
+                                    GameConditions.hasGameTextModification(game, yourStarfighter, ModifyGameTextType.LEGACY__TALLON_ROLL__REBEL_MAY_BE_INDEPENDENT_OR_REPUBLIC)
+                                            ? Filters.or(Filters.Rebel_starfighter, Filters.and(CardSubtype.STARFIGHTER, Filters.or(Icon.INDEPENDENT, Icon.REPUBLIC)))
+                                            : Filters.Rebel_starfighter);
                             action.appendTargeting(
-                                    new TargetCardOnTableEffect(action, playerId, "Choose opponent's starfighter", TargetingReason.TO_BE_LOST,
-                                            Filters.and(Filters.opponents(self), Filters.Rebel_starfighter, Filters.presentWith(yourStarfighter))) {
+                                    new TargetCardOnTableEffect(action, playerId, "Choose opponent's starfighter", TargetingReason.TO_BE_LOST, opponentAfterTIE) {
                                         @Override
                                         protected void cardTargeted(final int targetGroupId2, final PhysicalCard opponentsStarfighter) {
                                             action.addAnimationGroup(yourStarfighter, opponentsStarfighter);

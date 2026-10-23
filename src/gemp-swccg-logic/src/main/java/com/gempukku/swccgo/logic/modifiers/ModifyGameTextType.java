@@ -123,6 +123,7 @@ public enum ModifyGameTextType {
     LEGACY__MORE_DANGEROUS_THAN_YOU_REALIZE__REQUIRES_THREE_SITES_TO_FLIP_BACK("Opponent must control three Dantooine locations to flip it back"),
     LEGACY__REFLECTIONS_II_OBJECTIVE__TARGETS_KYLE_INSTEAD_OF_LUKE("Targets Kyle Katarn instead of Luke"),
     LEGACY__SCOUNDRELS_LUCK__ONCE_IS_TWICE("'Once' on Scoundrel's Luck treated as 'twice'"),
+    LEGACY__TALLON_ROLL__REBEL_MAY_BE_INDEPENDENT_OR_REPUBLIC("'Rebel' may be treated as '[Independent Starship]' or '[Republic]'"),
 
     ;
 
