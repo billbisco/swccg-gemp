@@ -80,11 +80,14 @@ public class RootUriRequestHandler implements UriRequestHandler {
         } else {
             // CSRF: state-changing requests must come from one of our own sites (Origin, else Referer).
             // The guest endpoints are open to anyone, so they also refuse a POST with neither header.
+            // GET /guest/start is the swccg.com form: it starts a game, so treat it like a POST.
             String method = request.method().name();
             String origin = request.headers().get("Origin");
             String referer = request.headers().get("Referer");
+            boolean guestStart = uri.startsWith(_serverContextPath + "guest/start");
+            String csrfMethod = guestStart ? "POST" : method;
             boolean allowed = uri.startsWith(_serverContextPath + "guest")
-                    ? _originPolicy.allowsOnlyFromOurPages(method, origin, referer)
+                    ? _originPolicy.allowsOnlyFromOurPages(csrfMethod, origin, referer)
                     : _originPolicy.allows(method, origin, referer);
             if (!allowed)
                 throw new HttpProcessingException(403);

@@ -63,6 +63,21 @@ public class GuestOriginTests {
     }
 
     @Test
+    public void GetStartFromThePickerIsAcceptedAndBareGetIsRefused() throws Exception {
+        FullHttpRequest fromSite = Requests.get(START + "?side=light&difficulty=beginner", null);
+        fromSite.headers().set("Referer", "https://swccg.com/play.html");
+        RecordingResponseWriter rw = new RecordingResponseWriter();
+        root.handleRequest(START + "?side=light&difficulty=beginner", fromSite, f.context, rw, "1.2.3.4");
+        assertEquals(302, rw.status);
+
+        assertEquals(403, refusedStatus(() -> {
+            FullHttpRequest bare = Requests.get(START + "?side=light&difficulty=beginner", null);
+            root.handleRequest(START + "?side=light&difficulty=beginner", bare, f.context,
+                    new RecordingResponseWriter(), "1.2.3.4");
+        }));
+    }
+
+    @Test
     public void TheRestOfTheApiStillLetsNonBrowserClientsThrough() throws Exception {
         //test1: a POST with neither header to a non-guest endpoint gets past the origin check, as before (here to a 404)
         FullHttpRequest request = Requests.post("/gemp-swccg-server/nosuchendpoint", "", null);
