@@ -124,6 +124,8 @@ public enum ModifyGameTextType {
     LEGACY__REFLECTIONS_II_OBJECTIVE__TARGETS_KYLE_INSTEAD_OF_LUKE("Targets Kyle Katarn instead of Luke"),
     LEGACY__SCOUNDRELS_LUCK__ONCE_IS_TWICE("'Once' on Scoundrel's Luck treated as 'twice'"),
     LEGACY__TALLON_ROLL__REBEL_MAY_BE_INDEPENDENT_OR_REPUBLIC("'Rebel' may be treated as '[Independent Starship]' or '[Republic]'"),
+    LEGACY__SCUM_AND_VILLAINY__IGNORES_CREATURE_VEHICLES("Ignores creature vehicles"),
+    LEGACY__TRAMPLE__DEWBACK_MAY_SUBSTITUTE_FOR_PILOTED_ATAT("May be targeted by Trample instead of a piloted AT-AT"),
 
     ;
 
