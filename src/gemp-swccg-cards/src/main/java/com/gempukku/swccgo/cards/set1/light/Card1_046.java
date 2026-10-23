@@ -116,6 +116,9 @@ public class Card1_046 extends AbstractUtinniEffect {
                 if (game.getModifiersQuerying().hasGameTextModification(game.getGameState(), self, ModifyGameTextType.DEATH_STAR_PLANS__ADD_DESTINY_TO_FORCE_RETRIEVED)) {
                     numDestinyToDraw++;
                 }
+                if (game.getModifiersQuerying().hasGameTextModification(game.getGameState(), self, ModifyGameTextType.LEGACY__ARTOO_V__DEATH_STAR_PLANS_IGNORES_OBJECTIVE_DRAWS_ONE)) {
+                    numDestinyToDraw = 1;
+                }
 
                 final RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
                 action.setSingletonTrigger(true);

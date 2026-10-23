@@ -43,6 +43,14 @@ public class DestinyDrawnResult extends EffectResult {
     }
 
     /**
+     * Gets the destiny value that was just drawn, including substitute destiny.
+     * @return the destiny value, or null
+     */
+    public Float getDestinyDrawValue() {
+        return _drawDestinyEffect.getDestinyDrawValue();
+    }
+
+    /**
      * Determines if the drawn destiny is canceled.
      * @return true if canceled, otherwise false
      */

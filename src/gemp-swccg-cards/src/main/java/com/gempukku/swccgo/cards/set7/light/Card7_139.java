@@ -8,6 +8,7 @@ import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Title;
+import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.DeployAsCaptiveOption;
 import com.gempukku.swccgo.game.PhysicalCard;
@@ -92,8 +93,10 @@ public class Card7_139 extends AbstractObjective {
         String playerId = self.getOwner();
 
         List<Modifier> modifiers = new LinkedList<Modifier>();
+        Filter deathStarPlansRestrictedByObjective = Filters.and(Filters.Death_Star_Plans,
+                Filters.not(Filters.hasGameTextModification(ModifyGameTextType.LEGACY__ARTOO_V__DEATH_STAR_PLANS_IGNORES_OBJECTIVE_DRAWS_ONE)));
         modifiers.add(new MayNotDeployToLocationModifier(self, Filters.and(Filters.your(self),
-                Filters.or(Filters.spy, Filters._8D8, Filters.Revolution, Filters.Death_Star_Plans)), Filters.Death_Star_location));
+                Filters.or(Filters.spy, Filters._8D8, Filters.Revolution, deathStarPlansRestrictedByObjective)), Filters.Death_Star_location));
         modifiers.add(new MayNotDeployModifier(self, Filters.Detention_Block_Control_Room, playerId));
         modifiers.add(new ImmuneToTitleModifier(self, Filters.canReleaseCaptives, Title.Sense));
         modifiers.add(new ImmuneToTitleModifier(self, Filters.canReleaseCaptives, Title.Alter));
@@ -116,7 +119,8 @@ public class Card7_139 extends AbstractObjective {
             // Perform result(s)
             action.appendEffect(
                     new AddUntilEndOfGameModifierEffect(action,
-                            new MayNotDeployModifier(self, Filters.Death_Star_Plans, playerId), null));
+                            new MayNotDeployModifier(self, Filters.and(Filters.Death_Star_Plans,
+                                    Filters.not(Filters.hasGameTextModification(ModifyGameTextType.LEGACY__ARTOO_V__DEATH_STAR_PLANS_IGNORES_OBJECTIVE_DRAWS_ONE))), playerId), null));
             action.appendEffect(
                     new PlaceCardOutOfPlayFromTableEffect(action, self));
             return Collections.singletonList(action);

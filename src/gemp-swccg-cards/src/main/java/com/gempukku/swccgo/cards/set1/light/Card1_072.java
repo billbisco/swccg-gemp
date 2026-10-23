@@ -14,6 +14,7 @@ import com.gempukku.swccgo.logic.actions.PlayInterruptAction;
 import com.gempukku.swccgo.logic.decisions.DecisionResultInvalidException;
 import com.gempukku.swccgo.logic.decisions.IntegerAwaitingDecision;
 import com.gempukku.swccgo.logic.effects.ActivateForceEffect;
+import com.gempukku.swccgo.logic.modifiers.ModifyGameTextType;
 import com.gempukku.swccgo.logic.effects.ChooseEffectOrderEffect;
 import com.gempukku.swccgo.logic.effects.PlayoutDecisionEffect;
 import com.gempukku.swccgo.logic.effects.RespondablePlayCardEffect;
@@ -67,6 +68,10 @@ public class Card1_072 extends AbstractLostInterrupt {
 
                                             int forceToActivateSelf = Math.min(numberOnCard2, game.getGameState().getReserveDeckSize(playerId));
                                             int forceToActivateOpp = Math.min(numberOnCard2, game.getGameState().getReserveDeckSize(opponent));
+                                            if (game.getModifiersQuerying().hasGameTextModification(game.getGameState(), self,
+                                                    ModifyGameTextType.LEGACY__OWEN_LARS_V__OPPONENT_ACTIVATES_NO_FORCE_FROM_BERU_STEW)) {
+                                                forceToActivateOpp = 0;
+                                            }
 
                                             effectsToOrder.add(new ActivateForceEffect(action, playerId, forceToActivateSelf));
                                             effectsToOrder.add(new ActivateForceEffect(action, opponent, forceToActivateOpp));
