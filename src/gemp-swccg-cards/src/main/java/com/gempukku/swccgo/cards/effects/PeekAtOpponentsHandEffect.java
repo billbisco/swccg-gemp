@@ -49,6 +49,9 @@ public class PeekAtOpponentsHandEffect extends AbstractStandardEffect implements
 
     @Override
     public boolean isPlayableInFull(SwccgGame game) {
+        if (game.getModifiersQuerying().mayNotLookAtOpponentsHand(game.getGameState(), getCardAllowingScan(), _playerId)) {
+            return false;
+        }
         String opponent = game.getOpponent(_playerId);
         return game.getGameState().getHand(opponent).isEmpty();
     }
@@ -56,6 +59,10 @@ public class PeekAtOpponentsHandEffect extends AbstractStandardEffect implements
     @Override
     protected FullEffectResult playEffectReturningResult(SwccgGame game) {
         String opponent = game.getOpponent(_playerId);
+
+        if (game.getModifiersQuerying().mayNotLookAtOpponentsHand(game.getGameState(), getCardAllowingScan(), _playerId)) {
+            return new FullEffectResult(false);
+        }
 
         final List<PhysicalCard> cards = game.getGameState().getHand(opponent);
         if (!cards.isEmpty()) {

@@ -130,6 +130,7 @@ public enum ModifyGameTextType {
     LEGACY__OWEN_LARS_V__OPPONENT_ACTIVATES_NO_FORCE_FROM_BERU_STEW("Opponent activates no Force from Beru Stew"),
     LEGACY__TARKIN_DOCTRINE__IGNORES_PARSEC_LIMIT("Ignores parsec limit"),
     LEGACY__SCUM_AND_VILLAINY__IGNORES_EMPEROR("Ignores Emperor"),
+    LEGACY__LOCAL_TROUBLE__MAY_PLAY_AT_EXTERIOR_TATOOINE_SITES("May be played at exterior Tatooine sites"),
 
     ;
 

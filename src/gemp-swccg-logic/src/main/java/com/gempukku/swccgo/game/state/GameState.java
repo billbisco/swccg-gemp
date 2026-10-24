@@ -1273,6 +1273,11 @@ public class GameState implements Snapshotable<GameState> {
      * @param fromJediTest5 true if stacked upside-down to be used as substitute destiny via Jedi Test #5, otherwise false
      */
     public void stackCard(PhysicalCard card, PhysicalCard stackOn, boolean faceDown, boolean asInactive, boolean fromJediTest5) {
+        if (_game != null && card.getOwner() != null
+                && _game.getModifiersQuerying().mayNotHaveCardsPlacedOn(this, stackOn, card.getOwner())) {
+            sendMessage(card.getOwner() + " may not place cards on " + GameUtils.getCardLink(stackOn));
+            return;
+        }
         card.stackOn(stackOn, asInactive, fromJediTest5);
         addCardToZone(card, faceDown ? Zone.STACKED_FACE_DOWN : Zone.STACKED, stackOn.getZoneOwner());
     }

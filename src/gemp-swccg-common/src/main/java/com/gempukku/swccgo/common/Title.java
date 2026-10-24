@@ -44,6 +44,7 @@ public interface Title {
     String Aim_High = "Aim High";
     String Ajan_Kloss = "Ajan Kloss";
     String Alderaan = "Alderaan";
+    String Alderaan_Blown_Away = "Alderaan (Blown Away)";
     String All_Too_Easy = "All Too Easy";
     String All_Wings_Report_In = "All Wings Report In";
     String All_Wrapped_Up = "All Wrapped Up";
@@ -610,6 +611,7 @@ public interface Title {
     String Incinerator = "Cloud City: Incinerator";
     String Indentured_To_The_Empire = "Indentured To The Empire";
     String Information_Exchange = "Information Exchange";
+    String Informant = "Informant";
     String Inner_Strength = "Inner Strength";
     String Independent_Operation = "Independent Operation";
     String Infantry_Mine = "Infantry Mine";
@@ -876,6 +878,7 @@ public interface Title {
     String Ord_Mantell = "Ord Mantell";
     String Order_To_Engage = "Order To Engage";
     String Organized_Attack = "Organized Attack";
+    String Organas_Ceremonial_Necklace = "Organa's Ceremonial Necklace";
     String Orrimaarko = "Orrimaarko";
     String Ortugg = "Ortugg";
     String Ortuggs_Ax = "Ortugg's Ax";
@@ -1139,6 +1142,7 @@ public interface Title {
     String Swoop_Mercenary = "Swoop Mercenary";
     String Systems_Will_Slip_Through_Your_Fingers = "Systems Will Slip Through Your Fingers";
     String Tactical_Support = "Tactical Support";
+    String Tactical_Re_Call = "Tactical Re-Call";
     String Tagge = "General Tagge";
     String Tallon_Roll = "Tallon Roll";
     String Take_Evasive_Action = "Take Evasive Action";
@@ -1169,6 +1173,7 @@ public interface Title {
     String Tempest_Scout_5 = "Tempest Scout 5";
     String Tempest_Scout_6 = "Tempest Scout 6";
     String Ten_Numb = "Ten Numb";
+    String Tentacle = "Tentacle";
     String Tessek = "Tessek";
     String Thank_The_Maker = "Thank The Maker";
     String That_Things_Operational = "That Thing's Operational";

@@ -29,6 +29,7 @@ import com.gempukku.swccgo.logic.effects.RespondablePlayCardEffect;
 import com.gempukku.swccgo.logic.effects.TargetCardOnTableEffect;
 import com.gempukku.swccgo.logic.effects.TargetCardsOnTableEffect;
 import com.gempukku.swccgo.logic.modifiers.MayNotInitiateBattleAtLocationModifier;
+import com.gempukku.swccgo.logic.modifiers.ModifyGameTextType;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 import com.gempukku.swccgo.logic.timing.Action;
 import com.gempukku.swccgo.logic.timing.EffectResult;
@@ -54,10 +55,11 @@ public class Card1_256 extends AbstractLostInterrupt {
 
     @Override
     protected List<PlayInterruptAction> getGameTextOptionalAfterActions(final String playerId, final SwccgGame game, EffectResult effectResult, final PhysicalCard self) {
+        Filter locationFilter = localTroubleLocationFilter(game, self);
         if (TriggerConditions.isStartOfYourPhase(game, effectResult, Phase.BATTLE, playerId)
                 && !GameConditions.isDuringBattle(game)
                 && GameConditions.canUseForceToPlayInterrupt(game, playerId, self, 1)
-                && GameConditions.canSpotLocation(game, Filters.Cantina)) {
+                && GameConditions.canSpotLocation(game, locationFilter)) {
 
             PlayInterruptAction action = createLocalTroubleAction(playerId, game, self);
             if (action != null) {
@@ -67,25 +69,61 @@ public class Card1_256 extends AbstractLostInterrupt {
         return null;
     }
 
+    private Filter localTroubleLocationFilter(SwccgGame game, PhysicalCard self) {
+        if (GameConditions.hasGameTextModification(game, self, ModifyGameTextType.LEGACY__LOCAL_TROUBLE__MAY_PLAY_AT_EXTERIOR_TATOOINE_SITES)) {
+            return Filters.or(Filters.Cantina, Filters.and(Filters.exterior_site, Filters.Tatooine_site));
+        }
+        return Filters.Cantina;
+    }
+
     private PlayInterruptAction createLocalTroubleAction(final String playerId, final SwccgGame game, final PhysicalCard self) {
-        final PhysicalCard cantina = Filters.findFirstFromTopLocationsOnTable(game, Filters.Cantina);
-        if (cantina == null) {
+        List<PhysicalCard> playableLocations = new LinkedList<PhysicalCard>();
+        for (PhysicalCard location : Filters.filterTopLocationsOnTable(game, localTroubleLocationFilter(game, self))) {
+            if (isLocalTroublePlayableAt(playerId, game, self, location)) {
+                playableLocations.add(location);
+            }
+        }
+        if (playableLocations.isEmpty()) {
             return null;
         }
+        if (playableLocations.size() == 1) {
+            return createLocalTroubleActionAt(playerId, game, self, playableLocations.get(0));
+        }
 
+        final PlayInterruptAction action = new PlayInterruptAction(game, self);
+        action.setText("Initiate Local Trouble battle");
+        action.appendTargeting(
+                new TargetCardOnTableEffect(action, playerId, "Choose location", Filters.in(playableLocations)) {
+                    @Override
+                    protected void cardTargeted(final int locationTargetGroupId, PhysicalCard targetedLocation) {
+                        appendLocalTroubleBattle(action, playerId, game, self, targetedLocation);
+                    }
+                });
+        return action;
+    }
+
+    private boolean isLocalTroublePlayableAt(String playerId, SwccgGame game, PhysicalCard self, PhysicalCard location) {
         // Local Trouble still initiates a battle, so Caldera / "may not initiate battle" apply.
-        if (game.getModifiersQuerying().mayNotInitiateBattleAtLocation(game.getGameState(), cantina, playerId)) {
-            return null;
+        if (game.getModifiersQuerying().mayNotInitiateBattleAtLocation(game.getGameState(), location, playerId)) {
+            return false;
         }
 
         // "Use 1 Force" is the battle-initiation payment (Feltipern can reset it; lose-Force modifiers apply).
-        float battleCost = game.getModifiersQuerying().getInitiateBattleCost(game.getGameState(), cantina, playerId, false);
+        float battleCost = game.getModifiersQuerying().getInitiateBattleCost(game.getGameState(), location, playerId, false);
         if (battleCost > 0 && !GameConditions.canUseForce(game, playerId, battleCost)) {
-            return null;
+            return false;
         }
 
-        final Filter stormtrooperFilter = Filters.and(Filters.your(self), Filters.stormtrooper, Filters.at(cantina),
-                Filters.canParticipateInBattleAt(cantina, playerId), Filters.canBeTargetedBy(self));
+        return GameConditions.canSpot(game, self, 2, localTroubleStormtrooperFilter(self, playerId, location))
+                && GameConditions.canTarget(game, self, localTroubleOpponentFilter(self, playerId, location));
+    }
+
+    private Filter localTroubleStormtrooperFilter(PhysicalCard self, String playerId, PhysicalCard location) {
+        return Filters.and(Filters.your(self), Filters.stormtrooper, Filters.at(location),
+                Filters.canParticipateInBattleAt(location, playerId), Filters.canBeTargetedBy(self));
+    }
+
+    private Filter localTroubleOpponentFilter(PhysicalCard self, String playerId, PhysicalCard location) {
         // Same as normal battle initiation: presence (ability or [Presence] icon) or MayBeBattled,
         // and not MayNotBeBattled. Forum 79090: a normal droid without presence cannot.
         final Filter notMayNotBeBattled = new Filter() {
@@ -94,18 +132,24 @@ public class Card1_256 extends AbstractLostInterrupt {
                 return !modifiersQuerying.mayNotBeBattled(gameState, physicalCard);
             }
         };
-        final Filter opponentFilter = Filters.and(Filters.opponents(self), Filters.character, Filters.at(cantina),
+        return Filters.and(Filters.opponents(self), Filters.character, Filters.at(location),
                 Filters.or(Filters.mayBeBattled, Filters.hasAbility, Filters.icon(Icon.PRESENCE)),
                 notMayNotBeBattled,
-                Filters.canParticipateInBattleAt(cantina, playerId), Filters.canBeTargetedBy(self));
+                Filters.canParticipateInBattleAt(location, playerId), Filters.canBeTargetedBy(self));
+    }
 
-        if (!GameConditions.canSpot(game, self, 2, stormtrooperFilter)
-                || !GameConditions.canTarget(game, self, opponentFilter)) {
-            return null;
-        }
-
+    private PlayInterruptAction createLocalTroubleActionAt(final String playerId, final SwccgGame game, final PhysicalCard self, final PhysicalCard battleLocation) {
         final PlayInterruptAction action = new PlayInterruptAction(game, self);
         action.setText("Initiate Local Trouble battle");
+        appendLocalTroubleBattle(action, playerId, game, self, battleLocation);
+        return action;
+    }
+
+    private void appendLocalTroubleBattle(final PlayInterruptAction action, final String playerId, final SwccgGame game, final PhysicalCard self, final PhysicalCard battleLocation) {
+        final int battleLocationPermId = battleLocation.getPermanentCardId();
+        final Filter stormtrooperFilter = localTroubleStormtrooperFilter(self, playerId, battleLocation);
+        final Filter opponentFilter = localTroubleOpponentFilter(self, playerId, battleLocation);
+
         // Choose target(s) before paying so Sense/Derlin/I Have A Bad Feeling About This can respond
         action.appendTargeting(
                 new TargetCardsOnTableEffect(action, playerId, "Choose two Stormtroopers", 2, 2, stormtrooperFilter) {
@@ -119,7 +163,7 @@ public class Card1_256 extends AbstractLostInterrupt {
                                         action.addAnimationGroup(targetedOpponent);
                                         // Pay the initiate-battle cost (default 1 Force; Feltipern can reset it).
                                         action.appendCost(
-                                                new PayInitiateBattleCostEffect(action, cantina, playerId, false));
+                                                new PayInitiateBattleCostEffect(action, battleLocation, playerId, false));
                                         // Allow response(s)
                                         action.allowResponses("Allow " + GameUtils.getAppendedNames(targetedStormtroopers) + " to battle " + GameUtils.getCardLink(targetedOpponent),
                                                 new RespondablePlayCardEffect(action) {
@@ -127,8 +171,8 @@ public class Card1_256 extends AbstractLostInterrupt {
                                                     protected void performActionResults(Action targetingAction) {
                                                         Collection<PhysicalCard> finalStormtroopers = action.getPrimaryTargetCards(stormtrooperTargetGroupId);
                                                         PhysicalCard finalOpponent = action.getPrimaryTargetCard(opponentTargetGroupId);
-                                                        PhysicalCard battleLocation = Filters.findFirstFromTopLocationsOnTable(game, Filters.Cantina);
-                                                        if (finalStormtroopers == null || finalStormtroopers.size() != 2 || finalOpponent == null || battleLocation == null) {
+                                                        PhysicalCard currentBattleLocation = game.findCardByPermanentId(battleLocationPermId);
+                                                        if (finalStormtroopers == null || finalStormtroopers.size() != 2 || finalOpponent == null || currentBattleLocation == null) {
                                                             return;
                                                         }
 
@@ -142,8 +186,8 @@ public class Card1_256 extends AbstractLostInterrupt {
                                                         // Apply even if the battle is later canceled
                                                         action.appendEffect(
                                                                 new AddUntilEndOfTurnModifierEffect(action,
-                                                                        new MayNotInitiateBattleAtLocationModifier(self, Filters.Cantina),
-                                                                        "No other battles may occur in Cantina this turn"));
+                                                                        new MayNotInitiateBattleAtLocationModifier(self, Filters.sameCardId(currentBattleLocation)),
+                                                                        "No other battles may occur at " + GameUtils.getCardLink(currentBattleLocation) + " this turn"));
                                                         // Optional "you may add one battle destiny" popup during the battle
                                                         action.appendEffect(
                                                                 new AddUntilEndOfTurnActionProxyEffect(action,
@@ -167,7 +211,7 @@ public class Card1_256 extends AbstractLostInterrupt {
                                                                         }
                                                                 ));
                                                         action.appendEffect(
-                                                                new BattleEffect(action, battleLocation, true, participants, Collections.emptyList()));
+                                                                new BattleEffect(action, currentBattleLocation, true, participants, Collections.emptyList()));
                                                     }
                                                 }
                                         );
@@ -177,6 +221,5 @@ public class Card1_256 extends AbstractLostInterrupt {
                     }
                 }
         );
-        return action;
     }
 }

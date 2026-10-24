@@ -64,4 +64,42 @@ public interface Piles extends BaseQuery {
         }
         return false;
     }
+
+    /**
+     * Determines if the specified player may not look at opponent's hand using the specified card.
+     */
+    default boolean mayNotLookAtOpponentsHand(GameState gameState, PhysicalCard actionSource, String playerId) {
+        for (Modifier modifier : getModifiers(gameState, ModifierType.MAY_NOT_LOOK_AT_OPPONENTS_HAND)) {
+            if (modifier.isForPlayer(playerId)) {
+                if (modifier.isActionSource(gameState, query(), actionSource)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Determines if the specified player may not place cards on the specified card.
+     */
+    default boolean mayNotHaveCardsPlacedOn(GameState gameState, PhysicalCard stackOn, String placingPlayerId) {
+        for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.MAY_NOT_HAVE_CARDS_PLACED_ON_IT, stackOn)) {
+            if (modifier.isForPlayer(placingPlayerId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Determines if the specified player may not play Interrupts from Lost Pile.
+     */
+    default boolean mayNotPlayInterruptFromLostPile(GameState gameState, String playerId) {
+        for (Modifier modifier : getModifiers(gameState, ModifierType.MAY_NOT_PLAY_INTERRUPT_FROM_LOST_PILE)) {
+            if (modifier.isForPlayer(playerId)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
