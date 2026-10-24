@@ -118,6 +118,16 @@ class PlaceCardsInCardPileFromTableEffect extends AbstractSubActionEffect {
         // Filter for cards that are still on the table
         _cards = Filters.filter(_cards, game, Filters.onTable);
 
+        if (_cardPile == Zone.USED_PILE) {
+            Collection<PhysicalCard> allowed = new ArrayList<PhysicalCard>();
+            for (PhysicalCard card : _cards) {
+                if (!game.getModifiersQuerying().mayNotBePlacedInUsedPile(game.getGameState(), card, _playerId)) {
+                    allowed.add(card);
+                }
+            }
+            _cards = allowed;
+        }
+
         if (!_cards.isEmpty()) {
             subAction.appendEffect(
                     new ChooseNextCardToPlaceInCardPile(subAction, game, _cards));

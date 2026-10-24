@@ -233,6 +233,23 @@ public interface Prohibited extends BaseQuery, Flags {
     }
 
     /**
+     * Determines if the specified card may not be placed in Used Pile by the specified player.
+     * @param gameState the game state
+     * @param card the card
+     * @param placingPlayer the player placing the card
+     * @return true if card may not be placed in Used Pile by that player, otherwise false
+     */
+    default boolean mayNotBePlacedInUsedPile(GameState gameState, PhysicalCard card, String placingPlayer) {
+        for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.MAY_NOT_BE_PLACED_IN_USED_PILE, card)) {
+            PhysicalCard source = modifier.getSource(gameState);
+            if (source != null && placingPlayer != null && !placingPlayer.equals(source.getOwner())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Determines if the specified card may not be removed from lost pile if just lost
      * @param gameState the game state
      * @param card the card
