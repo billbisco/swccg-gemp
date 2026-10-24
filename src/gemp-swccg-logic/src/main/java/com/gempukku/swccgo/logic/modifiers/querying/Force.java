@@ -466,6 +466,25 @@ public interface Force extends BaseQuery, PrivateQuery, Flags, Icons, Captives, 
     }
 
     /**
+     * Determines if Force retrieval for the specified player from the specified card may not be canceled.
+     * @param gameState the game state
+     * @param sourceCard the source of the Force retrieval
+     * @param playerRetrieving the player retrieving Force
+     * @return true or false
+     */
+    default boolean isForceRetrievalFromCardMayNotBeCanceled(GameState gameState, PhysicalCard sourceCard, String playerRetrieving) {
+        if (sourceCard == null) {
+            return false;
+        }
+        for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.FORCE_RETRIEVAL_FROM_CARD_MAY_NOT_BE_CANCELED, sourceCard)) {
+            if (modifier.isForPlayer(playerRetrieving)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Gets the initial calculated amount of Force for the specified player to retrieve when collecting a bounty.
      * @param gameState the game state
      * @param playerId the player to retrieve Force
