@@ -3384,6 +3384,9 @@ public class GameConditions {
      * @return true if card pile is allowed to be searched to play an Interrupt, otherwise false
      */
     public static boolean canPlayInterruptFromLostPile(SwccgGame game, String playerId, PhysicalCard self, GameTextActionId gameTextActionId) {
+        if (game.getModifiersQuerying().mayNotPlayInterruptFromLostPile(game.getGameState(), playerId)) {
+            return false;
+        }
         return canSearchLostPile(game, playerId, self, gameTextActionId);
     }
 
