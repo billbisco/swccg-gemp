@@ -1303,6 +1303,7 @@ public enum GameTextActionId {
     LEGACY__RETURN_OF_A_JEDI_V__DEPLOY_OR_RETRIEVE(true),
     LEGACY__UTINNI_LS_V__TAKE_UTINNI_EFFECT(true),
     LEGACY__UTINNI_LS_V__TAKE_JAWA(true),
+    LEGACY__VADER_V__USE_INTERRUPT_FOR_DESTINY,
     ;
 
     private boolean _searchCardPile;
