@@ -129,6 +129,7 @@ public enum ModifyGameTextType {
     LEGACY__ARTOO_V__DEATH_STAR_PLANS_IGNORES_OBJECTIVE_DRAWS_ONE("Ignores objective game text, but only draws one destiny"),
     LEGACY__OWEN_LARS_V__OPPONENT_ACTIVATES_NO_FORCE_FROM_BERU_STEW("Opponent activates no Force from Beru Stew"),
     LEGACY__TARKIN_DOCTRINE__IGNORES_PARSEC_LIMIT("Ignores parsec limit"),
+    LEGACY__SCUM_AND_VILLAINY__IGNORES_EMPEROR("Ignores Emperor"),
 
     ;
 

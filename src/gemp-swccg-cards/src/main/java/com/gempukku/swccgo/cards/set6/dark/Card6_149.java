@@ -65,11 +65,16 @@ public class Card6_149 extends AbstractNormalEffect {
                 new Filter() {
                     @Override
                     public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard) {
-                        if (!Filters.creature_vehicle.accepts(gameState, modifiersQuerying, physicalCard)) {
+                        PhysicalCard scum = gameState.findCardByPermanentId(permId);
+                        if (scum == null) {
                             return false;
                         }
-                        PhysicalCard scum = gameState.findCardByPermanentId(permId);
-                        return scum != null && modifiersQuerying.hasGameTextModification(gameState, scum, ModifyGameTextType.LEGACY__SCUM_AND_VILLAINY__IGNORES_CREATURE_VEHICLES);
+                        if (Filters.creature_vehicle.accepts(gameState, modifiersQuerying, physicalCard)
+                                && modifiersQuerying.hasGameTextModification(gameState, scum, ModifyGameTextType.LEGACY__SCUM_AND_VILLAINY__IGNORES_CREATURE_VEHICLES)) {
+                            return true;
+                        }
+                        return Filters.Emperor.accepts(gameState, modifiersQuerying, physicalCard)
+                                && modifiersQuerying.hasGameTextModification(gameState, scum, ModifyGameTextType.LEGACY__SCUM_AND_VILLAINY__IGNORES_EMPEROR);
                     }
                 });
     }
