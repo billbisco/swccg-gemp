@@ -6,6 +6,7 @@ import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.DeploymentOption;
 import com.gempukku.swccgo.game.DeploymentRestrictionsOption;
 import com.gempukku.swccgo.game.PhysicalCard;
+import com.gempukku.swccgo.game.ReactActionOption;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.GameUtils;
 import com.gempukku.swccgo.logic.actions.PlayCardAction;
@@ -32,6 +33,7 @@ class DeployCardFromPileSimultaneouslyWithCardEffect extends AbstractSubActionEf
     private float _changeInCost;
     private Filter _forFreeCardFilter;
     private boolean _reshuffle;
+    private boolean _asReact;
     private DeploymentOption _deploymentOption;
     private DeploymentRestrictionsOption _deploymentRestrictionsOption;
     private boolean _cardSelected;
@@ -101,7 +103,20 @@ class DeployCardFromPileSimultaneouslyWithCardEffect extends AbstractSubActionEf
         _deploymentOption = null;
         _deploymentRestrictionsOption = null;
         _reshuffle = reshuffle;
+        _asReact = false;
         _that = this;
+    }
+
+    void setAsReact(boolean asReact) {
+        _asReact = asReact;
+    }
+
+    private ReactActionOption reactActionOption() {
+        if (!_asReact) {
+            return null;
+        }
+        return new ReactActionOption(_action.getActionSource(), _forFree, _changeInCost, false, _action.getText(),
+                Filters.any, Filters.any, null, false);
     }
 
     /**
@@ -123,6 +138,7 @@ class DeployCardFromPileSimultaneouslyWithCardEffect extends AbstractSubActionEf
         _targetFilter = targetFilter;
         _forFree = forFree;
         _changeInCost = changeInCost;
+        _asReact = false;
         _deploymentOption = null;
         _deploymentRestrictionsOption = null;
         _that = this;
@@ -207,7 +223,7 @@ class DeployCardFromPileSimultaneouslyWithCardEffect extends AbstractSubActionEf
                                 }
                             }
 
-                            PlayCardAction playCardAction = selectedCard.getBlueprint().getPlayCardAction(_action.getPerformingPlayer(), game, selectedCard, _action.getActionSource(), _forFree, _changeInCost, _deploymentOption, _deploymentRestrictionsOption, null, null, _cardToDeployWith, _forFree, _changeInCost, _targetFilter, null);
+                            PlayCardAction playCardAction = selectedCard.getBlueprint().getPlayCardAction(_action.getPerformingPlayer(), game, selectedCard, _action.getActionSource(), _forFree, _changeInCost, _deploymentOption, _deploymentRestrictionsOption, null, reactActionOption(), _cardToDeployWith, _forFree, _changeInCost, _targetFilter, null);
                             playCardAction.setReshuffle(_reshuffle);
                             subAction.insertEffect(
                                     new StackActionEffect(subAction, playCardAction));
@@ -243,7 +259,7 @@ class DeployCardFromPileSimultaneouslyWithCardEffect extends AbstractSubActionEf
                         protected void doPlayEffect(SwccgGame game) {
                             _cardSelected = true;
 
-                            PlayCardAction playCardAction = _cardToDeploy.getBlueprint().getPlayCardAction(_action.getPerformingPlayer(), game, _cardToDeploy, _action.getActionSource(), _forFree, _changeInCost, _deploymentOption, _deploymentRestrictionsOption, null, null, _cardToDeployWith, _forFree, _changeInCost, _targetFilter, null);
+                            PlayCardAction playCardAction = _cardToDeploy.getBlueprint().getPlayCardAction(_action.getPerformingPlayer(), game, _cardToDeploy, _action.getActionSource(), _forFree, _changeInCost, _deploymentOption, _deploymentRestrictionsOption, null, reactActionOption(), _cardToDeployWith, _forFree, _changeInCost, _targetFilter, null);
                             playCardAction.setReshuffle(_reshuffle);
                             subAction.insertEffect(
                                     new StackActionEffect(subAction, playCardAction));

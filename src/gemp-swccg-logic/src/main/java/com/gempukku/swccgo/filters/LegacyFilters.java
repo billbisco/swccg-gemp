@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.filters;
 
+import com.gempukku.swccgo.common.ModelType;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.logic.modifiers.ModifierType;
@@ -50,5 +51,27 @@ public class LegacyFilters {
      */
     public static Filter canBeLiberated() {
         return Filters.and(Filters.battleground_system, Filters.except(Filters.liberated_system), Filters.except(mayNotBeLiberated()));
+    }
+
+    /**
+     * Filter that accepts frigates (Nebulon-B, modified Nebulon-B, and Munificent-class).
+     */
+    public static final Filter frigate = Filters.or(
+            hasModelType(com.gempukku.swccgo.common.ModelType.NEBULON_B_FRIGATE),
+            hasModelType(com.gempukku.swccgo.common.ModelType.MODIFIED_NEBULON_B_FRIGATE),
+            hasModelType(com.gempukku.swccgo.common.ModelType.MUNIFICENT_CLASS_STAR_FRIGATE));
+
+    private static Filter hasModelType(final com.gempukku.swccgo.common.ModelType modelType) {
+        return new Filter() {
+            @Override
+            public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard) {
+                for (com.gempukku.swccgo.common.ModelType curModelType : physicalCard.getBlueprint().getModelTypes()) {
+                    if (curModelType == modelType) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        };
     }
 }

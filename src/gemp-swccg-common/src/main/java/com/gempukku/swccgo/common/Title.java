@@ -102,6 +102,7 @@ public interface Title {
     String Battle_Order = "Battle Order";
     String Battle_Plains = "Naboo: Battle Plains";
     String Battle_Plan = "Battle Plan";
+    String Balanced_Attack = "Balanced Attack";
     String Baze = "Baze Malbus With Cannon";
     String Bazes_Cannon = "Baze's Cannon";
     String Beggar = "Beggar";
@@ -228,6 +229,7 @@ public interface Title {
     String Combat_Response = "Combat Response";
     String Combined_Attack = "Combined Attack";
     String Combined_Fleet_Action = "Combined Fleet Action";
+    String Coordinated_Attack = "Coordinated Attack";
     String Come_Here_You_Big_Coward = "Come Here You Big Coward";
     String Come_With_Me = "Come With Me";
     String Comlink = "Comlink";
@@ -311,6 +313,7 @@ public interface Title {
     String Death_Star_II_Docking_Bay = "Death Star II: Docking Bay";
     String Death_Star_II_Chasm_Walkway = "Death Star II: Chasm Walkway";
     String Death_Star_Plans = "Death Star Plans";
+    String Death_Star_Schematics = "Death Star Schematics";
     String Death_Star_Sentry = "Death Star Sentry";
     String Death_Star_Tractor_Beam = "Death Star Tractor Beam";
     String Death_Star_Trench = "Death Star: Trench";
@@ -695,6 +698,7 @@ public interface Title {
     String Kiffex = "Kiffex";
     String Kirdo_III = "Kirdo III";
     String Klaatu = "Klaatu";
+    String Klorslug = "K'lor'slug";
     String Knights_Of_The_Old_Republic = "Knights Of The Old Republic";
     String Krayt_Dragon_Bones = "Krayt Dragon Bones";
     String Krennic = "Director Orson Krennic";
@@ -1185,6 +1189,7 @@ public interface Title {
     String Theyd_Be_Crazy_To_Follow_Us = "They'd Be Crazy To Follow Us";
     String The_Camp = "The Camp";
     String The_Circle_Is_Now_Complete = "The Circle Is Now Complete";
+    String The_Empires_Back = "The Empire's Back";
     String The_Falcon_Junkyard_Garbage = "The Falcon, Junkyard Garbage";
     String The_First_Transport_Is_Away = "The First Transport Is Away!";
     String The_Force_Is_Strong_In_My_Family = "The Force Is Strong In My Family";

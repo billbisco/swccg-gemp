@@ -439,13 +439,12 @@ public abstract class AbstractStarship extends AbstractDeployable {
             // Check if explicit character to deploy simultaneously with was specified
             if (cardToDeployWith != null) {
                 if (!cardToDeployWith.getBlueprint().isOnlyDeploysAsUndercoverSpy(game, cardToDeployWith)
-                        && reactActionOption == null
                         && ((Filters.piloted.accepts(game, self) && Filters.hasAvailablePassengerCapacity(cardToDeployWith).accepts(game, self)) || (getValidPilotFilter(playerId, game, self, true).accepts(game, cardToDeployWith) && Filters.hasAvailablePilotCapacity(cardToDeployWith).accepts(game, self)))
                         && cardToDeployWith.getBlueprint().mayDeploySimultaneouslyAsAttachedRequirements(playerId, game, cardToDeployWith)
-                        && Filters.canSpot(game, self, Filters.and(deployTargetFilter, getValidDeployTargetWithPilotOrPassengerFilter(playerId, game, self, sourceCard, forFree, changeInCost, cardToDeployWith, cardToDeployWithForFree, cardToDeployWithChangeInCost, deploymentRestrictionsOption, null)))) {
+                        && Filters.canSpot(game, self, Filters.and(deployTargetFilter, getValidDeployTargetWithPilotOrPassengerFilter(playerId, game, self, sourceCard, forFree, changeInCost, cardToDeployWith, cardToDeployWithForFree, cardToDeployWithChangeInCost, deploymentRestrictionsOption, reactActionOption)))) {
 
                     // If they can be deployed simultaneously with starship, then include that filter.
-                    deployWithSeparatePilotTargetFilter = Filters.and(deployTargetFilter, getValidDeployTargetWithPilotOrPassengerFilter(playerId, game, self, sourceCard, forFree, changeInCost, cardToDeployWith, cardToDeployWithForFree, cardToDeployWithChangeInCost, deploymentRestrictionsOption, null));
+                    deployWithSeparatePilotTargetFilter = Filters.and(deployTargetFilter, getValidDeployTargetWithPilotOrPassengerFilter(playerId, game, self, sourceCard, forFree, changeInCost, cardToDeployWith, cardToDeployWithForFree, cardToDeployWithChangeInCost, deploymentRestrictionsOption, reactActionOption));
                     playCardActions.add(new PlayStarshipOrVehicleSimultaneouslyWithPilotOrPassengerAction(game, sourceCard, self, forFree, changeInCost, deployWithSeparatePilotTargetFilter, cardToDeployWith, cardToDeployWithForFree, cardToDeployWithChangeInCost, deploymentRestrictionsOption));
                 }
             }
