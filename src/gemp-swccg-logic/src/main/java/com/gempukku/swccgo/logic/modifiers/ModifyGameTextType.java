@@ -131,6 +131,8 @@ public enum ModifyGameTextType {
     LEGACY__TARKIN_DOCTRINE__IGNORES_PARSEC_LIMIT("Ignores parsec limit"),
     LEGACY__SCUM_AND_VILLAINY__IGNORES_EMPEROR("Ignores Emperor"),
     LEGACY__LOCAL_TROUBLE__MAY_PLAY_AT_EXTERIOR_TATOOINE_SITES("May be played at exterior Tatooine sites"),
+    LEGACY__FEAR_IS_MY_ALLY__THREE_IS_FOUR("'Three' treated as 'Four'"),
+    LEGACY__AN_UNUSUAL_AMOUNT_OF_FEAR__THREE_IS_FOUR("'Three' treated as 'Four'"),
 
     ;
 

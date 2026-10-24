@@ -2,6 +2,7 @@ package com.gempukku.swccgo.cards.set13.light;
 
 import com.gempukku.swccgo.cards.AbstractStartingEffect;
 import com.gempukku.swccgo.cards.GameConditions;
+import com.gempukku.swccgo.cards.effects.usage.FourTimesPerGameEffect;
 import com.gempukku.swccgo.cards.effects.usage.ThreeTimesPerGameEffect;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.GameTextActionId;
@@ -19,6 +20,7 @@ import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
 import com.gempukku.swccgo.logic.effects.choose.ChooseStackedCardEffect;
 import com.gempukku.swccgo.logic.effects.choose.PlayStackedDefensiveShieldEffect;
 import com.gempukku.swccgo.logic.effects.choose.StackCardsFromOutsideDeckEffect;
+import com.gempukku.swccgo.logic.modifiers.ModifyGameTextType;
 import com.gempukku.swccgo.logic.timing.EffectResult;
 
 import java.util.Collections;
@@ -59,16 +61,17 @@ public class Card13_005 extends AbstractStartingEffect {
     protected List<TopLevelGameTextAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
         GameTextActionId gameTextActionId = GameTextActionId.AN_UNUSUAL_AMOUNT_OF_FEAR__PLAY_DEFENSIVE_SHIELD;
         Filter filter = Filters.and(Filters.Defensive_Shield, Filters.playable(self));
+        boolean fourTimes = GameConditions.hasGameTextModification(game, self, ModifyGameTextType.LEGACY__AN_UNUSUAL_AMOUNT_OF_FEAR__THREE_IS_FOUR);
 
         // Check condition(s)
-        if (GameConditions.isThreeTimesPerGame(game, self, gameTextActionId)
+        if ((fourTimes ? GameConditions.isFourTimesPerGame(game, self, gameTextActionId) : GameConditions.isThreeTimesPerGame(game, self, gameTextActionId))
                 && GameConditions.hasStackedCards(game, self, filter)) {
 
             final TopLevelGameTextAction action = new TopLevelGameTextAction(self, gameTextSourceCardId, gameTextActionId);
             action.setText("Play a Defensive Shield");
             // Update usage limit(s)
             action.appendUsage(
-                    new ThreeTimesPerGameEffect(action));
+                    fourTimes ? new FourTimesPerGameEffect(action) : new ThreeTimesPerGameEffect(action));
             // Choose target(s)
             action.appendTargeting(
                     new ChooseStackedCardEffect(action, playerId, self, filter) {

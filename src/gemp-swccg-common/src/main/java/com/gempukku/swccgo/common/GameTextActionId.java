@@ -1304,6 +1304,8 @@ public enum GameTextActionId {
     LEGACY__UTINNI_LS_V__TAKE_UTINNI_EFFECT(true),
     LEGACY__UTINNI_LS_V__TAKE_JAWA(true),
     LEGACY__VADER_V__USE_INTERRUPT_FOR_DESTINY,
+    LEGACY__AFTER_HER_V__TAKE_ASTROMECH_SHORTAGE(true, true),
+    LEGACY__THERE_IS_ANOTHER__OPPONENT_ACTIVATES_FORCE,
     ;
 
     private boolean _searchCardPile;

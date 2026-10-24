@@ -189,6 +189,22 @@ public class ForceRetrievalEffect extends AbstractSubActionEffect {
     }
 
     /**
+     * Determines if the retrieval may not be canceled, including modifiers that prevent canceling retrieval from the source card.
+     * @param game the game
+     * @return true or false
+     */
+    public boolean mayNotBeCanceled(SwccgGame game) {
+        if (mayNotBeCanceled()) {
+            return true;
+        }
+        PhysicalCard source = _sourceCard != null ? _sourceCard : _action.getActionSource();
+        if (source == null) {
+            return false;
+        }
+        return game.getModifiersQuerying().isForceRetrievalFromCardMayNotBeCanceled(game.getGameState(), source, _playerToRetrieveForce);
+    }
+
+    /**
      * Determines if the Force retrieval is due to initiating battle.
      * @return true or false
      */
