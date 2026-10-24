@@ -717,7 +717,10 @@ public interface Title {
     String Leave_Them_To_Me = "Leave Them To Me";
     String Leebo = "LE-BO2D9 (Leebo)";
     String Leia_Of_Alderaan = "Leia Of Alderaan";
+    String Leias_Back = "Leia's Back";
+    String Leias_Blaster_Rifle = "Leia's Blaster Rifle";
     String Leias_Lightsaber = "Leia's Lightsaber";
+    String Leias_Sporting_Blaster = "Leia's Sporting Blaster";
     String Let_The_Wookiee_Win = "Let The Wookiee Win";
     String Let_Them_Make_The_First_Move = "Let Them Make The First Move";
     String Lets_Keep_A_Little_Optimism_Here = "Let's Keep A Little Optimism Here";
@@ -751,7 +754,10 @@ public interface Title {
     String Lothal_Capital_City = "Lothal: Capital City";
     String Lothal_Imperial_Complex = "Lothal: Imperial Complex";
     String Lothal_Jedi_Temple = "Lothal: Jedi Temple";
+    String Lukes_Back = "Luke's Back";
     String Lukes_Backpack = "Luke's Backpack";
+    String Lukes_Blaster_Pistol = "Luke's Blaster Pistol";
+    String Lukes_Lightsaber = "Luke's Lightsaber";
     String Lukes_T16_Skyhopper = "Luke's T-16 Skyhopper";
     String Lukes_X34_Landspeeder = "Luke's X-34 Landspeeder";
     String Lumat = "Lumat";
@@ -853,6 +859,7 @@ public interface Title {
     String North_Ridge = "Hoth: North Ridge (4th Marker)";
     String Nute_Gunray = "Nute Gunray";
     String ObiWans_Hut = "Tatooine: Obi-Wan's Hut";
+    String ObiWans_Cape = "Obi-Wan's Cape";
     String ObiWans_Journal = "Obi-Wan's Journal";
     String Obiwans_Lightsaber = "Obi-Wan's Lightsaber";
     String Observation_Platform = "Invisible Hand: Observation Platform";
@@ -931,6 +938,7 @@ public interface Title {
     String Power_Pivot = "Power Pivot";
     String Pray_I_Dont_Alter_It_Any_Further = "Pray I Don't Alter It Any Further";
     String Precise_Attack = "Precise Attack";
+    String Precise_Hit = "Precise Hit";
     String Prepare_For_A_Surface_Attack = "Prepare For A Surface Attack";
     String Prepare_The_Chamber = "Prepare The Chamber";
     String Presence_Of_The_Force = "Presence Of The Force";
