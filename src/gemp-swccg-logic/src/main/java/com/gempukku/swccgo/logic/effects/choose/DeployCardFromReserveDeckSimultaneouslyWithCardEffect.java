@@ -20,7 +20,21 @@ public class DeployCardFromReserveDeckSimultaneouslyWithCardEffect extends Deplo
      * @param reshuffle true if pile is reshuffled, otherwise false
      */
     public DeployCardFromReserveDeckSimultaneouslyWithCardEffect(Action action, PhysicalCard cardToDeployWith, Filter cardFilter, boolean reshuffle) {
+        this(action, cardToDeployWith, cardFilter, reshuffle, false);
+    }
+
+    /**
+     * Creates an effect that causes the player performing the action to choose and deploy a card accepted by the card filter
+     * from Reserve Deck simultaneously with the specified card, optionally as a 'react'.
+     * @param action the action performing this effect
+     * @param cardToDeployWith the card to deploy with simultaneously
+     * @param cardFilter the card filter
+     * @param reshuffle true if pile is reshuffled, otherwise false
+     * @param asReact true if deploying as a 'react', otherwise false
+     */
+    public DeployCardFromReserveDeckSimultaneouslyWithCardEffect(Action action, PhysicalCard cardToDeployWith, Filter cardFilter, boolean reshuffle, boolean asReact) {
         super(action, cardToDeployWith, Zone.RESERVE_DECK, action.getPerformingPlayer(), cardFilter, false, 0, null, reshuffle);
+        setAsReact(asReact);
     }
 
     /**

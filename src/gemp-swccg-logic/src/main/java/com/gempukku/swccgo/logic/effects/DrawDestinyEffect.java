@@ -237,6 +237,14 @@ public abstract class DrawDestinyEffect extends AbstractSubActionEffect {
     }
 
     /**
+     * Gets the amount this destiny draw has been modified after it was revealed (e.g. by an Interrupt).
+     * Standing destiny modifiers are already folded into the base drawn value.
+     */
+    public float getDestinyDrawValueModification() {
+        return _drawnDestinyValueModification;
+    }
+
+    /**
      * Sets the current drawn destiny card value for when destiny card is replaced by another card.
      * @param value the new drawn destiny card value
      */
@@ -363,6 +371,7 @@ public abstract class DrawDestinyEffect extends AbstractSubActionEffect {
      */
     public void resetDestiny(float resetValue) {
         _reset = true;
+        _canceled = false;
         _drawnDestinyValue = resetValue;
         _drawnDestinyValueModification = 0;
         _modifierSourceTitleMap.clear();
