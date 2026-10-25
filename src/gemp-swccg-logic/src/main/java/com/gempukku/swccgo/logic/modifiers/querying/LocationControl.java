@@ -341,6 +341,9 @@ public interface LocationControl extends BaseQuery, Ability, Battle, Ferocity, F
         if (!occupiesLocation(gameState, location, playerId, spotOverrides))
             return false;
 
+        if (mayNotControlLocation(gameState, location, playerId))
+            return false;
+
         if (treatsOccupyAsControl(gameState, location, playerId))
             return true;
 
@@ -355,6 +358,15 @@ public interface LocationControl extends BaseQuery, Ability, Battle, Ferocity, F
 
     private boolean treatsOccupyAsControl(GameState gameState, PhysicalCard location, String playerId) {
         for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.TREATS_OCCUPY_AS_CONTROL, location)) {
+            if (modifier.isForPlayer(playerId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean mayNotControlLocation(GameState gameState, PhysicalCard location, String playerId) {
+        for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.MAY_NOT_CONTROL_LOCATION, location)) {
             if (modifier.isForPlayer(playerId)) {
                 return true;
             }

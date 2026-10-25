@@ -692,6 +692,13 @@ public interface ModifiersState {
      */
     boolean hasPerformedRegularMoveThisTurn(PhysicalCard card);
 
+    /**
+     * Gets the number of granted additional moves this card has already used this turn.
+     * @param card the card
+     * @return the number of granted additional moves used
+     */
+    int getGrantedAdditionalMovesUsedThisTurn(PhysicalCard card);
+
     void setExtraInformationForArchetypeLabel(String playerId, String text);
     String getExtraInformationForArchetypeLabel(String playerId);
 }

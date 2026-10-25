@@ -1082,6 +1082,11 @@ public interface Destiny extends BaseQuery {
                 result += modifier.getDestinyWhenDrawnForDestinyModifier(gameState, query(), physicalCard);
             }
         }
+        for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.DESTINY_WHEN_DRAWN_FOR_LIGHTSABER_COMBAT_DESTINY, physicalCard)) {
+            if (!mayNotModifyDestinyDraw(gameState, modifier.getSource(gameState) != null ? modifier.getSource(gameState).getOwner() : null)) {
+                result += modifier.getDestinyWhenDrawnForDestinyModifier(gameState, query(), physicalCard);
+            }
+        }
         for (Modifier modifier : getModifiers(gameState, ModifierType.EACH_LIGHTSABER_COMBAT_DESTINY)) {
             if (modifier.isForPlayer(playerId)) {
                 if (!mayNotModifyDestinyDraw(gameState, modifier.getSource(gameState) != null ? modifier.getSource(gameState).getOwner() : null)) {

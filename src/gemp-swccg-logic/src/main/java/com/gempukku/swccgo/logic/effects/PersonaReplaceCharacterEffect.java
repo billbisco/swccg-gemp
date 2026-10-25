@@ -10,6 +10,7 @@ import com.gempukku.swccgo.logic.timing.AbstractSubActionEffect;
 import com.gempukku.swccgo.logic.timing.Action;
 import com.gempukku.swccgo.logic.timing.PassthruEffect;
 import com.gempukku.swccgo.logic.timing.results.AboutToPersonaReplaceCharacterResult;
+import com.gempukku.swccgo.logic.timing.results.AttemptingPersonaReplaceCharacterResult;
 import com.gempukku.swccgo.logic.timing.results.PersonaReplacedCharacterResult;
 
 import java.util.Collection;
@@ -18,9 +19,11 @@ import java.util.Collection;
 /**
  * The effect to persona replace a character with another character of the same persona.
  */
-public class PersonaReplaceCharacterEffect extends AbstractSubActionEffect {
+public class PersonaReplaceCharacterEffect extends AbstractSubActionEffect implements PreventableCardEffect {
     private PhysicalCard _oldCharacter;
     private PhysicalCard _newCharacter;
+    private java.util.Set<PhysicalCard> _preventedCards = new java.util.HashSet<PhysicalCard>();
+    private PersonaReplaceCharacterEffect _that;
 
     /**
      * Create an effect to persona replace a character with another character of the same persona.
@@ -32,6 +35,7 @@ public class PersonaReplaceCharacterEffect extends AbstractSubActionEffect {
         super(action);
         _oldCharacter = oldCharacter;
         _newCharacter = newCharacter;
+        _that = this;
     }
 
     @Override
@@ -46,9 +50,14 @@ public class PersonaReplaceCharacterEffect extends AbstractSubActionEffect {
 
         final SubAction subAction = new SubAction(_action);
         subAction.appendEffect(
+                new TriggeringResultEffect(subAction, new AttemptingPersonaReplaceCharacterResult(performingPlayerId, _oldCharacter, _newCharacter, _that)));
+        subAction.appendEffect(
                 new PassthruEffect(subAction) {
                     @Override
                     protected void doPlayEffect(SwccgGame game) {
+                        if (isEffectOnCardPrevented(_oldCharacter) || isEffectOnCardPrevented(_newCharacter)) {
+                            return;
+                        }
                         boolean wasUndercover = _oldCharacter.isUndercover();
 
                         Collection<PhysicalCard> cardsToPlaceInLostPile = gameState.replaceCharacterOnTable(_oldCharacter, _newCharacter);
@@ -70,7 +79,17 @@ public class PersonaReplaceCharacterEffect extends AbstractSubActionEffect {
     }
 
     @Override
+    public void preventEffectOnCard(PhysicalCard card) {
+        _preventedCards.add(card);
+    }
+
+    @Override
+    public boolean isEffectOnCardPrevented(PhysicalCard card) {
+        return _preventedCards.contains(card);
+    }
+
+    @Override
     protected boolean wasActionCarriedOut() {
-        return true;
+        return _preventedCards.isEmpty();
     }
 }
