@@ -29,7 +29,8 @@ public class StackCardFromVoidEffect extends AbstractSuccessfulEffect {
 
     @Override
     protected void doPlayEffect(SwccgGame game) {
-        if (_card.getZone() == Zone.VOID) {
+        if (_card.getZone() == Zone.VOID
+                || GameUtils.getZoneFromZoneTop(_card.getZone()) == Zone.UNRESOLVED_DESTINY_DRAW) {
             GameState gameState = game.getGameState();
             if (_action.getPerformingPlayer() != null)
                 gameState.sendMessage(_action.getPerformingPlayer() + " stacks " + GameUtils.getCardLink(_card) + " on " + GameUtils.getCardLink(_stackOn));

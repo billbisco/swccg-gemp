@@ -339,6 +339,14 @@ public interface Deploy extends BaseQuery, Attributes, CardTraits, Destiny, Loca
             maxToReduceCostBy = Math.max(0, Math.min(maxToReduceCostBy, modifier.getMaximumToReduceDeployCostBy(gameState, query(), cardToDeploy)));
             modifierCollector.addModifier(modifier);
         }
+        if (targetCard != null) {
+            for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.MAX_AMOUNT_TO_REDUCE_DEPLOY_COST_BY_TO_TARGET, cardToDeploy)) {
+                if (modifier.isAffectedTarget(gameState, query(), targetCard)) {
+                    maxToReduceCostBy = Math.max(0, Math.min(maxToReduceCostBy, modifier.getMaximumToReduceDeployCostBy(gameState, query(), cardToDeploy)));
+                    modifierCollector.addModifier(modifier);
+                }
+            }
+        }
         if (maxToReduceCostBy != Float.MAX_VALUE) {
             result += Math.max(0, totalReduceCostModifiers - maxToReduceCostBy);
         }
