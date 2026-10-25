@@ -822,6 +822,17 @@ public class TriggerConditions {
     /**
      * True while the new persona is on table and the old one has not yet been placed in Lost Pile.
      */
+    public static boolean attemptingPersonaReplaceCharacter(SwccgGame game, EffectResult effectResult, Filterable oldCharacterFilter) {
+        if (effectResult.getType() == EffectResult.Type.ATTEMPTING_PERSONA_REPLACE_CHARACTER) {
+            AttemptingPersonaReplaceCharacterResult result = (AttemptingPersonaReplaceCharacterResult) effectResult;
+            return Filters.and(Filters.in_play, oldCharacterFilter).accepts(game.getGameState(), game.getModifiersQuerying(), result.getOldCharacter());
+        }
+        return false;
+    }
+
+    /**
+     * True while the new persona is on table and the old one has not yet been placed in Lost Pile.
+     */
     public static boolean aboutToPersonaReplaceCharacter(SwccgGame game, EffectResult effectResult, Filterable newCharacterFilter) {
         if (effectResult.getType() == EffectResult.Type.ABOUT_TO_PERSONA_REPLACE_CHARACTER) {
             AboutToPersonaReplaceCharacterResult result = (AboutToPersonaReplaceCharacterResult) effectResult;

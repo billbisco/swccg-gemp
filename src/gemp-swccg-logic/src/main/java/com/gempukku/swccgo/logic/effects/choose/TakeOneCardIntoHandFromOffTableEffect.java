@@ -8,6 +8,7 @@ import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.logic.GameUtils;
 import com.gempukku.swccgo.logic.timing.AbstractStandardEffect;
 import com.gempukku.swccgo.logic.timing.Action;
+import com.gempukku.swccgo.logic.timing.results.PutCardToHandFromOffTableResult;
 import com.gempukku.swccgo.logic.timing.results.RemovedCoaxiumCardResult;
 
 import java.util.Collections;
@@ -49,6 +50,8 @@ public abstract class TakeOneCardIntoHandFromOffTableEffect extends AbstractStan
         _card.setOwner(_playerId);
         gameState.addCardToZone(_card, Zone.HAND, _playerId);
         gameState.sendMessage(_msgText);
+        game.getActionsEnvironment().emitEffectResult(
+                new PutCardToHandFromOffTableResult(_action, _playerId, _card));
 
         if (Filters.coaxiumCard.accepts(game, _card)) {
             game.getActionsEnvironment().emitEffectResult(

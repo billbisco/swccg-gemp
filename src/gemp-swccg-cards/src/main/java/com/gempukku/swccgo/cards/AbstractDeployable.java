@@ -335,8 +335,14 @@ public abstract class AbstractDeployable extends AbstractNonLocationPlaysToTable
      * @return true or false
      */
     protected boolean checkRegularMoveRequirements(String playerId, SwccgGame game, PhysicalCard self, boolean asAdditionalMove) {
-        return !self.isCaptive() && checkMoveRequirements(playerId, game, self)
-                && (asAdditionalMove == game.getModifiersQuerying().hasPerformedRegularMoveThisTurn(self));
+        if (self.isCaptive() || !checkMoveRequirements(playerId, game, self))
+            return false;
+        boolean alreadyMoved = game.getModifiersQuerying().hasPerformedRegularMoveThisTurn(self);
+        if (asAdditionalMove)
+            return alreadyMoved;
+        if (!alreadyMoved)
+            return true;
+        return game.getModifiersQuerying().hasUnusedGrantedAdditionalMoves(game.getGameState(), self);
     }
 
     /**

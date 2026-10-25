@@ -121,6 +121,7 @@ public class ModifiersLogic implements ModifiersEnvironment, ModifiersState, Mod
     private Set<PhysicalCard> _forceDrainStartedSet = new HashSet<PhysicalCard>();
     private Map<PhysicalCard, Float> _forceDrainCompletedMap = new HashMap<PhysicalCard, Float>();
     private Set<Integer> _regularMoveSet = new HashSet<Integer>();
+    private Map<Integer, Integer> _grantedAdditionalMovesUsedMap = new HashMap<Integer, Integer>();
     private Map<String, Integer> _battleInitiatedByPlayerMap = new HashMap<String, Integer>();
     private Map<Integer, Integer> _locationBattleMap = new HashMap<Integer, Integer>();
     private Map<Integer, Integer> _forceDrainParticipationMap = new HashMap<Integer, Integer>();
@@ -336,6 +337,7 @@ public class ModifiersLogic implements ModifiersEnvironment, ModifiersState, Mod
             snapshot._forceDrainCompletedMap.put(snapshotData.getDataForSnapshot(entry.getKey()), entry.getValue());
         }
         snapshot._regularMoveSet.addAll(_regularMoveSet);
+        snapshot._grantedAdditionalMovesUsedMap.putAll(_grantedAdditionalMovesUsedMap);
         snapshot._battleInitiatedByPlayerMap.putAll(_battleInitiatedByPlayerMap);
         snapshot._locationBattleMap.putAll(_locationBattleMap);
         snapshot._forceDrainParticipationMap.putAll(_forceDrainParticipationMap);
@@ -1206,6 +1208,7 @@ public class ModifiersLogic implements ModifiersEnvironment, ModifiersState, Mod
         _targetedByWeaponsMap.clear();
         _hitOrMadeLostByWeaponMap.clear();
         _regularMoveSet.clear();
+        _grantedAdditionalMovesUsedMap.clear();
         _locationAttackOnCreatureSet.clear();
         _attackOnCreatureParticipationSet.clear();
         _attackOnNonCreatureParticipationSet.clear();
@@ -1559,7 +1562,14 @@ public class ModifiersLogic implements ModifiersEnvironment, ModifiersState, Mod
      * @param card the card
      */
     public void regularMovePerformed(PhysicalCard card) {
-        _regularMoveSet.add(card.getCardId());
+        int cardId = card.getCardId();
+        if (_regularMoveSet.contains(cardId)) {
+            Integer used = _grantedAdditionalMovesUsedMap.get(cardId);
+            _grantedAdditionalMovesUsedMap.put(cardId, used != null ? used + 1 : 1);
+        }
+        else {
+            _regularMoveSet.add(cardId);
+        }
     }
 
     /**
@@ -1569,6 +1579,12 @@ public class ModifiersLogic implements ModifiersEnvironment, ModifiersState, Mod
      */
     public boolean hasPerformedRegularMoveThisTurn(PhysicalCard card) {
         return _regularMoveSet.contains(card.getCardId());
+    }
+
+    @Override
+    public int getGrantedAdditionalMovesUsedThisTurn(PhysicalCard card) {
+        Integer used = _grantedAdditionalMovesUsedMap.get(card.getCardId());
+        return used != null ? used : 0;
     }
 
     //region ModifiersState

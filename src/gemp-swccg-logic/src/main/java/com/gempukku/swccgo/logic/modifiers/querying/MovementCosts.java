@@ -10,7 +10,21 @@ import com.gempukku.swccgo.logic.modifiers.ModifierType;
 
 import java.util.Collection;
 
-public interface MovementCosts extends BaseQuery, MovementRestrictions {
+public interface MovementCosts extends BaseQuery, MovementRestrictions, ModifiersState {
+
+    /**
+     * Determines if the specified card still has unused granted additional moves this turn.
+     * @param gameState the game state
+     * @param card the card
+     * @return true if unused granted additional moves remain, otherwise false
+     */
+    default boolean hasUnusedGrantedAdditionalMoves(GameState gameState, PhysicalCard card) {
+        float granted = 0;
+        for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.MAY_MAKE_ADDITIONAL_MOVES, card)) {
+            granted += modifier.getValue(gameState, query(), card);
+        }
+        return getGrantedAdditionalMovesUsedThisTurn(card) < granted;
+    }
 
     /**
      * Gets the amount of Force needed to move the card using landspeed.

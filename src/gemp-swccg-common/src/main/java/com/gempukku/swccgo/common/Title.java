@@ -80,6 +80,7 @@ public interface Title {
     String Asteroid_Field = "Asteroid Field";
     String Asteroid_Sanctuary = "Asteroid Sanctuary";
     String Asteroids_Do_Not_Concern_Me = "Asteroids Do Not Concern Me";
+    String Atmospheric_Assault = "Atmospheric Assault";
     String Astromech_Shortage = "Astromech Shortage";
     String Astromech_Translator = "Astromech Translator";
     String AT_AT_Cannon = "AT-AT Cannon";
@@ -175,6 +176,7 @@ public interface Title {
     String Bring_Him_Before_Me = "Bring Him Before Me";
     String Brisky_Morning_Munchen = "Brisky Morning Munchen";
     String Broken_Concentration = "Broken Concentration";
+    String Brief_Loss_Of_Control = "Brief Loss Of Control";
     String Bubo = "Bubo";
     String Bunker = "Endor: Bunker";
     String Cantina = "Tatooine: Cantina";
@@ -318,6 +320,8 @@ public interface Title {
     String Death_Star_Sentry = "Death Star Sentry";
     String Death_Star_Tractor_Beam = "Death Star Tractor Beam";
     String Death_Star_Trench = "Death Star: Trench";
+    String Death_Star_War_Room = "Death Star: War Room";
+    String Debris_Zone = "Debris Zone";
     String Deep_Hatred = "Deep Hatred";
     String Defensive_Fire = "Defensive Fire";
     String Defensive_Perimeter = "Hoth: Defensive Perimeter (3rd Marker)";
@@ -436,6 +440,7 @@ public interface Title {
     String Falleens_Fist = "Falleen's Fist";
     String Fallen_Order = "Fallen Order";
     String Fallen_Portal = "Fallen Portal";
+    String Fear = "Fear";
     String Fear_Is_My_Ally = "Fear Is My Ally";
     String Fear_Will_Keep_Them_In_Line = "Fear Will Keep Them In Line";
     String Fearless_And_Inventive = "Fearless And Inventive";
@@ -712,6 +717,7 @@ public interface Title {
     String Lana_Dobreed = "Lana Dobreed";
     String Landing_Claw = "Landing Claw";
     String Landing_Platform = "Endor: Landing Platform (Docking Bay)";
+    String Lando_System = "Lando System?";
     String Landos_Blaster_Rifle = "Lando's Blaster Rifle";
     String Lars_Moisture_Farm = "Tatooine: Lars' Moisture Farm";
     String Laser_Cannon_Battery = "Laser Cannon Battery";
@@ -992,6 +998,7 @@ public interface Title {
     String Rebel_Strike_Team = "Rebel Strike Team";
     String Rebel_Tech = "Rebel Tech";
     String Recoil_In_Fear = "Recoil In Fear";
+    String Release_Your_Anger = "Release Your Anger";
     String Red_3 = "Red 3";
     String Red_6 = "Red 6";
     String Red_7 = "Red 7";
@@ -1088,6 +1095,7 @@ public interface Title {
     String Sei_Taria = "Sei Taria";
     String Senate_Hovercam = "Senate Hovercam";
     String Send_A_Detachment_Down = "Send A Detachment Down";
+    String Self_Destruct_Mechanism = "Self-Destruct Mechanism";
     String Sense = "Sense";
     String Sensor_Panel = "Sensor Panel";
     String Separatist_Command_Center = "Separatist Command Center";
@@ -1340,6 +1348,7 @@ public interface Title {
     String We_Need_Luke_Skywalker = "We Need Luke Skywalker";
     String We_Need_Your_Help = "We Need Your Help";
     String Weapon_Levitation = "Weapon Levitation";
+    String Weapon_Malfunction = "Weapon Malfunction";
     String Weapon_Of_A_Sith = "Weapon Of A Sith";
     String Weapons_Are_Part_Of_My_Religion = "Weapons Are Part Of My Religion";
     String Weather_Vane = "Weather Vane";
@@ -1402,6 +1411,7 @@ public interface Title {
     String Young_Fool = "Young Fool";
     String Your_Destiny = "Your Destiny";
     String Your_Insight_Serves_You_Well = "Your Insight Serves You Well";
+    String Your_Powers_Are_Weak_Old_Man = "Your Powers Are Weak, Old Man";
     String Your_Thoughts_Dwell_On_Your_Mother = "Your Thoughts Dwell On Your Mother";
     String Youre_A_Slave = "You're A Slave?";
     String Youre_All_Clear_Kid = "You're All Clear Kid!";
