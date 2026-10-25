@@ -376,6 +376,12 @@ public interface Force extends BaseQuery, PrivateQuery, Flags, Icons, Captives, 
     default float getForceToLose(GameState gameState, String playerId, boolean isCost, float baseValue) {
         float result = baseValue;
 
+        if (!isCost
+                && gameState.isDuringDuel()
+                && hasFlagActive(gameState, ModifierFlag.FORCE_RETRIEVED_OR_LOST_DURING_DUEL_MAY_NOT_BE_REDUCED_OR_CANCELED)) {
+            return Math.max(0, result);
+        }
+
         // If not a cost, check if all Force loss is divided in half (rounding up or down) first, then other modifiers
         if (!isCost) {
             if (hasFlagActive(gameState, ModifierFlag.HALVE_AND_ROUND_UP_FORCE_LOSS, playerId))
@@ -512,6 +518,11 @@ public interface Force extends BaseQuery, PrivateQuery, Flags, Icons, Captives, 
      */
     default float getForceToRetrieve(GameState gameState, String playerId, PhysicalCard source, float baseValue) {
         float result = baseValue;
+
+        if (gameState.isDuringDuel()
+                && hasFlagActive(gameState, ModifierFlag.FORCE_RETRIEVED_OR_LOST_DURING_DUEL_MAY_NOT_BE_REDUCED_OR_CANCELED)) {
+            return Math.max(0, result);
+        }
 
         for (Modifier modifier : getModifiers(gameState, ModifierType.FORCE_RETRIEVAL)) {
             if (modifier.isForPlayer(playerId)) {

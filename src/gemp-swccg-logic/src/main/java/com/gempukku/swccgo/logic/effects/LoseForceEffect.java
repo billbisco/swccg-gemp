@@ -149,6 +149,10 @@ public class LoseForceEffect extends AbstractSubActionEffect {
      * @return true or false
      */
     public boolean isCannotBeReduced(SwccgGame game) {
+        if (game.getGameState().isDuringDuel()
+                && game.getModifiersQuerying().hasFlagActive(game.getGameState(), ModifierFlag.FORCE_RETRIEVED_OR_LOST_DURING_DUEL_MAY_NOT_BE_REDUCED_OR_CANCELED)) {
+            return true;
+        }
         return _isCannotBeReduced || (_stackOn != null) || (getForceLossRemaining(game) <= _cannotBeReducedBelow);
     }
 

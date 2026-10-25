@@ -12,6 +12,7 @@ import com.gempukku.swccgo.logic.decisions.DecisionResultInvalidException;
 import com.gempukku.swccgo.logic.decisions.IntegerAwaitingDecision;
 import com.gempukku.swccgo.logic.decisions.MultipleChoiceAwaitingDecision;
 import com.gempukku.swccgo.logic.effects.choose.ChooseCardsFromLostPileEffect;
+import com.gempukku.swccgo.logic.modifiers.ModifierFlag;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 import com.gempukku.swccgo.logic.timing.AbstractSubActionEffect;
 import com.gempukku.swccgo.logic.timing.Action;
@@ -195,6 +196,10 @@ public class ForceRetrievalEffect extends AbstractSubActionEffect {
      */
     public boolean mayNotBeCanceled(SwccgGame game) {
         if (mayNotBeCanceled()) {
+            return true;
+        }
+        if (game.getGameState().isDuringDuel()
+                && game.getModifiersQuerying().hasFlagActive(game.getGameState(), ModifierFlag.FORCE_RETRIEVED_OR_LOST_DURING_DUEL_MAY_NOT_BE_REDUCED_OR_CANCELED)) {
             return true;
         }
         PhysicalCard source = _sourceCard != null ? _sourceCard : _action.getActionSource();
