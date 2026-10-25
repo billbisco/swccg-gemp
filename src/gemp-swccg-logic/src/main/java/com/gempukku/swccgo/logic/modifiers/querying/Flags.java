@@ -127,7 +127,8 @@ public interface Flags extends BaseQuery {
      * @return true if under "Hoth Energy Shield", otherwise false
      */
     default boolean isLocationUnderHothEnergyShield(GameState gameState, PhysicalCard location) {
-        return !getModifiersAffectingCard(gameState, ModifierType.UNDER_HOTH_ENERGY_SHIELD, location).isEmpty()
+        return !hasFlagActive(gameState, ModifierFlag.HOTH_ENERGY_SHIELD_RULES_SUSPENDED)
+                && !getModifiersAffectingCard(gameState, ModifierType.UNDER_HOTH_ENERGY_SHIELD, location).isEmpty()
                 && getModifiersAffectingCard(gameState, ModifierType.MAY_NOT_BE_COVERED_BY_HOTH_ENERGY_SHIELD, location).isEmpty();
     }
 

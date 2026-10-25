@@ -1321,6 +1321,11 @@ public interface MovementCosts extends BaseQuery, MovementRestrictions {
             result += modifier.getMoveCostModifier(gameState, query(), card);
         }
 
+        // Check for modifiers to docking bay transit cost on the moving card
+        for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.DOCKING_BAY_TRANSIT_COST, card)) {
+            result += modifier.getValue(gameState, query(), card);
+        }
+
         // Moving from collapsed site requires 1 additional Force
         if (fromDockingBay.isCollapsed()) {
             result += 1;
