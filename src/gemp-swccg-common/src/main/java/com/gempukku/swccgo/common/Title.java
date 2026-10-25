@@ -237,6 +237,7 @@ public interface Title {
     String Commando_Training = "Commando Training";
     String Commence_Primary_Ignition = "Commence Primary Ignition";
     String Commence_Recharging = "Commence Recharging";
+    String ComScan_Detection = "ComScan Detection";
     String Communing = "Communing";
     String Computer_Interface = "Computer Interface";
     String Concussion_Grenade = "Concussion Grenade";
@@ -320,6 +321,7 @@ public interface Title {
     String Deep_Hatred = "Deep Hatred";
     String Defensive_Fire = "Defensive Fire";
     String Defensive_Perimeter = "Hoth: Defensive Perimeter (3rd Marker)";
+    String Deflector_Shield_Generators = "Deflector Shield Generators";
     String Demotion = "Demotion";
     String Den_Of_Thieves = "Den Of Thieves";
     String Dengars_Blaster_Carbine =  "Dengar's Blaster Carbine";
@@ -600,6 +602,7 @@ public interface Title {
     String Imperial_Code_Cylinder = "Imperial Code Cylinder";
     String Imperial_Control = "Imperial Control";
     String Imperial_Decree = "Imperial Decree";
+    String Imperial_Domination = "Imperial Domination";
     String Imperial_Enforcement = "Imperial Enforcement";
     String Imperial_Holotable = "Imperial Holotable";
     String Imperial_Entanglements = "Imperial Entanglements";
@@ -610,6 +613,7 @@ public interface Title {
     String Imperial_Supply = "Imperial Supply";
     String Imperial_Troops_Have_Entered_The_Base = "Imperial Troops Have Entered The Base!";
     String Imperial_Tyranny = "Imperial Tyranny";
+    String Imperial_War_Machine = "Imperial War Machine";
     String In_Complete_Control = "In Complete Control";
     String In_The_Hands_Of_The_Empire = "In The Hands Of The Empire";
     String Incinerator = "Cloud City: Incinerator";
@@ -740,6 +744,7 @@ public interface Title {
     String Lirin_Carn = "Lirin Car'n";
     String Local_Trouble = "Local Trouble";
     String Local_Uprising = "Local Uprising";
+    String Location_Location_Location = "Location, Location, Location";
     String Logistical_Delay = "Logistical Delay";
     String Logray = "Logray";
     String Lone_Pilot = "Lone Pilot";
@@ -809,6 +814,7 @@ public interface Title {
     String Mining_Village = "Mapuzo: Mining Village";
     String Mirax = "Mirax Terrik";
     String Mobilization_Points = "Mobilization Points";
+    String Much_Anger_In_Him = "Much Anger In Him";
     String Molator = "Molator";
     String Mon_Calamari = "Mon Calamari";
     String Monnok = "Monnok";
@@ -877,6 +883,7 @@ public interface Title {
     String On_Target = "On Target";
     String On_The_Verge_Of_Greatness = "On The Verge Of Greatness";
     String One_In_A_Million = "One In A Million";
+    String One_Arm = "One-Arm";
     String One_More_Pass = "One More Pass";
     String Onyx_2 = "Onyx 2";
     String Oota_Goota_Solo = "Oo-ta Goo-ta, Solo?";
@@ -940,6 +947,7 @@ public interface Title {
     String Pray_I_Dont_Alter_It_Any_Further = "Pray I Don't Alter It Any Further";
     String Precise_Attack = "Precise Attack";
     String Precise_Hit = "Precise Hit";
+    String Precision_Targeting = "Precision Targeting";
     String Prepare_For_A_Surface_Attack = "Prepare For A Surface Attack";
     String Prepare_The_Chamber = "Prepare The Chamber";
     String Presence_Of_The_Force = "Presence Of The Force";
@@ -1141,6 +1149,7 @@ public interface Title {
     String Strike_Planning = "Strike Planning";
     String Strong_Is_Vader = "Strong Is Vader";
     String Stunning_Leader = "Stunning Leader";
+    String Sudden_Impact = "Sudden Impact";
     String Sullust = "Sullust";
     String Sunsdown = "Sunsdown";
     String Superlaser = "Superlaser";
@@ -1199,6 +1208,8 @@ public interface Title {
     String Theyd_Be_Crazy_To_Follow_Us = "They'd Be Crazy To Follow Us";
     String The_Camp = "The Camp";
     String The_Circle_Is_Now_Complete = "The Circle Is Now Complete";
+    String The_Dark_Path = "The Dark Path";
+    String The_Emperors_Prize = "The Emperor's Prize";
     String The_Empires_Back = "The Empire's Back";
     String The_Falcon_Junkyard_Garbage = "The Falcon, Junkyard Garbage";
     String The_First_Transport_Is_Away = "The First Transport Is Away!";
@@ -1212,6 +1223,7 @@ public interface Title {
     String The_Phantom_Menace = "The Phantom Menace";
     String The_Planet_That_Its_Farthest_From = "The Planet That It's Farthest From";
     String The_Professor = "The Professor";
+    String The_Quick_And_Easy_Path = "The Quick And Easy Path";
     String The_Resistance_Is_Doomed = "The Resistance Is Doomed";
     String The_Result_Is_Often_Resentment = "The Result Is Often Resentment";
     String The_Rise_Of_Skywalker = "The Rise Of Skywalker";
