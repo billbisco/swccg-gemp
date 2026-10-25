@@ -458,6 +458,7 @@ public interface Title {
     String Force_Lightning = "Force Lightning";
     String Force_Projection = "Force Projection";
     String Force_Push = "Force Push";
+    String Forced_Landing = "Forced Landing";
     String Forced_Servitude = "Forced Servitude";
     String Foundling = "Foundling";
     String Free_Ride = "Free Ride";
@@ -1138,6 +1139,7 @@ public interface Title {
     String Strangle = "Strangle";
     String Strategic_Reserves = "Strategic Reserves";
     String Strike_Planning = "Strike Planning";
+    String Strong_Is_Vader = "Strong Is Vader";
     String Stunning_Leader = "Stunning Leader";
     String Sullust = "Sullust";
     String Sunsdown = "Sunsdown";
@@ -1217,6 +1219,7 @@ public interface Title {
     String The_Shield_Will_Be_Down_In_Moments = "The Shield Will Be Down in Moments";
     String The_Time_To_Fight_Is_Now = "The Time To Fight Is Now";
     String The_Ultimate_Power_In_The_Universe = "The Ultimate Power In The Universe";
+    String The_Way_Of_Things = "The Way Of Things";
     String There_Is_Another = "There Is Another";
     String There_Is_No_Try = "There Is No Try";
     String There_They_Are = "There They Are!";

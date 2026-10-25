@@ -891,8 +891,16 @@ public class GameConditions {
      * @return true if condition is satisfied, otherwise false
      */
     public static boolean isOnceDuringYourPhase(SwccgGame game, PhysicalCard self, String playerId, int gameTextSourceCardId, GameTextActionId gameTextActionId, Phase phase) {
-        return isPhaseForPlayer(game, phase, playerId)
-                && game.getModifiersQuerying().getUntilEndOfPhaseLimitCounter(self, playerId, gameTextSourceCardId, gameTextActionId, phase).getUsedLimit() < 1;
+        String ownerId = playerId != null ? playerId : self.getOwner();
+        Phase phaseToCheck = phase;
+        if (phase != Phase.DEPLOY
+                && gameTextActionId != null && gameTextActionId.isSearchCardPile()
+                && game.getModifiersQuerying().hasFlagActive(game.getGameState(), ModifierFlag.MAY_ONLY_TAKE_OR_DEPLOY_FROM_RESERVE_DURING_DEPLOY_PHASE)
+                && isPhaseForPlayer(game, Phase.DEPLOY, ownerId)) {
+            phaseToCheck = Phase.DEPLOY;
+        }
+        return isPhaseForPlayer(game, phaseToCheck, playerId)
+                && game.getModifiersQuerying().getUntilEndOfPhaseLimitCounter(self, playerId, gameTextSourceCardId, gameTextActionId, phaseToCheck).getUsedLimit() < 1;
     }
 
     /**
@@ -3211,6 +3219,11 @@ public class GameConditions {
         if (!asReact && !skipDeployPhaseCheck && !isPhaseForPlayer(game, Phase.DEPLOY, playerId))
             return false;
 
+        if (cardPile == Zone.RESERVE_DECK && !asReact
+                && modifiersQuerying.hasFlagActive(gameState, ModifierFlag.MAY_ONLY_TAKE_OR_DEPLOY_FROM_RESERVE_DURING_DEPLOY_PHASE)
+                && !isPhaseForPlayer(game, Phase.DEPLOY, playerId))
+            return false;
+
         // Check the player is able to use the card action to search the card pile
         if (!canSearchCardPile(game, playerId, cardPile, playerId, self, gameTextActionId, false))
             return false;
@@ -3287,6 +3300,10 @@ public class GameConditions {
      * @return true if card pile is allowed to be searched to take cards into hand, otherwise false
      */
     public static boolean canTakeCardsIntoHandFromReserveDeck(SwccgGame game, String playerId, PhysicalCard self, GameTextActionId gameTextActionId) {
+        if (game.getModifiersQuerying().hasFlagActive(game.getGameState(), ModifierFlag.MAY_ONLY_TAKE_OR_DEPLOY_FROM_RESERVE_DURING_DEPLOY_PHASE)
+                && !isPhaseForPlayer(game, Phase.DEPLOY, playerId)) {
+            return false;
+        }
         return canSearchReserveDeck(game, playerId, self, gameTextActionId);
     }
 
