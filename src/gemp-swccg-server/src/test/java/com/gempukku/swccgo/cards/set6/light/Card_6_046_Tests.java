@@ -340,6 +340,8 @@ public class Card_6_046_Tests {
         scn.LSUseCardAction(fives, "into hand");
 
         scn.DSPass();
+        scn.PassResponses("PUT_TO_HAND_FROM_OFF_TABLE");
+        scn.DSPass(); //DESTINY_DRAWN - Optional responses
         assertFalse(scn.LSCardActionAvailable(yarkora, "Subtract 1"));
         assertTrue(scn.LSCardActionAvailable(yarkora2, "Subtract 1"));
         assertFalse(scn.LSCardActionAvailable(fives, "into hand"));
