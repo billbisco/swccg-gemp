@@ -459,6 +459,7 @@ public interface Title {
     String Flagship = "Flagship";
     String Flagship_Operations = "Flagship Operations";
     String Floating_Refinery = "Floating Refinery";
+    String Fly_Casual = "Fly Casual";
     String Focused_Attack = "Focused Attack";
     String Fondor = "Fondor";
     String Force_Field = "Force Field";
@@ -1277,6 +1278,7 @@ public interface Title {
     String Tibrin = "Tibrin";
     String TIE_Assault_Squadron = "TIE Assault Squadron";
     String TIE_Sentry_Ships = "TIE Sentry Ships";
+    String T_47_Battle_Formation = "T-47 Battle Formation";
     String TK421 = "TK-421";
     String TK422 = "TK-422";
     String Too_Cold_For_Speeders = "Too Cold For Speeders";
