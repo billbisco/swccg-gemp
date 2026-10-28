@@ -1331,6 +1331,7 @@ public interface Title {
     String Vigo = "Vigo";
     String Visage_Of_The_Emperor = "Visage Of The Emperor";
     String Visored_Vision = "Visored Vision";
+    String Voyeur = "Voyeur";
     String Vul_Tazaene = "Vul Tazaene";
     String Wakeelmui = "Wakeelmui";
     String Walker_Barrage = "Walker Barrage";
