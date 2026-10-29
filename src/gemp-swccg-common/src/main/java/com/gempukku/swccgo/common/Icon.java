@@ -20,6 +20,7 @@ public enum Icon implements Filterable {
     CORUSCANT("Coruscant", true),
     REFLECTIONS_III("Reflections III", true),
     THEED_PALACE("Theed Palace", true),
+    REFLECTIONS_GOLD("Reflections Gold", true),
     VIRTUAL_DEFENSIVE_SHIELD("Virtual Defensive Shield", true),
     VIRTUAL_SET_P("Set P", true),
     VIRTUAL_SET_0("Set 0", true),

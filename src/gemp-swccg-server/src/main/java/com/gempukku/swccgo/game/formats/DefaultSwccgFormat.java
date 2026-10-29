@@ -44,6 +44,7 @@ public class DefaultSwccgFormat implements SwccgFormat {
         _playtesting = playtesting;
 
         RarityReader rarityReader = new RarityReader();
+        _rarity.put(15, rarityReader.getSetRarity("15"));
         for (int i = 1; i < (1 + CardCounts.FULL_SETS_CARD_COUNTS.length); i++) {
             _rarity.put(i, rarityReader.getSetRarity(String.valueOf(i)));
         }

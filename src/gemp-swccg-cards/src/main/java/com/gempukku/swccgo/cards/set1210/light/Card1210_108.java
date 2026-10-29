@@ -5,6 +5,7 @@ import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.conditions.PresentWithCondition;
 import com.gempukku.swccgo.cards.effects.usage.OncePerPhaseEffect;
 import com.gempukku.swccgo.common.ExpansionSet;
+import com.gempukku.swccgo.common.Persona;
 import com.gempukku.swccgo.common.GameTextActionId;
 import com.gempukku.swccgo.common.Phase;
 import com.gempukku.swccgo.common.Rarity;
@@ -35,6 +36,7 @@ import java.util.List;
 public class Card1210_108 extends AbstractRebel {
     public Card1210_108() {
         super(Side.LIGHT, 2, 2, 1, 3, 4, Title.Owen_Lars, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_1, Rarity.V);
+        addPersona(Persona.OWEN);
         setVirtualSuffix(true);
         setLore("Guardian of Luke Skywalker. Husband of Beru Lars. Brother of Obi- Wan Kenobi. Farmer of moisture. Disapprover of Luke's desire to leave Tatooine.");
         setGameText("Opponent activates no Force from Beru Stew. While present with Lars' Vaporator: during your control phase, may use 3 Force to exchange one card from hand with one 'crop' card; cards with 'lightsaber' in title may not deploy here.");

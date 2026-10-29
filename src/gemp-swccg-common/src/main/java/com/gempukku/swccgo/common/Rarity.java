@@ -19,7 +19,8 @@ public enum Rarity {
     C("Common (C)"),
     C2("Common (C2)"),
     C3("Common (C3)"),
-    V("Virtual");
+    V("Virtual"),
+    UNKNOWN("Unspecified");
 
     private String _humanReadable;
 
