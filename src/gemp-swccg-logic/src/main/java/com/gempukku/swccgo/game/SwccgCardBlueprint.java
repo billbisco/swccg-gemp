@@ -84,6 +84,11 @@ public interface SwccgCardBlueprint {
      */
     List<String> getTitles();
 
+    /** Printed identities; effective uniqueness modifiers do not change these symbols. */
+    default List<TitleComponent> getTitleComponents() {
+        return getTitles().stream().map(title -> new TitleComponent(title, getUniqueness())).toList();
+    }
+
     /**
      * Gets the lore.
      * @return the lore

@@ -1,5 +1,7 @@
 package com.gempukku.swccgo.filters;
 
+import com.gempukku.swccgo.common.TitleComponent;
+
 import com.gempukku.swccgo.common.Agenda;
 import com.gempukku.swccgo.common.CardCategory;
 import com.gempukku.swccgo.common.CardSubtype;
@@ -159,8 +161,10 @@ public class Filters {
     public static final Filter unique = new Filter() {
         @Override
         public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard) {
-            Uniqueness uniqueness = modifiersQuerying.getUniqueness(gameState, physicalCard);
-            return uniqueness!=null && uniqueness==Uniqueness.UNIQUE;
+            return physicalCard.getTitleComponents().stream().anyMatch(component -> {
+                Uniqueness uniqueness = modifiersQuerying.getComponentUniqueness(gameState, physicalCard, component);
+                return uniqueness!=null && uniqueness==Uniqueness.UNIQUE;
+            });
         }
         @Override
         public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, SwccgBuiltInCardBlueprint builtInCardBlueprint) {
@@ -181,8 +185,10 @@ public class Filters {
     public static final Filter restricted = new Filter() {
         @Override
         public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard) {
-            Uniqueness uniqueness = modifiersQuerying.getUniqueness(gameState, physicalCard);
-            return uniqueness!=null && !uniqueness.isPerSystem() && uniqueness.getValue()>1;
+            return physicalCard.getTitleComponents().stream().anyMatch(component -> {
+                Uniqueness uniqueness = modifiersQuerying.getComponentUniqueness(gameState, physicalCard, component);
+                return uniqueness!=null && !uniqueness.isPerSystem() && uniqueness.getValue()>1;
+            });
         }
         @Override
         public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, SwccgBuiltInCardBlueprint builtInCardBlueprint) {
@@ -203,8 +209,10 @@ public class Filters {
     public static final Filter restricted_6 = new Filter() {
         @Override
         public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard) {
-            Uniqueness uniqueness = modifiersQuerying.getUniqueness(gameState, physicalCard);
-            return uniqueness!=null && !uniqueness.isPerSystem() && uniqueness.getValue()==6;
+            return physicalCard.getTitleComponents().stream().anyMatch(component -> {
+                Uniqueness uniqueness = modifiersQuerying.getComponentUniqueness(gameState, physicalCard, component);
+                return uniqueness!=null && !uniqueness.isPerSystem() && uniqueness.getValue()==6;
+            });
         }
         @Override
         public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, SwccgBuiltInCardBlueprint builtInCardBlueprint) {
@@ -225,8 +233,10 @@ public class Filters {
     public static final Filter non_unique = new Filter() {
         @Override
         public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard) {
-            Uniqueness uniqueness = modifiersQuerying.getUniqueness(gameState, physicalCard);
-            return uniqueness==null || uniqueness!=Uniqueness.UNIQUE;
+            return physicalCard.getTitleComponents().stream().anyMatch(component -> {
+                Uniqueness uniqueness = modifiersQuerying.getComponentUniqueness(gameState, physicalCard, component);
+                return uniqueness==null || uniqueness!=Uniqueness.UNIQUE;
+            });
         }
         @Override
         public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, SwccgBuiltInCardBlueprint builtInCardBlueprint) {
@@ -247,8 +257,10 @@ public class Filters {
     public static final Filter generic = new Filter() {
         @Override
         public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard) {
-            Uniqueness uniqueness = modifiersQuerying.getUniqueness(gameState, physicalCard);
-            return uniqueness != null && uniqueness.isPerSystem();
+            return physicalCard.getTitleComponents().stream().anyMatch(component -> {
+                Uniqueness uniqueness = modifiersQuerying.getComponentUniqueness(gameState, physicalCard, component);
+                return uniqueness != null && uniqueness.isPerSystem();
+            });
         }
         @Override
         public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, SwccgBuiltInCardBlueprint builtInCardBlueprint) {
@@ -269,8 +281,10 @@ public class Filters {
     public static final Filter perSystemUniqueness = new Filter() {
         @Override
         public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard) {
-            Uniqueness uniqueness = modifiersQuerying.getUniqueness(gameState, physicalCard);
-            return uniqueness != null && uniqueness.isPerSystem();
+            return physicalCard.getTitleComponents().stream().anyMatch(component -> {
+                Uniqueness uniqueness = modifiersQuerying.getComponentUniqueness(gameState, physicalCard, component);
+                return uniqueness != null && uniqueness.isPerSystem();
+            });
         }
         @Override
         public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, SwccgBuiltInCardBlueprint builtInCardBlueprint) {
@@ -296,7 +310,7 @@ public class Filters {
         return new Filter() {
             @Override
             public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard) {
-                return modifiersQuerying.getUniqueness(gameState, physicalCard) == uniqueness;
+                return physicalCard.getTitleComponents().stream().anyMatch(component -> modifiersQuerying.getComponentUniqueness(gameState, physicalCard, component) == uniqueness);
             }
             @Override
             public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, SwccgBuiltInCardBlueprint builtInCardBlueprint) {
@@ -1039,6 +1053,18 @@ public class Filters {
      * @param sameCardMatches true to consider the card itself accepted, or false to only consider other cards
      * @return Filter
      */
+    public static Filter titleComponent(final TitleComponent component) {
+        return new Filter() {
+            @Override public boolean accepts(GameState state, ModifiersQuerying query, PhysicalCard card) {
+                return !card.isBlownAway() && card.getTitleComponents().contains(component);
+            }
+            @Override public boolean accepts(GameState state, ModifiersQuerying query, SwccgBuiltInCardBlueprint card) {
+                String title = card.getTitle(state.getGame());
+                return title != null && component.equals(new TitleComponent(title, card.getUniqueness()));
+            }
+        };
+    }
+
     public static Filter sameTitleAs(PhysicalCard card, final boolean sameCardMatches) {
         final Integer permCardId = card.getPermanentCardId();
         return new Filter() {
@@ -1058,12 +1084,8 @@ public class Filters {
                 if (Filters.sameCardId(builtInCardBlueprint.getPhysicalCard(gameState.getGame())).accepts(gameState, modifiersQuerying, card))
                     return sameCardMatches;
 
-                for (String cardTitle : card.getTitles()) {
-                    if (Filters.title(cardTitle).accepts(gameState, modifiersQuerying, builtInCardBlueprint)) {
-                        return true;
-                    }
-                }
-                return false;
+                String title = builtInCardBlueprint.getTitle(gameState.getGame());
+                return title != null && card.getTitleComponents().contains(new TitleComponent(title, builtInCardBlueprint.getUniqueness()));
             }
         };
     }

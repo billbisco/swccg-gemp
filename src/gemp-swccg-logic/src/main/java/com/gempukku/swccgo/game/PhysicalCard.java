@@ -67,6 +67,12 @@ public interface PhysicalCard extends Filterable, Snapshotable<PhysicalCard> {
     String getTitleAbbreviated();
     List<String> getTitles();
 
+    default List<TitleComponent> getTitleComponents() {
+        if (getBlueprint().getCardCategory() == CardCategory.LOCATION)
+            return getTitles().stream().map(title -> new TitleComponent(title, getBlueprint().getUniqueness())).toList();
+        return getBlueprint().getTitleComponents();
+    }
+
     void setZone(Zone zone);
     Zone getZone();
 

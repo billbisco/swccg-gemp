@@ -1,6 +1,7 @@
 package com.gempukku.swccgo.logic.effects;
 
 import com.gempukku.swccgo.common.Persona;
+import com.gempukku.swccgo.common.TitleComponent;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
@@ -37,8 +38,12 @@ public class RecordCardsBeingPlayedEffect extends AbstractSuccessfulEffect {
             modifiersQuerying.cardBeingPlayed(cardPlayed);
 
             // Increment card title played per turn
-            for (String title : cardPlayed.getTitles()) {
+            for (String title : new HashSet<>(cardPlayed.getTitles())) {
                 modifiersQuerying.getCardTitlePlayedTurnLimitCounter(title).incrementToLimit(Integer.MAX_VALUE, 1);
+            }
+
+            for (TitleComponent component : new HashSet<>(cardPlayed.getTitleComponents())) {
+                modifiersQuerying.getTitleComponentPlayedTurnLimitCounter(component).incrementToLimit(Integer.MAX_VALUE, 1);
             }
 
             // Record personas played this turn (including permanent personas aboard)

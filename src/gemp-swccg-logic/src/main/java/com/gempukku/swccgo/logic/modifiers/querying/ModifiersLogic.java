@@ -107,6 +107,7 @@ public class ModifiersLogic implements ModifiersEnvironment, ModifiersState, Mod
     private Map<String, LimitCounter> _attackLimitCounters = new HashMap<String, LimitCounter>();
     private Map<String, LimitCounter> _duelLimitCounters = new HashMap<String, LimitCounter>();
     private Map<Integer, Map<String, LimitCounter>> _forceLossLimitCounters = new HashMap<Integer, Map<String, LimitCounter>>();
+    private Map<TitleComponent, LimitCounter> _titleComponentPlayedTurnLimitCounters = new HashMap<>();
     private Map<String, LimitCounter> _cardTitlePlayedTurnLimitCounters = new HashMap<String, LimitCounter>();
     private Set<Persona> _personasPlayedThisTurn = new HashSet<Persona>();
     private Map<Integer, Map<String, LimitCounter>> _captivityLimitCounters = new HashMap<Integer, Map<String, LimitCounter>>();
@@ -305,6 +306,9 @@ public class ModifiersLogic implements ModifiersEnvironment, ModifiersState, Mod
             for (Map.Entry<String, LimitCounter> entry : _forceLossLimitCounters.get(forceLossId).entrySet()) {
                 snapshotMap.put(entry.getKey(), snapshotData.getDataForSnapshot(entry.getValue()));
             }
+        }
+        for (Map.Entry<TitleComponent, LimitCounter> entry : _titleComponentPlayedTurnLimitCounters.entrySet()) {
+            snapshot._titleComponentPlayedTurnLimitCounters.put(entry.getKey(), snapshotData.getDataForSnapshot(entry.getValue()));
         }
         for (Map.Entry<String, LimitCounter> entry : _cardTitlePlayedTurnLimitCounters.entrySet()) {
             snapshot._cardTitlePlayedTurnLimitCounters.put(entry.getKey(), snapshotData.getDataForSnapshot(entry.getValue()));
@@ -735,6 +739,10 @@ public class ModifiersLogic implements ModifiersEnvironment, ModifiersState, Mod
             mapForForceLoss.put(key, limitCounter);
         }
         return limitCounter;
+    }
+
+    public LimitCounter getTitleComponentPlayedTurnLimitCounter(TitleComponent component) {
+        return _titleComponentPlayedTurnLimitCounters.computeIfAbsent(component, key -> new DefaultLimitCounter());
     }
 
     public LimitCounter getCardTitlePlayedTurnLimitCounter(String title) {
@@ -1193,6 +1201,7 @@ public class ModifiersLogic implements ModifiersEnvironment, ModifiersState, Mod
      */
     public void removeEndOfTurnCounters() {
         _cardTitlePlayedTurnLimitCounters.clear();
+        _titleComponentPlayedTurnLimitCounters.clear();
         _personasPlayedThisTurn.clear();
         _turnLimitCounters.clear();
         _turnForCardTitleLimitCounters.clear();

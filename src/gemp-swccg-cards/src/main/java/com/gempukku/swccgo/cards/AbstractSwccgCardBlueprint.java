@@ -171,7 +171,30 @@ public abstract class AbstractSwccgCardBlueprint implements SwccgCardBlueprint {
      * Adds the specified combo card titles.
      * @param titles the titles
      */
+    private List<TitleComponent> _titleComponents;
+
+    @Override
+    public List<TitleComponent> getTitleComponents() {
+        return _titleComponents != null ? _titleComponents : SwccgCardBlueprint.super.getTitleComponents();
+    }
+
+    /** Sets canonical component names and their independent printed restriction symbols. */
+    protected final void setTitleComponents(TitleComponent... components) {
+        if (components.length < 2) throw new IllegalArgumentException("A combination needs at least two components");
+        Set<String> names = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+        for (TitleComponent component : components) {
+            if (!names.add(component.name()))
+                throw new IllegalArgumentException("Duplicate component: " + component.name());
+            if (component.uniqueness().isPerSystem())
+                throw new IllegalArgumentException("Mixed per-system components are not supported");
+        }
+        _titleComponents = List.of(components);
+        _comboCardTitles.clear();
+        for (TitleComponent component : components) _comboCardTitles.add(component.name());
+    }
+
     protected final void addComboCardTitles(String... titles) {
+        _titleComponents = null;
         _comboCardTitles.addAll(Arrays.asList(titles));
     }
 

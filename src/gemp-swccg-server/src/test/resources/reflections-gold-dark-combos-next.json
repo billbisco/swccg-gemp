@@ -1,0 +1,164 @@
+[
+  {
+    "id": "15_255",
+    "title": "Informant & Takeel",
+    "destiny": 5,
+    "uniqueness": "UNRESTRICTED",
+    "type": "INTERRUPT",
+    "subtype": "USED_OR_LOST",
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "credits": 0,
+    "gameText": "USED: If a battle was just initiated at same site as your Undercover spy, your characters at adjacent sites may move there as a 'react' (for free). OR Cancel Sabotage. LOST: If both players just drew one battle destiny, use 1 Force to switch numbers.",
+    "comboTitles": [
+      "Informant",
+      "Takeel"
+    ],
+    "file": "RG-GEMP-Informant-Takeel.png",
+    "imageSha256": "4421f2d64f9f882f29b591772b07b1fbe65fdf1d368b06ff543b289a9ba080b6",
+    "evidence": "Full remaster viewed: destiny5, unrestricted Used or Lost, no credit circles/EpisodeI. Approved Undercover capitalized."
+  },
+  {
+    "id": "15_227",
+    "title": "Cold Feet & He Hasn't Come Back Yet",
+    "destiny": 3,
+    "uniqueness": "UNRESTRICTED",
+    "type": "INTERRUPT",
+    "subtype": "LOST",
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "credits": 0,
+    "gameText": "Target a character at any marker site. Draw destiny. If total destiny > ability, character may not move for remainder of turn. OR During your control phase, target any character alone at one of your exterior planet sites (except a docking bay). Draw destiny. Target is missing if destiny +3 > ability.",
+    "comboTitles": [
+      "Cold Feet",
+      "He Hasn't Come Back Yet"
+    ],
+    "file": "RG-GEMP-Cold-Feet-He-Hasn-t-Come-Back-Yet.png",
+    "imageSha256": "edf6a496b9c176971bdb02560563b764c7792a0ff712a7525ab538b2f9bbc3bb",
+    "evidence": "Full remaster viewed: destiny3 Lost unrestricted, no credits/EpisodeI. Cold Feet nighttime bonus omitted by printed RG text."
+  },
+  {
+    "id": "15_199",
+    "title": "Presence Of The Force & Dark Waters",
+    "destiny": 2,
+    "uniqueness": "RESTRICTED_2",
+    "type": "EFFECT",
+    "subtype": "NORMAL",
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [
+      "DEPLOYS_ON_SITE"
+    ],
+    "credits": 0,
+    "gameText": "Deploy on any exterior planet site (except Hoth) to add one [Dark] and one [Light]. Opponent's Force drains are -1 here. (Immune to Alter when a swamp creature is present.)",
+    "comboTitles": [
+      "Presence Of The Force",
+      "Dark Waters"
+    ],
+    "file": "RG-GEMP-Presence-Of-The-Force-Dark-Waters.png",
+    "imageSha256": "3e5ee107cf3ea4ff7c7e5cdab4e8dbc646d074c89135898a1654ca4ea6d11328",
+    "evidence": "Full remaster viewed: two uniqueness dots, destiny2 Effect, no credits/EpisodeI; only exterior planet site except Hoth.",
+    "componentUniqueness": [
+      "RESTRICTED_2",
+      "UNRESTRICTED"
+    ]
+  },
+  {
+    "id": "15_242",
+    "title": "Force Lightning & Rise, My Friend",
+    "destiny": 4,
+    "uniqueness": "UNIQUE",
+    "type": "INTERRUPT",
+    "subtype": "USED_OR_LOST",
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "credits": 0,
+    "gameText": "Target any character (even a captive) present with Emperor. USED: Target is defense value -4 for remainder of turn. LOST: Emperor loses immunity to attrition and is defense value -2 for remainder of turn. Draw Destiny. Target lost if destiny +1 > defense value. OR If Emperor on Death Star II, take Vader into hand from a location you control (cards on him go to owner's hand).",
+    "comboTitles": [
+      "Force Lightning",
+      "Rise, My Friend"
+    ],
+    "file": "RG-GEMP-Force-Lightning-Rise-My-Friend.png",
+    "imageSha256": "370832a7b6638f6fdf7f8847444386282d0747970a9be62a83dae457d075d5ca",
+    "evidence": "Full image viewed: unique destiny4 Used-or-Lost, no credits/EpisodeI; no Rise relocation or Sense immunity."
+  },
+  {
+    "id": "15_215",
+    "title": "Well Guarded & Security Precautions",
+    "destiny": 4,
+    "uniqueness": "UNIQUE",
+    "type": "EFFECT",
+    "subtype": "NORMAL",
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "credits": 0,
+    "gameText": "Deploy on table. If you 'probe' opponent's \"Hidden Base\" system, opponent loses X Force, where X = 15 - number of systems on table. You take no battle damage where you have a 'probe' card. Also, while you have fewer than 13 cards in your hand, your non-unique cards in hand (except effects of any kind and any interrupts) are immune to Grimtaash. (Immune to Alter while you occupy 2 battlegrounds).",
+    "comboTitles": [
+      "Well Guarded",
+      "Security Precautions"
+    ],
+    "file": "RG-GEMP-Well-Guarded-Security-Precautions.png",
+    "imageSha256": "b04cbda9011bb347ed828018f5046a2b3df5cb0f274485c3f6adeb4398d9cd40",
+    "evidence": "Full remaster rechecked: unique destiny4, no credits/EpisodeI; table deployment and conditional Alter immunity. Earlier visual read of3 was corrected before tests/publication."
+  },
+  {
+    "id": "15_218",
+    "title": "Your Destiny & Insignificant Rebellion",
+    "destiny": 0,
+    "uniqueness": "UNIQUE",
+    "type": "EFFECT",
+    "subtype": "NORMAL",
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "credits": 0,
+    "gameText": "Deploy on Bring Him Before Me. When Vader is present at a battleground site, at start of your turn opponent loses 3 Force unless Luke is captured, out of play or present at a battleground site. Luke is immune to Responsibility Of Command. Also, each time you win a battle, opponent loses 1 Force (cannot be reduced) and stacks lost card here face down. When attempting to cross Luke over (except with Epic Duel), add 3 to total destiny for each card in stack. (Immune to Alter.)",
+    "comboTitles": [
+      "Your Destiny",
+      "Insignificant Rebellion"
+    ],
+    "file": "RG-GEMP-Your-Destiny-Insignificant-Rebellion.png",
+    "imageSha256": "c56c6745db450175fb7b36e71c8550e4810d4aadc96e46bdad66ad2507814d16",
+    "evidence": "Full image viewed: unique destiny0 Effect, no credits/EpisodeI; deploy on Bring Him Before Me; no 2Force cost."
+  },
+  {
+    "id": "15_178",
+    "title": "Emperor's Power & Overseeing It Personally",
+    "destiny": 3,
+    "uniqueness": "UNIQUE",
+    "type": "EFFECT",
+    "subtype": "NORMAL",
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [
+      "DEPLOYS_ON_SITE"
+    ],
+    "credits": 0,
+    "gameText": "Deploy on your Throne Room. You may not Force drain here. While Emperor here, opponent's characters are deploy +2 to Death Star II sites and, once per turn, you may lose Effect (or 1 Force from top of Reserve Deck) to add one battle destiny anywhere. Also, while Emperor is at a battleground planet site you control, at each related site where an Imperial is present, your Force drains are +1. Effect lost if Emperor lost from table. (Immune to Alter.)",
+    "comboTitles": [
+      "Emperor's Power",
+      "Overseeing It Personally"
+    ],
+    "file": "RG-GEMP-Emperor-s-Power-Overseeing-It-Personally.png",
+    "imageSha256": "dcfb0ef719277c745d2cd9c71a72a5c95339f52e1e4fbda04d23396eca15e487",
+    "evidence": "Full image viewed: unique destiny3 Effect, no credits/EpisodeI; attached to own Throne Room; lost if Emperor lost from table."
+  }
+]
