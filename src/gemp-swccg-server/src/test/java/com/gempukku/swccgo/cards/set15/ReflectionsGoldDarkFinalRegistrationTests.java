@@ -27,7 +27,7 @@ public class ReflectionsGoldDarkFinalRegistrationTests {
         }
         try (var reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
             var expected = JsonParser.parseReader(reader).getAsJsonArray();
-            assertEquals(10, expected.size());
+            assertEquals(9, expected.size());
             for (var row : expected) {
                 var card = row.getAsJsonObject();
                 String id = card.get("id").getAsString();

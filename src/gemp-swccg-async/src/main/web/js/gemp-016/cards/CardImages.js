@@ -15,7 +15,6 @@ const fixedImages = {
 "15_211":"https://wiki.swccg.com/images/3/39/RG-GEMP-This-Is-Outrageous-Motion-Supported.png",
 "15_213":"https://wiki.swccg.com/images/a/a7/RG-GEMP-Watto-s-Box-Quietly-Observing.png",
 "15_219":"https://wiki.swccg.com/images/b/b4/RG-GEMP-Always-Thinking-With-Your-Stomach-Scout-Recon.png",
-"15_228":"https://wiki.swccg.com/images/b/b6/RG-GEMP-Combat-Readiness-Prepared-Defenses.png",
 "15_235":"https://wiki.swccg.com/images/d/d1/RG-GEMP-Dioxis-They-re-Still-Coming-Through.png",
 "15_238":"https://wiki.swccg.com/images/e/ed/RG-GEMP-Elis-Helrot-Oo-ta-Goo-ta-Solo.png",
 "15_262":"https://wiki.swccg.com/images/2/22/RG-GEMP-Look-Sir-Droids-Counter-Assault.png",

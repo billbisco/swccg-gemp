@@ -90,21 +90,6 @@
     "subtype": "USED_OR_LOST"
   },
   {
-    "id": "15_228",
-    "title": "Combat Readiness & Prepared Defenses",
-    "destiny": 3,
-    "credits": 0,
-    "episodeI": false,
-    "components": [
-      "UNIQUE",
-      "UNIQUE"
-    ],
-    "gameText": "USED: If a battle was just initiated, draw destiny and activate up to that much Force. STARTING: If you have not deployed an Objective, deploy from Reserve Deck one battleground site related to your starting location. Also, you may deploy up to two Effects if each of them deploys for free, is always immune to Alter and has \"Deploy on table\" (or \"deploy on your side of table\") in its game text. Place Interrupt in Lost Pile.",
-    "file": "RG-GEMP-Combat-Readiness-Prepared-Defenses.png",
-    "type": "INTERRUPT",
-    "subtype": "USED_OR_STARTING"
-  },
-  {
     "id": "15_235",
     "title": "Dioxis & They're Still Coming Through!",
     "destiny": 3,
