@@ -1,4 +1,8 @@
 const fixedImages = {
+"15_37":"https://wiki.swccg.com/images/3/36/RG-GEMP-I-Must-Be-Allowed-To-Speak-Goo-Nee-Tay.png",
+"15_75":"https://wiki.swccg.com/images/d/d6/RG-GEMP-Effective-Repairs-Punch-It.png",
+"15_92":"https://wiki.swccg.com/images/b/b5/RG-GEMP-Insertion-Planning-Critical-Error-Revealed.png",
+"15_120":"https://wiki.swccg.com/images/f/fd/RG-GEMP-Perimeter-Scan-Under-Attack.png",
 "15_99":"https://wiki.swccg.com/images/c/c2/RG-GEMP-Losing-Track-A-Step-Backwards.png",
 "15_100":"https://wiki.swccg.com/images/8/80/RG-GEMP-Lost-In-The-Wilderness-Yub-Yub.png",
 "15_105":"https://wiki.swccg.com/images/e/e7/RG-GEMP-My-Loyal-Bodyguard-Might-Of-The-Republic.png",
