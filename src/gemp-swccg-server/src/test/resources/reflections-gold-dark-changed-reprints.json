@@ -1,0 +1,59 @@
+[
+  {
+    "id": "15_177",
+    "title": "Crossfire",
+    "destiny": 4,
+    "credits": 2,
+    "uniqueness": "UNIQUE",
+    "type": "EFFECT",
+    "subtype": "NORMAL",
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "source": "set8/dark/Card8_121.java",
+    "gameText": "Deploy on table. When you fire two weapons (except lightsabers) in a battle, your total power is +5. Also, S-foils and Maneuvering Flaps are suspended where you have a weapon present or a starship with maneuver > 3 present. (Immune to Alter.)",
+    "file": "RG-GEMP-Crossfire.png",
+    "imageSha256": "ede9d0039571510cfbde48eacbadadc97a373774a79997c47aee549ba39d15a4",
+    "evidence": "Full printed image inspected; Crossfire destiny4 overlays approved RG-PROOF-17. Credits2/1/1. Crossfire and Flagship differ from older rules; We Have A Prisoner capture instead is a replacement event, using standard engine timing."
+  },
+  {
+    "id": "15_182",
+    "title": "Flagship Operations",
+    "destiny": 5,
+    "credits": 1,
+    "uniqueness": "UNIQUE",
+    "type": "EFFECT",
+    "subtype": "NORMAL",
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "source": "set9/dark/Card9_125.java",
+    "gameText": "Deploy on your Star Destroyer if at least 4 Executor sites on table. Your TIEs are deploy -1, forfeit +2 and destiny +1. At systems where you have a TIE, your Imperial capital starships are deploy -3 and your battle destiny draws are +1 each.",
+    "file": "RG-GEMP-Flagship-Operations.png",
+    "imageSha256": "f09bda2023c1ce0a68366d4f035a16b893207e80756b6c9beaf857e3d2a5f894",
+    "evidence": "Full printed image inspected; Crossfire destiny4 overlays approved RG-PROOF-17. Credits2/1/1. Crossfire and Flagship differ from older rules; We Have A Prisoner capture instead is a replacement event, using standard engine timing."
+  },
+  {
+    "id": "15_303",
+    "title": "We Have A Prisoner",
+    "destiny": 3,
+    "credits": 1,
+    "uniqueness": "UNRESTRICTED",
+    "type": "INTERRUPT",
+    "subtype": "LOST",
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "source": "set2/dark/Card2_142.java",
+    "gameText": "Use 1 Force if opponent just lost or forfeited a character from battle. Character is captured instead. OR Use X Force to capture all characters aboard a captured starship, where X = twice the number of characters.",
+    "file": "RG-GEMP-We-Have-A-Prisoner.png",
+    "imageSha256": "327fedc2257d02004e0a16dab576dd48b5918c1fdc264fcea30a03966fbf7c03",
+    "evidence": "Full printed image inspected; Crossfire destiny4 overlays approved RG-PROOF-17. Credits2/1/1. Crossfire and Flagship differ from older rules; We Have A Prisoner capture instead is a replacement event, using standard engine timing."
+  }
+]

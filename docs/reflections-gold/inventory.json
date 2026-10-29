@@ -1278,7 +1278,9 @@
     "title": "Blast Door Controls & Reactor Terminal",
     "image": "RG-GEMP-Blast-Door-Controls-Reactor-Terminal.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0,
+    "implementationSource": "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set15/dark/Card15_175.java"
   },
   {
     "id": "15_176",
@@ -1292,7 +1294,9 @@
     "title": "Crossfire",
     "image": "RG-GEMP-Crossfire.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 2,
+    "implementationSource": "set8/dark/Card8_121.java"
   },
   {
     "id": "15_178",
@@ -1329,7 +1333,9 @@
     "title": "Flagship Operations",
     "image": "RG-GEMP-Flagship-Operations.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 1,
+    "implementationSource": "set9/dark/Card9_125.java"
   },
   {
     "id": "15_183",
@@ -1658,7 +1664,9 @@
     "title": "Brief Loss Of Control & Imperial Supply",
     "image": "RG-GEMP-Brief-Loss-Of-Control-Imperial-Supply.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0,
+    "implementationSource": "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set15/dark/Card15_225.java"
   },
   {
     "id": "15_226",
@@ -1695,7 +1703,9 @@
     "title": "Dark Collaboration & Charming To The Last",
     "image": "RG-GEMP-Dark-Collaboration-Charming-To-The-Last.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0,
+    "implementationSource": "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set15/dark/Card15_230.java"
   },
   {
     "id": "15_231",
@@ -1824,7 +1834,9 @@
     "title": "I Have You Now & Your Powers Are Weak, Old Man",
     "image": "RG-GEMP-I-Have-You-Now-Your-Powers-Are-Weak-Old-Man.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0,
+    "implementationSource": "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set15/dark/Card15_247.java"
   },
   {
     "id": "15_248",
@@ -2260,7 +2272,9 @@
     "title": "We Have A Prisoner",
     "image": "RG-GEMP-We-Have-A-Prisoner.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 1,
+    "implementationSource": "set2/dark/Card2_142.java"
   },
   {
     "id": "15_304",
