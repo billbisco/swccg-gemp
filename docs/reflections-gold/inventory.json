@@ -1515,14 +1515,18 @@
     "title": "Search And Destroy",
     "image": "RG-GEMP-Search-And-Destroy.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3,
+    "implementationSource": "set8/dark/Card8_131.java"
   },
   {
     "id": "15_208",
     "title": "Security Precautions",
     "image": "RG-GEMP-Security-Precautions.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 4,
+    "implementationSource": "set8/dark/Card8_132.java"
   },
   {
     "id": "15_209",
@@ -1580,7 +1584,9 @@
     "title": "Well-Earned Command",
     "image": "RG-GEMP-Well-Earned-Command.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 2,
+    "implementationSource": "set8/dark/Card8_133.java"
   },
   {
     "id": "15_217",
@@ -1631,7 +1637,9 @@
     "title": "Blow Parried",
     "image": "RG-GEMP-Blow-Parried.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 1,
+    "implementationSource": "set13/dark/Card13_058.java"
   },
   {
     "id": "15_224",
@@ -1705,7 +1713,9 @@
     "title": "Dark Maneuvers",
     "image": "RG-GEMP-Dark-Maneuvers.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 1,
+    "implementationSource": "set1/dark/Card1_241.java"
   },
   {
     "id": "15_234",
@@ -1763,7 +1773,9 @@
     "title": "Force Lightning",
     "image": "RG-GEMP-Force-Lightning.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 2,
+    "implementationSource": "set9/dark/Card9_136.java"
   },
   {
     "id": "15_242",
@@ -1791,7 +1803,9 @@
     "title": "Hit Racer",
     "image": "RG-GEMP-Hit-Racer.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3,
+    "implementationSource": "set11/dark/Card11_081.java"
   },
   {
     "id": "15_246",
@@ -1819,7 +1833,9 @@
     "title": "Imperial Command",
     "image": "RG-GEMP-Imperial-Command-It-s-An-Older-Code.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3,
+    "implementationSource": "set9/dark/Card9_137.java"
   },
   {
     "id": "15_250",
@@ -1884,7 +1900,9 @@
     "title": "Jabba's Through With You",
     "image": "RG-GEMP-Jabba-s-Through-With-You.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 2,
+    "implementationSource": "set7/dark/Card7_255.java"
   },
   {
     "id": "15_259",
@@ -1898,7 +1916,9 @@
     "title": "Local Trouble",
     "image": "RG-GEMP-Local-Trouble.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 2,
+    "implementationSource": "set1/dark/Card1_256.java"
   },
   {
     "id": "15_261",
@@ -1933,7 +1953,9 @@
     "title": "None Shall Pass",
     "image": "RG-GEMP-None-Shall-Pass.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3,
+    "implementationSource": "set6/dark/Card6_157.java"
   },
   {
     "id": "15_266",
@@ -2057,7 +2079,9 @@
     "title": "Sniper",
     "image": "RG-GEMP-Sniper.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3,
+    "implementationSource": "set2/dark/Card2_139.java"
   },
   {
     "id": "15_282",
@@ -2101,7 +2125,9 @@
     "title": "Tactical Support",
     "image": "RG-GEMP-Tactical-Support.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3,
+    "implementationSource": "set3/dark/Card3_136.java"
   },
   {
     "id": "15_288",
@@ -2117,7 +2143,9 @@
     "title": "The Circle Is Now Complete",
     "image": "RG-GEMP-The-Circle-Is-Now-Complete.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3,
+    "implementationSource": "set1/dark/Card1_271.java"
   },
   {
     "id": "15_290",
@@ -2170,7 +2198,9 @@
     "title": "Trap Door",
     "image": "RG-GEMP-Trap-Door.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3,
+    "implementationSource": "set6/dark/Card6_159.java"
   },
   {
     "id": "15_297",
@@ -2191,14 +2221,18 @@
     "title": "Uncertain Is The Future",
     "image": "RG-GEMP-Uncertain-Is-The-Future.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 1,
+    "implementationSource": "set4/dark/Card4_151.java"
   },
   {
     "id": "15_300",
     "title": "Unexpected Interruption",
     "image": "RG-GEMP-Unexpected-Interruption.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3,
+    "implementationSource": "set4/dark/Card4_152.java"
   },
   {
     "id": "15_301",
@@ -2249,7 +2283,9 @@
     "title": "You Are Beaten",
     "image": "RG-GEMP-You-Are-Beaten.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 4,
+    "implementationSource": "set5/dark/Card5_163.java"
   },
   {
     "id": "15_308",
