@@ -1744,7 +1744,8 @@
     "title": "Dark Jedi Presence & Vader's Eye",
     "image": "RG-GEMP-Dark-Jedi-Presence-Vader-s-Eye.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_233",
@@ -1783,7 +1784,8 @@
     "title": "Drop Your Weapons & Halt!",
     "image": "RG-GEMP-Drop-Your-Weapons-Halt.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_238",
@@ -1868,7 +1870,8 @@
     "title": "Imbalance & Shocking Revelation",
     "image": "RG-GEMP-Imbalance-Shocking-Revelation.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_249",
@@ -1884,7 +1887,8 @@
     "title": "Imperial Command & It's An Older Code",
     "image": "RG-GEMP-Imperial-Command.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_251",
@@ -1953,7 +1957,8 @@
     "title": "Jabba's Through With You & Nevar Yalnal",
     "image": "RG-GEMP-Jabba-s-Through-With-You-Nevar-Yalnal.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_260",
