@@ -1,0 +1,350 @@
+[
+  {
+    "id": "15_207",
+    "title": "Search And Destroy",
+    "destiny": 3,
+    "uniqueness": "UNIQUE",
+    "type": "EFFECT",
+    "subtype": "NORMAL",
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "credits": 3,
+    "source": "set8\\dark\\Card8_131.java",
+    "gameText": "Deploy on table. During every draw phase, unless opponent's character of destiny < 4 occupies a battleground site, opponent loses 1 Force. Biker scouts are forfeit +1. Effect canceled unless your characters of destiny < 4 occupy two battleground sites.",
+    "file": "RG-GEMP-Search-And-Destroy.png",
+    "imageSha256": "0c34d075682f37340a3dbf6ef6925313797b2d0ecd9d7487bad7b93c6d70aa3a",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Wording compared against old printing: punctuation, ordering or equivalent phrasing only. Standard rules limit battle participants to own cards; Local Trouble preserves that normal rule."
+  },
+  {
+    "id": "15_208",
+    "title": "Security Precautions",
+    "destiny": 5,
+    "uniqueness": "UNIQUE",
+    "type": "EFFECT",
+    "subtype": "NORMAL",
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [
+      "DEPLOYS_ON_LOCATION"
+    ],
+    "credits": 4,
+    "source": "set8\\dark\\Card8_132.java",
+    "gameText": "Deploy on a location. Your Force generation is +1 here. If you 'probe' opponent's \"Hidden Base\" system, opponent loses X Force; X = 15 - number of systems on table. You take no battle damage where you have a 'probe' card. (Immune to Alter.)",
+    "file": "RG-GEMP-Security-Precautions.png",
+    "imageSha256": "8c0016944fb4cd702b51b9ba2ecf943f9f0e465afededdbea67d7c3dcf23a55c",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Wording compared against old printing: punctuation, ordering or equivalent phrasing only. Standard rules limit battle participants to own cards; Local Trouble preserves that normal rule."
+  },
+  {
+    "id": "15_216",
+    "title": "Well-earned Command",
+    "destiny": 4,
+    "uniqueness": "UNIQUE",
+    "type": "EFFECT",
+    "subtype": "NORMAL",
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [
+      "DEPLOYS_ON_CHARACTERS"
+    ],
+    "credits": 2,
+    "source": "set8\\dark\\Card8_133.java",
+    "gameText": "Deploy on your general or commander. When battling, adds 1 to your total battle destiny (or 2 if Igar). Once during your control phase, may take Imperial Propaganda into hand from Reserve Deck; reshuffle. Your Force drains are +1 at holosites.",
+    "file": "RG-GEMP-Well-Earned-Command.png",
+    "imageSha256": "0a40a07ddb1d39bc2f6d89e07cec04ee38fcbfb6e526b4dd2aa8fd7dc65b9333",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Wording compared against old printing: punctuation, ordering or equivalent phrasing only. Standard rules limit battle participants to own cards; Local Trouble preserves that normal rule. Full-size image rechecked: printed title uses lower-case e in earned, matching inherited engine title."
+  },
+  {
+    "id": "15_223",
+    "title": "Blow Parried",
+    "destiny": 3,
+    "uniqueness": "UNIQUE",
+    "type": "INTERRUPT",
+    "subtype": "USED",
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD",
+      "EPISODE_I"
+    ],
+    "keywords": [],
+    "credits": 1,
+    "source": "set13\\dark\\Card13_058.java",
+    "gameText": "Take top card of Force Pile into hand. OR Cancel a just-revealed combat card (place in opponent's Used Pile) and opponent must draw destiny instead (that destiny is reduced by 1). OR Cancel Glancing Blow, Clash Of Sabers, or Obi-Wan's Journal.",
+    "file": "RG-GEMP-Blow-Parried.png",
+    "imageSha256": "c4e38c570e1c006a001ff84e43680ec3a63abad31ff997a04d3d26b839aa782e",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Wording compared against old printing: punctuation, ordering or equivalent phrasing only. Standard rules limit battle participants to own cards; Local Trouble preserves that normal rule."
+  },
+  {
+    "id": "15_233",
+    "title": "Dark Maneuvers",
+    "destiny": 6,
+    "uniqueness": "UNRESTRICTED",
+    "type": "INTERRUPT",
+    "subtype": "USED",
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "credits": 1,
+    "source": "set1\\dark\\Card1_241.java",
+    "gameText": "Add 2 to maneuver and 1 to power of any starfighter for remainder of turn. If it has hyperdrive, also add 2 to hyperspeed. (Interrupt may even affect the result immediately after a destiny draw targeting the starfighter's maneuver.)",
+    "file": "RG-GEMP-Dark-Maneuvers.png",
+    "imageSha256": "f491bff68053a0f203266b5928d835c335d46decc4dae5122b72a1a13f61257f",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Wording compared against old printing: punctuation, ordering or equivalent phrasing only. Standard rules limit battle participants to own cards; Local Trouble preserves that normal rule."
+  },
+  {
+    "id": "15_241",
+    "title": "Force Lightning",
+    "destiny": 5,
+    "uniqueness": "UNIQUE",
+    "type": "INTERRUPT",
+    "subtype": "USED_OR_LOST",
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "credits": 2,
+    "source": "set9\\dark\\Card9_136.java",
+    "gameText": "Target a character (even a captive) present with Emperor. USED: Target is defense value -4 for rest of turn. LOST: Emperor loses immunity to attrition and is defense value -2 for rest of turn. Draw destiny. Target lost if destiny +1 > defense value.",
+    "file": "RG-GEMP-Force-Lightning.png",
+    "imageSha256": "1efe27fa645954cf187f76df92a6b12ffaa7dc27130442e6fa6196408ee00951",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Wording compared against old printing: punctuation, ordering or equivalent phrasing only. Standard rules limit battle participants to own cards; Local Trouble preserves that normal rule."
+  },
+  {
+    "id": "15_245",
+    "title": "Hit Racer",
+    "destiny": 4,
+    "uniqueness": "UNIQUE",
+    "type": "INTERRUPT",
+    "subtype": "LOST",
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD",
+      "EPISODE_I"
+    ],
+    "keywords": [],
+    "credits": 3,
+    "source": "set11\\dark\\Card11_081.java",
+    "gameText": "During your control phase, use 2 Force to target an opponent's Podracer with a race total within 4 of one of your race totals. Draw destiny. If destiny > target's destiny number, opponent may not draw race destiny this turn and target is 'damaged.'",
+    "file": "RG-GEMP-Hit-Racer.png",
+    "imageSha256": "748de272131ab4a55e95cb7781d5f982965511896a7a8682d693f0ea238dfe25",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Wording compared against old printing: punctuation, ordering or equivalent phrasing only. Standard rules limit battle participants to own cards; Local Trouble preserves that normal rule."
+  },
+  {
+    "id": "15_249",
+    "title": "Imperial Command",
+    "destiny": 4,
+    "uniqueness": "UNIQUE",
+    "type": "INTERRUPT",
+    "subtype": "USED",
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "credits": 3,
+    "source": "set9\\dark\\Card9_137.java",
+    "gameText": "Take one admiral or general into hand from Reserve Deck; reshuffle. OR If your admiral is in battle at a system (or your general is in battle at a site) either add one battle destiny or prevent opponent from drawing more than one battle destiny.",
+    "file": "RG-GEMP-Imperial-Command-It-s-An-Older-Code.png",
+    "imageSha256": "135f4d4ab8518295b7d903b93659cdb40a66a3b66a8821733287dd4eb078b433",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Wording compared against old printing: punctuation, ordering or equivalent phrasing only. Standard rules limit battle participants to own cards; Local Trouble preserves that normal rule."
+  },
+  {
+    "id": "15_258",
+    "title": "Jabba's Through With You",
+    "destiny": 5,
+    "uniqueness": "UNIQUE",
+    "type": "INTERRUPT",
+    "subtype": "USED",
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "credits": 2,
+    "source": "set7\\dark\\Card7_255.java",
+    "gameText": "If your bounty hunter just fired a character weapon during a battle, add one battle destiny. OR During your deploy phase, deploy on your bounty hunter one character weapon from Reserve Deck; reshuffle.",
+    "file": "RG-GEMP-Jabba-s-Through-With-You.png",
+    "imageSha256": "ec600cdf501fa0a514f1aee77b6021a10e651842679115d3e0533c7bd95ab9e3",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Wording compared against old printing: punctuation, ordering or equivalent phrasing only. Standard rules limit battle participants to own cards; Local Trouble preserves that normal rule."
+  },
+  {
+    "id": "15_260",
+    "title": "Local Trouble",
+    "destiny": 4,
+    "uniqueness": "UNIQUE",
+    "type": "INTERRUPT",
+    "subtype": "LOST",
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "credits": 2,
+    "source": "set1\\dark\\Card1_256.java",
+    "gameText": "Use 1 Force at the beginning of your battle phase to allow any two Stormtroopers in the Cantina to battle any one opponent's character (your choice). You may add one battle destiny. No other battles may occur in Cantina this turn.",
+    "file": "RG-GEMP-Local-Trouble.png",
+    "imageSha256": "9d58e0ca1c8a34cd2ee25c375c61076eb537752526c8378558e16ccece8c4268",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Wording compared against old printing: punctuation, ordering or equivalent phrasing only. Standard rules limit battle participants to own cards; Local Trouble preserves that normal rule."
+  },
+  {
+    "id": "15_265",
+    "title": "None Shall Pass",
+    "destiny": 1,
+    "uniqueness": "UNRESTRICTED",
+    "type": "INTERRUPT",
+    "subtype": "USED",
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "credits": 3,
+    "source": "set6\\dark\\Card6_157.java",
+    "gameText": "If opponent just deployed a Rebel to a Jabba's Palace site, (and you have no Imperials at a Jabba's Palace site), return Rebel to opponent's hand. Any Force used to deploy that Rebel remains used, and Rebel may not be deployed for the remainder of the turn.",
+    "file": "RG-GEMP-None-Shall-Pass.png",
+    "imageSha256": "1a6f99c97869cdee6aa3f629bb8d07ed1b05d4735788a99e126f392011dc38bb",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Wording compared against old printing: punctuation, ordering or equivalent phrasing only. Standard rules limit battle participants to own cards; Local Trouble preserves that normal rule."
+  },
+  {
+    "id": "15_281",
+    "title": "Sniper",
+    "destiny": 3,
+    "uniqueness": "UNIQUE",
+    "type": "INTERRUPT",
+    "subtype": "LOST",
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "credits": 3,
+    "source": "set2\\dark\\Card2_139.java",
+    "gameText": "During your control phase, fire one of your weapons. If URoRRuR'R'R firing, may add 2 to each weapon destiny draw. (A seeker may be targeted by a character weapon using a defense value of 4.) Any 'hit' targets are immediately lost.",
+    "file": "RG-GEMP-Sniper.png",
+    "imageSha256": "f66d6921872aa2f0b5a55c8cb6ff0615cab6193cd50d922493df0b19ddde3a87",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Wording compared against old printing: punctuation, ordering or equivalent phrasing only. Standard rules limit battle participants to own cards; Local Trouble preserves that normal rule."
+  },
+  {
+    "id": "15_287",
+    "title": "Tactical Support",
+    "destiny": 4,
+    "uniqueness": "UNIQUE",
+    "type": "INTERRUPT",
+    "subtype": "LOST",
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "credits": 3,
+    "source": "set3\\dark\\Card3_136.java",
+    "gameText": "Lose 1 Force to take up to three troopers into hand from Reserve Deck; reshuffle.",
+    "file": "RG-GEMP-Tactical-Support.png",
+    "imageSha256": "4a44df38272c6090705a8610136047c14283c61c239181bcf9a01d88b5dfbc22",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Wording compared against old printing: punctuation, ordering or equivalent phrasing only. Standard rules limit battle participants to own cards; Local Trouble preserves that normal rule."
+  },
+  {
+    "id": "15_289",
+    "title": "The Circle Is Now Complete",
+    "destiny": 6,
+    "uniqueness": "UNRESTRICTED",
+    "type": "INTERRUPT",
+    "subtype": "LOST",
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "credits": 3,
+    "source": "set1\\dark\\Card1_271.java",
+    "gameText": "If Vader and Obi-Wan are present at same site, use 1 Force to initiate a duel between them. Compare their power, and add 2 if that character is armed with a lightsaber. Loser (lowest total) of duel is placed out of play.",
+    "file": "RG-GEMP-The-Circle-Is-Now-Complete.png",
+    "imageSha256": "f4945d15d2784fa518550806423278ac549a9657674d71cb1f04496f091e059c",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Wording compared against old printing: punctuation, ordering or equivalent phrasing only. Standard rules limit battle participants to own cards; Local Trouble preserves that normal rule."
+  },
+  {
+    "id": "15_296",
+    "title": "Trap Door",
+    "destiny": 5,
+    "uniqueness": "UNIQUE",
+    "type": "INTERRUPT",
+    "subtype": "USED",
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "credits": 3,
+    "source": "set6\\dark\\Card6_159.java",
+    "gameText": "If you have no characters in the rancor pit at the end of your deploy phase, target a character (even a captive) at audience chamber. Draw destiny. If destiny +2 > ability, target relocated to Rancor Pit, and, if captive, released to Light Side of Rancor Pit.",
+    "file": "RG-GEMP-Trap-Door.png",
+    "imageSha256": "60292959710f413a7443bdb55d5d84823f38683fe9f48909feb75aa9d3c62652",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Wording compared against old printing: punctuation, ordering or equivalent phrasing only. Standard rules limit battle participants to own cards; Local Trouble preserves that normal rule."
+  },
+  {
+    "id": "15_299",
+    "title": "Uncertain Is The Future",
+    "destiny": 3,
+    "uniqueness": "UNIQUE",
+    "type": "INTERRUPT",
+    "subtype": "LOST",
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "credits": 1,
+    "source": "set4\\dark\\Card4_151.java",
+    "gameText": "Use 3 Force. Each player counts cards in hand, then places entire hand and Used Pile onto Reserve Deck; reshuffle. Each player then draws from Reserve Deck the counted number of cards to create a new hand.",
+    "file": "RG-GEMP-Uncertain-Is-The-Future.png",
+    "imageSha256": "16a083ba6369756b4d842ce51495903dac9b325055e741abde4bc155586a7400",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Wording compared against old printing: punctuation, ordering or equivalent phrasing only. Standard rules limit battle participants to own cards; Local Trouble preserves that normal rule."
+  },
+  {
+    "id": "15_300",
+    "title": "Unexpected Interruption",
+    "destiny": 2,
+    "uniqueness": "UNIQUE",
+    "type": "INTERRUPT",
+    "subtype": "LOST",
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "credits": 3,
+    "source": "set4\\dark\\Card4_152.java",
+    "gameText": "Use 2 Force to take one Interrupt into hand from Reserve Deck; reshuffle.",
+    "file": "RG-GEMP-Unexpected-Interruption.png",
+    "imageSha256": "579ea218bf8c99a91ab04470a5d858fa427f62c2ec2a83b451f15a5011268824",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Wording compared against old printing: punctuation, ordering or equivalent phrasing only. Standard rules limit battle participants to own cards; Local Trouble preserves that normal rule."
+  },
+  {
+    "id": "15_307",
+    "title": "You Are Beaten",
+    "destiny": 3,
+    "uniqueness": "UNIQUE",
+    "type": "INTERRUPT",
+    "subtype": "LOST",
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "credits": 4,
+    "source": "set5\\dark\\Card5_163.java",
+    "gameText": "Use 2 Force to target a character present with your warrior with a lightsaber. Target cannot move or battle until end of your next turn. OR Use 1 Force to take I Am Your Father into hand from Reserve Deck; reshuffle. OR Cancel Uncontrollable Fury.",
+    "file": "RG-GEMP-You-Are-Beaten.png",
+    "imageSha256": "220cd34c25843f06b1cd2040591dd59e377f3d90dc9914ae094048d18248cecf",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Wording compared against old printing: punctuation, ordering or equivalent phrasing only. Standard rules limit battle participants to own cards; Local Trouble preserves that normal rule."
+  }
+]
