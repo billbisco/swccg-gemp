@@ -4,6 +4,7 @@ import com.gempukku.swccgo.cards.AbstractLostInterrupt;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.effects.RevealUsedPileEffect;
 import com.gempukku.swccgo.common.ExpansionSet;
+import com.gempukku.swccgo.common.CardSubtype;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.TargetingReason;
@@ -39,6 +40,11 @@ public class Card1_259 extends AbstractLostInterrupt {
         setGameText("Use 1 Force to search through the opponent's Used Pile and move any droids you find there to opponent's Lost Pile. OR Use X Force to destroy any one droid on table where X = droid's deploy cost.");
     }
 
+    /** Allows a combination card to play the Used Pile search as a Used Interrupt. */
+    protected CardSubtype getSearchUsedPileSubtype() {
+        return CardSubtype.LOST;
+    }
+
     @Override
     protected List<PlayInterruptAction> getGameTextTopLevelActions(final String playerId, final SwccgGame game, final PhysicalCard self) {
         List<PlayInterruptAction> actions = new LinkedList<PlayInterruptAction>();
@@ -48,7 +54,7 @@ public class Card1_259 extends AbstractLostInterrupt {
         if (GameConditions.hasUsedPile(game, opponent)
                 && GameConditions.canUseForceToPlayInterrupt(game, playerId, self, 1)) {
 
-            final PlayInterruptAction action = new PlayInterruptAction(game, self);
+            final PlayInterruptAction action = new PlayInterruptAction(game, self, getSearchUsedPileSubtype());
             action.setText("Search opponent's Used Pile");
             // Pay cost(s)
             action.appendCost(
@@ -83,7 +89,7 @@ public class Card1_259 extends AbstractLostInterrupt {
         // Check condition(s)
         if (GameConditions.canTarget(game, self, targetingReason, filter)) {
 
-            final PlayInterruptAction action = new PlayInterruptAction(game, self);
+            final PlayInterruptAction action = new PlayInterruptAction(game, self, CardSubtype.LOST);
             action.setText("Destroy a droid");
             // Choose target(s)
             action.appendTargeting(

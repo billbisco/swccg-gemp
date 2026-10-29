@@ -1,0 +1,152 @@
+[
+  {
+    "id": "15_174",
+    "title": "Begin Landing Your Troops & Activate The Droids",
+    "destiny": 5,
+    "credits": 0,
+    "episodeI": true,
+    "components": [
+      "UNIQUE",
+      "UNIQUE"
+    ],
+    "gameText": "Deploy on your Blockade Flagship (may not deploy on a site). Whenever you initiate battle at a related planet site where you have a battle droid, you may activate 2 Force or retrieve 1 Force. Your unique (•) Republic Characters are forfeit +2 and immune to Goo Nee Tay. Unless Imperial Arrest Order on table, once during your deploy phase, may deploy one docking bay from Reserve Deck; reshuffle.",
+    "file": "RG-GEMP-Begin-Landing-Your-Troops-Activate-The-Droids.png",
+    "type": "EFFECT",
+    "subtype": "NORMAL"
+  },
+  {
+    "id": "15_191",
+    "title": "Krayt Dragon Bones & Imperial Justice",
+    "destiny": 2,
+    "credits": 0,
+    "episodeI": false,
+    "components": [
+      "UNIQUE",
+      "UNRESTRICTED"
+    ],
+    "gameText": "If opponent is generating at least 4 more Force than you, deploy on a location to cancel all Force generation at that location. OR Deploy on a location, it is now immune to Revolution. Also, each opponent's destiny draw, you do the following: (0) Put top used card in hand; (1) lose 1 Force; (2) activate 1 Force; (3) lose this Effect; (4) retrieve 1 Force; (5) deploy a character for free; (6+) nothing.",
+    "file": "RG-GEMP-Krayt-Dragon-Bones-Imperial-Justice.png",
+    "type": "EFFECT",
+    "subtype": "NORMAL"
+  },
+  {
+    "id": "15_206",
+    "title": "Scum And Villainy & Information Exchange",
+    "destiny": 3,
+    "credits": 0,
+    "episodeI": false,
+    "components": [
+      "UNIQUE",
+      "UNIQUE"
+    ],
+    "gameText": "Deploy on Audience Chamber. Whenever you have an Information Broker at a location where you just initiated a battle, you may examine the top four cards of opponent's Reserve Deck. You may then lose 1 Force to cancel the battle. Also, while all of your ability on table is provided only by aliens and independent starship pilots, your aliens and starships deploy -1 and you retrieve 2 Force whenever you initiate battle. (Immune to Alter if you control three Jabba's Palace sites.)",
+    "file": "RG-GEMP-Scum-And-Villainy.png",
+    "type": "EFFECT",
+    "subtype": "NORMAL"
+  },
+  {
+    "id": "15_211",
+    "title": "This Is Outrageous! & Motion Supported",
+    "destiny": 2,
+    "credits": 0,
+    "episodeI": true,
+    "components": [
+      "UNIQUE",
+      "UNIQUE"
+    ],
+    "gameText": "Deploy on table. If no senator here, you may place a senator here from hand to cancel an opponent's Force drain or to add 2 to your next Force drain at a battleground this turn. If a trade agenda here, once during your turn, you may place a card from hand in Lost Pile, shuffle that pile, and take top card into hand. If a wealth agenda here, once per turn, you may lose your just drawn battle destiny to substitute it with a card from hand.",
+    "file": "RG-GEMP-This-Is-Outrageous-Motion-Supported.png",
+    "type": "EFFECT",
+    "subtype": "POLITICAL"
+  },
+  {
+    "id": "15_213",
+    "title": "Watto's Box & Quietly Observing",
+    "destiny": 3,
+    "credits": 0,
+    "episodeI": true,
+    "components": [
+      "UNIQUE",
+      "UNIQUE"
+    ],
+    "gameText": "Deploy on table if all of your race totals = 0. When a player wins a Podrace, adds 5 to the amount retrieved. When a player loses a Podrace, adds 5 to the amount lost. Also, while Aurra Sing is alone at a site, your total ability at that site = 0. During your move phase, may lose Effect to target an opponent's lightsaber present with Aurra Sing. Draw destiny. If destiny > 3, Aurra Sing may 'steal' that lightsaber. (Immune to Alter.)",
+    "file": "RG-GEMP-Watto-s-Box-Quietly-Observing.png",
+    "type": "EFFECT",
+    "subtype": "NORMAL"
+  },
+  {
+    "id": "15_219",
+    "title": "Always Thinking With Your Stomach & Scout Recon",
+    "destiny": 5,
+    "credits": 0,
+    "episodeI": false,
+    "components": [
+      "UNIQUE",
+      "UNIQUE"
+    ],
+    "gameText": "USED: Add 1 to landspeed of your scout at an exterior planet site for remainder of turn. OR if Igar is with Grond or Dyer in battle, draw one destiny and subtract it from opponent's attrition against you. LOST: Cancel a Force drain at an exterior planet site where opponent has no vehicles or starships. Draw destiny. If destiny > number of opponent's characters at that site, choose one of those characters to be missing.",
+    "file": "RG-GEMP-Always-Thinking-With-Your-Stomach-Scout-Recon.png",
+    "type": "INTERRUPT",
+    "subtype": "USED_OR_LOST"
+  },
+  {
+    "id": "15_228",
+    "title": "Combat Readiness & Prepared Defenses",
+    "destiny": 3,
+    "credits": 0,
+    "episodeI": false,
+    "components": [
+      "UNIQUE",
+      "UNIQUE"
+    ],
+    "gameText": "USED: If a battle was just initiated, draw destiny and activate up to that much Force. STARTING: If you have not deployed an Objective, deploy from Reserve Deck one battleground site related to your starting location. Also, you may deploy up to two Effects if each of them deploys for free, is always immune to Alter and has \"Deploy on table\" (or \"deploy on your side of table\") in its game text. Place Interrupt in Lost Pile.",
+    "file": "RG-GEMP-Combat-Readiness-Prepared-Defenses.png",
+    "type": "INTERRUPT",
+    "subtype": "USED_OR_STARTING"
+  },
+  {
+    "id": "15_235",
+    "title": "Dioxis & They're Still Coming Through!",
+    "destiny": 3,
+    "credits": 0,
+    "episodeI": true,
+    "components": [
+      "UNIQUE",
+      "UNIQUE"
+    ],
+    "gameText": "USED: Cancel Rebel Barrier, It's A Trap!, or Smoke Screen. OR Re-target Fallen Portal by choosing up to two of opponent's characters there instead of your own. OR Peek at the top card of your Force Pile; either return it, or place it under your Force Pile or Reserve Deck. LOST: Target opponent's Jedi. Draw destiny. If destiny &gt; 2, target's game text is canceled for remainder of turn.",
+    "file": "RG-GEMP-Dioxis-They-re-Still-Coming-Through.png",
+    "type": "INTERRUPT",
+    "subtype": "USED_OR_LOST"
+  },
+  {
+    "id": "15_238",
+    "title": "Elis Helrot & Oo-ta Goo-ta Solo?",
+    "destiny": 4,
+    "credits": 0,
+    "episodeI": false,
+    "components": [
+      "UNRESTRICTED",
+      "UNRESTRICTED"
+    ],
+    "gameText": "If Nabrun Leids just completed a transport, use 2 Force. Nabrun is lost and all Rebels transported are captured. (Immune to Sense.) OR At any time (except during battle), target any or all of your characters at one site to 'transport' (relocate) to any one other site. Draw destiny. Use that much Force to 'transport' or place Interrupt in Lost Pile. OR Prevent a smuggler from moving this turn. OR Cancel a Kessel Run.",
+    "file": "RG-GEMP-Elis-Helrot-Oo-ta-Goo-ta-Solo.png",
+    "type": "INTERRUPT",
+    "subtype": "LOST"
+  },
+  {
+    "id": "15_262",
+    "title": "Look Sir, Droids & Counter Assault",
+    "destiny": 3,
+    "credits": 0,
+    "episodeI": false,
+    "components": [
+      "UNRESTRICTED",
+      "UNRESTRICTED"
+    ],
+    "gameText": "USED: Use 1 Force to search opponent's Used Pile and place any droids you find there to opponent's Lost Pile. LOST: Use X Force to destroy any one droid on table where X = that droid's deploy cost. OR Use 1 Force to cancel an opponent's Force drain at a location. Draw one destiny for each character, starship, and vehicle the opponent has present (limit 2). Compare your destiny total with opponent's total power. Player with lowest total loses Force equal to difference.",
+    "file": "RG-GEMP-Look-Sir-Droids-Counter-Assault.png",
+    "type": "INTERRUPT",
+    "subtype": "USED_OR_LOST"
+  }
+]
