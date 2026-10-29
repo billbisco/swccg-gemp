@@ -7,6 +7,7 @@ import com.gempukku.swccgo.logic.timing.EffectResult;
  * The effect result that is emitted when an attribute value (power, forfeit, hyperspeed, etc.) of a card is reset or modified by an action.
  */
 public class ResetOrModifyCardAttributeResult extends EffectResult {
+    private PhysicalCard _card;
 
     /**
      * Creates an effect result that is emitted when an attribute value (power, forfeit, hyperspeed, etc.) of a card is
@@ -16,5 +17,14 @@ public class ResetOrModifyCardAttributeResult extends EffectResult {
      */
     public ResetOrModifyCardAttributeResult(String performingPlayer, PhysicalCard card) {
         super(Type.ATTRIBUTE_RESET_OR_MODIFIED, performingPlayer);
+        _card = card;
+    }
+
+    /**
+     * Gets the card whose attribute was reset or modified.
+     * @return the card
+     */
+    public PhysicalCard getCard() {
+        return _card;
     }
 }

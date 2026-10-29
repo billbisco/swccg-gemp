@@ -94,6 +94,7 @@ public interface Title {
     String AT_ST_Dual_Cannon = "AT-ST Dual Cannon";
     String Attack_Pattern_Delta = "Attack Pattern Delta";
     String Attack_Run = "Attack Run";
+    String Away_Put_Your_Weapon = "Away Put Your Weapon";
     String Audience_Chamber = "Jabba's Palace: Audience Chamber";
     String Aurra_Sing = "Aurra Sing";
     String Avarik = "Corporal Avarik";
@@ -294,6 +295,7 @@ public interface Title {
     String Dark_Approach = "Dark Approach";
     String Dark_Collaboration = "Dark Collaboration";
     String Dark_Deal = "Dark Deal";
+    String Dark_Dissension = "Dark Dissension";
     String Dark_Forces = "Dark Forces";
     String Dark_Hours = "Dark Hours";
     String Dark_Jedi_Presence = "Dark Jedi Presence";
@@ -530,6 +532,7 @@ public interface Title {
     String Grond = "Lieutenant Grond";
     String Gungan_Energy_Shield = "Gungan Energy Shield";
     String Guri = "Guri";
+    String Gamblers_Luck = "Gambler's Luck";
     String Halt = "Halt!";
     String Han_Solo = "Han Solo";
     String Hans_Back = "Han's Back";
@@ -872,6 +875,7 @@ public interface Title {
     String Nevarro = "Nevarro";
     String Never_Tell_Me_The_Odds = "Never Tell Me The Odds";
     String New_Leadership_Is_Needed = "New Leadership Is Needed";
+    String Nice_Of_You_Guys_To_Drop_By = "Nice Of You Guys To Drop By";
     String Nien_Nunb = "Nien Nunb";
     String Nightclub = "Coruscant: Night Club";
     String Nick_Of_Time = "Nick Of Time";
@@ -974,6 +978,7 @@ public interface Title {
     String Pray_I_Dont_Alter_It_Any_Further = "Pray I Don't Alter It Any Further";
     String Precise_Attack = "Precise Attack";
     String Precise_Hit = "Precise Hit";
+    String Perimeter_Scan = "Perimeter Scan";
     String Precision_Targeting = "Precision Targeting";
     String Prepare_For_A_Surface_Attack = "Prepare For A Surface Attack";
     String Prepare_The_Chamber = "Prepare The Chamber";
