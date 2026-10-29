@@ -137,7 +137,8 @@
     "title": "A Gift",
     "image": "RG-GEMP-A-Gift.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3
   },
   {
     "id": "15_21",
@@ -431,7 +432,8 @@
     "title": "A Few Maneuvers & Han's Dice",
     "image": "RG-GEMP-A-Few-Maneuvers-Han-s-Dice.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_61",
@@ -585,7 +587,8 @@
     "title": "Fly Casual",
     "image": "RG-GEMP-Fly-Casual.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3
   },
   {
     "id": "15_82",
@@ -837,7 +840,8 @@
     "title": "Old Ben & Noble Sacrifice",
     "image": "RG-GEMP-Old-Ben-Noble-Sacrifice.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_116",
@@ -940,7 +944,8 @@
     "title": "Skull & Mandalorian Mishap",
     "image": "RG-GEMP-Skull-Mandalorian-Mishap.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_130",
@@ -1007,7 +1012,8 @@
     "title": "The Force Is Strong With This One & Jedi Presence",
     "image": "RG-GEMP-The-Force-Is-Strong-With-This-One-Jedi-Presence.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_139",
@@ -1105,7 +1111,8 @@
     "title": "Wookiee Strangle & We'll Find Han",
     "image": "RG-GEMP-Wookiee-Strangle-We-ll-Find-Han.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_152",

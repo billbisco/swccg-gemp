@@ -1,4 +1,11 @@
 const fixedImages = {
+"15_20":"https://wiki.swccg.com/images/5/52/RG-GEMP-A-Gift.png",
+"15_60":"https://wiki.swccg.com/images/f/f9/RG-GEMP-A-Few-Maneuvers-Han-s-Dice.png",
+"15_81":"https://wiki.swccg.com/images/6/67/RG-GEMP-Fly-Casual.png",
+"15_115":"https://wiki.swccg.com/images/b/b3/RG-GEMP-Old-Ben-Noble-Sacrifice.png",
+"15_129":"https://wiki.swccg.com/images/9/9e/RG-GEMP-Skull-Mandalorian-Mishap.png",
+"15_138":"https://wiki.swccg.com/images/c/c6/RG-GEMP-The-Force-Is-Strong-With-This-One-Jedi-Presence.png",
+"15_151":"https://wiki.swccg.com/images/f/fe/RG-GEMP-Wookiee-Strangle-We-ll-Find-Han.png",
 "15_263":"https://wiki.swccg.com/images/5/5f/RG-GEMP-Master-Destroyers-Rolling-Rolling-Rolling.png",
 "15_264":"https://wiki.swccg.com/images/1/10/RG-GEMP-Maul-Strikes-No-Match-For-A-Sith.png",
 "15_266":"https://wiki.swccg.com/images/c/cb/RG-GEMP-Oo-ta-Goo-ta-Solo.png",
