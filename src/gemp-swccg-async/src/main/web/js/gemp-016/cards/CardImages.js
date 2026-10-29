@@ -1,4 +1,11 @@
 const fixedImages = {
+"15_225":"https://wiki.swccg.com/images/f/f3/RG-GEMP-Brief-Loss-Of-Control-Imperial-Supply.png",
+"15_230":"https://wiki.swccg.com/images/6/60/RG-GEMP-Dark-Collaboration-Charming-To-The-Last.png",
+"15_247":"https://wiki.swccg.com/images/3/30/RG-GEMP-I-Have-You-Now-Your-Powers-Are-Weak-Old-Man.png",
+"15_175":"https://wiki.swccg.com/images/6/6a/RG-GEMP-Blast-Door-Controls-Reactor-Terminal.png",
+"15_177":"https://wiki.swccg.com/images/f/fe/RG-GEMP-Crossfire.png",
+"15_182":"https://wiki.swccg.com/images/c/c7/RG-GEMP-Flagship-Operations.png",
+"15_303":"https://wiki.swccg.com/images/d/d9/RG-GEMP-We-Have-A-Prisoner.png",
 "15_28":"https://wiki.swccg.com/images/0/0f/RG-GEMP-Close-Air-Support-Commando-Training.png",
 "15_30":"https://wiki.swccg.com/images/f/f4/RG-GEMP-Crack-Shot-Quick-Draw.png",
 "15_35":"https://wiki.swccg.com/images/7/7c/RG-GEMP-I-Hope-She-s-All-Right.png",

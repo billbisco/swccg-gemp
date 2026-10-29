@@ -1,0 +1,90 @@
+[
+  {
+    "id": "15_225",
+    "title": "Brief Loss Of Control & Imperial Supply",
+    "destiny": 3,
+    "uniqueness": "UNIQUE",
+    "type": "INTERRUPT",
+    "subtype": "USED_OR_LOST",
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "credits": 0,
+    "gameText": "USED: Lose 1 Force to activate 2 Force. LOST: Just after the weapons phase of a battle, use 2 Force to cause each player to target one of that player's characters involved in the battle. Target characters cannot apply their ability toward drawing battle destiny this turn. OR Lose 1 Force to activate 4 Force.",
+    "comboTitles": [
+      "Brief Loss Of Control",
+      "Imperial Supply"
+    ],
+    "file": "RG-GEMP-Brief-Loss-Of-Control-Imperial-Supply.png",
+    "imageSha256": "e0193b06e07b3fda62318d0c991723db9e74ba93bab352fd41b4e99726cd1fd9",
+    "evidence": "Full remastered image visually inspected. No positive credit circles; no EpisodeI. IHaveYouNow title uses canonical component comma from wiki; printed image omits comma."
+  },
+  {
+    "id": "15_230",
+    "title": "Dark Collaboration & Charming To The Last",
+    "destiny": 3,
+    "uniqueness": "UNIQUE",
+    "type": "INTERRUPT",
+    "subtype": "LOST",
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "credits": 0,
+    "gameText": "If Tarkin and either Tagge or Motti are in a battle together, you may add two battle destiny. (If Tarkin is also with Leia, add two additional battle destiny.)",
+    "comboTitles": [
+      "Dark Collaboration",
+      "Charming To The Last"
+    ],
+    "file": "RG-GEMP-Dark-Collaboration-Charming-To-The-Last.png",
+    "imageSha256": "b8ca32784d6bcb4957989030fa06fbf6b92e70f0ae31174fe2d10d9486614be8",
+    "evidence": "Full remastered image visually inspected. No positive credit circles; no EpisodeI. IHaveYouNow title uses canonical component comma from wiki; printed image omits comma."
+  },
+  {
+    "id": "15_247",
+    "title": "I Have You Now & Your Powers Are Weak, Old Man",
+    "destiny": 4,
+    "uniqueness": "UNRESTRICTED",
+    "type": "INTERRUPT",
+    "subtype": "LOST",
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "credits": 0,
+    "gameText": "If a Dark Jedi and a Rebel with ability > 2 are involved in the same battle, you may add one battle destiny (add two destiny if Rebel is Luke, three destiny if Rebel is Obi-Wan).",
+    "comboTitles": [
+      "I Have You Now",
+      "Your Powers Are Weak, Old Man"
+    ],
+    "file": "RG-GEMP-I-Have-You-Now-Your-Powers-Are-Weak-Old-Man.png",
+    "imageSha256": "85e7fa28b4de550f64dbc6bb3e95ae86b44696aa7f68dd5cc2dfa5250531473b",
+    "evidence": "Full remastered image visually inspected. No positive credit circles; no EpisodeI. IHaveYouNow title uses canonical component comma from wiki; printed image omits comma."
+  },
+  {
+    "id": "15_175",
+    "title": "Blast Door Controls & Reactor Terminal",
+    "destiny": 3,
+    "uniqueness": "UNIQUE",
+    "type": "EFFECT",
+    "subtype": "NORMAL",
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "credits": 0,
+    "gameText": "Deploy on table. Cancels: Into The Garbage Chute, Flyboy, Narrow Escape, Blast The Door Kid!, and Rebel Barrier. Also, during your control phase, you may return any cards from your hand to the top of your Used Pile.",
+    "comboTitles": [
+      "Blast Door Controls",
+      "Reactor Terminal"
+    ],
+    "file": "RG-GEMP-Blast-Door-Controls-Reactor-Terminal.png",
+    "imageSha256": "a0cf2e11965dc5d1a3f6be400a91873ee8af1a86963c80e5abd8827047acf3a3",
+    "evidence": "Full remastered image visually inspected; unique Effect destiny3, no credits or EpisodeI."
+  }
+]
