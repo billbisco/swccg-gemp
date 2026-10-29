@@ -23,7 +23,7 @@ public class Card15_230 extends AbstractLostInterrupt {
         super(Side.DARK, 3, "Dark Collaboration & Charming To The Last", Uniqueness.UNIQUE, ExpansionSet.REFLECTIONS_GOLD, Rarity.UNKNOWN);
         setLore("");
         setGameText("If Tarkin and either Tagge or Motti are in a battle together, you may add two battle destiny. (If Tarkin is also with Leia, add two additional battle destiny.)");
-        addComboCardTitles("Dark Collaboration", "Charming To The Last");
+        setTitleComponents(new TitleComponent("Dark Collaboration",Uniqueness.UNIQUE),new TitleComponent("Charming To The Last",Uniqueness.UNRESTRICTED));
         addIcons(Icon.REFLECTIONS_GOLD);
     }
 

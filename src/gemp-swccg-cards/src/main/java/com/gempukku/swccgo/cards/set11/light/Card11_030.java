@@ -70,7 +70,7 @@ public class Card11_030 extends AbstractLostInterrupt {
 
         // Check condition(s)
         if (GameConditions.hasInHand(game, playerId, 3, Filters.not(self))
-                && GameConditions.canTakeCardsIntoHandFromUsedPile(game, playerId, self, gameTextActionId)) {
+                && GameConditions.canSearchLostPile(game, playerId, self, gameTextActionId, true)) {
 
             final PlayInterruptAction action = new PlayInterruptAction(game, self);
             action.setText("Take character into hand from Lost Pile");

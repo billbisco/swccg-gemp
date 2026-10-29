@@ -143,12 +143,24 @@ public class GameState implements Snapshotable<GameState> {
     /**
      * Needed to generate snapshot.
      */
+    private int _startingCredits;
+
+    public int getStartingCredits() { return _startingCredits; }
+
+    /** Game setup only: a bounded budget shared by both players, never a spendable in-game resource. */
+    public void setStartingCredits(int credits) {
+        if (credits < 0 || credits > com.gempukku.swccgo.game.StartingCredits.MAX_BUDGET || (credits != 0 && !_game.getFormat().supportsStartingCredits()))
+            throw new IllegalArgumentException("Starting credits must be between 0 and 60 in a credit-enabled format");
+        _startingCredits = credits;
+    }
+
     public GameState() {
     }
 
     @Override
     public void generateSnapshot(GameState selfSnapshot, SnapshotData snapshotData) {
         GameState snapshot = selfSnapshot;
+        snapshot._startingCredits = _startingCredits;
 
         // Set each field
         snapshot._game = _game;

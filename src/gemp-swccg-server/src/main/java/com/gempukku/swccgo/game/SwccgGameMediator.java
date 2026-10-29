@@ -1461,7 +1461,8 @@ public class SwccgGameMediator {
         try {
             // Provide the full game reference for advanced AI features (e.g., deploy planning)
             ai.setGame(_swccgoGame);
-            answer = ai.decide(playerId, decision, _swccgoGame.getGameState());
+            answer = decision.getDecisionParameters().containsKey("startingCredits") ? ""
+                    : ai.decide(playerId, decision, _swccgoGame.getGameState());
 
             _userFeedback.participantDecided(playerId);
             decision.decisionMade(answer);

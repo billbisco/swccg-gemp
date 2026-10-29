@@ -337,7 +337,8 @@
     "title": "Projection Of A Skywalker & Yarna d'al' Gargan",
     "image": "RG-GEMP-Projection-Of-A-Skywalker-Yarna-d-al-Gargan.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_48",
@@ -701,14 +702,16 @@
     "title": "Keep Your Eyes Open & Shoo! Shoo!",
     "image": "RG-GEMP-Keep-Your-Eyes-Open-Shoo-Shoo.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_97",
     "title": "Light Maneuvers & Jedi Levitation",
     "image": "RG-GEMP-Light-Maneuvers-Jedi-Levitation.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_98",
@@ -752,7 +755,8 @@
     "title": "Mindful Of The Future & Inconsequential Barriers",
     "image": "RG-GEMP-Mindful-Of-The-Future-Inconsequential-Barriers.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_104",
@@ -960,7 +964,8 @@
     "title": "Smoke Screen & It's A Trap!",
     "image": "RG-GEMP-Smoke-Screen-It-s-A-Trap.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_132",
@@ -975,7 +980,8 @@
     "title": "Speak With The Jedi Council & Vote Now!",
     "image": "RG-GEMP-Speak-With-The-Jedi-Council-Vote-Now.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_134",
@@ -1027,7 +1033,8 @@
     "title": "This Is More Like It & I Have A Really Bad Feeling About This",
     "image": "RG-GEMP-This-Is-More-Like-It-I-Have-A-Bad-Feeling-About-This.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_141",
@@ -1318,7 +1325,8 @@
     "title": "Establish Secret Base & Ominous Rumors",
     "image": "RG-GEMP-Establish-Secret-Base-Ominous-Rumors.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_180",
@@ -1359,7 +1367,8 @@
     "title": "I Will Find Them Quickly Master",
     "image": "RG-GEMP-I-Will-Find-Them-Quickly-Master.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 2
   },
   {
     "id": "15_185",
@@ -1373,7 +1382,8 @@
     "title": "Imperial Decree & The Dark Path",
     "image": "RG-GEMP-Imperial-Decree-The-Dark-Path.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_187",
@@ -1478,7 +1488,8 @@
     "title": "Quick Reflexes & All Wrapped Up",
     "image": "RG-GEMP-Quick-Reflexes-All-Wrapped-Up.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_201",
@@ -1824,7 +1835,8 @@
     "title": "Hidden Weapons & Twi'lek Advisor",
     "image": "RG-GEMP-Hidden-Weapons-Twi-lek-Advisor.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_245",
@@ -1924,7 +1936,8 @@
     "title": "I've Got A Problem Here & Physical Choke",
     "image": "RG-GEMP-I-ve-Got-A-Problem-Here-Physical-Choke.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_258",

@@ -29,5 +29,10 @@ public interface SwccgFormat {
     int getMaximumDeckSize();
     boolean skipsFormatPool();
     int getDefaultGameTimerMinutes();
+
+    /** Whether this format uses the Reflections Gold opening-hand credit rule. */
+    default boolean supportsStartingCredits() { return false; }
+
+    default int getDefaultStartingCredits() { return supportsStartingCredits() ? 5 : 0; }
     List<SwccgCardBlueprint> getAllCardBlueprintsValidInFormat();
 }

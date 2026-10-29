@@ -3,6 +3,7 @@
     "comment": "Anything Goes is the default Casual/AI format. Structure only; 40-60 cards; Legacy plus non-Legacy.",
     "name":"Anything Goes",
     "code":"anything_goes",
+    "startingCredits":true,
     "loreHeroicRule":true,
     "skipFormatPool":true,
     "minDeckSize":40,
@@ -109,6 +110,12 @@
     "code": "premiere_set3",
     "set":[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 200, 201, 202, 203, 301],
     "valid": [ "209_15", "213_13", "216_5", "220_2", "220_10", "221_68", "223_7", "223_26", "223_29", "223_30", "223_49", "225_3" ]
+  },
+  {
+    "name": "Premiere - Reflections Gold",
+    "code": "premiere_reflections_gold",
+    "startingCredits": true,
+    "set":[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112]
   },
   {
     "name": "Decipher Cards Only",

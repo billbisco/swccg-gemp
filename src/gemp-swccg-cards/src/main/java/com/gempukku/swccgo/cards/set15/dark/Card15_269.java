@@ -33,7 +33,7 @@ public class Card15_269 extends Card7_258 {
             if (icon.isExpansionIcon() || icon == Icon.EPISODE_I) addIcon(icon, 0);
         }
         addIcons(Icon.REFLECTIONS_GOLD);
-        addComboCardTitles("Overwhelmed", "A Dark Time For The Rebellion");
+        setTitleComponents(new TitleComponent("Overwhelmed",Uniqueness.UNRESTRICTED),new TitleComponent("A Dark Time For The Rebellion",Uniqueness.UNIQUE));
     }
     @Override public String getTitle() { return "Overwhelmed & A Dark Time For The Rebellion"; }
     @Override public Float getDestiny() { return 2f; }

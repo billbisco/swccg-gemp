@@ -47,7 +47,7 @@ public class Card15_294 extends Card14_110 {
             if (icon.isExpansionIcon() || icon == Icon.EPISODE_I) addIcon(icon, 0);
         }
         addIcons(Icon.REFLECTIONS_GOLD, Icon.EPISODE_I);
-        addComboCardTitles("Trade Federation Tactics", "We're Hit, Artoo");
+        setTitleComponents(new TitleComponent("Trade Federation Tactics",Uniqueness.UNIQUE),new TitleComponent("We're Hit, Artoo",Uniqueness.RESTRICTED_2));
     }
     @Override public String getTitle() { return "Trade Federation Tactics & We're Hit Artoo"; }
     @Override public Float getDestiny() { return 4f; }

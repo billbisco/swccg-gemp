@@ -29,7 +29,7 @@ public class Card15_273 extends Card5_147 {
             if (icon.isExpansionIcon() || icon == Icon.EPISODE_I) addIcon(icon, 0);
         }
         addIcons(Icon.REFLECTIONS_GOLD);
-        addComboCardTitles("Point Man", "Slip Sliding Away");
+        setTitleComponents(new TitleComponent("Point Man",Uniqueness.UNRESTRICTED),new TitleComponent("Slip Sliding Away",Uniqueness.UNIQUE));
     }
     @Override public String getTitle() { return "Point Man & Slip Sliding Away"; }
     @Override public Float getDestiny() { return 4f; }

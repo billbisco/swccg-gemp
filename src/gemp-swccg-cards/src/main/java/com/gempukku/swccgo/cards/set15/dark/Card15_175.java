@@ -15,7 +15,8 @@ public class Card15_175 extends Card1_210 {
         setLore("");
         setGameText("Deploy on table. Cancels: Into The Garbage Chute, Flyboy, Narrow Escape, Blast The Door Kid!, and Rebel Barrier. Also, during your control phase, you may return any cards from your hand to the top of your Used Pile.");
         setAlternateDestiny(3);
-        addComboCardTitles("Blast Door Controls", "Reactor Terminal");
+        setTitleComponents(new TitleComponent("Blast Door Controls",Uniqueness.UNIQUE),
+                new TitleComponent("Reactor Terminal",Uniqueness.UNRESTRICTED));
         addIcons(Icon.REFLECTIONS_GOLD);
     }
     @Override public String getTitle() { return "Blast Door Controls & Reactor Terminal"; }

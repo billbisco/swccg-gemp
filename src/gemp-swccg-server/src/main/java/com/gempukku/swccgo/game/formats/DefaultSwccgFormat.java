@@ -25,6 +25,12 @@ public class DefaultSwccgFormat implements SwccgFormat {
     private int _maxDeckSize = 60;
     private boolean _skipFormatPool;
     private int _defaultGameTimerMinutes = 60;
+    private boolean _startingCredits;
+
+    @Override
+    public boolean supportsStartingCredits() { return _startingCredits; }
+
+    protected void setStartingCredits(boolean enabled) { _startingCredits = enabled; }
     private List<String> _bannedIcons = new ArrayList<String>();
     private List<String> _bannedCards = new ArrayList<String>();
     private List<String> _restrictedCards = new ArrayList<String>();
