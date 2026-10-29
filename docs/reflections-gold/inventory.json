@@ -196,7 +196,8 @@
     "title": "Close Air Support & Commando Training",
     "image": "RG-GEMP-Close-Air-Support-Commando-Training.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_29",
@@ -210,7 +211,8 @@
     "title": "Crack Shot & Quick Draw",
     "image": "RG-GEMP-Crack-Shot-Quick-Draw.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_31",
@@ -247,7 +249,8 @@
     "title": "I Hope She's All Right",
     "image": "RG-GEMP-I-Hope-She-s-All-Right.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3
   },
   {
     "id": "15_36",
@@ -589,7 +592,8 @@
     "title": "Gift Of The Mentor & Skywalkers",
     "image": "RG-GEMP-Gift-Of-The-Mentor-Skywalkers.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_83",
@@ -1032,7 +1036,8 @@
     "title": "Under Attack",
     "image": "RG-GEMP-Under-Attack.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 2
   },
   {
     "id": "15_143",

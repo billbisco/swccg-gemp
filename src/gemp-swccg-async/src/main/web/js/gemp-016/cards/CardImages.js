@@ -1,4 +1,9 @@
 const fixedImages = {
+"15_28":"https://wiki.swccg.com/images/0/0f/RG-GEMP-Close-Air-Support-Commando-Training.png",
+"15_30":"https://wiki.swccg.com/images/f/f4/RG-GEMP-Crack-Shot-Quick-Draw.png",
+"15_35":"https://wiki.swccg.com/images/7/7c/RG-GEMP-I-Hope-She-s-All-Right.png",
+"15_82":"https://wiki.swccg.com/images/1/1a/RG-GEMP-Gift-Of-The-Mentor-Skywalkers.png",
+"15_142":"https://wiki.swccg.com/images/9/91/RG-GEMP-Under-Attack.png",
 "15_207":"https://wiki.swccg.com/images/0/05/RG-GEMP-Search-And-Destroy.png",
 "15_208":"https://wiki.swccg.com/images/c/c8/RG-GEMP-Security-Precautions.png",
 "15_216":"https://wiki.swccg.com/images/a/a9/RG-GEMP-Well-Earned-Command.png",
