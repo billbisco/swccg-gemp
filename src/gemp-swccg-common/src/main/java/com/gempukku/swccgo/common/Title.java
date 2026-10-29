@@ -1368,6 +1368,7 @@ public interface Title {
     String Wakeelmui = "Wakeelmui";
     String Walker_Barrage = "Walker Barrage";
     String Walker_Garrison = "Walker Garrison";
+    String Walker_Sighting = "Walker Sighting";
     String Watto = "Watto";
     String Wattos_Box = "Watto's Box";
     String Wattos_Chance_Cube = "Watto's Chance Cube";
@@ -1390,6 +1391,7 @@ public interface Title {
     String Weather_Vane = "Weather Vane";
     String Weequay_Guard = "Weequay Guard";
     String Weequay_Marksman = "Weequay Marksman";
+    String Well_Find_Han = "We'll Find Han";
     String Well_Guarded = "Well Guarded";
     String Well_Handle_This = "We'll Handle This";
     String Well_Need_A_New_One = "We'll Need A New One";
@@ -1443,6 +1445,7 @@ public interface Title {
     String You_Overestimate_Their_Chances = "You Overestimate Their Chances";
     String You_Rebel_Scum = "You Rebel Scum";
     String You_Truly_Belong_Here_With_Us = "You Truly Belong Here With Us";
+    String You_Will_Go_To_The_Dagobah_System = "You Will Go To The Dagobah System";
     String Youll_Be_Dead = "You'll Be Dead!";
     String Young_Fool = "Young Fool";
     String Your_Destiny = "Your Destiny";
