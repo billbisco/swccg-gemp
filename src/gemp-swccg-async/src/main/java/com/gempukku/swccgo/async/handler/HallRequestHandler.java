@@ -342,6 +342,7 @@ public class HallRequestHandler extends SwccgoServerRequestHandler implements Ur
             String isInviteOnlyVal = getFormParameterSafely(postDecoder, "isInviteOnly");
             boolean isInviteOnly = (isInviteOnlyVal != null ? Boolean.valueOf(isInviteOnlyVal) : false);
             String timer = getFormParameterSafely(postDecoder, "timer");
+            String startingCredits = getFormParameterSafely(postDecoder, "startingCredits");
             boolean playVsAi = Boolean.parseBoolean(getFormParameterSafely(postDecoder, "playVsAi"));
             String aiSkill = getFormParameterSafely(postDecoder, "aiSkill");
             String aiDeckName = getFormParameterSafely(postDecoder, "aiDeckName");
@@ -358,7 +359,7 @@ public class HallRequestHandler extends SwccgoServerRequestHandler implements Ur
             Player librarian = (sampleDeck || playVsAi) ? getLibrarian() : null;
             
             try {
-                var table = _hallServer.createNewTable(format, resourceOwner, deckName, sampleDeck, tableDesc, isPrivate, librarian, playVsAi, aiSkill, aiDeckName, aiDeckSample, timer, isInviteOnly);
+                var table = _hallServer.createNewTable(format, resourceOwner, deckName, sampleDeck, tableDesc, isPrivate, librarian, playVsAi, aiSkill, aiDeckName, aiDeckSample, timer, isInviteOnly, startingCredits);
 
                 // If this is a league that locks in the first deck used, then we will warn the player if
                 // A: they haven't locked in so that they can be aware that this will lock in, or
@@ -834,6 +835,8 @@ public class HallRequestHandler extends SwccgoServerRequestHandler implements Ur
                 }
                 Element formatElem = doc.createElement("format");
                 formatElem.setAttribute("type", format.getKey());
+                formatElem.setAttribute("startingCredits", String.valueOf(format.getValue().supportsStartingCredits()));
+                formatElem.setAttribute("defaultStartingCredits", String.valueOf(format.getValue().getDefaultStartingCredits()));
                 formatElem.appendChild(doc.createTextNode(format.getValue().getName()));
                 hall.appendChild(formatElem);
             }
