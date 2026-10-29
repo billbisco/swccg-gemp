@@ -1355,6 +1355,7 @@ public enum GameTextActionId {
     LEGACY__PROBE_TELEMETRY_V__TAKE_PROBE_DROID(true),
     LEGACY__RELEASE_YOUR_ANGER_V__TAKE_YOUR_POWERS(true),
     LEGACY__VOYEUR_V__DEPLOY_BATTLEGROUND_LOCATION(true),
+    LEGACY__STALKER_V__DEPLOY_PROBE_DROID(true),
     ;
 
     private boolean _searchCardPile;

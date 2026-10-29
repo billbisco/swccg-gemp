@@ -587,6 +587,7 @@ public interface Title {
     String Ice_Storm = "Ice Storm";
     String Id_Just_As_Soon_Kiss_A_Wookiee = "I'd Just As Soon Kiss A Wookiee";
     String If_The_Trace_Was_Correct = "If The Trace Was Correct";
+    String IG_88s_Neural_Inhibitor = "IG-88's Neural Inhibitor";
     String Igar = "Commander Igar";
     String I_Had_No_Choice = "I Had No Choice";
     String I_Must_Be_Allowed_To_Speak = "I Must Be Allowed To Speak";
@@ -820,6 +821,7 @@ public interface Title {
     String Mind_What_You_Have_Learned = "Mind What You Have Learned";
     String Mining_Village = "Mapuzo: Mining Village";
     String Mirax = "Mirax Terrik";
+    String Mist_Hunter = "Mist Hunter";
     String Mobilization_Points = "Mobilization Points";
     String Much_Anger_In_Him = "Much Anger In Him";
     String Molator = "Molator";
@@ -1124,6 +1126,7 @@ public interface Title {
     String Skyhook_Platform = "Kashyyyk: Skyhook Platform";
     String Skywalker_Hut = "Tatooine: Skywalker Hut";
     String Skywalkers = "Skywalkers";
+    String Slave_I = "Slave I";
     String Slave_Quarters = "Tatooine: Slave Quarters";
     String Slaving_Camp_Headquarters = "Kashyyyk: Slaving Camp Headquarters";
     String Slip_Sliding_Away = "Slip Sliding Away";
