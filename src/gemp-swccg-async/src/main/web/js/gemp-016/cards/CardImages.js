@@ -1,4 +1,13 @@
 const fixedImages = {
+"15_174":"https://wiki.swccg.com/images/c/cf/RG-GEMP-Begin-Landing-Your-Troops-Activate-The-Droids.png",
+"15_191":"https://wiki.swccg.com/images/3/35/RG-GEMP-Krayt-Dragon-Bones-Imperial-Justice.png",
+"15_206":"https://wiki.swccg.com/images/8/86/RG-GEMP-Scum-And-Villainy.png",
+"15_211":"https://wiki.swccg.com/images/3/39/RG-GEMP-This-Is-Outrageous-Motion-Supported.png",
+"15_213":"https://wiki.swccg.com/images/a/a7/RG-GEMP-Watto-s-Box-Quietly-Observing.png",
+"15_219":"https://wiki.swccg.com/images/b/b4/RG-GEMP-Always-Thinking-With-Your-Stomach-Scout-Recon.png",
+"15_235":"https://wiki.swccg.com/images/d/d1/RG-GEMP-Dioxis-They-re-Still-Coming-Through.png",
+"15_238":"https://wiki.swccg.com/images/e/ed/RG-GEMP-Elis-Helrot-Oo-ta-Goo-ta-Solo.png",
+"15_262":"https://wiki.swccg.com/images/2/22/RG-GEMP-Look-Sir-Droids-Counter-Assault.png",
 "15_37":"https://wiki.swccg.com/images/3/36/RG-GEMP-I-Must-Be-Allowed-To-Speak-Goo-Nee-Tay.png",
 "15_75":"https://wiki.swccg.com/images/d/d6/RG-GEMP-Effective-Repairs-Punch-It.png",
 "15_92":"https://wiki.swccg.com/images/b/b5/RG-GEMP-Insertion-Planning-Critical-Error-Revealed.png",

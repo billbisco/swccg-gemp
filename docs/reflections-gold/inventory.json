@@ -1301,7 +1301,8 @@
     "title": "Begin Landing Your Troops & Activate The Droids",
     "image": "RG-GEMP-Begin-Landing-Your-Troops-Activate-The-Droids.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_175",
@@ -1436,7 +1437,8 @@
     "title": "Krayt Dragon Bones & Imperial Justice",
     "image": "RG-GEMP-Krayt-Dragon-Bones-Imperial-Justice.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_192",
@@ -1555,7 +1557,8 @@
     "title": "Scum And Villainy & Information Exchange",
     "image": "RG-GEMP-Scum-And-Villainy.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_207",
@@ -1594,7 +1597,8 @@
     "title": "This Is Outrageous! & Motion Supported",
     "image": "RG-GEMP-This-Is-Outrageous-Motion-Supported.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_212",
@@ -1608,7 +1612,8 @@
     "title": "Watto's Box & Quietly Observing",
     "image": "RG-GEMP-Watto-s-Box-Quietly-Observing.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_214",
@@ -1656,7 +1661,8 @@
     "title": "Always Thinking With Your Stomach & Scout Recon",
     "image": "RG-GEMP-Always-Thinking-With-Your-Stomach-Scout-Recon.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_220",
@@ -1786,7 +1792,8 @@
     "title": "Dioxis & They're Still Coming Through!",
     "image": "RG-GEMP-Dioxis-They-re-Still-Coming-Through.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_236",
@@ -1808,7 +1815,8 @@
     "title": "Elis Helrot & Oo-ta Goo-ta Solo?",
     "image": "RG-GEMP-Elis-Helrot-Oo-ta-Goo-ta-Solo.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_239",
@@ -1997,7 +2005,8 @@
     "title": "Look Sir, Droids & Counter Assault",
     "image": "RG-GEMP-Look-Sir-Droids-Counter-Assault.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_263",
