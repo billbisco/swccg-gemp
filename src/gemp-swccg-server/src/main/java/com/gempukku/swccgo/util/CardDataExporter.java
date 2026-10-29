@@ -247,6 +247,9 @@ public class CardDataExporter {
 
         data.put("side", safeToString(blueprint.getSide()));
         data.put("uniqueness", safeToString(blueprint.getUniqueness()));
+        data.put("titleComponents", blueprint.getTitleComponents().stream()
+                .map(component -> Map.of("name", component.name(), "uniqueness", component.uniqueness().name()))
+                .collect(Collectors.toList()));
         data.put("expansionSet", safeToString(expansionSet));
         data.put("rarity", safeToString(blueprint.getRarity()));
 

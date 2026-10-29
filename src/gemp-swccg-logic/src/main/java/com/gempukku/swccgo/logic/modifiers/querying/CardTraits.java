@@ -29,15 +29,14 @@ public interface CardTraits extends BaseQuery, Limits, Piloting, Weapons {
         if (gameState.getCurrentPhase()== Phase.PLAY_STARTING_CARDS)
             return false;
 
-        Uniqueness uniqueness = getUniqueness(gameState, card);
-        if (uniqueness==null || uniqueness == Uniqueness.UNRESTRICTED || uniqueness.isPerSystem())
-            return false;
-
-        for (String title : card.getTitles()) {
-            if (uniqueness.getValue() <= getCardTitlePlayedTurnLimitCounter(title).getUsedLimit()) {
-                return true;
-            }
+        boolean constrained = false;
+        for (TitleComponent component : card.getTitleComponents()) {
+            Uniqueness uniqueness = getComponentUniqueness(gameState, card, component);
+            if (uniqueness == null || uniqueness == Uniqueness.UNRESTRICTED || uniqueness.isPerSystem()) continue;
+            constrained = true;
+            if (uniqueness.getValue() <= getTitleComponentPlayedTurnLimitCounter(component).getUsedLimit()) return true;
         }
+        if (!constrained) return false;
 
         // Personas are unique this turn for both players; once a persona has been played,
         // other cards of that persona (including different titles) may not be played this turn.
@@ -106,36 +105,24 @@ public interface CardTraits extends BaseQuery, Limits, Piloting, Weapons {
             }
         }
 
-        // Otherwise, check based on uniqueness of card title.
-        Uniqueness uniqueness = getUniqueness(gameState, card);
-        if (uniqueness != null && !uniqueness.isPerSystem()) {
-
-            Filter filterForUniqueness = Filters.sameTitleAs(card, false);
+        // Each component has its own pool; a combo must not sum unrelated titles together.
+        for (TitleComponent component : card.getTitleComponents()) {
+            Uniqueness uniqueness = getComponentUniqueness(gameState, card, component);
+            if (uniqueness == null || uniqueness == Uniqueness.UNRESTRICTED || uniqueness.isPerSystem()) continue;
+            Filter identity = Filters.titleComponent(component);
+            Filter filterForUniqueness = Filters.and(Filters.not(card), identity);
             if (blueprint.getCardCategory() == CardCategory.LOCATION) {
                 filterForUniqueness = Filters.and(filterForUniqueness, Filters.owner(card.getOwner()), Filters.not(Filters.collapsed), Filters.not(Filters.perSystemUniqueness));
+            } else {
+                filterForUniqueness = Filters.or(filterForUniqueness,
+                        Filters.and(Filters.your(card), Filters.not(card), Filters.hasPermanentAboard(identity)),
+                        Filters.and(Filters.your(card), Filters.not(card), Filters.hasPermanentWeapon(identity)));
             }
-            else {
-                filterForUniqueness = Filters.or(filterForUniqueness, Filters.and(Filters.your(card), Filters.hasPermanentAboard(filterForUniqueness)), Filters.and(Filters.your(card), Filters.hasPermanentWeapon(filterForUniqueness)));
-            }
-            int count = Filters.countForUniquenessChecking(gameState.getGame(), filterForUniqueness);
-
-            if (uniqueness == Uniqueness.UNIQUE) {
-                if (count > 0) {
-                    return true;
-                }
-
-                // Only check out of play for characters, starships, and vehicles (except Jabba's Prize)
-                if ((blueprint.getCardCategory() == CardCategory.CHARACTER || blueprint.getCardCategory() == CardCategory.STARSHIP || blueprint.getCardCategory() == CardCategory.VEHICLE)
-                        && !Filters.Jabbas_Prize.accepts(gameState, query(), card)) {
-                    if (!Filters.filterCount(gameState.getAllOutOfPlayCards(), gameState.getGame(), 1, Filters.and(Filters.your(card), Filters.sameTitleAs(card, false))).isEmpty()) {
-                        return true;
-                    }
-                }
-            }
-
-            if (uniqueness.getValue() <= count) {
-                return true;
-            }
+            if (uniqueness.getValue() <= Filters.countForUniquenessChecking(gameState.getGame(), filterForUniqueness)) return true;
+            if (uniqueness == Uniqueness.UNIQUE
+                    && (blueprint.getCardCategory() == CardCategory.CHARACTER || blueprint.getCardCategory() == CardCategory.STARSHIP || blueprint.getCardCategory() == CardCategory.VEHICLE)
+                    && !Filters.Jabbas_Prize.accepts(gameState, query(), card)
+                    && !Filters.filterCount(gameState.getAllOutOfPlayCards(), gameState.getGame(), 1, Filters.and(Filters.your(card), identity)).isEmpty()) return true;
         }
 
         // Check its permanent weapon by title (if any)
@@ -340,14 +327,7 @@ public interface CardTraits extends BaseQuery, Limits, Piloting, Weapons {
      * @return true if cards have same card title, otherwise false
      */
     default boolean cardTitlesMatch(GameState gameState, PhysicalCard card1, PhysicalCard card2) {
-        // Check each title
-        for (String cardTitle : card1.getTitles()) {
-            if (Filters.title(cardTitle).accepts(gameState, query(), card2)) {
-                return true;
-            }
-        }
-
-        return false;
+        return !card2.isBlownAway() && card1.getTitleComponents().stream().anyMatch(card2.getTitleComponents()::contains);
     }
 
     default boolean isSpecies(GameState gameState, PhysicalCard physicalCard, Species species) {
@@ -449,6 +429,14 @@ public interface CardTraits extends BaseQuery, Limits, Piloting, Weapons {
     }
 
 
+
+    default Uniqueness getComponentUniqueness(GameState gameState, PhysicalCard card, TitleComponent component) {
+        if (!getModifiersAffectingCard(gameState, ModifierType.NOT_UNIQUE, card).isEmpty()) return null;
+        if (!getModifiersAffectingCard(gameState, ModifierType.UNIQUE, card).isEmpty()) return Uniqueness.UNIQUE;
+        // Null and UNRESTRICTED have the same printed symbol, but legacy predicates distinguish them.
+        return component.uniqueness() == Uniqueness.UNRESTRICTED && card.getBlueprint().getUniqueness() == null
+                ? null : component.uniqueness();
+    }
 
     default Uniqueness getUniqueness(GameState gameState, PhysicalCard card) {
         if (!getModifiersAffectingCard(gameState, ModifierType.NOT_UNIQUE, card).isEmpty())
