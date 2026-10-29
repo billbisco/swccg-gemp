@@ -1,4 +1,11 @@
 const fixedImages = {
+"15_255":"https://wiki.swccg.com/images/8/86/RG-GEMP-Informant-Takeel.png",
+"15_227":"https://wiki.swccg.com/images/5/5e/RG-GEMP-Cold-Feet-He-Hasn-t-Come-Back-Yet.png",
+"15_199":"https://wiki.swccg.com/images/4/4e/RG-GEMP-Presence-Of-The-Force-Dark-Waters.png",
+"15_242":"https://wiki.swccg.com/images/5/58/RG-GEMP-Force-Lightning-Rise-My-Friend.png",
+"15_215":"https://wiki.swccg.com/images/e/e4/RG-GEMP-Well-Guarded-Security-Precautions.png",
+"15_218":"https://wiki.swccg.com/images/1/14/RG-GEMP-Your-Destiny-Insignificant-Rebellion.png",
+"15_178":"https://wiki.swccg.com/images/4/46/RG-GEMP-Emperor-s-Power-Overseeing-It-Personally.png",
 "15_20":"https://wiki.swccg.com/images/5/52/RG-GEMP-A-Gift.png",
 "15_60":"https://wiki.swccg.com/images/f/f9/RG-GEMP-A-Few-Maneuvers-Han-s-Dice.png",
 "15_81":"https://wiki.swccg.com/images/6/67/RG-GEMP-Fly-Casual.png",
