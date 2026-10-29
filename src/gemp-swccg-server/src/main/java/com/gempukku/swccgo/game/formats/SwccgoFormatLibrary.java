@@ -49,6 +49,7 @@ public class SwccgoFormatLibrary {
 
                     final DefaultSwccgFormat format = new DefaultSwccgFormat(library, name, downloadBattlegroundRule, loreHeroicRule, jpSealedRule, playtesting);
                     format.setCode(formatCode);
+                    format.setStartingCredits(Boolean.TRUE.equals(formatDef.get("startingCredits")));
 
                     Boolean skipFormatPool = (Boolean) formatDef.get("skipFormatPool");
                     if (skipFormatPool != null && skipFormatPool)

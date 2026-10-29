@@ -38,6 +38,8 @@ public final class GameSaveHeader {
     public String gameId;
     public String formatCode;
     public long seed;
+    /** Zero for older saves, which predate credit selection. */
+    public int startingCredits;
     public List<Seat> seats = new ArrayList<>();
     /** Build that started the game. */
     public String buildCommit;

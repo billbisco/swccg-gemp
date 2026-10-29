@@ -85,12 +85,17 @@ final class PlayNowSaves implements SavedGameManager.LiveGameHooks, GameResumer.
         return _random.nextLong();
     }
 
-    /** The header of a new Play now game. */
     static GameSaveHeader header(String gameId, String seatId, PlayNowSide side, PlayNowBot bot, long seed) {
+        return header(gameId, seatId, side, bot, seed, 0);
+    }
+
+    /** The header of a new Play now game. */
+    static GameSaveHeader header(String gameId, String seatId, PlayNowSide side, PlayNowBot bot, long seed, int startingCredits) {
         GameSaveHeader header = new GameSaveHeader();
         header.gameId = gameId;
         header.formatCode = HallServer.PLAY_NOW_FORMAT;
         header.seed = seed;
+        header.startingCredits = startingCredits;
         header.buildCommit = SaveBuild.current().getBuildCommit();
         header.seats.add(GameSaveHeader.seat(seatId, seatId, null, GuestDecks.deck(side)));
         header.seats.add(GameSaveHeader.seat(bot.getPlayerId(), bot.getPlayerId(), bot.getCode(), GuestDecks.deck(side.opposite())));
@@ -212,6 +217,7 @@ final class PlayNowSaves implements SavedGameManager.LiveGameHooks, GameResumer.
         DefaultSwccgGame game = new DefaultSwccgGame(format, decks, feedback, _library, clocks, _bonusAbilities);
         feedback.setGame(game);
         game.getGameState().setRandomSeed(header.seed);
+        game.getGameState().setStartingCredits(header.startingCredits);
         game.startGame();
         return new SaveRoot(game, feedback, bots);
     }

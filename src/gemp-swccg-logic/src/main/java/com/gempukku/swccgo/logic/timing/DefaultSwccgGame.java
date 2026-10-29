@@ -107,6 +107,7 @@ public class DefaultSwccgGame implements SwccgGame {
         }
 
         _gameState = new GameState(this);
+        _gameState.setStartingCredits(format.getDefaultStartingCredits());
         _modifiersLogic = new ModifiersLogic(this);
         _userFeedback = userFeedback;
 

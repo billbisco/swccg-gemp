@@ -326,6 +326,14 @@ public class HallServer extends AbstractServer {
             boolean isPrivate, Player librarian, boolean playVsAi, String aiSkill, String aiDeckName, boolean aiDeckSample,
             String timerCode, boolean isInviteOnly)
             throws HallException {
+        return createNewTable(type, player, deckName, sampleDeck, tableDesc, isPrivate, librarian, playVsAi,
+                aiSkill, aiDeckName, aiDeckSample, timerCode, isInviteOnly, null);
+    }
+
+    public AwaitingTable createNewTable(String type, Player player, String deckName, boolean sampleDeck, String tableDesc,
+            boolean isPrivate, Player librarian, boolean playVsAi, String aiSkill, String aiDeckName, boolean aiDeckSample,
+            String timerCode, boolean isInviteOnly, String startingCredits)
+            throws HallException {
         if (_shutdown)
             throw new HallException(
                     "Server is in shutdown mode. No games may be started. Server will be restarted after all games have finished.");
@@ -395,6 +403,8 @@ public class HallServer extends AbstractServer {
             boolean isPrivateGame = isPrivate;
             boolean inviteOnlyGame = isInviteOnly && !playVsAi;
             HallGameTimer gameTimer = (league == null) ? HallGameTimer.fromCode(timerCode) : null;
+            if (league != null && startingCredits != null && !startingCredits.isEmpty())
+                throw new HallException("League games use the format's default starting credits");
 
             if (inviteOnlyGame) {
                 String inviteeName = tableDesc == null ? "" : tableDesc.trim();
@@ -450,6 +460,11 @@ public class HallServer extends AbstractServer {
             String tableId = new SwccgUuid().generateNewTableId();
             AwaitingTable table = new AwaitingTable(format, collectionType, league, leagueSerie, tableDesc,
                     isPrivateGame, inviteOnlyGame, gameTimer);
+            try {
+                table.setStartingCredits(startingCredits);
+            } catch (IllegalArgumentException e) {
+                throw new HallException(e.getMessage());
+            }
             _awaitingTables.put(tableId, table);
 
             if (playVsAi) {
@@ -525,7 +540,7 @@ public class HallServer extends AbstractServer {
                             long seed = saves.newSeed();
                             mediator.setRandomSeed(seed);
                             mediator.setSaveHooks(saves.hooksFor(mediator, owner,
-                                    PlayNowSaves.header(mediator.getGameId(), seatId, side, bot, seed)));
+                                    PlayNowSaves.header(mediator.getGameId(), seatId, side, bot, seed, mediator.getGameState().getStartingCredits())));
                             mediator.addGameResultListener(saves.deleteSaveWhenOver(mediator.getGameId()));
                         }
                     });
@@ -1410,7 +1425,9 @@ public class HallServer extends AbstractServer {
 
                 boolean hidePlayerId = table.getLeague() != null && !table.getLeague().getShowPlayerNames();
                 visitor.visitTable(tableInformation.getKey(), null, false, HallInfoVisitor.TableStatus.WAITING,
-                        "Waiting", table.getSwccgoFormat().getName(), table.getSwccgoFormat().getCode(),
+                        "Waiting", table.getSwccgoFormat().getName()
+                                + (table.getSwccgoFormat().supportsStartingCredits() ? " (" + table.getStartingCredits() + " starting credits)" : ""),
+                        table.getSwccgoFormat().getCode(),
                         table.getCollectionType() != null ? table.getCollectionType().getCode() : "default",
                         getTournamentName(table),
                         table.getLeague() != null ? null : table.getTableDesc(), players, null,
@@ -1777,7 +1794,8 @@ public class HallServer extends AbstractServer {
                 getTournamentName(awaitingTable), league != null ? null : awaitingTable.getTableDesc(), allowSpectators,
                 true, !awaitingTable.isPrivate(), (league == null) && !awaitingTable.isPrivate(), allowTimerExtensions,
                 decisionTimeoutSeconds, timePerPlayerMinutes, awaitingTable.isPrivate(), aiPlayerId, aiSkill,
-                maxPlayerTimeSeconds);
+                maxPlayerTimeSeconds, true,
+                mediator -> mediator.getGameState().setStartingCredits(awaitingTable.getStartingCredits()));
         awaitingTable.setStartedGameId(gameId);
         _awaitingTables.remove(tableId);
         removeWaitingTablesWithPlayers(players);

@@ -514,6 +514,7 @@ var GempSwccgHallUI = Class.extend({
         this.supportedFormatsSelect = $("<select class='play-form-select' style='width: 175px'></select>");
         this.supportedFormatsSelect.hide();
         this.supportedFormatsSelect.change(function () {
+            that.updateStartingCredits();
             var fmt = that.supportedFormatsSelect.val();
             if (fmt)
                 that.updateDecks(fmt, "default");
@@ -821,6 +822,11 @@ var GempSwccgHallUI = Class.extend({
         this.descRow.append("<span class='play-form-label'>Description</span>");
         this.descRow.append(this.tableDescInput);
 
+        this.startingCreditsInput = $("<input type='number' min='0' max='60' step='1' value='5' class='play-form-select'>");
+        this.startingCreditsRow = $("<div class='play-form-row'></div>").hide();
+        this.startingCreditsRow.append("<span class='play-form-label'>Starting credits</span>");
+        this.startingCreditsRow.append(this.startingCreditsInput);
+        this.startingCreditsRow.append("<span>0–60 per player; 0 uses random opening hands.</span>");
         this.timerRow = $("<div class='play-form-row'></div>");
         this.timerRow.append("<span class='play-form-label'>Game Timer</span>");
         this.timerRow.append(this.timerSelect);
@@ -857,6 +863,7 @@ var GempSwccgHallUI = Class.extend({
         this.playFormFields.append(this.libraryDeckRow);
         this.playFormFields.append(this.descRow);
         this.playFormFields.append(this.timerRow);
+        this.playFormFields.append(this.startingCreditsRow);
         this.playFormFields.append(this.inviteRow);
         this.playFormFields.append(this.inviteeRow);
         this.playFormFields.append(this.privateRow);
@@ -2257,6 +2264,7 @@ var GempSwccgHallUI = Class.extend({
         this.clearPlayFormResult();
 
         this.filterFormatsForPlayMode(mode);
+        this.updateStartingCredits();
         var fmt = this.supportedFormatsSelect.val();
         this.updateDecks(fmt, "default");
         this.updateAiDecksForSelection();
@@ -2266,6 +2274,16 @@ var GempSwccgHallUI = Class.extend({
             this.supportedFormatsSelect.css("display", "");
             this.createTableButton.css("display", "");
         }
+    },
+
+    updateStartingCredits:function() {
+        if (!this.startingCreditsRow) return;
+        var option = this.supportedFormatsSelect.find("option:selected");
+        var eligible = this.playMode !== "league" && option.attr("data-starting-credits") === "true";
+        this.startingCreditsRow.toggle(eligible);
+        this.startingCreditsInput.prop("disabled", !eligible);
+        // Reset when changing format so a hidden control cannot retain a prior table's custom budget.
+        this.startingCreditsInput.val(eligible ? option.attr("data-default-starting-credits") : "");
     },
 
     applyCasualBotFieldVisibility:function() {
@@ -2948,7 +2966,7 @@ var GempSwccgHallUI = Class.extend({
         }
         $(this.leagueCreateButton).button("disable");
         // League tables: human, not private (server rejects otherwise)
-        this.comm.createTable(format, deck, sampleDeck, "", false, false, null, null, null, null, false,
+        this.comm.createTable(format, deck, sampleDeck, "", false, false, null, null, null, null, false, null,
             function (xml) {
                 $(that.leagueCreateButton).button("enable");
                 if (xml != null) {
@@ -3156,6 +3174,12 @@ var GempSwccgHallUI = Class.extend({
             aiDeckSample = botDeck.sample;
         }
         var timer = (that.playMode === "casual" && that.timerSelect != null) ? that.timerSelect.val() : null;
+        var creditEligible = that.playMode !== "league" && that.supportedFormatsSelect.find("option:selected").attr("data-starting-credits") === "true";
+        var startingCredits = creditEligible ? that.startingCreditsInput.val() : null;
+        if (creditEligible && (!/^[0-9]{1,2}$/.test(startingCredits) || Number(startingCredits) > 60)) {
+            that.showPlayFormResult("Starting credits must be a whole number from 0 to 60.", true);
+            return;
+        }
         var keepOpen = that.keepOpenCheckbox != null && that.keepOpenCheckbox.find("input").is(":checked");
         that.clearPlayFormResult();
         $(that.createTableButton).button("disable");
@@ -3188,7 +3212,7 @@ var GempSwccgHallUI = Class.extend({
             finishErr(that.extractCreateTableErrorMessage(xhr, "Could not create table."));
         };
 
-        that.comm.createTable(format, deck, sampleDeck, tableDesc, isPrivate, playVsAi, aiSkill, aiDeckName, aiDeckSample, timer, isInviteOnly, function (xml) {
+        that.comm.createTable(format, deck, sampleDeck, tableDesc, isPrivate, playVsAi, aiSkill, aiDeckName, aiDeckSample, timer, isInviteOnly, startingCredits, function (xml) {
             var started = false;
             if (xml != null && xml.documentElement != null) {
                 var root = xml.documentElement;
@@ -4373,9 +4397,12 @@ var GempSwccgHallUI = Class.extend({
                 for (var i = 0; i < formats.length; i++) {
                     var format = formats[i].childNodes[0].nodeValue;
                     var type = formats[i].getAttribute("type");
-                    this.supportedFormatsSelect.append("<option value='" + type + "'>" + format + "</option>");
+                    this.supportedFormatsSelect.append($("<option></option>").val(type).text(format)
+                        .attr("data-starting-credits", formats[i].getAttribute("startingCredits"))
+                        .attr("data-default-starting-credits", formats[i].getAttribute("defaultStartingCredits")));
                 }
                 this.supportedFormatsInitialized = true;
+                this.updateStartingCredits();
                 // Mark league-type options via /league list (hall emits both as plain <format>)
                 this.tagLeagueFormats();
                 this.populateTournamentFormats();

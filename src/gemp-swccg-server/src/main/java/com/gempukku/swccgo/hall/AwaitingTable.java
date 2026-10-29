@@ -19,6 +19,7 @@ public class AwaitingTable {
     private boolean _isPrivate;
     private boolean _isInviteOnly;
     private HallGameTimer _gameTimer;
+    private int _startingCredits;
     private SwccgDeck _aiDeck;
     private String _aiPlayerId;
     private String _aiSkill;
@@ -34,6 +35,7 @@ public class AwaitingTable {
     public AwaitingTable(SwccgFormat swccgFormat, CollectionType collectionType, League league, LeagueSeriesData leagueSeries,
             String tableDesc, boolean isPrivate, boolean isInviteOnly, HallGameTimer gameTimer) {
         _swccgFormat = swccgFormat;
+        _startingCredits = swccgFormat.getDefaultStartingCredits();
         _collectionType = collectionType;
         _league = league;
         _leagueSeries = leagueSeries;
@@ -41,6 +43,12 @@ public class AwaitingTable {
         _isPrivate = isPrivate;
         _isInviteOnly = isInviteOnly;
         _gameTimer = gameTimer;
+    }
+
+    public int getStartingCredits() { return _startingCredits; }
+
+    public void setStartingCredits(String value) {
+        _startingCredits = com.gempukku.swccgo.game.StartingCredits.resolve(_swccgFormat, value);
     }
 
     public boolean isPrivate() {
