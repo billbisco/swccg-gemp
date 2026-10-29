@@ -1,0 +1,51 @@
+[
+  {
+    "id": "15_20",
+    "title": "A Gift",
+    "credits": 3,
+    "image": "RG-GEMP-A-Gift.png",
+    "imageUrl": "https://wiki.swccg.com/images/5/52/RG-GEMP-A-Gift.png"
+  },
+  {
+    "id": "15_60",
+    "title": "A Few Maneuvers & Han's Dice",
+    "credits": 0,
+    "image": "RG-GEMP-A-Few-Maneuvers-Han-s-Dice.png",
+    "imageUrl": "https://wiki.swccg.com/images/f/f9/RG-GEMP-A-Few-Maneuvers-Han-s-Dice.png"
+  },
+  {
+    "id": "15_81",
+    "title": "Fly Casual",
+    "credits": 3,
+    "image": "RG-GEMP-Fly-Casual.png",
+    "imageUrl": "https://wiki.swccg.com/images/6/67/RG-GEMP-Fly-Casual.png"
+  },
+  {
+    "id": "15_115",
+    "title": "Old Ben & Noble Sacrifice",
+    "credits": 0,
+    "image": "RG-GEMP-Old-Ben-Noble-Sacrifice.png",
+    "imageUrl": "https://wiki.swccg.com/images/b/b3/RG-GEMP-Old-Ben-Noble-Sacrifice.png"
+  },
+  {
+    "id": "15_129",
+    "title": "Skull & Mandalorian Mishap",
+    "credits": 0,
+    "image": "RG-GEMP-Skull-Mandalorian-Mishap.png",
+    "imageUrl": "https://wiki.swccg.com/images/9/9e/RG-GEMP-Skull-Mandalorian-Mishap.png"
+  },
+  {
+    "id": "15_138",
+    "title": "The Force Is Strong With This One & Jedi Presence",
+    "credits": 0,
+    "image": "RG-GEMP-The-Force-Is-Strong-With-This-One-Jedi-Presence.png",
+    "imageUrl": "https://wiki.swccg.com/images/c/c6/RG-GEMP-The-Force-Is-Strong-With-This-One-Jedi-Presence.png"
+  },
+  {
+    "id": "15_151",
+    "title": "Wookiee Strangle & We'll Find Han",
+    "credits": 0,
+    "image": "RG-GEMP-Wookiee-Strangle-We-ll-Find-Han.png",
+    "imageUrl": "https://wiki.swccg.com/images/f/fe/RG-GEMP-Wookiee-Strangle-We-ll-Find-Han.png"
+  }
+]

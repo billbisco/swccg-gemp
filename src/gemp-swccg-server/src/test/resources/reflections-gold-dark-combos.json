@@ -1,0 +1,360 @@
+[
+  {
+    "id": "15_263",
+    "title": "Master, Destroyers! & Rolling, Rolling, Rolling",
+    "destiny": 4,
+    "credits": 0,
+    "unique": true,
+    "episodeI": true,
+    "horizontal": false,
+    "image": "RG-GEMP-Master-Destroyers-Rolling-Rolling-Rolling.png",
+    "sha256": "1624af3caf008256df494a6e60131706a7b86a78afc2280d36077befdf0610b5",
+    "source": "Full remastered image visually read; approved wording overlay retained.",
+    "subtype": "USED_OR_LOST",
+    "titles": [
+      "Master, Destroyers!",
+      "Rolling, Rolling, Rolling"
+    ],
+    "imageUrl": "https://wiki.swccg.com/images/5/5f/RG-GEMP-Master-Destroyers-Rolling-Rolling-Rolling.png"
+  },
+  {
+    "id": "15_264",
+    "title": "Maul Strikes & No Match For A Sith",
+    "destiny": 3,
+    "credits": 0,
+    "unique": true,
+    "episodeI": true,
+    "horizontal": false,
+    "image": "RG-GEMP-Maul-Strikes-No-Match-For-A-Sith.png",
+    "sha256": "f172e23b7554d25cec3fe431cc728de762f3326f740134e79d16f068fa9a6e07",
+    "source": "Full remastered image visually read; approved wording overlay retained.",
+    "subtype": "LOST",
+    "titles": [
+      "Maul Strikes",
+      "No Match For A Sith"
+    ],
+    "imageUrl": "https://wiki.swccg.com/images/1/10/RG-GEMP-Maul-Strikes-No-Match-For-A-Sith.png"
+  },
+  {
+    "id": "15_266",
+    "title": "Oo-ta Goo-ta Solo?",
+    "destiny": 5,
+    "credits": 1,
+    "unique": false,
+    "episodeI": false,
+    "horizontal": true,
+    "image": "RG-GEMP-Oo-ta-Goo-ta-Solo.png",
+    "sha256": "1f626d9453aae1c9023fa4571de249c67317a5e01a5ec9ebaf7ad3f774f7b814",
+    "source": "Full remastered image visually read; approved wording overlay retained.",
+    "subtype": "USED",
+    "titles": [
+      "Oo-ta Goo-ta, Solo?"
+    ],
+    "imageUrl": "https://wiki.swccg.com/images/c/cb/RG-GEMP-Oo-ta-Goo-ta-Solo.png"
+  },
+  {
+    "id": "15_267",
+    "title": "Operational As Planned & Wounded Warrior",
+    "destiny": 3,
+    "credits": 0,
+    "unique": true,
+    "episodeI": false,
+    "horizontal": false,
+    "image": "RG-GEMP-Operational-As-Planned-Wounded-Warrior.png",
+    "sha256": "3f08e0f59fb4b87680bfd72a5e3f4f39b35ed76149d90a1eb93b80580a546988",
+    "source": "Full remastered image visually read; approved wording overlay retained.",
+    "subtype": "USED_OR_STARTING",
+    "titles": [
+      "Operational As Planned",
+      "Wounded Warrior"
+    ],
+    "imageUrl": "https://wiki.swccg.com/images/1/18/RG-GEMP-Operational-As-Planned-Wounded-Warrior.png"
+  },
+  {
+    "id": "15_269",
+    "title": "Overwhelmed & A Dark Time For The Rebellion",
+    "destiny": 2,
+    "credits": 0,
+    "unique": true,
+    "episodeI": false,
+    "horizontal": false,
+    "image": "RG-GEMP-Overwhelmed-A-Dark-Time-For-The-Rebellion.png",
+    "sha256": "290629e846bfa70fb64604d5bd451553c34046b36c18196ad179e340de9bd066",
+    "source": "Full remastered image visually read; approved wording overlay retained.",
+    "subtype": "LOST",
+    "titles": [
+      "Overwhelmed",
+      "A Dark Time For The Rebellion"
+    ],
+    "imageUrl": "https://wiki.swccg.com/images/4/4f/RG-GEMP-Overwhelmed-A-Dark-Time-For-The-Rebellion.png"
+  },
+  {
+    "id": "15_272",
+    "title": "Podracer Collision & Hit Racer",
+    "destiny": 2,
+    "credits": 0,
+    "unique": true,
+    "episodeI": true,
+    "horizontal": false,
+    "image": "RG-GEMP-Podracer-Collision-Hit-Racer.png",
+    "sha256": "e9879949be262a5e1c37284c9786b3fda73e3db8134d81022e06ff1413fe2327",
+    "source": "Full remastered image visually read; approved wording overlay retained.",
+    "subtype": "LOST",
+    "titles": [
+      "Podracer Collision",
+      "Hit Racer"
+    ],
+    "imageUrl": "https://wiki.swccg.com/images/5/50/RG-GEMP-Podracer-Collision-Hit-Racer.png"
+  },
+  {
+    "id": "15_273",
+    "title": "Point Man & Slip Sliding Away",
+    "destiny": 4,
+    "credits": 0,
+    "unique": true,
+    "episodeI": false,
+    "horizontal": false,
+    "image": "RG-GEMP-Point-Man-Slip-Sliding-Away.png",
+    "sha256": "c2788915906578f08d9e14b899606b34ed7d43aeee0064bc14dfffec0ee4d2ce",
+    "source": "Full remastered image visually read; approved wording overlay retained.",
+    "subtype": "USED",
+    "titles": [
+      "Point Man",
+      "Slip Sliding Away"
+    ],
+    "imageUrl": "https://wiki.swccg.com/images/6/66/RG-GEMP-Point-Man-Slip-Sliding-Away.png"
+  },
+  {
+    "id": "15_275",
+    "title": "Put All Sections On Alert & Full Scale Alert",
+    "destiny": 3,
+    "credits": 0,
+    "unique": true,
+    "episodeI": false,
+    "horizontal": false,
+    "image": "RG-GEMP-Put-All-Sections-On-Alert-Full-Scale-Alert.png",
+    "sha256": "4d41e60521d8127ebdc7c575b1b1436f54cee695553e75b3a17e169a006c9a75",
+    "source": "Full remastered image visually read; approved wording overlay retained.",
+    "subtype": "USED_OR_LOST",
+    "titles": [
+      "Put All Sections On Alert",
+      "Full Scale Alert"
+    ],
+    "imageUrl": "https://wiki.swccg.com/images/3/33/RG-GEMP-Put-All-Sections-On-Alert-Full-Scale-Alert.png"
+  },
+  {
+    "id": "15_276",
+    "title": "Release Your Anger & Unexpected Interruption",
+    "destiny": 2,
+    "credits": 0,
+    "unique": true,
+    "episodeI": false,
+    "horizontal": false,
+    "image": "RG-GEMP-Release-Your-Anger-Unexpected-Interruption.png",
+    "sha256": "7a210db82346e6e2ae70671b7c2401e0ba1c34eac56e6bfdcee6dfeedcfca12b",
+    "source": "Full remastered image visually read; approved wording overlay retained.",
+    "subtype": "LOST",
+    "titles": [
+      "Release Your Anger",
+      "Unexpected Interruption"
+    ],
+    "imageUrl": "https://wiki.swccg.com/images/8/8a/RG-GEMP-Release-Your-Anger-Unexpected-Interruption.png"
+  },
+  {
+    "id": "15_280",
+    "title": "Shut Him Up Or Shut Him Down & Voyeur",
+    "destiny": 3,
+    "credits": 0,
+    "unique": true,
+    "episodeI": false,
+    "horizontal": false,
+    "image": "RG-GEMP-Shut-Him-Up-Or-Shut-Him-Down-Voyeur.png",
+    "sha256": "5288575013243834443dee4928af1abb6eed5cbc3305804b7ea389d80c87a6d1",
+    "source": "Full remastered image visually read; approved wording overlay retained.",
+    "subtype": "USED_OR_LOST",
+    "titles": [
+      "Shut Him Up Or Shut Him Down",
+      "Voyeur"
+    ],
+    "imageUrl": "https://wiki.swccg.com/images/a/a8/RG-GEMP-Shut-Him-Up-Or-Shut-Him-Down-Voyeur.png"
+  },
+  {
+    "id": "15_282",
+    "title": "Something Hit Us! & Why Didn't You Tell Me?",
+    "destiny": 3,
+    "credits": 0,
+    "unique": true,
+    "episodeI": false,
+    "horizontal": false,
+    "image": "RG-GEMP-Something-Hit-Us-Why-Didn-t-You-Tell-Me.png",
+    "sha256": "fd3bf1c58d9cdb69a669d062234a68a40a0dffe0725b4ae5f0fad40c1f4036be",
+    "source": "Full remastered image visually read; approved wording overlay retained.",
+    "subtype": "USED_OR_LOST",
+    "titles": [
+      "Something Hit Us!",
+      "Why Didn't You Tell Me?"
+    ],
+    "imageUrl": "https://wiki.swccg.com/images/8/88/RG-GEMP-Something-Hit-Us-Why-Didn-t-You-Tell-Me.png"
+  },
+  {
+    "id": "15_285",
+    "title": "Start Your Engines! & Pit Crews",
+    "destiny": 3,
+    "credits": 0,
+    "unique": true,
+    "episodeI": true,
+    "horizontal": false,
+    "image": "RG-GEMP-Start-Your-Engines-Pit-Crews.png",
+    "sha256": "47aaf751074233c54985898ac93ea294e176f2bd93c7b7fca9400e226aeea925",
+    "source": "Full remastered image visually read; approved wording overlay retained.",
+    "subtype": "LOST_OR_STARTING",
+    "titles": [
+      "Start Your Engines!",
+      "Pit Crews"
+    ],
+    "imageUrl": "https://wiki.swccg.com/images/8/87/RG-GEMP-Start-Your-Engines-Pit-Crews.png"
+  },
+  {
+    "id": "15_286",
+    "title": "Surprise & E Chu Ta",
+    "destiny": 3,
+    "credits": 0,
+    "unique": false,
+    "episodeI": false,
+    "horizontal": false,
+    "image": "RG-GEMP-Surprise-E-Chu-Ta.png",
+    "sha256": "56f56dfe0fd2710dcc72aa120a2784b54b57a58c0f2ebbe919dceaa28a34e1c1",
+    "source": "Full remastered image visually read; approved wording overlay retained.",
+    "subtype": "USED_OR_LOST",
+    "titles": [
+      "Surprise",
+      "E Chu Ta"
+    ],
+    "imageUrl": "https://wiki.swccg.com/images/6/6a/RG-GEMP-Surprise-E-Chu-Ta.png"
+  },
+  {
+    "id": "15_290",
+    "title": "The Circle Is Now Complete & Vader's Obsession",
+    "destiny": 3,
+    "credits": 0,
+    "unique": true,
+    "episodeI": false,
+    "horizontal": false,
+    "image": "RG-GEMP-The-Circle-Is-Now-Complete-Vader-s-Obsession.png",
+    "sha256": "99f58746ab02f881a814b05a73716f80e8aa4fce42f17e576e533b5497ed4f21",
+    "source": "Full remastered image visually read; approved wording overlay retained.",
+    "subtype": "LOST",
+    "titles": [
+      "The Circle Is Now Complete",
+      "Vader's Obsession"
+    ],
+    "imageUrl": "https://wiki.swccg.com/images/5/50/RG-GEMP-The-Circle-Is-Now-Complete-Vader-s-Obsession.png"
+  },
+  {
+    "id": "15_291",
+    "title": "They're Still Coming Through",
+    "destiny": 4,
+    "credits": 2,
+    "unique": false,
+    "episodeI": true,
+    "horizontal": true,
+    "image": "RG-GEMP-They-re-Still-Coming-Through.png",
+    "sha256": "d74bd0650383941982d86c54112b1b6b10ccd04d16e31dd4f317301a306da941",
+    "source": "Full remastered image visually read; approved wording overlay retained.",
+    "subtype": "USED",
+    "titles": [
+      "They're Still Coming Through!"
+    ],
+    "imageUrl": "https://wiki.swccg.com/images/a/af/RG-GEMP-They-re-Still-Coming-Through.png"
+  },
+  {
+    "id": "15_294",
+    "title": "Trade Federation Tactics & We're Hit Artoo",
+    "destiny": 4,
+    "credits": 0,
+    "unique": true,
+    "episodeI": true,
+    "horizontal": false,
+    "image": "RG-GEMP-Trade-Federation-Tactics-We-re-Hit-Artoo.png",
+    "sha256": "6503d406abc606f1b21e5b1e94c8332dcd6664385b0fd3d9d38ea510ed79b4c2",
+    "source": "Full remastered image visually read; approved wording overlay retained.",
+    "subtype": "USED_OR_LOST",
+    "titles": [
+      "Trade Federation Tactics",
+      "We're Hit, Artoo"
+    ],
+    "imageUrl": "https://wiki.swccg.com/images/e/ec/RG-GEMP-Trade-Federation-Tactics-We-re-Hit-Artoo.png"
+  },
+  {
+    "id": "15_295",
+    "title": "Trample & Lightsaber Deficiency",
+    "destiny": 3,
+    "credits": 0,
+    "unique": false,
+    "episodeI": false,
+    "horizontal": false,
+    "image": "RG-GEMP-Trample-Lightsaber-Deficiency.png",
+    "sha256": "6e38edcd3fe7a5640a174ffa16f7e8885dbf05e4353925dc805b862e35961834",
+    "source": "Full remastered image visually read; approved wording overlay retained.",
+    "subtype": "USED",
+    "titles": [
+      "Trample",
+      "Lightsaber Deficiency"
+    ],
+    "imageUrl": "https://wiki.swccg.com/images/b/b0/RG-GEMP-Trample-Lightsaber-Deficiency.png"
+  },
+  {
+    "id": "15_297",
+    "title": "Trooper Assault & Tactical Support",
+    "destiny": 4,
+    "credits": 0,
+    "unique": true,
+    "episodeI": false,
+    "horizontal": false,
+    "image": "RG-GEMP-Trooper-Assault-Tactical-Support.png",
+    "sha256": "df4177996de7b9f7bfb9aad75c771525a4ca7298b2dddfe25aa366eac94d7b8b",
+    "source": "Full remastered image visually read; approved wording overlay retained.",
+    "subtype": "USED_OR_LOST",
+    "titles": [
+      "Trooper Assault",
+      "Tactical Support"
+    ],
+    "imageUrl": "https://wiki.swccg.com/images/e/e5/RG-GEMP-Trooper-Assault-Tactical-Support.png"
+  },
+  {
+    "id": "15_302",
+    "title": "Watto's Chance Cube & You Swindled Me!",
+    "destiny": 4,
+    "credits": 0,
+    "unique": true,
+    "episodeI": true,
+    "horizontal": false,
+    "image": "RG-GEMP-Watto-s-Chance-Cube-You-Swindled-Me.png",
+    "sha256": "9eaae223da42fe88fa8c1174336deba71bcb73354ea037dc493e8abdd7cd12be",
+    "source": "Full remastered image visually read; approved wording overlay retained.",
+    "subtype": "USED_OR_LOST",
+    "titles": [
+      "Watto's Chance Cube",
+      "You Swindled Me!"
+    ],
+    "imageUrl": "https://wiki.swccg.com/images/9/92/RG-GEMP-Watto-s-Chance-Cube-You-Swindled-Me.png"
+  },
+  {
+    "id": "15_304",
+    "title": "We Must Accelerate Our Plans & Vote Now!",
+    "destiny": 4,
+    "credits": 0,
+    "unique": true,
+    "episodeI": true,
+    "horizontal": false,
+    "image": "RG-GEMP-We-Must-Accelerate-Our-Plans-Vote-Now.png",
+    "sha256": "8a3d5e3de6ee32cb6e6a7473ce7bf9f47db4023648f9937207071374d4670a5e",
+    "source": "Full remastered image visually read; approved wording overlay retained.",
+    "subtype": "USED",
+    "titles": [
+      "We Must Accelerate Our Plans",
+      "Vote Now!"
+    ],
+    "imageUrl": "https://wiki.swccg.com/images/6/6d/RG-GEMP-We-Must-Accelerate-Our-Plans-Vote-Now.png"
+  }
+]

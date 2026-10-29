@@ -137,7 +137,8 @@
     "title": "A Gift",
     "image": "RG-GEMP-A-Gift.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3
   },
   {
     "id": "15_21",
@@ -431,7 +432,8 @@
     "title": "A Few Maneuvers & Han's Dice",
     "image": "RG-GEMP-A-Few-Maneuvers-Han-s-Dice.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_61",
@@ -585,7 +587,8 @@
     "title": "Fly Casual",
     "image": "RG-GEMP-Fly-Casual.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3
   },
   {
     "id": "15_82",
@@ -837,7 +840,8 @@
     "title": "Old Ben & Noble Sacrifice",
     "image": "RG-GEMP-Old-Ben-Noble-Sacrifice.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_116",
@@ -940,7 +944,8 @@
     "title": "Skull & Mandalorian Mishap",
     "image": "RG-GEMP-Skull-Mandalorian-Mishap.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_130",
@@ -1007,7 +1012,8 @@
     "title": "The Force Is Strong With This One & Jedi Presence",
     "image": "RG-GEMP-The-Force-Is-Strong-With-This-One-Jedi-Presence.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_139",
@@ -1105,7 +1111,8 @@
     "title": "Wookiee Strangle & We'll Find Han",
     "image": "RG-GEMP-Wookiee-Strangle-We-ll-Find-Han.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_152",
@@ -1956,14 +1963,16 @@
     "title": "Master, Destroyers! & Rolling, Rolling, Rolling",
     "image": "RG-GEMP-Master-Destroyers-Rolling-Rolling-Rolling.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_264",
     "title": "Maul Strikes & No Match For A Sith",
     "image": "RG-GEMP-Maul-Strikes-No-Match-For-A-Sith.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_265",
@@ -1979,14 +1988,16 @@
     "title": "Oo-ta Goo-ta Solo?",
     "image": "RG-GEMP-Oo-ta-Goo-ta-Solo.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 1
   },
   {
     "id": "15_267",
     "title": "Operational As Planned & Wounded Warrior",
     "image": "RG-GEMP-Operational-As-Planned-Wounded-Warrior.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_268",
@@ -2002,7 +2013,8 @@
     "title": "Overwhelmed & A Dark Time For The Rebellion",
     "image": "RG-GEMP-Overwhelmed-A-Dark-Time-For-The-Rebellion.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_270",
@@ -2027,14 +2039,16 @@
     "title": "Podracer Collision & Hit Racer",
     "image": "RG-GEMP-Podracer-Collision-Hit-Racer.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_273",
     "title": "Point Man & Slip Sliding Away",
     "image": "RG-GEMP-Point-Man-Slip-Sliding-Away.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_274",
@@ -2050,14 +2064,16 @@
     "title": "Put All Sections On Alert & Full Scale Alert",
     "image": "RG-GEMP-Put-All-Sections-On-Alert-Full-Scale-Alert.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_276",
     "title": "Release Your Anger & Unexpected Interruption",
     "image": "RG-GEMP-Release-Your-Anger-Unexpected-Interruption.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_277",
@@ -2089,7 +2105,8 @@
     "title": "Shut Him Up Or Shut Him Down & Voyeur",
     "image": "RG-GEMP-Shut-Him-Up-Or-Shut-Him-Down-Voyeur.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_281",
@@ -2105,7 +2122,8 @@
     "title": "Something Hit Us! & Why Didn't You Tell Me?",
     "image": "RG-GEMP-Something-Hit-Us-Why-Didn-t-You-Tell-Me.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_283",
@@ -2128,14 +2146,16 @@
     "title": "Start Your Engines! & Pit Crews",
     "image": "RG-GEMP-Start-Your-Engines-Pit-Crews.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_286",
     "title": "Surprise & E Chu Ta",
     "image": "RG-GEMP-Surprise-E-Chu-Ta.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_287",
@@ -2169,14 +2189,16 @@
     "title": "The Circle Is Now Complete & Vader's Obsession",
     "image": "RG-GEMP-The-Circle-Is-Now-Complete-Vader-s-Obsession.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_291",
     "title": "They're Still Coming Through",
     "image": "RG-GEMP-They-re-Still-Coming-Through.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 2
   },
   {
     "id": "15_292",
@@ -2201,14 +2223,16 @@
     "title": "Trade Federation Tactics & We're Hit Artoo",
     "image": "RG-GEMP-Trade-Federation-Tactics-We-re-Hit-Artoo.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_295",
     "title": "Trample & Lightsaber Deficiency",
     "image": "RG-GEMP-Trample-Lightsaber-Deficiency.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_296",
@@ -2224,7 +2248,8 @@
     "title": "Trooper Assault & Tactical Support",
     "image": "RG-GEMP-Trooper-Assault-Tactical-Support.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_298",
@@ -2265,7 +2290,8 @@
     "title": "Watto's Chance Cube & You Swindled Me!",
     "image": "RG-GEMP-Watto-s-Chance-Cube-You-Swindled-Me.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_303",
@@ -2281,7 +2307,8 @@
     "title": "We Must Accelerate Our Plans & Vote Now!",
     "image": "RG-GEMP-We-Must-Accelerate-Our-Plans-Vote-Now.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_305",
