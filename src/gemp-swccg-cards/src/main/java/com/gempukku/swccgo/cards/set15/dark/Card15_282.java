@@ -31,7 +31,7 @@ public class Card15_282 extends Card5_162 {
             if (icon.isExpansionIcon() || icon == Icon.EPISODE_I) addIcon(icon, 0);
         }
         addIcons(Icon.REFLECTIONS_GOLD);
-        addComboCardTitles("Something Hit Us!", "Why Didn't You Tell Me?");
+        setTitleComponents(new TitleComponent("Something Hit Us!",Uniqueness.UNRESTRICTED),new TitleComponent("Why Didn't You Tell Me?",Uniqueness.UNIQUE));
     }
     @Override public String getTitle() { return "Something Hit Us! & Why Didn't You Tell Me?"; }
     @Override public Float getDestiny() { return 3f; }

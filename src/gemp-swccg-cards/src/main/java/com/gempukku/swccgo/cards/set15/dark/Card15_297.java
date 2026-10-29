@@ -39,7 +39,7 @@ public class Card15_297 extends Card5_159 {
             if (icon.isExpansionIcon() || icon == Icon.EPISODE_I) addIcon(icon, 0);
         }
         addIcons(Icon.REFLECTIONS_GOLD);
-        addComboCardTitles("Trooper Assault", "Tactical Support");
+        setTitleComponents(new TitleComponent("Trooper Assault",Uniqueness.UNRESTRICTED),new TitleComponent("Tactical Support",Uniqueness.UNIQUE));
     }
     @Override public String getTitle() { return "Trooper Assault & Tactical Support"; }
     @Override public Float getDestiny() { return 4f; }
