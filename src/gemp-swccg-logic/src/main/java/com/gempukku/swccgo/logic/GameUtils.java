@@ -178,19 +178,9 @@ public class GameUtils {
     public static String getCardLink(String blueprintId, SwccgCardBlueprint blueprint, SwccgCardBlueprint otherSideBlueprint) {
         String testingText = blueprint.getTestingText();
 
-        String dots = "";
-        if (blueprint.getUniqueness()!=null) {
-            dots = blueprint.getUniqueness().getHumanReadable();
-        }
-
-        String fullTitle = "";
-        List<String> titles = blueprint.getTitles();
-        for (String title : titles) {
-            if (!fullTitle.isEmpty()) {
-                fullTitle += " & ";
-            }
-            fullTitle += (dots + title);
-        }
+        String fullTitle = blueprint.getTitleComponents().stream()
+                .map(component -> component.uniqueness().getHumanReadable() + component.name())
+                .collect(java.util.stream.Collectors.joining(" & "));
         fullTitle += getTitleSuffix(blueprint);
 
         String backSideTestingText = otherSideBlueprint != null ? otherSideBlueprint.getTestingText() : null;
