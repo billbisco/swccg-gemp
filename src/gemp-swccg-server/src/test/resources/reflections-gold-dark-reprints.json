@@ -1,0 +1,559 @@
+[
+  {
+    "id": "15_170",
+    "title": "Alert My Star Destroyer!",
+    "destiny": 3,
+    "uniqueness": "UNIQUE",
+    "type": "EFFECT",
+    "subtype": "IMMEDIATE",
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "credits": 2,
+    "source": "set7\\dark\\Card7_220.java",
+    "gameText": "If your admiral, moff or Dark Jedi just shuttled aboard your Star Destroyer, deploy on that character. Star Destroyer is immune to attrition and Flagship deploys free on that starship. Immediate Effect lost if character not aboard that starship.",
+    "file": "RG-GEMP-Alert-My-Star-Destroyer.png",
+    "imageSha256": "def079a89fb07f63abd2d3aea0a71cb544f5715f7d05ec7e27d559eebbf7f99e",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Rules compared against existing blueprint; no rule differences."
+  },
+  {
+    "id": "15_171",
+    "title": "Aratech Corporation",
+    "destiny": 4,
+    "uniqueness": "UNIQUE",
+    "type": "EFFECT",
+    "subtype": "NORMAL",
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [
+      "DEPLOYS_ON_LOCATION"
+    ],
+    "credits": 2,
+    "source": "set8\\dark\\Card8_117.java",
+    "gameText": "Deploy on Carida system. Your speeder bikes piloted by biker scouts are power +1 and forfeit +1 and may follow (for free) an opponent's vehicle or character that just moved from same site (if within range). (Immune to Alter while you occupy Carida.)",
+    "file": "RG-GEMP-Aratech-Corporation.png",
+    "imageSha256": "62a4e1c9e110c403e08dde5bb48d5f8b129f1aac6ea67e32b35dc64d6e6c1cf8",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Rules compared against existing blueprint; no rule differences."
+  },
+  {
+    "id": "15_181",
+    "title": "Expand The Empire",
+    "destiny": 3,
+    "uniqueness": "UNIQUE",
+    "type": "EFFECT",
+    "subtype": "NORMAL",
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [
+      "DEPLOYS_ON_SITE"
+    ],
+    "credits": 2,
+    "source": "set1\\dark\\Card1_215.java",
+    "gameText": "Deploy on any site. 'Expands' your 'game text' for that site to add to your 'game text' at the adjacent sites.",
+    "file": "RG-GEMP-Expand-The-Empire.png",
+    "imageSha256": "4fc5e2964830c06d07fd4871b212cc82ed32f69e7cd0990ce2faf09b44b6fa78",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Rules compared against existing blueprint; no rule differences."
+  },
+  {
+    "id": "15_183",
+    "title": "I Had No Choice",
+    "destiny": 3,
+    "uniqueness": "UNIQUE",
+    "type": "EFFECT",
+    "subtype": "NORMAL",
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [
+      "DEPLOYS_ON_CHARACTERS"
+    ],
+    "credits": 3,
+    "source": "set5\\dark\\Card5_119.java",
+    "gameText": "Deploy on an opponent's gambler. Cancels gambler's game text. If a battle was just initiated, you may use X Force to exclude gambler from that battle, where X = gambler's ability.",
+    "file": "RG-GEMP-I-Had-No-Choice.png",
+    "imageSha256": "10cf0129d0deda1a5a7e0d91d0fdd24f08cc9b707f2e4f097cff20e0d2181f8f",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Rules compared against existing blueprint; no rule differences."
+  },
+  {
+    "id": "15_188",
+    "title": "Imperial Justice",
+    "destiny": 3,
+    "uniqueness": "UNRESTRICTED",
+    "type": "EFFECT",
+    "subtype": "NORMAL",
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [
+      "DEPLOYS_ON_LOCATION"
+    ],
+    "credits": 1,
+    "source": "set2\\dark\\Card2_121.java",
+    "gameText": "If opponent is generating at least 4 more Force than you, deploy on a location to cancel all Force generation at that location. OR Deploy on a location. It is now immune to Revolution.",
+    "file": "RG-GEMP-Imperial-Justice.png",
+    "imageSha256": "8bd80d04adf8bfc4fce4305e2f9cda4d541393319f77c4728aa053410a960fa5",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Rules compared against existing blueprint; no rule differences."
+  },
+  {
+    "id": "15_195",
+    "title": "Open Fire!",
+    "destiny": 5,
+    "uniqueness": "UNIQUE",
+    "type": "EFFECT",
+    "subtype": "NORMAL",
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD",
+      "EPISODE_I"
+    ],
+    "keywords": [],
+    "credits": 1,
+    "source": "set14\\dark\\Card14_099.java",
+    "gameText": "Deploy on your AAT. Once during your control phase may use 3 Force to fire your AAT Laser Cannon on this AAT for free.",
+    "file": "RG-GEMP-Open-Fire.png",
+    "imageSha256": "53b99a6d96828777392e505b0723ae7c7e5066430a7b930e90d4cd06ebdc8dfe",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Rules compared against existing blueprint; no rule differences."
+  },
+  {
+    "id": "15_198",
+    "title": "Perimeter Patrol",
+    "destiny": 4,
+    "uniqueness": "UNIQUE",
+    "type": "EFFECT",
+    "subtype": "NORMAL",
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [
+      "DEPLOYS_ON_SITE"
+    ],
+    "credits": 3,
+    "source": "set8\\dark\\Card8_128.java",
+    "gameText": "Deploy on Bunker. While you control Bunker, each time opponent deploys a vehicle, starship or Rebel to an Endor site (except Rebel Landing Site), that card cannot move or battle for remainder of turn and opponent must lose 1 Force. (Immune to Alter.)",
+    "file": "RG-GEMP-Perimeter-Patrol.png",
+    "imageSha256": "10fd8911ef9ac3c28eeb4b5b24f87d8e2aea0c36efcd05bcea809c12ded78937",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Rules compared against existing blueprint; no rule differences."
+  },
+  {
+    "id": "15_201",
+    "title": "Quietly Observing",
+    "destiny": 4,
+    "uniqueness": "UNIQUE",
+    "type": "EFFECT",
+    "subtype": "NORMAL",
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD",
+      "EPISODE_I"
+    ],
+    "keywords": [
+      "DEPLOYS_ON_CHARACTERS"
+    ],
+    "credits": 2,
+    "source": "set11\\dark\\Card11_074.java",
+    "gameText": "Deploy on Aurra Sing. While Aurra is alone at a site, your total ability here = 0. During your move phase, may lose Effect to target an opponent's lightsaber present. Draw destiny. If destiny > 3, Aurra may 'steal' that lightsaber.",
+    "file": "RG-GEMP-Quietly-Observing.png",
+    "imageSha256": "ddc469c433729089e3a744f0d057ed51223e649e5d801cc522ad063ea017ad03",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Rules compared against existing blueprint; no rule differences."
+  },
+  {
+    "id": "15_202",
+    "title": "Relentless Tracking",
+    "destiny": 5,
+    "uniqueness": "UNIQUE",
+    "type": "EFFECT",
+    "subtype": "NORMAL",
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [
+      "DEPLOYS_ON_CHARACTERS"
+    ],
+    "credits": 1,
+    "source": "set8\\dark\\Card8_130.java",
+    "gameText": "Deploy on opponent's non-droid character at same or adjacent site as your scout. During each of your control phases, if your scout is at this site (and not Undercover), opponent loses 2 Force (or 3 Force if that scout is also a biker scout).",
+    "file": "RG-GEMP-Relentless-Tracking.png",
+    "imageSha256": "d5cfab912e099fe5a67963294f8de37c98623f983eae0b64d64d7ca33a663077",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Rules compared against existing blueprint; no rule differences."
+  },
+  {
+    "id": "15_203",
+    "title": "Responsibility Of Command",
+    "destiny": 5,
+    "uniqueness": "UNIQUE",
+    "type": "EFFECT",
+    "subtype": "UTINNI",
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "credits": 4,
+    "source": "set3\\dark\\Card3_109.java",
+    "gameText": "Use 2 Force to deploy on any war room at a Rebel Base. Target a Rebel with forfeit > 4 or an opponent's leader. Opponent may not initiate a battle or a Force drain at same location as target. Utinni Effect canceled when reached by target.",
+    "file": "RG-GEMP-Responsibility-Of-Command.png",
+    "imageSha256": "17773b0ab184ee0d263c2cfb96c18622a910a121d77d8d77abc0183a52762479",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Rules compared against existing blueprint; no rule differences."
+  },
+  {
+    "id": "15_205",
+    "title": "Scum And Villainy",
+    "destiny": 4,
+    "uniqueness": "UNIQUE",
+    "type": "EFFECT",
+    "subtype": "NORMAL",
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [
+      "DEPLOYS_ON_SITE"
+    ],
+    "credits": 4,
+    "source": "set6\\dark\\Card6_149.java",
+    "gameText": "Deploy on Audience Chamber. While all your ability on table is provided by aliens and independent starship pilots, your aliens and starships deploy -1 and you retrieve 2 Force whenever you initiate battle. (Immune to Alter if you control at least three Jabba's Palace sites.)",
+    "file": "RG-GEMP-Scum-And-Villainy-Information-Exchange.png",
+    "imageSha256": "004204a613aa7bd61a8ca746ab273e1b5004d6f693893f19331702a868251ed2",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Rules compared against existing blueprint; no rule differences."
+  },
+  {
+    "id": "15_214",
+    "title": "Weapon Malfunction",
+    "destiny": 4,
+    "uniqueness": "UNIQUE",
+    "type": "EFFECT",
+    "subtype": "UTINNI",
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "credits": 1,
+    "source": "set3\\dark\\Card3_114.java",
+    "gameText": "Deploy on any docking bay. Target a weapon deployed on a starfighter or vehicle. That weapon cannot be fired. Utinni Effect canceled when reached by target.",
+    "file": "RG-GEMP-Weapon-Malfunction.png",
+    "imageSha256": "f990788c92a6072f2f16503306e349ab80c656064be8c104545e70fe64c06cf4",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Rules compared against existing blueprint; no rule differences."
+  },
+  {
+    "id": "15_220",
+    "title": "Atmospheric Assault",
+    "destiny": 5,
+    "uniqueness": "UNIQUE",
+    "type": "INTERRUPT",
+    "subtype": "LOST",
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "credits": 2,
+    "source": "set5\\dark\\Card5_131.java",
+    "gameText": "If you just initiated a battle at a Cloud City sector, add one battle destiny. OR During your deploy phase, deploy one TIE Assault Squadron for free (no replacement is necessary).",
+    "file": "RG-GEMP-Atmospheric-Assault.png",
+    "imageSha256": "840943d9a7843c1693b3ef17270e99f2e0cb4e25f2be6763d587b4ca6cc5fa66",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Rules compared against existing blueprint; no rule differences."
+  },
+  {
+    "id": "15_229",
+    "title": "Counter Surprise Assault",
+    "destiny": 2,
+    "uniqueness": "UNRESTRICTED",
+    "type": "INTERRUPT",
+    "subtype": "LOST",
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "credits": 2,
+    "source": "set7\\dark\\Card7_249.java",
+    "gameText": "Cancel Surprise Assault. OR Use 4 Force to cancel opponent's Force drain at a mobile site. Deploy (for free) from Reserve Deck any number of non-unique troopers to that site. (Light Side characters, vehicles and starships here may 'escape' to Used Pile).",
+    "file": "RG-GEMP-Counter-Surprise-Assault.png",
+    "imageSha256": "88f0ee6f2dc234b93f9cda3aa565cf0e84e6ceeae2a1f139e486b94e1fb313f1",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Rules compared against existing blueprint; no rule differences."
+  },
+  {
+    "id": "15_231",
+    "title": "Dark Jedi Presence",
+    "destiny": 3,
+    "uniqueness": "UNRESTRICTED",
+    "type": "INTERRUPT",
+    "subtype": "LOST",
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "credits": 4,
+    "source": "set1\\dark\\Card1_240.java",
+    "gameText": "If one of your Dark Jedi is present during any battle, use 1 Force to cause all other Imperials there to battle at double power.",
+    "file": "RG-GEMP-Dark-Jedi-Presence.png",
+    "imageSha256": "509c4ca22ffd0c088ce1b607bf08edd4452596bdd1c2037013e2928e3f2b062c",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Rules compared against existing blueprint; no rule differences."
+  },
+  {
+    "id": "15_234",
+    "title": "Dioxis",
+    "destiny": 3,
+    "uniqueness": "UNIQUE",
+    "type": "INTERRUPT",
+    "subtype": "LOST",
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD",
+      "EPISODE_I"
+    ],
+    "keywords": [],
+    "credits": 2,
+    "source": "set12\\dark\\Card12_147.java",
+    "gameText": "Use 2 Force to target two opponent's Jedi at same interior battleground. Targets may not participate in battle for remainder of turn. OR Target opponent's Jedi. Draw destiny. If destiny > 2, target's game text is canceled for remainder of turn.",
+    "file": "RG-GEMP-Dioxis.png",
+    "imageSha256": "f546c8a2f3936f45b31e15a0c8d827f6a6e2a254071e77d857685b3c2a0759b5",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Rules compared against existing blueprint; no rule differences."
+  },
+  {
+    "id": "15_253",
+    "title": "Imperial Supply",
+    "destiny": 3,
+    "uniqueness": "UNIQUE",
+    "type": "INTERRUPT",
+    "subtype": "USED_OR_LOST",
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "credits": 3,
+    "source": "set3\\dark\\Card3_128.java",
+    "gameText": "USED: Lose 1 Force to activate 2 Force. LOST: Lose 1 Force to activate 4 Force.",
+    "file": "RG-GEMP-Imperial-Supply.png",
+    "imageSha256": "5ce9969a0f9d320b3259205490918b3a694058e545ad9c3b9fff429586d6c463",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Rules compared against existing blueprint; no rule differences."
+  },
+  {
+    "id": "15_268",
+    "title": "Our First Catch Of The Day",
+    "destiny": 6,
+    "uniqueness": "UNRESTRICTED",
+    "type": "INTERRUPT",
+    "subtype": "USED",
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "credits": 2,
+    "source": "set3\\dark\\Card3_131.java",
+    "gameText": "Add 2 to a tractor beam destiny draw. OR Cancel The First Transport Is Away! or Hyper Escape.",
+    "file": "RG-GEMP-Our-First-Catch-Of-The-Day.png",
+    "imageSha256": "45ac41a835b90e9333317273310b9af073bab0dcd6aeb29686e0c8548530ddb5",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Rules compared against existing blueprint; no rule differences."
+  },
+  {
+    "id": "15_270",
+    "title": "Pit Crews",
+    "destiny": 4,
+    "uniqueness": "UNIQUE",
+    "type": "INTERRUPT",
+    "subtype": "LOST",
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD",
+      "EPISODE_I"
+    ],
+    "keywords": [],
+    "credits": 1,
+    "source": "set11\\dark\\Card11_084.java",
+    "gameText": "Use 3 Force to reveal opponent's hand. All cards opponent has 3 or more of in hand are lost. OR Use 1 Force to 'repair' your Podracer. OR Target a Podracer. Draw destiny. If destiny > Podracer's destiny number, target Podracer is 'damaged.'",
+    "file": "RG-GEMP-Pit-Crews.png",
+    "imageSha256": "5ac64ebaf4a54a1532b3055f35442df08aac04922280e579c7ebfcaaef7cb824",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Rules compared against existing blueprint; no rule differences."
+  },
+  {
+    "id": "15_271",
+    "title": "Podracer Collision",
+    "destiny": 5,
+    "uniqueness": "UNIQUE",
+    "type": "INTERRUPT",
+    "subtype": "USED_OR_LOST",
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD",
+      "EPISODE_I"
+    ],
+    "keywords": [],
+    "credits": 3,
+    "source": "set11\\dark\\Card11_085.java",
+    "gameText": "USED: If you just verified opponent's Reserve Deck, search that Reserve Deck and place one Interrupt found there out of play. LOST: Lose 1 Force to remove a race destiny (random selection) from any Podracer and place it in owner's hand.",
+    "file": "RG-GEMP-Podracer-Collision.png",
+    "imageSha256": "f448f44341782c1df90724e51ec902b8ae4539565800e6c5b83cb883726e6fce",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Rules compared against existing blueprint; no rule differences."
+  },
+  {
+    "id": "15_274",
+    "title": "Projective Telepathy",
+    "destiny": 3,
+    "uniqueness": "UNIQUE",
+    "type": "INTERRUPT",
+    "subtype": "USED",
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "credits": 2,
+    "source": "set5\\dark\\Card5_149.java",
+    "gameText": "Cancel Anger, Fear, Aggression when it is inserted or revealed. OR If your opponent just initiated a battle or Force drain, opponent must choose to use 2 Force, or cancel that battle or Force drain.",
+    "file": "RG-GEMP-Projective-Telepathy.png",
+    "imageSha256": "e4f3c86265c546e149650dbb228a11c5c418bc976a60d5808537abb49efed196",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Rules compared against existing blueprint; no rule differences."
+  },
+  {
+    "id": "15_277",
+    "title": "Rolling, Rolling, Rolling",
+    "destiny": 5,
+    "uniqueness": "UNIQUE",
+    "type": "INTERRUPT",
+    "subtype": "USED",
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD",
+      "EPISODE_I"
+    ],
+    "keywords": [],
+    "credits": 3,
+    "source": "set14\\dark\\Card14_105.java",
+    "gameText": "Take any non-unique destroyer droid into hand from Reserve Deck; reshuffle. OR During your deploy phase, relocate your destroyer droid to an adjacent site.",
+    "file": "RG-GEMP-Rolling-Rolling-Rolling.png",
+    "imageSha256": "64d1562865da1361a5bd6869176080c9dc4415317d3ba0d5f3d8fb884b9642ea",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Rules compared against existing blueprint; no rule differences."
+  },
+  {
+    "id": "15_279",
+    "title": "Short Range Fighters",
+    "destiny": 5,
+    "uniqueness": "UNIQUE",
+    "type": "INTERRUPT",
+    "subtype": "USED",
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "credits": 3,
+    "source": "set7\\dark\\Card7_262.java",
+    "gameText": "Once per game, target one non-unique starfighter on table. Draw destiny. If destiny < X, retrieve X Force, where X = number of copies of that card you have on table. (Immune to Sense.) OR Take one non-unique starfighter into hand from Reserve Deck; reshuffle.",
+    "file": "RG-GEMP-Short-Range-Fighters.png",
+    "imageSha256": "7354a6263e06f2c1ae28f50158af88dcea44978c0fb9df2e5fdab55126da031f",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Rules compared against existing blueprint; no rule differences."
+  },
+  {
+    "id": "15_284",
+    "title": "Squabbling Delegates",
+    "destiny": 5,
+    "uniqueness": "UNIQUE",
+    "type": "INTERRUPT",
+    "subtype": "USED",
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD",
+      "EPISODE_I"
+    ],
+    "keywords": [],
+    "credits": 2,
+    "source": "set12\\dark\\Card12_159.java",
+    "gameText": "Once per game, retrieve 1 Force for each of your senators at Galactic Senate. (Immune to Sense.) OR Take one senator (or Coruscant Guard) into hand from Reserve Deck; reshuffle.",
+    "file": "RG-GEMP-Squabbling-Delegates.png",
+    "imageSha256": "d4539d41ba31918e3e59539cdec73e805ecd59ed8d4b3b697c89b563c423523d",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Rules compared against existing blueprint; no rule differences."
+  },
+  {
+    "id": "15_288",
+    "title": "Tallon Roll",
+    "destiny": 4,
+    "uniqueness": "UNRESTRICTED",
+    "type": "INTERRUPT",
+    "subtype": "USED",
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "credits": 3,
+    "source": "set1\\dark\\Card1_270.java",
+    "gameText": "Target two starfighters (your TIE/ln and any Rebel starfighter) present at same system or sector. Each player draws destiny. Opponent totals destiny and starship's power. You total destiny, TIE's power and TIE's maneuver. Lowest total loses starfighter.",
+    "file": "RG-GEMP-Tallon-Roll.png",
+    "imageSha256": "e7b44bc9e5f3172751c6c329c2e6870581aa8286d132a5d5f5a08f91f468bbb5",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Rules compared against existing blueprint; no rule differences."
+  },
+  {
+    "id": "15_292",
+    "title": "Those Rebels Won't Escape Us",
+    "destiny": 3,
+    "uniqueness": "UNRESTRICTED",
+    "type": "INTERRUPT",
+    "subtype": "USED_OR_LOST",
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "credits": 1,
+    "source": "set4\\dark\\Card4_150.java",
+    "gameText": "USED: Cancel Nabrun Leids. LOST: During your move phase, cancel Landing Claw. OR Cancel Hyper Escape, Closer?! or one 'react.'",
+    "file": "RG-GEMP-Those-Rebels-Won-t-Escape-Us.png",
+    "imageSha256": "4c6e2d1461e39aa3c984a10b0995b480ba0400b26a12f5f9c405300482f97c53",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Rules compared against existing blueprint; no rule differences."
+  },
+  {
+    "id": "15_293",
+    "title": "Through The Corridor",
+    "destiny": 3,
+    "uniqueness": "UNIQUE",
+    "type": "INTERRUPT",
+    "subtype": "LOST",
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD",
+      "EPISODE_I"
+    ],
+    "keywords": [],
+    "credits": 2,
+    "source": "set13\\dark\\Card13_093.java",
+    "gameText": "If opponent just initiated battle against Maul where opponent has two Jedi, cancel that battle and you may relocate one of those Jedi (your choice) to any adjacent site. That Jedi may not move for remainder of turn. (Immune to Sense.)",
+    "file": "RG-GEMP-Through-The-Corridor.png",
+    "imageSha256": "4ef3436a6468373e3de7943881ec857d368fa59f3ae47ddc8f7128f4b8f8fccf",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Rules compared against existing blueprint; no rule differences."
+  },
+  {
+    "id": "15_301",
+    "title": "Vote Now!",
+    "destiny": 5,
+    "uniqueness": "UNIQUE",
+    "type": "INTERRUPT",
+    "subtype": "USED",
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD",
+      "EPISODE_I"
+    ],
+    "keywords": [],
+    "credits": 3,
+    "source": "set12\\dark\\Card12_162.java",
+    "gameText": "During your control phase, draw destiny. If destiny > 2, draw up to X cards (maximum 4) from Reserve Deck, where X = your total politics at Galactic Senate minus opponent's total politics at Galactic Senate.",
+    "file": "RG-GEMP-Vote-Now-Dark.png",
+    "imageSha256": "3e785e227704998b77c70784c3382dc68826826bf8b6504bba4921f1302bf2fa",
+    "evidence": "Stats, subtype, uniqueness and credit circles inspected in full image/crop sheets; Episode I checked in dedicated right-edge strip. Rules compared against existing blueprint; no rule differences."
+  }
+]

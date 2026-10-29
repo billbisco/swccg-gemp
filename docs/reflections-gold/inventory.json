@@ -1234,14 +1234,18 @@
     "title": "Alert My Star Destroyer!",
     "image": "RG-GEMP-Alert-My-Star-Destroyer.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 2,
+    "implementationSource": "set7/dark/Card7_220.java"
   },
   {
     "id": "15_171",
     "title": "Aratech Corporation",
     "image": "RG-GEMP-Aratech-Corporation.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 2,
+    "implementationSource": "set8/dark/Card8_117.java"
   },
   {
     "id": "15_172",
@@ -1311,7 +1315,9 @@
     "title": "Expand The Empire",
     "image": "RG-GEMP-Expand-The-Empire.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 2,
+    "implementationSource": "set1/dark/Card1_215.java"
   },
   {
     "id": "15_182",
@@ -1325,7 +1331,9 @@
     "title": "I Had No Choice",
     "image": "RG-GEMP-I-Had-No-Choice.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3,
+    "implementationSource": "set5/dark/Card5_119.java"
   },
   {
     "id": "15_184",
@@ -1360,7 +1368,9 @@
     "title": "Imperial Justice",
     "image": "RG-GEMP-Imperial-Justice.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 1,
+    "implementationSource": "set2/dark/Card2_121.java"
   },
   {
     "id": "15_189",
@@ -1409,7 +1419,9 @@
     "title": "Open Fire!",
     "image": "RG-GEMP-Open-Fire.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 1,
+    "implementationSource": "set14/dark/Card14_099.java"
   },
   {
     "id": "15_196",
@@ -1430,7 +1442,9 @@
     "title": "Perimeter Patrol",
     "image": "RG-GEMP-Perimeter-Patrol.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3,
+    "implementationSource": "set8/dark/Card8_128.java"
   },
   {
     "id": "15_199",
@@ -1451,21 +1465,27 @@
     "title": "Quietly Observing",
     "image": "RG-GEMP-Quietly-Observing.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 2,
+    "implementationSource": "set11/dark/Card11_074.java"
   },
   {
     "id": "15_202",
     "title": "Relentless Tracking",
     "image": "RG-GEMP-Relentless-Tracking.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 1,
+    "implementationSource": "set8/dark/Card8_130.java"
   },
   {
     "id": "15_203",
     "title": "Responsibility Of Command",
     "image": "RG-GEMP-Responsibility-Of-Command.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 4,
+    "implementationSource": "set3/dark/Card3_109.java"
   },
   {
     "id": "15_204",
@@ -1479,7 +1499,9 @@
     "title": "Scum And Villainy",
     "image": "RG-GEMP-Scum-And-Villainy-Information-Exchange.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 4,
+    "implementationSource": "set6/dark/Card6_149.java"
   },
   {
     "id": "15_206",
@@ -1542,7 +1564,9 @@
     "title": "Weapon Malfunction",
     "image": "RG-GEMP-Weapon-Malfunction.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 1,
+    "implementationSource": "set3/dark/Card3_114.java"
   },
   {
     "id": "15_215",
@@ -1584,7 +1608,9 @@
     "title": "Atmospheric Assault",
     "image": "RG-GEMP-Atmospheric-Assault.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 2,
+    "implementationSource": "set5/dark/Card5_131.java"
   },
   {
     "id": "15_221",
@@ -1647,7 +1673,9 @@
     "title": "Counter Surprise Assault",
     "image": "RG-GEMP-Counter-Surprise-Assault.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 2,
+    "implementationSource": "set7/dark/Card7_249.java"
   },
   {
     "id": "15_230",
@@ -1661,7 +1689,9 @@
     "title": "Dark Jedi Presence",
     "image": "RG-GEMP-Dark-Jedi-Presence.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 4,
+    "implementationSource": "set1/dark/Card1_240.java"
   },
   {
     "id": "15_232",
@@ -1682,7 +1712,9 @@
     "title": "Dioxis",
     "image": "RG-GEMP-Dioxis.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 2,
+    "implementationSource": "set12/dark/Card12_147.java"
   },
   {
     "id": "15_235",
@@ -1815,7 +1847,9 @@
     "title": "Imperial Supply",
     "image": "RG-GEMP-Imperial-Supply.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3,
+    "implementationSource": "set3/dark/Card3_128.java"
   },
   {
     "id": "15_254",
@@ -1920,7 +1954,9 @@
     "title": "Our First Catch Of The Day",
     "image": "RG-GEMP-Our-First-Catch-Of-The-Day.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 2,
+    "implementationSource": "set3/dark/Card3_131.java"
   },
   {
     "id": "15_269",
@@ -1934,14 +1970,18 @@
     "title": "Pit Crews",
     "image": "RG-GEMP-Pit-Crews.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 1,
+    "implementationSource": "set11/dark/Card11_084.java"
   },
   {
     "id": "15_271",
     "title": "Podracer Collision",
     "image": "RG-GEMP-Podracer-Collision.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3,
+    "implementationSource": "set11/dark/Card11_085.java"
   },
   {
     "id": "15_272",
@@ -1962,7 +2002,9 @@
     "title": "Projective Telepathy",
     "image": "RG-GEMP-Projective-Telepathy.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 2,
+    "implementationSource": "set5/dark/Card5_149.java"
   },
   {
     "id": "15_275",
@@ -1983,7 +2025,9 @@
     "title": "Rolling, Rolling, Rolling",
     "image": "RG-GEMP-Rolling-Rolling-Rolling.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3,
+    "implementationSource": "set14/dark/Card14_105.java"
   },
   {
     "id": "15_278",
@@ -1997,7 +2041,9 @@
     "title": "Short Range Fighters",
     "image": "RG-GEMP-Short-Range-Fighters.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3,
+    "implementationSource": "set7/dark/Card7_262.java"
   },
   {
     "id": "15_280",
@@ -2032,7 +2078,9 @@
     "title": "Squabbling Delegates",
     "image": "RG-GEMP-Squabbling-Delegates.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 2,
+    "implementationSource": "set12/dark/Card12_159.java"
   },
   {
     "id": "15_285",
@@ -2060,7 +2108,9 @@
     "title": "Tallon Roll",
     "image": "RG-GEMP-Tallon-Roll.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3,
+    "implementationSource": "set1/dark/Card1_270.java"
   },
   {
     "id": "15_289",
@@ -2088,14 +2138,18 @@
     "title": "Those Rebels Won't Escape Us",
     "image": "RG-GEMP-Those-Rebels-Won-t-Escape-Us.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 1,
+    "implementationSource": "set4/dark/Card4_150.java"
   },
   {
     "id": "15_293",
     "title": "Through The Corridor",
     "image": "RG-GEMP-Through-The-Corridor.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 2,
+    "implementationSource": "set13/dark/Card13_093.java"
   },
   {
     "id": "15_294",
@@ -2151,7 +2205,9 @@
     "title": "Vote Now!",
     "image": "RG-GEMP-Vote-Now-Dark.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3,
+    "implementationSource": "set12/dark/Card12_162.java"
   },
   {
     "id": "15_302",
