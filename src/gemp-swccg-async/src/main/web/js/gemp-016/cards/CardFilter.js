@@ -220,6 +220,7 @@ var CardFilter = Class.extend({
             + "<option value='12'>Coruscant</option>"
             + "<option value='13'>Reflections III</option>"
             + "<option value='14'>Theed Palace</option>"
+            + "<option value='15'>Reflections Gold</option>"
             + "<option value='200'>Set 0</option>"
             + "<option value='201'>Set 1</option>"
             + "<option value='202'>Set 2</option>"

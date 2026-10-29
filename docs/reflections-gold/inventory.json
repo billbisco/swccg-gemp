@@ -1,0 +1,2172 @@
+[
+  {
+    "id": "15_1",
+    "title": "2-1B",
+    "image": "RG-GEMP-2-1B.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_2",
+    "title": "Anakin Skywalker",
+    "image": "RG-GEMP-Anakin-Skywalker.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_3",
+    "title": "Chewbacca",
+    "image": "RG-GEMP-Chewbacca.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_4",
+    "title": "Commander Myron Konkle",
+    "image": "RG-GEMP-Commander-Myron-Konkle.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_5",
+    "title": "Drem Redins",
+    "image": "RG-GEMP-Drem-Redins.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_6",
+    "title": "Ewok Tribesman",
+    "image": "RG-GEMP-Ewok-Tribesman.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_7",
+    "title": "Goldenrod",
+    "image": "RG-GEMP-Goldenrod.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_8",
+    "title": "Jar Jar",
+    "image": "RG-GEMP-Jar-Jar.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_9",
+    "title": "Old Ben Kenobi",
+    "image": "RG-GEMP-Old-Ben-Kenobi.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_10",
+    "title": "Owen",
+    "image": "RG-GEMP-Owen.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_11",
+    "title": "Palpatine, Senator To Naboo",
+    "image": "RG-GEMP-Palpatine-Senator-To-Naboo.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_12",
+    "title": "Rakes Jevorik",
+    "image": "RG-GEMP-Rakes-Jevorik.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_13",
+    "title": "Senator Organa",
+    "image": "RG-GEMP-Senator-Organa.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_14",
+    "title": "Solo",
+    "image": "RG-GEMP-Solo.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_15",
+    "title": "Tiinn",
+    "image": "RG-GEMP-Tiinn.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_16",
+    "title": "Wedge",
+    "image": "RG-GEMP-Wedge.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_17",
+    "title": "Yoda, Jedi Master",
+    "image": "RG-GEMP-Yoda-Jedi-Master.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_18",
+    "title": "Young Skywalker",
+    "image": "RG-GEMP-Young-Skywalker.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_19",
+    "title": "Gungan Celebration Trumpet",
+    "image": "RG-GEMP-Gungan-Celebration-Trumpet.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_20",
+    "title": "A Gift",
+    "image": "RG-GEMP-A-Gift.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_21",
+    "title": "Ackbar's Assault Plan",
+    "image": "RG-GEMP-Ackbar-s-Assault-Plan.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_22",
+    "title": "Aim High",
+    "image": "RG-GEMP-Aim-High.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_23",
+    "title": "Bad Lifters And Faulty Wings",
+    "image": "RG-GEMP-Bad-Lifters-And-Faulty-Wings.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_24",
+    "title": "Beggar & Revolution",
+    "image": "RG-GEMP-Beggar-Revolution.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_25",
+    "title": "Bring Me The Hydrospanners!",
+    "image": "RG-GEMP-Bring-Me-The-Hydrospanners.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_26",
+    "title": "Brisky Morning Munchen",
+    "image": "RG-GEMP-Brisky-Morning-Munchen.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_27",
+    "title": "Close Air Support",
+    "image": "RG-GEMP-Close-Air-Support.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_28",
+    "title": "Close Air Support & Commando Training",
+    "image": "RG-GEMP-Close-Air-Support-Commando-Training.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_29",
+    "title": "Congratulations",
+    "image": "RG-GEMP-Congradulations.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_30",
+    "title": "Crack Shot & Quick Draw",
+    "image": "RG-GEMP-Crack-Shot-Quick-Draw.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_31",
+    "title": "Crash Site Memorial",
+    "image": "RG-GEMP-Crash-Site-Memorial.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_32",
+    "title": "Credits Will Do Fine & We're Leaving",
+    "image": "RG-GEMP-Credits-Will-Do-Fine-We-re-Leaving.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_33",
+    "title": "Gungan Energy Shield",
+    "image": "RG-GEMP-Gungan-Energy-Shield.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_34",
+    "title": "Hiding In The Garbage",
+    "image": "RG-GEMP-Hiding-In-The-Garbage.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_35",
+    "title": "I Hope She's All Right",
+    "image": "RG-GEMP-I-Hope-She-s-All-Right.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_36",
+    "title": "I Must Be Allowed To Speak",
+    "image": "RG-GEMP-I-Must-Be-Allowed-To-Speak.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_37",
+    "title": "I Must Be Allowed To Speak & Goo Nee Tay",
+    "image": "RG-GEMP-I-Must-Be-Allowed-To-Speak-Goo-Nee-Tay.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_38",
+    "title": "I Thought He Was Blind",
+    "image": "RG-GEMP-I-Thought-He-Was-Blind.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_39",
+    "title": "I Will Not Defer & Plea To The Court",
+    "image": "RG-GEMP-I-Will-Not-Defer-Plea-To-The-Court.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_40",
+    "title": "Inspecting The Garbage",
+    "image": "RG-GEMP-Inspecting-The-Garbage.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_41",
+    "title": "Is Your Strike Team Assembled?",
+    "image": "RG-GEMP-Is-Your-Strike-Team-Assembled.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_42",
+    "title": "Lapti Nek",
+    "image": "RG-GEMP-Lapti-Nek.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_43",
+    "title": "Launching The Assault",
+    "image": "RG-GEMP-Launching-The-Assault.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_44",
+    "title": "Looking To The Future",
+    "image": "RG-GEMP-Looking-To-The-Future.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_45",
+    "title": "Obi-Wan's Cape & Lightsaber Proficiency",
+    "image": "RG-GEMP-Obi-Wan-s-Cape-Lightsaber-Proficiency.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_46",
+    "title": "Prisoner Transfer",
+    "image": "RG-GEMP-Prisoner-Transfer.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_47",
+    "title": "Projection Of A Skywalker & Yarna d'al' Gargan",
+    "image": "RG-GEMP-Projection-Of-A-Skywalker-Yarna-d-al-Gargan.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_48",
+    "title": "Revolution",
+    "image": "RG-GEMP-Revolution.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_49",
+    "title": "Scramble",
+    "image": "RG-GEMP-Scramble.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_50",
+    "title": "Scramble & Hiding In The Garbage",
+    "image": "RG-GEMP-Scramble-Hiding-In-The-Garbage.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_51",
+    "title": "That's The Real Trick",
+    "image": "RG-GEMP-That-s-The-Real-Trick.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_52",
+    "title": "They All Broken",
+    "image": "RG-GEMP-They-All-Broken.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_53",
+    "title": "This Is Your Father's Lightsaber",
+    "image": "RG-GEMP-This-Is-Your-Father-s-Lightsaber.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_54",
+    "title": "Through The Planet Core",
+    "image": "RG-GEMP-Through-The-Planet-Core.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_55",
+    "title": "Traffic Control",
+    "image": "RG-GEMP-Traffic-Control.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_56",
+    "title": "Traffic Control & Crash Site Memorial",
+    "image": "RG-GEMP-Traffic-Control-Crash-Site-Memorial.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_57",
+    "title": "We Are Brave, Your Highness",
+    "image": "RG-GEMP-We-Are-Brave-Your-Highness.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_58",
+    "title": "You Must Complete Your Training",
+    "image": "RG-GEMP-You-Must-Complete-The-Training.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_59",
+    "title": "A Few Maneuvers",
+    "image": "RG-GEMP-A-Few-Maneuvers.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_60",
+    "title": "A Few Maneuvers & Han's Dice",
+    "image": "RG-GEMP-A-Few-Maneuvers-Han-s-Dice.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_61",
+    "title": "All Wings Report In",
+    "image": "RG-GEMP-All-Wings-Report-In.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_62",
+    "title": "Armed And Dangerous & Ambush",
+    "image": "RG-GEMP-Armed-And-Dangerous-Ambush.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_63",
+    "title": "Attack Pattern Delta",
+    "image": "RG-GEMP-Attack-Pattern-Delta.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_64",
+    "title": "Away Put Your Weapon & Put That Down",
+    "image": "RG-GEMP-Away-Put-Your-Weapon-Put-That-Down.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_65",
+    "title": "Bickering At Its Finest",
+    "image": "RG-GEMP-Bickering-At-Its-Finest.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_66",
+    "title": "Biker Scout Down",
+    "image": "RG-GEMP-Biker-Scout-Down.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_67",
+    "title": "Blaster Deflection",
+    "image": "RG-GEMP-Blaster-Deflection.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_68",
+    "title": "Careful Planning & Heading For The Medical Frigate",
+    "image": "RG-GEMP-Careful-Planning-Heading-For-The-Medical-Frigate.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_69",
+    "title": "Choke & Blaster Deflection",
+    "image": "RG-GEMP-Choke-Blaster-Deflection.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_70",
+    "title": "Clash Of Sabers",
+    "image": "RG-GEMP-Clash-Of-Sabers.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_71",
+    "title": "Clinging To The Very Edge",
+    "image": "RG-GEMP-Clinging-To-The-Very-Edge.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_72",
+    "title": "Corellian Retort & Fly Casual",
+    "image": "RG-GEMP-Corellian-Retort-Fly-Casual.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_73",
+    "title": "Corellian Slip",
+    "image": "RG-GEMP-Corellian-Slip.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_74",
+    "title": "Droid Overboard",
+    "image": "RG-GEMP-Droid-Overboard.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_75",
+    "title": "Effective Repairs & Punch It!",
+    "image": "RG-GEMP-Effective-Repairs-Punch-It.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_76",
+    "title": "Either Way, You Win & Eventually You'll Lose",
+    "image": "RG-GEMP-Either-Way-You-Win-Eventually-You-ll-Lose.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_77",
+    "title": "Entering The Arena",
+    "image": "RG-GEMP-Entering-The-Arena.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_78",
+    "title": "Eventually You'll Lose",
+    "image": "RG-GEMP-Eventually-You-ll-Lose.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_79",
+    "title": "False Past",
+    "image": "RG-GEMP-False-Past.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_80",
+    "title": "Father, Please...",
+    "image": "RG-GEMP-Father-Please.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_81",
+    "title": "Fly Casual",
+    "image": "RG-GEMP-Fly-Casual.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_82",
+    "title": "Gift Of The Mentor & Skywalkers",
+    "image": "RG-GEMP-Gift-Of-The-Mentor-Skywalkers.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_83",
+    "title": "Glancing Blow",
+    "image": "RG-GEMP-Glancing-Blow.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_84",
+    "title": "Han's Back & Leia's Back",
+    "image": "RG-GEMP-Han-s-Back-Leia-s-Back.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_85",
+    "title": "Help Me Obi-Wan Kenobi & Double Agent",
+    "image": "RG-GEMP-Help-Me-Obi-Wan-Kenobi-Double-Agent.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_86",
+    "title": "How Did We Get Into This Mess?",
+    "image": "RG-GEMP-How-Did-We-Get-Into-This-Mess.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_87",
+    "title": "Hyper Escape",
+    "image": "RG-GEMP-Hyper-Escape.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_88",
+    "title": "I Have A Really Bad Feeling About This",
+    "image": "RG-GEMP-I-Have-A-Really-Bad-Feeling-About-This.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_89",
+    "title": "I Used To Live Here, You Know?",
+    "image": "RG-GEMP-I-Used-To-Live-Here-You-Know.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_90",
+    "title": "Inconsequential Barriers",
+    "image": "RG-GEMP-Inconsequential-Barriers.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_91",
+    "title": "Insertion Planning",
+    "image": "RG-GEMP-Insertion-Planning.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_92",
+    "title": "Insertion Planning & Critical Error Revealed",
+    "image": "RG-GEMP-Insertion-Planning-Critical-Error-Revealed.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_93",
+    "title": "Jedi Leap & Clinging To The Edge",
+    "image": "RG-GEMP-Jedi-Leap-Clinging-To-The-Edge.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_94",
+    "title": "Jedi Presence",
+    "image": "RG-GEMP-Jedi-Presence.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_95",
+    "title": "Jedi Tactics",
+    "image": "RG-GEMP-Jedi-Tactics.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_96",
+    "title": "Keep Your Eyes Open & Shoo! Shoo!",
+    "image": "RG-GEMP-Keep-Your-Eyes-Open-Shoo-Shoo.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_97",
+    "title": "Light Maneuvers & Jedi Levitation",
+    "image": "RG-GEMP-Light-Maneuvers-Jedi-Levitation.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_98",
+    "title": "Losing Track",
+    "image": "RG-GEMP-Losing-Track.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_99",
+    "title": "Losing Track & A Step Backwards",
+    "image": "RG-GEMP-Losing-Track-A-Step-Backwards.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_100",
+    "title": "Lost In The Wilderness & Yub Yub!",
+    "image": "RG-GEMP-Lost-In-The-Wilderness-Yub-Yub.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_101",
+    "title": "Luke! We're Going To Have Company",
+    "image": "RG-GEMP-Luke-We-re-Going-To-Have-Company.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_102",
+    "title": "Might Of The Republic",
+    "image": "RG-GEMP-Might-Of-The-Republic.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_103",
+    "title": "Mindful Of The Future & Inconsequential Barriers",
+    "image": "RG-GEMP-Mindful-Of-The-Future-Inconsequential-Barriers.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_104",
+    "title": "Mission Briefing",
+    "image": "RG-GEMP-Mission-Briefing.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_105",
+    "title": "My Loyal Bodyguard & Might Of The Republic",
+    "image": "RG-GEMP-My-Loyal-Bodyguard-Might-Of-The-Republic.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_106",
+    "title": "Nabrun Leids & Quite A Mercenary",
+    "image": "RG-GEMP-Nabrun-Leids-Quite-A-Mercenary.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_107",
+    "title": "Narrow Escape",
+    "image": "RG-GEMP-Narrow-Escape.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_108",
+    "title": "Neck And Neck",
+    "image": "RG-GEMP-Neck-And-Neck.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_109",
+    "title": "Neck And Neck & Changing The Odds",
+    "image": "RG-GEMP-Neck-And-Neck-Changing-The-Odds.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_110",
+    "title": "Nice Of You Guys To Drop By",
+    "image": "RG-GEMP-Nice-Of-You-Guys-To-Drop-By.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_111",
+    "title": "Nice Of You Guys To Drop By & Visored Vision",
+    "image": "RG-GEMP-Nice-Of-You-Guys-To-Drop-By-Visored-Vision.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_112",
+    "title": "No Giben Up, General Jar Jar!",
+    "image": "RG-GEMP-No-Giben-Up-General-Jar-Jar.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_113",
+    "title": "No Giben Up, General Jar Jar & Gimme A Lift!",
+    "image": "RG-GEMP-No-Giben-Up-General-Jar-Jar-Gimme-A-Lift.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_114",
+    "title": "Off The Edge",
+    "image": "RG-GEMP-Off-The-Edge.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_115",
+    "title": "Old Ben & Noble Sacrifice",
+    "image": "RG-GEMP-Old-Ben-Noble-Sacrifice.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_116",
+    "title": "Old Smoothies",
+    "image": "RG-GEMP-Old-Smoothies.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_117",
+    "title": "On The Edge & Surprise Assault",
+    "image": "RG-GEMP-On-The-Edge-Surprise-Assault.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_118",
+    "title": "Ouch Time",
+    "image": "RG-GEMP-Ouch-Time.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_119",
+    "title": "Out Of Commission",
+    "image": "RG-GEMP-Out-Of-Commission.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_120",
+    "title": "Perimeter Scan & Under Attack",
+    "image": "RG-GEMP-Perimeter-Scan-Under-Attack.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_121",
+    "title": "Podrace Prep & Too Close For Comfort",
+    "image": "RG-GEMP-Podrace-Prep-Too-Close-For-Comfort.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_122",
+    "title": "Quite A Mercenary",
+    "image": "RG-GEMP-Quite-A-Mercenary.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_123",
+    "title": "Rebel Leadership",
+    "image": "RG-GEMP-Rebel-Leadership.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_124",
+    "title": "Rebel Leadership & Throw Me Another Charge",
+    "image": "RG-GEMP-Rebel-Leadership-Throw-Me-Another-Charge.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_125",
+    "title": "Recoil In Fear",
+    "image": "RG-GEMP-Recoil-In-Fear.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_126",
+    "title": "Return Of A Jedi & Luke's Back",
+    "image": "RG-GEMP-Return-Of-A-Jedi-Luke-s-Back.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_127",
+    "title": "Sabotage & Slight Weapons Malfunction",
+    "image": "RG-GEMP-Sabotage-Slight-Weapons-Malfunction.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_128",
+    "title": "See You At The Rendezvous",
+    "image": "RG-GEMP-See-You-At-The-Rendezvous.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_129",
+    "title": "Skull & Mandalorian Mishap",
+    "image": "RG-GEMP-Skull-Mandalorian-Mishap.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_130",
+    "title": "Smoke Screen",
+    "image": "RG-GEMP-Smoke-Screen.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_131",
+    "title": "Smoke Screen & It's A Trap!",
+    "image": "RG-GEMP-Smoke-Screen-It-s-A-Trap.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_132",
+    "title": "Sorry About The Mess",
+    "image": "RG-GEMP-Sorry-About-The-Mess.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_133",
+    "title": "Speak With The Jedi Council & Vote Now!",
+    "image": "RG-GEMP-Speak-With-The-Jedi-Council-Vote-Now.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_134",
+    "title": "Stay Here",
+    "image": "RG-GEMP-Stay-Here.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_135",
+    "title": "Strangle",
+    "image": "RG-GEMP-Strangle.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_136",
+    "title": "Strike Blocked",
+    "image": "RG-GEMP-Strike-Blocked.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_137",
+    "title": "Taking On The Whole Empire By Myself",
+    "image": "RG-GEMP-Taking-On-The-Whole-Empire-Myself.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_138",
+    "title": "The Force Is Strong With This One & Jedi Presence",
+    "image": "RG-GEMP-The-Force-Is-Strong-With-This-One-Jedi-Presence.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_139",
+    "title": "The Signal & Jedi Mind Trick",
+    "image": "RG-GEMP-The-Signal-Jedi-Mind-Trick.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_140",
+    "title": "This Is More Like It & I Have A Really Bad Feeling About This",
+    "image": "RG-GEMP-This-Is-More-Like-It-I-Have-A-Bad-Feeling-About-This.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_141",
+    "title": "Too Close For Comfort",
+    "image": "RG-GEMP-Too-Close-For-Comfort.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_142",
+    "title": "Under Attack",
+    "image": "RG-GEMP-Under-Attack.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_143",
+    "title": "Vote Now!",
+    "image": "RG-GEMP-Vote-Now-Light.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_144",
+    "title": "Walker Sighting",
+    "image": "RG-GEMP-Walker-Sighting.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_145",
+    "title": "We Can Still Outmaneuver Them",
+    "image": "RG-GEMP-We-Can-Still-Outmaneuver-Them.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_146",
+    "title": "We Don't Need Their Scum",
+    "image": "RG-GEMP-We-Don-t-Need-Their-Scum.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_147",
+    "title": "We Don't Want To Cause Any Trouble",
+    "image": "RG-GEMP-We-Don-t-Want-To-Cause-Any-Trouble.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_148",
+    "title": "We Wish To Board At Once",
+    "image": "RG-GEMP-We-Wish-To-Board-At-Once.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_149",
+    "title": "We Wish To Board At Once & Are You Brain Dead?!",
+    "image": "RG-GEMP-We-Wish-To-Board-At-Once-Are-You-Brain-Dead.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_150",
+    "title": "Were You Looking For Me? & I Know",
+    "image": "RG-GEMP-Were-You-Looking-For-Me-I-Know.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_151",
+    "title": "Wookiee Strangle & We'll Find Han",
+    "image": "RG-GEMP-Wookiee-Strangle-We-ll-Find-Han.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_152",
+    "title": "Yoda I Must Know",
+    "image": "RG-GEMP-Yoda-I-Must-Know.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_153",
+    "title": "You Will Take Me To Jabba Now",
+    "image": "RG-GEMP-You-Will-Take-Me-To-Jabba-Now.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_154",
+    "title": "You Will Take Me To Jabba Now & Strangle",
+    "image": "RG-GEMP-You-Will-Take-Me-To-Jabba-Now-Strangle.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_155",
+    "title": "Yousa Guys Bombad!",
+    "image": "RG-GEMP-Yousa-Guys-Bombad.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_156",
+    "title": "Naboo: Ceremonial Chamber",
+    "image": "RG-GEMP-Naboo-Ceremonial-Chamber.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_157",
+    "title": "Boba Fett",
+    "image": "RG-GEMP-Boba-Fett.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_158",
+    "title": "Coilen",
+    "image": "RG-GEMP-Coilen.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_159",
+    "title": "Darth Maul, Sidious' Apprentice",
+    "image": "RG-GEMP-Darth-Maul-Sidious-Apprentice.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_160",
+    "title": "Emperor",
+    "image": "RG-GEMP-Emperor.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_161",
+    "title": "Emperor's Royal Guard",
+    "image": "RG-GEMP-Emperor-s-Royal-Guard.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_162",
+    "title": "Governor Tarkin",
+    "image": "RG-GEMP-Governer-Tarkin.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_163",
+    "title": "Griff Mirtong",
+    "image": "RG-GEMP-Griff-Mirtong.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_164",
+    "title": "Gweeta",
+    "image": "RG-GEMP-Gweeta.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_165",
+    "title": "Lord Vader, Lord Of The Sith",
+    "image": "RG-GEMP-Lord-Vader-Lord-Of-The-Sith.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_166",
+    "title": "SSA-33",
+    "image": "RG-GEMP-SSA-33.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_167",
+    "title": "TK-420",
+    "image": "RG-GEMP-TK-420.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_168",
+    "title": "Watto, Junk Dealer",
+    "image": "RG-GEMP-Watto-Junk-Dealer.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_169",
+    "title": "Security Activators",
+    "image": "RG-GEMP-Security-Activators.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_170",
+    "title": "Alert My Star Destroyer!",
+    "image": "RG-GEMP-Alert-My-Star-Destroyer.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_171",
+    "title": "Aratech Corporation",
+    "image": "RG-GEMP-Aratech-Corporation.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_172",
+    "title": "Back On Schedule",
+    "image": "RG-GEMP-Back-On-Schedule.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_173",
+    "title": "Battle Plains Victory",
+    "image": "RG-GEMP-Battle-Plains-Victory.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_174",
+    "title": "Begin Landing Your Troops & Activate The Droids",
+    "image": "RG-GEMP-Begin-Landing-Your-Troops-Activate-The-Droids.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_175",
+    "title": "Blast Door Controls & Reactor Terminal",
+    "image": "RG-GEMP-Blast-Door-Controls-Reactor-Terminal.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_176",
+    "title": "Boonta Eve Wagering",
+    "image": "RG-GEMP-Boonta-Eve-Wagering.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_177",
+    "title": "Crossfire",
+    "image": "RG-GEMP-Crossfire.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_178",
+    "title": "Emperor's Power & Overseeing It Personally",
+    "image": "RG-GEMP-Emperor-s-Power-Overseeing-It-Personally.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_179",
+    "title": "Establish Secret Base & Ominous Rumors",
+    "image": "RG-GEMP-Establish-Secret-Base-Ominous-Rumors.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_180",
+    "title": "Ewok Superstitions",
+    "image": "RG-GEMP-Ewok-Supersticions.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_181",
+    "title": "Expand The Empire",
+    "image": "RG-GEMP-Expand-The-Empire.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_182",
+    "title": "Flagship Operations",
+    "image": "RG-GEMP-Flagship-Operations.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_183",
+    "title": "I Had No Choice",
+    "image": "RG-GEMP-I-Had-No-Choice.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_184",
+    "title": "I Will Find Them Quickly Master",
+    "image": "RG-GEMP-I-Will-Find-Them-Quickly-Master.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_185",
+    "title": "Imperial Compensation",
+    "image": "RG-GEMP-Imperial-Compensation.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_186",
+    "title": "Imperial Decree & The Dark Path",
+    "image": "RG-GEMP-Imperial-Decree-The-Dark-Path.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_187",
+    "title": "Imperial Firepower",
+    "image": "RG-GEMP-Imperial-Firepower.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_188",
+    "title": "Imperial Justice",
+    "image": "RG-GEMP-Imperial-Justice.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_189",
+    "title": "Jabba's Droid Pool",
+    "image": "RG-GEMP-Jabba-s-Droid-Pool.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_190",
+    "title": "Jedi Rocks",
+    "image": "RG-GEMP-Jedi-Rocks.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_191",
+    "title": "Krayt Dragon Bones & Imperial Justice",
+    "image": "RG-GEMP-Krayt-Dragon-Bones-Imperial-Justice.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_192",
+    "title": "Name The System!",
+    "image": "RG-GEMP-Name-The-System.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_193",
+    "title": "Not Worth The Trouble",
+    "image": "RG-GEMP-Not-Worth-The-Trouble.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_194",
+    "title": "One Arm's Frozen Lunch",
+    "image": "RG-GEMP-One-Arm-s-Frozen-Lunch.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_195",
+    "title": "Open Fire!",
+    "image": "RG-GEMP-Open-Fire.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_196",
+    "title": "Perfect Hibernation",
+    "image": "RG-GEMP-Perfect-Hibernation.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_197",
+    "title": "Performing Under Pressure",
+    "image": "RG-GEMP-Performing-Under-Pressure.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_198",
+    "title": "Perimeter Patrol",
+    "image": "RG-GEMP-Perimeter-Patrol.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_199",
+    "title": "Presence Of The Force & Dark Waters",
+    "image": "RG-GEMP-Presence-Of-The-Force-Dark-Waters.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_200",
+    "title": "Quick Reflexes & All Wrapped Up",
+    "image": "RG-GEMP-Quick-Reflexes-All-Wrapped-Up.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_201",
+    "title": "Quietly Observing",
+    "image": "RG-GEMP-Quietly-Observing.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_202",
+    "title": "Relentless Tracking",
+    "image": "RG-GEMP-Relentless-Tracking.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_203",
+    "title": "Responsibility Of Command",
+    "image": "RG-GEMP-Responsibility-Of-Command.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_204",
+    "title": "Sarlacc Tentacles",
+    "image": "RG-GEMP-Sarlacc-Tentacles.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_205",
+    "title": "Scum And Villainy",
+    "image": "RG-GEMP-Scum-And-Villainy-Information-Exchange.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_206",
+    "title": "Scum And Villainy & Information Exchange",
+    "image": "RG-GEMP-Scum-And-Villainy.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_207",
+    "title": "Search And Destroy",
+    "image": "RG-GEMP-Search-And-Destroy.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_208",
+    "title": "Security Precautions",
+    "image": "RG-GEMP-Security-Precautions.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_209",
+    "title": "Tatooine Resale Operations",
+    "image": "RG-GEMP-Tatooine-Resale-Operations.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_210",
+    "title": "Tatooine Underground Operations",
+    "image": "RG-GEMP-Tatooine-Underground-Operations.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_211",
+    "title": "This Is Outrageous! & Motion Supported",
+    "image": "RG-GEMP-This-Is-Outrageous-Motion-Supported.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_212",
+    "title": "Visage Of A Viceroy",
+    "image": "RG-GEMP-Visage-Of-A-Viceroy.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_213",
+    "title": "Watto's Box & Quietly Observing",
+    "image": "RG-GEMP-Watto-s-Box-Quietly-Observing.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_214",
+    "title": "Weapon Malfunction",
+    "image": "RG-GEMP-Weapon-Malfunction.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_215",
+    "title": "Well Guarded & Security Precautions",
+    "image": "RG-GEMP-Well-Guarded-Security-Precautions.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_216",
+    "title": "Well-Earned Command",
+    "image": "RG-GEMP-Well-Earned-Command.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_217",
+    "title": "Worry",
+    "image": "RG-GEMP-Worry.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_218",
+    "title": "Your Destiny & Insignificant Rebellion",
+    "image": "RG-GEMP-Your-Destiny-Insignificant-Rebellion.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_219",
+    "title": "Always Thinking With Your Stomach & Scout Recon",
+    "image": "RG-GEMP-Always-Thinking-With-Your-Stomach-Scout-Recon.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_220",
+    "title": "Atmospheric Assault",
+    "image": "RG-GEMP-Atmospheric-Assault.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_221",
+    "title": "Begin Retreat!",
+    "image": "RG-GEMP-Begin-Retreat.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_222",
+    "title": "Ben?",
+    "image": "RG-GEMP-Ben.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_223",
+    "title": "Blow Parried",
+    "image": "RG-GEMP-Blow-Parried.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_224",
+    "title": "Boba Fett? Where?!",
+    "image": "RG-GEMP-Boba-Fett-Where.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_225",
+    "title": "Brief Loss Of Control & Imperial Supply",
+    "image": "RG-GEMP-Brief-Loss-Of-Control-Imperial-Supply.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_226",
+    "title": "Cannon Fire",
+    "image": "RG-GEMP-Cannon-Fire.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_227",
+    "title": "Cold Feet & He Hasn't Come Back Yet",
+    "image": "RG-GEMP-Cold-Feet-He-Hasn-t-Come-Back-Yet.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_228",
+    "title": "Combat Readiness & Prepared Defenses",
+    "image": "RG-GEMP-Combat-Readiness-Prepared-Defenses.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_229",
+    "title": "Counter Surprise Assault",
+    "image": "RG-GEMP-Counter-Surprise-Assault.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_230",
+    "title": "Dark Collaboration & Charming To The Last",
+    "image": "RG-GEMP-Dark-Collaboration-Charming-To-The-Last.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_231",
+    "title": "Dark Jedi Presence",
+    "image": "RG-GEMP-Dark-Jedi-Presence.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_232",
+    "title": "Dark Jedi Presence & Vader's Eye",
+    "image": "RG-GEMP-Dark-Jedi-Presence-Vader-s-Eye.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_233",
+    "title": "Dark Maneuvers",
+    "image": "RG-GEMP-Dark-Maneuvers.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_234",
+    "title": "Dioxis",
+    "image": "RG-GEMP-Dioxis.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_235",
+    "title": "Dioxis & They're Still Coming Through!",
+    "image": "RG-GEMP-Dioxis-They-re-Still-Coming-Through.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_236",
+    "title": "Disciplinary Actions",
+    "image": "RG-GEMP-Disciplinary-Actions.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_237",
+    "title": "Drop Your Weapons & Halt!",
+    "image": "RG-GEMP-Drop-Your-Weapons-Halt.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_238",
+    "title": "Elis Helrot & Oo-ta Goo-ta Solo?",
+    "image": "RG-GEMP-Elis-Helrot-Oo-ta-Goo-ta-Solo.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_239",
+    "title": "Entry Denied",
+    "image": "RG-GEMP-Entry-Denied.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_240",
+    "title": "Flag Emblems",
+    "image": "RG-GEMP-Flag-Emblems.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_241",
+    "title": "Force Lightning",
+    "image": "RG-GEMP-Force-Lightning.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_242",
+    "title": "Force Lightning & Rise, My Friend",
+    "image": "RG-GEMP-Force-Lightning-Rise-My-Friend.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_243",
+    "title": "Great Interest",
+    "image": "RG-GEMP-Great-Interest.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_244",
+    "title": "Hidden Weapons & Twi'lek Advisor",
+    "image": "RG-GEMP-Hidden-Weapons-Twi-lek-Advisor.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_245",
+    "title": "Hit Racer",
+    "image": "RG-GEMP-Hit-Racer.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_246",
+    "title": "I Didn't Mean To...",
+    "image": "RG-GEMP-I-Didn-t-Mean-To.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_247",
+    "title": "I Have You Now & Your Powers Are Weak, Old Man",
+    "image": "RG-GEMP-I-Have-You-Now-Your-Powers-Are-Weak-Old-Man.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_248",
+    "title": "Imbalance & Shocking Revelation",
+    "image": "RG-GEMP-Imbalance-Shocking-Revelation.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_249",
+    "title": "Imperial Command",
+    "image": "RG-GEMP-Imperial-Command-It-s-An-Older-Code.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_250",
+    "title": "Imperial Command & It's An Older Code",
+    "image": "RG-GEMP-Imperial-Command.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_251",
+    "title": "Imperial Data Network",
+    "image": "RG-GEMP-Imperial-Data-Network.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_252",
+    "title": "Imperial Detachments",
+    "image": "RG-GEMP-Imperial-Detachments.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_253",
+    "title": "Imperial Supply",
+    "image": "RG-GEMP-Imperial-Supply.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_254",
+    "title": "In The Pits",
+    "image": "RG-GEMP-In-The-Pits.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_255",
+    "title": "Informant & Takeel",
+    "image": "RG-GEMP-Informant-Takeel.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_256",
+    "title": "Is There Something Alive Down Here?",
+    "image": "RG-GEMP-Is-There-Something-Alive-Down-Here.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_257",
+    "title": "I've Got A Problem Here & Physical Choke",
+    "image": "RG-GEMP-I-ve-Got-A-Problem-Here-Physical-Choke.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_258",
+    "title": "Jabba's Through With You",
+    "image": "RG-GEMP-Jabba-s-Through-With-You.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_259",
+    "title": "Jabba's Through With You & Nevar Yalnal",
+    "image": "RG-GEMP-Jabba-s-Through-With-You-Nevar-Yalnal.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_260",
+    "title": "Local Trouble",
+    "image": "RG-GEMP-Local-Trouble.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_261",
+    "title": "Locked Door",
+    "image": "RG-GEMP-Locked-Door.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_262",
+    "title": "Look Sir, Droids & Counter Assault",
+    "image": "RG-GEMP-Look-Sir-Droids-Counter-Assault.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_263",
+    "title": "Master, Destroyers! & Rolling, Rolling, Rolling",
+    "image": "RG-GEMP-Master-Destroyers-Rolling-Rolling-Rolling.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_264",
+    "title": "Maul Strikes & No Match For A Sith",
+    "image": "RG-GEMP-Maul-Strikes-No-Match-For-A-Sith.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_265",
+    "title": "None Shall Pass",
+    "image": "RG-GEMP-None-Shall-Pass.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_266",
+    "title": "Oo-ta Goo-ta Solo?",
+    "image": "RG-GEMP-Oo-ta-Goo-ta-Solo.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_267",
+    "title": "Operational As Planned & Wounded Warrior",
+    "image": "RG-GEMP-Operational-As-Planned-Wounded-Warrior.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_268",
+    "title": "Our First Catch Of The Day",
+    "image": "RG-GEMP-Our-First-Catch-Of-The-Day.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_269",
+    "title": "Overwhelmed & A Dark Time For The Rebellion",
+    "image": "RG-GEMP-Overwhelmed-A-Dark-Time-For-The-Rebellion.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_270",
+    "title": "Pit Crews",
+    "image": "RG-GEMP-Pit-Crews.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_271",
+    "title": "Podracer Collision",
+    "image": "RG-GEMP-Podracer-Collision.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_272",
+    "title": "Podracer Collision & Hit Racer",
+    "image": "RG-GEMP-Podracer-Collision-Hit-Racer.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_273",
+    "title": "Point Man & Slip Sliding Away",
+    "image": "RG-GEMP-Point-Man-Slip-Sliding-Away.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_274",
+    "title": "Projective Telepathy",
+    "image": "RG-GEMP-Projective-Telepathy.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_275",
+    "title": "Put All Sections On Alert & Full Scale Alert",
+    "image": "RG-GEMP-Put-All-Sections-On-Alert-Full-Scale-Alert.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_276",
+    "title": "Release Your Anger & Unexpected Interruption",
+    "image": "RG-GEMP-Release-Your-Anger-Unexpected-Interruption.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_277",
+    "title": "Rolling, Rolling, Rolling",
+    "image": "RG-GEMP-Rolling-Rolling-Rolling.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_278",
+    "title": "Security Sweep",
+    "image": "RG-GEMP-Security-Sweep.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_279",
+    "title": "Short Range Fighters",
+    "image": "RG-GEMP-Short-Range-Fighters.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_280",
+    "title": "Shut Him Up Or Shut Him Down & Voyeur",
+    "image": "RG-GEMP-Shut-Him-Up-Or-Shut-Him-Down-Voyeur.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_281",
+    "title": "Sniper",
+    "image": "RG-GEMP-Sniper.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_282",
+    "title": "Something Hit Us! & Why Didn't You Tell Me?",
+    "image": "RG-GEMP-Something-Hit-Us-Why-Didn-t-You-Tell-Me.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_283",
+    "title": "Speeder Downed",
+    "image": "RG-GEMP-Speeder-Downed.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_284",
+    "title": "Squabbling Delegates",
+    "image": "RG-GEMP-Squabbling-Delegates.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_285",
+    "title": "Start Your Engines! & Pit Crews",
+    "image": "RG-GEMP-Start-Your-Engines-Pit-Crews.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_286",
+    "title": "Surprise & E Chu Ta",
+    "image": "RG-GEMP-Surprise-E-Chu-Ta.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_287",
+    "title": "Tactical Support",
+    "image": "RG-GEMP-Tactical-Support.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_288",
+    "title": "Tallon Roll",
+    "image": "RG-GEMP-Tallon-Roll.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_289",
+    "title": "The Circle Is Now Complete",
+    "image": "RG-GEMP-The-Circle-Is-Now-Complete.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_290",
+    "title": "The Circle Is Now Complete & Vader's Obsession",
+    "image": "RG-GEMP-The-Circle-Is-Now-Complete-Vader-s-Obsession.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_291",
+    "title": "They're Still Coming Through",
+    "image": "RG-GEMP-They-re-Still-Coming-Through.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_292",
+    "title": "Those Rebels Won't Escape Us",
+    "image": "RG-GEMP-Those-Rebels-Won-t-Escape-Us.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_293",
+    "title": "Through The Corridor",
+    "image": "RG-GEMP-Through-The-Corridor.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_294",
+    "title": "Trade Federation Tactics & We're Hit Artoo",
+    "image": "RG-GEMP-Trade-Federation-Tactics-We-re-Hit-Artoo.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_295",
+    "title": "Trample & Lightsaber Deficiency",
+    "image": "RG-GEMP-Trample-Lightsaber-Deficiency.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_296",
+    "title": "Trap Door",
+    "image": "RG-GEMP-Trap-Door.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_297",
+    "title": "Trooper Assault & Tactical Support",
+    "image": "RG-GEMP-Trooper-Assault-Tactical-Support.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_298",
+    "title": "Twilight Fading",
+    "image": "RG-GEMP-Twilight-Fading.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_299",
+    "title": "Uncertain Is The Future",
+    "image": "RG-GEMP-Uncertain-Is-The-Future.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_300",
+    "title": "Unexpected Interruption",
+    "image": "RG-GEMP-Unexpected-Interruption.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_301",
+    "title": "Vote Now!",
+    "image": "RG-GEMP-Vote-Now-Dark.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_302",
+    "title": "Watto's Chance Cube & You Swindled Me!",
+    "image": "RG-GEMP-Watto-s-Chance-Cube-You-Swindled-Me.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_303",
+    "title": "We Have A Prisoner",
+    "image": "RG-GEMP-We-Have-A-Prisoner.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_304",
+    "title": "We Must Accelerate Our Plans & Vote Now!",
+    "image": "RG-GEMP-We-Must-Accelerate-Our-Plans-Vote-Now.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_305",
+    "title": "We Would Be Honored If You Would Join Us",
+    "image": "RG-GEMP-We-Would-Be-Honored-If-You-Would-Join-Us.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_306",
+    "title": "Where Are You Taking This...Thing?",
+    "image": "RG-GEMP-Where-Are-You-Taking-This-Thing.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_307",
+    "title": "You Are Beaten",
+    "image": "RG-GEMP-You-Are-Beaten.png",
+    "intentionalBlank": false,
+    "implemented": false
+  },
+  {
+    "id": "15_308",
+    "title": "You Will Meet Your Destiny",
+    "image": "RG-GEMP-You-Will-Meet-Your-Destiny.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_309",
+    "title": "Star Destroyer Executor",
+    "image": "RG-GEMP-Star-Destroyer-Executor.png",
+    "intentionalBlank": true,
+    "implemented": true
+  },
+  {
+    "id": "15_310",
+    "title": "Blizzard Scout 4",
+    "image": "RG-GEMP-Blizzard-Scout-4.png",
+    "intentionalBlank": true,
+    "implemented": true
+  }
+]

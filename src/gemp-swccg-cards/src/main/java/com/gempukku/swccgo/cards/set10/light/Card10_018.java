@@ -4,6 +4,7 @@ import com.gempukku.swccgo.cards.AbstractRebel;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.conditions.AtCondition;
 import com.gempukku.swccgo.common.ExpansionSet;
+import com.gempukku.swccgo.common.Persona;
 import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Keyword;
 import com.gempukku.swccgo.common.Rarity;
@@ -36,6 +37,7 @@ import java.util.List;
 public class Card10_018 extends AbstractRebel {
     public Card10_018() {
         super(Side.LIGHT, 3, 3, 4, 3, 5, "Owen Lars & Beru Lars", Uniqueness.UNIQUE, ExpansionSet.REFLECTIONS_II, Rarity.PM);
+        addPersona(Persona.OWEN);
         addComboCardTitles(Title.Owen_Lars, Title.Beru_Lars);
         setLore("Watchful guardians of Luke Skywalker. When the Lars' moisture farm was attacked by stormtroopers, Luke's life changed forever.");
         setGameText("Deploy free to Lars' Moisture Farm. Draws one battle destiny if not able to otherwise. If opponent has a Stormtrooper at a Tatooine site, you may not play Harvest. If lost during opponent's turn, Luke is power +6 until end of your next turn.");

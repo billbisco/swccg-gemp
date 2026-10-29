@@ -1,0 +1,3117 @@
+[
+  {
+    "id": "15_1",
+    "title": "2-1B",
+    "side": "Light",
+    "subtype": "Droid",
+    "destiny": 3,
+    "deploy": 2,
+    "power": 0,
+    "ability": 0,
+    "forfeit": 5,
+    "icons": [
+      "DROID",
+      "REFLECTIONS_GOLD"
+    ],
+    "characteristics": [],
+    "persona": null,
+    "uniqueness": 1,
+    "landspeed": 1,
+    "game_text": "",
+    "credits": 0,
+    "image": "work\\refgold-final-proof\\images\\RG-GEMP-2-1B.png",
+    "sha256": "1601df1d5b5d1e27160ec54aea6425e52fd88545e400083fd57c5fa90e68e452",
+    "evidence": "Full normalized card visually inspected. Printed fields independent of implementation. Landspeed is character rule default. Persona and species associations need matching engine mapping; no borrowed abilities or icons.",
+    "model": "Medical",
+    "number": 1,
+    "lore": "Member of the droid pool on the rebel base of Hoth. Worked on Luke Skywalker and other members of Rogue Squadron who needed medical treatment.",
+    "gameText": "",
+    "cardTypes": [
+      "DROID"
+    ],
+    "keywords": [],
+    "personas": [],
+    "species": null,
+    "models": [
+      "MEDICAL"
+    ],
+    "file": "RG-GEMP-2-1B.png",
+    "kind": "Character"
+  },
+  {
+    "id": "15_2",
+    "title": "Anakin Skywalker",
+    "side": "Light",
+    "subtype": "Republic",
+    "destiny": 2,
+    "deploy": 3,
+    "power": 1,
+    "ability": 4,
+    "forfeit": 6,
+    "icons": [
+      "REPUBLIC",
+      "REFLECTIONS_GOLD",
+      "PILOT",
+      "EPISODE_I"
+    ],
+    "characteristics": [
+      "Skywalker"
+    ],
+    "persona": "Anakin",
+    "uniqueness": 1,
+    "landspeed": 1,
+    "game_text": "",
+    "credits": 0,
+    "image": "work\\refgold-final-proof\\images\\RG-GEMP-Anakin-Skywalker.png",
+    "sha256": "8d99c3c5c49bda1d6d6e8c7a8d392cc5e384e4bccfd698f23100f0bdcb7b1983",
+    "evidence": "Full normalized card visually inspected. Printed fields independent of implementation. Landspeed is character rule default. Persona and species associations need matching engine mapping; no borrowed abilities or icons.",
+    "number": 2,
+    "lore": "Vader. \"He can help you.\" \"You refer to the prophecy of the one who will bring balance to the Force.\" \"The boy is dangerous. They all sense it. Why can’t you?\"",
+    "gameText": "",
+    "cardTypes": [
+      "REPUBLIC"
+    ],
+    "keywords": [
+      "SKYWALKER"
+    ],
+    "personas": [
+      "ANAKIN"
+    ],
+    "species": null,
+    "models": [],
+    "file": "RG-GEMP-Anakin-Skywalker.png",
+    "kind": "Character"
+  },
+  {
+    "id": "15_3",
+    "title": "Chewbacca",
+    "side": "Light",
+    "subtype": "Rebel",
+    "destiny": 1,
+    "deploy": 4,
+    "power": 6,
+    "ability": 2,
+    "forfeit": 7,
+    "icons": [
+      "REBEL",
+      "REFLECTIONS_GOLD"
+    ],
+    "characteristics": [
+      "Smuggler",
+      "Wookiee"
+    ],
+    "persona": "Chewie",
+    "uniqueness": 1,
+    "landspeed": 1,
+    "game_text": "",
+    "credits": 0,
+    "image": "work\\refgold-final-proof\\images\\RG-GEMP-Chewbacca.png",
+    "sha256": "dcdf8320ab4f5c41dac18abfcf5647d921e9c7b65cd6bfe9858253dc70ae4f1e",
+    "evidence": "Full normalized card visually inspected. Printed fields independent of implementation. Landspeed is character rule default. Persona and species associations need matching engine mapping; no borrowed abilities or icons.",
+    "number": 3,
+    "lore": "Smuggler. Was attempting to repair the Millennium Falcon before the Empire located the rebel base on the planet Hoth. Known to enjoy the rug hug.",
+    "gameText": "",
+    "cardTypes": [
+      "REBEL"
+    ],
+    "keywords": [
+      "SMUGGLER"
+    ],
+    "personas": [
+      "CHEWIE"
+    ],
+    "species": "WOOKIEE",
+    "models": [],
+    "file": "RG-GEMP-Chewbacca.png",
+    "kind": "Character"
+  },
+  {
+    "id": "15_4",
+    "title": "Commander Myron Konkle",
+    "side": "Light",
+    "subtype": "Rebel",
+    "destiny": 2,
+    "deploy": 2,
+    "power": 2,
+    "ability": 2,
+    "forfeit": 5,
+    "icons": [
+      "REBEL",
+      "REFLECTIONS_GOLD"
+    ],
+    "characteristics": [],
+    "persona": null,
+    "uniqueness": 1,
+    "landspeed": 1,
+    "game_text": "",
+    "credits": 0,
+    "image": "work\\refgold-final-proof\\images\\RG-GEMP-Commander-Myron-Konkle.png",
+    "sha256": "c66dd0041a6d7b590c733e9a9fc84e0decc3939e14a8e7ff009f0f14b0caeb59",
+    "evidence": "Full normalized card visually inspected. Printed fields independent of implementation. Landspeed is character rule default. Persona and species associations need matching engine mapping; no borrowed abilities or icons.",
+    "title_rank": "Commander",
+    "number": 4,
+    "lore": "Electronics expert who assisted in the analysis of the Death Star data supplied by R2-D2. Former Imperial engineer who defected from the Star Destroyer Avenger.",
+    "gameText": "",
+    "cardTypes": [
+      "REBEL"
+    ],
+    "keywords": [
+      "COMMANDER"
+    ],
+    "personas": [],
+    "species": null,
+    "models": [],
+    "file": "RG-GEMP-Commander-Myron-Konkle.png",
+    "kind": "Character"
+  },
+  {
+    "id": "15_5",
+    "title": "Drem Redins",
+    "side": "Light",
+    "subtype": "Alien",
+    "destiny": 3,
+    "deploy": 3,
+    "power": 2,
+    "ability": 3,
+    "forfeit": 4,
+    "icons": [
+      "ALIEN",
+      "REFLECTIONS_GOLD",
+      "EPISODE_I"
+    ],
+    "characteristics": [
+      "Gambler",
+      "Ishi Tib"
+    ],
+    "persona": null,
+    "uniqueness": 1,
+    "landspeed": 1,
+    "game_text": "",
+    "credits": 0,
+    "image": "work\\refgold-final-proof\\images\\RG-GEMP-Drem-Redins.png",
+    "sha256": "6c018e679824d270217f4bc57da6b30f075bfbacfdb124bceab0f50ba3700daf",
+    "evidence": "Full normalized card visually inspected. Printed fields independent of implementation. Landspeed is character rule default. Persona and species associations need matching engine mapping; no borrowed abilities or icons.",
+    "number": 5,
+    "lore": "Ishi Tib gambler responsible for handling and paying out on small wagers at Boonta Eve. Rumored to be losing money because of his odds not being as desirable as Jabba’s.",
+    "gameText": "",
+    "cardTypes": [
+      "ALIEN"
+    ],
+    "keywords": [
+      "GAMBLER"
+    ],
+    "personas": [],
+    "species": "ISHI_TIB",
+    "models": [],
+    "file": "RG-GEMP-Drem-Redins.png",
+    "kind": "Character"
+  },
+  {
+    "id": "15_6",
+    "title": "Ewok Tribesman",
+    "side": "Light",
+    "subtype": "Alien",
+    "destiny": 3,
+    "deploy": 3,
+    "power": 1,
+    "ability": 2,
+    "forfeit": 2,
+    "icons": [
+      "ALIEN",
+      "REFLECTIONS_GOLD"
+    ],
+    "characteristics": [
+      "Ewok"
+    ],
+    "persona": null,
+    "uniqueness": 3,
+    "landspeed": 1,
+    "game_text": "",
+    "credits": 0,
+    "image": "work\\refgold-final-proof\\images\\RG-GEMP-Ewok-Tribesman.png",
+    "sha256": "1169175d23e3e424016a160064f440535ee352fd6facff86e4ce7010e59b15d9",
+    "evidence": "Full normalized card visually inspected. Printed fields independent of implementation. Landspeed is character rule default. Persona and species associations need matching engine mapping; no borrowed abilities or icons.",
+    "number": 6,
+    "lore": "Tribesmen are often in charge of making critical decisions that affect an entire tribe. Allowing Han Solo and his strike team into their village was one of those decisions.",
+    "gameText": "",
+    "cardTypes": [
+      "ALIEN"
+    ],
+    "keywords": [],
+    "personas": [],
+    "species": "EWOK",
+    "models": [],
+    "file": "RG-GEMP-Ewok-Tribesman.png",
+    "kind": "Character"
+  },
+  {
+    "id": "15_7",
+    "title": "Goldenrod",
+    "side": "Light",
+    "subtype": "Droid",
+    "destiny": 3,
+    "deploy": 2,
+    "power": 1,
+    "ability": 0,
+    "forfeit": 3,
+    "icons": [
+      "DROID",
+      "REFLECTIONS_GOLD"
+    ],
+    "characteristics": [],
+    "persona": "C3PO",
+    "uniqueness": 1,
+    "landspeed": 1,
+    "game_text": "",
+    "credits": 0,
+    "image": "work\\refgold-final-proof\\images\\RG-GEMP-Goldenrod.png",
+    "sha256": "2fb8fe06121afe05c6558588d2bc6a4e5bf052eceaed35c7c21bc115a4a49590",
+    "evidence": "Full normalized card visually inspected. Printed fields independent of implementation. Landspeed is character rule default. Persona and species associations need matching engine mapping; no borrowed abilities or icons.",
+    "model": "Communications",
+    "number": 7,
+    "lore": "\"With all we’ve been through, sometimes I’m amazed we’re in as good condition as we are, what with the Rebellion and all.\"",
+    "gameText": "",
+    "cardTypes": [
+      "DROID"
+    ],
+    "keywords": [],
+    "personas": [
+      "C3PO"
+    ],
+    "species": null,
+    "models": [
+      "COMMUNICATIONS"
+    ],
+    "file": "RG-GEMP-Goldenrod.png",
+    "kind": "Character"
+  },
+  {
+    "id": "15_8",
+    "title": "Jar Jar",
+    "side": "Light",
+    "subtype": "Alien",
+    "destiny": 3,
+    "deploy": 2,
+    "power": 3,
+    "ability": 3,
+    "forfeit": 6,
+    "icons": [
+      "ALIEN",
+      "REFLECTIONS_GOLD",
+      "EPISODE_I"
+    ],
+    "characteristics": [
+      "Gungan"
+    ],
+    "persona": "Jar Jar",
+    "uniqueness": 1,
+    "landspeed": 1,
+    "game_text": "",
+    "credits": 0,
+    "image": "work\\refgold-final-proof\\images\\RG-GEMP-Jar-Jar.png",
+    "sha256": "7282efbbf9e6b2a1056f567569a4e99c4c9c5ed41c5274512af0f867bc63ba4a",
+    "evidence": "Full normalized card visually inspected. Printed fields independent of implementation. Landspeed is character rule default. Persona and species associations need matching engine mapping; no borrowed abilities or icons.",
+    "printed_ability_label": "Force-attuned",
+    "number": 8,
+    "lore": "\"No, no. Mesa stay. Mesa called Jar Jar Binks. Mesa your humble servant.\"",
+    "gameText": "",
+    "cardTypes": [
+      "ALIEN"
+    ],
+    "keywords": [],
+    "personas": [
+      "JAR_JAR"
+    ],
+    "species": "GUNGAN",
+    "models": [],
+    "file": "RG-GEMP-Jar-Jar.png",
+    "kind": "Character"
+  },
+  {
+    "id": "15_9",
+    "title": "Old Ben Kenobi",
+    "side": "Light",
+    "subtype": "Rebel",
+    "destiny": 1,
+    "deploy": 5,
+    "power": 5,
+    "ability": 6,
+    "forfeit": 9,
+    "icons": [
+      "REBEL",
+      "REFLECTIONS_GOLD"
+    ],
+    "characteristics": [],
+    "persona": "Obi-Wan",
+    "uniqueness": 1,
+    "landspeed": 1,
+    "game_text": "",
+    "credits": 0,
+    "image": "work\\refgold-final-proof\\images\\RG-GEMP-Old-Ben-Kenobi.png",
+    "sha256": "1a51102f847128869a42d716d5221181476be8e70b6885b54cd0e82c998204f7",
+    "evidence": "Full normalized card visually inspected. Printed fields independent of implementation. Landspeed is character rule default. Persona and species associations need matching engine mapping; no borrowed abilities or icons.",
+    "number": 9,
+    "lore": "\"Hello there! Come here my little friend, don’t be afraid.\"",
+    "gameText": "",
+    "cardTypes": [
+      "REBEL"
+    ],
+    "keywords": [],
+    "personas": [
+      "OBIWAN"
+    ],
+    "species": null,
+    "models": [],
+    "file": "RG-GEMP-Old-Ben-Kenobi.png",
+    "kind": "Character"
+  },
+  {
+    "id": "15_10",
+    "title": "Owen",
+    "side": "Light",
+    "subtype": "Rebel",
+    "destiny": 2,
+    "deploy": 2,
+    "power": 1,
+    "ability": 3,
+    "forfeit": 4,
+    "icons": [
+      "REBEL",
+      "REFLECTIONS_GOLD"
+    ],
+    "characteristics": [],
+    "persona": "Owen",
+    "uniqueness": 1,
+    "landspeed": 1,
+    "game_text": "",
+    "credits": 0,
+    "image": "work\\refgold-final-proof\\images\\RG-GEMP-Owen.png",
+    "sha256": "4344c53a207aa9981997ee6c311530fa87ed4795909b48b3e2542de4b7970011",
+    "evidence": "Full normalized card visually inspected. Printed fields independent of implementation. Landspeed is character rule default. Persona and species associations need matching engine mapping; no borrowed abilities or icons.",
+    "printed_ability_label": "Force-attuned",
+    "number": 10,
+    "lore": "Only Owen Lars knew what kind of impact Anakin’s past would have on Luke. That’s what he was afraid of.",
+    "gameText": "",
+    "cardTypes": [
+      "REBEL"
+    ],
+    "keywords": [],
+    "personas": [
+      "OWEN"
+    ],
+    "species": null,
+    "models": [],
+    "file": "RG-GEMP-Owen.png",
+    "kind": "Character"
+  },
+  {
+    "id": "15_11",
+    "title": "Palpatine, Senator To Naboo",
+    "side": "Light",
+    "subtype": "Republic",
+    "destiny": 2,
+    "deploy": 4,
+    "power": 2,
+    "ability": 4,
+    "forfeit": 6,
+    "icons": [
+      "REPUBLIC",
+      "REFLECTIONS_GOLD",
+      "EPISODE_I"
+    ],
+    "characteristics": [
+      "Senator"
+    ],
+    "persona": "Palpatine",
+    "uniqueness": 1,
+    "landspeed": 1,
+    "game_text": "",
+    "credits": 0,
+    "image": "work\\refgold-final-proof\\images\\RG-GEMP-Palpatine-Senator-To-Naboo.png",
+    "sha256": "b669d017fa2627c99add84aa3c7b9c2856c7f57e50e32cd6be877b6b8633b3f6",
+    "evidence": "Full normalized card visually inspected. Printed fields independent of implementation. Landspeed is character rule default. Persona and species associations need matching engine mapping; no borrowed abilities or icons.",
+    "politics": 4,
+    "number": 11,
+    "lore": "\"A tragedy has occurred, which started right here with the taxation of trade routes and has now engulfed our entire planet in the oppression of the Trade Federation.\"",
+    "gameText": "",
+    "cardTypes": [
+      "REPUBLIC"
+    ],
+    "keywords": [
+      "SENATOR"
+    ],
+    "personas": [
+      "SIDIOUS"
+    ],
+    "species": null,
+    "models": [],
+    "file": "RG-GEMP-Palpatine-Senator-To-Naboo.png",
+    "kind": "Character"
+  },
+  {
+    "id": "15_12",
+    "title": "Rakes Jevorik",
+    "side": "Light",
+    "subtype": "Alien",
+    "destiny": 4,
+    "deploy": 3,
+    "power": 3,
+    "ability": 1,
+    "forfeit": 3,
+    "icons": [
+      "ALIEN",
+      "REFLECTIONS_GOLD"
+    ],
+    "characteristics": [
+      "Mercenary"
+    ],
+    "persona": null,
+    "uniqueness": 1,
+    "landspeed": 1,
+    "game_text": "",
+    "credits": 0,
+    "image": "work\\refgold-final-proof\\images\\RG-GEMP-Rakes-Jevorik.png",
+    "sha256": "c6b22d0d4e63cca43e36e7a2d2a70f6ada47deee0e22d68d1d2400145cbd9d6d",
+    "evidence": "Full normalized card visually inspected. Printed fields independent of implementation. Landspeed is character rule default. Persona and species associations need matching engine mapping; no borrowed abilities or icons.",
+    "number": 12,
+    "lore": "Mercenary who turned against Jabba when Luke Skywalker and his friends destroyed his sail barge at the great pit of carkoon. Now seeking a new employer.",
+    "gameText": "",
+    "cardTypes": [
+      "ALIEN"
+    ],
+    "keywords": [
+      "MERCENARY"
+    ],
+    "personas": [],
+    "species": null,
+    "models": [],
+    "file": "RG-GEMP-Rakes-Jevorik.png",
+    "kind": "Character"
+  },
+  {
+    "id": "15_13",
+    "title": "Senator Organa",
+    "side": "Light",
+    "subtype": "Rebel",
+    "destiny": 1,
+    "deploy": 2,
+    "power": 3,
+    "ability": 3,
+    "forfeit": 5,
+    "icons": [
+      "REBEL",
+      "REFLECTIONS_GOLD"
+    ],
+    "characteristics": [
+      "Senator",
+      "Female"
+    ],
+    "persona": "Leia",
+    "uniqueness": 1,
+    "landspeed": 1,
+    "game_text": "",
+    "credits": 0,
+    "image": "work\\refgold-final-proof\\images\\RG-GEMP-Senator-Organa.png",
+    "sha256": "41914add852ef40b6a67ad0b7f6dc7428df03d5c3a5dfaf0058fdd6dbb5ed3cb",
+    "evidence": "Full normalized card visually inspected. Printed fields independent of implementation. Landspeed is character rule default. Persona and species associations need matching engine mapping; no borrowed abilities or icons.",
+    "printed_ability_label": "Force-attuned",
+    "number": 13,
+    "lore": "\"Aren’t you a little short for a Stormtrooper?\"",
+    "gameText": "",
+    "cardTypes": [
+      "REBEL"
+    ],
+    "keywords": [
+      "SENATOR",
+      "FEMALE"
+    ],
+    "personas": [
+      "LEIA"
+    ],
+    "species": null,
+    "models": [],
+    "file": "RG-GEMP-Senator-Organa.png",
+    "kind": "Character"
+  },
+  {
+    "id": "15_14",
+    "title": "Solo",
+    "side": "Light",
+    "subtype": "Rebel",
+    "destiny": 1,
+    "deploy": 3,
+    "power": 3,
+    "ability": 3,
+    "forfeit": 7,
+    "icons": [
+      "REBEL",
+      "REFLECTIONS_GOLD"
+    ],
+    "characteristics": [],
+    "persona": "Han",
+    "uniqueness": 1,
+    "landspeed": 1,
+    "game_text": "",
+    "credits": 0,
+    "image": "work\\refgold-final-proof\\images\\RG-GEMP-Solo.png",
+    "sha256": "317641f48179f515d63357193a3d9f885d72d92e76ba7f3a15c1ca104f3a87b0",
+    "evidence": "Full normalized card visually inspected. Printed fields independent of implementation. Landspeed is character rule default. Persona and species associations need matching engine mapping; no borrowed abilities or icons.",
+    "printed_ability_label": "Force-attuned",
+    "number": 14,
+    "lore": "\"I’m captain of the Millennium Falcon. Chewie tells me you’re looking for passage to the Alderaan system.\"",
+    "gameText": "",
+    "cardTypes": [
+      "REBEL"
+    ],
+    "keywords": [],
+    "personas": [
+      "HAN"
+    ],
+    "species": null,
+    "models": [],
+    "file": "RG-GEMP-Solo.png",
+    "kind": "Character"
+  },
+  {
+    "id": "15_15",
+    "title": "Tiinn",
+    "side": "Light",
+    "subtype": "Alien",
+    "destiny": 3,
+    "deploy": 1,
+    "power": 1,
+    "ability": 2,
+    "forfeit": 3,
+    "icons": [
+      "ALIEN",
+      "REFLECTIONS_GOLD"
+    ],
+    "characteristics": [
+      "Jawa"
+    ],
+    "persona": null,
+    "uniqueness": 1,
+    "landspeed": 1,
+    "game_text": "",
+    "credits": 0,
+    "image": "work\\refgold-final-proof\\images\\RG-GEMP-Tiinn.png",
+    "sha256": "a1e47682d89f5eb5e955be4e88e225f4d3dbc29adcdae84197a8c8967d56bb39",
+    "evidence": "Full normalized card visually inspected. Printed fields independent of implementation. Landspeed is character rule default. Persona and species associations need matching engine mapping; no borrowed abilities or icons.",
+    "number": 15,
+    "lore": "Jawa accountant involved with tracking Coilen in and around the Dune Sea. Transmits Coilen’s activities to Tatooine officials every day: he’s still waiting to hear back from them.",
+    "gameText": "",
+    "cardTypes": [
+      "ALIEN"
+    ],
+    "keywords": [],
+    "personas": [],
+    "species": "JAWA",
+    "models": [],
+    "file": "RG-GEMP-Tiinn.png",
+    "kind": "Character"
+  },
+  {
+    "id": "15_16",
+    "title": "Wedge",
+    "side": "Light",
+    "subtype": "Rebel",
+    "destiny": 3,
+    "deploy": 3,
+    "power": 3,
+    "ability": 3,
+    "forfeit": 6,
+    "icons": [
+      "REBEL",
+      "REFLECTIONS_GOLD"
+    ],
+    "characteristics": [
+      "Rogue Squadron",
+      "Leader"
+    ],
+    "persona": "Wedge",
+    "uniqueness": 1,
+    "landspeed": 1,
+    "game_text": "",
+    "credits": 0,
+    "image": "work\\refgold-final-proof\\images\\RG-GEMP-Wedge.png",
+    "sha256": "4420d67a8db22584a38da498e59ae3dd6365e9a946461a66495c4cf078584dc6",
+    "evidence": "Full normalized card visually inspected. Printed fields independent of implementation. Landspeed is character rule default. Persona and species associations need matching engine mapping; no borrowed abilities or icons.",
+    "printed_ability_label": "Force-attuned",
+    "number": 16,
+    "lore": "Rogue Squadron leader who assisted Gold Squadron One during its historic attack run on the second Death Star.",
+    "gameText": "",
+    "cardTypes": [
+      "REBEL"
+    ],
+    "keywords": [
+      "ROGUE_SQUADRON",
+      "LEADER"
+    ],
+    "personas": [
+      "WEDGE"
+    ],
+    "species": null,
+    "models": [],
+    "file": "RG-GEMP-Wedge.png",
+    "kind": "Character"
+  },
+  {
+    "id": "15_17",
+    "title": "Yoda, Jedi Master",
+    "side": "Light",
+    "subtype": "Jedi Master",
+    "destiny": 2,
+    "deploy": 5,
+    "power": 2,
+    "ability": 7,
+    "forfeit": 9,
+    "icons": [
+      "JEDI_MASTER",
+      "REFLECTIONS_GOLD"
+    ],
+    "characteristics": [],
+    "persona": "Yoda",
+    "uniqueness": 1,
+    "landspeed": 1,
+    "game_text": "",
+    "credits": 0,
+    "image": "work\\refgold-final-proof\\images\\RG-GEMP-Yoda-Jedi-Master.png",
+    "sha256": "b4fba10f3bed22d38b5e3948c6b1b095fb51e0f7b061b853dd2d815250879f5b",
+    "evidence": "Full normalized card visually inspected. Printed fields independent of implementation. Landspeed is character rule default. Persona and species associations need matching engine mapping; no borrowed abilities or icons.",
+    "number": 17,
+    "lore": "\"No! No, no! Stay and help you I will.\"",
+    "gameText": "",
+    "cardTypes": [
+      "JEDI_MASTER"
+    ],
+    "keywords": [],
+    "personas": [
+      "YODA"
+    ],
+    "species": null,
+    "models": [],
+    "file": "RG-GEMP-Yoda-Jedi-Master.png",
+    "kind": "Character"
+  },
+  {
+    "id": "15_18",
+    "title": "Young Skywalker",
+    "side": "Light",
+    "subtype": "Rebel",
+    "destiny": 1,
+    "deploy": 3,
+    "power": 3,
+    "ability": 4,
+    "forfeit": 8,
+    "icons": [
+      "REBEL",
+      "REFLECTIONS_GOLD"
+    ],
+    "characteristics": [
+      "Skywalker"
+    ],
+    "persona": "Luke",
+    "uniqueness": 1,
+    "landspeed": 1,
+    "game_text": "",
+    "credits": 0,
+    "image": "work\\refgold-final-proof\\images\\RG-GEMP-Young-Skywalker.png",
+    "sha256": "e4c4ea3d6a2016c6b08528cd45373b7c495b54b8340fa06020f2b57cdc4c4639",
+    "evidence": "Parent independently inspected full normalized card; reported printed stats and icons. Default character landspeed 1. Watto species matched established character identity, not borrowed abilities.",
+    "number": 18,
+    "lore": "\"Luke’s just not a farmer, Owen. He has too much of his father in him.\"",
+    "gameText": "",
+    "cardTypes": [
+      "REBEL"
+    ],
+    "keywords": [
+      "SKYWALKER"
+    ],
+    "personas": [
+      "LUKE"
+    ],
+    "species": null,
+    "models": [],
+    "file": "RG-GEMP-Young-Skywalker.png",
+    "kind": "Character"
+  },
+  {
+    "id": "15_21",
+    "number": 21,
+    "title": "Ackbar's Assault Plan",
+    "side": "Light",
+    "kind": "Effect",
+    "subtype": null,
+    "destiny": 5,
+    "uniqueness": 1,
+    "cardTypes": [
+      "EFFECT"
+    ],
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "Admiral Ackbar and General Madine's plan to eliminate the Empire had its fair share of setbacks.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Ackbar-s-Assault-Plan.png",
+    "sha256": "907db7ea6ad312a2efa2ac300178182d56f61033d52212c12e32c08b1cbaceb1",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_23",
+    "number": 23,
+    "title": "Bad Lifters And Faulty Wings",
+    "side": "Light",
+    "kind": "Effect",
+    "subtype": null,
+    "destiny": 4,
+    "uniqueness": 1,
+    "cardTypes": [
+      "EFFECT"
+    ],
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "\"No, no! No! This one goes there, that one goes there, right?\"",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Bad-Lifters-And-Faulty-Wings.png",
+    "sha256": "0de85cf44b2c80db7331821bbb49be917b9fbc8049614e443633dd997485ba89",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_25",
+    "number": 25,
+    "title": "Bring Me The Hydrospanners!",
+    "side": "Light",
+    "kind": "Effect",
+    "subtype": null,
+    "destiny": 3,
+    "uniqueness": 1,
+    "cardTypes": [
+      "EFFECT"
+    ],
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "When nothing works, just start hitting things and something's bound to happen.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Bring-Me-The-Hydrospanners.png",
+    "sha256": "2a9fc2918742e6d7394f70cf049d9e77ab23f05afd9ba295fdfb889666b1897d",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_29",
+    "number": 29,
+    "title": "Congratulations",
+    "side": "Light",
+    "kind": "Effect",
+    "subtype": null,
+    "destiny": 3,
+    "uniqueness": 1,
+    "cardTypes": [
+      "EFFECT"
+    ],
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "Rebel officers hadn't celebrated in years when they destroyed the second Death Star. Finally, their moment of triumph had arrived.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Congradulations.png",
+    "sha256": "2a4fbcffd6c7c3c070c20df98ad2bea5e1f43d671248a35d483091df7122ec5d",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_38",
+    "number": 38,
+    "title": "I Thought He Was Blind",
+    "side": "Light",
+    "kind": "Effect",
+    "subtype": null,
+    "destiny": 5,
+    "uniqueness": 1,
+    "cardTypes": [
+      "EFFECT"
+    ],
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "He apparently can see much better now.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-I-Thought-He-Was-Blind.png",
+    "sha256": "3c6735fc231a6e933e30394d21458beffacbf253988f973d33f1fe85148bf6e7",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_40",
+    "number": 40,
+    "title": "Inspecting The Garbage",
+    "side": "Light",
+    "kind": "Effect",
+    "subtype": null,
+    "destiny": 4,
+    "uniqueness": 1,
+    "cardTypes": [
+      "EFFECT"
+    ],
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "Chewbacca made some new friends when he found C-3PO in the Cloud City incinerator.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Inspecting-The-Garbage.png",
+    "sha256": "feb135a69926e1dc9728e8a4f25747e39dd13f0357d950ad017bc7eadf539ba5",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_41",
+    "number": 41,
+    "title": "Is Your Strike Team Assembled?",
+    "side": "Light",
+    "kind": "Effect",
+    "subtype": null,
+    "destiny": 5,
+    "uniqueness": 1,
+    "cardTypes": [
+      "EFFECT"
+    ],
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "\"My team's assembled but I don't have a command crew for the shuttle.\"",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Is-Your-Strike-Team-Assembled.png",
+    "sha256": "5002c0257254a5ec0c197010e621f76f5fbd9dc4a6fcc75921630ee3b6c8df0e",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_42",
+    "number": 42,
+    "title": "Lapti Nek",
+    "side": "Light",
+    "kind": "Effect",
+    "subtype": null,
+    "destiny": 5,
+    "uniqueness": 1,
+    "cardTypes": [
+      "EFFECT"
+    ],
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "\"Rat a ran wim joct co jappi qaff.\"",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Lapti-Nek.png",
+    "sha256": "6afdd048c9444de57be0c262f667ba773f3a0f86d5753aa9b14546044212bc6a",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_44",
+    "number": 44,
+    "title": "Looking To The Future",
+    "side": "Light",
+    "kind": "Effect",
+    "subtype": null,
+    "destiny": 5,
+    "uniqueness": 1,
+    "cardTypes": [
+      "EFFECT"
+    ],
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "With Cloud City and Hoth behind them it was time for the Rebel Alliance to regroup and rebuild.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Looking-To-The-Future.png",
+    "sha256": "734f53e7a613f3caa09b0088d85f9e888fa550f2caf441d225a57432880d8354",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_46",
+    "number": 46,
+    "title": "Prisoner Transfer",
+    "side": "Light",
+    "kind": "Effect",
+    "subtype": null,
+    "destiny": 5,
+    "uniqueness": 1,
+    "cardTypes": [
+      "EFFECT"
+    ],
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "Using Stormtrooper uniforms to disguise yourself in an Imperial battlestation - good plan.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Prisoner-Transfer.png",
+    "sha256": "0282b5d688a2ad4c7a72703957dea15d3d7c212286fdb222231a36a1ac7d2123",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_51",
+    "number": 51,
+    "title": "That's The Real Trick",
+    "side": "Light",
+    "kind": "Effect",
+    "subtype": null,
+    "destiny": 4,
+    "uniqueness": 1,
+    "cardTypes": [
+      "EFFECT"
+    ],
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "\"Let's just say we'd like to avoid any Imperial entanglements.\"",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-That-s-The-Real-Trick.png",
+    "sha256": "59dd3bee42d8898d66ac519a5fc45001efadfa589c4480c98dc869a2f7ac6b17",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_52",
+    "number": 52,
+    "title": "They All Broken",
+    "side": "Light",
+    "kind": "Effect",
+    "subtype": null,
+    "destiny": 4,
+    "uniqueness": 1,
+    "cardTypes": [
+      "EFFECT"
+    ],
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD",
+      "EPISODE_I"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "The weakness of battle droids is in that they must rely on a central command source. Gungans on the other hand rely on leaders such as Jar Jar Binks to guide them.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-They-All-Broken.png",
+    "sha256": "678ed39df146411c928c6a52609bceace6181301b54a72170fcb9a47612a734e",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_53",
+    "number": 53,
+    "title": "This Is Your Father's Lightsaber",
+    "side": "Light",
+    "kind": "Effect",
+    "subtype": null,
+    "destiny": 3,
+    "uniqueness": 1,
+    "cardTypes": [
+      "EFFECT"
+    ],
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "\"Not as clumsy or random as a blaster.\"",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-This-Is-Your-Father-s-Lightsaber.png",
+    "sha256": "7e1e70af928956794dbc85298e2c9cbd344495faa12c577f014b2530d9edc72b",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_54",
+    "number": 54,
+    "title": "Through The Planet Core",
+    "side": "Light",
+    "kind": "Effect",
+    "subtype": null,
+    "destiny": 4,
+    "uniqueness": 1,
+    "cardTypes": [
+      "EFFECT"
+    ],
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD",
+      "EPISODE_I"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "\"Master what's a bongo?\" The way to Theed was a bit more complicated than that of an underwater joy ride.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Through-The-Planet-Core.png",
+    "sha256": "5047a1eae7c44161e77c80984755343f23e5242432b35ffee7752d804fe9849b",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_57",
+    "number": 57,
+    "title": "We Are Brave, Your Highness",
+    "side": "Light",
+    "kind": "Effect",
+    "subtype": null,
+    "destiny": 5,
+    "uniqueness": 1,
+    "cardTypes": [
+      "EFFECT"
+    ],
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD",
+      "EPISODE_I"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "\"Then I will plead our case to the Senate.\"",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-We-Are-Brave-Your-Highness.png",
+    "sha256": "a2dfbcdc26ea8917f439ee5921a0333a66aff139b4249cea557033da519f6182",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_58",
+    "number": 58,
+    "title": "You Must Complete Your Training",
+    "side": "Light",
+    "kind": "Effect",
+    "subtype": null,
+    "destiny": 3,
+    "uniqueness": 1,
+    "cardTypes": [
+      "EFFECT"
+    ],
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "\"You must not go!\"",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-You-Must-Complete-The-Training.png",
+    "sha256": "b2d5bc16636a0bcbc832f7e7364807bbc554ac26c6043eabc9156c95d04ec948",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_65",
+    "number": 65,
+    "title": "Bickering At Its Finest",
+    "side": "Light",
+    "kind": "Interrupt",
+    "subtype": "USED_OR_LOST",
+    "destiny": 4,
+    "uniqueness": 1,
+    "cardTypes": [
+      "INTERRUPT"
+    ],
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "\"Don't try to blame me. I didn't ask you to turn on the thermal heater. I merely commented that it was freezing in the princess's chamber.\"",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Bickering-At-Its-Finest.png",
+    "sha256": "85eb11cc371d8d692a9a5a1f4bf7bab7f7cdaf0e1d6a28161e43b9044f31c55c",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_66",
+    "number": 66,
+    "title": "Biker Scout Down",
+    "side": "Light",
+    "kind": "Interrupt",
+    "subtype": "USED_OR_LOST",
+    "destiny": 5,
+    "uniqueness": 1,
+    "cardTypes": [
+      "INTERRUPT"
+    ],
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "In places as remote as Endor forests, rebel strike forces hold no mercy towards their Imperial adversaries.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Biker-Scout-Down.png",
+    "sha256": "c4e8b9aab5b52d7eb253955a2b237fa3fd3ba2665cd3af5def09afcbf83829e4",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_71",
+    "number": 71,
+    "title": "Clinging To The Very Edge",
+    "side": "Light",
+    "kind": "Interrupt",
+    "subtype": "USED_OR_LOST",
+    "destiny": 5,
+    "uniqueness": 1,
+    "cardTypes": [
+      "INTERRUPT"
+    ],
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD",
+      "EPISODE_I"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "Sometimes Obi-Wan’s point of view is a bit hard to understand.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Clinging-To-The-Very-Edge.png",
+    "sha256": "42de9197ca7fd71f1fffa83282bc9406977f83446786dc6b9eb906c18df1555f",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_74",
+    "number": 74,
+    "title": "Droid Overboard",
+    "side": "Light",
+    "kind": "Interrupt",
+    "subtype": "USED_OR_LOST",
+    "destiny": 3,
+    "uniqueness": 1,
+    "cardTypes": [
+      "INTERRUPT"
+    ],
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "Communications droids are a low priority when the time for an attack has come.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Droid-Overboard.png",
+    "sha256": "d834340dec5ad67772c21a51af5a4acaad1dc49c7de514480c5bd145a2dbcf14",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_79",
+    "number": 79,
+    "title": "False Past",
+    "side": "Light",
+    "kind": "Interrupt",
+    "subtype": "USED_OR_LOST",
+    "destiny": 5,
+    "uniqueness": 1,
+    "cardTypes": [
+      "INTERRUPT"
+    ],
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "Luke thought his father was an ordinary pilot on a spice freighter. Dealing with his father's true identity would take him places he'd never dreamed possible.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-False-Past.png",
+    "sha256": "d610d5e1928f64ce5a2a274cae5b6b4a6513eb1b03b8b2b8b78558ea1f8615e2",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_80",
+    "number": 80,
+    "title": "Father, Please...",
+    "side": "Light",
+    "kind": "Interrupt",
+    "subtype": "USED_OR_LOST",
+    "destiny": 3,
+    "uniqueness": 1,
+    "cardTypes": [
+      "INTERRUPT"
+    ],
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "With no other options left, Luke had to look to his father for assistance; assistance that would bring balance to the Force.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Father-Please.png",
+    "sha256": "0ab0444545ee691bb58d018753e6b96d0e15dfce0a561a8caa616752bdbec65f",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_89",
+    "number": 89,
+    "title": "I Used To Live Here, You Know?",
+    "side": "Light",
+    "kind": "Interrupt",
+    "subtype": "USED_OR_LOST",
+    "destiny": 4,
+    "uniqueness": 1,
+    "cardTypes": [
+      "INTERRUPT"
+    ],
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "\"You’re going to die here, you know?\"",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-I-Used-To-Live-Here-You-Know.png",
+    "sha256": "0f04818154589631fc2af5d061ac7c4fa01c8c66ff24479b2203856f169ea4fb",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_95",
+    "number": 95,
+    "title": "Jedi Tactics",
+    "side": "Light",
+    "kind": "Interrupt",
+    "subtype": "USED_OR_LOST",
+    "destiny": 4,
+    "uniqueness": 1,
+    "cardTypes": [
+      "INTERRUPT"
+    ],
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD",
+      "EPISODE_I"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "Obi-Wan and Qui-Gon knew each other's combat tactics well enough to efficiently put their dark enemy on the defensive during their fateful battle.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Jedi-Tactics.png",
+    "sha256": "dd46bda13e8e2771a335038af950504b03225289e2821ffa7ad07451c2af5773",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_101",
+    "number": 101,
+    "title": "Luke! We're Going To Have Company",
+    "side": "Light",
+    "kind": "Interrupt",
+    "subtype": "USED_OR_LOST",
+    "destiny": 4,
+    "uniqueness": 1,
+    "cardTypes": [
+      "INTERRUPT"
+    ],
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "\"Who is this? What's your operating number?\"",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Luke-We-re-Going-To-Have-Company.png",
+    "sha256": "5581c167c848add0d6743f662f772b1a385cd191050de1454ba7fdeb50f2f6e1",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_104",
+    "number": 104,
+    "title": "Mission Briefing",
+    "side": "Light",
+    "kind": "Interrupt",
+    "subtype": "USED_OR_LOST",
+    "destiny": 5,
+    "uniqueness": 1,
+    "cardTypes": [
+      "INTERRUPT"
+    ],
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "Before the Battle of Hoth, rebel officers would fall silent the moment their commander came into the room to brief them.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Mission-Briefing.png",
+    "sha256": "e71fb66bcb618c1e116df57223adf9d6fe1c782bbc7e327595840d29299fa999",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_116",
+    "number": 116,
+    "title": "Old Smoothies",
+    "side": "Light",
+    "kind": "Interrupt",
+    "subtype": "USED_OR_LOST",
+    "destiny": 4,
+    "uniqueness": 1,
+    "cardTypes": [
+      "INTERRUPT"
+    ],
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "Lando did his best to appear delighted that his old buddy had come back to see him.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Old-Smoothies.png",
+    "sha256": "1d0af80b152d0329709f3abd0269866851a393a90767a76904a407b5d3ab2a92",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_118",
+    "number": 118,
+    "title": "Ouch Time",
+    "side": "Light",
+    "kind": "Interrupt",
+    "subtype": "USED_OR_LOST",
+    "destiny": 4,
+    "uniqueness": 1,
+    "cardTypes": [
+      "INTERRUPT"
+    ],
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD",
+      "EPISODE_I"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "Captain Tarpals had a way of describing certain situations to perfection.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Ouch-Time.png",
+    "sha256": "0b1cb4bbb095b0bc41630390dc001dd5890cf2e352585cfec474ae740a0f11d5",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_128",
+    "number": 128,
+    "title": "See You At The Rendezvous",
+    "side": "Light",
+    "kind": "Interrupt",
+    "subtype": "USED_OR_LOST",
+    "destiny": 4,
+    "uniqueness": 1,
+    "cardTypes": [
+      "INTERRUPT"
+    ],
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "Most rebels had their minds set on regrouping with the fleet as soon as possible. Luke had other plans.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-See-You-At-The-Rendezvous.png",
+    "sha256": "c9d428869f1ae493829765429826876f9082c9f160a5abf224029ec1f370642b",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_134",
+    "number": 134,
+    "title": "Stay Here",
+    "side": "Light",
+    "kind": "Interrupt",
+    "subtype": "USED_OR_LOST",
+    "destiny": 5,
+    "uniqueness": 1,
+    "cardTypes": [
+      "INTERRUPT"
+    ],
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD",
+      "EPISODE_I"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "\"But I...\"",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Stay-Here.png",
+    "sha256": "9dcbd027f7d842ff3c10052c2d4eff241e19a4cee4b7b6400c7edba517a47018",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_137",
+    "number": 137,
+    "title": "Taking On The Whole Empire By Myself",
+    "side": "Light",
+    "kind": "Interrupt",
+    "subtype": "USED_OR_LOST",
+    "destiny": 5,
+    "uniqueness": 1,
+    "cardTypes": [
+      "INTERRUPT"
+    ],
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "Rogue Squadron took pride in its dedication to serve the alliance, even if it meant never returning home from the battlefield.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Taking-On-The-Whole-Empire-Myself.png",
+    "sha256": "4a80dfdd4e6fdb7b47e8d2d83da731391ed382b855155f68b8efe9f64040e9f6",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_147",
+    "number": 147,
+    "title": "We Don't Want To Cause Any Trouble",
+    "side": "Light",
+    "kind": "Interrupt",
+    "subtype": "USED_OR_LOST",
+    "destiny": 5,
+    "uniqueness": 1,
+    "cardTypes": [
+      "INTERRUPT"
+    ],
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "By leaving their droids out of the action, our heroes were able to find success in one of the most wretched spaceports in the entire galaxy.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-We-Don-t-Want-To-Cause-Any-Trouble.png",
+    "sha256": "1e3e2ee46394dc0fb8e5e3b747a101c8b65cf8ad8dcf4c180553188bad6da731",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_152",
+    "number": 152,
+    "title": "Yoda I Must Know",
+    "side": "Light",
+    "kind": "Interrupt",
+    "subtype": "USED_OR_LOST",
+    "destiny": 5,
+    "uniqueness": 1,
+    "cardTypes": [
+      "INTERRUPT"
+    ],
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "Fearing Ben Kenobi had lied to him, Luke needed to hear the truth from Yoda himself.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Yoda-I-Must-Know.png",
+    "sha256": "d05c895920669d71c8b4ac906412fb547e2406829437d51d89b146d3170d17a2",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_155",
+    "number": 155,
+    "title": "Yousa Guys Bombad!",
+    "side": "Light",
+    "kind": "Interrupt",
+    "subtype": "USED_OR_LOST",
+    "destiny": 3,
+    "uniqueness": 1,
+    "cardTypes": [
+      "INTERRUPT"
+    ],
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD",
+      "EPISODE_I"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "Jedi tend to slice through battle droids like butter.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Yousa-Guys-Bombad.png",
+    "sha256": "cd477d9ceb5d57914ab2caee39cf90b626cb832801f9b1ada32e05e096028193",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_157",
+    "title": "Boba Fett",
+    "side": "Dark",
+    "subtype": "Alien",
+    "destiny": 1,
+    "deploy": 5,
+    "power": 4,
+    "ability": 3,
+    "forfeit": 6,
+    "icons": [
+      "ALIEN",
+      "REFLECTIONS_GOLD"
+    ],
+    "characteristics": [
+      "Bounty Hunter"
+    ],
+    "persona": "Boba Fett",
+    "uniqueness": 1,
+    "landspeed": 1,
+    "game_text": "",
+    "credits": 0,
+    "image": "work\\refgold-final-proof\\images\\RG-GEMP-Boba-Fett.png",
+    "sha256": "ec27d369064f42b903edcc0d1340616f05913cd8a95bfb768001070caac46bb1",
+    "evidence": "Full normalized card visually inspected. Printed fields independent of implementation. Landspeed is character rule default. Persona and species associations need matching engine mapping; no borrowed abilities or icons.",
+    "armor": 5,
+    "number": 157,
+    "lore": "Most feared bounty hunter in the entire galaxy. \"He’s no good to me dead.\"",
+    "gameText": "",
+    "cardTypes": [
+      "ALIEN"
+    ],
+    "keywords": [
+      "BOUNTY_HUNTER"
+    ],
+    "personas": [
+      "BOBA_FETT"
+    ],
+    "species": null,
+    "models": [],
+    "file": "RG-GEMP-Boba-Fett.png",
+    "kind": "Character"
+  },
+  {
+    "id": "15_158",
+    "title": "Coilen",
+    "side": "Dark",
+    "subtype": "Alien",
+    "destiny": 3,
+    "deploy": 1,
+    "power": 2,
+    "ability": 2,
+    "forfeit": 2,
+    "icons": [
+      "ALIEN",
+      "REFLECTIONS_GOLD"
+    ],
+    "characteristics": [
+      "Leader",
+      "Jawa",
+      "Thief"
+    ],
+    "persona": null,
+    "uniqueness": 1,
+    "landspeed": 1,
+    "game_text": "",
+    "credits": 0,
+    "image": "work\\refgold-final-proof\\images\\RG-GEMP-Coilen.png",
+    "sha256": "62558973a428055d21500810b13294ab281dfea876798a04024436c6c88b6503",
+    "evidence": "Full normalized card visually inspected. Printed fields independent of implementation. Landspeed is character rule default. Persona and species associations need matching engine mapping; no borrowed abilities or icons.",
+    "number": 158,
+    "lore": "Leader of the Jawa pack who captured R2-D2 on Tatooine and a nefarious thief. Nemesis to Rachalt Hyst - both have stolen goods from one another on multiple occasions.",
+    "gameText": "",
+    "cardTypes": [
+      "ALIEN"
+    ],
+    "keywords": [
+      "LEADER",
+      "THIEF"
+    ],
+    "personas": [],
+    "species": "JAWA",
+    "models": [],
+    "file": "RG-GEMP-Coilen.png",
+    "kind": "Character"
+  },
+  {
+    "id": "15_159",
+    "title": "Darth Maul, Sidious' Apprentice",
+    "side": "Dark",
+    "subtype": "Sith",
+    "destiny": 1,
+    "deploy": 6,
+    "power": 7,
+    "ability": 6,
+    "forfeit": 8,
+    "icons": [
+      "SITH",
+      "REFLECTIONS_GOLD",
+      "EPISODE_I"
+    ],
+    "characteristics": [],
+    "persona": "Maul",
+    "uniqueness": 1,
+    "landspeed": 1,
+    "game_text": "",
+    "credits": 0,
+    "image": "work\\refgold-final-proof\\images\\RG-GEMP-Darth-Maul-Sidious-Apprentice.png",
+    "sha256": "76f0671736dc660683f828aa74a050008dadfa39ca00c1b79e159565970d3287",
+    "evidence": "Full normalized card visually inspected. Printed fields independent of implementation. Landspeed is character rule default. Persona and species associations need matching engine mapping; no borrowed abilities or icons.",
+    "number": 159,
+    "lore": "\"I told you there was more to this. The Jedi are involved.\"",
+    "gameText": "",
+    "cardTypes": [
+      "SITH"
+    ],
+    "keywords": [],
+    "personas": [
+      "MAUL"
+    ],
+    "species": null,
+    "models": [],
+    "file": "RG-GEMP-Darth-Maul-Sidious-Apprentice.png",
+    "kind": "Character"
+  },
+  {
+    "id": "15_160",
+    "title": "Emperor",
+    "side": "Dark",
+    "subtype": "Dark Jedi Master / Imperial",
+    "destiny": 1,
+    "deploy": 5,
+    "power": 4,
+    "ability": 7,
+    "forfeit": 9,
+    "icons": [
+      "DARK_JEDI_MASTER",
+      "IMPERIAL",
+      "REFLECTIONS_GOLD"
+    ],
+    "characteristics": [],
+    "persona": "Emperor",
+    "uniqueness": 1,
+    "landspeed": 1,
+    "game_text": "",
+    "credits": 0,
+    "image": "work\\refgold-final-proof\\images\\RG-GEMP-Emperor.png",
+    "sha256": "07bdcefa1670a9a501e04a8c632a4ef24975d6740963d76732ad0fef967c2755",
+    "evidence": "Full normalized card visually inspected. Printed fields independent of implementation. Landspeed is character rule default. Persona and species associations need matching engine mapping; no borrowed abilities or icons.",
+    "number": 160,
+    "lore": "\"Soon you will call me master.\"",
+    "gameText": "",
+    "cardTypes": [
+      "DARK_JEDI_MASTER",
+      "IMPERIAL"
+    ],
+    "keywords": [],
+    "personas": [
+      "SIDIOUS"
+    ],
+    "species": null,
+    "models": [],
+    "file": "RG-GEMP-Emperor.png",
+    "kind": "Character"
+  },
+  {
+    "id": "15_161",
+    "title": "Emperor's Royal Guard",
+    "side": "Dark",
+    "subtype": "Imperial",
+    "destiny": 4,
+    "deploy": 3,
+    "power": 3,
+    "ability": 2,
+    "forfeit": 5,
+    "icons": [
+      "IMPERIAL",
+      "REFLECTIONS_GOLD"
+    ],
+    "characteristics": [
+      "Royal Guard"
+    ],
+    "persona": null,
+    "uniqueness": 3,
+    "landspeed": 1,
+    "game_text": "",
+    "credits": 0,
+    "image": "work\\refgold-final-proof\\images\\RG-GEMP-Emperor-s-Royal-Guard.png",
+    "sha256": "26b81260c314884c091b94b47dda0010811c6d1a7540b38ff1236adaa18af28e",
+    "evidence": "Full normalized card visually inspected. Printed fields independent of implementation. Landspeed is character rule default. Persona and species associations need matching engine mapping; no borrowed abilities or icons.",
+    "number": 161,
+    "lore": "The Emperor brought his most trusted members of the royal guard with him to the second Death Star, where he was to oversee its construction and completion.",
+    "gameText": "",
+    "cardTypes": [
+      "IMPERIAL"
+    ],
+    "keywords": [
+      "ROYAL_GUARD"
+    ],
+    "personas": [],
+    "species": null,
+    "models": [],
+    "file": "RG-GEMP-Emperor-s-Royal-Guard.png",
+    "kind": "Character"
+  },
+  {
+    "id": "15_162",
+    "title": "Governor Tarkin",
+    "side": "Dark",
+    "subtype": "Imperial",
+    "destiny": 1,
+    "deploy": 3,
+    "power": 4,
+    "ability": 3,
+    "forfeit": 5,
+    "icons": [
+      "IMPERIAL",
+      "REFLECTIONS_GOLD"
+    ],
+    "characteristics": [
+      "Commander"
+    ],
+    "persona": "Tarkin",
+    "uniqueness": 1,
+    "landspeed": 1,
+    "game_text": "",
+    "credits": 0,
+    "image": "work\\refgold-final-proof\\images\\RG-GEMP-Governer-Tarkin.png",
+    "sha256": "ae36cd44c73705a8b2561a61f0e41e4262284b4f6fced353f49a01c477b01287",
+    "evidence": "Full normalized card visually inspected. Printed fields independent of implementation. Landspeed is character rule default. Persona and species associations need matching engine mapping; no borrowed abilities or icons.",
+    "printed_ability_label": "Force-attuned",
+    "number": 162,
+    "lore": "Commander of the original Death Star. Tarkin will stop at nothing to ensure the destruction of the Rebellion at Yavin IV. Despiser of non-human races.",
+    "gameText": "",
+    "cardTypes": [
+      "IMPERIAL"
+    ],
+    "keywords": [
+      "COMMANDER"
+    ],
+    "personas": [
+      "TARKIN"
+    ],
+    "species": null,
+    "models": [],
+    "file": "RG-GEMP-Governer-Tarkin.png",
+    "kind": "Character"
+  },
+  {
+    "id": "15_163",
+    "title": "Griff Mirtong",
+    "side": "Dark",
+    "subtype": "Alien",
+    "destiny": 2,
+    "deploy": 4,
+    "power": 4,
+    "ability": 1,
+    "forfeit": 3,
+    "icons": [
+      "ALIEN",
+      "REFLECTIONS_GOLD",
+      "EPISODE_I"
+    ],
+    "characteristics": [],
+    "persona": null,
+    "uniqueness": 1,
+    "landspeed": 1,
+    "game_text": "",
+    "credits": 0,
+    "image": "work\\refgold-final-proof\\images\\RG-GEMP-Griff-Mirtong.png",
+    "sha256": "151635b09d72a5b1e61e6b856dc054b231c5af3b1cb93e379a1b0f90bd26eb1e",
+    "evidence": "Full normalized card visually inspected. Printed fields independent of implementation. Landspeed is character rule default. Persona and species associations need matching engine mapping; no borrowed abilities or icons.",
+    "number": 163,
+    "lore": "Griff took 28:1 odds on Mawhonic winning the entire Boonta Eve Podrace. It’s aliens like these who Jabba and Watto making a living off of.",
+    "gameText": "",
+    "cardTypes": [
+      "ALIEN"
+    ],
+    "keywords": [],
+    "personas": [],
+    "species": null,
+    "models": [],
+    "file": "RG-GEMP-Griff-Mirtong.png",
+    "kind": "Character"
+  },
+  {
+    "id": "15_164",
+    "title": "Gweeta",
+    "side": "Dark",
+    "subtype": "Alien",
+    "destiny": 2,
+    "deploy": 2,
+    "power": 2,
+    "ability": 1,
+    "forfeit": 3,
+    "icons": [
+      "ALIEN",
+      "REFLECTIONS_GOLD"
+    ],
+    "characteristics": [
+      "Rodian",
+      "Smuggler",
+      "Female"
+    ],
+    "persona": null,
+    "uniqueness": 1,
+    "landspeed": 1,
+    "game_text": "",
+    "credits": 0,
+    "image": "work\\refgold-final-proof\\images\\RG-GEMP-Gweeta.png",
+    "sha256": "2e4881bfd49fa77c4fdb0c657c03bea78e63d84fd8aa1708235cf7a4f9cef7cd",
+    "evidence": "Full normalized card visually inspected. Printed fields independent of implementation. Landspeed is character rule default. Persona and species associations need matching engine mapping; no borrowed abilities or icons.",
+    "number": 164,
+    "lore": "Rodian smuggler with a reputation for selling goods that are low in supply and high in demand. Will switch her prospective buyers at a moment’s notice if the price is right.",
+    "gameText": "",
+    "cardTypes": [
+      "ALIEN"
+    ],
+    "keywords": [
+      "SMUGGLER",
+      "FEMALE"
+    ],
+    "personas": [],
+    "species": "RODIAN",
+    "models": [],
+    "file": "RG-GEMP-Gweeta.png",
+    "kind": "Character"
+  },
+  {
+    "id": "15_165",
+    "title": "Lord Vader, Lord Of The Sith",
+    "side": "Dark",
+    "subtype": "Imperial",
+    "destiny": 1,
+    "deploy": 6,
+    "power": 6,
+    "ability": 6,
+    "forfeit": 8,
+    "icons": [
+      "IMPERIAL",
+      "REFLECTIONS_GOLD"
+    ],
+    "characteristics": [],
+    "persona": "Vader",
+    "uniqueness": 1,
+    "landspeed": 1,
+    "game_text": "",
+    "credits": 0,
+    "image": "work\\refgold-final-proof\\images\\RG-GEMP-Lord-Vader-Lord-Of-The-Sith.png",
+    "sha256": "1804940f370c6874730fc64040025b4d41af693c2791c7e573e17124ecad0b45",
+    "evidence": "Full normalized card visually inspected. Printed fields independent of implementation. Landspeed is character rule default. Persona and species associations need matching engine mapping; no borrowed abilities or icons.",
+    "number": 165,
+    "lore": "\"That is the system, and I’m sure Skywalker’s with them\"",
+    "gameText": "",
+    "cardTypes": [
+      "IMPERIAL"
+    ],
+    "keywords": [],
+    "personas": [
+      "VADER"
+    ],
+    "species": null,
+    "models": [],
+    "file": "RG-GEMP-Lord-Vader-Lord-Of-The-Sith.png",
+    "kind": "Character"
+  },
+  {
+    "id": "15_166",
+    "title": "SSA-33",
+    "side": "Dark",
+    "subtype": "Droid",
+    "destiny": 2,
+    "deploy": 1,
+    "power": 3,
+    "ability": 0,
+    "forfeit": 3,
+    "icons": [
+      "DROID",
+      "REFLECTIONS_GOLD",
+      "EPISODE_I"
+    ],
+    "characteristics": [],
+    "persona": null,
+    "uniqueness": 1,
+    "landspeed": 1,
+    "game_text": "",
+    "credits": 0,
+    "image": "work\\refgold-batch19\\SSA-33-proof19-v1.png",
+    "sha256": "c99eda9c1e32e9f8eb2a7fdd971f8b3abfd2e384fb73382047600b787c66b260",
+    "evidence": "Full normalized card visually inspected. Printed fields independent of implementation. Landspeed is character rule default. Persona and species associations need matching engine mapping; no borrowed abilities or icons.",
+    "armor": 3,
+    "model": "Battle",
+    "correction": "Bill approved ARMOR 3, not ABILITY 3; batch19 SSA-33-proof19-v1.png",
+    "number": 166,
+    "lore": "Infantry battle droid assigned guard duty in the Theed Palace docking bay. Experimented with brand new security subroutines that were to be used in the newer model battle droids.",
+    "gameText": "",
+    "cardTypes": [
+      "DROID"
+    ],
+    "keywords": [],
+    "personas": [],
+    "species": null,
+    "models": [
+      "BATTLE"
+    ],
+    "file": "RG-GEMP-SSA-33.png",
+    "kind": "Character"
+  },
+  {
+    "id": "15_167",
+    "title": "TK-420",
+    "side": "Dark",
+    "subtype": "Imperial",
+    "destiny": 3,
+    "deploy": 3,
+    "power": 3,
+    "ability": 2,
+    "forfeit": 5,
+    "icons": [
+      "IMPERIAL",
+      "REFLECTIONS_GOLD"
+    ],
+    "characteristics": [
+      "Stormtrooper"
+    ],
+    "persona": null,
+    "uniqueness": 1,
+    "landspeed": 1,
+    "game_text": "",
+    "credits": 0,
+    "image": "work\\refgold-final-proof\\images\\RG-GEMP-TK-420.png",
+    "sha256": "1f8c9447bd8e9c79219c4dcb870c21641e956e960dfbb91372797ea859c1bf2a",
+    "evidence": "Full normalized card visually inspected. Printed fields independent of implementation. Landspeed is character rule default. Persona and species associations need matching engine mapping; no borrowed abilities or icons.",
+    "number": 167,
+    "lore": "One of several Stormtroopers in charge of prisoner detail on the Death Star. Despises races such as the Wookiees and Calamarians.",
+    "gameText": "",
+    "cardTypes": [
+      "IMPERIAL"
+    ],
+    "keywords": [
+      "STORMTROOPER"
+    ],
+    "personas": [],
+    "species": null,
+    "models": [],
+    "file": "RG-GEMP-TK-420.png",
+    "kind": "Character"
+  },
+  {
+    "id": "15_168",
+    "title": "Watto, Junk Dealer",
+    "side": "Dark",
+    "subtype": "Alien",
+    "destiny": 3,
+    "deploy": 2,
+    "power": 3,
+    "ability": 2,
+    "forfeit": 4,
+    "icons": [
+      "ALIEN",
+      "REFLECTIONS_GOLD",
+      "EPISODE_I"
+    ],
+    "characteristics": [
+      "Toydarian"
+    ],
+    "persona": "Watto",
+    "uniqueness": 1,
+    "landspeed": 1,
+    "game_text": "",
+    "credits": 0,
+    "image": "work\\refgold-final-proof\\images\\RG-GEMP-Watto-Junk-Dealer.png",
+    "sha256": "4bad5c100e3da4411cb5d96624c32adc2a627aa222b80137a60838ebdc0255ae",
+    "evidence": "Parent independently inspected full normalized card; reported printed stats and icons. Default character landspeed 1. Watto species matched established character identity, not borrowed abilities.",
+    "number": 168,
+    "lore": "\"So-o-o-o...let-a me take-a thee out back...huh?\"",
+    "gameText": "",
+    "cardTypes": [
+      "ALIEN"
+    ],
+    "keywords": [],
+    "personas": [
+      "WATTO"
+    ],
+    "species": "TOYDARIAN",
+    "models": [],
+    "file": "RG-GEMP-Watto-Junk-Dealer.png",
+    "kind": "Character"
+  },
+  {
+    "id": "15_172",
+    "number": 172,
+    "title": "Back On Schedule",
+    "side": "Dark",
+    "kind": "Effect",
+    "subtype": null,
+    "destiny": 5,
+    "uniqueness": 1,
+    "cardTypes": [
+      "EFFECT"
+    ],
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "The Emperor is coming here?",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Back-On-Schedule.png",
+    "sha256": "fbca68e78b6893722b6e9de9eadc28bb220c071454f4503490e538535dd20c9b",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_173",
+    "number": 173,
+    "title": "Battle Plains Victory",
+    "side": "Dark",
+    "kind": "Effect",
+    "subtype": null,
+    "destiny": 5,
+    "uniqueness": 1,
+    "cardTypes": [
+      "EFFECT"
+    ],
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD",
+      "EPISODE_I"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "Battle droid officers knew the Battle of Naboo was theirs to win - the planned cleanup and aftermath of the battle was even planned out beforehand for efficiency.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Battle-Plains-Victory.png",
+    "sha256": "9632ae69764f2768346a19ee10dc3a6770659b5e8717f181c2b338401b43cb9d",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_176",
+    "number": 176,
+    "title": "Boonta Eve Wagering",
+    "side": "Dark",
+    "kind": "Effect",
+    "subtype": null,
+    "destiny": 4,
+    "uniqueness": 1,
+    "cardTypes": [
+      "EFFECT"
+    ],
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD",
+      "EPISODE_I"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "Not every bet at Boonta Eve took place through Watto or Jabba.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Boonta-Eve-Wagering.png",
+    "sha256": "73552658a9516d38b59152c9fd8fd7a480ea106ad65ecfd440f85f3197a09557",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_180",
+    "number": 180,
+    "title": "Ewok Superstitions",
+    "side": "Dark",
+    "kind": "Effect",
+    "subtype": null,
+    "destiny": 3,
+    "uniqueness": 1,
+    "cardTypes": [
+      "EFFECT"
+    ],
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "With Ewoks and droids it's a very love and hate type relationship.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Ewok-Supersticions.png",
+    "sha256": "78bd313eedfa1610c17217db868415600ee0a19c29c7915d372cb3d191c17f76",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_185",
+    "number": 185,
+    "title": "Imperial Compensation",
+    "side": "Dark",
+    "kind": "Effect",
+    "subtype": null,
+    "destiny": 4,
+    "uniqueness": 1,
+    "cardTypes": [
+      "EFFECT"
+    ],
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "The Empire is known to call upon any resource in their arsenal in order to eliminate their enemies - including the worst kind of scum in the galaxy.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Imperial-Compensation.png",
+    "sha256": "d7a234bc26e32fd48ade1a87dd67ce64e991abe8adf73a65f92d9bdc0847a04b",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_187",
+    "number": 187,
+    "title": "Imperial Firepower",
+    "side": "Dark",
+    "kind": "Effect",
+    "subtype": null,
+    "destiny": 5,
+    "uniqueness": 1,
+    "cardTypes": [
+      "EFFECT"
+    ],
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "The only option the rebels had available to them at the Battle of Hoth was to evacuate as many resources as possible before they were overwhelmed.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Imperial-Firepower.png",
+    "sha256": "6919d5bdf07308725a2388d74b3c43ce387d53bbfb322617b80d09b2d494c02e",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_189",
+    "number": 189,
+    "title": "Jabba's Droid Pool",
+    "side": "Dark",
+    "kind": "Effect",
+    "subtype": null,
+    "destiny": 5,
+    "uniqueness": 1,
+    "cardTypes": [
+      "EFFECT"
+    ],
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "EV-9D9 uses a wide variety of methods to insure the loyalty of his droids",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Jabba-s-Droid-Pool.png",
+    "sha256": "5ec36d0b56c00275c94b588d4f3c9399dff2ef6c6303aec74061430cf1f06385",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_190",
+    "number": 190,
+    "title": "Jedi Rocks",
+    "side": "Dark",
+    "kind": "Effect",
+    "subtype": null,
+    "destiny": 4,
+    "uniqueness": 1,
+    "cardTypes": [
+      "EFFECT"
+    ],
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "The Max Rebo Band! Playing every night and at every other time Jabba wants them to play.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Jedi-Rocks.png",
+    "sha256": "b44e2a9ca1df36d81dda1b357c4ad67a2bec96a9e57cca29d0797437466bbb50",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_192",
+    "number": 192,
+    "title": "Name The System!",
+    "side": "Dark",
+    "kind": "Effect",
+    "subtype": null,
+    "destiny": 5,
+    "uniqueness": 1,
+    "cardTypes": [
+      "EFFECT"
+    ],
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "Senator Organa pressured into revealing the location of her Rebellious operations eventually lied to Tarkin in order to buy precious time for her rebel friends.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Name-The-System.png",
+    "sha256": "a8fc9f4ba4499868f951fc84db964be3939abdc15866350a0f2ab32ddaf8c8b2",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_193",
+    "number": 193,
+    "title": "Not Worth The Trouble",
+    "side": "Dark",
+    "kind": "Effect",
+    "subtype": null,
+    "destiny": 4,
+    "uniqueness": 1,
+    "cardTypes": [
+      "EFFECT"
+    ],
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "The lesson that Dr. Evazan and Ponda Baba failed to learn was that when a Jedi wants to buy you a drink it's usually best to take him up on the offer.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Not-Worth-The-Trouble.png",
+    "sha256": "7a165e76678b049493c4ffc8107176dde282bff316ada3f2940b8f7647a2dd18",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_194",
+    "number": 194,
+    "title": "One Arm's Frozen Lunch",
+    "side": "Dark",
+    "kind": "Effect",
+    "subtype": null,
+    "destiny": 3,
+    "uniqueness": 1,
+    "cardTypes": [
+      "EFFECT"
+    ],
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "For lunch there was a frozen tauntaun to feast on. For dessert there was a warm Jedi apprentice to look forward to.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-One-Arm-s-Frozen-Lunch.png",
+    "sha256": "a87f668f472805f3969e8a36e1b820fc507ab6e06682a327c341cd058b6ff1bd",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_196",
+    "number": 196,
+    "title": "Perfect Hibernation",
+    "side": "Dark",
+    "kind": "Effect",
+    "subtype": null,
+    "destiny": 4,
+    "uniqueness": 1,
+    "cardTypes": [
+      "EFFECT"
+    ],
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "Freezing Han Solo in carbonite proved to be an efficient delivery system for Boba Fett's prize.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Perfect-Hibernation.png",
+    "sha256": "dd144d556bf479276a923f92d0769b0581e330ec13a3f5aec28485d232f960af",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_197",
+    "number": 197,
+    "title": "Performing Under Pressure",
+    "side": "Dark",
+    "kind": "Effect",
+    "subtype": null,
+    "destiny": 4,
+    "uniqueness": 1,
+    "cardTypes": [
+      "EFFECT"
+    ],
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "Scrambling to repair your freighter while being chased by a fleet of Star Destroyers can take its toll on a smuggler's mind. For Han Solo it brought chaos to his entire ship.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Performing-Under-Pressure.png",
+    "sha256": "154e9964e5904fca92c0e47b22f81234b64084fa1fb1a294f7fb1e1bb337db93",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_204",
+    "number": 204,
+    "title": "Sarlacc Tentacles",
+    "side": "Dark",
+    "kind": "Effect",
+    "subtype": null,
+    "destiny": 4,
+    "uniqueness": 1,
+    "cardTypes": [
+      "EFFECT"
+    ],
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "Don’t get caught too close.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Sarlacc-Tentacles.png",
+    "sha256": "f16c2d090ee38f9e37574dc80c47c695025b4894c6fdb926cda4c104e23fbcd0",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_209",
+    "number": 209,
+    "title": "Tatooine Resale Operations",
+    "side": "Dark",
+    "kind": "Effect",
+    "subtype": null,
+    "destiny": 3,
+    "uniqueness": 1,
+    "cardTypes": [
+      "EFFECT"
+    ],
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "Jawas such as Coilen are known to sell the cheapest droids at the highest prices. For Tatooine citizens it's the only droid resource they have.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Tatooine-Resale-Operations.png",
+    "sha256": "2dda429f4bf395c34f1dacf437361380ed6ac6272860dc9e6d6f59582d259b24",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_210",
+    "number": 210,
+    "title": "Tatooine Underground Operations",
+    "side": "Dark",
+    "kind": "Effect",
+    "subtype": null,
+    "destiny": 5,
+    "uniqueness": 1,
+    "cardTypes": [
+      "EFFECT"
+    ],
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "The agendas and intentions of some Tatooine citizens have consequences that border on the improper.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Tatooine-Underground-Operations.png",
+    "sha256": "a92196440591eee995130702a78383e70d461a351d747a0f8fc8342f6f782888",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_212",
+    "number": 212,
+    "title": "Visage Of A Viceroy",
+    "side": "Dark",
+    "kind": "Effect",
+    "subtype": null,
+    "destiny": 4,
+    "uniqueness": 1,
+    "cardTypes": [
+      "EFFECT"
+    ],
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD",
+      "EPISODE_I"
+    ],
+    "keywords": [
+      "HOLOGRAM"
+    ],
+    "personas": [],
+    "models": [],
+    "lore": "They must be dead by now. Destroy what’s left of them. Hologram.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Visage-Of-A-Viceroy.png",
+    "sha256": "2105c530915a5ceff386c8cb9c1615527ea7fa07565b69fa6ce8c444b7c082fc",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_217",
+    "number": 217,
+    "title": "Worry",
+    "side": "Dark",
+    "kind": "Effect",
+    "subtype": null,
+    "destiny": 3,
+    "uniqueness": 1,
+    "cardTypes": [
+      "EFFECT"
+    ],
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD",
+      "EPISODE_I"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "It was almost too much for Shmi to take in as she watched her son take part in one of the most dangerous sports in the galaxy.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Worry.png",
+    "sha256": "3aff6c6746ca2df9ace061c772f4c08121534ad430804c8834632f1726be9122",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_221",
+    "number": 221,
+    "title": "Begin Retreat!",
+    "side": "Dark",
+    "kind": "Interrupt",
+    "subtype": "USED_OR_LOST",
+    "destiny": 6,
+    "uniqueness": 1,
+    "cardTypes": [
+      "INTERRUPT"
+    ],
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "The rebels knew when the time had come to abandon their posts.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Begin-Retreat.png",
+    "sha256": "0a522ead95253b4f5cc9644c58076f345fa388f62aa16e9d918ece9d8a87cfe8",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_222",
+    "number": 222,
+    "title": "Ben?",
+    "side": "Dark",
+    "kind": "Interrupt",
+    "subtype": "USED_OR_LOST",
+    "destiny": 4,
+    "uniqueness": 1,
+    "cardTypes": [
+      "INTERRUPT"
+    ],
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "After being attacked by a one armed wampa and stranded on an ice plain, Ben chose to approach Luke about his next objective.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Ben.png",
+    "sha256": "846113135fb42ae9ec43f5764091210e056efeac53493a0a103a16e9acc2c4c6",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_224",
+    "number": 224,
+    "title": "Boba Fett? Where?!",
+    "side": "Dark",
+    "kind": "Interrupt",
+    "subtype": "USED_OR_LOST",
+    "destiny": 4,
+    "uniqueness": 1,
+    "cardTypes": [
+      "INTERRUPT"
+    ],
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "Fett's opportunity to capture a Jedi Knight was just too good to pass up.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Boba-Fett-Where.png",
+    "sha256": "c3f0d26c7070de56997d541ff18f210143eaf2b750cdb64405e0072ea074670e",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_226",
+    "number": 226,
+    "title": "Cannon Fire",
+    "side": "Dark",
+    "kind": "Interrupt",
+    "subtype": "USED_OR_LOST",
+    "destiny": 4,
+    "uniqueness": 1,
+    "cardTypes": [
+      "INTERRUPT"
+    ],
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "When all else fails, just fire as much as possible.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Cannon-Fire.png",
+    "sha256": "ee771fd64a8d0233af1a1e58957f77975629c87637d3a9bef9d74b4a0a4c23d8",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_236",
+    "number": 236,
+    "title": "Disciplinary Actions",
+    "side": "Dark",
+    "kind": "Interrupt",
+    "subtype": "USED_OR_LOST",
+    "destiny": 4,
+    "uniqueness": 1,
+    "cardTypes": [
+      "INTERRUPT"
+    ],
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "Vader had to kill someone from time to time just to keep the rest of his officers in check.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Disciplinary-Actions.png",
+    "sha256": "e74588ddb018d8dacd623016f9e4f249aef572b80edb6f863c457599bd6d6b0f",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_239",
+    "number": 239,
+    "title": "Entry Denied",
+    "side": "Dark",
+    "kind": "Interrupt",
+    "subtype": "USED_OR_LOST",
+    "destiny": 6,
+    "uniqueness": 1,
+    "cardTypes": [
+      "INTERRUPT"
+    ],
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD",
+      "EPISODE_I"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "After injecting so much fury into his battle with the Jedi, Darth Maul was forced to play a waiting game in order to eliminate his targets.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Entry-Denied.png",
+    "sha256": "c43c7a7a2076da208d190884870a902cfd3deb7aa9fdf22caf4bb98c5aa0a27d",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_240",
+    "number": 240,
+    "title": "Flag Emblems",
+    "side": "Dark",
+    "kind": "Interrupt",
+    "subtype": "USED_OR_LOST",
+    "destiny": 4,
+    "uniqueness": 1,
+    "cardTypes": [
+      "INTERRUPT"
+    ],
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD",
+      "EPISODE_I"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "Before a podrace, flags of the participating pilots are raised in a salute to what usually promises to be an exciting event.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Flag-Emblems.png",
+    "sha256": "6344239ba9baa2ac79f63d1a130640970e2cc210e3ffd3d972db4a25bb3bce15",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_243",
+    "number": 243,
+    "title": "Great Interest",
+    "side": "Dark",
+    "kind": "Interrupt",
+    "subtype": "USED_OR_LOST",
+    "destiny": 5,
+    "uniqueness": 1,
+    "cardTypes": [
+      "INTERRUPT"
+    ],
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD",
+      "EPISODE_I"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "Senator Palpatine was curious to find out more about Anakin Skywalker's past as well as his future.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Great-Interest.png",
+    "sha256": "bba8cd7089e291ead5c5b1e6bf9240fd6381b5ce8426601b780a564ecea65fc7",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_246",
+    "number": 246,
+    "title": "I Didn't Mean To...",
+    "side": "Dark",
+    "kind": "Interrupt",
+    "subtype": "USED_OR_LOST",
+    "destiny": 3,
+    "uniqueness": 1,
+    "cardTypes": [
+      "INTERRUPT"
+    ],
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "Eliminating 3PO was the only way to keep the Empire's secret safe on Cloud City. Fortunately for them Han blamed the droid's curiosity for his disappearance.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-I-Didn-t-Mean-To.png",
+    "sha256": "875da072eb5bf12460b179de615e7bba2c002897cd6d8a2cb76e9f41e4f0951f",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_251",
+    "number": 251,
+    "title": "Imperial Data Network",
+    "side": "Dark",
+    "kind": "Interrupt",
+    "subtype": "USED_OR_LOST",
+    "destiny": 5,
+    "uniqueness": 1,
+    "cardTypes": [
+      "INTERRUPT"
+    ],
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "Used as a central information resource the Imperial data network can be used to track intruders, access information or rescue damsels in distress.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Imperial-Data-Network.png",
+    "sha256": "e108dfa572fdc603adaf1edfc8312025418111c7f9a689381a7f2c684264ea79",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_252",
+    "number": 252,
+    "title": "Imperial Detachments",
+    "side": "Dark",
+    "kind": "Interrupt",
+    "subtype": "USED_OR_LOST",
+    "destiny": 5,
+    "uniqueness": 1,
+    "cardTypes": [
+      "INTERRUPT"
+    ],
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "The last place an undercover operative wants to be in is a spaceport that's flooded with Imperial troops on the lookout for anything suspicious.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Imperial-Detachments.png",
+    "sha256": "b8a6c69c17fbc04a5cbbdc8f4582891c4691f9846cde9d1ea7eb4770db60aa3f",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_254",
+    "number": 254,
+    "title": "In The Pits",
+    "side": "Dark",
+    "kind": "Interrupt",
+    "subtype": "USED_OR_LOST",
+    "destiny": 5,
+    "uniqueness": 1,
+    "cardTypes": [
+      "INTERRUPT"
+    ],
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD",
+      "EPISODE_I"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "Statistically, racers that have human crews tending to them perform better than racers tended by pit droids. Most pilots however will take anything they can get.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-In-The-Pits.png",
+    "sha256": "34f4207395cf3d2a6c59e31325cc54180a7c9f31ef921e1e0af973c71cab1d4e",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_256",
+    "number": 256,
+    "title": "Is There Something Alive Down Here?",
+    "side": "Dark",
+    "kind": "Interrupt",
+    "subtype": "USED_OR_LOST",
+    "destiny": 5,
+    "uniqueness": 1,
+    "cardTypes": [
+      "INTERRUPT"
+    ],
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "Something just moved past my leg!",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Is-There-Something-Alive-Down-Here.png",
+    "sha256": "d3356457f01bf1075e53f8474a263c1767b39d67a7e474865dceaeec55e5d40a",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_261",
+    "number": 261,
+    "title": "Locked Door",
+    "side": "Dark",
+    "kind": "Interrupt",
+    "subtype": "USED",
+    "destiny": 3,
+    "uniqueness": 1,
+    "cardTypes": [
+      "INTERRUPT"
+    ],
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "Luke's first attempted escape from the rancor pit got him nothing but a mocking from Jabba's court.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Locked-Door.png",
+    "sha256": "803856df1b20975504671307cd3a8648dac539d033cbb166fabbc3ad18e94674",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_278",
+    "number": 278,
+    "title": "Security Sweep",
+    "side": "Dark",
+    "kind": "Interrupt",
+    "subtype": "USED_OR_LOST",
+    "destiny": 4,
+    "uniqueness": 1,
+    "cardTypes": [
+      "INTERRUPT"
+    ],
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "Stormtroopers securing areas of the Death Star found evidence that intruders were aboard their battle station and that these intruders enjoyed locking droids in closets.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Security-Sweep.png",
+    "sha256": "ded88b92314f17114da8e793e3461d48b68c3be1393700c6b6a84c43a7228d72",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_283",
+    "number": 283,
+    "title": "Speeder Downed",
+    "side": "Dark",
+    "kind": "Interrupt",
+    "subtype": "USED",
+    "destiny": 4,
+    "uniqueness": 1,
+    "cardTypes": [
+      "INTERRUPT"
+    ],
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "The last place a pilot wants to be in is a crashed vehicle at the mercy of an AT-AT pilot.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Speeder-Downed.png",
+    "sha256": "7c6bab259cd828078cfafc550b59e03f5c47e6ef96f8c5e953dc6037c83a7ede",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_298",
+    "number": 298,
+    "title": "Twilight Fading",
+    "side": "Dark",
+    "kind": "Interrupt",
+    "subtype": "USED_OR_LOST",
+    "destiny": 5,
+    "uniqueness": 1,
+    "cardTypes": [
+      "INTERRUPT"
+    ],
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "\"There is...another...Sky...walker.\"",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Twilight-Fading.png",
+    "sha256": "26cf3f13e17dfd71986950a1e453ad8c768a0dda9293a86a578a78596f9d6f11",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_305",
+    "number": 305,
+    "title": "We Would Be Honored If You Would Join Us",
+    "side": "Dark",
+    "kind": "Interrupt",
+    "subtype": "USED_OR_LOST",
+    "destiny": 4,
+    "uniqueness": 1,
+    "cardTypes": [
+      "INTERRUPT"
+    ],
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "I had no choice. They arrived right before you did.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-We-Would-Be-Honored-If-You-Would-Join-Us.png",
+    "sha256": "e7580fafcf530e60fb53947b753313c2c2bee4219604baeacc9b9f17b477b784",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_306",
+    "number": 306,
+    "title": "Where Are You Taking This...Thing?",
+    "side": "Dark",
+    "kind": "Interrupt",
+    "subtype": "USED_OR_LOST",
+    "destiny": 5,
+    "uniqueness": 1,
+    "cardTypes": [
+      "INTERRUPT"
+    ],
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "Escorting Wookiees around a Death Star isn't exactly an activity you want to perform if you're trying not to be noticed.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-Where-Are-You-Taking-This-Thing.png",
+    "sha256": "c3766c2db2873786cd54e3ddcffe5fa666dc43333cd76e8fe7ea2ec36defd88d",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  },
+  {
+    "id": "15_308",
+    "number": 308,
+    "title": "You Will Meet Your Destiny",
+    "side": "Dark",
+    "kind": "Interrupt",
+    "subtype": "USED_OR_LOST",
+    "destiny": 5,
+    "uniqueness": 1,
+    "cardTypes": [
+      "INTERRUPT"
+    ],
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "personas": [],
+    "models": [],
+    "lore": "Vader was going to make sure Luke paid the price for not giving into his anger. Having been down the same path himself he knew he would get his son to turn eventually.",
+    "gameText": "",
+    "credits": 0,
+    "file": "RG-GEMP-You-Will-Meet-Your-Destiny.png",
+    "sha256": "f98b79f3ccdfe8f58a78235adab5094e937a0536b070a2f12db599bcc1454038",
+    "evidence": "Title, uniqueness, destiny, subtype and Episode I icon visually checked on normalized remaster. Game-text box intentionally blank."
+  }
+]

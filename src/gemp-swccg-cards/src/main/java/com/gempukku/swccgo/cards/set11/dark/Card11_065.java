@@ -31,6 +31,7 @@ public class Card11_065 extends AbstractAlien {
         addIcons(Icon.TATOOINE, Icon.EPISODE_I);
         addKeywords(Keyword.GAMBLER);
         setSpecies(Species.TOYDARIAN);
+        addPersona(Persona.WATTO);
     }
 
     @Override

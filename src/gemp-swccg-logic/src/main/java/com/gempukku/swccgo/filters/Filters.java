@@ -19208,7 +19208,7 @@ public class Filters {
     public static final Filter Overload = Filters.title(Title.Overload);
     public static final Filter Overseeing_It_Personally = Filters.title(Title.Overseeing_It_Personally);
     public static final Filter Overwhelmed = Filters.title(Title.Overwhelmed);
-    public static final Filter Owen = Filters.title(Title.Owen_Lars);
+    public static final Filter Owen = Filters.persona(Persona.OWEN);
     public static final Filter Ozzel = Filters.persona(Persona.OZZEL);
     public static final Filter padawan = Filters.and(Filters.keyword(Keyword.PADAWAN), Filters.not(Filters.abilityMoreThanOrEqualTo(6)));
     public static final Filter Padme = Filters.title(Title.Padme);
@@ -19813,7 +19813,7 @@ public class Filters {
     public static final Filter Warriors_Courage = Filters.title(Title.Warriors_Courage);
     public static final Filter Watch_Your_Back = Filters.title(Title.Watch_Your_Back);
     public static final Filter Watch_Your_Step = Filters.title(Title.Watch_Your_Step);
-    public static final Filter Watto = Filters.title(Title.Watto);
+    public static final Filter Watto = Filters.persona(Persona.WATTO);
     public static final Filter Wattos_Box = Filters.title(Title.Wattos_Box);
     public static final Filter Wattos_Chance_Cube = Filters.title(Title.Wattos_Chance_Cube);
     public static final Filter Wattos_Junkyard = Filters.title(Title.Wattos_Junkyard);

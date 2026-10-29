@@ -19,6 +19,7 @@ public enum ExpansionSet {
     CORUSCANT("Coruscant", 12),
     REFLECTIONS_III("Reflections III", 13),
     THEED_PALACE("Theed Palace", 14),
+    REFLECTIONS_GOLD("Reflections Gold", 15),
 
     PREMIERE_INTRO_TWO_PLAYER("Premiere Introductory Two Player Game", 101),
     JEDI_PACK("Jedi Pack", 102),
