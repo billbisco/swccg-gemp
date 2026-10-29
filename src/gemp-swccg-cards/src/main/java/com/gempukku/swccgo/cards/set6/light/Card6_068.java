@@ -97,7 +97,7 @@ public class Card6_068 extends AbstractUsedOrLostInterrupt {
                                                 // Perform result(s)
                                                 // Ask opponent to lose 2 Force to cancel
                                                 action.appendEffect(
-                                                        new PlayoutDecisionEffect(action, playerId,
+                                                        new PlayoutDecisionEffect(action, opponent,
                                                                 new YesNoDecision("Do you want to lose 2 Force to cancel captive's release?") {
                                                                     @Override
                                                                     protected void yes() {
