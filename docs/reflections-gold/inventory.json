@@ -266,7 +266,8 @@
     "title": "I Must Be Allowed To Speak & Goo Nee Tay",
     "image": "RG-GEMP-I-Must-Be-Allowed-To-Speak-Goo-Nee-Tay.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_38",
@@ -544,7 +545,8 @@
     "title": "Effective Repairs & Punch It!",
     "image": "RG-GEMP-Effective-Repairs-Punch-It.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_76",
@@ -673,7 +675,8 @@
     "title": "Insertion Planning & Critical Error Revealed",
     "image": "RG-GEMP-Insertion-Planning-Critical-Error-Revealed.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_93",
@@ -726,14 +729,18 @@
     "title": "Losing Track & A Step Backwards",
     "image": "RG-GEMP-Losing-Track-A-Step-Backwards.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0,
+    "implementationSource": "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set15/light/Card15_099.java"
   },
   {
     "id": "15_100",
     "title": "Lost In The Wilderness & Yub Yub!",
     "image": "RG-GEMP-Lost-In-The-Wilderness-Yub-Yub.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0,
+    "implementationSource": "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set15/light/Card15_100.java"
   },
   {
     "id": "15_101",
@@ -770,21 +777,27 @@
     "title": "My Loyal Bodyguard & Might Of The Republic",
     "image": "RG-GEMP-My-Loyal-Bodyguard-Might-Of-The-Republic.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0,
+    "implementationSource": "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set15/light/Card15_105.java"
   },
   {
     "id": "15_106",
     "title": "Nabrun Leids & Quite A Mercenary",
     "image": "RG-GEMP-Nabrun-Leids-Quite-A-Mercenary.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0,
+    "implementationSource": "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set15/light/Card15_106.java"
   },
   {
     "id": "15_107",
     "title": "Narrow Escape",
     "image": "RG-GEMP-Narrow-Escape.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3,
+    "implementationSource": "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set15/light/Card15_107.java"
   },
   {
     "id": "15_108",
@@ -799,7 +812,9 @@
     "title": "Neck And Neck & Changing The Odds",
     "image": "RG-GEMP-Neck-And-Neck-Changing-The-Odds.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0,
+    "implementationSource": "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set15/light/Card15_109.java"
   },
   {
     "id": "15_110",
@@ -881,7 +896,8 @@
     "title": "Perimeter Scan & Under Attack",
     "image": "RG-GEMP-Perimeter-Scan-Under-Attack.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_121",
@@ -1744,7 +1760,8 @@
     "title": "Dark Jedi Presence & Vader's Eye",
     "image": "RG-GEMP-Dark-Jedi-Presence-Vader-s-Eye.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_233",
@@ -1783,7 +1800,8 @@
     "title": "Drop Your Weapons & Halt!",
     "image": "RG-GEMP-Drop-Your-Weapons-Halt.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_238",
@@ -1868,7 +1886,8 @@
     "title": "Imbalance & Shocking Revelation",
     "image": "RG-GEMP-Imbalance-Shocking-Revelation.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_249",
@@ -1884,7 +1903,8 @@
     "title": "Imperial Command & It's An Older Code",
     "image": "RG-GEMP-Imperial-Command.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_251",
@@ -1953,7 +1973,8 @@
     "title": "Jabba's Through With You & Nevar Yalnal",
     "image": "RG-GEMP-Jabba-s-Through-With-You-Nevar-Yalnal.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_260",
