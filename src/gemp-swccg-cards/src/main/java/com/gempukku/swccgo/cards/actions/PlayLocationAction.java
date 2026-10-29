@@ -116,8 +116,9 @@ public class PlayLocationAction extends AbstractPlayCardAction {
             // Check if the parent needs to be chosen.
             if (!_parentChosen) {
 
-                // If location if a non-unique starship or vehicle site, check if there are multiple parent card options
-                if (Filters.and(Filters.non_unique, Filters.or(Filters.starship_site, Filters.vehicle_site)).accepts(game, _location)) {
+                // If location is a starship or vehicle site with no persona, check if there are multiple parent card options
+                if (Filters.or(Filters.starship_site, Filters.vehicle_site).accepts(game, _location)
+                        && _location.getBlueprint().getRelatedStarshipOrVehiclePersona() == null) {
 
                     // If multiple placements have different "parent systems" for location, then ask player to select which planet to deploy
                     Set<PhysicalCard> parentStarshipOrVehicle = new HashSet<PhysicalCard>();
