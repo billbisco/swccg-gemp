@@ -33,6 +33,7 @@ public interface Title {
     String Ackbar = "Admiral Ackbar";
     String Activate_The_Droids = "Activate The Droids";
     String Advance_Preparation = "Advance Preparation";
+    String Advantage = "Advantage";
     String Advosze = "Advosze";
     String A_Few_Maneuvers = "A Few Maneuvers";
     String Agents_In_The_Court = "Agents In The Court";
@@ -45,6 +46,7 @@ public interface Title {
     String Ajan_Kloss = "Ajan Kloss";
     String Alderaan = "Alderaan";
     String Alderaan_Blown_Away = "Alderaan (Blown Away)";
+    String All_My_Urchins = "All My Urchins";
     String All_Too_Easy = "All Too Easy";
     String All_Wings_Report_In = "All Wings Report In";
     String All_Wrapped_Up = "All Wrapped Up";
@@ -348,6 +350,7 @@ public interface Title {
     String Diplomatic_Mission_To_Alderaan = "Diplomatic Mission To Alderaan";
     String Disarmed = "Disarmed";
     String Disarming_Creature = "Disarming Creature";
+    String Dismantle_On_Sight = "Dismantle On Sight";
     String Do_Or_Do_Not = "Do, Or Do Not";
     String Do_They_Have_A_Code_Clearance = "Do They Have A Code Clearance?";
     String Doallyn = "Sergeant Doallyn";
@@ -411,6 +414,7 @@ public interface Title {
     String Emperors_Power = "Emperor's Power";
     String Empires_New_Order = "Empire's New Order";
     String Empires_Sinister_Agents = "Empire's Sinister Agents";
+    String Encampment = "Encampment";
     String End_This_Destructive_Conflict = "End This Destructive Conflict";
     String Endor = "Endor";
     String Endor_Celebration = "Endor Celebration";
@@ -419,6 +423,7 @@ public interface Title {
     String Endor_Shield = "Endor Shield";
     String Energy_Shell_Launchers = "Energy Shell Launchers";
     String Entrance_Cavern = "Jabba's Palace: Entrance Cavern";
+    String Entrenchment = "Entrenchment";
     String Ephant_Mon = "Ephant Mon";
     String Epic_Duel = "Epic Duel";
     String Eriadu = "Eriadu";
@@ -548,6 +553,7 @@ public interface Title {
     String Hidden_Forest_Trail = "Endor: Hidden Forest Trail";
     String Hidden_Recess= "Maz's Castle: Hidden Recess";
     String Hidden_Weapons = "Hidden Weapons";
+    String Hiding_In_The_Garbage = "Hiding In The Garbage";
     String Highspeed_Tactics = "High-speed Tactics";
     String His_Destiny = "His Destiny";
     String His_Name_Is_Anakin = "His Name Is Anakin";
@@ -629,6 +635,7 @@ public interface Title {
     String In_The_Hands_Of_The_Empire = "In The Hands Of The Empire";
     String Incinerator = "Cloud City: Incinerator";
     String Indentured_To_The_Empire = "Indentured To The Empire";
+    String Ineffective_Maneuver = "Ineffective Maneuver";
     String Information_Exchange = "Information Exchange";
     String Informant = "Informant";
     String Inner_Strength = "Inner Strength";

@@ -43,7 +43,7 @@ public class Card1_114 extends AbstractLostInterrupt {
         // Check condition(s)
         if (GameConditions.isDuringOpponentsPhase(game, self, Phase.CONTROL)
                 && GameConditions.canUseForceToPlayInterrupt(game, playerId, self, 1)
-                && GameConditions.wasDrainedThisTurnAtLeastForce(game, 5)) {
+                && GameConditions.wasDrainedThisTurnAtLeastForce(game, GameConditions.hasGameTextModification(game, self, com.gempukku.swccgo.logic.modifiers.ModifyGameTextType.LEGACY__THANK_THE_MAKER__TREAT_5_AS_3) ? 3 : 5)) {
             Filter droidFilter = Filters.and(Filters.your(self), Filters.droid);
             if (GameConditions.canTarget(game, self, droidFilter)) {
 
