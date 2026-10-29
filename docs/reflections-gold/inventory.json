@@ -1310,7 +1310,8 @@
     "title": "Emperor's Power & Overseeing It Personally",
     "image": "RG-GEMP-Emperor-s-Power-Overseeing-It-Personally.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_179",
@@ -1469,7 +1470,8 @@
     "title": "Presence Of The Force & Dark Waters",
     "image": "RG-GEMP-Presence-Of-The-Force-Dark-Waters.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_200",
@@ -1595,7 +1597,8 @@
     "title": "Well Guarded & Security Precautions",
     "image": "RG-GEMP-Well-Guarded-Security-Precautions.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_216",
@@ -1618,7 +1621,8 @@
     "title": "Your Destiny & Insignificant Rebellion",
     "image": "RG-GEMP-Your-Destiny-Insignificant-Rebellion.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_219",
@@ -1687,7 +1691,8 @@
     "title": "Cold Feet & He Hasn't Come Back Yet",
     "image": "RG-GEMP-Cold-Feet-He-Hasn-t-Come-Back-Yet.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_228",
@@ -1804,7 +1809,8 @@
     "title": "Force Lightning & Rise, My Friend",
     "image": "RG-GEMP-Force-Lightning-Rise-My-Friend.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_243",
@@ -1903,7 +1909,8 @@
     "title": "Informant & Takeel",
     "image": "RG-GEMP-Informant-Takeel.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_256",
