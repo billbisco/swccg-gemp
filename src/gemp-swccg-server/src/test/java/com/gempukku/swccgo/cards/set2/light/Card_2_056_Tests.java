@@ -23,11 +23,12 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 public class Card_2_056_Tests {
+	protected String sabotageBlueprint() { return "2_56"; }
 	protected VirtualTableScenario GetScenario() {
 		return new VirtualTableScenario(
 			new HashMap<>()
 			{{
-				put("sabotage", "2_56");
+				put("sabotage", sabotageBlueprint());
 				put("spy", "7_5"); // Bothan Spy
 				put("spy2", "7_5"); // second Bothan Spy (two-spy choose)
 				put("merc", "2_36"); // Merc Sunlet (thief skill)
