@@ -7,10 +7,10 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import static org.junit.Assert.*;
 public class ReflectionsGoldDarkFinalStatsTests {
-    @Test public void FinalTenDarkCardsMatchIndependentlyInspectedPrintedMetadata() throws Exception {
+    @Test public void FinalDarkCardsMatchIndependentlyInspectedPrintedMetadata() throws Exception {
         var library=new SwccgCardBlueprintLibrary();
         try(var reader=new InputStreamReader(getClass().getResourceAsStream("/reflections-gold-dark-final.json"),StandardCharsets.UTF_8)) {
-            var rows=JsonParser.parseReader(reader).getAsJsonArray(); assertEquals(10,rows.size());
+            var rows=JsonParser.parseReader(reader).getAsJsonArray(); assertEquals(9,rows.size());
             for(var item:rows) {
                 var row=item.getAsJsonObject();String id=row.get("id").getAsString();var card=library.getSwccgoCardBlueprint(id);
                 assertEquals(id,row.get("title").getAsString(),card.getTitle());

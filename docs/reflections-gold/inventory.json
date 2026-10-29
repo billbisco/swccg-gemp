@@ -1732,8 +1732,7 @@
     "title": "Combat Readiness & Prepared Defenses",
     "image": "RG-GEMP-Combat-Readiness-Prepared-Defenses.png",
     "intentionalBlank": false,
-    "implemented": true,
-    "credits": 0
+    "implemented": false
   },
   {
     "id": "15_229",
