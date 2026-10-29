@@ -54,6 +54,18 @@ public class LegacyFilters {
     }
 
     /**
+     * Filter that accepts cards that may be targeted by weapons like a vehicle.
+     */
+    public static Filter canBeTargetedByWeaponAsVehicle() {
+        return new Filter() {
+            @Override
+            public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard) {
+                return modifiersQuerying.canBeTargetedByWeaponsAsVehicle(gameState, physicalCard);
+            }
+        };
+    }
+
+    /**
      * Filter that accepts frigates (Nebulon-B, modified Nebulon-B, and Munificent-class).
      */
     public static final Filter frigate = Filters.or(
