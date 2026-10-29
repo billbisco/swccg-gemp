@@ -92,6 +92,7 @@ public interface Title {
     String At_Last_We_Will_Have_Revenge = "At Last We Will Have Revenge";
     String At_Peace = "At Peace";
     String AT_ST_Dual_Cannon = "AT-ST Dual Cannon";
+    String Attack_Pattern_Delta = "Attack Pattern Delta";
     String Attack_Run = "Attack Run";
     String Audience_Chamber = "Jabba's Palace: Audience Chamber";
     String Aurra_Sing = "Aurra Sing";
@@ -140,6 +141,7 @@ public interface Title {
     String Blaster_Deflection = "Blaster Deflection";
     String Blaster_Proficiency = "Blaster Proficiency";
     String Blaster_Rack = "Blaster Rack";
+    String Blaster_Rifle = "Blaster Rifle";
     String Blaster_Scope = "Blaster Scope";
     String Blizzard_1 = "Blizzard 1";
     String Blizzard_2 = "Blizzard 2";
@@ -341,6 +343,7 @@ public interface Title {
     String Desert_Landing_Site = "Tatooine: Desert Landing Site";
     String Despair = "Despair";
     String Desperate_Reach = "Desperate Reach";
+    String Desperate_Tactics = "Desperate Tactics";
     String Detention_Block_Control_Room = "Death Star: Detention Block Control Room";
     String Detention_Block_Corridor = "Death Star: Detention Block Corridor";
     String Devastator = "Devastator";
@@ -785,6 +788,7 @@ public interface Title {
     String Lukes_Lightsaber = "Luke's Lightsaber";
     String Lukes_T16_Skyhopper = "Luke's T-16 Skyhopper";
     String Lukes_X34_Landspeeder = "Luke's X-34 Landspeeder";
+    String Lucky_Shot = "Lucky Shot";
     String Lumat = "Lumat";
     String Madakor = "Captain Madakor";
     String Madine = "General Crix Madine";
@@ -870,6 +874,7 @@ public interface Title {
     String New_Leadership_Is_Needed = "New Leadership Is Needed";
     String Nien_Nunb = "Nien Nunb";
     String Nightclub = "Coruscant: Night Club";
+    String Nick_Of_Time = "Nick Of Time";
     String Nightfall = "Nightfall";
     String Niima_Outpost_Shipyard = "Jakku: Niima Outpost Shipyard";
     String No_Bargain = "No Bargain";
@@ -885,6 +890,7 @@ public interface Title {
     String NOOOOOOOOOOOO = "NOOOOOOOOOOOO!";
     String North_Ridge = "Hoth: North Ridge (4th Marker)";
     String Nute_Gunray = "Nute Gunray";
+    String ObiWans_Apparition = "Obi-Wan's Apparition";
     String ObiWans_Hut = "Tatooine: Obi-Wan's Hut";
     String ObiWans_Cape = "Obi-Wan's Cape";
     String ObiWans_Journal = "Obi-Wan's Journal";
@@ -953,6 +959,7 @@ public interface Title {
     String Physical_Choke = "Physical Choke";
     String Planet_Defender_Ion_Cannon = "Planet Defender Ion Cannon";
     String Plastoid_Armor = "Plastoid Armor";
+    String Polarized_Negative_Power_Coupling = "Polarized Negative Power Coupling";
     String Plea_To_The_Court = "Plea To The Court";
     String Plead_My_Case_To_The_Senate = "Plead My Case To The Senate";
     String Podrace_Arena = "Tatooine: Podrace Arena";
@@ -998,6 +1005,7 @@ public interface Title {
     String Ralltiir_Operations = "Ralltiir Operations";
     String Rancor = "Rancor";
     String Rancor_Pit = "Jabba's Palace: Rancor Pit";
+    String Rapid_Fire = "Rapid Fire";
     String Ravager_Crash_Site = "Jakku: Ravager Crash Site";
     String Reactor_Core = "Death Star II: Reactor Core";
     String Reactor_Terminal = "Reactor Terminal";
@@ -1006,6 +1014,7 @@ public interface Title {
     String Rebel_Barrier = "Rebel Barrier";
     String Rebel_Base_Occupation = "Rebel Base Occupation";
     String Rebel_Guard = "Rebel Guard";
+    String Rebel_Infantry = "Rebel Infantry";
     String Rebel_Landing_Site = "Endor: Rebel Landing Site (Forest)";
     String Rebel_Planners = "Rebel Planners";
     String Rebel_Reinforcements = "Rebel Reinforcements";
@@ -1144,6 +1153,7 @@ public interface Title {
     String Slaving_Camp_Headquarters = "Kashyyyk: Slaving Camp Headquarters";
     String Slip_Sliding_Away = "Slip Sliding Away";
     String Smoke_Screen = "Smoke Screen";
+    String Smugglers_Blues = "Smuggler's Blues";
     String Sniper = "Sniper";
     String Snoke = "Snoke";
     String Solo_Han = "Solo Han";
@@ -1164,6 +1174,7 @@ public interface Title {
     String Stardust = "Stardust";
     String Starkiller_Base = "Starkiller Base";
     String Starship_Graveyard = "Jakku: Starship Graveyard";
+    String Stay_Sharp = "Stay Sharp!";
     String Steady_Steady = "Steady, Steady";
     String Stolen_Data_Tapes = "Stolen Data Tapes";
     String Stone_Pile = "Stone Pile";
@@ -1359,6 +1370,7 @@ public interface Title {
     String Watts = "Lieutenant Watts";
     String Wampa_Cave = "Hoth: Wampa Cave (7th Marker)";
     String Warriors_Courage = "Warrior's Courage";
+    String Wars_Not_Make_One_Great = "Wars Not Make One Great";
     String Watch_Your_Back = "Watch Your Back!";
     String Watch_Your_Step = "Watch Your Step";
     String We_Dont_Need_Their_Scum = "We Don't Need Their Scum";
