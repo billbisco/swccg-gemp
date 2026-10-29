@@ -726,14 +726,18 @@
     "title": "Losing Track & A Step Backwards",
     "image": "RG-GEMP-Losing-Track-A-Step-Backwards.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0,
+    "implementationSource": "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set15/light/Card15_099.java"
   },
   {
     "id": "15_100",
     "title": "Lost In The Wilderness & Yub Yub!",
     "image": "RG-GEMP-Lost-In-The-Wilderness-Yub-Yub.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0,
+    "implementationSource": "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set15/light/Card15_100.java"
   },
   {
     "id": "15_101",
@@ -770,21 +774,27 @@
     "title": "My Loyal Bodyguard & Might Of The Republic",
     "image": "RG-GEMP-My-Loyal-Bodyguard-Might-Of-The-Republic.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0,
+    "implementationSource": "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set15/light/Card15_105.java"
   },
   {
     "id": "15_106",
     "title": "Nabrun Leids & Quite A Mercenary",
     "image": "RG-GEMP-Nabrun-Leids-Quite-A-Mercenary.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0,
+    "implementationSource": "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set15/light/Card15_106.java"
   },
   {
     "id": "15_107",
     "title": "Narrow Escape",
     "image": "RG-GEMP-Narrow-Escape.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3,
+    "implementationSource": "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set15/light/Card15_107.java"
   },
   {
     "id": "15_108",
@@ -799,7 +809,9 @@
     "title": "Neck And Neck & Changing The Odds",
     "image": "RG-GEMP-Neck-And-Neck-Changing-The-Odds.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0,
+    "implementationSource": "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set15/light/Card15_109.java"
   },
   {
     "id": "15_110",
