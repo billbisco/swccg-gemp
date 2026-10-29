@@ -502,7 +502,8 @@
     "title": "Careful Planning & Heading For The Medical Frigate",
     "image": "RG-GEMP-Careful-Planning-Heading-For-The-Medical-Frigate.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_69",
@@ -1756,7 +1757,8 @@
     "title": "Combat Readiness & Prepared Defenses",
     "image": "RG-GEMP-Combat-Readiness-Prepared-Defenses.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_229",

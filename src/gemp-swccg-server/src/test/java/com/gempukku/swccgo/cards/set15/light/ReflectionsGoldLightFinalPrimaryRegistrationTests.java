@@ -25,10 +25,6 @@ public class ReflectionsGoldLightFinalPrimaryRegistrationTests {
             var card = row.getAsJsonObject();
             inventory.put(card.get("id").getAsString(), card);
         }
-        assertFalse(inventory.get("15_68").get("implemented").getAsBoolean());
-        assertFalse(inventory.get("15_228").get("implemented").getAsBoolean());
-        assertFalse(images.contains("\"15_68\":"));
-        assertFalse(images.contains("\"15_228\":"));
         assertFalse(inventory.get("15_62").get("implemented").getAsBoolean());
         assertFalse(images.contains("\"15_62\":"));
         try (var reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {

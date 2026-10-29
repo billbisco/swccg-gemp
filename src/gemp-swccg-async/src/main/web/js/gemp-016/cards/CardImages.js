@@ -1,4 +1,6 @@
 const fixedImages = {
+"15_68":"https://wiki.swccg.com/images/f/f7/RG-GEMP-Careful-Planning-Heading-For-The-Medical-Frigate.png",
+"15_228":"https://wiki.swccg.com/images/b/b6/RG-GEMP-Combat-Readiness-Prepared-Defenses.png",
 "15_24":"https://wiki.swccg.com/images/2/20/RG-GEMP-Beggar-Revolution.png",
 "15_31":"https://wiki.swccg.com/images/6/61/RG-GEMP-Crash-Site-Memorial.png",
 "15_32":"https://wiki.swccg.com/images/4/4e/RG-GEMP-Credits-Will-Do-Fine-We-re-Leaving.png",

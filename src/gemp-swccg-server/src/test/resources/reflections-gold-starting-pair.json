@@ -1,0 +1,26 @@
+[
+  {
+    "id": "15_68",
+    "title": "Careful Planning & Heading For The Medical Frigate",
+    "image": "RG-GEMP-Careful-Planning-Heading-For-The-Medical-Frigate.png",
+    "imageUrl": "https://wiki.swccg.com/images/f/f7/RG-GEMP-Careful-Planning-Heading-For-The-Medical-Frigate.png",
+    "credits": 0,
+    "titleDotCountsLeftToRight": [
+      1,
+      1
+    ],
+    "sourceImageSha256": "808a30d6dcf427fcc1452043b73703f2b24dc9497f53b6d3c1e4321ad2e74af3"
+  },
+  {
+    "id": "15_228",
+    "title": "Combat Readiness & Prepared Defenses",
+    "image": "RG-GEMP-Combat-Readiness-Prepared-Defenses.png",
+    "imageUrl": "https://wiki.swccg.com/images/b/b6/RG-GEMP-Combat-Readiness-Prepared-Defenses.png",
+    "credits": 0,
+    "titleDotCountsLeftToRight": [
+      1,
+      1
+    ],
+    "sourceImageSha256": "4ee4493d696866297a368dd073967493f4ad67f34443178688eb4c302e288067"
+  }
+]
