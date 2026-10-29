@@ -5,6 +5,7 @@ package com.gempukku.swccgo.common;
  */
 public enum GameTextActionId {
     // Used for card actions that are not searching a card pile and not "per game", "per captive", nor "per Force drain"
+
     OTHER_CARD_ACTION_DEFAULT, // Default value
     OTHER_CARD_ACTION_1,
     OTHER_CARD_ACTION_2,
@@ -13,6 +14,12 @@ public enum GameTextActionId {
     OTHER_CARD_ACTION_5,
     OTHER_CARD_ACTION_6,
     OTHER_CARD_ACTION_7,
+
+    // Reflections Gold combo interrupts.
+    RG_HANS_BACK_LEIAS_BACK__RETRIEVE_CHARACTER(true),
+    RG_HANS_BACK_LEIAS_BACK__UPLOAD_CHARACTER(true),
+    RG_RETURN_OF_A_JEDI_LUKES_BACK__RETRIEVE_CHARACTER(true),
+    RG_RETURN_OF_A_JEDI_LUKES_BACK__UPLOAD_CHARACTER(true),
     BOSHEK_VIRTUAL_GAMETEXT_ONCE_PER_BATTLE,
     DAUGHTER_OF_SKYWALKER_VIRTUAL_GAMETEXT_ONCE_PER_BATTLE,
     CANCEL_AND_REDRAW_A_DESTINY,
