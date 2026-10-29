@@ -84,6 +84,7 @@ public interface Title {
     String Astromech_Shortage = "Astromech Shortage";
     String Astromech_Translator = "Astromech Translator";
     String AT_AT_Cannon = "AT-AT Cannon";
+    String AT_AT_Deployment_Platform = "AT-AT Deployment Platform";
     String At_Last_The_Jedi_Are_No_More = "At Last The Jedi Are No More";
     String At_Last_We_Will_Have_Revenge = "At Last We Will Have Revenge";
     String At_Peace = "At Peace";
@@ -124,6 +125,7 @@ public interface Title {
     String Big_One_Asteroid_Cave = "Big One: Asteroid Cave";
     String Big_One_Asteroid_Cave_Or_Space_Slug_Belly = "Big One: Asteroid Cave Or Space Slug Belly";
     String Biggs = "Biggs Darklighter";
+    String Biker_Scout_Gear = "Biker Scout Gear";
     String Binders = "Binders";
     String Bith_Shuffle = "The Bith Shuffle";
     String Black_4 = "Black 4";
@@ -1010,6 +1012,7 @@ public interface Title {
     String Red_10 = "Red 10";
     String Red_12 = "Red 12";
     String Red_Squadron_4 = "Red Squadron 4";
+    String Redemption_Command_Post = "Redemption: Command Post";
     String Reegesk = "Reegesk";
     String ReeYees = "Ree-Yees";
     String Reflection = "Reflection";

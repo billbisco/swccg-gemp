@@ -304,8 +304,9 @@ public class LocationsLayout implements Snapshotable<LocationsLayout> {
                 }
             }
         }
-        // Non-unique starship or vehicle sites
-        else if (Filters.and(Filters.non_unique, Filters.or(Filters.starship_site, Filters.vehicle_site)).accepts(game, cardToDeploy)) {
+        // Starship or vehicle sites related by filter (including unique sites with no persona)
+        else if (Filters.or(Filters.starship_site, Filters.vehicle_site).accepts(game, cardToDeploy)
+                && cardToDeploy.getBlueprint().getRelatedStarshipOrVehiclePersona() == null) {
 
             // Determine each starship or vehicle on table that the site could be related to.
             Filter filter = Filters.and(Filters.owner(cardToDeploy.getOwner()), cardToDeploy.getBlueprint().getRelatedStarshipOrVehicleFilter());
