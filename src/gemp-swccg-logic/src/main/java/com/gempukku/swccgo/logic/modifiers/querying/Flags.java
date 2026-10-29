@@ -425,6 +425,10 @@ public interface Flags extends BaseQuery {
         return (!getModifiersAffectingCard(gameState, ModifierType.TARGETED_BY_WEAPONS_LIKE_A_STARFIGHTER, card).isEmpty());
     }
 
+    default boolean canBeTargetedByWeaponsAsVehicle(GameState gameState, PhysicalCard card) {
+        return (!getModifiersAffectingCard(gameState, ModifierType.TARGETED_BY_WEAPONS_LIKE_A_VEHICLE, card).isEmpty());
+    }
+
     default boolean isPermanentPilotsNotAbleToApplyAbilityForBattleDestiny(GameState gameState, PhysicalCard card) {
         if (card.getBlueprint().getCardCategory() != CardCategory.STARSHIP &&
                 card.getBlueprint().getCardCategory() != CardCategory.VEHICLE)

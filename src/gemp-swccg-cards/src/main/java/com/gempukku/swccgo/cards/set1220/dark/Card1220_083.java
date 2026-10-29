@@ -13,6 +13,7 @@ import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.LegacyFilters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.TriggerConditions;
@@ -58,7 +59,7 @@ public class Card1220_083 extends AbstractVehicleWeapon {
     @Override
     protected List<FireWeaponAction> getGameTextFireWeaponActions(String playerId, final SwccgGame game, final PhysicalCard self, boolean forFree, int extraForceRequired, PhysicalCard sourceCard, boolean repeatedFiring, Filter targetedAsCharacter, Float defenseValueAsCharacter, Filter fireAtTargetFilter, boolean ignorePerAttackOrBattleLimit) {
         FireWeaponActionBuilder actionBuilder = FireWeaponActionBuilder.startBuildPrep(playerId, game, sourceCard, self, forFree, extraForceRequired, repeatedFiring, targetedAsCharacter, defenseValueAsCharacter, fireAtTargetFilter, ignorePerAttackOrBattleLimit)
-                .targetAtSameOrAdjacentSiteForFree(Filters.or(Filters.character, targetedAsCharacter, Filters.vehicle), TargetingReason.TO_BE_HIT).finishBuildPrep();
+                .targetAtSameOrAdjacentSiteForFree(Filters.or(Filters.character, targetedAsCharacter, Filters.vehicle, LegacyFilters.canBeTargetedByWeaponAsVehicle()), TargetingReason.TO_BE_HIT).finishBuildPrep();
         if (actionBuilder != null) {
             FireWeaponAction action = actionBuilder.buildFireWeaponWithHitAction(1, Statistic.DEFENSE_VALUE);
             return Collections.singletonList(action);
@@ -71,7 +72,7 @@ public class Card1220_083 extends AbstractVehicleWeapon {
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new MayTargetAdjacentSiteModifier(self));
         modifiers.add(new TotalWeaponDestinyModifier(self, 1, Filters.character));
-        modifiers.add(new TotalWeaponDestinyModifier(self, 2, Filters.vehicle));
+        modifiers.add(new TotalWeaponDestinyModifier(self, 2, Filters.or(Filters.vehicle, LegacyFilters.canBeTargetedByWeaponAsVehicle())));
         return modifiers;
     }
 

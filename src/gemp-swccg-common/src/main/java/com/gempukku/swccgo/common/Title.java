@@ -80,6 +80,7 @@ public interface Title {
     String Asteroid_Field = "Asteroid Field";
     String Asteroid_Sanctuary = "Asteroid Sanctuary";
     String Asteroids_Do_Not_Concern_Me = "Asteroids Do Not Concern Me";
+    String Artillery_Remote = "Artillery Remote";
     String Atmospheric_Assault = "Atmospheric Assault";
     String Astromech_Shortage = "Astromech Shortage";
     String Astromech_Translator = "Astromech Translator";
@@ -173,6 +174,7 @@ public interface Title {
     String Bravo_5 = "Bravo 5";
     String Bravo_Fighter = "Bravo Fighter";
     String Breached_Defenses = "Breached Defenses";
+    String Bright_Hope = "Bright Hope";
     String BlockadeFlagshipBridge = "Blockade Flagship: Bridge";
     String Blockade_Support_Ship = "Blockade Support Ship";
     String Bring_Him_Before_Me = "Bring Him Before Me";
@@ -1012,6 +1014,7 @@ public interface Title {
     String Red_10 = "Red 10";
     String Red_12 = "Red 12";
     String Red_Squadron_4 = "Red Squadron 4";
+    String Redemption = "Redemption";
     String Redemption_Command_Post = "Redemption: Command Post";
     String Reegesk = "Reegesk";
     String ReeYees = "Ree-Yees";

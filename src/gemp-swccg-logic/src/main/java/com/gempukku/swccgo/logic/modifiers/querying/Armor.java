@@ -21,8 +21,12 @@ public interface Armor extends BaseQuery, Piloting {
     }
 
     private boolean hasArmor(GameState gameState, PhysicalCard card, boolean skipArmorValueCheck) {
-        if (!card.getBlueprint().hasArmorAttribute())
+        if (!card.getBlueprint().hasArmorAttribute()
+                && getModifiersAffectingCard(gameState, ModifierType.UNMODIFIABLE_ARMOR, card).isEmpty()
+                && getModifiersAffectingCard(gameState, ModifierType.ARMOR, card).isEmpty()
+                && getModifiersAffectingCard(gameState, ModifierType.PRINTED_ARMOR, card).isEmpty()) {
             return false;
+        }
 
         if (!skipArmorValueCheck) {
             return getArmor(gameState, card) > 0;
@@ -39,7 +43,7 @@ public interface Armor extends BaseQuery, Piloting {
         if (!hasArmor(gameState, physicalCard, true))
             return 0;
 
-        Float result = physicalCard.getBlueprint().getArmor();
+        Float result = physicalCard.getBlueprint().hasArmorAttribute() ? physicalCard.getBlueprint().getArmor() : null;
 
         for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.PRINTED_ARMOR, physicalCard)) {
             result = modifier.getPrintedValueDefinedByGameText(gameState, query(), physicalCard);

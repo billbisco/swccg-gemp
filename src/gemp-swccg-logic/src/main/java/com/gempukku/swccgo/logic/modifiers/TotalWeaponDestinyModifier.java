@@ -99,6 +99,17 @@ public class TotalWeaponDestinyModifier extends AbstractModifier {
     /**
      * Creates a modifier that affects total weapon destiny for source weapon when fired at a target accepted by the target filter.
      * @param source the source of the modifier and the weapon affected by this modifier
+     * @param evaluator the evaluator that calculates the amount of the modifier
+     * @param targetFilter the target filter
+     */
+    public TotalWeaponDestinyModifier(PhysicalCard source, Evaluator evaluator, Filterable targetFilter) {
+        this(source, source, null, Filters.any, evaluator, targetFilter, true);
+        _noSpecifiedUser = true;
+    }
+
+    /**
+     * Creates a modifier that affects total weapon destiny for source weapon when fired at a target accepted by the target filter.
+     * @param source the source of the modifier and the weapon affected by this modifier
      * @param condition the condition that must be fulfilled for the modifier to be in effect
      * @param modifierAmount the amount of the modifier
      * @param targetFilter the target filter
