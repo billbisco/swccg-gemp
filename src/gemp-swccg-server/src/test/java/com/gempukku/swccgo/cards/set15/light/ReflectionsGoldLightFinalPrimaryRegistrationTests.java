@@ -1,0 +1,49 @@
+package com.gempukku.swccgo.cards.set15.light;
+
+import com.gempukku.swccgo.cards.packs.RarityReader;
+import com.gempukku.swccgo.common.Rarity;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import org.junit.Test;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.HashMap;
+import static org.junit.Assert.*;
+
+public class ReflectionsGoldLightFinalPrimaryRegistrationTests {
+    @Test
+    public void ReflectionsGoldLightCardsHaveImagesRarityAndInventory() throws Exception {
+        var stream = getClass().getResourceAsStream("/reflections-gold-light-final-primary.json");
+        assertNotNull(stream);
+        var rarity = new RarityReader().getSetRarity("15");
+        // Surefire runs from the server module, alongside the frontend module.
+        String images = Files.readString(Path.of("../gemp-swccg-async/src/main/web/js/gemp-016/cards/CardImages.js"));
+        var inventory = new HashMap<String, JsonObject>();
+        for (var row : JsonParser.parseString(Files.readString(Path.of("../../docs/reflections-gold/inventory.json"))).getAsJsonArray()) {
+            var card = row.getAsJsonObject();
+            inventory.put(card.get("id").getAsString(), card);
+        }
+        assertFalse(inventory.get("15_68").get("implemented").getAsBoolean());
+        assertFalse(inventory.get("15_228").get("implemented").getAsBoolean());
+        assertFalse(images.contains("\"15_68\":"));
+        assertFalse(images.contains("\"15_228\":"));
+        assertFalse(inventory.get("15_62").get("implemented").getAsBoolean());
+        assertFalse(images.contains("\"15_62\":"));
+        try (var reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
+            var expected = JsonParser.parseReader(reader).getAsJsonArray();
+            assertEquals(14, expected.size());
+            for (var row : expected) {
+                var card = row.getAsJsonObject();
+                String id = card.get("id").getAsString();
+                assertEquals(id, Rarity.UNKNOWN, rarity.getCardRarity(id));
+                assertTrue(id, images.contains("\"" + id + "\":\"" + card.get("imageUrl").getAsString() + "\""));
+                assertNotNull(id, inventory.get(id));
+                assertTrue(id, inventory.get(id).get("implemented").getAsBoolean());
+                assertEquals(id, card.get("image").getAsString(), inventory.get(id).get("image").getAsString());
+                assertEquals(id, card.get("credits").getAsInt(), inventory.get(id).get("credits").getAsInt());
+            }
+        }
+    }
+}

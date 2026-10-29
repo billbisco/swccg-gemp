@@ -598,7 +598,7 @@
     "sha256": "a1e47682d89f5eb5e955be4e88e225f4d3dbc29adcdae84197a8c8967d56bb39",
     "evidence": "Full normalized card visually inspected. Printed fields independent of implementation. Landspeed is character rule default. Persona and species associations need matching engine mapping; no borrowed abilities or icons.",
     "number": 15,
-    "lore": "Jawa accountant involved with tracking Coilen in and around the Dune Sea. Transmits Coilen’s activities to Tatooine officials every day: he’s still waiting to hear back from them.",
+    "lore": "Jawa accountant involved with tracking Coilen in and around the Dune Sea. Transmits Coilen’s activities to Tatooine officials every day; he’s still waiting to hear back from them.",
     "gameText": "",
     "cardTypes": [
       "ALIEN"

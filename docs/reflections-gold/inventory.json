@@ -167,7 +167,8 @@
     "title": "Beggar & Revolution",
     "image": "RG-GEMP-Beggar-Revolution.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_25",
@@ -220,14 +221,16 @@
     "title": "Crash Site Memorial",
     "image": "RG-GEMP-Crash-Site-Memorial.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 2
   },
   {
     "id": "15_32",
     "title": "Credits Will Do Fine & We're Leaving",
     "image": "RG-GEMP-Credits-Will-Do-Fine-We-re-Leaving.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_33",
@@ -281,7 +284,8 @@
     "title": "I Will Not Defer & Plea To The Court",
     "image": "RG-GEMP-I-Will-Not-Defer-Plea-To-The-Court.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_40",
@@ -324,7 +328,8 @@
     "title": "Obi-Wan's Cape & Lightsaber Proficiency",
     "image": "RG-GEMP-Obi-Wan-s-Cape-Lightsaber-Proficiency.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_46",
@@ -362,7 +367,8 @@
     "title": "Scramble & Hiding In The Garbage",
     "image": "RG-GEMP-Scramble-Hiding-In-The-Garbage.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_51",
@@ -405,7 +411,8 @@
     "title": "Traffic Control & Crash Site Memorial",
     "image": "RG-GEMP-Traffic-Control-Crash-Site-Memorial.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_57",
@@ -465,7 +472,8 @@
     "title": "Away Put Your Weapon & Put That Down",
     "image": "RG-GEMP-Away-Put-Your-Weapon-Put-That-Down.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_65",
@@ -501,7 +509,8 @@
     "title": "Choke & Blaster Deflection",
     "image": "RG-GEMP-Choke-Blaster-Deflection.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_70",
@@ -523,7 +532,8 @@
     "title": "Corellian Retort & Fly Casual",
     "image": "RG-GEMP-Corellian-Retort-Fly-Casual.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_73",
@@ -553,7 +563,8 @@
     "title": "Either Way, You Win & Eventually You'll Lose",
     "image": "RG-GEMP-Either-Way-You-Win-Eventually-You-ll-Lose.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_77",
@@ -622,7 +633,8 @@
     "title": "Help Me Obi-Wan Kenobi & Double Agent",
     "image": "RG-GEMP-Help-Me-Obi-Wan-Kenobi-Double-Agent.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_86",
@@ -637,7 +649,8 @@
     "title": "Hyper Escape",
     "image": "RG-GEMP-Hyper-Escape.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3
   },
   {
     "id": "15_88",
@@ -683,7 +696,8 @@
     "title": "Jedi Leap & Clinging To The Edge",
     "image": "RG-GEMP-Jedi-Leap-Clinging-To-The-Edge.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_94",
