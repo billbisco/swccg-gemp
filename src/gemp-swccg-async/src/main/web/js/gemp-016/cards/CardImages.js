@@ -1,4 +1,10 @@
 const fixedImages = {
+"15_99":"https://wiki.swccg.com/images/c/c2/RG-GEMP-Losing-Track-A-Step-Backwards.png",
+"15_100":"https://wiki.swccg.com/images/8/80/RG-GEMP-Lost-In-The-Wilderness-Yub-Yub.png",
+"15_105":"https://wiki.swccg.com/images/e/e7/RG-GEMP-My-Loyal-Bodyguard-Might-Of-The-Republic.png",
+"15_106":"https://wiki.swccg.com/images/a/ab/RG-GEMP-Nabrun-Leids-Quite-A-Mercenary.png",
+"15_107":"https://wiki.swccg.com/images/7/73/RG-GEMP-Narrow-Escape.png",
+"15_109":"https://wiki.swccg.com/images/5/52/RG-GEMP-Neck-And-Neck-Changing-The-Odds.png",
 "15_232":"https://wiki.swccg.com/images/9/94/RG-GEMP-Dark-Jedi-Presence-Vader-s-Eye.png",
 "15_237":"https://wiki.swccg.com/images/d/df/RG-GEMP-Drop-Your-Weapons-Halt.png",
 "15_248":"https://wiki.swccg.com/images/6/67/RG-GEMP-Imbalance-Shocking-Revelation.png",
