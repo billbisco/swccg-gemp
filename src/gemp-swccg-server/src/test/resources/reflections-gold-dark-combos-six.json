@@ -1,0 +1,70 @@
+[
+  {
+    "id": "15_179",
+    "title": "Establish Secret Base & Ominous Rumors",
+    "destiny": 3,
+    "uniqueness": "UNIQUE",
+    "type": "EFFECT",
+    "subtype": "NORMAL",
+    "icons": [
+      "EFFECT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [
+      "DEPLOYS_ON_LOCATION"
+    ],
+    "credits": 0,
+    "gameText": "Deploy on Endor system. Your Force drains at X other battleground systems are +1, where X = number of Endor sites you occupy. Your Force drains here are +2 while you control at least 2 Endor battleground sites with AT-STs and/or biker scouts. Place Effect in Used Pile if opponent controls this system or three Endor sites.",
+    "comboTitles": [
+      "Establish Secret Base",
+      "Ominous Rumors"
+    ],
+    "file": "RG-GEMP-Establish-Secret-Base-Ominous-Rumors.png",
+    "imageSha256": "d9f1f1cdb52629fcff143002ef65e220c36301a087161f9235eb6936843a2b59",
+    "evidence": "Image visually inspected: portrait, no bottom credit coins or EpisodeI. Approved Hidden Weapons character singular overlay."
+  },
+  {
+    "id": "15_244",
+    "title": "Hidden Weapons & Twi'lek Advisor",
+    "destiny": 2,
+    "uniqueness": "UNIQUE",
+    "type": "INTERRUPT",
+    "subtype": "USED",
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "credits": 0,
+    "gameText": "If Boba Fett, or your character with Mandalorian Armor is present during the weapons phase of a battle, target one opponent's character present. Draw Destiny: (0-1) no effect; (2-3) character immediately captured; (4-5) character is hit; (6+) character immediately lost. OR Use 3 Force to search your Reserve Deck and take one Effect of any kind into hand; reshuffle.",
+    "comboTitles": [
+      "Hidden Weapons",
+      "Twi'lek Advisor"
+    ],
+    "file": "RG-GEMP-Hidden-Weapons-Twi-lek-Advisor.png",
+    "imageSha256": "4becfee751581a22caaab0906e55398f62efca9a721c4aeb2e4a4855c3b32795",
+    "evidence": "Image visually inspected: portrait, no bottom credit coins or EpisodeI. Approved Hidden Weapons character singular overlay."
+  },
+  {
+    "id": "15_257",
+    "title": "I've Got A Problem Here & Physical Choke",
+    "destiny": 5,
+    "uniqueness": "UNRESTRICTED",
+    "type": "INTERRUPT",
+    "subtype": "USED",
+    "icons": [
+      "INTERRUPT",
+      "REFLECTIONS_GOLD"
+    ],
+    "keywords": [],
+    "credits": 0,
+    "gameText": "Use 1 Force to target opponent's starfighter with maneuver at a system or sector where a battle just finished. Draw destiny. Starfighter lost if destiny > maneuver. OR If a Dark Jedi is present at a battle you have just won, use 1 Force to attempt to choke an opposing character present. Draw destiny. If destiny > target's ability, target is lost.",
+    "comboTitles": [
+      "I've Got A Problem Here",
+      "Physical Choke"
+    ],
+    "file": "RG-GEMP-I-ve-Got-A-Problem-Here-Physical-Choke.png",
+    "imageSha256": "f92412b1bfa01f18d64858841c7d4a7c0aff5af836ff0993927bde2b7aec2a32",
+    "evidence": "Image visually inspected: portrait, no bottom credit coins or EpisodeI. Approved Hidden Weapons character singular overlay."
+  }
+]
