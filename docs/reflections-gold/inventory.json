@@ -151,7 +151,8 @@
     "title": "Aim High",
     "image": "RG-GEMP-Aim-High.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 2
   },
   {
     "id": "15_23",
@@ -179,14 +180,16 @@
     "title": "Brisky Morning Munchen",
     "image": "RG-GEMP-Brisky-Morning-Munchen.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3
   },
   {
     "id": "15_27",
     "title": "Close Air Support",
     "image": "RG-GEMP-Close-Air-Support.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 2
   },
   {
     "id": "15_28",
@@ -228,14 +231,16 @@
     "title": "Gungan Energy Shield",
     "image": "RG-GEMP-Gungan-Energy-Shield.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3
   },
   {
     "id": "15_34",
     "title": "Hiding In The Garbage",
     "image": "RG-GEMP-Hiding-In-The-Garbage.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3
   },
   {
     "id": "15_35",
@@ -249,7 +254,8 @@
     "title": "I Must Be Allowed To Speak",
     "image": "RG-GEMP-I-Must-Be-Allowed-To-Speak.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 2
   },
   {
     "id": "15_37",
@@ -298,7 +304,8 @@
     "title": "Launching The Assault",
     "image": "RG-GEMP-Launching-The-Assault.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3
   },
   {
     "id": "15_44",
@@ -333,14 +340,16 @@
     "title": "Revolution",
     "image": "RG-GEMP-Revolution.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 4
   },
   {
     "id": "15_49",
     "title": "Scramble",
     "image": "RG-GEMP-Scramble.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 4
   },
   {
     "id": "15_50",
@@ -382,7 +391,8 @@
     "title": "Traffic Control",
     "image": "RG-GEMP-Traffic-Control.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 2
   },
   {
     "id": "15_56",
@@ -410,7 +420,8 @@
     "title": "A Few Maneuvers",
     "image": "RG-GEMP-A-Few-Maneuvers.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 1
   },
   {
     "id": "15_60",
@@ -424,7 +435,8 @@
     "title": "All Wings Report In",
     "image": "RG-GEMP-All-Wings-Report-In.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3
   },
   {
     "id": "15_62",
@@ -438,7 +450,8 @@
     "title": "Attack Pattern Delta",
     "image": "RG-GEMP-Attack-Pattern-Delta.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 1
   },
   {
     "id": "15_64",
@@ -466,7 +479,8 @@
     "title": "Blaster Deflection",
     "image": "RG-GEMP-Blaster-Deflection.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 2
   },
   {
     "id": "15_68",
@@ -487,7 +501,8 @@
     "title": "Clash Of Sabers",
     "image": "RG-GEMP-Clash-Of-Sabers.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3
   },
   {
     "id": "15_71",
@@ -508,7 +523,8 @@
     "title": "Corellian Slip",
     "image": "RG-GEMP-Corellian-Slip.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 1
   },
   {
     "id": "15_74",
@@ -536,14 +552,16 @@
     "title": "Entering The Arena",
     "image": "RG-GEMP-Entering-The-Arena.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3
   },
   {
     "id": "15_78",
     "title": "Eventually You'll Lose",
     "image": "RG-GEMP-Eventually-You-ll-Lose.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3
   },
   {
     "id": "15_79",
@@ -578,14 +596,16 @@
     "title": "Glancing Blow",
     "image": "RG-GEMP-Glancing-Blow.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3
   },
   {
     "id": "15_84",
     "title": "Han's Back & Leia's Back",
     "image": "RG-GEMP-Han-s-Back-Leia-s-Back.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_85",
@@ -599,7 +619,8 @@
     "title": "How Did We Get Into This Mess?",
     "image": "RG-GEMP-How-Did-We-Get-Into-This-Mess.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3
   },
   {
     "id": "15_87",
@@ -613,7 +634,8 @@
     "title": "I Have A Really Bad Feeling About This",
     "image": "RG-GEMP-I-Have-A-Really-Bad-Feeling-About-This.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3
   },
   {
     "id": "15_89",
@@ -627,14 +649,16 @@
     "title": "Inconsequential Barriers",
     "image": "RG-GEMP-Inconsequential-Barriers.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 1
   },
   {
     "id": "15_91",
     "title": "Insertion Planning",
     "image": "RG-GEMP-Insertion-Planning.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3
   },
   {
     "id": "15_92",
@@ -655,7 +679,8 @@
     "title": "Jedi Presence",
     "image": "RG-GEMP-Jedi-Presence.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 4
   },
   {
     "id": "15_95",
@@ -683,7 +708,8 @@
     "title": "Losing Track",
     "image": "RG-GEMP-Losing-Track.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3
   },
   {
     "id": "15_99",
@@ -711,7 +737,8 @@
     "title": "Might Of The Republic",
     "image": "RG-GEMP-Might-Of-The-Republic.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 2
   },
   {
     "id": "15_103",
@@ -753,7 +780,8 @@
     "title": "Neck And Neck",
     "image": "RG-GEMP-Neck-And-Neck.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3
   },
   {
     "id": "15_109",
@@ -767,7 +795,8 @@
     "title": "Nice Of You Guys To Drop By",
     "image": "RG-GEMP-Nice-Of-You-Guys-To-Drop-By.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 1
   },
   {
     "id": "15_111",
@@ -781,7 +810,8 @@
     "title": "No Giben Up, General Jar Jar!",
     "image": "RG-GEMP-No-Giben-Up-General-Jar-Jar.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3
   },
   {
     "id": "15_113",
@@ -795,7 +825,8 @@
     "title": "Off The Edge",
     "image": "RG-GEMP-Off-The-Edge.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3
   },
   {
     "id": "15_115",
@@ -830,7 +861,8 @@
     "title": "Out Of Commission",
     "image": "RG-GEMP-Out-Of-Commission.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 2
   },
   {
     "id": "15_120",
@@ -851,14 +883,16 @@
     "title": "Quite A Mercenary",
     "image": "RG-GEMP-Quite-A-Mercenary.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 1
   },
   {
     "id": "15_123",
     "title": "Rebel Leadership",
     "image": "RG-GEMP-Rebel-Leadership.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3
   },
   {
     "id": "15_124",
@@ -872,14 +906,16 @@
     "title": "Recoil In Fear",
     "image": "RG-GEMP-Recoil-In-Fear.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3
   },
   {
     "id": "15_126",
     "title": "Return Of A Jedi & Luke's Back",
     "image": "RG-GEMP-Return-Of-A-Jedi-Luke-s-Back.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_127",
@@ -907,7 +943,8 @@
     "title": "Smoke Screen",
     "image": "RG-GEMP-Smoke-Screen.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 4
   },
   {
     "id": "15_131",
@@ -921,7 +958,8 @@
     "title": "Sorry About The Mess",
     "image": "RG-GEMP-Sorry-About-The-Mess.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3
   },
   {
     "id": "15_133",
@@ -942,14 +980,16 @@
     "title": "Strangle",
     "image": "RG-GEMP-Strangle.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 1
   },
   {
     "id": "15_136",
     "title": "Strike Blocked",
     "image": "RG-GEMP-Strike-Blocked.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 2
   },
   {
     "id": "15_137",
@@ -984,7 +1024,8 @@
     "title": "Too Close For Comfort",
     "image": "RG-GEMP-Too-Close-For-Comfort.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3
   },
   {
     "id": "15_142",
@@ -998,28 +1039,32 @@
     "title": "Vote Now!",
     "image": "RG-GEMP-Vote-Now-Light.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3
   },
   {
     "id": "15_144",
     "title": "Walker Sighting",
     "image": "RG-GEMP-Walker-Sighting.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 1
   },
   {
     "id": "15_145",
     "title": "We Can Still Outmaneuver Them",
     "image": "RG-GEMP-We-Can-Still-Outmaneuver-Them.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3
   },
   {
     "id": "15_146",
     "title": "We Don't Need Their Scum",
     "image": "RG-GEMP-We-Don-t-Need-Their-Scum.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 2
   },
   {
     "id": "15_147",
@@ -1033,7 +1078,8 @@
     "title": "We Wish To Board At Once",
     "image": "RG-GEMP-We-Wish-To-Board-At-Once.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3
   },
   {
     "id": "15_149",
@@ -1068,7 +1114,8 @@
     "title": "You Will Take Me To Jabba Now",
     "image": "RG-GEMP-You-Will-Take-Me-To-Jabba-Now.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 3
   },
   {
     "id": "15_154",

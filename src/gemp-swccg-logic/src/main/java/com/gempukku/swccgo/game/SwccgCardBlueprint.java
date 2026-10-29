@@ -469,6 +469,9 @@ public interface SwccgCardBlueprint {
      */
     Float getDestiny();
 
+    /** Gets the printed Reflections Gold credit value; zero when no credits are printed. */
+    default int getCredits() { return 0; }
+
     /**
      * Gets alternate destiny value (for cards that have two values), otherwise same as getDestiny method.
      * @return the alternate destiny value

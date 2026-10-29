@@ -211,7 +211,7 @@ public class CardDataExporter {
     /**
      * Extracts all relevant data from a card blueprint.
      */
-    private Map<String, Object> extractCardData(String cardId, SwccgCardBlueprint blueprint, Set<String> titlesNeedingVSuffix) {
+    Map<String, Object> extractCardData(String cardId, SwccgCardBlueprint blueprint, Set<String> titlesNeedingVSuffix) {
         Map<String, Object> data = new LinkedHashMap<>();
 
         // Basic identification
@@ -276,6 +276,7 @@ public class CardDataExporter {
         // Stats - only include if card has the attribute (wrapped safely)
         putIfHasAttribute(data, "deployCost", safeGetFloat(() -> blueprint.getDeployCost()));
         putIfHasAttribute(data, "destiny", safeGetFloat(() -> blueprint.getDestiny()));
+        data.put("credits", blueprint.getCredits());
 
         if (blueprint.hasPowerAttribute()) {
             data.put("power", blueprint.getPower());

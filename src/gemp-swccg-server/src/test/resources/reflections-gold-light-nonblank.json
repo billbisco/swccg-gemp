@@ -1,0 +1,331 @@
+[
+  {
+    "id": "15_22",
+    "title": "Aim High",
+    "credits": 2,
+    "image": "RG-GEMP-Aim-High.png",
+    "imageUrl": "https://wiki.swccg.com/images/7/7c/RG-GEMP-Aim-High.png"
+  },
+  {
+    "id": "15_26",
+    "title": "Brisky Morning Munchen",
+    "credits": 3,
+    "image": "RG-GEMP-Brisky-Morning-Munchen.png",
+    "imageUrl": "https://wiki.swccg.com/images/0/03/RG-GEMP-Brisky-Morning-Munchen.png"
+  },
+  {
+    "id": "15_27",
+    "title": "Close Air Support",
+    "credits": 2,
+    "image": "RG-GEMP-Close-Air-Support.png",
+    "imageUrl": "https://wiki.swccg.com/images/e/ee/RG-GEMP-Close-Air-Support.png"
+  },
+  {
+    "id": "15_33",
+    "title": "Gungan Energy Shield",
+    "credits": 3,
+    "image": "RG-GEMP-Gungan-Energy-Shield.png",
+    "imageUrl": "https://wiki.swccg.com/images/d/d3/RG-GEMP-Gungan-Energy-Shield.png"
+  },
+  {
+    "id": "15_34",
+    "title": "Hiding In The Garbage",
+    "credits": 3,
+    "image": "RG-GEMP-Hiding-In-The-Garbage.png",
+    "imageUrl": "https://wiki.swccg.com/images/0/04/RG-GEMP-Hiding-In-The-Garbage.png"
+  },
+  {
+    "id": "15_36",
+    "title": "I Must Be Allowed To Speak",
+    "credits": 2,
+    "image": "RG-GEMP-I-Must-Be-Allowed-To-Speak.png",
+    "imageUrl": "https://wiki.swccg.com/images/d/db/RG-GEMP-I-Must-Be-Allowed-To-Speak.png"
+  },
+  {
+    "id": "15_43",
+    "title": "Launching The Assault",
+    "credits": 3,
+    "image": "RG-GEMP-Launching-The-Assault.png",
+    "imageUrl": "https://wiki.swccg.com/images/6/60/RG-GEMP-Launching-The-Assault.png"
+  },
+  {
+    "id": "15_48",
+    "title": "Revolution",
+    "credits": 4,
+    "image": "RG-GEMP-Revolution.png",
+    "imageUrl": "https://wiki.swccg.com/images/f/f2/RG-GEMP-Revolution.png"
+  },
+  {
+    "id": "15_49",
+    "title": "Scramble",
+    "credits": 4,
+    "image": "RG-GEMP-Scramble.png",
+    "imageUrl": "https://wiki.swccg.com/images/f/f6/RG-GEMP-Scramble.png"
+  },
+  {
+    "id": "15_55",
+    "title": "Traffic Control",
+    "credits": 2,
+    "image": "RG-GEMP-Traffic-Control.png",
+    "imageUrl": "https://wiki.swccg.com/images/b/b7/RG-GEMP-Traffic-Control.png"
+  },
+  {
+    "id": "15_59",
+    "title": "A Few Maneuvers",
+    "credits": 1,
+    "image": "RG-GEMP-A-Few-Maneuvers.png",
+    "imageUrl": "https://wiki.swccg.com/images/a/a7/RG-GEMP-A-Few-Maneuvers.png"
+  },
+  {
+    "id": "15_61",
+    "title": "All Wings Report In",
+    "credits": 3,
+    "image": "RG-GEMP-All-Wings-Report-In.png",
+    "imageUrl": "https://wiki.swccg.com/images/7/7a/RG-GEMP-All-Wings-Report-In.png"
+  },
+  {
+    "id": "15_63",
+    "title": "Attack Pattern Delta",
+    "credits": 1,
+    "image": "RG-GEMP-Attack-Pattern-Delta.png",
+    "imageUrl": "https://wiki.swccg.com/images/b/b7/RG-GEMP-Attack-Pattern-Delta.png"
+  },
+  {
+    "id": "15_67",
+    "title": "Blaster Deflection",
+    "credits": 2,
+    "image": "RG-GEMP-Blaster-Deflection.png",
+    "imageUrl": "https://wiki.swccg.com/images/4/47/RG-GEMP-Blaster-Deflection.png"
+  },
+  {
+    "id": "15_70",
+    "title": "Clash Of Sabers",
+    "credits": 3,
+    "image": "RG-GEMP-Clash-Of-Sabers.png",
+    "imageUrl": "https://wiki.swccg.com/images/2/25/RG-GEMP-Clash-Of-Sabers.png"
+  },
+  {
+    "id": "15_73",
+    "title": "Corellian Slip",
+    "credits": 1,
+    "image": "RG-GEMP-Corellian-Slip.png",
+    "imageUrl": "https://wiki.swccg.com/images/f/ff/RG-GEMP-Corellian-Slip.png"
+  },
+  {
+    "id": "15_77",
+    "title": "Entering The Arena",
+    "credits": 3,
+    "image": "RG-GEMP-Entering-The-Arena.png",
+    "imageUrl": "https://wiki.swccg.com/images/0/0a/RG-GEMP-Entering-The-Arena.png"
+  },
+  {
+    "id": "15_78",
+    "title": "Eventually You'll Lose",
+    "credits": 3,
+    "image": "RG-GEMP-Eventually-You-ll-Lose.png",
+    "imageUrl": "https://wiki.swccg.com/images/a/a0/RG-GEMP-Eventually-You-ll-Lose.png"
+  },
+  {
+    "id": "15_83",
+    "title": "Glancing Blow",
+    "credits": 3,
+    "image": "RG-GEMP-Glancing-Blow.png",
+    "imageUrl": "https://wiki.swccg.com/images/2/20/RG-GEMP-Glancing-Blow.png"
+  },
+  {
+    "id": "15_84",
+    "title": "Han's Back & Leia's Back",
+    "credits": 0,
+    "image": "RG-GEMP-Han-s-Back-Leia-s-Back.png",
+    "imageUrl": "https://wiki.swccg.com/images/0/01/RG-GEMP-Han-s-Back-Leia-s-Back.png"
+  },
+  {
+    "id": "15_86",
+    "title": "How Did We Get Into This Mess?",
+    "credits": 3,
+    "image": "RG-GEMP-How-Did-We-Get-Into-This-Mess.png",
+    "imageUrl": "https://wiki.swccg.com/images/4/4a/RG-GEMP-How-Did-We-Get-Into-This-Mess.png"
+  },
+  {
+    "id": "15_88",
+    "title": "I Have A Really Bad Feeling About This",
+    "credits": 3,
+    "image": "RG-GEMP-I-Have-A-Really-Bad-Feeling-About-This.png",
+    "imageUrl": "https://wiki.swccg.com/images/2/21/RG-GEMP-I-Have-A-Really-Bad-Feeling-About-This.png"
+  },
+  {
+    "id": "15_90",
+    "title": "Inconsequential Barriers",
+    "credits": 1,
+    "image": "RG-GEMP-Inconsequential-Barriers.png",
+    "imageUrl": "https://wiki.swccg.com/images/9/99/RG-GEMP-Inconsequential-Barriers.png"
+  },
+  {
+    "id": "15_91",
+    "title": "Insertion Planning",
+    "credits": 3,
+    "image": "RG-GEMP-Insertion-Planning.png",
+    "imageUrl": "https://wiki.swccg.com/images/9/97/RG-GEMP-Insertion-Planning.png"
+  },
+  {
+    "id": "15_94",
+    "title": "Jedi Presence",
+    "credits": 4,
+    "image": "RG-GEMP-Jedi-Presence.png",
+    "imageUrl": "https://wiki.swccg.com/images/e/ed/RG-GEMP-Jedi-Presence.png"
+  },
+  {
+    "id": "15_98",
+    "title": "Losing Track",
+    "credits": 3,
+    "image": "RG-GEMP-Losing-Track.png",
+    "imageUrl": "https://wiki.swccg.com/images/e/e3/RG-GEMP-Losing-Track.png"
+  },
+  {
+    "id": "15_102",
+    "title": "Might Of The Republic",
+    "credits": 2,
+    "image": "RG-GEMP-Might-Of-The-Republic.png",
+    "imageUrl": "https://wiki.swccg.com/images/0/08/RG-GEMP-Might-Of-The-Republic.png"
+  },
+  {
+    "id": "15_108",
+    "title": "Neck And Neck",
+    "credits": 3,
+    "image": "RG-GEMP-Neck-And-Neck.png",
+    "imageUrl": "https://wiki.swccg.com/images/3/34/RG-GEMP-Neck-And-Neck.png"
+  },
+  {
+    "id": "15_110",
+    "title": "Nice Of You Guys To Drop By",
+    "credits": 1,
+    "image": "RG-GEMP-Nice-Of-You-Guys-To-Drop-By.png",
+    "imageUrl": "https://wiki.swccg.com/images/2/23/RG-GEMP-Nice-Of-You-Guys-To-Drop-By.png"
+  },
+  {
+    "id": "15_112",
+    "title": "No Giben Up, General Jar Jar!",
+    "credits": 3,
+    "image": "RG-GEMP-No-Giben-Up-General-Jar-Jar.png",
+    "imageUrl": "https://wiki.swccg.com/images/9/93/RG-GEMP-No-Giben-Up-General-Jar-Jar.png"
+  },
+  {
+    "id": "15_114",
+    "title": "Off The Edge",
+    "credits": 3,
+    "image": "RG-GEMP-Off-The-Edge.png",
+    "imageUrl": "https://wiki.swccg.com/images/5/56/RG-GEMP-Off-The-Edge.png"
+  },
+  {
+    "id": "15_119",
+    "title": "Out Of Commission",
+    "credits": 2,
+    "image": "RG-GEMP-Out-Of-Commission.png",
+    "imageUrl": "https://wiki.swccg.com/images/3/3e/RG-GEMP-Out-Of-Commission.png"
+  },
+  {
+    "id": "15_122",
+    "title": "Quite A Mercenary",
+    "credits": 1,
+    "image": "RG-GEMP-Quite-A-Mercenary.png",
+    "imageUrl": "https://wiki.swccg.com/images/7/75/RG-GEMP-Quite-A-Mercenary.png"
+  },
+  {
+    "id": "15_123",
+    "title": "Rebel Leadership",
+    "credits": 3,
+    "image": "RG-GEMP-Rebel-Leadership.png",
+    "imageUrl": "https://wiki.swccg.com/images/b/b7/RG-GEMP-Rebel-Leadership.png"
+  },
+  {
+    "id": "15_125",
+    "title": "Recoil In Fear",
+    "credits": 3,
+    "image": "RG-GEMP-Recoil-In-Fear.png",
+    "imageUrl": "https://wiki.swccg.com/images/b/bd/RG-GEMP-Recoil-In-Fear.png"
+  },
+  {
+    "id": "15_126",
+    "title": "Return Of A Jedi & Luke's Back",
+    "credits": 0,
+    "image": "RG-GEMP-Return-Of-A-Jedi-Luke-s-Back.png",
+    "imageUrl": "https://wiki.swccg.com/images/5/5b/RG-GEMP-Return-Of-A-Jedi-Luke-s-Back.png"
+  },
+  {
+    "id": "15_130",
+    "title": "Smoke Screen",
+    "credits": 4,
+    "image": "RG-GEMP-Smoke-Screen.png",
+    "imageUrl": "https://wiki.swccg.com/images/e/e1/RG-GEMP-Smoke-Screen.png"
+  },
+  {
+    "id": "15_132",
+    "title": "Sorry About The Mess",
+    "credits": 3,
+    "image": "RG-GEMP-Sorry-About-The-Mess.png",
+    "imageUrl": "https://wiki.swccg.com/images/b/b4/RG-GEMP-Sorry-About-The-Mess.png"
+  },
+  {
+    "id": "15_135",
+    "title": "Strangle",
+    "credits": 1,
+    "image": "RG-GEMP-Strangle.png",
+    "imageUrl": "https://wiki.swccg.com/images/0/08/RG-GEMP-Strangle.png"
+  },
+  {
+    "id": "15_136",
+    "title": "Strike Blocked",
+    "credits": 2,
+    "image": "RG-GEMP-Strike-Blocked.png",
+    "imageUrl": "https://wiki.swccg.com/images/6/61/RG-GEMP-Strike-Blocked.png"
+  },
+  {
+    "id": "15_141",
+    "title": "Too Close For Comfort",
+    "credits": 3,
+    "image": "RG-GEMP-Too-Close-For-Comfort.png",
+    "imageUrl": "https://wiki.swccg.com/images/c/c5/RG-GEMP-Too-Close-For-Comfort.png"
+  },
+  {
+    "id": "15_143",
+    "title": "Vote Now!",
+    "credits": 3,
+    "image": "RG-GEMP-Vote-Now-Light.png",
+    "imageUrl": "https://wiki.swccg.com/images/2/29/RG-GEMP-Vote-Now-Light.png"
+  },
+  {
+    "id": "15_144",
+    "title": "Walker Sighting",
+    "credits": 1,
+    "image": "RG-GEMP-Walker-Sighting.png",
+    "imageUrl": "https://wiki.swccg.com/images/8/8a/RG-GEMP-Walker-Sighting.png"
+  },
+  {
+    "id": "15_145",
+    "title": "We Can Still Outmaneuver Them",
+    "credits": 3,
+    "image": "RG-GEMP-We-Can-Still-Outmaneuver-Them.png",
+    "imageUrl": "https://wiki.swccg.com/images/a/ae/RG-GEMP-We-Can-Still-Outmaneuver-Them.png"
+  },
+  {
+    "id": "15_146",
+    "title": "We Don't Need Their Scum",
+    "credits": 2,
+    "image": "RG-GEMP-We-Don-t-Need-Their-Scum.png",
+    "imageUrl": "https://wiki.swccg.com/images/d/d6/RG-GEMP-We-Don-t-Need-Their-Scum.png"
+  },
+  {
+    "id": "15_148",
+    "title": "We Wish To Board At Once",
+    "credits": 3,
+    "image": "RG-GEMP-We-Wish-To-Board-At-Once.png",
+    "imageUrl": "https://wiki.swccg.com/images/a/a2/RG-GEMP-We-Wish-To-Board-At-Once.png"
+  },
+  {
+    "id": "15_153",
+    "title": "You Will Take Me To Jabba Now",
+    "credits": 3,
+    "image": "RG-GEMP-You-Will-Take-Me-To-Jabba-Now.png",
+    "imageUrl": "https://wiki.swccg.com/images/f/f8/RG-GEMP-You-Will-Take-Me-To-Jabba-Now.png"
+  }
+]

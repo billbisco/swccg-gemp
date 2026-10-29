@@ -32,6 +32,7 @@ public abstract class AbstractSwccgCardBlueprint implements SwccgCardBlueprint {
     private String _title;
     private List<String> _comboCardTitles = new ArrayList<String>();
     private Float _destiny;
+    private int _credits;
     private Float _alternateDestiny;
     private int _alternateDestinyCost;
     private String _lore;
@@ -178,6 +179,15 @@ public abstract class AbstractSwccgCardBlueprint implements SwccgCardBlueprint {
     public Float getDestiny() {
         return _destiny;
     }
+
+    /** Sets printed credits without prescribing a starting-hand budget or other gameplay rule. */
+    protected final void setCredits(int credits) {
+        if (credits < 0) throw new IllegalArgumentException("Printed credits cannot be negative");
+        _credits = credits;
+    }
+
+    @Override
+    public final int getCredits() { return _credits; }
 
     /**
      * Sets the specified 2nd destiny value. (Example: For BB-8)
