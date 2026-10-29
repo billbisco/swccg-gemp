@@ -133,6 +133,7 @@ public enum ModifyGameTextType {
     LEGACY__LOCAL_TROUBLE__MAY_PLAY_AT_EXTERIOR_TATOOINE_SITES("May be played at exterior Tatooine sites"),
     LEGACY__FEAR_IS_MY_ALLY__THREE_IS_FOUR("'Three' treated as 'Four'"),
     LEGACY__AN_UNUSUAL_AMOUNT_OF_FEAR__THREE_IS_FOUR("'Three' treated as 'Four'"),
+    LEGACY__THANK_THE_MAKER__TREAT_5_AS_3("'5' treated as '3'"),
 
     ;
 
