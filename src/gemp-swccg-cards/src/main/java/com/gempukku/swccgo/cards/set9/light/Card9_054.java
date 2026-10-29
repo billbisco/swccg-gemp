@@ -37,6 +37,10 @@ public class Card9_054 extends AbstractUsedInterrupt {
         addIcons(Icon.DEATH_STAR_II);
     }
 
+    protected boolean includesForfeitBonus() {
+        return true;
+    }
+
     @Override
     protected List<PlayInterruptAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self) {
         List<PlayInterruptAction> actions = new LinkedList<PlayInterruptAction>();
@@ -44,7 +48,7 @@ public class Card9_054 extends AbstractUsedInterrupt {
         final Filter admiralsAndGeneralsFilter = Filters.and(Filters.your(self), Filters.or(Filters.admiral, Filters.general));
 
         // Check condition(s)
-        if (GameConditions.canSpot(game, self, admiralsAndGeneralsFilter)) {
+        if (includesForfeitBonus() && GameConditions.canSpot(game, self, admiralsAndGeneralsFilter)) {
 
             final PlayInterruptAction action = new PlayInterruptAction(game, self);
             action.setText("Make admirals and generals forfeit +1");

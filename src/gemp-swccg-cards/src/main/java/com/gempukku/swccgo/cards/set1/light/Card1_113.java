@@ -41,6 +41,11 @@ public class Card1_113 extends AbstractLostInterrupt {
         setGameText("Use 1 Force to cancel a Force drain at one location. Draw one destiny for each character, starship and vehicle the opponent has present. Compare your destiny total to opponent's power total. Player with lowest total loses Force equal to the difference.");
     }
 
+    /** Number of draws for the printed Surprise Assault function. */
+    protected int getDestinyDrawCount(int eligibleCards) {
+        return eligibleCards;
+    }
+
     @Override
     protected List<PlayInterruptAction> getGameTextOptionalAfterActions(final String playerId, SwccgGame game, final EffectResult effectResult, final PhysicalCard self) {
         final String opponent = game.getOpponent(playerId);
@@ -74,7 +79,7 @@ public class Card1_113 extends AbstractLostInterrupt {
                                                     Filters.or(Filters.character, Filters.starship, Filters.vehicle), Filters.present(forceDrainLocation)));
                                             final float totalPower = modifiersQuerying.getTotalPowerAtLocation(gameState, forceDrainLocation, opponent, false, false);
                                             action.appendEffect(
-                                                    new DrawDestinyEffect(action, playerId, numDraws) {
+                                                    new DrawDestinyEffect(action, playerId, getDestinyDrawCount(numDraws)) {
                                                         @Override
                                                         protected void destinyDraws(SwccgGame game, List<PhysicalCard> destinyCardDraws, List<Float> destinyDrawValues, final Float totalDestiny) {
                                                             if (GameConditions.hasGameTextModification(game, self, ModifyGameTextType.SURPRISE_ASSAULT__ADD_DESTINY_TO_TOTAL)) {

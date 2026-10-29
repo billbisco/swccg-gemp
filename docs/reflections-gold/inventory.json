@@ -829,7 +829,8 @@
     "title": "Nice Of You Guys To Drop By & Visored Vision",
     "image": "RG-GEMP-Nice-Of-You-Guys-To-Drop-By-Visored-Vision.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_112",
@@ -844,7 +845,8 @@
     "title": "No Giben Up, General Jar Jar & Gimme A Lift!",
     "image": "RG-GEMP-No-Giben-Up-General-Jar-Jar-Gimme-A-Lift.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_114",
@@ -874,7 +876,8 @@
     "title": "On The Edge & Surprise Assault",
     "image": "RG-GEMP-On-The-Edge-Surprise-Assault.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_118",
@@ -904,7 +907,8 @@
     "title": "Podrace Prep & Too Close For Comfort",
     "image": "RG-GEMP-Podrace-Prep-Too-Close-For-Comfort.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_122",
@@ -927,7 +931,8 @@
     "title": "Rebel Leadership & Throw Me Another Charge",
     "image": "RG-GEMP-Rebel-Leadership-Throw-Me-Another-Charge.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_125",
@@ -950,7 +955,8 @@
     "title": "Sabotage & Slight Weapons Malfunction",
     "image": "RG-GEMP-Sabotage-Slight-Weapons-Malfunction.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_128",
@@ -1042,7 +1048,8 @@
     "title": "The Signal & Jedi Mind Trick",
     "image": "RG-GEMP-The-Signal-Jedi-Mind-Trick.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_140",
@@ -1120,14 +1127,16 @@
     "title": "We Wish To Board At Once & Are You Brain Dead?!",
     "image": "RG-GEMP-We-Wish-To-Board-At-Once-Are-You-Brain-Dead.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_150",
     "title": "Were You Looking For Me? & I Know",
     "image": "RG-GEMP-Were-You-Looking-For-Me-I-Know.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_151",
@@ -1157,7 +1166,8 @@
     "title": "You Will Take Me To Jabba Now & Strangle",
     "image": "RG-GEMP-You-Will-Take-Me-To-Jabba-Now-Strangle.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_155",

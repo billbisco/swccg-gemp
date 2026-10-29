@@ -17,10 +17,11 @@ import static org.junit.Assert.assertTrue;
  * can un-Ignore the Informant interaction without rewriting the rest of that suite.
  */
 public class Card_2_056_InformantCancel_Tests {
+	protected String sabotageBlueprint() { return "2_56"; }
 	protected VirtualTableScenario GetScenario() {
 		return new VirtualTableScenario(
 			new HashMap<>() {{
-				put("sabotage", "2_56");
+				put("sabotage", sabotageBlueprint());
 				put("spy", "7_5");
 				put("lsTrooper", "1_28");
 				put("undercover", "2_40"); // Undercover (2_40)
