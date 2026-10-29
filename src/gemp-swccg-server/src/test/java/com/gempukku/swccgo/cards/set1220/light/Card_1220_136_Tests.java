@@ -1,0 +1,132 @@
+package com.gempukku.swccgo.cards.set1220.light;
+
+import com.gempukku.swccgo.common.CardSubtype;
+import com.gempukku.swccgo.common.CardType;
+import com.gempukku.swccgo.common.ExpansionSet;
+import com.gempukku.swccgo.common.Icon;
+import com.gempukku.swccgo.common.Keyword;
+import com.gempukku.swccgo.common.Phase;
+import com.gempukku.swccgo.common.Rarity;
+import com.gempukku.swccgo.common.Side;
+import com.gempukku.swccgo.common.Title;
+import com.gempukku.swccgo.common.Uniqueness;
+import com.gempukku.swccgo.common.Zone;
+import com.gempukku.swccgo.framework.StartingSetup;
+import com.gempukku.swccgo.framework.VirtualTableScenario;
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import static com.gempukku.swccgo.framework.Assertions.assertInZone;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+public class Card_1220_136_Tests {
+    protected VirtualTableScenario GetScenario() {
+        return new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("wars", "1220_136");
+                    put("obi", "1_21");
+                    put("inner", "13_24");
+                }},
+                new HashMap<>() {{
+                    put("vader", "1_168");
+                }},
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+    }
+
+    @Test
+    public void WarsNotMakeOneGreatStatsIconsAndKeywordsAreCorrect() {
+        var scn = GetScenario();
+        var card = scn.GetLSCard("wars").getBlueprint();
+
+        assertEquals("Wars Not Make One Great", card.getTitle());
+        assertTrue(card.hasVirtualSuffix());
+        assertEquals(Uniqueness.UNIQUE, card.getUniqueness());
+        assertEquals(Side.LIGHT, card.getSide());
+        assertEquals(4, card.getDestiny(), scn.epsilon);
+        assertEquals(CardSubtype.NORMAL, card.getCardSubtype());
+        scn.BlueprintCardTypeCheck(card, new ArrayList<>() {{
+            add(CardType.EFFECT);
+        }});
+        scn.BlueprintKeywordCheck(card, new ArrayList<Keyword>());
+        scn.BlueprintIconCheck(card, new ArrayList<>() {{
+            add(Icon.DAGOBAH);
+            add(Icon.EFFECT);
+            add(Icon.LEGACY_BLOCK_2);
+        }});
+        assertTrue(card.isImmuneToCardTitle(Title.Alter));
+        assertEquals(ExpansionSet.VIRTUAL_BLOCK_2, card.getExpansionSet());
+        assertEquals(Rarity.V, card.getRarity());
+    }
+
+    @Test
+    public void WarsNotMakeOneGreatDeploysOnTable() {
+        var scn = GetScenario();
+        var wars = scn.GetLSCard("wars");
+
+        scn.StartGame();
+        scn.MoveCardsToLSHand(wars);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        assertTrue(scn.LSDeployAvailable(wars));
+        scn.LSDeployCard(wars);
+        scn.PassAllResponses();
+        assertInZone(Zone.SIDE_OF_TABLE, wars);
+    }
+
+    @Test
+    public void WarsNotMakeOneGreatCapsBattleDestinyDrawsAtTwoWhereYourJediIsPresent() {
+        var scn = GetScenario();
+        var wars = scn.GetLSCard("wars");
+        var obi = scn.GetLSCard("obi");
+        var vader = scn.GetDSCard("vader");
+        var site = scn.GetLSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLSSideOfTable(wars);
+        scn.MoveCardsToLocation(site, obi, vader);
+        scn.SkipToLSTurn(Phase.BATTLE);
+        scn.LSInitiateBattle(site);
+        scn.PassBattleStartResponses();
+        assertEquals(2, scn.GetLSBattleDestinyLimit());
+        assertEquals(2, scn.GetDSBattleDestinyLimit());
+    }
+
+    @Test
+    public void WarsNotMakeOneGreatTakesInnerStrengthFromReserveDeck() {
+        var scn = GetScenario();
+        var wars = scn.GetLSCard("wars");
+        var inner = scn.GetLSCard("inner");
+
+        scn.StartGame();
+        scn.MoveCardsToLSSideOfTable(wars);
+        scn.SkipToLSTurn(Phase.CONTROL);
+        scn.MoveCardsToTopOfLSReserveDeck(inner);
+        assertTrue(scn.LSCardActionAvailable(wars, "Take Inner Strength into hand from Reserve Deck"));
+        scn.LSUseCardAction(wars, "Take Inner Strength into hand from Reserve Deck");
+        int safety = 0;
+        while (safety++ < 16 && !scn.LSHasCardChoiceAvailable(inner)) {
+            if (scn.DSGetDecision() != null) {
+                scn.DSPass();
+            }
+            else if (scn.LSGetDecision() != null) {
+                scn.LSPass();
+            }
+            else {
+                break;
+            }
+        }
+        scn.LSChooseCard(inner);
+        scn.PassAllResponses();
+        assertEquals(Zone.HAND, inner.getZone());
+    }
+}
