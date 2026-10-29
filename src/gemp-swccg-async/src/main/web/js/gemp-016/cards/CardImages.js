@@ -1,4 +1,10 @@
 const fixedImages = {
+"15_179":"https://wiki.swccg.com/images/e/e2/RG-GEMP-Establish-Secret-Base-Ominous-Rumors.png",
+"15_184":"https://wiki.swccg.com/images/e/e7/RG-GEMP-I-Will-Find-Them-Quickly-Master.png",
+"15_186":"https://wiki.swccg.com/images/6/66/RG-GEMP-Imperial-Decree-The-Dark-Path.png",
+"15_200":"https://wiki.swccg.com/images/6/69/RG-GEMP-Quick-Reflexes-All-Wrapped-Up.png",
+"15_244":"https://wiki.swccg.com/images/d/d5/RG-GEMP-Hidden-Weapons-Twi-lek-Advisor.png",
+"15_257":"https://wiki.swccg.com/images/4/4b/RG-GEMP-I-ve-Got-A-Problem-Here-Physical-Choke.png",
 "15_255":"https://wiki.swccg.com/images/8/86/RG-GEMP-Informant-Takeel.png",
 "15_227":"https://wiki.swccg.com/images/5/5e/RG-GEMP-Cold-Feet-He-Hasn-t-Come-Back-Yet.png",
 "15_199":"https://wiki.swccg.com/images/4/4e/RG-GEMP-Presence-Of-The-Force-Dark-Waters.png",
