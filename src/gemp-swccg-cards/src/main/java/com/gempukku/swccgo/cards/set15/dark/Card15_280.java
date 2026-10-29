@@ -31,7 +31,7 @@ public class Card15_280 extends Card4_153 {
             if (icon.isExpansionIcon() || icon == Icon.EPISODE_I) addIcon(icon, 0);
         }
         addIcons(Icon.REFLECTIONS_GOLD);
-        addComboCardTitles("Shut Him Up Or Shut Him Down", "Voyeur");
+        setTitleComponents(new TitleComponent("Shut Him Up Or Shut Him Down",Uniqueness.UNIQUE),new TitleComponent("Voyeur",Uniqueness.RESTRICTED_2));
     }
     @Override public String getTitle() { return "Shut Him Up Or Shut Him Down & Voyeur"; }
     @Override public Float getDestiny() { return 3f; }

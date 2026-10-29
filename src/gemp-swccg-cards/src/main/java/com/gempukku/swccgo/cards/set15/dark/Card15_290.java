@@ -53,7 +53,7 @@ public class Card15_290 extends Card1_271 {
             if (icon.isExpansionIcon() || icon == Icon.EPISODE_I) addIcon(icon, 0);
         }
         addIcons(Icon.REFLECTIONS_GOLD);
-        addComboCardTitles("The Circle Is Now Complete", "Vader's Obsession");
+        setTitleComponents(new TitleComponent("The Circle Is Now Complete",Uniqueness.UNRESTRICTED),new TitleComponent("Vader's Obsession",Uniqueness.UNIQUE));
     }
     @Override public String getTitle() { return "The Circle Is Now Complete & Vader's Obsession"; }
     @Override public Float getDestiny() { return 3f; }

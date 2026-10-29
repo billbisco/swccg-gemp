@@ -42,7 +42,7 @@ public class Card15_275 extends Card1_246 {
             if (icon.isExpansionIcon() || icon == Icon.EPISODE_I) addIcon(icon, 0);
         }
         addIcons(Icon.REFLECTIONS_GOLD);
-        addComboCardTitles("Put All Sections On Alert", "Full Scale Alert");
+        setTitleComponents(new TitleComponent("Put All Sections On Alert",Uniqueness.UNIQUE),new TitleComponent("Full Scale Alert",Uniqueness.UNRESTRICTED));
     }
     @Override public String getTitle() { return "Put All Sections On Alert & Full Scale Alert"; }
     @Override public Float getDestiny() { return 3f; }
