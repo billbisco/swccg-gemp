@@ -1,4 +1,11 @@
 const fixedImages = {
+"15_47":"https://wiki.swccg.com/images/1/1d/RG-GEMP-Projection-Of-A-Skywalker-Yarna-d-al-Gargan.png",
+"15_96":"https://wiki.swccg.com/images/1/14/RG-GEMP-Keep-Your-Eyes-Open-Shoo-Shoo.png",
+"15_97":"https://wiki.swccg.com/images/2/29/RG-GEMP-Light-Maneuvers-Jedi-Levitation.png",
+"15_103":"https://wiki.swccg.com/images/9/98/RG-GEMP-Mindful-Of-The-Future-Inconsequential-Barriers.png",
+"15_131":"https://wiki.swccg.com/images/7/70/RG-GEMP-Smoke-Screen-It-s-A-Trap.png",
+"15_133":"https://wiki.swccg.com/images/b/b4/RG-GEMP-Speak-With-The-Jedi-Council-Vote-Now.png",
+"15_140":"https://wiki.swccg.com/images/1/13/RG-GEMP-This-Is-More-Like-It-I-Have-A-Bad-Feeling-About-This.png",
 "15_179":"https://wiki.swccg.com/images/e/e2/RG-GEMP-Establish-Secret-Base-Ominous-Rumors.png",
 "15_184":"https://wiki.swccg.com/images/e/e7/RG-GEMP-I-Will-Find-Them-Quickly-Master.png",
 "15_186":"https://wiki.swccg.com/images/6/66/RG-GEMP-Imperial-Decree-The-Dark-Path.png",
