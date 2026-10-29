@@ -1,4 +1,9 @@
 const fixedImages = {
+"15_232":"https://wiki.swccg.com/images/9/94/RG-GEMP-Dark-Jedi-Presence-Vader-s-Eye.png",
+"15_237":"https://wiki.swccg.com/images/d/df/RG-GEMP-Drop-Your-Weapons-Halt.png",
+"15_248":"https://wiki.swccg.com/images/6/67/RG-GEMP-Imbalance-Shocking-Revelation.png",
+"15_250":"https://wiki.swccg.com/images/f/fb/RG-GEMP-Imperial-Command.png",
+"15_259":"https://wiki.swccg.com/images/5/5e/RG-GEMP-Jabba-s-Through-With-You-Nevar-Yalnal.png",
 "15_47":"https://wiki.swccg.com/images/1/1d/RG-GEMP-Projection-Of-A-Skywalker-Yarna-d-al-Gargan.png",
 "15_96":"https://wiki.swccg.com/images/1/14/RG-GEMP-Keep-Your-Eyes-Open-Shoo-Shoo.png",
 "15_97":"https://wiki.swccg.com/images/2/29/RG-GEMP-Light-Maneuvers-Jedi-Levitation.png",
