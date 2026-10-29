@@ -266,7 +266,8 @@
     "title": "I Must Be Allowed To Speak & Goo Nee Tay",
     "image": "RG-GEMP-I-Must-Be-Allowed-To-Speak-Goo-Nee-Tay.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_38",
@@ -544,7 +545,8 @@
     "title": "Effective Repairs & Punch It!",
     "image": "RG-GEMP-Effective-Repairs-Punch-It.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_76",
@@ -673,7 +675,8 @@
     "title": "Insertion Planning & Critical Error Revealed",
     "image": "RG-GEMP-Insertion-Planning-Critical-Error-Revealed.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_93",
@@ -893,7 +896,8 @@
     "title": "Perimeter Scan & Under Attack",
     "image": "RG-GEMP-Perimeter-Scan-Under-Attack.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_121",
