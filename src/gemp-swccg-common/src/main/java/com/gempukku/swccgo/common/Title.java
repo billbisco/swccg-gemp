@@ -113,6 +113,7 @@ public interface Title {
     String Baze = "Baze Malbus With Cannon";
     String Bazes_Cannon = "Baze's Cannon";
     String Bane_Malar = "Bane Malar";
+    String Bantha_Herd = "Bantha Herd";
     String Beggar = "Beggar";
     String Beggars_Canyon = "Tatooine: Beggar's Canyon";
     String Beldons_Eye = "Beldon's Eye";
@@ -196,6 +197,7 @@ public interface Title {
     String Captain_Lennox = "Captain Lennox";
     String Captain_Sarkli = "Captain Sarkli";
     String Captain_Tarpals = "Captain Tarpals";
+    String Cane_Adiss = "Cane Adiss";
     String Captive_Fury = "Captive Fury";
     String Captive_Pursuit = "Captive Pursuit";
     String Carbon_Chamber_Testing = "Carbon Chamber Testing";
@@ -620,6 +622,7 @@ public interface Title {
     String Im_Sorry = "I'm Sorry";
     String Im_With_You_Too = "I'm With You Too";
     String Impressive_Most_Impressive = "Impressive, Most Impressive";
+    String Imperial_Academy_Training = "Imperial Academy Training";
     String Imperial_Arrest_Order = "Imperial Arrest Order";
     String Imperial_Artillery = "Imperial Artillery";
     String Imperial_Atrocity = "Imperial Atrocity";
@@ -644,6 +647,7 @@ public interface Title {
     String In_Complete_Control = "In Complete Control";
     String In_The_Hands_Of_The_Empire = "In The Hands Of The Empire";
     String Incinerator = "Cloud City: Incinerator";
+    String Inconsequential_Losses = "Inconsequential Losses";
     String Indentured_To_The_Empire = "Indentured To The Empire";
     String Ineffective_Maneuver = "Ineffective Maneuver";
     String Information_Exchange = "Information Exchange";
@@ -967,6 +971,7 @@ public interface Title {
     String Phasma = "Captain Phasma";
     String Phennir = "Major Turr Phennir";
     String Physical_Choke = "Physical Choke";
+    String Pinned_Down = "Pinned Down";
     String Planet_Defender_Ion_Cannon = "Planet Defender Ion Cannon";
     String Plastoid_Armor = "Plastoid Armor";
     String Polarized_Negative_Power_Coupling = "Polarized Negative Power Coupling";
@@ -1136,6 +1141,7 @@ public interface Title {
     String Sense = "Sense";
     String Sensor_Panel = "Sensor Panel";
     String Separatist_Command_Center = "Separatist Command Center";
+    String Sergeant_Wallen = "Sergeant Wallen";
     String Set_For_Stun = "Set For Stun";
     String Set_Your_Course_For_Alderaan = "Set Your Course For Alderaan";
     String Starship_Levitation = "Starship Levitation";
@@ -1257,6 +1263,7 @@ public interface Title {
     String The_Camp = "The Camp";
     String The_Circle_Is_Now_Complete = "The Circle Is Now Complete";
     String The_Dark_Path = "The Dark Path";
+    String The_Emperor = "The Emperor";
     String The_Emperors_Prize = "The Emperor's Prize";
     String The_Empires_Back = "The Empire's Back";
     String The_Falcon_Junkyard_Garbage = "The Falcon, Junkyard Garbage";
@@ -1370,6 +1377,7 @@ public interface Title {
     String Vigo = "Vigo";
     String Visage_Of_The_Emperor = "Visage Of The Emperor";
     String Visored_Vision = "Visored Vision";
+    String Vizam = "Vizam";
     String Voyeur = "Voyeur";
     String Vul_Tazaene = "Vul Tazaene";
     String Wakeelmui = "Wakeelmui";
@@ -1424,6 +1432,7 @@ public interface Title {
     String Wookiee_Roar = "Wookiee Roar";
     String Wookiee_Slaving_Operation = "Wookiee Slaving Operation";
     String Wookiee_Strangle = "Wookiee Strangle";
+    String Wooof = "Wooof";
     String Wounded_Wookiee = "Wounded Wookiee";
     String Wrong_Turn = "Wrong Turn";
     String Wuher = "Wuher";
