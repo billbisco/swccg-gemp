@@ -25,8 +25,6 @@ public class ReflectionsGoldLightBatch5RegistrationTests {
             var card = row.getAsJsonObject();
             inventory.put(card.get("id").getAsString(), card);
         }
-        assertFalse(inventory.get("15_62").get("implemented").getAsBoolean());
-        assertFalse(images.contains("\"15_62\":"));
         try (var reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
             var expected = JsonParser.parseReader(reader).getAsJsonArray();
             assertEquals(4, expected.size());

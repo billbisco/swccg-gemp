@@ -457,7 +457,8 @@
     "title": "Armed And Dangerous & Ambush",
     "image": "RG-GEMP-Armed-And-Dangerous-Ambush.png",
     "intentionalBlank": false,
-    "implemented": false
+    "implemented": true,
+    "credits": 0
   },
   {
     "id": "15_63",
