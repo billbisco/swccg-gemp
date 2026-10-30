@@ -4754,6 +4754,21 @@ const fixedImages = {
 "1103_13":"https://wiki.swccg.com/wiki/Special:FilePath/VS3O-13-Leias_Sporting_Blaster.png",
 "1103_14":"https://wiki.swccg.com/wiki/Special:FilePath/VS3O-14-Logistical_Delay.png",
 "1103_15":"https://wiki.swccg.com/wiki/Special:FilePath/VS3O-15-Merc_Sunlet.png",
+"1103_16":"https://wiki.swccg.com/wiki/Special:FilePath/VS3O-16-R2_D2_Artoo_Detoo.png",
+"1103_17":"https://wiki.swccg.com/wiki/Special:FilePath/VS3O-17-Rebel_Tech.png",
+"1103_18":"https://wiki.swccg.com/wiki/Special:FilePath/VS3O-18-Red_5.png",
+"1103_19":"https://wiki.swccg.com/wiki/Special:FilePath/VS3O-19-Sabotage.png",
+"1103_20":"https://wiki.swccg.com/wiki/Special:FilePath/VS3O-20-Scanner_Techs.png",
+"1103_21":"https://wiki.swccg.com/wiki/Special:FilePath/VS3O-21-Solomahal.png",
+"1103_22":"https://wiki.swccg.com/wiki/Special:FilePath/VS3O-22-Theyre_On_Dantooine.png",
+"1103_23":"https://wiki.swccg.com/wiki/Special:FilePath/VS3O-23-Traffic_Control.png",
+"1103_24":"https://wiki.swccg.com/wiki/Special:FilePath/VS3O-24-Undercover_Light.png",
+"1103_25":"https://wiki.swccg.com/wiki/Special:FilePath/VS3O-25-Wokling.png",
+"1103_26":"https://wiki.swccg.com/wiki/Special:FilePath/VS3O-26-A_Disturbance_In_The_Force.png",
+"1103_27":"https://wiki.swccg.com/wiki/Special:FilePath/VS3O-27-Astromech_Shortage.png",
+"1103_28":"https://wiki.swccg.com/wiki/Special:FilePath/VS3O-28-Besieged.png",
+"1103_29":"https://wiki.swccg.com/wiki/Special:FilePath/VS3O-29-Come_With_Me.png",
+"1103_30":"https://wiki.swccg.com/wiki/Special:FilePath/VS3O-30-Dannik_Jerriko.png",
 
 
 
