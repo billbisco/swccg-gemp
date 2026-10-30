@@ -55,7 +55,8 @@ public class Card11_023 extends AbstractImmediateEffect {
         String opponent = game.getOpponent(playerId);
 
         // Check condition(s)
-        if (TriggerConditions.duelInitiatedAgainst(game, effectResult, opponent, Filters.and(Filters.your(self), Filters.non_captive, Filters.Jedi, Filters.at(Filters.adjacentSiteTo(self, Filters.site))))) {
+        if (TriggerConditions.duelInitiatedAgainst(game, effectResult, opponent, Filters.and(Filters.your(self), Filters.non_captive, Filters.Jedi, Filters.at(Filters.adjacentSiteTo(self, Filters.site))))
+                && !game.getModifiersQuerying().mayNotCancelDuel(game.getGameState(), self)) {
             PhysicalCard jedi = game.getGameState().getDuelState().getCharacter(playerId);
 
             PlayCardAction action = getPlayCardAction(playerId, game, self, self, false, 0, null, null, null, null, null, false, 0, Filters.sameCardId(jedi), null);

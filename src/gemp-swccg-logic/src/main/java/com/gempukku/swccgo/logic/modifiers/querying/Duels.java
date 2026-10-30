@@ -14,6 +14,7 @@ import com.gempukku.swccgo.logic.actions.PlayInterruptAction;
 import com.gempukku.swccgo.logic.effects.DuelEffect;
 import com.gempukku.swccgo.logic.effects.RespondablePlayCardEffect;
 import com.gempukku.swccgo.logic.effects.TargetCardOnTableEffect;
+import com.gempukku.swccgo.logic.modifiers.MayNotCancelDuelModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.modifiers.ModifierType;
 import com.gempukku.swccgo.logic.timing.Action;
@@ -25,6 +26,25 @@ import java.util.List;
 import java.util.Map;
 
 public interface Duels extends BaseQuery {
+    /**
+     * Determines if the specified card may not cancel a duel.
+     * @param gameState the game state
+     * @param cardCanceling the card attempting to cancel the duel
+     * @return true if the card may not cancel the duel
+     */
+    default boolean mayNotCancelDuel(GameState gameState, PhysicalCard cardCanceling) {
+        if (cardCanceling == null)
+            return false;
+
+        for (Modifier modifier : getModifiers(gameState, ModifierType.MAY_NOT_CANCEL_DUEL)) {
+            if (modifier instanceof MayNotCancelDuelModifier
+                    && ((MayNotCancelDuelModifier) modifier).mayNotCancelDuel(gameState.getGame(), cardCanceling)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Gets actions that the specified Interrupt is currently able to perform to initiate an epic duel.
      *
