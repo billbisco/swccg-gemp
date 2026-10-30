@@ -1428,6 +1428,7 @@ public enum GameTextActionId {
     LEGACY__IMPERIAL_TYRANNY_V__DEPLOY_EMPIRES_NEW_ORDER(true),
     LEGACY__SCOUT_RECON_V__FIND_CHARACTER(true),
     LEGACY__DUNGEON_V__RETRIEVE_FORCE,
+    OVS__ADVANCED_PREPARATION__DEPLOY_FROM_STARTING_EFFECT(false, true),
     ;
 
     private boolean _searchCardPile;
