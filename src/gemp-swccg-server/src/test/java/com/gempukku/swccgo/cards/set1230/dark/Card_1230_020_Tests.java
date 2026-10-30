@@ -1,0 +1,109 @@
+package com.gempukku.swccgo.cards.set1230.dark;
+
+import com.gempukku.swccgo.common.CardType;
+import com.gempukku.swccgo.common.ExpansionSet;
+import com.gempukku.swccgo.common.Icon;
+import com.gempukku.swccgo.common.Keyword;
+import com.gempukku.swccgo.common.Persona;
+import com.gempukku.swccgo.common.Phase;
+import com.gempukku.swccgo.common.Rarity;
+import com.gempukku.swccgo.common.Side;
+import com.gempukku.swccgo.common.Uniqueness;
+import com.gempukku.swccgo.common.Zone;
+import com.gempukku.swccgo.framework.StartingSetup;
+import com.gempukku.swccgo.framework.VirtualTableScenario;
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import static com.gempukku.swccgo.framework.Assertions.assertInZone;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+public class Card_1230_020_Tests {
+    protected VirtualTableScenario GetScenario() {
+        return new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("luke", "1_19");
+                    put("speeder", "1_149");
+                }},
+                new HashMap<>() {{
+                    put("vizam", "1230_20");
+                }},
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+    }
+
+    @Test
+    public void VizamStatsIconsAndKeywordsAreCorrect() {
+        var scn = GetScenario();
+        var card = scn.GetDSCard("vizam").getBlueprint();
+        assertEquals("Vizam", card.getTitle());
+        assertTrue(card.hasVirtualSuffix());
+        assertEquals(Uniqueness.UNIQUE, card.getUniqueness());
+        assertEquals(Side.DARK, card.getSide());
+        assertEquals(3, card.getDestiny(), scn.epsilon);
+        assertEquals(1, card.getDeployCost(), scn.epsilon);
+        assertEquals(2, card.getPower(), scn.epsilon);
+        assertEquals(1, card.getAbility(), scn.epsilon);
+        assertEquals(3, card.getForfeit(), scn.epsilon);
+        scn.BlueprintCardTypeCheck(card, new ArrayList<>() {{
+            add(CardType.ALIEN);
+        }});
+        scn.BlueprintKeywordCheck(card, new ArrayList<>() {{
+        }});
+        scn.BlueprintPersonaCheck(card, new ArrayList<>() {{
+        }});
+        scn.BlueprintIconCheck(card, new ArrayList<>() {{
+            add(Icon.ALIEN);
+            add(Icon.JABBAS_PALACE);
+            add(Icon.LEGACY_BLOCK_3);
+        }});
+        assertEquals(ExpansionSet.VIRTUAL_BLOCK_3, card.getExpansionSet());
+        assertEquals(Rarity.V, card.getRarity());
+    }
+
+    @Test
+    public void VizamActivatesForceWhenOpponentDeploysAVehicleToSameLocation() {
+        var scn = GetScenario();
+        var vizam = scn.GetDSCard("vizam");
+        var speeder = scn.GetLSCard("speeder");
+        var site = scn.GetDSStartingLocation();
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, vizam);
+        scn.MoveCardsToLSHand(speeder);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        assertTrue(scn.LSCardPlayAvailable(speeder));
+        scn.LSPlayCard(speeder);
+        scn.LSChooseCard(site);
+        boolean offered = false;
+        for (int i = 0; i < 10; i++) {
+            if (scn.DSGetDecision() != null) {
+                try {
+                    if (scn.DSCardActionAvailable(vizam, "Activate")) {
+                        offered = true;
+                        break;
+                    }
+                } catch (IllegalStateException ignored) {
+                }
+                scn.DSPass();
+                continue;
+            }
+            if (scn.LSGetDecision() != null) {
+                scn.LSPass();
+                continue;
+            }
+            break;
+        }
+        assertTrue(offered);
+    }
+}
