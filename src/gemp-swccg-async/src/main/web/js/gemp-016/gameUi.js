@@ -1558,7 +1558,7 @@ var GempSwccgGameUI = Class.extend({
                     }
                 } else if (event.shiftKey) {
                     this.displayCardInfo(selectedCardElem.data("card"));
-                } else if ((selectedCardElem.hasClass("selectableCard") || selectedCardElem.hasClass("actionableCard") || selectedCardElem.hasClass("actionableCardSilent")) && !this.replayMode)
+                } else if ((selectedCardElem.hasClass("selectableCard") || selectedCardElem.hasClass("selectedCard") || selectedCardElem.hasClass("actionableCard") || selectedCardElem.hasClass("actionableCardSilent")) && !this.replayMode && this.selectionFunction)
                     this.selectionFunction(selectedCardElem.data("card").cardId, event);
                 event.stopPropagation();
             }
@@ -2822,9 +2822,25 @@ var GempSwccgGameUI = Class.extend({
         }
     },
 
+    creditCostHtml: function (value) {
+        // Only numeric server-provided costs enter this markup; retain a spoken unit.
+        if (!/^[0-9]+$/.test(String(value))) return "";
+        return value + "<img src='images/icons/reflections-gold-credit.png' alt=' credits' title='Credits' style='width:1em;height:1em;vertical-align:middle'>";
+    },
+
+    refreshCardSelection: function (eligibleIds, selectedIds, max) {
+        $(".selectableCard").removeClass("selectableCard");
+        $(".selectedCard").removeClass("selectedCard");
+        if (selectedIds.length < max)
+            this.attachSelectionFunctions(eligibleIds, true, false);
+        if (selectedIds.length > 0)
+            $(".card:cardId(" + selectedIds + ")").removeClass("selectableCard").addClass("selectedCard");
+    },
+
     // Choosing cards from a predefined selection (for example starting cards)
     arbitraryCardsDecision: function (decision) {
         var id = decision.getAttribute("id");
+        var startingCredits = this.getDecisionParameter(decision, "startingCredits");
         var text = decision.getAttribute("text");
 
         var min = this.getDecisionParameter(decision, "min");
@@ -2845,12 +2861,16 @@ var GempSwccgGameUI = Class.extend({
         var that = this;
 
         var selectedCardIds = new Array();
+        var creditCosts = {};
+        var lockedCardIds = [];
 
         var selectableCardIds = new Array();
 
         this.cardActionDialog
             .html("<div id='arbitraryChoice'></div>")
-            .dialog("option", "title", text);
+            .dialog("option", "title", startingCredits != null ? "Choose opening-hand cards (or choose none)" : text);
+        if (startingCredits != null)
+            $("#arbitraryChoice").append("<div class='startingCreditBudget'>Budget: " + this.creditCostHtml(startingCredits) + "</div><div id='creditSelectionError' role='alert'></div>");
 
         if (blueprintIds.length < 6) {
             this.cardActionDialog
@@ -2873,6 +2893,10 @@ var GempSwccgGameUI = Class.extend({
             var cardId = cardIds[i];
             var blueprintId = blueprintIds[i];
             var cardText = cardTexts[i];
+            if (startingCredits != null && /^[0-9]+ credits$/.test(cardText)) {
+                creditCosts[cardId] = Number(cardText.split(" ")[0]);
+                cardText = this.creditCostHtml(creditCosts[cardId]);
+            }
             var testingText = testingTexts[i];
             if (testingText == "null") {
                 testingText = null;
@@ -2888,6 +2912,7 @@ var GempSwccgGameUI = Class.extend({
 
             if (preselected[i] == "true") {
                 selectedCardIds.push(cardId);
+                if (selectable[i] != "true") lockedCardIds.push(cardId);
             }
 
             var card = new Card(blueprintId, testingText, backSideTestingText, horizontal, "SPECIAL", cardId, null);
@@ -2898,6 +2923,13 @@ var GempSwccgGameUI = Class.extend({
         }
 
         var finishChoice = function () {
+            if (startingCredits != null) {
+                var spent = selectedCardIds.reduce(function (total, cardId) { return total + creditCosts[cardId]; }, 0);
+                if (spent > Number(startingCredits)) {
+                    $("#creditSelectionError").text("Too many credits selected. Please try again.");
+                    return;
+                }
+            }
             that.cardActionDialog.dialog("close");
             $("#arbitraryChoice").html("");
             that.clearSelection();
@@ -2905,7 +2937,7 @@ var GempSwccgGameUI = Class.extend({
         };
 
         var resetChoice = function () {
-            selectedCardIds = new Array();
+            selectedCardIds = lockedCardIds.slice();
             that.clearSelection();
             allowSelection();
             processButtons();
@@ -2917,7 +2949,7 @@ var GempSwccgGameUI = Class.extend({
                 buttons["Clear selection"] = function () {
                     // If return any change, then finish after any selection change.
                     if (returnAnyChange == "true") {
-                        selectedCardIds = new Array();
+                        selectedCardIds = lockedCardIds.slice();
                         that.clearSelection();
                         finishChoice();
                         return;
@@ -2934,31 +2966,20 @@ var GempSwccgGameUI = Class.extend({
 
         var allowSelection = function () {
             that.selectionFunction = function (cardId) {
-                selectedCardIds.push(cardId);
+                if (selectableCardIds.indexOf(cardId) < 0) return;
+                var index = selectedCardIds.indexOf(cardId);
+                if (index >= 0) selectedCardIds.splice(index, 1);
+                else if (selectedCardIds.length < max) selectedCardIds.push(cardId);
+                else return;
 
-                // If return any change, then finish after any selection change.
-                if (returnAnyChange == "true") {
+                that.refreshCardSelection(selectableCardIds, selectedCardIds, max);
+                processButtons();
+                if (returnAnyChange == "true" || (index < 0 && selectedCardIds.length == max && that.settingsAutoAccept)) {
                     finishChoice();
                     return;
                 }
-                else if (selectedCardIds.length == max) {
-                    if (that.settingsAutoAccept) {
-                        finishChoice();
-                        return;
-                    } else {
-                        that.clearSelection();
-                        if (selectedCardIds.length > 0)
-                            $(".card:cardId(" + selectedCardIds + ")").addClass("selectedCard");
-                    }
-                } else {
-                    $(".card:cardId(" + cardId + ")").removeClass("selectableCard").addClass("selectedCard");
-                }
-
-                processButtons();
             };
-
-            that.attachSelectionFunctions(selectableCardIds, true, false);
-            that.attachSelectionFunctions(selectedCardIds, true, true);
+            that.refreshCardSelection(selectableCardIds, selectedCardIds, max);
         };
 
         allowSelection();
@@ -3144,6 +3165,11 @@ var GempSwccgGameUI = Class.extend({
         var resetChoice = function () {
             selectedCardIds = new Array();
             that.clearSelection();
+            // Rebuild temporary action cards from original IDs, not extra-prefixed IDs.
+            $(".card").each(function () {
+                if ($(this).data("card").zone == "EXTRA") $(this).remove();
+            });
+            cardIds = that.getDecisionParameters(decision, "cardId");
             allowSelection();
             processButtons();
         };
@@ -3209,6 +3235,9 @@ var GempSwccgGameUI = Class.extend({
                     } else {
                         that.clearSelection();
                         $(".card:cardId(" + cardId + ")").addClass("selectedCard");
+                        that.selectionFunction = function (selectedId) {
+                            if (selectedId === cardId) resetChoice();
+                        };
                         processButtons();
                     }
                 };
@@ -3457,6 +3486,9 @@ var GempSwccgGameUI = Class.extend({
                 } else {
                     processButtons();
                     $(".card:cardId(" + cardId + ")").addClass("selectedCard");
+                        that.selectionFunction = function (selectedId) {
+                            if (selectedId === cardId) resetChoice();
+                        };
                 }
             };
 
@@ -3535,24 +3567,19 @@ var GempSwccgGameUI = Class.extend({
 
         var allowSelection = function () {
             that.selectionFunction = function (cardId) {
-                selectedCardIds.push(cardId);
-                if (selectedCardIds.length == max) {
-                    if (this.settingsAutoAccept) {
-                        finishChoice();
-                        return;
-                    } else {
-                        that.clearSelection();
-                        if (selectedCardIds.length > 0)
-                            $(".card:cardId(" + selectedCardIds + ")").addClass("selectedCard");
-                    }
-                } else {
-                    $(".card:cardId(" + cardId + ")").removeClass("selectableCard").addClass("selectedCard");
+                if (cardIds.indexOf(cardId) < 0) return;
+                var index = selectedCardIds.indexOf(cardId);
+                if (index >= 0) selectedCardIds.splice(index, 1);
+                else if (selectedCardIds.length < max) selectedCardIds.push(cardId);
+                else return;
+                if (index < 0 && selectedCardIds.length == max && that.settingsAutoAccept) {
+                    finishChoice();
+                    return;
                 }
-
+                that.refreshCardSelection(cardIds, selectedCardIds, max);
                 processButtons();
             };
-
-            that.attachSelectionFunctions(cardIds, true, false);
+            that.refreshCardSelection(cardIds, selectedCardIds, max);
         };
 
         allowSelection();
@@ -4121,7 +4148,7 @@ var GempSwccgGameUI = Class.extend({
 
     clearSelection: function () {
         $(".selectableCard").removeClass("selectableCard").data("action", null);
-        $(".actionableCard").removeClass("actionableCard").removeClass("actionableCardSilent").data("action", null);
+        $(".actionableCard, .actionableCardSilent").removeClass("actionableCard").removeClass("actionableCardSilent").data("action", null);
         $(".selectedCard").removeClass("selectedCard");
         this.selectionFunction = null;
     },

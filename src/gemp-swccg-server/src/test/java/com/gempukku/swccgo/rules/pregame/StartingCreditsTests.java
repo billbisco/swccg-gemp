@@ -64,6 +64,8 @@ public class StartingCreditsTests {
     @Test public void StartingCreditsFourRejectsOverBudgetDuplicatesAndMalformedChoicesWithoutMovingCards() throws Exception {
         var s=scenario("premiere_reflections_gold",4);s.StartGame(false);var d=ls(s);
         String gift=choice(d,"15_20",0),two=choice(d,"15_22",0);
+        var overBudget=assertThrows(DecisionResultInvalidException.class,()->d.decisionMade(gift+","+two));
+        assertEquals("Too many credits selected. Please try again.",overBudget.getWarningMessage());
         for(String invalid:List.of(gift+","+two,gift+","+gift,"temp99","bad0","temp-1","temp0,"))
             assertThrows(DecisionResultInvalidException.class,()->d.decisionMade(invalid));
         assertEquals(0,s.gameState().getHand(s.LS).size());
