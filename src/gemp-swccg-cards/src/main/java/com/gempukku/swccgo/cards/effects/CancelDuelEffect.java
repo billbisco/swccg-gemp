@@ -27,6 +27,9 @@ public class CancelDuelEffect extends AbstractSuccessfulEffect {
 
         DuelState duelState = gameState.getDuelState();
         if (duelState !=null && duelState.canContinue(game)) {
+            if (game.getModifiersQuerying().mayNotCancelDuel(gameState, _action.getActionSource())) {
+                return;
+            }
             gameState.sendMessage(_action.getPerformingPlayer() + " cancels " + (duelState.isEpicDuel() ? "epic " : "") + "duel using " + GameUtils.getCardLink(_action.getActionSource()));
             duelState.cancel();
             game.getActionsEnvironment().emitEffectResult(new DuelCanceledResult(_action.getPerformingPlayer()));

@@ -112,6 +112,7 @@ public interface Title {
     String Balanced_Attack = "Balanced Attack";
     String Baze = "Baze Malbus With Cannon";
     String Bazes_Cannon = "Baze's Cannon";
+    String Bane_Malar = "Bane Malar";
     String Beggar = "Beggar";
     String Beggars_Canyon = "Tatooine: Beggar's Canyon";
     String Beldons_Eye = "Beldon's Eye";
@@ -483,6 +484,7 @@ public interface Title {
     String Forced_Landing = "Forced Landing";
     String Forced_Servitude = "Forced Servitude";
     String Foundling = "Foundling";
+    String Fozec = "Fozec";
     String Free_Ride = "Free Ride";
     String Friendly_Fire = "Friendly Fire";
     String Frostbite = "Frostbite";
@@ -508,6 +510,7 @@ public interface Title {
     String War_Has_Begun = "War Has Begun";
     String Get_Alongside_That_One = "Get Alongside That One";
     String Ghhhk = "Ghhhk";
+    String Gela_Yeens = "Gela Yeens";
     String Ghost = "Ghost";
     String Gift_Of_The_Mentor = "Gift Of The Mentor";
     String Glancing_Blow = "Glancing Blow";
@@ -555,6 +558,7 @@ public interface Title {
     String Hes_A_Coward = "He's A Coward";
     String Hes_All_Yours_Bounty_Hunter = "He's All Yours, Bounty Hunter";
     String Hewex = "Major Hewex";
+    String Hermi_Odle = "Hermi Odle";
     String Hidden_Base = "Hidden Base";
     String Hidden_Forest_Trail = "Endor: Hidden Forest Trail";
     String Hidden_Recess= "Maz's Castle: Hidden Recess";
@@ -692,6 +696,7 @@ public interface Title {
     String Jedha = "Jedha";
     String Jedha_City = "Jedha: Jedha City";
     String Jedi_Business = "Jedi Business";
+    String Jedi_Escape = "Jedi Escape";
     String Jedi_Council_Chamber = "Coruscant: Jedi Council Chamber";
     String Jedi_Lightsaber = "Jedi Lightsaber";
     String Jedi_Presence = "Jedi Presence";
@@ -880,6 +885,7 @@ public interface Title {
     String Nightclub = "Coruscant: Night Club";
     String Nick_Of_Time = "Nick Of Time";
     String Nightfall = "Nightfall";
+    String Nizuc_Bek = "Nizuc Bek";
     String Niima_Outpost_Shipyard = "Jakku: Niima Outpost Shipyard";
     String No_Bargain = "No Bargain";
     String No_Civility_Only_Politics = "No Civility, Only Politics";
@@ -1043,6 +1049,7 @@ public interface Title {
     String Rendezvous_Point = "Rendezvous Point";
     String Rendili = "Rendili";
     String Rennek = "Rennek";
+    String Renz = "Lieutenant Renz";
     String Report_To_Lord_Vader = "Report To Lord Vader";
     String Res_Luk_Raauf = "Res Luk Ra'auf";
     String Rescue_In_The_Clouds = "Rescue In The Clouds";
@@ -1401,6 +1408,7 @@ public interface Title {
     String Were_In_Attack_Position_Now = "We're In Attack Position Now";
     String Were_The_Bait = "We're The Bait";
     String What_Is_Thy_Bidding_My_Master = "What Is Thy Bidding, My Master?";
+    String What_Was_It = "What Was It?";
     String Where_Are_Those_Droidekas = "Where Are Those Droidekas?!";
     String Wheres_Han = "Where's Han?";
     String Why_Didnt_You_Tell_Me = "Why Didn't You Tell Me?";

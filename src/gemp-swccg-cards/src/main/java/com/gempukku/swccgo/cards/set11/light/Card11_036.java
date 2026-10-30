@@ -54,7 +54,8 @@ public class Card11_036 extends AbstractLostInterrupt {
 
         // Check condition(s)
         if (TriggerConditions.duelInitiatedAgainst(game, effectResult, opponent, Filters.and(Filters.your(self), Filters.non_captive, Filters.Jedi, Filters.at(Filters.site)))
-                && GameConditions.canUseForceToPlayInterrupt(game, playerId, self, 1)) {
+                && GameConditions.canUseForceToPlayInterrupt(game, playerId, self, 1)
+                && !game.getModifiersQuerying().mayNotCancelDuel(game.getGameState(), self)) {
             final PhysicalCard duelLocation = game.getGameState().getDuelState().getLocation();
 
             final PlayInterruptAction action = new PlayInterruptAction(game, self);
