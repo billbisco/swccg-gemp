@@ -132,7 +132,9 @@ public class PlayersShuffleAndDrawStartingHandGameProcess implements GameProcess
                         throw new DecisionResultInvalidException();
                     spent += cost;
                 }
-                if (spent > budget || chosen.size() > slots)
+                if (spent > budget)
+                    throw new DecisionResultInvalidException("Too many credits selected. Please try again.");
+                if (chosen.size() > slots)
                     throw new DecisionResultInvalidException();
                 state.removeCardsFromZone(chosen);
                 for (PhysicalCard card : chosen)
