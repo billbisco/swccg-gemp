@@ -1,0 +1,65 @@
+package com.gempukku.swccgo.cards.set1102.dark;
+
+import com.gempukku.swccgo.cards.AbstractDefensiveShield;
+import com.gempukku.swccgo.cards.GameConditions;
+import com.gempukku.swccgo.cards.evaluators.NumCopiesOfCardAtLocationEvaluator;
+import com.gempukku.swccgo.common.ExpansionSet;
+import com.gempukku.swccgo.common.PlayCardZoneOption;
+import com.gempukku.swccgo.common.Rarity;
+import com.gempukku.swccgo.common.Side;
+import com.gempukku.swccgo.common.Title;
+import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.game.PhysicalCard;
+import com.gempukku.swccgo.game.SwccgGame;
+import com.gempukku.swccgo.logic.TriggerConditions;
+import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
+import com.gempukku.swccgo.logic.effects.PlaceCardsInUsedPileFromTableEffect;
+import com.gempukku.swccgo.logic.modifiers.ExtraForceCostToDeployCardToLocationModifier;
+import com.gempukku.swccgo.logic.modifiers.Modifier;
+import com.gempukku.swccgo.logic.timing.EffectResult;
+
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+
+/**
+ * Set: Virtual Set 2: Our Most Desperate Hour
+ * Type: Defensive Shield
+ * Title: Death Star Sentry (V)
+ */
+public class Card1102_029 extends AbstractDefensiveShield {
+    public Card1102_029() {
+        super(Side.DARK, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.Death_Star_Sentry, ExpansionSet.VIRTUAL_ORIGINAL_SET_2, Rarity.V);
+        setVirtualSuffix(true);
+        setLore("Death Star troopers on sentry duty observe and direct incoming starships and monitor other critical sites. They perform sensor scans for life forms and weapons.");
+        setGameText("Plays on table. Opponent must first use X Force to deploy a non-unique card (except a Jawa) to a location, where X = the number of copies of that card at that location.");
+    }
+
+    @Override
+    protected List<RequiredGameTextTriggerAction> getGameTextRequiredAfterTriggers(SwccgGame game, final EffectResult effectResult, final PhysicalCard self, int gameTextSourceCardId) {
+        List<RequiredGameTextTriggerAction> actions = new LinkedList<RequiredGameTextTriggerAction>();
+
+        if (TriggerConditions.isTableChanged(game, effectResult)
+                && GameConditions.canSpot(game, self, 2, Filters.and(Filters.Death_Star_Sentry, Filters.unique))) {
+
+            final RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
+
+            Collection<PhysicalCard> deathStarSentries = Filters.filterActive(game, self, Filters.Death_Star_Sentry);
+            PhysicalCard firstDeathStarSentries = Filters.findFirstActive(game, self, Filters.Death_Star_Sentry);
+            deathStarSentries.remove(firstDeathStarSentries);
+            action.appendEffect(
+                    new PlaceCardsInUsedPileFromTableEffect(action, self.getOwner(), deathStarSentries)
+            );
+            actions.add(action);
+        }
+        return actions;
+    }
+
+    @Override
+    protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
+        List<Modifier> modifiers = new LinkedList<Modifier>();
+        modifiers.add(new ExtraForceCostToDeployCardToLocationModifier(self, Filters.and(Filters.opponents(self), Filters.non_unique, Filters.except(Filters.Jawa)),
+                new NumCopiesOfCardAtLocationEvaluator(self)));
+        return modifiers;
+    }
+}
