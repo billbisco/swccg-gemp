@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.logic.modifiers;
 
+import com.gempukku.swccgo.common.Filterable;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.logic.conditions.Condition;
 
@@ -23,5 +24,24 @@ public class SatisfiesAllBattleDamageWhenForfeitedModifier extends AbstractModif
      */
     public SatisfiesAllBattleDamageWhenForfeitedModifier(PhysicalCard source, Condition condition) {
         super(source, "Satisfies all battle damage when forfeited", source, condition, ModifierType.SATISFIES_ALL_BATTLE_DAMAGE_WHEN_FORFEITED);
+    }
+
+    /**
+     * Creates a modifier that causes the affected cards to satisfy all of owner's battle damage when forfeited.
+     * @param source the source of the modifier
+     * @param affectFilter the filter for cards that satisfy all battle damage when forfeited
+     */
+    public SatisfiesAllBattleDamageWhenForfeitedModifier(PhysicalCard source, Filterable affectFilter) {
+        super(source, "Satisfies all battle damage when forfeited", affectFilter, ModifierType.SATISFIES_ALL_BATTLE_DAMAGE_WHEN_FORFEITED);
+    }
+
+    /**
+     * Creates a modifier that causes the affected cards to satisfy all of owner's battle damage when forfeited.
+     * @param source the source of the modifier
+     * @param affectFilter the filter for cards that satisfy all battle damage when forfeited
+     * @param condition the condition that must be fulfilled for the modifier to be in effect
+     */
+    public SatisfiesAllBattleDamageWhenForfeitedModifier(PhysicalCard source, Filterable affectFilter, Condition condition) {
+        super(source, "Satisfies all battle damage when forfeited", affectFilter, condition, ModifierType.SATISFIES_ALL_BATTLE_DAMAGE_WHEN_FORFEITED);
     }
 }

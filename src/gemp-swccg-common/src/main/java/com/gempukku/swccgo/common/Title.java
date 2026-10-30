@@ -93,6 +93,7 @@ public interface Title {
     String At_Last_We_Will_Have_Revenge = "At Last We Will Have Revenge";
     String At_Peace = "At Peace";
     String AT_ST_Dual_Cannon = "AT-ST Dual Cannon";
+    String Attark = "Attark";
     String Attack_Pattern_Delta = "Attack Pattern Delta";
     String Attack_Run = "Attack Run";
     String Away_Put_Your_Weapon = "Away Put Your Weapon";
@@ -100,6 +101,7 @@ public interface Title {
     String Aurra_Sing = "Aurra Sing";
     String Avarik = "Corporal Avarik";
     String Avenger = "Avenger";
+    String Aved_Luun = "Aved Luun";
     String Awwww_Cannot_Get_Your_Ship_Out = "Awwww, Cannot Get Your Ship Out";
     String Azure_Angel = "Azure Angel";
     String Back_Door = "Endor: Back Door";
@@ -126,6 +128,7 @@ public interface Title {
     String Beskar_Deflection = "Beskar Deflection";
     String Bespin = "Bespin";
     String Bespin_Cloud_City = "Bespin: Cloud City";
+    String BG_J38 = "BG-J38";
     String Be_With_Me = "Be With Me";
     String Bib = "Bib Fortuna";
     String Beilert_Valance = "Beilert Valance";
@@ -310,6 +313,7 @@ public interface Title {
     String Darksaber = "Darksaber";
     String Darth_Tyranus = "Darth Tyranus";
     String Darth_Vader_Dark_Lord_of_the_Sith = "Darth Vader, Dark Lord Of The Sith";
+    String Darth_Vaders_Lightsaber = "Darth Vader's Lightsaber";
     String DataVault = "Scarif: Data Vault";
     String OceanShallows = "Scarif: Ocean Shallows";
     String Dathcha = "Dathcha";
@@ -444,6 +448,7 @@ public interface Title {
     String E_web_Blaster = "E-web Blaster";
     String Evil_Is_Everywhere = "Evil Is Everywhere";
     String Ewok_Bow = "Ewok Bow";
+    String Ewok_Catapult = "Ewok Catapult";
     String Ewok_Glider = "Ewok Glider";
     String Ewok_Rescue = "Ewok Rescue";
     String Ewok_Spearman = "Ewok Spearman";
@@ -465,6 +470,7 @@ public interface Title {
     String Fearless_And_Inventive = "Fearless And Inventive";
     String Fel = "Baron Soontir Fel";
     String Feltipern_Trevagg = "Feltipern Trevagg";
+    String Feltipern_Trevaggs_Stun_Rifle = "Feltipern Trevagg's Stun Rifle";
     String Field_Promotion = "Field Promotion";
     String Fighters_Coming_In = "Fighters Coming In";
     String Figrin_Dan = "Figrin D'an";
@@ -509,6 +515,8 @@ public interface Title {
     String Gather_Allies_And_Train = "Gather Allies And Train";
     String General_Calrissian = "General Calrissian";
     String General_Dodonna = "General Dodonna";
+    String General_Solo = "General Solo";
+    String General_Walex_Blissex = "General Walex Blissex";
     String Geonosis = "Geonosis";
     String Geonosis_Petranaki_Arena = "Geonosis: Petranaki Arena";
     String Geonosis_Separatist_Council_Room = "Geonosis: Separatist Council Room";
@@ -765,6 +773,7 @@ public interface Title {
     String Leias_Sporting_Blaster = "Leia's Sporting Blaster";
     String Let_The_Wookiee_Win = "Let The Wookiee Win";
     String Let_Them_Make_The_First_Move = "Let Them Make The First Move";
+    String Leslomy_Tacema = "Leslomy Tacema";
     String Lets_Keep_A_Little_Optimism_Here = "Let's Keep A Little Optimism Here";
     String Levitation = "Levitation";
     String Levitation_Attack = "Levitation Attack";
@@ -1130,6 +1139,7 @@ public interface Title {
     String Scrambled_Transmission = "Scrambled Transmission";
     String Scruffy_Looking_Nerf_Herder = "Scruffy-Looking Nerf Herder";
     String Scum_And_Villainy = "Scum And Villainy";
+    String SD_17_Homing_Missile = "SD-17 Homing Missile";
     String Scythe_3 = "Scythe 3";
     String Search_And_Destroy = "Search And Destroy";
     String Sebulba = "Sebulba";
@@ -1258,6 +1268,7 @@ public interface Title {
     String Ten_Numb = "Ten Numb";
     String Tentacle = "Tentacle";
     String Tessek = "Tessek";
+    String Thedit = "Thedit";
     String Thank_The_Maker = "Thank The Maker";
     String That_Things_Operational = "That Thing's Operational";
     String Thats_One = "That's One";
@@ -1449,6 +1460,7 @@ public interface Title {
     String Xizors_Palace = "Coruscant: Xizor's Palace";
     String Yaggle_Gakkle = "Yaggle Gakkle";
     String Yarna_dal_Gargan = "Yarna d'al' Gargan";
+    String Yerka_Mig = "Yerka Mig";
     String Yavin_4 = "Yavin 4";
     String Yavin_4_Docking_Bay = "Yavin 4: Docking Bay";
     String Yavin_4_Base_Operations = "Yavin 4 Base Operations";
