@@ -31,7 +31,13 @@ public class ReflectionsGoldCompleteRegistrationTests {
             var card=library.getSwccgoCardBlueprint(id);
             assertNotNull(id,card);assertEquals(id,ExpansionSet.REFLECTIONS_GOLD,card.getExpansionSet());
             assertEquals(id,Rarity.UNKNOWN,rarity.getCardRarity(id));
-            assertEquals(id,row.get("credits").getAsInt(),card.getCredits());
+            if (!row.has("credits")) {
+                // Foundation inventory omits zero credits on the intentional blank cards.
+                assertTrue(id,row.get("intentionalBlank").getAsBoolean());
+                assertEquals(id,0,card.getCredits());
+            } else {
+                assertEquals(id,row.get("credits").getAsInt(),card.getCredits());
+            }
             String filename=row.get("image").getAsString();
             String hash=HexFormat.of().formatHex(MessageDigest.getInstance("MD5").digest(filename.getBytes(StandardCharsets.UTF_8)));
             String url="https://wiki.swccg.com/images/"+hash.substring(0,1)+"/"+hash.substring(0,2)+"/"+filename;
