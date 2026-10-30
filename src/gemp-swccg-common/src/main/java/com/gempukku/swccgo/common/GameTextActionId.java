@@ -1448,6 +1448,7 @@ public enum GameTextActionId {
     OVS__KET_MALISS__TAKE_ALIEN(true),
     OVS__KET_MALISS__DEPLOY_DOCKING_BAY(true),
     OVS__MOTTI__DEPLOY_KUAT_DRIVE_YARDS(true, true),
+    OVS__UNDERCOVER_DARK__TAKE_INFORMANT(true),
     ;
 
     private boolean _searchCardPile;

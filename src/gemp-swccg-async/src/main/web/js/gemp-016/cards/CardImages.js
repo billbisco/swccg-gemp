@@ -4784,6 +4784,11 @@ const fixedImages = {
 "1103_43":"https://wiki.swccg.com/wiki/Special:FilePath/VS3O-43-Reegesk.png",
 "1103_44":"https://wiki.swccg.com/wiki/Special:FilePath/VS3O-44-Reserve_Pilot.png",
 "1103_45":"https://wiki.swccg.com/wiki/Special:FilePath/VS3O-45-Rodian.png",
+"1103_46":"https://wiki.swccg.com/wiki/Special:FilePath/VS3O-46-Spice_Mines_Of_Kessel.png",
+"1103_47":"https://wiki.swccg.com/wiki/Special:FilePath/VS3O-47-Tarkin.png",
+"1103_48":"https://wiki.swccg.com/wiki/Special:FilePath/VS3O-48-Tentacle.png",
+"1103_49":"https://wiki.swccg.com/wiki/Special:FilePath/VS3O-49-Trooper_Davin_Felth.png",
+"1103_50":"https://wiki.swccg.com/wiki/Special:FilePath/VS3O-50-Undercover_Dark.png",
 
 
 
