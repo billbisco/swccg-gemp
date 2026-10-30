@@ -30,6 +30,7 @@ public interface Title {
     String AAT_Laser_Cannon = "AAT Laser Cannon";
     String Abyssin_Ornament = "Abyssin Ornament";
     String Access_Denied = "Access Denied";
+    String Accuser = "Accuser";
     String Ackbar = "Admiral Ackbar";
     String Activate_The_Droids = "Activate The Droids";
     String Advance_Preparation = "Advance Preparation";
@@ -400,6 +401,7 @@ public interface Title {
     String DS_61_5 = "DS-61-5";
     String Dual_Laser_Cannon = "Dual Laser Cannon";
     String Dungeon = "Jabba's Palace: Dungeon";
+    String Dungeon_Prison = "Dungeon (Prison)";
     String Dutch = "Dutch";
     String Dyer = "Colonel Dyer";
     String Early_Warning_Network = "Early Warning Network";
@@ -488,6 +490,7 @@ public interface Title {
     String Foundling = "Foundling";
     String Fozec = "Fozec";
     String Free_Ride = "Free Ride";
+    String Freeze = "Freeze!";
     String Friendly_Fire = "Friendly Fire";
     String Frostbite = "Frostbite";
     String Frozen_Assets = "Frozen Assets";
@@ -948,6 +951,7 @@ public interface Title {
     String Out_Of_Commission = "Out Of Commission";
     String Out_Of_Nowhere = "Out Of Nowhere";
     String Out_Of_Somewhere = "Out Of Somewhere";
+    String Outflank = "Outflank";
     String Outrider = "Outrider";
     String Overload = "Overload";
     String Overseeing_It_Personally = "Overseeing It Personally";
@@ -984,6 +988,7 @@ public interface Title {
     String Polis_Massa = "Polis Massa";
     String Ponda_Baba = "Ponda Baba";
     String Portable_Fusion_Generator = "Portable Fusion Generator";
+    String Power_Of_The_Hutt = "Power Of The Hutt";
     String Power_Harpoon = "Power Harpoon";
     String Power_Pivot = "Power Pivot";
     String Pray_I_Dont_Alter_It_Any_Further = "Pray I Don't Alter It Any Further";
@@ -1120,6 +1125,7 @@ public interface Title {
     String Scimitar_1 = "Scimitar 1";
     String Scomp_Link_Access = "Scomp Link Access";
     String Scout_Blaster = "Scout Blaster";
+    String Scout_Recon = "Scout Recon";
     String Scramble = "Scramble";
     String Scrambled_Transmission = "Scrambled Transmission";
     String Scruffy_Looking_Nerf_Herder = "Scruffy-Looking Nerf Herder";
@@ -1408,6 +1414,7 @@ public interface Title {
     String Weequay_Marksman = "Weequay Marksman";
     String Well_Find_Han = "We'll Find Han";
     String Well_Guarded = "Well Guarded";
+    String Well_earned_Command = "Well-earned Command";
     String Well_Handle_This = "We'll Handle This";
     String Well_Need_A_New_One = "We'll Need A New One";
     String Well_Trained_In_The_Jedi_Arts = "Well Trained In The Jedi Arts";
@@ -1462,6 +1469,7 @@ public interface Title {
     String You_Overestimate_Their_Chances = "You Overestimate Their Chances";
     String You_Rebel_Scum = "You Rebel Scum";
     String You_Truly_Belong_Here_With_Us = "You Truly Belong Here With Us";
+    String You_Want_This_Dont_You = "You Want This, Don't You?";
     String You_Will_Go_To_The_Dagobah_System = "You Will Go To The Dagobah System";
     String Youll_Be_Dead = "You'll Be Dead!";
     String Young_Fool = "Young Fool";
