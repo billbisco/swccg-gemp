@@ -4769,6 +4769,21 @@ const fixedImages = {
 "1103_28":"https://wiki.swccg.com/wiki/Special:FilePath/VS3O-28-Besieged.png",
 "1103_29":"https://wiki.swccg.com/wiki/Special:FilePath/VS3O-29-Come_With_Me.png",
 "1103_30":"https://wiki.swccg.com/wiki/Special:FilePath/VS3O-30-Dannik_Jerriko.png",
+"1103_31":"https://wiki.swccg.com/wiki/Special:FilePath/VS3O-31-Dark_Forces.png",
+"1103_32":"https://wiki.swccg.com/wiki/Special:FilePath/VS3O-32-Greedo.png",
+"1103_33":"https://wiki.swccg.com/wiki/Special:FilePath/VS3O-33-Hem_Dazon.png",
+"1103_34":"https://wiki.swccg.com/wiki/Special:FilePath/VS3O-34-Hyperwave_Scan.png",
+"1103_35":"https://wiki.swccg.com/wiki/Special:FilePath/VS3O-35-Im_On_The_Leader.png",
+"1103_36":"https://wiki.swccg.com/wiki/Special:FilePath/VS3O-36-Informant.png",
+"1103_37":"https://wiki.swccg.com/wiki/Special:FilePath/VS3O-37-IT_O_Eyetee_Oh.png",
+"1103_38":"https://wiki.swccg.com/wiki/Special:FilePath/VS3O-38-Ket_Maliss.png",
+"1103_39":"https://wiki.swccg.com/wiki/Special:FilePath/VS3O-39-Leia_Seeker.png",
+"1103_40":"https://wiki.swccg.com/wiki/Special:FilePath/VS3O-40-Motti.png",
+"1103_41":"https://wiki.swccg.com/wiki/Special:FilePath/VS3O-41-Oota_Goota_Solo.png",
+"1103_42":"https://wiki.swccg.com/wiki/Special:FilePath/VS3O-42-Reactor_Terminal.png",
+"1103_43":"https://wiki.swccg.com/wiki/Special:FilePath/VS3O-43-Reegesk.png",
+"1103_44":"https://wiki.swccg.com/wiki/Special:FilePath/VS3O-44-Reserve_Pilot.png",
+"1103_45":"https://wiki.swccg.com/wiki/Special:FilePath/VS3O-45-Rodian.png",
 
 
 

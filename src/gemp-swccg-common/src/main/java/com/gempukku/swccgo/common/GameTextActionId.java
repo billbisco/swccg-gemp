@@ -1445,6 +1445,9 @@ public enum GameTextActionId {
     LEGACY__FELTIPERN_RIFLE_V__TAKE_INTERRUPT,
     OVS__REBEL_TECH__TAKE_ADVANCE_PREPARATION_OR_TRENCH(true),
     OVS__UNDERCOVER__TAKE_SABOTAGE(true),
+    OVS__KET_MALISS__TAKE_ALIEN(true),
+    OVS__KET_MALISS__DEPLOY_DOCKING_BAY(true),
+    OVS__MOTTI__DEPLOY_KUAT_DRIVE_YARDS(true, true),
     ;
 
     private boolean _searchCardPile;
