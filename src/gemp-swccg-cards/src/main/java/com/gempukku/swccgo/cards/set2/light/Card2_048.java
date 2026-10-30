@@ -51,7 +51,12 @@ public class Card2_048 extends AbstractLostInterrupt {
     protected List<PlayInterruptAction> getGameTextTopLevelActions(final String playerId, final SwccgGame game, final PhysicalCard self) {
         List<PlayInterruptAction> actions = new LinkedList<PlayInterruptAction>();
 
-        final Filter yourSpy = Filters.and(Filters.your(self), Filters.spy, Filters.at(Filters.site), Filters.canBeTargetedBy(self), Filters.with(self, SpotOverride.INCLUDE_UNDERCOVER, Filters.and(Filters.opponents(playerId), Filters.spy, Filters.canBeTargetedBy(self))));
+        Filter opponentTargetBase = Filters.and(Filters.opponents(playerId), Filters.spy, Filters.canBeTargetedBy(self));
+        if (GameConditions.hasGameTextModification(game, self, com.gempukku.swccgo.logic.modifiers.ModifyGameTextType.LEGACY__BLOUNT_V__DOUBLE_AGENT_TARGETS_BOUNTY_HUNTER)) {
+            opponentTargetBase = Filters.and(Filters.opponents(playerId), Filters.or(Filters.spy, Filters.bounty_hunter), Filters.canBeTargetedBy(self));
+        }
+        final Filter opponentTargetFilter = opponentTargetBase;
+        final Filter yourSpy = Filters.and(Filters.your(self), Filters.spy, Filters.at(Filters.site), Filters.canBeTargetedBy(self), Filters.with(self, SpotOverride.INCLUDE_UNDERCOVER, opponentTargetFilter));
 
         // Check condition(s)
         if (GameConditions.canSpot(game, self, SpotOverride.INCLUDE_UNDERCOVER, yourSpy)) {
@@ -62,9 +67,9 @@ public class Card2_048 extends AbstractLostInterrupt {
                     new ChooseCardOnTableEffect(action, playerId, "Choose your spy", SpotOverride.INCLUDE_UNDERCOVER, yourSpy) {
                         @Override
                         protected void cardSelected(PhysicalCard yourSpy) {
-                            Filter opponentSpy = Filters.and(Filters.opponents(playerId), Filters.spy, Filters.atSameSite(yourSpy), Filters.canBeTargetedBy(self));
+                            Filter opponentSpy = Filters.and(opponentTargetFilter, Filters.atSameSite(yourSpy));
                             action.appendTargeting(
-                                    new TargetCardOnTableEffect(action, playerId, "Choose opponent's spy", SpotOverride.INCLUDE_UNDERCOVER, TargetingReason.TO_BE_LOST, opponentSpy) {
+                                    new TargetCardOnTableEffect(action, playerId, "Choose opponent's spy or bounty hunter", SpotOverride.INCLUDE_UNDERCOVER, TargetingReason.TO_BE_LOST, opponentSpy) {
                                         @Override
                                         protected void cardTargeted(final int targetGroupId, final PhysicalCard opponentsSpy) {
                                             action.addAnimationGroup(opponentsSpy);

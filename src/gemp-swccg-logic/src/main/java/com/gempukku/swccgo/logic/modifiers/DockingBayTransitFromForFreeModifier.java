@@ -50,7 +50,7 @@ public class DockingBayTransitFromForFreeModifier extends AbstractModifier {
      * @param condition the condition that must be fulfilled for the modifier to be in effect
      * @param playerId the player
      */
-    private DockingBayTransitFromForFreeModifier(PhysicalCard source, Filterable affectFilter, Condition condition, String playerId) {
+    public DockingBayTransitFromForFreeModifier(PhysicalCard source, Filterable affectFilter, Condition condition, String playerId) {
         super(source, null, Filters.and(Filters.docking_bay, affectFilter), condition, ModifierType.DOCKING_BAY_TRANSIT_FROM_FOR_FREE, true);
         _playerId = playerId;
     }

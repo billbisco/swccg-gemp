@@ -1,6 +1,7 @@
 package com.gempukku.swccgo.cards.set8.light;
 
 import com.gempukku.swccgo.cards.AbstractArtilleryWeapon;
+import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.evaluators.PresentEvaluator;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
@@ -8,6 +9,7 @@ import com.gempukku.swccgo.common.Keyword;
 import com.gempukku.swccgo.common.PlayCardOptionId;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
+import com.gempukku.swccgo.common.Statistic;
 import com.gempukku.swccgo.common.TargetingReason;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filter;
@@ -18,6 +20,7 @@ import com.gempukku.swccgo.logic.actions.FireWeaponAction;
 import com.gempukku.swccgo.logic.actions.FireWeaponActionBuilder;
 import com.gempukku.swccgo.logic.modifiers.DoesNotRequirePowerSourceModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
+import com.gempukku.swccgo.logic.modifiers.ModifyGameTextType;
 import com.gempukku.swccgo.logic.modifiers.TotalWeaponDestinyModifier;
 
 import java.util.Collections;
@@ -51,15 +54,20 @@ public class Card8_088 extends AbstractArtilleryWeapon {
 
     @Override
     protected List<FireWeaponAction> getGameTextFireWeaponActions(String playerId, final SwccgGame game, final PhysicalCard self, boolean forFree, int extraForceRequired, PhysicalCard sourceCard, boolean repeatedFiring, Filter targetedAsCharacter, Float defenseValueAsCharacter, Filter fireAtTargetFilter, boolean ignorePerAttackOrBattleLimit) {
+        List<FireWeaponAction> actions = new LinkedList<FireWeaponAction>();
         FireWeaponActionBuilder actionBuilder = FireWeaponActionBuilder.startBuildPrep(playerId, game, sourceCard, self, forFree, extraForceRequired, repeatedFiring, targetedAsCharacter, defenseValueAsCharacter, fireAtTargetFilter, ignorePerAttackOrBattleLimit)
                 .targetAtSameOrAdjacentSiteForFree(Filters.and(Filters.vehicle, Filters.hasArmorDefined), TargetingReason.TO_BE_CRASHED).finishBuildPrep();
         if (actionBuilder != null) {
-
-            // Build action using common utility
-            FireWeaponAction action = actionBuilder.buildFireWeaponByCharacterPresentWithCrashAction(1);
-            return Collections.singletonList(action);
+            actions.add(actionBuilder.buildFireWeaponByCharacterPresentWithCrashAction(1));
         }
-        return null;
+        if (GameConditions.hasGameTextModification(game, self, ModifyGameTextType.LEGACY__CHIRPA_V__EWOK_CATAPULT_TARGETS_CHARACTERS)) {
+            FireWeaponActionBuilder characterBuilder = FireWeaponActionBuilder.startBuildPrep(playerId, game, sourceCard, self, forFree, extraForceRequired, repeatedFiring, targetedAsCharacter, defenseValueAsCharacter, fireAtTargetFilter, ignorePerAttackOrBattleLimit)
+                    .targetAtSameOrAdjacentSiteForFree(Filters.and(Filters.character, Filters.not(Filters.Dark_Jedi)), TargetingReason.TO_BE_LOST).finishBuildPrep();
+            if (characterBuilder != null) {
+                actions.add(characterBuilder.buildFireWeaponLostAction(1, Statistic.DEFENSE_VALUE));
+            }
+        }
+        return actions.isEmpty() ? null : actions;
     }
 
     @Override
