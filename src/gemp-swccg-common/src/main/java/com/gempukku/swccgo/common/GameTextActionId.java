@@ -1511,6 +1511,8 @@ public enum GameTextActionId {
     OVS__TIME_FOR_OUR_ATTACK__ADDITIONAL_MOVE(false, true),
     OVS__DROP__PLAY_CARD(false, true),
     OVS__JABBAS_SPACE_CRUISER__DEPLOY_INDEPENDENT(true),
+    OVS__COVERT_LANDING__DEPLOY_SCOUT(true),
+    OVS__MACE_WINDU__TAKE_BLASTER_DEFLECTION(true, true),
     ;
 
     private boolean _searchCardPile;
