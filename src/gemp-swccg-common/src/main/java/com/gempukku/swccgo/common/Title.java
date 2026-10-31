@@ -214,6 +214,7 @@ public interface Title {
     String Captain_Cassian_Andor = "Captain Cassian Andor";
     String Cease_Fire = "Cease Fire!";
     String Cell_2187 = "Cell 2187";
+    String Changing_The_Odds = "Changing The Odds";
     String Chandrila = "Chandrila";
     String Chasm_Walkway = "Cloud City: Chasm Walkway";
     String Chewbaccas_Bowcaster = "Chewbacca's Bowcaster";
@@ -379,6 +380,7 @@ public interface Title {
     String Dominator = "Dominator";
     String Dont_Get_Cocky = "Don't Get Cocky";
     String Dont_Underestimate_Our_Chances = "Don't Underestimate Our Chances";
+    String Diversionary_Tactics = "Diversionary Tactics";
     String Double_Agent = "Double Agent";
     String Double_Back = "Double Back";
     String Double_Crossing_No_Good_Swindler = "Double-Crossing, No-Good Swindler";
@@ -719,6 +721,7 @@ public interface Title {
     String Jedi_Lightsaber = "Jedi Lightsaber";
     String Jedi_Presence = "Jedi Presence";
     String Jek = "Jek Porkins";
+    String Jeroen_Webb = "Jeroen Webb";
     String Jerjerrod = "Moff Jerjerrod";
     String Jet_Pack = "Jet Pack";
     String Jodo = "Jodo Kast";
