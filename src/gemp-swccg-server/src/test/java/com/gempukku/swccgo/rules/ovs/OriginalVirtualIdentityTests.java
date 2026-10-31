@@ -160,6 +160,10 @@ public class OriginalVirtualIdentityTests {
         assertNotNull(library.getSwccgoCardBlueprint("1104_40"));
         assertNotNull(library.getSwccgoCardBlueprint("1104_41"));
         assertNotNull(library.getSwccgoCardBlueprint("1104_45"));
+        assertNotNull(library.getSwccgoCardBlueprint("1104_46"));
+        assertNotNull(library.getSwccgoCardBlueprint("1104_48"));
+        assertNotNull(library.getSwccgoCardBlueprint("1104_49"));
+        assertNotNull(library.getSwccgoCardBlueprint("1104_50"));
         assertEquals("1104_1", library.getBaseBlueprintId("1104_1"));
         assertEquals(ExpansionSet.VIRTUAL_ORIGINAL_SET_4, library.getSwccgoCardBlueprint("1104_1").getExpansionSet());
         assertEquals(ExpansionSet.VIRTUAL_ORIGINAL_SET_4, library.getSwccgoCardBlueprint("1104_3").getExpansionSet());

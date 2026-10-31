@@ -1465,6 +1465,7 @@ public enum GameTextActionId {
     OVS__IMPERIAL_OCCUPATION__TAKE_CARD(true),
     OVS__IMPERIAL_CONTROL__DEPLOY_MARKER_SITE(true),
     OVS__IMPERIAL_CONTROL__TAKE_FROM_LOST_PILE(true),
+    OVS__STALKER__DEPLOY_PROBE_DROID(true),
     ;
 
     private boolean _searchCardPile;
