@@ -1509,6 +1509,8 @@ public enum GameTextActionId {
     OVS__THROWN_BACK__PLAY_CARD(false, true),
     OVS__YARNA__DEPLOY_TATOOINE_BATTLEGROUND(true),
     OVS__TIME_FOR_OUR_ATTACK__ADDITIONAL_MOVE(false, true),
+    OVS__DROP__PLAY_CARD(false, true),
+    OVS__JABBAS_SPACE_CRUISER__DEPLOY_INDEPENDENT(true),
     ;
 
     private boolean _searchCardPile;
