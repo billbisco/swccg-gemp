@@ -453,6 +453,11 @@ public interface Modifier {
     float getReplacementPermanentPilotAbility(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard card);
 
     /**
+     * Gets the ability of an extra permanent pilot granted by this modifier.
+     */
+    float getExtraPermanentPilotAbility(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard card);
+
+    /**
      * Determines if the specified card is prohibited from moving from the affected location.
      * @param gameState the game state
      * @param modifiersQuerying the modifiers querying

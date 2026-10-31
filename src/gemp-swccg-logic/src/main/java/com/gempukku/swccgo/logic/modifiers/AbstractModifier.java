@@ -1449,6 +1449,11 @@ public abstract class AbstractModifier implements Modifier {
     }
 
     @Override
+    public float getExtraPermanentPilotAbility(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard card) {
+        return 0;
+    }
+
+    @Override
     public float getAbilityUsedForBattleDestinyModifier(GameState gameState, ModifiersQuerying modifiersLogic, PhysicalCard physicalCard) {
         return 0;
     }

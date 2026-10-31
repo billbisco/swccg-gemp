@@ -6,6 +6,7 @@ import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.game.ExtraPermanentPilotBuiltIn;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgBuiltInCardBlueprint;
 import com.gempukku.swccgo.game.SwccgCardBlueprint;
@@ -37,15 +38,24 @@ public interface Piloting extends BaseQuery, Icons, Locations, Prohibited {
      * @return the permanent pilots
      */
     default List<SwccgBuiltInCardBlueprint> getPermanentPilotsAboard(GameState gameState, PhysicalCard physicalCard) {
-        List<SwccgBuiltInCardBlueprint> permanentsAboard = physicalCard.getBlueprint().getPermanentsAboard(physicalCard);
-        if (permanentsAboard == null || permanentPilotsSuspended(gameState, physicalCard))
+        if (permanentPilotsSuspended(gameState, physicalCard))
             return Collections.emptyList();
 
+        List<SwccgBuiltInCardBlueprint> permanentsAboard = physicalCard.getBlueprint().getPermanentsAboard(physicalCard);
         List<SwccgBuiltInCardBlueprint> permanentPilots = new ArrayList<SwccgBuiltInCardBlueprint>();
-        for (SwccgBuiltInCardBlueprint permanentAboard : permanentsAboard) {
-            if (permanentAboard.isPilot()) {
-                permanentPilots.add(permanentAboard);
+        if (permanentsAboard != null) {
+            for (SwccgBuiltInCardBlueprint permanentAboard : permanentsAboard) {
+                if (permanentAboard.isPilot()) {
+                    permanentPilots.add(permanentAboard);
+                }
             }
+        }
+
+        for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.EXTRA_PERMANENT_PILOTS, physicalCard)) {
+            ExtraPermanentPilotBuiltIn extra = new ExtraPermanentPilotBuiltIn(physicalCard,
+                    modifier.getExtraPermanentPilotAbility(gameState, query(), physicalCard));
+            extra.setPhysicalCard(physicalCard);
+            permanentPilots.add(extra);
         }
 
         return permanentPilots;
