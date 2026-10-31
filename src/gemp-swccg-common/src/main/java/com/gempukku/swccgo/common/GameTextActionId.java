@@ -1519,6 +1519,7 @@ public enum GameTextActionId {
     OVS__SUPERFICIAL_DAMAGE__DEPLOY_WEAPON(true),
     OVS__THATS_ONE__CANCEL_BATTLE(false, true),
     OVS__CROSSFIRE__TAKE_EFFECT(true, true),
+    OVS__DREADED_IMPERIAL_STARFLEET__DEPLOY_SQUADRON(true),
     ;
 
     private boolean _searchCardPile;
