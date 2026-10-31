@@ -1412,7 +1412,7 @@ public class FireWeaponActionBuilder {
                                                             for (PhysicalCard cardFiredAt : cardsFiredAt) {
                                                                 if (affectForfeitCondition.isFulfilled(gameState, game.getModifiersQuerying())) {
                                                                     if (resetForfeit) {
-                                                                        float resetValue = PermanentWeaponForfeitReset.adjustResetValue(game, gameState, _permanentWeapon, forfeitModifierOrResetValue, cardFiredAt);
+                                                                        float resetValue = PermanentWeaponForfeitReset.adjustResetValue(game, gameState, _permanentWeapon, _weaponOrCardWithPermanentWeapon, forfeitModifierOrResetValue, cardFiredAt);
                                                                         if (opponentsForceLoss > 0 && forceLossTargetFilter.accepts(game, cardFiredAt)) {
                                                                             effectList.add(new HitCardResetForfeitAndOpponentLosesForceEffect(action, cardFiredAt, resetValue, opponentsForceLoss, _weaponOrCardWithPermanentWeapon, _permanentWeapon, gameState.getWeaponFiringState().getCardFiringWeapon()));
                                                                         } else {
@@ -1564,7 +1564,7 @@ public class FireWeaponActionBuilder {
                                                             for (PhysicalCard cardFiredAt : cardsFiredAt) {
                                                                 if (affectForfeitCondition.isFulfilled(gameState, game.getModifiersQuerying())) {
                                                                     if (resetForfeit) {
-                                                                        float resetValue = PermanentWeaponForfeitReset.adjustResetValue(game, gameState, _permanentWeapon, forfeitModifierOrResetValue, cardFiredAt);
+                                                                        float resetValue = PermanentWeaponForfeitReset.adjustResetValue(game, gameState, _permanentWeapon, _weaponOrCardWithPermanentWeapon, forfeitModifierOrResetValue, cardFiredAt);
                                                                         if (opponentsForceLoss > 0 && forceLossTargetFilter.accepts(game, cardFiredAt)) {
                                                                             effectList.add(new HitCardResetForfeitAndOpponentLosesForceEffect(action, cardFiredAt, resetValue, opponentsForceLoss, _weaponOrCardWithPermanentWeapon, _permanentWeapon, gameState.getWeaponFiringState().getCardFiringWeapon()));
                                                                         } else {
