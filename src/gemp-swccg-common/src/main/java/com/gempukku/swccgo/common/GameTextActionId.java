@@ -1513,6 +1513,12 @@ public enum GameTextActionId {
     OVS__JABBAS_SPACE_CRUISER__DEPLOY_INDEPENDENT(true),
     OVS__COVERT_LANDING__DEPLOY_SCOUT(true),
     OVS__MACE_WINDU__TAKE_BLASTER_DEFLECTION(true, true),
+    OVS__MON_MOTHMA__DEPLOY_BATTLEGROUND(true, true),
+    OVS__QUICK_DRAW__DEPLOY_SAITORR(true, true),
+    OVS__RAPID_DEPLOYMENT__DEPLOY_SCOUT(true),
+    OVS__SUPERFICIAL_DAMAGE__DEPLOY_WEAPON(true),
+    OVS__THATS_ONE__CANCEL_BATTLE(false, true),
+    OVS__CROSSFIRE__TAKE_EFFECT(true, true),
     ;
 
     private boolean _searchCardPile;

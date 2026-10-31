@@ -460,7 +460,22 @@ public class OriginalVirtualIdentityTests {
         assertNotNull(library.getSwccgoCardBlueprint("1109_12"));
         assertNotNull(library.getSwccgoCardBlueprint("1109_13"));
         assertNotNull(library.getSwccgoCardBlueprint("1109_14"));
+        assertNotNull(library.getSwccgoCardBlueprint("1109_15"));
         assertNotNull(library.getSwccgoCardBlueprint("1109_16"));
+        assertNotNull(library.getSwccgoCardBlueprint("1109_17"));
+        assertNotNull(library.getSwccgoCardBlueprint("1109_18"));
+        assertNotNull(library.getSwccgoCardBlueprint("1109_19"));
+        assertNotNull(library.getSwccgoCardBlueprint("1109_20"));
+        assertNotNull(library.getSwccgoCardBlueprint("1109_21"));
+        assertNotNull(library.getSwccgoCardBlueprint("1109_22"));
+        assertNotNull(library.getSwccgoCardBlueprint("1109_23"));
+        assertNotNull(library.getSwccgoCardBlueprint("1109_25"));
+        assertNotNull(library.getSwccgoCardBlueprint("1109_26"));
+        assertNotNull(library.getSwccgoCardBlueprint("1109_27"));
+        assertNotNull(library.getSwccgoCardBlueprint("1109_28"));
+        assertNotNull(library.getSwccgoCardBlueprint("1109_29"));
+        assertNotNull(library.getSwccgoCardBlueprint("1109_30"));
+        assertNotNull(library.getSwccgoCardBlueprint("1109_31"));
         assertEquals("1109_1", library.getBaseBlueprintId("1109_1"));
         assertEquals(ExpansionSet.VIRTUAL_ORIGINAL_SET_9, library.getSwccgoCardBlueprint("1109_1").getExpansionSet());
         assertEquals(ExpansionSet.VIRTUAL_ORIGINAL_SET_9, library.getSwccgoCardBlueprint("1109_2").getExpansionSet());
@@ -471,7 +486,14 @@ public class OriginalVirtualIdentityTests {
         assertEquals(ExpansionSet.VIRTUAL_ORIGINAL_SET_9, library.getSwccgoCardBlueprint("1109_12").getExpansionSet());
         assertEquals(ExpansionSet.VIRTUAL_ORIGINAL_SET_9, library.getSwccgoCardBlueprint("1109_13").getExpansionSet());
         assertEquals(ExpansionSet.VIRTUAL_ORIGINAL_SET_9, library.getSwccgoCardBlueprint("1109_14").getExpansionSet());
+        assertEquals(ExpansionSet.VIRTUAL_ORIGINAL_SET_9, library.getSwccgoCardBlueprint("1109_15").getExpansionSet());
         assertEquals(ExpansionSet.VIRTUAL_ORIGINAL_SET_9, library.getSwccgoCardBlueprint("1109_16").getExpansionSet());
+        assertEquals(ExpansionSet.VIRTUAL_ORIGINAL_SET_9, library.getSwccgoCardBlueprint("1109_17").getExpansionSet());
+        assertEquals(ExpansionSet.VIRTUAL_ORIGINAL_SET_9, library.getSwccgoCardBlueprint("1109_20").getExpansionSet());
+        assertEquals(ExpansionSet.VIRTUAL_ORIGINAL_SET_9, library.getSwccgoCardBlueprint("1109_22").getExpansionSet());
+        assertEquals(ExpansionSet.VIRTUAL_ORIGINAL_SET_9, library.getSwccgoCardBlueprint("1109_23").getExpansionSet());
+        assertEquals(ExpansionSet.VIRTUAL_ORIGINAL_SET_9, library.getSwccgoCardBlueprint("1109_27").getExpansionSet());
+        assertEquals(ExpansionSet.VIRTUAL_ORIGINAL_SET_9, library.getSwccgoCardBlueprint("1109_30").getExpansionSet());
         assertFalse(library.getSwccgoCardBlueprint("1109_1").isLegacy());
         assertFalse(library.getSwccgoCardBlueprint("1109_2").isLegacy());
         assertFalse(library.getSwccgoCardBlueprint("1109_3").isLegacy());
@@ -480,6 +502,12 @@ public class OriginalVirtualIdentityTests {
         assertFalse(library.getSwccgoCardBlueprint("1109_12").isLegacy());
         assertFalse(library.getSwccgoCardBlueprint("1109_13").isLegacy());
         assertFalse(library.getSwccgoCardBlueprint("1109_14").isLegacy());
+        assertFalse(library.getSwccgoCardBlueprint("1109_15").isLegacy());
         assertFalse(library.getSwccgoCardBlueprint("1109_16").isLegacy());
+        assertFalse(library.getSwccgoCardBlueprint("1109_17").isLegacy());
+        assertFalse(library.getSwccgoCardBlueprint("1109_22").isLegacy());
+        assertFalse(library.getSwccgoCardBlueprint("1109_23").isLegacy());
+        assertFalse(library.getSwccgoCardBlueprint("1109_27").isLegacy());
+        assertFalse(library.getSwccgoCardBlueprint("1109_30").isLegacy());
     }
 }
