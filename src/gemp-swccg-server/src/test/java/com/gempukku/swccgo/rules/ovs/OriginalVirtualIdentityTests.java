@@ -614,8 +614,8 @@ public class OriginalVirtualIdentityTests {
     }
 
     @Test
-    public void Vs12Wave1IdsLoadAsOriginalVirtualPrintingsNotLegacyAliases() {
-        for (int i = 1; i <= 15; i++) {
+    public void Vs12IdsLoadAsOriginalVirtualPrintingsNotLegacyAliases() {
+        for (int i = 1; i <= 30; i++) {
             String id = "1112_" + i;
             assertNotNull(id, library.getSwccgoCardBlueprint(id));
             assertEquals(id, library.getBaseBlueprintId(id));
