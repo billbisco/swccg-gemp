@@ -42,7 +42,9 @@ public class LightsaberCombatEffect extends AbstractSubActionEffect {
 
     @Override
     public boolean isPlayableInFull(SwccgGame game) {
-        return true;
+        String playerId = _action.getPerformingPlayer();
+        return playerId == null || !game.getModifiersQuerying().hasFlagActive(game.getGameState(),
+                com.gempukku.swccgo.logic.modifiers.ModifierFlag.MAY_NOT_INITIATE_LIGHTSABER_COMBAT, playerId);
     }
 
     @Override
