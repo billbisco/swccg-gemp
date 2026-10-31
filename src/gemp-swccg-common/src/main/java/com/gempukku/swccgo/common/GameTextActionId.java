@@ -1504,6 +1504,8 @@ public enum GameTextActionId {
     OVS__PRINCE_XIZOR__TAKE_UNEXPECTED_INTERRUPTION(true),
     OVS__THOSE_REBELS__TAKE_STINGER_OR_VIRAGO(true),
     OVS__ZUCKUSS__DEPLOY_4LOM(true, true),
+    OVS__BARGAINING_TABLE__DEPLOY_ALIEN(true),
+    OVS__KRAYT_DRAGON_HOWL__DEPLOY_OBIWAN_AND_WEAPON(true),
     ;
 
     private boolean _searchCardPile;
