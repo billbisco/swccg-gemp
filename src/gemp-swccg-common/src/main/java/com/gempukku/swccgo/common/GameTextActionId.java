@@ -1506,6 +1506,9 @@ public enum GameTextActionId {
     OVS__ZUCKUSS__DEPLOY_4LOM(true, true),
     OVS__BARGAINING_TABLE__DEPLOY_ALIEN(true),
     OVS__KRAYT_DRAGON_HOWL__DEPLOY_OBIWAN_AND_WEAPON(true),
+    OVS__THROWN_BACK__PLAY_CARD(false, true),
+    OVS__YARNA__DEPLOY_TATOOINE_BATTLEGROUND(true),
+    OVS__TIME_FOR_OUR_ATTACK__ADDITIONAL_MOVE(false, true),
     ;
 
     private boolean _searchCardPile;
