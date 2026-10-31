@@ -22,6 +22,7 @@ import com.gempukku.swccgo.logic.effects.DrawDestinyEffect;
 import com.gempukku.swccgo.logic.effects.LoseCardFromTableEffect;
 import com.gempukku.swccgo.logic.effects.RespondablePlayCardEffect;
 import com.gempukku.swccgo.logic.effects.TargetCardOnTableEffect;
+import com.gempukku.swccgo.logic.modifiers.ModifyGameTextType;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 import com.gempukku.swccgo.logic.timing.Action;
 import com.gempukku.swccgo.logic.timing.GuiUtils;
@@ -51,6 +52,9 @@ public class Card6_076 extends AbstractLostInterrupt {
 
         TargetingReason targetingReason = TargetingReason.TO_BE_LOST;
         Filter filter = Filters.and(Filters.escorting(Filters.nonFrozenCaptive), Filters.alone);
+        if (GameConditions.hasGameTextModification(game, self, ModifyGameTextType.LEGACY__LEIA_ORGANA_V__STRANGLE_ESCORT_ALONE_IS_ESCORT)) {
+            filter = Filters.escorting(Filters.nonFrozenCaptive);
+        }
 
         // Check condition(s)
         if (GameConditions.canTarget(game, self, targetingReason, filter)) {
