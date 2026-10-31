@@ -1490,6 +1490,7 @@ public enum GameTextActionId {
     OVS__YODA__DEPLOY_GIMER_STICK(true),
     OVS__BAD_FEELING_HAVE_I__DEPLOY_VADER(true, true),
     OVS__BAD_FEELING_HAVE_I__UPLOAD_DUEL_CARD(true),
+    OVS__FLAGSHIP__UPLOAD_ADMIRAL_OR_EXECUTOR(true),
     ;
 
     private boolean _searchCardPile;

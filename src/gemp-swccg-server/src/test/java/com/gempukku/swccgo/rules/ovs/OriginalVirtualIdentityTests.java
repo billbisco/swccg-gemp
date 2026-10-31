@@ -203,6 +203,11 @@ public class OriginalVirtualIdentityTests {
         assertNotNull(library.getSwccgoCardBlueprint("1105_25"));
         assertNotNull(library.getSwccgoCardBlueprint("1105_26"));
         assertNotNull(library.getSwccgoCardBlueprint("1105_28"));
+        assertNotNull(library.getSwccgoCardBlueprint("1105_33"));
+        assertNotNull(library.getSwccgoCardBlueprint("1105_34"));
+        assertNotNull(library.getSwccgoCardBlueprint("1105_35"));
+        assertNotNull(library.getSwccgoCardBlueprint("1105_38"));
+        assertNotNull(library.getSwccgoCardBlueprint("1105_41"));
         assertEquals("1105_1", library.getBaseBlueprintId("1105_1"));
         assertEquals(ExpansionSet.VIRTUAL_ORIGINAL_SET_5, library.getSwccgoCardBlueprint("1105_1").getExpansionSet());
         assertEquals(ExpansionSet.VIRTUAL_ORIGINAL_SET_5, library.getSwccgoCardBlueprint("1105_2").getExpansionSet());
@@ -211,11 +216,16 @@ public class OriginalVirtualIdentityTests {
         assertEquals(ExpansionSet.VIRTUAL_ORIGINAL_SET_5, library.getSwccgoCardBlueprint("1105_19").getExpansionSet());
         assertEquals(ExpansionSet.VIRTUAL_ORIGINAL_SET_5, library.getSwccgoCardBlueprint("1105_26").getExpansionSet());
         assertEquals(ExpansionSet.VIRTUAL_ORIGINAL_SET_5, library.getSwccgoCardBlueprint("1105_28").getExpansionSet());
+        assertEquals(ExpansionSet.VIRTUAL_ORIGINAL_SET_5, library.getSwccgoCardBlueprint("1105_33").getExpansionSet());
+        assertEquals(ExpansionSet.VIRTUAL_ORIGINAL_SET_5, library.getSwccgoCardBlueprint("1105_34").getExpansionSet());
+        assertEquals(ExpansionSet.VIRTUAL_ORIGINAL_SET_5, library.getSwccgoCardBlueprint("1105_38").getExpansionSet());
         assertFalse(library.getSwccgoCardBlueprint("1105_1").isLegacy());
         assertFalse(library.getSwccgoCardBlueprint("1105_2").isLegacy());
         assertFalse(library.getSwccgoCardBlueprint("1105_10").isLegacy());
         assertFalse(library.getSwccgoCardBlueprint("1105_17").isLegacy());
         assertFalse(library.getSwccgoCardBlueprint("1105_26").isLegacy());
         assertFalse(library.getSwccgoCardBlueprint("1105_28").isLegacy());
+        assertFalse(library.getSwccgoCardBlueprint("1105_33").isLegacy());
+        assertFalse(library.getSwccgoCardBlueprint("1105_38").isLegacy());
     }
 }
