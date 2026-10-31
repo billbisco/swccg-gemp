@@ -1520,6 +1520,11 @@ public enum GameTextActionId {
     OVS__THATS_ONE__CANCEL_BATTLE(false, true),
     OVS__CROSSFIRE__TAKE_EFFECT(true, true),
     OVS__DREADED_IMPERIAL_STARFLEET__DEPLOY_SQUADRON(true),
+    OVS__GREEN_SQUADRON_1__TAKE_DIVERSIONARY_TACTICS(true),
+    OVS__MEDITATION__PLAY_INTERRUPT_FROM_STARTING_EFFECT(false, true),
+    OVS__OBIWAN_JEDI_KNIGHT__TAKE_DISARMED(true, true),
+    OVS__DESPERATE_HOUR__DUMP_STARTING_HAND(false, true),
+    OVS__PADME__UPLOAD_LEIA_OR_LUKE(true),
     ;
 
     private boolean _searchCardPile;
