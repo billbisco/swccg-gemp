@@ -1,0 +1,88 @@
+package com.gempukku.swccgo.cards.set1106.dark;
+
+import com.gempukku.swccgo.common.CardType;
+import com.gempukku.swccgo.common.ExpansionSet;
+import com.gempukku.swccgo.common.Icon;
+import com.gempukku.swccgo.common.Keyword;
+import com.gempukku.swccgo.common.Persona;
+import com.gempukku.swccgo.common.Phase;
+import com.gempukku.swccgo.common.Rarity;
+import com.gempukku.swccgo.common.Side;
+import com.gempukku.swccgo.common.Uniqueness;
+import com.gempukku.swccgo.common.Zone;
+import com.gempukku.swccgo.framework.StartingSetup;
+import com.gempukku.swccgo.framework.VirtualTableScenario;
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import static com.gempukku.swccgo.framework.Assertions.assertInZone;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+public class Card_1106_046_Tests {
+    protected VirtualTableScenario GetScenario() {
+        return new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("luke", "1_19");
+                }},
+                new HashMap<>() {{
+                    put("emperor", "1106_46");
+                }},
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+    }
+
+    @Test
+    public void TheEmperorStatsIconsAndKeywordsAreCorrect() {
+        var scn = GetScenario();
+        var card = scn.GetDSCard("emperor").getBlueprint();
+        assertEquals("The Emperor", card.getTitle());
+        assertTrue(card.hasVirtualSuffix());
+        assertEquals(Uniqueness.UNIQUE, card.getUniqueness());
+        assertEquals(Side.DARK, card.getSide());
+        assertEquals(1, card.getDestiny(), scn.epsilon);
+        assertEquals(5, card.getDeployCost(), scn.epsilon);
+        assertEquals(4, card.getPower(), scn.epsilon);
+        assertEquals(7, card.getAbility(), scn.epsilon);
+        assertEquals(9, card.getForfeit(), scn.epsilon);
+        assertEquals(4, card.getPolitics(), scn.epsilon);
+        scn.BlueprintCardTypeCheck(card, new ArrayList<>() {{
+            add(CardType.DARK_JEDI_MASTER);
+            add(CardType.IMPERIAL);
+        }});
+        scn.BlueprintKeywordCheck(card, new ArrayList<>() {{
+            add(Keyword.LEADER);
+        }});
+        scn.BlueprintPersonaCheck(card, new ArrayList<>() {{
+            add(Persona.SIDIOUS);
+        }});
+        scn.BlueprintIconCheck(card, new ArrayList<>() {{
+            add(Icon.DARK_JEDI_MASTER);
+            add(Icon.IMPERIAL);
+            add(Icon.REFLECTIONS_II);        }});
+        assertEquals(ExpansionSet.VIRTUAL_ORIGINAL_SET_6, card.getExpansionSet());
+        assertEquals(Rarity.V, card.getRarity());
+    }
+
+    @Test
+    public void TheEmperorMayTargetACharacterPresent() {
+        var scn = GetScenario();
+        var emperor = scn.GetDSCard("emperor");
+        var luke = scn.GetLSCard("luke");
+        var site = scn.GetDSStartingLocation();
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, emperor, luke);
+        scn.SkipToDSTurn();
+        assertTrue(scn.DSCardActionAvailable(emperor, "Target"));
+    }
+}

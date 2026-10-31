@@ -1,0 +1,98 @@
+package com.gempukku.swccgo.cards.set1106.dark;
+
+import com.gempukku.swccgo.common.CardSubtype;
+import com.gempukku.swccgo.common.CardType;
+import com.gempukku.swccgo.common.ExpansionSet;
+import com.gempukku.swccgo.common.Icon;
+import com.gempukku.swccgo.common.Keyword;
+import com.gempukku.swccgo.common.Phase;
+import com.gempukku.swccgo.common.Rarity;
+import com.gempukku.swccgo.common.Side;
+import com.gempukku.swccgo.common.Uniqueness;
+import com.gempukku.swccgo.common.Zone;
+import com.gempukku.swccgo.framework.StartingSetup;
+import com.gempukku.swccgo.framework.VirtualTableScenario;
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import static com.gempukku.swccgo.framework.Assertions.assertInZone;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+public class Card_1106_048_Tests {
+    protected VirtualTableScenario GetScenario() {
+        return new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("luke", "1_19");
+                }},
+                new HashMap<>() {{
+                    put("bounty", "1106_48");
+                    put("boba", "5_91");
+                }},
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+    }
+
+    @Test
+    public void VadersBountyStatsIconsAndKeywordsAreCorrect() {
+        var scn = GetScenario();
+        var card = scn.GetDSCard("bounty").getBlueprint();
+
+        assertEquals("Vader's Bounty", card.getTitle());
+        assertTrue(card.hasVirtualSuffix());
+        assertEquals(Uniqueness.UNIQUE, card.getUniqueness());
+        assertEquals(Side.DARK, card.getSide());
+        assertEquals(4, card.getDestiny(), scn.epsilon);
+        assertEquals(CardSubtype.NORMAL, card.getCardSubtype());
+        scn.BlueprintCardTypeCheck(card, new ArrayList<>() {{
+            add(CardType.EFFECT);
+        }});
+        scn.BlueprintKeywordCheck(card, new ArrayList<Keyword>());
+        scn.BlueprintIconCheck(card, new ArrayList<>() {{
+            add(Icon.CLOUD_CITY);
+            add(Icon.EFFECT);
+        }});
+        assertEquals(ExpansionSet.VIRTUAL_ORIGINAL_SET_6, card.getExpansionSet());
+        assertEquals(Rarity.V, card.getRarity());
+    }
+
+    @Test
+    public void VadersBountyDeploysOnTable() {
+        var scn = GetScenario();
+        var bounty = scn.GetDSCard("bounty");
+
+        scn.StartGame();
+        scn.MoveCardsToDSHand(bounty);
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        assertTrue(scn.DSCardPlayAvailable(bounty));
+        scn.DSPlayCard(bounty);
+        scn.PassAllResponses();
+        assertInZone(Zone.SIDE_OF_TABLE, bounty);
+    }
+
+    @Test
+    public void VadersBountyMayPlaceInLostPileToAddThreeToBobaFettsWeaponDestinyOutsideBattle() {
+        var scn = GetScenario();
+        var bounty = scn.GetDSCard("bounty");
+        var boba = scn.GetDSCard("boba");
+        var site = scn.GetDSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToDSSideOfTable(bounty);
+        scn.MoveCardsToLocation(site, boba);
+        scn.SkipToDSTurn(Phase.CONTROL);
+        assertTrue(scn.DSCardActionAvailable(bounty, "Place in Lost Pile to add 3 to Boba Fett's total weapon destiny"));
+        scn.DSUseCardAction(bounty, "Place in Lost Pile to add 3 to Boba Fett's total weapon destiny");
+        scn.PassAllResponses();
+        assertTrue(bounty.getZone() == Zone.LOST_PILE || bounty.getZone() == Zone.TOP_OF_LOST_PILE);
+    }
+}
