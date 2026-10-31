@@ -108,6 +108,7 @@ public interface Title {
     String Bacta_Tank = "Bacta Tank";
     String Bad_Feeling_Have_I = "Bad Feeling Have I";
     String Barada = "Barada";
+    String Bargaining_Table = "Bargaining Table";
     String Barich = "Sergeant Barich";
     String Battle_Order = "Battle Order";
     String Battle_Plains = "Naboo: Battle Plains";
@@ -625,6 +626,7 @@ public interface Title {
     String I_Had_No_Choice = "I Had No Choice";
     String I_Must_Be_Allowed_To_Speak = "I Must Be Allowed To Speak";
     String I_Want_That_Map = "I Want That Map";
+    String I_Wonder_Who_They_Found = "I Wonder Who They Found";
     String I_Will_Find_Them_Quickly_Master = "I Will Find Them Quickly, Master";
     String I_Will_Finish_What_You_Started = "I Will Finish What You Started";
     String I_Will_Make_It_Legal = "I Will Make It Legal";
@@ -800,17 +802,20 @@ public interface Title {
     String Lower_Passages = "Jabba's Palace: Lower Passages";
     String Lor_San_Tekka = "Lor San Tekka";
     String Losing_Track = "Losing Track";
+    String Loje_Parm = "Loje Parm";
     String Lost_In_The_Wilderness = "Lost In The Wilderness";
     String Lothal = "Lothal";
     String Lothal_Advanced_Projects_Laboratory = "Lothal: Advanced Projects Laboratory";
     String Lothal_Capital_City = "Lothal: Capital City";
     String Lothal_Imperial_Complex = "Lothal: Imperial Complex";
     String Lothal_Jedi_Temple = "Lothal: Jedi Temple";
+    String Luke_Skywalker_Rebel_Scout = "Luke Skywalker, Rebel Scout";
     String Lukes_Back = "Luke's Back";
     String Lukes_Backpack = "Luke's Backpack";
     String Lukes_Blaster_Pistol = "Luke's Blaster Pistol";
     String Lukes_Lightsaber = "Luke's Lightsaber";
     String Lukes_T16_Skyhopper = "Luke's T-16 Skyhopper";
+    String Lukes_Ultimatum = "Luke's Ultimatum";
     String Lukes_X34_Landspeeder = "Luke's X-34 Landspeeder";
     String Lucky_Shot = "Lucky Shot";
     String Lumat = "Lumat";
@@ -1006,6 +1011,7 @@ public interface Title {
     String Perimeter_Scan = "Perimeter Scan";
     String Precision_Targeting = "Precision Targeting";
     String Prepare_For_A_Surface_Attack = "Prepare For A Surface Attack";
+    String Princess_Leia_Organa = "Princess Leia Organa";
     String Prepare_The_Chamber = "Prepare The Chamber";
     String Presence_Of_The_Force = "Presence Of The Force";
     String Pride_Of_The_Empire = "Pride Of The Empire";
@@ -1248,6 +1254,7 @@ public interface Title {
     String Takodana = "Takodana";
     String Tala_1 = "Tala 1";
     String Tala_2 = "Tala 2";
+    String Tamtel_Skreej = "Tamtel Skreej";
     String Tanbris = "Lieutenant Tanbris";
     String Tantive_IV = "Tantive IV";
     String Targeting_Computer = "Targeting Computer";
@@ -1256,6 +1263,7 @@ public interface Title {
     String Tatooine = "Tatooine";
     String Tatooine_Celebration = "Tatooine Celebration";
     String Tatooine_Occupation = "Tatooine Occupation";
+    String Tawss_Khaa = "Tawss Khaa";
     String Taym_Drengaren = "Taym Dren-garen";
     String Telsij = "Lieutenant Telsij";
     String Tempest_1 = "Tempest 1";
@@ -1437,6 +1445,7 @@ public interface Title {
     String What_Was_It = "What Was It?";
     String Where_Are_Those_Droidekas = "Where Are Those Droidekas?!";
     String Wheres_Han = "Where's Han?";
+    String Wicket = "Wicket";
     String Why_Didnt_You_Tell_Me = "Why Didn't You Tell Me?";
     String Wild_Karrde = "Wild Karrde";
     String Williams = "Lieutenant Williams";
