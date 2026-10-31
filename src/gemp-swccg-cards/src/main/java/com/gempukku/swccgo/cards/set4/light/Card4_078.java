@@ -31,6 +31,7 @@ import com.gempukku.swccgo.logic.effects.AddUntilEndOfPlayersNextTurnActionProxy
 import com.gempukku.swccgo.logic.effects.AddUntilEndOfPlayersNextTurnModifierEffect;
 import com.gempukku.swccgo.logic.effects.ChooseArbitraryCardsEffect;
 import com.gempukku.swccgo.logic.effects.CompleteJediTestEffect;
+import com.gempukku.swccgo.logic.effects.LoseForceEffect;
 import com.gempukku.swccgo.logic.effects.RefreshPrintedDestinyValuesEffect;
 import com.gempukku.swccgo.logic.effects.RotateCardEffect;
 import com.gempukku.swccgo.logic.effects.SubstituteDestinyEffect;
@@ -168,9 +169,18 @@ public class Card4_078 extends AbstractJediTest {
                 final PhysicalCard stackedDestinyCard = Filters.findFirstFromStacked(game, Filters.and(Filters.stackedViaJediTest5,
                         Filters.stackedOn(self, Filters.or(self.getTargetedCard(gameState, TargetId.JEDI_TEST_APPRENTICE), Filters.Jedi_Test_5))));
                 if (stackedDestinyCard != null) {
+                    boolean mustLoseForceToSubstitute = GameConditions.hasGameTextModification(game, self,
+                            ModifyGameTextType.SON_OF_SKYWALKER_V__LOSE_1_FORCE_TO_SUBSTITUTE_DESTINY);
+                    if (mustLoseForceToSubstitute && !GameConditions.canUseForce(game, playerId, 1)) {
+                        return actions;
+                    }
 
                     final OptionalGameTextTriggerAction action = new OptionalGameTextTriggerAction(self, gameTextSourceCardId, gameTextActionId);
                     action.setText("Substitute destiny");
+                    if (mustLoseForceToSubstitute) {
+                        action.appendCost(
+                                new LoseForceEffect(action, playerId, 1, true));
+                    }
                     // Pay cost(s)
                     action.appendCost(
                             new RefreshPrintedDestinyValuesEffect(action, Collections.singletonList(stackedDestinyCard)) {
