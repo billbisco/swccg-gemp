@@ -714,4 +714,17 @@ public class OriginalVirtualIdentityTests {
             assertFalse(library.getSwccgoCardBlueprint(id).isLegacy());
         }
     }
+
+    @Test
+    public void DefensiveShieldsIdsLoadAsOriginalVirtualPrintingsAndJoinTheVs12Pool() {
+        for (int i = 1; i <= 18; i++) {
+            String id = "1100_" + i;
+            assertNotNull(id, library.getSwccgoCardBlueprint(id));
+            assertEquals(id, library.getBaseBlueprintId(id));
+        }
+        assertFalse(formats.getFormat("premiere_ovs11").getValidSets().contains(1100));
+        for (int n = 12; n <= 17; n++) {
+            assertTrue("premiere_ovs" + n, formats.getFormat("premiere_ovs" + n).getValidSets().contains(1100));
+        }
+    }
 }
