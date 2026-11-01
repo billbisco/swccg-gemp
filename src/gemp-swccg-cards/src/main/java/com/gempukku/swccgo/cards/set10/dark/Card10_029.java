@@ -75,10 +75,10 @@ public class Card10_029 extends AbstractObjective {
                 });
 
         List<PhysicalCard> reserveDeck = game.getGameState().getReserveDeck(playerId);
-        if (!Filters.filter(reserveDeck, game, Filters.and(Icon.LEGACY_BLOCK_4, Filters.No_Bargain)).isEmpty()
-                && !Filters.filter(reserveDeck, game, Filters.and(Icon.LEGACY_BLOCK_4, Filters.title("Shada"))).isEmpty()) {
-            // Legacy Shada + No Bargain (V)
-            action.appendRequiredEffect(new DeployCardToLocationFromReserveDeckEffect(action, Filters.or(Filters.Xizor, Filters.and(Icon.LEGACY_BLOCK_4, Filters.title("Shada"))), Filters.Imperial_City, true, false) {
+        if (!Filters.filter(reserveDeck, game, shadaComboNoBargain()).isEmpty()
+                && !Filters.filter(reserveDeck, game, shadaComboShada()).isEmpty()) {
+            // Virtual Block 4 or Virtual Set 15 Shada + No Bargain
+            action.appendRequiredEffect(new DeployCardToLocationFromReserveDeckEffect(action, Filters.or(Filters.Xizor, shadaComboShada()), Filters.Imperial_City, true, false) {
                 @Override
                 public String getChoiceText() {
                     return "Choose Xizor or Shada to deploy";
@@ -86,9 +86,9 @@ public class Card10_029 extends AbstractObjective {
 
                 @Override
                 protected void cardDeployed(PhysicalCard card) {
-                    if (Filters.and(Icon.LEGACY_BLOCK_4, Filters.title("Shada")).accepts(game, card)) {
+                    if (shadaComboShada().accepts(game, card)) {
                         action.insertEffect(
-                                new DeployCardFromReserveDeckEffect(action, Filters.and(Icon.LEGACY_BLOCK_4, Filters.No_Bargain), true, false) {
+                                new DeployCardFromReserveDeckEffect(action, shadaComboNoBargain(), true, false) {
                                     @Override
                                     public String getChoiceText() {
                                         return "Choose No Bargain (V) to deploy";
@@ -182,5 +182,24 @@ public class Card10_029 extends AbstractObjective {
             }
         }
         return null;
+    }
+
+    private static com.gempukku.swccgo.filters.Filter fromSet(final com.gempukku.swccgo.common.Filterable base, final ExpansionSet set) {
+        return Filters.and(base, new com.gempukku.swccgo.filters.Filter() {
+            @Override
+            public boolean accepts(com.gempukku.swccgo.game.state.GameState gameState, com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard) {
+                return physicalCard.getBlueprint().getExpansionSet() == set;
+            }
+        });
+    }
+
+    private static com.gempukku.swccgo.filters.Filter shadaComboShada() {
+        return Filters.or(Filters.and(Icon.LEGACY_BLOCK_4, Filters.title("Shada")),
+                fromSet(Filters.title("Shada"), ExpansionSet.VIRTUAL_ORIGINAL_SET_15));
+    }
+
+    private static com.gempukku.swccgo.filters.Filter shadaComboNoBargain() {
+        return Filters.or(Filters.and(Icon.LEGACY_BLOCK_4, Filters.No_Bargain),
+                fromSet(Filters.No_Bargain, ExpansionSet.VIRTUAL_ORIGINAL_SET_15));
     }
 }
