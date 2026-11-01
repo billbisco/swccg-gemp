@@ -170,7 +170,7 @@ public class OriginalVirtualIdentityTests {
 
     @Test
     public void Vs15IdsLoadAsOriginalVirtualPrintingsNotLegacyAliases() {
-        for (int i = 1; i <= 45; i++) {
+        for (int i = 1; i <= 60; i++) {
             String id = "1115_" + i;
             assertNotNull(id, library.getSwccgoCardBlueprint(id));
             assertEquals(id, library.getBaseBlueprintId(id));
