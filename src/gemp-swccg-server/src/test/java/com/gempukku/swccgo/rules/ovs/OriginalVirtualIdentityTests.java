@@ -159,6 +159,24 @@ public class OriginalVirtualIdentityTests {
         assertTrue(premiereOvs14.getValidSets().contains(1113));
         assertTrue(premiereOvs14.getValidSets().contains(1114));
         assertFalse(premiereOvs14.getValidSets().contains(1115));
+        assertFalse(formats.getFormat("open").getValidSets().contains(1115));
+        assertFalse(formats.getFormat("legacy").getValidSets().contains(1115));
+        SwccgFormat premiereOvs15 = formats.getFormat("premiere_ovs15");
+        assertNotNull(premiereOvs15);
+        assertTrue(premiereOvs15.getValidSets().contains(1114));
+        assertTrue(premiereOvs15.getValidSets().contains(1115));
+        assertFalse(premiereOvs15.getValidSets().contains(1116));
+    }
+
+    @Test
+    public void Vs15IdsLoadAsOriginalVirtualPrintingsNotLegacyAliases() {
+        for (int i = 1; i <= 15; i++) {
+            String id = "1115_" + i;
+            assertNotNull(id, library.getSwccgoCardBlueprint(id));
+            assertEquals(id, library.getBaseBlueprintId(id));
+            assertEquals(ExpansionSet.VIRTUAL_ORIGINAL_SET_15, library.getSwccgoCardBlueprint(id).getExpansionSet());
+            assertFalse(library.getSwccgoCardBlueprint(id).isLegacy());
+        }
     }
 
     @Test
