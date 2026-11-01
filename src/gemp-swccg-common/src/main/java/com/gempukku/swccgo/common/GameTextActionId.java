@@ -1531,6 +1531,9 @@ public enum GameTextActionId {
     OVS__IVE_LOST_ARTOO__PLAY_INTERRUPT_FROM_STARTING_EFFECT(false, true),
     OVS__HE_IS_NOT_READY__DUMP_STARTING_HAND(false, true),
     OVS__LORD_VADER__DEPLOY_LIGHTSABER(false),
+    OVS__JEDI_ARCHIVES__TAKE_SPEAK_WITH_COUNCIL(true, true),
+    OVS__A_JEDIS_PLANS__DEPLOY_LOCATION(true),
+    OVS__UNUSUAL_FEAR__TAKE_A_JEDIS_CARD(true),
     ;
 
     private boolean _searchCardPile;
