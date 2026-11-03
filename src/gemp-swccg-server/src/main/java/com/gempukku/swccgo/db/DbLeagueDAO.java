@@ -21,14 +21,32 @@ public class DbLeagueDAO implements LeagueDAO {
         _dbAccess = dbAccess;
     }
 
+    private volatile boolean _setupColumnReady;
+
+    /** Adds league.game_setup (#119, approved by Bill in swccg-guild/work#114 Q2). Idempotent. */
+    private void ensureSetupColumn(Connection connection) throws SQLException {
+        if (_setupColumnReady)
+            return;
+        try (java.sql.Statement statement = connection.createStatement()) {
+            statement.execute("ALTER TABLE league ADD COLUMN IF NOT EXISTS game_setup TEXT CHARACTER SET utf8 COLLATE utf8_bin NULL");
+        }
+        _setupColumnReady = true;
+    }
+
     public void addLeague(int cost, String name, String type, String clazz, String parameters, int start, int endTime, boolean allowSpectators, boolean allowTimeExtensions, boolean showPlayerNames, boolean invitationOnly, String registrationInfo, int decisionTimeoutSeconds, int timePerPlayerMinutes, LockedDeckType lockedDeckType) throws SQLException, IOException {
         addLeague(cost, name, type, clazz, parameters, start, endTime, allowSpectators, allowTimeExtensions, showPlayerNames, invitationOnly, registrationInfo, decisionTimeoutSeconds, timePerPlayerMinutes, lockedDeckType, null);
     }
 
     @Override
     public void addLeague(int cost, String name, String type, String clazz, String parameters, int start, int endTime, boolean allowSpectators, boolean allowTimeExtensions, boolean showPlayerNames, boolean invitationOnly, String registrationInfo, int decisionTimeoutSeconds, int timePerPlayerMinutes, LockedDeckType lockedDeckType, Integer scheduleId) throws SQLException, IOException {
+        addLeague(cost, name, type, clazz, parameters, start, endTime, allowSpectators, allowTimeExtensions, showPlayerNames, invitationOnly, registrationInfo, decisionTimeoutSeconds, timePerPlayerMinutes, lockedDeckType, scheduleId, null);
+    }
+
+    @Override
+    public void addLeague(int cost, String name, String type, String clazz, String parameters, int start, int endTime, boolean allowSpectators, boolean allowTimeExtensions, boolean showPlayerNames, boolean invitationOnly, String registrationInfo, int decisionTimeoutSeconds, int timePerPlayerMinutes, LockedDeckType lockedDeckType, Integer scheduleId, String gameSetup) throws SQLException, IOException {
         Connection conn = _dbAccess.getDataSource().getConnection();
         try {
+            ensureSetupColumn(conn);
             // schedule_id is only named when there is one, so a hand-made league still saves on a database that has
             // not had update_league_schedule.sql run on it yet (only the scheduler needs the column).
             String columns = "name, type, class, parameters, start, end, status, cost, allowSpectators, allowTimeExtensions, showPlayerNames, decisionTimeoutSeconds, timePerPlayerMinutes, invitationOnly, registrationInfo, lockedDeckType";
@@ -37,6 +55,8 @@ public class DbLeagueDAO implements LeagueDAO {
                 columns += ", schedule_id";
                 values += ", ?";
             }
+            columns += ", game_setup";
+            values += ", ?";
             PreparedStatement statement = conn.prepareStatement("insert into league (" + columns + ") values (" + values + ")");
             try {
                 statement.setString(1, name);
@@ -55,8 +75,10 @@ public class DbLeagueDAO implements LeagueDAO {
                 statement.setBoolean(14, invitationOnly);
                 statement.setString(15, registrationInfo);
                 statement.setString(16, lockedDeckType == null ? null : lockedDeckType.getCode());
+                int next = 17;
                 if (scheduleId != null)
-                    statement.setInt(17, scheduleId);
+                    statement.setInt(next++, scheduleId);
+                statement.setString(next, gameSetup == null || gameSetup.isEmpty() ? null : gameSetup);
                 statement.execute();
             } finally {
                 statement.close();
@@ -69,7 +91,8 @@ public class DbLeagueDAO implements LeagueDAO {
     public List<League> loadActiveLeagues(SwccgCardBlueprintLibrary library, int currentTime) throws SQLException, IOException {
         Connection conn = _dbAccess.getDataSource().getConnection();
         try {
-            PreparedStatement statement = conn.prepareStatement("select name, type, class, parameters, status, cost, allowSpectators, allowTimeExtensions, showPlayerNames, decisionTimeoutSeconds, timePerPlayerMinutes, invitationOnly, registrationInfo, lockedDeckType from league where end>=? order by start desc");
+            ensureSetupColumn(conn);
+            PreparedStatement statement = conn.prepareStatement("select name, type, class, parameters, status, cost, allowSpectators, allowTimeExtensions, showPlayerNames, decisionTimeoutSeconds, timePerPlayerMinutes, invitationOnly, registrationInfo, lockedDeckType, game_setup from league where end>=? order by start desc");
             try {
                 statement.setInt(1, currentTime);
                 ResultSet rs = statement.executeQuery();
@@ -90,7 +113,9 @@ public class DbLeagueDAO implements LeagueDAO {
                         boolean invitationOnly = rs.getBoolean(12);
                         String registrationInfo = rs.getString(13);
                         LockedDeckType lockedDeckType = LockedDeckType.getLockedDeckType(rs.getString(14));
-                        activeLeagues.add(new League(library, cost, name, type, clazz, parameters, status, allowSpectators, allowTimeExtensions, showPlayerNames, invitationOnly, registrationInfo, decisionTimeoutSeconds, timePerPlayerMinutes, lockedDeckType));
+                        League league = new League(library, cost, name, type, clazz, parameters, status, allowSpectators, allowTimeExtensions, showPlayerNames, invitationOnly, registrationInfo, decisionTimeoutSeconds, timePerPlayerMinutes, lockedDeckType);
+                        league.setGameSetup(rs.getString(15));
+                        activeLeagues.add(league);
                     }
                     return activeLeagues;
                 } finally {
@@ -161,16 +186,21 @@ public class DbLeagueDAO implements LeagueDAO {
 
     /** Runs a query selecting {@link EventQuery#LEAGUE_COLUMNS} and maps every row to a League (with its stored start / end). */
     private List<League> loadLeagues(SwccgCardBlueprintLibrary library, EventQuery query) throws SQLException {
+        try (Connection setupConn = _dbAccess.getDataSource().getConnection()) {
+            ensureSetupColumn(setupConn);
+        }
         try (Connection conn = _dbAccess.getDataSource().getConnection();
              PreparedStatement statement = conn.prepareStatement(query.sql())) {
             query.bind(statement);
             try (ResultSet rs = statement.executeQuery()) {
                 List<League> leagues = new ArrayList<>();
                 while (rs.next()) {
-                    leagues.add(new League(library, rs.getInt(6), rs.getString(1), rs.getString(2), rs.getString(3),
+                    League league = new League(library, rs.getInt(6), rs.getString(1), rs.getString(2), rs.getString(3),
                             rs.getString(4), rs.getInt(5), rs.getBoolean(7), rs.getBoolean(8), rs.getBoolean(9),
                             rs.getBoolean(12), rs.getString(13), rs.getInt(10), rs.getInt(11),
-                            LockedDeckType.getLockedDeckType(rs.getString(14)), rs.getInt(15), rs.getInt(16), readScheduleId(rs, 17)));
+                            LockedDeckType.getLockedDeckType(rs.getString(14)), rs.getInt(15), rs.getInt(16), readScheduleId(rs, 17));
+                    league.setGameSetup(rs.getString(18));
+                    leagues.add(league);
                 }
                 return leagues;
             }

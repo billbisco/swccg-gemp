@@ -772,6 +772,7 @@ var GempSwccgCommunication = Class.extend({
             lightSampleDeck: params.lightSampleDeck,
             darkDeckName: params.darkDeckName,
             darkSampleDeck: params.darkSampleDeck,
+            gameOptions: params.gameOptions || "{}",
             participantId:getUrlParam("participantId")
         };
         $.ajax({
@@ -1401,7 +1402,7 @@ var GempSwccgCommunication = Class.extend({
                               allowTimeExtensions, allowSpectators, showPlayerNames,
                               invitationOnly, registrationInfo, decisionTimeoutSeconds,
                               timePerPlayerMinutes, lockedDeckType, formats, serieDurations, maxMatches,
-                              callback, errorMap) {
+                              callback, errorMap, serieOptions) {
         $.ajax({
             type:"POST",
             url:this.url + "/admin/league/constructed/preview",
@@ -1422,7 +1423,8 @@ var GempSwccgCommunication = Class.extend({
                 lockedDeckType:lockedDeckType,
                 formats:formats,
                 serieDurations:serieDurations,
-                maxMatches:maxMatches
+                maxMatches:maxMatches,
+                serieOptions:serieOptions || []
             },
             success:this.deliveryCheck(callback),
             error:this.errorCheck(errorMap),
@@ -1434,7 +1436,7 @@ var GempSwccgCommunication = Class.extend({
                               allowTimeExtensions, allowSpectators, showPlayerNames,
                               invitationOnly, registrationInfo, decisionTimeoutSeconds,
                               timePerPlayerMinutes, lockedDeckType, formats, serieDurations, maxMatches,
-                              callback, errorMap) {
+                              callback, errorMap, serieOptions) {
         $.ajax({
             type:"POST",
             url:this.url + "/admin/league/constructed/create",
@@ -1455,7 +1457,8 @@ var GempSwccgCommunication = Class.extend({
                 lockedDeckType:lockedDeckType,
                 formats:formats,
                 serieDurations:serieDurations,
-                maxMatches:maxMatches
+                maxMatches:maxMatches,
+                serieOptions:serieOptions || []
             },
             success:this.deliveryCheck(callback),
             error:this.errorCheck(errorMap),

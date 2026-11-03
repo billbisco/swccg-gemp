@@ -27,6 +27,8 @@ public class League {
     private int _start;
     private int _end;
     private Integer _scheduleId;
+    /** game_setup (#119): a JSON array with one game setup per serie, or null for format defaults. */
+    private String _gameSetup;
 
 
     public League(SwccgCardBlueprintLibrary library, int cost, String name, String type, String clazz, String parameters, int status, boolean allowSpectators, boolean allowTimeExtensions, boolean showPlayerNames, boolean invitationOnly, String registrationInfo, int decisionTimeoutSeconds, int timePerPlayerMinutes, LockedDeckType lockedDeckType) {
@@ -132,6 +134,29 @@ public class League {
             }
         }
         return _leagueData;
+    }
+
+    public String getGameSetup() {
+        return _gameSetup;
+    }
+
+    public void setGameSetup(String gameSetup) {
+        _gameSetup = gameSetup;
+    }
+
+    /** The stored setup JSON of the serie at {@code index} (0-based), or null (#119). */
+    public String getSerieSetupJson(int index) {
+        if (_gameSetup == null || _gameSetup.trim().isEmpty() || index < 0)
+            return null;
+        try {
+            com.google.gson.JsonElement root = com.google.gson.JsonParser.parseString(_gameSetup);
+            if (!root.isJsonArray() || index >= root.getAsJsonArray().size())
+                return null;
+            com.google.gson.JsonElement serie = root.getAsJsonArray().get(index);
+            return serie.isJsonNull() ? null : serie.toString();
+        } catch (RuntimeException exp) {
+            return null;
+        }
     }
 
     public int getStatus() {

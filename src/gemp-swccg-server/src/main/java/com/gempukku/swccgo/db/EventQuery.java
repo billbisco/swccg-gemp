@@ -18,7 +18,7 @@ import java.util.List;
 public final class EventQuery {
     static final String LEAGUE_COLUMNS = "name, type, class, parameters, status, cost, allowSpectators, allowTimeExtensions, "
             + "showPlayerNames, decisionTimeoutSeconds, timePerPlayerMinutes, invitationOnly, registrationInfo, lockedDeckType, "
-            + "start, end, schedule_id";
+            + "start, end, schedule_id, game_setup";
     static final String TOURNAMENT_COLUMNS = "tournament_id, draft_type, name, format, collection, stage, pairing, round, prizes, start";
     /** One day in milliseconds: {@code FLOOR(start / 86400000)} is the tournament's UTC day counted from the epoch. */
     static final long DAY_MS = 86400000L;

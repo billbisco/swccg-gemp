@@ -185,7 +185,15 @@ public class LeagueSchedule {
                 }
                 if (s == null)
                     throw new IllegalArgumentException("Serie " + (i + 1) + " must be an object {format, duration, matches}.");
-                d.series.add(new LeagueFactory.Serie(stringValue(s, "format", ""), intValue(s, "duration", 0), intValue(s, "matches", 0)));
+                // #119: optional "options": {optionId: value} for the serie's game setup
+                java.util.Map<String, String> options = new java.util.LinkedHashMap<>();
+                Object optionsValue = s.get("options");
+                if (optionsValue instanceof JSONObject) {
+                    JSONObject o = (JSONObject) optionsValue;
+                    for (String key : o.keySet())
+                        options.put(key, String.valueOf(o.get(key)));
+                }
+                d.series.add(new LeagueFactory.Serie(stringValue(s, "format", ""), intValue(s, "duration", 0), intValue(s, "matches", 0), options));
             }
         }
         return d;

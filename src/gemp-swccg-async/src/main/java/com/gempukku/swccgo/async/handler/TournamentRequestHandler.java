@@ -111,7 +111,7 @@ public class TournamentRequestHandler extends SwccgoServerRequestHandler impleme
         tournamentElem.setAttribute("id", tournament.getTournamentId());
         tournamentElem.setAttribute("name", tournament.getTournamentName());
         tournamentElem.setAttribute("format", _formatLibrary.getFormat(tournament.getFormat()).getName());
-            tournamentElem.setAttribute("options", _formatLibrary.storedSetup(tournament.getFormat(), null).chipsText());
+            tournamentElem.setAttribute("options", tournament.getGameSetup(_formatLibrary).chipsText());
         tournamentElem.setAttribute("collection", tournament.getCollectionType().getFullName());
         tournamentElem.setAttribute("round", String.valueOf(tournament.getCurrentRound()));
         tournamentElem.setAttribute("stage", tournament.getTournamentStage().getHumanReadable());
@@ -167,12 +167,13 @@ public class TournamentRequestHandler extends SwccgoServerRequestHandler impleme
             int maxPlayers = parseIntParam(getFormParameterSafely(postDecoder, "maxPlayers"), 4);
             int readyCheckSeconds = parseIntParam(getFormParameterSafely(postDecoder, "readyCheckSeconds"), 0);
             int packCount = parseIntParam(getFormParameterSafely(postDecoder, "packCount"), 0);
+            java.util.Map<String, String> gameOptions = HallRequestHandler.parseGameOptions(getFormParameterSafely(postDecoder, "gameOptions"));
 
             Player lightLibrarian = lightSample ? getLibrarian() : null;
             Player darkLibrarian = darkSample ? getLibrarian() : null;
             _hallServer.createPlayerMadeQueue(resourceOwner, titlePrefix, formatCode, pairing, totalGames, maxPlayers,
                     readyCheckSeconds, privateEvent, lightDeckName, lightSample, darkDeckName, darkSample,
-                    lightLibrarian, darkLibrarian, type, draftMode, productCode, packCount);
+                    lightLibrarian, darkLibrarian, type, draftMode, productCode, packCount, gameOptions);
             responseWriter.writeXmlResponse(null);
         } catch (HallException e) {
             responseWriter.writeXmlResponse(marshalException(e));
@@ -244,7 +245,7 @@ public class TournamentRequestHandler extends SwccgoServerRequestHandler impleme
             tournamentElem.setAttribute("id", tournament.getTournamentId());
             tournamentElem.setAttribute("name", tournament.getTournamentName());
             tournamentElem.setAttribute("format", _formatLibrary.getFormat(tournament.getFormat()).getName());
-            tournamentElem.setAttribute("options", _formatLibrary.storedSetup(tournament.getFormat(), null).chipsText());
+            tournamentElem.setAttribute("options", tournament.getGameSetup(_formatLibrary).chipsText());
             tournamentElem.setAttribute("collection", tournament.getCollectionType().getFullName());
             tournamentElem.setAttribute("round", String.valueOf(tournament.getCurrentRound()));
             tournamentElem.setAttribute("stage", tournament.getTournamentStage().getHumanReadable());
@@ -270,7 +271,7 @@ public class TournamentRequestHandler extends SwccgoServerRequestHandler impleme
             tournamentElem.setAttribute("id", tournament.getTournamentId());
             tournamentElem.setAttribute("name", tournament.getTournamentName());
             tournamentElem.setAttribute("format", _formatLibrary.getFormat(tournament.getFormat()).getName());
-            tournamentElem.setAttribute("options", _formatLibrary.storedSetup(tournament.getFormat(), null).chipsText());
+            tournamentElem.setAttribute("options", tournament.getGameSetup(_formatLibrary).chipsText());
             tournamentElem.setAttribute("collection", tournament.getCollectionType().getFullName());
             tournamentElem.setAttribute("round", String.valueOf(tournament.getCurrentRound()));
             tournamentElem.setAttribute("stage", tournament.getTournamentStage().getHumanReadable());

@@ -387,7 +387,7 @@ public class HallServer extends AbstractServer {
                         throw new HallException("You have already played max games in league");
                     format = _formatLibrary.getFormat(leagueSerie.getFormat());
                     collectionType = leagueSerie.getCollectionType();
-                    leagueSetup = leagueSerieSetup(leagueSerie);
+                    leagueSetup = leagueSerieSetup(league, leagueSerie);
                     if (leagueSetup != null)
                         format = _formatLibrary.effectiveFormat(leagueSetup);
                 }
@@ -1143,6 +1143,17 @@ public class HallServer extends AbstractServer {
             String lightDeckName, boolean lightSample, String darkDeckName, boolean darkSample,
             Player lightLibrarian, Player darkLibrarian, String eventType, String draftMode,
             String productCode, int packCount) throws HallException {
+        createPlayerMadeQueue(host, titlePrefix, formatCode, pairing, totalGames, maxPlayers, readyCheckSeconds,
+                privateEvent, lightDeckName, lightSample, darkDeckName, darkSample, lightLibrarian, darkLibrarian,
+                eventType, draftMode, productCode, packCount, null);
+    }
+
+    /** @param gameOptions the options chosen at setup (#119), option id to value; null or empty for the defaults */
+    public void createPlayerMadeQueue(Player host, String titlePrefix, String formatCode, String pairing,
+            int totalGames, int maxPlayers, int readyCheckSeconds, boolean privateEvent,
+            String lightDeckName, boolean lightSample, String darkDeckName, boolean darkSample,
+            Player lightLibrarian, Player darkLibrarian, String eventType, String draftMode,
+            String productCode, int packCount, Map<String, String> gameOptions) throws HallException {
         if (_shutdown)
             throw new HallException(
                     "Server is in shutdown mode. No games may be started. Server will be restarted after all games have finished.");
@@ -1177,11 +1188,26 @@ public class HallServer extends AbstractServer {
                 maxPlayers = product.getLiveMaxPlayers();
         }
 
-        if (chosenDeckSize != null)
-            formatCode = DeckSize.code(formatCode, chosenDeckSize);
-        SwccgFormat format = _formatLibrary.getHallFormat(formatCode);
-        if (format == null)
-            format = _formatLibrary.getFormat(formatCode);
+        SwccgFormat baseFormat = _formatLibrary.getHallFormat(formatCode);
+        if (baseFormat == null)
+            baseFormat = _formatLibrary.getFormat(formatCode);
+        if (baseFormat == null)
+            throw new HallException("This format is not supported: " + formatCode);
+        // #119: the event's game setup. Limited events play their product as it is; a deck size on the format code
+        // (older clients) counts as the deck size option.
+        Map<String, String> raw = new LinkedHashMap<>();
+        if (product == null && gameOptions != null)
+            raw.putAll(gameOptions);
+        if (chosenDeckSize != null && (raw.get(GameOptions.DECK_SIZE) == null || raw.get(GameOptions.DECK_SIZE).isBlank()))
+            raw.put(GameOptions.DECK_SIZE, String.valueOf(chosenDeckSize));
+        GameSetup eventSetup;
+        try {
+            SwccgFormat setupBase = _formatLibrary.getFormat(baseFormat.getBaseCode());
+            eventSetup = GameSetup.of(setupBase != null ? setupBase : baseFormat, raw, GameOption.Scope.TOURNAMENT);
+        } catch (IllegalArgumentException exp) {
+            throw new HallException(exp.getMessage());
+        }
+        SwccgFormat format = _formatLibrary.effectiveFormat(eventSetup);
         if (format == null)
             throw new HallException("This format is not supported: " + formatCode);
         if (format.isPlaytesting()
@@ -1207,6 +1233,7 @@ public class HallServer extends AbstractServer {
                     pairing, games, maxPlayers, readyCheckSeconds, privateEvent,
                     _tournamentPrizeSchemeRegistry.getTournamentPrizes("none"), type, mode, product, packCount,
                     collectionType, _sealedLeagueProduct, _packStorage, _soloDraftDefinitions, _tournamentCollections);
+            queue.setGameSetup(eventSetup);
             if (product == null) {
                 SwccgDeck lightDeck = validateUserAndDeck(format, host, lightDeckName, _allCardsCollectionType,
                         lightSample, lightLibrarian);
@@ -1604,7 +1631,7 @@ public class HallServer extends AbstractServer {
                         tournamentQueue.getProductCode(),
                         collectionCode,
                         tournamentQueue.isRequiresDeck(),
-                        setupChips(tournamentQueue.getFormat()));
+                        setupChips(tournamentQueue.getGameSetup(_formatLibrary)));
             }
 
             for (Map.Entry<String, Tournament> tournamentEntry : _runningTournaments.entrySet()) {
@@ -1628,7 +1655,7 @@ public class HallServer extends AbstractServer {
                         tournament.getCurrentRound(), tournament.getPlayersInCompetitionCount(),
                         tournament.isPlayerInCompetition(player.getName()),
                         collectionCode, decksLocked, deckBuildEndsAt, cubeSoloType, tournament.getFormat(),
-                        setupChips(tournament.getFormat()));
+                        setupChips(tournament.getGameSetup(_formatLibrary)));
             }
         } finally {
             _hallDataAccessLock.readLock().unlock();
@@ -2010,13 +2037,9 @@ public class HallServer extends AbstractServer {
      * If the league has deck lock-in enabled and the player already has a locked
      * deck for the given side, return the locked deck. Otherwise return the original.
      */
-    /** The non-default game options a stored format code carries (a league or tournament deck size), for lists (#116). */
-    private String setupChips(String formatCode) {
-        try {
-            return _formatLibrary.storedSetup(formatCode, null).chipsText();
-        } catch (RuntimeException exp) {
-            return "";
-        }
+    /** The non-default game options of a tournament or queue, for lists (#116/#119). */
+    private static String setupChips(GameSetup setup) {
+        return setup != null ? setup.chipsText() : "";
     }
 
     /** The non-default game options of a running game, for the table list (#116). */
@@ -2025,12 +2048,20 @@ public class HallServer extends AbstractServer {
         return setup != null ? setup.chipsText() : "";
     }
 
-    /**
-     * A league serie's game setup (#116), or null when it has none. PR 2 stores one per serie; until then a serie's
-     * format code alone decides (a retired size-only code keeps its deck size).
-     */
-    private GameSetup leagueSerieSetup(LeagueSeriesData serie) {
-        return _formatLibrary.storedSetup(serie.getFormat(), null);
+    /** Gives a league or tournament game its event's setup and the starting credits it sets (#119). */
+    private void applyEventSetup(SwccgGameMediator mediator, GameSetup setup) {
+        if (setup == null)
+            return;
+        mediator.setGameSetup(setup);
+        String credits = setup.getChosen(GameOptions.STARTING_CREDITS);
+        if (credits != null)
+            mediator.getGameState().setStartingCredits(
+                    com.gempukku.swccgo.game.StartingCredits.resolve(_formatLibrary.effectiveFormat(setup), credits));
+    }
+
+    /** A league serie's game setup (#116/#119): its stored options, or what its format code implies. */
+    private GameSetup leagueSerieSetup(League league, LeagueSeriesData serie) {
+        return com.gempukku.swccgo.league.LeagueSetups.forSerie(_formatLibrary, league, serie, _soloDraftDefinitions);
     }
 
     private SwccgDeck applyDeckLockIn(League league, String playerName, SwccgDeck originalDeck) {
@@ -2262,7 +2293,8 @@ public class HallServer extends AbstractServer {
                                 }
                             }, _formatLibrary.getFormat(_tournament.getFormat()), _tournament.getTournamentName(), null,
                             allowSpectators && !privateEvent, false, false, false, false, _decisionTimeoutSeconds,
-                            _timePerPlayerMinutes, privateEvent, null, null);
+                            _timePerPlayerMinutes, privateEvent, null, null, null, true,
+                            mediator -> applyEventSetup(mediator, _tournament.getGameSetup(_formatLibrary)));
                     RunningTable table = _runningTables.get(tableId);
                     if (table != null)
                         captured[0] = table.getSwccgoGameMediator();

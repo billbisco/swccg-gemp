@@ -94,6 +94,18 @@ public class PlayerMadeQueue extends AbstractTournamentQueue implements Tourname
         return _queueId;
     }
 
+    private com.gempukku.swccgo.game.setup.GameSetup _gameSetup;
+
+    /** The options chosen when the event was created (#119); null keeps what the format code implies. */
+    public void setGameSetup(com.gempukku.swccgo.game.setup.GameSetup gameSetup) {
+        _gameSetup = gameSetup;
+    }
+
+    @Override
+    public com.gempukku.swccgo.game.setup.GameSetup getGameSetup(com.gempukku.swccgo.game.formats.SwccgoFormatLibrary formats) {
+        return _gameSetup != null ? _gameSetup : formats.storedSetup(getFormat(), null);
+    }
+
     public String getHost() {
         return _host;
     }
@@ -340,6 +352,7 @@ public class PlayerMadeQueue extends AbstractTournamentQueue implements Tourname
             tournament = new PlayerConstructedTournament(
                     _queueId, _tournamentQueueName, _format, _pairing, _totalGames, _privateEvent,
                     new ArrayList<String>(_players), _lightDecks, _darkDecks);
+        tournament.setGameSetup(_gameSetup);
         tournamentQueueCallback.createTournament(tournament);
         return true;
     }

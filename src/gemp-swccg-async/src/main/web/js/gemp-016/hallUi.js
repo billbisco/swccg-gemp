@@ -999,15 +999,18 @@ var GempSwccgHallUI = Class.extend({
         this.tournamentFormatSelect = $("<select id='tournament-format' class='play-form-select'></select>");
         tFormatRow.append(this.tournamentFormatSelect);
         tFields.append(tFormatRow);
+        // #119: a tournament's game options (deck size, starting credits, ...) from the same registry as tables
         var thatSize = this;
-        var tDeckSize = this.buildDeckSizeControl("tournament-deck-size", function () {
-            var fmt = thatSize.tournamentFormatCode();
-            if (fmt)
-                thatSize.updateDecks(fmt, "default");
+        this.tournamentDeckSizeRow = $("<div class='game-options-rows tournament-game-options'></div>");
+        this.tournamentOptionsForm = new GameOptionsForm(this.tournamentDeckSizeRow, function (optionId) {
+            if (optionId === "deckSize") {
+                var fmt = thatSize.tournamentFormatCode();
+                if (fmt)
+                    thatSize.updateDecks(fmt, "default");
+            }
         });
-        this.tournamentDeckSizeRow = tDeckSize.row;
-        this.tournamentDeckSizeInput = tDeckSize.input;
-        this.tournamentDeckSizeNote = tDeckSize.note;
+        if (this.gameOptionsRoot != null)
+            this.tournamentOptionsForm.setRegistry(this.gameOptionsRoot);
         tFields.append(this.tournamentDeckSizeRow);
 
         this.tournamentProductRow = $("<div class='play-form-row' style='display:none'></div>");
@@ -1855,6 +1858,12 @@ var GempSwccgHallUI = Class.extend({
             that.tournamentFormatSelect.append($("<option></option>").attr("value", value).text(label)
                 .attr("data-min-deck-size", opt.attr("data-min-deck-size"))
                 .attr("data-max-deck-size", opt.attr("data-max-deck-size")));
+            // #119: the format's per-option defaults and ranges, for the tournament options form
+            var copy = that.tournamentFormatSelect.find("option").last();
+            $.each(this.attributes, function (i, a) {
+                if (a.name.indexOf("data-opt-") === 0)
+                    copy.attr(a.name, a.value);
+            });
         });
         if (that.selectHasValue(that.tournamentFormatSelect, "anything_goes"))
             that.tournamentFormatSelect.val("anything_goes");
@@ -2204,7 +2213,8 @@ var GempSwccgHallUI = Class.extend({
             lightDeckName: light.name,
             lightSampleDeck: light.sample,
             darkDeckName: dark.name,
-            darkSampleDeck: dark.sample
+            darkSampleDeck: dark.sample,
+            gameOptions: this.tournamentGameOptions()
         };
         var button = $(this.tournamentCreateButton);
         if (button.hasClass("ui-button"))
@@ -2420,7 +2430,22 @@ var GempSwccgHallUI = Class.extend({
         var base = this.tournamentFormatSelect != null ? this.tournamentFormatSelect.val() : null;
         if (this.isLimitedTournamentType())
             return base;
-        return this.sizedFormatCode(base, this.tournamentDeckSizeInput, this.tournamentFormatSelect.find("option:selected"), report);
+        if (this.tournamentOptionsForm == null)
+            return base;
+        var message = this.tournamentOptionsForm.validate();
+        if (message != null) {
+            if (report)
+                report(message);
+            return report ? null : base;
+        }
+        return this.tournamentOptionsForm.deckListCode(base);
+    },
+
+    /** The tournament form's non-default game options, as the JSON the server reads (#119). */
+    tournamentGameOptions:function() {
+        if (this.isLimitedTournamentType() || this.tournamentOptionsForm == null)
+            return "{}";
+        return JSON.stringify(this.tournamentOptionsForm.values());
     },
 
     updateTournamentDeckSize:function() {
@@ -2428,8 +2453,11 @@ var GempSwccgHallUI = Class.extend({
             return;
         var limited = this.isLimitedTournamentType();
         this.tournamentDeckSizeRow.css("display", limited ? "none" : "");
-        this.resetDeckSizeControl(this.tournamentDeckSizeInput, this.tournamentDeckSizeNote,
-            this.tournamentFormatSelect.find("option:selected"), false);
+        if (this.tournamentOptionsForm != null) {
+            if (this.gameOptionsRoot != null && $.isEmptyObject(this.tournamentOptionsForm.rows))
+                this.tournamentOptionsForm.setRegistry(this.gameOptionsRoot);
+            this.tournamentOptionsForm.refresh(this.tournamentFormatSelect.find("option:selected"), "TOURNAMENT", false);
+        }
     },
 
     applyCasualBotFieldVisibility:function() {
@@ -4568,8 +4596,11 @@ var GempSwccgHallUI = Class.extend({
                     this.supportedFormatsSelect.append(optionElem);
                 }
                 this.supportedFormatsInitialized = true;
+                this.gameOptionsRoot = root;
                 if (this.gameOptionsForm != null)
                     this.gameOptionsForm.setRegistry(root);
+                if (this.tournamentOptionsForm != null)
+                    this.tournamentOptionsForm.setRegistry(root);
                 this.updateGameOptions();
                 this.updateDeckSize();
                 // Mark league-type options via /league list (hall emits both as plain <format>)

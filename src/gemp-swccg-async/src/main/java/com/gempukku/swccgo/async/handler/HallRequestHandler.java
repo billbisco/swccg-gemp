@@ -60,6 +60,7 @@ public class HallRequestHandler extends SwccgoServerRequestHandler implements Ur
     private SwccgCardBlueprintLibrary _library;
     private LongPollingSystem _longPollingSystem;
     private SwccgoServer _swccgoServer;
+    private com.gempukku.swccgo.draft2.SoloDraftDefinitions _soloDraftDefinitions;
 
     public HallRequestHandler(Map<Type, Object> context, LongPollingSystem longPollingSystem) {
         super(context);
@@ -69,6 +70,7 @@ public class HallRequestHandler extends SwccgoServerRequestHandler implements Ur
         _leagueService = extractObject(context, LeagueService.class);
         _library = extractObject(context, SwccgCardBlueprintLibrary.class);
         _swccgoServer = extractObject(context, SwccgoServer.class);
+        _soloDraftDefinitions = extractObject(context, com.gempukku.swccgo.draft2.SoloDraftDefinitions.class);
         _longPollingSystem = longPollingSystem;
     }
 
@@ -921,12 +923,14 @@ public class HallRequestHandler extends SwccgoServerRequestHandler implements Ur
                     formatElem.setAttribute("type", league.getType());
                     // A league fixes the deck size for all its games (#90)
                     formatElem.setAttribute("league", "true");
-                    SwccgFormat leagueFormat = _formatLibrary.getFormat(currentLeagueSerie.getFormat());
-                    if (leagueFormat != null) {
+                    if (_formatLibrary.getFormat(currentLeagueSerie.getFormat()) != null) {
+                        // #116/#119: the league's setup decides the deck size; players can't change it
+                        com.gempukku.swccgo.game.setup.GameSetup leagueSetup = com.gempukku.swccgo.league.LeagueSetups.forSerie(
+                                _formatLibrary, league, currentLeagueSerie, _soloDraftDefinitions);
+                        SwccgFormat leagueFormat = _formatLibrary.effectiveFormat(leagueSetup);
                         formatElem.setAttribute("minDeckSize", String.valueOf(leagueFormat.getMinimumDeckSize()));
                         formatElem.setAttribute("maxDeckSize", String.valueOf(leagueFormat.getMaximumDeckSize()));
-                        // #116: the league's setup; players can't change it
-                        formatElem.setAttribute("options", _formatLibrary.storedSetup(currentLeagueSerie.getFormat(), null).chipsText());
+                        formatElem.setAttribute("options", leagueSetup.chipsText());
                     }
                     formatElem.appendChild(doc.createTextNode(league.getName()));
                     hall.appendChild(formatElem);

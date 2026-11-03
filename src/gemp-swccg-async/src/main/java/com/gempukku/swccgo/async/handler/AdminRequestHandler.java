@@ -718,6 +718,8 @@ public class AdminRequestHandler extends SwccgoServerRequestHandler implements U
             List<String> serieDurationsStr = getFormMultipleParametersSafely(postDecoder, "serieDurations");
             List<String> maxMatchesStr = getFormMultipleParametersSafely(postDecoder, "maxMatches");
             String lockedDeckTypeStr = getFormParameterSafely(postDecoder, "lockedDeckType");
+            // #119: one JSON object of game options per serie ({"deckSize":"100"}); optional, "" or {} for none
+            List<String> serieOptionsStr = getFormMultipleParametersSafely(postDecoder, "serieOptions");
 
             Throw400IfAnyStringNull("formats", formats);
             Throw400IfStringNull("collectionType", collectionType);
@@ -727,8 +729,13 @@ public class AdminRequestHandler extends SwccgoServerRequestHandler implements U
                 throw new HttpProcessingException(400, "Parameters 'formats', 'serieDurations' and 'maxMatches' must have one value per serie.");
             d.collectionType = collectionType;
             d.lockedDeckType = lockedDeckTypeStr == null ? "" : lockedDeckTypeStr;
-            for (int i = 0; i < formats.size(); ++i)
-                d.series.add(new LeagueFactory.Serie(formats.get(i), serieDurations.get(i), maxMatches.get(i)));
+            if (serieOptionsStr != null && !serieOptionsStr.isEmpty() && serieOptionsStr.size() != formats.size())
+                throw new HttpProcessingException(400, "Parameter 'serieOptions' must have one value per serie.");
+            for (int i = 0; i < formats.size(); ++i) {
+                Map<String, String> options = serieOptionsStr == null || serieOptionsStr.isEmpty()
+                        ? Collections.emptyMap() : parseOptionsObject("serieOptions", serieOptionsStr.get(i));
+                d.series.add(new LeagueFactory.Serie(formats.get(i), serieDurations.get(i), maxMatches.get(i), options));
+            }
         } else {
             String format = getFormParameterSafely(postDecoder, "format");
             String serieDurationStr = getFormParameterSafely(postDecoder, "serieDuration");
@@ -739,6 +746,28 @@ public class AdminRequestHandler extends SwccgoServerRequestHandler implements U
             d.series.add(new LeagueFactory.Serie(format, serieDuration, maxMatches));
         }
         return d;
+    }
+
+    /** One serie's game options as posted: a flat JSON object of option id to value (#119). */
+    static Map<String, String> parseOptionsObject(String parameter, String json) throws HttpProcessingException {
+        Map<String, String> options = new LinkedHashMap<>();
+        if (json == null || json.isBlank())
+            return options;
+        try {
+            com.google.gson.JsonElement root = com.google.gson.JsonParser.parseString(json);
+            if (!root.isJsonObject())
+                throw new IllegalStateException();
+            for (Map.Entry<String, com.google.gson.JsonElement> entry : root.getAsJsonObject().entrySet()) {
+                if (entry.getValue().isJsonNull())
+                    continue;
+                if (!entry.getValue().isJsonPrimitive())
+                    throw new IllegalStateException();
+                options.put(entry.getKey(), entry.getValue().getAsString());
+            }
+        } catch (RuntimeException exp) {
+            throw new HttpProcessingException(400, "Parameter '" + parameter + "' must hold JSON objects of option values.");
+        }
+        return options;
     }
 
     /** The {@code <league>} document the preview endpoints return (one shape for every kind). */
@@ -763,7 +792,8 @@ public class AdminRequestHandler extends SwccgoServerRequestHandler implements U
         leagueElem.setAttribute("timePerPlayerMinutes", String.valueOf(d.timePerPlayerMinutes));
         leagueElem.setAttribute("lockedDeckType", prepared.lockedDeckType() == null ? "" : prepared.lockedDeckType().getCode());
 
-        for (LeagueSeriesData serie : prepared.series()) {
+        for (int serieIndex = 0; serieIndex < prepared.series().size(); serieIndex++) {
+            LeagueSeriesData serie = prepared.series().get(serieIndex);
             Element serieElem = doc.createElement("serie");
             serieElem.setAttribute("type", serie.getName());
             serieElem.setAttribute("maxMatches", String.valueOf(serie.getMaxMatches()));
@@ -771,6 +801,7 @@ public class AdminRequestHandler extends SwccgoServerRequestHandler implements U
             serieElem.setAttribute("end", String.valueOf(serie.getEnd()));
             serieElem.setAttribute("format", _formatLibrary.getFormat(serie.getFormat()).getName());
             serieElem.setAttribute("formatType", serie.getFormat());
+            serieElem.setAttribute("options", prepared.serieSetup(_formatLibrary, serieIndex).chipsText());
             serieElem.setAttribute("collection", serie.getCollectionType().getFullName());
             serieElem.setAttribute("collectionType", serie.getCollectionType().getCode());
             serieElem.setAttribute("limited", String.valueOf(serie.isLimited()));
@@ -801,13 +832,15 @@ public class AdminRequestHandler extends SwccgoServerRequestHandler implements U
         result.put("timePerPlayerMinutes", d.timePerPlayerMinutes);
         result.put("lockedDeckType", prepared.lockedDeckType() == null ? "" : prepared.lockedDeckType().getCode());
         List<Map<String, Object>> series = new ArrayList<>();
-        for (LeagueSeriesData serie : prepared.series()) {
+        for (int serieIndex = 0; serieIndex < prepared.series().size(); serieIndex++) {
+            LeagueSeriesData serie = prepared.series().get(serieIndex);
             Map<String, Object> s = new LinkedHashMap<>();
             s.put("name", serie.getName());
             s.put("start", EventDates.isoDate(serie.getStart()));
             s.put("end", EventDates.isoDate(serie.getEnd()));
             s.put("formatType", serie.getFormat());
             s.put("format", _formatLibrary.getFormat(serie.getFormat()) == null ? serie.getFormat() : _formatLibrary.getFormat(serie.getFormat()).getName());
+            s.put("options", prepared.serieSetup(_formatLibrary, serieIndex).chipsText());
             s.put("collection", serie.getCollectionType().getFullName());
             s.put("maxMatches", serie.getMaxMatches());
             s.put("limited", serie.isLimited());

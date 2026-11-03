@@ -122,6 +122,6 @@ public class EventQueryTests {
 
         assertEquals("select " + EventQuery.LEAGUE_COLUMNS + " from league where schedule_id = ? and start = ?", query.sql());
         assertEquals(List.of(7, 20261101), query.parameters());
-        assertTrue(EventQuery.LEAGUE_COLUMNS.endsWith("start, end, schedule_id"));
+        assertTrue(EventQuery.LEAGUE_COLUMNS.endsWith("start, end, schedule_id, game_setup"));
     }
 }
