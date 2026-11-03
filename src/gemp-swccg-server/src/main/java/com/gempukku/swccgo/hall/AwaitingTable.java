@@ -20,6 +20,8 @@ public class AwaitingTable {
     private boolean _isInviteOnly;
     private HallGameTimer _gameTimer;
     private int _startingCredits;
+    /** The setup the table was created with (#116); the format above is already at its chosen deck size. */
+    private com.gempukku.swccgo.game.setup.GameSetup _gameSetup;
     private SwccgDeck _aiDeck;
     private String _aiPlayerId;
     private String _aiSkill;
@@ -46,6 +48,14 @@ public class AwaitingTable {
     }
 
     public int getStartingCredits() { return _startingCredits; }
+
+    public com.gempukku.swccgo.game.setup.GameSetup getGameSetup() {
+        return _gameSetup != null ? _gameSetup : com.gempukku.swccgo.game.setup.GameSetup.defaults(_swccgFormat.getBaseCode());
+    }
+
+    public void setGameSetup(com.gempukku.swccgo.game.setup.GameSetup gameSetup) {
+        _gameSetup = gameSetup;
+    }
 
     public void setStartingCredits(String value) {
         _startingCredits = com.gempukku.swccgo.game.StartingCredits.resolve(_swccgFormat, value);

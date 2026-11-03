@@ -1,7 +1,10 @@
 package com.gempukku.swccgo.game.formats;
 
+import com.gempukku.swccgo.game.DeckSize;
 import com.gempukku.swccgo.game.SwccgCardBlueprintLibrary;
 import com.gempukku.swccgo.game.SwccgFormat;
+import com.gempukku.swccgo.game.setup.GameOptions;
+import com.gempukku.swccgo.game.setup.GameSetup;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -15,11 +18,17 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class SwccgoFormatLibrary {
     private Map<String, SwccgFormat> _allFormats = new LinkedHashMap<String, SwccgFormat>();
     private Map<String, SwccgFormat> _hallFormats = new LinkedHashMap<String, SwccgFormat>();
     private Map<String, String> _formatStamps = new HashMap<String, String>();
+    /** Retired size-only format codes and the {@code <format>@<size>} code each now means (#90). */
+    private Map<String, String> _aliases = new HashMap<String, String>();
+    /** Per base format, per chosen size: the default game timer and tenets link that size uses, when they differ. */
+    private Map<String, Map<Integer, JSONObject>> _deckSizeVariants = new HashMap<String, Map<Integer, JSONObject>>();
+    private final Map<String, SwccgFormat> _deckSizeFormats = new ConcurrentHashMap<String, SwccgFormat>();
 
     public SwccgoFormatLibrary(SwccgCardBlueprintLibrary library) {
         try {
@@ -113,6 +122,25 @@ public class SwccgoFormatLibrary {
                             format.addRestrictedCard((String) restricted);
                         }
 
+                    // #90: deck size is a setup setting. Old size-only codes become aliases of <format>@<size>.
+                    JSONObject aliases = (JSONObject) formatDef.get("aliases");
+                    if (aliases != null) {
+                        for (Object aliasObj : aliases.entrySet()) {
+                            Map.Entry<?, ?> alias = (Map.Entry<?, ?>) aliasObj;
+                            int size = ((Number) alias.getValue()).intValue();
+                            _aliases.put((String) alias.getKey(), DeckSize.code(formatCode, size));
+                        }
+                    }
+                    JSONObject deckSizeVariants = (JSONObject) formatDef.get("deckSizeVariants");
+                    if (deckSizeVariants != null) {
+                        Map<Integer, JSONObject> bySize = new HashMap<Integer, JSONObject>();
+                        for (Object variantObj : deckSizeVariants.entrySet()) {
+                            Map.Entry<?, ?> variant = (Map.Entry<?, ?>) variantObj;
+                            bySize.put(Integer.parseInt((String) variant.getKey()), (JSONObject) variant.getValue());
+                        }
+                        _deckSizeVariants.put(formatCode, bySize);
+                    }
+
                     _allFormats.put(formatCode, format);
 
                     Boolean hallFormat = (Boolean) formatDef.get("hall");
@@ -134,7 +162,13 @@ public class SwccgoFormatLibrary {
     }
 
     public String stampFor(String formatCode) {
-        return _formatStamps.get(formatCode);
+        String stamp = _formatStamps.get(formatCode);
+        if (stamp != null)
+            return stamp;
+        SwccgFormat format = getFormat(formatCode);
+        if (format instanceof DeckSizeSwccgFormat)
+            return hashRules(((DeckSizeSwccgFormat) format).rulesStampSource());
+        return format != null ? _formatStamps.get(format.getCode()) : null;
     }
 
     private static String hashRules(String source) {
@@ -159,7 +193,101 @@ public class SwccgoFormatLibrary {
         return Collections.unmodifiableMap(_allFormats);
     }
 
+    /**
+     * The format for a code: a format from {@code swccgFormats.json}, a retired size-only code (an alias), or
+     * {@code <format>@<size>} for a format played at a deck size chosen at setup (#90). Returns {@code null} for an
+     * unknown format or an unsupported size.
+     */
     public SwccgFormat getFormat(String formatCode) {
-        return _allFormats.get(formatCode);
+        if (formatCode == null)
+            return null;
+        SwccgFormat format = _allFormats.get(formatCode);
+        if (format != null)
+            return format;
+        String alias = _aliases.get(formatCode);
+        if (alias != null)
+            return getFormat(alias);
+        return getDeckSizeFormat(formatCode, _allFormats);
+    }
+
+    /**
+     * Like {@link #getFormat(String)}, but only for formats offered in the hall: a hall format, or a hall format at a
+     * chosen deck size.
+     */
+    public SwccgFormat getHallFormat(String formatCode) {
+        if (formatCode == null)
+            return null;
+        SwccgFormat format = _hallFormats.get(formatCode);
+        if (format != null)
+            return format;
+        return getDeckSizeFormat(formatCode, _hallFormats);
+    }
+
+    /** The code for a format played at a deck size; the format's own code when the size is its default (#90). */
+    public String codeWithDeckSize(String formatCode, Integer deckSize) {
+        SwccgFormat format = getFormat(formatCode);
+        if (format == null || deckSize == null)
+            return format == null ? formatCode : format.getCode();
+        SwccgFormat sized = getFormat(DeckSize.code(format.getBaseCode(), deckSize));
+        if (sized == null)
+            throw new IllegalArgumentException("Deck size must be a whole number from " + DeckSize.MIN_SUPPORTED + " to " + DeckSize.MAX_SUPPORTED);
+        return sized.getCode();
+    }
+
+    /**
+     * The format a game with this setup plays (#116): the setup's format, at the chosen deck size if there is one.
+     * Returns {@code null} for an unknown format or an unsupported size.
+     */
+    public SwccgFormat effectiveFormat(GameSetup setup) {
+        SwccgFormat format = getFormat(setup.getFormatCode());
+        if (format == null)
+            return null;
+        String deckSize = setup.getChosen(GameOptions.DECK_SIZE);
+        if (deckSize == null)
+            return format;
+        return getFormat(DeckSize.code(format.getBaseCode(), Integer.parseInt(deckSize)));
+    }
+
+    /**
+     * The setup of a stored row (#116): its {@code game_setup} JSON, or the format's defaults for rows from before it.
+     * A retired size-only code ({@code open_100_card}) or a {@code <format>@<size>} key becomes its base format with
+     * that deck size, so old leagues, tournaments and games keep their size.
+     */
+    public GameSetup storedSetup(String formatCode, String setupJson) {
+        SwccgFormat format = getFormat(formatCode);
+        String baseCode = format != null ? format.getBaseCode() : formatCode;
+        GameSetup setup = GameSetup.fromJson(setupJson, baseCode).forFormat(baseCode);
+        if (format != null && format.isDeckSizeChosen() && setup.getChosen(GameOptions.DECK_SIZE) == null)
+            setup = setup.with(GameOptions.DECK_SIZE, String.valueOf(format.getRequiredDeckSize()));
+        return setup;
+    }
+
+    private SwccgFormat getDeckSizeFormat(String formatCode, Map<String, SwccgFormat> baseFormats) {
+        Integer size;
+        try {
+            size = DeckSize.chosenSize(formatCode);
+        } catch (IllegalArgumentException exp) {
+            return null;
+        }
+        if (size == null || !DeckSize.isSupported(size))
+            return null;
+        String baseCode = DeckSize.baseCode(formatCode);
+        SwccgFormat base = baseFormats.get(baseCode);
+        if (!(base instanceof DefaultSwccgFormat))
+            return null;
+        // The format's own fixed size is just the format (a table left at its default plays as today).
+        if (base.getMinimumDeckSize() == size && base.getMaximumDeckSize() == size)
+            return base;
+        return _deckSizeFormats.computeIfAbsent(DeckSize.code(baseCode, size), code -> {
+            JSONObject variant = _deckSizeVariants.getOrDefault(baseCode, Collections.emptyMap()).get(size);
+            Integer timer = null;
+            String tenetsLink = null;
+            if (variant != null) {
+                Number timerValue = (Number) variant.get("defaultGameTimerMinutes");
+                timer = timerValue == null ? null : timerValue.intValue();
+                tenetsLink = (String) variant.get("tenetsLink");
+            }
+            return new DeckSizeSwccgFormat((DefaultSwccgFormat) base, size, timer, tenetsLink);
+        });
     }
 }

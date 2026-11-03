@@ -24,6 +24,7 @@ import com.gempukku.swccgo.game.CardCollection;
 import com.gempukku.swccgo.game.Player;
 import com.gempukku.swccgo.game.SwccgCardBlueprint;
 import com.gempukku.swccgo.game.SwccgCardBlueprintLibrary;
+import com.gempukku.swccgo.game.DeckSize;
 import com.gempukku.swccgo.game.SwccgFormat;
 import com.gempukku.swccgo.game.SwccgoServer;
 import com.gempukku.swccgo.game.formats.SwccgoFormatLibrary;
@@ -329,6 +330,66 @@ public class HallRequestHandler extends SwccgoServerRequestHandler implements Ur
         }
     }
 
+    /** A {@code gameOptions} form value (a JSON object of option id to value) as a map; empty when absent (#116). */
+    static java.util.Map<String, String> parseGameOptions(String json) throws HttpProcessingException {
+        java.util.Map<String, String> result = new java.util.LinkedHashMap<String, String>();
+        if (json == null || json.trim().isEmpty())
+            return result;
+        try {
+            com.google.gson.JsonObject object = com.google.gson.JsonParser.parseString(json).getAsJsonObject();
+            for (java.util.Map.Entry<String, com.google.gson.JsonElement> entry : object.entrySet())
+                result.put(entry.getKey(), entry.getValue().isJsonNull() ? "" : entry.getValue().getAsString());
+        } catch (RuntimeException exp) {
+            throw new HttpProcessingException(400);
+        }
+        return result;
+    }
+
+    /**
+     * The option registry for the setup form (#116): one {@code <gameOption>} per option, with its choices. Per-format
+     * availability and defaults are attributes on each {@code <format>} ({@link #addFormatOptionAttributes}).
+     */
+    private void addGameOptionElements(Document doc, Element hall) {
+        for (com.gempukku.swccgo.game.setup.GameOption option : com.gempukku.swccgo.game.setup.GameOptions.all()) {
+            Element optionElem = doc.createElement("gameOption");
+            optionElem.setAttribute("id", option.getId());
+            optionElem.setAttribute("kind", option.getKind().name());
+            optionElem.setAttribute("type", option.getType().name());
+            optionElem.setAttribute("label", option.getLabel());
+            optionElem.setAttribute("help", option.getHelp());
+            StringBuilder scopes = new StringBuilder();
+            for (com.gempukku.swccgo.game.setup.GameOption.Scope scope : option.getScopes())
+                scopes.append(scopes.length() == 0 ? "" : ",").append(scope.name());
+            optionElem.setAttribute("scopes", scopes.toString());
+            for (com.gempukku.swccgo.game.setup.GameOption.Choice choice : option.getChoices()) {
+                Element choiceElem = doc.createElement("choice");
+                choiceElem.setAttribute("value", choice.getValue());
+                choiceElem.setAttribute("label", choice.getLabel());
+                choiceElem.setAttribute("shortLabel", choice.getShortLabel());
+                optionElem.appendChild(choiceElem);
+            }
+            hall.appendChild(optionElem);
+        }
+    }
+
+    /** {@code opt-<id>-available / -default / -defaultLabel / -min / -max} for one format (#116). */
+    static void addFormatOptionAttributes(Element formatElem, SwccgFormat format) {
+        for (com.gempukku.swccgo.game.setup.GameOption option : com.gempukku.swccgo.game.setup.GameOptions.all()) {
+            String prefix = "opt-" + option.getId() + "-";
+            boolean available = option.isAvailable(format);
+            formatElem.setAttribute(prefix + "available", String.valueOf(available));
+            if (!available)
+                continue;
+            String def = option.getDefault(format);
+            formatElem.setAttribute(prefix + "default", def == null ? "" : def);
+            formatElem.setAttribute(prefix + "defaultLabel", option.getDefaultLabel(format));
+            if (option.getType() == com.gempukku.swccgo.game.setup.GameOption.Type.INTEGER) {
+                formatElem.setAttribute(prefix + "min", String.valueOf(option.getMin(format)));
+                formatElem.setAttribute(prefix + "max", String.valueOf(option.getMax(format)));
+            }
+        }
+    }
+
     private void createTable(HttpRequest request, ResponseWriter responseWriter) throws Exception {
         HttpPostRequestDecoder postDecoder = new HttpPostRequestDecoder(request);
         try {
@@ -343,6 +404,9 @@ public class HallRequestHandler extends SwccgoServerRequestHandler implements Ur
             boolean isInviteOnly = (isInviteOnlyVal != null ? Boolean.valueOf(isInviteOnlyVal) : false);
             String timer = getFormParameterSafely(postDecoder, "timer");
             String startingCredits = getFormParameterSafely(postDecoder, "startingCredits");
+            // #116: game options as a JSON object of option id -> value (the setup form); timer and startingCredits
+            // above are the older fields and still work
+            String gameOptionsJson = getFormParameterSafely(postDecoder, "gameOptions");
             boolean playVsAi = Boolean.parseBoolean(getFormParameterSafely(postDecoder, "playVsAi"));
             String aiSkill = getFormParameterSafely(postDecoder, "aiSkill");
             String aiDeckName = getFormParameterSafely(postDecoder, "aiDeckName");
@@ -359,7 +423,13 @@ public class HallRequestHandler extends SwccgoServerRequestHandler implements Ur
             Player librarian = (sampleDeck || playVsAi) ? getLibrarian() : null;
             
             try {
-                var table = _hallServer.createNewTable(format, resourceOwner, deckName, sampleDeck, tableDesc, isPrivate, librarian, playVsAi, aiSkill, aiDeckName, aiDeckSample, timer, isInviteOnly, startingCredits);
+                java.util.Map<String, String> gameOptions = new java.util.LinkedHashMap<String, String>();
+                if (timer != null && !timer.isEmpty() && com.gempukku.swccgo.hall.HallGameTimer.fromCode(timer) != com.gempukku.swccgo.hall.HallGameTimer.DEFAULT)
+                    gameOptions.put(com.gempukku.swccgo.game.setup.GameOptions.TIMER, timer);
+                if (startingCredits != null && !startingCredits.isEmpty())
+                    gameOptions.put(com.gempukku.swccgo.game.setup.GameOptions.STARTING_CREDITS, startingCredits);
+                gameOptions.putAll(parseGameOptions(gameOptionsJson));
+                var table = _hallServer.createNewTable(format, resourceOwner, deckName, sampleDeck, tableDesc, isPrivate, librarian, playVsAi, aiSkill, aiDeckName, aiDeckSample, isInviteOnly, gameOptions);
 
                 // If this is a league that locks in the first deck used, then we will warn the player if
                 // A: they haven't locked in so that they can be aware that this will lock in, or
@@ -837,6 +907,10 @@ public class HallRequestHandler extends SwccgoServerRequestHandler implements Ur
                 formatElem.setAttribute("type", format.getKey());
                 formatElem.setAttribute("startingCredits", String.valueOf(format.getValue().supportsStartingCredits()));
                 formatElem.setAttribute("defaultStartingCredits", String.valueOf(format.getValue().getDefaultStartingCredits()));
+                // #90: the format's own deck size is only the default; the Play form offers the supported range
+                formatElem.setAttribute("minDeckSize", String.valueOf(format.getValue().getMinimumDeckSize()));
+                formatElem.setAttribute("maxDeckSize", String.valueOf(format.getValue().getMaximumDeckSize()));
+                addFormatOptionAttributes(formatElem, format.getValue());
                 formatElem.appendChild(doc.createTextNode(format.getValue().getName()));
                 hall.appendChild(formatElem);
             }
@@ -845,11 +919,23 @@ public class HallRequestHandler extends SwccgoServerRequestHandler implements Ur
                 if (currentLeagueSerie != null && _leagueService.isPlayerInLeague(league, resourceOwner)) {
                     Element formatElem = doc.createElement("format");
                     formatElem.setAttribute("type", league.getType());
+                    // A league fixes the deck size for all its games (#90)
+                    formatElem.setAttribute("league", "true");
+                    SwccgFormat leagueFormat = _formatLibrary.getFormat(currentLeagueSerie.getFormat());
+                    if (leagueFormat != null) {
+                        formatElem.setAttribute("minDeckSize", String.valueOf(leagueFormat.getMinimumDeckSize()));
+                        formatElem.setAttribute("maxDeckSize", String.valueOf(leagueFormat.getMaximumDeckSize()));
+                        // #116: the league's setup; players can't change it
+                        formatElem.setAttribute("options", _formatLibrary.storedSetup(currentLeagueSerie.getFormat(), null).chipsText());
+                    }
                     formatElem.appendChild(doc.createTextNode(league.getName()));
                     hall.appendChild(formatElem);
                 }
             }
 
+            addGameOptionElements(doc, hall);
+            hall.setAttribute("minSupportedDeckSize", String.valueOf(DeckSize.MIN_SUPPORTED));
+            hall.setAttribute("maxSupportedDeckSize", String.valueOf(DeckSize.MAX_SUPPORTED));
             hall.setAttribute("privateGamesEnabledBoolean", String.valueOf(_hallServer.privateGamesAllowed()));
             hall.setAttribute("aiTablesEnabledBoolean", String.valueOf(_hallServer.aiTablesEnabled()));
             doc.appendChild(hall);

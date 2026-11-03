@@ -39,7 +39,12 @@ public class GameHistoryService {
     }
 
     public void addGameHistory(String winner, String loser, String winReason, String loseReason, String winRecordingId, String loseRecordingId, String formatName, String tournament, String winnerDeckName, String loserDeckName, String winnerDeckArchetype, String loserDeckArchetype, String winningSide, String darkDeckString, String lightDeckString, String leagueType, String sealedLeagueType, Date startDate, Date endDate) {
-        _gameHistoryDAO.addGameHistory(winner, loser, winReason, loseReason, winRecordingId, loseRecordingId, formatName, tournament, winnerDeckName, loserDeckName, winnerDeckArchetype, loserDeckArchetype, winningSide, darkDeckString, lightDeckString, leagueType, sealedLeagueType, startDate, endDate);
+        addGameHistory(winner, loser, winReason, loseReason, winRecordingId, loseRecordingId, formatName, tournament, winnerDeckName, loserDeckName, winnerDeckArchetype, loserDeckArchetype, winningSide, darkDeckString, lightDeckString, leagueType, sealedLeagueType, startDate, endDate, null);
+    }
+
+    /** As above, with the game's setup JSON (#116). */
+    public void addGameHistory(String winner, String loser, String winReason, String loseReason, String winRecordingId, String loseRecordingId, String formatName, String tournament, String winnerDeckName, String loserDeckName, String winnerDeckArchetype, String loserDeckArchetype, String winningSide, String darkDeckString, String lightDeckString, String leagueType, String sealedLeagueType, Date startDate, Date endDate, String gameSetup) {
+        _gameHistoryDAO.addGameHistory(winner, loser, winReason, loseReason, winRecordingId, loseRecordingId, formatName, tournament, winnerDeckName, loserDeckName, winnerDeckArchetype, loserDeckArchetype, winningSide, darkDeckString, lightDeckString, leagueType, sealedLeagueType, startDate, endDate, gameSetup);
         Integer winnerCount = _playerGameCount.get(winner);
         Integer loserCount = _playerGameCount.get(loser);
         if (winnerCount != null)

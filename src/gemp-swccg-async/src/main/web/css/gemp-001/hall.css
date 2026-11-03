@@ -2363,3 +2363,19 @@ td.gemp-table-empty {
 .gh-event-link {
     font-size: 85%;
 }
+
+/* #116: game option chips next to a format name, and the setup form's option rows */
+.game-option-chips { white-space: normal; }
+.game-option-chip {
+    display: inline-block;
+    margin: 1px 0 1px 4px;
+    padding: 0 6px;
+    border: 1px solid rgba(232, 196, 104, 0.6);
+    border-radius: 8px;
+    background: rgba(232, 196, 104, 0.14);
+    font-size: 85%;
+    line-height: 1.5;
+    white-space: nowrap;
+}
+.game-option-note { margin-left: 6px; opacity: 0.75; font-size: 90%; }
+.game-option-locked { opacity: 0.85; font-style: italic; }

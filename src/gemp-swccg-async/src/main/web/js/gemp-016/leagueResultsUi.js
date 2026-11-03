@@ -240,7 +240,9 @@ var LeagueResultsUI = Class.extend({
 
                 target.append($("<div class='serieName'></div>").text(serieName + " - " + getDateString(serieStart) + " to " + getDateString(serieEnd)));
 
-                var formatName = $("<span class='clickableFormat'></span>").text(((limited == "true") ? "" : "Constructed ") + format);
+                var serieOptions = serie.getAttribute("options");
+                var formatName = $("<span class='clickableFormat'></span>").text(((limited == "true") ? "" : "Constructed ") + format
+                    + (serieOptions ? " · " + serieOptions : ""));
                 var formatDiv = $("<div><b>Format:</b> </div>");
                 formatDiv.append(formatName);
                 formatName.click(

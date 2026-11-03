@@ -231,12 +231,37 @@ The `gemp` script provides convenient commands for common development tasks:
 
 ```javascript
   {
-    "name":"Open (100 cards)",
-    "code":"open_100_card",
+    "name":"Example (long games)",
+    "code":"example_long",
     "set":[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
-    "deckSize":100,
-    "defaultGameTimerMinutes":90,
-    "tenetsLink": "https://www.starwarsccg.org/100card/"
+    "defaultGameTimerMinutes":90
+  },
+```
+
+### Game options: deck size, starting credits, timer (and more to come)
+
+* A game is a **format plus game options** (swccg-guild/work#114). The format is the card pool and the options'
+  defaults; options are chosen at setup and shown as short "chips" next to the unchanged format name
+  ("Open · 100 cards · Blitz").
+* Options are defined once, in `gemp-swccg-server/.../game/setup/GameOptions.java`. Each has an id, a kind (mode,
+  deck rules, play rules, table), a type, a default taken from the format, where it may be set (casual, bot, league,
+  tournament) and a short label. The hall sends the registry to the client, which builds the setup form from it, so a
+  new option needs no client change.
+* A format's own size is `deckSize` (exact, default 60) or `minDeckSize`/`maxDeckSize` (a range). That is only the
+  **default** for the deck size option, whose range is `DeckSize.MIN_SUPPORTED`–`MAX_SUPPORTED`
+  (`gemp-swccg-logic/.../game/DeckSize.java`). Don't add a separate format just to change the size.
+* `deckSizeVariants` sets the timer or tenets link a format uses at one size. `aliases` keeps retired size-only codes
+  working (`open_100_card` is Open with deck size 100).
+* A table's setup is stored with its game history (`game_history.game_setup`, JSON). Leagues and tournaments carry a
+  chosen deck size on their format code (`open@100`) until they get their own setup column.
+
+```javascript
+  {
+    "name":"Open",
+    "code":"open",
+    "set":[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
+    "aliases":{"open40card":40, "open_45_card":45, "open_100_card":100},
+    "deckSizeVariants":{"100":{"defaultGameTimerMinutes":90, "tenetsLink":"https://www.starwarsccg.org/100card/"}}
   },
 ```
 

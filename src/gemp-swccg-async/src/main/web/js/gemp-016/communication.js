@@ -867,7 +867,7 @@ var GempSwccgCommunication = Class.extend({
             dataType:"xml"
         });
     },
-    createTable:function (format, deckName, sampleDeck, tableDesc, isPrivate, playVsAi, aiSkill, aiDeckName, aiDeckSample, timer, isInviteOnly, startingCredits, callback, errorMap) {
+    createTable:function (format, deckName, sampleDeck, tableDesc, isPrivate, playVsAi, aiSkill, aiDeckName, aiDeckSample, timer, isInviteOnly, startingCredits, callback, errorMap, gameOptions) {
         $.ajax({
             type:"POST",
             url:this.url + "/hall",
@@ -884,6 +884,8 @@ var GempSwccgCommunication = Class.extend({
                 aiDeckSample:aiDeckSample,
                 timer:timer,
                 startingCredits:startingCredits,
+                // #116: {optionId: value} of the options that differ from the format's defaults
+                gameOptions:(gameOptions && !$.isEmptyObject(gameOptions)) ? JSON.stringify(gameOptions) : "",
                 isInviteOnly:isInviteOnly,
                 participantId:getUrlParam("participantId")},
             success:this.deliveryCheck(callback),

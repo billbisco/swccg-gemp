@@ -144,6 +144,8 @@ public class LeagueRequestHandler extends SwccgoServerRequestHandler implements 
             // a finished league may use a format the library has since retired: show its code rather than fail
             SwccgFormat serieFormat = _formatLibrary.getFormat(serie.getFormat());
             serieElem.setAttribute("format", serieFormat == null ? serie.getFormat() : serieFormat.getName());
+            // #116: options the serie sets (a deck size), shown next to the unchanged format name
+            serieElem.setAttribute("options", serieFormat == null ? "" : _formatLibrary.storedSetup(serie.getFormat(), null).chipsText());
             serieElem.setAttribute("collection", serie.getCollectionType().getFullName());
             serieElem.setAttribute("collectionType", serie.getCollectionType().getCode());
             serieElem.setAttribute("limited", String.valueOf(serie.isLimited()));

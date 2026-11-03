@@ -17,10 +17,28 @@ public class DbGameHistoryDAO implements GameHistoryDAO {
     }
 
     public void addGameHistory(String winner, String loser, String winReason, String loseReason, String winRecordingId, String loseRecordingId, String formatName, String tournament, String winnerDeckName, String loserDeckName, String winnerDeckArchetype, String loserDeckArchetype, String winnerSide, String darkDeckString, String lightDeckString, String leagueType, String sealedLeagueType, Date startDate, Date endDate) {
+        addGameHistory(winner, loser, winReason, loseReason, winRecordingId, loseRecordingId, formatName, tournament, winnerDeckName, loserDeckName, winnerDeckArchetype, loserDeckArchetype, winnerSide, darkDeckString, lightDeckString, leagueType, sealedLeagueType, startDate, endDate, null);
+    }
+
+    private volatile boolean _setupColumnReady;
+
+    /** Adds game_history.game_setup (#116, approved by Bill in swccg-guild/work#114 Q2). Idempotent. */
+    private void ensureSetupColumn(Connection connection) throws SQLException {
+        if (_setupColumnReady)
+            return;
+        try (java.sql.Statement statement = connection.createStatement()) {
+            statement.execute("ALTER TABLE game_history ADD COLUMN IF NOT EXISTS game_setup TEXT CHARACTER SET utf8 COLLATE utf8_bin NULL");
+        }
+        _setupColumnReady = true;
+    }
+
+    @Override
+    public void addGameHistory(String winner, String loser, String winReason, String loseReason, String winRecordingId, String loseRecordingId, String formatName, String tournament, String winnerDeckName, String loserDeckName, String winnerDeckArchetype, String loserDeckArchetype, String winnerSide, String darkDeckString, String lightDeckString, String leagueType, String sealedLeagueType, Date startDate, Date endDate, String gameSetup) {
         try {
             Connection connection = _dbAccess.getDataSource().getConnection();
             try {
-                PreparedStatement statement = connection.prepareStatement("insert into game_history (winner, loser, win_reason, lose_reason, win_recording_id, lose_recording_id, format_name, tournament, winner_deck_name, loser_deck_name, winner_deck_archetype, loser_deck_archetype, winner_side, dark_deck_string, light_deck_string, league_type, sealed_league_type, start_date, end_date) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+                ensureSetupColumn(connection);
+                PreparedStatement statement = connection.prepareStatement("insert into game_history (winner, loser, win_reason, lose_reason, win_recording_id, lose_recording_id, format_name, tournament, winner_deck_name, loser_deck_name, winner_deck_archetype, loser_deck_archetype, winner_side, dark_deck_string, light_deck_string, league_type, sealed_league_type, start_date, end_date, game_setup) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
                 try {
                     statement.setString(1, winner);
                     statement.setString(2, loser);
@@ -41,6 +59,7 @@ public class DbGameHistoryDAO implements GameHistoryDAO {
                     statement.setString(17, sealedLeagueType);
                     statement.setLong(18, startDate.getTime());
                     statement.setLong(19, endDate.getTime());
+                    statement.setString(20, gameSetup == null || gameSetup.isEmpty() ? null : gameSetup);
 
                     statement.execute();
                 } finally {
