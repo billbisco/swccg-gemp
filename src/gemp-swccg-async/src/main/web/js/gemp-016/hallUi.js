@@ -827,13 +827,14 @@ var GempSwccgHallUI = Class.extend({
 
         // #116: game options (deck size, starting credits, timer, ...) come from the server's option registry
         this.gameOptionsRows = $("<div class='game-options-rows'></div>");
+        var accountName = function () { return (that.userInfo && that.userInfo.name) ? that.userInfo.name : ""; };
         this.gameOptionsForm = new GameOptionsForm(this.gameOptionsRows, function (optionId) {
             if (optionId === "deckSize") {
                 var fmt = that.playFormatCode();
                 if (fmt)
                     that.updateDecks(fmt, "default");
             }
-        });
+        }, {saveKey: "play", userName: accountName});
 
         this.inviteRow = $("<div class='play-form-row play-form-row-check'></div>");
         this.inviteRow.append(this.isInviteOnlyCheckbox);
@@ -1008,7 +1009,9 @@ var GempSwccgHallUI = Class.extend({
                 if (fmt)
                     thatSize.updateDecks(fmt, "default");
             }
-        });
+        }, {saveKey: "tournament", userName: function () {
+            return (thatSize.userInfo && thatSize.userInfo.name) ? thatSize.userInfo.name : "";
+        }});
         if (this.gameOptionsRoot != null)
             this.tournamentOptionsForm.setRegistry(this.gameOptionsRoot);
         tFields.append(this.tournamentDeckSizeRow);
@@ -2545,6 +2548,7 @@ var GempSwccgHallUI = Class.extend({
             if (playerSelect.val())
                 librarySelect.val("");
             that.refreshExclusiveDeckPairHighlight(playerSelect, librarySelect);
+            that.applyDeckSizeOfSelectedDeck(playerSelect);
             if (typeof onChange == "function")
                 onChange();
         });
@@ -2552,9 +2556,27 @@ var GempSwccgHallUI = Class.extend({
             if (librarySelect.val())
                 playerSelect.val("");
             that.refreshExclusiveDeckPairHighlight(playerSelect, librarySelect);
+            that.applyDeckSizeOfSelectedDeck(librarySelect);
             if (typeof onChange == "function")
                 onChange();
         });
+    },
+
+    /**
+     * #120: picking a deck listed at another size ("(100 cards)") sets the form's deck size to it and reloads the deck
+     * lists at that size; the picked deck stays selected.
+     */
+    applyDeckSizeOfSelectedDeck:function(select) {
+        var size = select.find(":selected").attr("data-deck-size");
+        if (!size)
+            return;
+        var tournament = this.playMode === "tournament";
+        var form = tournament ? this.tournamentOptionsForm : this.gameOptionsForm;
+        if (form == null || !form.setValue("deckSize", size))
+            return;
+        var fmt = tournament ? this.tournamentFormatCode() : this.playFormatCode();
+        if (fmt)
+            this.updateDecks(fmt, "default");
     },
 
     refreshExclusiveDeckPairHighlight:function(playerSelect, librarySelect) {
@@ -2630,6 +2652,8 @@ var GempSwccgHallUI = Class.extend({
             option.attr("value", opt.name);
             option.attr("data-sample-deck", opt.sample ? "true" : "false");
             option.attr("data-side", opt.side);
+            if (opt.deckSize)
+                option.attr("data-deck-size", opt.deckSize);
             var label = opt.label;
             if (sampleOnly && label.indexOf("Sample: ") === 0)
                 label = label.substring(8);
@@ -3612,6 +3636,8 @@ var GempSwccgHallUI = Class.extend({
     // skipLibrary: sealed / draft / cube league tables do not offer sample decks.
     updateDecks:function (format, collection, skipLibrary) {
         var that = this;
+        // #120: at a format's own deck size, also offer decks legal at another size it allows (labelled with it)
+        var anySize = format && String(format).indexOf("@") < 0 && collection === "default" && this.playMode !== "league";
         var gen = (this.deckLoadGen || 0) + 1;
         this.deckLoadGen = gen;
         this.deckOptions = [];
@@ -3634,8 +3660,8 @@ var GempSwccgHallUI = Class.extend({
                     return;
                 that.processLibraryDecks(xml2);
                 that.updateAiDecksForSelection();
-            }, null, format, collection);
-        }, null, format, collection);
+            }, null, format, collection, anySize);
+        }, null, format, collection, anySize);
     },
 
     currentDateYyyymmdd:function() {
@@ -3749,17 +3775,21 @@ var GempSwccgHallUI = Class.extend({
             }
 
             var deckName = decks[i].childNodes[0].nodeValue;
+            var deckSize = decks[i].getAttribute ? decks[i].getAttribute("deckSize") : null;
+            var label = prefix + deckName + (deckSize ? " (" + deckSize + " cards)" : "");
             var deckElem = $("<option></option>");
             deckElem.attr("value", deckName);
             deckElem.attr("data-sample-deck", sampleDeck);
             deckElem.attr("data-side", side);
-            deckElem.text(prefix + deckName);
+            if (deckSize)
+                deckElem.attr("data-deck-size", deckSize);
+            deckElem.text(label);
             select.append(deckElem);
             added++;
 
             // Track for AI selection only when filling the create-table dropdown
             if (targetSelect == null) {
-                this.deckOptions.push({name: deckName, sample: sampleDeck === "true", side: side, label: prefix + deckName});
+                this.deckOptions.push({name: deckName, sample: sampleDeck === "true", side: side, label: label, deckSize: deckSize});
             }
         }
         return added;

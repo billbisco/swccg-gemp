@@ -33,7 +33,7 @@ public final class GameOptions {
                 .defaultLabel(f -> f.getMinimumDeckSize() == f.getMaximumDeckSize()
                         ? String.valueOf(f.getRequiredDeckSize())
                         : f.getMinimumDeckSize() + "–" + f.getMaximumDeckSize())
-                .range(f -> DeckSize.MIN_SUPPORTED, f -> DeckSize.MAX_SUPPORTED)
+                .range(f -> DeckSize.MIN_SUPPORTED, DeckSize::maxFor)
                 .shortLabel(v -> v + " cards")
                 .build());
         register(GameOption.builder(STARTING_CREDITS, Kind.PLAY_RULES, Type.INTEGER, "Starting credits")

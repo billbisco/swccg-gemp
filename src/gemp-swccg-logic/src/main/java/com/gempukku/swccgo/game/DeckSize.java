@@ -8,14 +8,16 @@ package com.gempukku.swccgo.game;
  * base format with the chosen size, so every place that already stores or looks up a format by code (tables, league
  * series, tournaments, saved games, replays) keeps the size without a schema change.
  * <p>
- * The supported range lives here and nowhere else: setup screens, the format library and validation all read it.
- * #80 and #88 widen it by changing these two constants.
+ * The supported range lives here: setup screens, the format library and validation all read it. A format may allow
+ * larger decks than {@link #MAX_SUPPORTED} (its {@code maxDeckSizeOption}, #120), never more than {@link #HARD_MAX}.
  */
 public final class DeckSize {
     /** Smallest deck size a table, league or tournament may choose. */
     public static final int MIN_SUPPORTED = 40;
     /** Largest deck size a table, league or tournament may choose. */
     public static final int MAX_SUPPORTED = 100;
+    /** Largest deck size any format may allow (#120: Anything Goes; #88 ran 200-card games without engine trouble). */
+    public static final int HARD_MAX = 200;
     /** Separates the base format code from the chosen size in a format code. */
     public static final char SEPARATOR = '@';
 
@@ -24,6 +26,22 @@ public final class DeckSize {
 
     public static boolean isSupported(int size) {
         return size >= MIN_SUPPORTED && size <= MAX_SUPPORTED;
+    }
+
+    /** Whether a format may be played at this size: from {@link #MIN_SUPPORTED} to the format's own largest option. */
+    public static boolean isSupported(SwccgFormat format, int size) {
+        return size >= MIN_SUPPORTED && size <= maxFor(format);
+    }
+
+    /** The format's largest deck size option, kept within {@link #HARD_MAX}. */
+    public static int maxFor(SwccgFormat format) {
+        int max = format == null ? MAX_SUPPORTED : format.getMaxDeckSizeOption();
+        return Math.max(MIN_SUPPORTED, Math.min(HARD_MAX, max));
+    }
+
+    /** The message for a deck size outside a format's range. */
+    public static String rangeMessage(SwccgFormat format) {
+        return "Deck size must be a whole number from " + MIN_SUPPORTED + " to " + maxFor(format);
     }
 
     /** The format code without a chosen size ({@code open@100} → {@code open}). */

@@ -383,7 +383,7 @@ var GempSwccgCommunication = Class.extend({
             dataType:"xml"
         });
     },
-    getDecks:function (callback, errorMap, format, collection) {
+    getDecks:function (callback, errorMap, format, collection, anySize) {
         var data = {
             participantId:getUrlParam("participantId")
         };
@@ -391,6 +391,8 @@ var GempSwccgCommunication = Class.extend({
             data.format = format;
         if (collection)
             data.collection = collection;
+        if (anySize)
+            data.anySize = "true";
         $.ajax({
             type:"GET",
             url:this.url + "/deck/list",
@@ -418,7 +420,7 @@ var GempSwccgCommunication = Class.extend({
             dataType:"xml"
         });
     },
-    getLibraryDecks:function (callback, errorMap, format, collection) {
+    getLibraryDecks:function (callback, errorMap, format, collection, anySize) {
         var data = {
             participantId:getUrlParam("participantId")
         };
@@ -426,6 +428,8 @@ var GempSwccgCommunication = Class.extend({
             data.format = format;
         if (collection)
             data.collection = collection;
+        if (anySize)
+            data.anySize = "true";
         $.ajax({
             type:"GET",
             url:this.url + "/deck/libraryList",

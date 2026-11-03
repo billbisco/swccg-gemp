@@ -23,6 +23,7 @@ public class DefaultSwccgFormat implements SwccgFormat {
     private int _requiredDeckSize = 60;
     private int _minDeckSize = 60;
     private int _maxDeckSize = 60;
+    private int _maxDeckSizeOption = com.gempukku.swccgo.game.DeckSize.MAX_SUPPORTED;
     private boolean _skipFormatPool;
     private int _defaultGameTimerMinutes = 60;
     private boolean _startingCredits;
@@ -153,6 +154,16 @@ public class DefaultSwccgFormat implements SwccgFormat {
         _requiredDeckSize = requiredDeckSize;
         _minDeckSize = requiredDeckSize;
         _maxDeckSize = requiredDeckSize;
+    }
+
+    /** The largest deck size that may be chosen at setup (#120); swccgFormats.json {@code maxDeckSizeOption}. */
+    protected void setMaxDeckSizeOption(int maxDeckSizeOption) {
+        _maxDeckSizeOption = maxDeckSizeOption;
+    }
+
+    @Override
+    public int getMaxDeckSizeOption() {
+        return _maxDeckSizeOption;
     }
 
     protected void setDeckSizeRange(int minDeckSize, int maxDeckSize) {

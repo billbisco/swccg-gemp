@@ -1172,8 +1172,8 @@ public class HallServer extends AbstractServer {
         } catch (IllegalArgumentException exp) {
             throw new HallException(exp.getMessage());
         }
-        if (chosenDeckSize != null && !DeckSize.isSupported(chosenDeckSize))
-            throw new HallException("Deck size must be a whole number from " + DeckSize.MIN_SUPPORTED + " to " + DeckSize.MAX_SUPPORTED);
+        if (chosenDeckSize != null && (chosenDeckSize < DeckSize.MIN_SUPPORTED || chosenDeckSize > DeckSize.HARD_MAX))
+            throw new HallException("Deck size must be a whole number from " + DeckSize.MIN_SUPPORTED + " to " + DeckSize.HARD_MAX);
         formatCode = DeckSize.baseCode(formatCode);
         productCode = DeckSize.baseCode(productCode);
         String mode = TournamentProduct.normalizeMode(draftMode);

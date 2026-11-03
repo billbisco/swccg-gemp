@@ -2378,4 +2378,8 @@ td.gemp-table-empty {
     white-space: nowrap;
 }
 .game-option-note { margin-left: 6px; opacity: 0.75; font-size: 90%; }
+/* #120: saved settings per format */
+.game-options-save { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.game-options-save button { font-size: 85%; padding: 2px 8px; cursor: pointer; }
+.game-options-save-note { margin-left: 0; }
 .game-option-locked { opacity: 0.85; font-style: italic; }
