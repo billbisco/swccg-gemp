@@ -8,7 +8,9 @@ import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.logic.actions.SubAction;
 import com.gempukku.swccgo.logic.decisions.ArbitraryCardsSelectionDecision;
+import com.gempukku.swccgo.logic.GameUtils;
 import com.gempukku.swccgo.logic.decisions.DecisionResultInvalidException;
+import com.gempukku.swccgo.logic.effects.ShufflePileEffect;
 import com.gempukku.swccgo.logic.effects.TriggeringResultEffect;
 import com.gempukku.swccgo.logic.timing.AbstractSubActionEffect;
 import com.gempukku.swccgo.logic.timing.Action;
@@ -84,6 +86,16 @@ abstract class ChooseCardCombinationFromHandAndOrCardPileEffect extends Abstract
                     protected void doPlayEffect(SwccgGame game) {
                         if (!_cardsChosen.isEmpty()) {
                             cardsChosen(_cardsChosen);
+                        }
+                        // The card pile was searched ("...; reshuffle"): a chosen card from the pile reshuffles it when it is
+                        // deployed, otherwise (nothing found, or all chosen cards from hand) reshuffle it now
+                        for (PhysicalCard card : _cardsChosen) {
+                            if (GameUtils.getZoneFromZoneTop(card.getZone()) == _cardPile)
+                                return;
+                        }
+                        if (_cardPile != Zone.LOST_PILE) {
+                            subAction.appendEffect(
+                                    new ShufflePileEffect(subAction, subAction.getActionSource(), _playerId, _playerId, _cardPile, false));
                         }
                     }
                 }
@@ -167,12 +179,21 @@ abstract class ChooseCardCombinationFromHandAndOrCardPileEffect extends Abstract
                     Collection<PhysicalCard> selectableCards = Filters.filter(cardsInPile, game, Filters.or(selectionFilter, Filters.in(prevSelection)));
                     int max = Math.min(prevSelection.size() + 1, selectableCards.size());
                     int min = isCurrentCombinationValid ? prevSelection.size() : max;
+                    // An invalid combination to which no card can be added: let the player remove cards instead of re-asking
+                    // for the same selection forever
+                    if (!isCurrentCombinationValid && selectableCards.size() <= prevSelection.size()) {
+                        min = 0;
+                        max = prevSelection.size();
+                    }
 
                     game.getUserFeedback().sendAwaitingDecision(_playerId,
                             new ArbitraryCardsSelectionDecision(_that.getChoiceText(game, _cardsChosen), cardsInPile, prevSelection, selectableCards, min, max, true, null) {
                                 @Override
                                 public void decisionMade(String result) throws DecisionResultInvalidException {
-                                    _cardsChosen = getSelectedCardsByResponse(result);
+                                    List<PhysicalCard> selection = getSelectedCardsByResponse(result);
+                                    if (!isValidPartialCombination(game, selection))
+                                        throw new DecisionResultInvalidException("These cards are not a valid combination");
+                                    _cardsChosen = selection;
                                     boolean isCurrentCombinationValid = isSelectionValid(game, _cardsChosen);
                                     Filter selectionFilter = getValidToSelectFilter(game, _cardsChosen);
                                     if (!isCurrentCombinationValid || !Filters.filterCount(cardsInPile, game, 1, Filters.and(selectionFilter, Filters.not(Filters.in(_cardsChosen)))).isEmpty()) {
@@ -184,6 +205,30 @@ abstract class ChooseCardCombinationFromHandAndOrCardPileEffect extends Abstract
                 }
             };
         }
+    }
+
+    /**
+     * Determines if the selection is a valid partial combination: every card in it is accepted by getValidToSelectFilter
+     * given the cards before it, for some order of the cards. Answers that are not are rejected, so a combination can't
+     * reach a state that can neither be completed nor undone.
+     */
+    private boolean isValidPartialCombination(SwccgGame game, Collection<PhysicalCard> selection) {
+        List<PhysicalCard> placed = new LinkedList<PhysicalCard>();
+        List<PhysicalCard> rest = new LinkedList<PhysicalCard>(selection);
+        boolean progress = true;
+        while (!rest.isEmpty() && progress) {
+            progress = false;
+            Filter filter = getValidToSelectFilter(game, placed);
+            for (PhysicalCard card : rest) {
+                if (filter.accepts(game, card)) {
+                    placed.add(card);
+                    rest.remove(card);
+                    progress = true;
+                    break;
+                }
+            }
+        }
+        return rest.isEmpty();
     }
 
     /**

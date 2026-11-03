@@ -62,6 +62,12 @@ public class PlaceAtLocationFromHandUsedPileOrReserveDeckEffect extends Abstract
         subAction.appendTargeting(
                 new ChooseCardFromHandOrCardPilesEffect(subAction, _playerId, Arrays.asList(Zone.USED_PILE, Zone.RESERVE_DECK), _playerId, validCardToChoose, false, false) {
                     @Override
+                    protected void noCardSelected(SwccgGame game) {
+                        // Used Pile and Reserve Deck were searched, but nothing was found: still reshuffle both
+                        reshuffleSearchedPiles(subAction, null);
+                    }
+
+                    @Override
                     protected void cardSelected(SwccgGame game, final PhysicalCard selectedCard) {
                         // Choose where to place card at location
                         Filter placeFilter = Filters.and(Filters.locationAndCardsAtLocation(Filters.and(_locationFilter)), selectedCard.getBlueprint().getValidPlaceCardTargetFilter(game, selectedCard));
@@ -136,9 +142,29 @@ public class PlaceAtLocationFromHandUsedPileOrReserveDeckEffect extends Abstract
                                         );
                                     }
                                 });
+                        // Used Pile and Reserve Deck were searched; the pile the card is placed from is reshuffled by the
+                        // placement, reshuffle the other(s) now (appended after the targeting above, as targeting may not follow effects)
+                        reshuffleSearchedPiles(subAction, GameUtils.getZoneFromZoneTop(selectedCard.getZone()));
                     }
                 });
         return subAction;
+    }
+
+    /**
+     * Reshuffles the searched card piles (Used Pile and Reserve Deck), except the pile the chosen card is placed from, since
+     * placing it reshuffles that pile.
+     * @param subAction the sub-action
+     * @param placedFromZone the zone the chosen card is placed from, or null if no card was chosen
+     */
+    private void reshuffleSearchedPiles(SubAction subAction, Zone placedFromZone) {
+        if (!_reshuffle)
+            return;
+        for (Zone cardPile : Arrays.asList(Zone.USED_PILE, Zone.RESERVE_DECK)) {
+            if (cardPile != placedFromZone) {
+                subAction.appendEffect(
+                        new ShufflePileEffect(subAction, subAction.getActionSource(), _playerId, _playerId, cardPile, false));
+            }
+        }
     }
 
     @Override

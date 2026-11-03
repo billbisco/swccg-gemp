@@ -12,9 +12,11 @@ import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Species;
 import com.gempukku.swccgo.common.Uniqueness;
+import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
+import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.logic.GameUtils;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
 import com.gempukku.swccgo.logic.effects.MoveCardAsRegularMoveEffect;
@@ -23,6 +25,7 @@ import com.gempukku.swccgo.logic.modifiers.EachBattleDestinyModifier;
 import com.gempukku.swccgo.logic.modifiers.ImmuneToAttritionLessThanModifier;
 import com.gempukku.swccgo.logic.modifiers.MayNotBeTargetedByPermanentWeaponsModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
+import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -60,6 +63,14 @@ public class Card211_059 extends AbstractRebel {
     protected List<TopLevelGameTextAction> getGameTextTopLevelActions(final String playerOnLightSideOfLocation, SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
         List<TopLevelGameTextAction> actions = new LinkedList<TopLevelGameTextAction>();
         GameTextActionId gameTextActionId = GameTextActionId.OTHER_CARD_ACTION_5;
+        // Only adjacent Sith/Padawan sites that Ahsoka can actually reach as a regular move (same check as the move itself)
+        final Filter siteFilter = Filters.and(Filters.adjacentSite(self), Filters.or(Filters.sameSiteAs(self, Filters.Sith), Filters.sameSiteAs(self, Filters.padawan)),
+                new Filter() {
+                    @Override
+                    public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard site) {
+                        return Filters.movableAsRegularMove(playerOnLightSideOfLocation, false, 0, false, Filters.sameTitle(site)).accepts(gameState, modifiersQuerying, self);
+                    }
+                });
 
         // Check condition(s)
         if (GameConditions.isDuringEitherPlayersPhase(game, Phase.DEPLOY)
@@ -68,7 +79,7 @@ public class Card211_059 extends AbstractRebel {
             final TopLevelGameTextAction action = new TopLevelGameTextAction(self, gameTextSourceCardId, gameTextActionId);
             action.setText("Move Ahsoka to a Sith or Padawan");
             action.appendTargeting(
-                new ChooseCardOnTableEffect(action, playerOnLightSideOfLocation, "Choose site to move to", Filters.and(Filters.adjacentSite(self), Filters.or(Filters.sameSiteAs(self, Filters.Sith), Filters.sameSiteAs(self, Filters.padawan)))) {
+                new ChooseCardOnTableEffect(action, playerOnLightSideOfLocation, "Choose site to move to", siteFilter) {
                 @Override
                 protected void cardSelected(PhysicalCard targetSite) {
                     action.addAnimationGroup(self);

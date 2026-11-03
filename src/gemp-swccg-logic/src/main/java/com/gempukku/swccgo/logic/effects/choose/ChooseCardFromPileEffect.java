@@ -46,7 +46,16 @@ public abstract class ChooseCardFromPileEffect extends ChooseCardsFromPileEffect
     protected final void cardsSelected(SwccgGame game, Collection<PhysicalCard> selectedCards) {
         if (selectedCards.size() == 1)
             cardSelected(game, selectedCards.iterator().next());
+        else
+            noCardSelected(game);
     }
 
     protected abstract void cardSelected(SwccgGame game, PhysicalCard selectedCard);
+
+    /**
+     * A callback method when no card was selected (e.g. none was valid and the card pile was verified).
+     * @param game the game
+     */
+    protected void noCardSelected(SwccgGame game) {
+    }
 }

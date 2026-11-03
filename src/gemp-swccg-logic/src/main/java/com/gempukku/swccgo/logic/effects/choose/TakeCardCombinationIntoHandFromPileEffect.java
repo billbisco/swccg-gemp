@@ -233,12 +233,21 @@ abstract class TakeCardCombinationIntoHandFromPileEffect extends AbstractSubActi
                     Collection<PhysicalCard> selectableCards = Filters.filter(cardsInPile, game, Filters.or(selectionFilter, Filters.in(prevSelection)));
                     int max = Math.min(prevSelection.size() + 1, selectableCards.size());
                     int min = isCurrentCombinationValid ? prevSelection.size() : max;
+                    // An invalid combination to which no card can be added: let the player remove cards instead of re-asking
+                    // for the same selection forever
+                    if (!isCurrentCombinationValid && selectableCards.size() <= prevSelection.size()) {
+                        min = 0;
+                        max = prevSelection.size();
+                    }
 
                     game.getUserFeedback().sendAwaitingDecision(_playerId,
                             new ArbitraryCardsSelectionDecision(_that.getChoiceText(game, _cardsToTakeIntoHand), cardsInPile, prevSelection, selectableCards, min, max, true, null) {
                                 @Override
                                 public void decisionMade(String result) throws DecisionResultInvalidException {
-                                    _cardsToTakeIntoHand = getSelectedCardsByResponse(result);
+                                    List<PhysicalCard> selection = getSelectedCardsByResponse(result);
+                                    if (!isValidPartialCombination(game, selection))
+                                        throw new DecisionResultInvalidException("These cards are not a valid combination");
+                                    _cardsToTakeIntoHand = selection;
                                     boolean isCurrentCombinationValid = isSelectionValid(game, _cardsToTakeIntoHand);
                                     Filter selectionFilter = getValidToSelectFilter(game, _cardsToTakeIntoHand);
 
@@ -259,6 +268,30 @@ abstract class TakeCardCombinationIntoHandFromPileEffect extends AbstractSubActi
                 }
             };
         }
+    }
+
+    /**
+     * Determines if the selection is a valid partial combination: every card in it is accepted by getValidToSelectFilter
+     * given the cards before it, for some order of the cards. Answers that are not are rejected, so a combination can't
+     * reach a state that can neither be completed nor undone.
+     */
+    private boolean isValidPartialCombination(SwccgGame game, Collection<PhysicalCard> selection) {
+        List<PhysicalCard> placed = new LinkedList<PhysicalCard>();
+        List<PhysicalCard> rest = new LinkedList<PhysicalCard>(selection);
+        boolean progress = true;
+        while (!rest.isEmpty() && progress) {
+            progress = false;
+            Filter filter = getValidToSelectFilter(game, placed);
+            for (PhysicalCard card : rest) {
+                if (filter.accepts(game, card)) {
+                    placed.add(card);
+                    rest.remove(card);
+                    progress = true;
+                    break;
+                }
+            }
+        }
+        return rest.isEmpty();
     }
 
     /**

@@ -47,6 +47,7 @@ public class PlaceCardInPlayEffect extends AbstractSubActionEffect {
         _performingPlayerId = _action.getPerformingPlayer();
         _cardToPlace = cardToPlace;
         _placedFromZone = GameUtils.getZoneFromZoneTop(cardToPlace.getZone());
+        _placedFromZoneOwner = cardToPlace.getZoneOwner();
         if (_placedFromZone == Zone.STACKED) {
             _placedFromStackedOn = cardToPlace.getStackedOn();
         }

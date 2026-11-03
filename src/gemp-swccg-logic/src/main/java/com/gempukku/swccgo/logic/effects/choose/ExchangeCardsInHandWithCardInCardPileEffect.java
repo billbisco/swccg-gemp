@@ -9,6 +9,7 @@ import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.logic.GameUtils;
 import com.gempukku.swccgo.logic.actions.SubAction;
+import com.gempukku.swccgo.logic.effects.ShufflePileEffect;
 import com.gempukku.swccgo.logic.timing.AbstractSubActionEffect;
 import com.gempukku.swccgo.logic.timing.Action;
 import com.gempukku.swccgo.logic.timing.PassthruEffect;
@@ -183,9 +184,23 @@ public class ExchangeCardsInHandWithCardInCardPileEffect extends AbstractSubActi
                                                             new ExchangedCardsInCardPileResult(subAction));
                                                 }
                                             }
+                                            else if (_reshuffle) {
+                                                // The card pile was searched, but no exchange took place: still reshuffle it
+                                                subAction.appendEffect(
+                                                        new ShufflePileEffect(subAction, subAction.getActionSource(), _playerId, _playerId, _cardPile, false));
+                                            }
                                         }
                                     }
                             );
+                        }
+                    }
+
+                    @Override
+                    protected void noCardSelected(SwccgGame game) {
+                        // The card pile was searched (and verified), but nothing was found: still reshuffle it
+                        if (_reshuffle) {
+                            subAction.appendEffect(
+                                    new ShufflePileEffect(subAction, subAction.getActionSource(), _playerId, _playerId, _cardPile, false));
                         }
                     }
                 }

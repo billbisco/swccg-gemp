@@ -2,10 +2,12 @@ package com.gempukku.swccgo.logic.effects;
 
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.common.Zone;
 import com.gempukku.swccgo.game.DeploymentOption;
 import com.gempukku.swccgo.game.DeploymentRestrictionsOption;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
+import com.gempukku.swccgo.logic.GameUtils;
 import com.gempukku.swccgo.logic.actions.PlayCardAction;
 import com.gempukku.swccgo.logic.actions.SubAction;
 import com.gempukku.swccgo.logic.timing.AbstractSubActionEffect;
@@ -78,6 +80,21 @@ public class DeployCardsSimultaneouslyEffect extends AbstractSubActionEffect {
                     @Override
                     protected void doPlayEffect(SwccgGame game) {
                         PlayCardAction playCardAction = _cardToDeploy.getBlueprint().getPlayCardAction(_action.getPerformingPlayer(), game, _cardToDeploy, _action.getActionSource(), _forFree, _changeInCost, _deploymentOption, _deploymentRestrictionsOption, null, null, _cardToDeployWith, _cardToDeployWithForFree, _cardToDeployWithChangeInCost, _targetFilter, null);
+                        // Check if the cards are no longer able to be deployed simultaneously at this point
+                        if (playCardAction == null) {
+                            game.getGameState().sendMessage(_action.getPerformingPlayer() + " is unable to deploy " + GameUtils.getCardLink(_cardToDeploy) + " simultaneously with " + GameUtils.getCardLink(_cardToDeployWith));
+                            // The deployment would have reshuffled the pile(s) the cards come from; they were searched, so reshuffle anyway
+                            Zone zone1 = GameUtils.getZoneFromZoneTop(_cardToDeploy.getZone());
+                            Zone zone2 = GameUtils.getZoneFromZoneTop(_cardToDeployWith.getZone());
+                            if (zone1.isCardPile() && zone1 != Zone.LOST_PILE)
+                                subAction.appendEffect(
+                                        new ShufflePileEffect(subAction, _action.getActionSource(), _action.getPerformingPlayer(), _cardToDeploy.getZoneOwner(), zone1, false));
+                            if (zone2.isCardPile() && zone2 != Zone.LOST_PILE
+                                    && (zone2 != zone1 || !_cardToDeployWith.getZoneOwner().equals(_cardToDeploy.getZoneOwner())))
+                                subAction.appendEffect(
+                                        new ShufflePileEffect(subAction, _action.getActionSource(), _action.getPerformingPlayer(), _cardToDeployWith.getZoneOwner(), zone2, false));
+                            return;
+                        }
                         playCardAction.setReshuffle(true);
                         subAction.appendEffect(
                                 new StackActionEffect(subAction, playCardAction));
