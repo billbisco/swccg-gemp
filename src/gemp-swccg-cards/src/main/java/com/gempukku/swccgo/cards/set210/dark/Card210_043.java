@@ -98,7 +98,7 @@ public class Card210_043 extends AbstractNormalEffect {
                     new OncePerTurnEffect(action));
             // Perform result(s)
             action.appendEffect(
-                    new DeployCardFromReserveDeckEffect(action, limitedDevices, false, false));
+                    new DeployCardFromReserveDeckEffect(action, limitedDevices, false, true));
 
             actions.add(action);
         }

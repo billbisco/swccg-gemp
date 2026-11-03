@@ -225,6 +225,13 @@ public class Card211_031 extends AbstractNormalEffect {
         action.appendTargeting(
                 new ChooseCardFromReserveDeckEffect(action, playerId, Filters.in(choicesInReserveDeck)) {
                     @Override
+                    protected void noCardSelected(SwccgGame game) {
+                        // Reserve Deck was searched (and verified), but nothing was found: still reshuffle
+                        action.appendEffect(
+                                new ShuffleReserveDeckEffect(action));
+                    }
+
+                    @Override
                     protected void cardSelected(SwccgGame game, PhysicalCard card) {
                         if (card.getBlueprint().getCardCategory() == CardCategory.CHARACTER) {
                             final Collection<PhysicalCard> matchingStarfightersInHand = Filters.filter(cardsInHand, game, Filters.and(Icon.INDEPENDENT, Filters.matchingStarship(card)));

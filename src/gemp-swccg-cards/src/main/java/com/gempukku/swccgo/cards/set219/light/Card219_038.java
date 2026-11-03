@@ -67,7 +67,7 @@ public class Card219_038 extends AbstractSystem {
             final List<PhysicalCard> validGhostsInHand = new ArrayList<PhysicalCard>();
             Collection<PhysicalCard> ghostsInHand = Filters.filter(cardsInHand, game, Filters.Ghost);
             for (PhysicalCard ghostInHand : ghostsInHand) {
-                if (Filters.canSpot(cardsInHand, game, Filters.and(Filters.Hera, Filters.deployableSimultaneouslyWith(self, ghostInHand, false, 0, false, 0)))) {
+                if (Filters.canSpot(cardsInHand, game, Filters.and(Filters.Hera, deployableHereSimultaneouslyWith(self, ghostInHand, Filters.and(self))))) {
                     validGhostsInHand.add(ghostInHand);
                 }
             }
@@ -93,46 +93,55 @@ public class Card219_038 extends AbstractSystem {
                                         protected void no() {
                                             // Allow response(s)
                                             action.setActionMsg("Deploy Ghost and Hera from hand");
-                                            action.appendTargeting(
-                                                new ChooseCardFromHandEffect(action, playerOnLightSideOfLocation, Filters.in(validGhostsInHand)) {
-                                                    @Override
-                                                    public String getChoiceText(int numCardsToChoose) {
-                                                        return "Choose Ghost";
-                                                    }
-
-                                                    @Override
-                                                    protected void cardSelected(SwccgGame game, final PhysicalCard ghost) {
-                                                        Collection<PhysicalCard> heras = Filters.filter(cardsInHand, game, Filters.and(Filters.Hera,
-                                                                Filters.deployableSimultaneouslyWith(self, ghost, false, 0, false, 0)));
-                                                        action.appendTargeting(
-                                                                new ChooseCardFromHandEffect(action, playerOnLightSideOfLocation, Filters.in(heras)) {
-                                                                    @Override
-                                                                    public String getChoiceText(int numCardsToChoose) {
-                                                                        return "Choose Hera";
-                                                                    }
-                                                                    @Override
-                                                                    protected void cardSelected(SwccgGame game, PhysicalCard hera) {
-                                                                        action.appendEffect(
-                                                                                new DeployCardsSimultaneouslyEffect(action, ghost, false, 0, hera, false, 0, Filters.and(self)));
-                                                                    }
-                                                                }
-                                                        );
-                                                    }
-                                                }
-                                            );
+                                            appendChooseGhostAndHeraFromHand(action, playerOnLightSideOfLocation, self, cardsInHand, validGhostsInHand);
                                         }
                                     }
                             )
                     );
-                } else {
+                } else if (canDeployCardFromReserveDeck) {
                     // Allow response(s)
                     action.setActionMsg("Deploy Ghost and Hera from hand and/or Reserve Deck");
                     action.appendEffect(getChooseCardsEffect(action));
+                } else {
+                    // Reserve Deck may not be searched: choose from hand only (the Reserve Deck is not shown)
+                    action.setActionMsg("Deploy Ghost and Hera from hand");
+                    appendChooseGhostAndHeraFromHand(action, playerOnLightSideOfLocation, self, cardsInHand, validGhostsInHand);
                 }
                 return Collections.singletonList(action);
             }
         }
         return null;
+    }
+
+    private void appendChooseGhostAndHeraFromHand(final TopLevelGameTextAction action, final String playerOnLightSideOfLocation, final PhysicalCard self,
+                                                  final List<PhysicalCard> cardsInHand, final List<PhysicalCard> validGhostsInHand) {
+        action.appendTargeting(
+            new ChooseCardFromHandEffect(action, playerOnLightSideOfLocation, Filters.in(validGhostsInHand)) {
+                @Override
+                public String getChoiceText(int numCardsToChoose) {
+                    return "Choose Ghost";
+                }
+
+                @Override
+                protected void cardSelected(SwccgGame game, final PhysicalCard ghost) {
+                    Collection<PhysicalCard> heras = Filters.filter(cardsInHand, game, Filters.and(Filters.Hera,
+                            deployableHereSimultaneouslyWith(self, ghost, Filters.and(self))));
+                    action.appendTargeting(
+                            new ChooseCardFromHandEffect(action, playerOnLightSideOfLocation, Filters.in(heras)) {
+                                @Override
+                                public String getChoiceText(int numCardsToChoose) {
+                                    return "Choose Hera";
+                                }
+                                @Override
+                                protected void cardSelected(SwccgGame game, PhysicalCard hera) {
+                                    action.appendEffect(
+                                            new DeployCardsSimultaneouslyEffect(action, ghost, false, 0, hera, false, 0, Filters.and(self)));
+                                }
+                            }
+                    );
+                }
+            }
+        );
     }
 
     private StandardEffect getChooseCardsEffect(final TopLevelGameTextAction action) {
@@ -153,14 +162,14 @@ public class Card219_038 extends AbstractSystem {
                     final List<PhysicalCard> validGhosts = new ArrayList<PhysicalCard>();
                     Collection<PhysicalCard> ghosts = Filters.filter(cardsToChooseFrom, game, Filters.Ghost);
                     for (PhysicalCard ghost : ghosts) {
-                        if (Filters.canSpot(cardsToChooseFrom, game, Filters.and(Filters.Hera, Filters.deployableSimultaneouslyWith(action.getActionSource(), ghost, false, 0, false, 0)))) {
+                        if (Filters.canSpot(cardsToChooseFrom, game, Filters.and(Filters.Hera, deployableHereSimultaneouslyWith(action.getActionSource(), ghost, Filters.Lothal_system)))) {
                             validGhosts.add(ghost);
                         }
                     }
                     return Filters.in(validGhosts);
                 } else if (cardsSelected.size() == 1) {
                     PhysicalCard ghost = cardsSelected.iterator().next();
-                    return Filters.and(Filters.Hera, Filters.deployableSimultaneouslyWith(action.getActionSource(), ghost, false, 0, false, 0));
+                    return Filters.and(Filters.Hera, deployableHereSimultaneouslyWith(action.getActionSource(), ghost, Filters.Lothal_system));
                 }
                 return Filters.none;
             }
@@ -199,5 +208,22 @@ public class Card219_038 extends AbstractSystem {
         modifiers.add(new MovesFreeToLocationModifier(self, ThrawnOrPryce, self));
         modifiers.add(new IconModifier(self, isLothalConverted, Icon.DARK_FORCE, 1));
         return modifiers;
+    }
+
+    /**
+     * Filter that accepts a Hera with which the specified Ghost can be deployed simultaneously to a target accepted by the
+     * target filter (the same check as the simultaneous deployment itself: Ghost deploys, with Hera, to the target).
+     */
+    private static Filter deployableHereSimultaneouslyWith(PhysicalCard sourceCard, PhysicalCard ghost, final Filter targetFilter) {
+        final Integer permSourceCardId = sourceCard.getPermanentCardId();
+        final Integer permGhostCardId = ghost.getPermanentCardId();
+        return new Filter() {
+            @Override
+            public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard hera) {
+                PhysicalCard source = gameState.findCardByPermanentId(permSourceCardId);
+                PhysicalCard ghost = gameState.findCardByPermanentId(permGhostCardId);
+                return ghost != null && modifiersQuerying.isDeployableToTarget(gameState, source, ghost, false, targetFilter, false, 0, null, null, null, null, null, hera, false, 0);
+            }
+        };
     }
 }

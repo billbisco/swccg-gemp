@@ -188,7 +188,17 @@ public abstract class ChooseCardFromHandOrCardPilesEffect extends AbstractStanda
         if (selectedCards.size() == 1) {
             cardSelected(game, selectedCards.iterator().next());
         }
+        else {
+            noCardSelected(game);
+        }
     }
 
     protected abstract void cardSelected(SwccgGame game, PhysicalCard selectedCard);
+
+    /**
+     * A callback method when no card was selected (e.g. none was valid and the card piles were verified).
+     * @param game the game
+     */
+    protected void noCardSelected(SwccgGame game) {
+    }
 }

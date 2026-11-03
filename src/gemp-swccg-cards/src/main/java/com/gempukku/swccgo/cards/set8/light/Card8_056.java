@@ -20,6 +20,7 @@ import com.gempukku.swccgo.logic.GameUtils;
 import com.gempukku.swccgo.logic.TriggerConditions;
 import com.gempukku.swccgo.logic.actions.PlayInterruptAction;
 import com.gempukku.swccgo.logic.effects.RespondablePlayCardEffect;
+import com.gempukku.swccgo.logic.effects.ShuffleReserveDeckEffect;
 import com.gempukku.swccgo.logic.effects.choose.ChooseCardFromHandOrReserveDeckEffect;
 import com.gempukku.swccgo.logic.effects.choose.DeployCardToLocationFromHandEffect;
 import com.gempukku.swccgo.logic.effects.choose.DeployCardToLocationFromReserveDeckEffect;
@@ -101,6 +102,13 @@ public class Card8_056 extends AbstractLostInterrupt {
                             action.appendEffect(
                                     new ChooseCardFromHandOrReserveDeckEffect(action, playerId, firstCardFilter, true, false) {
                                         @Override
+                                        protected void noCardSelected(SwccgGame game) {
+                                            // Reserve Deck was searched (and verified), but nothing was found: still reshuffle
+                                            action.appendEffect(
+                                                    new ShuffleReserveDeckEffect(action, playerId));
+                                        }
+
+                                        @Override
                                         protected void cardSelected(SwccgGame game, PhysicalCard firstCardToDeploy) {
                                             if (GameUtils.getZoneFromZoneTop(firstCardToDeploy.getZone()) == Zone.RESERVE_DECK) {
                                                 action.appendEffect(
@@ -109,6 +117,9 @@ public class Card8_056 extends AbstractLostInterrupt {
                                             else {
                                                 action.appendEffect(
                                                         new DeployCardToLocationFromHandEffect(action, firstCardToDeploy, Filters.battleLocation, true, true));
+                                                // Reserve Deck was searched, but the card deploys from hand: still reshuffle
+                                                action.appendEffect(
+                                                        new ShuffleReserveDeckEffect(action, playerId));
                                             }
                                             action.appendEffect(
                                                     new PassthruEffect(action) {
@@ -122,6 +133,13 @@ public class Card8_056 extends AbstractLostInterrupt {
                                                                     action.appendEffect(
                                                                             new ChooseCardFromHandOrReserveDeckEffect(action, playerId, secondCardFilter, true, true) {
                                                                                 @Override
+                                                                                protected void noCardSelected(SwccgGame game) {
+                                                                                    // Reserve Deck was searched (and verified), but nothing was found: still reshuffle
+                                                                                    action.appendEffect(
+                                                                                            new ShuffleReserveDeckEffect(action, playerId));
+                                                                                }
+
+                                                                                @Override
                                                                                 protected void cardSelected(SwccgGame game, PhysicalCard secondCardToDeploy) {
                                                                                     if (GameUtils.getZoneFromZoneTop(secondCardToDeploy.getZone()) == Zone.RESERVE_DECK) {
                                                                                         action.appendEffect(
@@ -130,6 +148,9 @@ public class Card8_056 extends AbstractLostInterrupt {
                                                                                     else {
                                                                                         action.appendEffect(
                                                                                                 new DeployCardToTargetFromHandEffect(action, secondCardToDeploy, Filters.sameCardId(leiaInBattle), true, true));
+                                                                                        // Reserve Deck was searched, but the card deploys from hand: still reshuffle
+                                                                                        action.appendEffect(
+                                                                                                new ShuffleReserveDeckEffect(action, playerId));
                                                                                     }
                                                                                 }
                                                                             }
