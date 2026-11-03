@@ -35,7 +35,7 @@ import java.util.List;
  * Set: Block 8
  * Type: Character
  * Subtype: Droid
- * Title: R-3PO (Ar-Threepio)
+ * Title: R-3PO (Ar-Threepio) (V)
  */
 public class Card601_231 extends AbstractDroid {
     public Card601_231() {

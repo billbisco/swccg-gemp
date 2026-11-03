@@ -31,7 +31,7 @@ import java.util.List;
  * Set: Block 2
  * Type: Character
  * Subtype: Droid
- * Title: 2-1B (Too-Onebee)
+ * Title: 2-1B (Too-Onebee) (V)
  */
 public class Card601_168 extends AbstractDroid {
     public Card601_168() {

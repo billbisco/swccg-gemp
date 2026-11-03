@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * Set: Block 4
  * Type: Effect
- * Title: No Bargain
+ * Title: No Bargain (V)
  */
 public class Card601_149 extends AbstractNormalEffect {
     public Card601_149() {
