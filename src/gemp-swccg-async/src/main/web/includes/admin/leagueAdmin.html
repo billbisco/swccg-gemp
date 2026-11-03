@@ -58,8 +58,8 @@ $(function () {
 		["classic_no_virtual", "Classic (no v-cards)"], ["classic_no_virtual_m", "Classic (no v-cards) (Modified)"],
 		["classic", "Classic"], ["open_no_shields_no_virtual", "Open (no shields / no v-cards)"],
 		["open_no_shields", "Open (no shields)"], ["open_no_virtual", "Decipher Cards Only"],
-		["open_no_virtual_m", "Decipher Cards Only (Modified)"], ["open40card", "Open (40 cards)"],
-		["open_45_card", "Open (45 cards)"], ["scavenger_premiere_ds2", "Scavenger"], ["legacy", "Legacy"],
+		["open_no_virtual_m", "Decipher Cards Only (Modified)"],
+		["scavenger_premiere_ds2", "Scavenger"], ["legacy", "Legacy"],
 		["jawa", "Jawa"], ["ewok", "Ewok"], ["utinni", "Utinni! (Jawas Only)"], ["open", "Open"],
 		["playtesting", "Playtesting"]
 	];
@@ -297,7 +297,7 @@ $(function () {
 		if (window.hall && hall.supportedFormatsSelect) {
 			hall.supportedFormatsSelect.find("option").each(function () {
 				var opt = $(this);
-				if (opt.attr("data-league") !== "1" && opt.attr("value"))
+				if (opt.attr("data-league") !== "1" && opt.attr("data-league-format") !== "true" && opt.attr("value"))
 					pairs.push([opt.attr("value"), opt.text()]);
 			});
 		}
@@ -333,13 +333,31 @@ $(function () {
 		return {format: "", duration: DEFAULT_DURATION, matches: DEFAULT_MATCHES};
 	};
 
+	// #90: deck size is its own setting. A serie stores it on the format code as <format>@<size>; the range comes from
+	// the hall (minSupportedDeckSize / maxSupportedDeckSize on GET /hall), with the server's own check behind it.
+	var deckSizeRange = function () {
+		var min = window.hall && hall.minSupportedDeckSize ? hall.minSupportedDeckSize : 40;
+		var max = window.hall && hall.maxSupportedDeckSize ? hall.maxSupportedDeckSize : 100;
+		return {min: min, max: max};
+	};
+	var splitFormatCode = function (code) {
+		var at = code ? String(code).indexOf("@") : -1;
+		return at < 0 ? {base: code || "", size: ""} : {base: code.substring(0, at), size: code.substring(at + 1)};
+	};
+
 	var buildSerieRow = function (type, serie, multi) {
 		var row = $("<div class='serie-row flex-horiz'></div>");
 		if (multi)
 			row.append("<span class='serie-index'></span>");
 		var select = $("<select class='serie-format' id='fmt-select-" + (++selectCounter) + "'></select>");
-		populateFormatSelect(select, serieKind(type), serie.format);
+		var code = splitFormatCode(serie.format);
+		populateFormatSelect(select, serieKind(type), code.base);
 		row.append(select);
+		var range = deckSizeRange();
+		var deckSizeLabel = $("<label class='field-inline' title='Leave empty for the format&#39;s own deck size. Every game in this serie uses it.'>Deck size: </label>");
+		deckSizeLabel.append($("<input type='number' step='1' class='serie-deck-size' placeholder='default'>")
+			.attr("min", range.min).attr("max", range.max).val(code.size));
+		row.append(deckSizeLabel);
 		var durationLabel = $("<label class='field-inline'>Days: </label>");
 		durationLabel.append($("<input type='number' min='1' class='serie-duration'>").val(serie.duration));
 		row.append(durationLabel);
@@ -388,8 +406,11 @@ $(function () {
 		var series = [];
 		editor.find(".serie-row").each(function () {
 			var row = $(this);
+			var base = row.find(".serie-format").val() || "";
+			var size = $.trim(row.find(".serie-deck-size").val() || "");
 			series.push({
-				format: row.find(".serie-format").val() || "",
+				format: base && size !== "" ? base + "@" + size : base,
+				deckSize: size,
 				duration: toInt(row.find(".serie-duration").val(), DEFAULT_DURATION),
 				matches: toInt(row.find(".serie-matches").val(), DEFAULT_MATCHES)
 			});
@@ -714,6 +735,12 @@ $(function () {
 			return false;
 		}
 		for (var i = 0; i < series.length; i++) {
+			var sizeRange = deckSizeRange();
+			if (series[i].deckSize && (!/^[0-9]{1,4}$/.test(series[i].deckSize)
+					|| Number(series[i].deckSize) < sizeRange.min || Number(series[i].deckSize) > sizeRange.max)) {
+				setResult(resultdiv, "Deck size must be a whole number from " + sizeRange.min + " to " + sizeRange.max + " (or empty for the format's default).", "error");
+				return false;
+			}
 			if (!series[i].format) {
 				setResult(resultdiv, "Please pick a format for every serie.", "error");
 				return false;

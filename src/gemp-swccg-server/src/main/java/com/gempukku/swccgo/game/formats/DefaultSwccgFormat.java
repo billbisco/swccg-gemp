@@ -292,6 +292,7 @@ public class DefaultSwccgFormat implements SwccgFormat {
         }
     }
 
+    /** Rules source hashed into the deck-format index stamp; the format library adds a chosen deck size to it. */
     String rulesStampSource() {
         StringBuilder sb = new StringBuilder();
         sb.append(_code).append('|')
@@ -405,6 +406,11 @@ public class DefaultSwccgFormat implements SwccgFormat {
 
     @Override
     public void validateDeck(SwccgDeck deck) throws DeckInvalidException {
+        validateDeck(deck, _minDeckSize, _maxDeckSize);
+    }
+
+    /** Validates the deck against this format's card pool and rules, with the given deck size range (#90). */
+    public void validateDeck(SwccgDeck deck, int minDeckSize, int maxDeckSize) throws DeckInvalidException {
         try {
             // Deck
             int dark = 0;
@@ -507,11 +513,11 @@ public class DefaultSwccgFormat implements SwccgFormat {
             }
 
             int deckSize = deck.getCards().size();
-            if (deckSize < _minDeckSize || deckSize > _maxDeckSize) {
-                if (_minDeckSize == _maxDeckSize) {
-                    throw new DeckInvalidException("Deck contains <span class=\"validate-deck-size\">" + deckSize + "</span> cards, however <span class=\"validate-required-deck-size\">" + _minDeckSize + "</span> cards are required.");
+            if (deckSize < minDeckSize || deckSize > maxDeckSize) {
+                if (minDeckSize == maxDeckSize) {
+                    throw new DeckInvalidException("Deck contains <span class=\"validate-deck-size\">" + deckSize + "</span> cards, however <span class=\"validate-required-deck-size\">" + minDeckSize + "</span> cards are required.");
                 }
-                throw new DeckInvalidException("Deck contains <span class=\"validate-deck-size\">" + deckSize + "</span> cards, however <span class=\"validate-required-deck-size\">" + _minDeckSize + "-" + _maxDeckSize + "</span> cards are required.");
+                throw new DeckInvalidException("Deck contains <span class=\"validate-deck-size\">" + deckSize + "</span> cards, however <span class=\"validate-required-deck-size\">" + minDeckSize + "-" + maxDeckSize + "</span> cards are required.");
             }
 
         } catch (IllegalArgumentException exp) {
