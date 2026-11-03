@@ -20,7 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Set: Block 4
+ * Set: Block 6
  * Type: Location
  * Subtype: Site
  * Title: Ralltiir: Spaceport Financial District

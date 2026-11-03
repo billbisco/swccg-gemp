@@ -30,7 +30,7 @@ import java.util.List;
  * Set: Block 7
  * Type: Character
  * Subtype: Alien
- * Title: Sy Snootles
+ * Title: Sy Snootles (V)
  */
 public class Card601_153 extends AbstractAlien {
     public Card601_153() {

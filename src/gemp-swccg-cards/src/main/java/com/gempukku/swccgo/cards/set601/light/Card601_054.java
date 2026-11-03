@@ -38,7 +38,7 @@ import java.util.List;
 
 
 /**
- * Set: Block 8
+ * Set: Block 7
  * Type: Character
  * Subtype: Rebel
  * Title: Master Kenobi

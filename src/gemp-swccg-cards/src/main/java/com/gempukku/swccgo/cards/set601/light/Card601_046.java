@@ -30,7 +30,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Set: Set 14
+ * Set: Block 9
  * Type: Character
  * Subtype: New Republic
  * Title: Jaina Solo
