@@ -88,7 +88,7 @@ public class HallCommunicationChannel implements LongPollableResource {
                     }
 
                     @Override
-                    public void visitTable(String tableId, String gameId, boolean watchable, TableStatus status, String statusDescription, String formatName, String formatCode, String collectionCode, String tournamentName, String tableDesc, List<SwccgGameParticipant> players, Map<String, String> deckArchetypeMap, boolean playing, String winner, boolean hidePlayerId, SwccgCardBlueprintLibrary library, boolean hideDesc, boolean hideDecks, boolean hideWinner, long ageAt) {
+                    public void visitTable(String tableId, String gameId, boolean watchable, TableStatus status, String statusDescription, String formatName, String formatCode, String collectionCode, String tournamentName, String tableDesc, List<SwccgGameParticipant> players, Map<String, String> deckArchetypeMap, boolean playing, String winner, boolean hidePlayerId, SwccgCardBlueprintLibrary library, boolean hideDesc, boolean hideDecks, boolean hideWinner, long ageAt, String setupChips) {
 
                         List<String> playerInfo = new LinkedList<String>();
 
@@ -117,6 +117,8 @@ public class HallCommunicationChannel implements LongPollableResource {
                         props.put("format", formatName);
                         if (formatCode != null && !formatCode.isEmpty())
                             props.put("formatCode", formatCode);
+                        // #116: the options that differ from the format's defaults ("100 cards · Blitz")
+                        props.put("options", setupChips == null ? "" : setupChips);
                         if (collectionCode != null && !collectionCode.isEmpty())
                             props.put("collectionCode", collectionCode);
                         props.put("tournament", tournamentName + ((!hideDesc && tableDesc != null && !tableDesc.isEmpty()) ? (" - " + tableDesc) : ""));
@@ -136,11 +138,12 @@ public class HallCommunicationChannel implements LongPollableResource {
                                                      String formatCode, boolean playerMade, boolean isHost, boolean startable, boolean canCancel,
                                                      String playersCsv, int maxPlayers, boolean readyCheck, boolean privateEvent, long createdAt,
                                                      int readyCheckSecsRemaining, boolean confirmedReadyCheck,
-                                                     String eventType, String draftMode, String productCode, String collectionCode, boolean requiresDeck) {
+                                                     String eventType, String draftMode, String productCode, String collectionCode, boolean requiresDeck, String setupChips) {
                         Map<String, String> props = new HashMap<String, String>();
                         props.put("cost", String.valueOf(cost));
                         props.put("collection", collectionName);
                         props.put("format", formatName);
+                        props.put("options", setupChips == null ? "" : setupChips);
                         props.put("queue", tournamentQueueName);
                         props.put("playerCount", String.valueOf(playerCount));
                         props.put("prizes", tournamentPrizes);
@@ -180,10 +183,11 @@ public class HallCommunicationChannel implements LongPollableResource {
                     @Override
                     public void visitTournament(String tournamentKey, String collectionName, String formatName, String tournamentName, String pairingDescription,
                                                 String tournamentStage, int round, int playerCount, boolean playerInCompetition,
-                                                String collectionCode, boolean decksLocked, long deckBuildEndsAt, String cubeSoloType, String formatCode) {
+                                                String collectionCode, boolean decksLocked, long deckBuildEndsAt, String cubeSoloType, String formatCode, String setupChips) {
                         Map<String, String> props = new HashMap<String, String>();
                         props.put("collection", collectionName);
                         props.put("format", formatName);
+                        props.put("options", setupChips == null ? "" : setupChips);
                         props.put("name", tournamentName);
                         props.put("system", pairingDescription);
                         props.put("stage", tournamentStage);

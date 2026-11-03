@@ -55,7 +55,8 @@ var TournamentResultsUI = Class.extend({
 
             var tournamentId = tournament.getAttribute("id");
             var tournamentName = tournament.getAttribute("name");
-            var tournamentFormat = tournament.getAttribute("format");
+            var tournamentFormat = tournament.getAttribute("format")
+                + (tournament.getAttribute("options") ? " · " + tournament.getAttribute("options") : "");
             var tournamentCollection = tournament.getAttribute("collection");
             var tournamentRound = tournament.getAttribute("round");
             var tournamentStage = tournament.getAttribute("stage");

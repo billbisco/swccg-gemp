@@ -163,8 +163,9 @@ public class DeckRequestHandler extends SwccgoServerRequestHandler implements Ur
                         // #90: a deck that only misses the format's default size may still be legal at a chosen size
                         SwccgFormat sized = sizedFormatForDeck(format, deck, exp);
                         if (sized != null) {
-                            String sizedCssId = sized.getName().replace(" ", "-").replace("(", "").replace(")", "").replace("/", "").replace("'", "");
-                            valid.append("<div id=\"deckstats-format-" + sizedCssId + "-container\" class=\"deckstats-format-container\"></span><span id=\"deckstats-format-" + sizedCssId + "\" class=\"deckstats-format-name\">" + sized.getName() + ":</span> <span id=\"deckstats-format-" + sizedCssId + "-content\" class=\"deckstats-format-valid\">valid (choose deck size " + sized.getRequiredDeckSize() + " at setup)</span></div>");
+                            String sizedName = sized.getName() + " · " + sized.getRequiredDeckSize() + " cards";
+                            String sizedCssId = formatCssId + "-" + sized.getRequiredDeckSize() + "-cards";
+                            valid.append("<div id=\"deckstats-format-" + sizedCssId + "-container\" class=\"deckstats-format-container\"></span><span id=\"deckstats-format-" + sizedCssId + "\" class=\"deckstats-format-name\">" + sizedName + ":</span> <span id=\"deckstats-format-" + sizedCssId + "-content\" class=\"deckstats-format-valid\">valid (choose deck size " + sized.getRequiredDeckSize() + " at setup)</span></div>");
                         }
                     }
                 }

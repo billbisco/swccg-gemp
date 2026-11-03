@@ -9,9 +9,11 @@ import com.gempukku.swccgo.logic.vo.SwccgDeck;
 import java.util.List;
 
 /**
- * A format played at a deck size chosen at setup (swccg-guild/work#90): the base format's card pool and rules, with
- * exactly {@link #getRequiredDeckSize()} cards. Its code is {@code <base>@<size>}, so it is stored and looked up like
- * any other format. Built only by {@link SwccgoFormatLibrary}.
+ * A format played at a deck size chosen at setup (swccg-guild/work#90/#116): the base format's card pool and rules, with
+ * exactly {@link #getRequiredDeckSize()} cards. It is what validation and deck lists use for a game whose
+ * {@link com.gempukku.swccgo.game.setup.GameSetup} chooses a deck size. Its code {@code <base>@<size>} is only a key for
+ * deck lists and the deck-format index; what is stored and shown is the base code and name plus the setup.
+ * Built only by {@link SwccgoFormatLibrary}.
  */
 public class DeckSizeSwccgFormat implements SwccgFormat {
     private final DefaultSwccgFormat _base;
@@ -50,19 +52,10 @@ public class DeckSizeSwccgFormat implements SwccgFormat {
         return true;
     }
 
-    /** game_history.format_name is VARCHAR(45); a format name longer than that can't be recorded. */
-    static final int MAX_NAME_LENGTH = 45;
-
+    /** The format's own name: a chosen deck size is shown as a chip next to it, never in the name (#114). */
     @Override
     public String getName() {
-        String name = _base.getName() + " (" + _deckSize + " cards)";
-        if (name.length() <= MAX_NAME_LENGTH)
-            return name;
-        String suffix = " (" + _deckSize + ")";
-        String base = _base.getName();
-        if (base.length() + suffix.length() > MAX_NAME_LENGTH)
-            base = base.substring(0, MAX_NAME_LENGTH - suffix.length());
-        return base + suffix;
+        return _base.getName();
     }
 
     @Override

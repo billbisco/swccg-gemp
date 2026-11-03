@@ -68,7 +68,7 @@ public class DeckSizeHallTests {
         s.hallServer.processHall(viewer, visitor);
         var row = mockingDetails(visitor).getInvocations().stream()
                 .filter(i -> i.getMethod().getName().equals("visitTable")).findFirst().orElseThrow();
-        return row.getArgument(5) + "|" + row.getArgument(6) + "|" + row.getArgument(0);
+        return row.getArgument(5) + "|" + row.getArgument(6) + "|" + row.getArgument(0) + "|" + row.getArgument(20);
     }
 
     @Test
@@ -89,6 +89,47 @@ public class DeckSizeHallTests {
         assertTrue(s.hallServer.joinTableAsPlayer(row[2], opponent, "dark45", false, null));
     }
 
+    private static AwaitingTable tableWithOptions(PlayNowTestServer s, String format, Player host, String deck,
+            Map<String, String> options) throws HallException {
+        return s.hallServer.createNewTable(format, host, deck, false, "options", false, null,
+                false, null, null, false, false, options);
+    }
+
+    @Test
+    public void GameSetupOptionsChosenAtSetupReachTheTableAndTheGame() throws Exception {
+        var s = server();
+        var host = s.member(1, "optionsHost");
+        var options = new java.util.LinkedHashMap<String, String>();
+        options.put("deckSize", "45");
+        options.put("timer", "blitz");
+        assertThrows("the deck size applies to the host's deck", HallException.class,
+                () -> tableWithOptions(s, "open", host, "light60", options));
+        var table = tableWithOptions(s, "open", host, "light45", options);
+        assertEquals("open", table.getGameSetup().getFormatCode());
+        assertEquals(45, table.getSwccgoFormat().getRequiredDeckSize());
+        assertEquals(HallGameTimer.BLITZ, table.getGameTimer());
+        var opponent = s.member(2, "optionsOpponent");
+        String[] row = tableRowFormat(s, opponent).split("\\|");
+        assertEquals("Open", row[0]);
+        assertEquals("45 cards · Blitz", row[3]);
+        assertThrows(HallException.class, () -> s.hallServer.joinTableAsPlayer(row[2], opponent, "dark60", false, null));
+        assertTrue(s.hallServer.joinTableAsPlayer(row[2], opponent, "dark45", false, null));
+        var game = s.swccgoServer.getGameById(table.getStartedGameId());
+        assertEquals("45 cards · Blitz", game.getGameSetup().chipsText());
+        assertTrue(game.getGameState().getLastMessages().contains("Game options: 45 cards · Blitz"));
+    }
+
+    @Test
+    public void GameSetupRejectsBadOptionsAndLeftAloneMeansDefaults() throws Exception {
+        var s = server();
+        var host = s.member(1, "optionsHost");
+        for (var bad : List.of(Map.of("deckSize", "101"), Map.of("startingCredits", "4"), Map.of("timer", "forever"), Map.of("noSuch", "1")))
+            assertThrows(bad.toString(), HallException.class, () -> tableWithOptions(s, "open", host, "light60", bad));
+        var table = tableWithOptions(s, "open", host, "light60", Map.of("deckSize", "", "timer", "default"));
+        assertTrue(table.getGameSetup().isDefault());
+        assertFalse(table.getSwccgoFormat().isDeckSizeChosen());
+    }
+
     @Test
     public void DeckSizeOutsideTheSupportedRangeIsRefused() throws Exception {
         var s = server();
@@ -104,7 +145,11 @@ public class DeckSizeHallTests {
         var table = table(s, "open", host, "light60");
         assertFalse(table.getSwccgoFormat().isDeckSizeChosen());
         assertEquals("open", table.getSwccgoFormat().getCode());
-        assertEquals("Open|open", tableRowFormat(s, s.member(2, "viewer")).replaceAll("\\|[^|]*$", ""));
+        String[] row = tableRowFormat(s, s.member(2, "viewer")).split("\\|", -1);
+        assertEquals("Open", row[0]);
+        assertEquals("open", row[1]);
+        assertEquals("no chips at the defaults", "", row[3]);
+        assertTrue(table.getGameSetup().isDefault());
         assertThrows(HallException.class, () -> table(s, "open", s.member(3, "other"), "light45"));
     }
 
@@ -115,13 +160,15 @@ public class DeckSizeHallTests {
         var table = table(s, "open@100", host, "light100");
         var opponent = s.member(2, "sizeOpponent");
         String[] row = tableRowFormat(s, opponent).split("\\|");
-        assertEquals("Open (100 cards)", row[0]);
-        assertEquals("open@100", row[1]);
+        assertEquals("the format name never changes (#114)", "Open", row[0]);
+        assertEquals("the deck-list key carries the size", "open@100", row[1]);
+        assertEquals("100 cards", row[3]);
         assertTrue(s.hallServer.joinTableAsPlayer(row[2], opponent, "dark100", false, null));
         var game = s.swccgoServer.getGameById(table.getStartedGameId());
-        assertEquals("open@100", game.getFormat().getCode());
-        assertTrue("the game log shows the chosen size to players and spectators: " + game.getGameState().getLastMessages(),
-                game.getGameState().getLastMessages().contains("Deck size: 100 cards (chosen at setup)"));
+        assertEquals(100, game.getFormat().getRequiredDeckSize());
+        assertEquals("100", game.getGameSetup().getChosen("deckSize"));
+        assertTrue("the game log shows the options to players and spectators: " + game.getGameState().getLastMessages(),
+                game.getGameState().getLastMessages().contains("Game options: 100 cards"));
     }
 
     @Test
@@ -145,13 +192,16 @@ public class DeckSizeHallTests {
 
         var host = s.member(1, "leagueHost");
         assertThrows("a league game can't use another size", HallException.class, () -> table(s, "league45", host, "light60"));
+        assertThrows("players can't change a league's options", HallException.class,
+                () -> tableWithOptions(s, "league45", host, "light45", Map.of("deckSize", "60")));
         var table = table(s, "league45", host, "light45");
         assertEquals(45, table.getSwccgoFormat().getRequiredDeckSize());
         assertSame(league, table.getLeague());
         // The league type is the only thing a player sends; there is no way to ask for another size
         var opponent = s.member(2, "leagueOpponent");
         String[] row = tableRowFormat(s, opponent).split("\\|");
-        assertEquals("Open (45 cards)", row[0]);
+        assertEquals("Open", row[0]);
+        assertEquals("45 cards", row[3]);
         assertThrows(HallException.class, () -> s.hallServer.joinTableAsPlayer(row[2], opponent, "dark60", false, null));
     }
 

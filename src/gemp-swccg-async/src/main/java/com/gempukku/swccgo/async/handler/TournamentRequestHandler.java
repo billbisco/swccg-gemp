@@ -111,6 +111,7 @@ public class TournamentRequestHandler extends SwccgoServerRequestHandler impleme
         tournamentElem.setAttribute("id", tournament.getTournamentId());
         tournamentElem.setAttribute("name", tournament.getTournamentName());
         tournamentElem.setAttribute("format", _formatLibrary.getFormat(tournament.getFormat()).getName());
+            tournamentElem.setAttribute("options", _formatLibrary.storedSetup(tournament.getFormat(), null).chipsText());
         tournamentElem.setAttribute("collection", tournament.getCollectionType().getFullName());
         tournamentElem.setAttribute("round", String.valueOf(tournament.getCurrentRound()));
         tournamentElem.setAttribute("stage", tournament.getTournamentStage().getHumanReadable());
@@ -243,6 +244,7 @@ public class TournamentRequestHandler extends SwccgoServerRequestHandler impleme
             tournamentElem.setAttribute("id", tournament.getTournamentId());
             tournamentElem.setAttribute("name", tournament.getTournamentName());
             tournamentElem.setAttribute("format", _formatLibrary.getFormat(tournament.getFormat()).getName());
+            tournamentElem.setAttribute("options", _formatLibrary.storedSetup(tournament.getFormat(), null).chipsText());
             tournamentElem.setAttribute("collection", tournament.getCollectionType().getFullName());
             tournamentElem.setAttribute("round", String.valueOf(tournament.getCurrentRound()));
             tournamentElem.setAttribute("stage", tournament.getTournamentStage().getHumanReadable());
@@ -268,6 +270,7 @@ public class TournamentRequestHandler extends SwccgoServerRequestHandler impleme
             tournamentElem.setAttribute("id", tournament.getTournamentId());
             tournamentElem.setAttribute("name", tournament.getTournamentName());
             tournamentElem.setAttribute("format", _formatLibrary.getFormat(tournament.getFormat()).getName());
+            tournamentElem.setAttribute("options", _formatLibrary.storedSetup(tournament.getFormat(), null).chipsText());
             tournamentElem.setAttribute("collection", tournament.getCollectionType().getFullName());
             tournamentElem.setAttribute("round", String.valueOf(tournament.getCurrentRound()));
             tournamentElem.setAttribute("stage", tournament.getTournamentStage().getHumanReadable());

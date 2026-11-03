@@ -175,9 +175,6 @@ public class SwccgoServer extends AbstractServer {
                         }
                     });
             swccgGameMediator.sendMessageToPlayers("You're starting a game of " + swccgFormat.getName());
-            // #90: a deck size chosen at setup is shown to players and spectators in the game log
-            if (swccgFormat.isDeckSizeChosen())
-                swccgGameMediator.sendMessageToPlayers("Deck size: " + swccgFormat.getRequiredDeckSize() + " cards (chosen at setup)");
 
             if (inGameStatisticsOn && !isPrivate && recordGame)
                 swccgGameMediator.addInGameStatisticsListener(new GameStatisticsProcessor(_inGameStatisticsDAO, gameId));

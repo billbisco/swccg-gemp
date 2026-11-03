@@ -85,7 +85,8 @@ public class GameRecorder {
                 Map<String, String> playerRecordingId = saveRecordedChannels(byAccount);
                 String winnerName = accountName(winner);
                 String loserName = accountName(loser);
-                _gameHistoryService.addGameHistory(winnerName, loserName, winReason, loseReason, playerRecordingId.get(winnerName), playerRecordingId.get(loserName), formatName, tournament, deckNames.get(winner), deckNames.get(loser), mediator.getDeckArchetypeLabel(winner), mediator.getDeckArchetypeLabel(loser), mediator.getWinningSideString(), mediator.getDeckString(Side.DARK), mediator.getDeckString(Side.LIGHT), leagueType, sealedLeagueType, startData, new Date());
+                _gameHistoryService.addGameHistory(winnerName, loserName, winReason, loseReason, playerRecordingId.get(winnerName), playerRecordingId.get(loserName), formatName, tournament, deckNames.get(winner), deckNames.get(loser), mediator.getDeckArchetypeLabel(winner), mediator.getDeckArchetypeLabel(loser), mediator.getWinningSideString(), mediator.getDeckString(Side.DARK), mediator.getDeckString(Side.LIGHT), leagueType, sealedLeagueType, startData, new Date(),
+                        mediator.getGameSetup() != null && !mediator.getGameSetup().isDefault() ? mediator.getGameSetup().toJson() : null);
             }
 
             private String accountName(String playerId) {

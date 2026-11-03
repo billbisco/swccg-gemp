@@ -3,6 +3,9 @@ package com.gempukku.swccgo.hall;
 import com.gempukku.swccgo.*;
 import com.gempukku.swccgo.ai.AiRegistry;
 import com.gempukku.swccgo.game.DeckSize;
+import com.gempukku.swccgo.game.setup.GameOption;
+import com.gempukku.swccgo.game.setup.GameOptions;
+import com.gempukku.swccgo.game.setup.GameSetup;
 import com.gempukku.swccgo.game.save.GameSaveCodec;
 import com.gempukku.swccgo.game.save.GameSaveDAO;
 import com.gempukku.swccgo.game.save.GameSaveHeader;
@@ -335,6 +338,24 @@ public class HallServer extends AbstractServer {
             boolean isPrivate, Player librarian, boolean playVsAi, String aiSkill, String aiDeckName, boolean aiDeckSample,
             String timerCode, boolean isInviteOnly, String startingCredits)
             throws HallException {
+        Map<String, String> options = new LinkedHashMap<String, String>();
+        // older callers always send a timer; "default" (or nothing) is the default timer, not a chosen option
+        if (timerCode != null && !timerCode.isEmpty() && HallGameTimer.fromCode(timerCode) != HallGameTimer.DEFAULT)
+            options.put(GameOptions.TIMER, timerCode);
+        if (startingCredits != null && !startingCredits.isEmpty())
+            options.put(GameOptions.STARTING_CREDITS, startingCredits);
+        return createNewTable(type, player, deckName, sampleDeck, tableDesc, isPrivate, librarian, playVsAi, aiSkill,
+                aiDeckName, aiDeckSample, isInviteOnly, options);
+    }
+
+    /**
+     * Creates a waiting table (#116): a format plus the game options chosen at setup ({@link GameOptions} ids to
+     * values; empty values mean the format's default). League tables use the league serie's setup and take no options.
+     */
+    public AwaitingTable createNewTable(String type, Player player, String deckName, boolean sampleDeck, String tableDesc,
+            boolean isPrivate, Player librarian, boolean playVsAi, String aiSkill, String aiDeckName, boolean aiDeckSample,
+            boolean isInviteOnly, Map<String, String> options)
+            throws HallException {
         if (_shutdown)
             throw new HallException(
                     "Server is in shutdown mode. No games may be started. Server will be restarted after all games have finished.");
@@ -346,6 +367,7 @@ public class HallServer extends AbstractServer {
         try {
             League league = null;
             LeagueSeriesData leagueSerie = null;
+            GameSetup leagueSetup = null;
             CollectionType collectionType = _allCardsCollectionType;
             // A hall format, or a hall format at a deck size chosen at setup (<format>@<size>, #90)
             SwccgFormat format = _formatLibrary.getHallFormat(type);
@@ -365,11 +387,38 @@ public class HallServer extends AbstractServer {
                         throw new HallException("You have already played max games in league");
                     format = _formatLibrary.getFormat(leagueSerie.getFormat());
                     collectionType = leagueSerie.getCollectionType();
+                    leagueSetup = leagueSerieSetup(leagueSerie);
+                    if (leagueSetup != null)
+                        format = _formatLibrary.effectiveFormat(leagueSetup);
                 }
             }
             // It's not a normal format and also not a league one
             if (format == null)
                 throw new HallException("This format is not supported: " + type);
+
+            // #116: the game setup. League games use the league's; other tables, the options chosen at setup.
+            GameSetup setup;
+            if (league != null) {
+                if (options != null && options.values().stream().anyMatch(v -> v != null && !v.trim().isEmpty()))
+                    throw new HallException("League games use the league's game options");
+                setup = leagueSetup != null ? leagueSetup : _formatLibrary.storedSetup(format.getCode(), null);
+            } else {
+                Map<String, String> raw = new LinkedHashMap<String, String>();
+                if (options != null)
+                    raw.putAll(options);
+                // a <format>@<size> code (older clients) is the format with that deck size
+                if (format.isDeckSizeChosen() && (raw.get(GameOptions.DECK_SIZE) == null || raw.get(GameOptions.DECK_SIZE).isEmpty()))
+                    raw.put(GameOptions.DECK_SIZE, String.valueOf(format.getRequiredDeckSize()));
+                SwccgFormat baseFormat = _formatLibrary.getFormat(format.getBaseCode());
+                try {
+                    setup = GameSetup.of(baseFormat, raw, playVsAi ? GameOption.Scope.BOT : GameOption.Scope.CASUAL);
+                } catch (IllegalArgumentException exp) {
+                    throw new HallException(exp.getMessage());
+                }
+                format = _formatLibrary.effectiveFormat(setup);
+                if (format == null)
+                    throw new HallException("This format is not supported: " + type);
+            }
 
             verifyNotExceedingMaxTables(player, true);
 
@@ -404,9 +453,7 @@ public class HallServer extends AbstractServer {
 
             boolean isPrivateGame = isPrivate;
             boolean inviteOnlyGame = isInviteOnly && !playVsAi;
-            HallGameTimer gameTimer = (league == null) ? HallGameTimer.fromCode(timerCode) : null;
-            if (league != null && startingCredits != null && !startingCredits.isEmpty())
-                throw new HallException("League games use the format's default starting credits");
+            HallGameTimer gameTimer = (league == null) ? HallGameTimer.fromCode(setup.getChosen(GameOptions.TIMER)) : null;
 
             if (inviteOnlyGame) {
                 String inviteeName = tableDesc == null ? "" : tableDesc.trim();
@@ -463,10 +510,11 @@ public class HallServer extends AbstractServer {
             AwaitingTable table = new AwaitingTable(format, collectionType, league, leagueSerie, tableDesc,
                     isPrivateGame, inviteOnlyGame, gameTimer);
             try {
-                table.setStartingCredits(startingCredits);
+                table.setStartingCredits(setup.getChosen(GameOptions.STARTING_CREDITS));
             } catch (IllegalArgumentException e) {
                 throw new HallException(e.getMessage());
             }
+            table.setGameSetup(setup);
             _awaitingTables.put(tableId, table);
 
             if (playVsAi) {
@@ -1440,15 +1488,14 @@ public class HallServer extends AbstractServer {
 
                 boolean hidePlayerId = table.getLeague() != null && !table.getLeague().getShowPlayerNames();
                 visitor.visitTable(tableInformation.getKey(), null, false, HallInfoVisitor.TableStatus.WAITING,
-                        "Waiting", table.getSwccgoFormat().getName()
-                                + (table.getSwccgoFormat().supportsStartingCredits() ? " (" + table.getStartingCredits() + " starting credits)" : ""),
+                        "Waiting", table.getSwccgoFormat().getName(),
                         table.getSwccgoFormat().getCode(),
                         table.getCollectionType() != null ? table.getCollectionType().getCode() : "default",
                         getTournamentName(table),
                         table.getLeague() != null ? null : table.getTableDesc(), players, null,
                         table.getPlayerNames().contains(player.getName()), null, hidePlayerId, _library,
                         table.getSwccgoFormat().isPlaytesting() && !playtestingVisible, true, true,
-                        table.getCreatedAt());
+                        table.getCreatedAt(), table.getGameSetup().chipsText());
             }
 
             // Then non-finished
@@ -1483,7 +1530,7 @@ public class HallServer extends AbstractServer {
                                         || (swccgGameMediator.getFormat().isPlaytesting() && !playtestingVisible)
                                         || !swccgGameMediator.isAllowSpectators(),
 
-                                swccgGameMediator.isPrivate(), runningTable.getStartedAt());
+                                swccgGameMediator.isPrivate(), runningTable.getStartedAt(), setupChips(swccgGameMediator));
                     } else {
                         finishedTables.put(runningGame.getKey(), runningTable);
                     }
@@ -1517,7 +1564,7 @@ public class HallServer extends AbstractServer {
                                     || (swccgGameMediator.getFormat().isPlaytesting() && !playtestingVisible)
                                     || !swccgGameMediator.isAllowSpectators(),
 
-                            swccgGameMediator.isPrivate(), 0L);
+                            swccgGameMediator.isPrivate(), 0L, setupChips(swccgGameMediator));
                 }
             }
 
@@ -1556,7 +1603,8 @@ public class HallServer extends AbstractServer {
                         tournamentQueue.getDraftMode(),
                         tournamentQueue.getProductCode(),
                         collectionCode,
-                        tournamentQueue.isRequiresDeck());
+                        tournamentQueue.isRequiresDeck(),
+                        setupChips(tournamentQueue.getFormat()));
             }
 
             for (Map.Entry<String, Tournament> tournamentEntry : _runningTournaments.entrySet()) {
@@ -1579,7 +1627,8 @@ public class HallServer extends AbstractServer {
                         tournament.getTournamentStage().getHumanReadable(),
                         tournament.getCurrentRound(), tournament.getPlayersInCompetitionCount(),
                         tournament.isPlayerInCompetition(player.getName()),
-                        collectionCode, decksLocked, deckBuildEndsAt, cubeSoloType, tournament.getFormat());
+                        collectionCode, decksLocked, deckBuildEndsAt, cubeSoloType, tournament.getFormat(),
+                        setupChips(tournament.getFormat()));
             }
         } finally {
             _hallDataAccessLock.readLock().unlock();
@@ -1810,7 +1859,10 @@ public class HallServer extends AbstractServer {
                 true, !awaitingTable.isPrivate(), (league == null) && !awaitingTable.isPrivate(), allowTimerExtensions,
                 decisionTimeoutSeconds, timePerPlayerMinutes, awaitingTable.isPrivate(), aiPlayerId, aiSkill,
                 maxPlayerTimeSeconds, true,
-                mediator -> mediator.getGameState().setStartingCredits(awaitingTable.getStartingCredits()));
+                mediator -> {
+                    mediator.getGameState().setStartingCredits(awaitingTable.getStartingCredits());
+                    mediator.setGameSetup(awaitingTable.getGameSetup());
+                });
         awaitingTable.setStartedGameId(gameId);
         _awaitingTables.remove(tableId);
         removeWaitingTablesWithPlayers(players);
@@ -1926,8 +1978,14 @@ public class HallServer extends AbstractServer {
                 }
             }
         }
+        // #116: every game has a setup. A league or tournament game takes it from its format code (a deck size chosen
+        // there rides on the code); a hall table replaces it with the table's full setup in beforeStart.
+        swccgGameMediator.setGameSetup(_formatLibrary.storedSetup(swccgFormat.getCode(), null));
         if (beforeStart != null)
             beforeStart.accept(swccgGameMediator);
+        GameSetup gameSetup = swccgGameMediator.getGameSetup();
+        if (gameSetup != null && !gameSetup.chips().isEmpty())
+            swccgGameMediator.sendMessageToPlayers("Game options: " + gameSetup.chipsText());
         swccgGameMediator.startGame();
         swccgGameMediator.addGameResultListener(_notifyHallListeners);
         _runningTables.put(tableId, new RunningTable(swccgGameMediator, swccgFormat.getName(), tournamentName,
@@ -1952,6 +2010,29 @@ public class HallServer extends AbstractServer {
      * If the league has deck lock-in enabled and the player already has a locked
      * deck for the given side, return the locked deck. Otherwise return the original.
      */
+    /** The non-default game options a stored format code carries (a league or tournament deck size), for lists (#116). */
+    private String setupChips(String formatCode) {
+        try {
+            return _formatLibrary.storedSetup(formatCode, null).chipsText();
+        } catch (RuntimeException exp) {
+            return "";
+        }
+    }
+
+    /** The non-default game options of a running game, for the table list (#116). */
+    private static String setupChips(SwccgGameMediator mediator) {
+        GameSetup setup = mediator.getGameSetup();
+        return setup != null ? setup.chipsText() : "";
+    }
+
+    /**
+     * A league serie's game setup (#116), or null when it has none. PR 2 stores one per serie; until then a serie's
+     * format code alone decides (a retired size-only code keeps its deck size).
+     */
+    private GameSetup leagueSerieSetup(LeagueSeriesData serie) {
+        return _formatLibrary.storedSetup(serie.getFormat(), null);
+    }
+
     private SwccgDeck applyDeckLockIn(League league, String playerName, SwccgDeck originalDeck) {
         if (league == null || league.getLockedDeckType() == null)
             return originalDeck;

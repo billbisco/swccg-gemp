@@ -72,13 +72,11 @@ public class DeckSizeFormatTests {
     public void DeckSizeChosenSizeKeepsTheFormatsCardPoolAndRules() {
         SwccgFormat base = LIBRARY.getFormat("open_no_virtual");
         SwccgFormat sized = LIBRARY.getFormat("open_no_virtual@45");
-        assertEquals("open_no_virtual@45", sized.getCode());
+        assertEquals("the deck-list key", "open_no_virtual@45", sized.getCode());
         assertEquals("open_no_virtual", sized.getBaseCode());
         assertTrue(sized.isDeckSizeChosen());
         assertFalse(base.isDeckSizeChosen());
-        assertEquals(base.getName() + " (45 cards)", sized.getName());
-        // A long name keeps the size readable within the 45 characters game history stores
-        assertEquals("Premiere - Reflections II (Modified) (100)", LIBRARY.getFormat("premiere_ref2_m@100").getName());
+        assertEquals("the format name never changes (#114)", base.getName(), sized.getName());
         assertEquals(base.getValidSets(), sized.getValidSets());
         assertEquals(base.getBannedCards(), sized.getBannedCards());
         assertEquals(base.getRestrictedCards(), sized.getRestrictedCards());
@@ -97,7 +95,7 @@ public class DeckSizeFormatTests {
             assertEquals(DeckSize.MAX_SUPPORTED, sized.getRequiredDeckSize());
             assertEquals(format.getCode(), sized.getBaseCode());
             assertSame("resolving a chosen size is cached", sized, LIBRARY.getFormat(sized.getCode()));
-            assertTrue("fits game_history.format_name: " + sized.getName(), sized.getName().length() <= 45);
+            assertEquals(format.getName(), sized.getName());
             assertTrue("fits tournament.format: " + sized.getCode(), sized.getCode().length() <= 45);
         }
     }
@@ -153,7 +151,7 @@ public class DeckSizeFormatTests {
             assertNotNull(entry.getKey() + " still loads", format);
             assertEquals("open", format.getBaseCode());
             assertEquals("open@" + entry.getValue(), format.getCode());
-            assertEquals("Open (" + entry.getValue() + " cards)", format.getName());
+            assertEquals("Open", format.getName());
             assertEquals((int) entry.getValue(), format.getRequiredDeckSize());
             assertSame(LIBRARY.getFormat("open@" + entry.getValue()), format);
             assertTrue(valid(format, deckOf(entry.getValue())));

@@ -3,6 +3,8 @@ package com.gempukku.swccgo.game.formats;
 import com.gempukku.swccgo.game.DeckSize;
 import com.gempukku.swccgo.game.SwccgCardBlueprintLibrary;
 import com.gempukku.swccgo.game.SwccgFormat;
+import com.gempukku.swccgo.game.setup.GameOptions;
+import com.gempukku.swccgo.game.setup.GameSetup;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -230,6 +232,34 @@ public class SwccgoFormatLibrary {
         if (sized == null)
             throw new IllegalArgumentException("Deck size must be a whole number from " + DeckSize.MIN_SUPPORTED + " to " + DeckSize.MAX_SUPPORTED);
         return sized.getCode();
+    }
+
+    /**
+     * The format a game with this setup plays (#116): the setup's format, at the chosen deck size if there is one.
+     * Returns {@code null} for an unknown format or an unsupported size.
+     */
+    public SwccgFormat effectiveFormat(GameSetup setup) {
+        SwccgFormat format = getFormat(setup.getFormatCode());
+        if (format == null)
+            return null;
+        String deckSize = setup.getChosen(GameOptions.DECK_SIZE);
+        if (deckSize == null)
+            return format;
+        return getFormat(DeckSize.code(format.getBaseCode(), Integer.parseInt(deckSize)));
+    }
+
+    /**
+     * The setup of a stored row (#116): its {@code game_setup} JSON, or the format's defaults for rows from before it.
+     * A retired size-only code ({@code open_100_card}) or a {@code <format>@<size>} key becomes its base format with
+     * that deck size, so old leagues, tournaments and games keep their size.
+     */
+    public GameSetup storedSetup(String formatCode, String setupJson) {
+        SwccgFormat format = getFormat(formatCode);
+        String baseCode = format != null ? format.getBaseCode() : formatCode;
+        GameSetup setup = GameSetup.fromJson(setupJson, baseCode).forFormat(baseCode);
+        if (format != null && format.isDeckSizeChosen() && setup.getChosen(GameOptions.DECK_SIZE) == null)
+            setup = setup.with(GameOptions.DECK_SIZE, String.valueOf(format.getRequiredDeckSize()));
+        return setup;
     }
 
     private SwccgFormat getDeckSizeFormat(String formatCode, Map<String, SwccgFormat> baseFormats) {

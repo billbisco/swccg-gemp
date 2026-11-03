@@ -238,15 +238,22 @@ The `gemp` script provides convenient commands for common development tasks:
   },
 ```
 
-### Deck size is a setup setting, not a format
+### Game options: deck size, starting credits, timer (and more to come)
 
+* A game is a **format plus game options** (swccg-guild/work#114). The format is the card pool and the options'
+  defaults; options are chosen at setup and shown as short "chips" next to the unchanged format name
+  ("Open · 100 cards · Blitz").
+* Options are defined once, in `gemp-swccg-server/.../game/setup/GameOptions.java`. Each has an id, a kind (mode,
+  deck rules, play rules, table), a type, a default taken from the format, where it may be set (casual, bot, league,
+  tournament) and a short label. The hall sends the registry to the client, which builds the setup form from it, so a
+  new option needs no client change.
 * A format's own size is `deckSize` (exact, default 60) or `minDeckSize`/`maxDeckSize` (a range). That is only the
-  **default**: whoever sets up a table, league or tournament can choose any size in the supported range, which is
-  defined once in `gemp-swccg-logic/.../game/DeckSize.java` (`MIN_SUPPORTED`, `MAX_SUPPORTED`).
-* A chosen size travels in the format code as `<format>@<size>`, for example `open@100`, and shows as
-  "Open (100 cards)". Don't add a separate format just to change the size.
+  **default** for the deck size option, whose range is `DeckSize.MIN_SUPPORTED`–`MAX_SUPPORTED`
+  (`gemp-swccg-logic/.../game/DeckSize.java`). Don't add a separate format just to change the size.
 * `deckSizeVariants` sets the timer or tenets link a format uses at one size. `aliases` keeps retired size-only codes
-  working (`open_100_card` is `open@100`).
+  working (`open_100_card` is Open with deck size 100).
+* A table's setup is stored with its game history (`game_history.game_setup`, JSON). Leagues and tournaments carry a
+  chosen deck size on their format code (`open@100`) until they get their own setup column.
 
 ```javascript
   {

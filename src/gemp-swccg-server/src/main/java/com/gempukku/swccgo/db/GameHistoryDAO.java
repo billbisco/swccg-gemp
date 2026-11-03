@@ -10,6 +10,11 @@ import java.util.Map;
 public interface GameHistoryDAO {
     public void addGameHistory(String winner, String loser, String winReason, String loseReason, String winRecordingId, String loseRecordingId, String formatName, String tournament, String winnerDeckName, String loserDeckName, String winnerDeckArchetype, String loserDeckArchetype, String winningSide, String darkDeckString, String lightDeckString, String leagueType, String sealedLeagueType, Date startDate, Date endDate);
 
+    /** As above, plus the game's setup JSON (#116); null or empty means the format's defaults. */
+    default void addGameHistory(String winner, String loser, String winReason, String loseReason, String winRecordingId, String loseRecordingId, String formatName, String tournament, String winnerDeckName, String loserDeckName, String winnerDeckArchetype, String loserDeckArchetype, String winningSide, String darkDeckString, String lightDeckString, String leagueType, String sealedLeagueType, Date startDate, Date endDate, String gameSetup) {
+        addGameHistory(winner, loser, winReason, loseReason, winRecordingId, loseRecordingId, formatName, tournament, winnerDeckName, loserDeckName, winnerDeckArchetype, loserDeckArchetype, winningSide, darkDeckString, lightDeckString, leagueType, sealedLeagueType, startDate, endDate);
+    }
+
     public List<GameHistoryEntry> getGameHistoryForPlayer(Player player, int start, int count);
 
     public int getGameHistoryForPlayerCount(Player player);
