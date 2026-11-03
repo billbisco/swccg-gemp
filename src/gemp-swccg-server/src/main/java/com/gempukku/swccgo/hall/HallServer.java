@@ -2,6 +2,7 @@ package com.gempukku.swccgo.hall;
 
 import com.gempukku.swccgo.*;
 import com.gempukku.swccgo.ai.AiRegistry;
+import com.gempukku.swccgo.game.DeckSize;
 import com.gempukku.swccgo.game.save.GameSaveCodec;
 import com.gempukku.swccgo.game.save.GameSaveDAO;
 import com.gempukku.swccgo.game.save.GameSaveHeader;
@@ -346,7 +347,8 @@ public class HallServer extends AbstractServer {
             League league = null;
             LeagueSeriesData leagueSerie = null;
             CollectionType collectionType = _allCardsCollectionType;
-            SwccgFormat format = _formatLibrary.getHallFormats().get(type);
+            // A hall format, or a hall format at a deck size chosen at setup (<format>@<size>, #90)
+            SwccgFormat format = _formatLibrary.getHallFormat(type);
 
             if (format == null) {
                 // Maybe it's a league format?
@@ -1104,6 +1106,17 @@ public class HallServer extends AbstractServer {
         String type = TournamentProduct.normalizeType(eventType);
         if (type == null)
             throw new HallException("Choose Constructed, Sealed, Draft, or Cube");
+        // #90: the deck size chosen at setup rides on the format code (<format>@<size>); keep it across the product lookup
+        Integer chosenDeckSize;
+        try {
+            chosenDeckSize = DeckSize.chosenSize(formatCode);
+        } catch (IllegalArgumentException exp) {
+            throw new HallException(exp.getMessage());
+        }
+        if (chosenDeckSize != null && !DeckSize.isSupported(chosenDeckSize))
+            throw new HallException("Deck size must be a whole number from " + DeckSize.MIN_SUPPORTED + " to " + DeckSize.MAX_SUPPORTED);
+        formatCode = DeckSize.baseCode(formatCode);
+        productCode = DeckSize.baseCode(productCode);
         String mode = TournamentProduct.normalizeMode(draftMode);
         TournamentProduct product = null;
         if (TournamentProduct.isLimitedType(type)) {
@@ -1116,7 +1129,9 @@ public class HallServer extends AbstractServer {
                 maxPlayers = product.getLiveMaxPlayers();
         }
 
-        SwccgFormat format = _formatLibrary.getHallFormats().get(formatCode);
+        if (chosenDeckSize != null)
+            formatCode = DeckSize.code(formatCode, chosenDeckSize);
+        SwccgFormat format = _formatLibrary.getHallFormat(formatCode);
         if (format == null)
             format = _formatLibrary.getFormat(formatCode);
         if (format == null)

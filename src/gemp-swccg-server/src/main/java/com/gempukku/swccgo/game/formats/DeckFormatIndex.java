@@ -16,11 +16,12 @@ import java.util.regex.Pattern;
 
 /**
  * Per-format cache on a deck row: one TEXT blob of triples {@code |code:stamp:P|} or {@code |code:stamp:F|}.
+ * A code may carry a chosen deck size ({@code open@100}, #90).
  * Stamp is the format's current rules hash. Missing code is unknown; {@code F} with a matching stamp is a known fail.
  */
 public final class DeckFormatIndex {
     public static final String DELIM = "|";
-    private static final Pattern TRIPLE = Pattern.compile("^([a-zA-Z0-9_]+):([0-9a-fA-F]{16}):([PF])$");
+    private static final Pattern TRIPLE = Pattern.compile("^([a-zA-Z0-9_]+(?:@[0-9]+)?):([0-9a-fA-F]{16}):([PF])$");
 
     public static final class FormatCheck {
         public final String code;

@@ -410,6 +410,9 @@ var GempSwccgHallUI = Class.extend({
     joinContextDiv:null,
     joinTitleEl:null,
     joinPending:null, // {kind:"table"|"queue", id, formatName, formatCode, collectionCode, contextLabel}
+    // #90: deck size is chosen at setup; the server publishes the supported range on the hall element
+    minSupportedDeckSize:40,
+    maxSupportedDeckSize:100,
     deckLoadGen:0,
     joinDeckLoadGen:0,
     lastServerTime:null,
@@ -515,7 +518,8 @@ var GempSwccgHallUI = Class.extend({
         this.supportedFormatsSelect.hide();
         this.supportedFormatsSelect.change(function () {
             that.updateStartingCredits();
-            var fmt = that.supportedFormatsSelect.val();
+            that.updateDeckSize();
+            var fmt = that.playFormatCode();
             if (fmt)
                 that.updateDecks(fmt, "default");
         });
@@ -827,6 +831,14 @@ var GempSwccgHallUI = Class.extend({
         this.startingCreditsRow.append("<span class='play-form-label'>Starting credits</span>");
         this.startingCreditsRow.append(this.startingCreditsInput);
         this.startingCreditsRow.append("<span>0–60 per player; 0 uses random opening hands.</span>");
+        var deckSizeControl = this.buildDeckSizeControl("play-deck-size", function () {
+            var fmt = that.playFormatCode();
+            if (fmt)
+                that.updateDecks(fmt, "default");
+        });
+        this.deckSizeRow = deckSizeControl.row;
+        this.deckSizeInput = deckSizeControl.input;
+        this.deckSizeNote = deckSizeControl.note;
         this.timerRow = $("<div class='play-form-row'></div>");
         this.timerRow.append("<span class='play-form-label'>Game Timer</span>");
         this.timerRow.append(this.timerSelect);
@@ -863,6 +875,7 @@ var GempSwccgHallUI = Class.extend({
         this.playFormFields.append(this.libraryDeckRow);
         this.playFormFields.append(this.descRow);
         this.playFormFields.append(this.timerRow);
+        this.playFormFields.append(this.deckSizeRow);
         this.playFormFields.append(this.startingCreditsRow);
         this.playFormFields.append(this.inviteRow);
         this.playFormFields.append(this.inviteeRow);
@@ -996,6 +1009,16 @@ var GempSwccgHallUI = Class.extend({
         this.tournamentFormatSelect = $("<select id='tournament-format' class='play-form-select'></select>");
         tFormatRow.append(this.tournamentFormatSelect);
         tFields.append(tFormatRow);
+        var thatSize = this;
+        var tDeckSize = this.buildDeckSizeControl("tournament-deck-size", function () {
+            var fmt = thatSize.tournamentFormatCode();
+            if (fmt)
+                thatSize.updateDecks(fmt, "default");
+        });
+        this.tournamentDeckSizeRow = tDeckSize.row;
+        this.tournamentDeckSizeInput = tDeckSize.input;
+        this.tournamentDeckSizeNote = tDeckSize.note;
+        tFields.append(this.tournamentDeckSizeRow);
 
         this.tournamentProductRow = $("<div class='play-form-row' style='display:none'></div>");
         this.tournamentProductRow.append("<span class='play-form-label'>Product</span>");
@@ -1134,8 +1157,10 @@ var GempSwccgHallUI = Class.extend({
             thatTourney.syncTournamentProductUi();
         });
         this.tournamentFormatSelect.change(function () {
-            var fmt = thatTourney.tournamentFormatSelect.val();
-            thatTourney.updateDecks(fmt, "default");
+            thatTourney.updateTournamentDeckSize();
+            var fmt = thatTourney.tournamentFormatCode();
+            if (fmt)
+                thatTourney.updateDecks(fmt, "default");
         });
         $(this.tournamentCreateButton).button().click(function () {
             thatTourney.submitCreateTournament();
@@ -1752,7 +1777,8 @@ var GempSwccgHallUI = Class.extend({
         this.populateTournamentFormats();
         this.syncTournamentTypeUi();
         this.syncTournamentPairingUi();
-        var fmt = this.tournamentFormatSelect != null ? this.tournamentFormatSelect.val() : null;
+        this.updateTournamentDeckSize();
+        var fmt = this.tournamentFormatCode();
         if (fmt)
             this.updateDecks(fmt, "default");
         this.fillTournamentDeckSelects();
@@ -1834,7 +1860,11 @@ var GempSwccgHallUI = Class.extend({
                 return;
             if (/sealed|draft|cube/i.test(label) || /sealed|draft|cube/i.test(value))
                 return;
-            that.tournamentFormatSelect.append($("<option></option>").attr("value", value).text(label));
+            if (opt.attr("data-league-format") === "true" || opt.attr("data-league") === "1")
+                return;
+            that.tournamentFormatSelect.append($("<option></option>").attr("value", value).text(label)
+                .attr("data-min-deck-size", opt.attr("data-min-deck-size"))
+                .attr("data-max-deck-size", opt.attr("data-max-deck-size")));
         });
         if (that.selectHasValue(that.tournamentFormatSelect, "anything_goes"))
             that.tournamentFormatSelect.val("anything_goes");
@@ -1906,8 +1936,9 @@ var GempSwccgHallUI = Class.extend({
                 this.tournamentPacksSelect.val(prev);
         }
         this.clampTournamentMaxForLiveCube();
-        if (this.tournamentFormatSelect != null && this.tournamentFormatSelect.val())
-            this.updateDecks(this.tournamentFormatSelect.val(), "default");
+        this.updateTournamentDeckSize();
+        if (this.tournamentFormatSelect != null && this.tournamentFormatCode())
+            this.updateDecks(this.tournamentFormatCode(), "default");
     },
 
     tournamentPlayerCountCap:function() {
@@ -2164,9 +2195,13 @@ var GempSwccgHallUI = Class.extend({
             return;
         }
         var pairing = this.tournamentPairingSelect.val() || "swiss";
+        var tournamentFormat = product != null ? product.formatCode
+            : this.tournamentFormatCode(function (message) { that.showTournamentError(message); });
+        if (tournamentFormat == null)
+            return;
         var params = {
             type: type,
-            formatCode: product != null ? product.formatCode : this.tournamentFormatSelect.val(),
+            formatCode: tournamentFormat,
             productCode: product != null ? product.code : "",
             draftMode: (type === "draft" || type === "cube") ? (this.tournamentModeSelect.val() || "solo") : "",
             packCount: (type === "draft" || type === "cube") ? (this.tournamentPacksSelect.val() || "0") : "0",
@@ -2265,7 +2300,8 @@ var GempSwccgHallUI = Class.extend({
 
         this.filterFormatsForPlayMode(mode);
         this.updateStartingCredits();
-        var fmt = this.supportedFormatsSelect.val();
+        this.updateDeckSize();
+        var fmt = this.playFormatCode();
         this.updateDecks(fmt, "default");
         this.updateAiDecksForSelection();
         this.updateCreateTableLabel();
@@ -2284,6 +2320,113 @@ var GempSwccgHallUI = Class.extend({
         this.startingCreditsInput.prop("disabled", !eligible);
         // Reset when changing format so a hidden control cannot retain a prior table's custom budget.
         this.startingCreditsInput.val(eligible ? option.attr("data-default-starting-credits") : "");
+    },
+
+    /**
+     * #90: a "Deck size" number input. Empty means the format's own size; any other value must be in the
+     * supported range, which comes from the server (hall attributes minSupportedDeckSize / maxSupportedDeckSize).
+     */
+    buildDeckSizeControl:function(id, onChange) {
+        var that = this;
+        var row = $("<div class='play-form-row play-form-deck-size-row'></div>");
+        row.append("<label class='play-form-label' for='" + id + "'>Deck size</label>");
+        var input = $("<input type='number' step='1' class='play-form-select play-deck-size-input' id='" + id + "'>");
+        input.attr("min", this.minSupportedDeckSize).attr("max", this.maxSupportedDeckSize);
+        var note = $("<span class='play-deck-size-note'></span>");
+        row.append(input);
+        row.append(note);
+        var timer = null;
+        input.on("input change", function () {
+            if (timer != null)
+                clearTimeout(timer);
+            timer = setTimeout(function () {
+                timer = null;
+                if (onChange)
+                    onChange();
+            }, 400);
+        });
+        return {row: row, input: input, note: note};
+    },
+
+    /** The format's own size as text: "60", or "40–60" for a range. */
+    formatDeckSizeLabel:function(option) {
+        var min = option != null ? option.attr("data-min-deck-size") : null;
+        var max = option != null ? option.attr("data-max-deck-size") : null;
+        if (!min || !max)
+            return "";
+        return min === max ? min : (min + "–" + max);
+    },
+
+    /** Resets a deck size control to the selected format's default. */
+    resetDeckSizeControl:function(input, note, option, fixed) {
+        if (input == null)
+            return;
+        var label = this.formatDeckSizeLabel(option);
+        input.attr("min", this.minSupportedDeckSize).attr("max", this.maxSupportedDeckSize);
+        input.val("");
+        input.attr("placeholder", label || "default");
+        input.prop("disabled", !!fixed);
+        if (fixed)
+            note.text("Set by the league for all its games.");
+        else
+            note.text((label ? "Format default " + label + ". " : "Leave empty for the format default. ")
+                + "Any size from " + this.minSupportedDeckSize + " to " + this.maxSupportedDeckSize + ".");
+    },
+
+    updateDeckSize:function() {
+        if (!this.deckSizeRow)
+            return;
+        var option = this.supportedFormatsSelect.find("option:selected");
+        var league = this.playMode === "league" || option.attr("data-league") === "1" || option.attr("data-league-format") === "true";
+        this.resetDeckSizeControl(this.deckSizeInput, this.deckSizeNote, option, league);
+    },
+
+    /**
+     * The format code to send for a base format and a typed deck size: the base code when the size is left empty or
+     * is the format's own fixed size, otherwise "<format>@<size>". Returns null (and reports) for a size out of range.
+     */
+    sizedFormatCode:function(baseCode, input, option, report) {
+        if (!baseCode || input == null || input.prop("disabled"))
+            return baseCode;
+        var value = $.trim(input.val() || "");
+        if (value === "")
+            return baseCode;
+        var size = Number(value);
+        if (!/^[0-9]{1,4}$/.test(value) || size < this.minSupportedDeckSize || size > this.maxSupportedDeckSize) {
+            if (report)
+                report("Deck size must be a whole number from " + this.minSupportedDeckSize + " to " + this.maxSupportedDeckSize + ".");
+            return null;
+        }
+        var min = option != null ? option.attr("data-min-deck-size") : null;
+        var max = option != null ? option.attr("data-max-deck-size") : null;
+        if (min && min === max && Number(min) === size)
+            return baseCode;
+        return baseCode + "@" + size;
+    },
+
+    /** The Play form's format code, with the chosen deck size (#90). */
+    playFormatCode:function(report) {
+        var base = this.supportedFormatsSelect != null ? this.supportedFormatsSelect.val() : null;
+        if (this.playMode === "league")
+            return base;
+        return this.sizedFormatCode(base, this.deckSizeInput, this.supportedFormatsSelect.find("option:selected"), report);
+    },
+
+    /** The tournament form's format code, with the chosen deck size (#90). */
+    tournamentFormatCode:function(report) {
+        var base = this.tournamentFormatSelect != null ? this.tournamentFormatSelect.val() : null;
+        if (this.isLimitedTournamentType())
+            return base;
+        return this.sizedFormatCode(base, this.tournamentDeckSizeInput, this.tournamentFormatSelect.find("option:selected"), report);
+    },
+
+    updateTournamentDeckSize:function() {
+        if (!this.tournamentDeckSizeRow)
+            return;
+        var limited = this.isLimitedTournamentType();
+        this.tournamentDeckSizeRow.css("display", limited ? "none" : "");
+        this.resetDeckSizeControl(this.tournamentDeckSizeInput, this.tournamentDeckSizeNote,
+            this.tournamentFormatSelect.find("option:selected"), false);
     },
 
     applyCasualBotFieldVisibility:function() {
@@ -3063,7 +3206,7 @@ var GempSwccgHallUI = Class.extend({
         var firstEnabled = null;
         this.supportedFormatsSelect.find("option").each(function () {
             var opt = $(this);
-            var isLeague = opt.attr("data-league") === "1";
+            var isLeague = opt.attr("data-league") === "1" || opt.attr("data-league-format") === "true";
             var enable;
             if (mode === "league") {
                 enable = isLeague;
@@ -3128,7 +3271,9 @@ var GempSwccgHallUI = Class.extend({
 
     submitCreateTable:function() {
         var that = this;
-        var format = that.supportedFormatsSelect.val();
+        var format = that.playFormatCode(function (message) { that.showPlayFormResult(message, true); });
+        if (format == null)
+            return;
         var playerDeck = that.selectedDeckFromPair(that.playerDeckSelect, that.libraryDeckSelect);
         if (playerDeck == null || playerDeck.name == null || playerDeck.name === "") {
             that.showPlayFormResult("You must select a deck.", true);
@@ -4028,6 +4173,16 @@ var GempSwccgHallUI = Class.extend({
             if (!isNaN(currency))
                 this.pocketValue = currency; // kept for merchant; no longer shown on primary bar
 
+            var minDeckSize = parseInt(root.getAttribute("minSupportedDeckSize"));
+            var maxDeckSize = parseInt(root.getAttribute("maxSupportedDeckSize"));
+            if (!isNaN(minDeckSize) && !isNaN(maxDeckSize)
+                    && (minDeckSize !== this.minSupportedDeckSize || maxDeckSize !== this.maxSupportedDeckSize)) {
+                this.minSupportedDeckSize = minDeckSize;
+                this.maxSupportedDeckSize = maxDeckSize;
+                this.updateDeckSize();
+                this.updateTournamentDeckSize();
+            }
+
             var privateGamesEnabled = root.getAttribute("privateGamesEnabledBoolean");
             this.privateGamesAllowed = (privateGamesEnabled == "true");
             this.applyCasualBotFieldVisibility();
@@ -4399,10 +4554,14 @@ var GempSwccgHallUI = Class.extend({
                     var type = formats[i].getAttribute("type");
                     this.supportedFormatsSelect.append($("<option></option>").val(type).text(format)
                         .attr("data-starting-credits", formats[i].getAttribute("startingCredits"))
-                        .attr("data-default-starting-credits", formats[i].getAttribute("defaultStartingCredits")));
+                        .attr("data-default-starting-credits", formats[i].getAttribute("defaultStartingCredits"))
+                        .attr("data-min-deck-size", formats[i].getAttribute("minDeckSize"))
+                        .attr("data-max-deck-size", formats[i].getAttribute("maxDeckSize"))
+                        .attr("data-league-format", formats[i].getAttribute("league")));
                 }
                 this.supportedFormatsInitialized = true;
                 this.updateStartingCredits();
+                this.updateDeckSize();
                 // Mark league-type options via /league list (hall emits both as plain <format>)
                 this.tagLeagueFormats();
                 this.populateTournamentFormats();

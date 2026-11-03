@@ -231,12 +231,30 @@ The `gemp` script provides convenient commands for common development tasks:
 
 ```javascript
   {
-    "name":"Open (100 cards)",
-    "code":"open_100_card",
+    "name":"Example (long games)",
+    "code":"example_long",
     "set":[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
-    "deckSize":100,
-    "defaultGameTimerMinutes":90,
-    "tenetsLink": "https://www.starwarsccg.org/100card/"
+    "defaultGameTimerMinutes":90
+  },
+```
+
+### Deck size is a setup setting, not a format
+
+* A format's own size is `deckSize` (exact, default 60) or `minDeckSize`/`maxDeckSize` (a range). That is only the
+  **default**: whoever sets up a table, league or tournament can choose any size in the supported range, which is
+  defined once in `gemp-swccg-logic/.../game/DeckSize.java` (`MIN_SUPPORTED`, `MAX_SUPPORTED`).
+* A chosen size travels in the format code as `<format>@<size>`, for example `open@100`, and shows as
+  "Open (100 cards)". Don't add a separate format just to change the size.
+* `deckSizeVariants` sets the timer or tenets link a format uses at one size. `aliases` keeps retired size-only codes
+  working (`open_100_card` is `open@100`).
+
+```javascript
+  {
+    "name":"Open",
+    "code":"open",
+    "set":[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
+    "aliases":{"open40card":40, "open_45_card":45, "open_100_card":100},
+    "deckSizeVariants":{"100":{"defaultGameTimerMinutes":90, "tenetsLink":"https://www.starwarsccg.org/100card/"}}
   },
 ```
 

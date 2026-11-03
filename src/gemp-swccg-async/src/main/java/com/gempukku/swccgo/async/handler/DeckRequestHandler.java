@@ -160,6 +160,12 @@ public class DeckRequestHandler extends SwccgoServerRequestHandler implements Ur
                         valid.append("<div id=\"deckstats-format-" + formatCssId + "-container\" class=\"deckstats-format-container\"></span><span id=\"deckstats-format-" + formatCssId + "\" class=\"deckstats-format-name\">" + format.getName() + ":</span> <span id=\"deckstats-format-" + formatCssId + "-content\" class=\"deckstats-format-valid\">valid</span></div>");
                     } catch (DeckInvalidException exp) {
                         invalid.append("<div id=\"deckstats-format-" + formatCssId + "-container\" class=\"deckstats-format-container\"></span><span id=\"deckstats-format-" + formatCssId + "\" class=\"deckstats-format-name\">" + format.getName() + ":</span> <span id=\"deckstats-format-" + formatCssId + "-content\" class=\"deckstats-format-invalid\">" + exp.getMessage() + "</span></div>");
+                        // #90: a deck that only misses the format's default size may still be legal at a chosen size
+                        SwccgFormat sized = sizedFormatForDeck(format, deck, exp);
+                        if (sized != null) {
+                            String sizedCssId = sized.getName().replace(" ", "-").replace("(", "").replace(")", "").replace("/", "").replace("'", "");
+                            valid.append("<div id=\"deckstats-format-" + sizedCssId + "-container\" class=\"deckstats-format-container\"></span><span id=\"deckstats-format-" + sizedCssId + "\" class=\"deckstats-format-name\">" + sized.getName() + ":</span> <span id=\"deckstats-format-" + sizedCssId + "-content\" class=\"deckstats-format-valid\">valid (choose deck size " + sized.getRequiredDeckSize() + " at setup)</span></div>");
+                        }
                     }
                 }
             }
@@ -346,6 +352,27 @@ public class DeckRequestHandler extends SwccgoServerRequestHandler implements Ur
                 responseWriter.writeXmlResponse(serializedDeck);
             }
 
+        }
+    }
+
+    /**
+     * The format at the deck's own size, when the deck fails only the format's default deck size and that size is
+     * supported (#90); otherwise {@code null}.
+     */
+    private SwccgFormat sizedFormatForDeck(SwccgFormat format, SwccgDeck deck, DeckInvalidException failure) {
+        if (failure.getMessage() == null || !failure.getMessage().contains("validate-deck-size"))
+            return null;
+        int size = deck.getCards().size();
+        if (!DeckSize.isSupported(size))
+            return null;
+        SwccgFormat sized = _formatLibrary.getFormat(DeckSize.code(format.getBaseCode(), size));
+        if (sized == null || !sized.isDeckSizeChosen())
+            return null;
+        try {
+            sized.validateDeck(deck);
+            return sized;
+        } catch (DeckInvalidException exp) {
+            return null;
         }
     }
 

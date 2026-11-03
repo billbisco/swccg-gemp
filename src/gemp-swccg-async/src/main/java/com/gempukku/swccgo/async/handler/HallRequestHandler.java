@@ -24,6 +24,7 @@ import com.gempukku.swccgo.game.CardCollection;
 import com.gempukku.swccgo.game.Player;
 import com.gempukku.swccgo.game.SwccgCardBlueprint;
 import com.gempukku.swccgo.game.SwccgCardBlueprintLibrary;
+import com.gempukku.swccgo.game.DeckSize;
 import com.gempukku.swccgo.game.SwccgFormat;
 import com.gempukku.swccgo.game.SwccgoServer;
 import com.gempukku.swccgo.game.formats.SwccgoFormatLibrary;
@@ -837,6 +838,9 @@ public class HallRequestHandler extends SwccgoServerRequestHandler implements Ur
                 formatElem.setAttribute("type", format.getKey());
                 formatElem.setAttribute("startingCredits", String.valueOf(format.getValue().supportsStartingCredits()));
                 formatElem.setAttribute("defaultStartingCredits", String.valueOf(format.getValue().getDefaultStartingCredits()));
+                // #90: the format's own deck size is only the default; the Play form offers the supported range
+                formatElem.setAttribute("minDeckSize", String.valueOf(format.getValue().getMinimumDeckSize()));
+                formatElem.setAttribute("maxDeckSize", String.valueOf(format.getValue().getMaximumDeckSize()));
                 formatElem.appendChild(doc.createTextNode(format.getValue().getName()));
                 hall.appendChild(formatElem);
             }
@@ -845,11 +849,20 @@ public class HallRequestHandler extends SwccgoServerRequestHandler implements Ur
                 if (currentLeagueSerie != null && _leagueService.isPlayerInLeague(league, resourceOwner)) {
                     Element formatElem = doc.createElement("format");
                     formatElem.setAttribute("type", league.getType());
+                    // A league fixes the deck size for all its games (#90)
+                    formatElem.setAttribute("league", "true");
+                    SwccgFormat leagueFormat = _formatLibrary.getFormat(currentLeagueSerie.getFormat());
+                    if (leagueFormat != null) {
+                        formatElem.setAttribute("minDeckSize", String.valueOf(leagueFormat.getMinimumDeckSize()));
+                        formatElem.setAttribute("maxDeckSize", String.valueOf(leagueFormat.getMaximumDeckSize()));
+                    }
                     formatElem.appendChild(doc.createTextNode(league.getName()));
                     hall.appendChild(formatElem);
                 }
             }
 
+            hall.setAttribute("minSupportedDeckSize", String.valueOf(DeckSize.MIN_SUPPORTED));
+            hall.setAttribute("maxSupportedDeckSize", String.valueOf(DeckSize.MAX_SUPPORTED));
             hall.setAttribute("privateGamesEnabledBoolean", String.valueOf(_hallServer.privateGamesAllowed()));
             hall.setAttribute("aiTablesEnabledBoolean", String.valueOf(_hallServer.aiTablesEnabled()));
             doc.appendChild(hall);

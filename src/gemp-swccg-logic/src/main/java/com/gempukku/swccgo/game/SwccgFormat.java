@@ -34,5 +34,11 @@ public interface SwccgFormat {
     default boolean supportsStartingCredits() { return false; }
 
     default int getDefaultStartingCredits() { return supportsStartingCredits() ? 5 : 0; }
+
+    /** The code of the format this one is based on; differs from {@link #getCode()} only when a deck size was chosen. */
+    default String getBaseCode() { return getCode(); }
+
+    /** Whether the deck size was chosen at setup instead of being the format's own (swccg-guild/work#90). */
+    default boolean isDeckSizeChosen() { return false; }
     List<SwccgCardBlueprint> getAllCardBlueprintsValidInFormat();
 }
