@@ -364,7 +364,7 @@ public class DeckRequestHandler extends SwccgoServerRequestHandler implements Ur
         if (failure.getMessage() == null || !failure.getMessage().contains("validate-deck-size"))
             return null;
         int size = deck.getCards().size();
-        if (!DeckSize.isSupported(size))
+        if (!DeckSize.isSupported(format, size))
             return null;
         SwccgFormat sized = _formatLibrary.getFormat(DeckSize.code(format.getBaseCode(), size));
         if (sized == null || !sized.isDeckSizeChosen())
@@ -383,7 +383,8 @@ public class DeckRequestHandler extends SwccgoServerRequestHandler implements Ur
         Player resourceOwner = getResourceOwnerSafely(request, participantId);
         String format = getQueryParameterSafely(queryDecoder, "format");
         String collection = getQueryParameterSafely(queryDecoder, "collection");
-        writeFilteredDeckList(resourceOwner, format, collection, true, resourceOwner, responseWriter);
+        boolean anySize = Boolean.parseBoolean(getQueryParameterSafely(queryDecoder, "anySize"));
+        writeFilteredDeckList(resourceOwner, format, collection, true, resourceOwner, anySize, responseWriter);
     }
 
     private void listLibraryDecks(HttpRequest request, ResponseWriter responseWriter) throws Exception {
@@ -396,14 +397,22 @@ public class DeckRequestHandler extends SwccgoServerRequestHandler implements Ur
         }
         String format = getQueryParameterSafely(queryDecoder, "format");
         String collection = getQueryParameterSafely(queryDecoder, "collection");
-        writeFilteredDeckList(getLibrarian(), format, collection, false, requestingPlayer, responseWriter);
+        boolean anySize = Boolean.parseBoolean(getQueryParameterSafely(queryDecoder, "anySize"));
+        writeFilteredDeckList(getLibrarian(), format, collection, false, requestingPlayer, anySize, responseWriter);
     }
 
+    /**
+     * @param anySize also list decks that are legal in the format only at another deck size it allows (#120); they
+     *                carry a {@code deckSize} attribute so the setup form can pick that size
+     */
     private void writeFilteredDeckList(Player deckOwner, String format, String collection, boolean persistIndex,
-            Player requestingPlayer, ResponseWriter responseWriter) throws Exception {
+            Player requestingPlayer, boolean anySize, ResponseWriter responseWriter) throws Exception {
         List<String> darkDeckNames = new ArrayList<String>();
         List<String> lightDeckNames = new ArrayList<String>();
         List<String> otherDeckNames = new ArrayList<String>();
+        Map<String, Integer> otherSizes = new HashMap<String, Integer>();
+        SwccgFormat listedFormat = format == null || format.isEmpty() ? null : _formatLibrary.getFormat(format);
+        boolean listOtherSizes = anySize && listedFormat != null && !listedFormat.isDeckSizeChosen();
 
         boolean includePlaytesting = requestingPlayer != null
                 && (requestingPlayer.hasType(Player.Type.ADMIN) || requestingPlayer.hasType(Player.Type.PLAYTESTER));
@@ -432,8 +441,15 @@ public class DeckRequestHandler extends SwccgoServerRequestHandler implements Ur
                 continue;
             if (format != null && !format.isEmpty()) {
                 ensureDeckIndex(deckOwner, deck, true, format);
-                if (!DeckFormatIndex.isFreshPass(deck.getFormatIndex(), format, _formatLibrary.stampFor(format)))
-                    continue;
+                if (!DeckFormatIndex.isFreshPass(deck.getFormatIndex(), format, _formatLibrary.stampFor(format))) {
+                    String sizedCode = listOtherSizes ? otherSizeCode(listedFormat, deck) : null;
+                    if (sizedCode == null)
+                        continue;
+                    ensureDeckIndex(deckOwner, deck, true, sizedCode);
+                    if (!DeckFormatIndex.isFreshPass(deck.getFormatIndex(), sizedCode, _formatLibrary.stampFor(sizedCode)))
+                        continue;
+                    otherSizes.put(deck.getDeckName(), deck.getCards().size());
+                }
             }
             if (!collectionAllowsDeck(deck, collection, leagueCards, persistIndex, deckOwner))
                 continue;
@@ -450,7 +466,11 @@ public class DeckRequestHandler extends SwccgoServerRequestHandler implements Ur
         Collections.sort(darkDeckNames);
         Collections.sort(lightDeckNames);
         Collections.sort(otherDeckNames);
-        writeDeckListXml(darkDeckNames, lightDeckNames, otherDeckNames, responseWriter);
+        writeDeckListXml(darkDeckNames, lightDeckNames, otherDeckNames, otherSizes, responseWriter);
+    }
+
+    private String otherSizeCode(SwccgFormat format, SwccgDeck deck) {
+        return _formatLibrary.otherSizeCode(format, deck.getCards().size());
     }
 
     private void ensureDeckIndex(Player owner, SwccgDeck deck, boolean persist, String formatCode) {
@@ -486,6 +506,11 @@ public class DeckRequestHandler extends SwccgoServerRequestHandler implements Ur
 
     private void writeDeckListXml(List<String> darkDeckNames, List<String> lightDeckNames, List<String> otherDeckNames,
             ResponseWriter responseWriter) throws ParserConfigurationException {
+        writeDeckListXml(darkDeckNames, lightDeckNames, otherDeckNames, Collections.<String, Integer>emptyMap(), responseWriter);
+    }
+
+    private void writeDeckListXml(List<String> darkDeckNames, List<String> lightDeckNames, List<String> otherDeckNames,
+            Map<String, Integer> otherSizes, ResponseWriter responseWriter) throws ParserConfigurationException {
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
         Document doc = documentBuilder.newDocument();
@@ -493,16 +518,22 @@ public class DeckRequestHandler extends SwccgoServerRequestHandler implements Ur
         Element decksElem = doc.createElement("decks");
         for (String darkDeckName : darkDeckNames) {
             Element deckElem = doc.createElement("darkDeck");
+            if (otherSizes.containsKey(darkDeckName))
+                deckElem.setAttribute("deckSize", String.valueOf(otherSizes.get(darkDeckName)));
             deckElem.appendChild(doc.createTextNode(darkDeckName));
             decksElem.appendChild(deckElem);
         }
         for (String lightDeckName : lightDeckNames) {
             Element deckElem = doc.createElement("lightDeck");
+            if (otherSizes.containsKey(lightDeckName))
+                deckElem.setAttribute("deckSize", String.valueOf(otherSizes.get(lightDeckName)));
             deckElem.appendChild(doc.createTextNode(lightDeckName));
             decksElem.appendChild(deckElem);
         }
         for (String otherDeckName : otherDeckNames) {
             Element deckElem = doc.createElement("otherDeck");
+            if (otherSizes.containsKey(otherDeckName))
+                deckElem.setAttribute("deckSize", String.valueOf(otherSizes.get(otherDeckName)));
             deckElem.appendChild(doc.createTextNode(otherDeckName));
             decksElem.appendChild(deckElem);
         }

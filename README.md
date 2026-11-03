@@ -250,10 +250,12 @@ The `gemp` script provides convenient commands for common development tasks:
 * A format's own size is `deckSize` (exact, default 60) or `minDeckSize`/`maxDeckSize` (a range). That is only the
   **default** for the deck size option, whose range is `DeckSize.MIN_SUPPORTED`–`MAX_SUPPORTED`
   (`gemp-swccg-logic/.../game/DeckSize.java`). Don't add a separate format just to change the size.
+* `maxDeckSizeOption` lets a format allow larger chosen sizes, up to `DeckSize.HARD_MAX` (200). Anything Goes uses it.
 * `deckSizeVariants` sets the timer or tenets link a format uses at one size. `aliases` keeps retired size-only codes
   working (`open_100_card` is Open with deck size 100).
-* A table's setup is stored with its game history (`game_history.game_setup`, JSON). Leagues and tournaments carry a
-  chosen deck size on their format code (`open@100`) until they get their own setup column.
+* A table's setup is stored with its game history (`game_history.game_setup`, JSON), a league's in
+  `league.game_setup` (one per serie). Player-made tournaments keep theirs in memory; DB-scheduled tournaments carry a
+  chosen deck size on their format code (`open@100`).
 
 ```javascript
   {

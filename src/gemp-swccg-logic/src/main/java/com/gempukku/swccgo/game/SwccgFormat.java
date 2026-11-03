@@ -40,5 +40,8 @@ public interface SwccgFormat {
 
     /** Whether the deck size was chosen at setup instead of being the format's own (swccg-guild/work#90). */
     default boolean isDeckSizeChosen() { return false; }
+
+    /** The largest deck size a table, league or tournament may choose in this format (#120; Anything Goes allows more). */
+    default int getMaxDeckSizeOption() { return DeckSize.MAX_SUPPORTED; }
     List<SwccgCardBlueprint> getAllCardBlueprintsValidInFormat();
 }

@@ -52,6 +52,11 @@ public class DeckSizeSwccgFormat implements SwccgFormat {
         return true;
     }
 
+    @Override
+    public int getMaxDeckSizeOption() {
+        return _base.getMaxDeckSizeOption();
+    }
+
     /** The format's own name: a chosen deck size is shown as a chip next to it, never in the name (#114). */
     @Override
     public String getName() {

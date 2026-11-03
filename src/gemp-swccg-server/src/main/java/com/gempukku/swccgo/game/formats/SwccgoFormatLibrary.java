@@ -75,6 +75,10 @@ public class SwccgoFormatLibrary {
                         format.setRequiredDeckSize(deckSize.intValue());
                     }
 
+                    Long maxDeckSizeOption = (Long) formatDef.get("maxDeckSizeOption");
+                    if (maxDeckSizeOption != null)
+                        format.setMaxDeckSizeOption(maxDeckSizeOption.intValue());
+
                     Long defaultGameTimerMinutes = (Long) formatDef.get("defaultGameTimerMinutes");
                     if (defaultGameTimerMinutes == null)
                         defaultGameTimerMinutes = 60L;
@@ -223,6 +227,22 @@ public class SwccgoFormatLibrary {
         return getDeckSizeFormat(formatCode, _hallFormats);
     }
 
+    /**
+     * The code for a format at another deck size it allows ({@code open@100} for a 100-card deck in Open), or
+     * {@code null} when the size is within the format's own range or not one the format allows (#120). Used to offer a
+     * deck that is legal only at its own size.
+     */
+    public String otherSizeCode(SwccgFormat format, int size) {
+        if (format == null || format.isDeckSizeChosen())
+            return null;
+        if (size >= format.getMinimumDeckSize() && size <= format.getMaximumDeckSize())
+            return null;
+        if (!DeckSize.isSupported(format, size))
+            return null;
+        SwccgFormat sized = getFormat(DeckSize.code(format.getBaseCode(), size));
+        return sized != null && sized.isDeckSizeChosen() ? sized.getCode() : null;
+    }
+
     /** The code for a format played at a deck size; the format's own code when the size is its default (#90). */
     public String codeWithDeckSize(String formatCode, Integer deckSize) {
         SwccgFormat format = getFormat(formatCode);
@@ -230,7 +250,7 @@ public class SwccgoFormatLibrary {
             return format == null ? formatCode : format.getCode();
         SwccgFormat sized = getFormat(DeckSize.code(format.getBaseCode(), deckSize));
         if (sized == null)
-            throw new IllegalArgumentException("Deck size must be a whole number from " + DeckSize.MIN_SUPPORTED + " to " + DeckSize.MAX_SUPPORTED);
+            throw new IllegalArgumentException(DeckSize.rangeMessage(format));
         return sized.getCode();
     }
 
@@ -269,11 +289,11 @@ public class SwccgoFormatLibrary {
         } catch (IllegalArgumentException exp) {
             return null;
         }
-        if (size == null || !DeckSize.isSupported(size))
+        if (size == null)
             return null;
         String baseCode = DeckSize.baseCode(formatCode);
         SwccgFormat base = baseFormats.get(baseCode);
-        if (!(base instanceof DefaultSwccgFormat))
+        if (!(base instanceof DefaultSwccgFormat) || !DeckSize.isSupported(base, size))
             return null;
         // The format's own fixed size is just the format (a table left at its default plays as today).
         if (base.getMinimumDeckSize() == size && base.getMaximumDeckSize() == size)
