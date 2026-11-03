@@ -5409,6 +5409,7 @@ const fixedImages = {
 "1200_15":"https://res.starwarsccg.org/cards/legacy/VirtualBlockDS-Dark/large/abyss.gif",
 "1200_16":"https://res.starwarsccg.org/cards/legacy/VirtualBlockDS-Dark/large/afterher.gif",
 "1200_17":"https://res.starwarsccg.org/cards/legacy/VirtualBlockDS-Dark/large/deathstarsentry.gif",
+"1200_18":"https://res.starwarsccg.org/cards/legacy/VirtualBlockDS-Light/large/planetarydefenses.gif",
 "1210_1":"https://res.starwarsccg.org/cards/legacy/VirtualBlock1-Dark/large/admiralmotti.gif",
 "1210_2":"https://res.starwarsccg.org/cards/legacy/VirtualBlock1-Dark/large/bobafett.gif",
 "1210_3":"https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/admiralmottibattlestationcoordinator.gif",

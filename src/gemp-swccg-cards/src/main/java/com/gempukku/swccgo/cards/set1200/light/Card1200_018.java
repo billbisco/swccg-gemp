@@ -1,4 +1,4 @@
-package com.gempukku.swccgo.cards.set1272.light;
+package com.gempukku.swccgo.cards.set1200.light;
 
 import com.gempukku.swccgo.cards.AbstractDefensiveShield;
 import com.gempukku.swccgo.cards.GameConditions;
@@ -27,13 +27,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Set: Virtual Block 7.2
+ * Set: Virtual Shields
  * Type: Defensive Shield
  * Title: Planetary Defenses
  */
-public class Card1272_019 extends AbstractDefensiveShield {
-    public Card1272_019() {
-        super(Side.LIGHT, PlayCardZoneOption.ATTACHED, "Planetary Defenses", ExpansionSet.VIRTUAL_BLOCK_7_2, Rarity.V);
+public class Card1200_018 extends AbstractDefensiveShield {
+    public Card1200_018() {
+        super(Side.LIGHT, PlayCardZoneOption.ATTACHED, "Planetary Defenses", ExpansionSet.VIRTUAL_SHIELDS, Rarity.V);
         setVirtualSuffix(true);
         setLore("Key installations are protected from bombardment by a complex network of early-warning sensors, emergency shields and fast-response fighters.");
         setGameText("Plays on any site. This location may not be targeted by Proton Bombs. Death Star sites are immune to Expand The Empire. Unless Death Star: Docking Bay 327 on table, Commence Primary Ignition is canceled.");

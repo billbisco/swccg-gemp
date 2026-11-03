@@ -1,4 +1,4 @@
-package com.gempukku.swccgo.cards.set1272.light;
+package com.gempukku.swccgo.cards.set1200.light;
 
 import com.gempukku.swccgo.common.CardType;
 import com.gempukku.swccgo.common.ExpansionSet;
@@ -21,11 +21,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class Card_1272_019_Tests {
+public class Card_1200_018_Tests {
     protected VirtualTableScenario GetScenario() {
         return new VirtualTableScenario(
                 new HashMap<>() {{
-                    put("shield", "1272_19");
+                    put("shield", "1200_18");
                     put("luke", "1_19");
                 }},
                 new HashMap<>() {{
@@ -70,9 +70,9 @@ public class Card_1272_019_Tests {
             add(Icon.DEFENSIVE_SHIELD);
             add(Icon.EPISODE_I);
             add(Icon.REFLECTIONS_III);
-            add(Icon.LEGACY_BLOCK_7);
+            add(Icon.LEGACY_BLOCK_D);
         }});
-        assertEquals(ExpansionSet.VIRTUAL_BLOCK_7_2, card.getExpansionSet());
+        assertEquals(ExpansionSet.VIRTUAL_SHIELDS, card.getExpansionSet());
         assertEquals(Rarity.V, card.getRarity());
     }
 
@@ -175,5 +175,27 @@ public class Card_1272_019_Tests {
         scn.DSUseCardAction(bombs, "collapse");
         assertFalse(scn.DSHasCardChoiceAvailable(db94));
         assertTrue(scn.DSHasCardChoiceAvailable(cantina));
+    }
+
+    @Test
+    public void PlanetaryDefensesOldVirtualBlock72IdLoadsTheVirtualShieldsCard() {
+        var scn = new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("old", "1272_19");
+                    put("pc", "601_147");
+                }},
+                new HashMap<>(),
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+        // 1272_19 (old Virtual Block 7.2 id) and 601_147 (PC id) are mapped to 1200_18 in blueprintMapping.txt
+        assertEquals(Card1200_018.class, scn.GetLSCard("old").getBlueprint().getClass());
+        assertEquals(Card1200_018.class, scn.GetLSCard("pc").getBlueprint().getClass());
     }
 }
