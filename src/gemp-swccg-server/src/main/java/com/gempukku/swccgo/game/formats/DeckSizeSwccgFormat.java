@@ -50,9 +50,19 @@ public class DeckSizeSwccgFormat implements SwccgFormat {
         return true;
     }
 
+    /** game_history.format_name is VARCHAR(45); a format name longer than that can't be recorded. */
+    static final int MAX_NAME_LENGTH = 45;
+
     @Override
     public String getName() {
-        return _base.getName() + " (" + _deckSize + " cards)";
+        String name = _base.getName() + " (" + _deckSize + " cards)";
+        if (name.length() <= MAX_NAME_LENGTH)
+            return name;
+        String suffix = " (" + _deckSize + ")";
+        String base = _base.getName();
+        if (base.length() + suffix.length() > MAX_NAME_LENGTH)
+            base = base.substring(0, MAX_NAME_LENGTH - suffix.length());
+        return base + suffix;
     }
 
     @Override
