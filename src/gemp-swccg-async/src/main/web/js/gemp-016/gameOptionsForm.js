@@ -139,6 +139,16 @@ var GameOptionsForm = Class.extend({
         this.formatOption = formatOption;
     },
 
+    /** Puts saved values back into the rows after a refresh ({id: value}; unknown ids are ignored). */
+    setValues: function (values) {
+        var that = this;
+        $.each(values || {}, function (id, value) {
+            var r = that.rows[id];
+            if (r != null && !r.input.prop("disabled") && value != null && value !== "")
+                r.input.val(String(value));
+        });
+    },
+
     /** The chosen value of one option, or "" when it is left at the default. */
     value: function (id) {
         var r = this.rows[id];

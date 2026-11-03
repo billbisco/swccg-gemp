@@ -193,6 +193,8 @@ $(function () {
 			var serie = series[j];
 			container.append($("<div class='serieName'></div>").text(serie.getAttribute("type") + " - " + iso(serie.getAttribute("start")) + " to " + iso(serie.getAttribute("end"))));
 			container.append($("<div></div>").html("<b>Format:</b> ").append(document.createTextNode((serie.getAttribute("limited") == "true" ? "Limited " : "Constructed ") + serie.getAttribute("format"))));
+			if (serie.getAttribute("options"))
+				container.append($("<div></div>").html("<b>Game options:</b> ").append(document.createTextNode(serie.getAttribute("options"))));
 			container.append($("<div></div>").html("<b>Collection:</b> ").append(document.createTextNode(serie.getAttribute("collection"))));
 			container.append($("<div></div>").text("Maximum ranked matches in serie: " + serie.getAttribute("maxMatches")));
 		}
@@ -232,6 +234,8 @@ $(function () {
 			var serie = series[j];
 			container.append($("<div class='serieName'></div>").text(serie.name + " - " + serie.start + " to " + serie.end));
 			container.append($("<div></div>").html("<b>Format:</b> ").append(document.createTextNode((serie.limited ? "Limited " : "Constructed ") + serie.format)));
+			if (serie.options)
+				container.append($("<div></div>").html("<b>Game options:</b> ").append(document.createTextNode(serie.options)));
 			container.append($("<div></div>").html("<b>Collection:</b> ").append(document.createTextNode(serie.collection)));
 			container.append($("<div></div>").text("Maximum ranked matches in serie: " + serie.maxMatches));
 		}
@@ -345,6 +349,30 @@ $(function () {
 		return at < 0 ? {base: code || "", size: ""} : {base: code.substring(0, at), size: code.substring(at + 1)};
 	};
 
+	// #119: a constructed serie's game options come from the hall's option registry, one form per serie
+	var hallFormatOption = function (code) {
+		if (!window.hall || !hall.supportedFormatsSelect || !code)
+			return $();
+		return hall.supportedFormatsSelect.find("option").filter(function () { return this.value === String(code); }).first();
+	};
+	var buildSerieOptions = function (row, select, serie, code) {
+		var box = $("<div class='serie-options game-options-rows'></div>");
+		var form = new GameOptionsForm(box, null);
+		if (window.hall && hall.gameOptionsRoot)
+			form.setRegistry(hall.gameOptionsRoot);
+		var saved = $.extend({}, serie.options || {});
+		if (code.size !== "" && !saved.deckSize)
+			saved.deckSize = code.size;
+		var refresh = function (values) {
+			form.refresh(hallFormatOption(select.val()), "LEAGUE", false);
+			form.setValues(values);
+		};
+		refresh(saved);
+		select.change(function () { refresh(form.values()); });
+		row.data("optionsForm", form);
+		return box;
+	};
+
 	var buildSerieRow = function (type, serie, multi) {
 		var row = $("<div class='serie-row flex-horiz'></div>");
 		if (multi)
@@ -353,11 +381,7 @@ $(function () {
 		var code = splitFormatCode(serie.format);
 		populateFormatSelect(select, serieKind(type), code.base);
 		row.append(select);
-		var range = deckSizeRange();
-		var deckSizeLabel = $("<label class='field-inline' title='Leave empty for the format&#39;s own deck size. Every game in this serie uses it.'>Deck size: </label>");
-		deckSizeLabel.append($("<input type='number' step='1' class='serie-deck-size' placeholder='default'>")
-			.attr("min", range.min).attr("max", range.max).val(code.size));
-		row.append(deckSizeLabel);
+		var optionsBox = serieKind(type) === "format" ? buildSerieOptions(row, select, serie, code) : null;
 		var durationLabel = $("<label class='field-inline'>Days: </label>");
 		durationLabel.append($("<input type='number' min='1' class='serie-duration'>").val(serie.duration));
 		row.append(durationLabel);
@@ -371,6 +395,8 @@ $(function () {
 				refreshSerieRows(editor);
 			}));
 		}
+		if (optionsBox != null)
+			row.append(optionsBox);
 		return row;
 	};
 
@@ -407,13 +433,17 @@ $(function () {
 		editor.find(".serie-row").each(function () {
 			var row = $(this);
 			var base = row.find(".serie-format").val() || "";
-			var size = $.trim(row.find(".serie-deck-size").val() || "");
-			series.push({
-				format: base && size !== "" ? base + "@" + size : base,
-				deckSize: size,
+			var form = row.data("optionsForm");
+			var item = {
+				format: base,
 				duration: toInt(row.find(".serie-duration").val(), DEFAULT_DURATION),
 				matches: toInt(row.find(".serie-matches").val(), DEFAULT_MATCHES)
-			});
+			};
+			if (form != null) {
+				item.options = form.values();
+				item.optionsError = form.validate();
+			}
+			series.push(item);
 		});
 		return series;
 	};
@@ -545,7 +575,12 @@ $(function () {
 		var events = [];
 		$("#rotation-rows .rotation-row").each(function () {
 			var row = $(this);
-			var params = $.extend({}, row.data("extras") || {}, {series: readSerieEditor(row.find(".serie-editor"))});
+			var series = readSerieEditor(row.find(".serie-editor")).map(function (s) {
+				var copy = $.extend({}, s);
+				delete copy.optionsError;
+				return copy;
+			});
+			var params = $.extend({}, row.data("extras") || {}, {series: series});
 			events.push({name: $.trim(row.find(".rotation-name").val()), params: params});
 		});
 		return events;
@@ -735,10 +770,8 @@ $(function () {
 			return false;
 		}
 		for (var i = 0; i < series.length; i++) {
-			var sizeRange = deckSizeRange();
-			if (series[i].deckSize && (!/^[0-9]{1,4}$/.test(series[i].deckSize)
-					|| Number(series[i].deckSize) < sizeRange.min || Number(series[i].deckSize) > sizeRange.max)) {
-				setResult(resultdiv, "Deck size must be a whole number from " + sizeRange.min + " to " + sizeRange.max + " (or empty for the format's default).", "error");
+			if (series[i].optionsError) {
+				setResult(resultdiv, "Serie " + (i + 1) + ": " + series[i].optionsError, "error");
 				return false;
 			}
 			if (!series[i].format) {
@@ -794,12 +827,13 @@ $(function () {
 			var formats = series.map(function (s) { return s.format; });
 			var durations = series.map(function (s) { return s.duration; });
 			var matches = series.map(function (s) { return s.matches; });
+			var serieOptions = series.map(function (s) { return JSON.stringify(s.options || {}); });
 			(preview ? hall.comm.previewConstructedLeague : hall.comm.addConstructedLeague).call(hall.comm,
 				common.name, common.cost, common.start8, common.collection,
 				b(common.allowTimeExtensions), b(common.allowSpectators), b(common.showPlayerNames),
 				b(common.inviteOnly), common.registrationInfo, common.decisionTimeoutSeconds, common.timePerPlayerMinutes,
 				common.lockedDeckType, formats, durations, matches,
-				onDone, err);
+				onDone, err, serieOptions);
 		}
 	};
 

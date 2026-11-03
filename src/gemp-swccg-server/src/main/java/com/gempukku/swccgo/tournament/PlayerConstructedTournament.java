@@ -116,6 +116,18 @@ public class PlayerConstructedTournament implements Tournament {
         return _privateEvent;
     }
 
+    private com.gempukku.swccgo.game.setup.GameSetup _gameSetup;
+
+    /** The options chosen when the event was created (#119); null keeps what the format code implies. */
+    public void setGameSetup(com.gempukku.swccgo.game.setup.GameSetup gameSetup) {
+        _gameSetup = gameSetup;
+    }
+
+    @Override
+    public com.gempukku.swccgo.game.setup.GameSetup getGameSetup(com.gempukku.swccgo.game.formats.SwccgoFormatLibrary formats) {
+        return _gameSetup != null ? _gameSetup : formats.storedSetup(getFormat(), null);
+    }
+
     @Override
     public String getTournamentId() {
         return _tournamentId;

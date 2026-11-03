@@ -19,6 +19,11 @@ public interface LeagueDAO {
      */
     void addLeague(int cost, String name, String type, String clazz, String parameters, int start, int endTime, boolean allowSpectators, boolean allowTimeExtensions, boolean showPlayerNames, boolean invitationOnly, String registrationInfo, int decisionTimeoutSeconds, int timePerPlayerMinutes, LockedDeckType lockedDeckType, Integer scheduleId) throws SQLException, IOException;
 
+    /** As above, plus each serie's game setup as a JSON array (#119); null means format defaults. */
+    default void addLeague(int cost, String name, String type, String clazz, String parameters, int start, int endTime, boolean allowSpectators, boolean allowTimeExtensions, boolean showPlayerNames, boolean invitationOnly, String registrationInfo, int decisionTimeoutSeconds, int timePerPlayerMinutes, LockedDeckType lockedDeckType, Integer scheduleId, String gameSetup) throws SQLException, IOException {
+        addLeague(cost, name, type, clazz, parameters, start, endTime, allowSpectators, allowTimeExtensions, showPlayerNames, invitationOnly, registrationInfo, decisionTimeoutSeconds, timePerPlayerMinutes, lockedDeckType, scheduleId);
+    }
+
     /** The leagues the given schedule created with that start day ({@code yyyyMMdd}); normally none or one. */
     List<League> loadLeaguesOfScheduleStarting(SwccgCardBlueprintLibrary library, int scheduleId, int start) throws SQLException, IOException;
 

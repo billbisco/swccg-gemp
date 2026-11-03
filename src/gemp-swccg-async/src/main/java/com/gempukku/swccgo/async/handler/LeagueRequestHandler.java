@@ -134,7 +134,8 @@ public class LeagueRequestHandler extends SwccgoServerRequestHandler implements 
         leagueElem.setAttribute("timePerPlayerMinutes", String.valueOf(league.getTimePerPlayerMinutes()));
         leagueElem.setAttribute("lockedDeckType", league.getLockedDeckType() == null ? "" : league.getLockedDeckType().getCode());
 
-        for (LeagueSeriesData serie : series) {
+        for (int serieIndex = 0; serieIndex < series.size(); serieIndex++) {
+            LeagueSeriesData serie = series.get(serieIndex);
             Element serieElem = doc.createElement("serie");
             serieElem.setAttribute("type", serie.getName());
             serieElem.setAttribute("maxMatches", String.valueOf(serie.getMaxMatches()));
@@ -145,7 +146,7 @@ public class LeagueRequestHandler extends SwccgoServerRequestHandler implements 
             SwccgFormat serieFormat = _formatLibrary.getFormat(serie.getFormat());
             serieElem.setAttribute("format", serieFormat == null ? serie.getFormat() : serieFormat.getName());
             // #116: options the serie sets (a deck size), shown next to the unchanged format name
-            serieElem.setAttribute("options", serieFormat == null ? "" : _formatLibrary.storedSetup(serie.getFormat(), null).chipsText());
+            serieElem.setAttribute("options", serieFormat == null ? "" : com.gempukku.swccgo.league.LeagueSetups.forSerie(_formatLibrary, league, serie, serieIndex).chipsText());
             serieElem.setAttribute("collection", serie.getCollectionType().getFullName());
             serieElem.setAttribute("collectionType", serie.getCollectionType().getCode());
             serieElem.setAttribute("limited", String.valueOf(serie.isLimited()));

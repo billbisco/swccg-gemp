@@ -222,4 +222,59 @@ public class DeckSizeHallTests {
         assertThrows(HallException.class, () -> s.hallServer.createPlayerMadeQueue(s.member(3, "thirdHost"), "Size",
                 "open@101", "swiss", 4, 4, 0, false, "light45", false, "dark45", false, null, null));
     }
+
+    private static com.gempukku.swccgo.tournament.PlayerMadeQueue queueOf(PlayNowTestServer s, String host) throws Exception {
+        var queues = HallServer.class.getDeclaredField("_tournamentQueues");
+        queues.setAccessible(true);
+        return ((Map<?, ?>) queues.get(s.hallServer)).values().stream()
+                .filter(q -> q instanceof com.gempukku.swccgo.tournament.PlayerMadeQueue)
+                .map(q -> (com.gempukku.swccgo.tournament.PlayerMadeQueue) q)
+                .filter(q -> q.getHost().equals(host)).findFirst().orElseThrow();
+    }
+
+    @Test
+    public void GameSetupPlayerTournamentTakesItsOptionsFromTheForm() throws Exception {
+        var s = server();
+        var library = s.hallServer.getClass().getDeclaredField("_formatLibrary");
+        library.setAccessible(true);
+        var formats = (com.gempukku.swccgo.game.formats.SwccgoFormatLibrary) library.get(s.hallServer);
+        s.hallServer.createPlayerMadeQueue(s.member(1, "optHost"), "Opts", "open", "swiss", 4, 4, 0, false,
+                "light100", false, "dark100", false, null, null, "constructed", null, null, 0, Map.of("deckSize", "100"));
+        var queue = queueOf(s, "optHost");
+        assertEquals("open@100", queue.getFormat());
+        assertEquals("100 cards", queue.getGameSetup(formats).chipsText());
+        // the hall lists the queue with its options
+        var visitor = mock(HallInfoVisitor.class);
+        s.hallServer.processHall(s.member(2, "viewer"), visitor);
+        assertTrue(mockingDetails(visitor).getInvocations().stream()
+                .anyMatch(i -> java.util.Arrays.asList(i.getArguments()).contains("100 cards")));
+        // a casual-only option or one the format doesn't use is refused
+        assertThrows(HallException.class, () -> s.hallServer.createPlayerMadeQueue(s.member(3, "timerHost"), "Opts", "open",
+                "swiss", 4, 4, 0, false, "light60", false, "dark60", false, null, null, "constructed", null, null, 0,
+                Map.of("timer", "blitz")));
+        assertThrows(HallException.class, () -> s.hallServer.createPlayerMadeQueue(s.member(4, "creditsHost"), "Opts", "open",
+                "swiss", 4, 4, 0, false, "light60", false, "dark60", false, null, null, "constructed", null, null, 0,
+                Map.of("startingCredits", "4")));
+        // no options is the format as it is
+        s.hallServer.createPlayerMadeQueue(s.member(5, "plainHost"), "Opts", "open", "swiss", 4, 4, 0, false,
+                "light60", false, "dark60", false, null, null, "constructed", null, null, 0, null);
+        assertTrue(queueOf(s, "plainHost").getGameSetup(formats).isDefault());
+    }
+
+    @Test
+    public void GameSetupTournamentGamesGetTheEventsSetup() throws Exception {
+        var formats = com.gempukku.swccgo.framework.VirtualTableScenario._formatLibrary;
+        var queue = new com.gempukku.swccgo.tournament.PlayerMadeQueue("q", "Q", "host", "open@45", "swiss", 2, 4, 0,
+                false, null);
+        var setup = com.gempukku.swccgo.game.setup.GameSetup.of(formats.getFormat("open"), Map.of("deckSize", "45"),
+                com.gempukku.swccgo.game.setup.GameOption.Scope.TOURNAMENT);
+        queue.setGameSetup(setup);
+        assertSame(setup, queue.getGameSetup(formats));
+        var tournament = com.gempukku.swccgo.tournament.PlayerConstructedTournament.limited("t", "T", "open@45", "swiss",
+                2, false, List.of("a", "b"), CollectionType.ALL_CARDS,
+                com.gempukku.swccgo.tournament.Tournament.Stage.PLAYING_GAMES, null);
+        assertEquals("without a stored setup the code decides", "45 cards", tournament.getGameSetup(formats).chipsText());
+        tournament.setGameSetup(setup.with("deckSize", "50"));
+        assertEquals("50 cards", tournament.getGameSetup(formats).chipsText());
+    }
 }

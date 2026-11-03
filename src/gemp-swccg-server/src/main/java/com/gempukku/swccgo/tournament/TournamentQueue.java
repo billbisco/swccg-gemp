@@ -10,6 +10,14 @@ public interface TournamentQueue {
 
     public String getFormat();
 
+    /**
+     * This event's game setup (#119): the options chosen when it was created, or what its format code implies (a
+     * {@code <format>@<size>} code keeps its deck size).
+     */
+    default com.gempukku.swccgo.game.setup.GameSetup getGameSetup(com.gempukku.swccgo.game.formats.SwccgoFormatLibrary formats) {
+        return formats.storedSetup(getFormat(), null);
+    }
+
     public CollectionType getCollectionType();
 
     public String getTournamentQueueName();

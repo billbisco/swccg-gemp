@@ -43,7 +43,16 @@ public class LeagueFactory {
     }
 
     /** One serie as the form describes it: a format (or sealed / draft product) code, a length in days and a ranked-match cap. */
-    public record Serie(String format, int duration, int maxMatches) {
+    public record Serie(String format, int duration, int maxMatches, java.util.Map<String, String> options) {
+        public Serie(String format, int duration, int maxMatches) {
+            this(format, duration, maxMatches, java.util.Collections.emptyMap());
+        }
+
+        /** The game options chosen for this serie (#119), option id to value; never null. */
+        @Override
+        public java.util.Map<String, String> options() {
+            return options == null ? java.util.Collections.emptyMap() : options;
+        }
     }
 
     /**
@@ -76,7 +85,18 @@ public class LeagueFactory {
      */
     public record PreparedLeague(Definition definition, String code, String leagueClass, String parameters,
                                  List<LeagueSeriesData> series, int start, int displayEnd, String registrationInfo,
-                                 LockedDeckType lockedDeckType) {
+                                 LockedDeckType lockedDeckType, String gameSetup) {
+        /** The game setup of serie {@code index} (#119), or the format defaults. */
+        public com.gempukku.swccgo.game.setup.GameSetup serieSetup(SwccgoFormatLibrary formats, int index) {
+            String json = null;
+            if (gameSetup != null) {
+                com.google.gson.JsonArray array = com.google.gson.JsonParser.parseString(gameSetup).getAsJsonArray();
+                if (index < array.size() && !array.get(index).isJsonNull())
+                    json = array.get(index).toString();
+            }
+            return formats.storedSetup(series.get(index).getFormat(), json);
+        }
+
         public String name() {
             return definition.name;
         }
@@ -167,6 +187,38 @@ public class LeagueFactory {
                 throw new LeagueDefinitionException("lockedDeckType", "Unknown deck lock type '" + definition.lockedDeckType + "'.");
         }
 
+        // #119: each constructed serie's game options, checked against its format. A <format>@<size> code (older
+        // forms and schedules) is the format with that deck size; the parameters string keeps the plain format code.
+        String gameSetup = null;
+        if (definition.kind == Kind.CONSTRUCTED) {
+            List<Serie> normalized = new ArrayList<>();
+            List<String> setups = new ArrayList<>();
+            boolean anyOptions = false;
+            for (int i = 0; i < series.size(); i++) {
+                Serie serie = series.get(i);
+                com.gempukku.swccgo.game.SwccgFormat format = _formatLibrary.getFormat(serie.format());
+                java.util.Map<String, String> raw = new java.util.LinkedHashMap<>(serie.options());
+                String chosenSize = raw.get(com.gempukku.swccgo.game.setup.GameOptions.DECK_SIZE);
+                if (format.isDeckSizeChosen() && (chosenSize == null || chosenSize.isBlank()))
+                    raw.put(com.gempukku.swccgo.game.setup.GameOptions.DECK_SIZE, String.valueOf(format.getRequiredDeckSize()));
+                com.gempukku.swccgo.game.SwccgFormat base = format.isDeckSizeChosen() ? _formatLibrary.getFormat(format.getBaseCode()) : null;
+                if (base == null)
+                    base = format;
+                com.gempukku.swccgo.game.setup.GameSetup setup;
+                try {
+                    setup = com.gempukku.swccgo.game.setup.GameSetup.of(base, raw, com.gempukku.swccgo.game.setup.GameOption.Scope.LEAGUE);
+                } catch (IllegalArgumentException exp) {
+                    throw new LeagueDefinitionException("series[" + i + "].options", "Serie " + (i + 1) + ": " + exp.getMessage());
+                }
+                anyOptions |= !setup.isDefault();
+                setups.add(setup.isDefault() ? "null" : setup.toJson());
+                normalized.add(new Serie(base == format ? serie.format() : base.getCode(), serie.duration(), serie.maxMatches(), serie.options()));
+            }
+            series = normalized;
+            if (anyOptions)
+                gameSetup = "[" + String.join(",", setups) + "]";
+        }
+
         String parameters = renderParameters(definition, series, code);
         if (parameters.length() > MAX_PARAMETERS_LENGTH)
             throw new LeagueDefinitionException("series", "The league definition is too long to store (" + parameters.length()
@@ -193,7 +245,8 @@ public class LeagueFactory {
         int start = built.get(0).getStart();
         int displayEnd = DateUtils.offsetDate(built.get(built.size() - 1).getEnd(), DISPLAY_DAYS_AFTER_END);
         return new PreparedLeague(definition, code, leagueData.getClass().getName(), parameters,
-                Collections.unmodifiableList(built), start, displayEnd, storedRegistrationInfo(definition.registrationInfo), lockedDeckType);
+                Collections.unmodifiableList(built), start, displayEnd, storedRegistrationInfo(definition.registrationInfo), lockedDeckType,
+                gameSetup);
     }
 
     /**
@@ -204,9 +257,15 @@ public class LeagueFactory {
     public String create(PreparedLeague prepared, Integer scheduleId) {
         Definition d = prepared.definition();
         try {
-            _leagueDao.addLeague(d.cost, d.name, prepared.code(), prepared.leagueClass(), prepared.parameters(), prepared.start(),
-                    prepared.displayEnd(), d.allowSpectators, d.allowTimeExtensions, d.showPlayerNames, d.invitationOnly,
-                    prepared.registrationInfo(), d.decisionTimeoutSeconds, d.timePerPlayerMinutes, prepared.lockedDeckType(), scheduleId);
+            if (prepared.gameSetup() == null)
+                _leagueDao.addLeague(d.cost, d.name, prepared.code(), prepared.leagueClass(), prepared.parameters(), prepared.start(),
+                        prepared.displayEnd(), d.allowSpectators, d.allowTimeExtensions, d.showPlayerNames, d.invitationOnly,
+                        prepared.registrationInfo(), d.decisionTimeoutSeconds, d.timePerPlayerMinutes, prepared.lockedDeckType(), scheduleId);
+            else
+                _leagueDao.addLeague(d.cost, d.name, prepared.code(), prepared.leagueClass(), prepared.parameters(), prepared.start(),
+                        prepared.displayEnd(), d.allowSpectators, d.allowTimeExtensions, d.showPlayerNames, d.invitationOnly,
+                        prepared.registrationInfo(), d.decisionTimeoutSeconds, d.timePerPlayerMinutes, prepared.lockedDeckType(), scheduleId,
+                        prepared.gameSetup());
         } catch (Exception exp) {
             throw new RuntimeException("Unable to store league '" + d.name + "'", exp);
         }
