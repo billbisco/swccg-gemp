@@ -86,4 +86,28 @@ public class LegacyFilters {
             }
         };
     }
+
+    /**
+     * Filter that accepts systems that are 'aligned' (Rally To Our Cause 1291_28 records each system it aligned by
+     * card id in its while-in-play data; the stacked card under the system marks it).
+     */
+    public static final Filter alignedSystem = new Filter() {
+        @Override
+        public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard) {
+            if (physicalCard.getBlueprint().getCardSubtype() != com.gempukku.swccgo.common.CardSubtype.SYSTEM) {
+                return false;
+            }
+            String id = String.valueOf(physicalCard.getCardId());
+            for (PhysicalCard card : gameState.getAllPermanentCards()) {
+                if (card.getZone() != null && card.getZone().isInPlay()
+                        && "Rally To Our Cause".equals(card.getBlueprint().getTitle())
+                        && card.getWhileInPlayData() != null
+                        && card.getWhileInPlayData().getTextValues() != null
+                        && card.getWhileInPlayData().getTextValues().contains(id)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    };
 }
