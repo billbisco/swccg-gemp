@@ -160,10 +160,55 @@ public class BoardScalingBenchmark {
         private volatile boolean running = true;
         private final Thread worker;
 
+        // slow-steps mode: samples wait here until the step ends, and are only counted for steps over the threshold
+        private final java.util.List<StackTraceElement[]> pending = new java.util.ArrayList<>();
+        private final boolean slowOnly;
+        int slowSteps;
+
         Sampler(Thread target) {
+            this(target, false);
+        }
+
+        Sampler(Thread target, boolean slowOnly) {
+            this.slowOnly = slowOnly;
             worker = new Thread(() -> {
                 while (running) {
                     StackTraceElement[] st = target.getStackTrace();
+                    if (slowOnly) {
+                        synchronized (pending) {
+                            pending.add(st);
+                        }
+                    } else {
+                        count(st);
+                    }
+                    try { Thread.sleep(5); } catch (InterruptedException ignored) { return; }
+                }
+            });
+            worker.setDaemon(true);
+            worker.start();
+        }
+
+        /** Slow-steps mode: the step that just ended took {@code nanos}; keep its samples only if it was slow. */
+        void stepEnded(long nanos, long thresholdNanos) {
+            synchronized (pending) {
+                if (nanos >= thresholdNanos) {
+                    slowSteps++;
+                    for (StackTraceElement[] st : pending) {
+                        // the buffer also holds the AI's thinking before the answer; only engine samples count
+                        boolean ai = false;
+                        for (StackTraceElement e : st)
+                            if (e.getClassName().startsWith("com.gempukku.swccgo.ai.models")) { ai = true; break; }
+                        if (!ai)
+                            count(st);
+                    }
+                }
+                pending.clear();
+            }
+        }
+
+        private synchronized void count(StackTraceElement[] st) {
+            {
+                {
                     if (st.length > 0) {
                         samples++;
                         self.merge(st[0].getClassName() + "." + st[0].getMethodName(), 1, Integer::sum);
@@ -181,22 +226,20 @@ public class BoardScalingBenchmark {
                         }
                         chains.merge(chain.toString(), 1, Integer::sum);
                     }
-                    try { Thread.sleep(5); } catch (InterruptedException ignored) { return; }
                 }
-            });
-            worker.setDaemon(true);
-            worker.start();
+            }
         }
 
         void report(int board) throws InterruptedException {
             running = false;
             worker.join();
-            StringBuilder sb = new StringBuilder("== sample board=" + board + " samples=" + samples + "\n-- self\n");
+            StringBuilder sb = new StringBuilder("== sample board=" + board + " samples=" + samples
+                    + (slowOnly ? " slow_steps=" + slowSteps : "") + "\n-- self\n");
             top(self, 15, sb);
             sb.append("-- inclusive\n");
             top(inclusive, Integer.getInteger("gemp.bench.top", 45), sb);
             sb.append("-- chains\n");
-            top(chains, 12, sb);
+            top(chains, Integer.getInteger("gemp.bench.chains", 12), sb);
             System.out.println(sb);
         }
 

@@ -176,8 +176,17 @@ public class LargeDeckBenchmark {
             }
         };
         HeadlessBotVsBotRunner.Result result;
-        BoardScalingBenchmark.Sampler sampler = Boolean.getBoolean("gemp.bench.sample")
-                ? new BoardScalingBenchmark.Sampler(Thread.currentThread()) : null;
+        // -Dgemp.bench.sample=true samples the whole game; -Dgemp.bench.sampleSlowMs=N only steps of N ms or more
+        Long slowMs = Long.getLong("gemp.bench.sampleSlowMs");
+        BoardScalingBenchmark.Sampler sampler = Boolean.getBoolean("gemp.bench.sample") || slowMs != null
+                ? new BoardScalingBenchmark.Sampler(Thread.currentThread(), slowMs != null) : null;
+        if (sampler != null && slowMs != null) {
+            java.util.function.LongConsumer record = cfg.stepNanos;
+            cfg.stepNanos = nanos -> {
+                record.accept(nanos);
+                sampler.stepEnded(nanos, slowMs * 1_000_000L);
+            };
+        }
         try {
             result = HeadlessBotVsBotRunner.playOneGame(cfg, cards, formats);
             if (sampler != null)
