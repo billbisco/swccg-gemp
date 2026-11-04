@@ -30,6 +30,7 @@ import com.gempukku.swccgo.logic.effects.choose.StackOneCardFromLostPileEffect;
 import com.gempukku.swccgo.logic.evaluators.BaseEvaluator;
 import com.gempukku.swccgo.logic.modifiers.EachBattleDestinyModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
+import com.gempukku.swccgo.logic.modifiers.ModifierType;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 import com.gempukku.swccgo.logic.timing.Action;
 import com.gempukku.swccgo.logic.timing.EffectResult;
@@ -150,7 +151,11 @@ public class Card1291_028 extends AbstractMission {
                                                         }
                                                         float x = Filters.countActive(game, self, alignedSystems(self));
                                                         float y = Filters.countActive(game, self, Filters.and(Filters.unique, Filters.character, Filters.icon(Icon.SEPARATIST)));
-                                                        if (draw + x + y <= 7) {
+                                                        float attemptBonus = 0;
+                                                        for (Modifier modifier : game.getModifiersQuerying().getModifiersAffectingCard(gameState, ModifierType.ALIGN_ATTEMPT, system)) {
+                                                            attemptBonus += modifier.getValue(gameState, game.getModifiersQuerying(), system);
+                                                        }
+                                                        if (draw + x + y + attemptBonus <= 7) {
                                                             gameState.sendMessage("Result: Failed");
                                                             return;
                                                         }

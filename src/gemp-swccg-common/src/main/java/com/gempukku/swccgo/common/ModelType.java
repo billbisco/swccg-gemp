@@ -93,6 +93,7 @@ public enum ModelType implements Filterable {
     SPACE("Space"),
     SPACE_SUPERIORITY_FIGHTER("Space Superiority Fighter"),
     SPEEDER_BIKE("Speeder Bike"),
+    SPIDER("Spider"),
     SNOW("Snow"),
     ST_70_CLASS_RAZOR_CREST_M_111_ASSAULT_SHIP("ST-70 class Razor Crest M-111 Assault Ship"),
     STAP("STAP"),
