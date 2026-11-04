@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.actions;
 
+import com.gempukku.swccgo.cards.UndercoverSpyDeployRestriction;
 import com.gempukku.swccgo.cards.effects.PayDeployCostEffect;
 import com.gempukku.swccgo.common.CaptureOption;
 import com.gempukku.swccgo.common.PlayCardOptionId;
@@ -81,7 +82,7 @@ public class PlayCharacterAction extends AbstractPlayCardAction {
                             _capacitySlotChosen = true;
 
                             // Determine if deploying characters as an Undercover spy
-                            if (_character.getBlueprint().mayDeployAsUndercoverSpy(game, _character)) {
+                            if (_character.getBlueprint().mayDeployAsUndercoverSpy(game, _character) && UndercoverSpyDeployRestriction.mayDeployAsUndercoverSpyTo(game, _character, _target)) {
 
                                 // Ask player to choose whether to deploy character as Undercover spy
                                 _chooseIfUndercoverEffect = new PlayoutDecisionEffect(_that, getPerformingPlayer(),
