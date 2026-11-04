@@ -178,6 +178,19 @@ public class GameState implements Snapshotable<GameState> {
 
     public void setStartingCardsCount(int count) { _startingCardsCount = Math.max(1, count); }
 
+    // #142 R2b/R2c (game options "Starting: Interrupts" / "Starting: Effects"): how many of each a player may play at
+    // game start. 1 is the rules. Set at game setup only.
+    private int _startingInterruptsCount = 1;
+    private int _startingEffectsCount = 1;
+
+    public int getStartingInterruptsCount() { return _startingInterruptsCount; }
+
+    public void setStartingInterruptsCount(int count) { _startingInterruptsCount = Math.max(1, count); }
+
+    public int getStartingEffectsCount() { return _startingEffectsCount; }
+
+    public void setStartingEffectsCount(int count) { _startingEffectsCount = Math.max(1, count); }
+
     public GameState() {
     }
 
@@ -188,6 +201,8 @@ public class GameState implements Snapshotable<GameState> {
         snapshot._objectiveOptional = _objectiveOptional;
         snapshot._shieldsNoPlayLimit = _shieldsNoPlayLimit;
         snapshot._startingCardsCount = _startingCardsCount;
+        snapshot._startingInterruptsCount = _startingInterruptsCount;
+        snapshot._startingEffectsCount = _startingEffectsCount;
 
         // Set each field
         snapshot._game = _game;

@@ -27,6 +27,8 @@ public final class GameOptions {
     public static final String NO_SHIELDS = "noShields";
     public static final String SHIELDS_NO_PLAY_LIMIT = "shieldsNoPlayLimit";
     public static final String STARTING_CARDS = "startingCards";
+    public static final String STARTING_INTERRUPTS = "startingInterrupts";
+    public static final String STARTING_EFFECTS = "startingEffects";
     /** Most starting locations and Objectives a player may choose (#142 R2a). */
     public static final int STARTING_CARDS_MAX = 10;
 
@@ -75,6 +77,19 @@ public final class GameOptions {
                 .defaultValue(f -> "1")
                 .range(f -> 1, f -> STARTING_CARDS_MAX)
                 .shortLabel(v -> v + " starting locations/Objectives")
+                .build());
+        // #142 R2b/R2c
+        register(GameOption.builder(STARTING_INTERRUPTS, Kind.PLAY_RULES, Type.INTEGER, "Starting: Interrupts")
+                .help("How many Starting Interrupts each player may play at game start. A unique one is played once.")
+                .defaultValue(f -> "1")
+                .range(f -> 1, f -> 5)
+                .shortLabel(v -> v + " starting interrupts")
+                .build());
+        register(GameOption.builder(STARTING_EFFECTS, Kind.DECK_RULES, Type.INTEGER, "Starting: Effects")
+                .help("How many Starting Effects a deck may hold; each is deployed at game start.")
+                .defaultValue(f -> "1")
+                .range(f -> 1, f -> 5)
+                .shortLabel(v -> v + " starting effects")
                 .build());
         GameOption.Builder timer = GameOption.builder(TIMER, Kind.TABLE, Type.CHOICE, "Game timer")
                 .help("Each player's time bank and the time per decision.")

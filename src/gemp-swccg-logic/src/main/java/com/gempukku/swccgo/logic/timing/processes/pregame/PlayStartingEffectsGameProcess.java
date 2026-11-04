@@ -70,17 +70,16 @@ public class PlayStartingEffectsGameProcess implements GameProcess {
         // Play starting effects (Dark then Light).
         SystemQueueAction action = new SystemQueueAction();
 
-        Collection<PhysicalCard> darkSideChoices = Filters.filter(game.getGameState().getReserveDeck(_darkPlayerId), game, Filters.Starting_Effect);
-        if (!darkSideChoices.isEmpty()) {
-            PhysicalCard darkSideStartingEffect = darkSideChoices.iterator().next();
-            action.appendEffect(
-                    new StackActionEffect(action, darkSideStartingEffect.getBlueprint().getPlayCardAction(_darkPlayerId, game, darkSideStartingEffect, darkSideStartingEffect, false, 0, null, null, null, null, null, false, 0, Filters.none, null)));
-        }
-        Collection<PhysicalCard> lightSideChoices = Filters.filter(game.getGameState().getReserveDeck(_lightPlayerId), game, Filters.Starting_Effect);
-        if (!lightSideChoices.isEmpty()) {
-            PhysicalCard lightSideStartingEffect = lightSideChoices.iterator().next();
-            action.appendEffect(
-                    new StackActionEffect(action, lightSideStartingEffect.getBlueprint().getPlayCardAction(_lightPlayerId, game, lightSideStartingEffect, lightSideStartingEffect, false, 0, null, null, null, null, null, false, 0, Filters.none, null)));
+        // #142 R2c: with "Starting: Effects" above 1, up to that many (the deck may hold that many)
+        int count = game.getGameState().getStartingEffectsCount();
+        for (String playerId : new String[]{_darkPlayerId, _lightPlayerId}) {
+            int played = 0;
+            for (PhysicalCard startingEffect : Filters.filter(game.getGameState().getReserveDeck(playerId), game, Filters.Starting_Effect)) {
+                if (played++ >= count)
+                    break;
+                action.appendEffect(
+                        new StackActionEffect(action, startingEffect.getBlueprint().getPlayCardAction(playerId, game, startingEffect, startingEffect, false, 0, null, null, null, null, null, false, 0, Filters.none, null)));
+            }
         }
         
         game.getActionsEnvironment().addActionToStack(action);

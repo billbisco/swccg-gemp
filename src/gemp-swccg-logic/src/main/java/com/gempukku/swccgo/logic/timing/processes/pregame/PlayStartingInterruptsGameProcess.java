@@ -28,6 +28,9 @@ public class PlayStartingInterruptsGameProcess implements GameProcess {
     private GameProcess _nextProcess;
     private PhysicalCard _darkSideStartingInterrupt;
     private PhysicalCard _lightSideStartingInterrupt;
+    // #142 R2b: further Starting Interrupts chosen with "Starting: Interrupts" above 1, played after the first
+    private final List<PhysicalCard> _darkExtras = new java.util.ArrayList<PhysicalCard>();
+    private final List<PhysicalCard> _lightExtras = new java.util.ArrayList<PhysicalCard>();
     private boolean _choicesMade;
 
     /**
@@ -69,14 +72,20 @@ public class PlayStartingInterruptsGameProcess implements GameProcess {
 
         // Starting Interrupts (if any) have been selected. Play them based on the player order.
         // Note: They are added to the stack in reverse order.
-        if (!_lightSideGoesFirst && _lightSideStartingInterrupt!=null) {
-            game.getActionsEnvironment().addActionToStack(_lightSideStartingInterrupt.getBlueprint().getStartingInterruptAction(_lightPlayerId, game, _lightSideStartingInterrupt));
+        // #142 R2b: a player's further Starting Interrupts resolve right after their first, in the order chosen
+        if (!_lightSideGoesFirst) {
+            stackExtras(game, _lightPlayerId, _lightExtras);
+            if (_lightSideStartingInterrupt != null)
+                game.getActionsEnvironment().addActionToStack(_lightSideStartingInterrupt.getBlueprint().getStartingInterruptAction(_lightPlayerId, game, _lightSideStartingInterrupt));
         }
+        stackExtras(game, _darkPlayerId, _darkExtras);
         if (_darkSideStartingInterrupt != null) {
             game.getActionsEnvironment().addActionToStack(_darkSideStartingInterrupt.getBlueprint().getStartingInterruptAction(_darkPlayerId, game, _darkSideStartingInterrupt));
         }
-        if (_lightSideGoesFirst && _lightSideStartingInterrupt!=null) {
-            game.getActionsEnvironment().addActionToStack(_lightSideStartingInterrupt.getBlueprint().getStartingInterruptAction(_lightPlayerId, game, _lightSideStartingInterrupt));
+        if (_lightSideGoesFirst) {
+            stackExtras(game, _lightPlayerId, _lightExtras);
+            if (_lightSideStartingInterrupt != null)
+                game.getActionsEnvironment().addActionToStack(_lightSideStartingInterrupt.getBlueprint().getStartingInterruptAction(_lightPlayerId, game, _lightSideStartingInterrupt));
         }
 
         // If either player is playing a starting interrupt, reveal any Starting Interrupts being
@@ -106,15 +115,37 @@ public class PlayStartingInterruptsGameProcess implements GameProcess {
         _nextProcess = _followingGameProcess;
     }
 
+    /** Stacks a player's further Starting Interrupts so they resolve in the order chosen (the stack is last-in first-out). */
+    private void stackExtras(SwccgGame game, String playerId, List<PhysicalCard> extras) {
+        for (int i = extras.size() - 1; i >= 0; i--) {
+            PhysicalCard card = extras.get(i);
+            if (card.getZone() != null && !card.getZone().isInPlay())
+                game.getActionsEnvironment().addActionToStack(card.getBlueprint().getStartingInterruptAction(playerId, game, card));
+        }
+    }
+
     private AwaitingDecision createChooseStartingInterruptDecision(final SwccgGame game, final String playerId, final Collection<PhysicalCard> possibleStartingInterrupts) {
-        return new ArbitraryCardsSelectionDecision("Choose starting interrupt", new LinkedList<PhysicalCard>(possibleStartingInterrupts), 0, 1) {
+        int max = Math.min(game.getGameState().getStartingInterruptsCount(), possibleStartingInterrupts.size());
+        return new ArbitraryCardsSelectionDecision(max > 1 ? "Choose up to " + max + " starting interrupts" : "Choose starting interrupt",
+                new LinkedList<PhysicalCard>(possibleStartingInterrupts), 0, max) {
             @Override
             public void decisionMade(String result) throws DecisionResultInvalidException {
                 List<PhysicalCard> selectedInterrupts = getSelectedCardsByResponse(result);
                 if (selectedInterrupts.isEmpty())
                     return;
 
-                PhysicalCard selectedPhysicalCard = selectedInterrupts.get(0);
+                // #142 R2b: a unique Starting Interrupt is played once (Bill 2026-11-04)
+                List<PhysicalCard> chosen = new java.util.ArrayList<PhysicalCard>();
+                java.util.Set<String> uniqueTitles = new java.util.HashSet<String>();
+                for (PhysicalCard card : selectedInterrupts) {
+                    if (card.getBlueprint().getUniqueness() == com.gempukku.swccgo.common.Uniqueness.UNIQUE && !uniqueTitles.add(card.getTitle()))
+                        continue;
+                    chosen.add(card);
+                }
+                PhysicalCard selectedPhysicalCard = chosen.get(0);
+                List<PhysicalCard> extras = playerId.equals(_darkPlayerId) ? _darkExtras : _lightExtras;
+                extras.clear();
+                extras.addAll(chosen.subList(1, chosen.size()));
 
                 if (playerId.equals(_darkPlayerId))
                     _darkSideStartingInterrupt = selectedPhysicalCard;
