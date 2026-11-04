@@ -56,7 +56,7 @@ public class Card3_115 extends AbstractEpicEventPlayable {
                 && GameConditions.canDrawDestiny(game, playerId)) {
             final PhysicalCard mainPowerGenerators = Filters.findFirstFromTopLocationsOnTable(game, Filters.Main_Power_Generators);
             if (mainPowerGenerators != null) {
-                Filter weaponToFireFilter = Filters.and(Filters.your(self), Filters.AT_AT_Cannon, Filters.attachedTo(Filters.and(Filters.AT_AT, Filters.piloted)), Filters.canBeFiredAtLocationInRange(mainPowerGenerators));
+                Filter weaponToFireFilter = Filters.and(Filters.your(self), Filters.AT_AT_Cannon, Filters.attachedTo(Filters.and(Filters.AT_AT, Filters.piloted)), Filters.canBeFiredAtLocationInRange(mainPowerGenerators), com.gempukku.swccgo.filters.HothEpicEventAttemptSiteFilter.mayAttemptFrom(playerId));
                 if (GameConditions.canSpot(game, self, weaponToFireFilter)) {
                     final TargetTheMainGeneratorState epicEventState = new TargetTheMainGeneratorState(self);
 
