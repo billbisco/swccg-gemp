@@ -137,6 +137,7 @@ public enum ModifyGameTextType {
     LEGACY__CHIRPA_V__EWOK_CATAPULT_TARGETS_CHARACTERS("'Vehicle with armor' may be treated as 'non-Dark Jedi character' ('crashes' is then treated as 'lost')"),
     LEGACY__BLOUNT_V__DOUBLE_AGENT_TARGETS_BOUNTY_HUNTER("May target opponent's bounty hunter with Double Agent instead of their spy"),
     LEGACY__LEIA_ORGANA_V__STRANGLE_ESCORT_ALONE_IS_ESCORT("'Escort alone' on Strangle is treated as 'escort'"),
+    LEGACY__WHAT_ABOUT_THAT_BLUE_ONE__FIRE_EXTINGUISHER_ONLY_YOUR_BATTLES("May only cancel battles its owner initiates"),
     SON_OF_SKYWALKER_V__LOSE_1_FORCE_TO_SUBSTITUTE_DESTINY("Must first lose 1 Force to substitute a destiny draw using Jedi Test #5"),
 
     ;

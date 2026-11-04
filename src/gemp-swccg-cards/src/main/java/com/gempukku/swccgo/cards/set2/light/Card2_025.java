@@ -86,6 +86,7 @@ public class Card2_025 extends AbstractCharacterDevice {
         // Check condition(s)
         if (TriggerConditions.battleInitiatedAt(game, effectResult, Filters.and(Filters.site, Filters.wherePresent(self)))
                 && GameConditions.isAttachedTo(game, self, Filters.R2D2)
+                && (!GameConditions.hasGameTextModification(game, self, com.gempukku.swccgo.logic.modifiers.ModifyGameTextType.LEGACY__WHAT_ABOUT_THAT_BLUE_ONE__FIRE_EXTINGUISHER_ONLY_YOUR_BATTLES) || TriggerConditions.battleInitiated(game, effectResult, self.getOwner()))
                 && GameConditions.canUseDevice(game, self)) {
 
             final OptionalGameTextTriggerAction action = new OptionalGameTextTriggerAction(self, gameTextSourceCardId);
