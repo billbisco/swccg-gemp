@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class GameRequestHandler extends SwccgoServerRequestHandler implements UriRequestHandler {
+    private static final org.apache.logging.log4j.Logger LOG = org.apache.logging.log4j.LogManager.getLogger(GameRequestHandler.class);
     private final SwccgoServer _swccgoServer;
     private final Set<Phase> _autoPassDefault = new HashSet<>();
     private final LongPollingSystem _longPollingSystem;
@@ -96,23 +97,35 @@ public class GameRequestHandler extends SwccgoServerRequestHandler implements Ur
 
             gameMediator.setPlayerAutoPassSettings(resourceOwner.getName(), getAutoPassPhases(request));
 
-            try {
-                if (decisionId != null)
-                    gameMediator.playerAnswered(resourceOwner, channelNumber, decisionId, decisionValue);
-
-                GameCommunicationChannel pollableResource = gameMediator.getCommunicationChannel(resourceOwner, channelNumber);
-                GameUpdateLongPollingResource pollingResource = new GameUpdateLongPollingResource(pollableResource, channelNumber, gameMediator, resourceOwner, responseWriter);
-                _longPollingSystem.processLongPollingResource(pollingResource, pollableResource);
-            } catch (SubscriptionConflictException exp) {
-                responseWriter.writeError(409);
-            } catch (PrivateInformationException e) {
-                responseWriter.writeError(403);
-            } catch (SubscriptionExpiredException e) {
-                responseWriter.writeError(410);
-            }
+            // #136: the engine work runs on the game engine pool, not on this Netty event-loop thread, so a slow step in
+            // one game doesn't hold up the other connections this thread serves. Everything read from the request is
+            // read above, before the hand-off.
+            final Integer answeredDecisionId = decisionId;
+            GameEngineExecutor.execute(() -> answerAndPoll(gameMediator, resourceOwner, channelNumber, answeredDecisionId, decisionValue, responseWriter));
         }
         finally {
             postDecoder.destroy();
+        }
+    }
+
+    private void answerAndPoll(SwccgGameMediator gameMediator, Player resourceOwner, int channelNumber, Integer decisionId,
+                               String decisionValue, ResponseWriter responseWriter) {
+        try {
+            if (decisionId != null)
+                gameMediator.playerAnswered(resourceOwner, channelNumber, decisionId, decisionValue);
+
+            GameCommunicationChannel pollableResource = gameMediator.getCommunicationChannel(resourceOwner, channelNumber);
+            GameUpdateLongPollingResource pollingResource = new GameUpdateLongPollingResource(pollableResource, channelNumber, gameMediator, resourceOwner, responseWriter);
+            _longPollingSystem.processLongPollingResource(pollingResource, pollableResource);
+        } catch (SubscriptionConflictException exp) {
+            responseWriter.writeError(409);
+        } catch (PrivateInformationException e) {
+            responseWriter.writeError(403);
+        } catch (SubscriptionExpiredException e) {
+            responseWriter.writeError(410);
+        } catch (RuntimeException e) {
+            LOG.error("Error processing a game answer", e);
+            responseWriter.writeError(500);
         }
     }
 
