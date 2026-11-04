@@ -219,7 +219,7 @@ public class BoardScalingBenchmark {
                             String m = e.getClassName().replace("com.gempukku.swccgo.", "") + "." + e.getMethodName();
                             if (seen.add(m))
                                 inclusive.merge(m, 1, Integer::sum);
-                            if (depth < 14 && e.getClassName().startsWith("com.gempukku")) {
+                            if (depth < Integer.getInteger("gemp.bench.depth", 14) && e.getClassName().startsWith("com.gempukku")) {
                                 chain.append(depth == 0 ? "" : " < ").append(m.substring(m.lastIndexOf('.', m.lastIndexOf('.') - 1) + 1)).append(":").append(e.getLineNumber());
                                 depth++;
                             }
