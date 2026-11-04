@@ -25,6 +25,8 @@ public class DefaultSwccgFormat implements SwccgFormat {
     private int _maxDeckSize = 60;
     private int _maxDeckSizeOption = com.gempukku.swccgo.game.DeckSize.MAX_SUPPORTED;
     private boolean _skipFormatPool;
+    // swccg-guild/work#141: Anything Goes decks may hold several Objectives; the player chooses one at game start
+    private boolean _multipleObjectives;
     private int _defaultGameTimerMinutes = 60;
     private boolean _startingCredits;
 
@@ -176,6 +178,10 @@ public class DefaultSwccgFormat implements SwccgFormat {
         _skipFormatPool = skipFormatPool;
     }
 
+    protected void setMultipleObjectives(boolean multipleObjectives) {
+        _multipleObjectives = multipleObjectives;
+    }
+
     @Override
     public int getDefaultGameTimerMinutes() {
         return _defaultGameTimerMinutes;
@@ -309,6 +315,7 @@ public class DefaultSwccgFormat implements SwccgFormat {
         sb.append(_code).append('|')
                 .append(_minDeckSize).append('|').append(_maxDeckSize).append('|')
                 .append(_skipFormatPool).append('|')
+                .append(_multipleObjectives ? "multipleObjectives|" : "")
                 .append(_downloadBattlegroundRule).append('|')
                 .append(_loreHeroicRule).append('|')
                 .append(_jpSealedRule).append('|')
@@ -477,7 +484,7 @@ public class DefaultSwccgFormat implements SwccgFormat {
             if (light > 0 && dark > 0)
                 throw new DeckInvalidException("Deck contains both light side and dark side cards");
 
-            if (numObjectives > 1)
+            if (numObjectives > 1 && !_multipleObjectives)
                 throw new DeckInvalidException("Deck contains more than one Objective");
 
             if (numStartingEffects > 1)
