@@ -7,6 +7,7 @@ import com.gempukku.swccgo.game.state.BattleState;
 import com.gempukku.swccgo.game.state.DrawDestinyState;
 import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.logic.effects.DrawDestinyEffect;
+import com.gempukku.swccgo.logic.modifiers.BattleDestinyMayNotBeReducedModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.modifiers.ModifierFlag;
 import com.gempukku.swccgo.logic.modifiers.ModifierType;
@@ -197,28 +198,28 @@ public interface BattleDestiny extends BaseQuery, Flags, LocationControl {
         for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.DESTINY, physicalCard)) {
             if (!affectTotalBdInstead || modifier.getSource(gameState) == null || !playerId.equals(modifier.getSource(gameState).getOwner())) {
                 if (!mayNotModifyDestinyDraw(gameState, modifier.getSource(gameState) != null ? modifier.getSource(gameState).getOwner() : null)) {
-                    result += modifier.getDestinyModifier(gameState, query(), physicalCard);
+                    result += BattleDestinyMayNotBeReducedModifier.unlessReduction(query(), gameState, playerId, modifier.getDestinyModifier(gameState, query(), physicalCard));
                 }
             }
         }
         for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.DESTINY_WHEN_DRAWN_FOR_DESTINY, physicalCard)) {
             if (!affectTotalBdInstead || modifier.getSource(gameState) == null || !playerId.equals(modifier.getSource(gameState).getOwner())) {
                 if (!mayNotModifyDestinyDraw(gameState, modifier.getSource(gameState) != null ? modifier.getSource(gameState).getOwner() : null)) {
-                    result += modifier.getDestinyWhenDrawnForDestinyModifier(gameState, query(), physicalCard);
+                    result += BattleDestinyMayNotBeReducedModifier.unlessReduction(query(), gameState, playerId, modifier.getDestinyWhenDrawnForDestinyModifier(gameState, query(), physicalCard));
                 }
             }
         }
         for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.DESTINY_WHEN_DRAWN_FOR_BATTLE_DESTINY, physicalCard)) {
             if (!affectTotalBdInstead || modifier.getSource(gameState) == null || !playerId.equals(modifier.getSource(gameState).getOwner())) {
                 if (!mayNotModifyDestinyDraw(gameState, modifier.getSource(gameState) != null ? modifier.getSource(gameState).getOwner() : null)) {
-                    result += modifier.getDestinyWhenDrawnForDestinyModifier(gameState, query(), physicalCard);
+                    result += BattleDestinyMayNotBeReducedModifier.unlessReduction(query(), gameState, playerId, modifier.getDestinyWhenDrawnForDestinyModifier(gameState, query(), physicalCard));
                 }
             }
         }
         for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.EACH_BATTLE_DESTINY_AT_LOCATION, battleLocation)) {
             if (!affectTotalBdInstead || modifier.getSource(gameState) == null || !playerId.equals(modifier.getSource(gameState).getOwner())) {
                 if (!mayNotModifyDestinyDraw(gameState, modifier.getSource(gameState) != null ? modifier.getSource(gameState).getOwner() : null)) {
-                    result += modifier.getBattleDestinyAtLocationModifier(playerId, gameState, query(), battleLocation);
+                    result += BattleDestinyMayNotBeReducedModifier.unlessReduction(query(), gameState, playerId, modifier.getBattleDestinyAtLocationModifier(playerId, gameState, query(), battleLocation));
                 }
             }
         }
@@ -226,7 +227,7 @@ public interface BattleDestiny extends BaseQuery, Flags, LocationControl {
             if (modifier.isForTopDrawDestinyEffect(gameState)) {
                 if (!affectTotalBdInstead || modifier.getSource(gameState) == null || !playerId.equals(modifier.getSource(gameState).getOwner())) {
                     if (!mayNotModifyDestinyDraw(gameState, modifier.getSource(gameState) != null ? modifier.getSource(gameState).getOwner() : null)) {
-                        result += modifier.getValue(gameState, query(), (PhysicalCard) null);
+                        result += BattleDestinyMayNotBeReducedModifier.unlessReduction(query(), gameState, playerId, modifier.getValue(gameState, query(), (PhysicalCard) null));
                     }
                 }
             }
@@ -319,10 +320,10 @@ public interface BattleDestiny extends BaseQuery, Flags, LocationControl {
 
                     float multiplyValue = modifier.getMultiplierValue(gameState, query(), battleLocation);
                     float addValue = modifier.getValue(gameState, query(), battleLocation);
-                    if (!mayNotIncrease || multiplyValue < 1)
+                    if ((!mayNotIncrease || multiplyValue < 1) && (multiplyValue >= 1 || !BattleDestinyMayNotBeReducedModifier.appliesTo(query(), gameState, playerId)))
                         result *= multiplyValue;
                     if (!mayNotIncrease || addValue < 0)
-                        result += addValue;
+                        result += BattleDestinyMayNotBeReducedModifier.unlessReduction(query(), gameState, playerId, addValue);
                 }
             }
         }

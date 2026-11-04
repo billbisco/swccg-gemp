@@ -36,8 +36,9 @@ public class LostFromLifeForceRule implements Rule {
                         PhysicalCard cardThatLeftTable = getCardLostFromLifeForce(effectResult);
 
                         // If game text of card was not previously canceled, get required triggers from card itself
-                        if (cardThatLeftTable != null && !cardThatLeftTable.wasPreviouslyCanceledGameText()) {
-//                            return cardThatLeftTable.getBlueprint().getLostFromLifeForceRequiredTriggers(game, effectResult, cardThatLeftTable);
+                        if (cardThatLeftTable != null && !cardThatLeftTable.wasPreviouslyCanceledGameText()
+                                && (cardThatLeftTable.getZone() == Zone.LOST_PILE || cardThatLeftTable.getZone() == Zone.TOP_OF_LOST_PILE)) {
+                            return cardThatLeftTable.getBlueprint().getLostFromLifeForceRequiredTriggers(game, effectResult, cardThatLeftTable);
                         }
 
                         return null;
