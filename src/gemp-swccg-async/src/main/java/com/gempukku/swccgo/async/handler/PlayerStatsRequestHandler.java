@@ -23,11 +23,15 @@ import java.util.Map;
 
 public class PlayerStatsRequestHandler extends SwccgoServerRequestHandler implements UriRequestHandler {
     private GameHistoryService _gameHistoryService;
+    private com.gempukku.swccgo.db.PlayerGameSettingsDAO _gameSettingsDao;
+    private com.gempukku.swccgo.game.formats.SwccgoFormatLibrary _formatLibrary;
 
     public PlayerStatsRequestHandler(Map<Type, Object> context) {
         super(context);
 
         _gameHistoryService = extractObject(context, GameHistoryService.class);
+        _gameSettingsDao = extractObject(context, com.gempukku.swccgo.db.PlayerGameSettingsDAO.class);
+        _formatLibrary = extractObject(context, com.gempukku.swccgo.game.formats.SwccgoFormatLibrary.class);
     }
 
     @Override
@@ -36,6 +40,10 @@ public class PlayerStatsRequestHandler extends SwccgoServerRequestHandler implem
             getPlayerStats(request, responseWriter);
         } else if ("/playerInfo".equals(uri) && request.method() == HttpMethod.GET) {
             getPlayerInfo(request, responseWriter);
+        } else if ("/gameSettings".equals(uri) && request.method() == HttpMethod.GET) {
+            getGameSettings(request, responseWriter);
+        } else if ("/gameSettings".equals(uri) && request.method() == HttpMethod.POST) {
+            saveGameSettings(request, responseWriter);
         } else {
             responseWriter.writeError(404);
         }
@@ -75,6 +83,46 @@ public class PlayerStatsRequestHandler extends SwccgoServerRequestHandler implem
         Player resourceOwner = getResourceOwnerSafely(request, participantId);
 
         responseWriter.writeJsonResponse(JSON.toJSONString(resourceOwner.GetUserInfo()));
+    }
+
+    /** The account's saved game settings (#135): {"play|open": {"deckSize": "100"}, ...}. */
+    private void getGameSettings(HttpRequest request, ResponseWriter responseWriter) throws Exception {
+        QueryStringDecoder queryDecoder = new QueryStringDecoder(request.uri());
+        Player resourceOwner = getResourceOwnerSafely(request, getQueryParameterSafely(queryDecoder, "participantId"));
+        com.google.gson.JsonObject result = new com.google.gson.JsonObject();
+        for (Map.Entry<String, String> entry : _gameSettingsDao.load(resourceOwner.getId()).entrySet()) {
+            try {
+                result.add(entry.getKey(), com.google.gson.JsonParser.parseString(entry.getValue()));
+            } catch (RuntimeException exp) {
+                // a damaged row is skipped; saving that format again replaces it
+            }
+        }
+        responseWriter.writeJsonResponse(result.toString());
+    }
+
+    /** Saves one form's settings for one format (#135); empty options remove them (Reset). */
+    private void saveGameSettings(HttpRequest request, ResponseWriter responseWriter) throws Exception {
+        io.netty.handler.codec.http.multipart.HttpPostRequestDecoder postDecoder =
+                new io.netty.handler.codec.http.multipart.HttpPostRequestDecoder(request);
+        try {
+            Player resourceOwner = getResourceOwnerSafely(request, getFormParameterSafely(postDecoder, "participantId"));
+            String form = getFormParameterSafely(postDecoder, "form");
+            String format = getFormParameterSafely(postDecoder, "format");
+            String optionsJson = getFormParameterSafely(postDecoder, "options");
+            if (optionsJson != null && optionsJson.length() > 4000)
+                throw new HttpProcessingException(400);
+            String stored;
+            try {
+                stored = com.gempukku.swccgo.game.setup.SavedGameSettings.normalize(_formatLibrary, form, format,
+                        HallRequestHandler.parseGameOptions(optionsJson));
+            } catch (IllegalArgumentException exp) {
+                throw new HttpProcessingException(400);
+            }
+            _gameSettingsDao.save(resourceOwner.getId(), form, format, stored);
+            responseWriter.writeJsonResponse(stored);
+        } finally {
+            postDecoder.destroy();
+        }
     }
 
     private void appendStatistics(List<PlayerStatistic> statistics, DecimalFormat percFormat, Document doc, Element type) {

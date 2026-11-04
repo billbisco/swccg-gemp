@@ -44,6 +44,7 @@ public class DaoBuilder {
         objectMap.put(LeagueDAO.class, new DbLeagueDAO(dbAccess));
         objectMap.put(LeagueScheduleDAO.class, new DbLeagueScheduleDAO(dbAccess));
         objectMap.put(GameHistoryDAO.class, new DbGameHistoryDAO(dbAccess));
+        objectMap.put(com.gempukku.swccgo.db.PlayerGameSettingsDAO.class, new com.gempukku.swccgo.db.DbPlayerGameSettingsDAO(dbAccess));
 
         DbDeckDAO dbDeckDao = new DbDeckDAO(dbAccess, library);
         CachedDeckDAO deckDao = new CachedDeckDAO(dbDeckDao);
