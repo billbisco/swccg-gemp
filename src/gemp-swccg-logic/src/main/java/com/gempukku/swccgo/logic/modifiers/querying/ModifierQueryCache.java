@@ -44,6 +44,7 @@ final class ModifierQueryCache {
     private static final int QUERY_MODIFIERS = 0;
     private static final int QUERY_CARD_STATE = 1;
     private static final int QUERY_CONDITION = 2;
+    private static final int QUERY_BATTLE_CAN_CONTINUE = 3;
     private static final Modifier[] NO_MODIFIERS = new Modifier[0];
     private static final int MAX_ENTRIES_PER_KEY = 8;
 
@@ -133,6 +134,10 @@ final class ModifierQueryCache {
 
     static Key cardStateKey(int flags, PhysicalCard card) {
         return new Key(QUERY_CARD_STATE, flags, 0, card.getCardId());
+    }
+
+    static Key battleCanContinueKey() {
+        return new Key(QUERY_BATTLE_CAN_CONTINUE, 0, 0, -1);
     }
 
     static Key conditionKey(Modifier modifier) {

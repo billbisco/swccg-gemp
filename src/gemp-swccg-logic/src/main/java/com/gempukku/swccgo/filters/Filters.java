@@ -12514,7 +12514,9 @@ public class Filters {
     public static final Filter completed_Jedi_Test = new Filter() {
         @Override
         public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard) {
-            return Filters.Jedi_Test.accepts(gameState, modifiersQuerying, physicalCard) && physicalCard.getJediTestStatus() == JediTestStatus.COMPLETED;
+            // #136: the status (a field) first. Only a Jedi Test ever has one, and the type check queries modifiers, so
+            // checking it for every card on the table made each character's ability cost a scan of the whole table.
+            return physicalCard.getJediTestStatus() == JediTestStatus.COMPLETED && Filters.Jedi_Test.accepts(gameState, modifiersQuerying, physicalCard);
         }
     };
     /**

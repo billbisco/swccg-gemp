@@ -105,6 +105,12 @@ public final class HeadlessBotVsBotRunner {
         /** Optional raw deck contents ({@code blueprintId,...|outside}); overrides pack. */
         public String darkDeckContents = null;
         public String lightDeckContents = null;
+        /** #136 benchmark: called with the engine time (ns) of each answered decision. */
+        public java.util.function.LongConsumer stepNanos = null;
+        /** #136 benchmark: called after each answered decision, with the decision count. */
+        public java.util.function.BiConsumer<DefaultSwccgGame, Integer> afterDecision = null;
+        /** #136 benchmark: called once the game is set up and before it starts (attach listeners). */
+        public java.util.function.Consumer<DefaultSwccgGame> beforeStart = null;
         public int maxDecisions = 25_000;
         public long maxMillis = 180_000L;
         public boolean verbose = false;
@@ -412,6 +418,8 @@ public final class HeadlessBotVsBotRunner {
         Path replayMetaPath = null;
 
         try {
+            if (cfg.beforeStart != null)
+                cfg.beforeStart.accept(game);
             game.startGame();
 
             while (!game.isFinished() && !game.isCancelled()) {
@@ -480,8 +488,16 @@ public final class HeadlessBotVsBotRunner {
 
                     userFeedback.participantDecided(playerId);
                     try {
+                        long stepStart = cfg.stepNanos != null ? System.nanoTime() : 0L;
                         decision.decisionMade(answer);
+                        if (cfg.stepNanos != null) {
+                            // as SwccgGameMediator.playerAnswered: run the engine to the next decision, inside the timing
+                            game.carryOutPendingActionsUntilDecisionNeeded();
+                            cfg.stepNanos.accept(System.nanoTime() - stepStart);
+                        }
                         decisionCount++;
+                        if (cfg.afterDecision != null)
+                            cfg.afterDecision.accept(game, decisionCount);
                         byPlayer.put(playerId, byPlayer.getOrDefault(playerId, 0) + 1);
                         progressed = true;
 

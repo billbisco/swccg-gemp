@@ -4259,10 +4259,11 @@ public class GameState implements Snapshotable<GameState> {
     }
 
     public boolean isParticipatingInBattle(PhysicalCard physicalCard) {
+        // #136: membership first (a set lookup); the battle check is far costlier and only matters for participants
         return (_battleState !=null
-                && _battleState.canContinue(_game)
                 && (_battleState.getDarkCardsParticipating().contains(physicalCard)
-                    || _battleState.getLightCardsParticipating().contains(physicalCard)));
+                    || _battleState.getLightCardsParticipating().contains(physicalCard))
+                && _battleState.canContinue(_game));
     }
 
     public BattleState getBattleState() {
