@@ -2015,6 +2015,9 @@ public class HallServer extends AbstractServer {
         String objectiveOptional = gameSetup != null ? gameSetup.get(GameOptions.OBJECTIVE_OPTIONAL, swccgFormat)
                 : String.valueOf(swccgFormat.allowsMultipleObjectives());
         swccgGameMediator.getGameState().setObjectiveOptional("true".equals(objectiveOptional));
+        // #145: "Shields: no play limit"
+        swccgGameMediator.getGameState().setShieldsNoPlayLimit(gameSetup != null
+                && "true".equals(gameSetup.get(GameOptions.SHIELDS_NO_PLAY_LIMIT, swccgFormat)));
         if (gameSetup != null && !gameSetup.chips().isEmpty())
             swccgGameMediator.sendMessageToPlayers("Game options: " + gameSetup.chipsText());
         swccgGameMediator.startGame();

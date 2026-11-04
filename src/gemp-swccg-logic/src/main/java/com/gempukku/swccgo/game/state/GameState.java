@@ -162,6 +162,14 @@ public class GameState implements Snapshotable<GameState> {
 
     public void setObjectiveOptional(boolean objectiveOptional) { _objectiveOptional = objectiveOptional; }
 
+    // swccg-guild/work#145 (game option "Shields: no play limit"): Starting Effects play Defensive Shields with no
+    // times-per-game limit and hold any number of them. Set at game setup only.
+    private boolean _shieldsNoPlayLimit;
+
+    public boolean isShieldsNoPlayLimit() { return _shieldsNoPlayLimit; }
+
+    public void setShieldsNoPlayLimit(boolean shieldsNoPlayLimit) { _shieldsNoPlayLimit = shieldsNoPlayLimit; }
+
     public GameState() {
     }
 
@@ -170,6 +178,7 @@ public class GameState implements Snapshotable<GameState> {
         GameState snapshot = selfSnapshot;
         snapshot._startingCredits = _startingCredits;
         snapshot._objectiveOptional = _objectiveOptional;
+        snapshot._shieldsNoPlayLimit = _shieldsNoPlayLimit;
 
         // Set each field
         snapshot._game = _game;

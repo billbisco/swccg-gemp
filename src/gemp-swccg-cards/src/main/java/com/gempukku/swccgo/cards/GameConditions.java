@@ -280,9 +280,33 @@ public class GameConditions {
      * @param gameTextActionId the identifier for the card's specific action to check the limit of
      * @return true if condition is satisfied, otherwise false
      */
+    /** The Starting Effects' "N times per game, may play a Defensive Shield (a card) from here" actions (#145). */
+    private static final java.util.Set<GameTextActionId> STARTING_EFFECT_SHIELD_PLAYS = java.util.EnumSet.of(
+            GameTextActionId.FEAR_IS_MY_ALLY__PLAY_DEFENSIVE_SHIELD,
+            GameTextActionId.AN_UNUSUAL_AMOUNT_OF_FEAR__PLAY_DEFENSIVE_SHIELD,
+            GameTextActionId.KNOWLEDGE_AND_DEFENSE__PLAY_CARD,
+            GameTextActionId.ANGER_FEAR_AGGRESSION__PLAY_CARD,
+            GameTextActionId.LEGACY__INEFFECTIVE_MANEUVER_V__PLAY_SHIELD,
+            GameTextActionId.LEGACY__SUDDEN_IMPACT_V__PLAY_SHIELD);
+
+    /** Game option "Shields: no play limit" (#145): those actions have no times-per-game limit. */
+    public static boolean isShieldPlayWithNoLimit(SwccgGame game, GameTextActionId gameTextActionId) {
+        return game.getGameState().isShieldsNoPlayLimit() && STARTING_EFFECT_SHIELD_PLAYS.contains(gameTextActionId);
+    }
+
+    /**
+     * How many Defensive Shields a Starting Effect may hold (#145): its printed number, or any number with the game
+     * option "Shields: no play limit".
+     */
+    public static int startingEffectShieldCap(SwccgGame game, int printed) {
+        return game.getGameState().isShieldsNoPlayLimit() ? Integer.MAX_VALUE : printed;
+    }
+
     public static boolean isThreeTimesPerGame(SwccgGame game, PhysicalCard card, GameTextActionId gameTextActionId) {
         if (!gameTextActionId.isPerGame())
             throw new UnsupportedOperationException(gameTextActionId + " is not a per game action");
+        if (isShieldPlayWithNoLimit(game, gameTextActionId))
+            return true;
 
         for (String title : card.getTitles()) {
             if (game.getModifiersQuerying().getUntilEndOfGameLimitCounter(title, gameTextActionId).getUsedLimit() >= 3) {
@@ -303,6 +327,8 @@ public class GameConditions {
     public static boolean isFourTimesPerGame(SwccgGame game, PhysicalCard card, GameTextActionId gameTextActionId) {
         if (!gameTextActionId.isPerGame())
             throw new UnsupportedOperationException(gameTextActionId + " is not a per game action");
+        if (isShieldPlayWithNoLimit(game, gameTextActionId))
+            return true;
 
         for (String title : card.getTitles()) {
             if (game.getModifiersQuerying().getUntilEndOfGameLimitCounter(title, gameTextActionId).getUsedLimit() >= 4) {
