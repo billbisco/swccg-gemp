@@ -626,6 +626,7 @@ public abstract class DrawDestinyEffect extends AbstractSubActionEffect {
             _noMoreDestinyToDraw = true;
             return true;
         }
+        if (com.gempukku.swccgo.logic.modifiers.MayNotDrawDestinyExceptBattleDestinyModifier.mayNotDrawDestiny(game, _performingPlayerId, _destinyType)) { gameState.sendMessage(_performingPlayerId + " may not draw " + _destinyType.getHumanReadable()); _noMoreDestinyToDraw = true; return true; }
 
         // Get the maximum limit for number of destinies that can be drawn
         int maxAllowedToDraw = Integer.MAX_VALUE;

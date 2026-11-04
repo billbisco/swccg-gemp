@@ -324,6 +324,7 @@ public enum ModifierType {
     // Carbon-Freezing destiny
     EACH_CARBON_FREEZING_DESTINY,
     TOTAL_CARBON_FREEZING_DESTINY,
+    LEGACY__MAY_NOT_DRAW_DESTINY_EXCEPT_BATTLE_DESTINY,
 
     // Race destiny
     MAY_NOT_DRAW_RACE_DESTINY,
