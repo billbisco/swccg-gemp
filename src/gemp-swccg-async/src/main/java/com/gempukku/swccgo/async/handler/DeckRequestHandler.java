@@ -5,7 +5,6 @@ import com.gempukku.swccgo.async.ResponseWriter;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.game.*;
 import com.gempukku.swccgo.game.formats.DeckFormatIndex;
-import com.gempukku.swccgo.game.formats.DefaultSwccgFormat;
 import com.gempukku.swccgo.game.formats.SwccgoFormatLibrary;
 import com.gempukku.swccgo.logic.GameUtils;
 import com.gempukku.swccgo.logic.vo.SwccgDeck;
@@ -232,12 +231,9 @@ public class DeckRequestHandler extends SwccgoServerRequestHandler implements Ur
             if (swccgDeck == null)
                 throw new HttpProcessingException(400);
 
-            try {
-                DefaultSwccgFormat.validateOriginalStartingEffectOutsideDeckShieldCap(_library, swccgDeck);
-            } catch (DeckInvalidException exp) {
-                throw new HttpProcessingException(400);
-            }
-
+            // #145: the Starting Effects' 10 / 15 cap on Defensive Shields outside the deck is a format rule, checked
+            // when the deck is used (every format still enforces it). Saving no longer refuses an over-cap deck, so it
+            // can be played at a table with the option "Shields: no play limit".
             swccgDeck.setSourceCollection(collectionType);
             swccgDeck.setFormatIndex("|");
             _deckDao.saveDeckForPlayer(resourceOwner, deckName, swccgDeck);
