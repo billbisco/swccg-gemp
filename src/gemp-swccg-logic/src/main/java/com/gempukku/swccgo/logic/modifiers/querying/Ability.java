@@ -3,6 +3,7 @@ package com.gempukku.swccgo.logic.modifiers.querying;
 import com.gempukku.swccgo.common.CardCategory;
 import com.gempukku.swccgo.common.Filterable;
 import com.gempukku.swccgo.common.Icon;
+import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgBuiltInCardBlueprint;
@@ -215,8 +216,13 @@ public interface Ability extends BaseQuery, Destiny, Icons, JediTests, Piloting,
 
         // If character has completed any Jedi Tests, ability is increased to highest Jedi Test number completed
         if (blueprint.getCardCategory() == CardCategory.CHARACTER) {
-            Collection<PhysicalCard> completedJediTests = Filters.filterAllOnTable(gameState.getGame(), Filters.and(Filters.completed_Jedi_Test, Filters.jediTestTargetingApprentice(Filters.sameCardId(physicalCard))));
+            // #136: the completed Jedi Tests are found once per query scope, then matched to this character
+            Collection<PhysicalCard> completedJediTests = query().getCompletedJediTestsOnTable(gameState,
+                    () -> Filters.filterAllOnTable(gameState.getGame(), Filters.completed_Jedi_Test));
+            Filter apprentice = completedJediTests.isEmpty() ? null : Filters.jediTestTargetingApprentice(Filters.sameCardId(physicalCard));
             for (PhysicalCard completedJediTest : completedJediTests) {
+                if (!apprentice.accepts(gameState, query(), completedJediTest))
+                    continue;
                 int jediTestNumber = getJediTestNumber(gameState, completedJediTest);
                 if (jediTestNumber > result && gameState.isCardInPlayActive(completedJediTest)) {
                     result = jediTestNumber;

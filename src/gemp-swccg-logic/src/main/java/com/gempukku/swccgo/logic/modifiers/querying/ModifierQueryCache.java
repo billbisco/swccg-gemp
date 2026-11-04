@@ -45,6 +45,8 @@ final class ModifierQueryCache {
     private static final int QUERY_CARD_STATE = 1;
     private static final int QUERY_CONDITION = 2;
     private static final int QUERY_BATTLE_CAN_CONTINUE = 3;
+    private static final int QUERY_COMPLETED_JEDI_TESTS = 4;
+    private static final int QUERY_PRESENCE = 5;
     private static final Modifier[] NO_MODIFIERS = new Modifier[0];
     private static final int MAX_ENTRIES_PER_KEY = 8;
 
@@ -134,6 +136,15 @@ final class ModifierQueryCache {
 
     static Key cardStateKey(int flags, PhysicalCard card) {
         return new Key(QUERY_CARD_STATE, flags, 0, card.getCardId());
+    }
+
+    static Key completedJediTestsKey() {
+        return new Key(QUERY_COMPLETED_JEDI_TESTS, 0, 0, -1);
+    }
+
+    /** @param side 0 dark, 1 light; @param battle 0 not for battle, else 1 + who initiated (0 none, 1 dark, 2 light) */
+    static Key presenceKey(int side, int battle, PhysicalCard location) {
+        return new Key(QUERY_PRESENCE, side, battle, location.getCardId());
     }
 
     static Key battleCanContinueKey() {

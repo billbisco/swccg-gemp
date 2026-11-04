@@ -3018,6 +3018,23 @@ public class ModifiersLogic implements ModifiersEnvironment, ModifiersState, Mod
     }
 
     @Override
+    public java.util.Collection<PhysicalCard> getCompletedJediTestsOnTable(GameState gameState,
+            Supplier<java.util.Collection<PhysicalCard>> computation) {
+        // the list is never changed by its users, so the cached one is shared
+        return _queryCache.query(ModifierQueryCache.completedJediTestsKey(), gameState, gameState, null,
+                () -> java.util.List.copyOf(computation.get()));
+    }
+
+    @Override
+    public boolean presenceAt(GameState gameState, String player, PhysicalCard location, boolean forBattle,
+            String playerInitiatingBattle, Supplier<Boolean> computation) {
+        String dark = gameState.getDarkPlayer();
+        int side = player.equals(dark) ? 0 : 1;
+        int battle = !forBattle ? 0 : 1 + (playerInitiatingBattle == null ? 0 : playerInitiatingBattle.equals(dark) ? 1 : 2);
+        return _queryCache.query(ModifierQueryCache.presenceKey(side, battle, location), gameState, location, null, computation);
+    }
+
+    @Override
     public boolean battleCanContinue(GameState gameState, Object battleState, Supplier<Boolean> computation) {
         return _queryCache.query(ModifierQueryCache.battleCanContinueKey(), gameState, battleState, null, computation);
     }
