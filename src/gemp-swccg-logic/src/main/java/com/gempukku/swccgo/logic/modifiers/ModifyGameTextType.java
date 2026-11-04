@@ -104,6 +104,7 @@ public enum ModifyGameTextType {
     YOU_CAN_EITHER_PROFIT_BY_THIS__DO_NOT_DEPLOY_HAN_AT_START_OF_GAME("Do not deploy Han at start of game"),
     YOU_OVERESTIMATE_THEIR_CHANCES__TRIPLE_RESULT("Triple result"),
     YOURE_A_SLAVE__DRAW_TOP_CARD_OF_RESERVE_DECK_WHEN_PLACING_A_CARD_IN_USED_PILE("Draw top card of Reserve Deck when you place a card in Used Pile."),
+    LEGACY__YOURE_A_SLAVE__FREE_MAY_BE_TREATED_AS_2_FORCE("'Free' may be treated as '2 Force'"),
     REMOVE_TWO_MORE_CARDS("Remove two more cards"),
     REMOVE_THREE_MORE_CARDS("Remove three more cards"),
 

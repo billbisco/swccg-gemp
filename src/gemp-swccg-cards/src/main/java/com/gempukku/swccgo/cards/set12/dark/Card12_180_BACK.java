@@ -164,6 +164,7 @@ public class Card12_180_BACK extends AbstractObjective {
 
                                                             // Check if player can deploy the card for free
                                                             boolean deployable = Filters.and(Filters.deployable(self, null, true, 0)).accepts(game, card);
+                                                            if (!deployable && com.gempukku.swccgo.cards.effects.LegacyYoureASlaveTwoForceDeploy.offer(action, game, self, playerId, card)) return;
 
                                                             if (deployable) {
                                                                 // Deploy card for free
