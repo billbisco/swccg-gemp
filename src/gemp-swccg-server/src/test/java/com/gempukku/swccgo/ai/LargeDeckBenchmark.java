@@ -36,11 +36,19 @@ public class LargeDeckBenchmark {
     private static final int SNAPSHOT_EVERY = 250;
 
     static String scaled(String contents, int size) {
+        return scaled(contents, size, null);
+    }
+
+    /**
+     * The deck repeated to {@code size} cards, or (with a {@code filler} blueprint) the deck once and then that card
+     * to fill it: a non-unique character such as Stormtrooper, so the bots can keep putting more cards on the table.
+     */
+    static String scaled(String contents, int size, String filler) {
         String cards = contents.substring(0, contents.indexOf('|'));
         List<String> base = Arrays.asList(cards.split(","));
         List<String> out = new ArrayList<>(size);
         for (int i = 0; i < size; i++)
-            out.add(base.get(i % base.size()));
+            out.add(filler != null && i >= base.size() ? filler : base.get(i % base.size()));
         return String.join(",", out) + "|";
     }
 
@@ -81,8 +89,9 @@ public class LargeDeckBenchmark {
         cfg.formatName = "anything_goes";
         cfg.darkAi = ai;
         cfg.lightAi = ai;
-        cfg.darkDeckContents = scaled(HeadlessBotVsBotRunner.WC96_ANH_DARK, size);
-        cfg.lightDeckContents = scaled(HeadlessBotVsBotRunner.WC96_ANH_LIGHT, size);
+        boolean troopers = Boolean.getBoolean("gemp.bench.troopers");
+        cfg.darkDeckContents = scaled(HeadlessBotVsBotRunner.WC96_ANH_DARK, size, troopers ? "1_194" : null);   // Stormtrooper
+        cfg.lightDeckContents = scaled(HeadlessBotVsBotRunner.WC96_ANH_LIGHT, size, troopers ? "1_28" : null);  // Rebel Trooper
         cfg.darkDeckName = "WC96 Dark x" + size;
         cfg.lightDeckName = "WC96 Light x" + size;
         cfg.maxDecisions = 400_000;
@@ -124,8 +133,14 @@ public class LargeDeckBenchmark {
             }
         };
         HeadlessBotVsBotRunner.Result result;
+        BoardScalingBenchmark.Sampler sampler = Boolean.getBoolean("gemp.bench.sample")
+                ? new BoardScalingBenchmark.Sampler(Thread.currentThread()) : null;
         try {
             result = HeadlessBotVsBotRunner.playOneGame(cfg, cards, formats);
+            if (sampler != null)
+                sampler.report(size);
+        } catch (InterruptedException exp) {
+            throw new IllegalStateException(exp);
         } catch (RuntimeException exp) {
             row.failure = exp.getClass().getSimpleName() + ": " + exp.getMessage();
             return row;

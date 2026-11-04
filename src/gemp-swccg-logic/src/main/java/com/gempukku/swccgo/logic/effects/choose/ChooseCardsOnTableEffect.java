@@ -178,24 +178,28 @@ public abstract class ChooseCardsOnTableEffect extends AbstractStandardEffect im
             _playerId = game.getGameState().getCurrentPlayerId();
         }
 
-        // Determine the cards to choose from
-        Collection<PhysicalCard> selectableCards;
-        if (_cards != null)
-            selectableCards = Filters.filter(_cards, game, _matchPartialModelType, _filters);
-        else
-            selectableCards = Filters.filterActive(game, _action.getActionSource(), _matchPartialModelType, _spotOverrides, _filters);
+        // Determine the cards to choose from. This only reads the game, so it runs in one query scope (#136): checking
+        // every card on a big table repeats the same modifier, presence and deploy-cost questions for each card.
+        final int[] acceptsCountTotal = {0};
+        Collection<PhysicalCard> selectableCards = game.getModifiersQuerying().withQueryCache(() -> {
+            Collection<PhysicalCard> candidates;
+            if (_cards != null)
+                candidates = Filters.filter(_cards, game, _matchPartialModelType, _filters);
+            else
+                candidates = Filters.filterActive(game, _action.getActionSource(), _matchPartialModelType, _spotOverrides, _filters);
 
-        // Filter cards by accounting for cards with multiple classes
-        int acceptsCountSoFar = 0;
-        List<PhysicalCard> validCards = new LinkedList<PhysicalCard>();
-        for (PhysicalCard selectableCard : selectableCards) {
-            int acceptsCount = Filters.and(_filters).acceptsCount(game, selectableCard);
-            if (acceptsCount > 0 && acceptsCount <= _maximumAcceptsCount) {
-                validCards.add(selectableCard);
-                acceptsCountSoFar += acceptsCount;
+            // Filter cards by accounting for cards with multiple classes
+            List<PhysicalCard> validCards = new LinkedList<PhysicalCard>();
+            for (PhysicalCard selectableCard : candidates) {
+                int acceptsCount = Filters.and(_filters).acceptsCount(game, selectableCard);
+                if (acceptsCount > 0 && acceptsCount <= _maximumAcceptsCount) {
+                    validCards.add(selectableCard);
+                    acceptsCountTotal[0] += acceptsCount;
+                }
             }
-        }
-        selectableCards = validCards;
+            return validCards;
+        });
+        int acceptsCountSoFar = acceptsCountTotal[0];
 
         // Make sure at least the minimum number of cards can be found
         if (acceptsCountSoFar < _minimum) {

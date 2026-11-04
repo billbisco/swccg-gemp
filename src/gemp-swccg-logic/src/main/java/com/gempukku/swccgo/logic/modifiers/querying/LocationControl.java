@@ -266,6 +266,13 @@ public interface LocationControl extends BaseQuery, Ability, Battle, Ferocity, F
     }
 
     default boolean hasPresenceAt(GameState gameState, String player, PhysicalCard physicalCard, boolean forBattle, String playerInitiatingBattle, Map<InactiveReason, Boolean> spotOverrides) {
+        if (spotOverrides == null && player != null && physicalCard != null)
+            return query().presenceAt(gameState, player, physicalCard, forBattle, playerInitiatingBattle,
+                    () -> computePresenceAt(gameState, player, physicalCard, forBattle, playerInitiatingBattle, null));
+        return computePresenceAt(gameState, player, physicalCard, forBattle, playerInitiatingBattle, spotOverrides);
+    }
+
+    private boolean computePresenceAt(GameState gameState, String player, PhysicalCard physicalCard, boolean forBattle, String playerInitiatingBattle, Map<InactiveReason, Boolean> spotOverrides) {
         Filter presenceIconFilter = Filters.and(Filters.owner(player), Icon.PRESENCE);
         if (forBattle) {
             presenceIconFilter = Filters.and(presenceIconFilter, Filters.canParticipateInBattleAt(physicalCard, playerInitiatingBattle));
@@ -274,7 +281,8 @@ public interface LocationControl extends BaseQuery, Ability, Battle, Ferocity, F
             }
         }
         else {
-            presenceIconFilter = Filters.and(presenceIconFilter, Filters.at(physicalCard));
+            // #136: the location first (cheap); the icon check counts icons through modifiers. Same result in any order.
+            presenceIconFilter = Filters.and(Filters.owner(player), Filters.at(physicalCard), Icon.PRESENCE);
         }
 
         // Check for [Presence icon] character.

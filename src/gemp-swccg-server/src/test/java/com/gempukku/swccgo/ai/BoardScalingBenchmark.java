@@ -194,7 +194,7 @@ public class BoardScalingBenchmark {
             StringBuilder sb = new StringBuilder("== sample board=" + board + " samples=" + samples + "\n-- self\n");
             top(self, 15, sb);
             sb.append("-- inclusive\n");
-            top(inclusive, 45, sb);
+            top(inclusive, Integer.getInteger("gemp.bench.top", 45), sb);
             sb.append("-- chains\n");
             top(chains, 12, sb);
             System.out.println(sb);
