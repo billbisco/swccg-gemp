@@ -46,9 +46,11 @@ doesn't read it, because GEMP shows the PC's card images, which already have the
 | `errata_mark` | The errata stamp, bottom right. | "E1", "E2", "D-E1" | Bottom margin, right edge x ≈ 670, baseline ≈ 1030; white heavy oblique (preset `errata`) |
 | `ai_mark` | The alternate-image stamp as printed, bottom right, next to the small Players Committee logo: "(AI)" or "(ALT)". An errata mark beside it is stored separately in `errata_mark`. | "(AI)" on Darth Vader, Betrayer Of The Jedi (AI) | Bottom margin, right |
 | `slip_mark` | Virtual Legacy cards only: the slip number printed at the right of the bottom strip. | "92E", "D45", "3•20" | Bottom margin, right |
-| `concept_credit` | The "Original concept by …" line, normally in the frame's bottom bar. `concept_credit_position` says where it is when it is elsewhere ("left side", "right side"). | "Original concept by James Booker" | Centred on the frame's bottom bar, baseline ≈ 994; white condensed italic with a dark edge (preset `concept`) |
+| `concept_credit` | The "Original concept by …" line, normally in the frame's bottom bar, also on Virtual Block cards (often with the tournament it was won at: "Original concept by James Booker, Worlds 2005"). `concept_credit_position` says where it is when it is elsewhere ("left side", "right side", or "side" on landscape Virtual Block cards). | "Original concept by James Booker" | Centred on the frame's bottom bar, baseline ≈ 994; white condensed italic with a dark edge (preset `concept`) |
 | `art_credit` | The art credit, normally printed up the left side of the frame beside the art. `art_credit_side: "right"` or `art_credit_position: "bottom bar"` marks the cards that print it elsewhere. | "Image courtesy of Jesus Conde" | Left frame edge, text centre x ≈ 61, reading bottom to top; Akzidenz Condensed, about 25 px cap height |
-| `copyright` | The vertical copyright line beside the art, **only when it is not the standard line**. The standard line is "ARTWORK NEITHER AFFILIATED WITH NOR ENDORSED BY LUCASFILM LTD." on Virtual Sets 0–27. Many (V) cards keep their Decipher card's line instead, and those are recorded. `copyright_side: "left"` when it is printed on the left. Virtual Legacy copyright lines are not recorded, because they can't be read at the 350 px the PC publishes. | "© 2001 LUCASFILM LTD. & TM. TM, ® & © 2001 DECIPHER INC." (No Civility, Only Politics (V)) | Right frame edge, text centre x ≈ 683, reading bottom to top |
+| `copyright` | The vertical copyright line beside the art, exactly as printed: the standard "ARTWORK NEITHER AFFILIATED WITH NOR ENDORSED BY LUCASFILM LTD." (Virtual Sets 0–27), or the Decipher card's own line that many (V) cards keep (Bill 2026-11-03: every line is recorded, so cards can be recreated exactly). A Decipher line printed in two halves on a system's two sides is joined with " / ". `copyright_side: "left"` when it is printed on the left. On Virtual Block cards only the legible "Artwork not affiliated or endorsed by Lucasfilm Ltd." disclaimer is recorded: their Lucasfilm/Decipher lines can't be read reliably at 350 px. No field: none is printed (Rescue In The Clouds (V), I'm Sorry (V)). | "ARTWORK NEITHER AFFILIATED WITH NOR ENDORSED BY LUCASFILM LTD."; "© 2001 LUCASFILM LTD. & TM. TM, ® & © 2001 DECIPHER INC." (No Civility, Only Politics (V)) | Right frame edge, text centre x ≈ 683, reading bottom to top |
+| `dedication` | An "In memory of …" line in the bottom bar. | "In memory of John Anderson, 1982 - 2018" (Puck, Red 12) | As `concept_credit` |
+| `bar_text`, `edge_text` | Any other small printed line in the bottom bar, or on a card's edge (`edge_text_position`). | "2004 New Year's Resolution Contest" | — |
 | `notes` | Free text for anything a reviewer needs: a misprint on the PC image, a label that is only partly readable, an unusual position. | "PC image prints 'Jabba’s Palace Sabacc (Dark)'" | — |
 
 Landscape faces (1039 × 745) print the title strip along one long edge. The positions above are for the face turned so
@@ -56,7 +58,7 @@ that the strip is at the bottom.
 
 ## How it is made
 
-`card_labels.json` is built from the PC's own images (Virtual Sets 0–27 at hires 745 × 1039; Virtual Legacy blocks
-at the 350 × 490 holotable size, the largest the PC publishes). Each label region is OCR'd, and each reading is then
+`card_labels.json` is built from the PC's own images (Virtual Sets 0–27, Virtual Defensive Shields and Virtual Premium at
+hires 745 × 1039; Virtual Legacy blocks at the 350 × 490 holotable size, the largest the PC publishes). Each label region is OCR'd, and each reading is then
 checked against the crop of the image. The build scripts and the per-card table are kept in swccg-guild/work
 `evidence/100/`.
