@@ -154,6 +154,14 @@ public class GameState implements Snapshotable<GameState> {
         _startingCredits = credits;
     }
 
+    // swccg-guild/work#142 (game option "Starting: Objective optional"): at game start a deck's Objectives are a choice
+    // alongside its starting locations instead of having to be played. Set at game setup only.
+    private boolean _objectiveOptional;
+
+    public boolean isObjectiveOptional() { return _objectiveOptional; }
+
+    public void setObjectiveOptional(boolean objectiveOptional) { _objectiveOptional = objectiveOptional; }
+
     public GameState() {
     }
 
@@ -161,6 +169,7 @@ public class GameState implements Snapshotable<GameState> {
     public void generateSnapshot(GameState selfSnapshot, SnapshotData snapshotData) {
         GameState snapshot = selfSnapshot;
         snapshot._startingCredits = _startingCredits;
+        snapshot._objectiveOptional = _objectiveOptional;
 
         // Set each field
         snapshot._game = _game;

@@ -1,5 +1,7 @@
 package com.gempukku.swccgo.logic.timing.processes.pregame;
 
+import com.gempukku.swccgo.common.CardCategory;
+
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
@@ -30,6 +32,9 @@ public class PlayStartingLocationsAndObjectivesGameProcess implements GameProces
     private boolean _checkedForObjectives;
     private PhysicalCard _darkSideObjective;
     private PhysicalCard _lightSideObjective;
+    // #142: a starting location chosen in the Objective-or-location box, used when the locations are chosen
+    private PhysicalCard _darkPreferredLocation;
+    private PhysicalCard _lightPreferredLocation;
     private PhysicalCard _darkSideLocation;
     private boolean _noValidDarkSideLocation;
     private PhysicalCard _lightSideLocation;
@@ -227,25 +232,12 @@ public class PlayStartingLocationsAndObjectivesGameProcess implements GameProces
 
             // Check for Objectives. A deck may hold several (Anything Goes allows it, swccg-guild/work#141): the player
             // then chooses which one to play, the way a starting location is chosen. The others stay in the deck as
-            // ordinary cards (an Objective's front side is its destiny).
-            boolean choosing = false;
-            List<PhysicalCard> darkSideObjectives = new ArrayList<PhysicalCard>(Filters.filter(game.getGameState().getReserveDeck(_darkPlayerId), game, Filters.Objective));
-            if (darkSideObjectives.size() == 1) {
-                _darkSideObjective = darkSideObjectives.get(0);
-            }
-            else if (darkSideObjectives.size() > 1) {
-                game.getUserFeedback().sendAwaitingDecision(_darkPlayerId, createChooseObjectiveDecision(_darkPlayerId, darkSideObjectives));
-                choosing = true;
-            }
-
-            List<PhysicalCard> lightSideObjectives = new ArrayList<PhysicalCard>(Filters.filter(game.getGameState().getReserveDeck(_lightPlayerId), game, Filters.Objective));
-            if (lightSideObjectives.size() == 1) {
-                _lightSideObjective = lightSideObjectives.get(0);
-            }
-            else if (lightSideObjectives.size() > 1) {
-                game.getUserFeedback().sendAwaitingDecision(_lightPlayerId, createChooseObjectiveDecision(_lightPlayerId, lightSideObjectives));
-                choosing = true;
-            }
+            // ordinary cards (an Objective's front side is its destiny). With the game option "Starting: Objective
+            // optional" (#142) the player's starting locations are offered in the same box, and choosing one plays no
+            // Objective.
+            boolean optional = game.getGameState().isObjectiveOptional();
+            boolean choosing = offerObjectives(game, _darkPlayerId, optional);
+            choosing = offerObjectives(game, _lightPlayerId, optional) || choosing;
 
             // Continue once the choices are made (this process runs again after the decisions)
             if (choosing)
@@ -279,7 +271,13 @@ public class PlayStartingLocationsAndObjectivesGameProcess implements GameProces
                 if (_darkSideChoices.isEmpty()) {
                     _noValidDarkSideLocation = true;
                 }
+                else if (_darkPreferredLocation != null && _darkSideChoices.contains(_darkPreferredLocation)) {
+                    // #142: already chosen in the Objective-or-location box
+                    _darkSideLocation = _darkPreferredLocation;
+                    _darkPreferredLocation = null;
+                }
                 else {
+                    _darkPreferredLocation = null;
                     game.getUserFeedback().sendAwaitingDecision(_darkPlayerId, createChooseLocationDecision(game, _darkPlayerId, _darkSideChoices));
                 }
             }
@@ -302,7 +300,13 @@ public class PlayStartingLocationsAndObjectivesGameProcess implements GameProces
                 if (_lightSideChoices.isEmpty()) {
                     _noValidLightSideLocation = true;
                 }
+                else if (_lightPreferredLocation != null && _lightSideChoices.contains(_lightPreferredLocation)) {
+                    // #142: already chosen in the Objective-or-location box
+                    _lightSideLocation = _lightPreferredLocation;
+                    _lightPreferredLocation = null;
+                }
                 else {
+                    _lightPreferredLocation = null;
                     game.getUserFeedback().sendAwaitingDecision(_lightPlayerId, createChooseLocationDecision(game, _lightPlayerId, _lightSideChoices));
                 }
             }
@@ -332,23 +336,50 @@ public class PlayStartingLocationsAndObjectivesGameProcess implements GameProces
         }
     }
 
-    private AwaitingDecision createChooseObjectiveDecision(final String playerId, final List<PhysicalCard> objectives) {
-        return new ArbitraryCardsSelectionDecision("Choose your Objective", new LinkedList<PhysicalCard>(objectives), 1, 1) {
+    /**
+     * Sets the player's Objective, or asks which to play (#141). With "Starting: Objective optional" (#142) their
+     * starting locations are offered too.
+     * @return true if a decision was sent
+     */
+    private boolean offerObjectives(SwccgGame game, String playerId, boolean optional) {
+        List<PhysicalCard> objectives = new ArrayList<PhysicalCard>(Filters.filter(game.getGameState().getReserveDeck(playerId), game, Filters.Objective));
+        if (objectives.isEmpty())
+            return false;
+        List<PhysicalCard> choices = new ArrayList<PhysicalCard>(objectives);
+        if (optional)
+            choices.addAll(Filters.filter(game.getGameState().getReserveDeck(playerId), game, Filters.deployableAsStartingLocation));
+        if (choices.size() == 1) {
+            if (playerId.equals(_darkPlayerId))
+                _darkSideObjective = objectives.get(0);
+            else
+                _lightSideObjective = objectives.get(0);
+            return false;
+        }
+        game.getUserFeedback().sendAwaitingDecision(playerId, createChooseObjectiveDecision(playerId, choices, choices.size() > objectives.size()));
+        return true;
+    }
+
+    private AwaitingDecision createChooseObjectiveDecision(final String playerId, final List<PhysicalCard> choices, boolean withLocations) {
+        return new ArbitraryCardsSelectionDecision(withLocations ? "Choose your Objective or starting location" : "Choose your Objective",
+                new LinkedList<PhysicalCard>(choices), 1, 1) {
             {
-                // the Objectives are still face down in the Reserve Deck, so show their fronts (the side that is played)
-                String[] fronts = new String[objectives.size()];
+                // the cards are still face down in the Reserve Deck, so show their fronts (the side that is played)
+                String[] fronts = new String[choices.size()];
                 for (int i = 0; i < fronts.length; i++)
-                    fronts[i] = objectives.get(i).getBlueprintId(true);
+                    fronts[i] = choices.get(i).getBlueprintId(true);
                 setParam("blueprintId", fronts);
             }
 
             @Override
             public void decisionMade(String result) throws DecisionResultInvalidException {
                 PhysicalCard selected = getSelectedCardsByResponse(result).get(0);
-                if (playerId.equals(_darkPlayerId))
-                    _darkSideObjective = selected;
-                else
-                    _lightSideObjective = selected;
+                boolean objective = selected.getBlueprint().getCardCategory() == CardCategory.OBJECTIVE;
+                if (playerId.equals(_darkPlayerId)) {
+                    if (objective) _darkSideObjective = selected; else _darkPreferredLocation = selected;
+                }
+                else {
+                    if (objective) _lightSideObjective = selected; else _lightPreferredLocation = selected;
+                }
             }
         };
     }
