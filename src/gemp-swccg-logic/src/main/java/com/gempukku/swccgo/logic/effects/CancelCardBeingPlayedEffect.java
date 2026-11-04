@@ -6,10 +6,13 @@ import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.logic.GameUtils;
 import com.gempukku.swccgo.logic.actions.SubAction;
+import com.gempukku.swccgo.logic.modifiers.PlaceOnBottomOfForcePileWhenCanceledModifier;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 import com.gempukku.swccgo.logic.timing.AbstractSubActionEffect;
 import com.gempukku.swccgo.logic.timing.Action;
 import com.gempukku.swccgo.logic.timing.PassthruEffect;
+
+import java.util.Collections;
 
 /**
  * Creates an effect that cancels a card being played/deployed.
@@ -62,7 +65,11 @@ public class CancelCardBeingPlayedEffect extends AbstractSubActionEffect {
                             if (cardToCancel.getZone() == Zone.VOID && !_playingCardEffect.isToBePlacedOutOfPlay()) {
 
                                 // Check if card should be placed in Used Pile or Lost Pile
-                                if (modifiersQuerying.isPlacedInUsedPileWhenCanceled(gameState, cardToCancel, performingPlayer, actionSource)) {
+                                if (PlaceOnBottomOfForcePileWhenCanceledModifier.isPlacedOnBottomOfForcePileWhenCanceled(gameState, modifiersQuerying, cardToCancel)) {
+                                    subAction.appendEffect(
+                                            new PutCardsInCardPileEffect(subAction, game, Collections.singletonList(cardToCancel), Zone.FORCE_PILE, true));
+                                }
+                                else if (modifiersQuerying.isPlacedInUsedPileWhenCanceled(gameState, cardToCancel, performingPlayer, actionSource)) {
                                     if (actionSource != null) {
                                         gameState.activatedCard(null, actionSource);
                                     }

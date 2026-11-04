@@ -112,6 +112,8 @@ public enum ModifyGameTextType {
     //Legacy
     LEGACY__YOUR_SITES__TREAT_TRANDOSHAN_AS_SLAVER("'Trandoshan' on this site may be treated as 'slaver'"),
     LEGACY__REF_III_ANOTHER_PATHETIC_LIFEFORM__IGNORES_YOUR_NONUNIQUE_ALIENS("Ignores non-unique aliens"),
+    LEGACY__REF_III_WIPE_THEM_OUT_ALL_OF_THEM__IGNORES_YOUR_NONUNIQUE_ALIENS("Ignores non-unique aliens"),
+    LEGACY__CLOUD_CITY_TROOPER__IGNORES_POWER_MINUS_ONE("Ignores 'power -1' in game text"),
     LEGACY__OUTRIDER_DOES_NOT_PLACE_UTINNI_EFFECTS_OUT_OF_PLAY("Does not place Utinni Effects out of play"),
     LEGACY__WELL_HANDLE_THIS__ONLY_TARGET_DROIDS_AND_SPIES("May target only droids and spies"),
     LEGACY__LET_THEM_MAKE_THE_FIRST_MOVE__ONLY_TARGET_DROIDS_AND_SPIES("May target only droids and spies"),
