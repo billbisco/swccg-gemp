@@ -34,6 +34,7 @@ import java.util.Locale;
  */
 public class LargeDeckBenchmark {
     private static final int SNAPSHOT_EVERY = 250;
+    private static final boolean SAVE = Boolean.getBoolean("gemp.bench.save");
 
     static String scaled(String contents, int size) {
         return scaled(contents, size, null);
@@ -121,6 +122,10 @@ public class LargeDeckBenchmark {
         int[] snapCount = {0};
         int[] maxInPlay = {0};
         boolean[] pendingSnap = {false};
+        int[] saveTurn = {-1};
+        double[] saveStats = {0, 0, 0, 0}; // max ms, max bytes, count, total ms
+        com.gempukku.swccgo.game.save.GameSaveCodec saveCodec = SAVE ? new com.gempukku.swccgo.game.save.GameSaveCodec(cards, formats,
+                com.gempukku.swccgo.game.save.SaveBuild.current()) : null;
 
         HeadlessBotVsBotRunner.Config cfg = new HeadlessBotVsBotRunner.Config();
         cfg.formatName = "anything_goes";
@@ -182,6 +187,22 @@ public class LargeDeckBenchmark {
             if (gs == null)
                 return;
             maxInPlay[0] = Math.max(maxInPlay[0], gs.getCardsInPlay().size());
+            // -Dgemp.bench.save=true: time a Play-now save snapshot (GameSaveCodec.write) at the first quiet point of each
+            // turn, as SavedGameManager does at turn start inside its server-wide lock
+            if (SAVE && !game.isFinished()) {
+                int turn = gs.getPlayersLatestTurnNumber(game.getDarkPlayer()) + gs.getPlayersLatestTurnNumber(game.getLightPlayer());
+                com.gempukku.swccgo.logic.timing.DefaultUserFeedback fb = (com.gempukku.swccgo.logic.timing.DefaultUserFeedback) game.getUserFeedback();
+                if (turn != saveTurn[0] && com.gempukku.swccgo.game.save.QuietPoint.isQuiet(game, fb)) {
+                    saveTurn[0] = turn;
+                    long t = System.nanoTime();
+                    byte[] bytes = saveCodec.write(new com.gempukku.swccgo.game.save.SaveRoot(game, fb, new java.util.HashMap<>()));
+                    double ms = (System.nanoTime() - t) / 1e6;
+                    saveStats[0] = Math.max(saveStats[0], ms);
+                    saveStats[1] = Math.max(saveStats[1], bytes.length);
+                    saveStats[2]++;
+                    saveStats[3] += ms;
+                }
+            }
             if (trace != null) {
                 StringBuilder line = new StringBuilder().append(count).append(' ').append(gs.getCurrentPhase())
                         .append(' ').append(gs.getCurrentPlayerId()).append(" play=").append(gs.getCardsInPlay().size());
@@ -214,8 +235,17 @@ public class LargeDeckBenchmark {
             }
         };
         HeadlessBotVsBotRunner.Result result;
-        BoardScalingBenchmark.Sampler sampler = Boolean.getBoolean("gemp.bench.sample")
-                ? new BoardScalingBenchmark.Sampler(Thread.currentThread()) : null;
+        // -Dgemp.bench.sample=true samples the whole game; -Dgemp.bench.sampleSlowMs=N only steps of N ms or more
+        Long slowMs = Long.getLong("gemp.bench.sampleSlowMs");
+        BoardScalingBenchmark.Sampler sampler = Boolean.getBoolean("gemp.bench.sample") || slowMs != null
+                ? new BoardScalingBenchmark.Sampler(Thread.currentThread(), slowMs != null) : null;
+        if (sampler != null && slowMs != null) {
+            java.util.function.LongConsumer record = cfg.stepNanos;
+            cfg.stepNanos = nanos -> {
+                record.accept(nanos);
+                sampler.stepEnded(nanos, slowMs * 1_000_000L);
+            };
+        }
         try {
             result = HeadlessBotVsBotRunner.playOneGame(cfg, cards, formats);
             if (sampler != null)
@@ -241,6 +271,9 @@ public class LargeDeckBenchmark {
         row.winner = (result.winner == null ? "" : result.winner) + " (" + (result.winReasonSummary == null ? ""
                 : result.winReasonSummary.replace(',', ';')) + ") lf=" + result.darkLifeForce + "/" + result.lightLifeForce;
         row.decisions = result.decisionCount;
+        if (SAVE)
+            System.out.println(String.format(Locale.ROOT, "[save136] %d,%d turn-start saves=%d max_ms=%.1f avg_ms=%.1f max_bytes=%d",
+                    size, seed, (int) saveStats[2], saveStats[0], saveStats[2] == 0 ? 0 : saveStats[3] / saveStats[2], (long) saveStats[1]));
         row.turns = Math.max(result.darkTurnNumber, result.lightTurnNumber);
         if (!result.failureNotes.isEmpty())
             row.failure = result.failureNotes.size() + " notes: " + result.failureNotes.get(0);

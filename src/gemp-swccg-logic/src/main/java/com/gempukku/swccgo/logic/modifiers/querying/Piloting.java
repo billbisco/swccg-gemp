@@ -38,10 +38,16 @@ public interface Piloting extends BaseQuery, Icons, Locations, Prohibited {
      * @return the permanent pilots
      */
     default List<SwccgBuiltInCardBlueprint> getPermanentPilotsAboard(GameState gameState, PhysicalCard physicalCard) {
+        List<SwccgBuiltInCardBlueprint> permanentsAboard = physicalCard.getBlueprint().getPermanentsAboard(physicalCard);
+        // #136: a card with no permanent pilot of its own, while no "extra permanent pilot" modifier exists, has none
+        // whether or not its pilots are suspended. Checked structurally (no conditions evaluated) before the modifier
+        // queries, which filters over every card on the table (persona filters, "has a permanent pilot") ask per card.
+        if (!hasBuiltIn(permanentsAboard, true) && !hasModifiersOfType(ModifierType.EXTRA_PERMANENT_PILOTS, physicalCard))
+            return Collections.emptyList();
+
         if (permanentPilotsSuspended(gameState, physicalCard))
             return Collections.emptyList();
 
-        List<SwccgBuiltInCardBlueprint> permanentsAboard = physicalCard.getBlueprint().getPermanentsAboard(physicalCard);
         List<SwccgBuiltInCardBlueprint> permanentPilots = new ArrayList<SwccgBuiltInCardBlueprint>();
         if (permanentsAboard != null) {
             for (SwccgBuiltInCardBlueprint permanentAboard : permanentsAboard) {
@@ -69,7 +75,8 @@ public interface Piloting extends BaseQuery, Icons, Locations, Prohibited {
      */
     default List<SwccgBuiltInCardBlueprint> getPermanentAstromechsAboard(GameState gameState, PhysicalCard physicalCard) {
         List<SwccgBuiltInCardBlueprint> permanentsAboard = physicalCard.getBlueprint().getPermanentsAboard(physicalCard);
-        if (permanentsAboard == null || permanentAstromechsSuspended(gameState, physicalCard))
+        // #136: no permanent astromech of its own: none, whether or not suspended (see getPermanentPilotsAboard)
+        if (!hasBuiltIn(permanentsAboard, false) || permanentAstromechsSuspended(gameState, physicalCard))
             return Collections.emptyList();
 
         List<SwccgBuiltInCardBlueprint> permanentAstromechs = new ArrayList<SwccgBuiltInCardBlueprint>();
@@ -91,6 +98,17 @@ public interface Piloting extends BaseQuery, Icons, Locations, Prohibited {
     default List<Modifier> getModifiersFromPermanentBuiltIn(GameState gameState, SwccgBuiltInCardBlueprint permanentBuiltIn) {
         PhysicalCard card = permanentBuiltIn.getPhysicalCard(game());
         return permanentBuiltIn.getGameTextModifiers(card);
+    }
+
+    /** Whether the list holds a permanent pilot (pilot=true) or a permanent astromech (pilot=false). */
+    private static boolean hasBuiltIn(List<SwccgBuiltInCardBlueprint> permanentsAboard, boolean pilot) {
+        if (permanentsAboard == null)
+            return false;
+        for (SwccgBuiltInCardBlueprint permanentAboard : permanentsAboard) {
+            if (pilot ? permanentAboard.isPilot() : permanentAboard.isAstromech())
+                return true;
+        }
+        return false;
     }
 
     default boolean permanentPilotsSuspended(GameState gameState, PhysicalCard physicalCard) {
