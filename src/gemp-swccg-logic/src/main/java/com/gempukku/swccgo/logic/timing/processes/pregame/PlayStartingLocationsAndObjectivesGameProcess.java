@@ -225,16 +225,31 @@ public class PlayStartingLocationsAndObjectivesGameProcess implements GameProces
         if (!_checkedForObjectives) {
             _checkedForObjectives = true;
 
-            // Check for Objectives
-            Collection<PhysicalCard> darkSideObjective = Filters.filterCount(game.getGameState().getReserveDeck(_darkPlayerId), game, 1, Filters.Objective);
-            if (!darkSideObjective.isEmpty()) {
-                _darkSideObjective = darkSideObjective.iterator().next();
+            // Check for Objectives. A deck may hold several (Anything Goes allows it, swccg-guild/work#141): the player
+            // then chooses which one to play, the way a starting location is chosen. The others stay in the deck as
+            // ordinary cards (an Objective's front side is its destiny).
+            boolean choosing = false;
+            List<PhysicalCard> darkSideObjectives = new ArrayList<PhysicalCard>(Filters.filter(game.getGameState().getReserveDeck(_darkPlayerId), game, Filters.Objective));
+            if (darkSideObjectives.size() == 1) {
+                _darkSideObjective = darkSideObjectives.get(0);
+            }
+            else if (darkSideObjectives.size() > 1) {
+                game.getUserFeedback().sendAwaitingDecision(_darkPlayerId, createChooseObjectiveDecision(_darkPlayerId, darkSideObjectives));
+                choosing = true;
             }
 
-            Collection<PhysicalCard> lightSideObjective = Filters.filterCount(game.getGameState().getReserveDeck(_lightPlayerId), game, 1, Filters.Objective);
-            if (!lightSideObjective.isEmpty()) {
-                _lightSideObjective = lightSideObjective.iterator().next();
+            List<PhysicalCard> lightSideObjectives = new ArrayList<PhysicalCard>(Filters.filter(game.getGameState().getReserveDeck(_lightPlayerId), game, Filters.Objective));
+            if (lightSideObjectives.size() == 1) {
+                _lightSideObjective = lightSideObjectives.get(0);
             }
+            else if (lightSideObjectives.size() > 1) {
+                game.getUserFeedback().sendAwaitingDecision(_lightPlayerId, createChooseObjectiveDecision(_lightPlayerId, lightSideObjectives));
+                choosing = true;
+            }
+
+            // Continue once the choices are made (this process runs again after the decisions)
+            if (choosing)
+                return;
         }
 
         // Check if both sides have an objective, in which case we don't need to look for starting locations.
@@ -315,6 +330,27 @@ public class PlayStartingLocationsAndObjectivesGameProcess implements GameProces
             _previousLocations.add(_darkSideLocation.getTitle());
             game.getUserFeedback().sendAwaitingDecision(_darkPlayerId, createAllowConversionDecision(game, _darkPlayerId, _darkSideLocation, _lightSideLocation));
         }
+    }
+
+    private AwaitingDecision createChooseObjectiveDecision(final String playerId, final List<PhysicalCard> objectives) {
+        return new ArbitraryCardsSelectionDecision("Choose your Objective", new LinkedList<PhysicalCard>(objectives), 1, 1) {
+            {
+                // the Objectives are still face down in the Reserve Deck, so show their fronts (the side that is played)
+                String[] fronts = new String[objectives.size()];
+                for (int i = 0; i < fronts.length; i++)
+                    fronts[i] = objectives.get(i).getBlueprintId(true);
+                setParam("blueprintId", fronts);
+            }
+
+            @Override
+            public void decisionMade(String result) throws DecisionResultInvalidException {
+                PhysicalCard selected = getSelectedCardsByResponse(result).get(0);
+                if (playerId.equals(_darkPlayerId))
+                    _darkSideObjective = selected;
+                else
+                    _lightSideObjective = selected;
+            }
+        };
     }
 
     private AwaitingDecision createChooseLocationDecision(final SwccgGame game, final String playerId, final Collection<PhysicalCard> possibleCharacters) {
