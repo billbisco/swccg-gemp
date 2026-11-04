@@ -49,12 +49,12 @@ public class Card1220_168 extends AbstractVehicleWeapon {
 
     @Override
     protected Filter getGameTextValidDeployTargetFilter(SwccgGame game, PhysicalCard self, PlayCardOptionId playCardOptionId, boolean asReact) {
-        return Filters.and(Filters.your(self), Filters.T_47);
+        return Filters.and(Filters.your(self), LegacyFilters.t47ForWeapon(self));
     }
 
     @Override
     protected Filter getGameTextValidToUseWeaponFilter(final SwccgGame game, final PhysicalCard self) {
-        return Filters.T_47;
+        return LegacyFilters.t47ForWeapon(self);
     }
 
     @Override

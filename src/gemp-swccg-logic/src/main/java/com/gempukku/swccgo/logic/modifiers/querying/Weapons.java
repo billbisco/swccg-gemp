@@ -20,7 +20,7 @@ public interface Weapons extends BaseQuery, Icons {
      * @return the permanent weapon
      */
     default SwccgBuiltInCardBlueprint getPermanentWeapon(GameState gameState, PhysicalCard physicalCard) {
-        if (physicalCard.getBlueprint().getCardCategory() != CardCategory.CHARACTER)
+        if (physicalCard.getBlueprint().getCardCategory() != CardCategory.CHARACTER && physicalCard.getBlueprint().getCardCategory() != CardCategory.VEHICLE)
             return null;
 
         SwccgBuiltInCardBlueprint permWeapon = physicalCard.getBlueprint().getPermanentWeapon(physicalCard);

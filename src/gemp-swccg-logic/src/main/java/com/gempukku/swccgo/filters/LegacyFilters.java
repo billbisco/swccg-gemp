@@ -54,6 +54,31 @@ public class LegacyFilters {
     }
 
     /**
+     * Filter for the "T-47" a weapon's game text names (deploy on / used by a T-47): accepts T-47s, and cards of a model
+     * type that the weapon may treat "T-47" as (AT-RT 1291_71: "'T-47' on [Hoth] weapons may be treated as 'AT-RT'").
+     * @param weapon the weapon whose game text names "T-47"
+     */
+    public static Filter t47ForWeapon(final PhysicalCard weapon) {
+        final int weaponPermId = weapon.getPermanentCardId();
+        return Filters.or(Filters.T_47, new Filter() {
+            @Override
+            public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard) {
+                PhysicalCard weaponCard = gameState.findCardByPermanentId(weaponPermId);
+                if (weaponCard == null) {
+                    return false;
+                }
+                for (com.gempukku.swccgo.logic.modifiers.Modifier modifier : modifiersQuerying.getModifiersAffectingCard(gameState, ModifierType.T47_ON_WEAPONS_TREATED_AS_MODEL_TYPE, weaponCard)) {
+                    if (modifier instanceof com.gempukku.swccgo.logic.modifiers.T47OnWeaponsTreatedAsModelTypeModifier
+                            && physicalCard.getBlueprint().getModelTypes().contains(((com.gempukku.swccgo.logic.modifiers.T47OnWeaponsTreatedAsModelTypeModifier) modifier).getModelType())) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
+    }
+
+    /**
      * Filter that accepts cards that may be targeted by weapons like a vehicle.
      */
     public static Filter canBeTargetedByWeaponAsVehicle() {
