@@ -72,7 +72,7 @@ public class Card601_054 extends AbstractRebel {
                 action.setText("Deploy location from Reserve Deck");
                 action.setActionMsg("Deploy Tatooine battleground or Obi-Wan's Hut from Reserve Deck");
                 action.appendUsage(new OncePerTurnEffect(action));
-                action.appendEffect(new DeployCardFromReserveDeckEffect(action, Filters.or(Filters.and(Filters.Tatooine_location, Filters.battleground), Filters.title("Tatooine: Obi-Wan's Hut")), true));
+                action.appendEffect(new DeployCardFromReserveDeckEffect(action, Filters.or(Filters.and(game.getModifiersQuerying().hasGameTextModification(game.getGameState(), self, com.gempukku.swccgo.logic.modifiers.ModifyGameTextType.LEGACY__MASTER_KENOBI__TATOOINE_TREATED_AS_DEATH_STAR) ? Filters.Death_Star_location : Filters.Tatooine_location, Filters.battleground), Filters.title("Tatooine: Obi-Wan's Hut")), true));
 
                 return Collections.singletonList(action);
             }

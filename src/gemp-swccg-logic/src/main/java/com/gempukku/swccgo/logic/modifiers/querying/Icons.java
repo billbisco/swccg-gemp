@@ -192,6 +192,7 @@ public interface Icons extends BaseQuery {
         else {
             result = physicalCard.getBlueprint().getIconCount(icon);
         }
+        if (icon == Icon.PRESENCE && result == 0 && !getModifiersAffectingCard(gameState, ModifierType.LEGACY__GAINS_PRESENCE_ICON, physicalCard).isEmpty()) result = 1;
 
         // Certain icons never get added/removed, so avoid circular checking (e.g. Ithorian), skip checking if these icons were added/removed
         if (icon != Icon.CREATURE_SITE && icon != Icon.EXTERIOR_SITE && icon != Icon.INTERIOR_SITE && icon != Icon.MOBILE

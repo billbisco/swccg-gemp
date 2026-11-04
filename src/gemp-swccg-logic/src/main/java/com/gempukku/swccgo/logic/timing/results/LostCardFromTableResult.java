@@ -16,6 +16,7 @@ public class LostCardFromTableResult extends EffectResult implements LostFromTab
     private PhysicalCard _lostFromAttachedTo;
     private PhysicalCard _lostFromLocation;
     private Collection<PhysicalCard> _wasPresentWith;
+    private PhysicalCard _sourceCard;
 
     /**
      * Creates an effect result that is triggered when a card is lost from table.
@@ -44,6 +45,15 @@ public class LostCardFromTableResult extends EffectResult implements LostFromTab
         _lostFromAttachedTo = lostFromAttachedTo;
         _lostFromLocation = lostFromLocation;
         _wasPresentWith = wasPresentWith;
+        _sourceCard = action != null ? action.getActionSource() : null;
+    }
+
+    /**
+     * Gets the card that is the source of the action that lost the card, or null.
+     * @return the source card
+     */
+    public PhysicalCard getSourceCard() {
+        return _sourceCard;
     }
 
     /**
