@@ -11,17 +11,15 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Deploying without presence or Force icons (system, docking bay, spy pilot).
+ * Tydirium: May deploy (and your characters may deploy aboard) even without presence or Force icons.
  */
 public class Card_8_079_Tests {
     protected VirtualTableScenario GetScenario() {
         return new VirtualTableScenario(
                 new HashMap<>() {{
-                    put("tydirium", "8_079"); // Tydirium: may deploy (and characters aboard) even without presence or Force icons
-                    put("tantive", "2_073"); // Tantive IV: may be deployed even without presence or Force icons
-                    put("han", "1_011"); // Han Solo (non-spy pilot)
-                    put("webb", "3_011"); // Jeroen Webb (spy pilot)
-                    put("falcon", "1_143"); // Millennium Falcon (empty starfighter, no permanent pilot)
+                    put("tydirium", "8_079"); // Tydirium
+                    put("han", "1_011"); // Han Solo (pilot)
+                    put("trashCompactor", "1_125"); // Death Star: Trash Compactor
                 }},
                 new HashMap<>() {{
                     put("deathStar", "2_143"); // Death Star system (no Light Force icons)
@@ -53,9 +51,6 @@ public class Card_8_079_Tests {
 
         assertTrue(scn.LSDeployAvailable(tydirium));
         scn.LSDeployCard(tydirium);
-        if (scn.LSDecisionAvailable("simultaneously deploy a pilot")) {
-            scn.LSChooseNo();
-        }
         assertTrue(scn.LSHasCardChoiceAvailable(dockingBay));
         scn.LSChooseCard(dockingBay);
         scn.PassAllResponses();
@@ -64,36 +59,8 @@ public class Card_8_079_Tests {
     }
 
     @Test
-    public void TydiriumMayDeployWithNonSpyPilotToSystemWithoutPresenceOrForceIcons() {
-        var scn = GetScenario();
-        var tydirium = scn.GetLSCard("tydirium");
-        var han = scn.GetLSCard("han");
-        var deathStar = scn.GetDSCard("deathStar");
-
-        scn.StartGame();
-        scn.MoveLocationToTable(deathStar);
-        scn.MoveCardsToLSHand(tydirium, han);
-        scn.LSActivateForceCheat(12);
-        scn.SkipToLSTurn(Phase.DEPLOY);
-
-        assertTrue(scn.LSDeployAvailable(tydirium));
-        scn.LSDeployCard(tydirium);
-        if (scn.LSDecisionAvailable("Do you want to simultaneously deploy a pilot")) {
-            scn.LSChooseYes();
-        }
-        assertTrue(scn.LSHasCardChoiceAvailable(han));
-        scn.LSChooseCard(han);
-        assertTrue(scn.LSHasCardChoiceAvailable(deathStar));
-        scn.LSChooseCard(deathStar);
-        scn.PassAllResponses();
-
-        assertTrue(scn.CardsAtLocation(deathStar, tydirium));
-        assertTrue(scn.IsAboardAsPilot(tydirium, han));
-    }
-
-    @Test
     public void TydiriumMayNotDeployAloneToSystem() {
-        // An unpiloted starship needs a pilot deploying with it to go to a system.
+        // Unpiloted starship still needs a pilot deploying with it to go to a system.
         var scn = GetScenario();
         var tydirium = scn.GetLSCard("tydirium");
         var deathStar = scn.GetDSCard("deathStar");
@@ -108,10 +75,87 @@ public class Card_8_079_Tests {
 
         assertTrue(scn.LSDeployAvailable(tydirium));
         scn.LSDeployCard(tydirium);
-        if (scn.LSDecisionAvailable("simultaneously deploy a pilot")) {
-            scn.LSChooseNo();
-        }
         assertTrue(scn.LSHasCardChoiceAvailable(dockingBay));
         assertFalse(scn.LSHasCardChoiceAvailable(deathStar));
+    }
+
+    @Test
+    public void TydiriumMayDeployWithPilotToSystemWithoutPresenceOrForceIcons() {
+        var scn = GetScenario();
+        var tydirium = scn.GetLSCard("tydirium");
+        var han = scn.GetLSCard("han");
+        var deathStar = scn.GetDSCard("deathStar");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(deathStar);
+        scn.MoveCardsToLSHand(tydirium, han);
+        scn.LSActivateForceCheat(12);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+
+        assertTrue(scn.LSDeployAvailable(tydirium));
+        scn.LSDeployCard(tydirium);
+        assertTrue(scn.LSDecisionAvailable("simultaneously deploy aboard"));
+        assertTrue(scn.LSHasCardChoiceAvailable(han));
+        scn.LSChooseCard(han);
+        assertTrue(scn.LSHasCardChoiceAvailable(deathStar));
+        scn.LSChooseCard(deathStar);
+        scn.PassAllResponses();
+
+        assertTrue(scn.CardsAtLocation(deathStar, tydirium));
+        assertTrue(scn.IsAboardAsPilot(tydirium, han));
+    }
+
+    @Test
+    public void TydiriumMayDeployWithPilotToSystemWhileTrashCompactorOnTable() {
+        // Trash Compactor's site-only ignore must not interfere with Tydirium's own ability.
+        var scn = GetScenario();
+        var tydirium = scn.GetLSCard("tydirium");
+        var han = scn.GetLSCard("han");
+        var deathStar = scn.GetDSCard("deathStar");
+        var trashCompactor = scn.GetLSCard("trashCompactor");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(deathStar);
+        scn.MoveLocationToTable(trashCompactor);
+        scn.MoveCardsToLSHand(tydirium, han);
+        scn.LSActivateForceCheat(12);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+
+        assertTrue(scn.LSDeployAvailable(tydirium));
+        scn.LSDeployCard(tydirium);
+        assertTrue(scn.LSDecisionAvailable("simultaneously deploy aboard"));
+        assertTrue(scn.LSHasCardChoiceAvailable(han));
+        scn.LSChooseCard(han);
+        assertTrue(scn.LSHasCardChoiceAvailable(deathStar));
+        scn.LSChooseCard(deathStar);
+        scn.PassAllResponses();
+
+        assertTrue(scn.CardsAtLocation(deathStar, tydirium));
+        assertTrue(scn.IsAboardAsPilot(tydirium, han));
+    }
+
+    @Test
+    public void YourCharacterMayDeployAboardTydiriumAtSystemWithoutPresenceOrForceIcons() {
+        var scn = GetScenario();
+        var tydirium = scn.GetLSCard("tydirium");
+        var han = scn.GetLSCard("han");
+        var deathStar = scn.GetDSCard("deathStar");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(deathStar);
+        scn.MoveCardsToLocation(deathStar, tydirium);
+        scn.MoveCardsToLSHand(han);
+        scn.LSActivateForceCheat(10);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+
+        assertTrue(scn.LSDeployAvailable(han));
+        scn.LSDeployCard(han);
+        assertTrue(scn.LSHasCardChoiceAvailable(tydirium));
+        scn.LSChooseCard(tydirium);
+        assertTrue(scn.LSChoiceAvailable("Pilot"));
+        scn.LSChoose("Pilot");
+        scn.PassAllResponses();
+
+        assertTrue(scn.IsAboardAsPilot(tydirium, han));
     }
 }
