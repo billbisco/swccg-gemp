@@ -83,6 +83,11 @@ public class DeckSizeSwccgFormat implements SwccgFormat {
         _base.validateDeck(deck, _deckSize, _deckSize);
     }
 
+    /** With the deck rules a table's game options add (#142/#144). */
+    void validateDeck(SwccgDeck deck, DeckRules rules) throws DeckInvalidException {
+        _base.validateDeck(deck, _deckSize, _deckSize, rules);
+    }
+
     @Override
     public int getDefaultGameTimerMinutes() {
         return _defaultGameTimerMinutes != null ? _defaultGameTimerMinutes : _base.getDefaultGameTimerMinutes();

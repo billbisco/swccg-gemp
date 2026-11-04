@@ -24,6 +24,7 @@ public final class GameOptions {
     public static final String STARTING_CREDITS = "startingCredits";
     public static final String TIMER = "timer";
     public static final String OBJECTIVE_OPTIONAL = "objectiveOptional";
+    public static final String NO_SHIELDS = "noShields";
 
     private static final Map<String, GameOption> OPTIONS = new LinkedHashMap<>();
 
@@ -49,6 +50,13 @@ public final class GameOptions {
                 .help("At game start, choose your Objective or one of your starting locations; Objectives not played stay in the deck (destiny 0).")
                 .defaultValue(f -> String.valueOf(f.allowsMultipleObjectives()))
                 .shortLabel(v -> "true".equals(v) ? "Objective optional" : "Objective required")
+                .build());
+        // #144: a deck rule, as Open (no shields): the table refuses decks holding Defensive Shields
+        register(GameOption.builder(NO_SHIELDS, Kind.DECK_RULES, Type.BOOLEAN, "Shields: none")
+                .help("Decks may not hold Defensive Shields, as in Open (no shields). Starting Effects are still allowed.")
+                .availableWhen(f -> !f.getBannedIcons().contains("DEFENSIVE_SHIELD"))
+                .defaultValue(f -> "false")
+                .shortLabel(v -> "true".equals(v) ? "No shields" : "Shields allowed")
                 .build());
         GameOption.Builder timer = GameOption.builder(TIMER, Kind.TABLE, Type.CHOICE, "Game timer")
                 .help("Each player's time bank and the time per decision.")

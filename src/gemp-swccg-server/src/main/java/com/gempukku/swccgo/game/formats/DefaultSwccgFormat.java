@@ -432,6 +432,23 @@ public class DefaultSwccgFormat implements SwccgFormat {
 
     /** Validates the deck against this format's card pool and rules, with the given deck size range (#90). */
     public void validateDeck(SwccgDeck deck, int minDeckSize, int maxDeckSize) throws DeckInvalidException {
+        validateDeck(deck, minDeckSize, maxDeckSize, DeckRules.NONE);
+    }
+
+    /** The same, with the deck rules a table's game options add (#142/#144). */
+    public void validateDeck(SwccgDeck deck, int minDeckSize, int maxDeckSize, DeckRules rules) throws DeckInvalidException {
+        if (rules.isNoShields()) {
+            // "Shields: none" (#144): as Open (no shields), which bans the Defensive Shield icon
+            for (java.util.List<String> cards : java.util.Arrays.asList(deck.getCards(), deck.getCardsOutsideDeck())) {
+                for (String blueprintId : cards) {
+                    SwccgCardBlueprint card = _library.getSwccgoCardBlueprint(blueprintId);
+                    if (card != null && card.hasIcon(Icon.DEFENSIVE_SHIELD))
+                        throw new DeckInvalidException("<span class=\"validate-invalid-icon\">" + Icon.DEFENSIVE_SHIELD.getHumanReadable()
+                                + "</span> icon, from card <span class=\"validate-invalid-icon-cardname\">" + GameUtils.getFullName(card)
+                                + "</span> not permitted at this table (Shields: none).");
+                }
+            }
+        }
         try {
             // Deck
             int dark = 0;
@@ -487,7 +504,7 @@ public class DefaultSwccgFormat implements SwccgFormat {
             if (light > 0 && dark > 0)
                 throw new DeckInvalidException("Deck contains both light side and dark side cards");
 
-            if (numObjectives > 1 && !_multipleObjectives)
+            if (numObjectives > 1 && !_multipleObjectives && !rules.isMultipleObjectives())
                 throw new DeckInvalidException("Deck contains more than one Objective");
 
             if (numStartingEffects > 1)
