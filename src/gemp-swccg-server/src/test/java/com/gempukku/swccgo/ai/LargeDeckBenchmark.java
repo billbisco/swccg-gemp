@@ -132,7 +132,8 @@ public class LargeDeckBenchmark {
         }
         row.finished = result.finished;
         row.stopper = result.stopper == null ? "" : result.stopper;
-        row.winner = result.winner == null ? "" : result.winner;
+        row.winner = (result.winner == null ? "" : result.winner) + " (" + (result.winReasonSummary == null ? ""
+                : result.winReasonSummary.replace(',', ';')) + ") lf=" + result.darkLifeForce + "/" + result.lightLifeForce;
         row.decisions = result.decisionCount;
         row.turns = Math.max(result.darkTurnNumber, result.lightTurnNumber);
         if (!result.failureNotes.isEmpty())
