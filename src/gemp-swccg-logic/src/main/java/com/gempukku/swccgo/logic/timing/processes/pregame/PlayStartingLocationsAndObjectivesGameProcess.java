@@ -35,6 +35,10 @@ public class PlayStartingLocationsAndObjectivesGameProcess implements GameProces
     // #142: a starting location chosen in the Objective-or-location box, used when the locations are chosen
     private PhysicalCard _darkPreferredLocation;
     private PhysicalCard _lightPreferredLocation;
+    // #142 R2a: more starting locations / Objectives chosen with "Starting: locations/Objectives" above 1; deployed
+    // after the first ones
+    private final List<PhysicalCard> _darkExtras = new ArrayList<PhysicalCard>();
+    private final List<PhysicalCard> _lightExtras = new ArrayList<PhysicalCard>();
     private PhysicalCard _darkSideLocation;
     private boolean _noValidDarkSideLocation;
     private PhysicalCard _lightSideLocation;
@@ -94,6 +98,9 @@ public class PlayStartingLocationsAndObjectivesGameProcess implements GameProces
             for (Action playCardAction : _actions) {
                 action.appendEffect(new StackActionEffect(action, playCardAction));
             }
+            // #142 R2a: then each player's further starting locations and Objectives, Dark Side first
+            appendExtras(game, action, _darkPlayerId, _darkExtras);
+            appendExtras(game, action, _lightPlayerId, _lightExtras);
 
             // Emit an effect result that the deploy starting locations and Objectives process is complete
             action.appendEffect(
@@ -355,13 +362,57 @@ public class PlayStartingLocationsAndObjectivesGameProcess implements GameProces
                 _lightSideObjective = objectives.get(0);
             return false;
         }
-        game.getUserFeedback().sendAwaitingDecision(playerId, createChooseObjectiveDecision(playerId, choices, choices.size() > objectives.size()));
+        game.getUserFeedback().sendAwaitingDecision(playerId, createChooseObjectiveDecision(playerId, choices, choices.size() > objectives.size(),
+                optional ? Math.min(game.getGameState().getStartingCardsCount(), choices.size()) : 1));
         return true;
     }
 
-    private AwaitingDecision createChooseObjectiveDecision(final String playerId, final List<PhysicalCard> choices, boolean withLocations) {
-        return new ArbitraryCardsSelectionDecision(withLocations ? "Choose your Objective or starting location" : "Choose your Objective",
-                new LinkedList<PhysicalCard>(choices), 1, 1) {
+    /**
+     * #142 R2a: deploys a player's further starting locations (as starting locations) and Objectives, in the order
+     * chosen. A card that can no longer be deployed is placed out of play, as a starting location that can't be.
+     */
+    private void appendExtras(SwccgGame game, SystemQueueAction action, final String playerId, final List<PhysicalCard> extras) {
+        for (final PhysicalCard card : extras) {
+            final boolean objective = card.getBlueprint().getCardCategory() == CardCategory.OBJECTIVE;
+            action.appendEffect(
+                    new PassthruEffect(action) {
+                        @Override
+                        protected void doPlayEffect(SwccgGame game) {
+                            if (card.getZone() == null || card.getZone().isInPlay())
+                                return;
+                            if (objective) {
+                                game.getGameState().sendMessage(playerId + " reveals Objective " + GameUtils.getCardLink(card));
+                                game.getGameState().showCardOnScreen(card);
+                            }
+                            else {
+                                card.startingLocation(true, game.getModifiersQuerying().isBattleground(game.getGameState(), card, null));
+                            }
+                            Action play = card.getBlueprint().getPlayCardAction(playerId, game, card, card, false, 0, null, null, null, null, null, false, 0, Filters.any, null);
+                            if (play != null)
+                                action.appendEffect(new StackActionEffect(action, play));
+                            else
+                                action.appendEffect(new PlaceCardOutOfPlayFromOffTableEffect(action, card));
+                        }
+                    });
+        }
+    }
+
+    /**
+     * The first card of a multiple choice (#142 R2a) goes through the usual steps: a location if any was chosen (the
+     * player then counts as a "location" player, Bill 2026-11-04), else the first Objective. The rest are extras.
+     */
+    private PhysicalCard primaryOf(List<PhysicalCard> selected) {
+        for (PhysicalCard card : selected)
+            if (card.getBlueprint().getCardCategory() != CardCategory.OBJECTIVE)
+                return card;
+        return selected.get(0);
+    }
+
+    private AwaitingDecision createChooseObjectiveDecision(final String playerId, final List<PhysicalCard> choices, boolean withLocations, int max) {
+        String text = withLocations ? "Choose your Objective or starting location" : "Choose your Objective";
+        if (max > 1)
+            text = withLocations ? "Choose up to " + max + " Objectives and starting locations" : "Choose up to " + max + " Objectives";
+        return new ArbitraryCardsSelectionDecision(text, new LinkedList<PhysicalCard>(choices), 1, max) {
             {
                 // the cards are still face down in the Reserve Deck, so show their fronts (the side that is played)
                 String[] fronts = new String[choices.size()];
@@ -372,7 +423,13 @@ public class PlayStartingLocationsAndObjectivesGameProcess implements GameProces
 
             @Override
             public void decisionMade(String result) throws DecisionResultInvalidException {
-                PhysicalCard selected = getSelectedCardsByResponse(result).get(0);
+                List<PhysicalCard> all = getSelectedCardsByResponse(result);
+                PhysicalCard selected = primaryOf(all);
+                List<PhysicalCard> extras = playerId.equals(_darkPlayerId) ? _darkExtras : _lightExtras;
+                extras.clear();
+                for (PhysicalCard card : all)
+                    if (card != selected)
+                        extras.add(card);
                 boolean objective = selected.getBlueprint().getCardCategory() == CardCategory.OBJECTIVE;
                 if (playerId.equals(_darkPlayerId)) {
                     if (objective) _darkSideObjective = selected; else _darkPreferredLocation = selected;
@@ -385,12 +442,20 @@ public class PlayStartingLocationsAndObjectivesGameProcess implements GameProces
     }
 
     private AwaitingDecision createChooseLocationDecision(final SwccgGame game, final String playerId, final Collection<PhysicalCard> possibleCharacters) {
-        return new ArbitraryCardsSelectionDecision("Choose starting location",
-                new LinkedList<PhysicalCard>(possibleCharacters), 1, 1) {
+        // #142 R2a: with "Starting: locations/Objectives" above 1 (and Objective optional), several may be chosen
+        List<PhysicalCard> extrasSoFar = playerId.equals(_darkPlayerId) ? _darkExtras : _lightExtras;
+        final int max = game.getGameState().isObjectiveOptional() && extrasSoFar.isEmpty()
+                ? Math.min(game.getGameState().getStartingCardsCount(), possibleCharacters.size()) : 1;
+        return new ArbitraryCardsSelectionDecision(max > 1 ? "Choose up to " + max + " starting locations" : "Choose starting location",
+                new LinkedList<PhysicalCard>(possibleCharacters), 1, max) {
             @Override
             public void decisionMade(String result) throws DecisionResultInvalidException {
                 List<PhysicalCard> selectedLocations = getSelectedCardsByResponse(result);
                 PhysicalCard selectedPhysicalCard = selectedLocations.get(0);
+                if (selectedLocations.size() > 1) {
+                    List<PhysicalCard> extras = playerId.equals(_darkPlayerId) ? _darkExtras : _lightExtras;
+                    extras.addAll(selectedLocations.subList(1, selectedLocations.size()));
+                }
 
                 if (playerId.equals(_darkPlayerId))
                     _darkSideLocation = selectedPhysicalCard;
