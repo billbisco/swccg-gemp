@@ -26,6 +26,9 @@ public final class GameOptions {
     public static final String OBJECTIVE_OPTIONAL = "objectiveOptional";
     public static final String NO_SHIELDS = "noShields";
     public static final String SHIELDS_NO_PLAY_LIMIT = "shieldsNoPlayLimit";
+    public static final String STARTING_CARDS = "startingCards";
+    /** Most starting locations and Objectives a player may choose (#142 R2a). */
+    public static final int STARTING_CARDS_MAX = 10;
 
     private static final Map<String, GameOption> OPTIONS = new LinkedHashMap<>();
 
@@ -65,6 +68,13 @@ public final class GameOptions {
                 .availableWhen(f -> !f.getBannedIcons().contains("DEFENSIVE_SHIELD"))
                 .defaultValue(f -> "false")
                 .shortLabel(v -> "true".equals(v) ? "Shields: no play limit" : "Shields: play limit")
+                .build());
+        // #142 R2a: needs "Starting: Objective optional" on (Bill 2026-11-04)
+        register(GameOption.builder(STARTING_CARDS, Kind.PLAY_RULES, Type.INTEGER, "Starting: locations/Objectives")
+                .help("How many starting locations and Objectives each player may choose at game start (with Starting: Objective optional on).")
+                .defaultValue(f -> "1")
+                .range(f -> 1, f -> STARTING_CARDS_MAX)
+                .shortLabel(v -> v + " starting locations/Objectives")
                 .build());
         GameOption.Builder timer = GameOption.builder(TIMER, Kind.TABLE, Type.CHOICE, "Game timer")
                 .help("Each player's time bank and the time per decision.")

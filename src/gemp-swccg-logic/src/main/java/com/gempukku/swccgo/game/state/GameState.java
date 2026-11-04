@@ -170,6 +170,14 @@ public class GameState implements Snapshotable<GameState> {
 
     public void setShieldsNoPlayLimit(boolean shieldsNoPlayLimit) { _shieldsNoPlayLimit = shieldsNoPlayLimit; }
 
+    // swccg-guild/work#142 R2a (game option "Starting: locations/Objectives"): how many starting locations and
+    // Objectives each player may choose at game start. 1 is the rules. Set at game setup only.
+    private int _startingCardsCount = 1;
+
+    public int getStartingCardsCount() { return _startingCardsCount; }
+
+    public void setStartingCardsCount(int count) { _startingCardsCount = Math.max(1, count); }
+
     public GameState() {
     }
 
@@ -179,6 +187,7 @@ public class GameState implements Snapshotable<GameState> {
         snapshot._startingCredits = _startingCredits;
         snapshot._objectiveOptional = _objectiveOptional;
         snapshot._shieldsNoPlayLimit = _shieldsNoPlayLimit;
+        snapshot._startingCardsCount = _startingCardsCount;
 
         // Set each field
         snapshot._game = _game;
