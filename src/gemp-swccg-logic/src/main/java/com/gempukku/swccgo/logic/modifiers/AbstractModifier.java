@@ -259,10 +259,13 @@ public abstract class AbstractModifier implements Modifier {
         if (modifiersQuerying.isExcludedFromBeingAffected(this, physicalCard))
             return false;
 
-        if (getSource(gameState) != null && modifiersQuerying.isEffectsFromModifierToCardSuspended(gameState, getSource(gameState), physicalCard))
+        // #136: the modifier's own filter first. It rejects most cards cheaply, and the "suspended effects" check (a
+        // scan of every SUSPEND_EFFECTS_FROM_CARD modifier and its conditions) is then only made for cards it accepts.
+        // Both checks only read the game state, so the answer is the same in either order.
+        if (!_affectFilter.accepts(gameState, modifiersQuerying, physicalCard))
             return false;
 
-        return _affectFilter.accepts(gameState, modifiersQuerying, physicalCard);
+        return getSource(gameState) == null || !modifiersQuerying.isEffectsFromModifierToCardSuspended(gameState, getSource(gameState), physicalCard);
     }
 
     /**

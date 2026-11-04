@@ -30,7 +30,7 @@ public class DefaultActionsEnvironment implements ActionsEnvironment {
     private List<ActionProxy> _untilEndOfWeaponFiringActionProxies = new LinkedList<ActionProxy>();
     private Map<Integer, List<ActionProxy>> _untilEndOfDrawDestinyActionProxies = new HashMap<Integer, List<ActionProxy>>();
     private Map<Integer, List<ActionProxy>> _untilEndOfBlowAwayActionProxies = new HashMap<Integer, List<ActionProxy>>();
-    private Set<EffectResult> _effectResults = new HashSet<EffectResult>();
+    private Set<EffectResult> _effectResults = new LinkedHashSet<EffectResult>();
 
     /**
      * Needed to generate snapshot.
@@ -100,7 +100,7 @@ public class DefaultActionsEnvironment implements ActionsEnvironment {
     @Override
     public Set<EffectResult> consumeEffectResults() {
         Set<EffectResult> result = _effectResults;
-        _effectResults = new HashSet<EffectResult>();
+        _effectResults = new LinkedHashSet<EffectResult>();
         return result;
     }
 
@@ -355,7 +355,7 @@ public class DefaultActionsEnvironment implements ActionsEnvironment {
     }
 
     private Map<TriggerAction, EffectResult> getRequiredAfterTriggersImpl(Collection<? extends EffectResult> effectResults) {
-        Map<TriggerAction, EffectResult> allActions = new HashMap<TriggerAction, EffectResult>();
+        Map<TriggerAction, EffectResult> allActions = new LinkedHashMap<TriggerAction, EffectResult>();
 
         GatherRequiredAfterTriggers gatherActions = new GatherRequiredAfterTriggers(effectResults);
         _swccgGame.getGameState().iterateCardsWithRequiredActions(gatherActions);
@@ -455,7 +455,7 @@ public class DefaultActionsEnvironment implements ActionsEnvironment {
         GatherOpponentsCardOptionalAfterTriggers gatherOpponentsActions = new GatherOpponentsCardOptionalAfterTriggers(playerId, effectResults);
         _swccgGame.getGameState().iterateOpponentsCardsWithOptionalActions(gatherOpponentsActions, playerId);
 
-        Map<TriggerAction, EffectResult> allActions = new HashMap<TriggerAction, EffectResult>();
+        Map<TriggerAction, EffectResult> allActions = new LinkedHashMap<TriggerAction, EffectResult>();
         allActions.putAll(gatherActions.getActions());
         allActions.putAll(gatherOpponentsActions.getActions());
 
@@ -822,7 +822,7 @@ public class DefaultActionsEnvironment implements ActionsEnvironment {
      */
     private class GatherOutsideOfDeckRequiredAfterTriggers extends CompletePhysicalCardVisitor {
         private Collection<? extends EffectResult> _effectResults;
-        private Map<TriggerAction, EffectResult> _actions = new HashMap<TriggerAction, EffectResult>();
+        private Map<TriggerAction, EffectResult> _actions = new LinkedHashMap<TriggerAction, EffectResult>();
 
         /**
          * Creates a card visitor that gathers the required "after" responses to an effect result from 'outside of deck' cards.
@@ -879,7 +879,7 @@ public class DefaultActionsEnvironment implements ActionsEnvironment {
      */
     private class GatherRequiredAfterTriggers extends CompletePhysicalCardVisitor {
         private Collection<? extends EffectResult> _effectResults;
-        private Map<TriggerAction, EffectResult> _actions = new HashMap<TriggerAction, EffectResult>();
+        private Map<TriggerAction, EffectResult> _actions = new LinkedHashMap<TriggerAction, EffectResult>();
 
         /**
          * Creates a card visitor that gathers the required "after" responses to an effect result.
@@ -938,7 +938,7 @@ public class DefaultActionsEnvironment implements ActionsEnvironment {
     private class GatherOptionalAfterTriggers extends CompletePhysicalCardVisitor {
         private String _playerId;
         private Collection<? extends EffectResult> _effectResults;
-        private Map<TriggerAction, EffectResult> _actions = new HashMap<TriggerAction, EffectResult>();
+        private Map<TriggerAction, EffectResult> _actions = new LinkedHashMap<TriggerAction, EffectResult>();
 
         /**
          * Creates a card visitor that gathers the optional "after" responses for the specified player to any of the specified
@@ -1001,7 +1001,7 @@ public class DefaultActionsEnvironment implements ActionsEnvironment {
     private class GatherOpponentsCardOptionalAfterTriggers extends CompletePhysicalCardVisitor {
         private String _playerId;
         private Collection<? extends EffectResult> _effectResults;
-        private Map<TriggerAction, EffectResult> _actions = new HashMap<TriggerAction, EffectResult>();
+        private Map<TriggerAction, EffectResult> _actions = new LinkedHashMap<TriggerAction, EffectResult>();
 
         /**
          * Creates a card visitor that gathers the optional "after" responses (from opponent's cards) for the specified

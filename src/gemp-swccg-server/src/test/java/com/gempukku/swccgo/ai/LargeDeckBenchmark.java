@@ -137,7 +137,25 @@ public class LargeDeckBenchmark {
         }
         cfg.darkDeckName = "WC96 Dark x" + size;
         cfg.lightDeckName = "WC96 Light x" + size;
-        cfg.maxDecisions = 400_000;
+        cfg.maxDecisions = Integer.getInteger("gemp.bench.maxDecisions", 400_000);
+        // -Dheadless.traces=true -Dheadless.traces.path=FILE: the runner's JSONL trace (each decision and the answer given)
+        if (HeadlessDecisionTraceWriter.enabledFromSystemProperties()) {
+            try {
+                cfg.traceWriter = new HeadlessDecisionTraceWriter(HeadlessDecisionTraceWriter.pathFromSystemProperties(),
+                        HeadlessDecisionTraceWriter.levelFromSystemProperties());
+            } catch (IOException exp) {
+                throw new IllegalStateException(exp);
+            }
+        }
+        // -Dgemp.bench.trace=FILE: one line per decision (phase, player, pile and board sizes) to diff two runs and
+        // find the first decision where they part (an exact optimization must not change a single line)
+        String tracePath = System.getProperty("gemp.bench.trace");
+        java.io.PrintWriter trace;
+        try {
+            trace = tracePath == null ? null : new java.io.PrintWriter(Files.newBufferedWriter(Paths.get(tracePath)));
+        } catch (IOException exp) {
+            throw new IllegalStateException(exp);
+        }
         cfg.maxMillis = maxMillis;
         cfg.stepNanos = steps::add;
         cfg.beforeStart = game -> {
@@ -149,12 +167,32 @@ public class LargeDeckBenchmark {
             }
         };
         cfg.afterDecision = (DefaultSwccgGame game, Integer count) -> {
-            for (GameCommunicationChannel channel : channels)
-                events[0] += channel.consumeGameEvents().size();
+            boolean first = true;
+            for (GameCommunicationChannel channel : channels) {
+                java.util.List<com.gempukku.swccgo.game.state.GameEvent> consumed = channel.consumeGameEvents();
+                events[0] += consumed.size();
+                // the game log of one seat goes into the trace, so a split between two runs shows what happened
+                if (first && trace != null)
+                    for (com.gempukku.swccgo.game.state.GameEvent e : consumed)
+                        if (e.getMessage() != null)
+                            trace.println("  msg " + e.getMessage().replaceAll("<[^>]*>", ""));
+                first = false;
+            }
             GameState gs = game.getGameState();
             if (gs == null)
                 return;
             maxInPlay[0] = Math.max(maxInPlay[0], gs.getCardsInPlay().size());
+            if (trace != null) {
+                StringBuilder line = new StringBuilder().append(count).append(' ').append(gs.getCurrentPhase())
+                        .append(' ').append(gs.getCurrentPlayerId()).append(" play=").append(gs.getCardsInPlay().size());
+                for (String p : Arrays.asList(HeadlessBotVsBotRunner.DS_PLAYER, HeadlessBotVsBotRunner.LS_PLAYER))
+                    line.append(' ').append(gs.getHand(p).size()).append('/').append(gs.getReserveDeck(p).size())
+                            .append('/').append(gs.getForcePile(p).size()).append('/').append(gs.getUsedPile(p).size())
+                            .append('/').append(gs.getLostPile(p).size());
+                trace.println(line);
+                if (count % 500 == 0)
+                    trace.flush();
+            }
             // Time a revert snapshot of the current board every SNAPSHOT_EVERY decisions (or at the next point where the
             // engine allows one), without adding it to the game's snapshot list.
             if ((count % SNAPSHOT_EVERY == 0 || pendingSnap[0]) && !game.isFinished()) {
@@ -188,6 +226,15 @@ public class LargeDeckBenchmark {
             exp.printStackTrace(System.out);
             row.failure = exp.getClass().getSimpleName() + ": " + exp.getMessage();
             return row;
+        } finally {
+            if (trace != null)
+                trace.close();
+            if (cfg.traceWriter != null) {
+                try {
+                    cfg.traceWriter.close();
+                } catch (Exception ignored) {
+                }
+            }
         }
         row.finished = result.finished;
         row.stopper = result.stopper == null ? "" : result.stopper;

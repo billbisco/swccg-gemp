@@ -15,6 +15,7 @@ import com.gempukku.swccgo.logic.timing.results.BlownAwayCalculateForceLossStepR
 import com.gempukku.swccgo.logic.timing.results.BlownAwayLastStepResult;
 import com.gempukku.swccgo.logic.timing.results.BlownAwayRelocateStepResult;
 
+import java.util.LinkedHashSet;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -141,7 +142,7 @@ public class BlowAwayEffect extends AbstractSubActionEffect {
                 new RecordCardsBlownAwayEffect(subAction, _cardsToBlowAway));
 
         // 4) Trigger to relocate cards attached to 'blown away' card.
-        Collection<EffectResult> blownAwayRelocateStepResults = new HashSet<EffectResult>();
+        Collection<EffectResult> blownAwayRelocateStepResults = new LinkedHashSet<EffectResult>();
         for (PhysicalCard cardToBlowAway : _cardsToBlowAway) {
             blownAwayRelocateStepResults.add(
                     new BlownAwayRelocateStepResult(subAction, cardToBlowAway));
@@ -186,7 +187,7 @@ public class BlowAwayEffect extends AbstractSubActionEffect {
         }
 
         // 6) Calculate and cause Force loss
-        Collection<EffectResult> blownAwayCalculateForceLossStepResults = new HashSet<EffectResult>();
+        Collection<EffectResult> blownAwayCalculateForceLossStepResults = new LinkedHashSet<EffectResult>();
         for (PhysicalCard cardToBlowAway : _cardsToBlowAway) {
             blownAwayCalculateForceLossStepResults.add(
                     new BlownAwayCalculateForceLossStepResult(subAction, cardToBlowAway, _bySuperlaser));
@@ -311,7 +312,7 @@ public class BlowAwayEffect extends AbstractSubActionEffect {
         );
 
         // 11) Automatic and optional responses from blowing away.
-        Collection<EffectResult> blownAwayLastStepResults = new HashSet<EffectResult>();
+        Collection<EffectResult> blownAwayLastStepResults = new LinkedHashSet<EffectResult>();
         for (PhysicalCard cardToBlowAway : _cardsToBlowAway) {
             blownAwayLastStepResults.add(
                     new BlownAwayLastStepResult(subAction, cardToBlowAway));

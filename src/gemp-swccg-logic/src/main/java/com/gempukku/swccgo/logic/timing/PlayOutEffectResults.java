@@ -3,6 +3,7 @@ package com.gempukku.swccgo.logic.timing;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.actions.SystemQueueAction;
 
+import java.util.LinkedHashSet;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,7 +11,7 @@ import java.util.Set;
  * An action for playing out effect results.
  */
 public class PlayOutEffectResults extends SystemQueueAction {
-    private Set<EffectResult> _effectResults = new HashSet<>();
+    private Set<EffectResult> _effectResults = new LinkedHashSet<>();
     private boolean _initialized;
 
     /**

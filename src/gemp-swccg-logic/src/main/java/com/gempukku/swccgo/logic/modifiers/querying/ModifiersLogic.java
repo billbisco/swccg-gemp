@@ -27,6 +27,7 @@ import com.gempukku.swccgo.logic.timing.TargetingActionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.LinkedHashMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -62,7 +63,7 @@ public class ModifiersLogic implements ModifiersEnvironment, ModifiersState, Mod
      */
     public SwccgGame game() { return _swccgGame; }
     private SwccgGame _swccgGame;
-    private Map<ModifierType, List<Modifier>> _modifiers = new HashMap<ModifierType, List<Modifier>>();
+    private Map<ModifierType, List<Modifier>> _modifiers = new LinkedHashMap<ModifierType, List<Modifier>>();
     private Map<Integer, List<Modifier>> _alwaysOnModifiersMap = new HashMap<>();
     private Map<Modifier, Set<Integer>> _excludedFromBeingAffected = new HashMap<Modifier, Set<Integer>>();
 
@@ -74,7 +75,7 @@ public class ModifiersLogic implements ModifiersEnvironment, ModifiersState, Mod
     private Map<Integer, List<Modifier>> _untilEndOfEachDrawnDestinyModifiers = new HashMap<Integer, List<Modifier>>();
     private Map<Integer, List<Modifier>> _untilEndOfBlowAwayModifiers = new HashMap<Integer, List<Modifier>>();
     private Map<PhysicalCard, List<Modifier>> _untilEndOfCardPlayedModifiers = new HashMap<PhysicalCard, List<Modifier>>();
-    private Map<EffectResult, List<Modifier>> _untilEndOfEffectResultModifiers = new HashMap<EffectResult, List<Modifier>>();
+    private Map<EffectResult, List<Modifier>> _untilEndOfEffectResultModifiers = new LinkedHashMap<EffectResult, List<Modifier>>();
     private Map<Integer, List<Modifier>> _untilEndOfGameTextActionModifiers = new HashMap<Integer, List<Modifier>>();
     private List<Modifier> _untilEndOfWeaponFiringModifiers = new LinkedList<Modifier>();
     private List<Modifier> _untilEndOfTractorBeamModifiers = new LinkedList<Modifier>();
@@ -2825,7 +2826,7 @@ public class ModifiersLogic implements ModifiersEnvironment, ModifiersState, Mod
 
     private Collection<Modifier> computeModifiersAffecting(GameState gameState, PhysicalCard card) {
         _queryCache.noteSkipSetTests(null); // affectsCardWithSkipSet, for modifiers of any type
-        Set<Modifier> result = new HashSet<Modifier>();
+        Set<Modifier> result = new LinkedHashSet<Modifier>();
         for (List<Modifier> modifiers : _modifiers.values()) {
             for (Modifier modifier : modifiers) {
                 Condition condition = modifier.getCondition();
