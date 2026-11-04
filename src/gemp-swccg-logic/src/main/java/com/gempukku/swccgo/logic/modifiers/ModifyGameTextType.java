@@ -137,6 +137,7 @@ public enum ModifyGameTextType {
     LEGACY__FEAR_IS_MY_ALLY__THREE_IS_FOUR("'Three' treated as 'Four'"),
     LEGACY__AN_UNUSUAL_AMOUNT_OF_FEAR__THREE_IS_FOUR("'Three' treated as 'Four'"),
     LEGACY__THANK_THE_MAKER__TREAT_5_AS_3("'5' treated as '3'"),
+    LEGACY__HYPERDRIVE_GENERATORS_GONE__TREAT_4_AS_2("'4' treated as '2'"),
     LEGACY__CHIRPA_V__EWOK_CATAPULT_TARGETS_CHARACTERS("'Vehicle with armor' may be treated as 'non-Dark Jedi character' ('crashes' is then treated as 'lost')"),
     LEGACY__BLOUNT_V__DOUBLE_AGENT_TARGETS_BOUNTY_HUNTER("May target opponent's bounty hunter with Double Agent instead of their spy"),
     LEGACY__LEIA_ORGANA_V__STRANGLE_ESCORT_ALONE_IS_ESCORT("'Escort alone' on Strangle is treated as 'escort'"),
