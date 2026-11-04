@@ -111,6 +111,7 @@ public enum ModifyGameTextType {
 
     //Legacy
     LEGACY__YOUR_SITES__TREAT_TRANDOSHAN_AS_SLAVER("'Trandoshan' on this site may be treated as 'slaver'"),
+    LEGACY__MASTER_KENOBI__TATOOINE_TREATED_AS_DEATH_STAR("'Tatooine' is treated as 'Death Star'"),
     LEGACY__REF_III_ANOTHER_PATHETIC_LIFEFORM__IGNORES_YOUR_NONUNIQUE_ALIENS("Ignores non-unique aliens"),
     LEGACY__REF_III_WIPE_THEM_OUT_ALL_OF_THEM__IGNORES_YOUR_NONUNIQUE_ALIENS("Ignores non-unique aliens"),
     LEGACY__CLOUD_CITY_TROOPER__IGNORES_POWER_MINUS_ONE("Ignores 'power -1' in game text"),

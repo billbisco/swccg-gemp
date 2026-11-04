@@ -25,6 +25,7 @@ public class CancelWeaponTargetingEffect extends AbstractSuccessfulEffect {
     protected void doPlayEffect(SwccgGame game) {
         GameState gameState = game.getGameState();
         WeaponFiringState weaponFiringState = gameState.getWeaponFiringState();
+        if (weaponFiringState != null && !game.getModifiersQuerying().getModifiersAffectingCard(gameState, com.gempukku.swccgo.logic.modifiers.ModifierType.LEGACY__WEAPON_TARGETING_MAY_NOT_BE_CANCELED, weaponFiringState.getCardFiring()).isEmpty()) { gameState.sendMessage("Targeting by " + GameUtils.getCardLink(weaponFiringState.getCardFiring()) + " may not be canceled"); return; }
         if (weaponFiringState != null) {
             RespondableWeaponFiringEffect respondableWeaponFiringEffect = (RespondableWeaponFiringEffect) weaponFiringState.getWeaponFiringEffect();
             if (!respondableWeaponFiringEffect.isCanceled()) {
