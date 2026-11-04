@@ -66,7 +66,7 @@ public class Card601_001 extends AbstractStartingEffect {
             action.skipInitialMessageAndAnimation();
             // Perform result(s)
             action.appendEffect(
-                    new StackCardsFromOutsideDeckEffect(action, playerId, 1, 15, self, Filters.Defensive_Shield));
+                    new StackCardsFromOutsideDeckEffect(action, playerId, 1, GameConditions.startingEffectShieldCap(game, 15), self, Filters.Defensive_Shield));
             return Collections.singletonList(action);
         }
         return null;

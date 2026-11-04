@@ -100,6 +100,16 @@ public class DeckRuleOptionsTests {
     }
 
     @Test
+    public void ShieldsNoPlayLimitLiftsTheOutsideDeckCap() {
+        // Fear Is My Ally (an original Starting Effect) allows 10 shields outside the deck
+        SwccgDeck eleven = darkDeck(59, "13_69");
+        for (String shield : new String[]{"13_51", "13_52", "13_54", "13_61", "13_63", "13_66", "13_68", "13_72", "13_78", "13_81", "13_84"})
+            eleven.addCardOutsideDeck(shield);
+        assertNotNull("11 shields are over the cap", error(table("open", Map.of()), eleven));
+        assertNull(error(table("open", Map.of(GameOptions.SHIELDS_NO_PLAY_LIMIT, "true")), eleven));
+    }
+
+    @Test
     public void NoOptionsIsTheLibraryFormatItself() {
         assertSame(LIBRARY.getFormat("open"), table("open", Map.of()));
     }

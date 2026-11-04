@@ -30,8 +30,10 @@ class CheckGameLimitEffect extends AbstractUsageLimitEffect {
     @Override
     public FullEffectResult playEffectReturningResult(SwccgGame game) {
         int incrementedBy = 1;
+        // #145: "Shields: no play limit" lifts the Starting Effects' times-per-game shield plays
+        int limit = com.gempukku.swccgo.cards.GameConditions.isShieldPlayWithNoLimit(game, _gameTextActionId) ? Integer.MAX_VALUE : _limit;
         for (String title : _card.getTitles()) {
-            incrementedBy = Math.min(incrementedBy, game.getModifiersQuerying().getUntilEndOfGameLimitCounter(title, _gameTextActionId).incrementToLimit(_limit, 1));
+            incrementedBy = Math.min(incrementedBy, game.getModifiersQuerying().getUntilEndOfGameLimitCounter(title, _gameTextActionId).incrementToLimit(limit, 1));
         }
         return new FullEffectResult(incrementedBy > 0);
     }

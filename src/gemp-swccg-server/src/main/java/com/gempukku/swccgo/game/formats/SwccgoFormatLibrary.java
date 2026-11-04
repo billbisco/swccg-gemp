@@ -292,7 +292,8 @@ public class SwccgoFormatLibrary {
         // deck rules the table's options add (#142/#144)
         DeckRules rules = new DeckRules(
                 "true".equals(setup.get(GameOptions.NO_SHIELDS, format)),
-                "true".equals(setup.get(GameOptions.OBJECTIVE_OPTIONAL, format)) && !format.allowsMultipleObjectives());
+                "true".equals(setup.get(GameOptions.OBJECTIVE_OPTIONAL, format)) && !format.allowsMultipleObjectives(),
+                "true".equals(setup.get(GameOptions.SHIELDS_NO_PLAY_LIMIT, format)));
         return rules.isNone() ? sized : new DeckRulesSwccgFormat(sized, rules, _cardLibrary);
     }
 

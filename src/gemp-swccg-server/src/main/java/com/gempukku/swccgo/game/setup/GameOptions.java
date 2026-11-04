@@ -25,6 +25,7 @@ public final class GameOptions {
     public static final String TIMER = "timer";
     public static final String OBJECTIVE_OPTIONAL = "objectiveOptional";
     public static final String NO_SHIELDS = "noShields";
+    public static final String SHIELDS_NO_PLAY_LIMIT = "shieldsNoPlayLimit";
 
     private static final Map<String, GameOption> OPTIONS = new LinkedHashMap<>();
 
@@ -57,6 +58,13 @@ public final class GameOptions {
                 .availableWhen(f -> !f.getBannedIcons().contains("DEFENSIVE_SHIELD"))
                 .defaultValue(f -> "false")
                 .shortLabel(v -> "true".equals(v) ? "No shields" : "Shields allowed")
+                .build());
+        // #145: lifts the Starting Effects' times-per-game shield plays and their 10 / 15 caps (deck and stacking)
+        register(GameOption.builder(SHIELDS_NO_PLAY_LIMIT, Kind.PLAY_RULES, Type.BOOLEAN, "Shields: no play limit")
+                .help("Starting Effects may play any number of Defensive Shields, and hold any number. Their timing rules still apply.")
+                .availableWhen(f -> !f.getBannedIcons().contains("DEFENSIVE_SHIELD"))
+                .defaultValue(f -> "false")
+                .shortLabel(v -> "true".equals(v) ? "Shields: no play limit" : "Shields: play limit")
                 .build());
         GameOption.Builder timer = GameOption.builder(TIMER, Kind.TABLE, Type.CHOICE, "Game timer")
                 .help("Each player's time bank and the time per decision.")

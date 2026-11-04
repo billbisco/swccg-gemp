@@ -525,7 +525,8 @@ public class DefaultSwccgFormat implements SwccgFormat {
             if (deck.getCardsOutsideDeck().size() > 50)
                 throw new DeckInvalidException("Deck specifies more than 50 cards as 'outside of deck'");
 
-            validateOriginalStartingEffectOutsideDeckShieldCap(_library, deck);
+            if (!rules.isUncappedShields())
+                validateOriginalStartingEffectOutsideDeckShieldCap(_library, deck);
 
             // Verify that all cards are valid
             for (String card : deck.getCards())
