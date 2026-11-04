@@ -17,6 +17,7 @@ import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.common.Zone;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.logic.modifiers.DeathMarkTotalModifier;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -40,6 +41,7 @@ public class Card_1281_010_Tests {
                     put("deathmark", "1281_10");
                     put("onthehunt", "1281_12");
                     put("bane", "1281_2"); // Bane Malar, Spice Addict: assassin, power 2
+                    put("rifle", "1_312"); // Blaster Rifle
                 }},
                 20, 20,
                 StartingSetup.DefaultLSGroundLocation,
@@ -220,5 +222,20 @@ public class Card_1281_010_Tests {
         var scn = DeployDeathMarkOn("luke", 98105);
         var deathmark = scn.GetDSCard("deathmark");
         assertTrue(scn.game().getModifiersQuerying().mayNotBeCanceled(scn.gameState(), deathmark));
+    }
+
+    @Test
+    public void DeathMarkTotalIncludesContractKillersWeaponBonus() {
+        var scn = DeployDeathMarkOn("luke", 98106);
+        var deathmark = scn.GetDSCard("deathmark");
+        var luke = scn.GetLSCard("luke");
+        var bane = scn.GetDSCard("bane");
+        scn.AttachCardsTo(bane, scn.GetDSCard("rifle"));
+        // Contract Killers' "characters add 1 to their Death Mark total for each weapon or device they carry"
+        scn.game().getModifiersEnvironment().addUntilEndOfGameModifier(new DeathMarkTotalModifier(deathmark, bane));
+        // DS: 3 + Bane's power 2 + 1 (rifle) = 6 > LS: 1 + Luke's defense value 4 = 5. Without the bonus it is a 5-5 tie.
+        MoveBaneToMarkDuringMovePhase(scn, 3, 1);
+        assertInZone(Zone.LOST_PILE, luke);
+        assertEquals(scn.DS, deathmark.getZoneOwner());
     }
 }
