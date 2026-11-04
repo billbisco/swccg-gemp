@@ -185,6 +185,7 @@ public class LargeDeckBenchmark {
         } catch (InterruptedException exp) {
             throw new IllegalStateException(exp);
         } catch (RuntimeException exp) {
+            exp.printStackTrace(System.out);
             row.failure = exp.getClass().getSimpleName() + ": " + exp.getMessage();
             return row;
         }
