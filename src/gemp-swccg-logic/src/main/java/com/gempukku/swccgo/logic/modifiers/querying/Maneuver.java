@@ -22,7 +22,7 @@ public interface Maneuver extends BaseQuery, Piloting {
     }
 
     private boolean hasManeuver(GameState gameState, PhysicalCard card, boolean skipManeuverValueCheck) {
-        if (!card.getBlueprint().hasManeuverAttribute())
+        if (!card.getBlueprint().hasManeuverAttribute() && getModifiersAffectingCard(gameState, ModifierType.UNMODIFIABLE_MANEUVER, card).isEmpty())
             return false;
 
         if (!skipManeuverValueCheck) {
@@ -56,7 +56,7 @@ public interface Maneuver extends BaseQuery, Piloting {
                 && !isPilotedOrMayPilotWithAstromech(gameState, physicalCard, false))
             return 0;
 
-        Float result = physicalCard.getBlueprint().getManeuver();
+        Float result = physicalCard.getBlueprint().hasManeuverAttribute() ? physicalCard.getBlueprint().getManeuver() : null;
         for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.PRINTED_MANEUVER, physicalCard)) {
             result = modifier.getPrintedValueDefinedByGameText(gameState, query(), physicalCard);
             modifierCollector.addModifier(modifier);

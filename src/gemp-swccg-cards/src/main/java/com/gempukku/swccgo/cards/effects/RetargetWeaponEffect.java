@@ -9,6 +9,7 @@ import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.game.state.WeaponFiringState;
 import com.gempukku.swccgo.logic.GameUtils;
 import com.gempukku.swccgo.logic.effects.RespondableWeaponFiringEffect;
+import com.gempukku.swccgo.logic.modifiers.ModifierType;
 import com.gempukku.swccgo.logic.timing.AbstractSuccessfulEffect;
 import com.gempukku.swccgo.logic.timing.Action;
 
@@ -39,6 +40,7 @@ public class RetargetWeaponEffect extends AbstractSuccessfulEffect {
     protected void doPlayEffect(SwccgGame game) {
         GameState gameState = game.getGameState();
         WeaponFiringState weaponFiringState = gameState.getWeaponFiringState();
+        if (weaponFiringState != null && !game.getModifiersQuerying().getModifiersAffectingCard(gameState, ModifierType.MAY_NOT_BE_RETARGETED, weaponFiringState.getCardFiring()).isEmpty()) { gameState.sendMessage(GameUtils.getCardLink(weaponFiringState.getCardFiring()) + " may not be re-targeted"); return; }
         if (weaponFiringState != null) {
             RespondableWeaponFiringEffect respondableWeaponFiringEffect = (RespondableWeaponFiringEffect) weaponFiringState.getWeaponFiringEffect();
             if (!respondableWeaponFiringEffect.isCanceled()) {
