@@ -186,27 +186,28 @@ public class DeckSizeFormatTests {
     }
 
     @Test
-    public void DeckSizeAnythingGoesAllowsUpTo200() throws Exception {
+    public void DeckSizeAnythingGoesAllowsUpTo1000() throws Exception {
         SwccgFormat anythingGoes = LIBRARY.getFormat("anything_goes");
         assertEquals(DeckSize.HARD_MAX, anythingGoes.getMaxDeckSizeOption());
         assertEquals(DeckSize.MAX_SUPPORTED, LIBRARY.getFormat("open").getMaxDeckSizeOption());
-        SwccgFormat big = LIBRARY.getFormat("anything_goes@200");
+        SwccgFormat big = LIBRARY.getFormat("anything_goes@1000");
         assertNotNull(big);
         assertEquals("a chosen size keeps the format's own limit", DeckSize.HARD_MAX, big.getMaxDeckSizeOption());
-        big.validateDeck(deckOf(200));
-        assertThrows(DeckInvalidException.class, () -> big.validateDeck(deckOf(199)));
-        assertNull(LIBRARY.getFormat("anything_goes@201"));
+        big.validateDeck(deckOf(1000));
+        assertThrows(DeckInvalidException.class, () -> big.validateDeck(deckOf(999)));
+        assertNotNull(LIBRARY.getFormat("anything_goes@200"));
+        assertNull(LIBRARY.getFormat("anything_goes@1001"));
         assertNull("other formats stay at 100", LIBRARY.getFormat("open@101"));
         assertThrows(IllegalArgumentException.class, () -> LIBRARY.codeWithDeckSize("open", 150));
         assertEquals("anything_goes@150", LIBRARY.codeWithDeckSize("anything_goes", 150));
         // the setup form's range comes from the same place
         var option = com.gempukku.swccgo.game.setup.GameOptions.get(com.gempukku.swccgo.game.setup.GameOptions.DECK_SIZE);
-        assertEquals(200, option.getMax(anythingGoes));
+        assertEquals(1000, option.getMax(anythingGoes));
         assertEquals(100, option.getMax(LIBRARY.getFormat("open")));
         assertEquals("200", com.gempukku.swccgo.game.setup.GameSetup.of(anythingGoes, Map.of("deckSize", "200"),
                 com.gempukku.swccgo.game.setup.GameOption.Scope.CASUAL).getChosen("deckSize"));
         assertThrows(IllegalArgumentException.class, () -> com.gempukku.swccgo.game.setup.GameSetup.of(anythingGoes,
-                Map.of("deckSize", "201"), com.gempukku.swccgo.game.setup.GameOption.Scope.CASUAL));
+                Map.of("deckSize", "1001"), com.gempukku.swccgo.game.setup.GameOption.Scope.CASUAL));
     }
 
     @Test

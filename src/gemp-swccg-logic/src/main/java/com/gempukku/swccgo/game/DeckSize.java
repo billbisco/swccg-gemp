@@ -16,8 +16,11 @@ public final class DeckSize {
     public static final int MIN_SUPPORTED = 40;
     /** Largest deck size a table, league or tournament may choose. */
     public static final int MAX_SUPPORTED = 100;
-    /** Largest deck size any format may allow (#120: Anything Goes; #88 ran 200-card games without engine trouble). */
-    public static final int HARD_MAX = 200;
+    /**
+     * Largest deck size any format may allow (#120: Anything Goes). #136: a merged 1000-card World Championship game
+     * plays to the end with one engine step over 1 s, and a slow step delays only its own game.
+     */
+    public static final int HARD_MAX = 1000;
     /** Separates the base format code from the chosen size in a format code. */
     public static final char SEPARATOR = '@';
 
