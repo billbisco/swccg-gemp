@@ -507,7 +507,7 @@ public class DefaultSwccgFormat implements SwccgFormat {
             if (numObjectives > 1 && !_multipleObjectives && !rules.isMultipleObjectives())
                 throw new DeckInvalidException("Deck contains more than one Objective");
 
-            if (numStartingEffects > 1)
+            if (numStartingEffects > rules.getStartingEffects())
                 throw new DeckInvalidException("Deck contains more than one Starting Effect");
 
             if (numFlipFalcons > 1)

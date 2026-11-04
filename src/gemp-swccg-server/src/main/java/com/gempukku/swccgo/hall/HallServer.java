@@ -2015,6 +2015,13 @@ public class HallServer extends AbstractServer {
         String objectiveOptional = gameSetup != null ? gameSetup.get(GameOptions.OBJECTIVE_OPTIONAL, swccgFormat)
                 : String.valueOf(swccgFormat.allowsMultipleObjectives());
         swccgGameMediator.getGameState().setObjectiveOptional("true".equals(objectiveOptional));
+        // #142 R2b/R2c: "Starting: Interrupts" / "Starting: Effects"
+        if (gameSetup != null) {
+            String interrupts = gameSetup.get(GameOptions.STARTING_INTERRUPTS, swccgFormat);
+            String effects = gameSetup.get(GameOptions.STARTING_EFFECTS, swccgFormat);
+            swccgGameMediator.getGameState().setStartingInterruptsCount(interrupts == null ? 1 : Integer.parseInt(interrupts));
+            swccgGameMediator.getGameState().setStartingEffectsCount(effects == null ? 1 : Integer.parseInt(effects));
+        }
         // #142 R2a: "Starting: locations/Objectives" (only with Objective optional)
         if ("true".equals(objectiveOptional) && gameSetup != null) {
             String startingCards = gameSetup.get(GameOptions.STARTING_CARDS, swccgFormat);

@@ -281,6 +281,11 @@ public class SwccgoFormatLibrary {
      * The format a game with this setup plays (#116): the setup's format, at the chosen deck size if there is one.
      * Returns {@code null} for an unknown format or an unsupported size.
      */
+    private static int intOption(GameSetup setup, String optionId, SwccgFormat format) {
+        String value = setup.get(optionId, format);
+        return value == null ? 1 : Integer.parseInt(value);
+    }
+
     public SwccgFormat effectiveFormat(GameSetup setup) {
         SwccgFormat format = getFormat(setup.getFormatCode());
         if (format == null)
@@ -293,7 +298,8 @@ public class SwccgoFormatLibrary {
         DeckRules rules = new DeckRules(
                 "true".equals(setup.get(GameOptions.NO_SHIELDS, format)),
                 "true".equals(setup.get(GameOptions.OBJECTIVE_OPTIONAL, format)) && !format.allowsMultipleObjectives(),
-                "true".equals(setup.get(GameOptions.SHIELDS_NO_PLAY_LIMIT, format)));
+                "true".equals(setup.get(GameOptions.SHIELDS_NO_PLAY_LIMIT, format)),
+                intOption(setup, GameOptions.STARTING_EFFECTS, format));
         return rules.isNone() ? sized : new DeckRulesSwccgFormat(sized, rules, _cardLibrary);
     }
 
