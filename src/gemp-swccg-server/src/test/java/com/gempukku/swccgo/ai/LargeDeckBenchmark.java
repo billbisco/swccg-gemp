@@ -36,12 +36,57 @@ public class LargeDeckBenchmark {
     private static final int SNAPSHOT_EVERY = 250;
 
     static String scaled(String contents, int size) {
+        return scaled(contents, size, null);
+    }
+
+    /**
+     * The deck repeated to {@code size} cards, or (with a {@code filler} blueprint) the deck once and then that card
+     * to fill it: a non-unique character such as Stormtrooper, so the bots can keep putting more cards on the table.
+     */
+    static String scaled(String contents, int size, String filler) {
         String cards = contents.substring(0, contents.indexOf('|'));
         List<String> base = Arrays.asList(cards.split(","));
         List<String> out = new ArrayList<>(size);
         for (int i = 0; i < size; i++)
-            out.add(base.get(i % base.size()));
+            out.add(filler != null && i >= base.size() ? filler : base.get(i % base.size()));
         return String.join(",", out) + "|";
+    }
+
+    /**
+     * #136 (Bill: "high Card Open decks with a lot of Defensive shields and Effects on both sides"): one big deck per
+     * side made by merging real tournament decks (test resource bench/&lt;name&gt;-decks.json, e.g. the 2026 World
+     * Championship GEMP files) in a seeded order until {@code size} cards; their cards outside the deck (Defensive
+     * Shields and the like) are all kept, once each.
+     */
+    @SuppressWarnings("unchecked")
+    static String merged(String resource, String side, int size, long seed) {
+        try (java.io.InputStream in = LargeDeckBenchmark.class.getResourceAsStream("/bench/" + resource + "-decks.json")) {
+            if (in == null)
+                throw new IllegalStateException("no test resource bench/" + resource + "-decks.json");
+            com.google.gson.JsonObject all = com.google.gson.JsonParser.parseReader(
+                    new java.io.InputStreamReader(in, StandardCharsets.UTF_8)).getAsJsonObject().getAsJsonObject(side);
+            List<String> names = new ArrayList<>(all.keySet());
+            Collections.sort(names);
+            Collections.shuffle(names, new java.util.Random(seed * 31 + side.hashCode()));
+            List<String> cards = new ArrayList<>();
+            java.util.LinkedHashSet<String> outside = new java.util.LinkedHashSet<>();
+            for (int round = 0; cards.size() < size; round++) {
+                for (String name : names) {
+                    com.google.gson.JsonObject deck = all.getAsJsonObject(name);
+                    for (com.google.gson.JsonElement c : deck.getAsJsonArray("cards")) {
+                        if (cards.size() < size)
+                            cards.add(c.getAsString());
+                    }
+                    for (com.google.gson.JsonElement c : deck.getAsJsonArray("outside"))
+                        outside.add(c.getAsString());
+                    if (cards.size() >= size)
+                        break;
+                }
+            }
+            return String.join(",", cards) + "|" + String.join(",", outside);
+        } catch (IOException exp) {
+            throw new IllegalStateException(exp);
+        }
     }
 
     static final class Row {
@@ -81,8 +126,15 @@ public class LargeDeckBenchmark {
         cfg.formatName = "anything_goes";
         cfg.darkAi = ai;
         cfg.lightAi = ai;
-        cfg.darkDeckContents = scaled(HeadlessBotVsBotRunner.WC96_ANH_DARK, size);
-        cfg.lightDeckContents = scaled(HeadlessBotVsBotRunner.WC96_ANH_LIGHT, size);
+        boolean troopers = Boolean.getBoolean("gemp.bench.troopers");
+        String deckSource = System.getProperty("gemp.bench.decks");
+        if (deckSource != null && !deckSource.isEmpty()) {
+            cfg.darkDeckContents = merged(deckSource, "dark", size, seed);
+            cfg.lightDeckContents = merged(deckSource, "light", size, seed);
+        } else {
+            cfg.darkDeckContents = scaled(HeadlessBotVsBotRunner.WC96_ANH_DARK, size, troopers ? "1_194" : null);   // Stormtrooper
+            cfg.lightDeckContents = scaled(HeadlessBotVsBotRunner.WC96_ANH_LIGHT, size, troopers ? "1_28" : null);  // Rebel Trooper
+        }
         cfg.darkDeckName = "WC96 Dark x" + size;
         cfg.lightDeckName = "WC96 Light x" + size;
         cfg.maxDecisions = 400_000;
@@ -124,8 +176,14 @@ public class LargeDeckBenchmark {
             }
         };
         HeadlessBotVsBotRunner.Result result;
+        BoardScalingBenchmark.Sampler sampler = Boolean.getBoolean("gemp.bench.sample")
+                ? new BoardScalingBenchmark.Sampler(Thread.currentThread()) : null;
         try {
             result = HeadlessBotVsBotRunner.playOneGame(cfg, cards, formats);
+            if (sampler != null)
+                sampler.report(size);
+        } catch (InterruptedException exp) {
+            throw new IllegalStateException(exp);
         } catch (RuntimeException exp) {
             row.failure = exp.getClass().getSimpleName() + ": " + exp.getMessage();
             return row;

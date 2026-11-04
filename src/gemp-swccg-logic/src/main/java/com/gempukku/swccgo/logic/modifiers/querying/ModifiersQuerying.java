@@ -41,6 +41,27 @@ public interface ModifiersQuerying extends BaseQuery, Ability, Armor, Attacks, A
      * @param computation the computation of the answer
      * @return the answer
      */
+    /**
+     * The completed Jedi Tests on table, computed by the computation and reused while a query scope is open (#136: it
+     * was a scan of the whole table for every character whose ability was worked out).
+     */
+    default java.util.Collection<com.gempukku.swccgo.game.PhysicalCard> getCompletedJediTestsOnTable(
+            com.gempukku.swccgo.game.state.GameState gameState,
+            java.util.function.Supplier<java.util.Collection<com.gempukku.swccgo.game.PhysicalCard>> computation) {
+        return computation.get();
+    }
+
+    /**
+     * Whether a player has presence at a location (LocationControl.hasPresenceAt without spot overrides), computed by the
+     * computation and reused while a query scope is open (#136: occupies/controls conditions asked it again and again,
+     * each time scanning every active card).
+     */
+    default boolean presenceAt(com.gempukku.swccgo.game.state.GameState gameState, String player,
+            com.gempukku.swccgo.game.PhysicalCard location, boolean forBattle, String playerInitiatingBattle,
+            java.util.function.Supplier<Boolean> computation) {
+        return computation.get();
+    }
+
     default boolean battleCanContinue(com.gempukku.swccgo.game.state.GameState gameState, Object battleState, java.util.function.Supplier<Boolean> computation) {
         return computation.get();
     }
