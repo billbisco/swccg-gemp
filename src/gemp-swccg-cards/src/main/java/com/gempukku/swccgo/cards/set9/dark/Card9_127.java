@@ -1,6 +1,7 @@
 package com.gempukku.swccgo.cards.set9.dark;
 
 import com.gempukku.swccgo.cards.AbstractNormalEffect;
+import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.conditions.DuringEpicDuelWithParticipantCondition;
 import com.gempukku.swccgo.cards.conditions.GameTextModificationCondition;
 import com.gempukku.swccgo.cards.evaluators.MultiplyEvaluator;
@@ -59,7 +60,7 @@ public class Card9_127 extends AbstractNormalEffect {
         String opponent = game.getOpponent(playerId);
 
         // Check condition(s)
-        if (TriggerConditions.wonBattle(game, effectResult, playerId)) {
+        if (TriggerConditions.wonBattle(game, effectResult, playerId) || (GameConditions.hasGameTextModification(game, self, ModifyGameTextType.LEGACY__JOIN_US_OR_DIE__BATTLE_IS_BATTLE_OR_DUEL) && TriggerConditions.wonDuel(game, effectResult, playerId))) {
 
             final RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
             action.setText("Make opponent lose 1 Force and stack here");

@@ -27,6 +27,7 @@ public class DepleteLifeForceEffect extends AbstractSuccessfulEffect {
     protected void doPlayEffect(SwccgGame game) {
         PhysicalCard source = _action.getActionSource();
         GameState gameState = game.getGameState();
+        if (game.getModifiersQuerying().hasGameTextModification(gameState, source, com.gempukku.swccgo.logic.modifiers.ModifyGameTextType.LEGACY__JOIN_US_OR_DIE__DOES_NOT_DEPLETE_LIFE_FORCE)) { gameState.sendMessage(GameUtils.getCardLink(source) + " does not deplete Life Force"); return; }
         gameState.sendMessage(GameUtils.getCardLink(source) + " causes " + _playerId + "'s Life Force to be depleted");
         gameState.lifeForceDepleted(_playerId);
     }
