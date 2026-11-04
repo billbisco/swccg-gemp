@@ -11,6 +11,7 @@ import com.gempukku.swccgo.logic.GameUtils;
 import com.gempukku.swccgo.logic.actions.SubAction;
 import com.gempukku.swccgo.logic.decisions.CardsSelectionDecision;
 import com.gempukku.swccgo.logic.decisions.DecisionResultInvalidException;
+import com.gempukku.swccgo.logic.modifiers.ForceLossFromCardMayNotBeReducedModifier;
 import com.gempukku.swccgo.logic.modifiers.ModifierFlag;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 import com.gempukku.swccgo.logic.timing.AbstractSubActionEffect;
@@ -153,7 +154,7 @@ public class LoseForceEffect extends AbstractSubActionEffect {
                 && game.getModifiersQuerying().hasFlagActive(game.getGameState(), ModifierFlag.FORCE_RETRIEVED_OR_LOST_DURING_DUEL_MAY_NOT_BE_REDUCED_OR_CANCELED)) {
             return true;
         }
-        return _isCannotBeReduced || (_stackOn != null) || (getForceLossRemaining(game) <= _cannotBeReducedBelow);
+        return _isCannotBeReduced || (_stackOn != null) || ForceLossFromCardMayNotBeReducedModifier.isForceLossMayNotBeReduced(game, _action, _playerToLoseForce) || (getForceLossRemaining(game) <= _cannotBeReducedBelow);
     }
 
     /**
@@ -205,7 +206,7 @@ public class LoseForceEffect extends AbstractSubActionEffect {
         }
 
         // Get "Force loss amount" since there may be modifiers for it
-        _currentAmountLeft = Math.max(0, game.getModifiersQuerying().getForceToLose(game.getGameState(), _playerToLoseForce, _isCannotBeReduced, _initialAmount) - _amountLostSoFar);
+        _currentAmountLeft = Math.max(0, game.getModifiersQuerying().getForceToLose(game.getGameState(), _playerToLoseForce, _isCannotBeReduced || ForceLossFromCardMayNotBeReducedModifier.isForceLossMayNotBeReduced(game, _action, _playerToLoseForce), _initialAmount) - _amountLostSoFar);
         if(_forceDrainState != null) {
             _forceDrainState.updateRemaining(_currentAmountLeft);
         }

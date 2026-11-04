@@ -91,6 +91,7 @@ public enum ModelType implements Filterable {
     SITH_INFILTRATOR("Sith Infiltrator"),
     SKYHOOK_PLATFORM("Skyhook Platform"),
     SPACE("Space"),
+    SPACE_SUPERIORITY_FIGHTER("Space Superiority Fighter"),
     SPEEDER_BIKE("Speeder Bike"),
     SNOW("Snow"),
     ST_70_CLASS_RAZOR_CREST_M_111_ASSAULT_SHIP("ST-70 class Razor Crest M-111 Assault Ship"),
