@@ -1628,6 +1628,32 @@ var GempSwccgCommunication = Class.extend({
         });
     },
     
+    /** The account's saved game settings (#135): {"play|open": {"deckSize": "100"}, ...}. */
+    getGameSettings:function (callback, errorMap) {
+        $.ajax({
+            type:"GET",
+            url:this.url + "/playerStats/gameSettings",
+            cache:false,
+            data:{participantId:getUrlParam("participantId")},
+            success:this.deliveryCheck(callback),
+            error:this.errorCheck(errorMap),
+            dataType:"json"
+        });
+    },
+
+    /** Saves one form's settings for one format on the account (#135); empty options remove them. */
+    saveGameSettings:function (form, format, options, callback, errorMap) {
+        $.ajax({
+            type:"POST",
+            url:this.url + "/playerStats/gameSettings",
+            cache:false,
+            data:{participantId:getUrlParam("participantId"), form:form, format:format, options:JSON.stringify(options || {})},
+            success:this.deliveryCheck(callback),
+            error:this.errorCheck(errorMap),
+            dataType:"json"
+        });
+    },
+
     getFormat:function (formatCode, callback, errorMap) {
         $.ajax({
             type:"GET",

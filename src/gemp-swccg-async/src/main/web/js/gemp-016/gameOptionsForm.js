@@ -29,6 +29,11 @@ var GameOptionsForm = Class.extend({
         this.remember = {timer: true};
         this.saveKey = settings && settings.saveKey ? settings.saveKey : null;
         this.userName = settings && settings.userName ? settings.userName : null;
+        this.accountStore = settings && settings.accountStore ? settings.accountStore : null;
+    },
+
+    formatCode: function () {
+        return this.formatOption != null && this.formatOption.length ? this.formatOption.attr("value") : null;
     },
 
     // ---- saved settings (#120): localStorage, guarded, per account and format ----
@@ -41,7 +46,7 @@ var GameOptionsForm = Class.extend({
         return "gemp-game-options:" + this.saveKey + ":" + user + ":" + code;
     },
 
-    loadSaved: function () {
+    loadLocal: function () {
         var key = this.storageKey();
         if (key == null)
             return null;
@@ -54,7 +59,7 @@ var GameOptionsForm = Class.extend({
         }
     },
 
-    storeSaved: function (values) {
+    storeLocal: function (values) {
         var key = this.storageKey();
         if (key == null)
             return false;
@@ -67,6 +72,46 @@ var GameOptionsForm = Class.extend({
         } catch (e) {
             return false;
         }
+    },
+
+    /**
+     * The saved settings for the selected format: the account's (#135) when they have loaded, else this browser's. A
+     * browser copy from before #135 is moved to the account the first time it is seen.
+     */
+    loadSaved: function () {
+        var code = this.formatCode();
+        if (!this.saveKey || !code)
+            return null;
+        var account = this.accountStore ? this.accountStore.get(this.saveKey, code) : undefined;
+        if (account !== undefined && account !== null)
+            return account;
+        var local = this.loadLocal();
+        if (account === null && local != null && !$.isEmptyObject(local)) {
+            var that = this;
+            this.accountStore.set(this.saveKey, code, local, function (ok) {
+                if (ok)
+                    that.storeLocal(null);
+            });
+        }
+        return local;
+    },
+
+    storeSaved: function (values) {
+        var code = this.formatCode();
+        if (!this.saveKey || !code)
+            return false;
+        // On the account when it has loaded; the browser copy is kept only until the account has it, so a Reset on
+        // another device is not undone by an old copy here.
+        if (this.accountStore && this.accountStore.get(this.saveKey, code) !== undefined) {
+            var that = this;
+            this.storeLocal(values);
+            this.accountStore.set(this.saveKey, code, values, function (ok) {
+                if (ok)
+                    that.storeLocal(null);
+            });
+            return true;
+        }
+        return this.storeLocal(values);
     },
 
     formatLabel: function () {

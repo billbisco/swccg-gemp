@@ -605,6 +605,10 @@ var GempSwccgHallUI = Class.extend({
         this.comm.getPlayerInfo(function(json)
             { 
                 that.userInfo = json;
+                // #135: game settings saved on the account, used by the Play and Create Tournament forms
+                that.comm.getGameSettings(function (settings) {
+                    that.accountGameSettings = settings || {};
+                }, {"0": function () {}, "401": function () {}, "404": function () {}, "500": function () {}});
                 if(    that.userInfo.type.includes("a")      //admin
                     || that.userInfo.type.includes("l")  //league admin
                     || that.userInfo.type.includes("p")  //playtesting admin
@@ -828,13 +832,35 @@ var GempSwccgHallUI = Class.extend({
         // #116: game options (deck size, starting credits, timer, ...) come from the server's option registry
         this.gameOptionsRows = $("<div class='game-options-rows'></div>");
         var accountName = function () { return (that.userInfo && that.userInfo.name) ? that.userInfo.name : ""; };
+        // #135: saved settings live on the account; the browser copy is the fallback
+        var accountStore = {
+            get: function (form, format) {
+                if (that.accountGameSettings == null)
+                    return undefined;
+                var value = that.accountGameSettings[form + "|" + format];
+                return value == null ? null : value;
+            },
+            set: function (form, format, values, done) {
+                if (that.accountGameSettings != null) {
+                    if (values == null || $.isEmptyObject(values))
+                        delete that.accountGameSettings[form + "|" + format];
+                    else
+                        that.accountGameSettings[form + "|" + format] = values;
+                }
+                that.comm.saveGameSettings(form, format, values, function () {
+                    if (done) done(true);
+                }, {"0": function () { if (done) done(false); }, "400": function () { if (done) done(false); },
+                    "401": function () { if (done) done(false); }, "500": function () { if (done) done(false); }});
+            }
+        };
+        this.accountGameSettingsStore = accountStore;
         this.gameOptionsForm = new GameOptionsForm(this.gameOptionsRows, function (optionId) {
             if (optionId === "deckSize") {
                 var fmt = that.playFormatCode();
                 if (fmt)
                     that.updateDecks(fmt, "default");
             }
-        }, {saveKey: "play", userName: accountName});
+        }, {saveKey: "play", userName: accountName, accountStore: accountStore});
 
         this.inviteRow = $("<div class='play-form-row play-form-row-check'></div>");
         this.inviteRow.append(this.isInviteOnlyCheckbox);
@@ -1011,6 +1037,16 @@ var GempSwccgHallUI = Class.extend({
             }
         }, {saveKey: "tournament", userName: function () {
             return (thatSize.userInfo && thatSize.userInfo.name) ? thatSize.userInfo.name : "";
+        }, accountStore: {
+            get: function (form, format) {
+                return thatSize.accountGameSettingsStore ? thatSize.accountGameSettingsStore.get(form, format) : undefined;
+            },
+            set: function (form, format, values, done) {
+                if (thatSize.accountGameSettingsStore)
+                    thatSize.accountGameSettingsStore.set(form, format, values, done);
+                else if (done)
+                    done(false);
+            }
         }});
         if (this.gameOptionsRoot != null)
             this.tournamentOptionsForm.setRegistry(this.gameOptionsRoot);
