@@ -6,6 +6,7 @@
     "startingCredits":true,
     "loreHeroicRule":true,
     "skipFormatPool":true,
+    "multipleObjectives":true,
     "minDeckSize":40,
     "maxDeckSize":60,
     "maxDeckSizeOption":200,
