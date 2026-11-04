@@ -23,6 +23,7 @@ public final class GameOptions {
     public static final String DECK_SIZE = "deckSize";
     public static final String STARTING_CREDITS = "startingCredits";
     public static final String TIMER = "timer";
+    public static final String OBJECTIVE_OPTIONAL = "objectiveOptional";
 
     private static final Map<String, GameOption> OPTIONS = new LinkedHashMap<>();
 
@@ -42,6 +43,12 @@ public final class GameOptions {
                 .defaultValue(f -> String.valueOf(f.getDefaultStartingCredits()))
                 .range(f -> 0, f -> StartingCredits.MAX_BUDGET)
                 .shortLabel(v -> v + " starting credits")
+                .build());
+        // #142: on by default where a deck may hold several Objectives (Anything Goes), off elsewhere
+        register(GameOption.builder(OBJECTIVE_OPTIONAL, Kind.PLAY_RULES, Type.BOOLEAN, "Starting: Objective optional")
+                .help("At game start, choose your Objective or one of your starting locations; Objectives not played stay in the deck (destiny 0).")
+                .defaultValue(f -> String.valueOf(f.allowsMultipleObjectives()))
+                .shortLabel(v -> "true".equals(v) ? "Objective optional" : "Objective required")
                 .build());
         GameOption.Builder timer = GameOption.builder(TIMER, Kind.TABLE, Type.CHOICE, "Game timer")
                 .help("Each player's time bank and the time per decision.")

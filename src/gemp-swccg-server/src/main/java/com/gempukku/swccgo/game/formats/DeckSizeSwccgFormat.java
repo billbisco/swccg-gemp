@@ -166,6 +166,11 @@ public class DeckSizeSwccgFormat implements SwccgFormat {
     }
 
     @Override
+    public boolean allowsMultipleObjectives() {
+        return _base.allowsMultipleObjectives();
+    }
+
+    @Override
     public int getDefaultStartingCredits() {
         return _base.getDefaultStartingCredits();
     }

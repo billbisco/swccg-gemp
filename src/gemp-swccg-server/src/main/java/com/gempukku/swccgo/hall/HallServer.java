@@ -2011,6 +2011,10 @@ public class HallServer extends AbstractServer {
         if (beforeStart != null)
             beforeStart.accept(swccgGameMediator);
         GameSetup gameSetup = swccgGameMediator.getGameSetup();
+        // #142: "Starting: Objective optional" (default on where a deck may hold several Objectives)
+        String objectiveOptional = gameSetup != null ? gameSetup.get(GameOptions.OBJECTIVE_OPTIONAL, swccgFormat)
+                : String.valueOf(swccgFormat.allowsMultipleObjectives());
+        swccgGameMediator.getGameState().setObjectiveOptional("true".equals(objectiveOptional));
         if (gameSetup != null && !gameSetup.chips().isEmpty())
             swccgGameMediator.sendMessageToPlayers("Game options: " + gameSetup.chipsText());
         swccgGameMediator.startGame();

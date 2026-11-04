@@ -33,6 +33,9 @@ public interface SwccgFormat {
     /** Whether this format uses the Reflections Gold opening-hand credit rule. */
     default boolean supportsStartingCredits() { return false; }
 
+    /** Whether a deck may hold several Objectives (#141: Anything Goes). */
+    default boolean allowsMultipleObjectives() { return false; }
+
     default int getDefaultStartingCredits() { return supportsStartingCredits() ? 5 : 0; }
 
     /** The code of the format this one is based on; differs from {@link #getCode()} only when a deck size was chosen. */

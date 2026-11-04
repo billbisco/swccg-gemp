@@ -33,6 +33,9 @@ public class DefaultSwccgFormat implements SwccgFormat {
     @Override
     public boolean supportsStartingCredits() { return _startingCredits; }
 
+    @Override
+    public boolean allowsMultipleObjectives() { return _multipleObjectives; }
+
     protected void setStartingCredits(boolean enabled) { _startingCredits = enabled; }
     private List<String> _bannedIcons = new ArrayList<String>();
     private List<String> _bannedCards = new ArrayList<String>();
