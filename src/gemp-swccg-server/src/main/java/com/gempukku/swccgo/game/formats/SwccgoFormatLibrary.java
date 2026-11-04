@@ -264,9 +264,14 @@ public class SwccgoFormatLibrary {
         if (format == null)
             return null;
         String deckSize = setup.getChosen(GameOptions.DECK_SIZE);
-        if (deckSize == null)
-            return format;
-        return getFormat(DeckSize.code(format.getBaseCode(), Integer.parseInt(deckSize)));
+        SwccgFormat sized = deckSize == null ? format : getFormat(DeckSize.code(format.getBaseCode(), Integer.parseInt(deckSize)));
+        if (sized == null)
+            return null;
+        // deck rules the table's options add (#142/#144)
+        DeckRules rules = new DeckRules(
+                "true".equals(setup.get(GameOptions.NO_SHIELDS, format)),
+                "true".equals(setup.get(GameOptions.OBJECTIVE_OPTIONAL, format)) && !format.allowsMultipleObjectives());
+        return rules.isNone() ? sized : new DeckRulesSwccgFormat(sized, rules);
     }
 
     /**
