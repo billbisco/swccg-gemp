@@ -3017,6 +3017,11 @@ public class ModifiersLogic implements ModifiersEnvironment, ModifiersState, Mod
         return _queryCache.withScope(readOnlyComputation);
     }
 
+    @Override
+    public boolean battleCanContinue(GameState gameState, Object battleState, Supplier<Boolean> computation) {
+        return _queryCache.query(ModifierQueryCache.battleCanContinueKey(), gameState, battleState, null, computation);
+    }
+
     private List<Modifier> computeKeywordModifiersAffectingCard(GameState gameState, ModifierType modifierType, Keyword keyword, PhysicalCard card) {
         _queryCache.noteSkipSetTests(modifierType);
         // Get always on modifiers

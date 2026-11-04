@@ -408,6 +408,13 @@ public class BattleState implements Snapshotable<BattleState> {
     public boolean canContinue(SwccgGame game) {
         if (_canceled)
             return false;
+        // #136: reused within a query scope (the board doesn't change there); see ModifiersQuerying.battleCanContinue
+        return game.getModifiersQuerying().battleCanContinue(game.getGameState(), this, () -> canContinueImpl(game));
+    }
+
+    private boolean canContinueImpl(SwccgGame game) {
+        if (_canceled)
+            return false;
 
         if (isReachedDamageSegment())
             return true;

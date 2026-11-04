@@ -32,4 +32,16 @@ public interface ModifiersQuerying extends BaseQuery, Ability, Armor, Attacks, A
     default <T> T withQueryCache(java.util.function.Supplier<T> readOnlyComputation) {
         return readOnlyComputation.get();
     }
+
+    /**
+     * Whether a battle can continue (BattleState.canContinue), computed by the computation and reused while a query
+     * scope is open, like the other cached queries (swccg-guild/work#136: it was recomputed for every card asked
+     * "is this participating in the battle", which made starting a battle on a big board cost seconds).
+     * @param battleState the battle
+     * @param computation the computation of the answer
+     * @return the answer
+     */
+    default boolean battleCanContinue(com.gempukku.swccgo.game.state.GameState gameState, Object battleState, java.util.function.Supplier<Boolean> computation) {
+        return computation.get();
+    }
 }

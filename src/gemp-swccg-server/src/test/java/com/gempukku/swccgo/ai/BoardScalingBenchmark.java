@@ -126,9 +126,12 @@ public class BoardScalingBenchmark {
             }
             toBattle = System.nanoTime() - t;
             if (scn.DSCanInitiateBattle(lsSite)) {
+                Sampler sampler = Boolean.getBoolean("gemp.bench.sample") ? new Sampler(Thread.currentThread()) : null;
                 t = System.nanoTime();
                 scn.DSInitiateBattle(lsSite);
                 battle = System.nanoTime() - t;
+                if (sampler != null)
+                    sampler.report(board);
             }
         } catch (RuntimeException | AssertionError exp) {
             StringBuilder pending = new StringBuilder();
@@ -146,6 +149,61 @@ public class BoardScalingBenchmark {
 
         return String.format(Locale.ROOT, "%d,%d,%.2f,%.2f,%.1f,%.1f,%.1f,%d",
                 board, inPlay, ms(stats), ms(snapshot), ms(activate), ms(toBattle), ms(battle), events);
+    }
+
+    /** A plain stack sampler (every 5 ms) for one thread: self time and inclusive time per method. */
+    static final class Sampler {
+        private final java.util.Map<String, Integer> self = new java.util.HashMap<>();
+        private final java.util.Map<String, Integer> inclusive = new java.util.HashMap<>();
+        private final java.util.Map<String, Integer> chains = new java.util.HashMap<>();
+        private int samples;
+        private volatile boolean running = true;
+        private final Thread worker;
+
+        Sampler(Thread target) {
+            worker = new Thread(() -> {
+                while (running) {
+                    StackTraceElement[] st = target.getStackTrace();
+                    if (st.length > 0) {
+                        samples++;
+                        self.merge(st[0].getClassName() + "." + st[0].getMethodName(), 1, Integer::sum);
+                        java.util.Set<String> seen = new java.util.HashSet<>();
+                        StringBuilder chain = new StringBuilder();
+                        int depth = 0;
+                        for (StackTraceElement e : st) {
+                            String m = e.getClassName().replace("com.gempukku.swccgo.", "") + "." + e.getMethodName();
+                            if (seen.add(m))
+                                inclusive.merge(m, 1, Integer::sum);
+                            if (depth < 14 && e.getClassName().startsWith("com.gempukku")) {
+                                chain.append(depth == 0 ? "" : " < ").append(m.substring(m.lastIndexOf('.', m.lastIndexOf('.') - 1) + 1)).append(":").append(e.getLineNumber());
+                                depth++;
+                            }
+                        }
+                        chains.merge(chain.toString(), 1, Integer::sum);
+                    }
+                    try { Thread.sleep(5); } catch (InterruptedException ignored) { return; }
+                }
+            });
+            worker.setDaemon(true);
+            worker.start();
+        }
+
+        void report(int board) throws InterruptedException {
+            running = false;
+            worker.join();
+            StringBuilder sb = new StringBuilder("== sample board=" + board + " samples=" + samples + "\n-- self\n");
+            top(self, 15, sb);
+            sb.append("-- inclusive\n");
+            top(inclusive, 45, sb);
+            sb.append("-- chains\n");
+            top(chains, 12, sb);
+            System.out.println(sb);
+        }
+
+        private void top(java.util.Map<String, Integer> m, int n, StringBuilder sb) {
+            m.entrySet().stream().sorted((a, b) -> b.getValue() - a.getValue()).limit(n)
+                    .forEach(e -> sb.append(String.format(Locale.ROOT, "%5.1f%% %s%n", 100.0 * e.getValue() / Math.max(1, samples), e.getKey())));
+        }
     }
 
     @Test
