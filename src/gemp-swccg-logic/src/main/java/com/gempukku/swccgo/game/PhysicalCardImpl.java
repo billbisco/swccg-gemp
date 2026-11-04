@@ -331,7 +331,9 @@ public class PhysicalCardImpl implements PhysicalCard, Cloneable {
         if (isFlipped())
             return _backBlueprintId;
 
-        if (_zone == Zone.TOP_OF_RESERVE_DECK && gameState.isTopCardOfReserveDeckRevealed(this.getOwner()))
+        // #136: gameState is null when called without one (getBlueprintId(boolean)); an Objective on top of the Reserve
+        // Deck, shown in a pile search, crashed the game here (found with Anything Goes decks holding several Objectives)
+        if (_zone == Zone.TOP_OF_RESERVE_DECK && gameState != null && gameState.isTopCardOfReserveDeckRevealed(this.getOwner()))
             return _frontBlueprintId;
 
         if (_isBlownAway

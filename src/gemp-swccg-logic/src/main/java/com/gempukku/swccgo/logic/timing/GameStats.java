@@ -274,6 +274,7 @@ public class GameStats {
             _zoneSizes = newZoneSizes;
         }
 
+        // #136: in the checks below the location test comes before the card-type test (types go through modifiers)
         List<PhysicalCard> locations = _game.getGameState().getTopLocations();
         Map<Integer, Float> newDarkPowerAtLocations = new HashMap<Integer, Float>();
         Map<Integer, Float> newLightPowerAtLocations = new HashMap<Integer, Float>();
@@ -281,7 +282,7 @@ public class GameStats {
             int locationIndex = location.getLocationZoneIndex();
             // If no cards at location, then -1 so User Interface doesn't show any power indicator
             float darkPowerAtLocation = -1;
-            if (Filters.canSpot(game, null, Filters.and(Filters.owner(darkPlayer), Filters.or(Filters.character, Filters.starship, Filters.vehicle), Filters.at(location)))) {
+            if (Filters.canSpot(game, null, Filters.and(Filters.owner(darkPlayer), Filters.at(location), Filters.or(Filters.character, Filters.starship, Filters.vehicle)))) {
                 darkPowerAtLocation = modifiersQuerying.getTotalPowerAtLocation(gameState, location, darkPlayer, false, false);
             }
             if (!_darkPowerAtLocations.containsKey(locationIndex) || _darkPowerAtLocations.get(locationIndex) != darkPowerAtLocation) {
@@ -291,7 +292,7 @@ public class GameStats {
 
             float lightPowerAtLocation = -1;
             // If no cards at location, then -1 so User Interface doesn't show any power indicator
-            if (Filters.canSpot(game, null, Filters.and(Filters.owner(lightPlayer), Filters.or(Filters.character, Filters.starship, Filters.vehicle), Filters.at(location)))) {
+            if (Filters.canSpot(game, null, Filters.and(Filters.owner(lightPlayer), Filters.at(location), Filters.or(Filters.character, Filters.starship, Filters.vehicle)))) {
                 lightPowerAtLocation = modifiersQuerying.getTotalPowerAtLocation(gameState, location, lightPlayer, false, false);
             }
             if (!_lightPowerAtLocations.containsKey(locationIndex) || _lightPowerAtLocations.get(locationIndex) != lightPowerAtLocation) {
