@@ -19,8 +19,10 @@ import java.util.List;
 public class DeckRulesSwccgFormat implements SwccgFormat {
     private final SwccgFormat _inner;
     private final DeckRules _rules;
+    private final com.gempukku.swccgo.game.SwccgCardBlueprintLibrary _library;
 
-    DeckRulesSwccgFormat(SwccgFormat inner, DeckRules rules) {
+    DeckRulesSwccgFormat(SwccgFormat inner, DeckRules rules, com.gempukku.swccgo.game.SwccgCardBlueprintLibrary library) {
+        _library = library;
         if (!(inner instanceof DefaultSwccgFormat) && !(inner instanceof DeckSizeSwccgFormat))
             throw new IllegalArgumentException("Deck rules apply to a library format, not " + inner.getClass().getSimpleName());
         _inner = inner;
@@ -40,6 +42,12 @@ public class DeckRulesSwccgFormat implements SwccgFormat {
     @Override
     public void validateCard(String cardId, boolean skipIfNotExists) throws DeckInvalidException {
         _inner.validateCard(cardId, skipIfNotExists);
+        // the deck builder's card filter checks cards one by one: "Shields: none" leaves shields out, as Open (no shields)
+        if (_rules.isNoShields() && _library != null) {
+            SwccgCardBlueprint card = _library.getSwccgoCardBlueprint(cardId);
+            if (card != null && card.hasIcon(Icon.DEFENSIVE_SHIELD))
+                throw new DeckInvalidException("Defensive Shields are not permitted at this table (Shields: none).");
+        }
     }
 
     @Override

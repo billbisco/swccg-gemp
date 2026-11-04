@@ -79,6 +79,27 @@ public class DeckRuleOptionsTests {
     }
 
     @Test
+    public void OpenNoShieldsIsOpenWithShieldsNone() {
+        SwccgFormat alias = LIBRARY.getFormat("open_no_shields");
+        assertNotNull("the old code keeps working", alias);
+        assertEquals("open", alias.getCode());
+        assertTrue(alias.getBannedIcons().contains("DEFENSIVE_SHIELD"));
+        // a stored table, league or game with the old code gets the option
+        GameSetup stored = LIBRARY.storedSetup("open_no_shields", null);
+        assertEquals("open", stored.getFormatCode());
+        assertEquals("true", stored.getChosen(GameOptions.NO_SHIELDS));
+        assertTrue("the chip says so", stored.chipsText().contains("No shields"));
+        // the deck builder's card filter leaves shields out, as before
+        assertThrows(DeckInvalidException.class, () -> alias.validateCard("13_51", false));
+        try {
+            alias.validateCard("13_69", false); // the Starting Effect is fine
+        } catch (DeckInvalidException e) {
+            fail(e.getMessage());
+        }
+        assertNull("no longer a separate format in the hall", LIBRARY.getHallFormats().get("open_no_shields"));
+    }
+
+    @Test
     public void NoOptionsIsTheLibraryFormatItself() {
         assertSame(LIBRARY.getFormat("open"), table("open", Map.of()));
     }

@@ -26,11 +26,17 @@ public class SwccgoFormatLibrary {
     private Map<String, String> _formatStamps = new HashMap<String, String>();
     /** Retired size-only format codes and the {@code <format>@<size>} code each now means (#90). */
     private Map<String, String> _aliases = new HashMap<String, String>();
+    // #144: retired format codes that are a base format with game options, e.g. open_no_shields = Open + Shields: none
+    private final Map<String, String> _optionAliasBase = new HashMap<String, String>();
+    private final Map<String, Map<String, String>> _optionAliasOptions = new HashMap<String, Map<String, String>>();
+    private final Map<String, SwccgFormat> _optionAliasFormats = new ConcurrentHashMap<String, SwccgFormat>();
+    private SwccgCardBlueprintLibrary _cardLibrary;
     /** Per base format, per chosen size: the default game timer and tenets link that size uses, when they differ. */
     private Map<String, Map<Integer, JSONObject>> _deckSizeVariants = new HashMap<String, Map<Integer, JSONObject>>();
     private final Map<String, SwccgFormat> _deckSizeFormats = new ConcurrentHashMap<String, SwccgFormat>();
 
     public SwccgoFormatLibrary(SwccgCardBlueprintLibrary library) {
+        _cardLibrary = library;
         try {
             final InputStreamReader reader = new InputStreamReader(SwccgoFormatLibrary.class.getResourceAsStream("/swccgFormats.json"), "UTF-8");
             try {
@@ -136,6 +142,19 @@ public class SwccgoFormatLibrary {
                             _aliases.put((String) alias.getKey(), DeckSize.code(formatCode, size));
                         }
                     }
+                    JSONObject optionAliases = (JSONObject) formatDef.get("optionAliases");
+                    if (optionAliases != null) {
+                        for (Object aliasObj : optionAliases.entrySet()) {
+                            Map.Entry<?, ?> alias = (Map.Entry<?, ?>) aliasObj;
+                            Map<String, String> options = new java.util.LinkedHashMap<String, String>();
+                            for (Object optionObj : ((JSONObject) alias.getValue()).entrySet()) {
+                                Map.Entry<?, ?> option = (Map.Entry<?, ?>) optionObj;
+                                options.put((String) option.getKey(), String.valueOf(option.getValue()));
+                            }
+                            _optionAliasBase.put((String) alias.getKey(), formatCode);
+                            _optionAliasOptions.put((String) alias.getKey(), java.util.Collections.unmodifiableMap(options));
+                        }
+                    }
                     JSONObject deckSizeVariants = (JSONObject) formatDef.get("deckSizeVariants");
                     if (deckSizeVariants != null) {
                         Map<Integer, JSONObject> bySize = new HashMap<Integer, JSONObject>();
@@ -212,6 +231,9 @@ public class SwccgoFormatLibrary {
         String alias = _aliases.get(formatCode);
         if (alias != null)
             return getFormat(alias);
+        if (_optionAliasBase.containsKey(formatCode))
+            return _optionAliasFormats.computeIfAbsent(formatCode, code -> effectiveFormat(GameSetup.of(
+                    getFormat(_optionAliasBase.get(code)), _optionAliasOptions.get(code), com.gempukku.swccgo.game.setup.GameOption.Scope.CASUAL)));
         return getDeckSizeFormat(formatCode, _allFormats);
     }
 
@@ -271,7 +293,7 @@ public class SwccgoFormatLibrary {
         DeckRules rules = new DeckRules(
                 "true".equals(setup.get(GameOptions.NO_SHIELDS, format)),
                 "true".equals(setup.get(GameOptions.OBJECTIVE_OPTIONAL, format)) && !format.allowsMultipleObjectives());
-        return rules.isNone() ? sized : new DeckRulesSwccgFormat(sized, rules);
+        return rules.isNone() ? sized : new DeckRulesSwccgFormat(sized, rules, _cardLibrary);
     }
 
     /**
@@ -285,6 +307,12 @@ public class SwccgoFormatLibrary {
         GameSetup setup = GameSetup.fromJson(setupJson, baseCode).forFormat(baseCode);
         if (format != null && format.isDeckSizeChosen() && setup.getChosen(GameOptions.DECK_SIZE) == null)
             setup = setup.with(GameOptions.DECK_SIZE, String.valueOf(format.getRequiredDeckSize()));
+        // a retired code that stands for options (#144: open_no_shields) gives the setup those options
+        Map<String, String> aliasOptions = _optionAliasOptions.get(formatCode);
+        if (aliasOptions != null)
+            for (Map.Entry<String, String> option : aliasOptions.entrySet())
+                if (setup.getChosen(option.getKey()) == null)
+                    setup = setup.with(option.getKey(), option.getValue());
         return setup;
     }
 
