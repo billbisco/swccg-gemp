@@ -7,6 +7,7 @@ import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.logic.GameUtils;
 import com.gempukku.swccgo.logic.actions.SubAction;
+import com.gempukku.swccgo.logic.modifiers.PlaceOnBottomOfForcePileWhenCanceledModifier;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 import com.gempukku.swccgo.logic.timing.AbstractSubActionEffect;
 import com.gempukku.swccgo.logic.timing.Action;
@@ -36,6 +37,7 @@ class CancelCardsOnTableSimultaneouslyEffect extends AbstractSubActionEffect imp
     private Collection<PhysicalCard> _toPlaceInLostPile = new ArrayList<PhysicalCard>();
     private Collection<PhysicalCard> _toPlaceInUsedPile = new ArrayList<PhysicalCard>();
     private Collection<PhysicalCard> _toPlaceInOtherPile = new ArrayList<PhysicalCard>();
+    private Collection<PhysicalCard> _toPlaceOnBottomOfForcePile = new ArrayList<PhysicalCard>();
     private Collection<PhysicalCard> _attachedCardsToLeaveTable = new ArrayList<PhysicalCard>();
 
     /**
@@ -227,7 +229,10 @@ class CancelCardsOnTableSimultaneouslyEffect extends AbstractSubActionEffect imp
                             }
 
                             for (PhysicalCard canceledCard : _canceled) {
-                                if (modifiersQuerying.isPlacedInUsedPileWhenCanceled(gameState, canceledCard, _action.getPerformingPlayer(), _action.getActionSource())) {
+                                if (PlaceOnBottomOfForcePileWhenCanceledModifier.isPlacedOnBottomOfForcePileWhenCanceled(gameState, modifiersQuerying, canceledCard)) {
+                                    _toPlaceOnBottomOfForcePile.add(canceledCard);
+                                }
+                                else if (modifiersQuerying.isPlacedInUsedPileWhenCanceled(gameState, canceledCard, _action.getPerformingPlayer(), _action.getActionSource())) {
                                     if (_action.getActionSource() != null) {
                                         gameState.activatedCard(null, _action.getActionSource());
                                     }
@@ -247,9 +252,13 @@ class CancelCardsOnTableSimultaneouslyEffect extends AbstractSubActionEffect imp
                 new PassthruEffect(subAction) {
                     @Override
                     protected void doPlayEffect(SwccgGame game) {
-                        if (!_toPlaceInLostPile.isEmpty() || !_toPlaceInUsedPile.isEmpty() || !_toPlaceInOtherPile.isEmpty()) {
+                        if (!_toPlaceInLostPile.isEmpty() || !_toPlaceInUsedPile.isEmpty() || !_toPlaceInOtherPile.isEmpty() || !_toPlaceOnBottomOfForcePile.isEmpty()) {
 
                             SubAction putInCardPileSubAction = new SubAction(subAction);
+                            if (!_toPlaceOnBottomOfForcePile.isEmpty()) {
+                                putInCardPileSubAction.appendEffect(
+                                        new PutCardsInCardPileEffect(subAction, game, _toPlaceOnBottomOfForcePile, Zone.FORCE_PILE, true));
+                            }
                             if (!_toPlaceInLostPile.isEmpty()) {
                                 putInCardPileSubAction.appendEffect(
                                         new PutCardsInCardPileEffect(subAction, game, _toPlaceInLostPile, Zone.LOST_PILE));

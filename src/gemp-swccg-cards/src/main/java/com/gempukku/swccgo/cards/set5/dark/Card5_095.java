@@ -2,6 +2,7 @@ package com.gempukku.swccgo.cards.set5.dark;
 
 import com.gempukku.swccgo.cards.AbstractAlien;
 import com.gempukku.swccgo.cards.conditions.AtCondition;
+import com.gempukku.swccgo.cards.conditions.GameTextModificationCondition;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Keyword;
@@ -13,7 +14,10 @@ import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
+import com.gempukku.swccgo.logic.conditions.AndCondition;
+import com.gempukku.swccgo.logic.conditions.NotCondition;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
+import com.gempukku.swccgo.logic.modifiers.ModifyGameTextType;
 import com.gempukku.swccgo.logic.modifiers.PowerModifier;
 
 import java.util.LinkedList;
@@ -42,7 +46,8 @@ public class Card5_095 extends AbstractAlien {
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
         List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new PowerModifier(self, new AtCondition(self, Filters.and(Filters.site, Filters.not(Filters.Cloud_City_site))), -1));
+        modifiers.add(new PowerModifier(self, new AndCondition(new AtCondition(self, Filters.and(Filters.site, Filters.not(Filters.Cloud_City_site))),
+                new NotCondition(new GameTextModificationCondition(self, ModifyGameTextType.LEGACY__CLOUD_CITY_TROOPER__IGNORES_POWER_MINUS_ONE))), -1));
         return modifiers;
     }
 }
