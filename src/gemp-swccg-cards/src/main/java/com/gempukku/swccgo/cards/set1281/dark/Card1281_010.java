@@ -23,6 +23,7 @@ import com.gempukku.swccgo.logic.TriggerConditions;
 import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
 import com.gempukku.swccgo.logic.decisions.YesNoDecision;
 import com.gempukku.swccgo.logic.effects.DrawDestinyEffect;
+import com.gempukku.swccgo.logic.modifiers.DeathMarkTotalModifier;
 import com.gempukku.swccgo.logic.effects.LoseCardFromTableEffect;
 import com.gempukku.swccgo.logic.effects.LoseForceEffect;
 import com.gempukku.swccgo.logic.effects.PlaceCardInUsedPileFromTableEffect;
@@ -112,14 +113,16 @@ public class Card1281_010 extends AbstractUtinniEffect {
                     new DrawDestinyEffect(action, playerId) {
                         @Override
                         protected void destinyDraws(SwccgGame game, List<PhysicalCard> destinyCardDraws, List<Float> destinyDrawValues, Float totalDestiny) {
-                            final float yourTotal = (totalDestiny != null ? totalDestiny : 0) + game.getModifiersQuerying().getPower(game.getGameState(), assassin);
+                            final float yourTotal = (totalDestiny != null ? totalDestiny : 0) + game.getModifiersQuerying().getPower(game.getGameState(), assassin)
+                                    + DeathMarkTotalModifier.getDeathMarkTotalModifier(game.getGameState(), game.getModifiersQuerying(), assassin);
                             game.getGameState().sendMessage(playerId + "'s total: " + GuiUtils.formatAsString(yourTotal));
                             action.appendEffect(
                                     new DrawDestinyEffect(action, opponent, 2, 1) {
                                         @Override
                                         protected void destinyDraws(SwccgGame game, List<PhysicalCard> destinyCardDraws, List<Float> destinyDrawValues, Float totalDestiny) {
                                             GameState gameState = game.getGameState();
-                                            float opponentsTotal = (totalDestiny != null ? totalDestiny : 0) + game.getModifiersQuerying().getDefenseValue(gameState, mark);
+                                            float opponentsTotal = (totalDestiny != null ? totalDestiny : 0) + game.getModifiersQuerying().getDefenseValue(gameState, mark)
+                                                    + DeathMarkTotalModifier.getDeathMarkTotalModifier(gameState, game.getModifiersQuerying(), mark);
                                             gameState.sendMessage(opponent + "'s total: " + GuiUtils.formatAsString(opponentsTotal));
                                             if (yourTotal > opponentsTotal) {
                                                 gameState.sendMessage("Result: " + GameUtils.getCardLink(mark) + " is 'assassinated'");
