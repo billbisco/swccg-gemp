@@ -130,7 +130,7 @@ public class Card210_025 extends AbstractObjective {
         if (TriggerConditions.isTableChanged(game, effectResult)
                 && GameConditions.canBeFlipped(game, self)) {
             PhysicalCard creditsWillDoFine = Filters.findFirstActive(game, self, Filters.Credits_Will_Do_Fine);
-            if (creditsWillDoFine != null && GameConditions.hasStackedCards(game, creditsWillDoFine, 4)) {
+            if (creditsWillDoFine != null && GameConditions.hasStackedCards(game, creditsWillDoFine, GameConditions.hasGameTextModification(game, self, com.gempukku.swccgo.logic.modifiers.ModifyGameTextType.LEGACY__HYPERDRIVE_GENERATORS_GONE__TREAT_4_AS_2) ? 2 : 4)) {
 
                 RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
                 action.setSingletonTrigger(true);
