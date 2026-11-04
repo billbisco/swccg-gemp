@@ -22,6 +22,7 @@ import com.gempukku.swccgo.logic.effects.LoseCardFromTableEffect;
 import com.gempukku.swccgo.logic.effects.RespondablePlayCardEffect;
 import com.gempukku.swccgo.logic.effects.TargetCardOnTableEffect;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
+import com.gempukku.swccgo.logic.modifiers.MayAddPilotAbilityWhenTargetedByTallonRollModifier;
 import com.gempukku.swccgo.logic.modifiers.ModifyGameTextType;
 import com.gempukku.swccgo.logic.timing.Action;
 import com.gempukku.swccgo.logic.timing.GuiUtils;
@@ -118,6 +119,9 @@ public class Card1_270 extends AbstractUsedInterrupt {
                                                                                             if (GameConditions.hasGameTextModification(game, self, ModifyGameTextType.TALLON_ROLL__OPPONENT_ADDS_MANEUVER_AND_ABILITY)) {
                                                                                                 opponentsManeuver = modifiersQuerying.getManeuver(gameState, opponentsFinalTarget);
                                                                                                 gameState.sendMessage(GameUtils.getCardLink(opponentsFinalTarget) + "'s maneuver: " + GuiUtils.formatAsString(opponentsManeuver));
+                                                                                                opponentsAbility = modifiersQuerying.getHighestAbilityPiloting(gameState, self, opponentsFinalTarget, false, false);
+                                                                                                gameState.sendMessage(GameUtils.getCardLink(opponentsFinalTarget) + "'s pilot's ability: " + GuiUtils.formatAsString(opponentsAbility));
+                                                                                            } else if (MayAddPilotAbilityWhenTargetedByTallonRollModifier.appliesTo(modifiersQuerying, gameState, opponentsFinalTarget)) {
                                                                                                 opponentsAbility = modifiersQuerying.getHighestAbilityPiloting(gameState, self, opponentsFinalTarget, false, false);
                                                                                                 gameState.sendMessage(GameUtils.getCardLink(opponentsFinalTarget) + "'s pilot's ability: " + GuiUtils.formatAsString(opponentsAbility));
                                                                                             }

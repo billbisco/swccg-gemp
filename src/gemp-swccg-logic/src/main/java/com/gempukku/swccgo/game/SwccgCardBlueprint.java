@@ -1602,6 +1602,15 @@ public interface SwccgCardBlueprint {
     List<TriggerAction> getOpponentsCardLostFromLifeForceOptionalTriggers(String playerId, SwccgGame game, EffectResult effectResult, PhysicalCard self);
 
     /**
+     * Gets the required triggers from a card when that card is lost from life force (and is in Lost Pile).
+     * @param game the game
+     * @param effectResult the effect result
+     * @param self the card
+     * @return the trigger actions
+     */
+    default List<TriggerAction> getLostFromLifeForceRequiredTriggers(SwccgGame game, EffectResult effectResult, PhysicalCard self) { return null; }
+
+    /**
      * Gets displayable information about the card.
      * @param game the game
      * @param self the card
