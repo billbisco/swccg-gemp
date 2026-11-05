@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.set109.dark;
 
+import com.gempukku.swccgo.cards.LegacyLadyValarian;
 import com.gempukku.swccgo.cards.AbstractDroid;
 import com.gempukku.swccgo.cards.AbstractPermanentWeapon;
 import com.gempukku.swccgo.cards.conditions.WithCondition;
@@ -48,7 +49,7 @@ public class Card109_006 extends AbstractDroid {
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
         List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new AddsBattleDestinyModifier(self, new WithCondition(self, Filters.or(Filters.Jabba, Filters.Zuckuss)), 1));
+        modifiers.add(new AddsBattleDestinyModifier(self, new WithCondition(self, Filters.or(LegacyLadyValarian.jabba(self), Filters.Zuckuss)), 1));
         return modifiers;
     }
 

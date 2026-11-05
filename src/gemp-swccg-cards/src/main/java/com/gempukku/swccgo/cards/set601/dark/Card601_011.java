@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.set601.dark;
 
+import com.gempukku.swccgo.cards.LegacyLadyValarian;
 import com.gempukku.swccgo.cards.AbstractTransportVehicle;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.effects.usage.OncePerTurnEffect;
@@ -75,6 +76,7 @@ public class Card601_011 extends AbstractTransportVehicle {
         // Check condition(s)
         if (GameConditions.isOncePerTurn(game, self, playerId, gameTextSourceCardId, gameTextActionId)
                 && (GameConditions.canDeployCardFromReserveDeck(game, playerId, self, gameTextActionId, Persona.JABBA)
+                || (LegacyLadyValarian.mayTreatJabbaAsLadyValarian(game, self) && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, gameTextActionId, LegacyLadyValarian.TITLE))
                 || GameConditions.canDeployCardFromReserveDeck(game, playerId, self, gameTextActionId, Title.Passenger_Deck)
                 || GameConditions.canDeployCardFromReserveDeck(game, playerId, self, gameTextActionId, "Pote Snitkin"))) {
 
@@ -86,7 +88,7 @@ public class Card601_011 extends AbstractTransportVehicle {
                     new OncePerTurnEffect(action));
             // Perform result(s)
             action.appendEffect(
-                    new DeployCardAboardFromReserveDeckEffect(action, Filters.or(Filters.Passenger_Deck, Filters.Jabba, Filters.title("Pote Snitkin")), Filters.and(self), true));
+                    new DeployCardAboardFromReserveDeckEffect(action, Filters.or(Filters.Passenger_Deck, LegacyLadyValarian.jabba(self), Filters.title("Pote Snitkin")), Filters.and(self), true));
             return Collections.singletonList(action);
         }
         return null;

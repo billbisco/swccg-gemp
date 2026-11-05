@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.set2.dark;
 
+import com.gempukku.swccgo.cards.LegacyLadyValarian;
 import com.gempukku.swccgo.cards.AbstractTransportVehicle;
 import com.gempukku.swccgo.cards.conditions.DuringBattleWithParticipantCondition;
 import com.gempukku.swccgo.cards.conditions.HasAboardCondition;
@@ -40,7 +41,7 @@ public class Card2_157 extends AbstractTransportVehicle {
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
         List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new MovesForFreeModifier(self, new HasAboardCondition(self, Filters.or(Filters.Jabba, Filters.bounty_hunter))));
+        modifiers.add(new MovesForFreeModifier(self, new HasAboardCondition(self, Filters.or(LegacyLadyValarian.jabba(self), Filters.bounty_hunter))));
         modifiers.add(new MayMoveAsReactToBattleForFreeModifier(self, new DuringBattleWithParticipantCondition(Filters.and(Filters.your(self),
                 Filters.or(Filters.thief, Filters.smuggler, Filters.bounty_hunter)))));
         return modifiers;

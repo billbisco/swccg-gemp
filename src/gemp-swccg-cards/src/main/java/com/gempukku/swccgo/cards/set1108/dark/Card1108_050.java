@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.set1108.dark;
 
+import com.gempukku.swccgo.cards.LegacyLadyValarian;
 import com.gempukku.swccgo.cards.AbstractAlien;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.effects.usage.OncePerPhaseEffect;
@@ -86,7 +87,7 @@ public class Card1108_050 extends AbstractAlien {
             action.appendUsage(
                     new OncePerPhaseEffect(action));
             action.appendEffect(
-                    new DeployCardAboardFromReserveDeckEffect(action, Filters.Jabba, Filters.Jabbas_Space_Cruiser, true, true));
+                    new DeployCardAboardFromReserveDeckEffect(action, LegacyLadyValarian.jabba(self), Filters.Jabbas_Space_Cruiser, true, true));
             return Collections.singletonList(action);
         }
         return null;

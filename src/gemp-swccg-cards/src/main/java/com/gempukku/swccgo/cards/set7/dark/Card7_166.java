@@ -1,9 +1,9 @@
 package com.gempukku.swccgo.cards.set7.dark;
 
+import com.gempukku.swccgo.cards.LegacyOmmniBox;
 import com.gempukku.swccgo.cards.AbstractAlien;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.effects.usage.OncePerPhaseEffect;
-import com.gempukku.swccgo.cards.evaluators.AtSameSiteEvaluator;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Keyword;
@@ -70,7 +70,7 @@ public class Card7_166 extends AbstractAlien {
                     new DrawDestinyEffect(action, playerId, 2) {
                         @Override
                         protected List<Modifier> getDrawDestinyModifiers(SwccgGame game, DrawDestinyState drawDestinyState) {
-                            Modifier modifier = new TotalDestinyModifier(self, drawDestinyState.getId(), new AtSameSiteEvaluator(self, Filters.and(Filters.your(self), Filters.gambler)));
+                            Modifier modifier = new TotalDestinyModifier(self, drawDestinyState.getId(), LegacyOmmniBox.atSameSiteEvaluator(self, Filters.and(Filters.your(self), Filters.gambler)));
                             return Collections.singletonList(modifier);
                         }
                         @Override

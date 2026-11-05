@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.set6.dark;
 
+import com.gempukku.swccgo.cards.LegacyLadyValarian;
 import com.gempukku.swccgo.cards.AbstractAlien;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.conditions.InBattleWithCondition;
@@ -54,7 +55,7 @@ public class Card6_101 extends AbstractAlien {
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new MayNotDeployToLocationModifier(self, opponentsSpiesGamblersAndThieves, sameSite));
         modifiers.add(new MayNotMoveToLocationModifier(self, opponentsSpiesGamblersAndThieves, sameSite));
-        modifiers.add(new PowerModifier(self, new InBattleWithCondition(self, Filters.Jabba), 2));
+        modifiers.add(new PowerModifier(self, new InBattleWithCondition(self, LegacyLadyValarian.jabba(self)), 2));
         return modifiers;
     }
 
@@ -63,7 +64,7 @@ public class Card6_101 extends AbstractAlien {
         // Check condition(s)
         if (TriggerConditions.isResolvingBattleDamageAndAttrition(game, effectResult, playerId)
                 && GameConditions.canForfeitToSatisfyAttritionAndBattleDamage(game, playerId, self)
-                && GameConditions.isInBattleWith(game, self, Filters.Jabba)) {
+                && GameConditions.isInBattleWith(game, self, LegacyLadyValarian.jabba(self))) {
             boolean cannotSatisfyAttrition = game.getModifiersQuerying().cannotSatisfyAttrition(game.getGameState(), self);
 
             final OptionalGameTextTriggerAction action = new OptionalGameTextTriggerAction(self, gameTextSourceCardId);

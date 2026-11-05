@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.set2.dark;
 
+import com.gempukku.swccgo.cards.LegacyOmmniBox;
 import com.gempukku.swccgo.cards.AbstractAlien;
 import com.gempukku.swccgo.cards.evaluators.PresentEvaluator;
 import com.gempukku.swccgo.common.ExpansionSet;
@@ -13,6 +14,7 @@ import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
+import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.logic.evaluators.Evaluator;
 import com.gempukku.swccgo.logic.modifiers.DeployCostToLocationModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
@@ -42,8 +44,10 @@ public class Card2_094 extends AbstractAlien {
         Evaluator forEachOtherMusicianPresent = new PresentEvaluator(self, Filters.and(Filters.other(self), Filters.musician));
 
         List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new DeployCostToLocationModifier(self, Filters.character, forEachOtherMusicianPresent, Filters.sameSite(self)));
-        modifiers.add(new MoveCostToLocationModifier(self, Filters.character, forEachOtherMusicianPresent, Filters.sameSite(self)));
+        Evaluator coverCharge = LegacyOmmniBox.coverCharge(self, forEachOtherMusicianPresent);
+        Filter payers = LegacyOmmniBox.coverChargePayers(self, Filters.character);
+        modifiers.add(new DeployCostToLocationModifier(self, payers, coverCharge, Filters.sameSite(self)));
+        modifiers.add(new MoveCostToLocationModifier(self, payers, coverCharge, Filters.sameSite(self)));
         return modifiers;
     }
 }

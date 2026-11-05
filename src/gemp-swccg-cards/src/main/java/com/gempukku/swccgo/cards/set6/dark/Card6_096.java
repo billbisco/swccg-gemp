@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.set6.dark;
 
+import com.gempukku.swccgo.cards.LegacyLadyValarian;
 import com.gempukku.swccgo.cards.AbstractAlien;
 import com.gempukku.swccgo.cards.conditions.AtCondition;
 import com.gempukku.swccgo.cards.conditions.OnTableCondition;
@@ -54,7 +55,7 @@ public class Card6_096 extends AbstractAlien {
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new ResetPowerModifier(self, new AtCondition(self, Filters.not(Filters.Tatooine_site)), 0));
-        modifiers.add(new PowerModifier(self, new AndCondition(new AtCondition(self, Filters.Jabbas_Palace_site), new OnTableCondition(self, Filters.Jabba)), 2));
+        modifiers.add(new PowerModifier(self, new AndCondition(new AtCondition(self, Filters.Jabbas_Palace_site), new OnTableCondition(self, LegacyLadyValarian.jabba(self))), 2));
         return modifiers;
     }
 

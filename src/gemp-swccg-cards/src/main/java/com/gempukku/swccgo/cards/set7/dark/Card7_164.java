@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.set7.dark;
 
+import com.gempukku.swccgo.cards.LegacyOmmniBox;
 import com.gempukku.swccgo.cards.AbstractAlien;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.effects.usage.OncePerPhaseEffect;
@@ -45,7 +46,7 @@ public class Card7_164 extends AbstractAlien {
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
         List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new AttritionModifier(self, Filters.sameSite(self), -1, self.getOwner()));
+        modifiers.add(new AttritionModifier(self, LegacyOmmniBox.sameSite(self), -1, self.getOwner()));
         return modifiers;
     }
 

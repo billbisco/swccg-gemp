@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.set1282.dark;
 
+import com.gempukku.swccgo.cards.LegacyLadyValarian;
 import com.gempukku.swccgo.cards.AbstractAlien;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.common.ExpansionSet;
@@ -49,7 +50,7 @@ public class Card1282_005 extends AbstractAlien {
         if ((TriggerConditions.isWeaponDestinyJustDrawnBy(game, effectResult, opponent)
                 || TriggerConditions.isBattleDestinyJustDrawnBy(game, effectResult, opponent))
                 && GameConditions.isAtLocation(game, self, Filters.Audience_Chamber)
-                && GameConditions.canSpot(game, self, Filters.and(Filters.Jabba, Filters.with(self)))
+                && GameConditions.canSpot(game, self, Filters.and(LegacyLadyValarian.jabba(self), Filters.with(self)))
                 && !GameConditions.isPresentWith(game, self, Filters.R2D2)
                 && GameConditions.canCancelDestinyAndCauseRedraw(game, playerId)) {
 

@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.set112.dark;
 
+import com.gempukku.swccgo.cards.LegacyLadyValarian;
 import com.gempukku.swccgo.cards.AbstractObjective;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.conditions.OnTableCondition;
@@ -144,7 +145,7 @@ public class Card112_015_BACK extends AbstractObjective {
         String playerId = self.getOwner();
 
         List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new EachBattleDestinyModifier(self, new AndCondition(new OnTableCondition(self, Filters.Jabba),
+        modifiers.add(new EachBattleDestinyModifier(self, new AndCondition(new OnTableCondition(self, LegacyLadyValarian.jabba(self)),
                 new OnTableCondition(self, Filters.Bib)), 2, playerId));
         modifiers.add(new DestinyModifier(self, Filters.Wounded_Wookiee, 3));
         modifiers.add(new ForfeitModifier(self, Filters.and(Filters.your(playerId), Filters.alien),
