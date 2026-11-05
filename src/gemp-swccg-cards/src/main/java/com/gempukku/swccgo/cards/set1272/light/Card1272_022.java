@@ -74,7 +74,7 @@ public class Card1272_022 extends AbstractNormalEffect {
             action.setActionMsg("Stack a non-lightsaber weapon on " + GameUtils.getCardLink(self) + " from Reserve Deck");
             // Perform result(s)
             action.appendEffect(
-                    new StackCardFromReserveDeckEffect(action, self, weaponToStack(), true));
+                    new StackCardFromReserveDeckEffect(action, playerId, self, weaponToStack(), true, false));
             return Collections.singletonList(action);
         }
 
