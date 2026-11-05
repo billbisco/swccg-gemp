@@ -79,6 +79,7 @@ public class Card_1272_014_Tests {
             add(Icon.REBEL);
             add(Icon.REPUBLIC);
             add(Icon.EPISODE_I);
+            add(Icon.JABBAS_PALACE);
             add(Icon.LEGACY_BLOCK_7);
         }});
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_7_2, card.getExpansionSet());

@@ -67,6 +67,7 @@ public class Card_1272_003_Tests {
             add(Icon.IMPERIAL);
             add(Icon.PILOT);
             add(Icon.WARRIOR);
+            add(Icon.ENDOR);
             add(Icon.LEGACY_BLOCK_7);
         }});
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_7_2, card.getExpansionSet());

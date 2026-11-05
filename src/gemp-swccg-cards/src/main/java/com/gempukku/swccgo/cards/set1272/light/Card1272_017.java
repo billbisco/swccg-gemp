@@ -39,7 +39,7 @@ public class Card1272_017 extends AbstractRebel {
         setVirtualSuffix(true);
         setLore("Alderaanian slicer and technician. Trained by Brooks Carlson to serve as a Scout for Alliance commandos. She gets nervous when General Solo tries to hotwire something.");
         setGameText("Adds 2 to power of anything she pilots (3 if any speeder bike). Once per turn, while piloting at a battleground site, may lose 1 Force to cancel a Force drain at opponent's interior site.");
-        addIcons(Icon.PILOT, Icon.WARRIOR);
+        addIcons(Icon.ENDOR, Icon.PILOT, Icon.WARRIOR);
         addKeywords(Keyword.SCOUT, Keyword.FEMALE);
         setSpecies(Species.ALDERAANIAN);
     }

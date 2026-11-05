@@ -39,7 +39,7 @@ public class Card1272_003 extends AbstractImperial {
         setVirtualSuffix(true);
         setLore("Cocky stormtrooper from an Outer Rim forest planet. Confident biker scout and hunter. Relies on superior balance and strength to operate his speeder bike.");
         setGameText("Adds 2 to power of anything he pilots (3 if any speeder bike). Once per turn, while piloting at a battleground site, may lose 1 Force to cancel a Force drain at opponent's interior site.");
-        addIcons(Icon.PILOT, Icon.WARRIOR);
+        addIcons(Icon.ENDOR, Icon.PILOT, Icon.WARRIOR);
         addKeywords(Keyword.BIKER_SCOUT);
     }
 

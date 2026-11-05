@@ -33,6 +33,8 @@ public class Card_1272_015_Tests {
                     put("jungle", "1_134");
                 }},
                 new HashMap<>() {{
+                    put("galen", "601_81");
+                    put("trooper", "1_194");
                 }},
                 10,
                 10,
@@ -148,6 +150,66 @@ public class Card_1272_015_Tests {
         }
         assertTrue(scn.AwaitingLSDeployPhaseActions());
         assertFalse(scn.LSCardActionAvailable(kota, "Peek at top card of Reserve Deck"));
+    }
+
+    @Test
+    public void RahmKotaBlindJediMayPeekAtOpponentsReserveDeckWhileGalenOnTable() {
+        var scn = GetScenario();
+        var kota = scn.GetLSCard("kota");
+        var luke = scn.GetLSCard("luke");
+        var galen = scn.GetDSCard("galen");
+        var trooper = scn.GetDSCard("trooper");
+
+        //test1: with Galen on table, Kota may choose either Reserve Deck
+        //test2: the peeked card goes on top of its owner's Used Pile
+        scn.StartGame();
+        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), kota);
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), galen);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        scn.MoveCardsToTopOfLSReserveDeck(luke);
+        scn.MoveCardsToTopOfDSReserveDeck(trooper);
+
+        assertTrue(scn.LSCardActionAvailable(kota, "Peek at top card of Reserve Deck"));
+        scn.LSUseCardAction(kota, "Peek at top card of Reserve Deck");
+        assertTrue(scn.LSDecisionAvailable("Choose card pile")); //test1
+        assertTrue(scn.LSHasCardChoiceAvailable(luke)); //test1
+        assertTrue(scn.LSHasCardChoiceAvailable(trooper)); //test1
+        scn.LSChooseCard(trooper);
+        scn.PassAllResponses();
+        assertTrue(scn.LSDecisionAvailable("Top card of Dark Side Player's Reserve Deck"));
+        scn.LSDismissRevealedCards();
+        scn.PassAllResponses();
+        assertTrue(scn.LSDecisionAvailable("Used Pile"));
+        scn.LSChooseYes();
+        scn.PassAllResponses();
+        assertTrue(inUsedPile(trooper)); //test2
+        assertEquals(scn.DS, trooper.getZoneOwner()); //test2
+        assertEquals(luke, scn.GetTopOfLSReserveDeck());
+    }
+
+    @Test
+    public void RahmKotaBlindJediPeeksOnlyAtYourReserveDeckWithoutGalen() {
+        var scn = GetScenario();
+        var kota = scn.GetLSCard("kota");
+        var luke = scn.GetLSCard("luke");
+        var trooper = scn.GetDSCard("trooper");
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), kota);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        scn.MoveCardsToTopOfLSReserveDeck(luke);
+        scn.MoveCardsToTopOfDSReserveDeck(trooper);
+
+        scn.LSUseCardAction(kota, "Peek at top card of Reserve Deck");
+        scn.PassAllResponses();
+        assertFalse(scn.LSDecisionAvailable("Choose card pile"));
+        assertTrue(scn.LSDecisionAvailable("Top card of Reserve Deck"));
+        scn.LSDismissRevealedCards();
+        scn.PassAllResponses();
+        scn.LSChooseYes();
+        scn.PassAllResponses();
+        assertTrue(inUsedPile(luke));
+        assertEquals(trooper, scn.GetTopOfDSReserveDeck());
     }
 
     @Test

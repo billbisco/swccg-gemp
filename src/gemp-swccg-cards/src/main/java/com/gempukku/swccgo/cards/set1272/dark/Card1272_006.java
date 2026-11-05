@@ -6,6 +6,7 @@ import com.gempukku.swccgo.cards.effects.usage.OncePerGameEffect;
 import com.gempukku.swccgo.cards.evaluators.StackedEvaluator;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.GameTextActionId;
+import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.PlayCardZoneOption;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
@@ -43,6 +44,7 @@ public class Card1272_006 extends AbstractNormalEffect {
         super(Side.DARK, 5, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Trophy Of A Bounty Hunter", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_2, Rarity.V);
         setLore("The Abyssins are known for their regenerative abilities. Jabba keeps several statue heads of Abyssin creatures on his repulsor sled.");
         setGameText("Deploy on table. Whenever opponent's card hit by your bounty hunter leaves table, stack it here face down. Your bounty hunters are power and defense value +X, where X = number of cards stacked here. Once per game, may deploy Desilijic Tattoo or Jabba's Influence from Reserve Deck; reshuffle. (Immune to Alter.)");
+        addIcons(Icon.JABBAS_PALACE);
         addImmuneToCardTitle(Title.Alter);
     }
 

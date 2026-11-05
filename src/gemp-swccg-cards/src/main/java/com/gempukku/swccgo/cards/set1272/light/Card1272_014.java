@@ -48,7 +48,7 @@ public class Card1272_014 extends AbstractRebelRepublic {
         setLore("Senator. Leader.");
         setGameText("Agenda: rebellion. Your [Coruscant] Political Effects and [Coruscant] senators are lost. Whenever you initiate a battle with a Rebel, may retrieve 1 Force. While in a senate majority, during your control phase, may take one card into hand from Force Pile; reshuffle.");
         addPersona(Persona.BAIL);
-        addIcons(Icon.EPISODE_I);
+        addIcons(Icon.JABBAS_PALACE, Icon.EPISODE_I);
         addKeywords(Keyword.SENATOR, Keyword.LEADER);
         setSpecies(Species.ALDERAANIAN);
     }

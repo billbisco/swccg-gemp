@@ -41,7 +41,7 @@ public class Card1272_012 extends AbstractSite {
         setGameText("Dark: During your control phase, if you occupy with at least two Trandoshans, opponent loses 1 Force. Light: Unless you control, Jedi deploy +1 to Kashyyyk and may 'swing' lightsabers only once per battle there.");
         addIcon(Icon.DARK_FORCE, 2);
         addIcon(Icon.LIGHT_FORCE, 1);
-        addIcons(Icon.EXTERIOR_SITE, Icon.PLANET, Icon.EPISODE_I);
+        addIcons(Icon.ENDOR, Icon.EXTERIOR_SITE, Icon.PLANET, Icon.EPISODE_I);
     }
 
     @Override

@@ -47,7 +47,7 @@ public class Card1272_016 extends AbstractRebel {
         setLore("Promoted to commander for his heroism in the Battle of Yavin. Leader in charge of training new pilots assigned to Echo Base. Piloted Rogue 3 in the battle of Hoth.");
         setGameText("Adds 3 to power of anything he pilots. Anything Wedge pilots is maneuver +1. Once per turn, may take One More Pass into hand from Reserve Deck; reshuffle. While piloting at a battleground site, draws one battle destiny if not able to otherwise, and [Virtual Block 4] Their Fire Has Gone Out Of The Universe flips and may not flip back.");
         addPersona(Persona.WEDGE);
-        addIcons(Icon.PILOT, Icon.WARRIOR);
+        addIcons(Icon.SPECIAL_EDITION, Icon.PILOT, Icon.WARRIOR);
         addKeywords(Keyword.COMMANDER, Keyword.LEADER, Keyword.ROGUE_SQUADRON);
         setSpecies(Species.CORELLIAN);
         setMatchingVehicleFilter(Filters.Rogue_3);

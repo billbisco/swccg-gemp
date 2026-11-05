@@ -39,7 +39,7 @@ public class Card1272_010 extends AbstractCapitalStarship {
         setGameText("May add 4 pilots, 4 passengers, 2 vehicles and 4 droid starfighters. Permanent pilot provides ability of 2. Once per game, may deploy a Neimoidian pilot aboard from Reserve Deck; reshuffle. Immune to Medium Transport.");
         addImmuneToCardTitle("Medium Transport");
         addPersona(Persona.BLOCKADE_FLAGSHIP);
-        addIcons(Icon.EPISODE_I, Icon.TRADE_FEDERATION, Icon.PILOT, Icon.NAV_COMPUTER);
+        addIcons(Icon.THEED_PALACE, Icon.EPISODE_I, Icon.TRADE_FEDERATION, Icon.PILOT, Icon.NAV_COMPUTER);
         addKeywords(Keyword.DROID_CONTROL_SHIP);
         addModelType(ModelType.TRADE_FEDERATION_BATTLESHIP);
         setPilotCapacity(4);

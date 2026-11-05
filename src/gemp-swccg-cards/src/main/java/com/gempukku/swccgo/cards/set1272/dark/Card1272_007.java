@@ -39,7 +39,7 @@ public class Card1272_007 extends AbstractNormalEffect {
         super(Side.DARK, 4, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Where Are You Taking Them?", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_2, Rarity.V);
         setLore("'Coruscant?'");
         setGameText("Deploy on table. At non-[Episode I] sites, immunity to attrition of [Coruscant] Jedi is limited to < 5. Your gametext on [Coruscant] systems is canceled. During your control phase, may say 'Coruscant?' and lose 1 Force to place a just-resolved Interrupt in owner's Lost Pile. (Immune to Alter.)");
-        addIcons(Icon.EPISODE_I);
+        addIcons(Icon.THEED_PALACE, Icon.EPISODE_I);
         addImmuneToCardTitle(Title.Alter);
     }
 

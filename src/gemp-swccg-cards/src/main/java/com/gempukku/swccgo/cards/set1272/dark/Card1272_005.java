@@ -4,6 +4,7 @@ import com.gempukku.swccgo.cards.AbstractNormalEffect;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.GameTextActionId;
+import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.PlayCardZoneOption;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
@@ -39,6 +40,7 @@ public class Card1272_005 extends AbstractNormalEffect {
         super(Side.DARK, 4, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Imperial Stockpile", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_2, Rarity.V);
         setLore("The Empire's efficient, fear-driven logistical systems can quickly divert weapons and equipment from one conflict to another, focusing on regions of highest strategic priority.");
         setGameText("Deploy on table; take into hand from Reserve Deck and stack a non-lightsaber weapon (without 'lost' in game text) here; reshuffle. If a battle was just initiated, may deploy weapon here on a participating card. Return weapon here at end of weapons segment (if possible), if it leaves table, or at end of battle. (Immune to Alter.)");
+        addIcons(Icon.HOTH);
         addImmuneToCardTitle(Title.Alter);
     }
 

@@ -83,6 +83,7 @@ public class Card_1272_010_Tests {
             add(Icon.PILOT);
             add(Icon.NAV_COMPUTER);
             add(Icon.EPISODE_I);
+            add(Icon.THEED_PALACE);
             add(Icon.LEGACY_BLOCK_7);
         }});
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_7_2, card.getExpansionSet());
