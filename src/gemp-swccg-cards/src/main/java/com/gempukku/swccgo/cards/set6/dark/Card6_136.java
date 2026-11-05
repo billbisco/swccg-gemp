@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.set6.dark;
 
+import com.gempukku.swccgo.cards.LegacyLadyValarian;
 import com.gempukku.swccgo.cards.AbstractAlien;
 import com.gempukku.swccgo.cards.conditions.DefendingBattleAtCondition;
 import com.gempukku.swccgo.cards.conditions.PilotingCondition;
@@ -51,7 +52,7 @@ public class Card6_136 extends AbstractAlien {
         modifiers.add(new PowerModifier(self, new DefendingBattleAtCondition(self, Filters.Jabbas_Palace_site), 2));
         modifiers.add(new AddsPowerToPilotedBySelfModifier(self, new ConditionEvaluator(2, 3,
                 new OrCondition(new PilotingCondition(self, Filters.and(Icon.INDEPENDENT, Filters.starship)),
-                                new PilotingCondition(self, Filters.hasAboard(self, Filters.Jabba))))));
+                                new PilotingCondition(self, Filters.hasAboard(self, LegacyLadyValarian.jabba(self)))))));
         return modifiers;
     }
 }

@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.set7.dark;
 
+import com.gempukku.swccgo.cards.LegacyOmmniBox;
 import com.gempukku.swccgo.cards.AbstractAlien;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.conditions.AtCondition;
@@ -55,7 +56,7 @@ public class Card7_176 extends AbstractAlien {
 
         if (GameConditions.isOnceDuringPlayersPhase(game, self, playerId, gameTextSourceCardId, gameTextActionId, playerId, Phase.CONTROL)
                 && GameConditions.hasForcePile(game, playerId)) {
-            int numOtherMusiciansAtSameSite = Filters.countActive(game, self, Filters.and(Filters.not(self), Filters.atSameSite(self), Filters.musician));
+            int numOtherMusiciansAtSameSite = LegacyOmmniBox.countAtSameSite(game, self, Filters.and(Filters.not(self), Filters.musician));
             if (numOtherMusiciansAtSameSite > 0) {
                 TopLevelGameTextAction action = new TopLevelGameTextAction(self, playerId, gameTextSourceCardId, gameTextActionId);
                 action.setText("Peak at top " + numOtherMusiciansAtSameSite + " cards.");

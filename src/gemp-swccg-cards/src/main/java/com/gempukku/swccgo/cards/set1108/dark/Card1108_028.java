@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.set1108.dark;
 
+import com.gempukku.swccgo.cards.LegacyLadyValarian;
 import com.gempukku.swccgo.cards.AbstractAlien;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.conditions.WithCondition;
@@ -60,7 +61,7 @@ public class Card1108_028 extends AbstractAlien {
         modifiers.add(new AddsPowerToPilotedBySelfModifier(self, 3));
         modifiers.add(new PowerModifier(self, Filters.and(Filters.Slave_I, Filters.hasPiloting(self)), 4));
         modifiers.add(new DefinedByGameTextLandspeedModifier(self, 3));
-        modifiers.add(new ImmuneToAttritionLessThanModifier(self, new ConditionEvaluator(3, 5, new WithCondition(self, Filters.or(Filters.Han, Filters.Jabba)))));
+        modifiers.add(new ImmuneToAttritionLessThanModifier(self, new ConditionEvaluator(3, 5, new WithCondition(self, Filters.or(Filters.Han, LegacyLadyValarian.jabba(self))))));
         return modifiers;
     }
 

@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.set1108.dark;
 
+import com.gempukku.swccgo.cards.LegacyLadyValarian;
 import com.gempukku.swccgo.cards.AbstractCapitalStarship;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.conditions.HereCondition;
@@ -55,7 +56,7 @@ public class Card1108_039 extends AbstractCapitalStarship {
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
         List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new ImmuneToAttritionModifier(self, new HereCondition(self, Filters.Jabba)));
+        modifiers.add(new ImmuneToAttritionModifier(self, new HereCondition(self, LegacyLadyValarian.jabba(self))));
         modifiers.add(new MayDeployOtherCardsAsReactToLocationModifier(self, "Deploy Independent starship as a react", self.getOwner(),
                 Filters.and(Filters.your(self), Icon.INDEPENDENT, Filters.starship), Filters.here(self)));
         return modifiers;

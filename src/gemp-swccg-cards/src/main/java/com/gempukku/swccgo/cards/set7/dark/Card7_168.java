@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.set7.dark;
 
+import com.gempukku.swccgo.cards.LegacyLadyValarian;
 import com.gempukku.swccgo.cards.AbstractAlien;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.effects.usage.OncePerBattleEffect;
@@ -38,7 +39,7 @@ public class Card7_168 extends AbstractAlien {
 
     @Override
     protected Filter getGameTextValidDeployTargetFilter(final SwccgGame game, final PhysicalCard self, PlayCardOptionId playCardOptionId, boolean asReact) {
-        return Filters.or(Filters.Deploys_on_Tatooine, Filters.locationAndCardsAtLocation(Filters.sameLocationAs(self, Filters.Jabba)));
+        return Filters.or(Filters.Deploys_on_Tatooine, Filters.locationAndCardsAtLocation(Filters.sameLocationAs(self, LegacyLadyValarian.jabba(self))));
     }
 
     @Override

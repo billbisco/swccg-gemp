@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.set7.dark;
 
+import com.gempukku.swccgo.cards.LegacyOmmniBox;
 import com.gempukku.swccgo.cards.AbstractAlien;
 import com.gempukku.swccgo.cards.conditions.InBattleWithCondition;
 import com.gempukku.swccgo.cards.evaluators.AddEvaluator;
@@ -45,8 +46,8 @@ public class Card7_188 extends AbstractAlien {
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(final SwccgGame game, final PhysicalCard self) {
         List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new DeployCostToLocationModifier(self, Filters.and(Filters.bounty_hunter, Filters.not(Filters.Boba_Fett)), -1, Filters.sameSite(self)));
-        modifiers.add(new DeploysFreeToLocationModifier(self, Filters.Boba_Fett, Filters.sameSite(self)));
+        modifiers.add(new DeployCostToLocationModifier(self, Filters.and(Filters.bounty_hunter, Filters.not(Filters.Boba_Fett)), -1, LegacyOmmniBox.sameSite(self)));
+        modifiers.add(new DeploysFreeToLocationModifier(self, Filters.Boba_Fett, LegacyOmmniBox.sameSite(self)));
         modifiers.add(new TotalPowerModifier(self, Filters.sameLocation(self), new InBattleCondition(self),
                 new NegativeEvaluator(
                         new AddEvaluator(new PresentEvaluator(self, Filters.and(Filters.your(self), Filters.musician)),

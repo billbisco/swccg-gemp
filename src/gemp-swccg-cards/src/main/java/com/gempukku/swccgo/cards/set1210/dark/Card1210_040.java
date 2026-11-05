@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.set1210.dark;
 
+import com.gempukku.swccgo.cards.LegacyLadyValarian;
 import com.gempukku.swccgo.cards.AbstractNormalEffect;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.conditions.OnTableCondition;
@@ -58,7 +59,7 @@ public class Card1210_040 extends AbstractNormalEffect {
         GameTextActionId gameTextActionId = GameTextActionId.LEGACY__JABBAS_INFLUENCE_V__DEPLOY_ALIEN;
 
         if (GameConditions.isOncePerGame(game, self, gameTextActionId)
-                && GameConditions.canSpot(game, self, Filters.and(Filters.Jabba, Filters.at(Filters.Audience_Chamber)))
+                && GameConditions.canSpot(game, self, Filters.and(LegacyLadyValarian.jabba(self), Filters.at(Filters.Audience_Chamber)))
                 && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, gameTextActionId)) {
 
             final TopLevelGameTextAction action = new TopLevelGameTextAction(self, playerId, gameTextSourceCardId, gameTextActionId);

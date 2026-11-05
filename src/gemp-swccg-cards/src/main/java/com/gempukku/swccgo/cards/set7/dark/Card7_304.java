@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.set7.dark;
 
+import com.gempukku.swccgo.cards.LegacyLadyValarian;
 import com.gempukku.swccgo.cards.AbstractCapitalStarship;
 import com.gempukku.swccgo.cards.conditions.HasAboardCondition;
 import com.gempukku.swccgo.common.ExpansionSet;
@@ -59,7 +60,7 @@ public class Card7_304 extends AbstractCapitalStarship {
 
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
-        Condition jabbaAboard = new HasAboardCondition(self, Filters.Jabba);
+        Condition jabbaAboard = new HasAboardCondition(self, LegacyLadyValarian.jabba(self));
 
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new MayDeployOtherCardsAsReactToTargetModifier(self, "Deploy Turbolaser Battery as a 'react'", self.getOwner(), Filters.turbolaser_battery, self, true));

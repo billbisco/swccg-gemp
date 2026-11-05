@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.set7.dark;
 
+import com.gempukku.swccgo.cards.LegacyOmmniBox;
 import com.gempukku.swccgo.cards.AbstractAlien;
 import com.gempukku.swccgo.cards.conditions.AtCondition;
 import com.gempukku.swccgo.common.ExpansionSet;
@@ -39,7 +40,7 @@ public class Card7_209 extends AbstractAlien {
 
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
-        Filter otherMusiciansFilter = Filters.and(Filters.your(self), Filters.other(self), Filters.musician, Filters.atSameSite(self));
+        Filter otherMusiciansFilter = Filters.and(Filters.your(self), Filters.other(self), Filters.musician, LegacyOmmniBox.atSameSite(self));
 
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new PowerModifier(self, new AtCondition(self, Filters.Jabbas_Palace_site), 2));

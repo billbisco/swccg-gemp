@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.set13.dark;
 
+import com.gempukku.swccgo.cards.LegacyLadyValarian;
 import com.gempukku.swccgo.cards.AbstractAlien;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.conditions.WithCondition;
@@ -51,7 +52,7 @@ public class Card13_055 extends AbstractAlien {
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
         List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new PowerModifier(self, new WithCondition(self, Filters.Jabba), 3));
+        modifiers.add(new PowerModifier(self, new WithCondition(self, LegacyLadyValarian.jabba(self)), 3));
         return modifiers;
     }
 
@@ -59,7 +60,7 @@ public class Card13_055 extends AbstractAlien {
     protected List<TopLevelGameTextAction> getGameTextTopLevelActions(final String playerId, final SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
         // Check condition(s)
         if (GameConditions.isOnceDuringYourPhase(game, self, playerId, gameTextSourceCardId, Phase.DRAW)
-                && GameConditions.isWith(game, self, Filters.Jabba)
+                && GameConditions.isWith(game, self, LegacyLadyValarian.jabba(self))
                 && GameConditions.canUseForce(game, playerId, 1)
                 && GameConditions.hasForcePile(game, playerId)) {
 

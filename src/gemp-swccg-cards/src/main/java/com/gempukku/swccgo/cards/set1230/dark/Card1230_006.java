@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.set1230.dark;
 
+import com.gempukku.swccgo.cards.LegacyLadyValarian;
 import com.gempukku.swccgo.cards.AbstractAlien;
 import com.gempukku.swccgo.cards.conditions.InBattleWithCondition;
 import com.gempukku.swccgo.common.ExpansionSet;
@@ -41,7 +42,7 @@ public class Card1230_006 extends AbstractAlien {
 
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
-        Condition inBattleWithJabba = new InBattleWithCondition(self, Filters.Jabba);
+        Condition inBattleWithJabba = new InBattleWithCondition(self, LegacyLadyValarian.jabba(self));
         Filter opponentCharactersHere = Filters.and(Filters.opponents(self), Filters.character, Filters.atSameSite(self));
 
         List<Modifier> modifiers = new LinkedList<Modifier>();

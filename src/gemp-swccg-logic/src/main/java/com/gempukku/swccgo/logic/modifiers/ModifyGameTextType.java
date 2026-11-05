@@ -145,6 +145,9 @@ public enum ModifyGameTextType {
     LEGACY__WHAT_ABOUT_THAT_BLUE_ONE__FIRE_EXTINGUISHER_ONLY_YOUR_BATTLES("May only cancel battles its owner initiates"),
     LEGACY__JOIN_US_OR_DIE__DOES_NOT_DEPLETE_LIFE_FORCE("Does not deplete Life Force"),
     LEGACY__JOIN_US_OR_DIE__BATTLE_IS_BATTLE_OR_DUEL("'Battle' treated as 'battle or duel'"),
+    LEGACY__LADY_VALARIAN__JABBA_MAY_BE_TREATED_AS_LADY_VALARIAN("'Jabba' may be treated as 'Lady Valarian'"),
+    LEGACY__OMMNI_BOX__AT_SAME_SITE_MAY_BE_TREATED_AS_AT_BATTLEGROUND_SITES("'At same site' may be treated as 'at battleground sites'"),
+    LEGACY__OMMNI_BOX__COVER_CHARGES_ONLY_OPPONENT_AND_LIMITED_TO_3("'Cover charges' only apply to opponent and are limited to 3"),
     SON_OF_SKYWALKER_V__LOSE_1_FORCE_TO_SUBSTITUTE_DESTINY("Must first lose 1 Force to substitute a destiny draw using Jedi Test #5"),
 
     ;

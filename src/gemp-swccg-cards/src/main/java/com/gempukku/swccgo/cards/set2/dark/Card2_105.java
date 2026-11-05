@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.set2.dark;
 
+import com.gempukku.swccgo.cards.LegacyOmmniBox;
 import com.gempukku.swccgo.cards.AbstractAlien;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.effects.PeekAtTopCardsOfCardPileEffect;
@@ -45,7 +46,7 @@ public class Card2_105 extends AbstractAlien {
 
     @Override
     protected List<OptionalGameTextTriggerAction> getGameTextOptionalAfterTriggers(final String playerId, final SwccgGame game, final EffectResult effectResult, final PhysicalCard self, int gameTextSourceCardId) {
-        Filter musicianFilter = Filters.and(Filters.musician, Filters.atSameSite(self));
+        Filter musicianFilter = Filters.and(Filters.musician, LegacyOmmniBox.atSameSite(self));
 
         // Check condition(s)
         if (TriggerConditions.cardPileJustShuffledBy(game, effectResult, Filters.and(Filters.your(self), Filters.Ommni_Box))
@@ -53,7 +54,7 @@ public class Card2_105 extends AbstractAlien {
             ShufflingResult result = (ShufflingResult) effectResult;
             final String zoneOwner = result.getZoneOwner();
             final Zone cardPile = result.getCardPile();
-            int numMusicians = Filters.countActive(game, self, musicianFilter);
+            int numMusicians = LegacyOmmniBox.countAtSameSite(game, self, Filters.musician);
             int pileSize = game.getGameState().getCardPileSize(zoneOwner, cardPile);
             final int count = Math.min(numMusicians, pileSize);
             if (count > 0) {
