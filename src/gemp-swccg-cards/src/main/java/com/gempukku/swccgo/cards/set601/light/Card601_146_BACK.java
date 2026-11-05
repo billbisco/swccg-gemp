@@ -25,6 +25,7 @@ import com.gempukku.swccgo.logic.effects.choose.DrawCardIntoHandFromBottomOfRese
 import com.gempukku.swccgo.logic.modifiers.EachWeaponDestinyModifier;
 import com.gempukku.swccgo.logic.modifiers.ForceGenerationModifier;
 import com.gempukku.swccgo.logic.modifiers.ImmuneToTitleModifier;
+import com.gempukku.swccgo.logic.modifiers.LegacyPlaceCardFromHandToDeployToLocationModifier;
 import com.gempukku.swccgo.logic.modifiers.MayNotDeployToLocationModifier;
 import com.gempukku.swccgo.logic.modifiers.MayNotMoveToLocationModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
@@ -59,7 +60,7 @@ public class Card601_146_BACK extends AbstractObjective {
 
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new ImmuneToTitleModifier(self, Filters.Corellia_site, Title.No_Escape));
-        //TODO add extra cost to deploying a non-Corellian card with ability to Corellia
+        modifiers.add(new LegacyPlaceCardFromHandToDeployToLocationModifier(self, Filters.and(Filters.hasAbilityOrHasPermanentPilotWithAbility, Filters.not(Filters.Corellian)), Filters.Corellia_location));
         modifiers.add(new EachWeaponDestinyModifier(self, Filters.and(Filters.not(Filters.blaster), Filters.character_weapon, Filters.at(Filters.Corellia_site)), -2));
         modifiers.add(new ForceGenerationModifier(self, Filters.and(Filters.Corellia_site, Filters.spaceport_site), 1, playerId));
         modifiers.add(new MayNotDeployToLocationModifier(self, Filters.and(Filters.your(self), Filters.combat_vehicle), Filters.except(Filters.and(Filters.Corellia_site, Filters.at(Filters.and(Filters.opponents(playerId), Filters.vehicle))))));

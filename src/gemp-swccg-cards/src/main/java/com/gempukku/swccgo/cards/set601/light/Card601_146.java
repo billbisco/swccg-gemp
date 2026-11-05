@@ -25,6 +25,7 @@ import com.gempukku.swccgo.logic.effects.choose.DeployCardFromReserveDeckEffect;
 import com.gempukku.swccgo.logic.effects.choose.DeployCardToLocationFromReserveDeckEffect;
 import com.gempukku.swccgo.logic.effects.choose.DeployCardToSystemFromReserveDeckEffect;
 import com.gempukku.swccgo.logic.modifiers.ImmuneToTitleModifier;
+import com.gempukku.swccgo.logic.modifiers.LegacyPlaceCardFromHandToDeployToLocationModifier;
 import com.gempukku.swccgo.logic.modifiers.MayNotForceDrainAtLocationModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.timing.EffectResult;
@@ -94,7 +95,7 @@ public class Card601_146 extends AbstractObjective {
 
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new ImmuneToTitleModifier(self, Filters.Corellia_site, Title.No_Escape));
-        //TODO add extra cost to deploying a non-Corellian card with ability to Corellia
+        modifiers.add(new LegacyPlaceCardFromHandToDeployToLocationModifier(self, Filters.and(Filters.hasAbilityOrHasPermanentPilotWithAbility, Filters.not(Filters.Corellian)), Filters.Corellia_location));
         modifiers.add(new MayNotForceDrainAtLocationModifier(self, Filters.Corellia_system, playerId));
         return modifiers;
     }
