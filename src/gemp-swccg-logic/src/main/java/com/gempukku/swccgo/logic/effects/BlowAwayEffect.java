@@ -8,6 +8,7 @@ import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.game.state.BlowAwayState;
 import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.logic.actions.SubAction;
+import com.gempukku.swccgo.logic.modifiers.MayNotBeBlownAwayModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 import com.gempukku.swccgo.logic.timing.*;
@@ -103,6 +104,8 @@ public class BlowAwayEffect extends AbstractSubActionEffect {
         final ModifiersQuerying modifiersQuerying = game.getModifiersQuerying();
 
         final SubAction subAction = new SubAction(_action);
+        _cardsToBlowAway = Collections.unmodifiableCollection(MayNotBeBlownAwayModifier.mayBeBlownAway(game, _cardsToBlowAway));
+        if (_cardsToBlowAway.isEmpty()) return subAction;
 
         // 1) Begin blow away
         subAction.appendEffect(
