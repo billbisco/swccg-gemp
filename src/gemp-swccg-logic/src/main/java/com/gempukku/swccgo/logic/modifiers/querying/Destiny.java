@@ -535,6 +535,7 @@ public interface Destiny extends BaseQuery {
             }
         }
 
+        result = LegacyWeaponDestinyMayNotBeFurtherReducedModifier.applyLimit(gameState, query(), physicalCard, result);
         return result;
     }
 
