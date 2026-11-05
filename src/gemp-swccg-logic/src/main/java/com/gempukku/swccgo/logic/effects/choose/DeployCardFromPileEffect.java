@@ -14,6 +14,7 @@ import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 import com.gempukku.swccgo.logic.timing.AbstractSubActionEffect;
 import com.gempukku.swccgo.logic.timing.Action;
 import com.gempukku.swccgo.logic.timing.PassthruEffect;
+import com.gempukku.swccgo.logic.timing.results.LegacySearchNotFoundResult;
 
 /**
  * An effect that causes the player performing the action to deploy a card from the specified card pile.
@@ -184,6 +185,7 @@ public class DeployCardFromPileEffect extends AbstractSubActionEffect {
         final GameState gameState = game.getGameState();
         final ModifiersQuerying modifiersQuerying = game.getModifiersQuerying();
 
+        final LegacySearchNotFoundResult.Retry legacySearchRetry = LegacySearchNotFound.deployRetry(_playerId, _cardFilter, _targetFilter, _ignoreTargetFilterCardFilter, _targetSystem, _specialLocationConditions, _forFree, _forFreeCardFilter, _changeInCost, _changeInCostCardFilter, _deploymentRestrictionsOption, _deployAsCaptiveOption, _asReact);
         final ReactActionOption reactActionOption = _asReact ? new ReactActionOption(_action.getActionSource(), _forFree,
                 _changeInCost, false, _action.getText(), Filters.any, Filters.any, null, false) : null;
 
@@ -328,6 +330,7 @@ public class DeployCardFromPileEffect extends AbstractSubActionEffect {
                                 subAction.appendEffect(
                                         new ShufflePileEffect(subAction, subAction.getActionSource(), subAction.getPerformingPlayer(), _cardPileOwner, _cardPile, true));
                             }
+                            if (!_cardSelected) LegacySearchNotFound.deployedNothing(subAction, _playerId, _cardPile, _cardPileOwner, legacySearchRetry);
                         }
                     }
             );

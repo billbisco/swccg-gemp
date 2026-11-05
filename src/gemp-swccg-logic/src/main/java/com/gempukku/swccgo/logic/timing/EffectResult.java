@@ -202,6 +202,7 @@ public abstract class EffectResult implements Snapshotable<EffectResult> {
 
         // Verify card pile
         VERIFY_CARD_PILE,
+        LEGACY__SEARCH_NOT_FOUND,
 
         // Sabacc
         SABACC_TOTAL_CALCULATED,

@@ -365,6 +365,7 @@ public enum ModifierType {
 
     // Addition actions
     MAY_PLAY_TO_INITIATE_EPIC_DUEL,
+    LEGACY__MAY_PLAY_INTERRUPT_AS,
     MAY_PLAY_TO_CANCEL_FORCE_DRAIN,
     MAY_PLAY_TO_CANCEL_CARD,
 
