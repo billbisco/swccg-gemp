@@ -29,6 +29,7 @@ public final class GameOptions {
     public static final String STARTING_CARDS = "startingCards";
     public static final String STARTING_INTERRUPTS = "startingInterrupts";
     public static final String STARTING_EFFECTS = "startingEffects";
+    public static final String DECIPHER_LOCATION_RULES = "decipherLocationRules";
     /** Most starting locations and Objectives a player may choose (#142 R2a). */
     public static final int STARTING_CARDS_MAX = 10;
 
@@ -90,6 +91,12 @@ public final class GameOptions {
                 .defaultValue(f -> "1")
                 .range(f -> 1, f -> 5)
                 .shortLabel(v -> v + " starting effects")
+                .build());
+        // #143
+        register(GameOption.builder(DECIPHER_LOCATION_RULES, Kind.PLAY_RULES, Type.BOOLEAN, "Starting: Decipher location rules")
+                .help("Both players choosing the same unique starting location set it aside and choose again, with no conversion offered, as in Decipher's rules.")
+                .defaultValue(f -> "false")
+                .shortLabel(v -> "true".equals(v) ? "Decipher location rules" : "PC location rules")
                 .build());
         GameOption.Builder timer = GameOption.builder(TIMER, Kind.TABLE, Type.CHOICE, "Game timer")
                 .help("Each player's time bank and the time per decision.")

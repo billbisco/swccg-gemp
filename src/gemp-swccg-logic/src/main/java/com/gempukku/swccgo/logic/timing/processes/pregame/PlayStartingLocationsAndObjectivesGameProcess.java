@@ -336,6 +336,13 @@ public class PlayStartingLocationsAndObjectivesGameProcess implements GameProces
             else
                 _done = true;
         }
+        // #143 "Starting: Decipher location rules": both set the location aside and choose again; no conversion
+        else if (game.getGameState().isDecipherLocationRules()) {
+            _previousLocations.add(_darkSideLocation.getTitle());
+            game.getGameState().sendMessage("Both players chose " + GameUtils.getCardLink(_darkSideLocation) + " as their starting location; both set it aside and choose again");
+            _darkSideLocation = null;
+            _lightSideLocation = null;
+        }
         // Ask dark side player to willing to allow conversion
         else {
             _previousLocations.add(_darkSideLocation.getTitle());

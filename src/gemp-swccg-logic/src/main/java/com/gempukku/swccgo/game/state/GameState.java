@@ -191,6 +191,15 @@ public class GameState implements Snapshotable<GameState> {
 
     public void setStartingEffectsCount(int count) { _startingEffectsCount = Math.max(1, count); }
 
+    // swccg-guild/work#143 (game option "Starting: Decipher location rules"): when both players choose the same unique
+    // starting location, both set it aside and choose again, with no conversion offered (Decipher Glossary
+    // Supplement 2002, p.19). Set at game setup only.
+    private boolean _decipherLocationRules;
+
+    public boolean isDecipherLocationRules() { return _decipherLocationRules; }
+
+    public void setDecipherLocationRules(boolean decipherLocationRules) { _decipherLocationRules = decipherLocationRules; }
+
     public GameState() {
     }
 
@@ -203,6 +212,7 @@ public class GameState implements Snapshotable<GameState> {
         snapshot._startingCardsCount = _startingCardsCount;
         snapshot._startingInterruptsCount = _startingInterruptsCount;
         snapshot._startingEffectsCount = _startingEffectsCount;
+        snapshot._decipherLocationRules = _decipherLocationRules;
 
         // Set each field
         snapshot._game = _game;
