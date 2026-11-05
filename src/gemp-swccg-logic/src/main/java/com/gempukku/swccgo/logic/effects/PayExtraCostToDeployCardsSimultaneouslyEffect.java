@@ -4,9 +4,14 @@ import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.logic.actions.SubAction;
+import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 import com.gempukku.swccgo.logic.timing.AbstractSubActionEffect;
 import com.gempukku.swccgo.logic.timing.Action;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * An effect for paying extra costs for deploying a card.
@@ -48,6 +53,8 @@ public class PayExtraCostToDeployCardsSimultaneouslyEffect extends AbstractSubAc
 
         int extraCost = modifiersQuerying.getExtraForceRequiredToDeployToTarget(gameState, _cardToDeploy, _target, null, _action.getActionSource(), _forFree)
                 + modifiersQuerying.getExtraForceRequiredToDeployToTarget(gameState, _attachedCardToDeploy, _cardToDeploy, _target, _action.getActionSource(), _forFree);
+        if (!LegacyPlaceCardFromHandToDeployCost.canPay(game, _cardToDeploy.getOwner(), getLegacyHandCosts(game), Arrays.asList(_cardToDeploy, _attachedCardToDeploy)))
+            return false;
         if (extraCost == 0)
             return true;
 
@@ -75,7 +82,14 @@ public class PayExtraCostToDeployCardsSimultaneouslyEffect extends AbstractSubAc
         if (extraCost > 0) {
             subAction.appendEffect(new UseForceEffect(subAction, _cardToDeploy.getOwner(), extraCost));
         }
+        LegacyPlaceCardFromHandToDeployCost.appendCosts(subAction, _cardToDeploy.getOwner(), getLegacyHandCosts(game), Arrays.asList(_cardToDeploy, _attachedCardToDeploy));
         return subAction;
+    }
+
+    private List<Modifier> getLegacyHandCosts(SwccgGame game) {
+        List<Modifier> costs = new ArrayList<Modifier>(LegacyPlaceCardFromHandToDeployCost.getCosts(game, _cardToDeploy, _target));
+        costs.addAll(LegacyPlaceCardFromHandToDeployCost.getCosts(game, _attachedCardToDeploy, _target));
+        return costs;
     }
 
     /**

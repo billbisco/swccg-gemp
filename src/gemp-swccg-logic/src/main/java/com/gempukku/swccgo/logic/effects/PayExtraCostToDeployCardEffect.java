@@ -8,6 +8,8 @@ import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 import com.gempukku.swccgo.logic.timing.AbstractSubActionEffect;
 import com.gempukku.swccgo.logic.timing.Action;
 
+import java.util.Collections;
+
 /**
  * An effect for paying extra costs for deploying a card.
  */
@@ -43,6 +45,10 @@ public class PayExtraCostToDeployCardEffect extends AbstractSubActionEffect {
         GameState gameState = game.getGameState();
         ModifiersQuerying modifiersQuerying = game.getModifiersQuerying();
 
+        if (!LegacyPlaceCardFromHandToDeployCost.canPay(game, _cardToDeploy.getOwner(),
+                LegacyPlaceCardFromHandToDeployCost.getCosts(game, _cardToDeploy, _target), Collections.singletonList(_cardToDeploy)))
+            return false;
+
         int extraCost = modifiersQuerying.getExtraForceRequiredToDeployToTarget(gameState, _cardToDeploy, _target, null, _action.getActionSource(), _forFree);
         if (extraCost == 0)
             return true;
@@ -70,6 +76,8 @@ public class PayExtraCostToDeployCardEffect extends AbstractSubActionEffect {
         if (extraCost > 0) {
             subAction.appendEffect(new UseForceEffect(subAction, _cardToDeploy.getOwner(), extraCost));
         }
+        LegacyPlaceCardFromHandToDeployCost.appendCosts(subAction, _cardToDeploy.getOwner(),
+                LegacyPlaceCardFromHandToDeployCost.getCosts(game, _cardToDeploy, _target), Collections.singletonList(_cardToDeploy));
         return subAction;
     }
 
