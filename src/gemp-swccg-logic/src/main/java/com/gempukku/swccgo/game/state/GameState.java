@@ -200,6 +200,15 @@ public class GameState implements Snapshotable<GameState> {
 
     public void setDecipherLocationRules(boolean decipherLocationRules) { _decipherLocationRules = decipherLocationRules; }
 
+    // swccg-guild/work#142 R3 (game option "Objectives: deploy from hand"): an Objective in hand may be deployed for free
+    // during its owner's deploy phase when its required cards are in hand or on the table; its setup then takes them
+    // from hand instead of Reserve Deck. Set at game setup only.
+    private boolean _objectivesFromHand;
+
+    public boolean isObjectivesFromHand() { return _objectivesFromHand; }
+
+    public void setObjectivesFromHand(boolean objectivesFromHand) { _objectivesFromHand = objectivesFromHand; }
+
     public GameState() {
     }
 
@@ -213,6 +222,7 @@ public class GameState implements Snapshotable<GameState> {
         snapshot._startingInterruptsCount = _startingInterruptsCount;
         snapshot._startingEffectsCount = _startingEffectsCount;
         snapshot._decipherLocationRules = _decipherLocationRules;
+        snapshot._objectivesFromHand = _objectivesFromHand;
 
         // Set each field
         snapshot._game = _game;
@@ -3273,6 +3283,9 @@ public class GameState implements Snapshotable<GameState> {
             return getUnresolvedDestinyDraw(playerId);
         if (zone == Zone.OUTSIDE_OF_DECK)
             return getOutsideOfDeck(playerId);
+        // #142 R3: an Objective deployed from hand takes its setup cards from hand
+        if (zone == Zone.HAND)
+            return getHand(playerId);
         return null;
     }
 

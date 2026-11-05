@@ -30,6 +30,7 @@ public final class GameOptions {
     public static final String STARTING_INTERRUPTS = "startingInterrupts";
     public static final String STARTING_EFFECTS = "startingEffects";
     public static final String DECIPHER_LOCATION_RULES = "decipherLocationRules";
+    public static final String OBJECTIVES_FROM_HAND = "objectivesFromHand";
     /** Most starting locations and Objectives a player may choose (#142 R2a). */
     public static final int STARTING_CARDS_MAX = 10;
 
@@ -97,6 +98,12 @@ public final class GameOptions {
                 .help("Both players choosing the same unique starting location set it aside and choose again, with no conversion offered, as in Decipher's rules.")
                 .defaultValue(f -> "false")
                 .shortLabel(v -> "true".equals(v) ? "Decipher location rules" : "PC location rules")
+                .build());
+        // #142 R3 (Bill 2026-11-05, design A1): on by default where a deck may hold several Objectives (Anything Goes)
+        register(GameOption.builder(OBJECTIVES_FROM_HAND, Kind.PLAY_RULES, Type.BOOLEAN, "Objectives: deploy from hand")
+                .help("During your deploy phase, deploy an Objective from hand for free when the cards its setup deploys are in your hand or already on the table; the setup takes them from hand.")
+                .defaultValue(f -> String.valueOf(f.allowsMultipleObjectives()))
+                .shortLabel(v -> "true".equals(v) ? "Objectives from hand" : "Objectives at start only")
                 .build());
         GameOption.Builder timer = GameOption.builder(TIMER, Kind.TABLE, Type.CHOICE, "Game timer")
                 .help("Each player's time bank and the time per decision.")

@@ -5,6 +5,8 @@ import com.gempukku.swccgo.common.CardCategory;
 import com.gempukku.swccgo.common.CardType;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
+import com.gempukku.swccgo.common.Phase;
+import com.gempukku.swccgo.common.Zone;
 import com.gempukku.swccgo.common.PlayCardZoneOption;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
@@ -15,12 +17,19 @@ import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.PlayCardOption;
 import com.gempukku.swccgo.game.ReactActionOption;
 import com.gempukku.swccgo.game.SwccgGame;
+import com.gempukku.swccgo.logic.ObjectivesFromHand;
 import com.gempukku.swccgo.logic.TriggerConditions;
+import com.gempukku.swccgo.logic.actions.PlayCardAction;
 import com.gempukku.swccgo.logic.actions.OptionalGameTextTriggerAction;
 import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
 import com.gempukku.swccgo.logic.actions.TriggerAction;
+import com.gempukku.swccgo.cards.effects.SetWhileInPlayDataEffect;
+import com.gempukku.swccgo.logic.effects.AddUntilEndOfGameModifierEffect;
 import com.gempukku.swccgo.logic.effects.StackActionEffect;
+import com.gempukku.swccgo.logic.effects.choose.StackCardFromOutsideDeckEffect;
+import com.gempukku.swccgo.logic.effects.choose.StackCardsFromOutsideDeckEffect;
+import com.gempukku.swccgo.logic.effects.choose.DeployCardFromPileEffect;
 import com.gempukku.swccgo.logic.effects.choose.DeployCardFromReserveDeckEffect;
 import com.gempukku.swccgo.logic.effects.choose.DeployCardToTargetFromReserveDeckEffect;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
@@ -28,6 +37,8 @@ import com.gempukku.swccgo.logic.timing.Action;
 import com.gempukku.swccgo.logic.timing.Effect;
 import com.gempukku.swccgo.logic.timing.EffectResult;
 import com.gempukku.swccgo.logic.timing.PassthruEffect;
+import com.gempukku.swccgo.logic.timing.StandardEffect;
+import com.gempukku.swccgo.logic.timing.results.PlayCardResult;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -97,6 +108,13 @@ public abstract class AbstractObjective extends AbstractNonLocationPlaysToTable 
     public final List<Action> getTopLevelActions(String playerId, SwccgGame game, PhysicalCard self) {
         List<Action> actions = new LinkedList<Action>();
 
+        // #142 R3: "Objectives: deploy from hand"
+        if (canDeployFromHand(playerId, game, self)) {
+            PlayCardAction playCardAction = getPlayCardAction(playerId, game, self, self, true, 0, null, null, null, null, null, false, 0, Filters.any, null);
+            if (playCardAction != null)
+                actions.add(playCardAction);
+        }
+
         // Actions from game text
         List<TopLevelGameTextAction> gameTextActions;
         if (self.isObjectiveDeploymentComplete()) {
@@ -107,6 +125,47 @@ public abstract class AbstractObjective extends AbstractNonLocationPlaysToTable 
         }
 
         return actions;
+    }
+
+    /**
+     * #142 R3 (game option "Objectives: deploy from hand"): an Objective in its owner's hand may be deployed for free
+     * during the owner's deploy phase when no Objective of the same title is on the table and each card its setup
+     * requires is in the owner's hand or already on the table.
+     */
+    private boolean canDeployFromHand(String playerId, SwccgGame game, PhysicalCard self) {
+        return game.getGameState().isObjectivesFromHand()
+                && self.getZone() == Zone.HAND
+                && playerId.equals(self.getOwner())
+                && GameConditions.isDuringYourPhase(game, playerId, Phase.DEPLOY)
+                && Filters.filterAllOnTable(game, Filters.and(Filters.Objective, Filters.title(getTitle()))).isEmpty()
+                && ObjectivesFromHand.requirementsMet(game, playerId, getRequiredCardsToDeployFromHand(playerId, game, self));
+    }
+
+    /**
+     * #142 R3: the cards this Objective's setup requires, for deploying it from hand. By default, the card each required
+     * setup step deploys from Reserve Deck, in order; null (not deployable from hand) when a required step takes cards
+     * from Reserve Deck some other way. An Objective whose setup isn't a list of single deploys overrides this.
+     * @param playerId the player
+     * @param game the game
+     * @param self the card
+     * @return the required card filters, or null if this Objective may not be deployed from hand
+     */
+    protected List<Filter> getRequiredCardsToDeployFromHand(String playerId, SwccgGame game, PhysicalCard self) {
+        ObjectiveDeployedTriggerAction setup = getGameTextWhenDeployedAction(playerId, game, self, self.getCardId());
+        if (setup == null)
+            return Collections.emptyList();
+        List<Filter> required = new ArrayList<Filter>();
+        for (StandardEffect effect : setup.getRequiredEffects()) {
+            // steps that take no card from Reserve Deck need nothing in hand
+            if (effect instanceof StackCardFromOutsideDeckEffect || effect instanceof StackCardsFromOutsideDeckEffect
+                    || effect instanceof SetWhileInPlayDataEffect || effect instanceof AddUntilEndOfGameModifierEffect)
+                continue;
+            Filter filter = effect instanceof DeployCardFromPileEffect ? ((DeployCardFromPileEffect) effect).getRequiredCardFilter() : null;
+            if (filter == null)
+                return null;
+            required.add(filter);
+        }
+        return required;
     }
 
     /**
@@ -224,8 +283,12 @@ public abstract class AbstractObjective extends AbstractNonLocationPlaysToTable 
 
         // Objective deployed
         if (TriggerConditions.justDeployed(game, effectResult, self)) {
-            final RequiredGameTextTriggerAction action = getGameTextWhenDeployedAction(self.getOwner(), game, self, self.getCardId());
+            final ObjectiveDeployedTriggerAction action = getGameTextWhenDeployedAction(self.getOwner(), game, self, self.getCardId());
             if (action != null) {
+                // #142 R3: deployed from hand, so the setup takes its cards from hand
+                if (game.getGameState().isObjectivesFromHand() && effectResult instanceof PlayCardResult
+                        && ((PlayCardResult) effectResult).getPlayedCardFrom() == Zone.HAND)
+                    action.setSetupFromHand(true);
                 action.skipInitialMessageAndAnimation();
                 action.appendAfterEffect(
                         new PassthruEffect(action) {

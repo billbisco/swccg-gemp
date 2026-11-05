@@ -9,6 +9,7 @@ import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.logic.GameUtils;
+import com.gempukku.swccgo.logic.ObjectivesFromHand;
 import com.gempukku.swccgo.logic.actions.PlayCardAction;
 import com.gempukku.swccgo.logic.actions.SubAction;
 import com.gempukku.swccgo.logic.effects.ShufflePileEffect;
@@ -163,7 +164,7 @@ class DeployCardsFromPileEffect extends AbstractSubActionEffect {
             return true;
 
         if (_cardsDeployed.size() < _maximum) {
-            List<PhysicalCard> cardPile = new LinkedList<PhysicalCard>(game.getGameState().getCardPile(_playerId, _cardPile));
+            List<PhysicalCard> cardPile = new LinkedList<PhysicalCard>(game.getGameState().getCardPile(_playerId, ObjectivesFromHand.pile(_action, _cardPile)));
             return !Filters.filterCount(cardPile, game, 1, _cardFilter).isEmpty();
         }
 
@@ -172,6 +173,11 @@ class DeployCardsFromPileEffect extends AbstractSubActionEffect {
 
     @Override
     protected SubAction getSubAction(SwccgGame game) {
+        // #142 R3: an Objective deployed from hand takes its cards from hand
+        if (ObjectivesFromHand.isSetupFromHand(_action) && _cardPile == Zone.RESERVE_DECK) {
+            _cardPile = Zone.HAND;
+            _reshuffle = false;
+        }
         final SubAction subAction = new SubAction(_action, _playerId);
 
         subAction.appendEffect(getChooseOneCardToDeployEffect(subAction));

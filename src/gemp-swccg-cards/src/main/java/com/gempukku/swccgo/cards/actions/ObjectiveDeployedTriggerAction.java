@@ -1,5 +1,10 @@
 package com.gempukku.swccgo.cards.actions;
 
+import com.gempukku.swccgo.logic.actions.ObjectiveSetupAction;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.GameUtils;
@@ -11,8 +16,11 @@ import com.gempukku.swccgo.logic.timing.StandardEffect;
 /**
  * An action that performs the deployment text of the Objective.
  */
-public class ObjectiveDeployedTriggerAction extends RequiredGameTextTriggerAction {
+public class ObjectiveDeployedTriggerAction extends RequiredGameTextTriggerAction implements ObjectiveSetupAction {
     private ObjectiveDeployedTriggerAction _that;
+    // #142 R3
+    private boolean _setupFromHand;
+    private final List<StandardEffect> _requiredEffects = new ArrayList<StandardEffect>();
 
     /**
      * Creates an action that performs the deployment text of the Objective.
@@ -46,7 +54,24 @@ public class ObjectiveDeployedTriggerAction extends RequiredGameTextTriggerActio
      * @param effect the effect
      */
     public final void appendRequiredEffect(StandardEffect effect) {
+        _requiredEffects.add(effect);
         appendCost(effect);
+    }
+
+    /**
+     * @return the required effects, in order (#142 R3: the cards an Objective deployed from hand needs)
+     */
+    public final List<StandardEffect> getRequiredEffects() {
+        return Collections.unmodifiableList(_requiredEffects);
+    }
+
+    @Override
+    public boolean isSetupFromHand() {
+        return _setupFromHand;
+    }
+
+    public void setSetupFromHand(boolean setupFromHand) {
+        _setupFromHand = setupFromHand;
     }
 
     /**

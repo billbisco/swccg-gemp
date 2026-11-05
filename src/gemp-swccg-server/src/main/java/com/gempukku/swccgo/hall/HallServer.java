@@ -2018,6 +2018,10 @@ public class HallServer extends AbstractServer {
         // #143: "Starting: Decipher location rules"
         swccgGameMediator.getGameState().setDecipherLocationRules(gameSetup != null
                 && "true".equals(gameSetup.get(GameOptions.DECIPHER_LOCATION_RULES, swccgFormat)));
+        // #142 R3: "Objectives: deploy from hand" (default on where a deck may hold several Objectives)
+        String objectivesFromHand = gameSetup != null ? gameSetup.get(GameOptions.OBJECTIVES_FROM_HAND, swccgFormat)
+                : String.valueOf(swccgFormat.allowsMultipleObjectives());
+        swccgGameMediator.getGameState().setObjectivesFromHand("true".equals(objectivesFromHand));
         // #142 R2b/R2c: "Starting: Interrupts" / "Starting: Effects"
         if (gameSetup != null) {
             String interrupts = gameSetup.get(GameOptions.STARTING_INTERRUPTS, swccgFormat);

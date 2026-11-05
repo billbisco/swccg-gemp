@@ -6,6 +6,7 @@ import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.*;
 import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.logic.GameUtils;
+import com.gempukku.swccgo.logic.ObjectivesFromHand;
 import com.gempukku.swccgo.logic.actions.PlayCardAction;
 import com.gempukku.swccgo.logic.actions.SubAction;
 import com.gempukku.swccgo.logic.effects.ShufflePileEffect;
@@ -24,6 +25,8 @@ public class DeployCardFromPileEffect extends AbstractSubActionEffect {
     private Zone _cardPile;
     private String _cardPileOwner;
     private Filter _cardFilter;
+    // #142 R3: the card filter as given, before deployability is added (what an Objective deployed from hand requires)
+    private Filter _requiredCardFilter;
     private PhysicalCard _cardToDeploy;
     private Filter _targetFilter;
     private Filter _ignoreTargetFilterCardFilter;
@@ -126,6 +129,7 @@ public class DeployCardFromPileEffect extends AbstractSubActionEffect {
         _cardPile = zone;
         _cardPileOwner = _playerId;
         _cardFilter = Filters.or(cardFilter, Filters.hasPermanentAboard(cardFilter));
+        _requiredCardFilter = cardFilter;
         _targetFilter = targetFilter;
         _ignoreTargetFilterCardFilter = ignoreTargetFilterCardFilter;
         _targetSystem = targetSystem;
@@ -175,13 +179,42 @@ public class DeployCardFromPileEffect extends AbstractSubActionEffect {
         return "Choose card to deploy from " + _cardPile.getHumanReadable();
     }
 
+    /**
+     * #142 R3: the card this effect deploys from Reserve Deck as part of an Objective's setup, or null.
+     */
+    public Filter getRequiredCardFilter() {
+        return _cardPile == Zone.RESERVE_DECK ? _requiredCardFilter : null;
+    }
+
+    // #142 R3: a required card already on the table when the Objective was deployed from hand
+    private boolean isAlreadyOnTable(SwccgGame game) {
+        return ObjectivesFromHand.isSetupFromHand(_action) && _requiredCardFilter != null && _cardPile == Zone.RESERVE_DECK
+                && ObjectivesFromHand.onTable(game, _playerId, _requiredCardFilter) != null;
+    }
+
     @Override
     public boolean isPlayableInFull(SwccgGame game) {
-        return game.getGameState().getCardPileSize(_playerId, _cardPile) > 0;
+        if (isAlreadyOnTable(game))
+            return true;
+        Zone pile = ObjectivesFromHand.pile(_action, _cardPile);
+        if (pile == Zone.HAND)
+            return !game.getGameState().getHand(_playerId).isEmpty();
+        return game.getGameState().getCardPileSize(_playerId, pile) > 0;
     }
 
     @Override
     protected SubAction getSubAction(SwccgGame game) {
+        // #142 R3: an Objective deployed from hand takes its cards from hand, and one already on the table counts
+        if (isAlreadyOnTable(game)) {
+            PhysicalCard onTable = ObjectivesFromHand.onTable(game, _playerId, _requiredCardFilter);
+            game.getGameState().sendMessage(GameUtils.getCardLink(onTable) + " is already on the table");
+            _cardSelected = true;
+            return new SubAction(_action, _playerId);
+        }
+        if (ObjectivesFromHand.isSetupFromHand(_action) && _cardPile == Zone.RESERVE_DECK) {
+            _cardPile = Zone.HAND;
+            _reshuffle = false;
+        }
         final GameState gameState = game.getGameState();
         final ModifiersQuerying modifiersQuerying = game.getModifiersQuerying();
 
