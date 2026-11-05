@@ -245,6 +245,7 @@ abstract class TakeCardsIntoHandFromPileEffect extends AbstractSubActionEffect i
                                     protected void doPlayEffect(SwccgGame game) {
                                         // Only callback with the cards still in the player's hand
                                         cardsTakenIntoHand(Filters.filter(_cardsTakenIntoHand, game, Filters.inHand(_playerId)));
+                                        if (_cardsToTakeIntoHand == null && _cardsTakenIntoHand.isEmpty()) LegacySearchNotFound.tookNothingIntoHand(subAction, _playerId, _zone, _cardPileOwner, _minimum, _maximum, _topmost, _filters, _hidden);
                                     }
                                 }
                         );

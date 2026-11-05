@@ -128,6 +128,7 @@ public enum Icon implements Filterable {
     SIDIOUS("Sidious"),
     SKYWALKER("Skywalker"),
     TRADE_FEDERATION("Trade Federation"),
+    VADER("Vader"),
     ;
 
     private String _humanReadable;

@@ -32,6 +32,7 @@ import com.gempukku.swccgo.logic.actions.TriggerAction;
 import com.gempukku.swccgo.logic.effects.RespondablePlayCardEffect;
 import com.gempukku.swccgo.logic.effects.RespondablePlayingCardEffect;
 import com.gempukku.swccgo.logic.modifiers.MayNotPlayUnlessImmuneToSpecificTitleModifier;
+import com.gempukku.swccgo.logic.modifiers.LegacyMayPlayInterruptAsModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.modifiers.ModifierType;
 import com.gempukku.swccgo.logic.timing.Action;
@@ -188,6 +189,7 @@ public abstract class AbstractInterrupt extends AbstractSwccgCardBlueprint {
         if (initiateEpicDuelActions != null) {
             actionList.addAll(initiateEpicDuelActions);
         }
+        actionList.addAll(LegacyMayPlayInterruptAsModifier.getGrantedPlayActions(playerId, game, self));
 
         // Check condition(s)
         Collection<PhysicalCard> grantedToBeCanceledByList = Filters.filterActive(game, self,
