@@ -101,7 +101,8 @@ public class Card_1261_059_Tests {
         scn.EnsureDSForcePile(8); scn.SkipToDSTurn(Phase.DEPLOY);
         scn.DSDeployCard(driver); scn.DSChooseCard(walker); scn.PassAllResponses();
         assertTrue(scn.IsAboardAsPilot(walker, driver));
-        scn.DSDeployCard(second);
+        if (scn.AwaitingLSDeployPhaseActions()) scn.LSPass();
+        assertTrue(scn.AwaitingDSDeployPhaseActions()); scn.DSDeployCard(second);
         var choices = scn.GetADParam(scn.DS, "blueprintId"); var selectable = scn.GetADParam(scn.DS, "selectable");
         for (int i = 0; i < choices.length; i++) {
             if (choices[i].equals(walker.getBlueprintId(true))) assertFalse(Boolean.parseBoolean(selectable[i]));
