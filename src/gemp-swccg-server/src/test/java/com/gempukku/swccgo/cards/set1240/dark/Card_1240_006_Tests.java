@@ -267,6 +267,7 @@ public class Card_1240_006_Tests {
         scn.SkipToDSTurn(Phase.CONTROL);
         scn.MoveCardsToDSHand(scn.GetDSCard("guri"));
         scn.EnsureDSForcePile(3);
+        while (scn.GetDSForcePileCount() > 3) scn.MoveCardsToTopOfDSUsedPile(scn.GetTopOfDSForcePile());
         scn.SkipToPhase(Phase.DEPLOY);
         assertTrue(scn.AwaitingDSDeployPhaseActions());
         assertEquals(3, scn.GetDSForcePileCount());
