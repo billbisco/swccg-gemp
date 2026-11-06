@@ -6,6 +6,7 @@ import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Keyword;
 import com.gempukku.swccgo.common.Phase;
 import com.gempukku.swccgo.common.Uniqueness;
+import com.gempukku.swccgo.common.Zone;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import org.junit.Test;
@@ -20,15 +21,66 @@ public class Card_1250_035_Tests {
             put("pilot", "1250_35");
             put("ship", "1115_26");
             put("otherShip", "1_140");
+            put("thirdShip", "1_140");
             put("rebelPilot", "1_3");
             put("jedi", "1116_35");
             put("vehicle", "102_4");
             put("kessel", "1_126");
             put("tatooine", "1_127");
-        }}, new HashMap<>() {{ put("trooper", "1_194"); }}, 10, 10,
+        }}, new HashMap<>() {{
+            put("trooper", "1_194");
+            put("destroyer", "1_301");
+            put("vader", "1_168");
+        }}, 10, 10,
                 StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
+    }
+
+    @Test
+    public void ClonePilotImmunityBelowFiveDoesNotSatisfyFourAttritionWhenShipForfeited() {
+        checkAttritionBoundary(false, 4, 4);
+    }
+
+    @Test
+    public void ClonePilotImmunityBelowFiveAllowsShipToSatisfyFiveAttrition() {
+        checkAttritionBoundary(false, 5, 0);
+    }
+
+    @Test
+    public void ClonePilotImmunityBelowThreeDoesNotSatisfyTwoAttritionWhenShipForfeited() {
+        checkAttritionBoundary(true, 2, 2);
+    }
+
+    @Test
+    public void ClonePilotImmunityBelowThreeAllowsShipToSatisfyThreeAttrition() {
+        checkAttritionBoundary(true, 3, 0);
+    }
+
+    private void checkAttritionBoundary(boolean otherPilotPresent, int attrition, int remaining) {
+        var scn = scenario();
+        var ship = scn.GetLSCard("ship");
+        var system = scn.GetLSCard("tatooine");
+        var destroyer = scn.GetDSCard("destroyer");
+        scn.StartGame();
+        scn.MoveLocationToTable(system);
+        scn.MoveCardsToLocation(system, ship, scn.GetLSCard("otherShip"), scn.GetLSCard("thirdShip"), destroyer);
+        scn.BoardAsPilot(ship, scn.GetLSCard("pilot"));
+        scn.BoardAsPilot(destroyer, scn.GetDSCard("vader"));
+        if (otherPilotPresent) {
+            scn.BoardAsPassenger(ship, scn.GetLSCard("rebelPilot"));
+        }
+        scn.LSStartBattleAndSkipToWeaponsSegment(system);
+        scn.PrepareLSDestiny(0);
+        scn.PrepareDSDestiny(attrition - 1);
+        scn.SkipToDamageSegment(true);
+        assertEquals(0, scn.gameState().getBattleState().getBattleDamageRemaining(scn.game(), scn.LS), scn.epsilon);
+        assertEquals(attrition, scn.gameState().getBattleState().getAttritionRemaining(scn.game(), scn.LS), scn.epsilon);
+        assertTrue(scn.LSDecisionAvailable("Choose a card from battle to forfeit"));
+        scn.LSChooseCard(ship);
+        scn.PassAllResponses();
+        assertEquals(Zone.LOST_PILE, ship.getZone());
+        assertEquals(remaining, scn.gameState().getBattleState().getAttritionRemaining(scn.game(), scn.LS), scn.epsilon);
     }
 
     @Test
@@ -96,6 +148,9 @@ public class Card_1250_035_Tests {
         assertEquals(5, scn.game().getModifiersQuerying().getImmunityToAttritionLessThan(scn.gameState(), vehicle), scn.epsilon);
         scn.MoveOutOfPlay(pilot);
         assertEquals(0, scn.GetPower(vehicle));
+        assertEquals(0, scn.GetManeuver(vehicle));
+        scn.BoardAsPilot(vehicle, scn.GetLSCard("rebelPilot"));
+        assertEquals(4, scn.GetPower(vehicle));
         assertEquals(5, scn.GetManeuver(vehicle));
         assertEquals(0, scn.game().getModifiersQuerying().getImmunityToAttritionLessThan(scn.gameState(), vehicle), scn.epsilon);
     }
