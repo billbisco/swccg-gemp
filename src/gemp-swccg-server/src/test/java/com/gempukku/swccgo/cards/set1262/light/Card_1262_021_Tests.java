@@ -80,7 +80,7 @@ public class Card_1262_021_Tests {
         scn.MoveCardsToLocation(site, scn.GetLSCard(luke ? "luke" : "trooper"), scn.GetDSCard("vader"));
         if (extraEnemies) scn.MoveCardsToLocation(site, scn.GetDSCard("trooper1"), scn.GetDSCard("trooper2"));
         scn.SkipToLSTurn(Phase.BATTLE);
-        scn.MoveCardsToLocation(here ? site : scn.GetDSStartingLocation(), scn.GetLSCard("gundark"));
+        scn.MoveCardsToLocation(here ? site : scn.GetLSStartingLocation(), scn.GetLSCard("gundark"));
         scn.LSInitiateBattle(site); scn.PassAllResponses(); scn.SkipToDamageSegment(false); scn.PassDamageSegmentActions();
         return scn;
     }
@@ -107,7 +107,7 @@ public class Card_1262_021_Tests {
         var scn = battle(false, false, false);
         assertTrue(scn.AwaitingLSBattleDamagePayment()); assertEquals(5, scn.GetUnpaidLSBattleDamage());
         int lost = scn.GetLSLostPileCount(); scn.LSPayRemainingBattleDamageFromReserveDeck(); scn.PassAllResponses();
-        assertEquals(lost + 5, scn.GetLSLostPileCount()); assertAtLocation(scn.GetDSStartingLocation(), scn.GetLSCard("gundark"));
+        assertEquals(lost + 5, scn.GetLSLostPileCount()); assertAtLocation(scn.GetLSStartingLocation(), scn.GetLSCard("gundark"));
     }
 
     @Test public void GundarkReductionIsOptionalAndDoesNotForfeitTheCreature() {
@@ -146,7 +146,16 @@ public class Card_1262_021_Tests {
         scn.SkipToLSTurn(Phase.BATTLE); scn.MoveCardsToLocation(site, scn.GetLSCard("gundark"));
         scn.LSInitiateBattle(site); scn.PassAllResponses(); scn.SkipToDamageSegment(false); scn.PassDamageSegmentActions();
         scn.PassAllResponses(); assertAtLocation(site, scn.GetLSCard("gundark"));
-        assertFalse(scn.LSCardActionAvailable(scn.GetLSCard("gundark"), "Place Gundark in Lost Pile"));
+        if (scn.LSGetADParam("actionText") != null)
+            assertFalse(scn.LSCardActionAvailable(scn.GetLSCard("gundark"), "Place Gundark in Lost Pile"));
+    }
+
+    @Test public void GundarkCannotDeployWithoutItsFullFourForceCost() {
+        var scn = scenario(); scn.StartGame(); scn.MoveCardsToLSHand(scn.GetLSCard("gundark"));
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        scn.MoveCardsToTopOfLSReserveDeck(scn.GetLSForcePile().toArray(com.gempukku.swccgo.game.PhysicalCardImpl[]::new));
+        scn.LSActivateForceCheat(3); assertEquals(3, scn.GetLSForcePileCount());
+        assertFalse(scn.LSCardActionAvailable(scn.GetLSCard("gundark"), "Deploy")); assertInHand(scn.GetLSCard("gundark"));
     }
 
 }

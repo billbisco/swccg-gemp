@@ -14,7 +14,7 @@ public class Card_1262_024_Tests {
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>() {{
             put("security", "1262_24"); put("trooper", "1_28"); put("luke", "1_19"); put("obi", "1_21");
-            put("spy", "1_20"); put("naboo", "13_31"); put("core", "13_32"); put("beggar", "1_44"); put("traffic", "1_66"); put("plains", "12_79"); put("shield", "14_32");
+            put("spy", "1_20"); put("speeder", "3_69"); put("naboo", "13_31"); put("core", "13_32"); put("beggar", "1_44"); put("traffic", "1_66"); put("plains", "12_79"); put("shield", "14_32");
         }}, new HashMap<>() {{
             put("vader", "1_168"); put("trooper1", "1_194"); put("trooper2", "1_194"); put("trooper3", "1_194"); put("trooper4", "1_194");
             put("derdram", "4_98"); put("ephant", "6_101"); put("alter", "1_234"); put("hypo", "2_112");
@@ -50,7 +50,7 @@ public class Card_1262_024_Tests {
         assertEquals(7, scn.GetPower(scn.GetLSCard("obi"))); assertEquals(7, scn.GetPower(scn.GetDSCard("vader")));
         scn.LSDeployCard(scn.GetLSCard("security")); scn.PassAllResponses();
         assertEquals(5, scn.GetPower(scn.GetLSCard("obi"))); assertEquals(6, scn.GetPower(scn.GetDSCard("vader")));
-        scn.MoveCardsToLSHand(scn.GetLSCard("security"));
+        scn.MoveCardsToLSHand(scn.GetLSCard("security")); scn.SkipToPhase(Phase.BATTLE);
         assertEquals(7, scn.GetPower(scn.GetLSCard("obi"))); assertEquals(7, scn.GetPower(scn.GetDSCard("vader")));
     }
 
@@ -143,8 +143,8 @@ public class Card_1262_024_Tests {
     }
     @Test public void SecurityBreachDoesNotCancelNonReflectionsNabooSiteText() {
         var scn = deployed(); var plains = scn.GetLSCard("plains"); scn.MoveLocationToTable(plains);
-        scn.MoveCardsToTopOfLSReserveDeck(scn.GetLSCard("shield"));
         scn.SkipToDSTurn(Phase.DRAW); scn.SkipToLSTurn(Phase.CONTROL);
+        scn.MoveCardsToTopOfLSReserveDeck(scn.GetLSCard("shield"));
         assertTrue(scn.LSCardActionAvailable(plains, "Take card into hand"));
         scn.LSUseCardAction(plains, "Take card into hand"); scn.PassAllResponses();
         scn.LSChooseCard(scn.GetLSCard("shield")); scn.PassAllResponses(); assertInHand(scn.GetLSCard("shield"));
@@ -173,6 +173,7 @@ public class Card_1262_024_Tests {
         scn.DSPlayCard(scn.GetDSCard("alter"), "Draw destiny to cancel Effect");
         assertFalse(scn.DSHasCardChoiceAvailable(effect)); assertTrue(scn.DSHasCardChoiceAvailable(beggar));
         assertTrue(scn.DSHasCardChoiceAvailable(scn.GetLSCard("traffic"))); scn.DSChooseCard(beggar);
+        scn.DSChooseCard(scn.GetDSCard("vader"));
         scn.PassAllResponses(); scn.PassDestinyDrawResponses(); scn.PassAllResponses();
         assertInZone(Zone.LOST_PILE, beggar); assertInZone(Zone.SIDE_OF_TABLE, effect);
     }
@@ -198,6 +199,16 @@ public class Card_1262_024_Tests {
         assertTrue(scn.AwaitingDSBattleDamagePayment()); assertEquals(4, scn.GetUnpaidDSBattleDamage());
         int lost = scn.GetDSLostPileCount(); scn.DSPayRemainingBattleDamageFromReserveDeck(); scn.PassAllResponses();
         assertEquals(lost + 4, scn.GetDSLostPileCount()); assertInZone(Zone.SIDE_OF_TABLE, scn.GetLSCard("security"));
+    }
+
+    @Test public void SecurityBreachDoesNotCountCharacterInsideEnclosedVehicleAsPresent() {
+        var scn = deployed(); var site = scn.GetDSStartingLocation(); var derdram = scn.GetDSCard("derdram");
+        scn.MoveCardsToLocation(site, derdram, scn.GetDSCard("trooper1"), scn.GetDSCard("trooper2"), scn.GetLSCard("speeder"));
+        scn.BoardAsPassenger(scn.GetLSCard("speeder"), scn.GetLSCard("trooper"));
+        scn.MoveCardsToTopOfDSReserveDeck(scn.GetDSCard("hypo")); scn.DSActivateForceCheat(5); scn.SkipToDSTurn(Phase.CONTROL);
+        assertFalse(scn.DSCardActionAvailable(derdram, "Take card into hand"));
+        scn.MoveCardsToLocation(site, scn.GetLSCard("trooper")); scn.SkipToPhase(Phase.DEPLOY);
+        assertTrue(scn.DSCardActionAvailable(derdram, "Take card into hand"));
     }
 
 }
