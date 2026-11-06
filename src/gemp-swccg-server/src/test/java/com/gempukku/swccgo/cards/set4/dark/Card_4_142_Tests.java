@@ -664,7 +664,7 @@ public class Card_4_142_Tests {
 
 	@Test
 	public void FrustrationCannotTargetLocationWithNoPrintedDeployCost() {
-		// AbstractLocation.getDeployCost() is hardcoded 0. That is not a printed cost.
+		// #178: a location has no deploy cost, so Frustration cannot target it.
 		var scn = GetScenario();
 		var frustration = scn.GetDSCard("frustration");
 		var mosEisley = scn.GetLSCard("mosEisley");

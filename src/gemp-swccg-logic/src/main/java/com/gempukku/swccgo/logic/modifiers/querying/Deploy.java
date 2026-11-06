@@ -680,6 +680,9 @@ public interface Deploy extends BaseQuery, Attributes, CardTraits, Destiny, Loca
      * @return true if card deploys for free, otherwise false
      */
     default boolean deploysForFree(GameState gameState, PhysicalCard card) {
+        // #178: locations are free (no deploy cost at all), per AR 1-20's "free"
+        if (card.getBlueprint().getCardCategory() == CardCategory.LOCATION && card.getBlueprint().getDeployCost() == null)
+            return true;
         if (!hasDeployCostAttribute(card))
             return false;
 

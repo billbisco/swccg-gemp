@@ -20,6 +20,10 @@ public interface Attributes extends BaseQuery {
         if (card.getBlueprint().getCardCategory() == CardCategory.INTERRUPT)
             return false;
 
+        // #178: a location has no deploy cost, unless its game text gives it one
+        if (card.getBlueprint().getCardCategory() == CardCategory.LOCATION)
+            return card.getBlueprint().getDeployCost() != null;
+
         return true;
     }
 
