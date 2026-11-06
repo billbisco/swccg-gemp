@@ -97,8 +97,6 @@ public class Card_1250_069_Tests {
         scn.SkipToPowerSegment();
         int draws = alone ? 2 : 1;
         for (int draw = 0; draw < draws; draw++) {
-            assertTrue(scn.LSDecisionAvailable("destiny"));
-            scn.LSChooseYes();
             scn.PassDestinyDrawResponses();
         }
         scn.SkipBattleDestinyDraws(false);

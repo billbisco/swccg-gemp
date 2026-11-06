@@ -176,7 +176,8 @@ public class Card_1250_079_Tests {
         int force = scn.GetLSForcePileCount();
         scn.LSUseCardAction(ship, "Deploy a senator aboard");
         scn.PassAllResponses();
-        assertTrue(isSelectable(scn, senator));
+        scn.PassCardAndForceUseResponses();
+        assertTrue("Expected senator selection; awaiting " + (scn.LSGetDecision() == null ? "none" : scn.LSGetDecision().getText()), isSelectable(scn, senator));
         assertFalse(isSelectable(scn, scn.GetLSCard("pilot")));
         scn.LSChooseCard(senator);
         scn.PassAllResponses();
