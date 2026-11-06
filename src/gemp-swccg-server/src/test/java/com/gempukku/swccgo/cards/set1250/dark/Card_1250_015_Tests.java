@@ -52,6 +52,7 @@ public class Card_1250_015_Tests {
         scn.LSStartBattleAndSkipToWeaponsSegment(site); scn.PrepareLSDestiny(destiny);
         scn.LSUseCardAction(scn.GetLSCard("rifle"), "Fire"); scn.LSChooseCard(scn.GetDSCard(targetName));
         scn.PassResponses("Fire "); scn.PassDestinyDrawResponses(); scn.PassResponses("ABOUT_TO_BE_HIT");
+        System.out.println("ARMOR_FIRE_STATE " + scn.GetCurrentDecision().getText());
         return scn;
     }
     private void restore(String wearerName, Zone pile) {
@@ -90,7 +91,9 @@ public class Card_1250_015_Tests {
         }
         else {
             assertTrue(scn.DSDecisionAvailable("Choose a card from battle to forfeit")); assertFalse(scn.DSDecisionAvailable("(if desired)"));
-            scn.DSChooseCard(wearer); scn.PassAllResponses(); assertInZone(Zone.LOST_PILE, wearer);
+            scn.DSChooseCard(wearer); scn.PassAllResponses();
+            System.out.println("ARMOR_FORFEIT_STATE " + scn.GetCurrentDecision().getText());
+            assertInZone(Zone.LOST_PILE, wearer);
         }
     }
     @Test public void MandalorianArmorWearerSurvivesAttritionBelowFour() { attrition(3, true); }
