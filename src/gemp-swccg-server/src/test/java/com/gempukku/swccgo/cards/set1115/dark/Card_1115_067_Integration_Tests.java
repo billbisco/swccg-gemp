@@ -181,7 +181,7 @@ public class Card_1115_067_Integration_Tests {
         assertInZone(Zone.LOST_PILE, maul);
         assertInZone(Zone.HAND, sister);
         assertInZone(Zone.HAND, brother);
-        assertEquals(scn.GetCurrentDecision().getText(), Zone.LOST_PILE, interrupt.getZone());
+        assertInZone(Zone.LOST_PILE, interrupt);
     }
 
     private void legacyDeploymentSearch(boolean trained) {
