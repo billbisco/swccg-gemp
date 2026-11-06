@@ -81,7 +81,7 @@ public class Card_1250_015_Tests {
         var scn = scenario(); var site = scn.GetDSStartingLocation(); var wearer = scn.GetDSCard("alien");
         scn.StartGame(); scn.MoveCardsToLocation(site, wearer, scn.GetDSCard("vader"), scn.GetLSCard("luke"));
         scn.AttachCardsTo(wearer, scn.GetDSCard("armor")); scn.SkipToDSTurn(Phase.BATTLE);
-        scn.PrepareLSDestiny(destiny); scn.PrepareDSDestiny(10);
+        scn.PrepareLSDestiny(destiny); scn.PrepareDSDestiny(7);
         scn.DSInitiateBattle(site); scn.SkipToDamageSegment(true); scn.PassDamageSegmentActions();
         assertEquals(0, scn.GetUnpaidDSBattleDamage()); assertEquals(destiny, scn.GetUnpaidDSAttrition());
         if (immune) {
