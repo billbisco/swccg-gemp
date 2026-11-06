@@ -30,6 +30,7 @@ public final class GameOptions {
     public static final String STARTING_EFFECTS = "startingEffects";
     public static final String DECIPHER_LOCATION_RULES = "decipherLocationRules";
     public static final String OBJECTIVES_FROM_HAND = "objectivesFromHand";
+    public static final String SAME_SIDE = "sameSide";
     /** Most starting locations and Objectives a player may choose (#142 R2a). */
     public static final int STARTING_CARDS_MAX = 10;
 
@@ -46,6 +47,12 @@ public final class GameOptions {
                         : f.getMinimumDeckSize() + "–" + f.getMaximumDeckSize())
                 .range(f -> DeckSize.MIN_SUPPORTED, DeckSize::maxFor)
                 .shortLabel(v -> "Deck: " + v + " cards")
+                .build());
+        // #176 (Bill 2026-11-05): offered everywhere, on by default in Anything Goes
+        register(GameOption.builder(SAME_SIDE, Kind.DECK_RULES, Type.BOOLEAN, "Deck: same side allowed")
+                .help("Both decks may be the same side of the Force. A coin toss decides who takes the Light Side seat; each player uses the Force icons on their seat's side.")
+                .defaultValue(f -> String.valueOf(f.allowsMultipleObjectives()))
+                .shortLabel(v -> "true".equals(v) ? "Deck: same side allowed" : "Deck: opposite sides")
                 .build());
         // #144: a deck rule, as Open (no shields): the table refuses decks holding Defensive Shields
         register(GameOption.builder(NO_SHIELDS, Kind.DECK_RULES, Type.BOOLEAN, "Shields: none")

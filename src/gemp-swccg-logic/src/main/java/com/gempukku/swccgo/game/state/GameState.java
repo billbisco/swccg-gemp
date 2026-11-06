@@ -207,6 +207,13 @@ public class GameState implements Snapshotable<GameState> {
 
     public boolean isObjectivesFromHand() { return _objectivesFromHand; }
 
+    // swccg-guild/work#176: both decks are the same side of the Force; a coin toss decided the seats
+    private boolean _sameSideGame;
+
+    public boolean isSameSideGame() { return _sameSideGame; }
+
+    public void setSameSideGame(boolean sameSideGame) { _sameSideGame = sameSideGame; }
+
     public void setObjectivesFromHand(boolean objectivesFromHand) { _objectivesFromHand = objectivesFromHand; }
 
     public GameState() {
@@ -223,6 +230,7 @@ public class GameState implements Snapshotable<GameState> {
         snapshot._startingEffectsCount = _startingEffectsCount;
         snapshot._decipherLocationRules = _decipherLocationRules;
         snapshot._objectivesFromHand = _objectivesFromHand;
+        snapshot._sameSideGame = _sameSideGame;
 
         // Set each field
         snapshot._game = _game;

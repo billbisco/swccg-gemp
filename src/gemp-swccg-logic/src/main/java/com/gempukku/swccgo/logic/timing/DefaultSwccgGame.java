@@ -21,6 +21,8 @@ import com.gempukku.swccgo.logic.modifiers.querying.ModifiersLogic;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 import com.gempukku.swccgo.logic.vo.SwccgDeck;
 
+import java.util.Collections;
+import java.util.ArrayList;
 import java.util.*;
 
 /**
@@ -38,6 +40,9 @@ public class DefaultSwccgGame implements SwccgGame {
     private Set<String> _allPlayers;
     private String _lightPlayerId;
     private String _darkPlayerId;
+    // #176: both decks are the same side of the Force
+    private boolean _sameSide;
+    private Side _sameSideDeckSide;
     private SwccgCardBlueprintLibrary _library;
     private Map<String, String> _decks;
     private Map<String, List<String>> _cards;
@@ -106,6 +111,17 @@ public class DefaultSwccgGame implements SwccgGame {
             _outSideOfDeckCards.put(playerId, outsideOfDeck);
         }
 
+        // #176 same-side game: both decks are one side of the Force. Seat the players in name order for now; the coin
+        // toss at game start decides who takes the Light Side seat.
+        if (_allPlayers.size() == 2 && (_darkPlayerId == null || _lightPlayerId == null)) {
+            List<String> names = new ArrayList<String>(_allPlayers);
+            Collections.sort(names);
+            _darkPlayerId = names.get(0);
+            _lightPlayerId = names.get(1);
+            _sameSide = true;
+            _sameSideDeckSide = decks.get(names.get(0)).getSide(library);
+        }
+
         _gameState = new GameState(this);
         _gameState.setStartingCredits(format.getDefaultStartingCredits());
         _modifiersLogic = new ModifiersLogic(this);
@@ -128,11 +144,23 @@ public class DefaultSwccgGame implements SwccgGame {
     @Override
     public void startGame() {
         if (!_cancelled) {
+            // #176: in a same-side game, a coin toss decides who takes the Light Side seat
+            // (parity of a whole 64-bit draw: the first nextBoolean() of nearby seeds is nearly constant)
+            if (_sameSide && Long.bitCount(_gameState.getRandom().nextLong()) % 2 == 1) {
+                String dark = _darkPlayerId;
+                _darkPlayerId = _lightPlayerId;
+                _lightPlayerId = dark;
+            }
             // Initially set dark side to go first
             List<String> orderedPlayers = new LinkedList<String>();
             orderedPlayers.add(_darkPlayerId);
             orderedPlayers.add(_lightPlayerId);
             _gameState.init(new PlayerOrder(orderedPlayers), _darkPlayerId, _lightPlayerId, _cards, _outSideOfDeckCards, _library);
+            if (_sameSide) {
+                _gameState.setSameSideGame(true);
+                _gameState.sendMessage("Both decks are " + _sameSideDeckSide.getHumanReadable() + "; coin toss: "
+                        + _lightPlayerId + " takes the Light Side seat and " + _darkPlayerId + " the Dark Side seat. Each player uses the Force icons on their seat's side.");
+            }
 
             // Generate locations layout
             _gameState.setLocationsLayout(new LocationsLayout(_library));

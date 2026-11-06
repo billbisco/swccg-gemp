@@ -1,5 +1,7 @@
 package com.gempukku.swccgo.logic.timing.processes.pregame;
 
+import com.gempukku.swccgo.logic.FirstTurn;
+
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
@@ -48,7 +50,7 @@ public class PlayStartingInterruptsGameProcess implements GameProcess {
     public void process(SwccgGame game) {
         if (!_determinedOrder) {
             _determinedOrder = true;
-            if (game.getModifiersQuerying().hasFlagActive(game.getGameState(), ModifierFlag.LIGHT_SIDE_GOES_FIRST)) {
+            if (FirstTurn.firstPlayer(game).equals(_lightPlayerId)) {
                 _lightSideGoesFirst = true;
             }
         }

@@ -2011,32 +2011,36 @@ public class HallServer extends AbstractServer {
         if (beforeStart != null)
             beforeStart.accept(swccgGameMediator);
         GameSetup gameSetup = swccgGameMediator.getGameSetup();
+        // option defaults come from the library format, not the table's effective format (whose deck rules, e.g.
+        // several Objectives, would change them)
+        SwccgFormat optionFormat = swccgFormat.getBaseCode() != null && _formatLibrary.getFormat(swccgFormat.getBaseCode()) != null
+                ? _formatLibrary.getFormat(swccgFormat.getBaseCode()) : swccgFormat;
         // #142: "Starting: Objective optional" (default on where a deck may hold several Objectives)
-        String objectiveOptional = gameSetup != null ? gameSetup.get(GameOptions.OBJECTIVE_OPTIONAL, swccgFormat)
+        String objectiveOptional = gameSetup != null ? gameSetup.get(GameOptions.OBJECTIVE_OPTIONAL, optionFormat)
                 : String.valueOf(swccgFormat.allowsMultipleObjectives());
         swccgGameMediator.getGameState().setObjectiveOptional("true".equals(objectiveOptional));
         // #143: "Starting: Decipher location rules"
         swccgGameMediator.getGameState().setDecipherLocationRules(gameSetup != null
-                && "true".equals(gameSetup.get(GameOptions.DECIPHER_LOCATION_RULES, swccgFormat)));
+                && "true".equals(gameSetup.get(GameOptions.DECIPHER_LOCATION_RULES, optionFormat)));
         // #142 R3: "Objectives: deploy from hand" (default on where a deck may hold several Objectives)
-        String objectivesFromHand = gameSetup != null ? gameSetup.get(GameOptions.OBJECTIVES_FROM_HAND, swccgFormat)
+        String objectivesFromHand = gameSetup != null ? gameSetup.get(GameOptions.OBJECTIVES_FROM_HAND, optionFormat)
                 : String.valueOf(swccgFormat.allowsMultipleObjectives());
         swccgGameMediator.getGameState().setObjectivesFromHand("true".equals(objectivesFromHand));
         // #142 R2b/R2c: "Starting: Interrupts" / "Starting: Effects"
         if (gameSetup != null) {
-            String interrupts = gameSetup.get(GameOptions.STARTING_INTERRUPTS, swccgFormat);
-            String effects = gameSetup.get(GameOptions.STARTING_EFFECTS, swccgFormat);
+            String interrupts = gameSetup.get(GameOptions.STARTING_INTERRUPTS, optionFormat);
+            String effects = gameSetup.get(GameOptions.STARTING_EFFECTS, optionFormat);
             swccgGameMediator.getGameState().setStartingInterruptsCount(interrupts == null ? 1 : Integer.parseInt(interrupts));
             swccgGameMediator.getGameState().setStartingEffectsCount(effects == null ? 1 : Integer.parseInt(effects));
         }
         // #142 R2a: "Starting: locations/Objectives" (only with Objective optional)
         if ("true".equals(objectiveOptional) && gameSetup != null) {
-            String startingCards = gameSetup.get(GameOptions.STARTING_CARDS, swccgFormat);
+            String startingCards = gameSetup.get(GameOptions.STARTING_CARDS, optionFormat);
             swccgGameMediator.getGameState().setStartingCardsCount(startingCards == null ? 1 : Integer.parseInt(startingCards));
         }
         // #145: "Shields: no play limit"
         swccgGameMediator.getGameState().setShieldsNoPlayLimit(gameSetup != null
-                && "true".equals(gameSetup.get(GameOptions.SHIELDS_NO_PLAY_LIMIT, swccgFormat)));
+                && "true".equals(gameSetup.get(GameOptions.SHIELDS_NO_PLAY_LIMIT, optionFormat)));
         if (gameSetup != null && !gameSetup.chips().isEmpty())
             swccgGameMediator.sendMessageToPlayers("Game options: " + gameSetup.chipsText());
         swccgGameMediator.startGame();
@@ -2138,10 +2142,15 @@ public class HallServer extends AbstractServer {
             }
         }
 
-        // Check that game will be Light side vs Dark side
+        // Check that game will be Light side vs Dark side, unless the table allows same-side decks (#176)
         List<SwccgGameParticipant> participants = new LinkedList<SwccgGameParticipant>(awaitingTable.getPlayers());
+        com.gempukku.swccgo.game.setup.GameSetup tableSetup = awaitingTable.getGameSetup();
+        boolean sameSideAllowed = tableSetup != null
+                && "true".equals(tableSetup.get(com.gempukku.swccgo.game.setup.GameOptions.SAME_SIDE,
+                        _formatLibrary.getFormat(awaitingTable.getSwccgoFormat().getBaseCode()) != null
+                                ? _formatLibrary.getFormat(awaitingTable.getSwccgoFormat().getBaseCode()) : awaitingTable.getSwccgoFormat()));
         for (SwccgGameParticipant participant : participants) {
-            if (participant.getDeck().getSide(_library) == side) {
+            if (!sameSideAllowed && participant.getDeck().getSide(_library) == side) {
                 throw new HallException(
                         "You can't play against an opponent with a deck from the same side of the Force");
             }
