@@ -92,6 +92,8 @@ public class Card_1261_103_Tests {
         scn.LSUseCardAction(falcon, "Take A Few Maneuvers"); scn.LSChooseCard(scn.GetLSCard("maneuvers"));
         scn.PassAllResponses(); assertInHand(scn.GetLSCard("maneuvers")); //test1
         assertEquals(5, scn.GetDefense(falcon));
+        assertTrue(scn.AwaitingDSDeployPhaseActions()); scn.DSPass();
+        assertTrue(scn.AwaitingLSDeployPhaseActions());
         assertFalse(scn.LSCardActionAvailable(falcon, "Take A Few Maneuvers"));
         scn.LSPlayCard(scn.GetLSCard("maneuvers")); scn.LSChooseCard(falcon); scn.PassAllResponses();
         assertEquals(7, scn.GetDefense(falcon)); //test2
@@ -112,7 +114,7 @@ public class Card_1261_103_Tests {
     public void HanChewieAndTheFalconDoesNotSearchAnEmptyReserveDeck() {
         var scn = start(); scn.SkipToLSTurn(Phase.CONTROL);
         scn.MoveCardsToLSHand(scn.GetLSReserveDeck().toArray(com.gempukku.swccgo.game.PhysicalCardImpl[]::new));
-        scn.SkipToLSTurn(Phase.DEPLOY);
+        scn.SkipToPhase(Phase.DEPLOY);
         assertTrue(scn.AwaitingLSDeployPhaseActions());
         assertFalse(scn.LSCardActionAvailable(scn.GetLSCard("falcon"), "Take A Few Maneuvers"));
     }
