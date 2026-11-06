@@ -7,6 +7,9 @@ import com.gempukku.swccgo.filters.InterruptPersonaReferences;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import com.gempukku.swccgo.logic.modifiers.AddsBattleDestinyModifier;
+import com.gempukku.swccgo.logic.modifiers.ModifyGameTextModifier;
+import com.gempukku.swccgo.logic.modifiers.ModifyGameTextType;
+import com.gempukku.swccgo.filters.Filters;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -19,6 +22,7 @@ public class Card_1115_067_Integration_Tests {
         var scn = new VirtualTableScenario(new HashMap<>() {{
             put("enemyInterrupt", "5_49"); put("enemySkill", "1_64"); put("luke", "1_19");
             put("obi", "1_21");
+            put("exceptVader", "9_53");
         }}, new HashMap<>() {{
             put("trained", "1115_67"); put("skill", "1_209"); put("trooper", "1_194");
             put("maul", "11_54"); put("mara", "110_10"); put("duel", "1110_13");
@@ -234,5 +238,41 @@ public class Card_1115_067_Integration_Tests {
     @Test
     public void LegacyCountMayUsePrintedOrSubstitutedTextWithoutCombiningBoth() {
         separateBattlegroundCounts("legacyEmpires");
+    }
+
+    private void optionalNegativeReference(boolean vader, boolean maul, boolean playable) {
+        var scn = scenario();
+        var interrupt = scn.GetLSCard("exceptVader");
+        var site = scn.GetDSStartingLocation();
+        scn.MoveCardsToHand(interrupt);
+        scn.MoveCardsToLocation(site, scn.GetLSCard("luke"));
+        if (vader) scn.MoveCardsToLocation(site, scn.GetDSCard("vader"));
+        if (maul) scn.MoveCardsToLocation(site, scn.GetDSCard("maul"));
+        // A synthetic grant exercises this Light Side Interrupt's shared interpretation contract.
+        // The actual Dark Side Effect's owner scope is tested separately above.
+        scn.ApplyAdHocModifier(new ModifyGameTextModifier(scn.GetLSStartingLocation(),
+                Filters.and(Filters.your(scn.LS), Filters.Interrupt),
+                ModifyGameTextType.LEGACY__INTERRUPTS__VADER_MAY_BE_MAUL_OR_MARA_JADE));
+        scn.SkipToDSTurn(Phase.BATTLE);
+        scn.EnsureDSForcePile(2);
+        scn.DSInitiateBattle(site);
+        scn.PassAllResponses();
+        if (scn.AwaitingDSWeaponsSegmentActions()) scn.DSPass();
+        assertEquals(playable, scn.LSCardPlayAvailable(interrupt, "Subtract 2 from battle destiny draws"));
+    }
+
+    @Test
+    public void NegativeReferenceMayDeclineSubstitutionWhenOnlyMaulIsInBattle() {
+        optionalNegativeReference(false, true, true);
+    }
+
+    @Test
+    public void NegativeReferenceMayChooseSubstitutionWhenOnlyVaderIsInBattle() {
+        optionalNegativeReference(true, false, true);
+    }
+
+    @Test
+    public void NegativeReferenceFailsWhenBothInterpretationsArePresent() {
+        optionalNegativeReference(true, true, false);
     }
 }
