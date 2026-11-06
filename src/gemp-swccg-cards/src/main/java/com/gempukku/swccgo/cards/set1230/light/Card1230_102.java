@@ -57,9 +57,10 @@ public class Card1230_102 extends AbstractUsedOrLostInterrupt {
                     action.allowResponses(new RespondablePlayCardEffect(action) {
                         @Override
                         protected void performActionResults(Action targetingAction) {
+                            PhysicalCard finalTarget = targetingAction.getPrimaryTargetCard(targetGroupId);
                             action.appendEffect(new AddUntilEndOfTurnModifierEffect(action,
-                                    new HyperspeedModifier(self, Filters.sameCardId(targetingAction.getPrimaryTargetCard(targetGroupId)), -1),
-                                    "makes " + starship.getBlueprint().getTitle() + " hyperspeed -1"));
+                                    new HyperspeedModifier(self, Filters.sameCardId(finalTarget), -1),
+                                    "makes " + finalTarget.getBlueprint().getTitle() + " hyperspeed -1"));
                         }
                     });
                 }
