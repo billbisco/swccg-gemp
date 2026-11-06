@@ -91,7 +91,7 @@ public class Card_1263_020_Tests {
         scn.StartGame(); scn.MoveCardsToLocation(site, walker, scn.GetLSCard("luke"));
         scn.BoardAsPilot(walker, scn.GetDSCard("driver"));
         scn.SkipToDSTurn(Phase.BATTLE); scn.PrepareLSDestiny(destiny);
-        scn.DSInitiateBattle(site); scn.SkipToDamageSegment(true);
+        scn.DSInitiateBattle(site); scn.SkipToDamageSegment(true); scn.PassDamageSegmentActions();
         assertEquals(remaining, scn.GetUnpaidDSAttrition());
     }
     @Test public void CycloneWalkerDriverProtectsFromAttritionBelowFive() { attrition(4, 0); }

@@ -4,9 +4,11 @@ import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import org.junit.Test;
+import com.gempukku.swccgo.game.PhysicalCardImpl;
 import java.util.ArrayList;
 import java.util.HashMap;
 import static org.junit.Assert.*;
+import static com.gempukku.swccgo.framework.Assertions.assertInZone;
 
 public class Card_1250_003_Tests {
     private VirtualTableScenario scenario() {
@@ -41,17 +43,17 @@ public class Card_1250_003_Tests {
         var scn = scenario(); battle(scn, true); var chokk = scn.GetDSCard("chokk");
         assertTrue(scn.DSCardActionAvailable(chokk)); int force = scn.GetDSForcePileCount();
         scn.DSUseCardAction(chokk); scn.PassAllResponses();
-        assertEquals(force - 1, scn.GetDSForcePileCount()); assertEquals(Zone.USED_PILE, chokk.getZone());
+        assertEquals(force - 1, scn.GetDSForcePileCount()); assertInZone(Zone.USED_PILE, chokk);
     }
     @Test
     public void ChokkCannotUseAbilityWithoutAnotherFriendlyNonDroid() {
         var scn = scenario(); battle(scn, false);
-        assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("chokk")));
+        assertNoChokkResponse(scn);
     }
     @Test
     public void ChokkMayDeclineAndRemainInBattle() {
         var scn = scenario(); battle(scn, true); var chokk = scn.GetDSCard("chokk");
-        assertTrue(scn.DSCardActionAvailable(chokk)); scn.PassBattleStartResponses();
+        assertTrue(scn.DSCardActionAvailable(chokk)); scn.PassAllResponses();
         assertEquals(Zone.AT_LOCATION, chokk.getZone());
     }
     @Test
@@ -79,6 +81,11 @@ public class Card_1250_003_Tests {
         assertTrue(scn.AwaitingDSWeaponsSegmentActions());
         assertFalse(scn.DSCardPlayAvailable(scn.GetDSCard("interrupt")));
         scn.DSPass();
+        assertTrue(scn.gameState().getBattleState().isReachedPowerSegment());
+        assertFalse(scn.game().getModifiersQuerying().isPlayingCardProhibited(scn.gameState(), scn.GetLSCard("interrupt"), false));
+        assertFalse(scn.game().getModifiersQuerying().isPlayingCardProhibited(scn.gameState(), scn.GetDSCard("interrupt"), false));
+        scn.PassResponses("BEFORE_BATTLE_DESTINY_DRAWS");
+        scn.SkipBattleDestinyDraws(false);
         assertTrue(scn.AwaitingLSPowerSegmentActions());
         assertTrue(scn.LSCardPlayAvailable(scn.GetLSCard("interrupt")));
         scn.LSPass();
@@ -87,7 +94,7 @@ public class Card_1250_003_Tests {
 
     @Test
     public void ChokkDecliningLeavesInterruptsPlayableInWeaponsSegment() {
-        var scn = scenario(); battle(scn, true); scn.PassBattleStartResponses();
+        var scn = scenario(); battle(scn, true); scn.PassAllResponses();
         assertTrue(scn.AwaitingLSWeaponsSegmentActions());
         assertTrue(scn.LSCardPlayAvailable(scn.GetLSCard("interrupt")));
         scn.LSPass();
@@ -99,28 +106,28 @@ public class Card_1250_003_Tests {
         var scn = scenario(); var site = scn.GetDSStartingLocation();
         scn.StartGame(); scn.MoveCardsToLocation(site, scn.GetDSCard("chokk"), scn.GetDSCard("droid"), scn.GetLSCard("luke"));
         scn.SkipToLSTurn(Phase.BATTLE); scn.LSInitiateBattle(site);
-        assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("chokk")));
+        assertNoChokkResponse(scn);
     }
 
     @Test
     public void ChokkCannotUseAbilityWithoutOneForce() {
         var scn = scenario(); var site = scn.GetDSStartingLocation();
         scn.StartGame(); scn.MoveCardsToLocation(site, scn.GetDSCard("chokk"), scn.GetDSCard("trooper"), scn.GetLSCard("luke"));
-        scn.SkipToLSTurn(Phase.BATTLE); scn.EnsureDSForcePile(0); scn.LSInitiateBattle(site);
+        scn.SkipToLSTurn(Phase.BATTLE); setDarkForce(scn, 0); scn.LSInitiateBattle(site);
         assertEquals(0, scn.GetDSForcePileCount());
-        assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("chokk")));
+        assertNoChokkResponse(scn);
     }
 
     @Test
     public void ChokkCanRespondToHisOwnersBattleUsingExactlyOneForce() {
         var scn = scenario(); var site = scn.GetDSStartingLocation();
         scn.StartGame(); scn.MoveCardsToLocation(site, scn.GetDSCard("chokk"), scn.GetDSCard("trooper"), scn.GetLSCard("luke"));
-        scn.SkipToDSTurn(Phase.BATTLE); scn.EnsureDSForcePile(2); scn.DSInitiateBattle(site);
+        scn.SkipToDSTurn(Phase.BATTLE); setDarkForce(scn, 2); scn.DSInitiateBattle(site);
         assertEquals(1, scn.GetDSForcePileCount());
         assertTrue(scn.DSCardActionAvailable(scn.GetDSCard("chokk")));
         scn.DSUseCardAction(scn.GetDSCard("chokk")); scn.PassAllResponses();
         assertEquals(0, scn.GetDSForcePileCount());
-        assertEquals(Zone.USED_PILE, scn.GetDSCard("chokk").getZone());
+        assertInZone(Zone.USED_PILE, scn.GetDSCard("chokk"));
     }
 
     @Test
@@ -129,6 +136,16 @@ public class Card_1250_003_Tests {
         scn.StartGame(); scn.MoveCardsToLocation(site, scn.GetDSCard("chokk"), scn.GetLSCard("luke"));
         scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetDSCard("trooper"));
         scn.SkipToLSTurn(Phase.BATTLE); scn.LSInitiateBattle(site);
-        assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("chokk")));
+        assertNoChokkResponse(scn);
+    }
+
+    private void setDarkForce(VirtualTableScenario scn, int amount) {
+        scn.MoveCardsToTopOfDSReserveDeck(scn.GetDSForcePile().toArray(PhysicalCardImpl[]::new));
+        scn.EnsureDSForcePile(amount);
+    }
+
+    private void assertNoChokkResponse(VirtualTableScenario scn) {
+        assertFalse(scn.AnyDecisionsAvailable(scn.DS));
+        assertTrue(scn.AwaitingLSWeaponsSegmentActions());
     }
 }
