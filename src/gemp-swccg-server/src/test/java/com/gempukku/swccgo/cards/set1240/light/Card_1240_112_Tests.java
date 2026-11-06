@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import static com.gempukku.swccgo.framework.Assertions.assertAtLocation;
+import static com.gempukku.swccgo.framework.Assertions.assertInZone;
 import static org.junit.Assert.*;
 
 public class Card_1240_112_Tests {
@@ -71,6 +72,19 @@ public class Card_1240_112_Tests {
         assertAtLocation(scn.GetLSStartingLocation(), scn.GetLSCard("infinity"));
         assertTrue(scn.IsAboardAsPilot(scn.GetLSCard("infinity"), scn.GetLSCard("boshek")));
         assertEquals(0, scn.GetLSForcePileCount());
+    }
+
+    @Test
+    public void InfinityCannotDeployWithOnlyTwoForce() {
+        var scn = GetScenario();
+        scn.StartGame();
+        scn.SkipToLSTurn(Phase.CONTROL);
+        scn.MoveCardsToLSHand(scn.GetLSCard("infinity"), scn.GetLSCard("boshek"));
+        scn.EnsureLSForcePile(2);
+        scn.SkipToPhase(Phase.DEPLOY);
+        assertTrue(scn.AwaitingLSDeployPhaseActions());
+        assertEquals(2, scn.GetLSForcePileCount());
+        assertFalse(scn.LSDeployAvailable(scn.GetLSCard("infinity")));
     }
 
     private VirtualTableScenario Ready(int boShekPlacement) {
@@ -226,8 +240,8 @@ public class Card_1240_112_Tests {
         var scn = BattleReady(4);
         scn.LSPayRemainingBattleDamageFromReserveDeck();
         assertEquals(4, scn.GetUnpaidLSAttrition());
-        assertTrue(scn.AwaitingLSAttritionPayment());
-        assertTrue(scn.LSHasCardChoiceAvailable(scn.GetLSCard("infinity")));
+        scn.LSPayAttritionFromCardInPlay(scn.GetLSCard("infinity"));
+        assertInZone(Zone.LOST_PILE, scn.GetLSCard("infinity"));
     }
 
     private VirtualTableScenario BattleReady(int destiny) {
