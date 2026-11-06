@@ -16,7 +16,7 @@ public class Card_1261_003_Tests {
         return new VirtualTableScenario(new HashMap<>() {{ put("obiwan", "1_21"); put("han", "1_11"); put("chewie", "2_3"); }},
                 new HashMap<>() {{ put("driver", "1261_3"); put("walker", "3_157"); put("otherWalker", "3_157");
                     put("scout", "3_156"); put("otherPilot", "3_83"); put("vader", "1_168");
-                    put("tie", "1_306"); put("hoth", "3_143"); }}, 20, 20,
+                    put("tie", "1_306"); put("chokeVader", "101_5"); put("hoth", "3_143"); }}, 20, 20,
                 StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -140,4 +140,19 @@ public class Card_1261_003_Tests {
             assertFalse(scn.GetDSAvailableActions().stream().anyMatch(t -> t.contains("Place in Used Pile")));
         com.gempukku.swccgo.framework.Assertions.assertInZone(Zone.LOST_PILE, scn.GetDSCard("driver"));
     }
+    @Test
+    public void AtAtDriverOrdinaryLossFromPilotingAtAtCanAlsoReturnToUsedPile() {
+        var scn = scenario(); scn.StartGame(); var walker = scn.GetDSCard("walker"); var driver = scn.GetDSCard("driver");
+        var site = scn.GetDSStartingLocation();
+        scn.MoveCardsToLocation(site, walker, scn.GetLSCard("obiwan"), scn.GetLSCard("han"), scn.GetLSCard("chewie"));
+        scn.BoardAsPilot(walker, driver); scn.BoardAsPassenger(walker, scn.GetDSCard("chokeVader"));
+        scn.DSStartBattleAndSkipToWeaponsSegment(site); scn.EnsureDSForcePile(3); scn.PrepareDSDestiny(5);
+        scn.SkipToDamageSegment(false); scn.PassDamageSegmentActions();
+        scn.DSPayRemainingBattleDamageFromReserveDeck(); scn.PassAllResponses();
+        scn.DSChooseCard(driver); scn.PassCardLeavingTable(); int force = scn.GetDSForcePileCount();
+        scn.DSChooseAction("Place in Used Pile"); scn.PassAllResponses();
+        com.gempukku.swccgo.framework.Assertions.assertInZone(Zone.USED_PILE, driver);
+        assertEquals(force - 1, scn.GetDSForcePileCount());
+    }
+
 }
