@@ -16,7 +16,7 @@ public class Card_1262_024_Tests {
             put("security", "1262_24"); put("trooper", "1_28"); put("luke", "1_19"); put("obi", "1_21");
             put("spy", "1_20"); put("naboo", "13_31"); put("core", "13_32"); put("beggar", "1_44"); put("traffic", "1_66"); put("plains", "12_79"); put("shield", "14_32");
         }}, new HashMap<>() {{
-            put("vader", "1_168"); put("trooper1", "1_194"); put("trooper2", "1_194"); put("trooper3", "1_194");
+            put("vader", "1_168"); put("trooper1", "1_194"); put("trooper2", "1_194"); put("trooper3", "1_194"); put("trooper4", "1_194");
             put("derdram", "4_98"); put("ephant", "6_101"); put("alter", "1_234"); put("hypo", "2_112");
         }}, 50, 50, StartingSetup.LSStartingLocation("1_136"), StartingSetup.DSStartingLocation("12_176"),
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
@@ -175,6 +175,29 @@ public class Card_1262_024_Tests {
         assertTrue(scn.DSHasCardChoiceAvailable(scn.GetLSCard("traffic"))); scn.DSChooseCard(beggar);
         scn.PassAllResponses(); scn.PassDestinyDrawResponses(); scn.PassAllResponses();
         assertInZone(Zone.LOST_PILE, beggar); assertInZone(Zone.SIDE_OF_TABLE, effect);
+    }
+
+    @Test public void SecurityBreachPreservesDerdramWithMoreThanThreeOthers() { derdram(4, false); }
+    @Test public void SecurityBreachPreservesEphantWithMoreThanThreeOthers() { ephant(4, true); }
+
+    @Test public void SecurityBreachReducesExactlyFourActualDamageToZero() {
+        var scn = deployed(); var site = scn.GetLSStartingLocation(); var effect = scn.GetLSCard("security");
+        scn.MoveCardsToLocation(site, scn.GetLSCard("luke"), scn.GetDSCard("vader"), scn.GetDSCard("trooper1"));
+        scn.SkipToPhase(Phase.BATTLE); scn.LSInitiateBattle(site); scn.PassAllResponses();
+        scn.SkipToDamageSegment(false); scn.PassDamageSegmentActions(); assertEquals(4, scn.GetUnpaidLSBattleDamage());
+        scn.LSUseCardAction(effect, "Place out of play"); scn.PassAllResponses();
+        assertInZone(Zone.OUT_OF_PLAY, effect); assertFalse(scn.AwaitingLSBattleDamagePayment());
+        assertAtLocation(site, scn.GetLSCard("luke"));
+    }
+
+    @Test public void SecurityBreachDoesNotReduceOpponentsBattleDamage() {
+        var scn = deployed(); var site = scn.GetLSStartingLocation();
+        scn.MoveCardsToLocation(site, scn.GetLSCard("obi"), scn.GetDSCard("trooper1"));
+        scn.SkipToPhase(Phase.BATTLE); scn.LSInitiateBattle(site); scn.PassAllResponses();
+        scn.SkipToDamageSegment(false); scn.PassDamageSegmentActions();
+        assertTrue(scn.AwaitingDSBattleDamagePayment()); assertEquals(4, scn.GetUnpaidDSBattleDamage());
+        int lost = scn.GetDSLostPileCount(); scn.DSPayRemainingBattleDamageFromReserveDeck(); scn.PassAllResponses();
+        assertEquals(lost + 4, scn.GetDSLostPileCount()); assertInZone(Zone.SIDE_OF_TABLE, scn.GetLSCard("security"));
     }
 
 }

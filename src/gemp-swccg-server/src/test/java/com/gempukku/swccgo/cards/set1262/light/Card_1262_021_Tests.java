@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
 public class Card_1262_021_Tests {
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>() {{
-            put("gundark", "1262_21"); put("trooper", "1_28"); put("luke", "1_19");
+            put("gundark", "1262_21"); put("trooper", "1_28"); put("luke", "1_19"); put("obi", "1_21");
             put("swamp", "4_87"); put("endor", "8_73"); put("hut", "8_71");
         }}, new HashMap<>() {{
             put("vader", "1_168"); put("trooper1", "1_194"); put("trooper2", "1_194");
@@ -128,6 +128,25 @@ public class Card_1262_021_Tests {
         scn.PassAllResponses(); scn.PassWeaponsSegmentActions(); scn.PassAllResponses();
         scn.PassDestinyDrawResponses(); scn.PassAllResponses();
         assertInZone(Zone.LOST_PILE, target); assertAtLocation(site, g);
+    }
+
+    @Test public void GundarkDoesNotReduceOpponentsBattleDamage() {
+        var scn = scenario(); scn.StartGame(); var site = scn.GetDSCard("forest"); scn.MoveLocationToTable(site);
+        scn.MoveCardsToLocation(site, scn.GetLSCard("obi"), scn.GetDSCard("trooper1"));
+        scn.SkipToLSTurn(Phase.BATTLE); scn.MoveCardsToLocation(site, scn.GetLSCard("gundark"));
+        scn.LSInitiateBattle(site); scn.PassAllResponses(); scn.SkipToDamageSegment(false); scn.PassDamageSegmentActions();
+        assertTrue(scn.AwaitingDSBattleDamagePayment()); assertEquals(4, scn.GetUnpaidDSBattleDamage());
+        int lost = scn.GetDSLostPileCount(); scn.DSPayRemainingBattleDamageFromReserveDeck(); scn.PassAllResponses();
+        assertEquals(lost + 4, scn.GetDSLostPileCount()); assertAtLocation(site, scn.GetLSCard("gundark"));
+    }
+
+    @Test public void GundarkDoesNotOfferReductionWhenNeitherPlayerHasBattleDamage() {
+        var scn = scenario(); scn.StartGame(); var site = scn.GetDSCard("forest"); scn.MoveLocationToTable(site);
+        scn.MoveCardsToLocation(site, scn.GetLSCard("trooper"), scn.GetDSCard("trooper1"));
+        scn.SkipToLSTurn(Phase.BATTLE); scn.MoveCardsToLocation(site, scn.GetLSCard("gundark"));
+        scn.LSInitiateBattle(site); scn.PassAllResponses(); scn.SkipToDamageSegment(false); scn.PassDamageSegmentActions();
+        scn.PassAllResponses(); assertAtLocation(site, scn.GetLSCard("gundark"));
+        assertFalse(scn.LSCardActionAvailable(scn.GetLSCard("gundark"), "Place Gundark in Lost Pile"));
     }
 
 }
