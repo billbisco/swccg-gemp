@@ -23,6 +23,7 @@ class DeparturePilotSnapshotTests {
         PhysicalCardImpl card = new PhysicalCardImpl();
         card.setZone(Zone.ATTACHED);
         card.attachTo(host, asPilot, !asPilot, false, false, false);
+        when(game.getGameState().getAttachedCards(card)).thenReturn(List.of());
         card.updateRememberedInPlayCardInfo(game);
         card.attachTo(null, false, false, false, false, false);
         card.setZone(Zone.LOST_PILE);
