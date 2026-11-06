@@ -118,6 +118,7 @@ public class Card_1250_005_Tests {
     }
     private void attrition(int destiny, boolean immune) {
         var scn = ships(true, false); var dofine = scn.GetDSCard("dofine"); var ship = scn.GetDSCard("flagship");
+        scn.MoveCardsToDSHand(scn.GetDSCard("otherShip"));
         scn.ApplyAdHocModifier(new TotalBattleDestinyModifier(scn.GetLSCard("luke"), destiny - 7, scn.LS));
         scn.PrepareLSDestiny(7); scn.PrepareDSDestiny(7);
         scn.DSInitiateBattle(scn.GetDSCard("system")); scn.SkipToDamageSegment(true); scn.PassDamageSegmentActions();
