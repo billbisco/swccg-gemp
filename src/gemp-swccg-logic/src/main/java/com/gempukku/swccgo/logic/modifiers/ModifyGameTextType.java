@@ -150,6 +150,7 @@ public enum ModifyGameTextType {
     LEGACY__OMMNI_BOX__AT_SAME_SITE_MAY_BE_TREATED_AS_AT_BATTLEGROUND_SITES("'At same site' may be treated as 'at battleground sites'"),
     LEGACY__OMMNI_BOX__COVER_CHARGES_ONLY_OPPONENT_AND_LIMITED_TO_3("'Cover charges' only apply to opponent and are limited to 3"),
     SON_OF_SKYWALKER_V__LOSE_1_FORCE_TO_SUBSTITUTE_DESTINY("Must first lose 1 Force to substitute a destiny draw using Jedi Test #5"),
+    LEGACY__SQUABBLING_DELEGATES__SENATORS_ARE_CORUSCANT_GUARDS("'Senators' treated as 'Coruscant Guards'"),
 
     ;
 
