@@ -33,7 +33,7 @@ public class Card1262_024 extends AbstractNormalEffect {
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, PhysicalCard self) {
         Filter namedCharacters = Filters.and(Filters.character,
-                Filters.or(Filters.title("Derdram"), Filters.title(Title.Corporal_Derdram), Filters.Ephant_Mon));
+                Filters.or(Filters.title("Derdram"), Filters.title("Corporal Derdram"), Filters.Ephant_Mon));
         return Arrays.asList(new CancelsGameTextModifier(self, Filters.and(Filters.Naboo_site, Icon.REFLECTIONS_III)),
                 new CancelsGameTextModifier(self, Filters.and(namedCharacters,
                         Filters.not(Filters.presentWith(self, 3, Filters.character)))));
