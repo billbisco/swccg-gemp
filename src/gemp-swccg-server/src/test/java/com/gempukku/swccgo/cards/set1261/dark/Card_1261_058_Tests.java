@@ -49,10 +49,8 @@ public class Card_1261_058_Tests {
         assertTrue("Blizzard deployment needs six Force", force >= 6);
         scn.DSDeployCard(b);
         if (scn.DSHasCardChoiceAvailable(site)) scn.DSChooseCard(site);
-        var windows = new ArrayList<String>();
         for (int i = 0; i < 20 && !scn.GetDSAvailableActions().stream().anyMatch(text -> text.contains("Deploy a non-pilot Imperial warrior from Reserve Deck")); i++) {
-            windows.add(scn.GetDecidingPlayer() + ": " + scn.GetCurrentDecision().getText() + " actions=" + scn.GetDSAvailableActions());
-            assertTrue("Missed download; windows=" + windows + "; reserve=" + scn.GetDSReserveDeckCount() + "; Blizzard zone=" + b.getZone() + "; trooper zone=" + trooper.getZone(), scn.GetCurrentDecision().getText().toLowerCase().contains("optional"));
+            assertTrue("Expected an optional response before the download", scn.GetCurrentDecision().getText().toLowerCase().contains("optional"));
             scn.PlayerPass(scn.GetDecidingPlayer());
         }
         scn.DSUseCardAction(b, "Deploy a non-pilot Imperial warrior from Reserve Deck"); scn.PassAllResponses();
