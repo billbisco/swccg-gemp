@@ -44,8 +44,9 @@ public class Card_1261_058_Tests {
     public void BlizzardFourDownloadsNonPilotImperialWarriorFromReserveDeckForFree() {
         var scn = scenario(); scn.StartGame(); var b = scn.GetDSCard("blizzard"); var trooper = scn.GetDSCard("trooper");
         var piett = scn.GetDSCard("piett"); var site = scn.GetDSStartingLocation();
-        scn.MoveCardsToDSHand(b); scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.MoveCardsToDSHand(b); scn.DSActivateForceCheat(10); scn.SkipToDSTurn(Phase.DEPLOY);
         scn.MoveCardsToTopOfDSReserveDeck(trooper, piett); int force = scn.GetDSForcePileCount();
+        assertTrue("Blizzard deployment needs six Force", force >= 6);
         scn.DSDeployCard(b);
         if (scn.DSHasCardChoiceAvailable(site)) scn.DSChooseCard(site);
         var windows = new ArrayList<String>();
