@@ -36,6 +36,8 @@ public class Card_1230_096_Tests {
             put("republic", "14_58");
             put("tatooine", "1_127");
             put("alderaan", "1_121");
+            put("staging", "6_87");
+            put("squadron", "7_150");
             put("luke", "1_19");
         }}, new HashMap<>() {{
             put("destroyer", "1_301");
@@ -418,5 +420,62 @@ public class Card_1230_096_Tests {
         assertEquals(0, scn.GetLSForcePileCount());
         assertFalse(attackAvailable(scn));
         assertEquals(Zone.HAND, scn.GetLSCard("attack").getZone());
+    }
+
+    @Test
+    public void TheTimeForOurAttackHasComeFailedDownloadCannotAttachToAnExistingShip() {
+        var scn = ready(1);
+        scn.MoveCardsToLocation(scn.GetLSCard("tatooine"), scn.GetLSCard("capital"));
+        deploySecond(scn, "tatooine");
+        scn.LSUseCardAction(scn.GetLSCard("attack"), "Reserve Deck");
+        scn.PassAllResponses();
+        scn.LSPass();
+        for (int i = 0; i < 20; i++) {
+            var decision = scn.GetCurrentDecision();
+            String text = decision.getText().toLowerCase();
+            if (!text.contains("verify") && !text.contains("optional response"))
+                break;
+            scn.PlayerPass(scn.GetDecidingPlayer());
+        }
+        assertEquals(Zone.HAND, scn.GetLSCard("attack").getZone());
+        assertTrue(scn.GetLSReserveDeck().contains(scn.GetLSCard("ship")));
+        org.junit.Assert.assertNull(scn.GetLSCard("attack").getAttachedTo());
+    }
+
+    @Test
+    public void TheTimeForOurAttackHasComeSquadronArrivalCountsItsThreeStarfighters() {
+        var scn = scenario();
+        scn.StartGame();
+        scn.SkipToLSTurn(Phase.ACTIVATE);
+        scn.SkipToPhase(Phase.CONTROL);
+        scn.MoveLocationToTable(scn.GetLSCard("tatooine"));
+        scn.MoveLocationToTable(scn.GetLSCard("staging"));
+        scn.MoveCardsToLocation(scn.GetLSCard("staging"), scn.GetLSCard("squadron"));
+        scn.MoveCardsToLSHand(scn.GetLSCard("attack"));
+        scn.EnsureLSForcePile(20);
+        scn.MoveCardsToTopOfLSReserveDeck(scn.GetLSCard("ship"));
+        scn.SkipToPhase(Phase.MOVE);
+        scn.LSMoveCard(scn.GetLSCard("squadron"), scn.GetLSCard("tatooine"));
+        reachAttackResponse(scn);
+        assertTrue(attackAvailable(scn, "Reserve Deck"));
+        finishDownload(scn, true);
+        assertEquals(scn.GetLSCard("ship"), scn.GetLSCard("attack").getAttachedTo());
+    }
+
+    @Test
+    public void TheTimeForOurAttackHasComeAdditionalMoveLimitSurvivesAReplacementEffectCopy() {
+        var scn = attached();
+        scn.LSUseCardAction(scn.GetLSCard("attack"), "move again");
+        scn.PassAllResponses();
+        if (scn.LSDecisionAvailable("Choose regular move action"))
+            scn.LSChooseOption("hyperspeed");
+        scn.PassAllResponses();
+        assertEquals(scn.GetLSCard("alderaan"), scn.GetLSCard("ship").getAtLocation());
+        scn.MoveCardsToTopOfLSLostPile(scn.GetLSCard("attack"));
+        scn.AttachCardsTo(scn.GetLSCard("ship"), scn.GetLSCard("attack2"));
+        scn.SkipToDSTurn(Phase.MOVE);
+        scn.SkipToLSTurn(Phase.MOVE);
+        assertFalse(scn.LSCardActionAvailable(scn.GetLSCard("attack2"), "move again"));
+        assertTrue(scn.LSMoveAvailable(scn.GetLSCard("ship")));
     }
 }
