@@ -1696,6 +1696,7 @@ public enum GameTextActionId {
     // Append new identifiers to preserve existing enum ordinals.
     LEGACY__RAPID_DEPLOYMENT__DEPLOY_SCOUT(true),
     LEGACY__GREEN_SQUADRON_1__TAKE_DIVERSIONARY_TACTICS(true),
+    LEGACY__UH_OH__DEPLOY_CLAKDOR_OR_MUSICIAN(true),
     ;
 
     private boolean _searchCardPile;
