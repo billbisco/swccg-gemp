@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.function.BooleanSupplier;
 
 import static org.junit.Assert.*;
+import static com.gempukku.swccgo.framework.Assertions.assertInZone;
 
 public class Card_1261_109_Tests {
     private VirtualTableScenario scenario() {
@@ -94,7 +95,7 @@ public class Card_1261_109_Tests {
         assertEquals(immune, scn.LSDecisionAvailable("(if desired)"));
         if (immune) scn.LSChooseCards();
         else scn.LSPayAttritionFromCardInPlay(scn.GetLSCard("dash"));
-        assertEquals(immune ? Zone.AT_LOCATION : Zone.LOST_PILE, scn.GetLSCard("dash").getZone());
+        assertInZone(immune ? Zone.AT_LOCATION : Zone.LOST_PILE, scn.GetLSCard("dash"));
     }
 
     @Test public void DashInRogue10DoesNotPayAttritionThree() { attrition(3, true); }
