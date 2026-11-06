@@ -229,6 +229,7 @@ public class Card_1240_013_Tests {
     public void PrinceXizorMustStillSatisfyAttritionAtExactlyFour() {
         var scn = ImmunityReady(4);
         assertTrue(scn.GetUnpaidDSAttrition() > 0);
+        assertEquals("1", scn.GetADParam(scn.DS, "min")[0]);
         scn.DSPayAttritionFromCardInPlay(scn.GetDSCard("xizor"));
         assertInZone(Zone.LOST_PILE, scn.GetDSCard("xizor"));
     }

@@ -239,6 +239,7 @@ public class Card_1240_006_Tests {
     public void GuriIsStillVulnerableAtExactlyFiveAttrition() {
         var scn = ImmunityReady(5);
         assertTrue(scn.GetUnpaidDSAttrition() > 0);
+        assertEquals("1", scn.GetADParam(scn.DS, "min")[0]);
         scn.DSPayAttritionFromCardInPlay(scn.GetDSCard("guri"));
         assertInZone(Zone.LOST_PILE, scn.GetDSCard("guri"));
     }
