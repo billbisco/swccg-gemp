@@ -23,6 +23,17 @@ public interface Flags extends BaseQuery {
         return false;
     }
 
+    /**
+     * The source cards of the active modifiers with the flag, in order (#176: who goes first).
+     */
+    default java.util.List<PhysicalCard> getFlagActiveSources(GameState gameState, ModifierFlag modifierFlag) {
+        java.util.List<PhysicalCard> sources = new java.util.ArrayList<PhysicalCard>();
+        for (Modifier modifier : getModifiers(gameState, ModifierType.SPECIAL_FLAG))
+            if (modifier.hasFlagActive(gameState, query(), modifierFlag, null))
+                sources.add(modifier.getSource(gameState));
+        return sources;
+    }
+
     default int getFlagActiveCount(GameState gameState, ModifierFlag modifierFlag, String playerId) {
         int count = 0;
         for (Modifier modifier : getModifiers(gameState, ModifierType.SPECIAL_FLAG)) {

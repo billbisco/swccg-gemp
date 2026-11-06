@@ -114,6 +114,11 @@ public interface CardTraits extends BaseQuery, Limits, Piloting, Weapons {
             if (blueprint.getCardCategory() == CardCategory.LOCATION) {
                 filterForUniqueness = Filters.and(filterForUniqueness, Filters.owner(card.getOwner()), Filters.not(Filters.collapsed), Filters.not(Filters.perSystemUniqueness));
             } else {
+                // #176 (Bill 2026-11-05): in a same-side game uniqueness is per player: the player's own cards, plus
+                // opponent's cards the player has stolen (as for personas above). In a Light vs Dark game the opponent's
+                // cards still count, which is what lets a card convert its opposite-side version.
+                if (gameState.isSameSideGame())
+                    filterForUniqueness = Filters.and(filterForUniqueness, Filters.or(Filters.your(card), Filters.and(Filters.opponents(card), Filters.stolen)));
                 filterForUniqueness = Filters.or(filterForUniqueness,
                         Filters.and(Filters.your(card), Filters.not(card), Filters.hasPermanentAboard(identity)),
                         Filters.and(Filters.your(card), Filters.not(card), Filters.hasPermanentWeapon(identity)));

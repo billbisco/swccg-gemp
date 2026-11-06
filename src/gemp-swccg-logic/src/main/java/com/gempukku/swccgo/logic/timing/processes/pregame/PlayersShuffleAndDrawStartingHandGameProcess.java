@@ -1,5 +1,7 @@
 package com.gempukku.swccgo.logic.timing.processes.pregame;
 
+import com.gempukku.swccgo.logic.FirstTurn;
+
 import com.gempukku.swccgo.common.Zone;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
@@ -63,14 +65,18 @@ public class PlayersShuffleAndDrawStartingHandGameProcess implements GameProcess
             }
 
             // set current player opposite of player with first turn
-            if (modifiersQuerying.hasFlagActive(gameState, ModifierFlag.LIGHT_SIDE_GOES_FIRST)) {
-                gameState.setFirstPlayer(_lightPlayerId);
+            // #176: FirstTurn reads the "Light Side goes first" cards seat-neutrally
+            String firstPlayer = FirstTurn.firstPlayer(game);
+            gameState.setFirstPlayer(firstPlayer);
+            if (gameState.isSameSideGame()) {
+                if (FirstTurn.claims(game).size() > 1)
+                    gameState.sendMessage("Both players' cards claim the first turn; they cancel, so the Dark Side seat goes first");
+                gameState.sendMessage(firstPlayer + " goes first");
+            }
+            else if (firstPlayer.equals(_lightPlayerId))
                 gameState.sendMessage("Light Side goes first");
-            }
-            else {
-                gameState.setFirstPlayer(_darkPlayerId);
+            else
                 gameState.sendMessage("Dark Side goes first");
-            }
 
             _choicesOffered = true;
             if (game.getFormat().supportsStartingCredits())
