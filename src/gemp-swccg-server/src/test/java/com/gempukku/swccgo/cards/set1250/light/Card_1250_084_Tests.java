@@ -84,6 +84,7 @@ public class Card_1250_084_Tests {
         }});
         scn.BlueprintIconCheck(card, new ArrayList<>() {{
             add(Icon.STARSHIP);
+            add(Icon.LEGACY_BLOCK_5);
             add(Icon.EPISODE_I);
             add(Icon.REPUBLIC);
             add(Icon.PILOT);
@@ -112,7 +113,8 @@ public class Card_1250_084_Tests {
         assertEquals(6, scn.GetPower(corvette));
         scn.MoveOutOfPlay(destroyer);
         assertEquals(5, scn.GetPower(corvette));
-        assertEquals(2, scn.GetAbility(corvette));
+        assertEquals(2, scn.game().getModifiersQuerying().getHighestAbilityPiloting(
+                scn.gameState(), corvette, corvette, true, false), scn.epsilon);
     }
 
     @Test
@@ -177,12 +179,14 @@ public class Card_1250_084_Tests {
         scn.StartGame();
         scn.MoveLocationToTable(tatooine);
         scn.MoveCardsToLocation(tatooine, corvette);
+        scn.MoveCardsToLocation(tatooine, scn.GetLSCard("ordinaryCorvette"));
         scn.MoveCardsToHand(cannon);
         scn.SkipToLSTurn(Phase.DEPLOY);
-        assertFalse(scn.LSDeployAvailable(cannon));
-        scn.MoveCardsToLocation(tatooine, scn.GetLSCard("ordinaryCorvette"));
         assertTrue(scn.LSDeployAvailable(cannon));
         scn.LSDeployCard(cannon);
+        assertFalse(scn.LSGetCardChoices().contains(String.valueOf(corvette.getCardId())));
+        assertTrue(scn.LSGetCardChoices().contains(String.valueOf(scn.GetLSCard("ordinaryCorvette").getCardId())));
+        scn.LSChooseCard(scn.GetLSCard("ordinaryCorvette"));
         scn.PassAllResponses();
         assertEquals(scn.GetLSCard("ordinaryCorvette"), cannon.getAttachedTo());
     }
