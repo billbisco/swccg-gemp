@@ -1,6 +1,7 @@
 package com.gempukku.swccgo.cards.set1271.light;
 
 import com.gempukku.swccgo.common.CardType;
+import com.gempukku.swccgo.cards.set1271.LegacyShuffleObserver;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Keyword;
@@ -84,6 +85,7 @@ public class Card_1271_041_Tests {
     }
 
     private void deployCharacter(VirtualTableScenario scn) {
+        var shuffles = LegacyShuffleObserver.observe(scn);
         scn.LSUseCardAction(scn.GetLSCard("effect"), "Deploy Obi-Wan");
         scn.PassAllResponses();
         assertTrue(pileCardSelectable(scn, scn.GetLSCard("character")));
@@ -92,6 +94,7 @@ public class Card_1271_041_Tests {
         scn.PassAllResponses();
         scn.LSChooseCard(scn.GetLSStartingLocation());
         scn.PassAllResponses();
+        assertTrue(shuffles.sawOwnedShuffle(scn.LS, Zone.RESERVE_DECK));
     }
 
     private boolean retryAvailable(VirtualTableScenario scn) {
@@ -171,6 +174,7 @@ public class Card_1271_041_Tests {
     @Test
     public void OhHesNotDeadNotYetPlacesItselfInUsedPileToTakeOnlyAGrabber() {
         var scn = ready(false);
+        var shuffles = LegacyShuffleObserver.observe(scn);
         scn.LSUseCardAction(scn.GetLSCard("effect"), "Grabber");
         scn.PassAllResponses();
         assertTrue(scn.GetLSUsedPile().contains(scn.GetLSCard("effect")));
@@ -180,11 +184,13 @@ public class Card_1271_041_Tests {
         scn.LSChooseCard(scn.GetLSCard("grabber"));
         scn.PassAllResponses();
         assertEquals(Zone.HAND, scn.GetLSCard("grabber").getZone());
+        assertTrue(shuffles.sawOwnedShuffle(scn.LS, Zone.RESERVE_DECK));
     }
 
     @Test
     public void OhHesNotDeadNotYetMayRepeatAnActualFailedDeploymentInItsForcePile() {
         var scn = ready(true);
+        var shuffles = LegacyShuffleObserver.observe(scn);
         scn.MoveCardsToTopOfLSForcePile(scn.GetLSCard("character"));
         scn.LSUseCardAction(scn.GetLSCard("effect"), "Deploy Obi-Wan");
         scn.PassAllResponses();
@@ -200,6 +206,7 @@ public class Card_1271_041_Tests {
         scn.LSChooseCard(scn.GetLSStartingLocation());
         scn.PassAllResponses();
         assertEquals(scn.GetLSStartingLocation(), scn.GetLSCard("character").getAtLocation());
+        assertTrue(shuffles.sawOwnedShuffle(scn.LS, Zone.FORCE_PILE));
     }
 
     @Test
@@ -218,6 +225,7 @@ public class Card_1271_041_Tests {
     @Test
     public void OhHesNotDeadNotYetRepeatsAnActualFailedTakeIntoHandWithTheOriginalFilter() {
         var scn = ready(false);
+        var shuffles = LegacyShuffleObserver.observe(scn);
         scn.MoveCardsToLSHand(scn.GetLSCard("search"));
         scn.MoveCardsToTopOfLSLostPile(scn.GetLSCard("copy"));
         scn.MoveCardsToTopOfLSForcePile(scn.GetLSCard("grabber"), scn.GetLSCard("wrong"));
@@ -238,6 +246,7 @@ public class Card_1271_041_Tests {
         scn.PassAllResponses();
         assertEquals(Zone.HAND, scn.GetLSCard("grabber").getZone());
         assertTrue(scn.GetLSUsedPile().contains(scn.GetLSCard("search")));
+        assertTrue(shuffles.sawOwnedShuffle(scn.LS, Zone.FORCE_PILE));
     }
 
     @Test

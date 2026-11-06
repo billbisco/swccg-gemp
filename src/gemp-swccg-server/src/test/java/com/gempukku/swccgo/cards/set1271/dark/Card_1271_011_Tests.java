@@ -1,6 +1,7 @@
 package com.gempukku.swccgo.cards.set1271.dark;
 
 import com.gempukku.swccgo.common.CardType;
+import com.gempukku.swccgo.cards.set1271.LegacyShuffleObserver;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Keyword;
@@ -96,6 +97,7 @@ public class Card_1271_011_Tests {
     @Test
     public void IllTakeThemMyselfTakesOnlyASetupCardIntoHand() {
         var scn = ready();
+        var shuffles = LegacyShuffleObserver.observe(scn);
         scn.DSUseCardAction(scn.GetDSCard("myself"), "Setup card");
         scn.PassAllResponses();
         assertTrue(pileCardSelectable(scn, scn.GetDSCard("setup")));
@@ -107,6 +109,7 @@ public class Card_1271_011_Tests {
         assertEquals(Zone.SIDE_OF_TABLE, scn.GetDSCard("myself").getZone());
         returnToDarkAction(scn);
         assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("myself"), "Setup card"));
+        assertTrue(shuffles.sawOwnedShuffle(scn.DS, Zone.RESERVE_DECK));
     }
 
     @Test
@@ -140,6 +143,7 @@ public class Card_1271_011_Tests {
     @Test
     public void IllTakeThemMyselfPlacesItselfInUsedPileToTakeAnImmediateEffect() {
         var scn = ready();
+        var shuffles = LegacyShuffleObserver.observe(scn);
         scn.DSUseCardAction(scn.GetDSCard("myself"), "Immediate Effect");
         scn.PassAllResponses();
         assertTrue(scn.GetDSUsedPile().contains(scn.GetDSCard("myself")));
@@ -149,6 +153,7 @@ public class Card_1271_011_Tests {
         scn.DSChooseCard(scn.GetDSCard("immediate"));
         scn.PassAllResponses();
         assertEquals(Zone.HAND, scn.GetDSCard("immediate").getZone());
+        assertTrue(shuffles.sawOwnedShuffle(scn.DS, Zone.RESERVE_DECK));
     }
 
     @Test

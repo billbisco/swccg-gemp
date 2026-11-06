@@ -1,6 +1,7 @@
 package com.gempukku.swccgo.cards.set1271.dark;
 
 import com.gempukku.swccgo.common.CardType;
+import com.gempukku.swccgo.cards.set1271.LegacyShuffleObserver;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Keyword;
@@ -84,6 +85,7 @@ public class Card_1271_010_Tests {
     }
 
     private void deployCharacter(VirtualTableScenario scn) {
+        var shuffles = LegacyShuffleObserver.observe(scn);
         scn.DSUseCardAction(scn.GetDSCard("effect"), "Deploy Vader");
         scn.PassAllResponses();
         assertTrue(pileCardSelectable(scn, scn.GetDSCard("character")));
@@ -92,6 +94,7 @@ public class Card_1271_010_Tests {
         scn.PassAllResponses();
         scn.DSChooseCard(scn.GetDSStartingLocation());
         scn.PassAllResponses();
+        assertTrue(shuffles.sawOwnedShuffle(scn.DS, Zone.RESERVE_DECK));
     }
 
     private boolean retryAvailable(VirtualTableScenario scn) {
@@ -171,6 +174,7 @@ public class Card_1271_010_Tests {
     @Test
     public void IWantEveryPartOfThisShipCheckedPlacesItselfInUsedPileToTakeOnlyAGrabber() {
         var scn = ready(false);
+        var shuffles = LegacyShuffleObserver.observe(scn);
         scn.DSUseCardAction(scn.GetDSCard("effect"), "Grabber");
         scn.PassAllResponses();
         assertTrue(scn.GetDSUsedPile().contains(scn.GetDSCard("effect")));
@@ -180,11 +184,13 @@ public class Card_1271_010_Tests {
         scn.DSChooseCard(scn.GetDSCard("grabber"));
         scn.PassAllResponses();
         assertEquals(Zone.HAND, scn.GetDSCard("grabber").getZone());
+        assertTrue(shuffles.sawOwnedShuffle(scn.DS, Zone.RESERVE_DECK));
     }
 
     @Test
     public void IWantEveryPartOfThisShipCheckedMayRepeatAnActualFailedDeploymentInItsForcePile() {
         var scn = ready(true);
+        var shuffles = LegacyShuffleObserver.observe(scn);
         scn.MoveCardsToTopOfDSForcePile(scn.GetDSCard("character"));
         scn.DSUseCardAction(scn.GetDSCard("effect"), "Deploy Vader");
         scn.PassAllResponses();
@@ -200,6 +206,7 @@ public class Card_1271_010_Tests {
         scn.DSChooseCard(scn.GetDSStartingLocation());
         scn.PassAllResponses();
         assertEquals(scn.GetDSStartingLocation(), scn.GetDSCard("character").getAtLocation());
+        assertTrue(shuffles.sawOwnedShuffle(scn.DS, Zone.FORCE_PILE));
     }
 
     @Test
@@ -218,6 +225,7 @@ public class Card_1271_010_Tests {
     @Test
     public void IWantEveryPartOfThisShipCheckedRepeatsAnActualFailedTakeIntoHandWithTheOriginalFilter() {
         var scn = ready(false);
+        var shuffles = LegacyShuffleObserver.observe(scn);
         scn.MoveCardsToDSHand(scn.GetDSCard("search"));
         scn.MoveCardsToTopOfDSLostPile(scn.GetDSCard("copy"));
         scn.MoveCardsToTopOfDSForcePile(scn.GetDSCard("grabber"), scn.GetDSCard("wrong"));
@@ -238,6 +246,7 @@ public class Card_1271_010_Tests {
         scn.PassAllResponses();
         assertEquals(Zone.HAND, scn.GetDSCard("grabber").getZone());
         assertTrue(scn.GetDSUsedPile().contains(scn.GetDSCard("search")));
+        assertTrue(shuffles.sawOwnedShuffle(scn.DS, Zone.FORCE_PILE));
     }
 
     @Test
