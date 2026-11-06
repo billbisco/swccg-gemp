@@ -185,6 +185,7 @@ public class Card_1250_079_Tests {
         assertTrue(scn.IsAboardAsPassenger(ship, senator));
         assertEquals(force - 3, scn.GetLSForcePileCount());
         assertFalse(scn.GetLSReserveDeck().contains(senator));
+        scn.DSPass();
         assertFalse(scn.LSCardActionAvailable(ship, "Deploy a senator aboard"));
         scn.SkipToDSTurn(Phase.CONTROL);
         scn.SkipToLSTurn(Phase.DEPLOY);
