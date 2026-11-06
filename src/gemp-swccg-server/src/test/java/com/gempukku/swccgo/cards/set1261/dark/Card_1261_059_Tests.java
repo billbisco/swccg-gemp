@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
 public class Card_1261_059_Tests {
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>() {{ put("obiwan", "1_21"); put("speeder", "3_69"); }},
-                new HashMap<>() {{ put("marquand", "1261_59"); put("otherWalker", "3_155"); put("cannon", "3_158"); }},
+                new HashMap<>() {{ put("marquand", "1261_59"); put("otherWalker", "3_155"); put("cannon", "3_158"); put("driver", "3_83"); put("secondDriver", "3_83"); }},
                 20, 20, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -93,4 +93,38 @@ public class Card_1261_059_Tests {
         assertTrue(target.isHit()); assertEquals(1, scn.GetPower(target)); assertEquals(2, scn.GetForfeit(target));
         assertEquals(0, scn.GetBattleDestinyAbility(target));
     }
+    @Test
+    public void MarquandInBlizzardSixActuallyAcceptsOneAdditionalPilotAndNotASecond() {
+        var scn = scenario(); scn.StartGame(); var walker = scn.GetDSCard("marquand");
+        var driver = scn.GetDSCard("driver"); var second = scn.GetDSCard("secondDriver");
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), walker); scn.MoveCardsToDSHand(driver, second);
+        scn.EnsureDSForcePile(8); scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.DSDeployCard(driver); scn.DSChooseCard(walker); scn.PassAllResponses();
+        assertTrue(scn.IsAboardAsPilot(walker, driver));
+        scn.DSDeployCard(second);
+        var choices = scn.GetADParam(scn.DS, "blueprintId"); var selectable = scn.GetADParam(scn.DS, "selectable");
+        for (int i = 0; i < choices.length; i++) {
+            if (choices[i].equals(walker.getBlueprintId(true))) assertFalse(Boolean.parseBoolean(selectable[i]));
+        }
+    }
+
+    private void assertAttritionBoundary(int destiny, boolean immune) {
+        var scn = scenario(); scn.StartGame(); var walker = scn.GetDSCard("marquand"); var site = scn.GetDSStartingLocation();
+        scn.MoveCardsToLocation(site, walker, scn.GetLSCard("obiwan"));
+        scn.DSStartBattleAndSkipToWeaponsSegment(site); scn.PrepareLSDestiny(destiny);
+        scn.SkipToDamageSegment(true); scn.PassDamageSegmentActions();
+        scn.DSPayRemainingBattleDamageFromReserveDeck(); scn.PassAllResponses();
+        if (immune) {
+            scn.DSPass(); scn.PassAllResponses(); assertEquals(site, walker.getAtLocation());
+        } else {
+            assertTrue(scn.AwaitingDSAttritionPayment()); scn.DSPayAttritionFromCardInPlay(walker); scn.PassAllResponses();
+            com.gempukku.swccgo.framework.Assertions.assertInZone(Zone.LOST_PILE, walker);
+        }
+    }
+
+    @Test
+    public void MarquandInBlizzardSixSurvivesThreeAttritionButMustSatisfyFour() {
+        assertAttritionBoundary(3, true); assertAttritionBoundary(4, false);
+    }
+
 }
