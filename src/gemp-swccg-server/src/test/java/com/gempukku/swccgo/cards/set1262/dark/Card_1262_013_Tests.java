@@ -44,23 +44,34 @@ public class Card_1262_013_Tests {
         scn.MoveCardsToDSHand(scn.GetDSCard("reinforcement"), scn.GetDSCard("rifle"), scn.GetDSCard("artillery"), scn.GetDSCard("device"));
         scn.SkipToLSTurn(Phase.BATTLE); force(scn, true, force); scn.LSInitiateBattle(site); return scn;
     }
+    private boolean selectable(VirtualTableScenario scn, String blueprint) {
+        String[] cards = scn.GetADParam(scn.DS, "blueprintId");
+        String[] selectable = scn.GetADParam(scn.DS, "selectable");
+        if (cards == null) return false;
+        for (int i = 0; i < cards.length; i++) {
+            if (blueprint.equals(cards[i]) && (selectable == null || Boolean.parseBoolean(selectable[i]))) return true;
+        }
+        return false;
+    }
     private void deployReact(VirtualTableScenario scn, String cardName) {
         var room = scn.GetDSCard("room"); var card = scn.GetDSCard(cardName);
         assertTrue(scn.DSCardActionAvailable(room, "Deploy card as a 'react'"));
         scn.DSUseCardAction(room, "Deploy card as a 'react'");
-        assertTrue(scn.DSHasCardChoiceAvailable(card)); assertTrue(scn.DSHasCardChoiceNotAvailable(scn.GetDSCard("device")));
+        assertTrue(scn.DSHasCardChoiceAvailable(card));
+        assertFalse(selectable(scn, "1_201"));
         scn.DSChooseCard(card);
+        scn.PassAllResponses();
         scn.DSChooseCard(cardName.equals("rifle") ? scn.GetDSCard("trooper") : room);
         scn.PassAllResponses();
         assertEquals(room, scn.game().getModifiersQuerying().getLocationThatCardIsAt(scn.gameState(), card));
     }
     @Test public void CloudCityDiningRoomDeploysCharacterAsBattleReactAtNormalCost() {
         var scn = reactBattle(true, 5); int force = scn.GetDSForcePileCount(); deployReact(scn, "reinforcement");
-        assertEquals(force - 2, scn.GetDSForcePileCount()); assertEquals(Zone.AT_LOCATION, scn.GetDSCard("reinforcement").getZone());
+        assertEquals(force - 1, scn.GetDSForcePileCount()); assertEquals(Zone.AT_LOCATION, scn.GetDSCard("reinforcement").getZone());
     }
     @Test public void CloudCityDiningRoomDeploysCharacterWeaponAsBattleReact() {
         var scn = reactBattle(true, 5); int force = scn.GetDSForcePileCount(); deployReact(scn, "rifle");
-        assertEquals(force - 2, scn.GetDSForcePileCount()); assertEquals(scn.GetDSCard("trooper"), scn.GetDSCard("rifle").getAttachedTo());
+        assertEquals(force - 1, scn.GetDSForcePileCount()); assertEquals(scn.GetDSCard("trooper"), scn.GetDSCard("rifle").getAttachedTo());
     }
     @Test public void CloudCityDiningRoomAlsoDeploysArtilleryWeaponAsReact() {
         var scn = reactBattle(true, 5); int force = scn.GetDSForcePileCount(); deployReact(scn, "artillery");
@@ -71,7 +82,7 @@ public class Card_1262_013_Tests {
         scn.PassAllResponses(); assertInZone(Zone.HAND, scn.GetDSCard("reinforcement")); assertTrue(scn.AwaitingLSWeaponsSegmentActions());
     }
     @Test public void CloudCityDiningRoomDoesNotOfferUnaffordableReacts() {
-        var scn = reactBattle(true, 1); assertFalse(scn.AnyDecisionsAvailable(scn.DS)); assertTrue(scn.AwaitingLSWeaponsSegmentActions());
+        var scn = reactBattle(true, 0); assertFalse(scn.AnyDecisionsAvailable(scn.DS)); assertTrue(scn.AwaitingLSWeaponsSegmentActions());
     }
     @Test public void CloudCityDiningRoomDoesNotGrantReactsToAnotherSite() {
         var scn = reactBattle(false, 5); assertFalse(scn.AnyDecisionsAvailable(scn.DS)); assertTrue(scn.AwaitingLSWeaponsSegmentActions());
@@ -110,7 +121,7 @@ public class Card_1262_013_Tests {
         assertEquals(0, scn.GetLSForcePileCount()); assertTrue(scn.GetDSCard("trooper").isHit());
     }
     @Test public void CloudCityDiningRoomDarkBlasterPaysNormalFiringCost() {
-        var scn = weapon(true, true, 2, "rifle"); scn.PrepareDSDestiny(5);
+        var scn = weapon(true, true, 1, "rifle"); scn.PrepareDSDestiny(5);
         scn.DSUseCardAction(scn.GetDSCard("rifle"), "Fire"); scn.DSChooseCard(scn.GetLSCard("luke")); scn.PassForceUseResponses(); scn.PassWeaponFireWithDestinyDraw();
         assertEquals(0, scn.GetDSForcePileCount()); assertTrue(scn.GetLSCard("luke").isHit());
     }
@@ -126,7 +137,7 @@ public class Card_1262_013_Tests {
         var scn = scenario(); var room = scn.GetDSCard("room"); var han = scn.GetLSCard("han"); var rifle = scn.GetLSCard("rifle");
         scn.StartGame(); scn.MoveLocationToTable(room); scn.MoveCardsToLocation(room, han, scn.GetLSCard("luke"));
         scn.AttachCardsTo(scn.GetLSCard("luke"), rifle); scn.SkipToDSTurn(Phase.CONTROL);
-        var q = scn.game().getModifiersQuerying(); var modifiers = q.getModifiers(scn.gameState(), ModifierType.FIRES_FOR_FREE).stream().filter(m -> m.getSource(scn.gameState()) == room).toList();
+        var q = scn.game().getModifiersQuerying(); var modifiers = q.getModifiers(scn.gameState(), ModifierType.FIRE_WEAPON_FIRED_BY_FOR_FREE).stream().filter(m -> m.getSource(scn.gameState()) == room).toList();
         assertEquals(1, modifiers.size()); assertTrue(modifiers.getFirst().isAffectedTarget(scn.gameState(), q, rifle));
         assertFalse(modifiers.getFirst().isAffectedTarget(scn.gameState(), q, han.getBlueprint().getPermanentWeapon(han)));
     }

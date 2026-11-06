@@ -5,7 +5,7 @@ import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
-import com.gempukku.swccgo.logic.modifiers.FiresForFreeModifier;
+import com.gempukku.swccgo.logic.modifiers.FireWeaponFiredByForFreeModifier;
 import com.gempukku.swccgo.logic.modifiers.MayDeployOtherCardsAsReactToLocationModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 import java.util.List;
@@ -30,7 +30,7 @@ public class Card1262_013 extends AbstractSite {
     }
     @Override
     protected List<Modifier> getGameTextLightSideWhileActiveModifiers(String playerOnLightSideOfLocation, SwccgGame game, PhysicalCard self) {
-        return List.of(new FiresForFreeModifier(self, Filters.and(Filters.your(playerOnLightSideOfLocation),
+        return List.of(new FireWeaponFiredByForFreeModifier(self, Filters.your(playerOnLightSideOfLocation), Filters.and(Filters.your(playerOnLightSideOfLocation),
                 Filters.blaster, Filters.not(Icon.PERMANENT_WEAPON), Filters.atSameSite(self))));
     }
 }
