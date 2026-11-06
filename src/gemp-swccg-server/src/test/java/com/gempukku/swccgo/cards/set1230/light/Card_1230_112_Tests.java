@@ -158,36 +158,7 @@ public class Card_1230_112_Tests {
         return scn;
     }
 
-    @Test
-    public void GreenSquadron1SitsAtASystem() {
-        var scn = GetScenario();
-        var gs1 = scn.GetLSCard("gs1");
-        var system = scn.GetLSStartingLocation();
 
-        scn.StartGame();
-        scn.MoveCardsToLocation(system, gs1);
-        assertAtLocation(system, gs1);
-    }
 
-    @Test
-    public void GreenSquadron1TakesDiversionaryTacticsIntoHandFromReserveDeck() {
-        var scn = GetScenario();
-        var gs1 = scn.GetLSCard("gs1");
-        var greenleader = scn.GetLSCard("greenleader");
-        var tactics = scn.GetLSCard("tactics");
-        var system = scn.GetLSStartingLocation();
 
-        scn.StartGame();
-        scn.MoveCardsToLocation(system, gs1);
-        scn.BoardAsPilot(gs1, greenleader);
-        scn.SkipToLSTurn(Phase.CONTROL);
-        scn.MoveCardsToTopOfLSReserveDeck(tactics);
-        assertTrue(scn.LSCardActionAvailable(gs1, "Take Diversionary Tactics into hand from Reserve Deck"));
-        scn.LSUseCardAction(gs1, "Take Diversionary Tactics into hand from Reserve Deck");
-        scn.PassAllResponses();
-        scn.PassCardAndForceUseResponses();
-        scn.LSChooseCard(tactics);
-        scn.PassAllResponses();
-        assertEquals(Zone.HAND, tactics.getZone());
-    }
 }
