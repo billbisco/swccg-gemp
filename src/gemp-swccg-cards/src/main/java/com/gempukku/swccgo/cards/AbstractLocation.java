@@ -77,9 +77,13 @@ public abstract class AbstractLocation extends AbstractSwccgCardBlueprint {
         addCardType(CardType.LOCATION);
     }
 
+    /**
+     * swccg-guild/work#178 (Bill 2026-11-05): a location has no deploy cost (it is free, not "deploy 0"), so it never
+     * meets a deploy cost comparison such as Frustration's "deploy cost < X".
+     */
     @Override
     public Float getDeployCost() {
-        return 0f;
+        return null;
     }
 
     @Override

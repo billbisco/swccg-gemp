@@ -181,16 +181,11 @@ public class Card4_142 extends AbstractLostInterrupt {
 
     /**
      * Printed deploy costs of this card, then global DEPLOY_COST modifiers.
-     * Does not use getDeployCost(), which collapses an undefined cost to 0.
+     * Does not use the deploy cost query, which collapses an undefined cost to 0.
      */
     private Float getFrustrationDeployCost(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard card) {
+        // #178: locations have no deploy cost (null), so they are never targeted here
         Float printed = card.getBlueprint().getDeployCost();
-
-        // Locations always report 0 from AbstractLocation.getDeployCost(). That is not a printed cost
-        // (Mos Eisley, etc.). Real location costs come from this card's PRINTED_DEPLOY_COST modifiers.
-        if (card.getBlueprint().getCardCategory() == CardCategory.LOCATION) {
-            printed = null;
-        }
 
         // Admiral's Orders, Defensive Shields, and Objectives always play for free
         // (constructor 0/null plus isCardTypeAlwaysPlayedForFree). Free is not a deploy cost.

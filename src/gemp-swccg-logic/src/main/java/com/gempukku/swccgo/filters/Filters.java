@@ -1735,7 +1735,8 @@ public class Filters {
         return new Filter() {
             @Override
             public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard) {
-                return physicalCard.getBlueprint().getDeployCost() <= cost;
+                Float printed = physicalCard.getBlueprint().getDeployCost();  // #178: no cost never matches
+                return printed != null && printed <= cost;
             }
         };
     }
@@ -1750,7 +1751,8 @@ public class Filters {
         return new Filter() {
             @Override
             public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard) {
-                return physicalCard.getBlueprint().getDeployCost() >= cost;
+                Float printed = physicalCard.getBlueprint().getDeployCost();  // #178: no cost never matches
+                return printed != null && printed >= cost;
             }
         };
     }
