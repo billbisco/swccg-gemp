@@ -10,6 +10,7 @@ import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.cards.LegacyPersonaFilters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.actions.PlayInterruptAction;
@@ -41,7 +42,7 @@ public class Card7_095 extends AbstractUsedInterrupt {
     protected List<PlayInterruptAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, PhysicalCard self) {
         // Check condition(s)
         if (GameConditions.isDuringBattleWithParticipant(game, Filters.and(Filters.Luke, Filters.or(Filters.defendingBattle, Filters.at(Title.Tatooine))))
-                && GameConditions.isDuringBattleWithParticipant(game, Filters.and(Filters.Biggs, Filters.or(Filters.defendingBattle, Filters.at(Title.Tatooine))))
+                && GameConditions.isDuringBattleWithParticipant(game, Filters.and(LegacyPersonaFilters.BIGGS, Filters.or(Filters.defendingBattle, Filters.at(Title.Tatooine))))
                 && GameConditions.canAddBattleDestinyDraws(game, self)) {
 
             final PlayInterruptAction action = new PlayInterruptAction(game, self);
@@ -66,7 +67,7 @@ public class Card7_095 extends AbstractUsedInterrupt {
     protected List<PlayInterruptAction> getGameTextTopLevelAttackRunActions(final String playerId, SwccgGame game, final PhysicalCard self) {
         // Check condition(s)
         if (GameConditions.isDuringAttackRunWithParticipant(game, Filters.Luke)
-                && GameConditions.isDuringAttackRunWithParticipant(game, Filters.Biggs)) {
+                && GameConditions.isDuringAttackRunWithParticipant(game, LegacyPersonaFilters.BIGGS)) {
 
             final PlayInterruptAction action = new PlayInterruptAction(game, self);
             action.setText("Add one destiny to Attack Run total");

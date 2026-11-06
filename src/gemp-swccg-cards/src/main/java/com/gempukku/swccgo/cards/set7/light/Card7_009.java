@@ -15,6 +15,7 @@ import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.cards.LegacyPersonaFilters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
@@ -76,7 +77,7 @@ public class Card7_009 extends AbstractAlien {
             // Perform result(s)
             action.appendEffect(
                     new DeployCardToLocationFromReserveDeckEffect(action, Filters.or(Filters.and(Filters.Luke, Filters.powerLessThan(4)),
-                            Filters.Biggs, Filters.Fixer), Filters.sameSite(self), true));
+                            LegacyPersonaFilters.BIGGS, Filters.Fixer), Filters.sameSite(self), true));
             return Collections.singletonList(action);
         }
         return null;

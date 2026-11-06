@@ -6,6 +6,7 @@ import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Keyword;
 import com.gempukku.swccgo.common.Rarity;
+import com.gempukku.swccgo.common.Persona;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
@@ -36,6 +37,7 @@ public class Card1_003 extends AbstractRebel {
         addIcons(Icon.PILOT, Icon.WARRIOR);
         addKeyword(Keyword.RED_SQUADRON);
         setMatchingStarshipFilter(Filters.Red_3);
+        addPersona(Persona.BIGGS);
     }
 
     @Override
