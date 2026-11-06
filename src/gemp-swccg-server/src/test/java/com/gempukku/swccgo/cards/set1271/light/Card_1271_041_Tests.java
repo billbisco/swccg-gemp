@@ -40,6 +40,17 @@ public class Card_1271_041_Tests {
         return scn;
     }
 
+    private boolean pileCardSelectable(VirtualTableScenario scn, com.gempukku.swccgo.game.PhysicalCardImpl card) {
+        String[] ids = scn.LSGetADParam("blueprintId");
+        String[] selectable = scn.LSGetADParam("selectable");
+        org.junit.Assert.assertNotNull(ids);
+        org.junit.Assert.assertNotNull(selectable);
+        for (int i = 0; i < ids.length; i++)
+            if (ids[i].equals(card.getBlueprintId(true)) && Boolean.parseBoolean(selectable[i]))
+                return true;
+        return false;
+    }
+
     @Test
     public void OhHesNotDeadNotYetStatsIconsAndKeywordsAreCorrect() {
         var scn = scenario();
@@ -75,8 +86,8 @@ public class Card_1271_041_Tests {
     private void deployCharacter(VirtualTableScenario scn) {
         scn.LSUseCardAction(scn.GetLSCard("effect"), "Deploy Obi-Wan");
         scn.PassAllResponses();
-        assertTrue(scn.LSHasCardChoiceAvailable(scn.GetLSCard("character")));
-        assertFalse(scn.LSHasCardChoiceAvailable(scn.GetLSCard("wrong")));
+        assertTrue(pileCardSelectable(scn, scn.GetLSCard("character")));
+        assertFalse(pileCardSelectable(scn, scn.GetLSCard("wrong")));
         scn.LSChooseCard(scn.GetLSCard("character"));
         scn.PassAllResponses();
         scn.LSChooseCard(scn.GetLSStartingLocation());
@@ -163,9 +174,9 @@ public class Card_1271_041_Tests {
         scn.LSUseCardAction(scn.GetLSCard("effect"), "Grabber");
         scn.PassAllResponses();
         assertTrue(scn.GetLSUsedPile().contains(scn.GetLSCard("effect")));
-        assertTrue(scn.LSHasCardChoiceAvailable(scn.GetLSCard("grabber")));
-        assertFalse(scn.LSHasCardChoiceAvailable(scn.GetLSCard("character")));
-        assertFalse(scn.LSHasCardChoiceAvailable(scn.GetLSCard("wrong")));
+        assertTrue(pileCardSelectable(scn, scn.GetLSCard("grabber")));
+        assertFalse(pileCardSelectable(scn, scn.GetLSCard("character")));
+        assertFalse(pileCardSelectable(scn, scn.GetLSCard("wrong")));
         scn.LSChooseCard(scn.GetLSCard("grabber"));
         scn.PassAllResponses();
         assertEquals(Zone.HAND, scn.GetLSCard("grabber").getZone());
@@ -182,8 +193,8 @@ public class Card_1271_041_Tests {
         scn.LSUseCardAction(scn.GetLSCard("effect"), "repeat the search");
         scn.PassAllResponses();
         assertTrue(scn.GetLSLostPile().contains(scn.GetLSCard("effect")));
-        assertTrue(scn.LSHasCardChoiceAvailable(scn.GetLSCard("character")));
-        assertFalse(scn.LSHasCardChoiceAvailable(scn.GetLSCard("wrong")));
+        assertTrue(pileCardSelectable(scn, scn.GetLSCard("character")));
+        assertFalse(pileCardSelectable(scn, scn.GetLSCard("wrong")));
         scn.LSChooseCard(scn.GetLSCard("character"));
         scn.PassAllResponses();
         scn.LSChooseCard(scn.GetLSStartingLocation());
@@ -210,6 +221,8 @@ public class Card_1271_041_Tests {
         scn.MoveCardsToLSHand(scn.GetLSCard("search"));
         scn.MoveCardsToTopOfLSLostPile(scn.GetLSCard("copy"));
         scn.MoveCardsToTopOfLSForcePile(scn.GetLSCard("grabber"), scn.GetLSCard("wrong"));
+        // The search Interrupt costs3 Force: keep the desired retry target below that payment.
+        scn.MoveCardsToTopOfLSForcePile(scn.GetLSCard("filler-01"), scn.GetLSCard("filler-02"), scn.GetLSCard("filler-03"));
         // Refresh the current action list after arranging the hidden-zone fixtures.
         scn.SkipToPhase(Phase.MOVE);
         scn.LSPlayCard(scn.GetLSCard("search"));
@@ -219,8 +232,8 @@ public class Card_1271_041_Tests {
         scn.LSUseCardAction(scn.GetLSCard("effect"), "repeat the search");
         scn.PassAllResponses();
         assertTrue(scn.GetLSLostPile().contains(scn.GetLSCard("effect")));
-        assertTrue(scn.LSHasCardChoiceAvailable(scn.GetLSCard("grabber")));
-        assertFalse(scn.LSHasCardChoiceAvailable(scn.GetLSCard("wrong")));
+        assertTrue(pileCardSelectable(scn, scn.GetLSCard("grabber")));
+        assertFalse(pileCardSelectable(scn, scn.GetLSCard("wrong")));
         scn.LSChooseCard(scn.GetLSCard("grabber"));
         scn.PassAllResponses();
         assertEquals(Zone.HAND, scn.GetLSCard("grabber").getZone());

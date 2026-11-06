@@ -40,6 +40,17 @@ public class Card_1271_010_Tests {
         return scn;
     }
 
+    private boolean pileCardSelectable(VirtualTableScenario scn, com.gempukku.swccgo.game.PhysicalCardImpl card) {
+        String[] ids = scn.DSGetADParam("blueprintId");
+        String[] selectable = scn.DSGetADParam("selectable");
+        org.junit.Assert.assertNotNull(ids);
+        org.junit.Assert.assertNotNull(selectable);
+        for (int i = 0; i < ids.length; i++)
+            if (ids[i].equals(card.getBlueprintId(true)) && Boolean.parseBoolean(selectable[i]))
+                return true;
+        return false;
+    }
+
     @Test
     public void IWantEveryPartOfThisShipCheckedStatsIconsAndKeywordsAreCorrect() {
         var scn = scenario();
@@ -75,8 +86,8 @@ public class Card_1271_010_Tests {
     private void deployCharacter(VirtualTableScenario scn) {
         scn.DSUseCardAction(scn.GetDSCard("effect"), "Deploy Vader");
         scn.PassAllResponses();
-        assertTrue(scn.DSHasCardChoiceAvailable(scn.GetDSCard("character")));
-        assertFalse(scn.DSHasCardChoiceAvailable(scn.GetDSCard("wrong")));
+        assertTrue(pileCardSelectable(scn, scn.GetDSCard("character")));
+        assertFalse(pileCardSelectable(scn, scn.GetDSCard("wrong")));
         scn.DSChooseCard(scn.GetDSCard("character"));
         scn.PassAllResponses();
         scn.DSChooseCard(scn.GetDSStartingLocation());
@@ -163,9 +174,9 @@ public class Card_1271_010_Tests {
         scn.DSUseCardAction(scn.GetDSCard("effect"), "Grabber");
         scn.PassAllResponses();
         assertTrue(scn.GetDSUsedPile().contains(scn.GetDSCard("effect")));
-        assertTrue(scn.DSHasCardChoiceAvailable(scn.GetDSCard("grabber")));
-        assertFalse(scn.DSHasCardChoiceAvailable(scn.GetDSCard("character")));
-        assertFalse(scn.DSHasCardChoiceAvailable(scn.GetDSCard("wrong")));
+        assertTrue(pileCardSelectable(scn, scn.GetDSCard("grabber")));
+        assertFalse(pileCardSelectable(scn, scn.GetDSCard("character")));
+        assertFalse(pileCardSelectable(scn, scn.GetDSCard("wrong")));
         scn.DSChooseCard(scn.GetDSCard("grabber"));
         scn.PassAllResponses();
         assertEquals(Zone.HAND, scn.GetDSCard("grabber").getZone());
@@ -182,8 +193,8 @@ public class Card_1271_010_Tests {
         scn.DSUseCardAction(scn.GetDSCard("effect"), "repeat the search");
         scn.PassAllResponses();
         assertTrue(scn.GetDSLostPile().contains(scn.GetDSCard("effect")));
-        assertTrue(scn.DSHasCardChoiceAvailable(scn.GetDSCard("character")));
-        assertFalse(scn.DSHasCardChoiceAvailable(scn.GetDSCard("wrong")));
+        assertTrue(pileCardSelectable(scn, scn.GetDSCard("character")));
+        assertFalse(pileCardSelectable(scn, scn.GetDSCard("wrong")));
         scn.DSChooseCard(scn.GetDSCard("character"));
         scn.PassAllResponses();
         scn.DSChooseCard(scn.GetDSStartingLocation());
@@ -210,6 +221,8 @@ public class Card_1271_010_Tests {
         scn.MoveCardsToDSHand(scn.GetDSCard("search"));
         scn.MoveCardsToTopOfDSLostPile(scn.GetDSCard("copy"));
         scn.MoveCardsToTopOfDSForcePile(scn.GetDSCard("grabber"), scn.GetDSCard("wrong"));
+        // The search Interrupt costs3 Force: keep the desired retry target below that payment.
+        scn.MoveCardsToTopOfDSForcePile(scn.GetDSCard("filler-01"), scn.GetDSCard("filler-02"), scn.GetDSCard("filler-03"));
         // Refresh the current action list after arranging the hidden-zone fixtures.
         scn.SkipToPhase(Phase.MOVE);
         scn.DSPlayCard(scn.GetDSCard("search"));
@@ -219,8 +232,8 @@ public class Card_1271_010_Tests {
         scn.DSUseCardAction(scn.GetDSCard("effect"), "repeat the search");
         scn.PassAllResponses();
         assertTrue(scn.GetDSLostPile().contains(scn.GetDSCard("effect")));
-        assertTrue(scn.DSHasCardChoiceAvailable(scn.GetDSCard("grabber")));
-        assertFalse(scn.DSHasCardChoiceAvailable(scn.GetDSCard("wrong")));
+        assertTrue(pileCardSelectable(scn, scn.GetDSCard("grabber")));
+        assertFalse(pileCardSelectable(scn, scn.GetDSCard("wrong")));
         scn.DSChooseCard(scn.GetDSCard("grabber"));
         scn.PassAllResponses();
         assertEquals(Zone.HAND, scn.GetDSCard("grabber").getZone());

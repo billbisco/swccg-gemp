@@ -36,6 +36,17 @@ public class Card_1271_011_Tests {
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
     }
 
+    private boolean pileCardSelectable(VirtualTableScenario scn, com.gempukku.swccgo.game.PhysicalCardImpl card) {
+        String[] ids = scn.DSGetADParam("blueprintId");
+        String[] selectable = scn.DSGetADParam("selectable");
+        org.junit.Assert.assertNotNull(ids);
+        org.junit.Assert.assertNotNull(selectable);
+        for (int i = 0; i < ids.length; i++)
+            if (ids[i].equals(card.getBlueprintId(true)) && Boolean.parseBoolean(selectable[i]))
+                return true;
+        return false;
+    }
+
     @Test
     public void IllTakeThemMyselfStatsIconsAndKeywordsAreCorrect() {
         var scn = scenario();
@@ -87,9 +98,9 @@ public class Card_1271_011_Tests {
         var scn = ready();
         scn.DSUseCardAction(scn.GetDSCard("myself"), "Setup card");
         scn.PassAllResponses();
-        assertTrue(scn.DSHasCardChoiceAvailable(scn.GetDSCard("setup")));
-        assertFalse(scn.DSHasCardChoiceAvailable(scn.GetDSCard("immediate")));
-        assertFalse(scn.DSHasCardChoiceAvailable(scn.GetDSCard("trooper")));
+        assertTrue(pileCardSelectable(scn, scn.GetDSCard("setup")));
+        assertFalse(pileCardSelectable(scn, scn.GetDSCard("immediate")));
+        assertFalse(pileCardSelectable(scn, scn.GetDSCard("trooper")));
         scn.DSChooseCard(scn.GetDSCard("setup"));
         scn.PassAllResponses();
         assertEquals(Zone.HAND, scn.GetDSCard("setup").getZone());
@@ -132,9 +143,9 @@ public class Card_1271_011_Tests {
         scn.DSUseCardAction(scn.GetDSCard("myself"), "Immediate Effect");
         scn.PassAllResponses();
         assertTrue(scn.GetDSUsedPile().contains(scn.GetDSCard("myself")));
-        assertTrue(scn.DSHasCardChoiceAvailable(scn.GetDSCard("immediate")));
-        assertFalse(scn.DSHasCardChoiceAvailable(scn.GetDSCard("setup")));
-        assertFalse(scn.DSHasCardChoiceAvailable(scn.GetDSCard("trooper")));
+        assertTrue(pileCardSelectable(scn, scn.GetDSCard("immediate")));
+        assertFalse(pileCardSelectable(scn, scn.GetDSCard("setup")));
+        assertFalse(pileCardSelectable(scn, scn.GetDSCard("trooper")));
         scn.DSChooseCard(scn.GetDSCard("immediate"));
         scn.PassAllResponses();
         assertEquals(Zone.HAND, scn.GetDSCard("immediate").getZone());
