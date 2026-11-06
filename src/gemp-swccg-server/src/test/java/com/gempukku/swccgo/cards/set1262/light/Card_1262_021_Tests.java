@@ -120,4 +120,14 @@ public class Card_1262_021_Tests {
         }
         assertAtLocation(scn.GetDSCard("forest"), g);
     }
+    @Test public void GundarkActuallyDrawsFerocityDestinyAndDefeatsACharacter() {
+        var scn = scenario(); scn.StartGame(); var site = scn.GetDSCard("forest"); scn.MoveLocationToTable(site);
+        var g = scn.GetLSCard("gundark"); var target = scn.GetDSCard("trooper1");
+        scn.MoveCardsToLocation(site, g, target); scn.SkipToLSTurn(Phase.BATTLE); scn.PrepareLSDestiny(2);
+        assertTrue(scn.LSCardActionAvailable(g, "Initiate attack")); scn.LSUseCardAction(g, "Initiate attack");
+        scn.PassAllResponses(); scn.PassWeaponsSegmentActions(); scn.PassAllResponses();
+        scn.PassDestinyDrawResponses(); scn.PassAllResponses();
+        assertInZone(Zone.LOST_PILE, target); assertAtLocation(site, g);
+    }
+
 }

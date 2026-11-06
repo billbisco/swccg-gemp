@@ -14,7 +14,7 @@ public class Card_1262_024_Tests {
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>() {{
             put("security", "1262_24"); put("trooper", "1_28"); put("luke", "1_19"); put("obi", "1_21");
-            put("spy", "1_20"); put("naboo", "13_31"); put("core", "13_32"); put("beggar", "1_44");
+            put("spy", "1_20"); put("naboo", "13_31"); put("core", "13_32"); put("beggar", "1_44"); put("traffic", "1_66"); put("plains", "12_79"); put("shield", "14_32");
         }}, new HashMap<>() {{
             put("vader", "1_168"); put("trooper1", "1_194"); put("trooper2", "1_194"); put("trooper3", "1_194");
             put("derdram", "4_98"); put("ephant", "6_101"); put("alter", "1_234"); put("hypo", "2_112");
@@ -141,4 +141,40 @@ public class Card_1262_024_Tests {
         assertTrue(scn.AwaitingLSBattleDamagePayment()); assertEquals(5, scn.GetUnpaidLSBattleDamage());
         assertInZone(Zone.SIDE_OF_TABLE, effect);
     }
+    @Test public void SecurityBreachDoesNotCancelNonReflectionsNabooSiteText() {
+        var scn = deployed(); var plains = scn.GetLSCard("plains"); scn.MoveLocationToTable(plains);
+        scn.MoveCardsToTopOfLSReserveDeck(scn.GetLSCard("shield"));
+        scn.SkipToDSTurn(Phase.DRAW); scn.SkipToLSTurn(Phase.CONTROL);
+        assertTrue(scn.LSCardActionAvailable(plains, "Take card into hand"));
+        scn.LSUseCardAction(plains, "Take card into hand"); scn.PassAllResponses();
+        scn.LSChooseCard(scn.GetLSCard("shield")); scn.PassAllResponses(); assertInHand(scn.GetLSCard("shield"));
+    }
+
+    @Test public void SecurityBreachCountsOpposingPresentCharactersAndUpdatesWhenTheyMove() {
+        var scn = deployed(); var site = scn.GetDSStartingLocation(); var derdram = scn.GetDSCard("derdram");
+        scn.MoveCardsToLocation(site, derdram, scn.GetDSCard("trooper1"), scn.GetDSCard("trooper2"));
+        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetLSCard("trooper"));
+        scn.MoveCardsToTopOfDSReserveDeck(scn.GetDSCard("hypo")); scn.DSActivateForceCheat(5);
+        scn.SkipToDSTurn(Phase.CONTROL);
+        assertFalse(scn.DSCardActionAvailable(derdram, "Take card into hand"));
+        scn.MoveCardsToLocation(site, scn.GetLSCard("trooper")); scn.SkipToPhase(Phase.DEPLOY);
+        assertTrue(scn.DSCardActionAvailable(derdram, "Take card into hand"));
+        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetLSCard("trooper")); scn.SkipToPhase(Phase.BATTLE);
+        assertFalse(scn.DSCardActionAvailable(derdram, "Take card into hand"));
+        scn.MoveCardsToLSHand(scn.GetLSCard("security")); scn.SkipToPhase(Phase.MOVE);
+        assertTrue(scn.DSCardActionAvailable(derdram, "Take card into hand"));
+    }
+
+    @Test public void SecurityBreachIsNotAnAlterTargetWhileOrdinaryEffectIsCanceled() {
+        var scn = deployed(); var effect = scn.GetLSCard("security"); var beggar = scn.GetLSCard("beggar");
+        scn.AttachCardsTo(scn.GetDSStartingLocation(), beggar); scn.MoveCardsToLSSideOfTable(scn.GetLSCard("traffic"));
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("vader"));
+        scn.MoveCardsToDSHand(scn.GetDSCard("alter")); scn.SkipToDSTurn(Phase.CONTROL); scn.PrepareDSDestiny(1);
+        scn.DSPlayCard(scn.GetDSCard("alter"), "Draw destiny to cancel Effect");
+        assertFalse(scn.DSHasCardChoiceAvailable(effect)); assertTrue(scn.DSHasCardChoiceAvailable(beggar));
+        assertTrue(scn.DSHasCardChoiceAvailable(scn.GetLSCard("traffic"))); scn.DSChooseCard(beggar);
+        scn.PassAllResponses(); scn.PassDestinyDrawResponses(); scn.PassAllResponses();
+        assertInZone(Zone.LOST_PILE, beggar); assertInZone(Zone.SIDE_OF_TABLE, effect);
+    }
+
 }
