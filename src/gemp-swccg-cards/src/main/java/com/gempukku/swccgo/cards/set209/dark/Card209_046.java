@@ -25,7 +25,7 @@ import com.gempukku.swccgo.logic.modifiers.ImmuneToAttritionModifier;
 import com.gempukku.swccgo.logic.modifiers.MayNotHavePowerIncreasedByCardModifier;
 import com.gempukku.swccgo.logic.timing.Action;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -50,17 +50,18 @@ public class Card209_046 extends AbstractLostInterrupt {
         if (GameConditions.isDuringBattle(game) && GameConditions.canSpot(game, self, filter)) {
 
             // Generate action using common method
-            PlayInterruptAction action = generatePlayInterruptAction(playerId, game, self, filter);
-            if (action != null) {
-                return Collections.singletonList(action);
+            List<PlayInterruptAction> actions = new ArrayList<>();
+            for (Filter vaderReference : InterruptPersonaReferences.vaderInterpretations(game, self)) {
+                actions.add(generatePlayInterruptAction(playerId, game, self, filter, vaderReference));
             }
+            return actions;
         }
         return null;
     }
 
-    private PlayInterruptAction generatePlayInterruptAction(final String playerId, final SwccgGame game, final PhysicalCard self, Filter filter) {
+    private PlayInterruptAction generatePlayInterruptAction(final String playerId, final SwccgGame game, final PhysicalCard self, Filter filter, final Filter vaderReference) {
         final PlayInterruptAction action = new PlayInterruptAction(game, self);
-        action.setText("Lose Imperial leader piloting your Star Destroyer");
+        action.setText("Lose Imperial leader piloting your Star Destroyer" + (vaderReference == Filters.Vader ? "" : " (treat Vader as Maul or Mara Jade)"));
         // Choose target(s)
         action.appendTargeting(
                 new TargetCardOnTableEffect(action, playerId, "Choose Star Destroyer pilot", filter) {
@@ -89,7 +90,7 @@ public class Card209_046 extends AbstractLostInterrupt {
                                                         "Makes " + GameUtils.getCardLink(starDestroyer) + " immune to attrition"));
                                         action.appendEffect(
                                                 new AddUntilEndOfTurnModifierEffect(action,
-                                                        new MayNotHavePowerIncreasedByCardModifier(self, starDestroyer, Filters.and(Filters.Imperial, Filters.pilot, Filters.aboard(starDestroyer), Filters.not(InterruptPersonaReferences.vader(game, self)))),
+                                                        new MayNotHavePowerIncreasedByCardModifier(self, starDestroyer, Filters.and(Filters.Imperial, Filters.pilot, Filters.aboard(starDestroyer), Filters.not(vaderReference))),
                                                         "Prevents the power of " + GameUtils.getCardLink(starDestroyer) + " from being increased by Imperial pilots aboard (except Vader)"));
 
 

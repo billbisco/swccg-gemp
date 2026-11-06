@@ -25,6 +25,8 @@ import com.gempukku.swccgo.logic.timing.Action;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 
 /**
  * Set: Virtual Set 2: Our Most Desperate Hour
@@ -85,26 +87,31 @@ public class Card1102_048 extends AbstractLostInterrupt {
             actions.add(action);
         }
 
-        Filter battlegrounds = Filters.and(Filters.battleground,
-                Filters.controlsWith(playerId, self, Filters.or(Filters.Motti, Filters.Tagge, Filters.Tarkin, InterruptPersonaReferences.vader(game, self))));
-        final int count = Filters.countTopLocationsOnTable(game, battlegrounds);
-        if (GameConditions.isOnceDuringYourPhase(game, self, playerId, self.getCardId(), Phase.CONTROL)
-                && count > 0) {
+        List<Filter> interpretations = InterruptPersonaReferences.vaderInterpretations(game, self);
+        Set<Integer> offeredCounts = new HashSet<>();
+        for (Filter vaderReference : interpretations) {
+            Filter battlegrounds = Filters.and(Filters.battleground,
+                    Filters.controlsWith(playerId, self, Filters.or(Filters.Motti, Filters.Tagge, Filters.Tarkin, vaderReference)));
+            final int count = Filters.countTopLocationsOnTable(game, battlegrounds);
+            if (GameConditions.isOnceDuringYourPhase(game, self, playerId, self.getCardId(), Phase.CONTROL)
+                    && count > 0 && offeredCounts.add(count)) {
 
-            final PlayInterruptAction action = new PlayInterruptAction(game, self);
-            action.setText("Make opponent lose Force");
-            action.appendUsage(
-                    new OncePerPhaseEffect(action));
-            action.allowResponses("Make opponent lose " + count + " Force",
-                    new RespondablePlayCardEffect(action) {
-                        @Override
-                        protected void performActionResults(Action targetingAction) {
-                            action.appendEffect(
-                                    new LoseForceEffect(action, opponent, count));
+                final PlayInterruptAction action = new PlayInterruptAction(game, self);
+                action.setText("Make opponent lose Force" + (interpretations.size() > 1
+                        ? " (" + (vaderReference == Filters.Vader ? "Vader" : "Maul or Mara Jade") + ": " + count + ")" : ""));
+                action.appendUsage(
+                        new OncePerPhaseEffect(action));
+                action.allowResponses("Make opponent lose " + count + " Force",
+                        new RespondablePlayCardEffect(action) {
+                            @Override
+                            protected void performActionResults(Action targetingAction) {
+                                action.appendEffect(
+                                        new LoseForceEffect(action, opponent, count));
+                            }
                         }
-                    }
-            );
-            actions.add(action);
+                );
+                actions.add(action);
+            }
         }
 
         return actions;

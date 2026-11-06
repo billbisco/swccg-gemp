@@ -28,6 +28,7 @@ public class Card_1115_067_Integration_Tests {
             put("modernSearch", "213_20"); put("sister", "213_12");
             put("brother", "213_6");
             put("legacySearch", "601_98");
+            put("legacyEmpires", "1210_67"); put("mosEisley", "1_295");
         }}, 20, 20, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -200,5 +201,38 @@ public class Card_1115_067_Integration_Tests {
     public void LegacyDeploymentSearchCanStillBeOfferedWhenVaderUniquenessBlocksVader() {
         legacyDeploymentSearch(true);
         legacyDeploymentSearch(false);
+    }
+
+    private void separateBattlegroundCounts(String card) {
+        var scn = scenario();
+        var interrupt = scn.GetDSCard(card);
+        var mosEisley = scn.GetDSCard("mosEisley");
+        scn.MoveLocationToTable(mosEisley);
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("vader"));
+        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetDSCard("maul"));
+        scn.MoveCardsToLocation(mosEisley, scn.GetDSCard("mara"));
+        scn.MoveCardsToHand(interrupt);
+        scn.SkipToDSTurn(Phase.CONTROL);
+        assertTrue(scn.DSCardPlayAvailable(interrupt, "Make opponent lose Force (Vader: 1)"));
+        assertTrue(scn.DSCardPlayAvailable(interrupt, "Make opponent lose Force (Maul or Mara Jade: 2)"));
+        int before = scn.GetLSLifeForceRemaining();
+        scn.DSPlayCard(interrupt, "Make opponent lose Force (Maul or Mara Jade: 2)");
+        scn.PassAllResponses();
+        if (scn.LSDecisionAvailable("Choose Force to lose")) {
+            scn.LSPayRemainingForceLossFromReserveDeck();
+            scn.PassAllResponses();
+        }
+        assertEquals(before - 2, scn.GetLSLifeForceRemaining());
+        assertInZone(Zone.LOST_PILE, interrupt);
+    }
+
+    @Test
+    public void OriginalVirtualCountMayUsePrintedOrSubstitutedTextWithoutCombiningBoth() {
+        separateBattlegroundCounts("original");
+    }
+
+    @Test
+    public void LegacyCountMayUsePrintedOrSubstitutedTextWithoutCombiningBoth() {
+        separateBattlegroundCounts("legacyEmpires");
     }
 }

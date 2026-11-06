@@ -6,6 +6,7 @@ import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.modifiers.ModifyGameTextType;
 import java.util.Set;
+import java.util.List;
 
 /** Interprets persona references in one Interrupt's modified game text. */
 public final class InterruptPersonaReferences {
@@ -28,6 +29,13 @@ public final class InterruptPersonaReferences {
     public static Set<Persona> vaderPersonas(SwccgGame game, PhysicalCard source) {
         return mayTreatVaderAsMaulOrMara(game, source)
                 ? Set.of(Persona.VADER, Persona.MAUL, Persona.MARA_JADE) : Set.of(Persona.VADER);
+    }
+
+    /** Separate optional interpretations for negated references, counts and lasting results. */
+    public static List<Filter> vaderInterpretations(SwccgGame game, PhysicalCard source) {
+        return mayTreatVaderAsMaulOrMara(game, source)
+                ? List.of(Filters.Vader, Filters.or(Filters.Maul, Filters.Mara_Jade))
+                : List.of(Filters.Vader);
     }
 
     public static boolean isVaderName(SwccgGame game, PhysicalCard source, String name) {

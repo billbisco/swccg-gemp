@@ -27,6 +27,7 @@ import com.gempukku.swccgo.logic.timing.Effect;
 import com.gempukku.swccgo.logic.timing.EffectResult;
 
 import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -51,39 +52,43 @@ public class Card101_003 extends AbstractLostInterrupt {
             final PhysicalCard battleLocation = game.getGameState().getBattleLocation();
             if (GameConditions.canTarget(game, self, filter)) {
 
-                final PlayInterruptAction action = new PlayInterruptAction(game, self);
-                action.setText("Move Luke to battle");
-                // Choose target(s)
-                action.appendTargeting(
-                        new TargetCardOnTableEffect(action, playerId, "Choose Luke", filter) {
-                            @Override
-                            protected void cardTargeted(final int targetGroupId, PhysicalCard targetedCard) {
-                                action.addAnimationGroup(targetedCard);
-                                action.addAnimationGroup(battleLocation);
-                                // Allow response(s)
-                                action.allowResponses("Move " + GameUtils.getCardLink(targetedCard) + " to " + GameUtils.getCardLink(battleLocation),
-                                        new RespondablePlayCardEffect(action) {
-                                            @Override
-                                            protected void performActionResults(Action targetingAction) {
-                                                // Get the targeted card(s) from the action using the targetGroupId.
-                                                // This needs to be done in case the target(s) were changed during the responses.
-                                                final PhysicalCard finalTarget = action.getPrimaryTargetCard(targetGroupId);
+                List<PlayInterruptAction> actions = new ArrayList<>();
+                for (Filter vaderReference : InterruptPersonaReferences.vaderInterpretations(game, self)) {
+                    final PlayInterruptAction action = new PlayInterruptAction(game, self);
+                    action.setText("Move Luke to battle" + (vaderReference == Filters.Vader ? "" : " (treat Vader as Maul or Mara Jade)"));
+                    // Choose target(s)
+                    action.appendTargeting(
+                            new TargetCardOnTableEffect(action, playerId, "Choose Luke", filter) {
+                                @Override
+                                protected void cardTargeted(final int targetGroupId, PhysicalCard targetedCard) {
+                                    action.addAnimationGroup(targetedCard);
+                                    action.addAnimationGroup(battleLocation);
+                                    // Allow response(s)
+                                    action.allowResponses("Move " + GameUtils.getCardLink(targetedCard) + " to " + GameUtils.getCardLink(battleLocation),
+                                            new RespondablePlayCardEffect(action) {
+                                                @Override
+                                                protected void performActionResults(Action targetingAction) {
+                                                    // Get the targeted card(s) from the action using the targetGroupId.
+                                                    // This needs to be done in case the target(s) were changed during the responses.
+                                                    final PhysicalCard finalTarget = action.getPrimaryTargetCard(targetGroupId);
 
-                                                // Perform result(s)
-                                                action.appendEffect(
-                                                        new MoveCardUsingLandspeedEffect(action, playerId, finalTarget, true, Filters.battleLocation));
-                                                action.appendEffect(
-                                                        new AddUntilEndOfBattleModifierEffect(action,
-                                                                new PowerModifier(self, Filters.Luke, new CantSpotCondition(self, Filters.or(
-                                                                        Filters.personaPresentAt(InterruptPersonaReferences.vader(game, self), Filters.battleLocation),
-                                                                        Filters.personaAt(InterruptPersonaReferences.vader(game, self), Filters.adjacentSiteTo(self, Filters.battleLocation)))), 2), null));
+                                                    // Perform result(s)
+                                                    action.appendEffect(
+                                                            new MoveCardUsingLandspeedEffect(action, playerId, finalTarget, true, Filters.battleLocation));
+                                                    action.appendEffect(
+                                                            new AddUntilEndOfBattleModifierEffect(action,
+                                                                    new PowerModifier(self, Filters.Luke, new CantSpotCondition(self, Filters.or(
+                                                                            Filters.personaPresentAt(vaderReference, Filters.battleLocation),
+                                                                            Filters.personaAt(vaderReference, Filters.adjacentSiteTo(self, Filters.battleLocation)))), 2), null));
+                                                }
                                             }
-                                        }
-                                );
+                                    );
+                                }
                             }
-                        }
-                );
-                return Collections.singletonList(action);
+                    );
+                    actions.add(action);
+                }
+                return actions;
             }
         }
         return null;

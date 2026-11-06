@@ -91,4 +91,21 @@ class InterruptPersonaReferencesTests {
         permission(false);
         assertEquals(Set.of(Persona.VADER), InterruptPersonaReferences.vaderPersonas(game, source));
     }
+
+    @Test
+    void OptionalInterpretationsKeepPrintedAndSubstitutedReferencesSeparate() {
+        permission(true);
+        var interpretations = InterruptPersonaReferences.vaderInterpretations(game, source);
+        assertEquals(2, interpretations.size());
+        persona(Persona.VADER);
+        assertTrue(interpretations.get(0).accepts(game, target));
+        assertFalse(interpretations.get(1).accepts(game, target));
+        when(game.getModifiersQuerying().hasPersona(game.getGameState(), target, Persona.VADER)).thenReturn(false);
+        persona(Persona.MAUL);
+        assertFalse(interpretations.get(0).accepts(game, target));
+        assertTrue(interpretations.get(1).accepts(game, target));
+        permission(false);
+        assertEquals(1, InterruptPersonaReferences.vaderInterpretations(game, source).size());
+        assertTrue(interpretations.get(1).accepts(game, target));
+    }
 }

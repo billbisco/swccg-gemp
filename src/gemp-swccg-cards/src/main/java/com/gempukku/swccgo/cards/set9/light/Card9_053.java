@@ -77,7 +77,8 @@ public class Card9_053 extends AbstractUsedOrLostInterrupt {
 
         // Check condition(s)
         if (GameConditions.isDuringBattleWithParticipant(game, Filters.Luke)
-                && !GameConditions.isDuringBattleWithParticipant(game, InterruptPersonaReferences.vader(game, self))) {
+                && InterruptPersonaReferences.vaderInterpretations(game, self).stream()
+                .anyMatch(reference -> !GameConditions.isDuringBattleWithParticipant(game, reference))) {
 
             final PlayInterruptAction action = new PlayInterruptAction(game, self, CardSubtype.LOST);
             action.setText("Subtract 2 from battle destiny draws");
