@@ -115,7 +115,7 @@ public abstract class AbstractImmediateEffect extends AbstractEffect {
         return result;
     }
 
-    private boolean forceMayDeployForFree() {
+    protected boolean forceMayDeployForFree() {
         return Boolean.TRUE.equals(FORCE_MAY_DEPLOY_FOR_FREE.get());
     }
 
