@@ -42,7 +42,7 @@ public class Card_1230_096_Tests {
         }}, new HashMap<>() {{
             put("destroyer", "1_301");
             put("vader", "1_168");
-            put("control", "9_114");
+            put("control", "4_139");
         }}, 40, 40, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -333,15 +333,15 @@ public class Card_1230_096_Tests {
         scn.AttachCardsTo(scn.GetLSCard("ship"), scn.GetLSCard("attack"));
         // Isolate attrition immunity from battle damage without other forfeitable Light cards.
         scn.ApplyAdHocModifier(new com.gempukku.swccgo.logic.modifiers.PowerModifier(
-                null, scn.GetLSCard("ship"), 10));
-        assertEquals(17, scn.GetPower(scn.GetLSCard("ship")));
+                null, scn.GetLSCard("ship"), 5 + destiny));
+        assertEquals(12 + destiny, scn.GetPower(scn.GetLSCard("ship")));
         scn.SkipToPhase(Phase.BATTLE);
         scn.LSInitiateBattle(scn.GetLSCard("tatooine"));
         scn.PassAllResponses();
         scn.PrepareLSDestiny(0);
         scn.PrepareDSDestiny(destiny - 1);
         scn.SkipToEndOfPowerSegment(true);
-        assertTrue(scn.GetLSTotalPower() >= scn.GetDSTotalPower());
+        assertEquals(scn.GetLSTotalPower(), scn.GetDSTotalPower());
         assertEquals(destiny, scn.gameState().getBattleState().getTotalBattleDestiny(scn.game(), scn.DS), scn.epsilon);
         scn.PassResponses("INITIAL_ATTRITION_CALCULATED");
         scn.PassAllResponses();
@@ -426,10 +426,10 @@ public class Card_1230_096_Tests {
     public void TheTimeForOurAttackHasComeFailedDownloadCannotAttachToAnExistingShip() {
         var scn = ready(1);
         scn.MoveCardsToLocation(scn.GetLSCard("tatooine"), scn.GetLSCard("capital"));
+        scn.MoveCardsToLSHand(scn.GetLSCard("ship"), scn.GetLSCard("otherShip"));
         deploySecond(scn, "tatooine");
         scn.LSUseCardAction(scn.GetLSCard("attack"), "Reserve Deck");
         scn.PassAllResponses();
-        scn.LSPass();
         for (int i = 0; i < 20; i++) {
             var decision = scn.GetCurrentDecision();
             String text = decision.getText().toLowerCase();
@@ -438,12 +438,12 @@ public class Card_1230_096_Tests {
             scn.PlayerPass(scn.GetDecidingPlayer());
         }
         assertEquals(Zone.HAND, scn.GetLSCard("attack").getZone());
-        assertTrue(scn.GetLSReserveDeck().contains(scn.GetLSCard("ship")));
+        assertEquals(Zone.HAND, scn.GetLSCard("ship").getZone());
         org.junit.Assert.assertNull(scn.GetLSCard("attack").getAttachedTo());
     }
 
     @Test
-    public void TheTimeForOurAttackHasComeSquadronArrivalCountsItsThreeStarfighters() {
+    public void TheTimeForOurAttackHasComeSquadronArrivalIsNotAStarfighterArrival() {
         var scn = scenario();
         scn.StartGame();
         scn.SkipToLSTurn(Phase.ACTIVATE);
@@ -457,20 +457,23 @@ public class Card_1230_096_Tests {
         scn.SkipToPhase(Phase.MOVE);
         scn.LSMoveCard(scn.GetLSCard("squadron"), scn.GetLSCard("tatooine"));
         reachAttackResponse(scn);
-        assertTrue(attackAvailable(scn, "Reserve Deck"));
-        finishDownload(scn, true);
-        assertEquals(scn.GetLSCard("ship"), scn.GetLSCard("attack").getAttachedTo());
+        // AR2 p80: a squadron is not targeted or treated as a starfighter.
+        assertFalse(attackAvailable(scn));
+        assertEquals(Zone.HAND, scn.GetLSCard("attack").getZone());
     }
 
     @Test
     public void TheTimeForOurAttackHasComeAdditionalMoveLimitSurvivesAReplacementEffectCopy() {
         var scn = attached();
+        scn.LSMoveCard(scn.GetLSCard("ship"), scn.GetLSCard("alderaan"));
+        scn.PassAllResponses();
+        returnToLightAction(scn);
         scn.LSUseCardAction(scn.GetLSCard("attack"), "move again");
         scn.PassAllResponses();
         if (scn.LSDecisionAvailable("Choose regular move action"))
             scn.LSChooseOption("hyperspeed");
         scn.PassAllResponses();
-        assertEquals(scn.GetLSCard("alderaan"), scn.GetLSCard("ship").getAtLocation());
+        assertEquals(scn.GetLSCard("tatooine"), scn.GetLSCard("ship").getAtLocation());
         scn.MoveCardsToTopOfLSLostPile(scn.GetLSCard("attack"));
         scn.AttachCardsTo(scn.GetLSCard("ship"), scn.GetLSCard("attack2"));
         scn.SkipToDSTurn(Phase.MOVE);
