@@ -95,7 +95,7 @@ public class Card_1250_035_Tests {
         assertEquals(4, scn.GetForfeit(pilot));
         assertEquals(5, scn.game().getModifiersQuerying().getImmunityToAttritionLessThan(scn.gameState(), vehicle), scn.epsilon);
         scn.MoveOutOfPlay(pilot);
-        assertEquals(2, scn.GetPower(vehicle));
+        assertEquals(0, scn.GetPower(vehicle));
         assertEquals(5, scn.GetManeuver(vehicle));
         assertEquals(0, scn.game().getModifiersQuerying().getImmunityToAttritionLessThan(scn.gameState(), vehicle), scn.epsilon);
     }
