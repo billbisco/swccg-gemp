@@ -111,10 +111,10 @@ public class Card_1261_019_Tests {
         var scn = scenario(); scn.StartGame(); var swamp = scn.GetLSCard("swamp"); scn.MoveLocationToTable(swamp);
         var d = scn.GetDSCard("dianoga"); var food = scn.GetLSCard("food"); scn.MoveCardsToLocation(swamp, d, food);
         feed(scn, food, d, 3);
-        com.gempukku.swccgo.framework.Assertions.assertInZone(Zone.LOST_PILE, food);
         assertTrue(scn.AwaitingLSForceLossPayment());
         for (int i = 0; i < 2; i++) { scn.LSPayForceLossFromReserveDeck(); scn.PassAllResponses(); }
         assertFalse(scn.AwaitingLSForceLossPayment());
+        com.gempukku.swccgo.framework.Assertions.assertInZone(Zone.LOST_PILE, food);
     }
 
     private boolean isSelectable(VirtualTableScenario scn, com.gempukku.swccgo.game.PhysicalCardImpl card) {
