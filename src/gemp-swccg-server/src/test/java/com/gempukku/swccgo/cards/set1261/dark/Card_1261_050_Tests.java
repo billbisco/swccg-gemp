@@ -78,6 +78,8 @@ public class Card_1261_050_Tests {
         var scn = scenario(); scn.StartGame(); scn.MoveCardsToDSHand(scn.GetDSCard("sentry"));
         scn.MoveCardsToTopOfDSLostPile(scn.GetDSCard("uniqueImperial"));
         scn.DSActivateMaxForceAndPass(); scn.SkipToPhase(Phase.CONTROL); scn.DrainDSForcePileTo(2);
+        scn.SkipToPhase(Phase.DEPLOY); assertEquals(2, scn.GetDSForcePileCount());
+        assertTrue(scn.AwaitingDSDeployPhaseActions());
         assertFalse(scn.DSCardPlayAvailable(scn.GetDSCard("sentry"), "Retrieve a unique Imperial starship into hand"));
     }
 
