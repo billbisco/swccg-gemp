@@ -18,10 +18,10 @@ public class Card_1261_113_Tests {
         return new VirtualTableScenario(new HashMap<>() {{
             put("wookiee", "7_50"); put("wookiee2", "7_50"); put("wookiee3", "7_50"); put("wookiee4", "7_50");
             put("luke", "1_19"); put("trooper", "1_28"); put("speeder", "3_69"); put("ship", "12_91");
-            put("sacred", "1116_16"); put("haven", "1116_17"); put("skyhook", "601_14");
+            put("sacred", "1116_16"); put("haven", "1116_17");
             put("kashyyyk", "2_64"); put("falcon", "1_143"); put("safeSite", "1_136");
         }}, new HashMap<>() {{
-            put("vader", "1_168"); put("walker", "3_156"); put("shuttle", "7_309"); put("tie", "1_304");
+            put("skyhook", "601_14"); put("vader", "1_168"); put("walker", "3_156"); put("shuttle", "7_309"); put("tie", "1_304");
         }}, 50, 50, StartingSetup.LSStartingLocation("1261_113"), StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -44,9 +44,10 @@ public class Card_1261_113_Tests {
 
     private VirtualTableScenario battle(int occupiedLocations, boolean kashyyykBattle, boolean sameSite) {
         var scn = scenario(); scn.StartGame(); var forest = scn.GetLSStartingLocation();
-        for (String site : new String[]{"sacred", "haven", "skyhook"}) scn.MoveLocationToTable(scn.GetLSCard(site));
+        scn.MoveLocationToTable(scn.GetDSCard("skyhook"));
+        for (String site : new String[]{"sacred", "haven"}) scn.MoveLocationToTable(scn.GetLSCard(site));
         var locations = new com.gempukku.swccgo.game.PhysicalCardImpl[]{forest,
-                scn.GetLSCard("sacred"), scn.GetLSCard("haven"), scn.GetLSCard("skyhook")};
+                scn.GetLSCard("sacred"), scn.GetLSCard("haven"), scn.GetDSCard("skyhook")};
         String[] names = {"wookiee", "wookiee2", "wookiee3", "wookiee4"};
         for (int i = 0; i < occupiedLocations; i++) scn.MoveCardsToLocation(locations[sameSite ? 0 : i], scn.GetLSCard(names[i]));
         var site = kashyyykBattle ? forest : scn.GetDSStartingLocation();

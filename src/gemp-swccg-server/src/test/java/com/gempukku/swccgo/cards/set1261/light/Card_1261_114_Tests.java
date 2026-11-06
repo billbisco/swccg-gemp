@@ -39,6 +39,21 @@ public class Card_1261_114_Tests {
         scn.BlueprintKeywordCheck(b, new ArrayList<>());
     }
 
+    private boolean selectable(VirtualTableScenario scn, com.gempukku.swccgo.game.PhysicalCardImpl card) {
+        String[] blueprints = scn.LSGetADParam("blueprintId"), enabled = scn.LSGetADParam("selectable");
+        if (blueprints == null || enabled == null) return scn.LSHasCardChoiceAvailable(card);
+        for (int i = 0; i < blueprints.length; i++)
+            if (blueprints[i].equals(card.getBlueprintId(true)) && Boolean.parseBoolean(enabled[i])) return true;
+        return false;
+    }
+
+    private void skipEmptySearches(VirtualTableScenario scn) {
+        while (scn.LSGetADParam("selectable") != null && scn.LSDecisionAvailable("deploy from")
+                && Arrays.stream(scn.LSGetADParam("selectable")).noneMatch(Boolean::parseBoolean)) {
+            scn.LSChooseCards(); scn.PassAllResponses();
+        }
+    }
+
     private VirtualTableScenario deploy(int force, boolean ricInReserve, boolean shipInReserve) {
         var scn = scenario(); scn.StartGame();
         if (!ricInReserve) scn.MoveCardsToLSHand(scn.GetLSCard("ric"));
@@ -48,12 +63,19 @@ public class Card_1261_114_Tests {
         scn.LSActivateForceCheat(force);
         scn.LSUseCardAction(scn.GetLSStartingLocation(), "Deploy Ric Olie");
         scn.PassAllResponses();
+        skipEmptySearches(scn);
+        if (scn.LSGetADParam("selectable") != null) {
+            System.out.println("QUEEN_SEARCH Force=" + scn.GetLSForcePileCount() + " decision=" + scn.LSGetDecision().getText());
+            String[] bp = scn.LSGetADParam("blueprintId"), en = scn.LSGetADParam("selectable");
+            for (int i = 0; i < bp.length; i++) if (Boolean.parseBoolean(en[i])) System.out.println("QUEEN_SELECTABLE " + bp[i]);
+        }
         return scn;
     }
 
     private void choose(VirtualTableScenario scn, String name) {
-        var card = scn.GetLSCard(name); assertTrue(scn.LSHasCardChoiceAvailable(card));
+        var card = scn.GetLSCard(name); assertTrue(selectable(scn, card));
         scn.LSChooseCard(card); scn.PassAllResponses();
+        skipEmptySearches(scn);
         if (scn.LSHasCardChoiceAvailable(scn.GetLSStartingLocation())) {
             scn.LSChooseCard(scn.GetLSStartingLocation()); scn.PassAllResponses();
         }
@@ -89,12 +111,12 @@ public class Card_1261_114_Tests {
     public void TatooineQueensLandingSiteDoesNotOfferOtherStarfightersOrCharacters() {
         //test1: the first selection accepts only a327 Nubian, and the second only Ric.
         var scn = deploy(5, true, true);
-        assertTrue(scn.LSHasCardChoiceAvailable(scn.GetLSCard("ship"))); //test1
-        assertFalse(scn.LSHasCardChoiceAvailable(scn.GetLSCard("otherShip")));
-        assertFalse(scn.LSHasCardChoiceAvailable(scn.GetLSCard("ric")));
+        assertTrue(selectable(scn, scn.GetLSCard("ship"))); //test1
+        assertFalse(selectable(scn, scn.GetLSCard("otherShip")));
+        assertFalse(selectable(scn, scn.GetLSCard("ric")));
         choose(scn, "ship");
-        assertTrue(scn.LSHasCardChoiceAvailable(scn.GetLSCard("ric")));
-        assertFalse(scn.LSHasCardChoiceAvailable(scn.GetLSCard("otherCharacter")));
+        assertTrue(selectable(scn, scn.GetLSCard("ric")));
+        assertFalse(selectable(scn, scn.GetLSCard("otherCharacter")));
     }
 
     @Test
@@ -103,7 +125,7 @@ public class Card_1261_114_Tests {
         var scn = deploy(1, true, false);
         assertInZone(Zone.RESERVE_DECK, scn.GetLSCard("ric")); //test1
         assertEquals(1, scn.GetLSForcePileCount());
-        assertFalse(scn.LSHasCardChoiceAvailable(scn.GetLSCard("ric")));
+        assertFalse(selectable(scn, scn.GetLSCard("ric")));
     }
 
     @Test
@@ -112,14 +134,14 @@ public class Card_1261_114_Tests {
         var scn = deploy(2, false, true);
         assertInZone(Zone.RESERVE_DECK, scn.GetLSCard("ship")); //test1
         assertEquals(2, scn.GetLSForcePileCount());
-        assertFalse(scn.LSHasCardChoiceAvailable(scn.GetLSCard("ship")));
+        assertFalse(selectable(scn, scn.GetLSCard("ship")));
     }
 
     @Test
     public void TatooineQueensLandingSiteMayDeclineEitherOrBothDownloads() {
         //test1: both categories are optional; declining spends no Force but consumes this turn's use.
         var scn = deploy(5, true, true); scn.LSChooseCards(); scn.PassAllResponses();
-        assertTrue(scn.LSHasCardChoiceAvailable(scn.GetLSCard("ric"))); //test1
+        assertTrue(selectable(scn, scn.GetLSCard("ric"))); //test1
         scn.LSChooseCards(); scn.PassAllResponses();
         assertInZone(Zone.RESERVE_DECK, scn.GetLSCard("ship"), scn.GetLSCard("ric"));
         assertEquals(5, scn.GetLSForcePileCount());
