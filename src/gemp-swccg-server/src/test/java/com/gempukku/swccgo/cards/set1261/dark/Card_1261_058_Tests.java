@@ -11,7 +11,7 @@ import static org.junit.Assert.*;
 public class Card_1261_058_Tests {
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>() {{ put("obiwan", "1_21"); }},
-                new HashMap<>() {{ put("blizzard", "1261_58"); put("trooper", "1_194"); put("piett", "9_98"); }},
+                new HashMap<>() {{ put("blizzard", "1261_58"); put("trooper", "8_100"); put("piett", "9_98"); }},
                 10, 10, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
