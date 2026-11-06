@@ -21,7 +21,7 @@ public class Card_1263_028_Tests {
         }}, new HashMap<>() {{
             put("vader", "1_168"); put("stormtrooper", "1_194"); put("tie", "1_304");
             put("coruscant", "12_165");
-        }}, 40, 40, StartingSetup.LSStartingLocation("1_130"), StartingSetup.DefaultDSGroundLocation,
+        }}, 40, 40, StartingSetup.LSStartingLocation("1_136"), StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
     }

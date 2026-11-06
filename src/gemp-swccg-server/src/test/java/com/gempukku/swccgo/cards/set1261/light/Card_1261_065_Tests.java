@@ -19,7 +19,7 @@ public class Card_1261_065_Tests {
             put("launch", "9_36"); put("kessel", "1_126");
         }}, new HashMap<>() {{
             put("tie", "1_304"); put("infiltrator", "12_182"); put("maul", "11_54");
-        }}, 40, 40, StartingSetup.LSStartingLocation("1_127"), StartingSetup.DefaultDSSpaceSystem,
+        }}, 40, 40, StartingSetup.LSStartingLocation("1_127"), StartingSetup.DSStartingLocation("2_148"),
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
     }
@@ -41,6 +41,8 @@ public class Card_1261_065_Tests {
 
     private void start(VirtualTableScenario scn) {
         scn.StartGame(); scn.MoveLocationToTable(scn.GetLSCard("kessel"));
+        assertFalse("Ralltiir has no Light Force icon", com.gempukku.swccgo.filters.Filters.battleground.accepts(scn.game(), scn.GetDSStartingLocation()));
+        assertTrue(com.gempukku.swccgo.filters.Filters.battleground.accepts(scn.game(), scn.GetLSStartingLocation()));
     }
 
     private void pilot(VirtualTableScenario scn, String ship, com.gempukku.swccgo.game.PhysicalCardImpl system) {
