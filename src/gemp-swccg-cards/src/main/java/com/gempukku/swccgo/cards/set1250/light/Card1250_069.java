@@ -31,7 +31,7 @@ public class Card1250_069 extends AbstractLostInterrupt {
     public Card1250_069() {
         super(Side.LIGHT, 3, Title.Wookiee_Roar, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_5, Rarity.V);
         setVirtualSuffix(true);
-        setLore("'GHRRRRAARRRRHG!'");
+        setLore("\"GHRRRRAARRRRHG!\"");
         setGameText("If a battle was just initiated involving a Wookiee, add one destiny to your total power (two if alone). That Wookiee is defense value +3 for remainder of turn. OR If you have 8 or more cards in hand, cancel a Force drain.");
         addIcons(Icon.A_NEW_HOPE, Icon.EPISODE_I);
     }
