@@ -26,6 +26,7 @@ public class Card_1250_005_Tests {
         assertEquals(2, bp.getDestiny(), scn.epsilon); assertEquals(3, bp.getDeployCost(), scn.epsilon);
         assertEquals(2, bp.getPower(), scn.epsilon); assertEquals(3, bp.getAbility(), scn.epsilon);
         assertEquals(4, bp.getForfeit(), scn.epsilon); assertTrue(bp.hasPersona(Persona.DOFINE));
+        assertEquals(Species.NEIMOIDIAN, bp.getSpecies());
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_5, bp.getExpansionSet()); assertEquals(Rarity.V, bp.getRarity());
         scn.BlueprintCardTypeCheck(bp, new ArrayList<>() {{ add(CardType.REPUBLIC); }});
         scn.BlueprintIconCheck(bp, new ArrayList<>() {{ add(Icon.REPUBLIC); add(Icon.PILOT); add(Icon.CORUSCANT); add(Icon.EPISODE_I); add(Icon.LEGACY_BLOCK_5); }});
