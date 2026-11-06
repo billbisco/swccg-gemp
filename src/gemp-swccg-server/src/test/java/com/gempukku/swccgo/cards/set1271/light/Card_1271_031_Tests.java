@@ -14,11 +14,22 @@ public class Card_1271_031_Tests {
         return new VirtualTableScenario(new HashMap<>() {{
             put("biggs", "1271_31"); put("original", "1_3"); put("red3", "1_145");
             put("ywing", "1_147"); put("corvette", "1_140"); put("hobbie", "3_5"); put("take", "1_19");
-            put("ground", "5_79");
+            put("ground", "5_79"); put("camie", "7_9"); put("fixer", "1115_10"); put("tatooine", "12_85");
         }}, new HashMap<>() {{ put("isd", "1_302"); }}, 10, 10,
                 StartingSetup.DefaultLSSpaceSystem, StartingSetup.DefaultDSSpaceSystem,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
+    }
+
+    @Test
+    public void BiggsRogueLegendBlocksCamieSearchWhenEveryNamedPersonaIsAlreadyInPlay() {
+        //test1: Camie cannot search when Luke, Fixer, and this differently titled Biggs are all already on table.
+        // Fixer has no implemented original printing, so the OVS printing supplies his unchanged identity.
+        var scn = GetScenario(); var site = scn.GetLSCard("tatooine"); var camie = scn.GetLSCard("camie");
+        scn.StartGame(); scn.MoveLocationToTable(site);
+        scn.MoveCardsToLocation(site, camie, scn.GetLSCard("take"), scn.GetLSCard("fixer"), scn.GetLSCard("biggs"));
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        assertFalse(scn.LSCardActionAvailable(camie, "Deploy card from Reserve Deck")); //test1
     }
 
     @Test

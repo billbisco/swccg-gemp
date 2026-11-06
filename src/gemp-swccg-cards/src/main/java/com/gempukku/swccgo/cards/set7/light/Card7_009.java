@@ -24,7 +24,7 @@ import com.gempukku.swccgo.logic.modifiers.DeploysFreeToLocationModifier;
 import com.gempukku.swccgo.logic.modifiers.ForfeitModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 
-import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -66,7 +66,7 @@ public class Card7_009 extends AbstractAlien {
         // Check condition(s)
         if (GameConditions.isOnceDuringYourPhase(game, self, playerId, gameTextSourceCardId, gameTextActionId, Phase.DEPLOY)
                 && GameConditions.isAtLocation(game, self, Filters.Tatooine_site)
-                && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, gameTextActionId, Persona.LUKE, Arrays.asList(Title.Biggs, Title.Fixer))) {
+                && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, gameTextActionId, EnumSet.of(Persona.LUKE, Persona.BIGGS), Collections.singletonList(Title.Fixer))) {
 
             final TopLevelGameTextAction action = new TopLevelGameTextAction(self, gameTextSourceCardId, gameTextActionId);
             action.setText("Deploy card from Reserve Deck");
