@@ -16,14 +16,23 @@ import static org.junit.Assert.*;
 
 public class Card_1250_040_Tests {
     private VirtualTableScenario scenario() {
+        StartingSetup objectiveOutsideDeck = new StartingSetup() {
+            @Override
+            public HashMap<String, String> Cards() {
+                return new HashMap<>() {{ put("objective", "1117_10"); }};
+            }
+
+            @Override
+            public void Setup(VirtualTableScenario scn) { }
+        };
         return new VirtualTableScenario(new HashMap<>() {{
-            put("guardian", "1250_40"); put("inner", "13_24"); put("objective", "1117_10");
+            put("guardian", "1250_40"); put("inner", "13_24");
             put("saber", "1_155"); put("blaster", "1_156"); put("otherJedi", "1_19");
         }}, new HashMap<>() {{
             put("trooper", "1_194"); put("vader", "1_168");
         }}, 10, 10, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
-                StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
+                objectiveOutsideDeck, StartingSetup.NoDSShields, VirtualTableScenario.Open);
     }
 
     @Test
