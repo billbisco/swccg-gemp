@@ -12,9 +12,9 @@ import static org.junit.Assert.*;
 public class Card_1261_001_Tests {
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>() {{ put("hallway", "14_51"); put("obiwan", "1_21");
-                    put("han", "1_11"); put("objective", "13_46"); put("enemyDroid", "3_14"); }},
+                    put("han", "1_11"); put("enemyDroid", "3_14"); }},
                 new HashMap<>() {{ put("droid", "1261_1"); put("oom", "14_83"); put("infantry", "14_80");
-                    put("nonPresence", "2_99"); put("vader", "1_168"); put("ownHallway", "14_112");
+                    put("nonPresence", "2_99"); put("trooper", "1_194"); put("vader", "1_168"); put("ownHallway", "14_112");
                     put("exterior", "12_170"); }}, 20, 20,
                 StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
@@ -91,9 +91,11 @@ public class Card_1261_001_Tests {
 
     @Test
     public void ThreeBThreeTenPreventsActualWellHandleThisTargetWhileAnUnprotectedDroidCanBeLost() {
-        var scn = protection(); var objective = scn.GetLSCard("objective");
+        var scn = protection();
+        var objective = com.gempukku.swccgo.cards.legacy.MissionTestSupport.putInHand(scn, 126101, scn.LS,
+                VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("13_46"));
         scn.MoveCardsToLSSideOfTable(objective);
-        scn.MoveCardsToLocation(scn.GetLSCard("hallway"), scn.GetLSCard("obiwan"));
+        scn.MoveCardsToLocation(scn.GetLSCard("hallway"), scn.GetLSCard("obiwan"), scn.GetDSCard("trooper"));
         scn.SkipToLSTurn(Phase.CONTROL);
         scn.LSUseCardAction(objective, "Target character");
         assertTrue(scn.LSHasCardChoiceNotAvailable(scn.GetDSCard("droid")));
@@ -127,4 +129,31 @@ public class Card_1261_001_Tests {
         scn.MoveCardsToLocation(site, scn.GetDSCard("droid"), scn.GetDSCard("oom"), scn.GetDSCard("vader"), scn.GetLSCard("han"));
         scn.DSStartBattleAndSkipToWeaponsSegment(site); assertEquals(1, scn.GetDSBattleDestinyCount());
     }
+    private PhysicalCardImpl enemyPresenceBattleDroid(VirtualTableScenario scn) {
+        // A constructed opposing companion isolates ownership; primary gameplay fixtures use Decipher cards.
+        return com.gempukku.swccgo.cards.legacy.MissionTestSupport.putInHand(scn, 126100,
+                scn.LS, new com.gempukku.swccgo.cards.AbstractDroid(Side.LIGHT, 2, 2, 3, 3,
+                        "Opposing Unique Battle Droid", Uniqueness.UNIQUE, ExpansionSet.PREMIERE, Rarity.C1) {
+                    { addIcons(Icon.PRESENCE); addModelType(ModelType.BATTLE); }
+                });
+    }
+
+    @Test
+    public void ThreeBThreeTenDoesNotProtectOpponentsDroidEvenWhenItHasPresence() {
+        var scn = protection(); var enemy = enemyPresenceBattleDroid(scn);
+        scn.MoveCardsToLocation(scn.GetLSCard("hallway"), enemy);
+        assertFalse(scn.game().getModifiersQuerying().isImmuneToCardTitle(scn.gameState(), enemy, Title.Well_Handle_This));
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("vader"), scn.GetLSCard("han"));
+        scn.DSStartBattleAndSkipToWeaponsSegment(scn.GetDSStartingLocation());
+        assertFalse(scn.game().getModifiersQuerying().mayNotBePlacedInUsedPile(scn.gameState(), enemy, scn.LS));
+    }
+
+    @Test
+    public void ThreeBThreeTenCompanionMayBeAnOpponentsUniqueBattleDroid() {
+        var scn = scenario(); scn.StartGame(); var enemy = enemyPresenceBattleDroid(scn);
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("droid"), enemy);
+        scn.DSStartBattleAndSkipToWeaponsSegment(scn.GetDSStartingLocation());
+        assertEquals(1, scn.GetDSBattleDestinyCount());
+    }
+
 }
