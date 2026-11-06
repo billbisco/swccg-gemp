@@ -90,6 +90,7 @@ public class Card_1261_003_Tests {
         scn.PassAllResponses(); scn.DSChooseCard(site); scn.PassAllResponses();
         assertEquals(walker, site.getRelatedStarshipOrVehicle());
         assertEquals(Zone.LOCATIONS, site.getZone()); assertEquals(force - 1, scn.GetDSForcePileCount());
+        if (scn.AwaitingLSDeployPhaseActions()) scn.LSPass();
         assertFalse(scn.DSCardActionAvailable(driver, "Deploy vehicle site from Reserve Deck"));
     }
 
@@ -126,7 +127,8 @@ public class Card_1261_003_Tests {
     public void AtAtDriverLostAsPassengerOrNonAtAtPilotCannotReturnToUsedPile() {
         for (boolean passenger : new boolean[]{true, false}) {
             var scn = forfeitDriver(passenger, !passenger, 3);
-            assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("driver"), "Place in Used Pile"));
+            assertTrue(scn.AwaitingDSBattleDamagePayment());
+            assertFalse(scn.GetDSAvailableActions().stream().anyMatch(t -> t.contains("Place in Used Pile")));
             com.gempukku.swccgo.framework.Assertions.assertInZone(Zone.LOST_PILE, scn.GetDSCard("driver"));
         }
     }
@@ -134,7 +136,8 @@ public class Card_1261_003_Tests {
     @Test
     public void AtAtDriverCannotReturnFromLostPileWithoutOneForce() {
         var scn = forfeitDriver(false, false, 1); assertEquals(0, scn.GetDSForcePileCount());
-        assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("driver"), "Place in Used Pile"));
+        assertTrue(scn.AwaitingDSBattleDamagePayment());
+            assertFalse(scn.GetDSAvailableActions().stream().anyMatch(t -> t.contains("Place in Used Pile")));
         com.gempukku.swccgo.framework.Assertions.assertInZone(Zone.LOST_PILE, scn.GetDSCard("driver"));
     }
 }

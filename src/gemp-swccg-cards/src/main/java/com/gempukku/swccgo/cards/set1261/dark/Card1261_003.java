@@ -41,7 +41,7 @@ public class Card1261_003 extends AbstractImperial {
     @Override
     protected List<TopLevelGameTextAction> getGameTextTopLevelActions(String playerId, SwccgGame game,
             PhysicalCard self, int gameTextSourceCardId) {
-        GameTextActionId id = GameTextActionId.OTHER_CARD_ACTION_1;
+        GameTextActionId id = GameTextActionId.LEGACY__AT_AT_DRIVER__DEPLOY_VEHICLE_SITE;
         if (GameConditions.isPiloting(game, self, Filters.AT_AT)
                 && GameConditions.isOncePerTurn(game, self, playerId, gameTextSourceCardId, id)
                 && GameConditions.canUseForce(game, playerId, 1)

@@ -1700,6 +1700,7 @@ public enum GameTextActionId {
     LEGACY__OUR_ONLY_HOPE__DEPLOY_LUKE(true),
     LEGACY__OUR_ONLY_HOPE__TAKE_ANY_CARD(true),
     LEGACY__A_JEDIS_PATIENCE__DUEL(false, true),
+    LEGACY__AT_AT_DRIVER__DEPLOY_VEHICLE_SITE(true),
     ;
 
     private boolean _searchCardPile;
