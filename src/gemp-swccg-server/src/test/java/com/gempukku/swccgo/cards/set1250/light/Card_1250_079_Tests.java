@@ -33,7 +33,7 @@ public class Card_1250_079_Tests {
     private boolean isSelectable(VirtualTableScenario scn, PhysicalCardImpl card) {
         String[] ids = scn.GetADParam(scn.LS, "cardId");
         String identity = String.valueOf(card.getCardId());
-        if (ids == null) {
+        if (ids == null || (ids.length > 0 && ids[0].startsWith("temp"))) {
             ids = scn.GetADParam(scn.LS, "blueprintId");
             identity = card.getBlueprintId(true);
         }
