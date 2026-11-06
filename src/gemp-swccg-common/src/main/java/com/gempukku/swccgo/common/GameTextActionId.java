@@ -1700,7 +1700,7 @@ public enum GameTextActionId {
     LEGACY__OUR_ONLY_HOPE__DEPLOY_LUKE(true),
     LEGACY__OUR_ONLY_HOPE__TAKE_ANY_CARD(true),
     LEGACY__A_JEDIS_PATIENCE__DUEL(false, true),
-    ;
+    LEGACY__HAN_CHEWIE_AND_THE_FALCON__TAKE_A_FEW_MANEUVERS(true, true);
 
     private boolean _searchCardPile;
     private boolean _perGame;
