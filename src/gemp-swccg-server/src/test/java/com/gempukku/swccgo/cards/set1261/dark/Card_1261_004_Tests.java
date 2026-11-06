@@ -10,9 +10,9 @@ import static org.junit.Assert.*;
 
 public class Card_1261_004_Tests {
     private VirtualTableScenario scenario() {
-        return new VirtualTableScenario(new HashMap<>() {{ put("obiwan", "1_21"); put("chewie", "2_3"); }},
+        return new VirtualTableScenario(new HashMap<>() {{ put("obiwan", "1_21"); put("chewie", "2_3"); put("dune", "1_130"); }},
                 new HashMap<>() {{ put("boba", "1261_4"); put("vader", "1_168"); put("trooper", "1_194");
-                    put("alien", "1_172"); put("hunter", "4_100"); put("hoth", "3_143"); put("ship", "1_301"); put("camp", "1_292"); put("farm", "1_294"); put("mos", "1_295"); put("dune", "1_130"); }},
+                    put("alien", "1_172"); put("hunter", "4_100"); put("hoth", "3_143"); put("ship", "1_301"); put("camp", "1_292"); put("farm", "1_294"); put("mos", "1_295"); }},
                 10, 10, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -96,7 +96,7 @@ public class Card_1261_004_Tests {
     public void BobaFettBountyHunterActuallyFliesThreeSitesButCannotFlyFour() {
         var scn = scenario(); scn.StartGame(); var b = scn.GetDSCard("boba");
         var start = scn.GetDSStartingLocation(); var camp = scn.GetDSCard("camp"); var farm = scn.GetDSCard("farm");
-        var mos = scn.GetDSCard("mos"); var dune = scn.GetDSCard("dune");
+        var mos = scn.GetDSCard("mos"); var dune = scn.GetLSCard("dune");
         var previous = start;
         for (var next : new com.gempukku.swccgo.game.PhysicalCardImpl[] {camp, farm, mos, dune}) {
             scn.MoveLocationToTable(next, new com.gempukku.swccgo.game.layout.LocationPlacement(
