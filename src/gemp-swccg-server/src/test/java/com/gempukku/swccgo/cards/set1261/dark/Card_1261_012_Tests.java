@@ -86,4 +86,12 @@ public class Card_1261_012_Tests {
         int lost = scn.GetLSLostPileCount(); scn.DSPayBattleDamageFromCardInPlay(warrior); scn.PassAllResponses();
         assertFalse(scn.AwaitingLSForceLossPayment()); assertEquals(lost, scn.GetLSLostPileCount());
     }
+
+    @Test
+    public void MassassiWarriorDoesNotAddDestinyWhenAbilityAlreadyProvidesOne() {
+        var scn = scenario(); scn.StartGame(); var site = scn.GetDSStartingLocation();
+        scn.MoveCardsToLocation(site, scn.GetDSCard("warrior"), scn.GetDSCard("other"), scn.GetDSCard("vader"), scn.GetLSCard("luke"));
+        scn.DSStartBattleAndSkipToWeaponsSegment(site); assertEquals(1, scn.GetDSBattleDestinyCount());
+    }
+
 }

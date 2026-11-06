@@ -107,4 +107,15 @@ public class Card_1261_002_Tests {
         scn.MoveCardsToDSHand(scn.GetDSCard("tie")); scn.MoveCardsToSideOfTable(scn.GetDSCard("flagship"));
         scn.DSStartBattleAndSkipToWeaponsSegment(site); assertFalse(scn.DSCardActionAvailable(piett, "Add 3 to total power"));
     }
+
+    @Test
+    public void AdmiralPiettActuallyDeploysAboardExecutorAsPassengerForTwoForce() {
+        var scn = scenario(); scn.StartGame(); var piett = scn.GetDSCard("piett"); var executor = scn.GetDSCard("executor");
+        scn.MoveLocationToTable(scn.GetDSCard("hoth")); scn.MoveCardsToLocation(scn.GetDSCard("hoth"), executor);
+        scn.MoveCardsToDSHand(piett); scn.EnsureDSForcePile(8); scn.SkipToDSTurn(Phase.DEPLOY);
+        int force = scn.GetDSForcePileCount(); scn.DSDeployCard(piett); scn.DSChooseCard(executor);
+        scn.DSChoose("Passenger"); scn.PassAllResponses();
+        assertTrue(scn.IsAboardAsPassenger(executor, piett)); assertEquals(force - 2, scn.GetDSForcePileCount());
+    }
+
 }
