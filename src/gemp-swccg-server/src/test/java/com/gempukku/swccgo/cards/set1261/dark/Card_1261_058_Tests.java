@@ -47,8 +47,8 @@ public class Card_1261_058_Tests {
         scn.MoveCardsToDSHand(b); scn.MoveCardsToTopOfDSReserveDeck(trooper, piett);
         scn.SkipToDSTurn(Phase.DEPLOY); int force = scn.GetDSForcePileCount();
         scn.DSDeployCard(b); scn.DSChooseCard(site); scn.PassForceUseResponses();
-        for (int i = 0; i < 20 && !scn.GetDSAvailableActions().contains("Deploy a non-pilot Imperial warrior from Reserve Deck"); i++) {
-            assertTrue(scn.GetCurrentDecision().getText().toLowerCase().contains("optional")); scn.PassResponses();
+        for (int i = 0; i < 20 && !scn.GetDSAvailableActions().stream().anyMatch(text -> text.contains("Deploy a non-pilot Imperial warrior from Reserve Deck")); i++) {
+            assertTrue("Expected deployment response, got: " + scn.GetCurrentDecision().getText() + " DS actions: " + scn.GetDSAvailableActions(), scn.GetCurrentDecision().getText().toLowerCase().contains("optional")); scn.PassResponses();
         }
         scn.DSUseCardAction(b, "Deploy a non-pilot Imperial warrior from Reserve Deck"); scn.PassAllResponses();
         scn.PassCardAndForceUseResponses(); assertTrue(scn.DSHasCardChoiceAvailable(trooper)); assertFalse(scn.DSHasCardChoiceAvailable(piett)); scn.DSChooseCard(trooper); scn.PassAllResponses();

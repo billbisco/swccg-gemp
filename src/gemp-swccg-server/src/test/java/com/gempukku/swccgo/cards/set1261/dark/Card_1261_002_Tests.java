@@ -41,7 +41,7 @@ public class Card_1261_002_Tests {
         scn.BoardAsPilot(tie, piett); assertEquals(4, scn.GetPower(tie));
         var ship = scn.GetDSCard("devastator"); scn.MoveCardsToLocation(scn.GetDSCard("hoth"), ship);
         scn.BoardAsPassenger(ship, piett); assertEquals(9, scn.GetPower(ship));
-        scn.BoardAsPilot(ship, piett); assertEquals(12, scn.GetPower(ship));
+        scn.MoveCardsToDSHand(piett); scn.BoardAsPilot(ship, piett); assertEquals(12, scn.GetPower(ship));
     }
 
     @Test
@@ -78,7 +78,7 @@ public class Card_1261_002_Tests {
         scn.DSStartBattleAndSkipToWeaponsSegment(site); int power = scn.GetDSTotalPower();
         scn.DSUseCardAction(piett, "Add 3 to total power"); scn.PassAllResponses();
         if (payment.getZone() == Zone.HAND) { scn.DSChooseCard(payment); scn.PassAllResponses(); }
-        assertEquals(Zone.USED_PILE, payment.getZone()); assertEquals(power + 3, scn.GetDSTotalPower());
+        com.gempukku.swccgo.framework.Assertions.assertInZone(Zone.USED_PILE, payment); assertEquals(power + 3, scn.GetDSTotalPower());
         if (scn.AwaitingLSWeaponsSegmentActions()) scn.LSPass();
         assertFalse(scn.DSCardActionAvailable(piett, "Add 3 to total power"));
     }
