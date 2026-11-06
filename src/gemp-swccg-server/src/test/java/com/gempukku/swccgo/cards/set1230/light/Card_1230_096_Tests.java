@@ -18,7 +18,9 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class Card_1230_096_Tests {
     private VirtualTableScenario scenario() {
@@ -74,16 +76,31 @@ public class Card_1230_096_Tests {
             scn.MoveCardsToLocation(scn.GetLSCard("tatooine"), scn.GetLSCard("first"));
         if (fighters > 1)
             scn.MoveCardsToLocation(scn.GetLSCard("tatooine"), scn.GetLSCard("third"));
-        scn.MoveCardsToLSHand(scn.GetLSCard("attack"), scn.GetLSCard("second"));
+        scn.MoveCardsToLSHand(scn.GetLSCard("attack"), scn.GetLSCard("second"), scn.GetLSCard("republic"));
         scn.EnsureLSForcePile(20);
         scn.MoveCardsToTopOfLSReserveDeck(scn.GetLSCard("ship"));
         scn.SkipToPhase(Phase.DEPLOY);
         return scn;
     }
 
+    private boolean attackAvailable(VirtualTableScenario scn) {
+        return attackAvailable(scn, null);
+    }
+
+    private boolean attackAvailable(VirtualTableScenario scn, String text) {
+        return scn.LSGetDecision() instanceof com.gempukku.swccgo.logic.decisions.CardActionSelectionDecision
+                && (text == null ? scn.LSCardPlayAvailable(scn.GetLSCard("attack"))
+                                 : scn.LSCardPlayAvailable(scn.GetLSCard("attack"), text));
+    }
+
+    private void returnToLightAction(VirtualTableScenario scn) {
+        if (scn.GetDecidingPlayer().equals(scn.DS))
+            scn.DSPass();
+    }
+
     private void reachAttackResponse(VirtualTableScenario scn) {
         for (int i = 0; i < 20; i++) {
-            if (scn.LSCardPlayAvailable(scn.GetLSCard("attack"))
+            if (attackAvailable(scn)
                     || !scn.GetCurrentDecision().getText().toLowerCase().contains("optional response"))
                 return;
             scn.PlayerPass(scn.GetDecidingPlayer());
@@ -114,7 +131,7 @@ public class Card_1230_096_Tests {
     @Test
     public void TheTimeForOurAttackHasComeCannotDeployWithoutAnArrival() {
         var scn = ready(2);
-        assertFalse(scn.LSCardPlayAvailable(scn.GetLSCard("attack")));
+        assertFalse(attackAvailable(scn));
     }
 
     @Test
@@ -122,7 +139,7 @@ public class Card_1230_096_Tests {
         var scn = ready(1);
         int force = scn.GetLSForcePileCount();
         deploySecond(scn, "tatooine");
-        assertTrue(scn.LSCardPlayAvailable(scn.GetLSCard("attack"), "Reserve Deck"));
+        assertTrue(attackAvailable(scn, "Reserve Deck"));
         finishDownload(scn, true);
         assertEquals(scn.GetLSCard("tatooine"), scn.GetLSCard("ship").getAtLocation());
         assertEquals(force - 6, scn.GetLSForcePileCount());
@@ -136,7 +153,7 @@ public class Card_1230_096_Tests {
         var scn = ready(1);
         scn.MoveCardsToTopOfLSLostPile(scn.GetLSCard("ship"));
         deploySecond(scn, "tatooine");
-        assertTrue(scn.LSCardPlayAvailable(scn.GetLSCard("attack"), "Lost Pile"));
+        assertTrue(attackAvailable(scn, "Lost Pile"));
         finishDownload(scn, false);
         assertFalse(scn.GetLSLostPile().contains(scn.GetLSCard("ship")));
     }
@@ -145,7 +162,7 @@ public class Card_1230_096_Tests {
     public void TheTimeForOurAttackHasComeDoesNotTriggerForTheFirstStarfighter() {
         var scn = ready(0);
         deploySecond(scn, "tatooine");
-        assertFalse(scn.LSCardPlayAvailable(scn.GetLSCard("attack")));
+        assertFalse(attackAvailable(scn));
         assertEquals(Zone.HAND, scn.GetLSCard("attack").getZone());
     }
 
@@ -153,14 +170,14 @@ public class Card_1230_096_Tests {
     public void TheTimeForOurAttackHasComeDoesNotTriggerForTheThirdStarfighter() {
         var scn = ready(2);
         deploySecond(scn, "tatooine");
-        assertFalse(scn.LSCardPlayAvailable(scn.GetLSCard("attack")));
+        assertFalse(attackAvailable(scn));
     }
 
     @Test
     public void TheTimeForOurAttackHasComeDoesNotUseTwoFightersAtADifferentSystem() {
         var scn = ready(2);
         deploySecond(scn, "alderaan");
-        assertFalse(scn.LSCardPlayAvailable(scn.GetLSCard("attack")));
+        assertFalse(attackAvailable(scn));
     }
 
     @Test
@@ -182,13 +199,17 @@ public class Card_1230_096_Tests {
     public void TheTimeForOurAttackHasComeMayBeDeclinedWithoutDeployingAnything() {
         var scn = ready(1);
         deploySecond(scn, "tatooine");
-        assertTrue(scn.LSCardPlayAvailable(scn.GetLSCard("attack")));
+        assertTrue(attackAvailable(scn));
         scn.PassAllResponses();
         assertEquals(Zone.HAND, scn.GetLSCard("attack").getZone());
         assertEquals(Zone.RESERVE_DECK, scn.GetLSCard("ship").getZone());
     }
 
     private VirtualTableScenario attached() {
+        return attached(20);
+    }
+
+    private VirtualTableScenario attached(int force) {
         var scn = scenario();
         scn.StartGame();
         scn.SkipToLSTurn(Phase.ACTIVATE);
@@ -197,6 +218,7 @@ public class Card_1230_096_Tests {
         scn.MoveCardsToLocation(scn.GetLSCard("tatooine"), scn.GetLSCard("ship"));
         scn.AttachCardsTo(scn.GetLSCard("ship"), scn.GetLSCard("attack"));
         scn.EnsureLSForcePile(20);
+        scn.DrainLSForcePileTo(force);
         scn.SkipToPhase(Phase.MOVE);
         return scn;
     }
@@ -216,6 +238,7 @@ public class Card_1230_096_Tests {
         scn.LSMoveCard(scn.GetLSCard("ship"), scn.GetLSCard("alderaan"));
         scn.PassAllResponses();
         int force = scn.GetLSForcePileCount();
+        returnToLightAction(scn);
         assertFalse(scn.LSMoveAvailable(scn.GetLSCard("ship")));
         assertTrue(scn.LSCardActionAvailable(scn.GetLSCard("attack"), "move again"));
         scn.LSUseCardAction(scn.GetLSCard("attack"), "move again");
@@ -223,22 +246,25 @@ public class Card_1230_096_Tests {
         scn.PassAllResponses();
         assertEquals(scn.GetLSCard("tatooine"), scn.GetLSCard("ship").getAtLocation());
         assertEquals(force - 1, scn.GetLSForcePileCount());
+        returnToLightAction(scn);
         assertFalse(scn.LSCardActionAvailable(scn.GetLSCard("attack"), "move again"));
     }
 
     @Test
     public void TheTimeForOurAttackHasComeAdditionalMoveCannotBeUsedWithoutEnoughForce() {
-        var scn = attached();
-        scn.DrainLSForcePileTo(0);
-        scn.LSPass();
+        var scn = attached(0);
+        assertEquals(0, scn.GetLSForcePileCount());
         assertFalse(scn.LSCardActionAvailable(scn.GetLSCard("attack"), "move again"));
     }
 
     @Test
     public void TheTimeForOurAttackHasComeAdditionalMoveLimitPersistsIntoLaterTurns() {
         var scn = attached();
+        scn.LSMoveCard(scn.GetLSCard("ship"), scn.GetLSCard("alderaan"));
+        scn.PassAllResponses();
+        returnToLightAction(scn);
         scn.LSUseCardAction(scn.GetLSCard("attack"), "move again");
-        scn.LSChooseCard(scn.GetLSCard("alderaan"));
+        scn.LSChooseCard(scn.GetLSCard("tatooine"));
         scn.PassAllResponses();
         scn.SkipToDSTurn(Phase.MOVE);
         scn.SkipToLSTurn(Phase.MOVE);
@@ -261,7 +287,7 @@ public class Card_1230_096_Tests {
         scn.SkipToPhase(Phase.MOVE);
         scn.LSMoveCard(scn.GetLSCard("second"), scn.GetLSCard("tatooine"));
         reachAttackResponse(scn);
-        assertTrue(scn.LSCardPlayAvailable(scn.GetLSCard("attack"), "Reserve Deck"));
+        assertTrue(attackAvailable(scn, "Reserve Deck"));
         finishDownload(scn, true);
         assertEquals(scn.GetLSCard("tatooine"), scn.GetLSCard("ship").getAtLocation());
     }
@@ -273,7 +299,7 @@ public class Card_1230_096_Tests {
         scn.LSDeployCard(scn.GetLSCard("republic"));
         scn.LSChooseCard(scn.GetLSCard("tatooine"));
         reachAttackResponse(scn);
-        assertFalse(scn.LSCardPlayAvailable(scn.GetLSCard("attack")));
+        assertFalse(attackAvailable(scn));
     }
 
     private VirtualTableScenario attritionReady(int destiny) {
@@ -289,7 +315,7 @@ public class Card_1230_096_Tests {
         scn.LSInitiateBattle(scn.GetLSCard("tatooine"));
         scn.PassAllResponses();
         scn.PrepareLSDestiny(0);
-        scn.PrepareDSDestiny(destiny);
+        scn.PrepareDSDestiny(destiny - 1);
         scn.SkipToDamageSegment(true);
         scn.PassAllResponses();
         if (scn.AwaitingDSBattleDamagePayment()) {
@@ -327,8 +353,8 @@ public class Card_1230_096_Tests {
         scn.ApplyAdHocModifier(new com.gempukku.swccgo.logic.modifiers.DeployCostModifier(scn.GetLSCard("attack"), 1));
         scn.ApplyAdHocModifier(new com.gempukku.swccgo.logic.modifiers.MayDeployFreeModifier(scn.GetLSCard("attack")));
         deploySecond(scn, "tatooine");
-        assertTrue(scn.LSCardPlayAvailable(scn.GetLSCard("attack"), "Reserve Deck for free"));
-        assertTrue(scn.LSCardPlayAvailable(scn.GetLSCard("attack"), "Reserve Deck for 1 Force"));
+        assertTrue(attackAvailable(scn, "Reserve Deck for free"));
+        assertTrue(attackAvailable(scn, "Reserve Deck for 1 Force"));
         return scn;
     }
 
@@ -357,7 +383,7 @@ public class Card_1230_096_Tests {
         scn.DrainLSForcePileTo(2);
         deploySecond(scn, "tatooine");
         assertEquals(0, scn.GetLSForcePileCount());
-        assertFalse(scn.LSCardPlayAvailable(scn.GetLSCard("attack")));
+        assertFalse(attackAvailable(scn));
         assertEquals(Zone.HAND, scn.GetLSCard("attack").getZone());
     }
 }
