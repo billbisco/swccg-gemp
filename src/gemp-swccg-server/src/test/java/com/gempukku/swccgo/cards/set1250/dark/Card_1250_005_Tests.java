@@ -4,6 +4,7 @@ import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import com.gempukku.swccgo.logic.modifiers.PowerModifier;
+import com.gempukku.swccgo.logic.modifiers.DestinyModifier;
 import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,6 +34,7 @@ public class Card_1250_005_Tests {
     private VirtualTableScenario ships(boolean pilot, boolean order) {
         var scn = scenario(); scn.StartGame(); scn.MoveLocationToTable(scn.GetDSCard("system"));
         scn.MoveCardsToLocation(scn.GetDSCard("system"), scn.GetDSCard("flagship"), scn.GetDSCard("otherShip"), scn.GetLSCard("falcon"));
+        scn.BoardAsPilot(scn.GetLSCard("falcon"), scn.GetLSCard("luke"));
         if (pilot) scn.BoardAsPilot(scn.GetDSCard("flagship"), scn.GetDSCard("dofine"));
         else scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("dofine"));
         if (order) scn.MoveCardsToDSSideOfTable(scn.GetDSCard("order"));
@@ -58,6 +60,7 @@ public class Card_1250_005_Tests {
         assertEquals(protectedShip, q.isProhibitedFromHavingPowerReduced(scn.gameState(), ship, scn.DS));
         int power = scn.GetPower(ship);
         scn.ApplyAdHocModifier(new PowerModifier(scn.GetLSCard("falcon"), ship, -2));
+        scn.DSPass();
         assertEquals(power - (protectedShip ? 0 : 2), scn.GetPower(ship));
     }
     @Test public void DaultayDofineProtectsPilotedFlagshipWithOwnTheedOrder() { powerReduction(ships(true, true), true); }
@@ -100,6 +103,8 @@ public class Card_1250_005_Tests {
         assertFalse(reserveChoiceSelectable(scn, "1_194"));
         scn.DSChooseCard(scn.GetDSCard(target)); scn.PassAllResponses();
         assertInZone(Zone.HAND, scn.GetDSCard(target));
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        assertTrue(scn.AwaitingDSDeployPhaseActions());
         assertFalse(scn.DSCardActionAvailable(dofine, "Take Gunray or Haako into hand")); return scn;
     }
     @Test public void DaultayDofineTakesGunrayFromReserveOncePerGame() { retrieve("gunray"); }
@@ -113,8 +118,8 @@ public class Card_1250_005_Tests {
     }
     private void attrition(int destiny, boolean immune) {
         var scn = ships(true, false); var dofine = scn.GetDSCard("dofine"); var ship = scn.GetDSCard("flagship");
-        scn.BoardAsPilot(scn.GetLSCard("falcon"), scn.GetLSCard("luke"));
-        scn.PrepareLSDestiny(destiny); scn.PrepareDSDestiny(20);
+        scn.ApplyAdHocModifier(new DestinyModifier(scn.GetLSCard("luke"), scn.GetLSDestiny(7), destiny - 7));
+        scn.PrepareLSDestiny(7); scn.PrepareDSDestiny(7);
         scn.DSInitiateBattle(scn.GetDSCard("system")); scn.SkipToDamageSegment(true); scn.PassDamageSegmentActions();
         assertEquals(0, scn.GetUnpaidDSBattleDamage()); assertEquals(destiny, scn.GetUnpaidDSAttrition());
         if (immune) {
@@ -133,7 +138,8 @@ public class Card_1250_005_Tests {
     @Test public void DaultayDofineOncePerGameLimitSurvivesLeavingAndReturning() {
         var scn = retrieve("gunray"); var dofine = scn.GetDSCard("dofine");
         scn.MoveCardsToDSHand(dofine); scn.MoveCardsToLocation(scn.GetDSStartingLocation(), dofine);
-        scn.SkipToLSTurn(Phase.CONTROL); scn.SkipToDSTurn(Phase.CONTROL);
+        scn.SkipToLSTurn(Phase.CONTROL); scn.SkipToDSTurn(Phase.DEPLOY);
+        assertTrue(scn.AwaitingDSDeployPhaseActions());
         assertFalse(scn.DSCardActionAvailable(dofine, "Take Gunray or Haako into hand"));
     }
 }
