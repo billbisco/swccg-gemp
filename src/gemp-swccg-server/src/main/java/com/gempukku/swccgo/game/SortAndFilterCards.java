@@ -525,6 +525,8 @@ public class SortAndFilterCards {
     private boolean isRarity(String blueprintId, Set<Rarity> rarity, SwccgCardBlueprintLibrary library, Map<String, SetRarity> rarities) {
         if (rarity.isEmpty())
             return true;
+        if (LegacyIds.isLegacyBlueprint(blueprintId))
+            return rarity.contains(library.getSwccgoCardBlueprint(blueprintId).getRarity());
         if (blueprintId.contains("_")) {
             SetRarity setRarity = rarities.get(blueprintId.substring(0, blueprintId.indexOf("_")));
             try {
@@ -561,6 +563,8 @@ public class SortAndFilterCards {
 
     private boolean isInSets(String blueprintId, String[] sets, SwccgCardBlueprintLibrary library, SwccgoFormatLibrary formatLibrary) {
         for (String set : sets) {
+            if ("601".equals(set) && LegacyIds.isLegacyBlueprint(blueprintId))
+                return true;
             SwccgFormat format = formatLibrary.getFormat(set);
             if (format != null) {
                 try {

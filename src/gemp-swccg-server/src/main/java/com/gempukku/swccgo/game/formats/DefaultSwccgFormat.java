@@ -3,6 +3,7 @@ package com.gempukku.swccgo.game.formats;
 import com.gempukku.swccgo.cards.packs.RarityReader;
 import com.gempukku.swccgo.cards.packs.SetRarity;
 import com.gempukku.swccgo.common.*;
+import com.gempukku.swccgo.collection.LegacyCardPool;
 import com.gempukku.swccgo.game.DeckInvalidException;
 import com.gempukku.swccgo.game.SwccgCardBlueprint;
 import com.gempukku.swccgo.game.SwccgCardBlueprintLibrary;
@@ -579,6 +580,7 @@ public class DefaultSwccgFormat implements SwccgFormat {
         addCardsToDefaultCollection(_library, CardCounts.VIRTUAL_PREMIUM_SETS_CARD_COUNTS, 301, _allCardBlueprints);
         addCardsToDefaultCollection(_library, CardCounts.DREAM_CARD_SETS_CARD_COUNTS, 401, _allCardBlueprints);
         addCardsToDefaultCollection(_library, CardCounts.PLAYTESTING_SETS_CARD_COUNTS, 501, _allCardBlueprints);
+        LegacyCardPool.appendValidBlueprints(_library, this, _allCardBlueprints);
 
         return _allCardBlueprints;
     }
