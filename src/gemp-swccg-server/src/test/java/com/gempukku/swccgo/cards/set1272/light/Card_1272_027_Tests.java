@@ -64,6 +64,7 @@ public class Card_1272_027_Tests {
         scn.BlueprintIconCheck(card, new ArrayList<>() {{
             add(Icon.INTERRUPT);
             add(Icon.EPISODE_I);
+            add(Icon.REFLECTIONS_III);
             add(Icon.LEGACY_BLOCK_7);
         }});
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_7_2, card.getExpansionSet());

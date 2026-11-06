@@ -65,6 +65,7 @@ public class Card_1272_025_Tests {
         }});
         scn.BlueprintIconCheck(card, new ArrayList<>() {{
             add(Icon.EFFECT);
+            add(Icon.ENDOR);
             add(Icon.LEGACY_BLOCK_7);
         }});
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_7_2, card.getExpansionSet());
@@ -145,7 +146,7 @@ public class Card_1272_025_Tests {
     }
 
     @Test
-    public void EffectDeployingOnBackDoorCostsForceWithoutIHopeShesAllRightV() {
+    public void IHopeShesAllRightVControlPaysDeployCostWithoutEffect() {
         var scn = GetScenario();
         var backdoor = scn.GetLSCard("backdoor");
         var wonder = scn.GetLSCard("wonder");

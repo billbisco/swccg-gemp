@@ -137,7 +137,7 @@ public class Card_1272_020_Tests {
     }
 
     @Test
-    public void TotalBattleDestinyIsNotModifiedWithoutDeclarationOfRebellion() {
+    public void DeclarationOfRebellionControlHasUnmodifiedBattleDestinyWithoutEffect() {
         var scn = GetScenario();
         battleWithLeiaAndLukeAtMarketplace(scn, false);
         assertEquals(1, scn.GetLSBattleDestinyCount());

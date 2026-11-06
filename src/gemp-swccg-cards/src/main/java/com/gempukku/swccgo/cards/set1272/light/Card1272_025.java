@@ -41,6 +41,7 @@ public class Card1272_025 extends AbstractNormalEffect {
     public Card1272_025() {
         super(Side.LIGHT, 3, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.I_Hope_Shes_All_Right, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_2, Rarity.V);
         setVirtualSuffix(true);
+        addIcons(Icon.ENDOR);
         setLore("'I'm afraid that Artoo's sensors can find no trace of Princess Leia.'");
         setGameText("Deploy on table. Your scouts are defense value and forfeit +2 (neither may be increased above 6). Your Effects that deploy on Back Door may deploy there for free. Once per turn, may use 2 Force to take into hand an [Endor] battleground site, an [Endor] weapon, or a card with 'Ewok' in lore from Reserve Deck; reshuffle. (Immune to Alter.)");
         addImmuneToCardTitle(Title.Alter);

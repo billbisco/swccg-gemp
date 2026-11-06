@@ -3,6 +3,7 @@ package com.gempukku.swccgo.cards.set1272.light;
 import com.gempukku.swccgo.cards.AbstractNormalEffect;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.common.ExpansionSet;
+import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.GameTextActionId;
 import com.gempukku.swccgo.common.PlayCardZoneOption;
 import com.gempukku.swccgo.common.Rarity;
@@ -37,6 +38,7 @@ import java.util.List;
 public class Card1272_022 extends AbstractNormalEffect {
     public Card1272_022() {
         super(Side.LIGHT, 4, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Rebel Gunrunner", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_2, Rarity.V);
+        addIcons(Icon.PREMIUM);
         setLore("Smugglers from many worlds are hunted by the Empire for providing arms and supplies to the Alliance. The Outer Rim is their refuge.");
         setGameText("Deploy on table; take and stack a non-lightsaber weapon (without 'lost' in game text) here from Reserve Deck; reshuffle. If a battle was just initiated, may deploy weapon here on a participating card. Return weapon here at end of weapons segment (if possible), if it leaves table, or at end of battle. (Immune to Alter.)");
         addImmuneToCardTitle(Title.Alter);

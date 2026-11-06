@@ -35,7 +35,7 @@ public class Card1272_027 extends AbstractUsedOrLostInterrupt {
         setVirtualSuffix(true);
         setLore("There are some times, more than others, when you should not look down.");
         setGameText("USED: During opponent's deploy phase, if both players occupy the same battleground, activate 2 Force. LOST: During any deploy phase, deploy a lightsaber from Lost Pile on your character at an interior Naboo battleground.");
-        addIcons(Icon.EPISODE_I);
+        addIcons(Icon.EPISODE_I, Icon.REFLECTIONS_III);
     }
 
     static Filter yourCharacterAtInteriorNabooBattleground(PhysicalCard self) {

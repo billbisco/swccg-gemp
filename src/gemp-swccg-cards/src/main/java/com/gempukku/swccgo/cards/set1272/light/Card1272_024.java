@@ -37,6 +37,7 @@ import java.util.List;
 public class Card1272_024 extends AbstractNormalEffect {
     public Card1272_024() {
         super(Side.LIGHT, 4, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Rogue Squadron Tactics", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_2, Rarity.V);
+        addIcons(Icon.SPECIAL_EDITION);
         setLore("'I'm going to cut across the axis and try and draw their fire.'");
         setGameText("Deploy on table. Once per game, may take a non-[Virtual Block 1] Alderaan or Dressel, and/or a [Death Star II] Rogue Squadron pilot (except Tycho) into hand from Reserve Deck; reshuffle. Once per turn, if you just Force drained at a battleground system, may draw top card of Reserve Deck. (Immune to Alter.)");
         addImmuneToCardTitle(Title.Alter);
