@@ -1693,6 +1693,8 @@ public enum GameTextActionId {
     LEGACY__MAX_REBO_V__TAKE_INTERRUPT(true),
     LEGACY__NIEN_NUNB_SULLUSTAN_SMUGGLER__RETRIEVE_FORCE,
     LEGACY__VOOLVIF_MONN__CANCEL_WEAPON_DESTINY,
+    // Append new identifiers to preserve existing enum ordinals.
+    LEGACY__RAPID_DEPLOYMENT__DEPLOY_SCOUT(true),
     ;
 
     private boolean _searchCardPile;
