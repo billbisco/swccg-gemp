@@ -76,7 +76,7 @@ public class Card_1262_021_Tests {
     }
 
     private VirtualTableScenario battle(boolean here, boolean luke, boolean extraEnemies) {
-        var scn = scenario(); scn.StartGame(); var site = scn.GetLSStartingLocation();
+        var scn = scenario(); scn.StartGame(); var site = scn.GetDSCard("forest"); scn.MoveLocationToTable(site);
         scn.MoveCardsToLocation(site, scn.GetLSCard(luke ? "luke" : "trooper"), scn.GetDSCard("vader"));
         if (extraEnemies) scn.MoveCardsToLocation(site, scn.GetDSCard("trooper1"), scn.GetDSCard("trooper2"));
         scn.SkipToLSTurn(Phase.BATTLE);
@@ -97,7 +97,7 @@ public class Card_1262_021_Tests {
             scn.LSPayRemainingBattleDamageFromReserveDeck(); scn.PassAllResponses();
             assertEquals(lost + 1 + remaining, scn.GetLSLostPileCount());
         } else assertFalse(scn.AwaitingLSBattleDamagePayment());
-        assertAtLocation(scn.GetLSStartingLocation(), scn.GetLSCard(luke ? "luke" : "trooper"));
+        assertAtLocation(scn.GetDSCard("forest"), scn.GetLSCard(luke ? "luke" : "trooper"));
     }
     @Test public void GundarkReducesActualFiveDamageToZeroAndIsPlacedInLostPile() { reduce(false, false, 5, 0); }
     @Test public void GundarkReductionDoesNotCreateNegativeDamage() { reduce(true, false, 3, 0); }
@@ -115,7 +115,9 @@ public class Card_1262_021_Tests {
         assertTrue(scn.LSCardActionAvailable(g, "Place Gundark in Lost Pile"));
         scn.LSPass(); scn.PassAllResponses();
         assertTrue(scn.AwaitingLSBattleDamagePayment()); assertEquals(5, scn.GetUnpaidLSBattleDamage());
-        scn.LSPayRemainingBattleDamageFromReserveDeck(); scn.PassAllResponses();
-        assertAtLocation(scn.GetLSStartingLocation(), g);
+        for (int i = 0; i < 5; i++) {
+            scn.LSPayBattleDamageFromReserveDeck(); scn.PassAllResponses();
+        }
+        assertAtLocation(scn.GetDSCard("forest"), g);
     }
 }

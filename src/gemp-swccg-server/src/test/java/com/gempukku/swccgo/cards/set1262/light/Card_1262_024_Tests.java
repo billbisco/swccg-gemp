@@ -46,8 +46,8 @@ public class Card_1262_024_Tests {
     @Test public void SecurityBreachCancelsBothSidesOfReflectionsThreeNabooSiteAndRestoresOnRemoval() {
         var scn = scenario(); scn.StartGame(); var site = scn.GetLSCard("naboo"); scn.MoveLocationToTable(site);
         scn.MoveCardsToLocation(site, scn.GetLSCard("obi"), scn.GetDSCard("vader"));
-        assertEquals(7, scn.GetPower(scn.GetLSCard("obi"))); assertEquals(7, scn.GetPower(scn.GetDSCard("vader")));
         scn.MoveCardsToLSHand(scn.GetLSCard("security")); scn.SkipToLSTurn(Phase.DEPLOY);
+        assertEquals(7, scn.GetPower(scn.GetLSCard("obi"))); assertEquals(7, scn.GetPower(scn.GetDSCard("vader")));
         scn.LSDeployCard(scn.GetLSCard("security")); scn.PassAllResponses();
         assertEquals(5, scn.GetPower(scn.GetLSCard("obi"))); assertEquals(6, scn.GetPower(scn.GetDSCard("vader")));
         scn.MoveCardsToLSHand(scn.GetLSCard("security"));
@@ -126,7 +126,10 @@ public class Card_1262_024_Tests {
     @Test public void SecurityBreachReductionIsOptional() {
         var scn = battle(false, false, true); assertTrue(scn.LSCardActionAvailable(scn.GetLSCard("security"), "Place out of play"));
         scn.LSPass(); scn.PassAllResponses(); assertTrue(scn.AwaitingLSBattleDamagePayment());
-        assertEquals(5, scn.GetUnpaidLSBattleDamage()); scn.LSPayRemainingBattleDamageFromReserveDeck(); scn.PassAllResponses();
+        assertEquals(5, scn.GetUnpaidLSBattleDamage());
+        for (int i = 0; i < 5; i++) {
+            scn.LSPayBattleDamageFromReserveDeck(); scn.PassAllResponses();
+        }
         assertInZone(Zone.SIDE_OF_TABLE, scn.GetLSCard("security"));
     }
     @Test public void SecurityBreachOncePerGameSurvivesLeavingPlayAndANewTurn() {
