@@ -41,18 +41,20 @@ public class Card_1261_006_Tests {
         scn.DSStartBattleAndSkipToWeaponsSegment(site); return scn;
     }
 
-    private void fire(VirtualTableScenario scn, com.gempukku.swccgo.game.PhysicalCardImpl target, int first, int second) {
+    private int fire(VirtualTableScenario scn, com.gempukku.swccgo.game.PhysicalCardImpl target, int first, int second) {
         scn.PrepareDSDestiny(first); scn.PrepareDSDestiny(second);
+        int reserveAfterPreparation = scn.GetDSReserveDeckCount();
         scn.DSUseCardAction(scn.GetDSCard("maul"), "Fire");
         if (scn.DSHasCardChoiceAvailable(target)) scn.DSChooseCard(target);
         scn.PassAllResponses();
+        return reserveAfterPreparation;
     }
 
     @Test
     public void DarthMaulWithLightsaberHitsCharacterForFreeDrawsTwoAndZeroesForfeit() {
         var scn = battle(); var target = scn.GetLSCard("obiwan"); var maul = scn.GetDSCard("maul");
-        int force = scn.GetDSForcePileCount(); int reserve = scn.GetDSReserveDeckCount();
-        fire(scn, target, 3, 4);
+        int force = scn.GetDSForcePileCount();
+        int reserve = fire(scn, target, 3, 4);
         assertTrue(target.isHit()); assertEquals(0, scn.GetForfeit(target)); assertEquals(force, scn.GetDSForcePileCount());
         assertEquals(reserve - 2, scn.GetDSReserveDeckCount());
         if (scn.AwaitingLSWeaponsSegmentActions()) scn.LSPass();
