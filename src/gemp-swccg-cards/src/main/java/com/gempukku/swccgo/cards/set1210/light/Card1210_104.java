@@ -14,6 +14,7 @@ import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.cards.LegacyPersonaFilters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.TriggerConditions;
@@ -56,7 +57,7 @@ public class Card1210_104 extends AbstractRebel {
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new AddsPowerToPilotedBySelfModifier(self, 3));
-        modifiers.add(new AddsBattleDestinyModifier(self, new OrCondition(new WithCondition(self, Filters.Biggs), new PilotingCondition(self, Filters.T_16)), 1));
+        modifiers.add(new AddsBattleDestinyModifier(self, new OrCondition(new WithCondition(self, LegacyPersonaFilters.BIGGS), new PilotingCondition(self, Filters.T_16)), 1));
         return modifiers;
     }
 

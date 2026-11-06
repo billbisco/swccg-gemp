@@ -13,6 +13,7 @@ import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.cards.LegacyPersonaFilters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.TriggerConditions;
@@ -72,7 +73,7 @@ public class Card1210_118 extends AbstractLocationDevice {
     }
 
     private static Filter vaporatorTakeFilter() {
-        return Filters.or(Filters.Biggs, Filters.title("Camie"), Filters.Ardon_Crell, Filters.Fixer,
+        return Filters.or(LegacyPersonaFilters.BIGGS, Filters.title("Camie"), Filters.Ardon_Crell, Filters.Fixer,
                 Filters.title("Moisture Farmer"), Filters.Owen, Filters.Beru,
                 Filters.and(Filters.Tatooine_site, Icon.SPECIAL_EDITION));
     }

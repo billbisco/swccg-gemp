@@ -15,6 +15,7 @@ import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.cards.LegacyPersonaFilters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
@@ -23,7 +24,7 @@ import com.gempukku.swccgo.logic.modifiers.DeploysFreeToLocationModifier;
 import com.gempukku.swccgo.logic.modifiers.ForfeitModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 
-import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -65,7 +66,7 @@ public class Card7_009 extends AbstractAlien {
         // Check condition(s)
         if (GameConditions.isOnceDuringYourPhase(game, self, playerId, gameTextSourceCardId, gameTextActionId, Phase.DEPLOY)
                 && GameConditions.isAtLocation(game, self, Filters.Tatooine_site)
-                && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, gameTextActionId, Persona.LUKE, Arrays.asList(Title.Biggs, Title.Fixer))) {
+                && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, gameTextActionId, EnumSet.of(Persona.LUKE, Persona.BIGGS), Collections.singletonList(Title.Fixer))) {
 
             final TopLevelGameTextAction action = new TopLevelGameTextAction(self, gameTextSourceCardId, gameTextActionId);
             action.setText("Deploy card from Reserve Deck");
@@ -76,7 +77,7 @@ public class Card7_009 extends AbstractAlien {
             // Perform result(s)
             action.appendEffect(
                     new DeployCardToLocationFromReserveDeckEffect(action, Filters.or(Filters.and(Filters.Luke, Filters.powerLessThan(4)),
-                            Filters.Biggs, Filters.Fixer), Filters.sameSite(self), true));
+                            LegacyPersonaFilters.BIGGS, Filters.Fixer), Filters.sameSite(self), true));
             return Collections.singletonList(action);
         }
         return null;

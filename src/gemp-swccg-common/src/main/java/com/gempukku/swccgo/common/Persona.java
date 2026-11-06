@@ -271,6 +271,9 @@ public enum Persona implements Filterable {
     VADERS_LIGHTSABER("Vader's Lightsaber"),
     ZUCKUSS_SNARE_RIFLE("Zuckuss' Snare Rifle"),
 
+    // Append new personas so existing serialized enum ordinals remain stable.
+    BIGGS("Biggs"),
+
     ;
 
 

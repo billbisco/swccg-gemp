@@ -12,6 +12,7 @@ import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.cards.LegacyPersonaFilters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.modifiers.AddsPowerToPilotedBySelfModifier;
@@ -42,7 +43,7 @@ public class Card3_005 extends AbstractRebel {
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
         List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new PowerModifier(self, new AtSameSiteAsCondition(self, Filters.Biggs), 2));
+        modifiers.add(new PowerModifier(self, new AtSameSiteAsCondition(self, LegacyPersonaFilters.BIGGS), 2));
         modifiers.add(new AddsPowerToPilotedBySelfModifier(self, new ConditionEvaluator(2, 3, new AtSameLocationAsCondition(self, Filters.Star_Destroyer))));
         modifiers.add(new ManeuverModifier(self, Filters.and(Filters.Rogue_4, Filters.hasPiloting(self)), 2));
         return modifiers;
