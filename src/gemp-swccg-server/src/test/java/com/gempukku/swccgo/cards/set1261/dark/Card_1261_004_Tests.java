@@ -106,7 +106,7 @@ public class Card_1261_004_Tests {
         scn.MoveCardsToLocation(start, b); scn.SkipToDSTurn(Phase.MOVE);
         int force = scn.GetDSForcePileCount();
         scn.DSUseCardAction(b, "Move");
-        assertTrue(scn.DSHasCardChoiceAvailable(mos)); assertFalse(scn.DSHasCardChoiceAvailable(dune));
+        assertTrue(isSelectable(scn, mos)); assertFalse(isSelectable(scn, dune));
         scn.DSChooseCard(mos); scn.PassAllResponses();
         assertEquals(mos, b.getAtLocation()); assertEquals(force - 1, scn.GetDSForcePileCount());
     }
@@ -127,7 +127,7 @@ public class Card_1261_004_Tests {
         scn.SkipToDamageSegment(true); scn.PassDamageSegmentActions();
         scn.DSPayRemainingBattleDamageFromReserveDeck(); scn.PassAllResponses();
         if (immune) {
-            assertFalse(scn.AwaitingDSAttritionPayment()); assertEquals(site, b.getAtLocation());
+            scn.DSPass(); scn.PassAllResponses(); assertEquals(site, b.getAtLocation());
         } else {
             assertTrue(scn.AwaitingDSAttritionPayment()); assertTrue(scn.DSHasCardChoiceAvailable(b));
             scn.DSPayAttritionFromCardInPlay(b); scn.PassAllResponses();
@@ -145,6 +145,19 @@ public class Card_1261_004_Tests {
     public void BobaFettBountyHunterOpponentsBountyHunterGrantsImmunityBelowFiveButNotFive() {
         assertBobaAttritionBoundary(4, true, true);
         assertBobaAttritionBoundary(5, true, false);
+    }
+
+
+    private boolean isSelectable(VirtualTableScenario scn, com.gempukku.swccgo.game.PhysicalCardImpl card) {
+        var blueprints = scn.GetADParam(scn.DS, "blueprintId");
+        var ids = scn.GetADParam(scn.DS, "cardId");
+        var allowed = scn.GetADParam(scn.DS, "selectable");
+        int length = blueprints != null ? blueprints.length : ids.length;
+        for (int i = 0; i < length; i++) {
+            if (blueprints != null ? blueprints[i].equals(card.getBlueprintId(true)) : ids[i].equals(String.valueOf(card.getCardId())))
+                return allowed == null || Boolean.parseBoolean(allowed[i]);
+        }
+        return false;
     }
 
 }

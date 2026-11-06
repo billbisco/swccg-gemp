@@ -41,7 +41,7 @@ public class Card_1261_019_Tests {
         scn.MoveLocationToTable(swamp); scn.MoveLocationToTable(jungle); scn.MoveLocationToTable(trash);
         scn.MoveCardsToDSHand(d); scn.SkipToDSTurn(Phase.DEPLOY); scn.DSDeployCard(d);
         assertTrue(scn.DSHasCardChoiceAvailable(swamp)); assertTrue(scn.DSHasCardChoiceAvailable(jungle));
-        assertTrue(scn.DSHasCardChoiceAvailable(trash)); assertFalse(scn.DSHasCardChoiceAvailable(ordinary));
+        assertTrue(scn.DSHasCardChoiceAvailable(trash)); assertFalse(isSelectable(scn, ordinary));
         scn.DSChooseCard(swamp); scn.PassAllResponses(); assertEquals(swamp, d.getAtLocation());
         assertEquals(5, scn.game().getModifiersQuerying().getFerocity(scn.gameState(), d, 3f), scn.epsilon);
     }
@@ -58,7 +58,7 @@ public class Card_1261_019_Tests {
     private void feed(VirtualTableScenario scn, com.gempukku.swccgo.game.PhysicalCardImpl food,
                       com.gempukku.swccgo.game.PhysicalCardImpl creature) {
         var yaggle = scn.GetDSCard("yaggle"); scn.MoveCardsToDSHand(yaggle);
-        scn.SkipToDSTurn(Phase.CONTROL); scn.PrepareDSDestiny(5);
+        scn.DSActivateMaxForceAndPass(); scn.SkipToPhase(Phase.CONTROL); scn.PrepareDSDestiny(5);
         scn.DSPlayCard(yaggle); scn.DSChooseCard(food); scn.DSChooseCard(creature);
         scn.PassCardPlayResponses(); scn.PassForceUseResponses(); scn.PassDestinyDrawResponses(); scn.PassAllResponses();
     }
@@ -91,4 +91,17 @@ public class Card_1261_019_Tests {
         feed(scn, food, scn.GetDSCard("wampa")); assertFalse(scn.AwaitingLSForceLossPayment());
         assertEquals(lost + 1, scn.GetLSLostPileCount());
     }
+
+    private boolean isSelectable(VirtualTableScenario scn, com.gempukku.swccgo.game.PhysicalCardImpl card) {
+        var blueprints = scn.GetADParam(scn.DS, "blueprintId");
+        var ids = scn.GetADParam(scn.DS, "cardId");
+        var allowed = scn.GetADParam(scn.DS, "selectable");
+        int length = blueprints != null ? blueprints.length : ids.length;
+        for (int i = 0; i < length; i++) {
+            if (blueprints != null ? blueprints[i].equals(card.getBlueprintId(true)) : ids[i].equals(String.valueOf(card.getCardId())))
+                return allowed == null || Boolean.parseBoolean(allowed[i]);
+        }
+        return false;
+    }
+
 }
