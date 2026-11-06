@@ -16,14 +16,20 @@ import static org.junit.Assert.*;
 
 public class Card_1_272_PersonaReferences_Tests {
     private VirtualTableScenario search(boolean modified) {
+        return search(modified, false);
+    }
+
+    private VirtualTableScenario search(boolean modified, boolean originalVirtualEffect) {
         var scn = new VirtualTableScenario(new HashMap<>(), new HashMap<>() {{
             put("interrupt", "1_272"); put("maul", "11_54"); put("mara", "110_10");
             put("vader", "1_168"); put("trooper", "1_194");
+            put("trained", "1115_67");
         }}, 20, 20,
                 StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
         scn.StartGame();
+        scn.MoveOutOfPlay(scn.GetDSCard("trained"));
         scn.SkipToDSTurn(Phase.CONTROL);
         var interrupt = scn.GetDSCard("interrupt");
         scn.MoveCardsToHand(interrupt);
@@ -33,7 +39,9 @@ public class Card_1_272_PersonaReferences_Tests {
         scn.DrainDSForcePileTo(6);
         for (String key : new String[]{"maul", "mara", "vader", "trooper"})
             scn.MoveCardsToTopOfDSReserveDeck(scn.GetDSCard(key));
-        if (modified)
+        if (originalVirtualEffect)
+            scn.MoveCardsToDSSideOfTable(scn.GetDSCard("trained"));
+        else if (modified)
             scn.ApplyAdHocModifier(new ModifyGameTextModifier(scn.GetDSStartingLocation(), Filters.title("The Empire's Back"),
                     ModifyGameTextType.LEGACY__INTERRUPTS__VADER_MAY_BE_MAUL_OR_MARA_JADE));
         scn.SkipToPhase(Phase.DEPLOY);
@@ -80,5 +88,18 @@ public class Card_1_272_PersonaReferences_Tests {
     @Test
     public void TheEmpiresBackModifiedSearchTakesMaraForItsNormalForceCost() {
         modifiedSearch("mara");
+    }
+
+    @Test
+    public void OriginalVirtualTrainedEffectActuallyEnablesDecipherInterruptSearch() {
+        var scn = search(false, true);
+        selectable(scn, "vader", true);
+        selectable(scn, "maul", true);
+        selectable(scn, "mara", true);
+        selectable(scn, "trooper", false);
+        scn.DSChooseCard(scn.GetDSCard("maul"));
+        scn.PassAllResponses();
+        assertInZone(Zone.HAND, scn.GetDSCard("maul"));
+        assertEquals(2, scn.GetDSForcePileCount());
     }
 }
