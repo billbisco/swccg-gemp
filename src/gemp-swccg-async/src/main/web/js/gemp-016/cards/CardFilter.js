@@ -159,7 +159,8 @@ var CardFilter = Class.extend({
 
         this.formatLabel = $("<label for='formatSelect' class='filterLabel'>Format:</label>");
         this.formatSelect = $("<select id='formatSelect' class='filterInput'>"
-            + "<option value='all' selected='selected'>All</option>"
+            + "<option value='anything_goes' selected='selected'>Anything Goes</option>"
+            + "<option value='all'>All</option>"
             + "<option value='open'>Open</option>"
             + "<option value='open_no_shields'>Open (no shields)</option>"
             + "<option value='open_no_shields_no_virtual'>Open (no shields / no v-cards)</option>"
@@ -836,12 +837,13 @@ var CardFilter = Class.extend({
                 });
         $("#resetAllFiltersButton").click(
                 function (event) {
-                    $('#sideSelect, #formatSelect, #setSelect, #cardTypeSelect, #raritySelect, #nameInput, #loreInput, #gametextInput' +
+                    $('#sideSelect, #setSelect, #cardTypeSelect, #raritySelect, #nameInput, #loreInput, #gametextInput' +
                       ', #iconSelect, #personaSelect, #destinyCompareSelect, #destinyValueInput' +
                       ', #powerCompareSelect, #powerValueInput, #abilityCompareSelect, #abilityValueInput, #deployCompareSelect' +
                       ', #deployValueInput, #forfeitCompareSelect, #forfeitValueInput, #armorCompareSelect, #armorValueInput' +
                       ', #defenseValueCompareSelect, #defenseValueValueInput, #maneuverCompareSelect, #maneuverValueInput' +
                       ', #hyperspeedCompareSelect, #hyperspeedValueInput, #landspeedCompareSelect, #landspeedValueInput').val('').trigger('change');
+                    $('#formatSelect').val('anything_goes').trigger('change');
                 });
 
         // Triggers for filter fields changed
