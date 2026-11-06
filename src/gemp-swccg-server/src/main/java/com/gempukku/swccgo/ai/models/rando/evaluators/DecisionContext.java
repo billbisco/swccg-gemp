@@ -102,6 +102,18 @@ public class DecisionContext {
         this.side = side;
     }
 
+    // #177: the side of the bot's own cards. The same as getSide() (the seat, which decides Force icons) except in a
+    // same-side game, where the Light Side seat may hold a Dark Side deck or the reverse.
+    private Side deckSide;
+
+    public Side getDeckSide() {
+        return deckSide != null ? deckSide : side;
+    }
+
+    public void setDeckSide(Side deckSide) {
+        this.deckSide = deckSide;
+    }
+
     public String getOpponentId() {
         if (gameState == null || playerId == null) return null;
         return gameState.getOpponent(playerId);

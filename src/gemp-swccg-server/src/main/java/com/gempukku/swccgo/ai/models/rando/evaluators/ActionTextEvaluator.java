@@ -767,7 +767,7 @@ public class ActionTextEvaluator extends ActionEvaluator {
         // CRITICAL: Grabbing own interrupts is a big player complaint - hard block it!
         // Ported from Python action_text_evaluator.py lines 1169-1210
 
-        Side mySide = context.getSide();
+        Side mySide = context.getDeckSide();  // #177: whose cards look like ours
 
         // Determine side from card name patterns in action text
         // Look for known Light/Dark side indicator patterns
@@ -809,7 +809,7 @@ public class ActionTextEvaluator extends ActionEvaluator {
         // CRITICAL: Breaking own spy cover is a big player complaint - hard block it!
         // Ported from Python action_text_evaluator.py lines 1212-1246
 
-        Side mySide = context.getSide();
+        Side mySide = context.getDeckSide();  // #177: whose cards look like ours
 
         // Determine side from card name patterns in action text
         String textLower = actionText.toLowerCase();

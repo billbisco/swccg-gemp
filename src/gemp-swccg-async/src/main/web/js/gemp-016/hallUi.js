@@ -855,6 +855,9 @@ var GempSwccgHallUI = Class.extend({
         };
         this.accountGameSettingsStore = accountStore;
         this.gameOptionsForm = new GameOptionsForm(this.gameOptionsRows, function (optionId) {
+            // #177: "Deck: same side allowed" widens the bot deck list
+            if (optionId === "sameSide")
+                that.updateAiDecksForSelection();
             if (optionId === "deckSize") {
                 var fmt = that.playFormatCode();
                 if (fmt)
@@ -1306,6 +1309,19 @@ var GempSwccgHallUI = Class.extend({
         return null;
     },
 
+    /** #176: whether a table takes a deck of the host's side: its chip says so, or its format allows it by default. */
+    tableAllowsSameSide:function(formatCode, tableOptions) {
+        var chips = tableOptions || "";
+        if (chips.indexOf("Deck: same side allowed") >= 0)
+            return true;
+        if (chips.indexOf("Deck: opposite sides") >= 0)
+            return false;
+        if (!this.supportedFormatsSelect || !formatCode)
+            return false;
+        var option = this.supportedFormatsSelect.find("option").filter(function () { return $(this).val() === formatCode; });
+        return option.length > 0 && option.attr("data-opt-sameSide-default") === "true";
+    },
+
     oppositeForceSide:function(side) {
         if (side === "light")
             return "dark";
@@ -1325,9 +1341,9 @@ var GempSwccgHallUI = Class.extend({
         }
     },
 
-    openJoinTablePopup:function(tableId, formatName, playersStr, formatCode, collectionCode) {
+    openJoinTablePopup:function(tableId, formatName, playersStr, formatCode, collectionCode, tableOptions) {
         var hostSide = this.parseHostSideFromPlayersStr(playersStr);
-        var requiredSide = this.oppositeForceSide(hostSide);
+        var requiredSide = this.tableAllowsSameSide(formatCode, tableOptions) ? null : this.oppositeForceSide(hostSide);
         this.openJoinPopup({
             kind: "table",
             id: tableId,
@@ -2736,7 +2752,9 @@ var GempSwccgHallUI = Class.extend({
     },
 
     updateBotDeckSelects:function() {
-        var required = this.oppositeSide(this.getSelectedDeckSide());
+        // #177: with "Deck: same side allowed" the bot may play a deck of either side
+        var sameSide = this.gameOptionsForm != null && this.gameOptionsForm.effective("sameSide") === "true";
+        var required = sameSide ? null : this.oppositeSide(this.getSelectedDeckSide());
         var prevBotPlayer = this.botPlayerDeckSelect != null ? this.botPlayerDeckSelect.val() : null;
         var prevBotLib = this.botLibraryDeckSelect != null ? this.botLibraryDeckSelect.val() : null;
         var playerCount = this.fillDeckSelect(this.botPlayerDeckSelect, false, required, "Choose one of your decks", false);
@@ -4527,11 +4545,11 @@ var GempSwccgHallUI = Class.extend({
                             var collectionCode = table.getAttribute("collectionCode");
                             var but = $("<button>Join table</button>");
                             $(but).button().click((
-                                function(tableId, fmt, owners, fmtCode, collCode) {
+                                function(tableId, fmt, owners, fmtCode, collCode, opts) {
                                     return function() {
-                                        that.openJoinTablePopup(tableId, fmt, owners, fmtCode, collCode);
+                                        that.openJoinTablePopup(tableId, fmt, owners, fmtCode, collCode, opts);
                                     };
-                                })(id, tableOptions ? formatName + " · " + tableOptions : formatName, playersStr, formatCode, collectionCode));
+                                })(id, tableOptions ? formatName + " · " + tableOptions : formatName, playersStr, formatCode, collectionCode, tableOptions));
                             lastField.append(but);
                         }
                     } else if (status == "PLAYING") {

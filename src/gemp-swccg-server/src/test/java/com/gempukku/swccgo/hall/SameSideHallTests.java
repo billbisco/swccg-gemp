@@ -15,7 +15,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-/** swccg-guild/work#176: "Deck: same side allowed" lets two decks of one side play each other. */
+/** swccg-guild/work#176/#177: "Deck: same side allowed" lets two decks of one side play each other, bots included. */
 public class SameSideHallTests {
     private PlayNowTestServer server() throws Exception {
         var s = new PlayNowTestServer();
@@ -69,5 +69,22 @@ public class SameSideHallTests {
         assertEquals("true", option.getDefault(library.getFormat("anything_goes")));
         assertEquals("false", option.getDefault(library.getFormat("open")));
         assertTrue("offered everywhere", option.isAvailable(library.getFormat("open")));
+    }
+
+    private static AwaitingTable botTable(PlayNowTestServer s, Player host, Map<String, String> options) throws HallException {
+        return s.hallServer.createNewTable("open", host, "dark", false, "same side bot", false, null,
+                true, "BEGINNER", "dark", false, false, options);
+    }
+
+    @Test
+    public void SameSideBotTableNeedsTheOption() throws Exception {
+        var s = server();
+        HallException e = assertThrows(HallException.class, () -> botTable(s, s.member(1, "ssBotHost"), new LinkedHashMap<>()));
+        assertTrue(e.getMessage(), e.getMessage().contains("opposite side"));
+        var options = new LinkedHashMap<String, String>();
+        options.put("sameSide", "true");
+        var table = botTable(s, s.member(2, "ssBotHost2"), options);
+        assertNotNull("the bot game starts", table.getStartedGameId());
+        assertTrue(s.swccgoServer.getGameById(table.getStartedGameId()).getGameState().isSameSideGame());
     }
 }
