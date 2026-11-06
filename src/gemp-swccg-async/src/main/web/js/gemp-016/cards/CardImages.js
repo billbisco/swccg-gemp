@@ -5900,7 +5900,7 @@ const fixedImages = {
 "1240_23":"https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/dreadedimperialstarfleet.gif",
 "1240_24":"https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/frozendinner.gif",
 "1240_25":"https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/giftofthemaster.gif",
-"1240_26":"https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/heisnotready.gif",
+"1240_26":"https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/heisnotready%26imperialpropaganda.gif",
 "1240_27":"https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/imperialpropaganda.gif",
 "1240_28":"https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/informationexchange.gif",
 "1240_29":"https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/kraytdragonbones.gif",
