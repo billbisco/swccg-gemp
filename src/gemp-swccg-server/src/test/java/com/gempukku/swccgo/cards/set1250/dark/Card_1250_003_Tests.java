@@ -84,10 +84,11 @@ public class Card_1250_003_Tests {
         assertTrue(scn.gameState().getBattleState().isReachedPowerSegment());
         assertFalse(scn.game().getModifiersQuerying().isPlayingCardProhibited(scn.gameState(), scn.GetLSCard("interrupt"), false));
         assertFalse(scn.game().getModifiersQuerying().isPlayingCardProhibited(scn.gameState(), scn.GetDSCard("interrupt"), false));
-        assertTrue(scn.LSDecisionAvailable("BEFORE_BATTLE_DESTINY_DRAWS"));
+        scn.SkipToDamageSegment(false);
+        assertTrue(scn.AwaitingLSDamageSegmentActions());
         assertTrue(scn.LSCardPlayAvailable(scn.GetLSCard("interrupt")));
         scn.LSPass();
-        assertTrue(scn.DSDecisionAvailable("BEFORE_BATTLE_DESTINY_DRAWS"));
+        assertTrue(scn.AwaitingDSDamageSegmentActions());
         assertTrue(scn.DSCardPlayAvailable(scn.GetDSCard("interrupt")));
     }
 
