@@ -322,6 +322,7 @@ public interface PhysicalCard extends Filterable, Snapshotable<PhysicalCard> {
 
 
     void updateRememberedInPlayCardInfo(SwccgGame game);
+    boolean wasPreviouslyInPilotCapacitySlot();
     Collection<PhysicalCard> getCardsPreviouslyAttached();
 
     void setInserted(boolean inserted);
