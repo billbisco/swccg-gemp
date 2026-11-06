@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
 public class Card_1261_001_Tests {
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>() {{ put("hallway", "14_51"); put("obiwan", "1_21");
-                    put("han", "1_11"); put("enemyDroid", "3_14"); }},
+                    put("han", "1_11"); put("enemyDroid", "3_14"); put("chewie", "2_3"); put("ambush", "5_31"); }},
                 new HashMap<>() {{ put("droid", "1261_1"); put("oom", "14_83"); put("infantry", "14_80");
                     put("nonPresence", "2_99"); put("trooper", "1_194"); put("vader", "1_168"); put("ownHallway", "14_112");
                     put("exterior", "12_170"); }}, 20, 20,
@@ -94,7 +94,7 @@ public class Card_1261_001_Tests {
         var scn = protection();
         var objective = com.gempukku.swccgo.cards.legacy.MissionTestSupport.putInHand(scn, 126101, scn.LS,
                 VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("13_46"));
-        scn.MoveCardsToLSSideOfTable(objective);
+        scn.MoveCardsToLSSideOfTable(objective); objective.setObjectiveDeploymentComplete(true);
         scn.MoveCardsToLocation(scn.GetLSCard("hallway"), scn.GetLSCard("obiwan"), scn.GetDSCard("trooper"));
         scn.SkipToLSTurn(Phase.CONTROL);
         scn.LSUseCardAction(objective, "Target character");
@@ -154,6 +154,22 @@ public class Card_1261_001_Tests {
         scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("droid"), enemy);
         scn.DSStartBattleAndSkipToWeaponsSegment(scn.GetDSStartingLocation());
         assertEquals(1, scn.GetDSBattleDestinyCount());
+    }
+
+    @Test
+    public void ThreeBThreeTenStopsActualAmbushPlacementDuringBattleAtAnotherSite() {
+        var scn = scenario(); scn.StartGame(); var hallway = scn.GetLSCard("hallway"); scn.MoveLocationToTable(hallway);
+        var droid = scn.GetDSCard("droid"); var unprotected = scn.GetDSCard("nonPresence");
+        scn.MoveCardsToLocation(hallway, droid, unprotected, scn.GetLSCard("obiwan"), scn.GetLSCard("chewie"));
+        var elsewhere = scn.GetDSStartingLocation();
+        scn.MoveCardsToLocation(elsewhere, scn.GetLSCard("han"), scn.GetDSCard("vader"));
+        var ambush = scn.GetLSCard("ambush"); scn.MoveCardsToLSHand(ambush);
+        scn.LSStartBattleAndSkipToWeaponsSegment(elsewhere);
+        scn.LSPlayCard(ambush);
+        if (scn.LSHasCardChoiceAvailable(hallway)) scn.LSChooseCard(hallway);
+        scn.PassAllResponses();
+        assertEquals(hallway, droid.getAtLocation());
+        com.gempukku.swccgo.framework.Assertions.assertInZone(Zone.USED_PILE, unprotected);
     }
 
 }
