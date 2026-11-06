@@ -14,7 +14,7 @@ import static com.gempukku.swccgo.framework.Assertions.assertInZone;
 public class Card_1250_012_Tests {
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>() {{ }},
-                new HashMap<>() {{ put("watto", "1250_12"); put("junkyard", "12_178"); put("trooper", "1_194"); }},
+                new HashMap<>() {{ put("watto", "1250_12"); put("junkyard", "12_178"); put("trooper", "1_194"); put("half", "213_10"); put("fourHalf", "217_2"); }},
                 10, 10, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -105,4 +105,11 @@ public class Card_1250_012_Tests {
         }
         assertEquals(new HashSet<Integer>() {{ add(1); add(2); }}, selected);
     }
+    private void fractional(String name) {
+        var scn = setup(true); force(scn); var card = scn.GetDSCard(name); scn.MoveCardsToTopOfDSForcePile(card);
+        int hand = scn.GetDSHandCount(); reveal(scn); assertEquals(hand, scn.GetDSHandCount()); assertInZone(Zone.USED_PILE, card);
+        returnToDarkActions(scn); scn.DSForceDrainAt(scn.GetDSCard("junkyard")); scn.PassForceDrainStartResponses(); assertEquals(1, scn.GetForceDrainTotal());
+    }
+    @Test public void WattoHalfDestinyIsNeitherOddNorEvenAndStillGoesToUsed() { fractional("half"); }
+    @Test public void WattoFourAndHalfDestinyIsNeitherOddNorEvenAndStillGoesToUsed() { fractional("fourHalf"); }
 }

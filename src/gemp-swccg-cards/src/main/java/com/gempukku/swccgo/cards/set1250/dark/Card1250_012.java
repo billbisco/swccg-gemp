@@ -48,14 +48,14 @@ public class Card1250_012 extends AbstractAlien {
                     if (cards.isEmpty()) return;
                     PhysicalCard card = cards.getFirst();
                     var location = game.getModifiersQuerying().getLocationThatCardIsAt(game.getGameState(), self);
-                    boolean odd = ((int) game.getModifiersQuerying().getDestiny(game.getGameState(), card)) % 2 != 0;
+                    float destiny = game.getModifiersQuerying().getDestiny(game.getGameState(), card);
                     game.getGameState().markCardsRevealedFromPile(cards);
                     game.getGameState().sendMessage(playerId + " reveals " + GameUtils.getCardLink(card) + " at random from Force Pile");
                     action.appendEffect(new ShowCardOnScreenEffect(action, card));
-                    if (odd)
+                    if (destiny % 2 == 1)
                         action.appendEffect(new AddUntilEndOfTurnModifierEffect(action,
                                 new ForceDrainModifier(self, location, 1, playerId), "Force drain +1 at Watto's location"));
-                    else
+                    else if (destiny % 2 == 0)
                         action.appendEffect(new DrawCardIntoHandFromReserveDeckEffect(action, playerId));
                     action.appendEffect(new PutCardFromForcePileOnTopOfCardPileEffect(action, playerId, card, Zone.USED_PILE, false));
                 }
