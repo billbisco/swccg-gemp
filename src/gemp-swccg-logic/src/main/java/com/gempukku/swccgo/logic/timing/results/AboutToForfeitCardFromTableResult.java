@@ -68,7 +68,7 @@ public class AboutToForfeitCardFromTableResult extends EffectResult implements A
      * @return true or false
      */
     public boolean isToBeForfeitedToLostPile() {
-        return _effect.isForfeitToLostPile();
+        return _effect.isForfeitToLostPile(_cardToBeForfeited);
     }
 
     /**

@@ -27,6 +27,7 @@ import java.util.*;
 public class ForfeitCardsFromTableSimultaneouslyEffect extends AbstractSubActionEffect implements PreventableCardEffect {
     private Collection<PhysicalCard> _originalCardsToForfeit;
     private Zone _forfeitCardsToZone;
+    private Set<PhysicalCard> _forfeitToUsedPile = new HashSet<PhysicalCard>();
     private Float _forfeitValueToUse;
     private boolean _toBottomOfPile;
     private boolean _releaseCaptives;
@@ -99,12 +100,29 @@ public class ForfeitCardsFromTableSimultaneouslyEffect extends AbstractSubAction
         return _forfeitCardsToZone == Zone.LOST_PILE;
     }
 
+    /**
+     * Determines the destination for one card, including its replacement effects.
+     * @param card the card being forfeited
+     * @return true if this card will be forfeited to Lost Pile
+     */
+    public boolean isForfeitToLostPile(PhysicalCard card) {
+        return isForfeitToLostPile() && !_forfeitToUsedPile.contains(card);
+    }
+
 
     /**
      * Sets the cards to be forfeited to Used Pile instead of Lost Pile.
      */
     public void setForfeitToUsedPile() {
         _forfeitCardsToZone = Zone.USED_PILE;
+    }
+
+    /**
+     * Forfeits only the specified card to Used Pile, preserving other destinations.
+     * @param card the card being forfeited
+     */
+    public void setForfeitToUsedPile(PhysicalCard card) {
+        _forfeitToUsedPile.add(Objects.requireNonNull(card));
     }
 
     @Override
@@ -353,11 +371,13 @@ public class ForfeitCardsFromTableSimultaneouslyEffect extends AbstractSubAction
                             List<PhysicalCard> toBePlacedInLostPile = new ArrayList<PhysicalCard>(_lostFromPlay);
                             List<PhysicalCard> toBePlacedInAnotherPile = new ArrayList<PhysicalCard>();
 
-                            if (_forfeitCardsToZone == Zone.LOST_PILE) {
-                                toBePlacedInLostPile.addAll(_forfeitedFromPlay);
-                            }
-                            else {
-                                toBePlacedInAnotherPile.addAll(_forfeitedFromPlay);
+                            for (PhysicalCard card : _forfeitedFromPlay) {
+                                if (isForfeitToLostPile(card)) {
+                                    toBePlacedInLostPile.add(card);
+                                }
+                                else {
+                                    toBePlacedInAnotherPile.add(card);
+                                }
                             }
 
                             // Place the cards in the card piles
@@ -368,7 +388,7 @@ public class ForfeitCardsFromTableSimultaneouslyEffect extends AbstractSubAction
                             }
                             if (!toBePlacedInAnotherPile.isEmpty()) {
                                 putInCardPileSubAction.appendEffect(
-                                        new PutCardsInCardPileEffect(subAction, game, toBePlacedInAnotherPile, _forfeitCardsToZone, _toBottomOfPile));
+                                        new PutCardsInCardPileEffect(subAction, game, toBePlacedInAnotherPile, Zone.USED_PILE, _toBottomOfPile));
                             }
                             // Stack sub-action
                             subAction.stackSubAction(putInCardPileSubAction);
@@ -385,7 +405,7 @@ public class ForfeitCardsFromTableSimultaneouslyEffect extends AbstractSubAction
                         if (!_forfeitedFromPlay.isEmpty()) {
 
                             for (PhysicalCard forfeitedFromPlayCard : _forfeitedFromPlay) {
-                                if (_forfeitCardsToZone == Zone.USED_PILE) {
+                                if (!isForfeitToLostPile(forfeitedFromPlayCard)) {
                                     game.getActionsEnvironment().emitEffectResult(
                                             new ForfeitedCardToUsedPileFromTableResult(subAction, forfeitedFromPlayCard));
                                 }

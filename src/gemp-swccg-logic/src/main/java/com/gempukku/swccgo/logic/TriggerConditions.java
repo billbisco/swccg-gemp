@@ -2306,7 +2306,7 @@ public class TriggerConditions {
             return card.getZone().isInPlay()
                     && (aboutToForfeitCardFromTableResult.getPreventableCardEffect() == null
                     || !aboutToForfeitCardFromTableResult.getPreventableCardEffect().isEffectOnCardPrevented(card))
-                    && aboutToForfeitCardFromTableResult.getForfeitCardEffect().isForfeitToLostPile()
+                    && aboutToForfeitCardFromTableResult.isToBeForfeitedToLostPile()
                     && Filters.and(filter).accepts(game.getGameState(), game.getModifiersQuerying(), card);
         }
         return false;
