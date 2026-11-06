@@ -191,9 +191,23 @@ public class Card_1240_060_Tests {
     }
 
     private VirtualTableScenario BattleReady(int destiny) {
+        return BattleReady(destiny, true);
+    }
+
+    @Test
+    public void KatanaMustSatisfyExactlyFourAttritionWithoutOtherFriendlyShips() {
+        var scn = BattleReady(4, false);
+        scn.DSPayRemainingBattleDamageFromReserveDeck();
+        assertEquals("1", scn.GetADParam(scn.DS, "min")[0]);
+        scn.DSPayAttritionFromCardInPlay(scn.GetDSCard("katana"));
+        assertEquals(Zone.LOST_PILE, scn.GetDSCard("katana").getZone());
+    }
+
+    private VirtualTableScenario BattleReady(int destiny, boolean otherDreadnaught) {
         var scn = Ready();
         var system = scn.GetDSStartingLocation();
         scn.MoveCardsToDSHand(scn.GetDSCard("devastator"));
+        if (!otherDreadnaught) scn.MoveCardsToDSHand(scn.GetDSCard("dreadnaught"));
         scn.MoveCardsToLocation(system, scn.GetLSCard("corvette"));
         scn.BoardAsPilot(scn.GetLSCard("corvette"), scn.GetLSCard("luke"));
         scn.EnsureDSForcePile(5);

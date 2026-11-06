@@ -179,8 +179,9 @@ public class Card_1240_110_Tests {
         var scn = BattleReady(4);
         scn.LSPayRemainingBattleDamageFromReserveDeck();
         assertEquals(4, scn.GetUnpaidLSAttrition());
-        assertTrue(scn.AwaitingLSAttritionPayment());
-        assertTrue(scn.LSHasCardChoiceAvailable(scn.GetLSCard("yt")));
+        assertEquals("1", scn.GetADParam(scn.LS, "min")[0]);
+        scn.LSPayAttritionFromCardInPlay(scn.GetLSCard("yt"));
+        assertEquals(Zone.LOST_PILE, scn.GetLSCard("yt").getZone());
     }
 
     private VirtualTableScenario BattleReady(int destiny) {
