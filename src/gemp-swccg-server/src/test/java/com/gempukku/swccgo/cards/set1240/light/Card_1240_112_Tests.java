@@ -240,6 +240,7 @@ public class Card_1240_112_Tests {
         var scn = BattleReady(4);
         scn.LSPayRemainingBattleDamageFromReserveDeck();
         assertEquals(4, scn.GetUnpaidLSAttrition());
+        assertEquals("1", scn.GetADParam(scn.LS, "min")[0]);
         scn.LSPayAttritionFromCardInPlay(scn.GetLSCard("infinity"));
         assertInZone(Zone.LOST_PILE, scn.GetLSCard("infinity"));
     }
