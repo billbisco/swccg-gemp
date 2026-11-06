@@ -288,8 +288,11 @@ public class Card_1230_096_Tests {
         scn.PassAllResponses();
         scn.SkipToDSTurn(Phase.MOVE);
         scn.SkipToLSTurn(Phase.MOVE);
-        assertFalse(scn.LSCardActionAvailable(scn.GetLSCard("attack"), "move again"));
         assertTrue(scn.LSMoveAvailable(scn.GetLSCard("ship")));
+        scn.LSMoveCard(scn.GetLSCard("ship"), scn.GetLSCard("alderaan"));
+        scn.PassAllResponses();
+        returnToLightAction(scn);
+        assertFalse(scn.LSCardActionAvailable(scn.GetLSCard("attack"), "move again"));
     }
 
     @Test
@@ -479,8 +482,11 @@ public class Card_1230_096_Tests {
         scn.AttachCardsTo(scn.GetLSCard("ship"), scn.GetLSCard("attack2"));
         scn.SkipToDSTurn(Phase.MOVE);
         scn.SkipToLSTurn(Phase.MOVE);
-        assertFalse(scn.LSCardActionAvailable(scn.GetLSCard("attack2"), "move again"));
         assertTrue(scn.LSMoveAvailable(scn.GetLSCard("ship")));
+        scn.LSMoveCard(scn.GetLSCard("ship"), scn.GetLSCard("alderaan"));
+        scn.PassAllResponses();
+        returnToLightAction(scn);
+        assertFalse(scn.LSCardActionAvailable(scn.GetLSCard("attack2"), "move again"));
     }
 
     @Test
