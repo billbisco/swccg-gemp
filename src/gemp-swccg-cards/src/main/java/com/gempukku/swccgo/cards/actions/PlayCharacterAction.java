@@ -1,6 +1,7 @@
 package com.gempukku.swccgo.cards.actions;
 
 import com.gempukku.swccgo.cards.UndercoverSpyDeployRestriction;
+import com.gempukku.swccgo.cards.ConditionalUndercoverSpyDeployment;
 import com.gempukku.swccgo.cards.effects.PayDeployCostEffect;
 import com.gempukku.swccgo.common.CaptureOption;
 import com.gempukku.swccgo.common.PlayCardOptionId;
@@ -81,8 +82,10 @@ public class PlayCharacterAction extends AbstractPlayCardAction {
                         if (Filters.location.accepts(game, _target)) {
                             _capacitySlotChosen = true;
 
-                            // Determine if deploying characters as an Undercover spy
-                            if (_character.getBlueprint().mayDeployAsUndercoverSpy(game, _character) && UndercoverSpyDeployRestriction.mayDeployAsUndercoverSpyTo(game, _character, _target)) {
+                            // A required deployment takes precedence over an optional undercover choice.
+                            boolean deployUndercover = _character.getBlueprint().isOnlyDeploysAsUndercoverSpy(game, _character)
+                                    || (deployAsCaptiveOption == null && ConditionalUndercoverSpyDeployment.isRequiredAt(game, _character, _target));
+                            if (!deployUndercover && _character.getBlueprint().mayDeployAsUndercoverSpy(game, _character) && UndercoverSpyDeployRestriction.mayDeployAsUndercoverSpyTo(game, _character, _target)) {
 
                                 // Ask player to choose whether to deploy character as Undercover spy
                                 _chooseIfUndercoverEffect = new PlayoutDecisionEffect(_that, getPerformingPlayer(),
@@ -103,7 +106,7 @@ public class PlayCharacterAction extends AbstractPlayCardAction {
                             }
                             else {
                                 _chosenIfUndercover = true;
-                                _zoneOwnerToDeployTo = _character.getBlueprint().isOnlyDeploysAsUndercoverSpy(game, _character) ? game.getOpponent(character.getOwner()) : character.getOwner();
+                                _zoneOwnerToDeployTo = deployUndercover ? game.getOpponent(character.getOwner()) : character.getOwner();
                                 _playCardEffect = new DeploySingleCardEffect(_that, _character, _target, !_character.getOwner().equals(_zoneOwnerToDeployTo), deployAsCaptiveOption, _reactActionOption, PlayCardOptionId.PLAY_CARD_OPTION_1, _reshuffle);
                             }
                         }
