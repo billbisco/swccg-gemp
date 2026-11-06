@@ -57,14 +57,14 @@ public class Card_1261_012_Tests {
     public void MassassiWarriorDrawsOneBattleDestinyWithAnotherSithDespiteAbilityBelowFour() {
         var scn = scenario(); scn.StartGame(); var site = scn.GetDSStartingLocation();
         scn.MoveCardsToLocation(site, scn.GetDSCard("warrior"), scn.GetDSCard("other"), scn.GetLSCard("luke"));
-        scn.DSStartBattleAndSkipToWeaponsSegment(site); assertEquals(1, scn.GetDSBattleDestinyLimit());
+        scn.DSStartBattleAndSkipToWeaponsSegment(site); assertEquals(1, scn.GetDSBattleDestinyCount());
     }
 
     @Test
     public void MassassiWarriorAloneDoesNotGrantBattleDestiny() {
         var scn = scenario(); scn.StartGame(); var site = scn.GetDSStartingLocation();
         scn.MoveCardsToLocation(site, scn.GetDSCard("warrior"), scn.GetLSCard("luke"));
-        scn.DSStartBattleAndSkipToWeaponsSegment(site); assertEquals(0, scn.GetDSBattleDestinyLimit());
+        scn.DSStartBattleAndSkipToWeaponsSegment(site); assertEquals(0, scn.GetDSBattleDestinyCount());
     }
 
     @Test
@@ -74,13 +74,14 @@ public class Card_1261_012_Tests {
         scn.DSStartBattleAndSkipToWeaponsSegment(site); scn.SkipToDamageSegment(false); scn.PassDamageSegmentActions();
         int lost = scn.GetLSLostPileCount(); scn.DSPayBattleDamageFromCardInPlay(warrior);
         assertTrue(scn.AwaitingLSForceLossPayment()); scn.LSPayForceLossFromReserveDeck(); scn.PassAllResponses();
-        assertEquals(lost + 1, scn.GetLSLostPileCount()); assertEquals(Zone.LOST_PILE, warrior.getZone());
+        assertEquals(lost + 1, scn.GetLSLostPileCount()); com.gempukku.swccgo.framework.Assertions.assertInZone(Zone.LOST_PILE, warrior);
     }
 
     @Test
     public void MassassiWarriorLostWithoutJediDoesNotCauseForceLoss() {
         var scn = scenario(); scn.StartGame(); var site = scn.GetDSStartingLocation(); var warrior = scn.GetDSCard("warrior");
         scn.MoveCardsToLocation(site, warrior, scn.GetLSCard("han"), scn.GetLSCard("rebel"));
+        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetLSCard("luke"));
         scn.DSStartBattleAndSkipToWeaponsSegment(site); scn.SkipToDamageSegment(false); scn.PassDamageSegmentActions();
         int lost = scn.GetLSLostPileCount(); scn.DSPayBattleDamageFromCardInPlay(warrior); scn.PassAllResponses();
         assertFalse(scn.AwaitingLSForceLossPayment()); assertEquals(lost, scn.GetLSLostPileCount());

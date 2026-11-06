@@ -36,7 +36,7 @@ public class Card_1261_058_Tests {
     public void BlizzardFourPermanentPilotProvidesTwoAndImmunityIsBelowFour() {
         var scn = scenario(); scn.StartGame(); var b = scn.GetDSCard("blizzard");
         scn.MoveCardsToLocation(scn.GetDSStartingLocation(), b);
-        assertEquals(2, scn.GetAbility(b));
+        assertEquals(2, scn.GetBattleDestinyAbility(b));
         assertEquals(4, scn.game().getModifiersQuerying().getImmunityToAttritionLessThan(scn.gameState(), b), scn.epsilon);
     }
 
@@ -47,7 +47,7 @@ public class Card_1261_058_Tests {
         scn.MoveCardsToDSHand(b); scn.MoveCardsToTopOfDSReserveDeck(trooper, piett);
         scn.SkipToDSTurn(Phase.DEPLOY); int force = scn.GetDSForcePileCount();
         scn.DSDeployCard(b); scn.DSChooseCard(site); scn.PassForceUseResponses();
-        for (int i = 0; i < 20 && !scn.DSCardActionAvailable(b, "Deploy a non-pilot Imperial warrior from Reserve Deck"); i++) {
+        for (int i = 0; i < 20 && !scn.GetDSAvailableActions().contains("Deploy a non-pilot Imperial warrior from Reserve Deck"); i++) {
             assertTrue(scn.GetCurrentDecision().getText().toLowerCase().contains("optional")); scn.PassResponses();
         }
         scn.DSUseCardAction(b, "Deploy a non-pilot Imperial warrior from Reserve Deck"); scn.PassAllResponses();

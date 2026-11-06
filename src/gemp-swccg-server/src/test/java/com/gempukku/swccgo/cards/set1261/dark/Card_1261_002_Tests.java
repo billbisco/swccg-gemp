@@ -14,7 +14,7 @@ public class Card_1261_002_Tests {
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>() {{ put("obiwan", "1_21"); }},
                 new HashMap<>() {{ put("piett", "1261_2"); put("executor", "4_167"); put("devastator", "1_301");
-                    put("hoth", "3_143"); put("tie", "1_299"); put("flagship", "9_125"); put("payment", "1_194"); }},
+                    put("driver", "3_83"); put("hoth", "3_143"); put("tie", "1_299"); put("flagship", "9_125"); put("payment", "1_194"); }},
                 10, 10, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -37,7 +37,7 @@ public class Card_1261_002_Tests {
     @Test
     public void AdmiralPiettAddsThreeToAnyShipHePilotsButNotAsPassenger() {
         var scn = scenario(); scn.StartGame(); scn.MoveLocationToTable(scn.GetDSCard("hoth")); var piett = scn.GetDSCard("piett"); var tie = scn.GetDSCard("tie");
-        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), tie);
+        scn.MoveCardsToLocation(scn.GetDSCard("hoth"), tie);
         scn.BoardAsPilot(tie, piett); assertEquals(4, scn.GetPower(tie));
         var ship = scn.GetDSCard("devastator"); scn.MoveCardsToLocation(scn.GetDSCard("hoth"), ship);
         scn.BoardAsPassenger(ship, piett); assertEquals(9, scn.GetPower(ship));
@@ -62,7 +62,7 @@ public class Card_1261_002_Tests {
                     { addPersona(Persona.EXECUTOR); setPilotCapacity(10); setPassengerCapacity(10); }
                 });
         scn.MoveCardsToLocation(scn.GetDSCard("hoth"), executor);
-        scn.BoardAsPassenger(executor, piett); var q = scn.game().getModifiersQuerying();
+        scn.BoardAsPilot(executor, scn.GetDSCard("driver")); scn.BoardAsPassenger(executor, piett); var q = scn.game().getModifiersQuerying();
         assertEquals(3, scn.GetHyperspeed(executor));
         assertEquals(5, q.getImmunityToAttritionLessThan(scn.gameState(), executor), scn.epsilon);
         scn.MoveCardsToLocation(scn.GetDSStartingLocation(), piett);
@@ -76,7 +76,8 @@ public class Card_1261_002_Tests {
         var flagship = scn.GetDSCard("flagship"); var payment = scn.GetDSCard("payment");
         scn.MoveCardsToLocation(site, piett, scn.GetLSCard("obiwan")); scn.MoveCardsToDSHand(payment); scn.MoveCardsToSideOfTable(flagship);
         scn.DSStartBattleAndSkipToWeaponsSegment(site); int power = scn.GetDSTotalPower();
-        scn.DSUseCardAction(piett, "Add 3 to total power"); scn.DSChooseCard(payment); scn.PassAllResponses();
+        scn.DSUseCardAction(piett, "Add 3 to total power"); scn.PassAllResponses();
+        if (payment.getZone() == Zone.HAND) { scn.DSChooseCard(payment); scn.PassAllResponses(); }
         assertEquals(Zone.USED_PILE, payment.getZone()); assertEquals(power + 3, scn.GetDSTotalPower());
         if (scn.AwaitingLSWeaponsSegmentActions()) scn.LSPass();
         assertFalse(scn.DSCardActionAvailable(piett, "Add 3 to total power"));
@@ -86,6 +87,24 @@ public class Card_1261_002_Tests {
     public void AdmiralPiettBattleBonusNeedsFlagshipOperations() {
         var scn = scenario(); scn.StartGame(); scn.MoveLocationToTable(scn.GetDSCard("hoth")); var piett = scn.GetDSCard("piett"); var site = scn.GetDSStartingLocation();
         scn.MoveCardsToLocation(site, piett, scn.GetLSCard("obiwan")); scn.MoveCardsToDSHand(scn.GetDSCard("payment"));
+        scn.DSStartBattleAndSkipToWeaponsSegment(site); assertFalse(scn.DSCardActionAvailable(piett, "Add 3 to total power"));
+    }
+
+    @Test
+    public void AdmiralPiettCannotPayBattleBonusWithoutHandCard() {
+        var scn = scenario(); scn.StartGame(); var piett = scn.GetDSCard("piett"); var site = scn.GetDSStartingLocation();
+        scn.MoveCardsToLocation(site, piett, scn.GetLSCard("obiwan")); scn.MoveCardsToSideOfTable(scn.GetDSCard("flagship"));
+        scn.DSStartBattleAndSkipToWeaponsSegment(site);
+        scn.MoveCardsToTopOfDSReserveDeck(scn.GetDSHand().toArray(new com.gempukku.swccgo.game.PhysicalCardImpl[0]));
+        assertFalse(scn.DSCardActionAvailable(piett, "Add 3 to total power"));
+    }
+
+    @Test
+    public void AdmiralPiettCannotAddPowerToUnrelatedBattle() {
+        var scn = scenario(); scn.StartGame(); var piett = scn.GetDSCard("piett"); var site = scn.GetDSStartingLocation();
+        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), piett);
+        scn.MoveCardsToLocation(site, scn.GetDSCard("payment"), scn.GetLSCard("obiwan"));
+        scn.MoveCardsToDSHand(scn.GetDSCard("tie")); scn.MoveCardsToSideOfTable(scn.GetDSCard("flagship"));
         scn.DSStartBattleAndSkipToWeaponsSegment(site); assertFalse(scn.DSCardActionAvailable(piett, "Add 3 to total power"));
     }
 }
