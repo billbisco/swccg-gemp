@@ -137,7 +137,8 @@ public class Card_1115_067_Integration_Tests {
     @Test
     public void OriginalVirtualVadersAngerCannotUseMaulWithoutTheGrantingEffect() {
         var scn = scenario();
-        scn.MoveOutOfPlay(scn.GetDSCard("trained"), scn.GetDSCard("vader"));
+        scn.MoveOutOfPlay(scn.GetDSCard("trained"));
+        scn.MoveOutOfPlay(scn.GetDSCard("vader"));
         scn.MoveCardsToHand(scn.GetDSCard("duel"));
         scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("maul"), scn.GetLSCard("obi"));
         scn.SkipToDSTurn(Phase.CONTROL);
@@ -150,7 +151,9 @@ public class Card_1115_067_Integration_Tests {
         var interrupt = scn.GetDSCard("modernSearch");
         var maul = scn.GetDSCard("maul");
         var sister = scn.GetDSCard("sister");
-        scn.MoveOutOfPlay(scn.GetDSCard("vader"), scn.GetDSCard("mara"), sister);
+        scn.MoveOutOfPlay(scn.GetDSCard("vader"));
+        scn.MoveOutOfPlay(scn.GetDSCard("mara"));
+        scn.MoveOutOfPlay(sister);
         scn.MoveCardsToHand(interrupt, maul);
         scn.SkipToDSTurn(Phase.CONTROL);
         scn.MoveCardsToTopOfDSReserveDeck(sister);
