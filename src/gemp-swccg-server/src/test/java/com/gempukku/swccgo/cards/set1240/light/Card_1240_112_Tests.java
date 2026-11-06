@@ -81,6 +81,7 @@ public class Card_1240_112_Tests {
         scn.SkipToLSTurn(Phase.CONTROL);
         scn.MoveCardsToLSHand(scn.GetLSCard("infinity"), scn.GetLSCard("boshek"));
         scn.EnsureLSForcePile(2);
+        while (scn.GetLSForcePileCount() > 2) scn.MoveCardsToTopOfLSUsedPile(scn.GetTopOfLSForcePile());
         scn.SkipToPhase(Phase.DEPLOY);
         assertTrue(scn.AwaitingLSDeployPhaseActions());
         assertEquals(2, scn.GetLSForcePileCount());
