@@ -38,6 +38,7 @@ public class Card_1230_096_Tests {
             put("alderaan", "1_121");
             put("staging", "6_87");
             put("squadron", "7_150");
+            put("vulnerable", "12_38");
             put("luke", "1_19");
         }}, new HashMap<>() {{
             put("destroyer", "1_301");
@@ -480,5 +481,21 @@ public class Card_1230_096_Tests {
         scn.SkipToLSTurn(Phase.MOVE);
         assertFalse(scn.LSCardActionAvailable(scn.GetLSCard("attack2"), "move again"));
         assertTrue(scn.LSMoveAvailable(scn.GetLSCard("ship")));
+    }
+
+    @Test
+    public void TheTimeForOurAttackHasComeCannotBeCanceledByControlWhileAnotherImmediateEffectCan() {
+        var scn = attached();
+        scn.MoveCardsToDSHand(scn.GetDSCard("control"));
+        scn.AttachCardsTo(scn.GetDSStartingLocation(), scn.GetLSCard("vulnerable"));
+        scn.SkipToDSTurn(Phase.CONTROL);
+        scn.DSPlayCard(scn.GetDSCard("control"));
+        scn.PassAllResponses();
+        assertTrue(scn.DSHasCardChoiceAvailable(scn.GetLSCard("vulnerable")));
+        assertFalse(scn.DSHasCardChoiceAvailable(scn.GetLSCard("attack")));
+        scn.DSChooseCard(scn.GetLSCard("vulnerable"));
+        scn.PassAllResponses();
+        assertTrue(scn.GetLSLostPile().contains(scn.GetLSCard("vulnerable")));
+        assertEquals(Zone.ATTACHED, scn.GetLSCard("attack").getZone());
     }
 }
