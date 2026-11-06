@@ -5,11 +5,11 @@ package com.gempukku.swccgo.hall;
  * time bank minutes / per-action timeout minutes.
  */
 public enum HallGameTimer {
-    DEFAULT("default", 45, 6, "Default (45m/6m)", "Default timer"),
+    DEFAULT("default", 45, 6, "Default (45m/6m)", "Default"),
     BLITZ("blitz", 25, 3, "Blitz! (25m/3m)", "Blitz"),
-    WC("WC", 20, 10, "Championship (20m/10m)", "Championship timer"),
-    SLOW("slow", 80, 10, "Slow (80m/10m)", "Slow timer"),
-    GLACIAL("glacial", 1440, 1440, "Glacial (1d/1d)", "Glacial timer");
+    WC("WC", 20, 10, "Championship (20m/10m)", "Championship"),
+    SLOW("slow", 80, 10, "Slow (80m/10m)", "Slow"),
+    GLACIAL("glacial", 1440, 1440, "Glacial (1d/1d)", "Glacial");
 
     private final String _code;
     private final int _bankMinutes;
@@ -30,7 +30,7 @@ public enum HallGameTimer {
         return _label;
     }
 
-    /** As lists show it when chosen (#116), for example "Blitz". */
+    /** As lists show it when chosen (#116), after "Timer: " (#175), for example "Blitz". */
     public String getShortLabel() {
         return _shortLabel;
     }

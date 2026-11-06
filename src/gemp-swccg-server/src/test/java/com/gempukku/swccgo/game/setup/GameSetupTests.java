@@ -44,26 +44,26 @@ public class GameSetupTests {
         SwccgFormat rg = LIBRARY.getFormat("premiere_reflections_gold");
         // given in the "wrong" order; chips come out as deck rules, play rules, table settings
         GameSetup setup = GameSetup.of(rg, options("timer", "blitz", "startingCredits", "4", "deckSize", "100"), Scope.CASUAL);
-        assertEquals(List.of("100 cards", "4 starting credits", "Blitz"), setup.chips());
-        assertEquals("100 cards · 4 starting credits · Blitz", setup.chipsText());
+        assertEquals(List.of("Deck: 100 cards", "Starting: 4 credits", "Timer: Blitz"), setup.chips());
+        assertEquals("Deck: 100 cards · Starting: 4 credits · Timer: Blitz", setup.chipsText());
         assertEquals("premiere_reflections_gold", setup.getFormatCode());
         SwccgFormat effective = LIBRARY.effectiveFormat(setup);
         assertEquals(100, effective.getRequiredDeckSize());
         assertEquals("the name never changes", rg.getName(), effective.getName());
         Map<String, String> full = setup.describe(rg);
-        assertEquals("100", full.get("Deck size"));
-        assertEquals("4", full.get("Starting credits"));
-        assertEquals("Blitz! (25m/3m)", full.get("Game timer"));
+        assertEquals("100", full.get("Deck: size"));
+        assertEquals("4", full.get("Starting: credits"));
+        assertEquals("Blitz! (25m/3m)", full.get("Timer: game"));
     }
 
     @Test
     public void GameSetupFullViewShowsDefaultsAndHidesUnavailableOptions() {
         SwccgFormat open = LIBRARY.getFormat("open");
         Map<String, String> full = GameSetup.defaults("open").describe(open);
-        assertEquals("60 (default)", full.get("Deck size"));
-        assertEquals("Default (45m/6m) (default)", full.get("Game timer"));
-        assertFalse("Open has no starting credits", full.containsKey("Starting credits"));
-        assertEquals("40–60 (default)", GameSetup.defaults("anything_goes").describe(LIBRARY.getFormat("anything_goes")).get("Deck size"));
+        assertEquals("60 (default)", full.get("Deck: size"));
+        assertEquals("Default (45m/6m) (default)", full.get("Timer: game"));
+        assertFalse("Open has no starting credits", full.containsKey("Starting: credits"));
+        assertEquals("40–60 (default)", GameSetup.defaults("anything_goes").describe(LIBRARY.getFormat("anything_goes")).get("Deck: size"));
     }
 
     @Test
@@ -79,7 +79,7 @@ public class GameSetupTests {
             assertThrows(bad.toString(), IllegalArgumentException.class, () -> GameSetup.of(open, bad, Scope.CASUAL));
         // the timer is a casual-table setting only
         assertThrows(IllegalArgumentException.class, () -> GameSetup.of(open, options("timer", "blitz"), Scope.BOT));
-        assertEquals("Blitz", GameSetup.of(open, options("timer", "BLITZ"), Scope.CASUAL).chipsText());
+        assertEquals("Timer: Blitz", GameSetup.of(open, options("timer", "BLITZ"), Scope.CASUAL).chipsText());
     }
 
     @Test
@@ -102,7 +102,7 @@ public class GameSetupTests {
             GameSetup setup = LIBRARY.storedSetup(retired.getKey(), null);
             assertEquals("open", setup.getFormatCode());
             assertEquals(String.valueOf(retired.getValue()), setup.getChosen("deckSize"));
-            assertEquals(retired.getValue() + " cards", setup.chipsText());
+            assertEquals("Deck: " + retired.getValue() + " cards", setup.chipsText());
             assertEquals((int) retired.getValue(), LIBRARY.effectiveFormat(setup).getRequiredDeckSize());
         }
         // the deck-list key form, and a plain old row
@@ -136,7 +136,7 @@ public class GameSetupTests {
             assertTrue(GameOptions.all().contains(probe));
             GameSetup setup = GameSetup.of(open, options("testProbe", "off", "deckSize", "100"), Scope.CASUAL);
             assertEquals("false", setup.getChosen("testProbe"));
-            assertEquals("100 cards · No probe", setup.chipsText());
+            assertEquals("Deck: 100 cards · No probe", setup.chipsText());
             assertEquals("Off", setup.describe(open).get("Test probe rule"));
             assertEquals(setup, GameSetup.fromJson(setup.toJson(), "open"));
             assertTrue(GameSetup.of(open, options("testProbe", "on"), Scope.CASUAL).isDefault());

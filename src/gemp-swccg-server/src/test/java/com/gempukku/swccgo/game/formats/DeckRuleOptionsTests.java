@@ -88,7 +88,7 @@ public class DeckRuleOptionsTests {
         GameSetup stored = LIBRARY.storedSetup("open_no_shields", null);
         assertEquals("open", stored.getFormatCode());
         assertEquals("true", stored.getChosen(GameOptions.NO_SHIELDS));
-        assertTrue("the chip says so", stored.chipsText().contains("No shields"));
+        assertTrue("the chip says so", stored.chipsText().contains("Shields: none"));
         // the deck builder's card filter leaves shields out, as before
         assertThrows(DeckInvalidException.class, () -> alias.validateCard("13_51", false));
         try {

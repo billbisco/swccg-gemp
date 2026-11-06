@@ -56,12 +56,12 @@ public final class GameSetup {
                 if (option == null)
                     throw new IllegalArgumentException("Unknown game option: " + entry.getKey());
                 if (!option.isAvailable(format))
-                    throw new IllegalArgumentException(option.getLabel() + " is not used in " + format.getName());
+                    throw new IllegalArgumentException("\"" + option.getLabel() + "\" is not used in " + format.getName());
                 String normalized = option.normalize(value, format);
                 if (normalized.equals(option.getDefault(format)))
                     continue;
                 if (scope != null && !option.isAllowedIn(scope))
-                    throw new IllegalArgumentException(option.getLabel() + " can't be changed in this kind of game");
+                    throw new IllegalArgumentException("\"" + option.getLabel() + "\" can't be changed in this kind of game");
                 values.put(option.getId(), normalized);
             }
         }

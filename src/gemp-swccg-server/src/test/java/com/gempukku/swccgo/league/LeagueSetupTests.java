@@ -40,9 +40,9 @@ public class LeagueSetupTests {
                 new LeagueFactory.Serie("premiere_reflections_gold", 7, 10, Map.of("startingCredits", "4"))), "c");
         assertEquals("the parameters keep plain format codes", "20261101,default,3,open,7,10,open,7,10,premiere_reflections_gold,7,10",
                 prepared.parameters());
-        assertEquals("100 cards", prepared.serieSetup(LIBRARY, 0).chipsText());
+        assertEquals("Deck: 100 cards", prepared.serieSetup(LIBRARY, 0).chipsText());
         assertTrue(prepared.serieSetup(LIBRARY, 1).isDefault());
-        assertEquals("4 starting credits", prepared.serieSetup(LIBRARY, 2).chipsText());
+        assertEquals("Starting: 4 credits", prepared.serieSetup(LIBRARY, 2).chipsText());
         assertTrue(prepared.gameSetup().startsWith("[") && prepared.gameSetup().contains("null"));
     }
 
@@ -64,9 +64,9 @@ public class LeagueSetupTests {
 
     @Test
     public void LeagueSetupRefusesOptionsTheFormatOrALeagueCannotUse() {
-        assertEquals("series[0].options: Serie 1: Starting credits is not used in Open",
+        assertEquals("series[0].options: Serie 1: \"Starting: credits\" is not used in Open",
                 message(_factory, LeagueFactoryTests.constructed("Bad", 20261101, new LeagueFactory.Serie("open", 7, 10, Map.of("startingCredits", "4")))));
-        assertEquals("series[1].options: Serie 2: Game timer can't be changed in this kind of game",
+        assertEquals("series[1].options: Serie 2: \"Timer: game\" can't be changed in this kind of game",
                 message(_factory, LeagueFactoryTests.constructed("Bad", 20261101, new LeagueFactory.Serie("open", 7, 10),
                         new LeagueFactory.Serie("open", 7, 10, Map.of("timer", "blitz")))));
         assertNotNull(message(_factory, LeagueFactoryTests.constructed("Bad", 20261101, new LeagueFactory.Serie("open", 7, 10, Map.of("deckSize", "101")))));
@@ -82,7 +82,7 @@ public class LeagueSetupTests {
         List<LeagueSeriesData> series = prepared.series();
         assertTrue(LeagueSetups.forSerie(LIBRARY, league, series.get(0), 0).isDefault());
         GameSetup second = LeagueSetups.forSerie(LIBRARY, league, series.get(1), 1);
-        assertEquals("75 cards", second.chipsText());
+        assertEquals("Deck: 75 cards", second.chipsText());
         assertEquals(75, LIBRARY.effectiveFormat(second).getRequiredDeckSize());
         assertEquals(1, LeagueSetups.indexOf(series, series.get(1)));
         // a league from before #119 has no stored setup: its format codes decide, as before

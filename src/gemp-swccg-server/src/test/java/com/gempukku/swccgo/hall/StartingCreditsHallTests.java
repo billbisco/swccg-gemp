@@ -28,7 +28,7 @@ public class StartingCreditsHallTests {
         var row=mockingDetails(visitor).getInvocations().stream().filter(i->i.getMethod().getName().equals("visitTable")).findFirst().orElseThrow();
         // #116: the format name stays; the chosen budget is an option chip
         assertEquals("Premiere - Reflections Gold",row.getArgument(5));
-        assertEquals("4 starting credits · Blitz",row.getArgument(20));
+        assertEquals("Starting: 4 credits · Timer: Blitz",row.getArgument(20));
         assertTrue(s.hallServer.joinTableAsPlayer(row.getArgument(0),opponent,"dark",false,null));
         var game=s.swccgoServer.getGameById(table.getStartedGameId());
         assertEquals(4,game.getGameState().getStartingCredits());

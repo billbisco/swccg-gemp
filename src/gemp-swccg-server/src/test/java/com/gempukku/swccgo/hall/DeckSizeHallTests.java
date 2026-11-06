@@ -111,12 +111,12 @@ public class DeckSizeHallTests {
         var opponent = s.member(2, "optionsOpponent");
         String[] row = tableRowFormat(s, opponent).split("\\|");
         assertEquals("Open", row[0]);
-        assertEquals("45 cards · Blitz", row[3]);
+        assertEquals("Deck: 45 cards · Timer: Blitz", row[3]);
         assertThrows(HallException.class, () -> s.hallServer.joinTableAsPlayer(row[2], opponent, "dark60", false, null));
         assertTrue(s.hallServer.joinTableAsPlayer(row[2], opponent, "dark45", false, null));
         var game = s.swccgoServer.getGameById(table.getStartedGameId());
-        assertEquals("45 cards · Blitz", game.getGameSetup().chipsText());
-        assertTrue(game.getGameState().getLastMessages().contains("Game options: 45 cards · Blitz"));
+        assertEquals("Deck: 45 cards · Timer: Blitz", game.getGameSetup().chipsText());
+        assertTrue(game.getGameState().getLastMessages().contains("Game options: Deck: 45 cards · Timer: Blitz"));
     }
 
     @Test
@@ -162,13 +162,13 @@ public class DeckSizeHallTests {
         String[] row = tableRowFormat(s, opponent).split("\\|");
         assertEquals("the format name never changes (#114)", "Open", row[0]);
         assertEquals("the deck-list key carries the size", "open@100", row[1]);
-        assertEquals("100 cards", row[3]);
+        assertEquals("Deck: 100 cards", row[3]);
         assertTrue(s.hallServer.joinTableAsPlayer(row[2], opponent, "dark100", false, null));
         var game = s.swccgoServer.getGameById(table.getStartedGameId());
         assertEquals(100, game.getFormat().getRequiredDeckSize());
         assertEquals("100", game.getGameSetup().getChosen("deckSize"));
         assertTrue("the game log shows the options to players and spectators: " + game.getGameState().getLastMessages(),
-                game.getGameState().getLastMessages().contains("Game options: 100 cards"));
+                game.getGameState().getLastMessages().contains("Game options: Deck: 100 cards"));
     }
 
     @Test
@@ -201,7 +201,7 @@ public class DeckSizeHallTests {
         var opponent = s.member(2, "leagueOpponent");
         String[] row = tableRowFormat(s, opponent).split("\\|");
         assertEquals("Open", row[0]);
-        assertEquals("45 cards", row[3]);
+        assertEquals("Deck: 45 cards", row[3]);
         assertThrows(HallException.class, () -> s.hallServer.joinTableAsPlayer(row[2], opponent, "dark60", false, null));
     }
 
@@ -242,12 +242,12 @@ public class DeckSizeHallTests {
                 "light100", false, "dark100", false, null, null, "constructed", null, null, 0, Map.of("deckSize", "100"));
         var queue = queueOf(s, "optHost");
         assertEquals("open@100", queue.getFormat());
-        assertEquals("100 cards", queue.getGameSetup(formats).chipsText());
+        assertEquals("Deck: 100 cards", queue.getGameSetup(formats).chipsText());
         // the hall lists the queue with its options
         var visitor = mock(HallInfoVisitor.class);
         s.hallServer.processHall(s.member(2, "viewer"), visitor);
         assertTrue(mockingDetails(visitor).getInvocations().stream()
-                .anyMatch(i -> java.util.Arrays.asList(i.getArguments()).contains("100 cards")));
+                .anyMatch(i -> java.util.Arrays.asList(i.getArguments()).contains("Deck: 100 cards")));
         // a casual-only option or one the format doesn't use is refused
         assertThrows(HallException.class, () -> s.hallServer.createPlayerMadeQueue(s.member(3, "timerHost"), "Opts", "open",
                 "swiss", 4, 4, 0, false, "light60", false, "dark60", false, null, null, "constructed", null, null, 0,
@@ -273,8 +273,8 @@ public class DeckSizeHallTests {
         var tournament = com.gempukku.swccgo.tournament.PlayerConstructedTournament.limited("t", "T", "open@45", "swiss",
                 2, false, List.of("a", "b"), CollectionType.ALL_CARDS,
                 com.gempukku.swccgo.tournament.Tournament.Stage.PLAYING_GAMES, null);
-        assertEquals("without a stored setup the code decides", "45 cards", tournament.getGameSetup(formats).chipsText());
+        assertEquals("without a stored setup the code decides", "Deck: 45 cards", tournament.getGameSetup(formats).chipsText());
         tournament.setGameSetup(setup.with("deckSize", "50"));
-        assertEquals("50 cards", tournament.getGameSetup(formats).chipsText());
+        assertEquals("Deck: 50 cards", tournament.getGameSetup(formats).chipsText());
     }
 }
