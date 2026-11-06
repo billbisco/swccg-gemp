@@ -57,8 +57,13 @@ public class Card_1261_019_Tests {
 
     private void feed(VirtualTableScenario scn, com.gempukku.swccgo.game.PhysicalCardImpl food,
                       com.gempukku.swccgo.game.PhysicalCardImpl creature) {
+        feed(scn, food, creature, 5);
+    }
+
+    private void feed(VirtualTableScenario scn, com.gempukku.swccgo.game.PhysicalCardImpl food,
+                      com.gempukku.swccgo.game.PhysicalCardImpl creature, int destiny) {
         var yaggle = scn.GetDSCard("yaggle"); scn.MoveCardsToDSHand(yaggle);
-        scn.DSActivateMaxForceAndPass(); scn.SkipToPhase(Phase.CONTROL); scn.PrepareDSDestiny(5);
+        scn.DSActivateMaxForceAndPass(); scn.SkipToPhase(Phase.CONTROL); scn.PrepareDSDestiny(destiny);
         scn.DSPlayCard(yaggle); scn.DSChooseCard(food); scn.DSChooseCard(creature);
         scn.PassCardPlayResponses(); scn.PassForceUseResponses(); scn.PassDestinyDrawResponses(); scn.PassAllResponses();
     }
@@ -90,6 +95,26 @@ public class Card_1261_019_Tests {
         scn.MoveCardsToLocation(cave, food, scn.GetDSCard("wampa")); int lost = scn.GetLSLostPileCount();
         feed(scn, food, scn.GetDSCard("wampa")); assertFalse(scn.AwaitingLSForceLossPayment());
         assertEquals(lost + 1, scn.GetLSLostPileCount());
+    }
+
+    @Test
+    public void DianogaActualFerocityTwoPlusDestinyTwoDoesNotEatDefenseFourVehicle() {
+        var scn = scenario(); scn.StartGame(); var swamp = scn.GetLSCard("swamp"); scn.MoveLocationToTable(swamp);
+        var d = scn.GetDSCard("dianoga"); var food = scn.GetLSCard("food"); scn.MoveCardsToLocation(swamp, d, food);
+        int lost = scn.GetLSLostPileCount(); feed(scn, food, d, 2);
+        assertEquals(swamp, food.getAtLocation()); assertFalse(scn.AwaitingLSForceLossPayment());
+        assertEquals(lost, scn.GetLSLostPileCount());
+    }
+
+    @Test
+    public void DianogaActualFerocityTwoPlusDestinyThreeEatsDefenseFourVehicle() {
+        var scn = scenario(); scn.StartGame(); var swamp = scn.GetLSCard("swamp"); scn.MoveLocationToTable(swamp);
+        var d = scn.GetDSCard("dianoga"); var food = scn.GetLSCard("food"); scn.MoveCardsToLocation(swamp, d, food);
+        feed(scn, food, d, 3);
+        com.gempukku.swccgo.framework.Assertions.assertInZone(Zone.LOST_PILE, food);
+        assertTrue(scn.AwaitingLSForceLossPayment());
+        for (int i = 0; i < 2; i++) { scn.LSPayForceLossFromReserveDeck(); scn.PassAllResponses(); }
+        assertFalse(scn.AwaitingLSForceLossPayment());
     }
 
     private boolean isSelectable(VirtualTableScenario scn, com.gempukku.swccgo.game.PhysicalCardImpl card) {
