@@ -13,7 +13,7 @@ import com.gempukku.swccgo.logic.actions.OptionalGameTextTriggerAction;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
 import com.gempukku.swccgo.logic.effects.PutCardFromLostPileInUsedPileEffect;
 import com.gempukku.swccgo.logic.effects.UseForceEffect;
-import com.gempukku.swccgo.logic.effects.choose.DeployCardToTargetFromReserveDeckEffect;
+import com.gempukku.swccgo.logic.effects.choose.DeployCardFromReserveDeckEffect;
 import com.gempukku.swccgo.logic.modifiers.AddsPowerToPilotedBySelfModifier;
 import com.gempukku.swccgo.logic.modifiers.DrawsBattleDestinyIfUnableToOtherwiseModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
@@ -51,8 +51,8 @@ public class Card1261_003 extends AbstractImperial {
             action.setText("Deploy vehicle site from Reserve Deck");
             action.appendUsage(new OncePerTurnEffect(action));
             action.appendCost(new UseForceEffect(action, playerId, 1));
-            action.appendEffect(new DeployCardToTargetFromReserveDeckEffect(action,
-                    Filters.vehicle_site, Filters.sameCardId(walker), true));
+            action.appendEffect(new DeployCardFromReserveDeckEffect(action,
+                    Filters.vehicle_site, Filters.siteOfStarshipOrVehicle(walker), true));
             return Collections.singletonList(action);
         }
         return null;

@@ -109,7 +109,7 @@ public class Card_1261_003_Tests {
         scn.MoveCardsToLocation(site, host, scn.GetLSCard("obiwan"), scn.GetLSCard("han"), scn.GetLSCard("chewie"));
         if (passenger) { scn.BoardAsPilot(host, scn.GetDSCard("otherPilot")); scn.BoardAsPassenger(host, scn.GetDSCard("driver")); }
         else scn.BoardAsPilot(host, scn.GetDSCard("driver"));
-        scn.SkipToDSTurn(Phase.BATTLE); scn.EnsureDSForcePile(force); scn.DSInitiateBattle(site);
+        scn.SkipToDSTurn(Phase.BATTLE); scn.EnsureDSForcePile(force); scn.DrainDSForcePileTo(force); scn.DSInitiateBattle(site);
         scn.PassWeaponsSegmentActions(); scn.SkipBattleDestinyDraws(false); scn.PassResponses("INITIAL_ATTRITION_CALCULATED");
         assertTrue(scn.AwaitingDSBattleDamagePayment()); scn.DSChooseCard(scn.GetDSCard("driver")); scn.PassCardLeavingTable();
         return scn;
@@ -147,9 +147,8 @@ public class Card_1261_003_Tests {
         scn.MoveCardsToLocation(site, walker, scn.GetLSCard("obiwan"), scn.GetLSCard("han"), scn.GetLSCard("chewie"));
         scn.BoardAsPilot(walker, driver); scn.BoardAsPassenger(walker, scn.GetDSCard("chokeVader"));
         scn.DSStartBattleAndSkipToWeaponsSegment(site); scn.EnsureDSForcePile(3); scn.PrepareDSDestiny(5);
-        scn.SkipToDamageSegment(false); scn.PassDamageSegmentActions();
-        scn.DSPayRemainingBattleDamageFromReserveDeck(); scn.PassAllResponses();
-        scn.DSChooseCard(driver); scn.PassCardLeavingTable(); int force = scn.GetDSForcePileCount();
+        scn.SkipToDamageSegment(false); scn.PassDamageSegmentActions(); scn.PassAllResponses();
+        assertTrue(scn.DSHasCardChoiceAvailable(driver)); scn.DSChooseCard(driver); scn.PassCardLeavingTable(); int force = scn.GetDSForcePileCount();
         scn.DSChooseAction("Place in Used Pile"); scn.PassAllResponses();
         com.gempukku.swccgo.framework.Assertions.assertInZone(Zone.USED_PILE, driver);
         assertEquals(force - 1, scn.GetDSForcePileCount());
