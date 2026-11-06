@@ -80,14 +80,24 @@ public class Card_1250_005_Tests {
     }
     @Test public void DaultayDofinePreventsActualWeaponTargetingWithOrder() { weapon(true); }
     @Test public void DaultayDofineLeavesWeaponTargetingWithoutOrder() { weapon(false); }
+    private boolean reserveChoiceSelectable(VirtualTableScenario scn, String blueprint) {
+        String[] cards = scn.GetADParam(scn.DS, "blueprintId");
+        String[] selectable = scn.GetADParam(scn.DS, "selectable");
+        assertEquals(cards.length, selectable.length);
+        for (int i = 0; i < cards.length; i++) {
+            if (blueprint.equals(cards[i]) && Boolean.parseBoolean(selectable[i])) return true;
+        }
+        return false;
+    }
     private VirtualTableScenario retrieve(String target) {
         var scn = scenario(); var dofine = scn.GetDSCard("dofine");
         scn.StartGame(); scn.MoveCardsToLocation(scn.GetDSStartingLocation(), dofine); scn.SkipToDSTurn(Phase.CONTROL);
         scn.MoveCardsToTopOfDSReserveDeck(scn.GetDSCard("gunray"), scn.GetDSCard("haako"), scn.GetDSCard("trooper"));
         assertTrue(scn.DSCardActionAvailable(dofine, "Take Gunray or Haako into hand"));
         scn.DSUseCardAction(dofine, "Take Gunray or Haako into hand"); scn.PassAllResponses(); scn.PassCardAndForceUseResponses();
-        assertTrue(scn.DSHasCardChoicesAvailable(scn.GetDSCard("gunray"), scn.GetDSCard("haako")));
-        assertTrue(scn.DSHasCardChoiceNotAvailable(scn.GetDSCard("trooper")));
+        assertTrue(reserveChoiceSelectable(scn, "12_112"));
+        assertTrue(reserveChoiceSelectable(scn, "12_117"));
+        assertFalse(reserveChoiceSelectable(scn, "1_194"));
         scn.DSChooseCard(scn.GetDSCard(target)); scn.PassAllResponses();
         assertInZone(Zone.HAND, scn.GetDSCard(target));
         assertFalse(scn.DSCardActionAvailable(dofine, "Take Gunray or Haako into hand")); return scn;
