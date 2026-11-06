@@ -103,7 +103,8 @@ public class Card_1263_008_Tests {
     }
     @Test
     public void SecurityBattleDroidDoesNotAddAnotherDestinyWhenAlreadyAbleToDraw() {
-        var scn = battle("vader"); assertEquals(3, scn.GetDSTotalDestiny(), scn.epsilon);
+        var scn = battle("vader"); assertEquals(1, scn.GetDSBattleDestinyCount());
+        assertEquals(4, scn.GetDSTotalDestiny(), scn.epsilon);
     }
 
     @Test

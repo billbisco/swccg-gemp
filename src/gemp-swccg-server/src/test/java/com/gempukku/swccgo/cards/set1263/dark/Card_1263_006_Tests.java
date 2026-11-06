@@ -10,6 +10,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 import static org.junit.Assert.*;
+import static com.gempukku.swccgo.framework.Assertions.assertInZone;
 
 public class Card_1263_006_Tests {
     private VirtualTableScenario scenario() {
@@ -35,16 +36,18 @@ public class Card_1263_006_Tests {
     public void MercenaryShadowPirateAddsTwoPowerToPilotedVehicleButNotAsPassenger() {
         var scn = scenario(); var pirate = scn.GetDSCard("pirate"); var walker = scn.GetDSCard("walker");
         scn.StartGame(); scn.MoveCardsToLocation(scn.GetDSStartingLocation(), walker);
-        scn.BoardAsPassenger(walker, pirate); scn.SkipToDSTurn(Phase.BATTLE); assertEquals(7, scn.GetPower(walker));
+        scn.BoardAsPilot(walker, scn.GetDSCard("veers"));
+        scn.BoardAsPassenger(walker, pirate); scn.SkipToDSTurn(Phase.BATTLE); assertEquals(10, scn.GetPower(walker));
+        scn.MoveCardsToDSHand(scn.GetDSCard("veers")); scn.MoveCardsToDSHand(pirate);
         scn.BoardAsPilot(walker, pirate); assertEquals(9, scn.GetPower(walker));
-        scn.MoveCardsToDSHand(pirate); assertEquals(7, scn.GetPower(walker));
+        scn.MoveCardsToDSHand(pirate); assertEquals(0, scn.GetPower(walker));
     }
     @Test
     public void MercenaryShadowPirateAddsTwoPowerToPilotedStarship() {
         var scn = scenario(); var ship = scn.GetDSCard("ship");
         scn.StartGame(); scn.MoveLocationToTable(scn.GetDSCard("system"));
         scn.MoveCardsToLocation(scn.GetDSCard("system"), ship); scn.BoardAsPilot(ship, scn.GetDSCard("pirate"));
-        scn.SkipToDSTurn(Phase.BATTLE); assertEquals(10, scn.GetPower(ship));
+        scn.SkipToDSTurn(Phase.BATTLE); assertEquals(3, scn.GetPower(ship));
     }
     private VirtualTableScenario battle(boolean pirateHere) {
         var scn = scenario(); var site = scn.GetDSStartingLocation();
@@ -71,8 +74,8 @@ public class Card_1263_006_Tests {
     private void resolveWeather(VirtualTableScenario scn, PhysicalCardImpl weather) {
         for (int i=0; i<10; i++) {
             scn.PassAllResponses();
-            if (scn.DSCardActionAvailable(scn.GetDSCard("pirate"), "Cancel"))
-                scn.DSUseCardAction(scn.GetDSCard("pirate"), "Cancel");
+            if (scn.DSDecisionAvailable("Required responses"))
+                scn.DSChooseAction("Cancel Ice Storm or Sandwhirl");
             else if (scn.DSDecisionAvailable("Target card to cancel"))
                 scn.DSChooseCard(weather);
             else return;
@@ -89,12 +92,12 @@ public class Card_1263_006_Tests {
         return scn;
     }
     @Test public void MercenaryShadowPirateCancelsExistingIceStormAtSameLocation() {
-        var scn = weather("ice", "hoth", "hoth"); assertEquals(Zone.LOST_PILE, scn.GetDSCard("ice").getZone());
+        var scn = weather("ice", "hoth", "hoth"); assertInZone(Zone.LOST_PILE, scn.GetDSCard("ice"));
         assertEquals(Zone.AT_LOCATION, scn.GetDSCard("pirate").getZone());
         assertFalse(Filters.missing.accepts(scn.game(), scn.GetDSCard("pirate")));
     }
     @Test public void MercenaryShadowPirateCancelsExistingIceStormAtRelatedLocation() {
-        var scn = weather("ice", "hoth", "bay"); assertEquals(Zone.LOST_PILE, scn.GetDSCard("ice").getZone());
+        var scn = weather("ice", "hoth", "bay"); assertInZone(Zone.LOST_PILE, scn.GetDSCard("ice"));
         assertEquals(Zone.AT_LOCATION, scn.GetDSCard("pirate").getZone());
         assertFalse(Filters.missing.accepts(scn.game(), scn.GetDSCard("pirate")));
     }
@@ -104,7 +107,7 @@ public class Card_1263_006_Tests {
         scn.MoveCardsToDSHand(pirate); scn.SkipToDSTurn(Phase.DEPLOY);
         scn.AttachCardsTo(scn.GetDSCard("desert"), scn.GetDSCard("sand"));
         scn.DSDeployCard(pirate); scn.DSChooseCard(scn.GetDSStartingLocation()); resolveWeather(scn, scn.GetDSCard("sand"));
-        assertEquals(Zone.LOST_PILE, scn.GetDSCard("sand").getZone());
+        assertInZone(Zone.LOST_PILE, scn.GetDSCard("sand"));
     }
     @Test public void MercenaryShadowPirateDoesNotCancelWeatherAtUnrelatedLocation() {
         var scn = weather("sand", "desert", "bay"); assertEquals(Zone.ATTACHED, scn.GetDSCard("sand").getZone());
@@ -115,7 +118,7 @@ public class Card_1263_006_Tests {
         scn.MoveCardsToLocation(scn.GetDSCard("bay"), scn.GetDSCard("pirate"));
         scn.MoveCardsToDSHand(ice); scn.SkipToDSTurn(Phase.DEPLOY);
         scn.DSDeployCard(ice); scn.DSChooseCard(scn.GetDSCard("hoth")); resolveWeather(scn, ice);
-        assertEquals(Zone.LOST_PILE, ice.getZone());
+        assertInZone(Zone.LOST_PILE, ice);
     }
     @Test public void MercenaryShadowPirateCancelsNewSandwhirlBeforeItDeploys() {
         var scn = scenario(); var sand = scn.GetDSCard("sand");
@@ -123,7 +126,7 @@ public class Card_1263_006_Tests {
         scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("pirate"));
         scn.MoveCardsToDSHand(sand); scn.SkipToDSTurn(Phase.DEPLOY);
         scn.DSDeployCard(sand); scn.DSChooseCard(scn.GetDSCard("desert")); resolveWeather(scn, sand);
-        assertEquals(Zone.LOST_PILE, sand.getZone());
+        assertInZone(Zone.LOST_PILE, sand);
     }
 
     @Test
@@ -133,7 +136,7 @@ public class Card_1263_006_Tests {
         scn.MoveCardsToDSHand(pirate); scn.SkipToDSTurn(Phase.DEPLOY);
         scn.AttachCardsTo(scn.GetDSCard("hoth"), ice);
         scn.DSDeployCard(pirate); scn.DSChooseCard(scn.GetDSCard("bay")); resolveWeather(scn, ice);
-        assertEquals(Zone.LOST_PILE, ice.getZone());
+        assertInZone(Zone.LOST_PILE, ice);
         assertFalse(Filters.missing.accepts(scn.game(), pirate));
     }
 }
