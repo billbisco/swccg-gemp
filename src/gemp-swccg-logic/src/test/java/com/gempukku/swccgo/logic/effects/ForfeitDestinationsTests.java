@@ -4,6 +4,7 @@ import com.gempukku.swccgo.common.CardCategory;
 import com.gempukku.swccgo.common.Zone;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
+import com.gempukku.swccgo.game.ActionsEnvironment;
 import com.gempukku.swccgo.game.state.BattleState;
 import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.logic.TriggerConditions;
@@ -76,17 +77,18 @@ class ForfeitDestinationsTests {
         ForfeitCardsFromTableSimultaneouslyEffect effect =
                 new ForfeitCardsFromTableSimultaneouslyEffect(action, List.of(first, second));
         List<EffectResult> results = new ArrayList<>();
+        ActionsEnvironment actions = game.getActionsEnvironment();
         doAnswer(call -> {
             EffectResult result = call.getArgument(0);
             results.add(result);
             if (result instanceof AboutToForfeitCardFromTableResult about && about.getCardToBeForfeited() == first)
                 about.getForfeitCardEffect().setForfeitToUsedPile(first);
             return null;
-        }).when(game.getActionsEnvironment()).emitEffectResult(any(EffectResult.class));
+        }).when(actions).emitEffectResult(any(EffectResult.class));
         doAnswer(call -> {
             run((SubAction) call.getArgument(0), game);
             return null;
-        }).when(game.getActionsEnvironment()).addActionToStack(any(Action.class));
+        }).when(actions).addActionToStack(any(Action.class));
 
         effect.playEffect(game);
 
