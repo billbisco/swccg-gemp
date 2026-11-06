@@ -56,8 +56,18 @@ public class Card_1261_058_Tests {
             scn.PlayerPass(scn.GetDecidingPlayer());
         }
         scn.DSUseCardAction(b, "Deploy a non-pilot Imperial warrior from Reserve Deck"); scn.PassAllResponses();
-        scn.PassCardAndForceUseResponses(); assertTrue(scn.DSHasCardChoiceAvailable(trooper)); assertFalse(scn.DSHasCardChoiceAvailable(piett)); scn.DSChooseCard(trooper); scn.PassAllResponses();
+        scn.PassCardAndForceUseResponses(); assertTrue(scn.DSHasCardChoiceAvailable(trooper)); assertFalse(isSelectable(scn, piett)); scn.DSChooseCard(trooper); scn.PassAllResponses();
         assertEquals(b, trooper.getAttachedTo()); assertTrue(trooper.isPassengerOf());
         assertEquals(Zone.RESERVE_DECK, piett.getZone()); assertEquals(force - 6, scn.GetDSForcePileCount());
     }
+
+    private boolean isSelectable(VirtualTableScenario scn, com.gempukku.swccgo.game.PhysicalCardImpl card) {
+        var blueprints = scn.GetADParam(scn.DS, "blueprintId");
+        var allowed = scn.GetADParam(scn.DS, "selectable");
+        for (int i = 0; i < blueprints.length; i++) {
+            if (blueprints[i].equals(card.getBlueprintId(true))) return allowed == null || Boolean.parseBoolean(allowed[i]);
+        }
+        return false;
+    }
+
 }
