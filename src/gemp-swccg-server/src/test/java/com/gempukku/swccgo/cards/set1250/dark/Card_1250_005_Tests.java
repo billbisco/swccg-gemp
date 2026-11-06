@@ -4,7 +4,7 @@ import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import com.gempukku.swccgo.logic.modifiers.PowerModifier;
-import com.gempukku.swccgo.logic.modifiers.DestinyModifier;
+import com.gempukku.swccgo.logic.modifiers.TotalBattleDestinyModifier;
 import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -118,7 +118,7 @@ public class Card_1250_005_Tests {
     }
     private void attrition(int destiny, boolean immune) {
         var scn = ships(true, false); var dofine = scn.GetDSCard("dofine"); var ship = scn.GetDSCard("flagship");
-        scn.ApplyAdHocModifier(new DestinyModifier(scn.GetLSCard("luke"), scn.GetLSDestiny(7), destiny - 7));
+        scn.ApplyAdHocModifier(new TotalBattleDestinyModifier(scn.GetLSCard("luke"), destiny - 7, scn.LS));
         scn.PrepareLSDestiny(7); scn.PrepareDSDestiny(7);
         scn.DSInitiateBattle(scn.GetDSCard("system")); scn.SkipToDamageSegment(true); scn.PassDamageSegmentActions();
         assertEquals(0, scn.GetUnpaidDSBattleDamage()); assertEquals(destiny, scn.GetUnpaidDSAttrition());
