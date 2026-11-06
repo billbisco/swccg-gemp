@@ -15,9 +15,9 @@ public class Card_1261_110_Tests {
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>() {{
             put("garrison", "1261_110"); put("hoth", "3_62"); put("perimeter", "3_56");
-            put("luke", "1_19"); put("rebel", "1_28");
+            put("luke", "1_19"); put("rebel", "1_28"); put("offHothDestination", "1_137");
         }}, new HashMap<>() {{ put("vader", "1_168"); }}, 30, 30,
-                StartingSetup.LSStartingLocation("1_130"), StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.LSStartingLocation("1_136"), StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
     }
@@ -41,7 +41,7 @@ public class Card_1261_110_Tests {
     }
 
     private void start(VirtualTableScenario scn) {
-        scn.StartGame(); scn.MoveLocationToTable(scn.GetLSCard("hoth")); scn.MoveLocationToTable(scn.GetLSCard("perimeter"));
+        scn.StartGame(); scn.MoveLocationToTable(scn.GetLSCard("offHothDestination")); scn.MoveLocationToTable(scn.GetLSCard("hoth")); scn.MoveLocationToTable(scn.GetLSCard("perimeter"));
     }
 
     @Test
@@ -78,7 +78,7 @@ public class Card_1261_110_Tests {
 
     private VirtualTableScenario react(boolean hoth, int force) {
         var scn = scenario(); start(scn); var from = hoth ? scn.GetLSCard("perimeter") : scn.GetLSStartingLocation();
-        var to = hoth ? scn.GetLSCard("hoth") : scn.GetDSStartingLocation();
+        var to = hoth ? scn.GetLSCard("hoth") : scn.GetLSCard("offHothDestination");
         scn.MoveCardsToLocation(from, scn.GetLSCard("garrison"));
         scn.MoveCardsToLocation(to, scn.GetLSCard("luke"), scn.GetDSCard("vader"));
         scn.SkipToDSTurn(Phase.BATTLE);
@@ -102,7 +102,7 @@ public class Card_1261_110_Tests {
     }
 
     @Test
-    public void SnowspeederGarrisonCannotReactFromAnotherPlanet() {
+    public void SnowspeederGarrisonCannotReactAwayFromHothEvenOnSamePlanet() {
         var scn = react(false, 4); assertFalse(scn.LSCardActionAvailable(scn.GetLSCard("garrison"), "react"));
     }
 

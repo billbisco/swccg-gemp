@@ -19,7 +19,7 @@ public class Card_1261_109_Tests {
             put("dash", "1261_109"); put("speeder", "3_69"); put("luke", "1_19");
             put("hoth", "3_62"); put("otherSite", "3_56"); put("pilot", "1_27");
         }}, new HashMap<>() {{ put("vader", "1_168"); }}, 30, 30,
-                StartingSetup.LSStartingLocation("1_130"), StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.LSStartingLocation("1_136"), StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
     }
