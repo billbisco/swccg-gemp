@@ -44,8 +44,8 @@ public class Card_1261_058_Tests {
     public void BlizzardFourDownloadsNonPilotImperialWarriorFromReserveDeckForFree() {
         var scn = scenario(); scn.StartGame(); var b = scn.GetDSCard("blizzard"); var trooper = scn.GetDSCard("trooper");
         var piett = scn.GetDSCard("piett"); var site = scn.GetDSStartingLocation();
-        scn.MoveCardsToDSHand(b); scn.MoveCardsToTopOfDSReserveDeck(trooper, piett);
-        scn.SkipToDSTurn(Phase.DEPLOY); int force = scn.GetDSForcePileCount();
+        scn.MoveCardsToDSHand(b); scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.MoveCardsToTopOfDSReserveDeck(trooper, piett); int force = scn.GetDSForcePileCount();
         scn.DSDeployCard(b); scn.DSChooseCard(site); scn.PassForceUseResponses();
         for (int i = 0; i < 20 && !scn.GetDSAvailableActions().stream().anyMatch(text -> text.contains("Deploy a non-pilot Imperial warrior from Reserve Deck")); i++) {
             assertTrue("Expected deployment response, got: " + scn.GetCurrentDecision().getText() + " DS actions: " + scn.GetDSAvailableActions(), scn.GetCurrentDecision().getText().toLowerCase().contains("optional")); scn.PassResponses();
