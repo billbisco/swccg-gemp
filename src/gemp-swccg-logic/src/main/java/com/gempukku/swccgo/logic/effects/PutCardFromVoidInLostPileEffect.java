@@ -17,6 +17,12 @@ public class PutCardFromVoidInLostPileEffect extends PutOneCardFromVoidInCardPil
      * @param card the card
      */
     public PutCardFromVoidInLostPileEffect(Action action, String playerId, PhysicalCard card) {
-        super(action, card, Zone.LOST_PILE, false, ((playerId != null) ? playerId : card.getOwner()) + " puts " + GameUtils.getCardLink(card) + " in Lost Pile");
+        this(action, playerId, card, false);
+    }
+
+    /** Places the card on the specified end of Lost Pile, retaining normal discard results. */
+    public PutCardFromVoidInLostPileEffect(Action action, String playerId, PhysicalCard card, boolean bottom) {
+        super(action, card, Zone.LOST_PILE, bottom, ((playerId != null) ? playerId : card.getOwner())
+                + " puts " + GameUtils.getCardLink(card) + (bottom ? " on bottom of Lost Pile" : " in Lost Pile"));
     }
 }
