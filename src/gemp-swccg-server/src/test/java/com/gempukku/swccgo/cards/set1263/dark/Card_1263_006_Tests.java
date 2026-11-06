@@ -4,6 +4,8 @@ import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.game.PhysicalCardImpl;
+import com.gempukku.swccgo.filters.Filters;
 import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -66,27 +68,42 @@ public class Card_1263_006_Tests {
         assertTrue(scn.LSCardActionAvailable(leia, "Add one destiny to total power"));
         assertTrue(scn.LSCardActionAvailable(leia, "Add one destiny to attrition"));
     }
+    private void resolveWeather(VirtualTableScenario scn, PhysicalCardImpl weather) {
+        for (int i=0; i<10; i++) {
+            scn.PassAllResponses();
+            if (scn.DSCardActionAvailable(scn.GetDSCard("pirate"), "Cancel"))
+                scn.DSUseCardAction(scn.GetDSCard("pirate"), "Cancel");
+            else if (scn.DSDecisionAvailable("Target card to cancel"))
+                scn.DSChooseCard(weather);
+            else return;
+        }
+    }
+
     private VirtualTableScenario weather(String weatherName, String weatherSite, String pirateSite) {
         var scn = scenario(); var pirate = scn.GetDSCard("pirate");
         scn.StartGame(); scn.MoveLocationToTable(scn.GetDSCard("hoth"));
         scn.MoveLocationToTable(scn.GetDSCard("bay")); scn.MoveLocationToTable(scn.GetDSCard("desert"));
         scn.MoveCardsToDSHand(pirate); scn.SkipToDSTurn(Phase.DEPLOY);
         scn.AttachCardsTo(scn.GetDSCard(weatherSite), scn.GetDSCard(weatherName));
-        scn.DSDeployCard(pirate); scn.DSChooseCard(scn.GetDSCard(pirateSite)); scn.PassAllResponses();
+        scn.DSDeployCard(pirate); scn.DSChooseCard(scn.GetDSCard(pirateSite)); resolveWeather(scn, scn.GetDSCard(weatherName));
         return scn;
     }
     @Test public void MercenaryShadowPirateCancelsExistingIceStormAtSameLocation() {
         var scn = weather("ice", "hoth", "hoth"); assertEquals(Zone.LOST_PILE, scn.GetDSCard("ice").getZone());
+        assertEquals(Zone.AT_LOCATION, scn.GetDSCard("pirate").getZone());
+        assertFalse(Filters.missing.accepts(scn.game(), scn.GetDSCard("pirate")));
     }
     @Test public void MercenaryShadowPirateCancelsExistingIceStormAtRelatedLocation() {
         var scn = weather("ice", "hoth", "bay"); assertEquals(Zone.LOST_PILE, scn.GetDSCard("ice").getZone());
+        assertEquals(Zone.AT_LOCATION, scn.GetDSCard("pirate").getZone());
+        assertFalse(Filters.missing.accepts(scn.game(), scn.GetDSCard("pirate")));
     }
     @Test public void MercenaryShadowPirateCancelsExistingSandwhirlAtRelatedLocation() {
         var scn = scenario(); var pirate = scn.GetDSCard("pirate");
         scn.StartGame(); scn.MoveLocationToTable(scn.GetDSCard("desert"));
         scn.MoveCardsToDSHand(pirate); scn.SkipToDSTurn(Phase.DEPLOY);
         scn.AttachCardsTo(scn.GetDSCard("desert"), scn.GetDSCard("sand"));
-        scn.DSDeployCard(pirate); scn.DSChooseCard(scn.GetDSStartingLocation()); scn.PassAllResponses();
+        scn.DSDeployCard(pirate); scn.DSChooseCard(scn.GetDSStartingLocation()); resolveWeather(scn, scn.GetDSCard("sand"));
         assertEquals(Zone.LOST_PILE, scn.GetDSCard("sand").getZone());
     }
     @Test public void MercenaryShadowPirateDoesNotCancelWeatherAtUnrelatedLocation() {
@@ -97,7 +114,7 @@ public class Card_1263_006_Tests {
         scn.StartGame(); scn.MoveLocationToTable(scn.GetDSCard("hoth")); scn.MoveLocationToTable(scn.GetDSCard("bay"));
         scn.MoveCardsToLocation(scn.GetDSCard("bay"), scn.GetDSCard("pirate"));
         scn.MoveCardsToDSHand(ice); scn.SkipToDSTurn(Phase.DEPLOY);
-        scn.DSDeployCard(ice); scn.DSChooseCard(scn.GetDSCard("hoth")); scn.PassAllResponses();
+        scn.DSDeployCard(ice); scn.DSChooseCard(scn.GetDSCard("hoth")); resolveWeather(scn, ice);
         assertEquals(Zone.LOST_PILE, ice.getZone());
     }
     @Test public void MercenaryShadowPirateCancelsNewSandwhirlBeforeItDeploys() {
@@ -105,7 +122,18 @@ public class Card_1263_006_Tests {
         scn.StartGame(); scn.MoveLocationToTable(scn.GetDSCard("desert"));
         scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("pirate"));
         scn.MoveCardsToDSHand(sand); scn.SkipToDSTurn(Phase.DEPLOY);
-        scn.DSDeployCard(sand); scn.DSChooseCard(scn.GetDSCard("desert")); scn.PassAllResponses();
+        scn.DSDeployCard(sand); scn.DSChooseCard(scn.GetDSCard("desert")); resolveWeather(scn, sand);
         assertEquals(Zone.LOST_PILE, sand.getZone());
+    }
+
+    @Test
+    public void MercenaryShadowPirateAlsoCancelsOpponentsWeather() {
+        var scn = scenario(); var pirate = scn.GetDSCard("pirate"); var ice = scn.GetLSCard("ice");
+        scn.StartGame(); scn.MoveLocationToTable(scn.GetDSCard("hoth")); scn.MoveLocationToTable(scn.GetDSCard("bay"));
+        scn.MoveCardsToDSHand(pirate); scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.AttachCardsTo(scn.GetDSCard("hoth"), ice);
+        scn.DSDeployCard(pirate); scn.DSChooseCard(scn.GetDSCard("bay")); resolveWeather(scn, ice);
+        assertEquals(Zone.LOST_PILE, ice.getZone());
+        assertFalse(Filters.missing.accepts(scn.game(), pirate));
     }
 }
