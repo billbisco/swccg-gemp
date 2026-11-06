@@ -32,7 +32,6 @@ import java.util.List;
 public class Card1250_084 extends AbstractCapitalStarship {
     public Card1250_084() {
         super(Side.LIGHT, 1, 5, 5, 4, null, 3, 8, "Republic Corvette", Uniqueness.UNRESTRICTED, ExpansionSet.VIRTUAL_BLOCK_5, Rarity.V);
-        setVirtualSuffix(true);
         setLore("Multi-purpose Rebel Blockade Runner. Modular interior designed for troop or cargo transport. 150 meters long. Used by Rebels, pirates, corporations and the Empire.");
         setGameText("May add 3 Republic pilots and 4 passengers. Quad Laser Cannons may not deploy aboard. Permanent pilot provides ability of 2. While with an Imperial-class Star Destroyer, power +1.");
         addIcons(Icon.EPISODE_I, Icon.REPUBLIC, Icon.PILOT, Icon.NAV_COMPUTER, Icon.SCOMP_LINK);

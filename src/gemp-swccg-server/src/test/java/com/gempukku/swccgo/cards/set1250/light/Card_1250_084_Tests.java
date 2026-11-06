@@ -63,7 +63,7 @@ public class Card_1250_084_Tests {
         var card = scn.GetLSCard("corvette").getBlueprint();
 
         assertEquals("Republic Corvette", card.getTitle());
-        assertTrue(card.hasVirtualSuffix());
+        assertFalse(card.hasVirtualSuffix());
         assertEquals(Uniqueness.UNRESTRICTED, card.getUniqueness());
         assertEquals(Side.LIGHT, card.getSide());
         assertEquals(1, card.getDestiny(), scn.epsilon);
