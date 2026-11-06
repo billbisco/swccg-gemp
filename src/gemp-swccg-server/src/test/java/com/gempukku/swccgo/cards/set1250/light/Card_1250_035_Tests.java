@@ -43,9 +43,9 @@ public class Card_1250_035_Tests {
         assertEquals(2, card.getAbility(), scn.epsilon);
         assertEquals(3, card.getArmor(), scn.epsilon);
         assertEquals(4, card.getForfeit(), scn.epsilon);
-        scn.BlueprintCardTypeCheck(card, new ArrayList<>() {{ add(CardType.CHARACTER); add(CardType.REPUBLIC); }});
+        scn.BlueprintCardTypeCheck(card, new ArrayList<>() {{ add(CardType.REPUBLIC); }});
         scn.BlueprintIconCheck(card, new ArrayList<>() {{
-            add(Icon.CHARACTER); add(Icon.REPUBLIC); add(Icon.EPISODE_I); add(Icon.PILOT); add(Icon.LEGACY_BLOCK_5);
+            add(Icon.REPUBLIC); add(Icon.EPISODE_I); add(Icon.PILOT); add(Icon.LEGACY_BLOCK_5);
         }});
         scn.BlueprintKeywordCheck(card, new ArrayList<>() {{ add(Keyword.CLONE_TROOPER); }});
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_5, card.getExpansionSet());
