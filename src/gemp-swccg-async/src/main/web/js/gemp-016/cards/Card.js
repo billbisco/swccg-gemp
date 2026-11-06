@@ -289,7 +289,13 @@ class Card {
     static resUrl(url) {
         if (url == null)
             return url;
-        return String(url).replace("https://res.starwarsccg.org", Card.resOrigin());
+        var resourceUrl = String(url);
+        var resourceOrigin = Card.resOrigin();
+        // The default mirror does not serve the Legacy scan subtree.
+        if (resourceOrigin === "https://swccg.com"
+                && resourceUrl.startsWith("https://res.starwarsccg.org/cards/legacy/"))
+            return resourceUrl;
+        return resourceUrl.replace("https://res.starwarsccg.org", resourceOrigin);
     }
 
     static getImageUrl(blueprintId) {
