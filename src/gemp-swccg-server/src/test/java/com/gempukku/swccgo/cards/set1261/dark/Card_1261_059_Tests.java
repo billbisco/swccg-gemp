@@ -106,6 +106,8 @@ public class Card_1261_059_Tests {
         for (int i = 0; i < choices.length; i++) {
             if (choices[i].equals(walker.getBlueprintId(true))) assertFalse(Boolean.parseBoolean(selectable[i]));
         }
+        var site = scn.GetDSStartingLocation(); assertTrue(scn.DSHasCardChoiceAvailable(site));
+        scn.DSChooseCard(site); scn.PassAllResponses(); assertEquals(site, second.getAtLocation());
     }
 
     private void assertAttritionBoundary(int destiny, boolean immune) {
