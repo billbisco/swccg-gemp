@@ -61,7 +61,7 @@ public class Card_1263_028_Tests {
         var scn = ground(false, true); play(scn);
         assertEquals(2, scn.GetPower(scn.GetLSCard("trooper")));
         assertEquals(2, scn.GetPower(scn.GetLSCard("trooper2")));
-        assertEquals(5, scn.GetPower(scn.GetLSCard("luke")));
+        assertEquals(3, scn.GetPower(scn.GetLSCard("luke")));
         assertEquals(6, scn.GetPower(scn.GetDSCard("vader")));
         assertEquals(1, scn.GetPower(scn.GetLSCard("farTrooper")));
         assertTrue(scn.game().getModifiersQuerying().getImmunityToAttritionLessThan(scn.gameState(), scn.GetLSCard("trooper")) > 100);
@@ -82,7 +82,8 @@ public class Card_1263_028_Tests {
 
     @Test
     public void FirefightOnlyPlaysWhenBattleJustInitiated() {
-        var scn = ground(false, true); scn.PassAllResponses(); scn.SkipToPowerSegment();
+        var scn = ground(false, true); scn.PassBattleStartResponses();
+        assertTrue(scn.AwaitingLSWeaponsSegmentActions());
         assertFalse(scn.LSCardPlayAvailable(scn.GetLSCard("firefight")));
     }
 
@@ -110,12 +111,17 @@ public class Card_1263_028_Tests {
     @Test
     public void FirefightProtectedTroopersDoNotPayBattleAttrition() {
         var scn = ground(false, true); play(scn);
-        scn.PrepareLSDestiny(0); scn.PrepareDSDestiny(1);
+        scn.MoveCardsToLSHand(scn.GetLSCard("luke"));
+        scn.PrepareDSDestiny(1);
         scn.SkipToDamageSegment(true); scn.PassDamageSegmentActions();
         assertTrue(scn.AwaitingLSAttritionPayment());
-        assertFalse(scn.LSHasCardChoiceAvailable(scn.GetLSCard("trooper")));
-        assertFalse(scn.LSHasCardChoiceAvailable(scn.GetLSCard("trooper2")));
-        assertTrue(scn.LSHasCardChoiceAvailable(scn.GetLSCard("luke")));
+        assertEquals(2, scn.GetUnpaidLSAttrition());
+        if (scn.AwaitingLSBattleDamagePayment()) scn.LSPayRemainingBattleDamageFromReserveDeck();
+        assertTrue(scn.LSDecisionAvailable("(if desired)"));
+        scn.LSChooseCards();
+        scn.PassAllResponses();
+        assertInZone(Zone.AT_LOCATION, scn.GetLSCard("trooper"));
+        assertInZone(Zone.AT_LOCATION, scn.GetLSCard("trooper2"));
     }
 
     @Test
@@ -140,6 +146,6 @@ public class Card_1263_028_Tests {
         assertEquals(3, scn.GetPower(scn.GetLSCard("bravo")));
         assertEquals(6, scn.GetPower(scn.GetLSCard("red5")));
         assertTrue(scn.game().getModifiersQuerying().getImmunityToAttritionLessThan(scn.gameState(), scn.GetLSCard("bravo")) > 100);
-        assertEquals(0, scn.game().getModifiersQuerying().getImmunityToAttritionLessThan(scn.gameState(), scn.GetLSCard("red5")), scn.epsilon);
+        assertEquals(4, scn.game().getModifiersQuerying().getImmunityToAttritionLessThan(scn.gameState(), scn.GetLSCard("red5")), scn.epsilon);
     }
 }
