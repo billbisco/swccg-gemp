@@ -66,8 +66,13 @@ public class Card_1261_004_Tests {
         var scn = scenario(); scn.StartGame(); var site = scn.GetDSStartingLocation();
         scn.MoveCardsToLocation(site, scn.GetDSCard("boba"), scn.GetLSCard("chewie"));
         scn.DSStartBattleAndSkipToWeaponsSegment(site); assertEquals(0, scn.GetDSBattleDestinyCount());
-        scn.MoveCardsToLocation(site, scn.GetDSCard("alien")); assertEquals(2, scn.GetDSBattleDestinyCount());
-        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetDSCard("alien")); assertEquals(0, scn.GetDSBattleDestinyCount());
+        var own = scenario(); own.StartGame(); var ownSite = own.GetDSStartingLocation();
+        own.MoveCardsToLocation(ownSite, own.GetDSCard("boba"), own.GetDSCard("alien"), own.GetLSCard("chewie"));
+        own.DSStartBattleAndSkipToWeaponsSegment(ownSite); assertEquals(2, own.GetDSBattleDestinyCount());
+        var remote = scenario(); remote.StartGame(); var remoteSite = remote.GetDSStartingLocation();
+        remote.MoveCardsToLocation(remoteSite, remote.GetDSCard("boba"), remote.GetLSCard("chewie"));
+        remote.MoveCardsToLocation(remote.GetLSStartingLocation(), remote.GetDSCard("alien"));
+        remote.DSStartBattleAndSkipToWeaponsSegment(remoteSite); assertEquals(0, remote.GetDSBattleDestinyCount());
     }
 
     @Test
