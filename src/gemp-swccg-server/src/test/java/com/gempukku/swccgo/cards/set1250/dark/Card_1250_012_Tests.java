@@ -45,17 +45,24 @@ public class Card_1250_012_Tests {
         assertTrue(scn.DSCardActionAvailable(scn.GetDSCard("watto"), "Reveal random Force Pile card"));
         scn.DSUseCardAction(scn.GetDSCard("watto"), "Reveal random Force Pile card"); scn.PassAllResponses();
     }
+    private void returnToDarkActions(VirtualTableScenario scn) {
+        if (scn.AnyDecisionsAvailable(scn.LS)) {
+            assertTrue(scn.LSDecisionAvailable("action"));
+            scn.LSPass();
+        }
+        assertTrue(scn.AwaitingDSControlPhaseActions());
+    }
     @Test public void WattoOddRevealIncreasesActualDrainHereAndUsesRevealedCard() {
         var scn = setup(true); var yard = scn.GetDSCard("junkyard"); force(scn, 3);
         int hand = scn.GetDSHandCount(); int life = scn.GetLSLifeForceRemaining(); reveal(scn);
         assertInZone(Zone.USED_PILE, scn.GetDSDestiny(3)); assertEquals(hand, scn.GetDSHandCount());
-        scn.DSForceDrainAt(yard); scn.PassForceDrainStartResponses(); assertEquals(2, scn.GetForceDrainTotal());
+        returnToDarkActions(scn); scn.DSForceDrainAt(yard); scn.PassForceDrainStartResponses(); assertEquals(2, scn.GetForceDrainTotal());
         scn.LSPayRemainingForceLossFromReserveDeck(); scn.PassAllResponses(); assertEquals(life - 2, scn.GetLSLifeForceRemaining());
     }
     @Test public void WattoOddRevealDoesNotIncreaseDrainAtOtherSite() {
         var scn = setup(true); force(scn, 1); var site = scn.GetDSStartingLocation();
         int base = (int) scn.game().getModifiersQuerying().getForceDrainAmount(scn.gameState(), site, scn.DS);
-        reveal(scn); scn.DSForceDrainAt(site); scn.PassForceDrainStartResponses(); assertEquals(base, scn.GetForceDrainTotal());
+        reveal(scn); returnToDarkActions(scn); scn.DSForceDrainAt(site); scn.PassForceDrainStartResponses(); assertEquals(base, scn.GetForceDrainTotal());
     }
     @Test public void WattoOddBonusExpiresAtEndOfTurn() {
         var scn = setup(true); force(scn, 1); reveal(scn); scn.SkipToLSTurn(Phase.CONTROL); scn.SkipToDSTurn(Phase.CONTROL);
@@ -65,25 +72,27 @@ public class Card_1250_012_Tests {
         var scn = setup(true); force(scn, destiny); scn.PrepareDSDestiny(5); var top = scn.GetTopOfDSReserveDeck();
         int hand = scn.GetDSHandCount(); reveal(scn);
         assertEquals(hand + 1, scn.GetDSHandCount()); assertInZone(Zone.HAND, top); assertInZone(Zone.USED_PILE, scn.GetDSDestiny(destiny));
-        scn.DSForceDrainAt(scn.GetDSCard("junkyard")); scn.PassForceDrainStartResponses(); assertEquals(1, scn.GetForceDrainTotal());
+        returnToDarkActions(scn); scn.DSForceDrainAt(scn.GetDSCard("junkyard")); scn.PassForceDrainStartResponses(); assertEquals(1, scn.GetForceDrainTotal());
     }
     @Test public void WattoEvenRevealDrawsTopReserveCardAndUsesRevealedCard() { even(2); }
     @Test public void WattoZeroDestinyTakesEvenBranch() { even(0); }
     @Test public void WattoMayRevealOnlyOnceInSameTurn() {
         var scn = setup(true); force(scn, 3); reveal(scn); force(scn, 1);
-        scn.SkipToDSTurn(Phase.DEPLOY); assertTrue(scn.AwaitingDSDeployPhaseActions());
+        scn.SkipToPhase(Phase.DEPLOY); assertTrue(scn.AwaitingDSDeployPhaseActions());
         assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("watto"), "Reveal random Force Pile card"));
     }
     @Test public void WattoMayRevealAgainDuringOpponentsTurn() {
         var scn = setup(true); force(scn, 3); reveal(scn); scn.SkipToLSTurn(Phase.ACTIVATE); force(scn, 2);
-        scn.LSActivateMaxForceAndPass(); reveal(scn); assertInZone(Zone.USED_PILE, scn.GetDSDestiny(2));
+        scn.LSPass();
+        if (scn.LSDecisionAvailable("You have not activated Force")) scn.LSChooseYes();
+        reveal(scn); assertInZone(Zone.USED_PILE, scn.GetDSDestiny(2));
     }
     @Test public void WattoCannotRevealAtAnotherSite() {
         var scn = setup(false); assertTrue(scn.AwaitingDSControlPhaseActions());
         assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("watto"), "Reveal random Force Pile card"));
     }
     @Test public void WattoCannotRevealFromEmptyForcePile() {
-        var scn = setup(true); force(scn); scn.SkipToDSTurn(Phase.DEPLOY); assertTrue(scn.AwaitingDSDeployPhaseActions());
+        var scn = setup(true); force(scn); scn.SkipToPhase(Phase.DEPLOY); assertTrue(scn.AwaitingDSDeployPhaseActions());
         assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("watto"), "Reveal random Force Pile card"));
     }
     @Test public void WattoRandomRevealCanSelectEitherCardInsteadOfAlwaysTakingTop() {
