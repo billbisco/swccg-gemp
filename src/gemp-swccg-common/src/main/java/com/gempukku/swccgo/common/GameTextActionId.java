@@ -1697,6 +1697,9 @@ public enum GameTextActionId {
     LEGACY__RAPID_DEPLOYMENT__DEPLOY_SCOUT(true),
     LEGACY__GREEN_SQUADRON_1__TAKE_DIVERSIONARY_TACTICS(true),
     LEGACY__UH_OH__DEPLOY_CLAKDOR_OR_MUSICIAN(true),
+    LEGACY__OUR_ONLY_HOPE__DEPLOY_LUKE(true),
+    LEGACY__OUR_ONLY_HOPE__TAKE_ANY_CARD(true),
+    LEGACY__A_JEDIS_PATIENCE__DUEL(false, true),
     ;
 
     private boolean _searchCardPile;
