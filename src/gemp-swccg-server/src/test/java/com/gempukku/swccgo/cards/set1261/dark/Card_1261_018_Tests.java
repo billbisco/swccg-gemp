@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
 
 public class Card_1261_018_Tests {
     private VirtualTableScenario scenario() {
-        return new VirtualTableScenario(new HashMap<>() {{ put("luke", "1_19"); }},
+        return new VirtualTableScenario(new HashMap<>() {{ put("luke", "1_19"); put("blaster", "1_152"); }},
                 new HashMap<>() {{ put("guards", "1261_18"); put("jabba", "6_109");
                     put("trooper", "1_194"); put("palace", "6_162"); }}, 10, 10,
                 StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
@@ -115,4 +115,26 @@ public class Card_1261_018_Tests {
         assertEquals(6, scn.GetDSTotalPower());
         assertTrue(scn.DSCardActionAvailable(guards, "Add 2 to total power"));
     }
+
+    @Test
+    public void ThokAndThugDoNotBecomeHeroicWithOpponentsAlienLeader() {
+        var scn = scenario(); scn.StartGame(); var guards = scn.GetDSCard("guards");
+        var enemyLeader = com.gempukku.swccgo.cards.legacy.MissionTestSupport.putInHand(scn, 9184, scn.LS,
+                new com.gempukku.swccgo.cards.AbstractAlien(Side.LIGHT, 1, 2, 2, 2, 3, "Alien Leader", Uniqueness.UNRESTRICTED, ExpansionSet.PREMIERE, Rarity.C1) {
+                    { addKeywords(Keyword.LEADER); }
+                });
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), guards, enemyLeader);
+        assertFalse(scn.HasKeyword(guards, Keyword.HEROIC));
+    }
+
+    @Test
+    public void ThokAndThugGrantedHeroicProtectsJabbaFromWeaponTargeting() {
+        var scn = scenario(); scn.StartGame(); var guards = scn.GetDSCard("guards"); var jabba = scn.GetDSCard("jabba");
+        var luke = scn.GetLSCard("luke"); var blaster = scn.GetLSCard("blaster"); var site = scn.GetDSStartingLocation();
+        scn.MoveCardsToLocation(site, guards, jabba, luke); scn.AttachCardsTo(luke, blaster);
+        scn.LSStartBattleAndSkipToWeaponsSegment(site); scn.LSUseCardAction(blaster, "Fire");
+        assertTrue(scn.LSHasCardChoiceAvailable(guards));
+        assertTrue(scn.LSHasCardChoiceNotAvailable(jabba));
+    }
+
 }
