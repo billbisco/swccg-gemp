@@ -128,6 +128,7 @@ public class Card_1261_004_Tests {
         scn.DSStartBattleAndSkipToWeaponsSegment(site); scn.PrepareLSDestiny(destiny);
         scn.SkipToDamageSegment(true); scn.PassDamageSegmentActions();
         scn.DSPayRemainingBattleDamageFromReserveDeck(); scn.PassAllResponses();
+        assertEquals(immune ? "0" : "1", scn.GetADParam(scn.DS, "min")[0]);
         if (immune) {
             scn.DSPass(); scn.PassAllResponses(); assertEquals(site, b.getAtLocation());
         } else {
