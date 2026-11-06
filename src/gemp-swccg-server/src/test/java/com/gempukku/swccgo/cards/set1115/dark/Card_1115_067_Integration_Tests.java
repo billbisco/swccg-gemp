@@ -26,6 +26,7 @@ public class Card_1115_067_Integration_Tests {
             put("original", "1102_48");
             put("vader", "1_168");
             put("modernSearch", "213_20"); put("sister", "213_12");
+            put("brother", "213_6");
             put("legacySearch", "601_98");
         }}, 20, 20, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
@@ -79,7 +80,7 @@ public class Card_1115_067_Integration_Tests {
         var battleSite = atSkillEffect ? here : scn.GetLSStartingLocation();
         scn.MoveCardsToLocation(here, scn.GetDSCard("trooper"));
         scn.AttachCardsTo(scn.GetDSCard("trooper"), scn.GetDSCard("skill"));
-        scn.MoveCardsToLocation(battleSite, scn.GetDSCard("vader"), scn.GetLSCard("luke"));
+        scn.MoveCardsToLocation(battleSite, scn.GetDSCard("maul"), scn.GetLSCard("luke"));
         scn.ApplyAdHocModifier(new AddsBattleDestinyModifier(here, 1));
         scn.SkipToDSTurn(Phase.BATTLE);
         scn.EnsureDSForcePile(2);
@@ -161,24 +162,26 @@ public class Card_1115_067_Integration_Tests {
         var interrupt = scn.GetDSCard("modernSearch");
         var maul = scn.GetDSCard("maul");
         var sister = scn.GetDSCard("sister");
+        var brother = scn.GetDSCard("brother");
         scn.MoveOutOfPlay(scn.GetDSCard("vader"));
         scn.MoveOutOfPlay(scn.GetDSCard("mara"));
         scn.MoveOutOfPlay(sister);
+        scn.MoveOutOfPlay(brother);
         scn.MoveCardsToHand(interrupt, maul);
         scn.SkipToDSTurn(Phase.CONTROL);
-        scn.MoveCardsToTopOfDSReserveDeck(sister);
+        scn.MoveCardsToTopOfDSReserveDeck(sister, brother);
         scn.DSPlayCard(interrupt, "Take inquisitors into hand from Reserve Deck");
         if (scn.GetDSHand().contains(maul))
             scn.DSChooseCard(maul);
         scn.PassAllResponses();
         scn.DSChooseCard(sister);
         scn.PassAllResponses();
-        if (scn.DSDecisionAvailable("Choose card to take into hand"))
-            scn.DSChooseCards();
+        scn.DSChooseCard(brother);
         scn.PassAllResponses();
         assertInZone(Zone.LOST_PILE, maul);
         assertInZone(Zone.HAND, sister);
-        assertInZone(Zone.LOST_PILE, interrupt);
+        assertInZone(Zone.HAND, brother);
+        assertEquals(scn.GetCurrentDecision().getText(), Zone.LOST_PILE, interrupt.getZone());
     }
 
     private void legacyDeploymentSearch(boolean trained) {
