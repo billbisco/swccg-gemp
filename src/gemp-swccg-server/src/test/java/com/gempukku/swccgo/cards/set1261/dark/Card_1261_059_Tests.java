@@ -103,10 +103,14 @@ public class Card_1261_059_Tests {
         assertTrue(scn.IsAboardAsPilot(walker, driver));
         if (scn.AwaitingLSDeployPhaseActions()) scn.LSPass();
         assertTrue(scn.AwaitingDSDeployPhaseActions()); scn.DSDeployCard(second);
-        var choices = scn.GetADParam(scn.DS, "blueprintId"); var selectable = scn.GetADParam(scn.DS, "selectable");
-        for (int i = 0; i < choices.length; i++) {
-            if (choices[i].equals(walker.getBlueprintId(true))) assertFalse(Boolean.parseBoolean(selectable[i]));
+        var choices = scn.GetADParam(scn.DS, "blueprintId"); var ids = scn.GetADParam(scn.DS, "cardId");
+        var selectable = scn.GetADParam(scn.DS, "selectable"); boolean walkerSelectable = false;
+        int count = choices != null ? choices.length : ids.length;
+        for (int i = 0; i < count; i++) {
+            boolean isWalker = choices != null ? choices[i].equals(walker.getBlueprintId(true)) : ids[i].equals(String.valueOf(walker.getCardId()));
+            if (isWalker) walkerSelectable = selectable == null || Boolean.parseBoolean(selectable[i]);
         }
+        assertFalse(walkerSelectable);
         var site = scn.GetDSStartingLocation(); assertTrue(scn.DSHasCardChoiceAvailable(site));
         scn.DSChooseCard(site); scn.PassAllResponses(); assertEquals(site, second.getAtLocation());
     }
