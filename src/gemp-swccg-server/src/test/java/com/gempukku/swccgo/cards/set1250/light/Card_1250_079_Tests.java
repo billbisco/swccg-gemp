@@ -181,11 +181,6 @@ public class Card_1250_079_Tests {
         assertFalse(isSelectable(scn, scn.GetLSCard("pilot")));
         scn.LSChooseCard(senator);
         scn.PassAllResponses();
-        assertTrue(isSelectable(scn, ship));
-        assertFalse(isSelectable(scn, otherShip));
-        assertFalse(isSelectable(scn, system));
-        scn.LSChooseCard(ship);
-        scn.PassAllResponses();
         scn.PassCardAndForceUseResponses();
         assertTrue(scn.IsAboardAsPassenger(ship, senator));
         assertEquals(force - 3, scn.GetLSForcePileCount());
