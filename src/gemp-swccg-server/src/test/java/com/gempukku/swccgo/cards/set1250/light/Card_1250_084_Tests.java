@@ -5,6 +5,7 @@ import com.gempukku.swccgo.common.CardType;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.ModelType;
+import com.gempukku.swccgo.common.Keyword;
 import com.gempukku.swccgo.common.Phase;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
@@ -90,7 +91,7 @@ public class Card_1250_084_Tests {
             add(Icon.SCOMP_LINK);
         }});
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_5, card.getExpansionSet());
-        scn.BlueprintKeywordCheck(card, new ArrayList<>());
+        scn.BlueprintKeywordCheck(card, new ArrayList<>() {{ add(Keyword.SHIP_DOCKING_CAPABILITY); }});
         assertEquals(Rarity.V, card.getRarity());
     }
 
