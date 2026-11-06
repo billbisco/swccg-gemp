@@ -39,11 +39,16 @@ public class Card_1263_028_Tests {
     }
 
     private VirtualTableScenario ground(boolean coruscant, boolean troopers) {
+        return ground(coruscant, troopers, false);
+    }
+
+    private VirtualTableScenario ground(boolean coruscant, boolean troopers, boolean enemyTrooper) {
         var scn = scenario(); scn.StartGame();
         var site = coruscant ? scn.GetLSCard("coruscantSite") : scn.GetLSStartingLocation();
         if (coruscant) scn.MoveLocationToTable(site);
         scn.MoveCardsToLocation(site, scn.GetLSCard("luke"), scn.GetDSCard("vader"));
         if (troopers) scn.MoveCardsToLocation(site, scn.GetLSCard("trooper"), scn.GetLSCard("trooper2"));
+        if (enemyTrooper) scn.MoveCardsToLocation(site, scn.GetDSCard("stormtrooper"));
         scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetLSCard("farTrooper"));
         scn.MoveCardsToLSHand(scn.GetLSCard("firefight"));
         scn.SkipToLSTurn(Phase.BATTLE); scn.LSInitiateBattle(site);
@@ -58,7 +63,9 @@ public class Card_1263_028_Tests {
 
     @Test
     public void FirefightBoostsEachOwnTrooperPresentButNotOtherCharactersOrSites() {
-        var scn = ground(false, true); play(scn);
+        var scn = ground(false, true, true); play(scn);
+        assertEquals(1, scn.GetPower(scn.GetDSCard("stormtrooper")));
+        assertEquals(0, scn.game().getModifiersQuerying().getImmunityToAttritionLessThan(scn.gameState(), scn.GetDSCard("stormtrooper")), scn.epsilon);
         assertEquals(2, scn.GetPower(scn.GetLSCard("trooper")));
         assertEquals(2, scn.GetPower(scn.GetLSCard("trooper2")));
         assertEquals(3, scn.GetPower(scn.GetLSCard("luke")));
