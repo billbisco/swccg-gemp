@@ -92,16 +92,20 @@ public class Card_1263_020_Tests {
         scn.BoardAsPilot(walker, scn.GetDSCard("driver"));
         scn.SkipToDSTurn(Phase.BATTLE); scn.PrepareLSDestiny(destiny);
         scn.DSInitiateBattle(site); scn.SkipToDamageSegment(true); scn.PassDamageSegmentActions();
-        if (destiny == 4) {
-            var query = scn.game().getModifiersQuerying(); var driver = scn.GetDSCard("driver");
-            System.out.println("CYCLONE_DAMAGE_STATE " + scn.GetCurrentDecision().getText()
-                    + " vehicleImmunity=" + query.getImmunityToAttritionLessThan(scn.gameState(), walker)
-                    + " driverImmunity=" + query.getImmunityToAttritionLessThan(scn.gameState(), driver)
-                    + " driverPresent=" + query.getLocationThatCardIsPresentAt(scn.gameState(), driver)
-                    + " vehiclePresent=" + query.getLocationThatCardIsPresentAt(scn.gameState(), walker)
-                    + " dsDamage=" + scn.GetUnpaidDSBattleDamage());
+        assertEquals(destiny, scn.GetUnpaidDSAttrition());
+        if (remaining == 0) {
+            assertTrue(scn.DSDecisionAvailable("Choose a card from battle to forfeit (if desired)"));
+            scn.DSPass();
+            assertEquals(Zone.AT_LOCATION, walker.getZone());
+            assertEquals(walker, scn.GetDSCard("driver").getAttachedTo());
         }
-        assertEquals(remaining, scn.GetUnpaidDSAttrition());
+        else {
+            assertTrue(scn.DSDecisionAvailable("Choose a card from battle to forfeit"));
+            assertFalse(scn.DSDecisionAvailable("(if desired)"));
+            scn.DSChooseCard(scn.GetDSCard("driver"));
+            scn.PassAllResponses();
+            com.gempukku.swccgo.framework.Assertions.assertInZone(Zone.LOST_PILE, scn.GetDSCard("driver"));
+        }
     }
     @Test public void CycloneWalkerDriverProtectsFromAttritionBelowFive() { attrition(4, 0); }
     @Test public void CycloneWalkerDriverDoesNotProtectFromAttritionEqualToFive() { attrition(5, 5); }

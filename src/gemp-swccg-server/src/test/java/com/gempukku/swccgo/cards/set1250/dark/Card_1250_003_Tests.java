@@ -84,20 +84,11 @@ public class Card_1250_003_Tests {
         assertTrue(scn.gameState().getBattleState().isReachedPowerSegment());
         assertFalse(scn.game().getModifiersQuerying().isPlayingCardProhibited(scn.gameState(), scn.GetLSCard("interrupt"), false));
         assertFalse(scn.game().getModifiersQuerying().isPlayingCardProhibited(scn.gameState(), scn.GetDSCard("interrupt"), false));
-        scn.PassResponses("BEFORE_BATTLE_DESTINY_DRAWS");
-        scn.SkipBattleDestinyDraws(false);
-        System.out.println("CHOKK_POWER_DECISION " + scn.GetCurrentDecision().getText());
-        assertTrue(scn.AwaitingLSPowerSegmentActions() || scn.AwaitingDSPowerSegmentActions());
-        if (scn.AwaitingLSPowerSegmentActions()) {
-            assertTrue(scn.LSCardPlayAvailable(scn.GetLSCard("interrupt")));
-            scn.LSPass();
-            assertTrue(scn.DSCardPlayAvailable(scn.GetDSCard("interrupt")));
-        }
-        else {
-            assertTrue(scn.DSCardPlayAvailable(scn.GetDSCard("interrupt")));
-            scn.DSPass();
-            assertTrue(scn.LSCardPlayAvailable(scn.GetLSCard("interrupt")));
-        }
+        assertTrue(scn.LSDecisionAvailable("BEFORE_BATTLE_DESTINY_DRAWS"));
+        assertTrue(scn.LSCardPlayAvailable(scn.GetLSCard("interrupt")));
+        scn.LSPass();
+        assertTrue(scn.DSDecisionAvailable("BEFORE_BATTLE_DESTINY_DRAWS"));
+        assertTrue(scn.DSCardPlayAvailable(scn.GetDSCard("interrupt")));
     }
 
     @Test
