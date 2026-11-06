@@ -2,6 +2,7 @@ package com.gempukku.swccgo.cards.set1115.dark;
 
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Phase;
+import com.gempukku.swccgo.common.Zone;
 import com.gempukku.swccgo.filters.InterruptPersonaReferences;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
@@ -11,17 +12,21 @@ import org.junit.Test;
 import java.util.HashMap;
 
 import static org.junit.Assert.*;
+import static com.gempukku.swccgo.framework.Assertions.assertInZone;
 
 public class Card_1115_067_Integration_Tests {
     private VirtualTableScenario scenario() {
         var scn = new VirtualTableScenario(new HashMap<>() {{
-            put("enemyInterrupt", "5_49"); put("enemySkill", "1_64"); put("luke", "1_50");
+            put("enemyInterrupt", "5_49"); put("enemySkill", "1_64"); put("luke", "1_19");
+            put("obi", "1_21");
         }}, new HashMap<>() {{
             put("trained", "1115_67"); put("skill", "1_209"); put("trooper", "1_194");
             put("maul", "11_54"); put("mara", "110_10"); put("duel", "1110_13");
             put("modern", "221_41"); put("gold", "15_290"); put("decipher", "1_272");
             put("original", "1102_48");
             put("vader", "1_168");
+            put("modernSearch", "213_20"); put("sister", "213_12");
+            put("legacySearch", "601_98");
         }}, 20, 20, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -95,5 +100,81 @@ public class Card_1115_067_Integration_Tests {
     @Test
     public void SkillEffectDoesNotModifyActualBattleDestinyAtAnotherLocation() {
         battleDestiny(false);
+    }
+
+    private void originalVirtualDuel(String character) {
+        var scn = scenario();
+        var interrupt = scn.GetDSCard("duel");
+        var duelist = scn.GetDSCard(character);
+        var obi = scn.GetLSCard("obi");
+        scn.MoveCardsToHand(interrupt);
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), duelist, obi);
+        scn.SkipToDSTurn(Phase.CONTROL);
+        scn.MoveCardsToTopOfDSReserveDeck(scn.GetDSDestiny(6), scn.GetDSDestiny(5));
+        scn.MoveCardsToTopOfLSReserveDeck(scn.GetLSDestiny(0), scn.GetLSDestiny(1));
+        assertTrue(scn.DSCardPlayAvailable(interrupt, "Initiate epic duel"));
+        scn.DSPlayCard(interrupt, "Initiate epic duel");
+        scn.DSChooseCard(obi);
+        if (scn.DSDecisionAvailable("Choose Vader"))
+            scn.DSChooseCard(duelist);
+        scn.PassAllResponses();
+        scn.PassAllResponses();
+        scn.PassAllResponses();
+        assertInZone(Zone.OUT_OF_PLAY, obi);
+        assertInZone(Zone.AT_LOCATION, duelist);
+    }
+
+    @Test
+    public void OriginalVirtualVadersAngerActuallyDuelsWithMaulUnderOriginalVirtualEffect() {
+        originalVirtualDuel("maul");
+    }
+
+    @Test
+    public void OriginalVirtualVadersAngerActuallyDuelsWithMaraUnderOriginalVirtualEffect() {
+        originalVirtualDuel("mara");
+    }
+
+    @Test
+    public void OriginalVirtualVadersAngerCannotUseMaulWithoutTheGrantingEffect() {
+        var scn = scenario();
+        scn.MoveOutOfPlay(scn.GetDSCard("trained"), scn.GetDSCard("vader"));
+        scn.MoveCardsToHand(scn.GetDSCard("duel"));
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("maul"), scn.GetLSCard("obi"));
+        scn.SkipToDSTurn(Phase.CONTROL);
+        assertFalse(scn.DSCardPlayAvailable(scn.GetDSCard("duel"), "Initiate epic duel"));
+    }
+
+    @Test
+    public void ModernVirtualInterruptActuallyLosesMaulFromHandAsCostAndSearchesInquisitor() {
+        var scn = scenario();
+        var interrupt = scn.GetDSCard("modernSearch");
+        var maul = scn.GetDSCard("maul");
+        var sister = scn.GetDSCard("sister");
+        scn.MoveOutOfPlay(scn.GetDSCard("vader"), scn.GetDSCard("mara"), sister);
+        scn.MoveCardsToHand(interrupt, maul);
+        scn.SkipToDSTurn(Phase.CONTROL);
+        scn.MoveCardsToTopOfDSReserveDeck(sister);
+        scn.DSPlayCard(interrupt, "Take inquisitors into hand from Reserve Deck");
+        if (scn.GetDSHand().contains(maul))
+            scn.DSChooseCard(maul);
+        scn.PassAllResponses();
+        scn.DSChooseCard(sister);
+        scn.PassAllResponses();
+        assertInZone(Zone.LOST_PILE, maul);
+        assertInZone(Zone.HAND, sister);
+        assertInZone(Zone.LOST_PILE, interrupt);
+    }
+
+    @Test
+    public void LegacyDeploymentSearchCanStillBeOfferedWhenVaderUniquenessBlocksVader() {
+        var scn = scenario();
+        var interrupt = scn.GetDSCard("legacySearch");
+        scn.MoveCardsToHand(interrupt);
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("vader"));
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.EnsureDSForcePile(2);
+        assertTrue(scn.DSCardPlayAvailable(interrupt, "Deploy Vader from Reserve Deck"));
+        scn.MoveOutOfPlay(scn.GetDSCard("trained"));
+        assertFalse(scn.DSCardPlayAvailable(interrupt, "Deploy Vader from Reserve Deck"));
     }
 }

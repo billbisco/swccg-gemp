@@ -41,8 +41,10 @@ import com.gempukku.swccgo.logic.timing.EffectResult;
 import com.gempukku.swccgo.logic.timing.GuiUtils;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -152,9 +154,11 @@ public class Card601_098 extends AbstractUsedOrLostInterrupt {
         gameTextActionId = GameTextActionId.LEGACY__WEAPON_LEVITATION_THE_EMPIRES_BACK__DEPLOY_OR_RETRIEVE_VADER;
         final Filter searchFilter = Filters.and(vaderFilter);
 
+        Set<Persona> deployPersonas = new HashSet<>(InterruptPersonaReferences.vaderPersonas(game, self));
+        if (mayTreatVaderAsGalen)
+            deployPersonas.add(Persona.GALEN);
         if (GameConditions.canUseForceToPlayInterrupt(game, playerId, self, 1)
-            && (GameConditions.canDeployCardFromReserveDeck(game, playerId, self, gameTextActionId, Persona.VADER)
-            || (mayTreatVaderAsGalen && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, gameTextActionId, Persona.GALEN)))) {
+            && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, gameTextActionId, deployPersonas)) {
 
             String text = "Deploy Vader from Reserve Deck";
             if (mayTreatVaderAsGalen)

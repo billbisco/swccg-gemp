@@ -6,6 +6,7 @@ import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.modifiers.ModifyGameTextType;
 import org.junit.jupiter.api.Test;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -80,5 +81,14 @@ class InterruptPersonaReferencesTests {
         assertFalse(InterruptPersonaReferences.isVaderName(game, source, "Anakin"));
         permission(false);
         assertFalse(InterruptPersonaReferences.isVaderName(game, source, "Maul"));
+    }
+
+    @Test
+    void DeploymentPersonaRestrictionsUseAllPermittedAlternatives() {
+        permission(true);
+        assertEquals(Set.of(Persona.VADER, Persona.MAUL, Persona.MARA_JADE),
+                InterruptPersonaReferences.vaderPersonas(game, source));
+        permission(false);
+        assertEquals(Set.of(Persona.VADER), InterruptPersonaReferences.vaderPersonas(game, source));
     }
 }
