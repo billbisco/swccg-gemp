@@ -111,4 +111,40 @@ public class Card_1261_004_Tests {
         assertEquals(mos, b.getAtLocation()); assertEquals(force - 1, scn.GetDSForcePileCount());
     }
 
+
+    private void assertBobaAttritionBoundary(int destiny, boolean enemyHunter, boolean immune) {
+        var scn = scenario(); scn.StartGame(); var b = scn.GetDSCard("boba"); var site = scn.GetDSStartingLocation();
+        if (enemyHunter) {
+            var hunter = com.gempukku.swccgo.cards.legacy.MissionTestSupport.putInHand(scn, 9185, scn.LS,
+                    new com.gempukku.swccgo.cards.AbstractAlien(Side.LIGHT, 1, 3, 3, 4, 5, "Opposing Bounty Hunter", Uniqueness.UNRESTRICTED, ExpansionSet.PREMIERE, Rarity.C1) {
+                        { addKeywords(Keyword.BOUNTY_HUNTER); }
+                    });
+            scn.MoveCardsToLocation(site, b, hunter);
+        } else {
+            scn.MoveCardsToLocation(site, b, scn.GetLSCard("obiwan"));
+        }
+        scn.DSStartBattleAndSkipToWeaponsSegment(site); scn.PrepareLSDestiny(destiny);
+        scn.SkipToDamageSegment(true); scn.PassDamageSegmentActions();
+        scn.DSPayRemainingBattleDamageFromReserveDeck(); scn.PassAllResponses();
+        if (immune) {
+            assertFalse(scn.AwaitingDSAttritionPayment()); assertEquals(site, b.getAtLocation());
+        } else {
+            assertTrue(scn.AwaitingDSAttritionPayment()); assertTrue(scn.DSHasCardChoiceAvailable(b));
+            scn.DSPayAttritionFromCardInPlay(b); scn.PassAllResponses();
+            com.gempukku.swccgo.framework.Assertions.assertInZone(Zone.LOST_PILE, b);
+        }
+    }
+
+    @Test
+    public void BobaFettBountyHunterSurvivesTwoAttritionButCanBeForfeitedAtThree() {
+        assertBobaAttritionBoundary(2, false, true);
+        assertBobaAttritionBoundary(3, false, false);
+    }
+
+    @Test
+    public void BobaFettBountyHunterOpponentsBountyHunterGrantsImmunityBelowFiveButNotFive() {
+        assertBobaAttritionBoundary(4, true, true);
+        assertBobaAttritionBoundary(5, true, false);
+    }
+
 }
