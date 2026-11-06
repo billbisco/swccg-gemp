@@ -8,6 +8,9 @@ import com.gempukku.swccgo.logic.effects.choose.TakeDestinyCardIntoHandEffect;
 import com.gempukku.swccgo.logic.timing.EffectResult;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
+import com.gempukku.swccgo.common.Keyword;
+import com.gempukku.swccgo.common.Variable;
+import com.gempukku.swccgo.cards.evaluators.CalculateCardVariableEvaluator;
 import com.gempukku.swccgo.common.PlayCardOptionId;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
@@ -44,6 +47,7 @@ public class Card1250_086 extends AbstractCharacterWeapon {
         setLore("Hand-crafted weapon of choice among Wookiees. Fires explosive 'quarrels' (which look like blaster bolts). Requires great strength to use. Extra ammo carried on bandoliers.");
         setGameText("Deploy on your Wookiee. May target a character or vehicle for free. Draw destiny (may take drawn card into hand). Target hit if destiny + X > defense value, where X = number of Kashyyyk sites you control.");
         addIcons(Icon.A_NEW_HOPE, Icon.EPISODE_I);
+        addKeyword(Keyword.BOWCASTER);
     }
 
     @Override
@@ -58,17 +62,13 @@ public class Card1250_086 extends AbstractCharacterWeapon {
 
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
-        Evaluator kashyyykSites = new Evaluator() {
+        Evaluator kashyyykSites = new CalculateCardVariableEvaluator(self, Variable.X) {
             @Override
-            public float evaluateExpression(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard cardAffected) {
+            protected float baseValueCalculation(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard cardAffected) {
                 return Filters.countTopLocationsOnTable(gameState.getGame(),
                         Filters.and(Filters.Kashyyyk_site, Filters.controls(self.getOwner())));
             }
 
-            @Override
-            public float evaluateExpression(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard cardAffected, PhysicalCard otherCard) {
-                return evaluateExpression(gameState, modifiersQuerying, cardAffected);
-            }
         };
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new TotalWeaponDestinyModifier(self, kashyyykSites));

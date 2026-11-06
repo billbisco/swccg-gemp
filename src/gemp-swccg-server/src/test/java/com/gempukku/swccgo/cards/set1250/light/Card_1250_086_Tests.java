@@ -4,6 +4,7 @@ import com.gempukku.swccgo.common.CardSubtype;
 import com.gempukku.swccgo.common.CardType;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
+import com.gempukku.swccgo.common.Keyword;
 import com.gempukku.swccgo.common.Phase;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.framework.StartingSetup;
@@ -17,8 +18,12 @@ import static org.junit.Assert.*;
 
 public class Card_1250_086_Tests {
     private VirtualTableScenario scenario() {
+        return scenario(false);
+    }
+
+    private VirtualTableScenario scenario(boolean specialEditionWookiee) {
         return new VirtualTableScenario(new HashMap<>() {{
-            put("bowcaster", "1250_86"); put("wookiee", "7_50"); put("rebel", "1_28");
+            put("bowcaster", "1250_86"); put("wookiee", specialEditionWookiee ? "7_50" : "8_2"); put("rebel", "1_28");
             put("forest", "1116_16"); put("haven", "1116_17");
             put("guard1", "1_28"); put("guard2", "1_28");
         }}, new HashMap<>() {{
@@ -43,7 +48,7 @@ public class Card_1250_086_Tests {
         scn.BlueprintIconCheck(card, new ArrayList<>() {{
             add(Icon.WEAPON); add(Icon.A_NEW_HOPE); add(Icon.EPISODE_I); add(Icon.LEGACY_BLOCK_5);
         }});
-        scn.BlueprintKeywordCheck(card, new ArrayList<>());
+        scn.BlueprintKeywordCheck(card, new ArrayList<>() {{ add(Keyword.BOWCASTER); }});
     }
 
     @Test
@@ -102,9 +107,24 @@ public class Card_1250_086_Tests {
         checkShot(true, 0, false, 5, false);
     }
 
+    @Test
+    public void BowcasterSpecialEditionWookieeResetsPrintedXToOne() {
+        checkShot(false, 2, false, 5, false, true);
+    }
+
+    private String prompt(VirtualTableScenario scn, boolean dark) {
+        var decision = dark ? scn.DSGetDecision() : scn.LSGetDecision();
+        return decision == null ? "none" : decision.getText();
+    }
+
     private void checkShot(boolean vehicle, int controlledSites, boolean contestSecondSite,
             int destiny, boolean takeIntoHand) {
-        var scn = scenario();
+        checkShot(vehicle, controlledSites, contestSecondSite, destiny, takeIntoHand, false);
+    }
+
+    private void checkShot(boolean vehicle, int controlledSites, boolean contestSecondSite,
+            int destiny, boolean takeIntoHand, boolean specialEditionWookiee) {
+        var scn = scenario(specialEditionWookiee);
         var weapon = scn.GetLSCard("bowcaster");
         var site = scn.GetLSStartingLocation();
         var target = scn.GetDSCard(vehicle ? "scout" : "vader");
@@ -132,7 +152,11 @@ public class Card_1250_086_Tests {
             scn.PassResponses("Fire ");
             scn.PassResponses("COST_TO_DRAW_DESTINY_CARD");
             scn.PassResponses("ABOUT_TO_DRAW_DESTINY_CARD");
-            assertTrue(scn.LSCardActionAvailable(weapon, "Take destiny card into hand"));
+            if (scn.DSDecisionAvailable("DESTINY_DRAWN")) {
+                scn.DSPass();
+            }
+            assertTrue("Expected destiny response; LS=" + prompt(scn, false) + "; DS=" + prompt(scn, true),
+                    scn.LSCardActionAvailable(weapon, "Take destiny card into hand"));
             scn.LSUseCardAction(weapon, "Take destiny card into hand");
             scn.PassAllResponses();
             assertTrue(scn.GetLSHand().contains(destinyCard));
@@ -140,10 +164,12 @@ public class Card_1250_086_Tests {
         else {
             scn.PassWeaponFireWithDestinyDraw();
             assertFalse(scn.GetLSHand().contains(destinyCard));
-            assertTrue(scn.GetLSUsedPile().contains(destinyCard));
+            scn.PassAllResponses();
+            assertTrue("Expected resolved destiny in Used Pile; LS=" + prompt(scn, false) + "; DS=" + prompt(scn, true),
+                    scn.GetLSUsedPile().contains(destinyCard));
         }
         scn.PassAllResponses();
-        int bonus = controlledSites - (contestSecondSite ? 1 : 0);
+        int bonus = specialEditionWookiee ? 1 : controlledSites - (contestSecondSite ? 1 : 0);
         assertEquals(destiny + bonus > (vehicle ? 4 : 6), target.isHit());
         assertEquals(force, scn.GetLSForcePileCount());
     }
