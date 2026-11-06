@@ -253,4 +253,29 @@ public class Card_1271_041_Tests {
         scn.SkipToPhase(Phase.MOVE);
         assertFalse(scn.LSCardActionAvailable(scn.GetLSCard("effect"), "Deploy Obi-Wan"));
     }
+
+    @Test
+    public void OhHesNotDeadNotYetMayDeployTheCharacterDuringTheOpponentsTurn() {
+        var scn = ready(true);
+        scn.SkipToDSTurn(Phase.CONTROL);
+        scn.DSPass();
+        deployCharacter(scn);
+        assertEquals(scn.GetLSStartingLocation(), scn.GetLSCard("character").getAtLocation());
+    }
+
+    @Test
+    public void OhHesNotDeadNotYetCannotRetryWhenItsForcePileIsEmpty() {
+        var scn = ready(false);
+        scn.MoveCardsToLSHand(scn.GetLSCard("search"));
+        scn.MoveCardsToTopOfLSLostPile(scn.GetLSCard("copy"));
+        scn.MoveOutOfPlay(scn.GetLSCard("grabber"));
+        scn.DrainLSForcePileTo(3);
+        scn.SkipToPhase(Phase.MOVE);
+        scn.LSPlayCard(scn.GetLSCard("search"));
+        scn.PassAllResponses();
+        reachRetry(scn);
+        assertEquals(0, scn.GetLSForcePileCount());
+        assertFalse(retryAvailable(scn));
+        assertEquals(Zone.SIDE_OF_TABLE, scn.GetLSCard("effect").getZone());
+    }
 }

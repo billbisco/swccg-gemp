@@ -253,4 +253,29 @@ public class Card_1271_010_Tests {
         scn.SkipToPhase(Phase.MOVE);
         assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("effect"), "Deploy Vader"));
     }
+
+    @Test
+    public void IWantEveryPartOfThisShipCheckedMayDeployTheCharacterDuringTheOpponentsTurn() {
+        var scn = ready(true);
+        scn.SkipToLSTurn(Phase.CONTROL);
+        scn.LSPass();
+        deployCharacter(scn);
+        assertEquals(scn.GetDSStartingLocation(), scn.GetDSCard("character").getAtLocation());
+    }
+
+    @Test
+    public void IWantEveryPartOfThisShipCheckedCannotRetryWhenItsForcePileIsEmpty() {
+        var scn = ready(false);
+        scn.MoveCardsToDSHand(scn.GetDSCard("search"));
+        scn.MoveCardsToTopOfDSLostPile(scn.GetDSCard("copy"));
+        scn.MoveOutOfPlay(scn.GetDSCard("grabber"));
+        scn.DrainDSForcePileTo(3);
+        scn.SkipToPhase(Phase.MOVE);
+        scn.DSPlayCard(scn.GetDSCard("search"));
+        scn.PassAllResponses();
+        reachRetry(scn);
+        assertEquals(0, scn.GetDSForcePileCount());
+        assertFalse(retryAvailable(scn));
+        assertEquals(Zone.SIDE_OF_TABLE, scn.GetDSCard("effect").getZone());
+    }
 }
