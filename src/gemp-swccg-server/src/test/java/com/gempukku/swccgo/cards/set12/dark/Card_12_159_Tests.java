@@ -36,9 +36,12 @@ public class Card_12_159_Tests {
         scn.MoveCardsToTopOfDSLostPile(scn.GetDSCard("lost1"), scn.GetDSCard("lost2"), scn.GetDSCard("lost3"));
         scn.MoveCardsToHand(delegates);
         if (modified)
-            scn.ApplyAdHocModifier(new ModifyGameTextModifier(delegates, Filters.sameCardId(delegates),
+            scn.ApplyAdHocModifier(new ModifyGameTextModifier(senate, Filters.title("Squabbling Delegates"),
                     ModifyGameTextType.LEGACY__SQUABBLING_DELEGATES__SENATORS_ARE_CORUSCANT_GUARDS));
         scn.SkipToPhase(Phase.DEPLOY);
+        if (modified)
+            assertTrue(scn.game().getModifiersQuerying().hasGameTextModification(scn.gameState(), delegates,
+                    ModifyGameTextType.LEGACY__SQUABBLING_DELEGATES__SENATORS_ARE_CORUSCANT_GUARDS));
         return scn;
     }
 
