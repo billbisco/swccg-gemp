@@ -6,7 +6,6 @@ import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Phase;
 import com.gempukku.swccgo.common.Uniqueness;
-import com.gempukku.swccgo.common.Zone;
 import com.gempukku.swccgo.game.PhysicalCardImpl;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
@@ -86,7 +85,7 @@ public class Card_1250_069_Tests {
         scn.LSPlayCard(roar);
         scn.LSChooseCard(wookiee);
         scn.PassAllResponses();
-        assertEquals(Zone.LOST_PILE, roar.getZone());
+        assertTrue(scn.gameState().getLostPile(scn.LS).contains(roar));
         assertEquals(4, scn.GetDefense(wookiee));
         if (!alone) {
             assertEquals(1, scn.GetDefense(other));
@@ -133,7 +132,7 @@ public class Card_1250_069_Tests {
                 scn.gameState(), scn.LS, false, false));
         assertEquals(0, scn.game().getModifiersQuerying().getNumDestinyDrawsToTotalPowerOnly(
                 scn.gameState(), scn.DS, false, false));
-        assertEquals(Zone.LOST_PILE, roar.getZone());
+        assertTrue(scn.gameState().getLostPile(scn.LS).contains(roar));
     }
 
     @Test
@@ -199,7 +198,7 @@ public class Card_1250_069_Tests {
         if (canCancel) {
             scn.LSPlayCard(roar);
             scn.PassAllResponses();
-            assertEquals(Zone.LOST_PILE, roar.getZone());
+            assertTrue(scn.gameState().getLostPile(scn.LS).contains(roar));
             assertFalse(scn.IsActiveForceDrain());
         }
     }

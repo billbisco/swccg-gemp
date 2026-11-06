@@ -83,7 +83,7 @@ public class Card_1250_035_Tests {
         else {
             scn.LSChooseCard(pilot);
             scn.PassAllResponses();
-            assertEquals(Zone.LOST_PILE, pilot.getZone());
+            assertTrue(scn.gameState().getLostPile(scn.LS).contains(pilot));
             assertEquals(0, scn.gameState().getBattleState().getAttritionRemaining(scn.game(), scn.LS), scn.epsilon);
         }
         assertEquals(Zone.AT_LOCATION, ship.getZone());
