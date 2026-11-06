@@ -10,6 +10,7 @@ import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.InterruptPersonaReferences;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.GameUtils;
@@ -74,8 +75,8 @@ public class Card101_003 extends AbstractLostInterrupt {
                                                 action.appendEffect(
                                                         new AddUntilEndOfBattleModifierEffect(action,
                                                                 new PowerModifier(self, Filters.Luke, new CantSpotCondition(self, Filters.or(
-                                                                        Filters.personaPresentAt(Filters.Vader, Filters.battleLocation),
-                                                                        Filters.personaAt(Filters.Vader, Filters.adjacentSiteTo(self, Filters.battleLocation)))), 2), null));
+                                                                        Filters.personaPresentAt(InterruptPersonaReferences.vader(game, self), Filters.battleLocation),
+                                                                        Filters.personaAt(InterruptPersonaReferences.vader(game, self), Filters.adjacentSiteTo(self, Filters.battleLocation)))), 2), null));
                                             }
                                         }
                                 );

@@ -10,6 +10,7 @@ import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.InterruptPersonaReferences;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.GameUtils;
@@ -46,7 +47,7 @@ public class Card5_049 extends AbstractLostInterrupt {
          // Check condition(s)
          if (GameConditions.isDuringBattle(game)
                  && GameConditions.isDuringBattleWithParticipant(game, Filters.and(Filters.your(self), Filters.character_with_a_lightsaber, Filters.presentInBattle))) {
-             Filter vaderFilter = Filters.and(Filters.Vader, Filters.participatingInBattle);
+             Filter vaderFilter = Filters.and(InterruptPersonaReferences.vader(game, self), Filters.participatingInBattle);
              if (GameConditions.canTarget(game, self, vaderFilter)) {
 
                  final PlayInterruptAction action = new PlayInterruptAction(game, self);

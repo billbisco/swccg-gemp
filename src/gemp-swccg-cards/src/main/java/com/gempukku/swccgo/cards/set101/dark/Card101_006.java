@@ -13,6 +13,7 @@ import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.InterruptPersonaReferences;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.game.state.DuelState;
@@ -52,7 +53,7 @@ public class Card101_006 extends AbstractLostInterrupt {
     @Override
     public Filter getValidDuelParticipant(Side side, SwccgGame game, final PhysicalCard self) {
         if (side == Side.DARK)
-            return Filters.or(Filters.Vader, Filters.grantedMayBeTargetedBy(self));
+            return Filters.or(InterruptPersonaReferences.vader(game, self), Filters.grantedMayBeTargetedBy(self));
         else
             return Filters.Luke;
     }

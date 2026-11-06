@@ -11,6 +11,7 @@ import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.InterruptPersonaReferences;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.GameUtils;
@@ -88,7 +89,7 @@ public class Card209_046 extends AbstractLostInterrupt {
                                                         "Makes " + GameUtils.getCardLink(starDestroyer) + " immune to attrition"));
                                         action.appendEffect(
                                                 new AddUntilEndOfTurnModifierEffect(action,
-                                                        new MayNotHavePowerIncreasedByCardModifier(self, starDestroyer, Filters.and(Filters.Imperial, Filters.pilot, Filters.aboard(starDestroyer), Filters.not(Filters.Vader))),
+                                                        new MayNotHavePowerIncreasedByCardModifier(self, starDestroyer, Filters.and(Filters.Imperial, Filters.pilot, Filters.aboard(starDestroyer), Filters.not(InterruptPersonaReferences.vader(game, self)))),
                                                         "Prevents the power of " + GameUtils.getCardLink(starDestroyer) + " from being increased by Imperial pilots aboard (except Vader)"));
 
 

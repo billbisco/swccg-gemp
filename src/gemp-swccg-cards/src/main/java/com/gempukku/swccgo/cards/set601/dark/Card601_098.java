@@ -14,6 +14,7 @@ import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.InterruptPersonaReferences;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.GameUtils;
@@ -82,9 +83,9 @@ public class Card601_098 extends AbstractUsedOrLostInterrupt {
         List<PlayInterruptAction> actions = new LinkedList<>();
 
         boolean mayTreatVaderAsGalen = game.getModifiersQuerying().hasGameTextModification(game.getGameState(), self, ModifyGameTextType.LEGACY__THE_EMPIRES_BACK__VADER_MAY_BE_TREATED_AS_GALEN);
-        Filter vaderFilter = Filters.Vader;
+        Filter vaderFilter = InterruptPersonaReferences.vader(game, self);
         if (mayTreatVaderAsGalen) {
-            vaderFilter = Filters.or(Filters.Vader, Filters.Galen);
+            vaderFilter = Filters.or(InterruptPersonaReferences.vader(game, self), Filters.Galen);
         }
 
         //Cancel Disarmed (if it's on table)
@@ -211,9 +212,9 @@ public class Card601_098 extends AbstractUsedOrLostInterrupt {
     @Override
     protected List<PlayInterruptAction> getGameTextOptionalAfterActions(final String playerId, SwccgGame game, final EffectResult effectResult, final PhysicalCard self) {
         boolean mayTreatVaderAsGalen = game.getModifiersQuerying().hasGameTextModification(game.getGameState(), self, ModifyGameTextType.LEGACY__THE_EMPIRES_BACK__VADER_MAY_BE_TREATED_AS_GALEN);
-        Filter vaderFilter = Filters.Vader;
+        Filter vaderFilter = InterruptPersonaReferences.vader(game, self);
         if (mayTreatVaderAsGalen) {
-            vaderFilter = Filters.or(Filters.Vader, Filters.Galen);
+            vaderFilter = Filters.or(InterruptPersonaReferences.vader(game, self), Filters.Galen);
         }
 
         final String opponent = game.getOpponent(playerId);

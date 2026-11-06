@@ -12,6 +12,7 @@ import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.InterruptPersonaReferences;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.actions.PlayInterruptAction;
@@ -44,7 +45,7 @@ public class Card1210_067 extends AbstractLostInterrupt {
     protected List<PlayInterruptAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self) {
         List<PlayInterruptAction> actions = new LinkedList<PlayInterruptAction>();
         final String opponent = game.getOpponent(playerId);
-        final Filter uniqueFilter = Filters.or(Filters.Motti, Filters.Tagge, Filters.Tarkin, Filters.Vader);
+        final Filter uniqueFilter = Filters.or(Filters.Motti, Filters.Tagge, Filters.Tarkin, InterruptPersonaReferences.vader(game, self));
         GameTextActionId searchActionId = GameTextActionId.LEGACY__THE_EMPIRES_BACK_V__DEPLOY_OR_RETRIEVE_UNIQUE;
 
         if (GameConditions.canUseForceToPlayInterrupt(game, playerId, self, 1)
@@ -86,7 +87,7 @@ public class Card1210_067 extends AbstractLostInterrupt {
         }
 
         Filter battlegrounds = Filters.and(Filters.battleground,
-                Filters.controlsWith(playerId, self, Filters.or(Filters.Motti, Filters.Tagge, Filters.Tarkin, Filters.Vader)));
+                Filters.controlsWith(playerId, self, Filters.or(Filters.Motti, Filters.Tagge, Filters.Tarkin, InterruptPersonaReferences.vader(game, self))));
         final int count = Filters.countTopLocationsOnTable(game, battlegrounds);
         if (GameConditions.isOnceDuringYourPhase(game, self, playerId, self.getCardId(), Phase.CONTROL)
                 && count > 0) {

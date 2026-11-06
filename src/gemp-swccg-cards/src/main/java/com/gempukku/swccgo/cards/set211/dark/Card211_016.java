@@ -9,6 +9,7 @@ import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.InterruptPersonaReferences;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.GameUtils;
@@ -44,14 +45,14 @@ public class Card211_016 extends AbstractUsedInterrupt {
 
     @Override
     protected List<PlayInterruptAction> getGameTextOptionalAfterActions(final String playerId, SwccgGame game, EffectResult effectResult, PhysicalCard self) {
-        if (TriggerConditions.movedFromOrThroughLocationToLocation(game, effectResult, Filters.and(Filters.opponents(self), Filters.character), Filters.sameLocationAs(self, Filters.Vader), Filters.location)
-                && GameConditions.canTarget(game, self, Filters.Vader)) {
+        if (TriggerConditions.movedFromOrThroughLocationToLocation(game, effectResult, Filters.and(Filters.opponents(self), Filters.character), Filters.sameLocationAs(self, InterruptPersonaReferences.vader(game, self)), Filters.location)
+                && GameConditions.canTarget(game, self, InterruptPersonaReferences.vader(game, self))) {
 
             MovedResult movedResult = (MovedResult) effectResult;
             if (movedResult.isMoveComplete()) {
                 final PhysicalCard toLocation = movedResult.getMovedTo();
 
-                final PhysicalCard vader = Filters.findFirstActive(game, self, Filters.and(Filters.Vader, Filters.movableAsRegularMoveUsingLandspeed(playerId, false, false, true, 0, null, Filters.sameLocation(toLocation))));
+                final PhysicalCard vader = Filters.findFirstActive(game, self, Filters.and(InterruptPersonaReferences.vader(game, self), Filters.movableAsRegularMoveUsingLandspeed(playerId, false, false, true, 0, null, Filters.sameLocation(toLocation))));
 
                 if (vader != null) {
                     PhysicalCard cardToFollow = movedResult.getMovedCards().iterator().next();
@@ -82,7 +83,7 @@ public class Card211_016 extends AbstractUsedInterrupt {
 
         // Check condition(s)
         if (GameConditions.canTargetToCancel(game, self, Filters.Its_A_Trap)
-                && GameConditions.isDuringBattleWithParticipant(game, Filters.Vader)) {
+                && GameConditions.isDuringBattleWithParticipant(game, InterruptPersonaReferences.vader(game, self))) {
 
             final PlayInterruptAction action = new PlayInterruptAction(game, self);
             // Build action using common utility
@@ -92,7 +93,7 @@ public class Card211_016 extends AbstractUsedInterrupt {
 
         // Check condition(s)
         if (GameConditions.canTargetToCancel(game, self, Filters.Dodge)
-                && GameConditions.isDuringBattleWithParticipant(game, Filters.Vader)) {
+                && GameConditions.isDuringBattleWithParticipant(game, InterruptPersonaReferences.vader(game, self))) {
 
             final PlayInterruptAction action = new PlayInterruptAction(game, self);
             // Build action using common utility
@@ -102,7 +103,7 @@ public class Card211_016 extends AbstractUsedInterrupt {
 
         // Check condition(s)
         if (GameConditions.canTargetToCancel(game, self, Filters.ObiWans_Journal)
-                && GameConditions.isDuringBattleWithParticipant(game, Filters.Vader)) {
+                && GameConditions.isDuringBattleWithParticipant(game, InterruptPersonaReferences.vader(game, self))) {
 
             final PlayInterruptAction action = new PlayInterruptAction(game, self);
             // Build action using common utility
@@ -111,7 +112,7 @@ public class Card211_016 extends AbstractUsedInterrupt {
         }
 
         // Check condition(s)
-        if (GameConditions.isDuringBattleWithParticipant(game, Filters.and(Filters.Vader, Filters.alone))) {
+        if (GameConditions.isDuringBattleWithParticipant(game, Filters.and(InterruptPersonaReferences.vader(game, self), Filters.alone))) {
             final int count = Filters.countActive(game, self, Filters.and(Filters.character, Filters.participatingInBattle));
             if (count > 0) {
 
@@ -142,7 +143,7 @@ public class Card211_016 extends AbstractUsedInterrupt {
         // Check condition(s)
         if (TriggerConditions.isPlayingCard(game, effect, Filters.or(Filters.Its_A_Trap, Filters.Dodge, Filters.ObiWans_Journal))
                 && GameConditions.canCancelCardBeingPlayed(game, self, effect)
-                && GameConditions.isDuringBattleWithParticipant(game, Filters.Vader)) {
+                && GameConditions.isDuringBattleWithParticipant(game, InterruptPersonaReferences.vader(game, self))) {
 
             PlayInterruptAction action = new PlayInterruptAction(game, self);
             // Build action using common utility
