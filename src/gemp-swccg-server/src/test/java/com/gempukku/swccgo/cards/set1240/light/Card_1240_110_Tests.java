@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import static com.gempukku.swccgo.framework.Assertions.assertAtLocation;
+import static com.gempukku.swccgo.framework.Assertions.assertInZone;
 import static org.junit.Assert.*;
 
 public class Card_1240_110_Tests {
@@ -66,7 +67,7 @@ public class Card_1240_110_Tests {
         scn.PassAllResponses();
         assertAtLocation(scn.GetLSStartingLocation(), scn.GetLSCard("yt"));
         assertEquals(force - 2, scn.GetLSForcePileCount());
-        assertEquals(1, scn.GetAbility(scn.GetLSCard("yt")));
+        assertEquals(1, scn.game().getModifiersQuerying().getAbility(scn.gameState(), scn.GetLSCard("yt"), true), scn.epsilon);
         assertTrue(scn.game().getModifiersQuerying().isPiloted(scn.gameState(), scn.GetLSCard("yt"), false));
     }
 
@@ -77,6 +78,7 @@ public class Card_1240_110_Tests {
         scn.SkipToLSTurn(Phase.CONTROL);
         scn.MoveCardsToLSHand(scn.GetLSCard("yt"));
         scn.EnsureLSForcePile(1);
+        while (scn.GetLSForcePileCount() > 1) scn.MoveCardsToTopOfLSUsedPile(scn.GetTopOfLSForcePile());
         scn.SkipToPhase(Phase.DEPLOY);
         assertTrue(scn.AwaitingLSDeployPhaseActions());
         assertEquals(1, scn.GetLSForcePileCount());
@@ -181,7 +183,7 @@ public class Card_1240_110_Tests {
         assertEquals(4, scn.GetUnpaidLSAttrition());
         assertEquals("1", scn.GetADParam(scn.LS, "min")[0]);
         scn.LSPayAttritionFromCardInPlay(scn.GetLSCard("yt"));
-        assertEquals(Zone.LOST_PILE, scn.GetLSCard("yt").getZone());
+        assertInZone(Zone.LOST_PILE, scn.GetLSCard("yt"));
     }
 
     private VirtualTableScenario BattleReady(int destiny) {

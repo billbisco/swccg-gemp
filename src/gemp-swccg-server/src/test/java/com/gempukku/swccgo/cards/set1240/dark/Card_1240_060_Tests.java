@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import static com.gempukku.swccgo.framework.Assertions.assertAtLocation;
+import static com.gempukku.swccgo.framework.Assertions.assertInZone;
 import static org.junit.Assert.*;
 
 public class Card_1240_060_Tests {
@@ -65,7 +66,7 @@ public class Card_1240_060_Tests {
         scn.PassAllResponses();
         assertAtLocation(scn.GetDSStartingLocation(), scn.GetDSCard("katana"));
         assertEquals(force - 6, scn.GetDSForcePileCount());
-        assertEquals(3, scn.GetAbility(scn.GetDSCard("katana")));
+        assertEquals(3, scn.game().getModifiersQuerying().getAbility(scn.gameState(), scn.GetDSCard("katana"), true), scn.epsilon);
         assertTrue(scn.game().getModifiersQuerying().isPiloted(scn.gameState(), scn.GetDSCard("katana"), false));
     }
 
@@ -76,6 +77,7 @@ public class Card_1240_060_Tests {
         scn.SkipToDSTurn(Phase.CONTROL);
         scn.MoveCardsToDSHand(scn.GetDSCard("katana"));
         scn.EnsureDSForcePile(5);
+        while (scn.GetDSForcePileCount() > 5) scn.MoveCardsToTopOfDSUsedPile(scn.GetTopOfDSForcePile());
         scn.SkipToPhase(Phase.DEPLOY);
         assertTrue(scn.AwaitingDSDeployPhaseActions());
         assertEquals(5, scn.GetDSForcePileCount());
@@ -157,7 +159,7 @@ public class Card_1240_060_Tests {
         scn.PrepareLSDestiny(4);
         scn.LSUseCardAction(scn.GetLSCard("cannon"), "Fire");
         scn.LSChooseCard(scn.GetDSCard("dreadnaught"));
-        scn.PassWeaponFireWithDestinyDraw();
+        scn.PassAllResponses();
         assertTrue(scn.GetDSCard("dreadnaught").isHit());
     }
 
@@ -200,7 +202,7 @@ public class Card_1240_060_Tests {
         scn.DSPayRemainingBattleDamageFromReserveDeck();
         assertEquals("1", scn.GetADParam(scn.DS, "min")[0]);
         scn.DSPayAttritionFromCardInPlay(scn.GetDSCard("katana"));
-        assertEquals(Zone.LOST_PILE, scn.GetDSCard("katana").getZone());
+        assertInZone(Zone.LOST_PILE, scn.GetDSCard("katana"));
     }
 
     private VirtualTableScenario BattleReady(int destiny, boolean otherDreadnaught) {
