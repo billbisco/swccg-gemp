@@ -92,6 +92,15 @@ public class Card_1263_020_Tests {
         scn.BoardAsPilot(walker, scn.GetDSCard("driver"));
         scn.SkipToDSTurn(Phase.BATTLE); scn.PrepareLSDestiny(destiny);
         scn.DSInitiateBattle(site); scn.SkipToDamageSegment(true); scn.PassDamageSegmentActions();
+        if (destiny == 4) {
+            var query = scn.game().getModifiersQuerying(); var driver = scn.GetDSCard("driver");
+            System.out.println("CYCLONE_DAMAGE_STATE " + scn.GetCurrentDecision().getText()
+                    + " vehicleImmunity=" + query.getImmunityToAttritionLessThan(scn.gameState(), walker)
+                    + " driverImmunity=" + query.getImmunityToAttritionLessThan(scn.gameState(), driver)
+                    + " driverPresent=" + query.getLocationThatCardIsPresentAt(scn.gameState(), driver)
+                    + " vehiclePresent=" + query.getLocationThatCardIsPresentAt(scn.gameState(), walker)
+                    + " dsDamage=" + scn.GetUnpaidDSBattleDamage());
+        }
         assertEquals(remaining, scn.GetUnpaidDSAttrition());
     }
     @Test public void CycloneWalkerDriverProtectsFromAttritionBelowFive() { attrition(4, 0); }
