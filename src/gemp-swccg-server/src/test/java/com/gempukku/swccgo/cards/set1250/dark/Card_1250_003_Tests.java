@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
 
 public class Card_1250_003_Tests {
     private VirtualTableScenario scenario() {
-        return new VirtualTableScenario(new HashMap<>() {{ put("luke", "1_19"); put("interrupt", "6_77"); }},
+        return new VirtualTableScenario(new HashMap<>() {{ put("luke", "1_19"); put("interrupt", "1_115"); }},
                 new HashMap<>() {{ put("chokk", "1250_3"); put("trooper", "1_194"); put("droid", "2_99"); put("interrupt", "1_268"); }},
                 10, 10, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,

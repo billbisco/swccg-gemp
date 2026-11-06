@@ -45,7 +45,7 @@ public class Card_1263_020_Tests {
         var scn = scenario(); var walker = scn.GetDSCard("walker"); var site = scn.GetDSStartingLocation();
         scn.StartGame(); scn.MoveCardsToLocation(site, walker, scn.GetLSCard("luke"));
         scn.SkipToDSTurn(Phase.BATTLE);
-        assertEquals(1, scn.GetAbility(walker));
+        assertEquals(1, scn.GetBattleDestinyAbility(walker));
         assertTrue(scn.DSCanInitiateBattle(site));
         scn.DSInitiateBattle(site); scn.SkipToEndOfPowerSegment(false);
         assertEquals(5, scn.GetDSTotalPower(), scn.epsilon);
@@ -90,8 +90,8 @@ public class Card_1263_020_Tests {
         var scn = scenario(); var walker = scn.GetDSCard("walker"); var site = scn.GetDSStartingLocation();
         scn.StartGame(); scn.MoveCardsToLocation(site, walker, scn.GetLSCard("luke"));
         scn.BoardAsPilot(walker, scn.GetDSCard("driver"));
-        scn.SkipToLSTurn(Phase.BATTLE); scn.PrepareLSDestiny(destiny);
-        scn.LSInitiateBattle(site); scn.SkipToDamageSegment(true);
+        scn.SkipToDSTurn(Phase.BATTLE); scn.PrepareLSDestiny(destiny);
+        scn.DSInitiateBattle(site); scn.SkipToDamageSegment(true);
         assertEquals(remaining, scn.GetUnpaidDSAttrition());
     }
     @Test public void CycloneWalkerDriverProtectsFromAttritionBelowFive() { attrition(4, 0); }
@@ -117,6 +117,30 @@ public class Card_1263_020_Tests {
     public void CycloneWalkerDisallowsDeploymentOfNinthPassenger() {
         var scn = scenario(); passengers(scn, 8);
         assertTrue(scn.DSHasCardChoicesNotAvailable(scn.GetDSCard("walker")));
+        assertTrue(scn.DSHasCardChoicesAvailable(scn.GetDSStartingLocation()));
+    }
+
+    private void fullPassengerHold(VirtualTableScenario scn) {
+        scn.StartGame(); var walker = scn.GetDSCard("walker");
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), walker);
+        for (int i=1; i<=8; i++) scn.BoardAsPassenger(walker, scn.GetDSCard("passenger"+i));
+    }
+    @Test
+    public void CycloneWalkerAllowsOneAddedPilotWithEightPassengers() {
+        var scn = scenario(); fullPassengerHold(scn);
+        var driver = scn.GetDSCard("driver"); var walker = scn.GetDSCard("walker");
+        scn.MoveCardsToDSHand(driver); scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.DSDeployCard(driver); assertTrue(scn.DSHasCardChoicesAvailable(walker));
+        scn.DSChooseCard(walker); scn.PassAllResponses();
+        assertTrue(scn.IsAboardAsPilot(walker, driver));
+    }
+    @Test
+    public void CycloneWalkerDisallowsSecondAddedPilotWhenPassengerHoldIsFull() {
+        var scn = scenario(); fullPassengerHold(scn); var walker = scn.GetDSCard("walker");
+        scn.BoardAsPilot(walker, scn.GetDSCard("driver"));
+        scn.MoveCardsToDSHand(scn.GetDSCard("other")); scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.DSDeployCard(scn.GetDSCard("other"));
+        assertTrue(scn.DSHasCardChoicesNotAvailable(walker));
         assertTrue(scn.DSHasCardChoicesAvailable(scn.GetDSStartingLocation()));
     }
 }
