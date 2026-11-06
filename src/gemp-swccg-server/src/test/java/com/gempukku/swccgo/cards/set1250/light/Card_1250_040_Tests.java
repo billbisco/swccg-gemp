@@ -77,10 +77,12 @@ public class Card_1250_040_Tests {
             objective.setObjectiveDeploymentComplete(true);
         }
         scn.MoveCardsToHand(guardian);
+        scn.LSActivateForceCheat(10);
         scn.SkipToLSTurn(Phase.DEPLOY);
         int cost = objectivePresent ? 5 : 8;
         assertEquals(cost, scn.GetDeployCost(guardian));
         int force = scn.GetLSForcePileCount();
+        assertTrue(force >= cost);
         scn.LSDeployCard(guardian);
         scn.LSChooseCard(site);
         scn.PassAllResponses();
@@ -113,8 +115,10 @@ public class Card_1250_040_Tests {
         scn.MoveCardsToLSSideOfTable(scn.GetLSCard("inner"), scn.GetLSCard("objective"));
         scn.GetLSCard("objective").setObjectiveDeploymentComplete(true);
         scn.MoveCardsToHand(guardian);
+        scn.LSActivateForceCheat(10);
         scn.SkipToLSTurn(Phase.DEPLOY);
         assertEquals(5, scn.GetDeployCost(guardian));
+        assertTrue(scn.GetLSForcePileCount() >= 5);
         assertFalse(scn.LSDeployAvailable(guardian));
     }
 
