@@ -19,14 +19,14 @@ public class Card_1250_040_Tests {
         StartingSetup objectiveOutsideDeck = new StartingSetup() {
             @Override
             public HashMap<String, String> Cards() {
-                return new HashMap<>() {{ put("objective", "1117_10"); }};
+                return new HashMap<>() {{ put("objective", "1117_10"); put("inner", "13_24"); }};
             }
 
             @Override
             public void Setup(VirtualTableScenario scn) { }
         };
         return new VirtualTableScenario(new HashMap<>() {{
-            put("guardian", "1250_40"); put("inner", "13_24");
+            put("guardian", "1250_40");
             put("saber", "1_155"); put("blaster", "1_156"); put("otherJedi", "1_19");
         }}, new HashMap<>() {{
             put("trooper", "1_194"); put("vader", "1_168");
@@ -174,6 +174,7 @@ public class Card_1250_040_Tests {
         scn.LSUseCardAction(saber, "Fire");
         scn.LSChooseCard(trooper);
         scn.PassWeaponFireWithDestinyDraw(2);
+        scn.PassAllResponses();
         if (!miss && !otherJediFires) {
             scn.DSChooseCard(scn.GetTopOfDSForcePile());
         }
@@ -200,9 +201,11 @@ public class Card_1250_040_Tests {
         scn.MoveCardsToLocation(site, guardian, scn.GetDSCard("vader"));
         scn.LSStartBattleAndSkipToWeaponsSegment(site);
         scn.PrepareLSDestiny(7);
-        scn.PrepareDSDestiny(attrition);
+        // Premiere Vader adds 1 to each of his battle destiny draws.
+        scn.PrepareDSDestiny(attrition - 1);
         scn.SkipToDamageSegment(true);
         assertEquals(0, scn.gameState().getBattleState().getBattleDamageRemaining(scn.game(), scn.LS), scn.epsilon);
+        assertEquals(attrition, scn.gameState().getBattleState().getAttritionRemaining(scn.game(), scn.LS), scn.epsilon);
         assertEquals(attrition < 4 ? 0 : 1, scn.LSGetChoiceMin());
         if (attrition < 4) {
             scn.LSChooseCards();
