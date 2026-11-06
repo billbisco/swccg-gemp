@@ -342,7 +342,7 @@ var GameOptionsForm = Class.extend({
                 return;
             var min = Number(r.input.attr("min")), max = Number(r.input.attr("max"));
             if (!/^[0-9]{1,6}$/.test(v) || Number(v) < min || Number(v) > max)
-                message = r.option.label + " must be a whole number from " + min + " to " + max + ".";
+                message = "\u201c" + r.option.label + "\u201d must be a whole number from " + min + " to " + max + ".";
         });
         return message;
     },
