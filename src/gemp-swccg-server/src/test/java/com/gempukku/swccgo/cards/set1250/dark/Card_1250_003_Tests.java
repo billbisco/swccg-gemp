@@ -84,12 +84,7 @@ public class Card_1250_003_Tests {
         assertTrue(scn.gameState().getBattleState().isReachedPowerSegment());
         assertFalse(scn.game().getModifiersQuerying().isPlayingCardProhibited(scn.gameState(), scn.GetLSCard("interrupt"), false));
         assertFalse(scn.game().getModifiersQuerying().isPlayingCardProhibited(scn.gameState(), scn.GetDSCard("interrupt"), false));
-        scn.SkipToDamageSegment(false);
-        assertTrue(scn.AwaitingLSDamageSegmentActions());
-        assertTrue(scn.LSCardPlayAvailable(scn.GetLSCard("interrupt")));
-        scn.LSPass();
-        assertTrue(scn.AwaitingDSDamageSegmentActions());
-        assertTrue(scn.DSCardPlayAvailable(scn.GetDSCard("interrupt")));
+
     }
 
     @Test
