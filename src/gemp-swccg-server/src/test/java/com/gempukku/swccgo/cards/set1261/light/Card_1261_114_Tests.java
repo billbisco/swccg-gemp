@@ -64,11 +64,6 @@ public class Card_1261_114_Tests {
         scn.LSUseCardAction(scn.GetLSStartingLocation(), "Deploy Ric Olie");
         scn.PassAllResponses();
         skipEmptySearches(scn);
-        if (scn.LSGetADParam("selectable") != null) {
-            System.out.println("QUEEN_SEARCH Force=" + scn.GetLSForcePileCount() + " decision=" + scn.LSGetDecision().getText());
-            String[] bp = scn.LSGetADParam("blueprintId"), en = scn.LSGetADParam("selectable");
-            for (int i = 0; i < bp.length; i++) if (Boolean.parseBoolean(en[i])) System.out.println("QUEEN_SELECTABLE " + bp[i]);
-        }
         return scn;
     }
 
@@ -149,6 +144,22 @@ public class Card_1261_114_Tests {
         assertFalse(scn.LSCardActionAvailable(scn.GetLSStartingLocation(), "Deploy Ric Olie"));
         scn.SkipToDSTurn(Phase.ACTIVATE); scn.SkipToLSTurn(Phase.DEPLOY);
         assertTrue(scn.LSCardActionAvailable(scn.GetLSStartingLocation(), "Deploy Ric Olie"));
+    }
+
+    @Test
+    public void TatooineQueensLandingSiteLandedPermissionExpiresWithDownloadAction() {
+        //test1: declining the download does not permit a subsequent ordinary hand deployment here.
+        var scn = deploy(8, false, true); scn.LSChooseCards(); scn.PassAllResponses(); skipEmptySearches(scn);
+        var site = scn.GetLSStartingLocation(); var other = scn.GetLSCard("otherSite");
+        scn.MoveLocationToTable(other); scn.MoveCardsToLSHand(scn.GetLSCard("ship"));
+        // A normal Ric deployment refreshes the real deploy decision after moving the fixture to hand.
+        scn.LSDeployCard(scn.GetLSCard("ric"));
+        if (scn.LSHasCardChoiceAvailable(site)) scn.LSChooseCard(site);
+        scn.PassAllResponses(); scn.LSDeployCard(scn.GetLSCard("ship"));
+        assertFalse(scn.LSHasCardChoiceAvailable(site)); //test1
+        assertTrue(scn.LSHasCardChoiceAvailable(other)); scn.LSChooseCard(other); scn.PassAllResponses();
+        assertAtLocation(other, scn.GetLSCard("ship"));
+        assertEquals(1, scn.GetLSForcePileCount());
     }
 
     @Test

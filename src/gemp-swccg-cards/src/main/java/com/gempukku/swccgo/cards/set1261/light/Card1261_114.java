@@ -9,6 +9,8 @@ import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
 import com.gempukku.swccgo.cards.effects.usage.OncePerTurnEffect;
 import com.gempukku.swccgo.logic.effects.ShufflePileEffect;
+import com.gempukku.swccgo.logic.effects.AddUntilEndOfGameTextActionModifierEffect;
+import com.gempukku.swccgo.logic.modifiers.MayDeployAsLandedToLocationModifier;
 import com.gempukku.swccgo.logic.effects.choose.DeployCardsToLocationFromReserveDeckEffect;
 import com.gempukku.swccgo.logic.modifiers.ForceDrainModifier;
 import com.gempukku.swccgo.logic.modifiers.MayNotForceDrainAtLocationModifier;
@@ -42,6 +44,9 @@ public class Card1261_114 extends AbstractSite {
             TopLevelGameTextAction action = new TopLevelGameTextAction(self, playerId, gameTextSourceCardId, actionId);
             action.setText("Deploy Ric Olie and/or 327 Nubian");
             action.appendUsage(new OncePerTurnEffect(action));
+            action.appendEffect(new AddUntilEndOfGameTextActionModifierEffect(action, action,
+                    new MayDeployAsLandedToLocationModifier(self,
+                            Filters.and(Filters.your(playerId), Filters.starship, ModelType.J_TYPE_327_NUBIAN), self), null));
             // Ship first permits Ric to deploy aboard it. Each category is optional and limited to one.
             action.appendEffect(new DeployCardsToLocationFromReserveDeckEffect(action,
                     Filters.and(Filters.starship, ModelType.J_TYPE_327_NUBIAN), 0, 1, self, -1, false));
