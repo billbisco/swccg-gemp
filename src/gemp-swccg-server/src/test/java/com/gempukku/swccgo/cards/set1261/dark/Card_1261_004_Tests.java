@@ -12,7 +12,7 @@ public class Card_1261_004_Tests {
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>() {{ put("obiwan", "1_21"); put("chewie", "2_3"); }},
                 new HashMap<>() {{ put("boba", "1261_4"); put("vader", "1_168"); put("trooper", "1_194");
-                    put("alien", "1_172"); put("hunter", "4_100"); put("hoth", "3_143"); put("ship", "1_301"); }},
+                    put("alien", "1_172"); put("hunter", "4_100"); put("hoth", "3_143"); put("ship", "1_301"); put("camp", "1_292"); put("farm", "1_294"); put("mos", "1_295"); put("dune", "1_130"); }},
                 10, 10, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -91,4 +91,24 @@ public class Card_1261_004_Tests {
         assertEquals(5, scn.game().getModifiersQuerying().getImmunityToAttritionLessThan(scn.gameState(), b), scn.epsilon);
         scn.DSStartBattleAndSkipToWeaponsSegment(site); assertEquals(2, scn.GetDSBattleDestinyCount());
     }
+
+    @Test
+    public void BobaFettBountyHunterActuallyFliesThreeSitesButCannotFlyFour() {
+        var scn = scenario(); scn.StartGame(); var b = scn.GetDSCard("boba");
+        var start = scn.GetDSStartingLocation(); var camp = scn.GetDSCard("camp"); var farm = scn.GetDSCard("farm");
+        var mos = scn.GetDSCard("mos"); var dune = scn.GetDSCard("dune");
+        var previous = start;
+        for (var next : new com.gempukku.swccgo.game.PhysicalCardImpl[] {camp, farm, mos, dune}) {
+            scn.MoveLocationToTable(next, new com.gempukku.swccgo.game.layout.LocationPlacement(
+                    "Tatooine", null, null, previous, LocationPlacementDirection.RIGHT_OF));
+            previous = next;
+        }
+        scn.MoveCardsToLocation(start, b); scn.SkipToDSTurn(Phase.MOVE);
+        int force = scn.GetDSForcePileCount();
+        scn.DSUseCardAction(b, "Move");
+        assertTrue(scn.DSHasCardChoiceAvailable(mos)); assertFalse(scn.DSHasCardChoiceAvailable(dune));
+        scn.DSChooseCard(mos); scn.PassAllResponses();
+        assertEquals(mos, b.getAtLocation()); assertEquals(force - 1, scn.GetDSForcePileCount());
+    }
+
 }
