@@ -51,8 +51,7 @@ public class Card_1250_015_Tests {
         scn.AttachCardsTo(scn.GetLSCard("luke"), scn.GetLSCard("rifle"));
         scn.LSStartBattleAndSkipToWeaponsSegment(site); scn.PrepareLSDestiny(destiny);
         scn.LSUseCardAction(scn.GetLSCard("rifle"), "Fire"); scn.LSChooseCard(scn.GetDSCard(targetName));
-        scn.PassResponses("Fire "); scn.PassDestinyDrawResponses(); scn.PassResponses("ABOUT_TO_BE_HIT");
-        System.out.println("ARMOR_FIRE_STATE " + scn.GetCurrentDecision().getText());
+        scn.PassForceUseResponses(); scn.PassResponses("Fire "); scn.PassDestinyDrawResponses(); scn.PassResponses("ABOUT_TO_BE_HIT");
         return scn;
     }
     private void restore(String wearerName, Zone pile) {
@@ -92,7 +91,8 @@ public class Card_1250_015_Tests {
         else {
             assertTrue(scn.DSDecisionAvailable("Choose a card from battle to forfeit")); assertFalse(scn.DSDecisionAvailable("(if desired)"));
             scn.DSChooseCard(wearer); scn.PassAllResponses();
-            System.out.println("ARMOR_FORFEIT_STATE " + scn.GetCurrentDecision().getText());
+            assertTrue(scn.DSDecisionAvailable("Choose card to put on Lost Pile"));
+            scn.DSChooseCard(wearer); scn.PassAllResponses();
             assertInZone(Zone.LOST_PILE, wearer);
         }
     }
