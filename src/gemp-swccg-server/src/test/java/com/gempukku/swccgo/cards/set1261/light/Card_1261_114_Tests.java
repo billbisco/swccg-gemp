@@ -154,6 +154,10 @@ public class Card_1261_114_Tests {
         assertTrue(scn.AwaitingDSDeployPhaseActions()); scn.DSPass();
         var site = scn.GetLSStartingLocation(); var other = scn.GetLSCard("otherSite");
         scn.MoveLocationToTable(other); scn.MoveCardsToLSHand(scn.GetLSCard("ship"));
+        // Moving fixtures may remove a card activated into the Force Pile. Establish the cost baseline afterward.
+        scn.MoveCardsToTopOfLSReserveDeck(scn.GetLSForcePile().toArray(com.gempukku.swccgo.game.PhysicalCardImpl[]::new));
+        scn.LSActivateForceCheat(8);
+        assertEquals(8, scn.GetLSForcePileCount());
         // A normal Ric deployment refreshes the real deploy decision after moving the fixture to hand.
         scn.LSDeployCard(scn.GetLSCard("ric"));
         if (scn.LSHasCardChoiceAvailable(site)) scn.LSChooseCard(site);
