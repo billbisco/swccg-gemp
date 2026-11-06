@@ -2,6 +2,7 @@ package com.gempukku.swccgo.cards.set1261.light;
 
 import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.framework.StartingSetup;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -15,7 +16,10 @@ public class Card_1261_110_Tests {
         return new VirtualTableScenario(new HashMap<>() {{
             put("garrison", "1261_110"); put("hoth", "3_62"); put("perimeter", "3_56");
             put("luke", "1_19"); put("rebel", "1_28");
-        }}, new HashMap<>() {{ put("vader", "1_168"); }});
+        }}, new HashMap<>() {{ put("vader", "1_168"); }}, 30, 30,
+                StartingSetup.LSStartingLocation("1_130"), StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
     }
 
     @Test
