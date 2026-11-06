@@ -318,6 +318,16 @@ var GameOptionsForm = Class.extend({
         return value === def ? "" : value;
     },
 
+    /** The value in effect for one option: the chosen value, or the format's default (#177). */
+    effective: function (id) {
+        var r = this.rows[id];
+        var def = this.formatOption != null ? (this.formatOption.attr("data-opt-" + id + "-default") || "") : "";
+        if (r == null || r.input.prop("disabled") || !r.row.is(":visible"))
+            return def;
+        var value = $.trim(r.input.val() || "");
+        return value === "" ? def : value;
+    },
+
     /** {id: value} of the options that differ from the format's defaults. */
     values: function () {
         var result = {};

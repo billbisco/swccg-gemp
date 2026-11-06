@@ -495,7 +495,10 @@ public class HallServer extends AbstractServer {
 
                 Side aiSide = aiDeck.getSide(_library);
 
-                if (aiSide == swccgDeck.getSide(_library)) {
+                // #177: a same-side bot game when the table allows same-side decks (#176)
+                boolean sameSideAllowed = setup != null && "true".equals(setup.get(GameOptions.SAME_SIDE,
+                        _formatLibrary.getFormat(format.getBaseCode()) != null ? _formatLibrary.getFormat(format.getBaseCode()) : format));
+                if (aiSide == swccgDeck.getSide(_library) && !sameSideAllowed) {
                     throw new HallException("AI deck must be the opposite side of the Force");
                 }
             }

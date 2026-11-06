@@ -86,6 +86,8 @@ public class RandoCalAi extends HeuristicAiBase {
     private boolean battleMessageSentThisBattle = false;  // Track if we already sent a battle message
     private boolean gameEndMessageSent = false;  // Track if game end message was sent
     private Side mySide;
+    // #177: the side of the bot's own cards (differs from mySide, the seat, only in a same-side game)
+    private Side myDeckSide;
     private String opponentName;
 
     // Opponent tracking for strategy components
@@ -786,6 +788,7 @@ public class RandoCalAi extends HeuristicAiBase {
         // Set game context for advanced analysis
         evalContext.setGame(currentGame);
         evalContext.setSide(mySide);
+        evalContext.setDeckSide(myDeckSide);
 
         // Set strategy components so evaluators can use them
         evalContext.setStrategyController(strategyController);
@@ -1194,6 +1197,7 @@ public class RandoCalAi extends HeuristicAiBase {
             battleMessageSentThisBattle = false;  // Reset battle message tracking
             gameEndMessageSent = false;  // Reset game end message tracking
             mySide = newSide;
+            myDeckSide = deckSide(gameState, playerId, newSide);
             opponentName = newOpponent;
             currentGameId = playerId + "_" + System.currentTimeMillis();
 
@@ -1206,7 +1210,7 @@ public class RandoCalAi extends HeuristicAiBase {
             strategyController.setSide(mySide);
             strategyController.reset();
             objectiveHandler.reset();
-            shieldStrategy.setSide(mySide);
+            shieldStrategy.setSide(myDeckSide);  // #177: shields are the deck's side
             shieldStrategy.reset();
             deployPhasePlanner.reset();
             LOG.debug("[RandoCalAi] All strategy components reset for new game as {} side", mySide);
@@ -1239,7 +1243,9 @@ public class RandoCalAi extends HeuristicAiBase {
                     }
                 }
 
-                String welcome = personality.getWelcomeMessage(opponentName, mySide,
+                // #177: the greeting suits the opponent's deck; in a same-side game it is our own side
+                Side greetingSide = gameState.isSameSideGame() ? (myDeckSide == Side.DARK ? Side.LIGHT : Side.DARK) : mySide;
+                String welcome = personality.getWelcomeMessage(opponentName, greetingSide,
                     damageRecordHolder, damageRecordValue, routeRecordHolder, routeRecordValue);
                 if (holidayOverlay != null && holidayOverlay.isHolidayActive()) {
                     welcome = holidayOverlay.getGreeting().orElse(welcome);
@@ -1695,5 +1701,19 @@ public class RandoCalAi extends HeuristicAiBase {
         boolean behindOnLifeForce() {
             return selfLifeForce + 5 < opponentLifeForce;
         }
+    }
+
+    /**
+     * #177: the side of the player's own cards: the seat's side, except in a same-side game, where it is the side of
+     * the player's deck.
+     */
+    static Side deckSide(com.gempukku.swccgo.game.state.GameState gameState, String playerId, Side seatSide) {
+        if (!gameState.isSameSideGame())
+            return seatSide;
+        for (com.gempukku.swccgo.game.PhysicalCard card : gameState.getAllPermanentCards()) {
+            if (playerId.equals(card.getOwner()) && card.getBlueprint().getSide() != null)
+                return card.getBlueprint().getSide();
+        }
+        return seatSide;
     }
 }
