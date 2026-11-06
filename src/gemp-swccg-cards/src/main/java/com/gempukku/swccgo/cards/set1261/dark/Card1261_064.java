@@ -26,7 +26,7 @@ public class Card1261_064 extends AbstractCharacterWeapon {
         setLore("Relby-k23 blaster pistol. Inflicts severe pain prior to death. Safety known to fail. Although these blasters are on the civilian restricted list, Imperial agents use them anyway.");
         setGameText("Deploy on Tarkin or an ISB Agent. May be forfeited to Used Pile (forfeit = 3). May target a character or creature for free. Draw destiny. Target hit, and its forfeit = 0, if destiny (+1 if on Tarkin) > defense value. Matching weapon for Tarkin.");
         addIcons(Icon.CLOUD_CITY, Icon.LEGACY_BLOCK_6);
-        addKeywords(Keyword.BLASTER_PISTOL);
+        addKeywords(Keyword.BLASTER);
         setMatchingCharacterFilter(Filters.Tarkin);
     }
 

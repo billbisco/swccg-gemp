@@ -26,7 +26,7 @@ public class Card_1261_064_Tests {
         assertEquals(5, b.getDestiny(), scn.epsilon); assertEquals(CardSubtype.CHARACTER, b.getCardSubtype());
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_6_1, b.getExpansionSet()); assertEquals(Rarity.V, b.getRarity());
         scn.BlueprintCardTypeCheck(b, new ArrayList<>() {{ add(CardType.WEAPON); }});
-        scn.BlueprintKeywordCheck(b, new ArrayList<>() {{ add(Keyword.BLASTER_PISTOL); }});
+        scn.BlueprintKeywordCheck(b, new ArrayList<>() {{ add(Keyword.BLASTER); }});
         scn.BlueprintIconCheck(b, new ArrayList<>() {{ add(Icon.WEAPON); add(Icon.CLOUD_CITY); add(Icon.LEGACY_BLOCK_6); }});
     }
 
