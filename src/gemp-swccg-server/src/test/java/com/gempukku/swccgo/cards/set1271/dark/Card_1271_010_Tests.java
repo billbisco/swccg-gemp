@@ -31,10 +31,13 @@ public class Card_1271_010_Tests {
             put("wrong", "1_194");
         }};
         var other = new HashMap<String, String>() {{ put("prerequisite", "1_21"); }};
-        return new VirtualTableScenario(other, own, 40, 40,
+        var scn = new VirtualTableScenario(other, own, 40, 40,
                 StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
+        // A Starting Interrupt fixture must not interrupt the no-starting-interrupt setup.
+        scn.MoveOutOfPlay(scn.GetDSCard("search"));
+        return scn;
     }
 
     @Test

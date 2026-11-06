@@ -59,12 +59,12 @@ public class Card_1271_011_Tests {
         scn.SkipToDSTurn(Phase.CONTROL);
         scn.MoveCardsToDSSideOfTable(scn.GetDSCard("myself"));
         scn.MoveCardsToTopOfDSReserveDeck(scn.GetDSCard("setup"), scn.GetDSCard("immediate"), scn.GetDSCard("trooper"));
-        scn.SkipToPhase(Phase.CONTROL);
+        scn.SkipToPhase(Phase.DEPLOY);
         return scn;
     }
 
-    private void returnToDarkControlAction(VirtualTableScenario scn) {
-        if (scn.AwaitingLSControlPhaseActions())
+    private void returnToDarkAction(VirtualTableScenario scn) {
+        if (scn.GetDecidingPlayer().equals(scn.LS))
             scn.LSPass();
     }
 
@@ -94,7 +94,7 @@ public class Card_1271_011_Tests {
         scn.PassAllResponses();
         assertEquals(Zone.HAND, scn.GetDSCard("setup").getZone());
         assertEquals(Zone.SIDE_OF_TABLE, scn.GetDSCard("myself").getZone());
-        returnToDarkControlAction(scn);
+        returnToDarkAction(scn);
         assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("myself"), "Setup card"));
     }
 
@@ -183,6 +183,8 @@ public class Card_1271_011_Tests {
         scn.SkipToDSTurn(Phase.CONTROL);
         int force = scn.GetLSLifeForceRemaining();
         scn.DSForceDrainAt(scn.GetDSStartingLocation());
+        for (int i = 0; i < 10 && scn.GetDecidingPlayer().equals(scn.LS); i++)
+            scn.LSPass();
         assertTrue(scn.DSCardActionAvailable(scn.GetDSCard("myself"), "cancel Force drain"));
         scn.DSUseCardAction(scn.GetDSCard("myself"), "cancel Force drain");
         scn.PassAllResponses();
