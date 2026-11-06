@@ -61,8 +61,7 @@ public class Card_1262_013_Tests {
         assertFalse(selectable(scn, "1_201"));
         scn.DSChooseCard(card);
         scn.PassAllResponses();
-        scn.DSChooseCard(cardName.equals("rifle") ? scn.GetDSCard("trooper") : room);
-        scn.PassAllResponses();
+        // The standard deployment action automatically selects its sole legal destination.
         assertEquals(room, scn.game().getModifiersQuerying().getLocationThatCardIsAt(scn.gameState(), card));
     }
     @Test public void CloudCityDiningRoomDeploysCharacterAsBattleReactAtNormalCost() {
@@ -90,7 +89,7 @@ public class Card_1262_013_Tests {
     @Test public void CloudCityDiningRoomCharacterReactCanStopForceDrain() {
         var scn = scenario(); var room = scn.GetDSCard("room");
         scn.StartGame(); scn.MoveLocationToTable(room); scn.MoveCardsToLocation(room, scn.GetLSCard("luke"));
-        scn.MoveCardsToDSHand(scn.GetDSCard("reinforcement"), scn.GetDSCard("device")); scn.SkipToLSTurn(Phase.CONTROL);
+        scn.MoveCardsToDSHand(scn.GetDSCard("reinforcement"), scn.GetDSCard("trooper"), scn.GetDSCard("device")); scn.SkipToLSTurn(Phase.CONTROL);
         int life = scn.GetDSLifeForceRemaining(); scn.LSForceDrainAt(room); deployReact(scn, "reinforcement");
         assertEquals(life, scn.GetDSLifeForceRemaining());
     }
