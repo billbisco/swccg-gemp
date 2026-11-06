@@ -1,13 +1,14 @@
 package com.gempukku.swccgo.cards.set1115.dark;
 
 import com.gempukku.swccgo.common.Side;
+import com.gempukku.swccgo.common.Phase;
 import com.gempukku.swccgo.filters.InterruptPersonaReferences;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.logic.modifiers.AddsBattleDestinyModifier;
 import org.junit.Test;
 
 import java.util.HashMap;
-import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -20,6 +21,7 @@ public class Card_1115_067_Integration_Tests {
             put("maul", "11_54"); put("mara", "110_10"); put("duel", "1110_13");
             put("modern", "221_41"); put("gold", "15_290"); put("decipher", "1_272");
             put("original", "1102_48");
+            put("vader", "1_168");
         }}, 20, 20, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -66,21 +68,32 @@ public class Card_1115_067_Integration_Tests {
         assertEquals(hereBase, query.getForceDrainAmount(scn.gameState(), here, scn.DS), 0);
     }
 
-    @Test
-    public void SkillEffectModifiesEachBattleDestinyRatherThanTotalAndOnlyAtItsLocation() {
+    private void battleDestiny(boolean atSkillEffect) {
         var scn = scenario();
         var here = scn.GetDSStartingLocation();
-        scn.MoveCardsToLocation(here, scn.GetDSCard("trooper"), scn.GetLSCard("luke"));
+        var battleSite = atSkillEffect ? here : scn.GetLSStartingLocation();
+        scn.MoveCardsToLocation(here, scn.GetDSCard("trooper"));
         scn.AttachCardsTo(scn.GetDSCard("trooper"), scn.GetDSCard("skill"));
-        var destiny = scn.GetDSCard("decipher");
-        destiny.setDestinyValueToUse(3);
-        var query = scn.game().getModifiersQuerying();
-        scn.gameState().beginBattle(scn.DS, here, false, List.of(), List.of());
-        assertEquals(4, query.getBattleDestiny(scn.gameState(), destiny, scn.DS), 0);
-        assertEquals(3, query.getBattleDestiny(scn.gameState(), destiny, scn.LS), 0);
-        assertEquals(6, query.getTotalBattleDestiny(scn.gameState(), scn.DS, 6), 0);
-        scn.gameState().endBattle();
-        scn.gameState().beginBattle(scn.DS, scn.GetLSStartingLocation(), false, List.of(), List.of());
-        assertEquals(3, query.getBattleDestiny(scn.gameState(), destiny, scn.DS), 0);
+        scn.MoveCardsToLocation(battleSite, scn.GetDSCard("vader"), scn.GetLSCard("luke"));
+        scn.ApplyAdHocModifier(new AddsBattleDestinyModifier(here, 1));
+        scn.SkipToDSTurn(Phase.BATTLE);
+        scn.EnsureDSForcePile(2);
+        scn.DSInitiateBattle(battleSite);
+        scn.PassAllResponses();
+        scn.MoveCardsToTopOfDSReserveDeck(scn.GetDSDestiny(3), scn.GetDSDestiny(2));
+        scn.PrepareLSDestiny(3);
+        scn.SkipToEndOfPowerSegment(true);
+        assertEquals(atSkillEffect ? 7 : 5, scn.GetDSTotalDestiny());
+        assertEquals(3, scn.GetLSTotalDestiny());
+    }
+
+    @Test
+    public void SkillEffectAddsOneToEachOfTwoActualBattleDestinyDrawsRatherThanOnlyTotal() {
+        battleDestiny(true);
+    }
+
+    @Test
+    public void SkillEffectDoesNotModifyActualBattleDestinyAtAnotherLocation() {
+        battleDestiny(false);
     }
 }
