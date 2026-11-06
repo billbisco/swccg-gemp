@@ -38,7 +38,7 @@ public class Card1271_035 extends AbstractDroid {
         setGameText("Captured if an Imperial controls this site. While present with a Scomp link at a battleground (or mobile) site, your total power at adjacent sites is +2 and, once per turn, may use 1 Force to add or subtract 1 from opponent's just drawn destiny.");
         addPersona(Persona.R2D2);
         addModelType(ModelType.ASTROMECH);
-        addIcons(Icon.A_NEW_HOPE);
+        addIcons(Icon.NAV_COMPUTER, Icon.A_NEW_HOPE);
         addKeywords(Keyword.SPY);
     }
 

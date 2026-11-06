@@ -33,7 +33,7 @@ public class Card_1271_035_Tests {
         assertEquals(2, card.getDeployCost(), scn.epsilon); assertEquals(1, card.getPower(), scn.epsilon);
         assertEquals(3, card.getForfeit(), scn.epsilon); assertEquals(1, scn.GetLandspeed(physical));
         scn.BlueprintCardTypeCheck(card, new ArrayList<>() {{ add(CardType.DROID); }});
-        scn.BlueprintIconCheck(card, new ArrayList<>() {{ add(Icon.DROID); add(Icon.A_NEW_HOPE); add(Icon.LEGACY_BLOCK_7); }});
+        scn.BlueprintIconCheck(card, new ArrayList<>() {{ add(Icon.DROID); add(Icon.NAV_COMPUTER); add(Icon.A_NEW_HOPE); add(Icon.LEGACY_BLOCK_7); }});
         scn.BlueprintKeywordCheck(card, new ArrayList<>() {{ add(Keyword.SPY); }});
         scn.BlueprintPersonaCheck(card, new ArrayList<>() {{ add(Persona.R2D2); }});
         scn.BlueprintModelTypeCheck(card, new ArrayList<>() {{ add(ModelType.ASTROMECH); }});
@@ -57,6 +57,7 @@ public class Card_1271_035_Tests {
         var scn = DeployOpponentAtR2Site("greedo", false);
         assertTrue(Filters.controls(scn.DS).accepts(scn.game(), scn.GetDSStartingLocation()));
         assertFalse(scn.GetLSCard("r2").isCaptive());
+        assertEquals(scn.GetDSStartingLocation(), scn.GetLSCard("r2").getAtLocation());
         assertTrue(scn.AwaitingLSDeployPhaseActions() || scn.AwaitingDSDeployPhaseActions());
     }
 
@@ -65,6 +66,7 @@ public class Card_1271_035_Tests {
         var scn = DeployOpponentAtR2Site("vader", true);
         assertFalse(Filters.controls(scn.DS).accepts(scn.game(), scn.GetDSStartingLocation()));
         assertFalse(scn.GetLSCard("r2").isCaptive());
+        assertEquals(scn.GetDSStartingLocation(), scn.GetLSCard("r2").getAtLocation());
         assertTrue(scn.AwaitingLSDeployPhaseActions() || scn.AwaitingDSDeployPhaseActions());
     }
 
