@@ -119,12 +119,6 @@ public class Card_1230_096_Tests {
         finishSelectedDownload(scn);
     }
 
-    private void trace(VirtualTableScenario scn, String label) {
-        var d = scn.GetCurrentDecision();
-        System.out.println("TRACE " + label + " " + scn.GetDecidingPlayer() + " " + d.getClass().getSimpleName() + " " + d.getText());
-        d.getDecisionParameters().forEach((k, v) -> System.out.println(k + "=" + java.util.Arrays.toString(v)));
-    }
-
     private void deploySelectedShip(VirtualTableScenario scn) {
         scn.PassAllResponses();
         scn.LSChooseCard(scn.GetLSCard("ship"));
@@ -337,7 +331,7 @@ public class Card_1230_096_Tests {
         scn.AttachCardsTo(scn.GetLSCard("ship"), scn.GetLSCard("attack"));
         // Isolate attrition immunity from battle damage without other forfeitable Light cards.
         scn.ApplyAdHocModifier(new com.gempukku.swccgo.logic.modifiers.PowerModifier(
-                scn.GetLSCard("attack"), scn.GetLSCard("ship"), 10));
+                null, scn.GetLSCard("ship"), 10));
         assertEquals(17, scn.GetPower(scn.GetLSCard("ship")));
         scn.SkipToPhase(Phase.BATTLE);
         scn.LSInitiateBattle(scn.GetLSCard("tatooine"));
@@ -359,7 +353,8 @@ public class Card_1230_096_Tests {
     @Test
     public void TheTimeForOurAttackHasComeProtectsItsHostFromFourAttritionInAnActualBattle() {
         var scn = attritionReady(4);
-        trace(scn, "attrition4");
+        assertTrue(scn.AwaitingLSAttritionPayment());
+        assertEquals(0, scn.LSGetChoiceMin());
         scn.LSPass();
         scn.PassAllResponses();
         org.junit.Assert.assertNull(scn.gameState().getBattleState());
@@ -389,8 +384,6 @@ public class Card_1230_096_Tests {
         scn.ApplyAdHocModifier(cost);
         scn.ApplyAdHocModifier(new com.gempukku.swccgo.logic.modifiers.MayDeployFreeModifier(null, scn.GetLSCard("attack")));
         deploySecond(scn, "tatooine");
-        trace(scn, "free modes");
-        System.out.println("COST " + scn.game().getModifiersQuerying().getDeployCost(scn.gameState(), scn.GetLSCard("attack")) + " MAYFREE " + scn.game().getModifiersQuerying().mayDeployForFree(scn.gameState(), scn.GetLSCard("attack")));
         assertTrue(attackAvailable(scn, "Reserve Deck for free"));
         assertTrue(attackAvailable(scn, "Reserve Deck for 1 Force"));
         return scn;
@@ -423,8 +416,6 @@ public class Card_1230_096_Tests {
         scn.DrainLSForcePileTo(2);
         deploySecond(scn, "tatooine");
         assertEquals(0, scn.GetLSForcePileCount());
-        trace(scn, "unpayable");
-        System.out.println("COST " + scn.game().getModifiersQuerying().getDeployCost(scn.gameState(), scn.GetLSCard("attack")));
         assertFalse(attackAvailable(scn));
         assertEquals(Zone.HAND, scn.GetLSCard("attack").getZone());
     }
