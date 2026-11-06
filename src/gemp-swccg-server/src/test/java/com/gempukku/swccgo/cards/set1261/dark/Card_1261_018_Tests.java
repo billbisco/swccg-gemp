@@ -91,4 +91,28 @@ public class Card_1261_018_Tests {
         scn.LSStartBattleAndSkipToWeaponsSegment(site); scn.LSPass();
         assertFalse(scn.DSCardActionAvailable(guards, "Add 2 to total power"));
     }
+
+    @Test
+    public void ThokAndThugActuallyDeployForThreeAtPalaceSite() {
+        var scn = scenario(); var guards = scn.GetDSCard("guards"); var palace = scn.GetDSCard("palace");
+        scn.StartGame(); scn.MoveLocationToTable(palace); scn.MoveCardsToDSHand(guards);
+        scn.SkipToDSTurn(Phase.DEPLOY); int force = scn.GetDSForcePileCount();
+        scn.DSDeployCard(guards); scn.DSChooseCard(palace); scn.PassAllResponses();
+        assertEquals(palace, guards.getAtLocation());
+        assertEquals(force - 3, scn.GetDSForcePileCount());
+    }
+
+    @Test
+    public void ThokAndThugBonusExpiresAfterBattleAndResetsNextTurn() {
+        var scn = scenario(); var guards = scn.GetDSCard("guards"); var site = scn.GetDSStartingLocation();
+        scn.StartGame(); scn.MoveCardsToLocation(site, guards, scn.GetLSCard("luke"));
+        scn.LSStartBattleAndSkipToWeaponsSegment(site); scn.LSPass();
+        scn.DSUseCardAction(guards, "Add 2 to total power"); scn.PassAllResponses();
+        scn.SkipToDamageSegment(false); scn.PassDamageSegmentActions();
+        scn.LSPayRemainingBattleDamageFromReserveDeck(); scn.PassAllResponses();
+        assertFalse(scn.gameState().isDuringBattle());
+        scn.SkipToLSTurn(Phase.BATTLE); scn.LSInitiateBattle(site); scn.PassAllResponses(); scn.LSPass();
+        assertEquals(6, scn.GetDSTotalPower());
+        assertTrue(scn.DSCardActionAvailable(guards, "Add 2 to total power"));
+    }
 }
