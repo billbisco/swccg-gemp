@@ -30,6 +30,7 @@ public class Card_1_272_PersonaReferences_Tests {
         for (String key : new String[]{"maul", "mara", "vader", "trooper"})
             scn.MoveCardsToTopOfDSReserveDeck(scn.GetDSCard(key));
         scn.EnsureDSForcePile(6);
+        scn.DrainDSForcePileTo(6);
         if (modified)
             scn.ApplyAdHocModifier(new ModifyGameTextModifier(scn.GetDSStartingLocation(), Filters.title("The Empire's Back"),
                     ModifyGameTextType.LEGACY__INTERRUPTS__VADER_MAY_BE_MAUL_OR_MARA_JADE));
