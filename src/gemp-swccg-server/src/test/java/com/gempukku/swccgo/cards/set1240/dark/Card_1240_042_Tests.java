@@ -30,11 +30,22 @@ public class Card_1240_042_Tests {
     }
 
     private void Reach(VirtualTableScenario scn, PhysicalCardImpl card, String action) {
-        for (int i = 0; i < 20 && !scn.DSCardActionAvailable(card, action); i++) {
+        for (int i = 0; i < 20 && !(scn.DSAnyActionsAvailable() && scn.DSCardActionAvailable(card, action)); i++) {
             assertTrue(scn.GetCurrentDecision().getText().toLowerCase().contains("optional response"));
             scn.PlayerPass(scn.GetDecidingPlayer());
         }
-        assertTrue(scn.DSCardActionAvailable(card, action));
+        assertTrue(scn.DSAnyActionsAvailable() && scn.DSCardActionAvailable(card, action));
+    }
+
+    private void PassResponsesWithoutFrustration(VirtualTableScenario scn) {
+        for (int i = 0; i < 20; i++) {
+            if (!scn.GetCurrentDecision().getText().toLowerCase().contains("optional response")) return;
+            if (scn.DSDecisionAvailable("optional response") && scn.GetADParam(scn.DS, "actionText") != null) {
+                assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("frustration")));
+            }
+            scn.PlayerPass(scn.GetDecidingPlayer());
+        }
+        fail("Optional responses did not finish");
     }
 
     @Test
@@ -198,9 +209,8 @@ public class Card_1240_042_Tests {
     @Test
     public void FrustrationUsedDoesNotRespondToAPeekAtTheLostPile() {
         var scn = MusicianPeekReady(Zone.LOST_PILE);
-        scn.PassAllResponses();
+        PassResponsesWithoutFrustration(scn);
         assertTrue(scn.DSDecisionAvailable("Do you want to re-shuffle this card pile?"));
-        assertFalse(scn.DSCardPlayAvailable(scn.GetDSCard("frustration")));
         scn.DSChooseNo();
         scn.PassAllResponses();
         assertInZone(Zone.HAND, scn.GetDSCard("frustration"));
@@ -311,8 +321,8 @@ public class Card_1240_042_Tests {
         scn.PassAllResponses();
         assertTrue(scn.DSDecisionAvailable("Top card"));
         scn.DSPass();
-        scn.PassAllResponses();
-        assertTrue(scn.AwaitingDSControlPhaseActions());
+        PassResponsesWithoutFrustration(scn);
+        Reach(scn, scn.GetDSCard("scan"), "Peek at top of opponent's Reserve Deck");
         assertFalse(scn.DSCardPlayAvailable(scn.GetDSCard("frustration")));
     }
 
