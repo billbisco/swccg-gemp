@@ -87,7 +87,17 @@ public class Card_1115_067_Integration_Tests {
         scn.PassAllResponses();
         scn.MoveCardsToTopOfDSReserveDeck(scn.GetDSDestiny(3), scn.GetDSDestiny(2));
         scn.PrepareLSDestiny(3);
-        scn.SkipToEndOfPowerSegment(true);
+        scn.SkipToPowerSegment();
+        assertTrue(scn.GetCurrentDecision().getText(), scn.DSDecisionAvailable("battle destiny?"));
+        scn.DSChooseYes();
+        scn.PassDestinyDrawResponses();
+        scn.PassDestinyDrawResponses();
+        scn.PassResponses("BATTLE_DESTINY_DRAWS_COMPLETE_FOR_PLAYER");
+        assertTrue(scn.GetCurrentDecision().getText(), scn.LSDecisionAvailable("battle destiny?"));
+        scn.LSChooseYes();
+        scn.PassDestinyDrawResponses();
+        scn.PassResponses("BATTLE_DESTINY_DRAWS_COMPLETE_FOR_PLAYER");
+        scn.PassResponses("BATTLE_DESTINY_DRAWS_COMPLETE_FOR_BOTH_PLAYERS");
         assertEquals(atSkillEffect ? 7 : 5, scn.GetDSTotalDestiny());
         assertEquals(3, scn.GetLSTotalDestiny());
     }
@@ -163,21 +173,29 @@ public class Card_1115_067_Integration_Tests {
         scn.PassAllResponses();
         scn.DSChooseCard(sister);
         scn.PassAllResponses();
+        if (scn.DSDecisionAvailable("Choose card to take into hand"))
+            scn.DSChooseCards();
+        scn.PassAllResponses();
         assertInZone(Zone.LOST_PILE, maul);
         assertInZone(Zone.HAND, sister);
         assertInZone(Zone.LOST_PILE, interrupt);
     }
 
-    @Test
-    public void LegacyDeploymentSearchCanStillBeOfferedWhenVaderUniquenessBlocksVader() {
+    private void legacyDeploymentSearch(boolean trained) {
         var scn = scenario();
+        if (!trained)
+            scn.MoveOutOfPlay(scn.GetDSCard("trained"));
         var interrupt = scn.GetDSCard("legacySearch");
         scn.MoveCardsToHand(interrupt);
         scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("vader"));
         scn.SkipToDSTurn(Phase.DEPLOY);
         scn.EnsureDSForcePile(2);
-        assertTrue(scn.DSCardPlayAvailable(interrupt, "Deploy Vader from Reserve Deck"));
-        scn.MoveOutOfPlay(scn.GetDSCard("trained"));
-        assertFalse(scn.DSCardPlayAvailable(interrupt, "Deploy Vader from Reserve Deck"));
+        assertEquals(trained, scn.DSCardPlayAvailable(interrupt, "Deploy Vader from Reserve Deck"));
+    }
+
+    @Test
+    public void LegacyDeploymentSearchCanStillBeOfferedWhenVaderUniquenessBlocksVader() {
+        legacyDeploymentSearch(true);
+        legacyDeploymentSearch(false);
     }
 }
