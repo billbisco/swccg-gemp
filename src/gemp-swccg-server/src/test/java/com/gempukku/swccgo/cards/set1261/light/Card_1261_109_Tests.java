@@ -70,7 +70,9 @@ public class Card_1261_109_Tests {
         scn.MoveCardsToLSHand(pilot); scn.SkipToLSTurn(Phase.DEPLOY);
         scn.LSDeployCard(pilot); scn.LSChooseCard(dash); scn.PassAllResponses();
         assertEquals(dash, pilot.getAttachedTo());
-        assertEquals(5, scn.GetBattleDestinyAbility(dash));
+        assertEquals(2, scn.GetBattleDestinyAbility(pilot));
+        assertTrue(com.gempukku.swccgo.filters.Filters.piloting(dash).accepts(scn.game(), pilot));
+        assertEquals(7, scn.GetPower(dash));
     }
 
     @Test
@@ -82,13 +84,17 @@ public class Card_1261_109_Tests {
 
     private void attrition(int destiny, boolean immune) {
         var scn = scenario(); startAtSite(scn, false);
+        scn.MoveCardsToLSHand(scn.GetLSCard("luke"));
         scn.SkipToLSTurn(Phase.BATTLE);
-        scn.PrepareLSDestiny(0); scn.PrepareDSDestiny(destiny - 1);
+        scn.PrepareDSDestiny(destiny - 1);
         scn.LSInitiateBattle(scn.GetLSStartingLocation());
         scn.PassAllResponses(); scn.SkipToDamageSegment(true); scn.PassDamageSegmentActions();
-        assertTrue(scn.AwaitingLSAttritionPayment());
-        assertEquals(!immune, scn.LSHasCardChoiceAvailable(scn.GetLSCard("dash")));
-        assertTrue(scn.LSHasCardChoiceAvailable(scn.GetLSCard("luke")));
+        assertEquals(destiny, scn.GetUnpaidLSAttrition());
+        if (scn.AwaitingLSBattleDamagePayment()) scn.LSPayRemainingBattleDamageFromReserveDeck();
+        assertEquals(immune, scn.LSDecisionAvailable("(if desired)"));
+        if (immune) scn.LSChooseCards();
+        else scn.LSPayAttritionFromCardInPlay(scn.GetLSCard("dash"));
+        assertEquals(immune ? Zone.AT_LOCATION : Zone.LOST_PILE, scn.GetLSCard("dash").getZone());
     }
 
     @Test public void DashInRogue10DoesNotPayAttritionThree() { attrition(3, true); }
@@ -116,7 +122,7 @@ public class Card_1261_109_Tests {
     }
 
     private boolean drawAction(VirtualTableScenario scn) {
-        return scn.LSGetDecision() != null && scn.LSCardActionAvailable(scn.GetLSCard("dash"), "Draw two battle destiny");
+        return scn.LSGetADParam("actionText") != null && scn.LSCardActionAvailable(scn.GetLSCard("dash"), "Draw two battle destiny");
     }
 
     @Test

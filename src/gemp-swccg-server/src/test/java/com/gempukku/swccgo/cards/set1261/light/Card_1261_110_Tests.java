@@ -98,12 +98,16 @@ public class Card_1261_110_Tests {
 
     @Test
     public void SnowspeederGarrisonCannotReactWithoutExtraForce() {
-        var scn = react(true, 1); assertFalse(scn.LSCardActionAvailable(scn.GetLSCard("garrison"), "react"));
+        var scn = react(true, 1); assertNull(scn.LSGetDecision());
+        assertNotNull(scn.DSGetDecision());
+        assertEquals(scn.GetLSCard("perimeter"), scn.GetLSCard("garrison").getAtLocation());
     }
 
     @Test
     public void SnowspeederGarrisonCannotReactAwayFromHothEvenOnSamePlanet() {
-        var scn = react(false, 4); assertFalse(scn.LSCardActionAvailable(scn.GetLSCard("garrison"), "react"));
+        var scn = react(false, 4); assertNull(scn.LSGetDecision());
+        assertNotNull(scn.DSGetDecision());
+        assertEquals(scn.GetLSStartingLocation(), scn.GetLSCard("garrison").getAtLocation());
     }
 
     @Test
@@ -123,14 +127,17 @@ public class Card_1261_110_Tests {
     private void attrition(boolean hoth, int destiny, boolean immune) {
         var scn = scenario(); start(scn); var g = scn.GetLSCard("garrison");
         var site = hoth ? scn.GetLSCard("hoth") : scn.GetLSStartingLocation();
-        scn.MoveCardsToLocation(site, g, scn.GetLSCard("luke"), scn.GetDSCard("vader"));
+        scn.MoveCardsToLocation(site, g, scn.GetDSCard("vader"));
         scn.SkipToLSTurn(Phase.BATTLE);
         scn.PrepareLSDestiny(0); scn.PrepareDSDestiny(destiny - 1);
         scn.LSInitiateBattle(site);
         scn.PassAllResponses(); scn.SkipToDamageSegment(true); scn.PassDamageSegmentActions();
-        assertTrue(scn.AwaitingLSAttritionPayment());
-        assertEquals(!immune, scn.LSHasCardChoiceAvailable(g));
-        assertTrue(scn.LSHasCardChoiceAvailable(scn.GetLSCard("luke")));
+        assertEquals(destiny, scn.GetUnpaidLSAttrition());
+        if (scn.AwaitingLSBattleDamagePayment()) scn.LSPayRemainingBattleDamageFromReserveDeck();
+        assertEquals(immune, scn.LSDecisionAvailable("(if desired)"));
+        if (immune) scn.LSChooseCards();
+        else scn.LSPayAttritionFromCardInPlay(g);
+        assertEquals(immune ? Zone.AT_LOCATION : Zone.LOST_PILE, g.getZone());
     }
 
     @Test public void SnowspeederGarrisonDoesNotPayAttritionThreeOnHoth() { attrition(true, 3, true); }
