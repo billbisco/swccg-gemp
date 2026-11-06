@@ -88,7 +88,7 @@ public class Card_1261_103_Tests {
     public void HanChewieAndTheFalconTakesManeuversAndMayUseItNormally() {
         //test1: the up-triangle means take into hand, not deploy or play the Interrupt.
         //test2: using the fetched card produces the ordinary maneuver/hyperspeed bonus.
-        var scn = start(); scn.SkipToLSTurn(Phase.CONTROL); var falcon = scn.GetLSCard("falcon");
+        var scn = start(); scn.SkipToLSTurn(Phase.DEPLOY); var falcon = scn.GetLSCard("falcon");
         scn.LSUseCardAction(falcon, "Take A Few Maneuvers"); scn.LSChooseCard(scn.GetLSCard("maneuvers"));
         scn.PassAllResponses(); assertInHand(scn.GetLSCard("maneuvers")); //test1
         assertEquals(5, scn.GetDefense(falcon));
@@ -110,10 +110,10 @@ public class Card_1261_103_Tests {
 
     @Test
     public void HanChewieAndTheFalconDoesNotSearchAnEmptyReserveDeck() {
-        var scn = start(); scn.LSActivateForceCheat(1);
+        var scn = start(); scn.SkipToLSTurn(Phase.CONTROL);
         scn.MoveCardsToLSHand(scn.GetLSReserveDeck().toArray(com.gempukku.swccgo.game.PhysicalCardImpl[]::new));
-        scn.SkipToLSTurn(Phase.CONTROL);
-        assertTrue(scn.AwaitingLSControlPhaseActions());
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        assertTrue(scn.AwaitingLSDeployPhaseActions());
         assertFalse(scn.LSCardActionAvailable(scn.GetLSCard("falcon"), "Take A Few Maneuvers"));
     }
 
