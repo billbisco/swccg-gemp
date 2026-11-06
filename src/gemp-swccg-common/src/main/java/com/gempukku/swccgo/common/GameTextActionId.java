@@ -1695,6 +1695,7 @@ public enum GameTextActionId {
     LEGACY__VOOLVIF_MONN__CANCEL_WEAPON_DESTINY,
     // Append new identifiers to preserve existing enum ordinals.
     LEGACY__RAPID_DEPLOYMENT__DEPLOY_SCOUT(true),
+    LEGACY__GREEN_SQUADRON_1__TAKE_DIVERSIONARY_TACTICS(true),
     ;
 
     private boolean _searchCardPile;
