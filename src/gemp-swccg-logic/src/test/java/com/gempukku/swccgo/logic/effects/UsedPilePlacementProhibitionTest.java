@@ -11,6 +11,7 @@ import com.gempukku.swccgo.logic.modifiers.MayNotBePlacedInUsedPileModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.modifiers.ModifierType;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
+import com.gempukku.swccgo.logic.modifiers.querying.ModifiersLogic;
 import com.gempukku.swccgo.logic.timing.Action;
 import org.junit.jupiter.api.Test;
 
@@ -24,7 +25,7 @@ class UsedPilePlacementProhibitionTest {
     private final GameState state = mock(GameState.class);
     private final PhysicalCard source = mock(PhysicalCard.class);
     private final PhysicalCard card = mock(PhysicalCard.class);
-    private final ModifiersQuerying querying = mock(ModifiersQuerying.class, CALLS_REAL_METHODS);
+    private final ModifiersQuerying querying = spy(new ModifiersLogic(game));
 
     UsedPilePlacementProhibitionTest() {
         when(game.getGameState()).thenReturn(state);
