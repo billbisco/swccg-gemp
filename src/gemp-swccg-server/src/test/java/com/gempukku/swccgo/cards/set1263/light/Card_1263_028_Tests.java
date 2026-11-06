@@ -82,7 +82,7 @@ public class Card_1263_028_Tests {
 
     @Test
     public void FirefightOnlyPlaysWhenBattleJustInitiated() {
-        var scn = ground(false, true); scn.PassBattleStartResponses();
+        var scn = ground(false, true); scn.PassAllResponses();
         assertTrue(scn.AwaitingLSWeaponsSegmentActions());
         assertFalse(scn.LSCardPlayAvailable(scn.GetLSCard("firefight")));
     }
