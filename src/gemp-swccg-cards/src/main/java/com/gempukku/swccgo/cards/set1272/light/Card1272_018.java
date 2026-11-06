@@ -22,7 +22,8 @@ import com.gempukku.swccgo.logic.effects.PlayoutDecisionEffect;
 import com.gempukku.swccgo.logic.effects.choose.TakeCardIntoHandFromUsedPileEffect;
 import com.gempukku.swccgo.logic.modifiers.KeywordModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
-import com.gempukku.swccgo.logic.modifiers.TreatsOccupyAsControlModifier;
+import com.gempukku.swccgo.logic.modifiers.ModifyGameTextModifier;
+import com.gempukku.swccgo.logic.modifiers.ModifyGameTextType;
 import com.gempukku.swccgo.logic.timing.EffectResult;
 
 import java.util.Collections;
@@ -48,7 +49,8 @@ public class Card1272_018 extends AbstractAlien {
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
         List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new TreatsOccupyAsControlModifier(self, Filters.titleContains("Forest Depths")));
+        modifiers.add(new ModifyGameTextModifier(self, Filters.titleContains("Forest Depths"),
+                ModifyGameTextType.OCCUPY_IN_GAME_TEXT_IS_CONTROL));
         modifiers.add(new KeywordModifier(self, Filters.and(Filters.Wookiee, Filters.not(Filters.unique), Filters.here(self)), Keyword.HEROIC));
         return modifiers;
     }
