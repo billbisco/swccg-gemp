@@ -186,6 +186,18 @@ public class Card_1240_110_Tests {
         assertInZone(Zone.LOST_PILE, scn.GetLSCard("yt"));
     }
 
+    @Test
+    public void Yt1300TransportQualifiedForfeitPaysFiveOfActualBattleDamage() {
+        var scn = BattleReady(4);
+        int damage = scn.GetUnpaidLSBattleDamage();
+        assertTrue(damage > 5);
+        assertEquals(5, scn.GetForfeit(scn.GetLSCard("yt")));
+        scn.LSPayBattleDamageFromCardInPlay(scn.GetLSCard("yt"));
+        assertInZone(Zone.LOST_PILE, scn.GetLSCard("yt"));
+        assertEquals(damage - 5, scn.GetUnpaidLSBattleDamage());
+        assertEquals(0, scn.GetUnpaidLSAttrition());
+    }
+
     private VirtualTableScenario BattleReady(int destiny) {
         var scn = Ready();
         var system = scn.GetLSStartingLocation();

@@ -14,7 +14,7 @@ import static org.junit.Assert.*;
 public class Card_1240_060_Tests {
     private VirtualTableScenario GetScenario() {
         return new VirtualTableScenario(new HashMap<>() {{
-                    put("corvette", "1_140"); put("luke", "1_19"); put("cannon", "1_159");
+                    put("corvette", "1_140"); put("corvette2", "1_140"); put("luke", "1_19"); put("cannon", "1_159");
                 }},
                 new HashMap<>() {{
                     put("katana", "1240_60");
@@ -205,13 +205,32 @@ public class Card_1240_060_Tests {
         assertInZone(Zone.LOST_PILE, scn.GetDSCard("katana"));
     }
 
+    @Test
+    public void KatanaBoostedForfeitPaysSevenOfActualBattleDamageAndAttrition() {
+        var scn = BattleReady(7, true, true);
+        int damage = scn.GetUnpaidDSBattleDamage();
+        assertTrue(damage > 7);
+        assertEquals(7, scn.GetUnpaidDSAttrition());
+        assertEquals(7, scn.GetForfeit(scn.GetDSCard("dreadnaught")));
+        scn.DSPayBattleDamageFromCardInPlay(scn.GetDSCard("dreadnaught"));
+        assertInZone(Zone.LOST_PILE, scn.GetDSCard("dreadnaught"));
+        assertEquals(damage - 7, scn.GetUnpaidDSBattleDamage());
+        assertEquals(0, scn.GetUnpaidDSAttrition());
+        assertAtLocation(scn.GetDSStartingLocation(), scn.GetDSCard("katana"));
+    }
+
     private VirtualTableScenario BattleReady(int destiny, boolean otherDreadnaught) {
+        return BattleReady(destiny, otherDreadnaught, false);
+    }
+
+    private VirtualTableScenario BattleReady(int destiny, boolean otherDreadnaught, boolean extraCorvette) {
         var scn = Ready();
         var system = scn.GetDSStartingLocation();
         scn.MoveCardsToDSHand(scn.GetDSCard("devastator"));
         if (!otherDreadnaught) scn.MoveCardsToDSHand(scn.GetDSCard("dreadnaught"));
         scn.MoveCardsToLocation(system, scn.GetLSCard("corvette"));
         scn.BoardAsPilot(scn.GetLSCard("corvette"), scn.GetLSCard("luke"));
+        if (extraCorvette) scn.MoveCardsToLocation(system, scn.GetLSCard("corvette2"));
         scn.EnsureDSForcePile(5);
         scn.SkipToPhase(Phase.BATTLE);
         scn.DSInitiateBattle(system);
