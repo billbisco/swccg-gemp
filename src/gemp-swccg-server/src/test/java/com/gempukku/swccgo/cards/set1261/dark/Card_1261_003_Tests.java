@@ -101,6 +101,8 @@ public class Card_1261_003_Tests {
         scn.BoardAsPassenger(walker, driver); scn.SkipToDSTurn(Phase.DEPLOY);
         assertFalse(scn.DSCardActionAvailable(driver, "Deploy vehicle site from Reserve Deck"));
         scn.MoveCardsToDSHand(driver); scn.BoardAsPilot(walker, driver); scn.DrainDSForcePileTo(0);
+        scn.SkipToPhase(Phase.MOVE); assertEquals(0, scn.GetDSForcePileCount());
+        assertTrue(scn.AwaitingDSMovePhaseActions());
         assertFalse(scn.DSCardActionAvailable(driver, "Deploy vehicle site from Reserve Deck"));
     }
 
