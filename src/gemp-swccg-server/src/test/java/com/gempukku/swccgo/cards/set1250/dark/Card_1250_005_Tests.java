@@ -12,7 +12,7 @@ import static com.gempukku.swccgo.framework.Assertions.assertInZone;
 
 public class Card_1250_005_Tests {
     private VirtualTableScenario scenario() {
-        return new VirtualTableScenario(new HashMap<>() {{ put("falcon", "1_143"); put("cannon", "1_159"); }},
+        return new VirtualTableScenario(new HashMap<>() {{ put("falcon", "1_143"); put("cannon", "1_159"); put("luke", "1_19"); put("order", "14_1"); }},
                 new HashMap<>() {{ put("dofine", "1250_5"); put("flagship", "14_114"); put("otherShip", "1_299"); put("system", "1_282"); put("order", "14_67"); put("wrongOrder", "9_92"); put("gunray", "12_112"); put("haako", "12_117"); put("trooper", "1_194"); }},
                 10, 10, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
@@ -94,4 +94,36 @@ public class Card_1250_005_Tests {
     }
     @Test public void DaultayDofineTakesGunrayFromReserveOncePerGame() { retrieve("gunray"); }
     @Test public void DaultayDofineTakesHaakoFromReserveOncePerGame() { retrieve("haako"); }
+
+    @Test public void DaultayDofineDoesNotProtectWithOpponentsTheedOrder() {
+        var scn = ships(true, false); scn.MoveCardsToLSSideOfTable(scn.GetLSCard("order")); powerReduction(scn, false);
+    }
+    @Test public void DaultayDofinePassengerDoesNotProtectWithOrder() {
+        var scn = ships(false, true); scn.BoardAsPassenger(scn.GetDSCard("flagship"), scn.GetDSCard("dofine")); powerReduction(scn, false);
+    }
+    private void attrition(int destiny, boolean immune) {
+        var scn = ships(true, false); var dofine = scn.GetDSCard("dofine"); var ship = scn.GetDSCard("flagship");
+        scn.BoardAsPilot(scn.GetLSCard("falcon"), scn.GetLSCard("luke"));
+        scn.PrepareLSDestiny(destiny); scn.PrepareDSDestiny(20);
+        scn.DSInitiateBattle(scn.GetDSCard("system")); scn.SkipToDamageSegment(true); scn.PassDamageSegmentActions();
+        assertEquals(0, scn.GetUnpaidDSBattleDamage()); assertEquals(destiny, scn.GetUnpaidDSAttrition());
+        if (immune) {
+            assertTrue(scn.DSDecisionAvailable("Choose a card from battle to forfeit (if desired)"));
+            scn.DSPass(); assertEquals(Zone.AT_LOCATION, ship.getZone()); assertEquals(ship, dofine.getAttachedTo());
+        }
+        else {
+            assertTrue(scn.DSDecisionAvailable("Choose a card from battle to forfeit"));
+            assertFalse(scn.DSDecisionAvailable("(if desired)"));
+            scn.DSChooseCard(dofine); scn.PassAllResponses(); assertInZone(Zone.LOST_PILE, dofine);
+        }
+    }
+    @Test public void DaultayDofineFlagshipAndCrewSurviveAttritionBelowNine() { attrition(8, true); }
+    @Test public void DaultayDofineDoesNotProtectCrewFromAttritionEqualToNine() { attrition(9, false); }
+    @Test public void DaultayDofineDoesNotProtectCrewFromAttritionAboveNine() { attrition(10, false); }
+    @Test public void DaultayDofineOncePerGameLimitSurvivesLeavingAndReturning() {
+        var scn = retrieve("gunray"); var dofine = scn.GetDSCard("dofine");
+        scn.MoveCardsToDSHand(dofine); scn.MoveCardsToLocation(scn.GetDSStartingLocation(), dofine);
+        scn.SkipToLSTurn(Phase.CONTROL); scn.SkipToDSTurn(Phase.CONTROL);
+        assertFalse(scn.DSCardActionAvailable(dofine, "Take Gunray or Haako into hand"));
+    }
 }
