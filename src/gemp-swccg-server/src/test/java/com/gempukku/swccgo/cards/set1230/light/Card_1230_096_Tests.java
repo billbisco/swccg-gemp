@@ -119,10 +119,17 @@ public class Card_1230_096_Tests {
         finishSelectedDownload(scn);
     }
 
+    private void trace(VirtualTableScenario scn, String label) {
+        var d = scn.GetCurrentDecision();
+        System.out.println("TRACE " + label + " " + scn.GetDecidingPlayer() + " " + d.getClass().getSimpleName() + " " + d.getText());
+        d.getDecisionParameters().forEach((k, v) -> System.out.println(k + "=" + java.util.Arrays.toString(v)));
+    }
+
     private void deploySelectedShip(VirtualTableScenario scn) {
         scn.PassAllResponses();
         scn.LSChooseCard(scn.GetLSCard("ship"));
         scn.PassAllResponses();
+        trace(scn, "before Tatooine choice");
         scn.LSChooseCard(scn.GetLSCard("tatooine"));
         scn.PassAllResponses();
     }
@@ -207,7 +214,7 @@ public class Card_1230_096_Tests {
         assertTrue(attackAvailable(scn));
         scn.PassAllResponses();
         assertEquals(Zone.HAND, scn.GetLSCard("attack").getZone());
-        assertEquals(Zone.RESERVE_DECK, scn.GetLSCard("ship").getZone());
+        assertTrue(scn.GetLSReserveDeck().contains(scn.GetLSCard("ship")));
     }
 
     private VirtualTableScenario attached() {
@@ -252,6 +259,7 @@ public class Card_1230_096_Tests {
         if (scn.LSDecisionAvailable("Choose regular move action"))
             scn.LSChooseOption("hyperspeed");
         scn.PassAllResponses();
+        trace(scn, "before Tatooine choice");
         scn.LSChooseCard(scn.GetLSCard("tatooine"));
         scn.PassAllResponses();
         assertEquals(scn.GetLSCard("tatooine"), scn.GetLSCard("ship").getAtLocation());
@@ -278,6 +286,7 @@ public class Card_1230_096_Tests {
         if (scn.LSDecisionAvailable("Choose regular move action"))
             scn.LSChooseOption("hyperspeed");
         scn.PassAllResponses();
+        trace(scn, "before Tatooine choice");
         scn.LSChooseCard(scn.GetLSCard("tatooine"));
         scn.PassAllResponses();
         scn.SkipToDSTurn(Phase.MOVE);
@@ -310,7 +319,6 @@ public class Card_1230_096_Tests {
     @Test
     public void TheTimeForOurAttackHasComeDoesNotTriggerForARepublicStarfighter() {
         var scn = ready(1);
-        scn.MoveCardsToLSHand(scn.GetLSCard("republic"));
         scn.LSDeployCard(scn.GetLSCard("republic"));
         scn.LSChooseCard(scn.GetLSCard("tatooine"));
         reachAttackResponse(scn);
@@ -348,6 +356,9 @@ public class Card_1230_096_Tests {
     @Test
     public void TheTimeForOurAttackHasComeProtectsItsHostFromFourAttritionInAnActualBattle() {
         var scn = attritionReady(4);
+        trace(scn, "attrition4");
+        scn.LSPass();
+        scn.PassAllResponses();
         org.junit.Assert.assertNull(scn.gameState().getBattleState());
         assertEquals(Zone.AT_LOCATION, scn.GetLSCard("ship").getZone());
         assertEquals(Zone.ATTACHED, scn.GetLSCard("attack").getZone());
@@ -361,6 +372,7 @@ public class Card_1230_096_Tests {
         assertTrue(scn.LSHasCardChoiceAvailable(scn.GetLSCard("ship")));
         scn.LSPayAttritionFromCardInPlay(scn.GetLSCard("ship"));
         scn.PassAllResponses();
+        trace(scn, "after attrition5 payment");
         assertTrue(scn.GetLSLostPile().contains(scn.GetLSCard("ship")));
         assertTrue(scn.GetLSLostPile().contains(scn.GetLSCard("attack")));
     }
@@ -370,6 +382,8 @@ public class Card_1230_096_Tests {
         scn.ApplyAdHocModifier(new com.gempukku.swccgo.logic.modifiers.DefinedByGameTextDeployCostModifier(scn.GetLSCard("attack"), 1));
         scn.ApplyAdHocModifier(new com.gempukku.swccgo.logic.modifiers.MayDeployFreeModifier(scn.GetLSCard("attack")));
         deploySecond(scn, "tatooine");
+        trace(scn, "free modes");
+        System.out.println("COST " + scn.game().getModifiersQuerying().getDeployCost(scn.gameState(), scn.GetLSCard("attack")) + " MAYFREE " + scn.game().getModifiersQuerying().mayDeployForFree(scn.gameState(), scn.GetLSCard("attack")));
         assertTrue(attackAvailable(scn, "Reserve Deck for free"));
         assertTrue(attackAvailable(scn, "Reserve Deck for 1 Force"));
         return scn;
@@ -400,6 +414,8 @@ public class Card_1230_096_Tests {
         scn.DrainLSForcePileTo(2);
         deploySecond(scn, "tatooine");
         assertEquals(0, scn.GetLSForcePileCount());
+        trace(scn, "unpayable");
+        System.out.println("COST " + scn.game().getModifiersQuerying().getDeployCost(scn.gameState(), scn.GetLSCard("attack")));
         assertFalse(attackAvailable(scn));
         assertEquals(Zone.HAND, scn.GetLSCard("attack").getZone());
     }
