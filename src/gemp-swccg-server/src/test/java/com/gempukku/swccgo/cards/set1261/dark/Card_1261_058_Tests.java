@@ -48,9 +48,11 @@ public class Card_1261_058_Tests {
         scn.MoveCardsToTopOfDSReserveDeck(trooper, piett); int force = scn.GetDSForcePileCount();
         scn.DSDeployCard(b);
         if (scn.DSHasCardChoiceAvailable(site)) scn.DSChooseCard(site);
-        scn.PassForceUseResponses();
+        var windows = new ArrayList<String>();
         for (int i = 0; i < 20 && !scn.GetDSAvailableActions().stream().anyMatch(text -> text.contains("Deploy a non-pilot Imperial warrior from Reserve Deck")); i++) {
-            assertTrue("Expected deployment response, got: " + scn.GetCurrentDecision().getText() + " DS actions: " + scn.GetDSAvailableActions(), scn.GetCurrentDecision().getText().toLowerCase().contains("optional")); scn.PlayerPass(scn.GetDecidingPlayer());
+            windows.add(scn.GetDecidingPlayer() + ": " + scn.GetCurrentDecision().getText() + " actions=" + scn.GetDSAvailableActions());
+            assertTrue("Missed download; windows=" + windows + "; reserve=" + scn.GetDSReserveDeckCount() + "; Blizzard zone=" + b.getZone() + "; trooper zone=" + trooper.getZone(), scn.GetCurrentDecision().getText().toLowerCase().contains("optional"));
+            scn.PlayerPass(scn.GetDecidingPlayer());
         }
         scn.DSUseCardAction(b, "Deploy a non-pilot Imperial warrior from Reserve Deck"); scn.PassAllResponses();
         scn.PassCardAndForceUseResponses(); assertTrue(scn.DSHasCardChoiceAvailable(trooper)); assertFalse(scn.DSHasCardChoiceAvailable(piett)); scn.DSChooseCard(trooper); scn.PassAllResponses();
