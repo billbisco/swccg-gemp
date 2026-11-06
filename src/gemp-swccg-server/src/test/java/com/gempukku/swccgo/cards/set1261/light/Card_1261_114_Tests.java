@@ -140,6 +140,7 @@ public class Card_1261_114_Tests {
         scn.LSChooseCards(); scn.PassAllResponses();
         assertInZone(Zone.RESERVE_DECK, scn.GetLSCard("ship"), scn.GetLSCard("ric"));
         assertEquals(5, scn.GetLSForcePileCount());
+        assertTrue(scn.AwaitingDSDeployPhaseActions()); scn.DSPass();
         assertTrue(scn.AwaitingLSDeployPhaseActions());
         assertFalse(scn.LSCardActionAvailable(scn.GetLSStartingLocation(), "Deploy Ric Olie"));
         scn.SkipToDSTurn(Phase.ACTIVATE); scn.SkipToLSTurn(Phase.DEPLOY);
@@ -150,12 +151,15 @@ public class Card_1261_114_Tests {
     public void TatooineQueensLandingSiteLandedPermissionExpiresWithDownloadAction() {
         //test1: declining the download does not permit a subsequent ordinary hand deployment here.
         var scn = deploy(8, false, true); scn.LSChooseCards(); scn.PassAllResponses(); skipEmptySearches(scn);
+        assertTrue(scn.AwaitingDSDeployPhaseActions()); scn.DSPass();
         var site = scn.GetLSStartingLocation(); var other = scn.GetLSCard("otherSite");
         scn.MoveLocationToTable(other); scn.MoveCardsToLSHand(scn.GetLSCard("ship"));
         // A normal Ric deployment refreshes the real deploy decision after moving the fixture to hand.
         scn.LSDeployCard(scn.GetLSCard("ric"));
         if (scn.LSHasCardChoiceAvailable(site)) scn.LSChooseCard(site);
-        scn.PassAllResponses(); scn.LSDeployCard(scn.GetLSCard("ship"));
+        scn.PassAllResponses();
+        assertTrue(scn.AwaitingDSDeployPhaseActions()); scn.DSPass();
+        scn.LSDeployCard(scn.GetLSCard("ship"));
         assertFalse(scn.LSHasCardChoiceAvailable(site)); //test1
         assertTrue(scn.LSHasCardChoiceAvailable(other)); scn.LSChooseCard(other); scn.PassAllResponses();
         assertAtLocation(other, scn.GetLSCard("ship"));
