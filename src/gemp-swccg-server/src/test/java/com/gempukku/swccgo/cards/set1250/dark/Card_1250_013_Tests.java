@@ -173,4 +173,13 @@ public class Card_1250_013_Tests {
     @Test public void AtLastWeAreGettingResultsForcesObiWanLossAtReducedThreshold() { attrition(true, 2, false); }
     @Test public void AtLastWeAreGettingResultsForcesObiWanLossAboveReducedThreshold() { attrition(true, 3, false); }
     @Test public void AtLastWeAreGettingResultsAbsentLeavesObiWanOriginalImmunity() { attrition(false, 2, true); }
+
+    @Test public void AtLastWeAreGettingResultsDiscountExcludesOpponentsShipsAndNonStarshipsAndEndsOnDeparture() {
+        var scn = active(false); var ship = scn.GetDSCard("ship"); var opponent = scn.GetLSCard("falcon"); var droid = scn.GetDSCard("droid");
+        scn.MoveCardsToDSHand(ship, droid); scn.MoveCardsToLSHand(opponent); scn.SkipToDSTurn(Phase.DEPLOY);
+        int ownCost = scn.GetDeployCost(ship), opponentCost = scn.GetDeployCost(opponent), droidCost = scn.GetDeployCost(droid);
+        scn.MoveCardsToDSSideOfTable(scn.GetDSCard("results"));
+        assertEquals(ownCost - 1, scn.GetDeployCost(ship)); assertEquals(opponentCost, scn.GetDeployCost(opponent)); assertEquals(droidCost, scn.GetDeployCost(droid));
+        scn.MoveCardsToDSHand(scn.GetDSCard("results")); assertEquals(ownCost, scn.GetDeployCost(ship));
+    }
 }
