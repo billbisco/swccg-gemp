@@ -113,6 +113,72 @@ public class Card_1261_032_Tests {
         }
     }
 
+    private VirtualTableScenario humanShieldScenario() {
+        return new VirtualTableScenario(new HashMap<>(Map.of("chewie", "2_3", "blaster", "1_152")),
+                new HashMap<>(Map.of("hutt", "1261_32", "rancor", "6_166", "zuckuss", "4_107",
+                        "vader", "1_168", "shield", "5_145")),
+                10, 10, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
+    }
+
+    /** LS fires a blaster at the escort of a captive in battle; returns whether DS may then play Human Shield. */
+    private boolean humanShieldPlayableWhenEscortHit(VirtualTableScenario scn, String escortKey, boolean huttActive) {
+        var shield = scn.GetDSCard("shield");
+        var escort = scn.GetDSCard(escortKey);
+        var chewie = scn.GetLSCard("chewie");
+        var trooper = scn.GetLSFiller(1);
+        var blaster = scn.GetLSCard("blaster");
+        var site = scn.GetLSStartingLocation();
+        scn.MoveCardsToDSHand(shield);
+        scn.StartGame();
+        scn.MoveLocationToTable(scn.GetDSCard("rancor"));
+        if (huttActive)
+            scn.AttachCardsTo(scn.GetDSCard("rancor"), scn.GetDSCard("hutt"));
+        scn.MoveCardsToLocation(site, escort, trooper);
+        scn.AttachCardsTo(trooper, blaster);
+        scn.CaptureCardWith(escort, chewie);
+        scn.SkipToLSTurn(Phase.BATTLE);
+        scn.EnsureLSForcePile(6);
+        scn.LSInitiateBattle(site);
+
+        assertTrue(scn.LSCardActionAvailable(blaster));
+        scn.LSUseCardAction(blaster);
+        assertTrue(scn.LSDecisionAvailable("Choose target"));
+        scn.LSChooseCard(escort);
+        scn.PassForceUseResponses();
+        scn.PrepareLSDestiny(7);
+        scn.PassResponses("Fire ");
+        scn.PassDestinyDrawResponses();
+        scn.PassResponses("ABOUT_TO_BE_HIT");
+        assertTrue(escort.isHit());
+        boolean playable = scn.DSPlayUsedInterruptAvailable(shield);
+        if (playable) {
+            scn.DSPlayUsedInterrupt(shield);
+            scn.DSChooseCard(chewie);
+            scn.PassCardPlayResponses();
+            scn.PassAllResponses();
+            assertFalse(escort.isHit());
+            assertTrue(chewie.isHit());
+        }
+        return playable;
+    }
+
+    @Test(timeout = 20000)
+    public void humanShieldTreatsImperialAsBountyHunterWhileHuttInfluenceIsActive() {
+        assertTrue(humanShieldPlayableWhenEscortHit(humanShieldScenario(), "zuckuss", true));
+    }
+
+    @Test(timeout = 20000)
+    public void humanShieldDoesNotAcceptBountyHunterEscortWithoutHuttInfluence() {
+        assertFalse(humanShieldPlayableWhenEscortHit(humanShieldScenario(), "zuckuss", false));
+    }
+
+    @Test(timeout = 20000)
+    public void humanShieldStillWorksForAnImperialEscortWhileHuttInfluenceIsActive() {
+        assertTrue(humanShieldPlayableWhenEscortHit(humanShieldScenario(), "vader", true));
+    }
+
     private void start(VirtualTableScenario scn) {
         scn.MoveCardsToDSHand(scn.GetDSCard("objective"));
         scn.StartGame();

@@ -15,6 +15,8 @@ import com.gempukku.swccgo.logic.modifiers.ForfeitModifier;
 import com.gempukku.swccgo.logic.modifiers.ImmuneToDeployCostModifiersToLocationModifier;
 import com.gempukku.swccgo.logic.modifiers.ImmuneToTitleModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
+import com.gempukku.swccgo.logic.modifiers.ModifyGameTextModifier;
+import com.gempukku.swccgo.logic.modifiers.ModifyGameTextType;
 
 import java.util.List;
 
@@ -40,6 +42,8 @@ public class Card1261_032 extends AbstractNormalEffect {
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, PhysicalCard self) {
         var watching = new OnTableCondition(self, Filters.I_Shall_Enjoy_Watching_You_Die);
         return List.of(
+                new ModifyGameTextModifier(self, Filters.Human_Shield,
+                        ModifyGameTextType.LEGACY__HUTT_INFLUENCE__HUMAN_SHIELD_IMPERIAL_MAY_BE_BOUNTY_HUNTER),
                 new ForfeitModifier(self, Filters.bounty_hunter, watching, 2),
                 new ImmuneToTitleModifier(self, Filters.bounty_hunter, watching, Title.Goo_Nee_Tay),
                 new ImmuneToDeployCostModifiersToLocationModifier(self,
