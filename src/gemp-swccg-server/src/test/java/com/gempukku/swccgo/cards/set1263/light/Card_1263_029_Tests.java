@@ -20,6 +20,10 @@ public class Card_1263_029_Tests {
     private static final String CANCEL = "Lose 2 Force to cancel battle";
 
     private VirtualTableScenario scenario(boolean startObjective) {
+        return scenario(startObjective, false);
+    }
+
+    private VirtualTableScenario scenario(boolean startObjective, boolean startInterruptWithoutObjective) {
         var starting = new StartingSetup() {
             @Override public HashMap<String, String> Cards() { return new HashMap<>(); }
             @Override public void Setup(VirtualTableScenario scn) {
@@ -35,6 +39,13 @@ public class Card_1263_029_Tests {
                 scn.PassAllResponses();
             }
         };
+        // Without Rescue The Princess the Starting mode is still offered; ordinary scenarios decline it.
+        var decline = new StartingSetup() {
+            @Override public HashMap<String, String> Cards() { return new HashMap<>(); }
+            @Override public void Setup(VirtualTableScenario scn) {
+                if (scn.LSDecisionAvailable("Choose starting interrupt")) scn.LSPass();
+            }
+        };
         var ls = new HashMap<String, String>() {{
             put("rescueInterrupt", "1263_29"); put("otherCopy", "1263_29");
             put("cell", "601_129"); put("immune", "9_47"); put("ordinary", "1_66");
@@ -45,7 +56,8 @@ public class Card_1263_029_Tests {
             put("gravel", "1_247"); put("vader", "1_168"); put("sense", "1_267");
         }}, 60, 60, startObjective ? StartingSetup.RescueThePrincessVObjective : StartingSetup.LSStartingLocation("1_136"),
                 startObjective ? StartingSetup.DefaultDSSpaceSystem : StartingSetup.DSStartingLocation("1_295"),
-                startObjective ? starting : StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
+                startObjective || startInterruptWithoutObjective ? starting : decline,
+                StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, startObjective ? "anything_goes" : "legacy");
     }
 
@@ -63,6 +75,14 @@ public class Card_1263_029_Tests {
     @Test public void RescueYouActuallyStartsWithCellAndAnAlwaysImmuneEffectThenGoesToHand() {
         var scn = scenario(true); scn.StartGame(false);
         assertInZone(Zone.SIDE_OF_TABLE, scn.GetLSCard("rescue"), scn.GetLSCard("cell"), scn.GetLSCard("immune"));
+        assertInHand(scn.GetLSCard("rescueInterrupt"));
+        assertFalse(scn.GetLSCard("ordinary").getZone().isInPlay());
+    }
+
+    @Test public void RescueYouStartsWithoutRescueThePrincessOnTable() {
+        var scn = scenario(false, true); scn.MoveOutOfPlay(scn.GetLSCard("objective")); scn.StartGame(false);
+        assertEquals(Zone.OUT_OF_PLAY, scn.GetLSCard("objective").getZone());
+        assertInZone(Zone.SIDE_OF_TABLE, scn.GetLSCard("immune"));
         assertInHand(scn.GetLSCard("rescueInterrupt"));
         assertFalse(scn.GetLSCard("ordinary").getZone().isInPlay());
     }

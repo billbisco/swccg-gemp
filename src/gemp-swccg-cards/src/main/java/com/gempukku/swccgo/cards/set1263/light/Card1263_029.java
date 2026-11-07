@@ -39,9 +39,7 @@ public class Card1263_029 extends AbstractLostOrStartingInterrupt {
 
     @Override
     protected PlayInterruptAction getGameTextStartingAction(String playerId, SwccgGame game, PhysicalCard self) {
-        if (!GameConditions.canSpot(game, self, Filters.Rescue_The_Princess)) {
-            return null;
-        }
+        // 'If Rescue The Princess on table' prefixes only the LOST section; STARTING is always available.
         PlayInterruptAction action = new PlayInterruptAction(game, self, START, CardSubtype.STARTING);
         action.setText("Deploy Cell 2187 and an Effect always immune to Alter");
         action.allowResponses(new RespondablePlayCardEffect(action) {
