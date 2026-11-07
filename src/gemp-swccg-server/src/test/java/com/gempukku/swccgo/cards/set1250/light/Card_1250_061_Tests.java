@@ -32,7 +32,7 @@ public class Card_1250_061_Tests {
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_5, bp.getExpansionSet());
         assertEquals("Every Gungan that died on the battle plains gave Amidala and her troops that much more time to capture the Viceroy.", bp.getLore());
         scn.BlueprintCardTypeCheck(bp, new ArrayList<>() {{ add(CardType.EFFECT); }});
-        scn.BlueprintIconCheck(bp, new ArrayList<>() {{ add(Icon.THEED_PALACE); add(Icon.EPISODE_I); add(Icon.LEGACY_BLOCK_5); }});
+        scn.BlueprintIconCheck(bp, new ArrayList<>() {{ add(Icon.EFFECT); add(Icon.THEED_PALACE); add(Icon.EPISODE_I); add(Icon.LEGACY_BLOCK_5); }});
         scn.BlueprintKeywordCheck(bp, new ArrayList<>());
     }
 
@@ -101,6 +101,8 @@ public class Card_1250_061_Tests {
         scn.DSActivateForceCheat(12); scn.SkipToDSTurn(Phase.CONTROL);
     }
     private void lightning(VirtualTableScenario scn, String interrupt, String victim) {
+        if (scn.AwaitingLSControlPhaseActions()) scn.LSPass();
+        assertTrue(scn.AwaitingDSControlPhaseActions());
         scn.PrepareDSDestiny(3); scn.DSPlayCard(scn.GetDSCard(interrupt), "Make target lost");
         if (scn.DSDecisionAvailable("Choose Emperor")) scn.DSChooseCard(scn.GetDSCard("emperor"));
         if (scn.DSDecisionAvailable("Choose character")) scn.DSChooseCard(scn.GetLSCard(victim));
@@ -167,7 +169,7 @@ public class Card_1250_061_Tests {
         if (scn.DSDecisionAvailable("Choose Effect")) {
             assertFalse(scn.DSHasCardChoicesAvailable(wesa)); assertTrue(scn.DSHasCardChoicesAvailable(planners)); scn.DSChooseCard(planners);
         }
-        if (scn.DSDecisionAvailable("Choose character")) scn.DSChooseCard(scn.GetDSCard("emperor"));
+        if (scn.DSDecisionAvailable("Choose a highest-ability character")) scn.DSChooseCard(scn.GetDSCard("emperor"));
         scn.PassDestinyDrawResponses(); scn.PassAllResponses();
         assertEquals(system, wesa.getAttachedTo()); assertTrue(scn.GetLSLostPile().contains(planners));
     }
