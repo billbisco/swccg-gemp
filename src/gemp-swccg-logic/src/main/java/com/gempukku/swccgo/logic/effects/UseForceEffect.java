@@ -41,6 +41,8 @@ public class UseForceEffect extends AbstractSubActionEffect {
     }
 
     public void setAmountForOpponentToUse(int amount) {
+        if (_onlyOwnForce)
+            return; // limited to the player's own Force Pile cards
         _amountForOpponentToUse = amount;
     }
 
