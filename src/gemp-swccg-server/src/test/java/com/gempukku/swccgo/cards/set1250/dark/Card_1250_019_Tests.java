@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
 public class Card_1250_019_Tests {
     private VirtualTableScenario scenario() {
         var scn = new VirtualTableScenario(
-                new HashMap<>(Map.of("amidala", "14_25", "senator", "12_28", "other", "1_17")),
+                new HashMap<>(Map.of("amidala", "14_25", "senator", "12_28", "other", "1_19")),
                 new HashMap<>(Map.of("effect", "1250_19", "senator", "14_81", "trooper", "1_194")),
                 30, 30, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
