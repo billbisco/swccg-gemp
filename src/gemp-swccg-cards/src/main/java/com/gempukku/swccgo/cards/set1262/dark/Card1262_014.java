@@ -7,6 +7,7 @@ import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.game.state.BattleState;
+import com.gempukku.swccgo.game.state.AttackState;
 import com.gempukku.swccgo.logic.TriggerConditions;
 import com.gempukku.swccgo.logic.actions.PlayInterruptAction;
 import com.gempukku.swccgo.logic.effects.*;
@@ -69,7 +70,10 @@ public class Card1262_014 extends AbstractUsedInterrupt {
     @Override
     protected List<PlayInterruptAction> getGameTextOptionalAfterActions(final String playerId, SwccgGame game, EffectResult effectResult, PhysicalCard self) {
         BattleState battle = game.getGameState().getBattleState();
-        if (battle != null && battle.isReachedPowerSegment() && !battle.isReachedDamageSegment()
+        AttackState attack = game.getGameState().getAttackState();
+        boolean powerSegment = (battle != null && battle.isReachedPowerSegment() && !battle.isReachedDamageSegment())
+                || (attack != null && attack.isReachedPowerSegment() && !attack.isReachedDamageSegment());
+        if (powerSegment
                 && TriggerConditions.isDestinyJustDrawn(game, effectResult)
                 && ((DestinyDrawnResult) effectResult).getDestinyType() != DestinyType.BATTLE_DESTINY
                 && GameConditions.canCancelDestiny(game, playerId)) {

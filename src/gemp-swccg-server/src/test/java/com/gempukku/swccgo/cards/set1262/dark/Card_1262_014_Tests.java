@@ -16,7 +16,7 @@ public class Card_1262_014_Tests {
     private VirtualTableScenario scenario() {
         // IL-19 has no Decipher printing. Leia's V text supplies an attrition-only draw.
         return new VirtualTableScenario(new HashMap<>() {{ put("il19", "1115_13"); put("leia", "202_1"); put("luke", "1_19"); put("blaster", "1_153"); }},
-                new HashMap<>() {{ put("why", "1262_14"); put("vader", "1_168"); put("veers", "3_87"); put("cost", "1_201"); put("force1", "1_194"); put("force2", "1_317"); put("force3", "3_154"); put("used", "1_299"); put("sunsdown","1_230");put("tatooine","1_289"); }},
+                new HashMap<>() {{ put("why", "1262_14"); put("vader", "1_168"); put("veers", "3_87"); put("cost", "1_201"); put("force1", "1_194"); put("force2", "1_317"); put("force3", "3_154"); put("used", "1_299"); put("sunsdown","1_230");put("tatooine","1_289");put("mynock","4_110"); }},
                 10, 10, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -129,6 +129,8 @@ public class Card_1262_014_Tests {
                 return state.getDrawDestinyEffect();
             if(scn.DSDecisionAvailable("battle destiny?"))scn.DSChooseYes();
             else if(scn.LSDecisionAvailable("battle destiny?"))scn.LSChooseYes();
+            else if(scn.DSDecisionAvailable("Do you want to draw"))scn.DSChooseYes();
+            else if(scn.LSDecisionAvailable("Do you want to draw"))scn.LSChooseYes();
             else if(scn.DSGetDecision()!=null)scn.DSPass();
             else if(scn.LSGetDecision()!=null)scn.LSPass();
             else fail("Why Didn't You Tell Me requires a live destiny response window");
@@ -188,4 +190,17 @@ public class Card_1262_014_Tests {
     @Test public void WhyDidntYouTellMeCancelsOpponentsPowerDrawFromOriginalEffect() {sunsdown(false,4);}
     @Test public void WhyDidntYouTellMeMayAlsoCancelItsOwnersPowerDraw() {sunsdown(true,3);}
     @Test public void WhyDidntYouTellMeMayCancelZeroValuedPowerDestiny() {sunsdown(false,0);}
+    @Test public void WhyDidntYouTellMeAlsoCancelsDestinyDuringAnAttacksPowerSegment() {
+        var scn=scenario();scn.StartGame();var site=scn.GetDSStartingLocation();
+        scn.MoveCardsToLocation(site,scn.GetLSCard("luke"),scn.GetDSCard("mynock"));
+        scn.MoveCardsToDSHand(scn.GetDSCard("why"));scn.SkipToLSTurn(Phase.BATTLE);scn.PrepareLSDestiny(5);
+        assertTrue(scn.LSCardActionAvailable(site,"attack"));scn.LSUseCardAction(site,"attack");
+        var draw=reachDraw(scn,DestinyType.DESTINY,scn.LS);
+        assertNull(scn.game().getGameState().getBattleState());
+        assertTrue(scn.game().getGameState().getAttackState().isReachedPowerSegment());
+        assertTrue(scn.DSCardPlayAvailable(scn.GetDSCard("why"),CANCEL));
+        var card=draw.getDrawnDestinyCard();scn.DSPlayCard(scn.GetDSCard("why"),CANCEL);scn.PassAllResponses();
+        assertTrue(draw.isDestinyCanceled());assertInZone(Zone.USED_PILE,scn.GetDSCard("why"));
+        assertTrue(scn.game().getGameState().getUsedPile(scn.LS).contains(card));
+    }
 }
