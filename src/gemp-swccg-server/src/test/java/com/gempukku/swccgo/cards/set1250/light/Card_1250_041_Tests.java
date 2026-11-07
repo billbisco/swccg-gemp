@@ -31,7 +31,8 @@ public class Card_1250_041_Tests {
         assertEquals("Female.", bp.getLore()); assertEquals(3, bp.getDestiny(), s.epsilon);
         assertEquals(5, bp.getDeployCost(), s.epsilon); assertEquals(5, bp.getPower(), s.epsilon);
         assertEquals(6, bp.getAbility(), s.epsilon); assertEquals(5, bp.getForfeit(), s.epsilon);
-        s.BlueprintCardTypeCheck(bp, new ArrayList<>(List.of(CardType.CHARACTER, CardType.ALIEN)));
+        assertEquals(CardCategory.CHARACTER, bp.getCardCategory());
+        s.BlueprintCardTypeCheck(bp, new ArrayList<>(List.of(CardType.ALIEN)));
         s.BlueprintIconCheck(bp, new ArrayList<>(List.of(Icon.ALIEN, Icon.SPECIAL_EDITION,
                 Icon.EPISODE_I, Icon.WARRIOR, Icon.MAINTENANCE, Icon.LEGACY_BLOCK_5)));
         s.BlueprintKeywordCheck(bp, new ArrayList<>(List.of(Keyword.FEMALE)));
