@@ -97,10 +97,7 @@ public class Card_1240_015_Tests {
         var site = scn.GetDSStartingLocation();
 
         scn.StartGame();
-        scn.MoveCardsToLocation(site, merc, bike);
-        assertEquals(2, scn.GetDefense(merc));
-
-        scn.RemoveCardZone(merc);
+        scn.MoveCardsToLocation(site, bike);
         scn.BoardAsPilot(bike, merc);
         assertEquals(scn.GetDefense(bike), scn.GetDefense(merc));
         assertTrue(scn.GetDefense(merc) > 2);

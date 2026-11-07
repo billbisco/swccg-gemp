@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.set1240.dark;
 
+import com.gempukku.swccgo.common.CardCategory;
 import com.gempukku.swccgo.common.CardType;
 import com.gempukku.swccgo.common.CardSubtype;
 import com.gempukku.swccgo.common.ExpansionSet;
@@ -59,13 +60,14 @@ public class Card_1240_020_Tests {
         assertEquals(Uniqueness.UNIQUE, card.getUniqueness());
         assertEquals(Side.DARK, card.getSide());
         assertEquals(4, card.getDestiny(), scn.epsilon);
-        assertEquals(CardType.EFFECT, card.getCardType());
+        assertEquals(CardCategory.EFFECT, card.getCardCategory());
         assertEquals(CardSubtype.NORMAL, card.getCardSubtype());
         scn.BlueprintKeywordCheck(card, new ArrayList<>() {{
             add(Keyword.DEPLOYS_ON_LOCATION);
         }});
         scn.BlueprintIconCheck(card, new ArrayList<>() {{
             add(Icon.EPISODE_I);
+            add(Icon.EFFECT);
             add(Icon.TATOOINE);
             add(Icon.LEGACY_BLOCK_4);
         }});
@@ -154,7 +156,7 @@ public class Card_1240_020_Tests {
         scn.DSChooseCard(blaster);
         scn.PassAllResponses();
 
-        assertEquals(Zone.USED_PILE, blaster.getZone());
+        assertTrue(scn.GetLSUsedPile().contains(blaster));
         assertEquals(usedBefore + 1, scn.GetLSUsedPileCount());
         assertFalse(scn.IsAttachedTo(trooper1, blaster));
     }

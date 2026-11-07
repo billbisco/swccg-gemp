@@ -16,6 +16,7 @@ import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.logic.GameUtils;
+import com.gempukku.swccgo.logic.TriggerConditions;
 import com.gempukku.swccgo.logic.actions.PlayInterruptAction;
 import com.gempukku.swccgo.logic.effects.AddUntilEndOfGameModifierEffect;
 import com.gempukku.swccgo.logic.effects.CalculateFerocityEffect;
@@ -28,11 +29,11 @@ import com.gempukku.swccgo.logic.effects.TriggeringResultEffect;
 import com.gempukku.swccgo.logic.modifiers.FerocityModifier;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 import com.gempukku.swccgo.logic.timing.Action;
+import com.gempukku.swccgo.logic.timing.EffectResult;
 import com.gempukku.swccgo.logic.timing.GuiUtils;
 import com.gempukku.swccgo.logic.timing.results.EatenResult;
 
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -51,7 +52,6 @@ public class Card3_142 extends AbstractUsedInterrupt {
 
     @Override
     protected List<PlayInterruptAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self) {
-        List<PlayInterruptAction> actions = new LinkedList<PlayInterruptAction>();
         final TargetingReason targetingReason = TargetingReason.TO_BE_LOST;
         Filter vehicleFilter = Filters.and(Filters.creature_vehicle, Filters.hasManeuverDefined,
                 Filters.at(Filters.wherePresent(self, Filters.creature)));
@@ -133,14 +133,18 @@ public class Card3_142 extends AbstractUsedInterrupt {
                         }
                     }
             );
-            actions.add(action);
+            return Collections.singletonList(action);
         }
+        return null;
+    }
 
+    @Override
+    protected List<PlayInterruptAction> getGameTextOptionalAfterActions(final String playerId, SwccgGame game, EffectResult effectResult, final PhysicalCard self) {
         // Frozen Dinner (V) (Virtual Block 4): 'USED: During battle, place a ferocious creature there (even if excluded)
         // in Lost Pile to reduce your battle damage by 5.'
         final Filter creatureInBattle = Filters.and(Filters.creature, Filters.atLocation(Filters.battleLocation));
-        if (GameConditions.canSpot(game, self, Filters.and(Filters.your(playerId), Filters.Effect, Filters.title("Frozen Dinner")))
-                && GameConditions.isDuringBattle(game)
+        if (TriggerConditions.isResolvingBattleDamageAndAttrition(game, effectResult, playerId)
+                && GameConditions.canSpot(game, self, Filters.and(Filters.your(playerId), Filters.Effect, Filters.title("Frozen Dinner")))
                 && GameConditions.isBattleDamageRemaining(game, playerId)
                 && GameConditions.canSpot(game, self, SpotOverride.INCLUDE_EXCLUDED_FROM_BATTLE, creatureInBattle)) {
 
@@ -165,8 +169,8 @@ public class Card3_142 extends AbstractUsedInterrupt {
                         }
                     }
             );
-            actions.add(action);
+            return Collections.singletonList(action);
         }
-        return actions;
+        return null;
     }
 }

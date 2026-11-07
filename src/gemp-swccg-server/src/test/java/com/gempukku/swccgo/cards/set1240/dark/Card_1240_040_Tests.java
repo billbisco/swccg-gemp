@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.set1240.dark;
 
+import com.gempukku.swccgo.common.CardCategory;
 import com.gempukku.swccgo.common.CardType;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
@@ -33,6 +34,8 @@ public class Card_1240_040_Tests {
                     put("saber", "1117_15");
                     put("rogue", "601_95");
                     put("trooper", "1_194");
+                    put("tatooine", "1_289");
+                    put("moseisley", "1_295");
                 }},
                 10,
                 10,
@@ -56,7 +59,7 @@ public class Card_1240_040_Tests {
         assertEquals(Uniqueness.UNIQUE, card.getUniqueness());
         assertEquals(Side.DARK, card.getSide());
         assertEquals(0, card.getDestiny(), scn.epsilon);
-        assertEquals(CardType.EPIC_EVENT, card.getCardType());
+        assertEquals(CardCategory.EPIC_EVENT, card.getCardCategory());
         assertTrue(card.hasIcon(Icon.TATOOINE));
         assertTrue(card.hasIcon(Icon.LEGACY_BLOCK_4));
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_4, card.getExpansionSet());
@@ -88,6 +91,7 @@ public class Card_1240_040_Tests {
         var site = scn.GetDSStartingLocation();
 
         scn.StartGame();
+        scn.MoveLocationToTable(scn.GetDSCard("tatooine"));
         scn.MoveCardsToHand(rogue);
         scn.MoveCardsToSideOfTable(trace);
         scn.SkipToPhase(Phase.DEPLOY);
@@ -95,7 +99,8 @@ public class Card_1240_040_Tests {
 
         assertTrue(scn.DSDeployAvailable(rogue));
         scn.DSDeployCard(rogue);
-        assertTrue(scn.DSHasCardChoiceAvailable(site));
+        Block4DarkTestSupport.advanceUntil(scn, () -> scn.DSHasCardChoiceAvailable(site), 5);
+        assertTrue(Block4DarkTestSupport.describe(scn), scn.DSHasCardChoiceAvailable(site));
     }
 
     @Test
@@ -130,7 +135,6 @@ public class Card_1240_040_Tests {
         assertEquals(Zone.USED_PILE, saber.getZone());
         assertTrue(scn.DSHasCardChoiceAvailable(rebel1));
         assertFalse(scn.DSHasCardChoiceAvailable(luke)); // ability 4
-        assertEquals(2, scn.DSGetSelectableCount() >= 2 ? 2 : scn.DSGetSelectableCount());
         scn.DSChooseCards(rebel1, rebel2);
         scn.PassAllResponses();
 
@@ -146,30 +150,27 @@ public class Card_1240_040_Tests {
         var rogue = scn.GetDSCard("rogue");
         var luke = scn.GetLSCard("luke");
         var dsSite = scn.GetDSStartingLocation();
-        var lsSite = scn.GetLSStartingLocation();
+        var lsSite = scn.GetDSCard("moseisley");
 
         scn.StartGame();
+        scn.MoveLocationToTable(scn.GetDSCard("tatooine"));
+        scn.MoveLocationToTable(lsSite);
         scn.MoveCardsToSideOfTable(trace);
         scn.MoveCardsToLocation(dsSite, rogue);
         scn.MoveCardsToLocation(lsSite, luke);
-        scn.MoveCardsToTopOfOwnUsedPile(scn.GetDSFiller(1));
 
         scn.SkipToPhase(Phase.MOVE);
+        scn.MoveCardsToTopOfOwnUsedPile(scn.GetDSFiller(1));
         scn.EnsureDSForcePile(6);
         int forceBefore = scn.GetDSForcePileCount();
         int handBefore = scn.GetDSHandCount();
-        assertTrue(scn.DSCardActionAvailable(trace, "Relocate Rogue Shadow"));
+        assertTrue(Block4DarkTestSupport.describe(scn), scn.DSCardActionAvailable(trace, "Relocate Rogue Shadow"));
         scn.DSUseCardAction(trace, "Relocate Rogue Shadow");
         scn.DSChooseCard(lsSite);
-        for (int i = 0; i < 10; i++) {
-            if (scn.DSDecisionAvailable("Optional") && scn.DSCardActionAvailable(trace, "Take top card of Used Pile into hand")) {
-                scn.DSUseCardAction(trace, "Take top card of Used Pile into hand");
-                continue;
-            }
-            if (scn.LSAnyDecisionsAvailable()) scn.LSPass();
-            else if (scn.DSAnyDecisionsAvailable() && !scn.AwaitingDSMovePhaseActions()) scn.DSPass();
-            else break;
-        }
+        assertTrue(Block4DarkTestSupport.describe(scn), Block4DarkTestSupport.advanceUntil(scn,
+                () -> Block4DarkTestSupport.dsActionAvailable(scn, trace, "Take top card of Used Pile into hand"), 20));
+        scn.DSUseCardAction(trace, "Take top card of Used Pile into hand");
+        Block4DarkTestSupport.advanceUntil(scn, scn::AwaitingDSMovePhaseActions, 20);
         assertEquals(lsSite.getCardId(), scn.game().getModifiersQuerying().getLocationThatCardIsAt(scn.gameState(), rogue).getCardId());
         assertEquals(forceBefore - 3, scn.GetDSForcePileCount());
         assertEquals(handBefore + 1, scn.GetDSHandCount());

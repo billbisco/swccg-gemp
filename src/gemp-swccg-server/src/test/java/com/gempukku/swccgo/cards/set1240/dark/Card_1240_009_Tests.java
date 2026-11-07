@@ -107,15 +107,10 @@ public class Card_1240_009_Tests {
         assertFalse(scn.game().getModifiersQuerying().isImmuneToCardTitle(scn.gameState(), other, Title.Rebel_Barrier));
     }
 
-    private void fireRifleUntilDrawTwoOffered(VirtualTableScenario scn, String expectedText) {
-        for (int i = 0; i < 20; i++) {
-            if (scn.DSCardActionAvailable(scn.GetDSCard("trooper"), expectedText))
-                return;
-            if (scn.LSDecisionAvailable("Optional responses") || scn.LSAnyDecisionsAvailable() && scn.GetAwaitingDecision(scn.LS) != null && scn.LSAnyActionsAvailable())
-                scn.LSPass();
-            else if (scn.DSAnyDecisionsAvailable())
-                scn.DSPass();
-        }
+    private boolean advanceToDrawTwo(VirtualTableScenario scn) {
+        var trooper = scn.GetDSCard("trooper");
+        return Block4DarkTestSupport.advanceUntil(scn,
+                () -> Block4DarkTestSupport.dsActionAvailable(scn, trooper, "Draw two weapon destiny"), 40);
     }
 
     @Test
@@ -138,28 +133,21 @@ public class Card_1240_009_Tests {
         scn.MoveCardsToTopOfDSReserveDeck(high);
 
         scn.DSInitiateBattle(site);
-        for (int i = 0; i < 6 && !scn.AwaitingDSWeaponsSegmentActions(); i++) {
-            if (scn.LSAnyDecisionsAvailable()) scn.LSPass(); else scn.DSPass();
-        }
+        Block4DarkTestSupport.advanceUntil(scn, scn::AwaitingDSWeaponsSegmentActions, 20);
         assertTrue(scn.AwaitingDSWeaponsSegmentActions());
         int forceBefore = scn.GetDSForcePileCount();
         scn.DSUseCardAction(rifle, "Fire");
         scn.DSChooseCard(luke);
-        fireRifleUntilDrawTwoOffered(scn, "Draw two weapon destiny");
-        assertTrue(scn.DSCardActionAvailable(trooper, "Draw two weapon destiny"));
+        assertTrue(Block4DarkTestSupport.describe(scn), advanceToDrawTwo(scn));
         assertEquals(forceBefore, scn.GetDSForcePileCount());
 
         int handBefore = scn.GetDSHandCount();
         scn.DSUseCardAction(trooper, "Draw two weapon destiny");
-        for (int i = 0; i < 20; i++) {
-            if (scn.DSDecisionAvailable("into hand")) break;
-            if (scn.DSHasCardChoiceAvailable(high)) {
-                scn.DSChooseCard(high);
-                continue;
-            }
-            if (scn.LSAnyDecisionsAvailable()) scn.LSPass(); else scn.DSPass();
-        }
-        assertTrue(scn.DSDecisionAvailable("into hand"));
+        Block4DarkTestSupport.advanceUntil(scn, () -> scn.DSHasCardChoiceAvailable(high), 20);
+        assertTrue(Block4DarkTestSupport.describe(scn), scn.DSHasCardChoiceAvailable(high));
+        scn.DSChooseCard(high);
+        Block4DarkTestSupport.advanceUntil(scn, () -> scn.DSDecisionAvailable("into hand"), 20);
+        assertTrue(Block4DarkTestSupport.describe(scn), scn.DSDecisionAvailable("into hand"));
         scn.DSChooseYes();
         assertEquals(Zone.HAND, low.getZone());
         assertEquals(handBefore + 1, scn.GetDSHandCount());
@@ -180,12 +168,9 @@ public class Card_1240_009_Tests {
         scn.SkipToPhase(Phase.BATTLE);
         scn.EnsureDSForcePile(3);
         scn.DSInitiateBattle(site);
-        for (int i = 0; i < 6 && !scn.AwaitingDSWeaponsSegmentActions(); i++) {
-            if (scn.LSAnyDecisionsAvailable()) scn.LSPass(); else scn.DSPass();
-        }
+        Block4DarkTestSupport.advanceUntil(scn, scn::AwaitingDSWeaponsSegmentActions, 20);
         scn.DSUseCardAction(blaster, "Fire");
         scn.DSChooseCard(luke);
-        fireRifleUntilDrawTwoOffered(scn, "Draw two weapon destiny");
-        assertFalse(scn.DSCardActionAvailable(trooper, "Draw two weapon destiny"));
+        assertFalse(advanceToDrawTwo(scn));
     }
 }

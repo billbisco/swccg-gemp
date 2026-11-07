@@ -1,6 +1,7 @@
 package com.gempukku.swccgo.cards.set1240.dark;
 
 import com.gempukku.swccgo.common.CardSubtype;
+import com.gempukku.swccgo.common.CardCategory;
 import com.gempukku.swccgo.common.CardType;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
@@ -59,10 +60,11 @@ public class Card_1240_024_Tests {
         assertEquals(Uniqueness.UNRESTRICTED, card.getUniqueness());
         assertEquals(Side.DARK, card.getSide());
         assertEquals(6, card.getDestiny(), scn.epsilon);
-        assertEquals(CardType.EFFECT, card.getCardType());
+        assertEquals(CardCategory.EFFECT, card.getCardCategory());
         assertEquals(CardSubtype.NORMAL, card.getCardSubtype());
         scn.BlueprintIconCheck(card, new ArrayList<>() {{
             add(Icon.HOTH);
+            add(Icon.EFFECT);
             add(Icon.LEGACY_BLOCK_4);
         }});
         assertTrue(card.isImmuneToCardTitle(Title.Alter));
@@ -95,17 +97,19 @@ public class Card_1240_024_Tests {
 
         scn.StartGame();
         scn.MoveCardsToSideOfTable(dinner);
-        scn.MoveCardsToTopOfOwnReserveDeck(bones);
         scn.SkipToPhase(Phase.DEPLOY);
         scn.EnsureDSForcePile(10);
+        scn.MoveCardsToTopOfOwnReserveDeck(bones);
 
         assertTrue(scn.DSCardActionAvailable(dinner, "Deploy Krayt Dragon Bones from Reserve Deck"));
         scn.DSUseCardAction(dinner, "Deploy Krayt Dragon Bones from Reserve Deck");
+        Block4DarkTestSupport.advanceUntil(scn, () -> scn.DSHasCardChoiceAvailable(bones) || bones.getZone() == Zone.SIDE_OF_TABLE, 10);
         if (scn.DSHasCardChoiceAvailable(bones)) {
             scn.DSChooseCard(bones);
         }
         scn.PassAllResponses();
         assertEquals(Zone.SIDE_OF_TABLE, bones.getZone());
+        Block4DarkTestSupport.advanceUntil(scn, scn::AwaitingDSDeployPhaseActions, 10);
         assertFalse(scn.DSCardActionAvailable(dinner, "Deploy Krayt Dragon Bones from Reserve Deck"));
     }
 
@@ -124,11 +128,10 @@ public class Card_1240_024_Tests {
             scn.MoveCardsToSideOfTable(dinner);
         scn.MoveCardsToHand(yaggle);
         scn.MoveCardsToLocation(site, trooper, womp, luke, leia, han);
-
-        scn.SkipToLSTurn(Phase.BATTLE);
-        scn.EnsureLSForcePile(2);
-        scn.LSInitiateBattle(site);
-        scn.SkipToDamageSegment(false);
+        scn.SkipToPhase(Phase.BATTLE);
+        scn.EnsureDSForcePile(2);
+        scn.DSInitiateBattle(site);
+        scn.SkipToEndOfPowerSegment(false);
     }
 
     @Test
@@ -138,16 +141,17 @@ public class Card_1240_024_Tests {
         var yaggle = scn.GetDSCard("yaggle");
         var womp = scn.GetDSCard("womp");
 
+        assertTrue(Block4DarkTestSupport.describe(scn), Block4DarkTestSupport.advanceUntil(scn,
+                () -> Block4DarkTestSupport.dsActionAvailable(scn, yaggle, "Place creature in Lost Pile"), 10));
         float damageBefore = scn.gameState().getBattleState().getBattleDamageRemaining(scn.game(), scn.DS);
         assertTrue(damageBefore > 0);
-        assertTrue(scn.DSCardPlayAvailable(yaggle, "Place creature in Lost Pile"));
         scn.DSPlayCard(yaggle, "Place creature in Lost Pile");
         if (scn.DSHasCardChoiceAvailable(womp)) {
             scn.DSChooseCard(womp);
         }
         scn.PassAllResponses();
 
-        assertEquals(Zone.LOST_PILE, womp.getZone());
+        assertTrue(scn.GetDSLostPile().contains(womp));
         assertEquals(Math.max(0, damageBefore - 5), scn.gameState().getBattleState().getBattleDamageRemaining(scn.game(), scn.DS), scn.epsilon);
     }
 
@@ -157,6 +161,7 @@ public class Card_1240_024_Tests {
         setUpLostBattle(scn, false);
         var yaggle = scn.GetDSCard("yaggle");
 
-        assertFalse(scn.DSCardPlayAvailable(yaggle, "Place creature in Lost Pile"));
+        assertFalse(Block4DarkTestSupport.advanceUntil(scn,
+                () -> Block4DarkTestSupport.dsActionAvailable(scn, yaggle, "Place creature in Lost Pile"), 10));
     }
 }

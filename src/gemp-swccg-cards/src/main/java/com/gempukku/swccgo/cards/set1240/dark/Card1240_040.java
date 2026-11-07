@@ -23,16 +23,16 @@ import com.gempukku.swccgo.logic.actions.OptionalGameTextTriggerAction;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
 import com.gempukku.swccgo.logic.effects.DrawDestinyEffect;
 import com.gempukku.swccgo.logic.effects.HitCardEffect;
-import com.gempukku.swccgo.cards.effects.PayRelocateBetweenLocationsCostEffect;
 import com.gempukku.swccgo.logic.effects.PlaceCardInUsedPileFromTableEffect;
 import com.gempukku.swccgo.logic.effects.RelocateBetweenLocationsEffect;
+import com.gempukku.swccgo.logic.effects.UseForceEffect;
 import com.gempukku.swccgo.logic.effects.UnrespondableEffect;
 import com.gempukku.swccgo.logic.effects.choose.ChooseCardOnTableEffect;
 import com.gempukku.swccgo.logic.effects.choose.ChooseCardsOnTableEffect;
 import com.gempukku.swccgo.logic.effects.choose.DrawCardIntoHandFromUsedPileEffect;
 import com.gempukku.swccgo.logic.effects.choose.TakeCardIntoHandFromUsedPileEffect;
 import com.gempukku.swccgo.logic.modifiers.ImmuneToAttritionLessThanModifier;
-import com.gempukku.swccgo.logic.modifiers.MayDeployToLocationModifier;
+import com.gempukku.swccgo.logic.modifiers.MayDeployAsLandedToLocationModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.modifiers.MovesForFreeModifier;
 import com.gempukku.swccgo.logic.timing.Action;
@@ -69,7 +69,7 @@ public class Card1240_040 extends AbstractEpicEventDeployable {
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, PhysicalCard self) {
         Filter rogueShadow = rogueShadow(self);
         List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new MayDeployToLocationModifier(self, rogueShadow, Filters.site));
+        modifiers.add(new MayDeployAsLandedToLocationModifier(self, rogueShadow, Filters.site));
         modifiers.add(new MovesForFreeModifier(self, rogueShadow));
         modifiers.add(new ImmuneToAttritionLessThanModifier(self, rogueShadow, 4));
         return modifiers;
@@ -143,9 +143,10 @@ public class Card1240_040 extends AbstractEpicEventDeployable {
         // You may use 3 Force to relocate Rogue Shadow to a battleground site (as a regular move during your move phase).
         final PhysicalCard rogue = Filters.findFirstActive(game, self, rogueShadow(self));
         if (rogue != null
-                && GameConditions.isDuringYourPhase(game, self, Phase.MOVE)) {
+                && GameConditions.isDuringYourPhase(game, self, Phase.MOVE)
+                && GameConditions.canUseForce(game, playerId, 3)) {
             final Filter battlegroundSite = Filters.and(Filters.battleground_site, Filters.not(Filters.sameLocation(rogue)),
-                    Filters.locationCanBeRelocatedTo(rogue, false, false, false, 3, false));
+                    Filters.locationCanBeRelocatedTo(rogue, false, false, true, 0, false));
             if (GameConditions.canSpot(game, self, battlegroundSite)) {
                 final TopLevelGameTextAction action = new TopLevelGameTextAction(self, gameTextSourceCardId, GameTextActionId.LEGACY__IF_THE_TRACE_WAS_CORRECT_V__RELOCATE_ROGUE_SHADOW);
                 action.setText("Relocate Rogue Shadow");
@@ -155,8 +156,9 @@ public class Card1240_040 extends AbstractEpicEventDeployable {
                             protected void cardSelected(final PhysicalCard siteSelected) {
                                 action.addAnimationGroup(rogue);
                                 action.addAnimationGroup(siteSelected);
+                                // "Moves for free (unless relocating)": this relocation always costs 3 Force.
                                 action.appendCost(
-                                        new PayRelocateBetweenLocationsCostEffect(action, playerId, rogue, siteSelected, 3));
+                                        new UseForceEffect(action, playerId, 3));
                                 action.allowResponses("Relocate " + GameUtils.getCardLink(rogue) + " to " + GameUtils.getCardLink(siteSelected),
                                         new UnrespondableEffect(action) {
                                             @Override

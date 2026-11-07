@@ -1,6 +1,7 @@
 package com.gempukku.swccgo.cards.set1240.dark;
 
 import com.gempukku.swccgo.common.CardSubtype;
+import com.gempukku.swccgo.common.CardCategory;
 import com.gempukku.swccgo.common.CardType;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
@@ -55,7 +56,7 @@ public class Card_1240_052_Tests {
         assertFalse(card.hasVirtualSuffix());
         assertEquals(Uniqueness.DIAMOND_1, card.getUniqueness());
         assertEquals(Side.DARK, card.getSide());
-        assertEquals(CardType.LOCATION, card.getCardType());
+        assertEquals(CardCategory.LOCATION, card.getCardCategory());
         assertEquals(CardSubtype.SITE, card.getCardSubtype());
         assertTrue(card.hasIcon(Icon.EXTERIOR_SITE));
         assertTrue(card.hasIcon(Icon.PLANET));
@@ -76,12 +77,13 @@ public class Card_1240_052_Tests {
 
         scn.StartGame();
         scn.MoveLocationToTable(arena);
-        scn.MoveCardsToTopOfOwnReserveDeck(waters);
         scn.SkipToPhase(Phase.DEPLOY);
         scn.EnsureDSForcePile(5);
+        scn.MoveCardsToTopOfOwnReserveDeck(waters);
 
         assertTrue(scn.DSCardActionAvailable(arena, "Deploy Dark Waters here from Reserve Deck"));
         scn.DSUseCardAction(arena, "Deploy Dark Waters here from Reserve Deck");
+        Block4DarkTestSupport.advanceUntil(scn, () -> scn.DSHasCardChoiceAvailable(waters), 10);
         if (scn.DSHasCardChoiceAvailable(waters)) scn.DSChooseCard(waters);
         if (scn.DSHasCardChoiceAvailable(arena)) scn.DSChooseCard(arena);
         scn.PassAllResponses();
@@ -114,12 +116,11 @@ public class Card_1240_052_Tests {
         scn.SkipToPhase(Phase.CONTROL);
 
         int lifeBefore = scn.GetLSLifeForceRemaining();
-        if (scn.DSForceDrainAvailable(arena)) {
-            scn.DSForceDrainAt(arena);
-            scn.PassAllResponses();
-            if (scn.AwaitingLSForceLossPayment()) scn.LSPayRemainingForceLossFromReserveDeck();
-            scn.PassAllResponses();
-        }
+        assertTrue(scn.DSForceDrainAvailable(arena));
+        scn.DSForceDrainAt(arena);
+        scn.PassAllResponses();
+        if (scn.AwaitingLSForceLossPayment()) scn.LSPayRemainingForceLossFromReserveDeck();
+        scn.PassAllResponses();
         assertEquals(lifeBefore, scn.GetLSLifeForceRemaining());
     }
 
@@ -161,7 +162,9 @@ public class Card_1240_052_Tests {
 
         int lifeBefore = scn.GetLSLifeForceRemaining();
         scn.SkipToPhase(Phase.CONTROL);
-        if (scn.AwaitingLSForceLossPayment()) scn.LSPayRemainingForceLossFromReserveDeck();
+        Block4DarkTestSupport.advanceUntil(scn, scn::AwaitingLSForceLossPayment, 10);
+        assertTrue(Block4DarkTestSupport.describe(scn), scn.AwaitingLSForceLossPayment());
+        scn.LSPayRemainingForceLossFromReserveDeck();
         scn.PassAllResponses();
         assertEquals(lifeBefore - 1, scn.GetLSLifeForceRemaining());
     }
@@ -179,6 +182,7 @@ public class Card_1240_052_Tests {
 
         int lifeBefore = scn.GetLSLifeForceRemaining();
         scn.SkipToPhase(Phase.CONTROL);
+        Block4DarkTestSupport.advanceUntil(scn, scn::AwaitingLSForceLossPayment, 10);
         assertFalse(scn.AwaitingLSForceLossPayment());
         assertEquals(lifeBefore, scn.GetLSLifeForceRemaining());
     }

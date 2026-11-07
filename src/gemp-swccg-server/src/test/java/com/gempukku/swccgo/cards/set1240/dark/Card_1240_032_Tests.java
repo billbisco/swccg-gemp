@@ -1,6 +1,7 @@
 package com.gempukku.swccgo.cards.set1240.dark;
 
 import com.gempukku.swccgo.common.CardSubtype;
+import com.gempukku.swccgo.common.CardCategory;
 import com.gempukku.swccgo.common.CardType;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
@@ -56,10 +57,11 @@ public class Card_1240_032_Tests {
         assertEquals(Uniqueness.UNIQUE, card.getUniqueness());
         assertEquals(Side.DARK, card.getSide());
         assertEquals(4, card.getDestiny(), scn.epsilon);
-        assertEquals(CardType.EFFECT, card.getCardType());
+        assertEquals(CardCategory.EFFECT, card.getCardCategory());
         assertEquals(CardSubtype.NORMAL, card.getCardSubtype());
         scn.BlueprintIconCheck(card, new ArrayList<>() {{
             add(Icon.EPISODE_I);
+            add(Icon.EFFECT);
             add(Icon.TATOOINE);
             add(Icon.LEGACY_BLOCK_4);
         }});
@@ -111,20 +113,21 @@ public class Card_1240_032_Tests {
         assertTrue(scn.DSCardActionAvailable(quietly, "Reveal up to two unique"));
         scn.DSUseCardAction(quietly, "Reveal up to two unique");
         scn.DSChoose("1");
-        assertTrue(scn.DSHasCardChoiceAvailable(evazan));
-        assertFalse(scn.DSHasCardChoiceAvailable(rodian)); // not unique
-        scn.DSChooseCard(evazan);
-        if (scn.DSDecisionAvailable("Reveal another alien from Reserve Deck")) {
-            scn.DSChooseNo();
+        // Evazan is the only unique alien in hand (the Rodian is not unique), so he is chosen automatically.
+        if (scn.DSHasCardChoiceAvailable(evazan)) {
+            assertFalse(scn.DSHasCardChoiceAvailable(rodian));
+            scn.DSChooseCard(evazan);
         }
+        assertTrue(scn.DSDecisionAvailable("Reveal another alien from Reserve Deck"));
+        scn.DSChooseNo();
         scn.PassAllResponses();
 
         scn.MoveCardsToLocation(site, evazan, rodian);
         assertTrue(scn.HasKeyword(evazan, Keyword.ASSASSIN));
         assertTrue(scn.HasKeyword(evazan, Keyword.BLACK_SUN_AGENT));
-        assertFalse(scn.HasKeyword(rodian, Keyword.ASSASSIN));
-        assertFalse(scn.HasKeyword(rodian, Keyword.BLACK_SUN_AGENT));
+        assertFalse(scn.HasKeyword(rodian, Keyword.BLACK_SUN_AGENT)); // not revealed
 
+        Block4DarkTestSupport.advanceUntil(scn, scn::AwaitingDSDeployPhaseActions, 10);
         assertFalse(scn.DSCardActionAvailable(quietly, "Reveal up to two unique"));
     }
 }

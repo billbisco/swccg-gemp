@@ -62,13 +62,14 @@ public class Card_1240_061_Tests {
         assertEquals(4, card.getForfeit(), scn.epsilon);
         assertNull(card.getArmor());
         scn.BlueprintCardTypeCheck(card, new ArrayList<>() {{
-            add(CardType.STARFIGHTER);
+            add(CardType.STARSHIP);
         }});
         scn.BlueprintModelTypeCheck(card, new ArrayList<>() {{
             add(ModelType.SENTINEL_CLASS_LANDING_CRAFT);
         }});
         scn.BlueprintIconCheck(card, new ArrayList<>() {{
             add(Icon.INDEPENDENT);
+            add(Icon.STARSHIP);
             add(Icon.NAV_COMPUTER);
             add(Icon.SCOMP_LINK);
             add(Icon.LEGACY_BLOCK_4);

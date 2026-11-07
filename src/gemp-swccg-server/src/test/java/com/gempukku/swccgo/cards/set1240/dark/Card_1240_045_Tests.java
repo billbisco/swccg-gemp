@@ -1,6 +1,7 @@
 package com.gempukku.swccgo.cards.set1240.dark;
 
 import com.gempukku.swccgo.common.CardSubtype;
+import com.gempukku.swccgo.common.CardCategory;
 import com.gempukku.swccgo.common.CardType;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
@@ -54,10 +55,11 @@ public class Card_1240_045_Tests {
         assertEquals(Uniqueness.UNRESTRICTED, card.getUniqueness());
         assertEquals(Side.DARK, card.getSide());
         assertEquals(4, card.getDestiny(), scn.epsilon);
-        assertEquals(CardType.INTERRUPT, card.getCardType());
+        assertEquals(CardCategory.INTERRUPT, card.getCardCategory());
         assertEquals(CardSubtype.USED, card.getCardSubtype());
         scn.BlueprintIconCheck(card, new ArrayList<>() {{
             add(Icon.JABBAS_PALACE);
+            add(Icon.INTERRUPT);
             add(Icon.LEGACY_BLOCK_4);
         }});
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_4, card.getExpansionSet());
@@ -87,8 +89,8 @@ public class Card_1240_045_Tests {
         }
 
         assertEquals(forceBefore - 3, scn.GetDSForcePileCount());
-        assertNotEquals(Zone.LOST_PILE, womp.getZone());
-        assertEquals(Zone.LOST_PILE, trooper.getZone());
+        assertFalse(scn.GetDSLostPile().contains(womp));
+        assertTrue(scn.GetDSLostPile().contains(trooper));
     }
 
     @Test
@@ -105,8 +107,10 @@ public class Card_1240_045_Tests {
 
         scn.SkipToPhase(Phase.CONTROL);
         assertFalse(scn.DSCardPlayAvailable(letspass, "Have ferocious creature attack"));
+        scn.MoveCardsToHand(womp);
 
         scn.SkipToLSTurn(Phase.CONTROL);
+        scn.MoveCardsToLocation(site, womp);
         scn.LSPass();
         assertTrue(scn.DSCardPlayAvailable(letspass, "Have ferocious creature attack"));
     }
@@ -118,12 +122,10 @@ public class Card_1240_045_Tests {
         scn.DSPlayCard(letspass, "Have ferocious creature attack");
         if (scn.DSHasCardChoiceAvailable(womp)) scn.DSChooseCard(womp);
         if (scn.DSHasCardChoiceAvailable(luke)) scn.DSChooseCard(luke);
-        scn.PassAllResponses();
-        assertTrue(scn.gameState().isDuringAttack() || womp.getZone() != Zone.AT_LOCATION || luke.getZone() != Zone.AT_LOCATION || true);
-        for (int i = 0; i < 40 && scn.gameState().isDuringAttack(); i++) {
-            if (scn.LSAnyDecisionsAvailable()) scn.LSPass();
-            else if (scn.DSAnyDecisionsAvailable()) scn.DSPass();
-        }
+        Block4DarkTestSupport.advanceUntil(scn, () -> scn.gameState().isDuringAttack(), 10);
+        assertTrue(Block4DarkTestSupport.describe(scn), scn.gameState().isDuringAttack());
+        Block4DarkTestSupport.advanceUntil(scn, () -> !scn.gameState().isDuringAttack(), 60);
+        assertFalse(Block4DarkTestSupport.describe(scn), scn.gameState().isDuringAttack());
     }
 
     @Test
@@ -136,24 +138,24 @@ public class Card_1240_045_Tests {
 
         scn.StartGame();
         scn.MoveCardsToHand(letspass);
-        scn.MoveCardsToLocation(site, womp, luke);
         scn.MoveCardsToTopOfOwnLostPile(scn.GetDSFiller(1));
 
         scn.SkipToLSTurn(Phase.CONTROL);
+        scn.MoveCardsToLocation(site, womp, luke);
         scn.LSPass();
         playAttack(scn);
 
         // Make the site unoccupied (the creature remains, and did not move).
         if (luke.getZone() == Zone.AT_LOCATION) {
             scn.RemoveCardZone(luke);
-            scn.MoveCardToZone(luke, Zone.LOST_PILE);
+            scn.MoveCardToZone(scn.LS, luke, Zone.LOST_PILE);
         }
         assertEquals(Zone.AT_LOCATION, womp.getZone());
 
         int lsLifeBefore = scn.GetLSLifeForceRemaining();
         int dsLostBefore = scn.GetDSLostPileCount();
-        scn.SkipToDSTurn();
-        if (scn.AwaitingLSForceLossPayment()) scn.LSPayRemainingForceLossFromReserveDeck();
+        assertTrue(Block4DarkTestSupport.describe(scn), Block4DarkTestSupport.advanceUntil(scn, scn::AwaitingLSForceLossPayment, 80));
+        scn.LSPayRemainingForceLossFromReserveDeck();
         scn.PassAllResponses();
 
         assertTrue(scn.GetLSLifeForceRemaining() <= lsLifeBefore - 1);
@@ -171,10 +173,10 @@ public class Card_1240_045_Tests {
 
         scn.StartGame();
         scn.MoveCardsToHand(letspass);
-        scn.MoveCardsToLocation(site, womp, luke, trooper);
         scn.MoveCardsToTopOfOwnLostPile(scn.GetDSFiller(1));
 
         scn.SkipToLSTurn(Phase.CONTROL);
+        scn.MoveCardsToLocation(site, womp, luke, trooper);
         scn.LSPass();
         playAttack(scn);
 

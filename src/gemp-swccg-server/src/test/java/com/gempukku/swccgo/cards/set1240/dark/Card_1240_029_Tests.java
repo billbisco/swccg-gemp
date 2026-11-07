@@ -1,6 +1,7 @@
 package com.gempukku.swccgo.cards.set1240.dark;
 
 import com.gempukku.swccgo.common.CardSubtype;
+import com.gempukku.swccgo.common.CardCategory;
 import com.gempukku.swccgo.common.CardType;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
@@ -56,10 +57,11 @@ public class Card_1240_029_Tests {
         assertEquals(Uniqueness.UNIQUE, card.getUniqueness());
         assertEquals(Side.DARK, card.getSide());
         assertEquals(3, card.getDestiny(), scn.epsilon);
-        assertEquals(CardType.EFFECT, card.getCardType());
+        assertEquals(CardCategory.EFFECT, card.getCardCategory());
         assertEquals(CardSubtype.NORMAL, card.getCardSubtype());
         scn.BlueprintIconCheck(card, new ArrayList<>() {{
             add(Icon.A_NEW_HOPE);
+            add(Icon.EFFECT);
             add(Icon.LEGACY_BLOCK_4);
         }});
         assertTrue(card.isImmuneToCardTitle(Title.Alter));
@@ -113,21 +115,23 @@ public class Card_1240_029_Tests {
 
         scn.StartGame();
         scn.MoveCardsToSideOfTable(bones);
-        scn.MoveCardsToTopOfOwnReserveDeck(womp, bogwing, dewback);
         scn.SkipToPhase(Phase.DEPLOY);
         scn.EnsureDSForcePile(10);
+        scn.MoveCardsToTopOfOwnReserveDeck(womp, bogwing, dewback);
 
         assertTrue(scn.DSCardActionAvailable(bones, "Deploy creature or dewback from Reserve Deck"));
         scn.DSUseCardAction(bones, "Deploy creature or dewback from Reserve Deck");
-        assertTrue(scn.DSHasCardChoiceAvailable(dewback));
-        assertTrue(scn.DSHasCardChoiceAvailable(womp));
-        assertFalse(scn.DSHasCardChoiceAvailable(bogwing));
+        Block4DarkTestSupport.advanceUntil(scn, () -> scn.DSHasCardChoiceAvailable(dewback), 10);
+        assertTrue(Block4DarkTestSupport.dsSelectable(scn, dewback));
+        assertTrue(Block4DarkTestSupport.dsSelectable(scn, womp));
+        assertFalse(Block4DarkTestSupport.dsSelectable(scn, bogwing));
         scn.DSChooseCard(dewback);
         if (scn.DSHasCardChoiceAvailable(site)) {
             scn.DSChooseCard(site);
         }
-        scn.PassAllResponses();
+        Block4DarkTestSupport.advanceUntil(scn, () -> dewback.getZone() == Zone.AT_LOCATION, 10);
         assertEquals(Zone.AT_LOCATION, dewback.getZone());
+        Block4DarkTestSupport.advanceUntil(scn, scn::AwaitingDSDeployPhaseActions, 10);
 
         assertFalse(scn.DSCardActionAvailable(bones, "Deploy creature or dewback from Reserve Deck"));
     }
