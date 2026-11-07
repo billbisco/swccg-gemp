@@ -115,6 +115,6 @@ public class Card_1261_011_Tests {
         }
         assertTrue(scn.LSCardPlayAvailable(scn.GetLSCard("barrier")));
         scn.LSPlayCard(scn.GetLSCard("barrier")); scn.PassAllResponses();
-        assertEquals(Zone.USED_PILE, scn.GetLSCard("barrier").getZone());
+        com.gempukku.swccgo.framework.Assertions.assertInZone(Zone.USED_PILE, scn.GetLSCard("barrier"));
     }
 }
