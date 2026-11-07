@@ -104,10 +104,10 @@ public class Card_1250_010_Tests {
     }
     @Test public void SebulbaGrantsOneActualBattleDestinyWhenOtherwiseUnable() {
         var scn=scenario();scn.StartGame();scn.MoveCardsToLocation(scn.GetDSStartingLocation(),scn.GetDSCard("sebulba"),scn.GetLSCard("luke"));
-        scn.DSStartBattleAndSkipToWeaponsSegment(scn.GetDSStartingLocation());scn.PrepareDSDestiny(4);scn.SkipToEndOfPowerSegment();assertEquals(1,scn.GetDSBattleDestinyCount());assertEquals(4,scn.GetDSTotalDestiny());
+        scn.DSStartBattleAndSkipToWeaponsSegment(scn.GetDSStartingLocation());scn.PrepareDSDestiny(4);scn.SkipToEndOfPowerSegment(true);assertEquals(1,scn.GetDSBattleDestinyCount());assertEquals(4,scn.GetDSTotalDestiny());
     }
     @Test public void SebulbaDoesNotAddAnotherBattleDestinyWhenAlreadyAble() {
-        var scn=battle(-1,true,true,true,false,null);scn.SkipToEndOfPowerSegment();assertEquals(1,scn.GetDSBattleDestinyCount());assertEquals(3,scn.GetDSTotalDestiny());
+        var scn=battle(-1,true,true,true,false,null);scn.SkipToEndOfPowerSegment(true);assertEquals(1,scn.GetDSBattleDestinyCount());assertEquals(3,scn.GetDSTotalDestiny());
     }
     private void resolveBrisky(VirtualTableScenario scn) {
         for(int i=0;i<10;i++) {
