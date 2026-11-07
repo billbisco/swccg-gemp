@@ -101,7 +101,8 @@ public class Card_1262_006_Tests {
             if (scn.DSHasCardChoiceAvailable(bay)) scn.DSChooseCard(bay);
             else if (scn.DSHasCardChoiceAvailable(passenger)) {
                 scn.DSChooseCard(passenger);
-            } else if (scn.DSHasCardChoiceAvailable(craft)) {
+            } else if (scn.DSDecisionAvailable("Choose capacity slot")) scn.DSChoose("Passenger");
+            else if (scn.DSHasCardChoiceAvailable(craft)) {
                 assertFalse(scn.DSHasCardChoiceAvailable(otherCraft));
                 scn.DSChooseCard(craft);
             } else if (scn.DSGetDecision() instanceof CardActionSelectionDecision
@@ -161,7 +162,7 @@ public class Card_1262_006_Tests {
                 scn.DSChooseCard(revealed);
             } else if (scn.DSHasCardChoiceAvailable(searched)) scn.DSChooseCard(searched);
             else if (scn.DSHasCardChoiceAvailable(destination)) scn.DSChooseCard(destination);
-            else if (scn.DSDecisionAvailable("pilot or passenger")) scn.DSChoose("Pilot");
+            else if (scn.DSDecisionAvailable("Choose capacity slot")) scn.DSChoose("Pilot");
             else if (scn.LSGetDecision() instanceof CardActionSelectionDecision) scn.LSPass();
             else if (scn.DSGetDecision() instanceof CardActionSelectionDecision) scn.DSPass();
             else fail("Unexpected reveal/search/paired deployment decision: " + scn.GetCurrentDecision().getText());

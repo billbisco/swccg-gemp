@@ -57,7 +57,7 @@ public class Card1262_006 extends AbstractNormalEffect {
         Filter craft = Filters.and(Filters.your(self), Filters.Landing_Craft, Filters.hasAnyAvailablePilotOrPassengerCapacity);
         if (!TriggerConditions.justLandedAt(game, result, playerId, craft, Filters.site)
                 || !GameConditions.canUseForce(game, playerId, 1)
-                || !GameConditions.canDeployCardFromReserveDeck(game, playerId, self, id)) return null;
+                || !GameConditions.canDeployCardFromReserveDeck(game, playerId, self, id, true, false)) return null;
 
         var landed = Filters.filter(((LandedResult) result).getMovedCards(), game, craft);
         var action = new OptionalGameTextTriggerAction(self, sourceId, id);
