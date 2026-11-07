@@ -19,12 +19,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/** Final Legacy master list, page 33 (destiny 6; earlier full card has 4). */
+/** Final Legacy master list, page 33; full card supplies unchanged destiny 4. */
 public class Card1263_027 extends AbstractUsedInterrupt {
     private static final GameTextActionId EXCHANGE = GameTextActionId.LEGACY__DESPERATE_TACTICS__EXCHANGE_PERSONA;
 
     public Card1263_027() {
-        super(Side.LIGHT, 6, "Desperate Tactics", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_6_3, Rarity.V);
+        super(Side.LIGHT, 4, "Desperate Tactics", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_6_3, Rarity.V);
         setVirtualSuffix(true);
         setLore("Members of the Rebel Alliance are willing to make a perilous frontal attack for their cause.");
         setGameText("If opponent just initiated battle, lose 1 Force to target a character present. Target is power +2 and loses all immunity to attrition this turn. OR Once per game, exchange a character in hand with a character of the same persona from Lost Pile or Reserve Deck; reshuffle.");

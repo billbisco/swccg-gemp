@@ -30,9 +30,9 @@ public class Card_1263_027_Tests {
         var scn = scenario(); scn.StartGame(); scn.MoveLocationToTable(scn.GetLSCard("remote"));
         scn.MoveCardsToLSHand(scn.GetLSCard("tactics"), scn.GetLSCard("tactics2")); return scn;
     }
-    @Test public void TacticsUsesFinalSixDestinyUsedInterrupt() {
+    @Test public void TacticsRetainsFourDestinyFromTheFullCard() {
         var scn = scenario(); var b = scn.GetLSCard("tactics").getBlueprint();
-        assertEquals("Desperate Tactics", b.getTitle()); assertEquals(6, b.getDestiny(), scn.epsilon);
+        assertEquals("Desperate Tactics", b.getTitle()); assertEquals(4, b.getDestiny(), scn.epsilon);
         assertEquals(Side.LIGHT, b.getSide()); assertEquals(Uniqueness.UNIQUE, b.getUniqueness()); assertTrue(b.hasVirtualSuffix());
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_6_3, b.getExpansionSet()); assertEquals(Rarity.V, b.getRarity()); assertEquals(CardSubtype.USED, b.getCardSubtype());
         scn.BlueprintCardTypeCheck(b, new ArrayList<>(Arrays.asList(CardType.INTERRUPT)));
