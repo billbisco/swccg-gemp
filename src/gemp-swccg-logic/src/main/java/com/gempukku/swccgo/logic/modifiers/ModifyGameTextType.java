@@ -155,8 +155,8 @@ public enum ModifyGameTextType {
     LEGACY__DROID_RACKS__WHERE_ARE_THOSE_DROIDEKAS_IGNORES_NEIMOIDIANS("Ignores Neimoidians"),
     LEGACY__HUTT_INFLUENCE__HUMAN_SHIELD_IMPERIAL_MAY_BE_BOUNTY_HUNTER("'Imperial' may be treated as 'bounty hunter'"),
     LEGACY__MOS_ESPA_V__YOURE_A_SLAVE_FREE_IS_2_FORCE("'Free' treated as '2 Force'"),
-
     ;
+
 
     private String _humanReadable;
 
