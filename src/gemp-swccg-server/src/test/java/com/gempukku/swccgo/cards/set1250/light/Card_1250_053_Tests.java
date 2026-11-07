@@ -17,7 +17,7 @@ public class Card_1250_053_Tests {
             put("clone1", "1116_8"); put("clone2", "1116_8"); put("rebel", "1_28");
             put("ambush", "5_31"); put("chewie", "8_2"); put("corridor", "5_82");
             put("system", "12_73"); put("ship", "1_140");
-        }}, new HashMap<>() {{ put("trooper", "1_242"); }}, 25, 25,
+        }}, new HashMap<>() {{ put("trooper", "1_194"); }}, 25, 25,
                 StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -75,6 +75,8 @@ public class Card_1250_053_Tests {
         scn.LSActivateForceCheat(6); scn.SkipToLSTurn(Phase.MOVE);
         int force = scn.GetLSForcePileCount(); scn.LSMoveCard(palpatine, to); scn.PassAllResponses(); scn.DSPass();
         assertEquals(to, palpatine.getAtLocation());
+        assertEquals(0, scn.game().getModifiersQuerying().getGrantedAdditionalMovesUsedThisTurn(palpatine));
+        assertTrue(scn.game().getModifiersQuerying().hasUnusedGrantedAdditionalMoves(scn.gameState(), palpatine));
         scn.LSMoveCard(palpatine, from); scn.PassAllResponses(); scn.DSPass();
         assertEquals(from, palpatine.getAtLocation()); assertEquals(force - 2, scn.GetLSForcePileCount());
         assertFalse(scn.LSCardActionAvailable(palpatine, "Move"));
