@@ -95,6 +95,9 @@ public class Card_1262_006_Tests {
         scn.SkipToPhase(Phase.MOVE);
         assertFalse(scn.DSCardActionAvailable(orders, LANDING));
         int forceBefore = scn.GetDSForcePileCount();
+        var remaining = new ArrayList<>(scn.GetDSReserveDeck());
+        if (expected) assertTrue(remaining.remove(passenger));
+        scn.gameState().getRandom().setSeed(4096);
         scn.DSUseCardAction(craft, "Land");
         boolean offered = false;
         for (int i = 0; i < 80 && !scn.AwaitingDSMovePhaseActions(); i++) {
@@ -121,7 +124,12 @@ public class Card_1262_006_Tests {
             assertSame(craft, passenger.getAttachedTo());
             assertEquals(forceBefore - 1 - (int) (float) passenger.getBlueprint().getDeployCost(),
                     scn.GetDSForcePileCount());
-        } else assertInZone(Zone.RESERVE_DECK, passenger);
+            assertEquals(new HashSet<>(remaining), new HashSet<>(scn.GetDSReserveDeck()));
+            assertNotEquals(remaining, scn.GetDSReserveDeck());
+        } else {
+            assertInZone(Zone.RESERVE_DECK, passenger);
+            assertEquals(remaining, scn.GetDSReserveDeck());
+        }
     }
 
     @Test public void DeploymentOrdersRevealsVehicleAndTakesPilotForRealSimultaneousDeployment() {
