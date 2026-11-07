@@ -21,6 +21,7 @@ public class Card1271_039 extends LegacySetupSearchEffect {
     @Override
     protected boolean checkGameTextDeployRequirements(String playerId, SwccgGame game, PhysicalCard self,
             PlayCardOptionId playCardOptionId, boolean asReact) {
-        return !GameConditions.canSpot(game, self, Filters.and(Filters.your(self), Filters.Epic_Event));
+        return !game.getGameState().hasPlayedStartingEpicEvent(playerId)
+            && !GameConditions.canSpot(game, self, Filters.and(Filters.your(self), Filters.Epic_Event));
     }
 }

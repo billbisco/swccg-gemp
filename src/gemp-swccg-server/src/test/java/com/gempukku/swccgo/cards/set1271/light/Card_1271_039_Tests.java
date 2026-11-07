@@ -65,6 +65,35 @@ public class Card_1271_039_Tests {
         assertFalse(s.LSDeployAvailable(s.GetLSCard("trust")));
     }
 
+    @Test public void LukeTrustMeCannotDeployAfterItsOwnersStartingEpicEventLeavesTheTable() {
+        var s = new VirtualTableScenario(
+            new HashMap<>(Map.of("trust", "1271_39", "interrupt", "216_39", "communing", "216_24", "kenobi", "216_36")),
+            new HashMap<>(), 30, 30,
+            StartingSetup.LSStartingLocation("216_43"), StartingSetup.DefaultDSGroundLocation,
+            StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
+            StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
+        var communing = s.GetLSCard("communing");
+        var kenobi = s.GetLSCard("kenobi");
+        var trust = s.GetLSCard("trust");
+        s.MoveCardsToLSHand(trust);
+        s.DSDecided("0");
+        s.LSDecided("0");
+        StartingSetup.DefaultDSGroundLocation.Setup(s);
+        s.LSChooseCard(s.GetLSCard("starting-location"));
+
+        assertTrue(s.LSDecisionAvailable("Choose starting interrupt"));
+        s.LSChooseCard(s.GetLSCard("interrupt"));
+        if (s.LSHasCardChoiceAvailable(communing)) s.LSChooseCard(communing);
+        if (s.LSHasCardChoiceAvailable(kenobi)) s.LSChooseCard(kenobi);
+        assertEquals(Zone.SIDE_OF_TABLE, communing.getZone());
+        assertTrue(s.gameState().hasPlayedStartingEpicEvent(s.LS));
+
+        s.MoveOutOfPlay(communing);
+        s.SkipToLSTurn(Phase.DEPLOY);
+        assertEquals(Zone.HAND, trust.getZone());
+        assertFalse(s.LSDeployAvailable(trust));
+    }
+
     @Test public void LukeTrustMeActuallySearchesForSetupAndReshufflesOnlyOncePerGame() {
         var s = ready(false);
         deploy(s);
