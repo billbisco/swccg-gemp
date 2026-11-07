@@ -128,7 +128,7 @@ public class Card_1261_033_Tests {
     }
 
     private VirtualTableScenario fullScenario() {
-        return new VirtualTableScenario(new HashMap<>(Map.of("luke", "1_19")),
+        return new VirtualTableScenario(new HashMap<>(Map.of("luke", "1_19", "rebel", "1_28")),
                 new HashMap<>(Map.of("waters", "1261_33", "pit", "6_166", "chamber", "6_162", "wampa", "3_93",
                         "womprat", "7_215", "trooper", "1_194", "trooper2", "1_194", "rancor", "6_139",
                         "imperialcity", "7_277")),
@@ -198,6 +198,34 @@ public class Card_1261_033_Tests {
             scn.DSChooseCard(luke);
         scn.PassAllResponses();
         assertSame(scn.GetDSCard("pit"), scn.game().getModifiersQuerying().getLocationThatCardIsAt(scn.gameState(), luke));
+    }
+
+    @Test(timeout = 15000)
+    public void captiveRelocationIsOncePerBattlePhaseAndTheCaptiveStaysCaptive() {
+        var scn = fullScenario();
+        var pit = scn.GetDSCard("pit");
+        var chamber = scn.GetDSCard("chamber");
+        var waters = scn.GetDSCard("waters");
+        var luke = scn.GetLSCard("luke");
+        var rebel = scn.GetLSCard("rebel");
+        scn.StartGame();
+        scn.MoveLocationToTable(pit);
+        scn.MoveLocationToTable(chamber);
+        scn.AttachCardsTo(pit, waters);
+        scn.MoveCardsToLocation(chamber, scn.GetDSCard("trooper"), scn.GetDSCard("trooper2"));
+        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), luke, rebel);
+        scn.CaptureCardWith(scn.GetDSCard("trooper"), luke);
+        scn.CaptureCardWith(scn.GetDSCard("trooper2"), rebel);
+        scn.SkipToDSTurn(Phase.BATTLE);
+        assertTrue(scn.DSCardActionAvailable(waters, RELOCATE));
+        scn.DSUseCardAction(waters, RELOCATE);
+        scn.DSChooseCard(luke);
+        scn.PassAllResponses();
+        assertSame(pit, scn.game().getModifiersQuerying().getLocationThatCardIsAt(scn.gameState(), luke));
+        assertTrue(luke.isCaptive());
+        assertTrue(rebel.isCaptive());
+        assertSame(chamber, scn.game().getModifiersQuerying().getLocationThatCardIsAt(scn.gameState(), rebel));
+        assertFalse(scn.DSCardActionAvailable(waters, RELOCATE));
     }
 
     @Test(timeout = 15000)

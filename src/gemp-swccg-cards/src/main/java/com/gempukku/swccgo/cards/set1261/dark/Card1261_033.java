@@ -2,6 +2,7 @@ package com.gempukku.swccgo.cards.set1261.dark;
 
 import com.gempukku.swccgo.cards.AbstractNormalEffect;
 import com.gempukku.swccgo.cards.GameConditions;
+import com.gempukku.swccgo.cards.effects.usage.OncePerPhaseEffect;
 import com.gempukku.swccgo.cards.effects.usage.OncePerTurnEffect;
 import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.filters.Filter;
@@ -62,7 +63,8 @@ public class Card1261_033 extends AbstractNormalEffect {
     protected List<TopLevelGameTextAction> getGameTextTopLevelActions(String playerId, SwccgGame game,
             PhysicalCard self, int sourceId) {
         var pit = self.getAttachedTo();
-        if (pit == null || !GameConditions.isDuringYourPhase(game, self, Phase.BATTLE)
+        var relocateId = GameTextActionId.LEGACY__DARK_WATERS_AND_KRAYT_DRAGON_BONES__RELOCATE_CAPTIVE;
+        if (pit == null || !GameConditions.isOnceDuringYourPhase(game, self, playerId, sourceId, relocateId, Phase.BATTLE)
                 || GameConditions.occupies(game, playerId, pit))
             return null;
         Filter captive = Filters.and(Filters.captive, Filters.at(Filters.Audience_Chamber),
@@ -70,8 +72,9 @@ public class Card1261_033 extends AbstractNormalEffect {
         if (!GameConditions.canTarget(game, self, SpotOverride.INCLUDE_CAPTIVE, captive))
             return null;
 
-        var action = new TopLevelGameTextAction(self, playerId, sourceId);
+        var action = new TopLevelGameTextAction(self, playerId, sourceId, relocateId);
         action.setText("Relocate captive from Audience Chamber");
+        action.appendUsage(new OncePerPhaseEffect(action));
         action.appendTargeting(new TargetCardOnTableEffect(action, playerId, "Choose captive",
                 SpotOverride.INCLUDE_CAPTIVE, captive) {
             @Override
