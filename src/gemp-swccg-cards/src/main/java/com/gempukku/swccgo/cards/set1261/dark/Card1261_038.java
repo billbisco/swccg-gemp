@@ -55,7 +55,7 @@ public class Card1261_038 extends AbstractNormalEffect {
                         for (PhysicalCard site : Filters.filterTopLocationsOnTable(state.getGame(),
                                 Filters.and(Filters.battleground_site, Filters.occupies(self.getOwner())))) {
                             if (Filters.countActive(state.getGame(), self, Filters.and(Filters.your(self),
-                                    Filters.Royal_Guard, Filters.presentAt(site))) >= 2)
+                                    Filters.Royal_Guard, Filters.presentAt(Filters.sameLocationId(site)))) >= 2)
                                 occupied++;
                         }
                         return occupied;
