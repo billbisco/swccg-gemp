@@ -11,6 +11,8 @@ import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.actions.OptionalGameTextTriggerAction;
 import com.gempukku.swccgo.logic.effects.CaptureCharacterOnTableEffect;
 import com.gempukku.swccgo.logic.effects.TargetCardOnTableEffect;
+import com.gempukku.swccgo.logic.effects.RespondableEffect;
+import com.gempukku.swccgo.logic.timing.Action;
 import com.gempukku.swccgo.logic.modifiers.DefinedByGameTextLandspeedModifier;
 import com.gempukku.swccgo.logic.modifiers.ExtraForceCostToFireWeaponModifier;
 import com.gempukku.swccgo.logic.modifiers.MayBeTargetedByModifier;
@@ -55,7 +57,12 @@ public class Card1263_005 extends AbstractAlien {
                 action.appendTargeting(new TargetCardOnTableEffect(action, playerId, "Choose transported character", TargetingReason.TO_BE_CAPTURED, target) {
                     @Override
                     protected void cardTargeted(int targetGroupId, PhysicalCard targetedCard) {
-                        action.appendEffect(new CaptureCharacterOnTableEffect(action, targetedCard));
+                        action.allowResponses(new RespondableEffect(action) {
+                            @Override
+                            protected void performActionResults(Action targetingAction) {
+                                action.appendEffect(new CaptureCharacterOnTableEffect(action, targetingAction.getPrimaryTargetCard(targetGroupId)));
+                            }
+                        });
                     }
                 });
                 return List.of(action);
