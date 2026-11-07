@@ -121,6 +121,22 @@ public class Card_1261_044_Tests {
 
     // ---- Mode 1: restore a forfeit just reduced to 0 ----
 
+    private static boolean dsHas(VirtualTableScenario scn, PhysicalCard card, String text) {
+        try {
+            return scn.DSCardActionAvailable((com.gempukku.swccgo.game.PhysicalCardImpl) card, text);
+        } catch (IllegalStateException e) {
+            return false;
+        }
+    }
+
+    private static boolean lsHas(VirtualTableScenario scn, PhysicalCard card, String text) {
+        try {
+            return scn.LSCardActionAvailable((com.gempukku.swccgo.game.PhysicalCardImpl) card, text);
+        } catch (IllegalStateException e) {
+            return false;
+        }
+    }
+
     private static final String RESTORE = "forfeit to normal";
 
     private VirtualTableScenario combatScenario() {
@@ -136,7 +152,7 @@ public class Card_1261_044_Tests {
 
     private void passUntilDSAction(VirtualTableScenario scn, PhysicalCard card, String text) {
         for (int i = 0; i < 60; i++) {
-            if (scn.DSCardActionAvailable((com.gempukku.swccgo.game.PhysicalCardImpl) card, text))
+            if (dsHas(scn, card, text))
                 return;
             assertTrue("no pending optional response: " + scn.GetCurrentDecision().getText(),
                     scn.GetCurrentDecision().getText().toLowerCase().contains("optional"));
@@ -216,7 +232,7 @@ public class Card_1261_044_Tests {
         scn.LSUseCardAction(scn.GetLSCard("obisaber"), "Fire");
         scn.LSChooseCard(trooper);
         for (int i = 0; i < 40 && scn.GetCurrentDecision().getText().toLowerCase().contains("optional"); i++) {
-            assertFalse(scn.DSCardActionAvailable(lana, RESTORE));
+            assertFalse(dsHas(scn, lana, RESTORE));
             scn.PlayerPass(scn.GetDecidingPlayer());
         }
         assertEquals(0, scn.GetForfeit(trooper));
@@ -250,28 +266,28 @@ public class Card_1261_044_Tests {
             scn.MoveLocationToTable(scn.GetDSCard(key));
         scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("vader"), scn.GetDSCard("trooper"));
         scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetLSCard("yoda"));
-        scn.MoveCardsToDSHand(scn.GetDSCard("lana"), scn.GetDSCard("lana2"));
+        scn.MoveCardsToDSHand(scn.GetDSCard("elis"), scn.GetDSCard("lana"));
         scn.SkipToDSTurn(Phase.MOVE);
         scn.EnsureDSForcePile(10);
         scn.EnsureLSForcePile(10);
         scn.PrepareDSDestiny(2);
-        scn.DSUseCardAction(scn.GetDSCard("lana"), TRANSPORT);
+        scn.DSUseCardAction(scn.GetDSCard("elis"), TRANSPORT);
         scn.DSChooseCard(scn.GetDSStartingLocation());
         scn.DSChooseCard(scn.GetDSCard("battleground"));
         scn.DSChooseCard(scn.GetDSCard("vader"));
         scn.PassAllResponses();
         scn.DSChooseYes();
         var yoda = scn.GetLSCard("yoda");
-        drive(scn, () -> scn.LSCardActionAvailable(yoda, "Cancel"));
-        assertTrue("Yoda's cancel not offered", scn.LSCardActionAvailable(yoda, "Cancel"));
+        drive(scn, () -> lsHas(scn, yoda, "Cancel"));
+        assertTrue("Yoda's cancel not offered", lsHas(scn, yoda, "Cancel"));
         scn.LSUseCardAction(yoda, "Cancel");
-        if (scn.LSGetDecision() != null && scn.LSHasCardChoiceAvailable(scn.GetDSCard("lana")))
-            scn.LSChooseCard(scn.GetDSCard("lana"));
+        if (scn.LSGetDecision() != null && scn.LSHasCardChoiceAvailable(scn.GetDSCard("elis")))
+            scn.LSChooseCard(scn.GetDSCard("elis"));
     }
 
     private VirtualTableScenario yodaScenario() {
         return new VirtualTableScenario(new HashMap<>(Map.of("yoda", "1114_15")),
-                new HashMap<>(Map.of("lana", "1261_44", "lana2", "1261_44", "vader", "1_168", "trooper", "1_194",
+                new HashMap<>(Map.of("lana", "1261_44", "elis", "1_243", "vader", "1_168", "trooper", "1_194",
                         "battleground", "5_166", "interior", "5_168", "exterior", "7_277")),
                 25, 25, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
@@ -282,15 +298,16 @@ public class Card_1261_044_Tests {
     public void loseTwoForceToCancelYodasAttemptToCancelYourInterrupt() {
         var scn = yodaScenario();
         transportWithYodaReady(scn);
-        var lana2 = scn.GetDSCard("lana2");
-        drive(scn, () -> scn.DSCardActionAvailable(lana2, CANCEL_ATTEMPT));
-        assertTrue(scn.DSCardActionAvailable(lana2, CANCEL_ATTEMPT));
+        var lana = scn.GetDSCard("lana");
+        drive(scn, () -> dsHas(scn, lana, CANCEL_ATTEMPT));
+        assertTrue(String.join("\n", scn.gameState().getLastMessages()), dsHas(scn, lana, CANCEL_ATTEMPT));
         int dsLost = scn.GetDSLostPileCount();
-        scn.DSUseCardAction(lana2, CANCEL_ATTEMPT);
+        scn.DSUseCardAction(lana, CANCEL_ATTEMPT);
         drive(scn, () -> false);
         assertEquals(dsLost + 2, scn.GetDSLostPileCount());
         assertSame(scn.GetDSCard("battleground"), location(scn, scn.GetDSCard("vader")));
-        assertTrue(scn.GetDSUsedPile().contains(scn.GetDSCard("lana")));
+        assertTrue(scn.GetDSUsedPile().contains(scn.GetDSCard("elis")));
+        assertTrue(scn.GetDSUsedPile().contains(lana));
     }
 
     @Test(timeout = 20000)
@@ -299,7 +316,8 @@ public class Card_1261_044_Tests {
         transportWithYodaReady(scn);
         drive(scn, () -> false);
         assertSame(scn.GetDSStartingLocation(), location(scn, scn.GetDSCard("vader")));
-        assertFalse(scn.GetDSUsedPile().contains(scn.GetDSCard("lana")));
+        assertTrue(scn.GetDSLostPile().contains(scn.GetDSCard("elis")));
+        assertTrue(scn.GetDSHand().contains(scn.GetDSCard("lana")));
     }
 
     private void fireAtLukeWithObiWanReady(VirtualTableScenario scn) {
@@ -315,13 +333,13 @@ public class Card_1261_044_Tests {
         scn.EnsureLSForcePile(10);
         scn.DSInitiateBattle(site);
         scn.PassAllResponses();
-        scn.PrepareDSDestiny(3);
-        scn.PrepareDSDestiny(3);
+        scn.PrepareDSDestiny(1);
+        scn.PrepareDSDestiny(6);
         scn.DSUseCardAction(scn.GetDSCard("vsaber"), "Fire");
         scn.DSChooseCard(luke);
         var obi = scn.GetLSCard("obijk");
-        drive(scn, () -> scn.LSCardActionAvailable(obi, "Cancel opponent's destiny"));
-        assertTrue("Obi-Wan's cancel not offered", scn.LSCardActionAvailable(obi, "Cancel opponent's destiny"));
+        drive(scn, () -> lsHas(scn, obi, "Cancel opponent's destiny"));
+        assertTrue("Obi-Wan's cancel not offered", lsHas(scn, obi, "Cancel opponent's destiny"));
         scn.LSUseCardAction(obi, "Cancel opponent's destiny");
     }
 
@@ -330,12 +348,12 @@ public class Card_1261_044_Tests {
         var scn = combatScenario();
         fireAtLukeWithObiWanReady(scn);
         var lana = scn.GetDSCard("lana");
-        drive(scn, () -> scn.DSCardActionAvailable(lana, CANCEL_ATTEMPT));
-        assertTrue(scn.DSCardActionAvailable(lana, CANCEL_ATTEMPT));
+        drive(scn, () -> dsHas(scn, lana, CANCEL_ATTEMPT));
+        assertTrue(dsHas(scn, lana, CANCEL_ATTEMPT));
         int dsLost = scn.GetDSLostPileCount();
         scn.DSUseCardAction(lana, CANCEL_ATTEMPT);
         drive(scn, () -> scn.GetLSCard("rebel").isHit());
-        assertTrue(scn.GetLSCard("rebel").isHit());
+        assertTrue(String.join("\n", scn.gameState().getLastMessages()), scn.GetLSCard("rebel").isHit());
         assertEquals(dsLost + 2, scn.GetDSLostPileCount());
     }
 
