@@ -52,8 +52,8 @@ public class Card_1261_078_Tests {
         s.MoveCardsToTopOfLSReserveDeck(s.GetLSDestiny(vaderWins ? 0 : 6), s.GetLSDestiny(vaderWins ? 1 : 5));
         assertTrue(s.DSCardPlayAvailable(circle, "Initiate epic duel"));
         s.DSPlayCard(circle, "Initiate epic duel");
-        if (s.DSHasCardChoiceAvailable(obi)) s.DSChooseCard(obi);
         if (s.DSHasCardChoiceAvailable(vader)) s.DSChooseCard(vader);
+        if (s.DSHasCardChoiceAvailable(obi)) s.DSChooseCard(obi);
         s.PassAllResponses();
         s.PassDestinyDrawResponses();
         s.PassAllResponses();
