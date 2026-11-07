@@ -67,6 +67,7 @@ public class Card_1261_022_Tests {
     }
 
     private void startDarkDrain(VirtualTableScenario scn) {
+        scn.MoveCardsToLocation(scn.GetLSCard("forest"), scn.GetDSCard("vader"));
         nextDarkControl(scn);
         scn.DSForceDrainAt(scn.GetLSCard("forest"));
         scn.PassAllResponses();
@@ -217,6 +218,7 @@ public class Card_1261_022_Tests {
     @Test
     public void NoEscapeDoesNotProtectTheDrainFromCancellation() {
         var scn = ready(true, true);
+        scn.MoveCardsToLocation(scn.GetLSCard("forest"), scn.GetDSCard("vader"));
         scn.MoveCardsToLSHand(scn.GetLSCard("control"));
         nextDarkControl(scn);
         scn.DSForceDrainAt(scn.GetLSCard("forest"));
@@ -229,12 +231,14 @@ public class Card_1261_022_Tests {
     private int activateWithNudj(boolean shield) {
         var scn = scenario();
         scn.StartGame();
-        scn.SkipToDSTurn(Phase.ACTIVATE);
+        scn.SkipToDSTurn(Phase.CONTROL);
         scn.MoveLocationToTable(scn.GetDSCard("dantooine"));
         scn.MoveLocationToTable(scn.GetLSCard("forest"));
         scn.MoveCardsToLocation(scn.GetLSCard("forest"), scn.GetLSCard("nudj"));
         if (shield)
             scn.MoveCardsToDSSideOfTable(scn.GetDSCard("shield"));
+        scn.SkipToLSTurn(Phase.CONTROL);
+        scn.SkipToDSTurn(Phase.ACTIVATE);
         assertEquals(shield ? 1 : 0, scn.game().getModifiersQuerying().getIconCount(scn.gameState(), scn.GetLSCard("forest"), Icon.DARK_FORCE));
         return scn.DSActivateMaxForceAndPass();
     }

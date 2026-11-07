@@ -38,8 +38,8 @@ public class Card1261_021 extends AbstractDefensiveShield {
         Filter protectedSites = Filters.and(Filters.opponents(self), Filters.site,
                 Filters.or(Filters.Dantooine_site, Filters.Subjugated_planet_location));
         Filter swampOrJungle = Filters.and(Filters.opponents(self), Filters.generic_site,
-                Filters.or(Filters.title("Swamp"), Filters.title("Jungle")));
-        Filter forest = Filters.and(Filters.opponents(self), Filters.generic_site, Filters.title("Forest"));
+                Filters.or(Filters.swamp, Filters.jungle));
+        Filter forest = Filters.and(Filters.opponents(self), Filters.generic_site, Filters.forest);
         return Arrays.asList(
                 new DeployCostToLocationModifier(self, Filters.and(Filters.your(self), Filters.Imperial), -2, protectedSites),
                 new ForceDrainsMayNotBeModifiedByModifier(self, Filters.opponents(self), null, playerId, protectedSites),

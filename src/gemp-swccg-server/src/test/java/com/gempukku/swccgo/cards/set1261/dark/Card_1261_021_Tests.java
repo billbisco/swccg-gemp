@@ -159,7 +159,7 @@ public class Card_1261_021_Tests {
     @Test
     public void LeaveThemToMeDoesNotReduceDeploymentAtAnUnrelatedSite() {
         var scn = ready(true);
-        deployAndCheckCost(scn, "trooper", scn.GetLSStartingLocation(), 2);
+        deployAndCheckCost(scn, "trooper", scn.GetLSStartingLocation(), 1);
     }
 
     @Test
@@ -173,7 +173,7 @@ public class Card_1261_021_Tests {
         var scn = ready(true);
         scn.MoveOutOfPlay(scn.GetLSCard("forest"));
         scn.MoveLocationToTable(scn.GetDSCard("ownForest"));
-        deployAndCheckCost(scn, "trooper", scn.GetDSCard("ownForest"), 2);
+        deployAndCheckCost(scn, "trooper", scn.GetDSCard("ownForest"), 1);
     }
 
     private void nextDarkControl(VirtualTableScenario scn) {
