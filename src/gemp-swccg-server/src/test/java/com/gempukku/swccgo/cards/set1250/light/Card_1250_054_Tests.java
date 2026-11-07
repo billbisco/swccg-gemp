@@ -33,7 +33,7 @@ public class Card_1250_054_Tests {
         assertEquals(Species.WOOKIEE, bp.getSpecies());
         scn.BlueprintCardTypeCheck(bp, new ArrayList<>() {{ add(CardType.ALIEN); }});
         scn.BlueprintIconCheck(bp, new ArrayList<>() {{
-            add(Icon.SPECIAL_EDITION); add(Icon.WARRIOR); add(Icon.EPISODE_I); add(Icon.LEGACY_BLOCK_5);
+            add(Icon.ALIEN); add(Icon.SPECIAL_EDITION); add(Icon.WARRIOR); add(Icon.EPISODE_I); add(Icon.LEGACY_BLOCK_5);
         }});
         scn.BlueprintKeywordCheck(bp, new ArrayList<Keyword>());
     }
@@ -108,19 +108,28 @@ public class Card_1250_054_Tests {
         return false;
     }
 
-    private void checkForfeit(int saved, boolean draw) {
+    @Test
+    public void WookieeMayDrawBeforeForfeitWithoutAttachments() { checkForfeit(0, true, false); }
+
+    @Test
+    public void WookieeMayDeclineBothRescueAndDraw() { checkForfeit(0, false); }
+
+    private void checkForfeit(int saved, boolean draw) { checkForfeit(saved, draw, true); }
+
+    private void checkForfeit(int saved, boolean draw, boolean attached) {
         var scn = scenario(); scn.StartGame();
         var wookiee = scn.GetLSCard("wookiee"); var weapon = scn.GetLSCard("bowcaster");
         var device = scn.GetLSCard("binoculars");
         scn.MoveCardsToLocation(scn.GetLSStartingLocation(), wookiee, scn.GetDSCard("vader"));
-        scn.AttachCardsTo(wookiee, weapon, device);
-        scn.DSStartBattleAndSkipToWeaponsSegment(scn.GetLSStartingLocation());
+        if (attached) scn.AttachCardsTo(wookiee, weapon, device);
+        scn.LSStartBattleAndSkipToWeaponsSegment(scn.GetLSStartingLocation());
         scn.PrepareDSDestiny(3); scn.SkipToDamageSegment(true);
         assertTrue(scn.LSDecisionAvailable("Choose a card from battle to forfeit"));
         scn.LSChooseCard(wookiee);
         assertTrue(passToSaveAction(scn, wookiee));
         var top = scn.GetTopOfLSReserveDeck(); int hand = scn.GetLSHandCount();
         scn.LSUseCardAction(wookiee, "Save attached cards");
+        if (attached) {
         assertTrue(scn.LSDecisionAvailable("Choose cards on Wookiee"));
         if (saved == 0) scn.LSChooseCards();
         else if (saved == 1) scn.LSChooseCard(weapon);
@@ -129,15 +138,18 @@ public class Card_1250_054_Tests {
         if (saved == 2 && scn.LSDecisionAvailable("Choose card to place")) {
             scn.LSChooseCard(weapon); scn.PassAllResponses();
         }
+        }
         assertTrue(scn.LSDecisionAvailable("Draw top card"));
         if (draw) scn.LSChooseYes(); else scn.LSChooseNo();
         scn.PassAllResponses();
         assertTrue(scn.GetLSLostPile().contains(wookiee));
         assertEquals(hand + (draw ? 1 : 0), scn.GetLSHandCount());
         assertEquals(draw, scn.GetLSHand().contains(top));
+        if (attached) {
         assertEquals(saved > 0, scn.GetLSUsedPile().contains(weapon));
         assertEquals(saved > 1, scn.GetLSUsedPile().contains(device));
         assertEquals(saved == 0, scn.GetLSLostPile().contains(weapon));
         assertEquals(saved < 2, scn.GetLSLostPile().contains(device));
+        }
     }
 }
