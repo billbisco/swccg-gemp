@@ -73,10 +73,10 @@ public class Card_1250_027_Tests {
     }
     private VirtualTableScenario battle(boolean character) {
         var scn=scenario();scn.StartGame();var site=scn.GetDSStartingLocation();
-        scn.MoveCardsToLocation(site,scn.GetDSCard("veers"),scn.GetLSCard("luke"));scn.MoveCardsToDSHand(scn.GetDSCard("fury"));
+        scn.MoveCardsToLocation(site,scn.GetDSCard("vader"),scn.GetLSCard("luke"));scn.MoveCardsToDSHand(scn.GetDSCard("fury"));
         scn.DSStartBattleAndSkipToWeaponsSegment(site);
-        scn.MoveCardsToTopOfDSReserveDeck(scn.GetDSCard("device"),scn.GetDSCard(character?"character":"vader"));
-        if(!character)scn.MoveCardsToTopOfDSReserveDeck(scn.GetDSCard("device"));
+        scn.MoveCardsToTopOfDSReserveDeck(scn.GetDSCard("device"));
+        if(character)scn.MoveCardsToTopOfDSReserveDeck(scn.GetDSCard("character"));
         return scn;
     }
     private com.gempukku.swccgo.logic.effects.DrawDestinyEffect reachDraw(VirtualTableScenario scn,boolean dark) {
