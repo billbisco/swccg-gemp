@@ -34,7 +34,11 @@ public class Card_1220_163_Tests {
 
             @Override public void Setup(VirtualTableScenario scn) {
                 for (String card : List.of("hoth", "generators")) {
-                    if (scn.LSHasCardChoiceAvailable(scn.GetLSCard(card))) scn.LSChooseCard(scn.GetLSCard(card));
+                    assertTrue("Required setup " + card + " at " + scn.GetCurrentDecision().getText()
+                                    + " options=" + java.util.Arrays.toString(scn.GetADParam(scn.LS, "blueprintId"))
+                                    + " results=" + java.util.Arrays.toString(scn.GetADParam(scn.LS, "results")),
+                            scn.LSHasCardChoiceAvailable(scn.GetLSCard(card)));
+                    scn.LSChooseCard(scn.GetLSCard(card));
                 }
                 for (String card : List.of("garrison", "flaps")) {
                     if (scn.LSHasCardChoiceAvailable(scn.GetLSCard(card))) {
