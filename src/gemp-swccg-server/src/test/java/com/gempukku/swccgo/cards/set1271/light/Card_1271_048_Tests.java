@@ -79,7 +79,7 @@ public class Card_1271_048_Tests {
         s.DSChooseCard(s.GetDSCard(name));
         if(s.DSDecisionAvailable("Do you still want to forfeit it?"))s.DSChooseYes();
         // Pass only earlier loss windows; leave the forfeiture trigger available for the cannon's choice.
-        s.PassResponses("ABOUT_TO_LOSE_CARD_FROM_TABLE");s.PassResponses("ABOUT_TO_LOSE_FORCE_NOT_FROM_BATTLE_DAMAGE");
+        s.PassResponses("ABOUT_TO_BE_LOST_FROM_TABLE");s.PassResponses("ABOUT_TO_LOSE_FORCE_NOT_FROM_BATTLE_DAMAGE");
         // The current player chooses competing pile placement order (AR2 p.11), including opponent's cards.
         for(int i=0;i<4;i++) {
             boolean light=s.LSDecisionAvailable("put on Lost Pile") || s.LSDecisionAvailable("Choose card to be lost");
@@ -87,9 +87,9 @@ public class Card_1271_048_Tests {
             if(light)s.LSChooseCard(s.LSHasCardChoiceAvailable(s.GetDSCard("weapon"))?s.GetDSCard("weapon"):s.GetDSCard(name));
             else if(dark)s.DSChooseCard(s.DSHasCardChoiceAvailable(s.GetDSCard("weapon"))?s.GetDSCard("weapon"):s.GetDSCard(name));
             else break;
-            s.PassResponses("ABOUT_TO_LOSE_CARD_FROM_TABLE");
+            s.PassResponses("ABOUT_TO_BE_LOST_FROM_TABLE");
         }
-        assertTrue("Temporary forfeiture diagnostic: zone="+s.GetDSCard(name).getZone()+" LS="+(s.LSGetDecision()==null?null:s.LSGetDecision().getText())+" DS="+(s.DSGetDecision()==null?null:s.DSGetDecision().getText()),s.GetDSLostPile().contains(s.GetDSCard(name)));
+        assertTrue("The capital must reach its owner's Lost Pile before the theft window",s.GetDSLostPile().contains(s.GetDSCard(name)));
     }
     @Test public void PlanetDefenderIonCannonActuallyTradesItselfOutOfPlayForTheForfeitedTargetInHand() {
         var s=ready(true);shoot(s,3,4);forfeitTarget(s);assertTrue(s.LSCardActionAvailable(s.GetLSCard("cannon"),"Steal"));
