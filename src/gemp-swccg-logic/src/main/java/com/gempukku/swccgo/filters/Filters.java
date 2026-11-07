@@ -47,8 +47,11 @@ import com.gempukku.swccgo.game.state.actions.PlayCardState;
 import com.gempukku.swccgo.logic.GameUtils;
 import com.gempukku.swccgo.logic.actions.PlayCardAction;
 import com.gempukku.swccgo.logic.effects.RespondableWeaponFiringEffect;
+import com.gempukku.swccgo.logic.modifiers.Modifier;
+import com.gempukku.swccgo.logic.modifiers.ModifierType;
 import com.gempukku.swccgo.logic.modifiers.ModifyGameTextType;
 import com.gempukku.swccgo.logic.modifiers.MouseDroidUtinniCarry;
+import com.gempukku.swccgo.logic.modifiers.TreatEffectOnCardAsModifier;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 import com.gempukku.swccgo.logic.timing.Action;
 import com.gempukku.swccgo.logic.timing.Effect;
@@ -9656,6 +9659,33 @@ public class Filters {
      */
     private static Filter dejarikHologramAtHolosite() {
         return dejarikHologramAtHolosite;
+    }
+
+    /**
+     * Filter that accepts cards that 'Effect' in the specified card's game text may be treated as (for example,
+     * "'Effect' on Alter may be treated as 'Mantellian Savrip.'"). Cards that choose an Effect add this filter to
+     * the Effects they may choose.
+     *
+     * @param card the card whose game text refers to an 'Effect'
+     * @return Filter
+     */
+    public static Filter treatedAsEffectOnCard(PhysicalCard card) {
+        final Integer permCardId = card.getPermanentCardId();
+        return new Filter() {
+            @Override
+            public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard) {
+                PhysicalCard card = gameState.findCardByPermanentId(permCardId);
+                if (card == null)
+                    return false;
+                for (Modifier modifier : modifiersQuerying.getModifiersAffectingCard(gameState, ModifierType.TREAT_EFFECT_ON_CARD_AS, card)) {
+                    if (modifier instanceof TreatEffectOnCardAsModifier
+                            && ((TreatEffectOnCardAsModifier) modifier).getTreatedAsFilter().accepts(gameState, modifiersQuerying, physicalCard)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        };
     }
 
     //

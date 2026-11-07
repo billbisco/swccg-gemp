@@ -60,7 +60,7 @@ public class Card601_196 extends AbstractUsedOrLostInterrupt {
     protected List<PlayInterruptAction> getGameTextOptionalBeforeActions(final String playerId, SwccgGame game, final Effect effect, final PhysicalCard self) {
         List<PlayInterruptAction> actions = new LinkedList<PlayInterruptAction>();
         final Filter senseFilter = Filters.Sense;
-        final Filter effectFilter = Filters.and(Filters.or(Filters.Effect, Filters.Political_Effect, Filters.Utinni_Effect), Filters.not(Filters.dejarikHologramAtHolosite));
+        final Filter effectFilter = Filters.or(Filters.and(Filters.or(Filters.Effect, Filters.Political_Effect, Filters.Utinni_Effect), Filters.not(Filters.dejarikHologramAtHolosite)), Filters.treatedAsEffectOnCard(self));
         final Filter characterFilter = Filters.and(Filters.your(self), Filters.character, Filters.notPreventedFromApplyingAbilityForSenseAlterDestiny);
 
         // Check condition(s)

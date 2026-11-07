@@ -1025,8 +1025,9 @@ public interface Deploy extends BaseQuery, Attributes, CardTraits, Destiny, Loca
     }
 
     default boolean mayDeployAsIfFromHand(GameState gameState, PhysicalCard card) {
-        // Face-down stacks (e.g. Cyborg Construct) also deploy/play as if from hand when flagged
-        if (card.getZone() != Zone.STACKED && card.getZone() != Zone.STACKED_FACE_DOWN)
+        // Face-down stacks (e.g. Cyborg Construct) also deploy/play as if from hand when flagged, as do
+        // dejariks/holograms at a holosite (e.g. Eyes In The Dark (V): "may play your Interrupts here as if from hand")
+        if (card.getZone() != Zone.STACKED && card.getZone() != Zone.STACKED_FACE_DOWN && !card.isDejarikHologramAtHolosite())
             return false;
 
         return (!getModifiersAffectingCard(gameState, ModifierType.MAY_DEPLOY_AS_IF_FROM_HAND, card).isEmpty());

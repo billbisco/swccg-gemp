@@ -2215,10 +2215,21 @@ public abstract class AbstractSwccgCardBlueprint implements SwccgCardBlueprint {
      * @return true if card can be played, otherwise false
      */
     protected boolean checkPlayRequirements(String playerId, SwccgGame game, PhysicalCard self, DeploymentRestrictionsOption deploymentRestrictionsOption, PlayCardOption playCardOption, ReactActionOption reactActionOption) {
-        return playerId.equals(self.getOwner()) && !self.getZone().isInPlay()
+        return playerId.equals(self.getOwner()) && (!self.getZone().isInPlay() || mayPlayFromTableAsIfFromHand(game, self))
                 && !game.getModifiersQuerying().isPlayingCardProhibited(game.getGameState(), self, false)
                 && !game.getModifiersQuerying().isPlayingCardTitleTurnLimitReached(game.getGameState(), self)
                 && (reactActionOption == null || !game.getModifiersQuerying().isProhibitedFromParticipatingInReact(game.getGameState(), self));
+    }
+
+    /**
+     * Determines if the card, while it is on table, may still be played as if from hand (for example, an Interrupt
+     * deployed to a holosite as a dejarik when a card allows it to be played from there as if from hand).
+     * @param game the game
+     * @param self the card
+     * @return true if the card may be played from table as if from hand, otherwise false
+     */
+    protected boolean mayPlayFromTableAsIfFromHand(SwccgGame game, PhysicalCard self) {
+        return false;
     }
 
     /**
