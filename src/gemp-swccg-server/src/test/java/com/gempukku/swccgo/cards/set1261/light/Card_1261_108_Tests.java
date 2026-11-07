@@ -164,7 +164,7 @@ public class Card_1261_108_Tests {
             assertEquals(scn.DS, luke.getOwner());
             assertFalse(Filters.Luke.accepts(scn.game(), luke));
         } else assertEquals(Zone.OUT_OF_PLAY, luke.getZone());
-        assertEquals(Zone.OUT_OF_PLAY, objective.getZone());
+        assertEquals(scn.gameState().getLastMessages().toString(), Zone.OUT_OF_PLAY, objective.getZone());
     }
 
     @Test public void realLukeCrossoverPlacesSaveYouItCanOutOfPlay() { apprenticeLeaves(true); }

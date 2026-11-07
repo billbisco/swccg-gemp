@@ -9,6 +9,7 @@ import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.TriggerConditions;
+import com.gempukku.swccgo.logic.GameUtils;
 import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
 import com.gempukku.swccgo.logic.conditions.NotCondition;
@@ -17,8 +18,9 @@ import com.gempukku.swccgo.logic.effects.ReturnCardToHandFromTableEffect;
 import com.gempukku.swccgo.logic.effects.UseForceEffect;
 import com.gempukku.swccgo.logic.effects.TargetCardOnTableEffect;
 import com.gempukku.swccgo.logic.modifiers.*;
+import com.gempukku.swccgo.logic.timing.Action;
 import com.gempukku.swccgo.logic.timing.EffectResult;
-import com.gempukku.swccgo.logic.timing.results.CrossedOverResult;
+import com.gempukku.swccgo.logic.timing.UnrespondableEffect;
 
 import java.util.List;
 
@@ -35,10 +37,10 @@ public class Card1261_108_BACK extends AbstractObjective {
     protected List<RequiredGameTextTriggerAction> getGameTextRequiredAfterTriggers(
             SwccgGame game, EffectResult result, PhysicalCard self, int sourceId) {
         var apprentice = Card1261_108.apprentice(game, self);
-        // The native result follows the owner and persona change. Inspect the printed persona.
+        // The engine stores the previous persona before moving the crossed-over character.
         Persona trainedPersona = Card1261_108.targetsLeia(game, self) ? Persona.LEIA : Persona.LUKE;
-        boolean crossed = result instanceof CrossedOverResult crossover
-                && crossover.getCharacter().getBlueprint().getPersonas().contains(trainedPersona);
+        boolean crossed = TriggerConditions.isTableChanged(game, result)
+                && game.getModifiersQuerying().isCrossedOver(game.getGameState(), trainedPersona);
         if (!crossed && !TriggerConditions.justPlacedOutOfPlayFromTable(game, result, Filters.and(Filters.your(self), apprentice))) return List.of();
         var action = new RequiredGameTextTriggerAction(self, sourceId);
         action.setText("Place out of play");
@@ -59,8 +61,15 @@ public class Card1261_108_BACK extends AbstractObjective {
         action.appendTargeting(new TargetCardOnTableEffect(action, playerId, "Choose " + name + " to take into hand", filter) {
             @Override
             protected void cardTargeted(int targetGroupId, PhysicalCard card) {
+                action.addAnimationGroup(card);
                 action.appendCost(new UseForceEffect(action, playerId, 3));
-                action.appendEffect(new ReturnCardToHandFromTableEffect(action, card, Zone.USED_PILE));
+                action.allowResponses("Take " + GameUtils.getCardLink(card) + " into hand",
+                        new UnrespondableEffect(action) {
+                            @Override
+                            protected void performActionResults(Action targetingAction) {
+                                action.appendEffect(new ReturnCardToHandFromTableEffect(action, card, Zone.USED_PILE));
+                            }
+                        });
             }
         });
         return List.of(action);
