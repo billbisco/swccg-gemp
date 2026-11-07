@@ -1819,6 +1819,7 @@ public enum GameTextActionId {
     ANY_CARD__OPERATE_ON_CHARACTER,
     LEGACY__BEAST_RIDER__DEPLOY_KAADU(true),
     LEGACY__LANDO_SCOUNDREL__CONVERT(false, true),
+    LEGACY__JABBA_LAST_CHANCE__PLAY_SHIELD(false, true),
     ;
 
     private boolean _searchCardPile;
