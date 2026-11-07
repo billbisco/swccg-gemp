@@ -112,7 +112,9 @@ public class Card_1261_056_Tests {
         scn.DSPayRemainingBattleDamageFromReserveDeck(); scn.PassAllResponses();
         assertEquals(immune ? "0" : "1", scn.GetADParam(scn.DS, "min")[0]);
         if (immune) { scn.DSPass(); scn.PassAllResponses(); assertEquals(system, black.getAtLocation()); }
-        else { scn.DSChooseCard(black); assertTrue(scn.DSDecisionAvailable("Do you still want to forfeit it?")); scn.DSChooseYes(); scn.PassAllResponses(); com.gempukku.swccgo.framework.Assertions.assertInZone(Zone.LOST_PILE, black); }
+        else { scn.DSChooseCard(black); assertTrue(scn.DSDecisionAvailable("Do you still want to forfeit it?")); scn.DSChooseYes(); scn.PassAllResponses();
+            assertTrue(scn.DSDecisionAvailable("Choose card to put on Lost Pile")); scn.DSChooseCard(black); scn.PassAllResponses();
+            com.gempukku.swccgo.framework.Assertions.assertInZone(Zone.LOST_PILE, black); }
     }
 
     @Test
@@ -155,6 +157,16 @@ public class Card_1261_056_Tests {
         if (scn.LSHasCardChoiceAvailable(scn.GetDSCard("tie"))) scn.LSChooseCard(scn.GetDSCard("tie"));
         scn.PassAllResponses();
         com.gempukku.swccgo.framework.Assertions.assertInZone(Zone.LOST_PILE, scn.GetDSCard("tie"));
+    }
+
+    @Test
+    public void BlackOneActuallyAcceptsJunoDeploymentButNotVader() {
+        var scn = scenario(); scn.StartGame(); var black = scn.GetDSCard("black"); var juno = scn.GetDSCard("juno");
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), black);
+        scn.MoveCardsToDSHand(juno, scn.GetDSCard("vader")); scn.SkipToDSTurn(Phase.DEPLOY); scn.EnsureDSForcePile(10);
+        assertFalse(scn.DSCardPlayAvailable(scn.GetDSCard("vader")));
+        int force = scn.GetDSForcePileCount(); scn.DSDeployCard(juno); scn.DSChooseCard(black); scn.PassAllResponses();
+        assertSame(black, juno.getAttachedTo()); assertTrue(juno.isPilotOf()); assertEquals(force - 2, scn.GetDSForcePileCount());
     }
 
 }
