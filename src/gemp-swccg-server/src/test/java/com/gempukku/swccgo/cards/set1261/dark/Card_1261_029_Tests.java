@@ -131,7 +131,7 @@ public class Card_1261_029_Tests {
         assertEquals(7, deployCostAtSite(scn, permanent), scn.epsilon);
     }
 
-    @Test
+    @Test(timeout = 10000)
     public void characterLossBeforeDamageIsDeferredWithZeroForfeitAndSurvivesSourceLeaving() {
         var scn = scenario();
         var combo = scn.GetDSCard("combo");
@@ -152,34 +152,46 @@ public class Card_1261_029_Tests {
         assertTrue(scn.GetDSLostPile().contains(trooper));
     }
 
-    @Test
-    public void defersYourNonIndependentShipButNotIndependentOrOpposingShips() {
-        for (String target : List.of("devastator", "independent", "xwing")) {
-            var scn = scenario();
-            var system = scn.GetDSCard("system");
-            var own = scn.GetDSCard("devastator");
-            var independent = scn.GetDSCard("independent");
-            var enemy = scn.GetLSCard("xwing");
-            var loss = target.equals("xwing") ? enemy : scn.GetDSCard(target);
-            scn.StartGame();
-            scn.MoveCardsToDSSideOfTable(scn.GetDSCard("combo"));
-            scn.MoveLocationToTable(system);
-            scn.MoveCardsToLocation(system, own, independent, scn.GetDSCard("destroyer"), enemy, scn.GetLSCard("ywing"));
-            scn.SkipToDSTurn(Phase.BATTLE);
-            scn.EnsureDSForcePile(6);
-            scn.DSInitiateBattle(system);
-            scn.PassAllResponses();
-            loseAtCurrentBattleWindow(scn, loss);
-            if (target.equals("devastator")) {
-                assertFalse(scn.GetDSLostPile().contains(loss));
-                assertEquals(0, scn.game().getModifiersQuerying().getForfeitWhenForfeiting(scn.gameState(), loss), scn.epsilon);
-                finishBattle(scn);
-                assertTrue(scn.GetDSLostPile().contains(loss));
-            } else {
-                assertTrue("Loss should resolve immediately for " + target,
-                        (target.equals("xwing") ? scn.GetLSLostPile() : scn.GetDSLostPile()).contains(loss));
-            }
-        }
+    @Test(timeout = 10000)
+    public void defersYourNonIndependentShipUntilBattleEnds() {
+        var scn = startShipBattle();
+        var own = scn.GetDSCard("devastator");
+        loseAtCurrentBattleWindow(scn, own);
+        assertFalse(scn.GetDSLostPile().contains(own));
+        assertEquals(0, scn.game().getModifiersQuerying().getForfeitWhenForfeiting(scn.gameState(), own), scn.epsilon);
+        finishBattle(scn);
+        assertTrue(scn.GetDSLostPile().contains(own));
+    }
+
+    @Test(timeout = 10000)
+    public void independentShipGoesLostImmediately() {
+        var scn = startShipBattle();
+        var independent = scn.GetDSCard("independent");
+        loseAtCurrentBattleWindow(scn, independent);
+        assertTrue(scn.GetDSLostPile().contains(independent));
+    }
+
+    @Test(timeout = 10000)
+    public void opposingShipGoesLostImmediately() {
+        var scn = startShipBattle();
+        var enemy = scn.GetLSCard("xwing");
+        loseAtCurrentBattleWindow(scn, enemy);
+        assertTrue(scn.GetLSLostPile().contains(enemy));
+    }
+
+    private VirtualTableScenario startShipBattle() {
+        var scn = scenario();
+        var system = scn.GetDSCard("system");
+        scn.StartGame();
+        scn.MoveCardsToDSSideOfTable(scn.GetDSCard("combo"));
+        scn.MoveLocationToTable(system);
+        scn.MoveCardsToLocation(system, scn.GetDSCard("devastator"), scn.GetDSCard("independent"),
+                scn.GetDSCard("destroyer"), scn.GetLSCard("xwing"), scn.GetLSCard("ywing"));
+        scn.SkipToDSTurn(Phase.BATTLE);
+        scn.EnsureDSForcePile(6);
+        scn.DSInitiateBattle(system);
+        scn.PassAllResponses();
+        return scn;
     }
 
     private boolean selectable(VirtualTableScenario scn, PhysicalCardImpl card) {
