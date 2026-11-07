@@ -95,6 +95,13 @@ public class Card_1261_093_Tests {
         scn.DSInitiateBattle(scn.GetLSStartingLocation());
         if (scn.GetAwaitingDecision(scn.LS) != null) scn.LSPass();
         scn.DSPlayCard(scn.GetDSCard("stunning"), "Exclude characters");
+        for (int i = 0; i < 12 && !hasAction(scn, "Cancel"); i++) {
+            var decision = scn.GetCurrentDecision();
+            if (decision == null || !decision.getText().toLowerCase().contains("response")) break;
+            scn.PlayerPass(scn.GetAwaitingDecision(scn.LS) != null ? scn.LS : scn.DS);
+        }
+        assertTrue("Expected real Stunning Leader cancel window: " + scn.GetCurrentDecision().getText() + " " + scn.GetLSAvailableActions(),
+                hasAction(scn, "Cancel"));
         scn.LSPlayCard(scn.GetLSCard("combo"), "Cancel"); scn.PassAllResponses();
         assertInZone(Zone.LOST_PILE, scn.GetDSCard("stunning")); assertInZone(Zone.USED_PILE, scn.GetLSCard("combo"));
         assertTrue(Filters.participatingInBattle.accepts(scn.game(), scn.GetLSCard("obi")));
