@@ -223,7 +223,8 @@ public class Card_1261_033_Tests {
         for (int i = 0; i < 20 && !scn.AwaitingDSBattlePhaseActions(); i++) {
             if (scn.LSReleaseDecisionAvailable())
                 scn.LSChooseRally();
-            else if (scn.GetCurrentDecision().getText().toLowerCase().contains("optional"))
+            else if (scn.GetCurrentDecision().getText().toLowerCase().contains("optional")
+                    || scn.LSDecisionAvailable("Choose Battle action"))
                 scn.PlayerPass(scn.GetDecidingPlayer());
             else
                 fail("Unexpected decision: " + scn.GetCurrentDecision().getText());
