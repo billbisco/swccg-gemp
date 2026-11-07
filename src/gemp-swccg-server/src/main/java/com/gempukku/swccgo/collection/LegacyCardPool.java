@@ -22,17 +22,41 @@ public final class LegacyCardPool {
     }
 
     public static void addSheetCards(SwccgCardBlueprintLibrary library, DefaultCardCollection collection) {
-        for (String id : implementedSheetIds(library)) {
+        for (String id : implementedSheetIds(library, true)) {
             collection.addItem(id, 60);
         }
+    }
+
+    /** Numbered printings on the same published sheet keep their own artwork in All Cards decks. */
+    public static String defaultDeckPrinting(SwccgCardBlueprintLibrary library, String id) {
+        String base = library.getBaseBlueprintId(id);
+        if (id.equals(base))
+            return id;
+        for (int[] sheet : SHEETS) {
+            String prefix = sheet[0] + "_";
+            if (isNumberedPrinting(id, prefix, sheet[1]) && isNumberedPrinting(base, prefix, sheet[1])
+                    && library.getSwccgoCardBlueprint(id) != null)
+                return id;
+        }
+        return base;
+    }
+
+    private static boolean isNumberedPrinting(String id, String prefix, int lastCard) {
+        if (!id.startsWith(prefix))
+            return false;
+        String number = id.substring(prefix.length());
+        if (number.isEmpty() || number.length() > 3 || number.charAt(0) == '0'
+                || !number.chars().allMatch(c -> c >= '0' && c <= '9'))
+            return false;
+        return Integer.parseInt(number) <= lastCard;
     }
 
     public static void appendValidBlueprints(SwccgCardBlueprintLibrary library, SwccgFormat format,
                                              List<SwccgCardBlueprint> blueprints) {
         List<String> ids = new ArrayList<>();
         // The original implementation set is not included in DefaultSwccgFormat's ordinary ranges.
-        appendImplementedIds(library, ids, 601, 999);
-        ids.addAll(implementedSheetIds(library));
+        appendImplementedIds(library, ids, 601, 999, false);
+        ids.addAll(implementedSheetIds(library, false));
         for (String id : ids) {
             try {
                 format.validateCard(id, true);
@@ -43,19 +67,20 @@ public final class LegacyCardPool {
         }
     }
 
-    private static List<String> implementedSheetIds(SwccgCardBlueprintLibrary library) {
+    private static List<String> implementedSheetIds(SwccgCardBlueprintLibrary library, boolean includePrintings) {
         List<String> ids = new ArrayList<>();
         for (int[] sheet : SHEETS) {
-            appendImplementedIds(library, ids, sheet[0], sheet[1]);
+            appendImplementedIds(library, ids, sheet[0], sheet[1], includePrintings);
         }
         return ids;
     }
 
     private static void appendImplementedIds(SwccgCardBlueprintLibrary library, List<String> ids,
-                                              int set, int lastCard) {
+                                              int set, int lastCard, boolean includePrintings) {
         for (int number = 1; number <= lastCard; number++) {
             String id = set + "_" + number;
-            if (id.equals(library.getBaseBlueprintId(id)) && library.getSwccgoCardBlueprint(id) != null) {
+            String printing = includePrintings ? defaultDeckPrinting(library, id) : library.getBaseBlueprintId(id);
+            if (id.equals(printing) && library.getSwccgoCardBlueprint(id) != null) {
                 ids.add(id);
             }
         }

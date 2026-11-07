@@ -216,9 +216,6 @@ public interface Prohibited extends BaseQuery, Flags {
      * @return true if card may not be canceled, otherwise false
      */
     default boolean mayNotBeCanceled(GameState gameState, PhysicalCard card) {
-        if (card.getBlueprint().isCardTypeMayNotBeCanceled())
-            return false;
-
         return (!getModifiersAffectingCard(gameState, ModifierType.MAY_NOT_BE_CANCELED, card).isEmpty());
     }
 
