@@ -49,15 +49,16 @@ public class Card_1263_001_Tests {
     }
 
     @Test public void BaneAddsTwoPowerOnlyWhilePiloting() {
-        var scn = scenario();
-        var ship = scn.GetDSCard("ship");
-        var bane = scn.GetDSCard("bane");
-        scn.MoveCardsToLocation(scn.GetDSCard("system"), ship);
-        int power = scn.GetPower(ship);
-        scn.BoardAsPassenger(ship, bane);
-        assertEquals(power, scn.GetPower(ship));
-        scn.BoardAsPilot(ship, bane);
-        assertEquals(power + 2, scn.GetPower(ship));
+        for (boolean piloting : List.of(false, true)) {
+            var scn = scenario();
+            var ship = scn.GetDSCard("ship");
+            var bane = scn.GetDSCard("bane");
+            scn.MoveCardsToLocation(scn.GetDSCard("system"), ship);
+            int power = scn.GetPower(ship);
+            if (piloting) scn.BoardAsPilot(ship, bane);
+            else scn.BoardAsPassenger(ship, bane);
+            assertEquals(power + (piloting ? 2 : 0), scn.GetPower(ship));
+        }
     }
 
     @Test public void BaneActuallyDeploysTheHoldOutBlasterWithoutForce() {
@@ -68,6 +69,8 @@ public class Card_1263_001_Tests {
         var blaster = scn.GetDSCard("blaster");
         scn.MoveCardsToLocation(site, bane, trooper);
         scn.MoveCardsToDSHand(blaster);
+        scn.SkipToPhase(Phase.CONTROL);
+        setForce(scn, 0);
         scn.SkipToPhase(Phase.DEPLOY);
         assertEquals(0, scn.GetDSForcePileCount());
         scn.DSDeployCard(blaster);
@@ -88,8 +91,11 @@ public class Card_1263_001_Tests {
             var ben = scn.GetLSCard("ben");
             scn.MoveCardsToLocation(site, bearer, ben);
             scn.AttachCardsTo(bearer, blaster);
-            scn.EnsureDSForcePile(1);
-            scn.DSStartBattleAndSkipToWeaponsSegment(site);
+            scn.SkipToPhase(Phase.CONTROL);
+            setForce(scn, 1);
+            scn.SkipToPhase(Phase.BATTLE);
+            scn.DSInitiateBattle(site);
+            scn.PassAllResponses();
             assertEquals(0, scn.GetDSForcePileCount());
             assertEquals(baneFires, scn.DSCardActionAvailable(blaster, "Fire"));
             if (!baneFires) continue;
@@ -104,6 +110,13 @@ public class Card_1263_001_Tests {
             }
             assertTrue(ben.isHit());
             assertEquals(0, scn.GetDSForcePileCount());
+        }
+    }
+    private void setForce(VirtualTableScenario scn, int amount) {
+        scn.EnsureDSForcePile(amount);
+        while (scn.GetDSForcePileCount() > amount) {
+            scn.MoveCardsToTopOfDSReserveDeck((com.gempukku.swccgo.game.PhysicalCardImpl)
+                    scn.gameState().getForcePile(scn.DS).getFirst());
         }
     }
 }
