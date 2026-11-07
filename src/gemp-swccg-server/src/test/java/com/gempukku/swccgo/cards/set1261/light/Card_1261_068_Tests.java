@@ -49,7 +49,7 @@ public class Card_1261_068_Tests {
     }
     private void pilot(String key) {
         var scn = started(); var ship = scn.GetLSCard(key); var lando = scn.GetLSCard("lando");
-        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), ship); scn.BoardAsPilot(ship, lando); assertEquals(5, scn.GetPower(ship));
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), ship); scn.BoardAsPilot(ship, lando); assertEquals(5, scn.GetPower(ship));
         scn.MoveCardsToLSHand(lando); assertEquals(0, scn.GetPower(ship));
     }
     @Test public void LandoScoundrelAddsTwoPowerToFalconHePilots() { pilot("falcon"); }
@@ -65,7 +65,7 @@ public class Card_1261_068_Tests {
         scn.LSUseCardAction(scn.GetLSCard("lando"), "Convert opponent's Lando");
         if (scn.LSHasCardChoiceAvailable(scn.GetDSCard("enemy"))) scn.LSChooseCard(scn.GetDSCard("enemy"));
         scn.PassAllResponses(); assertEquals(scn.LS, scn.GetDSCard("enemy").getOwner());
-        assertTrue(scn.LSDecisionAvailable("retrieve 2 Force"));
+        assertTrue(scn.GetCurrentDecision().getText(), scn.LSDecisionAvailable("retrieve 2 Force"));
         if (retrieve) scn.LSChooseYes(); else scn.LSChooseNo();
         scn.PassAllResponses();
     }
@@ -105,11 +105,11 @@ public class Card_1261_068_Tests {
     }
     @Test public void LandoScoundrelAddsActualSecondBattleDestinyWithOwnRebel() {
         var scn = battle("rebel"); scn.MoveCardsToTopOfLSReserveDeck(scn.GetLSDestiny(2), scn.GetLSDestiny(3)); scn.PrepareDSDestiny(0); scn.SkipToEndOfPowerSegment(true);
-        assertEquals(5, scn.GetLSTotalDestiny());
+        assertEquals(scn.GetCurrentDecision().getText(), 5, scn.GetLSTotalDestiny());
     }
     @Test public void LandoScoundrelAddsActualSecondBattleDestinyWithOwnAlien() {
         var scn = battle("alien"); scn.MoveCardsToTopOfLSReserveDeck(scn.GetLSDestiny(2), scn.GetLSDestiny(3)); scn.PrepareDSDestiny(0); scn.SkipToEndOfPowerSegment(true);
-        assertEquals(5, scn.GetLSTotalDestiny());
+        assertEquals(scn.GetCurrentDecision().getText(), 5, scn.GetLSTotalDestiny());
     }
     @Test public void LandoScoundrelAloneDoesNotCountHimselfAsRebelCompany() {
         var scn = battle(null); assertEquals(0, scn.GetLSBattleDestinyCount());
@@ -146,7 +146,7 @@ public class Card_1261_068_Tests {
         scn.SkipToLSTurn(Phase.BATTLE);
         if (effect) scn.MoveCardsToDSSideOfTable(scn.GetLSCard("effect"));
         scn.LSInitiateBattle(scn.GetLSStartingLocation()); scn.PassAllResponses(); scn.MoveCardsToTopOfLSReserveDeck(scn.GetLSDestiny(0), scn.GetLSDestiny(1)); scn.PrepareDSDestiny(amount - 1);
-        scn.SkipToDamageSegment(true); scn.PassDamageSegmentActions(); assertEquals(amount, scn.GetUnpaidLSAttrition());
+        scn.SkipToDamageSegment(true); scn.PassDamageSegmentActions(); assertEquals(scn.GetCurrentDecision().getText(), amount, scn.GetUnpaidLSAttrition());
         assertEquals(0, scn.GetUnpaidLSBattleDamage());
         // Armed Jedi Knight is immune below6; Lando alone decides whether this attrition payment is mandatory.
         assertEquals(immune, scn.LSDecisionAvailable("(if desired)"));
