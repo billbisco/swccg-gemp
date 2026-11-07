@@ -128,7 +128,7 @@ public class Card_1240_068_Tests {
     @Test
     public void LeeboCannotPeekEmptyOpponentReserveEvenWithCardsInOwnReserve() {
         var scn = Ready();
-        scn.MoveCardsToDSLostPile(scn.GetDSReserveDeck().toArray(new com.gempukku.swccgo.game.PhysicalCardImpl[0]));
+        scn.MoveCardsToTopOfDSLostPile(scn.GetDSReserveDeck().toArray(new com.gempukku.swccgo.game.PhysicalCardImpl[0]));
         assertTrue(scn.GetLSReserveDeckCount() > 0);
         assertFalse(scn.LSCardActionAvailable(scn.GetLSCard("leebo"), "Peek at top of opponent's Reserve Deck"));
     }
@@ -136,7 +136,7 @@ public class Card_1240_068_Tests {
     @Test
     public void LeeboCanMoveTheOnlyOpponentReserveCardToUsedPile() {
         var scn = Ready();
-        scn.MoveCardsToDSLostPile(scn.GetDSReserveDeck().subList(1, scn.GetDSReserveDeckCount()).toArray(new com.gempukku.swccgo.game.PhysicalCardImpl[0]));
+        scn.MoveCardsToTopOfDSLostPile(scn.GetDSReserveDeck().subList(1, scn.GetDSReserveDeckCount()).toArray(new com.gempukku.swccgo.game.PhysicalCardImpl[0]));
         assertEquals(1, scn.GetDSReserveDeckCount());
         Peek(scn);
         scn.LSChooseYes();
