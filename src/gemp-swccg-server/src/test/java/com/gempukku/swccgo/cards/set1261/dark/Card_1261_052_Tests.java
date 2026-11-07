@@ -29,6 +29,8 @@ public class Card_1261_052_Tests {
         scn.BlueprintCardTypeCheck(b, new ArrayList<>() {{ add(CardType.LOCATION); }});
         scn.BlueprintKeywordCheck(b, new ArrayList<>() {{ add(Keyword.MARKER_5); }});
         scn.BlueprintIconCheck(b, new ArrayList<>() {{ add(Icon.DARK_FORCE); add(Icon.EXTERIOR_SITE); add(Icon.PLANET); add(Icon.HOTH); add(Icon.LEGACY_BLOCK_6); }});
+        assertTrue(GameTextActionId.LEGACY__HOTH_ICE_PLAINS__TAKE_AT_AT.isPerGame());
+        assertTrue(GameTextActionId.LEGACY__HOTH_ICE_PLAINS__TAKE_AT_AT.isSearchCardPile());
         assertEquals(2, b.getIconCount(Icon.DARK_FORCE)); assertEquals(0, b.getIconCount(Icon.LIGHT_FORCE));
     }
 
