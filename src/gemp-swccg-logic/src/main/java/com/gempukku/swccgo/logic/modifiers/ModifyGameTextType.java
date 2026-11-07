@@ -152,9 +152,12 @@ public enum ModifyGameTextType {
     SON_OF_SKYWALKER_V__LOSE_1_FORCE_TO_SUBSTITUTE_DESTINY("Must first lose 1 Force to substitute a destiny draw using Jedi Test #5"),
     LEGACY__SQUABBLING_DELEGATES__SENATORS_ARE_CORUSCANT_GUARDS("'Senators' treated as 'Coruscant Guards'"),
     LEGACY__INTERRUPTS__VADER_MAY_BE_MAUL_OR_MARA_JADE("'Vader' may be treated as 'Maul or Mara Jade'"),
-
+    LEGACY__DROID_RACKS__WHERE_ARE_THOSE_DROIDEKAS_IGNORES_NEIMOIDIANS("Ignores Neimoidians"),
+    LEGACY__HUTT_INFLUENCE__HUMAN_SHIELD_IMPERIAL_MAY_BE_BOUNTY_HUNTER("'Imperial' may be treated as 'bounty hunter'"),
+    LEGACY__MOS_ESPA_V__YOURE_A_SLAVE_FREE_IS_2_FORCE("'Free' treated as '2 Force'"),
     OCCUPY_IN_GAME_TEXT_IS_CONTROL("'Occupy' in game text is treated as 'control'"),
     ;
+
 
     private String _humanReadable;
 
