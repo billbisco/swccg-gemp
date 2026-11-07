@@ -62,7 +62,7 @@ public class Card1263_029 extends AbstractLostOrStartingInterrupt {
             return null;
         }
         List<PlayInterruptAction> actions = new ArrayList<>();
-        Filter nonHeroic = Filters.and(Filters.R2D2, Filters.not(Keyword.HEROIC));
+        Filter nonHeroic = Filters.and(Filters.R2D2, Filters.not(Filters.and(Keyword.HEROIC)));
         if (TriggerConditions.isAboutToBeLost(game, result, nonHeroic)) {
             AboutToLoseCardFromTableResult loss = (AboutToLoseCardFromTableResult) result;
             if (loss.getPreventableCardEffect() != null) {
