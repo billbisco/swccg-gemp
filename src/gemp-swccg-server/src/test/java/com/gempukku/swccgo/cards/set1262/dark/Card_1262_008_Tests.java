@@ -77,7 +77,7 @@ public class Card_1262_008_Tests {
             var scn = scenario();
             var drop = scn.GetDSCard("drop");
             var site = scn.GetDSStartingLocation();
-            scn.MoveCardsToLocation(site, scn.GetDSCard("aplek"), scn.GetLSCard("lando"));
+            scn.MoveCardsToLocation(site, scn.GetDSCard("aplek"), scn.GetDSCard("trooper"), scn.GetLSCard("lando"));
             if (dropOnTable) scn.MoveCardsToDSSideOfTable(drop);
             scn.EnsureDSForcePile(2);
             scn.SkipToPhase(Phase.BATTLE);
