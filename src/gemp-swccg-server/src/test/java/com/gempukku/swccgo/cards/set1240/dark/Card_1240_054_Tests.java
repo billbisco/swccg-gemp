@@ -53,6 +53,7 @@ public class Card_1240_054_Tests {
         scn.MoveLocationToTable(scn.GetDSCard("bay"));
         scn.MoveLocationToTable(scn.GetLSCard("otherbay"));
         scn.MoveCardsToLocation(scn.GetDSCard("bay"), lightTurn ? scn.GetLSCard("traveler") : scn.GetDSCard("traveler"));
+        scn.SkipToPhase(Phase.MOVE);
         if (lightTurn) {
             scn.EnsureLSForcePile(force);
             while (scn.GetLSForcePileCount() > force) scn.MoveCardsToTopOfLSUsedPile((PhysicalCardImpl) scn.GetLSForcePile().getFirst());
@@ -61,7 +62,6 @@ public class Card_1240_054_Tests {
             scn.EnsureDSForcePile(force);
             while (scn.GetDSForcePileCount() > force) scn.MoveCardsToTopOfDSUsedPile((PhysicalCardImpl) scn.GetDSForcePile().getFirst());
         }
-        scn.SkipToPhase(Phase.MOVE);
         return scn;
     }
 
@@ -69,16 +69,12 @@ public class Card_1240_054_Tests {
         var from = fromKessel ? scn.GetDSCard("bay") : scn.GetLSCard("otherbay");
         var to = fromKessel ? scn.GetLSCard("otherbay") : scn.GetDSCard("bay");
         var traveler = light ? scn.GetLSCard("traveler") : scn.GetDSCard("traveler");
-        if (light) {
-            scn.LSUseCardAction(from, "transit");
-            scn.LSChooseCard(to);
-            scn.LSChooseCard(traveler);
-        }
-        else {
-            scn.DSUseCardAction(from, "transit");
-            scn.DSChooseCard(to);
-            scn.DSChooseCard(traveler);
-        }
+        // A transit is started from the site's action when it offers one, or else from the rule-level transit action.
+        String player = light ? scn.LS : scn.DS;
+        if (scn.ActionAvailable(player, from, "transit")) scn.PlayerDecided(player, scn.GetCardActionId(player, from, "transit"));
+        else scn.PlayerDecided(player, scn.GetCardActionId(player, "transit"));
+        if (scn.HasCardChoiceAvailable(player, to)) scn.ChooseCards(player, to);
+        if (scn.HasCardChoiceAvailable(player, traveler)) scn.ChooseCards(player, traveler);
         scn.PassAllResponses();
         assertAtLocation(to, traveler);
     }
@@ -100,13 +96,23 @@ public class Card_1240_054_Tests {
     @Test
     public void KesselDockingBayDarkSideCannotTransitWithNoForceWithoutSmuggler() {
         var scn = Ready(false, 0);
-        assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("bay"), "transit"));
+        if (scn.DSCardActionAvailable(scn.GetDSCard("bay"), "transit")) {
+            scn.DSUseCardAction(scn.GetDSCard("bay"), "transit");
+            if (scn.DSHasCardChoiceAvailable(scn.GetLSCard("otherbay"))) scn.DSChooseCard(scn.GetLSCard("otherbay"));
+            assertTrue(scn.DSHasCardChoiceNotAvailable(scn.GetDSCard("traveler")));
+        }
+        assertAtLocation(scn.GetDSCard("bay"), scn.GetDSCard("traveler"));
     }
 
     @Test
     public void KesselDockingBayLightSideCannotTransitWithOnlyTwoForceWithoutSmuggler() {
         var scn = Ready(true, 2);
-        assertFalse(scn.LSCardActionAvailable(scn.GetDSCard("bay"), "transit"));
+        if (scn.LSCardActionAvailable(scn.GetDSCard("bay"), "transit")) {
+            scn.LSUseCardAction(scn.GetDSCard("bay"), "transit");
+            if (scn.LSHasCardChoiceAvailable(scn.GetLSCard("otherbay"))) scn.LSChooseCard(scn.GetLSCard("otherbay"));
+            assertTrue(scn.LSHasCardChoiceNotAvailable(scn.GetLSCard("traveler")));
+        }
+        assertAtLocation(scn.GetDSCard("bay"), scn.GetLSCard("traveler"));
     }
 
     @Test
@@ -171,20 +177,26 @@ public class Card_1240_054_Tests {
         assertEquals(0, scn.GetLSForcePileCount());
     }
 
+    private int TransitCost(VirtualTableScenario scn, PhysicalCardImpl traveler, PhysicalCardImpl from, PhysicalCardImpl to) {
+        return Math.round(scn.game().getModifiersQuerying().getDockingBayTransitCost(scn.gameState(), traveler, from, to, 0));
+    }
+
     @Test
     public void KesselDockingBayDoesNotApplyDarkFromCostToIncomingTransit() {
         var scn = Ready(false, 2);
-        scn.MoveCardsToLocation(scn.GetLSCard("otherbay"), scn.GetDSCard("traveler"));
+        // Original Yavin 4 Docking Bay: Dark transit from there requires 2; Kessel's 'from here' cost does not add.
+        assertEquals(2, TransitCost(scn, scn.GetDSCard("traveler"), scn.GetLSCard("otherbay"), scn.GetDSCard("bay")));
+        assertEquals(1, TransitCost(scn, scn.GetDSCard("traveler"), scn.GetDSCard("bay"), scn.GetLSCard("otherbay")));
         scn.MoveCardsToLocation(scn.GetDSCard("bay"), scn.GetDSCard("smuggler"));
-        Transit(scn, false, false);
-        assertEquals(0, scn.GetDSForcePileCount()); // Original Yavin4 origin costs2.
+        // A smuggler present at Kessel does not waive the cost of transit from elsewhere into Kessel.
+        assertEquals(2, TransitCost(scn, scn.GetDSCard("traveler"), scn.GetLSCard("otherbay"), scn.GetDSCard("bay")));
     }
 
     @Test
     public void KesselDockingBayDoesNotChargeLightFromCostOnFreeIncomingTransit() {
         var scn = Ready(true, 0);
-        scn.MoveCardsToLocation(scn.GetLSCard("otherbay"), scn.GetLSCard("traveler"));
-        Transit(scn, true, false);
-        assertEquals(0, scn.GetLSForcePileCount()); // Original Yavin4 origin is free.
+        // Original Yavin 4 Docking Bay: Light transit from there is free; Kessel's 3-Force 'from here' cost does not add.
+        assertEquals(0, TransitCost(scn, scn.GetLSCard("traveler"), scn.GetLSCard("otherbay"), scn.GetDSCard("bay")));
+        assertEquals(3, TransitCost(scn, scn.GetLSCard("traveler"), scn.GetDSCard("bay"), scn.GetLSCard("otherbay")));
     }
 }

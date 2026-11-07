@@ -216,9 +216,14 @@ public class Card_1240_056_Tests {
         scn.PrepareLSDestiny(0);
         scn.PrepareDSDestiny(0);
         scn.SkipToEndOfPowerSegment(true);
-        scn.PassResponses("INITIAL_ATTRITION_CALCULATED");
-        if (scn.AwaitingLSBattleDamagePayment()) scn.LSPayRemainingBattleDamageFromReserveDeck();
-        scn.SkipToPhase(Phase.MOVE);
+        for (int i = 0; i < 30 && scn.gameState().getCurrentPhase() != Phase.MOVE; i++) {
+            if (scn.AwaitingLSBattleDamagePayment()) scn.LSPayRemainingBattleDamageFromReserveDeck();
+            else if (scn.AwaitingDSBattleDamagePayment()) scn.DSPayRemainingBattleDamageFromReserveDeck();
+            else if (scn.DSDecisionAvailable("Do you want to draw")) scn.DSChooseYes();
+            else if (scn.LSDecisionAvailable("Do you want to draw")) scn.LSChooseYes();
+            else scn.PassResponses();
+        }
+        assertEquals(Phase.MOVE, scn.gameState().getCurrentPhase());
         assertTrue(DeliverAndReachReward(scn));
         ChooseReward(scn);
         assertTrue(r2.isImprisoned());

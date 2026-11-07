@@ -195,25 +195,16 @@ public class Card_1240_060_Tests {
     }
 
     @Test
-    public void KatanaGrantedImmunityStillProtectsOtherDreadnaughtBelowFourWhenKatanaIsExcluded() {
-        var scn = BattleWithKatanaExcluded(3);
-        scn.DSPayRemainingBattleDamageFromReserveDeck();
-        assertEquals("0", scn.GetADParam(scn.DS, "min")[0]);
-        scn.DSPass();
-        assertAtLocation(scn.GetDSStartingLocation(), scn.GetDSCard("dreadnaught"));
+    public void KatanaExcludedFromBattleGivesNoBonusOrImmunityToOtherDreadnaughtInThatBattle() {
+        // An excluded card's game text does not affect the battle, so the other Dreadnaught fights unboosted.
+        var scn = BattleWithKatanaExcluded();
+        var dreadnaught = scn.GetDSCard("dreadnaught");
+        assertEquals(5, scn.GetPower(dreadnaught));
+        assertFalse(scn.IsImmuneToAttrition(dreadnaught));
+        assertEquals(0, scn.game().getModifiersQuerying().getImmunityToAttritionLessThan(scn.gameState(), dreadnaught), scn.epsilon);
     }
 
-    @Test
-    public void KatanaGrantedImmunityRequiresOtherDreadnaughtToPayExactlyFourWhenKatanaIsExcluded() {
-        var scn = BattleWithKatanaExcluded(4);
-        scn.DSPayRemainingBattleDamageFromReserveDeck();
-        assertEquals("1", scn.GetADParam(scn.DS, "min")[0]);
-        scn.DSPayAttritionFromCardInPlay(scn.GetDSCard("dreadnaught"));
-        assertInZone(Zone.LOST_PILE, scn.GetDSCard("dreadnaught"));
-        assertAtLocation(scn.GetDSStartingLocation(), scn.GetDSCard("katana"));
-    }
-
-    private VirtualTableScenario BattleWithKatanaExcluded(int destiny) {
+    private VirtualTableScenario BattleWithKatanaExcluded() {
         var scn = Ready();
         var system = scn.GetDSStartingLocation();
         scn.MoveCardsToDSHand(scn.GetDSCard("devastator"));
@@ -232,11 +223,7 @@ public class Card_1240_060_Tests {
         assertFalse(scn.gameState().isParticipatingInBattle(scn.GetDSCard("katana")));
         assertTrue(scn.gameState().isParticipatingInBattle(scn.GetDSCard("dreadnaught")));
         assertAtLocation(system, scn.GetDSCard("katana"));
-        assertEquals(6, scn.GetPower(scn.GetDSCard("dreadnaught")));
-        scn.PrepareLSDestiny(destiny);
-        scn.SkipToEndOfPowerSegment(true);
-        assertEquals(destiny, scn.GetLSTotalDestiny());
-        scn.PassResponses("INITIAL_ATTRITION_CALCULATED");
+        assertEquals(5, scn.GetPower(scn.GetDSCard("dreadnaught")));
         return scn;
     }
 

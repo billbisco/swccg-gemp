@@ -64,11 +64,8 @@ public class Card_1240_055_Tests {
     private VirtualTableScenario Operations() {
         var scn = Started();
         var operations = scn.GetDSCard("operations");
-        scn.MoveCardsToDSHand(operations);
-        scn.EnsureDSForcePile(2);
+        scn.MoveCardsToDSSideOfTable(operations);
         scn.SkipToDSTurn(Phase.DEPLOY);
-        scn.DSDeployCard(operations);
-        scn.PassAllResponses();
         assertInZone(Zone.SIDE_OF_TABLE, operations);
         return scn;
     }
@@ -76,12 +73,7 @@ public class Card_1240_055_Tests {
     private PhysicalCardImpl StackOwnSpice(VirtualTableScenario scn) {
         var spice = scn.GetDSCard("spice");
         var operations = scn.GetDSCard("operations");
-        scn.MoveCardsToTopOfDSLostPile(spice);
-        scn.EnsureDSForcePile(2);
-        scn.DSUseCardAction(operations, "Stack a card from Lost Pile here");
-        scn.PassAllResponses();
-        if (scn.DSDecisionAvailable("Lost Pile")) scn.DSChooseCard(spice);
-        scn.PassAllResponses();
+        scn.StackCardsOn(operations, spice);
         assertTrue(scn.IsStackedOn(operations, spice));
         return spice;
     }
@@ -116,10 +108,24 @@ public class Card_1240_055_Tests {
 
     private void NextDarkControl(VirtualTableScenario scn, int force) {
         scn.SkipToLSTurn(Phase.CONTROL);
-        scn.SkipToDSTurn(Phase.CONTROL);
-        scn.EnsureDSForcePile(force);
-        scn.DrainDSForcePileTo(force);
+        scn.SkipToDSTurn(Phase.ACTIVATE);
+        LeaveActivateWithForce(scn, false, force);
+        assertEquals(Phase.CONTROL, scn.gameState().getCurrentPhase());
     }
+
+    /**
+     * From the given player's activate phase, sets that player's Force Pile to exactly force and leaves the phase
+     * without activating, so the next phase's actions are offered against that Force.
+     */
+    static void LeaveActivateWithForce(VirtualTableScenario scn, boolean light, int force) {
+        String player = light ? scn.LS : scn.DS;
+        scn.EnsureForcePile(player, force);
+        scn.DrainForcePileTo(player, force);
+        if (light) scn.LSPass(); else scn.DSPass();
+        if (scn.DecisionAvailable(player, "You have not activated Force")) scn.ChooseOption(player, "Yes");
+        scn.PassActivateActions();
+    }
+
 
     @Test
     public void DarkCanPayOneWithoutOccupyingAndMovesOwnSpiceToUsed() {
@@ -159,8 +165,7 @@ public class Card_1240_055_Tests {
         scn.SkipToLSTurn(Phase.CONTROL);
         if (scn.AwaitingLSControlPhaseActions()) scn.LSPass();
         assertFalse(scn.DSCardActionAvailable(facility, USED));
-        scn.SkipToDSTurn(Phase.CONTROL);
-        scn.DrainDSForcePileTo(0);
+        NextDarkControl(scn, 0);
         assertFalse(scn.DSCardActionAvailable(facility, USED));
         assertTrue(scn.IsStackedOn(scn.GetDSCard("operations"), spice));
     }
@@ -169,9 +174,10 @@ public class Card_1240_055_Tests {
         var facility = scn.GetDSCard("facility");
         scn.MoveCardsToLocation(facility, scn.GetDSCard("vader"));
         scn.MoveCardsToLocation(occupied ? facility : scn.GetLSStartingLocation(), scn.GetLSCard("luke"));
+        scn.SkipToLSTurn(Phase.DEPLOY);
         scn.EnsureLSForcePile(force);
-        scn.SkipToLSTurn(Phase.MOVE);
         scn.DrainLSForcePileTo(force);
+        scn.SkipToPhase(Phase.MOVE);
     }
 
     @Test

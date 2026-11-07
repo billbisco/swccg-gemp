@@ -52,7 +52,7 @@ public class Card1240_056 extends AbstractSite {
 
     @Override
     protected List<OptionalGameTextTriggerAction> getGameTextDarkSideOptionalAfterTriggers(String playerOnDarkSideOfLocation, SwccgGame game, EffectResult effectResult, PhysicalCard self, int gameTextSourceCardId) {
-        GameTextActionId gameTextActionId = GameTextActionId.LEGACY__DUNGEON_V__RETRIEVE_FORCE;
+        GameTextActionId gameTextActionId = GameTextActionId.LEGACY__KESSEL_SPICE_MINES_PRISON__RETRIEVE_FORCE;
         PhysicalCard captive = null;
         if (effectResult instanceof DeliveredCaptiveToPrisonResult delivered
                 && TriggerConditions.captiveDeliveredToPrison(game, effectResult, Filters.droid, self)) {

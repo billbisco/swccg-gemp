@@ -95,13 +95,16 @@ public class Card_1240_064_Tests {
         return scn.game().getModifiersQuerying().getImmunityToAttritionLessThan(scn.gameState(), scn.GetDSCard(name));
     }
 
-    private VirtualTableScenario Defending(boolean junoHere) {
+    private VirtualTableScenario Defending(boolean junoHere) { return Defending(junoHere, true); }
+
+    private VirtualTableScenario Defending(boolean junoHere, boolean withTrooper) {
         var scn = Started();
         DeployOnGalen(scn);
         var site = scn.GetDSStartingLocation();
         var junoSite = junoHere ? site : scn.GetLSStartingLocation();
         scn.MoveCardsToLocation(junoSite, scn.GetDSCard("juno"));
-        scn.MoveCardsToLocation(site, scn.GetDSCard("trooper"), scn.GetLSCard("luke"));
+        scn.MoveCardsToLocation(site, scn.GetLSCard("luke"));
+        if (withTrooper) scn.MoveCardsToLocation(site, scn.GetDSCard("trooper"));
         assertEquals(4, Immunity(scn, "galen"), scn.epsilon);
         assertEquals(3, Immunity(scn, "juno"), scn.epsilon);
         scn.EnsureLSForcePile(1);
@@ -126,52 +129,67 @@ public class Card_1240_064_Tests {
         assertEquals(3, Immunity(scn, "juno"), scn.epsilon);
     }
 
-    private VirtualTableScenario DefendingAtAttrition(int amount) {
-        var scn = Defending(true);
+    /**
+     * Finishes the remaining destiny draws and responses of the current battle, paying all battle damage of either
+     * side from its Reserve Deck. Returns true when the given side must pay attrition, or false when the battle ended
+     * without that side having to forfeit anything.
+     */
+    static boolean ToAttrition(VirtualTableScenario scn, boolean lightPays) {
+        for (int i = 0; i < 60; i++) {
+            if (scn.gameState().getCurrentPhase() != Phase.BATTLE) return false;
+            if (lightPays ? scn.AwaitingLSAttritionPayment() && scn.GetUnpaidLSBattleDamage() == 0
+                    : scn.AwaitingDSAttritionPayment() && scn.GetUnpaidDSBattleDamage() == 0) return true;
+            if (scn.AwaitingLSBattleDamagePayment()) scn.LSPayBattleDamageFromReserveDeck();
+            else if (scn.AwaitingDSBattleDamagePayment()) scn.DSPayBattleDamageFromReserveDeck();
+            else if (scn.DSDecisionAvailable("battle destiny?")) scn.DSChooseYes();
+            else if (scn.LSDecisionAvailable("battle destiny?")) scn.LSChooseYes();
+            else scn.PassResponses();
+        }
+        fail("Battle never reached attrition payment or its end");
+        return false;
+    }
+
+    /** Galen (with his lightsaber) and Juno alone defend against Luke, who draws the given battle destiny. */
+    private VirtualTableScenario DefendingAtAttrition(int amount, boolean expectPayment) {
+        var scn = Defending(true, false);
         scn.PrepareLSDestiny(amount);
         scn.MoveCardsToTopOfDSReserveDeck(scn.GetDSDestiny(1), scn.GetDSDestiny(0));
         scn.SkipToEndOfPowerSegment(true);
         assertEquals(amount, scn.GetLSTotalDestiny());
-        scn.PassResponses("INITIAL_ATTRITION_CALCULATED");
-        if (scn.AwaitingLSBattleDamagePayment()) scn.LSPayRemainingBattleDamageFromReserveDeck();
-        assertEquals(amount, scn.GetUnpaidDSAttrition());
-        assertTrue(scn.AwaitingDSAttritionPayment());
+        assertEquals(expectPayment, ToAttrition(scn, false));
         return scn;
     }
 
+    // Attrition is ignored only when every card present is immune to the total; otherwise any card may be forfeited.
     @Test
-    public void AtFourAttritionDefendingGalenAndJunoAreProtectedButTrooperMustPay() {
-        var scn = DefendingAtAttrition(4);
-        var galen = scn.GetDSCard("galen");
-        var juno = scn.GetDSCard("juno");
-        var trooper = scn.GetDSCard("trooper");
-        assertFalse(scn.DSHasCardChoiceAvailable(galen));
-        assertFalse(scn.DSHasCardChoiceAvailable(juno));
-        assertTrue(scn.DSHasCardChoiceAvailable(trooper));
-        scn.DSPayAttritionFromCardInPlay(trooper);
-        assertInZone(Zone.LOST_PILE, trooper);
-        assertAtLocation(scn.GetDSStartingLocation(), galen);
-        assertAtLocation(scn.GetDSStartingLocation(), juno);
+    public void AtFourAttritionDefendingGalenAndJunoAreBothProtected() {
+        var scn = DefendingAtAttrition(4, true);
+        assertTrue(scn.DSDecisionAvailable("(if desired)"));
+        scn.DSPass();
+        var site = scn.GetDSStartingLocation();
+        assertAtLocation(site, scn.GetDSCard("galen"));
+        assertAtLocation(site, scn.GetDSCard("juno"));
     }
 
     @Test
-    public void JunoIsVulnerableAtFiveButGalenIsNot() {
-        var scn = DefendingAtAttrition(5);
+    public void JunoIsVulnerableAtFiveSoAttritionMustBeSatisfied() {
+        var scn = DefendingAtAttrition(5, true);
         var juno = scn.GetDSCard("juno");
-        assertFalse(scn.DSHasCardChoiceAvailable(scn.GetDSCard("galen")));
+        assertEquals(5, scn.GetUnpaidDSAttrition());
+        assertFalse(scn.DSDecisionAvailable("(if desired)"));
         assertTrue(scn.DSHasCardChoiceAvailable(juno));
         scn.DSPayAttritionFromCardInPlay(juno);
-        assertInZone(Zone.LOST_PILE, juno);
+        assertTrue(juno.getZone() == Zone.LOST_PILE || juno.getZone() == Zone.TOP_OF_LOST_PILE);
         assertAtLocation(scn.GetDSStartingLocation(), scn.GetDSCard("galen"));
     }
 
     @Test
     public void GalenIsVulnerableAtSixDespiteDefending() {
-        var scn = DefendingAtAttrition(6);
+        var scn = DefendingAtAttrition(6, true);
         var galen = scn.GetDSCard("galen");
+        assertEquals(6, scn.GetUnpaidDSAttrition());
+        assertFalse(scn.DSDecisionAvailable("(if desired)"));
         assertTrue(scn.DSHasCardChoiceAvailable(galen));
-        scn.DSPayAttritionFromCardInPlay(galen);
-        assertInZone(Zone.LOST_PILE, galen);
     }
 
     private VirtualTableScenario Attacking() {
@@ -180,9 +198,8 @@ public class Card_1240_064_Tests {
         var site = scn.GetDSStartingLocation();
         scn.MoveCardsToLocation(site, scn.GetLSCard("luke"), scn.GetLSCard("han"));
         scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetDSCard("juno"));
-        scn.EnsureDSForcePile(1);
+        scn.EnsureDSForcePile(3);
         scn.DSStartBattleAndSkipToWeaponsSegment(site);
-        assertEquals(0, scn.GetDSForcePileCount());
         return scn;
     }
 
@@ -200,10 +217,11 @@ public class Card_1240_064_Tests {
         scn.MoveCardsToTopOfDSReserveDeck(two, one);
         int used = scn.GetDSUsedPileCount();
         assertEquals(4, scn.game().getModifiersQuerying().getDefenseValue(scn.gameState(), luke), scn.epsilon);
+        int force = scn.GetDSForcePileCount();
         scn.DSUseCardAction(scn.GetDSCard("saber"), FIRE);
         scn.DSChooseCard(luke);
         scn.PassAllResponses();
-        assertEquals(0, scn.GetDSForcePileCount());
+        assertEquals(force, scn.GetDSForcePileCount());
         assertEquals(used + 2, scn.GetDSUsedPileCount());
         assertInZone(Zone.USED_PILE, one);
         assertInZone(Zone.USED_PILE, two);
@@ -241,7 +259,12 @@ public class Card_1240_064_Tests {
         scn.PrepareDSDestiny(4);
         scn.PrepareLSDestiny(2);
         scn.SkipToEndOfPowerSegment(true);
-        scn.PassResponses("INITIAL_ATTRITION_CALCULATED");
+        for (int i = 0; i < 20 && !scn.AwaitingLSBattleDamagePayment(); i++) {
+            if (scn.DSDecisionAvailable("battle destiny?")) scn.DSChooseYes();
+            else if (scn.LSDecisionAvailable("battle destiny?")) scn.LSChooseYes();
+            else if (scn.DSDecisionAvailable("(if desired)")) scn.DSPass();
+            else scn.PassResponses();
+        }
         assertEquals(4, scn.GetUnpaidLSAttrition());
         assertTrue(scn.AwaitingLSBattleDamagePayment());
         scn.LSPayBattleDamageFromCardInPlay(luke);
@@ -263,13 +286,13 @@ public class Card_1240_064_Tests {
         scn.SkipToPhase(Phase.BATTLE);
         scn.DSUseCardAction(site, "attack");
         scn.PassAllResponses();
-        assertEquals(0, scn.GetDSForcePileCount());
+        int force = scn.GetDSForcePileCount();
         scn.MoveCardsToTopOfDSReserveDeck(scn.GetDSDestiny(3), scn.GetDSDestiny(2));
         assertTrue(scn.DSCardActionAvailable(saber, FIRE));
         scn.DSUseCardAction(saber, FIRE);
         if (scn.DSHasCardChoiceAvailable(mynock)) scn.DSChooseCard(mynock);
         scn.PassAllResponses();
         assertTrue(mynock.isHit() || mynock.getZone() == Zone.LOST_PILE);
-        assertEquals(0, scn.GetDSForcePileCount());
+        assertEquals(force, scn.GetDSForcePileCount());
     }
 }

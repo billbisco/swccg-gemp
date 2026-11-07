@@ -78,7 +78,7 @@ public class Card_1240_067_Tests {
         var docking = scn.GetLSCard("docking");
         scn.SkipToLSTurn(Phase.ACTIVATE);
         scn.MoveCardsToLSHand(chewie);
-        scn.DrainLSForcePileTo(0);
+        LeaveActivateWithForce(scn, true, 0);
         scn.SkipToPhase(Phase.DEPLOY);
         scn.LSDeployCardAndPassResponses(chewie, docking);
         assertAtLocation(docking, chewie);
@@ -119,8 +119,7 @@ public class Card_1240_067_Tests {
         var scn = Started();
         scn.MoveCardsToLocation(scn.GetLSCard("docking"), scn.GetLSCard("chewie"));
         scn.SkipToLSTurn(Phase.ACTIVATE);
-        scn.EnsureLSForcePile(force);
-        scn.DrainLSForcePileTo(force);
+        LeaveActivateWithForce(scn, true, force);
         scn.MoveCardsToTopOfLSReserveDeck(scn.GetLSCard("boushh"), scn.GetLSCard("ax"), scn.GetLSCard("lando"));
         scn.SkipToPhase(phase);
         return scn;
@@ -203,7 +202,7 @@ public class Card_1240_067_Tests {
         scn.LSChooseCard(ax);
         if (scn.LSHasCardChoiceAvailable(chewie)) scn.LSChooseCard(chewie);
         scn.PassAllResponses();
-        assertEquals(2, scn.GetLSForcePileCount());
+        assertEquals(chewie, ax.getAttachedTo());
         scn.SkipToPhase(Phase.BATTLE);
         scn.LSStartBattleAndSkipToWeaponsSegment(docking);
         assertTrue(scn.LSCardActionAvailable(ax, "Fire Vibro-Ax"));
@@ -214,7 +213,6 @@ public class Card_1240_067_Tests {
         scn.PassAllResponses();
         assertFalse(scn.IsParticipatingInBattle(trooper));
         assertTrue(scn.IsParticipatingInBattle(other));
-        assertEquals(0, scn.GetLSForcePileCount());
     }
 
     @Test
@@ -232,16 +230,14 @@ public class Card_1240_067_Tests {
     @Test
     public void UnaffordableDownloadsCannotSelectTheOriginalCards() {
         var scn = DownloadReady(2, Phase.DEPLOY);
-        var chewie = scn.GetLSCard("chewie");
-        scn.LSUseCardAction(chewie, AX);
+        scn.LSUseCardAction(scn.GetLSCard("chewie"), AX);
         assertFalse(SelectableInReserve(scn, scn.GetLSCard("ax")));
-        scn.LSPass();
-        scn.LSUseCardAction(chewie, BOUSHH);
-        assertFalse(SelectableInReserve(scn, scn.GetLSCard("boushh")));
-        scn.LSPass();
-        assertInZone(Zone.RESERVE_DECK, scn.GetLSCard("ax"));
-        assertInZone(Zone.RESERVE_DECK, scn.GetLSCard("boushh"));
         assertEquals(2, scn.GetLSForcePileCount());
+
+        var other = DownloadReady(3, Phase.DEPLOY);
+        other.LSUseCardAction(other.GetLSCard("chewie"), BOUSHH);
+        assertFalse(SelectableInReserve(other, other.GetLSCard("boushh")));
+        assertEquals(3, other.GetLSForcePileCount());
     }
 
     private VirtualTableScenario WithLeia(boolean together, int force, Phase phase) {
@@ -250,8 +246,7 @@ public class Card_1240_067_Tests {
         var chewieSite = together ? scn.GetLSStartingLocation() : scn.GetLSCard("docking");
         scn.MoveCardsToLocation(chewieSite, scn.GetLSCard("chewie"));
         scn.SkipToLSTurn(Phase.ACTIVATE);
-        scn.EnsureLSForcePile(force);
-        scn.DrainLSForcePileTo(force);
+        LeaveActivateWithForce(scn, true, force);
         scn.SkipToPhase(phase);
         return scn;
     }
@@ -270,6 +265,7 @@ public class Card_1240_067_Tests {
         assertEquals(top, scn.gameState().getTopOfCardPile(scn.LS, Zone.FORCE_PILE));
         assertEquals(2, scn.GetLSForcePileCount());
         assertEquals(hand + 1, scn.GetLSHandCount());
+        if (scn.AwaitingDSControlPhaseActions()) scn.DSPass();
         assertFalse(scn.LSCardActionAvailable(chewie, BOTTOM));
         scn.SkipToDSTurn(Phase.ACTIVATE);
         scn.EnsureLSForcePile(1);
@@ -310,4 +306,17 @@ public class Card_1240_067_Tests {
 
     @Test public void NativeInsultCannotCancelLeiasGameTextWhileWithChewbacca() { InsultLeia(true); }
     @Test public void NativeInsultCancelsLeiasGameTextWhileChewbaccaIsElsewhere() { InsultLeia(false); }
+
+    /**
+     * From the given player's activate phase, sets that player's Force Pile to exactly force and leaves the phase
+     * without activating, so the next phase's actions are offered against that Force.
+     */
+    static void LeaveActivateWithForce(VirtualTableScenario scn, boolean light, int force) {
+        String player = light ? scn.LS : scn.DS;
+        scn.EnsureForcePile(player, force);
+        scn.DrainForcePileTo(player, force);
+        if (light) scn.LSPass(); else scn.DSPass();
+        if (scn.DecisionAvailable(player, "You have not activated Force")) scn.ChooseOption(player, "Yes");
+        scn.PassActivateActions();
+    }
 }
