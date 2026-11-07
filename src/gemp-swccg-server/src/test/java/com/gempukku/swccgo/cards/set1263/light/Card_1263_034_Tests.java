@@ -17,7 +17,7 @@ public class Card_1263_034_Tests {
             put("rogue", "1263_34"); put("rogue2", "1263_34"); put("aces", "1271_45");
             put("luke", "1_19"); put("commander", "3_3"); put("wedge", "7_12"); put("dack", "3_4");
             put("pilot", "1_27"); put("artoo", "2_14"); put("arfive", "2_15"); put("red1", "1_144");
-            put("ground", "1_136"); put("torpedoes", "1_158");
+            put("ground", "1_136"); put("home", "9_74"); put("corvette", "1_140"); put("torpedoes", "1_158");
         }}, new HashMap<>() {{ put("devastator", "1_301"); put("vader", "1_168"); put("overload", "1_263"); }},
                 60, 60, StartingSetup.LSStartingLocation("2_65"), StartingSetup.DefaultDSSpaceSystem,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
@@ -55,8 +55,9 @@ public class Card_1263_034_Tests {
         scn.SkipToLSTurn(Phase.CONTROL);
         while (scn.GetLSForcePileCount() > 0) scn.MoveCardsToTopOfLSReserveDeck(scn.GetTopOfLSForcePile());
         scn.LSActivateForceCheat(2); scn.SkipToPhase(Phase.DEPLOY); scn.LSDeployCard(ship);
-        scn.LSChooseCard(scn.GetLSStartingLocation()); scn.PassAllResponses();
-        assertAtLocation(scn.GetLSStartingLocation(), ship); assertEquals(0, scn.GetLSForcePileCount());
+        assertFalse(scn.LSHasCardChoiceAvailable(scn.GetLSStartingLocation()));
+        scn.LSChooseCard(scn.GetLSCard("ground")); scn.PassAllResponses();
+        assertAtLocation(scn.GetLSCard("ground"), ship); assertEquals(0, scn.GetLSForcePileCount());
     }
     @Test public void RogueSquadronXwingCanCarryOnePilotAndOneAstromechTogether() {
         var scn = started(true); var ship = scn.GetLSCard("rogue"); scn.BoardAsPilot(ship, scn.GetLSCard("luke"));
@@ -114,11 +115,11 @@ public class Card_1263_034_Tests {
         if (battle) {
             scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetDSCard("devastator"));
             scn.BoardAsPilot(scn.GetDSCard("devastator"), scn.GetDSCard("vader"));
+            if (damage) scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetLSCard("home"), scn.GetLSCard("corvette"));
             scn.SkipToLSTurn(Phase.BATTLE); scn.LSInitiateBattle(scn.GetLSStartingLocation()); scn.PassAllResponses();
             if (damage) {
-                scn.SkipToDamageSegment(false);
-                if (scn.AwaitingLSDamageSegmentActions()) scn.LSPass();
-                assertTrue(scn.AwaitingDSDamageSegmentActions());
+                scn.PrepareLSDestiny(0); scn.PrepareDSDestiny(3);
+                scn.SkipToDamageSegment(true); scn.PassDamageSegmentActions();
             } else {
                 assertTrue(scn.AwaitingLSWeaponsSegmentActions()); scn.LSPass(); assertTrue(scn.AwaitingDSWeaponsSegmentActions());
             }
@@ -128,7 +129,11 @@ public class Card_1263_034_Tests {
     private void overload(VirtualTableScenario scn) {
         scn.DSPlayCard(scn.GetDSCard("overload")); scn.DSChooseCard(scn.GetLSCard("torpedoes"));
         scn.PassAllResponses(); scn.PassDestinyDrawResponses(); scn.PassAllResponses();
-        // Overload loses both weapon and carrier; the current player orders the physical losses.
+        finishOrderedLosses(scn);
+        assertInZone(Zone.LOST_PILE, scn.GetDSCard("overload")); assertInZone(Zone.LOST_PILE, scn.GetLSCard("torpedoes"));
+    }
+    private void finishOrderedLosses(VirtualTableScenario scn) {
+        // The current player orders the physical losses of carrier and attachments.
         for (int i = 0; i < 12; i++) {
             boolean chose = false;
             for (String key : new String[]{"torpedoes", "rogue", "luke"}) {
@@ -138,7 +143,6 @@ public class Card_1263_034_Tests {
             }
             scn.PassAllResponses(); if (!chose) break;
         }
-        assertInZone(Zone.LOST_PILE, scn.GetDSCard("overload")); assertInZone(Zone.LOST_PILE, scn.GetLSCard("torpedoes"));
     }
     @Test public void RogueSquadronXwingSurvivesActualIndirectLossBeforeDamage() {
         var scn = overloadSetup(true, true, false); overload(scn);
@@ -149,7 +153,11 @@ public class Card_1263_034_Tests {
         var scn = overloadSetup(false, true, false); overload(scn); assertInZone(Zone.LOST_PILE, scn.GetLSCard("rogue"));
     }
     @Test public void RogueSquadronXwingProtectionEndsAtDamageSegment() {
-        var scn = overloadSetup(true, true, true); overload(scn); assertInZone(Zone.LOST_PILE, scn.GetLSCard("rogue"));
+        var scn = overloadSetup(true, true, true);
+        assertEquals(4, scn.GetUnpaidLSAttrition()); assertEquals(0, scn.GetUnpaidLSBattleDamage());
+        assertTrue(Filters.canBeTargetedBy(scn.GetDSCard("overload"), TargetingReason.TO_BE_LOST).accepts(scn.game(), scn.GetLSCard("rogue")));
+        scn.LSPayAttritionFromCardInPlay(scn.GetLSCard("rogue")); finishOrderedLosses(scn);
+        assertInZone(Zone.LOST_PILE, scn.GetLSCard("rogue"));
     }
     @Test public void RogueSquadronXwingRebelAcesDoesNotPreventLossOutsideBattle() {
         var scn = overloadSetup(true, false, false); overload(scn); assertInZone(Zone.LOST_PILE, scn.GetLSCard("rogue"));
