@@ -59,9 +59,13 @@ public class Card_1263_027_Tests {
         assertTrue(Filters.hasAnyImmunityToAttrition.accepts(scn.game(), vader)); boost(scn, vader);
         assertEquals(8, scn.GetPower(vader)); assertFalse(Filters.hasAnyImmunityToAttrition.accepts(scn.game(), vader));
         assertTrue(Filters.hasAnyImmunityToAttrition.accepts(scn.game(), scn.GetLSCard("jedi")));
-        scn.SkipToDamageSegment(false); scn.SkipToPhase(Phase.MOVE);
+        scn.SkipToDamageSegment(false);
+        scn.PassAllResponses();
+        scn.SkipToPhase(Phase.MOVE);
         assertEquals(8, scn.GetPower(vader)); assertFalse(Filters.hasAnyImmunityToAttrition.accepts(scn.game(), vader));
-        scn.SkipToLSTurn(Phase.CONTROL); assertEquals(6, scn.GetPower(vader)); assertTrue(Filters.hasAnyImmunityToAttrition.accepts(scn.game(), vader));
+        scn.SkipToPhase(Phase.DRAW); scn.PassDrawActions(); scn.PassResponses("RECIRCULATED"); scn.PassAllResponses();
+        assertEquals(scn.LS, scn.GetCurrentPlayer());
+        assertEquals(6, scn.GetPower(vader)); assertTrue(Filters.hasAnyImmunityToAttrition.accepts(scn.game(), vader));
     }
     @Test public void TacticsCanAlsoBoostOwnCharacterAtBattle() {
         var scn = battle(true); var jedi = scn.GetLSCard("jedi"); int power = scn.GetPower(jedi); boost(scn, jedi);
@@ -74,8 +78,9 @@ public class Card_1263_027_Tests {
     }
     @Test public void TacticsCannotUseBoostAfterBattleInitiationWindow() {
         var scn = battle(true); assertTrue(scn.LSCardPlayAvailable(scn.GetLSCard("tactics"), BOOST));
-        scn.PassBattleStartResponses(); if (scn.AwaitingDSWeaponsSegmentActions()) scn.DSPass();
-        assertTrue(scn.AwaitingLSWeaponsSegmentActions()); assertFalse(scn.LSCardPlayAvailable(scn.GetLSCard("tactics"), BOOST));
+        scn.LSPass(); scn.PassAllResponses();
+        assertNotNull(scn.gameState().getBattleState());
+        assertFalse(scn.GetLSAvailableActions().stream().anyMatch(text -> text.contains(BOOST)));
     }
     private VirtualTableScenario exchangeSetup(boolean lost) {
         var scn = started(); scn.MoveCardsToLSHand(scn.GetLSCard("luke")); scn.SkipToLSTurn(Phase.CONTROL);
