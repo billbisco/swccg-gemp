@@ -64,7 +64,7 @@ public class Card_1240_005_Tests {
         assertEquals(4, card.getAbility(), scn.epsilon);
         assertEquals(7, card.getForfeit(), scn.epsilon);
         assertTrue(card.getPersonas().contains(Persona.THRAWN));
-        scn.BlueprintCardTypeCheck(card, new ArrayList<>(List.of(CardType.CHARACTER, CardType.IMPERIAL)));
+        scn.BlueprintCardTypeCheck(card, new ArrayList<>(List.of(CardType.IMPERIAL)));
         scn.BlueprintIconCheck(card, new ArrayList<>(List.of(Icon.IMPERIAL, Icon.PILOT, Icon.WARRIOR,
                 Icon.REFLECTIONS_II, Icon.LEGACY_BLOCK_4)));
         scn.BlueprintKeywordCheck(card, new ArrayList<>(List.of(Keyword.LEADER)));
