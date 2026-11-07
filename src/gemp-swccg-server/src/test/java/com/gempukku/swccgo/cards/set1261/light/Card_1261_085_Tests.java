@@ -85,9 +85,9 @@ public class Card_1261_085_Tests {
         var scn = host("emperor", false); deployOn(scn, "emperor");
         scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetLSCard("luke")); scn.MoveCardsToDSHand(scn.GetDSCard("lightning"));
         scn.SkipToDSTurn(Phase.CONTROL); assertEquals(scn.GetDSCard("emperor"), scn.GetLSCard("return").getAttachedTo());
-        int defense = scn.GetDefenseValue(scn.GetLSCard("luke")); scn.DSPlayCard(scn.GetDSCard("lightning"), "Reduce target");
+        int defense = scn.GetDefense(scn.GetLSCard("luke")); scn.DSPlayCard(scn.GetDSCard("lightning"), "Reduce target");
         if (scn.DSHasCardChoiceAvailable(scn.GetLSCard("luke"))) scn.DSChooseCard(scn.GetLSCard("luke"));
-        scn.PassAllResponses(); assertInZone(Zone.LOST_PILE, scn.GetDSCard("lightning")); assertEquals(defense, scn.GetDefenseValue(scn.GetLSCard("luke")));
+        scn.PassAllResponses(); assertInZone(Zone.LOST_PILE, scn.GetDSCard("lightning")); assertEquals(defense, scn.GetDefense(scn.GetLSCard("luke")));
         assertEquals(3, scn.GetPower(scn.GetLSCard("luke")));
     }
     private VirtualTableScenario sidiousLoss(boolean protect) {
