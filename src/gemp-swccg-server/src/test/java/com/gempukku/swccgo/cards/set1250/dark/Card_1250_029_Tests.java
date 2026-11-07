@@ -104,9 +104,7 @@ public class Card_1250_029_Tests {
             else if (scn.AwaitingDSForceLossPayment()) {
                 if (lightTurn) assertInZone(Zone.USED_PILE, scn.GetDSCard("vader"));
                 scn.DSPayRemainingForceLossFromReserveDeck();
-            }
-           
-            else if (scn.DSHasCardChoiceAvailable(scn.GetLSCard("obi"))) scn.DSChooseCard(scn.GetLSCard("obi"));
+            } else if (scn.DSHasCardChoiceAvailable(scn.GetLSCard("obi"))) scn.DSChooseCard(scn.GetLSCard("obi"));
             else if (scn.DSHasCardChoiceAvailable(scn.GetDSCard("vader"))) scn.DSChooseCard(scn.GetDSCard("vader"));
             else if (scn.DSDecisionAvailable("Retrieve 2 Force?")) {
                 offerSeen = true;
