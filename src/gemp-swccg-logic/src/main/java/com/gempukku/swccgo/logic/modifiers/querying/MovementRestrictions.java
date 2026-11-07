@@ -763,6 +763,10 @@ public interface MovementRestrictions extends BaseQuery, Locations {
             return true;
         }
 
+        if (mayNotRelocate(gameState, card)) {
+            return true;
+        }
+
         // Check for Dagobah or Ahch-To, which neither player may relocate from/to unless explicitly allowed
         if (!allowDagobah) {
             if (Filters.Dagobah_location.accepts(gameState, query(), fromLocation) || Filters.Dagobah_location.accepts(gameState, query(), toLocation))
@@ -793,6 +797,26 @@ public interface MovementRestrictions extends BaseQuery, Locations {
         }
 
         return false;
+    }
+
+    /**
+     * Determines if the specified card may not relocate.
+     * @param gameState the game state
+     * @param card the card
+     * @return true if card may not relocate, otherwise false
+     */
+    default boolean mayNotRelocate(GameState gameState, PhysicalCard card) {
+        return !getModifiersAffectingCard(gameState, ModifierType.MAY_NOT_RELOCATE, card).isEmpty();
+    }
+
+    /**
+     * Determines if the specified card may not be (become) Undercover.
+     * @param gameState the game state
+     * @param card the card
+     * @return true if card may not be Undercover, otherwise false
+     */
+    default boolean mayNotBeUndercover(GameState gameState, PhysicalCard card) {
+        return !getModifiersAffectingCard(gameState, ModifierType.MAY_NOT_BE_UNDERCOVER, card).isEmpty();
     }
 
     /**
