@@ -135,6 +135,7 @@ public class Card_1263_034_Tests {
     private void finishOrderedLosses(VirtualTableScenario scn) {
         // The current player orders the physical losses of carrier and attachments.
         for (int i = 0; i < 12; i++) {
+            scn.PassAllResponses();
             boolean chose = false;
             for (String key : new String[]{"torpedoes", "rogue", "luke"}) {
                 var card = scn.GetLSCard(key);
