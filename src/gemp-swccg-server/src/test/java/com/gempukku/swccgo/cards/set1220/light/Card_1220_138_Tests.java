@@ -13,11 +13,13 @@ import java.util.Map;
 import static org.junit.Assert.*;
 
 public class Card_1220_138_Tests {
-    private VirtualTableScenario fixture(String start, String purge) {
+    private VirtualTableScenario fixture(String start, String purge) { return fixture(start, purge, false); }
+
+    private VirtualTableScenario fixture(String start, String purge, boolean arrangeZones) {
         var ls = new HashMap<>(Map.of("future", "1220_138", "battlePlan", "8_35", "doNot", "4_21",
                 "immune", "9_47", "ordinary", "1_66", "luke", "1_19", "site", "3_63",
                 "stackOne", "2_18", "stackTwo", "2_23", "stackThree", "2_27"));
-        if (purge == null) ls.putAll(Map.of("tableMaintenance", "13_9", "handWeapon", "108_3", "forceRevolution", "1_62"));
+        if (arrangeZones) ls.putAll(Map.of("tableMaintenance", "13_9", "handWeapon", "108_3", "forceRevolution", "1_62"));
         if (purge != null) ls.put("purge", purge);
         var ds = new HashMap<>(Map.of("darkInsert", "1_208", "darkWeapon", "108_6", "vader", "1_168", "darkMaintenance", "13_59"));
         return new VirtualTableScenario(ls, ds, 40, 40, StartingSetup.LSStartingLocation(start),
@@ -57,7 +59,7 @@ public class Card_1220_138_Tests {
     private VirtualTableScenario begin(boolean agent, String purge) { return begin(agent, purge, false); }
 
     private VirtualTableScenario begin(boolean agent, String purge, boolean arrangeZones) {
-        var scn = fixture("5_79", purge);
+        var scn = fixture("5_79", purge, arrangeZones);
         scn.StartGame();
         if (arrangeZones) {
             scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetLSCard("tableMaintenance"));
