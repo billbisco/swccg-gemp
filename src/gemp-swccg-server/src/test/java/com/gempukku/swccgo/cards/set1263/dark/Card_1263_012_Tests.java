@@ -55,6 +55,9 @@ public class Card_1263_012_Tests {
         scn.MoveCardsToDSHand(scn.GetDSCard("oap"));
         scn.SkipToDSTurn(Phase.CONTROL);
         while (scn.GetDSForcePileCount() > 0) scn.MoveCardsToTopOfDSReserveDeck(scn.GetTopOfDSForcePile());
+        var named = new com.gempukku.swccgo.game.PhysicalCardImpl[]{scn.GetDSCard("tentacle"), scn.GetDSCard("grotto"), scn.GetDSCard("oldgrotto"),
+                scn.GetDSCard("drop"), scn.GetDSCard("faith"), scn.GetDSCard("trooper")};
+        scn.MoveCardsToBottomOfDSReserveDeck(named);
         scn.DSActivateForceCheat(force);
         scn.MoveCardsToTopOfDSReserveDeck(scn.GetDSCard("tentacle"), scn.GetDSCard("grotto"), scn.GetDSCard("oldgrotto"),
                 scn.GetDSCard("drop"), scn.GetDSCard("faith"), scn.GetDSCard("trooper"));
