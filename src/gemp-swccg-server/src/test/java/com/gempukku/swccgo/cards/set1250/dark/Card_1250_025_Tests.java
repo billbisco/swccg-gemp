@@ -79,7 +79,7 @@ public class Card_1250_025_Tests {
     }
     @Test public void WipeThemOutAllOfThemCannotActivateWithoutReserveDeckCards() {
         var scn=scenario();scn.StartGame();scn.AttachCardsTo(scn.GetDSStartingLocation(),scn.GetDSCard("wipe"));scn.MoveLocationToTable(scn.GetLSCard("quiet"));
-        scn.MoveCardsToDSHand(scn.gameState().getReserveDeck(scn.DS).toArray(com.gempukku.swccgo.game.PhysicalCardImpl[]::new));scn.SkipToLSTurn(Phase.DRAW);scn.LSPass();
+        scn.SkipToLSTurn(Phase.CONTROL);scn.MoveCardsToDSHand(scn.gameState().getReserveDeck(scn.DS).toArray(com.gempukku.swccgo.game.PhysicalCardImpl[]::new));scn.SkipToPhase(Phase.DRAW);scn.LSPass();
         assertNotNull(scn.DSGetDecision());assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("wipe"),"Activate 1 Force"));
     }
     @Test public void WipeThemOutAllOfThemDoesNotGrantActionDuringOwnersDrawPhase() {
