@@ -79,6 +79,7 @@ public class Card_1261_032_Tests {
             assertEquals(flipped, objective.isFlipped());
             assertEquals(zuckuss.getBlueprint().getForfeit() + (flipped ? 2 : 0), scn.GetForfeit(zuckuss), scn.epsilon);
             assertEquals(vader.getBlueprint().getForfeit(), scn.GetForfeit(vader), scn.epsilon);
+            scn.MoveCardsToDSHand(zuckuss, vader);
             assertEquals(zuckuss.getBlueprint().getDeployCost() + (flipped ? 0 : 2), costAtSite(scn, zuckuss), scn.epsilon);
             assertEquals(vader.getBlueprint().getDeployCost() + 2, costAtSite(scn, vader), scn.epsilon);
         }
