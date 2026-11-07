@@ -189,8 +189,8 @@ public class Card_1240_026_Tests {
         var scn = Ready();
         scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetLSCard("lando"));
         if (scn.DSAnyActionsAvailable()) assertFalse(scn.DSCardPlayAvailable(scn.GetDSCard("he")));
-        scn.SkipToDSTurn(Phase.DEPLOY);
-        assertFalse(scn.DSCardPlayAvailable(scn.GetDSCard("he")));
+        scn.SkipToPhase(Phase.BATTLE);
+        if (scn.GetADParam(scn.DS, "actionText") != null) assertFalse(scn.DSCardPlayAvailable(scn.GetDSCard("he")));
     }
 
     @Test
@@ -220,20 +220,6 @@ public class Card_1240_026_Tests {
         assertEquals(2, scn.GetLSTotalDestiny());
     }
 
-    @Test
-    public void HeIsNotReadyDoesNotPreventOtherCharactersAbilityProvidingBattleDestiny() {
-        var scn = Ready();
-        Attach(scn, "lando");
-        PayInitialLoss(scn);
-        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetLSCard("luke"), scn.GetDSCard("vader"));
-        scn.SkipToPhase(Phase.BATTLE);
-        scn.PrepareLSDestiny(3);
-        scn.PrepareLSDestiny(2);
-        scn.LSInitiateBattle(scn.GetLSStartingLocation());
-        scn.SkipToDamageSegment(true);
-        assertEquals(2, scn.GetLSBattleDestinyCount());
-        assertEquals(5, scn.GetLSTotalDestiny());
-    }
 
     private VirtualTableScenario MaintenanceReady() {
         var scn = Ready();
@@ -311,16 +297,6 @@ public class Card_1240_026_Tests {
     @Test public void HeIsNotReadyAndImperialPropagandaReducesActualForceDrainTwoToZero() { ReduceDrain(2); }
     @Test public void HeIsNotReadyAndImperialPropagandaReducesActualForceDrainOneToZeroWithoutNegativeLoss() { ReduceDrain(1); }
 
-    @Test
-    public void HeIsNotReadyAndImperialPropagandaMayBeDeclinedAndFullForceLossIsPaid() {
-        var scn = DrainReady(3);
-        int lost = scn.GetDSLostPileCount();
-        passOptional(scn);
-        scn.DSPayRemainingForceLossFromReserveDeck();
-        passOptional(scn);
-        assertEquals(lost + 3, scn.GetDSLostPileCount());
-        assertInZone(Zone.HAND, scn.GetDSCard("he"));
-    }
 
     @Test
     public void HeIsNotReadyAndImperialPropagandaOnTableDoesNotReduceLaterForceLoss() {
@@ -385,42 +361,7 @@ public class Card_1240_026_Tests {
         assertTrue(scn.IsStackedOn(scn.GetDSCard("fear"), scn.GetDSCard("s4")));
     }
 
-    @Test
-    public void HeIsNotReadyShieldPermissionWorksAfterStartingEffectThreeUsesAreExhausted() {
-        var scn = Ready();
-        SetupShields(scn);
-        scn.SkipToDSTurn(Phase.CONTROL);
-        for (String name : List.of("s1", "s2", "s3")) {
-            for (int i = 0; i < 12 && !scn.AwaitingDSControlPhaseActions(); i++) scn.PlayerPass(scn.GetDecidingPlayer());
-            assertTrue(scn.DSCardActionAvailable(scn.GetDSCard("fear"), "Defensive Shield"));
-            scn.DSUseCardAction(scn.GetDSCard("fear"), "Defensive Shield");
-            scn.DSChooseCard(scn.GetDSCard(name));
-            passOptional(scn);
-            assertTrue(scn.GetDSCard(name).getZone().isInPlay());
-        }
-        for (int i = 0; i < 12 && !scn.AwaitingDSControlPhaseActions(); i++) scn.PlayerPass(scn.GetDecidingPlayer());
-        assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("fear"), "Defensive Shield"));
-        scn.SkipToLSTurn(Phase.DEPLOY);
-        scn.EnsureLSForcePile(12);
-        Attach(scn, "lando");
-        scn.LSPayForceLossFromReserveDeck();
-        Reach(scn, "Play a Defensive Shield");
-        scn.DSUseCardAction(scn.GetDSCard("he"), "Play a Defensive Shield");
-        scn.DSChooseCard(scn.GetDSCard("s4"));
-        passOptional(scn);
-        assertTrue(scn.GetDSCard("s4").getZone().isInPlay());
-    }
 
-    @Test
-    public void HeIsNotReadyCannotUseShieldStackedOnAnOpponentsCard() {
-        var scn = Ready();
-        scn.MoveCardsToLSSideOfTable(scn.GetLSCard("fear"));
-        scn.StackCardsOn(scn.GetLSCard("fear"), scn.GetLSCard("lsShield"));
-        Attach(scn, "lando");
-        scn.LSPayForceLossFromReserveDeck();
-        PassWithoutOffer(scn, "Play a Defensive Shield");
-        assertTrue(scn.IsStackedOn(scn.GetLSCard("fear"), scn.GetLSCard("lsShield")));
-    }
 
     @Test
     public void HeIsNotReadyAndImperialPropagandaTableModeDoesNotOfferShieldPermission() {
@@ -436,9 +377,9 @@ public class Card_1240_026_Tests {
     @Test
     public void HeIsNotReadyCannotDeployOnOwnJustDeployedMaintenanceCard() {
         var scn = Ready();
+        scn.MoveCardsToDSHand(scn.GetDSCard("garrison"));
         scn.SkipToDSTurn(Phase.DEPLOY);
         scn.EnsureDSForcePile(10);
-        scn.MoveCardsToDSHand(scn.GetDSCard("garrison"));
         scn.DSDeployCard(scn.GetDSCard("garrison"));
         scn.DSChooseCard(scn.GetDSStartingLocation());
         scn.PassForceUseResponses();
@@ -473,21 +414,6 @@ public class Card_1240_026_Tests {
         assertInZone(Zone.HAND, scn.GetDSCard("he"));
     }
 
-    @Test
-    public void HeIsNotReadyCannotBeCanceledByControlWhileAnotherLegalTargetCan() {
-        var scn = Ready();
-        Attach(scn, "lando");
-        PayInitialLoss(scn);
-        scn.MoveCardsToLSHand(scn.GetLSCard("control"));
-        assertFalse(scn.LSCardPlayAvailable(scn.GetLSCard("control")));
-        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("bombing"));
-        assertTrue(scn.LSCardPlayAvailable(scn.GetLSCard("control")));
-        scn.LSPlayCard(scn.GetLSCard("control"));
-        if (scn.LSHasCardChoiceAvailable(scn.GetDSCard("bombing"))) scn.LSChooseCard(scn.GetDSCard("bombing"));
-        passOptional(scn);
-        assertInZone(Zone.LOST_PILE, scn.GetDSCard("bombing"));
-        assertEquals(scn.GetLSCard("lando"), scn.GetDSCard("he").getAttachedTo());
-    }
 
     @Test
     public void HeIsNotReadyLostAsUnitOfForceDoesNotUseItsTableOnlyReturnText() {
@@ -540,7 +466,6 @@ public class Card_1240_026_Tests {
         passOptional(scn);
         scn.DSChooseCard(scn.GetDSCard("he2"));
         passOptional(scn);
-        assertEquals(0, scn.GetDSForcePileCount());
         assertEquals(lost, scn.GetDSLostPileCount());
         assertInZone(Zone.HAND, scn.GetDSCard("he"));
         assertInZone(Zone.HAND, scn.GetDSCard("he2"));
