@@ -33,9 +33,10 @@ public class Card_1261_064_Tests {
 
     private VirtualTableScenario deployment() {
         var scn = scenario(); scn.StartGame();
-        // Existing Yularen lacks the engine ISB keyword; isolate that unrelated metadata with an explicit fixture grant.
-        scn.ApplyAdHocModifier(new KeywordModifier(scn.GetDSCard("yularen"), Keyword.ISB_AGENT));
         scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("tarkin"), scn.GetDSCard("yularen"), scn.GetDSCard("vader"));
+        // Apply after placement: removing a card from its old zone unregisters its modifiers.
+        scn.ApplyAdHocModifier(new KeywordModifier(scn.GetDSCard("yularen"), Keyword.ISB_AGENT));
+        assertTrue(scn.HasKeyword(scn.GetDSCard("yularen"), Keyword.ISB_AGENT));
         scn.MoveCardsToDSHand(scn.GetDSCard("pistol")); scn.SkipToDSTurn(Phase.DEPLOY); return scn;
     }
 
@@ -50,9 +51,7 @@ public class Card_1261_064_Tests {
 
     @Test
     public void ISBBlasterPistolCannotDeployOnOrdinaryWarrior() {
-        var scn = scenario(); scn.StartGame();
-        // Existing Yularen lacks the engine ISB keyword; isolate that unrelated metadata with an explicit fixture grant.
-        scn.ApplyAdHocModifier(new KeywordModifier(scn.GetDSCard("yularen"), Keyword.ISB_AGENT)); scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("vader"));
+        var scn = scenario(); scn.StartGame(); scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("vader"));
         scn.MoveCardsToDSHand(scn.GetDSCard("pistol")); scn.SkipToDSTurn(Phase.DEPLOY);
         assertFalse(scn.DSCardPlayAvailable(scn.GetDSCard("pistol")));
     }
@@ -65,10 +64,10 @@ public class Card_1261_064_Tests {
     }
 
     private VirtualTableScenario battle(String bearer) {
-        var scn = scenario(); scn.StartGame();
-        // Existing Yularen lacks the engine ISB keyword; isolate that unrelated metadata with an explicit fixture grant.
-        scn.ApplyAdHocModifier(new KeywordModifier(scn.GetDSCard("yularen"), Keyword.ISB_AGENT)); var site = scn.GetDSStartingLocation();
+        var scn = scenario(); scn.StartGame(); var site = scn.GetDSStartingLocation();
         scn.MoveCardsToLocation(site, scn.GetDSCard(bearer), scn.GetLSCard("obiwan"), scn.GetLSCard("han"));
+        scn.ApplyAdHocModifier(new KeywordModifier(scn.GetDSCard("yularen"), Keyword.ISB_AGENT));
+        assertTrue(scn.HasKeyword(scn.GetDSCard("yularen"), Keyword.ISB_AGENT));
         scn.AttachCardsTo(scn.GetDSCard(bearer), scn.GetDSCard("pistol"));
         scn.DSStartBattleAndSkipToWeaponsSegment(site); return scn;
     }
@@ -106,9 +105,7 @@ public class Card_1261_064_Tests {
 
     @Test
     public void ISBBlasterPistolActuallyFiresAtCreatureForFree() {
-        var scn = scenario(); scn.StartGame();
-        // Existing Yularen lacks the engine ISB keyword; isolate that unrelated metadata with an explicit fixture grant.
-        scn.ApplyAdHocModifier(new KeywordModifier(scn.GetDSCard("yularen"), Keyword.ISB_AGENT)); var site = scn.GetDSStartingLocation();
+        var scn = scenario(); scn.StartGame(); var site = scn.GetDSStartingLocation();
         scn.MoveCardsToLocation(site, scn.GetDSCard("tarkin"), scn.GetLSCard("worrt"));
         scn.AttachCardsTo(scn.GetDSCard("tarkin"), scn.GetDSCard("pistol"));
         scn.DSActivateMaxForceAndPass(); scn.SkipToPhase(Phase.BATTLE);
