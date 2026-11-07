@@ -161,6 +161,12 @@ public class Card_1263_011_Tests {
             boolean succeeds = destiny > 2;
             assertEquals(succeeds ? power - 2 : power, scn.GetPower(luke));
             assertEquals(succeeds ? 0 : immunity, mods.getImmunityToAttritionLessThan(scn.gameState(), luke), scn.epsilon);
+            if (succeeds) {
+                scn.SkipToPhase(Phase.MOVE);
+                assertInZone(Zone.AT_LOCATION, luke);
+                assertEquals(power, scn.GetPower(luke));
+                assertEquals(immunity, mods.getImmunityToAttritionLessThan(scn.gameState(), luke), scn.epsilon);
+            }
         }
     }
 }

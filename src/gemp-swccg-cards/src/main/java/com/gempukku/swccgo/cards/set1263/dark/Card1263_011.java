@@ -18,9 +18,9 @@ import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.GameUtils;
 import com.gempukku.swccgo.logic.actions.PlayInterruptAction;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
-import com.gempukku.swccgo.logic.effects.CancelImmunityToAttritionUntilEndOfTurnEffect;
+import com.gempukku.swccgo.logic.effects.CancelImmunityToAttritionUntilEndOfBattleEffect;
 import com.gempukku.swccgo.logic.effects.DrawDestinyEffect;
-import com.gempukku.swccgo.logic.effects.ModifyPowerUntilEndOfTurnEffect;
+import com.gempukku.swccgo.logic.effects.ModifyPowerUntilEndOfBattleEffect;
 import com.gempukku.swccgo.logic.effects.RespondablePlayCardEffect;
 import com.gempukku.swccgo.logic.effects.TargetCardOnTableEffect;
 import com.gempukku.swccgo.logic.effects.choose.DeployCardFromReserveDeckEffect;
@@ -94,9 +94,9 @@ public class Card1263_011 extends AbstractNormalEffect {
                                                         Float total) {
                                 if (total != null && total + 3 > game.getModifiersQuerying()
                                         .getAbility(game.getGameState(), finalTarget)) {
-                                    action.appendEffect(new CancelImmunityToAttritionUntilEndOfTurnEffect(action, finalTarget,
+                                    action.appendEffect(new CancelImmunityToAttritionUntilEndOfBattleEffect(action, finalTarget,
                                             "Cancels " + GameUtils.getCardLink(finalTarget) + "'s immunity to attrition"));
-                                    action.appendEffect(new ModifyPowerUntilEndOfTurnEffect(action, finalTarget, -2));
+                                    action.appendEffect(new ModifyPowerUntilEndOfBattleEffect(action, finalTarget, -2));
                                 }
                             }
                         });
