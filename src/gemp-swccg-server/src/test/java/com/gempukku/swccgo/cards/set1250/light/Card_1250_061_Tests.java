@@ -98,7 +98,7 @@ public class Card_1250_061_Tests {
         scn.AttachCardsTo(system, scn.GetLSCard("wesa"));
         scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetLSCard("gungan"), scn.GetLSCard("gungan2"), scn.GetLSCard("ewok"), scn.GetLSCard("trooper"), scn.GetDSCard("emperor"));
         scn.MoveCardsToHand(scn.GetDSCard("lightning"), scn.GetDSCard("lightning2"), scn.GetDSCard("lightning3"));
-        scn.DSActivateForceCheat(12); scn.SkipToDSTurn(Phase.CONTROL);
+        scn.SkipToDSTurn(Phase.CONTROL);
     }
     private void lightning(VirtualTableScenario scn, String interrupt, String victim) {
         if (scn.AwaitingLSControlPhaseActions()) scn.LSPass();
@@ -144,6 +144,7 @@ public class Card_1250_061_Tests {
     }
     private void forfeitSecondNative(VirtualTableScenario scn) {
         int turn = scn.gameState().getPlayersLatestTurnNumber(scn.DS);
+        assertTrue(scn.GetDSForcePileCount() >= 1);
         scn.SkipToPhase(Phase.BATTLE); scn.DSInitiateBattle(scn.GetLSStartingLocation()); scn.PassAllResponses();
         assertEquals(turn, scn.gameState().getPlayersLatestTurnNumber(scn.DS));
         assertTrue(scn.AwaitingDSWeaponsSegmentActions());
@@ -166,14 +167,7 @@ public class Card_1250_061_Tests {
     @Test
     public void WesaReadySaveAllowanceResetsOnNextTurn() {
         var scn = scenario(); setupLoss(scn); lightning(scn, "lightning", "gungan"); save(scn);
-        try {
-            scn.SkipToLSTurn(Phase.CONTROL); scn.SkipToDSTurn(Phase.CONTROL);
-        }
-        catch (RuntimeException failure) {
-            throw new AssertionError("Reset transition: player=" + scn.gameState().getCurrentPlayerId()
-                    + ", phase=" + scn.gameState().getCurrentPhase() + ", decision="
-                    + (scn.GetCurrentDecision() == null ? "none" : scn.GetCurrentDecision().getText()), failure);
-        }
+        scn.SkipToLSTurn(Phase.CONTROL); scn.SkipToDSTurn(Phase.CONTROL);
         lightning(scn, "lightning3", "ewok"); save(scn); assertTrue(scn.GetLSUsedPile().contains(scn.GetLSCard("ewok")));
     }
     @Test
