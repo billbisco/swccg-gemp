@@ -90,8 +90,8 @@ public class Card_1261_086_Tests {
         test.setTargetedCard(TargetId.JEDI_TEST_MENTOR, null, yoda, Filters.sameCardId(yoda));
         test.setTargetedCard(TargetId.JEDI_TEST_APPRENTICE, null, leia, Filters.sameCardId(leia));
         if (boost) scn.AttachCardsTo(leia, scn.GetLSCard("reflection"));
-        scn.SkipToLSTurn(Phase.ACTIVATE); scn.PrepareLSDestiny(7);
-        scn.SkipToPhase(Phase.CONTROL);
+        scn.SkipToLSTurn(Phase.CONTROL);
+        scn.PrepareLSDestiny(7);
         assertTrue(scn.GetLSAvailableActions().toString(), scn.GetLSAvailableActions().stream().anyMatch(x -> x.contains("Attempt Jedi Test")));
         scn.LSUseCardAction(test, "Attempt Jedi Test");
         scn.PassAllResponses(); scn.PassDestinyDrawResponses(); scn.PassAllResponses();
