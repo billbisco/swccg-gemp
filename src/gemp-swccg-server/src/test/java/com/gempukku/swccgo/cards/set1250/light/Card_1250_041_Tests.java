@@ -51,8 +51,8 @@ public class Card_1250_041_Tests {
         s.SkipToPhase(Phase.BATTLE);
         assertFalse(s.LSCanInitiateBattle(enemy)); assertTrue(s.LSCanInitiateBattle(friendly));
         toMaintenance(s); s.LSChoose("to maintain"); s.PassAllResponses();
-        s.SkipToDSTurn(Phase.BATTLE); assertTrue(s.DSCanInitiateBattle(enemy));
-        s.SkipToLSTurn(Phase.BATTLE); assertTrue(s.LSCanInitiateBattle(enemy));
+        reachBattle(s, s.DS); assertTrue(s.DSCanInitiateBattle(enemy));
+        reachBattle(s, s.LS); assertTrue(s.LSCanInitiateBattle(enemy));
     }
 
     @Test
@@ -88,10 +88,9 @@ public class Card_1250_041_Tests {
         s.DSInitiateBattle(site);
         if (s.AwaitingDSWeaponsSegmentActions()) s.DSPass();
         assertTrue(s.AwaitingLSWeaponsSegmentActions());
-        assertTrue(s.LSCardActionAvailable(survivor)); s.LSUseCardAction(survivor);
-        if (s.LSHasCardChoiceAvailable(saber)) s.LSChooseCard(saber);
-        if (s.LSHasCardChoiceAvailable(target)) s.LSChooseCard(target);
-        s.PassDestinyDrawResponses(); s.PassAllResponses();
+        assertTrue(s.LSCardActionAvailable(saber, "Fire")); s.LSUseCardAction(saber, "Fire");
+        s.LSChooseCard(target);
+        s.PassWeaponFireWithDestinyDraw(2); s.PassAllResponses();
         assertTrue(target.isHit()); assertEquals(0, s.GetLSForcePileCount());
     }
 
@@ -105,6 +104,22 @@ public class Card_1250_041_Tests {
             s.PlayerPass(s.GetDecidingPlayer());
         }
         assertTrue(s.LSDecisionAvailable("Choose maintenance option"));
+    }
+
+    private void reachBattle(VirtualTableScenario s, String player) {
+        for (int i = 0; i < 60; i++) {
+            if (s.GetCurrentPlayer().equals(player)
+                    && (player.equals(s.LS) ? s.AwaitingLSBattlePhaseActions() : s.AwaitingDSBattlePhaseActions())) return;
+            String prompt = s.GetCurrentDecision().getText();
+            if (prompt.equals("You have not activated Force. Do you want to Pass?")) {
+                s.PlayerChooseYes(s.GetDecidingPlayer());
+            } else {
+                assertTrue(prompt, prompt.contains("action or Pass") || prompt.contains("Optional responses")
+                        || prompt.contains("RECIRCULATED"));
+                s.PlayerPass(s.GetDecidingPlayer());
+            }
+        }
+        fail("Expected next battle phase for " + player);
     }
 
     private VirtualTableScenario maintenanceSetup() {
@@ -129,6 +144,9 @@ public class Card_1250_041_Tests {
         var payment = s.GetLSCard("payment"); s.MoveCardsToHand(payment); s.LSActivateForceCheat(4); toMaintenance(s);
         assertTrue(s.LSChoiceAvailable("to recycle")); s.LSChoose("to recycle");
         s.PassAllResponses(); assertTrue(s.AwaitingLSForceLossPayment()); s.LSChooseCard(payment);
+        s.PassAllResponses();
+        if (s.LSDecisionAvailable("Choose card to put on Used Pile")) s.LSChooseCard(survivor);
+        if (s.LSDecisionAvailable("Choose card to put on Used Pile")) s.LSChooseCard(s.GetLSCard("saber"));
         s.PassAllResponses();
         assertTrue(s.GetLSLostPile().contains(payment));
         assertTrue(s.GetLSUsedPile().containsAll(List.of(survivor, s.GetLSCard("saber"))));
