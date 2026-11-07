@@ -24,7 +24,9 @@ public class Card_1261_108_Tests {
     private VirtualTableScenario fixture(int stack) {
         var ls = new HashMap<>(Map.of("hut", "4_89", "jungle", "4_86", "luke", "1_19", "yoda", "4_2", "han", "1_11",
                 "loss", "2_18", "testOne", "4_77", "testFive", "4_78", "backpack", "4_12", "commander", "601_52"));
-        return new VirtualTableScenario(ls, new HashMap<>(), 40, 40,
+        ls.putAll(Map.of("trainingArea", "4_88", "anoat", "4_80", "asteroid", "4_81",
+                "maintenance", "13_9", "permanentWeapon", "108_3"));
+        return new VirtualTableScenario(ls, new HashMap<>(Map.of("cantina", "1_290")), 40, 40,
                 new StartingSetup() {
                     @Override public HashMap<String, String> Cards() {
                         return new HashMap<>(Map.of("objective", "1261_108", "dagobah", "4_84", "strong", "1261_87"));
@@ -124,7 +126,7 @@ public class Card_1261_108_Tests {
             } else if (scn.GetLSAvailableActions().stream().anyMatch(x -> x.contains("Flip"))) {
                 scn.LSChooseAction("Flip");
             } else if (scn.GetLSAvailableActions().stream().anyMatch(x -> x.contains("Reveal top two"))) {
-                scn.LSUseCardAction(test, "Reveal top two");
+                scn.LSChooseAction("Reveal top two");
             } else if (prompt.toLowerCase().contains("optional response")) {
                 scn.PlayerPass(scn.GetDecidingPlayer());
             } else if (fifth && prompt.startsWith("Top cards of Reserve Deck")) {
@@ -253,4 +255,26 @@ public class Card_1261_108_Tests {
 
     @Test public void strongSuspendsACompletedTestUntilTheApprenticeReturns() { apprenticeLeavesTraining(true); }
     @Test public void unfinishedTestIsStillLostWhenTheApprenticeLeaves() { apprenticeLeavesTraining(false); }
+    private void strongRestrictions(boolean strongOnTable) {
+        var scn = fixture(0); scn.StartGame();
+        var strong = scn.GetLSCard("strong"); var training = scn.GetLSCard("trainingArea");
+        var cantina = scn.GetDSCard("cantina"); var anoat = scn.GetLSCard("anoat");
+        scn.MoveLocationToTable(training); scn.MoveLocationToTable(cantina); scn.MoveLocationToTable(anoat);
+        scn.MoveCardsToLocation(training, scn.GetLSCard("yoda"));
+        scn.MoveCardsToLocation(cantina, scn.GetLSCard("han"));
+        if (!strongOnTable) scn.MoveOutOfPlay(strong);
+        scn.MoveCardsToLSHand(scn.GetLSCard("asteroid"), scn.GetLSCard("maintenance"),
+                scn.GetLSCard("permanentWeapon"), scn.GetLSCard("luke"));
+        scn.LSActivateForceCheat(12); scn.SkipToLSTurn(Phase.CONTROL);
+        assertEquals(!strongOnTable, scn.LSForceDrainAvailable(training));
+        assertTrue(scn.LSForceDrainAvailable(cantina));
+        scn.SkipToPhase(Phase.DEPLOY);
+        for (String key : List.of("asteroid", "maintenance", "permanentWeapon")) {
+            assertEquals(key + " " + scn.GetLSAvailableActions(), !strongOnTable, scn.LSDeployAvailable(scn.GetLSCard(key)));
+        }
+        assertTrue(scn.LSDeployAvailable(scn.GetLSCard("luke")));
+    }
+
+    @Test public void strongBlocksDagobahDrainAndOnlyTheThreePrintedDeploymentKinds() { strongRestrictions(true); }
+    @Test public void theSameDrainAndCardDeploymentsAreLegalWithoutStrong() { strongRestrictions(false); }
 }
