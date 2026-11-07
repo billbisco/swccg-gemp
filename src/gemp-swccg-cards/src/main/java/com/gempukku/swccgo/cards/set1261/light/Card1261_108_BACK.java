@@ -20,7 +20,7 @@ import com.gempukku.swccgo.logic.effects.TargetCardOnTableEffect;
 import com.gempukku.swccgo.logic.modifiers.*;
 import com.gempukku.swccgo.logic.timing.Action;
 import com.gempukku.swccgo.logic.timing.EffectResult;
-import com.gempukku.swccgo.logic.timing.UnrespondableEffect;
+import com.gempukku.swccgo.logic.effects.UnrespondableEffect;
 
 import java.util.List;
 
