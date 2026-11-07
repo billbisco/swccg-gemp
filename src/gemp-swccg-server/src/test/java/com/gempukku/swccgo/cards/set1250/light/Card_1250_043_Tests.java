@@ -88,9 +88,43 @@ public class Card_1250_043_Tests {
         assertTrue(s.LSDecisionAvailable("Choose 1 destiny"));
         assertTrue(s.LSHasCardChoicesAvailable(high, low)); s.LSChooseCard(low);
         s.PassAllResponses(); s.SkipBattleDestinyDraws(false);
+        assertFalse(s.LSDecisionAvailable("into hand"));
         assertEquals(2, s.GetLSTotalDestiny());
         assertTrue(s.GetLSUsedPile().containsAll(List.of(high, low)));
+        assertFalse(s.GetLSHand().contains(high));
     }
+
+    private VirtualTableScenario battleAtOpponentsSystem() {
+        var s = scenario(); s.StartGame(); var system = s.GetDSStartingLocation();
+        var ship = s.GetLSCard("radiant");
+        s.MoveCardsToLocation(system, ship); s.BoardAsPilot(ship, s.GetLSCard("williams"));
+        s.MoveCardsToLocation(system, s.GetDSCard("devastator")); s.LSActivateForceCheat(6);
+        s.SkipToLSTurn(Phase.BATTLE);
+        s.LSInitiateBattle(system);
+        return s;
+    }
+
+    private void drawTwoAtOpponentsSystem(boolean takeIntoHand) {
+        var s = battleAtOpponentsSystem(); var high = s.GetLSDestiny(5); var low = s.GetLSDestiny(2);
+        s.MoveCardsToTopOfLSReserveDeck(high, low); s.SkipToPowerSegment();
+        assertTrue(s.LSDecisionAvailable("battle destiny?")); s.LSChooseYes(); passUntilChooseOffered(s);
+        assertTrue(chooseOffered(s)); s.LSUseCardAction(s.GetLSCard("williams"), CHOOSE);
+        s.PassDestinyDrawResponses(); s.PassAllResponses();
+        assertTrue(s.LSDecisionAvailable("Choose 1 destiny")); s.LSChooseCard(low);
+        assertTrue(s.LSDecisionAvailable("into hand"));
+        if (takeIntoHand) s.LSChooseYes(); else s.LSChooseNo();
+        s.PassAllResponses(); s.SkipBattleDestinyDraws(false);
+        assertEquals(2, s.GetLSTotalDestiny());
+        assertEquals(takeIntoHand, s.GetLSHand().contains(high));
+        assertEquals(!takeIntoHand, s.GetLSUsedPile().contains(high));
+        assertTrue(s.GetLSUsedPile().contains(low));
+    }
+
+    @Test
+    public void AtOpponentsSystemMayTakeTheOtherActualDestinyIntoHand() { drawTwoAtOpponentsSystem(true); }
+
+    @Test
+    public void AtOpponentsSystemMayDeclineAndTheOtherDestinyIsHandledAsNormal() { drawTwoAtOpponentsSystem(false); }
 
     @Test
     public void WilliamsAtAnotherSystemCannotReplaceActualBattleDestiny() {

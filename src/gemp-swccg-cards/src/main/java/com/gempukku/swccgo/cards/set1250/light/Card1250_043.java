@@ -48,7 +48,10 @@ public class Card1250_043 extends AbstractRepublic {
 
         OptionalGameTextTriggerAction action = new OptionalGameTextTriggerAction(self, gameTextSourceCardId);
         action.setText("Draw two battle destiny and choose one");
-        action.appendEffect(new DrawDestinyAndChooseInsteadEffect(action, 2, 1));
+        // "Opponent's system" is a system opponent owns (opponent always occupies the system during a battle there).
+        boolean opponentsSystem = GameConditions.canSpot(game, self,
+                Filters.and(Filters.opponents(self), Filters.system, Filters.here(self)));
+        action.appendEffect(new DrawDestinyAndChooseInsteadEffect(action, 2, 1).setMayTakeOtherIntoHand(opponentsSystem));
         return List.of(action);
     }
 }
