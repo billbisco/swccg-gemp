@@ -19,6 +19,7 @@ import java.util.HashMap;
 
 import static com.gempukku.swccgo.framework.Assertions.assertInZone;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class Card_1220_060_Tests {
@@ -26,6 +27,7 @@ public class Card_1220_060_Tests {
         return new VirtualTableScenario(
                 new HashMap<>() {{
                     put("luke", "1_19");
+                    put("corridor", "5_82");
                 }},
                 new HashMap<>() {{
                     put("hes", "1220_60");
@@ -84,5 +86,47 @@ public class Card_1220_060_Tests {
         scn.PassAllResponses();
         assertInZone(Zone.USED_PILE, hes);
         assertTrue(scn.game().getModifiersQuerying().hasUnusedGrantedAdditionalMoves(scn.gameState(), boba));
+    }
+
+    @Test
+    public void HesAllYoursGrantedMovesAreNotConsumedByTheRegularLandspeedMove() {
+        // Engine check: a landspeed move records the regular move once, so the two granted moves stay available
+        // for a second and third move, and a fourth move is not allowed.
+        var scn = GetScenario();
+        var hes = scn.GetDSCard("hes");
+        var boba = scn.GetDSCard("boba");
+        var luke = scn.GetLSCard("luke");
+        var from = scn.GetLSStartingLocation();
+        var to = scn.GetLSCard("corridor");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(to);
+        scn.MoveCardsToLocation(from, boba, luke);
+        scn.CaptureCardWith(boba, luke);
+        scn.MoveCardsToDSHand(hes);
+        scn.DSActivateForceCheat(4);
+        scn.SkipToDSTurn(Phase.MOVE);
+        scn.DSPlayCard(hes, "Grant two additional moves");
+        scn.PassAllResponses();
+        scn.LSPass();
+
+        scn.DSMoveCard(boba, to);
+        scn.PassAllResponses();
+        scn.LSPass();
+        assertEquals(to, boba.getAtLocation());
+        assertEquals(0, scn.game().getModifiersQuerying().getGrantedAdditionalMovesUsedThisTurn(boba));
+
+        scn.DSMoveCard(boba, from);
+        scn.PassAllResponses();
+        scn.LSPass();
+        assertEquals(from, boba.getAtLocation());
+        assertEquals(1, scn.game().getModifiersQuerying().getGrantedAdditionalMovesUsedThisTurn(boba));
+
+        scn.DSMoveCard(boba, to);
+        scn.PassAllResponses();
+        scn.LSPass();
+        assertEquals(to, boba.getAtLocation());
+        assertEquals(2, scn.game().getModifiersQuerying().getGrantedAdditionalMovesUsedThisTurn(boba));
+        assertFalse(scn.DSCardActionAvailable(boba, "Move"));
     }
 }
