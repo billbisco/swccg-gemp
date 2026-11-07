@@ -24,7 +24,7 @@ public class Card_1261_014_Tests {
         assertEquals(1, b.getDestiny(), scn.epsilon); assertEquals(5, b.getDeployCost(), scn.epsilon);
         assertEquals(5, b.getPower(), scn.epsilon); assertEquals(5, b.getArmor(), scn.epsilon); assertEquals(5, b.getForfeit(), scn.epsilon);
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_6_1, b.getExpansionSet()); assertEquals(Rarity.V, b.getRarity());
-        scn.BlueprintCardTypeCheck(b, new ArrayList<>() {{ add(CardType.CHARACTER); }});
+        scn.BlueprintCardTypeCheck(b, new ArrayList<>() {{ add(CardType.DROID); }});
         scn.BlueprintKeywordCheck(b, new ArrayList<>());
         scn.BlueprintModelTypeCheck(b, new ArrayList<>() {{ add(ModelType.DESTROYER); }});
         scn.BlueprintIconCheck(b, new ArrayList<>() {{ add(Icon.PERMANENT_WEAPON); add(Icon.PRESENCE); add(Icon.THEED_PALACE); add(Icon.EPISODE_I); add(Icon.LEGACY_BLOCK_6); }});
