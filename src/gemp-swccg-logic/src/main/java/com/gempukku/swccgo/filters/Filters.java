@@ -13772,6 +13772,29 @@ public class Filters {
     }
 
     /**
+     * Gets a filter representing the locations added to the specified creature's habitat by modifiers.
+     * @param creature the creature
+     * @return the filter
+     */
+    public static Filter habitatIncludedByModifiers(PhysicalCard creature) {
+        final Integer permCreatureCardId = creature.getPermanentCardId();
+        return new Filter() {
+            @Override
+            public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard) {
+                PhysicalCard creatureCard = gameState.findCardByPermanentId(permCreatureCardId);
+                if (creatureCard == null)
+                    return false;
+                for (com.gempukku.swccgo.logic.modifiers.Modifier modifier : modifiersQuerying.getModifiersAffectingCard(gameState,
+                        com.gempukku.swccgo.logic.modifiers.ModifierType.HABITAT_INCLUDES_LOCATION, creatureCard)) {
+                    if (modifier.isAffectedTarget(gameState, modifiersQuerying, physicalCard))
+                        return true;
+                }
+                return false;
+            }
+        };
+    }
+
+    /**
      * Gets a filter representing the card the specified card is granted the ability to deploy to.
      * @param cardToDeploy the card to deploy
      * @param reactActionOption a 'react' action option, or null if not a 'react'
@@ -19572,6 +19595,15 @@ public class Filters {
     public static final Filter Special_Delivery = Filters.title(Title.Special_Delivery);
     public static final Filter Special_Modifications = Filters.title(Title.Special_Modifications);
     public static final Filter speeder = Filters.or(ModelType.SPEEDER_BIKE, Keyword.SPEEDER, Keyword.LANDSPEEDER, Keyword.SANDSPEEDER, Keyword.SNOWSPEEDER);
+    /**
+     * Filter that accepts cards that may be 'thrown' (are not prevented from being 'thrown' by a modifier).
+     */
+    public static final Filter canBeThrown = new Filter() {
+        @Override
+        public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard) {
+            return !modifiersQuerying.mayNotBeThrown(gameState, physicalCard);
+        }
+    };
     public static final Filter speeder_bike = Filters.modelType(ModelType.SPEEDER_BIKE);
     public static final Filter Spice_Mines_Of_Kessel = Filters.title(Title.Spice_Mines_Of_Kessel);
     public static final Filter spy = Filters.keyword(Keyword.SPY);

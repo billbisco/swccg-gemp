@@ -362,6 +362,7 @@ public interface Title {
     String Dianoga = "Dianoga";
     String Dice_Ibegon = "Dice Ibegon";
     String Dining_Room = "Cloud City: Dining Room";
+    String Altering_The_Deal = "Altering The Deal";
     String Diplomatic_Mission_To_Alderaan = "Diplomatic Mission To Alderaan";
     String Disarmed = "Disarmed";
     String Disarming_Creature = "Disarming Creature";

@@ -13,6 +13,7 @@ import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.SpotOverride;
 import com.gempukku.swccgo.common.TargetingReason;
 import com.gempukku.swccgo.common.Title;
+import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.AbstractActionProxy;
 import com.gempukku.swccgo.game.PhysicalCard;
@@ -294,7 +295,8 @@ public class Card9_151 extends AbstractObjective {
                 action.setText("Deploy Luke from Reserve Deck");
                 // Perform result(s)
                 action.appendEffect(
-                        new DeployCardFromReserveDeckEffect(action, Filters.or(Filters.Luke, Filters.grantedMayBeTargetedBy(self)), -2, true) {
+                        (lukeDeploysToVadersSite(game, self)
+                                ? new DeployCardFromReserveDeckEffect(action, Filters.or(Filters.Luke, Filters.grantedMayBeTargetedBy(self)), vadersSite(self), -2, true) {
                             @Override
                             protected void cardDeployed(PhysicalCard card) {
                                 if (Filters.title("Kanan, Rebel Infiltrator").accepts(game, card)) {
@@ -302,7 +304,16 @@ public class Card9_151 extends AbstractObjective {
                                     game.getModifiersEnvironment().addUntilEndOfGameModifier(new ModifyGameTextModifier(card, Filters.or(Filters.and(Filters.opponents(card), Icon.DEATH_STAR_II, Filters.Objective), Filters.Insignificant_Rebellion, Filters.Your_Destiny), ModifyGameTextType.BRING_HIM_BEFORE_ME__TARGETS_KANAN_INSTEAD_OF_LUKE));
                                 }
                             }
-                        });
+                        }
+                                : new DeployCardFromReserveDeckEffect(action, Filters.or(Filters.Luke, Filters.grantedMayBeTargetedBy(self)), -2, true) {
+                            @Override
+                            protected void cardDeployed(PhysicalCard card) {
+                                if (Filters.title("Kanan, Rebel Infiltrator").accepts(game, card)) {
+                                    game.getGameState().sendMessage(playerId + " Make Insignificant Rebellion, Your Destiny, and opponent's [Death Star II] objective target Kanan instead of Luke for remainder of game using " + GameUtils.getCardLink(card));
+                                    game.getModifiersEnvironment().addUntilEndOfGameModifier(new ModifyGameTextModifier(card, Filters.or(Filters.and(Filters.opponents(card), Icon.DEATH_STAR_II, Filters.Objective), Filters.Insignificant_Rebellion, Filters.Your_Destiny), ModifyGameTextType.BRING_HIM_BEFORE_ME__TARGETS_KANAN_INSTEAD_OF_LUKE));
+                                }
+                            }
+                        }));
                 actions.add(action);
             }
 
@@ -315,7 +326,8 @@ public class Card9_151 extends AbstractObjective {
                 action.setText("Deploy Luke from Lost Pile");
                 // Perform result(s)
                 action.appendEffect(
-                        new DeployCardFromLostPileEffect(action, Filters.or(Filters.Luke, Filters.grantedMayBeTargetedBy(self)), false) {
+                        new DeployCardFromLostPileEffect(action, Filters.or(Filters.Luke, Filters.grantedMayBeTargetedBy(self)),
+                                lukeDeploysToVadersSite(game, self) ? vadersSite(self) : null, false, false) {
                             @Override
                             protected void cardDeployed(PhysicalCard card) {
                                 if (Filters.title("Kanan, Rebel Infiltrator").accepts(game, card)) {
@@ -329,6 +341,16 @@ public class Card9_151 extends AbstractObjective {
 
             return actions;
         }
+    }
+
+    // Legacy So Be It, Jedi: "When Luke deploys using your Objective, he deploys to Vader's site (if possible)."
+    private static boolean lukeDeploysToVadersSite(SwccgGame game, PhysicalCard self) {
+        return GameConditions.hasGameTextModification(game, self, ModifyGameTextType.LEGACY__SO_BE_IT_JEDI__LUKE_DEPLOYS_TO_VADERS_SITE)
+                && GameConditions.canSpot(game, self, Filters.and(Filters.Vader, Filters.at(Filters.site)));
+    }
+
+    private static Filter vadersSite(PhysicalCard self) {
+        return Filters.and(Filters.site, Filters.sameSiteAs(self, Filters.Vader));
     }
 
     @Override

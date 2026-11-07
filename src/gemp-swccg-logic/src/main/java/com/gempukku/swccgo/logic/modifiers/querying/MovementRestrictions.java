@@ -42,7 +42,32 @@ public interface MovementRestrictions extends BaseQuery, Locations {
             return true;
         }
 
-        return (!getModifiersAffectingCard(gameState, ModifierType.MAY_NOT_MOVE, card).isEmpty());
+        List<Modifier> mayNotMoveModifiers = getModifiersAffectingCard(gameState, ModifierType.MAY_NOT_MOVE, card);
+        if (mayNotMoveModifiers.isEmpty()) {
+            return false;
+        }
+        if (!gameState.isMovingAsReactTowardBattle(card)) {
+            return true;
+        }
+        // During a 'react' (other than away from battle), ignore prohibitions from cards that may not prevent that.
+        for (Modifier modifier : mayNotMoveModifiers) {
+            if (!mayNotPreventMovingAsReact(gameState, modifier.getSource(gameState))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Determines if the specified card is prohibited from preventing cards from moving as a 'react'
+     * (except as a 'react' away from battle).
+     * @param gameState the game state
+     * @param card the card that would prevent the movement, or null
+     * @return true or false
+     */
+    default boolean mayNotPreventMovingAsReact(GameState gameState, PhysicalCard card) {
+        return card != null
+                && !getModifiersAffectingCard(gameState, ModifierType.MAY_NOT_PREVENT_MOVING_AS_REACT, card).isEmpty();
     }
 
     /**
