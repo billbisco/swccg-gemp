@@ -18,7 +18,7 @@ public class Card_1250_050_Tests {
 
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>() {{
-            put("jarJar", "1250_50"); put("electropole", "14_65"); put("plains", "12_79");
+            put("jarJar", "1250_50"); put("electropole", "14_65"); put("jarJarPole", "13_25"); put("tarpalsPole", "14_64"); put("plains", "12_79");
             put("speeder", "14_60"); put("snow", "3_69"); put("dual", "3_74");
             put("wrongNaboo", "14_51"); put("dock", "12_74"); put("mace", "14_19");
             put("home", "8_69"); put("related", "8_77"); put("luke", "1_19");
@@ -104,6 +104,23 @@ public class Card_1250_050_Tests {
         s.gameState().markCardsRevealedFromPile(List.of(marker)); assertTrue(s.gameState().isCardRevealedFromPile(marker));
         deployFromReserve(s, "electropole", true);
         assertFalse(s.gameState().isCardRevealedFromPile(marker));
+    }
+
+    @Test
+    public void SenatorJarJarDownloadsNamedElectropolesToo() {
+        var s = search(false); s.LSActivateForceCheat(3);
+        s.MoveCardsToTopOfLSReserveDeck(s.GetLSCard("jarJarPole"), s.GetLSCard("tarpalsPole"));
+        assertTrue(action(s, DOWNLOAD));
+        s.LSUseCardAction(s.GetLSCard("jarJar"), DOWNLOAD); s.PassAllResponses();
+        assertSelectable(s, "jarJarPole", true);
+        assertSelectable(s, "electropole", true);
+        var pole = s.GetLSCard("jarJarPole");
+        s.LSChooseCard(pole); s.PassAllResponses();
+        if (s.LSDecisionAvailable("Choose where to deploy") || s.LSDecisionAvailable("Choose location where to deploy")) {
+            s.LSChooseCard(s.GetLSCard("jarJar"));
+        }
+        s.PassAllResponses();
+        assertEquals(s.GetLSCard("jarJar"), pole.getAttachedTo());
     }
 
     @Test
