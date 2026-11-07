@@ -52,17 +52,21 @@ public class Card_1263_031_Tests {
         scn.gameState().markCardsRevealedFromPile(Collections.singletonList(scn.GetLSCard("xwing")));
         assertTrue(scn.gameState().isCardRevealedFromPile(scn.GetLSCard("xwing")));
     }
+    private boolean selectable(VirtualTableScenario scn, String key) {
+        int index = scn.LSGetADParamAsList("cardId").indexOf(Integer.toString(scn.GetLSCard(key).getCardId()));
+        return index >= 0 && Boolean.parseBoolean(scn.LSGetADParamAsList("selectable").get(index));
+    }
     @Test public void FaultPaysOneToTakeAnImmediateEffectAndReshuffle() {
         var scn = ready(1, "hand"); markReserve(scn); scn.LSPlayCard(scn.GetLSCard("fault"), IMMEDIATE); scn.PassAllResponses();
-        assertTrue(scn.LSHasCardChoiceAvailable(scn.GetLSCard("immediate")));
-        assertFalse(scn.LSHasCardChoiceAvailable(scn.GetLSCard("oldPhylo"))); assertFalse(scn.LSHasCardChoiceAvailable(scn.GetLSCard("traffic")));
+        assertTrue(selectable(scn, "immediate"));
+        assertFalse(selectable(scn, "oldPhylo")); assertFalse(selectable(scn, "traffic"));
         scn.LSChooseCard(scn.GetLSCard("immediate")); scn.PassAllResponses();
         assertInHand(scn.GetLSCard("immediate")); assertInZone(Zone.USED_PILE, scn.GetLSCard("fault")); assertEquals(0, scn.GetLSForcePileCount()); assertReshuffled(scn);
     }
     @Test public void FaultPaysTwoToTakeFreeEffectAndReshuffle() {
         var scn = ready(2, "hand"); markReserve(scn); scn.LSPlayCard(scn.GetLSCard("fault"), FREE); scn.PassAllResponses();
-        assertTrue(scn.LSHasCardChoiceAvailable(scn.GetLSCard("traffic")));
-        assertFalse(scn.LSHasCardChoiceAvailable(scn.GetLSCard("paid"))); assertFalse(scn.LSHasCardChoiceAvailable(scn.GetLSCard("xwing")));
+        assertTrue(selectable(scn, "traffic"));
+        assertFalse(selectable(scn, "paid")); assertFalse(selectable(scn, "xwing"));
         scn.LSChooseCard(scn.GetLSCard("traffic")); scn.PassAllResponses();
         assertInHand(scn.GetLSCard("traffic")); assertInZone(Zone.USED_PILE, scn.GetLSCard("fault")); assertEquals(0, scn.GetLSForcePileCount()); assertReshuffled(scn);
     }

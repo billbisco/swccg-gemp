@@ -77,6 +77,10 @@ public class Card_1261_084_Tests {
         if (scn.LSHasCardChoiceAvailable(scn.GetLSCard(target))) scn.LSChooseCard(scn.GetLSCard(target));
         scn.PassAllResponses(); assertInZone(Zone.USED_PILE, scn.GetLSCard(target));
     }
+    private boolean selectable(VirtualTableScenario scn, String key) {
+        int index = scn.LSGetADParamAsList("cardId").indexOf(Integer.toString(scn.GetLSCard(key).getCardId()));
+        return index >= 0 && Boolean.parseBoolean(scn.LSGetADParamAsList("selectable").get(index));
+    }
     @Test public void RepublicLogisticsPaysLostJawaAndRetrievesActualAbilityFourCharacter() {
         var scn = lost("jawa", "luke"); chooseCost(scn, "jawa"); chooseRetrieved(scn, "luke");
     }
@@ -93,8 +97,8 @@ public class Card_1261_084_Tests {
     @Test public void RepublicLogisticsRetrievalExcludesAbilityFiveWeaponMaintenanceAndNonUnique() {
         var scn = lost("jawa", "luke", "red1", "leia", "han", "falcon", "xwing", "traffic");
         chooseCost(scn, "jawa");
-        assertTrue(scn.LSHasCardChoiceAvailable(scn.GetLSCard("luke"))); assertTrue(scn.LSHasCardChoiceAvailable(scn.GetLSCard("red1")));
-        for (String key : new String[]{"leia", "han", "falcon", "xwing", "traffic"}) assertFalse(key, scn.LSHasCardChoiceAvailable(scn.GetLSCard(key)));
+        assertTrue(selectable(scn, "luke")); assertTrue(selectable(scn, "red1"));
+        for (String key : new String[]{"leia", "han", "falcon", "xwing", "traffic"}) assertFalse(key, selectable(scn, key));
         chooseRetrieved(scn, "luke"); assertInZone(Zone.LOST_PILE, scn.GetLSCard("red1"));
     }
     @Test public void RepublicLogisticsOncePerTurnAndResetsOnOpponentTurn() {
