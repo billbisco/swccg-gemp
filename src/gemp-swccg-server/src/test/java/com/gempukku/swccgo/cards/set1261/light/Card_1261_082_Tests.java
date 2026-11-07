@@ -6,6 +6,7 @@ import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
 import com.gempukku.swccgo.logic.effects.SuspendCardUntilEndOfTurnEffect;
+import com.gempukku.swccgo.logic.effects.ThrowCardEffect;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -27,6 +28,8 @@ public class Card_1261_082_Tests {
                 "xwing", "1_146", "xwingCannon", "7_162", "rapidFire", "7_100",
                 "onTarget", "7_96", "luckyShot", "3_45", "steadyAim", "7_105", "speederCannon", "3_74"));
         ls.put("lightAlter", "1_71");
+        ls.put("dack", "3_4");
+        ls.put("leia", "1_17");
         var ds = new HashMap<>(Map.of("darkEffect", "4_116", "vader", "1_168", "alter", "1_234", "capital", "1_301", "walker", "3_157"));
         return new VirtualTableScenario(ls, ds, 40, 40, StartingSetup.DefaultLSGroundLocation,
                 StartingSetup.DefaultDSGroundLocation, StartingSetup.NoLSStartingInterrupts,
@@ -83,24 +86,72 @@ public class Card_1261_082_Tests {
     @Test public void revealsACombatVehicleAndDeploysItsReservePilot() { pair(false); }
     @Test public void revealsAPilotAndDeploysItsReserveCombatVehicle() { pair(true); }
 
-    @Test public void flapsDeploysAndNativeSuspensionCannotDisableIt() {
+    @Test public void flapsDeploysAndMayBeSuspendedLikeAnyEffect() {
+        // The Legacy printed text has no "May not be suspended." (that was on the 200_043 V version).
         var scn = fixture(); scn.StartGame();
         var flaps = scn.GetLSCard("flaps"); var ordinary = scn.GetLSCard("controlEffect");
         scn.MoveCardsToLSHand(flaps); scn.SkipToLSTurn(Phase.DEPLOY);
         scn.LSPlayCard(flaps); scn.PassAllResponses();
         assertEquals(Zone.SIDE_OF_TABLE, flaps.getZone());
+        assertFalse(flaps.getBlueprint().getGameText().contains("suspended"));
         scn.MoveCardsToLSSideOfTable(ordinary);
-        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetDSCard("vader"));
-        scn.MoveCardsToDSHand(scn.GetDSCard("alter"));
-        scn.SkipToDSTurn(Phase.CONTROL); scn.EnsureDSForcePile(8);
-        assertTrue(flaps.getBlueprint().isImmuneToCardTitle(Title.Alter));
+        scn.SkipToDSTurn(Phase.CONTROL);
         var action = new TopLevelGameTextAction(scn.GetDSStartingLocation(), scn.DS, scn.GetDSStartingLocation().getCardId());
         action.appendEffect(new SuspendCardUntilEndOfTurnEffect(action, ordinary));
         action.appendEffect(new SuspendCardUntilEndOfTurnEffect(action, flaps));
         scn.carryOutEffectInPhaseActionByPlayer(scn.DS, action);
         scn.PassAllResponses();
         assertFalse(scn.IsCardActive(ordinary));
-        assertTrue(scn.IsCardActive(flaps));
+        assertFalse(scn.IsCardActive(flaps));
+    }
+
+    // ---- "Your vehicles with a pilot character or gunner aboard are not hit when 'thrown.'" ----
+
+    /** Vader 'throws' the vehicle (shared ThrowCardEffect) during DS's control phase; returns whether it was 'hit'. */
+    private boolean throwVehicle(boolean flapsOnTable, String vehicleKey, boolean dsVehicle, String pilotKey, String passengerKey) {
+        var scn = fixture(); scn.StartGame();
+        var site = scn.GetLSCard("hoth");
+        scn.MoveLocationToTable(site);
+        var vader = scn.GetDSCard("vader");
+        var vehicle = dsVehicle ? scn.GetDSCard(vehicleKey) : scn.GetLSCard(vehicleKey);
+        scn.MoveCardsToLocation(site, vader, vehicle);
+        if (pilotKey != null) scn.BoardAsPilot(vehicle, scn.GetLSCard(pilotKey));
+        if (passengerKey != null) scn.BoardAsPassenger(vehicle, scn.GetLSCard(passengerKey));
+        if (flapsOnTable) scn.MoveCardsToLSSideOfTable(scn.GetLSCard("flaps"));
+        scn.SkipToDSTurn(Phase.CONTROL);
+        var action = new TopLevelGameTextAction(vader, scn.DS, vader.getCardId());
+        action.appendEffect(new ThrowCardEffect(action, vehicle, vader));
+        scn.carryOutEffectInPhaseActionByPlayer(scn.DS, action);
+        boolean aboutToBeHitWindow = scn.GetCurrentDecision() != null && scn.GetCurrentDecision().getText().contains("ABOUT_TO_BE_HIT");
+        scn.PassAllResponses();
+        // A vehicle 'hit' outside of battle is lost right away, so 'hit' shows as having left the site.
+        boolean hit = vehicle.isHit() || vehicle.getZone() != Zone.AT_LOCATION;
+        assertEquals("the 'hit' goes through the normal about-to-be-hit window", hit, aboutToBeHitWindow);
+        return hit;
+    }
+
+    @Test public void yourVehicleWithAPilotCharacterAboardIsNotHitWhenThrown() {
+        assertFalse(throwVehicle(true, "rogue", false, "luke", null));
+    }
+
+    @Test public void yourVehicleWithAGunnerAboardIsNotHitWhenThrown() {
+        assertFalse(throwVehicle(true, "differentVehicle", false, null, "dack"));
+    }
+
+    @Test public void withoutFlapsTheSamePilotedVehicleIsHitWhenThrown() {
+        assertTrue(throwVehicle(false, "rogue", false, "luke", null));
+    }
+
+    @Test public void yourEmptyVehicleIsStillHitWhenThrown() {
+        assertTrue(throwVehicle(true, "differentVehicle", false, null, null));
+    }
+
+    @Test public void yourVehicleWithOnlyANonPilotNonGunnerAboardIsStillHitWhenThrown() {
+        assertTrue(throwVehicle(true, "differentVehicle", false, null, "leia"));
+    }
+
+    @Test public void opponentsVehiclesAreStillHitWhenThrown() {
+        assertTrue(throwVehicle(true, "walker", true, null, null));
     }
 
     private void tacticsDraw(boolean accept) {
