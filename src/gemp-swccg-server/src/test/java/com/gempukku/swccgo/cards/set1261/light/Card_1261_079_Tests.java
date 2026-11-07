@@ -99,6 +99,7 @@ public class Card_1261_079_Tests {
         scn.carryOutEffectInPhaseActionByPlayer(scn.LS, action);
         scn.PassAllResponses();
         if (independent) {
+            finishOrderedLosses(scn, lost);
             assertTrue(scn.GetLSLostPile().contains(lost));
         } else {
             assertTrue(lost.getZone().isInPlay());
@@ -107,8 +108,19 @@ public class Card_1261_079_Tests {
             var cancel = new TopLevelGameTextAction(site, scn.LS, site.getCardId());
             cancel.appendEffect(new CancelBattleEffect(cancel));
             scn.carryOutEffectInPhaseActionByPlayer(scn.LS, cancel);
-            scn.PassAllResponses();
+            finishOrderedLosses(scn, lost);
             assertTrue(scn.GetLSLostPile().contains(lost));
+        }
+    }
+
+    private void finishOrderedLosses(VirtualTableScenario scn, com.gempukku.swccgo.game.PhysicalCardImpl lost) {
+        for (int i = 0; i < 8; i++) {
+            scn.PassAllResponses();
+            if (!scn.LSDecisionAvailable("Choose card to be lost")) return;
+            var pilot = scn.GetLSCard("commander");
+            if (scn.LSHasCardChoiceAvailable(pilot)) scn.LSChooseCard(pilot);
+            else if (scn.LSHasCardChoiceAvailable(lost)) scn.LSChooseCard(lost);
+            else return;
         }
     }
 

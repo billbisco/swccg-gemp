@@ -93,7 +93,9 @@ public class Card1261_079 extends AbstractNormalEffect {
                 if (!TriggerConditions.battleEnded(game, result) && !TriggerConditions.battleCanceled(game, result)) return List.of();
                 var source = game.findCardByPermanentId(key);
                 if (source == null) return List.of();
-                var pending = source.getForRemainderOfGameData().get(key).getPhysicalCards();
+                var data = source.getForRemainderOfGameData().get(key);
+                if (data == null) return List.of();
+                var pending = data.getPhysicalCards();
                 pending.removeIf(card -> !Filters.onTable.accepts(game, card));
                 if (pending.isEmpty()) return List.of();
                 var action = new RequiredGameTextTriggerAction(source, source.getCardId(), GameTextActionId.OTHER_CARD_ACTION_2);
