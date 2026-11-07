@@ -15,7 +15,7 @@ import com.gempukku.swccgo.logic.TriggerConditions;
 import com.gempukku.swccgo.logic.actions.PlayCardAction;
 import com.gempukku.swccgo.logic.actions.PlayEpicEventAction;
 import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
-import com.gempukku.swccgo.logic.actions.TopLevelEpicEventGameTextAction;
+import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
 import com.gempukku.swccgo.logic.decisions.MultipleChoiceAwaitingDecision;
 import com.gempukku.swccgo.logic.effects.*;
 import com.gempukku.swccgo.logic.effects.choose.DeployCardFromReserveDeckEffect;
@@ -155,13 +155,13 @@ public class Card1220_138 extends AbstractEpicEventDeployable {
     }
 
     @Override
-    protected List<TopLevelEpicEventGameTextAction> getEpicEventGameTextTopLevelActions(
+    protected List<TopLevelGameTextAction> getGameTextTopLevelActions(
             String playerId, SwccgGame game, PhysicalCard self, int sourceId) {
         if (!playerId.equals(self.getOwner()) || !onJediSide(self)
                 || !GameConditions.isDuringYourTurn(game, playerId) || !GameConditions.hasHand(game, playerId)) return List.of();
         int cost = game.getGameState().getStackedCards(self).size();
         if (cost > 0 && !GameConditions.canUseForce(game, playerId, cost)) return List.of();
-        var action = new TopLevelEpicEventGameTextAction(self, playerId, sourceId);
+        var action = new TopLevelGameTextAction(self, playerId, sourceId);
         action.setText("Stack a card from hand face up");
         if (cost > 0) action.appendCost(new UseForceEffect(action, playerId, cost));
         action.appendEffect(new StackCardFromHandEffect(action, playerId, self));
