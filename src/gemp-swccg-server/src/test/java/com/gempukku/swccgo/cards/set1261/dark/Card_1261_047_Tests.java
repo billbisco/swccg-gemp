@@ -212,8 +212,19 @@ public class Card_1261_047_Tests {
         assertFalse("Finish the battle before changing turns", scn.gameState().isDuringBattle());
         String battleTurn = scn.GetCurrentPlayer();
         scn.SkipToPhase(Phase.DRAW);
-        scn.PassDrawActions();
-        scn.PassResponses("RECIRCULATED");
+        for (int i = 0; i < 12 && battleTurn.equals(scn.GetCurrentPlayer()); i++) {
+            var decision = scn.GetCurrentDecision();
+            assertNotNull("Turn ended without reaching the next player", decision);
+            String prompt = decision.getText();
+            if (prompt.contains("Do you want to Pass?"))
+                scn.PlayerChooseOption(scn.GetDecidingPlayer(), "Yes");
+            else {
+                assertTrue("Unexpected turn-end decision: " + prompt,
+                        prompt.toLowerCase().contains("optional") || prompt.contains("action")
+                                || prompt.toLowerCase().contains("draw"));
+                scn.PlayerPass(scn.GetDecidingPlayer());
+            }
+        }
         assertNotEquals("The actual turn must end before checking expiry", battleTurn, scn.GetCurrentPlayer());
         assertFalse(bountyProhibited(scn, luke));
     }
