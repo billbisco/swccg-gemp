@@ -21,17 +21,22 @@ public class Card_1250_033_Tests {
     private static final String BOOST = "Add 1 to Force drain";
 
     private VirtualTableScenario scenario() {
+        StartingSetup objectiveOutsideDeck = new StartingSetup() {
+            @Override public HashMap<String, String> Cards() {
+                return new HashMap<>() {{ put("objective", "14_52"); }};
+            }
+            @Override public void Setup(VirtualTableScenario s) { }
+        };
         return new VirtualTableScenario(new HashMap<>() {{
             put("order", "1250_33"); put("endor", "8_68"); put("site", "8_69"); put("otherSite", "8_77");
             put("nonBg", "8_70"); put("unrelated", "12_74"); put("bespin", "5_76"); put("clouds", "5_85");
             put("capital", "2_73"); put("red", "103_2"); put("gold", "103_1"); put("artoo", "111_2");
             put("luke", "1_19"); put("trooper", "1_28"); put("speeder", "3_69"); put("k2", "206_5");
-            put("objective", "14_52");
         }}, new HashMap<>() {{
             put("capital", "1_301"); put("droid", "14_73"); put("trooper", "1_194"); put("scout", "8_175");
         }}, 35, 35, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
-                StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
+                objectiveOutsideDeck, StartingSetup.NoDSShields, VirtualTableScenario.Open);
     }
 
     private VirtualTableScenario setup() {
@@ -186,7 +191,10 @@ public class Card_1250_033_Tests {
         var s = setup(); var endor = s.GetLSCard("endor");
         s.MoveCardsToLocation(endor, s.GetLSCard("red"), s.GetLSCard("gold"));
         s.MoveCardsToLocation(thirdAtSystem ? endor : s.GetLSCard("bespin"), s.GetLSCard("artoo"));
-        if (objective) s.MoveCardsToLSSideOfTable(s.GetLSCard("objective"));
+        if (objective) {
+            s.MoveCardsToLSSideOfTable(s.GetLSCard("objective"));
+            s.GetLSCard("objective").setObjectiveDeploymentComplete(true);
+        }
         s.MoveCardsToLocation(s.GetLSCard(location), s.GetLSCard("luke"));
         advance(s, s.LS, Phase.CONTROL);
         lightDrain(s, location, offer, offer, base + (offer ? 1 : 0), Math.min(2, base + (offer ? 1 : 0)));
