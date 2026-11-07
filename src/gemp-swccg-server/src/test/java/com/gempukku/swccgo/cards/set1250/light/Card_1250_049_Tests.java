@@ -169,15 +169,21 @@ public class Card_1250_049_Tests {
     private VirtualTableScenario restrictedBattle(boolean piloting, boolean yodaRestriction) {
         var s = scenario(); s.StartGame(); var site = s.GetLSStartingLocation();
         var plo = s.GetLSCard("plo"); var speeder = s.GetLSCard("speeder");
-        s.MoveCardsToLocation(site, plo, speeder, s.GetLSCard("warrior"), s.GetLSCard("luke"), s.GetDSCard("trooper"));
-        if (piloting) s.BoardAsPilot(speeder, plo); else s.BoardAsPassenger(speeder, plo);
+        s.MoveCardsToLocation(site, speeder, s.GetLSCard("warrior"), s.GetLSCard("luke"), s.GetDSCard("trooper"));
+        s.MoveCardsToHand(plo);
         // Keep the back side up: the printed Objective flips without a Dark Jedi at an interior Naboo battleground.
         var naboo = s.GetLSCard("naboo"); s.MoveLocationToTable(naboo); s.MoveCardsToLocation(naboo, s.GetDSCard("vader"));
         var objective = s.GetLSCard("objective"); s.MoveCardsToLSSideOfTable(objective);
         objective.setObjectiveDeploymentComplete(true); s.gameState().flipCard(s.game(), objective, true);
         if (yodaRestriction) s.MoveCardsToLocation(site, s.GetLSCard("yoda"));
-        s.SkipToLSTurn(Phase.BATTLE);
+        s.SkipToLSTurn(Phase.CONTROL); s.LSActivateForceCheat(6); s.SkipToPhase(Phase.DEPLOY);
+        s.LSDeployCard(plo); s.LSChooseCard(speeder);
+        s.LSChooseOption(piloting ? "Pilot" : "Passenger"); s.PassAllResponses();
+        assertEquals(piloting, s.IsAboardAsPilot(speeder, plo));
+        s.SkipToPhase(Phase.BATTLE);
         assertEquals("Duel Of The Fates", objective.getBlueprint().getTitle());
+        assertEquals("Only the pilot overrides the Objective", piloting, s.game().getModifiersQuerying()
+                .ignoresObjectiveRestrictionsWhenInitiatingBattleAtLocation(s.gameState(), site, objective, s.LS));
         return s;
     }
 
