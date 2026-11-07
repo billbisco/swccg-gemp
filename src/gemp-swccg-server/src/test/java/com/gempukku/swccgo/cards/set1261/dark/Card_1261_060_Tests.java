@@ -147,7 +147,7 @@ public class Card_1261_060_Tests {
         assertTrue(scn.GetLSCard("obiwan").isHit()); assertEquals(reserve - 1, scn.GetDSReserveDeckCount());
     }
     @Test public void FettsBlasterRifleMatchingPairRequiresAnEligibleBobaWhoCanUseIt() {
-        var scn = scenario(); var matching = scn.GetDSCard("rifle").getBlueprint().getMatchingCharacterFilter();
+        var scn = scenario(); scn.StartGame(); var matching = scn.GetDSCard("rifle").getBlueprint().getMatchingCharacterFilter();
         assertTrue(matching.accepts(scn.game(), scn.GetDSCard("boba")));
         assertTrue(matching.accepts(scn.game(), scn.GetDSCard("jpBoba")));
         assertFalse(matching.accepts(scn.game(), scn.GetDSCard("otherBoba")));
