@@ -64,9 +64,12 @@ public class Card_1263_029_Tests {
     }
 
     private VirtualTableScenario setup(boolean objective, boolean alone, String droid) {
-        var scn = scenario(false); scn.StartGame();
+        var scn = scenario(false);
+        // Keep the ordinary Objective out of the starting-card choice; these tests isolate its table condition.
+        scn.MoveOutOfPlay(scn.GetLSCard("objective")); scn.StartGame();
         if (objective) scn.MoveCardsToLSSideOfTable(scn.GetLSCard("objective"));
         var mos = scn.GetDSStartingLocation(); var battle = scn.GetLSStartingLocation();
+        assertInZone(Zone.LOCATIONS, mos, battle);
         scn.MoveCardsToLocation(mos, scn.GetLSCard(droid));
         scn.MoveCardsToLocation(battle, scn.GetLSCard("leia"), scn.GetDSCard("vader"));
         if (!alone) scn.MoveCardsToLocation(battle, scn.GetLSCard("ally"));
