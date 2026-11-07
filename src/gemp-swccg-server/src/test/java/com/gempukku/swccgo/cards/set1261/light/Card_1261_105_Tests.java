@@ -274,4 +274,53 @@ public class Card_1261_105_Tests {
             scn.PlayerPass(scn.LSGetDecision() != null ? scn.LS : scn.DS);
         }
     }
+
+    // ---- Mode 2 against your own Corporal Delevar (V) ----
+
+    private VirtualTableScenario delevarScenario() {
+        var scn = new VirtualTableScenario(new HashMap<>(Map.of(
+                "combo", "1261_105", "delevar", "208_4", "han", "1_11")),
+                new HashMap<>(Map.of("vader", "1_168")),
+                40, 40, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields, StartingSetup.NoDSShields, "legacy");
+        scn.StartGame();
+        return scn;
+    }
+
+    private boolean delevarMayOperateOn(VirtualTableScenario scn) {
+        return scn.game().getModifiersQuerying().canBeTargetedBy(scn.gameState(), scn.GetLSCard("han"), scn.GetLSCard("delevar"),
+                Set.of(TargetingReason.TO_BE_OPERATED_ON));
+    }
+
+    @Test public void cancelsYourOwnDelevarsOperateAndHeMayNotTargetThatCharacterUntilOpponentsNextTurn() {
+        var scn = delevarScenario();
+        var site = scn.GetLSStartingLocation();
+        var delevar = scn.GetLSCard("delevar"); var han = scn.GetLSCard("han"); var vader = scn.GetDSCard("vader");
+        scn.MoveCardsToLocation(site, delevar, han, vader);
+        scn.MoveCardsToLSHand(scn.GetLSCard("combo"));
+        scn.SkipToDSTurn(Phase.CONTROL);
+        scn.DSExecuteAdHocEffect(vader, new com.gempukku.swccgo.logic.effects.DisarmCharacterEffect(
+                new com.gempukku.swccgo.logic.actions.TopLevelGameTextAction(vader, scn.DS, vader.getCardId()), han, vader));
+        scn.PassAllResponses();
+        assertTrue(han.isDisarmed());
+        if (scn.LSGetDecision() == null && scn.DSGetDecision() != null) scn.DSPass();
+        assertTrue(scn.GetLSAvailableActions().toString(), scn.LSCardActionAvailable(delevar, "'Operate'"));
+        scn.LSUseCardAction(delevar, "'Operate'");
+        if (scn.LSHasCardChoiceAvailable(han)) scn.LSChooseCard(han);
+        passUntil(scn, () -> lsHas(scn, CANCEL_OPERATE));
+        assertTrue(scn.GetLSAvailableActions().toString(), scn.LSCardPlayAvailable(scn.GetLSCard("combo"), CANCEL_OPERATE));
+        scn.LSPlayCard(scn.GetLSCard("combo"), CANCEL_OPERATE);
+        scn.PassAllResponses();
+        assertTrue("The canceled 'operate' did not restore Han", han.isDisarmed());
+        assertFalse("Protected from further 'operate' attempts", delevarMayOperateOn(scn));
+        // LS's own next turn: Delevar's once-per-turn 'operate' is available again, but Han may not be targeted.
+        scn.SkipToLSTurn(Phase.CONTROL);
+        assertTrue(han.isDisarmed());
+        assertFalse(delevarMayOperateOn(scn));
+        assertFalse(scn.GetLSAvailableActions().toString(), scn.LSCardActionAvailable(delevar, "'Operate'"));
+        // Protection ends at the start of the opponent's next turn.
+        scn.SkipToDSTurn(Phase.CONTROL);
+        assertTrue(delevarMayOperateOn(scn));
+    }
 }

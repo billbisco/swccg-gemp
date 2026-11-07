@@ -2790,7 +2790,7 @@ public class ModifiersLogic implements ModifiersEnvironment, ModifiersState, Mod
         if (!_hitOrMadeLostByWeaponMap.containsKey(target.getPermanentCardId()))
             return false;
         List<PhysicalCard> hitOrMadeLostByWeapon = _hitOrMadeLostByWeaponMap.get(target.getPermanentCardId());
-        return Filters.filter(hitOrMadeLostByWeapon, _swccgGame, hitBy).isEmpty();
+        return !Filters.filter(hitOrMadeLostByWeapon, _swccgGame, hitBy).isEmpty();
     }
 
     public boolean canPerformSpecialBattlegroundDownload(GameState gameState, String playerId) {

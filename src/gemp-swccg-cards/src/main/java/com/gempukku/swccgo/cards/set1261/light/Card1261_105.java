@@ -16,8 +16,6 @@ import com.gempukku.swccgo.logic.decisions.YesNoDecision;
 import com.gempukku.swccgo.logic.effects.*;
 import com.gempukku.swccgo.logic.effects.choose.ChooseCardOnTableEffect;
 import com.gempukku.swccgo.logic.modifiers.MayNotTargetToBeOperatedOnModifier;
-import com.gempukku.swccgo.logic.modifiers.Modifier;
-import com.gempukku.swccgo.logic.modifiers.ModifierType;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 import com.gempukku.swccgo.logic.timing.Action;
 import com.gempukku.swccgo.logic.timing.Effect;
@@ -233,26 +231,12 @@ public class Card1261_105 extends AbstractUsedInterrupt {
     }
 
     /**
-     * A character's forfeit counts as reduced by a [Permanent Weapon] weapon when the character is 'hit' and a forfeit
-     * reset/reduction affecting it comes from a card firing its permanent weapon (the source is the card carrying the
-     * permanent weapon, not a separate weapon card).
+     * A character's forfeit counts as reduced by a [Permanent Weapon] weapon when it was 'hit' by a character with a
+     * permanent weapon (as on the Virtual First Aid, Card209_021), using the engine's record of weapon hits.
      */
     private static boolean forfeitReducedByPermanentWeapon(SwccgGame game, PhysicalCard character) {
-        if (!character.isHit())
-            return false;
-        GameState gameState = game.getGameState();
-        ModifiersQuerying modifiersQuerying = game.getModifiersQuerying();
-        for (ModifierType type : new ModifierType[]{ModifierType.UNMODIFIABLE_FORFEIT_VALUE, ModifierType.FORFEIT_VALUE}) {
-            for (Modifier modifier : modifiersQuerying.getModifiersAffectingCard(gameState, type, character)) {
-                PhysicalCard source = modifier.getSource(gameState);
-                if (source != null
-                        && !Filters.weapon.accepts(game, source)
-                        && Filters.hasPermanentWeapon.accepts(game, source)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return character.isHit()
+                && game.getModifiersQuerying().wasHitOrMadeLostByWeapon(character, Filters.character_with_permanent_character_weapon);
     }
 
     @Override
