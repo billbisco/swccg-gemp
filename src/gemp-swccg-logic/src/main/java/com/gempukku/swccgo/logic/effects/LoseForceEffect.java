@@ -488,6 +488,15 @@ public class LoseForceEffect extends AbstractSubActionEffect {
                                     _fromForcePile = mustComeFromForcePile;
                                     allowForceLossFromAnywhereAvailable = false;
                                 }
+                                else if (game.getModifiersQuerying().hasFlagActive(game.getGameState(), ModifierFlag.FORCE_DRAIN_LOST_FROM_LIFE_FORCE, _playerToLoseForce)
+                                        && (topOfReserveDeck != null || topOfForcePile != null || game.getGameState().getTopOfUsedPile(_playerToLoseForce) != null)) {
+                                    // Lost Force must come from Life Force (Reserve Deck, Force Pile, Used Pile), if possible
+                                    _fromHand = _fromSabaccHand = _fromDrawnDestiny = false;
+                                    _fromReserveDeck = topOfReserveDeck != null;
+                                    _fromForcePile = topOfForcePile != null;
+                                    _fromUsedPile = game.getGameState().getTopOfUsedPile(_playerToLoseForce) != null;
+                                    allowForceLossFromAnywhereAvailable = false;
+                                }
                             }
 
 
