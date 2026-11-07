@@ -36,8 +36,17 @@ public class Card1271_042 extends AbstractNormalEffect {
     }
     @Override protected List<OptionalGameTextTriggerAction> getGameTextOptionalAfterTriggers(String playerId, SwccgGame game, EffectResult result, PhysicalCard self, int sourceId) {
         if (!TriggerConditions.justDeployed(game, result, Filters.and(Filters.your(self), Filters.Rebel_starfighter))) return null;
-        PhysicalCard pilot = ((PlayCardResult) result).getOtherPlayedCard();
+        PlayCardResult deployment = (PlayCardResult) result;
+        PhysicalCard pilot = deployment.getOtherPlayedCard();
         if (pilot == null || !Filters.and(Filters.your(self), Filters.character, Filters.pilot).accepts(game, pilot)) return null;
+        PhysicalCard starfighter = deployment.getPlayedCard();
+        var state = game.getGameState();
+        var modifiers = game.getModifiersQuerying();
+        // Crossfire suspends effects where its conditions are met. The deploying starfighter locates this reward.
+        if (modifiers.getModifiersAffectingCard(state, ModifierType.SUSPEND_EFFECTS_FROM_CARD, starfighter).stream()
+                .anyMatch(suspension -> suspension.getSource(state) != null
+                    && Filters.canBeTargetedBy(suspension.getSource(state)).accepts(game, self)
+                    && suspension.isAffectedTarget(state, modifiers, self))) return null;
         OptionalGameTextTriggerAction action = new OptionalGameTextTriggerAction(self, playerId, sourceId);
         action.setText("Retrieve 1 Force and/or draw top card");
         if (GameConditions.hasLostPile(game, playerId)) {

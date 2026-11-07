@@ -15,6 +15,7 @@ public class Card_1271_042_Tests {
             put("presence","1_146");put("lost","1_28");put("lost2","1_2");put("away","3_55");
         }},new HashMap<>() {{
             put("ground","12_176");put("vader","1_168");put("tie","1_306");put("alter","1_234");put("crossfire","13_63");put("deathStar","2_143");
+            put("virago","10_54");
         }},40,40,StartingSetup.LSStartingLocation(rebelBase?"1_135":"6_87"),StartingSetup.DefaultDSSpaceSystem,
             StartingSetup.NoLSStartingInterrupts,StartingSetup.NoDSStartingInterrupts,StartingSetup.NoLSShields,StartingSetup.NoDSShields,VirtualTableScenario.Open);
     }
@@ -117,6 +118,24 @@ public class Card_1271_042_Tests {
         s.MoveCardsToLocation(s.GetLSStartingLocation(),s.GetLSCard("presence"));s.SkipToPhase(Phase.BATTLE);
         assertFalse(Filters.canBeTargetedBy(s.GetDSCard("crossfire")).accepts(s.game(),s.GetLSCard("foils")));
     }
+    @Test public void SFoilsCrossfireSuspendsTheRewardOnlyAtTheAffectedSystemUnlessTheEffectIsImmune() {
+        crossfireAtDeployment(false, true, false);
+        crossfireAtDeployment(false, false, true);
+        crossfireAtDeployment(true, true, true);
+    }
+
+    private void crossfireAtDeployment(boolean occupyHome, boolean darkShipAtDeployment, boolean rewardAvailable) {
+        var s = ready();
+        s.MoveCardsToSideOfTable(s.GetDSCard("crossfire"));
+        var darkShip = s.GetDSCard("virago");
+        s.MoveCardsToLocation(darkShipAtDeployment ? s.GetLSCard("away") : s.GetDSStartingLocation(), darkShip);
+        if (occupyHome) s.MoveCardsToLocation(s.GetLSStartingLocation(), s.GetLSCard("presence"));
+        deployPair(s, "red3", "biggs", true);
+        assertEquals(rewardAvailable, reachReward(s));
+        s.PassAllResponses();
+        assertTrue(s.IsAboardAsPilot(s.GetLSCard("red3"), s.GetLSCard("biggs")));
+    }
+
     @Test public void SFoilsIsSuspendedAndDoesNotRewardDeploymentIfDeathStarWasAlreadyBlownAway() {
         var s=scenario(true);s.StartGame();s.SkipToLSTurn(Phase.CONTROL);s.EnsureLSForcePile(20);
         var deathStar=s.GetDSCard("deathStar");s.MoveLocationToTable(deathStar);
