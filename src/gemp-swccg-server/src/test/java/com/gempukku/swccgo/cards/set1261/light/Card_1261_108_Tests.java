@@ -135,8 +135,10 @@ public class Card_1261_108_Tests {
                 scn.LSUseCardAction(test, "Reveal top two");
             } else if (prompt.toLowerCase().contains("optional response")) {
                 scn.PlayerPass(scn.GetDecidingPlayer());
+            } else if (fifth && prompt.startsWith("Top cards of Reserve Deck")) {
+                scn.PlayerDecided(scn.GetDecidingPlayer(), "");
             } else if (fifth && scn.LSGetDecision() != null
-                    && prompt.toLowerCase().contains("choose") && !scn.LSGetCardChoices().isEmpty()) {
+                    && prompt.startsWith("Choose destiny card to stack") && !scn.LSGetCardChoices().isEmpty()) {
                 scn.LSChooseAnyCard();
             } else break;
         }
