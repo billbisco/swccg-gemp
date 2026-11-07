@@ -112,10 +112,15 @@ public interface Forfeit extends BaseQuery, Attributes, Destiny, Flags, Keywords
         boolean forfeitMayNotBeReduced = isProhibitedFromHavingForfeitReduced(gameState, physicalCard, modifierCollector);
         boolean forfeitMayNotBeIncreased = isProhibitedFromHavingForfeitValueIncreased(gameState, physicalCard, modifierCollector);
 
+        // Value before any reductions (used for "may not be reduced below N")
+        float valueBeforeReductions = result;
         for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.FORFEIT_VALUE, physicalCard)) {
             float modifierAmount = modifier.getForfeitModifier(gameState, query(), physicalCard);
             if ((modifierAmount >= 0 && !forfeitMayNotBeIncreased) || (modifierAmount <= 0 && !forfeitMayNotBeReduced)) {
                 result += modifierAmount;
+                if (modifierAmount > 0) {
+                    valueBeforeReductions += modifierAmount;
+                }
                 modifierCollector.addModifier(modifier);
             }
         }
@@ -131,6 +136,20 @@ public interface Forfeit extends BaseQuery, Attributes, Destiny, Flags, Keywords
         }
         if (lowestResetValue != null) {
             result = lowestResetValue;
+        }
+
+        // Check if value may not be reduced below a floor, and use highest floor found
+        Float highestFloor = null;
+        for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.FORFEIT_MAY_NOT_BE_REDUCED_BELOW, physicalCard)) {
+            float floor = modifier.getValue(gameState, query(), physicalCard);
+            highestFloor = (highestFloor != null) ? Math.max(highestFloor, floor) : floor;
+            modifierCollector.addModifier(modifier);
+        }
+        if (highestFloor != null) {
+            float minimum = Math.min(highestFloor, valueBeforeReductions);
+            if (result < minimum) {
+                result = minimum;
+            }
         }
 
         // Check if value is limited (above printed value), and use lowest found

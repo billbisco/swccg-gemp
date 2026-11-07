@@ -10,6 +10,9 @@ import com.gempukku.swccgo.logic.TriggerConditions;
 import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
 import com.gempukku.swccgo.logic.effects.StackCardFromTableEffect;
 import com.gempukku.swccgo.logic.modifiers.EachBattleDestinyModifier;
+import com.gempukku.swccgo.logic.modifiers.ForfeitMayNotBeReducedBelowModifier;
+import com.gempukku.swccgo.logic.modifiers.MayNotBeUndercoverModifier;
+import com.gempukku.swccgo.logic.modifiers.MayNotRelocateModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.timing.EffectResult;
 
@@ -64,8 +67,16 @@ public class Card1271_037 extends AbstractUtinniEffect {
     }
 
     @Override
+    protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, PhysicalCard self) {
+        // Until completed (while still deployed on the spy).
+        Filter spy = Filters.hasAttached(self);
+        return List.of(new MayNotRelocateModifier(self, spy), new MayNotBeUndercoverModifier(self, spy));
+    }
+
+    @Override
     protected List<Modifier> getGameTextWhileStackedModifiers(SwccgGame game, PhysicalCard self) {
         if (self.getStackedOn() == null || !warRoom(self).accepts(game, self.getStackedOn())) return List.of();
-        return List.of(new EachBattleDestinyModifier(self, -1, game.getOpponent(self.getOwner())));
+        return List.of(new EachBattleDestinyModifier(self, -1, game.getOpponent(self.getOwner())),
+            new ForfeitMayNotBeReducedBelowModifier(self, Filters.and(Filters.your(self), Filters.spy), 3));
     }
 }
