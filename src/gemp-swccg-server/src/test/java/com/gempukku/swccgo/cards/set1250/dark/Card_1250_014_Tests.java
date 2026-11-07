@@ -6,7 +6,7 @@ import com.gempukku.swccgo.framework.VirtualTableScenario;
 import com.gempukku.swccgo.game.layout.LocationPlacement;
 import com.gempukku.swccgo.logic.decisions.CardActionSelectionDecision;
 import com.gempukku.swccgo.logic.modifiers.AddsBattleDestinyModifier;
-import com.gempukku.swccgo.logic.modifiers.PoliticsModifier;
+import com.gempukku.swccgo.logic.modifiers.ResetPoliticsModifier;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -140,8 +140,7 @@ public class Card_1250_014_Tests {
         scn.MoveCardsToLocation(senate, sidious);
         scn.AttachCardsTo(senate, scn.GetDSCard("expand"));
         // Seed exact boundaries without adding a senator the Effect would be required to lose.
-        // This Original Virtual Sidious has 4 politics at his own Senate.
-        scn.ApplyAdHocModifier(new PoliticsModifier(sidious, sidious, politics - 4));
+        scn.ApplyAdHocModifier(new ResetPoliticsModifier(senate, sidious, politics));
         scn.SkipToPhase(Phase.CONTROL);
         var query = scn.game().getModifiersQuerying();
         assertEquals(politics, query.getTotalPoliticsAtGalacticSenate(scn.gameState(), scn.DS), scn.epsilon);
