@@ -20,6 +20,7 @@ import java.util.HashMap;
 
 import static com.gempukku.swccgo.framework.Assertions.assertInHand;
 import static com.gempukku.swccgo.framework.Assertions.assertInZone;
+import static com.gempukku.swccgo.framework.Assertions.assertAtLocation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -65,5 +66,79 @@ public class Card_1105_020_Tests {
         assertEquals(ExpansionSet.VIRTUAL_ORIGINAL_SET_5, card.getExpansionSet());
         assertEquals(Rarity.V, card.getRarity());
         assertTrue(card.isImmuneToCardTitle("Sense"));
+    }
+
+    private VirtualTableScenario GetReegeskScenario() {
+        return new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("shoo", "1105_20");
+                    put("xwing", "1_146");
+                }},
+                new HashMap<>() {{
+                    put("reegesk", "1103_43");
+                }},
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+    }
+
+    @Test
+    public void ShooShooOVSCancelsReegeskStealAndReegeskIsLost() {
+        var scn = GetReegeskScenario();
+        var shoo = scn.GetLSCard("shoo");
+        var xwing = scn.GetLSCard("xwing");
+        var reegesk = scn.GetDSCard("reegesk");
+        var site = scn.GetDSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, reegesk);
+        scn.MoveCardsToTopOfLSLostPile(xwing);
+        scn.MoveCardsToLSHand(shoo);
+        scn.SkipToLSTurn(Phase.CONTROL);
+        scn.LSPass();
+
+        assertTrue(scn.DSCardActionAvailable(reegesk, "Steal card from Lost Pile"));
+        scn.DSUseCardAction(reegesk, "Steal card from Lost Pile");
+
+        assertTrue(scn.LSCardPlayAvailable(shoo, "Cancel Reegesk steal"));
+        scn.LSPlayCard(shoo, "Cancel Reegesk steal");
+        scn.PassAllResponses();
+
+        assertTrue(scn.GetLSLostPile().contains(xwing));
+        assertEquals(scn.LS, xwing.getOwner());
+        assertTrue(scn.GetDSLostPile().contains(reegesk));
+    }
+
+    @Test
+    public void ShooShooOVSNotUsedReegeskStealSucceeds() {
+        var scn = GetReegeskScenario();
+        var shoo = scn.GetLSCard("shoo");
+        var xwing = scn.GetLSCard("xwing");
+        var reegesk = scn.GetDSCard("reegesk");
+        var site = scn.GetDSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, reegesk);
+        scn.MoveCardsToTopOfLSLostPile(xwing);
+        scn.MoveCardsToLSHand(shoo);
+        scn.SkipToLSTurn(Phase.CONTROL);
+        scn.LSPass();
+
+        scn.DSUseCardAction(reegesk, "Steal card from Lost Pile");
+        assertTrue(scn.LSCardPlayAvailable(shoo, "Cancel Reegesk steal"));
+        scn.PassAllResponses();
+        scn.DSChooseCard(xwing);
+        scn.PassAllResponses();
+
+        assertEquals(Zone.HAND, xwing.getZone());
+        assertEquals(scn.DS, xwing.getOwner());
+        assertEquals(Zone.HAND, shoo.getZone());
+        assertAtLocation(site, reegesk);
     }
 }

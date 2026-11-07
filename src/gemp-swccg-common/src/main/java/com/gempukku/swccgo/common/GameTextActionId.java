@@ -1826,6 +1826,7 @@ public enum GameTextActionId {
     LEGACY__ITS_WORSE_V__DEPLOY_PIT(true),
     LEGACY__CARIDA_ISB_TRAINING_ACADEMY__STACK_REBEL_INTERRUPT(false, true),
     OVS__KESSEL_SPICE_MINES_PRISON_V__RETRIEVE_FORCE(false, false, true, false),
+    LEGACY__OPERATIONAL_AS_PLANNED_V__RETURN_PROTOCOL_FAILURE,
     ;
 
     private boolean _searchCardPile;
