@@ -63,7 +63,7 @@ public class Card_1261_035_Tests {
     public void realPregameStacksFiveFaceDownIncludingNonShieldsAndAllowsOnlyTwoShieldPlays() {
         var scn = scenario(true, 5);
         var effect = scn.GetDSCard("jedi");
-        scn.StartGame();
+        startWithoutObjective(scn);
         assertEquals(Zone.SIDE_OF_TABLE, effect.getZone());
         var stacked = scn.GetStackedCards(effect);
         assertEquals(5, stacked.size());
@@ -92,7 +92,7 @@ public class Card_1261_035_Tests {
         for (int count : List.of(4, 6)) {
             var scn = scenario(true, count);
             var effect = scn.GetDSCard("jedi");
-            scn.StartGame();
+            startWithoutObjective(scn);
             assertTrue(scn.GetStackedCards(effect).isEmpty());
         }
     }
@@ -105,7 +105,7 @@ public class Card_1261_035_Tests {
         var obi = scn.GetLSCard("obi");
         var saber = scn.GetLSCard("saber");
         var blaster = scn.GetLSCard("blaster");
-        scn.StartGame();
+        startWithoutObjective(scn);
         var site = scn.GetLSStartingLocation();
         scn.MoveCardsToLocation(site, obi);
         scn.AttachCardsTo(obi, saber, blaster);
@@ -129,7 +129,7 @@ public class Card_1261_035_Tests {
             var occupation = scn.GetDSCard("occupation");
             var bespin = scn.GetDSCard("bespin");
             var platform = scn.GetDSCard("platform");
-            scn.StartGame();
+            startWithoutObjective(scn);
             scn.MoveLocationToTable(bespin);
             scn.MoveLocationToTable(platform);
             scn.MoveCardsToLocation(platform, scn.GetDSCard("trooperA"));
@@ -147,5 +147,10 @@ public class Card_1261_035_Tests {
             else
                 assertSame(bespin, occupation.getAttachedTo());
         }
+    }
+
+    private void startWithoutObjective(VirtualTableScenario scn) {
+        scn.MoveCardsToDSHand(scn.GetDSCard("deal"));
+        scn.StartGame();
     }
 }
