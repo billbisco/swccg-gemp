@@ -11,6 +11,7 @@ import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.InterruptPersonaReferences;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.GameUtils;
@@ -43,7 +44,7 @@ public class Card5_141 extends AbstractLostInterrupt {
 
     @Override
     protected List<PlayInterruptAction> getGameTextTopLevelActions(final String playerId, final SwccgGame game, final PhysicalCard self) {
-        Filter filter = Filters.and(Filters.personaPresentInBattle(Filters.Vader), Filters.hasAnyImmunityToAttrition);
+        Filter filter = Filters.and(Filters.personaPresentInBattle(InterruptPersonaReferences.vader(game, self)), Filters.hasAnyImmunityToAttrition);
 
         // Check condition(s)
         if (GameConditions.isDuringBattleAt(game, Filters.site)

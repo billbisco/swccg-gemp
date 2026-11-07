@@ -13,6 +13,7 @@ import com.gempukku.swccgo.common.TargetingReason;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.InterruptPersonaReferences;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.game.state.DuelState;
@@ -296,6 +297,6 @@ public class Card15_290 extends Card1_271 {
 
     @Override
     public Filter getValidDuelParticipant(Side side, SwccgGame game, PhysicalCard self) {
-        return side == Side.DARK ? Filters.or(Filters.Vader, Filters.grantedMayBeTargetedBy(self)) : Filters.or(Filters.ObiWan, Filters.Luke);
+        return side == Side.DARK ? Filters.or(InterruptPersonaReferences.vader(game,self), Filters.grantedMayBeTargetedBy(self)) : Filters.or(Filters.ObiWan, Filters.Luke);
     }
 }

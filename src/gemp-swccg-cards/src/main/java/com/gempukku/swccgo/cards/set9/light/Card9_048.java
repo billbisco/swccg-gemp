@@ -11,6 +11,7 @@ import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.InterruptPersonaReferences;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.game.state.DrawDestinyState;
@@ -61,7 +62,7 @@ public class Card9_048 extends AbstractUsedInterrupt {
                 && GameConditions.canDrawDestiny(game, playerId)) {
             final AboutToLeaveTableResult aboutToLeaveTableResult = (AboutToLeaveTableResult) effectResult;
             PhysicalCard cardToBeLost = aboutToLeaveTableResult.getCardAboutToLeaveTable();
-            final Filter vaderFilter = Filters.personaPresentAt(Filters.Vader, Filters.sameLocation(cardToBeLost));
+            final Filter vaderFilter = Filters.personaPresentAt(InterruptPersonaReferences.vader(game, self), Filters.sameLocation(cardToBeLost));
             if (GameConditions.canTarget(game, self, vaderFilter)) {
                 final Filter emperorFilter = Filters.personaPresentAt(Filters.Emperor, Filters.sameLocation(cardToBeLost));
 
