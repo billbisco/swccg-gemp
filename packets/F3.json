@@ -1,0 +1,139 @@
+[
+ {
+  "pr": 645,
+  "branch": "legacy/lane-a-batch29",
+  "base": "master",
+  "title": "Legacy lane A: Lana Dobreed & Sacrifice transport (1261_44)",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1261/dark/Card1261_044.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1261/dark/Card_1261_044_Tests.java"
+  ],
+  "review": {
+   "verdict": "FIX",
+   "cards": [
+    {
+     "blueprint": "1261_44",
+     "title": "Lana Dobreed & Sacrifice",
+     "verdict": "FIX",
+     "issues": [
+      "Missing mode 1: if your character's forfeit was just reduced to 0, use 1 Force (free if reduced by a [Permanent Weapon] weapon) to restore it to normal; Immune to Sense.",
+      "Missing mode 2: lose 2 Force to cancel an attempt by Yoda or Obi-Wan to cancel your Interrupt or your just-drawn weapon destiny."
+     ]
+    }
+   ],
+   "shared_changes": "none",
+   "blocked_on": null,
+   "fix_instructions": "Implement the two missing Used modes as optional-response actions with tests; mode 1 Sense-immune, free when the reduction came from a permanent weapon.",
+   "notes": "Only the 'transport' mode is implemented (looks correct, 3 tests)."
+  },
+  "cards": [
+   {
+    "blueprint": "1261_44",
+    "pc_front": {
+     "destiny": "4",
+     "gametext": "If your character's forfeit was just reduced to 0, use 1 Force (free if forfeit reduced by a [Permanent Weapon] weapon) to restore it to normal. (Immune to Sense.) OR Lose 2 Force to cancel an attempt by Yoda or Obi-Wan to cancel your Interrupt or your just drawn weapon destiny. OR During your move phase, target any or all of your characters at one site to 'transport' (relocate) to an exterior or battleground site. Draw destiny. Use that much Force to 'transport,' or place Interrupt in Lost Pile.",
+     "icons": [
+      "Episode I",
+      "Coruscant"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/lanadobreed&sacrifice.gif",
+     "subType": "Used",
+     "title": "\u2022Lana Dobreed & \u2022Sacrifice",
+     "type": "Interrupt"
+    },
+    "pc_side": "Dark"
+   }
+  ]
+ },
+ {
+  "pr": 666,
+  "branch": "legacy/lane-a-batch33",
+  "base": "master",
+  "title": "Legacy lane A: Dark Waters & Krayt Dragon Bones (1261_33)",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1261/dark/Card1261_033.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1261/dark/Card_1261_033_Tests.java"
+  ],
+  "review": {
+   "verdict": "FIX",
+   "cards": [
+    {
+     "blueprint": "1261_33",
+     "title": "Dark Waters & Krayt Dragon Bones",
+     "verdict": "FIX",
+     "issues": [
+      "Missing: 'May deploy a non-[Selective] ferocious creature here' (habitat permission). setGameText rewrites it as 'May [download]...', which is not the PC text.",
+      "Missing: during your battle phase, if you have no presence here, may relocate a captive from Audience Chamber to here.",
+      "Missing: once per turn, a creature here about to draw ferocity destiny may use its destiny number instead.",
+      "setGameText clause order differs from PC."
+     ]
+    }
+   ],
+   "shared_changes": "none",
+   "blocked_on": null,
+   "fix_instructions": "Restore PC gametext; add a modifier letting non-Selective ferocious creatures deploy to the Rancor Pit; add the battle-phase captive relocation action; add the once-per-turn ferocity-destiny substitution; tests for each.",
+   "notes": "Rancor Pit deploy, eaten retrieve 3, creature-lost Force loss implemented and tested."
+  },
+  "cards": [
+   {
+    "blueprint": "1261_33",
+    "pc_front": {
+     "destiny": "1",
+     "gametext": "Deploy on Rancor Pit. May deploy a non-[Selective] ferocious creature here. During your battle phase, if you have no presence here, may relocate a captive from Audience Chamber to here. If opponent's character here was just eaten, retrieve 3 Force. If a creature here is lost, owner loses Force equal to half its printed deploy cost (round up). Once per turn, if a creature here is about to draw destiny for ferocity, may instead use its destiny number. (Immune to Alter.)",
+     "icons": [
+      "A New Hope"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/darkwaters&kraytdragonbones.gif",
+     "title": "\u2022Dark Waters & \u2022Krayt Dragon Bones",
+     "type": "Effect"
+    },
+    "pc_side": "Dark"
+   }
+  ]
+ },
+ {
+  "pr": 667,
+  "branch": "legacy/lane-a-batch34",
+  "base": "master",
+  "title": "Legacy lane A: Protocol Failure (1261_36)",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1261/dark/Card1261_036.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1261/dark/Card_1261_036_Tests.java"
+  ],
+  "review": {
+   "verdict": "FIX",
+   "cards": [
+    {
+     "blueprint": "1261_36",
+     "title": "Protocol Failure",
+     "verdict": "FIX",
+     "issues": [
+      "Missing second mode: at any time target a unique [Episode I] droid; opponent chooses deploy on droid (its game text canceled) or place this Effect in Lost Pile (you may take any one card into hand from Reserve Deck; reshuffle)."
+     ]
+    }
+   ],
+   "shared_changes": "none",
+   "blocked_on": null,
+   "fix_instructions": "Implement the droid mode as a top-level play action with opponent's choice; on 'deploy' attach and cancel the droid's game text, on 'lost' place in Lost Pile and offer the Reserve Deck take + reshuffle; add tests.",
+   "notes": "Site mode (cancel drain, Vader deploy -1, lost at end of your turn), Control immunity fine."
+  },
+  "cards": [
+   {
+    "blueprint": "1261_36",
+    "pc_front": {
+     "destiny": "4",
+     "gametext": "Deploy on a site to cancel a Force drain there. Vader is deploy -1 here. At end of your turn, place this Effect in Lost Pile. OR At any time, target a unique (\u2022) [Episode I] droid. Opponent chooses: deploy on droid (its game text is canceled), or place this Effect in Lost Pile (you may take any one card into hand from Reserve Deck; reshuffle). (Immune to Control.)",
+     "icons": [
+      "Cloud City"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/protocolfailure.gif",
+     "lore": "'Oh my! Oh, uh, I'm, I'm terribly sorry. I. . . I didn't mean to intrude. No, no, no, please don't get up. No!'",
+     "subType": "Immediate",
+     "title": "Protocol Failure",
+     "type": "Effect"
+    },
+    "pc_side": "Dark"
+   }
+  ]
+ }
+]

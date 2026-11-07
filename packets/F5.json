@@ -1,0 +1,264 @@
+[
+ {
+  "pr": 547,
+  "branch": "legacy/lane-b-batch06",
+  "base": "master",
+  "title": "Legacy lane B: Baragwin, Beast-Rider and Kaadu",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1261/light/Card1261_062.java",
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1262/light/Card1262_020.java",
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1262/light/Card1262_026.java",
+   "src/gemp-swccg-common/src/main/java/com/gempukku/swccgo/common/GameTextActionId.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1261/light/Card_1261_062_Tests.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1262/light/Card_1262_020_Tests.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1262/light/Card_1262_026_Tests.java"
+  ],
+  "review": {
+   "verdict": "FIX",
+   "cards": [
+    {
+     "blueprint": "1261_62",
+     "title": "Baragwin (V)",
+     "verdict": "READY",
+     "issues": []
+    },
+    {
+     "blueprint": "1262_20",
+     "title": "Beast-Rider",
+     "verdict": "FIX",
+     "issues": [
+      "setVirtualSuffix(true) is wrong: printed card (image) and PC JSON title are '\u2022\u2022\u2022Beast-Rider' with no (V); the bottom strip shows it is printed over 'Camie (V)', so it is a new title. Test BeastRiderStatsMatchPrintedHyphenAndVirtualSuffix asserts the wrong thing.",
+      "'Ferocious' predicate is a private card-level rule (selective icon + landspeed>1 = packhunter +2, else +4); PR body describes a different predicate (defense>2 except Mynock/Vine Snake). Existing GEMP cards treat creatures generically. Needs a ruling; at minimum make code and PR body agree."
+     ]
+    },
+    {
+     "blueprint": "1262_26",
+     "title": "Kaadu (V)",
+     "verdict": "READY",
+     "issues": []
+    }
+   ],
+   "shared_changes": "GameTextActionId: one appended constant (safe)",
+   "blocked_on": null,
+   "fix_instructions": "Card1262_020: remove setVirtualSuffix(true) (title stays 'Beast-Rider' with hyphen) and update the stats test to assert no virtual suffix. Get a ruling on what counts as 'ferocious' for the +4 bonus (or document the chosen rule consistently in code comment and PR body).",
+   "notes": "Baragwin and Kaadu match images/PC (Baragwin V suffix correct; Kaadu power/maneuver/landspeed 1/2/4, ability 1/2, rider bonuses). 60+ gameplay tests."
+  },
+  "cards": [
+   {
+    "blueprint": "1261_62",
+    "pc_front": {
+     "ability": "2",
+     "deploy": "2",
+     "destiny": "3",
+     "forfeit": "5",
+     "gametext": "This character is lost if a Starting Effect on table. Your non-alien characters at sites are power and forfeit = 0. If present at a battleground site, your Force drains at battleground sites where you have two aliens are +1, and whenever you deploy an alien, retrieve 1 Force.",
+     "icons": [
+      "Jabba's Palace"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Light/large/baragwin.gif",
+     "lore": "Hunchbacked scavengers. Found in separate groups throughout the galaxy. Good at finding missing items. Make excellent gun runners. Some work with the rebellion.",
+     "power": "1",
+     "subType": "Alien",
+     "title": "\u2022\u2022\u2022Baragwin (V)",
+     "type": "Character"
+    },
+    "pc_side": "Light"
+   },
+   {
+    "blueprint": "1262_20",
+    "pc_front": {
+     "ability": "4",
+     "deploy": "3",
+     "destiny": "2",
+     "extraText": [
+      "Force-Sensitive"
+     ],
+     "forfeit": "5",
+     "gametext": "Landspeed = 2. During battle, for each non-parasite creature here (even if excluded), power +2 (+4 if ferocious). If an opponent's card here is eaten, you may retrieve up to 4 Force. Once per turn, may deploy Kaadu here from Reserve Deck; reshuffle. Cannot be attacked.",
+     "icons": [
+      "Special Edition",
+      "Episode I"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Light/large/beastrider.gif",
+     "lore": "Female.",
+     "power": "2",
+     "subType": "Republic",
+     "title": "\u2022\u2022\u2022Beast Rider",
+     "type": "Character"
+    },
+    "pc_side": "Light"
+   },
+   {
+    "blueprint": "1262_26",
+    "pc_front": {
+     "deploy": "1",
+     "destiny": "4",
+     "forfeit": "2",
+     "gametext": "May add 1 'rider' (passenger). Ability = 1/2. While ridden by a Beast-Rider, power and maneuver +2, cannot be attacked, your Force drains here are +1, and Kaadu and 'rider' are immune to attrition < 4.",
+     "icons": [
+      "Episode I",
+      "Theed Palace"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Light/large/kaadu.gif",
+     "landspeed": "4",
+     "lore": "Used by many Gungan warriors due to their fearless nature. Kaadu lay large numbers of eggs to compensate for those eaten by predators.",
+     "maneuver": "2",
+     "power": "1",
+     "subType": "Creature",
+     "title": "Kaadu (V)",
+     "type": "Vehicle"
+    },
+    "pc_side": "Light"
+   }
+  ]
+ },
+ {
+  "pr": 578,
+  "branch": "legacy/lane-b-batch11",
+  "base": "master",
+  "title": "Legacy lane B: Lando Scoundrel (1261_68)",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1261/light/Card1261_068.java",
+   "src/gemp-swccg-common/src/main/java/com/gempukku/swccgo/common/GameTextActionId.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1261/light/Card_1261_068_Tests.java"
+  ],
+  "review": {
+   "verdict": "FIX",
+   "cards": [
+    {
+     "blueprint": "1261_68",
+     "title": "Lando Calrissian, Scoundrel (V)",
+     "verdict": "FIX",
+     "issues": [
+      "Missing Icon.CLOUD_CITY: PC JSON lists 'Cloud City' and the PC card image shows the Cloud City expansion icon at the lore box. PR claims the final master has no Cloud City icon; both the PC data and printed image contradict that."
+     ]
+    }
+   ],
+   "shared_changes": "GameTextActionId: one appended constant (safe)",
+   "blocked_on": null,
+   "fix_instructions": "Card1261_068: addIcons(Icon.PILOT, Icon.WARRIOR, Icon.CLOUD_CITY) and update the stats test icon list. Everything else is correct.",
+   "notes": "Gameplay clauses all correct and tested (pilot +2, once/game convert opponent's Lando present at site + optional retrieve 2, battle destiny with your alien/Rebel, attrition <3/<5 with your Effect with 'Lando' in lore). If the coder has an authoritative final-master page showing no icon, attach it and this becomes READY."
+  },
+  "cards": [
+   {
+    "blueprint": "1261_68",
+    "pc_front": {
+     "ability": "3",
+     "deploy": "4",
+     "destiny": "1",
+     "extraText": [
+      "Force-Attuned"
+     ],
+     "forfeit": "7",
+     "gametext": "Adds 2 to power of anything he pilots. Once per game, may convert opponent's Lando present at a site (may retrieve 2 Force). Adds one battle destiny if with your alien or Rebel. Immune to attrition < 3 (< 5 if your Effect with 'Lando' in lore on table).",
+     "icons": [
+      "Pilot",
+      "Warrior",
+      "Cloud City"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Light/large/landocalrissianscoundrel.gif",
+     "lore": "With a silvery tongue or a rapid-fire blaster, Lando prides himself on being able to get out of tight situations. Is at his best when cornered.",
+     "power": "4",
+     "subType": "Rebel",
+     "title": "\u2022Lando Calrissian, Scoundrel (V)",
+     "type": "Character"
+    },
+    "pc_side": "Light"
+   }
+  ]
+ },
+ {
+  "pr": 642,
+  "branch": "legacy/lane-b-batch24",
+  "base": "master",
+  "title": "Legacy Block 6 Light: Jabba, This Is Your Last Chance!",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1261/light/Card1261_080.java",
+   "src/gemp-swccg-common/src/main/java/com/gempukku/swccgo/common/GameTextActionId.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1261/light/Card_1261_080_Tests.java"
+  ],
+  "review": {
+   "verdict": "FIX",
+   "cards": [
+    {
+     "blueprint": "1261_80",
+     "title": "Jabba, This Is Your Last Chance!",
+     "verdict": "FIX",
+     "issues": [
+      "Clause 'If Quiet Mining Colony or Independent Operation on table, lightsabers may not add to Force drains or swing more than once per battle' is not implemented at all; setGameText also drops 'or swing more than once per battle'.",
+      "Lore missing: PC JSON has lore 'With a quick motion of his hand, Luke signaled Artoo and dramatically changed the situation.' (PR body claims blank lore); no setLore call."
+     ]
+    }
+   ],
+   "shared_changes": "none (card + test + appended GameTextActionId only)",
+   "blocked_on": null,
+   "fix_instructions": "Add while-active modifiers conditioned on (Quiet Mining Colony OR Independent Operation on table): CancelForceDrainBonusesFromCardModifier(self, Filters.lightsaber, condition) and MayFireOnlyOncePerBattleModifier(self, Filters.lightsaber, condition) (both exist on master; Card1261_070 in PR 668 already uses the swing limiter). Restore full printed gametext and setLore per PC JSON. Add a gameplay test for each half of the clause (on and off condition).",
+   "notes": "Stack 5 face-down, twice-per-game Defensive Shield play and Cloud City Celebration cancel (on table + being played) look right. Worker says the lightsaber clause awaits shared support, but the needed modifiers already exist."
+  },
+  "cards": [
+   {
+    "blueprint": "1261_80",
+    "pc_front": {
+     "destiny": "5",
+     "gametext": "Deploy on table with 5 cards from outside your deck face down under here. Twice per game, may play a Defensive Shield from here (as if from hand). If Quiet Mining Colony or Independent Operation on table, lightsabers may not add to Force drains or 'swing' more than once per battle. Cloud City Celebration is canceled.",
+     "icons": [
+      "Jabba's Palace"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Light/large/jabbathisisyourlastchance.gif",
+     "lore": "With a quick motion of his hand, Luke signaled Artoo and dramatically changed the situation.",
+     "subType": "Starting",
+     "title": "\u2022Jabba, This Is Your Last Chance!",
+     "type": "Effect"
+    },
+    "pc_side": "Light"
+   }
+  ]
+ },
+ {
+  "pr": 647,
+  "branch": "legacy/lane-b-batch25",
+  "base": "master",
+  "title": "Legacy Block 6 Light: I'm Here To Rescue You",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1263/light/Card1263_029.java",
+   "src/gemp-swccg-common/src/main/java/com/gempukku/swccgo/common/GameTextActionId.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1263/light/Card_1263_029_Tests.java"
+  ],
+  "review": {
+   "verdict": "FIX",
+   "cards": [
+    {
+     "blueprint": "1263_29",
+     "title": "I'm Here To Rescue You (V)",
+     "verdict": "FIX",
+     "issues": [
+      "STARTING mode is gated on Rescue The Princess being on table; the printed 'If Rescue The Princess on table,' prefixes only the LOST: section. STARTING must be playable without RTP.",
+      "No test covers STARTING without RTP."
+     ]
+    }
+   ],
+   "shared_changes": "none (card + test + appended GameTextActionId only)",
+   "blocked_on": null,
+   "fix_instructions": "In getGameTextStartingAction remove the canSpot(Rescue_The_Princess) check (keep it only in the LOST modes). Add a test that the Starting mode works with no Rescue The Princess on table.",
+   "notes": "LOST modes (cancel attempt to make non-Heroic R2-D2 lost; lose 2 Force to cancel battle with Leia defending alone), shared once-per-game, Sense immunity on LOST only, and Starting deploys look correct and are tested."
+  },
+  "cards": [
+   {
+    "blueprint": "1263_29",
+    "pc_front": {
+     "destiny": "6",
+     "gametext": "If Rescue The Princess on table,LOST: Once per game, choose: Cancel an attempt to make non-Heroic R2-D2 lost. OR Lose 2 Force to cancel a battle just initiated if Leia defending alone. [Immune to Sense.]  STARTING: Deploy from Reserve Deck Cell 2187 and one always-[Immune to Alter] Effect. Place this Interrupt in hand.",
+     "icons": [
+      "A New Hope"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Light/large/imheretorescueyou.gif",
+     "lore": "'Huh?'",
+     "subType": "Lost Or Starting",
+     "title": "I'm Here to Rescue You (V)",
+     "type": "Interrupt"
+    },
+    "pc_side": "Light"
+   }
+  ]
+ }
+]

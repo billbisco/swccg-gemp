@@ -1,0 +1,53 @@
+[
+ {
+  "pr": 572,
+  "branch": "legacy/lane-c-batch09",
+  "base": "master",
+  "title": "Legacy Block 5 Light: Supreme Chancellor Palpatine",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1250/light/Card1250_053.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1250/light/Card_1250_053_Tests.java"
+  ],
+  "review": {
+   "verdict": "BLOCKED",
+   "cards": [
+    {
+     "blueprint": "1250_53",
+     "title": "Supreme Chancellor Palpatine",
+     "verdict": "BLOCKED",
+     "issues": [
+      "Card code matches print. CI fails on SupremeChancellorPalpatineCanMakeTwoRegularMovesAwayFromCoruscantButNotThree: shared engine bookkeeping counts the first ordinary move against the MayMakeAdditionalMovesModifier grant (getGrantedAdditionalMovesUsedThisTurn), so the additional regular move is not available."
+     ]
+    }
+   ],
+   "shared_changes": "none",
+   "blocked_on": "Engine fix for granted additional-move bookkeeping (MayMakeAdditionalMovesModifier / ModifiersQuerying granted-move counting), requested in swccg-guild/work#182 comment 6700477278. No PR for it is in the review set.",
+   "fix_instructions": null,
+   "notes": "Merge after the engine fix lands and this test goes green; no card changes expected."
+  },
+  "cards": [
+   {
+    "blueprint": "1250_53",
+    "pc_front": {
+     "ability": "4",
+     "deploy": "4",
+     "destiny": "0",
+     "forfeit": "6",
+     "gametext": "Agendas: ambition, order. While on Coruscant, Ambush is a Used Interrupt and, each time you initiate a Force drain with a clone, may draw top card from Reserve Deck. During your turn, may make an additional regular move. Valorum is lost.",
+     "icons": [
+      "Episode I",
+      "Coruscant"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/supremechancellorpalpatine.gif",
+     "lore": "Leader.",
+     "politics": "5",
+     "power": "2",
+     "subType": "Republic",
+     "title": "\u2022Supreme Chancellor Palpatine",
+     "type": "Character"
+    },
+    "pc_side": "Light"
+   }
+  ]
+ }
+]

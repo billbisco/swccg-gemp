@@ -1,0 +1,222 @@
+[
+ {
+  "pr": 571,
+  "branch": "legacy/lane-c-batch08",
+  "base": "master",
+  "title": "Legacy Block 5 Light: Bail Organa",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1250/light/Card1250_034.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1250/light/Card_1250_034_Tests.java"
+  ],
+  "review": {
+   "verdict": "FIX",
+   "cards": [
+    {
+     "blueprint": "1250_34",
+     "title": "Bail Organa",
+     "verdict": "FIX",
+     "issues": [
+      "Retrieval clause fires once per Force card lost: justLostForceFromForceDrainAt(..., false) offers 'retrieve 1 Force' for every unit of a multi-Force drain (test BailOrganaMayRespondToEachUnitActuallyLostToTwoForceRebelDrain asserts 2 retrievals from one 2-Force drain). Printed text gives one retrieval per Force drain."
+     ]
+    }
+   ],
+   "shared_changes": "none",
+   "blocked_on": null,
+   "fix_instructions": "Card1250_034.getGameTextOptionalAfterTriggers: pass isFirstForceOnly=true to TriggerConditions.justLostForceFromForceDrainAt (or trigger once per completed drain) so a single Force drain yields at most one 'Retrieve 1 Force'. Rewrite the two-unit test to assert exactly one retrieval offer for a 2-Force drain.",
+   "notes": "Everything else (agenda, Leia destiny, Coruscant senator/Political Effect loss, Senate +2 power to unique Rebels ability<4) is correct."
+  },
+  "cards": [
+   {
+    "blueprint": "1250_34",
+    "pc_front": {
+     "ability": "3",
+     "deploy": "2",
+     "destiny": "3",
+     "forfeit": "5",
+     "gametext": "Agenda: rebellion. Adds one battle destiny with Leia. Your [Coruscant] senators and [Coruscant] Political Effects are lost. While at Senate: unique (\u2022) Rebels of ability < 4 are power +2, and, if opponent just lost Force to a Force drain by a Rebel, may retrieve 1 Force.",
+     "icons": [
+      "Episode I",
+      "Special Edition"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/bailorgana.gif",
+     "lore": "Leader. Senator.",
+     "politics": "2",
+     "power": "3",
+     "subType": "Rebel/Republic",
+     "title": "\u2022Bail Organa",
+     "type": "Character"
+    },
+    "pc_side": "Light"
+   }
+  ]
+ },
+ {
+  "pr": 652,
+  "branch": "legacy/lane-d-batch27",
+  "base": "master",
+  "title": "Implement Legacy An Enemy Of The Republic",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1250/dark/Card1250_018.java",
+   "src/gemp-swccg-common/src/main/java/com/gempukku/swccgo/common/GameTextActionId.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1250/dark/Card_1250_018_Tests.java"
+  ],
+  "review": {
+   "verdict": "FIX",
+   "cards": [
+    {
+     "blueprint": "1250_18",
+     "title": "An Enemy Of The Republic",
+     "verdict": "FIX",
+     "issues": [
+      "Relocation target omits 'non-droid': PC gametext says 'opponent must relocate this card to their participating non-droid character' (OVS 1116_40 also says non-droid). Worker followed the hosted image wording instead."
+     ]
+    }
+   ],
+   "shared_changes": "Appends one GameTextActionId constant at the enum tail (safe; textual conflict with other PRs appending at the same line, trivial to resolve).",
+   "blocked_on": null,
+   "fix_instructions": "In relocateToBattle add Filters.not(Filters.droid) to the participating-character filter, update setGameText to the PC wording ('participating non-droid character'), and flip the droid test (AnEnemyOfTheRepublicLetsLightChooseParticipatingDroid...) to assert a droid is NOT offered. If Bill/PC rules the image wording (no non-droid) is current, this becomes READY as is. Rest is correct: deploy on Sidious, uncancelable own destiny in battle here, return to Sidious when bearer about to be lost with optional Reserve search.",
+   "notes": "See fix_instructions."
+  },
+  "cards": [
+   {
+    "blueprint": "1250_18",
+    "pc_front": {
+     "destiny": "6",
+     "gametext": "Deploy on Sidious. While at Senate, if battle was just initiated anywhere, opponent must relocate this card to their participating non-droid character; during battle here, your destiny draws may not be canceled. If character about to be lost, relocate to Sidious; may take any one card into hand from Reserve Deck; reshuffle.",
+     "icons": [
+      "Episode I",
+      "Sidious"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Dark/large/anenemyoftherepublic.gif",
+     "lore": "-",
+     "title": "\u2022An Enemy Of The Republic",
+     "type": "Effect"
+    },
+    "pc_side": "Dark"
+   }
+  ]
+ },
+ {
+  "pr": 658,
+  "branch": "legacy/lane-d-batch29",
+  "base": "master",
+  "title": "Implement Legacy Expand The Empire and Order 66",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1250/dark/Card1250_014.java",
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1250/dark/Card1250_020.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1250/dark/Card_1250_014_Tests.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1250/dark/Card_1250_020_Tests.java"
+  ],
+  "review": {
+   "verdict": "FIX",
+   "cards": [
+    {
+     "blueprint": "1250_14",
+     "title": "Expand The Empire (V)",
+     "verdict": "READY",
+     "issues": [
+      "Cosmetic: setGameText reorders the lost-card list and lore uses double quotes vs PC single quotes."
+     ]
+    },
+    {
+     "blueprint": "1250_20",
+     "title": "Order 66",
+     "verdict": "FIX",
+     "issues": [
+      "Adds Icon.CORUSCANT, which is not on the PC card (icons: Episode I, Sidious) nor on the card image."
+     ]
+    }
+   ],
+   "shared_changes": "none",
+   "blocked_on": null,
+   "fix_instructions": "Order 66 (Card1250_020): remove Icon.CORUSCANT from addIcons (keep SIDIOUS, LEGACY_BLOCK_5; EPISODE_I inherited) and drop CORUSCANT from Order66PrintedMetadataMatches icon expectation. Gameplay is correct: control-phase relocation to an [Episode I] Jedi at battleground/Senate when with Block 5 Expand, else retrieve 1; adds battle destiny when on a Jedi; returns to Sidious when that Jedi is lost (OVS 'Jedi lost at end of turn' correctly dropped). Optional: match PC gametext order/lore quotes on Expand.",
+   "notes": "See fix_instructions."
+  },
+  "cards": [
+   {
+    "blueprint": "1250_14",
+    "pc_front": {
+     "destiny": "3",
+     "gametext": "Deploy on Senate. May raise your converted Senate to the top. Jedi here are politics +4. While your total politics here is > 5, at battlegrounds where you have an Imperial, your Force drains and battle destiny draws are +1. Your aliens (except Mara), senators, Maul, and [Independent Starship] starships are lost. (Immune to Alter.)",
+     "icons": [
+      "Episode I"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Dark/large/expandtheempire.gif",
+     "lore": "The Emperor disbanded the Imperial Senate 'for the duration of the emergency,' seizing absolute power. He planned to extend rule by terrorizing planets into submission.",
+     "title": "\u2022Expand The Empire (V)",
+     "type": "Effect"
+    },
+    "pc_side": "Dark"
+   },
+   {
+    "blueprint": "1250_20",
+    "pc_front": {
+     "destiny": "7",
+     "gametext": "Deploy on Sidious. If with [Virtual Block 5] Expand the Empire during your control phase: relocate this card to an [Episode I] Jedi at a battleground or Senate (otherwise, retrieve 1 Force). If on a Jedi, add one battle destiny here, and if that Jedi just lost, relocate this card to Sidious.",
+     "icons": [
+      "Episode I",
+      "Sidious"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Dark/large/order66.gif",
+     "lore": "Hologram.",
+     "title": "\u2022Order 66",
+     "type": "Effect"
+    },
+    "pc_side": "Dark"
+   }
+  ]
+ },
+ {
+  "pr": 686,
+  "branch": "legacy/lane-c-batch36",
+  "base": "master",
+  "title": "Implement Legacy Senator Padme Amidala",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1250/light/Card1250_052.java",
+   "src/gemp-swccg-common/src/main/java/com/gempukku/swccgo/common/GameTextActionId.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1250/light/Card_1250_052_Tests.java"
+  ],
+  "review": {
+   "verdict": "FIX",
+   "cards": [
+    {
+     "blueprint": "1250_52",
+     "title": "Senator Padme Amidala",
+     "verdict": "FIX",
+     "issues": [
+      "Title is 'Senator Padm\u00e9 Amidala' (accented). PC title and the OVS 1116_004 on master use 'Senator Padme Amidala'; no master card uses an accented Padm\u00e9 title.",
+      "'If just lost from same site as Vader, place her out of play; opponent loses 4 Force' not implemented."
+     ]
+    }
+   ],
+   "shared_changes": "GameTextActionId: appended LEGACY__SENATOR_PADME_AMIDALA__DEPLOY_REBEL. Safe.",
+   "blocked_on": null,
+   "fix_instructions": "1) Change the title to 'Senator Padme Amidala'. 2) Add a required trigger: TriggerConditions.justLostFromLocation(game, result, self, Filters.sameSiteAs(self, Filters.Vader)) (pattern in Card210_046) -> place her out of play from Lost Pile and make the opponent of her owner lose 4 Force; test with Vader at the same site (out of play, opponent -4) and elsewhere (nothing). The simultaneous-loss edge case can be a note, not a blocker.",
+   "notes": "Agendas, both affiliations, and the once-per-turn lose-1 Lost Pile deploy (unique, non-maintenance Rebel ability < 4, at Senate with Bail) are implemented and tested."
+  },
+  "cards": [
+   {
+    "blueprint": "1250_52",
+    "pc_front": {
+     "ability": "4",
+     "deploy": "3",
+     "destiny": "1",
+     "forfeit": "7",
+     "gametext": "Agendas: justice, rebellion. Once per turn, if at Senate with Bail, may lose 1 Force to deploy a unique (\u2022), non-[Maintenance] Rebel of ability < 4 from Lost Pile. If just lost from same site as Vader, place her out of play; opponent loses 4 Force.",
+     "icons": [
+      "Episode I",
+      "Warrior"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/senatorpadmeamidala.gif",
+     "lore": "Leader. Senator.",
+     "politics": "4",
+     "power": "3",
+     "subType": "Rebel/Republic",
+     "title": "\u2022Senator Padme Amidala",
+     "type": "Character"
+    },
+    "pc_side": "Light"
+   }
+  ]
+ }
+]

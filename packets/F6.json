@@ -1,0 +1,227 @@
+[
+ {
+  "pr": 656,
+  "branch": "legacy/lane-b-batch26",
+  "base": "master",
+  "title": "Legacy lane B: Antilles Maneuver & Rebel Reinforcements",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1261/light/Card1261_092.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1261/light/Card_1261_092_Tests.java"
+  ],
+  "review": {
+   "verdict": "FIX",
+   "cards": [
+    {
+     "blueprint": "1261_92",
+     "title": "Antilles Maneuver & Rebel Reinforcements",
+     "verdict": "FIX",
+     "issues": [
+      "CI red: Card_1261_092_Tests.zeroDestinyDoesNotRetrieveAndStillConsumesTheGameUse:267 throws IllegalState 'Light Side Player has no card-action decision; pending=null' (the final assertFalse(scn.LSCardPlayAvailable(copy, RETRIEVE)) is called when LS has no decision pending)."
+     ]
+    }
+   ],
+   "shared_changes": "none (card + test only)",
+   "blocked_on": null,
+   "fix_instructions": "Fix the test: after the zero-destiny resolution, advance to a point where LS has a card-action decision (e.g. pass to LS's next action window) before calling LSCardPlayAvailable, or check the once-per-game usage another way. Card code itself appears correct; rerun CI.",
+   "notes": "All three modes (Lateral Damage cancel immune to Sense; opp deploy-phase Rebel ability<3 non-admiral aboard your starship; once-per-game LOST destiny retrieval with optional take-into-hand) implemented. Only the one test errors."
+  },
+  "cards": [
+   {
+    "blueprint": "1261_92",
+    "pc_front": {
+     "destiny": "5",
+     "gametext": "USED: Cancel Lateral Damage (Immune to Sense.) OR During opponent's deploy phase, deploy a Rebel of ability < 3 (except an admiral) aboard your starship from Reserve Deck; reshuffle  LOST: Once per game, if opponent has more cards with ability on table than you, draw destiny and retrieve up to that number of Rebels and/or Rebel starships (may take one retrieved card into hand).",
+     "icons": [
+      "Special Edition"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Light/large/antillesmaneuver&rebelreinforcements.gif",
+     "subType": "Used Or Lost",
+     "title": "\u2022Antilles Maneuver & \u2022Rebel Reinforcements",
+     "type": "Interrupt"
+    },
+    "pc_side": "Light"
+   }
+  ]
+ },
+ {
+  "pr": 676,
+  "branch": "legacy/lane-b-batch31",
+  "base": "master",
+  "title": "Legacy lane B: Odin Nesloor & First Aid",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1261/light/Card1261_105.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1261/light/Card_1261_105_Tests.java"
+  ],
+  "review": {
+   "verdict": "FIX",
+   "cards": [
+    {
+     "blueprint": "1261_105",
+     "title": "Odin Nesloor & First Aid",
+     "verdict": "FIX",
+     "issues": [
+      "Mode 1 (your character's forfeit just reduced to 0: use 1 Force, free if by a [Permanent Weapon] weapon, to restore it; immune to Sense) not implemented.",
+      "Mode 2 (cancel an attempt to 'operate' on a character; protected until start of opponent's next turn) not implemented.",
+      "Only the transport mode (copied from 209_21) exists."
+     ]
+    }
+   ],
+   "shared_changes": "none (card + test only)",
+   "blocked_on": null,
+   "fix_instructions": "Implement mode 1 now with TriggerConditions.forfeitJustReducedToZero (exists on master, used by Card7_089/Card7_261/Card1281_026): optional-after action, cost 1 Force unless the reducing source is a permanent weapon, effect restores forfeit, setImmuneTo(Sense) on this mode only. Mode 2 needs an engine 'operate attempt' event (operate is card-specific today) - implement when available or mark the card blocked on it. Add tests for each mode.",
+   "notes": "Transport mode looks correct."
+  },
+  "cards": [
+   {
+    "blueprint": "1261_105",
+    "pc_front": {
+     "destiny": "4",
+     "gametext": "If your character's forfeit was just reduced to 0, use 1 Force (free if forfeit reduced by a [Permanent Weapon] weapon) to restore it to normal. (Immune to Sense.) OR Cancel an attempt to 'operate' on a character; character is protected from any further attempts until start of opponent's next turn. OR During your move phase, target any or all of your characters at one site to 'transport' (relocate) to an exterior or battleground site. Draw destiny. Use that much Force to 'transport,' or place Interrupt in Lost Pile.",
+     "icons": [
+      "Special Edition",
+      "Episode I"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Light/large/odinnesloor&firstaid.gif",
+     "subType": "Used",
+     "title": "\u2022Odin Nesloor & \u2022First Aid",
+     "type": "Interrupt"
+    },
+    "pc_side": "Light"
+   }
+  ]
+ },
+ {
+  "pr": 691,
+  "branch": "legacy/lane-b-batch35",
+  "base": "master",
+  "title": "Legacy lane B batch 35: It Is The Future You See",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1220/light/Card1220_138.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1220/light/Card_1220_138_Tests.java"
+  ],
+  "review": {
+   "verdict": "FIX",
+   "cards": [
+    {
+     "blueprint": "1220_138",
+     "title": "It Is The Future You See (V)",
+     "verdict": "FIX",
+     "issues": [
+      "Jedi mode: 'Instead of using X Force, may turn X cards here face down' not implemented.",
+      "Agent of Evil: only total battle destiny +2; 'and duel destiny is +2' missing."
+     ]
+    }
+   ],
+   "shared_changes": "none (card + test only)",
+   "blocked_on": null,
+   "fix_instructions": "Reuse the OVS predecessor Card1112_013 approach: add the 'turn a stacked card face down to activate/pay 1 Force' action for the face-down payment, and add a duel modifier (EachDuelDestinyModifier as OVS does, or DuelTotalModifier) for +2 to the opponent. Test both.",
+   "notes": "Starting-interrupt replacement, location gate, downloads, purge, LS goes first, mode choice and stacking are in. Worker refused to emulate pending engine support, but OVS already has a workable pattern."
+  },
+  "cards": [
+   {
+    "blueprint": "1220_138",
+    "pc_front": {
+     "destiny": "0",
+     "gametext": "If you deployed only 1 location (unless it is [Coruscant], [Reflections 3], or [Special Edition]), play instead of a Starting Interrupt. Deploy from Reserve Deck Battle Plan, Do, Or Do Not, and a [Immune to Alter] Effect. Revolution, insert cards, and your [Maintenance] and [Permanent Weapon] cards are lost. You go first. Choose one:",
+     "icons": [
+      "Dagobah"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock2-Light/large/itisthefutureyousee.gif",
+     "title": "It Is The Future You See (V)",
+     "type": "Epic Event"
+    },
+    "pc_side": "Light"
+   }
+  ]
+ },
+ {
+  "pr": 695,
+  "branch": "legacy/lane-b-batch38",
+  "base": "master",
+  "title": "Legacy lane B batch 38: Mind What You Have Learned, Strong Is Vader and At Peace",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1261/light/Card1261_087.java",
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1261/light/Card1261_108.java",
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1261/light/Card1261_108_BACK.java",
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1262/light/Card1262_022.java",
+   "src/gemp-swccg-common/src/main/java/com/gempukku/swccgo/common/GameTextActionId.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1261/light/Card_1261_087_Tests.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1261/light/Card_1261_108_Tests.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1262/light/Card_1262_022_Tests.java"
+  ],
+  "review": {
+   "verdict": "FIX",
+   "cards": [
+    {
+     "blueprint": "1261_87",
+     "title": "Strong Is Vader",
+     "verdict": "FIX",
+     "issues": [
+      "Deploy requirement checks MWYHL with Icon.LEGACY_BLOCK_6; PC JSON and the official card show the generic [Virtual] icon, so the V MWYHL (Card225_053) should also qualify."
+     ]
+    },
+    {
+     "blueprint": "1261_108",
+     "title": "Mind What You Have Learned / Save You It Can (V)",
+     "verdict": "READY",
+     "issues": []
+    },
+    {
+     "blueprint": "1262_22",
+     "title": "At Peace (V)",
+     "verdict": "READY",
+     "issues": []
+    }
+   ],
+   "shared_changes": "none (card + test + appended GameTextActionId only)",
+   "blocked_on": null,
+   "fix_instructions": "In Card1261_087.checkGameTextDeployRequirements accept any virtual MWYHL (Card225_053 or the Legacy 1261_108), not only the Block 6 one; add a test with Card225_053.",
+   "notes": "Large but coherent: objective setup, only-Luke apprentice with Leia switch, -3 deploy, downloads, retrieval restriction, Sense/Alter +4, flip; back side JT5 destiny placement, take Luke to hand, ignore restrictions, opp may not play Sense/Alter, out of play; At Peace suppression of Broken Concentration and SIV retrieval, hit prevention. Strong Is Vader stacks Jedi Tests by direct GameState calls and tracks apprentices in ForRemainderOfGameData (card-local, acceptable). Worker lists 'released alternate apprentice selection' as pending but the shipped code already handles it via existing ModifyGameTextType. 44 tests."
+  },
+  "cards": [
+   {
+    "blueprint": "1261_87",
+    "pc_front": {
+     "destiny": "0",
+     "gametext": "If [Virtual] Mind What You have Learned on table, deploy on table with up to 6 Jedi Tests under here from outside your deck. You may not Force drain at Dagobah locations or deploy asteroid sectors, [Maintenance] cards, or [Permanent Weapon] cards. Whenever you draw training destiny, draw two and chose one. You may retrieve 3 Force whenever you complete a Jedi Test. Completed Jedi Tests are placed on table and are suspended (not lost) whenever character who completed them not on table.",
+     "icons": [
+      "Death Star II"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Light/large/strongisvader.gif",
+     "title": "\u2022Strong Is Vader",
+     "type": "Epic Event"
+    },
+    "pc_side": "Light"
+   },
+   {
+    "blueprint": "1261_108",
+    "pc_front": {
+     "destiny": "0",
+     "gametext": "Mind What You Have Learned: Deploy Dagobah system (may not be converted) and Strong Is Vader. {For} remainder of game, only Luke may be an apprentice. Yoda and Luke deploy -3 to Dagobah. {While} this side up, may deploy At Peace, Luke, Luke's Backpack, [Dagobah] Yoda, and/or Yoda's Hope to Dagobah from Reserve Deck; reshuffle. Your cards on Dagobah may not contribute to Force retrieval (except with Strong Is Vader). Each player's Sense and Alter destiny draws are +4. {Flip} this card when Luke completes Jedi Test #5. Save You It Can: {Immediately} place destiny card from Jedi Test #5 on that Jedi Test. {While} this side up, during your move phase, may use 3 Force to take Luke into hand from a location you control (cards on Luke go to owner's Used Pile). Luke may ignore location deployment restrictions listed in his game text. Opponent may not play Sense or Alter. {Place} out of play if Luke is placed out of play or crosses over.",
+     "icons": [
+      "Special Edition"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Light/large/mindwhatyouhavelearned.gif",
+     "title": "Mind What You Have Learned / Save You It Can (V)",
+     "type": "Objective"
+    },
+    "pc_side": "Light"
+   },
+   {
+    "blueprint": "1262_22",
+    "pc_front": {
+     "destiny": "3",
+     "gametext": "Deploy on Yoda's Hut. May use 1 Force to prevent Broken concentration from modifying your training destiny (and Strong Is Vader from retrieving Force) this turn. If Luke has completed Jedi Test #5 and is about to be hit, may place this Effect out of play to prevent it.",
+     "icons": [
+      "Dagobah"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Light/large/atpeace.gif",
+     "lore": "To recover from the strenuous Jedi training routine and revitalize the mind and body, an apprentice must rest to be calm and at peace.",
+     "title": "\u2022At Peace (V)",
+     "type": "Effect"
+    },
+    "pc_side": "Light"
+   }
+  ]
+ }
+]

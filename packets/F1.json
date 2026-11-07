@@ -1,0 +1,153 @@
+[
+ {
+  "pr": 546,
+  "branch": "legacy/lane-a-batch09",
+  "base": "master",
+  "title": "Legacy lane A: Kir Kanos With Force Pike (1261_11)",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1261/dark/Card1261_011.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1261/dark/Card_1261_011_Tests.java"
+  ],
+  "review": {
+   "verdict": "FIX",
+   "cards": [
+    {
+     "blueprint": "1261_11",
+     "title": "Kir Kanos With Force Pike",
+     "verdict": "FIX",
+     "issues": [
+      "No persona: nothing stops this card and Kir Kanos (10_043 / 208_032) being on table at the same time."
+     ]
+    }
+   ],
+   "shared_changes": "none",
+   "blocked_on": null,
+   "fix_instructions": "Add a Kir Kanos persona: append Persona.KIR_KANOS to Persona.java and call addPersona(Persona.KIR_KANOS) in Card1261_011, Card10_043 and Card208_032 (same pattern as Darth Maul With Lightsaber using Persona.MAUL). Add a test that Kir Kanos With Force Pike cannot deploy while Kir Kanos is on table.",
+   "notes": "Everything else is correct: Force Pike (free, character only, destiny+1, power=0 via Royal Guard reset), Heroic, own characters here immune to Cantina Brawl/Fallen Portal/Rebel Barrier."
+  },
+  "cards": [
+   {
+    "blueprint": "1261_11",
+    "pc_front": {
+     "ability": "2",
+     "deploy": "3",
+     "destiny": "3",
+     "forfeit": "4",
+     "gametext": "Heroic. Permanent weapon is Force Pike (may target a character for free; draw destiny; target hit, and its power = 0, if destiny +1 > defense value). Your characters here are immune to Cantina Brawl, Fallen Portal, and Rebel Barrier.",
+     "icons": [
+      "Warrior",
+      "Permanent weapon",
+      "Reflections 2"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/kirkanoswithforcepike.gif",
+     "lore": "Fiercely devoted Royal Guard. Feels deeply indebted to those who risk their life for him. Unaware of the extent of Palpatine's atrocities and cruelty.",
+     "power": "4",
+     "subType": "Imperial",
+     "title": "\u2022Kir Kanos With Force Pike",
+     "type": "Character"
+    },
+    "pc_side": "Dark"
+   }
+  ]
+ },
+ {
+  "pr": 563,
+  "branch": "legacy/lane-a-batch13",
+  "base": "master",
+  "title": "Legacy: implement Boba Fett, Relentless Bounty Hunter (1261_5)",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1261/dark/Card1261_005.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1261/dark/Card_1261_005_Tests.java"
+  ],
+  "review": {
+   "verdict": "FIX",
+   "cards": [
+    {
+     "blueprint": "1261_5",
+     "title": "Boba Fett, Relentless Bounty Hunter",
+     "verdict": "FIX",
+     "issues": [
+      "Move-phase relocation has no usage limit; test RelentlessBobaPaysTwoToRelocateAcrossSystemsWithCaptiveAndCanRepeat asserts it can repeat. 'During your move phase ... may use 2 Force to relocate' names a time frame with a singular action, so the One Rule limits it to once per move phase."
+     ]
+    }
+   ],
+   "shared_changes": "none",
+   "blocked_on": null,
+   "fix_instructions": "In Card1261_005 relocation action: add GameConditions.isOnceDuringYourPhase(game, self, playerId, sourceId, GameTextActionId.OTHER_CARD_ACTION_2, Phase.MOVE) to the condition and action.appendUsage(new OncePerPhaseEffect(action)). Change the repeat test to assert a second relocation is NOT offered in the same move phase (and is offered again next turn).",
+   "notes": "Other clauses fine: pilot +3, flying landspeed 3, once-per-battle choice of one destiny to total power OR attrition while armed with a blaster, immune < 3, Persona BOBA_FETT."
+  },
+  "cards": [
+   {
+    "blueprint": "1261_5",
+    "pc_front": {
+     "ability": "3",
+     "armor": "5",
+     "deploy": "4",
+     "destiny": "1",
+     "forfeit": "6",
+     "gametext": "Adds 3 to power of anything he pilots. May 'fly' (landspeed = 3). While armed with a blaster, may add one destiny to total power or attrition. During your move phase, if escorting a captive, may use 2 Force to relocate both to a docking bay. Immune to attrition < 3.",
+     "icons": [
+      "Pilot",
+      "Warrior",
+      "Jabba's Palace"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/bobafettrelentlessbountyhunter.gif",
+     "lore": "Boba Fett's helmet has infrared capabilities, a motion tracking system, a macrobinocular viewer, an internal comlink and a broadband antenna. He doesn't miss a thing.",
+     "power": "4",
+     "subType": "Alien",
+     "title": "\u2022Boba Fett, Relentless Bounty Hunter",
+     "type": "Character"
+    },
+    "pc_side": "Dark"
+   }
+  ]
+ },
+ {
+  "pr": 634,
+  "branch": "legacy/lane-a-batch27",
+  "base": "master",
+  "title": "Legacy lane A: He's No Jedi (1261_35)",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1261/dark/Card1261_035.java",
+   "src/gemp-swccg-common/src/main/java/com/gempukku/swccgo/common/GameTextActionId.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1261/dark/Card_1261_035_Tests.java"
+  ],
+  "review": {
+   "verdict": "FIX",
+   "cards": [
+    {
+     "blueprint": "1261_35",
+     "title": "He's No Jedi",
+     "verdict": "FIX",
+     "issues": [
+      "Missing clause: with This Deal Is Getting Worse All The Time on table, for remainder of game lightsabers may not 'swing' more than once per battle (PR omits it, citing a different printed face; PC JSON is the source of truth).",
+      "setGameText drops the swing clause; must match PC.",
+      "Force-drain clause only cancels drain bonuses from lightsaber cards (CancelForceDrainBonusesFromCardModifier); permanent-weapon lightsabers not covered; PR itself says partial."
+     ]
+    }
+   ],
+   "shared_changes": "appends one GameTextActionId constant (safe)",
+   "blocked_on": null,
+   "fix_instructions": "In the remainder-of-game trigger, also add an until-end-of-game MayFireOnlyOncePerBattleModifier (or equivalent) on lightsabers incl. permanent-weapon lightsabers (Filters.or(lightsaber, hasPermanentWeapon(lightsaber))), and make the drain-bonus prohibition cover permanent lightsabers too. Restore PC gametext in setGameText. Add tests for both.",
+   "notes": "Five face-down stack, twice-per-game shield play, Cloud City Occupation cancel are fine."
+  },
+  "cards": [
+   {
+    "blueprint": "1261_35",
+    "pc_front": {
+     "destiny": "5",
+     "gametext": "Deploy on table with 5 cards from outside your deck face down under here. Twice per game, may play a Defensive Shield from here (as if from hand). If This Deal Is Getting Worse All The Time on table, for remainder of game lightsabers may not add to Force Drains or 'swing' more than once per battle. Cloud City Occupation is canceled.",
+     "icons": [
+      "Jabba's Palace"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/hesnojedi.gif",
+     "lore": "'He's no Jedi.'",
+     "subType": "Starting",
+     "title": "\u2022He's No Jedi",
+     "type": "Effect"
+    },
+    "pc_side": "Dark"
+   }
+  ]
+ }
+]

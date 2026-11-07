@@ -1,0 +1,190 @@
+[
+ {
+  "pr": 680,
+  "branch": "legacy/lane-c-batch33",
+  "base": "master",
+  "title": "Implement Legacy Kashyyyk Sacred Forest",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1250/light/Card1250_075.java",
+   "src/gemp-swccg-common/src/main/java/com/gempukku/swccgo/common/GameTextActionId.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1250/light/Card_1250_075_Tests.java"
+  ],
+  "review": {
+   "verdict": "BLOCKED",
+   "cards": [
+    {
+     "blueprint": "1250_75",
+     "title": "Kashyyyk: Sacred Forest",
+     "verdict": "BLOCKED",
+     "issues": [
+      "Dark side 'Unless Mosep on table, Force lost from your Force drains here must come from opponent's hand, if possible' not implemented (engine; OVS 1116_016 on master also omits it)."
+     ]
+    }
+   ],
+   "shared_changes": "GameTextActionId: appended LEGACY__SACRED_FOREST__DEPLOY_YARNA. Safe.",
+   "blocked_on": "Engine: hand-first drain loss with Mosep exception (swccg-guild/work#182, no PR)",
+   "fix_instructions": "Implement the hand-first drain clause after the engine hook, with tests (with/without Mosep, empty hand fallback).",
+   "notes": "Start-of-turn draw per qualifying Kashyyyk site, once-per-turn Yarna download, all Nudjs lost: implemented and tested."
+  },
+  "cards": [
+   {
+    "blueprint": "1250_75",
+    "pc_front": {
+     "destiny": "0",
+     "gametext": "Light: At start of your turn, may draw a card from Reserve Deck for each Kashyyyk site where all your ability is provided by Wookiees. Once per turn, may deploy Yarna d'al' Gargan from Reserve Deck; reshuffle. Dark: Unless Mosep on table, Force lost from your Force drains here must come from opponent's hand, if possible. All Nudjs are lost.",
+     "icons": [
+      "Exterior",
+      "Planet",
+      "Endor",
+      "Episode I"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/kashyyyksacredforest.gif",
+     "subType": "Site",
+     "title": "\u2022Kashyyyk: Sacred Forest",
+     "type": "Location"
+    },
+    "pc_side": "Light"
+   }
+  ]
+ },
+ {
+  "pr": 681,
+  "branch": "legacy/lane-b-batch33",
+  "base": "master",
+  "title": "Legacy lane B: Reflection",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1261/light/Card1261_086.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1261/light/Card_1261_086_Tests.java"
+  ],
+  "review": {
+   "verdict": "BLOCKED",
+   "cards": [
+    {
+     "blueprint": "1261_86",
+     "title": "Reflection (V)",
+     "verdict": "BLOCKED",
+     "issues": [
+      "'(cannot be reduced)' on the retrieved Force is not implemented; RetrieveForceEffect is plain."
+     ]
+    }
+   ],
+   "shared_changes": "none (card + test only)",
+   "blocked_on": "Source-scoped 'this retrieval cannot be reduced' support (only a duel-wide flag exists on master; worker's request swccg-guild/work#182; no prerequisite PR).",
+   "fix_instructions": "When available, mark this card's retrieval as not reducible and add a test with a retrieval-reducing card.",
+   "notes": "Deploy on [Endor] Leia, training destiny +1, control-phase 3 Force (1 with Save You It Can) retrieve 1 implemented and tested."
+  },
+  "cards": [
+   {
+    "blueprint": "1261_86",
+    "pc_front": {
+     "destiny": "3",
+     "gametext": "Deploy on [Endor] Leia. Leia's training destiny draws are +1. During your control phase, may use 3 Force (if Save You It Can on table, may use 1 Force instead) to retrieve 1 Force (cannot be reduced).",
+     "icons": [
+      "Dagobah"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Light/large/reflection.gif",
+     "lore": "It was hard to imagine the enormous losses the Alliance suffered during the Battle of Hoth. Leia contemplated what she could do to help the Rebellion recover.",
+     "title": "\u2022Reflection (V)",
+     "type": "Effect"
+    },
+    "pc_side": "Light"
+   }
+  ]
+ },
+ {
+  "pr": 683,
+  "branch": "legacy/lane-c-batch34",
+  "base": "master",
+  "title": "Implement Legacy A Jedi Cunning",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1250/light/Card1250_058.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1250/light/Card_1250_058_Tests.java"
+  ],
+  "review": {
+   "verdict": "BLOCKED",
+   "cards": [
+    {
+     "blueprint": "1250_58",
+     "title": "A Jedi's Cunning",
+     "verdict": "BLOCKED",
+     "issues": [
+      "'opponent may not cancel immunity to attrition of your Jedi' (while Sidious or [Episode I] hologram on table) not implemented. Existing ImmunityToAttritionMayNotBeCanceledModifier only protects its source card and is not opponent-scoped."
+     ]
+    }
+   ],
+   "shared_changes": "none",
+   "blocked_on": "Engine: filter-based, opponent-source-only version of ImmunityToAttritionMayNotBeCanceledModifier (swccg-guild/work#182, no PR)",
+   "fix_instructions": "Add a constructor taking an affect filter plus a check that only opponent-sourced cancellations are blocked, then add the clause (your Jedi, conditional on Sidious/Episode I hologram) with a test.",
+   "notes": "Both battle-destiny caps (sites with your Jedi under the condition; where Luke present) implemented and tested; Alter immunity tested."
+  },
+  "cards": [
+   {
+    "blueprint": "1250_58",
+    "pc_front": {
+     "destiny": "5",
+     "gametext": "Deploy on table. While Sidious or an [Episode I] hologram on table, opponent may not cancel immunity to attrition of your Jedi and draws no more than two battle destiny at sites where you have a Jedi. Opponent draws no more than two battle destiny where Luke present. (Immune to Alter.)",
+     "icons": [
+      "Cloud City"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/ajediscunning.gif",
+     "lore": "Luke's sudden reversal of fortune allowed him to turn the tables on Vader.",
+     "title": "\u2022A Jedi's Cunning",
+     "type": "Effect"
+    },
+    "pc_side": "Light"
+   }
+  ]
+ },
+ {
+  "pr": 684,
+  "branch": "legacy/lane-c-batch35",
+  "base": "master",
+  "title": "Implement Legacy Lieutenant Williams",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1250/light/Card1250_043.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1250/light/Card_1250_043_Tests.java"
+  ],
+  "review": {
+   "verdict": "BLOCKED",
+   "cards": [
+    {
+     "blueprint": "1250_43",
+     "title": "Lieutenant Williams (V)",
+     "verdict": "BLOCKED",
+     "issues": [
+      "'if at opponent's system, may take other destiny into hand' not implemented (DrawDestinyAndChooseInsteadEffect has no hand option)."
+     ]
+    }
+   ],
+   "shared_changes": "none",
+   "blocked_on": "Engine: optional hand destination for the unchosen destiny in DrawDestinyAndChooseInsteadEffect (swccg-guild/work#182, no PR)",
+   "fix_instructions": "Add the opponent's-system branch once the effect supports it, with a test at opponent's system (take the other card into hand) and at own system (no option).",
+   "notes": "+2 power piloting, Radiant VII draws one battle destiny if unable otherwise, draw two choose one at a system here: implemented and tested."
+  },
+  "cards": [
+   {
+    "blueprint": "1250_43",
+    "pc_front": {
+     "ability": "2",
+     "deploy": "2",
+     "destiny": "3",
+     "forfeit": "4",
+     "gametext": "Adds 2 to power of anything he pilots. While piloting Radiant VII, draws one battle destiny if unable to otherwise. During battle at a system, if about to draw a battle destiny here, may instead draw two and choose one; if at opponent's system, may take other destiny into hand.",
+     "icons": [
+      "Pilot",
+      "Warrior",
+      "Episode I",
+      "Coruscant"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/lieutenantwilliams.gif",
+     "lore": "Pilot of the Radiant VII. Was personally requested by Captain Madakor to assist in the transportation of the Jedi ambassadors.",
+     "power": "2",
+     "subType": "Republic",
+     "title": "\u2022Lieutenant Williams (V)",
+     "type": "Character"
+    },
+    "pc_side": "Light"
+   }
+  ]
+ }
+]

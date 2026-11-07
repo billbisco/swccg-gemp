@@ -1,0 +1,157 @@
+[
+ {
+  "pr": 620,
+  "branch": "legacy/lane-b-batch20",
+  "base": "master",
+  "title": "Legacy Block 6 Light: General Solomahal",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1263/light/Card1263_022.java",
+   "src/gemp-swccg-common/src/main/java/com/gempukku/swccgo/common/GameTextActionId.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1263/light/Card_1263_022_Tests.java"
+  ],
+  "review": {
+   "verdict": "FIX",
+   "cards": [
+    {
+     "blueprint": "1263_22",
+     "title": "General Solomahal",
+     "verdict": "FIX",
+     "issues": [
+      "CI Maven fails: Card_1263_022_Tests.SolomahalReordersAllFlagshipSitesAndTheirCardsWithoutMovingOtherSites line 78 (site order after rearrange does not match chosen order). PR body does not explain the failure.",
+      "Destiny-boost clause has no positive test (needs [VB5] Palpatine 1250_53 from PR #572) and no imprisoned-Palpatine test."
+     ]
+    }
+   ],
+   "shared_changes": "GameTextActionId: one appended constant (safe)",
+   "blocked_on": null,
+   "fix_instructions": "Find why the rearranged Blockade Flagship sites do not end up in the chosen left-to-right order (card wiring of ChooseAndRearrangeRelatedSitesEffect with Filters.siteOfStarshipOrVehicle(BLOCKADE_FLAGSHIP) vs test expectations) and make the test pass. Then add positive tests for 'drew a 3, use X Force (1-3) to add X' with [VB5] Palpatine on table and imprisoned, once-per-turn reset, and X capped at 3 (after PR #572 lands, or with a test stand-in).",
+   "notes": "Identity matches image (power/ability/armor 3, deploy 3, forfeit 3, Leader/Scout). Code for the destiny clause looks right on reading."
+  },
+  "cards": [
+   {
+    "blueprint": "1263_22",
+    "pc_front": {
+     "ability": "3",
+     "armor": "3",
+     "deploy": "3",
+     "destiny": "3",
+     "forfeit": "3",
+     "gametext": "Once per game, may rearrange all Blockade Flagship sites (all cards at a given site move along with that site). Once per turn, if [Virtual Block 5] Palpatine on table (or imprisoned) and you just drew a battle destiny of 3, may use X Force (limit 3) to add X to that destiny.",
+     "icons": [
+      "Episode I",
+      "Warrior",
+      "A New Hope"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Light/large/generalsolomahal.gif",
+     "lore": "Leader. Scout.",
+     "power": "3",
+     "subType": "Republic",
+     "title": "\u2022General Solomahal",
+     "type": "Character"
+    },
+    "pc_side": "Light"
+   }
+  ]
+ },
+ {
+  "pr": 626,
+  "branch": "legacy/lane-b-batch21",
+  "base": "master",
+  "title": "Legacy Block 6 Light: Dressel retrieval and drain",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1263/light/Card1263_030.java",
+   "src/gemp-swccg-common/src/main/java/com/gempukku/swccgo/common/GameTextActionId.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1263/light/Card_1263_030_Tests.java"
+  ],
+  "review": {
+   "verdict": "BLOCKED",
+   "cards": [
+    {
+     "blueprint": "1263_30",
+     "title": "Dressel",
+     "verdict": "BLOCKED",
+     "issues": [
+      "Dark-side clause 'Despair may not prevent cards from moving as a react (except away from battle)' is not implemented; PR says shared movement logic cannot express it and an engine request is open on integration #182. No engine PR for this is in the review set.",
+      "CI Maven fails: 5 of 6 tests in Card_1263_030_Tests fail with 'Card choice unavailable' (scenario setup/choice flow, likely the LS starting-location system setup)."
+     ]
+    }
+   ],
+   "shared_changes": "GameTextActionId: one appended constant (safe)",
+   "blocked_on": "Engine support to let a source suppress Despair's prevention of react movement (except reacts away from battle); no PR exists yet.",
+   "fix_instructions": "1) Fix the test scenario so the 5 failing tests run (they fail before reaching card logic: 'Card choice unavailable'). 2) After the engine change exists, implement the Despair exception and test it. Light retrieval and drain -1 code look right.",
+   "notes": "Icons verified against image (2 light/1 dark, parsec 2)."
+  },
+  "cards": [
+   {
+    "blueprint": "1263_30",
+    "pc_front": {
+     "destiny": "0",
+     "gametext": "Light: During your control phase, if you occupy, may lose 1 Force to retrieve a trooper into hand. Dark: Force drain -1 here. Despair may not prevent cards from moving as a 'react' (except away from battle).",
+     "icons": [
+      "Planet"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Light/large/dressel.gif",
+     "parsec": "2",
+     "subType": "System",
+     "title": "\u2022Dressel",
+     "type": "Location"
+    },
+    "pc_side": "Light"
+   }
+  ]
+ },
+ {
+  "pr": 701,
+  "branch": "legacy/lane-b-batch42",
+  "base": "master",
+  "title": "Legacy lane B42: Republic Starfighter crew and deployment discounts",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1263/light/Card1263_033.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1263/light/Card_1263_033_Tests.java"
+  ],
+  "review": {
+   "verdict": "BLOCKED",
+   "cards": [
+    {
+     "blueprint": "1263_33",
+     "title": "Republic Starfighter",
+     "verdict": "BLOCKED",
+     "issues": [
+      "'May be revealed or deployed using Get To Your Ships!' not implemented; GTYS only accepts unpiloted starfighters and this ship has a permanent pilot."
+     ]
+    }
+   ],
+   "shared_changes": "none (card + test only)",
+   "blocked_on": "PR 516 (adds MayUseGetToYourShips permission interface and GetToYourShipsStarfighterFilter to Get To Your Ships!).",
+   "fix_instructions": "After 516 merges, make Card1263_033 implement MayUseGetToYourShips and add reveal-from-hand and Reserve-deploy GTYS tests.",
+   "notes": "Stats/icons, permanent pilot ability 1, suspended while pilot seat filled, pilots deploy -1 aboard (-2 Jedi) correct and tested."
+  },
+  "cards": [
+   {
+    "blueprint": "1263_33",
+    "pc_front": {
+     "deploy": "3",
+     "destiny": "2",
+     "forfeit": "5",
+     "gametext": "Permanent pilot provides ability of 1. May add 1 pilot (suspends permanent pilot). Pilots deploy -1 aboard (-2 if a Jedi). May be revealed or deployed using Get To Your Ships!.",
+     "hyperspeed": "5",
+     "icons": [
+      "Pilot",
+      "Nav Computer",
+      "Republic",
+      "Scomp Link",
+      "Death Star II",
+      "Episode I"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Light/large/republicstarfighter.gif",
+     "maneuver": "4",
+     "power": "3",
+     "subType": "Starfighter: Reconnaissance Fighter",
+     "title": "Republic Starfighter",
+     "type": "Starship"
+    },
+    "pc_side": "Light"
+   }
+  ]
+ }
+]

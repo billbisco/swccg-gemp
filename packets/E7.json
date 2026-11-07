@@ -1,0 +1,219 @@
+[
+ {
+  "pr": 688,
+  "branch": "legacy/lane-b-batch34",
+  "base": "master",
+  "title": "Legacy lane B batch 34: Local Uprising and Main Power Generators",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1220/light/Card1220_163.java",
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1220/light/Card1220_163_BACK.java",
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1261/light/Card1261_112.java",
+   "src/gemp-swccg-common/src/main/java/com/gempukku/swccgo/common/GameTextActionId.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1220/light/Card_1220_163_Tests.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1261/light/Card_1261_112_Tests.java"
+  ],
+  "review": {
+   "verdict": "BLOCKED",
+   "cards": [
+    {
+     "blueprint": "1220_163",
+     "title": "Local Uprising / Liberation (V)",
+     "verdict": "BLOCKED",
+     "issues": [
+      "Liberation clause 'Wedge may not cancel battle destiny draws on Hoth' not implemented (MayNotCancelBattleDestinyModifier is not source-scoped)."
+     ]
+    },
+    {
+     "blueprint": "1261_112",
+     "title": "Hoth: Main Power Generators (1st Marker) (V)",
+     "verdict": "BLOCKED",
+     "issues": [
+      "LS clause 'Unique speeders cannot be thrown' not implemented."
+     ]
+    }
+   ],
+   "shared_changes": "none (card + test + appended GameTextActionId only)",
+   "blocked_on": "(1) Modifier preventing a specific card (Wedge) from canceling battle destiny at a location; (2) engine support for preventing a speeder being 'thrown'. Both are worker requests in swccg-guild/work#182; no prerequisite PR in the review set.",
+   "fix_instructions": "Add the two missing clauses with tests once support exists.",
+   "notes": "Rest of both cards is solid: startup (Hoth, VB6 MPG, optional Echo Base Garrison / Maneuvering Flaps, deploy restrictions, T-47 Battle Formation once per game + Sense immunity), deploy-phase download, flip conditions, blown-away out of play, Liberation Force loss / take card / loss reduction; MPG shield coverage, 8 Force blow-away, powered artillery. 23 tests."
+  },
+  "cards": [
+   {
+    "blueprint": "1220_163",
+    "pc_front": {
+     "destiny": "0",
+     "gametext": "Local Uprising: Deploy Hoth system and [Virtual Block 6] Main Power Generators. May deploy Echo Base Garrison and/or Maneuvering Flaps. {For} remainder of game, you may not deploy Hoth Sentry or non-Hoth locations (except Rendezvous Point). T-47 Battle Formation may only be played once per game and is [Immune to Sense]. {While} this side up, during your deploy phase, may deploy an exterior Hoth site or a non-unique Rebel to Hoth from Reserve Deck; reshuffle. {Flip} this card during your move phase if you control 3 exterior Hoth sites with T-47s and/or non-unique Rebels. {Place} out of play if Main Power Generators 'blown away'. Liberation: {While} this side up, Wedge may not cancel battle destiny draws on Hoth. During your control phase: opponent loses 1 Force for each battleground marker site you control with both a T-47 and a Rebel, and you may use 2 Force to take any one card into hand from Reserve Deck; reshuffle. Whenever you must lose Force (except from your card, battle damage, or a Force drain at a battleground), reduce the loss (to a minimum of 1) by the number of Hoth locations you occupy. {Flip} this card if you do not control 2 exterior Hoth sites. {Place} out of play if if Main Power Generators 'blown away'.",
+     "icons": [
+      "Special Edition"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock2-Light/large/localuprising.gif",
+     "title": "Local Uprising / Liberation (V)",
+     "type": "Objective"
+    },
+    "pc_side": "Light"
+   },
+   {
+    "blueprint": "1261_112",
+    "pc_front": {
+     "destiny": "0",
+     "gametext": "Light: While Liberation on table, Hoth Energy Shield covers only this site and Echo sites. Unique (\u2022) speeders cannot be 'thrown.' Dark: 'Hoth Energy Shield Rules' in effect. If 'blown away,' Light Side loses 8 Force. Artillery weapons on Hoth are powered.",
+     "icons": [
+      "Exterior",
+      "Planet",
+      "Hoth"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Light/large/hothmainpowergenerators.gif",
+     "subType": "Site",
+     "title": "\u2022Hoth: Main Power Generators (1st Marker) (V)",
+     "type": "Location"
+    },
+    "pc_side": "Light"
+   }
+  ]
+ },
+ {
+  "pr": 697,
+  "branch": "legacy/lane-b-batch39",
+  "base": "master",
+  "title": "Legacy lane B batch 39: Light Jabba Prize",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1261/light/Card1261_067.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1261/light/Card_1261_067_Tests.java"
+  ],
+  "review": {
+   "verdict": "BLOCKED",
+   "cards": [
+    {
+     "blueprint": "1261_67",
+     "title": "Jabba's Prize (Light)",
+     "verdict": "BLOCKED",
+     "issues": [
+      "'subtracts one from the number of cards you may start under your Starting Effect' not implemented.",
+      "Adds Icon.REFLECTIONS_II; PC JSON lists no icons (check the image)."
+     ]
+    }
+   ],
+   "shared_changes": "none (card + test only)",
+   "blocked_on": "Starting Effect capacity adjustment support (integration request swccg-guild/work#182; no prerequisite PR).",
+   "fix_instructions": "Implement the capacity reduction once supported and test it; confirm the R2 icon against the printed card.",
+   "notes": "Outside-deck, reveal, Security Tower replacement, Corran persona on table only, Maintenance Falcon ban, out of play on release/leave, Audience Chamber battle destiny +1 implemented."
+  },
+  "cards": [
+   {
+    "blueprint": "1261_67",
+    "pc_front": {
+     "ability": "0",
+     "deploy": "0",
+     "destiny": "0",
+     "forfeit": "0",
+     "gametext": "Jabba's Prize is a Light Side card and does not count toward your deck limit (but subtracts one from the number of cards you may start under your Starting Effect). Reveal to opponent when deploying your Starting Effect. {Deploys only at start of game if Jabba's Prize is at Security Tower (replaces opponent's Jabba's Prize imprisoned in Security Tower); otherwise place out of play.} May not be placed in Reserve Deck. Jabba's Prize is a persona of Corran Horn only while on table. If Jabba's Prize was just released or leaves table, place it out of play. For remainder of game, you may not deploy [Maintenance] Falcon. While Jabba's Prize at Audience Chamber, opponent's battle destiny draws there are +1.",
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Light/large/jabbasprizefront.gif",
+     "power": "0",
+     "subType": "Rebel",
+     "title": "\u2022Jabba's Prize/Jabba's Prize",
+     "type": "Character"
+    },
+    "pc_side": "Light"
+   }
+  ]
+ },
+ {
+  "pr": 698,
+  "branch": "legacy/lane-b-batch40",
+  "base": "master",
+  "title": "Legacy lane B batch 40: Commando Training and Klor slug",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1261/light/Card1261_079.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1261/light/Card_1261_079_Tests.java"
+  ],
+  "review": {
+   "verdict": "BLOCKED",
+   "cards": [
+    {
+     "blueprint": "1261_79",
+     "title": "Commando Training & K'lor'slug",
+     "verdict": "BLOCKED",
+     "issues": [
+      "'(and power -1)' ignore not implemented.",
+      "'apply their Endor deployment modifiers at any location' not implemented.",
+      "'Your Interrupts that retrieve exactly 1 Force (except Corellian Retort) are not stacked on Do They Have A Code Clearance?' not implemented."
+     ]
+    }
+   ],
+   "shared_changes": "none (card + test only)",
+   "blocked_on": "Engine hooks: ignore own 'power -1' text, apply Endor deploy modifiers elsewhere, and DTHACC exact-one-retrieval provenance (worker requests in swccg-guild/work#182; no prerequisite PR).",
+   "fix_instructions": "Add the three clauses with tests when hooks exist.",
+   "notes": "Deferred loss to end of battle (forfeit for 0), deploy-restriction ignore, Bad Feeling Have I immunity, cannot be canceled, Alter immunity implemented and tested."
+  },
+  "cards": [
+   {
+    "blueprint": "1261_79",
+    "pc_front": {
+     "destiny": "1",
+     "gametext": "Deploy on table. If your character or non-[Independent Starship] starship in battle is about to be lost before the damage segment, it is instead lost at end of battle (if forfeited, forfeit for 0). Rebels (except Jedi or [Permanent Weapon] characters) ignore location deploytment restrictions (and 'power -1') in their game text, apply their Endor deployment modifiers at any location, and are immune to Bad Feeling Have I. Your Interrupts that retrieve exactly 1 Force (except Corellian Retort) are not stacked on Do They Have A Code Clearance?. Cannot be canceled. (Immune to Alter.)",
+     "icons": [
+      "Endor"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Light/large/commandotraining&klorslug.gif",
+     "title": "\u2022Commando Training & \u2022K'lor'slug",
+     "type": "Effect"
+    },
+    "pc_side": "Light"
+   }
+  ]
+ },
+ {
+  "pr": 699,
+  "branch": "legacy/lane-b-batch17",
+  "base": "master",
+  "title": "Legacy lane B17: Phylo Gandish pilot and local immunities",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1263/light/Card1263_026.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1263/light/Card_1263_026_Tests.java"
+  ],
+  "review": {
+   "verdict": "BLOCKED",
+   "cards": [
+    {
+     "blueprint": "1263_26",
+     "title": "Phylo Gandish (V)",
+     "verdict": "BLOCKED",
+     "issues": [
+      "Clause 'If opponent's [Virtual Block 6] card just added a destiny to total power or attrition here, draw two destiny, choose one, subtract it from their attrition and total power' not implemented."
+     ]
+    }
+   ],
+   "shared_changes": "none (card + test only)",
+   "blocked_on": "Trigger for 'a destiny was just added to total power/attrition by card X here' (worker request swccg-guild/work#182; no prerequisite PR).",
+   "fix_instructions": "Implement the response when the trigger exists, with positive and inverse tests.",
+   "notes": "+2 to piloted, You Are Beaten and attrition <3 immunity for your characters here are correct and tested."
+  },
+  "cards": [
+   {
+    "blueprint": "1263_26",
+    "pc_front": {
+     "ability": "4",
+     "deploy": "3",
+     "destiny": "2",
+     "extraText": [
+      "Force-Sensitive"
+     ],
+     "forfeit": "4",
+     "gametext": "Adds 2 to power of anything she pilots. If opponent's [Virtual Block 6] card just added a destiny to total power or attrition here, draw two destiny, choose one, and subtract it from their attrition and total power. Your characters here are immune to You Are Beaten and attrition < 3.",
+     "icons": [
+      "Pilot",
+      "Episode I",
+      "Coruscant"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Light/large/phylogandish.gif",
+     "lore": "Good-natured former pilot whose family owns a galactic transportation company. Years of travel has her to learn many loopholes in spaceport protocol.",
+     "power": "1",
+     "subType": "Alien",
+     "title": "\u2022Phylo Gandish (V)",
+     "type": "Character"
+    },
+    "pc_side": "Light"
+   }
+  ]
+ }
+]

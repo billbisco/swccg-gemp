@@ -1,0 +1,103 @@
+[
+ {
+  "pr": 660,
+  "branch": "legacy/lane-a-batch32",
+  "base": "master",
+  "title": "Legacy lane A: Lieutenant Cecius (V) (1261_16)",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1261/dark/Card1261_016.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1261/dark/Card_1261_016_Tests.java"
+  ],
+  "review": {
+   "verdict": "BLOCKED",
+   "cards": [
+    {
+     "blueprint": "1261_16",
+     "title": "Lieutenant Cecius (V)",
+     "verdict": "BLOCKED",
+     "issues": [
+      "Missing clause: at battlegrounds where you have a unique and a non-unique Imperial present (and no other Force drain bonus), your Force drains are +1."
+     ]
+    }
+   ],
+   "shared_changes": "none",
+   "blocked_on": "Engine support for a conditional Force drain bonus that applies only when no other Force drain bonus applies (no precedent on master, no PR in the review set).",
+   "fix_instructions": null,
+   "notes": "Deploy +1 for opponent's characters at same mobile site and Tactical Support as Used Interrupt are fine."
+  },
+  "cards": [
+   {
+    "blueprint": "1261_16",
+    "pc_front": {
+     "ability": "2",
+     "deploy": "2",
+     "destiny": "2",
+     "forfeit": "3",
+     "gametext": "Opponent's characters are deploy +1 to same mobile site. At battlegrounds where you have a unique (\u2022) and non-unique Imperial present (and no other bonus to your Force drain), your Force drains are +1. Tactical Support is a Used Interrupt.",
+     "icons": [
+      "Warrior",
+      "Cloud City"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/lieutenantcecius.gif",
+     "lore": "Former member of the Imperial infantry. Specializes in boarding and taking control of enemy ships. Native of Vogel 7. Hasn't had a date in years.",
+     "power": "2",
+     "subType": "Imperial",
+     "title": "\u2022Lieutenant Cecius (V)",
+     "type": "Character"
+    },
+    "pc_side": "Dark"
+   }
+  ]
+ },
+ {
+  "pr": 682,
+  "branch": "legacy/lane-a-batch38",
+  "base": "master",
+  "title": "Implement independent Captain Mod Terrik clauses (Legacy Lane A)",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1261/dark/Card1261_007.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1261/dark/Card_1261_007_Tests.java"
+  ],
+  "review": {
+   "verdict": "BLOCKED",
+   "cards": [
+    {
+     "blueprint": "1261_7",
+     "title": "Captain Mod Terrik",
+     "verdict": "BLOCKED",
+     "issues": [
+      "Missing clause: your ability-1 troopers (unless they have another forfeit bonus) are forfeit +2."
+     ]
+    }
+   ],
+   "shared_changes": "none",
+   "blocked_on": "Engine query to test 'has another forfeit bonus' without recursion (no precedent on master, no PR in review set).",
+   "fix_instructions": null,
+   "notes": "Stats/armor/keywords, other sandtroopers deploy -1, ability-1 trooper forfeit-reduction protection, two-trooper battle destiny fine."
+  },
+  "cards": [
+   {
+    "blueprint": "1261_7",
+    "pc_front": {
+     "ability": "2",
+     "armor": "4",
+     "deploy": "2",
+     "destiny": "3",
+     "forfeit": "3",
+     "gametext": "Other sandtroopers are deploy -1. Your ability-1 troopers may not have their forfeit reduced and (unless they have another forfeit bonus) are forfeit +2. At sites where you have two troopers, they may draw one battle destiny if not able to otherwise.",
+     "icons": [
+      "Warrior",
+      "A New Hope"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/captainmodterrik.gif",
+     "lore": "Leader. Captain Mod Terrik, a typical officer of the Desert Sands sandtrooper unit. Fearless and highly motivated. Willing to sacrifice as many troops as necessary.",
+     "power": "2",
+     "subType": "Imperial",
+     "title": "\u2022Captain Mod Terrik",
+     "type": "Character"
+    },
+    "pc_side": "Dark"
+   }
+  ]
+ }
+]

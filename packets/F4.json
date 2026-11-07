@@ -1,0 +1,212 @@
+[
+ {
+  "pr": 674,
+  "branch": "legacy/lane-a-batch36",
+  "base": "master",
+  "title": "Implement independent Fleet Security Protocols clauses (Legacy Lane A)",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1261/dark/Card1261_034.java",
+   "src/gemp-swccg-common/src/main/java/com/gempukku/swccgo/common/GameTextActionId.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1261/dark/Card_1261_034_Tests.java"
+  ],
+  "review": {
+   "verdict": "FIX",
+   "cards": [
+    {
+     "blueprint": "1261_34",
+     "title": "Fleet Security Protocols",
+     "verdict": "FIX",
+     "issues": [
+      "Power clause differs from PC: PC says characters at related starship/vehicle sites cumulatively add 2 to YOUR TOTAL POWER during battle where you have a starship or vehicle; code gives each participating vessel +2 power per character.",
+      "Missing: those characters may be forfeited to reduce battle damage or attrition.",
+      "Missing: when a starship/vehicle site leaves table, place it and all cards there in owner's Used Pile.",
+      "setGameText rewritten; does not match PC."
+     ]
+    }
+   ],
+   "shared_changes": "appends one GameTextActionId constant (safe)",
+   "blocked_on": null,
+   "fix_instructions": "Use PC gametext; replace the PowerModifier with a total-power modifier (+2 per your character at related starship/vehicle sites of your starships/vehicles in the battle); allow those characters to be forfeited to battle damage/attrition; add the site-leaves-table Used Pile rule; tests.",
+   "notes": "Once-per-turn non-unique ship/vehicle site download fine."
+  },
+  "cards": [
+   {
+    "blueprint": "1261_34",
+    "pc_front": {
+     "destiny": "3",
+     "gametext": "Deploy on table. Once per turn, may deploy a non-unique starship (or vehicle) site from Reserve Deck; reshuffle. During battle where you have a starship or vehicle, characters at related starship (or vehicle) sites cumulatively add 2 to your total power and may be forfeited to reduce battle damage or attrition. When a starship (or vehicle) site leaves table, place it and all cards there in owner's Used Pile. (Immune to Alter.)",
+     "icons": [
+      "Death Star II"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/fleetsecurityprotocols.gif",
+     "lore": "Since the debacle at Yavin, the Emperor places a premium on the security of his costly war machine.",
+     "title": "\u2022Fleet Security Protocols",
+     "type": "Effect"
+    },
+    "pc_side": "Dark"
+   }
+  ]
+ },
+ {
+  "pr": 685,
+  "branch": "legacy/lane-a-batch39",
+  "base": "master",
+  "title": "Implement independent Carnor Jax and Royal Escort clauses (Legacy Lane A)",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1261/dark/Card1261_008.java",
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1261/dark/Card1261_038.java",
+   "src/gemp-swccg-common/src/main/java/com/gempukku/swccgo/common/GameTextActionId.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1261/dark/Card_1261_008_Tests.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1261/dark/Card_1261_038_Tests.java"
+  ],
+  "review": {
+   "verdict": "FIX",
+   "cards": [
+    {
+     "blueprint": "1261_8",
+     "title": "Carnor Jax, Royal Guard",
+     "verdict": "FIX",
+     "issues": [
+      "Missing: Imperials may not have deploy costs increased (or be excluded from battle) by opponent here.",
+      "Missing: when using a Force Pike, may draw two weapon destiny and choose one (may take the other into hand)."
+     ]
+    },
+    {
+     "blueprint": "1261_38",
+     "title": "Royal Escort (V)",
+     "verdict": "FIX",
+     "issues": [
+      "Missing: \"'Emperor' on Royal Guards may be treated as 'Sidious'.\"",
+      "Cosmetic: setGameText uses '[download]' wording instead of PC 'deploy ... from Reserve Deck; reshuffle'."
+     ]
+    }
+   ],
+   "shared_changes": "appends one GameTextActionId constant (safe)",
+   "blocked_on": null,
+   "fix_instructions": "Jax: add opponent-sourced deploy-cost-increase immunity and may-not-be-excluded-from-battle for Imperials here; add the two-weapon-destiny choice when firing a Force Pike (precedent Card1117_019). Escort: implement Emperor->Sidious substitution on Royal Guards (ModifyGameTextModifier pattern). Tests for each.",
+   "notes": "Jax only has stats and immunity <3. Escort's deploy restriction, SE Coruscant icon, attrition and Force Pike download fine."
+  },
+  "cards": [
+   {
+    "blueprint": "1261_8",
+    "pc_front": {
+     "ability": "2",
+     "armor": "3",
+     "deploy": "4",
+     "destiny": "2",
+     "forfeit": "5",
+     "gametext": "Imperials may not have their deploy costs increased (or be excluded from battle) by opponent here. When using a Force Pike, may draw two weapon destiny and choose one (may take the other into hand). Immune to attrition < 3.",
+     "icons": [
+      "Warrior",
+      "Death Star II"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/carnorjaxroyalguard.gif",
+     "power": "5",
+     "subType": "Imperial",
+     "title": "\u2022Carnor Jax, Royal Guard",
+     "type": "Character"
+    },
+    "pc_side": "Dark"
+   },
+   {
+    "blueprint": "1261_38",
+    "pc_front": {
+     "destiny": "4",
+     "gametext": "Deploy on table unless your [Reflections 2] Objective on table. Unique (\u2022) [Special Edition] Coruscant sites gain one [Light Side Force]. 'Emperor' on Royal Guards may be treated as 'Sidious.' Attrition against opponent is +1 for each battleground site occupied by two Royal Guards. May use 1 Force to deploy a Force Pike from Reserve Deck; reshuffle. (Immune to Alter.)",
+     "icons": [
+      "Death Star II"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/royalescort.gif",
+     "lore": "When away from the Imperial Palace on Coruscant, the Emperor is protected by legions of troops. Typically this force includes soldiers trained to fight in local environment.",
+     "title": "\u2022Royal Escort (V)",
+     "type": "Effect"
+    },
+    "pc_side": "Dark"
+   }
+  ]
+ },
+ {
+  "pr": 687,
+  "branch": "legacy/lane-a-batch40",
+  "base": "master",
+  "title": "Implement independent Command Station and Black 11 clauses (Legacy Lane A)",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1261/dark/Card1261_054.java",
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1261/dark/Card1261_057.java",
+   "src/gemp-swccg-common/src/main/java/com/gempukku/swccgo/common/GameTextActionId.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1261/dark/Card_1261_054_Tests.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1261/dark/Card_1261_057_Tests.java"
+  ],
+  "review": {
+   "verdict": "FIX",
+   "cards": [
+    {
+     "blueprint": "1261_54",
+     "title": "Star Destroyer: Command Station",
+     "verdict": "FIX",
+     "issues": [
+      "Missing: while you control, related starship may move as a 'react' (MayMoveAsReactModifier exists).",
+      "setGameText says 'If you control' and '[download] Jir'; PC says 'While you control' and 'deploy Jir here from Reserve Deck; reshuffle'."
+     ]
+    },
+    {
+     "blueprint": "1261_57",
+     "title": "DS-61-11 In Black 11",
+     "verdict": "FIX",
+     "issues": [
+      "Missing: whenever you deploy a TIE simultaneously with a pilot character, your Force retrieval from Sienar Fleet Systems is +1."
+     ]
+    }
+   ],
+   "shared_changes": "appends one GameTextActionId constant (safe)",
+   "blocked_on": null,
+   "fix_instructions": "Station: add MayMoveAsReactModifier for the related starship under ControlsCondition; restore PC text. Black 11: add a modifier increasing Sienar Fleet Systems' retrieval by 1 when a TIE deploys simultaneously with a pilot (may need a small engine hook). Tests.",
+   "notes": "Station power protection, Light attrition immunity, Devastator-gated Jir download fine. Black 11 stats/pilot/immunity fine."
+  },
+  "cards": [
+   {
+    "blueprint": "1261_54",
+    "pc_front": {
+     "destiny": "0",
+     "gametext": "Dark: While you control, related starship may not have its power reduced and may move as a 'react.' Once per game, if Devastator on table, may deploy Jir here from Reserve Deck; reshuffle. Light: Unless you control, related starship is immune to attrition < 4 or adds 2 to immunity (if on Devastator and opponent controls this site, immune to attrition).",
+     "icons": [
+      "Interior",
+      "Mobile",
+      "Starship",
+      "Scomp Link",
+      "Dagobah"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/stardestroyercommandstation.gif",
+     "subType": "Site",
+     "title": "\u2022\u2022\u2022Star Destroyer: Command Station",
+     "type": "Location"
+    },
+    "pc_side": "Dark"
+   },
+   {
+    "blueprint": "1261_57",
+    "pc_front": {
+     "deploy": "3",
+     "destiny": "2",
+     "extraText": [
+      "No Hyperdrive"
+     ],
+     "forfeit": "4",
+     "gametext": "Permanent pilot is \u2022DS-61-11, who provides ability of 2. Whenever you deploy a TIE simultaneously with a pilot character, your Force retrieval from Sienar Fleet Systems is +1. Immune to attrition < 5.",
+     "icons": [
+      "Pilot",
+      "Death Star II"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/ds6111inblack11.gif",
+     "lore": "Stationed aboard command ship Executor. Pilot known as 'Wampa' for icy precision in battle. Often serves as escort to Lord Vader's shuttle.",
+     "maneuver": "3",
+     "power": "4",
+     "subType": "Starfighter: TIE/LN",
+     "title": "\u2022DS-61-11 In Black 11",
+     "type": "Starship"
+    },
+    "pc_side": "Dark"
+   }
+  ]
+ }
+]

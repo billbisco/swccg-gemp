@@ -1,0 +1,223 @@
+[
+ {
+  "pr": 693,
+  "branch": "legacy/lane-c-batch39",
+  "base": "master",
+  "title": "Implement Legacy We Have A Plan",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1250/light/Card1250_078.java",
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1250/light/Card1250_078_BACK.java",
+   "src/gemp-swccg-common/src/main/java/com/gempukku/swccgo/common/GameTextActionId.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1250/light/Card_1250_078_Tests.java"
+  ],
+  "review": {
+   "verdict": "FIX",
+   "cards": [
+    {
+     "blueprint": "1250_78",
+     "title": "We Have A Plan / They Will Be Lost And Confused (V)",
+     "verdict": "FIX",
+     "issues": [
+      "Back: 'Flip this card (and if possible, relocate Palpatine to a prison and imprison him there) if Palpatine is about to be captured, lost, missing, or removed from table' is not implemented at all. The OVS 1116_011_BACK on master at least flips on isAboutToBeLost(Palpatine).",
+      "Tests use provisional OVS Prison/Decipher Palpatine; canonical Block 5 versions noted as pending by the worker."
+     ]
+    }
+   ],
+   "shared_changes": "GameTextActionId: appended two ids. Safe.",
+   "blocked_on": "Relocate-and-imprison part may need an engine replacement hook (swccg-guild/work#182)",
+   "fix_instructions": "Add a required trigger on the back for Palpatine about to be captured/lost/missing/removed from table that flips the card (OVS 1116_011_BACK pattern, extended to the other about-to events), and relocate/imprison him at a prison where possible; if relocation truly needs an engine hook, implement the flip now and mark relocation BLOCKED. Add tests.",
+   "notes": "Front fully implemented and tested (Coruscant + Prison with imprisoned Palpatine, optional Security Control, no conversion, +1 generation, clone Monnok immunity, no transfer at Flagship sites, site download, flip). Back's other clauses tested. #657 depends on this PR."
+  },
+  "cards": [
+   {
+    "blueprint": "1250_78",
+    "pc_front": {
+     "destiny": "0",
+     "gametext": "We Have A Plan: Deploy Coruscant system (may not be converted) and Blockade Flagship: Prison with Palpatine imprisoned there. May deploy Security Control. {For} remainder of game, your Force generation is +1 at Coruscant battlegrounds. Unless you have 13 or more cards in hand, clones are immune to Monnok. {While} this side up, at Blockade Flagship sites, imprisoned captives may not be transferred. Once per turn, may deploy a battleground site to Coruscant from Reserve Deck; reshuffle. {Flip} this card if Palpatine on Coruscant. They Will Be Lost And Confused: {Immediately} take any one card into hand from Reserve Deck; reshuffle. {While} this side up, whenever a card of ability > 2 is lost, its owner loses 1 Force. While you control two battlegrounds with clones, opponent must have two cards with ability (or two [Presence] droids) to initiate a Force drain. Once per turn, may deploy a clone from Lost Pile. Clones are immune to attrition < 4. {Flip} this card (and if possible, relocate Palpatine to a prison and imprison him there) if Palpatine is about to be captured, lost, missing, or removed from table.",
+     "icons": [
+      "Episode I",
+      "Theed Palace"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/wehaveaplan.gif",
+     "title": "We Have A Plan / They Will Be Lost And Confused (V)",
+     "type": "Objective"
+    },
+    "pc_side": "Light"
+   }
+  ]
+ },
+ {
+  "pr": 657,
+  "branch": "legacy/lane-c-batch27",
+  "base": "master",
+  "title": "Legacy Block 5 Light: Clone Trooper",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1250/light/Card1250_038.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1250/light/Card_1250_038_Tests.java"
+  ],
+  "review": {
+   "verdict": "BLOCKED",
+   "cards": [
+    {
+     "blueprint": "1250_38",
+     "title": "Clone Trooper",
+     "verdict": "BLOCKED",
+     "issues": [
+      "Objective-dependent clauses (Palpatine immune to attrition < 6, your drains +1 at same site while [VB5] They Will Be Lost And Confused on table) have only a negative test; positive test needs 1250_78 (PR #693)."
+     ]
+    }
+   ],
+   "shared_changes": "none",
+   "blocked_on": "PR #693 (We Have A Plan / They Will Be Lost And Confused 1250_78)",
+   "fix_instructions": null,
+   "notes": "Code is complete and matches printed text (Heroic with Palpatine, +1 power/forfeit on Coruscant, objective-conditioned modifiers using Icon.LEGACY_BLOCK_5 + title, compatible with #693's back). Can merge in the same batch as #693; add a positive objective test."
+  },
+  "cards": [
+   {
+    "blueprint": "1250_38",
+    "pc_front": {
+     "ability": "1",
+     "armor": "4",
+     "deploy": "2",
+     "destiny": "3",
+     "forfeit": "3",
+     "gametext": "While with Palpatine, Heroic. Power and forfeit +1 on Coruscant. While [Virtual Block 5] They Will Be Lost And Confused on table, Palpatine is immune to attrition < 6 and your Force drains at same site are +1.",
+     "icons": [
+      "Warrior",
+      "A New Hope",
+      "Episode I"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/clonetrooper.gif",
+     "power": "2",
+     "subType": "Republic",
+     "title": "Clone Trooper",
+     "type": "Character"
+    },
+    "pc_side": "Light"
+   }
+  ]
+ },
+ {
+  "pr": 665,
+  "branch": "legacy/lane-c-batch29",
+  "base": "master",
+  "title": "Implement Legacy Coruscant Council and Landing Platform",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1250/light/Card1250_072.java",
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1250/light/Card1250_074.java",
+   "src/gemp-swccg-common/src/main/java/com/gempukku/swccgo/common/GameTextActionId.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1250/light/Card_1250_072_Tests.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1250/light/Card_1250_074_Tests.java"
+  ],
+  "review": {
+   "verdict": "FIX",
+   "cards": [
+    {
+     "blueprint": "1250_72",
+     "title": "Coruscant: Jedi Council Chamber (V)",
+     "verdict": "FIX",
+     "issues": [
+      "Dark side: Wipe suspension condition is evaluated once inside getGameTextDarkSideWhileActiveModifiers (modifiers are built once in PhysicalCardImpl.startAffectingGame), so it is frozen at the moment the site enters play.",
+      "No positive test of the Wipe suspension (needs #587)."
+     ]
+    },
+    {
+     "blueprint": "1250_74",
+     "title": "Coruscant: Senate Landing Platform",
+     "verdict": "BLOCKED",
+     "issues": [
+      "Dark side 'Unless you occupy, [VB5] Wipe Them Out, All Of Them ignores starship and holosite sites' is not implemented; needs support in Wipe (PR #587 or a follow-up)."
+     ]
+    }
+   ],
+   "shared_changes": "GameTextActionId: appended two search ids. Safe.",
+   "blocked_on": "PR #587 (Block 5 Wipe Them Out) for 1250_74 dark text and positive tests",
+   "fix_instructions": "1250_72: always return the SuspendsCardModifier and pass the logic as a Condition (SuspendsCardModifier(source, filter, condition)): condition = !controls(darkPlayer, battleground_site) OR canSpot(your non-battleground site with no related locations), evaluated live. Add a test that toggles the condition after the site is on table. 1250_74: implement the dark-side clause once #587 lands (Wipe must ignore starship/holosite sites unless the Platform's dark-side player occupies), with tests.",
+   "notes": "Light-side text of both sites is correct and tested (Senate restriction, Used Pile take on Council member deploy; starships deploy here, once-per-turn starship site download)."
+  },
+  "cards": [
+   {
+    "blueprint": "1250_72",
+    "pc_front": {
+     "destiny": "0",
+     "gametext": "Light: May not be deployed if your Senate on table. If you just deployed a Jedi Council Member here, may take any one card into hand from Used Pile; reshuffle. Dark: If your non-battleground site on table with no related locations (or if you do not control a battleground site), [Virtual Block 5] Wipe Them Out, All Of Them is suspended.",
+     "icons": [
+      "Interior",
+      "Planet",
+      "Episode I",
+      "Coruscant"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/coruscantjedicouncilchamber.gif",
+     "subType": "Site",
+     "title": "\u2022Coruscant: Jedi Council Chamber (V)",
+     "type": "Location"
+    },
+    "pc_side": "Light"
+   },
+   {
+    "blueprint": "1250_74",
+    "pc_front": {
+     "destiny": "0",
+     "gametext": "Light: Starships may deploy here. Once per turn, may deploy a starship site from Reserve Deck if its starship card on table; reshuffle. Dark: Unless you occupy, [Virtual Block 5] Wipe Them Out, All Of Them ignores starship and holosite sites.",
+     "icons": [
+      "Exterior",
+      "Planet",
+      "Episode I",
+      "Coruscant"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/coruscantsenatelandingplatform.gif",
+     "subType": "Site",
+     "title": "\u2022Coruscant: Senate Landing Platform",
+     "type": "Location"
+    },
+    "pc_side": "Light"
+   }
+  ]
+ },
+ {
+  "pr": 690,
+  "branch": "legacy/lane-c-batch38",
+  "base": "master",
+  "title": "Implement Legacy Changing The Odds",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1250/light/Card1250_066.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1250/light/Card_1250_066_Tests.java"
+  ],
+  "review": {
+   "verdict": "FIX",
+   "cards": [
+    {
+     "blueprint": "1250_66",
+     "title": "Changing The Odds (V)",
+     "verdict": "FIX",
+     "issues": [
+      "Second mode 'If both players just drew one battle destiny, cancel and redraw both destiny draws' is not implemented. The OVS 1112_003 on master has the identical text and already implements it (isBattleDestinyDrawingJustCompletedForBothPlayers + didBothPlayersDrawOneBattleDestiny, CancelPreviousBattleDestinyDrawsEffect x2, DrawDestinyEffect x2)."
+     ]
+    }
+   ],
+   "shared_changes": "none",
+   "blocked_on": null,
+   "fix_instructions": "Port mode 2 from Card1112_003 (same text) and add a gameplay test (both players draw one battle destiny -> both canceled and redrawn; not offered when a player drew 2). If the worker believes the OVS accounting is wrong, show it with a failing test instead of omitting the mode.",
+   "notes": "Mode 1 is correct and well tested (weapon/Interrupt/Objective/Epic Event, drawer activates and shuffles, decline path, last-card case)."
+  },
+  "cards": [
+   {
+    "blueprint": "1250_66",
+    "pc_front": {
+     "destiny": "5",
+     "gametext": "If a player is about to draw destiny for an Epic Event, Interrupt, Objective, or weapon, that player must first activate 1 Force and shuffle their Reserve Deck. OR If both players just drew one battle destiny, cancel and redraw both destiny draws.",
+     "icons": [
+      "Episode I",
+      "Tatooine"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/changingtheodds.gif",
+     "lore": "Qui-Gon used his Jedi abilities to insure that there was no 'chance' involved with the use of Watto's chance cube.",
+     "subType": "Used",
+     "title": "\u2022Changing The Odds (V)",
+     "type": "Interrupt"
+    },
+    "pc_side": "Light"
+   }
+  ]
+ }
+]

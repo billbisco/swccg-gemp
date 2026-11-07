@@ -1,0 +1,93 @@
+[
+ {
+  "pr": 651,
+  "branch": "legacy/lane-f-batch24",
+  "base": "master",
+  "title": "Legacy F24: A Sith\u2019s Weapon",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1271/dark/Card1271_008.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1271/dark/Card_1271_008_Tests.java"
+  ],
+  "review": {
+   "verdict": "BLOCKED",
+   "cards": [
+    {
+     "blueprint": "1271_8",
+     "title": "A Sith's Weapon",
+     "verdict": "BLOCKED",
+     "issues": [
+      "Main clause not implemented: once per turn, if your ability>4 character just failed to 'hit' an [Episode I] Jedi (or [Virtual Block 6] Luke) with a non-[Permanent Weapon] lightsaber, may lose 1 Force to 'swing' at target again."
+     ]
+    }
+   ],
+   "shared_changes": "none",
+   "blocked_on": "Engine support for a 'weapon just failed to hit' result plus re-firing that same weapon at the same target. No PR in the review set provides it.",
+   "fix_instructions": "Once the engine exposes a failed-hit result: add an optional trigger (once per turn, lose 1 Force cost) that re-fires the same lightsaber at the same target, with tests for EpI Jedi / Block 6 Luke, ability>4, and non-[Permanent Weapon] restrictions.",
+   "notes": "Obi-Wan's Journal cancellation (place in Used Pile, both as played and on table) is done and tested."
+  },
+  "cards": [
+   {
+    "blueprint": "1271_8",
+    "pc_front": {
+     "destiny": "4",
+     "gametext": "Deploy on table. Once per turn, if your character of ability > 4 just failed to 'hit' an [Episode I] Jedi (or [Virtual Block 6] Luke) with a non-[Permanent Weapon] lightsaber, may lose 1 Force to 'swing' at target again. May place in Used Pile to cancel Obi-Wan's Journal.",
+     "icons": [
+      "Episode I",
+      "Setup",
+      "Reflections 3"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Dark/large/asithsweapon.gif",
+     "lore": "Lightsaber confrontations are a complex dance of feints, strikes, parries and footwork. Mistakes are rarely forgiven.",
+     "title": "\u2022A Sith's Weapon",
+     "type": "Effect"
+    },
+    "pc_side": "Dark"
+   }
+  ]
+ },
+ {
+  "pr": 692,
+  "branch": "legacy/lane-b-batch36",
+  "base": "master",
+  "title": "Legacy lane B batch 36: Maneuvering Flaps and Nick Of Time",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1261/light/Card1261_082.java",
+   "src/gemp-swccg-common/src/main/java/com/gempukku/swccgo/common/GameTextActionId.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1261/light/Card_1261_082_Tests.java"
+  ],
+  "review": {
+   "verdict": "BLOCKED",
+   "cards": [
+    {
+     "blueprint": "1261_82",
+     "title": "Maneuvering Flaps & Nick Of Time",
+     "verdict": "BLOCKED",
+     "issues": [
+      "Clause 'Your vehicles with a pilot character or gunner aboard are not hit when thrown' not implemented.",
+      "Adds MayNotBeSuspendedModifier and 'May not be suspended.' to gametext; that is not on the Legacy printed text (copied from the 200_043 V version). Remove it."
+     ]
+    }
+   ],
+   "shared_changes": "none (card + test + appended GameTextActionId only)",
+   "blocked_on": "Engine support for 'not hit when thrown' (worker's shared throw contract, swccg-guild/work#182; no prerequisite PR).",
+   "fix_instructions": "Remove MayNotBeSuspendedModifier and the extra sentence. Add the thrown-hit protection when support exists.",
+   "notes": "Matching vehicle/pilot simultaneous deploy and the five-Interrupt draw trigger are correct. GameTextActionId entry lacks a trailing comma (cosmetic; will conflict with sibling PRs on the same line anyway)."
+  },
+  "cards": [
+   {
+    "blueprint": "1261_82",
+    "pc_front": {
+     "destiny": "1",
+     "gametext": "Deploy on table. Your vehicles with a pilot character or gunner aboard are not hit when 'thrown.' During your deploy phase, may reveal an unpiloted combat vehicle from hand to take its matching pilot character (or vice versa) from Reserve Deck and deploy both simultaneously; reshuffle. Whenever you play Desperate Tactics, Lucky Shot, On Target, Rapid Fire, or Steady Aim, may draw top card from Reserve Deck. (Immune to Alter.)",
+     "icons": [
+      "Special Edition"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Light/large/maneuveringflaps&nickoftime.gif",
+     "title": "\u2022Maneuvering Flaps & \u2022Nick Of Time",
+     "type": "Effect"
+    },
+    "pc_side": "Light"
+   }
+  ]
+ }
+]

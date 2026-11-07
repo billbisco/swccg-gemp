@@ -1,0 +1,306 @@
+[
+ {
+  "pr": 617,
+  "branch": "legacy/lane-f-batch14",
+  "base": "master",
+  "title": "Draft: Legacy Vader equipment and Rise Of The Dark Lord",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1271/dark/Card1271_002.java",
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1271/dark/Card1271_013.java",
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1271/dark/Card1271_014.java",
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1271/dark/Card1271_015.java",
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1271/dark/Card1271_016.java",
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1271/dark/Card1271_017.java",
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1271/dark/Card1271_019.java",
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1271/dark/LegacyVaderEquipment.java",
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set601/dark/Card601_093.java",
+   "src/gemp-swccg-logic/src/main/java/com/gempukku/swccgo/game/state/GameState.java",
+   "src/gemp-swccg-logic/src/main/java/com/gempukku/swccgo/game/state/actions/DefaultActionsEnvironment.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1271/dark/Card_1271_002_Tests.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1271/dark/Card_1271_013_Tests.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1271/dark/Card_1271_014_Tests.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1271/dark/Card_1271_015_Tests.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1271/dark/Card_1271_016_Tests.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1271/dark/Card_1271_017_Tests.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1271/dark/Card_1271_019_Tests.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1271/dark/LegacyVaderScenario.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/logic/timing/processes/pregame/StartingEpicEventTests.java"
+  ],
+  "review": {
+   "verdict": "FIX",
+   "cards": [
+    {
+     "blueprint": "1271_2",
+     "title": "Darth Vader, More Machine Than Man",
+     "verdict": "READY",
+     "issues": []
+    },
+    {
+     "blueprint": "1271_13",
+     "title": "Vader's Bionic Limbs",
+     "verdict": "READY",
+     "issues": [
+      "choke is limited to once per battle; text has no limit (minor, acceptable as a usage window)"
+     ]
+    },
+    {
+     "blueprint": "1271_14",
+     "title": "Vader's Cape (V)",
+     "verdict": "READY",
+     "issues": []
+    },
+    {
+     "blueprint": "1271_15",
+     "title": "Vader's Cybernetic Enhancements",
+     "verdict": "READY",
+     "issues": []
+    },
+    {
+     "blueprint": "1271_16",
+     "title": "Vader's Helmet",
+     "verdict": "READY",
+     "issues": []
+    },
+    {
+     "blueprint": "1271_17",
+     "title": "Vader's Mask",
+     "verdict": "FIX",
+     "issues": [
+      "Missing clause: 'In order for opponent's character to move away from here using landspeed, opponent must first lose 1 Force.'"
+     ]
+    },
+    {
+     "blueprint": "1271_19",
+     "title": "Rise Of The Dark Lord",
+     "verdict": "FIX",
+     "issues": [
+      "Missing clause: 'When using The Empire's Back to deploy Vader, it is a Used Interrupt.' (in setGameText, not in code)",
+      "setGameText adds 'Twisted And Evil: ... canceled', The Empire's Back and drawn-[Vader]-card clauses that are NOT in the PC JSON gametext; worker says the 7.1 sheet and MasterDS have them. Needs confirmation which text is final."
+     ]
+    }
+   ],
+   "shared_changes": "Includes PR 702's GameState/DefaultActionsEnvironment starting-Epic-Event history (identical). Also changes Prepared Defenses (V) Card601_093 Starting deploy minimum from 1 to 0 ('up to three' is printed, so this is a correct general fix, but it is outside this PR's cards).",
+   "blocked_on": "PR 702 (shared starting Epic Event history) should merge first.",
+   "fix_instructions": "1) Vader's Mask (1271_17): add the landspeed-move restriction: opponent's characters moving away from Vader's location using landspeed must first lose 1 Force (a move cost of Force loss, not Use Force); add a test. 2) Rise Of The Dark Lord (1271_19): implement 'When using The Empire's Back to deploy Vader, it is a Used Interrupt' (UsedInterruptModifier on The Empire's Back while its deployment targets Vader) and test it. 3) Confirm Rise's final printed text vs the PC JSON (PC JSON lacks the Twisted And Evil cancellations, Empire's Back and drawn-Vader-card clauses); if the PC JSON is right, remove those clauses. 4) Finish the tests the PR body still lists as due (Cape combat/weapon destiny, Enhancements react/attachments, Helmet Journal/fallback destiny, Vader defenses). Worker marked it 'Keep draft'.",
+   "notes": "Large draft. The other five cards read correctly against PC text."
+  },
+  "cards": [
+   {
+    "blueprint": "1271_2",
+    "pc_front": {
+     "ability": "6",
+     "deploy": "6",
+     "destiny": "1",
+     "extraText": [
+      "Dark Jedi"
+     ],
+     "forfeit": "8",
+     "gametext": "Adds 3 to power of anything he pilots. [Vader] cards never deploy unless Rise Of The Dark Lord on table. Once per turn, if at a site you control, may apply his ability to draw battle destiny elsewhere. Immune to Clash Of Sabers and attrition < 5. May not be Disarmed.",
+     "icons": [
+      "Pilot",
+      "Warrior",
+      "Vader"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Dark/large/darthvadermoremachinethanman.gif",
+     "lore": "Dark Lord of the Sith. Servant of Emperor's. Encased in armor with cybernetic life support. Student of Obi-Wan Kenobi. Was the best starpilot in the galaxy. Cunning warrior.",
+     "power": "6",
+     "subType": "Imperial",
+     "title": "\u2022Darth Vader, More Machine Than Man",
+     "type": "Character"
+    },
+    "pc_side": "Dark"
+   },
+   {
+    "blueprint": "1271_13",
+    "pc_front": {
+     "destiny": "0",
+     "gametext": "Deploy on [Vader] Vader. Vader is landspeed +1. If Vader about to be lost before the damage segment, he is instead 'hit.' During battle, may target one opponent's character present. Draw destiny. Target 'choked' (lost) if destiny > ability. (Immune to Alter.)",
+     "icons": [
+      "Vader"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Dark/large/vadersbioniclimbs.gif",
+     "lore": "Darth Vader often used physical means of 'persuasion' to get information. Captain Antilles of Tantive IV chose to die rather than reveal the location of the stolen Death Star plans.",
+     "title": "\u2022Vader's Bionic Limbs",
+     "type": "Effect"
+    },
+    "pc_side": "Dark"
+   },
+   {
+    "blueprint": "1271_14",
+    "pc_front": {
+     "destiny": "3",
+     "gametext": "Deploy on [Vader] Vader. Vader moves (using landspeed) for free. While with a Jedi or Skywalker, Vader is defense value and immunity to attrition +2, and his weapon destiny draws are +1. During a duel (or lightsaber combat) opponent initiates, Vader's destiny draws are +1. (Immune to Alter.)",
+     "icons": [
+      "Vader",
+      "Cloud City"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Dark/large/vaderscape.gif",
+     "lore": "A symbol of the Dark Lord of the Sith, and of the seductive power of the dark side.",
+     "title": "\u2022Vader's Cape (V)",
+     "type": "Effect"
+    },
+    "pc_side": "Dark"
+   },
+   {
+    "blueprint": "1271_15",
+    "pc_front": {
+     "destiny": "0",
+     "gametext": "Deploy on [Vader] Vader. Vader may move as a 'react.' Your battle destiny draws here are +1. Opponent's cards deployed on Vader are canceled. If Vader about to be placed in Lost Pile, may lose 4 Force to take him (and a lightsaber he was armed with, if possible) into hand. (Immune to Alter.)",
+     "icons": [
+      "Vader",
+      "Dagobah"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Dark/large/vaderscyberneticenhancements.gif",
+     "lore": "Users of the Force can mysteriously manipulate their own physiology and psychology. Control allows rapid healing and provides some immunity to pain, poison and disease.",
+     "title": "\u2022Vader's Cybernetic Enhancements",
+     "type": "Effect"
+    },
+    "pc_side": "Dark"
+   },
+   {
+    "blueprint": "1271_16",
+    "pc_front": {
+     "destiny": "0",
+     "gametext": "Deploy on [Vader] Vader. When Vader moves to same site as a Jedi or Skywalker, opponent loses 1 Force. If Obi-Wan's Journal here, may place it on bottom of opponent's Lost Pile. While with opponent's character of ability > 4, Vader is power +1 and draws two battle destiny if not able to otherwise. (Immune to Alter.)",
+     "icons": [
+      "Vader",
+      "Dagobah"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Dark/large/vadershelmet.gif",
+     "lore": "'If once you start down the dark path, forever will it dominate your destiny. Consume you it will, as it did Obi-Wan's apprentice.'",
+     "title": "\u2022Vader's Helmet",
+     "type": "Effect"
+    },
+    "pc_side": "Dark"
+   },
+   {
+    "blueprint": "1271_17",
+    "pc_front": {
+     "destiny": "0",
+     "gametext": "Deploy on [Vader] Vader. During your battle phase, may cancel this Effect to allow Vader to make a regular move. In order for opponent's character to move away from here using landspeed, opponent must first lose 1 Force. While defending a battle at opponent's site, Vader is power +2 and immune to attrition. (Immune to Alter.)",
+     "icons": [
+      "Vader"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Dark/large/vadersmask.gif",
+     "lore": "Darth Vader's armored mask and life-support system provide him with extraordinary physical protection in duels and battles, in addition to his Dark Jedi combat skill.",
+     "title": "\u2022Vader's Mask",
+     "type": "Effect"
+    },
+    "pc_side": "Dark"
+   },
+   {
+    "blueprint": "1271_19",
+    "pc_front": {
+     "destiny": "0",
+     "gametext": "Deploy on table (deploys only at start of game) with three different [Vader] Effects from your Reserve Deck face down under here. Once per turn, may deploy a [Vader] Effect from here (never from elsewhere). Limit one [Vader] Effect on table and, when lost, stack it under here. You may cancel your [Vader] Effect at any time.",
+     "icons": [
+      "Setup",
+      "Cloud City"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Dark/large/riseofthedarklord.gif",
+     "title": "\u2022Rise Of The Dark Lord",
+     "type": "Epic Event"
+    },
+    "pc_side": "Dark"
+   },
+   {
+    "blueprint": "601_93",
+    "pc_front": null,
+    "pc_side": null
+   }
+  ]
+ },
+ {
+  "pr": 625,
+  "branch": "legacy/lane-f-batch16",
+  "base": "master",
+  "title": "Legacy F16: Field Dressing\u2019s final errata",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1271/light/Card1271_038.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1271/light/Card_1271_038_Tests.java"
+  ],
+  "review": {
+   "verdict": "FIX",
+   "cards": [
+    {
+     "blueprint": "1271_38",
+     "title": "Field Dressing",
+     "verdict": "FIX",
+     "issues": [
+      "'Character is forfeit = 0 (even if forfeit may not normally be reduced)' is not honored: ResetForfeitModifier is UNMODIFIABLE_FORFEIT_VALUE, and Forfeit.java skips a lower reset when the card has MayNotHaveForfeitValueReduced (e.g. Grievous, Hunter Of Jedi while armed).",
+      "setGameText is the worker's 'final errata' wording (return from Lost Pile to same site), not the PC JSON text ('deploy on that character (who remains at same site and, if hit, is restored to normal)'). Play result is equivalent; confirm the text.",
+      "Ability boundary is tested at 6, not 5."
+     ]
+    }
+   ],
+   "shared_changes": "none",
+   "blocked_on": null,
+   "fix_instructions": "Make the forfeit=0 reset bypass 'may not have forfeit reduced' for the attached character (e.g. a reset modifier flag or a dedicated modifier type that Forfeit.getForfeit applies regardless of isProhibitedFromHavingForfeitReduced), and add a test with a character whose forfeit may not be reduced. Add an ability-5 rejection test. Align setGameText with the PC JSON or confirm the errata text. Worker notes the shared 'pre-forfeit effective ability/presence' hook is also still pending.",
+   "notes": "Rest is fine: Immune to your own Control, First Aid places it in Used Pile, restores 'hit'."
+  },
+  "cards": [
+   {
+    "blueprint": "1271_38",
+    "pc_front": {
+     "destiny": "3",
+     "gametext": "If you just forfeited a character of ability < 5 present at a site, deploy on that character (who remains at same site and, if 'hit,' is restored to normal). Character is forfeit = 0 (even if forfeit may not normally be reduced). May play First Aid to place this card in Used Pile. Immune to your Control.",
+     "icons": [
+      "Special Edition"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/fielddressing.gif",
+     "lore": "The Alliance lost many fine soldiers at conflicts such as the Battle of Hoth. The Rebel High Command is aware of the cost of freedom from Imperial tyranny.",
+     "subType": "Immediate",
+     "title": "\u2022\u2022Field Dressing",
+     "type": "Effect"
+    },
+    "pc_side": "Light"
+   }
+  ]
+ },
+ {
+  "pr": 638,
+  "branch": "legacy/lane-f-batch19",
+  "base": "master",
+  "title": "Legacy F19: Emperor\u2019s Sinister Plans",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1271/light/Card1271_037.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1271/light/Card_1271_037_Tests.java"
+  ],
+  "review": {
+   "verdict": "FIX",
+   "cards": [
+    {
+     "blueprint": "1271_37",
+     "title": "Emperor's Sinister Plans",
+     "verdict": "FIX",
+     "issues": [
+      "Missing: 'Until completed, spy may not relocate or be Undercover.'",
+      "Missing: once stacked, 'your spies may not have their forfeit reduced below 3.'"
+     ]
+    }
+   ],
+   "shared_changes": "none",
+   "blocked_on": null,
+   "fix_instructions": "Add while-attached modifiers on the spy (until the Utinni Effect completes): may not relocate (MayNotRelocate-style modifier) and may not become Undercover. Add to getGameTextWhileStackedModifiers a floor so your spies' forfeit may not be reduced below 3 (needs a 'forfeit may not be reduced below N' modifier; none exists on master, so this is a small engine addition). Test all three.",
+   "notes": "Deploy on your non-droid spy at Back Door, target your war room, stacks on arrival, opponent's battle destiny -1 while stacked: implemented and tested. Worker flagged the missing clauses as needing shared rules support."
+  },
+  "cards": [
+   {
+    "blueprint": "1271_37",
+    "pc_front": {
+     "destiny": "6",
+     "gametext": "Deploy on your non-droid spy at Back Door. Target your war room. Until completed, spy may not relocate or be Undercover. When Utinni Effect reaches target, stack there: opponent's battle destiny draws are -1 and your spies may not have their forfeit reduced below 3.",
+     "icons": [
+      "Death Star II"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/emperorssinisterplans.gif",
+     "lore": "Hologram technology allows effecient communication of complex intelligence during war room briefings.",
+     "subType": "Utinni",
+     "title": "\u2022Emperor's Sinister Plans",
+     "type": "Effect"
+    },
+    "pc_side": "Light"
+   }
+  ]
+ }
+]

@@ -1,0 +1,55 @@
+[
+ {
+  "pr": 527,
+  "branch": "legacy/integration-occupation",
+  "base": "legacy/integration-delegates",
+  "title": "Treat occupy as control only in Forest Depths text",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/conditions/GameTextOccupiesCondition.java",
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set12/dark/Card12_159.java",
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1272/light/Card1272_018.java",
+   "src/gemp-swccg-logic/src/main/java/com/gempukku/swccgo/filters/GameTextOccupationFilters.java",
+   "src/gemp-swccg-logic/src/main/java/com/gempukku/swccgo/logic/modifiers/ModifyGameTextType.java",
+   "src/gemp-swccg-logic/src/test/java/com/gempukku/swccgo/filters/GameTextOccupationFiltersTests.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set12/dark/Card_12_159_Tests.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1272/light/Card_1272_018_Tests.java"
+  ],
+  "review": {
+   "verdict": "FIX",
+   "cards": [
+    {
+     "blueprint": "1272_18",
+     "title": "Tarfful, Wookiee Insurgent",
+     "verdict": "FIX",
+     "issues": [
+      "needs rebase onto master; ModifyGameTextType conflict"
+     ]
+    },
+    {
+     "blueprint": "12_159",
+     "title": "Squabbling Delegates",
+     "verdict": "READY",
+     "issues": [
+      "change comes from base PR520, already on master identically; drops out after rebase"
+     ]
+    }
+   ],
+   "shared_changes": "New ModifyGameTextType.OCCUPY_IN_GAME_TEXT_IS_CONTROL; new filters/GameTextOccupationFilters.occupies/occupiesWith(player, textSource[, cards]) (control instead of occupy when the text source carries that modification) and cards/conditions/GameTextOccupiesCondition. Tarfful switches from the global TreatsOccupyAsControlModifier (which made contested Forest Depths count as controlled for everything) to a ModifyGameTextModifier on Forest Depths. LocationControl/global control rules untouched; TreatsOccupyAsControlModifier left in place but now unused.",
+   "blocked_on": null,
+   "fix_instructions": "Rebase legacy/integration-occupation onto current master (PR520 is already merged as 726bed869, identical content for Card12_159 and its tests) and retarget the PR base to master. Resolve ModifyGameTextType.java by keeping master's LEGACY__INTERRUPTS__VADER_MAY_BE_MAUL_OR_MARA_JADE and appending OCCUPY_IN_GAME_TEXT_IS_CONTROL after it (append-only, keep ordinals). After the rebase the PR should touch only GameTextOccupiesCondition, GameTextOccupationFilters, ModifyGameTextType, Card1272_018 and the two test files. No logic change needed.",
+   "notes": "Interpretation is correct: 'Occupy on Forest Depths is treated as control' is a text replacement on the card Forest Depths (same pattern as other 'X treated as Y' Legacy text mods). The only Forest Depths with 'occupy' in its text is Legacy 1261_113 (LS attrition 'locations you occupy with a Wookiee'; DS 'Unless you occupy, your Force generation here is canceled'), so the master implementation (granting control of contested sites, enabling LS drains there) was wrong. Tests: 2 filter unit tests (source scope, player scope) and updated Tarfful VTS (contested = no drain/no destiny bonus, works while Tarfful elsewhere, unchanged without Tarfful, genuine control still works). Dependents: PR 526 Forest Depths (1261_113) currently uses Filters.occupiesWith / OccupiesCondition and must switch to GameTextOccupationFilters.occupiesWith(playerId, self, Filters.Wookiee) and GameTextOccupiesCondition(playerId, self, self) after this lands, with a Tarfful interaction test."
+  },
+  "cards": [
+   {
+    "blueprint": "1272_18",
+    "pc_front": null,
+    "pc_side": null
+   },
+   {
+    "blueprint": "12_159",
+    "pc_front": null,
+    "pc_side": null
+   }
+  ]
+ }
+]

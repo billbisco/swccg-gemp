@@ -1,0 +1,243 @@
+[
+ {
+  "pr": 668,
+  "branch": "legacy/lane-b-batch29",
+  "base": "master",
+  "title": "Legacy lane B: Obi-Wan, Crazy Wizard",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1261/light/Card1261_070.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1261/light/Card_1261_070_Tests.java"
+  ],
+  "review": {
+   "verdict": "BLOCKED",
+   "cards": [
+    {
+     "blueprint": "1261_70",
+     "title": "Obi-Wan, Crazy Wizard",
+     "verdict": "BLOCKED",
+     "issues": [
+      "Clause 'Old Ben is a Used Interrupt and may target this site even if not a Tatooine site' not implemented.",
+      "Clause 'When leaving table, place all your cards on Obi-Wan in Used Pile' not implemented."
+     ]
+    }
+   ],
+   "shared_changes": "none (card + test only)",
+   "blocked_on": "Support for changing Old Ben's subtype/target scope from another card, and a 'cards on X go to Used Pile when it leaves table' hook (worker's requests in swccg-guild/work#182; no prerequisite PR in the review set).",
+   "fix_instructions": "Implement both missing clauses with tests once support exists (or via a card-specific ModifyGameText on Old Ben and an about-to-leave-table trigger that redirects attached cards owned by you to Used Pile).",
+   "notes": "Stats, persona, Dark Jedi lightsaber swing-once-per-battle here (MayFireOnlyOncePerBattleModifier) and attrition <5 are correct and tested."
+  },
+  "cards": [
+   {
+    "blueprint": "1261_70",
+    "pc_front": {
+     "ability": "6",
+     "deploy": "5",
+     "destiny": "1",
+     "extraText": [
+      "Jedi Knight"
+     ],
+     "forfeit": "9",
+     "gametext": "Old Ben is a Used Interrupt and may target this site even if not a Tatooine site. Dark Jedi may not 'swing' lightsabers more than once per battle here. When leaving table, place all your cards on Obi-Wan in Used Pile. Immune to attrition < 5.",
+     "icons": [
+      "Warrior"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Light/large/obiwancrazywizard.gif",
+     "lore": "'That old man's just a crazy wizard.' Obi-Wan lived in Tatooine's deserts for years...ready for the right moment to act.",
+     "power": "5",
+     "subType": "Rebel",
+     "title": "\u2022Obi-Wan, Crazy Wizard",
+     "type": "Character"
+    },
+    "pc_side": "Light"
+   }
+  ]
+ },
+ {
+  "pr": 671,
+  "branch": "legacy/lane-c-batch30",
+  "base": "master",
+  "title": "Implement Legacy We Will Handle This / Duel Of The Fates",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1250/light/Card1250_082.java",
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1250/light/Card1250_082_BACK.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1250/light/Card_1250_082_Tests.java"
+  ],
+  "review": {
+   "verdict": "BLOCKED",
+   "cards": [
+    {
+     "blueprint": "1250_82",
+     "title": "We'll Handle This / Duel Of The Fates (V)",
+     "verdict": "BLOCKED",
+     "issues": [
+      "Back clause 'Jedi Test #2 may deploy on any Jedi (as if completed), but applies only at that site' is not implemented (needs engine hook, swccg-guild/work#182).",
+      "Front restriction text reads '[New Republic] characters or starships' while PC JSON says 'New Republic Characters'; confirm against the card image and drop starships if the PC text is right.",
+      "Jedi Survivor maintenance cancel only verifiable with PR #673; real Legacy Chamber startup with PR #665."
+     ]
+    }
+   ],
+   "shared_changes": "none",
+   "blocked_on": "Engine hook for Jedi Test #2 deploy-anywhere/site-scoped (no PR found; swccg-guild/work#182)",
+   "fix_instructions": "After the engine hook: implement the Jedi Test #2 clause with a test. Also reconcile the New Republic restriction wording with the printed card.",
+   "notes": "Everything else is implemented and has gameplay tests: Chamber setup, permanent deploy restrictions, no Force loss to Vengeance/Your Destiny, Speak With The Jedi Council as Used, Yoda -3 at Chamber, drains -1, flip conditions both ways, attrition < 5, ignore location deployment restrictions, lightsaber drain bonuses uncancelable, no drain at Chamber, retrieve 2 on Jedi battle initiation, Jedi Tests to Used Pile on flip back."
+  },
+  "cards": [
+   {
+    "blueprint": "1250_82",
+    "pc_front": {
+     "destiny": "0",
+     "gametext": "We'll Handle This: Deploy Jedi Council Chamber. {For} remainder of game, you may not deploy Affect Mind, Senate, New Republic Characters, Rebel starships, or Rebels of ability > 2. You lose no Force to Vengeance Of The Dark Prince or Your Destiny. Jedi Survivor's [Maintenance] is canceled. Speak With The Jedi Council is a Used Interrupt. {While} this side up, Yoda is deploy -3 to Jedi Council Chamber. Your Force drains are -1. {Flip} this card if Yoda and two other Jedi are at Jedi Council Chamber. Duel Of The Fates: {While} this side up, Jedi are immune to attrition < 5 and ignore location deployment restrictions listed in their game text. Your lightsaber Force drain bonuses may not be canceled. You may not Force drain at Jedi Council Chamber. Whenever you initiate a battle with a Jedi, may retrieve 2 Force. Jedi Test #2 may deploy on any Jedi (as if completed), but applies only at that site. {Flip} this card (and place all Jedi Tests in Used Pile) if less than two Jedi at Jedi Council Chamber (unless Yoda there).",
+     "icons": [
+      "Reflections 3",
+      "Episode I"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/wellhandlethis.gif",
+     "title": "We'll Handle This / Duel Of The Fates (V)",
+     "type": "Objective"
+    },
+    "pc_side": "Light"
+   }
+  ]
+ },
+ {
+  "pr": 673,
+  "branch": "legacy/lane-c-batch31",
+  "base": "master",
+  "title": "Implement Legacy Jedi Survivor",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1250/light/Card1250_041.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1250/light/Card_1250_041_Tests.java"
+  ],
+  "review": {
+   "verdict": "BLOCKED",
+   "cards": [
+    {
+     "blueprint": "1250_41",
+     "title": "Jedi Survivor",
+     "verdict": "BLOCKED",
+     "issues": [
+      "'May never be won in sabacc' not implemented (needs engine sabacc-prize exclusion; no PR). Note the OVS 1116_033 on master also omits it."
+     ]
+    }
+   ],
+   "shared_changes": "none",
+   "blocked_on": "Engine: sabacc prize exclusion (swccg-guild/work#182, no PR)",
+   "fix_instructions": "Add the sabacc exclusion once the engine supports it, or Bill may accept merging without it as the OVS precedent does.",
+   "notes": "Rest is correct and tested: no battle at deploy site that turn, +1 Light/+1 Dark icon at opponent's site, free lightsaber firing, immune attrition < 5, maintenance (use 1 / lose 1 to recycle / out of play), maintenance gated on having the icon so We'll Handle This can cancel it."
+  },
+  "cards": [
+   {
+    "blueprint": "1250_41",
+    "pc_front": {
+     "ability": "6",
+     "deploy": "5",
+     "destiny": "3",
+     "extraText": [
+      "Jedi Knight"
+     ],
+     "forfeit": "5",
+     "gametext": "When deployed, you may not initiate battle here this turn. While at opponent's site, adds one [Light Side Force] and one [Dark Side Force]. May 'swing' lightsabers for free. May never be won in sabacc. Immune to attrition < 5. End of turn: Use 1 to maintain OR Lose 1 Force to place in Used Pile OR Place out of play.",
+     "icons": [
+      "Episode I",
+      "Warrior",
+      "Special Edition"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/jedisurvivor.gif",
+     "lore": "Female.",
+     "power": "5",
+     "subType": "Alien",
+     "title": "\u2022\u2022\u2022Jedi Survivor",
+     "type": "Character"
+    },
+    "pc_side": "Light"
+   }
+  ]
+ },
+ {
+  "pr": 689,
+  "branch": "legacy/lane-c-batch37",
+  "base": "master",
+  "title": "Implement Legacy Jedi Advisor and Council Yoda",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1250/light/Card1250_039.java",
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1250/light/Card1250_057.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1250/light/Card_1250_039_Tests.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1250/light/Card_1250_057_Tests.java"
+  ],
+  "review": {
+   "verdict": "BLOCKED",
+   "cards": [
+    {
+     "blueprint": "1250_39",
+     "title": "Jedi Advisor",
+     "verdict": "BLOCKED",
+     "issues": [
+      "'While Yoda here, Force retrieval from your [VB5] objective cannot be canceled (except by Secret Plans)' not implemented."
+     ]
+    },
+    {
+     "blueprint": "1250_57",
+     "title": "Yoda, Senior Council Member (V)",
+     "verdict": "BLOCKED",
+     "issues": [
+      "'(unless a Dark Jedi here) other Jedi may treat Jedi Council Chamber in their game text as [Episode I] battleground sites' not implemented."
+     ]
+    }
+   ],
+   "shared_changes": "none",
+   "blocked_on": "Engine: source-aware retrieval-cancel protection with Secret Plans exception, and a game-text location substitution hook (swccg-guild/work#182, no PRs)",
+   "fix_instructions": "Implement both clauses after the hooks land, with tests.",
+   "notes": "Advisor: Coruscant-only deploy, cumulative +1 duel and lightsaber combat totals unless Inner Strength, tested. Yoda: Episode I sites only, at Chamber immune to attrition and Jedi deploy -2 there, tested."
+  },
+  "cards": [
+   {
+    "blueprint": "1250_39",
+    "pc_front": {
+     "ability": "7",
+     "deploy": "3",
+     "destiny": "2",
+     "extraText": [
+      "Jedi Master"
+     ],
+     "forfeit": "6",
+     "gametext": "Never deploys, except to Coruscant. While Yoda here, Force retrieval from your [Virtual Block 5] objective cannot be canceled (except by Secret Plans). Unless Inner Strength on table, your duel destiny and lightsaber combat totals are cumulatively +1.",
+     "icons": [
+      "Special Edition",
+      "Episode I"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/jediadvisor.gif",
+     "lore": "Female. Jedi Council Member.",
+     "power": "4",
+     "subType": "Jedi Master",
+     "title": "\u2022\u2022\u2022Jedi Advisor",
+     "type": "Character"
+    },
+    "pc_side": "Light"
+   },
+   {
+    "blueprint": "1250_57",
+    "pc_front": {
+     "ability": "7",
+     "deploy": "4",
+     "destiny": "1",
+     "extraText": [
+      "Jedi Master"
+     ],
+     "forfeit": "7",
+     "gametext": "Deploys only to [Episode I] sites. While at Jedi Council Chamber, immune to attrition, Jedi are deploy -2 here, and (unless a Dark Jedi here) other Jedi may treat 'Jedi Council Chamber' in their game text as '[Episode I] battleground sites.'",
+     "icons": [
+      "Episode I",
+      "Coruscant"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/yodaseniorcouncilmember.gif",
+     "lore": "Senior Jedi Council member. Responsible for the early training of Obi-Wan Kenobi. When Qui-Gon brought Anakin before the Council, Yoda voted not to train the boy.",
+     "power": "3",
+     "subType": "Jedi Master",
+     "title": "\u2022Yoda, Senior Council Member (V)",
+     "type": "Character"
+    },
+    "pc_side": "Light"
+   }
+  ]
+ }
+]

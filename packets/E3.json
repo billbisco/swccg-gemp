@@ -1,0 +1,188 @@
+[
+ {
+  "pr": 664,
+  "branch": "legacy/lane-b-batch28",
+  "base": "master",
+  "title": "Legacy lane B: Thrown Back",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1262/light/Card1262_023.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1262/light/Card_1262_023_Tests.java"
+  ],
+  "review": {
+   "verdict": "BLOCKED",
+   "cards": [
+    {
+     "blueprint": "1262_23",
+     "title": "Thrown Back (V)",
+     "verdict": "BLOCKED",
+     "issues": [
+      "Clause 'During battle, neither player may add more than two destiny to power (or total power) or one destiny to total attrition' is not implemented."
+     ]
+    }
+   ],
+   "shared_changes": "none (card + test only)",
+   "blocked_on": "Engine modifier capping the number of destiny each player may add to power/total power and to total attrition during battle (no such modifier on master; worker's integration request swccg-guild/work#182; no prerequisite PR in the review set).",
+   "fix_instructions": "Once the cap modifier exists, add it as a while-active modifier for both players with 2/3 and 1/2 boundary tests per side.",
+   "notes": "Permanent Weapon/Maintenance no-battle-destiny, once-per-turn hand-to-Used, Alter immunity implemented correctly."
+  },
+  "cards": [
+   {
+    "blueprint": "1262_23",
+    "pc_front": {
+     "destiny": "3",
+     "gametext": "Deploy on table. [Permanent weapon] and [Maintenance] cards do not add battle destiny draws. During battle, neither player may add more than two destiny to power (or total power) or one destiny to total attrition. Once per turn, may place a card from hand in Used Pile. (Immune to Alter.)",
+     "icons": [
+      "Episode I",
+      "Coruscant"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Light/large/thrownback.gif",
+     "lore": "Being sent to dispose of two Jedi is the battle droid equivalent of a really bad day at the office.",
+     "title": "\u2022Thrown Back (V)",
+     "type": "Effect"
+    },
+    "pc_side": "Light"
+   }
+  ]
+ },
+ {
+  "pr": 677,
+  "branch": "legacy/lane-c-batch32",
+  "base": "master",
+  "title": "Implement Legacy Grrrghrrrgh!",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1250/light/Card1250_062.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1250/light/Card_1250_062_Tests.java"
+  ],
+  "review": {
+   "verdict": "BLOCKED",
+   "cards": [
+    {
+     "blueprint": "1250_62",
+     "title": "Grrrghrrrgh!",
+     "verdict": "BLOCKED",
+     "issues": [
+      "'You may not add more than one destiny to total power in battle' not implemented (engine cap, no PR).",
+      "Because of that, the 'place a card out of play to add one destiny to total power' action can be repeated in the same battle as long as cards are stacked, so it currently adds unlimited destinies."
+     ]
+    }
+   ],
+   "shared_changes": "none",
+   "blocked_on": "Engine: per-battle cap on destinies added to total power (swccg-guild/work#182, no PR)",
+   "fix_instructions": "Interim card-local fix even before the engine cap: make the stacked-card action usable only if the player has not yet added a destiny to total power in this battle (at minimum once per battle). Full fix: apply the cap to all sources once the engine supports it, with a test that a second source is refused.",
+   "notes": "Other clauses correct and tested: deploy on table, stack just-lost Wookiee, Wookiees deploy -1, armor = 4 and immune attrition < 3 while stack non-empty, Alter immunity."
+  },
+  "cards": [
+   {
+    "blueprint": "1250_62",
+    "pc_front": {
+     "destiny": "5",
+     "gametext": "Deploy on table. If your Wookiee just lost, may stack it here. You may not add more than one destiny to total power in battle. Wookiees are deploy -1 and, while at least one stacked here, they are armor = 4 and immune to attrition < 3. During any battle, may place a card here out of play to add one destiny to total power. (Immune to Alter.)",
+     "icons": [
+      "A New Hope",
+      "Episode I"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/grrrghrrrgh.gif",
+     "lore": "'It's not wise to upset a Wookiee.' 'But sir, nobody worries about upsetting a droid.' 'That's 'cause a droid don't pull people's arms out of their sockets when they lose.'",
+     "title": "\u2022Grrrghrrrgh!",
+     "type": "Effect"
+    },
+    "pc_side": "Light"
+   }
+  ]
+ },
+ {
+  "pr": 696,
+  "branch": "legacy/lane-b-batch14",
+  "base": "master",
+  "title": "Legacy lane B batch 14: Three solo-defense Interrupts",
+  "files": [
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1261/light/Card1261_098.java",
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1261/light/Card1261_101.java",
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1261/light/Card1261_102.java",
+   "src/gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards/set1261/light/SoloDefenseInterrupt.java",
+   "src/gemp-swccg-common/src/main/java/com/gempukku/swccgo/common/GameTextActionId.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1261/light/Card_1261_098_Tests.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1261/light/Card_1261_101_Tests.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1261/light/Card_1261_102_Tests.java",
+   "src/gemp-swccg-server/src/test/java/com/gempukku/swccgo/cards/set1261/light/SoloDefenseTestSupport.java"
+  ],
+  "review": {
+   "verdict": "BLOCKED",
+   "cards": [
+    {
+     "blueprint": "1261_98",
+     "title": "Out Of Somewhere (V)",
+     "verdict": "BLOCKED",
+     "issues": [
+      "'(add 1 for each character and vehicle present)' to the added power destiny not implemented."
+     ]
+    },
+    {
+     "blueprint": "1261_101",
+     "title": "Solo Han (V)",
+     "verdict": "BLOCKED",
+     "issues": [
+      "Same missing +1 per character/vehicle present.",
+      "PC JSON gametext (non-[Permanent Weapon] Han except Falcon; power +1 per character) differs from the official image, which reads 'non-[Reflections III] Han' and the destiny +1 form; the code follows the image, which is correct."
+     ]
+    },
+    {
+     "blueprint": "1261_102",
+     "title": "Warrior's Courage (V)",
+     "verdict": "BLOCKED",
+     "issues": [
+      "Same missing +1 per character/vehicle present."
+     ]
+    }
+   ],
+   "shared_changes": "New card-package helper SoloDefenseInterrupt (abstract base in set1261/light) + test support class; card-local, safe.",
+   "blocked_on": "Source-specific modifier on a single added power destiny (+1 per character and vehicle present); worker's request swccg-guild/work#182, no prerequisite PR.",
+   "fix_instructions": "Once the hook exists, add the bonus to the AddsDestinyToPower destiny and test it with 0/1/2 others present.",
+   "notes": "Deploy/retrieve modes, forfeit cannot be reduced, adds one destiny, battle destiny if unable otherwise, Sense immunity all done and tested (30 tests)."
+  },
+  "cards": [
+   {
+    "blueprint": "1261_98",
+    "pc_front": {
+     "destiny": "4",
+     "gametext": "Use 1 Force to deploy (or retrieve) Lando from Reserve Deck; reshuffle. OR If a battle just initiated, and your Lando defending alone at a site, his forfeit cannot be reduced, he adds one destiny to power (add 1 for each character and vehicle present), and draws one battle destiny if not able to otherwise. (Immune to Sense.)",
+     "icons": [
+      "Cloud City"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Light/large/outofsomewhere.gif",
+     "lore": "When the ghost-like image of Obi-Wan failed to appear, another came out of the light to rescue Luke.",
+     "subType": "Lost",
+     "title": "\u2022Out Of Somewhere (V)",
+     "type": "Interrupt"
+    },
+    "pc_side": "Light"
+   },
+   {
+    "blueprint": "1261_101",
+    "pc_front": {
+     "destiny": "4",
+     "gametext": "Use 1 Force to deploy (or retrieve) non-[Permanent Weapon] Han (except Falcon) from Reserve Deck; reshuffle. OR If battle just initiated, and Han defending alone at a site, he is power +1 for each character and vehicle present, his forfeit cannot be reduced, he adds one destiny to power, and he draws one battle destiny if not able to otherwise. (Immune to Sense.)",
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Light/large/solohan.gif",
+     "lore": "As a smuggler, Solo must always be alert for trouble, even when appearing relaxed. Bounty hunters are eager to claim the price on the Corellian pirate's head.",
+     "subType": "Lost",
+     "title": "\u2022Solo Han (V)",
+     "type": "Interrupt"
+    },
+    "pc_side": "Light"
+   },
+   {
+    "blueprint": "1261_102",
+    "pc_front": {
+     "destiny": "4",
+     "gametext": "Use 1 Force to deploy from Reserve Deck (or retrieve) Leia; reshuffle. OR If a battle just initiated, and non-[Reflections 3] Leia is defending alone at a site, her forfeit cannot be reduced, she adds one destiny to power (+1 for each character and vehicle present), and draws one battle destiny if not able to otherwise. (Immune to Sense.)",
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Light/large/warriorscourage.gif",
+     "lore": "Each Rebel soldier is driven by bravery and a belief in the Rebel Alliance's ideal of freedom. Courageous and quick-thinking Rebels often defeat Imperial legions.",
+     "subType": "Lost",
+     "title": "\u2022Warrior's Courage (V)",
+     "type": "Interrupt"
+    },
+    "pc_side": "Light"
+   }
+  ]
+ }
+]
