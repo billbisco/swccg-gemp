@@ -201,8 +201,9 @@ public class Card_1240_044_Tests {
         if (cancel) {
             scn.MoveCardsToDSHand(worse);
         }
-        scn.SkipToLSTurn(Phase.BATTLE);
+        scn.SkipToLSTurn(Phase.ACTIVATE);
         scn.EnsureLSForcePile(2);
+        scn.SkipToPhase(Phase.BATTLE);
         scn.LSUseCardAction(site, "Initiate attack on creature");
         if (scn.LSHasCardChoiceAvailable(bubo)) {
             scn.LSChooseCard(bubo);

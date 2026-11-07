@@ -83,8 +83,9 @@ public class Card_1240_005_Tests {
         scn.MoveLocationToTable(scn.GetDSCard("system"));
         scn.MoveCardsToLocation(scn.GetDSCard("system"), ship);
         scn.MoveCardsToDSHand(scn.GetDSCard("thrawn"));
-        scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.SkipToDSTurn(Phase.ACTIVATE);
         scn.EnsureDSForcePile(6);
+        scn.SkipToPhase(Phase.DEPLOY);
         int power = scn.GetPower(ship);
         deployThrawnAboard(scn, ship, role);
         assertTrue(scn.IsAttachedTo(ship, scn.GetDSCard("thrawn")));
@@ -104,8 +105,9 @@ public class Card_1240_005_Tests {
         scn.MoveLocationToTable(system);
         scn.MoveCardsToLocation(system, ship, hunter, punishing, pulsar);
         scn.MoveCardsToDSHand(scn.GetDSCard("thrawn"), ig);
-        scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.SkipToDSTurn(Phase.ACTIVATE);
         scn.EnsureDSForcePile(10);
+        scn.SkipToPhase(Phase.DEPLOY);
         assertAtLocation(system, hunter, punishing, pulsar);
         deployThrawnAboard(scn, ship, "Pilot");
         assertInZone(Zone.LOST_PILE, hunter, punishing);
@@ -128,11 +130,10 @@ public class Card_1240_005_Tests {
         var thrawn = scn.GetDSCard("thrawn");
         var dread = scn.GetDSCard("deployDread");
         var hoth = scn.GetLSCard("hoth");
-        scn.MoveCardsToTopOfDSReserveDeck(dread, scn.GetDSCard("capital"));
-        scn.SkipToDSTurn(Phase.DRAW);
+        scn.SkipToDSTurn(Phase.ACTIVATE);
         scn.EnsureDSForcePile(8);
-        // If activating into the Force Pile moved either selected card, return the pair before opening the search.
         scn.MoveCardsToTopOfDSReserveDeck(dread, scn.GetDSCard("capital"));
+        scn.SkipToPhase(Phase.DRAW);
         int force = scn.GetDSForcePileCount();
 
         assertEquals(5, hoth.getBlueprint().getParsec());
