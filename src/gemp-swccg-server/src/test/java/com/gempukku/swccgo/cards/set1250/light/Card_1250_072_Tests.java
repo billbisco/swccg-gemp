@@ -17,9 +17,9 @@ public class Card_1250_072_Tests {
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>() {{
             put("chamber", "1250_72"); put("senate", "12_75"); put("platform", "1113_3");
-            put("depa", "12_4"); put("luke", "1_19"); put("sense", "1_109"); put("patience", "11_28");
+            put("depa", "12_4"); put("luke", "1_19"); put("sense", "1_109"); put("patience", "11_28"); put("swamp", "4_85");
         }}, new HashMap<>() {{
-            put("senate", "12_167"); put("wipe", "1109_50");
+            put("senate", "12_167"); put("wipe", "1109_50"); put("legacyWipe", "1250_25"); put("trooper", "1_194");
         }}, 35, 35, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -107,5 +107,40 @@ public class Card_1250_072_Tests {
         var wipe = s.GetDSCard("wipe"); s.AttachCardsTo(s.GetDSStartingLocation(), wipe);
         s.SkipToPhase(Phase.CONTROL);
         assertFalse(wipe.isSuspended());
+    }
+    private boolean wipeSuspendedByChamber(VirtualTableScenario s) {
+        return s.game().getModifiersQuerying().getCardsMarkingCardSuspended(s.gameState(), s.GetDSCard("legacyWipe"))
+                .contains(s.GetLSCard("chamber"));
+    }
+
+    @Test
+    public void LegacyWipeSuspensionFollowsTheBoardAfterTheChamberIsOnTable() {
+        var s = scenario(); s.StartGame(); var chamber = s.GetLSCard("chamber");
+        var wipe = s.GetDSCard("legacyWipe"); var marketplace = s.GetDSStartingLocation();
+        s.MoveLocationToTable(chamber); s.AttachCardsTo(marketplace, wipe);
+        var trooper = s.GetDSCard("trooper"); s.MoveCardsToHand(trooper);
+        s.SkipToDSTurn(Phase.DEPLOY); s.DSActivateForceCheat(4);
+        // Dark controls no battleground site: suspended.
+        assertTrue(wipeSuspendedByChamber(s));
+
+        // Dark takes control of the Marketplace battleground after the Chamber entered play: no longer suspended.
+        s.DSDeployCard(trooper);
+        if (s.DSDecisionAvailable("Choose where to deploy")) s.DSChooseCard(marketplace);
+        s.PassAllResponses();
+        assertEquals(marketplace, trooper.getAtLocation());
+        assertFalse(wipeSuspendedByChamber(s)); assertFalse(wipe.isSuspended());
+
+        // A Dark non-battleground site with no related locations suspends it again despite that control.
+        var swamp = s.GetLSCard("swamp"); swamp.setOwner(s.DS); s.MoveLocationToTable(swamp);
+        assertTrue(wipeSuspendedByChamber(s));
+    }
+
+    @Test
+    public void LegacyWipeIsNotSuspendedWhileDarkControlsABattlegroundAndHasNoIsolatedSite() {
+        var s = scenario(); s.StartGame(); var marketplace = s.GetDSStartingLocation();
+        s.MoveLocationToTable(s.GetLSCard("chamber")); s.AttachCardsTo(marketplace, s.GetDSCard("legacyWipe"));
+        s.MoveCardsToLocation(marketplace, s.GetDSCard("trooper"));
+        s.SkipToPhase(Phase.CONTROL);
+        assertFalse(wipeSuspendedByChamber(s));
     }
 }

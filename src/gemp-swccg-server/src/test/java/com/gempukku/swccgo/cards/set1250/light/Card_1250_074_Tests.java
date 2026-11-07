@@ -2,7 +2,9 @@ package com.gempukku.swccgo.cards.set1250.light;
 
 import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.framework.StartingSetup;
+import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.logic.modifiers.KeywordModifier;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -94,5 +96,60 @@ public class Card_1250_074_Tests {
         }
         assertTrue(s.GetLSReserveDeck().contains(s.GetLSCard("bay")));
         assertTrue(s.GetLSReserveDeck().contains(s.GetLSCard("room")));
+    }
+    private static final String RETRIEVE = "Retrieve 1 Force";
+
+    /**
+     * Legacy Wipe Them Out on table; the Light Side has one non-battleground site with no related locations (a
+     * starship site, or an ordinary site made a holosite). Returns at Dark's chance to use Wipe in Light's draw phase.
+     */
+    private VirtualTableScenario wipeDraw(boolean platform, boolean occupy, boolean holosite) {
+        var s = new VirtualTableScenario(new HashMap<>() {{
+            put("platform", "1250_74"); put("bay", "9_57"); put("swamp", "4_85");
+        }}, new HashMap<>() {{
+            put("wipe", "1250_25"); put("trooper", "1_194");
+        }}, 35, 35, StartingSetup.DefaultLSSpaceSystem, StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
+        s.StartGame();
+        var platformSite = s.GetLSCard("platform");
+        s.AttachCardsTo(s.GetDSStartingLocation(), s.GetDSCard("wipe"));
+        if (platform) s.MoveLocationToTable(platformSite);
+        if (holosite) {
+            var swamp = s.GetLSCard("swamp"); s.MoveLocationToTable(swamp);
+            s.game().getModifiersEnvironment().addUntilEndOfGameModifier(
+                    new KeywordModifier(null, Filters.samePermanentCardId(swamp), Keyword.HOLOSITE));
+        } else {
+            s.MoveLocationToTable(s.GetLSCard("bay"));
+        }
+        if (occupy) s.MoveCardsToLocation(platformSite, s.GetDSCard("trooper"));
+        s.SkipToLSTurn(Phase.DRAW); s.LSPass();
+        return s;
+    }
+
+    private boolean wipeOffered(VirtualTableScenario s) {
+        return s.DSCardActionAvailable(s.GetDSCard("wipe"), RETRIEVE);
+    }
+
+    @Test
+    public void WithoutThePlatformWipeCountsTheIsolatedStarshipSite() {
+        assertTrue(wipeOffered(wipeDraw(false, false, false)));
+    }
+
+    @Test
+    public void UnlessDarkOccupiesWipeIgnoresStarshipSites() {
+        assertFalse(wipeOffered(wipeDraw(true, false, false)));
+    }
+
+    @Test
+    public void UnlessDarkOccupiesWipeIgnoresHolosites() {
+        assertTrue(wipeOffered(wipeDraw(false, false, true)));
+        assertFalse(wipeOffered(wipeDraw(true, false, true)));
+    }
+
+    @Test
+    public void WhenDarkOccupiesThePlatformWipeCountsStarshipSitesAndHolosites() {
+        assertTrue(wipeOffered(wipeDraw(true, true, false)));
+        assertTrue(wipeOffered(wipeDraw(true, true, true)));
     }
 }

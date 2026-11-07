@@ -16,6 +16,7 @@ import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.logic.TriggerConditions;
 import com.gempukku.swccgo.logic.actions.OptionalGameTextTriggerAction;
+import com.gempukku.swccgo.logic.conditions.Condition;
 import com.gempukku.swccgo.logic.effects.choose.TakeCardIntoHandFromUsedPileEffect;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.modifiers.SuspendsCardModifier;
@@ -62,11 +63,10 @@ public class Card1250_072 extends AbstractSite {
             }
         };
         Filter isolated = Filters.and(Filters.your(playerId), Filters.site, Filters.not(Filters.battleground), noRelatedLocations);
-        if (!GameConditions.controls(game, playerId, Filters.battleground_site)
-                || GameConditions.canSpot(game, self, isolated)) {
-            return List.of(new SuspendsCardModifier(self,
-                    Filters.and(Icon.LEGACY_BLOCK_5, Filters.title("Wipe Them Out, All Of Them"))));
-        }
-        return null;
+        // Evaluated live, so the suspension follows the board after this site is on table.
+        Condition suspended = (state, modifiers) -> !GameConditions.controls(game, playerId, Filters.battleground_site)
+                || GameConditions.canSpot(game, self, isolated);
+        return List.of(new SuspendsCardModifier(self,
+                Filters.and(Icon.LEGACY_BLOCK_5, Filters.title("Wipe Them Out, All Of Them")), suspended));
     }
 }
