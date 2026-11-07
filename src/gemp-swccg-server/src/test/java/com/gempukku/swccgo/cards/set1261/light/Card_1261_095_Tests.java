@@ -151,7 +151,7 @@ public class Card_1261_095_Tests {
         var scn = lose("lando", true); assertFalse(scn.LSPlayLostInterruptAvailable(scn.GetLSCard("scum")));
     }
     @Test public void ScumCannotRetrieveOldLostGamblerOutsideJustLostWindow() {
-        var scn = started(); scn.MoveCardsToLSLostPile(scn.GetLSCard("lando")); scn.SkipToLSTurn(Phase.CONTROL);
+        var scn = started(); scn.MoveCardsToTopOfLSLostPile(scn.GetLSCard("lando")); scn.SkipToLSTurn(Phase.CONTROL);
         assertFalse(scn.LSPlayLostInterruptAvailable(scn.GetLSCard("scum")));
     }
     @Test public void ScumCannotRetrieveGamblerAfterResponseWindowCloses() {
