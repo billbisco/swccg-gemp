@@ -12,7 +12,7 @@ public class Card_1261_005_Tests {
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>() {{ put("obiwan", "1_21"); put("han", "1_11"); }},
                 new HashMap<>() {{ put("boba", "1261_5"); put("blaster", "5_179"); put("sword", "1_324");
-                    put("vader", "1_168"); put("scout", "3_156"); put("ship", "1_306");
+                    put("officer", "1_166"); put("scout", "3_156"); put("ship", "1_306");
                     put("hoth", "3_143"); put("bay", "1_285"); put("otherBay", "1_291"); }}, 30, 30,
                 StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
@@ -51,7 +51,7 @@ public class Card_1261_005_Tests {
         var scn = scenario(); scn.StartGame(); var site = scn.GetDSStartingLocation();
         scn.MoveCardsToLocation(site, scn.GetDSCard("boba"), scn.GetLSCard("obiwan"));
         if (weapon != null) scn.AttachCardsTo(scn.GetDSCard("boba"), scn.GetDSCard(weapon));
-        if (naturalAbility) scn.MoveCardsToLocation(site, scn.GetDSCard("vader"));
+        if (naturalAbility) scn.MoveCardsToLocation(site, scn.GetDSCard("officer"));
         scn.DSStartBattleAndSkipToWeaponsSegment(site); return scn;
     }
 
@@ -100,7 +100,8 @@ public class Card_1261_005_Tests {
         scn.MoveLocationToTable(scn.GetDSCard("bay")); scn.MoveLocationToTable(scn.GetDSCard("otherBay"));
         scn.MoveCardsToLocation(site, scn.GetDSCard("boba"), scn.GetLSCard("han"));
         if (captive) scn.CaptureCardWith(scn.GetDSCard("boba"), scn.GetLSCard("han"));
-        scn.SkipToDSTurn(phase); scn.EnsureDSForcePile(force); scn.DrainDSForcePileTo(force); return scn;
+        scn.SkipToDSTurn(Phase.CONTROL); scn.EnsureDSForcePile(force); scn.DrainDSForcePileTo(force);
+        scn.SkipToPhase(phase); assertEquals(force, scn.GetDSForcePileCount()); return scn;
     }
 
     @Test public void RelentlessBobaPaysTwoToRelocateAcrossSystemsWithCaptiveAndCanRepeat() {
@@ -110,7 +111,8 @@ public class Card_1261_005_Tests {
         if (scn.DSHasCardChoiceAvailable(scn.GetDSCard("bay"))) scn.DSChooseCard(scn.GetDSCard("bay")); scn.PassAllResponses();
         assertEquals(scn.GetDSCard("bay"), boba.getAtLocation()); assertEquals(2, scn.GetDSForcePileCount());
         assertSame(boba, han.getAttachedTo()); assertEquals(Zone.ATTACHED, han.getZone()); assertTrue(han.isCaptive());
-        if (scn.LSDecisionAvailable("move phase")) scn.LSPass();
+        if (scn.AwaitingLSMovePhaseActions()) scn.LSPass();
+        assertTrue(scn.AwaitingDSMovePhaseActions());
         assertTrue(scn.DSCardActionAvailable(boba, "Relocate with captive to docking bay"));
         scn.DSUseCardAction(boba, "Relocate with captive to docking bay");
         if (scn.DSHasCardChoiceAvailable(scn.GetDSCard("otherBay"))) scn.DSChooseCard(scn.GetDSCard("otherBay")); scn.PassAllResponses();
