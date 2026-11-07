@@ -65,7 +65,13 @@ public class Card1271_022 extends AbstractSite {
     @Override
     protected List<OptionalGameTextTriggerAction> getGameTextDarkSideOptionalAfterTriggers(String darkPlayer, SwccgGame game,
             EffectResult result, PhysicalCard self, int sourceId) {
-        Filter orbitedWreck = Filters.and(BLOWN_AWAY_SYSTEM, Filters.isOrbitedBy(Filters.Death_Star_system));
+        Filter orbitedWreck = Filters.and(BLOWN_AWAY_SYSTEM, new Filter() {
+            @Override public boolean accepts(GameState state, ModifiersQuerying modifiers, PhysicalCard wreck) {
+                // The generic isOrbitedBy filter omits blown-away titles.
+                return Filters.findFirstFromTopLocationsOnTable(game,
+                    Filters.and(Filters.Death_Star_system, Filters.isOrbiting(wreck.getTitle()))) != null;
+            }
+        });
         if (!TriggerConditions.forceDrainInitiatedBy(game, result, darkPlayer, orbitedWreck)
                 || !GameConditions.hasLostPile(game, darkPlayer)) return null;
 
