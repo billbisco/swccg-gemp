@@ -47,7 +47,7 @@ public class Card1262_020 extends AbstractRepublic {
                 float bonus = 0;
                 for (PhysicalCard creature : Filters.filterActive(gameState.getGame(), self,
                         SpotOverride.INCLUDE_EXCLUDED_FROM_BATTLE,
-                        Filters.and(Filters.creature, Filters.not(Keyword.PARASITE), Filters.here(self)))) {
+                        Filters.and(Filters.creature, Filters.not(Filters.keyword(Keyword.PARASITE)), Filters.here(self)))) {
                     // Historical ferocious definition; current non-parasite is a broader category.
                     boolean ferocious = modifiersQuerying.getDefenseValue(gameState, creature) > 2
                             && !Filters.title("Mynock").accepts(gameState, modifiersQuerying, creature)
