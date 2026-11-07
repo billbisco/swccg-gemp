@@ -37,7 +37,7 @@ import java.util.List;
  */
 public class Card1250_063 extends AbstractEffect {
     public Card1250_063() {
-        super(Side.LIGHT, 3, PlayCardZoneOption.ATTACHED, "So This Is How Liberty Dies", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_5, Rarity.V);
+        super(Side.LIGHT, 3f, PlayCardZoneOption.ATTACHED, "So This Is How Liberty Dies", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_5, Rarity.V);
         setCardSubtype(CardSubtype.POLITICAL);
         setLore("\"Vote now! Vote now! Vote now!\"");
         setGameText("Deploy on Senate. Your [Coruscant] Political Effects are lost. While you have a character here with rebellion agenda, your Force drains at battlegrounds where you have a Rebel are +1 and may not be canceled. May not be canceled or placed in Used Pile.");
