@@ -26,11 +26,11 @@ public class Card_1261_062_Tests {
     @Test public void BaragwinStatsMatchFinalMasterInsteadOfOriginal() {
         var scn = scenario(); var b = scn.GetLSCard("baragwin").getBlueprint();
         assertEquals("Baragwin", b.getTitle()); assertTrue(b.hasVirtualSuffix()); assertEquals(Side.LIGHT, b.getSide());
-        assertEquals(Uniqueness.RESTRICTED_3, b.getUniqueness()); assertEquals(CardSubtype.ALIEN, b.getCardSubtype());
+        assertEquals(Uniqueness.RESTRICTED_3, b.getUniqueness()); assertNull(b.getCardSubtype());
         assertEquals(3, b.getDestiny(), scn.epsilon); assertEquals(2, b.getDeployCost(), scn.epsilon);
         assertEquals(1, b.getPower(), scn.epsilon); assertEquals(2, b.getAbility(), scn.epsilon); assertEquals(5, b.getForfeit(), scn.epsilon);
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_6_1, b.getExpansionSet()); assertEquals(Rarity.V, b.getRarity());
-        scn.BlueprintCardTypeCheck(b, new ArrayList<>(Arrays.asList(CardType.CHARACTER)));
+        scn.BlueprintCardTypeCheck(b, new ArrayList<>(Arrays.asList(CardType.ALIEN)));
         scn.BlueprintIconCheck(b, new ArrayList<>(Arrays.asList(Icon.ALIEN, Icon.JABBAS_PALACE, Icon.LEGACY_BLOCK_6)));
         scn.BlueprintKeywordCheck(b, new ArrayList<>(Arrays.asList(Keyword.SCAVENGER)));
         assertEquals(Species.BARAGWIN, b.getSpecies());

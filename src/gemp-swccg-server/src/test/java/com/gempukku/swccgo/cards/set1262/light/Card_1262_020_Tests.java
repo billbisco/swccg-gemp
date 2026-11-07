@@ -32,11 +32,11 @@ public class Card_1262_020_Tests {
     @Test public void BeastRiderStatsMatchPrintedHyphenAndVirtualSuffix() {
         var scn = scenario(); var b = scn.GetLSCard("rider").getBlueprint();
         assertEquals("Beast-Rider", b.getTitle()); assertTrue(b.hasVirtualSuffix()); assertEquals(Side.LIGHT, b.getSide());
-        assertEquals(Uniqueness.RESTRICTED_3, b.getUniqueness()); assertEquals(CardSubtype.REPUBLIC, b.getCardSubtype());
+        assertEquals(Uniqueness.RESTRICTED_3, b.getUniqueness()); assertNull(b.getCardSubtype());
         assertEquals(2, b.getDestiny(), scn.epsilon); assertEquals(3, b.getDeployCost(), scn.epsilon);
         assertEquals(2, b.getPower(), scn.epsilon); assertEquals(4, b.getAbility(), scn.epsilon); assertEquals(5, b.getForfeit(), scn.epsilon);
         assertEquals("Female.", b.getLore()); assertEquals(ExpansionSet.VIRTUAL_BLOCK_6_2, b.getExpansionSet()); assertEquals(Rarity.V, b.getRarity());
-        scn.BlueprintCardTypeCheck(b, new ArrayList<>(Arrays.asList(CardType.CHARACTER)));
+        scn.BlueprintCardTypeCheck(b, new ArrayList<>(Arrays.asList(CardType.REPUBLIC)));
         scn.BlueprintIconCheck(b, new ArrayList<>(Arrays.asList(Icon.REPUBLIC, Icon.SPECIAL_EDITION, Icon.EPISODE_I, Icon.LEGACY_BLOCK_6)));
         scn.BlueprintKeywordCheck(b, new ArrayList<>(Arrays.asList(Keyword.FEMALE)));
     }
