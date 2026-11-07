@@ -1765,6 +1765,7 @@ public enum GameTextActionId {
     LEGACY__QUEENS_LANDING_SITE__DOWNLOAD(true),
     LEGACY__HAN_CHEWIE_AND_THE_FALCON__TAKE_A_FEW_MANEUVERS(true, true),
     LEGACY__SECURITY_BREACH__REDUCE_BATTLE_DAMAGE(false, true),
+    LEGACY__HUTT_INFLUENCE_V__UPLOAD_ALL_WRAPPED_UP(true, true),
     ;
 
     private boolean _searchCardPile;
