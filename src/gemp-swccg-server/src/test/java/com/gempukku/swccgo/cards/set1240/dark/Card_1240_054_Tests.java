@@ -54,6 +54,9 @@ public class Card_1240_054_Tests {
         scn.MoveLocationToTable(scn.GetLSCard("otherbay"));
         scn.MoveCardsToLocation(scn.GetDSCard("bay"), lightTurn ? scn.GetLSCard("traveler") : scn.GetDSCard("traveler"));
         scn.SkipToPhase(Phase.MOVE);
+        // Cards a test moves in later are held in hand first, so none of them is counted as Force.
+        scn.MoveCardsToLSHand(scn.GetLSCard("smuggler"), scn.GetLSCard("vehicle"));
+        scn.MoveCardsToDSHand(scn.GetDSCard("smuggler"));
         if (lightTurn) {
             scn.EnsureLSForcePile(force);
             while (scn.GetLSForcePileCount() > force) scn.MoveCardsToTopOfLSUsedPile((PhysicalCardImpl) scn.GetLSForcePile().getFirst());
