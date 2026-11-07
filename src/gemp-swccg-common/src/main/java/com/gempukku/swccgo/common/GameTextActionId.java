@@ -1817,6 +1817,9 @@ public enum GameTextActionId {
     LEGACY__GRAND_ADMIRAL_THRAWN_V__DEPLOY_DREADNAUGHT(true),
     LEGACY__ITS_WORSE_V__DEPLOY_PIT(true),
     LEGACY__CARIDA_ISB_TRAINING_ACADEMY__STACK_REBEL_INTERRUPT(false, true),
+    LEGACY__GENERAL_SOLOMAHAL__REARRANGE_SITES(false, true),
+    // Any card's attempt to 'operate' on a character (lets other cards recognize and respond to the attempt)
+    ANY_CARD__OPERATE_ON_CHARACTER,
     ;
 
     private boolean _searchCardPile;
