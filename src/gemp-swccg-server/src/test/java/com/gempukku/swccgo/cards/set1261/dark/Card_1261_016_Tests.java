@@ -87,6 +87,9 @@ public class Card_1261_016_Tests {
             if (scn.DSHasCardChoiceAvailable(trooper))
                 scn.DSChooseCard(trooper);
             scn.PassAllResponses();
+            if (scn.DSDecisionAvailable("Choose card to take into hand"))
+                scn.DSChooseCards();
+            scn.PassAllResponses();
             assertTrue(scn.GetDSHand().contains(trooper));
             String state = "active=" + active + "; Tactical Support=" + tactical.getZone()
                     + "; decision=" + scn.GetCurrentDecision().getText();
