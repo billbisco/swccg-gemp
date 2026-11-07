@@ -57,9 +57,11 @@ public class Card_1250_033_Tests {
 
     private void deployAndPay(VirtualTableScenario s, boolean dark, PhysicalCardImpl card, PhysicalCardImpl site, int expected) {
         s.MoveCardsToHand(card);
-        if (dark) { s.SkipToDSTurn(Phase.DEPLOY); s.DSActivateForceCheat(8); }
-        else { s.SkipToLSTurn(Phase.DEPLOY); s.LSActivateForceCheat(8); }
+        if (dark) s.DSActivateForceCheat(8); else s.LSActivateForceCheat(8);
+        advance(s, dark ? s.DS : s.LS, Phase.DEPLOY);
         int force = dark ? s.GetDSForcePileCount() : s.GetLSForcePileCount();
+        assertTrue(card + " in " + card.getZone() + " with " + force + " Force: " + s.GetCurrentDecision().getText(),
+                dark ? s.DSDeployAvailable(card) : s.LSDeployAvailable(card));
         if (dark) s.DSDeployCard(card); else s.LSDeployCard(card);
         s.PassAllResponses();
         assertTrue(s.GetCurrentDecision().getText(), s.GetCurrentDecision().getText().contains("deploy"));
@@ -67,6 +69,23 @@ public class Card_1250_033_Tests {
         s.PassAllResponses();
         assertEquals(site, s.game().getModifiersQuerying().getLocationThatCardIsAt(s.gameState(), card));
         assertEquals(expected, force - (dark ? s.GetDSForcePileCount() : s.GetLSForcePileCount()));
+    }
+
+    private void advance(VirtualTableScenario s, String player, Phase phase) {
+        String target = "Choose " + (phase == Phase.CONTROL ? "Control" : "Deploy") + " action or Pass";
+        for (int i = 0; i < 120; i++) {
+            String prompt = s.GetCurrentDecision().getText();
+            if (player.equals(s.GetCurrentPlayer()) && phase == s.GetCurrentPhase()
+                    && player.equals(s.GetDecidingPlayer()) && prompt.contains(target)) return;
+            if (prompt.equals("You have not activated Force. Do you want to Pass?")) {
+                s.PlayerChooseYes(s.GetDecidingPlayer());
+            } else {
+                assertTrue(prompt, prompt.contains("action or Pass") || prompt.contains("Optional responses")
+                        || prompt.contains("RECIRCULATED"));
+                s.PlayerPass(s.GetDecidingPlayer());
+            }
+        }
+        fail("Could not reach " + player + " " + phase + ": " + s.GetCurrentDecision().getText());
     }
 
     @Test
@@ -123,6 +142,8 @@ public class Card_1250_033_Tests {
 
     private void lightDrain(VirtualTableScenario s, String label, boolean offer, boolean take, int displayed, int lost) {
         var site = s.GetLSCard(label);
+        assertTrue(label + ": " + s.GetCurrentDecision().getText() + ", controls="
+                + Filters.controls(s.LS).accepts(s.game(), site), s.LSForceDrainAvailable(site));
         s.LSForceDrainAt(site);
         for (int i = 0; i < 20 && !boostOffered(s) && !s.AwaitingDSForceLossPayment(); i++) {
             String prompt = s.GetCurrentDecision().getText();
@@ -147,7 +168,7 @@ public class Card_1250_033_Tests {
         s.MoveCardsToLocation(endor, s.GetLSCard("capital"), s.GetDSCard("capital"));
         s.MoveCardsToLocation(s.GetLSCard("site"), s.GetLSCard("luke"));
         s.MoveCardsToLocation(s.GetLSCard("otherSite"), s.GetLSCard("trooper"));
-        s.SkipToLSTurn(Phase.CONTROL);
+        advance(s, s.LS, Phase.CONTROL);
         lightDrain(s, "site", true, true, 3, 2);
         lightDrain(s, "otherSite", true, true, 2, 2);
     }
@@ -157,7 +178,7 @@ public class Card_1250_033_Tests {
         var s = setup();
         s.MoveCardsToLocation(s.GetLSCard("endor"), s.GetLSCard("capital"));
         s.MoveCardsToLocation(s.GetLSCard("otherSite"), s.GetLSCard("luke"));
-        s.SkipToLSTurn(Phase.CONTROL);
+        advance(s, s.LS, Phase.CONTROL);
         lightDrain(s, "otherSite", true, false, 1, 1);
     }
 
@@ -167,7 +188,7 @@ public class Card_1250_033_Tests {
         s.MoveCardsToLocation(thirdAtSystem ? endor : s.GetLSCard("bespin"), s.GetLSCard("artoo"));
         if (objective) s.MoveCardsToLSSideOfTable(s.GetLSCard("objective"));
         s.MoveCardsToLocation(s.GetLSCard(location), s.GetLSCard("luke"));
-        s.SkipToLSTurn(Phase.CONTROL);
+        advance(s, s.LS, Phase.CONTROL);
         lightDrain(s, location, offer, offer, base + (offer ? 1 : 0), Math.min(2, base + (offer ? 1 : 0)));
     }
 
