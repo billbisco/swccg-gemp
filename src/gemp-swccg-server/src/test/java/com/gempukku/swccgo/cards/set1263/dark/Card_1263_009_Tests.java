@@ -70,8 +70,9 @@ public class Card_1263_009_Tests {
         assertInZone(Zone.AT_LOCATION, scn.GetDSCard("trooper"));
         scn.SkipToLSTurn(Phase.DEPLOY);
         scn.MoveCardsToDSHand(maul);
-        scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.SkipToDSTurn(Phase.CONTROL);
         scn.EnsureDSForcePile(8);
+        scn.SkipToPhase(Phase.DEPLOY);
         scn.DSDeployCard(maul);
         if (scn.DSHasCardChoiceAvailable(site)) scn.DSChooseCard(site);
         settleDeploy(scn);
@@ -96,12 +97,10 @@ public class Card_1263_009_Tests {
         assertTrue(deployAndSearch(scn, "mara", site, false, 0));
         assertInZone(Zone.USED_PILE, scn.GetDSCard("target"));
         scn.MoveCardsToDSHand(scn.GetDSCard("mara"));
-        scn.MoveCardsToDSHand(scn.GetDSCard("otherMara"));
-        scn.EnsureDSForcePile(10);
+        prepareNextDeploy(scn, "otherMara");
         assertTrue(deployAndSearch(scn, "otherMara", site, true, 0));
         scn.MoveOutOfPlay(scn.GetDSCard("otherMara"));
-        scn.MoveCardsToTopOfDSUsedPile(scn.GetDSCard("target"));
-        scn.EnsureDSForcePile(10);
+        prepareNextDeploy(scn, "mara");
         assertFalse(deployAndSearch(scn, "mara", site, true, 0));
         assertInZone(Zone.USED_PILE, scn.GetDSCard("target"));
     }
@@ -135,9 +134,18 @@ public class Card_1263_009_Tests {
         scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetLSCard("luke"));
         scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetDSCard("trooper"));
         scn.MoveCardsToDSHand(scn.GetDSCard(assassin));
-        scn.SkipToPhase(Phase.DEPLOY);
+        scn.SkipToPhase(Phase.CONTROL);
         scn.EnsureDSForcePile(10);
         scn.MoveCardsToTopOfDSUsedPile(scn.GetDSCard("target"));
+        scn.SkipToPhase(Phase.DEPLOY);
+    }
+
+    private void prepareNextDeploy(VirtualTableScenario scn, String assassin) {
+        scn.MoveCardsToDSHand(scn.GetDSCard(assassin));
+        scn.SkipToDSTurn(Phase.CONTROL);
+        scn.EnsureDSForcePile(10);
+        scn.MoveCardsToTopOfDSUsedPile(scn.GetDSCard("target"));
+        scn.SkipToPhase(Phase.DEPLOY);
     }
 
     private boolean deployAndSearch(VirtualTableScenario scn, String assassin, PhysicalCardImpl site,
@@ -145,7 +153,7 @@ public class Card_1263_009_Tests {
         var card = scn.GetDSCard(assassin);
         var guild = scn.GetDSCard("guild");
         var target = scn.GetDSCard("target");
-        assertTrue(scn.DSDeployAvailable(card));
+        assertTrue("No deploy for " + assassin + " with " + scn.GetDSForcePileCount() + " Force", scn.DSDeployAvailable(card));
         scn.DSDeployCard(card);
         boolean offered = false;
         for (int i = 0; i < 70 && !scn.AwaitingDSDeployPhaseActions(); i++) {
