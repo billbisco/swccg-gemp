@@ -2,6 +2,7 @@ package com.gempukku.swccgo.cards.set1261.light;
 
 import com.gempukku.swccgo.cards.AbstractEpicEventDeployable;
 import com.gempukku.swccgo.cards.GameConditions;
+import com.gempukku.swccgo.cards.set1262.light.Card1262_022;
 import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
@@ -129,7 +130,8 @@ public class Card1261_087 extends AbstractEpicEventDeployable {
     protected List<OptionalGameTextTriggerAction> getGameTextOptionalAfterTriggers(
             String playerId, SwccgGame game, EffectResult result, PhysicalCard self, int sourceId) {
         if (!TriggerConditions.jediTestCompletedBy(game, result, Filters.and(Filters.your(self), Filters.Jedi_Test), Filters.your(self))
-                || !GameConditions.hasLostPile(game, playerId)) return List.of();
+                || !GameConditions.hasLostPile(game, playerId)
+                || Card1262_022.suppressesStrongIsVaderRetrieval(game, self)) return List.of();
         var action = new OptionalGameTextTriggerAction(self, sourceId);
         action.setText("Retrieve 3 Force for completing a Jedi Test");
         action.appendEffect(new RetrieveForceEffect(action, playerId, 3));

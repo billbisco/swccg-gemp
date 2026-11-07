@@ -30,6 +30,7 @@ public class Card_1261_108_Tests {
         ls.put("ordinaryEffect", "1_66");
         ls.put("hothOnlyLuke", "3_3");
         ls.put("hope", "4_44");
+        ls.put("peace", "1262_22");
         return new VirtualTableScenario(ls, new HashMap<>(Map.of("cantina", "1_290", "vader", "1_168",
                 "bad", "4_116", "darkAlter", "1_234", "sense", "1_267", "darkDagobah", "7_279")), 40, 40,
                 new StartingSetup() {
@@ -109,6 +110,11 @@ public class Card_1261_108_Tests {
     private VirtualTableScenario completeTest(boolean fifth) { return completeTest(fifth, 1, true); }
 
     private VirtualTableScenario completeTest(boolean fifth, int available, boolean accept) {
+        return completeTest(fifth, available, accept, false, false, false);
+    }
+
+    private VirtualTableScenario completeTest(boolean fifth, int available, boolean accept,
+                                             boolean atPeaceInPlay, boolean pay, boolean nextTurn) {
         var scn = fixture(0); scn.StartGame();
         var hut = scn.GetLSCard("hut"); var strong = scn.GetLSCard("strong");
         var luke = scn.GetLSCard("luke"); var yoda = scn.GetLSCard("yoda");
@@ -120,7 +126,21 @@ public class Card_1261_108_Tests {
         if (available == 4) scn.MoveCardsToTopOfLSLostPile(loss, scn.GetLSCard("lossTwo"),
                 scn.GetLSCard("lossThree"), scn.GetLSCard("lossFour"));
         else scn.MoveCardsToTopOfLSLostPile(loss);
-        scn.SkipToLSTurn(Phase.DEPLOY);
+        if (atPeaceInPlay) {
+            var peace = scn.GetLSCard("peace");
+            scn.LSActivateForceCheat(8); scn.SkipToLSTurn(Phase.CONTROL);
+            scn.MoveCardsToTopOfLSReserveDeck(peace);
+            resolveDownload(scn, scn.GetLSCard("objective"), peace, hut, scn.GetDSStartingLocation(), Zone.ATTACHED);
+            assertEquals(hut, peace.getAttachedTo());
+            if (pay) {
+                int before = scn.GetLSForcePileCount();
+                scn.LSUseCardAction(peace, "Use 1 Force to protect training destiny this turn");
+                scn.PassForceUseResponses(); scn.PassAllResponses();
+                assertEquals(1, before - scn.GetLSForcePileCount());
+            }
+            if (nextTurn) scn.SkipToLSTurn(Phase.DEPLOY);
+            else scn.SkipToPhase(Phase.DEPLOY);
+        } else scn.SkipToLSTurn(Phase.DEPLOY);
         var action = new TopLevelGameTextAction(test, scn.LS, test.getCardId());
         action.appendEffect(new CompleteJediTestEffect(action, test));
         scn.carryOutEffectInPhaseActionByPlayer(scn.LS, action);
@@ -150,9 +170,10 @@ public class Card_1261_108_Tests {
                 objective.getBlueprint().getTitle());
         assertEquals(Zone.SIDE_OF_TABLE, test.getZone());
         assertTrue(GameConditions.isJediTestCompleted(scn.game(), test));
-        assertTrue(trace.toString(), offered);
-        assertEquals(accept ? Math.max(0, available - 3) : available, scn.GetLSLostPileCount());
-        if (available == 1 && accept) assertTrue(scn.GetLSUsedPile().contains(loss));
+        boolean allowed = !pay || nextTurn;
+        assertEquals(trace.toString(), allowed, offered);
+        assertEquals(allowed && accept ? Math.max(0, available - 3) : available, scn.GetLSLostPileCount());
+        if (available == 1 && allowed && accept) assertTrue(scn.GetLSUsedPile().contains(loss));
         if (fifth) {
             assertEquals(1, scn.gameState().getStackedCards(test).size());
             assertTrue(scn.gameState().getStackedCards(luke).isEmpty());
@@ -501,4 +522,22 @@ public class Card_1261_108_Tests {
         if (scn.DSGetDecision() != null) scn.DSPass();
     }
 
+
+    @Test public void paidAtPeaceStopsTheActualStrongIsVaderRetrievalThisTurn() {
+        var scn = completeTest(false, 4, true, true, true, false);
+        var source = scn.GetLSCard("ordinaryEffect");
+        scn.MoveCardsToLSSideOfTable(source);
+        var action = new TopLevelGameTextAction(source, scn.LS, source.getCardId());
+        action.appendEffect(new RetrieveForceEffect(action, scn.LS, 1));
+        scn.carryOutEffectInPhaseActionByPlayer(scn.LS, action); scn.PassAllResponses();
+        assertEquals(3, scn.GetLSLostPileCount());
+    }
+
+    @Test public void unpaidAtPeaceLetsActualStrongIsVaderRetrieve() {
+        completeTest(false, 4, true, true, false, false);
+    }
+
+    @Test public void thePaidAtPeaceRestrictionExpiresBeforeNextTurnsActualRetrieval() {
+        completeTest(false, 4, true, true, true, true);
+    }
 }
