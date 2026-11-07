@@ -113,10 +113,10 @@ public class Card_1261_033_Tests {
             scn.DSExecuteAdHocEffect(rancor, new TriggeringResultEffect(action,
                     new EatenResult(luke, null, null, forfeit, false, rancor, pit)));
             for (int i = 0; i < 8 && scn.DSDecisionAvailable("Required responses"); i++) {
-                if (scn.DSCardActionAvailable(waters, "Retrieve 3 Force"))
-                    scn.DSUseCardAction(waters, "Retrieve 3 Force");
+                if (scn.DSActionAvailable("Retrieve 3 Force"))
+                    scn.DSChooseAction("Retrieve 3 Force");
                 else
-                    scn.DSUseCardAction(pit);
+                    scn.DSChooseAction("Retrieve " + forfeit + " Force");
             }
             scn.PassAllResponses();
             assertEquals(before - forfeit - (inPlay ? 3 : 0), scn.GetDSLostPileCount());
