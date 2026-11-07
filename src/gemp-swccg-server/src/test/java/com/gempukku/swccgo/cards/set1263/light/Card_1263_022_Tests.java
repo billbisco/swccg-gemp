@@ -42,7 +42,8 @@ public class Card_1263_022_Tests {
         assertFalse(b.hasVirtualSuffix());
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_6_3, b.getExpansionSet());
         assertEquals(Rarity.V, b.getRarity());
-        scn.BlueprintCardTypeCheck(b, new ArrayList<>(List.of(CardType.CHARACTER, CardType.REPUBLIC)));
+        assertEquals(CardCategory.CHARACTER, b.getCardCategory());
+        scn.BlueprintCardTypeCheck(b, new ArrayList<>(List.of(CardType.REPUBLIC)));
         scn.BlueprintIconCheck(b, new ArrayList<>(List.of(Icon.REPUBLIC, Icon.EPISODE_I, Icon.WARRIOR, Icon.A_NEW_HOPE, Icon.LEGACY_BLOCK_6)));
         scn.BlueprintKeywordCheck(b, new ArrayList<>(List.of(Keyword.GENERAL, Keyword.LEADER, Keyword.SCOUT)));
     }
