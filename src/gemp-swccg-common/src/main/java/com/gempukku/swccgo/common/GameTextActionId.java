@@ -1800,6 +1800,9 @@ public enum GameTextActionId {
     LEGACY__FLAPS_NICK_OF_TIME__DEPLOY_MATCHING(true),
     // Any card's attempt to 'operate' on a character (lets other cards recognize and respond to the attempt)
     ANY_CARD__OPERATE_ON_CHARACTER,
+    LEGACY__OUTPOST__DEPLOY_DEVICE_OR_EFFECT(true, true),
+    LEGACY__KESSEL_SPICE_MINES_PRISON__RETRIEVE_FORCE(false, false, true, false),
+    OVS__ALDERAAN_CONSULAR_SHIP__DEPLOY_SENATOR(true, true),
     ;
 
     private boolean _searchCardPile;

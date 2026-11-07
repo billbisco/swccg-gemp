@@ -53,6 +53,7 @@ public abstract class AbstractSwccgCardBlueprint implements SwccgCardBlueprint {
     private boolean _hasAlternateImageSuffix;
     private boolean _hasVirtualSuffix;
     private boolean _mayNotBePlacedInReserveDeck;
+    private boolean _mayNeverBeWonInSabacc;
     private boolean _doesNotCountTowardDeckLimit;
     private int _startingEffectCapacityReduction;
     private boolean _isLegacy;
@@ -590,6 +591,19 @@ public abstract class AbstractSwccgCardBlueprint implements SwccgCardBlueprint {
      */
     public void setMayNotBePlacedInReserveDeck(boolean value) {
         _mayNotBePlacedInReserveDeck = value;
+    }
+
+    @Override
+    public boolean isMayNeverBeWonInSabacc() {
+        return _mayNeverBeWonInSabacc;
+    }
+
+    /**
+     * Sets if the card may never be won in sabacc.
+     * @param value true if card may never be won in sabacc, otherwise false
+     */
+    public void setMayNeverBeWonInSabacc(boolean value) {
+        _mayNeverBeWonInSabacc = value;
     }
 
     @Override
