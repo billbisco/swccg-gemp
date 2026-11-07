@@ -78,10 +78,25 @@ public class Card_1261_034_Tests {
         }
         assertTrue("At least one legal launch bay", legal > 0);
         scn.DSChooseCard(launch);
-        if (scn.DSHasCardChoiceAvailable(ship))
-            scn.DSChooseCard(ship);
-        scn.PassAllResponses();
+        for (int i = 0; i < 16 && launch.getZone() != Zone.LOCATIONS; i++) {
+            var decision = scn.GetCurrentDecision();
+            String prompt = decision.getText().toLowerCase();
+            if (prompt.contains("optional response")) {
+                if (scn.DSGetDecision() != null)
+                    scn.DSPass();
+                else
+                    scn.LSPass();
+            } else if (scn.DSHasCardChoiceAvailable(ship)) {
+                scn.DSChooseCard(ship);
+            } else if (scn.DSGetDecision() != null && prompt.contains("on which side")) {
+                scn.ChooseOption(scn.DS, scn.DSGetMultipleChoices().getFirst());
+            } else {
+                fail("Unresolved site placement: " + decision.getText()
+                        + " " + decision.getDecisionParameters().keySet());
+            }
+        }
         assertEquals(Zone.LOCATIONS, launch.getZone());
+        scn.PassAllResponses();
         assertNotNull(launch.getRelatedStarshipOrVehicle());
         if (scn.LSGetDecision() != null)
             scn.LSPass();
