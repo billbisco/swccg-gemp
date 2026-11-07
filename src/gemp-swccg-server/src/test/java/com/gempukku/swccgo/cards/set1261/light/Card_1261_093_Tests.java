@@ -39,6 +39,7 @@ public class Card_1261_093_Tests {
         assertEquals(CardSubtype.USED_OR_LOST, b.getCardSubtype());
         scn.BlueprintCardTypeCheck(b, new ArrayList<>(List.of(CardType.INTERRUPT)));
         scn.BlueprintIconCheck(b, new ArrayList<>(List.of(Icon.INTERRUPT, Icon.CLOUD_CITY, Icon.LEGACY_BLOCK_6)));
+        scn.BlueprintKeywordCheck(b, new ArrayList<>());
     }
 
     private VirtualTableScenario started() {
