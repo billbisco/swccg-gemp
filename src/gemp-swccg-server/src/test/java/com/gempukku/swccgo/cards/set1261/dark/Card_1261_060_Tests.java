@@ -12,7 +12,7 @@ public class Card_1261_060_Tests {
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>() {{ put("obiwan", "1_21"); put("han", "1_11"); put("worrt", "6_48"); }},
                 new HashMap<>() {{ put("rifle", "1261_60"); put("boba", "5_91"); put("otherBoba", "7_167"); put("jpBoba", "601_2");
-                    put("vader", "1_168"); put("delivery", "1220_45"); put("hidden", "6_154"); }}, 30, 30,
+                    put("vader", "1_168"); put("officer", "1_166"); put("delivery", "1220_45"); put("hidden", "6_154"); }}, 30, 30,
                 StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -96,6 +96,7 @@ public class Card_1261_060_Tests {
     @Test public void FettsBlasterRifleActuallyDeploysSpecialDeliveryAndReshufflesWithoutPrintedTurnCap() {
         var scn = scenario(); scn.StartGame(); var rifle = scn.GetDSCard("rifle"); var delivery = scn.GetDSCard("delivery");
         scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("boba")); scn.AttachCardsTo(scn.GetDSCard("boba"), rifle);
+        scn.MoveCardsToDSHand(scn.GetDSCard("officer"));
         scn.SkipToDSTurn(Phase.DEPLOY); scn.MoveCardsToTopOfDSReserveDeck(delivery);
         com.gempukku.swccgo.framework.Assertions.assertInZone(Zone.RESERVE_DECK, delivery); int force = scn.GetDSForcePileCount();
         var remaining = scn.GetDSReserveDeck().stream().filter(c -> c != delivery).findFirst().orElseThrow();
@@ -108,10 +109,16 @@ public class Card_1261_060_Tests {
         if (scn.AwaitingLSDeployPhaseActions()) scn.LSPass();
         assertFalse(scn.DSCardActionAvailable(rifle, "Deploy Special Delivery from Reserve Deck"));
         scn.MoveCardsToTopOfDSReserveDeck(delivery);
+        // A normal deployment refreshes the action menu after the manual removal fixture.
+        scn.DSDeployCard(scn.GetDSCard("officer"));
+        if (scn.DSHasCardChoiceAvailable(scn.GetDSStartingLocation())) scn.DSChooseCard(scn.GetDSStartingLocation());
+        scn.PassAllResponses(); if (scn.AwaitingLSDeployPhaseActions()) scn.LSPass();
+        assertTrue(scn.AwaitingDSDeployPhaseActions());
+        assertEquals(force - 2, scn.GetDSForcePileCount());
         assertTrue("No printed timeframe prevents another deployment after Delivery leaves table", scn.DSCardActionAvailable(rifle, "Deploy Special Delivery from Reserve Deck"));
         scn.DSUseCardAction(rifle, "Deploy Special Delivery from Reserve Deck"); scn.PassAllResponses();
         if (scn.DSHasCardChoiceAvailable(delivery)) scn.DSChooseCard(delivery); scn.PassAllResponses(); assertEquals(scn.GetCurrentDecision().getText(), Zone.SIDE_OF_TABLE, delivery.getZone());
-        assertEquals(force, scn.GetDSForcePileCount());
+        assertEquals(force - 2, scn.GetDSForcePileCount());
         scn.MoveCardsToTopOfDSReserveDeck(delivery); scn.SkipToPhase(Phase.MOVE);
         assertFalse(scn.DSCardActionAvailable(rifle, "Deploy Special Delivery from Reserve Deck"));
     }
