@@ -128,6 +128,38 @@ public interface StartingSetup {
      */
     StartingSetup NoLSStartingInterrupts = DoNothingSetup;
 
+    /**
+     * Like {@link #NoDSStartingInterrupts}, but declines the "Choose starting interrupt" prompt that appears when the
+     * Dark Side deck holds a card that may be played as a Starting Interrupt.
+     */
+    StartingSetup DeclineDSStartingInterrupt = new StartingSetup() {
+        @Override
+        public HashMap<String, String> Cards() { return new HashMap<>(); }
+
+        @Override
+        public void Setup(VirtualTableScenario scn) {
+            if (scn.DSDecisionAvailable("Choose starting interrupt")) {
+                scn.DSPass();
+            }
+        }
+    };
+
+    /**
+     * Like {@link #NoLSStartingInterrupts}, but declines the "Choose starting interrupt" prompt that appears when the
+     * Light Side deck holds a card that may be played as a Starting Interrupt.
+     */
+    StartingSetup DeclineLSStartingInterrupt = new StartingSetup() {
+        @Override
+        public HashMap<String, String> Cards() { return new HashMap<>(); }
+
+        @Override
+        public void Setup(VirtualTableScenario scn) {
+            if (scn.LSDecisionAvailable("Choose starting interrupt")) {
+                scn.LSPass();
+            }
+        }
+    };
+
 
 
     /**
