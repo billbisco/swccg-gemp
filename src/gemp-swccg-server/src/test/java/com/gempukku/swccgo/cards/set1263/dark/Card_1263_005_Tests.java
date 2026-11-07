@@ -122,4 +122,11 @@ public class Card_1263_005_Tests {
         var scn=transport(true,"luke");scn.PrepareLSDestiny(0);scn.LSPlayCard(scn.GetLSCard("nabrun"));scn.LSChooseCard(scn.GetLSStartingLocation());scn.LSChooseCard(scn.GetDSStartingLocation());scn.LSChooseCard(scn.GetLSCard("luke"));scn.PassAllResponses();scn.LSChooseNo();scn.PassAllResponses();
         assertEquals(scn.GetLSStartingLocation(),scn.GetLSCard("luke").getAtLocation());assertFalse(scn.GetLSCard("luke").isCaptive());assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("jodo"),CAPTURE));
     }
+    @Test public void JodoKastDoesNotTaxHisOwnersWeaponAtSameSite() {
+        var scn=scenario();scn.StartGame();var site=scn.GetDSStartingLocation();scn.MoveCardsToLocation(site,scn.GetDSCard("jodo"),scn.GetDSCard("trooper"),scn.GetLSCard("luke"));scn.AttachCardsTo(scn.GetDSCard("trooper"),scn.GetDSCard("blaster"));
+        scn.SkipToDSTurn(Phase.BATTLE);force(scn,true,2);scn.DSInitiateBattle(site);scn.PassAllResponses();scn.PrepareDSDestiny(5);scn.DSUseCardAction(scn.GetDSCard("blaster"),"Fire");scn.DSChooseCard(scn.GetLSCard("luke"));scn.PassForceUseResponses();scn.PassWeaponFireWithDestinyDraw();assertEquals(0,scn.GetDSForcePileCount());assertTrue(scn.GetLSCard("luke").isHit());
+    }
+    @Test public void JodoKastAbsentDoesNotEnableHiddenWeaponsThroughOrdinaryTrooper() {
+        var scn=scenario();scn.StartGame();scn.MoveCardsToLocation(scn.GetDSStartingLocation(),scn.GetDSCard("trooper"),scn.GetLSCard("luke"));scn.MoveCardsToDSHand(scn.GetDSCard("hidden"));scn.DSStartBattleAndSkipToWeaponsSegment(scn.GetDSStartingLocation());assertTrue(scn.AwaitingDSWeaponsSegmentActions());assertFalse(scn.DSCardPlayAvailable(scn.GetDSCard("hidden")));
+    }
 }
