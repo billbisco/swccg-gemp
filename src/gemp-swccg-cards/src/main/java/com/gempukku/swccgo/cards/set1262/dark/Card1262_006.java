@@ -84,7 +84,7 @@ public class Card1262_006 extends AbstractNormalEffect {
         action.appendCost(new UseForceEffect(action, playerId, 1));
         action.appendEffect(new ChooseCardFromHandEffect(action, playerId, reveal) {
             @Override
-            protected void cardSelected(PhysicalCard selected) {
+            protected void cardSelected(SwccgGame game, PhysicalCard selected) {
                 action.appendEffect(new RevealCardFromOwnHandEffect(action, playerId, selected) {
                     @Override
                     protected void cardRevealed(PhysicalCard revealed) {
