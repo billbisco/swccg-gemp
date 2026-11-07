@@ -20,7 +20,7 @@ public class Card_1261_079_Tests {
     private VirtualTableScenario fixture() {
         var ls = new HashMap<>(Map.of("combo", "1261_79", "commander", "3_3", "luke", "108_3",
                 "obi", "1_21", "han", "1_11", "ship", "1_146", "independent", "10_17",
-                "space", "6_87", "ordinary", "1_66"));
+                "space", "6_87", "ordinary", "1_66", "trooper", "1_28", "ordinaryLuke", "1_19"));
         var ds = new HashMap<>(Map.of("bad", "4_116", "vader", "1_168", "fighter", "1_299", "fighterPilot", "1_173", "alter", "1_234"));
         var scn = new VirtualTableScenario(ls, ds, 40, 40, StartingSetup.DefaultLSGroundLocation,
                 StartingSetup.DefaultDSGroundLocation, StartingSetup.NoLSStartingInterrupts,
@@ -127,4 +127,37 @@ public class Card_1261_079_Tests {
     @Test public void participatingCharacterLossWaitsUntilBattleEnds() { loseBeforeDamage(false, false); }
     @Test public void participatingNonIndependentStarshipLossWaitsUntilBattleEnds() { loseBeforeDamage(true, false); }
     @Test public void independentStarshipIsLostImmediately() { loseBeforeDamage(true, true); }
+    private void normalBattle(boolean chooseDeferredCharacterForAttrition) {
+        var scn = fixture(); var combo = scn.GetLSCard("combo"); var han = scn.GetLSCard("han");
+        var site = scn.GetLSStartingLocation(); var trooper = scn.GetLSCard("trooper");
+        scn.MoveCardsToLSSideOfTable(combo);
+        scn.MoveCardsToLocation(site, han, trooper, scn.GetLSCard("ordinaryLuke"), scn.GetDSCard("vader"));
+        scn.LSActivateForceCheat(8); scn.SkipToLSTurn(Phase.BATTLE);
+        scn.LSStartBattleAndSkipToWeaponsSegment(site);
+        var loss = new TopLevelGameTextAction(site, scn.LS, site.getCardId());
+        loss.appendEffect(new LoseCardFromTableEffect(loss, han));
+        scn.carryOutEffectInPhaseActionByPlayer(scn.LS, loss);
+        scn.PassAllResponses();
+        assertTrue(han.getZone().isInPlay());
+        scn.PrepareLSDestiny(0); scn.PrepareDSDestiny(0);
+        scn.SkipToDamageSegment(true);
+        scn.PassDamageSegmentActions();
+        assertEquals(1, scn.GetUnpaidLSAttrition());
+        assertEquals(0, scn.GetUnpaidLSBattleDamage());
+        if (chooseDeferredCharacterForAttrition) {
+            scn.LSPayAttritionFromCardInPlay(han);
+            assertTrue(scn.GetLSLostPile().contains(han));
+            assertEquals(1, scn.GetUnpaidLSAttrition());
+            assertTrue(scn.AwaitingLSAttritionPayment());
+        } else {
+            scn.LSPayAttritionFromCardInPlay(trooper);
+            scn.PassAllResponses();
+            assertTrue(scn.GetLSLostPile().contains(trooper));
+            assertTrue(scn.GetLSLostPile().contains(han));
+            assertFalse(scn.gameState().isDuringBattle());
+        }
+    }
+
+    @Test public void deferredCharacterMayForfeitButPaysZeroActualAttrition() { normalBattle(true); }
+    @Test public void deferredCharacterIsLostAtTheEndOfAnUncancelledBattle() { normalBattle(false); }
 }
