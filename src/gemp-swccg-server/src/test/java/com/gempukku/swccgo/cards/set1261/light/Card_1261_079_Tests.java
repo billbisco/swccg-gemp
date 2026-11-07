@@ -1,12 +1,12 @@
 package com.gempukku.swccgo.cards.set1261.light;
 
+import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.effects.CancelBattleEffect;
 import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
-import com.gempukku.swccgo.logic.effects.CancelCardOnTableEffect;
 import com.gempukku.swccgo.logic.effects.LoseCardFromTableEffect;
 import org.junit.Test;
 
@@ -170,12 +170,16 @@ public class Card_1261_079_Tests {
     @Test public void explicitNativeCancellationCannotCancelTheCombo() {
         var scn = fixture(); var combo = scn.GetLSCard("combo"); var ordinary = scn.GetLSCard("ordinary");
         scn.MoveCardsToLSSideOfTable(combo, ordinary);
-        scn.SkipToDSTurn(Phase.CONTROL);
-        var source = scn.GetDSStartingLocation();
-        var action = new TopLevelGameTextAction(source, scn.DS, source.getCardId());
-        action.appendEffect(new CancelCardOnTableEffect(action, ordinary));
-        action.appendEffect(new CancelCardOnTableEffect(action, combo));
-        scn.carryOutEffectInPhaseActionByPlayer(scn.DS, action); scn.PassAllResponses();
+        assertFalse(GameConditions.canBeCanceled(scn.game(), combo));
+        assertTrue(GameConditions.canBeCanceled(scn.game(), ordinary));
+        var alter = scn.GetDSCard("alter"); var vader = scn.GetDSCard("vader");
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), vader);
+        scn.MoveCardsToDSHand(alter);
+        scn.SkipToDSTurn(Phase.CONTROL); scn.PrepareDSDestiny(1);
+        scn.DSPlayCard(alter, "Draw destiny to cancel Effect");
+        if (scn.DSHasCardChoiceAvailable(ordinary)) scn.DSChooseCard(ordinary);
+        if (scn.DSHasCardChoiceAvailable(vader)) scn.DSChooseCard(vader);
+        scn.PassAllResponses(); scn.PassDestinyDrawResponses(); scn.PassAllResponses();
         assertTrue(scn.GetLSLostPile().contains(ordinary));
         assertTrue(scn.IsCardActive(combo));
     }
