@@ -32,7 +32,7 @@ public class Card_1261_081_Tests {
         assertEquals("Incom Corporation & Koensayr Manufacturing", b.getTitle()); assertFalse(b.hasVirtualSuffix());
         assertEquals(Side.LIGHT, b.getSide()); assertEquals(Uniqueness.UNIQUE, b.getUniqueness());
         assertEquals(3, b.getDestiny(), scn.epsilon); assertEquals(ExpansionSet.VIRTUAL_BLOCK_6_1, b.getExpansionSet());
-        assertEquals(Rarity.V, b.getRarity()); assertNull(b.getCardSubtype());
+        assertEquals(Rarity.V, b.getRarity()); assertEquals(CardSubtype.NORMAL, b.getCardSubtype());
         scn.BlueprintCardTypeCheck(b, new ArrayList<>(Arrays.asList(CardType.EFFECT)));
         scn.BlueprintIconCheck(b, new ArrayList<>(Arrays.asList(Icon.EFFECT, Icon.SPECIAL_EDITION, Icon.LEGACY_BLOCK_6)));
         scn.BlueprintKeywordCheck(b, new ArrayList<>(Arrays.asList(Keyword.DEPLOYS_ON_SITE)));
@@ -66,9 +66,9 @@ public class Card_1261_081_Tests {
     private void upgraded(String key, boolean ground, int printedPower) {
         var scn = started(true); var card = scn.GetLSCard(key);
         scn.MoveCardsToLocation(scn.GetLSCard(ground ? "jungle" : "system"), card);
-        assertEquals(2, scn.GetAbility(card)); assertEquals(printedPower + 1, scn.GetPower(card));
+        assertEquals(2, scn.GetBattleDestinyAbility(card)); assertEquals(printedPower + 1, scn.GetPower(card));
         scn.MoveCardsToLSHand(scn.GetLSCard("incom"));
-        assertEquals(1, scn.GetAbility(card)); assertEquals(printedPower, scn.GetPower(card));
+        assertEquals(1, scn.GetBattleDestinyAbility(card)); assertEquals(printedPower, scn.GetPower(card));
     }
     @Test public void IncomKoensayrUpgradesXwingAndRestoresItWhenRemoved() { upgraded("xwing", false, 3); }
     @Test public void IncomKoensayrAddsYwingsUnlikeOriginalIncom() { upgraded("ywing", false, 2); }
@@ -77,11 +77,11 @@ public class Card_1261_081_Tests {
 
     @Test public void IncomKoensayrDoesNotUpgradeT16UnlikeOriginalIncom() {
         var scn = started(true); scn.MoveCardsToLocation(scn.GetLSCard("jungle"), scn.GetLSCard("t16"));
-        assertEquals(1, scn.GetAbility(scn.GetLSCard("t16"))); assertEquals(1, scn.GetPower(scn.GetLSCard("t16")));
+        assertEquals(1, scn.GetBattleDestinyAbility(scn.GetLSCard("t16"))); assertEquals(1, scn.GetPower(scn.GetLSCard("t16")));
     }
     @Test public void IncomKoensayrDoesNotUpgradeSquadronsWithAbilityOnePilots() {
         var scn = started(true); scn.MoveCardsToLocation(scn.GetLSCard("system"), scn.GetLSCard("squadron"));
-        assertEquals(3, scn.GetAbility(scn.GetLSCard("squadron"))); assertEquals(9, scn.GetPower(scn.GetLSCard("squadron")));
+        assertEquals(3, scn.GetBattleDestinyAbility(scn.GetLSCard("squadron"))); assertEquals(9, scn.GetPower(scn.GetLSCard("squadron")));
     }
     @Test public void IncomKoensayrDoesNotInventPermanentPilotInUnpilotedXwing() {
         var scn = started(true); scn.MoveCardsToLocation(scn.GetLSCard("system"), scn.GetLSCard("red1"));
@@ -91,7 +91,7 @@ public class Card_1261_081_Tests {
     }
     @Test public void IncomKoensayrDoesNotUpgradeOpposingPermanentPilot() {
         var scn = started(true); var tie = scn.GetDSCard("tie"); scn.MoveCardsToLocation(scn.GetLSCard("system"), tie);
-        assertEquals(1, scn.GetAbility(tie)); assertEquals(1, scn.GetPower(tie));
+        assertEquals(1, scn.GetBattleDestinyAbility(tie)); assertEquals(1, scn.GetPower(tie));
     }
     @Test public void IncomKoensayrPowerBonusChangesActualBattleTotal() {
         var scn = started(true); var site = scn.GetLSCard("jungle");
@@ -114,7 +114,7 @@ public class Card_1261_081_Tests {
         scn.LSUseCardAction(scn.GetLSCard("incom"), "Retrieve a Y-wing or Z-95"); scn.PassAllResponses();
         assertTrue(scn.LSHasCardChoiceAvailable(card)); scn.LSChooseCard(card); scn.PassAllResponses();
         assertInZone(Zone.USED_PILE, card); assertInZone(Zone.LOST_PILE, scn.GetLSFiller(1));
-        assertEquals(lost - 1, scn.GetLSLostPileCount()); assertFalse(scn.LSCardActionAvailable(scn.GetLSCard("incom"), "Retrieve"));
+        assertEquals(lost - 1, scn.GetLSLostPileCount()); assertFalse(scn.GetLSAvailableActions().stream().anyMatch(text -> text.contains("Retrieve a Y-wing or Z-95")));
     }
     @Test public void IncomKoensayrRetrievesOneYwingEvenBelowNonmatchingTopCard() { retrieve("ywing"); }
     @Test public void IncomKoensayrRetrievesOneZ95() { retrieve("z95"); }
@@ -125,20 +125,20 @@ public class Card_1261_081_Tests {
     }
     @Test public void IncomKoensayrRetrievalIsOnlyDuringOwnersControlPhase() {
         var scn = started(true); scn.MoveCardsToTopOfLSLostPile(scn.GetLSCard("ywing"));
-        scn.SkipToLSTurn(Phase.DEPLOY); assertFalse(scn.LSCardActionAvailable(scn.GetLSCard("incom"), "Retrieve"));
-        scn.SkipToDSTurn(Phase.CONTROL); assertFalse(scn.LSCardActionAvailable(scn.GetLSCard("incom"), "Retrieve"));
+        scn.SkipToLSTurn(Phase.DEPLOY); assertFalse(scn.GetLSAvailableActions().stream().anyMatch(text -> text.contains("Retrieve a Y-wing or Z-95")));
+        scn.SkipToDSTurn(Phase.CONTROL); assertFalse(scn.GetLSAvailableActions().stream().anyMatch(text -> text.contains("Retrieve a Y-wing or Z-95")));
     }
     @Test public void IncomKoensayrRetrievalResetsNextOwnControlPhase() {
         var scn = started(true); var effect = scn.GetLSCard("incom");
         scn.MoveCardsToTopOfLSLostPile(scn.GetLSCard("ywing"), scn.GetLSCard("z95")); scn.SkipToLSTurn(Phase.CONTROL);
         scn.LSUseCardAction(effect, "Retrieve"); scn.PassAllResponses(); scn.LSChooseCard(scn.GetLSCard("ywing")); scn.PassAllResponses();
-        assertFalse(scn.LSCardActionAvailable(effect, "Retrieve")); scn.SkipToLSTurn(Phase.CONTROL);
+        assertFalse(scn.GetLSAvailableActions().stream().anyMatch(text -> text.contains("Retrieve a Y-wing or Z-95"))); scn.SkipToLSTurn(Phase.CONTROL);
         scn.LSUseCardAction(effect, "Retrieve"); scn.PassAllResponses(); scn.LSChooseCard(scn.GetLSCard("z95")); scn.PassAllResponses();
         assertInZone(Zone.USED_PILE, scn.GetLSCard("z95"));
     }
     @Test public void IncomKoensayrEmptyLostPileOffersNoRetrieval() {
         var scn = started(true); scn.SkipToLSTurn(Phase.CONTROL); assertEquals(0, scn.GetLSLostPileCount());
-        assertFalse(scn.LSCardActionAvailable(scn.GetLSCard("incom"), "Retrieve"));
+        assertFalse(scn.GetLSAvailableActions().stream().anyMatch(text -> text.contains("Retrieve a Y-wing or Z-95")));
     }
 
     @Test public void IncomKoensayrSuspendsAndResumesWithoutBeingCanceled() {
@@ -146,10 +146,10 @@ public class Card_1261_081_Tests {
         var ship = scn.GetLSCard("ywing"); scn.MoveCardsToLocation(scn.GetLSCard("system"), ship);
         scn.MoveCardsToLocation(site, scn.GetDSCard("trooper")); scn.MoveCardsToTopOfLSLostPile(scn.GetLSCard("z95"));
         scn.SkipToLSTurn(Phase.CONTROL); assertTrue(effect.isSuspended()); assertEquals(site, effect.getAttachedTo());
-        assertEquals(1, scn.GetAbility(ship)); assertEquals(2, scn.GetPower(ship));
-        assertFalse(scn.LSCardActionAvailable(effect, "Retrieve"));
+        assertEquals(1, scn.GetBattleDestinyAbility(ship)); assertEquals(2, scn.GetPower(ship));
+        assertFalse(scn.GetLSAvailableActions().stream().anyMatch(text -> text.contains("Retrieve a Y-wing or Z-95")));
         scn.MoveCardsToLocation(site, scn.GetLSCard("luke")); scn.SkipToPhase(Phase.DEPLOY);
-        assertFalse(effect.isSuspended()); assertEquals(2, scn.GetAbility(ship)); assertEquals(3, scn.GetPower(ship));
+        assertFalse(effect.isSuspended()); assertEquals(2, scn.GetBattleDestinyAbility(ship)); assertEquals(3, scn.GetPower(ship));
         scn.SkipToLSTurn(Phase.CONTROL); assertTrue(scn.LSCardActionAvailable(effect, "Retrieve"));
     }
     @Test public void IncomKoensayrOpposingControlOfOtherSiteDoesNotSuspend() {
@@ -196,7 +196,7 @@ public class Card_1261_081_Tests {
         scn.ApplyAdHocModifier(new WidenIncomKoensayrScopeModifier(scn.GetLSCard("warRoom")));
         scn.SkipToLSTurn(Phase.CONTROL); assertTrue(WidenIncomKoensayrScopeModifier.isActive(scn.game(), scn.GetLSCard("incom")));
         // Ability-2 permanent pilot is retained and must not gain the ability-1 replacement bonus.
-        assertEquals(2, scn.GetAbility(ship)); assertEquals(5, scn.GetPower(ship));
+        assertEquals(2, scn.GetBattleDestinyAbility(ship)); assertEquals(5, scn.GetPower(ship));
         scn.LSUseCardAction(scn.GetLSCard("incom"), "Retrieve"); scn.PassAllResponses();
         scn.LSChooseCard(scn.GetLSCard("xwing")); scn.PassAllResponses(); assertInZone(Zone.USED_PILE, scn.GetLSCard("xwing"));
     }

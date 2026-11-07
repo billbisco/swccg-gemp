@@ -9,6 +9,7 @@ import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
+import com.gempukku.swccgo.game.TitleComponent;
 import com.gempukku.swccgo.logic.TriggerConditions;
 import com.gempukku.swccgo.logic.actions.CancelCardActionBuilder;
 import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
@@ -26,7 +27,8 @@ public class Card1261_081 extends AbstractNormalEffect {
     public Card1261_081() {
         super(Side.LIGHT, 3, PlayCardZoneOption.ATTACHED, "Incom Corporation & Koensayr Manufacturing",
                 Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
-        setComboCard(true);
+        setTitleComponents(new TitleComponent("Incom Corporation", Uniqueness.UNIQUE),
+                new TitleComponent("Koensayr Manufacturing", Uniqueness.UNIQUE));
         setGameText("Deploy on a Rebel Base war room. Echo Base Operations is canceled. Your ability-1 permanent pilots aboard T-47s, X-wings, Y-wings, and Z-95s (except squadrons) are replaced by ability-2 permanent pilots who add 1 to power. During your control phase, may retrieve one Y-wing or Z-95. Suspended if opponent controls this site. (Immune to Alter.)");
         addKeywords(Keyword.DEPLOYS_ON_SITE); addIcons(Icon.SPECIAL_EDITION); addImmuneToCardTitle(Title.Alter);
     }
