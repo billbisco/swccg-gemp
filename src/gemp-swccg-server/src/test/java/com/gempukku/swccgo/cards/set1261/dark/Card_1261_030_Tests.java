@@ -26,7 +26,7 @@ public class Card_1261_030_Tests {
             StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
     }
     private VirtualTableScenario ready(boolean shield) {
-        var s = scenario(); s.StartGame(); s.SkipToDSTurn(Phase.CONTROL);
+        var s = scenario(); s.StartGame(); s.SkipToDSTurn(Phase.ACTIVATE); s.SkipToPhase(Phase.CONTROL);
         if (shield) s.MoveCardsToDSSideOfTable(s.GetDSCard("shield"));
         return s;
     }
