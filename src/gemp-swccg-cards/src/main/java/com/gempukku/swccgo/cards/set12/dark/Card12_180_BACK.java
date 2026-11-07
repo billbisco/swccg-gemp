@@ -149,18 +149,26 @@ public class Card12_180_BACK extends AbstractObjective {
                             if (GameConditions.canUseForce(game, opponent, 2)) {
                                 action.appendEffect(
                                         new PlayoutDecisionEffect(action, opponent,
-                                                new MultipleChoiceAwaitingDecision("Choose effect", new String[]{"Lose 2 Force (place card in Used Pile)", "Use 2 Force (opponent deploys card for free)"}) {
+                                                new MultipleChoiceAwaitingDecision("Choose effect", new String[]{"Lose 2 Force (place card in Used Pile)",
+                                                        com.gempukku.swccgo.cards.effects.LegacyYoureASlaveTwoForceDeploy.freeIsTwoForce(game, self)
+                                                                ? "Use 2 Force (opponent deploys card for 2 Force)" : "Use 2 Force (opponent deploys card for free)"}) {
                                                     @Override
                                                     protected void validDecisionMade(int index, String result) {
                                                         if (index == 0) {
                                                             opponentLosesTwoForceAndPlaceCardInUsedPile(action, game, self, gameState, playerId, opponent, card, opponent + " chooses to lose 2 Force and place card in Used Pile");
                                                         } else {
-                                                            gameState.sendMessage(opponent + " chooses to use 2 Force to allow opponent to deploy card for free");
+                                                            gameState.sendMessage(opponent + " chooses to use 2 Force to allow opponent to deploy card"
+                                                                    + (com.gempukku.swccgo.cards.effects.LegacyYoureASlaveTwoForceDeploy.freeIsTwoForce(game, self) ? " for 2 Force" : " for free"));
                                                             action.appendEffect(
                                                                     new UseForceEffect(action, opponent, 2));
                                                             // Flip over card and deploy if possible
                                                             gameState.sendMessage(playerId + "'s card on side of table is " + GameUtils.getCardLink(card));
                                                             gameState.cardAffectsCard(playerId, card, card);
+
+                                                            if (com.gempukku.swccgo.cards.effects.LegacyYoureASlaveTwoForceDeploy.freeIsTwoForce(game, self)) {
+                                                                com.gempukku.swccgo.cards.effects.LegacyYoureASlaveTwoForceDeploy.deployForTwoForce(action, game, self, playerId, card);
+                                                                return;
+                                                            }
 
                                                             // Check if player can deploy the card for free
                                                             boolean deployable = Filters.and(Filters.deployable(self, null, true, 0)).accepts(game, card);
