@@ -11,6 +11,7 @@ import com.gempukku.swccgo.logic.effects.CompleteJediTestEffect;
 import com.gempukku.swccgo.logic.effects.CrossOverCharacterEffect;
 import com.gempukku.swccgo.logic.effects.LoseCardFromTableEffect;
 import com.gempukku.swccgo.logic.effects.PlaceCardOutOfPlayFromTableEffect;
+import com.gempukku.swccgo.logic.effects.RetrieveForceEffect;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -27,7 +28,9 @@ public class Card_1261_108_Tests {
         ls.putAll(Map.of("trainingArea", "4_88", "anoat", "4_80", "asteroid", "4_81",
                 "maintenance", "13_9", "permanentWeapon", "108_3", "otherYoda", "12_35", "lossTwo", "2_23", "lossThree", "2_27", "lossFour", "2_33", "lightAlter", "1_71"));
         ls.put("ordinaryEffect", "1_66");
-        return new VirtualTableScenario(ls, new HashMap<>(Map.of("cantina", "1_290")), 40, 40,
+        ls.put("hothOnlyLuke", "3_3");
+        return new VirtualTableScenario(ls, new HashMap<>(Map.of("cantina", "1_290", "vader", "1_168",
+                "bad", "4_116", "darkAlter", "1_234", "sense", "1_267")), 40, 40,
                 new StartingSetup() {
                     @Override public HashMap<String, String> Cards() {
                         return new HashMap<>(Map.of("objective", "1261_108", "dagobah", "4_84", "strong", "1261_87"));
@@ -329,21 +332,93 @@ public class Card_1261_108_Tests {
         var objective = scn.GetLSCard("objective"); var luke = scn.GetLSCard("luke");
         var site = scn.GetDSStartingLocation(); var vader = scn.GetDSCard("vader");
         var darkEffect = scn.GetDSCard("bad"); var lightEffect = scn.GetLSCard("ordinaryEffect");
-        var lsAlter = scn.GetLSCard("lightAlter"); var dsAlter = scn.GetDSCard("darkAlter"); var sense = scn.GetDSCard("sense");
+        var lsAlter = scn.GetLSCard("lightAlter"); var dsAlter = scn.GetDSCard("darkAlter");
         scn.MoveCardsToLSSideOfTable(lightEffect, darkEffect);
         scn.MoveCardsToLocation(site, luke, vader);
         if (back) scn.gameState().flipCard(scn.game(), objective, true);
-        scn.MoveCardsToDSHand(dsAlter, sense); scn.MoveCardsToLSHand(lsAlter);
+        scn.MoveCardsToDSHand(dsAlter, scn.GetDSCard("sense")); scn.MoveCardsToLSHand(lsAlter);
         scn.SkipToDSTurn(Phase.CONTROL);
         assertEquals(!back, scn.DSCardPlayAvailable(dsAlter, "Draw destiny to cancel Effect"));
         scn.SkipToLSTurn(Phase.CONTROL);
         scn.LSPlayCard(lsAlter, "Draw destiny to cancel Effect");
         if (scn.LSHasCardChoiceAvailable(darkEffect)) scn.LSChooseCard(darkEffect);
         if (scn.LSHasCardChoiceAvailable(luke)) scn.LSChooseCard(luke);
-        boolean senseOffered = scn.DSGetDecision() != null && scn.DSCardPlayAvailable(sense, "Draw destiny to cancel");
+        boolean senseOffered = scn.GetDSAvailableActions().stream()
+                .anyMatch(action -> action.contains("Draw destiny to cancel") && action.contains("Alter"));
         assertEquals(scn.GetCurrentDecision().getText(), !back, senseOffered);
     }
 
     @Test public void frontAllowsActualDarkSideSenseAndAlter() { actualCancelPermissions(false); }
     @Test public void backBansActualDarkSideSenseAndAlterButAllowsLightAlter() { actualCancelPermissions(true); }
+
+    private void actualAlterBonus(boolean lightPlayer) {
+        var scn = fixture(0); scn.StartGame();
+        var site = scn.GetDSStartingLocation(); var luke = scn.GetLSCard("luke"); var vader = scn.GetDSCard("vader");
+        var lightEffect = scn.GetLSCard("ordinaryEffect"); var darkEffect = scn.GetDSCard("bad");
+        var alter = lightPlayer ? scn.GetLSCard("lightAlter") : scn.GetDSCard("darkAlter");
+        var effect = lightPlayer ? darkEffect : lightEffect;
+        var character = lightPlayer ? luke : vader;
+        scn.MoveCardsToLocation(site, luke, vader);
+        scn.MoveCardsToLSSideOfTable(lightEffect, darkEffect);
+        if (lightPlayer) {
+            scn.MoveCardsToLSHand(alter); scn.SkipToLSTurn(Phase.CONTROL); scn.PrepareLSDestiny(1);
+            scn.LSPlayCard(alter, "Draw destiny to cancel Effect");
+            if (scn.LSHasCardChoiceAvailable(effect)) scn.LSChooseCard(effect);
+            if (scn.LSHasCardChoiceAvailable(character)) scn.LSChooseCard(character);
+        } else {
+            scn.MoveCardsToDSHand(alter); scn.SkipToDSTurn(Phase.CONTROL); scn.PrepareDSDestiny(1);
+            scn.DSPlayCard(alter, "Draw destiny to cancel Effect");
+            if (scn.DSHasCardChoiceAvailable(effect)) scn.DSChooseCard(effect);
+            if (scn.DSHasCardChoiceAvailable(character)) scn.DSChooseCard(character);
+        }
+        scn.PassAllResponses(); scn.PassDestinyDrawResponses(); scn.PassAllResponses();
+        assertTrue(scn.gameState().getLastMessages().toString(), scn.gameState().getLastMessages().stream()
+                .anyMatch(msg -> msg.equals("Destiny: 5")));
+        if (lightPlayer) assertTrue(scn.IsCardActive(darkEffect));
+        else assertTrue(scn.GetLSLostPile().contains(lightEffect));
+    }
+
+    @Test public void frontAddsFourToTheActualLightAlterDraw() { actualAlterBonus(true); }
+    @Test public void frontAddsFourToTheActualDarkAlterDraw() { actualAlterBonus(false); }
+
+    private void retrievalContribution(boolean onDagobah) {
+        var scn = fixture(0); scn.StartGame();
+        var hut = scn.GetLSCard("hut"); var other = scn.GetDSStartingLocation(); var luke = scn.GetLSCard("luke");
+        var source = scn.GetLSCard("ordinaryEffect"); var lost = scn.GetLSCard("loss");
+        scn.MoveLocationToTable(hut); scn.MoveCardsToLocation(onDagobah ? hut : other, luke);
+        scn.MoveCardsToLSSideOfTable(source); scn.MoveCardsToTopOfLSLostPile(lost);
+        scn.SkipToLSTurn(Phase.CONTROL);
+        var action = new TopLevelGameTextAction(source, scn.LS, source.getCardId());
+        action.appendEffect(new RetrieveForceEffect(action, scn.LS, 1) {
+            @Override public java.util.Collection<com.gempukku.swccgo.game.PhysicalCard> getAdditionalCardsInvolvedInForceRetrieval() {
+                return List.of(luke);
+            }
+        });
+        scn.carryOutEffectInPhaseActionByPlayer(scn.LS, action); scn.PassAllResponses();
+        assertEquals(!onDagobah, scn.GetLSUsedPile().contains(lost));
+        assertEquals(onDagobah, scn.GetLSLostPile().contains(lost));
+    }
+
+    @Test public void frontPreventsActualRetrievalWhenItsContributorIsOnDagobah() { retrievalContribution(true); }
+    @Test public void frontAllowsActualRetrievalWithTheSameContributorOffDagobah() { retrievalContribution(false); }
+
+    private void handDeployment(boolean back) {
+        var scn = fixture(0); scn.StartGame();
+        var objective = scn.GetLSCard("objective"); var luke = scn.GetLSCard("hothOnlyLuke");
+        var cantina = scn.GetDSCard("cantina");
+        scn.MoveLocationToTable(cantina); scn.MoveCardsToLocation(cantina, scn.GetLSCard("han"));
+        if (back) scn.gameState().flipCard(scn.game(), objective, true);
+        scn.MoveCardsToLSHand(luke); scn.LSActivateForceCheat(10); scn.SkipToLSTurn(Phase.DEPLOY);
+        assertEquals(back, scn.LSDeployAvailable(luke));
+        if (!back) return;
+        scn.LSDeployCard(luke);
+        scn.PassAllResponses();
+        if (scn.LSHasCardChoiceAvailable(cantina)) scn.LSChooseCard(cantina);
+        scn.PassForceUseResponses(); scn.PassAllResponses();
+        assertEquals(cantina, luke.getAtLocation());
+    }
+
+    @Test public void backLetsCommanderLukeDeployOutsideHothFromHand() { handDeployment(true); }
+    @Test public void frontLeavesCommandersOwnHothOnlyRequirementInPlaceFromHand() { handDeployment(false); }
+
 }
