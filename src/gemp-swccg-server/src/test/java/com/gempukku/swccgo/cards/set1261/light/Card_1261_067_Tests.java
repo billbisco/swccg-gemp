@@ -17,9 +17,12 @@ import java.util.Map;
 import static org.junit.Assert.*;
 
 public class Card_1261_067_Tests {
-    private VirtualTableScenario fixture(boolean darkStartsPrize) {
+    private VirtualTableScenario fixture(boolean darkStartsPrize) { return fixture(darkStartsPrize, true); }
+
+    private VirtualTableScenario fixture(boolean darkStartsPrize, boolean startingEffect) {
         var light = new HashMap<>(Map.of("maintenance", "13_21", "regularFalcon", "1_143",
                 "space", "6_87", "effect", "13_5", "lsPresence", "1_146", "pilot", "1_19", "falconPilot", "1_11"));
+        if (!startingEffect) light.remove("effect");
         StartingSetup darkStart = darkStartsPrize ? new StartingSetup() {
             @Override public HashMap<String, String> Cards() {
                 return new HashMap<>(Map.of("cct", "7_296", "chamber", "5_166", "console", "5_107",
@@ -128,4 +131,18 @@ public class Card_1261_067_Tests {
 
     @Test public void captiveAddsOneToTheOpponentsActualAudienceChamberBattleDraw() { audienceBattle(true); }
     @Test public void captiveDoesNotAddToAnActualBattleDrawAtADifferentSite() { audienceBattle(false); }
+    @Test public void realStartingEffectPubliclyRevealsTheLightPrize() {
+        var scn = fixture(false); scn.StartGame();
+        assertTrue(scn.IsCardActive(scn.GetLSCard("effect")));
+        assertTrue(scn.gameState().getLastMessages().toString(), scn.gameState().getLastMessages().stream()
+                .anyMatch(msg -> msg.contains("reveals") && msg.contains("1261_67")));
+        assertEquals(Zone.OUT_OF_PLAY, scn.GetLSCard("prize").getZone());
+    }
+
+    @Test public void withoutAStartingEffectThereIsNoPrizeReveal() {
+        var scn = fixture(false, false); scn.StartGame();
+        assertFalse(scn.gameState().getLastMessages().stream()
+                .anyMatch(msg -> msg.contains("reveals") && msg.contains("1261_67")));
+        assertEquals(Zone.OUT_OF_PLAY, scn.GetLSCard("prize").getZone());
+    }
 }
