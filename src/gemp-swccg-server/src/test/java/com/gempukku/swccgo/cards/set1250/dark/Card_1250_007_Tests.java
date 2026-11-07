@@ -3,6 +3,8 @@ package com.gempukku.swccgo.cards.set1250.dark;
 import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.game.PhysicalCardImpl;
+import com.gempukku.swccgo.logic.decisions.CardActionSelectionDecision;
 import com.gempukku.swccgo.logic.modifiers.CancelsGameTextModifier;
 import org.junit.Test;
 
@@ -94,9 +96,37 @@ public class Card_1250_007_Tests {
         assertTrue(q.isProhibitedFromHavingGameTextCanceled(scn.gameState(), sidious));
         assertFalse(q.isGameTextCanceled(scn.gameState(), sidious));
         assertEquals(4f, q.getPolitics(scn.gameState(), sidious), scn.epsilon);
-        scn.MoveCardsToLocation(scn.GetDSCard("senate"), scn.GetDSCard("senator"));
+        var senator = scn.GetDSCard("senator");
+        var senate = scn.GetDSCard("senate");
+        scn.MoveCardsToDSHand(senator);
+        scn.SkipToPhase(Phase.CONTROL);
+        scn.EnsureDSForcePile(5);
+        scn.SkipToPhase(Phase.DEPLOY);
+        assertTrue(scn.DSCardPlayAvailable(senator));
+        scn.DSPlayCard(senator);
+        if (scn.DSHasCardChoiceAvailable(senate)) scn.DSChooseCard(senate);
+        scn.PassAllResponses();
+        assertEquals(senate, senator.getAtLocation());
         assertFalse(q.isProhibitedFromHavingGameTextCanceled(scn.gameState(), sidious));
         assertTrue(q.isGameTextCanceled(scn.gameState(), sidious));
+    }
+
+    private void resolveLeiaRemoval(VirtualTableScenario scn, PhysicalCardImpl target) {
+        for (int i = 0; i < 25 && target.getZone() != Zone.OUT_OF_PLAY; i++) {
+            if (scn.AwaitingLSForceLossPayment()) {
+                scn.LSPayRemainingForceLossFromReserveDeck();
+            } else if (scn.LSHasCardChoiceAvailable(target)) {
+                scn.LSChooseCard(target);
+            } else {
+                var decision = scn.GetCurrentDecision();
+                assertTrue("Expected a live Leia response: " + decision.getText(),
+                        decision instanceof CardActionSelectionDecision
+                                && !scn.AwaitingLSControlPhaseActions() && !scn.AwaitingDSControlPhaseActions());
+                if (scn.LSGetDecision() != null) scn.LSPass();
+                else scn.DSPass();
+            }
+        }
+        assertInZone(Zone.OUT_OF_PLAY, target);
     }
 
     @Test public void LordSidiousCannotBeChosenByActualBlockOneLeiaButNormalTargetCan() {
@@ -109,11 +139,7 @@ public class Card_1250_007_Tests {
         assertTrue(scn.LSCardActionAvailable(leia, "and other character out of play"));
         scn.LSUseCardAction(leia, "and other character out of play");
         assertFalse(scn.LSHasCardChoiceAvailable(scn.GetDSCard("sidious")));
-        if (scn.LSHasCardChoiceAvailable(trooper)) scn.LSChooseCard(trooper);
-        scn.PassAllResponses();
-        scn.LSPayRemainingForceLossFromReserveDeck();
-        scn.PassAllResponses();
-        assertInZone(Zone.OUT_OF_PLAY, trooper);
+        resolveLeiaRemoval(scn, trooper);
         assertInZone(Zone.AT_LOCATION, scn.GetDSCard("sidious"));
     }
 
@@ -125,11 +151,7 @@ public class Card_1250_007_Tests {
         scn.SkipToLSTurn(Phase.CONTROL);
         assertTrue(scn.LSCardActionAvailable(leia, "and other character out of play"));
         scn.LSUseCardAction(leia, "and other character out of play");
-        if (scn.LSHasCardChoiceAvailable(sidious)) scn.LSChooseCard(sidious);
-        scn.PassAllResponses();
-        scn.LSPayRemainingForceLossFromReserveDeck();
-        scn.PassAllResponses();
-        assertInZone(Zone.OUT_OF_PLAY, sidious);
+        resolveLeiaRemoval(scn, sidious);
     }
 
     private void forfeit(String character, int darkJediCount, int expectedRetrieval) {

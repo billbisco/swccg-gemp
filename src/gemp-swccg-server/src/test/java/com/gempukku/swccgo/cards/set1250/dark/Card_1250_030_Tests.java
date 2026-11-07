@@ -61,10 +61,12 @@ public class Card_1250_030_Tests {
         var scn = scenario();
         scn.MoveLocationToTable(scn.GetDSCard("senate"));
         scn.MoveCardsToLocation(scn.GetDSCard("senate"), scn.GetDSCard("trooper"));
+        scn.MoveCardsToDSHand(scn.GetDSCard("sidious"), scn.GetDSCard("original"),
+                scn.GetDSCard("ovs"), scn.GetDSCard("sidious2"));
         scn.SkipToPhase(Phase.CONTROL);
         exactForce(scn, force);
         scn.MoveCardsToTopOfDSReserveDeck(scn.GetDSCard("sidious"), scn.GetDSCard("original"), scn.GetDSCard("ovs"));
-        scn.MoveCardsToDSHand(scn.GetDSCard("sidious2"));
+        assertEquals(force, scn.GetDSForcePileCount());
         scn.SkipToPhase(Phase.DEPLOY);
         return scn;
     }
