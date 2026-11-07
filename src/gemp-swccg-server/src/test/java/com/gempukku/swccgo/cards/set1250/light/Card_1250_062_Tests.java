@@ -3,6 +3,8 @@ package com.gempukku.swccgo.cards.set1250.light;
 import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.logic.modifiers.AddsDestinyToPowerModifier;
+import com.gempukku.swccgo.logic.modifiers.DestinyAddedCapTests;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -148,5 +150,45 @@ public class Card_1250_062_Tests {
         if (s.DSDecisionAvailable("Choose a highest-ability character")) s.DSChooseCard(s.GetDSCard("vader"));
         s.PassDestinyDrawResponses(); s.PassAllResponses();
         assertTrue(s.GetLSLostPile().contains(ordinary)); assertEquals(Zone.SIDE_OF_TABLE, roar.getZone());
+    }
+
+    // "You may not add more than one destiny to total power in battle."
+
+    private void addPowerSources(VirtualTableScenario s, String player, int count) {
+        s.game().getModifiersEnvironment().addUntilEndOfBattleModifier(
+                new AddsDestinyToPowerModifier(s.GetLSCard("guard"), count, player, true));
+    }
+
+    @Test
+    public void StackedCardActionCannotAddASecondDestinyInTheSameBattle() {
+        var s = battle(true); var roar = s.GetLSCard("roar");
+        assertTrue(offered(s, SPEND)); s.LSUseCardAction(roar, SPEND); s.PassAllResponses();
+        s.LSChooseCard(s.GetLSCard("marker")); s.PassAllResponses();
+        assertEquals(1, s.GetStackedCards(roar).size());
+        assertFalse(offered(s, SPEND));
+    }
+
+    @Test
+    public void StackedCardActionIsRefusedWhenAnotherSourceAlreadyAddsADestiny() {
+        var s = battle(true);
+        assertTrue(offered(s, SPEND));
+        addPowerSources(s, s.LS, 1);
+        assertFalse(offered(s, SPEND));
+    }
+
+    @Test
+    public void OtherSourcesAreCappedAtOneDestinyToPower() {
+        var s = battle(false);
+        addPowerSources(s, s.LS, 2);
+        DestinyAddedCapTests.advanceToDamageSegment(s, false);
+        assertEquals(1, s.gameState().getBattleState().getNumDestinyToTotalPowerDrawn(s.LS));
+    }
+
+    @Test
+    public void OpponentIsNotCapped() {
+        var s = battle(false);
+        addPowerSources(s, s.DS, 2);
+        DestinyAddedCapTests.advanceToDamageSegment(s, false);
+        assertEquals(2, s.gameState().getBattleState().getNumDestinyToTotalPowerDrawn(s.DS));
     }
 }

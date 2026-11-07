@@ -2,6 +2,7 @@ package com.gempukku.swccgo.cards.set1250.light;
 
 import com.gempukku.swccgo.cards.AbstractNormalEffect;
 import com.gempukku.swccgo.cards.GameConditions;
+import com.gempukku.swccgo.cards.conditions.DuringBattleCondition;
 import com.gempukku.swccgo.cards.conditions.HasStackedCondition;
 import com.gempukku.swccgo.cards.effects.AddDestinyToTotalPowerEffect;
 import com.gempukku.swccgo.common.ExpansionSet;
@@ -21,6 +22,7 @@ import com.gempukku.swccgo.logic.effects.choose.PlaceStackedCardOutOfPlayEffect;
 import com.gempukku.swccgo.logic.effects.choose.StackOneCardFromLostPileEffect;
 import com.gempukku.swccgo.logic.modifiers.DeployCostModifier;
 import com.gempukku.swccgo.logic.modifiers.ImmuneToAttritionLessThanModifier;
+import com.gempukku.swccgo.logic.modifiers.MayNotAddMoreThanDestinyToPowerModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.modifiers.ResetArmorModifier;
 import com.gempukku.swccgo.logic.timing.EffectResult;
@@ -41,7 +43,8 @@ public class Card1250_062 extends AbstractNormalEffect {
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, PhysicalCard self) {
         var hasStack = new HasStackedCondition(self, Filters.any);
-        return List.of(new DeployCostModifier(self, Filters.Wookiee, -1),
+        return List.of(new MayNotAddMoreThanDestinyToPowerModifier(self, new DuringBattleCondition(), 1, self.getOwner()),
+                new DeployCostModifier(self, Filters.Wookiee, -1),
                 new ResetArmorModifier(self, Filters.Wookiee, hasStack, 4),
                 new ImmuneToAttritionLessThanModifier(self, Filters.Wookiee, hasStack, 3));
     }
@@ -61,7 +64,8 @@ public class Card1250_062 extends AbstractNormalEffect {
     @Override
     protected List<TopLevelGameTextAction> getGameTextTopLevelActions(String playerId, SwccgGame game,
             PhysicalCard self, int gameTextSourceCardId) {
-        if (!GameConditions.isDuringBattle(game) || !GameConditions.hasStackedCards(game, self)) return null;
+        if (!GameConditions.isDuringBattle(game) || !GameConditions.hasStackedCards(game, self)
+                || !GameConditions.canAddDestinyDrawsToPower(game, playerId)) return null;
 
         TopLevelGameTextAction action = new TopLevelGameTextAction(self, gameTextSourceCardId);
         action.setText("Place a stacked card out of play to add a power destiny");
