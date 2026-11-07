@@ -112,6 +112,7 @@ public class Card_1271_012_Tests {
         s.PassAllResponses();
         assertEquals(Zone.HAND, s.GetDSCard("mission").getZone());
         assertTrue(observer.sawOwnedShuffle(s.DS, Zone.RESERVE_DECK));
+        if (s.DSGetDecision() == null && s.LSGetDecision() != null) s.LSPass();
         assertFalse(s.DSCardActionAvailable(bureau, TAKE_MISSION));
     }
 
