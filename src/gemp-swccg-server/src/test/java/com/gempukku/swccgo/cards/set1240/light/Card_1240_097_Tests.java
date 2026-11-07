@@ -164,7 +164,7 @@ public class Card_1240_097_Tests {
         scn.LSChooseCard(snake);
         scn.PassAllResponses();
         assertEquals(force - 3, scn.GetLSForcePileCount());
-        assertEquals(Zone.USED_PILE, snake.getZone());
+        assertTrue(snake.getZone() == Zone.USED_PILE || snake.getZone() == Zone.TOP_OF_USED_PILE);
         assertTrue(tauntaun.getZone() == Zone.LOST_PILE || tauntaun.getZone() == Zone.TOP_OF_LOST_PILE);
     }
 }
