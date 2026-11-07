@@ -89,6 +89,7 @@ public abstract class DrawDestinyEffect extends AbstractSubActionEffect {
     private int _chooseY;
     private boolean _takeOtherIntoHand;
     private boolean _mayTakeOtherIntoHandOrReturnToTopOfReserve;
+    private boolean _mayTakeOtherIntoHand;
     private String _drawXChooserPlayerId;
     private Map<String, Float> _modifierSourceTitleMap = new HashMap<>();
     private boolean _combinedAttackHitCheckPlusOrMinusFolded;
@@ -454,6 +455,15 @@ public abstract class DrawDestinyEffect extends AbstractSubActionEffect {
      */
     public void setMayTakeOtherIntoHandOrReturnToTopOfReserve(boolean value) {
         _mayTakeOtherIntoHandOrReturnToTopOfReserve = value;
+    }
+
+    /**
+     * Sets whether each unchosen destiny from draw X / choose Y may be taken into hand (otherwise it is handled like
+     * any other drawn destiny).
+     * @param value true if the player may take each unchosen destiny into hand
+     */
+    public void setMayTakeOtherIntoHand(boolean value) {
+        _mayTakeOtherIntoHand = value;
     }
 
     /**
@@ -1665,6 +1675,28 @@ public abstract class DrawDestinyEffect extends AbstractSubActionEffect {
                                                                                                 gameState.addCardToTopOfZone(destinyCard, Zone.RESERVE_DECK, _performingPlayerId);
                                                                                                 gameState.sendMessage(_performingPlayerId + " returns " + GameUtils.getCardLink(destinyCard) + " to top of Reserve Deck");
                                                                                             }
+                                                                                        }
+                                                                                    }
+                                                                            )
+                                                                    );
+                                                                }
+                                                            }
+                                                        }
+                                                        else if (_mayTakeOtherIntoHand) {
+                                                            for (final PhysicalCard destinyCard : _drawXCardsToChooseFrom) {
+                                                                if (destinyCard != null && !selectedCards.contains(destinyCard)
+                                                                        && GameUtils.getZoneFromZoneTop(destinyCard.getZone()) == Zone.UNRESOLVED_DESTINY_DRAW) {
+                                                                    subAction.appendEffect(
+                                                                            new PlayoutDecisionEffect(subAction, _performingPlayerId,
+                                                                                    new YesNoDecision("Take " + GameUtils.getCardLink(destinyCard) + " into hand?") {
+                                                                                        @Override
+                                                                                        protected void yes() {
+                                                                                            if (GameUtils.getZoneFromZoneTop(destinyCard.getZone()) != Zone.UNRESOLVED_DESTINY_DRAW) {
+                                                                                                return;
+                                                                                            }
+                                                                                            gameState.removeCardsFromZone(Collections.singleton(destinyCard));
+                                                                                            gameState.addCardToZone(destinyCard, Zone.HAND, _performingPlayerId);
+                                                                                            gameState.sendMessage(_performingPlayerId + " takes " + GameUtils.getCardLink(destinyCard) + " into hand");
                                                                                         }
                                                                                     }
                                                                             )

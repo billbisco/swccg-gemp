@@ -14,11 +14,18 @@ import java.util.Map;
 import static org.junit.Assert.*;
 
 public class Card_1261_038_Tests {
+    private static HashMap<String, String> mapOf(String... kv) {
+        var map = new HashMap<String, String>();
+        for (int i = 0; i < kv.length; i += 2)
+            map.put(kv[i], kv[i + 1]);
+        return map;
+    }
+
     private VirtualTableScenario scenario() {
-        return new VirtualTableScenario(new HashMap<>(Map.of("luke", "1_19")), new HashMap<>(Map.of(
+        return new VirtualTableScenario(new HashMap<>(Map.of("luke", "1_19")), mapOf(
                 "escort", "1261_38", "objective", "10_29", "city", "7_277", "square", "7_278",
                 "senate", "12_167", "jax", "1261_8", "guard", "9_119", "guard2", "9_119",
-                "guard3", "9_119", "pike", "9_179")), 20, 20, StartingSetup.DefaultLSGroundLocation,
+                "guard3", "9_119", "pike", "9_179", "sidious", "14_78", "trooper", "1_194"), 20, 20, StartingSetup.DefaultLSGroundLocation,
                 StartingSetup.DefaultDSGroundLocation, StartingSetup.NoLSStartingInterrupts,
                 StartingSetup.NoDSStartingInterrupts, StartingSetup.NoLSShields,
                 StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -112,5 +119,43 @@ public class Card_1261_038_Tests {
         scn.PassAllResponses();
         assertSame(guard, pike.getAttachedTo());
         assertEquals(force - 1, scn.GetDSForcePileCount());
+    }
+
+    private boolean royalGuardMayDeployToDarthSidious(boolean escortOnTable) {
+        var scn = scenario();
+        var guard = scn.GetDSCard("guard");
+        scn.MoveCardsToDSHand(scn.GetDSCard("objective"));
+        scn.StartGame();
+        var site = scn.GetDSStartingLocation();
+        scn.MoveCardsToLocation(site, scn.GetDSCard("sidious"));
+        if (escortOnTable)
+            scn.MoveCardsToDSSideOfTable(scn.GetDSCard("escort"));
+        scn.MoveCardsToHand(guard);
+        scn.DSActivateForceCheat(6);
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        assertTrue(scn.AwaitingDSDeployPhaseActions());
+        return scn.DSDeployAvailable(guard);
+    }
+
+    @Test(timeout = 10000)
+    public void royalGuardMayTreatEmperorAsSidiousForDeployingWithEscort() {
+        assertTrue("'Emperor' on Royal Guard treated as 'Sidious'", royalGuardMayDeployToDarthSidious(true));
+    }
+
+    @Test(timeout = 10000)
+    public void withoutEscortDarthSidiousIsNotEmperorForRoyalGuardDeployment() {
+        assertFalse(royalGuardMayDeployToDarthSidious(false));
+    }
+
+    @Test
+    public void emperorAsSidiousAppliesOnlyToRoyalGuards() {
+        var scn = scenario();
+        scn.MoveCardsToDSHand(scn.GetDSCard("objective"));
+        scn.StartGame();
+        scn.MoveCardsToDSSideOfTable(scn.GetDSCard("escort"));
+        var type = com.gempukku.swccgo.logic.modifiers.ModifyGameTextType.LEGACY__ROYAL_ESCORT_V__EMPEROR_MAY_BE_TREATED_AS_SIDIOUS;
+        var query = scn.game().getModifiersQuerying();
+        assertTrue(query.hasGameTextModification(scn.gameState(), scn.GetDSCard("guard"), type));
+        assertFalse(query.hasGameTextModification(scn.gameState(), scn.GetDSCard("trooper"), type));
     }
 }

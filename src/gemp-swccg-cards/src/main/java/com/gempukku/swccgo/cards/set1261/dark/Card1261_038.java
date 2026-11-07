@@ -15,6 +15,8 @@ import com.gempukku.swccgo.logic.evaluators.BaseEvaluator;
 import com.gempukku.swccgo.logic.modifiers.AttritionModifier;
 import com.gempukku.swccgo.logic.modifiers.IconModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
+import com.gempukku.swccgo.logic.modifiers.ModifyGameTextModifier;
+import com.gempukku.swccgo.logic.modifiers.ModifyGameTextType;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 
 import java.util.List;
@@ -26,9 +28,26 @@ public class Card1261_038 extends AbstractNormalEffect {
                 Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("When away from the Imperial Palace on Coruscant, the Emperor is protected by legions of troops. Typically this force includes soldiers trained to fight in local environment.");
-        setGameText("Deploy on table unless your [Reflections 2] Objective on table. Unique (•) [Special Edition] Coruscant sites gain one [Light Side Force]. 'Emperor' on Royal Guards may be treated as 'Sidious.' Attrition against opponent is +1 for each battleground site occupied by two Royal Guards. May use 1 Force to [download] a Force Pike. (Immune to Alter.)");
+        setGameText("Deploy on table unless your [Reflections 2] Objective on table. Unique (•) [Special Edition] Coruscant sites gain one [Light Side Force]. 'Emperor' on Royal Guards may be treated as 'Sidious.' Attrition against opponent is +1 for each battleground site occupied by two Royal Guards. May use 1 Force to deploy a Force Pike from Reserve Deck; reshuffle. (Immune to Alter.)");
         addIcons(Icon.DEATH_STAR_II);
         addImmuneToCardTitle(Title.Alter);
+    }
+
+    /**
+     * Filter for 'Emperor' as read on the specified Royal Guard: Sidious while Royal Escort (V) lets 'Emperor' on
+     * Royal Guards be treated as 'Sidious', otherwise Emperor.
+     * @param royalGuard the Royal Guard whose game text is read
+     * @return the filter
+     */
+    public static Filter emperorOnRoyalGuard(PhysicalCard royalGuard) {
+        return new Filter() {
+            @Override
+            public boolean accepts(GameState state, ModifiersQuerying modifiers, PhysicalCard card) {
+                boolean treatedAsSidious = modifiers.hasGameTextModification(state, royalGuard,
+                        ModifyGameTextType.LEGACY__ROYAL_ESCORT_V__EMPEROR_MAY_BE_TREATED_AS_SIDIOUS);
+                return (treatedAsSidious ? Filters.Sidious : Filters.Emperor).accepts(state, modifiers, card);
+            }
+        };
     }
 
     @Override
@@ -48,6 +67,8 @@ public class Card1261_038 extends AbstractNormalEffect {
         };
         Filter sites = Filters.and(Filters.Coruscant_site, Filters.unique, specialEdition);
         return List.of(new IconModifier(self, sites, Icon.LIGHT_FORCE),
+                new ModifyGameTextModifier(self, Filters.Royal_Guard,
+                        ModifyGameTextType.LEGACY__ROYAL_ESCORT_V__EMPEROR_MAY_BE_TREATED_AS_SIDIOUS),
                 new AttritionModifier(self, new BaseEvaluator() {
                     @Override
                     public float evaluateExpression(GameState state, ModifiersQuerying modifiers, PhysicalCard battleSite) {

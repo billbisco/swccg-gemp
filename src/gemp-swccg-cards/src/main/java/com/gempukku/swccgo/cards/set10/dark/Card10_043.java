@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.set10.dark;
 
+import com.gempukku.swccgo.cards.set1261.dark.Card1261_038;
 import com.gempukku.swccgo.cards.AbstractImperial;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.conditions.ArmedWithCondition;
@@ -73,7 +74,7 @@ public class Card10_043 extends AbstractImperial {
 
             // Check condition(s)
             if (GameConditions.canUseForce(game, playerId, 1)
-                    && GameConditions.canSpot(game, self, Filters.Emperor)) {
+                    && GameConditions.canSpot(game, self, Card1261_038.emperorOnRoyalGuard(self))) {
 
                 action = new TopLevelGameTextAction(self, gameTextSourceCardId);
                 action.setText("Use 1 Force");
@@ -107,7 +108,7 @@ public class Card10_043 extends AbstractImperial {
         // Check if reached end of owner's deploy phase and action was not performed yet.
         if (TriggerConditions.isEndOfYourPhase(game, self, effectResult, Phase.DEPLOY)
                 && GameConditions.isOnceDuringYourPhase(game, self, playerId, gameTextSourceCardId, Phase.DEPLOY)) {
-            boolean useForceIsOption = GameConditions.canUseForce(game, playerId, 1) && GameConditions.canSpot(game, self, Filters.Emperor);
+            boolean useForceIsOption = GameConditions.canUseForce(game, playerId, 1) && GameConditions.canSpot(game, self, Card1261_038.emperorOnRoyalGuard(self));
 
             final RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
             if (useForceIsOption)

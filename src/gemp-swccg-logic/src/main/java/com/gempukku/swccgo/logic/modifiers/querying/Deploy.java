@@ -151,6 +151,13 @@ public interface Deploy extends BaseQuery, Attributes, CardTraits, Destiny, Loca
         boolean deployCostMayNotBeIncreased = deployCostMayNotBeModified || isDeployCostNotAllowedToBeIncreased(gameState, cardToDeploy, null, modifierCollector);
         boolean deployCostMayNotBeIncreasedByOwner = deployCostMayNotBeIncreased || isDeployCostNotAllowedToBeIncreased(gameState, cardToDeploy, owner, modifierCollector);
         boolean deployCostMayNotBeIncreasedByOpponent = deployCostMayNotBeIncreased || isDeployCostNotAllowedToBeIncreased(gameState, cardToDeploy, opponent, modifierCollector);
+        if (targetCard != null) {
+            PhysicalCard deployLocation = getLocationHere(gameState, targetCard);
+            if (deployLocation != null) {
+                deployCostMayNotBeIncreasedByOwner = deployCostMayNotBeIncreasedByOwner || isDeployCostNotAllowedToBeIncreasedAtLocation(gameState, cardToDeploy, deployLocation, owner, modifierCollector);
+                deployCostMayNotBeIncreasedByOpponent = deployCostMayNotBeIncreasedByOpponent || isDeployCostNotAllowedToBeIncreasedAtLocation(gameState, cardToDeploy, deployLocation, opponent, modifierCollector);
+            }
+        }
 
         // Use destiny number instead if "Dejarik Rules"
         if (isDejarikRules || cardToDeploy.isDejarikHologramAtHolosite()) {
@@ -859,6 +866,18 @@ public interface Deploy extends BaseQuery, Attributes, CardTraits, Destiny, Loca
      * @param modifierCollector collector of affecting modifiers
      * @return true if deploy cost may not be increased, otherwise false
      */
+    default boolean isDeployCostNotAllowedToBeIncreasedAtLocation(GameState gameState, PhysicalCard card, PhysicalCard location, String playerIncreasingCost, ModifierCollector modifierCollector) {
+        boolean retVal = false;
+        for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.MAY_NOT_HAVE_DEPLOY_COST_INCREASED_AT_LOCATION, card)) {
+            if (modifier.isForPlayer(playerIncreasingCost)
+                    && ((MayNotHaveDeployCostIncreasedAtLocationModifier) modifier).appliesToDeployLocation(gameState, query(), location)) {
+                retVal = true;
+                modifierCollector.addModifier(modifier);
+            }
+        }
+        return retVal;
+    }
+
     default boolean isDeployCostNotAllowedToBeIncreased(GameState gameState, PhysicalCard card, String playerIncreasingCost, ModifierCollector modifierCollector) {
         boolean retVal = false;
         for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.MAY_NOT_HAVE_DEPLOY_COST_INCREASED, card)) {
