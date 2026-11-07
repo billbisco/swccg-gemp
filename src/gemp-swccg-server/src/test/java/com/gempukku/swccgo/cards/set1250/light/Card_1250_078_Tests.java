@@ -57,7 +57,7 @@ public class Card_1250_078_Tests {
         var s = new VirtualTableScenario(new HashMap<>() {{
             put("clone", "1116_9"); put("trooper", "1_26"); put("luke", "1_19");
             put("dock", "12_74"); put("plains", "12_79"); put("marker", "1_109");
-            put("secondclone", "1116_9"); put("cantina", "1_128");
+            put("secondclone", "1116_9"); put("pilot", "1116_8"); put("cantina", "1_128");
         }}, new HashMap<>() {{
             put("trooper", "1_194"); put("vader", "1_168");
             put("emperor", "9_109"); put("lightning", "9_136"); put("monnok", "2_135");
@@ -93,7 +93,7 @@ public class Card_1250_078_Tests {
                 objective.isObjectiveDeploymentComplete());
         assertFalse(objective.isFlipped());
         assertEquals(Zone.LOCATIONS, s.GetLSCard("coruscant").getZone()); assertEquals(Zone.LOCATIONS, prison.getZone());
-        assertEquals(prison, palpatine.getAtLocation()); assertTrue(palpatine.isImprisoned());
+        assertEquals(prison, palpatine.getAttachedTo()); assertTrue(palpatine.isImprisoned());
         assertEquals(Zone.SIDE_OF_TABLE, s.GetLSCard("security").getZone());
         var modifiers = s.game().getModifiersQuerying();
         assertTrue(modifiers.cannotBeConverted(s.gameState(), s.GetLSCard("coruscant")));
@@ -158,7 +158,7 @@ public class Card_1250_078_Tests {
     @Test
     public void BackCanDeployOneCloneFromLostPileAtNormalCostAndGrantsImmunityBelowFour() {
         var s = flipAndSearch(); var objective = s.GetLSCard("objective");
-        var clone = s.GetLSCard("clone"); var second = s.GetLSCard("secondclone");
+        var clone = s.GetLSCard("clone"); var second = s.GetLSCard("pilot");
         var dock = s.GetLSCard("dock"); var text = "Deploy a clone from Lost Pile";
         s.MoveCardsToTopOfLSLostPile(clone, second);
         s.LSActivateForceCheat(5);
@@ -169,7 +169,7 @@ public class Card_1250_078_Tests {
         if (s.LSHasCardChoiceAvailable(clone)) s.LSChooseCard(clone);
         if (s.LSDecisionAvailable("Choose where to deploy")) s.LSChooseCard(dock);
         s.PassAllResponses();
-        assertEquals(dock, clone.getAtLocation());
+        assertEquals(s.GetCurrentDecision().getText() + "; clone zone " + clone.getZone(), dock, clone.getAtLocation());
         assertEquals(force - clone.getBlueprint().getDeployCost(), s.GetLSForcePileCount(), s.epsilon);
         assertEquals(4, s.game().getModifiersQuerying().getImmunityToAttritionLessThan(s.gameState(), clone), s.epsilon);
         if (s.AwaitingDSDeployPhaseActions()) s.DSPass();
@@ -209,10 +209,11 @@ public class Card_1250_078_Tests {
         }
         s.SkipToPhase(Phase.CONTROL); s.DSActivateForceCheat(4);
         assertEquals(handSize, s.GetLSHandCount());
+        var originalHand = List.copyOf(s.GetLSHand());
         assertTrue(s.DSPlayLostInterruptAvailable(monnok)); s.DSPlayLostInterrupt(monnok);
         for (int i = 0; i < 70 && !s.AwaitingDSControlPhaseActions(); i++) {
             if (s.LSDecisionAvailable("Choose card to put on Lost Pile")) {
-                var choice = s.GetLSHand().stream().map(PhysicalCardImpl.class::cast)
+                var choice = originalHand.stream().map(PhysicalCardImpl.class::cast)
                         .filter(s::LSHasCardChoiceAvailable).findFirst().orElseThrow();
                 s.LSChooseCard(choice);
             } else if (s.DSDecisionAvailable("Opponent's hand")) {
