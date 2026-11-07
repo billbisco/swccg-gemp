@@ -54,7 +54,11 @@ public class Card_1271_047_Tests {
         var s=battle();s.PrepareLSDestiny(0);s.PrepareDSDestiny(amount);s.SkipToDamageSegment(true);s.PassDamageSegmentActions();
         if(s.AwaitingLSBattleDamagePayment())s.LSPayRemainingBattleDamageFromReserveDeck();assertEquals(immune,s.LSDecisionAvailable("(if desired)"));
         if(immune){s.LSChooseCards();assertEquals(Zone.AT_LOCATION,s.GetLSCard("red3").getZone());}
-        else {s.LSPayAttritionFromCardInPlay(s.GetLSCard("red3"));finishLostOrder(s);assertTrue("Temporary loss diagnostic: zone="+s.GetLSCard("red3").getZone()+" LS="+(s.LSGetDecision()==null?null:s.LSGetDecision().getText())+" DS="+(s.DSGetDecision()==null?null:s.DSGetDecision().getText()),s.GetLSLostPile().contains(s.GetLSCard("red3")));}
+        else {
+            s.LSPayAttritionFromCardInPlay(s.GetLSCard("red3"));
+            assertTrue(s.LSDecisionAvailable("Do you still want to forfeit it?"));s.LSChooseYes();s.PassAllResponses();finishLostOrder(s);
+            assertTrue(s.GetLSLostPile().contains(s.GetLSCard("red3")));
+        }
     }
     @Test public void Red3MaySurviveActualAttritionThree(){attrition(3,true);}
     @Test public void Red3MustSatisfyActualAttritionFour(){attrition(4,false);}
