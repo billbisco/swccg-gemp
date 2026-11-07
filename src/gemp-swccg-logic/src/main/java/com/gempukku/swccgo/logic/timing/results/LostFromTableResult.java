@@ -23,6 +23,13 @@ public interface LostFromTableResult {
     PhysicalCard getFromAttachedTo();
 
     /**
+     * Whether this card occupied its former host's pilot capacity slot when it left table.
+     * This is captured for this result and does not change if the card later moves again.
+     * @return true for a former pilot, false for passengers and unattached cards
+     */
+    boolean wasInPilotCapacitySlot();
+
+    /**
      * Gets the location the card was lost from.
      * @return the location, or null if card was not lost from a location
      */

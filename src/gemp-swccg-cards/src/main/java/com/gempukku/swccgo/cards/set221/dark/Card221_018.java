@@ -11,6 +11,7 @@ import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.LegacyFilters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
@@ -57,7 +58,7 @@ public class Card221_018 extends AbstractNormalEffect {
                     new PlaceCardInUsedPileFromTableEffect(action, self));
 
             if (GameConditions.canTarget(game, self, Filters.Systems_Will_Slip_Through_Your_Fingers)
-                    || GameConditions.canTarget(game, self, Filters.liberated_system)) {
+                    || GameConditions.canTarget(game, self, LegacyFilters.liberatedSystem)) {
                 action.appendEffect(
                         new LoseForceEffect(action, opponent, 3));
             }

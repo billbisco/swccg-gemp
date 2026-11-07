@@ -27,6 +27,14 @@ const configured = load('https://assets.example.test');
 for (const [id,url] of legacy)
     assert.strictEqual(configured.CardUnderTest.getImageUrl(id), url.replace(official, 'https://assets.example.test'), id);
 assert.strictEqual(configured.CardUnderTest.getImageUrl('1_19'), 'https://assets.example.test/cards/Premiere-Light/large/lukeskywalker.gif');
+const originalVirtual = Object.entries(defaults.ImagesUnderTest).filter(([id]) => /^11(?:0\d|1[0-7])_/.test(id));
+assert(originalVirtual.length > 700, 'Exercise the Original Virtual artwork registry');
+for (const [id, url] of originalVirtual) {
+    assert(url.startsWith('https://wiki.swccg.com/images/'), 'Original Virtual artwork uses a direct file: ' + id);
+    assert.strictEqual(defaults.CardUnderTest.getImageUrl(id), url, id);
+    assert.strictEqual(configured.CardUnderTest.getImageUrl(id), url, id);
+}
+assert.notStrictEqual(defaults.CardUnderTest.getImageUrl('1101_2'), defaults.CardUnderTest.getImageUrl('1101_11'));
 assert.strictEqual(defaults.CardUnderTest.resUrl('https://wiki.swccg.com/images/card.png'), 'https://wiki.swccg.com/images/card.png');
 assert.strictEqual(defaults.CardUnderTest.resUrl(null), null);
 assert.strictEqual(defaults.CardUnderTest.resUrl(undefined), undefined);

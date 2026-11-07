@@ -21,6 +21,7 @@ import static com.gempukku.swccgo.framework.Assertions.assertAtLocation;
 import static com.gempukku.swccgo.framework.Assertions.assertInZone;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 public class Card_1104_019_Tests {
     protected VirtualTableScenario GetScenario() {
@@ -29,6 +30,7 @@ public class Card_1104_019_Tests {
                     put("bones", "1104_19");
                     put("tauntaun", "3_70");
                     put("bogwing", "4_3");
+                    put("worrt", "6_48");
                     put("starting", "13_5");
                     put("ridge", "3_62");
                     put("jungle", "4_86");
@@ -74,18 +76,65 @@ public class Card_1104_019_Tests {
     public void TauntaunBonesYourFerociousCreaturesAreDeployMinusTwoAndFerocityPlusTwo() {
         var scn = GetScenario();
         var bones = scn.GetLSCard("bones");
-        var bogwing = scn.GetLSCard("bogwing");
+        var worrt = scn.GetLSCard("worrt");
         var jungle = scn.GetLSCard("jungle");
 
         scn.StartGame();
-        scn.MoveCardsToLSHand(bogwing);
-        int printed = scn.GetDeployCost(bogwing);
+        scn.MoveCardsToLSHand(worrt);
+        int printed = scn.GetDeployCost(worrt);
         scn.MoveCardsToLSSideOfTable(bones);
-        assertEquals(printed - 2, scn.GetDeployCost(bogwing), scn.epsilon);
+        assertEquals(printed - 2, scn.GetDeployCost(worrt), scn.epsilon);
 
         scn.MoveLocationToTable(jungle);
+        scn.MoveCardsToLocation(jungle, worrt);
+        assertEquals(5f, scn.game().getModifiersQuerying().getFerocity(scn.gameState(), worrt, 0f), scn.epsilon);
+    }
+
+    @Test
+    public void TauntaunBonesDoesNotDiscountOrIncreaseFerocityOfAParasite() {
+        var scn = GetScenario();
+        var bogwing = scn.GetLSCard("bogwing");
+        var jungle = scn.GetLSCard("jungle");
+        scn.StartGame();
+        scn.MoveCardsToLSHand(bogwing);
+        int printed = scn.GetDeployCost(bogwing);
+        scn.MoveCardsToLSSideOfTable(scn.GetLSCard("bones"));
+        assertEquals(printed, scn.GetDeployCost(bogwing), scn.epsilon);
+        scn.MoveLocationToTable(jungle);
         scn.MoveCardsToLocation(jungle, bogwing);
-        assertEquals(1f, scn.game().getModifiersQuerying().getFerocity(scn.gameState(), bogwing, 0f), scn.epsilon);
+        assertEquals(0f, scn.game().getModifiersQuerying().getFerocity(scn.gameState(), bogwing, 0f), scn.epsilon);
+    }
+
+    @Test
+    public void TauntaunBonesSearchExcludesParasitesAndTakesAFerociousCreature() {
+        var scn = GetScenario();
+        var bones = scn.GetLSCard("bones");
+        var worrt = scn.GetLSCard("worrt");
+        var bogwing = scn.GetLSCard("bogwing");
+        scn.StartGame();
+        scn.MoveCardsToLSSideOfTable(bones);
+        scn.SkipToLSTurn(Phase.CONTROL);
+        scn.MoveCardsToTopOfLSReserveDeck(worrt, bogwing);
+        scn.LSUseCardAction(bones, "Take card into hand from Reserve Deck");
+        scn.PassAllResponses();
+        int parasiteIndex = scn.LSGetADParamAsList("blueprintId").indexOf(bogwing.getBlueprintId(true));
+        assertTrue(parasiteIndex >= 0);
+        assertFalse(Boolean.parseBoolean(scn.LSGetADParam("selectable")[parasiteIndex]));
+        scn.LSChooseCard(worrt);
+        scn.PassAllResponses();
+        assertInZone(Zone.HAND, worrt);
+    }
+
+    @Test
+    public void TauntaunBonesDoesNotOfferDeployWhenOnlyAParasiteIsStacked() {
+        var scn = GetScenario();
+        var starting = scn.GetLSCard("starting");
+        var bones = scn.GetLSCard("bones");
+        scn.StartGame();
+        scn.MoveCardsToLSSideOfTable(starting, bones);
+        scn.StackCardsOn(starting, scn.GetLSCard("bogwing"));
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        assertFalse(scn.LSCardActionAvailable(bones, "Deploy card from under Starting Effect"));
     }
 
     @Test
