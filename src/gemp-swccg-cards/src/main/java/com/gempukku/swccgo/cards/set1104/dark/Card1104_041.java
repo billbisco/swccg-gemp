@@ -14,6 +14,7 @@ import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.LegacyCreatureFilters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
@@ -43,7 +44,7 @@ public class Card1104_041 extends AbstractNormalEffect {
 
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
-        Filter yourFerociousCreatures = Filters.and(Filters.your(self), Filters.creature);
+        Filter yourFerociousCreatures = Filters.and(Filters.your(self), LegacyCreatureFilters.ferocious);
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new DeployCostModifier(self, yourFerociousCreatures, -2));
         modifiers.add(new FerocityModifier(self, yourFerociousCreatures, 2));
@@ -53,7 +54,7 @@ public class Card1104_041 extends AbstractNormalEffect {
     @Override
     protected List<TopLevelGameTextAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
         List<TopLevelGameTextAction> actions = new LinkedList<TopLevelGameTextAction>();
-        Filter ferociousCreature = Filters.creature;
+        Filter ferociousCreature = LegacyCreatureFilters.ferocious;
 
         GameTextActionId takeId = GameTextActionId.OVS__KRAYT_DRAGON_BONES__TAKE_FEROCIOUS_CREATURE;
         if (GameConditions.isOncePerTurn(game, self, playerId, gameTextSourceCardId, takeId)
