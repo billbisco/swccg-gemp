@@ -102,7 +102,7 @@ public class Card_1250_002_Tests {
     }
     @Test public void AurraSingMovePhaseShotPaysNormalWeaponCostAndLosesHitJedi() {
         var scn=shot("obi",1,true,true);fire(scn,7);assertEquals(0,scn.GetDSForcePileCount());
-        assertEquals("After a resolved shot at destiny 7; hit flag=" + scn.GetLSCard("obi").isHit(),Zone.LOST_PILE,scn.GetLSCard("obi").getZone());
+        assertInZone(Zone.LOST_PILE,scn.GetLSCard("obi"));
     }
     @Test public void AurraSingMovePhaseShotMissesAtEqualDefenseBoundary() {
         var scn=shot("obi",1,true,true);fire(scn,6);assertEquals(scn.GetDSStartingLocation(),scn.GetLSCard("obi").getAtLocation());assertFalse(scn.GetLSCard("obi").isHit());assertEquals(0,scn.GetDSForcePileCount());
