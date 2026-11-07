@@ -190,4 +190,28 @@ public class Card_1262_020_Tests {
         assertAtLocation(scn.GetLSStartingLocation(), scn.GetLSCard("rider"));
     }
 
+    @Test public void BeastRiderDownloadDoesNotOfferAnotherLegalSite() {
+        var scn = download(Phase.CONTROL, false, 1); scn.LSChooseCard(scn.GetLSCard("kaadu")); scn.PassAllResponses();
+        assertFalse(scn.LSHasCardChoiceAvailable(scn.GetLSCard("dock")));
+        if (scn.LSHasCardChoiceAvailable(scn.GetLSStartingLocation())) {
+            scn.LSChooseCard(scn.GetLSStartingLocation()); scn.PassAllResponses();
+        }
+        assertAtLocation(scn.GetLSStartingLocation(), scn.GetLSCard("kaadu"));
+    }
+
+    @Test public void BeastRiderDownloadResetsOnImmediatelyFollowingOpponentTurn() {
+        var scn = download(Phase.CONTROL, false, 2); deployChosen(scn, "kaadu");
+        scn.DSPass(); assertFalse(scn.LSCardActionAvailable(scn.GetLSCard("rider"), "Deploy Kaadu here"));
+        scn.SkipToDSTurn(Phase.MOVE); scn.DSPass();
+        assertTrue(scn.LSCardActionAvailable(scn.GetLSCard("rider"), "Deploy Kaadu here"));
+        scn.LSUseCardAction(scn.GetLSCard("rider"), "Deploy Kaadu here"); scn.PassAllResponses(); deployChosen(scn, "oldKaadu");
+    }
+
+    @Test public void BeastRiderDoesNotSearchAnEmptyReserveDeck() {
+        var scn = start(); scn.SkipToLSTurn(Phase.CONTROL);
+        scn.MoveCardsToLSHand(scn.GetLSReserveDeck().toArray(PhysicalCardImpl[]::new));
+        assertEquals(0, scn.GetLSReserveDeckCount());
+        assertFalse(scn.LSCardActionAvailable(scn.GetLSCard("rider"), "Deploy Kaadu here"));
+    }
+
 }

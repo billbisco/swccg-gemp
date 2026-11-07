@@ -93,6 +93,7 @@ public class Card_1261_062_Tests {
         var target = nonBattlegroundTarget ? scn.GetLSCard("throne") : scn.GetDSStartingLocation();
         scn.MoveCardsToLocation(target, scn.GetLSCard("momaw"));
         if (twoAliens) scn.MoveCardsToLocation(target, scn.GetLSCard("gungan"));
+        else scn.MoveCardsToLocation(target, scn.GetLSCard("luke"));
         scn.SkipToLSTurn(Phase.CONTROL); int lost = scn.GetDSLostPileCount();
         if (expected == 0) assertFalse(scn.LSForceDrainAvailable(target));
         else {
@@ -140,4 +141,19 @@ public class Card_1261_062_Tests {
     @Test public void BaragwinIsLostAfterDeploymentWithOpposingStartingEffect() { deploymentWithEffect(true, false, false); }
     @Test public void BaragwinDoesNotConfuseOrdinaryEffectWithStartingEffect() { deploymentWithEffect(false, true, false); }
     @Test public void BaragwinAlreadyInPlayIsLostWhenStartingEffectIsOnTable() { deploymentWithEffect(false, false, true); }
+    @Test public void BaragwinRetrievesForItsOwnActualDeploymentAtBattleground() {
+        var scn = scenario(); scn.StartGame(); scn.MoveCardsToLSHand(scn.GetLSCard("baragwin"));
+        scn.SkipToLSTurn(Phase.DEPLOY); scn.LSActivateForceCheat(5); scn.MoveCardsToTopOfLSLostPile(scn.GetLSFillerRange(3));
+        scn.LSDeployCard(scn.GetLSCard("baragwin")); scn.LSChooseCard(scn.GetLSStartingLocation()); scn.PassAllResponses();
+        assertAtLocation(scn.GetLSStartingLocation(), scn.GetLSCard("baragwin")); assertEquals(2, scn.GetLSLostPileCount());
+        assertInZone(Zone.USED_PILE, scn.GetLSFiller(3));
+    }
+
+    @Test public void BaragwinDoesNotRetrieveForOwnNonAlienDeployment() {
+        var scn = start(true, false); scn.MoveCardsToLSHand(scn.GetLSCard("luke"));
+        scn.SkipToLSTurn(Phase.DEPLOY); scn.LSActivateForceCheat(5); scn.MoveCardsToTopOfLSLostPile(scn.GetLSFillerRange(3));
+        scn.LSDeployCard(scn.GetLSCard("luke")); scn.LSChooseCard(scn.GetDSStartingLocation()); scn.PassAllResponses();
+        assertAtLocation(scn.GetDSStartingLocation(), scn.GetLSCard("luke")); assertEquals(3, scn.GetLSLostPileCount());
+    }
+
 }
