@@ -99,7 +99,7 @@ public class Card_1263_009_Tests {
         scn.MoveCardsToDSHand(scn.GetDSCard("mara"));
         prepareNextDeploy(scn, "otherMara");
         assertTrue(deployAndSearch(scn, "otherMara", site, true, 0));
-        scn.MoveOutOfPlay(scn.GetDSCard("otherMara"));
+        scn.MoveCardsToDSHand(scn.GetDSCard("otherMara"));
         prepareNextDeploy(scn, "mara");
         assertFalse(deployAndSearch(scn, "mara", site, true, 0));
         assertInZone(Zone.USED_PILE, scn.GetDSCard("target"));
