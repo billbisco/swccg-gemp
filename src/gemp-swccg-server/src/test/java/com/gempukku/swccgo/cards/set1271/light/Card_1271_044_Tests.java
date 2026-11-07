@@ -20,7 +20,7 @@ public class Card_1271_044_Tests {
         light.put("frigate","1271_44");light.put("redemption","5_87");light.put("masanya","9_78");
         light.put("homeOne","9_74");light.put("oldCapital","1_140");light.put("bwing","9_66");light.put("luke","1_19");
         light.put("setup","1271_46");light.put("do","4_21");light.put("staging","9_40");light.put("insurrection","8_40");
-        light.put("conditional","7_75");light.put("paid","9_34");light.put("shield","13_4");
+        light.put("attachedEffect","9_36");light.put("conditional","7_75");light.put("paid","9_34");light.put("shield","13_4");
         StartingSetup interrupt=new StartingSetup() {
             public HashMap<String,String> Cards(){return new HashMap<>();}
             public void Setup(VirtualTableScenario s){
@@ -88,7 +88,7 @@ public class Card_1271_044_Tests {
     @Test public void HeadingForTheMedicalFrigateStartingExcludesConditionalImmunityPaidEffectsAndNonEffectsWithoutSetup(){
         var s=scenario(true,List.of(),x->{
             assertTrue(selectable(x,"do"));assertTrue(selectable(x,"setup"));
-            for(String name:List.of("conditional","paid","luke","shield"))assertFalse(name,selectable(x,name));
+            for(String name:List.of("conditional","paid","attachedEffect","luke","shield"))assertFalse(name,selectable(x,name));
         });s.StartGame();assertTrue(s.GetLSLostPile().contains(s.GetLSCard("frigate")));
     }
 }
