@@ -140,6 +140,7 @@ public class Card_1271_023_Tests {
         s.MoveCardsToLSSideOfTable(rough);
         var q = s.game().getModifiersQuerying();
         assertEquals(2, q.getForceGenerationFromLocation(s.gameState(), chamber, s.DS), s.epsilon);
+        rough.setObjectiveDeploymentComplete(true);
         s.gameState().flipCard(s.game(), rough, true);
         assertEquals(Title.This_Place_Can_Be_A_Little_Rough, rough.getTitle());
         assertTrue(Filters.Executor_site.accepts(s.game(), chamber));
