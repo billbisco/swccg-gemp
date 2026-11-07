@@ -19,7 +19,7 @@ public class Card_1250_031_Tests {
     private static final String CANCEL = "Maul disembarks to cancel Jedi attrition immunity";
 
     private VirtualTableScenario scenario() {
-        var scn = new VirtualTableScenario(new HashMap<>(Map.of("obi", "1_21", "rebel", "1_28")),
+        var scn = new VirtualTableScenario(new HashMap<>(Map.of("obi", "1_21", "rebel", "1_28", "luke", "1_19")),
                 new HashMap<>(Map.of("speeder", "1250_31", "maul", "11_54", "trooper", "1_194",
                         "site", "5_169")), 22, 22, StartingSetup.DefaultLSGroundLocation,
                 StartingSetup.DefaultDSGroundLocation, StartingSetup.NoLSStartingInterrupts,
@@ -71,6 +71,8 @@ public class Card_1250_031_Tests {
         if (scn.DSHasCardChoiceAvailable(speeder)) scn.DSChooseCard(speeder);
         scn.PassAllResponses();
         assertTrue(Filters.driving(speeder).accepts(scn.game(), maul));
+        if (scn.LSGetDecision() instanceof CardActionSelectionDecision) scn.LSPass();
+        assertTrue(scn.AwaitingDSMovePhaseActions());
         assertFalse(scn.DSCardActionAvailable(speeder, CANCEL));
     }
 
@@ -123,6 +125,7 @@ public class Card_1250_031_Tests {
         var maul = scn.GetDSCard("maul");
         scn.MoveCardsToLocation(site, speeder, scn.GetDSCard("trooper"), scn.GetLSCard("rebel"));
         scn.MoveCardsToLocation(jediHere ? site : scn.GetLSStartingLocation(), scn.GetLSCard("obi"));
+        if (!jediHere) scn.MoveCardsToLocation(site, scn.GetLSCard("luke"));
         if (driver) scn.BoardAsPilot(speeder, maul);
         else scn.MoveCardsToLocation(site, maul);
         scn.EnsureDSForcePile(1);
@@ -130,6 +133,7 @@ public class Card_1250_031_Tests {
         scn.PrepareDSDestiny(1);
         scn.PrepareLSDestiny(6);
         scn.DSInitiateBattle(site);
+        scn.PassBattleStartResponses();
         return scn;
     }
 
@@ -165,8 +169,7 @@ public class Card_1250_031_Tests {
 
     private void reachDarkBattleActions(VirtualTableScenario scn) {
         for (int i = 0; i < 18; i++) {
-            if (scn.DSGetDecision() instanceof CardActionSelectionDecision
-                    && scn.GetCurrentDecision().getText().toLowerCase().contains("battle")) return;
+            if (scn.AwaitingDSWeaponsSegmentActions()) return;
             if (scn.LSGetDecision() instanceof CardActionSelectionDecision) scn.LSPass();
             else if (scn.DSGetDecision() instanceof CardActionSelectionDecision) scn.DSPass();
             else fail("Unexpected battle decision: " + scn.GetCurrentDecision().getText());
@@ -176,9 +179,16 @@ public class Card_1250_031_Tests {
 
     private void finishBattle(VirtualTableScenario scn) {
         for (int i = 0; i < 100 && scn.gameState().getBattleState() != null; i++) {
-            if (scn.AwaitingDSForceLossPayment()) scn.DSPayRemainingForceLossFromReserveDeck();
+            if (scn.DSDecisionAvailable("battle destiny?")) scn.DSChooseYes();
+            else if (scn.LSDecisionAvailable("battle destiny?")) scn.LSChooseNo();
+            else if (scn.AwaitingDSForceLossPayment()) scn.DSPayRemainingForceLossFromReserveDeck();
             else if (scn.AwaitingLSForceLossPayment()) scn.LSPayRemainingForceLossFromReserveDeck();
-            else if (scn.LSHasCardChoiceAvailable(scn.GetLSCard("rebel"))) scn.LSChooseCard(scn.GetLSCard("rebel"));
+            else if (scn.AwaitingLSAttritionPayment()) {
+                assertTrue("Obi-Wan can now forfeit to the actual attrition",
+                        scn.LSHasCardChoiceAvailable(scn.GetLSCard("obi")));
+                scn.LSChooseCard(scn.GetLSCard("rebel"));
+            } else if (scn.AwaitingDSBattleDamagePayment()) scn.DSPayBattleDamageFromReserveDeck();
+            else if (scn.AwaitingLSBattleDamagePayment()) scn.LSPayBattleDamageFromReserveDeck();
             else if (scn.LSGetDecision() instanceof CardActionSelectionDecision) scn.LSPass();
             else if (scn.DSGetDecision() instanceof CardActionSelectionDecision) scn.DSPass();
             else fail("Unexpected battle decision: " + scn.GetCurrentDecision().getText());

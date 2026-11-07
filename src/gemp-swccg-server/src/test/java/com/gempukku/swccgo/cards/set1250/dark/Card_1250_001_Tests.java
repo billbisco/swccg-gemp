@@ -23,7 +23,7 @@ public class Card_1250_001_Tests {
         var scn = new VirtualTableScenario(
                 new HashMap<>(Map.of("capital", "2_73", "rebel", "1_28")),
                 new HashMap<>(Map.ofEntries(Map.entry("order", "1250_1"), Map.entry("system", "1_289"),
-                        Map.entry("site", "12_176"), Map.entry("cantina", "1_290"), Map.entry("capital", "1_301"),
+                        Map.entry("cantina", "1_290"), Map.entry("capital", "1_301"),
                         Map.entry("trooper", "1_194"), Map.entry("presence", "14_69"), Map.entry("bespin", "5_164"),
                         Map.entry("sector", "5_165"), Map.entry("car", "5_178"), Map.entry("vaderShip", "1_306"),
                         Map.entry("freighter", "4_168"), Map.entry("bosskShip", "7_301"), Map.entry("scout", "1_305"),
@@ -32,7 +32,7 @@ public class Card_1250_001_Tests {
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
         scn.StartGame();
-        for (String location : List.of("system", "site", "cantina", "bespin", "sector")) {
+        for (String location : List.of("system", "cantina", "bespin", "sector")) {
             scn.MoveLocationToTable(scn.GetDSCard(location));
         }
         if (orderOnTable) scn.MoveCardsToSideOfTable(scn.GetDSCard("order"));
@@ -59,7 +59,7 @@ public class Card_1250_001_Tests {
 
     @Test public void NothingCanGetThroughOurShieldDeploysAndDiscountsAnActualDarkDeployment() {
         var scn = scenario(false);
-        var site = scn.GetDSCard("site");
+        var site = scn.GetDSStartingLocation();
         var order = scn.GetDSCard("order");
         var trooper = scn.GetDSCard("trooper");
         scn.MoveCardsToLocation(scn.GetDSCard("system"), scn.GetDSCard("capital"));
@@ -82,7 +82,7 @@ public class Card_1250_001_Tests {
     @Test public void NothingCanGetThroughOurShieldDiscountsEitherSideWithControlAndCapitalOnly() {
         var scn = scenario(true);
         var system = scn.GetDSCard("system");
-        var site = scn.GetDSCard("site");
+        var site = scn.GetDSStartingLocation();
         var rebel = scn.GetLSCard("rebel");
         var trooper = scn.GetDSCard("trooper");
         var presence = scn.GetDSCard("presence");
@@ -126,7 +126,7 @@ public class Card_1250_001_Tests {
         var scn = scenario(true);
         scn.MoveCardsToLocation(scn.GetDSCard("system"), scn.GetDSCard("capital"), scn.GetLSCard("capital"));
         prepareDrainSites(scn);
-        drain(scn, scn.GetDSCard("site"), true, true, 2);
+        drain(scn, scn.GetDSStartingLocation(), true, true, 2);
         drain(scn, scn.GetDSCard("cantina"), true, true, 2);
     }
 
@@ -136,7 +136,7 @@ public class Card_1250_001_Tests {
         scn.MoveCardsToLocation(system, scn.GetDSCard("vaderShip"), scn.GetDSCard("freighter"),
                 scn.GetDSCard("scout"));
         prepareDrainSites(scn);
-        drain(scn, scn.GetDSCard("site"), false, false, 1);
+        drain(scn, scn.GetDSStartingLocation(), false, false, 1);
         scn.MoveCardsToLocation(system, scn.GetDSCard("bosskShip"));
         drain(scn, scn.GetDSCard("cantina"), true, false, 2);
     }
@@ -146,11 +146,11 @@ public class Card_1250_001_Tests {
         scn.MoveCardsToLocation(scn.GetDSCard("system"), scn.GetDSCard("capital"));
         scn.MoveCardsToSideOfTable(scn.GetDSCard("objective"));
         prepareDrainSites(scn);
-        drain(scn, scn.GetDSCard("site"), false, false, 1);
+        drain(scn, scn.GetDSStartingLocation(), false, false, 1);
     }
 
     private void prepareDrainSites(VirtualTableScenario scn) {
-        scn.MoveCardsToLocation(scn.GetDSCard("site"), scn.GetDSCard("trooper"));
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("trooper"));
         scn.MoveCardsToLocation(scn.GetDSCard("cantina"), scn.GetDSCard("cantinaTrooper"));
         scn.SkipToPhase(Phase.CONTROL);
     }
