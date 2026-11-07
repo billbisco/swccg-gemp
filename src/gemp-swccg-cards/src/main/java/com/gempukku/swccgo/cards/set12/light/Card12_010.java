@@ -45,7 +45,7 @@ public class Card12_010 extends AbstractRepublic {
     @Override
     protected List<Modifier> getGameTextAlwaysOnModifiers(SwccgGame game, PhysicalCard self) {
         List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new DeployCostToLocationModifier(self, 3, Filters.not(Filters.Jedi_Council_Chamber)));
+        modifiers.add(new DeployCostToLocationModifier(self, 3, Filters.not(Filters.jediCouncilChamberInGameTextOf(self))));
         return modifiers;
     }
 
@@ -71,7 +71,7 @@ public class Card12_010 extends AbstractRepublic {
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
         List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new ImmuneToAttritionLessThanModifier(self, new AtCondition(self, Filters.Jedi_Council_Chamber), 5));
+        modifiers.add(new ImmuneToAttritionLessThanModifier(self, new AtCondition(self, Filters.jediCouncilChamberInGameTextOf(self)), 5));
         return modifiers;
     }
 }

@@ -6,21 +6,28 @@ import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.logic.GameUtils;
 import com.gempukku.swccgo.logic.actions.SubAction;
+import com.gempukku.swccgo.logic.modifiers.MayNotGoMissingModifier;
+import com.gempukku.swccgo.logic.modifiers.Modifier;
+import com.gempukku.swccgo.logic.modifiers.ModifierType;
 import com.gempukku.swccgo.logic.timing.AbstractSubActionEffect;
 import com.gempukku.swccgo.logic.timing.Action;
 import com.gempukku.swccgo.logic.timing.PassthruEffect;
+import com.gempukku.swccgo.logic.timing.results.AboutToGoMissingResult;
 import com.gempukku.swccgo.logic.timing.results.GoneMissingResult;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * An effect that causes specified characters to go 'missing'.
  */
-public class GoMissingEffect extends AbstractSubActionEffect {
+public class GoMissingEffect extends AbstractSubActionEffect implements PreventableCardEffect {
     private Collection<PhysicalCard> _charactersToGoMissing;
+    private final Set<PhysicalCard> _preventedCards = new HashSet<PhysicalCard>();
 
     /**
      * Creates an effect that causes a character to go 'missing'.
@@ -55,6 +62,18 @@ public class GoMissingEffect extends AbstractSubActionEffect {
         final SubAction subAction = new SubAction(_action);
 
         final Collection<PhysicalCard> charactersToGoMissing = Filters.filter(_charactersToGoMissing, game, Filters.not(Filters.missing));
+
+        // Remove characters that may not go missing from this source
+        for (PhysicalCard character : new LinkedList<PhysicalCard>(charactersToGoMissing)) {
+            for (Modifier modifier : game.getModifiersQuerying().getModifiersAffectingCard(gameState, ModifierType.MAY_NOT_GO_MISSING, character)) {
+                if (!(modifier instanceof MayNotGoMissingModifier)
+                        || ((MayNotGoMissingModifier) modifier).preventsGoingMissingFrom(gameState, source)) {
+                    charactersToGoMissing.remove(character);
+                    gameState.sendMessage(GameUtils.getCardLink(character) + " may not go 'missing' due to " + GameUtils.getCardLink(modifier.getSource(gameState)));
+                    break;
+                }
+            }
+        }
         if (!charactersToGoMissing.isEmpty()) {
 
             // Special Rule for Luke's Backpack (if character carrying it goes missing, then character in it also goes missing, and vice versa)
@@ -65,10 +84,22 @@ public class GoMissingEffect extends AbstractSubActionEffect {
                 charactersToGoMissing.addAll(Filters.filterAllOnTable(game, Filters.and(Filters.not(Filters.in(charactersToGoMissing)), Filters.character, Filters.hasAttached(Filters.Lukes_Backpack))));
             }
 
+            // Trigger is "about to go missing" for each character. When responding to the trigger, the
+            // preventEffectOnCard method can be called to prevent that character from going missing.
+            for (PhysicalCard character : charactersToGoMissing) {
+                subAction.appendEffect(
+                        new TriggeringResultEffect(subAction, new AboutToGoMissingResult(subAction, character, this)));
+            }
+
             subAction.appendEffect(
                     new PassthruEffect(subAction) {
                         @Override
                         protected void doPlayEffect(SwccgGame game) {
+                            charactersToGoMissing.removeIf(character -> isEffectOnCardPrevented(character)
+                                    || !character.getZone().isInPlay());
+                            if (charactersToGoMissing.isEmpty()) {
+                                return;
+                            }
 
                             if (performingPlayerId != null)
                                 gameState.sendMessage(performingPlayerId + " causes " + GameUtils.getAppendedNames(charactersToGoMissing) + " to go 'missing' using " + GameUtils.getCardLink(source));
@@ -121,5 +152,24 @@ public class GoMissingEffect extends AbstractSubActionEffect {
     @Override
     protected boolean wasActionCarriedOut() {
         return true;
+    }
+
+    /**
+     * Prevents the specified card from going 'missing'.
+     * @param card the card
+     */
+    @Override
+    public void preventEffectOnCard(PhysicalCard card) {
+        _preventedCards.add(card);
+    }
+
+    /**
+     * Determines if the specified card was prevented from going 'missing'.
+     * @param card the card
+     * @return true or false
+     */
+    @Override
+    public boolean isEffectOnCardPrevented(PhysicalCard card) {
+        return _preventedCards.contains(card);
     }
 }

@@ -28,6 +28,7 @@ import com.gempukku.swccgo.logic.conditions.Condition;
 import com.gempukku.swccgo.logic.effects.DrawDestinyEffect;
 import com.gempukku.swccgo.logic.effects.RespondableEffect;
 import com.gempukku.swccgo.logic.effects.TargetCardOnTableEffect;
+import com.gempukku.swccgo.logic.effects.PlaceCardInUsedPileFromTableEffect;
 import com.gempukku.swccgo.logic.effects.choose.StealCardAndAttachFromTableEffect;
 import com.gempukku.swccgo.logic.modifiers.KeywordModifier;
 import com.gempukku.swccgo.logic.modifiers.MayNotBeStolenModifier;
@@ -88,7 +89,11 @@ public class Card2_126 extends AbstractNormalEffect {
 
     @Override
     protected List<TopLevelGameTextAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
-        final Filter filter = Filters.and(Filters.device, Filters.atSameSite(self), Filters.canBeTargetedBy(self.getAttachedTo(), TargetingReason.TO_BE_STOLEN));
+        // Dark Reconnaissance (Virtual Block 4 / Virtual Set 15): 'Stolen' is treated as 'placed in owner's Used Pile'
+        // and it may target a weapon instead of a device.
+        final boolean darkReconnaissance = isDarkReconnaissanceOnTable(game, self);
+        final Filter filter = Filters.and(darkReconnaissance ? Filters.or(Filters.device, Filters.weapon) : Filters.device,
+                Filters.atSameSite(self), Filters.canBeTargetedBy(self.getAttachedTo(), TargetingReason.TO_BE_STOLEN));
         TargetingReason targetingReason = TargetingReason.TO_BE_STOLEN;
 
         // Check condition(s)
@@ -97,13 +102,13 @@ public class Card2_126 extends AbstractNormalEffect {
                 && GameConditions.canTarget(game, self, SpotOverride.INCLUDE_STOLEN, targetingReason, filter)) {
 
             final TopLevelGameTextAction action = new TopLevelGameTextAction(self, gameTextSourceCardId);
-            action.setText("Steal device");
+            action.setText(darkReconnaissance ? "Steal device or weapon" : "Steal device");
             // Update usage limit(s)
             action.appendUsage(
                     new OncePerPhaseEffect(action));
             // Choose target(s)
             action.appendTargeting(
-                    new TargetCardOnTableEffect(action, playerId, "Target device to steal", SpotOverride.INCLUDE_STOLEN, targetingReason, filter) {
+                    new TargetCardOnTableEffect(action, playerId, darkReconnaissance ? "Target device or weapon to steal" : "Target device to steal", SpotOverride.INCLUDE_STOLEN, targetingReason, filter) {
                         @Override
                         protected void cardTargeted(final int targetGroupId, PhysicalCard targetedCard) {
                             action.addAnimationGroup(targetedCard);
@@ -133,8 +138,14 @@ public class Card2_126 extends AbstractNormalEffect {
 
                                                             if (totalDestiny < targetsDestiny) {
                                                                 gameState.sendMessage("Result: Succeeded");
-                                                                action.appendEffect(
-                                                                        new StealCardAndAttachFromTableEffect(action, cardToSteal, self.getAttachedTo()));
+                                                                if (isDarkReconnaissanceOnTable(game, self)) {
+                                                                    action.appendEffect(
+                                                                            new PlaceCardInUsedPileFromTableEffect(action, cardToSteal));
+                                                                }
+                                                                else {
+                                                                    action.appendEffect(
+                                                                            new StealCardAndAttachFromTableEffect(action, cardToSteal, self.getAttachedTo()));
+                                                                }
                                                             }
                                                             else {
                                                                 gameState.sendMessage("Result: Failed");
@@ -151,5 +162,9 @@ public class Card2_126 extends AbstractNormalEffect {
             return Collections.singletonList(action);
         }
         return null;
+    }
+
+    private static boolean isDarkReconnaissanceOnTable(SwccgGame game, PhysicalCard self) {
+        return GameConditions.canSpot(game, self, Filters.and(Filters.Effect, Filters.title("Dark Reconnaissance")));
     }
 }
