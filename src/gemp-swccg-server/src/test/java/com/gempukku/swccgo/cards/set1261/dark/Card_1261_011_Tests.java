@@ -101,12 +101,13 @@ public class Card_1261_011_Tests {
     @Test
     public void KirKanosBlocksActualRebelBarrierResponseAtHisSite() {
         var scn = deployTrooper(true);
-        for (int i = 0; i < 20 && !scn.AwaitingDSDeployPhaseActions(); i++) {
+        for (int i = 0; i < 20 && !scn.AwaitingDSDeployPhaseActions() && !scn.AwaitingLSDeployPhaseActions(); i++) {
             assertFalse("Barrier must be unavailable in every live deployment response window",
                     scn.GetLSAvailableActions().stream().anyMatch(x -> x.contains("Prevent")));
-            assertTrue("Expected an optional deployment response", scn.GetCurrentDecision().getText().toLowerCase().contains("optional"));
+            assertTrue("Expected an optional deployment response: " + scn.GetCurrentDecision().getText(), scn.GetCurrentDecision().getText().toLowerCase().contains("optional"));
             scn.PlayerPass(scn.GetDecidingPlayer());
         }
+        if (scn.AwaitingLSDeployPhaseActions()) scn.LSPass();
         assertTrue(scn.AwaitingDSDeployPhaseActions());
         assertTrue(scn.game().getModifiersQuerying().isImmuneToCardTitle(scn.gameState(), scn.GetDSCard("trooper"), Title.Rebel_Barrier));
     }
