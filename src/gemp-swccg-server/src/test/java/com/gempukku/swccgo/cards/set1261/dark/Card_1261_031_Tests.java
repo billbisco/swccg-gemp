@@ -34,9 +34,9 @@ public class Card_1261_031_Tests {
     };
 
     private VirtualTableScenario scenario(boolean invasion) {
-        return new VirtualTableScenario(new HashMap<>(),
+        return new VirtualTableScenario(new HashMap<>(Map.of("luke", "1_19")),
                 new HashMap<>(Map.of("racks", "1261_31", "droid", "12_104", "nute", "12_112",
-                        "vehicle", "14_120", "trooper", "1_194")),
+                        "vehicle", "14_120", "trooper", "1_194", "droidekas", "1250_24", "oldDroidekas", "1114_33")),
                 23, 23, StartingSetup.DefaultLSGroundLocation,
                 invasion ? INVASION : StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
@@ -137,6 +137,48 @@ public class Card_1261_031_Tests {
         scn.EnsureDSForcePile(4);
         assertTrue(scn.GetStackedCards(racks).contains(droid));
         assertFalse(scn.DSCardActionAvailable(racks, MOVE_TO_USED));
+    }
+
+    @Test
+    public void whereAreThoseDroidekasIgnoresNeimoidiansOnlyWhileRacksIsActive() {
+        for (String key : List.of("droidekas", "oldDroidekas")) {
+            var scn = scenario(true);
+            var racks = scn.GetDSCard("racks");
+            var site = scn.GetDSCard("swamp");
+            var luke = scn.GetLSCard("luke");
+            scn.StartGame();
+            scn.MoveCardsToLocation(site, luke, scn.GetDSCard("droid"));
+            scn.SkipToDSTurn(Phase.CONTROL);
+            int base = (int) scn.GetDefense(luke);
+            scn.MoveCardsToDSSideOfTable(scn.GetDSCard(key));
+            assertEquals(key, base - 1, scn.GetDefense(luke), scn.epsilon);
+
+            // A Neimoidian at a site is ignored while Droid Racks (V) is on table.
+            scn.MoveCardsToLocation(site, scn.GetDSCard("nute"));
+            assertTrue(racks.getZone().isInPlay());
+            assertEquals(key, base - 1, scn.GetDefense(luke), scn.epsilon);
+
+            // Without Droid Racks (V), the Neimoidian breaks "all your characters at sites are destroyer droids".
+            scn.MoveCardsToDSHand(racks);
+            assertEquals(key, base, scn.GetDefense(luke), scn.epsilon);
+        }
+    }
+
+    @Test
+    public void racksDoesNotMakeWhereAreThoseDroidekasIgnoreOtherNonDestroyerCharacters() {
+        var scn = scenario(true);
+        var racks = scn.GetDSCard("racks");
+        var site = scn.GetDSCard("swamp");
+        var luke = scn.GetLSCard("luke");
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, luke, scn.GetDSCard("droid"), scn.GetDSCard("nute"));
+        scn.SkipToDSTurn(Phase.CONTROL);
+        int base = (int) scn.GetDefense(luke);
+        scn.MoveCardsToDSSideOfTable(scn.GetDSCard("droidekas"));
+        assertEquals(base - 1, scn.GetDefense(luke), scn.epsilon);
+        scn.MoveCardsToLocation(site, scn.GetDSCard("trooper"));
+        assertTrue(racks.getZone().isInPlay());
+        assertEquals(base, scn.GetDefense(luke), scn.epsilon);
     }
 
     private void lose(VirtualTableScenario scn, PhysicalCardImpl card) {

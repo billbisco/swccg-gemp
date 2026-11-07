@@ -17,6 +17,9 @@ import com.gempukku.swccgo.logic.effects.PutStackedCardInUsedPileEffect;
 import com.gempukku.swccgo.logic.effects.UseForceEffect;
 import com.gempukku.swccgo.logic.effects.choose.ChooseStackedCardEffect;
 import com.gempukku.swccgo.logic.effects.choose.StackOneCardFromLostPileEffect;
+import com.gempukku.swccgo.logic.modifiers.Modifier;
+import com.gempukku.swccgo.logic.modifiers.ModifyGameTextModifier;
+import com.gempukku.swccgo.logic.modifiers.ModifyGameTextType;
 import com.gempukku.swccgo.logic.timing.EffectResult;
 import com.gempukku.swccgo.logic.timing.results.LostFromTableResult;
 
@@ -38,6 +41,12 @@ public class Card1261_031 extends AbstractNormalEffect {
     protected Filter getGameTextValidDeployTargetFilter(SwccgGame game, PhysicalCard self,
             PlayCardOptionId id, boolean asReact) {
         return Filters.Invasion;
+    }
+
+    @Override
+    protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, PhysicalCard self) {
+        return List.of(new ModifyGameTextModifier(self, Filters.Where_Are_Those_Droidekas,
+                ModifyGameTextType.LEGACY__DROID_RACKS__WHERE_ARE_THOSE_DROIDEKAS_IGNORES_NEIMOIDIANS));
     }
 
     @Override

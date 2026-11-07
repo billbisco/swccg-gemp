@@ -1,7 +1,6 @@
 package com.gempukku.swccgo.cards.set1250.dark;
 
 import com.gempukku.swccgo.cards.GameConditions;
-import com.gempukku.swccgo.cards.conditions.CantSpotCondition;
 import com.gempukku.swccgo.cards.set1114.dark.Card1114_033;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
@@ -49,8 +48,7 @@ public class Card1250_024 extends Card1114_033 {
             }
         };
         modifiers.add(new DefenseValueModifier(self, Filters.and(Filters.opponents(self), Filters.character),
-                new CantSpotCondition(self, Filters.and(Filters.your(self), Filters.character,
-                        Filters.at(Filters.site), Filters.not(Filters.destroyer_droid))), presentDroids));
+                allYourCharactersAtSitesAreDestroyerDroids(self), presentDroids));
         return modifiers;
     }
     @Override
