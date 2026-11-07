@@ -163,6 +163,10 @@ public class Card_1250_068_Tests {
         assertEquals(hand + 1, s.GetLSHandCount()); assertEquals(reserve - 2, s.GetLSReserveDeckCount());
         assertEquals(2, s.GetStackedCards(roar).size());
         assertFalse(offered(s, s.GetLSCard("second"), DRAW));
+        s.SkipToDSTurn(Phase.CONTROL);
+        if (s.DSAnyDecisionsAvailable()) s.DSPass();
+        assertTrue(s.LSAnyDecisionsAvailable());
+        assertFalse(offered(s, s.GetLSCard("second"), DRAW));
     }
 
     @Test
