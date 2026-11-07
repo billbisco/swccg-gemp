@@ -162,7 +162,6 @@ public class Card_1261_082_Tests {
         var system = scn.GetLSCard("system"); var ship = scn.GetLSCard("xwing");
         var cannon = scn.GetLSCard("xwingCannon"); var top = scn.GetLSCard("top");
         scn.MoveLocationToTable(system); scn.MoveCardsToLocation(system, ship, scn.GetDSCard("capital"));
-        scn.BoardAsPilot(ship, scn.GetLSCard("luke"));
         scn.MoveCardsToLSSideOfTable(scn.GetLSCard("flaps"));
         scn.MoveCardsToLSHand(scn.GetLSCard("rapidFire"), cannon);
         scn.LSActivateForceCheat(8); scn.SkipToLSTurn(Phase.BATTLE);
