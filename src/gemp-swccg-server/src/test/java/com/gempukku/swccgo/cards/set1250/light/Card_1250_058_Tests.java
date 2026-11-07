@@ -58,13 +58,14 @@ public class Card_1250_058_Tests {
         assertEquals(count == 2 ? 2 : Integer.MAX_VALUE, s.GetDSBattleDestinyLimit());
         s.PrepareDSDestiny(3); s.PrepareDSDestiny(4); s.PrepareDSDestiny(5); s.PrepareLSDestiny(0);
         s.SkipToPowerSegment();
-        assertTrue(s.GetCurrentDecision().getText(), s.DSDecisionAvailable("battle destiny?"));
+        assertTrue(s.GetCurrentDecision().getText(), s.DSDecisionAvailable("battle destiny"));
         s.DSChooseYes();
         for (int i = 0; i < 35 && s.GetCurrentDecision().getText().contains("Optional responses"); i++) {
             if (s.GetDSTotalDestiny() > 0) break;
             s.PlayerPass(s.GetDecidingPlayer());
         }
-        assertEquals(count == 2 ? 9 : 12, s.GetDSTotalDestiny());
+        // Premiere Vader adds one to each of the actual drawn values (5, 4, and, if legal, 3).
+        assertEquals(count == 2 ? 11 : 15, s.GetDSTotalDestiny());
         assertTrue(s.GetDSUsedPile().containsAll(List.of(s.GetDSDestiny(5), s.GetDSDestiny(4))));
         assertEquals(count == 3, s.GetDSUsedPile().contains(s.GetDSDestiny(3)));
     }
