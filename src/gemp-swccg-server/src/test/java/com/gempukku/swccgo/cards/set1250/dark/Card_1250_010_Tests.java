@@ -145,4 +145,17 @@ public class Card_1250_010_Tests {
         scn.DSUseCardAction(scn.GetDSCard("sebulba"),REDRAW);scn.PassAllResponses();scn.PassDestinyDrawResponses();scn.PassAllResponses();scn.PassResponses("ABOUT_TO_BE_HIT");
         assertEquals(Zone.HAND,scn.GetDSCard("device").getZone());assertTrue(scn.GetLSCard("luke").isHit());
     }
+    @Test public void SebulbaMayRedrawAgainInANewTurnAfterSurvivingPreviousBattleElsewhere() {
+        var scn=battle(1,true,true,true,true,"trooper");redraw(scn);
+        for(int i=0;i<80 && scn.gameState().getBattleState()!=null;i++) {
+            if(scn.AwaitingDSBattleDamagePayment())scn.DSPayRemainingBattleDamageFromReserveDeck();
+            else if(scn.AwaitingLSBattleDamagePayment())scn.LSPayRemainingBattleDamageFromReserveDeck();
+            else if(scn.DSHasCardChoiceAvailable(scn.GetDSCard("trooper")))scn.DSChooseCard(scn.GetDSCard("trooper"));
+            else if(scn.LSHasCardChoiceAvailable(scn.GetLSCard("luke")))scn.LSChooseCard(scn.GetLSCard("luke"));
+            else if(scn.DSGetDecision()!=null)scn.DSPass();else if(scn.LSGetDecision()!=null)scn.LSPass();
+        }
+        assertNull(scn.gameState().getBattleState());assertEquals(Zone.AT_LOCATION,scn.GetDSCard("sebulba").getZone());
+        scn.SkipToDSTurn(Phase.CONTROL);scn.MoveCardsToLocation(scn.GetDSStartingLocation(),scn.GetLSCard("luke"),scn.GetDSCard("veers"),scn.GetDSCard("trooper"));
+        scn.DSStartBattleAndSkipToWeaponsSegment(scn.GetDSStartingLocation());scn.PrepareDSDestiny(6);scn.MoveCardsToTopOfDSReserveDeck(scn.GetDSCard("device"));redraw(scn);
+    }
 }
