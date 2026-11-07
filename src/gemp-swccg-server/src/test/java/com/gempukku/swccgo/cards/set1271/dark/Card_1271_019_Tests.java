@@ -4,6 +4,7 @@ import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.game.PhysicalCardImpl;
 import org.junit.Test;
 
 import java.util.List;
@@ -36,14 +37,12 @@ public class Card_1271_019_Tests {
         assertFalse(s.DSDeployAvailable(rise));
     }
 
-    @Test public void RiseOfTheDarkLordDeploysDuringSetupAndStacksThreeDifferentVaderEffectsFaceDown() {
+    @Test public void RiseOfTheDarkLordDeploysWithPreparedDefensesAndStacksThreeDifferentVaderEffectsFaceDown() {
         var s = scenario();
         var rise = s.GetDSCard("rise");
         var selectedEffects = List.of(s.GetDSCard("limbs"), s.GetDSCard("cape"), s.GetDSCard("cybernetic"));
-        chooseStartingLocations(s);
-
-        assertTrue(s.DSDecisionAvailable("Choose starting Epic Event"));
-        s.DSChooseCard(rise);
+        playPreparedDefenses(s);
+        if (s.DSHasCardChoiceAvailable(rise)) s.DSChooseCard(rise);
         for (var effect : selectedEffects) {
             s.DSChooseCard(effect);
         }
@@ -64,18 +63,23 @@ public class Card_1271_019_Tests {
         s.MoveOutOfPlay(s.GetDSCard("mask"));
         var duplicate = s.gameState().createPhysicalCard(s.DS, VirtualTableScenario._cardLibrary, "1271_13");
         s.gameState().addCardToZone(duplicate, Zone.RESERVE_DECK, s.DS);
-        chooseStartingLocations(s);
+        playPreparedDefenses(s);
 
-        assertFalse(s.DSDecisionAvailable("Choose starting Epic Event"));
+        assertFalse(s.DSHasCardChoiceAvailable(s.GetDSCard("rise")));
         assertFalse(s.GetDSCard("rise").getZone().isInPlay());
         assertFalse(s.gameState().hasPlayedStartingEpicEvent(s.DS));
     }
 
-    private void chooseStartingLocations(VirtualTableScenario s) {
+    private void playPreparedDefenses(VirtualTableScenario s) {
+        var interrupt = (PhysicalCardImpl)
+            s.gameState().createPhysicalCard(s.DS, VirtualTableScenario._cardLibrary, "601_93");
+        s.gameState().addCardToZone(interrupt, Zone.RESERVE_DECK, s.DS);
         s.DSDecided("0");
         s.LSDecided("0");
         StartingSetup.DefaultDSGroundLocation.Setup(s);
         StartingSetup.DefaultLSGroundLocation.Setup(s);
+        assertTrue(s.DSDecisionAvailable("Choose starting interrupt"));
+        s.DSChooseCard(interrupt);
     }
 
     @Test public void RiseOfTheDarkLordActuallyDeploysItsStackedEffectButRejectsHandAndRepeatDeployment() {
