@@ -24,7 +24,6 @@ import com.gempukku.swccgo.logic.timing.Effect;
 import com.gempukku.swccgo.logic.timing.EffectResult;
 import com.gempukku.swccgo.logic.timing.results.MovedResult;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -52,12 +51,18 @@ public class Card211_016 extends AbstractUsedInterrupt {
             if (movedResult.isMoveComplete()) {
                 final PhysicalCard toLocation = movedResult.getMovedTo();
 
-                final PhysicalCard vader = Filters.findFirstActive(game, self, Filters.and(InterruptPersonaReferences.vader(game, self), Filters.movableAsRegularMoveUsingLandspeed(playerId, false, false, true, 0, null, Filters.sameLocation(toLocation))));
-
-                if (vader != null) {
+                List<PlayInterruptAction> actions = new LinkedList<>();
+                for (final PhysicalCard vader : Filters.filterActive(game, self, Filters.and(
+                        InterruptPersonaReferences.vader(game, self), Filters.canBeTargetedBy(self),
+                        Filters.movableAsRegularMoveUsingLandspeed(playerId, false, false, true, 0, null, Filters.sameLocation(toLocation))))) {
+                    if (!TriggerConditions.movedFromOrThroughLocationToLocation(game, effectResult,
+                            Filters.and(Filters.opponents(self), Filters.character),
+                            Filters.sameLocation(vader), Filters.location)) {
+                        continue;
+                    }
                     PhysicalCard cardToFollow = movedResult.getMovedCards().iterator().next();
                     final PlayInterruptAction action = new PlayInterruptAction(game, self);
-                    action.setText("Follow " + GameUtils.getFullName(cardToFollow));
+                    action.setText("Follow " + GameUtils.getFullName(cardToFollow) + " with " + GameUtils.getFullName(vader));
                     action.setActionMsg("Follow " + GameUtils.getCardLink(cardToFollow) + " for free using landspeed");
 
                     action.allowResponses(new RespondablePlayCardEffect(action) {
@@ -69,8 +74,9 @@ public class Card211_016 extends AbstractUsedInterrupt {
                         }
                     });
 
-                    return Collections.singletonList(action);
+                    actions.add(action);
                 }
+                return actions;
             }
         }
 
