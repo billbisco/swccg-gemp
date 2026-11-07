@@ -72,7 +72,7 @@ public class Card1250_051 extends AbstractRebelRepublic {
             PhysicalCard self, int gameTextSourceCardId) {
         GameTextActionId id = GameTextActionId.LEGACY__SENATOR_MON_MOTHMA__DEPLOY_BATTLEGROUND;
         if (!GameConditions.isOncePerGame(game, self, id)
-                || !GameConditions.canDeployCardFromReserveDeck(game, playerId, self, id, true, false)) return null;
+                || !GameConditions.canDeployCardFromReserveDeck(game, playerId, self, id)) return null;
 
         TopLevelGameTextAction action = new TopLevelGameTextAction(self, playerId, gameTextSourceCardId, id);
         action.setText("Deploy a battleground except Endor system");

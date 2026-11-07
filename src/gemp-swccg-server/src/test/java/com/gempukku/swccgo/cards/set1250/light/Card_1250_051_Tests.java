@@ -257,7 +257,7 @@ public class Card_1250_051_Tests {
     private VirtualTableScenario reserve(boolean darkTurn) {
         var s = scenario(); s.StartGame();
         s.MoveCardsToLocation(s.GetLSStartingLocation(), s.GetLSCard("mothma"));
-        if (darkTurn) s.SkipToDSTurn(Phase.CONTROL); else s.SkipToLSTurn(Phase.CONTROL);
+        if (darkTurn) s.SkipToDSTurn(Phase.CONTROL); else s.SkipToLSTurn(Phase.DEPLOY);
         s.MoveCardsToTopOfLSReserveDeck(s.GetLSCard("endor"), s.GetLSCard("endorSite"),
                 s.GetLSCard("chamber"), s.GetLSCard("naboo"));
         if (darkTurn && s.DSAnyDecisionsAvailable()) s.DSPass();
@@ -296,8 +296,11 @@ public class Card_1250_051_Tests {
     }
 
     @Test
-    public void ReserveSearchCanDeployANonEndorBattlegroundSystemOnDarkTurn() {
-        download(reserve(true), "naboo", false);
+    public void ReserveSearchCannotDeployDuringDarkTurn() {
+        var s = reserve(true);
+        assertFalse(lightAction(s, DOWNLOAD));
+        s.SkipToLSTurn(Phase.DEPLOY);
+        download(s, "naboo", false);
     }
 
     @Test
@@ -306,6 +309,9 @@ public class Card_1250_051_Tests {
         s.SkipToPhase(Phase.MOVE); assertTrue(s.AwaitingLSMovePhaseActions()); assertFalse(lightAction(s, DOWNLOAD));
         advanceToDarkControl(s);
         if (s.DSAnyDecisionsAvailable()) s.DSPass();
+        assertFalse(lightAction(s, DOWNLOAD));
+        s.SkipToLSTurn(Phase.DEPLOY);
+        assertTrue(s.AwaitingLSDeployPhaseActions());
         assertFalse(lightAction(s, DOWNLOAD));
         assertEquals(Zone.RESERVE_DECK, s.GetLSCard("endorSite").getZone());
     }
