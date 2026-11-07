@@ -76,9 +76,10 @@ public class Card_1240_067_Tests {
         var scn = Started();
         var chewie = scn.GetLSCard("chewie");
         var docking = scn.GetLSCard("docking");
-        scn.SkipToLSTurn(Phase.DEPLOY);
+        scn.SkipToLSTurn(Phase.ACTIVATE);
         scn.MoveCardsToLSHand(chewie);
         scn.DrainLSForcePileTo(0);
+        scn.SkipToPhase(Phase.DEPLOY);
         scn.LSDeployCardAndPassResponses(chewie, docking);
         assertAtLocation(docking, chewie);
         assertEquals(0, scn.GetLSForcePileCount());
@@ -117,10 +118,11 @@ public class Card_1240_067_Tests {
     private VirtualTableScenario DownloadReady(int force, Phase phase) {
         var scn = Started();
         scn.MoveCardsToLocation(scn.GetLSCard("docking"), scn.GetLSCard("chewie"));
+        scn.SkipToLSTurn(Phase.ACTIVATE);
         scn.EnsureLSForcePile(force);
-        scn.SkipToLSTurn(phase);
         scn.DrainLSForcePileTo(force);
         scn.MoveCardsToTopOfLSReserveDeck(scn.GetLSCard("boushh"), scn.GetLSCard("ax"), scn.GetLSCard("lando"));
+        scn.SkipToPhase(phase);
         return scn;
     }
 
@@ -247,9 +249,10 @@ public class Card_1240_067_Tests {
         scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetLSCard("leia"));
         var chewieSite = together ? scn.GetLSStartingLocation() : scn.GetLSCard("docking");
         scn.MoveCardsToLocation(chewieSite, scn.GetLSCard("chewie"));
+        scn.SkipToLSTurn(Phase.ACTIVATE);
         scn.EnsureLSForcePile(force);
-        scn.SkipToLSTurn(phase);
         scn.DrainLSForcePileTo(force);
+        scn.SkipToPhase(phase);
         return scn;
     }
 
@@ -268,8 +271,9 @@ public class Card_1240_067_Tests {
         assertEquals(2, scn.GetLSForcePileCount());
         assertEquals(hand + 1, scn.GetLSHandCount());
         assertFalse(scn.LSCardActionAvailable(chewie, BOTTOM));
-        scn.SkipToDSTurn(Phase.CONTROL);
+        scn.SkipToDSTurn(Phase.ACTIVATE);
         scn.EnsureLSForcePile(1);
+        scn.SkipToPhase(Phase.CONTROL);
         if (scn.AwaitingDSControlPhaseActions()) scn.DSPass();
         assertTrue(scn.LSCardActionAvailable(chewie, BOTTOM));
         bottom = scn.gameState().getBottomOfCardPile(scn.LS, Zone.FORCE_PILE);
@@ -283,9 +287,9 @@ public class Card_1240_067_Tests {
         var scn = WithLeia(false, 3, Phase.CONTROL);
         var chewie = scn.GetLSCard("chewie");
         assertFalse(scn.LSCardActionAvailable(chewie, BOTTOM));
-        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), chewie);
-        scn.DrainLSForcePileTo(0);
-        assertFalse(scn.LSCardActionAvailable(chewie, BOTTOM));
+        var empty = WithLeia(true, 0, Phase.CONTROL);
+        assertEquals(0, empty.GetLSForcePileCount());
+        assertFalse(empty.LSCardActionAvailable(empty.GetLSCard("chewie"), BOTTOM));
     }
 
     private void InsultLeia(boolean together) {
