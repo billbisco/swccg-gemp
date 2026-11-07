@@ -10,6 +10,7 @@ import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.DeploymentRestrictionsOption;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
+import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.logic.TriggerConditions;
 import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
@@ -20,6 +21,7 @@ import com.gempukku.swccgo.logic.effects.FlipCardEffect;
 import com.gempukku.swccgo.logic.effects.choose.DeployCardFromReserveDeckEffect;
 import com.gempukku.swccgo.logic.effects.choose.DeployCardToSystemFromReserveDeckEffect;
 import com.gempukku.swccgo.logic.modifiers.*;
+import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 import com.gempukku.swccgo.logic.timing.EffectResult;
 
 import java.util.List;
@@ -68,12 +70,17 @@ public class Card1261_108 extends AbstractObjective {
         action.appendEffect(new AddUntilEndOfGameModifierEffect(action,
                 new ModifyGameTextModifier(self, Filters.and(Filters.your(self), Filters.Jedi_Test), onlyLuke,
                         ModifyGameTextType.JEDI_TESTS__ONLY_LUKE_MAY_BE_APPRENTICE), null));
+        // One noncumulative modifier per source and target; evaluate the discounted persona at deployment.
+        var discountedPersona = new Filter() {
+            @Override
+            public boolean accepts(GameState state, ModifiersQuerying modifiers, PhysicalCard card) {
+                var apprentice = leia.isFulfilled(state, modifiers) ? Filters.Leia : Filters.Luke;
+                return Filters.Yoda.accepts(state, modifiers, card) || apprentice.accepts(state, modifiers, card);
+            }
+        };
         action.appendEffect(new AddUntilEndOfGameModifierEffect(action,
-                new DeployCostToTargetModifier(self, Filters.and(Filters.your(self), Filters.Yoda), -3, Filters.Deploys_on_Dagobah), null));
-        action.appendEffect(new AddUntilEndOfGameModifierEffect(action,
-                new DeployCostToTargetModifier(self, Filters.and(Filters.your(self), Filters.Luke), onlyLuke, -3, Filters.Deploys_on_Dagobah), null));
-        action.appendEffect(new AddUntilEndOfGameModifierEffect(action,
-                new DeployCostToTargetModifier(self, Filters.and(Filters.your(self), Filters.Leia), leia, -3, Filters.Deploys_on_Dagobah), null));
+                new DeployCostToTargetModifier(self, Filters.and(Filters.your(self), discountedPersona),
+                        -3, Filters.Deploys_on_Dagobah), null));
         return action;
     }
 
