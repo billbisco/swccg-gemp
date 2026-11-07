@@ -162,6 +162,10 @@ public class Card_1261_108_Tests {
         scn.carryOutEffectInPhaseActionByPlayer(scn.DS, action);
         scn.PassAllResponses();
         if (crossesOver) {
+            if (scn.GetCurrentDecision().getText().contains("Required responses")) {
+                scn.ChooseAction(scn.GetDecidingPlayer(), "Place out of play");
+                scn.PassAllResponses();
+            }
             assertTrue(luke.isCrossedOver());
             assertEquals(scn.DS, luke.getOwner());
             assertTrue(scn.game().getModifiersQuerying().isCrossedOver(scn.gameState(), Persona.LUKE));
@@ -242,12 +246,15 @@ public class Card_1261_108_Tests {
         if (completed) {
             assertEquals(Zone.SIDE_OF_TABLE, test.getZone());
             assertFalse(scn.IsCardActive(test));
+            var returnSite = scn.GetDSCard("cantina");
+            scn.MoveLocationToTable(returnSite);
             scn.MoveCardsToLSHand(luke);
             scn.LSActivateForceCheat(8); scn.SkipToLSTurn(Phase.DEPLOY);
             scn.LSDeployCard(luke);
-            if (scn.LSHasCardChoiceAvailable(site)) scn.LSChooseCard(site);
+            scn.PassAllResponses();
+            if (scn.LSHasCardChoiceAvailable(returnSite)) scn.LSChooseCard(returnSite);
             scn.PassForceUseResponses(); scn.PassAllResponses();
-            assertEquals(site, luke.getAtLocation());
+            assertEquals(scn.GetCurrentDecision().getText(), returnSite, luke.getAtLocation());
             assertEquals(luke, test.getTargetedCard(scn.gameState(), TargetId.JEDI_TEST_APPRENTICE));
             assertTrue(scn.IsCardActive(test));
         } else assertTrue(scn.GetLSLostPile().contains(test));
