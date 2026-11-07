@@ -18,7 +18,7 @@ import static org.junit.Assert.*;
 public class Card_1250_008_Tests {
     private VirtualTableScenario scenario() {
         var scn = new VirtualTableScenario(
-                new HashMap<>(Map.of("jedi", "601_52", "other", "1_17", "saber", "1_155")),
+                new HashMap<>(Map.of("jedi", "9_24", "other", "1_17", "saber", "1_155")),
                 new HashMap<>(Map.of("mando", "1250_8", "jet", "6_140", "cantina", "1_290", "ship", "7_307",
                         "system", "1_289", "alien", "6_121", "trooper", "1_194")),
                 30, 30, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
@@ -53,15 +53,16 @@ public class Card_1250_008_Tests {
     }
 
     @Test public void TheMandalorianAddsTwoToShipPowerOnlyWhenPiloting() {
-        var scn = scenario();
-        var mando = scn.GetDSCard("mando");
-        var ship = scn.GetDSCard("ship");
-        scn.MoveCardsToLocation(scn.GetDSCard("system"), ship);
-        int power = scn.GetPower(ship);
-        scn.BoardAsPassenger(ship, mando);
-        assertEquals(power, scn.GetPower(ship));
-        scn.BoardAsPilot(ship, mando);
-        assertEquals(power + 2, scn.GetPower(ship));
+        for (boolean piloting : List.of(false, true)) {
+            var scn = scenario();
+            var ship = scn.GetDSCard("ship");
+            var mando = scn.GetDSCard("mando");
+            scn.MoveCardsToLocation(scn.GetDSCard("system"), ship);
+            int power = scn.GetPower(ship);
+            if (piloting) scn.BoardAsPilot(ship, mando);
+            else scn.BoardAsPassenger(ship, mando);
+            assertEquals(power + (piloting ? 2 : 0), scn.GetPower(ship));
+        }
     }
 
     @Test public void TheMandalorianActuallyDeploysJetPackFromReserveForFreeAndReshuffles() {
