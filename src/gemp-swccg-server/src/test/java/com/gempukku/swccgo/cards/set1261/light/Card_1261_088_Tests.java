@@ -49,10 +49,11 @@ public class Card_1261_088_Tests {
         if (includeOtherTargets) scn.MoveCardsToLocation(scn.GetLSCard("hoth"), scn.GetLSCard("transport"));
         scn.MoveCardsToLocation(scn.GetLSCard("third"), scn.GetLSCard("trooper"));
         scn.MoveCardsToLocation(scn.GetLSCard("fourth"), scn.GetLSCard("obi"));
-        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetLSCard("han"));
         scn.MoveCardsToLSHand(scn.GetLSCard("first"), scn.GetLSCard("base"));
         scn.MoveCardsToDSHand(scn.GetDSCard("control"), scn.GetDSCard("alter"), scn.GetDSCard("surprise"));
-        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("vader"));
+        var darkSite = scn.GetDSStartingLocation();
+        if (darkSite.getZone() != Zone.LOCATIONS) scn.MoveLocationToTable(darkSite);
+        scn.MoveCardsToLocation(darkSite, scn.GetDSCard("vader"));
         scn.SkipToDSTurn(Phase.CONTROL); scn.DSActivateForceCheat(8);
         scn.SkipToLSTurn(Phase.CONTROL); scn.LSActivateForceCheat(8); scn.SkipToPhase(Phase.DEPLOY);
         return scn;
