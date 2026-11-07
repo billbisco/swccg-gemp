@@ -394,4 +394,29 @@ public class Card_1220_138_Tests {
         assertEquals(2, scn.GetDSUsedPileCount());
         assertEquals(0, faceDown(scn));
     }
+
+    private float duelTotalModifiers(VirtualTableScenario scn, com.gempukku.swccgo.game.PhysicalCard character) {
+        float total = 0;
+        for (var modifier : scn.game().getModifiersQuerying().getModifiersAffectingCard(scn.gameState(),
+                com.gempukku.swccgo.logic.modifiers.ModifierType.DUEL_TOTAL, character)) {
+            total += modifier.getValue(scn.gameState(), scn.game().getModifiersQuerying(), character);
+        }
+        return total;
+    }
+
+    @Test public void agentAddsTwoToOpponentsDuelTotalOnly() {
+        var scn = begin(true, null);
+        var site = scn.GetLSStartingLocation();
+        scn.MoveCardsToLocation(site, scn.GetLSCard("luke"), scn.GetDSCard("vader"));
+        assertEquals(2, duelTotalModifiers(scn, scn.GetDSCard("vader")), scn.epsilon);
+        assertEquals(0, duelTotalModifiers(scn, scn.GetLSCard("luke")), scn.epsilon);
+    }
+
+    @Test public void jediModeDoesNotModifyDuelTotals() {
+        var scn = begin(false, null);
+        var site = scn.GetLSStartingLocation();
+        scn.MoveCardsToLocation(site, scn.GetLSCard("luke"), scn.GetDSCard("vader"));
+        assertEquals(0, duelTotalModifiers(scn, scn.GetDSCard("vader")), scn.epsilon);
+        assertEquals(0, duelTotalModifiers(scn, scn.GetLSCard("luke")), scn.epsilon);
+    }
 }

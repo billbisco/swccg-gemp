@@ -23,6 +23,7 @@ import com.gempukku.swccgo.logic.effects.*;
 import com.gempukku.swccgo.logic.effects.choose.DeployCardFromReserveDeckEffect;
 import com.gempukku.swccgo.logic.effects.choose.StackCardFromHandEffect;
 import com.gempukku.swccgo.logic.effects.choose.TakeCardIntoHandFromReserveDeckEffect;
+import com.gempukku.swccgo.logic.modifiers.DuelTotalModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.modifiers.TotalBattleDestinyModifier;
 import com.gempukku.swccgo.logic.timing.Action;
@@ -127,7 +128,9 @@ public class Card1220_138 extends AbstractEpicEventDeployable {
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, PhysicalCard self) {
         if (self.getZone() == Zone.SIDE_OF_TABLE && game.getOpponent(self.getOwner()).equals(self.getZoneOwner())) {
-            return List.of(new TotalBattleDestinyModifier(self, 2, self.getZoneOwner()));
+            String opponent = self.getZoneOwner();
+            return List.of(new TotalBattleDestinyModifier(self, 2, opponent),
+                    new DuelTotalModifier(self, Filters.and(Filters.owner(opponent), Filters.character), 2));
         }
         if (onJediSide(self)) {
             return List.of(TurnStackedCardsFaceDownInsteadOfUsingForce.modifier(self));
@@ -179,6 +182,8 @@ public class Card1220_138 extends AbstractEpicEventDeployable {
         if (!playerId.equals(self.getOwner()) || !onJediSide(self)
                 || !GameConditions.isDuringYourTurn(game, playerId) || !GameConditions.hasHand(game, playerId)) return List.of();
         int cost = game.getGameState().getStackedCards(self).size();
+        // Force available includes face-up cards here, which may be turned face down instead of using that Force
+        // (see TurnStackedCardsFaceDownInsteadOfUsingForce; applies to any Force used during your turn).
         if (cost > 0 && !GameConditions.canUseForce(game, playerId, cost)) return List.of();
         var action = new TopLevelGameTextAction(self, playerId, sourceId);
         action.setText("Stack a card from hand face up");
