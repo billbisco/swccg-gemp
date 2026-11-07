@@ -113,6 +113,12 @@ public class Card_1261_111_Tests {
     @Test public void EchoCommandCenterDoesNotOfferUnaffordableSearch() {
         var scn = search(0, true, Phase.CONTROL, true); assertFalse(offersSearch(scn));
     }
+    @Test public void EchoCommandCenterDoesNotOfferSearchWithEmptyReserveDeck() {
+        var scn = search(1, true, Phase.CONTROL, true);
+        scn.MoveCardsToLSHand(scn.GetLSReserveDeck().toArray(com.gempukku.swccgo.game.PhysicalCardImpl[]::new));
+        scn.LSPass(); scn.DSPass();
+        assertNotNull(scn.LSGetDecision()); assertFalse(offersSearch(scn)); assertEquals(1, scn.GetLSForcePileCount());
+    }
     @Test public void EchoCommandCenterSearchCannotTakeUnrelatedCard() {
         var scn = search(1, true, Phase.CONTROL, true);
         scn.LSUseCardAction(scn.GetLSCard("echo"), "Take Rendezvous Point"); scn.PassAllResponses();
