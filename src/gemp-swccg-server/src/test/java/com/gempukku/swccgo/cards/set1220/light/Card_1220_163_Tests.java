@@ -25,7 +25,10 @@ public class Card_1220_163_Tests {
                 Map.entry("thirdRebel", "3_6"), Map.entry("unique", "1_17"),
                 Map.entry("speeder", "3_69"), Map.entry("secondSpeeder", "3_69"),
                 Map.entry("lsArtillery", "3_72"), Map.entry("take", "2_18")));
-        var ds = new HashMap<>(Map.of("dsArtillery", "3_159", "vader", "1_168", "sense", "1_267"));
+        ls.put("formation", "7_107");
+        ls.put("secondFormation", "7_107");
+        var ds = new HashMap<>(Map.of("dsArtillery", "3_159", "vader", "1_168", "sense", "1_267",
+                "garrisonOne", "104_7", "garrisonTwo", "104_7"));
         return new VirtualTableScenario(ls, ds, 40, 40, new StartingSetup() {
             @Override public HashMap<String, String> Cards() {
                 return new HashMap<>(Map.of("objective", "1220_163", "hoth", "3_55",
@@ -192,6 +195,77 @@ public class Card_1220_163_Tests {
         assertTrue(query.isLocationUnderHothEnergyShield(state, generators));
         assertTrue(query.isLocationUnderHothEnergyShield(state, echo));
         assertFalse(query.isLocationUnderHothEnergyShield(state, trench));
+    }
+
+    @Test public void actualFormationIsSenseImmuneAndNormalLostOnlyOncePerGame() {
+        var scn = start(); var objective = scn.GetLSCard("objective");
+        var first = scn.GetLSCard("formation"); var second = scn.GetLSCard("secondFormation");
+        var garrison = scn.GetDSCard("garrisonOne"); var later = scn.GetDSCard("garrisonTwo");
+        scn.MoveCardsToDSSideOfTable(garrison);
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("vader"));
+        scn.MoveCardsToDSHand(scn.GetDSCard("sense")); scn.MoveCardsToLSHand(first, second);
+        scn.SkipToLSTurn(Phase.CONTROL); scn.EnsureDSForcePile(5);
+        assertTrue(scn.LSCardPlayAvailable(first, "Cancel Walker Garrison"));
+        scn.LSPlayCard(first, "Cancel Walker Garrison");
+        if (scn.LSHasCardChoiceAvailable(garrison)) scn.LSChooseCard(garrison);
+        assertFalse(scn.GetDSAvailableActions().stream().anyMatch(x -> x.contains("Draw destiny to cancel")));
+        scn.PassAllResponses();
+        assertTrue(scn.GetLSLostPile().contains(first));
+        assertTrue(scn.GetDSLostPile().contains(garrison));
+        scn.MoveOutOfPlay(objective);
+        scn.MoveCardsToDSSideOfTable(later);
+        scn.SkipToLSTurn(Phase.CONTROL);
+        assertTrue(scn.IsCardActive(later));
+        assertFalse(scn.LSCardPlayAvailable(second, "Cancel Walker Garrison"));
+    }
+
+    private VirtualTableScenario liberationWithTwoControlledSites(boolean pair) {
+        var scn = start();
+        var trench = scn.GetLSCard("trench"); var generators = scn.GetLSCard("generators");
+        scn.MoveLocationToTable(trench);
+        scn.MoveCardsToLocation(generators, scn.GetLSCard("rebel"), scn.GetLSCard("speeder"));
+        scn.MoveCardsToLocation(trench, scn.GetLSCard("secondRebel"));
+        if (pair) scn.MoveCardsToLocation(trench, scn.GetLSCard("secondSpeeder"));
+        scn.gameState().flipCard(scn.game(), scn.GetLSCard("objective"), true);
+        return scn;
+    }
+
+    @Test public void liberationCountsOnlyBattlegroundMarkersWithBothCards() {
+        var scn = liberationWithTwoControlledSites(true); var objective = scn.GetLSCard("objective");
+        scn.SkipToLSTurn(Phase.CONTROL);
+        int before = scn.GetDSLostPileCount();
+        assertTrue(scn.LSCardActionAvailable(objective, "Make opponent lose 1 Force"));
+        assertFalse(scn.LSCardActionAvailable(objective, "Make opponent lose 2 Force"));
+        scn.LSUseCardAction(objective, "Make opponent lose 1 Force");
+        scn.PassAllResponses(); scn.DSPayRemainingForceLossFromReserveDeck();
+        scn.PassAllResponses();
+        if (scn.DSGetDecision() != null) scn.DSPass();
+        assertEquals(before + 1, scn.GetDSLostPileCount());
+        assertFalse(scn.GetLSAvailableActions().stream().anyMatch(x -> x.contains("Make opponent lose")));
+        scn.SkipToPhase(Phase.DEPLOY);
+        assertEquals(before + 1, scn.GetDSLostPileCount());
+
+        var noPair = liberationWithTwoControlledSites(false);
+        noPair.SkipToLSTurn(Phase.CONTROL);
+        assertFalse(noPair.GetLSAvailableActions().stream().anyMatch(x -> x.contains("Make opponent lose")));
+    }
+
+    @Test public void liberationPaysTwoForAnyCardAndReshuffles() {
+        var scn = liberationWithTwoControlledSites(false); var objective = scn.GetLSCard("objective");
+        var take = scn.GetLSCard("take"); var wrongForFront = scn.GetLSCard("outside");
+        scn.SkipToLSTurn(Phase.CONTROL); scn.EnsureLSForcePile(5);
+        scn.MoveCardsToTopOfLSReserveDeck(take, wrongForFront);
+        scn.gameState().markCardsRevealedFromPile(List.of(wrongForFront));
+        int before = scn.GetLSForcePileCount();
+        scn.LSUseCardAction(objective, "Take any card");
+        scn.PassForceUseResponses(); scn.PassAllResponses();
+        assertTrue(selectable(scn, wrongForFront.getBlueprintId(true)));
+        scn.LSChooseCard(take); scn.PassAllResponses();
+        assertTrue(scn.GetLSHand().contains(take));
+        assertEquals(before - 2, scn.GetLSForcePileCount());
+        assertFalse(scn.gameState().isCardRevealedFromPile(wrongForFront));
+        if (scn.DSGetDecision() != null) scn.DSPass();
+        assertFalse(scn.GetLSAvailableActions().stream().anyMatch(x -> x.contains("Take any card")));
     }
 
     @Test public void blownAwayMakesLightLoseEightAndPlacesTheObjectiveOutOfPlay() {
