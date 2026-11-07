@@ -92,7 +92,7 @@ public class Card_1271_042_Tests {
     }
     @Test public void SFoilsDoesNotRewardASimultaneouslyDeployedCapitalStarship() {
         var s=ready();var navy=s.GetLSCard("navy");var capital=s.GetLSCard("capital");var pilot=s.GetLSCard("kilian");
-        s.MoveCardsToLSSideOfTable(navy);s.MoveCardsToLSHand(capital);s.SkipToPhase(Phase.DEPLOY);
+        s.MoveCardsToLSSideOfTable(navy);s.MoveCardsToLSHand(capital);s.MoveCardsToTopOfLSReserveDeck(pilot);s.SkipToPhase(Phase.DEPLOY);
         s.LSUseCardAction(navy,"Reveal starship or pilot from hand");s.LSChooseCard(capital);s.PassAllResponses();
         s.LSChooseCard(pilot);s.PassAllResponses();
         if(s.LSHasCardChoiceAvailable(s.GetLSStartingLocation()))s.LSChooseCard(s.GetLSStartingLocation());
