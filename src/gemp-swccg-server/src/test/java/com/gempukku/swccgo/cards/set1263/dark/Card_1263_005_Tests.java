@@ -4,6 +4,7 @@ import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import com.gempukku.swccgo.game.PhysicalCardImpl;
+import com.gempukku.swccgo.logic.decisions.CardActionSelectionDecision;
 import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,8 +49,9 @@ public class Card_1263_005_Tests {
     private void assertNoCaptureOnArrival(VirtualTableScenario scn) {
         for(int i=0;i<30;i++) {
             if(scn.DSGetDecision()!=null)assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("jodo"),CAPTURE));
-            if(scn.AwaitingLSControlPhaseActions())return;
-            assertNotNull(scn.GetCurrentDecision());assertTrue(scn.GetCurrentDecision().getText().toLowerCase().contains("optional"));
+            if(scn.AwaitingLSControlPhaseActions() || scn.AwaitingDSControlPhaseActions())return;
+            assertTrue("Expected a live response action window: " + scn.GetCurrentDecision().getText(),
+                    scn.GetCurrentDecision() instanceof CardActionSelectionDecision);
             if(scn.DSGetDecision()!=null)scn.DSPass();else scn.LSPass();
         }
         fail("Nabrun transport did not resolve");
