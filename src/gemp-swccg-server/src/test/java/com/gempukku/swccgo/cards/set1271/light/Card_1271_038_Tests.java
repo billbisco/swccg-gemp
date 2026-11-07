@@ -69,6 +69,11 @@ public class Card_1271_038_Tests {
         }
         assertTrue(s.CardsAtLocation(site, patient));
         assertEquals(patient, dressing.getAttachedTo());
+        var q = s.game().getModifiersQuerying();
+        assertTrue("The dressing's host filter must match the revived card", com.gempukku.swccgo.filters.Filters.hasAttached(dressing).accepts(s.game(), patient));
+        assertFalse("Premiere Luke does not protect his forfeit", q.isProhibitedFromHavingForfeitReduced(s.gameState(), patient));
+        assertFalse("Attached dressing must supply an active forfeit reset",
+            q.getModifiersAffectingCard(s.gameState(), com.gempukku.swccgo.logic.modifiers.ModifierType.UNMODIFIABLE_FORFEIT_VALUE, patient).isEmpty());
         assertEquals(0, s.GetForfeit(patient));
         assertFalse(s.GetLSLostPile().contains(patient));
     }
