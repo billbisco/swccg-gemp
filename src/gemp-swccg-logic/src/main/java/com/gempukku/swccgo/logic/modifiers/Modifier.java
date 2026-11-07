@@ -687,6 +687,16 @@ public interface Modifier {
     int getNumDestinyDrawsToPowerOnlyModifier(String playerId, GameState gameState, ModifiersQuerying modifiersQuerying);
     int getNumDestinyDrawsToAttritionOnlyModifier(String playerId, GameState gameState, ModifiersQuerying modifiersQuerying);
 
+    /**
+     * Gets the bonus added to each destiny drawn to power only that comes from this modifier's source (for example
+     * "adds one destiny to power (add 1 for each character present)").
+     * @param playerId the player drawing the destiny
+     * @param gameState the game state
+     * @param modifiersQuerying the modifiers querying
+     * @return the bonus
+     */
+    float getBonusForEachDestinyDrawToPowerOnly(String playerId, GameState gameState, ModifiersQuerying modifiersQuerying);
+
     float getWeaponDestinyModifier(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard weaponUser, PhysicalCard weaponCard, SwccgBuiltInCardBlueprint permanentWeapon, Collection<PhysicalCard> weaponTargets);
     float getTotalWeaponDestinyModifier(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard weaponUser, PhysicalCard weaponCard, SwccgBuiltInCardBlueprint permanentWeapon, Collection<PhysicalCard> weaponTargets);
     float getFireWeaponCostModifier(GameState gameState, ModifiersQuerying modifiersLogic, PhysicalCard physicalCard);
