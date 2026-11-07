@@ -12,6 +12,7 @@ import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.LegacyFilters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.GameUtils;
@@ -60,7 +61,7 @@ public class Card12_158 extends AbstractUsedOrLostInterrupt {
                         protected void performActionResults(Action targetingAction) {
                             // Perform result(s)
                             action.appendEffect(
-                                    new TakeCardIntoHandFromReserveDeckEffect(action, playerId, Filters.and(Filters.unique, Filters.unpiloted, Filters.starfighter, Filters.canBeTargetedBy(self)), true));
+                                    new TakeCardIntoHandFromReserveDeckEffect(action, playerId, Filters.and(uniqueRequirement(game, self), Filters.unpiloted, Filters.starfighter, Filters.canBeTargetedBy(self)), true));
                         }
                     }
             );
@@ -71,7 +72,7 @@ public class Card12_158 extends AbstractUsedOrLostInterrupt {
 
     @Override
     protected List<PlayInterruptAction> getGameTextOptionalAfterActions(final String playerId, final SwccgGame game, final EffectResult effectResult, final PhysicalCard self) {
-        final Filter yourStarfighterInBattle = Filters.and(Filters.your(self), Filters.unique, Filters.starfighter, Filters.participatingInBattle, Filters.hasManeuverDefined);
+        final Filter yourStarfighterInBattle = Filters.and(Filters.your(self), uniqueRequirement(game, self), Filters.starfighter, Filters.participatingInBattle, Filters.hasManeuverDefined);
 
         // Check condition(s)
         if (TriggerConditions.isAboutToDrawBattleDestiny(game, effectResult, playerId)
@@ -110,5 +111,12 @@ public class Card12_158 extends AbstractUsedOrLostInterrupt {
             return Collections.singletonList(action);
         }
         return null;
+    }
+
+    /**
+     * The 'unique (•)' requirement in this card's game text, unless another card says to ignore it.
+     */
+    private static Filter uniqueRequirement(SwccgGame game, PhysicalCard self) {
+        return LegacyFilters.ignoresUniqueInGameText.accepts(game, self) ? Filters.any : Filters.unique;
     }
 }

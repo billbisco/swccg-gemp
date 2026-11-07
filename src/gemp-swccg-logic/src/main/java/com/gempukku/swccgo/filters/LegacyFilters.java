@@ -3,6 +3,7 @@ package com.gempukku.swccgo.filters;
 import com.gempukku.swccgo.common.ModelType;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.state.GameState;
+import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.modifiers.ModifierType;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 
@@ -44,6 +45,23 @@ public class LegacyFilters {
             }
         };
     }
+
+    /**
+     * Filter that accepts cards whose game text is read ignoring 'unique (•)' requirements
+     * (TIE Fighter Construction Facility 1240_35 on Watch Your Back!).
+     */
+    public static final Filter ignoresUniqueInGameText = new Filter() {
+        @Override
+        public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard) {
+            // Checked directly against each active modifier, so it also works while the card is being played from hand.
+            for (Modifier modifier : modifiersQuerying.getModifiers(gameState, ModifierType.IGNORES_UNIQUE_IN_GAME_TEXT)) {
+                if (modifier.affectsCard(gameState, modifiersQuerying, physicalCard)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    };
 
     /** Systems liberated by either a stacked liberation card or an active card modifier. */
     public static final Filter liberatedSystem = Filters.and(Filters.system, Filters.or(Filters.liberated_system,
