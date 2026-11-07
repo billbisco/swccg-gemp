@@ -20,7 +20,7 @@ public class Card_1250_052_Tests {
             put("padme", "1250_52"); put("bail", "1116_1"); put("senate", "12_75");
             put("leia", "1_17"); put("han", "1_11"); put("luke", "1_19"); put("guard", "1_26");
             put("maintenance", "13_9"); put("alien", "7_50"); put("payment", "1_109");
-        }}, new HashMap<>(), 35, 35, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
+        }}, new HashMap<>() {{ put("vader", "1_168"); }}, 35, 35, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
     }
@@ -28,7 +28,7 @@ public class Card_1250_052_Tests {
     @Test
     public void FinalPadmeHasBothAffiliationsAndBothAgendasAtOnce() {
         var s = scenario(); var card = s.GetLSCard("padme"); var bp = card.getBlueprint();
-        assertEquals("Senator Padmé Amidala", bp.getTitle()); assertFalse(bp.hasVirtualSuffix());
+        assertEquals("Senator Padme Amidala", bp.getTitle()); assertFalse(bp.hasVirtualSuffix());
         assertEquals(Uniqueness.UNIQUE, bp.getUniqueness()); assertEquals(ExpansionSet.VIRTUAL_BLOCK_5, bp.getExpansionSet());
         assertEquals("Leader. Senator.", bp.getLore()); assertTrue(bp.hasPersona(Persona.AMIDALA));
         assertEquals(1, bp.getDestiny(), s.epsilon); assertEquals(3, bp.getDeployCost(), s.epsilon);
@@ -117,5 +117,40 @@ public class Card_1250_052_Tests {
         assertFalse(s.GetLSLostPile().contains(han));
         assertEquals(home, han.getAtLocation());
         assertEquals(force - han.getBlueprint().getDeployCost(), s.GetLSForcePileCount(), s.epsilon);
+    }
+
+    @Test
+    public void LostFromSameSiteAsVaderGoesOutOfPlayAndOpponentLosesFour() {
+        var scn = scenario(); scn.StartGame();
+        var site = scn.GetDSStartingLocation(); var padme = scn.GetLSCard("padme");
+        scn.MoveCardsToLocation(site, padme, scn.GetDSCard("vader"));
+        scn.EnsureDSForcePile(1);
+        scn.SkipToPhase(Phase.BATTLE);
+        int dsForceBefore = scn.GetDSLifeForceRemaining();
+        scn.DSInitiateBattle(site);
+        scn.SkipToDamageSegment(false);
+        scn.LSPayBattleDamageFromCardInPlay(padme);
+        scn.PassAllResponses();
+        assertEquals(Zone.OUT_OF_PLAY, padme.getZone());
+        assertFalse(scn.GetLSLostPile().contains(padme));
+        assertEquals(dsForceBefore - 4, scn.GetDSLifeForceRemaining());
+    }
+
+    @Test
+    public void LostAwayFromVaderStaysInLostPileAndOpponentLosesNothing() {
+        var scn = scenario(); scn.StartGame();
+        var site = scn.GetDSStartingLocation(); var padme = scn.GetLSCard("padme");
+        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetDSCard("vader"));
+        scn.MoveCardsToLocation(site, padme, scn.GetDSFiller(1), scn.GetDSFiller(2), scn.GetDSFiller(3),
+                scn.GetDSFiller(4), scn.GetDSFiller(5));
+        scn.EnsureDSForcePile(1);
+        scn.SkipToPhase(Phase.BATTLE);
+        int dsForceBefore = scn.GetDSLifeForceRemaining();
+        scn.DSInitiateBattle(site);
+        scn.SkipToDamageSegment(false);
+        scn.LSPayBattleDamageFromCardInPlay(padme);
+        scn.PassAllResponses();
+        assertEquals(Zone.LOST_PILE, padme.getZone());
+        assertEquals(dsForceBefore, scn.GetDSLifeForceRemaining());
     }
 }
