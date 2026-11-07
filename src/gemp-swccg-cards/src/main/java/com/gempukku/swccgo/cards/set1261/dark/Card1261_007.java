@@ -8,6 +8,7 @@ import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.modifiers.DeployCostModifier;
 import com.gempukku.swccgo.logic.modifiers.DrawsBattleDestinyIfUnableToOtherwiseModifier;
+import com.gempukku.swccgo.logic.modifiers.ForfeitModifier;
 import com.gempukku.swccgo.logic.modifiers.MayNotHaveForfeitValueReducedModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 
@@ -30,9 +31,13 @@ public class Card1261_007 extends AbstractImperial {
         Filter yourTroopers = Filters.and(Filters.your(self), Filters.trooper);
         Filter troopersAtBattleSite = Filters.and(yourTroopers, Filters.participatingInBattle,
                 Filters.presentAt(Filters.and(Filters.site, Filters.battleLocation)));
+        Filter yourAbilityOneTroopers = Filters.and(yourTroopers, Filters.abilityEqualTo(1));
+        Modifier forfeitBonus = new ForfeitModifier(self, yourAbilityOneTroopers, 2);
+        forfeitBonus.setOnlyIfNoOtherBonus(true);
         return List.of(
                 new DeployCostModifier(self, Filters.and(Filters.other(self), Filters.sandtrooper), -1),
-                new MayNotHaveForfeitValueReducedModifier(self, Filters.and(yourTroopers, Filters.abilityEqualTo(1))),
+                new MayNotHaveForfeitValueReducedModifier(self, yourAbilityOneTroopers),
+                forfeitBonus,
                 new DrawsBattleDestinyIfUnableToOtherwiseModifier(self, troopersAtBattleSite,
                         (state, modifiers) -> Filters.countActive(state.getGame(), self, troopersAtBattleSite) >= 2, 1));
     }

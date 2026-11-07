@@ -6,6 +6,7 @@ import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import com.gempukku.swccgo.game.PhysicalCardImpl;
 import com.gempukku.swccgo.logic.modifiers.ForfeitModifier;
+import com.gempukku.swccgo.logic.modifiers.Modifier;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -76,7 +77,8 @@ public class Card_1261_007_Tests {
         scn.MoveCardsToLocation(site, scn.GetDSCard("terrik"), low, high, droid, source);
         scn.game().getModifiersEnvironment().addUntilEndOfTurnModifier(
                 new ForfeitModifier(source, Filters.or(low, high, droid), -1));
-        assertEquals(low.getBlueprint().getForfeit(), scn.GetForfeit(low), scn.epsilon);
+        // The -1 is blocked; Terrik's +2 still applies because a penalty is not a forfeit bonus
+        assertEquals(low.getBlueprint().getForfeit() + 2, scn.GetForfeit(low), scn.epsilon);
         assertEquals(high.getBlueprint().getForfeit() - 1, scn.GetForfeit(high), scn.epsilon);
         assertEquals(droid.getBlueprint().getForfeit() - 1, scn.GetForfeit(droid), scn.epsilon);
     }
@@ -95,6 +97,54 @@ public class Card_1261_007_Tests {
                 scn.MoveCardsToLocation(site, scn.GetDSCard("vader"));
             scn.DSStartBattleAndSkipToWeaponsSegment(site);
             assertEquals(i == 0 ? 0 : 1, scn.GetDSBattleDestinyCount());
+        }
+    }
+
+    @Test
+    public void onlyYourAbilityOneTroopersAreForfeitPlusTwo() {
+        var scn = scenario();
+        var terrik = scn.GetDSCard("terrik");
+        var low = scn.GetDSCard("trooper");
+        var high = scn.GetDSCard("felth");
+        var droid = scn.GetDSCard("droid");
+        scn.StartGame();
+        var site = scn.GetDSStartingLocation();
+        scn.MoveCardsToLocation(site, low, high, droid);
+        assertEquals(low.getBlueprint().getForfeit(), scn.GetForfeit(low), scn.epsilon);
+        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), terrik);
+        assertEquals(low.getBlueprint().getForfeit() + 2, scn.GetForfeit(low), scn.epsilon);
+        assertEquals(high.getBlueprint().getForfeit(), scn.GetForfeit(high), scn.epsilon);
+        assertEquals(droid.getBlueprint().getForfeit(), scn.GetForfeit(droid), scn.epsilon);
+        assertEquals(terrik.getBlueprint().getForfeit(), scn.GetForfeit(terrik), scn.epsilon);
+    }
+
+    @Test
+    public void forfeitBonusDoesNotApplyWhenTrooperHasAnotherForfeitBonus() {
+        var scn = scenario();
+        var low = scn.GetDSCard("trooper");
+        var low2 = scn.GetDSCard("trooper2");
+        var source = scn.GetLSCard("luke");
+        scn.StartGame();
+        var site = scn.GetDSStartingLocation();
+        scn.MoveCardsToLocation(site, scn.GetDSCard("terrik"), low, low2, source);
+        scn.game().getModifiersEnvironment().addUntilEndOfTurnModifier(new ForfeitModifier(source, low, 1));
+        assertEquals("other +1 bonus replaces Terrik's +2", low.getBlueprint().getForfeit() + 1, scn.GetForfeit(low), scn.epsilon);
+        assertEquals("trooper without another bonus", low2.getBlueprint().getForfeit() + 2, scn.GetForfeit(low2), scn.epsilon);
+    }
+
+    @Test
+    public void twoOnlyIfNoOtherForfeitBonusesApplyOnlyTheLargest() {
+        for (int otherAmount : List.of(1, 3)) {
+            var scn = scenario();
+            var low = scn.GetDSCard("trooper");
+            var source = scn.GetLSCard("luke");
+            scn.StartGame();
+            scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("terrik"), low, source);
+            Modifier other = new ForfeitModifier(source, low, otherAmount);
+            other.setOnlyIfNoOtherBonus(true);
+            scn.game().getModifiersEnvironment().addUntilEndOfTurnModifier(other);
+            assertEquals("other conditional +" + otherAmount, low.getBlueprint().getForfeit() + Math.max(2, otherAmount),
+                    scn.GetForfeit(low), scn.epsilon);
         }
     }
 
