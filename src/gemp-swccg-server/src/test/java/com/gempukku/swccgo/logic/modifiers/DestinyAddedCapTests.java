@@ -48,14 +48,23 @@ public class DestinyAddedCapTests {
         return new AddsDestinyToPowerModifier(scn.GetLSCard("luke"), count, player, true);
     }
 
-    /** Passes through the battle, drawing (or not) battle destiny, until the damage segment is reached. */
-    public static void advanceToDamageSegment(VirtualTableScenario scn, boolean drawBattleDestiny) {
+    /**
+     * Passes through the battle, drawing (or not) battle destiny, until the damage segment is reached or the battle
+     * ends after its power segment (for example in a tie).
+     * @return the battle's state, which keeps the destiny added to power and attrition after the battle ends
+     */
+    public static BattleState advanceToDamageSegment(VirtualTableScenario scn, boolean drawBattleDestiny) {
+        BattleState last = null;
         for (int i = 0; i < 120; i++) {
             BattleState battleState = scn.gameState().getBattleState();
-            if (battleState == null)
-                fail("Battle ended before the damage segment: " + scn.gameState().getLastMessages());
+            if (battleState == null) {
+                if (last != null && last.isReachedPowerSegment())
+                    return last;
+                fail("Battle ended before the power segment: " + scn.gameState().getLastMessages());
+            }
+            last = battleState;
             if (battleState.isReachedDamageSegment())
-                return;
+                return battleState;
             String player = scn.GetDecidingPlayer();
             if (scn.DecisionAvailable(player, "battle destiny?")) {
                 if (drawBattleDestiny) scn.PlayerChooseYes(player); else scn.PlayerChooseNo(player);
@@ -64,21 +73,28 @@ public class DestinyAddedCapTests {
             }
         }
         fail("Did not reach the damage segment");
+        return null;
+    }
+
+    private BattleState state;
+
+    private void advance(VirtualTableScenario scn, boolean drawBattleDestiny) {
+        state = advanceToDamageSegment(scn, drawBattleDestiny);
     }
 
     private int drawnToPower(VirtualTableScenario scn, String player) {
-        return scn.gameState().getBattleState().getNumDestinyToTotalPowerDrawn(player);
+        return state.getNumDestinyToTotalPowerDrawn(player);
     }
 
     private float totalToPower(VirtualTableScenario scn, String player) {
-        return scn.gameState().getBattleState().getTotalDestinyToPowerOnly(player);
+        return state.getTotalDestinyToPowerOnly(player);
     }
 
     @Test public void withoutCapEverySourceDrawsItsDestinyToPower() {
         var scn = battle();
         add(scn, powerSources(scn, scn.LS, 3));
         scn.PrepareLSDestiny(1); scn.PrepareLSDestiny(2); scn.PrepareLSDestiny(4);
-        advanceToDamageSegment(scn, false);
+        advance(scn, false);
         assertEquals(3, drawnToPower(scn, scn.LS));
         assertEquals(7, totalToPower(scn, scn.LS), scn.epsilon);
     }
@@ -89,7 +105,7 @@ public class DestinyAddedCapTests {
         add(scn, new MayNotAddMoreThanDestinyToPowerModifier(scn.GetLSCard("luke"), null, 2, null));
         assertEquals(Integer.valueOf(2), scn.game().getModifiersQuerying().getMaxDestinyAddedToPower(scn.gameState(), scn.LS));
         scn.PrepareLSDestiny(1); scn.PrepareLSDestiny(2); scn.PrepareLSDestiny(4);
-        advanceToDamageSegment(scn, false);
+        advance(scn, false);
         assertEquals(2, drawnToPower(scn, scn.LS));
         assertEquals(6, totalToPower(scn, scn.LS), scn.epsilon);
     }
@@ -98,7 +114,7 @@ public class DestinyAddedCapTests {
         var scn = battle();
         add(scn, powerSources(scn, scn.LS, 2));
         add(scn, new MayNotAddMoreThanDestinyToPowerModifier(scn.GetLSCard("luke"), null, 2, null));
-        advanceToDamageSegment(scn, false);
+        advance(scn, false);
         assertEquals(2, drawnToPower(scn, scn.LS));
     }
 
@@ -108,7 +124,7 @@ public class DestinyAddedCapTests {
         add(scn, powerSources(scn, scn.DS, 3));
         add(scn, new MayNotAddMoreThanDestinyToPowerModifier(scn.GetLSCard("luke"), null, 1, scn.LS));
         assertNull(scn.game().getModifiersQuerying().getMaxDestinyAddedToPower(scn.gameState(), scn.DS));
-        advanceToDamageSegment(scn, false);
+        advance(scn, false);
         assertEquals(1, drawnToPower(scn, scn.LS));
         assertEquals(3, drawnToPower(scn, scn.DS));
     }
@@ -118,7 +134,7 @@ public class DestinyAddedCapTests {
         Condition never = (gameState, modifiersQuerying) -> false;
         add(scn, powerSources(scn, scn.LS, 3));
         add(scn, new MayNotAddMoreThanDestinyToPowerModifier(scn.GetLSCard("luke"), never, 1, null));
-        advanceToDamageSegment(scn, false);
+        advance(scn, false);
         assertEquals(3, drawnToPower(scn, scn.LS));
     }
 
@@ -128,7 +144,7 @@ public class DestinyAddedCapTests {
         add(scn, new MayNotAddMoreThanDestinyToPowerModifier(scn.GetLSCard("luke"), null, 2, null));
         add(scn, new MayNotAddMoreThanDestinyToPowerModifier(scn.GetLSCard("han"), null, 1, scn.LS));
         scn.PrepareLSDestiny(4);
-        advanceToDamageSegment(scn, false);
+        advance(scn, false);
         assertEquals(1, drawnToPower(scn, scn.LS));
     }
 
@@ -154,22 +170,20 @@ public class DestinyAddedCapTests {
         assertEquals(before, querying.getNumBattleDestinyDraws(scn.gameState(), scn.LS, false, false));
         assertEquals(Integer.MAX_VALUE, querying.getNumBattleDestinyDraws(scn.gameState(), scn.LS, true, false));
         scn.PrepareLSDestiny(3); scn.PrepareLSDestiny(3);
-        advanceToDamageSegment(scn, true);
-        assertEquals(2, scn.gameState().getBattleState().getNumBattleDestinyDrawn(scn.LS));
+        advance(scn, true);
+        assertEquals(2, state.getNumBattleDestinyDrawn(scn.LS));
     }
 
     @Test public void attritionCapLimitsAddedDestinyToAttrition() {
         var uncapped = battle();
         add(uncapped, new AddsDestinyToAttritionModifier(uncapped.GetLSCard("luke"), 2, uncapped.LS, true));
-        advanceToDamageSegment(uncapped, true);
-        assertEquals(2, uncapped.gameState().getBattleState().getNumDestinyToAttritionDrawn(uncapped.LS));
+        assertEquals(2, advanceToDamageSegment(uncapped, true).getNumDestinyToAttritionDrawn(uncapped.LS));
 
         var capped = battle();
         add(capped, new AddsDestinyToAttritionModifier(capped.GetLSCard("luke"), 2, capped.LS, true));
         add(capped, new MayNotAddMoreThanDestinyToAttritionModifier(capped.GetLSCard("luke"), null, 1, null));
         assertFalse(GameConditions.canAddDestinyDrawsToAttrition(capped.game(), capped.LS));
-        advanceToDamageSegment(capped, true);
-        assertEquals(1, capped.gameState().getBattleState().getNumDestinyToAttritionDrawn(capped.LS));
+        assertEquals(1, advanceToDamageSegment(capped, true).getNumDestinyToAttritionDrawn(capped.LS));
     }
 
     @Test public void attritionCapBlocksAddingWhenReached() {
@@ -184,7 +198,7 @@ public class DestinyAddedCapTests {
         var scn = battle();
         add(scn, new AddsDestinyToPowerModifier(scn.GetLSCard("luke"), 1, scn.LS, true).setBonusForEachDestinyDraw(new ConstantEvaluator(3)));
         scn.PrepareLSDestiny(2);
-        advanceToDamageSegment(scn, false);
+        advance(scn, false);
         assertEquals(1, drawnToPower(scn, scn.LS));
         assertEquals(5, totalToPower(scn, scn.LS), scn.epsilon);
     }
@@ -195,7 +209,7 @@ public class DestinyAddedCapTests {
         add(scn, new AddsDestinyToPowerModifier(scn.GetLSCard("han"), 1, scn.LS, true).setBonusForEachDestinyDraw(new ConstantEvaluator(3)));
         add(scn, new MayNotAddMoreThanDestinyToPowerModifier(scn.GetLSCard("luke"), null, 1, null));
         scn.PrepareLSDestiny(2);
-        advanceToDamageSegment(scn, false);
+        advance(scn, false);
         assertEquals(1, drawnToPower(scn, scn.LS));
         assertEquals(2, totalToPower(scn, scn.LS), scn.epsilon);
     }
