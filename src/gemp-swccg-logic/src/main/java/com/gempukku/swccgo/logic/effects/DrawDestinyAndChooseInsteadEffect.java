@@ -13,6 +13,7 @@ public class DrawDestinyAndChooseInsteadEffect extends AbstractSuccessfulEffect 
     private int _drawX;
     private int _chooseY;
     private boolean _mayTakeOtherIntoHandOrReturnToTopOfReserve;
+    private boolean _mayTakeOtherIntoHand;
 
     /**
      * Creates an effect that causes the current destiny draw to instead draw X and choose Y.
@@ -39,6 +40,15 @@ public class DrawDestinyAndChooseInsteadEffect extends AbstractSuccessfulEffect 
         _mayTakeOtherIntoHandOrReturnToTopOfReserve = mayTakeOtherIntoHandOrReturnToTopOfReserve;
     }
 
+    /**
+     * Makes each unchosen destiny optionally able to be taken into hand ("may take other into hand").
+     * @return this effect
+     */
+    public DrawDestinyAndChooseInsteadEffect mayTakeOtherIntoHand() {
+        _mayTakeOtherIntoHand = true;
+        return this;
+    }
+
     @Override
     protected void doPlayEffect(SwccgGame game) {
         GameState gameState = game.getGameState();
@@ -52,6 +62,9 @@ public class DrawDestinyAndChooseInsteadEffect extends AbstractSuccessfulEffect 
                 drawDestinyEffect.setDrawXAndChooseY(_drawX, _chooseY);
                 if (_mayTakeOtherIntoHandOrReturnToTopOfReserve) {
                     drawDestinyEffect.setMayTakeOtherIntoHandOrReturnToTopOfReserve(true);
+                }
+                if (_mayTakeOtherIntoHand) {
+                    drawDestinyEffect.setMayTakeOtherIntoHand(true);
                 }
             }
         }
