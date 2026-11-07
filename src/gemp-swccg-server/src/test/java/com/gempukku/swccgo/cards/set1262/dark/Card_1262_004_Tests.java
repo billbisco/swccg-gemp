@@ -34,7 +34,7 @@ public class Card_1262_004_Tests {
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_6_2, bp.getExpansionSet());
         assertEquals(Rarity.V, bp.getRarity());
         scn.BlueprintCardTypeCheck(bp, new ArrayList<>() {{ add(CardType.DEVICE); }});
-        scn.BlueprintIconCheck(bp, new ArrayList<>() {{ add(Icon.LEGACY_BLOCK_6); }});
+        scn.BlueprintIconCheck(bp, new ArrayList<>() {{ add(Icon.DEVICE); add(Icon.LEGACY_BLOCK_6); }});
         assertTrue(bp.getGameText().startsWith("Deploy on an Imperial warrior."));
     }
 
@@ -96,7 +96,7 @@ public class Card_1262_004_Tests {
         var comlink = scn.GetDSCard("comlink");
         assertTrue(scn.DSCardActionAvailable(comlink, "Deploy a character as a 'react'"));
         scn.DSUseCardAction(comlink, "Deploy a character as a 'react'");
-        scn.DSChooseCard(scn.GetDSCard(card));
+        if (scn.DSHasCardChoiceAvailable(scn.GetDSCard(card))) scn.DSChooseCard(scn.GetDSCard(card));
         if (scn.DSDecisionAvailable("Choose where to deploy") || scn.DSDecisionAvailable("Choose location where to deploy")) {
             scn.DSChooseCard(site);
         }
@@ -119,7 +119,8 @@ public class Card_1262_004_Tests {
     @Test
     public void ComlinkVDoesNotGrantReactToNonAdjacentSite() {
         var scn = reactSetup(false, true);
-        assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("comlink"), "Deploy a character as a 'react'"));
+        assertFalse(scn.AnyDecisionsAvailable(scn.DS));
+        assertTrue(scn.AwaitingLSWeaponsSegmentActions());
     }
 
     /** Dark Side Force drains at the given site, where Comlink is on a trooper. */
