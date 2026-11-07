@@ -23,6 +23,8 @@ import com.gempukku.swccgo.logic.modifiers.IgnoresLocationDeploymentRestrictions
 import com.gempukku.swccgo.logic.modifiers.ImmuneToAttritionLessThanModifier;
 import com.gempukku.swccgo.logic.modifiers.MayNotForceDrainAtLocationModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
+import com.gempukku.swccgo.logic.modifiers.ModifyGameTextType;
+import com.gempukku.swccgo.logic.modifiers.ModifyGameTextModifier;
 import com.gempukku.swccgo.logic.timing.EffectResult;
 
 import java.util.List;
@@ -42,7 +44,9 @@ public class Card1250_082_BACK extends AbstractObjective {
         return List.of(new ImmuneToAttritionLessThanModifier(self, Filters.Jedi, 5),
                 new IgnoresLocationDeploymentRestrictionsInGameTextModifier(self, Filters.Jedi),
                 new ForceDrainBonusesMayNotBeCanceledModifier(self, Filters.and(Filters.your(self), Filters.lightsaber)),
-                new MayNotForceDrainAtLocationModifier(self, Filters.Jedi_Council_Chamber, self.getOwner()));
+                new MayNotForceDrainAtLocationModifier(self, Filters.Jedi_Council_Chamber, self.getOwner()),
+                new ModifyGameTextModifier(self, Filters.Jedi_Test_2,
+                        ModifyGameTextType.JEDI_TEST_2__MAY_DEPLOY_ON_JEDI_AS_IF_COMPLETED_APPLIES_ONLY_AT_THAT_SITE));
     }
 
     @Override

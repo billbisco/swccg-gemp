@@ -39,7 +39,7 @@ public class Card_1250_082_Tests {
             put("obi", "1_21"); put("saber", "1_157"); put("bunker", "8_70");
             put("warroom", "1_139"); put("dock", "1_136");
         }}, new HashMap<>() {{
-            put("trooper", "1_194"); put("vader", "1_168");
+            put("trooper", "1_194"); put("vader", "1_168"); put("djas", "1_171"); put("djas2", "1_171");
         }}, 40, 40, councilStart(chamberId), StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -350,5 +350,71 @@ public class Card_1250_082_Tests {
             s.PlayerPass(s.GetDecidingPlayer());
         }
         assertFalse(retrieveOffered(s)); assertEquals(2, s.GetLSLostPileCount());
+    }
+
+    /** Flips to Duel Of The Fates (Yoda, Depa and Mace at the Chamber) with Jedi Test #2 in hand. */
+    private VirtualTableScenario duelSideWithJediTestInHand() {
+        var s = start(); stageFlip(s, true); var test = s.GetLSCard("test");
+        s.MoveCardsToHand(test); s.MoveLocationToTable(s.GetLSCard("plains"));
+        s.SkipToLSTurn(Phase.DEPLOY); fund(s, 10);
+        deployAt(s, s.GetLSCard("yoda"), s.GetLSCard("chamber"));
+        assertTrue(s.GetLSCard("objective").isFlipped());
+        waitForLightDeploy(s);
+        return s;
+    }
+
+    @Test
+    public void FrontSideJediTestTwoMayNotDeployOnAJedi() {
+        var s = start(); stageFlip(s, true); var test = s.GetLSCard("test");
+        s.MoveCardsToHand(test); s.SkipToLSTurn(Phase.DEPLOY); fund(s, 5); waitForLightDeploy(s);
+        assertFalse(s.GetLSCard("objective").isFlipped());
+        assertFalse(s.LSDeployAvailable(test));
+    }
+
+    @Test
+    public void DuelSideJediTestTwoActuallyDeploysOnAJediAsIfCompleted() {
+        var s = duelSideWithJediTestInHand(); var test = s.GetLSCard("test"); var mace = s.GetLSCard("mace");
+        assertTrue(s.LSDeployAvailable(test));
+        s.LSDeployCard(test);
+        assertTrue(s.LSHasCardChoiceAvailable(mace));
+        assertFalse(s.LSHasCardChoiceAvailable(s.GetLSCard("chamber")));
+        s.LSChooseCard(mace);
+        // The Jedi is then targeted as the Jedi Test's apprentice (no mentor)
+        assertTrue(s.LSDecisionAvailable("Choose Jedi"));
+        assertTrue(s.LSHasCardChoiceAvailable(mace));
+        assertFalse(s.LSHasCardChoiceAvailable(s.GetLSCard("depa")));
+        s.LSChooseCard(mace);
+        s.PassAllResponses();
+        assertEquals(mace, test.getAttachedTo());
+        assertEquals(JediTestStatus.COMPLETED, test.getJediTestStatus());
+        assertTrue(Filters.and(Filters.completed_Jedi_Test, Filters.Jedi_Test_2).accepts(s.game(), test));
+        assertTrue(Filters.apprenticeTargetedByJediTest(test).accepts(s.game(), mace));
+        assertFalse(test.isSuspended());
+    }
+
+    private int darkBattleDestiniesAfterJediTestOnMace(boolean battleAtMacesSite) {
+        var s = duelSideWithJediTestInHand(); var test = s.GetLSCard("test"); var mace = s.GetLSCard("mace");
+        var chamber = s.GetLSCard("chamber"); var plains = s.GetLSCard("plains");
+        s.LSDeployCard(test); s.LSChooseCard(mace); s.LSChooseCard(mace); s.PassAllResponses();
+        assertEquals(JediTestStatus.COMPLETED, test.getJediTestStatus());
+        var site = battleAtMacesSite ? chamber : plains;
+        s.MoveCardsToLocation(site, s.GetDSCard("djas"));
+        if (!battleAtMacesSite) s.MoveCardsToLocation(plains, s.GetLSCard("plo"));
+        fund(s, 3); s.SkipToPhase(Phase.BATTLE);
+        s.LSInitiateBattle(site); s.PassAllResponses();
+        assertTrue(s.IsBattleStarted());
+        return s.GetDSBattleDestinyCount();
+    }
+
+    @Test
+    public void JediTestTwoDeployedOnAJediRequiresAbilitySixOnlyAtThatSite() {
+        // Djas Puhr has ability 4: he needs total ability 6 to draw battle destiny at Mace's site...
+        assertEquals(0, darkBattleDestiniesAfterJediTestOnMace(true));
+    }
+
+    @Test
+    public void JediTestTwoDeployedOnAJediDoesNotApplyAtOtherSites() {
+        // ...but draws normally at any other site
+        assertEquals(1, darkBattleDestiniesAfterJediTestOnMace(false));
     }
 }
