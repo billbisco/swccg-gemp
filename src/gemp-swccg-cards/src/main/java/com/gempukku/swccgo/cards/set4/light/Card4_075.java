@@ -1,6 +1,14 @@
 package com.gempukku.swccgo.cards.set4.light;
 
 import com.gempukku.swccgo.cards.AbstractJediTest;
+import com.gempukku.swccgo.common.JediTestStatus;
+import com.gempukku.swccgo.common.TargetId;
+import com.gempukku.swccgo.game.PlayCardOption;
+import com.gempukku.swccgo.game.state.WhileInPlayData;
+import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
+import com.gempukku.swccgo.logic.effects.TargetCardOnTableEffect;
+import com.gempukku.swccgo.logic.timing.Action;
+import com.gempukku.swccgo.logic.timing.TargetingEffect;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.conditions.JediTestCompletedCondition;
 import com.gempukku.swccgo.common.DestinyType;
@@ -26,6 +34,7 @@ import com.gempukku.swccgo.logic.TriggerConditions;
 import com.gempukku.swccgo.logic.actions.OptionalGameTextTriggerAction;
 import com.gempukku.swccgo.logic.actions.OptionalRuleTriggerAction;
 import com.gempukku.swccgo.logic.actions.TriggerAction;
+import com.gempukku.swccgo.logic.conditions.AndCondition;
 import com.gempukku.swccgo.logic.conditions.Condition;
 import com.gempukku.swccgo.logic.conditions.NotCondition;
 import com.gempukku.swccgo.logic.effects.AttachCardFromTableEffect;
@@ -65,7 +74,67 @@ public class Card4_075 extends AbstractJediTest {
 
     @Override
     protected Filter getGameTextValidDeployTargetFilter(SwccgGame game, PhysicalCard self, PlayCardOptionId playCardOptionId, boolean asReact) {
-        return Filters.and(Filters.unoccupied, Filters.Dagobah_site);
+        Filter filter = Filters.and(Filters.unoccupied, Filters.Dagobah_site);
+        if (GameConditions.hasGameTextModification(game, self, ModifyGameTextType.JEDI_TEST_2__MAY_DEPLOY_ON_JEDI_AS_IF_COMPLETED_APPLIES_ONLY_AT_THAT_SITE)) {
+            filter = Filters.or(filter, Filters.and(Filters.your(self), Filters.Jedi));
+        }
+        return filter;
+    }
+
+    /**
+     * Determines if this Jedi Test is being deployed (or was deployed) directly on a Jedi 'as if completed'.
+     */
+    private static boolean isDeployOnJediTarget(SwccgGame game, PhysicalCard deployTarget) {
+        return deployTarget != null && Filters.character.accepts(game, deployTarget);
+    }
+
+    @Override
+    public Filter getValidJediTestMentorTargetFilter(String playerId, SwccgGame game, PhysicalCard self, PhysicalCard deployTarget) {
+        // Deployed on a Jedi 'as if completed': there is no mentor, and that Jedi is the apprentice
+        if (isDeployOnJediTarget(game, deployTarget)) {
+            return Filters.sameCardId(deployTarget);
+        }
+        return super.getValidJediTestMentorTargetFilter(playerId, game, self, deployTarget);
+    }
+
+    @Override
+    public List<TargetingEffect> getTargetCardsWhenDeployedEffects(final Action action, String playerId, final SwccgGame game, final PhysicalCard self, final PhysicalCard target, PlayCardOption playCardOption) {
+        if (!isDeployOnJediTarget(game, target)) {
+            return super.getTargetCardsWhenDeployedEffects(action, playerId, game, self, target, playCardOption);
+        }
+        final Filter jediFilter = Filters.sameCardId(target);
+        TargetingEffect targetingEffect = new TargetCardOnTableEffect(action, playerId, "Choose Jedi (apprentice)", jediFilter) {
+            @Override
+            protected void cardTargeted(int targetGroupId, PhysicalCard jedi) {
+                action.addAnimationGroup(jedi);
+                self.setTargetedCard(TargetId.JEDI_TEST_APPRENTICE, targetGroupId, jedi, jediFilter);
+            }
+        };
+        return Collections.singletonList(targetingEffect);
+    }
+
+    @Override
+    protected List<RequiredGameTextTriggerAction> getGameTextRequiredAfterTriggers(SwccgGame game, EffectResult effectResult, final PhysicalCard self, int gameTextSourceCardId) {
+        // Deployed directly on a Jedi: treat as completed (applies only at that Jedi's site)
+        if (TriggerConditions.justDeployed(game, effectResult, self)
+                && self.getJediTestStatus() != JediTestStatus.COMPLETED
+                && isDeployOnJediTarget(game, self.getAttachedTo())) {
+            final PhysicalCard jedi = self.getAttachedTo();
+            RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
+            action.setText("Treat as completed");
+            action.setActionMsg(GameUtils.getCardLink(self) + " is deployed on " + GameUtils.getCardLink(jedi) + " as if completed");
+            action.appendEffect(
+                    new PassthruEffect(action) {
+                        @Override
+                        protected void doPlayEffect(SwccgGame game) {
+                            self.setJediTestStatus(JediTestStatus.COMPLETED);
+                            self.setWhileInPlayData(new WhileInPlayData(true));
+                            game.getModifiersQuerying().completedJediTest(self, jedi);
+                        }
+                    });
+            return Collections.singletonList(action);
+        }
+        return null;
     }
 
     @Override
@@ -93,7 +162,17 @@ public class Card4_075 extends AbstractJediTest {
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new MayOnlyMoveUsingLandspeedModifier(self, Filters.apprenticeTargetedByJediTest(self), new NotCondition(jediTestCompleted)));
         modifiers.add(new PowerModifier(self, Filters.apprenticeTargetedByJediTest(self), jediTestCompleted, 1));
-        modifiers.add(new AbilityRequiredForBattleDestinyModifier(self, jediTestCompleted, 6, opponent));
+        final int permCardId = self.getPermanentCardId();
+        Condition deployedOnJedi = new Condition() {
+            @Override
+            public boolean isFulfilled(GameState gameState, ModifiersQuerying modifiersQuerying) {
+                PhysicalCard card = gameState.findCardByPermanentId(permCardId);
+                return card != null && card.getWhileInPlayData() != null && card.getWhileInPlayData().getBooleanValue();
+            }
+        };
+        modifiers.add(new AbilityRequiredForBattleDestinyModifier(self, Filters.any, new AndCondition(jediTestCompleted, new NotCondition(deployedOnJedi)), 6, opponent));
+        // Deployed on a Jedi 'as if completed': applies only at that site
+        modifiers.add(new AbilityRequiredForBattleDestinyModifier(self, Filters.sameSite(self), new AndCondition(jediTestCompleted, deployedOnJedi), 6, opponent));
         return modifiers;
     }
 

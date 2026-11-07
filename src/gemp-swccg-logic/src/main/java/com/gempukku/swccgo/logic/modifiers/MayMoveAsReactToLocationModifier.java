@@ -52,7 +52,20 @@ public class MayMoveAsReactToLocationModifier extends AbstractModifier {
      * @param changeInCost change in amount of Force (can be positive or negative) required
      */
     public MayMoveAsReactToLocationModifier(PhysicalCard source, Condition condition, Filterable locationFilter, float changeInCost) {
-        super(source, null, source, condition, ModifierType.MAY_MOVE_AS_REACT_TO_LOCATION, true);
+        this(source, source, condition, locationFilter, changeInCost);
+    }
+
+    /**
+     * Creates a modifier which allows cards accepted by the affect filter to move as a 'react' to locations accepted
+     * by the location filter.
+     * @param source the source of the modifier
+     * @param affectFilter the filter for cards that may move as a 'react'
+     * @param condition the condition that must be fulfilled for the modifier to be in effect
+     * @param locationFilter the location filter
+     * @param changeInCost change in amount of Force (can be positive or negative) required
+     */
+    public MayMoveAsReactToLocationModifier(PhysicalCard source, Filterable affectFilter, Condition condition, Filterable locationFilter, float changeInCost) {
+        super(source, null, affectFilter, condition, ModifierType.MAY_MOVE_AS_REACT_TO_LOCATION, true);
         _locationFilter = Filters.and(locationFilter, Filters.location, Filters.in_play);
         _changeInCost = changeInCost;
     }

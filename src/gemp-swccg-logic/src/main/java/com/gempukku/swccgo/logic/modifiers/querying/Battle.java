@@ -76,6 +76,23 @@ public interface Battle extends BaseQuery, Ability, Attributes, CardTraits, Flag
     }
 
     /**
+     * Determines if the specified card may not be excluded from battle by the specified player.
+     * @param gameState the game state
+     * @param card the card
+     * @param playerId the player attempting to exclude the card
+     * @return true if card may not be excluded from battle by that player, otherwise false
+     */
+    default boolean mayNotBeExcludedFromBattleByPlayer(GameState gameState, PhysicalCard card, String playerId) {
+        if (playerId == null)
+            return false;
+        for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.MAY_NOT_BE_EXCLUDED_FROM_BATTLE_BY_PLAYER, card)) {
+            if (modifier.isForPlayer(playerId))
+                return true;
+        }
+        return false;
+    }
+
+    /**
      * Determines if the specified card is prohibited from participating in battle.
      * @param gameState the game state
      * @param card the card

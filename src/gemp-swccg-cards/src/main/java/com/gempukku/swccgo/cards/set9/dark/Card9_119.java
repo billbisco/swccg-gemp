@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.set9.dark;
 
+import com.gempukku.swccgo.cards.set1261.dark.Card1261_038;
 import com.gempukku.swccgo.cards.AbstractImperial;
 import com.gempukku.swccgo.cards.conditions.ArmedWithCondition;
 import com.gempukku.swccgo.cards.conditions.DefendingBattleCondition;
@@ -40,7 +41,7 @@ public class Card9_119 extends AbstractImperial {
 
     @Override
     protected Filter getGameTextValidDeployTargetFilter(final SwccgGame game, final PhysicalCard self, PlayCardOptionId playCardOptionId, boolean asReact) {
-        return Filters.or(Filters.Deploys_on_Coruscant, Filters.locationAndCardsAtLocation(Filters.sameOrRelatedSiteAs(self, Filters.Emperor)));
+        return Filters.or(Filters.Deploys_on_Coruscant, Filters.locationAndCardsAtLocation(Filters.sameOrRelatedSiteAs(self, Card1261_038.emperorOnRoyalGuard(self))));
     }
 
     @Override
@@ -48,8 +49,8 @@ public class Card9_119 extends AbstractImperial {
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new AddsBattleDestinyModifier(self, new AndCondition(new ArmedWithCondition(self, Filters.Force_pike),
                 new DefendingBattleCondition(self)), 1));
-        modifiers.add(new MayNotBeTargetedByWeaponsModifier(self, Filters.Emperor, new OnTableCondition(self, Filters.and(Filters.Royal_Guard,
-                Filters.not(Filters.hit), Filters.presentWith(self, Filters.Emperor)))));
+        modifiers.add(new MayNotBeTargetedByWeaponsModifier(self, Card1261_038.emperorOnRoyalGuard(self), new OnTableCondition(self, Filters.and(Filters.Royal_Guard,
+                Filters.not(Filters.hit), Filters.presentWith(self, Card1261_038.emperorOnRoyalGuard(self))))));
         return modifiers;
     }
 }
