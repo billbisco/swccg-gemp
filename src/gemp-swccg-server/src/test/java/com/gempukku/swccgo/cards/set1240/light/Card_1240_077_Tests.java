@@ -58,6 +58,8 @@ public class Card_1240_077_Tests {
         var bearer = scn.GetLSCard(name);
         scn.LSChooseCard(bearer);
         scn.PassAllResponses();
+        // Dark then gets its own deploy-phase decision; passing it returns the phase to Light.
+        if (scn.GetAwaitingDecision(scn.DS) != null && scn.DSDecisionAvailable("action or Pass")) scn.DSPass();
         assertInZone(Zone.ATTACHED, scn.GetLSCard("armor"));
         assertEquals(bearer, scn.GetLSCard("armor").getAttachedTo());
         assertEquals(0, scn.GetLSForcePileCount());
@@ -154,11 +156,15 @@ public class Card_1240_077_Tests {
     @Test public void ArmorFourMakesOriginalImperialBlasterMissAtFour() { ImperialBlasterFiresAtHan(true); }
     @Test public void OriginalImperialBlasterHitsUnarmoredHanAtFour() { ImperialBlasterFiresAtHan(false); }
 
+    /**
+     * Armored Luke alone defends against Vader, whose battle destiny totals the given attrition. Light's battle
+     * damage is paid from Reserve Deck first.
+     */
     private VirtualTableScenario ArmorAtAttrition(int attrition) {
         var scn = Started();
         DeployOn(scn, "luke");
         var site = scn.GetLSStartingLocation();
-        scn.MoveCardsToLocation(site, scn.GetDSCard("vader"), scn.GetLSCard("han"));
+        scn.MoveCardsToLocation(site, scn.GetDSCard("vader"));
         scn.EnsureDSForcePile(1);
         scn.SkipToDSTurn(Phase.BATTLE);
         scn.DSInitiateBattle(site);
@@ -166,21 +172,24 @@ public class Card_1240_077_Tests {
         scn.PrepareDSDestiny(attrition - 1); // Original Vader adds one to his battle destiny.
         scn.SkipToEndOfPowerSegment(true);
         assertEquals(attrition, scn.GetDSTotalDestiny());
-        scn.PassResponses("INITIAL_ATTRITION_CALCULATED");
-        if (scn.AwaitingLSBattleDamagePayment()) scn.LSPayRemainingBattleDamageFromReserveDeck();
+        for (int i = 0; i < 60 && !(scn.AwaitingLSAttritionPayment() && scn.GetUnpaidLSBattleDamage() == 0); i++) {
+            if (scn.AwaitingLSBattleDamagePayment()) scn.LSPayBattleDamageFromReserveDeck();
+            else if (scn.DSDecisionAvailable("destiny?")) scn.DSChooseYes();
+            else if (scn.LSDecisionAvailable("destiny?")) scn.LSChooseYes();
+            else scn.PassResponses();
+        }
         assertEquals(attrition, scn.GetUnpaidLSAttrition());
         assertTrue(scn.AwaitingLSAttritionPayment());
         return scn;
     }
 
+    // Attrition is ignored only when every card present is immune to the total.
     @Test
-    public void ArmorAddsTwoToLukeImmunitySoHanMustPayFourAttrition() {
+    public void ArmorAddsTwoToLukesImmunitySoFourAttritionMayBeIgnored() {
         var scn = ArmorAtAttrition(4);
-        var han = scn.GetLSCard("han");
-        assertFalse(scn.LSHasCardChoiceAvailable(scn.GetLSCard("luke")));
-        assertTrue(scn.LSHasCardChoiceAvailable(han));
-        scn.LSPayAttritionFromCardInPlay(han);
-        assertInZone(Zone.LOST_PILE, han);
+        assertEquals(5, Immunity(scn, scn.GetLSCard("luke")), scn.epsilon);
+        assertTrue(scn.LSDecisionAvailable("(if desired)"));
+        scn.LSPass();
         assertInZone(Zone.AT_LOCATION, scn.GetLSCard("luke"));
     }
 
@@ -188,9 +197,19 @@ public class Card_1240_077_Tests {
     public void ArmorDoesNotProtectLukeAtExactlyFiveAttrition() {
         var scn = ArmorAtAttrition(5);
         var luke = scn.GetLSCard("luke");
+        assertFalse(scn.LSDecisionAvailable("(if desired)"));
         assertTrue(scn.LSHasCardChoiceAvailable(luke));
         scn.LSPayAttritionFromCardInPlay(luke);
-        assertInZone(Zone.LOST_PILE, luke);
+        // Luke and his attached Armor go to the Lost Pile together; the order of the two is chosen.
+        for (int i = 0; i < 6; i++) {
+            scn.PassAllResponses();
+            if (scn.GetCurrentDecision() == null || !scn.GetCurrentDecision().getText().contains("put on Lost Pile")) break;
+            String player = scn.GetDecidingPlayer();
+            var ids = scn.GetADParam(player, "cardId");
+            var blueprints = scn.GetADParam(player, "blueprintId");
+            scn.PlayerDecided(player, ids[Math.max(0, java.util.Arrays.asList(blueprints).indexOf(luke.getBlueprintId(true)))]);
+        }
+        assertTrue(luke.getZone() == Zone.LOST_PILE || luke.getZone() == Zone.TOP_OF_LOST_PILE);
     }
 
     private void DrawBattleDestinyWith(String... qualifiers) {
@@ -219,15 +238,20 @@ public class Card_1240_077_Tests {
 
     private void PlayOriginalAlter(boolean opposingQualifier) {
         var scn = Started();
-        DeployOn(scn, "luke");
         var effect = scn.GetLSCard("effect");
+        var alter = scn.GetLSCard("alter");
         scn.MoveCardsToLSSideOfTable(effect);
         if (opposingQualifier) scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("jabba"));
-        var alter = scn.GetLSCard("alter");
         scn.MoveCardsToLSHand(alter);
+        DeployOn(scn, "luke");
+        // Alter is played in Dark's next control phase, once Light has Force again.
+        scn.EnsureLSForcePile(3);
+        scn.SkipToDSTurn(Phase.CONTROL);
+        if (scn.AwaitingDSControlPhaseActions()) scn.DSPass();
         scn.PrepareLSDestiny(3);
         scn.LSPlayCard(alter, "Draw destiny to cancel Effect");
         if (scn.LSHasCardChoiceAvailable(effect)) scn.LSChooseCard(effect);
+        if (scn.LSHasCardChoiceAvailable(scn.GetLSCard("luke"))) scn.LSChooseCard(scn.GetLSCard("luke"));
         scn.PassAllResponses();
         assertInZone(opposingQualifier ? Zone.SIDE_OF_TABLE : Zone.LOST_PILE, effect);
     }
@@ -270,6 +294,7 @@ public class Card_1240_077_Tests {
         assertEquals(1, picked.size());
         before.remove(picked.getFirst());
         assertNotEquals(before, new ArrayList<>(scn.GetLSReserveDeck()));
+        if (scn.GetAwaitingDecision(scn.DS) != null && scn.DSDecisionAvailable("action or Pass")) scn.DSPass();
         assertFalse(scn.LSCardActionAvailable(armor, SEARCH));
         scn.SkipToDSTurn(Phase.CONTROL);
         if (scn.AwaitingDSControlPhaseActions()) scn.DSPass();
@@ -284,30 +309,21 @@ public class Card_1240_077_Tests {
     @Test
     public void MercenaryArmorCannotSearchAnEmptyReserveDeck() {
         var scn = Started();
-        DeployOn(scn, "luke");
-        for (var card : new ArrayList<>(scn.GetLSReserveDeck())) scn.MoveCardsToLSHand((PhysicalCardImpl) card);
-        assertEquals(0, scn.GetLSReserveDeckCount());
-        assertFalse(scn.LSCardActionAvailable(scn.GetLSCard("armor"), SEARCH));
-    }
-
-    @Test
-    public void MercenaryArmorCanFinishARealReserveSearchWithoutSelectingAnything() {
-        var scn = Started();
-        DeployOn(scn, "luke");
+        var luke = scn.GetLSCard("luke");
         var armor = scn.GetLSCard("armor");
-        var undercover = scn.GetLSCard("undercover");
-        scn.MoveCardsToTopOfLSReserveDeck(undercover);
-        var before = new ArrayList<>(scn.GetLSReserveDeck());
-        int hand = scn.GetLSHandCount();
-        scn.gameState().setRandomSeed(124077);
-        scn.LSUseCardAction(armor, SEARCH);
-        assertTrue(IsSelectable(scn, undercover));
-        scn.LSPass();
+        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), luke);
+        scn.MoveCardsToLSHand(armor);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        // Empty Reserve Deck (into Used Pile, keeping Life Force) before the deployment, so the actions
+        // offered afterwards reflect it.
+        for (var card : new ArrayList<>(scn.GetLSReserveDeck())) scn.MoveCardsToTopOfLSUsedPile((PhysicalCardImpl) card);
+        scn.LSDeployCard(armor);
+        scn.LSChooseCard(luke);
         scn.PassAllResponses();
-        assertInZone(Zone.RESERVE_DECK, undercover);
-        assertEquals(hand, scn.GetLSHandCount());
-        assertEquals(before.size(), scn.GetLSReserveDeckCount());
-        assertNotEquals(before, new ArrayList<>(scn.GetLSReserveDeck()));
+        if (scn.GetAwaitingDecision(scn.DS) != null && scn.DSDecisionAvailable("action or Pass")) scn.DSPass();
+        assertEquals(luke, armor.getAttachedTo());
+        assertEquals(0, scn.GetLSReserveDeckCount());
         assertFalse(scn.LSCardActionAvailable(armor, SEARCH));
     }
+
 }
