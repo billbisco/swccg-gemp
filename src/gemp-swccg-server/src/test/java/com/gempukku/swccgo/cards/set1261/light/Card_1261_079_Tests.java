@@ -20,7 +20,8 @@ public class Card_1261_079_Tests {
     private VirtualTableScenario fixture() {
         var ls = new HashMap<>(Map.of("combo", "1261_79", "commander", "3_3", "luke", "108_3",
                 "obi", "1_21", "han", "1_11", "ship", "1_146", "independent", "10_17",
-                "space", "6_87", "ordinary", "1_66", "trooper", "1_28", "ordinaryLuke", "1_19"));
+                "space", "6_87", "ordinary", "1_66", "trooper", "1_28"));
+        ls.put("ordinaryLuke", "1_19");
         var ds = new HashMap<>(Map.of("bad", "4_116", "vader", "1_168", "fighter", "1_299", "fighterPilot", "1_173", "alter", "1_234"));
         var scn = new VirtualTableScenario(ls, ds, 40, 40, StartingSetup.DefaultLSGroundLocation,
                 StartingSetup.DefaultDSGroundLocation, StartingSetup.NoLSStartingInterrupts,
