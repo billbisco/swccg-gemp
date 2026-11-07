@@ -80,8 +80,10 @@ public class Card_1250_067_Tests {
     @Test
     public void UsedModeCannotActivateFromEmptyReserve() {
         var s = scenario(false); s.StartGame(); s.MoveCardsToHand(s.GetLSCard("howl"));
-        for (var card : new ArrayList<>(s.GetLSReserveDeck())) s.MoveCardsToTopOfLSForcePile((PhysicalCardImpl) card);
         s.SkipToLSTurn(Phase.CONTROL);
+        for (var card : new ArrayList<>(s.GetLSReserveDeck())) s.MoveCardsToTopOfLSForcePile((PhysicalCardImpl) card);
+        s.SkipToPhase(Phase.DEPLOY);
+        assertTrue(s.AwaitingLSDeployPhaseActions());
         assertEquals(0, s.GetLSReserveDeckCount());
         assertFalse(s.LSCardPlayAvailable(s.GetLSCard("howl"), "Activate 1 Force"));
     }
