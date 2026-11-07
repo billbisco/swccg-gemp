@@ -17,7 +17,7 @@ public class Card_1263_026_Tests {
         return new VirtualTableScenario(
                 new HashMap<>(Map.of("phylo", "1263_26", "local", "1_28", "remote", "1_30",
                         "ship", "1_145", "system", "3_55", "obi", "1_21")),
-                new HashMap<>(Map.of("vader", "1_168", "saber", "1_324", "beaten", "5_163", "otherDark", "1_173", "secondDark", "1_179")),
+                new HashMap<>(Map.of("vader", "1_168", "saber", "1_324", "beaten", "5_163", "otherDark", "1_173", "secondDark", "1_179", "blockSix", "1261_21")),
                 40, 40, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, "legacy");
@@ -114,4 +114,61 @@ public class Card_1263_026_Tests {
 
     @Test public void canDeclineForfeitAtActualAttritionTwo() { actualAttrition(2); }
     @Test public void mustForfeitAtActualAttritionThree() { actualAttrition(3); }
+
+    /**
+     * Dark battles at Light's starting site while a Dark card's modifier makes Dark draw one destiny to total power.
+     * Returns whether Phylo offered her response; if offered, uses it and checks Dark's total power drops.
+     */
+    private boolean phyloRespondsToAddedDestiny(String sourceName, boolean phyloHere) {
+        var scn = fixture(); scn.StartGame();
+        var here = scn.GetLSStartingLocation(); var away = scn.GetDSStartingLocation();
+        var phylo = scn.GetLSCard("phylo"); var local = scn.GetLSCard("local");
+        var vader = scn.GetDSCard("vader"); var source = scn.GetDSCard(sourceName);
+        scn.MoveCardsToDSSideOfTable(source);
+        scn.MoveCardsToLocation(here, local, vader);
+        scn.MoveCardsToLocation(phyloHere ? here : away, phylo);
+        scn.ApplyAdHocModifier(new com.gempukku.swccgo.logic.modifiers.NumDestinyDrawsToPowerOnlyModifier(source, 1, scn.DS, com.gempukku.swccgo.filters.Filters.any));
+        scn.DSActivateForceCheat(4);
+        scn.SkipToDSTurn(Phase.BATTLE);
+        scn.DSInitiateBattle(here);
+        var trace = new ArrayList<String>();
+        for (int i = 0; i < 60 && scn.GetCurrentDecision() != null; i++) {
+            var text = scn.GetCurrentDecision().getText(); var decider = scn.GetDecidingPlayer();
+            trace.add(decider + ":" + text);
+            if (text.contains("INITIAL_ATTRITION_CALCULATED") || text.toLowerCase().contains("damage segment")) break;
+            if (decider.equals(scn.LS) && scn.LSCardActionAvailable(phylo, "Draw two destiny")) {
+                int before = scn.GetDSTotalPower();
+                scn.PrepareLSDestiny(3); scn.PrepareLSDestiny(2);
+                scn.LSUseCardAction(phylo, "Draw two destiny");
+                for (int j = 0; j < 30 && scn.GetCurrentDecision() != null; j++) {
+                    var t = scn.GetCurrentDecision().getText(); var d = scn.GetDecidingPlayer();
+                    if (scn.gameState().getBattleState() == null || t.contains("INITIAL_ATTRITION_CALCULATED")) break;
+                    if (d.equals(scn.LS) && t.contains("destiny") && t.startsWith("Choose 1")) {
+                        scn.LSChooseAnyCard();
+                        continue;
+                    }
+                    if (scn.GetDSTotalPower() < before) break;
+                    scn.PlayerPass(d);
+                }
+                assertTrue(trace.toString(), scn.GetDSTotalPower() < before);
+                return true;
+            }
+            if (text.contains("battle destiny?")) { scn.PlayerChooseYes(decider); continue; }
+            scn.PlayerPass(decider);
+        }
+        assertTrue(trace.toString(), trace.stream().anyMatch(t -> t.contains("BATTLE_DESTINY_DRAWS") || t.contains("DESTINY_DRAWN")));
+        return false;
+    }
+
+    @Test public void respondsWhenOpponentsBlockSixCardAddsDestinyToTotalPowerHere() {
+        assertTrue(phyloRespondsToAddedDestiny("blockSix", true));
+    }
+
+    @Test public void doesNotRespondToADestinyAddedByANonBlockSixCard() {
+        assertFalse(phyloRespondsToAddedDestiny("vader", true));
+    }
+
+    @Test public void doesNotRespondToADestinyAddedElsewhere() {
+        assertFalse(phyloRespondsToAddedDestiny("blockSix", false));
+    }
 }
