@@ -156,7 +156,7 @@ public class Card_1261_047_Tests {
         finishCapture(scn, luke, trooper);
         scn.PassAllResponses();
         assertEquals(force - 1, scn.GetDSForcePileCount());
-        assertEquals(Zone.LOST_PILE, combo.getZone());
+        assertTrue(scn.GetDSLostPile().contains(combo));
         assertSame(trooper, luke.getAttachedTo());
         assertSame(luke, oldBounty.getAttachedTo());
         assertEquals(7, scn.GetForfeit(luke));
