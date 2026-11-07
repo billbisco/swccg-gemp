@@ -2,6 +2,7 @@ package com.gempukku.swccgo.cards.set1261.light;
 
 import com.gempukku.swccgo.cards.AbstractUsedInterrupt;
 import com.gempukku.swccgo.cards.GameConditions;
+import com.gempukku.swccgo.cards.effects.CancelCardResultEffect;
 import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
@@ -9,26 +10,35 @@ import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.logic.GameUtils;
+import com.gempukku.swccgo.logic.TriggerConditions;
 import com.gempukku.swccgo.logic.actions.PlayInterruptAction;
 import com.gempukku.swccgo.logic.decisions.YesNoDecision;
 import com.gempukku.swccgo.logic.effects.*;
 import com.gempukku.swccgo.logic.effects.choose.ChooseCardOnTableEffect;
+import com.gempukku.swccgo.logic.modifiers.MayNotTargetToBeOperatedOnModifier;
+import com.gempukku.swccgo.logic.modifiers.Modifier;
+import com.gempukku.swccgo.logic.modifiers.ModifierType;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 import com.gempukku.swccgo.logic.timing.Action;
+import com.gempukku.swccgo.logic.timing.Effect;
+import com.gempukku.swccgo.logic.timing.EffectResult;
 import com.gempukku.swccgo.logic.timing.FailCostEffect;
 import com.gempukku.swccgo.logic.timing.GuiUtils;
+import com.gempukku.swccgo.logic.timing.results.ForfeitReducedToZeroResult;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /** Odin Nesloor & First Aid, final Light master page 35. */
 public class Card1261_105 extends AbstractUsedInterrupt {
     public Card1261_105() {
         super(Side.LIGHT, 4, "Odin Nesloor & First Aid", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
         setTitleComponents(new TitleComponent(Title.Odin_Nesloor, Uniqueness.UNIQUE), new TitleComponent(Title.First_Aid, Uniqueness.UNIQUE));
-        setGameText("If your character's forfeit was just reduced to 0, use 1 Force (free if reduced by a [Permanent Weapon] weapon) to restore it to normal. (Immune to Sense.) OR Cancel an attempt to 'operate' on a character (character is also protected from any further attempts until start of opponent's next turn). OR During your move phase, target any or all of your characters at one site to 'transport' (relocate) to an exterior or battleground site. Draw destiny. Use that much Force to 'transport,' or place Interrupt in Lost Pile.");
+        setGameText("If your character's forfeit was just reduced to 0, use 1 Force (free if forfeit reduced by a [Permanent Weapon] weapon) to restore it to normal. (Immune to Sense.) OR Cancel an attempt to 'operate' on a character; character is protected from any further attempts until start of opponent's next turn. OR During your move phase, target any or all of your characters at one site to 'transport' (relocate) to an exterior or battleground site. Draw destiny. Use that much Force to 'transport,' or place Interrupt in Lost Pile.");
         addIcons(Icon.SPECIAL_EDITION, Icon.EPISODE_I);
     }
 
@@ -175,5 +185,123 @@ public class Card1261_105 extends AbstractUsedInterrupt {
             }
         }
         return actions;
+    }
+
+    @Override
+    protected List<PlayInterruptAction> getGameTextOptionalAfterActions(final String playerId, final SwccgGame game, final EffectResult effectResult, final PhysicalCard self) {
+        List<PlayInterruptAction> actions = new LinkedList<>();
+
+        // Mode 1: restore your character's forfeit that was just reduced to 0
+        if (TriggerConditions.forfeitJustReducedToZero(game, effectResult, Filters.and(Filters.your(self), Filters.character))) {
+            final PhysicalCard cardToRestore = ((ForfeitReducedToZeroResult) effectResult).getCard();
+            final boolean free = forfeitReducedByPermanentWeapon(game, cardToRestore);
+            if ((free || GameConditions.canUseForce(game, playerId, 1))
+                    && GameConditions.canTarget(game, self, cardToRestore)) {
+
+                final PlayInterruptAction action = new PlayInterruptAction(game, self);
+                action.setText("Restore " + GameUtils.getFullName(cardToRestore) + "'s forfeit to normal");
+                action.setImmuneTo(Title.Sense);
+                // Choose target(s)
+                action.appendTargeting(
+                        new TargetCardOnTableEffect(action, playerId, "Choose character", cardToRestore) {
+                            @Override
+                            protected void cardTargeted(final int targetGroupId, final PhysicalCard cardTargeted) {
+                                action.addAnimationGroup(cardTargeted);
+                                // Pay cost(s)
+                                if (!free) {
+                                    action.appendCost(
+                                            new UseForceEffect(action, playerId, 1));
+                                }
+                                // Allow response(s)
+                                action.allowResponses("Restore " + GameUtils.getCardLink(cardTargeted) + "'s forfeit to normal",
+                                        new RespondablePlayCardEffect(action) {
+                                            @Override
+                                            protected void performActionResults(Action targetingAction) {
+                                                // Perform result(s)
+                                                action.appendEffect(
+                                                        new RestoreForfeitToNormalEffect(action, action.getPrimaryTargetCard(targetGroupId)));
+                                            }
+                                        }
+                                );
+                            }
+                        }
+                );
+                actions.add(action);
+            }
+        }
+        return actions;
+    }
+
+    /**
+     * A character's forfeit counts as reduced by a [Permanent Weapon] weapon when the character is 'hit' and a forfeit
+     * reset/reduction affecting it comes from a card firing its permanent weapon (the source is the card carrying the
+     * permanent weapon, not a separate weapon card).
+     */
+    private static boolean forfeitReducedByPermanentWeapon(SwccgGame game, PhysicalCard character) {
+        if (!character.isHit())
+            return false;
+        GameState gameState = game.getGameState();
+        ModifiersQuerying modifiersQuerying = game.getModifiersQuerying();
+        for (ModifierType type : new ModifierType[]{ModifierType.UNMODIFIABLE_FORFEIT_VALUE, ModifierType.FORFEIT_VALUE}) {
+            for (Modifier modifier : modifiersQuerying.getModifiersAffectingCard(gameState, type, character)) {
+                PhysicalCard source = modifier.getSource(gameState);
+                if (source != null
+                        && !Filters.weapon.accepts(game, source)
+                        && Filters.hasPermanentWeapon.accepts(game, source)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    protected List<PlayInterruptAction> getGameTextOptionalBeforeActions(final String playerId, final SwccgGame game, final Effect effect, final PhysicalCard self) {
+        List<PlayInterruptAction> actions = new LinkedList<>();
+
+        // Mode 2: cancel an attempt to 'operate' on a character
+        if (TriggerConditions.isPerformingGameTextActionType(game, effect, Filters.any, GameTextActionId.ANY_CARD__OPERATE_ON_CHARACTER)) {
+            final PhysicalCard patient = operatedOnCharacter(game, effect.getAction());
+            if (patient != null) {
+                final String opponent = game.getOpponent(playerId);
+                final PlayInterruptAction action = new PlayInterruptAction(game, self);
+                action.setText("Cancel attempt to 'operate' on " + GameUtils.getFullName(patient));
+                action.addAnimationGroup(patient);
+                // Allow response(s)
+                action.allowResponses("Cancel attempt to 'operate' on " + GameUtils.getCardLink(patient),
+                        new RespondablePlayCardEffect(action) {
+                            @Override
+                            protected void performActionResults(Action targetingAction) {
+                                // Perform result(s)
+                                action.appendEffect(
+                                        new CancelCardResultEffect(action, effect));
+                                action.appendEffect(
+                                        new AddUntilStartOfPlayersNextTurnModifierEffect(action, opponent,
+                                                new MayNotTargetToBeOperatedOnModifier(self, Filters.sameCardId(patient)),
+                                                "Protects " + GameUtils.getCardLink(patient) + " from attempts to 'operate'"));
+                            }
+                        }
+                );
+                actions.add(action);
+            }
+        }
+        return actions;
+    }
+
+    /**
+     * Gets the character targeted to be 'operated' on by the specified action.
+     */
+    private static PhysicalCard operatedOnCharacter(SwccgGame game, Action operateAction) {
+        Map<Integer, Map<PhysicalCard, Set<TargetingReason>>> primaryTargets = operateAction.getAllPrimaryTargetCards();
+        if (primaryTargets == null)
+            return null;
+        for (Map<PhysicalCard, Set<TargetingReason>> targets : primaryTargets.values()) {
+            for (Map.Entry<PhysicalCard, Set<TargetingReason>> target : targets.entrySet()) {
+                if (Filters.character.accepts(game, target.getKey())) {
+                    return target.getKey();
+                }
+            }
+        }
+        return null;
     }
 }

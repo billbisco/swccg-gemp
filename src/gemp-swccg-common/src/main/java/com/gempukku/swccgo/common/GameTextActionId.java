@@ -1709,6 +1709,8 @@ public enum GameTextActionId {
     LEGACY__OH_HES_NOT_DEAD_NOT_YET__DEPLOY_CHARACTER(true, true),
     LEGACY__OH_HES_NOT_DEAD_NOT_YET__TAKE_GRABBER(true),
     LEGACY__OH_HES_NOT_DEAD_NOT_YET__SEARCH_FORCE_PILE(true),
+    // Any card's attempt to 'operate' on a character (lets other cards recognize and respond to the attempt)
+    ANY_CARD__OPERATE_ON_CHARACTER,
     ;
 
     private boolean _searchCardPile;

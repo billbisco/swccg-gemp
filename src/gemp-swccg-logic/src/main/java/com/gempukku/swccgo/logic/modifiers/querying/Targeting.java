@@ -103,6 +103,10 @@ public interface Targeting extends BaseQuery, Weapons, Captives, CardTraits, Pil
             }
         }
 
+        if (targetingReasons.contains(TargetingReason.TO_BE_OPERATED_ON)
+                && !getModifiersAffectingCard(gameState, ModifierType.MAY_NOT_TARGET_TO_BE_OPERATED_ON, cardToTarget).isEmpty())
+            return false;
+
         if (targetingReasons.contains(TargetingReason.TO_BE_TORTURED)
                 && !getModifiersAffectingCard(gameState, ModifierType.MAY_NOT_TARGET_TO_BE_TORTURED, cardToTarget).isEmpty())
             return false;
