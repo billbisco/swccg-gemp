@@ -1,11 +1,12 @@
 package com.gempukku.swccgo.cards.set1261.light;
 
 import com.gempukku.swccgo.cards.AbstractSite;
-import com.gempukku.swccgo.cards.conditions.OccupiesCondition;
+import com.gempukku.swccgo.cards.conditions.GameTextOccupiesCondition;
 import com.gempukku.swccgo.cards.evaluators.MaxLimitEvaluator;
 import com.gempukku.swccgo.cards.evaluators.OnTableEvaluator;
 import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.GameTextOccupationFilters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.conditions.NotCondition;
@@ -15,7 +16,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-/** Kashyyyk: Forest Depths, Virtual Block 6.1. */
+/** Kashyyyk: Forest Depths, Virtual Block 6.1. Both "occupy" clauses honour OCCUPY_IN_GAME_TEXT_IS_CONTROL (Tarfful). */
 public class Card1261_113 extends AbstractSite {
     public Card1261_113() {
         super(Side.LIGHT, "Kashyyyk: Forest Depths", Title.Kashyyyk, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
@@ -31,13 +32,13 @@ public class Card1261_113 extends AbstractSite {
     protected List<Modifier> getGameTextLightSideWhileActiveModifiers(String playerId, SwccgGame game, PhysicalCard self) {
         return Collections.singletonList(new AttritionModifier(self, Filters.Kashyyyk_location,
                 new MaxLimitEvaluator(new OnTableEvaluator(self, Filters.and(Filters.Kashyyyk_location,
-                        Filters.occupiesWith(playerId, self, Filters.Wookiee))), 3), game.getOpponent(playerId)));
+                        GameTextOccupationFilters.occupiesWith(playerId, self, Filters.Wookiee))), 3), game.getOpponent(playerId)));
     }
 
     @Override
     protected List<Modifier> getGameTextDarkSideWhileActiveModifiers(String playerId, SwccgGame game, PhysicalCard self) {
         return Arrays.asList(
-                new GenerateNoForceModifier(self, self, new NotCondition(new OccupiesCondition(playerId, self)), playerId),
+                new GenerateNoForceModifier(self, self, new NotCondition(new GameTextOccupiesCondition(playerId, self, self)), playerId),
                 new MayNotExistAtLocationModifier(self, Filters.or(Filters.starship, Filters.vehicle), self));
     }
 }

@@ -9,6 +9,7 @@ import com.gempukku.swccgo.logic.modifiers.*;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public interface GameText extends BaseQuery, Piloting {
@@ -46,6 +47,26 @@ public interface GameText extends BaseQuery, Piloting {
                 return true;
         }
         return false;
+    }
+
+    /**
+     * Gets the source cards of the specified gametext modifications currently applied to the card.
+     * @param gameState the game state
+     * @param card the card
+     * @param type the gametext modification type
+     * @return the source cards (empty if card does not have the modification)
+     */
+    default Collection<PhysicalCard> getGameTextModificationSources(GameState gameState, PhysicalCard card, ModifyGameTextType type) {
+        Set<PhysicalCard> sources = new LinkedHashSet<PhysicalCard>();
+        for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.MODIFY_GAME_TEXT, card)) {
+            if (modifier.getModifyGameTextType(gameState, query(), card)==type) {
+                PhysicalCard source = modifier.getSource(gameState);
+                if (source != null) {
+                    sources.add(source);
+                }
+            }
+        }
+        return sources;
     }
 
     /**

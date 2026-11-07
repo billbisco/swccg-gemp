@@ -265,6 +265,14 @@ public interface SwccgCardBlueprint {
     boolean isMayNotBePlacedInReserveDeck();
 
     /**
+     * Determines if this card may never be won in sabacc (it is never a valid sabacc stake).
+     * @return true if may never be won in sabacc, otherwise false
+     */
+    default boolean isMayNeverBeWonInSabacc() {
+        return false;
+    }
+
+    /**
      * Gets the filter for the starfighters present at a location that are replaced by the squadron.
      * @return the filter
      */

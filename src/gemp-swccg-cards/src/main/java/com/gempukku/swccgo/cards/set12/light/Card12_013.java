@@ -48,14 +48,14 @@ public class Card12_013 extends AbstractJediMaster {
     @Override
     protected List<Modifier> getGameTextAlwaysOnModifiers(SwccgGame game, PhysicalCard self) {
         List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new DeployCostToLocationModifier(self, 3, Filters.not(Filters.Jedi_Council_Chamber)));
+        modifiers.add(new DeployCostToLocationModifier(self, 3, Filters.not(Filters.jediCouncilChamberInGameTextOf(self))));
         return modifiers;
     }
 
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
         List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new ImmuneToAttritionModifier(self, new AtCondition(self, Filters.Jedi_Council_Chamber)));
+        modifiers.add(new ImmuneToAttritionModifier(self, new AtCondition(self, Filters.jediCouncilChamberInGameTextOf(self))));
         return modifiers;
     }
 
@@ -63,7 +63,7 @@ public class Card12_013 extends AbstractJediMaster {
     protected List<TopLevelGameTextAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
         // Check condition(s)
         if (GameConditions.isOnceDuringYourPhase(game, self, playerId, gameTextSourceCardId, Phase.CONTROL)
-                && GameConditions.isAtLocation(game, self, Filters.Jedi_Council_Chamber)
+                && GameConditions.isAtLocation(game, self, Filters.jediCouncilChamberInGameTextOf(self))
                 && !GameConditions.canSpot(game, self, Filters.Maul)
                 && GameConditions.canSpot(game, self, Filters.and(Filters.Amidala, Filters.at(Filters.battleground_site)))) {
 
@@ -88,7 +88,7 @@ public class Card12_013 extends AbstractJediMaster {
         // Check if reached end of control phase and action was not performed yet.
         if (TriggerConditions.isEndOfYourPhase(game, self, effectResult, Phase.CONTROL)
                 && GameConditions.isOnceDuringYourPhase(game, self, playerId, gameTextSourceCardId, Phase.CONTROL)
-                && GameConditions.isAtLocation(game, self, Filters.Jedi_Council_Chamber)
+                && GameConditions.isAtLocation(game, self, Filters.jediCouncilChamberInGameTextOf(self))
                 && !GameConditions.canSpot(game, self, Filters.and(Filters.Maul, Filters.onTable))
                 && GameConditions.canSpot(game, self, Filters.and(Filters.Amidala, Filters.at(Filters.battleground_site)))) {
 

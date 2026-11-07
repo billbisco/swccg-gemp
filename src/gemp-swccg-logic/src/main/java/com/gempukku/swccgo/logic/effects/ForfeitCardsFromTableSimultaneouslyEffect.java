@@ -47,6 +47,7 @@ public class ForfeitCardsFromTableSimultaneouslyEffect extends AbstractSubAction
     private Collection<PhysicalCard> _lostFromPlay = new ArrayList<PhysicalCard>();
     private Collection<PhysicalCard> _attachedCardsToLeaveTable = new ArrayList<PhysicalCard>();
     private Collection<PhysicalCard> _releasedCaptives = new ArrayList<PhysicalCard>();
+    private Collection<PhysicalCard> _toUsedPileBecauseSiteLeftTable = new ArrayList<PhysicalCard>();
 
     /**
      * Creates an effect that causes one more cards on table to be forfeited simultaneously.
@@ -300,6 +301,21 @@ public class ForfeitCardsFromTableSimultaneouslyEffect extends AbstractSubAction
                 new PassthruEffect(subAction) {
                     @Override
                     protected void doPlayEffect(SwccgGame game) {
+                        // Sites (and cards there) that go to Used Pile instead of Lost Pile when they leave table
+                        _toUsedPileBecauseSiteLeftTable.addAll(CardsLeavePlayUtils.cardsToUsedPileBecauseSiteLeavesTable(game, _lostFromPlay));
+                        _lostFromPlay.removeAll(_toUsedPileBecauseSiteLeftTable);
+
+                        if (!_toUsedPileBecauseSiteLeftTable.isEmpty()) {
+                            for (PhysicalCard card : _toUsedPileBecauseSiteLeftTable) {
+                                card.updateRememberedInPlayCardInfo(game);
+                            }
+                            gameState.removeCardsFromZone(_toUsedPileBecauseSiteLeftTable);
+                            for (PhysicalCard card : _toUsedPileBecauseSiteLeftTable) {
+                                gameState.addCardToTopOfZone(card, Zone.VOID, card.getOwner());
+                            }
+                            gameState.sendMessage(GameUtils.getAppendedNames(_toUsedPileBecauseSiteLeftTable) + " on table placed in Used Pile instead of Lost Pile");
+                        }
+
                         if (!_forfeitedFromPlay.isEmpty() || !_forfeitedAndRemainsInPlay.keySet().isEmpty() || !_lostFromPlay.isEmpty()) {
 
                             // Make sure cards remember current information and get location indexes
@@ -366,7 +382,7 @@ public class ForfeitCardsFromTableSimultaneouslyEffect extends AbstractSubAction
                 new PassthruEffect(subAction) {
                     @Override
                     protected void doPlayEffect(SwccgGame game) {
-                        if (!_forfeitedFromPlay.isEmpty() || !_lostFromPlay.isEmpty()) {
+                        if (!_forfeitedFromPlay.isEmpty() || !_lostFromPlay.isEmpty() || !_toUsedPileBecauseSiteLeftTable.isEmpty()) {
 
                             List<PhysicalCard> toBePlacedInLostPile = new ArrayList<PhysicalCard>(_lostFromPlay);
                             List<PhysicalCard> toBePlacedInAnotherPile = new ArrayList<PhysicalCard>();
@@ -382,6 +398,10 @@ public class ForfeitCardsFromTableSimultaneouslyEffect extends AbstractSubAction
 
                             // Place the cards in the card piles
                             SubAction putInCardPileSubAction = new SubAction(subAction);
+                            if (!_toUsedPileBecauseSiteLeftTable.isEmpty()) {
+                                putInCardPileSubAction.appendEffect(
+                                        new PutCardsInCardPileEffect(subAction, game, _toUsedPileBecauseSiteLeftTable, Zone.USED_PILE));
+                            }
                             if (!toBePlacedInLostPile.isEmpty()) {
                                 putInCardPileSubAction.appendEffect(
                                         new PutCardsInCardPileEffect(subAction, game, toBePlacedInLostPile, Zone.LOST_PILE, _toBottomOfPile));
@@ -421,6 +441,10 @@ public class ForfeitCardsFromTableSimultaneouslyEffect extends AbstractSubAction
                                 game.getActionsEnvironment().emitEffectResult(
                                         new LostCardFromTableResult(subAction, lostFromPlayCard, _wasAttachedToWhenLostOrForfeited.get(lostFromPlayCard), _locationLostOrForfeitedFrom.get(lostFromPlayCard), _wasPresentWithWhenLostOrForfeited.get(lostFromPlayCard)));
                             }
+                        }
+                        for (PhysicalCard putToPileCard : _toUsedPileBecauseSiteLeftTable) {
+                            game.getActionsEnvironment().emitEffectResult(
+                                    new PutCardInUsedPileFromTableResult(subAction, putToPileCard));
                         }
                     }
                 }

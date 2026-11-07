@@ -49,13 +49,13 @@ public class Card12_004 extends AbstractJediMaster {
 
     @Override
     protected Filter getGameTextValidDeployTargetFilter(SwccgGame game, PhysicalCard self, PlayCardOptionId playCardOptionId, boolean asReact) {
-        return Filters.locationAndCardsAtLocation(Filters.Jedi_Council_Chamber);
+        return Filters.locationAndCardsAtLocation(Filters.jediCouncilChamberInGameTextOf(self));
     }
 
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
         List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new ImmuneToAttritionModifier(self, new AtCondition(self, Filters.Jedi_Council_Chamber)));
+        modifiers.add(new ImmuneToAttritionModifier(self, new AtCondition(self, Filters.jediCouncilChamberInGameTextOf(self))));
         return modifiers;
     }
 
@@ -66,7 +66,7 @@ public class Card12_004 extends AbstractJediMaster {
         // Check condition(s)
         if (GameConditions.isOncePerTurn(game, self, playerId, gameTextSourceCardId)
                 && GameConditions.canUseForce(game, playerId, 1)
-                && GameConditions.isAtLocation(game, self, Filters.Jedi_Council_Chamber)
+                && GameConditions.isAtLocation(game, self, Filters.jediCouncilChamberInGameTextOf(self))
                 && (GameConditions.hasReserveDeck(game, playerId) || GameConditions.hasReserveDeck(game, opponent))) {
 
             final TopLevelGameTextAction action = new TopLevelGameTextAction(self, gameTextSourceCardId);
