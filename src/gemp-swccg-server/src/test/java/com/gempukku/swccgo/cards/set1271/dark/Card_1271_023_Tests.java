@@ -4,8 +4,12 @@ import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.game.PhysicalCard;
+import com.gempukku.swccgo.game.state.GameCommunicationChannel;
+import com.gempukku.swccgo.game.state.GameState;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +22,8 @@ public class Card_1271_023_Tests {
         var dark = new HashMap<>(Map.ofEntries(
             Map.entry("warRoom", "1271_23"), Map.entry("deathStar", "2_143"), Map.entry("bay", "1_285"),
             Map.entry("executorSite", "4_163"), Map.entry("bespin", "5_164"), Map.entry("devastator", "1_301"),
-            Map.entry("trooper", "1_194"), Map.entry("presence", "1_227"), Map.entry("coruscantWipe", "12_143")));
+            Map.entry("trooper", "1_194"), Map.entry("presence", "1_227"), Map.entry("coruscantWipe", "12_143"),
+            Map.entry("legacyWipe", "1250_25")));
         return new VirtualTableScenario(light, dark, 40, 40, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
             StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
             StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -164,5 +169,37 @@ public class Card_1271_023_Tests {
         s.DSDeployCard(wipe);
         s.PassAllResponses();
         assertEquals(Zone.SIDE_OF_TABLE, wipe.getZone());
+    }
+
+    @Test public void DeathStarWarRoomCancelsActualBlockFiveWipeThemOutOnDeployment() {
+        assertLegacyWipeDeployment(true);
+        assertLegacyWipeDeployment(false);
+    }
+
+    private void assertLegacyWipeDeployment(boolean withWarRoom) {
+        var s = board(false);
+        if (!withWarRoom) s.MoveOutOfPlay(s.GetDSCard("warRoom"));
+        var wipe = s.GetDSCard("legacyWipe");
+        var site = s.GetDSCard("bay");
+        var observedZones = new ArrayList<Zone>();
+        s.MoveCardsToDSHand(wipe);
+        s.SkipToDSTurn(Phase.DEPLOY);
+        s.game().addGameStateListener(s.DS, new GameCommunicationChannel(s.DS, 1) {
+            @Override public void cardCreated(PhysicalCard card, GameState state, boolean restoreSnapshot) {
+                if (card == wipe) observedZones.add(card.getZone());
+            }
+            @Override public void cardMoved(PhysicalCard card, GameState state) {
+                if (card == wipe) observedZones.add(card.getZone());
+            }
+        });
+        s.DSDeployCard(wipe);
+        if (s.DSHasCardChoiceAvailable(site)) s.DSChooseCard(site);
+        s.PassAllResponses();
+        assertEquals(!withWarRoom, observedZones.stream().anyMatch(Zone::isInPlay));
+        if (withWarRoom) {
+            assertTrue(s.GetDSLostPile().contains(wipe));
+        } else {
+            assertEquals(site, wipe.getAttachedTo());
+        }
     }
 }
