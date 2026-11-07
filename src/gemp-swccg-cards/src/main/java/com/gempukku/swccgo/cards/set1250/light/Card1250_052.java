@@ -19,8 +19,8 @@ import com.gempukku.swccgo.logic.TriggerConditions;
 import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
 import com.gempukku.swccgo.logic.effects.LoseForceEffect;
+import com.gempukku.swccgo.logic.effects.PlaceCardOutOfPlayFromOffTableEffect;
 import com.gempukku.swccgo.logic.effects.choose.DeployCardFromLostPileEffect;
-import com.gempukku.swccgo.logic.effects.choose.PlaceCardOutOfPlayFromLostPileEffect;
 import com.gempukku.swccgo.logic.modifiers.AgendaModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.timing.EffectResult;
@@ -71,7 +71,7 @@ public class Card1250_052 extends AbstractRebelRepublic {
             String owner = self.getOwner();
             RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
             action.setText("Place out of play and make opponent lose 4 Force");
-            action.appendEffect(new PlaceCardOutOfPlayFromLostPileEffect(action, owner, owner, self, false));
+            action.appendEffect(new PlaceCardOutOfPlayFromOffTableEffect(action, self));
             action.appendEffect(new LoseForceEffect(action, game.getOpponent(owner), 4));
             return List.of(action);
         }

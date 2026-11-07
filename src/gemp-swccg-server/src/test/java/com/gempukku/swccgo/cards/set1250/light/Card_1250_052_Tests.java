@@ -133,6 +133,16 @@ public class Card_1250_052_Tests {
         scn.PassAllResponses();
         assertEquals(Zone.OUT_OF_PLAY, padme.getZone());
         assertFalse(scn.GetLSLostPile().contains(padme));
+        // Dark Side chooses where each of the 4 Force comes from.
+        for (int i = 0; i < 12 && scn.GetDSLifeForceRemaining() > dsForceBefore - 4; i++) {
+            var choice = scn.GetForcePile(scn.DS).isEmpty() ? null : scn.GetTopOfDSForcePile();
+            if (choice == null || !scn.DSHasCardChoiceAvailable(choice))
+                choice = scn.GetUsedPile(scn.DS).isEmpty() ? null : scn.GetTopOfDSUsedPile();
+            if (choice == null || !scn.DSHasCardChoiceAvailable(choice)) choice = scn.GetTopOfDSReserveDeck();
+            assertTrue("Unexpected decision: " + scn.DSGetDecision().getText(), scn.DSHasCardChoiceAvailable(choice));
+            scn.DSChooseCard(choice);
+            scn.PassAllResponses();
+        }
         assertEquals(dsForceBefore - 4, scn.GetDSLifeForceRemaining());
     }
 
@@ -150,7 +160,7 @@ public class Card_1250_052_Tests {
         scn.SkipToDamageSegment(false);
         scn.LSPayBattleDamageFromCardInPlay(padme);
         scn.PassAllResponses();
-        assertEquals(Zone.LOST_PILE, padme.getZone());
+        assertTrue(scn.GetLSLostPile().contains(padme));
         assertEquals(dsForceBefore, scn.GetDSLifeForceRemaining());
     }
 }
