@@ -47,8 +47,8 @@ public class Card_1250_008_Tests {
         assertEquals(Rarity.V, b.getRarity());
         assertTrue(b.isLegacy());
         assertFalse(b.hasVirtualSuffix());
-        scn.BlueprintCardTypeCheck(b, new ArrayList<>(List.of(CardType.CHARACTER)));
-        scn.BlueprintIconCheck(b, new ArrayList<>(List.of(Icon.EPISODE_I, Icon.PILOT, Icon.WARRIOR, Icon.PERMANENT_WEAPON, Icon.LEGACY_BLOCK_5)));
+        scn.BlueprintCardTypeCheck(b, new ArrayList<>(List.of(CardType.ALIEN)));
+        scn.BlueprintIconCheck(b, new ArrayList<>(List.of(Icon.ALIEN, Icon.EPISODE_I, Icon.PILOT, Icon.WARRIOR, Icon.PERMANENT_WEAPON, Icon.LEGACY_BLOCK_5)));
         scn.BlueprintKeywordCheck(b, new ArrayList<>(List.of(Keyword.TRADE_FEDERATION)));
     }
 
