@@ -3,6 +3,7 @@ package com.gempukku.swccgo.cards.set1250.light;
 import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.game.PhysicalCardImpl;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -17,8 +18,10 @@ public class Card_1250_066_Tests {
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>() {{
             put("odds", "1250_66"); put("luke", "1_19"); put("guard", "1_26");
+            put("mace", "12_13"); put("hallway", "14_51");
         }}, new HashMap<>() {{
             put("emperor", "9_109"); put("lightning", "9_136"); put("vader", "1_168"); put("saber", "1_324");
+            put("podrace", "11_79"); put("arena", "11_94");
         }}, 35, 35, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -96,5 +99,61 @@ public class Card_1250_066_Tests {
         var s = battle(); s.SkipToPowerSegment();
         assertTrue(s.DSDecisionAvailable("battle destiny")); s.DSChooseYes(); passUntilOffer(s);
         assertFalse(offered(s)); assertTrue(s.GetLSHand().contains(s.GetLSCard("odds")));
+    }
+
+    @Test
+    public void ActualEpicEventActivatesTheDrawerEvenWhenOwnedByTheOtherPlayer() {
+        var s = scenario(); s.StartGame();
+        var race = s.GetDSCard("podrace"); var arena = s.GetDSCard("arena");
+        s.MoveLocationToTable(arena); s.AttachCardsTo(arena, race);
+        s.MoveCardsToHand(s.GetLSCard("odds"));
+        s.SkipToPhase(Phase.CONTROL);
+        assertTrue(s.DSCardActionAvailable(race, "Initiate a Podrace"));
+        s.DSUseCardAction(race, "Initiate a Podrace"); s.PassAllResponses();
+        for (int i = 0; i < 8 && !s.AwaitingLSControlPhaseActions(); i++) {
+            assertTrue(s.AwaitingDSControlPhaseActions()); s.DSPass();
+        }
+        assertTrue(s.LSCardActionAvailable(race, "Draw race destiny"));
+        s.LSUseCardAction(race, "Draw race destiny"); passUntilOffer(s);
+        assertTrue(s.GetCurrentDecision().getText(), offered(s));
+        var top = s.GetLSDestiny(6); var marker = s.GetLSDestiny(3);
+        s.MoveCardsToTopOfLSReserveDeck(marker, top);
+        s.gameState().markCardsRevealedFromPile(List.of(marker));
+        int lightForce = s.GetLSForcePileCount(); int darkForce = s.GetDSForcePileCount();
+        s.LSPlayCard(s.GetLSCard("odds"), CHANGE); s.PassAllResponses();
+        assertEquals(lightForce + 1, s.GetLSForcePileCount()); assertTrue(s.GetLSForcePile().contains(top));
+        assertEquals(darkForce, s.GetDSForcePileCount()); assertFalse(s.gameState().isCardRevealedFromPile(marker));
+    }
+
+    @Test
+    public void ActualObjectiveDestinyCanBeChangedOrTheResponseCanBeDeclined() {
+        var changed = combatDraw();
+        checkActivationAndShuffle(changed);
+
+        var declined = combatDraw();
+        assertTrue(declined.GetCurrentDecision().getText(), offered(declined));
+        int darkForce = declined.GetDSForcePileCount(); int lightForce = declined.GetLSForcePileCount();
+        declined.LSPass(); declined.PassAllResponses();
+        assertTrue(declined.GetLSHand().contains(declined.GetLSCard("odds")));
+        assertEquals(darkForce, declined.GetDSForcePileCount());
+        assertEquals(lightForce, declined.GetLSForcePileCount());
+    }
+
+    private VirtualTableScenario combatDraw() {
+        var s = scenario(); s.StartGame();
+        var objective = (PhysicalCardImpl) s.gameState().createPhysicalCard(s.DS, VirtualTableScenario._cardLibrary, "13_73");
+        s.gameState().addCardToZone(objective, Zone.HAND, s.DS, true, false, false);
+        s.MoveCardsToDSSideOfTable(objective); objective.setObjectiveDeploymentComplete(true);
+        s.gameState().flipCard(s.game(), objective, true);
+        var site = s.GetLSCard("hallway"); var mace = s.GetLSCard("mace"); var vader = s.GetDSCard("vader");
+        s.MoveLocationToTable(site); s.MoveCardsToLocation(site, mace, vader);
+        s.MoveCardsToHand(s.GetLSCard("odds"));
+        s.SkipToPhase(Phase.MOVE);
+        assertTrue(s.DSCardActionAvailable(objective, "Initiate lightsaber combat"));
+        s.DSUseCardAction(objective, "Initiate lightsaber combat");
+        if (s.DSHasCardChoiceAvailable(vader)) s.DSChooseCard(vader);
+        if (s.DSHasCardChoiceAvailable(mace)) s.DSChooseCard(mace);
+        passUntilOffer(s);
+        return s;
     }
 }
