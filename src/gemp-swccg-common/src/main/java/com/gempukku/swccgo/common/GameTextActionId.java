@@ -1817,7 +1817,6 @@ public enum GameTextActionId {
     LEGACY__GENERAL_SOLOMAHAL__REARRANGE_SITES(false, true),
     // Any card's attempt to 'operate' on a character (lets other cards recognize and respond to the attempt)
     ANY_CARD__OPERATE_ON_CHARACTER,
-    LEGACY__OPERATIONAL_AS_PLANNED_V__RETURN_PROTOCOL_FAILURE,
     LEGACY__BEAST_RIDER__DEPLOY_KAADU(true),
     LEGACY__LANDO_SCOUNDREL__CONVERT(false, true),
     LEGACY__JABBA_LAST_CHANCE__PLAY_SHIELD(false, true),
@@ -1826,6 +1825,7 @@ public enum GameTextActionId {
     LEGACY__GRAND_ADMIRAL_THRAWN_V__DEPLOY_DREADNAUGHT(true),
     LEGACY__ITS_WORSE_V__DEPLOY_PIT(true),
     LEGACY__CARIDA_ISB_TRAINING_ACADEMY__STACK_REBEL_INTERRUPT(false, true),
+    LEGACY__OPERATIONAL_AS_PLANNED_V__RETURN_PROTOCOL_FAILURE,
     ;
 
     private boolean _searchCardPile;
