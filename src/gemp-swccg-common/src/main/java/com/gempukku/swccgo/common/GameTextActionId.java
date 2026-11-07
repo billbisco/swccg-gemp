@@ -1701,6 +1701,7 @@ public enum GameTextActionId {
     LEGACY__OUR_ONLY_HOPE__TAKE_ANY_CARD(true),
     LEGACY__A_JEDIS_PATIENCE__DUEL(false, true),
     LEGACY__THE_TIME_FOR_OUR_ATTACK_HAS_COME__DEPLOY_STARSHIP(true),
+    LEGACY__ARTOO_BRAVE_LITTLE_DROID_V__TARGET_DROIDS(false, true),
     ;
 
     private boolean _searchCardPile;
