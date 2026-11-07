@@ -129,7 +129,16 @@ public class ExcludeFromBattleEffect extends AbstractSubActionEffect implements 
 
                                 // If not excluded by rule (i.e. there is an action source), then check if cards are prevented from being excluded
                                 if (!_excludedByCardMap.isEmpty()) {
-                                    Collection<PhysicalCard> cardsThatMayNotBeExcluded = Filters.filter(cardsToAttemptToExclude, game, Filters.mayNotBeExcludedFromBattle);
+                                    Collection<PhysicalCard> cardsThatMayNotBeExcluded = new ArrayList<PhysicalCard>(Filters.filter(cardsToAttemptToExclude, game, Filters.mayNotBeExcludedFromBattle));
+                                    for (PhysicalCard sourceCard : _excludedByCardMap.keySet()) {
+                                        String playerExcluding = _action.getPerformingPlayer() != null ? _action.getPerformingPlayer() : sourceCard.getOwner();
+                                        for (PhysicalCard cardToExclude : _excludedByCardMap.get(sourceCard)) {
+                                            if (cardsToAttemptToExclude.contains(cardToExclude) && !cardsThatMayNotBeExcluded.contains(cardToExclude)
+                                                    && game.getModifiersQuerying().mayNotBeExcludedFromBattleByPlayer(gameState, cardToExclude, playerExcluding)) {
+                                                cardsThatMayNotBeExcluded.add(cardToExclude);
+                                            }
+                                        }
+                                    }
                                     if (!cardsThatMayNotBeExcluded.isEmpty()) {
                                         gameState.sendMessage(GameUtils.getAppendedNames(cardsThatMayNotBeExcluded) + " may not be excluded from battle");
                                     }
