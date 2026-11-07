@@ -43,6 +43,11 @@ public class Card1271_019 extends AbstractEpicEventDeployable {
     }
 
     @Override
+    public boolean isStartingEpicEvent() {
+        return true;
+    }
+
+    @Override
     protected boolean checkGameTextDeployRequirements(String playerId, SwccgGame game, PhysicalCard self, PlayCardOptionId option, boolean asReact) {
         return game.getGameState().getCurrentPhase() == Phase.PLAY_STARTING_CARDS
             && game.getGameState().getReserveDeck(playerId).stream().filter(card -> VADER_EFFECT.accepts(game, card))

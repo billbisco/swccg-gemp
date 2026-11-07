@@ -2,6 +2,7 @@ package com.gempukku.swccgo.cards.set1271.dark;
 
 import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import org.junit.Test;
 
@@ -33,6 +34,48 @@ public class Card_1271_019_Tests {
         s.MoveCardsToDSHand(rise);
         s.SkipToPhase(Phase.DEPLOY);
         assertFalse(s.DSDeployAvailable(rise));
+    }
+
+    @Test public void RiseOfTheDarkLordDeploysDuringSetupAndStacksThreeDifferentVaderEffectsFaceDown() {
+        var s = scenario();
+        var rise = s.GetDSCard("rise");
+        var selectedEffects = List.of(s.GetDSCard("limbs"), s.GetDSCard("cape"), s.GetDSCard("cybernetic"));
+        chooseStartingLocations(s);
+
+        assertTrue(s.DSDecisionAvailable("Choose starting Epic Event"));
+        s.DSChooseCard(rise);
+        for (var effect : selectedEffects) {
+            s.DSChooseCard(effect);
+        }
+
+        assertEquals(Zone.SIDE_OF_TABLE, rise.getZone());
+        assertTrue(s.gameState().hasPlayedStartingEpicEvent(s.DS));
+        assertEquals(3, s.gameState().getStackedCards(rise).size());
+        for (var effect : selectedEffects) {
+            assertEquals(Zone.STACKED_FACE_DOWN, effect.getZone());
+            assertEquals(rise, effect.getStackedOn());
+        }
+    }
+
+    @Test public void RiseOfTheDarkLordIsNotOfferedWithFewerThanThreeDifferentVaderEffects() {
+        var s = scenario();
+        s.MoveOutOfPlay(s.GetDSCard("cybernetic"));
+        s.MoveOutOfPlay(s.GetDSCard("helmet"));
+        s.MoveOutOfPlay(s.GetDSCard("mask"));
+        var duplicate = s.gameState().createPhysicalCard(s.DS, VirtualTableScenario._cardLibrary, "1271_13");
+        s.gameState().addCardToZone(duplicate, Zone.RESERVE_DECK, s.DS);
+        chooseStartingLocations(s);
+
+        assertFalse(s.DSDecisionAvailable("Choose starting Epic Event"));
+        assertFalse(s.GetDSCard("rise").getZone().isInPlay());
+        assertFalse(s.gameState().hasPlayedStartingEpicEvent(s.DS));
+    }
+
+    private void chooseStartingLocations(VirtualTableScenario s) {
+        s.DSDecided("0");
+        s.LSDecided("0");
+        StartingSetup.DefaultDSGroundLocation.Setup(s);
+        StartingSetup.DefaultLSGroundLocation.Setup(s);
     }
 
     @Test public void RiseOfTheDarkLordActuallyDeploysItsStackedEffectButRejectsHandAndRepeatDeployment() {
