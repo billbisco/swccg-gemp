@@ -100,8 +100,12 @@ public class Card_1261_083_Tests {
     }
 
     private VirtualTableScenario battle(boolean source, boolean pilot, String shipName, int destiny) {
+        return battle(source, pilot, shipName, destiny, false);
+    }
+    private VirtualTableScenario battle(boolean source, boolean pilot, String shipName, int destiny, boolean reinforce) {
         var scn = started(source); var system = scn.GetLSCard("ralltiir"); var ship = scn.GetLSCard(shipName);
         scn.MoveCardsToLocation(system, ship, scn.GetDSCard("devastator"));
+        if (reinforce) scn.MoveCardsToLocation(system, scn.GetLSCard("home"));
         scn.BoardAsPilot(scn.GetDSCard("devastator"), scn.GetDSCard("vader"));
         if (pilot) scn.BoardAsPilot(ship, scn.GetLSCard("luke"));
         scn.SkipToLSTurn(Phase.BATTLE); scn.PrepareLSDestiny(6); scn.PrepareLSDestiny(2); scn.PrepareDSDestiny(destiny - 1);
@@ -124,13 +128,11 @@ public class Card_1261_083_Tests {
         assertFalse(scn.LSDecisionAvailable("battle destiny?")); assertInZone(Zone.RESERVE_DECK, scn.GetLSDestiny(2));
     }
     private void attrition(boolean source, int value, boolean immune) {
-        var scn = battle(source, false, "cruiser", value); var ship = scn.GetLSCard("cruiser");
+        var scn = battle(source, false, "cruiser", value, true); var ship = scn.GetLSCard("cruiser");
         scn.SkipToDamageSegment(true); scn.PassDamageSegmentActions(); assertEquals(value, scn.GetUnpaidLSAttrition());
-        int damage = scn.GetUnpaidLSBattleDamage(); int lost = scn.GetLSLostPileCount();
-        for (int paid = 0; paid < damage; paid++) {
-            scn.LSPayBattleDamageFromReserveDeck(); scn.PassAllResponses();
-        }
-        assertEquals(0, scn.GetUnpaidLSBattleDamage()); assertEquals(lost + damage, scn.GetLSLostPileCount());
+        // Home One supplies enough power to remove battle damage as a competing payment.
+        // Its own <8 immunity leaves this cruiser as the mandatory attrition-four candidate.
+        assertEquals(0, scn.GetUnpaidLSBattleDamage());
         assertEquals(immune, scn.LSDecisionAvailable("(if desired)"));
         if (immune) scn.LSChooseCards(); else scn.LSPayAttritionFromCardInPlay(ship);
         assertInZone(immune ? Zone.AT_LOCATION : Zone.LOST_PILE, ship);
