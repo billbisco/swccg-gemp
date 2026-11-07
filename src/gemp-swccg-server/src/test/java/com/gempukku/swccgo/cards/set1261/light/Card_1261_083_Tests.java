@@ -96,7 +96,7 @@ public class Card_1261_083_Tests {
     }
     @Test public void MonCalamariDockyardsDoesNotDiscountOtherCapitalStarships() {
         var scn = started(true);
-        assertEquals(3, scn.game().getModifiersQuerying().getDeployCost(scn.gameState(), scn.GetLSCard("corvette")), scn.epsilon);
+        assertEquals(4, scn.game().getModifiersQuerying().getDeployCost(scn.gameState(), scn.GetLSCard("corvette")), scn.epsilon);
     }
 
     private VirtualTableScenario battle(boolean source, boolean pilot, String shipName, int destiny) {
@@ -126,7 +126,11 @@ public class Card_1261_083_Tests {
     private void attrition(boolean source, int value, boolean immune) {
         var scn = battle(source, false, "cruiser", value); var ship = scn.GetLSCard("cruiser");
         scn.SkipToDamageSegment(true); scn.PassDamageSegmentActions(); assertEquals(value, scn.GetUnpaidLSAttrition());
-        if (scn.AwaitingLSBattleDamagePayment()) scn.LSPayRemainingBattleDamageFromReserveDeck();
+        int damage = scn.GetUnpaidLSBattleDamage(); int lost = scn.GetLSLostPileCount();
+        for (int paid = 0; paid < damage; paid++) {
+            scn.LSPayBattleDamageFromReserveDeck(); scn.PassAllResponses();
+        }
+        assertEquals(0, scn.GetUnpaidLSBattleDamage()); assertEquals(lost + damage, scn.GetLSLostPileCount());
         assertEquals(immune, scn.LSDecisionAvailable("(if desired)"));
         if (immune) scn.LSChooseCards(); else scn.LSPayAttritionFromCardInPlay(ship);
         assertInZone(immune ? Zone.AT_LOCATION : Zone.LOST_PILE, ship);
@@ -141,11 +145,15 @@ public class Card_1261_083_Tests {
         assertInZone(Zone.LOST_PILE, scn.GetLSCard("support")); assertInZone(Zone.SIDE_OF_TABLE, scn.GetLSCard("dockyards"));
     }
     @Test public void MonCalamariDockyardsCancelsCapitalSupportActuallyBeingPlayed() {
-        var scn = started(true); scn.MoveCardsToLSHand(scn.GetLSCard("support")); scn.SkipToLSTurn(Phase.DEPLOY);
+        var scn = started(true); scn.MoveCardsToLSHand(scn.GetLSCard("support"));
+        scn.MoveCardsToLocation(scn.GetLSCard("ralltiir"), scn.GetLSCard("corvette"));
+        scn.SkipToLSTurn(Phase.DEPLOY);
         scn.LSPlayCard(scn.GetLSCard("support")); scn.PassAllResponses(); assertInZone(Zone.LOST_PILE, scn.GetLSCard("support"));
     }
     @Test public void MonCalamariDockyardsAbsentCapitalSupportStaysOnTable() {
-        var scn = started(false); scn.MoveCardsToLSHand(scn.GetLSCard("support")); scn.SkipToLSTurn(Phase.DEPLOY);
+        var scn = started(false); scn.MoveCardsToLSHand(scn.GetLSCard("support"));
+        scn.MoveCardsToLocation(scn.GetLSCard("ralltiir"), scn.GetLSCard("corvette"));
+        scn.SkipToLSTurn(Phase.DEPLOY);
         scn.LSPlayCard(scn.GetLSCard("support")); scn.PassAllResponses(); assertInZone(Zone.SIDE_OF_TABLE, scn.GetLSCard("support"));
     }
     @Test public void MonCalamariDockyardsDoesNotCancelOtherEffects() {
