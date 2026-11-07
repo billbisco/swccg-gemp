@@ -14,8 +14,8 @@ import static org.junit.Assert.*;
 
 public class Card_1263_024_Tests {
     private VirtualTableScenario fixture() {
-        return new VirtualTableScenario(new HashMap<>(Map.of("rogue", "1263_24", "xwing", "1_146",
-                "speeder", "3_69", "falcon", "1_143", "hoth", "3_55", "from", "3_56", "to", "3_62")),
+        return new VirtualTableScenario(new HashMap<>(Map.of("rogue", "1263_24", "xwing", "1_145",
+                "speeder", "3_69", "falcon", "1_143", "hoth", "3_55", "from", "3_56", "to", "3_62", "ordMantell", "3_64")),
                 new HashMap<>(), 40, 40, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, "legacy");
@@ -60,4 +60,19 @@ public class Card_1263_024_Tests {
         assertEquals(to, speeder.getAtLocation());
         assertEquals(before, scn.GetLSForcePile().size());
     }
+    private void actualStarshipMove(String key, int expectedCost) {
+        var scn = fixture(); scn.StartGame();
+        var from = scn.GetLSCard("hoth"); var to = scn.GetLSCard("ordMantell");
+        var ship = scn.GetLSCard(key); var rogue = scn.GetLSCard("rogue");
+        scn.MoveLocationToTable(from); scn.MoveLocationToTable(to);
+        scn.MoveCardsToLocation(from, ship); scn.BoardAsPilot(ship, rogue);
+        scn.LSActivateForceCheat(8); scn.SkipToLSTurn(Phase.MOVE);
+        int before = scn.GetLSForcePile().size();
+        scn.LSMoveCard(ship, to); scn.PassAllResponses();
+        assertEquals(to, ship.getAtLocation());
+        assertEquals(before - expectedCost, scn.GetLSForcePile().size());
+    }
+
+    @Test public void actualXWingHyperspeedMoveCostsNoForce() { actualStarshipMove("xwing", 0); }
+    @Test public void actualFalconHyperspeedMoveStillCostsOne() { actualStarshipMove("falcon", 1); }
 }
