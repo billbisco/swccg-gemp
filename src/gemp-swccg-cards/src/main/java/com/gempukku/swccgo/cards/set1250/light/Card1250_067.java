@@ -76,7 +76,7 @@ public class Card1250_067 extends AbstractUsedOrStartingInterrupt {
             @Override
             protected void cardDeployed(PhysicalCard obiWan) {
                 Filter target = Filters.sameCardId(obiWan);
-                Filter cape = Filters.and(ExpansionSet.VIRTUAL_BLOCK_1, Filters.title("Obi-Wan's Cape"));
+                Filter cape = Filters.and(Icon.LEGACY_BLOCK_1, Filters.title("Obi-Wan's Cape"));
                 action.insertEffect(
                         new DeployCardToTargetFromReserveDeckEffect(action, Filters.matchingWeaponForCharacter(obiWan), target, true, false),
                         new DeployCardToTargetFromReserveDeckEffect(action, cape, target, true, false));
