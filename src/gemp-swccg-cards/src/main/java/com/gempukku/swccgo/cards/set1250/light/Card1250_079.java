@@ -60,7 +60,7 @@ public class Card1250_079 extends AbstractCapitalStarship {
             final TopLevelGameTextAction action = new TopLevelGameTextAction(self, gameTextSourceCardId, gameTextActionId);
             action.setText("Deploy a senator aboard");
             action.appendUsage(new OncePerGameEffect(action));
-            action.appendEffect(new DeployCardAboardFromReserveDeckEffect(action, Filters.senator, Filters.sameCardId(self), true));
+            action.appendEffect(new DeployCardAboardFromReserveDeckEffect(action, Filters.and(Filters.senator, Filters.canBeTargetedBy(self)), Filters.sameCardId(self), true));
             return Collections.singletonList(action);
         }
         return null;
