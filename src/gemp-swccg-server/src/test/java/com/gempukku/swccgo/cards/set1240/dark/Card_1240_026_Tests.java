@@ -545,4 +545,44 @@ public class Card_1240_026_Tests {
         assertInZone(Zone.HAND, scn.GetDSCard("he"));
         assertInZone(Zone.HAND, scn.GetDSCard("he2"));
     }
+    @Test
+    public void HeIsNotReadyInitialLossStopsAtExactlyOneAfterAllForceLossIsPaid() {
+        var scn = Ready();
+        int lost = scn.GetLSLostPileCount();
+        Attach(scn, "lando");
+        scn.LSPayRemainingForceLossFromReserveDeck();
+        scn.PassAllResponses();
+        assertEquals(lost + 1, scn.GetLSLostPileCount());
+        assertFalse(scn.AwaitingLSForceLossPayment());
+    }
+
+    @Test
+    public void HeIsNotReadyExtraMaintenanceStopsAtExactlyOneAfterAllLossIsPaid() {
+        var scn = MaintenanceReady();
+        scn.EnsureLSForcePile(0);
+        int lost = scn.GetLSLostPileCount();
+        scn.LSChooseOption("Lose 1 Force");
+        scn.PassAllResponses();
+        scn.LSPayRemainingForceLossFromReserveDeck();
+        scn.PassAllResponses();
+        assertEquals(lost + 1, scn.GetLSLostPileCount());
+        assertEquals(0, scn.GetLSForcePileCount());
+        assertFalse(scn.AwaitingLSForceLossPayment());
+    }
+
+    @Test
+    public void HeIsNotReadyRetrievesOnlyOneWhenTwoLostCardsAreAvailable() {
+        var scn = Ready();
+        scn.MoveCardsToTopOfDSLostPile(scn.GetDSCard("trooper"), scn.GetDSCard("lost"));
+        Attach(scn, "lando");
+        scn.LSPayForceLossFromReserveDeck();
+        Reach(scn, "Retrieve");
+        int reserve = scn.GetDSReserveDeckCount();
+        scn.DSUseCardAction(scn.GetDSCard("he"), "Retrieve");
+        scn.PassAllResponses();
+        assertInZone(Zone.USED_PILE, scn.GetDSCard("lost"));
+        assertInZone(Zone.LOST_PILE, scn.GetDSCard("trooper"));
+        assertEquals(1, scn.GetDSLostPileCount());
+        assertEquals(reserve, scn.GetDSReserveDeckCount());
+    }
 }

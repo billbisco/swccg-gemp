@@ -195,6 +195,9 @@ public class Card_1240_048_Tests {
                 scn.LSUseCardAction(scn.GetLSCard("cannon"), "Fire");
                 return;
             }
+            assertNotNull(scn.GetCurrentDecision());
+            String text = scn.GetCurrentDecision().getText().toLowerCase();
+            assertTrue(text, text.contains("weapon") || text.contains("optional response"));
             scn.PlayerPass(scn.GetDecidingPlayer());
         }
         fail("Expected real cannon firing action");
