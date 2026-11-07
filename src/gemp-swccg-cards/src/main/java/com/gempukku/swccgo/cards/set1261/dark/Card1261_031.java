@@ -61,10 +61,10 @@ public class Card1261_031 extends AbstractNormalEffect {
             return null;
         var action = new TopLevelGameTextAction(self, playerId, sourceId, GameTextActionId.OTHER_CARD_ACTION_2);
         action.setText("Place a destroyer droid in Used Pile");
-        action.appendCost(new UseForceEffect(action, playerId, 2));
         action.appendTargeting(new ChooseStackedCardEffect(action, playerId, self, Filters.destroyer_droid) {
             @Override
             protected void cardSelected(PhysicalCard droid) {
+                action.appendCost(new UseForceEffect(action, playerId, 2));
                 action.appendEffect(new PutStackedCardInUsedPileEffect(action, playerId, droid, false));
             }
         });
