@@ -12,7 +12,7 @@ public class Card_1261_060_Tests {
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>() {{ put("obiwan", "1_21"); put("han", "1_11"); put("worrt", "6_48"); }},
                 new HashMap<>() {{ put("rifle", "1261_60"); put("boba", "5_91"); put("otherBoba", "7_167"); put("jpBoba", "601_2");
-                    put("vader", "1_168"); put("officer", "1_166"); put("delivery", "1220_45"); put("hidden", "6_154"); }}, 30, 30,
+                    put("vader", "1_168"); put("oldRifle", "5_179"); put("bossk", "4_100"); put("officer", "1_166"); put("delivery", "1220_45"); put("hidden", "6_154"); }}, 30, 30,
                 StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -24,6 +24,7 @@ public class Card_1261_060_Tests {
         assertEquals(Uniqueness.UNIQUE, b.getUniqueness()); assertEquals(Side.DARK, b.getSide());
         assertEquals(2, b.getDestiny(), scn.epsilon); assertEquals(CardSubtype.CHARACTER, b.getCardSubtype());
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_6_1, b.getExpansionSet()); assertEquals(Rarity.V, b.getRarity());
+        scn.BlueprintPersonaCheck(b, new ArrayList<>() {{ add(Persona.BOBA_FETTS_BLASTER_RIFLE); }});
         scn.BlueprintCardTypeCheck(b, new ArrayList<>() {{ add(CardType.WEAPON); }});
         scn.BlueprintKeywordCheck(b, new ArrayList<>() {{ add(Keyword.BLASTER_RIFLE); }});
         scn.BlueprintIconCheck(b, new ArrayList<>() {{ add(Icon.WEAPON); add(Icon.CLOUD_CITY); add(Icon.LEGACY_BLOCK_6); }});
@@ -144,5 +145,20 @@ public class Card_1261_060_Tests {
         if (scn.DSHasCardChoiceAvailable(scn.GetLSCard("obiwan"))) scn.DSChooseCard(scn.GetLSCard("obiwan"));
         scn.PassAllResponses();
         assertTrue(scn.GetLSCard("obiwan").isHit()); assertEquals(reserve - 1, scn.GetDSReserveDeckCount());
+    }
+    @Test public void FettsBlasterRifleMatchingPairRequiresAnEligibleBobaWhoCanUseIt() {
+        var scn = scenario(); var matching = scn.GetDSCard("rifle").getBlueprint().getMatchingCharacterFilter();
+        assertTrue(matching.accepts(scn.game(), scn.GetDSCard("boba")));
+        assertTrue(matching.accepts(scn.game(), scn.GetDSCard("jpBoba")));
+        assertFalse(matching.accepts(scn.game(), scn.GetDSCard("otherBoba")));
+        assertFalse(matching.accepts(scn.game(), scn.GetDSCard("vader")));
+    }
+
+    @Test public void FettsBlasterRifleCannotDuplicateExistingBobaRifleWeaponPersona() {
+        var scn = scenario(); scn.StartGame();
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("boba"), scn.GetDSCard("bossk"));
+        scn.AttachCardsTo(scn.GetDSCard("bossk"), scn.GetDSCard("oldRifle"));
+        scn.MoveCardsToDSHand(scn.GetDSCard("rifle")); scn.SkipToDSTurn(Phase.DEPLOY);
+        assertFalse(scn.DSCardPlayAvailable(scn.GetDSCard("rifle")));
     }
 }

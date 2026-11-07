@@ -24,6 +24,8 @@ public class Card1261_060 extends AbstractCharacterWeapon {
         setGameText("Deploy on [Cloud City] or [Jabba's Palace] Boba Fett (may draw one battle destiny if not able to otherwise). Hidden Weapons is canceled. If Special Delivery not on table, may deploy it from Reserve Deck; reshuffle. May target a character for free. Draw destiny. Target hit, and forfeit = 0, if destiny +1 > defense value.");
         addIcons(Icon.CLOUD_CITY, Icon.LEGACY_BLOCK_6);
         addKeywords(Keyword.BLASTER_RIFLE);
+        addPersona(Persona.BOBA_FETTS_BLASTER_RIFLE);
+        setMatchingCharacterFilter(eligibleBearer());
     }
 
     private Filter eligibleBearer() {
