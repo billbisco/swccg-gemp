@@ -26,7 +26,8 @@ public class Card_1261_082_Tests {
         ls.putAll(Map.of("system", "3_55", "capital", "9_74", "turbolaser", "9_89",
                 "xwing", "1_146", "xwingCannon", "7_162", "rapidFire", "7_100",
                 "onTarget", "7_96", "luckyShot", "3_45", "steadyAim", "7_105", "speederCannon", "3_74"));
-        var ds = new HashMap<>(Map.of("vader", "1_168", "alter", "1_234", "capital", "1_301", "walker", "3_157"));
+        ls.put("lightAlter", "1_71");
+        var ds = new HashMap<>(Map.of("darkEffect", "4_116", "vader", "1_168", "alter", "1_234", "capital", "1_301", "walker", "3_157"));
         return new VirtualTableScenario(ls, ds, 40, 40, StartingSetup.DefaultLSGroundLocation,
                 StartingSetup.DefaultDSGroundLocation, StartingSetup.NoLSStartingInterrupts,
                 StartingSetup.NoDSStartingInterrupts, StartingSetup.NoLSShields, StartingSetup.NoDSShields, "legacy");
@@ -226,5 +227,26 @@ public class Card_1261_082_Tests {
         scn.DSPlayCard(scn.GetDSCard("alter"), "Draw destiny to cancel Effect");
         assertFalse(scn.DSHasCardChoiceAvailable(flaps));
         assertTrue(scn.DSHasCardChoiceAvailable(other));
+    }
+    @Test public void playingAnUnlistedLightInterruptDoesNotOfferTheDraw() {
+        var scn = fixture(); scn.StartGame();
+        var flaps = scn.GetLSCard("flaps"); var alter = scn.GetLSCard("lightAlter");
+        var effect = scn.GetDSCard("darkEffect"); var luke = scn.GetLSCard("luke");
+        var top = scn.GetLSCard("top");
+        scn.MoveCardsToLSSideOfTable(flaps, effect);
+        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), luke);
+        scn.MoveCardsToLSHand(alter); scn.SkipToLSTurn(Phase.CONTROL);
+        scn.MoveCardsToTopOfLSReserveDeck(top);
+        scn.LSPlayCard(alter, "Draw destiny to cancel Effect");
+        if (scn.LSHasCardChoiceAvailable(effect)) scn.LSChooseCard(effect);
+        if (scn.LSHasCardChoiceAvailable(luke)) scn.LSChooseCard(luke);
+        boolean sawDraw = false;
+        for (int i = 0; i < 22 && scn.GetCurrentDecision() != null; i++) {
+            sawDraw |= scn.GetLSAvailableActions().stream().anyMatch(x -> x.contains(DRAW));
+            if (!scn.GetCurrentDecision().getText().toLowerCase().contains("optional response")) break;
+            scn.PlayerPass(scn.GetDecidingPlayer());
+        }
+        assertFalse(sawDraw);
+        assertTrue(scn.GetLSUsedPile().contains(alter));
     }
 }
