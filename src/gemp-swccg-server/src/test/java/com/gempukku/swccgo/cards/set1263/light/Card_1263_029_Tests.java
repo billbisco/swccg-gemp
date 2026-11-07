@@ -1,0 +1,144 @@
+package com.gempukku.swccgo.cards.set1263.light;
+
+import com.gempukku.swccgo.common.*;
+import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.framework.StartingSetup;
+import com.gempukku.swccgo.framework.VirtualTableScenario;
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import static com.gempukku.swccgo.framework.Assertions.assertAtLocation;
+import static com.gempukku.swccgo.framework.Assertions.assertInHand;
+import static com.gempukku.swccgo.framework.Assertions.assertInZone;
+import static org.junit.Assert.*;
+
+public class Card_1263_029_Tests {
+    private static final String SAVE = "Cancel the attempt to make R2-D2 lost";
+    private static final String CANCEL = "Lose 2 Force to cancel battle";
+
+    private VirtualTableScenario scenario(boolean startObjective) {
+        var starting = new StartingSetup() {
+            @Override public HashMap<String, String> Cards() { return new HashMap<>(); }
+            @Override public void Setup(VirtualTableScenario scn) {
+                if (scn.LSDecisionAvailable("Choose starting interrupt")) {
+                    scn.LSChooseCard(scn.GetLSCard("rescueInterrupt"));
+                }
+                if (scn.LSHasCardChoiceAvailable(scn.GetLSCard("cell"))) scn.LSChooseCard(scn.GetLSCard("cell"));
+                if (scn.LSHasCardChoiceAvailable(scn.GetLSCard("immune"))) scn.LSChooseCard(scn.GetLSCard("immune"));
+                scn.PassAllResponses();
+            }
+        };
+        var ls = new HashMap<String, String>() {{
+            put("rescueInterrupt", "1263_29"); put("otherCopy", "1263_29");
+            put("cell", "601_129"); put("immune", "9_47"); put("ordinary", "1_66");
+            put("hero", "2_14"); put("r2", "1271_35"); put("leia", "1_17"); put("ally", "1_28");
+            put("mos", "1_295"); put("otherSite", "1_136");
+        }};
+        if (!startObjective) ls.put("objective", "7_139");
+        return new VirtualTableScenario(ls, new HashMap<>() {{
+            put("gravel", "1_247"); put("vader", "1_168"); put("sense", "1_267");
+        }}, 60, 60, startObjective ? StartingSetup.RescueThePrincessVObjective : StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSSpaceSystem,
+                startObjective ? starting : StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields, StartingSetup.NoDSShields, "anything_goes");
+    }
+
+    @Test public void RescueYouKeepsTheFinalLostOrStartingPrinting() {
+        var scn = scenario(false); var b = scn.GetLSCard("rescueInterrupt").getBlueprint();
+        assertEquals("I'm Here To Rescue You", b.getTitle()); assertEquals(6, b.getDestiny(), scn.epsilon);
+        assertEquals(Uniqueness.UNRESTRICTED, b.getUniqueness()); assertTrue(b.hasVirtualSuffix());
+        assertEquals(Side.LIGHT, b.getSide()); assertEquals(Rarity.V, b.getRarity());
+        assertEquals(ExpansionSet.VIRTUAL_BLOCK_6_3, b.getExpansionSet()); assertEquals(CardSubtype.LOST_OR_STARTING, b.getCardSubtype());
+        scn.BlueprintCardTypeCheck(b, new ArrayList<>(List.of(CardType.INTERRUPT)));
+        scn.BlueprintIconCheck(b, new ArrayList<>(List.of(Icon.INTERRUPT, Icon.A_NEW_HOPE, Icon.LEGACY_BLOCK_6)));
+    }
+
+    @Test public void RescueYouActuallyStartsWithCellAndAnAlwaysImmuneEffectThenGoesToHand() {
+        var scn = scenario(true); scn.StartGame(false);
+        assertInZone(Zone.SIDE_OF_TABLE, scn.GetLSCard("rescue"), scn.GetLSCard("cell"), scn.GetLSCard("immune"));
+        assertInHand(scn.GetLSCard("rescueInterrupt"));
+        assertFalse(scn.GetLSCard("ordinary").getZone().isInPlay());
+    }
+
+    private VirtualTableScenario setup(boolean objective, boolean alone, String droid) {
+        var scn = scenario(false); scn.StartGame();
+        if (objective) scn.MoveCardsToLSSideOfTable(scn.GetLSCard("objective"));
+        var mos = scn.GetLSCard("mos"); var battle = scn.GetLSCard("otherSite");
+        scn.MoveLocationToTable(mos); scn.MoveLocationToTable(battle);
+        scn.MoveCardsToLocation(mos, scn.GetLSCard(droid));
+        scn.MoveCardsToLocation(battle, scn.GetLSCard("leia"), scn.GetDSCard("vader"));
+        if (!alone) scn.MoveCardsToLocation(battle, scn.GetLSCard("ally"));
+        scn.MoveCardsToLSHand(scn.GetLSCard("rescueInterrupt"), scn.GetLSCard("otherCopy"));
+        scn.MoveCardsToDSHand(scn.GetDSCard("gravel"), scn.GetDSCard("sense"));
+        return scn;
+    }
+
+    private boolean has(VirtualTableScenario scn, String mode) {
+        return scn.GetLSAvailableActions().stream().anyMatch(text -> text.contains(mode));
+    }
+
+    private void untilSaveOrResolved(VirtualTableScenario scn) {
+        for (int i = 0; i < 18 && !has(scn, SAVE); i++) {
+            var d = scn.GetCurrentDecision();
+            if (d == null || !d.getText().toLowerCase().contains("response")) return;
+            scn.PlayerPass(scn.GetAwaitingDecision(scn.LS) != null ? scn.LS : scn.DS);
+        }
+    }
+
+    private VirtualTableScenario storm(boolean objective, String droid) {
+        var scn = setup(objective, true, droid); scn.SkipToDSTurn(Phase.CONTROL);
+        scn.DSActivateForceCheat(6); scn.PrepareDSDestiny(5);
+        scn.DSPass(); scn.LSPass();
+        scn.DSPlayCard(scn.GetDSCard("gravel"), "Target a character");
+        if (scn.DSHasCardChoiceAvailable(scn.GetLSCard(droid))) scn.DSChooseCard(scn.GetLSCard(droid));
+        untilSaveOrResolved(scn);
+        return scn;
+    }
+
+    @Test public void RescueYouSavesRealNonHeroicArtooAndTheOtherCopyCannotCancelABattle() {
+        var scn = storm(true, "r2"); assertTrue(has(scn, SAVE));
+        scn.LSPlayCard(scn.GetLSCard("rescueInterrupt"), SAVE); scn.PassAllResponses();
+        assertAtLocation(scn.GetLSCard("mos"), scn.GetLSCard("r2"));
+        assertInZone(Zone.LOST_PILE, scn.GetLSCard("rescueInterrupt")); assertInHand(scn.GetLSCard("otherCopy"));
+        scn.SkipToPhase(Phase.BATTLE); scn.DSInitiateBattle(scn.GetLSCard("otherSite"));
+        assertNotNull(scn.gameState().getBattleState()); assertFalse(has(scn, CANCEL));
+    }
+
+    @Test public void RescueYouDoesNotSaveHeroicArtooFromTheSameActualLoss() {
+        var scn = storm(true, "hero");
+        assertTrue(Filters.and(Keyword.HEROIC).accepts(scn.game(), scn.GetLSCard("hero")));
+        assertFalse(has(scn, SAVE)); assertInZone(Zone.LOST_PILE, scn.GetLSCard("hero"));
+    }
+
+    @Test public void RescueYouCannotPreventActualArtooLossWithoutRescueThePrincess() {
+        var scn = storm(false, "r2"); assertFalse(has(scn, SAVE));
+        assertInZone(Zone.LOST_PILE, scn.GetLSCard("r2"));
+    }
+
+    @Test public void RescueYouLosesTwoForceToCancelActualBattleWithLeiaDefendingAlone() {
+        var scn = setup(true, true, "r2"); scn.SkipToDSTurn(Phase.BATTLE);
+        var site = scn.GetLSCard("otherSite"); int lost = scn.GetLSLostPileCount();
+        scn.DSInitiateBattle(site);
+        assertTrue(has(scn, CANCEL)); scn.LSPlayCard(scn.GetLSCard("rescueInterrupt"), CANCEL);
+        scn.PassAllResponses();
+        scn.LSChooseCard(scn.GetTopOfLSReserveDeck()); scn.PassAllResponses();
+        scn.LSChooseCard(scn.GetTopOfLSReserveDeck()); scn.PassAllResponses();
+        assertEquals(lost + 3, scn.GetLSLostPileCount()); assertNull(scn.gameState().getBattleState());
+        assertAtLocation(site, scn.GetLSCard("leia"), scn.GetDSCard("vader"));
+    }
+
+    @Test public void RescueYouCannotCancelAnActualBattleWhenLeiaHasAnAlly() {
+        var scn = setup(true, false, "r2"); scn.SkipToDSTurn(Phase.BATTLE);
+        scn.DSInitiateBattle(scn.GetLSCard("otherSite"));
+        assertNotNull(scn.gameState().getBattleState()); assertFalse(has(scn, CANCEL));
+    }
+
+    @Test public void RescueYouCannotCancelAnActualBattleThatLeiaInitiated() {
+        var scn = setup(true, true, "r2"); scn.SkipToLSTurn(Phase.BATTLE);
+        scn.LSInitiateBattle(scn.GetLSCard("otherSite"));
+        assertNotNull(scn.gameState().getBattleState()); assertFalse(has(scn, CANCEL));
+    }
+}
