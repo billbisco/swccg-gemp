@@ -120,7 +120,8 @@ public class Card_1262_002_Tests {
             scn.MoveCardsToLocation(remote ? scn.GetDSStartingLocation() : site, creature);
             if (excluded) scn.ApplyAdHocModifier(new ExcludedFromBattleModifier(null, creature));
         }
-        scn.SkipToDSTurn(Phase.BATTLE);
+        scn.SkipToPhase(Phase.BATTLE);
+        assertTrue(scn.AwaitingDSBattlePhaseActions());
         scn.DSInitiateBattle(site);
         scn.PassBattleStartResponses();
         assertEquals(expected, scn.GetDSTotalPower());
@@ -160,7 +161,8 @@ public class Card_1262_002_Tests {
         var witch = scn.GetDSCard("witch");
         scn.MoveCardsToLocation(site, wampa, witch);
         if (withTrooper) scn.MoveCardsToLocation(site, scn.GetDSCard("trooper"));
-        scn.SkipToDSTurn(Phase.BATTLE);
+        scn.SkipToPhase(Phase.BATTLE);
+        assertTrue(scn.AwaitingDSBattlePhaseActions());
         return scn;
     }
 
@@ -173,9 +175,8 @@ public class Card_1262_002_Tests {
         var trooper = scn.GetDSCard("trooper");
         assertTrue(scn.DSCardActionAvailable(wampa, "Initiate attack"));
         scn.DSUseCardAction(wampa, "Initiate attack");
-        assertFalse(scn.DSHasCardChoiceAvailable(witch));
-        if (scn.DSHasCardChoiceAvailable(trooper)) scn.DSChooseCard(trooper);
-        scn.PassAllResponses();
+        scn.PassResponses("ATTACK_TARGET_SELECTED");
+        scn.PassResponses("ATTACK_INITIATED");
         assertTrue(scn.gameState().isParticipatingInAttack(trooper));
         assertFalse(scn.gameState().isParticipatingInAttack(witch));
     }
@@ -197,13 +198,22 @@ public class Card_1262_002_Tests {
         assertTrue(scn.AwaitingDSDeployPhaseActions());
         assertTrue(scn.DSCardActionAvailable(scn.GetDSCard("witch"), DOWNLOAD));
         scn.DSUseCardAction(scn.GetDSCard("witch"), DOWNLOAD);
-        assertTrue(scn.DSHasCardChoiceAvailable(mount));
-        assertFalse(scn.DSHasCardChoiceAvailable(scn.GetDSCard("walker")));
+        assertTrue(reserveChoiceIsSelectable(scn, mount));
+        assertFalse(reserveChoiceIsSelectable(scn, scn.GetDSCard("walker")));
         scn.DSChooseCard(mount);
         assertFalse(scn.DSHasCardChoiceAvailable(scn.GetDSCard("town")));
         if (scn.DSHasCardChoiceAvailable(scn.GetDSStartingLocation())) scn.DSChooseCard(scn.GetDSStartingLocation());
         scn.PassAllResponses();
         assertEquals(scn.GetDSStartingLocation(), mount.getAtLocation());
+    }
+
+    private boolean reserveChoiceIsSelectable(VirtualTableScenario scn, PhysicalCardImpl card) {
+        var ids = scn.DSGetBPChoices();
+        var selectable = scn.GetADParamAsList(scn.DS, "selectable");
+        for (int i = 0; i < ids.size() && i < selectable.size(); i++) {
+            if (ids.get(i).equals(card.getBlueprintId(true)) && "true".equals(selectable.get(i))) return true;
+        }
+        return false;
     }
 
     @Test public void DathomirWitchDeploysOnlyMountHereForNormalCostAndReshuffles() {
@@ -225,7 +235,7 @@ public class Card_1262_002_Tests {
         var mount = scn.GetDSCard("mount");
         if (scn.DSCardActionAvailable(scn.GetDSCard("witch"), DOWNLOAD)) {
             scn.DSUseCardAction(scn.GetDSCard("witch"), DOWNLOAD);
-            assertFalse(scn.DSHasCardChoiceAvailable(mount));
+            assertFalse(reserveChoiceIsSelectable(scn, mount));
         }
         assertEquals(2, scn.GetDSForcePileCount());
         assertInZone(Zone.RESERVE_DECK, mount);

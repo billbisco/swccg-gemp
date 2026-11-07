@@ -35,9 +35,9 @@ public class Card1262_016 extends AbstractCreatureVehicle {
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, PhysicalCard self) {
         Filter rider = Filters.and(Filters.character, Filters.aboardAsPassenger(self));
-        Filter witchRider = Filters.and(Filters.title("Dathomir Witch"), rider);
-        Condition ridden = (state, querying) -> state.getAttachedCards(self, false).stream()
-                .anyMatch(card -> witchRider.accepts(state, querying, card));
+        Filter witch = Filters.title("Dathomir Witch");
+        Condition ridden = (state, querying) -> state.getPassengerCardsAboard(self).stream()
+                .anyMatch(card -> witch.accepts(state, querying, card));
         Filter protectedMount = new Filter() {
             @Override
             public boolean accepts(GameState state, ModifiersQuerying querying, PhysicalCard card) {

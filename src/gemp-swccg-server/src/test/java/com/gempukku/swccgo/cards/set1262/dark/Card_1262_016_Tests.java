@@ -16,9 +16,10 @@ import static org.junit.Assert.*;
 public class Card_1262_016_Tests {
     private VirtualTableScenario scenario() {
         var scn = new VirtualTableScenario(new HashMap<>(Map.of("luke", "1_19")),
-                new HashMap<>(Map.of("mount", "1262_16", "witch", "1262_2", "otherwitch", "1262_2",
-                        "trooper", "1_194", "wampa", "3_93", "cave", "3_150",
-                        "camp", "1_292", "wastes", "1_293", "farm", "1_294", "town", "1_295")),
+                new HashMap<>(Map.ofEntries(Map.entry("mount", "1262_16"), Map.entry("mount2", "1262_16"),
+                        Map.entry("witch", "1262_2"), Map.entry("otherwitch", "1262_2"),
+                        Map.entry("trooper", "1_194"), Map.entry("wampa", "3_93"), Map.entry("cave", "3_150"),
+                        Map.entry("town", "1_295"))),
                 20, 20, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -81,12 +82,16 @@ public class Card_1262_016_Tests {
         assertEquals(3, scn.GetPower(mount));
     }
 
-    @Test public void RancorMountHasHalfAbilityAndProvidesPresenceWithoutARider() {
+    @Test public void RancorMountHalfAbilityNeedsTwoMountsToControlAnEmptySite() {
         var scn = scenario();
         var site = scn.GetDSStartingLocation();
         var mount = scn.GetDSCard("mount");
         scn.MoveCardsToLocation(site, mount);
-        assertEquals(0.5f, scn.game().getModifiersQuerying().getAbility(scn.gameState(), mount), scn.epsilon);
+        var querying = scn.game().getModifiersQuerying();
+        assertEquals(0.5f, querying.getAbility(scn.gameState(), mount), scn.epsilon);
+        assertEquals(0.5f, querying.getTotalAbilityPresentAtLocation(scn.gameState(), scn.DS, site), scn.epsilon);
+        scn.MoveCardsToLocation(site, scn.GetDSCard("mount2"));
+        assertEquals(1f, querying.getTotalAbilityPresentAtLocation(scn.gameState(), scn.DS, site), scn.epsilon);
         scn.SkipToDSTurn(Phase.CONTROL);
         assertTrue(scn.DSForceDrainAvailable(site));
         scn.DSForceDrainAt(site);
@@ -149,7 +154,8 @@ public class Card_1262_016_Tests {
             scn.MoveCardsToDSHand(witch);
             scn.BoardAsPassenger(mount, witch);
         }
-        scn.SkipToDSTurn(Phase.BATTLE);
+        scn.SkipToPhase(Phase.BATTLE);
+        assertTrue(scn.AwaitingDSBattlePhaseActions());
         return scn;
     }
 
@@ -164,8 +170,8 @@ public class Card_1262_016_Tests {
         var mount = scn.GetDSCard("mount");
         assertTrue(scn.DSCardActionAvailable(wampa, "Initiate attack"));
         scn.DSUseCardAction(wampa, "Initiate attack");
-        if (scn.DSHasCardChoiceAvailable(mount)) scn.DSChooseCard(mount);
-        scn.PassAllResponses();
+        scn.PassResponses("ATTACK_TARGET_SELECTED");
+        scn.PassResponses("ATTACK_INITIATED");
         assertTrue(scn.gameState().isParticipatingInAttack(mount));
     }
 
@@ -208,6 +214,7 @@ public class Card_1262_016_Tests {
             assertTrue(scn.DSHasCardChoiceAvailable(forfeited));
             scn.DSChooseCard(forfeited);
             scn.PassAllResponses();
+            if (forfeited.getZone() == Zone.VOID) scn.PassResponses("CARDS_LOST");
             assertInZone(Zone.LOST_PILE, forfeited);
         }
     }
