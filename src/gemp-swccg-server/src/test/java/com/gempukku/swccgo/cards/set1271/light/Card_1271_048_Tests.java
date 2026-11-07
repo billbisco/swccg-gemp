@@ -77,6 +77,7 @@ public class Card_1271_048_Tests {
     private void forfeit(VirtualTableScenario s,String name) {
         s.PrepareLSDestiny(5);s.PrepareDSDestiny(0);s.SkipToDamageSegment(true);s.PassDamageSegmentActions();assertTrue(s.AwaitingDSBattleDamagePayment());
         s.DSChooseCard(s.GetDSCard(name));
+        if(s.DSDecisionAvailable("Do you still want to forfeit it?"))s.DSChooseYes();
         // Pass only earlier loss windows; leave the forfeiture trigger available for the cannon's choice.
         s.PassResponses("ABOUT_TO_LOSE_CARD_FROM_TABLE");s.PassResponses("ABOUT_TO_LOSE_FORCE_NOT_FROM_BATTLE_DAMAGE");
         for(int i=0;i<3 && s.DSDecisionAvailable("put on Lost Pile");i++){
@@ -96,7 +97,8 @@ public class Card_1271_048_Tests {
     @Test public void PlanetDefenderIonCannonDoesNotOfferTheftAfterAnUnsuccessfulShot() {
         var s=ready(true);shoot(s,2,4);forfeitTarget(s);assertFalse(s.LSAnyActionsAvailable() && s.LSCardActionAvailable(s.GetLSCard("cannon"),"Steal"));s.PassAllResponses();
         assertEquals(s.GetLSCard("powerSite"),s.GetLSCard("cannon").getAttachedTo());assertTrue(s.GetDSLostPile().contains(s.GetDSCard("target")));
-    }    @Test public void PlanetDefenderIonCannonDoesNotStealADifferentForfeitedCapital() {
+    }
+    @Test public void PlanetDefenderIonCannonDoesNotStealADifferentForfeitedCapital() {
         var s=ready(true);s.MoveCardsToLocation(s.GetLSStartingLocation(),s.GetDSCard("otherCapital"));shoot(s,3,4);forfeit(s,"otherCapital");
         assertFalse(s.LSAnyActionsAvailable() && s.LSCardActionAvailable(s.GetLSCard("cannon"),"Steal"));s.PassAllResponses();
         assertTrue(s.GetDSLostPile().contains(s.GetDSCard("otherCapital")));assertEquals(Zone.AT_LOCATION,s.GetDSCard("target").getZone());
