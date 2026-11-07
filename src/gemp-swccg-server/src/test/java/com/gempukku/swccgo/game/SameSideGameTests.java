@@ -18,7 +18,7 @@ import static org.junit.Assert.*;
 /**
  * swccg-guild/work#176, same-side games (Bill 2026-11-05): a coin toss decides who takes the Light Side seat; the "Light
  * Side goes first" cards read seat-neutrally (Death Star: your opponent goes first; Massassi Throne Room: you go first);
- * claims in opposite directions cancel; each player uses their seat's Force icons; uniqueness is per player.
+ * claims in opposite directions tie and a coin toss decides who goes first (Bill 2026-11-07); each player uses their seat's Force icons; uniqueness is per player.
  */
 public class SameSideGameTests {
     static final String A = "alice";
@@ -168,24 +168,85 @@ public class SameSideGameTests {
         assertFalse("bob may still deploy his own copy",
                 g.game.getModifiersQuerying().isUniquenessOnTableLimitReached(g.state(), bobs));
     }
-    @Test
-    public void BothStartingAtDeathStarCancelSoTheDarkSideSeatGoesFirst() {
-        // the second Death Star converts the first (PC rules); each claimed the first turn for the other player
-        for (long seed : new long[]{ALICE_DARK, ALICE_LIGHT}) {
-            Game g = start(deck("a", "2_143"), deck("b", "2_143"), seed);
+    /**
+     * Both players' claims tie (Bill 2026-11-07): a coin toss with the game's seeded random decides who goes first. Over
+     * a range of seeds the toss must go both ways, to both seats and to both players, and the same seed must give the
+     * same result.
+     */
+    static void assertTieDecidedByCoinToss(String startA, String startB) {
+        java.util.Set<String> winners = new java.util.HashSet<>();
+        java.util.Set<Boolean> darkSeatWon = new java.util.HashSet<>();
+        for (long seed = 1; seed <= 12; seed++) {
+            Game g = start(deck("a", startA), deck("b", startB), seed);
             toFirstTurn(g);
-            assertTrue(log(g), logHas(g, "they cancel, so the Dark Side seat goes first"));
-            assertEquals("seed " + seed, g.state().getDarkPlayer(), g.state().getCurrentPlayerId());
+            String winner = g.state().getFirstTurnCoinTossWinner();
+            assertNotNull("seed " + seed + "\n" + log(g), winner);
+            assertEquals("seed " + seed + "\n" + log(g), winner, g.state().getCurrentPlayerId());
+            assertTrue(log(g), logHas(g, "the claims tie; a coin toss decides who goes first: " + winner + " wins the toss"));
+            assertTrue(log(g), logHas(g, winner + " goes first"));
+            assertFalse(log(g), logHas(g, "they cancel"));
+            // the seeded outcome is reproducible
+            Game again = start(deck("a", startA), deck("b", startB), seed);
+            toFirstTurn(again);
+            assertEquals("seed " + seed, winner, again.state().getFirstTurnCoinTossWinner());
+            assertEquals("seed " + seed, winner, again.state().getCurrentPlayerId());
+            winners.add(winner);
+            darkSeatWon.add(winner.equals(g.state().getDarkPlayer()));
+        }
+        assertEquals("both players win the toss for some seed", 2, winners.size());
+        assertEquals("both seats win the toss for some seed", 2, darkSeatWon.size());
+    }
+
+    @Test
+    public void BothStartingAtDeathStarTieSoACoinTossDecides() {
+        // the second Death Star converts the first (PC rules); each claimed the first turn for the other player
+        assertTieDecidedByCoinToss("2_143", "2_143");
+    }
+
+    @Test
+    public void BothStartingAtMassassiThroneRoomTieSoACoinTossDecides() {
+        assertTieDecidedByCoinToss("1_138", "1_138");
+    }
+
+    @Test
+    public void SingleClaimsMakeNoCoinToss() {
+        for (long seed : new long[]{ALICE_DARK, ALICE_LIGHT}) {
+            Game ds = start(deck("a", "2_143"), deck("b", "12_176"), seed);
+            toFirstTurn(ds);
+            assertEquals(B, ds.state().getCurrentPlayerId());
+            assertNull(ds.state().getFirstTurnCoinTossWinner());
+            assertFalse(log(ds), logHas(ds, "coin toss decides who goes first"));
+            Game mtr = start(deck("a", "1_138"), deck("b", "5_79"), seed);
+            toFirstTurn(mtr);
+            assertEquals(A, mtr.state().getCurrentPlayerId());
+            assertNull(mtr.state().getFirstTurnCoinTossWinner());
+            assertFalse(log(mtr), logHas(mtr, "coin toss decides who goes first"));
         }
     }
 
     @Test
-    public void BothStartingAtMassassiThroneRoomCancelSoTheDarkSideSeatGoesFirst() {
+    public void NormalGamesAreUnchanged() {
+        // Light vs Dark: no seating toss, Dark Side goes first unless Death Star / Massassi Throne Room says Light
         for (long seed : new long[]{ALICE_DARK, ALICE_LIGHT}) {
-            Game g = start(deck("a", "1_138"), deck("b", "1_138"), seed);
-            toFirstTurn(g);
-            assertTrue(log(g), logHas(g, "they cancel, so the Dark Side seat goes first"));
-            assertEquals("seed " + seed, g.state().getDarkPlayer(), g.state().getCurrentPlayerId());
+            Game plain = start(deck("a", "4_154"), deck("b", "5_79"), seed);
+            assertFalse(plain.state().isSameSideGame());
+            assertEquals(A, plain.state().getDarkPlayer());
+            toFirstTurn(plain);
+            assertEquals(log(plain), A, plain.state().getCurrentPlayerId());
+            assertTrue(logHas(plain, "Dark Side goes first"));
+            assertNull(plain.state().getFirstTurnCoinTossWinner());
+
+            Game ds = start(deck("a", "2_143"), deck("b", "5_79"), seed);
+            toFirstTurn(ds);
+            assertEquals(log(ds), B, ds.state().getCurrentPlayerId());
+            assertTrue(logHas(ds, "Light Side goes first"));
+            assertNull(ds.state().getFirstTurnCoinTossWinner());
+
+            Game both = start(deck("a", "2_143"), deck("b", "1_138"), seed);
+            toFirstTurn(both);
+            assertEquals(log(both), B, both.state().getCurrentPlayerId());
+            assertNull(both.state().getFirstTurnCoinTossWinner());
+            assertFalse(logHas(both, "coin toss decides who goes first"));
         }
     }
 }
