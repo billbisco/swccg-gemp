@@ -135,7 +135,7 @@ public class Card1240_107 extends AbstractObjective {
             action.appendUsage(
                     new OncePerTurnEffect(action));
             action.appendEffect(
-                    new DeployCardFromReserveDeckEffect(action, Filters.battleground_system, true));
+                    new DeployCardFromReserveDeckEffect(action, Card1240_087.objectiveBattlegroundSystem(self), true));
             actions.add(action);
         }
 
