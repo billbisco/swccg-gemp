@@ -19,7 +19,7 @@ public class Card_1261_092_Tests {
 
     private VirtualTableScenario setup() {
         var scn = new VirtualTableScenario(new HashMap<>(Map.ofEntries(
-                Map.entry("combo", "1261_92"), Map.entry("other", "1210_160"),
+                Map.entry("combo", "1261_92"), Map.entry("copy", "1261_92"),
                 Map.entry("trooper", "2_18"), Map.entry("red", "1_144"),
                 Map.entry("home", "9_74"), Map.entry("admiral", "203_9"),
                 Map.entry("leia", "1_17"), Map.entry("nonrebel", "1_66"),
@@ -153,7 +153,7 @@ public class Card_1261_092_Tests {
         scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetDSCard("tie"));
         scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetLSCard("home"));
         if (tied) scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetLSCard("leia"));
-        scn.MoveCardsToLSHand(scn.GetLSCard("combo"), scn.GetLSCard("other"));
+        scn.MoveCardsToLSHand(scn.GetLSCard("combo"), scn.GetLSCard("copy"));
         scn.MoveCardsToTopOfLSLostPile(scn.GetLSCard("nonrebel"), scn.GetLSCard("trooper"), scn.GetLSCard("red"));
         scn.SkipToLSTurn(Phase.CONTROL);
         scn.MoveCardsToTopOfLSUsedPile(scn.GetLSCard("oldUsed"));
@@ -255,13 +255,16 @@ public class Card_1261_092_Tests {
 
     @Test public void zeroDestinyDoesNotRetrieveAndStillConsumesTheGameUse() {
         var scn = retrieval(false);
+        var copy = scn.GetLSCard("copy");
+        assertTrue(scn.LSCardPlayAvailable(copy, RETRIEVE));
         scn.PrepareLSDestiny(0);
         scn.LSPlayCard(scn.GetLSCard("combo"), RETRIEVE);
         scn.PassAllResponses(); scn.PassDestinyDrawResponses(); scn.PassAllResponses();
         assertTrue(scn.GetLSLostPile().contains(scn.GetLSCard("red")));
         assertTrue(scn.GetLSLostPile().contains(scn.GetLSCard("trooper")));
         assertTrue(scn.GetLSLostPile().contains(scn.GetLSCard("combo")));
-        assertFalse(available(scn, RETRIEVE));
+        assertEquals(Zone.HAND, copy.getZone());
+        assertFalse(scn.LSCardPlayAvailable(copy, RETRIEVE));
     }
 
 
