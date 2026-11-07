@@ -30,7 +30,8 @@ public class Card_1250_001_Tests {
                         Map.entry("cantina", "1_290"), Map.entry("capital", "1_301"),
                         Map.entry("trooper", "1_194"), Map.entry("presence", "14_69"), Map.entry("bespin", "5_164"),
                         Map.entry("sector", "5_165"), Map.entry("car", "5_178"), Map.entry("vaderShip", "1_306"),
-                        Map.entry("freighter", "4_168"), Map.entry("bosskShip", "7_301"), Map.entry("scout", "1_305"),
+                        Map.entry("obsidian1", "7_305"), Map.entry("obsidian2", "7_306"),
+                        Map.entry("bosskShip", "7_301"), Map.entry("scout", "1_305"),
                         Map.entry("cantinaTrooper", "1_194")));
         if (withObjective) dark.put("market", "12_176");
         var scn = new VirtualTableScenario(light, dark, 28, 28, StartingSetup.DefaultLSGroundLocation,
@@ -114,7 +115,8 @@ public class Card_1250_001_Tests {
         assertEquals(lightBase - 1, deployCost(scn, rebel, site), scn.epsilon);
         assertEquals(darkBase, deployCost(scn, trooper, site), scn.epsilon);
         scn.MoveCardsToLSHand(lightCapital);
-        scn.MoveCardsToLocation(system, ship, scn.GetDSCard("freighter"), scn.GetDSCard("bosskShip"));
+        scn.MoveCardsToLocation(system, scn.GetDSCard("obsidian1"), scn.GetDSCard("obsidian2"),
+                scn.GetDSCard("bosskShip"));
         assertEquals(darkBase, deployCost(scn, trooper, site), scn.epsilon);
     }
 
@@ -140,7 +142,7 @@ public class Card_1250_001_Tests {
     @Test public void NothingCanGetThroughOurShieldNeedsThreeUniqueShipsWithoutCapitalAndCanDecline() {
         var scn = scenario(true);
         var system = scn.GetDSCard("system");
-        scn.MoveCardsToLocation(system, scn.GetDSCard("vaderShip"), scn.GetDSCard("freighter"),
+        scn.MoveCardsToLocation(system, scn.GetDSCard("obsidian1"), scn.GetDSCard("obsidian2"),
                 scn.GetDSCard("scout"));
         prepareDrainSites(scn);
         drain(scn, scn.GetDSStartingLocation(), false, false, 1);

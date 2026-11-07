@@ -53,7 +53,7 @@ public class Card1250_001 extends Card1114_029 {
         Filter eligible = Filters.and(Filters.owner(playerId), Filters.or(Filters.character, Filters.vehicle),
                 Filters.not(Icon.PRESENCE));
         Filter relatedPlaces = Filters.and(Filters.or(Filters.site, Filters.sector),
-                Filters.relatedSystemTo(self, systemWithFleet(self, playerId, true)));
+                Filters.relatedLocationTo(self, systemWithFleet(self, playerId, true)));
         return new DeployCostToLocationModifier(self, eligible, -1, relatedPlaces);
     }
 
@@ -73,7 +73,7 @@ public class Card1250_001 extends Card1114_029 {
         }
         var location = drain.getLocation();
         Filter eligibleSite = Filters.and(Filters.battleground, Filters.site,
-                Filters.relatedSystemTo(self, systemWithFleet(self, playerId, false)));
+                Filters.relatedLocationTo(self, systemWithFleet(self, playerId, false)));
         if (!eligibleSite.accepts(game, location)) return null;
 
         var action = new OptionalGameTextTriggerAction(self, sourceId);
