@@ -11,8 +11,8 @@ import static org.junit.Assert.*;
 public class Card_1250_036_Tests {
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>() {{
-            put("artoo", "1250_36"); put("ownDroid", "1_5"); put("ship", "1115_2"); put("bravo", "1116_26");
-            put("ordinary", "1_140"); put("epiVehicle", "14_60"); put("speeder", "3_69"); put("system", "1_127"); put("biggs", "1_3");
+            put("artoo", "1250_36"); put("ownDroid", "1_5"); put("ship", "1115_26"); put("bravo", "1116_26");
+            put("ordinary", "1_140"); put("epiVehicle", "14_60"); put("speeder", "3_69"); put("system", "1_127"); put("pilot", "12_1");
             put("senate", "12_75"); put("chamber", "1116_29"); put("archives", "1117_4"); put("platform", "1113_3");
         }}, new HashMap<>() {{
             put("droid1", "1_163"); put("droid2", "1_186"); put("trooper", "1_194");
@@ -43,7 +43,7 @@ public class Card_1250_036_Tests {
         scn.LSUseCardAction(artoo, "Target up to two opponent's droids");
         if (scn.LSDecisionAvailable("Choose up to two opponent's droids")) {
             assertFalse(scn.LSHasCardChoicesAvailable(scn.GetLSCard("ownDroid"))); assertFalse(scn.LSHasCardChoicesAvailable(scn.GetDSCard("trooper")));
-            assertEquals(2, scn.LSGetChoiceMax());
+            assertEquals(scn.GetLSStartingLocation().equals(scn.GetDSCard("droid2").getAtLocation()) ? 2 : 1, scn.LSGetChoiceMax());
             if (two) scn.LSChooseCards(scn.GetDSCard("droid1"), scn.GetDSCard("droid2")); else scn.LSChooseCard(scn.GetDSCard("droid1"));
         }
         scn.PassAllResponses(); assertTrue(scn.DSDecisionAvailable("Place targeted droids in Used Pile or lose 4 Force"));
@@ -119,7 +119,7 @@ public class Card_1250_036_Tests {
     public void ArtooAddsTwoToExistingImmunityInsteadOfReplacingItWithFour() {
         var scn = scenario(); scn.StartGame(); var system = scn.GetLSCard("system"); var ship = scn.GetLSCard("bravo"); scn.MoveLocationToTable(system); scn.MoveCardsToLocation(system, ship);
         assertEquals(3, scn.game().getModifiersQuerying().getImmunityToAttritionLessThan(scn.gameState(), ship), scn.epsilon);
-        scn.AttachCardsTo(ship, scn.GetLSCard("artoo")); assertEquals(5, scn.game().getModifiersQuerying().getImmunityToAttritionLessThan(scn.gameState(), ship), scn.epsilon);
+        scn.BoardAsPassenger(ship, scn.GetLSCard("artoo")); assertEquals(5, scn.game().getModifiersQuerying().getImmunityToAttritionLessThan(scn.gameState(), ship), scn.epsilon);
     }
     @Test
     public void ArtooDoesNotImproveNonEpisodeIShip() {
@@ -139,7 +139,7 @@ public class Card_1250_036_Tests {
     public void ArtooShipMustForfeitAtFourActualAttrition() { checkAttrition(4, false); }
     private void checkAttrition(int attrition, boolean ignore) {
         var scn = scenario(); scn.StartGame(); var system = scn.GetLSCard("system"); var ship = scn.GetLSCard("ship"); scn.MoveLocationToTable(system);
-        scn.MoveCardsToLocation(system, ship, scn.GetDSCard("destroyer")); scn.BoardAsPilot(ship, scn.GetLSCard("biggs")); scn.BoardAsPassenger(ship, scn.GetLSCard("artoo"));
+        scn.MoveCardsToLocation(system, ship, scn.GetDSCard("destroyer")); scn.BoardAsPilot(ship, scn.GetLSCard("pilot")); scn.BoardAsPassenger(ship, scn.GetLSCard("artoo"));
         scn.BoardAsPilot(scn.GetDSCard("destroyer"), scn.GetDSCard("motti")); scn.LSStartBattleAndSkipToWeaponsSegment(system);
         scn.PrepareLSDestiny(7); scn.PrepareDSDestiny(attrition); scn.SkipToDamageSegment(true);
         assertEquals(0, scn.gameState().getBattleState().getBattleDamageRemaining(scn.game(), scn.LS), scn.epsilon);
