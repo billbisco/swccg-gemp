@@ -70,10 +70,27 @@ public class LocationsLayout implements Snapshotable<LocationsLayout> {
         findSystemsAndStarshipsAndVehiclesForLayout(library, CardCounts.PLAYTESTING_SETS_CARD_COUNTS, 501, systems, starshipsAndVehicles);
         findSystemsAndStarshipsAndVehiclesForLayout(library, CardCounts.LEGACY_SETS_CARD_COUNTS, 601, systems, starshipsAndVehicles);
         findSystemsAndStarshipsAndVehiclesForLayout(library, CardCounts.LEGACY_SETS_CARD_COUNTS, 1210, systems, starshipsAndVehicles);
-        // Later Virtual Block sets (1220 and up), so systems first printed there (for example Dressel) get a layout.
+        // Later Virtual Block sets (1220 and up): only systems and starship/vehicle site personas first printed there
+        // (for example Dressel) are added, so the layouts of systems already known above stay exactly as they were.
+        Set<String> knownSystemTitles = new HashSet<String>();
+        for (SwccgCardBlueprint system : systems) {
+            knownSystemTitles.add(system.getTitle());
+        }
         for (ExpansionSet expansionSet : ExpansionSet.values()) {
             if (expansionSet.getSetNumber() > 1210) {
-                findSystemsAndStarshipsAndVehiclesForLayout(library, CardCounts.LEGACY_SETS_CARD_COUNTS, expansionSet.getSetNumber(), systems, starshipsAndVehicles);
+                List<SwccgCardBlueprint> laterSystems = new LinkedList<SwccgCardBlueprint>();
+                List<Persona> laterStarshipsAndVehicles = new LinkedList<Persona>();
+                findSystemsAndStarshipsAndVehiclesForLayout(library, CardCounts.LEGACY_SETS_CARD_COUNTS, expansionSet.getSetNumber(), laterSystems, laterStarshipsAndVehicles);
+                for (SwccgCardBlueprint system : laterSystems) {
+                    if (knownSystemTitles.add(system.getTitle())) {
+                        systems.add(system);
+                    }
+                }
+                for (Persona persona : laterStarshipsAndVehicles) {
+                    if (!starshipsAndVehicles.contains(persona)) {
+                        starshipsAndVehicles.add(persona);
+                    }
+                }
             }
         }
 
