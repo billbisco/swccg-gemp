@@ -23,7 +23,7 @@ import static org.junit.Assert.*;
 public class Card_1261_108_Tests {
     private VirtualTableScenario fixture(int stack) {
         var ls = new HashMap<>(Map.of("hut", "4_89", "jungle", "4_86", "luke", "1_19", "yoda", "4_2", "han", "1_11",
-                "loss", "2_18", "testOne", "4_77", "testFive", "4_78", "backpack", "4_12", "commander", "3_3"));
+                "loss", "2_18", "testOne", "4_77", "testFive", "4_78", "backpack", "4_12", "commander", "601_52"));
         return new VirtualTableScenario(ls, new HashMap<>(), 40, 40,
                 new StartingSetup() {
                     @Override public HashMap<String, String> Cards() {
@@ -162,9 +162,10 @@ public class Card_1261_108_Tests {
         if (crossesOver) {
             assertTrue(luke.isCrossedOver());
             assertEquals(scn.DS, luke.getOwner());
+            assertTrue(scn.game().getModifiersQuerying().isCrossedOver(scn.gameState(), Persona.LUKE));
             assertFalse(Filters.Luke.accepts(scn.game(), luke));
         } else assertEquals(Zone.OUT_OF_PLAY, luke.getZone());
-        assertEquals(scn.gameState().getLastMessages().toString(), Zone.OUT_OF_PLAY, objective.getZone());
+        assertEquals(scn.GetCurrentDecision().getText() + " " + scn.gameState().getLastMessages(), Zone.OUT_OF_PLAY, objective.getZone());
     }
 
     @Test public void realLukeCrossoverPlacesSaveYouItCanOutOfPlay() { apprenticeLeaves(true); }
@@ -239,7 +240,13 @@ public class Card_1261_108_Tests {
         if (completed) {
             assertEquals(Zone.SIDE_OF_TABLE, test.getZone());
             assertFalse(scn.IsCardActive(test));
-            scn.MoveCardsToLocation(site, luke);
+            scn.MoveCardsToLSHand(luke);
+            scn.LSActivateForceCheat(8); scn.SkipToLSTurn(Phase.DEPLOY);
+            scn.LSDeployCard(luke);
+            if (scn.LSHasCardChoiceAvailable(site)) scn.LSChooseCard(site);
+            scn.PassForceUseResponses(); scn.PassAllResponses();
+            assertEquals(site, luke.getAtLocation());
+            assertEquals(luke, test.getTargetedCard(scn.gameState(), TargetId.JEDI_TEST_APPRENTICE));
             assertTrue(scn.IsCardActive(test));
         } else assertTrue(scn.GetLSLostPile().contains(test));
     }
