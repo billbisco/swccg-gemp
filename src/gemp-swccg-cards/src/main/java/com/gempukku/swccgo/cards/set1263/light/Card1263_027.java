@@ -34,7 +34,7 @@ public class Card1263_027 extends AbstractUsedInterrupt {
     @Override
     protected List<PlayInterruptAction> getGameTextOptionalAfterActions(String playerId, SwccgGame game, EffectResult result, PhysicalCard self) {
         if (!TriggerConditions.battleInitiated(game, result, game.getOpponent(playerId))) return null;
-        Filter target = Filters.and(Filters.character, Filters.presentAt(game.getGameState().getBattleState().getBattleLocation()));
+        Filter target = Filters.and(Filters.character, Filters.presentAt(Filters.and(game.getGameState().getBattleState().getBattleLocation())));
         if (!GameConditions.canTarget(game, self, target)) return null;
 
         PlayInterruptAction action = new PlayInterruptAction(game, self);
