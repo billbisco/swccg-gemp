@@ -85,7 +85,7 @@ public abstract class LegacyInsertPodraceShieldTests {
         if (dark() == own) s.DSUseCardAction(card, text); else s.LSUseCardAction(card, text);
     }
     protected VirtualTableScenario ready(boolean shield) {
-        var s = scenario(); s.StartGame(); turn(s, true, Phase.CONTROL);
+        var s = scenario(); s.StartGame(); turn(s, true, Phase.ACTIVATE); s.SkipToPhase(Phase.CONTROL);
         if (shield) table(s, true, card(s, true, "shield"));
         return s;
     }
