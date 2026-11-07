@@ -1768,6 +1768,7 @@ public enum GameTextActionId {
     LEGACY__HES_NO_JEDI__PLAY_SHIELD(false, true),
     LEGACY__HUTT_INFLUENCE_V__UPLOAD_ALL_WRAPPED_UP(true, true),
     LEGACY__MOS_ESPA_V__PREVENT_SLAVE_LOSS(false, true),
+    LEGACY__SACRED_FOREST__DEPLOY_YARNA(true),
     ;
 
     private boolean _searchCardPile;
