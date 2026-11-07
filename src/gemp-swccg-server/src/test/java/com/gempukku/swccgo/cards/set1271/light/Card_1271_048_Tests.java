@@ -80,8 +80,14 @@ public class Card_1271_048_Tests {
         if(s.DSDecisionAvailable("Do you still want to forfeit it?"))s.DSChooseYes();
         // Pass only earlier loss windows; leave the forfeiture trigger available for the cannon's choice.
         s.PassResponses("ABOUT_TO_LOSE_CARD_FROM_TABLE");s.PassResponses("ABOUT_TO_LOSE_FORCE_NOT_FROM_BATTLE_DAMAGE");
-        for(int i=0;i<3 && s.DSDecisionAvailable("put on Lost Pile");i++){
-            s.DSChooseCard(s.DSHasCardChoiceAvailable(s.GetDSCard(name))?s.GetDSCard(name):s.GetDSCard("weapon"));
+        // The current player chooses competing pile placement order (AR2 p.11), including opponent's cards.
+        for(int i=0;i<4;i++) {
+            boolean light=s.LSDecisionAvailable("put on Lost Pile") || s.LSDecisionAvailable("Choose card to be lost");
+            boolean dark=s.DSDecisionAvailable("put on Lost Pile") || s.DSDecisionAvailable("Choose card to be lost");
+            if(light)s.LSChooseCard(s.LSHasCardChoiceAvailable(s.GetDSCard("weapon"))?s.GetDSCard("weapon"):s.GetDSCard(name));
+            else if(dark)s.DSChooseCard(s.DSHasCardChoiceAvailable(s.GetDSCard("weapon"))?s.GetDSCard("weapon"):s.GetDSCard(name));
+            else break;
+            s.PassResponses("ABOUT_TO_LOSE_CARD_FROM_TABLE");
         }
     }
     @Test public void PlanetDefenderIonCannonActuallyTradesItselfOutOfPlayForTheForfeitedTargetInHand() {
