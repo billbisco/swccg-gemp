@@ -7,7 +7,6 @@ import com.gempukku.swccgo.framework.VirtualTableScenario;
 import com.gempukku.swccgo.game.PhysicalCardImpl;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgCardBlueprintLibrary;
-import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -91,7 +90,7 @@ public abstract class LegacyInsertPodraceShieldTests {
         return s;
     }
 
-    @Test public void FinalPrintedStatsIconsAndKeywordsAreCorrect() {
+    protected void checkFinalPrintedStatsIconsAndKeywordsAreCorrect() {
         var s = scenario(); var b = card(s, true, "shield").getBlueprint();
         assertEquals(title(), b.getTitle()); assertTrue(b.hasVirtualSuffix());
         assertEquals(dark() ? Side.DARK : Side.LIGHT, b.getSide());
@@ -102,7 +101,7 @@ public abstract class LegacyInsertPodraceShieldTests {
         s.BlueprintIconCheck(b, new ArrayList<>() {{ add(Icon.DEFENSIVE_SHIELD); add(Icon.REFLECTIONS_III); add(Icon.LEGACY_BLOCK_6); }});
     }
 
-    @Test public void BothPrintingLookupsRetainPhysicalImageIdsAndOneCanonicalRuleClass() {
+    protected void checkBothPrintingLookupsRetainPhysicalImageIdsAndOneCanonicalRuleClass() {
         var s = scenario(); var a = card(s, true, "shield"); var b = card(s, true, "otherPrinting");
         assertEquals(shieldId(), a.getBlueprintId(true)); assertNotEquals(a.getBlueprintId(true), b.getBlueprintId(true));
         assertEquals(a.getBlueprint().getClass(), b.getBlueprint().getClass());
@@ -110,7 +109,7 @@ public abstract class LegacyInsertPodraceShieldTests {
         assertEquals(primaryId(), new SwccgCardBlueprintLibrary().getBaseBlueprintId(shieldId()));
     }
 
-    @Test public void ShieldActuallyPlaysFromTheStartingEffectForFree() {
+    protected void checkShieldActuallyPlaysFromTheStartingEffectForFree() {
         var s = ready(false); var fear = card(s, true, "fear"); var shield = card(s, true, "shield");
         table(s, true, fear); s.StackCardsOn(fear, shield); s.SkipToPhase(Phase.DEPLOY);
         int before = force(s, true); use(s, true, fear, "Defensive Shield");
@@ -118,13 +117,13 @@ public abstract class LegacyInsertPodraceShieldTests {
         s.PassAllResponses(); assertEquals(Zone.SIDE_OF_TABLE, shield.getZone()); assertEquals(before, force(s, true));
     }
 
-    @Test public void ASecondPrintingCannotBePlayedAlongsideTheSameShieldTitle() {
+    protected void checkASecondPrintingCannotBePlayedAlongsideTheSameShieldTitle() {
         var s = ready(true); var fear = card(s, true, "fear");
         table(s, true, fear); s.StackCardsOn(fear, card(s, true, "otherPrinting")); s.SkipToPhase(Phase.DEPLOY);
         assertFalse(dark() ? s.DSCardActionAvailable(fear, "Defensive Shield") : s.LSCardActionAvailable(fear, "Defensive Shield"));
     }
 
-    @Test public void BothPrintingsCountTowardTheExistingOutsideDeckShieldCap() throws com.gempukku.swccgo.game.DeckInvalidException {
+    protected void checkBothPrintingsCountTowardTheExistingOutsideDeckShieldCap() throws com.gempukku.swccgo.game.DeckInvalidException {
         var library = new SwccgCardBlueprintLibrary();
         var deck = new com.gempukku.swccgo.logic.vo.SwccgDeck("shield-cap");
         deck.addCard(dark() ? "13_69" : "13_5");
@@ -137,8 +136,8 @@ public abstract class LegacyInsertPodraceShieldTests {
         } catch (com.gempukku.swccgo.game.DeckInvalidException expected) { assertTrue(expected.getMessage().contains("More defensive shields")); }
     }
 
-    @Test public void AnOpponentsActualInsertPlayIsCanceled() { assertInsertCanceled(false); }
-    @Test public void AnOwnersActualInsertPlayIsAlsoCanceled() { assertInsertCanceled(true); }
+    protected void checkAnOpponentsActualInsertPlayIsCanceled() { assertInsertCanceled(false); }
+    protected void checkAnOwnersActualInsertPlayIsAlsoCanceled() { assertInsertCanceled(true); }
     private void assertInsertCanceled(boolean ownInsert) {
         var s = ready(true); var insert = card(s, ownInsert, "insert");
         hand(s, ownInsert, insert); turn(s, ownInsert, Phase.DEPLOY); play(s, ownInsert, insert); s.PassAllResponses();
@@ -156,12 +155,12 @@ public abstract class LegacyInsertPodraceShieldTests {
         s.PassAllResponses(); assertTrue(lost(s, false).contains(insert));
         return force(s, true) - before;
     }
-    @Test public void CancelingARevealedInsertAllowsActualActivationToContinue() {
+    protected void checkCancelingARevealedInsertAllowsActualActivationToContinue() {
         int stopped = activatePastInsert(false); int continued = activatePastInsert(true);
         assertTrue("Shield must prevent the insert from stopping activation", continued > stopped);
     }
 
-    @Test public void ShieldDoesNotCancelAnOrdinaryCharacterDeployment() {
+    protected void checkShieldDoesNotCancelAnOrdinaryCharacterDeployment() {
         var s = ready(true); var trooper = card(s, true, "trooper"); hand(s, true, trooper);
         s.SkipToPhase(Phase.DEPLOY); force(s, true, 5); int before = force(s, true);
         var site = dark() ? s.GetDSStartingLocation() : s.GetLSStartingLocation();
@@ -170,9 +169,9 @@ public abstract class LegacyInsertPodraceShieldTests {
         s.PassAllResponses(); assertEquals(site, trooper.getAtLocation()); assertEquals(before - 1, force(s, true));
     }
 
-    @Test public void ActualPodraceFromOwnersCardProtectsLossAndOpponentsRetrieval() { finishRace(true, true); }
-    @Test public void ActualPodraceFromOpponentsCardAlsoProtectsLossAndRetrieval() { finishRace(true, false); }
-    @Test public void WithoutTheShieldTheSameRaceLosesForceAndRetrievalCanBeCanceled() { finishRace(false, true); }
+    protected void checkActualPodraceFromOwnersCardProtectsLossAndOpponentsRetrieval() { finishRace(true, true); }
+    protected void checkActualPodraceFromOpponentsCardAlsoProtectsLossAndRetrieval() { finishRace(true, false); }
+    protected void checkWithoutTheShieldTheSameRaceLosesForceAndRetrievalCanBeCanceled() { finishRace(false, true); }
 
     private void finishRace(boolean shield, boolean ownBoonta) {
         var s = ready(shield); var arena = s.GetDSCard("arena"); var boonta = card(s, ownBoonta, "boonta");

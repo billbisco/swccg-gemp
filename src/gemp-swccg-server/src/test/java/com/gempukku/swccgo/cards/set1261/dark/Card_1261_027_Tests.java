@@ -12,7 +12,7 @@ public class Card_1261_027_Tests extends LegacyInsertPodraceShieldTests {
     protected String conversionId() { return "1261_28"; }
     protected String title() { return "You Cannot Hide Forever"; }
 
-    @Test public void SuspensionRequiresStrictlyMoreBattlegroundsAndUpdatesAsOccupationChanges() {
+    @Test public void YouCannotHideForeverSuspensionRequiresStrictlyMoreBattlegroundsAndUpdatesAsOccupationChanges() {
         var s = ready(true); var didIt = s.GetLSCard("didIt"); table(s, false, didIt);
         s.MoveLocationToTable(s.GetLSCard("cantina")); s.MoveLocationToTable(s.GetLSCard("farm"));
         s.SkipToPhase(Phase.DEPLOY); assertFalse(didIt.isSuspended()); // zero versus zero
@@ -26,10 +26,22 @@ public class Card_1261_027_Tests extends LegacyInsertPodraceShieldTests {
         turn(s, true, Phase.CONTROL); assertFalse(didIt.isSuspended()); // two versus two
     }
 
-    @Test public void NonBattlegroundOccupationDoesNotSuspendIDidIt() {
+    @Test public void YouCannotHideForeverNonBattlegroundOccupationDoesNotSuspendIDidIt() {
         var s = ready(true); var didIt = s.GetLSCard("didIt"); table(s, false, didIt);
         s.MoveLocationToTable(s.GetLSCard("nonBattleground"));
         s.MoveCardsToLocation(s.GetLSCard("nonBattleground"), s.GetDSCard("char1"));
         s.SkipToPhase(Phase.DEPLOY); assertFalse(didIt.isSuspended());
     }
+    @Test public void YouCannotHideForeverFinalPrintedStatsIconsAndKeywordsAreCorrect() { checkFinalPrintedStatsIconsAndKeywordsAreCorrect(); }
+    @Test public void YouCannotHideForeverBothPrintingLookupsRetainPhysicalImageIdsAndOneCanonicalRuleClass() { checkBothPrintingLookupsRetainPhysicalImageIdsAndOneCanonicalRuleClass(); }
+    @Test public void YouCannotHideForeverShieldActuallyPlaysFromTheStartingEffectForFree() { checkShieldActuallyPlaysFromTheStartingEffectForFree(); }
+    @Test public void YouCannotHideForeverASecondPrintingCannotBePlayedAlongsideTheSameShieldTitle() { checkASecondPrintingCannotBePlayedAlongsideTheSameShieldTitle(); }
+    @Test public void YouCannotHideForeverBothPrintingsCountTowardTheExistingOutsideDeckShieldCap() throws com.gempukku.swccgo.game.DeckInvalidException { checkBothPrintingsCountTowardTheExistingOutsideDeckShieldCap(); }
+    @Test public void YouCannotHideForeverAnOpponentsActualInsertPlayIsCanceled() { checkAnOpponentsActualInsertPlayIsCanceled(); }
+    @Test public void YouCannotHideForeverAnOwnersActualInsertPlayIsAlsoCanceled() { checkAnOwnersActualInsertPlayIsAlsoCanceled(); }
+    @Test public void YouCannotHideForeverCancelingARevealedInsertAllowsActualActivationToContinue() { checkCancelingARevealedInsertAllowsActualActivationToContinue(); }
+    @Test public void YouCannotHideForeverShieldDoesNotCancelAnOrdinaryCharacterDeployment() { checkShieldDoesNotCancelAnOrdinaryCharacterDeployment(); }
+    @Test public void YouCannotHideForeverActualPodraceFromOwnersCardProtectsLossAndOpponentsRetrieval() { checkActualPodraceFromOwnersCardProtectsLossAndOpponentsRetrieval(); }
+    @Test public void YouCannotHideForeverActualPodraceFromOpponentsCardAlsoProtectsLossAndRetrieval() { checkActualPodraceFromOpponentsCardAlsoProtectsLossAndRetrieval(); }
+    @Test public void YouCannotHideForeverWithoutTheShieldTheSameRaceLosesForceAndRetrievalCanBeCanceled() { checkWithoutTheShieldTheSameRaceLosesForceAndRetrievalCanBeCanceled(); }
 }
