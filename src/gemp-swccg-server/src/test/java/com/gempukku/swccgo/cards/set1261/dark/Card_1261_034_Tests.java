@@ -48,6 +48,7 @@ public class Card_1261_034_Tests {
         var scn = scenario();
         var effect = scn.GetDSCard("protocols");
         var launch = scn.GetDSCard("launch");
+        var launch2 = scn.GetDSCard("launch2");
         var unique = scn.GetDSCard("unique");
         var ground = scn.GetDSCard("ground");
         var ship = scn.GetDSCard("destroyer");
@@ -62,7 +63,7 @@ public class Card_1261_034_Tests {
         if (scn.LSGetDecision() != null)
             scn.LSPass();
         assertEquals(Zone.SIDE_OF_TABLE, effect.getZone());
-        scn.MoveCardsToTopOfDSReserveDeck(launch, unique, ground, scn.GetDSCard("launch2"));
+        scn.MoveCardsToTopOfDSReserveDeck(launch, unique, ground, launch2);
         assertTrue(scn.DSCardActionAvailable(effect, "Deploy non-unique starship or vehicle site"));
         scn.DSUseCardAction(effect, "Deploy non-unique starship or vehicle site");
         scn.PassAllResponses();
@@ -78,7 +79,7 @@ public class Card_1261_034_Tests {
         }
         assertTrue("At least one legal launch bay", legal > 0);
         scn.DSChooseCard(launch);
-        for (int i = 0; i < 16 && launch.getZone() != Zone.LOCATIONS; i++) {
+        for (int i = 0; i < 16 && launch.getZone() != Zone.LOCATIONS && launch2.getZone() != Zone.LOCATIONS; i++) {
             var decision = scn.GetCurrentDecision();
             String prompt = decision.getText().toLowerCase();
             if (prompt.contains("optional response")) {
@@ -95,9 +96,11 @@ public class Card_1261_034_Tests {
                         + " " + decision.getDecisionParameters().keySet());
             }
         }
-        assertEquals(Zone.LOCATIONS, launch.getZone());
+        assertTrue("Exactly one of the identical copies was downloaded",
+                (launch.getZone() == Zone.LOCATIONS) != (launch2.getZone() == Zone.LOCATIONS));
+        var deployed = launch.getZone() == Zone.LOCATIONS ? launch : launch2;
         scn.PassAllResponses();
-        assertNotNull(launch.getRelatedStarshipOrVehicle());
+        assertNotNull(deployed.getRelatedStarshipOrVehicle());
         if (scn.LSGetDecision() != null)
             scn.LSPass();
         assertFalse(scn.DSCardActionAvailable(effect, "Deploy non-unique starship or vehicle site"));
