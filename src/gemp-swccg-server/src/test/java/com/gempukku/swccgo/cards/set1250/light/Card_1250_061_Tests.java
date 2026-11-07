@@ -167,7 +167,25 @@ public class Card_1250_061_Tests {
     @Test
     public void WesaReadySaveAllowanceResetsOnNextTurn() {
         var scn = scenario(); setupLoss(scn); lightning(scn, "lightning", "gungan"); save(scn);
-        scn.SkipToLSTurn(Phase.CONTROL); scn.SkipToDSTurn(Phase.CONTROL);
+        // Pass legal decisions explicitly: SkipToTurn cannot pass an Activate phase
+        // when its "Activate Force" action is unavailable or the off-player has priority.
+        int oldTurn = scn.gameState().getPlayersLatestTurnNumber(scn.DS);
+        for (int decision = 0; decision < 200; decision++) {
+            if (scn.GetCurrentPlayer().equals(scn.DS) && scn.gameState().getPlayersLatestTurnNumber(scn.DS) == oldTurn + 1
+                    && scn.GetCurrentPhase() == Phase.CONTROL) break;
+            String prompt = scn.GetCurrentDecision().getText();
+            if (prompt.equals("You have not activated Force. Do you want to Pass?")) {
+                if (scn.DSDecisionAvailable(prompt)) scn.DSChooseYes(); else scn.LSChooseYes();
+            } else {
+                assertTrue("Unexpected turn-advance decision: " + prompt,
+                        prompt.contains("action or Pass") || prompt.contains("Optional responses")
+                                || prompt.contains("RECIRCULATED"));
+                if (scn.DSDecisionAvailable(prompt)) scn.DSPass(); else scn.LSPass();
+            }
+        }
+        assertTrue(scn.GetCurrentPlayer().equals(scn.DS));
+        assertEquals(oldTurn + 1, scn.gameState().getPlayersLatestTurnNumber(scn.DS));
+        assertEquals(Phase.CONTROL, scn.GetCurrentPhase());
         lightning(scn, "lightning3", "ewok"); save(scn); assertTrue(scn.GetLSUsedPile().contains(scn.GetLSCard("ewok")));
     }
     @Test
