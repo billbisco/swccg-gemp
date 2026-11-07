@@ -108,6 +108,7 @@ public class Card_1262_007_Tests {
         scn.MoveCardsToLocation(scn.GetDSStartingLocation(), vader, obi);
         scn.AttachCardsTo(vader, scn.GetDSCard("saber"));
         scn.AttachCardsTo(obi, scn.GetLSCard("saber"));
+        scn.SkipToLSTurn(Phase.ACTIVATE);
         if (protectedVader) scn.AttachCardsTo(vader, scn.GetDSCard("power"));
         scn.MoveCardsToLSHand(scn.GetLSCard("clash"), scn.GetLSCard("sorry"), scn.GetLSCard("disarmed"),
                 scn.GetLSCard("control"));
@@ -117,7 +118,7 @@ public class Card_1262_007_Tests {
     @Test public void PowerOfTheSithProtectsAgainstActualDisarmedAndSorryAboutTheMess() {
         for (boolean protection : List.of(false, true)) {
             var scn = armed(protection);
-            scn.SkipToLSTurn(Phase.CONTROL);
+            scn.SkipToPhase(Phase.CONTROL);
             assertEquals(!protection, scn.LSCardPlayAvailable(scn.GetLSCard("disarmed")));
             assertEquals(!protection, scn.LSCardPlayAvailable(scn.GetLSCard("sorry"), "Fire a weapon"));
         }
@@ -128,7 +129,7 @@ public class Card_1262_007_Tests {
         var vader = scn.GetDSCard("vader");
         var trooper = scn.GetDSCard("trooper");
         scn.MoveCardsToLocation(scn.GetDSStartingLocation(), trooper);
-        scn.SkipToLSTurn(Phase.CONTROL);
+        scn.SkipToPhase(Phase.CONTROL);
         scn.EnsureLSForcePile(2);
         assertFalse(scn.LSCardPlayAvailable(scn.GetLSCard("control")));
         var clash = scn.GetLSCard("clash");
@@ -180,15 +181,18 @@ public class Card_1262_007_Tests {
         scn.PassBattleStartResponses();
         scn.PrepareLSDestiny(6);
         scn.SkipToPowerSegment();
-        if (scn.DSDecisionAvailable("battle destiny?")) scn.DSChooseNo();
-        assertTrue(scn.LSDecisionAvailable("battle destiny?"));
-        scn.LSChooseYes();
-        scn.PassDestinyDrawResponses();
+        boolean lightDrew = false;
         for (int i = 0; i < 55 && !scn.AwaitingDSAttritionPayment(); i++) {
-            if (scn.LSGetDecision() instanceof CardActionSelectionDecision) scn.LSPass();
+            if (scn.DSDecisionAvailable("battle destiny?")) scn.DSChooseNo();
+            else if (scn.LSDecisionAvailable("battle destiny?")) {
+                scn.LSChooseYes();
+                scn.PassDestinyDrawResponses();
+                lightDrew = true;
+            } else if (scn.LSGetDecision() instanceof CardActionSelectionDecision) scn.LSPass();
             else if (scn.DSGetDecision() instanceof CardActionSelectionDecision) scn.DSPass();
             else fail("Unexpected battle decision: " + scn.GetCurrentDecision().getText());
         }
+        assertTrue(lightDrew);
         assertEquals(6, scn.GetUnpaidDSAttrition());
         scn.DSPayAttritionFromCardInPlay(vader);
         scn.PassAllResponses();
