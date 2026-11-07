@@ -203,4 +203,22 @@ public class Card_1261_079_Tests {
 
     @Test public void theComboDoesNotDeferLossOutsideBattle() { unprotectedLoss(false); }
     @Test public void theComboDoesNotDeferLossOfANonparticipant() { unprotectedLoss(true); }
+
+    @Test public void aParticipatingCharacterIsLostImmediatelyAfterTheDamageSegmentBegins() {
+        var scn = fixture(); var combo = scn.GetLSCard("combo"); var leia = scn.GetLSCard("leia");
+        var site = scn.GetLSStartingLocation(); var trooper = scn.GetLSCard("trooper");
+        scn.MoveCardsToLSSideOfTable(combo);
+        scn.MoveCardsToLocation(site, leia, trooper, scn.GetLSCard("ordinaryLuke"), scn.GetDSCard("vader"));
+        scn.LSActivateForceCheat(8); scn.SkipToLSTurn(Phase.BATTLE);
+        scn.LSStartBattleAndSkipToWeaponsSegment(site);
+        scn.PrepareLSDestiny(1); scn.PrepareDSDestiny(1);
+        scn.SkipToDamageSegment(true);
+        assertTrue(scn.gameState().getBattleState().isReachedDamageSegment());
+        var loss = new TopLevelGameTextAction(site, scn.LS, site.getCardId());
+        loss.appendEffect(new LoseCardFromTableEffect(loss, leia));
+        scn.carryOutEffectInPhaseActionByPlayer(scn.LS, loss);
+        scn.PassAllResponses();
+        assertTrue(scn.GetLSLostPile().contains(leia));
+        assertTrue(scn.gameState().isDuringBattle());
+    }
 }
