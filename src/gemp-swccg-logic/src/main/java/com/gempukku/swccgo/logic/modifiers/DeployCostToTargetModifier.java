@@ -135,6 +135,10 @@ public class DeployCostToTargetModifier extends AbstractModifier {
             if (modifiersQuerying.appliesOwnDeploymentModifiersAtAnyLocation(gameState, cardToDeploy)) {
                 return _evaluator.evaluateExpression(gameState, modifiersQuerying, cardToDeploy);
             }
+            // Check if self deployment modifier for specific locations (e.g. Endor) is applied at any location
+            if (modifiersQuerying.appliesOwnLocationDeploymentModifierAtAnyLocation(gameState, cardToDeploy, _targetFilter)) {
+                return _evaluator.evaluateExpression(gameState, modifiersQuerying, cardToDeploy);
+            }
         }
         else {
             if (Filters.and(_cardToDeployFilter).accepts(gameState, modifiersQuerying, cardToDeploy))

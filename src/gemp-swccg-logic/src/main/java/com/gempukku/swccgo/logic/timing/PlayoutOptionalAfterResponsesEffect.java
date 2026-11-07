@@ -65,7 +65,8 @@ public class PlayoutOptionalAfterResponsesEffect extends AbstractSuccessfulEffec
                         || effectResult.getType() == EffectResult.Type.START_OF_TURN
                         || effectResult.getType() == EffectResult.Type.START_OF_PHASE
                         || effectResult.getType() == EffectResult.Type.END_OF_PHASE
-                        || effectResult.getType() == EffectResult.Type.END_OF_TURN) {
+                        || effectResult.getType() == EffectResult.Type.END_OF_TURN
+                        || effectResult.getType() == EffectResult.Type.DESTINY_ADDED_TO_TOTAL_POWER_OR_ATTRITION) {
                     noDelay = true;
                     break;
                 }

@@ -250,6 +250,15 @@ public interface SwccgCardBlueprint {
     boolean isDoesNotCountTowardDeckLimit();
 
     /**
+     * Gets the number this card (while outside of its owner's deck) subtracts from the number of cards its owner may
+     * place under their Starting Effect.
+     * @return the reduction, or 0
+     */
+    default int getStartingEffectCapacityReduction() {
+        return 0;
+    }
+
+    /**
      * Determines if this card may not be placed in Reserve Deck.
      * @return true if may not be placed in Reserve Deck, otherwise false
      */
@@ -1263,6 +1272,15 @@ public interface SwccgCardBlueprint {
      * @return true if card is considered inactive instead of active, otherwise false
      */
     boolean isInactiveInsteadOfActive(final SwccgGame game, final PhysicalCard self);
+
+    /**
+     * Determines if the card remains active while attached to a captive (cards attached to a captive are normally
+     * inactive along with the captive). Used by cards whose game text explicitly works on the captive.
+     * @return true if the card stays active while attached to a captive, otherwise false
+     */
+    default boolean isActiveWhileAttachedToCaptive() {
+        return false;
+    }
 
     /**
      * Gets a filter for the cards the specified card is not prohibited from moving to.

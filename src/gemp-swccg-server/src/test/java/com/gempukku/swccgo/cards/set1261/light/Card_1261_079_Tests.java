@@ -1,0 +1,330 @@
+package com.gempukku.swccgo.cards.set1261.light;
+
+import com.gempukku.swccgo.cards.GameConditions;
+import com.gempukku.swccgo.cards.effects.CancelBattleEffect;
+import com.gempukku.swccgo.common.*;
+import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.framework.StartingSetup;
+import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.game.AbstractActionProxy;
+import com.gempukku.swccgo.game.SwccgGame;
+import com.gempukku.swccgo.logic.TriggerConditions;
+import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
+import com.gempukku.swccgo.logic.actions.TriggerAction;
+import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
+import com.gempukku.swccgo.logic.effects.LoseCardFromTableEffect;
+import com.gempukku.swccgo.logic.timing.EffectResult;
+import com.gempukku.swccgo.logic.timing.PassthruEffect;
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.*;
+
+public class Card_1261_079_Tests {
+    private VirtualTableScenario fixture() {
+        var ls = new HashMap<>(Map.of("combo", "1261_79", "commander", "3_3", "luke", "108_3",
+                "obi", "1_21", "han", "1_11", "ship", "1_146", "independent", "109_5",
+                "space", "6_87", "ordinary", "1_66", "trooper", "1_28"));
+        ls.put("ordinaryLuke", "1_19");
+        ls.put("leia", "1_17");
+        var ds = new HashMap<>(Map.of("bad", "4_116", "vader", "1_168", "fighter", "1_299", "fighterPilot", "1_173", "alter", "1_234"));
+        var scn = new VirtualTableScenario(ls, ds, 40, 40, StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation, StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts, StartingSetup.NoLSShields, StartingSetup.NoDSShields, "legacy");
+        scn.StartGame();
+        return scn;
+    }
+
+    @Test public void exactComboHasTwoUniqueTitlesAndOneDestiny() {
+        var scn = fixture(); var card = scn.GetLSCard("combo"); var b = card.getBlueprint();
+        assertEquals("Commando Training & K'lor'slug", b.getTitle());
+        assertTrue(Filters.title(Title.Commando_Training).accepts(scn.game(), card));
+        assertTrue(Filters.title(Title.Klorslug).accepts(scn.game(), card));
+        assertEquals(1, b.getDestiny(), scn.epsilon); assertEquals(Uniqueness.UNIQUE, b.getUniqueness());
+        assertFalse(b.hasVirtualSuffix()); assertEquals(Side.LIGHT, b.getSide()); assertEquals(Rarity.V, b.getRarity());
+        assertEquals(ExpansionSet.VIRTUAL_BLOCK_6_1, b.getExpansionSet());
+        scn.BlueprintCardTypeCheck(b, new ArrayList<>(List.of(CardType.EFFECT)));
+        scn.BlueprintIconCheck(b, new ArrayList<>(List.of(Icon.EFFECT, Icon.ENDOR, Icon.LEGACY_BLOCK_6)));
+        scn.BlueprintKeywordCheck(b, new ArrayList<>());
+    }
+
+    @Test public void realCommanderDeploymentIgnoresHisOwnHothOnlyTextAndBadFeeling() {
+        var scn = fixture(); var combo = scn.GetLSCard("combo"); var commander = scn.GetLSCard("commander");
+        var bad = scn.GetDSCard("bad"); var luke = scn.GetLSCard("luke"); var obi = scn.GetLSCard("obi");
+        scn.MoveCardsToLSSideOfTable(bad);
+        scn.MoveCardsToLSHand(commander, luke, obi, combo);
+        scn.LSActivateForceCheat(12); scn.SkipToLSTurn(Phase.DEPLOY);
+        assertFalse(scn.LSCardPlayAvailable(commander));
+        assertEquals(commander.getBlueprint().getDeployCost().intValue() + 2, scn.GetDeployCost(commander));
+        scn.LSPlayCard(combo); scn.PassAllResponses();
+        assertEquals(Zone.SIDE_OF_TABLE, combo.getZone());
+        var mods = scn.game().getModifiersQuerying(); var site = scn.GetLSStartingLocation();
+        assertTrue(mods.isImmuneToDeployCostToTargetModifierFromCard(scn.gameState(), commander, site, bad));
+        assertFalse(mods.isImmuneToDeployCostToTargetModifierFromCard(scn.gameState(), luke, site, bad));
+        assertFalse(mods.isImmuneToDeployCostToTargetModifierFromCard(scn.gameState(), obi, site, bad));
+        assertEquals(luke.getBlueprint().getDeployCost().intValue() + 2, scn.GetDeployCost(luke));
+        assertEquals(obi.getBlueprint().getDeployCost().intValue() + 2, scn.GetDeployCost(obi));
+        if (scn.DSGetDecision() != null) scn.DSPass();
+        assertTrue(scn.LSCardPlayAvailable(commander));
+        int before = scn.GetLSForcePile().size();
+        scn.LSPlayCard(commander); scn.PassForceUseResponses(); scn.PassAllResponses();
+        if (scn.LSHasCardChoiceAvailable(scn.GetLSStartingLocation())) scn.LSChooseCard(scn.GetLSStartingLocation());
+        scn.PassForceUseResponses(); scn.PassAllResponses();
+        assertEquals(site, commander.getAtLocation());
+        assertEquals(commander.getBlueprint().getDeployCost().intValue(), before - scn.GetLSForcePile().size());
+    }
+
+    @Test public void realAlterCannotTargetTheComboWhileAnotherEffectIsLegal() {
+        var scn = fixture(); var combo = scn.GetLSCard("combo"); var ordinary = scn.GetLSCard("ordinary");
+        var alter = scn.GetDSCard("alter");
+        scn.MoveCardsToLSSideOfTable(combo, ordinary);
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("vader"));
+        scn.MoveCardsToDSHand(alter);
+        scn.SkipToDSTurn(Phase.CONTROL); scn.EnsureDSForcePile(8);
+        scn.DSPlayCard(alter, "Draw destiny to cancel Effect");
+        assertFalse(scn.DSHasCardChoiceAvailable(combo));
+        assertTrue(scn.DSHasCardChoiceAvailable(ordinary));
+    }
+
+    private void loseBeforeDamage(boolean inSpace, boolean independent) {
+        var scn = fixture(); var combo = scn.GetLSCard("combo");
+        var lost = scn.GetLSCard(inSpace ? (independent ? "independent" : "ship") : "han");
+        var site = inSpace ? scn.GetLSCard("space") : scn.GetLSStartingLocation();
+        var opponent = scn.GetDSCard(inSpace ? "fighter" : "vader");
+        scn.MoveCardsToLSSideOfTable(combo);
+        if (inSpace) scn.MoveLocationToTable(site);
+        scn.MoveCardsToLocation(site, lost, opponent);
+        if (inSpace) scn.BoardAsPilot(opponent, scn.GetDSCard("fighterPilot"));
+        scn.LSActivateForceCheat(8); scn.SkipToLSTurn(Phase.BATTLE);
+        scn.LSStartBattleAndSkipToWeaponsSegment(site);
+        var action = new TopLevelGameTextAction(site, scn.LS, site.getCardId());
+        action.appendEffect(new LoseCardFromTableEffect(action, lost));
+        scn.carryOutEffectInPhaseActionByPlayer(scn.LS, action);
+        scn.PassAllResponses();
+        if (independent) {
+            finishOrderedLosses(scn, lost);
+            assertTrue(scn.GetCurrentDecision().getText() + " " + scn.gameState().getLastMessages(), scn.GetLSLostPile().contains(lost));
+        } else {
+            assertTrue(lost.getZone().isInPlay());
+            assertEquals(0, scn.game().getModifiersQuerying().getForfeitWhenForfeiting(scn.gameState(), lost), scn.epsilon);
+            if (scn.DSGetDecision() != null) scn.DSPass();
+            var cancel = new TopLevelGameTextAction(site, scn.LS, site.getCardId());
+            cancel.appendEffect(new CancelBattleEffect(cancel));
+            scn.carryOutEffectInPhaseActionByPlayer(scn.LS, cancel);
+            finishOrderedLosses(scn, lost);
+            assertTrue(scn.GetCurrentDecision().getText() + " " + scn.gameState().getLastMessages(), scn.GetLSLostPile().contains(lost));
+        }
+    }
+
+    private void finishOrderedLosses(VirtualTableScenario scn, com.gempukku.swccgo.game.PhysicalCardImpl lost) {
+        for (int i = 0; i < 8; i++) {
+            scn.PassAllResponses();
+            if (!(scn.LSDecisionAvailable("Choose card to be lost")
+                    || scn.LSDecisionAvailable("Choose card to put on"))) return;
+            var pilot = scn.GetLSCard("commander");
+            if (scn.LSHasCardChoiceAvailable(pilot)) scn.LSChooseCard(pilot);
+            else if (scn.LSHasCardChoiceAvailable(lost)) scn.LSChooseCard(lost);
+            else return;
+        }
+    }
+
+    @Test public void participatingCharacterLossWaitsUntilBattleEnds() { loseBeforeDamage(false, false); }
+    @Test public void participatingNonIndependentStarshipLossWaitsUntilBattleEnds() { loseBeforeDamage(true, false); }
+    @Test public void independentStarshipIsLostImmediately() { loseBeforeDamage(true, true); }
+    private void normalBattle(boolean chooseDeferredCharacterForAttrition) {
+        var scn = fixture(); var combo = scn.GetLSCard("combo"); var leia = scn.GetLSCard("leia");
+        var site = scn.GetLSStartingLocation(); var trooper = scn.GetLSCard("trooper");
+        scn.MoveCardsToLSSideOfTable(combo);
+        scn.MoveCardsToLocation(site, leia, trooper, scn.GetLSCard("ordinaryLuke"), scn.GetDSCard("vader"));
+        scn.LSActivateForceCheat(8); scn.SkipToLSTurn(Phase.BATTLE);
+        scn.LSStartBattleAndSkipToWeaponsSegment(site);
+        var loss = new TopLevelGameTextAction(site, scn.LS, site.getCardId());
+        loss.appendEffect(new LoseCardFromTableEffect(loss, leia));
+        scn.carryOutEffectInPhaseActionByPlayer(scn.LS, loss);
+        scn.PassAllResponses();
+        assertTrue(leia.getZone().isInPlay());
+        scn.PrepareLSDestiny(1); scn.PrepareDSDestiny(1);
+        scn.SkipToEndOfPowerSegment(true);
+        assertEquals(scn.gameState().getLastMessages().toString(), 2, scn.GetDSTotalDestiny());
+        scn.PassResponses("INITIAL_ATTRITION_CALCULATED");
+        scn.PassDamageSegmentActions();
+        assertEquals(scn.gameState().getLastMessages().toString(), 2, scn.GetUnpaidLSAttrition());
+        assertEquals(0, scn.GetUnpaidLSBattleDamage());
+        if (chooseDeferredCharacterForAttrition) {
+            scn.LSPayAttritionFromCardInPlay(leia);
+            assertTrue(scn.GetLSLostPile().contains(leia));
+            assertEquals(2, scn.GetUnpaidLSAttrition());
+            scn.PassAllResponses();
+            if (scn.DSDecisionAvailable("if desired")) scn.DSPass();
+            scn.PassAllResponses();
+            assertTrue(scn.GetCurrentDecision().getText(), scn.LSHasCardChoiceAvailable(trooper));
+        }
+        scn.LSPayAttritionFromCardInPlay(trooper);
+        scn.PassAllResponses();
+        if (scn.DSDecisionAvailable("if desired")) scn.DSPass();
+        scn.PassAllResponses();
+        assertTrue(scn.GetLSLostPile().contains(trooper));
+        assertTrue(scn.GetCurrentDecision().getText() + " " + scn.gameState().getLastMessages(), scn.GetLSLostPile().contains(leia));
+        assertFalse(scn.gameState().isDuringBattle());
+    }
+
+    @Test public void deferredCharacterMayForfeitButPaysZeroActualAttrition() { normalBattle(true); }
+    @Test public void deferredCharacterIsLostAtTheEndOfAnUncancelledBattle() { normalBattle(false); }
+    @Test public void explicitNativeCancellationCannotCancelTheCombo() {
+        var scn = fixture(); var combo = scn.GetLSCard("combo"); var ordinary = scn.GetLSCard("ordinary");
+        scn.MoveCardsToLSSideOfTable(combo, ordinary);
+        assertFalse(GameConditions.canBeCanceled(scn.game(), combo));
+        assertTrue(GameConditions.canBeCanceled(scn.game(), ordinary));
+        var alter = scn.GetDSCard("alter"); var vader = scn.GetDSCard("vader");
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), vader);
+        scn.MoveCardsToDSHand(alter);
+        scn.SkipToDSTurn(Phase.CONTROL); scn.PrepareDSDestiny(1);
+        scn.DSPlayCard(alter, "Draw destiny to cancel Effect");
+        if (scn.DSHasCardChoiceAvailable(ordinary)) scn.DSChooseCard(ordinary);
+        if (scn.DSHasCardChoiceAvailable(vader)) scn.DSChooseCard(vader);
+        scn.PassAllResponses(); scn.PassDestinyDrawResponses(); scn.PassAllResponses();
+        assertTrue(scn.GetLSLostPile().contains(ordinary));
+        assertTrue(scn.IsCardActive(combo));
+    }
+
+    private void unprotectedLoss(boolean anotherBattle) {
+        var scn = fixture();
+        var combo = scn.GetLSCard("combo"); var here = scn.GetLSStartingLocation(); var away = scn.GetDSStartingLocation();
+        var target = scn.GetLSCard("trooper");
+        scn.MoveCardsToLSSideOfTable(combo);
+        scn.MoveCardsToLocation(away, target);
+        if (anotherBattle) {
+            scn.MoveCardsToLocation(here, scn.GetLSCard("han"), scn.GetDSCard("vader"));
+            scn.LSActivateForceCheat(8); scn.SkipToLSTurn(Phase.BATTLE);
+            scn.LSStartBattleAndSkipToWeaponsSegment(here);
+        } else scn.SkipToLSTurn(Phase.CONTROL);
+        var action = new TopLevelGameTextAction(away, scn.LS, away.getCardId());
+        action.appendEffect(new LoseCardFromTableEffect(action, target));
+        scn.carryOutEffectInPhaseActionByPlayer(scn.LS, action); scn.PassAllResponses();
+        assertTrue(scn.GetLSLostPile().contains(target));
+    }
+
+    @Test public void theComboDoesNotDeferLossOutsideBattle() { unprotectedLoss(false); }
+    @Test public void theComboDoesNotDeferLossOfANonparticipant() { unprotectedLoss(true); }
+
+    @Test public void aParticipatingCharacterIsLostImmediatelyAfterTheDamageSegmentBegins() {
+        var scn = fixture(); var combo = scn.GetLSCard("combo"); var leia = scn.GetLSCard("leia");
+        var site = scn.GetLSStartingLocation(); var trooper = scn.GetLSCard("trooper");
+        scn.MoveCardsToLSSideOfTable(combo);
+        scn.MoveCardsToLocation(site, leia, trooper, scn.GetLSCard("ordinaryLuke"), scn.GetDSCard("vader"));
+        scn.LSActivateForceCheat(8); scn.SkipToLSTurn(Phase.BATTLE);
+        scn.LSStartBattleAndSkipToWeaponsSegment(site);
+        scn.PrepareLSDestiny(1); scn.PrepareDSDestiny(1);
+        scn.SkipToDamageSegment(true);
+        assertTrue(scn.gameState().getBattleState().isReachedDamageSegment());
+        scn.game().getActionsEnvironment().addUntilEndOfBattleActionProxy(new AbstractActionProxy() {
+            @Override
+            public List<TriggerAction> getRequiredAfterTriggers(SwccgGame game, EffectResult result) {
+                if (!TriggerConditions.isAboutToBeForfeited(game, result, Filters.sameCardId(trooper))) return List.of();
+                var loss = new RequiredGameTextTriggerAction(site, site.getCardId());
+                loss.appendEffect(new LoseCardFromTableEffect(loss, leia));
+                loss.appendEffect(new PassthruEffect(loss) {
+                    @Override protected void doPlayEffect(SwccgGame game) {
+                        assertTrue(game.getGameState().getBattleState().isReachedDamageSegment());
+                        assertTrue(scn.GetLSLostPile().contains(leia));
+                    }
+                });
+                return List.of(loss);
+            }
+        });
+        scn.PassDamageSegmentActions();
+        scn.LSPayAttritionFromCardInPlay(trooper);
+        scn.PassAllResponses();
+        assertTrue(scn.GetLSLostPile().contains(leia));
+        assertTrue(scn.GetLSLostPile().contains(trooper));
+    }
+
+    // ---- 'power -1', Endor deployment modifiers and Do They Have A Code Clearance? ----
+
+    private VirtualTableScenario extraFixture() {
+        var ls = new HashMap<>(Map.of("combo", "1261_79", "echoTrooper", "3_6", "chewie", "8_2",
+                "backDoor", "8_69", "attackRun", "2_43", "retort", "6_63", "lostOne", "1_28", "lostTwo", "1_28",
+                "lostThree", "1_28"));
+        var ds = new HashMap<>(Map.of("dthacc", "13_66", "vader", "1_168"));
+        var scn = new VirtualTableScenario(ls, ds, 40, 40, StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation, StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts, StartingSetup.NoLSShields, StartingSetup.NoDSShields, "legacy");
+        scn.StartGame();
+        return scn;
+    }
+
+    @Test public void rebelsIgnorePowerMinusOneInTheirOwnGameText() {
+        var scn = extraFixture(); var trooper = scn.GetLSCard("echoTrooper");
+        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), trooper);
+        int printed = Math.round(trooper.getBlueprint().getPower());
+        assertEquals(printed - 1, scn.GetPower(trooper));
+        scn.MoveCardsToLSSideOfTable(scn.GetLSCard("combo"));
+        assertEquals(printed, scn.GetPower(trooper));
+    }
+
+    @Test public void powerMinusOneFromAnotherCardIsStillApplied() {
+        var scn = extraFixture(); var trooper = scn.GetLSCard("echoTrooper");
+        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), trooper);
+        scn.MoveCardsToLSSideOfTable(scn.GetLSCard("combo"));
+        int printed = Math.round(trooper.getBlueprint().getPower());
+        scn.ApplyAdHocModifier(new com.gempukku.swccgo.logic.modifiers.PowerModifier(scn.GetLSCard("combo"), trooper, -1));
+        assertEquals(printed - 1, scn.GetPower(trooper));
+    }
+
+    private int deployCostTo(VirtualTableScenario scn, com.gempukku.swccgo.game.PhysicalCardImpl card, com.gempukku.swccgo.game.PhysicalCardImpl target) {
+        return Math.round(scn.game().getModifiersQuerying().getDeployCost(scn.gameState(), null, card, target, false, null, false, 0, null, false));
+    }
+
+    @Test public void rebelsApplyTheirEndorDeploymentModifiersAtAnyLocation() {
+        var scn = extraFixture(); var chewie = scn.GetLSCard("chewie"); var backDoor = scn.GetLSCard("backDoor");
+        var elsewhere = scn.GetLSStartingLocation();
+        scn.MoveLocationToTable(backDoor);
+        scn.MoveCardsToLSHand(chewie);
+        int printed = Math.round(chewie.getBlueprint().getDeployCost());
+        assertEquals(printed - 2, deployCostTo(scn, chewie, backDoor));
+        assertEquals(printed, deployCostTo(scn, chewie, elsewhere));
+        scn.MoveCardsToLSSideOfTable(scn.GetLSCard("combo"));
+        assertEquals(printed - 2, deployCostTo(scn, chewie, elsewhere));
+        assertEquals(printed - 2, deployCostTo(scn, chewie, backDoor));
+    }
+
+    /** Light retrieves Force with the given Interrupt; returns whether Dark may stack it on Do They Have A Code Clearance?. */
+    private boolean darkMayStackRetrievingInterrupt(boolean combo, String interrupt, int amount) {
+        var scn = extraFixture(); var dthacc = scn.GetDSCard("dthacc"); var source = scn.GetLSCard(interrupt);
+        scn.MoveCardsToDSSideOfTable(dthacc);
+        if (combo) scn.MoveCardsToLSSideOfTable(scn.GetLSCard("combo"));
+        scn.MoveCardsToTopOfLSLostPile(scn.GetLSCard("lostOne"), scn.GetLSCard("lostTwo"), scn.GetLSCard("lostThree"));
+        scn.MoveCardsToLSHand(source);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        var action = new TopLevelGameTextAction(source, scn.LS, source.getCardId());
+        action.appendEffect(new com.gempukku.swccgo.logic.effects.RetrieveForceEffect(source, action, scn.LS, amount));
+        scn.carryOutEffectInPhaseActionByPlayer(scn.LS, action);
+        for (int i = 0; i < 20 && scn.GetCurrentDecision() != null; i++) {
+            var decider = scn.GetDecidingPlayer();
+            if (decider.equals(scn.DS) && scn.DSCardActionAvailable(dthacc, "Stack")) return true;
+            if (decider.equals(scn.LS) && scn.GetCurrentDecision().getText().toLowerCase().contains("deploy action")) return false;
+            scn.PlayerPass(decider);
+        }
+        return false;
+    }
+
+    @Test public void yourInterruptRetrievingExactlyOneIsNotStackedOnCodeClearance() {
+        assertFalse(darkMayStackRetrievingInterrupt(true, "attackRun", 1));
+    }
+
+    @Test public void withoutTheComboAnInterruptRetrievingOneMayBeStacked() {
+        assertTrue(darkMayStackRetrievingInterrupt(false, "attackRun", 1));
+    }
+
+    @Test public void anInterruptRetrievingTwoMayStillBeStacked() {
+        assertTrue(darkMayStackRetrievingInterrupt(true, "attackRun", 2));
+    }
+
+    @Test public void corellianRetortRetrievingOneMayStillBeStacked() {
+        assertTrue(darkMayStackRetrievingInterrupt(true, "retort", 1));
+    }
+}
