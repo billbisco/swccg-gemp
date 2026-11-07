@@ -214,7 +214,11 @@ public class Card_1262_016_Tests {
             assertTrue(scn.DSHasCardChoiceAvailable(forfeited));
             scn.DSChooseCard(forfeited);
             scn.PassAllResponses();
-            if (forfeited.getZone() == Zone.VOID) scn.PassResponses("CARDS_LOST");
+            if (scn.DSDecisionAvailable("Choose card to put on Lost Pile")) {
+                assertTrue(scn.DSHasCardChoiceAvailable(forfeited));
+                scn.DSChooseCard(forfeited);
+                scn.PassAllResponses();
+            }
             assertInZone(Zone.LOST_PILE, forfeited);
         }
     }

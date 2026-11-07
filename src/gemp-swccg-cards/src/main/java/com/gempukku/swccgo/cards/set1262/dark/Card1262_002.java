@@ -56,7 +56,7 @@ public class Card1262_002 extends AbstractRepublic {
             var action = new TopLevelGameTextAction(self, playerId, sourceId, id);
             action.setText("Deploy Rancor Mount from Reserve Deck");
             action.appendUsage(new OncePerTurnEffect(action));
-            action.appendEffect(new DeployCardFromReserveDeckEffect(action, Filters.title("Rancor Mount"), Filters.here(self), true));
+            action.appendEffect(new DeployCardFromReserveDeckEffect(action, Filters.title("Rancor Mount"), Filters.here(self), 0, true));
             return List.of(action);
         }
         return null;

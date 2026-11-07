@@ -115,13 +115,15 @@ public class Card_1262_002_Tests {
         var site = scn.GetDSCard(siteName);
         scn.MoveLocationToTable(site);
         scn.MoveCardsToLocation(site, scn.GetDSCard("witch"), scn.GetLSCard("luke"));
+        scn.SkipToPhase(Phase.BATTLE);
+        assertTrue(scn.AwaitingDSBattlePhaseActions());
+        // Set up the creature board after phase entry so their own automatic moves
+        // do not change the tested position before the actual battle.
         for (String name : creatures) {
             var creature = scn.GetDSCard(name);
             scn.MoveCardsToLocation(remote ? scn.GetDSStartingLocation() : site, creature);
             if (excluded) scn.ApplyAdHocModifier(new ExcludedFromBattleModifier(null, creature));
         }
-        scn.SkipToPhase(Phase.BATTLE);
-        assertTrue(scn.AwaitingDSBattlePhaseActions());
         scn.DSInitiateBattle(site);
         scn.PassBattleStartResponses();
         assertEquals(expected, scn.GetDSTotalPower());
