@@ -1818,6 +1818,7 @@ public enum GameTextActionId {
     // Any card's attempt to 'operate' on a character (lets other cards recognize and respond to the attempt)
     ANY_CARD__OPERATE_ON_CHARACTER,
     LEGACY__BEAST_RIDER__DEPLOY_KAADU(true),
+    LEGACY__LANDO_SCOUNDREL__CONVERT(false, true),
     ;
 
     private boolean _searchCardPile;
