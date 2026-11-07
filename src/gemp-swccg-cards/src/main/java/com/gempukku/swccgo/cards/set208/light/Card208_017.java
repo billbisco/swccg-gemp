@@ -136,6 +136,7 @@ public class Card208_017 extends AbstractEpicEventDeployable {
         GameTextActionId gameTextActionId = GameTextActionId.OTHER_CARD_ACTION_2;
 
         // Check condition(s)
+        // Only a stacked liberation card can be moved to its owner's Used Pile here.
         if (TriggerConditions.forceDrainInitiatedBy(game, effectResult, opponent, Filters.liberated_system)) {
             final PhysicalCard system = ((ForceDrainInitiatedResult) effectResult).getLocation();
             Collection<PhysicalCard> liberationCards = Filters.filterStacked(game, Filters.and(Filters.liberationCard, Filters.stackedOn(system)));
@@ -153,8 +154,8 @@ public class Card208_017 extends AbstractEpicEventDeployable {
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
         List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new ForceDrainModifier(self, Filters.liberated_system, 1, self.getOwner()));
-        modifiers.add(new DeployCostToLocationModifier(self, Filters.and(Filters.opponents(self), Filters.starship), 1, Filters.liberated_system));
+        modifiers.add(new ForceDrainModifier(self, LegacyFilters.liberatedSystem, 1, self.getOwner()));
+        modifiers.add(new DeployCostToLocationModifier(self, Filters.and(Filters.opponents(self), Filters.starship), 1, LegacyFilters.liberatedSystem));
         return modifiers;
     }
 }

@@ -15,6 +15,7 @@ import java.util.Collections;
 public class CancelCardOnTableResult extends EffectResult implements LostFromTableResult {
     private PhysicalCard _sourceCard;
     private PhysicalCard _card;
+    private boolean _wasInPilotCapacitySlot;
     private PhysicalCard _attachedTo;
 
     /**
@@ -38,6 +39,7 @@ public class CancelCardOnTableResult extends EffectResult implements LostFromTab
         super(Type.CANCELED_ON_TABLE, performingPlayerId);
         _sourceCard = action.getActionSource();
         _card = card;
+        _wasInPilotCapacitySlot = attachedTo != null && card.wasPreviouslyInPilotCapacitySlot();
         _attachedTo = attachedTo;
     }
 
@@ -63,6 +65,11 @@ public class CancelCardOnTableResult extends EffectResult implements LostFromTab
      */
     public PhysicalCard getFromAttachedTo() {
         return _attachedTo;
+    }
+
+    @Override
+    public boolean wasInPilotCapacitySlot() {
+        return _wasInPilotCapacitySlot;
     }
 
     /**
