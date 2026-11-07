@@ -25,7 +25,8 @@ public class Card_1261_108_Tests {
         var ls = new HashMap<>(Map.of("hut", "4_89", "jungle", "4_86", "luke", "1_19", "yoda", "4_2", "han", "1_11",
                 "loss", "2_18", "testOne", "4_77", "testFive", "4_78", "backpack", "4_12", "commander", "601_52"));
         ls.putAll(Map.of("trainingArea", "4_88", "anoat", "4_80", "asteroid", "4_81",
-                "maintenance", "13_9", "permanentWeapon", "108_3", "otherYoda", "12_35"));
+                "maintenance", "13_9", "permanentWeapon", "108_3", "otherYoda", "12_35", "lossTwo", "2_23", "lossThree", "2_27", "lossFour", "2_33", "lightAlter", "1_71"));
+        ls.put("ordinaryEffect", "1_66");
         return new VirtualTableScenario(ls, new HashMap<>(Map.of("cantina", "1_290")), 40, 40,
                 new StartingSetup() {
                     @Override public HashMap<String, String> Cards() {
@@ -101,7 +102,9 @@ public class Card_1261_108_Tests {
     @Test public void objectiveStartsStrongAndAllowsASubsetOfTests() { actualStack(2); }
     @Test public void objectiveStartsStrongAndAllowsSixTestsWithoutTakingTheSeventh() { actualStack(6); }
 
-    private VirtualTableScenario completeTest(boolean fifth) {
+    private VirtualTableScenario completeTest(boolean fifth) { return completeTest(fifth, 1, true); }
+
+    private VirtualTableScenario completeTest(boolean fifth, int available, boolean accept) {
         var scn = fixture(0); scn.StartGame();
         var hut = scn.GetLSCard("hut"); var strong = scn.GetLSCard("strong");
         var luke = scn.GetLSCard("luke"); var yoda = scn.GetLSCard("yoda");
@@ -110,19 +113,22 @@ public class Card_1261_108_Tests {
         scn.AttachCardsTo(hut, test);
         test.setTargetedCard(TargetId.JEDI_TEST_MENTOR, null, yoda, Filters.sameCardId(yoda));
         test.setTargetedCard(TargetId.JEDI_TEST_APPRENTICE, null, luke, Filters.sameCardId(luke));
-        scn.MoveCardsToTopOfLSLostPile(loss);
+        if (available == 4) scn.MoveCardsToTopOfLSLostPile(loss, scn.GetLSCard("lossTwo"),
+                scn.GetLSCard("lossThree"), scn.GetLSCard("lossFour"));
+        else scn.MoveCardsToTopOfLSLostPile(loss);
         scn.SkipToLSTurn(Phase.DEPLOY);
         var action = new TopLevelGameTextAction(test, scn.LS, test.getCardId());
         action.appendEffect(new CompleteJediTestEffect(action, test));
         scn.carryOutEffectInPhaseActionByPlayer(scn.LS, action);
         var objective = scn.GetLSCard("objective");
         var trace = new ArrayList<String>();
-        boolean retrieved = false;
+        boolean offered = false;
         for (int i = 0; i < 18 && scn.GetCurrentDecision() != null; i++) {
             var prompt = scn.GetCurrentDecision().getText();
             trace.add(prompt + " actions=" + scn.GetLSAvailableActions());
             if (scn.GetLSAvailableActions().stream().anyMatch(x -> x.contains("Retrieve 3 Force"))) {
-                scn.LSUseCardAction(strong, "Retrieve 3 Force"); retrieved = true;
+                offered = true;
+                if (accept) scn.LSUseCardAction(strong, "Retrieve 3 Force"); else scn.LSPass();
             } else if (scn.GetLSAvailableActions().stream().anyMatch(x -> x.contains("Flip"))) {
                 scn.LSChooseAction("Flip");
             } else if (scn.GetLSAvailableActions().stream().anyMatch(x -> x.contains("Reveal top two"))) {
@@ -140,8 +146,13 @@ public class Card_1261_108_Tests {
                 objective.getBlueprint().getTitle());
         assertEquals(Zone.SIDE_OF_TABLE, test.getZone());
         assertTrue(GameConditions.isJediTestCompleted(scn.game(), test));
-        assertTrue(trace.toString(), retrieved);
-        assertTrue(scn.GetLSUsedPile().contains(loss));
+        assertTrue(trace.toString(), offered);
+        assertEquals(accept ? Math.max(0, available - 3) : available, scn.GetLSLostPileCount());
+        if (available == 1 && accept) assertTrue(scn.GetLSUsedPile().contains(loss));
+        if (fifth) {
+            assertEquals(1, scn.gameState().getStackedCards(test).size());
+            assertTrue(scn.gameState().getStackedCards(luke).isEmpty());
+        }
         return scn;
     }
 
@@ -310,4 +321,29 @@ public class Card_1261_108_Tests {
         assertEquals(2, before - scn.GetLSForcePileCount());
         assertFalse(scn.gameState().isCardRevealedFromPile(otherYoda));
     }
+    @Test public void completingATestRetrievesExactlyThreeEvenWithFourAvailable() { completeTest(false, 4, true); }
+    @Test public void thePlayerCanDeclineAllThreeAfterCompletingATest() { completeTest(false, 4, false); }
+
+    private void actualCancelPermissions(boolean back) {
+        var scn = fixture(0); scn.StartGame();
+        var objective = scn.GetLSCard("objective"); var luke = scn.GetLSCard("luke");
+        var site = scn.GetDSStartingLocation(); var vader = scn.GetDSCard("vader");
+        var darkEffect = scn.GetDSCard("bad"); var lightEffect = scn.GetLSCard("ordinaryEffect");
+        var lsAlter = scn.GetLSCard("lightAlter"); var dsAlter = scn.GetDSCard("darkAlter"); var sense = scn.GetDSCard("sense");
+        scn.MoveCardsToLSSideOfTable(lightEffect, darkEffect);
+        scn.MoveCardsToLocation(site, luke, vader);
+        if (back) scn.gameState().flipCard(scn.game(), objective, true);
+        scn.MoveCardsToDSHand(dsAlter, sense); scn.MoveCardsToLSHand(lsAlter);
+        scn.SkipToDSTurn(Phase.CONTROL);
+        assertEquals(!back, scn.DSCardPlayAvailable(dsAlter, "Draw destiny to cancel Effect"));
+        scn.SkipToLSTurn(Phase.CONTROL);
+        scn.LSPlayCard(lsAlter, "Draw destiny to cancel Effect");
+        if (scn.LSHasCardChoiceAvailable(darkEffect)) scn.LSChooseCard(darkEffect);
+        if (scn.LSHasCardChoiceAvailable(luke)) scn.LSChooseCard(luke);
+        boolean senseOffered = scn.DSGetDecision() != null && scn.DSCardPlayAvailable(sense, "Draw destiny to cancel");
+        assertEquals(scn.GetCurrentDecision().getText(), !back, senseOffered);
+    }
+
+    @Test public void frontAllowsActualDarkSideSenseAndAlter() { actualCancelPermissions(false); }
+    @Test public void backBansActualDarkSideSenseAndAlterButAllowsLightAlter() { actualCancelPermissions(true); }
 }
