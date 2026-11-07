@@ -119,10 +119,13 @@ public class Card_1250_027_Tests {
         assertFalse(scn.DSCardPlayAvailable(scn.GetDSCard("fury"),REDRAW));assertFalse(draw.isDestinyCanceled());
         assertEquals(Zone.HAND,scn.GetDSCard("fury").getZone());
     }
-    @Test public void SithFuryLostAlsoDeploysDarkJediDuringMovePhase() {
-        var scn=deploy(10);scn.SkipToPhase(Phase.MOVE);openDeploy(scn);
-        assertTrue(selectable(scn,"1_168"));scn.DSChooseCard(scn.GetDSCard("vader"));scn.DSChooseCard(scn.GetDSStartingLocation());scn.PassAllResponses();
-        assertEquals(Zone.AT_LOCATION,scn.GetDSCard("vader").getZone());assertInZone(Zone.LOST_PILE,scn.GetDSCard("fury"));assertEquals(0,scn.GetDSForcePileCount());
+    @Test public void SithFuryLostDoesNotBypassNormalDeploymentTimingDuringMovePhase() {
+        var scn=deploy(10);scn.SkipToPhase(Phase.MOVE);assertNotNull(scn.DSGetDecision());
+        assertFalse(scn.DSCardPlayAvailable(scn.GetDSCard("fury"),DEPLOY));assertEquals(10,scn.GetDSForcePileCount());
+    }
+    @Test public void SithFuryLostDoesNotDeployDuringOpponentsDeployPhase() {
+        var scn=deploy(10);scn.SkipToLSTurn(Phase.DEPLOY);scn.LSPass();assertNotNull(scn.DSGetDecision());
+        assertFalse(scn.DSCardPlayAvailable(scn.GetDSCard("fury"),DEPLOY));
     }
     @Test public void SithFuryUsedAlsoTakesADroidDrawnForDestiny() {
         var scn=battle(true);scn.MoveCardsToTopOfDSReserveDeck(scn.GetDSCard("droid"));var draw=reachDraw(scn,true);
