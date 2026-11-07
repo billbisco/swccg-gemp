@@ -1709,6 +1709,7 @@ public enum GameTextActionId {
     LEGACY__OH_HES_NOT_DEAD_NOT_YET__DEPLOY_CHARACTER(true, true),
     LEGACY__OH_HES_NOT_DEAD_NOT_YET__TAKE_GRABBER(true),
     LEGACY__OH_HES_NOT_DEAD_NOT_YET__SEARCH_FORCE_PILE(true),
+    LEGACY__HAN_SOLO_COURAGEOUS_SMUGGLER__DEPLOY_CHEWIE(true, true),
     ;
 
     private boolean _searchCardPile;
