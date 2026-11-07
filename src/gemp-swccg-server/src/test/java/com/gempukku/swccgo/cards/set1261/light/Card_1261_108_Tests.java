@@ -29,8 +29,9 @@ public class Card_1261_108_Tests {
                 "maintenance", "13_9", "permanentWeapon", "108_3", "otherYoda", "12_35", "lossTwo", "2_23", "lossThree", "2_27", "lossFour", "2_33", "lightAlter", "1_71"));
         ls.put("ordinaryEffect", "1_66");
         ls.put("hothOnlyLuke", "3_3");
+        ls.put("hope", "4_44");
         return new VirtualTableScenario(ls, new HashMap<>(Map.of("cantina", "1_290", "vader", "1_168",
-                "bad", "4_116", "darkAlter", "1_234", "sense", "1_267")), 40, 40,
+                "bad", "4_116", "darkAlter", "1_234", "sense", "1_267", "darkDagobah", "7_279")), 40, 40,
                 new StartingSetup() {
                     @Override public HashMap<String, String> Cards() {
                         return new HashMap<>(Map.of("objective", "1261_108", "dagobah", "4_84", "strong", "1261_87"));
@@ -340,12 +341,21 @@ public class Card_1261_108_Tests {
         scn.SkipToDSTurn(Phase.CONTROL);
         assertEquals(!back, scn.DSCardPlayAvailable(dsAlter, "Draw destiny to cancel Effect"));
         scn.SkipToLSTurn(Phase.CONTROL);
+        scn.PrepareDSDestiny(1);
         scn.LSPlayCard(lsAlter, "Draw destiny to cancel Effect");
         if (scn.LSHasCardChoiceAvailable(darkEffect)) scn.LSChooseCard(darkEffect);
         if (scn.LSHasCardChoiceAvailable(luke)) scn.LSChooseCard(luke);
         boolean senseOffered = scn.GetDSAvailableActions().stream()
                 .anyMatch(action -> action.contains("Draw destiny to cancel") && action.contains("Alter"));
         assertEquals(scn.GetCurrentDecision().getText(), !back, senseOffered);
+        if (!back) {
+            scn.DSPlayCard(scn.GetDSCard("sense"), "Draw destiny to cancel");
+            if (scn.DSHasCardChoiceAvailable(vader)) scn.DSChooseCard(vader);
+            scn.PassAllResponses(); scn.PassDestinyDrawResponses(); scn.PassAllResponses();
+            assertTrue(scn.gameState().getLastMessages().toString(), scn.gameState().getLastMessages().stream()
+                    .anyMatch(msg -> msg.equals("Destiny: 5")));
+            assertTrue(scn.GetLSLostPile().contains(lsAlter));
+        }
     }
 
     @Test public void frontAllowsActualDarkSideSenseAndAlter() { actualCancelPermissions(false); }
@@ -420,5 +430,75 @@ public class Card_1261_108_Tests {
 
     @Test public void backLetsCommanderLukeDeployOutsideHothFromHand() { handDeployment(true); }
     @Test public void frontLeavesCommandersOwnHothOnlyRequirementInPlaceFromHand() { handDeployment(false); }
+
+
+    private void actualSystemConversion(boolean objectiveInSetup) {
+        var scn = objectiveInSetup ? fixture(0) : new VirtualTableScenario(new HashMap<>(),
+                new HashMap<>(Map.of("darkDagobah", "7_279")), 40, 40, StartingSetup.LSStartingLocation("4_84"),
+                StartingSetup.DefaultDSGroundLocation, StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts, StartingSetup.NoLSShields, StartingSetup.NoDSShields, "legacy");
+        scn.StartGame();
+        var original = objectiveInSetup ? scn.GetLSCard("dagobah") : scn.GetLSStartingLocation();
+        var replacement = scn.GetDSCard("darkDagobah");
+        if (objectiveInSetup) {
+            var objective = scn.GetLSCard("objective");
+            scn.gameState().flipCard(scn.game(), objective, true);
+            assertTrue(objective.isFlipped());
+        }
+        scn.MoveCardsToDSHand(replacement); scn.SkipToDSTurn(Phase.DEPLOY);
+        assertEquals(!objectiveInSetup, scn.DSDeployAvailable(replacement));
+        if (!objectiveInSetup) {
+            scn.DSDeployCard(replacement);
+            if (scn.DSHasCardChoiceAvailable(original)) scn.DSChooseCard(original);
+            scn.PassAllResponses();
+            assertEquals(Zone.LOCATIONS, replacement.getZone());
+            assertTrue(scn.gameState().getConvertedLocationsUnderTopLocation(replacement).contains(original));
+        } else {
+            assertEquals(Zone.LOCATIONS, original.getZone());
+            assertEquals(Zone.HAND, replacement.getZone());
+        }
+    }
+
+    @Test public void nativeDarkDagobahCannotConvertTheObjectiveSystemAfterTheFlip() { actualSystemConversion(true); }
+    @Test public void nativeDarkDagobahCanNormallyConvertTheSameLightSystem() { actualSystemConversion(false); }
+
+    @Test public void frontDownloadsLukeForZeroThenBackpackAndHopeOnlyToDagobah() {
+        var scn = fixture(0); scn.StartGame();
+        var objective = scn.GetLSCard("objective"); var hut = scn.GetLSCard("hut");
+        var luke = scn.GetLSCard("luke"); var backpack = scn.GetLSCard("backpack");
+        var hope = scn.GetLSCard("hope"); var han = scn.GetLSCard("han");
+        scn.MoveLocationToTable(hut);
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), han);
+        scn.LSActivateForceCheat(8); scn.SkipToLSTurn(Phase.CONTROL);
+        scn.MoveCardsToTopOfLSReserveDeck(luke, backpack, hope);
+        int before = scn.GetLSForcePileCount();
+        resolveDownload(scn, objective, luke, hut, han, Zone.AT_LOCATION);
+        assertEquals(hut, luke.getAtLocation());
+        assertEquals(before, scn.GetLSForcePileCount());
+        resolveDownload(scn, objective, backpack, luke, han, Zone.ATTACHED);
+        assertEquals(luke, backpack.getAttachedTo());
+        resolveDownload(scn, objective, hope, luke, han, Zone.ATTACHED);
+        assertEquals(luke, hope.getAttachedTo());
+    }
+
+    private void resolveDownload(VirtualTableScenario scn, PhysicalCardImpl objective, PhysicalCardImpl card,
+                                 PhysicalCardImpl target, PhysicalCardImpl offSystem, Zone destination) {
+        scn.LSUseCardAction(objective, "Deploy card to Dagobah from Reserve Deck");
+        var trace = new ArrayList<String>();
+        for (int i = 0; i < 16 && card.getZone() != destination; i++) {
+            var prompt = scn.GetCurrentDecision().getText(); trace.add(prompt);
+            if (scn.LSGetDecision() != null && scn.LSGetBPChoices().contains(card.getBlueprintId(true))) {
+                scn.LSChooseCard(card);
+            } else if (scn.LSHasCardChoiceAvailable(target)) {
+                assertFalse("Off-system target offered: " + trace, scn.LSHasCardChoiceAvailable(offSystem));
+                scn.LSChooseCard(target);
+            } else if (prompt.toLowerCase().contains("optional response")) {
+                scn.PlayerPass(scn.GetDecidingPlayer());
+            } else break;
+        }
+        scn.PassAllResponses();
+        assertEquals(trace.toString(), destination, card.getZone());
+        if (scn.DSGetDecision() != null) scn.DSPass();
+    }
 
 }
