@@ -127,18 +127,40 @@ public interface ForceDrains extends BaseQuery, CardTraits, Icons, Captives, Pil
         Icon icon = (gameState.getSide(performingPlayerId) == Side.DARK) ? Icon.LIGHT_FORCE : Icon.DARK_FORCE;
 
         int result = getIconCount(gameState, location, icon);
+        LimitForceDrainBonusesModifier limit = null;
+        for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.LIMIT_FORCE_DRAIN_BONUSES, location)) {
+            if (modifier.isForPlayer(performingPlayerId)) {
+                var candidate = (LimitForceDrainBonusesModifier) modifier;
+                if (limit == null || candidate.getLimit() < limit.getLimit()) limit = candidate;
+            }
+        }
+        float bonusRemaining = limit == null ? Float.POSITIVE_INFINITY : limit.getLimit();
+        boolean limitedBonus = false;
         OnlyIfNoOtherBonusResolver onlyIfNoOtherBonus = new OnlyIfNoOtherBonusResolver();
         for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.FORCE_DRAIN_AMOUNT, location)) {
             if (modifier.isForPlayer(performingPlayerId)) {
-                float modifierAmount = modifier.getForceDrainModifier(performingPlayerId, gameState, query(), location);
-                if (onlyIfNoOtherBonus.defer(modifier, modifierAmount)) {
+                float amount = modifier.getForceDrainModifier(performingPlayerId, gameState, query(), location);
+                if (onlyIfNoOtherBonus.defer(modifier, amount)) {
                     continue;
                 }
-                result += modifierAmount;
+                if (limit != null && amount > 0) {
+                    float allowed = Math.min(amount, bonusRemaining);
+                    limitedBonus |= allowed < amount;
+                    bonusRemaining -= allowed;
+                    amount = allowed;
+                }
+                result += amount;
                 modifierCollector.addModifier(modifier);
             }
         }
-        result += onlyIfNoOtherBonus.resolve(modifierCollector);
+        float conditionalBonus = onlyIfNoOtherBonus.resolve(modifierCollector);
+        if (limit != null && conditionalBonus > 0) {
+            float allowed = Math.min(conditionalBonus, bonusRemaining);
+            limitedBonus |= allowed < conditionalBonus;
+            conditionalBonus = allowed;
+        }
+        result += conditionalBonus;
+        if (limitedBonus) modifierCollector.addModifier(limit);
 
         for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.UNMODIFIABLE_FORCE_DRAIN_AMOUNT, location)) {
             if (modifier.isForPlayer(performingPlayerId)) {
