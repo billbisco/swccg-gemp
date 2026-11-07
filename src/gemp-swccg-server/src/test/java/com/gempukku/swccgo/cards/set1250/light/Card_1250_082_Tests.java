@@ -14,20 +14,22 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 public class Card_1250_082_Tests {
-    private static final StartingSetup COUNCIL_START = new StartingSetup() {
-        @Override
-        public HashMap<String, String> Cards() {
-            return new HashMap<>() {{ put("objective", "1250_82"); put("chamber", "12_76"); }};
-        }
+    private static StartingSetup councilStart(String chamberId) {
+        return new StartingSetup() {
+            @Override
+            public HashMap<String, String> Cards() {
+                return new HashMap<>() {{ put("objective", "1250_82"); put("chamber", chamberId); }};
+            }
 
-        @Override
-        public void Setup(VirtualTableScenario s) {
-            if (s.LSDecisionAvailable("Choose your Objective")) s.LSChooseCard(s.GetLSCard("objective"));
-            if (s.LSDecisionAvailable("Choose Jedi Council Chamber")) s.LSChooseCard(s.GetLSCard("chamber"));
-        }
-    };
+            @Override
+            public void Setup(VirtualTableScenario s) {
+                if (s.LSDecisionAvailable("Choose your Objective")) s.LSChooseCard(s.GetLSCard("objective"));
+                if (s.LSDecisionAvailable("Choose Jedi Council Chamber")) s.LSChooseCard(s.GetLSCard("chamber"));
+            }
+        };
+    }
 
-    private VirtualTableScenario scenario() {
+    private VirtualTableScenario scenario(String chamberId) {
         return new VirtualTableScenario(new HashMap<>() {{
             put("yoda", "12_35"); put("depa", "12_4"); put("mace", "12_13"); put("plo", "12_21");
             put("senate", "12_75"); put("speak", "12_69"); put("affect", "1_43"); put("newrepublic", "601_46");
@@ -36,13 +38,13 @@ public class Card_1250_082_Tests {
             put("plains", "12_79"); put("cantina", "1_128");
         }}, new HashMap<>() {{
             put("trooper", "1_194"); put("vader", "1_168");
-        }}, 40, 40, COUNCIL_START, StartingSetup.DefaultDSGroundLocation,
+        }}, 40, 40, councilStart(chamberId), StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
     }
 
     private VirtualTableScenario start() {
-        var s = scenario(); s.StartGame();
+        var s = scenario("12_76"); s.StartGame();
         var objective = s.GetLSCard("objective");
         assertTrue(objective.isObjectiveDeploymentComplete());
         assertEquals(Zone.LOCATIONS, s.GetLSCard("chamber").getZone());
@@ -222,5 +224,58 @@ public class Card_1250_082_Tests {
         waitForLightDeploy(s);
         s.LSDeployLocation(cantina); s.PassAllResponses();
         assertFalse(objective.isFlipped()); assertTrue(s.GetLSUsedPile().contains(test));
+    }
+
+    @Test
+    public void BackBlocksAnOtherwiseLegalChamberDrainButAllowsAnActualDrainElsewhere() {
+        var s = scenario("1116_29"); s.StartGame(); stageFlip(s, true);
+        var chamber = s.GetLSCard("chamber"); var cantina = s.GetLSCard("cantina");
+        s.MoveLocationToTable(cantina); s.MoveCardsToLocation(cantina, s.GetLSCard("trooper"));
+        s.SkipToLSTurn(Phase.CONTROL);
+        assertTrue(s.LSForceDrainAvailable(chamber));
+        s.SkipToPhase(Phase.DEPLOY); fund(s, 8); deployAt(s, s.GetLSCard("yoda"), chamber);
+        assertTrue(s.GetLSCard("objective").isFlipped());
+        s.SkipToLSTurn(Phase.CONTROL);
+        assertFalse(s.LSForceDrainAvailable(chamber)); assertTrue(s.LSForceDrainAvailable(cantina));
+        s.LSForceDrainAt(cantina); s.PassAllResponses();
+        assertEquals(2, s.GetForceDrainTotal());
+    }
+
+    @Test
+    public void BackGrantsThePrintedAttritionThresholdToJediButNotOtherCharacters() {
+        var s = start(); stageFlip(s, true);
+        var site = s.GetDSStartingLocation(); var jedi = s.GetLSCard("plo"); var trooper = s.GetLSCard("trooper");
+        s.MoveCardsToLocation(site, jedi, trooper);
+        var modifiers = s.game().getModifiersQuerying();
+        assertTrue(modifiers.getImmunityToAttritionLessThan(s.gameState(), jedi) < 5);
+        s.SkipToLSTurn(Phase.DEPLOY); fund(s, 8); deployAt(s, s.GetLSCard("yoda"), s.GetLSCard("chamber"));
+        assertTrue(s.GetLSCard("objective").isFlipped());
+        assertEquals(5, modifiers.getImmunityToAttritionLessThan(s.gameState(), jedi), s.epsilon);
+        assertEquals(0, modifiers.getImmunityToAttritionLessThan(s.gameState(), trooper), s.epsilon);
+    }
+
+    @Test
+    public void ActualVengeanceForceLossIsPreventedAfterTheLightObjectiveFlips() {
+        var s = start(); stageFlip(s, true);
+        var site = s.GetDSStartingLocation();
+        var vengeance = createDarkCard(s, "10_29");
+        var xizor = createDarkCard(s, "10_45");
+        s.MoveCardsToDSSideOfTable(vengeance); vengeance.setObjectiveDeploymentComplete(true);
+        s.gameState().flipCard(s.game(), vengeance, true);
+        s.MoveCardsToLocation(site, xizor);
+        s.SkipToLSTurn(Phase.DEPLOY); fund(s, 8); deployAt(s, s.GetLSCard("yoda"), s.GetLSCard("chamber"));
+        assertTrue(s.GetLSCard("objective").isFlipped());
+        s.SkipToDSTurn(Phase.CONTROL);
+        String action = "Make " + s.LS + " lose 1 Force";
+        assertTrue(s.DSCardActionAvailable(vengeance, action));
+        int lost = s.GetLSLostPileCount();
+        s.DSUseCardAction(vengeance, action); s.PassAllResponses();
+        assertFalse(s.AwaitingLSForceLossPayment()); assertEquals(lost, s.GetLSLostPileCount());
+    }
+
+    private PhysicalCardImpl createDarkCard(VirtualTableScenario s, String id) {
+        var card = (PhysicalCardImpl) s.gameState().createPhysicalCard(s.DS, VirtualTableScenario._cardLibrary, id);
+        s.gameState().addCardToZone(card, Zone.HAND, s.DS, true, false, false);
+        return card;
     }
 }
