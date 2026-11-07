@@ -16,8 +16,8 @@ public class Card_1250_063_Tests {
             put("bail", "1116_1"); put("palpatine", "12_28"); put("trooper", "1_28"); put("panaka", "12_2");
             put("political", "12_40"); put("planners", "1_60"); put("bay", "8_76"); put("snowspeeder", "3_69");
         }}, new HashMap<>() {{
-            put("political", "12_127"); put("nonbg", "1_287"); put("control", "4_139"); put("alter", "1_234");
-            put("emperor", "9_109"); put("fear", "1105_36");
+            put("political", "12_127"); put("nonbg", "1_287"); put("control", "4_139"); put("alter", "12_145");
+            put("emperor", "9_109"); put("scan", "1103_34");
         }}, 25, 25, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -100,37 +100,29 @@ public class Card_1250_063_Tests {
         scn.MoveLocationToTable(senate); scn.MoveLocationToTable(bay);
         scn.AttachCardsTo(senate, scn.GetLSCard("liberty")); scn.AttachCardsTo(bay, scn.GetLSCard("planners"));
         scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("emperor")); scn.MoveCardsToHand(scn.GetDSCard("alter"));
-        scn.SkipToDSTurn(Phase.CONTROL); scn.PrepareDSDestiny(3); scn.DSPlayCard(scn.GetDSCard("alter"), "Draw destiny to cancel Effect");
+        scn.SkipToDSTurn(Phase.CONTROL); scn.PrepareDSDestiny(3); scn.DSPlayCard(scn.GetDSCard("alter"), "Cancel Effect");
         if (scn.DSDecisionAvailable("Choose Effect")) { assertFalse(scn.DSHasCardChoicesAvailable(scn.GetLSCard("liberty"))); scn.DSChooseCard(scn.GetLSCard("planners")); }
-        if (scn.DSDecisionAvailable("Choose a highest-ability character")) scn.DSChooseCard(scn.GetDSCard("emperor"));
+        if (scn.DSDecisionAvailable("Choose a character")) scn.DSChooseCard(scn.GetDSCard("emperor"));
         scn.PassAllResponses(); assertTrue(scn.GetLSLostPile().contains(scn.GetLSCard("planners")));
         assertEquals(senate, scn.GetLSCard("liberty").getAttachedTo());
     }
     @Test
-    public void LibertyDiesCannotBePlacedInUsedByActualFearDestiny() { checkFear(true); }
+    public void LibertyDiesCannotBePlacedInUsedByActualHyperwaveScan() { checkScan(true); }
     @Test
-    public void LibertyDiesUsedProtectionDoesNotPreventOtherEffectBeingPlaced() { checkFear(false); }
-    private void checkFear(boolean protectedEffect) {
-        var scn = scenario(); scn.StartGame(); var senate = scn.GetLSCard("senate"); var bay = scn.GetLSCard("bay");
-        scn.MoveLocationToTable(senate); scn.MoveLocationToTable(bay);
-        scn.AttachCardsTo(senate, scn.GetLSCard("liberty")); scn.AttachCardsTo(bay, scn.GetLSCard("planners"));
-        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("emperor"), scn.GetLSCard("trooper"));
-        scn.DSStartBattleAndSkipToWeaponsSegment(scn.GetDSStartingLocation());
-        var fear = scn.GetDSCard("fear"); scn.MoveCardsToTopOfDSReserveDeck(fear); scn.SkipToPowerSegment();
-        assertTrue(scn.DSDecisionAvailable("battle destiny?")); scn.DSChooseYes();
-        boolean offered = false;
-        for (int i = 0; i < 32; i++) {
-            if (scn.GetADParam(scn.DS, "cardId") != null && scn.GetADParam(scn.DS, "actionText") != null
-                    && scn.DSCardActionAvailable(fear, "Place Effect in Used Pile")) { offered = true; break; }
-            if (scn.DSDecisionAvailable("optional")) scn.DSPass();
-            else if (scn.LSDecisionAvailable("optional")) scn.LSPass(); else break;
-        }
-        assertTrue(offered); scn.DSUseCardAction(fear, "Place Effect in Used Pile");
-        assertTrue(scn.DSDecisionAvailable("Choose Effect")); scn.DSChooseCard(scn.GetLSCard(protectedEffect ? "liberty" : "planners")); scn.PassAllResponses();
-        assertEquals(senate, scn.GetLSCard("liberty").getAttachedTo());
-        assertEquals(!protectedEffect, scn.GetLSUsedPile().contains(scn.GetLSCard("planners")));
+    public void LibertyDiesUsedProtectionDoesNotPreventOtherPoliticalEffectBeingPlaced() { checkScan(false); }
+    private void checkScan(boolean protectedEffect) {
+        var scn = scenario(); scn.StartGame(); var senate = scn.GetLSCard("senate"); scn.MoveLocationToTable(senate);
+        scn.AttachCardsTo(senate, scn.GetLSCard("liberty"));
+        scn.MoveCardsToDSSideOfTable(scn.GetDSCard("political"), scn.GetDSCard("scan"));
+        for (int i = scn.GetDSHandCount(); i < 13; i++) scn.MoveCardsToHand(scn.GetTopOfDSReserveDeck());
+        assertEquals(13, scn.GetDSHandCount()); scn.DSActivateForceCheat(3); scn.SkipToLSTurn(Phase.MOVE); scn.LSPass();
+        assertTrue(scn.DSCardActionAvailable(scn.GetDSCard("scan"), "Place a Political Effect in Used Pile"));
+        int force = scn.GetDSForcePileCount(); scn.DSUseCardAction(scn.GetDSCard("scan"), "Place a Political Effect in Used Pile");
+        scn.PassAllResponses(); assertTrue(scn.DSDecisionAvailable("Choose a Political Effect"));
+        scn.DSChooseCard(protectedEffect ? scn.GetLSCard("liberty") : scn.GetDSCard("political")); scn.PassAllResponses();
+        assertEquals(force - 3, scn.GetDSForcePileCount()); assertEquals(senate, scn.GetLSCard("liberty").getAttachedTo());
+        assertEquals(!protectedEffect, scn.GetDSUsedPile().contains(scn.GetDSCard("political")));
     }
-
     @Test
     public void LibertyDiesAlsoPreventsOwnerCancelingProtectedDrain() { checkOwnerControl(true); }
     @Test
