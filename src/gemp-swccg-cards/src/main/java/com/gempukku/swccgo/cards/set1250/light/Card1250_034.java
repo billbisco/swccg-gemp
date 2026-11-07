@@ -68,7 +68,7 @@ public class Card1250_034 extends AbstractRebelRepublic {
             EffectResult effectResult, PhysicalCard self, int gameTextSourceCardId) {
         if (GameConditions.isAtLocation(game, self, Filters.Galactic_Senate)
                 && TriggerConditions.justLostForceFromForceDrainAt(game, effectResult, game.getOpponent(playerId),
-                        Filters.sameLocationAs(self, Filters.and(Filters.your(self), Filters.Rebel)), false)
+                        Filters.sameLocationAs(self, Filters.and(Filters.your(self), Filters.Rebel)), true)
                 && GameConditions.hasLostPile(game, playerId)) {
             OptionalGameTextTriggerAction action = new OptionalGameTextTriggerAction(self, gameTextSourceCardId);
             action.setText("Retrieve 1 Force");

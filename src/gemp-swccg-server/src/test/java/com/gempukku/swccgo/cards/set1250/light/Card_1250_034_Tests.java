@@ -158,7 +158,7 @@ public class Card_1250_034_Tests {
         if (!emptyLost) assertEquals(!accept, scn.GetLSLostPile().contains(target));
     }
     @Test
-    public void BailOrganaMayRespondToEachUnitActuallyLostToTwoForceRebelDrain() {
+    public void BailOrganaRetrievesOnlyOnceForTwoForceRebelDrain() {
         var scn = scenario(); scn.StartGame(); var senate = scn.GetLSCard("senate"); var cantina = scn.GetLSCard("cantina");
         scn.MoveLocationToTable(senate); scn.MoveLocationToTable(cantina);
         scn.MoveCardsToLocation(senate, scn.GetLSCard("bail"));
@@ -167,14 +167,15 @@ public class Card_1250_034_Tests {
         int life = scn.GetLSLifeForceRemaining();
         scn.LSForceDrainAt(cantina); scn.DSPass(); scn.PassForceDrainStartResponses();
         assertEquals(2, scn.GetForceDrainTotal());
-        for (int unit = 0; unit < 2; unit++) {
-            scn.DSChooseCard(scn.GetTopOfDSForcePile());
-            assertTrue(retrievalOffered(scn));
-            scn.LSUseCardAction(scn.GetLSCard("bail"), "Retrieve 1 Force"); scn.PassAllResponses();
-            assertEquals(life + unit + 1, scn.GetLSLifeForceRemaining());
-        }
-        assertTrue(scn.GetLSUsedPile().contains(scn.GetLSCard("retrieve1")));
-        assertTrue(scn.GetLSUsedPile().contains(scn.GetLSCard("retrieve2")));
+        scn.DSChooseCard(scn.GetTopOfDSForcePile());
+        assertTrue(retrievalOffered(scn));
+        scn.LSUseCardAction(scn.GetLSCard("bail"), "Retrieve 1 Force"); scn.PassAllResponses();
+        assertEquals(life + 1, scn.GetLSLifeForceRemaining());
+        scn.DSChooseCard(scn.GetTopOfDSForcePile());
+        assertFalse(retrievalOffered(scn));
+        scn.PassAllResponses();
+        assertEquals(life + 1, scn.GetLSLifeForceRemaining());
+        assertEquals(1, scn.GetLSUsedPile().stream().filter(c -> c == scn.GetLSCard("retrieve1") || c == scn.GetLSCard("retrieve2")).count());
         assertFalse(scn.IsActiveForceDrain());
     }
 
