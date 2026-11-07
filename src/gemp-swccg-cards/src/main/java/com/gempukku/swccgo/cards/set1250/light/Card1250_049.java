@@ -17,6 +17,7 @@ import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
+import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.logic.TriggerConditions;
 import com.gempukku.swccgo.logic.actions.OptionalGameTextTriggerAction;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
@@ -28,6 +29,7 @@ import com.gempukku.swccgo.logic.modifiers.AddsPowerToPilotedBySelfModifier;
 import com.gempukku.swccgo.logic.modifiers.EachWeaponDestinyModifier;
 import com.gempukku.swccgo.logic.modifiers.IgnoresObjectiveRestrictionsWhenInitiatingBattleAtLocationModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
+import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 import com.gempukku.swccgo.logic.timing.EffectResult;
 
 import java.util.List;
@@ -72,7 +74,12 @@ public class Card1250_049 extends AbstractJediMaster {
     protected List<OptionalGameTextTriggerAction> getGameTextOptionalAfterTriggers(String playerId, SwccgGame game,
             EffectResult result, PhysicalCard self, int gameTextSourceCardId) {
         if (!TriggerConditions.battleInitiatedAt(game, result, Filters.sameLocation(self))) return null;
-        Filter canPlace = (state, modifiers, weapon) -> !modifiers.mayNotBePlacedInUsedPile(state, weapon, playerId);
+        Filter canPlace = new Filter() {
+            @Override
+            public boolean accepts(GameState state, ModifiersQuerying modifiers, PhysicalCard weapon) {
+                return !modifiers.mayNotBePlacedInUsedPile(state, weapon, playerId);
+            }
+        };
         Filter weaponsHere = Filters.and(Filters.your(playerId), Filters.weapon, Filters.here(self), canPlace);
         if (!GameConditions.canSpot(game, self, weaponsHere)) return null;
 
