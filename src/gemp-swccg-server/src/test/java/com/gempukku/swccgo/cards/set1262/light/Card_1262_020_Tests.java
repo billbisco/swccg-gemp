@@ -29,9 +29,9 @@ public class Card_1262_020_Tests {
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
     }
 
-    @Test public void BeastRiderStatsMatchPrintedHyphenAndVirtualSuffix() {
+    @Test public void BeastRiderStatsMatchPrintedHyphenAndNoVirtualSuffix() {
         var scn = scenario(); var b = scn.GetLSCard("rider").getBlueprint();
-        assertEquals("Beast-Rider", b.getTitle()); assertTrue(b.hasVirtualSuffix()); assertEquals(Side.LIGHT, b.getSide());
+        assertEquals("Beast-Rider", b.getTitle()); assertFalse(b.hasVirtualSuffix()); assertEquals(Side.LIGHT, b.getSide());
         assertEquals(Uniqueness.RESTRICTED_3, b.getUniqueness()); assertNull(b.getCardSubtype());
         assertEquals(2, b.getDestiny(), scn.epsilon); assertEquals(3, b.getDeployCost(), scn.epsilon);
         assertEquals(2, b.getPower(), scn.epsilon); assertEquals(4, b.getAbility(), scn.epsilon); assertEquals(5, b.getForfeit(), scn.epsilon);

@@ -5,6 +5,7 @@ import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.effects.usage.OncePerTurnEffect;
 import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.LegacyCreatureFilters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.game.state.GameState;
@@ -25,11 +26,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-/** Beast-Rider (V), final Virtual Block 6.2 text. */
+/** Beast-Rider (new Legacy title, no (V) suffix), final Virtual Block 6.2 text. */
 public class Card1262_020 extends AbstractRepublic {
     public Card1262_020() {
         super(Side.LIGHT, 2, 3, 2, 4, 5, "Beast-Rider", Uniqueness.RESTRICTED_3, ExpansionSet.VIRTUAL_BLOCK_6_2, Rarity.V);
-        setVirtualSuffix(true); setLore("Female.");
+        setLore("Female.");
         setGameText("Landspeed = 2. During battle, for each non-parasite creature here (even if excluded), power +2 (+4 if ferocious). If an opponent's card here is eaten, you may retrieve up to 4 Force. Once per turn, may deploy Kaadu here from Reserve Deck; reshuffle. Cannot be attacked.");
         addIcons(Icon.SPECIAL_EDITION, Icon.EPISODE_I); addKeyword(Keyword.FEMALE);
     }
@@ -47,11 +48,10 @@ public class Card1262_020 extends AbstractRepublic {
                 float bonus = 0;
                 for (PhysicalCard creature : Filters.filterActive(gameState.getGame(), self,
                         SpotOverride.INCLUDE_EXCLUDED_FROM_BATTLE,
-                        Filters.and(Filters.creature, Filters.not(Filters.and(Keyword.PARASITE)), Filters.here(self)))) {
-                    // AR2.0: a non-parasite is ferocious unless it is a selective landspeed>1 packhunter.
-                    boolean packhunter = Filters.and(Icon.SELECTIVE_CREATURE).accepts(gameState, modifiersQuerying, creature)
-                            && modifiersQuerying.getLandspeed(gameState, creature) > 1;
-                    bonus += packhunter ? 2 : 4;
+                        Filters.and(Filters.creature, Filters.not(Filters.parasite), Filters.here(self)))) {
+                    // Legacy AR2.0 creature classification (LegacyCreatureFilters): a non-parasite creature is
+                    // ferocious (+4) unless it is a packhunter (selective creature with landspeed > 1, +2).
+                    bonus += LegacyCreatureFilters.ferocious.accepts(gameState, modifiersQuerying, creature) ? 4 : 2;
                 }
                 return bonus;
             }
