@@ -26,7 +26,7 @@ public class Card_1261_037_Tests {
         assertTrue(b.isImmuneToCardTitle(Title.Alter));
         scn.BlueprintCardTypeCheck(b, new ArrayList<>() {{ add(CardType.EFFECT); }});
         scn.BlueprintKeywordCheck(b, new ArrayList<>());
-        scn.BlueprintIconCheck(b, new ArrayList<>() {{ add(Icon.DAGOBAH); add(Icon.LEGACY_BLOCK_6); }});
+        scn.BlueprintIconCheck(b, new ArrayList<>() {{ add(Icon.EFFECT); add(Icon.DAGOBAH); add(Icon.LEGACY_BLOCK_6); }});
     }
 
     @Test public void TdoshokHuntingVowActuallyDeploysOnTable() {

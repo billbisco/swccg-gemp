@@ -38,7 +38,7 @@ public class Card1261_037 extends AbstractNormalEffect {
         };
         var bosskAtSite = new OnTableCondition(self, Filters.and(Filters.Bossk,
                 Filters.at(Filters.and(Filters.site, Filters.not(Filters.Audience_Chamber)))));
-        return List.of(new DrawsBattleDestinyIfUnableToOtherwiseModifier(self, new DuringBattleAtCondition(supportedLocations), 1),
+        return List.of(new DrawsBattleDestinyIfUnableToOtherwiseModifier(self, Filters.your(self), new DuringBattleAtCondition(supportedLocations), 1),
                 new TotalPowerModifier(self, supportedLocations, -3, game.getOpponent(self.getOwner())),
                 new PowerModifier(self, Filters.species(Species.TRANDOSHAN), bosskAtSite, 1),
                 new ForfeitModifier(self, Filters.species(Species.TRANDOSHAN), bosskAtSite, 2));
