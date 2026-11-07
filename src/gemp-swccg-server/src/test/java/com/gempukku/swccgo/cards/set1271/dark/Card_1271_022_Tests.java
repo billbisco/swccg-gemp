@@ -4,6 +4,8 @@ import com.gempukku.swccgo.cards.set1271.LegacyShuffleObserver;
 import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.game.PhysicalCard;
+import com.gempukku.swccgo.logic.modifiers.ForceDrainModifier;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -102,4 +104,35 @@ public class Card_1271_022_Tests {
 
     @Test public void DeathStarCentralCoreRetrievesOneWhenDarkActuallyDrainsAtAnOrbitedWreck() { drain(true); }
     @Test public void DeathStarCentralCoreDoesNotRetrieveWhenDarkDrainsAtANonOrbitedWreck() { drain(false); }
+
+    @Test public void DeathStarCentralCoreCapsAnActualDarkDrainWithoutCappingLightOrLightOwnedSystems() {
+        var s = board(true);
+        var darkSystem = s.GetDSCard("other");
+        var lightSystem = s.GetLSCard("alderaan");
+        var site = s.GetDSStartingLocation();
+        var query = s.game().getModifiersQuerying();
+        float darkBase = query.getForceDrainAmount(s.gameState(), darkSystem, s.DS);
+        float lightOwnedBase = query.getForceDrainAmount(s.gameState(), lightSystem, s.DS);
+        float siteBase = query.getForceDrainAmount(s.gameState(), site, s.DS);
+        float lightBase = query.getForceDrainAmount(s.gameState(), darkSystem, s.LS);
+        addDrainModifier(s, darkSystem, s.DS, 2);
+        addDrainModifier(s, darkSystem, s.DS, 2);
+        addDrainModifier(s, darkSystem, s.DS, -1);
+        addDrainModifier(s, lightSystem, s.DS, 3);
+        addDrainModifier(s, site, s.DS, 3);
+        addDrainModifier(s, darkSystem, s.LS, 3);
+        assertEquals(lightOwnedBase + 3, query.getForceDrainAmount(s.gameState(), lightSystem, s.DS), s.epsilon);
+        assertEquals(siteBase + 3, query.getForceDrainAmount(s.gameState(), site, s.DS), s.epsilon);
+        assertEquals(lightBase + 3, query.getForceDrainAmount(s.gameState(), darkSystem, s.LS), s.epsilon);
+        s.MoveCardsToLocation(darkSystem, s.GetDSCard("ship"));
+        s.SkipToDSTurn(Phase.CONTROL);
+        assertTrue(s.DSForceDrainAvailable(darkSystem));
+        s.DSForceDrainAt(darkSystem);
+        s.PassForceDrainStartResponses();
+        assertEquals(darkBase, s.GetForceDrainTotal(), s.epsilon);
+    }
+
+    private void addDrainModifier(VirtualTableScenario s, PhysicalCard location, String player, int amount) {
+        s.ApplyAdHocModifier(new ForceDrainModifier(s.GetLSStartingLocation(), location, amount, player));
+    }
 }

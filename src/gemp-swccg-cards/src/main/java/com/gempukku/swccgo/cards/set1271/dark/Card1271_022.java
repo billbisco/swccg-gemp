@@ -15,6 +15,7 @@ import com.gempukku.swccgo.logic.effects.RetrieveForceEffect;
 import com.gempukku.swccgo.logic.effects.choose.DeployCardFromReserveDeckEffect;
 import com.gempukku.swccgo.logic.modifiers.IconModifier;
 import com.gempukku.swccgo.logic.modifiers.ImmuneToTitleModifier;
+import com.gempukku.swccgo.logic.modifiers.LimitForceDrainBonusesModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 import com.gempukku.swccgo.logic.timing.EffectResult;
@@ -59,7 +60,9 @@ public class Card1271_022 extends AbstractSite {
 
     @Override
     protected List<Modifier> getGameTextLightSideWhileActiveModifiers(String lightPlayer, SwccgGame game, PhysicalCard self) {
-        return List.of(new ImmuneToTitleModifier(self, Title.Expand_The_Empire));
+        return List.of(new ImmuneToTitleModifier(self, Title.Expand_The_Empire),
+            new LimitForceDrainBonusesModifier(self, Filters.and(Filters.system, Filters.opponents(lightPlayer)),
+                1, game.getOpponent(lightPlayer)));
     }
 
     @Override
