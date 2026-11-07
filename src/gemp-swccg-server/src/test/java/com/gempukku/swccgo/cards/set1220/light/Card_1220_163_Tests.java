@@ -5,6 +5,8 @@ import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
 import com.gempukku.swccgo.logic.effects.BlowAwayEffect;
+import com.gempukku.swccgo.logic.effects.LoseCardFromTableEffect;
+import com.gempukku.swccgo.logic.effects.LoseForceEffect;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -270,4 +272,52 @@ public class Card_1220_163_Tests {
         assertEquals(before - 8, scn.GetPlayerLifeForceRemaining(scn.LS));
         assertEquals(Zone.OUT_OF_PLAY, objective.getZone());
     }
+    @Test public void liberationForcesMarkerLossAtEndOfControlIfNotTakenEarlier() {
+        var scn = liberationWithTwoControlledSites(true);
+        scn.SkipToLSTurn(Phase.CONTROL);
+        int before = scn.GetDSLostPileCount();
+        for (int i = 0; i < 12 && !scn.DSDecisionAvailable("Choose Force to lose"); i++) {
+            var prompt = scn.GetCurrentDecision().getText().toLowerCase();
+            if (!prompt.contains("pass") && !prompt.contains("optional response")) break;
+            scn.PlayerPass(scn.GetDecidingPlayer());
+        }
+        assertTrue(scn.GetCurrentDecision().getText(), scn.DSDecisionAvailable("Choose Force to lose"));
+        scn.DSPayRemainingForceLossFromReserveDeck();
+        scn.PassAllResponses();
+        assertEquals(before + 1, scn.GetDSLostPileCount());
+    }
+
+    @Test public void losingControlOfTheSecondExteriorSiteFlipsLiberationBack() {
+        var scn = liberationWithTwoControlledSites(false);
+        var objective = scn.GetLSCard("objective");
+        var lost = scn.GetLSCard("secondRebel");
+        var source = scn.GetDSStartingLocation();
+        scn.SkipToDSTurn(Phase.CONTROL);
+        assertEquals(Title.Liberation, objective.getBlueprint().getTitle());
+        var action = new TopLevelGameTextAction(source, scn.DS, source.getCardId());
+        action.appendEffect(new LoseCardFromTableEffect(action, lost));
+        scn.carryOutEffectInPhaseActionByPlayer(scn.DS, action);
+        scn.PassAllResponses();
+        assertTrue(scn.GetLSLostPile().contains(lost));
+        assertEquals(Title.Local_Uprising, objective.getBlueprint().getTitle());
+    }
+
+    private void resolveForceLoss(boolean fromOwnCard, int amount, int remaining) {
+        var scn = liberationWithTwoControlledSites(false);
+        var player = fromOwnCard ? scn.LS : scn.DS;
+        var source = fromOwnCard ? scn.GetLSCard("rebel") : scn.GetDSStartingLocation();
+        if (fromOwnCard) scn.SkipToLSTurn(Phase.CONTROL); else scn.SkipToDSTurn(Phase.CONTROL);
+        int before = scn.GetLSLostPileCount();
+        var action = new TopLevelGameTextAction(source, player, source.getCardId());
+        action.appendEffect(new LoseForceEffect(action, scn.LS, amount));
+        scn.carryOutEffectInPhaseActionByPlayer(player, action);
+        scn.PassAllResponses();
+        scn.LSPayRemainingForceLossFromReserveDeck();
+        scn.PassAllResponses();
+        assertEquals(remaining, scn.GetLSLostPileCount() - before);
+    }
+
+    @Test public void liberationReducesOtherForceLossByTwoOccupiedHothLocations() { resolveForceLoss(false, 5, 3); }
+    @Test public void liberationCannotReduceOtherForceLossBelowOne() { resolveForceLoss(false, 2, 1); }
+    @Test public void liberationDoesNotReduceForceLossFromOwnCard() { resolveForceLoss(true, 5, 5); }
 }
