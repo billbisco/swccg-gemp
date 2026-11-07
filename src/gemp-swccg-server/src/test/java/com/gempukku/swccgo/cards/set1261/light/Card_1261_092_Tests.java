@@ -1,0 +1,211 @@
+package com.gempukku.swccgo.cards.set1261.light;
+
+import com.gempukku.swccgo.common.*;
+import com.gempukku.swccgo.framework.StartingSetup;
+import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.game.PhysicalCardImpl;
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.*;
+
+public class Card_1261_092_Tests {
+    private static final String DEPLOY = "Deploy a Rebel from Reserve Deck aboard your starship";
+    private static final String RETRIEVE = "Draw destiny to retrieve Rebels";
+
+    private VirtualTableScenario setup() {
+        var scn = new VirtualTableScenario(new HashMap<>(Map.ofEntries(
+                Map.entry("combo", "1261_92"), Map.entry("other", "1210_160"),
+                Map.entry("trooper", "1_28"), Map.entry("red", "1_144"),
+                Map.entry("home", "9_74"), Map.entry("admiral", "203_9"),
+                Map.entry("leia", "1_17"), Map.entry("nonrebel", "1_66"),
+                Map.entry("oldUsed", "1_146"), Map.entry("site", "1_136"))),
+                new HashMap<>(Map.of("damage", "1_222", "sense", "1_267",
+                        "vader", "1_168", "tie", "1_304", "system", "1_282")),
+                45, 45, StartingSetup.DefaultLSSpaceSystem, StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
+        scn.StartGame();
+        return scn;
+    }
+
+    private boolean available(VirtualTableScenario scn, String action) {
+        return scn.GetLSAvailableActions().stream().anyMatch(x -> x.contains(action));
+    }
+
+    private void passResponsesUntil(VirtualTableScenario scn, java.util.function.BooleanSupplier ready) {
+        for (int i = 0; i < 18 && !ready.getAsBoolean(); i++) {
+            var decision = scn.GetCurrentDecision();
+            if (decision == null || !decision.getText().toLowerCase().contains("response")) return;
+            scn.PlayerPass(scn.LSGetDecision() != null ? scn.LS : scn.DS);
+        }
+    }
+
+    private boolean selectable(VirtualTableScenario scn, PhysicalCardImpl card) {
+        if (scn.LSGetDecision() == null) return false;
+        var blueprints = scn.LSGetADParam("blueprintId");
+        var enabled = scn.LSGetADParam("selectable");
+        if (blueprints != null && enabled != null) {
+            for (int i = 0; i < Math.min(blueprints.length, enabled.length); i++) {
+                if (card.getBlueprintId(true).equals(blueprints[i]) && Boolean.parseBoolean(enabled[i])) return true;
+            }
+            return false;
+        }
+        return scn.LSHasCardChoiceAvailable(card);
+    }
+
+    @Test public void finalComboHasBothUniqueTitlesAndNoOriginalVirtualSuffix() {
+        var scn = setup(); var b = scn.GetLSCard("combo").getBlueprint();
+        assertEquals("Antilles Maneuver & Rebel Reinforcements", b.getTitle());
+        assertEquals(5, b.getDestiny(), scn.epsilon);
+        assertEquals(Side.LIGHT, b.getSide()); assertEquals(Rarity.V, b.getRarity());
+        assertEquals(Uniqueness.UNIQUE, b.getUniqueness());
+        assertEquals(CardSubtype.USED_OR_LOST, b.getCardSubtype());
+        assertEquals(ExpansionSet.VIRTUAL_BLOCK_6_1, b.getExpansionSet());
+        assertFalse(b.hasVirtualSuffix());
+        scn.BlueprintCardTypeCheck(b, new ArrayList<>(List.of(CardType.INTERRUPT)));
+        scn.BlueprintKeywordCheck(b, new ArrayList<>());
+        scn.BlueprintIconCheck(b, new ArrayList<>(List.of(Icon.INTERRUPT, Icon.SPECIAL_EDITION, Icon.LEGACY_BLOCK_6)));
+    }
+
+    @Test public void deployModeCostsForceAndExcludesAbilityThreeAndAbilityTwoAdmiral() {
+        var scn = setup();
+        var home = scn.GetLSCard("home"); var combo = scn.GetLSCard("combo");
+        var trooper = scn.GetLSCard("trooper"); var leia = scn.GetLSCard("leia");
+        var admiral = scn.GetLSCard("admiral");
+        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), home, scn.GetDSCard("tie"));
+        scn.MoveCardsToLSHand(combo);
+        scn.MoveCardsToTopOfLSReserveDeck(trooper, leia, admiral);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        assertFalse(available(scn, DEPLOY));
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.LSActivateForceCheat(5);
+        if (scn.DSGetDecision() != null) scn.DSPass();
+        assertTrue(available(scn, DEPLOY));
+        int before = scn.GetLSForcePileCount();
+        scn.LSPlayCard(combo, DEPLOY);
+        scn.PassAllResponses();
+        assertTrue(selectable(scn, trooper));
+        assertFalse(selectable(scn, leia));
+        assertFalse(selectable(scn, admiral));
+        scn.LSChooseCard(trooper);
+        if (scn.LSHasCardChoiceAvailable(home)) scn.LSChooseCard(home);
+        scn.PassAllResponses();
+        assertEquals(home, trooper.getAttachedTo());
+        assertEquals(before - 1, scn.GetLSForcePileCount());
+        assertEquals(Zone.RESERVE_DECK, admiral.getZone());
+        assertEquals(Zone.RESERVE_DECK, leia.getZone());
+    }
+
+    private VirtualTableScenario lateralDamage(boolean holdCombo) {
+        var scn = setup(); var ship = scn.GetLSCard("home"); var dsSystem = scn.GetDSCard("system");
+        scn.MoveLocationToTable(dsSystem);
+        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), ship);
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("vader"));
+        scn.MoveCardsToDSHand(scn.GetDSCard("damage"), scn.GetDSCard("sense"));
+        if (holdCombo) scn.MoveCardsToLSHand(scn.GetLSCard("combo"));
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.DSActivateForceCheat(8);
+        scn.DSPlayCard(scn.GetDSCard("damage"));
+        if (scn.DSHasCardChoiceAvailable(dsSystem)) scn.DSChooseCard(dsSystem);
+        if (scn.DSHasCardChoiceAvailable(ship)) scn.DSChooseCard(ship);
+        return scn;
+    }
+
+    @Test public void usedCancelStopsActualLateralDamageWhileItIsBeingPlayed() {
+        var scn = lateralDamage(true);
+        passResponsesUntil(scn, () -> available(scn, "Cancel Lateral Damage"));
+        assertTrue(available(scn, "Cancel Lateral Damage"));
+        scn.LSPlayCard(scn.GetLSCard("combo"), "Cancel Lateral Damage");
+        assertFalse(scn.GetDSAvailableActions().stream().anyMatch(x -> x.contains("Sense")));
+        scn.PassAllResponses();
+        assertFalse(scn.GetDSCard("damage").getZone().isInPlay());
+        assertTrue(scn.GetPower(scn.GetLSCard("home")) > 0);
+    }
+
+    @Test public void usedCancelAlsoRemovesResolvedLateralDamageAndRestoresStats() {
+        var scn = lateralDamage(false); var home = scn.GetLSCard("home");
+        scn.PassAllResponses();
+        assertEquals(0, scn.GetPower(home)); assertEquals(0, scn.GetForfeit(home));
+        scn.MoveCardsToLSHand(scn.GetLSCard("combo"));
+        if (scn.DSGetDecision() != null) scn.DSPass();
+        assertTrue(available(scn, "Cancel Lateral Damage"));
+        scn.LSPlayCard(scn.GetLSCard("combo"), "Cancel Lateral Damage");
+        scn.PassAllResponses();
+        assertFalse(scn.GetDSCard("damage").getZone().isInPlay());
+        assertTrue(scn.GetPower(home) > 0); assertTrue(scn.GetForfeit(home) > 0);
+    }
+
+    private VirtualTableScenario retrieval(boolean tied) {
+        var scn = setup();
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("vader"));
+        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetDSCard("tie"));
+        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetLSCard("home"));
+        if (tied) scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetLSCard("leia"));
+        scn.MoveCardsToLSHand(scn.GetLSCard("combo"), scn.GetLSCard("other"));
+        scn.MoveCardsToTopOfLSLostPile(scn.GetLSCard("nonrebel"), scn.GetLSCard("trooper"), scn.GetLSCard("red"));
+        scn.SkipToLSTurn(Phase.CONTROL);
+        scn.MoveCardsToTopOfLSUsedPile(scn.GetLSCard("oldUsed"));
+        return scn;
+    }
+
+    @Test public void permanentPilotCountsButEqualAbilityCardCountsDoNotQualify() {
+        assertFalse(available(retrieval(true), RETRIEVE));
+        assertTrue(available(retrieval(false), RETRIEVE));
+    }
+
+    private void resolveRetrieval(VirtualTableScenario scn, int amount, boolean takeOne) {
+        var combo = scn.GetLSCard("combo"); var trooper = scn.GetLSCard("trooper");
+        var red = scn.GetLSCard("red"); var other = scn.GetLSCard("nonrebel");
+        scn.PrepareLSDestiny(2);
+        scn.LSPlayCard(combo, RETRIEVE);
+        scn.PassAllResponses();
+        scn.PassDestinyDrawResponses();
+        boolean handChoice = false;
+        for (int i = 0; i < 30; i++) {
+            if (scn.LSDecisionAvailable("Choose a retrieved")) {
+                assertTrue(selectable(scn, trooper));
+                assertEquals(amount == 2, selectable(scn, red));
+                assertFalse(selectable(scn, scn.GetLSCard("oldUsed")));
+                if (takeOne) scn.LSChooseCard(trooper); else scn.LSDecided("");
+                handChoice = true;
+                continue;
+            }
+            if (scn.LSDecisionAvailable("Choose value for X")) {
+                scn.LSDecided(amount); continue;
+            }
+            if (scn.LSDecisionAvailable("Viewing") || scn.LSDecisionAvailable("prior to choosing")) {
+                scn.LSDecided(""); continue;
+            }
+            if (selectable(scn, trooper)) {
+                assertFalse(selectable(scn, other));
+                scn.LSChooseCard(trooper); continue;
+            }
+            if (selectable(scn, red)) {
+                assertFalse(selectable(scn, other));
+                scn.LSChooseCard(red); continue;
+            }
+            if (combo.getZone() == Zone.LOST_PILE || combo.getZone() == Zone.TOP_OF_LOST_PILE) break;
+            passResponsesUntil(scn, () -> scn.LSGetDecision() != null);
+        }
+        assertTrue("The actual retrieval must offer the optional hand selection", handChoice);
+        assertEquals(takeOne ? Zone.HAND : Zone.USED_PILE, trooper.getZone());
+        if (amount == 2) assertEquals(Zone.USED_PILE, red.getZone());
+        else assertTrue(scn.GetLSLostPile().contains(red));
+        assertTrue(scn.GetLSLostPile().contains(other));
+        assertTrue(scn.GetLSLostPile().contains(combo));
+        assertFalse(available(scn, RETRIEVE));
+    }
+
+    @Test public void retrieveBothRealCardKindsAndTakeOnlyOneIntoHand() {
+        resolveRetrieval(retrieval(false), 2, true);
+    }
+
+    @Test public void destinyTwoAllowsRetrievingOnlyOneAndDecliningTheHandChoice() {
+        resolveRetrieval(retrieval(false), 1, false);
+    }
+}
