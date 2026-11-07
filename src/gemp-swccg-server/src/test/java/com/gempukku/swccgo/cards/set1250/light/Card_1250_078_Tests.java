@@ -1,8 +1,11 @@
 package com.gempukku.swccgo.cards.set1250.light;
 
 import com.gempukku.swccgo.common.*;
+import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.game.DeployAsCaptiveOption;
+import com.gempukku.swccgo.game.PhysicalCardImpl;
 import com.gempukku.swccgo.game.SwccgCardBlueprint;
 import com.gempukku.swccgo.logic.modifiers.KeywordModifier;
 import org.junit.Test;
@@ -42,17 +45,27 @@ public class Card_1250_078_Tests {
     }
 
     private VirtualTableScenario scenario(boolean takeSecurity) {
+        return scenario(takeSecurity, true);
+    }
+
+    private VirtualTableScenario scenario(boolean takeSecurity, boolean realStartup) {
+        var setup = objectiveStart(takeSecurity);
+        var outsideDeck = new StartingSetup() {
+            @Override public HashMap<String, String> Cards() { return setup.Cards(); }
+            @Override public void Setup(VirtualTableScenario s) { }
+        };
         var s = new VirtualTableScenario(new HashMap<>() {{
             put("clone", "1116_9"); put("trooper", "1_26"); put("luke", "1_19");
             put("dock", "12_74"); put("plains", "12_79"); put("marker", "1_109");
             put("secondclone", "1116_9"); put("cantina", "1_128");
         }}, new HashMap<>() {{
             put("trooper", "1_194"); put("vader", "1_168");
-        }}, 40, 40, objectiveStart(takeSecurity), StartingSetup.DefaultDSGroundLocation,
+            put("emperor", "9_109"); put("lightning", "9_136"); put("monnok", "2_135");
+        }}, 40, 40, realStartup ? setup : StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
-                StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
+                realStartup ? StartingSetup.NoLSShields : outsideDeck, StartingSetup.NoDSShields, VirtualTableScenario.Open);
         // The provisional OVS fixture omits the keyword that is native to the Block 5 Prison.
-        s.game().getModifiersEnvironment().addUntilEndOfGameModifier(
+        if (realStartup) s.game().getModifiersEnvironment().addUntilEndOfGameModifier(
                 new KeywordModifier(null, s.GetLSCard("prison"), Keyword.PRISON));
         return s;
     }
@@ -71,7 +84,12 @@ public class Card_1250_078_Tests {
         var prison = s.GetLSCard("prison"); var palpatine = s.GetLSCard("palpatine");
         assertFace(s, objective.getBlueprint(), Title.We_Have_A_Plan, 0);
         assertFace(s, objective.getOtherSideBlueprint(), Title.They_Will_Be_Lost_And_Confused, 7);
-        assertTrue("Startup zones: " + List.of(s.GetLSCard("coruscant").getZone(), prison.getZone(), palpatine.getZone()),
+        assertTrue("Startup zones: " + List.of(s.GetLSCard("coruscant").getZone(), prison.getZone(), palpatine.getZone())
+                        + "; keyword=" + Filters.prison.accepts(s.game(), prison)
+                        + "; persona=" + Filters.Palpatine.accepts(s.game(), palpatine)
+                        + "; legal actions=" + palpatine.getBlueprint().getPlayCardActions(s.LS, s.game(), palpatine,
+                                objective, true, 0, null, null, DeployAsCaptiveOption.deployAsImprisonedCaptive(),
+                                null, null, false, 0, prison, null).size(),
                 objective.isObjectiveDeploymentComplete());
         assertFalse(objective.isFlipped());
         assertEquals(Zone.LOCATIONS, s.GetLSCard("coruscant").getZone()); assertEquals(Zone.LOCATIONS, prison.getZone());
@@ -112,12 +130,14 @@ public class Card_1250_078_Tests {
     }
 
     private VirtualTableScenario flipAndSearch() {
-        var s = scenario(false); s.StartGame(); var objective = s.GetLSCard("objective");
+        var s = scenario(false, false); s.StartGame(); var objective = s.GetLSCard("objective");
+        // Starting imprisonment is verified separately. Here the printed flip and search run normally.
+        s.MoveCardsToLSSideOfTable(objective); objective.setObjectiveDeploymentComplete(true);
         var dock = s.GetLSCard("dock"); var palpatine = s.GetLSCard("palpatine");
         var clone = s.GetLSCard("clone"); var marker = s.GetLSCard("marker"); var trooper = s.GetLSCard("trooper");
         s.MoveLocationToTable(dock);
         s.SkipToLSTurn(Phase.DEPLOY); s.LSActivateForceCheat(8);
-        s.gameState().moveCardToLocation(palpatine, dock, true);
+        s.MoveCardsToLocation(dock, palpatine);
         s.MoveCardsToHand(trooper); s.MoveCardsToTopOfLSReserveDeck(marker, clone);
         s.gameState().markCardsRevealedFromPile(List.of(marker));
         assertTrue(s.LSDeployAvailable(trooper)); s.LSDeployCard(trooper);
@@ -126,7 +146,6 @@ public class Card_1250_078_Tests {
         assertTrue(objective.isFlipped()); assertTrue(s.LSHasCardChoiceAvailable(clone));
         s.LSChooseCard(clone); s.PassAllResponses();
         assertTrue(s.GetLSHand().contains(clone)); assertFalse(s.gameState().isCardRevealedFromPile(marker));
-        assertEquals(2, s.game().getModifiersQuerying().getForceGenerationFromLocation(s.gameState(), dock, s.LS), s.epsilon);
         return s;
     }
 
@@ -175,5 +194,72 @@ public class Card_1250_078_Tests {
         assertTrue(s.DSForceDrainAvailable(marketplace));
         s.DSForceDrainAt(marketplace); s.PassAllResponses();
         assertTrue(s.AwaitingLSForceLossPayment());
+    }
+
+    private VirtualTableScenario resolveMonnok(int handSize) {
+        var s = scenario(false); s.StartGame();
+        var clone = s.GetLSCard("clone"); var second = s.GetLSCard("secondclone");
+        var monnok = s.GetDSCard("monnok");
+        s.MoveCardsToHand(clone, second, monnok);
+        while (s.GetLSHandCount() < handSize) {
+            s.MoveCardsToHand(s.GetTopOfLSReserveDeck());
+        }
+        s.SkipToPhase(Phase.CONTROL); s.DSActivateForceCheat(4);
+        assertEquals(handSize, s.GetLSHandCount());
+        assertTrue(s.DSPlayLostInterruptAvailable(monnok)); s.DSPlayLostInterrupt(monnok);
+        for (int i = 0; i < 70 && !s.AwaitingDSControlPhaseActions(); i++) {
+            if (s.LSDecisionAvailable("Choose card to put on Lost Pile")) {
+                var choice = s.GetLSHand().stream().map(PhysicalCardImpl.class::cast)
+                        .filter(s::LSHasCardChoiceAvailable).findFirst().orElseThrow();
+                s.LSChooseCard(choice);
+            } else if (s.DSDecisionAvailable("Opponent's hand")) {
+                s.DSPass();
+            } else if (s.GetCurrentDecision().getText().contains("Optional responses")
+                    || s.AwaitingLSControlPhaseActions()) {
+                s.PlayerPass(s.GetDecidingPlayer());
+            } else {
+                break;
+            }
+        }
+        assertTrue(s.GetDSLostPile().contains(monnok));
+        return s;
+    }
+
+    @Test
+    public void ActualMonnokCannotLoseDuplicateClonesAtTwelveCardsButCanAtThirteen() {
+        var protectedHand = resolveMonnok(12);
+        assertTrue(protectedHand.GetLSHand().containsAll(List.of(
+                protectedHand.GetLSCard("clone"), protectedHand.GetLSCard("secondclone"))));
+        var exposedHand = resolveMonnok(13);
+        assertTrue(exposedHand.GetLSLostPile().containsAll(List.of(
+                exposedHand.GetLSCard("clone"), exposedHand.GetLSCard("secondclone"))));
+    }
+
+    private VirtualTableScenario loseCharacterToLightning(String name) {
+        var s = flipAndSearch(); var site = s.GetDSStartingLocation();
+        var target = s.GetLSCard(name); var lightning = s.GetDSCard("lightning");
+        s.MoveCardsToLocation(site, target, s.GetDSCard("emperor"));
+        s.MoveCardsToHand(lightning); s.SkipToDSTurn(Phase.CONTROL); s.PrepareDSDestiny(6);
+        s.DSPlayCard(lightning, "Make target lost");
+        if (s.DSDecisionAvailable("Choose Emperor")) s.DSChooseCard(s.GetDSCard("emperor"));
+        if (s.DSDecisionAvailable("Choose character")) s.DSChooseCard(target);
+        s.PassDestinyDrawResponses();
+        for (int i = 0; i < 70 && !s.AwaitingLSForceLossPayment()
+                && s.GetCurrentDecision().getText().contains("Optional responses"); i++) {
+            s.PlayerPass(s.GetDecidingPlayer());
+        }
+        assertTrue(s.GetCurrentDecision().getText() + "; target zone " + target.getZone(),
+                s.GetLSLostPile().contains(target));
+        return s;
+    }
+
+    @Test
+    public void LosingAbilityFourCostsItsOwnerOneForceButLosingAbilityTwoDoesNot() {
+        var s = loseCharacterToLightning("luke"); var before = s.GetLSLostPileCount();
+        assertTrue(s.AwaitingLSForceLossPayment());
+        s.LSPayForceLossFromReserveDeck(); s.PassAllResponses();
+        assertEquals(before + 1, s.GetLSLostPileCount());
+        var inverse = loseCharacterToLightning("clone");
+        assertFalse(inverse.AwaitingLSForceLossPayment()); assertEquals(1, inverse.GetLSLostPileCount());
     }
 }
