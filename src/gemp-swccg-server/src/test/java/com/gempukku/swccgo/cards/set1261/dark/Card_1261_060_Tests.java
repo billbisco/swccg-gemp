@@ -93,7 +93,7 @@ public class Card_1261_060_Tests {
         assertTrue(scn.gameState().isDuringAttack()); assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("rifle"), "Fire"));
     }
 
-    @Test public void FettsBlasterRifleActuallyDeploysSpecialDeliveryAndReshufflesWithoutPrintedTurnCap() {
+    @Test public void FettsBlasterRifleDeploysAndReshufflesWithoutInventedSearchCapButPreservesUniqueTurnLimit() {
         var scn = scenario(); scn.StartGame(); var rifle = scn.GetDSCard("rifle"); var delivery = scn.GetDSCard("delivery");
         scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("boba")); scn.AttachCardsTo(scn.GetDSCard("boba"), rifle);
         scn.MoveCardsToDSHand(scn.GetDSCard("officer"));
@@ -117,9 +117,13 @@ public class Card_1261_060_Tests {
         assertEquals(force - 2, scn.GetDSForcePileCount());
         assertTrue("No printed timeframe prevents another deployment after Delivery leaves table", scn.DSCardActionAvailable(rifle, "Deploy Special Delivery from Reserve Deck"));
         scn.DSUseCardAction(rifle, "Deploy Special Delivery from Reserve Deck"); scn.PassAllResponses();
-        if (scn.DSHasCardChoiceAvailable(delivery)) scn.DSChooseCard(delivery); scn.PassAllResponses(); assertEquals(scn.GetCurrentDecision().getText(), Zone.SIDE_OF_TABLE, delivery.getZone());
+        // The search can repeat, but normal uniqueness still forbids deploying this unique title twice in one turn.
+        assertTrue(scn.DSDecisionAvailable("Verify Reserve Deck")); assertTrue(scn.LSDecisionAvailable("Verify Reserve Deck"));
+        assertTrue(scn.game().getModifiersQuerying().isPlayingCardTitleTurnLimitReached(scn.gameState(), delivery));
+        com.gempukku.swccgo.framework.Assertions.assertInZone(Zone.RESERVE_DECK, delivery);
+        scn.DSPass(); scn.LSPass(); scn.PassAllResponses();
         assertEquals(force - 2, scn.GetDSForcePileCount());
-        scn.MoveCardsToTopOfDSReserveDeck(delivery); scn.SkipToPhase(Phase.MOVE);
+        scn.SkipToPhase(Phase.MOVE);
         assertFalse(scn.DSCardActionAvailable(rifle, "Deploy Special Delivery from Reserve Deck"));
     }
 
