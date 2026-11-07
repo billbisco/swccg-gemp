@@ -57,7 +57,7 @@ public class Card_1261_044_Tests {
             scn.DSChooseYes();
             scn.PassAllResponses();
             assertEquals(before - 3, scn.GetDSForcePileCount());
-            assertEquals(Zone.USED_PILE, scn.GetDSCard("lana").getZone());
+            assertTrue(scn.GetDSUsedPile().contains(scn.GetDSCard("lana")));
             assertSame(scn.GetDSCard(destination), location(scn, scn.GetDSCard("vader")));
             assertSame(scn.GetDSCard(destination), location(scn, scn.GetDSCard("trooper")));
             assertSame(scn.GetLSStartingLocation(), location(scn, scn.GetDSCard("elsewhere")));
@@ -81,7 +81,7 @@ public class Card_1261_044_Tests {
                 scn.DSChooseNo();
             scn.PassAllResponses();
             assertEquals(before, scn.GetDSForcePileCount());
-            assertEquals(Zone.LOST_PILE, scn.GetDSCard("lana").getZone());
+            assertTrue(scn.GetDSLostPile().contains(scn.GetDSCard("lana")));
             assertSame(scn.GetDSStartingLocation(), location(scn, scn.GetDSCard("vader")));
             assertSame(scn.GetDSStartingLocation(), location(scn, scn.GetDSCard("trooper")));
         }
