@@ -9,6 +9,9 @@ import com.gempukku.swccgo.game.state.BattleState;
 import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.logic.modifiers.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public interface Forfeit extends BaseQuery, Attributes, Destiny, Flags, Keywords, Prohibited {
 
     default boolean cannotSatisfyAttrition(GameState gameState, PhysicalCard card) {
@@ -112,25 +115,61 @@ public interface Forfeit extends BaseQuery, Attributes, Destiny, Flags, Keywords
         boolean forfeitMayNotBeReduced = isProhibitedFromHavingForfeitReduced(gameState, physicalCard, modifierCollector);
         boolean forfeitMayNotBeIncreased = isProhibitedFromHavingForfeitValueIncreased(gameState, physicalCard, modifierCollector);
 
+        // Value before any reductions (used for "may not be reduced below N")
+        float valueBeforeReductions = result;
+        OnlyIfNoOtherBonusResolver onlyIfNoOtherBonus = new OnlyIfNoOtherBonusResolver();
         for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.FORFEIT_VALUE, physicalCard)) {
             float modifierAmount = modifier.getForfeitModifier(gameState, query(), physicalCard);
             if ((modifierAmount >= 0 && !forfeitMayNotBeIncreased) || (modifierAmount <= 0 && !forfeitMayNotBeReduced)) {
+                if (onlyIfNoOtherBonus.defer(modifier, modifierAmount)) {
+                    continue;
+                }
                 result += modifierAmount;
+                if (modifierAmount > 0) {
+                    valueBeforeReductions += modifierAmount;
+                }
                 modifierCollector.addModifier(modifier);
             }
+        }
+        float deferredBonus = onlyIfNoOtherBonus.resolve(modifierCollector);
+        result += deferredBonus;
+        if (deferredBonus > 0) {
+            valueBeforeReductions += deferredBonus;
         }
 
         // Check if value was reset to an "unmodifiable value", and use lowest found
         Float lowestResetValue = null;
+        // Lowest reset that applies "even if forfeit may not normally be reduced" (also ignores forfeit floors)
+        Float lowestOverridingResetValue = null;
         for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.UNMODIFIABLE_FORFEIT_VALUE, physicalCard)) {
             float modifierAmount = modifier.getUnmodifiableForfeit(gameState, query(), physicalCard);
-            if (modifierAmount >= result || !forfeitMayNotBeReduced) {
+            if (modifierAmount >= result || !forfeitMayNotBeReduced || modifier.isForfeitResetEvenIfMayNotBeReduced()) {
                 lowestResetValue = (lowestResetValue != null) ? Math.min(lowestResetValue, modifierAmount) : modifierAmount;
                 modifierCollector.addModifier(modifier);
+            }
+            if (modifier.isForfeitResetEvenIfMayNotBeReduced()) {
+                lowestOverridingResetValue = (lowestOverridingResetValue != null) ? Math.min(lowestOverridingResetValue, modifierAmount) : modifierAmount;
             }
         }
         if (lowestResetValue != null) {
             result = lowestResetValue;
+        }
+
+        // Check if value may not be reduced below a floor, and use highest floor found
+        Float highestFloor = null;
+        for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.FORFEIT_MAY_NOT_BE_REDUCED_BELOW, physicalCard)) {
+            float floor = modifier.getValue(gameState, query(), physicalCard);
+            highestFloor = (highestFloor != null) ? Math.max(highestFloor, floor) : floor;
+            modifierCollector.addModifier(modifier);
+        }
+        if (highestFloor != null) {
+            float minimum = Math.min(highestFloor, valueBeforeReductions);
+            if (result < minimum) {
+                result = minimum;
+            }
+            if (lowestOverridingResetValue != null) {
+                result = Math.min(result, lowestOverridingResetValue);
+            }
         }
 
         // Check if value is limited (above printed value), and use lowest found
@@ -322,14 +361,35 @@ public interface Forfeit extends BaseQuery, Attributes, Destiny, Flags, Keywords
             return false;
 
         boolean mayNotBeCanceled = false;
+        List<Modifier> mayNotBeCanceledByPlayerModifiers = new ArrayList<>();
         for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.IMMUNITY_TO_ATTRITION_MAY_NOT_BE_CANCELED, card)) {
-            mayNotBeCanceled = true;
-            modifierCollector.addModifier(modifier);
+            if (modifier.getForPlayer() == null) {
+                mayNotBeCanceled = true;
+                modifierCollector.addModifier(modifier);
+            }
+            else {
+                mayNotBeCanceledByPlayerModifiers.add(modifier);
+            }
         }
 
         if (!mayNotBeCanceled) {
             boolean isCanceled = false;
             for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.LOSE_IMMUNITY_TO_ATTRITION, card)) {
+                // A player-scoped 'may not be canceled' modifier only blocks cancellations from that player's cards
+                PhysicalCard cancelSource = modifier.getSource(gameState);
+                Modifier blockedBy = null;
+                if (cancelSource != null) {
+                    for (Modifier mayNotCancel : mayNotBeCanceledByPlayerModifiers) {
+                        if (mayNotCancel.getForPlayer().equals(cancelSource.getOwner())) {
+                            blockedBy = mayNotCancel;
+                            break;
+                        }
+                    }
+                }
+                if (blockedBy != null) {
+                    modifierCollector.addModifier(blockedBy);
+                    continue;
+                }
                 isCanceled = true;
                 modifierCollector.addModifier(modifier);
             }

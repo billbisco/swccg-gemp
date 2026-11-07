@@ -150,8 +150,15 @@ public enum ModifyGameTextType {
     LEGACY__OMMNI_BOX__AT_SAME_SITE_MAY_BE_TREATED_AS_AT_BATTLEGROUND_SITES("'At same site' may be treated as 'at battleground sites'"),
     LEGACY__OMMNI_BOX__COVER_CHARGES_ONLY_OPPONENT_AND_LIMITED_TO_3("'Cover charges' only apply to opponent and are limited to 3"),
     SON_OF_SKYWALKER_V__LOSE_1_FORCE_TO_SUBSTITUTE_DESTINY("Must first lose 1 Force to substitute a destiny draw using Jedi Test #5"),
+    LEGACY__SQUABBLING_DELEGATES__SENATORS_ARE_CORUSCANT_GUARDS("'Senators' treated as 'Coruscant Guards'"),
+    LEGACY__INTERRUPTS__VADER_MAY_BE_MAUL_OR_MARA_JADE("'Vader' may be treated as 'Maul or Mara Jade'"),
 
+    LEGACY__DROID_RACKS__WHERE_ARE_THOSE_DROIDEKAS_IGNORES_NEIMOIDIANS("Ignores Neimoidians"),
+    LEGACY__HUTT_INFLUENCE__HUMAN_SHIELD_IMPERIAL_MAY_BE_BOUNTY_HUNTER("'Imperial' may be treated as 'bounty hunter'"),
+    LEGACY__MOS_ESPA_V__YOURE_A_SLAVE_FREE_IS_2_FORCE("'Free' treated as '2 Force'"),
+    LEGACY__SO_BE_IT_JEDI__LUKE_DEPLOYS_TO_VADERS_SITE("Luke deploys to Vader's site (if possible)"),
     ;
+
 
     private String _humanReadable;
 
