@@ -107,8 +107,8 @@ public class Card_1261_069_Tests {
         scn.SkipToDSTurn(Phase.BATTLE);
         scn.LSActivateForceCheat(5);
         scn.DSInitiateBattle(target);
-        assertTrue(scn.GetLSAvailableActions().toString(), scn.LSCardActionAvailable(scn.GetLSCard("leia"), "Move as a 'react"));
-        scn.LSUseCardAction(scn.GetLSCard("leia"), "Move as a 'react");
+        assertTrue(scn.GetLSAvailableActions().toString(), scn.LSCardActionAvailable(scn.GetLSCard("leia"), "Move using landspeed as a 'react"));
+        scn.LSUseCardAction(scn.GetLSCard("leia"), "Move using landspeed as a 'react");
         if (scn.LSHasCardChoiceAvailable(target)) scn.LSChooseCard(target);
         for (int i = 0; i < 18 && scn.GetLSAvailableActions().stream().noneMatch(x -> x.contains(COMPANION)); i++) {
             var d = scn.GetCurrentDecision();
