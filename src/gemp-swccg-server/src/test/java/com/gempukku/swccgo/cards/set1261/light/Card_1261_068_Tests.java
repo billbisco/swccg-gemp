@@ -49,7 +49,9 @@ public class Card_1261_068_Tests {
     }
     private void pilot(String key) {
         var scn = started(); var ship = scn.GetLSCard(key); var lando = scn.GetLSCard("lando");
-        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), ship); scn.BoardAsPilot(ship, lando); assertEquals(5, scn.GetPower(ship));
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), ship);
+        // Reattach from hand: the fixture's in-play boarding shortcut removes the character's active modifiers.
+        scn.MoveCardsToLSHand(lando); scn.BoardAsPilot(ship, lando); assertEquals(5, scn.GetPower(ship));
         scn.MoveCardsToLSHand(lando); assertEquals(0, scn.GetPower(ship));
     }
     @Test public void LandoScoundrelAddsTwoPowerToFalconHePilots() { pilot("falcon"); }
@@ -65,22 +67,24 @@ public class Card_1261_068_Tests {
         scn.LSUseCardAction(scn.GetLSCard("lando"), "Convert opponent's Lando");
         if (scn.LSHasCardChoiceAvailable(scn.GetDSCard("enemy"))) scn.LSChooseCard(scn.GetDSCard("enemy"));
         scn.PassAllResponses(); assertEquals(scn.LS, scn.GetDSCard("enemy").getOwner());
+        assertTrue(scn.LSDecisionAvailable("duplicated persona"));
+        scn.LSChooseCard(scn.GetDSCard("enemy")); scn.PassAllResponses();
+        assertInZone(Zone.LOST_PILE, scn.GetDSCard("enemy"));
         assertTrue(scn.GetCurrentDecision().getText(), scn.LSDecisionAvailable("retrieve 2 Force"));
         if (retrieve) scn.LSChooseYes(); else scn.LSChooseNo();
         scn.PassAllResponses();
     }
     @Test public void LandoScoundrelActuallyConvertsLandoAndOptionallyRetrievesTwo() {
         var scn = convertSetup(false, false); int used = scn.GetLSUsedPileCount(); convert(scn, true);
-        assertEquals(1, scn.GetLSLostPileCount()); assertEquals(used + 2, scn.GetLSUsedPileCount());
-        assertAtLocation(scn.GetLSStartingLocation(), scn.GetDSCard("enemy"));
+        assertEquals(2, scn.GetLSLostPileCount()); assertEquals(used + 2, scn.GetLSUsedPileCount());
     }
     @Test public void LandoScoundrelMayDeclineRetrievalAfterConversion() {
         var scn = convertSetup(false, false); int used = scn.GetLSUsedPileCount(); convert(scn, false);
-        assertEquals(3, scn.GetLSLostPileCount()); assertEquals(used, scn.GetLSUsedPileCount());
+        assertEquals(4, scn.GetLSLostPileCount()); assertEquals(used, scn.GetLSUsedPileCount());
     }
     @Test public void LandoScoundrelCanConvertOpponentLandoAtRemoteSite() {
         // Printed "present at a site" is not "present with" the source; reuse correct OVS conversion scope.
-        var scn = convertSetup(true, false); convert(scn, false); assertAtLocation(scn.GetLSCard("remote"), scn.GetDSCard("enemy"));
+        var scn = convertSetup(true, false); convert(scn, false); assertInZone(Zone.LOST_PILE, scn.GetDSCard("enemy"));
     }
     @Test public void LandoScoundrelCannotConvertLandoEnclosedAtSite() {
         var scn = convertSetup(false, true); assertFalse(scn.LSCardActionAvailable(scn.GetLSCard("lando"), "Convert"));
@@ -103,12 +107,18 @@ public class Card_1261_068_Tests {
         scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetDSCard("vader"));
         scn.SkipToLSTurn(Phase.BATTLE); scn.LSInitiateBattle(scn.GetLSStartingLocation()); scn.PassAllResponses(); return scn;
     }
+    private void finishBattleDestinies(VirtualTableScenario scn) {
+        // The framework's standard shortcut drains only one destiny at a time.
+        for (int i = 0; i < 3; i++) {
+            scn.SkipToEndOfPowerSegment(true); scn.PassDestinyDrawResponses();
+        }
+    }
     @Test public void LandoScoundrelAddsActualSecondBattleDestinyWithOwnRebel() {
-        var scn = battle("rebel"); scn.MoveCardsToTopOfLSReserveDeck(scn.GetLSDestiny(2), scn.GetLSDestiny(3)); scn.PrepareDSDestiny(0); scn.SkipToEndOfPowerSegment(true);
+        var scn = battle("rebel"); scn.MoveCardsToTopOfLSReserveDeck(scn.GetLSDestiny(2), scn.GetLSDestiny(3)); scn.PrepareDSDestiny(0); finishBattleDestinies(scn);
         assertEquals(scn.GetCurrentDecision().getText(), 5, scn.GetLSTotalDestiny());
     }
     @Test public void LandoScoundrelAddsActualSecondBattleDestinyWithOwnAlien() {
-        var scn = battle("alien"); scn.MoveCardsToTopOfLSReserveDeck(scn.GetLSDestiny(2), scn.GetLSDestiny(3)); scn.PrepareDSDestiny(0); scn.SkipToEndOfPowerSegment(true);
+        var scn = battle("alien"); scn.MoveCardsToTopOfLSReserveDeck(scn.GetLSDestiny(2), scn.GetLSDestiny(3)); scn.PrepareDSDestiny(0); finishBattleDestinies(scn);
         assertEquals(scn.GetCurrentDecision().getText(), 5, scn.GetLSTotalDestiny());
     }
     @Test public void LandoScoundrelAloneDoesNotCountHimselfAsRebelCompany() {
@@ -146,7 +156,8 @@ public class Card_1261_068_Tests {
         scn.SkipToLSTurn(Phase.BATTLE);
         if (effect) scn.MoveCardsToDSSideOfTable(scn.GetLSCard("effect"));
         scn.LSInitiateBattle(scn.GetLSStartingLocation()); scn.PassAllResponses(); scn.MoveCardsToTopOfLSReserveDeck(scn.GetLSDestiny(0), scn.GetLSDestiny(1)); scn.PrepareDSDestiny(amount - 1);
-        scn.SkipToDamageSegment(true); scn.PassDamageSegmentActions(); assertEquals(scn.GetCurrentDecision().getText(), amount, scn.GetUnpaidLSAttrition());
+        finishBattleDestinies(scn); scn.PassResponses("INITIAL_ATTRITION_CALCULATED"); scn.PassDamageSegmentActions();
+        assertEquals(scn.GetCurrentDecision().getText(), amount, scn.GetUnpaidLSAttrition());
         assertEquals(0, scn.GetUnpaidLSBattleDamage());
         // Armed Jedi Knight is immune below6; Lando alone decides whether this attrition payment is mandatory.
         assertEquals(immune, scn.LSDecisionAvailable("(if desired)"));
