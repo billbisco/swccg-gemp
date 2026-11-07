@@ -7,6 +7,7 @@ import com.gempukku.swccgo.cards.effects.usage.OncePerPhaseEffect;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.GameTextActionId;
 import com.gempukku.swccgo.common.Icon;
+import com.gempukku.swccgo.common.Persona;
 import com.gempukku.swccgo.common.Phase;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
@@ -37,6 +38,7 @@ public class Card1115_039 extends AbstractAlien {
         setVirtualSuffix(true);
         setLore("Twi'lek leader and majordomo of Jabba's palace. Succeeded Jabba's last majordomo, Naroon Cuthus. Plotting to kill Jabba.");
         setGameText("Opponent's non-Jedi characters are deploy +1 to [Jabba's Palace] sites. Once during your control phase, you may place three cards from hand in Used Pile to reveal top card of Reserve Deck; if it is an alien, take it into hand.");
+        addPersona(Persona.BIB);
         addIcons(Icon.JABBAS_PALACE);
         addKeywords(com.gempukku.swccgo.common.Keyword.LEADER);
     }

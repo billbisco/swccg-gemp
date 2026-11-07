@@ -6,6 +6,7 @@ import com.gempukku.swccgo.cards.effects.usage.TwicePerGameEffect;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.GameTextActionId;
 import com.gempukku.swccgo.common.Icon;
+import com.gempukku.swccgo.common.Persona;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Uniqueness;
@@ -36,6 +37,7 @@ public class Card1210_089 extends AbstractAlien {
         setVirtualSuffix(true);
         setLore("Rogue pilot. Outlaw starship tech. Has secret lab in Mos Eisley. He bragged about beating Han Solo's Kessel Run record. Left fringe life behind after meeting Obi-Wan Kenobi.");
         setGameText("Adds 3 to power of anything he pilots. Deploys -2 to Cantina, a docking bay, or a starship. BoShek is a matching pilot for any starship. Twice per game, may take a device into hand from Reserve Deck; reshuffle. Immune to attrition < 3.");
+        addPersona(Persona.BOSHEK);
         addIcons(Icon.PILOT);
         setMatchingStarshipFilter(Filters.starship);
     }
