@@ -1,0 +1,595 @@
+{
+ "branch": "legacy/r2-block4-drafts-a",
+ "cards": [
+  {
+   "implementation_id": "1240_13",
+   "printing_id": "1240_13",
+   "side": "Dark",
+   "type": "Character",
+   "title": "\u2022Prince Xizor (V)",
+   "pc": {
+    "front": {
+     "ability": "3",
+     "deploy": "4",
+     "destiny": "1",
+     "extraText": [
+      "Force-Attuned"
+     ],
+     "forfeit": "6",
+     "gametext": "Adds 2 to power of anything he pilots. Other Black Sun agents are forfeit +1. Your unique (\u2022) gamblers, gangsters, smugglers, and thieves are Black Sun agents. Once per turn, may take Unexpected Interruption into hand from Reserve Deck; reshuffle. Immune to attrition < 4.",
+     "icons": [
+      "Pilot",
+      "Warrior",
+      "Reflections 2"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/princexizor.gif",
+     "lore": "Falleen gangster and leader. Black Sun agent. Dark Prince of the Black Sun crime syndicate. Fortifies his personal defenses with information gathered by his agents.",
+     "power": "5",
+     "subType": "Alien",
+     "title": "\u2022Prince Xizor (V)",
+     "type": "Character"
+    },
+    "id": 6576,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "PM",
+    "set": "1004",
+    "side": "Dark"
+   },
+   "drafted_on": [
+    "legacy/lane-e-batch03"
+   ],
+   "pc_id": "6576"
+  },
+  {
+   "implementation_id": "1240_5",
+   "printing_id": "1240_5",
+   "side": "Dark",
+   "type": "Character",
+   "title": "\u2022Grand Admiral Thrawn (V)",
+   "pc": {
+    "conceptBy": "(Original concept by Nick Kolnik - PC Volunteer Award 2006)",
+    "front": {
+     "ability": "4",
+     "deploy": "4",
+     "destiny": "1",
+     "extraText": [
+      "Force-Sensitive"
+     ],
+     "forfeit": "7",
+     "gametext": "Adds 3 to power of anything he pilots. Your [Independent Starship] starships are lost. During your turn, if at a system, may deploy a Dreadnaught here from Reserve Deck; reshuffle (or retrieve a Dreadnaught). Once per turn, if opponent's alien at same or related location, may peek at opponent's hand.",
+     "icons": [
+      "Pilot",
+      "Warrior",
+      "Reflections 2"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/grandadmiralthrawn.gif",
+     "lore": "The last remaining Grand Admiral. Found legendary Katana fleet of missing dreadnaughts. Military genius. Master of unorthodox tactics. Passionate collector of art. Leader.",
+     "power": "2",
+     "subType": "Imperial",
+     "title": "\u2022Grand Admiral Thrawn (V)",
+     "type": "Character"
+    },
+    "id": 6333,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "PM",
+    "set": "1004",
+    "side": "Dark"
+   },
+   "drafted_on": [
+    "legacy/lane-e-batch34"
+   ],
+   "pc_id": "6333"
+  },
+  {
+   "implementation_id": "1240_6",
+   "printing_id": "1240_6",
+   "side": "Dark",
+   "type": "Character",
+   "title": "\u2022Guri (V)",
+   "pc": {
+    "front": {
+     "armor": "5",
+     "deploy": "4",
+     "destiny": "2",
+     "extraText": [
+      "Assassin Droid"
+     ],
+     "forfeit": "6",
+     "gametext": "Adds 2 to power of anything she pilots. At Coruscant sites where you have a Black Sun agent, your Force drains are +1. While with Xizor in battle, she may be forfeited to satisfy all remaining battle damage against you. Immune to Restraining Bolt, purchase, and attrition < 5.",
+     "icons": [
+      "Pilot",
+      "Warrior",
+      "Reflections 2"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/guri.gif",
+     "lore": "Human-replica droid. Programmed to function as Xizor's personal bodyguard and assassin. Black Sun agent. Cost 9 million credits. Worth every decicred.",
+     "power": "6",
+     "subType": "Droid",
+     "title": "\u2022Guri (V)",
+     "type": "Character"
+    },
+    "id": 6342,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "PM",
+    "set": "1004",
+    "side": "Dark"
+   },
+   "drafted_on": [
+    "legacy/lane-e-batch03"
+   ],
+   "pc_id": "6342"
+  },
+  {
+   "implementation_id": "1240_17",
+   "printing_id": "1240_17",
+   "side": "Dark",
+   "type": "Creature",
+   "title": "\u2022Thrawn's Ysalamir",
+   "pc": {
+    "conceptBy": "(Original concept by Jeffrey Johns - PC Volunteer Award 2007)",
+    "front": {
+     "deploy": "2",
+     "destiny": "4",
+     "extraText": [
+      "FANGS: 4"
+     ],
+     "forfeit": "0",
+     "gametext": "Habitat: sites. Parasite: Imperials. While attached and present, at same site: all Force generation is canceled, Dark Jedi and Jedi are defense value -1 and their weapon destinies are -1, and no attacks.",
+     "icons": [
+      "Dagobah"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/thrawnsysalamir.gif",
+     "power": "3",
+     "subType": "Force Eater",
+     "title": "\u2022Thrawn's Ysalamir",
+     "type": "Creature"
+    },
+    "id": 6702,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "C",
+    "set": "1004",
+    "side": "Dark"
+   },
+   "drafted_on": [
+    "legacy/lane-e-batch23"
+   ],
+   "pc_id": "6702"
+  },
+  {
+   "implementation_id": "1240_23",
+   "printing_id": "1240_23",
+   "side": "Dark",
+   "type": "Effect",
+   "title": "\u2022Dreaded Imperial Starfleet (V)",
+   "pc": {
+    "front": {
+     "destiny": "3",
+     "gametext": "Deploy on table. While you have more systems on table than opponent, your capital starships may deploy at -2 (to a maximum of -3) to battlegrounds. When you deploy an Imperial-Class Star Destroyer, may deploy (for free) a [Death Star II] or [A New Hope] squadron there (no replacement necessary) from Reserve Deck; reshuffle. (Immune to Alter.)",
+     "icons": [
+      "Special Edition"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/dreadedimperialstarfleet.gif",
+     "lore": "The Empire uses short-range fighters and patrol craft to maintain a presence in every system within its scope of power.",
+     "title": "\u2022Dreaded Imperial Starfleet (V)",
+     "type": "Effect"
+    },
+    "id": 6264,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "R",
+    "set": "1004",
+    "side": "Dark"
+   },
+   "drafted_on": [
+    "legacy/lane-e-batch04"
+   ],
+   "pc_id": "6264"
+  },
+  {
+   "implementation_id": "1240_26",
+   "printing_id": "1240_26",
+   "side": "Dark",
+   "type": "Effect",
+   "title": "He Is Not Ready (V)",
+   "pc": {
+    "front": {
+     "destiny": "5",
+     "gametext": "Deploy on opponent's just deployed [Reflections 3][Maintenance] card; opponent loses 1 Force, you may retrieve 1 Force, and you may play a Defensive Shield from under your Starting Effect. Target is power -3 and cannot apply target's ability towards drawing battle destiny. During opponent's draw phase, opponent must lose 1 Force or place target in Lost Pile. If just lost, place this effect in Used Pile. Immune to Honor of The Jedi. (Immune to Control.) OR If you are about to lose Force during opponent's control phase, deploy on table to reduce loss by 2.",
+     "icons": [
+      "Dagobah"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/heisnotready.gif",
+     "subType": "Immediate",
+     "title": "He Is Not Ready (V)",
+     "type": "Effect"
+    },
+    "id": 6345,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "C",
+    "set": "1004",
+    "side": "Dark"
+   },
+   "drafted_on": [
+    "legacy/lane-e-batch11",
+    "legacy/lane-e-batch14"
+   ],
+   "pc_id": "6345"
+  },
+  {
+   "implementation_id": "1240_35",
+   "printing_id": "1240_35",
+   "side": "Dark",
+   "type": "Effect",
+   "title": "\u2022TIE Fighter Construction Facility",
+   "pc": {
+    "front": {
+     "destiny": "4",
+     "gametext": "Deploy on table. TIE/ads and restricted (\u2022\u2022\u2022) TIEs are deploy = 2, forfeit = 4, and immune to attrition < 4. Ignore 'unique (\u2022)' in Watch Your Back's game text. Attrition against opponent is +3 where your capital starship present with a non-squadron TIE. (Immune to Alter.)",
+     "icons": [
+      "Death Star II"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/tiefighterconstructionfacility.gif",
+     "title": "\u2022TIE Fighter Construction Facility",
+     "type": "Effect"
+    },
+    "id": 6705,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "C",
+    "set": "1004",
+    "side": "Dark"
+   },
+   "drafted_on": [
+    "legacy/lane-e-batch27"
+   ],
+   "pc_id": "6705"
+  },
+  {
+   "implementation_id": "1240_37",
+   "printing_id": "1240_37",
+   "side": "Dark",
+   "type": "Epic Event",
+   "title": "Deep Hatred (V)",
+   "pc": {
+    "conceptBy": "(Original concept by Logan Suriano - 2005 New Year's Resolution Contest)",
+    "front": {
+     "destiny": "0",
+     "gametext": "Unless your [Reflections 3] Objective on table, deploy on table. Vader's Obsession may be played to initiate an epic duel as follows: If Mara is present with Luke, each player draws two destiny (if armed with a lightsaber, each destiny is +1). Add character's ability. If Karrde on table, your total is -1. Higher total wins. If Luke loses, place him out of play and you may retrieve 5 Force. If Mara loses, cross her to the Light Side (she is now Mara Skywalker). Unless duel canceled or tied, for remainder of game any Mara is ability = 6, adds one battle destiny, and once per battle involving her, may cancel one just drawn destiny.",
+     "icons": [
+      "Episode I",
+      "Reflections 3"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/deephatred.gif",
+     "title": "Deep Hatred (V)",
+     "type": "Epic Event"
+    },
+    "id": 6240,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "PM",
+    "set": "1004",
+    "side": "Dark"
+   },
+   "drafted_on": [
+    "legacy/lane-e-batch24"
+   ],
+   "pc_id": "6240"
+  },
+  {
+   "implementation_id": "1240_41",
+   "printing_id": "1240_41",
+   "side": "Dark",
+   "type": "Epic Event",
+   "title": "\u2022The Force Unleashed",
+   "pc": {
+    "front": {
+     "destiny": "0",
+     "gametext": "Deploy on table. During battle, you may play Lightsaber Parry, Tarkin's Orders, and There Is No Conflict as follows: 'If Vader or Galen present: USED: Target a vehicle or starship present. Draw destiny. If destiny > 2, target 'thrown' (hit and adds its printed defense value to your total power). LOST: Target opponent's character present and choose (then draw destiny): If destiny > ability, target 'choked' (lost). OR If destiny +1 > ability, target 'drained of life' (hit and opponent loses 2 Force).'",
+     "icons": [
+      "Cloud City"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/theforceunleashed.gif",
+     "title": "\u2022The Force Unleashed",
+     "type": "Epic Event"
+    },
+    "id": 6691,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "R",
+    "set": "1004",
+    "side": "Dark"
+   },
+   "drafted_on": [
+    "legacy/lane-e-batch26"
+   ],
+   "pc_id": "6691"
+  },
+  {
+   "implementation_id": "1240_42",
+   "printing_id": "1240_42",
+   "side": "Dark",
+   "type": "Interrupt",
+   "title": "\u2022Frustration (V)",
+   "pc": {
+    "front": {
+     "destiny": "3",
+     "gametext": "USED: If you just peeked at cards in your Life Force, peek at and reorder the top 3 cards of that deck or pile (may take one into hand). LOST: If Xizor and Guri are in a battle together, your total battle destiny is +5 and may retrieve 1 Force.",
+     "icons": [
+      "Dagobah"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/frustration.gif",
+     "lore": "'Rrraaaarrr!'",
+     "subType": "Used Or Lost",
+     "title": "\u2022Frustration (V)",
+     "type": "Interrupt"
+    },
+    "id": 6311,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "R",
+    "set": "1004",
+    "side": "Dark"
+   },
+   "drafted_on": [
+    "legacy/lane-e-batch05"
+   ],
+   "pc_id": "6311"
+  },
+  {
+   "implementation_id": "1240_43",
+   "printing_id": "1240_43",
+   "side": "Dark",
+   "type": "Interrupt",
+   "title": "Imperial Code Cylinder (V)",
+   "pc": {
+    "front": {
+     "destiny": "4",
+     "gametext": "USED: Take Executor: Control Station, Homing Beacon, or Kessel into hand from Reserve Deck; reshuffle. STARTING: If Conference Room on table, deploy from Reserve Deck Ord Mantell, Death Star: War Room, There Is No Try, and two always [Immune to Alter] Effects. Place this Interrupt in Lost Pile.",
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/imperialcodecylinder.gif",
+     "lore": "Imperial officers are issued coded cylinders which access computer information via Scomp links. Each cylinder is coded to the officer's own security clearance.",
+     "subType": "Used Or Starting",
+     "title": "Imperial Code Cylinder (V)",
+     "type": "Interrupt"
+    },
+    "id": 6390,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "C2",
+    "set": "1004",
+    "side": "Dark"
+   },
+   "drafted_on": [
+    "legacy/lane-e-batch18"
+   ],
+   "pc_id": "6390"
+  },
+  {
+   "implementation_id": "1240_44",
+   "printing_id": "1240_44",
+   "side": "Dark",
+   "type": "Interrupt",
+   "title": "It's Worse (V)",
+   "pc": {
+    "front": {
+     "destiny": "6",
+     "gametext": "Use 1 Force to deploy a pit from Reserve Deck; reshuffle. OR At end of your deploy phase, target a non-frozen captive at a site; captive is released and relocated to a related pit you do not occupy. OR During an attack, cancel a just drawn weapon destiny.",
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/itsworse.gif",
+     "lore": "Things went from bad to worse when Luke was attacked by a dianoga, a parasitic predator native to the planet Vodran.",
+     "subType": "Used",
+     "title": "It's Worse (V)",
+     "type": "Interrupt"
+    },
+    "id": 6430,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "C2",
+    "set": "1004",
+    "side": "Dark"
+   },
+   "drafted_on": [
+    "legacy/lane-e-batch34"
+   ],
+   "pc_id": "6430"
+  },
+  {
+   "implementation_id": "1240_47",
+   "printing_id": "1240_47",
+   "side": "Dark",
+   "type": "Interrupt",
+   "title": "\u2022Unexpected Interruption (V)",
+   "pc": {
+    "front": {
+     "destiny": "2",
+     "gametext": "If a battle was just initiated, target an opponent's female non-droid character present with Xizor. Draw destiny. Target excluded from battle and adds her power to Xizor's for remainder of turn if destiny +2 > target's ability.",
+     "icons": [
+      "Dagobah"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/unexpectedinterruption.gif",
+     "lore": "'Sir! Sir! I've isolated the reverse power flux coupling!'",
+     "subType": "Used",
+     "title": "\u2022Unexpected Interruption (V)",
+     "type": "Interrupt"
+    },
+    "id": 6718,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "R",
+    "set": "1004",
+    "side": "Dark"
+   },
+   "drafted_on": [
+    "legacy/lane-e-batch05",
+    "legacy/lane-e-batch52"
+   ],
+   "pc_id": "6718"
+  },
+  {
+   "implementation_id": "1240_48",
+   "printing_id": "1240_48",
+   "side": "Dark",
+   "type": "Interrupt",
+   "title": "Those Rebels Won't Escape Us (V)",
+   "pc": {
+    "front": {
+     "destiny": "3",
+     "gametext": "Use 1 Force to take Stinger or Virago into hand from Reserve Deck; reshuffle. OR Cancel Darklighter Spin. OR If opponent just initiated a battle at same system or sector as Stinger or Virago, opponent may not target those starfighters with weapons for remainder of turn.",
+     "icons": [
+      "Dagobah"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/thoserebelswontescapeus.gif",
+     "lore": "'I don't know how we're gonna get out of this one.'",
+     "subType": "Used",
+     "title": "Those Rebels Won't Escape Us (V)",
+     "type": "Interrupt"
+    },
+    "id": 6701,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "C",
+    "set": "1004",
+    "side": "Dark"
+   },
+   "drafted_on": [
+    "legacy/lane-e-batch13",
+    "legacy/lane-e-batch14"
+   ],
+   "pc_id": "6701"
+  },
+  {
+   "implementation_id": "1240_49",
+   "printing_id": "1240_49",
+   "side": "Dark",
+   "type": "Location",
+   "title": "\u2022Carida: ISB Training Academy",
+   "pc": {
+    "conceptBy": "(Original concept by Greg Shaw - New Jersey States 2004)",
+    "front": {
+     "destiny": "0",
+     "gametext": "Dark: Once per game, if opponent just played an Interrupt with 'Rebel' in title, may stack it here. Light: Imperial Council Members are forfeit +2 here. Immune to Revolution.",
+     "icons": [
+      "Grabber",
+      "Exterior",
+      "Planet",
+      "Special Edition"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/caridaisbtrainingacademy.gif",
+     "subType": "Site",
+     "title": "\u2022Carida: ISB Training Academy",
+     "type": "Location"
+    },
+    "id": 6164,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "F",
+    "set": "1004",
+    "side": "Dark"
+   },
+   "drafted_on": [
+    "legacy/lane-e-batch09",
+    "legacy/lane-e-batch10"
+   ],
+   "pc_id": "6164"
+  },
+  {
+   "implementation_id": "1240_50",
+   "printing_id": "1240_50",
+   "side": "Dark",
+   "type": "Location",
+   "title": "\u2022Coruscant: ISB Central Office",
+   "pc": {
+    "front": {
+     "destiny": "0",
+     "gametext": "Dark: If your spy here, you may play non-[Virtual Block 3] Interrupts with 'advisor' in title for 1 Force. Light: Unless Blount present, Empire's Sinister Agents may not flip. Immune to Revolution.",
+     "icons": [
+      "Interior",
+      "Episode I",
+      "Planet"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/coruscantisbcentraloffice.gif",
+     "subType": "Site",
+     "title": "\u2022Coruscant: ISB Central Office",
+     "type": "Location"
+    },
+    "id": 6200,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "C",
+    "set": "1004",
+    "side": "Dark"
+   },
+   "drafted_on": [
+    "legacy/lane-e-batch22"
+   ],
+   "pc_id": "6200"
+  }
+ ]
+}

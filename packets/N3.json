@@ -1,0 +1,384 @@
+{
+ "branch": "legacy/r2-block4-dark",
+ "cards": [
+  {
+   "implementation_id": "1240_15",
+   "printing_id": "1240_15",
+   "side": "Dark",
+   "type": "Character",
+   "title": "Scout Mercenary",
+   "pc": {
+    "front": {
+     "ability": "2",
+     "deploy": "2",
+     "destiny": "3",
+     "forfeit": "3",
+     "gametext": "Adds 2 to power of anything she pilots, (3 if piloting a speeder bike). During battle, unless Gall on table, may use 1 Force to fire a DH-17 blaster twice (for free), separately or combined. While piloting a vehicle, she may use its defense value and may not go missing (except from your card).",
+     "icons": [
+      "Pilot",
+      "Warrior",
+      "Special Edition"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/scoutmercenary.gif",
+     "lore": "Opportunists work with corrupt governments and Raithal casino operators. Keep the Empire informed of local Alliance activity, for a price.",
+     "power": "2",
+     "subType": "Alien",
+     "title": "Scout Mercenary",
+     "type": "Character"
+    },
+    "id": 6617,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "C",
+    "set": "1004",
+    "side": "Dark"
+   },
+   "drafted_on": [],
+   "pc_id": "6617"
+  },
+  {
+   "implementation_id": "1240_18",
+   "printing_id": "1240_18",
+   "side": "Dark",
+   "type": "Device",
+   "title": "\u2022\u2022Laser Gate (V)",
+   "pc": {
+    "front": {
+     "destiny": "4",
+     "gametext": "Deploy between two non-exterior Death Star sites. Unless aboard a Lift Tube, for opponent's character to pass opponent must first lose 1 Force. At adjacent sites: weapon destiny draws are -1, your Force generation may not be limited, and opponent's characters are deploy +2.",
+     "icons": [
+      "A New Hope"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/lasergate.gif",
+     "lore": "Security corridors are guarded by a grid of laser emplacements which can be activated upon demand to seal off sensitive areas from intrusion.",
+     "title": "\u2022\u2022Laser Gate (V)",
+     "type": "Device"
+    },
+    "id": 6481,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "U2",
+    "set": "1004",
+    "side": "Dark"
+   },
+   "drafted_on": [],
+   "pc_id": "6481"
+  },
+  {
+   "implementation_id": "1240_20",
+   "printing_id": "1240_20",
+   "side": "Dark",
+   "type": "Effect",
+   "title": "\u2022Dark Reconnaissance",
+   "pc": {
+    "front": {
+     "destiny": "4",
+     "gametext": "Deploy on opponent's location. Your Force drains here cannot be modified or canceled by opponent. Wherever you have two Mistryl, your Force drains are +1. 'Stolen' on Swilla Corey is treated as 'placed in owner's Used Pile' and it may target a weapon instead of a device.",
+     "icons": [
+      "pisode I",
+      "Tatooine"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/darkreconnaissance.gif",
+     "lore": "On her assignment to kill Sharad Hett, Aurra used her patience and cunning to help track down the Jedi Master.",
+     "title": "\u2022Dark Reconnaissance",
+     "type": "Effect"
+    },
+    "id": 6217,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "U",
+    "set": "1004",
+    "side": "Dark"
+   },
+   "drafted_on": [],
+   "pc_id": "6217"
+  },
+  {
+   "implementation_id": "1240_24",
+   "printing_id": "1240_24",
+   "side": "Dark",
+   "type": "Effect",
+   "title": "Frozen Dinner (V)",
+   "pc": {
+    "front": {
+     "destiny": "6",
+     "gametext": "Deploy on table. Let's Pass On That is destiny +2. Once per game, may deploy one Krayt Dragon Bones from Reserve Deck; reshuffle. You may play Yaggle Gakkle as follows: 'USED: During battle, place a ferocious creature there (even if excluded) in Lost Pile to reduce your battle damage by 5.' (Immune to Alter.)",
+     "icons": [
+      "Hoth"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/frozendinner.gif",
+     "lore": "Freeze dried and ready to serve, a tasty, wholesome Rebel makes a nutritious meal for the whole wampa clan. They're Gr-r-reat!",
+     "title": "Frozen Dinner (V)",
+     "type": "Effect"
+    },
+    "id": 6310,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "R1",
+    "set": "1004",
+    "side": "Dark"
+   },
+   "drafted_on": [],
+   "pc_id": "6310"
+  },
+  {
+   "implementation_id": "1240_29",
+   "printing_id": "1240_29",
+   "side": "Dark",
+   "type": "Effect",
+   "title": "\u2022Krayt Dragon Bones (V)",
+   "pc": {
+    "front": {
+     "destiny": "3",
+     "gametext": "Deploy on table. Womp Rats are not [Selective Creature]. Once per turn, may deploy a creature (except a parasite) or a dewback from Reserve Deck; reshuffle. Your ferocious creatures are deploy -2 and ferocity +1. Whenever you retrieve Force because a creatue has eaten a card, you need only use X-2 Force for Aim High (to a minimum of 1). (Immune to Alter.)",
+     "icons": [
+      "A New Hope"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/kraytdragonbones.gif",
+     "lore": "Tusken Raiders, Jawas and other desert dwellers believe that krayt dragon bones possess mystical powers that can bring good or bad luck.",
+     "title": "\u2022Krayt Dragon Bones (V)",
+     "type": "Effect"
+    },
+    "id": 6469,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "U1",
+    "set": "1004",
+    "side": "Dark"
+   },
+   "drafted_on": [],
+   "pc_id": "6469"
+  },
+  {
+   "implementation_id": "1240_32",
+   "printing_id": "1240_32",
+   "side": "Dark",
+   "type": "Effect",
+   "title": "\u2022Quietly Observing (V)",
+   "pc": {
+    "front": {
+     "destiny": "4",
+     "gametext": "Deploy on table. Aurra, Bossk, and Cad are destiny +2. Once per game, may reveal up to two unique (\u2022) aliens from hand and/or Reserve Deck (reshuffle); for remainder of game, those cards are assassins and Black Sun agents. (Immune to Alter.)",
+     "icons": [
+      "Episode I",
+      "Tatooine"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/quietlyobserving.gif",
+     "lore": "On her assignment to kill Sharad Hett, Aurra used her patience and cunning to help track down the Jedi Master.",
+     "title": "\u2022Quietly Observing (V)",
+     "type": "Effect"
+    },
+    "id": 6584,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "U",
+    "set": "1004",
+    "side": "Dark"
+   },
+   "drafted_on": [],
+   "pc_id": "6584"
+  },
+  {
+   "implementation_id": "1240_40",
+   "printing_id": "1240_40",
+   "side": "Dark",
+   "type": "Epic Event",
+   "title": "\u2022If The Trace Was Correct (V)",
+   "pc": {
+    "front": {
+     "destiny": "0",
+     "gametext": "Deploy on table. Instead of firing Galen's Lightsaber, may 'throw' it to Used Pile: draw destiny; choose up to half that number (round up) of opponent's ability < 3 characters present to be hit. Rogue Shadow may deploy to sites, moves for free (unless relocating), is immune to attrition < 4, and you may use 3 Force to relocate it to a battleground site (as a regular move during your move phase). If it just moved to a site opponent occupies, may take top card of Used Pile into hand (or if it just landed, any one card in Used Pile; reshuffle).",
+     "icons": [
+      "Tatooine"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/ifthetracewascorrect.gif",
+     "title": "\u2022If The Trace Was Correct (V)",
+     "type": "Epic Event"
+    },
+    "id": 6375,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "U",
+    "set": "1004",
+    "side": "Dark"
+   },
+   "drafted_on": [],
+   "pc_id": "6375"
+  },
+  {
+   "implementation_id": "1240_45",
+   "printing_id": "1240_45",
+   "side": "Dark",
+   "type": "Interrupt",
+   "title": "Let's Pass On That",
+   "pc": {
+    "front": {
+     "destiny": "4",
+     "gametext": "During opponent's control phase, your ferocious creature attacks. At end of turn, if that creature is at an unoccupied site and did not move, opponent loses 1 Force and you retrieve 1 Force. OR Use 3 Force to retrieve a creature.",
+     "icons": [
+      "Jabba's Palace"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/letspassonthat.gif",
+     "lore": "'Uu a'kingsa riika pagh bagla bis kachata weenow con bantha poodoo.'",
+     "subType": "Used",
+     "title": "Let's Pass On That",
+     "type": "Interrupt"
+    },
+    "id": 6486,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "C",
+    "set": "1004",
+    "side": "Dark"
+   },
+   "drafted_on": [],
+   "pc_id": "6486"
+  },
+  {
+   "implementation_id": "1240_52",
+   "printing_id": "1240_52",
+   "side": "Dark",
+   "type": "Location",
+   "title": "<>Execution Arena (Pit)",
+   "pc": {
+    "front": {
+     "destiny": "0",
+     "gametext": "Dark: May not deploy to Bespin, Dagobah, Endor or Hoth. May deploy Dark Waters here from Reserve Deck; reshuffle. [Virtual Block 4] Krayt Dragon Bones and your Force drains here are canceled. Light: If a ferocious creature here, characters and creatures cannot move from here, and, once during opponent's control phase, if opponent controls an adjacent site, lose 1 Force.",
+     "icons": [
+      "Exterior",
+      "Planet",
+      "Episode I",
+      "Tatooine"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/executionarenapit.gif",
+     "subType": "Site",
+     "title": "<>Execution Arena (Pit)",
+     "type": "Location"
+    },
+    "id": 6288,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "C",
+    "set": "1004",
+    "side": "Dark"
+   },
+   "drafted_on": [],
+   "pc_id": "6288"
+  },
+  {
+   "implementation_id": "1240_61",
+   "printing_id": "1240_61",
+   "side": "Dark",
+   "type": "Starship",
+   "title": "Raider Craft",
+   "pc": {
+    "front": {
+     "deploy": "3",
+     "destiny": "2",
+     "forfeit": "4",
+     "gametext": "May add 2 alien pilots, 4 passengers, and 1 vehicle. Any Mistryl or smuggler is a matching pilot (while aboard, adds at least 1 to maneuver and draws one battle destiny if not able to otherwise).",
+     "hyperspeed": "3",
+     "icons": [
+      "Independent",
+      "Nav Computer",
+      "Scomp Link"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/raidercraft.gif",
+     "lore": "Modified light freighter. Length 20 meters. Heavily armored for a landing craft. Has ion cannon mounts. Often carries speeder bikes for reconnaissance purposes.",
+     "maneuver": "3",
+     "power": "3",
+     "subType": "Starfighter: Sentinel-Class Landing Craft",
+     "title": "Raider Craft",
+     "type": "Starship"
+    },
+    "id": 6588,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "F",
+    "set": "1004",
+    "side": "Dark"
+   },
+   "drafted_on": [],
+   "pc_id": "6588"
+  },
+  {
+   "implementation_id": "1240_9",
+   "printing_id": "1240_9",
+   "side": "Dark",
+   "type": "Character",
+   "title": "Imperial Stormtrooper",
+   "pc": {
+    "front": {
+     "ability": "2",
+     "armor": "4",
+     "deploy": "2",
+     "destiny": "3",
+     "forfeit": "3",
+     "gametext": "Clone. Blaster Rifle deploys (and fires) for free on this trooper. When this trooper fires Blaster Rifle, may draw two weapon destiny and choose one (may take other into hand). Immune to Rebel Barrier.",
+     "icons": [
+      "Warrior",
+      "Episode I"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/imperialstormtrooper.gif",
+     "lore": "One of the countless elite shock troops totally loyal to the Emperor. Unquestioningly follows orders. Willing to sacrifice their lives to accomplish a mission. First-strike force.",
+     "power": "2",
+     "subType": "Imperial",
+     "title": "Imperial Stormtrooper",
+     "type": "Character"
+    },
+    "id": 6406,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "C3",
+    "set": "1004",
+    "side": "Dark"
+   },
+   "drafted_on": [],
+   "pc_id": "6406"
+  }
+ ]
+}

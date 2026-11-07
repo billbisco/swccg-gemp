@@ -1,0 +1,425 @@
+{
+ "branch": "legacy/r2-block5-6-dark",
+ "cards": [
+  {
+   "implementation_id": "1250_19",
+   "printing_id": "1250_19",
+   "side": "Dark",
+   "type": "Effect",
+   "title": "\u2022Nute Gunray's Bounty",
+   "pc": {
+    "front": {
+     "destiny": "4",
+     "gametext": "Deploy on Amidala or opponent's senator. During your move phase, unless a Jedi here, your alien bounty hunter present may capture and seize that character. During your control phase, if that character is escorted by an alien, opponent loses 1 Force.",
+     "icons": [
+      "Episode I",
+      "Coruscant"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Dark/large/nutegunraysbounty.gif",
+     "lore": "Palpatine suggested to the Queen that she acquiesce to the Trade Federation, just for the time being",
+     "title": "\u2022Nute Gunray's Bounty",
+     "type": "Effect"
+    },
+    "id": 6549,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1005"
+     }
+    ],
+    "rarity": "U",
+    "set": "1005",
+    "side": "Dark"
+   },
+   "drafted_on": [],
+   "pc_id": "6549"
+  },
+  {
+   "implementation_id": "1250_28",
+   "printing_id": "1250_28",
+   "side": "Dark",
+   "type": "Interrupt",
+   "title": "\u2022Trade Federation Tactics (V)",
+   "pc": {
+    "front": {
+     "destiny": "6",
+     "gametext": "Retarget an attempt to make your [Episode I] character 'hit' or lost to your other [Episode I] character present. OR Retarget opponent's just drawn destiny result about to make your starship 'hit' or lost to your character aboard; starship is protected from all such attempts this turn. OR deploy Sil Unch.",
+     "icons": [
+      "Episode I",
+      "Theed Palace"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Dark/large/tradefederationtactics.gif",
+     "lore": "Organizations as wealthy as the Trade Federation can afford large amounts of military hardware, all purchased under the guise of protecting their commercial interests.",
+     "subType": "Used",
+     "title": "\u2022Trade Federation Tactics (V)",
+     "type": "Interrupt"
+    },
+    "id": 6708,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1005"
+     }
+    ],
+    "rarity": "U",
+    "set": "1005",
+    "side": "Dark"
+   },
+   "drafted_on": [],
+   "pc_id": "6708"
+  },
+  {
+   "implementation_id": "1250_8",
+   "printing_id": "1250_8",
+   "side": "Dark",
+   "type": "Character",
+   "title": "\u2022Jango Fett",
+   "pc": {
+    "conceptBy": "(Original concept by Chris Clarke - Australia Nationals 2007)",
+    "front": {
+     "ability": "3",
+     "armor": "5",
+     "deploy": "4",
+     "destiny": "2",
+     "forfeit": "4",
+     "gametext": "Adds 2 to power of anything he pilots. May deploy Jet Pack on him for free from Reserve Deck; reshuffle; he moves using it for -1 Force. Permanent weapon is Dual Blasters (may lose 1 Force to target a Jedi; until end of turn, choose: target may not fire weapons OR target loses immunity to attrition).",
+     "icons": [
+      "Episode I",
+      "Pilot",
+      "Warrior",
+      "Permanent weapon"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Dark/large/jangofett.gif",
+     "lore": "Trade Federation.",
+     "power": "3",
+     "subType": "Alien",
+     "title": "\u2022Jango Fett",
+     "type": "Character"
+    },
+    "id": 6439,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1005"
+     }
+    ],
+    "rarity": "PM",
+    "set": "1005",
+    "side": "Dark"
+   },
+   "drafted_on": [],
+   "pc_id": "6439"
+  },
+  {
+   "implementation_id": "1262_10",
+   "printing_id": "1262_10",
+   "side": "Dark",
+   "type": "Effect",
+   "title": "\u2022Program Trap (V)",
+   "pc": {
+    "front": {
+     "destiny": "4",
+     "gametext": "Deploy on opponent's capital or [Independent] starship. Starship is power -2, and its gametext (except related to capacity, immunity, and identity and ability of permanent pilots) is canceled.",
+     "icons": [
+      "A New Hope"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/programtrap.gif",
+     "lore": "Imperial slicers imbed a secret command in a droid's primary performance banks. A predetermined trigger causes a power overload, destroying the droid and anything nearby.",
+     "title": "\u2022Program Trap (V)",
+     "type": "Effect"
+    },
+    "id": 6580,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1006"
+     }
+    ],
+    "rarity": "U1",
+    "set": "1006",
+    "side": "Dark"
+   },
+   "drafted_on": [],
+   "pc_id": "6580"
+  },
+  {
+   "implementation_id": "1262_11",
+   "printing_id": "1262_11",
+   "side": "Dark",
+   "type": "Effect",
+   "title": "\u2022So Be It, Jedi",
+   "pc": {
+    "front": {
+     "destiny": "5",
+     "gametext": "Deploy on table. When Luke dpeloys using your Objective, he deploys to Vader's site (if possible). Duels initiated with your Objective may not be canceled. Once per game, may take Rise, My Friend into hand from Reserve Deck; reshuffle. If this Effect canceled by opponent, stack it on Insignificant Rebellion.",
+     "icons": [
+      "Death Star II"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/sobeitjedi.gif",
+     "lore": "'Now, young Skywalker ... you will die.'",
+     "title": "\u2022So Be It, Jedi",
+     "type": "Effect"
+    },
+    "id": 6652,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1006"
+     }
+    ],
+    "rarity": "R",
+    "set": "1006",
+    "side": "Dark"
+   },
+   "drafted_on": [],
+   "pc_id": "6652"
+  },
+  {
+   "implementation_id": "1262_3",
+   "printing_id": "1262_3",
+   "side": "Dark",
+   "type": "Effect",
+   "title": "\u2022Altering The Deal",
+   "pc": {
+    "front": {
+     "destiny": "3",
+     "gametext": "Deploy on Dining Room. Dark Deal may deploy here if you control three Bespin sites, and is canceled if opponent controls this site. While Dark Deal on table and you occupy Bespin, This Deal Is Getting Worse All The Time flips and may not flip back. (Immune to Alter.)",
+     "icons": [
+      "Cloud City"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/alteringthedeal.gif",
+     "lore": "Gamblers are vulnerable to bribery, extortion and other forms of manipulation. Their notorious dealings can be easily taken advantage of.",
+     "title": "\u2022Altering The Deal",
+     "type": "Effect"
+    },
+    "id": 6086,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1006"
+     }
+    ],
+    "rarity": "R",
+    "set": "1006",
+    "side": "Dark"
+   },
+   "drafted_on": [],
+   "pc_id": "6086"
+  },
+  {
+   "implementation_id": "1262_4",
+   "printing_id": "1262_4",
+   "side": "Dark",
+   "type": "Device",
+   "title": "Comlink (V)",
+   "pc": {
+    "front": {
+     "destiny": "3",
+     "gametext": "Deploy on an Imperial warrior. Your characters may deploy as a 'react' to same or adjacent site. If at an opponent's site, when opponent is losing Force from Force drains here, lost Force must come from Life Force (if possible).",
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/comlink.gif",
+     "lore": "Hand-held communication device. Military comlinks have scrambling and variable frequency programming for secure communication during battles or emergencies.",
+     "title": "Comlink (V)",
+     "type": "Device"
+    },
+    "id": 6180,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1006"
+     }
+    ],
+    "rarity": "C1",
+    "set": "1006",
+    "side": "Dark"
+   },
+   "drafted_on": [],
+   "pc_id": "6180"
+  },
+  {
+   "implementation_id": "1262_8",
+   "printing_id": "1262_8",
+   "side": "Dark",
+   "type": "Effect",
+   "title": "\u2022Drop! (V)",
+   "pc": {
+    "front": {
+     "destiny": "3",
+     "gametext": "Deploy on table. [Permanent weapon] and [Maintenance] cards do not add battle destiny draws. During battle, neither player may add more than two destiny to power (or total power) or one destiny to total attrition. Once per turn, may place a card from hand in Used Pile. (Immune to Alter.)",
+     "icons": [
+      "Episode I",
+      "Coruscant"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/drop.gif",
+     "lore": "Anakin had to heed Qui-Gon's advice to avoid the rapidly approaching storm.",
+     "title": "\u2022Drop! (V)",
+     "type": "Effect"
+    },
+    "id": 6268,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1006"
+     }
+    ],
+    "rarity": "U",
+    "set": "1006",
+    "side": "Dark"
+   },
+   "drafted_on": [],
+   "pc_id": "6268"
+  },
+  {
+   "implementation_id": "1263_1",
+   "printing_id": "1263_1",
+   "side": "Dark",
+   "type": "Character",
+   "title": "\u2022Cad Bane",
+   "pc": {
+    "front": {
+     "ability": "2",
+     "deploy": "4",
+     "destiny": "1",
+     "forfeit": "4",
+     "gametext": "Adds 2 to power of anything he pilots. Ponda Baba's Hold-out Blaster deploys and fires for free on Bane. Once per turn, if Bane just used a weapon to hit a character, may 'annihilate' target (target is placed out of play when forfeited this battle).",
+     "icons": [
+      "Pilot",
+      "Warrior",
+      "Episode I"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/cadbane.gif",
+     "lore": "Bounty Hunter",
+     "power": "4",
+     "subType": "Alien",
+     "title": "\u2022Cad Bane",
+     "type": "Character"
+    },
+    "id": 6153,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1006"
+     }
+    ],
+    "rarity": "C",
+    "set": "1006",
+    "side": "Dark"
+   },
+   "drafted_on": [],
+   "pc_id": "6153"
+  },
+  {
+   "implementation_id": "1263_12",
+   "printing_id": "1263_12",
+   "side": "Dark",
+   "type": "Interrupt",
+   "title": "\u2022Operational As Planned (V)",
+   "pc": {
+    "front": {
+     "destiny": "5",
+     "gametext": "Once per turn, if taken into hand using Protocol Failure, may immediately reveal this Interrupt to return Protocol Failure from Lost Pile to hand. Use 1 Force to take [Virtual Block 6] Grotto Werribee or an Immediate Effect into hand from Reserve Deck; reshuffle. OR Use 2 Force to take an Effect that deploys for free into hand from Reserve Deck; reshuffle.",
+     "icons": [
+      "Death Star II"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/operationalasplanned.gif",
+     "lore": "'We shall double our efforts.'",
+     "subType": "Used",
+     "title": "\u2022Operational As Planned (V)",
+     "type": "Interrupt"
+    },
+    "id": 6563,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1006"
+     }
+    ],
+    "rarity": "C",
+    "set": "1006",
+    "side": "Dark"
+   },
+   "drafted_on": [],
+   "pc_id": "6563"
+  },
+  {
+   "implementation_id": "1263_19",
+   "printing_id": "1263_19",
+   "side": "Dark",
+   "type": "Starship",
+   "title": "TIE Avenger (V)",
+   "pc": {
+    "front": {
+     "deploy": "2",
+     "destiny": "3",
+     "forfeit": "4",
+     "gametext": "May add 1 pilot and 1 astromech. While TIE Fighter Construction Facility on table, pilot is forfeit +2 and this starship may not be lost before the damage segment of battle. May deploy an astromech aboard from Reserve Deck; reshuffle.",
+     "hyperspeed": "3",
+     "icons": [
+      "Nav Computer",
+      "Scomp Link",
+      "Dagobah"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/tieavenger.gif",
+     "lore": "Design based on Lord Vader's prototype Advanced x1. Manufactured until replaced by the more economical TIE Interceptor. Equipped with deflector shields and a hyperdrive.",
+     "maneuver": "4",
+     "power": "3",
+     "subType": "Starfighter: TIE/AD",
+     "title": "TIE Avenger (V)",
+     "type": "Starship"
+    },
+    "id": 6704,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1006"
+     }
+    ],
+    "rarity": "C",
+    "set": "1006",
+    "side": "Dark"
+   },
+   "drafted_on": [],
+   "pc_id": "6704"
+  },
+  {
+   "implementation_id": "1263_4",
+   "printing_id": "1263_4",
+   "side": "Dark",
+   "type": "Character",
+   "title": "\u2022Grotto Werribee (V)",
+   "pc": {
+    "front": {
+     "ability": "4",
+     "deploy": "3",
+     "destiny": "1",
+     "extraText": [
+      "Force-Sensitive"
+     ],
+     "forfeit": "4",
+     "gametext": "Adds 2 to power of anything he pilots. If opponent's [Virtual Block 6] card just added a destiny to total power or attrition here, draw two destiny, choose one, and subtract it from their attrition and total power. Your characters here are immune to Clash of Sabers and attrition <3.",
+     "icons": [
+      "Pilot",
+      "Episode I"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/grottowerribee.gif",
+     "lore": "Once a junior traffic controller for an interstellar shipping corporation, Grotto brags that there is nothing about docking bay procedure that he doesn't know. Information broker.",
+     "power": "2",
+     "subType": "Alien",
+     "title": "\u2022Grotto Werribee (V)",
+     "type": "Character"
+    },
+    "id": 6340,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1006"
+     }
+    ],
+    "rarity": "R",
+    "set": "1006",
+    "side": "Dark"
+   },
+   "drafted_on": [],
+   "pc_id": "6340"
+  }
+ ]
+}

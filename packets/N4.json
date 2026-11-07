@@ -1,0 +1,375 @@
+{
+ "branch": "legacy/r2-block4-light",
+ "cards": [
+  {
+   "implementation_id": "1240_106",
+   "printing_id": "1240_106",
+   "side": "Light",
+   "type": "Location",
+   "title": "\u2022Yavin 4: Jedi Academy",
+   "pc": {
+    "conceptBy": "(Original concept by Charles Clarkson - New York States 2006)",
+    "front": {
+     "destiny": "0",
+     "gametext": "Light: If a Dark Jedi on table, Force drain -1 here. Once per game, may deploy Jedi Luke here from Reserve Deck; reshuffle. Dark: While opponent's non-[Episode I] Jedi here, destiny draws for Sense and Alter may not be modified.",
+     "icons": [
+      "Exterior",
+      "Planet",
+      "A New Hope"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Light/large/yavin4jediacademy.gif",
+     "subType": "Site",
+     "title": "\u2022Yavin 4: Jedi Academy",
+     "type": "Location"
+    },
+    "id": 6034,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "U1",
+    "set": "1004",
+    "side": "Light"
+   },
+   "drafted_on": [],
+   "pc_id": "6034"
+  },
+  {
+   "implementation_id": "1240_71",
+   "printing_id": "1240_71",
+   "side": "Light",
+   "type": "Character",
+   "title": "\u2022Lars' Protocol Droid",
+   "pc": {
+    "conceptBy": "(Original concept by Drew Scott - World Champion 2005)",
+    "front": {
+     "deploy": "2",
+     "destiny": "4",
+     "extraText": [
+      "Protocol Droid"
+     ],
+     "forfeit": "3",
+     "gametext": "'Device' on Harvest may be treated as '[A New Hope] or [Hoth] droid'. While at a farm: your characters present are forfeit +3; may raise this site (if converted) to the top; and, once per move phase, may put hand in Used Pile to place a 'crop' on Reserve Deck.",
+     "icons": [
+      "Hoth"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Light/large/larsprotocoldroid.gif",
+     "power": "1",
+     "subType": "Droid",
+     "title": "\u2022Lars' Protocol Droid",
+     "type": "Character"
+    },
+    "id": 5665,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "R1",
+    "set": "1004",
+    "side": "Light"
+   },
+   "drafted_on": [],
+   "pc_id": "5665"
+  },
+  {
+   "implementation_id": "1240_75",
+   "printing_id": "1240_75",
+   "side": "Light",
+   "type": "Character",
+   "title": "\u2022Talon Karrde (V)",
+   "pc": {
+    "front": {
+     "ability": "3",
+     "deploy": "3",
+     "destiny": "3",
+     "extraText": [
+      "Force-Attuned"
+     ],
+     "forfeit": "4",
+     "gametext": "Adds 2 to power of anything he pilots. If your [Virtual Block 4] objective on table: aliens are forfeit +2 at Rebel Cell sites; Yerka Mig may deploy on a Rebel Cell site, ignores Jedi, is immune to Alter, and for remainder of game, you retrieve Force with it only once per turn.",
+     "icons": [
+      "Pilot",
+      "Reflections 2"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Light/large/talonkarrde.gif",
+     "lore": "Smuggler and information broker. Operates intelligence network. Pragmatic businessman. Strong sense of personal honor. Bounty placed on his head by Grand Admiral Thrawn.",
+     "power": "2",
+     "subType": "Alien",
+     "title": "\u2022Talon Karrde (V)",
+     "type": "Character"
+    },
+    "id": 5939,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "PM",
+    "set": "1004",
+    "side": "Light"
+   },
+   "drafted_on": [],
+   "pc_id": "5939"
+  },
+  {
+   "implementation_id": "1240_81",
+   "printing_id": "1240_81",
+   "side": "Light",
+   "type": "Effect",
+   "title": "Eject! Eject! (V)",
+   "pc": {
+    "front": {
+     "destiny": "5",
+     "gametext": "Deploy on opponent's just deployed [Reflections 3][Maintenance] card; opponent loses 1 Force, you may retrieve 1 Force, and you may play a Defensive Shield from under your Starting Effect. Target is power -3 and opponent must use 1 Force to apply target's ability towards drawing battle destiny. During opponent's draw phase, opponent must lose 1 Force or place target in Lost Pile. If just lost, place this Effect in Used Pile. (Immune to Control.) OR If you are about to lose Force during opponent's control phase, deploy on table to reduce loss by 2.",
+     "icons": [
+      "A New Hope"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Light/large/ejecteject.gif",
+     "subType": "Immediate",
+     "title": "Eject! Eject! (V)",
+     "type": "Effect"
+    },
+    "id": 5505,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "C2",
+    "set": "1004",
+    "side": "Light"
+   },
+   "drafted_on": [],
+   "pc_id": "5505"
+  },
+  {
+   "implementation_id": "1240_82",
+   "printing_id": "1240_82",
+   "side": "Light",
+   "type": "Effect",
+   "title": "Disarming Creature (V)",
+   "pc": {
+    "front": {
+     "destiny": "6",
+     "gametext": "Deploy on table. Skull is destiny +2. Once per game, may deploy one Tauntaun Bones from Reserve Deck; reshuffle. You may play I Thought They Smelled Bad On The Outside as follows: 'USED: Lose 1 Force to take a creature (except Nudj), creature vehicle, or Beast-Rider into hand from Reserve Deck; reshuffle.' (Immune to Alter.)",
+     "icons": [
+      "Hoth"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Light/large/disarmingcreature.gif",
+     "lore": "Luke's defensive maneuver put him out of arm's way.",
+     "title": "Disarming Creature (V)",
+     "type": "Effect"
+    },
+    "id": 5488,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "R1",
+    "set": "1004",
+    "side": "Light"
+   },
+   "drafted_on": [],
+   "pc_id": "5488"
+  },
+  {
+   "implementation_id": "1240_85",
+   "printing_id": "1240_85",
+   "side": "Light",
+   "type": "Effect",
+   "title": "\u2022Eyes In The Dark (V)",
+   "pc": {
+    "front": {
+     "destiny": "5",
+     "gametext": "Deploy on a holosite. [Virtual Block] Wipe Them Out, All Of Them ignores this site. 'Effect' on Alter may be treated as 'Mantellian Savrip.' The game text of your Effects here may not be suspended. Except during battles here, may play your Interrupts here as if from hand.",
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Light/large/eyesinthedark.gif",
+     "lore": "'I don't like the look of this.'",
+     "title": "\u2022Eyes In The Dark (V)",
+     "type": "Effect"
+    },
+    "id": 5519,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "U1",
+    "set": "1004",
+    "side": "Light"
+   },
+   "drafted_on": [],
+   "pc_id": "5519"
+  },
+  {
+   "implementation_id": "1240_87",
+   "printing_id": "1240_87",
+   "side": "Light",
+   "type": "Effect",
+   "title": "\u2022Insurrection (V)",
+   "pc": {
+    "front": {
+     "destiny": "5",
+     "gametext": "Deploy on table. 'Battleground system' on your [Virtual Block 4] objective is treated as 'unique (\u2022) battleground site.' When targeted by weapons, your characters of ability = 3 may use the defense value of your other character present. Once per turn, may deploy No Disintegrations! from Reserve Deck; reshuffle. (Immune to Alter.)",
+     "icons": [
+      "Endor"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Light/large/insurrection.gif",
+     "lore": "Rebel insurgents and local activists are the first step in breaking the Imperial stranglehold on a world.",
+     "title": "\u2022Insurrection (V)",
+     "type": "Effect"
+    },
+    "id": 5611,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "U",
+    "set": "1004",
+    "side": "Light"
+   },
+   "drafted_on": [],
+   "pc_id": "5611"
+  },
+  {
+   "implementation_id": "1240_89",
+   "printing_id": "1240_89",
+   "side": "Light",
+   "type": "Effect",
+   "title": "\u2022Scrambled Transmission (V)",
+   "pc": {
+    "front": {
+     "destiny": "4",
+     "gametext": "Deploy on table. Unless you have 13 or more cards in hand, opponent may not peek at or remove those cards (except with Monnok). Once per turn, may take Logistical Delay into hand from Reserve Deck; reshuffle, peek at a card placed face down by You're A Slave?, or lose 2 Force to cancel a Political Effect. (Immune to Alter.)",
+     "icons": [
+      "Special Edition"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Light/large/scrambledtransmission.gif",
+     "lore": "The Rebel Alliance employs sophisticated jamming technology to block Imperial communications.",
+     "title": "\u2022Scrambled Transmission (V)",
+     "type": "Effect"
+    },
+    "id": 5897,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "U",
+    "set": "1004",
+    "side": "Light"
+   },
+   "drafted_on": [],
+   "pc_id": "5897"
+  },
+  {
+   "implementation_id": "1240_90",
+   "printing_id": "1240_90",
+   "side": "Light",
+   "type": "Effect",
+   "title": "\u2022Tauntaun Bones (V)",
+   "pc": {
+    "front": {
+     "destiny": "3",
+     "gametext": "Deploy on table. Once per turn, may deploy a creature (except a parasite) or a tauntaun from Reserve Deck; reshuffle. Your ferocious creatures are deploy -2 and ferocity +1. Whenever you retrieve Force because a creature has eaten a card, you need only use X-2 Force for Secret Plans (to a minimum of 1). (Immune to Alter.)",
+     "icons": [
+      "Hoth"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Light/large/tauntaunbones.gif",
+     "lore": "The bones of a tauntaun represent both death and life: death for the prey, life for the predator. A symbol of the ebb and flow of the Force through all things.",
+     "title": "\u2022Tauntaun Bones (V)",
+     "type": "Effect"
+    },
+    "id": 5951,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "U1",
+    "set": "1004",
+    "side": "Light"
+   },
+   "drafted_on": [],
+   "pc_id": "5951"
+  },
+  {
+   "implementation_id": "1240_96",
+   "printing_id": "1240_96",
+   "side": "Light",
+   "type": "Interrupt",
+   "title": "\u2022Shoo! Shoo! (V)",
+   "pc": {
+    "front": {
+     "destiny": "6",
+     "gametext": "Relocate an opponent's ferocious creature to a related location (habitat permitting). OR During any move phase, initiate an attack against a creature. OR Cancel an attempt by Reegesk to steal a card; Reegesk is lost. (Immune to Sense.)",
+     "icons": [
+      "Dagobah"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Light/large/shooshoo.gif",
+     "lore": "'Oh! Go away! Go away! Beastly thing!'",
+     "subType": "Used",
+     "title": "\u2022Shoo! Shoo! (V)",
+     "type": "Interrupt"
+    },
+    "id": 5911,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "U",
+    "set": "1004",
+    "side": "Light"
+   },
+   "drafted_on": [],
+   "pc_id": "5911"
+  },
+  {
+   "implementation_id": "1240_97",
+   "printing_id": "1240_97",
+   "side": "Light",
+   "type": "Interrupt",
+   "title": "\u2022Skull (V)",
+   "pc": {
+    "front": {
+     "destiny": "4",
+     "gametext": "During opponent's control phase, your pack attacks. Weapons may only target the lead creature. Pack may then move to an adjacent site. OR If a card was just 'eaten,' card's owner loses 2 Force. OR Use 3 Force to retrieve a creature.",
+     "icons": [
+      "Jabba's Palace"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Light/large/skull.gif",
+     "lore": "Bidlo Kwerve was involved in both the procurement and (posthumously) the loss of the rancor.",
+     "subType": "Used",
+     "title": "\u2022Skull (V)",
+     "type": "Interrupt"
+    },
+    "id": 5913,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "U",
+    "set": "1004",
+    "side": "Light"
+   },
+   "drafted_on": [],
+   "pc_id": "5913"
+  }
+ ]
+}

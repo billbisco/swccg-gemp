@@ -1,0 +1,635 @@
+{
+ "branch": "legacy/r2-block4-drafts-b",
+ "cards": [
+  {
+   "implementation_id": "1240_54",
+   "printing_id": "1240_54",
+   "side": "Dark",
+   "type": "Location",
+   "title": "\u2022Kessel: Spice Mines - Docking Bay",
+   "pc": {
+    "front": {
+     "destiny": "0",
+     "gametext": "Dark: Your docking bay transit from here requires 1 Force (free if your smuggler present). Light: Your docking bay transit from here requires 3 Force (free if your smuggler present).",
+     "icons": [
+      "Interior",
+      "Exterior",
+      "Planet",
+      "Hoth"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/kesselspiceminesdockingbay.gif",
+     "subType": "Site",
+     "title": "\u2022Kessel: Spice Mines - Docking Bay",
+     "type": "Location"
+    },
+    "id": 6461,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "U2",
+    "set": "1004",
+    "side": "Dark"
+   },
+   "drafted_on": [
+    "legacy/lane-e-batch08",
+    "legacy/lane-e-batch10"
+   ],
+   "pc_id": "6461"
+  },
+  {
+   "implementation_id": "1240_55",
+   "printing_id": "1240_55",
+   "side": "Dark",
+   "type": "Location",
+   "title": "\u2022Kessel: Spice Mines - Extraction Facility",
+   "pc": {
+    "front": {
+     "destiny": "0",
+     "gametext": "Dark: During your control phase, may use 1 Force to place a 'spice' card in owner's Used Pile. Light: If you occupy, may use 3 Force to place a 'spice' card out of play.",
+     "icons": [
+      "Exterior",
+      "Planet",
+      "Episode I",
+      "Tatooine"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/kesselspiceminesextractionfacility.gif",
+     "subType": "Site",
+     "title": "\u2022Kessel: Spice Mines - Extraction Facility",
+     "type": "Location"
+    },
+    "id": 6462,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "U2",
+    "set": "1004",
+    "side": "Dark"
+   },
+   "drafted_on": [
+    "legacy/lane-e-batch19"
+   ],
+   "pc_id": "6462"
+  },
+  {
+   "implementation_id": "1240_56",
+   "printing_id": "1240_56",
+   "side": "Dark",
+   "type": "Location",
+   "title": "\u2022Kessel: Spice Mines - Prison",
+   "pc": {
+    "front": {
+     "destiny": "0",
+     "gametext": "Dark: Whenever a droid is imprisoned here, may retrieve 3 Force (once per captive). Light: If you control, may release any captives imprisoned here (may retrieve 1 Force for each).",
+     "icons": [
+      "Interior",
+      "Planet",
+      "Dagobah"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/kesselspiceminesprison.gif",
+     "subType": "Site",
+     "title": "\u2022Kessel: Spice Mines - Prison",
+     "type": "Location"
+    },
+    "id": 6463,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "U2",
+    "set": "1004",
+    "side": "Dark"
+   },
+   "drafted_on": [
+    "legacy/lane-e-batch18"
+   ],
+   "pc_id": "6463"
+  },
+  {
+   "implementation_id": "1240_60",
+   "printing_id": "1240_60",
+   "side": "Dark",
+   "type": "Starship",
+   "title": "\u2022Katana",
+   "pc": {
+    "conceptBy": "(Original concept by Thomas Caspersen - Sandvika V-Lite 2005)",
+    "front": {
+     "armor": "4",
+     "deploy": "6",
+     "destiny": "3",
+     "forfeit": "6",
+     "gametext": "May add 3 pilots, 6 passengers and 4 TIEs. Your other Dreadnaughts here are power +1, forfeit +2, Heroic, and Immune to attrition < 4. Permanent pilot provides ability of 3. Immune to attrition < 4.",
+     "hyperspeed": "3",
+     "icons": [
+      "Pilot",
+      "Nav Computer",
+      "Scomp Link",
+      "Premium"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/katana.gif",
+     "lore": "Introduced during the Clone Wars. 600 meters long. Some have cargo space converted to TIE hanger bays. Still used to maintain an Imperial presence in the Outer Rim.",
+     "power": "5",
+     "subType": "Capital: Dradnaught-Class Heavy Cruiser",
+     "title": "\u2022Katana",
+     "type": "Starship"
+    },
+    "id": 6457,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "PM",
+    "set": "1004",
+    "side": "Dark"
+   },
+   "drafted_on": [
+    "legacy/lane-e-batch01"
+   ],
+   "pc_id": "6457"
+  },
+  {
+   "implementation_id": "1240_64",
+   "printing_id": "1240_64",
+   "side": "Dark",
+   "type": "Weapon",
+   "title": "\u2022Galen's Lightsaber",
+   "pc": {
+    "front": {
+     "destiny": "1",
+     "gametext": "Deploy on Galen. While Galen defending a battle, his and Juno Eclipse's immunity to atttition is +2. May target a character or creature for free. Draw two destiny. If total destiny > defense value, target hit, power -3, and may not be used to satisfy attrition.",
+     "icons": [
+      "Cloud City"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/galenslightsaber.gif",
+     "subType": "Character",
+     "title": "\u2022Galen's Lightsaber",
+     "type": "Weapon"
+    },
+    "id": 6316,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "U",
+    "set": "1004",
+    "side": "Dark"
+   },
+   "drafted_on": [
+    "legacy/lane-e-batch17"
+   ],
+   "pc_id": "6316"
+  },
+  {
+   "implementation_id": "1240_67",
+   "printing_id": "1240_67",
+   "side": "Light",
+   "type": "Character",
+   "title": "\u2022Chewbacca, Protector (V)",
+   "pc": {
+    "front": {
+     "ability": "2",
+     "armor": "4",
+     "deploy": "3",
+     "destiny": "1",
+     "forfeit": "7",
+     "gametext": "Deploys free to Coruscant and is a spy while there. During your deploy phase, may deploy one Boushh or Vibro-Ax (on Chewie) from Reserve Deck; reshuffle. While with Leia, her game text may not be canceled and, once per turn, may take the bottom card of Force Pile into hand.",
+     "icons": [
+      "Pilot",
+      "Warrior",
+      "Reflections 2"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Light/large/chewbaccaprotector.gif",
+     "lore": "Chewie honored his life debt to Han by protecting Leia. Posed as the mercenary Snoova while on Coruscant. Smuggler. Wookiee.",
+     "power": "6",
+     "subType": "Rebel",
+     "title": "\u2022Chewbacca, Protector (V)",
+     "type": "Character"
+    },
+    "id": 5414,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "PM",
+    "set": "1004",
+    "side": "Light"
+   },
+   "drafted_on": [
+    "legacy/lane-e-batch16"
+   ],
+   "pc_id": "5414"
+  },
+  {
+   "implementation_id": "1240_68",
+   "printing_id": "1240_68",
+   "side": "Light",
+   "type": "Character",
+   "title": "\u2022LE-BO2D9 (Leebo) (V)",
+   "pc": {
+    "front": {
+     "armor": "4",
+     "deploy": "3",
+     "destiny": "3",
+     "extraText": [
+      "Maintenance Droid"
+     ],
+     "forfeit": "3",
+     "gametext": "May be battled. If with Dash Rendar, adds one destiny to attrition only. Once per turn, if at a battleground, you may peek at the top card of opponent's Reserve Deck; may place that card on top of opponent's Used Pile.",
+     "icons": [
+      "Pilot",
+      "Reflections 2"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Light/large/lebo2d9leebo.gif",
+     "lore": "Smuggler. Heavily modified Cybot Galactica LE-series repair droid. Information broker. Provides information gained through underworld channels to the Alliance.",
+     "power": "3",
+     "subType": "Droid",
+     "title": "\u2022LE-BO2D9 (Leebo) (V)",
+     "type": "Character"
+    },
+    "id": 5669,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "PM",
+    "set": "1004",
+    "side": "Light"
+   },
+   "drafted_on": [
+    "legacy/lane-e-batch07",
+    "legacy/lane-e-batch10"
+   ],
+   "pc_id": "5669"
+  },
+  {
+   "implementation_id": "1240_70",
+   "printing_id": "1240_70",
+   "side": "Light",
+   "type": "Character",
+   "title": "\u2022Fixer",
+   "pc": {
+    "front": {
+     "ability": "2",
+     "deploy": "2",
+     "destiny": "3",
+     "forfeit": "3",
+     "gametext": "Adds 2 to power of anything he pilots. Deploys -1 to same site as Camie. Once per turn, may use 1 Force to place a card from Crash Site Memorial in Used Pile. If Crash Site Memorial leaves table (except by your card), place all cards on it in Used Pile.",
+     "icons": [
+      "Pilot",
+      "Special Edition"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Light/large/fixer.gif",
+     "lore": "Careful manipulator of funds and Imperial taxation codes. Buys droids from Jawas and sells them to the Alliance.",
+     "power": "2",
+     "subType": "Alien",
+     "title": "\u2022Fixer",
+     "type": "Character"
+    },
+    "id": 5524,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "C",
+    "set": "1004",
+    "side": "Light"
+   },
+   "drafted_on": [
+    "legacy/lane-e-batch15",
+    "legacy/lane-e-batch53"
+   ],
+   "pc_id": "5524"
+  },
+  {
+   "implementation_id": "1240_72",
+   "printing_id": "1240_72",
+   "side": "Light",
+   "type": "Character",
+   "title": "\u2022Senator Leia Organa",
+   "pc": {
+    "front": {
+     "ability": "3",
+     "deploy": "3",
+     "destiny": "2",
+     "forfeit": "5",
+     "gametext": "Agendas: justice, rebellion. When deployed, may play a Defensive Shield from under your Starting Effect (as if from hand). While aboard Alderaan Consular Ship, it is Immune to Lateral Damage and attrition. Attrition against opponent is +2 here.",
+     "icons": [
+      "Warrior",
+      "Special Edition"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Light/large/senatorleiaorgana.gif",
+     "lore": "Adopted by Bail Organa. Former senator of Alderaan. Natural leader. Helped steal the Death Star plans. A key figure in the Rebel Alliance.",
+     "politics": "1",
+     "power": "3",
+     "subType": "Rebel/Republic",
+     "title": "\u2022Senator Leia Organa",
+     "type": "Character"
+    },
+    "id": 5904,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "R",
+    "set": "1004",
+    "side": "Light"
+   },
+   "drafted_on": [
+    "legacy/lane-e-batch12",
+    "legacy/lane-e-batch14"
+   ],
+   "pc_id": "5904"
+  },
+  {
+   "implementation_id": "1240_73",
+   "printing_id": "1240_73",
+   "side": "Light",
+   "type": "Character",
+   "title": "\u2022Rayc Ryjerd (V)",
+   "pc": {
+    "front": {
+     "ability": "2",
+     "deploy": "2",
+     "destiny": "2",
+     "forfeit": "4",
+     "gametext": "Adds 3 to power of anything he pilots. Twice per game, may take one Big One, Kessel Run, or Rycar's Run into hand from Reserve Deck; reshuffle. Once per game, may double the value of X for Kessel Run or Rycar's Run. Rayc is a matching pilot for any freighter or yacht.",
+     "icons": [
+      "Pilot",
+      "Jabba's Palace"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Light/large/raycryjerd.gif",
+     "lore": "An 'honest' smuggler. Working for Jabba to pay off debts for his ship. Rycar's son. Even more of an idiot.",
+     "power": "2",
+     "subType": "Alien",
+     "title": "\u2022Rayc Ryjerd (V)",
+     "type": "Character"
+    },
+    "id": 5824,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "R",
+    "set": "1004",
+    "side": "Light"
+   },
+   "drafted_on": [
+    "legacy/lane-e-batch21"
+   ],
+   "pc_id": "5824"
+  },
+  {
+   "implementation_id": "1240_76",
+   "printing_id": "1240_76",
+   "side": "Light",
+   "type": "Character",
+   "title": "\u2022Wes Janson (V)",
+   "pc": {
+    "conceptBy": "(Original concept by Alexander Sheynis - Berkeley V-Lite 2005)",
+    "front": {
+     "ability": "2",
+     "deploy": "2",
+     "destiny": "2",
+     "forfeit": "5",
+     "gametext": "Adds 2 to power of anything he pilots. While piloting Red 3, it gains [Nav Computer] and Wes draws one battle destiny if unable to otherwise. While aboard a starship or vehicle, its total weapon destiny is +1; if with Jek and it hits a target, opponent loses 1 Force from Reserve Deck.",
+     "icons": [
+      "Pilot",
+      "Warrior",
+      "Hoth"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Light/large/wesjanson.gif",
+     "lore": "Served for many years as a gunner with friend Jek Porkins in the Tierfon Yellow Aces. Expert marksmanship helped the Alliance earn some of its earliest victories.",
+     "power": "2",
+     "subType": "Rebel",
+     "title": "\u2022Wes Janson (V)",
+     "type": "Character"
+    },
+    "id": 6017,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "R2",
+    "set": "1004",
+    "side": "Light"
+   },
+   "drafted_on": [
+    "legacy/lane-e-batch06",
+    "legacy/lane-e-batch10"
+   ],
+   "pc_id": "6017"
+  },
+  {
+   "implementation_id": "1240_77",
+   "printing_id": "1240_77",
+   "side": "Light",
+   "type": "Device",
+   "title": "\u2022\u2022Mercenary Armor (V)",
+   "pc": {
+    "front": {
+     "destiny": "3",
+     "gametext": "Deploy on your alien without armor or a Rebel. This character is a spy, has armor = 4, and its immunity to attrition is +2. While opponent has a Black Sun agent, gangster, smuggler, spy, or thief on table, your destiny draws are +1. Once per turn, may take Undercover into hand from Reserve Deck; reshuffle.",
+     "icons": [
+      "Reflections 2"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Light/large/mercenaryarmor.gif",
+     "lore": "Worn by hired guns throughout the galaxy. Often used by Rebels when infiltrating underworld organizations. Leia wore Boushh's armor when she infiltrated Black Sun.",
+     "title": "\u2022\u2022Mercenary Armor (V)",
+     "type": "Device"
+    },
+    "id": 5738,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "PM",
+    "set": "1004",
+    "side": "Light"
+   },
+   "drafted_on": [
+    "legacy/lane-e-batch17"
+   ],
+   "pc_id": "5738"
+  },
+  {
+   "implementation_id": "1240_92",
+   "printing_id": "1240_92",
+   "side": "Light",
+   "type": "Effect",
+   "title": "\u2022Tusken Breath Mask (V)",
+   "pc": {
+    "front": {
+     "destiny": "4",
+     "gametext": "Deploy on an exterior Tatooine battleground site. X = the face up destiny number of your Objective. Once per turn, if all your ability on table is provided by aliens, may add X to your total ability during battle at a site. This Effect canceled if opponent controls this site.",
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Light/large/tuskenbreathmask.gif",
+     "lore": "Sand People use a special mask to reclaim exhaled moisture in the hot, harsh environment of Tatooine. Protects by filtering blowing sand and dispersing excess heat.",
+     "title": "\u2022Tusken Breath Mask (V)",
+     "type": "Effect"
+    },
+    "id": 5983,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "U1",
+    "set": "1004",
+    "side": "Light"
+   },
+   "drafted_on": [
+    "legacy/lane-e-batch20"
+   ],
+   "pc_id": "5983"
+  },
+  {
+   "implementation_id": "1240_101",
+   "printing_id": "1240_101",
+   "side": "Light",
+   "type": "Location",
+   "title": "<>Outpost",
+   "pc": {
+    "front": {
+     "destiny": "0",
+     "gametext": "Light: May not deploy to Bespin, Coruscant, Dantooine, Kessel or Tatooine. Once per game, may deploy a device (except a comlink) or Effect that deploys on a character here. Dark: Unless opponent's matching operative at same or related site, those sites are immune to [Premium] No Escape.",
+     "icons": [
+      "Exterior",
+      "Planet",
+      "Hoth"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Light/large/outpost.gif",
+     "subType": "Site",
+     "title": "<>Outpost",
+     "type": "Location"
+    },
+    "id": 5784,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "C2",
+    "set": "1004",
+    "side": "Light"
+   },
+   "drafted_on": [
+    "legacy/lane-e-batch34"
+   ],
+   "pc_id": "5784"
+  },
+  {
+   "implementation_id": "1240_110",
+   "printing_id": "1240_110",
+   "side": "Light",
+   "type": "Starship",
+   "title": "YT-1300 Transport (V)",
+   "pc": {
+    "front": {
+     "deploy": "2",
+     "destiny": "3",
+     "forfeit": "4",
+     "gametext": "May add 1 pilot and 4 passengers. Permanent pilot provides ability of 1. While all your ability is provided by aliens, Jedi, and [Independent Starship] starship pilots, this starship is forfeit +1, maneuver +1, and immune to attrition < 4.",
+     "hyperspeed": "5",
+     "icons": [
+      "Pilot",
+      "Nav Computer",
+      "Independent",
+      "Scomp Link",
+      "Endor"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Light/large/yt1300transport.gif",
+     "lore": "Reliable and durable. Widely used freighter made by Corellian Engineering Corporation. Sales have dramatically increased in proportion to the fame of Han Solo's ship.",
+     "maneuver": "3",
+     "power": "2",
+     "subType": "Starfighter: Modified Light Freighter",
+     "title": "YT-1300 Transport (V)",
+     "type": "Starship"
+    },
+    "id": 6051,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "C",
+    "set": "1004",
+    "side": "Light"
+   },
+   "drafted_on": [
+    "legacy/lane-e-batch01"
+   ],
+   "pc_id": "6051"
+  },
+  {
+   "implementation_id": "1240_112",
+   "printing_id": "1240_112",
+   "side": "Light",
+   "type": "Starship",
+   "title": "\u2022Infinity",
+   "pc": {
+    "front": {
+     "deploy": "3",
+     "destiny": "3",
+     "forfeit": "4",
+     "gametext": "May add 2 pilots. While BoShek piloting: maneuver and hyperspeed +2; immune to attrition < 4; and if at a battleground system, may add 1 to Force drains here.",
+     "hyperspeed": "4",
+     "icons": [
+      "Independent",
+      "Nav Computer",
+      "Scomp Link",
+      "Special Edition"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Light/large/infinity.gif",
+     "lore": "Blank",
+     "maneuver": "3",
+     "power": "3",
+     "subType": "Starfighter: Modified Light Freighter",
+     "title": "\u2022Infinity",
+     "type": "Starship"
+    },
+    "id": 5610,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1004"
+     }
+    ],
+    "rarity": "U",
+    "set": "1004",
+    "side": "Light"
+   },
+   "drafted_on": [
+    "legacy/lane-e-batch02",
+    "legacy/lane-e-batch10"
+   ],
+   "pc_id": "5610"
+  }
+ ]
+}

@@ -1,0 +1,360 @@
+{
+ "branch": "legacy/r2-alternate-images",
+ "cards": [
+  {
+   "implementation_id": "1250_36ai",
+   "printing_id": "1250_36ai",
+   "side": "Light",
+   "type": "Character",
+   "title": "\u2022Artoo, Brave Little Droid (V) (AI)",
+   "pc": {
+    "front": {
+     "deploy": "3",
+     "destiny": "6",
+     "extraText": [
+      "Astromech Droid"
+     ],
+     "forfeit": "4",
+     "gametext": "May fly (landspeed = 2). Once per game, may target up to two opponent's droids present; owner must place targets in Used Pile or lose 4 Force. While aboard an [Episode I] starship, it is power +3 and immune to attrition < 4 (or adds 2 to immunity).",
+     "icons": [
+      "Nav Computer",
+      "Episode I",
+      "Theed Palace"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/artoobravelittledroidai.gif",
+     "lore": "Starship maintenance droid within the Naboo droid pool. Personally responsible for saving Amidala's starship and getting her to Tatooine.",
+     "power": "2",
+     "subType": "Droid",
+     "title": "\u2022Artoo, Brave Little Droid (V) (AI)",
+     "type": "Character"
+    },
+    "id": 5354,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1005"
+     }
+    ],
+    "rarity": "R",
+    "set": "1005",
+    "side": "Light"
+   },
+   "drafted_on": [],
+   "pc_id": "5354"
+  },
+  {
+   "implementation_id": "1250_44ai",
+   "printing_id": "1250_44ai",
+   "side": "Light",
+   "type": "Character",
+   "title": "\u2022Master Qui-Gon (V) (AI)",
+   "pc": {
+    "conceptBy": "(Original concept by James Booker - Worlds 2005)",
+    "front": {
+     "ability": "7",
+     "deploy": "7",
+     "destiny": "1",
+     "extraText": [
+      "Jedi Master"
+     ],
+     "forfeit": "7",
+     "gametext": "Deploys -1 to [Episode I] locations. If you just lost Force from an opponent's Effect, may take an [Episode I] Interrupt (except Control) into hand from Reserve Deck; reshuffle, or place a card from hand under Credits Will Do Fine. Immune to Disarmed, You Are Beaten, and attrition.",
+     "icons": [
+      "Warrior",
+      "Episode I",
+      "Coruscant"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/masterquigonai.gif",
+     "lore": "Jedi Master currently not on the Council. Although he serves the Council well, there have been times when he has defied their wishes to pursue a path he believes is right.",
+     "power": "6",
+     "subType": "Jedi Master",
+     "title": "\u2022Master Qui-Gon (V) (AI)",
+     "type": "Character"
+    },
+    "id": 5731,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1005"
+     }
+    ],
+    "rarity": "R",
+    "set": "1005",
+    "side": "Light"
+   },
+   "drafted_on": [],
+   "pc_id": "5731"
+  },
+  {
+   "implementation_id": "1250_50ai",
+   "printing_id": "1250_50ai",
+   "side": "Light",
+   "type": "Character",
+   "title": "\u2022Senator Jar Jar Binks (AI)",
+   "pc": {
+    "conceptBy": "(Original concept by Brian Herold - Minnesota States 2006)",
+    "front": {
+     "ability": "3",
+     "deploy": "2",
+     "destiny": "2",
+     "forfeit": "4",
+     "gametext": "Agendas: justice, order. At same and related sites, vehicle weapon destiny draws are -2. Once per turn, may deploy an electropole, a [Coruscant] Naboo location, or a [Theed Palace] vehicle from Reserve Deck; reshuffle. If at Senate, may place Jar Jar and a [Coruscant] Political Effect out of play.",
+     "icons": [
+      "Warrior",
+      "Episode I",
+      "Theed Palace"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/senatorjarjarbinksai.gif",
+     "lore": "Gungan.",
+     "politics": "2",
+     "power": "3",
+     "subType": "Alien/Republic",
+     "title": "\u2022Senator Jar Jar Binks (AI)",
+     "type": "Character"
+    },
+    "id": 5903,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1005"
+     }
+    ],
+    "rarity": "R",
+    "set": "1005",
+    "side": "Light"
+   },
+   "drafted_on": [],
+   "pc_id": "5903"
+  },
+  {
+   "implementation_id": "1250_57ai",
+   "printing_id": "1250_57ai",
+   "side": "Light",
+   "type": "Character",
+   "title": "\u2022Yoda, Senior Council Member (V) (AI)",
+   "pc": {
+    "conceptBy": "(Original concept by Jacob Taylor - PC Volunteer Award 2005)",
+    "front": {
+     "ability": "7",
+     "deploy": "4",
+     "destiny": "1",
+     "extraText": [
+      "Jedi Master"
+     ],
+     "forfeit": "7",
+     "gametext": "Deploys only to [Episode I] sites. While at Jedi Council Chamber, immune to attrition, Jedi are deploy -2 here, and (unless a Dark Jedi here) other Jedi may treat 'Jedi Council Chamber' in their game text as '[Episode I] battleground sites.'",
+     "icons": [
+      "Episode I",
+      "Coruscant"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/yodaseniorcouncilmemberai.gif",
+     "lore": "Senior Jedi Council member. Responsible for the early training of Obi-Wan Kenobi. When Qui-Gon brought Anakin before the Council, Yoda voted not to train the boy.",
+     "power": "3",
+     "subType": "Jedi Master",
+     "title": "\u2022Yoda, Senior Council Member (V) (AI)",
+     "type": "Character"
+    },
+    "id": 6043,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1005"
+     }
+    ],
+    "rarity": "R",
+    "set": "1005",
+    "side": "Light"
+   },
+   "drafted_on": [],
+   "pc_id": "6043"
+  },
+  {
+   "implementation_id": "1250_10ai",
+   "printing_id": "1250_10ai",
+   "side": "Dark",
+   "type": "Character",
+   "title": "\u2022Sebulba (V) (AI)",
+   "pc": {
+    "conceptBy": "(Original concept by Garrett Larson - Minnesota States Sealed 2005)",
+    "front": {
+     "ability": "2",
+     "deploy": "3",
+     "destiny": "2",
+     "forfeit": "5",
+     "gametext": "Adds 2 to power of any combat vehicle he pilots. Brisky Morning Munchen is canceled. Once per turn, if any podrace total > 0, may take your just drawn destiny into hand to cancel and redraw that destiny. Draws one battle destiny if unable to otherwise.",
+     "icons": [
+      "Pilot",
+      "Warrior",
+      "Episode I",
+      "Tatooine"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Dark/large/sebulbaai.gif",
+     "lore": "Bad tempered Dug from Pixelito. He was about to turn Jar Jar into orange goo, until Anakin intervened.",
+     "power": "3",
+     "subType": "Alien",
+     "title": "\u2022Sebulba (V) (AI)",
+     "type": "Character"
+    },
+    "id": 6623,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1005"
+     }
+    ],
+    "rarity": "R",
+    "set": "1005",
+    "side": "Dark"
+   },
+   "drafted_on": [],
+   "pc_id": "6623"
+  },
+  {
+   "implementation_id": "1250_12ai",
+   "printing_id": "1250_12ai",
+   "side": "Dark",
+   "type": "Character",
+   "title": "\u2022Watto (V) (AI)",
+   "pc": {
+    "front": {
+     "ability": "2",
+     "deploy": "2",
+     "destiny": "3",
+     "forfeit": "4",
+     "gametext": "Once per turn, if at Watto's Junkyard, may randomly reveal a card from Force Pile: if destiny odd, Force drain +1 here this turn (if even, draw a card from Reserve Deck); place revealed card in Used Pile.",
+     "icons": [
+      "Episode I",
+      "Tatooine"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Dark/large/wattoai.gif",
+     "lore": "Toydarian junk dealer. Skilled gambler. Won Shmi and Anakin in a Podrace bet with Gardulla the Hutt. Jedi mind tricks don't work on him, only money.",
+     "power": "3",
+     "subType": "Alien",
+     "title": "\u2022Watto (V) (AI)",
+     "type": "Character"
+    },
+    "id": 6750,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1005"
+     }
+    ],
+    "rarity": "R",
+    "set": "1005",
+    "side": "Dark"
+   },
+   "drafted_on": [],
+   "pc_id": "6750"
+  },
+  {
+   "implementation_id": "1250_2ai",
+   "printing_id": "1250_2ai",
+   "side": "Dark",
+   "type": "Character",
+   "title": "\u2022Aurra Sing (V) (AI)",
+   "pc": {
+    "conceptBy": "(Original concept by Sam Tashima - North Dakota States 2005)",
+    "front": {
+     "ability": "4",
+     "deploy": "4",
+     "destiny": "1",
+     "extraText": [
+      "Force-Sensitive"
+     ],
+     "forfeit": "3",
+     "gametext": "Once during opponent's activate phase, may relocate Aurra to a site where opponent has a Jedi. Once per game, during your move phase, may fire her weapon at a Jedi; hit target is lost. Immune to attrition < 4.",
+     "icons": [
+      "Warrior",
+      "Episode I",
+      "Tatooine"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Dark/large/aurrasingai.gif",
+     "lore": "Bounty hunter. Former student of the Force. After failing her Jedi training, Aurra became known for hunting down and killing Jedi Knights.",
+     "power": "4",
+     "subType": "Alien",
+     "title": "\u2022Aurra Sing (V) (AI)",
+     "type": "Character"
+    },
+    "id": 6107,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1005"
+     }
+    ],
+    "rarity": "R",
+    "set": "1005",
+    "side": "Dark"
+   },
+   "drafted_on": [],
+   "pc_id": "6107"
+  },
+  {
+   "implementation_id": "1261_24",
+   "printing_id": "1261_24",
+   "side": "Dark",
+   "type": "Defensive Shield",
+   "title": "\u2022Leave Them To Me (Death Star II) (V)",
+   "pc": {
+    "front": {
+     "destiny": "0",
+     "gametext": "Plays on table. At opponent's Dantooine and Subjugated Planet sites, your Imperials are deploy -2 and your Force drains may not be modified or canceled by opponent. Your game text at opponent's <>Swamp and <>Jungle is canceled. Your characters present at opponent's <>Forest are immune to attrition.",
+     "icons": [
+      "Defensive Shield",
+      "Reflections 3"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlockDS-Dark/large/leavethemtomev.gif",
+     "lore": "'I will deal with them myself.'",
+     "title": "\u2022Leave Them To Me (Death Star II) (V)",
+     "type": "Defensive Shield"
+    },
+    "id": 6482,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1000d"
+     }
+    ],
+    "rarity": "C",
+    "set": "1000d",
+    "side": "Dark"
+   },
+   "drafted_on": [],
+   "pc_id": "6482"
+  },
+  {
+   "implementation_id": "1261_25",
+   "printing_id": "1261_25",
+   "side": "Dark",
+   "type": "Defensive Shield",
+   "title": "\u2022No Escape (Premium) (V)",
+   "pc": {
+    "front": {
+     "destiny": "0",
+     "gametext": "Plays on table. While you occupy a Subjugated Planet location, operatives are forfeit = 0, operatives do not add to Force drains, and your Force drains may not be reduced. Nudjs do not cancel Force icons.",
+     "icons": [
+      "Defensive Shield",
+      "Reflections 3"
+     ],
+     "imageUrl": "https://res.starwarsccg.org/cards/legacy/VirtualBlockDS-Dark/large/noescapev.gif",
+     "lore": "Jabba's influence is not easily ignored. Neither are his voracious and vile appetites. Even Jedi soon learn this lesson.",
+     "title": "\u2022No Escape (Premium) (V)",
+     "type": "Defensive Shield"
+    },
+    "id": 6541,
+    "legacy": true,
+    "printings": [
+     {
+      "set": "1000d"
+     }
+    ],
+    "rarity": "PM",
+    "set": "1000d",
+    "side": "Dark"
+   },
+   "drafted_on": [],
+   "pc_id": "6541"
+  }
+ ]
+}
