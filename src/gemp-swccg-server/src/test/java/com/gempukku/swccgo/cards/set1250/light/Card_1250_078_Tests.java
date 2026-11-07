@@ -131,15 +131,23 @@ public class Card_1250_078_Tests {
     }
 
     private VirtualTableScenario flipAndSearch() {
-        var s = scenario(false, false); s.StartGame(); var objective = s.GetLSCard("objective");
-        // Starting imprisonment is verified separately. Here the printed flip and search run normally.
-        s.MoveCardsToLSSideOfTable(objective); objective.setObjectiveDeploymentComplete(true);
+        return flipAndSearch(false);
+    }
+
+    private VirtualTableScenario flipAndSearch(boolean withStartup) {
+        var s = scenario(false, withStartup); s.StartGame(); var objective = s.GetLSCard("objective");
+        if (!withStartup) {
+            // Starting imprisonment is verified separately. Here the printed flip and search run normally.
+            s.MoveCardsToLSSideOfTable(objective); objective.setObjectiveDeploymentComplete(true);
+        }
+        assertTrue(objective.isObjectiveDeploymentComplete());
         var dock = s.GetLSCard("dock"); var palpatine = s.GetLSCard("palpatine");
         var clone = s.GetLSCard("clone"); var marker = s.GetLSCard("marker"); var trooper = s.GetLSCard("trooper");
         s.MoveLocationToTable(dock);
         s.MoveCardsToHand(trooper); s.LSActivateForceCheat(8);
         s.SkipToLSTurn(Phase.DEPLOY);
-        s.MoveCardsToLocation(dock, palpatine);
+        if (withStartup) s.gameState().moveCardToLocation(palpatine, dock, true);
+        else s.MoveCardsToLocation(dock, palpatine);
         s.MoveCardsToTopOfLSReserveDeck(marker, clone);
         s.gameState().markCardsRevealedFromPile(List.of(marker));
         assertTrue(s.LSDeployAvailable(trooper)); s.LSDeployCard(trooper);
@@ -296,5 +304,27 @@ public class Card_1250_078_Tests {
         var s = opposingDrain(false, "vader"); var site = s.GetDSStartingLocation();
         assertTrue(s.DSForceDrainAvailable(site)); s.DSForceDrainAt(site); s.PassAllResponses();
         assertTrue(s.AwaitingLSForceLossPayment());
+    }
+
+    @Test
+    public void StartingCoruscantConversionAndGenerationProtectionSurviveTheActualFlip() {
+        var s = flipAndSearch(true); var dock = s.GetLSCard("dock");
+        var modifiers = s.game().getModifiersQuerying();
+        assertTrue(modifiers.cannotBeConverted(s.gameState(), s.GetLSCard("coruscant")));
+        assertEquals(2, modifiers.getForceGenerationFromLocation(s.gameState(), dock, s.LS), s.epsilon);
+        assertEquals(1, modifiers.getForceGenerationFromLocation(s.gameState(), dock, s.DS), s.epsilon);
+    }
+
+    @Test
+    public void ActualDeploymentDoesNotFlipWhenPalpatineIsAtAnotherPlanet() {
+        var s = scenario(false, false); s.StartGame(); var objective = s.GetLSCard("objective");
+        var dock = s.GetLSCard("dock"); var trooper = s.GetLSCard("trooper");
+        s.MoveCardsToLSSideOfTable(objective); objective.setObjectiveDeploymentComplete(true);
+        s.MoveLocationToTable(dock); s.MoveCardsToLocation(s.GetLSStartingLocation(), s.GetLSCard("palpatine"));
+        s.MoveCardsToHand(trooper); s.LSActivateForceCheat(8); s.SkipToLSTurn(Phase.DEPLOY);
+        assertTrue(s.LSDeployAvailable(trooper)); s.LSDeployCard(trooper);
+        if (s.LSDecisionAvailable("Choose where to deploy")) s.LSChooseCard(dock);
+        s.PassAllResponses();
+        assertEquals(dock, trooper.getAtLocation()); assertFalse(objective.isFlipped());
     }
 }
