@@ -28,9 +28,11 @@ public class Card_1261_111_Tests {
     }
     private VirtualTableScenario started() {
         var scn = scenario(); scn.StartGame();
-        assertTrue(scn.LSDecisionAvailable("Choose site to deploy"));
-        scn.LSChooseCard(scn.GetLSCard("farm")); scn.PassAllResponses();
-        assertEquals(Phase.ACTIVATE, scn.gameState().getCurrentPhase());
+        if (scn.LSHasCardChoiceAvailable(scn.GetLSCard("farm"))) scn.LSChooseCard(scn.GetLSCard("farm"));
+        if (scn.LSHasCardChoiceAvailable(scn.GetLSStartingLocation())) scn.LSChooseCard(scn.GetLSStartingLocation());
+        if (scn.LSDecisionAvailable("On which side")) scn.LSChoose("Left");
+        scn.PassAllResponses();
+        assertEquals(scn.GetCurrentDecision().getText(), Phase.ACTIVATE, scn.gameState().getCurrentPhase());
         for (String key : new String[]{"echo", "hoth", "perimeter", "ridge", "generators", "kessel"})
             scn.MoveLocationToTable(scn.GetLSCard(key));
         return scn;
