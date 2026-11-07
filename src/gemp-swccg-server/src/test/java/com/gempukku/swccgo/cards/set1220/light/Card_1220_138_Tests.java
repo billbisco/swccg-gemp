@@ -18,7 +18,7 @@ public class Card_1220_138_Tests {
                 "immune", "9_47", "ordinary", "1_66", "luke", "1_19", "site", "3_63",
                 "stackOne", "2_18", "stackTwo", "2_23", "stackThree", "2_27"));
         if (purge != null) ls.put("purge", purge);
-        var ds = new HashMap<>(Map.of("darkInsert", "1_208", "darkWeapon", "108_6"));
+        var ds = new HashMap<>(Map.of("darkInsert", "1_208", "darkWeapon", "108_6", "vader", "1_168"));
         return new VirtualTableScenario(ls, ds, 40, 40, StartingSetup.LSStartingLocation(start),
                 StartingSetup.DefaultDSGroundLocation, StartingSetup.NoLSStartingInterrupts,
                 StartingSetup.NoDSStartingInterrupts, StartingSetup.NoLSShields, StartingSetup.NoDSShields, "legacy");
@@ -136,4 +136,20 @@ public class Card_1220_138_Tests {
         assertEquals(event, first.getStackedOn());
         assertEquals(event, second.getStackedOn());
     }
+    private void battleDestiny(boolean agent) {
+        var scn = begin(agent, null);
+        var site = scn.GetLSStartingLocation();
+        scn.MoveCardsToLocation(site, scn.GetLSCard("luke"), scn.GetDSCard("vader"));
+        scn.LSActivateForceCheat(8);
+        scn.SkipToLSTurn(Phase.BATTLE);
+        scn.LSInitiateBattle(site);
+        scn.PrepareLSDestiny(3); scn.PrepareDSDestiny(3);
+        scn.SkipToEndOfPowerSegment(true);
+        assertEquals(3, scn.GetLSTotalDestiny());
+        // Native Premiere Vader adds one to the draw, while the Agent adds two to the total.
+        assertEquals(agent ? 6 : 4, scn.GetDSTotalDestiny());
+    }
+
+    @Test public void actualAgentBattleAddsTwoToDarkSidesTotalOnly() { battleDestiny(true); }
+    @Test public void actualJediModeDoesNotModifyEitherSidesBattleDestiny() { battleDestiny(false); }
 }
