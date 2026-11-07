@@ -85,7 +85,7 @@ public class Card_1250_054_Tests {
         scn.MoveCardsToLocation(to, scn.GetLSCard("rebel"), scn.GetDSCard("vader"));
         scn.SkipToDSTurn(Phase.BATTLE); scn.LSActivateForceCheat(3);
         int force = scn.GetLSForcePileCount(); scn.DSInitiateBattle(to);
-        assertTrue(scn.LSCardActionAvailable(wookiee, "react"));
+        assertTrue("Wookiee should have a battle react", reactOffered(scn, wookiee));
         scn.LSUseCardAction(wookiee, "react"); scn.LSChooseCard(to); scn.PassAllResponses();
         assertEquals(to, wookiee.getAtLocation()); assertEquals(force - 1, scn.GetLSForcePileCount());
     }
@@ -112,10 +112,15 @@ public class Card_1250_054_Tests {
         scn.SkipToDSTurn(Phase.CONTROL); scn.LSActivateForceCheat(3);
         int force = scn.GetLSForcePileCount(); int life = scn.GetLSLifeForceRemaining();
         scn.DSForceDrainAt(to);
-        assertTrue(scn.LSCardActionAvailable(wookiee, "react"));
+        assertTrue("Wookiee should have a Force drain react", reactOffered(scn, wookiee));
         scn.LSUseCardAction(wookiee, "react"); scn.LSChooseCard(to); scn.PassAllResponses();
         assertEquals(to, wookiee.getAtLocation()); assertEquals(force - 1, scn.GetLSForcePileCount());
         assertFalse(scn.IsActiveForceDrain()); assertEquals(life, scn.GetLSLifeForceRemaining());
+    }
+
+    private boolean reactOffered(VirtualTableScenario scn, PhysicalCardImpl wookiee) {
+        return scn.GetADParam(scn.LS, "cardId") != null && scn.GetADParam(scn.LS, "actionText") != null
+                && scn.LSCardActionAvailable(wookiee, "react");
     }
 
     @Test
