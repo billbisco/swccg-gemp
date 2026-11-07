@@ -12,7 +12,8 @@ public class Card_1261_011_Tests {
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>() {{ put("obiwan", "1_21"); put("han", "1_11");
                     put("blaster", "1_152"); put("barrier", "1_105"); }},
-                new HashMap<>() {{ put("kir", "1261_11"); put("trooper", "1_194"); put("vader", "1_168"); }}, 30, 30,
+                new HashMap<>() {{ put("kir", "1261_11"); put("trooper", "1_194"); put("vader", "1_168");
+                    put("oldkir", "10_43"); put("kirv", "208_32"); }}, 30, 30,
                 StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -123,5 +124,34 @@ public class Card_1261_011_Tests {
         assertTrue(scn.LSCardPlayAvailable(scn.GetLSCard("barrier")));
         scn.LSPlayCard(scn.GetLSCard("barrier")); scn.PassAllResponses();
         com.gempukku.swccgo.framework.Assertions.assertInZone(Zone.USED_PILE, scn.GetLSCard("barrier"));
+    }
+
+    @Test
+    public void KirKanosPersonaSharedWithBothOtherKirKanosVersions() {
+        var scn = scenario();
+        for (String k : new String[] { "kir", "oldkir", "kirv" }) {
+            var b = scn.GetDSCard(k).getBlueprint();
+            scn.BlueprintPersonaCheck(b, new ArrayList<>() {{ add(Persona.KIR_KANOS); }});
+        }
+    }
+
+    private VirtualTableScenario deployKirWith(String otherOnTable) {
+        var scn = scenario(); scn.StartGame();
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("trooper"), scn.GetDSCard(otherOnTable));
+        scn.MoveCardsToDSHand(scn.GetDSCard("kir")); scn.EnsureDSForcePile(10);
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        assertTrue(scn.AwaitingDSDeployPhaseActions());
+        return scn;
+    }
+
+    @Test
+    public void KirKanosWithForcePikeCannotDeployWhileKirKanosOnTable() {
+        // Kir Kanos (V) shares Persona.KIR_KANOS (as does 10_43, checked above), so the persona rule blocks deployment.
+        var scn = deployKirWith("kirv"); assertFalse(scn.DSCardPlayAvailable(scn.GetDSCard("kir")));
+    }
+
+    @Test
+    public void KirKanosWithForcePikeDeploysWhenNoOtherKirKanosOnTable() {
+        var scn = deployKirWith("vader"); assertTrue(scn.DSCardPlayAvailable(scn.GetDSCard("kir")));
     }
 }

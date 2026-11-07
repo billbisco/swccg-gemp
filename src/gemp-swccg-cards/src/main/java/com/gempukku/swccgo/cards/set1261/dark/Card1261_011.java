@@ -22,6 +22,7 @@ public class Card1261_011 extends AbstractImperial {
         setGameText("Heroic. Permanent weapon is Force Pike (may target a character for free; draw destiny; target hit, and its power = 0, if destiny +1 > defense value). Your characters here are immune to Cantina Brawl, Fallen Portal, and Rebel Barrier.");
         addIcons(Icon.WARRIOR, Icon.PERMANENT_WEAPON, Icon.REFLECTIONS_II);
         addKeywords(Keyword.ROYAL_GUARD, Keyword.HEROIC);
+        addPersona(Persona.KIR_KANOS);
     }
 
     @Override
