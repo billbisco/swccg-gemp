@@ -23,7 +23,7 @@ public class Card_1271_012_Tests {
             Map.entry("leader", "1272_2"), Map.entry("trooper", "1_194"),
             Map.entry("look", "1_259"), Map.entry("advisor", "6_160"), Map.entry("unrelated", "1_234"),
             Map.entry("mission", "1271_25"), Map.entry("mission2", "1271_26"), Map.entry("setupEffect", "1271_10"),
-            Map.entry("system", "1_282"), Map.entry("sunsdown", "1_230")));
+            Map.entry("system", "1_282"), Map.entry("sunsdown", "1_230"), Map.entry("isbOperations", "7_299")));
         StartingSetup passAdvisor = new StartingSetup() {
             @Override public HashMap<String, String> Cards() { return new HashMap<>(); }
             @Override public void Setup(VirtualTableScenario s) {
@@ -38,7 +38,11 @@ public class Card_1271_012_Tests {
 
     private VirtualTableScenario ready(boolean active) {
         var s = scenario();
+        var operations = s.GetDSCard("isbOperations");
+        s.MoveCardsToDSHand(operations);
         s.StartGame();
+        operations.setObjectiveDeploymentComplete(true);
+        s.MoveCardsToDSSideOfTable(operations);
         s.MoveLocationToTable(s.GetDSCard("isbSite"));
         s.MoveLocationToTable(s.GetDSCard("system"));
         if (active) s.MoveCardsToDSSideOfTable(s.GetDSCard("bureau"));
@@ -95,6 +99,8 @@ public class Card_1271_012_Tests {
     @Test public void ImperialSecurityBureauActuallyTakesOnlySetupMissionsAndReshufflesOncePerGame() {
         var s = ready(true);
         var bureau = s.GetDSCard("bureau");
+        s.MoveCardsToTopOfDSReserveDeck(s.GetDSCard("mission"), s.GetDSCard("mission2"),
+            s.GetDSCard("setupEffect"), s.GetDSCard("leader"));
         var observer = LegacyShuffleObserver.observe(s);
         s.DSUseCardAction(bureau, TAKE_MISSION);
         s.PassAllResponses();
@@ -114,6 +120,8 @@ public class Card_1271_012_Tests {
         var interrupt = s.GetDSCard(name);
         s.MoveCardsToDSHand(interrupt);
         s.SkipToPhase(Phase.DEPLOY);
+        s.MoveCardsToTopOfDSReserveDeck(s.GetDSCard("leader"), s.GetDSCard("trooper"));
+        assertTrue(Filters.ISB_agent.accepts(s.game(), s.GetDSCard("leader")));
         int force = s.GetDSForcePileCount();
         var observer = LegacyShuffleObserver.observe(s);
         s.DSPlayCard(interrupt, TAKE_AGENT);
