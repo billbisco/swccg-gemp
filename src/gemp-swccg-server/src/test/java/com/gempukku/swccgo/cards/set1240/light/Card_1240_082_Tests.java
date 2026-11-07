@@ -130,6 +130,7 @@ public class Card_1240_082_Tests {
         scn.MoveCardsToLSHand(ittsboto);
         scn.MoveCardsToLSSideOfTable(disarming);
         scn.SkipToLSTurn(Phase.DEPLOY);
+        scn.MoveCardsToTopOfLSReserveDeck(worrt, nudj);
         int lost = scn.GetLSLostPileCount();
         assertTrue(scn.LSCardActionAvailable(ittsboto, "Lose 1 Force to take card into hand"));
         scn.LSUseCardAction(ittsboto, "Lose 1 Force to take card into hand");

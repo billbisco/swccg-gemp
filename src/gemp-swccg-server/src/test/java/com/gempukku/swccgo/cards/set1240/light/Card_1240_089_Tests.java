@@ -85,6 +85,7 @@ public class Card_1240_089_Tests {
         assertEquals(Zone.SIDE_OF_TABLE, scrambled.getZone());
 
         scn.DSPass();
+        scn.MoveCardsToTopOfLSReserveDeck(delay);
         assertTrue(scn.LSCardActionAvailable(scrambled, "Take Logistical Delay"));
         scn.LSUseCardAction(scrambled, "Take Logistical Delay");
         scn.PassAllResponses();

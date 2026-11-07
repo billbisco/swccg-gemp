@@ -120,6 +120,7 @@ public class Card_1240_090_Tests {
         scn.MoveCardsToLSSideOfTable(bones);
         scn.SkipToLSTurn(Phase.DEPLOY);
         scn.EnsureForcePile(scn.LS, 6);
+        scn.MoveCardsToTopOfLSReserveDeck(worrt, bogwing);
 
         assertTrue(scn.LSCardActionAvailable(bones, "Deploy creature or tauntaun"));
         scn.LSUseCardAction(bones, "Deploy creature or tauntaun");
@@ -155,6 +156,7 @@ public class Card_1240_090_Tests {
         scn.MoveCardsToLSSideOfTable(bones);
         scn.SkipToLSTurn(Phase.DEPLOY);
         scn.EnsureForcePile(scn.LS, 6);
+        scn.MoveCardsToTopOfLSReserveDeck(tauntaun);
 
         scn.LSUseCardAction(bones, "Deploy creature or tauntaun");
         scn.PassAllResponses();
