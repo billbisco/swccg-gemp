@@ -520,6 +520,10 @@ public class Card_1261_108_Tests {
         for (int i = 0; i < 16 && card.getZone() != destination; i++) {
             var prompt = scn.GetCurrentDecision().getText(); trace.add(prompt);
             if (scn.LSGetDecision() != null && scn.LSGetBPChoices().contains(card.getBlueprintId(true))) {
+                int index = scn.LSGetBPChoices().indexOf(card.getBlueprintId(true));
+                var allowed = scn.LSGetADParamAsList("selectable");
+                assertTrue(card.getBlueprint().getTitle() + " disabled at " + trace + ": " + allowed,
+                        Boolean.parseBoolean(allowed.get(index)));
                 scn.LSChooseCard(card);
             } else if (scn.LSHasCardChoiceAvailable(target)) {
                 assertFalse("Off-system target offered: " + trace, scn.LSHasCardChoiceAvailable(offSystem));
@@ -550,6 +554,8 @@ public class Card_1261_108_Tests {
 
     @Test public void paidAtPeaceStopsTheActualStrongIsVaderRetrievalThisTurn() {
         var scn = completeTest(false, 4, true, true, true, false);
+        scn.SkipToPhase(Phase.MOVE);
+        assertTrue(scn.GetCurrentDecision().getText(), scn.AwaitingLSMovePhaseActions());
         var source = scn.GetLSCard("ordinaryEffect");
         scn.MoveCardsToLSSideOfTable(source);
         var action = new TopLevelGameTextAction(source, scn.LS, source.getCardId());
@@ -581,8 +587,15 @@ public class Card_1261_108_Tests {
         assertEquals(4, before - scn.GetLSForcePileCount());
         assertTrue(GameConditions.hasGameTextModification(scn.game(), objective,
                 com.gempukku.swccgo.logic.modifiers.ModifyGameTextType.MIND_WHAT_YOU_HAVE_LEARNED_SAVE_YOU_IT_CAN__TARGETS_LEIA_INSTEAD_OF_LUKE));
-        scn.MoveCardsToTopOfLSLostPile(daughter);
         scn.SkipToPhase(Phase.DEPLOY);
+        var loss = new TopLevelGameTextAction(objective, scn.LS, objective.getCardId());
+        loss.appendEffect(new LoseCardFromTableEffect(loss, daughter));
+        scn.carryOutEffectInPhaseActionByPlayer(scn.LS, loss); scn.PassAllResponses();
+        assertTrue(scn.GetLSLostPile().contains(daughter));
+        scn.MoveCardsToBottomOfLSReserveDeck(leia, luke);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        assertEquals(Zone.RESERVE_DECK, leia.getZone());
+        assertEquals(Zone.RESERVE_DECK, luke.getZone());
         before = scn.GetLSForcePileCount();
         resolveDownload(scn, objective, leia, hut, remote, Zone.AT_LOCATION);
         assertEquals(hut, leia.getAtLocation());
