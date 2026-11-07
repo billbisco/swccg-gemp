@@ -8,6 +8,7 @@ import com.gempukku.swccgo.common.Phase;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.game.PhysicalCardImpl;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -20,12 +21,12 @@ public class Card_1250_038_Tests {
     private VirtualTableScenario scenario() {
         StartingSetup originalObjectiveOutsideDeck = new StartingSetup() {
             @Override public HashMap<String, String> Cards() {
-                return new HashMap<>() {{ put("original", "1116_11"); }};
+                return new HashMap<>() {{ put("original", "1116_11"); put("legacy", "1250_78"); }};
             }
             @Override public void Setup(VirtualTableScenario s) { }
         };
         return new VirtualTableScenario(new HashMap<>() {{
-            put("clone", "1250_38"); put("palpatine", "12_28"); put("luke", "1_19"); put("dock", "12_74");
+            put("clone", "1250_38"); put("palpatine", "12_28"); put("luke", "1_19"); put("dock", "12_74"); put("plains", "12_79");
         }}, new HashMap<>(), 35, 35, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 originalObjectiveOutsideDeck, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -83,5 +84,62 @@ public class Card_1250_038_Tests {
         assertTrue(s.AwaitingDSForceLossPayment());
         s.DSPayForceLossFromReserveDeck(); s.PassAllResponses();
         assertFalse(s.IsActiveForceDrain());
+    }
+    /** Puts the given objective on table with its They Will Be Lost And Confused side up. */
+    private void flipObjective(VirtualTableScenario s, String name) {
+        var objective = s.GetLSCard(name); s.MoveCardsToLSSideOfTable(objective);
+        objective.setObjectiveDeploymentComplete(true); s.gameState().flipCard(s.game(), objective, true);
+        assertEquals("They Will Be Lost And Confused", objective.getBlueprint().getTitle());
+    }
+
+    private int drainTotalAt(VirtualTableScenario s, PhysicalCardImpl site) {
+        s.SkipToLSTurn(Phase.CONTROL);
+        s.LSForceDrainAt(site); s.PassForceDrainStartResponses();
+        return (int) s.GetForceDrainTotal();
+    }
+
+    @Test
+    public void LegacyObjectiveBackAddsOneToDrainsAtTheClonesSite() {
+        var s = scenario(); s.StartGame(); var dock = s.GetLSCard("dock");
+        s.MoveLocationToTable(dock); s.MoveCardsToLocation(dock, s.GetLSCard("clone"));
+        flipObjective(s, "legacy");
+        assertEquals(ExpansionSet.VIRTUAL_BLOCK_5, s.GetLSCard("legacy").getBlueprint().getExpansionSet());
+        assertEquals(2, drainTotalAt(s, dock));
+    }
+
+    private int drainAtOtherSite(boolean legacyBack) {
+        var s = scenario(); s.StartGame(); var dock = s.GetLSCard("dock"); var plains = s.GetLSCard("plains");
+        s.MoveLocationToTable(dock); s.MoveLocationToTable(plains);
+        s.MoveCardsToLocation(dock, s.GetLSCard("clone")); s.MoveCardsToLocation(plains, s.GetLSCard("luke"));
+        if (legacyBack) flipObjective(s, "legacy");
+        return drainTotalAt(s, plains);
+    }
+
+    @Test
+    public void LegacyObjectiveBackDoesNotAddToDrainsAtAnotherSite() {
+        assertEquals(drainAtOtherSite(false), drainAtOtherSite(true));
+    }
+
+    @Test
+    public void LegacyObjectiveBackMakesPalpatineImmuneToAttritionBelowSix() {
+        var s = scenario(); s.StartGame(); var palpatine = s.GetLSCard("palpatine");
+        var site = s.GetLSStartingLocation();
+        s.MoveCardsToLocation(site, s.GetLSCard("clone")); s.MoveCardsToLocation(s.GetDSStartingLocation(), palpatine);
+        var query = s.game().getModifiersQuerying();
+        float before = query.getImmunityToAttritionLessThan(s.gameState(), palpatine);
+        assertTrue(before < 6);
+        flipObjective(s, "legacy");
+        assertEquals(6, query.getImmunityToAttritionLessThan(s.gameState(), palpatine), s.epsilon);
+    }
+
+    @Test
+    public void OriginalVirtualObjectiveBackDoesNotGrantPalpatineImmunity() {
+        var s = scenario(); s.StartGame(); var palpatine = s.GetLSCard("palpatine");
+        s.MoveCardsToLocation(s.GetLSStartingLocation(), s.GetLSCard("clone"));
+        s.MoveCardsToLocation(s.GetDSStartingLocation(), palpatine);
+        var query = s.game().getModifiersQuerying();
+        float before = query.getImmunityToAttritionLessThan(s.gameState(), palpatine);
+        flipObjective(s, "original");
+        assertEquals(before, query.getImmunityToAttritionLessThan(s.gameState(), palpatine), s.epsilon);
     }
 }
