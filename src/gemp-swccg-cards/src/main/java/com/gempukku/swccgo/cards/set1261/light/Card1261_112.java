@@ -1,7 +1,6 @@
 package com.gempukku.swccgo.cards.set1261.light;
 
 import com.gempukku.swccgo.cards.AbstractSite;
-import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Keyword;
@@ -10,6 +9,9 @@ import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.Filter;
+import com.gempukku.swccgo.game.state.GameState;
+import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.TriggerConditions;
@@ -56,10 +58,15 @@ public class Card1261_112 extends AbstractSite {
 
     @Override
     protected List<Modifier> getGameTextLightSideWhileActiveModifiers(String playerOnLightSideOfLocation, SwccgGame game, PhysicalCard self) {
-        var covered = GameConditions.canSpot(game, self, Filters.title(Title.Liberation))
-                ? Filters.or(Filters.sameCardId(self), Filters.Echo_site)
-                : Filters.or(Filters.Echo_site, Filters.First_Marker, Filters.Second_Marker, Filters.Third_Marker);
-        return List.of(new UnderHothEnergyShieldModifier(self, covered));
+        Filter outsideLiberationCoverage = new Filter() {
+            @Override
+            public boolean accepts(GameState state, ModifiersQuerying querying, PhysicalCard location) {
+                return !Filters.canSpot(state.getGame(), self, Filters.Liberation);
+            }
+        };
+        return List.of(new UnderHothEnergyShieldModifier(self, Filters.or(
+                Filters.sameCardId(self), Filters.Echo_site,
+                Filters.and(Filters.or(Filters.Second_Marker, Filters.Third_Marker), outsideLiberationCoverage))));
     }
 
     @Override

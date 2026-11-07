@@ -12,6 +12,9 @@ import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.Filter;
+import com.gempukku.swccgo.logic.decisions.YesNoDecision;
+import com.gempukku.swccgo.logic.effects.PlayoutDecisionEffect;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.GameUtils;
@@ -64,20 +67,8 @@ public class Card1220_163 extends AbstractObjective {
                         return "Choose Main Power Generators to deploy";
                     }
                 });
-        action.appendOptionalEffect(
-                new DeployCardFromReserveDeckEffect(action, Filters.title("Echo Base Garrison"), true, false) {
-                    @Override
-                    public String getChoiceText() {
-                        return "Choose Echo Base Garrison to deploy";
-                    }
-                });
-        action.appendOptionalEffect(
-                new DeployCardFromReserveDeckEffect(action, Filters.Maneuvering_Flaps, true, false) {
-                    @Override
-                    public String getChoiceText() {
-                        return "Choose Maneuvering Flaps to deploy";
-                    }
-                });
+        offerSetupEffect(action, playerId, "Echo Base Garrison", Filters.title("Echo Base Garrison"));
+        offerSetupEffect(action, playerId, "Maneuvering Flaps", Filters.Maneuvering_Flaps);
         var formation = Filters.title(Title.T_47_Battle_Formation);
         var forbidden = Filters.or(Filters.Hoth_Sentry,
                 Filters.and(Filters.location, Filters.not(Filters.Hoth_location), Filters.not(Filters.title(Title.Rendezvous_Point))));
@@ -88,6 +79,20 @@ public class Card1220_163 extends AbstractObjective {
         action.appendEffect(new AddUntilEndOfGameModifierEffect(action,
                 new ImmuneToTitleModifier(self, formation, Title.Sense), null));
         return action;
+    }
+
+    private void offerSetupEffect(ObjectiveDeployedTriggerAction action, String playerId, String title, Filter filter) {
+        action.appendOptionalEffect(new PlayoutDecisionEffect(action, playerId, new YesNoDecision("Deploy " + title + "?") {
+            @Override
+            protected void yes() {
+                action.insertEffect(new DeployCardFromReserveDeckEffect(action, filter, true, false) {
+                    @Override
+                    public String getChoiceText() {
+                        return "Choose " + title + " to deploy";
+                    }
+                });
+            }
+        }));
     }
 
     private static final class FormationPlayedCondition implements Condition {

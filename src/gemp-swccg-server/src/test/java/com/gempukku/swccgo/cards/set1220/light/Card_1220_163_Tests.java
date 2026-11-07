@@ -19,7 +19,7 @@ public class Card_1220_163_Tests {
         var ls = new HashMap<>(Map.ofEntries(
                 Map.entry("original", "3_61"), Map.entry("trench", "3_63"),
                 Map.entry("perimeter", "3_56"), Map.entry("ridge", "3_62"),
-                Map.entry("echo", "3_59"), Map.entry("sentry", "7_64"),
+                Map.entry("echo", "3_57"), Map.entry("sentry", "7_64"),
                 Map.entry("outside", "5_79"), Map.entry("rendezvous", "7_123"),
                 Map.entry("rebel", "3_6"), Map.entry("secondRebel", "3_6"),
                 Map.entry("thirdRebel", "3_6"), Map.entry("unique", "1_17"),
@@ -45,6 +45,8 @@ public class Card_1220_163_Tests {
                         scn.LSChooseCard(scn.GetLSCard("hoth"));
                     } else if (prompt.contains("Choose Main Power Generators to deploy")) {
                         scn.LSChooseCard(scn.GetLSCard("generators"));
+                    } else if (prompt.equals("Deploy Echo Base Garrison?") || prompt.equals("Deploy Maneuvering Flaps?")) {
+                        if (chooseOptional) scn.LSChooseYes(); else scn.LSChooseNo();
                     } else if (prompt.contains("Choose Echo Base Garrison to deploy")) {
                         if (chooseOptional) scn.LSChooseCard(scn.GetLSCard("garrison")); else scn.LSPass();
                     } else if (prompt.contains("Choose Maneuvering Flaps to deploy")) {
@@ -168,9 +170,7 @@ public class Card_1220_163_Tests {
         scn.SkipToLSTurn(Phase.MOVE);
         assertFalse(scn.GetLSAvailableActions().stream().anyMatch(x -> x.contains("Flip")));
         scn.MoveCardsToLocation(perimeter, scn.GetLSCard("speeder"));
-        scn.SkipToLSTurn(Phase.MOVE);
-        scn.LSUseCardAction(objective, "Flip");
-        scn.PassAllResponses();
+        scn.SkipToPhase(Phase.DRAW);
         assertEquals(Title.Liberation, objective.getBlueprint().getTitle());
     }
 
