@@ -5616,6 +5616,27 @@ public class TriggerConditions {
     }
 
     /**
+     * Determines if a card accepted by the source filter just added a destiny to the specified player's total power
+     * or attrition at a location accepted by the location filter.
+     * @param game the game
+     * @param effectResult the effect result
+     * @param playerId the player whose total power or attrition the destiny was added to
+     * @param sourceFilter the filter for the card that added the destiny
+     * @param locationFilter the location filter
+     * @return true or false
+     */
+    public static boolean isDestinyJustAddedToTotalPowerOrAttritionBy(SwccgGame game, EffectResult effectResult, String playerId, Filterable sourceFilter, Filterable locationFilter) {
+        if (effectResult.getType() == EffectResult.Type.DESTINY_ADDED_TO_TOTAL_POWER_OR_ATTRITION
+                && playerId.equals(effectResult.getPerformingPlayerId())) {
+            DestinyAddedToTotalPowerOrAttritionResult result = (DestinyAddedToTotalPowerOrAttritionResult) effectResult;
+            return result.getSourceCard() != null && result.getLocation() != null
+                    && Filters.and(sourceFilter).accepts(game, result.getSourceCard())
+                    && Filters.and(locationFilter).accepts(game, result.getLocation());
+        }
+        return false;
+    }
+
+    /**
      * Determines if the specified player just retrieved Force using a card accepted by the card filter.
      * @param game the game
      * @param effectResult the effect result
