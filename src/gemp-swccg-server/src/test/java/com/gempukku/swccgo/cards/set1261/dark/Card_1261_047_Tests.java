@@ -217,7 +217,7 @@ public class Card_1261_047_Tests {
             assertNotNull("Turn ended without reaching the next player", decision);
             String prompt = decision.getText();
             if (prompt.contains("Do you want to Pass?"))
-                scn.PlayerChooseOption(scn.GetDecidingPlayer(), "Yes");
+                scn.ChooseOption(scn.GetDecidingPlayer(), "Yes");
             else {
                 assertTrue("Unexpected turn-end decision: " + prompt,
                         prompt.toLowerCase().contains("optional") || prompt.contains("action")
