@@ -25,7 +25,7 @@ public class Card_1220_163_Tests {
                 Map.entry("thirdRebel", "3_6"), Map.entry("unique", "1_17"),
                 Map.entry("speeder", "3_69"), Map.entry("secondSpeeder", "3_69"),
                 Map.entry("lsArtillery", "3_72"), Map.entry("take", "2_18")));
-        var ds = new HashMap<>(Map.of("dsArtillery", "3_159", "vader", "1_168", "sense", "1_254"));
+        var ds = new HashMap<>(Map.of("dsArtillery", "3_159", "vader", "1_168", "sense", "1_267"));
         return new VirtualTableScenario(ls, ds, 40, 40, new StartingSetup() {
             @Override public HashMap<String, String> Cards() {
                 return new HashMap<>(Map.of("objective", "1220_163", "hoth", "3_55",
@@ -33,18 +33,30 @@ public class Card_1220_163_Tests {
             }
 
             @Override public void Setup(VirtualTableScenario scn) {
-                for (String card : List.of("hoth", "generators")) {
-                    assertTrue("Required setup " + card + " at " + scn.GetCurrentDecision().getText()
-                                    + " options=" + java.util.Arrays.toString(scn.GetADParam(scn.LS, "blueprintId"))
-                                    + " results=" + java.util.Arrays.toString(scn.GetADParam(scn.LS, "results")),
-                            scn.LSHasCardChoiceAvailable(scn.GetLSCard(card)));
-                    scn.LSChooseCard(scn.GetLSCard(card));
-                }
-                for (String card : List.of("garrison", "flaps")) {
-                    if (scn.LSHasCardChoiceAvailable(scn.GetLSCard(card))) {
-                        if (chooseOptional) scn.LSChooseCard(scn.GetLSCard(card)); else scn.LSDecided("");
+                var trace = new ArrayList<String>();
+                for (int i = 0; i < 20 && scn.GetCurrentDecision() != null; i++) {
+                    var prompt = scn.GetCurrentDecision().getText();
+                    trace.add(prompt);
+                    if (prompt.startsWith("On which side of")) {
+                        scn.LSChooseOption("Left");
+                    } else if (prompt.startsWith("Verify ")) {
+                        scn.PlayerPass(scn.GetDecidingPlayer());
+                    } else if (prompt.contains("Choose Hoth system to deploy")) {
+                        scn.LSChooseCard(scn.GetLSCard("hoth"));
+                    } else if (prompt.contains("Choose Main Power Generators to deploy")) {
+                        scn.LSChooseCard(scn.GetLSCard("generators"));
+                    } else if (prompt.contains("Choose Echo Base Garrison to deploy")) {
+                        if (chooseOptional) scn.LSChooseCard(scn.GetLSCard("garrison")); else scn.LSPass();
+                    } else if (prompt.contains("Choose Maneuvering Flaps to deploy")) {
+                        if (chooseOptional) scn.LSChooseCard(scn.GetLSCard("flaps")); else scn.LSPass();
+                    } else if (prompt.toLowerCase().contains("optional response")) {
+                        scn.PlayerPass(scn.GetDecidingPlayer());
+                    } else {
+                        break;
                     }
                 }
+                assertEquals(trace.toString(), Zone.LOCATIONS, scn.GetLSCard("hoth").getZone());
+                assertEquals(trace.toString(), Zone.LOCATIONS, scn.GetLSCard("generators").getZone());
             }
         }, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
@@ -129,13 +141,20 @@ public class Card_1220_163_Tests {
         scn.MoveCardsToTopOfLSReserveDeck(trench, echo, outside);
         assertTrue(scn.LSCardActionAvailable(objective, "Deploy a non-unique Rebel"));
         scn.LSUseCardAction(objective, "Deploy an exterior Hoth site");
-        assertTrue(scn.LSHasCardChoiceAvailable(trench));
-        assertFalse(scn.LSHasCardChoiceAvailable(echo));
-        assertFalse(scn.LSHasCardChoiceAvailable(outside));
-        scn.LSChooseCard(trench); scn.PassAllResponses();
+        assertTrue(selectable(scn, trench.getBlueprintId(true)));
+        assertFalse(selectable(scn, echo.getBlueprintId(true)));
+        assertFalse(selectable(scn, outside.getBlueprintId(true)));
+        scn.LSChooseCard(trench);
+        if (scn.LSDecisionAvailable("On which side of")) scn.LSChooseOption("Left");
+        scn.PassAllResponses();
         assertTrue(scn.IsCardActive(trench));
         if (scn.DSGetDecision() != null) scn.DSPass();
         assertFalse(scn.GetLSAvailableActions().stream().anyMatch(x -> x.contains("Deploy a non-unique Rebel")));
+    }
+
+    private boolean selectable(VirtualTableScenario scn, String blueprint) {
+        int index = scn.LSGetBPChoices().indexOf(blueprint);
+        return index >= 0 && Boolean.parseBoolean(scn.LSGetADParamAsList("selectable").get(index));
     }
 
     @Test public void moveFlipNeedsThreeExteriorSitesWithQualifyingCards() {
@@ -158,7 +177,7 @@ public class Card_1220_163_Tests {
     @Test public void liberationNarrowsTheLiveHothShieldAndEitherSidesHothArtilleryIsPowered() {
         var scn = start(); var objective = scn.GetLSCard("objective"); var generators = scn.GetLSCard("generators");
         var trench = scn.GetLSCard("trench"); var echo = scn.GetLSCard("echo"); var ridge = scn.GetLSCard("ridge");
-        for (var location : List.of(trench, echo, ridge)) scn.MoveLocationToTable(location);
+        for (var location : List.of(trench, echo, ridge)) if (location.getZone() != Zone.LOCATIONS) scn.MoveLocationToTable(location);
         var ls = scn.GetLSCard("lsArtillery"); var ds = scn.GetDSCard("dsArtillery");
         scn.MoveCardsToLocation(trench, ls, ds);
         var query = scn.game().getModifiersQuerying(); var state = scn.gameState();
