@@ -19,7 +19,7 @@ import static org.junit.Assert.*;
 public class Card_1261_079_Tests {
     private VirtualTableScenario fixture() {
         var ls = new HashMap<>(Map.of("combo", "1261_79", "commander", "3_3", "luke", "108_3",
-                "obi", "1_21", "han", "1_11", "ship", "1_146", "independent", "10_17",
+                "obi", "1_21", "han", "1_11", "ship", "1_146", "independent", "109_5",
                 "space", "6_87", "ordinary", "1_66", "trooper", "1_28"));
         ls.put("ordinaryLuke", "1_19");
         var ds = new HashMap<>(Map.of("bad", "4_116", "vader", "1_168", "fighter", "1_299", "fighterPilot", "1_173", "alter", "1_234"));
@@ -89,10 +89,7 @@ public class Card_1261_079_Tests {
         scn.MoveCardsToLSSideOfTable(combo);
         if (inSpace) scn.MoveLocationToTable(site);
         scn.MoveCardsToLocation(site, lost, opponent);
-        if (inSpace) {
-            scn.BoardAsPilot(lost, scn.GetLSCard("commander"));
-            scn.BoardAsPilot(opponent, scn.GetDSCard("fighterPilot"));
-        }
+        if (inSpace) scn.BoardAsPilot(opponent, scn.GetDSCard("fighterPilot"));
         scn.LSActivateForceCheat(8); scn.SkipToLSTurn(Phase.BATTLE);
         scn.LSStartBattleAndSkipToWeaponsSegment(site);
         var action = new TopLevelGameTextAction(site, scn.LS, site.getCardId());
@@ -101,7 +98,7 @@ public class Card_1261_079_Tests {
         scn.PassAllResponses();
         if (independent) {
             finishOrderedLosses(scn, lost);
-            assertTrue(scn.GetLSLostPile().contains(lost));
+            assertTrue(scn.GetCurrentDecision().getText() + " " + scn.gameState().getLastMessages(), scn.GetLSLostPile().contains(lost));
         } else {
             assertTrue(lost.getZone().isInPlay());
             assertEquals(0, scn.game().getModifiersQuerying().getForfeitWhenForfeiting(scn.gameState(), lost), scn.epsilon);
@@ -110,14 +107,15 @@ public class Card_1261_079_Tests {
             cancel.appendEffect(new CancelBattleEffect(cancel));
             scn.carryOutEffectInPhaseActionByPlayer(scn.LS, cancel);
             finishOrderedLosses(scn, lost);
-            assertTrue(scn.GetLSLostPile().contains(lost));
+            assertTrue(scn.GetCurrentDecision().getText() + " " + scn.gameState().getLastMessages(), scn.GetLSLostPile().contains(lost));
         }
     }
 
     private void finishOrderedLosses(VirtualTableScenario scn, com.gempukku.swccgo.game.PhysicalCardImpl lost) {
         for (int i = 0; i < 8; i++) {
             scn.PassAllResponses();
-            if (!scn.LSDecisionAvailable("Choose card to be lost")) return;
+            if (!(scn.LSDecisionAvailable("Choose card to be lost")
+                    || scn.LSDecisionAvailable("Choose card to put on"))) return;
             var pilot = scn.GetLSCard("commander");
             if (scn.LSHasCardChoiceAvailable(pilot)) scn.LSChooseCard(pilot);
             else if (scn.LSHasCardChoiceAvailable(lost)) scn.LSChooseCard(lost);
@@ -140,15 +138,17 @@ public class Card_1261_079_Tests {
         scn.carryOutEffectInPhaseActionByPlayer(scn.LS, loss);
         scn.PassAllResponses();
         assertTrue(han.getZone().isInPlay());
-        scn.PrepareLSDestiny(0); scn.PrepareDSDestiny(0);
-        scn.SkipToDamageSegment(true);
+        scn.PrepareLSDestiny(1); scn.PrepareDSDestiny(1);
+        scn.SkipToEndOfPowerSegment(true);
+        assertEquals(scn.gameState().getLastMessages().toString(), 2, scn.GetDSTotalDestiny());
+        scn.PassResponses("INITIAL_ATTRITION_CALCULATED");
         scn.PassDamageSegmentActions();
-        assertEquals(1, scn.GetUnpaidLSAttrition());
+        assertEquals(scn.gameState().getLastMessages().toString(), 2, scn.GetUnpaidLSAttrition());
         assertEquals(0, scn.GetUnpaidLSBattleDamage());
         if (chooseDeferredCharacterForAttrition) {
             scn.LSPayAttritionFromCardInPlay(han);
             assertTrue(scn.GetLSLostPile().contains(han));
-            assertEquals(1, scn.GetUnpaidLSAttrition());
+            assertEquals(2, scn.GetUnpaidLSAttrition());
             assertTrue(scn.AwaitingLSAttritionPayment());
         } else {
             scn.LSPayAttritionFromCardInPlay(trooper);
