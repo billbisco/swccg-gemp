@@ -25,7 +25,7 @@ public class Card_1261_082_Tests {
         ls.put("hoth", "3_63");
         ls.putAll(Map.of("system", "3_55", "capital", "9_74", "turbolaser", "9_89",
                 "xwing", "1_146", "xwingCannon", "7_162", "rapidFire", "7_100",
-                "onTarget", "7_96", "luckyShot", "3_45", "steadyAim", "7_105"));
+                "onTarget", "7_96", "luckyShot", "3_45", "steadyAim", "7_105", "speederCannon", "3_74"));
         var ds = new HashMap<>(Map.of("vader", "1_168", "alter", "1_234", "capital", "1_301", "walker", "3_157"));
         return new VirtualTableScenario(ls, ds, 40, 40, StartingSetup.DefaultLSGroundLocation,
                 StartingSetup.DefaultDSGroundLocation, StartingSetup.NoLSStartingInterrupts,
@@ -177,7 +177,7 @@ public class Card_1261_082_Tests {
     private void weaponResponse(boolean starship) {
         var scn = fixture(); scn.StartGame();
         var location = starship ? scn.GetLSCard("system") : scn.GetLSCard("hoth");
-        var gun = scn.GetLSCard(starship ? "turbolaser" : "artillery");
+        var gun = scn.GetLSCard(starship ? "turbolaser" : "speederCannon");
         var opponent = scn.GetDSCard(starship ? "capital" : "walker");
         var response = scn.GetLSCard(starship ? "steadyAim" : "luckyShot");
         scn.MoveLocationToTable(location);
@@ -186,7 +186,10 @@ public class Card_1261_082_Tests {
             scn.MoveCardsToLocation(location, capital, opponent);
             scn.AttachCardsTo(capital, gun);
         } else {
-            scn.MoveCardsToLocation(location, gun, scn.GetLSCard("luke"), opponent);
+            var speeder = scn.GetLSCard("rogue");
+            scn.MoveCardsToLocation(location, speeder, opponent);
+            scn.BoardAsPilot(speeder, scn.GetLSCard("luke"));
+            scn.AttachCardsTo(speeder, gun);
             scn.BoardAsPilot(opponent, scn.GetDSCard("vader"));
         }
         scn.MoveCardsToLSSideOfTable(scn.GetLSCard("flaps"));
@@ -197,13 +200,31 @@ public class Card_1261_082_Tests {
         scn.LSUseCardAction(gun, "Fire");
         if (scn.LSHasCardChoiceAvailable(opponent)) scn.LSChooseCard(opponent);
         scn.PassForceUseResponses();
-        scn.PassResponses("FIRING_WEAPON");
-        scn.PassResponses("WEAPON_FIRED");
-        if (scn.DSGetDecision() != null && scn.GetCurrentDecision().getText().toLowerCase().contains("optional response")) scn.DSPass();
-        scn.LSPlayCard(response, starship ? "Add 2 to weapon destiny" : "Add 1 to weapon destiny");
+        String mode = starship ? "Add 2 to weapon destiny" : "Add 1 to weapon destiny";
+        var trace = new ArrayList<String>();
+        for (int i = 0; i < 12 && scn.GetCurrentDecision() != null
+                && scn.GetLSAvailableActions().stream().noneMatch(x -> x.contains(mode)); i++) {
+            var prompt = scn.GetCurrentDecision().getText();
+            trace.add(prompt + " " + scn.GetLSAvailableActions());
+            if (!prompt.toLowerCase().contains("optional response")) break;
+            scn.PlayerPass(scn.GetDecidingPlayer());
+        }
+        assertTrue(trace.toString(), scn.GetLSAvailableActions().stream().anyMatch(x -> x.contains(mode)));
+        scn.LSPlayCard(response, mode);
         takeFlapsDraw(scn);
     }
 
     @Test public void actualLuckyShotOffersTheTopReserveCard() { weaponResponse(false); }
     @Test public void actualSteadyAimOffersTheTopReserveCard() { weaponResponse(true); }
+    @Test public void actualAlterCanChooseOrdinaryEffectButNotFlaps() {
+        var scn = fixture(); scn.StartGame();
+        var flaps = scn.GetLSCard("flaps"); var other = scn.GetLSCard("controlEffect");
+        scn.MoveCardsToLSSideOfTable(flaps, other);
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("vader"));
+        scn.MoveCardsToDSHand(scn.GetDSCard("alter"));
+        scn.DSActivateForceCheat(8); scn.SkipToDSTurn(Phase.CONTROL);
+        scn.DSPlayCard(scn.GetDSCard("alter"), "Draw destiny to cancel Effect");
+        assertFalse(scn.DSHasCardChoiceAvailable(flaps));
+        assertTrue(scn.DSHasCardChoiceAvailable(other));
+    }
 }
