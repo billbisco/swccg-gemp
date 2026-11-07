@@ -13,6 +13,7 @@ import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.LegacyFilters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.actions.PlayInterruptAction;
@@ -111,7 +112,7 @@ public class Card223_001 extends AbstractUsedOrLostInterrupt {
         // Check condition(s)
         if (((GameConditions.hasDeployedAtLeastXCardsThisGame(game, opponent, 2, Filters.system)
                 && !GameConditions.hasDeployedAtLeastXCardsThisGame(game, opponent, 1, Filters.battleground_site))
-                || GameConditions.canSpot(game, self, Filters.liberated_system))
+                || GameConditions.canSpot(game, self, LegacyFilters.liberatedSystem))
                 && GameConditions.isOncePerGame(game, self, gameTextActionId1)
                 && GameConditions.isDuringYourPhase(game, playerId, Phase.DEPLOY)) {
 
