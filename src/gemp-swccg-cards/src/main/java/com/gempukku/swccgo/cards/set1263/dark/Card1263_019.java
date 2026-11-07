@@ -26,7 +26,7 @@ public class Card1263_019 extends AbstractStarfighter {
     private static final Filter FACTORY = Filters.title("TIE Fighter Construction Facility");
 
     public Card1263_019() {
-        super(Side.DARK, 3, 3, 3, null, 4, 2, 4, "TIE Avenger", Uniqueness.UNRESTRICTED,
+        super(Side.DARK, 3, 2, 3, null, 4, 3, 4, "TIE Avenger", Uniqueness.UNRESTRICTED,
                 ExpansionSet.VIRTUAL_BLOCK_6_3, Rarity.V);
         setVirtualSuffix(true);
         setLore("Design based on Lord Vader's prototype Advanced x1. Manufactured until replaced by the more economical TIE Interceptor. Equipped with deflector shields and a hyperdrive.");
