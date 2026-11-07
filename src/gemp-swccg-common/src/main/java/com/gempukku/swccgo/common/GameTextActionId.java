@@ -1817,6 +1817,7 @@ public enum GameTextActionId {
     LEGACY__GENERAL_SOLOMAHAL__REARRANGE_SITES(false, true),
     // Any card's attempt to 'operate' on a character (lets other cards recognize and respond to the attempt)
     ANY_CARD__OPERATE_ON_CHARACTER,
+    LEGACY__BEAST_RIDER__DEPLOY_KAADU(true),
     ;
 
     private boolean _searchCardPile;
