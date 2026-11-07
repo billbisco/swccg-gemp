@@ -39,6 +39,7 @@ public class Card_1271_020_Tests {
                     s.MoveLocationToTable(s.GetDSCard(forbidden));
                 }
                 normalLight.Setup(s);
+                if (converted && s.DSDecisionAvailable("Will you allow the other player to convert")) s.DSChooseYes();
             }
         };
         StartingSetup starting = new StartingSetup() {
@@ -52,8 +53,12 @@ public class Card_1271_020_Tests {
                 }
                 s.DSChooseCard(s.GetDSCard("design"));
                 s.PassAllResponses();
-                s.DSChooseCard(s.GetDSCard("emperor"));
-                s.PassAllResponses();
+                if (!s.GetDSCard("emperor").getZone().isInPlay()) {
+                    assertTrue("Expected Emperor search; DS: " + decision(s.DSGetDecision()) + ", LS: " + decision(s.LSGetDecision()),
+                        selectable(s, "emperor"));
+                    s.DSChooseCard(s.GetDSCard("emperor"));
+                    s.PassAllResponses();
+                }
                 var target = converted ? s.GetLSStartingLocation() : s.GetDSStartingLocation();
                 if (s.DSHasCardChoiceAvailable(target)) {
                     s.DSChooseCard(target);
@@ -61,10 +66,10 @@ public class Card_1271_020_Tests {
                 }
                 if (inspectEffects) {
                     for (String name : List.of("noTry", "mobilization", "arrestOrder", "oppressive")) {
-                        assertTrue(name, s.DSHasCardChoiceAvailable(s.GetDSCard(name)));
+                        assertTrue(name, selectable(s, name));
                     }
                     for (String name : List.of("attached", "shield", "vader")) {
-                        assertFalse(name, s.DSHasCardChoiceAvailable(s.GetDSCard(name)));
+                        assertFalse(name, selectable(s, name));
                     }
                 }
                 for (String name : effects) {
@@ -81,6 +86,19 @@ public class Card_1271_020_Tests {
             : "deathStar".equals(forbidden) ? StartingSetup.DSStartingLocation("2_143") : StartingSetup.DefaultDSGroundLocation;
         return new VirtualTableScenario(new HashMap<>(), dark, 40, 40, light, darkStart,
             StartingSetup.NoLSStartingInterrupts, starting, StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
+    }
+
+    private static String decision(com.gempukku.swccgo.logic.decisions.AwaitingDecision decision) {
+        return decision == null ? "none" : decision.getText();
+    }
+
+    private static boolean selectable(VirtualTableScenario s, String name) {
+        String[] ids = s.DSGetADParam("blueprintId"), allowed = s.DSGetADParam("selectable");
+        if (ids == null || allowed == null) return false;
+        for (int i = 0; i < ids.length; i++) {
+            if (ids[i].equals(s.GetDSCard(name).getBlueprintId(true)) && Boolean.parseBoolean(allowed[i])) return true;
+        }
+        return false;
     }
 
     @Test public void AccordingToMyDesignPrintedStatsIconsKeywordsAndLoreAreCorrect() {
@@ -117,7 +135,8 @@ public class Card_1271_020_Tests {
         int force = s.GetDSForcePileCount();
         s.DSPlayCard(s.GetDSCard("design"));
         s.PassAllResponses();
-        assertFalse(s.DSHasCardChoiceAvailable(s.GetDSCard("vader")));
+        assertFalse(selectable(s, "vader"));
+        assertTrue("Expected Emperor search; " + decision(s.DSGetDecision()), selectable(s, "emperor"));
         s.DSChooseCard(s.GetDSCard("emperor"));
         s.PassAllResponses();
         if (s.DSHasCardChoiceAvailable(s.GetDSStartingLocation())) {
