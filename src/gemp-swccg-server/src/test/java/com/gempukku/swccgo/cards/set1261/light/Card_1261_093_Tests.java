@@ -92,7 +92,9 @@ public class Card_1261_093_Tests {
     @Test public void ArmedCancelsActualStunningLeaderBeforeItsExclusion() {
         var scn = started(); moveCombatants(scn, "obi"); scn.MoveCardsToDSHand(scn.GetDSCard("stunning"));
         scn.SkipToDSTurn(Phase.CONTROL); scn.DSActivateForceCheat(8); scn.SkipToPhase(Phase.BATTLE);
-        scn.DSInitiateBattle(scn.GetLSStartingLocation()); scn.DSPlayCard(scn.GetDSCard("stunning"), "Exclude characters");
+        scn.DSInitiateBattle(scn.GetLSStartingLocation());
+        if (scn.GetAwaitingDecision(scn.LS) != null) scn.LSPass();
+        scn.DSPlayCard(scn.GetDSCard("stunning"), "Exclude characters");
         scn.LSPlayCard(scn.GetLSCard("combo"), "Cancel"); scn.PassAllResponses();
         assertInZone(Zone.LOST_PILE, scn.GetDSCard("stunning")); assertInZone(Zone.USED_PILE, scn.GetLSCard("combo"));
         assertTrue(Filters.participatingInBattle.accepts(scn.game(), scn.GetLSCard("obi")));
