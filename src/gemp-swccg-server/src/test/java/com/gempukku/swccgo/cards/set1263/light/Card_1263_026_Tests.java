@@ -17,7 +17,7 @@ public class Card_1263_026_Tests {
         return new VirtualTableScenario(
                 new HashMap<>(Map.of("phylo", "1263_26", "local", "1_28", "remote", "1_30",
                         "ship", "1_146", "system", "3_55")),
-                new HashMap<>(Map.of("vader", "1_168", "saber", "1_324", "beaten", "5_163", "otherDark", "1_173")),
+                new HashMap<>(Map.of("vader", "1_168", "saber", "1_324", "beaten", "5_163", "otherDark", "1_173", "secondDark", "1_179")),
                 40, 40, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, "legacy");
@@ -63,16 +63,27 @@ public class Card_1263_026_Tests {
         assertEquals(3, mods.getImmunityToAttritionLessThan(state, remote), scn.epsilon);
         assertEquals(opposingBaseline, mods.getImmunityToAttritionLessThan(state, vader), scn.epsilon);
     }
-    @Test public void actualYouAreBeatenCannotTargetOwnCharactersHereButCanTargetOpposingCharacters() {
+    private void playYouAreBeaten(boolean protectedHere) {
         var scn = fixture(); scn.StartGame();
         var here = scn.GetLSStartingLocation(); var away = scn.GetDSStartingLocation();
         var phylo = scn.GetLSCard("phylo"); var local = scn.GetLSCard("local");
         var vader = scn.GetDSCard("vader"); var saber = scn.GetDSCard("saber"); var beaten = scn.GetDSCard("beaten");
-        scn.MoveCardsToLocation(here, phylo, local, vader, scn.GetDSCard("otherDark")); scn.AttachCardsTo(vader, saber);
+        var otherDark = scn.GetDSCard("otherDark"); var secondDark = scn.GetDSCard("secondDark");
+        scn.MoveCardsToLocation(here, local, vader, otherDark, secondDark); scn.AttachCardsTo(vader, saber);
+        scn.MoveCardsToLocation(protectedHere ? here : away, phylo);
         scn.MoveCardsToDSHand(beaten); scn.DSActivateForceCheat(8); scn.SkipToDSTurn(Phase.CONTROL);
         scn.DSPlayCard(beaten, "Prevent character from moving or battling");
+        assertEquals(scn.GetCurrentDecision().getText(), !protectedHere, scn.DSHasCardChoiceAvailable(local));
         assertFalse(scn.DSHasCardChoiceAvailable(phylo));
-        assertFalse(scn.DSHasCardChoiceAvailable(local));
-        assertTrue(scn.DSHasCardChoiceAvailable(vader));
+        assertTrue(scn.DSHasCardChoiceAvailable(otherDark));
+        assertTrue(scn.DSHasCardChoiceAvailable(secondDark));
+        if (!protectedHere) {
+            scn.DSChooseCard(local);
+            scn.PassForceUseResponses(); scn.PassAllResponses();
+            assertTrue(scn.GetDSLostPile().contains(beaten));
+        }
     }
+
+    @Test public void actualYouAreBeatenCannotTargetOwnCharactersAtPhylosSite() { playYouAreBeaten(true); }
+    @Test public void actualYouAreBeatenCanTargetAnAllyAtADifferentSiteFromPhylo() { playYouAreBeaten(false); }
 }
