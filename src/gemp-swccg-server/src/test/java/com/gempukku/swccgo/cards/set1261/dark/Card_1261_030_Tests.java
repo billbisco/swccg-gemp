@@ -31,9 +31,10 @@ public class Card_1261_030_Tests {
         if (shield) s.MoveCardsToDSSideOfTable(s.GetDSCard("shield"));
         return s;
     }
-    private void playShield(VirtualTableScenario s) {
+    private int playShield(VirtualTableScenario s) {
         var fear=s.GetDSCard("fear"); s.MoveCardsToDSSideOfTable(fear); s.StackCardsOn(fear,s.GetDSCard("shield")); s.SkipToPhase(Phase.DEPLOY);
-        s.DSUseCardAction(fear,"Defensive Shield"); s.DSChooseCard(s.GetDSCard("shield")); s.PassAllResponses();
+        int before=s.GetDSForcePileCount();
+        s.DSUseCardAction(fear,"Defensive Shield"); s.DSChooseCard(s.GetDSCard("shield")); s.PassAllResponses(); return before;
     }
     @Test public void WellLetFateADecideHuhPrintedStatsIconsAndKeywordsAreCorrect() {
         var s=scenario(); var b=s.GetDSCard("shield").getBlueprint();
@@ -46,7 +47,7 @@ public class Card_1261_030_Tests {
         s.BlueprintKeywordCheck(b,new ArrayList<Keyword>());
     }
     @Test public void WellLetFateADecideHuhActuallyPlaysFromStartingEffectForFree() {
-        var s=ready(false);int force=s.GetDSForcePileCount();playShield(s);
+        var s=ready(false);int force=playShield(s);
         assertEquals(Zone.SIDE_OF_TABLE,s.GetDSCard("shield").getZone());assertEquals(force,s.GetDSForcePileCount());
     }
     @Test public void WellLetFateADecideHuhCancelsAnAlreadyDeployedBeggar() {
