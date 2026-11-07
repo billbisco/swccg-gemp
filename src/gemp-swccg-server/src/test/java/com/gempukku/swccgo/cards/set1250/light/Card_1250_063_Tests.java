@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
 public class Card_1250_063_Tests {
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>() {{
-            put("liberty", "1250_63"); put("senate", "12_75"); put("platform", "1113_3");
+            put("liberty", "1250_63"); put("control", "4_48"); put("senate", "12_75"); put("platform", "1113_3");
             put("bail", "1116_1"); put("palpatine", "12_28"); put("trooper", "1_28"); put("panaka", "12_2");
             put("political", "12_40"); put("planners", "1_60"); put("bay", "8_76"); put("snowspeeder", "3_69");
         }}, new HashMap<>() {{
@@ -129,5 +129,33 @@ public class Card_1250_063_Tests {
         assertTrue(scn.DSDecisionAvailable("Choose Effect")); scn.DSChooseCard(scn.GetLSCard(protectedEffect ? "liberty" : "planners")); scn.PassAllResponses();
         assertEquals(senate, scn.GetLSCard("liberty").getAttachedTo());
         assertEquals(!protectedEffect, scn.GetLSUsedPile().contains(scn.GetLSCard("planners")));
+    }
+
+    @Test
+    public void LibertyDiesAlsoPreventsOwnerCancelingProtectedDrain() { checkOwnerControl(true); }
+    @Test
+    public void LibertyDiesOwnerCanCancelDrainWithoutRebellionCondition() { checkOwnerControl(false); }
+    private void checkOwnerControl(boolean rebellionHere) {
+        var scn = scenario(); scn.StartGame(); var senate = scn.GetLSCard("senate"); scn.MoveLocationToTable(senate);
+        scn.AttachCardsTo(senate, scn.GetLSCard("liberty"));
+        scn.MoveCardsToLocation(rebellionHere ? senate : scn.GetLSStartingLocation(), scn.GetLSCard("bail"));
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetLSCard("trooper"));
+        var control = scn.GetLSCard("control"); scn.MoveCardsToHand(control); scn.SkipToLSTurn(Phase.CONTROL);
+        scn.LSForceDrainAt(scn.GetDSStartingLocation()); scn.DSPass();
+        boolean available = scn.GetADParam(scn.LS, "cardId") != null && scn.GetADParam(scn.LS, "actionText") != null
+                && scn.LSCardPlayAvailable(control, "Cancel Force drain");
+        assertEquals(!rebellionHere, available);
+        if (available) { scn.LSPlayCard(control, "Cancel Force drain"); scn.PassAllResponses(); assertFalse(scn.IsActiveForceDrain()); }
+        else { scn.PassForceDrainStartResponses(); assertEquals(2, scn.GetForceDrainTotal()); }
+    }
+    @Test
+    public void LibertyDiesDoesNotBoostOrProtectDarkDrain() {
+        var scn = scenario(); scn.StartGame(); var senate = scn.GetLSCard("senate"); scn.MoveLocationToTable(senate);
+        scn.AttachCardsTo(senate, scn.GetLSCard("liberty")); scn.MoveCardsToLocation(senate, scn.GetLSCard("bail"));
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("emperor"));
+        var control = scn.GetLSCard("control"); scn.MoveCardsToHand(control); scn.SkipToDSTurn(Phase.CONTROL);
+        assertEquals(1, scn.game().getModifiersQuerying().getForceDrainAmount(scn.gameState(), scn.GetDSStartingLocation(), scn.DS), scn.epsilon);
+        scn.DSForceDrainAt(scn.GetDSStartingLocation()); assertTrue(scn.LSCardPlayAvailable(control, "Cancel Force drain"));
+        scn.LSPlayCard(control, "Cancel Force drain"); scn.PassAllResponses(); assertFalse(scn.IsActiveForceDrain());
     }
 }
