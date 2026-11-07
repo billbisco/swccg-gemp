@@ -72,9 +72,9 @@ public class Card1271_046 extends AbstractMission {
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
         String playerId = self.getOwner();
-        Filter liberatedSameAndRelated = Filters.or(Filters.liberated_system, Filters.relatedLocationTo(self, Filters.liberated_system));
+        Filter liberatedSameAndRelated = Filters.or(LegacyFilters.liberatedSystem, Filters.relatedLocationTo(self, LegacyFilters.liberatedSystem));
         List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new ForceDrainModifier(self, Filters.liberated_system, 1, playerId));
+        modifiers.add(new ForceDrainModifier(self, LegacyFilters.liberatedSystem, 1, playerId));
         modifiers.add(new TotalPowerModifier(self, liberatedSameAndRelated, 3, playerId));
         modifiers.add(new DrawsBattleDestinyIfUnableToOtherwiseModifier(self, Filters.and(Filters.your(self), Filters.at(liberatedSameAndRelated)), 1));
         return modifiers;
@@ -150,6 +150,7 @@ public class Card1271_046 extends AbstractMission {
     @Override
     protected List<RequiredGameTextTriggerAction> getGameTextRequiredAfterTriggers(final SwccgGame game, EffectResult effectResult, final PhysicalCard self, int gameTextSourceCardId) {
         final String opponent = game.getOpponent(self.getOwner());
+        // This instruction moves a stacked card, not the Effect that may otherwise liberate the system.
         if (TriggerConditions.forceDrainInitiatedBy(game, effectResult, opponent, Filters.liberated_system)) {
             final PhysicalCard system = ((ForceDrainInitiatedResult) effectResult).getLocation();
             Collection<PhysicalCard> liberationCards = Filters.filterStacked(game, Filters.and(Filters.liberationCard, Filters.stackedOn(system)));
