@@ -13,6 +13,7 @@ import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.conditions.OrCondition;
+import com.gempukku.swccgo.logic.modifiers.ImmunityToAttritionMayNotBeCanceledModifier;
 import com.gempukku.swccgo.logic.modifiers.MayNotDrawMoreThanBattleDestinyModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 
@@ -34,7 +35,8 @@ public class Card1250_058 extends AbstractNormalEffect {
         var siteWithYourJedi = Filters.and(Filters.site, Filters.sameLocationAs(self, Filters.and(Filters.your(self), Filters.Jedi)));
         var sidiousOrHologram = new OrCondition(new OnTableCondition(self, Filters.Sidious),
                 new OnTableCondition(self, Filters.and(Icon.EPISODE_I, Filters.hologram)));
-        return List.of(new MayNotDrawMoreThanBattleDestinyModifier(self, siteWithYourJedi, sidiousOrHologram, 2, opponent),
+        return List.of(new ImmunityToAttritionMayNotBeCanceledModifier(self, Filters.and(Filters.your(self), Filters.Jedi), sidiousOrHologram, opponent),
+                new MayNotDrawMoreThanBattleDestinyModifier(self, siteWithYourJedi, sidiousOrHologram, 2, opponent),
                 new MayNotDrawMoreThanBattleDestinyModifier(self, Filters.wherePresent(self, Filters.Luke), 2, opponent));
     }
 }

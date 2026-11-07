@@ -3,7 +3,10 @@ package com.gempukku.swccgo.cards.set1250.light;
 import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.logic.modifiers.AddsBattleDestinyModifier;
+import com.gempukku.swccgo.logic.modifiers.CancelImmunityToAttritionModifier;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -16,7 +19,7 @@ public class Card_1250_058_Tests {
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>() {{
             put("cunning", "1250_58"); put("luke", "1_19"); put("jedi", "1_21"); put("guard", "1_26");
-            put("ordinary", "1_60"); put("oldholo", "9_49");
+            put("ordinary", "1_60"); put("oldholo", "9_49"); put("leia", "1_17");
         }}, new HashMap<>() {{
             put("vader", "1_168"); put("sidious", "9_109"); put("holo", "12_139"); put("alter", "1_234");
         }}, 35, 35, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
@@ -101,5 +104,44 @@ public class Card_1250_058_Tests {
         if (s.DSDecisionAvailable("Choose a highest-ability character")) s.DSChooseCard(s.GetDSCard("vader"));
         s.PassDestinyDrawResponses(); s.PassAllResponses();
         assertTrue(s.GetLSLostPile().contains(ordinary)); assertEquals(Zone.SIDE_OF_TABLE, cunning.getZone());
+    }
+
+    /** Obi-Wan (Jedi, immune < 5) and Leia (non-Jedi, immune < 2) with a cancel-immunity modifier from the given card. */
+    private float[] immunityAfterCancel(boolean sidious, boolean cancelFromOpponent) {
+        var s = scenario(); s.StartGame(); var site = s.GetLSStartingLocation();
+        var obiWan = s.GetLSCard("jedi"); var leia = s.GetLSCard("leia");
+        s.MoveCardsToLSSideOfTable(s.GetLSCard("cunning"));
+        s.MoveCardsToLocation(site, obiWan, leia);
+        if (sidious) s.MoveCardsToLocation(s.GetDSStartingLocation(), s.GetDSCard("sidious"));
+        PhysicalCard canceler = cancelFromOpponent ? s.GetDSCard("vader") : s.GetLSCard("ordinary");
+        s.ApplyAdHocModifier(new CancelImmunityToAttritionModifier(canceler, Filters.or(Filters.sameCardId(obiWan), Filters.sameCardId(leia))));
+        var q = s.game().getModifiersQuerying();
+        return new float[] {q.getImmunityToAttritionLessThan(s.gameState(), obiWan), q.getImmunityToAttritionLessThan(s.gameState(), leia)};
+    }
+
+    @Test
+    public void WithSidiousOpponentMayNotCancelYourJedisImmunity() {
+        var immunity = immunityAfterCancel(true, true);
+        assertEquals(5, immunity[0], 0.01);
+        // Leia is not a Jedi, so the opponent's cancel still applies to her.
+        assertEquals(0, immunity[1], 0.01);
+    }
+
+    @Test
+    public void WithoutSidiousOrHologramOpponentStillCancelsJediImmunity() {
+        assertEquals(0, immunityAfterCancel(false, true)[0], 0.01);
+    }
+
+    @Test
+    public void YourOwnCardsMayStillCancelYourJedisImmunity() {
+        assertEquals(0, immunityAfterCancel(true, false)[0], 0.01);
+    }
+
+    @Test
+    public void WithoutAnyCancelJediKeepsImmunity() {
+        var s = scenario(); s.StartGame(); var obiWan = s.GetLSCard("jedi");
+        s.MoveCardsToLSSideOfTable(s.GetLSCard("cunning"));
+        s.MoveCardsToLocation(s.GetLSStartingLocation(), obiWan);
+        assertEquals(5, s.game().getModifiersQuerying().getImmunityToAttritionLessThan(s.gameState(), obiWan), 0.01);
     }
 }
