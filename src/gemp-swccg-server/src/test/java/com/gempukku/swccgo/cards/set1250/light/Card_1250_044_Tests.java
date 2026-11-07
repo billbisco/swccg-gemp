@@ -84,7 +84,9 @@ public class Card_1250_044_Tests {
         s.MoveCardsToDSSideOfTable(s.GetDSCard("search"));
         if (credits) s.MoveCardsToLSSideOfTable(s.GetLSCard("credits"));
         s.MoveCardsToHand(s.GetLSCard("token"));
-        s.SkipToDSTurn(Phase.DRAW);
+        assertEquals(s.DS, s.GetCurrentPlayer());
+        s.SkipToPhase(Phase.DRAW);
+        assertTrue(s.GetCurrentDecision().getText(), s.AwaitingDSDrawPhaseActions());
         s.MoveCardsToTopOfLSReserveDeck(s.GetLSCard("oldInterrupt"), s.GetLSCard("control"), s.GetLSCard("episode"));
         s.PrepareLSDestiny(2);
         assertTrue(s.DSCardActionAvailable(s.GetDSCard("search"), "lose 1 Force"));
@@ -204,7 +206,18 @@ public class Card_1250_044_Tests {
         s.LSStartBattleAndSkipToWeaponsSegment(site);
         s.PrepareLSDestiny(7); s.PrepareDSDestiny(7);
         s.SkipToDamageSegment(true);
-        assertEquals(0, s.GetUnpaidLSAttrition());
+        assertEquals("Vader's real battle destiny still generates attrition", 8, s.GetUnpaidLSAttrition());
+        for (int i = 0; i < 35 && s.gameState().getBattleState() != null; i++) {
+            String prompt = s.GetCurrentDecision().getText();
+            if (s.DSDecisionAvailable("card from battle to forfeit")) s.DSChooseCard(s.GetDSCard("vader"));
+            else if (s.AwaitingLSBattleDamagePayment()) s.LSChooseCard(s.GetTopOfLSReserveDeck());
+            else {
+                assertTrue("Qui-Gon should not be required to forfeit: " + prompt,
+                        prompt.contains("Optional responses") || prompt.contains("action to play or Pass"));
+                s.PlayerPass(s.GetDecidingPlayer());
+            }
+        }
+        assertNull(s.gameState().getBattleState());
         assertEquals(site, qui.getAtLocation());
     }
 }
