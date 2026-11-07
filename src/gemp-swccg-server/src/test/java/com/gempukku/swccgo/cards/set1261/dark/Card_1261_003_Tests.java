@@ -86,12 +86,16 @@ public class Card_1261_003_Tests {
                         Uniqueness.UNRESTRICTED, ExpansionSet.HOTH, Rarity.C1) {
                     { addIcons(Icon.INTERIOR_SITE, Icon.MOBILE); addIcon(Icon.DARK_FORCE, 1); }
                 });
-        int force = scn.GetDSForcePileCount(); int messages = scn.gameState().getLastMessages().size();
+        int force = scn.GetDSForcePileCount();
+        // A shuffle ends revealed-state for a card that remains in this pile, independent of random order.
+        var revealed = scn.GetDSReserveDeck().stream().filter(card -> card != site).findFirst().orElseThrow();
+        scn.gameState().markCardsRevealedFromPile(java.util.Collections.singletonList(revealed));
+        assertTrue(scn.gameState().isCardRevealedFromPile(revealed));
         scn.DSUseCardAction(driver, "Deploy vehicle site from Reserve Deck");
         scn.PassAllResponses(); scn.DSChooseCard(site); scn.PassAllResponses();
         assertEquals(walker, site.getRelatedStarshipOrVehicle());
-        assertTrue("Completed vehicle-site search must reshuffle Reserve Deck", scn.gameState().getLastMessages()
-                .subList(messages, scn.gameState().getLastMessages().size()).stream().anyMatch(x -> x.contains("shuffles") && x.contains("Reserve Deck")));
+        assertTrue(scn.GetDSReserveDeck().contains(revealed));
+        assertFalse("Completed location search must end revealed-state by reshuffling", scn.gameState().isCardRevealedFromPile(revealed));
         assertEquals(Zone.LOCATIONS, site.getZone()); assertEquals(force - 1, scn.GetDSForcePileCount());
         if (scn.AwaitingLSDeployPhaseActions()) scn.LSPass();
         assertFalse(scn.DSCardActionAvailable(driver, "Deploy vehicle site from Reserve Deck"));
