@@ -11,7 +11,7 @@ import static org.junit.Assert.*;
 public class Card_1261_060_Tests {
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>() {{ put("obiwan", "1_21"); put("han", "1_11"); put("worrt", "6_48"); }},
-                new HashMap<>() {{ put("rifle", "1261_60"); put("boba", "5_91"); put("otherBoba", "13_59"); put("jpBoba", "601_2");
+                new HashMap<>() {{ put("rifle", "1261_60"); put("boba", "5_91"); put("otherBoba", "7_167"); put("jpBoba", "601_2");
                     put("vader", "1_168"); put("delivery", "1220_45"); put("hidden", "6_154"); }}, 30, 30,
                 StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
@@ -57,6 +57,7 @@ public class Card_1261_060_Tests {
         scn.MoveCardsToLocation(site, scn.GetDSCard("boba"), scn.GetLSCard("obiwan"), scn.GetLSCard("han"));
         if (rifle) scn.AttachCardsTo(scn.GetDSCard("boba"), scn.GetDSCard("rifle"));
         if (naturalAbility) scn.MoveCardsToLocation(site, scn.GetDSCard("vader"));
+        scn.MoveCardsToDSHand(scn.GetDSCard("hidden")); scn.PrepareDSDestiny(4);
         scn.DSStartBattleAndSkipToWeaponsSegment(site); return scn;
     }
 
@@ -100,22 +101,22 @@ public class Card_1261_060_Tests {
         scn.gameState().markCardsRevealedFromPile(java.util.Collections.singletonList(remaining));
         assertTrue(scn.gameState().isCardRevealedFromPile(remaining));
         scn.DSUseCardAction(rifle, "Deploy Special Delivery from Reserve Deck"); scn.PassAllResponses();
-        scn.DSChooseCard(delivery); scn.PassAllResponses();
-        assertEquals(Zone.SIDE_OF_TABLE, delivery.getZone()); assertEquals(force, scn.GetDSForcePileCount());
+        if (scn.DSHasCardChoiceAvailable(delivery)) scn.DSChooseCard(delivery); scn.PassAllResponses();
+        assertEquals(scn.GetCurrentDecision().getText(), Zone.SIDE_OF_TABLE, delivery.getZone()); assertEquals(force, scn.GetDSForcePileCount());
         assertTrue(scn.GetDSReserveDeck().contains(remaining)); assertFalse(scn.gameState().isCardRevealedFromPile(remaining));
         if (scn.AwaitingLSDeployPhaseActions()) scn.LSPass();
         assertFalse(scn.DSCardActionAvailable(rifle, "Deploy Special Delivery from Reserve Deck"));
         scn.MoveCardsToTopOfDSReserveDeck(delivery);
         assertTrue("No printed timeframe prevents another deployment after Delivery leaves table", scn.DSCardActionAvailable(rifle, "Deploy Special Delivery from Reserve Deck"));
         scn.DSUseCardAction(rifle, "Deploy Special Delivery from Reserve Deck"); scn.PassAllResponses();
-        scn.DSChooseCard(delivery); scn.PassAllResponses(); assertEquals(Zone.SIDE_OF_TABLE, delivery.getZone());
+        if (scn.DSHasCardChoiceAvailable(delivery)) scn.DSChooseCard(delivery); scn.PassAllResponses(); assertEquals(scn.GetCurrentDecision().getText(), Zone.SIDE_OF_TABLE, delivery.getZone());
         assertEquals(force, scn.GetDSForcePileCount());
         scn.MoveCardsToTopOfDSReserveDeck(delivery); scn.SkipToPhase(Phase.MOVE);
         assertFalse(scn.DSCardActionAvailable(rifle, "Deploy Special Delivery from Reserve Deck"));
     }
 
     @Test public void FettsBlasterRifleCancelsActualHiddenWeaponsBeforeItsDestinyDraw() {
-        var scn = battle(true, false); scn.MoveCardsToDSHand(scn.GetDSCard("hidden")); scn.PrepareDSDestiny(4);
+        var scn = battle(true, false);
         int reserve = scn.GetDSReserveDeckCount();
         scn.DSPlayCard(scn.GetDSCard("hidden"));
         if (scn.DSHasCardChoiceAvailable(scn.GetLSCard("obiwan"))) scn.DSChooseCard(scn.GetLSCard("obiwan"));
@@ -125,7 +126,7 @@ public class Card_1261_060_Tests {
     }
 
     @Test public void HiddenWeaponsStillResolvesWithoutFettsBlasterRifle() {
-        var scn = battle(false, false); scn.MoveCardsToDSHand(scn.GetDSCard("hidden")); scn.PrepareDSDestiny(4);
+        var scn = battle(false, false);
         int reserve = scn.GetDSReserveDeckCount();
         scn.DSPlayCard(scn.GetDSCard("hidden"));
         if (scn.DSHasCardChoiceAvailable(scn.GetLSCard("obiwan"))) scn.DSChooseCard(scn.GetLSCard("obiwan"));
