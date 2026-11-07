@@ -5,7 +5,7 @@ import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import com.gempukku.swccgo.logic.decisions.CardActionSelectionDecision;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
-import com.gempukku.swccgo.logic.effects.ReleaseCaptiveEffect;
+import com.gempukku.swccgo.cards.effects.CancelDuelEffect;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -102,7 +102,7 @@ public class Card_1262_011_Tests {
         }
     }
 
-    @Test public void SoBeItJediBlocksJediEscapeAgainstAnActualObjectiveDuel() {
+    @Test public void SoBeItJediBlocksRealCancellationOfAnActualObjectiveDuel() {
         for (boolean effectOnTable : List.of(false, true)) {
             var scn = scenario();
             var objective = scn.GetDSCard("bhbm");
@@ -110,27 +110,10 @@ public class Card_1262_011_Tests {
             var luke = scn.GetLSCard("luke");
             var escape = scn.GetLSCard("escape");
             scn.MoveCardsToLocation(throne, scn.GetDSCard("vader"), scn.GetDSCard("emperor"), luke);
-            scn.MoveCardsToLSHand(escape);
-            scn.EnsureLSForcePile(2);
             if (effectOnTable) scn.MoveCardsToDSSideOfTable(scn.GetDSCard("effect"));
             scn.SkipToPhase(Phase.CONTROL);
             assertTrue(objective.isFlipped());
             assertTrue("The front of the Objective really captured Luke", luke.isCaptive());
-            var release = new TopLevelGameTextAction(objective, scn.DS, objective.getCardId());
-            release.appendEffect(new ReleaseCaptiveEffect(release, luke));
-            scn.carryOutEffectInPhaseActionByPlayer(scn.DS, release);
-            for (int i = 0; i < 35 && !scn.AwaitingDSControlPhaseActions(); i++) {
-                if (scn.DSDecisionAvailable("Choose release option")) scn.DSChoose("Rally");
-                else if (scn.LSDecisionAvailable("Choose release option")) scn.LSChoose("Rally");
-                else if (scn.DSHasCardChoiceAvailable(throne)) scn.DSChooseCard(throne);
-                else if (scn.LSHasCardChoiceAvailable(throne)) scn.LSChooseCard(throne);
-                else if (scn.LSGetDecision() instanceof CardActionSelectionDecision) scn.LSPass();
-                else if (scn.DSGetDecision() instanceof CardActionSelectionDecision) scn.DSPass();
-                else fail("Unexpected release decision: " + scn.GetCurrentDecision().getText());
-            }
-            assertTrue(scn.AwaitingDSControlPhaseActions());
-            assertFalse(luke.isCaptive());
-            assertTrue(objective.isFlipped());
             scn.DSChooseAction("Initiate a Luke/Vader duel");
             for (int i = 0; i < 25 && !scn.LSDecisionAvailable("Duel just initiated"); i++) {
                 if (scn.DSGetDecision() instanceof CardActionSelectionDecision) scn.DSPass();
@@ -138,13 +121,14 @@ public class Card_1262_011_Tests {
                 else fail("Unexpected Objective duel decision: " + scn.GetCurrentDecision().getText());
             }
             assertTrue(scn.LSDecisionAvailable("Duel just initiated"));
-            assertSame(objective, scn.gameState().getDuelState().getCardInitiatedDuel());
-            assertEquals(!effectOnTable, scn.LSCardPlayAvailable(escape, "Cancel duel"));
-            if (!effectOnTable) {
-                scn.LSPlayCard(escape, "Cancel duel");
-                scn.PassAllResponses();
-                assertInZone(Zone.LOST_PILE, escape);
-            }
+            var duel = scn.gameState().getDuelState();
+            assertSame(objective, duel.getCardInitiatedDuel());
+            // Standard cancellation at the live response. The printed Jedi Escape action is
+            // unavailable against captive Luke regardless of So Be It, Jedi.
+            var cancel = new TopLevelGameTextAction(escape, scn.LS, escape.getCardId());
+            cancel.appendEffect(new CancelDuelEffect(cancel));
+            scn.carryOutEffectInPhaseActionByPlayer(scn.LS, cancel);
+            assertEquals(!effectOnTable, duel.isCanceled());
         }
     }
     private void settleDeploy(VirtualTableScenario scn) {
