@@ -44,6 +44,6 @@ public class Card1262_004 extends AbstractCharacterDevice {
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, PhysicalCard self) {
         return List.of(new MayDeployOtherCardsAsReactToLocationModifier(self, "Deploy a character as a 'react'",
-                self.getOwner(), Filters.character, Filters.or(Filters.sameSite(self), Filters.adjacentSite(self))));
+                self.getOwner(), Filters.character, Filters.and(Filters.site, Filters.or(Filters.sameLocation(self), Filters.adjacentSite(self)))));
     }
 }

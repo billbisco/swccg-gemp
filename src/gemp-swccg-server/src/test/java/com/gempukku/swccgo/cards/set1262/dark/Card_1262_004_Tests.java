@@ -40,7 +40,7 @@ public class Card_1262_004_Tests {
         assertTrue(b.isLegacy());
         scn.BlueprintCardTypeCheck(b, new ArrayList<>(List.of(CardType.DEVICE)));
         scn.BlueprintIconCheck(b, new ArrayList<>(List.of(Icon.DEVICE, Icon.LEGACY_BLOCK_6)));
-        scn.BlueprintKeywordCheck(b, new ArrayList<>());
+        scn.BlueprintKeywordCheck(b, new ArrayList<>(List.of(Keyword.DEPLOYS_ON_CHARACTERS)));
     }
 
     @Test public void ComlinkActuallyDeploysForFreeOnlyOnAnImperialWarrior() {
@@ -51,6 +51,11 @@ public class Card_1262_004_Tests {
         var link = scn.GetDSCard("link");
         scn.MoveCardsToLocation(site, vader, alien, scn.GetLSCard("ben"));
         scn.MoveCardsToDSHand(link);
+        scn.SkipToPhase(Phase.CONTROL);
+        while (scn.GetDSForcePileCount() > 0) {
+            scn.MoveCardsToTopOfDSReserveDeck((com.gempukku.swccgo.game.PhysicalCardImpl)
+                    scn.gameState().getForcePile(scn.DS).getFirst());
+        }
         scn.SkipToPhase(Phase.DEPLOY);
         assertEquals(0, scn.GetDSForcePileCount());
         scn.DSDeployCard(link);
@@ -94,7 +99,7 @@ public class Card_1262_004_Tests {
                 else if (scn.DSGetDecision() instanceof CardActionSelectionDecision) scn.DSPass();
                 else fail("Unexpected Comlink react decision: " + scn.GetCurrentDecision().getText());
             }
-            assertEquals(distance < 2, reacted);
+            assertEquals("Character react at distance " + distance, distance < 2, reacted);
             if (reacted) assertSame(site, backup.getAtLocation());
             else assertInZone(Zone.HAND, backup);
         }
