@@ -31,7 +31,7 @@ public class Card1250_020 extends Card1116_048 {
     public Card1250_020() {
         setLore("Hologram.");
         setGameText("Deploy on Sidious. If with [Virtual Block 5] Expand The Empire during your control phase: relocate this card to an [Episode I] Jedi at a battleground or Senate (otherwise, retrieve 1 Force). If on a Jedi, add one battle destiny here, and if that Jedi just lost, relocate this card to Sidious.");
-        addIcons(Icon.CORUSCANT, Icon.SIDIOUS, Icon.LEGACY_BLOCK_5);
+        addIcons(Icon.SIDIOUS, Icon.LEGACY_BLOCK_5);
         addKeyword(Keyword.HOLOGRAM);
         setAsLegacy(true);
     }

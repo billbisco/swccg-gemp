@@ -49,7 +49,7 @@ public class Card_1250_014_Tests {
         assertEquals(3, b.getDestiny(), scn.epsilon);
         assertTrue(b.hasVirtualSuffix());
         assertTrue(b.isLegacy());
-        assertEquals("The Emperor disbanded the Imperial Senate \"for the duration of the emergency,\" seizing absolute power. He planned to extend rule by terrorizing planets into submission.", b.getLore());
+        assertEquals("The Emperor disbanded the Imperial Senate 'for the duration of the emergency,' seizing absolute power. He planned to extend rule by terrorizing planets into submission.", b.getLore());
         scn.BlueprintCardTypeCheck(b, new ArrayList<>(List.of(CardType.EFFECT)));
         scn.BlueprintIconCheck(b, new ArrayList<>(List.of(Icon.EFFECT, Icon.EPISODE_I, Icon.LEGACY_BLOCK_5)));
         scn.BlueprintKeywordCheck(b, new ArrayList<>());

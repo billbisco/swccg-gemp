@@ -48,7 +48,7 @@ public class Card_1250_020_Tests {
         assertTrue(b.isLegacy());
         assertEquals("Hologram.", b.getLore());
         scn.BlueprintCardTypeCheck(b, new ArrayList<>(List.of(CardType.EFFECT)));
-        scn.BlueprintIconCheck(b, new ArrayList<>(List.of(Icon.EFFECT, Icon.EPISODE_I, Icon.CORUSCANT,
+        scn.BlueprintIconCheck(b, new ArrayList<>(List.of(Icon.EFFECT, Icon.EPISODE_I,
                 Icon.SIDIOUS, Icon.LEGACY_BLOCK_5)));
         scn.BlueprintKeywordCheck(b, new ArrayList<>(List.of(Keyword.HOLOGRAM)));
     }
