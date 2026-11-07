@@ -160,6 +160,8 @@ public abstract class LegacyInsertPodraceShieldTests {
         if (dark()) s.MoveCardsToTopOfDSReserveDeck(insert, cover); else s.MoveCardsToTopOfLSReserveDeck(insert, cover);
         insert.setInserted(true); int before = force(s, true); activateOne(s);
         assertTrue(lost(s, false).contains(insert));
+        assertEquals(!shield, s.game().getModifiersQuerying().isActivatingForceProhibited(s.gameState(), owner(s)));
+        if (!s.GetDecidingPlayer().equals(owner(s))) s.PlayerPass(enemy(s));
         boolean canContinue = dark() ? s.DSActionAvailable("Activate Force") : s.LSActionAvailable("Activate Force");
         assertEquals(shield, canContinue);
         if (shield) activateOne(s);
@@ -214,7 +216,7 @@ public abstract class LegacyInsertPodraceShieldTests {
             if (text.contains("Choose effect to be performed first")) { s.PlayerDecided(player, "0"); continue; }
             String[] ids = decision.getDecisionParameters().get("cardId");
             if (text.contains("Used Pile") && ids != null && ids.length > 0) { s.PlayerDecided(player, ids[0]); continue; }
-            fail("Unexpected Podrace decision: " + text);
+            fail("Podrace must resolve its printed loss, retrieval and cleanup choices");
         }
         assertFalse("The real Podrace must finish", GameConditions.isDuringPodrace(s.game()));
         assertEquals(ownLost + (shield ? 0 : 6), lost(s, true).size());
