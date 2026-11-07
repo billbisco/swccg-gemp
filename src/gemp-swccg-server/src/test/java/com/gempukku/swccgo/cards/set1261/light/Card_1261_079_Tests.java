@@ -6,8 +6,15 @@ import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.game.AbstractActionProxy;
+import com.gempukku.swccgo.game.SwccgGame;
+import com.gempukku.swccgo.logic.TriggerConditions;
+import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
+import com.gempukku.swccgo.logic.actions.TriggerAction;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
 import com.gempukku.swccgo.logic.effects.LoseCardFromTableEffect;
+import com.gempukku.swccgo.logic.timing.EffectResult;
+import com.gempukku.swccgo.logic.timing.PassthruEffect;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -214,11 +221,25 @@ public class Card_1261_079_Tests {
         scn.PrepareLSDestiny(1); scn.PrepareDSDestiny(1);
         scn.SkipToDamageSegment(true);
         assertTrue(scn.gameState().getBattleState().isReachedDamageSegment());
-        var loss = new TopLevelGameTextAction(site, scn.LS, site.getCardId());
-        loss.appendEffect(new LoseCardFromTableEffect(loss, leia));
-        scn.carryOutEffectInPhaseActionByPlayer(scn.LS, loss);
+        scn.game().getActionsEnvironment().addUntilEndOfBattleActionProxy(new AbstractActionProxy() {
+            @Override
+            public List<TriggerAction> getRequiredAfterTriggers(SwccgGame game, EffectResult result) {
+                if (!TriggerConditions.isAboutToBeForfeited(game, result, Filters.sameCardId(trooper))) return List.of();
+                var loss = new RequiredGameTextTriggerAction(site, site.getCardId());
+                loss.appendEffect(new LoseCardFromTableEffect(loss, leia));
+                loss.appendEffect(new PassthruEffect(loss) {
+                    @Override protected void doPlayEffect(SwccgGame game) {
+                        assertTrue(game.getGameState().getBattleState().isReachedDamageSegment());
+                        assertTrue(scn.GetLSLostPile().contains(leia));
+                    }
+                });
+                return List.of(loss);
+            }
+        });
+        scn.PassDamageSegmentActions();
+        scn.LSPayAttritionFromCardInPlay(trooper);
         scn.PassAllResponses();
         assertTrue(scn.GetLSLostPile().contains(leia));
-        assertTrue(scn.gameState().isDuringBattle());
+        assertTrue(scn.GetLSLostPile().contains(trooper));
     }
 }
