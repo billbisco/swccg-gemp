@@ -26,6 +26,8 @@ public class Card_1271_023_Tests {
 
     private VirtualTableScenario board(boolean blownAway) {
         var s = scenario();
+        // The flipped Objective is only a later board fixture, never a starting choice.
+        s.MoveCardsToLSHand(s.GetLSCard("rough"));
         s.StartGame();
         s.MoveLocationToTable(s.GetDSCard("deathStar"));
         s.MoveLocationToTable(s.GetDSCard("warRoom"));
