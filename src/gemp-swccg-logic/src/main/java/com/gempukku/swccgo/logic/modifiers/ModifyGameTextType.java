@@ -152,6 +152,7 @@ public enum ModifyGameTextType {
     SON_OF_SKYWALKER_V__LOSE_1_FORCE_TO_SUBSTITUTE_DESTINY("Must first lose 1 Force to substitute a destiny draw using Jedi Test #5"),
     LEGACY__SQUABBLING_DELEGATES__SENATORS_ARE_CORUSCANT_GUARDS("'Senators' treated as 'Coruscant Guards'"),
     LEGACY__INTERRUPTS__VADER_MAY_BE_MAUL_OR_MARA_JADE("'Vader' may be treated as 'Maul or Mara Jade'"),
+    LEGACY__SO_BE_IT_JEDI__LUKE_DEPLOYS_TO_VADERS_SITE("Luke deploys to Vader's site (if possible)"),
 
     ;
 
