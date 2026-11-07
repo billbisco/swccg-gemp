@@ -34,6 +34,7 @@ public class Card1261_068 extends AbstractRebel {
         setGameText("Adds 2 to power of anything he pilots. Once per game, may convert opponent's Lando present at a site (may retrieve 2 Force). Adds one battle destiny if with your alien or Rebel. Immune to attrition < 3 (< 5 if your Effect with 'Lando' in lore on table).");
         addIcons(Icon.PILOT, Icon.WARRIOR);
         addPersona(Persona.LANDO);
+        addKeywords(Keyword.SCOUNDREL);
         setMatchingStarshipFilter(Filters.Falcon);
     }
 
