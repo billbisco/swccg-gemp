@@ -27,7 +27,11 @@ public class Card_1263_029_Tests {
                     scn.LSChooseCard(scn.GetLSCard("rescueInterrupt"));
                 }
                 if (scn.LSHasCardChoiceAvailable(scn.GetLSCard("cell"))) scn.LSChooseCard(scn.GetLSCard("cell"));
-                if (scn.LSHasCardChoiceAvailable(scn.GetLSCard("immune"))) scn.LSChooseCard(scn.GetLSCard("immune"));
+                if (scn.LSHasCardChoiceAvailable(scn.GetLSCard("immune"))) {
+                    int ordinary = scn.LSGetBPChoices().indexOf("1_66");
+                    assertTrue(ordinary < 0 || !Boolean.parseBoolean(scn.LSGetADParamAsList("selectable").get(ordinary)));
+                    scn.LSChooseCard(scn.GetLSCard("immune"));
+                }
                 scn.PassAllResponses();
             }
         };
@@ -155,6 +159,25 @@ public class Card_1263_029_Tests {
         assertEquals(lost + 3, scn.GetLSLostPileCount()); assertNull(scn.gameState().getBattleState());
         assertAtLocation(site, scn.GetLSCard("leia"), scn.GetDSCard("vader"));
     }
+
+    @Test public void rescueYouCannotCancelIfOnlyOneForceCanBeLost() {
+        var scn = setup(true, true, "r2"); enterTurn(scn, scn.DS, Phase.BATTLE);
+        var keep = scn.GetTopOfLSReserveDeck();
+        var combo = scn.GetLSCard("rescueInterrupt");
+        var available = new ArrayList<com.gempukku.swccgo.game.PhysicalCard>();
+        available.addAll(scn.GetLSReserveDeck());
+        available.addAll(scn.GetLSUsedPile());
+        available.addAll(scn.GetLSForcePile());
+        available.addAll(scn.GetLSHand());
+        for (var card : available) {
+            if (card != keep && card != combo) scn.MoveOutOfPlay((com.gempukku.swccgo.game.PhysicalCardImpl) card);
+        }
+        assertEquals(1, scn.GetLSReserveDeckCount()); assertEquals(1, scn.GetLSHandCount());
+        scn.DSInitiateBattle(scn.GetLSStartingLocation());
+        assertNotNull(scn.gameState().getBattleState());
+        assertFalse(has(scn, CANCEL));
+    }
+
 
     @Test public void RescueYouCannotCancelAnActualBattleWhenLeiaHasAnAlly() {
         var scn = setup(true, false, "r2"); enterTurn(scn, scn.DS, Phase.BATTLE);
