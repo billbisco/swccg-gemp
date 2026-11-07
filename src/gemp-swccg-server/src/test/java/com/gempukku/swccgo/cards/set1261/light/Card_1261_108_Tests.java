@@ -131,7 +131,7 @@ public class Card_1261_108_Tests {
         if (atPeaceInPlay) {
             var peace = scn.GetLSCard("peace");
             scn.LSActivateForceCheat(8);
-            scn.MoveCardsToTopOfLSReserveDeck(peace);
+            scn.MoveCardsToBottomOfLSReserveDeck(peace);
             scn.SkipToLSTurn(Phase.CONTROL);
             assertEquals(Zone.RESERVE_DECK, peace.getZone());
             resolveDownload(scn, scn.GetLSCard("objective"), peace, hut, scn.GetDSStartingLocation(), Zone.ATTACHED);
