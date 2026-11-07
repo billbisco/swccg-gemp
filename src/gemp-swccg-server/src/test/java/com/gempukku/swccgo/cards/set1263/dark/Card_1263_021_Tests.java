@@ -123,4 +123,14 @@ public class Card_1263_021_Tests {
         assertInZone(Zone.LOST_PILE,scn.GetLSCard("luke"));assertEquals(5,scn.GetUnpaidLSAttrition());
         assertTrue(scn.LSHasCardChoiceAvailable(scn.GetLSCard("leia")));
     }
+    @Test public void DroidWalkerDoesNotAcceptAnUnprintedAdditionalPilot() {
+        var scn=scenario();scn.StartGame();scn.MoveCardsToLocation(scn.GetDSStartingLocation(),scn.GetDSCard("walker"),scn.GetDSCard("other"));
+        scn.MoveCardsToDSHand(scn.GetDSCard("veers"));scn.SkipToDSTurn(Phase.DEPLOY);scn.DSDeployCard(scn.GetDSCard("veers"));
+        assertFalse(scn.DSHasCardChoiceAvailable(scn.GetDSCard("walker")));assertTrue(scn.DSHasCardChoiceAvailable(scn.GetDSCard("other")));
+    }
+    @Test public void DroidWalkerDoesNotAcceptAnUnprintedPassenger() {
+        var scn=scenario();scn.StartGame();scn.MoveCardsToLocation(scn.GetDSStartingLocation(),scn.GetDSCard("walker"),scn.GetDSCard("other"));
+        scn.MoveCardsToDSHand(scn.GetDSCard("trooper"));scn.SkipToDSTurn(Phase.DEPLOY);scn.DSDeployCard(scn.GetDSCard("trooper"));
+        assertFalse(scn.DSHasCardChoiceAvailable(scn.GetDSCard("walker")));assertTrue(scn.DSHasCardChoiceAvailable(scn.GetDSCard("other")));
+    }
 }
