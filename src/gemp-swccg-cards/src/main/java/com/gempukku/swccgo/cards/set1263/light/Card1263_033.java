@@ -7,6 +7,7 @@ import com.gempukku.swccgo.cards.conditions.HasPilotSeatOccupiedCondition;
 import com.gempukku.swccgo.cards.evaluators.CardMatchesEvaluator;
 import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.game.MayUseGetToYourShips;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.modifiers.DeployCostToTargetModifier;
@@ -16,7 +17,7 @@ import com.gempukku.swccgo.logic.modifiers.SuspendPermanentPilotModifier;
 import java.util.List;
 
 /** Legacy Block 6: Republic Starfighter. */
-public class Card1263_033 extends AbstractStarfighter {
+public class Card1263_033 extends AbstractStarfighter implements MayUseGetToYourShips {
     public Card1263_033() {
         super(Side.LIGHT, 2, 3, 3, null, 4, 5, 5, "Republic Starfighter",
                 Uniqueness.UNRESTRICTED, ExpansionSet.VIRTUAL_BLOCK_6_3, Rarity.V);

@@ -3,6 +3,7 @@ package com.gempukku.swccgo.cards.set1263.light;
 import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.game.PhysicalCardImpl;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -15,7 +16,8 @@ import static org.junit.Assert.*;
 public class Card_1263_033_Tests {
     private VirtualTableScenario fixture() {
         return new VirtualTableScenario(new HashMap<>(Map.of("fighter", "1263_33", "jedi", "9_24",
-                "pilot", "1_19", "nonpilot", "1_21", "hoth", "3_55", "otherShip", "12_90")),
+                "pilot", "1_19", "nonpilot", "1_21", "hoth", "3_55", "otherShip", "12_90",
+                "gtys", "14_31", "jediPilot", "601_171", "fighter2", "1263_33")),
                 new HashMap<>(), 40, 40, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, "legacy");
@@ -66,4 +68,72 @@ public class Card_1263_033_Tests {
     @Test public void actualNonJediPilotDeploysAboardForOneLess() { deploy("pilot", "fighter", 1); }
     @Test public void actualJediPilotDeploysAboardForTwoLess() { deploy("jedi", "fighter", 2); }
     @Test public void otherShipGetsNoDiscount() { deploy("pilot", "otherShip", 0); }
+
+    private static final String GTYS = "Reveal pilot or unpiloted starfighter from hand";
+
+    /** Get To Your Ships! on table, Hoth system on table, Force to pay for both cards. */
+    private VirtualTableScenario gtysTable() {
+        var scn = fixture(); scn.StartGame();
+        scn.MoveLocationToTable(scn.GetLSCard("hoth"));
+        scn.MoveCardsToLSSideOfTable(scn.GetLSCard("gtys"));
+        scn.LSActivateForceCheat(14);
+        return scn;
+    }
+
+    private void finishSimultaneousDeploy(VirtualTableScenario scn, PhysicalCardImpl fromReserve, PhysicalCardImpl ship) {
+        for (int i = 0; i < 10; i++) {
+            if (scn.LSHasCardChoiceAvailable(fromReserve)) scn.LSChooseCard(fromReserve);
+            else if (scn.LSHasCardChoiceAvailable(scn.GetLSCard("hoth"))) scn.LSChooseCard(scn.GetLSCard("hoth"));
+            else if (scn.LSHasCardChoiceAvailable(ship)) scn.LSChooseCard(ship);
+            else break;
+        }
+        scn.PassAllResponses();
+    }
+
+    @Test public void republicStarfighterMayBeRevealedUsingGetToYourShipsToDeployItsMatchingPilotFromReserve() {
+        var scn = gtysTable();
+        var ship = scn.GetLSCard("fighter"); var jedi = scn.GetLSCard("jediPilot"); var gtys = scn.GetLSCard("gtys");
+        scn.MoveCardsToLSHand(ship);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        scn.MoveCardsToTopOfLSReserveDeck(jedi); // after the activate phase, which takes cards from the top
+        assertTrue("Jedi Pilot matches Republic Starfighter", scn.game().getModifiersQuerying().isMatchingPair(scn.gameState(), jedi, ship));
+        assertTrue(scn.LSCardActionAvailable(gtys, GTYS));
+        scn.LSUseCardAction(gtys, GTYS);
+        assertTrue(scn.LSHasCardChoiceAvailable(ship));
+        scn.LSChooseCard(ship);
+        scn.PassAllResponses();
+        finishSimultaneousDeploy(scn, jedi, ship);
+        assertEquals(scn.GetLSCard("hoth"), scn.game().getModifiersQuerying().getLocationThatCardIsAt(scn.gameState(), ship));
+        assertTrue(scn.IsAboardAsPilot(ship, jedi));
+    }
+
+    @Test public void republicStarfighterMayBeDeployedFromReserveUsingGetToYourShipsWithItsMatchingPilot() {
+        var scn = gtysTable();
+        var ship = scn.GetLSCard("fighter"); var jedi = scn.GetLSCard("jediPilot"); var gtys = scn.GetLSCard("gtys");
+        scn.MoveCardsToLSHand(jedi);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        scn.MoveCardsToTopOfLSReserveDeck(ship); // after the activate phase, which takes cards from the top
+        assertTrue(scn.LSCardActionAvailable(gtys, GTYS));
+        scn.LSUseCardAction(gtys, GTYS);
+        scn.LSChooseCard(jedi);
+        scn.PassAllResponses();
+        finishSimultaneousDeploy(scn, ship, ship);
+        assertEquals(scn.GetLSCard("hoth"), scn.game().getModifiersQuerying().getLocationThatCardIsAt(scn.gameState(), ship));
+        assertTrue(scn.IsAboardAsPilot(ship, jedi));
+    }
+
+    @Test public void otherPermanentPilotStarfighterMayNotBeRevealedUsingGetToYourShips() {
+        var scn = gtysTable();
+        scn.MoveCardsToLSHand(scn.GetLSCard("otherShip"));
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        assertFalse(scn.LSCardActionAvailable(scn.GetLSCard("gtys"), GTYS));
+    }
+
+    @Test public void republicStarfighterInHandEnablesGetToYourShips() {
+        var scn = gtysTable();
+        scn.MoveCardsToLSHand(scn.GetLSCard("otherShip"), scn.GetLSCard("fighter2"));
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        assertTrue(scn.LSCardActionAvailable(scn.GetLSCard("gtys"), GTYS));
+    }
+
 }
