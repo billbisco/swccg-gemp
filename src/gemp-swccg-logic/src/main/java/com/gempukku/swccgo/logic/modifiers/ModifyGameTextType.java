@@ -160,6 +160,7 @@ public enum ModifyGameTextType {
     LEGACY__OBI_WAN_CRAZY_WIZARD__OLD_BEN_MAY_TARGET_SITE("May target Obi-Wan, Crazy Wizard's site even if not a Tatooine site"),
     LEGACY__YODA_SENIOR_COUNCIL_MEMBER__JEDI_COUNCIL_CHAMBER_IS_EPISODE_I_BATTLEGROUND_SITES("'Jedi Council Chamber' may be treated as '[Episode I] battleground sites'"),
     JEDI_TEST_2__MAY_DEPLOY_ON_JEDI_AS_IF_COMPLETED_APPLIES_ONLY_AT_THAT_SITE("May deploy on any Jedi (as if completed), but applies only at that site"),
+    OCCUPY_IN_GAME_TEXT_IS_CONTROL("'Occupy' in game text is treated as 'control'"),
     ;
 
 
