@@ -22,6 +22,7 @@ public class Card_1261_079_Tests {
                 "obi", "1_21", "han", "1_11", "ship", "1_146", "independent", "109_5",
                 "space", "6_87", "ordinary", "1_66", "trooper", "1_28"));
         ls.put("ordinaryLuke", "1_19");
+        ls.put("leia", "1_17");
         var ds = new HashMap<>(Map.of("bad", "4_116", "vader", "1_168", "fighter", "1_299", "fighterPilot", "1_173", "alter", "1_234"));
         var scn = new VirtualTableScenario(ls, ds, 40, 40, StartingSetup.DefaultLSGroundLocation,
                 StartingSetup.DefaultDSGroundLocation, StartingSetup.NoLSStartingInterrupts,
@@ -127,17 +128,17 @@ public class Card_1261_079_Tests {
     @Test public void participatingNonIndependentStarshipLossWaitsUntilBattleEnds() { loseBeforeDamage(true, false); }
     @Test public void independentStarshipIsLostImmediately() { loseBeforeDamage(true, true); }
     private void normalBattle(boolean chooseDeferredCharacterForAttrition) {
-        var scn = fixture(); var combo = scn.GetLSCard("combo"); var han = scn.GetLSCard("han");
+        var scn = fixture(); var combo = scn.GetLSCard("combo"); var leia = scn.GetLSCard("leia");
         var site = scn.GetLSStartingLocation(); var trooper = scn.GetLSCard("trooper");
         scn.MoveCardsToLSSideOfTable(combo);
-        scn.MoveCardsToLocation(site, han, trooper, scn.GetLSCard("ordinaryLuke"), scn.GetDSCard("vader"));
+        scn.MoveCardsToLocation(site, leia, trooper, scn.GetLSCard("ordinaryLuke"), scn.GetDSCard("vader"));
         scn.LSActivateForceCheat(8); scn.SkipToLSTurn(Phase.BATTLE);
         scn.LSStartBattleAndSkipToWeaponsSegment(site);
         var loss = new TopLevelGameTextAction(site, scn.LS, site.getCardId());
-        loss.appendEffect(new LoseCardFromTableEffect(loss, han));
+        loss.appendEffect(new LoseCardFromTableEffect(loss, leia));
         scn.carryOutEffectInPhaseActionByPlayer(scn.LS, loss);
         scn.PassAllResponses();
-        assertTrue(han.getZone().isInPlay());
+        assertTrue(leia.getZone().isInPlay());
         scn.PrepareLSDestiny(1); scn.PrepareDSDestiny(1);
         scn.SkipToEndOfPowerSegment(true);
         assertEquals(scn.gameState().getLastMessages().toString(), 2, scn.GetDSTotalDestiny());
@@ -146,15 +147,15 @@ public class Card_1261_079_Tests {
         assertEquals(scn.gameState().getLastMessages().toString(), 2, scn.GetUnpaidLSAttrition());
         assertEquals(0, scn.GetUnpaidLSBattleDamage());
         if (chooseDeferredCharacterForAttrition) {
-            scn.LSPayAttritionFromCardInPlay(han);
-            assertTrue(scn.GetLSLostPile().contains(han));
+            scn.LSPayAttritionFromCardInPlay(leia);
+            assertTrue(scn.GetLSLostPile().contains(leia));
             assertEquals(2, scn.GetUnpaidLSAttrition());
             assertTrue(scn.AwaitingLSAttritionPayment());
         } else {
             scn.LSPayAttritionFromCardInPlay(trooper);
             scn.PassAllResponses();
             assertTrue(scn.GetLSLostPile().contains(trooper));
-            assertTrue(scn.GetLSLostPile().contains(han));
+            assertTrue(scn.GetLSLostPile().contains(leia));
             assertFalse(scn.gameState().isDuringBattle());
         }
     }
