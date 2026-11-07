@@ -179,7 +179,7 @@ public class Card_1261_047_Tests {
         scn.DSInitiateBattle(site);
         scn.PassAllResponses();
         scn.PrepareDSDestiny(4);
-        scn.PrepareLSDestiny(4);
+        scn.PrepareLSDestiny(0);
         scn.SkipToDamageSegment(true);
         scn.PassResponses("Just drew");
         scn.PassDestinyDrawResponses();
@@ -187,7 +187,8 @@ public class Card_1261_047_Tests {
         scn.PassPowerSegmentActions();
         scn.PassAllResponses();
         scn.PassDamageSegmentActions();
-        assertTrue(scn.AwaitingLSAttritionPayment() || scn.AwaitingLSBattleDamagePayment());
+        assertTrue("Expected the observed LS payment decision: " + scn.GetCurrentDecision(),
+                scn.AwaitingLSAttritionPayment() || scn.AwaitingLSBattleDamagePayment());
         scn.LSChooseCard(luke);
         reachInterrupt(scn, combo, "Capture");
         scn.DSPlayCard(combo, "Capture");
@@ -195,11 +196,20 @@ public class Card_1261_047_Tests {
         scn.PassAllResponses();
         assertEquals(0, scn.GetUnpaidLSAttrition());
         assertTrue(bountyProhibited(scn, luke));
-        if (scn.AwaitingLSBattleDamagePayment())
-            scn.LSPayRemainingBattleDamageFromReserveDeck();
-        if (scn.AwaitingDSBattleDamagePayment())
-            scn.DSPayRemainingBattleDamageFromReserveDeck();
-        scn.PassAllResponses();
+        for (int i = 0; i < 20 && scn.gameState().isDuringBattle(); i++) {
+            scn.PassAllResponses();
+            if (scn.AwaitingLSBattleDamagePayment())
+                scn.LSPayBattleDamageFromReserveDeck();
+            else if (scn.AwaitingDSBattleDamagePayment())
+                scn.DSPayBattleDamageFromReserveDeck();
+            else if (scn.AwaitingLSForceLossPayment())
+                scn.LSPayRemainingForceLossFromReserveDeck();
+            else if (scn.AwaitingDSForceLossPayment())
+                scn.DSPayRemainingForceLossFromReserveDeck();
+            else if (scn.gameState().isDuringBattle())
+                passOptional(scn);
+        }
+        assertFalse("Finish the battle before changing turns", scn.gameState().isDuringBattle());
         String battleTurn = scn.GetCurrentPlayer();
         scn.SkipToPhase(Phase.DRAW);
         scn.PassDrawActions();
