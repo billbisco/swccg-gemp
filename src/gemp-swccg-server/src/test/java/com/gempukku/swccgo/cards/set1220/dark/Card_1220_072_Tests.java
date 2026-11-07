@@ -7,6 +7,7 @@ import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import com.gempukku.swccgo.game.PhysicalCardImpl;
+import com.gempukku.swccgo.logic.modifiers.CancelOpponentsForceDrainBonusesModifier;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -48,12 +49,13 @@ public class Card_1220_072_Tests {
     };
 
     private VirtualTableScenario scenario() {
-        return new VirtualTableScenario(new HashMap<>(Map.of("revolution", "1_62", "rebel", "1_19")),
+        return new VirtualTableScenario(new HashMap<>(Map.of("revolution", "1_62", "rebel", "1_19", "lightShip", "9_74")),
                 new HashMap<>(Map.ofEntries(Map.entry("hoth", "3_143"), Map.entry("generators", "1282_8"),
                         Map.entry("decipherIce", "3_148"), Map.entry("decree", "1220_38"), Map.entry("blockade", "1220_31"),
                         Map.entry("cannon", "3_158"), Map.entry("landing", "11_77"), Map.entry("landing8", "1282_3"),
                         Map.entry("garrison", "104_7"), Map.entry("marker", "3_149"), Map.entry("vader", "1_168"),
-                        Map.entry("veers", "3_87"), Map.entry("walker", "3_157"), Map.entry("marker2", "3_144"))),
+                        Map.entry("veers", "3_87"), Map.entry("walker", "3_157"), Map.entry("marker2", "3_144"),
+                        Map.entry("darkShip", "1_301"), Map.entry("otherVehicle", "1_308"))),
                 30, 30, StartingSetup.DefaultLSGroundLocation, START,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -87,6 +89,7 @@ public class Card_1220_072_Tests {
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_2, bp.getExpansionSet());
         assertEquals(Rarity.V, bp.getRarity());
         scn.BlueprintCardTypeCheck(bp, new ArrayList<>(List.of(CardType.OBJECTIVE)));
+        scn.BlueprintKeywordCheck(bp, new ArrayList<>());
         scn.BlueprintIconCheck(bp, new ArrayList<>(List.of(Icon.OBJECTIVE, Icon.SPECIAL_EDITION, Icon.LEGACY_BLOCK_2)));
         var back = new Card1220_072_BACK();
         assertEquals("Imperial Control", back.getTitle());
@@ -160,8 +163,8 @@ public class Card_1220_072_Tests {
         assertTrue(scn.DSCardPlayAvailable(garrison, "Take an AT-AT"));
         scn.DSPlayCard(garrison, "Take an AT-AT");
         scn.PassAllResponses();
-        if (scn.DSHasCardChoiceAvailable(scn.GetTopOfDSForcePile()))
-            scn.DSPayForceLossFromForcePile();
+        if (scn.DSDecisionAvailable("Choose Force to lose"))
+            scn.DSChooseCard(scn.GetTopOfDSForcePile());
         scn.PassAllResponses();
         if (scn.DSHasCardChoiceAvailable(walker))
             scn.DSChooseCard(walker);
@@ -212,6 +215,114 @@ public class Card_1220_072_Tests {
             if (scn.AwaitingLSDeployPhaseActions())
                 scn.LSPass();
         }
+    }
+
+
+    @Test(timeout = 10000)
+    public void imperialControlAddsForOnlyImperialsAtHothSystemAndRaisesRebelDeployOnlyAtHothSites() {
+        var scn = scenario();
+        var ice = setup(scn);
+        var hoth = scn.GetDSCard("hoth");
+        var ship = scn.GetDSCard("darkShip");
+        var veers = scn.GetDSCard("veers");
+        var rebel = scn.GetLSCard("rebel");
+        flipToControl(scn);
+        scn.MoveCardsToLSHand(rebel);
+        assertEquals(rebel.getBlueprint().getDeployCost() + 1, costAt(scn, rebel, ice), scn.epsilon);
+        assertEquals(rebel.getBlueprint().getDeployCost(), costAt(scn, rebel, scn.GetLSStartingLocation()), scn.epsilon);
+        scn.MoveCardsToLocation(hoth, ship, scn.GetLSCard("lightShip"));
+        scn.BoardAsPilot(ship, scn.GetDSCard("vader"));
+        scn.MoveCardsToLocation(ice, veers);
+        scn.SkipToDSTurn(Phase.BATTLE);
+        scn.EnsureDSForcePile(8);
+        scn.DSInitiateBattle(hoth);
+        scn.PassAllResponses();
+        var mods = scn.game().getModifiersQuerying();
+        assertEquals(6, mods.getTotalBattleDestiny(scn.gameState(), scn.DS, 5), scn.epsilon);
+        assertEquals(5, mods.getTotalBattleDestiny(scn.gameState(), scn.LS, 5), scn.epsilon);
+    }
+
+    @Test(timeout = 10000)
+    public void backProtectsDrainBonusesOnlyUntilLightControlsAHothLocation() {
+        var scn = scenario();
+        var ice = setup(scn);
+        var rebel = scn.GetLSCard("rebel");
+        var veers = scn.GetDSCard("veers");
+        flipToControl(scn);
+        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), rebel);
+        scn.MoveCardsToLocation(ice, veers);
+        scn.ApplyAdHocModifier(new CancelOpponentsForceDrainBonusesModifier(rebel, Filters.any));
+        var mods = scn.game().getModifiersQuerying();
+        assertFalse(mods.isForceDrainModifierCanceled(scn.gameState(), ice, veers, scn.DS, scn.DS, 1));
+        scn.MoveCardsToLocation(ice, rebel);
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), veers);
+        scn.SkipToPhase(Phase.BATTLE);
+        assertTrue(mods.isForceDrainModifierCanceled(scn.gameState(), ice, veers, scn.DS, scn.DS, 1));
+    }
+
+    @Test(timeout = 10000)
+    public void backRetrievesARealNonVehicleNonInterruptIntoHandAfterAnAtAtDeploys() {
+        var scn = scenario();
+        var ice = setup(scn);
+        var obj = scn.GetDSCard("objective");
+        var walker = scn.GetDSCard("walker");
+        var vader = scn.GetDSCard("vader");
+        flipToControl(scn);
+        scn.MoveCardsToDSHand(walker);
+        scn.MoveCardsToTopOfDSLostPile(vader, scn.GetDSCard("landing"), scn.GetDSCard("otherVehicle"));
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.EnsureDSForcePile(10);
+        scn.DSDeployCard(walker);
+        if (scn.DSHasCardChoiceAvailable(ice))
+            scn.DSChooseCard(ice);
+        for (int i = 0; i < 10; i++) {
+            var ds = scn.DSGetDecision();
+            var ls = scn.LSGetDecision();
+            if (ds != null && ds.getText().toLowerCase().contains("optional response")
+                    && scn.DSCardActionAvailable(obj, "Retrieve a card into hand"))
+                break;
+            if (ls != null && ls.getText().toLowerCase().contains("optional response"))
+                scn.LSPass();
+            else if (ds != null && ds.getText().toLowerCase().contains("optional response"))
+                scn.DSPass();
+            else
+                fail("Expected actual AT-AT deployment to offer retrieval");
+        }
+        scn.DSUseCardAction(obj, "Retrieve a card into hand");
+        if (scn.DSHasCardChoiceAvailable(vader))
+            scn.DSChooseCard(vader);
+        scn.PassAllResponses();
+        assertTrue(scn.GetDSHand().contains(vader));
+        assertTrue(scn.GetDSLostPile().contains(scn.GetDSCard("landing")));
+        assertTrue(scn.GetDSLostPile().contains(scn.GetDSCard("otherVehicle")));
+    }
+
+
+    @Test(timeout = 10000)
+    public void revolutionIsCanceledOnEachFace() {
+        for (boolean back : List.of(false, true)) {
+            var scn = scenario();
+            setup(scn);
+            if (back)
+                flipToControl(scn);
+            var revolution = scn.GetLSCard("revolution");
+            scn.MoveCardsToLSHand(revolution);
+            scn.SkipToLSTurn(Phase.DEPLOY);
+            scn.EnsureLSForcePile(8);
+            scn.LSDeployCard(revolution);
+            if (scn.LSHasCardChoiceAvailable(scn.GetLSStartingLocation()))
+                scn.LSChooseCard(scn.GetLSStartingLocation());
+            scn.PassAllResponses();
+            assertTrue(scn.GetLSLostPile().contains(revolution));
+            assertEquals(back, scn.GetDSCard("objective").isFlipped());
+        }
+    }
+
+    private void flipToControl(VirtualTableScenario scn) {
+        recordBlownAway(scn, scn.GetDSCard("generators"));
+        scn.AttachCardsTo(scn.GetDSCard("hoth"), scn.GetDSCard("blockade"));
+        scn.SkipToDSTurn(Phase.CONTROL);
+        assertTrue(scn.GetDSCard("objective").isFlipped());
     }
 
     private float costAt(VirtualTableScenario scn, PhysicalCardImpl card, PhysicalCardImpl site) {
