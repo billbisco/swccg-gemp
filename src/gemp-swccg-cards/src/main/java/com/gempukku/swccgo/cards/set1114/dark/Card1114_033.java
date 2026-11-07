@@ -2,6 +2,7 @@ package com.gempukku.swccgo.cards.set1114.dark;
 
 import com.gempukku.swccgo.cards.AbstractNormalEffect;
 import com.gempukku.swccgo.cards.conditions.CantSpotCondition;
+import com.gempukku.swccgo.cards.conditions.GameTextModificationCondition;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.PlayCardZoneOption;
@@ -9,16 +10,21 @@ import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
+import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.game.state.GameState;
+import com.gempukku.swccgo.logic.conditions.AndCondition;
+import com.gempukku.swccgo.logic.conditions.Condition;
+import com.gempukku.swccgo.logic.conditions.OrCondition;
 import com.gempukku.swccgo.logic.evaluators.Evaluator;
 import com.gempukku.swccgo.logic.modifiers.CancelsGameTextModifier;
 import com.gempukku.swccgo.logic.modifiers.DefenseValueModifier;
 import com.gempukku.swccgo.logic.modifiers.DeployCostModifier;
 import com.gempukku.swccgo.logic.modifiers.ForfeitModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
+import com.gempukku.swccgo.logic.modifiers.ModifyGameTextType;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 
 import java.util.LinkedList;
@@ -55,8 +61,19 @@ public class Card1114_033 extends AbstractNormalEffect {
         modifiers.add(new DeployCostModifier(self, Filters.and(Filters.destroyer_droid, Filters.non_unique), -1));
         modifiers.add(new ForfeitModifier(self, Filters.and(Filters.destroyer_droid, Filters.non_unique), 1));
         modifiers.add(new DefenseValueModifier(self, Filters.and(Filters.opponents(self), Filters.character),
-                new CantSpotCondition(self, Filters.and(Filters.your(self), Filters.character, Filters.at(Filters.site), Filters.not(Filters.destroyer_droid))),
+                allYourCharactersAtSitesAreDestroyerDroids(self),
                 perDestroyer));
         return modifiers;
+    }
+
+    /**
+     * "While all your characters at sites are destroyer droids". When this card's game text is modified to ignore
+     * Neimoidians (e.g. by Droid Racks (V)), your Neimoidians at sites do not break the condition.
+     */
+    protected static Condition allYourCharactersAtSitesAreDestroyerDroids(PhysicalCard self) {
+        Filter nonDestroyers = Filters.and(Filters.your(self), Filters.character, Filters.at(Filters.site), Filters.not(Filters.destroyer_droid));
+        return new OrCondition(new CantSpotCondition(self, nonDestroyers),
+                new AndCondition(new GameTextModificationCondition(self, ModifyGameTextType.LEGACY__DROID_RACKS__WHERE_ARE_THOSE_DROIDEKAS_IGNORES_NEIMOIDIANS),
+                        new CantSpotCondition(self, Filters.and(nonDestroyers, Filters.not(Filters.Neimoidian)))));
     }
 }
