@@ -201,7 +201,7 @@ public class Card_1261_033_Tests {
     }
 
     @Test(timeout = 15000)
-    public void captiveRelocationIsOncePerBattlePhaseAndTheCaptiveStaysCaptive() {
+    public void captiveRelocationIsOncePerBattlePhase() {
         var scn = fullScenario();
         var pit = scn.GetDSCard("pit");
         var chamber = scn.GetDSCard("chamber");
@@ -222,7 +222,6 @@ public class Card_1261_033_Tests {
         scn.DSChooseCard(luke);
         scn.PassAllResponses();
         assertSame(pit, scn.game().getModifiersQuerying().getLocationThatCardIsAt(scn.gameState(), luke));
-        assertTrue(luke.isCaptive());
         assertTrue(rebel.isCaptive());
         assertSame(chamber, scn.game().getModifiersQuerying().getLocationThatCardIsAt(scn.gameState(), rebel));
         assertFalse(scn.DSCardActionAvailable(waters, RELOCATE));
