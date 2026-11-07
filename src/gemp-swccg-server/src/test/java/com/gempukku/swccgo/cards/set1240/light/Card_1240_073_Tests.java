@@ -39,7 +39,7 @@ public class Card_1240_073_Tests {
                 Map.entry("luminous", "9_77"), Map.entry("ywing", "1_147"),
                 Map.entry("han", "1_11"), Map.entry("falcon", "1_143"),
                 Map.entry("yacht", "10_20"), Map.entry("corvette", "1_140"),
-                Map.entry("redOne", "1_144"))), new HashMap<>(), 10, 10,
+                Map.entry("redOne", "1_144"))), new HashMap<>(), 40, 40,
                 StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -135,12 +135,13 @@ public class Card_1240_073_Tests {
         var rayc = scn.GetLSCard("rayc");
         scn.StartGame();
         scn.MoveCardsToLocation(scn.GetLSStartingLocation(), rayc);
+        scn.SkipToLSTurn(Phase.CONTROL);
+        // Placed after activation so that activating Force does not draw them from the top of Reserve Deck.
         for (String key : List.of("bigOne", "kesselRun", "rycarRun", "corvette")) {
             var card = scn.GetLSCard(key);
             scn.MoveOutOfPlay(card);
             scn.MoveCardsToTopOfLSReserveDeck(card);
         }
-        scn.SkipToLSTurn(Phase.CONTROL);
         assertFalse(scn.LSCardActionAvailable(rayc, DOUBLE));
         takeRun(scn, rayc, first, List.of("bigOne", "kesselRun", "rycarRun"));
         scn.SkipToDSTurn();
@@ -166,9 +167,9 @@ public class Card_1240_073_Tests {
         scn.PassAllResponses();
         scn.PassCardAndForceUseResponses();
         for (String target : eligible) {
-            assertTrue(target, scn.LSHasCardChoiceAvailable(scn.GetLSCard(target)));
+            assertTrue(target, SelectableInReserve(scn, scn.GetLSCard(target)));
         }
-        assertFalse(scn.LSHasCardChoiceAvailable(scn.GetLSCard("corvette")));
+        assertFalse(SelectableInReserve(scn, scn.GetLSCard("corvette")));
         scn.LSChooseCard(wanted);
         scn.PassAllResponses();
         assertInHand(wanted);
@@ -209,16 +210,18 @@ public class Card_1240_073_Tests {
         scn.MoveCardsToLocation(hoth, luminous);
         scn.MoveCardsToLocation(kessel, ywing);
         scn.MoveCardsToLSHand(han, bigOne, kesselRun, rycarRun);
+        scn.SkipToLSTurn(Phase.ACTIVATE);
+        LeaveActivateWithForce(scn, true, 15);
         for (int i = 0; i < 12; i++) {
             scn.MoveCardsToTopOfLSLostPile(scn.GetTopOfLSReserveDeck());
         }
-
-        scn.SkipToLSTurn(Phase.DEPLOY);
+        scn.SkipToPhase(Phase.DEPLOY);
         scn.LSDeployCard(han);
         scn.LSChooseCard(luminous);
         scn.LSChoose("Pilot");
         finishLightAction(scn);
         scn.LSDeployCard(bigOne);
+        if (scn.LSHasCardChoiceAvailable(kessel)) scn.LSChooseCard(kessel); // Big One sector of the Kessel system.
         finishLightAction(scn);
         scn.LSDeployCard(kesselRun);
         scn.LSChooseCard(kessel);
@@ -252,8 +255,7 @@ public class Card_1240_073_Tests {
         scn.LSChooseCard(bigOne);
         finishLightAction(scn);
         assertTrue(scn.IsAttachedTo(kessel, rycarRun));
-
-        scn.SkipToDSTurn();
+        EndLightTurn(scn);
         scn.PrepareDSDestiny(1);
         scn.SkipToLSTurn(Phase.MOVE);
         if (chosen != null) assertFalse(scn.LSCardActionAvailable(rayc, DOUBLE));
@@ -284,7 +286,7 @@ public class Card_1240_073_Tests {
         for (int i = 0; i < 5; i++) {
             scn.MoveCardsToTopOfLSLostPile(scn.GetTopOfLSReserveDeck());
         }
-        scn.SkipToDSTurn();
+        EndLightTurn(scn);
         scn.SkipToLSTurn(Phase.DEPLOY);
         scn.LSDeployCard(kesselRun);
         scn.LSChooseCard(kessel);
@@ -298,7 +300,7 @@ public class Card_1240_073_Tests {
         scn.LSChooseCard(kessel);
         finishLightAction(scn);
         assertTrue(scn.CardsAtLocation(kessel, luminous));
-        scn.SkipToDSTurn();
+        EndLightTurn(scn);
         scn.SkipToLSTurn(Phase.MOVE);
         int lost = scn.GetLSLostPileCount();
         scn.LSUseCardAction(luminous, "hyperspeed");
@@ -308,8 +310,37 @@ public class Card_1240_073_Tests {
         assertEquals(lost + 1 - 3, scn.GetLSLostPileCount());
     }
 
+    private static boolean SelectableInReserve(VirtualTableScenario scn, PhysicalCardImpl card) {
+        var blueprints = scn.GetADParam(scn.LS, "blueprintId");
+        var selectable = scn.GetADParam(scn.LS, "selectable");
+        if (blueprints == null || selectable == null) return false;
+        for (int i = 0; i < blueprints.length; i++) {
+            if (blueprints[i].equals(card.getBlueprintId(true)) && Boolean.parseBoolean(selectable[i])) return true;
+        }
+        return false;
+    }
+
+    /** Passes every remaining decision of Light's turn until Dark's turn begins. */
+    private static void EndLightTurn(VirtualTableScenario scn) {
+        for (int i = 0; i < 40 && scn.GetCurrentPlayer().equals(scn.LS); i++) scn.PlayerPass(scn.GetDecidingPlayer());
+        assertEquals(scn.DS, scn.GetCurrentPlayer());
+    }
+
     private void finishLightAction(VirtualTableScenario scn) {
         scn.PassAllResponses();
-        if (scn.DSAnyActionsAvailable()) scn.DSPass();
+        if (scn.GetAwaitingDecision(scn.DS) != null && scn.DSDecisionAvailable("action or Pass")) scn.DSPass();
+    }
+
+    /**
+     * From the given player's activate phase, sets that player's Force Pile to exactly force and leaves the phase
+     * without activating, so the next phase's actions are offered against that Force.
+     */
+    static void LeaveActivateWithForce(VirtualTableScenario scn, boolean light, int force) {
+        String player = light ? scn.LS : scn.DS;
+        scn.EnsureForcePile(player, force);
+        scn.DrainForcePileTo(player, force);
+        if (light) scn.LSPass(); else scn.DSPass();
+        if (scn.DecisionAvailable(player, "You have not activated Force")) scn.ChooseOption(player, "Yes");
+        scn.PassActivateActions();
     }
 }
