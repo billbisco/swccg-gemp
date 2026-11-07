@@ -99,6 +99,12 @@ public class Card_1263_011_Tests {
             assertEquals(force - (int) (float) guard.getBlueprint().getDeployCost(), scn.GetDSForcePileCount());
             assertEquals(new HashSet<>(remaining), new HashSet<>(scn.GetDSReserveDeck()));
             assertNotEquals(remaining, scn.GetDSReserveDeck());
+            for (int i = 0; i < 20 && !scn.AwaitingDSDeployPhaseActions(); i++) {
+                if (scn.LSGetDecision() instanceof CardActionSelectionDecision) scn.LSPass();
+                else if (scn.DSGetDecision() instanceof CardActionSelectionDecision) scn.DSPass();
+                else fail("Unexpected deployment response: " + scn.GetCurrentDecision().getText());
+            }
+            assertTrue(scn.AwaitingDSDeployPhaseActions());
             assertFalse(scn.DSCardActionAvailable(effect, GUARD));
             scn.SkipToDSTurn(Phase.DEPLOY);
             assertFalse(scn.DSCardActionAvailable(effect, GUARD));
@@ -162,6 +168,8 @@ public class Card_1263_011_Tests {
             assertEquals(succeeds ? power - 2 : power, scn.GetPower(luke));
             assertEquals(succeeds ? 0 : immunity, mods.getImmunityToAttritionLessThan(scn.gameState(), luke), scn.epsilon);
             if (succeeds) {
+                scn.SkipToDamageSegment(false);
+                if (scn.AwaitingLSBattleDamagePayment()) scn.LSPayRemainingBattleDamageFromReserveDeck();
                 scn.SkipToPhase(Phase.MOVE);
                 assertInZone(Zone.AT_LOCATION, luke);
                 assertEquals(power, scn.GetPower(luke));
