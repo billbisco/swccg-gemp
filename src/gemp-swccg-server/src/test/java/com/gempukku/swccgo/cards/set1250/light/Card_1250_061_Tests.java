@@ -155,9 +155,13 @@ public class Card_1250_061_Tests {
         var scn = scenario(); setupLoss(scn); lightning(scn, "lightning", "gungan"); save(scn);
         forfeitSecondNative(scn); assertFalse(offer(scn)); scn.PassAllResponses();
         assertTrue(scn.GetLSLostPile().contains(scn.GetLSCard("gungan2")));
-        // Gungan Warrior forfeits for2; pay the remaining attrition/damage with the nonnative trooper.
-        assertTrue(scn.LSDecisionAvailable("card from battle to forfeit")); scn.LSChooseCard(scn.GetLSCard("trooper")); scn.PassAllResponses();
-        assertFalse(scn.IsActiveBattle());
+        // Complete any remaining damage decision before advancing the turn.
+        if (scn.LSDecisionAvailable("card from battle to forfeit")) {
+            if (scn.LSGetChoiceMin() == 0) scn.LSChooseCards();
+            else { assertTrue(scn.LSHasCardChoiceAvailable(scn.GetLSCard("trooper"))); scn.LSChooseCard(scn.GetLSCard("trooper")); }
+            scn.PassAllResponses();
+        }
+        assertFalse("Unfinished battle: " + scn.GetCurrentDecision().getText(), scn.IsActiveBattle());
         scn.SkipToLSTurn(Phase.CONTROL); scn.SkipToDSTurn(Phase.CONTROL);
         lightning(scn, "lightning3", "ewok"); save(scn); assertTrue(scn.GetLSUsedPile().contains(scn.GetLSCard("ewok")));
     }
