@@ -115,13 +115,18 @@ public interface Forfeit extends BaseQuery, Attributes, Destiny, Flags, Keywords
         boolean forfeitMayNotBeReduced = isProhibitedFromHavingForfeitReduced(gameState, physicalCard, modifierCollector);
         boolean forfeitMayNotBeIncreased = isProhibitedFromHavingForfeitValueIncreased(gameState, physicalCard, modifierCollector);
 
+        OnlyIfNoOtherBonusResolver onlyIfNoOtherBonus = new OnlyIfNoOtherBonusResolver();
         for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.FORFEIT_VALUE, physicalCard)) {
             float modifierAmount = modifier.getForfeitModifier(gameState, query(), physicalCard);
             if ((modifierAmount >= 0 && !forfeitMayNotBeIncreased) || (modifierAmount <= 0 && !forfeitMayNotBeReduced)) {
+                if (onlyIfNoOtherBonus.defer(modifier, modifierAmount)) {
+                    continue;
+                }
                 result += modifierAmount;
                 modifierCollector.addModifier(modifier);
             }
         }
+        result += onlyIfNoOtherBonus.resolve(modifierCollector);
 
         // Check if value was reset to an "unmodifiable value", and use lowest found
         Float lowestResetValue = null;
