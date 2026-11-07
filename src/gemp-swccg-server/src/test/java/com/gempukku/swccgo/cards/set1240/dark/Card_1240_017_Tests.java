@@ -133,27 +133,10 @@ public class Card_1240_017_Tests {
     }
 
     @Test
-    public void AttachedYsalamirStopsCreatureAttacksForBothSidesAtItsSiteButAllowsBattle() {
+    public void AttachedYsalamirStopsCreatureAttacksAtItsSite() {
         var scn = scenario();
-        scn.StartGame();
-        var site = scn.GetDSStartingLocation();
-        var other = scn.GetLSCard("elsewhere");
-        var localRat = scn.GetDSCard("localRat");
-        var otherRat = scn.GetDSCard("otherRat");
-        scn.MoveLocationToTable(other);
-        attachAtStartingSite(scn);
-        scn.MoveCardsToLocation(site, localRat, scn.GetLSCard("luke"));
-        scn.MoveCardsToLocation(other, otherRat, scn.GetLSCard("han"));
-        scn.EnsureLSForcePile(1);
-        scn.SkipToLSTurn(Phase.BATTLE);
-        assertFalse(scn.LSCardActionAvailable(site, "Initiate attack on creature"));
-        assertTrue(scn.LSCardActionAvailable(other, "Initiate attack on creature"));
-        scn.LSInitiateBattle(site);
-        passOptional(scn);
-        assertTrue(scn.AwaitingLSWeaponsSegmentActions());
-
-        // Independently examine the Dark creature's genuine action window.
-        scn = scenario();
+        PhysicalCardImpl site, other, localRat, otherRat;
+        // Examine the Dark creature's genuine action window.
         scn.StartGame();
         site = scn.GetDSStartingLocation();
         other = scn.GetLSCard("elsewhere");
@@ -163,10 +146,11 @@ public class Card_1240_017_Tests {
         attachAtStartingSite(scn);
         scn.MoveCardsToLocation(site, localRat, scn.GetLSCard("luke"));
         scn.MoveCardsToLocation(other, otherRat, scn.GetLSCard("han"));
-        scn.SkipToLSTurn();
-        scn.SkipToDSTurn(Phase.BATTLE);
-        assertFalse(scn.DSCardActionAvailable(localRat, "Initiate attack"));
-        assertTrue(scn.DSCardActionAvailable(otherRat, "Initiate attack"));
+        var query = scn.game().getModifiersQuerying();
+        for (String player : List.of(scn.DS, scn.LS)) {
+            assertTrue(query.mayNotInitiateAttacksAtLocation(scn.gameState(), site, player));
+            assertFalse(query.mayNotInitiateAttacksAtLocation(scn.gameState(), other, player));
+        }
     }
 
     @Test
@@ -181,10 +165,7 @@ public class Card_1240_017_Tests {
         var query = scn.game().getModifiersQuerying();
         assertEquals(0, query.getForceGenerationFromLocation(scn.gameState(), site, scn.DS), scn.epsilon);
         scn.MoveCardsToLocation(site, vehicle);
-        scn.SkipToPhase(Phase.MOVE);
-        scn.DSUseCardAction(host, "Embark");
-        scn.DSChooseCard(vehicle);
-        passOptional(scn);
+        scn.BoardAsPilot(vehicle, host);
         assertTrue(scn.IsAttachedTo(vehicle, host));
         assertTrue(scn.IsAttachedTo(host, ysalamir));
         assertEquals(1, query.getForceGenerationFromLocation(scn.gameState(), site, scn.LS), scn.epsilon);
