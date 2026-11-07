@@ -4,6 +4,7 @@ import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.InterruptPersonaReferences;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.actions.PlayInterruptAction;
@@ -27,7 +28,7 @@ public class Card15_242 extends Card9_136 {
     @Override
     protected List<PlayInterruptAction> getGameTextTopLevelActions(String playerId,SwccgGame game,PhysicalCard self) {
         List<PlayInterruptAction> actions=new ArrayList<>(super.getGameTextTopLevelActions(playerId,game,self));
-        Filter vader=Filters.and(Filters.Vader,Filters.at(Filters.controls(playerId)));
+        Filter vader=Filters.and(InterruptPersonaReferences.vader(game,self),Filters.at(Filters.controls(playerId)));
         if (GameConditions.canSpot(game,self,Filters.and(Filters.Emperor,Filters.on(Title.Death_Star_II)))
                 && GameConditions.canTarget(game,self,vader)) {
             final PlayInterruptAction action=new PlayInterruptAction(game,self,CardSubtype.LOST);

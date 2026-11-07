@@ -10,6 +10,7 @@ import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.InterruptPersonaReferences;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.TriggerConditions;
@@ -41,7 +42,7 @@ public class Card1_280 extends AbstractLostInterrupt {
         List<PlayInterruptAction> actions = new LinkedList<PlayInterruptAction>();
 
         // Check condition(s)
-        if (GameConditions.isDuringBattleWithParticipant(game, Filters.Vader)
+        if (GameConditions.isDuringBattleWithParticipant(game, InterruptPersonaReferences.vader(game, self))
                 && GameConditions.canAddBattleDestinyDraws(game, self)
                 && GameConditions.isDuringBattleWithParticipant(game, Filters.ObiWan)) {
 

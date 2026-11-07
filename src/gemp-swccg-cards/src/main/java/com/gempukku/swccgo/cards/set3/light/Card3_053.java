@@ -11,6 +11,7 @@ import com.gempukku.swccgo.common.TargetingReason;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.InterruptPersonaReferences;
 import com.gempukku.swccgo.game.AbstractActionProxy;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
@@ -55,7 +56,7 @@ public class Card3_053 extends AbstractLostInterrupt {
 
         // Check condition(s)
         if (TriggerConditions.battleInitiated(game, effectResult, opponent)
-                && GameConditions.canSpot(game, self, Filters.Vader)) {
+                && GameConditions.canSpot(game, self, InterruptPersonaReferences.vader(game, self))) {
             final Filter filter = Filters.and(Filters.opponents(self), Filters.leader, Filters.abilityLessThan(6), Filters.participatingInBattle);
             final Filter notOzzelFilter = Filters.and(filter, Filters.not(Filters.Ozzel));
             final Filter ozzelFilter = Filters.and(filter, Filters.Ozzel);
