@@ -11,7 +11,7 @@ public class Card_1271_042_Tests {
     private VirtualTableScenario scenario(boolean rebelBase) {
         return new VirtualTableScenario(new HashMap<>() {{
             put("foils","1271_42");put("red3","1_145");put("red1","1_144");put("biggs","1_3");put("luke","1_19");
-            put("capital","1_140");put("presence","1_146");put("lost","1_28");put("lost2","1_2");put("away","3_55");
+            put("capital","5_87");put("presence","1_146");put("lost","1_28");put("lost2","1_2");put("away","3_55");
         }},new HashMap<>() {{
             put("ground","12_176");put("vader","1_168");put("tie","1_306");put("alter","1_234");put("crossfire","13_63");put("deathStar","2_143");
         }},40,40,StartingSetup.LSStartingLocation(rebelBase?"1_135":"6_87"),StartingSetup.DefaultDSSpaceSystem,
@@ -78,12 +78,15 @@ public class Card_1271_042_Tests {
         var s=ready();int lost=s.GetLSLostPileCount();deployPair(s,"red3","biggs",false);assertTrue(reachReward(s));s.PassAllResponses();assertEquals(lost,s.GetLSLostPileCount());assertFalse(reachReward(s));
     }
     @Test public void SFoilsDoesNotRewardAStarfighterAndPilotDeployedSeparately() {
-        var s=ready();s.MoveCardsToTopOfLSReserveDeck(s.GetLSCard("biggs"));s.MoveCardsToLSHand(s.GetLSCard("red3"));s.SkipToPhase(Phase.DEPLOY);
-        s.LSDeployCard(s.GetLSCard("red3"));if(s.LSHasCardChoiceAvailable(s.GetLSStartingLocation()))s.LSChooseCard(s.GetLSStartingLocation());
-        assertFalse(reachReward(s));s.PassAllResponses();assertEquals(Zone.AT_LOCATION,s.GetLSCard("red3").getZone());
-        s.SkipToPhase(Phase.DRAW);s.MoveCardsToLSHand(s.GetLSCard("biggs"));s.SkipToLSTurn(Phase.DEPLOY);
+        var s=ready();s.MoveCardsToLocation(s.GetLSStartingLocation(),s.GetLSCard("red3"));
+        s.MoveCardsToLSHand(s.GetLSCard("biggs"));s.SkipToPhase(Phase.DEPLOY);
         s.LSDeployCard(s.GetLSCard("biggs"));if(s.LSHasCardChoiceAvailable(s.GetLSCard("red3")))s.LSChooseCard(s.GetLSCard("red3"));
         assertFalse(reachReward(s));s.PassAllResponses();assertEquals(s.GetLSCard("red3"),s.GetLSCard("biggs").getAttachedTo());
+    }
+    @Test public void SFoilsDoesNotRewardAStarfighterWithOnlyAPermanentPilot() {
+        var s=ready();s.MoveCardsToLSHand(s.GetLSCard("presence"));s.SkipToPhase(Phase.DEPLOY);
+        s.LSDeployCard(s.GetLSCard("presence"));if(s.LSHasCardChoiceAvailable(s.GetLSStartingLocation()))s.LSChooseCard(s.GetLSStartingLocation());
+        assertFalse(reachReward(s));s.PassAllResponses();assertEquals(Zone.AT_LOCATION,s.GetLSCard("presence").getZone());
     }
     @Test public void SFoilsDoesNotRewardASimultaneouslyDeployedCapitalStarship() {
         var s=ready();deployPair(s,"capital","biggs",false);assertFalse(reachReward(s));s.PassAllResponses();assertEquals(s.GetLSCard("capital"),s.GetLSCard("biggs").getAttachedTo());
@@ -108,8 +111,13 @@ public class Card_1271_042_Tests {
         assertFalse(Filters.canBeTargetedBy(s.GetDSCard("crossfire")).accepts(s.game(),s.GetLSCard("foils")));
     }
     @Test public void SFoilsIsSuspendedAndDoesNotRewardDeploymentIfDeathStarWasAlreadyBlownAway() {
-        var s=ready();s.MoveLocationToTable(s.GetDSCard("deathStar"));s.GetDSCard("deathStar").setBlownAway(true);
-        s.MoveCardsToLSHand(s.GetLSCard("red3"),s.GetLSCard("biggs"));s.SkipToPhase(Phase.DEPLOY);assertTrue(s.GetLSCard("foils").isSuspended());
+        var s=scenario(true);s.StartGame();s.SkipToLSTurn(Phase.CONTROL);s.EnsureLSForcePile(20);
+        var deathStar=s.GetDSCard("deathStar");s.MoveLocationToTable(deathStar);
+        s.game().getModifiersEnvironment().blownAway(deathStar);
+        s.game().getGameState().flipBlownAwayLocations(s.game(),List.of(deathStar));
+        s.MoveCardsToLSHand(s.GetLSCard("foils"),s.GetLSCard("red3"),s.GetLSCard("biggs"));s.SkipToPhase(Phase.DEPLOY);
+        s.LSDeployCard(s.GetLSCard("foils"));s.PassAllResponses();if(s.GetLSCard("foils").getAttachedTo()==null){s.LSChooseCard(s.GetLSStartingLocation());s.PassAllResponses();}
+        assertTrue(s.GetLSCard("foils").isSuspended());if(s.AwaitingDSDeployPhaseActions())s.DSPass();
         deployPair(s,"red3","biggs",false);assertFalse(reachReward(s));s.PassAllResponses();assertTrue(s.GetLSCard("foils").isSuspended());
     }
 }
