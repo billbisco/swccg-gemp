@@ -17,7 +17,7 @@ public class Card_1240_070_Tests {
         return new VirtualTableScenario(new HashMap<>() {{
             put("fixer", "1240_70"); put("camie", "7_9"); put("luke", "1_19");
             put("corvette", "1_140"); put("rogue", "3_66"); put("droid", "1_5");
-            put("memorial", "1_45"); put("alter", "1_71"); put("control", "4_48"); put("planners", "1_60");
+            put("memorial", "1_45"); put("alter", "1_71"); put("control", "4_48"); put("otherEffect", "1_66");
         }}, new HashMap<>() {{
             put("alter", "1_234"); put("vader", "1_168"); put("system", "1_282");
             put("dread", "106_13");
@@ -67,8 +67,9 @@ public class Card_1240_070_Tests {
 
     @Test
     public void FixerActuallyDeploysForTwoWithoutCamieAtDestination() {
-        var scn = Ready(true, Phase.DEPLOY);
-        scn.EnsureLSForcePile(2);
+        var scn = Ready(true, Phase.ACTIVATE);
+        scn.DrainLSForcePileTo(2);
+        scn.SkipToPhase(Phase.DEPLOY);
         DeployFixer(scn);
         assertEquals(0, scn.GetLSForcePileCount());
         assertEquals(scn.GetDSStartingLocation(), scn.GetLSCard("fixer").getAtLocation());
@@ -76,17 +77,19 @@ public class Card_1240_070_Tests {
 
     @Test
     public void FixerCannotDeployForOneWithoutCamieAtDestination() {
-        var scn = Ready(true, Phase.DEPLOY);
-        scn.EnsureLSForcePile(1);
+        var scn = Ready(true, Phase.ACTIVATE);
+        scn.DrainLSForcePileTo(1);
+        scn.SkipToPhase(Phase.DEPLOY);
         assertFalse(scn.LSDeployAvailable(scn.GetLSCard("fixer")));
         assertInZone(Zone.HAND, scn.GetLSCard("fixer"));
     }
 
     @Test
     public void FixerActuallyDeploysForOneToSameSiteAsCamie() {
-        var scn = Ready(true, Phase.DEPLOY);
+        var scn = Ready(true, Phase.ACTIVATE);
         scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetLSCard("camie"));
-        scn.EnsureLSForcePile(1);
+        scn.DrainLSForcePileTo(1);
+        scn.SkipToPhase(Phase.DEPLOY);
         DeployFixer(scn);
         assertEquals(0, scn.GetLSForcePileCount());
         assertEquals(scn.GetDSStartingLocation(), scn.GetLSCard("fixer").getAtLocation());
@@ -95,20 +98,22 @@ public class Card_1240_070_Tests {
 
     @Test
     public void FixerDeploymentReductionIncludesCamieAboardEnclosedVehicleAtSameSite() {
-        var scn = Ready(true, Phase.DEPLOY);
+        var scn = Ready(true, Phase.ACTIVATE);
         scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetLSCard("rogue"));
         scn.BoardAsPilot(scn.GetLSCard("rogue"), scn.GetLSCard("luke"));
         scn.BoardAsPassenger(scn.GetLSCard("rogue"), scn.GetLSCard("camie"));
-        scn.EnsureLSForcePile(1);
+        scn.DrainLSForcePileTo(1);
+        scn.SkipToPhase(Phase.DEPLOY);
         DeployFixer(scn);
         assertEquals(0, scn.GetLSForcePileCount());
     }
 
     @Test
     public void FixerDoesNotReceiveDestinationReductionWhenCamieIsElsewhere() {
-        var scn = Ready(true, Phase.DEPLOY);
+        var scn = Ready(true, Phase.ACTIVATE);
         scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetLSCard("camie"));
-        scn.EnsureLSForcePile(2);
+        scn.DrainLSForcePileTo(2);
+        scn.SkipToPhase(Phase.DEPLOY);
         DeployFixer(scn);
         assertEquals(0, scn.GetLSForcePileCount());
     }
@@ -166,7 +171,7 @@ public class Card_1240_070_Tests {
     }
 
     private VirtualTableScenario MemorialReady(boolean light) {
-        var scn = Ready(light, Phase.CONTROL);
+        var scn = Ready(light, Phase.ACTIVATE);
         scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetLSCard("fixer"), scn.GetLSCard("luke"));
         scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("vader"));
         scn.MoveCardsToLSSideOfTable(scn.GetLSCard("memorial"));
@@ -175,6 +180,7 @@ public class Card_1240_070_Tests {
     }
 
     private void AwaitLSControl(VirtualTableScenario scn) {
+        scn.SkipToPhase(Phase.CONTROL);
         for (int i = 0; i < 12 && !scn.AwaitingLSControlPhaseActions(); i++) {
             assertEquals(Phase.CONTROL, scn.gameState().getCurrentPhase());
             assertNotNull(scn.GetCurrentDecision());
@@ -207,7 +213,7 @@ public class Card_1240_070_Tests {
     @Test
     public void FixerUsesExactlyOneForceToMoveSelectedDroidFromMemorialToUsed() {
         var scn = MemorialReady(true);
-        scn.EnsureLSForcePile(1);
+        scn.DrainLSForcePileTo(1);
         UseMemorialCard(scn, "droid");
         assertEquals(0, scn.GetLSForcePileCount());
         assertTrue(scn.IsStackedOn(scn.GetLSCard("memorial"), scn.GetLSCard("rogue")));
@@ -226,6 +232,7 @@ public class Card_1240_070_Tests {
     public void FixerCannotMoveMemorialCardWithZeroActivatedForce() {
         var scn = MemorialReady(true);
         scn.DrainLSForcePileTo(0);
+        AwaitLSControl(scn);
         assertFalse(scn.LSCardActionAvailable(scn.GetLSCard("fixer"), UNSTACK));
         assertTrue(scn.IsStackedOn(scn.GetLSCard("memorial"), scn.GetLSCard("droid")));
     }
@@ -243,23 +250,28 @@ public class Card_1240_070_Tests {
     public void FixerMayMoveAnotherMemorialCardDuringOpponentsNextTurn() {
         var scn = MemorialReady(true);
         UseMemorialCard(scn, "droid");
+        assertInZone(Zone.USED_PILE, scn.GetLSCard("droid"));
         scn.SkipToDSTurn(Phase.CONTROL);
         UseMemorialCard(scn, "rogue");
-        assertInZone(Zone.USED_PILE, scn.GetLSCard("droid"));
+        assertInZone(Zone.USED_PILE, scn.GetLSCard("rogue"));
     }
 
     @Test
     public void FixerDoesNotOfferMemorialActionWhenItIsAbsentOrEmpty() {
-        var scn = Ready(true, Phase.CONTROL);
-        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetLSCard("fixer"));
-        assertFalse(scn.LSCardActionAvailable(scn.GetLSCard("fixer"), UNSTACK));
-        scn.MoveCardsToLSSideOfTable(scn.GetLSCard("memorial"));
-        assertFalse(scn.LSCardActionAvailable(scn.GetLSCard("fixer"), UNSTACK));
+        for (boolean memorialPresent : List.of(false, true)) {
+            var scn = Ready(true, Phase.ACTIVATE);
+            scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetLSCard("fixer"));
+            if (memorialPresent) scn.MoveCardsToLSSideOfTable(scn.GetLSCard("memorial"));
+            AwaitLSControl(scn);
+            assertFalse(scn.LSCardActionAvailable(scn.GetLSCard("fixer"), UNSTACK));
+        }
     }
 
     @Test
     public void FixerMayDeclineMemorialActionLeavingBothCardsStacked() {
         var scn = MemorialReady(true);
+        AwaitLSControl(scn);
+        assertTrue(scn.LSCardActionAvailable(scn.GetLSCard("fixer"), UNSTACK));
         scn.SkipToPhase(Phase.DEPLOY);
         assertTrue(scn.IsStackedOn(scn.GetLSCard("memorial"), scn.GetLSCard("droid")));
         assertTrue(scn.IsStackedOn(scn.GetLSCard("memorial"), scn.GetLSCard("rogue")));
@@ -282,12 +294,16 @@ public class Card_1240_070_Tests {
         if (light) {
             scn.MoveCardsToLSHand(scn.GetLSCard("alter"));
             scn.PrepareLSDestiny(0);
+            scn.SkipToPhase(Phase.CONTROL);
+            assertTrue(scn.LSCardPlayAvailable(scn.GetLSCard("alter"), "Draw destiny to cancel Effect"));
             scn.LSPlayCard(scn.GetLSCard("alter"), "Draw destiny to cancel");
             if (scn.LSHasCardChoiceAvailable(scn.GetLSCard(effect))) scn.LSChooseCard(scn.GetLSCard(effect));
             if (scn.LSHasCardChoiceAvailable(scn.GetLSCard("luke"))) scn.LSChooseCard(scn.GetLSCard("luke"));
         } else {
             scn.MoveCardsToDSHand(scn.GetDSCard("alter"));
             scn.PrepareDSDestiny(0);
+            scn.SkipToPhase(Phase.CONTROL);
+            assertTrue(scn.DSCardPlayAvailable(scn.GetDSCard("alter"), "Draw destiny to cancel Effect"));
             scn.DSPlayCard(scn.GetDSCard("alter"), "Draw destiny to cancel");
             if (scn.DSHasCardChoiceAvailable(scn.GetLSCard(effect))) scn.DSChooseCard(scn.GetLSCard(effect));
             if (scn.DSHasCardChoiceAvailable(scn.GetDSCard("vader"))) scn.DSChooseCard(scn.GetDSCard("vader"));
@@ -363,10 +379,10 @@ public class Card_1240_070_Tests {
     @Test
     public void FixerDoesNotUnstackMemorialCardsWhenADifferentEffectLeavesTable() {
         var scn = MemorialReady(false);
-        scn.MoveCardsToLSSideOfTable(scn.GetLSCard("planners"));
-        PlayAlter(scn, false, "planners");
+        scn.MoveCardsToLSSideOfTable(scn.GetLSCard("otherEffect"));
+        PlayAlter(scn, false, "otherEffect");
         ResolvePileOrder(scn);
-        assertInZone(Zone.LOST_PILE, scn.GetLSCard("planners"));
+        assertInZone(Zone.LOST_PILE, scn.GetLSCard("otherEffect"));
         assertTrue(scn.IsStackedOn(scn.GetLSCard("memorial"), scn.GetLSCard("droid")));
         assertTrue(scn.IsStackedOn(scn.GetLSCard("memorial"), scn.GetLSCard("rogue")));
     }
