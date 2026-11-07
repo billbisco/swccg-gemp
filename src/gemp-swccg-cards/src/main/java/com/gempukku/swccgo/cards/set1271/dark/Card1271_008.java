@@ -28,8 +28,8 @@ public class Card1271_008 extends AbstractNormalEffect {
     protected List<TopLevelGameTextAction> getGameTextTopLevelActions(String playerId, SwccgGame game, PhysicalCard self, int sourceId) {
         if (!GameConditions.canTargetToCancel(game, self, Filters.ObiWans_Journal)) return null;
         TopLevelGameTextAction action = new TopLevelGameTextAction(self, playerId, sourceId);
-        action.appendCost(new PlaceCardInUsedPileFromTableEffect(action, self));
         CancelCardActionBuilder.buildCancelCardAction(action, Filters.ObiWans_Journal, Title.ObiWans_Journal);
+        action.appendCost(new PlaceCardInUsedPileFromTableEffect(action, self));
         return List.of(action);
     }
 
@@ -39,8 +39,8 @@ public class Card1271_008 extends AbstractNormalEffect {
         if (!TriggerConditions.isPlayingCard(game, effect, Filters.ObiWans_Journal)
                 || !GameConditions.canCancelCardBeingPlayed(game, self, effect)) return null;
         OptionalGameTextTriggerAction action = new OptionalGameTextTriggerAction(self, playerId, sourceId);
-        action.appendCost(new PlaceCardInUsedPileFromTableEffect(action, self));
         CancelCardActionBuilder.buildCancelCardBeingPlayedAction(action, effect);
+        action.appendCost(new PlaceCardInUsedPileFromTableEffect(action, self));
         return List.of(action);
     }
 }
