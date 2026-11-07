@@ -3,6 +3,7 @@ package com.gempukku.swccgo.cards.set1262.dark;
 import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.logic.GameUtils;
 import com.gempukku.swccgo.logic.decisions.CardActionSelectionDecision;
 import org.junit.Test;
 
@@ -195,7 +196,14 @@ public class Card_1262_007_Tests {
         assertTrue(lightDrew);
         assertEquals(6, scn.GetUnpaidDSAttrition());
         scn.DSPayAttritionFromCardInPlay(vader);
-        scn.PassAllResponses();
+        for (int i = 0; i < 40 && (GameUtils.getZoneFromZoneTop(vader.getZone()) != Zone.LOST_PILE
+                || GameUtils.getZoneFromZoneTop(power.getZone()) != Zone.USED_PILE); i++) {
+            if (scn.DSHasCardChoiceAvailable(vader)) scn.DSChooseCard(vader);
+            else if (scn.DSHasCardChoiceAvailable(power)) scn.DSChooseCard(power);
+            else if (scn.LSGetDecision() instanceof CardActionSelectionDecision) scn.LSPass();
+            else if (scn.DSGetDecision() instanceof CardActionSelectionDecision) scn.DSPass();
+            else fail("Unexpected forfeiture decision: " + scn.GetCurrentDecision().getText());
+        }
         assertInZone(Zone.LOST_PILE, vader);
         assertInZone(Zone.USED_PILE, power);
     }
