@@ -4705,11 +4705,31 @@ public class TriggerConditions {
      * @return true or false
      */
     public static boolean justHitBy(SwccgGame game, EffectResult effectResult, Filterable cardHitFilter, Filterable hitByCardFilter) {
+        return justHitBy(game, effectResult, cardHitFilter, hitByCardFilter, false);
+    }
+
+    /**
+     * Same as {@link #justHitBy(SwccgGame, EffectResult, Filterable, Filterable)}, but also true when the hit card has
+     * already left table (which clears its 'hit' status) by the time the trigger is checked. Use for required responses
+     * to the hit that must still resolve when another required response to the same hit (e.g. the rule that loses a
+     * card hit outside of attack or battle) has already removed the card from table.
+     * @param game the game
+     * @param effectResult the effect result
+     * @param cardHitFilter the card hit filter
+     * @param hitByCardFilter the hit by card filter
+     * @return true or false
+     */
+    public static boolean justHitByEvenIfLeftTable(SwccgGame game, EffectResult effectResult, Filterable cardHitFilter, Filterable hitByCardFilter) {
+        return justHitBy(game, effectResult, cardHitFilter, hitByCardFilter, true);
+    }
+
+    private static boolean justHitBy(SwccgGame game, EffectResult effectResult, Filterable cardHitFilter, Filterable hitByCardFilter, boolean evenIfLeftTable) {
         if (effectResult.getType() == EffectResult.Type.HIT) {
             HitResult hitResult = (HitResult) effectResult;
             PhysicalCard hitCard = hitResult.getCardHit();
+            boolean stillHit = hitCard.isHit() || (evenIfLeftTable && !Filters.onTable.accepts(game, hitCard));
 
-            if (hitCard.isHit() && Filters.and(cardHitFilter).accepts(game.getGameState(), game.getModifiersQuerying(), hitCard)) {
+            if (stillHit && Filters.and(cardHitFilter).accepts(game.getGameState(), game.getModifiersQuerying(), hitCard)) {
                 PhysicalCard hitByCard = hitResult.getHitByCard();
                 SwccgBuiltInCardBlueprint hitByPermanentWeapon = hitResult.getHitByPermanentWeapon();
                 PhysicalCard weaponFiredBy = hitResult.getCardFiringWeapon();

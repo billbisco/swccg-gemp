@@ -17,6 +17,7 @@ import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.AbstractActionProxy;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
+import com.gempukku.swccgo.logic.GameUtils;
 import com.gempukku.swccgo.logic.TriggerConditions;
 import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
@@ -32,6 +33,7 @@ import com.gempukku.swccgo.logic.modifiers.ImmunityToAttritionChangeModifier;
 import com.gempukku.swccgo.logic.modifiers.MayNotPlayModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.timing.EffectResult;
+import com.gempukku.swccgo.logic.timing.PassthruEffect;
 import com.gempukku.swccgo.logic.timing.results.HitResult;
 
 import java.util.Collections;
@@ -134,19 +136,49 @@ public class Card601_087 extends AbstractObjective {
         }
 
 
-        GameTextActionId gameTextActionId = GameTextActionId.OTHER_CARD_ACTION_1;
         // Whenever a character hit by Galen's Lightsaber or Vader's Lightsaber leaves table, opponent loses 2 Force.
-        if (TriggerConditions.justHitBy(game, effectResult, Filters.and(Filters.opponents(self), Filters.character), Filters.or(Persona.GALENS_LIGHTSABER, Persona.VADERS_LIGHTSABER))) {
+        // Even if the hit character already left table: a character hit outside battle is also lost by rule in response
+        // to the same hit, and the owner may resolve that first (Bill, 2026-11-07: both apply).
+        if (TriggerConditions.justHitByEvenIfLeftTable(game, effectResult, Filters.and(Filters.opponents(self), Filters.character), Filters.or(Persona.GALENS_LIGHTSABER, Persona.VADERS_LIGHTSABER))) {
             PhysicalCard justHitCard = ((HitResult)effectResult).getCardHit();
 
             if (justHitCard != null) {
-                RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId, gameTextActionId);
-                action.skipInitialMessageAndAnimation();
-                action.setSingletonTrigger(true);
-                action.setActionMsg(null);
+                actions.add(getHitCharacterLeavesTableTrigger(game, self, gameTextSourceCardId, justHitCard));
+            }
+        }
+        return actions;
+    }
 
-                final int permCardIdSelf = self.getPermanentCardId();
-                final int permCardIdHitCharacter = justHitCard.getPermanentCardId();
+    /**
+     * Creates the required response to a character just hit by Galen's Lightsaber or Vader's Lightsaber, for "Whenever a
+     * character hit by Galen's Lightsaber or Vader's Lightsaber leaves table, opponent loses 2 Force." (both sides).
+     * <p>
+     * Normally it watches the hit character for the rest of the turn and opponent loses 2 Force when it leaves table. A
+     * character hit outside battle is also lost by rule in response to the same hit, and the owner chooses the order of
+     * the two required responses (Bill, 2026-11-07: both apply). If the rule went first, the hit character has already
+     * left table when this resolves, so opponent loses 2 Force right away instead of waiting for a leave-table that has
+     * already happened.
+     */
+    static RequiredGameTextTriggerAction getHitCharacterLeavesTableTrigger(SwccgGame game, final PhysicalCard self, final int gameTextSourceCardId, PhysicalCard justHitCard) {
+        final RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId, GameTextActionId.OTHER_CARD_ACTION_1);
+        action.skipInitialMessageAndAnimation();
+        action.setSingletonTrigger(true);
+        action.setActionMsg(null);
+
+        final int permCardIdSelf = self.getPermanentCardId();
+        final int permCardIdHitCharacter = justHitCard.getPermanentCardId();
+        action.appendEffect(new PassthruEffect(action) {
+            @Override
+            protected void doPlayEffect(SwccgGame game) {
+                PhysicalCard hitCharacter = game.findCardByPermanentId(permCardIdHitCharacter);
+                if (hitCharacter != null && !Filters.onTable.accepts(game, hitCharacter)) {
+                    // Already left table (lost by the hit-outside-battle rule resolved first).
+                    PhysicalCard objective = game.findCardByPermanentId(permCardIdSelf);
+                    game.getGameState().sendMessage(GameUtils.getCardLink(objective) + " makes " + game.getOpponent(objective.getOwner())
+                            + " lose 2 Force because " + GameUtils.getCardLink(hitCharacter) + ", hit by Galen's Lightsaber or Vader's Lightsaber, left table");
+                    action.appendEffect(new LoseForceTargetingCardEffect(action, game.getOpponent(objective.getOwner()), 2, hitCharacter));
+                    return;
+                }
                 action.appendEffect(new AddUntilEndOfTurnActionProxyEffect(action, new AbstractActionProxy() {
                     @Override
                     public List<TriggerAction> getRequiredAfterTriggers(SwccgGame game, EffectResult effectResult) {
@@ -171,10 +203,8 @@ public class Card601_087 extends AbstractObjective {
                         return actions1;
                     }
                 }));
-
-                actions.add(action);
             }
-        }
-        return actions;
+        });
+        return action;
     }
 }
