@@ -19,7 +19,7 @@ public class Card_1261_066_Tests {
 
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>() {{
-            put("han", "1261_66"); put("falcon", "1_143"); put("red", "1_144"); put("lando", "5_5");
+            put("han", "1261_66"); put("falcon", "1_143"); put("red", "1_144"); put("lando", "5_5"); put("wing", "1_146");
             put("leia", "1_17"); put("pistol", "1_154"); put("chewie", "109_1"); put("maintenance", "13_9");
             put("site", "1_129"); put("remote", "1_136"); put("jedi", "9_24"); put("saber", "9_90"); put("traffic", "1_66");
         }}, new HashMap<>() {{ put("tie", "1_304"); put("trooper", "1_194"); put("vader", "1_168"); }},
@@ -49,11 +49,15 @@ public class Card_1261_066_Tests {
         assertAtLocation(scn.GetLSCard("site"), scn.GetLSCard("han")); assertEquals(force-3, scn.GetLSForcePileCount()); assertEquals(5, scn.GetDefense(scn.GetLSCard("han")));
     }
     private VirtualTableScenario spaceBattle(String ship, boolean passenger) {
+        return spaceBattle(ship, passenger, false);
+    }
+    private VirtualTableScenario spaceBattle(String ship, boolean passenger, boolean extraAbility) {
         var scn = started(); var craft = scn.GetLSCard(ship); var system = scn.GetLSStartingLocation();
         scn.MoveCardsToLocation(system, craft, scn.GetDSCard("tie"));
         if (passenger) {
             scn.MoveCardsToLSHand(scn.GetLSCard("lando")); scn.BoardAsPilot(craft, scn.GetLSCard("lando")); scn.BoardAsPassenger(craft, scn.GetLSCard("han"));
         } else scn.BoardAsPilot(craft, scn.GetLSCard("han"));
+        if (extraAbility) scn.MoveCardsToLocation(system, scn.GetLSCard("wing"));
         scn.SkipToLSTurn(Phase.BATTLE); scn.LSInitiateBattle(system); scn.PassAllResponses(); return scn;
     }
     private void finishDestinies(VirtualTableScenario scn, boolean drawBattle) {
@@ -76,13 +80,19 @@ public class Card_1261_066_Tests {
         assertEquals(0, scn.gameState().getBattleState().getNumDestinyToAttritionDrawn(scn.LS)); assertEquals(0, scn.GetLSTotalDestiny());
     }
     @Test public void CourageousHanActuallyDrawsAttritionOnlyAndCannotAlsoChoosePower() {
-        var scn = spaceBattle("falcon", false); scn.LSUseCardAction(scn.GetLSCard("han"), ATTRITION); scn.PassAllResponses();
+        var scn = spaceBattle("falcon", false, true); scn.LSUseCardAction(scn.GetLSCard("han"), ATTRITION); scn.PassAllResponses();
         if (scn.AwaitingDSWeaponsSegmentActions()) scn.DSPass();
         assertFalse(scn.GetLSAvailableActions().stream().anyMatch(x -> x.contains(ATTRITION) || x.contains(POWER)));
-        scn.PrepareLSDestiny(3); finishDestinies(scn, false); scn.PassResponses("INITIAL_ATTRITION_CALCULATED");
+        scn.MoveCardsToTopOfLSReserveDeck(scn.GetLSDestiny(3), scn.GetLSDestiny(0));
+        finishDestinies(scn, true); scn.PassResponses("INITIAL_ATTRITION_CALCULATED");
         assertEquals(1, scn.gameState().getBattleState().getNumDestinyToAttritionDrawn(scn.LS));
         assertEquals(0, scn.gameState().getBattleState().getTotalDestinyToPowerOnly(scn.LS), scn.epsilon);
         assertEquals(3, scn.GetUnpaidDSAttrition());
+    }
+    @Test public void CourageousHanDoesNotDrawAttritionDestinyWithoutABattleDestiny() {
+        var scn = spaceBattle("falcon", false); scn.LSUseCardAction(scn.GetLSCard("han"), ATTRITION); scn.PassAllResponses();
+        scn.PrepareLSDestiny(3); finishDestinies(scn, false);
+        assertEquals(0, scn.gameState().getBattleState().getNumDestinyToAttritionDrawn(scn.LS)); assertInZone(Zone.RESERVE_DECK, scn.GetLSDestiny(3));
     }
     private VirtualTableScenario fire(boolean hanFires) {
         var scn = started(); var site = scn.GetLSCard("site"); var shooter = scn.GetLSCard(hanFires ? "han" : "leia");
@@ -90,15 +100,25 @@ public class Card_1261_066_Tests {
         if (!hanFires) scn.MoveCardsToLocation(site, shooter);
         scn.AttachCardsTo(shooter, scn.GetLSCard("pistol")); scn.SkipToLSTurn(Phase.CONTROL); scn.LSActivateForceCheat(5); scn.SkipToPhase(Phase.BATTLE);
         scn.LSInitiateBattle(site); scn.PassAllResponses(); scn.PrepareLSDestiny(0); scn.LSUseCardAction(scn.GetLSCard("pistol"), "Fire");
-        scn.LSChooseCard(scn.GetDSCard("trooper")); scn.PassResponses("Fire "); scn.PassResponses("COST_TO_DRAW_DESTINY_CARD"); return scn;
+        scn.LSChooseCard(scn.GetDSCard("trooper"));
+        // Stop on the real substitution window; otherwise advance through the weapon's nested response windows.
+        for (int i = 0; i < 16; i++) {
+            if (scn.GetLSAvailableActions().stream().anyMatch(x -> x.contains(ABILITY))) break;
+            var decision = scn.GetCurrentDecision();
+            if (decision == null || !decision.getText().toLowerCase().contains("response")) break;
+            scn.PlayerPass(scn.GetAwaitingDecision(scn.LS) != null ? scn.LS : scn.DS);
+        }
+        return scn;
     }
     @Test public void CourageousHanSubstitutesAbilityBeforeDrawingAndHitsTrooper() {
-        var scn = fire(true); assertTrue(scn.LSCardActionAvailable(scn.GetLSCard("han"), ABILITY)); scn.LSUseCardAction(scn.GetLSCard("han"), ABILITY);
+        var scn = fire(true); assertTrue(scn.GetCurrentDecision().getText(), scn.GetLSAvailableActions().stream().anyMatch(x -> x.contains(ABILITY)));
+        scn.LSUseCardAction(scn.GetLSCard("han"), ABILITY);
         scn.PassWeaponFireWithDestinyDraw(); assertTrue(scn.GetDSCard("trooper").isHit()); assertInZone(Zone.RESERVE_DECK, scn.GetLSDestiny(0));
         assertEquals(0, scn.GetForfeit(scn.GetDSCard("trooper")));
     }
     @Test public void CourageousHanMayDeclineSubstitutionAndActuallyDrawZero() {
-        var scn = fire(true); assertTrue(scn.LSCardActionAvailable(scn.GetLSCard("han"), ABILITY)); scn.PassWeaponFireWithDestinyDraw();
+        var scn = fire(true); assertTrue(scn.GetCurrentDecision().getText(), scn.GetLSAvailableActions().stream().anyMatch(x -> x.contains(ABILITY)));
+        scn.PassWeaponFireWithDestinyDraw();
         assertFalse(scn.GetDSCard("trooper").isHit()); assertInZone(Zone.USED_PILE, scn.GetLSDestiny(0));
     }
     @Test public void CourageousHanDoesNotSubstituteForOtherCharactersWeapon() {
