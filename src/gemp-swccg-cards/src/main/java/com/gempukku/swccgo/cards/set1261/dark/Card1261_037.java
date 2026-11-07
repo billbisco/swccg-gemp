@@ -33,7 +33,7 @@ public class Card1261_037 extends AbstractNormalEffect {
             @Override public boolean accepts(GameState state, ModifiersQuerying querying, PhysicalCard location) {
                 return Filters.location.accepts(state, querying, location)
                         && Filters.canSpot(state.getGame(), self, 2, Filters.and(Filters.your(self), Filters.non_unique,
-                        Filters.alien, Filters.presentAt(location)));
+                        Filters.alien, Filters.presentAt(Filters.sameCardId(location))));
             }
         };
         var bosskAtSite = new OnTableCondition(self, Filters.and(Filters.Bossk,
