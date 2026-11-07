@@ -80,7 +80,10 @@ public class Card_1262_008_Tests {
             scn.MoveCardsToLocation(site, scn.GetDSCard("aplek"), scn.GetLSCard("lando"));
             if (dropOnTable) scn.MoveCardsToDSSideOfTable(drop);
             scn.EnsureDSForcePile(2);
-            scn.DSStartBattleAndSkipToWeaponsSegment(site);
+            scn.SkipToPhase(Phase.BATTLE);
+            scn.DSInitiateBattle(site);
+            scn.PassAllResponses();
+            assertTrue(scn.AwaitingDSWeaponsSegmentActions());
             scn.PrepareDSDestiny(2);
             scn.PrepareDSDestiny(3);
             scn.PrepareLSDestiny(2);
