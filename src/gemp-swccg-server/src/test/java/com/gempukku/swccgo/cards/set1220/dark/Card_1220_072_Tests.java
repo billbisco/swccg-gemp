@@ -132,7 +132,7 @@ public class Card_1220_072_Tests {
         var generators = scn.GetDSCard("generators");
         var hoth = scn.GetDSCard("hoth");
         var blockade = scn.GetDSCard("blockade");
-        scn.gameState().flipBlownAwayLocations(scn.game(), List.of(generators));
+        recordBlownAway(scn, generators);
         scn.SkipToDSTurn(Phase.CONTROL);
         assertFalse(obj.isFlipped());
         scn.AttachCardsTo(hoth, blockade);
@@ -159,6 +159,9 @@ public class Card_1220_072_Tests {
         scn.MoveCardsToTopOfDSReserveDeck(walker);
         assertTrue(scn.DSCardPlayAvailable(garrison, "Take an AT-AT"));
         scn.DSPlayCard(garrison, "Take an AT-AT");
+        scn.PassAllResponses();
+        if (scn.DSHasCardChoiceAvailable(scn.GetTopOfDSForcePile()))
+            scn.DSPayForceLossFromForcePile();
         scn.PassAllResponses();
         if (scn.DSHasCardChoiceAvailable(walker))
             scn.DSChooseCard(walker);
@@ -191,7 +194,7 @@ public class Card_1220_072_Tests {
         setup(scn);
         var obj = scn.GetDSCard("objective");
         var blockade = scn.GetDSCard("blockade");
-        scn.gameState().flipBlownAwayLocations(scn.game(), List.of(scn.GetDSCard("generators")));
+        recordBlownAway(scn, scn.GetDSCard("generators"));
         scn.AttachCardsTo(scn.GetDSCard("hoth"), blockade);
         scn.SkipToDSTurn(Phase.DEPLOY);
         assertTrue(obj.isFlipped());
@@ -214,6 +217,12 @@ public class Card_1220_072_Tests {
     private float costAt(VirtualTableScenario scn, PhysicalCardImpl card, PhysicalCardImpl site) {
         return scn.game().getModifiersQuerying().getDeployCost(scn.gameState(), card, card, site,
                 false, null, false, 0, null, false);
+    }
+
+
+    private void recordBlownAway(VirtualTableScenario scn, PhysicalCardImpl generators) {
+        scn.game().getModifiersQuerying().blownAway(generators);
+        scn.gameState().flipBlownAwayLocations(scn.game(), List.of(generators));
     }
 
 }
