@@ -1,6 +1,5 @@
 package com.gempukku.swccgo.cards.set1240.light;
 
-import com.gempukku.swccgo.common.CardSubtype;
 import com.gempukku.swccgo.common.CardType;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
@@ -54,8 +53,7 @@ public class Card_1240_073_Tests {
         assertEquals(Uniqueness.UNIQUE, card.getUniqueness());
         assertTrue(card.hasVirtualSuffix());
         assertEquals(Side.LIGHT, card.getSide());
-        assertEquals(CardType.CHARACTER, card.getCardType());
-        assertEquals(CardSubtype.ALIEN, card.getCardSubtype());
+        assertEquals(CardType.ALIEN, card.getCardType());
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_4, card.getExpansionSet());
         assertEquals(Rarity.V, card.getRarity());
         assertEquals(2, card.getDestiny(), scn.epsilon);
