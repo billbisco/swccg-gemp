@@ -21,7 +21,7 @@ public class Card_1250_078_Tests {
                     put("objective", "1250_78");
                     put("coruscant", "12_73");
                     put("prison", "1116_7");
-                    put("palpatine", "1116_10");
+                    put("palpatine", "12_28");
                     put("security", "12_47");
                 }};
             }
@@ -53,7 +53,7 @@ public class Card_1250_078_Tests {
 
     private void assertFace(VirtualTableScenario s, SwccgCardBlueprint bp, String title, int destiny) {
         assertEquals(title, bp.getTitle()); assertEquals(destiny, bp.getDestiny(), s.epsilon);
-        assertEquals(ExpansionSet.VIRTUAL_BLOCK_5, bp.getExpansionSet()); assertFalse(bp.hasVirtualSuffix());
+        assertEquals(ExpansionSet.VIRTUAL_BLOCK_5, bp.getExpansionSet()); assertTrue(bp.hasVirtualSuffix());
         s.BlueprintCardTypeCheck(bp, new ArrayList<>(List.of(CardType.OBJECTIVE)));
         s.BlueprintIconCheck(bp, new ArrayList<>(List.of(Icon.OBJECTIVE, Icon.THEED_PALACE, Icon.EPISODE_I, Icon.LEGACY_BLOCK_5)));
         s.BlueprintKeywordCheck(bp, new ArrayList<>());
@@ -65,7 +65,9 @@ public class Card_1250_078_Tests {
         var prison = s.GetLSCard("prison"); var palpatine = s.GetLSCard("palpatine");
         assertFace(s, objective.getBlueprint(), Title.We_Have_A_Plan, 0);
         assertFace(s, objective.getOtherSideBlueprint(), Title.They_Will_Be_Lost_And_Confused, 7);
-        assertTrue(objective.isObjectiveDeploymentComplete()); assertFalse(objective.isFlipped());
+        assertTrue("Startup zones: " + List.of(s.GetLSCard("coruscant").getZone(), prison.getZone(), palpatine.getZone()),
+                objective.isObjectiveDeploymentComplete());
+        assertFalse(objective.isFlipped());
         assertEquals(Zone.LOCATIONS, s.GetLSCard("coruscant").getZone()); assertEquals(Zone.LOCATIONS, prison.getZone());
         assertEquals(prison, palpatine.getAtLocation()); assertTrue(palpatine.isImprisoned());
         assertEquals(Zone.SIDE_OF_TABLE, s.GetLSCard("security").getZone());

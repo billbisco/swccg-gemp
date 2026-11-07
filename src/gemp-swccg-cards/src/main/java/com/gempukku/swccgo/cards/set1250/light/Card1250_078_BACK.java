@@ -33,6 +33,7 @@ import java.util.List;
 public class Card1250_078_BACK extends AbstractObjective {
     public Card1250_078_BACK() {
         super(Side.LIGHT, 7, Title.They_Will_Be_Lost_And_Confused, ExpansionSet.VIRTUAL_BLOCK_5, Rarity.V);
+        setVirtualSuffix(true);
         setGameText("Immediately take any one card into hand from Reserve Deck; reshuffle. While this side up, whenever a card of ability > 2 is lost, its owner loses 1 Force. While you control two battlegrounds with clones, opponent must have two cards with ability (or two [Presence] droids) to initiate a Force drain. Once per turn, may deploy a clone from Lost Pile. Clones are immune to attrition < 4. Flip this card (and if possible, relocate Palpatine to a prison and imprison him there) if Palpatine is about to be captured, lost, missing, or removed from table.");
         addIcons(Icon.THEED_PALACE, Icon.EPISODE_I);
     }

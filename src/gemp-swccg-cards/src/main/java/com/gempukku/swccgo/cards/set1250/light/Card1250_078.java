@@ -42,6 +42,7 @@ public class Card1250_078 extends AbstractObjective {
     public Card1250_078() {
         super(Side.LIGHT, 0, Title.We_Have_A_Plan, ExpansionSet.VIRTUAL_BLOCK_5, Rarity.V);
         setFrontOfDoubleSidedCard(true);
+        setVirtualSuffix(true);
         setGameText("Deploy Coruscant system (may not be converted) and Blockade Flagship: Prison with Palpatine imprisoned there. May deploy Security Control. For remainder of game, your Force generation is +1 at Coruscant battlegrounds. Unless you have 13 or more cards in hand, clones are immune to Monnok. While this side up, at Blockade Flagship sites, imprisoned captives may not be transferred. Once per turn, may deploy a battleground site to Coruscant from Reserve Deck; reshuffle. Flip this card if Palpatine on Coruscant.");
         addIcons(Icon.THEED_PALACE, Icon.EPISODE_I);
     }
