@@ -7,7 +7,6 @@ import com.gempukku.swccgo.cards.conditions.PilotingCondition;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Persona;
-import com.gempukku.swccgo.common.Keyword;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Uniqueness;
@@ -41,7 +40,6 @@ public class Card1240_076 extends AbstractRebel {
         setLore("Served for many years as a gunner with friend Jek Porkins in the Tierfon Yellow Aces. Expert marksmanship helped the Alliance earn some of its earliest victories.");
         setGameText("Adds 2 to power of anything he pilots. While piloting Red 3, it gains [Nav Computer] and Wes draws one battle destiny if unable to otherwise. While aboard a starship or vehicle, its total weapon destiny is +1; if with Jek and it hits a target, opponent loses 1 Force from Reserve Deck.");
         addIcons(Icon.HOTH, Icon.PILOT, Icon.WARRIOR, Icon.LEGACY_BLOCK_4);
-        addKeywords(Keyword.GUNNER);
         addPersona(Persona.WES);
     }
 

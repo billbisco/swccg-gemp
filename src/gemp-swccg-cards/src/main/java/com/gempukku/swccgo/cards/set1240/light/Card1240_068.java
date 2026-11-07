@@ -38,7 +38,7 @@ import java.util.List;
  */
 public class Card1240_068 extends AbstractDroid {
     public Card1240_068() {
-        super(Side.LIGHT, 3, 3, 3, 3, Title.Leebo, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_4, Rarity.V);
+        super(Side.LIGHT, 3, 2, 2, 4, Title.Leebo, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_4, Rarity.V);
         setVirtualSuffix(true);
         setArmor(4);
         setLore("Smuggler. Heavily modified Cybot Galactica LE-series repair droid. Information broker. Provides information gained through underworld channels to the Alliance.");

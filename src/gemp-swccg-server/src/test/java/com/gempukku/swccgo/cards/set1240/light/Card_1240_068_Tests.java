@@ -33,10 +33,10 @@ public class Card_1240_068_Tests {
         assertEquals(Uniqueness.UNIQUE, bp.getUniqueness());
         assertEquals(Side.LIGHT, bp.getSide());
         assertEquals(3, bp.getDestiny(), scn.epsilon);
-        assertEquals(3, bp.getDeployCost(), scn.epsilon);
-        assertEquals(3, bp.getPower(), scn.epsilon);
+        assertEquals(2, bp.getDeployCost(), scn.epsilon);
+        assertEquals(2, bp.getPower(), scn.epsilon);
         assertEquals(4, bp.getArmor(), scn.epsilon);
-        assertEquals(3, bp.getForfeit(), scn.epsilon);
+        assertEquals(4, bp.getForfeit(), scn.epsilon);
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_4, bp.getExpansionSet());
         assertEquals(Rarity.V, bp.getRarity());
         assertEquals("Smuggler. Heavily modified Cybot Galactica LE-series repair droid. Information broker. Provides information gained through underworld channels to the Alliance.", bp.getLore());
@@ -203,7 +203,7 @@ public class Card_1240_068_Tests {
         var scn = BattleReady(true);
         scn.SkipToEndOfPowerSegment(true);
         assertEquals(2, scn.GetLSTotalDestiny());
-        assertEquals(11, scn.GetLSTotalPower()); // Leebo3+Dash3+Luke3+normalDestiny2.
+        assertEquals(10, scn.GetLSTotalPower()); // Leebo2+Dash3+Luke3+normalDestiny2.
         ToDamageSegment(scn);
         assertEquals(5, scn.GetUnpaidDSAttrition()); // Normal destiny 2 + attrition-only destiny 3.
     }
@@ -226,11 +226,11 @@ public class Card_1240_068_Tests {
     }
 
     @Test
-    public void LeeboDeploysForExactlyThreeForce() {
+    public void LeeboDeploysForExactlyTwoForce() {
         var scn = Ready();
         scn.MoveCardsToLSHand(scn.GetLSCard("leebo"));
         scn.SkipToPhase(Phase.DEPLOY);
-        while (scn.GetLSForcePileCount() > 3) scn.MoveCardsToTopOfLSUsedPile((com.gempukku.swccgo.game.PhysicalCardImpl) scn.GetLSForcePile().getFirst());
+        while (scn.GetLSForcePileCount() > 2) scn.MoveCardsToTopOfLSUsedPile((com.gempukku.swccgo.game.PhysicalCardImpl) scn.GetLSForcePile().getFirst());
         scn.LSDeployCard(scn.GetLSCard("leebo"));
         scn.LSChooseCard(scn.GetLSStartingLocation());
         scn.PassAllResponses();
@@ -239,12 +239,12 @@ public class Card_1240_068_Tests {
     }
 
     @Test
-    public void LeeboCannotDeployWithOnlyTwoForce() {
+    public void LeeboCannotDeployWithOnlyOneForce() {
         var scn = Ready();
         scn.MoveCardsToLSHand(scn.GetLSCard("leebo"));
-        while (scn.GetLSForcePileCount() > 2) scn.MoveCardsToTopOfLSUsedPile((com.gempukku.swccgo.game.PhysicalCardImpl) scn.GetLSForcePile().getFirst());
+        while (scn.GetLSForcePileCount() > 1) scn.MoveCardsToTopOfLSUsedPile((com.gempukku.swccgo.game.PhysicalCardImpl) scn.GetLSForcePile().getFirst());
         scn.SkipToPhase(Phase.DEPLOY);
-        assertEquals(2, scn.GetLSForcePileCount());
+        assertEquals(1, scn.GetLSForcePileCount());
         assertFalse(scn.LSCardPlayAvailable(scn.GetLSCard("leebo")));
     }
 }

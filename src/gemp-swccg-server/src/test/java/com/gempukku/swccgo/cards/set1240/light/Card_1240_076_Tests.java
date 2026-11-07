@@ -25,7 +25,7 @@ public class Card_1240_076_Tests {
     }
 
     @Test
-    public void WesJansonPrintedStatsIconsAndGunnerCharacteristicAreCorrect() {
+    public void WesJansonPrintedStatsIconsAndCharacteristicsAreCorrect() {
         var scn = GetScenario();
         var bp = scn.GetLSCard("wes").getBlueprint();
         assertEquals("Wes Janson", bp.getTitle());
@@ -43,7 +43,7 @@ public class Card_1240_076_Tests {
         assertEquals("Served for many years as a gunner with friend Jek Porkins in the Tierfon Yellow Aces. Expert marksmanship helped the Alliance earn some of its earliest victories.", bp.getLore());
         scn.BlueprintCardTypeCheck(bp, new ArrayList<>(List.of(CardType.REBEL)));
         scn.BlueprintIconCheck(bp, new ArrayList<>(List.of(Icon.REBEL, Icon.PILOT, Icon.WARRIOR, Icon.HOTH, Icon.LEGACY_BLOCK_4)));
-        scn.BlueprintKeywordCheck(bp, new ArrayList<>(List.of(Keyword.GUNNER)));
+        scn.BlueprintKeywordCheck(bp, new ArrayList<>());
         scn.BlueprintModelTypeCheck(bp, new ArrayList<ModelType>());
     }
 
