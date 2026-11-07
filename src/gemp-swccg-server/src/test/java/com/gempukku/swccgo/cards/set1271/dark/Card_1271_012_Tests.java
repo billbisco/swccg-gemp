@@ -24,9 +24,15 @@ public class Card_1271_012_Tests {
             Map.entry("look", "1_259"), Map.entry("advisor", "6_160"), Map.entry("unrelated", "1_234"),
             Map.entry("mission", "1271_25"), Map.entry("mission2", "1271_26"), Map.entry("setupEffect", "1271_10"),
             Map.entry("system", "1_282"), Map.entry("sunsdown", "1_230")));
+        StartingSetup passAdvisor = new StartingSetup() {
+            @Override public HashMap<String, String> Cards() { return new HashMap<>(); }
+            @Override public void Setup(VirtualTableScenario s) {
+                if (s.DSDecisionAvailable("starting interrupt")) s.DSPass();
+            }
+        };
         return new VirtualTableScenario(new HashMap<>(), dark, 40, 40,
             StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
-            StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
+            StartingSetup.NoLSStartingInterrupts, passAdvisor,
             StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
     }
 
