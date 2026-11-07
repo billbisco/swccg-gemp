@@ -9,16 +9,25 @@ import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
+import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
 import com.gempukku.swccgo.logic.effects.choose.DeployCardToTargetFromReserveDeckEffect;
 import com.gempukku.swccgo.logic.modifiers.ImmuneToTitleModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
+import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 
 import java.util.List;
 
 /** Legacy Block 6.1 Remote Depot. */
 public class Card1261_053 extends AbstractSite {
     private static final GameTextActionId SEARCH = GameTextActionId.LEGACY__REMOTE_DEPOT__DEPLOY_EFFECT;
+    // Zone-only plays ignore the target constraint in the generic deploy helper.
+    private static final Filter ATTACHING_EFFECT = Filters.and(Filters.Effect, new Filter() {
+        @Override
+        public boolean accepts(GameState state, ModifiersQuerying modifiers, PhysicalCard card) {
+            return card.getBlueprint().getSinglePlayCardZoneOption() == PlayCardZoneOption.ATTACHED;
+        }
+    });
 
     public Card1261_053() {
         super(Side.DARK, "Remote Depot", Uniqueness.DIAMOND_1, ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
@@ -43,7 +52,7 @@ public class Card1261_053 extends AbstractSite {
         var action = new TopLevelGameTextAction(self, playerId, sourceId, SEARCH);
         action.setText("Deploy Effect on a character or device here");
         action.appendUsage(new OncePerGameEffect(action));
-        action.appendEffect(new DeployCardToTargetFromReserveDeckEffect(action, Filters.Effect, target, true));
+        action.appendEffect(new DeployCardToTargetFromReserveDeckEffect(action, ATTACHING_EFFECT, target, true));
         return List.of(action);
     }
 
