@@ -81,7 +81,15 @@ public class Card_1261_036_Tests {
         assertEquals(vader.getBlueprint().getDeployCost() - 1, cost(scn, vader, site), scn.epsilon);
         assertEquals(vader.getBlueprint().getDeployCost(), cost(scn, vader, scn.GetDSStartingLocation()), scn.epsilon);
         assertEquals(trooper.getBlueprint().getDeployCost(), cost(scn, trooper, site), scn.epsilon);
-        scn.SkipToLSTurn(Phase.ACTIVATE);
+        for (int i = 0; i < 24 && scn.gameState().getCurrentPlayerId().equals(scn.DS); i++) {
+            if (scn.DSGetDecision() != null)
+                scn.DSPass();
+            else if (scn.LSGetDecision() != null)
+                scn.LSPass();
+            else
+                fail("Dark turn stalled before Protocol Failure could expire");
+        }
+        assertEquals(scn.LS, scn.gameState().getCurrentPlayerId());
         assertTrue(scn.GetDSLostPile().contains(card));
     }
 
