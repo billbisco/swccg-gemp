@@ -5,6 +5,9 @@ import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
+import com.gempukku.swccgo.logic.effects.RetrieveForceEffect;
+import com.gempukku.swccgo.logic.modifiers.ForceRetrievalModifier;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -18,7 +21,7 @@ public class Card_1261_086_Tests {
     private VirtualTableScenario scenario() {
         var scn = new VirtualTableScenario(new HashMap<>(Map.ofEntries(
                 Map.entry("reflection", "1261_86"), Map.entry("endorLeia", "8_8"), Map.entry("otherLeia", "1_17"),
-                Map.entry("objective", "7_138"), Map.entry("lost", "1_66"), Map.entry("jungle", "4_86"),
+                Map.entry("objective", "7_138"), Map.entry("lost", "1_66"), Map.entry("lost2", "1_67"), Map.entry("jungle", "4_86"),
                 Map.entry("yoda", "4_2"), Map.entry("test", "4_77"))),
                 new HashMap<>(), 40, 40, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
@@ -102,5 +105,39 @@ public class Card_1261_086_Tests {
     @Test public void trainingDestinySixWithYodaBeatsTheActualFirstTestOnlyWithReflection() {
         assertTrue(completeTest(true));
         assertFalse(completeTest(false));
+    }
+
+    /** Retrieves via Reflection's 3-Force action with a Force retrieval modifier of the given amount active; returns cards retrieved. */
+    private int retrieveWithModifier(int modifier) {
+        var scn = deploy(true); var reflection = scn.GetLSCard("reflection");
+        var lost = scn.GetLSCard("lost"); var lost2 = scn.GetLSCard("lost2");
+        scn.MoveCardsToTopOfLSLostPile(lost, lost2);
+        scn.ApplyAdHocModifier(new ForceRetrievalModifier(scn.GetDSStartingLocation(), modifier, scn.LS));
+        scn.SkipToLSTurn(Phase.CONTROL); scn.EnsureLSForcePile(6);
+        scn.LSUseCardAction(reflection, "Use 3 Force");
+        scn.PassForceUseResponses(); scn.PassAllResponses();
+        if (scn.DSGetDecision() != null) scn.DSPass();
+        return (scn.GetLSUsedPile().contains(lost) ? 1 : 0) + (scn.GetLSUsedPile().contains(lost2) ? 1 : 0);
+    }
+
+    @Test public void reflectionRetrievalCannotBeReducedByARetrievalPenalty() {
+        assertEquals(1, retrieveWithModifier(-1));
+        assertEquals(1, retrieveWithModifier(-3));
+    }
+
+    @Test public void reflectionRetrievalMayStillBeIncreased() {
+        assertEquals(2, retrieveWithModifier(1));
+    }
+
+    @Test public void theSamePenaltyStillReducesAnOrdinaryRetrieval() {
+        var scn = deploy(true); var leia = scn.GetLSCard("endorLeia");
+        var lost = scn.GetLSCard("lost");
+        scn.MoveCardsToTopOfLSLostPile(lost);
+        scn.ApplyAdHocModifier(new ForceRetrievalModifier(scn.GetDSStartingLocation(), -1, scn.LS));
+        scn.SkipToLSTurn(Phase.CONTROL);
+        scn.LSExecuteAdHocEffect(leia, new RetrieveForceEffect(new TopLevelGameTextAction(leia, leia.getCardId()), scn.LS, 1));
+        scn.PassAllResponses();
+        assertFalse(scn.GetLSUsedPile().contains(lost));
+        assertTrue(scn.GetLSLostPile().contains(lost));
     }
 }

@@ -61,7 +61,12 @@ public class Card1261_086 extends AbstractNormalEffect {
         action.setText("Use " + cost + " Force to retrieve 1 Force");
         action.appendUsage(new OncePerPhaseEffect(action));
         action.appendCost(new UseForceEffect(action, playerId, cost));
-        action.appendEffect(new RetrieveForceEffect(action, playerId, 1));
+        action.appendEffect(new RetrieveForceEffect(action, playerId, 1) {
+            @Override
+            public boolean mayNotBeReduced() {
+                return true;
+            }
+        });
         return action;
     }
 }
