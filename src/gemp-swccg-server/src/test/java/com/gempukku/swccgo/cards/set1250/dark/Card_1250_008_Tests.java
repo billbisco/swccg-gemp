@@ -116,44 +116,75 @@ public class Card_1250_008_Tests {
         }
     }
 
-    @Test public void TheMandalorianActuallyFiresDualBlastersAndPaysOneForceForEitherChoice() {
-        for (String choice : List.of("Jedi may not fire weapons", "Jedi loses immunity to attrition")) {
-            var scn = scenario();
-            var mando = scn.GetDSCard("mando");
-            var jedi = scn.GetLSCard("jedi");
-            var other = scn.GetLSCard("other");
-            var saber = scn.GetLSCard("saber");
-            var site = scn.GetDSStartingLocation();
-            scn.MoveCardsToLocation(site, mando, jedi, other);
-            scn.AttachCardsTo(jedi, saber);
-            scn.EnsureDSForcePile(3);
-            scn.DSStartBattleAndSkipToWeaponsSegment(site);
-            int life = scn.GetDSLifeForceRemaining();
-            var mods = scn.game().getModifiersQuerying();
-            float immunity = mods.getImmunityToAttritionLessThan(scn.gameState(), jedi);
-            assertTrue(immunity > 0);
-            scn.DSUseCardAction(mando, "Fire Dual Blasters");
-            assertTrue(scn.DSHasCardChoiceAvailable(jedi));
-            assertFalse(scn.DSHasCardChoiceAvailable(other));
-            scn.DSChooseCard(jedi);
-            boolean chosen = false;
-            for (int i = 0; i < 70 && !scn.AwaitingLSWeaponsSegmentActions(); i++) {
-                if (scn.AwaitingDSForceLossPayment()) scn.DSChooseCard(scn.GetTopOfDSReserveDeck());
-                else if (scn.DSDecisionAvailable("Choose a Dual Blasters result")) {
-                    scn.DSChoose(choice);
-                    chosen = true;
-                } else if (scn.LSGetDecision() instanceof CardActionSelectionDecision) scn.LSPass();
-                else if (scn.DSGetDecision() instanceof CardActionSelectionDecision) scn.DSPass();
-                else fail("Unexpected Dual Blasters decision: " + scn.GetCurrentDecision().getText());
-            }
-            assertTrue(chosen);
-            assertTrue(scn.AwaitingLSWeaponsSegmentActions());
-            boolean losesImmunity = choice.contains("immunity");
-            assertEquals(life - 1, scn.GetDSLifeForceRemaining());
-            assertFalse(jedi.isHit());
-            assertInZone(Zone.AT_LOCATION, jedi);
-            assertEquals(losesImmunity ? 0 : immunity, mods.getImmunityToAttritionLessThan(scn.gameState(), jedi), scn.epsilon);
-            assertEquals(losesImmunity, scn.LSCardActionAvailable(saber, "Fire"));
+    @Test public void DualBlastersWeaponRestrictionCostsOneForceAndLastsUntilTurnEnds() {
+        dualBlastersUntilTurnEnds("Jedi may not fire weapons");
+    }
+
+    @Test public void DualBlastersAttritionRestrictionCostsOneForceAndLastsUntilTurnEnds() {
+        dualBlastersUntilTurnEnds("Jedi loses immunity to attrition");
+    }
+
+    private void dualBlastersUntilTurnEnds(String choice) {
+        var scn = scenario();
+        var mando = scn.GetDSCard("mando");
+        var jedi = scn.GetLSCard("jedi");
+        var other = scn.GetLSCard("other");
+        var saber = scn.GetLSCard("saber");
+        var site = scn.GetDSStartingLocation();
+        scn.MoveCardsToLocation(site, mando, jedi, other);
+        scn.AttachCardsTo(jedi, saber);
+        scn.EnsureDSForcePile(3);
+        scn.DSStartBattleAndSkipToWeaponsSegment(site);
+        int life = scn.GetDSLifeForceRemaining();
+        var mods = scn.game().getModifiersQuerying();
+        float immunity = mods.getImmunityToAttritionLessThan(scn.gameState(), jedi);
+        assertTrue(immunity > 0);
+        scn.DSUseCardAction(mando, "Fire Dual Blasters");
+        assertTrue(scn.DSHasCardChoiceAvailable(jedi));
+        assertFalse(scn.DSHasCardChoiceAvailable(other));
+        scn.DSChooseCard(jedi);
+        boolean chosen = false;
+        for (int i = 0; i < 70 && !scn.AwaitingLSWeaponsSegmentActions(); i++) {
+            if (scn.AwaitingDSForceLossPayment()) scn.DSChooseCard(scn.GetTopOfDSReserveDeck());
+            else if (scn.DSDecisionAvailable("Choose a Dual Blasters result")) {
+                scn.DSChoose(choice);
+                chosen = true;
+            } else if (scn.LSGetDecision() instanceof CardActionSelectionDecision) scn.LSPass();
+            else if (scn.DSGetDecision() instanceof CardActionSelectionDecision) scn.DSPass();
+            else fail("Unexpected Dual Blasters decision: " + scn.GetCurrentDecision().getText());
         }
+        assertTrue(chosen);
+        assertTrue(scn.AwaitingLSWeaponsSegmentActions());
+        boolean losesImmunity = choice.contains("immunity");
+        assertEquals(life - 1, scn.GetDSLifeForceRemaining());
+        assertFalse(jedi.isHit());
+        assertInZone(Zone.AT_LOCATION, jedi);
+        assertEquals(losesImmunity ? 0 : immunity, mods.getImmunityToAttritionLessThan(scn.gameState(), jedi), scn.epsilon);
+        assertEquals(losesImmunity, scn.LSCardActionAvailable(saber, "Fire"));
+
+        scn.SkipToDamageSegment(false);
+        scn.PassDamageSegmentActions();
+        scn.DSPayRemainingBattleDamageFromReserveDeck();
+        scn.PassAllResponses();
+        assertEquals(scn.DS, scn.gameState().getCurrentPlayerId());
+        assertEquals("The chosen immunity change lasts after battle in the same turn",
+                losesImmunity ? 0 : immunity, mods.getImmunityToAttritionLessThan(scn.gameState(), jedi), scn.epsilon);
+        assertEquals("The chosen weapon restriction lasts after battle in the same turn",
+                losesImmunity, mods.notProhibitedFromFiringWeapons(scn.gameState(), jedi));
+        scn.SkipToLSTurn(Phase.CONTROL);
+        assertEquals("The attrition change ends on the previous turn", immunity,
+                mods.getImmunityToAttritionLessThan(scn.gameState(), jedi), scn.epsilon);
+        scn.EnsureLSForcePile(2);
+        scn.SkipToPhase(Phase.BATTLE);
+        scn.LSInitiateBattle(site);
+        scn.PassAllResponses();
+        assertTrue("The same Jedi may actually fire on the next turn", scn.LSCardActionAvailable(saber, "Fire"));
+        scn.PrepareLSDestiny(6);
+        scn.PrepareLSDestiny(5);
+        scn.LSUseCardAction(saber, "Fire");
+        scn.LSChooseCard(mando);
+        scn.PassWeaponFireWithDestinyDraw(2);
+        scn.PassAllResponses();
+        assertTrue(mando.isHit());
     }
 }
