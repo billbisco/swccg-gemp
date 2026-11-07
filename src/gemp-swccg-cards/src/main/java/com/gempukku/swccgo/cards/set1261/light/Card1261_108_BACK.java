@@ -35,7 +35,10 @@ public class Card1261_108_BACK extends AbstractObjective {
     protected List<RequiredGameTextTriggerAction> getGameTextRequiredAfterTriggers(
             SwccgGame game, EffectResult result, PhysicalCard self, int sourceId) {
         var apprentice = Card1261_108.apprentice(game, self);
-        boolean crossed = result instanceof CrossedOverResult crossover && apprentice.accepts(game, crossover.getCharacter());
+        // The native result follows the owner and persona change. Inspect the printed persona.
+        Persona trainedPersona = Card1261_108.targetsLeia(game, self) ? Persona.LEIA : Persona.LUKE;
+        boolean crossed = result instanceof CrossedOverResult crossover
+                && crossover.getCharacter().getBlueprint().getPersonas().contains(trainedPersona);
         if (!crossed && !TriggerConditions.justPlacedOutOfPlayFromTable(game, result, Filters.and(Filters.your(self), apprentice))) return List.of();
         var action = new RequiredGameTextTriggerAction(self, sourceId);
         action.setText("Place out of play");
@@ -68,10 +71,10 @@ public class Card1261_108_BACK extends AbstractObjective {
         var leia = new GameTextModificationCondition(self, Card1261_108.TARGETS_LEIA);
         return List.of(new ModifyGameTextModifier(self, Filters.and(Filters.your(self), Filters.Jedi_Test_5),
                         ModifyGameTextType.IT_IS_THE_FUTURE_YOU_SEE__STACK_DESTINY_CARD_ON_JEDI_TEST_5),
-                new IgnoresLocationDeploymentRestrictionsWhenDeployingToLocationModifier(self,
-                        Filters.and(Filters.your(self), Filters.Luke), new NotCondition(leia), Filters.any, true),
-                new IgnoresLocationDeploymentRestrictionsWhenDeployingToLocationModifier(self,
-                        Filters.and(Filters.your(self), Filters.Leia), leia, Filters.any, true),
+                new IgnoresLocationDeploymentRestrictionsInGameTextModifier(self,
+                        Filters.and(Filters.your(self), Filters.Luke), new NotCondition(leia)),
+                new IgnoresLocationDeploymentRestrictionsInGameTextModifier(self,
+                        Filters.and(Filters.your(self), Filters.Leia), leia),
                 new MayNotPlayModifier(self, Filters.or(Filters.Sense, Filters.Alter), game.getOpponent(self.getOwner())));
     }
 }

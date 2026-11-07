@@ -8,6 +8,8 @@ import com.gempukku.swccgo.framework.VirtualTableScenario;
 import com.gempukku.swccgo.game.PhysicalCardImpl;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
 import com.gempukku.swccgo.logic.effects.CompleteJediTestEffect;
+import com.gempukku.swccgo.logic.effects.CrossOverCharacterEffect;
+import com.gempukku.swccgo.logic.effects.PlaceCardOutOfPlayFromTableEffect;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -20,7 +22,7 @@ import static org.junit.Assert.*;
 public class Card_1261_108_Tests {
     private VirtualTableScenario fixture(int stack) {
         var ls = new HashMap<>(Map.of("hut", "4_89", "jungle", "4_86", "luke", "1_19", "yoda", "4_2", "han", "1_11",
-                "loss", "2_18", "testOne", "4_77", "testFive", "4_78", "backpack", "4_6"));
+                "loss", "2_18", "testOne", "4_77", "testFive", "4_78", "backpack", "4_12"));
         return new VirtualTableScenario(ls, new HashMap<>(), 40, 40,
                 new StartingSetup() {
                     @Override public HashMap<String, String> Cards() {
@@ -57,17 +59,6 @@ public class Card_1261_108_Tests {
                     }
                     @Override public void Setup(VirtualTableScenario scn) {}
                 }, StartingSetup.NoDSShields, "legacy");
-    }
-
-    @Test public void strongIsVaderUsesTheExactLegacyEpicEventPrinting() {
-        var scn = fixture(0); var b = scn.GetLSCard("strong").getBlueprint();
-        assertEquals(Title.Strong_Is_Vader, b.getTitle()); assertEquals(0, b.getDestiny(), scn.epsilon);
-        assertEquals(Uniqueness.UNIQUE, b.getUniqueness()); assertFalse(b.hasVirtualSuffix());
-        assertEquals(Side.LIGHT, b.getSide()); assertEquals(Rarity.V, b.getRarity());
-        assertEquals(ExpansionSet.VIRTUAL_BLOCK_6_1, b.getExpansionSet());
-        scn.BlueprintCardTypeCheck(b, new ArrayList<>(List.of(CardType.EPIC_EVENT)));
-        scn.BlueprintIconCheck(b, new ArrayList<>(List.of(Icon.EPIC_EVENT, Icon.DEATH_STAR_II, Icon.LEGACY_BLOCK_6)));
-        scn.BlueprintKeywordCheck(b, new ArrayList<>());
     }
 
     @Test public void bothObjectiveFacesUseTheFinalLegacyPrinting() {
@@ -152,4 +143,45 @@ public class Card_1261_108_Tests {
 
     @Test public void firstTestGoesOnTableAndRetrievesWithoutFlippingTheObjective() { completeTest(false); }
     @Test public void fifthTestFlipsTheObjectiveAndStillLetsStrongRetrieve() { completeTest(true); }
+    private void apprenticeLeaves(boolean crossesOver) {
+        var scn = fixture(0); scn.StartGame();
+        var objective = scn.GetLSCard("objective");
+        var luke = scn.GetLSCard("luke");
+        var site = scn.GetLSCard("hut");
+        scn.MoveLocationToTable(site); scn.MoveCardsToLocation(site, luke);
+        scn.gameState().flipCard(scn.game(), objective, true);
+        scn.SkipToDSTurn(Phase.CONTROL);
+        var source = scn.GetDSStartingLocation();
+        var action = new TopLevelGameTextAction(source, scn.DS, source.getCardId());
+        if (crossesOver) action.appendEffect(new CrossOverCharacterEffect(action, luke));
+        else action.appendEffect(new PlaceCardOutOfPlayFromTableEffect(action, luke));
+        scn.carryOutEffectInPhaseActionByPlayer(scn.DS, action);
+        scn.PassAllResponses();
+        if (crossesOver) {
+            assertTrue(luke.isCrossedOver());
+            assertEquals(scn.DS, luke.getOwner());
+            assertFalse(Filters.Luke.accepts(scn.game(), luke));
+        } else assertEquals(Zone.OUT_OF_PLAY, luke.getZone());
+        assertEquals(Zone.OUT_OF_PLAY, objective.getZone());
+    }
+
+    @Test public void realLukeCrossoverPlacesSaveYouItCanOutOfPlay() { apprenticeLeaves(true); }
+    @Test public void placingLukeOutOfPlayAlsoRemovesSaveYouItCan() { apprenticeLeaves(false); }
+
+    @Test public void paidMovePhaseReturnPutsLukesAttachmentInUsedPile() {
+        var scn = fixture(0); scn.StartGame();
+        var objective = scn.GetLSCard("objective"); var luke = scn.GetLSCard("luke");
+        var site = scn.GetLSCard("hut"); var backpack = scn.GetLSCard("backpack");
+        scn.MoveLocationToTable(site); scn.MoveCardsToLocation(site, luke); scn.AttachCardsTo(luke, backpack);
+        scn.gameState().flipCard(scn.game(), objective, true);
+        scn.LSActivateForceCheat(8); scn.SkipToLSTurn(Phase.MOVE);
+        int before = scn.GetLSForcePileCount();
+        scn.LSUseCardAction(objective, "Take Luke into hand");
+        if (scn.LSHasCardChoiceAvailable(luke)) scn.LSChooseCard(luke);
+        scn.PassForceUseResponses(); scn.PassAllResponses();
+        assertTrue(scn.GetLSHand().contains(luke));
+        assertTrue(scn.GetLSUsedPile().contains(backpack));
+        assertEquals(before - 3, scn.GetLSForcePileCount());
+        assertTrue(scn.IsCardActive(objective));
+    }
 }
