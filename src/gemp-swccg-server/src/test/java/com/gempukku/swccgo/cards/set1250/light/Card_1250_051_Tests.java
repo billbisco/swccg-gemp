@@ -72,6 +72,7 @@ public class Card_1250_051_Tests {
                 s.GetDSCard("emperor"), s.GetDSCard("aks"));
         s.SkipToDSTurn(Phase.CONTROL);
         if (s.GetDSForcePileCount() == 0) s.DSActivateForceCheat(2);
+        s.MoveCardsToHand(s.GetDSCard("trooper"));
         s.PrepareDSDestiny(5);
         assertTrue(s.DSCardActionAvailable(s.GetDSCard("emperor"), EMPEROR));
         s.DSUseCardAction(s.GetDSCard("emperor"), EMPEROR); s.PassAllResponses();
@@ -154,6 +155,18 @@ public class Card_1250_051_Tests {
         assertEquals(Zone.HAND, destiny.getZone()); assertEquals(hand + 1, s.GetLSHandCount());
     }
 
+    private void finishLightDraws(VirtualTableScenario s, int count, int total) {
+        var battle = s.gameState().getBattleState();
+        for (int i = 0; i < 40 && battle.getNumBattleDestinyDrawn(s.LS) < count; i++) {
+            String prompt = s.GetCurrentDecision().getText();
+            assertFalse("Mothma is offered again before finishing the same turn", lightAction(s, TAKE));
+            assertTrue(prompt, prompt.contains("Optional responses"));
+            s.PlayerPass(s.GetDecidingPlayer());
+        }
+        assertEquals(count, battle.getNumBattleDestinyDrawn(s.LS));
+        assertEquals(total, s.GetLSTotalDestiny());
+    }
+
     @Test
     public void SenateMajorityTakesPhysicalBattleDestinyAndKeepsValueButOnlyOnceThisTurn() {
         var s = battle(true, null);
@@ -161,7 +174,8 @@ public class Card_1250_051_Tests {
         finishTake(s, s.GetLSDestiny(3));
         advanceToDrawResponse(s);
         assertFalse(lightAction(s, TAKE)); s.PassDestinyDrawResponses();
-        assertNotEquals(Zone.HAND, s.GetLSDestiny(4).getZone()); assertEquals(7, s.GetLSTotalDestiny());
+        finishLightDraws(s, 2, 7);
+        assertNotEquals(Zone.HAND, s.GetLSDestiny(4).getZone());
     }
 
     @Test
@@ -171,7 +185,7 @@ public class Card_1250_051_Tests {
         s.LSPass(); s.PassDestinyDrawResponses(); assertNotEquals(Zone.HAND, s.GetLSDestiny(3).getZone());
         advanceToDrawResponse(s);
         finishTake(s, s.GetLSDestiny(4));
-        assertEquals(7, s.GetLSTotalDestiny());
+        finishLightDraws(s, 2, 7);
     }
 
     @Test
