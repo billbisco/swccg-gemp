@@ -14,7 +14,7 @@ import static org.junit.Assert.*;
 
 public class Card_1271_023_Tests {
     private VirtualTableScenario scenario() {
-        var light = new HashMap<>(Map.of("alderaan", "1_121", "luke", "1_19", "rough", "10_26_BACK"));
+        var light = new HashMap<>(Map.of("alderaan", "1_121", "luke", "1_19", "rough", "10_26"));
         var dark = new HashMap<>(Map.ofEntries(
             Map.entry("warRoom", "1271_23"), Map.entry("deathStar", "2_143"), Map.entry("bay", "1_285"),
             Map.entry("executorSite", "4_163"), Map.entry("bespin", "5_164"), Map.entry("devastator", "1_301"),
@@ -127,7 +127,7 @@ public class Card_1271_023_Tests {
         s.DSChooseCard(room);
         s.PassAllResponses();
         assertEquals(room, presence.getAttachedTo());
-        assertEquals(1, s.GetLSIconsOnLocation(room));
+        assertEquals(1, s.game().getModifiersQuerying().getIconCount(s.gameState(), room, Icon.LIGHT_FORCE));
         assertFalse(Filters.battleground.accepts(s.game(), room));
         assertTrue(Filters.battleground.accepts(s.game(), s.GetDSCard("bay")));
     }
@@ -139,6 +139,9 @@ public class Card_1271_023_Tests {
         var rough = s.GetLSCard("rough");
         s.MoveCardsToLSSideOfTable(rough);
         var q = s.game().getModifiersQuerying();
+        assertEquals(2, q.getForceGenerationFromLocation(s.gameState(), chamber, s.DS), s.epsilon);
+        s.gameState().flipCard(s.game(), rough, true);
+        assertEquals(Title.This_Place_Can_Be_A_Little_Rough, rough.getTitle());
         assertEquals(2, q.getForceGenerationFromLocation(s.gameState(), s.GetDSCard("warRoom"), s.DS), s.epsilon);
         assertEquals(3, q.getForceGenerationFromLocation(s.gameState(), s.GetDSCard("deathStar"), s.DS), s.epsilon);
         assertEquals(1, q.getForceGenerationFromLocation(s.gameState(), chamber, s.DS), s.epsilon);
