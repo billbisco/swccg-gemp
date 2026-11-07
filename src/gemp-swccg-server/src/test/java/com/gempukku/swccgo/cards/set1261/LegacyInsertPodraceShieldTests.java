@@ -144,15 +144,25 @@ public abstract class LegacyInsertPodraceShieldTests {
         assertTrue(lost(s, ownInsert).contains(insert)); assertFalse(insert.isInserted());
     }
 
+    private void activateOne(VirtualTableScenario s) {
+        if (dark()) { s.DSChooseAction("Activate Force"); s.DSDecided("1"); }
+        else { s.LSChooseAction("Activate Force"); s.LSDecided("1"); }
+        if (s.GetCurrentDecision().getText().contains("amount of Force to allow opponent"))
+            s.PlayerDecided(enemy(s), "1");
+        s.PassAllResponses();
+    }
     private int activatePastInsert(boolean shield) {
         var s = scenario(); s.StartGame(); turn(s, true, Phase.ACTIVATE);
         if (shield) table(s, true, card(s, true, "shield"));
         var insert = card(s, false, "insert");
-        // Arrange a pre-existing insert at the top; the actual activation invokes the engine reveal rule.
-        if (dark()) s.MoveCardsToTopOfDSReserveDeck(insert); else s.MoveCardsToTopOfLSReserveDeck(insert);
-        insert.setInserted(true); int before = force(s, true);
-        if (dark()) s.DSActivateMaxForceAndPass(); else s.LSActivateMaxForceAndPass();
-        s.PassAllResponses(); assertTrue(lost(s, false).contains(insert));
+        var cover = dark() ? s.GetDSFiller(1) : s.GetLSFiller(1);
+        // Activating the normal top card exposes the pre-existing insert through the real engine reveal rule.
+        if (dark()) s.MoveCardsToTopOfDSReserveDeck(insert, cover); else s.MoveCardsToTopOfLSReserveDeck(insert, cover);
+        insert.setInserted(true); int before = force(s, true); activateOne(s);
+        assertTrue(lost(s, false).contains(insert));
+        boolean canContinue = dark() ? s.DSActionAvailable("Activate Force") : s.LSActionAvailable("Activate Force");
+        assertEquals(shield, canContinue);
+        if (shield) activateOne(s);
         return force(s, true) - before;
     }
     protected void checkCancelingARevealedInsertAllowsActualActivationToContinue() {
@@ -188,7 +198,7 @@ public abstract class LegacyInsertPodraceShieldTests {
             var filler = dark() ? s.GetLSFiller(n) : s.GetDSFiller(n);
             if (dark()) s.MoveCardsToTopOfLSLostPile(filler); else s.MoveCardsToTopOfDSLostPile(filler);
         }
-        force(s, false, 0); int ownLost = lost(s, true).size(); int enemyLost = lost(s, false).size();
+        s.DrainForcePileTo(enemy(s), 0); assertEquals(0, force(s, false)); int ownLost = lost(s, true).size(); int enemyLost = lost(s, false).size();
         s.SkipToPhase(Phase.MOVE);
         for (int step = 0; step < 40; step++) {
             s.PassAllResponses();
@@ -198,6 +208,9 @@ public abstract class LegacyInsertPodraceShieldTests {
                 continue;
             }
             var decision = s.GetCurrentDecision(); String text = decision.getText(); String player = s.GetDecidingPlayer();
+            if (text.contains("to proceed with Force retrieval?")) {
+                if (player.equals(s.DS)) s.DSChooseNo(); else s.LSChooseNo(); continue;
+            }
             if (text.contains("Choose effect to be performed first")) { s.PlayerDecided(player, "0"); continue; }
             String[] ids = decision.getDecisionParameters().get("cardId");
             if (text.contains("Used Pile") && ids != null && ids.length > 0) { s.PlayerDecided(player, ids[0]); continue; }
