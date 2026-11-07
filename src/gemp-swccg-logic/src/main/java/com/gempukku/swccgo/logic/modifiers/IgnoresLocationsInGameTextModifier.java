@@ -1,7 +1,7 @@
 package com.gempukku.swccgo.logic.modifiers;
 
 import com.gempukku.swccgo.filters.Filter;
-import com.gempukku.swccgo.filters.Filterable;
+import com.gempukku.swccgo.common.Filterable;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.logic.conditions.Condition;
