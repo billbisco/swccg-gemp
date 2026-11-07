@@ -14,6 +14,8 @@ import static org.junit.Assert.*;
 public class Card_1240_060_Tests {
     private VirtualTableScenario GetScenario() {
         return new VirtualTableScenario(new HashMap<>() {{
+                    // Existing Legacy exclusion is a secondary fixture: no original card excludes a capital ship in place.
+                    put("maneuvers", "1230_102"); put("red1", "1_144"); put("red3", "1_145"); put("jek", "1_13");
                     put("corvette", "1_140"); put("corvette2", "1_140"); put("luke", "1_19"); put("cannon", "1_159");
                 }},
                 new HashMap<>() {{
@@ -190,6 +192,53 @@ public class Card_1240_060_Tests {
         assertTrue(scn.AwaitingDSAttritionPayment());
         assertTrue(scn.DSHasCardChoiceAvailable(scn.GetDSCard("katana")));
         assertTrue(scn.DSHasCardChoiceAvailable(scn.GetDSCard("dreadnaught")));
+    }
+
+    @Test
+    public void KatanaGrantedImmunityStillProtectsOtherDreadnaughtBelowFourWhenKatanaIsExcluded() {
+        var scn = BattleWithKatanaExcluded(3);
+        scn.DSPayRemainingBattleDamageFromReserveDeck();
+        assertEquals("0", scn.GetADParam(scn.DS, "min")[0]);
+        scn.DSPass();
+        assertAtLocation(scn.GetDSStartingLocation(), scn.GetDSCard("dreadnaught"));
+    }
+
+    @Test
+    public void KatanaGrantedImmunityRequiresOtherDreadnaughtToPayExactlyFourWhenKatanaIsExcluded() {
+        var scn = BattleWithKatanaExcluded(4);
+        scn.DSPayRemainingBattleDamageFromReserveDeck();
+        assertEquals("1", scn.GetADParam(scn.DS, "min")[0]);
+        scn.DSPayAttritionFromCardInPlay(scn.GetDSCard("dreadnaught"));
+        assertInZone(Zone.LOST_PILE, scn.GetDSCard("dreadnaught"));
+        assertAtLocation(scn.GetDSStartingLocation(), scn.GetDSCard("katana"));
+    }
+
+    private VirtualTableScenario BattleWithKatanaExcluded(int destiny) {
+        var scn = Ready();
+        var system = scn.GetDSStartingLocation();
+        scn.MoveCardsToDSHand(scn.GetDSCard("devastator"));
+        scn.MoveCardsToLocation(system, scn.GetLSCard("red1"), scn.GetLSCard("red3"));
+        scn.BoardAsPilot(scn.GetLSCard("red1"), scn.GetLSCard("luke"));
+        scn.BoardAsPilot(scn.GetLSCard("red3"), scn.GetLSCard("jek"));
+        scn.MoveCardsToLSHand(scn.GetLSCard("maneuvers"));
+        scn.EnsureDSForcePile(5);
+        scn.SkipToPhase(Phase.BATTLE);
+        scn.DSInitiateBattle(system);
+        if (scn.DSAnyActionsAvailable()) scn.DSPass();
+        scn.PrepareLSDestiny(1);
+        scn.LSPlayCard(scn.GetLSCard("maneuvers"), "Draw destiny to exclude a starship");
+        scn.PassAllResponses();
+        scn.LSChooseCard(scn.GetDSCard("katana"));
+        scn.PassAllResponses();
+        assertFalse(scn.gameState().isParticipatingInBattle(scn.GetDSCard("katana")));
+        assertTrue(scn.gameState().isParticipatingInBattle(scn.GetDSCard("dreadnaught")));
+        assertAtLocation(system, scn.GetDSCard("katana"));
+        assertEquals(6, scn.GetPower(scn.GetDSCard("dreadnaught")));
+        scn.PrepareLSDestiny(destiny);
+        scn.SkipToEndOfPowerSegment(true);
+        assertEquals(destiny, scn.GetLSTotalDestiny());
+        scn.PassResponses("INITIAL_ATTRITION_CALCULATED");
+        return scn;
     }
 
     private VirtualTableScenario BattleReady(int destiny) {
