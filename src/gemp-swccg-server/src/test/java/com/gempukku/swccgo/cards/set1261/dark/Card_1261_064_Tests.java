@@ -66,8 +66,10 @@ public class Card_1261_064_Tests {
     private VirtualTableScenario battle(String bearer) {
         var scn = scenario(); scn.StartGame(); var site = scn.GetDSStartingLocation();
         scn.MoveCardsToLocation(site, scn.GetDSCard(bearer), scn.GetLSCard("obiwan"), scn.GetLSCard("han"));
-        scn.ApplyAdHocModifier(new KeywordModifier(scn.GetDSCard("yularen"), Keyword.ISB_AGENT));
-        assertTrue(scn.HasKeyword(scn.GetDSCard("yularen"), Keyword.ISB_AGENT));
+        if (bearer.equals("yularen")) {
+            scn.ApplyAdHocModifier(new KeywordModifier(scn.GetDSCard("yularen"), Keyword.ISB_AGENT));
+            assertTrue(scn.HasKeyword(scn.GetDSCard("yularen"), Keyword.ISB_AGENT));
+        }
         scn.AttachCardsTo(scn.GetDSCard(bearer), scn.GetDSCard("pistol"));
         scn.DSStartBattleAndSkipToWeaponsSegment(site); return scn;
     }
@@ -122,7 +124,7 @@ public class Card_1261_064_Tests {
         var scn = battle("yularen"); var pistol = scn.GetDSCard("pistol"); var bearer = scn.GetDSCard("yularen");
         scn.SkipToDamageSegment(false); int before = scn.GetUnpaidDSBattleDamage();
         scn.DSUseCardAction(pistol, "Forfeit ISB Blaster Pistol"); scn.PassAllResponses();
-        assertEquals(Zone.USED_PILE, pistol.getZone()); assertEquals(Zone.AT_LOCATION, bearer.getZone());
+        com.gempukku.swccgo.framework.Assertions.assertInZone(Zone.USED_PILE, pistol); assertEquals(Zone.AT_LOCATION, bearer.getZone());
         assertEquals(before - 3, scn.GetUnpaidDSBattleDamage());
     }
 }
