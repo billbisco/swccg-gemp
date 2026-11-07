@@ -22,8 +22,8 @@ public class Card_1250_065_Tests {
 
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>() {{
-            put("ambush", "1250_65"); put("clone1", "1116_8"); put("clone2", "1116_8");
-            put("clone3", "1116_8"); put("nonClone", "1_28"); put("luke", "1_19");
+            put("ambush", "1250_65"); put("clone1", "1116_8"); put("clone2", "1116_9");
+            put("clone3", "200_6"); put("nonClone", "1_28"); put("luke", "1_19");
             put("forest", "8_74"); put("dense", "8_72"); put("door", "8_69"); put("hut", "8_71");
             put("dock", "12_74"); put("club", "1116_30"); put("council", "1116_29");
             put("older", "1_60"); put("newer", "1_5");
@@ -114,12 +114,16 @@ public class Card_1250_065_Tests {
 
     private void chooseClone(VirtualTableScenario s, String clone) {
         assertTrue(s.LSDecisionAvailable("to deploy from Reserve Deck"));
-        s.LSChooseCard(s.GetLSCard(clone));
+        int index = s.LSGetADParamAsList("blueprintId").indexOf(s.GetLSCard(clone).getBlueprintId(true));
+        assertTrue("Missing " + clone + " in the Reserve Deck choices", index >= 0);
+        assertEquals("true", s.LSGetADParam("selectable")[index]);
+        s.LSChooseCard(s.GetLSCard(clone)); s.PassAllResponses();
         if (s.LSAnyDecisionsAvailable() && s.LSHasCardChoicesAvailable(s.GetLSStartingLocation()))
             s.LSChooseCard(s.GetLSStartingLocation());
         s.PassAllResponses();
-        assertEquals(s.GetLSStartingLocation(), s.game().getModifiersQuerying()
-                .getLocationThatCardIsAt(s.gameState(), s.GetLSCard(clone)));
+        assertEquals("Deploying " + clone + "; zone=" + s.GetLSCard(clone).getZone()
+                        + "; decision=" + s.GetCurrentDecision().getText(), s.GetLSStartingLocation(),
+                s.game().getModifiersQuerying().getLocationThatCardIsAt(s.gameState(), s.GetLSCard(clone)));
     }
 
     @Test
