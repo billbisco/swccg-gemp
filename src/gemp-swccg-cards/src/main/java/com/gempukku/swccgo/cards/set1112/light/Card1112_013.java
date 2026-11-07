@@ -2,6 +2,7 @@ package com.gempukku.swccgo.cards.set1112.light;
 
 import com.gempukku.swccgo.cards.AbstractEpicEventDeployable;
 import com.gempukku.swccgo.cards.GameConditions;
+import com.gempukku.swccgo.cards.TurnStackedCardsFaceDownInsteadOfUsingForce;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Keyword;
@@ -17,11 +18,11 @@ import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.TriggerConditions;
 import com.gempukku.swccgo.common.CardSubtype;
+import com.gempukku.swccgo.logic.actions.OptionalGameTextTriggerAction;
 import com.gempukku.swccgo.logic.actions.PlayCardAction;
 import com.gempukku.swccgo.logic.actions.PlayInterruptAction;
 import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
-import com.gempukku.swccgo.logic.effects.ActivateForceEffect;
 import com.gempukku.swccgo.logic.effects.LightSideGoesFirstEffect;
 import com.gempukku.swccgo.logic.effects.UseForceEffect;
 import com.gempukku.swccgo.logic.effects.choose.DeployCardFromReserveDeckEffect;
@@ -30,6 +31,7 @@ import com.gempukku.swccgo.logic.effects.choose.TakeCardIntoHandFromReserveDeckE
 import com.gempukku.swccgo.logic.modifiers.EachDuelDestinyModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.modifiers.TotalBattleDestinyModifier;
+import com.gempukku.swccgo.logic.timing.Effect;
 import com.gempukku.swccgo.logic.timing.EffectResult;
 import com.gempukku.swccgo.logic.timing.PassthruEffect;
 
@@ -99,7 +101,25 @@ public class Card1112_013 extends AbstractEpicEventDeployable {
             modifiers.add(new TotalBattleDestinyModifier(self, 3, opponent));
             modifiers.add(new EachDuelDestinyModifier(self, 3, opponent));
         }
+        if (onJediSide(self)) {
+            modifiers.add(TurnStackedCardsFaceDownInsteadOfUsingForce.modifier(self));
+        }
         return modifiers;
+    }
+
+    private boolean onJediSide(PhysicalCard self) {
+        return self.getZone() == Zone.SIDE_OF_TABLE && self.getOwner().equals(self.getZoneOwner());
+    }
+
+    @Override
+    protected List<OptionalGameTextTriggerAction> getGameTextOptionalBeforeTriggers(String playerId, SwccgGame game, Effect effect, PhysicalCard self, int gameTextSourceCardId) {
+        // Instead of using X Force (any Force used during your turn), may turn X cards here face down.
+        return onJediSide(self) ? TurnStackedCardsFaceDownInsteadOfUsingForce.optionalBeforeTriggers(playerId, game, effect, self, gameTextSourceCardId) : null;
+    }
+
+    @Override
+    protected List<RequiredGameTextTriggerAction> getGameTextRequiredBeforeTriggers(SwccgGame game, Effect effect, PhysicalCard self, int gameTextSourceCardId) {
+        return onJediSide(self) ? TurnStackedCardsFaceDownInsteadOfUsingForce.requiredBeforeTriggers(game, effect, self, gameTextSourceCardId) : null;
     }
 
     @Override
@@ -146,21 +166,6 @@ public class Card1112_013 extends AbstractEpicEventDeployable {
             actions.add(action);
         }
 
-        Collection<PhysicalCard> faceUp = Filters.filter(game.getGameState().getStackedCards(self), game, Zone.STACKED);
-        if (!faceUp.isEmpty()) {
-            final TopLevelGameTextAction action = new TopLevelGameTextAction(self, playerId, gameTextSourceCardId);
-            action.setText("Turn a stacked card face down to activate 1 Force");
-            action.appendEffect(new PassthruEffect(action) {
-                @Override
-                protected void doPlayEffect(SwccgGame game) {
-                    PhysicalCard card = Filters.filter(game.getGameState().getStackedCards(self), game, Zone.STACKED).iterator().next();
-                    game.getGameState().removeCardsFromZone(Collections.singleton(card));
-                    game.getGameState().stackCard(card, self, true, false, false);
-                }
-            });
-            action.appendEffect(new ActivateForceEffect(action, playerId, 1));
-            actions.add(action);
-        }
         return actions;
     }
 }

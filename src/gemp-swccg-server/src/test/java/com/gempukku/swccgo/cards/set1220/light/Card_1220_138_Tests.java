@@ -3,6 +3,9 @@ package com.gempukku.swccgo.cards.set1220.light;
 import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.game.PhysicalCardImpl;
+import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
+import com.gempukku.swccgo.logic.effects.UseForceEffect;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -19,6 +22,7 @@ public class Card_1220_138_Tests {
         var ls = new HashMap<>(Map.of("future", "1220_138", "battlePlan", "8_35", "doNot", "4_21",
                 "immune", "9_47", "ordinary", "1_66", "luke", "1_19", "site", "3_63",
                 "stackOne", "2_18", "stackTwo", "2_23", "stackThree", "2_27"));
+        ls.putAll(Map.of("jess", "6_21", "beggar", "1_44"));
         if (arrangeZones) ls.putAll(Map.of("tableMaintenance", "13_9", "handWeapon", "108_3", "forceRevolution", "1_62"));
         if (purge != null) ls.put("purge", purge);
         var ds = new HashMap<>(Map.of("darkInsert", "1_208", "darkWeapon", "108_6", "vader", "1_168", "darkMaintenance", "13_59"));
@@ -173,5 +177,221 @@ public class Card_1220_138_Tests {
         assertTrue(scn.GetDSHand().contains(scn.GetDSCard("darkMaintenance")));
         assertTrue(scn.GetDSHand().contains(scn.GetDSCard("darkWeapon")));
         assertTrue(scn.GetLSHand().contains(scn.GetLSCard("ordinary")));
+    }
+    // --- "Instead of using X Force, may turn X cards here face down" (Bill 2026-11-07: any Force used during your turn) ---
+
+    private void stackFaceUp(VirtualTableScenario scn, String... keys) {
+        var event = scn.GetLSCard("future");
+        for (String key : keys) scn.gameState().relocateCardAsStacked(scn.GetLSCard(key), event, false, false);
+    }
+
+    private void setForcePile(VirtualTableScenario scn, String player, int size) {
+        while (scn.GetForcePile(player).size() > size)
+            scn.MoveCardsToTopOfReserveDeck(player, (PhysicalCardImpl) scn.GetForcePile(player).getFirst());
+        if (scn.GetForcePile(player).size() < size) scn.EnsureForcePile(player, size);
+        assertEquals(size, scn.GetForcePile(player).size());
+    }
+
+    private long faceDown(VirtualTableScenario scn) {
+        return scn.gameState().getStackedCards(scn.GetLSCard("future")).stream().filter(c -> c.getZone() == Zone.STACKED_FACE_DOWN).count();
+    }
+
+    private void startJessDeploy(VirtualTableScenario scn) {
+        var jess = scn.GetLSCard("jess"); var site = scn.GetLSStartingLocation();
+        scn.LSDeployCard(jess);
+        if (scn.LSHasCardChoiceAvailable(site)) scn.LSChooseCard(site);
+    }
+
+    /** Pass the opponent through the "Use N Force - Optional responses" window until Light Side holds it. */
+    private void toLSForceUseWindow(VirtualTableScenario scn) {
+        for (int i = 0; i < 4 && !scn.LSDecisionAvailable("Force - Optional responses"); i++) {
+            if (scn.DSDecisionAvailable("Optional responses")) scn.DSPass(); else break;
+        }
+        assertTrue(scn.GetCurrentDecision().getText(), scn.LSDecisionAvailable("Force - Optional responses"));
+    }
+
+    private void finishDeploy(VirtualTableScenario scn) {
+        scn.PassAllResponses();
+        assertTrue(scn.CardsAtLocation(scn.GetLSStartingLocation(), scn.GetLSCard("jess")));
+    }
+
+    private VirtualTableScenario jediDeployTurn(int forcePile, String... stacked) { return jediDeployTurn(-1, forcePile, stacked); }
+
+    /** dsForcePile >= 0 also attaches Beggar and sets the Dark Side Force Pile. */
+    private VirtualTableScenario jediDeployTurn(int dsForcePile, int forcePile, String... stacked) {
+        var scn = begin(false, null);
+        scn.MoveCardsToLSHand(scn.GetLSCard("jess"));
+        scn.SkipToLSTurn(Phase.CONTROL);
+        stackFaceUp(scn, stacked);
+        setForcePile(scn, scn.LS, forcePile);
+        if (dsForcePile >= 0) {
+            scn.AttachCardsTo(scn.GetDSStartingLocation(), scn.GetLSCard("beggar"));
+            setForcePile(scn, scn.DS, dsForcePile);
+        }
+        scn.SkipToPhase(Phase.DEPLOY); // fresh action list for the arranged state
+        return scn;
+    }
+
+    @Test public void deployCostPaidEntirelyByTurningCardsFaceDown() {
+        var scn = jediDeployTurn(4, "stackOne", "stackTwo", "stackThree");
+        assertEquals(4 + 3, scn.game().getModifiersQuerying().getForceAvailableToUse(scn.gameState(), scn.LS));
+        startJessDeploy(scn);
+        toLSForceUseWindow(scn);
+        var event = scn.GetLSCard("future");
+        assertTrue(scn.LSCardActionAvailable(event, "Turn cards face down instead of using Force"));
+        scn.LSUseCardAction(event, "Turn cards face down instead of using Force");
+        assertTrue(scn.LSDecisionAvailable("turn face down instead of using Force"));
+        assertEquals(1, scn.LSGetChoiceMin());
+        assertEquals(3, scn.LSGetChoiceMax()); // Jess deploys for 3
+        scn.LSDecided(3);
+        finishDeploy(scn);
+        assertEquals(4, scn.GetLSForcePileCount());
+        assertEquals(0, scn.GetLSUsedPileCount());
+        assertEquals(3, faceDown(scn));
+    }
+
+    @Test public void deployCostPaidPartlyByTurningCardsFaceDown() {
+        var scn = jediDeployTurn(4, "stackOne", "stackTwo", "stackThree");
+        startJessDeploy(scn);
+        toLSForceUseWindow(scn);
+        scn.LSUseCardAction(scn.GetLSCard("future"), "Turn cards face down instead of using Force");
+        scn.LSDecided(1);
+        finishDeploy(scn);
+        assertEquals(2, scn.GetLSForcePileCount());
+        assertEquals(2, scn.GetLSUsedPileCount());
+        assertEquals(1, faceDown(scn));
+    }
+
+    @Test public void faceUpCardsMakeAnUnaffordableDeployPlayableAndAreRequiredForTheShortfall() {
+        var scn = jediDeployTurn(1, "stackOne", "stackTwo", "stackThree");
+        assertTrue(scn.LSDeployAvailable(scn.GetLSCard("jess")));
+        startJessDeploy(scn);
+        assertTrue(scn.LSDecisionAvailable("turn face down instead of using Force"));
+        assertEquals(2, scn.LSGetChoiceMin()); // 3 cost - 1 Force in Force Pile
+        assertEquals(3, scn.LSGetChoiceMax());
+        scn.LSDecided(2);
+        finishDeploy(scn);
+        assertEquals(0, scn.GetLSForcePileCount());
+        assertEquals(2, faceDown(scn));
+    }
+
+    @Test public void notOfferedWithoutFaceUpCardsAndUnaffordableDeployStaysUnavailable() {
+        for (int forcePile : new int[]{1, 4}) {
+            var scn = begin(false, null); var event = scn.GetLSCard("future");
+            scn.MoveCardsToLSHand(scn.GetLSCard("jess"));
+            scn.SkipToLSTurn(Phase.CONTROL);
+            stackFaceUp(scn, "stackOne", "stackTwo");
+            for (var card : scn.gameState().getStackedCards(event)) scn.gameState().relocateCardAsStacked(card, event, true, false);
+            setForcePile(scn, scn.LS, forcePile);
+            scn.SkipToPhase(Phase.DEPLOY);
+            assertEquals(0, scn.game().getModifiersQuerying().getForceUseSubstitutesAvailable(scn.gameState(), scn.LS));
+            if (forcePile == 1) {
+                assertFalse(scn.LSDeployAvailable(scn.GetLSCard("jess")));
+                continue;
+            }
+            startJessDeploy(scn);
+            toLSForceUseWindow(scn);
+            assertFalse(scn.LSCardActionAvailable(event, "Turn cards face down instead of using Force"));
+            finishDeploy(scn);
+            assertEquals(1, scn.GetLSForcePileCount());
+        }
+    }
+
+    @Test public void notOfferedOnOpponentsTurnAndCardsTurnFaceUpAtStartOfOwnTurn() {
+        var scn = jediDeployTurn(4, "stackOne", "stackTwo", "stackThree");
+        var event = scn.GetLSCard("future");
+        var querying = scn.game().getModifiersQuerying();
+        assertEquals(scn.GetLSForcePileCount() + 3, querying.getForceAvailableToUse(scn.gameState(), scn.LS));
+        startJessDeploy(scn);
+        toLSForceUseWindow(scn);
+        scn.LSUseCardAction(event, "Turn cards face down instead of using Force");
+        scn.LSDecided(2);
+        finishDeploy(scn);
+        assertEquals(2, faceDown(scn));
+
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        assertEquals(2, faceDown(scn)); // only at the start of *your* turn
+        assertEquals(0, querying.getForceUseSubstitutesAvailable(scn.gameState(), scn.LS));
+        assertEquals(scn.GetLSForcePileCount(), querying.getForceAvailableToUse(scn.gameState(), scn.LS));
+        var useForce = new UseForceEffect(new TopLevelGameTextAction(event, scn.LS, event.getCardId()), scn.LS, 1);
+        assertTrue(scn.game().getActionsEnvironment().getOptionalBeforeTriggers(scn.LS, useForce).stream().noneMatch(a -> a.getActionSource() == event));
+        assertTrue(scn.game().getActionsEnvironment().getRequiredBeforeTriggers(useForce).stream().noneMatch(a -> a.getActionSource() == event));
+
+        scn.SkipToLSTurn(Phase.CONTROL);
+        assertEquals(0, faceDown(scn));
+        assertEquals(3, querying.getForceUseSubstitutesAvailable(scn.gameState(), scn.LS));
+    }
+
+    @Test public void stackingCostCanItselfBePaidByTurningCardsFaceDown() {
+        var scn = begin(false, null); var event = scn.GetLSCard("future");
+        scn.MoveCardsToLSHand(scn.GetLSCard("stackThree"));
+        scn.SkipToLSTurn(Phase.CONTROL);
+        stackFaceUp(scn, "stackOne", "stackTwo");
+        setForcePile(scn, scn.LS, 0);
+        scn.SkipToPhase(Phase.DEPLOY);
+        assertTrue(scn.LSCardActionAvailable(event, "Stack a card from hand face up"));
+        scn.LSUseCardAction(event, "Stack a card from hand face up");
+        assertTrue(scn.LSDecisionAvailable("turn face down instead of using Force"));
+        assertEquals(2, scn.LSGetChoiceMin());
+        scn.LSDecided(2);
+        scn.PassAllResponses();
+        if (scn.LSHasCardChoiceAvailable(scn.GetLSCard("stackThree"))) scn.LSChooseCard(scn.GetLSCard("stackThree"));
+        scn.PassAllResponses();
+        assertEquals(Zone.STACKED, scn.GetLSCard("stackThree").getZone());
+        assertEquals(2, faceDown(scn));
+    }
+
+    private VirtualTableScenario beggarTurn(int lsForce, int dsForce, String... stacked) {
+        return jediDeployTurn(dsForce, lsForce, stacked);
+    }
+
+    @Test public void beggarAndFaceDownCardsCombineInTheOptionalWindow() {
+        var scn = beggarTurn(4, 3, "stackOne", "stackTwo");
+        startJessDeploy(scn);
+        toLSForceUseWindow(scn);
+        scn.LSUseCardAction(scn.GetLSCard("beggar"), "opponent's Force");
+        assertEquals(3, scn.LSGetChoiceMax());
+        scn.LSDecided(1);
+        toLSForceUseWindow(scn);
+        scn.LSUseCardAction(scn.GetLSCard("future"), "Turn cards face down instead of using Force");
+        assertEquals(2, scn.LSGetChoiceMax()); // 3 cost - 1 opponent's Force
+        scn.LSDecided(2);
+        finishDeploy(scn);
+        assertEquals(4, scn.GetLSForcePileCount());
+        assertEquals(1, scn.GetDSUsedPileCount());
+        assertEquals(2, scn.GetDSForcePileCount());
+        assertEquals(2, faceDown(scn));
+    }
+
+    @Test public void shortfallLetsPlayerSplitBetweenFaceDownCardsAndBeggar() {
+        var scn = beggarTurn(1, 3, "stackOne", "stackTwo");
+        startJessDeploy(scn);
+        // Shortfall 2 could be covered by Beggar, so turning cards face down is optional (0 allowed)
+        assertTrue(scn.LSDecisionAvailable("turn face down instead of using Force"));
+        assertEquals(0, scn.LSGetChoiceMin());
+        assertEquals(2, scn.LSGetChoiceMax());
+        scn.LSDecided(1);
+        assertTrue(scn.LSDecisionAvailable("turn face down instead of using Force"));
+        assertEquals(0, scn.LSGetChoiceMin());
+        scn.LSDecided(0); // decline: the rest must come from Beggar
+        assertTrue(scn.LSDecisionAvailable("opponent's Force to use"));
+        assertEquals(1, scn.LSGetChoiceMin());
+        scn.LSDecided(1);
+        finishDeploy(scn);
+        assertEquals(1, faceDown(scn));
+        assertEquals(1, scn.GetDSUsedPileCount());
+        assertEquals(0, scn.GetLSForcePileCount());
+        assertEquals(1, scn.GetLSUsedPileCount());
+    }
+
+    @Test public void beggarWithoutFaceUpCardsStillRequiresOpponentsForce() {
+        var scn = beggarTurn(1, 3);
+        startJessDeploy(scn);
+        assertTrue(scn.LSDecisionAvailable("opponent's Force to use"));
+        assertEquals(2, scn.LSGetChoiceMin());
+        scn.LSDecided(2);
+        finishDeploy(scn);
+        assertEquals(2, scn.GetDSUsedPileCount());
+        assertEquals(0, faceDown(scn));
     }
 }

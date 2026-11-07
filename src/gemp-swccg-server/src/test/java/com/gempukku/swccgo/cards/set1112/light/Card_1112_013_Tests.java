@@ -28,6 +28,7 @@ public class Card_1112_013_Tests {
                     put("future", "1112_13");
                     put("card", "1_2");
                     put("extra", "1_128");
+                    put("second", "1_3");
                 }},
                 new HashMap<>() {{
                 }},
@@ -77,7 +78,7 @@ public class Card_1112_013_Tests {
     }
 
     @Test
-    public void ItIsTheFutureYouSeeStacksACardFromHandAndTurnsItFaceDownToActivateForce() {
+    public void ItIsTheFutureYouSeeStacksCardsFromHandAndTurnsCardsFaceDownInsteadOfUsingForce() {
         var scn = GetScenario();
         var future = scn.GetLSCard("future");
         var card = scn.GetLSCard("card");
@@ -101,13 +102,32 @@ public class Card_1112_013_Tests {
         assertEquals(Zone.STACKED, card.getZone());
         assertEquals(force, scn.GetLSForcePileCount());
 
+        // "Instead of using X Force, may turn X cards here face down" now applies to any Force used during your
+        // turn (Bill 2026-11-07), here the 1 Force cost of stacking the second card.
+        var second = scn.GetLSCard("second");
+        scn.MoveCardsToLSHand(second);
         if (!scn.LSAnyDecisionsAvailable() && scn.DSAnyDecisionsAvailable()) {
             scn.DSPass();
         }
-        assertTrue(scn.LSCardActionAvailable(future, "Turn a stacked card face down to activate 1 Force"));
-        scn.LSUseCardAction(future, "Turn a stacked card face down to activate 1 Force");
+        assertFalse(scn.LSCardActionAvailable(future, "activate 1 Force"));
+        scn.LSUseCardAction(future, "Stack a card from hand");
+        for (int i = 0; i < 4 && !scn.LSDecisionAvailable("Force - Optional responses"); i++) {
+            if (scn.DSDecisionAvailable("Optional responses")) scn.DSPass(); else break;
+        }
+        assertTrue(scn.LSCardActionAvailable(future, "Turn cards face down instead of using Force"));
+        scn.LSUseCardAction(future, "Turn cards face down instead of using Force");
+        assertEquals(1, scn.LSGetChoiceMax());
+        scn.LSDecided(1);
+        scn.PassAllResponses();
+        if (scn.LSHasCardChoiceAvailable(second)) scn.LSChooseCard(second);
         scn.PassAllResponses();
         assertEquals(Zone.STACKED_FACE_DOWN, card.getZone());
-        assertEquals(force + 1, scn.GetLSForcePileCount());
+        assertEquals(Zone.STACKED, second.getZone());
+        assertEquals(force, scn.GetLSForcePileCount());
+
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        assertEquals(Zone.STACKED_FACE_DOWN, card.getZone());
+        scn.SkipToLSTurn(Phase.CONTROL);
+        assertEquals(Zone.STACKED, card.getZone());
     }
 }

@@ -114,7 +114,9 @@ public class Card1_044 extends AbstractNormalEffect {
         // Check condition(s)
         if (TriggerConditions.isUsingForce(game, effect, playerId)) {
             final UseForceEffect useForceEffect = (UseForceEffect) effect;
-            int minOpponentForceToUse = Math.max(0, useForceEffect.getTotalAmountOfForceToUse() - game.getGameState().getForcePile(playerId).size());
+            // Force that another card may stand in for ("instead of using X Force") need not come from opponent's Force Pile
+            int minOpponentForceToUse = Math.max(0, useForceEffect.getTotalAmountOfForceToUse() - game.getGameState().getForcePile(playerId).size()
+                    - useForceEffect.getSubstitutesStillAvailable(game));
             if ((minOpponentForceToUse > 0) && (minOpponentForceToUse > useForceEffect.getAmountForOpponentToUse())) {
                 final int maxForceToUseViaCard = game.getModifiersQuerying().getMaxOpponentsForceToUseViaCard(game.getGameState(), playerId, self, useForceEffect.getAmountForOpponentToUse(), minOpponentForceToUse);
                 if (maxForceToUseViaCard > 0) {

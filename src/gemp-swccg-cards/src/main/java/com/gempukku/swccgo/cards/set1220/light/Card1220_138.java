@@ -2,6 +2,7 @@ package com.gempukku.swccgo.cards.set1220.light;
 
 import com.gempukku.swccgo.cards.AbstractEpicEventDeployable;
 import com.gempukku.swccgo.cards.GameConditions;
+import com.gempukku.swccgo.cards.TurnStackedCardsFaceDownInsteadOfUsingForce;
 import com.gempukku.swccgo.cards.AbstractNormalEffect;
 import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
@@ -12,6 +13,7 @@ import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.game.state.EpicEventState;
 import com.gempukku.swccgo.logic.TriggerConditions;
+import com.gempukku.swccgo.logic.actions.OptionalGameTextTriggerAction;
 import com.gempukku.swccgo.logic.actions.PlayCardAction;
 import com.gempukku.swccgo.logic.actions.PlayEpicEventAction;
 import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
@@ -24,6 +26,7 @@ import com.gempukku.swccgo.logic.effects.choose.TakeCardIntoHandFromReserveDeckE
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.modifiers.TotalBattleDestinyModifier;
 import com.gempukku.swccgo.logic.timing.Action;
+import com.gempukku.swccgo.logic.timing.Effect;
 import com.gempukku.swccgo.logic.timing.EffectResult;
 import com.gempukku.swccgo.logic.timing.PassthruEffect;
 
@@ -126,7 +129,23 @@ public class Card1220_138 extends AbstractEpicEventDeployable {
         if (self.getZone() == Zone.SIDE_OF_TABLE && game.getOpponent(self.getOwner()).equals(self.getZoneOwner())) {
             return List.of(new TotalBattleDestinyModifier(self, 2, self.getZoneOwner()));
         }
+        if (onJediSide(self)) {
+            return List.of(TurnStackedCardsFaceDownInsteadOfUsingForce.modifier(self));
+        }
         return List.of();
+    }
+
+    @Override
+    protected List<OptionalGameTextTriggerAction> getGameTextOptionalBeforeTriggers(
+            String playerId, SwccgGame game, Effect effect, PhysicalCard self, int sourceId) {
+        // Instead of using X Force (any Force used during your turn), may turn X cards here face down.
+        return onJediSide(self) ? TurnStackedCardsFaceDownInsteadOfUsingForce.optionalBeforeTriggers(playerId, game, effect, self, sourceId) : null;
+    }
+
+    @Override
+    protected List<RequiredGameTextTriggerAction> getGameTextRequiredBeforeTriggers(
+            SwccgGame game, Effect effect, PhysicalCard self, int sourceId) {
+        return onJediSide(self) ? TurnStackedCardsFaceDownInsteadOfUsingForce.requiredBeforeTriggers(game, effect, self, sourceId) : null;
     }
 
     private boolean onJediSide(PhysicalCard self) {
