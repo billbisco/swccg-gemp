@@ -23,6 +23,7 @@ import com.gempukku.swccgo.logic.modifiers.MayNotHaveForfeitValueReducedModifier
 import com.gempukku.swccgo.logic.timing.Action;
 import com.gempukku.swccgo.logic.timing.Effect;
 import com.gempukku.swccgo.logic.timing.EffectResult;
+import com.gempukku.swccgo.logic.timing.StandardEffect;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -123,7 +124,7 @@ public class Card1261_093 extends AbstractUsedOrLostInterrupt {
         return actions;
     }
 
-    private void resolve(PlayInterruptAction action, Effect effect) {
+    private void resolve(PlayInterruptAction action, StandardEffect effect) {
         action.allowResponses(new RespondablePlayCardEffect(action) {
             @Override
             protected void performActionResults(Action targetingAction) {
