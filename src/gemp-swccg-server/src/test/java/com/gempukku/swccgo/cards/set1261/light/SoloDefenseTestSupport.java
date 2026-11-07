@@ -97,6 +97,35 @@ public abstract class SoloDefenseTestSupport {
         assertTrue(scn.GetLSLostPile().contains(card));
     }
 
+    private void nativeDraws(boolean protect) {
+        var scn = battle("person", true, true);
+        var person = scn.GetLSCard("person"); var interrupt = scn.GetLSCard("interrupt");
+        assertTrue(scn.GetAbility(person) < 4);
+        if (protect) {
+            scn.LSPlayCard(interrupt, PROTECT);
+            if (scn.LSHasCardChoiceAvailable(person)) scn.LSChooseCard(person);
+            scn.PassAllResponses();
+        }
+        var power = scn.GetLSDestiny(2); var battle = scn.GetLSDestiny(3);
+        // The helper puts the last listed card on top. Power-only destiny resolves first.
+        scn.MoveCardsToTopOfLSReserveDeck(battle, power);
+        scn.PrepareDSDestiny(0);
+        scn.PassBattleStartResponses();
+        scn.PassWeaponsSegmentActions();
+        scn.PassPowerSegmentActions();
+        scn.PassDestinyDrawResponses();
+        scn.SkipBattleDestinyDraws(true);
+        var state = scn.gameState().getBattleState();
+        assertEquals(protect ? 1 : 0, state.getNumDestinyToTotalPowerDrawn(scn.LS));
+        assertEquals(protect ? 1 : 0, state.getNumUncanceledBattleDestinyDrawn(scn.LS));
+        assertEquals(protect ? 3 : 0, scn.GetLSTotalDestiny());
+        assertEquals(protect, scn.GetLSUsedPile().contains(power));
+        assertEquals(protect, scn.GetLSUsedPile().contains(battle));
+    }
+
+    @Test public void actualSoloDefenderDrawsSeparatePowerAndFallbackBattleDestinies() { nativeDraws(true); }
+    @Test public void theSameDefenderWithoutTheInterruptDrawsNeitherDestiny() { nativeDraws(false); }
+
     @Test public void cannotProtectWhenNotAloneOrWhenLightInitiates() {
         var withAlly = battle("person", false, true);
         assertFalse(withAlly.GetLSAvailableActions().stream().anyMatch(x -> x.contains(PROTECT)));
