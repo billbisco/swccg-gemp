@@ -53,8 +53,8 @@ public class Card_1240_072_Tests {
         assertTrue(bp.hasPersona(Persona.LEIA));
         assertEquals(Species.ALDERAANIAN, bp.getSpecies());
         assertEquals(CardCategory.CHARACTER, bp.getCardCategory());
-        scn.BlueprintCardTypeCheck(bp, new ArrayList<>(List.of(CardType.REBEL)));
-        scn.BlueprintIconCheck(bp, new ArrayList<>(List.of(Icon.REBEL, Icon.WARRIOR, Icon.SPECIAL_EDITION, Icon.LEGACY_BLOCK_4)));
+        scn.BlueprintCardTypeCheck(bp, new ArrayList<>(List.of(CardType.REBEL, CardType.REPUBLIC)));
+        scn.BlueprintIconCheck(bp, new ArrayList<>(List.of(Icon.REBEL, Icon.REPUBLIC, Icon.WARRIOR, Icon.SPECIAL_EDITION, Icon.LEGACY_BLOCK_4)));
         scn.BlueprintKeywordCheck(bp, new ArrayList<>(List.of(Keyword.SENATOR, Keyword.LEADER, Keyword.FEMALE)));
     }
 

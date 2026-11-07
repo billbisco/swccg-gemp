@@ -1,6 +1,6 @@
 package com.gempukku.swccgo.cards.set1240.light;
 
-import com.gempukku.swccgo.cards.AbstractRebel;
+import com.gempukku.swccgo.cards.AbstractRebelRepublic;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.common.Agenda;
 import com.gempukku.swccgo.common.ExpansionSet;
@@ -36,7 +36,7 @@ import java.util.List;
  * Subtype: Rebel
  * Title: Senator Leia Organa
  */
-public class Card1240_072 extends AbstractRebel {
+public class Card1240_072 extends AbstractRebelRepublic {
     public Card1240_072() {
         super(Side.LIGHT, 2, 3, 3, 3, 5, "Senator Leia Organa", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_4, Rarity.V);
         setLore("Adopted by Bail Organa. Former senator of Alderaan. Natural leader. Helped steal the Death Star plans. A key figure in the Rebel Alliance.");
