@@ -25,7 +25,7 @@ public class Card_1250_039_Tests {
         return new VirtualTableScenario(new HashMap<>() {{
             put("advisor", "1250_39"); put("second", "1250_39"); put("chamber", "12_76"); put("dock", "12_74");
             put("obi", "1_21"); put("strength", "13_24"); put("hallway", "14_51");
-        }}, new HashMap<>() {{ put("vader", "1_168"); }}, 35, 35,
+        }}, new HashMap<>() {{ put("vader", "1_168"); put("circle", "1_271"); }}, 35, 35,
                 StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -143,5 +143,40 @@ public class Card_1250_039_Tests {
 
         var disabled = realLightsaberCombat(2, true);
         assertTrue(disabled.GetCurrentDecision().getText(), disabled.AwaitingLSForceLossPayment());
+    }
+
+    private VirtualTableScenario realDuel(int copies, boolean innerStrength) {
+        var s = scenario(); s.StartGame();
+        var chamber = s.GetLSCard("chamber"); var site = s.GetDSStartingLocation();
+        var obi = s.GetLSCard("obi"); var vader = s.GetDSCard("vader"); var circle = s.GetDSCard("circle");
+        s.MoveLocationToTable(chamber);
+        if (copies > 0) s.MoveCardsToLocation(chamber, s.GetLSCard("advisor"));
+        if (copies > 1) s.MoveCardsToLocation(chamber, s.GetLSCard("second"));
+        if (innerStrength) s.MoveCardsToLSSideOfTable(s.GetLSCard("strength"));
+        s.MoveCardsToLocation(site, obi, vader);
+        s.MoveCardsToHand(circle); s.DSActivateForceCheat(4); s.SkipToPhase(Phase.CONTROL);
+        assertTrue(s.DSCardPlayAvailable(circle, "Initiate duel"));
+        s.DSPlayCard(circle, "Initiate duel");
+        if (s.DSHasCardChoiceAvailable(obi)) s.DSChooseCard(obi);
+        if (s.DSHasCardChoiceAvailable(vader)) s.DSChooseCard(vader);
+        s.PassAllResponses();
+        return s;
+    }
+
+    @Test
+    public void TwoRemoteAdvisorsTurnAnActualDuelLossIntoAWin() {
+        var losing = realDuel(0, false);
+        assertEquals(Zone.OUT_OF_PLAY, losing.GetLSCard("obi").getZone());
+
+        var tied = realDuel(1, false);
+        assertEquals(Zone.AT_LOCATION, tied.GetLSCard("obi").getZone());
+        assertEquals(Zone.AT_LOCATION, tied.GetDSCard("vader").getZone());
+
+        var winning = realDuel(2, false);
+        assertEquals(Zone.OUT_OF_PLAY, winning.GetDSCard("vader").getZone());
+        assertEquals(Zone.AT_LOCATION, winning.GetLSCard("obi").getZone());
+
+        var disabled = realDuel(2, true);
+        assertEquals(Zone.OUT_OF_PLAY, disabled.GetLSCard("obi").getZone());
     }
 }
