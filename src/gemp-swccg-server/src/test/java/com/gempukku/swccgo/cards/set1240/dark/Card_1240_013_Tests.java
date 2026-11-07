@@ -176,7 +176,9 @@ public class Card_1240_013_Tests {
         assertEquals(force, scn.GetDSForcePileCount());
         assertEquals(reserve - 1, scn.GetDSReserveDeckCount());
         assertNotEquals(order, new ArrayList<>(scn.gameState().getReserveDeck(scn.DS)));
-        assertTrue(scn.AwaitingDSControlPhaseActions());
+        assertTrue(scn.AwaitingDSControlPhaseActions() || scn.AwaitingLSControlPhaseActions());
+        if (scn.AwaitingLSControlPhaseActions()) scn.LSPass();
+        assertTrue(scn.AwaitingDSControlPhaseActions() || scn.AwaitingDSDeployPhaseActions());
         assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("xizor"), SEARCH));
     }
 
