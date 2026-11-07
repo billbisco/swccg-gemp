@@ -26,7 +26,7 @@ public class LightSideGoesFirstEffect extends AbstractSuccessfulEffect {
     protected void doPlayEffect(SwccgGame game) {
         PhysicalCard source = _action.getActionSource();
 
-        // #176: the card names a player (FirstTurn); a second card naming the other player is kept, so the two cancel
+        // #176: the card names a player (FirstTurn); a second card naming the other player is kept, so the two tie (FirstTurn: coin toss)
         String beneficiary = FirstTurn.beneficiary(game, source);
         if (!FirstTurn.claims(game).contains(beneficiary)) {
             if (game.getGameState().isSameSideGame())

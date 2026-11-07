@@ -217,6 +217,14 @@ public class GameState implements Snapshotable<GameState> {
 
     public void setSameSideGame(boolean sameSideGame) { _sameSideGame = sameSideGame; }
 
+    // swccg-guild/work#176 (Bill 2026-11-07): in a same-side game whose first-turn claims tie, the winner of the coin
+    // toss that decides who goes first; null until that toss is made (it is made at most once per game)
+    private String _firstTurnCoinTossWinner;
+
+    public String getFirstTurnCoinTossWinner() { return _firstTurnCoinTossWinner; }
+
+    public void setFirstTurnCoinTossWinner(String playerId) { _firstTurnCoinTossWinner = playerId; }
+
     public void setObjectivesFromHand(boolean objectivesFromHand) { _objectivesFromHand = objectivesFromHand; }
 
     public GameState() {
@@ -234,6 +242,7 @@ public class GameState implements Snapshotable<GameState> {
         snapshot._decipherLocationRules = _decipherLocationRules;
         snapshot._objectivesFromHand = _objectivesFromHand;
         snapshot._sameSideGame = _sameSideGame;
+        snapshot._firstTurnCoinTossWinner = _firstTurnCoinTossWinner;
 
         // Set each field
         snapshot._game = _game;
