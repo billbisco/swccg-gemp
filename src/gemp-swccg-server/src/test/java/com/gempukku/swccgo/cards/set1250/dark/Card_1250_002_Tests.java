@@ -4,6 +4,7 @@ import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import com.gempukku.swccgo.game.PhysicalCardImpl;
+import com.gempukku.swccgo.logic.decisions.CardActionSelectionDecision;
 import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -87,11 +88,21 @@ public class Card_1250_002_Tests {
     }
     private void fire(VirtualTableScenario scn,int destiny) {
         int force=scn.GetDSForcePileCount();assertTrue(scn.DSCardActionAvailable(scn.GetDSCard("aurra"),FIRE));scn.PrepareDSDestiny(destiny);scn.DSUseCardAction(scn.GetDSCard("aurra"),FIRE);
-        if(scn.DSDecisionAvailable("Choose Aurra's weapon"))scn.DSChooseCard(scn.GetDSCard("blaster"));
-        if(scn.DSDecisionAvailable("Choose target"))scn.DSChooseCard(scn.GetLSCard("obi"));scn.PassForceUseResponses();scn.PassWeaponFireWithDestinyDraw();scn.PassAllResponses();assertEquals(force-1,scn.GetDSForcePileCount());
+        for(int i=0;i<30 && !scn.AwaitingDSMovePhaseActions() && !scn.AwaitingLSMovePhaseActions();i++) {
+            if(scn.DSDecisionAvailable("Choose Aurra's weapon"))scn.DSChooseCard(scn.GetDSCard("blaster"));
+            else if(scn.DSDecisionAvailable("Choose target"))scn.DSChooseCard(scn.GetLSCard("obi"));
+            else {
+                var decision=scn.GetCurrentDecision();
+                assertTrue("Expected a weapon response window: " + decision.getText(), decision instanceof CardActionSelectionDecision);
+                if(scn.DSGetDecision()!=null)scn.DSPass();else scn.LSPass();
+            }
+        }
+        assertTrue("Weapon firing did not resolve", scn.AwaitingDSMovePhaseActions() || scn.AwaitingLSMovePhaseActions());
+        assertEquals(force-1,scn.GetDSForcePileCount());
     }
     @Test public void AurraSingMovePhaseShotPaysNormalWeaponCostAndLosesHitJedi() {
-        var scn=shot("obi",1,true,true);fire(scn,7);assertEquals(0,scn.GetDSForcePileCount());assertInZone(Zone.LOST_PILE,scn.GetLSCard("obi"));
+        var scn=shot("obi",1,true,true);fire(scn,7);assertEquals(0,scn.GetDSForcePileCount());
+        assertEquals("After a resolved shot at destiny 7; hit flag=" + scn.GetLSCard("obi").isHit(),Zone.LOST_PILE,scn.GetLSCard("obi").getZone());
     }
     @Test public void AurraSingMovePhaseShotMissesAtEqualDefenseBoundary() {
         var scn=shot("obi",1,true,true);fire(scn,6);assertEquals(scn.GetDSStartingLocation(),scn.GetLSCard("obi").getAtLocation());assertFalse(scn.GetLSCard("obi").isHit());assertEquals(0,scn.GetDSForcePileCount());
@@ -101,7 +112,11 @@ public class Card_1250_002_Tests {
     @Test public void AurraSingCannotFireAtJediAtAnotherSite() {var scn=shot("obi",1,true,false);assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("aurra"),FIRE));}
     @Test public void AurraSingCannotUseMovePhaseShotWithoutWeapon() {var scn=shot("obi",1,false,true);assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("aurra"),FIRE));}
     @Test public void AurraSingMovePhaseShotIsOncePerGameEvenAfterNewTurn() {
-        var scn=shot("obi",2,true,true);fire(scn,6);assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("aurra"),FIRE));scn.SkipToDSTurn(Phase.MOVE);assertTrue(scn.AwaitingDSMovePhaseActions());assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("aurra"),FIRE));
+        var scn=shot("obi",2,true,true);fire(scn,6);
+        if(scn.AwaitingLSMovePhaseActions())scn.LSPass();
+        assertTrue(scn.AwaitingDSMovePhaseActions());
+        assertEquals(1,scn.GetDSForcePileCount());assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("aurra"),FIRE));
+        scn.SkipToDSTurn(Phase.MOVE);assertTrue(scn.AwaitingDSMovePhaseActions());assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("aurra"),FIRE));
     }
     @Test public void AurraSingMovePhaseShotCannotBeUsedDuringHerControlPhase() {
         var scn=shot("obi",2,true,true);scn.SkipToDSTurn(Phase.CONTROL);assertTrue(scn.AwaitingDSControlPhaseActions());assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("aurra"),FIRE));
