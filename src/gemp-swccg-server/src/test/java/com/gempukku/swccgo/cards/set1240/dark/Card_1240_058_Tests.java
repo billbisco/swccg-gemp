@@ -114,10 +114,19 @@ public class Card_1240_058_Tests {
     }
 
     /**
-     * Dark Side plays Sniper and Vader hits the target with Vader's Lightsaber (6 + 7 > defense value). Stops at the
-     * required responses to the hit.
+     * Dark Side plays Sniper and Vader hits the target with Vader's Lightsaber (6 + 7 > defense value), then resolves
+     * the objective's trigger to the hit before the rule that loses the hit character.
      */
     private void vaderSnipesTarget(VirtualTableScenario scn, PhysicalCardImpl target) {
+        vaderSnipesTarget(scn, target, false);
+    }
+
+    /**
+     * Dark Side plays Sniper and Vader hits the target with Vader's Lightsaber (6 + 7 > defense value). Dark Side then
+     * picks which of the two required responses to the hit resolves first: the objective's trigger, or (ruleFirst) the
+     * rule that loses a character hit outside battle.
+     */
+    private void vaderSnipesTarget(VirtualTableScenario scn, PhysicalCardImpl target, boolean ruleFirst) {
         var vader = scn.GetDSCard("vader");
         var sniper = scn.GetDSCard("sniper");
 
@@ -129,11 +138,12 @@ public class Card_1240_058_Tests {
         scn.PassAllResponses();
         assertTrue(target.isHit());
         // Two required responses to the hit: the objective's 'hit character leaves table' trigger and the rule that
-        // loses a character hit outside battle (no action text). Dark Side resolves the objective's trigger first.
+        // loses a character hit outside battle (no action text). Dark Side chooses the order.
         var requiredResponses = scn.GetDSAvailableActions();
         assertEquals(2, requiredResponses.size());
         assertTrue(requiredResponses.contains(null));
-        scn.DSDecided(requiredResponses.indexOf(null) == 0 ? 1 : 0);
+        int ruleIndex = requiredResponses.indexOf(null);
+        scn.DSDecided(ruleFirst ? ruleIndex : 1 - ruleIndex);
         scn.PassAllResponses();
         assertInZone(Zone.LOST_PILE, target);
     }
@@ -222,5 +232,134 @@ public class Card_1240_058_Tests {
 
         lsLosesForce(scn, 2, lifeForceBefore); //test1
         assertEquals(Title.Their_Fire_Has_Gone_Out_Of_The_Universe, hunt.getBlueprint().getTitle()); //test2
+    }
+
+    @Test
+    public void HitCharacterLostByRuleBeforeObjectiveTriggerStillLosesTwoForce() {
+        var scn = GetScenario();
+        var hunt = scn.GetDSCard("hunt");
+        var target = scn.GetLSFiller(1);
+        var site = scn.GetDSCard("corridor");
+        //test1: Sniper hit outside battle: Dark Side resolves the 'hit character is lost' rule first; the target is lost
+        //test2: the objective's trigger still resolves afterwards and opponent loses 2 Force (Bill 2026-11-07: both apply)
+        //test3: the objective stays on its front side
+
+        setupVaderAndTargetAtSite(scn, site, target, false);
+        int lifeForceBefore = scn.GetLSLifeForceRemaining();
+
+        vaderSnipesTarget(scn, target, true); //test1
+
+        lsLosesForce(scn, 2, lifeForceBefore); //test2
+        assertEquals(Title.Hunt_Down_And_Destroy_The_Jedi, hunt.getBlueprint().getTitle()); //test3
+    }
+
+    @Test
+    public void TheirFireHasGoneOutOfTheUniverseHitCharacterLostByRuleFirstStillLosesTwoForce() {
+        var scn = GetScenario();
+        var hunt = scn.GetDSCard("hunt");
+        var target = scn.GetLSFiller(1);
+        var site = scn.GetDSCard("corridor");
+        //test1: back side up, rule resolved first: the target is lost and opponent still loses 2 Force
+
+        setupVaderAndTargetAtSite(scn, site, target, true);
+        int lifeForceBefore = scn.GetLSLifeForceRemaining();
+
+        vaderSnipesTarget(scn, target, true);
+
+        lsLosesForce(scn, 2, lifeForceBefore); //test1
+        assertEquals(Title.Their_Fire_Has_Gone_Out_Of_The_Universe, hunt.getBlueprint().getTitle());
+    }
+
+    @Test
+    public void HitJediLostByRuleFirstAtBattlegroundFlipsAndStillLosesTwoForce() {
+        var scn = GetScenario();
+        var hunt = scn.GetDSCard("hunt");
+        var obiwan = scn.GetLSCard("obiwan");
+        var site = scn.GetDSStartingLocation();
+        //test1: rule resolved first: Obi-Wan is lost, the objective flips
+        //test2: and opponent still loses 2 Force (exactly 2, not 4)
+
+        setupVaderAndTargetAtSite(scn, site, obiwan, false);
+        int lifeForceBefore = scn.GetLSLifeForceRemaining();
+
+        vaderSnipesTarget(scn, obiwan, true);
+
+        lsLosesForce(scn, 2, lifeForceBefore); //test2
+        assertEquals(Title.Their_Fire_Has_Gone_Out_Of_The_Universe, hunt.getBlueprint().getTitle()); //test1
+    }
+
+    @Test
+    public void WithoutObjectiveSniperHitOnlyLosesTheCharacter() {
+        var scn = GetScenario();
+        var vader = scn.GetDSCard("vader");
+        var sniper = scn.GetDSCard("sniper");
+        var target = scn.GetLSFiller(1);
+        var site = scn.GetDSCard("corridor");
+        //test1: no Hunt Down And Destroy The Jedi (V) on table: the hit character is lost by rule (only required response)
+        //test2: opponent loses no Force
+
+        scn.MoveOutOfPlay(scn.GetDSCard("hunt"));
+        scn.StartGame();
+        scn.MoveLocationToTable(site);
+        scn.MoveCardsToLocation(site, vader, target, scn.GetLSFiller(2));
+        scn.MoveCardsToDSHand(sniper);
+        scn.SkipToPhase(Phase.CONTROL);
+        scn.PrepareDSDestiny(6);
+        scn.PrepareDSDestiny(7);
+        int lifeForceBefore = scn.GetLSLifeForceRemaining();
+
+        scn.DSPlayCard(sniper);
+        scn.DSChooseCard(vader);
+        scn.LSPass();
+        scn.DSPass();
+        scn.DSChooseCard(target);
+        scn.PassAllResponses();
+
+        assertInZone(Zone.LOST_PILE, target); //test1
+        assertFalse(scn.LSDecisionAvailable("Choose Force to lose")); //test2
+        assertEquals(lifeForceBefore, scn.GetLSLifeForceRemaining()); //test2
+    }
+
+    @Test
+    public void HitInBattleCharacterStaysOnTableAndLosesTwoForceWhenForfeited() {
+        var scn = GetScenario();
+        var hunt = scn.GetDSCard("hunt");
+        var vader = scn.GetDSCard("vader");
+        var target = scn.GetLSFiller(1);
+        var site = scn.GetDSCard("corridor");
+        //test1: hit by Vader's Lightsaber in battle: the target is not lost right away (the outside-battle rule does not apply)
+        //test2: no Force lost yet
+        //test3: once the hit target leaves table later in the battle (forfeited to battle damage), opponent loses 2 Force
+
+        setupVaderAndTargetAtSite(scn, site, target, false);
+        scn.EnsureDSForcePile(3);
+        scn.SkipToPhase(Phase.BATTLE);
+        scn.DSStartBattleAndSkipToWeaponsSegment(site);
+        scn.PrepareDSDestiny(6);
+        scn.PrepareDSDestiny(7);
+        scn.DSUseCardAction(vader, "Fire Vader's Lightsaber");
+        scn.DSChooseCard(target);
+        scn.PassAllResponses();
+
+        assertTrue(target.isHit());
+        assertTrue(target.getZone().isInPlay()); //test1
+        int lifeForceBefore = scn.GetLSLifeForceRemaining();
+        assertFalse(scn.LSDecisionAvailable("Choose Force to lose")); //test2
+        assertEquals(Title.Hunt_Down_And_Destroy_The_Jedi, hunt.getBlueprint().getTitle());
+
+        // Damage segment: Light Side forfeits the hit target to battle damage, so it leaves table.
+        scn.SkipToDamageSegment(false);
+        assertTrue(scn.AwaitingLSBattleDamagePayment());
+        scn.LSChooseCard(target);
+        scn.PassAllResponses();
+        assertInZone(Zone.LOST_PILE, target);
+        for (int i = 0; i < 2; ++i) {
+            assertTrue(scn.LSDecisionAvailable("Choose Force to lose")); //test3
+            assertFalse(scn.LSDecisionAvailable("card from battle to forfeit")); // the objective's loss, not battle damage
+            scn.LSChooseCard(scn.GetTopOfLSReserveDeck());
+            scn.PassAllResponses();
+        }
+        assertEquals(2, lifeForceBefore - scn.GetLSLifeForceRemaining()); //test3
+        assertTrue(scn.AwaitingLSBattleDamagePayment()); // back to the remaining battle damage
     }
 }
