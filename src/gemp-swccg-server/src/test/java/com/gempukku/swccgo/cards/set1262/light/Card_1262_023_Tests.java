@@ -103,11 +103,11 @@ public class Card_1262_023_Tests {
         assertEquals(0, draws(restricted, restricted.DS));
     }
 
-    @Test public void maintenanceSourcesCannotAddButAnOrdinaryVaderStillCan() {
+    @Test public void maintenanceSourcesCannotAddButOrdinaryBattleDestinyRemains() {
         var baseline = battle(false, true);
-        assertEquals(2, draws(baseline, baseline.LS)); assertEquals(4, draws(baseline, baseline.DS));
+        assertEquals(2, draws(baseline, baseline.LS)); assertEquals(3, draws(baseline, baseline.DS));
         var restricted = battle(true, true);
-        assertEquals(1, draws(restricted, restricted.LS)); assertEquals(2, draws(restricted, restricted.DS));
+        assertEquals(1, draws(restricted, restricted.LS)); assertEquals(1, draws(restricted, restricted.DS));
     }
 
     @Test public void realAlterCanCancelAnotherEffectButCannotTargetThrownBack() {
