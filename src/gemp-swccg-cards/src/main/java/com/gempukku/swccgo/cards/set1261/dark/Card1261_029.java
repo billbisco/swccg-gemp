@@ -22,7 +22,7 @@ import com.gempukku.swccgo.logic.modifiers.*;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 import com.gempukku.swccgo.logic.timing.EffectResult;
 import com.gempukku.swccgo.logic.timing.PassthruEffect;
-import com.gempukku.swccgo.logic.timing.TriggerAction;
+import com.gempukku.swccgo.logic.actions.TriggerAction;
 import com.gempukku.swccgo.logic.timing.results.AboutToLoseCardFromTableResult;
 
 import java.util.ArrayList;
