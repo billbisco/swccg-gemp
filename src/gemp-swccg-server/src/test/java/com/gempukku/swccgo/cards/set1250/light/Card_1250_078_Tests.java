@@ -4,6 +4,7 @@ import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import com.gempukku.swccgo.game.SwccgCardBlueprint;
+import com.gempukku.swccgo.logic.modifiers.KeywordModifier;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -41,14 +42,19 @@ public class Card_1250_078_Tests {
     }
 
     private VirtualTableScenario scenario(boolean takeSecurity) {
-        return new VirtualTableScenario(new HashMap<>() {{
+        var s = new VirtualTableScenario(new HashMap<>() {{
             put("clone", "1116_9"); put("trooper", "1_26"); put("luke", "1_19");
             put("dock", "12_74"); put("plains", "12_79"); put("marker", "1_109");
+            put("secondclone", "1116_9"); put("cantina", "1_128");
         }}, new HashMap<>() {{
             put("trooper", "1_194"); put("vader", "1_168");
         }}, 40, 40, objectiveStart(takeSecurity), StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
+        // The provisional OVS fixture omits the keyword that is native to the Block 5 Prison.
+        s.game().getModifiersEnvironment().addUntilEndOfGameModifier(
+                new KeywordModifier(null, s.GetLSCard("prison"), Keyword.PRISON));
+        return s;
     }
 
     private void assertFace(VirtualTableScenario s, SwccgCardBlueprint bp, String title, int destiny) {
@@ -105,8 +111,7 @@ public class Card_1250_078_Tests {
         assertFalse(s.LSCardActionAvailable(objective, text));
     }
 
-    @Test
-    public void RealDeploymentFlipsWithPalpatineOnCoruscantAndSearchesForAnyCard() {
+    private VirtualTableScenario flipAndSearch() {
         var s = scenario(false); s.StartGame(); var objective = s.GetLSCard("objective");
         var dock = s.GetLSCard("dock"); var palpatine = s.GetLSCard("palpatine");
         var clone = s.GetLSCard("clone"); var marker = s.GetLSCard("marker"); var trooper = s.GetLSCard("trooper");
@@ -122,6 +127,53 @@ public class Card_1250_078_Tests {
         s.LSChooseCard(clone); s.PassAllResponses();
         assertTrue(s.GetLSHand().contains(clone)); assertFalse(s.gameState().isCardRevealedFromPile(marker));
         assertEquals(2, s.game().getModifiersQuerying().getForceGenerationFromLocation(s.gameState(), dock, s.LS), s.epsilon);
-        assertEquals(4, s.game().getModifiersQuerying().getImmunityToAttritionOfExactly(s.gameState(), clone), s.epsilon);
+        return s;
+    }
+
+    @Test
+    public void RealDeploymentFlipsWithPalpatineOnCoruscantAndSearchesForAnyCard() {
+        flipAndSearch();
+    }
+
+    @Test
+    public void BackCanDeployOneCloneFromLostPileAtNormalCostAndGrantsImmunityBelowFour() {
+        var s = flipAndSearch(); var objective = s.GetLSCard("objective");
+        var clone = s.GetLSCard("clone"); var second = s.GetLSCard("secondclone");
+        var dock = s.GetLSCard("dock"); var text = "Deploy a clone from Lost Pile";
+        s.MoveCardsToTopOfLSLostPile(clone, second);
+        s.LSActivateForceCheat(5);
+        if (s.AwaitingDSDeployPhaseActions()) s.DSPass();
+        assertTrue(s.LSCardActionAvailable(objective, text));
+        int force = s.GetLSForcePileCount();
+        s.LSUseCardAction(objective, text); s.PassAllResponses();
+        if (s.LSHasCardChoiceAvailable(clone)) s.LSChooseCard(clone);
+        if (s.LSDecisionAvailable("Choose where to deploy")) s.LSChooseCard(dock);
+        s.PassAllResponses();
+        assertEquals(dock, clone.getAtLocation());
+        assertEquals(force - clone.getBlueprint().getDeployCost(), s.GetLSForcePileCount(), s.epsilon);
+        assertEquals(4, s.game().getModifiersQuerying().getImmunityToAttritionLessThan(s.gameState(), clone), s.epsilon);
+        if (s.AwaitingDSDeployPhaseActions()) s.DSPass();
+        assertTrue(s.AwaitingLSDeployPhaseActions());
+        assertFalse(s.LSCardActionAvailable(objective, text)); assertTrue(s.GetLSLostPile().contains(second));
+    }
+
+    @Test
+    public void TwoCloneBattlegroundsRequireTwoOpposingCardsWithAbilityToDrain() {
+        var s = flipAndSearch(); var dock = s.GetLSCard("dock"); var cantina = s.GetLSCard("cantina");
+        var marketplace = s.GetDSStartingLocation();
+        s.MoveLocationToTable(cantina);
+        s.MoveCardsToLocation(dock, s.GetLSCard("clone"));
+        s.MoveCardsToLocation(cantina, s.GetLSCard("secondclone"));
+        s.MoveCardsToLocation(marketplace, s.GetDSCard("vader"));
+        s.SkipToDSTurn(Phase.CONTROL);
+        assertFalse(s.DSForceDrainAvailable(marketplace));
+        s.MoveCardsToLocation(marketplace, s.GetDSCard("trooper"));
+        // Refresh the normal Control decision after the table fixture changes.
+        s.DSPass();
+        if (s.AwaitingLSControlPhaseActions()) s.LSPass();
+        if (!s.AwaitingDSControlPhaseActions()) s.SkipToDSTurn(Phase.CONTROL);
+        assertTrue(s.DSForceDrainAvailable(marketplace));
+        s.DSForceDrainAt(marketplace); s.PassAllResponses();
+        assertTrue(s.AwaitingLSForceLossPayment());
     }
 }
