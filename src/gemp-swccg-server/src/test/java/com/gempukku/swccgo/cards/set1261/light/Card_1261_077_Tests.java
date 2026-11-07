@@ -34,9 +34,9 @@ public class Card_1261_077_Tests {
             put("ounee", "112_4");
             put("ouneeShield", "13_37");
             put("trooper", "1_28");
-            put("alien", "1_4");
-            put("djas", "1_4");
-            put("vader", "1_19");
+
+            put("boshek", "1_4");
+            put("luke", "1_19");
             put("ralltiir", "2_65");
             put("ownForest", "7_121");
             put("ownSwamp", "7_128");
@@ -44,8 +44,8 @@ public class Card_1261_077_Tests {
             put("forest", "7_284");
             put("swamp", "7_292");
             put("jungle", "7_285");
-            
-                        put("luke", "1_171");
+
+                        put("djas", "1_171");
             put("control", "4_139");
         }}, 40, 40, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
@@ -62,7 +62,7 @@ public class Card_1261_077_Tests {
         if (shield)
             scn.MoveCardsToLSSideOfTable(scn.GetLSCard("shield"));
         scn.EnsureLSForcePile(20);
-        scn.MoveCardsToLSHand(scn.GetLSCard("trooper"), scn.GetLSCard("vader"), scn.GetLSCard("alien"));
+        scn.MoveCardsToLSHand(scn.GetLSCard("trooper"), scn.GetLSCard("luke"), scn.GetLSCard("boshek"));
         return scn;
     }
 
@@ -184,7 +184,7 @@ public class Card_1261_077_Tests {
     public void OptimismReducesAnActualRebelDeploymentAtAnOpponentsRenegadeSite() {
         var scn = ready(true);
         scn.gameState().setRenegadePlanet("Tatooine");
-        deployAndCheckCost(scn, "vader", scn.GetDSStartingLocation(), 1);
+        deployAndCheckCost(scn, "luke", scn.GetDSStartingLocation(), 1);
     }
 
     @Test
@@ -196,7 +196,7 @@ public class Card_1261_077_Tests {
     @Test
     public void OptimismDoesNotReduceAnAliensDeployment() {
         var scn = ready(true);
-        deployAndCheckCost(scn, "alien", scn.GetDSCard("forest"), 4);
+        deployAndCheckCost(scn, "boshek", scn.GetDSCard("forest"), 4);
     }
 
     @Test
@@ -216,9 +216,9 @@ public class Card_1261_077_Tests {
     public void OptimismBlocksAnOpponentsDrainModifierButRetainsItsOwnersBonus() {
         var scn = ready(true);
         scn.MoveCardsToLocation(scn.GetDSCard("forest"), scn.GetLSCard("trooper"));
-        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("luke"));
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("djas"));
         scn.ApplyAdHocModifier(new ForceDrainModifier(scn.GetLSCard("shield"), scn.GetDSCard("forest"), 2, scn.LS));
-        scn.ApplyAdHocModifier(new ForceDrainModifier(scn.GetDSCard("luke"), scn.GetDSCard("forest"), -1, scn.LS));
+        scn.ApplyAdHocModifier(new ForceDrainModifier(scn.GetDSCard("djas"), scn.GetDSCard("forest"), -1, scn.LS));
         nextLightControl(scn);
         scn.LSForceDrainAt(scn.GetDSCard("forest"));
         scn.PassAllResponses();
@@ -266,7 +266,7 @@ public class Card_1261_077_Tests {
     public void OptimismActuallyRemovesTheOpponentsSwampBattleSurcharge() {
         var scn = ready(true);
         scn.MoveLocationToTable(scn.GetDSCard("swamp"));
-        scn.MoveCardsToLocation(scn.GetDSCard("swamp"), scn.GetLSCard("trooper"), scn.GetDSCard("luke"));
+        scn.MoveCardsToLocation(scn.GetDSCard("swamp"), scn.GetLSCard("trooper"), scn.GetDSCard("djas"));
         scn.SkipToPhase(Phase.BATTLE);
         int force = scn.GetLSForcePileCount();
         scn.LSInitiateBattle(scn.GetDSCard("swamp"));
@@ -284,9 +284,9 @@ public class Card_1261_077_Tests {
 
     private VirtualTableScenario forestBattle(boolean shield) {
         var scn = ready(shield);
-        scn.MoveCardsToLocation(scn.GetDSCard("forest"), scn.GetLSCard("djas"), scn.GetDSCard("luke"));
+        scn.MoveCardsToLocation(scn.GetDSCard("forest"), scn.GetLSCard("boshek"), scn.GetDSCard("djas"));
         scn.SkipToDSTurn(Phase.BATTLE);
-        assertEquals(2, scn.GetPower(scn.GetLSCard("djas")));
+        assertEquals(2, scn.GetPower(scn.GetLSCard("boshek")));
         scn.DSInitiateBattle(scn.GetDSCard("forest"));
         scn.PassAllResponses();
         scn.PrepareDSDestiny(5);
@@ -309,7 +309,7 @@ public class Card_1261_077_Tests {
         assertEquals(0, scn.LSGetChoiceMin());
         scn.LSPass();
         scn.PassAllResponses();
-        assertEquals(Zone.AT_LOCATION, scn.GetLSCard("djas").getZone());
+        assertEquals(Zone.AT_LOCATION, scn.GetLSCard("boshek").getZone());
     }
 
     @Test
@@ -317,8 +317,8 @@ public class Card_1261_077_Tests {
         var scn = forestBattle(false);
         assertTrue(scn.AwaitingLSAttritionPayment());
         assertEquals(1, scn.LSGetChoiceMin());
-        scn.LSPayAttritionFromCardInPlay(scn.GetLSCard("djas"));
+        scn.LSPayAttritionFromCardInPlay(scn.GetLSCard("boshek"));
         scn.PassAllResponses();
-        assertTrue(scn.GetLSLostPile().contains(scn.GetLSCard("djas")));
+        assertTrue(scn.GetLSLostPile().contains(scn.GetLSCard("boshek")));
     }
 }
