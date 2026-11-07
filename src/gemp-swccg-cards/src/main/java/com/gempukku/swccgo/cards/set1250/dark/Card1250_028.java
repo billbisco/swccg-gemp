@@ -113,12 +113,12 @@ public class Card1250_028 extends AbstractUsedInterrupt {
         final Filter yourEpisodeICharacter = Filters.and(Filters.your(self), Filters.character, Icon.EPISODE_I);
         List<PlayInterruptAction> actions = new LinkedList<PlayInterruptAction>();
 
-        // Starship about to be 'hit' by opponent
+        // Starship about to be 'hit' by opponent's weapon destiny
         if (TriggerConditions.isAboutToBeHitBy(game, effectResult, yourStarship, Filters.owner(opponent))) {
             final AboutToBeHitResult result = (AboutToBeHitResult) effectResult;
             final PhysicalCard starship = result.getCardToBeHit();
             final Filter characterAboard = Filters.and(Filters.your(self), Filters.character, Filters.aboard(starship));
-            if (GameConditions.canSpot(game, self, characterAboard)) {
+            if (isHitByWeapon(game, result) && GameConditions.canSpot(game, self, characterAboard)) {
                 final PlayInterruptAction action = new PlayInterruptAction(game, self, GameTextActionId.LEGACY__TRADE_FEDERATION_TACTICS_V__RETARGET_STARSHIP_HIT);
                 action.setText("Re-target 'hit' on " + GameUtils.getFullName(starship));
                 action.appendTargeting(
@@ -141,8 +141,8 @@ public class Card1250_028 extends AbstractUsedInterrupt {
             }
         }
 
-        // Starship about to be lost by opponent's action
-        if (isAboutToBeLostByOpponent(game, effectResult, yourStarship, opponent)) {
+        // Starship about to be lost due to opponent's just drawn destiny (weapon destiny or asteroid destiny)
+        if (isStarshipAboutToBeLostDueToOpponentsDestiny(game, effectResult, yourStarship, opponent)) {
             final AboutToLoseCardFromTableResult result = (AboutToLoseCardFromTableResult) effectResult;
             final PhysicalCard starship = result.getCardToBeLost();
             final Filter characterAboard = Filters.and(Filters.your(self), Filters.character, Filters.aboard(starship));
@@ -205,7 +205,9 @@ public class Card1250_028 extends AbstractUsedInterrupt {
             final AboutToLoseCardFromTableResult result = (AboutToLoseCardFromTableResult) effectResult;
             final PhysicalCard original = result.getCardToBeLost();
             final Filter newTarget = otherEpisodeICharacterPresent(yourEpisodeICharacter, original);
-            if (!Filters.weapon.accepts(game, result.getSourceCard()) && GameConditions.canSpot(game, self, newTarget)) {
+            // Weapon attempts (including permanent weapons) are re-targeted when the weapon targets, so are not offered again here
+            if (!Filters.weapon.accepts(game, result.getSourceCard()) && !isWeaponTarget(game, original)
+                    && GameConditions.canSpot(game, self, newTarget)) {
                 final PlayInterruptAction action = new PlayInterruptAction(game, self);
                 action.setText("Re-target loss of " + GameUtils.getFullName(original));
                 action.appendTargeting(
@@ -241,6 +243,45 @@ public class Card1250_028 extends AbstractUsedInterrupt {
         return opponent.equals(result.getPerformingPlayerId())
                 && source != null && opponent.equals(source.getOwner())
                 && result.getPreventableCardEffect() != null;
+    }
+
+    /** The 'hit' comes from a weapon (weapon destiny), including a permanent weapon. */
+    private static boolean isHitByWeapon(SwccgGame game, AboutToBeHitResult result) {
+        PhysicalCard hitByCard = result.getHitByCard();
+        return result.getHitByPermanentWeapon() != null || result.getCardFiringWeapon() != null
+                || (hitByCard != null && Filters.weapon.accepts(game, hitByCard));
+    }
+
+    /** The card is a target of the weapon currently being fired. */
+    private static boolean isWeaponTarget(SwccgGame game, PhysicalCard card) {
+        WeaponFiringState weaponFiringState = game.getGameState().getWeaponFiringState();
+        return weaponFiringState != null && weaponFiringState.getTargets() != null
+                && weaponFiringState.getTargets().contains(card);
+    }
+
+    /**
+     * The starship is about to be lost as the result of a destiny just drawn by the opponent: opponent's weapon
+     * (weapon destiny, including permanent weapons) targeting it, or asteroid destiny drawn against it.
+     */
+    private static boolean isStarshipAboutToBeLostDueToOpponentsDestiny(SwccgGame game, EffectResult effectResult, Filter filter, String opponent) {
+        if (!TriggerConditions.isAboutToBeLost(game, effectResult, filter))
+            return false;
+        AboutToLoseCardFromTableResult result = (AboutToLoseCardFromTableResult) effectResult;
+        if (result.getPreventableCardEffect() == null)
+            return false;
+        PhysicalCard starship = result.getCardToBeLost();
+        String performingPlayer = result.getPerformingPlayerId();
+        // Asteroid destiny
+        if (starship.equals(game.getGameState().getStarshipDrawingAsteroidDestinyAgainst())
+                && (performingPlayer == null || opponent.equals(performingPlayer)))
+            return true;
+        // Weapon destiny
+        PhysicalCard source = result.getSourceCard();
+        if (source != null && Filters.weapon.accepts(game, source) && opponent.equals(source.getOwner()))
+            return true;
+        WeaponFiringState weaponFiringState = game.getGameState().getWeaponFiringState();
+        return isWeaponTarget(game, starship) && weaponFiringState.getCardFiring() != null
+                && opponent.equals(weaponFiringState.getCardFiring().getOwner());
     }
 
     private static Filter otherEpisodeICharacterPresent(Filter yourEpisodeICharacter, PhysicalCard original) {

@@ -151,9 +151,17 @@ public class Card_1250_028_Tests {
 
     private boolean waitForDSPlay(VirtualTableScenario scn, String text) {
         var tactics = scn.GetDSCard("tactics");
-        for (int i = 0; i < 6; i++) {
-            if (scn.DSAnyDecisionsAvailable() && scn.DSCardPlayAvailable(tactics, text)) return true;
-            if (scn.LSAnyDecisionsAvailable()) scn.LSPass(); else if (scn.DSAnyDecisionsAvailable()) scn.DSPass(); else return false;
+        for (int i = 0; i < 20; i++) {
+            try {
+                if (scn.DSAnyDecisionsAvailable() && scn.DSCardPlayAvailable(tactics, text)) return true;
+            } catch (IllegalStateException e) {
+                return false; // Dark Side is making a non-action decision (no response window)
+            }
+            try {
+                if (scn.LSAnyDecisionsAvailable()) scn.LSPass(); else if (scn.DSAnyDecisionsAvailable()) scn.DSPass(); else return false;
+            } catch (RuntimeException e) {
+                return false; // reached a decision that cannot be passed: the response windows are over
+            }
         }
         return false;
     }
@@ -228,21 +236,33 @@ public class Card_1250_028_Tests {
         assertEquals(Zone.AT_LOCATION, jango.getZone());
     }
 
+    private VirtualTableScenario asteroidScenario() {
+        return new VirtualTableScenario(
+                new HashMap<>() {{ put("luke", "1_19"); put("kessel", "1_126"); put("asteroid", "4_081"); }},
+                new HashMap<>() {{ put("tactics", "1250_28"); put("jango", "1250_8"); put("avenger", "1263_19"); }},
+                20, 20, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
+    }
+
     @Test
-    public void TradeFederationTacticsVRetargetsLossOfStarshipToCharacterAboardAndProtectsStarship() {
-        var scn = scenario();
-        var system = scn.GetDSCard("system");
+    public void TradeFederationTacticsVRetargetsAsteroidDestinyLossOfStarshipToCharacterAboardAndProtectsStarship() {
+        var scn = asteroidScenario();
+        var asteroid = scn.GetLSCard("asteroid");
         var avenger = scn.GetDSCard("avenger");
         var jango = scn.GetDSCard("jango");
         var tactics = scn.GetDSCard("tactics");
         scn.StartGame();
-        scn.MoveLocationToTable(system);
-        scn.MoveCardsToLocation(system, avenger);
+        scn.MoveLocationToTable(scn.GetLSCard("kessel"));
+        scn.MoveLocationToTable(asteroid);
+        scn.MoveCardsToLocation(asteroid, avenger);
         scn.BoardAsPilot(avenger, jango);
-        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetLSCard("luke"));
         scn.MoveCardsToDSHand(tactics);
-        scn.SkipToLSTurn(Phase.DEPLOY);
-        lightSidePerforms(scn, a -> new com.gempukku.swccgo.logic.effects.LoseCardFromTableEffect(a, avenger));
+        scn.SkipToPhase(Phase.CONTROL);
+        scn.DSPass();
+        scn.PrepareLSDestiny(7);
+        assertTrue(scn.LSCardActionAvailable(avenger, "asteroid"));
+        scn.LSUseCardAction(avenger, "asteroid");
         assertTrue(waitForDSPlay(scn, "Re-target loss"));
         scn.DSPlayCard(tactics, "Re-target loss");
         if (scn.DSHasCardChoiceAvailable(jango)) scn.DSChooseCard(jango);
@@ -251,5 +271,39 @@ public class Card_1250_028_Tests {
         assertTrue(scn.GetDSLostPile().contains(jango));
         assertFalse(scn.game().getModifiersQuerying().getModifiersAffectingCard(scn.gameState(),
                 com.gempukku.swccgo.logic.modifiers.ModifierType.MAY_NOT_BE_TARGETED_BY, avenger).isEmpty());
+    }
+
+    private VirtualTableScenario starshipWithPilotAtSystem() {
+        var scn = scenario();
+        var system = scn.GetDSCard("system");
+        var avenger = scn.GetDSCard("avenger");
+        scn.StartGame();
+        scn.MoveLocationToTable(system);
+        scn.MoveCardsToLocation(system, avenger);
+        scn.BoardAsPilot(avenger, scn.GetDSCard("jango"));
+        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetLSCard("luke"));
+        scn.MoveCardsToDSHand(scn.GetDSCard("tactics"));
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        return scn;
+    }
+
+    @Test
+    public void TradeFederationTacticsVDoesNotRetargetOpponentsNonDestinyAttemptToMakeStarshipLost() {
+        var scn = starshipWithPilotAtSystem();
+        var avenger = scn.GetDSCard("avenger");
+        lightSidePerforms(scn, a -> new com.gempukku.swccgo.logic.effects.LoseCardFromTableEffect(a, avenger));
+        assertFalse(waitForDSPlay(scn, "Re-target loss"));
+        assertFalse(scn.GetDSLostPile().contains(scn.GetDSCard("tactics")));
+        assertFalse(scn.GetDSUsedPile().contains(scn.GetDSCard("tactics")));
+    }
+
+    @Test
+    public void TradeFederationTacticsVDoesNotRetargetOpponentsNonDestinyAttemptToHitStarship() {
+        var scn = starshipWithPilotAtSystem();
+        var avenger = scn.GetDSCard("avenger");
+        var luke = scn.GetLSCard("luke");
+        lightSidePerforms(scn, a -> new com.gempukku.swccgo.logic.effects.HitCardEffect(a, avenger, luke));
+        assertFalse(waitForDSPlay(scn, "Re-target 'hit'"));
+        assertFalse(scn.GetDSCard("jango").isHit());
     }
 }
