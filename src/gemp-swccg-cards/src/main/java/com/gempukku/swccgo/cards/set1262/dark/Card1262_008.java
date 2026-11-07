@@ -17,7 +17,8 @@ import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
 import com.gempukku.swccgo.cards.conditions.DuringBattleCondition;
 import com.gempukku.swccgo.logic.effects.PutCardFromHandOnUsedPileEffect;
-import com.gempukku.swccgo.logic.modifiers.LimitDestinyDrawsAddedModifier;
+import com.gempukku.swccgo.logic.modifiers.MayNotAddMoreThanDestinyToAttritionModifier;
+import com.gempukku.swccgo.logic.modifiers.MayNotAddMoreThanDestinyToPowerModifier;
 import com.gempukku.swccgo.logic.modifiers.MayNotAddBattleDestinyDrawsModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 
@@ -44,8 +45,9 @@ public class Card1262_008 extends AbstractNormalEffect {
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new MayNotAddBattleDestinyDrawsModifier(self, Filters.or(Icon.PERMANENT_WEAPON, Icon.MAINTENANCE)));
-        modifiers.add(new LimitDestinyDrawsAddedModifier(self, new DuringBattleCondition(), false, 2, null));
-        modifiers.add(new LimitDestinyDrawsAddedModifier(self, new DuringBattleCondition(), true, 1, null));
+        DuringBattleCondition duringBattle = new DuringBattleCondition();
+        modifiers.add(new MayNotAddMoreThanDestinyToPowerModifier(self, duringBattle, 2, null));
+        modifiers.add(new MayNotAddMoreThanDestinyToAttritionModifier(self, duringBattle, 1, null));
         return modifiers;
     }
 

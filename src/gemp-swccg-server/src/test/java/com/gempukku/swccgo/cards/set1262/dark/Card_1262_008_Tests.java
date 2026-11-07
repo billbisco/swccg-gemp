@@ -79,28 +79,37 @@ public class Card_1262_008_Tests {
         }
     }
 
+    private Integer maxPower(VirtualTableScenario scn, String player) {
+        return scn.game().getModifiersQuerying().getMaxDestinyAddedToPower(scn.gameState(), player);
+    }
+
+    private Integer maxAttrition(VirtualTableScenario scn, String player) {
+        return scn.game().getModifiersQuerying().getMaxDestinyAddedToAttrition(scn.gameState(), player);
+    }
+
     @Test
     public void DropVNeitherPlayerMayAddMoreThanTwoDestinyToPower() {
         var without = battle(false);
         addDestinies(without);
-        assertEquals(3, powerDraws(without, without.DS));
-        assertEquals(3, powerDraws(without, without.LS));
+        assertNull(maxPower(without, without.DS));
+        assertEquals(Integer.MAX_VALUE, without.game().getModifiersQuerying().getNumDestinyDrawsToTotalPowerOnly(without.gameState(), without.DS, true, false));
         var scn = battle(true);
         addDestinies(scn);
-        assertEquals(2, powerDraws(scn, scn.DS));
-        assertEquals(2, powerDraws(scn, scn.LS));
+        assertEquals(Integer.valueOf(2), maxPower(scn, scn.DS));
+        assertEquals(Integer.valueOf(2), maxPower(scn, scn.LS));
+        assertEquals(2, scn.game().getModifiersQuerying().getNumDestinyDrawsToTotalPowerOnly(scn.gameState(), scn.DS, true, false));
     }
 
     @Test
     public void DropVNeitherPlayerMayAddMoreThanOneDestinyToAttrition() {
         var without = battle(false);
         addDestinies(without);
-        assertEquals(2, attritionDraws(without, without.DS));
-        assertEquals(2, attritionDraws(without, without.LS));
+        assertNull(maxAttrition(without, without.LS));
         var scn = battle(true);
         addDestinies(scn);
-        assertEquals(1, attritionDraws(scn, scn.DS));
-        assertEquals(1, attritionDraws(scn, scn.LS));
+        assertEquals(Integer.valueOf(1), maxAttrition(scn, scn.DS));
+        assertEquals(Integer.valueOf(1), maxAttrition(scn, scn.LS));
+        assertEquals(1, scn.game().getModifiersQuerying().getNumDestinyDrawsToAttritionOnly(scn.gameState(), scn.LS, true, false));
     }
 
     @Test
@@ -110,6 +119,19 @@ public class Card_1262_008_Tests {
         scn.ApplyAdHocModifier(new NumDestinyDrawsToPowerOnlyModifier(source, null, 1, scn.DS));
         assertEquals(1, powerDraws(scn, scn.DS));
         assertEquals(0, attritionDraws(scn, scn.DS));
+    }
+
+    @Test
+    public void DropVAddDestinyActionsBecomeUnavailableAtTheCap() {
+        var scn = battle(true);
+        var source = scn.GetDSCard("vader");
+        assertTrue(com.gempukku.swccgo.cards.GameConditions.canAddDestinyDrawsToPower(scn.game(), scn.DS));
+        scn.ApplyAdHocModifier(new NumDestinyDrawsToPowerOnlyModifier(source, null, 2, scn.DS));
+        assertFalse(com.gempukku.swccgo.cards.GameConditions.canAddDestinyDrawsToPower(scn.game(), scn.DS));
+        assertTrue(com.gempukku.swccgo.cards.GameConditions.canAddDestinyDrawsToPower(scn.game(), scn.LS));
+        assertTrue(com.gempukku.swccgo.cards.GameConditions.canAddDestinyDrawsToAttrition(scn.game(), scn.LS));
+        scn.ApplyAdHocModifier(new NumDestinyDrawsToAttritionOnlyModifier(source, null, 1, scn.LS));
+        assertFalse(com.gempukku.swccgo.cards.GameConditions.canAddDestinyDrawsToAttrition(scn.game(), scn.LS));
     }
 
     @Test
