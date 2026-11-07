@@ -6,6 +6,9 @@ import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.logic.GameUtils;
 import com.gempukku.swccgo.logic.actions.SubAction;
+import com.gempukku.swccgo.logic.modifiers.MayNotGoMissingModifier;
+import com.gempukku.swccgo.logic.modifiers.Modifier;
+import com.gempukku.swccgo.logic.modifiers.ModifierType;
 import com.gempukku.swccgo.logic.timing.AbstractSubActionEffect;
 import com.gempukku.swccgo.logic.timing.Action;
 import com.gempukku.swccgo.logic.timing.PassthruEffect;
@@ -55,6 +58,18 @@ public class GoMissingEffect extends AbstractSubActionEffect {
         final SubAction subAction = new SubAction(_action);
 
         final Collection<PhysicalCard> charactersToGoMissing = Filters.filter(_charactersToGoMissing, game, Filters.not(Filters.missing));
+
+        // Remove characters that may not go missing from this source
+        for (PhysicalCard character : new LinkedList<PhysicalCard>(charactersToGoMissing)) {
+            for (Modifier modifier : game.getModifiersQuerying().getModifiersAffectingCard(gameState, ModifierType.MAY_NOT_GO_MISSING, character)) {
+                if (!(modifier instanceof MayNotGoMissingModifier)
+                        || ((MayNotGoMissingModifier) modifier).preventsGoingMissingFrom(gameState, source)) {
+                    charactersToGoMissing.remove(character);
+                    gameState.sendMessage(GameUtils.getCardLink(character) + " may not go 'missing' due to " + GameUtils.getCardLink(modifier.getSource(gameState)));
+                    break;
+                }
+            }
+        }
         if (!charactersToGoMissing.isEmpty()) {
 
             // Special Rule for Luke's Backpack (if character carrying it goes missing, then character in it also goes missing, and vice versa)
