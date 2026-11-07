@@ -25,7 +25,8 @@ public class Card_1250_039_Tests {
         return new VirtualTableScenario(new HashMap<>() {{
             put("advisor", "1250_39"); put("second", "1250_39"); put("chamber", "12_76"); put("dock", "12_74");
             put("obi", "1_21"); put("strength", "13_24"); put("hallway", "14_51");
-        }}, new HashMap<>() {{ put("vader", "1_168"); put("circle", "1_271"); }}, 35, 35,
+            put("yoda", "12_35");
+        }}, new HashMap<>() {{ put("vader", "1_168"); put("circle", "1_271"); put("plans", "7_240"); }}, 35, 35,
                 StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -178,5 +179,45 @@ public class Card_1250_039_Tests {
 
         var disabled = realDuel(2, true);
         assertEquals(Zone.OUT_OF_PLAY, disabled.GetLSCard("obi").getZone());
+    }
+
+    @Test
+    public void RetrievalProtectionWithASecretPlansExceptionStillLetsOnlySecretPlansCancel() {
+        var s = scenario(); s.StartGame(); var source = s.GetLSCard("chamber");
+        var plans = s.GetDSCard("plans"); var other = s.GetDSCard("circle");
+        var query = s.game().getModifiersQuerying();
+        s.MoveLocationToTable(source);
+        assertFalse(query.isForceRetrievalFromCardMayNotBeCanceled(s.gameState(), source, s.LS, plans));
+        s.game().getModifiersEnvironment().addUntilEndOfGameModifier(
+                new com.gempukku.swccgo.logic.modifiers.ForceRetrievalFromCardMayNotBeCanceledModifier(
+                        s.GetLSCard("advisor"), source, null, s.LS, com.gempukku.swccgo.filters.Filters.Secret_Plans));
+        assertTrue(query.isForceRetrievalFromCardMayNotBeCanceled(s.gameState(), source, s.LS));
+        assertTrue(query.isForceRetrievalFromCardMayNotBeCanceled(s.gameState(), source, s.LS, other));
+        assertFalse(query.isForceRetrievalFromCardMayNotBeCanceled(s.gameState(), source, s.LS, plans));
+        assertFalse(query.isForceRetrievalFromCardMayNotBeCanceled(s.gameState(), source, s.DS, other));
+    }
+
+    @Test
+    public void RetrievalProtectionWithoutAnExceptionStillStopsSecretPlans() {
+        var s = scenario(); s.StartGame(); var source = s.GetLSCard("chamber");
+        var query = s.game().getModifiersQuerying();
+        s.MoveLocationToTable(source);
+        s.game().getModifiersEnvironment().addUntilEndOfGameModifier(
+                new com.gempukku.swccgo.logic.modifiers.ForceRetrievalFromCardMayNotBeCanceledModifier(
+                        s.GetLSCard("advisor"), source, s.LS));
+        assertTrue(query.isForceRetrievalFromCardMayNotBeCanceled(s.gameState(), source, s.LS, s.GetDSCard("plans")));
+    }
+
+    @Test
+    public void AdvisorWithYodaDoesNotProtectRetrievalFromANonVirtualBlock5Objective() {
+        var s = scenario(); s.StartGame(); var chamber = s.GetLSCard("chamber");
+        // The Original Virtual (Virtual Set 17) We'll Handle This objective, created after setup so it is not chosen as the starting objective
+        var objective = (PhysicalCardImpl) s.gameState().createPhysicalCard(s.LS, VirtualTableScenario._cardLibrary, "1117_10");
+        s.gameState().addCardToZone(objective, Zone.HAND, s.LS, true, false, false);
+        var query = s.game().getModifiersQuerying();
+        s.MoveLocationToTable(chamber);
+        s.MoveCardsToLocation(chamber, s.GetLSCard("advisor"), s.GetLSCard("yoda"));
+        assertEquals(ExpansionSet.VIRTUAL_ORIGINAL_SET_17, objective.getBlueprint().getExpansionSet());
+        assertFalse(query.isForceRetrievalFromCardMayNotBeCanceled(s.gameState(), objective, s.LS));
     }
 }

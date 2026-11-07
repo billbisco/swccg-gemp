@@ -15,8 +15,8 @@ public class Card_1250_057_Tests {
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>() {{
             put("yoda", "1250_57"); put("depa", "12_4"); put("chamber", "12_76"); put("naboo", "12_79");
-            put("tibrin", "6_87");
-        }}, new HashMap<>(), 35, 35, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
+            put("tibrin", "6_87"); put("plo", "12_21");
+        }}, new HashMap<>() {{ put("vader", "1_168"); }}, 35, 35, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
     }
@@ -65,4 +65,57 @@ public class Card_1250_057_Tests {
 
     @Test public void YodaAtChamberHasImmunityAndOtherJediActuallyPaysTwoLess() { paidDepa(true, 2); }
     @Test public void YodaAwayFromChamberHasNeitherBenefit() { paidDepa(false, 4); }
+
+    /** Places Yoda, then reports whether Depa ("Deploys only to Jedi Council Chamber") may deploy to Battle Plains. */
+    private boolean depaMayDeployToBattlePlains(boolean yodaAtChamber, boolean darkJediAtChamber) {
+        var s = scenario(); s.StartGame(); var yoda = s.GetLSCard("yoda"); var depa = s.GetLSCard("depa");
+        var chamber = s.GetLSCard("chamber"); var naboo = s.GetLSCard("naboo");
+        s.MoveLocationToTable(chamber); s.MoveLocationToTable(naboo);
+        assertTrue(com.gempukku.swccgo.filters.Filters.battleground.accepts(s.game(), naboo));
+        s.MoveCardsToLocation(yodaAtChamber ? chamber : s.GetLSStartingLocation(), yoda);
+        if (darkJediAtChamber) s.MoveCardsToLocation(chamber, s.GetDSCard("vader"));
+        s.MoveCardsToHand(depa); s.LSActivateForceCheat(9); s.SkipToLSTurn(Phase.DEPLOY);
+        assertTrue(s.LSCardPlayAvailable(depa));
+        s.LSDeployCard(depa);
+        boolean naboOk = s.LSHasCardChoiceAvailable(naboo);
+        assertTrue(s.LSHasCardChoiceAvailable(chamber));
+        assertFalse(s.LSHasCardChoiceAvailable(s.GetLSStartingLocation()));
+        if (naboOk) {
+            s.LSChooseCard(naboo); s.PassAllResponses();
+            assertEquals(naboo, depa.getAtLocation());
+        }
+        return naboOk;
+    }
+
+    @Test public void OtherJediMayActuallyDeployToEpisodeOneBattlegroundAsIfJediCouncilChamber() {
+        assertTrue(depaMayDeployToBattlePlains(true, false));
+    }
+
+    @Test public void SubstitutionNeedsYodaAtJediCouncilChamber() {
+        assertFalse(depaMayDeployToBattlePlains(false, false));
+    }
+
+    @Test public void SubstitutionStopsWhileADarkJediIsAtJediCouncilChamber() {
+        assertFalse(depaMayDeployToBattlePlains(true, true));
+    }
+
+    @Test public void JediAtEpisodeOneBattlegroundUseTheirJediCouncilChamberImmunityOnlyWhileYodaAllows() {
+        var s = scenario(); s.StartGame(); var yoda = s.GetLSCard("yoda"); var plo = s.GetLSCard("plo");
+        var chamber = s.GetLSCard("chamber"); var naboo = s.GetLSCard("naboo");
+        s.MoveLocationToTable(chamber); s.MoveLocationToTable(naboo);
+        var modifiers = s.game().getModifiersQuerying();
+        s.MoveCardsToLocation(naboo, plo);
+        s.MoveCardsToLocation(s.GetLSStartingLocation(), yoda);
+        assertFalse(modifiers.hasAnyImmunityToAttrition(s.gameState(), plo));
+        s.MoveCardsToLocation(chamber, yoda);
+        assertTrue(modifiers.hasAnyImmunityToAttrition(s.gameState(), plo));
+        // A non-Episode I site (Cloud City) is not substituted
+        s.MoveCardsToLocation(s.GetLSStartingLocation(), plo);
+        assertFalse(modifiers.hasAnyImmunityToAttrition(s.gameState(), plo));
+        s.MoveCardsToLocation(naboo, plo);
+        s.MoveCardsToLocation(chamber, s.GetDSCard("vader"));
+        assertFalse(modifiers.hasAnyImmunityToAttrition(s.gameState(), plo));
+        // Yoda keeps his own Chamber immunity
+        assertTrue(modifiers.hasAnyImmunityToAttrition(s.gameState(), yoda));
+    }
 }

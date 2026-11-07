@@ -2,6 +2,7 @@ package com.gempukku.swccgo.cards.set1250.light;
 
 import com.gempukku.swccgo.cards.AbstractJediMaster;
 import com.gempukku.swccgo.cards.conditions.AtCondition;
+import com.gempukku.swccgo.cards.conditions.HereCondition;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Keyword;
@@ -14,9 +15,13 @@ import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
+import com.gempukku.swccgo.logic.conditions.AndCondition;
+import com.gempukku.swccgo.logic.conditions.NotCondition;
 import com.gempukku.swccgo.logic.modifiers.DeployCostToLocationModifier;
 import com.gempukku.swccgo.logic.modifiers.ImmuneToAttritionModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
+import com.gempukku.swccgo.logic.modifiers.ModifyGameTextModifier;
+import com.gempukku.swccgo.logic.modifiers.ModifyGameTextType;
 
 import java.util.List;
 
@@ -40,7 +45,11 @@ public class Card1250_057 extends AbstractJediMaster {
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, PhysicalCard self) {
         var atChamber = new AtCondition(self, Filters.Jedi_Council_Chamber);
+        var noDarkJediHere = new NotCondition(new HereCondition(self, Filters.Dark_Jedi));
         return List.of(new ImmuneToAttritionModifier(self, atChamber),
-                new DeployCostToLocationModifier(self, Filters.Jedi, atChamber, -2, Filters.Jedi_Council_Chamber));
+                new DeployCostToLocationModifier(self, Filters.Jedi, atChamber, -2, Filters.Jedi_Council_Chamber),
+                new ModifyGameTextModifier(self, Filters.and(Filters.Jedi, Filters.not(Filters.sameCardId(self))),
+                        new AndCondition(atChamber, noDarkJediHere),
+                        ModifyGameTextType.LEGACY__YODA_SENIOR_COUNCIL_MEMBER__JEDI_COUNCIL_CHAMBER_IS_EPISODE_I_BATTLEGROUND_SITES));
     }
 }

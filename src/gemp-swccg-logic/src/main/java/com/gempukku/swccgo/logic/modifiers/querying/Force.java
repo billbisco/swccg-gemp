@@ -479,11 +479,28 @@ public interface Force extends BaseQuery, PrivateQuery, Flags, Icons, Captives, 
      * @return true or false
      */
     default boolean isForceRetrievalFromCardMayNotBeCanceled(GameState gameState, PhysicalCard sourceCard, String playerRetrieving) {
+        return isForceRetrievalFromCardMayNotBeCanceled(gameState, sourceCard, playerRetrieving, null);
+    }
+
+    /**
+     * Determines if Force retrieval for the specified player from the specified card may not be canceled by the
+     * specified canceling card (some modifiers still allow specific cards to cancel the retrieval).
+     * @param gameState the game state
+     * @param sourceCard the source of the Force retrieval
+     * @param playerRetrieving the player retrieving Force
+     * @param cancelingCard the card attempting to cancel the Force retrieval, or null
+     * @return true or false
+     */
+    default boolean isForceRetrievalFromCardMayNotBeCanceled(GameState gameState, PhysicalCard sourceCard, String playerRetrieving, PhysicalCard cancelingCard) {
         if (sourceCard == null) {
             return false;
         }
         for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.FORCE_RETRIEVAL_FROM_CARD_MAY_NOT_BE_CANCELED, sourceCard)) {
             if (modifier.isForPlayer(playerRetrieving)) {
+                if (modifier instanceof ForceRetrievalFromCardMayNotBeCanceledModifier
+                        && ((ForceRetrievalFromCardMayNotBeCanceledModifier) modifier).isCancelAllowedBy(gameState, query(), cancelingCard)) {
+                    continue;
+                }
                 return true;
             }
         }

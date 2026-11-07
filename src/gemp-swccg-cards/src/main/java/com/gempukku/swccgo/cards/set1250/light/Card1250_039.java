@@ -1,6 +1,7 @@
 package com.gempukku.swccgo.cards.set1250.light;
 
 import com.gempukku.swccgo.cards.AbstractJediMaster;
+import com.gempukku.swccgo.cards.conditions.HereCondition;
 import com.gempukku.swccgo.cards.conditions.OnTableCondition;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
@@ -13,12 +14,15 @@ import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
+import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.conditions.NotCondition;
 import com.gempukku.swccgo.logic.evaluators.ConstantEvaluator;
 import com.gempukku.swccgo.logic.modifiers.DuelTotalModifier;
+import com.gempukku.swccgo.logic.modifiers.ForceRetrievalFromCardMayNotBeCanceledModifier;
 import com.gempukku.swccgo.logic.modifiers.LightsaberCombatTotalModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
+import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 
 import java.util.List;
 
@@ -40,7 +44,15 @@ public class Card1250_039 extends AbstractJediMaster {
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, PhysicalCard self) {
         var unlessInnerStrength = new NotCondition(new OnTableCondition(self, Filters.title(Title.Inner_Strength)));
+        Filter yourVirtualBlock5Objective = Filters.and(Filters.your(self), Filters.Objective, new Filter() {
+            @Override
+            public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard) {
+                return physicalCard.getBlueprint().getExpansionSet() == ExpansionSet.VIRTUAL_BLOCK_5;
+            }
+        });
         return List.of(
+                new ForceRetrievalFromCardMayNotBeCanceledModifier(self, yourVirtualBlock5Objective,
+                        new HereCondition(self, Filters.Yoda), self.getOwner(), Filters.Secret_Plans),
                 new DuelTotalModifier(self, Filters.your(self), unlessInnerStrength, 1) {
                     @Override public boolean isCumulative() { return true; }
                 },

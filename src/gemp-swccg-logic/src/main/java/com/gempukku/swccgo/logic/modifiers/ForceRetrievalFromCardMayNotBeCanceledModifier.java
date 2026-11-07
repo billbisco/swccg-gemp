@@ -1,6 +1,7 @@
 package com.gempukku.swccgo.logic.modifiers;
 
 import com.gempukku.swccgo.common.Filterable;
+import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.logic.conditions.Condition;
@@ -10,6 +11,7 @@ import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
  * A modifier that prevents Force retrieval for the specified player from affected cards from being canceled.
  */
 public class ForceRetrievalFromCardMayNotBeCanceledModifier extends AbstractModifier {
+    private Filterable _exceptCancelingCardFilter;
 
     /**
      * Creates a modifier that prevents Force retrieval for the specified player from affected cards from being canceled.
@@ -29,8 +31,34 @@ public class ForceRetrievalFromCardMayNotBeCanceledModifier extends AbstractModi
      * @param playerRetrieving the player whose Force retrieval may not be canceled
      */
     public ForceRetrievalFromCardMayNotBeCanceledModifier(PhysicalCard source, Filterable affectFilter, Condition condition, String playerRetrieving) {
+        this(source, affectFilter, condition, playerRetrieving, null);
+    }
+
+    /**
+     * Creates a modifier that prevents Force retrieval for the specified player from affected cards from being canceled,
+     * except by cards accepted by the specified filter.
+     * @param source the source of the modifier
+     * @param affectFilter the filter for cards whose Force retrieval may not be canceled
+     * @param condition the condition that must be fulfilled for the modifier to be in effect
+     * @param playerRetrieving the player whose Force retrieval may not be canceled
+     * @param exceptCancelingCardFilter the filter for cards that may still cancel the Force retrieval, or null
+     */
+    public ForceRetrievalFromCardMayNotBeCanceledModifier(PhysicalCard source, Filterable affectFilter, Condition condition, String playerRetrieving, Filterable exceptCancelingCardFilter) {
         super(source, "Force retrieval may not be canceled", affectFilter, condition, ModifierType.FORCE_RETRIEVAL_FROM_CARD_MAY_NOT_BE_CANCELED);
         _playerId = playerRetrieving;
+        _exceptCancelingCardFilter = exceptCancelingCardFilter;
+    }
+
+    /**
+     * Determines if the specified card may still cancel the Force retrieval despite this modifier.
+     * @param gameState the game state
+     * @param modifiersQuerying the modifiers querying
+     * @param cancelingCard the card canceling the Force retrieval, or null
+     * @return true or false
+     */
+    public boolean isCancelAllowedBy(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard cancelingCard) {
+        return _exceptCancelingCardFilter != null && cancelingCard != null
+                && Filters.and(_exceptCancelingCardFilter).accepts(gameState, modifiersQuerying, cancelingCard);
     }
 
     @Override
