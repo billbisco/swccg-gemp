@@ -16,7 +16,7 @@ public class Card_1261_081_Tests {
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>() {{
             put("incom", "1261_81"); put("warRoom", "1_139"); put("echoRoom", "3_57");
-            put("system", "1_135"); put("jungle", "1_137"); put("throne", "1_138"); put("generators", "3_61");
+            put("shipRoom", "9_58"); put("system", "1_135"); put("jungle", "1_137"); put("throne", "1_138"); put("generators", "3_61");
             put("echoBay", "3_59"); put("echoMed", "3_60"); put("rebel1", "1_28"); put("rebel2", "1_28"); put("rebel3", "1_28");
             put("ebo", "3_34"); put("xwing", "1_146"); put("xwing2", "1_146"); put("ywing", "1_147");
             put("z95", "106_9"); put("speeder", "3_69"); put("t16", "2_75"); put("red1", "1_144");
@@ -42,7 +42,7 @@ public class Card_1261_081_Tests {
 
     private VirtualTableScenario started(boolean attached) {
         var scn = scenario(); scn.StartGame();
-        for (String key : new String[]{"warRoom", "echoRoom", "system", "jungle", "throne", "generators"})
+        for (String key : new String[]{"warRoom", "echoRoom", "shipRoom", "system", "jungle", "throne", "generators"})
             scn.MoveLocationToTable(scn.GetLSCard(key));
         if (attached) scn.AttachCardsTo(scn.GetLSCard("warRoom"), scn.GetLSCard("incom"));
         else scn.MoveCardsToLSHand(scn.GetLSCard("incom"));
@@ -55,6 +55,9 @@ public class Card_1261_081_Tests {
         scn.LSDeployCard(scn.GetLSCard("incom"));
         assertTrue(scn.LSHasCardChoiceAvailable(scn.GetLSCard("warRoom")));
         assertTrue(scn.LSHasCardChoiceAvailable(scn.GetLSCard("echoRoom")));
+        assertTrue(Filters.war_room.accepts(scn.game(), scn.GetLSCard("shipRoom")));
+        assertFalse(Filters.Rebel_Base_site.accepts(scn.game(), scn.GetLSCard("shipRoom")));
+        assertFalse(scn.LSHasCardChoiceAvailable(scn.GetLSCard("shipRoom")));
         assertFalse(scn.LSHasCardChoiceAvailable(scn.GetLSCard("throne")));
         assertFalse(scn.LSHasCardChoiceAvailable(scn.GetLSCard("jungle")));
         assertFalse(scn.LSHasCardChoiceAvailable(scn.GetLSCard("system")));
