@@ -17,7 +17,9 @@ import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
+import com.gempukku.swccgo.logic.effects.RespondableEffect;
 import com.gempukku.swccgo.logic.effects.choose.StealCardIntoHandFromLostPileEffect;
+import com.gempukku.swccgo.logic.timing.Action;
 
 import java.util.Collections;
 import java.util.List;
@@ -42,7 +44,7 @@ public class Card1210_018 extends AbstractAlien {
     @Override
     protected List<TopLevelGameTextAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
         GameTextActionId gameTextActionId = GameTextActionId.LEGACY__REEGESK_V__STEAL_FROM_LOST_PILE;
-        Filter stealFilter = Filters.or(Filters.device, Filters.droid, Filters.starfighter, Filters.vehicle, Filters.weapon);
+        final Filter stealFilter = Filters.or(Filters.device, Filters.droid, Filters.starfighter, Filters.vehicle, Filters.weapon);
 
         if (GameConditions.isOpponentsTurn(game, playerId)
                 && GameConditions.isPresentAt(game, self, Filters.battleground_site)
@@ -54,8 +56,15 @@ public class Card1210_018 extends AbstractAlien {
             action.setActionMsg("Steal a device, droid, starfighter, vehicle, or weapon from opponent's Lost Pile into hand");
             action.appendUsage(
                     new OncePerTurnEffect(action));
-            action.appendEffect(
-                    new StealCardIntoHandFromLostPileEffect(action, playerId, stealFilter));
+            // Allow response(s) (e.g. Shoo! Shoo! canceling the attempt to steal)
+            action.allowResponses("Steal a device, droid, starfighter, vehicle, or weapon from opponent's Lost Pile into hand",
+                    new RespondableEffect(action) {
+                        @Override
+                        protected void performActionResults(Action targetingAction) {
+                            action.appendEffect(
+                                    new StealCardIntoHandFromLostPileEffect(action, playerId, stealFilter));
+                        }
+                    });
             return Collections.singletonList(action);
         }
         return null;
