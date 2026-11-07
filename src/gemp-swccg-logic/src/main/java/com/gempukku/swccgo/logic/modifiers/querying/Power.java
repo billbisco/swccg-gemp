@@ -75,6 +75,11 @@ public interface Power extends BaseQuery, Attributes, Destiny, Piloting, Politic
             PhysicalCard sourceCard = modifier.getSource(gameState);
             String playerId = sourceCard != null ? sourceCard.getOwner() : null;
             float modifierAmount = modifier.getPowerModifier(gameState, query(), physicalCard);
+            // 'Power -1' in the card's own game text may be ignored
+            if (modifierAmount == -1 && sourceCard != null && sourceCard.getCardId() == physicalCard.getCardId()
+                    && !getModifiersAffectingCard(gameState, ModifierType.IGNORES_OWN_POWER_MINUS_ONE_IN_GAME_TEXT, physicalCard).isEmpty()) {
+                continue;
+            }
             if (modifierAmount <= 0 || !isProhibitedFromHavingPowerIncreasedByCard(gameState, physicalCard, playerId, sourceCard, modifierCollector)) {
                 if (modifierAmount >= 0 || !isProhibitedFromHavingPowerReduced(gameState, physicalCard, playerId, modifierCollector)) {
                     result += modifierAmount;

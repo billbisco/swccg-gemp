@@ -24,6 +24,14 @@ public class AboutToDrawDestinyCardResult extends EffectResult {
     }
 
     /**
+     * Gets the draw destiny effect that is about to draw.
+     * @return the draw destiny effect
+     */
+    public DrawDestinyEffect getDrawDestinyEffect() {
+        return _drawDestinyEffect;
+    }
+
+    /**
      * Determines if performing a "draw X and choose Y"
      * @return true or false
      */

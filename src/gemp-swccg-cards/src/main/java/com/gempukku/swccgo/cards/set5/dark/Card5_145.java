@@ -23,6 +23,7 @@ import com.gempukku.swccgo.logic.effects.RespondablePlayCardEffect;
 import com.gempukku.swccgo.logic.effects.RestoreCardToNormalEffect;
 import com.gempukku.swccgo.logic.effects.TargetCardOnTableEffect;
 import com.gempukku.swccgo.logic.effects.TargetCardsOnTableEffect;
+import com.gempukku.swccgo.logic.modifiers.ModifyGameTextType;
 import com.gempukku.swccgo.logic.timing.Action;
 import com.gempukku.swccgo.logic.timing.EffectResult;
 import com.gempukku.swccgo.logic.timing.results.HitResult;
@@ -49,7 +50,10 @@ public class Card5_145 extends AbstractUsedOrLostInterrupt {
     protected List<PlayInterruptAction> getGameTextOptionalAfterActions(final String playerId, final SwccgGame game, final EffectResult effectResult, final PhysicalCard self) {
         List<PlayInterruptAction> actions = new LinkedList<>();
 
-        Filter impPresentWithCaptive = Filters.and(Filters.Imperial, Filters.presentInBattle, Filters.escorting(Filters.any));
+        // 'Imperial' may be treated as 'bounty hunter' when this game text is modified (e.g. by Hutt Influence (V)).
+        Filter imperial = GameConditions.hasGameTextModification(game, self, ModifyGameTextType.LEGACY__HUTT_INFLUENCE__HUMAN_SHIELD_IMPERIAL_MAY_BE_BOUNTY_HUNTER)
+                ? Filters.or(Filters.Imperial, Filters.bounty_hunter) : Filters.Imperial;
+        Filter impPresentWithCaptive = Filters.and(imperial, Filters.presentInBattle, Filters.escorting(Filters.any));
         // Check condition(s)
         if (TriggerConditions.justHitBy(game, effectResult, impPresentWithCaptive, Filters.and(Filters.opponents(playerId), Filters.weapon))) {
             final PhysicalCard cardHit = ((HitResult) effectResult).getCardHit();

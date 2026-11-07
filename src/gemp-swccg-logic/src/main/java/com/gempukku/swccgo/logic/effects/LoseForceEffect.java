@@ -482,10 +482,24 @@ public class LoseForceEffect extends AbstractSubActionEffect {
                             if (isForceDrain()) {
                                 boolean mustComeFromReserveDeck = topOfReserveDeck != null && game.getModifiersQuerying().hasFlagActive(game.getGameState(), ModifierFlag.FORCE_DRAIN_LOST_FROM_RESERVE_DECK, _playerToLoseForce);
                                 boolean mustComeFromForcePile = topOfForcePile != null && game.getModifiersQuerying().hasFlagActive(game.getGameState(), ModifierFlag.FORCE_DRAIN_LOST_FROM_FORCE_PILE, _playerToLoseForce);
-                                if (mustComeFromReserveDeck || mustComeFromForcePile) {
-                                    _fromHand = _fromSabaccHand = _fromUsedPile = false;
+                                boolean mustComeFromHand = !game.getGameState().getHand(_playerToLoseForce).isEmpty() && game.getModifiersQuerying().hasFlagActive(game.getGameState(), ModifierFlag.FORCE_DRAIN_LOST_FROM_HAND, _playerToLoseForce);
+                                if (mustComeFromReserveDeck || mustComeFromForcePile || mustComeFromHand) {
+                                    _fromHand = mustComeFromHand;
+                                    _fromSabaccHand = _fromUsedPile = false;
+                                    if (mustComeFromHand) {
+                                        _fromDrawnDestiny = false;
+                                    }
                                     _fromReserveDeck = mustComeFromReserveDeck;
                                     _fromForcePile = mustComeFromForcePile;
+                                    allowForceLossFromAnywhereAvailable = false;
+                                }
+                                else if (game.getModifiersQuerying().hasFlagActive(game.getGameState(), ModifierFlag.FORCE_DRAIN_LOST_FROM_LIFE_FORCE, _playerToLoseForce)
+                                        && (topOfReserveDeck != null || topOfForcePile != null || game.getGameState().getTopOfUsedPile(_playerToLoseForce) != null)) {
+                                    // Lost Force must come from Life Force (Reserve Deck, Force Pile, Used Pile), if possible
+                                    _fromHand = _fromSabaccHand = _fromDrawnDestiny = false;
+                                    _fromReserveDeck = topOfReserveDeck != null;
+                                    _fromForcePile = topOfForcePile != null;
+                                    _fromUsedPile = game.getGameState().getTopOfUsedPile(_playerToLoseForce) != null;
                                     allowForceLossFromAnywhereAvailable = false;
                                 }
                             }

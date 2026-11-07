@@ -24,10 +24,13 @@ import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.game.state.MoveAsReactState;
 import com.gempukku.swccgo.game.state.UsingTractorBeamState;
 import com.gempukku.swccgo.game.state.WeaponFiringState;
+import com.gempukku.swccgo.logic.effects.DrawFerocityDestinyEffect;
 import com.gempukku.swccgo.logic.effects.LookAtCardsInOpponentsHandEffect;
 import com.gempukku.swccgo.logic.effects.MovingAsReactEffect;
 import com.gempukku.swccgo.logic.effects.RespondableDeployMultipleCardsSimultaneouslyEffect;
 import com.gempukku.swccgo.logic.effects.RespondablePlayingCardEffect;
+import com.gempukku.swccgo.logic.effects.RespondableCancelDestinyEffect;
+import com.gempukku.swccgo.logic.effects.DrawDestinyEffect;
 import com.gempukku.swccgo.logic.effects.UseForceEffect;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 import com.gempukku.swccgo.logic.timing.Action;
@@ -1248,6 +1251,49 @@ public class TriggerConditions {
     }
 
     /**
+     * Determines if the effect is an attempt, by game text of a card accepted by the canceling card filter, to cancel
+     * a card accepted by the card filter that is being played (the attempt targets the card "to be canceled").
+     * @param game the game
+     * @param effect the effect
+     * @param cancelingCardFilter the filter for the card whose game text is attempting the cancel
+     * @param cardBeingPlayedFilter the filter for the card being played
+     * @return true or false
+     */
+    public static boolean isAttemptToCancelCardBeingPlayed(SwccgGame game, Effect effect, Filterable cancelingCardFilter, Filterable cardBeingPlayedFilter) {
+        if (effect.getType() != Effect.Type.RESPONDABLE_EFFECT || effect.isCanceled())
+            return false;
+        Action action = effect.getAction();
+        return action.isFromGameText()
+                && action.getActionSource() != null
+                && Filters.and(cancelingCardFilter).accepts(game, action.getActionSource())
+                && TargetingActionUtils.isTargeting(game, action, TargetingReason.TO_BE_CANCELED, Filters.and(cardBeingPlayedFilter));
+    }
+
+    /**
+     * Determines if the effect is an attempt, by game text of a card accepted by the canceling card filter, to cancel
+     * a just drawn destiny of the specified type drawn by the specified player.
+     * @param game the game
+     * @param effect the effect
+     * @param cancelingCardFilter the filter for the card whose game text is attempting the cancel
+     * @param playerDrawingDestiny the player who drew the destiny
+     * @param destinyType the destiny type
+     * @return true or false
+     */
+    public static boolean isAttemptToCancelDestiny(SwccgGame game, Effect effect, Filterable cancelingCardFilter, String playerDrawingDestiny, DestinyType destinyType) {
+        if (!(effect instanceof RespondableCancelDestinyEffect) || effect.isCanceled())
+            return false;
+        DrawDestinyEffect drawDestinyEffect = ((RespondableCancelDestinyEffect) effect).getDrawDestinyEffect();
+        Action action = effect.getAction();
+        return drawDestinyEffect != null
+                && !drawDestinyEffect.isDestinyCanceled()
+                && playerDrawingDestiny.equals(drawDestinyEffect.getPlayerDrawingDestiny())
+                && drawDestinyEffect.getDestinyType() == destinyType
+                && action.isFromGameText()
+                && action.getActionSource() != null
+                && Filters.and(cancelingCardFilter).accepts(game, action.getActionSource());
+    }
+
+    /**
      * Determines if a card accepted by the target filter is being targeted by any of the specified reasons.
      * @param game the game
      * @param effect the effect
@@ -2306,7 +2352,7 @@ public class TriggerConditions {
             return card.getZone().isInPlay()
                     && (aboutToForfeitCardFromTableResult.getPreventableCardEffect() == null
                     || !aboutToForfeitCardFromTableResult.getPreventableCardEffect().isEffectOnCardPrevented(card))
-                    && aboutToForfeitCardFromTableResult.getForfeitCardEffect().isForfeitToLostPile()
+                    && aboutToForfeitCardFromTableResult.isToBeForfeitedToLostPile()
                     && Filters.and(filter).accepts(game.getGameState(), game.getModifiersQuerying(), card);
         }
         return false;
@@ -3747,6 +3793,24 @@ public class TriggerConditions {
     }
 
     /**
+     * Determines if a creature accepted by the creature filter is about to draw destiny for ferocity.
+     * @param game the game
+     * @param effectResult the effect result
+     * @param creatureFilter the creature filter
+     * @return true or false
+     */
+    public static boolean isAboutToDrawFerocityDestiny(SwccgGame game, EffectResult effectResult, Filterable creatureFilter) {
+        if (effectResult.getType() == EffectResult.Type.ABOUT_TO_DRAW_DESTINY_CARD) {
+            AboutToDrawDestinyCardResult result = (AboutToDrawDestinyCardResult) effectResult;
+            return !result.isSubstituteDestiny()
+                    && result.getDrawDestinyEffect() instanceof DrawFerocityDestinyEffect.FerocityDestinyDrawEffect
+                    && Filters.and(creatureFilter).accepts(game,
+                    ((DrawFerocityDestinyEffect.FerocityDestinyDrawEffect) result.getDrawDestinyEffect()).getCreature());
+        }
+        return false;
+    }
+
+    /**
      * Determines if the specified player is about to draw battle destiny.
      * @param game the game
      * @param effectResult the effect result
@@ -4541,6 +4605,45 @@ public class TriggerConditions {
                     && (cardFiringWeapon != null && Filters.and(firedByFilter).accepts(game.getGameState(), game.getModifiersQuerying(), cardFiringWeapon));
         }
         return false;
+    }
+
+    /**
+     * Determines if a weapon card (not a permanent weapon) accepted by the weapon filter, fired by a card accepted by the
+     * fired by filter, just failed to 'hit' a target accepted by the target filter (the target was fired at but was not
+     * 'hit' or made lost by that weapon firing).
+     * @param game the game
+     * @param effectResult the effect result
+     * @param weaponFilter the weapon filter
+     * @param firedByFilter the fired by filter
+     * @param targetFilter the target filter
+     * @return true or false
+     */
+    public static boolean weaponCardJustFailedToHit(SwccgGame game, EffectResult effectResult, Filterable weaponFilter, Filterable firedByFilter, Filterable targetFilter) {
+        return !getTargetsWeaponCardJustFailedToHit(game, effectResult, weaponFilter, firedByFilter, targetFilter).isEmpty();
+    }
+
+    /**
+     * Gets the targets accepted by the target filter that a weapon card (not a permanent weapon) accepted by the weapon
+     * filter, fired by a card accepted by the fired by filter, just failed to 'hit'.
+     * @param game the game
+     * @param effectResult the effect result
+     * @param weaponFilter the weapon filter
+     * @param firedByFilter the fired by filter
+     * @param targetFilter the target filter
+     * @return the targets the weapon just failed to 'hit' (empty if none)
+     */
+    public static Collection<PhysicalCard> getTargetsWeaponCardJustFailedToHit(SwccgGame game, EffectResult effectResult, Filterable weaponFilter, Filterable firedByFilter, Filterable targetFilter) {
+        if (effectResult.getType() == EffectResult.Type.FIRED_WEAPON) {
+            FiredWeaponResult weaponFiredResult = (FiredWeaponResult) effectResult;
+            PhysicalCard weaponCardFired = weaponFiredResult.getWeaponCardFired();
+            PhysicalCard cardFiringWeapon = weaponFiredResult.getCardFiringWeapon();
+            if (weaponCardFired != null && weaponFiredResult.getPermanentWeaponFired() == null
+                    && Filters.and(weaponFilter).accepts(game.getGameState(), game.getModifiersQuerying(), weaponCardFired)
+                    && cardFiringWeapon != null && Filters.and(firedByFilter).accepts(game.getGameState(), game.getModifiersQuerying(), cardFiringWeapon)) {
+                return Filters.filter(weaponFiredResult.getTargetsNotHit(), game, targetFilter);
+            }
+        }
+        return Collections.emptyList();
     }
 
     /**
@@ -5547,6 +5650,27 @@ public class TriggerConditions {
     public static boolean justRetrievedForce(SwccgGame game, EffectResult effectResult, String playerId) {
         if (effectResult.getType() == EffectResult.Type.RETRIEVED_FORCE) {
             return playerId.equals(effectResult.getPerformingPlayerId());
+        }
+        return false;
+    }
+
+    /**
+     * Determines if a card accepted by the source filter just added a destiny to the specified player's total power
+     * or attrition at a location accepted by the location filter.
+     * @param game the game
+     * @param effectResult the effect result
+     * @param playerId the player whose total power or attrition the destiny was added to
+     * @param sourceFilter the filter for the card that added the destiny
+     * @param locationFilter the location filter
+     * @return true or false
+     */
+    public static boolean isDestinyJustAddedToTotalPowerOrAttritionBy(SwccgGame game, EffectResult effectResult, String playerId, Filterable sourceFilter, Filterable locationFilter) {
+        if (effectResult.getType() == EffectResult.Type.DESTINY_ADDED_TO_TOTAL_POWER_OR_ATTRITION
+                && playerId.equals(effectResult.getPerformingPlayerId())) {
+            DestinyAddedToTotalPowerOrAttritionResult result = (DestinyAddedToTotalPowerOrAttritionResult) effectResult;
+            return result.getSourceCard() != null && result.getLocation() != null
+                    && Filters.and(sourceFilter).accepts(game, result.getSourceCard())
+                    && Filters.and(locationFilter).accepts(game, result.getLocation());
         }
         return false;
     }

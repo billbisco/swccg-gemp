@@ -226,8 +226,9 @@ public class FireSingleWeaponAction extends AbstractFireWeaponAction {
                 if (!_emitFiredWeaponResult) {
                     _emitFiredWeaponResult = true;
                     Collection<PhysicalCard> firedTargets = (game.getGameState().getWeaponFiringState()==null ? Collections.<PhysicalCard>emptyList():game.getGameState().getWeaponFiringState().getTargets());
+                    Collection<PhysicalCard> targetsNotHit = (game.getGameState().getWeaponFiringState()==null ? Collections.<PhysicalCard>emptyList():game.getGameState().getWeaponFiringState().getTargetsNotHitOrMadeLost());
                     _firedAtTargets = new java.util.LinkedList<PhysicalCard>(firedTargets);
-                    game.getActionsEnvironment().emitEffectResult(new FiredWeaponResult(game, _permanentWeapon != null ? null : _weaponToFire, _permanentWeapon, getCardFiringWeapon(), _thrown, _repeatedFiring, firedTargets));
+                    game.getActionsEnvironment().emitEffectResult(new FiredWeaponResult(game, _permanentWeapon != null ? null : _weaponToFire, _permanentWeapon, getCardFiringWeapon(), _thrown, _repeatedFiring, firedTargets, targetsNotHit));
                 }
             }
         }
