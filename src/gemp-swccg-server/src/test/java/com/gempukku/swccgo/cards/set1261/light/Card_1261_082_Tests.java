@@ -23,7 +23,10 @@ public class Card_1261_082_Tests {
         var ls = new HashMap<>(Map.of("flaps", "1261_82", "luke", "3_3", "rogue", "3_66", "differentPilot", "3_27",
                 "differentVehicle", "3_68", "artillery", "3_72", "tactics", "7_86", "top", "2_18", "controlEffect", "1_66"));
         ls.put("hoth", "3_63");
-        var ds = new HashMap<>(Map.of("vader", "1_168", "alter", "1_234"));
+        ls.putAll(Map.of("system", "3_55", "capital", "9_74", "turbolaser", "9_89",
+                "xwing", "1_146", "xwingCannon", "7_162", "rapidFire", "7_100",
+                "onTarget", "7_96", "luckyShot", "3_45", "steadyAim", "7_105"));
+        var ds = new HashMap<>(Map.of("vader", "1_168", "alter", "1_234", "capital", "1_301", "walker", "3_157"));
         return new VirtualTableScenario(ls, ds, 40, 40, StartingSetup.DefaultLSGroundLocation,
                 StartingSetup.DefaultDSGroundLocation, StartingSetup.NoLSStartingInterrupts,
                 StartingSetup.NoDSStartingInterrupts, StartingSetup.NoLSShields, StartingSetup.NoDSShields, "legacy");
@@ -118,4 +121,89 @@ public class Card_1261_082_Tests {
 
     @Test public void actualDesperateTacticsOffersTheTopReserveCard() { tacticsDraw(true); }
     @Test public void actualDesperateTacticsDrawMayBeDeclined() { tacticsDraw(false); }
+    private void takeFlapsDraw(VirtualTableScenario scn) {
+        var flaps = scn.GetLSCard("flaps");
+        var top = scn.GetLSCard("top");
+        var trace = new ArrayList<String>();
+        for (int i = 0; i < 12 && scn.GetCurrentDecision() != null; i++) {
+            var prompt = scn.GetCurrentDecision().getText();
+            trace.add(prompt + " " + scn.GetLSAvailableActions());
+            if (scn.GetLSAvailableActions().stream().anyMatch(x -> x.contains(DRAW))) {
+                assertEquals(top, scn.GetTopOfLSReserveDeck());
+                scn.LSUseCardAction(flaps, DRAW);
+                assertEquals(Zone.HAND, top.getZone());
+                return;
+            }
+            if (!prompt.toLowerCase().contains("optional response")) break;
+            scn.PlayerPass(scn.GetDecidingPlayer());
+        }
+        fail("Flaps did not offer its printed draw: " + trace);
+    }
+
+    @Test public void actualOnTargetOffersTheTopReserveCard() {
+        var scn = fixture(); scn.StartGame();
+        var system = scn.GetLSCard("system"); var capital = scn.GetLSCard("capital");
+        var opponent = scn.GetDSCard("capital"); var top = scn.GetLSCard("top");
+        scn.MoveLocationToTable(system); scn.MoveCardsToLocation(system, capital, opponent);
+        scn.AttachCardsTo(capital, scn.GetLSCard("turbolaser"));
+        scn.MoveCardsToLSSideOfTable(scn.GetLSCard("flaps"));
+        scn.MoveCardsToLSHand(scn.GetLSCard("onTarget"));
+        scn.LSActivateForceCheat(10); scn.SkipToLSTurn(Phase.CONTROL);
+        scn.MoveCardsToTopOfLSReserveDeck(top);
+        scn.LSPlayCard(scn.GetLSCard("onTarget"), "Target starship");
+        if (scn.LSHasCardChoiceAvailable(opponent)) scn.LSChooseCard(opponent);
+        scn.PassForceUseResponses();
+        takeFlapsDraw(scn);
+    }
+
+    @Test public void actualRapidFireOffersTheTopReserveCard() {
+        var scn = fixture(); scn.StartGame();
+        var system = scn.GetLSCard("system"); var ship = scn.GetLSCard("xwing");
+        var cannon = scn.GetLSCard("xwingCannon"); var top = scn.GetLSCard("top");
+        scn.MoveLocationToTable(system); scn.MoveCardsToLocation(system, ship, scn.GetDSCard("capital"));
+        scn.BoardAsPilot(ship, scn.GetLSCard("luke"));
+        scn.MoveCardsToLSSideOfTable(scn.GetLSCard("flaps"));
+        scn.MoveCardsToLSHand(scn.GetLSCard("rapidFire"), cannon);
+        scn.LSActivateForceCheat(8); scn.SkipToLSTurn(Phase.BATTLE);
+        scn.LSInitiateBattle(system);
+        scn.MoveCardsToTopOfLSReserveDeck(top);
+        scn.LSPlayCard(scn.GetLSCard("rapidFire"), "Deploy weapon from hand");
+        scn.PassResponses("PLAYING_CARD_ACTION");
+        if (scn.LSHasCardChoiceAvailable(cannon)) scn.LSChooseCard(cannon);
+        if (scn.LSHasCardChoiceAvailable(ship)) scn.LSChooseCard(ship);
+        takeFlapsDraw(scn);
+    }
+
+    private void weaponResponse(boolean starship) {
+        var scn = fixture(); scn.StartGame();
+        var location = starship ? scn.GetLSCard("system") : scn.GetLSCard("hoth");
+        var gun = scn.GetLSCard(starship ? "turbolaser" : "artillery");
+        var opponent = scn.GetDSCard(starship ? "capital" : "walker");
+        var response = scn.GetLSCard(starship ? "steadyAim" : "luckyShot");
+        scn.MoveLocationToTable(location);
+        if (starship) {
+            var capital = scn.GetLSCard("capital");
+            scn.MoveCardsToLocation(location, capital, opponent);
+            scn.AttachCardsTo(capital, gun);
+        } else {
+            scn.MoveCardsToLocation(location, gun, scn.GetLSCard("luke"), opponent);
+            scn.BoardAsPilot(opponent, scn.GetDSCard("vader"));
+        }
+        scn.MoveCardsToLSSideOfTable(scn.GetLSCard("flaps"));
+        scn.MoveCardsToLSHand(response);
+        scn.LSActivateForceCheat(12); scn.SkipToLSTurn(Phase.BATTLE);
+        scn.LSStartBattleAndSkipToWeaponsSegment(location);
+        scn.MoveCardsToTopOfLSReserveDeck(scn.GetLSCard("top"));
+        scn.LSUseCardAction(gun, "Fire");
+        if (scn.LSHasCardChoiceAvailable(opponent)) scn.LSChooseCard(opponent);
+        scn.PassForceUseResponses();
+        scn.PassResponses("FIRING_WEAPON");
+        scn.PassResponses("WEAPON_FIRED");
+        if (scn.DSGetDecision() != null && scn.GetCurrentDecision().getText().toLowerCase().contains("optional response")) scn.DSPass();
+        scn.LSPlayCard(response, starship ? "Add 2 to weapon destiny" : "Add 1 to weapon destiny");
+        takeFlapsDraw(scn);
+    }
+
+    @Test public void actualLuckyShotOffersTheTopReserveCard() { weaponResponse(false); }
+    @Test public void actualSteadyAimOffersTheTopReserveCard() { weaponResponse(true); }
 }
