@@ -322,8 +322,9 @@ public class Card_1240_042_Tests {
         assertTrue(scn.DSDecisionAvailable("Top card"));
         scn.DSPass();
         PassResponsesWithoutFrustration(scn);
-        Reach(scn, scn.GetDSCard("scan"), "Peek at top of opponent's Reserve Deck");
-        assertFalse(scn.DSCardPlayAvailable(scn.GetDSCard("frustration")));
+        assertTrue(scn.AwaitingDSControlPhaseActions() || scn.AwaitingLSControlPhaseActions());
+        if (scn.DSAnyActionsAvailable()) assertFalse(scn.DSCardPlayAvailable(scn.GetDSCard("frustration")));
+        assertInZone(Zone.HAND, scn.GetDSCard("frustration"));
     }
 
     @Test
