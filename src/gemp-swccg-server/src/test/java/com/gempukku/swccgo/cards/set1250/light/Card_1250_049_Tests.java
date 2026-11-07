@@ -29,7 +29,7 @@ public class Card_1250_049_Tests {
             put("plo", "1250_49"); put("yoda", "4_2"); put("ship", "1_140"); put("system", "1_135");
             put("speeder", "3_69"); put("cost", "1_153"); put("rifle", "1_153");
             put("warrior", "1_28"); put("madakor", "12_1"); put("otherWarrior", "1_28");
-            put("otherWeapon", "1_153"); put("nonWeapon", "1_5");
+            put("luke", "1_19"); put("nonWeapon", "1_5");
         }}, new HashMap<>() {{
             put("trooper", "1_194"); put("yularen", "1_166"); put("rifle", "1_312");
             put("scout", "8_175"); put("cannon", "8_178");
@@ -55,26 +55,29 @@ public class Card_1250_049_Tests {
         s.BlueprintKeywordCheck(bp, new ArrayList<>(List.of(Keyword.JEDI_COUNCIL_MEMBER)));
     }
 
-    @Test
-    public void PloKoonAddsTwoPowerWhilePilotingShipButNotAsPassenger() {
-        var s = scenario(); s.StartGame(); var system = s.GetLSCard("system");
-        var plo = s.GetLSCard("plo"); var ship = s.GetLSCard("ship");
-        s.MoveLocationToTable(system); s.MoveCardsToLocation(system, ship);
-        int normal = s.GetPower(ship);
-        s.BoardAsPassenger(ship, plo); assertEquals(normal, s.GetPower(ship), s.epsilon);
-        s.MoveCardsToLocation(system, plo);
-        s.BoardAsPilot(ship, plo); assertEquals(normal + 2, s.GetPower(ship), s.epsilon);
+    private void checkTransport(boolean vehicle, boolean pilot) {
+        var s = scenario(); s.StartGame(); var plo = s.GetLSCard("plo");
+        var transport = s.GetLSCard(vehicle ? "speeder" : "ship");
+        var location = vehicle ? s.GetLSStartingLocation() : s.GetLSCard("system");
+        if (!vehicle) s.MoveLocationToTable(location);
+        s.MoveCardsToLocation(location, transport); s.MoveCardsToHand(plo);
+        int normal = s.GetPower(transport);
+        s.SkipToLSTurn(Phase.CONTROL); s.LSActivateForceCheat(6); s.SkipToPhase(Phase.DEPLOY);
+        assertTrue(s.LSCardPlayAvailable(plo)); s.LSDeployCard(plo); s.LSChooseCard(transport);
+        s.LSChooseOption(pilot ? "Pilot" : "Passenger"); s.PassAllResponses();
+        assertEquals(pilot, s.IsAboardAsPilot(transport, plo));
+        assertEquals(normal + (pilot ? 2 : 0), s.GetPower(transport));
+        s.MoveOutOfPlay(plo); assertEquals(normal, s.GetPower(transport));
     }
 
     @Test
-    public void PloKoonAddsTwoPowerWhileDrivingVehicle() {
-        var s = scenario(); s.StartGame(); var site = s.GetLSStartingLocation();
-        var speeder = s.GetLSCard("speeder"); var plo = s.GetLSCard("plo");
-        s.MoveCardsToLocation(site, speeder, plo);
-        int normal = s.GetPower(speeder);
-        s.BoardAsPilot(speeder, plo); assertEquals(normal + 2, s.GetPower(speeder), s.epsilon);
-        s.MoveCardsToLocation(site, plo); assertEquals(normal, s.GetPower(speeder), s.epsilon);
-    }
+    public void PloKoonAddsTwoPowerWhenActuallyDeployedAsShipPilot() { checkTransport(false, true); }
+
+    @Test
+    public void PloKoonDoesNotAddPowerWhenActuallyDeployedAsPassenger() { checkTransport(false, false); }
+
+    @Test
+    public void PloKoonAddsTwoPowerWhenActuallyDeployedAsVehicleDriver() { checkTransport(true, true); }
 
     private boolean action(VirtualTableScenario s, String text) {
         return s.GetADParam(s.LS, "cardId") != null && s.GetADParam(s.LS, "actionText") != null
@@ -104,6 +107,7 @@ public class Card_1250_049_Tests {
         s.MoveCardsToLocation(s.GetLSStartingLocation(), s.GetLSCard("plo"), s.GetLSCard("warrior"));
         s.MoveCardsToLocation(s.GetDSStartingLocation(), s.GetLSCard("otherWarrior"));
         if (darkTurn) s.SkipToDSTurn(Phase.CONTROL); else s.SkipToLSTurn(Phase.CONTROL);
+        s.MoveOutOfPlay(s.GetLSCard("cost"));
         s.MoveCardsToTopOfLSReserveDeck(s.GetLSCard("rifle"), s.GetLSCard("nonWeapon"));
         if (darkTurn) {
             s.LSActivateForceCheat(4);
@@ -169,7 +173,7 @@ public class Card_1250_049_Tests {
     private VirtualTableScenario restrictedBattle(boolean piloting, boolean yodaRestriction) {
         var s = scenario(); s.StartGame(); var site = s.GetLSStartingLocation();
         var plo = s.GetLSCard("plo"); var speeder = s.GetLSCard("speeder");
-        s.MoveCardsToLocation(site, plo, speeder, s.GetLSCard("warrior"), s.GetDSCard("trooper"));
+        s.MoveCardsToLocation(site, plo, speeder, s.GetLSCard("warrior"), s.GetLSCard("luke"), s.GetDSCard("trooper"));
         if (piloting) s.BoardAsPilot(speeder, plo); else s.BoardAsPassenger(speeder, plo);
         var objective = s.GetLSCard("objective"); s.MoveCardsToLSSideOfTable(objective);
         objective.setObjectiveDeploymentComplete(true); s.gameState().flipCard(s.game(), objective, true);
@@ -203,7 +207,7 @@ public class Card_1250_049_Tests {
         s.MoveCardsToLocation(costHere ? site : other, s.GetLSCard("warrior"));
         s.MoveCardsToLocation(site, s.GetLSCard("madakor"), s.GetDSCard("trooper"), s.GetDSCard("yularen"));
         s.AttachCardsTo(s.GetLSCard("warrior"), s.GetLSCard("cost"));
-        if (ploHere) s.AttachCardsTo(s.GetLSCard("plo"), s.GetLSCard("rifle"));
+        if (ploHere && costHere) s.AttachCardsTo(s.GetLSCard("plo"), s.GetLSCard("rifle"));
         s.AttachCardsTo(s.GetDSCard("trooper"), s.GetDSCard("rifle"));
         if (vehicle) {
             s.MoveCardsToLocation(site, s.GetDSCard("scout"));
@@ -280,6 +284,11 @@ public class Card_1250_049_Tests {
     @Test
     public void PloKoonCannotSacrificeWhenBattleIsAtAnotherSite() {
         var s = weapons(false, true, false, false); assertFalse(offer(s));
+        assertFalse(s.GetLSUsedPile().contains(s.GetLSCard("cost")));
+    }
+    @Test
+    public void PloKoonCannotPayWithEnemyWeaponHereOrOwnWeaponElsewhere() {
+        var s = weapons(false, false, true, false); assertFalse(offer(s));
         assertFalse(s.GetLSUsedPile().contains(s.GetLSCard("cost")));
     }
 }

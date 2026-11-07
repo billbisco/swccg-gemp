@@ -89,11 +89,11 @@ public class Card1250_049 extends AbstractJediMaster {
             @Override
             protected void cardSelected(PhysicalCard weapon) {
                 action.appendCost(new PlaceCardInUsedPileFromTableEffect(action, weapon));
+                action.appendEffect(new AddUntilEndOfBattleModifierEffect(action,
+                        new EachWeaponDestinyModifier(self, Filters.not(Filters.vehicle_weapon), -1),
+                        "Non-vehicle weapon destiny draws -1"));
             }
         });
-        action.appendEffect(new AddUntilEndOfBattleModifierEffect(action,
-                new EachWeaponDestinyModifier(self, Filters.not(Filters.vehicle_weapon), -1),
-                "Non-vehicle weapon destiny draws -1"));
         return List.of(action);
     }
 }
