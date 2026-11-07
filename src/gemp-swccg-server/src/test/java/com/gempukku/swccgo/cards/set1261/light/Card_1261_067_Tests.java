@@ -145,4 +145,69 @@ public class Card_1261_067_Tests {
                 .anyMatch(msg -> msg.contains("reveals") && msg.contains("1261_67")));
         assertEquals(Zone.OUT_OF_PLAY, scn.GetLSCard("prize").getZone());
     }
+
+    /** Light starts N copies of A Close Race outside the deck with the 13_5 Starting Effect (up to 10 shields). */
+    private VirtualTableScenario capacityFixture(boolean withPrize, int shields) {
+        var light = new HashMap<>(Map.of("effect", "13_5"));
+        var outside = new StartingSetup() {
+            @Override public HashMap<String, String> Cards() {
+                var cards = new HashMap<String, String>();
+                if (withPrize) cards.put("prize", "1261_67");
+                for (int i = 0; i < shields; i++) cards.put("shield" + i, "13_1");
+                return cards;
+            }
+            @Override public void Setup(VirtualTableScenario scn) {}
+        };
+        return new VirtualTableScenario(light, new HashMap<>(), 40, 40, StartingSetup.DefaultLSSpaceSystem,
+                StartingSetup.DefaultDSGroundLocation, StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
+                outside, StartingSetup.NoDSShields, "legacy");
+    }
+
+    private int stackedUnderEffect(VirtualTableScenario scn) {
+        var effect = scn.GetLSCard("effect");
+        assertTrue(scn.IsCardActive(effect));
+        return scn.GetStackedCards(effect).size();
+    }
+
+    @Test public void prizeSubtractsOneFromTheCardsStartedUnderTheStartingEffect() {
+        var scn = capacityFixture(true, 9); scn.StartGame();
+        assertEquals(9, stackedUnderEffect(scn));
+        assertFalse(scn.GetStackedCards(scn.GetLSCard("effect")).contains(scn.GetLSCard("prize")));
+    }
+
+    @Test public void prizeMakesTheTenthShieldExceedTheStartingEffectCapacity() {
+        var scn = capacityFixture(true, 10); scn.StartGame();
+        assertEquals(0, stackedUnderEffect(scn));
+        assertTrue(scn.gameState().getLastMessages().toString(), scn.gameState().getLastMessages().stream()
+                .anyMatch(msg -> msg.contains("More defensive shields in outside of deck area")));
+    }
+
+    @Test public void withoutThePrizeTheStartingEffectStillHoldsTen() {
+        var scn = capacityFixture(false, 10); scn.StartGame();
+        assertEquals(10, stackedUnderEffect(scn));
+    }
+
+    @Test public void deckValidationSubtractsThePrizeFromTheStartingEffectShieldCap() throws com.gempukku.swccgo.game.DeckInvalidException {
+        var library = new com.gempukku.swccgo.game.SwccgCardBlueprintLibrary();
+        var deck = new com.gempukku.swccgo.logic.vo.SwccgDeck("prize-cap");
+        deck.addCard("13_5");
+        for (int i = 0; i < 10; i++) deck.addCardOutsideDeck("13_1");
+        com.gempukku.swccgo.game.formats.DefaultSwccgFormat.validateOriginalStartingEffectOutsideDeckShieldCap(library, deck);
+        deck.addCardOutsideDeck("1261_67");
+        try {
+            com.gempukku.swccgo.game.formats.DefaultSwccgFormat.validateOriginalStartingEffectOutsideDeckShieldCap(library, deck);
+            fail("Ten shields plus the Light Jabba's Prize must exceed the Starting Effect cap");
+        } catch (com.gempukku.swccgo.game.DeckInvalidException expected) {
+            assertTrue(expected.getMessage().contains("More defensive shields"));
+        }
+        var nine = new com.gempukku.swccgo.logic.vo.SwccgDeck("prize-cap-nine");
+        nine.addCard("13_5");
+        for (int i = 0; i < 9; i++) nine.addCardOutsideDeck("13_1");
+        nine.addCardOutsideDeck("1261_67");
+        com.gempukku.swccgo.game.formats.DefaultSwccgFormat.validateOriginalStartingEffectOutsideDeckShieldCap(library, nine);
+    }
+
+    @Test public void prizeDeclaresAStartingEffectCapacityReductionOfOne() {
+        assertEquals(1, capacityFixture(true, 0).GetLSCard("prize").getBlueprint().getStartingEffectCapacityReduction());
+    }
 }
