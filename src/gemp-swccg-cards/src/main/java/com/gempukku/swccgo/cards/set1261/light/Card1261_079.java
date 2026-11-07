@@ -49,7 +49,9 @@ public class Card1261_079 extends AbstractNormalEffect {
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, PhysicalCard self) {
         return List.of(new IgnoresLocationDeploymentRestrictionsInGameTextModifier(self, QUALIFIED_REBEL),
-                new ImmuneToTitleModifier(self, QUALIFIED_REBEL, Title.Bad_Feeling_Have_I));
+                new ImmuneToTitleModifier(self, QUALIFIED_REBEL, Title.Bad_Feeling_Have_I),
+                new ImmuneToDeployCostModifiersToLocationModifier(self, QUALIFIED_REBEL,
+                        Filters.title(Title.Bad_Feeling_Have_I), Filters.location));
     }
 
     @Override

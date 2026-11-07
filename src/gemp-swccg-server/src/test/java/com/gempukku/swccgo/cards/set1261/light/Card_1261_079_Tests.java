@@ -21,7 +21,7 @@ public class Card_1261_079_Tests {
         var ls = new HashMap<>(Map.of("combo", "1261_79", "commander", "3_3", "luke", "108_3",
                 "obi", "1_21", "han", "1_11", "ship", "1_146", "independent", "10_17",
                 "space", "6_87", "ordinary", "1_66"));
-        var ds = new HashMap<>(Map.of("bad", "4_116", "vader", "1_168", "fighter", "1_299", "alter", "1_234"));
+        var ds = new HashMap<>(Map.of("bad", "4_116", "vader", "1_168", "fighter", "1_299", "fighterPilot", "1_173", "alter", "1_234"));
         var scn = new VirtualTableScenario(ls, ds, 40, 40, StartingSetup.DefaultLSGroundLocation,
                 StartingSetup.DefaultDSGroundLocation, StartingSetup.NoLSStartingInterrupts,
                 StartingSetup.NoDSStartingInterrupts, StartingSetup.NoLSShields, StartingSetup.NoDSShields, "legacy");
@@ -47,20 +47,25 @@ public class Card_1261_079_Tests {
         var bad = scn.GetDSCard("bad"); var luke = scn.GetLSCard("luke"); var obi = scn.GetLSCard("obi");
         scn.MoveCardsToLSSideOfTable(bad);
         scn.MoveCardsToLSHand(commander, luke, obi, combo);
-        scn.SkipToLSTurn(Phase.DEPLOY); scn.EnsureLSForcePile(12);
+        scn.LSActivateForceCheat(12); scn.SkipToLSTurn(Phase.DEPLOY);
         assertFalse(scn.LSCardPlayAvailable(commander));
         assertEquals(commander.getBlueprint().getDeployCost().intValue() + 2, scn.GetDeployCost(commander));
         scn.LSPlayCard(combo); scn.PassAllResponses();
         assertEquals(Zone.SIDE_OF_TABLE, combo.getZone());
-        assertEquals(commander.getBlueprint().getDeployCost().intValue(), scn.GetDeployCost(commander));
+        var mods = scn.game().getModifiersQuerying(); var site = scn.GetLSStartingLocation();
+        assertTrue(mods.isImmuneToDeployCostToTargetModifierFromCard(scn.gameState(), commander, site, bad));
+        assertFalse(mods.isImmuneToDeployCostToTargetModifierFromCard(scn.gameState(), luke, site, bad));
+        assertFalse(mods.isImmuneToDeployCostToTargetModifierFromCard(scn.gameState(), obi, site, bad));
         assertEquals(luke.getBlueprint().getDeployCost().intValue() + 2, scn.GetDeployCost(luke));
         assertEquals(obi.getBlueprint().getDeployCost().intValue() + 2, scn.GetDeployCost(obi));
         if (scn.DSGetDecision() != null) scn.DSPass();
         assertTrue(scn.LSCardPlayAvailable(commander));
+        int before = scn.GetLSForcePile().size();
         scn.LSPlayCard(commander); scn.PassForceUseResponses(); scn.PassAllResponses();
         if (scn.LSHasCardChoiceAvailable(scn.GetLSStartingLocation())) scn.LSChooseCard(scn.GetLSStartingLocation());
         scn.PassForceUseResponses(); scn.PassAllResponses();
-        assertEquals(scn.GetLSStartingLocation(), commander.getAtLocation());
+        assertEquals(site, commander.getAtLocation());
+        assertEquals(commander.getBlueprint().getDeployCost().intValue(), before - scn.GetLSForcePile().size());
     }
 
     @Test public void realAlterCannotTargetTheComboWhileAnotherEffectIsLegal() {
@@ -83,8 +88,11 @@ public class Card_1261_079_Tests {
         scn.MoveCardsToLSSideOfTable(combo);
         if (inSpace) scn.MoveLocationToTable(site);
         scn.MoveCardsToLocation(site, lost, opponent);
-        if (inSpace && !independent) scn.BoardAsPilot(lost, scn.GetLSCard("commander"));
-        scn.SkipToLSTurn(Phase.BATTLE); scn.EnsureLSForcePile(6);
+        if (inSpace) {
+            scn.BoardAsPilot(lost, scn.GetLSCard("commander"));
+            scn.BoardAsPilot(opponent, scn.GetDSCard("fighterPilot"));
+        }
+        scn.LSActivateForceCheat(8); scn.SkipToLSTurn(Phase.BATTLE);
         scn.LSStartBattleAndSkipToWeaponsSegment(site);
         var action = new TopLevelGameTextAction(site, scn.LS, site.getCardId());
         action.appendEffect(new LoseCardFromTableEffect(action, lost));
