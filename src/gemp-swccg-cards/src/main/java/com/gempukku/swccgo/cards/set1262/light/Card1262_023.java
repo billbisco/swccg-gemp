@@ -2,6 +2,7 @@ package com.gempukku.swccgo.cards.set1262.light;
 
 import com.gempukku.swccgo.cards.AbstractNormalEffect;
 import com.gempukku.swccgo.cards.GameConditions;
+import com.gempukku.swccgo.cards.conditions.DuringBattleCondition;
 import com.gempukku.swccgo.cards.effects.usage.OncePerTurnEffect;
 import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.filters.Filters;
@@ -10,6 +11,8 @@ import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
 import com.gempukku.swccgo.logic.effects.PutCardFromHandOnUsedPileEffect;
 import com.gempukku.swccgo.logic.modifiers.MayNotAddBattleDestinyDrawsModifier;
+import com.gempukku.swccgo.logic.modifiers.MayNotAddMoreThanDestinyToAttritionModifier;
+import com.gempukku.swccgo.logic.modifiers.MayNotAddMoreThanDestinyToPowerModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 
 import java.util.List;
@@ -27,7 +30,10 @@ public class Card1262_023 extends AbstractNormalEffect {
 
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, PhysicalCard self) {
-        return List.of(new MayNotAddBattleDestinyDrawsModifier(self, Filters.or(Icon.PERMANENT_WEAPON, Icon.MAINTENANCE)));
+        var duringBattle = new DuringBattleCondition();
+        return List.of(new MayNotAddBattleDestinyDrawsModifier(self, Filters.or(Icon.PERMANENT_WEAPON, Icon.MAINTENANCE)),
+                new MayNotAddMoreThanDestinyToPowerModifier(self, duringBattle, 2, null),
+                new MayNotAddMoreThanDestinyToAttritionModifier(self, duringBattle, 1, null));
     }
 
     @Override

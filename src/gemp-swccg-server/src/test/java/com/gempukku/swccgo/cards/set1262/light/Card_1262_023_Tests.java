@@ -3,6 +3,10 @@ package com.gempukku.swccgo.cards.set1262.light;
 import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.cards.GameConditions;
+import com.gempukku.swccgo.logic.modifiers.AddsDestinyToAttritionModifier;
+import com.gempukku.swccgo.logic.modifiers.AddsDestinyToPowerModifier;
+import com.gempukku.swccgo.logic.modifiers.DestinyAddedCapTests;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -125,5 +129,88 @@ public class Card_1262_023_Tests {
         scn.PassAllResponses(); scn.PassDestinyDrawResponses(); scn.PassAllResponses();
         assertInZone(Zone.SIDE_OF_TABLE, effect);
         assertFalse(ordinary.getZone().isInPlay());
+    }
+
+    // "During battle, neither player may add more than two destiny to power (or total power) or one destiny to total attrition."
+
+    private void addPowerSources(VirtualTableScenario scn, String player, int count) {
+        addPowerSources(scn, "luke", player, count);
+    }
+
+    private void addPowerSources(VirtualTableScenario scn, String sourceKey, String player, int count) {
+        scn.game().getModifiersEnvironment().addUntilEndOfBattleModifier(
+                new AddsDestinyToPowerModifier(scn.GetLSCard(sourceKey), count, player, true));
+    }
+
+    private void addAttritionSources(VirtualTableScenario scn, String player, int count) {
+        scn.game().getModifiersEnvironment().addUntilEndOfBattleModifier(
+                new AddsDestinyToAttritionModifier(scn.GetLSCard("luke"), count, player, true));
+    }
+
+    private int powerDrawn(VirtualTableScenario scn, String player) {
+        return scn.gameState().getBattleState().getNumDestinyToTotalPowerDrawn(player);
+    }
+
+    private int attritionDrawn(VirtualTableScenario scn, String player) {
+        return scn.gameState().getBattleState().getNumDestinyToAttritionDrawn(player);
+    }
+
+    private int powerDrawnWith(boolean effect, String side, int sources) {
+        var scn = battle(effect, false);
+        String player = side.equals("LS") ? scn.LS : scn.DS;
+        addPowerSources(scn, player, sources);
+        DestinyAddedCapTests.advanceToDamageSegment(scn, false);
+        return powerDrawn(scn, player);
+    }
+
+    private int attritionDrawnWith(boolean effect, String side, int sources) {
+        // Maintenance fixture: both sides keep an ordinary battle destiny under Thrown Back, which attrition draws need.
+        var scn = battle(effect, true);
+        String player = side.equals("LS") ? scn.LS : scn.DS;
+        addAttritionSources(scn, player, sources);
+        DestinyAddedCapTests.advanceToDamageSegment(scn, true);
+        return attritionDrawn(scn, player);
+    }
+
+    @Test public void lightSideMayAddNoMoreThanTwoDestinyToPower() {
+        assertEquals(3, powerDrawnWith(false, "LS", 3));
+        assertEquals(2, powerDrawnWith(true, "LS", 3));
+        assertEquals(2, powerDrawnWith(true, "LS", 2));
+    }
+
+    @Test public void darkSideMayAddNoMoreThanTwoDestinyToPower() {
+        assertEquals(3, powerDrawnWith(false, "DS", 3));
+        assertEquals(2, powerDrawnWith(true, "DS", 3));
+        assertEquals(2, powerDrawnWith(true, "DS", 2));
+    }
+
+    @Test public void lightSideMayAddNoMoreThanOneDestinyToAttrition() {
+        assertEquals(2, attritionDrawnWith(false, "LS", 2));
+        assertEquals(1, attritionDrawnWith(true, "LS", 2));
+        assertEquals(1, attritionDrawnWith(true, "LS", 1));
+    }
+
+    @Test public void darkSideMayAddNoMoreThanOneDestinyToAttrition() {
+        assertEquals(2, attritionDrawnWith(false, "DS", 2));
+        assertEquals(1, attritionDrawnWith(true, "DS", 2));
+        assertEquals(1, attritionDrawnWith(true, "DS", 1));
+    }
+
+    @Test public void addDestinyActionsBecomeUnavailableAtTheCap() {
+        var scn = battle(true, false);
+        addPowerSources(scn, scn.DS, 1);
+        assertTrue(GameConditions.canAddDestinyDrawsToPower(scn.game(), scn.DS));
+        addPowerSources(scn, "han", scn.DS, 1);
+        assertFalse(GameConditions.canAddDestinyDrawsToPower(scn.game(), scn.DS));
+        assertTrue(GameConditions.canAddDestinyDrawsToPower(scn.game(), scn.LS));
+        assertTrue(GameConditions.canAddDestinyDrawsToAttrition(scn.game(), scn.LS));
+        addAttritionSources(scn, scn.LS, 1);
+        assertFalse(GameConditions.canAddDestinyDrawsToAttrition(scn.game(), scn.LS));
+    }
+
+    @Test public void capsDoNotApplyOutsideBattle() {
+        var scn = deploy();
+        assertNull(scn.game().getModifiersQuerying().getMaxDestinyAddedToPower(scn.gameState(), scn.LS));
+        assertTrue(GameConditions.canAddDestinyDrawsToPower(scn.game(), scn.LS));
     }
 }
