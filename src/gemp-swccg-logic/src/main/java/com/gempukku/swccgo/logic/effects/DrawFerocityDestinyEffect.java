@@ -59,7 +59,7 @@ public abstract class DrawFerocityDestinyEffect extends AbstractSubActionEffect 
                         gameState.sendMessage(performingPlayerId + " targets to draw " + numDestiny + " destiny for " + GameUtils.getCardLink(_creature) + "'s ferocity");
                         gameState.activatedCard(performingPlayerId, _creature);
                         subAction.appendEffect(
-                                new DrawDestinyEffect(subAction, performingPlayerId, numDestiny, DestinyType.DESTINY) {
+                                new FerocityDestinyDrawEffect(subAction, performingPlayerId, numDestiny, _creature) {
                                     @Override
                                     protected void destinyDraws(SwccgGame game, List<PhysicalCard> destinyCardDraws, List<Float> destinyDrawValues, Float totalDestiny) {
                                         if (totalDestiny == null) {
@@ -134,5 +134,26 @@ public abstract class DrawFerocityDestinyEffect extends AbstractSubActionEffect 
     @Override
     protected boolean wasActionCarriedOut() {
         return true;
+    }
+
+    /**
+     * The destiny draw for a creature's ferocity, so cards can recognize that a creature is about to draw destiny for
+     * ferocity.
+     */
+    public abstract static class FerocityDestinyDrawEffect extends DrawDestinyEffect {
+        private final PhysicalCard _ferociousCreature;
+
+        protected FerocityDestinyDrawEffect(Action action, String playerId, int numDestiny, PhysicalCard creature) {
+            super(action, playerId, numDestiny, DestinyType.DESTINY);
+            _ferociousCreature = creature;
+        }
+
+        /**
+         * Gets the creature whose ferocity destiny is being drawn.
+         * @return the creature
+         */
+        public PhysicalCard getCreature() {
+            return _ferociousCreature;
+        }
     }
 }

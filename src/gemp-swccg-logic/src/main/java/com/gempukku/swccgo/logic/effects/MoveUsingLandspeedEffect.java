@@ -31,6 +31,7 @@ public class MoveUsingLandspeedEffect extends AbstractSubActionEffect implements
     private boolean _initialMove;
     private boolean _moveCompleted;
     private Set<PhysicalCard> _preventedCards = new HashSet<PhysicalCard>();
+    private Set<PhysicalCard> _regularMoveRecordedCards = new HashSet<PhysicalCard>();
     private MoveUsingLandspeedEffect _that;
 
     /**
@@ -150,7 +151,7 @@ public class MoveUsingLandspeedEffect extends AbstractSubActionEffect implements
                         protected void doPlayEffect(SwccgGame game) {
                             // Record that regular move was performed
                             for (PhysicalCard movedCard : _movedCards) {
-                                game.getModifiersQuerying().regularMovePerformed(movedCard);
+                                recordRegularMove(game, movedCard);
                             }
                         }
                     }
@@ -160,6 +161,19 @@ public class MoveUsingLandspeedEffect extends AbstractSubActionEffect implements
         }
 
         return subAction;
+    }
+
+    /**
+     * Records that the specified card performed a regular move, at most once per card for this movement. A landspeed
+     * move passes through each site along the way, but it is still a single regular move, so it must not consume any
+     * granted additional moves beyond the first record.
+     * @param game the game
+     * @param card the card
+     */
+    private void recordRegularMove(SwccgGame game, PhysicalCard card) {
+        if (_regularMoveRecordedCards.add(card)) {
+            game.getModifiersQuerying().regularMovePerformed(card);
+        }
     }
 
     @Override
@@ -247,7 +261,7 @@ public class MoveUsingLandspeedEffect extends AbstractSubActionEffect implements
                                                 }
 
                                                 // Record that regular move was performed (in case it was added to move later)
-                                                modifiersQuerying.regularMovePerformed(cardMoving);
+                                                recordRegularMove(game, cardMoving);
 
                                                 if (!_preventedCards.isEmpty()) {
                                                     return;

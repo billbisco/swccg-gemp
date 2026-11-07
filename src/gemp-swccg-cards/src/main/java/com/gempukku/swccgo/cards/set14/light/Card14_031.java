@@ -14,6 +14,7 @@ import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.GetToYourShipsStarfighterFilter;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.GameUtils;
@@ -41,7 +42,7 @@ public class Card14_031 extends AbstractNormalEffect {
 
     @Override
     protected List<TopLevelGameTextAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
-        final Filter unpilotedStarfighter = Filters.and(Filters.unpiloted, Filters.starfighter);
+        final Filter unpilotedStarfighter = new GetToYourShipsStarfighterFilter();
         Filter filter = Filters.and(Filters.or(Filters.pilot, unpilotedStarfighter), Filters.isUniquenessOnTableNotReached);
 
         GameTextActionId gameTextActionId = GameTextActionId.GET_TO_YOUR_SHIPS__DEPLOY_MATCHING_STARFIGHTER_OR_PILOT;

@@ -14,6 +14,16 @@ import com.gempukku.swccgo.logic.modifiers.ModifierType;
 public interface Weapons extends BaseQuery, Icons {
 
     /**
+     * Determines if a card is not 'hit' when 'thrown'.
+     * @param gameState the game state
+     * @param card a card
+     * @return true if card is not 'hit' when 'thrown', otherwise false
+     */
+    default boolean isNotHitWhenThrown(GameState gameState, PhysicalCard card) {
+        return !getModifiersAffectingCard(gameState, ModifierType.NOT_HIT_WHEN_THROWN, card).isEmpty();
+    }
+
+    /**
      * Gets the permanent weapon built into the card, not including if card is disarmed or game text canceled.
      * @param gameState the game state
      * @param physicalCard a card

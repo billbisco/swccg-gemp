@@ -18,9 +18,9 @@ import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.game.state.GameState;
+import com.gempukku.swccgo.logic.actions.CancelCardActionBuilder;
 import com.gempukku.swccgo.logic.actions.OptionalGameTextTriggerAction;
 import com.gempukku.swccgo.logic.conditions.Condition;
-import com.gempukku.swccgo.logic.effects.CancelCardBeingPlayedEffect;
 import com.gempukku.swccgo.logic.effects.LoseForceEffect;
 import com.gempukku.swccgo.logic.effects.RespondablePlayingCardEffect;
 import com.gempukku.swccgo.logic.modifiers.AddsBattleDestinyModifier;
@@ -87,14 +87,13 @@ public class Card1114_015 extends AbstractJediMaster {
         }
         PhysicalCard played = ((RespondablePlayingCardEffect) effect).getCard();
         if (!Filters.and(Filters.Interrupt, Filters.not(Filters.immune_to_Sense)).accepts(game.getGameState(), game.getModifiersQuerying(), played)
-                || !GameConditions.isOncePerGame(game, self, GameTextActionId.OTHER_CARD_ACTION_1)) {
+                || !GameConditions.isOncePerGame(game, self, GameTextActionId.LEGACY__YODA_GREAT_WARRIOR__CANCEL_INTERRUPT)) {
             return null;
         }
-        final OptionalGameTextTriggerAction action = new OptionalGameTextTriggerAction(self, playerId, gameTextSourceCardId, GameTextActionId.OTHER_CARD_ACTION_1);
-        action.setText("Cancel " + played.getTitle());
+        final OptionalGameTextTriggerAction action = new OptionalGameTextTriggerAction(self, playerId, gameTextSourceCardId, GameTextActionId.LEGACY__YODA_GREAT_WARRIOR__CANCEL_INTERRUPT);
+        CancelCardActionBuilder.buildCancelCardBeingPlayedAction(action, effect);
         action.appendUsage(new OncePerGameEffect(action));
         action.appendCost(new LoseForceEffect(action, playerId, 2));
-        action.appendEffect(new CancelCardBeingPlayedEffect(action, (RespondablePlayingCardEffect) effect));
         return Collections.singletonList(action);
     }
 }

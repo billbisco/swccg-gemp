@@ -17,6 +17,7 @@ public class FiredWeaponResult extends EffectResult {
     private boolean _thrown;
     private boolean _repeatedFiring;
     private Collection<PhysicalCard> _targets;
+    private Collection<PhysicalCard> _targetsNotHit;
 
     /**
      * Creates an effect result that is triggered when a weapon (or permanent weapon) has been fired.
@@ -35,6 +36,23 @@ public class FiredWeaponResult extends EffectResult {
         _thrown = thrown;
         _repeatedFiring = repeatedFiring;
         _targets = targets;
+    }
+
+    /**
+     * Creates an effect result that is triggered when a weapon (or permanent weapon) has been fired, including which
+     * of its targets were not 'hit' (or made lost) by that weapon firing.
+     * @param game the game
+     * @param weaponCard the weapon card (or null if weapon was a permanent weapon)
+     * @param permanentWeapon the permanent weapon (or null if weapon is not a permanent weapon)
+     * @param cardFiringWeapon the card that fired the weapon (or null if the card is self-firing)
+     * @param thrown true if the weapon was 'thrown'
+     * @param repeatedFiring true if this was a repeated firing
+     * @param targets the targets
+     * @param targetsNotHit the targets that were not 'hit' (or made lost) by this weapon firing
+     */
+    public FiredWeaponResult(SwccgGame game, PhysicalCard weaponCard, SwccgBuiltInCardBlueprint permanentWeapon, PhysicalCard cardFiringWeapon, boolean thrown, boolean repeatedFiring, Collection<PhysicalCard> targets, Collection<PhysicalCard> targetsNotHit) {
+        this(game, weaponCard, permanentWeapon, cardFiringWeapon, thrown, repeatedFiring, targets);
+        _targetsNotHit = targetsNotHit;
     }
 
     public FiredWeaponResult(SwccgGame game, PhysicalCard weaponCard, SwccgBuiltInCardBlueprint permanentWeapon, PhysicalCard cardFiringWeapon, boolean thrown, Collection<PhysicalCard> targets) {
@@ -91,6 +109,16 @@ public class FiredWeaponResult extends EffectResult {
     public Collection<PhysicalCard> getTargets() {
         return _targets;
     }
+    /**
+     * Returns the targets of this weapon firing that were not 'hit' (or made lost) by it, i.e. the weapon 'failed to hit'
+     * those targets. This is only known for weapon firings performed through the standard fire weapon action; otherwise
+     * it is empty.
+     * @return the targets not 'hit'
+     */
+    public Collection<PhysicalCard> getTargetsNotHit() {
+        return _targetsNotHit != null ? _targetsNotHit : java.util.Collections.<PhysicalCard>emptyList();
+    }
+
     /**
      * Gets the text to show to describe the effect result.
      * @param game the game
