@@ -58,7 +58,7 @@ public class Card1250_050 extends AbstractAlienRepublic {
         List<TopLevelGameTextAction> actions = new ArrayList<>();
         GameTextActionId id = GameTextActionId.LEGACY__SENATOR_JAR_JAR_BINKS__DEPLOY;
         if (GameConditions.isOncePerTurn(game, self, playerId, gameTextSourceCardId, id)
-                && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, id, true, false)) {
+                && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, id)) {
             Filter card = Filters.and(Filters.canBeTargetedBy(self), Filters.or(Filters.title("Electropole"),
                     Filters.and(Icon.CORUSCANT, Filters.Naboo_location),
                     Filters.and(Icon.THEED_PALACE, Filters.vehicle)));

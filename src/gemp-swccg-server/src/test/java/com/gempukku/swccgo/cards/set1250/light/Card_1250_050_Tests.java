@@ -63,7 +63,7 @@ public class Card_1250_050_Tests {
     private VirtualTableScenario search(boolean darkTurn) {
         var s = scenario(); s.StartGame(); var home = s.GetLSCard("home");
         s.MoveLocationToTable(home); s.MoveCardsToLocation(home, s.GetLSCard("jarJar"));
-        if (darkTurn) s.SkipToDSTurn(Phase.CONTROL); else s.SkipToLSTurn(Phase.CONTROL);
+        if (darkTurn) s.SkipToDSTurn(Phase.CONTROL); else s.SkipToLSTurn(Phase.DEPLOY);
         if (s.GetLSForcePileCount() < 2) s.LSActivateForceCheat(2);
         s.MoveCardsToTopOfLSReserveDeck(s.GetLSCard("electropole"), s.GetLSCard("plains"), s.GetLSCard("speeder"),
                 s.GetLSCard("snow"), s.GetLSCard("wrongNaboo"), s.GetLSCard("dock"), s.GetLSCard("mace"));
@@ -116,15 +116,14 @@ public class Card_1250_050_Tests {
     }
 
     @Test
-    public void SenatorJarJarMayDownloadOnOpponentsControlPhase() { deployFromReserve(search(true), "plains", false); }
+    public void SenatorJarJarCannotDownloadOnOpponentsControlPhase() { assertFalse(action(search(true), DOWNLOAD)); }
 
     @Test
-    public void SenatorJarJarDownloadLimitSpansPhasesAndResetsNextTurn() {
+    public void SenatorJarJarDownloadLimitResetsInNextLightDeployPhase() {
         var s = search(false); deployFromReserve(s, "electropole", false);
         int turn = s.gameState().getPlayersLatestTurnNumber(s.LS);
-        s.SkipToPhase(Phase.MOVE);
-        assertEquals(turn, s.gameState().getPlayersLatestTurnNumber(s.LS));
-        assertTrue(s.AwaitingLSMovePhaseActions()); assertFalse(action(s, DOWNLOAD));
+        if (s.AwaitingDSDeployPhaseActions()) s.DSPass();
+        assertTrue(s.AwaitingLSDeployPhaseActions()); assertFalse(action(s, DOWNLOAD));
         for (int i = 0; i < 100 && !(s.GetCurrentPlayer().equals(s.DS) && s.GetCurrentPhase() == Phase.CONTROL); i++) {
             String prompt = s.GetCurrentDecision().getText();
             if (prompt.equals("You have not activated Force. Do you want to Pass?")) {
@@ -137,6 +136,9 @@ public class Card_1250_050_Tests {
         }
         assertEquals(s.DS, s.GetCurrentPlayer()); assertEquals(Phase.CONTROL, s.GetCurrentPhase());
         if (s.DSAnyDecisionsAvailable()) s.DSPass();
+        assertFalse(action(s, DOWNLOAD));
+        s.SkipToLSTurn(Phase.DEPLOY);
+        assertEquals(turn + 1, s.gameState().getPlayersLatestTurnNumber(s.LS));
         deployFromReserve(s, "plains", false);
     }
 
