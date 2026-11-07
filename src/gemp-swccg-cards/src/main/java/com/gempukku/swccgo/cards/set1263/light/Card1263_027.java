@@ -39,10 +39,10 @@ public class Card1263_027 extends AbstractUsedInterrupt {
 
         PlayInterruptAction action = new PlayInterruptAction(game, self);
         action.setText("Lose 1 Force to boost a character and cancel its attrition immunity");
-        action.appendCost(new LoseForceEffect(action, playerId, 1, true));
         action.appendTargeting(new TargetCardOnTableEffect(action, playerId, "Choose a character present at the battle", target) {
             @Override
             protected void cardTargeted(int targetGroupId, PhysicalCard targetedCard) {
+                action.appendCost(new LoseForceEffect(action, playerId, 1, true));
                 action.allowResponses(new RespondablePlayCardEffect(action) {
                     @Override
                     protected void performActionResults(Action targetingAction) {

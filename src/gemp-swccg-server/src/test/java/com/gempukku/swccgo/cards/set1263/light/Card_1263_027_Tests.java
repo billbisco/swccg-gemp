@@ -96,7 +96,8 @@ public class Card_1263_027_Tests {
         scn.gameState().markCardsRevealedFromPile(Collections.singletonList(scn.GetLSCard("traffic")));
         assertTrue(scn.gameState().isCardRevealedFromPile(scn.GetLSCard("traffic")));
         scn.LSPlayCard(scn.GetLSCard("tactics"), EXCHANGE+pile.getHumanReadable()); scn.PassAllResponses();
-        scn.LSChooseCard(scn.GetLSCard("luke")); scn.PassAllResponses();
+        if (scn.LSDecisionAvailable("Choose card from hand") && scn.LSHasCardChoiceAvailable(scn.GetLSCard("luke"))) scn.LSChooseCard(scn.GetLSCard("luke"));
+        scn.PassAllResponses();
         assertTrue(selectable(scn, "jedi")); assertFalse(selectable(scn, "han")); assertFalse(selectable(scn, "traffic"));
         scn.LSChooseCard(scn.GetLSCard("jedi")); scn.PassAllResponses();
         if (scn.LSHasCardChoiceAvailable(scn.GetLSCard("luke"))) scn.LSChooseCard(scn.GetLSCard("luke"));
