@@ -11,11 +11,13 @@ import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.actions.PlayInterruptAction;
 import com.gempukku.swccgo.logic.effects.RespondablePlayCardEffect;
 import com.gempukku.swccgo.logic.effects.RetrieveForceEffect;
+import com.gempukku.swccgo.logic.modifiers.ModifyGameTextType;
 import com.gempukku.swccgo.logic.effects.choose.TakeCardIntoHandFromReserveDeckEffect;
 import com.gempukku.swccgo.logic.timing.Action;
 
@@ -45,8 +47,11 @@ public class Card12_159 extends AbstractUsedInterrupt {
 
         // Check condition(s)
         if (GameConditions.isOncePerGame(game, self, gameTextActionId)) {
+            Filter contributors = game.getModifiersQuerying().hasGameTextModification(game.getGameState(), self,
+                    ModifyGameTextType.LEGACY__SQUABBLING_DELEGATES__SENATORS_ARE_CORUSCANT_GUARDS)
+                    ? Filters.Coruscant_Guard : Filters.senator;
             final int numSenators = Filters.countActive(game, self,
-                    Filters.and(Filters.your(self), Filters.senator, Filters.at(Filters.Galactic_Senate), Filters.mayContributeToForceRetrieval));
+                    Filters.and(Filters.your(self), contributors, Filters.at(Filters.Galactic_Senate), Filters.mayContributeToForceRetrieval));
             if (numSenators > 0) {
 
                 final PlayInterruptAction action = new PlayInterruptAction(game, self, gameTextActionId);
