@@ -45,6 +45,15 @@ public class Card_1263_005_Tests {
         }
         assertTrue(scn.DSCardActionAvailable(scn.GetDSCard("jodo"),CAPTURE));
     }
+    private void assertNoCaptureOnArrival(VirtualTableScenario scn) {
+        for(int i=0;i<30;i++) {
+            if(scn.DSGetDecision()!=null)assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("jodo"),CAPTURE));
+            if(scn.AwaitingLSControlPhaseActions())return;
+            assertNotNull(scn.GetCurrentDecision());assertTrue(scn.GetCurrentDecision().getText().toLowerCase().contains("optional"));
+            if(scn.DSGetDecision()!=null)scn.DSPass();else scn.LSPass();
+        }
+        fail("Nabrun transport did not resolve");
+    }
     private void capture(VirtualTableScenario scn,PhysicalCardImpl target) {
         reachCapture(scn);scn.DSUseCardAction(scn.GetDSCard("jodo"),CAPTURE);
         if(scn.DSHasCardChoiceAvailable(target))scn.DSChooseCard(target);scn.PassAllResponses();
@@ -74,7 +83,7 @@ public class Card_1263_005_Tests {
     }
     @Test public void JodoKastCannotCaptureAgainWithSecondNabrunInSameGame() {
         var scn=transport(true,"luke");move(scn,scn.GetLSCard("nabrun"),scn.GetLSCard("luke"),scn.GetDSStartingLocation());capture(scn,scn.GetLSCard("luke"));
-        scn.MoveCardsToLocation(scn.GetLSStartingLocation(),scn.GetLSCard("leia"));scn.SkipToLSTurn(Phase.CONTROL);move(scn,scn.GetLSCard("nabrun2"),scn.GetLSCard("leia"),scn.GetDSStartingLocation());scn.PassAllResponses();assertFalse(scn.GetLSCard("leia").isCaptive());assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("jodo"),CAPTURE));
+        scn.MoveCardsToLocation(scn.GetLSStartingLocation(),scn.GetLSCard("leia"));scn.SkipToLSTurn(Phase.CONTROL);move(scn,scn.GetLSCard("nabrun2"),scn.GetLSCard("leia"),scn.GetDSStartingLocation());assertNoCaptureOnArrival(scn);assertFalse(scn.GetLSCard("leia").isCaptive());assertEquals(scn.GetDSStartingLocation(),scn.GetLSCard("leia").getAtLocation());
     }
     private void force(VirtualTableScenario scn,boolean dark,int amount) {
         String player=dark?scn.DS:scn.LS;var cards=scn.gameState().getForcePile(player).toArray(PhysicalCardImpl[]::new);
@@ -128,5 +137,10 @@ public class Card_1263_005_Tests {
     }
     @Test public void JodoKastAbsentDoesNotEnableHiddenWeaponsThroughOrdinaryTrooper() {
         var scn=scenario();scn.StartGame();scn.MoveCardsToLocation(scn.GetDSStartingLocation(),scn.GetDSCard("trooper"),scn.GetLSCard("luke"));scn.MoveCardsToDSHand(scn.GetDSCard("hidden"));scn.DSStartBattleAndSkipToWeaponsSegment(scn.GetDSStartingLocation());assertTrue(scn.AwaitingDSWeaponsSegmentActions());assertFalse(scn.DSCardPlayAvailable(scn.GetDSCard("hidden")));
+    }
+    @Test public void JodoKastMayChooseOneOfTwoActuallyTransportedCharacters() {
+        var scn=transport(true,"luke");scn.MoveCardsToLocation(scn.GetLSStartingLocation(),scn.GetLSCard("leia"));scn.PrepareLSDestiny(0);
+        scn.LSPlayCard(scn.GetLSCard("nabrun"));scn.LSChooseCard(scn.GetLSStartingLocation());scn.LSChooseCard(scn.GetDSStartingLocation());scn.LSChooseCards(scn.GetLSCard("luke"),scn.GetLSCard("leia"));scn.PassAllResponses();scn.LSChooseYes();
+        capture(scn,scn.GetLSCard("leia"));assertFalse(scn.GetLSCard("luke").isCaptive());assertEquals(scn.GetDSStartingLocation(),scn.GetLSCard("luke").getAtLocation());
     }
 }
