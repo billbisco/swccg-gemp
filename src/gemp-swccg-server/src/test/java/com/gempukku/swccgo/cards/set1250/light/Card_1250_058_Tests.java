@@ -54,10 +54,19 @@ public class Card_1250_058_Tests {
     }
 
     private void draw(VirtualTableScenario s, int count) {
-        assertEquals(count, s.GetDSBattleDestinyCount());
+        assertEquals(3, s.GetDSBattleDestinyCount());
+        assertEquals(count == 2 ? 2 : Integer.MAX_VALUE, s.GetDSBattleDestinyLimit());
         s.PrepareDSDestiny(3); s.PrepareDSDestiny(4); s.PrepareDSDestiny(5); s.PrepareLSDestiny(0);
-        s.SkipToEndOfPowerSegment(true);
+        s.SkipToPowerSegment();
+        assertTrue(s.GetCurrentDecision().getText(), s.DSDecisionAvailable("battle destiny?"));
+        s.DSChooseYes();
+        for (int i = 0; i < 35 && s.GetCurrentDecision().getText().contains("Optional responses"); i++) {
+            if (s.GetDSTotalDestiny() > 0) break;
+            s.PlayerPass(s.GetDecidingPlayer());
+        }
         assertEquals(count == 2 ? 9 : 12, s.GetDSTotalDestiny());
+        assertTrue(s.GetDSUsedPile().containsAll(List.of(s.GetDSDestiny(5), s.GetDSDestiny(4))));
+        assertEquals(count == 3, s.GetDSUsedPile().contains(s.GetDSDestiny(3)));
     }
 
     @Test
