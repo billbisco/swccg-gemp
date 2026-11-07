@@ -99,8 +99,8 @@ public class Card_1250_010_Tests {
         scn.DSPass();scn.PassAllResponses();assertFalse(draw.isDestinyCanceled());assertInZone(Zone.USED_PILE,scn.GetDSCard("device"));assertEquals(3,scn.GetDSTotalDestiny());
     }
     @Test public void SebulbaCannotRedrawTheReplacementAgainInSameTurn() {
-        var scn=battle(1,true,true,true,false,null);reachDraw(scn,true);scn.DSUseCardAction(scn.GetDSCard("sebulba"),REDRAW);scn.PassAllResponses();
-        reachDraw(scn,true);assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("sebulba"),REDRAW));assertEquals(Zone.HAND,scn.GetDSCard("device").getZone());
+        var scn=battle(1,true,true,true,false,null);reachDraw(scn,true);scn.DSUseCardAction(scn.GetDSCard("sebulba"),REDRAW);
+        var replacement=reachDraw(scn,true);assertEquals(6,replacement.getDrawnDestinyCard().getBlueprint().getDestiny(),scn.epsilon);assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("sebulba"),REDRAW));assertEquals(Zone.HAND,scn.GetDSCard("device").getZone());
     }
     @Test public void SebulbaGrantsOneActualBattleDestinyWhenOtherwiseUnable() {
         var scn=scenario();scn.StartGame();scn.MoveCardsToLocation(scn.GetDSStartingLocation(),scn.GetDSCard("sebulba"),scn.GetLSCard("luke"));
@@ -148,7 +148,9 @@ public class Card_1250_010_Tests {
     @Test public void SebulbaMayRedrawAgainInANewTurnAfterSurvivingPreviousBattleElsewhere() {
         var scn=battle(1,true,true,true,true,"trooper");redraw(scn);
         for(int i=0;i<80 && scn.gameState().getBattleState()!=null;i++) {
-            if(scn.AwaitingDSBattleDamagePayment())scn.DSPayRemainingBattleDamageFromReserveDeck();
+            if(scn.LSDecisionAvailable("battle destiny?"))scn.LSChooseNo();
+            else if(scn.DSDecisionAvailable("battle destiny?"))scn.DSChooseNo();
+            else if(scn.AwaitingDSBattleDamagePayment())scn.DSPayRemainingBattleDamageFromReserveDeck();
             else if(scn.AwaitingLSBattleDamagePayment())scn.LSPayRemainingBattleDamageFromReserveDeck();
             else if(scn.DSHasCardChoiceAvailable(scn.GetDSCard("trooper")))scn.DSChooseCard(scn.GetDSCard("trooper"));
             else if(scn.LSHasCardChoiceAvailable(scn.GetLSCard("luke")))scn.LSChooseCard(scn.GetLSCard("luke"));
