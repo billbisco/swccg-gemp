@@ -56,7 +56,7 @@ public class Card1250_034 extends AbstractRebelRepublic {
                 RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
                 action.setSingletonTrigger(true);
                 action.setText("Make your Coruscant senators and Political Effects lost");
-                action.appendEffect(new LoseCardsFromTableEffect(action, toLose, true));
+                action.appendEffect(new LoseCardsFromTableEffect(action, toLose));
                 return Collections.singletonList(action);
             }
         }

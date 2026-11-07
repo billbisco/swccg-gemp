@@ -62,7 +62,16 @@ public class Card_1250_034_Tests {
         if (otherRebel) scn.MoveCardsToLocation(site, scn.GetLSCard("luke"));
         scn.LSStartBattleAndSkipToWeaponsSegment(site);
         scn.PrepareLSDestiny(3); if (withLeia) scn.PrepareLSDestiny(4); scn.PrepareDSDestiny(1);
-        scn.SkipToEndOfPowerSegment(true); assertEquals(total, scn.GetLSTotalDestiny());
+        scn.SkipToPowerSegment();
+        int draws = withLeia ? 2 : otherRebel ? 1 : 0;
+        assertEquals(draws, scn.GetLSBattleDestinyCount());
+        if (draws > 0) {
+            assertTrue(scn.LSDecisionAvailable("battle destiny?"));
+            scn.LSChooseYes();
+            for (int i = 0; i < draws; i++) scn.PassDestinyDrawResponses();
+        }
+        scn.PassResponses("BATTLE_DESTINY_DRAWS_COMPLETE_FOR_PLAYER");
+        assertEquals(total, scn.GetLSTotalDestiny());
     }
 
     @Test
@@ -75,7 +84,7 @@ public class Card_1250_034_Tests {
         scn.MoveCardsToDSSideOfTable(scn.GetDSCard("political"));
         scn.MoveCardsToHand(bail); scn.LSActivateForceCheat(6); scn.SkipToLSTurn(Phase.DEPLOY);
         int force = scn.GetLSForcePileCount(); scn.LSDeployCard(bail); scn.LSChooseCard(scn.GetLSStartingLocation()); scn.PassAllResponses();
-        if (scn.LSDecisionAvailable("Choose card to put on Lost Pile")) { scn.LSChooseCard(scn.GetLSCard("senator")); scn.PassAllResponses(); }
+        if (scn.LSDecisionAvailable("Choose card to be lost")) { scn.LSChooseCard(scn.GetLSCard("senator")); scn.PassAllResponses(); }
         assertTrue(scn.GetLSLostPile().contains(scn.GetLSCard("senator")));
         assertTrue(scn.GetLSLostPile().contains(scn.GetLSCard("political")));
         assertEquals(force - 2, scn.GetLSForcePileCount());
