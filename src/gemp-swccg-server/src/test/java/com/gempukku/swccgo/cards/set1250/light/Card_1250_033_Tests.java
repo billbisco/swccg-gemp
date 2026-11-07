@@ -58,6 +58,7 @@ public class Card_1250_033_Tests {
         s.BlueprintCardTypeCheck(bp, new ArrayList<>(List.of(CardType.ADMIRALS_ORDER)));
         s.BlueprintIconCheck(bp, new ArrayList<>(List.of(Icon.ADMIRALS_ORDER, Icon.EPISODE_I,
                 Icon.THEED_PALACE, Icon.LEGACY_BLOCK_5)));
+        s.BlueprintKeywordCheck(bp, new ArrayList<>());
     }
 
     private void deployAndPay(VirtualTableScenario s, boolean dark, PhysicalCardImpl card, PhysicalCardImpl site, int expected) {
