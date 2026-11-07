@@ -30,7 +30,7 @@ public class Card_1250_013_Tests {
                     put("invasion", "14_113"); put("controlEffect", "1_224");
                     put("droid", "14_74"); put("plainDroid", "1_193"); put("trooper", "1_194");
                     put("maul", "12_101"); put("vader", "1_168"); put("objective", "10_29");
-                    put("ship", "1_299"); put("system", "1_282");
+                    put("ship", "1_299"); put("deployShip", "3_152"); put("system", "1_282");
                 }},
                 10, 10,
                 StartingSetup.DefaultLSGroundLocation,
@@ -130,17 +130,17 @@ public class Card_1250_013_Tests {
     @Test public void AtLastWeAreGettingResultsAbsentAllowsHitAtOriginalDefenseThreshold() { weaponThreshold(false, 2, true); }
     private void maulDeployment(boolean effect) {
         var scn = active(effect); var maul = scn.GetDSCard("maul"); var vader = scn.GetDSCard("vader");
-        scn.MoveCardsToDSSideOfTable(scn.GetDSCard("objective")); scn.MoveCardsToDSHand(maul, vader); scn.SkipToDSTurn(Phase.DEPLOY); scn.EnsureDSForcePile(20);
+        scn.MoveCardsToDSSideOfTable(scn.GetDSCard("objective")); scn.MoveCardsToDSHand(maul, vader); scn.SkipToDSTurn(Phase.DEPLOY); scn.EnsureDSForcePile(10);
         assertEquals(effect, scn.DSDeployAvailable(maul)); assertFalse(scn.DSDeployAvailable(vader));
         if (effect) { scn.DSDeployCard(maul); scn.DSChooseCard(scn.GetDSStartingLocation()); scn.PassAllResponses(); assertInZone(Zone.AT_LOCATION, maul); }
     }
     @Test public void AtLastWeAreGettingResultsMaulActuallyDeploysDespiteObjectiveWhileVaderCannot() { maulDeployment(true); }
     @Test public void AtLastWeAreGettingResultsAbsentLeavesObjectiveDeploymentRestriction() { maulDeployment(false); }
     @Test public void AtLastWeAreGettingResultsStarshipActuallyDeploysForOneLessForce() {
-        var scn = active(true); var ship = scn.GetDSCard("ship"); scn.MoveLocationToTable(scn.GetDSCard("system"));
+        var scn = active(true); var ship = scn.GetDSCard("deployShip"); scn.MoveLocationToTable(scn.GetDSCard("system"));
         scn.MoveCardsToDSHand(ship); scn.SkipToDSTurn(Phase.DEPLOY); scn.EnsureDSForcePile(10); int before = scn.GetDSForcePileCount();
         scn.DSDeployCard(ship); scn.DSChooseCard(scn.GetDSCard("system")); scn.PassAllResponses();
-        assertEquals(before, scn.GetDSForcePileCount()); assertInZone(Zone.AT_LOCATION, ship);
+        assertEquals(before - 7, scn.GetDSForcePileCount()); assertInZone(Zone.AT_LOCATION, ship);
     }
     @Test public void AtLastWeAreGettingResultsReducesOpponentsImmunityAndRestoresOnDeparture() {
         var scn = active(true); scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetLSCard("luke"), scn.GetLSCard("leia"), scn.GetDSCard("vader"));
