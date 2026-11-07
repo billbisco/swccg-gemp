@@ -2,18 +2,25 @@ package com.gempukku.swccgo.cards.set1261.dark;
 
 import com.gempukku.swccgo.cards.AbstractUsedInterrupt;
 import com.gempukku.swccgo.cards.GameConditions;
+import com.gempukku.swccgo.cards.effects.CancelCardResultEffect;
 import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
+import com.gempukku.swccgo.game.state.WeaponFiringState;
+import com.gempukku.swccgo.logic.GameUtils;
+import com.gempukku.swccgo.logic.TriggerConditions;
 import com.gempukku.swccgo.logic.actions.PlayInterruptAction;
 import com.gempukku.swccgo.logic.decisions.YesNoDecision;
 import com.gempukku.swccgo.logic.effects.*;
 import com.gempukku.swccgo.logic.effects.choose.ChooseCardOnTableEffect;
 import com.gempukku.swccgo.logic.timing.Action;
+import com.gempukku.swccgo.logic.timing.Effect;
+import com.gempukku.swccgo.logic.timing.EffectResult;
 import com.gempukku.swccgo.logic.timing.FailCostEffect;
 import com.gempukku.swccgo.logic.timing.GuiUtils;
+import com.gempukku.swccgo.logic.timing.results.ForfeitReducedToZeroResult;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -23,13 +30,76 @@ import java.util.Map;
 /** Legacy Block 6.1 Lana Dobreed & Sacrifice. */
 public class Card1261_044 extends AbstractUsedInterrupt {
     private static final Filter DESTINATION = Filters.or(Filters.exterior_site, Filters.battleground_site);
+    private static final Filter YODA_OR_OBIWAN = Filters.or(Filters.Yoda, Filters.ObiWan);
 
     public Card1261_044() {
         super(Side.DARK, 4, "Lana Dobreed & Sacrifice", Uniqueness.UNIQUE,
                 ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
         addComboCardTitles(Title.Lana_Dobreed, Title.Sacrifice);
-        setGameText("If your character's forfeit was just reduced to 0, use 1 Force (free if forfeit reduced by a [Permanent Weapon] weapon) to restore it to normal. (Immune to Sense.) OR Lose 2 Force to cancel an attempt by Yoda or Obi-Wan to cancel your Interrupt or your just drawn weapon destiny. OR During your move phase, target any or all of your characters at one site to 'transport' (relocate) to an exterior or battleground site. Draw destiny. Use that much Force to 'transport,' or place this Interrupt in Lost Pile.");
+        setGameText("If your character's forfeit was just reduced to 0, use 1 Force (free if forfeit reduced by a [Permanent Weapon] weapon) to restore it to normal. (Immune to Sense.) OR Lose 2 Force to cancel an attempt by Yoda or Obi-Wan to cancel your Interrupt or your just drawn weapon destiny. OR During your move phase, target any or all of your characters at one site to 'transport' (relocate) to an exterior or battleground site. Draw destiny. Use that much Force to 'transport,' or place Interrupt in Lost Pile.");
         addIcons(Icon.EPISODE_I, Icon.CORUSCANT);
+    }
+
+    @Override
+    protected List<PlayInterruptAction> getGameTextOptionalAfterActions(String playerId, SwccgGame game, EffectResult effectResult, PhysicalCard self) {
+        if (!TriggerConditions.forfeitJustReducedToZero(game, effectResult, Filters.and(Filters.your(self), Filters.character)))
+            return null;
+        var character = ((ForfeitReducedToZeroResult) effectResult).getCard();
+        boolean free = reducedByPermanentWeapon(game, character);
+        if (!GameConditions.canTarget(game, self, character) || (!free && !GameConditions.canUseForce(game, playerId, 1)))
+            return null;
+
+        var action = new PlayInterruptAction(game, self);
+        action.setText("Restore " + GameUtils.getFullName(character) + "'s forfeit to normal");
+        action.setImmuneTo(Title.Sense);
+        action.appendTargeting(new TargetCardOnTableEffect(action, playerId, "Choose character", character) {
+            @Override
+            protected void cardTargeted(int targetGroupId, PhysicalCard target) {
+                action.addAnimationGroup(target);
+                if (!free)
+                    action.appendCost(new UseForceEffect(action, playerId, 1));
+                action.allowResponses("Restore " + GameUtils.getCardLink(target) + "'s forfeit to normal",
+                        new RespondablePlayCardEffect(action) {
+                            @Override
+                            protected void performActionResults(Action targetingAction) {
+                                action.appendEffect(new RestoreForfeitToNormalEffect(action,
+                                        action.getPrimaryTargetCard(targetGroupId)));
+                            }
+                        });
+            }
+        });
+        return List.of(action);
+    }
+
+    /** True if the character's forfeit was just reduced by a hit from a [Permanent Weapon] weapon now firing. */
+    private static boolean reducedByPermanentWeapon(SwccgGame game, PhysicalCard character) {
+        WeaponFiringState firing = game.getGameState().getWeaponFiringState();
+        return firing != null && firing.getPermanentWeaponFiring() != null
+                && firing.getTargets() != null && firing.getTargets().contains(character);
+    }
+
+    @Override
+    protected List<PlayInterruptAction> getGameTextOptionalBeforeActions(String playerId, SwccgGame game, Effect effect, PhysicalCard self) {
+        boolean cancelingInterrupt = TriggerConditions.isAttemptToCancelCardBeingPlayed(game, effect, YODA_OR_OBIWAN,
+                Filters.and(Filters.owner(playerId), Filters.Interrupt, Filters.not(self)));
+        boolean cancelingWeaponDestiny = TriggerConditions.isAttemptToCancelDestiny(game, effect, YODA_OR_OBIWAN,
+                playerId, DestinyType.WEAPON_DESTINY);
+        if (!cancelingInterrupt && !cancelingWeaponDestiny)
+            return null;
+
+        var canceler = effect.getAction().getActionSource();
+        var action = new PlayInterruptAction(game, self);
+        action.setText("Cancel " + GameUtils.getFullName(canceler) + "'s attempt to cancel your "
+                + (cancelingInterrupt ? "Interrupt" : "weapon destiny"));
+        action.appendCost(new LoseForceEffect(action, playerId, 2, true));
+        action.allowResponses("Cancel " + GameUtils.getCardLink(canceler) + "'s attempt to cancel",
+                new RespondablePlayCardEffect(action) {
+                    @Override
+                    protected void performActionResults(Action targetingAction) {
+                        action.appendEffect(new CancelCardResultEffect(action, effect));
+                    }
+                });
+        return List.of(action);
     }
 
     @Override

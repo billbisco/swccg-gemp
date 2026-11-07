@@ -18,9 +18,9 @@ import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.game.state.GameState;
+import com.gempukku.swccgo.logic.actions.CancelCardActionBuilder;
 import com.gempukku.swccgo.logic.actions.OptionalGameTextTriggerAction;
 import com.gempukku.swccgo.logic.conditions.Condition;
-import com.gempukku.swccgo.logic.effects.CancelCardBeingPlayedEffect;
 import com.gempukku.swccgo.logic.effects.LoseForceEffect;
 import com.gempukku.swccgo.logic.effects.RespondablePlayingCardEffect;
 import com.gempukku.swccgo.logic.modifiers.AddsBattleDestinyModifier;
@@ -91,10 +91,9 @@ public class Card1114_015 extends AbstractJediMaster {
             return null;
         }
         final OptionalGameTextTriggerAction action = new OptionalGameTextTriggerAction(self, playerId, gameTextSourceCardId, GameTextActionId.OTHER_CARD_ACTION_1);
-        action.setText("Cancel " + played.getTitle());
+        CancelCardActionBuilder.buildCancelCardBeingPlayedAction(action, effect);
         action.appendUsage(new OncePerGameEffect(action));
         action.appendCost(new LoseForceEffect(action, playerId, 2));
-        action.appendEffect(new CancelCardBeingPlayedEffect(action, (RespondablePlayingCardEffect) effect));
         return Collections.singletonList(action);
     }
 }
