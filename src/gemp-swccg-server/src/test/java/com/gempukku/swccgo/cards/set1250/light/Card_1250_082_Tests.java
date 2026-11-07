@@ -328,6 +328,10 @@ public class Card_1250_082_Tests {
         assertTrue(s.GetLSCard("objective").isFlipped());
         int lost = s.GetLSLostPileCount();
         s.SkipToDSTurn();
+        assertTrue(s.GetCurrentDecision().getText(),
+                s.GetCurrentDecision().getText().contains("FORCE_LOSS_INITIATED"));
+        s.PassAllResponses();
+        assertFalse(s.AwaitingLSForceLossPayment());
         assertTrue(s.GetCurrentDecision().getText(), s.AwaitingDSActivatePhaseActions());
         assertEquals(lost, s.GetLSLostPileCount());
     }
