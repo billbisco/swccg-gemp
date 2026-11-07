@@ -116,7 +116,7 @@ public class Card_1263_002_Tests {
     @Test public void BrangusGleeRandomExchangeSelectsEitherLostCardAndPreservesOtherPileOrder() {
         var outcomes = new HashSet<String>();
         for (long seed : new long[]{0, 4096, 8192, 12288}) {
-            var scn = exchangeSetup("casino", 0, true, 2); var before = new ArrayList<>(scn.gameState().getLostPile(scn.DS));
+            var scn = exchangeSetup("ordinary", 1, true, 2); var before = new ArrayList<>(scn.gameState().getLostPile(scn.DS));
             scn.gameState().getRandom().setSeed(seed); var hand = scn.GetDSCard("hand1"); exchange(scn, hand);
             var selected = scn.GetDSCard("lost1").getZone() == Zone.HAND ? scn.GetDSCard("lost1") : scn.GetDSCard("lost2");
             assertInZone(Zone.HAND, selected); outcomes.add(selected.getBlueprintId(true)); before.set(before.indexOf(selected), hand); assertEquals(before, scn.gameState().getLostPile(scn.DS));
