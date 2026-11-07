@@ -115,12 +115,22 @@ public class Card_1250_075_Tests {
         var forest = s.GetLSCard("forest"); s.MoveCardsToHand(forest); s.SkipToLSTurn(Phase.DEPLOY);
         s.MoveLocationToTable(plains); s.MoveLocationToTable(bog);
         s.MoveCardsToLocation(plains, s.GetLSCard("nudj")); s.MoveCardsToLocation(bog, s.GetLSCard("second"), s.GetLSCard("vine"));
-        s.LSDeployLocation(forest); s.PassAllResponses();
-        if (s.LSDecisionAvailable("Choose card to put on Lost Pile")) s.LSChooseCard(s.GetLSCard("nudj"));
-        if (s.LSDecisionAvailable("Choose card to put on Lost Pile")) s.LSChooseCard(s.GetLSCard("second"));
-        s.PassAllResponses();
+        var nudjs = List.of(s.GetLSCard("nudj"), s.GetLSCard("second"));
+        s.LSDeployLocation(forest);
+        for (int i = 0; i < 70 && !s.GetLSLostPile().containsAll(nudjs); i++) {
+            String prompt = s.GetCurrentDecision().getText();
+            if (s.LSDecisionAvailable("Choose card to put on Lost Pile")) {
+                var choice = nudjs.stream().filter(s::LSHasCardChoiceAvailable).findFirst().orElseThrow();
+                s.LSChooseCard(choice);
+            } else if (prompt.contains("Optional responses")) {
+                s.PlayerPass(s.GetDecidingPlayer());
+            } else {
+                break;
+            }
+        }
         assertEquals(Zone.LOCATIONS, forest.getZone());
-        assertTrue(s.GetLSLostPile().containsAll(List.of(s.GetLSCard("nudj"), s.GetLSCard("second"))));
+        assertTrue(s.GetCurrentDecision().getText() + "; Nudj zones " + nudjs.stream().map(c -> c.getZone()).toList(),
+                s.GetLSLostPile().containsAll(nudjs));
         assertEquals(bog, s.GetLSCard("vine").getAtLocation());
     }
 }
