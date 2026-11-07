@@ -33,12 +33,12 @@ public class Card_1261_072_Tests {
             put("fear", "13_5");
             put("optimism", "1261_77");
             put("operative", "7_1");
-            put("vader", "1_19");
+            put("luke", "1_19");
             put("alderaan", "1_121");
         }}, new HashMap<>() {{
             put("forest", "7_284");
             put("operative", "7_174");
-            put("luke", "1_171");
+            put("djas", "1_171");
             put("sleen", "4_111");
             put("control", "4_139");
         }}, 40, 40, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
@@ -91,7 +91,7 @@ public class Card_1261_072_Tests {
     public void OuneeTaCannotBeCanceledAndDoesNotProtectOtherCards() {
         var scn = ready(false, true);
         assertTrue(scn.game().getModifiersQuerying().mayNotBeCanceled(scn.gameState(), scn.GetLSCard("shield")));
-        assertFalse(scn.game().getModifiersQuerying().mayNotBeCanceled(scn.gameState(), scn.GetLSCard("vader")));
+        assertFalse(scn.game().getModifiersQuerying().mayNotBeCanceled(scn.gameState(), scn.GetLSCard("luke")));
     }
 
     @Test
@@ -170,7 +170,7 @@ public class Card_1261_072_Tests {
         var scn = ready(true, true);
         assertEquals(0, scn.GetForfeit(scn.GetLSCard("operative")));
         assertEquals(0, scn.GetForfeit(scn.GetDSCard("operative")));
-        assertEquals(7, scn.GetLSCard("vader").getBlueprint().getForfeit(), scn.epsilon);
+        assertEquals(7, scn.GetLSCard("luke").getBlueprint().getForfeit(), scn.epsilon);
     }
 
     @Test
@@ -192,8 +192,8 @@ public class Card_1261_072_Tests {
     @Test
     public void OuneeTaOperativeActuallyForfeitsForZeroDuringABattleElsewhere() {
         var scn = ready(true, true);
-        scn.MoveCardsToLocation(scn.GetDSCard("forest"), scn.GetLSCard("vader"));
-        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetLSCard("operative"), scn.GetDSCard("luke"));
+        scn.MoveCardsToLocation(scn.GetDSCard("forest"), scn.GetLSCard("luke"));
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetLSCard("operative"), scn.GetDSCard("djas"));
         scn.MoveCardsToDSHand(scn.GetDSCard("operative"));
         scn.SkipToDSTurn(Phase.BATTLE);
         scn.DSInitiateBattle(scn.GetDSStartingLocation());
@@ -230,9 +230,9 @@ public class Card_1261_072_Tests {
     public void OuneeTaPreventsAnOpponentsReductionOfTheOwnersActualDrain() {
         var scn = ready(true, true);
         scn.MoveCardsToLSHand(scn.GetLSCard("operative"));
-        scn.MoveCardsToLocation(scn.GetDSCard("forest"), scn.GetLSCard("vader"));
-        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("luke"));
-        scn.ApplyAdHocModifier(new ForceDrainModifier(scn.GetDSCard("luke"), scn.GetDSCard("forest"), -1, scn.LS));
+        scn.MoveCardsToLocation(scn.GetDSCard("forest"), scn.GetLSCard("luke"));
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("djas"));
+        scn.ApplyAdHocModifier(new ForceDrainModifier(scn.GetDSCard("djas"), scn.GetDSCard("forest"), -1, scn.LS));
         startLightDrain(scn);
         assertEquals(1, scn.GetForceDrainTotal());
     }
