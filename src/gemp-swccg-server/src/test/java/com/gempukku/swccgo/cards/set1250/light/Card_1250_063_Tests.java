@@ -100,7 +100,7 @@ public class Card_1250_063_Tests {
         scn.MoveLocationToTable(senate); scn.MoveLocationToTable(bay);
         scn.AttachCardsTo(senate, scn.GetLSCard("liberty")); scn.AttachCardsTo(bay, scn.GetLSCard("planners"));
         scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("emperor")); scn.MoveCardsToHand(scn.GetDSCard("alter"));
-        scn.SkipToDSTurn(Phase.CONTROL); scn.PrepareDSDestiny(3); scn.DSPlayCard(scn.GetDSCard("alter"), "Cancel Effect");
+        scn.SkipToDSTurn(Phase.CONTROL); scn.PrepareDSDestiny(3); scn.DSPlayCard(scn.GetDSCard("alter"), "cancel Effect");
         if (scn.DSDecisionAvailable("Choose Effect")) { assertFalse(scn.DSHasCardChoicesAvailable(scn.GetLSCard("liberty"))); scn.DSChooseCard(scn.GetLSCard("planners")); }
         if (scn.DSDecisionAvailable("Choose a character")) scn.DSChooseCard(scn.GetDSCard("emperor"));
         scn.PassAllResponses(); assertTrue(scn.GetLSLostPile().contains(scn.GetLSCard("planners")));
