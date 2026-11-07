@@ -67,7 +67,7 @@ public class Card_1261_077_Tests {
     }
 
     @Test
-    public void OptimismCancelsTheOriginalOuneeTaEffectAlreadyOnTheTable() {
+    public void LetsKeepALittleOptimismHereCancelsTheOriginalOuneeTaEffectAlreadyOnTheTable() {
         var scn = ready(false);
         scn.MoveCardsToLSSideOfTable(scn.GetLSCard("ounee"));
         scn.MoveCardsToLSSideOfTable(scn.GetLSCard("shield"));
@@ -77,7 +77,7 @@ public class Card_1261_077_Tests {
     }
 
     @Test
-    public void OptimismCancelsAnOuneeTaEffectAsItIsPlayed() {
+    public void LetsKeepALittleOptimismHereCancelsAnOuneeTaEffectAsItIsPlayed() {
         var scn = ready(true);
         scn.MoveCardsToLSHand(scn.GetLSCard("ounee"));
         scn.SkipToPhase(Phase.DEPLOY);
@@ -87,7 +87,7 @@ public class Card_1261_077_Tests {
     }
 
     @Test
-    public void OptimismAlsoCancelsTheOriginalOuneeTaDefensiveShield() {
+    public void LetsKeepALittleOptimismHereAlsoCancelsTheOriginalOuneeTaDefensiveShield() {
         var scn = ready(false);
         scn.MoveCardsToLSSideOfTable(scn.GetLSCard("ouneeShield"), scn.GetLSCard("shield"));
         scn.SkipToPhase(Phase.DEPLOY);
@@ -96,7 +96,7 @@ public class Card_1261_077_Tests {
     }
 
     @Test
-    public void OptimismConversionPrintingCountsTowardTheExistingOutsideDeckShieldCap() throws DeckInvalidException {
+    public void LetsKeepALittleOptimismHereConversionPrintingCountsTowardTheExistingOutsideDeckShieldCap() throws DeckInvalidException {
         var library = new SwccgCardBlueprintLibrary();
         assertEquals("1261_77", library.getBaseBlueprintId(shieldId()));
         var deck = new SwccgDeck("shield-cap");
@@ -114,7 +114,7 @@ public class Card_1261_077_Tests {
     }
 
     @Test
-    public void OptimismPrintingsKeepTheirOwnImageIdsButShareRulesAndUniqueness() {
+    public void LetsKeepALittleOptimismHerePrintingsKeepTheirOwnImageIdsButShareRulesAndUniqueness() {
         var scn = scenario();
         var shield = scn.GetLSCard("shield");
         var other = scn.GetLSCard("otherPrinting");
@@ -133,7 +133,7 @@ public class Card_1261_077_Tests {
     }
 
     @Test
-    public void OptimismStatsIconsAndKeywordsAreCorrect() {
+    public void LetsKeepALittleOptimismHereStatsIconsAndKeywordsAreCorrect() {
         var scn = scenario();
         var card = scn.GetLSCard("shield").getBlueprint();
         assertEquals("Let's Keep A Little Optimism Here", card.getTitle());
@@ -151,7 +151,7 @@ public class Card_1261_077_Tests {
     }
 
     @Test
-    public void OptimismCanActuallyBePlayedFromTheStartingEffectsShieldStackForFree() {
+    public void LetsKeepALittleOptimismHereCanActuallyBePlayedFromTheStartingEffectsShieldStackForFree() {
         var scn = ready(false);
         scn.MoveCardsToLSSideOfTable(scn.GetLSCard("fear"));
         scn.StackCardsOn(scn.GetLSCard("fear"), scn.GetLSCard("shield"));
@@ -175,32 +175,32 @@ public class Card_1261_077_Tests {
     }
 
     @Test
-    public void OptimismReducesAnActualRebelDeploymentAtAnOpponentsRalltiirSite() {
+    public void LetsKeepALittleOptimismHereReducesAnActualRebelDeploymentAtAnOpponentsRalltiirSite() {
         var scn = ready(true);
         deployAndCheckCost(scn, "trooper", scn.GetDSCard("forest"), 0);
     }
 
     @Test
-    public void OptimismReducesAnActualRebelDeploymentAtAnOpponentsRenegadeSite() {
+    public void LetsKeepALittleOptimismHereReducesAnActualRebelDeploymentAtAnOpponentsRenegadeSite() {
         var scn = ready(true);
         scn.gameState().setRenegadePlanet("Tatooine");
         deployAndCheckCost(scn, "luke", scn.GetDSStartingLocation(), 1);
     }
 
     @Test
-    public void OptimismDoesNotReduceDeploymentAtAnUnrelatedSite() {
+    public void LetsKeepALittleOptimismHereDoesNotReduceDeploymentAtAnUnrelatedSite() {
         var scn = ready(true);
         deployAndCheckCost(scn, "trooper", scn.GetDSStartingLocation(), 1);
     }
 
     @Test
-    public void OptimismDoesNotReduceAnAliensDeployment() {
+    public void LetsKeepALittleOptimismHereDoesNotReduceAnAliensDeployment() {
         var scn = ready(true);
         deployAndCheckCost(scn, "boshek", scn.GetDSCard("forest"), 4);
     }
 
     @Test
-    public void OptimismDoesNotReduceDeploymentAtItsOwnersRalltiirSite() {
+    public void LetsKeepALittleOptimismHereDoesNotReduceDeploymentAtItsOwnersRalltiirSite() {
         var scn = ready(true);
         scn.MoveOutOfPlay(scn.GetDSCard("forest"));
         scn.MoveLocationToTable(scn.GetLSCard("ownForest"));
@@ -213,7 +213,7 @@ public class Card_1261_077_Tests {
     }
 
     @Test
-    public void OptimismBlocksAnOpponentsDrainModifierButRetainsItsOwnersBonus() {
+    public void LetsKeepALittleOptimismHereBlocksAnOpponentsDrainModifierButRetainsItsOwnersBonus() {
         var scn = ready(true);
         scn.MoveCardsToLocation(scn.GetDSCard("forest"), scn.GetLSCard("trooper"));
         scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("djas"));
@@ -226,7 +226,7 @@ public class Card_1261_077_Tests {
     }
 
     @Test
-    public void OptimismPreventsOpponentFromCancelingTheProtectedDrain() {
+    public void LetsKeepALittleOptimismHerePreventsOpponentFromCancelingTheProtectedDrain() {
         var scn = ready(true);
         scn.MoveCardsToLocation(scn.GetDSCard("forest"), scn.GetLSCard("trooper"));
         scn.MoveCardsToDSHand(scn.GetDSCard("control"));
@@ -239,7 +239,7 @@ public class Card_1261_077_Tests {
     }
 
     @Test
-    public void OptimismAllowsOpponentToCancelADrainAtAnUnprotectedSite() {
+    public void LetsKeepALittleOptimismHereAllowsOpponentToCancelADrainAtAnUnprotectedSite() {
         var scn = ready(true);
         scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetLSCard("trooper"));
         scn.MoveCardsToDSHand(scn.GetDSCard("control"));
@@ -251,7 +251,7 @@ public class Card_1261_077_Tests {
     }
 
     @Test
-    public void OptimismCancelsOnlyItsOwnersLocationTextOnOpponentsGenericSwampAndJungle() {
+    public void LetsKeepALittleOptimismHereCancelsOnlyItsOwnersLocationTextOnOpponentsGenericSwampAndJungle() {
         var scn = ready(true);
         scn.MoveLocationToTable(scn.GetDSCard("swamp"));
         scn.MoveLocationToTable(scn.GetDSCard("jungle"));
@@ -263,7 +263,7 @@ public class Card_1261_077_Tests {
     }
 
     @Test
-    public void OptimismActuallyRemovesTheOpponentsSwampBattleSurcharge() {
+    public void LetsKeepALittleOptimismHereActuallyRemovesTheOpponentsSwampBattleSurcharge() {
         var scn = ready(true);
         scn.MoveLocationToTable(scn.GetDSCard("swamp"));
         scn.MoveCardsToLocation(scn.GetDSCard("swamp"), scn.GetLSCard("trooper"), scn.GetDSCard("djas"));
@@ -275,7 +275,7 @@ public class Card_1261_077_Tests {
     }
 
     @Test
-    public void OptimismDoesNotCancelTextAtItsOwnersUniversalSwamp() {
+    public void LetsKeepALittleOptimismHereDoesNotCancelTextAtItsOwnersUniversalSwamp() {
         var scn = ready(true);
         scn.MoveLocationToTable(scn.GetLSCard("ownSwamp"));
         scn.SkipToPhase(Phase.DEPLOY);
@@ -303,7 +303,7 @@ public class Card_1261_077_Tests {
     }
 
     @Test
-    public void OptimismProtectsAnAlienPresentAtOpponentsForestFromActualAttrition() {
+    public void LetsKeepALittleOptimismHereProtectsAnAlienPresentAtOpponentsForestFromActualAttrition() {
         var scn = forestBattle(true);
         assertTrue(scn.AwaitingLSAttritionPayment());
         assertEquals(0, scn.LSGetChoiceMin());
@@ -313,7 +313,7 @@ public class Card_1261_077_Tests {
     }
 
     @Test
-    public void OptimismWithoutTheShieldTheSameAlienMustActuallyBeForfeited() {
+    public void LetsKeepALittleOptimismHereWithoutTheShieldTheSameAlienMustActuallyBeForfeited() {
         var scn = forestBattle(false);
         assertTrue(scn.AwaitingLSAttritionPayment());
         assertEquals(1, scn.LSGetChoiceMin());
