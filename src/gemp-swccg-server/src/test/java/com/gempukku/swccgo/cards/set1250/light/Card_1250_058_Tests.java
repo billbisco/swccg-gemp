@@ -1,0 +1,95 @@
+package com.gempukku.swccgo.cards.set1250.light;
+
+import com.gempukku.swccgo.common.*;
+import com.gempukku.swccgo.framework.StartingSetup;
+import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.logic.modifiers.AddsBattleDestinyModifier;
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import static org.junit.Assert.*;
+
+public class Card_1250_058_Tests {
+    private VirtualTableScenario scenario() {
+        return new VirtualTableScenario(new HashMap<>() {{
+            put("cunning", "1250_58"); put("luke", "1_19"); put("jedi", "1_21"); put("guard", "1_26");
+            put("ordinary", "1_60"); put("oldholo", "9_49");
+        }}, new HashMap<>() {{
+            put("vader", "1_168"); put("sidious", "9_109"); put("holo", "12_139"); put("alter", "1_234");
+        }}, 35, 35, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
+    }
+
+    @Test
+    public void CunningHasFinalCloudCityMetadataAndDeploysOnTable() {
+        var s = scenario(); var card = s.GetLSCard("cunning"); var bp = card.getBlueprint();
+        assertEquals("A Jedi's Cunning", bp.getTitle()); assertFalse(bp.hasVirtualSuffix());
+        assertEquals(Uniqueness.UNIQUE, bp.getUniqueness()); assertEquals(ExpansionSet.VIRTUAL_BLOCK_5, bp.getExpansionSet());
+        assertEquals(5, bp.getDestiny(), s.epsilon);
+        assertEquals("Luke's sudden reversal of fortune allowed him to turn the tables on Vader.", bp.getLore());
+        s.BlueprintCardTypeCheck(bp, new ArrayList<>(List.of(CardType.EFFECT)));
+        s.BlueprintIconCheck(bp, new ArrayList<>(List.of(Icon.EFFECT, Icon.CLOUD_CITY, Icon.LEGACY_BLOCK_5)));
+        s.BlueprintKeywordCheck(bp, new ArrayList<>());
+        s.StartGame(); s.MoveCardsToHand(card); s.SkipToLSTurn(Phase.DEPLOY);
+        s.LSDeployCard(card); s.PassAllResponses(); assertEquals(Zone.SIDE_OF_TABLE, card.getZone());
+    }
+
+    private VirtualTableScenario startBattle(String fighter, String condition) {
+        var s = scenario(); s.StartGame(); var site = s.GetDSStartingLocation();
+        s.MoveCardsToLSSideOfTable(s.GetLSCard("cunning"));
+        s.MoveCardsToLocation(site, s.GetLSCard(fighter), s.GetDSCard("vader"));
+        if (fighter.equals("guard")) s.MoveCardsToLocation(s.GetLSStartingLocation(), s.GetLSCard("jedi"));
+        if ("sidious".equals(condition)) s.MoveCardsToLocation(s.GetLSStartingLocation(), s.GetDSCard("sidious"));
+        if ("holo".equals(condition)) s.MoveCardsToDSSideOfTable(s.GetDSCard("holo"));
+        if ("oldholo".equals(condition)) s.MoveCardsToLSSideOfTable(s.GetLSCard("oldholo"));
+        s.DSActivateForceCheat(3); s.SkipToDSTurn(Phase.BATTLE);
+        s.DSInitiateBattle(site); s.PassAllResponses();
+        // The draw-count fixture supplies two extra native battle destinies; the real power segment resolves them.
+        s.game().getModifiersEnvironment().addUntilEndOfBattleModifier(new AddsBattleDestinyModifier(s.GetDSCard("vader"), 2));
+        return s;
+    }
+
+    private void draw(VirtualTableScenario s, int count) {
+        assertEquals(count, s.GetDSBattleDestinyCount());
+        s.PrepareDSDestiny(3); s.PrepareDSDestiny(4); s.PrepareDSDestiny(5); s.PrepareLSDestiny(0);
+        s.SkipToEndOfPowerSegment(true);
+        assertEquals(count == 2 ? 9 : 12, s.GetDSTotalDestiny());
+    }
+
+    @Test
+    public void SidiousAnywhereCapsActualOpponentDrawsAtFriendlyJediSite() { draw(startBattle("jedi", "sidious"), 2); }
+
+    @Test
+    public void EpisodeOneHologramAloneAlsoCapsActualDraws() { draw(startBattle("jedi", "holo"), 2); }
+
+    @Test
+    public void NonEpisodeOneHologramDoesNotCapActualDraws() { draw(startBattle("jedi", "oldholo"), 3); }
+
+    @Test
+    public void SidiousDoesNotCapBattleAtAnotherSiteWithoutTheJedi() { draw(startBattle("guard", "sidious"), 3); }
+
+    @Test
+    public void LukePresentCapsActualDrawsWithoutSidiousOrHologram() { draw(startBattle("luke", null), 2); }
+
+    @Test
+    public void WithoutEitherConditionNonLukeJediDoesNotCapDraws() { draw(startBattle("jedi", null), 3); }
+
+    @Test
+    public void ActualAlterCannotCancelCunningButCancelsOrdinaryEffect() {
+        var s = scenario(); s.StartGame(); var cunning = s.GetLSCard("cunning"); var ordinary = s.GetLSCard("ordinary");
+        s.MoveCardsToLSSideOfTable(cunning); s.AttachCardsTo(s.GetLSStartingLocation(), ordinary);
+        s.MoveCardsToLocation(s.GetDSStartingLocation(), s.GetDSCard("vader"));
+        var alter = s.GetDSCard("alter"); s.MoveCardsToHand(alter); s.SkipToDSTurn(Phase.CONTROL); s.PrepareDSDestiny(3);
+        s.DSPlayCard(alter, "cancel Effect");
+        if (s.DSDecisionAvailable("Choose Effect")) {
+            assertFalse(s.DSHasCardChoiceAvailable(cunning)); s.DSChooseCard(ordinary);
+        }
+        if (s.DSDecisionAvailable("Choose a highest-ability character")) s.DSChooseCard(s.GetDSCard("vader"));
+        s.PassDestinyDrawResponses(); s.PassAllResponses();
+        assertTrue(s.GetLSLostPile().contains(ordinary)); assertEquals(Zone.SIDE_OF_TABLE, cunning.getZone());
+    }
+}
