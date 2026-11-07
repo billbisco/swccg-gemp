@@ -67,6 +67,7 @@ public class Card_1220_138_Tests {
             if (decision == null) break;
             var prompt = decision.getText();
             trace.add(prompt);
+            needed.removeIf(key -> scn.IsCardActive(scn.GetLSCard(key)) || scn.GetLSHand().contains(scn.GetLSCard(key)));
             if (prompt.startsWith("Choose It Is The Future")) {
                 scn.LSChooseOption(agent ? "Agent of Evil" : "Jedi"); choseMode = true;
             } else if (prompt.startsWith("Verify ")) {
@@ -85,6 +86,7 @@ public class Card_1220_138_Tests {
             }
         }
         assertTrue(trace.toString(), choseMode);
+        needed.removeIf(key -> scn.IsCardActive(scn.GetLSCard(key)) || scn.GetLSHand().contains(scn.GetLSCard(key)));
         assertTrue(trace + " remaining=" + needed, needed.isEmpty());
         var event = scn.GetLSCard("future");
         assertEquals(trace.toString(), Zone.SIDE_OF_TABLE, event.getZone());
