@@ -4,6 +4,7 @@ import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import com.gempukku.swccgo.game.PhysicalCardImpl;
+import com.gempukku.swccgo.logic.modifiers.DestinyAddedCapTests;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ public abstract class SoloDefenseTestSupport {
 
     protected VirtualTableScenario fixture() {
         var ls = new HashMap<>(Map.of("interrupt", printing, "person", matching, "inverse", inverse, "other", "2_18", "daughter", "8_8"));
-        var ds = new HashMap<>(Map.of("vader", "1_168", "sense", "1_267", "saber", "1_324"));
+        var ds = new HashMap<>(Map.of("vader", "1_168", "sense", "1_267", "saber", "1_324", "trooper", "1_194", "crawler", "1_309"));
         var scn = new VirtualTableScenario(ls, ds, 40, 40, StartingSetup.LSStartingLocation(site),
                 StartingSetup.DefaultDSGroundLocation, StartingSetup.NoLSStartingInterrupts,
                 StartingSetup.NoDSStartingInterrupts, StartingSetup.NoLSShields, StartingSetup.NoDSShields, "legacy");
@@ -75,9 +76,10 @@ public abstract class SoloDefenseTestSupport {
         return battle(defender, alone, defending, false);
     }
 
-    private VirtualTableScenario battle(String defender, boolean alone, boolean defending, boolean armedVader) {
+    private VirtualTableScenario battle(String defender, boolean alone, boolean defending, boolean armedVader, String... dsExtras) {
         var scn = fixture(); var at = scn.GetLSStartingLocation(); var vader = scn.GetDSCard("vader");
         scn.MoveCardsToLocation(at, scn.GetLSCard(defender), vader);
+        for (String extra : dsExtras) scn.MoveCardsToLocation(at, scn.GetDSCard(extra));
         if (armedVader) scn.AttachCardsTo(vader, scn.GetDSCard("saber"));
         if (!alone) scn.MoveCardsToLocation(at, scn.GetLSCard("other"));
         scn.MoveCardsToLSHand(scn.GetLSCard("interrupt"));
@@ -177,5 +179,39 @@ public abstract class SoloDefenseTestSupport {
         assertFalse(withAlly.GetLSAvailableActions().stream().anyMatch(x -> x.contains(PROTECT)));
         var attacking = battle("person", true, false);
         assertFalse(attacking.GetLSAvailableActions().stream().anyMatch(x -> x.contains(PROTECT)));
+    }
+
+    // "adds one destiny to power (add 1 for each character and vehicle present)": the defender and each other
+    // character and vehicle present at the site count.
+    private float destinyToPowerWith(boolean protect, String... dsExtras) {
+        var scn = battle("person", true, true, false, dsExtras);
+        var person = scn.GetLSCard("person");
+        scn.MoveCardsToTopOfLSUsedPile(scn.GetLSForcePile().stream()
+                .map(PhysicalCardImpl.class::cast).toArray(PhysicalCardImpl[]::new));
+        if (protect) {
+            scn.LSPlayCard(scn.GetLSCard("interrupt"), PROTECT);
+            if (scn.LSHasCardChoiceAvailable(person)) scn.LSChooseCard(person);
+        }
+        scn.MoveCardsToTopOfLSReserveDeck(scn.GetLSDestiny(3), scn.GetLSDestiny(2));
+        DestinyAddedCapTests.advanceToDamageSegment(scn, false);
+        var state = scn.gameState().getBattleState();
+        assertEquals(protect ? 1 : 0, state.getNumDestinyToTotalPowerDrawn(scn.LS));
+        return state.getTotalDestinyToPowerOnly(scn.LS);
+    }
+
+    @Test public void addedDestinyGainsOneForTheDefenderAndOneOpponentPresent() {
+        assertEquals(2 + 2, destinyToPowerWith(true), 0.01);
+    }
+
+    @Test public void addedDestinyGainsOneMoreForASecondOpposingCharacter() {
+        assertEquals(2 + 3, destinyToPowerWith(true, "trooper"), 0.01);
+    }
+
+    @Test public void addedDestinyCountsVehiclesPresent() {
+        assertEquals(2 + 4, destinyToPowerWith(true, "trooper", "crawler"), 0.01);
+    }
+
+    @Test public void withoutTheInterruptNoDestinyOrBonusIsAddedToPower() {
+        assertEquals(0, destinyToPowerWith(false, "trooper"), 0.01);
     }
 }

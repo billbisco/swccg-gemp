@@ -2,6 +2,7 @@ package com.gempukku.swccgo.cards.set1261.light;
 
 import com.gempukku.swccgo.cards.AbstractLostInterrupt;
 import com.gempukku.swccgo.cards.GameConditions;
+import com.gempukku.swccgo.cards.evaluators.PresentEvaluator;
 import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
@@ -95,7 +96,8 @@ abstract class SoloDefenseInterrupt extends AbstractLostInterrupt {
                         action.appendEffect(new AddUntilEndOfBattleModifierEffect(action,
                                 new MayNotHaveForfeitValueReducedModifier(self, defender), null));
                         action.appendEffect(new AddUntilEndOfBattleModifierEffect(action,
-                                new AddsDestinyToPowerModifier(defender, 1, playerId), null));
+                                new AddsDestinyToPowerModifier(defender, 1, playerId).setBonusForEachDestinyDraw(
+                                        new PresentEvaluator(defender, Filters.or(Filters.character, Filters.vehicle))), null));
                         action.appendEffect(new AddUntilEndOfBattleModifierEffect(action,
                                 new DrawsBattleDestinyIfUnableToOtherwiseModifier(self, defender, 1), null));
                     }
