@@ -24,7 +24,7 @@ public class Card_1261_088_Tests {
         }}, new HashMap<>() {{
             put("virtualMarker", "1282_8"); put("surprise", "5_156"); put("alter", "1_234"); put("control", "4_139");
             put("vader", "1_168");
-        }}, 60, 60, StartingSetup.LSStartingLocation("1_129"), StartingSetup.DefaultDSGroundLocation,
+        }}, 60, 60, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
     }
