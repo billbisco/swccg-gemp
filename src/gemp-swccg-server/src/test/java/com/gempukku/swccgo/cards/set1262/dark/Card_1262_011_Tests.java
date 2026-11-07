@@ -20,7 +20,7 @@ public class Card_1262_011_Tests {
 
     private VirtualTableScenario scenario() {
         var scn = new VirtualTableScenario(
-                new HashMap<>(Map.of("luke", "601_52", "ben", "1_21", "alter", "1_71", "escape", "11_36")),
+                new HashMap<>(Map.of("luke", "9_24", "ben", "1_21", "alter", "1_71", "escape", "11_36")),
                 new HashMap<>(Map.of("effect", "1262_11", "rise", "9_140", "vader", "1_168", "emperor", "9_109",
                         "trooper", "1_194")),
                 30, 30, StartingSetup.DefaultLSGroundLocation, StartingSetup.BHBMObjective,
@@ -56,7 +56,7 @@ public class Card_1262_011_Tests {
         scn.MoveCardsToDSHand(effect);
         scn.SkipToPhase(Phase.DEPLOY);
         scn.DSDeployCard(effect);
-        scn.PassAllResponses();
+        settleDeploy(scn);
         assertInZone(Zone.SIDE_OF_TABLE, effect);
         scn.MoveCardsToTopOfDSReserveDeck(rise, trooper);
         var remaining = new ArrayList<>(scn.GetDSReserveDeck());
@@ -108,8 +108,8 @@ public class Card_1262_011_Tests {
             var luke = scn.GetLSCard("luke");
             var escape = scn.GetLSCard("escape");
             // Stage the back-side state with non-captive Luke, so Jedi Escape would otherwise be legal.
-            scn.gameState().flipCard(scn.game(), objective, true);
             scn.MoveCardsToLocation(throne, scn.GetDSCard("vader"), scn.GetDSCard("emperor"), luke);
+            scn.gameState().flipCard(scn.game(), objective, true);
             scn.MoveCardsToLSHand(escape);
             scn.EnsureLSForcePile(2);
             if (effectOnTable) scn.MoveCardsToDSSideOfTable(scn.GetDSCard("effect"));
@@ -131,5 +131,13 @@ public class Card_1262_011_Tests {
                 assertInZone(Zone.LOST_PILE, escape);
             }
         }
+    }
+    private void settleDeploy(VirtualTableScenario scn) {
+        for (int i = 0; i < 35 && !scn.AwaitingDSDeployPhaseActions(); i++) {
+            if (scn.LSGetDecision() instanceof CardActionSelectionDecision) scn.LSPass();
+            else if (scn.DSGetDecision() instanceof CardActionSelectionDecision) scn.DSPass();
+            else fail("Unexpected So Be It, Jedi deployment: " + scn.GetCurrentDecision().getText());
+        }
+        assertTrue(scn.AwaitingDSDeployPhaseActions());
     }
 }
