@@ -19,9 +19,13 @@ public class Card_1250_031_Tests {
     private static final String CANCEL = "Maul disembarks to cancel Jedi attrition immunity";
 
     private VirtualTableScenario scenario() {
+        return scenario(StartingSetup.DefaultLSGroundLocation);
+    }
+
+    private VirtualTableScenario scenario(StartingSetup lightStart) {
         var scn = new VirtualTableScenario(new HashMap<>(Map.of("obi", "1_21", "rebel", "1_28", "luke", "1_19")),
                 new HashMap<>(Map.of("speeder", "1250_31", "maul", "11_54", "trooper", "1_194",
-                        "site", "5_169")), 22, 22, StartingSetup.DefaultLSGroundLocation,
+                        "site", "5_169")), 22, 22, lightStart,
                 StartingSetup.DefaultDSGroundLocation, StartingSetup.NoLSStartingInterrupts,
                 StartingSetup.NoDSStartingInterrupts, StartingSetup.NoLSShields, StartingSetup.NoDSShields,
                 VirtualTableScenario.Open);
@@ -165,6 +169,48 @@ public class Card_1250_031_Tests {
             reachDarkBattleActions(scn);
             assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("speeder"), CANCEL));
         }
+    }
+
+    @Test public void MaulsSithSpeederCanRemainInPlayThroughActualAttrition() {
+        // The Hyperdrive Generator's Gone grants immunity to Maul, not to the Speeder.
+        var scn = scenario(new StartingSetup() {
+            @Override public HashMap<String, String> Cards() {
+                return new HashMap<>(Map.of("hyperdrive", "12_89", "junkyard", "12_87",
+                        "outskirts", "11_42", "credits", "12_42"));
+            }
+
+            @Override public void Setup(VirtualTableScenario scn) {
+                for (int i = 0; i < 10 && scn.LSGetDecision() != null; i++) {
+                    if (scn.LSDecisionAvailable("On which side")) scn.LSChoose("Left");
+                    else if (scn.LSHasCardChoiceAvailable(scn.GetLSCard("junkyard"))) scn.LSChooseCard(scn.GetLSCard("junkyard"));
+                    else if (scn.LSHasCardChoiceAvailable(scn.GetLSCard("outskirts"))) scn.LSChooseCard(scn.GetLSCard("outskirts"));
+                    else if (scn.LSHasCardChoiceAvailable(scn.GetLSCard("credits"))) scn.LSChooseCard(scn.GetLSCard("credits"));
+                    else return;
+                }
+            }
+        });
+        var site = scn.GetDSCard("site");
+        var speeder = scn.GetDSCard("speeder");
+        var maul = scn.GetDSCard("maul");
+        assertInZone(Zone.SIDE_OF_TABLE, scn.GetLSCard("hyperdrive"));
+        scn.MoveCardsToLocation(site, speeder, maul, scn.GetLSCard("obi"));
+        scn.BoardAsPilot(speeder, maul);
+        scn.EnsureDSForcePile(1);
+        scn.SkipToPhase(Phase.BATTLE);
+        scn.PrepareDSDestiny(7);
+        scn.PrepareLSDestiny(4);
+        scn.DSInitiateBattle(site);
+        scn.SkipToDamageSegment(true);
+        scn.PassDamageSegmentActions();
+        if (scn.AwaitingLSBattleDamagePayment()) scn.LSPayBattleDamageFromReserveDeck();
+        assertEquals(4, scn.GetUnpaidDSAttrition());
+        assertEquals(0, scn.GetUnpaidDSBattleDamage());
+        assertTrue("The Speeder need not be forfeited to attrition",
+                scn.DSDecisionAvailable("Choose a card from battle to forfeit (if desired)"));
+        scn.DSPass();
+        scn.PassAllResponses();
+        assertInZone(Zone.AT_LOCATION, speeder);
+        assertSame(speeder, maul.getAttachedTo());
     }
 
     private void reachDarkBattleActions(VirtualTableScenario scn) {
