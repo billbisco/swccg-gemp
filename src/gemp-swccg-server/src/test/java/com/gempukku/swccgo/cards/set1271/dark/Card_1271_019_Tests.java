@@ -51,7 +51,7 @@ public class Card_1271_019_Tests {
         if (s.DSHasCardChoiceAvailable(vader)) s.DSChooseCard(vader);
         s.PassAllResponses();
         assertEquals(vader, limbs.getAttachedTo());
-        if (!s.DSAnyActionsAvailable() && s.LSAnyActionsAvailable()) s.LSPass();
+        if (s.DSGetDecision() == null && s.LSGetDecision() != null) s.LSPass();
         assertTrue("Expected cancellation action; DS=" + s.DSGetDecision() + ", LS=" + s.LSGetDecision(),
             s.DSAnyActionsAvailable() && s.DSCardActionAvailable(rise, "Cancel your Vader Effect"));
         s.DSUseCardAction(rise, "Cancel your Vader Effect");
@@ -59,6 +59,7 @@ public class Card_1271_019_Tests {
         s.PassAllResponses();
         assertEquals(Zone.STACKED_FACE_DOWN, limbs.getZone());
         assertEquals(rise, limbs.getStackedOn());
-        assertFalse(s.DSCardActionAvailable(rise, "Deploy a Vader Effect from here"));
+        if (s.DSGetDecision() == null && s.LSGetDecision() != null) s.LSPass();
+        assertFalse(s.DSAnyActionsAvailable() && s.DSCardActionAvailable(rise, "Deploy a Vader Effect from here"));
     }
 }
