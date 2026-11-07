@@ -86,19 +86,21 @@ public class Card_1261_108_Tests {
     }
 
     private void actualStack(int count) {
-        var scn = fixture(count); scn.StartGame(); var strong = scn.GetLSCard("strong");
+        var scn = fixture(count);
+        var originalOutside = List.copyOf(scn.gameState().getOutsideOfDeck(scn.LS));
+        scn.StartGame(); var strong = scn.GetLSCard("strong");
         var dagobah = scn.GetLSCard("dagobah");
         assertTrue(scn.IsCardActive(scn.GetLSCard("objective")));
         assertTrue(scn.IsCardActive(strong)); assertEquals(Zone.LOCATIONS, dagobah.getZone());
         assertTrue(scn.game().getModifiersQuerying().cannotBeConverted(scn.gameState(), dagobah));
         assertEquals(count, scn.gameState().getStackedCards(strong).size());
-        for (int i = 0; i < count; i++) {
-            var card = scn.GetLSCard("outside" + i);
+        for (var card : scn.gameState().getStackedCards(strong)) {
+            assertTrue(originalOutside.contains(card));
+            assertTrue(Filters.Jedi_Test.accepts(scn.game(), card));
             assertEquals(Zone.STACKED_FACE_DOWN, card.getZone());
             assertEquals(strong, card.getStackedOn());
         }
         assertFalse(scn.gameState().getStackedCards(strong).contains(scn.GetLSCard("outsideOther")));
-        assertFalse(scn.gameState().getStackedCards(strong).contains(scn.GetLSCard("testOne")));
     }
 
     @Test public void objectiveStartsStrongAndAllowsZeroTests() { actualStack(0); }
@@ -119,12 +121,30 @@ public class Card_1261_108_Tests {
         var action = new TopLevelGameTextAction(test, scn.LS, test.getCardId());
         action.appendEffect(new CompleteJediTestEffect(action, test));
         scn.carryOutEffectInPhaseActionByPlayer(scn.LS, action);
-        assertEquals(fifth ? Title.Save_You_It_Can : Title.Mind_What_You_Have_Learned,
-                scn.GetLSCard("objective").getBlueprint().getTitle());
+        var objective = scn.GetLSCard("objective");
+        var trace = new ArrayList<String>();
+        boolean retrieved = false;
+        for (int i = 0; i < 18 && scn.GetCurrentDecision() != null; i++) {
+            var prompt = scn.GetCurrentDecision().getText();
+            trace.add(prompt + " actions=" + scn.GetLSAvailableActions());
+            if (scn.GetLSAvailableActions().stream().anyMatch(x -> x.contains("Retrieve 3 Force"))) {
+                scn.LSUseCardAction(strong, "Retrieve 3 Force"); retrieved = true;
+            } else if (scn.GetLSAvailableActions().stream().anyMatch(x -> x.contains("Flip"))) {
+                scn.LSUseCardAction(objective, "Flip");
+            } else if (scn.GetLSAvailableActions().stream().anyMatch(x -> x.contains("Reveal top two"))) {
+                scn.LSUseCardAction(test, "Reveal top two");
+            } else if (prompt.toLowerCase().contains("optional response")) {
+                scn.PlayerPass(scn.GetDecidingPlayer());
+            } else if (fifth && scn.LSGetDecision() != null
+                    && prompt.toLowerCase().contains("choose") && !scn.LSGetCardChoices().isEmpty()) {
+                scn.LSChooseAnyCard();
+            } else break;
+        }
+        assertEquals(trace.toString(), fifth ? Title.Save_You_It_Can : Title.Mind_What_You_Have_Learned,
+                objective.getBlueprint().getTitle());
         assertEquals(Zone.SIDE_OF_TABLE, test.getZone());
         assertTrue(GameConditions.isJediTestCompleted(scn.game(), test));
-        assertTrue(scn.LSCardActionAvailable(strong, "Retrieve 3 Force"));
-        scn.LSUseCardAction(strong, "Retrieve 3 Force"); scn.PassAllResponses();
+        assertTrue(trace.toString(), retrieved);
         assertTrue(scn.GetLSUsedPile().contains(loss));
     }
 
