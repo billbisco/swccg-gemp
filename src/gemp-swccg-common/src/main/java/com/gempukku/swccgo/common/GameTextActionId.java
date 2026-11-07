@@ -1765,8 +1765,6 @@ public enum GameTextActionId {
     LEGACY__QUEENS_LANDING_SITE__DOWNLOAD(true),
     LEGACY__HAN_CHEWIE_AND_THE_FALCON__TAKE_A_FEW_MANEUVERS(true, true),
     LEGACY__SECURITY_BREACH__REDUCE_BATTLE_DAMAGE(false, true),
-    // Any card's attempt to 'operate' on a character (lets other cards recognize and respond to the attempt)
-    ANY_CARD__OPERATE_ON_CHARACTER,
     LEGACY__HES_NO_JEDI__PLAY_SHIELD(false, true),
     LEGACY__HUTT_INFLUENCE_V__UPLOAD_ALL_WRAPPED_UP(true, true),
     LEGACY__MOS_ESPA_V__PREVENT_SLAVE_LOSS(false, true),
@@ -1775,6 +1773,8 @@ public enum GameTextActionId {
     LEGACY__OUT_OF_SOMEWHERE__DEPLOY_OR_RETRIEVE(true),
     LEGACY__SOLO_HAN__DEPLOY_OR_RETRIEVE(true),
     LEGACY__WARRIORS_COURAGE__DEPLOY_OR_RETRIEVE(true),
+    // Any card's attempt to 'operate' on a character (lets other cards recognize and respond to the attempt)
+    ANY_CARD__OPERATE_ON_CHARACTER,
     ;
 
     private boolean _searchCardPile;
