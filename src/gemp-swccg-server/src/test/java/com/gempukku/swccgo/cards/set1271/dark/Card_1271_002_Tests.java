@@ -68,4 +68,34 @@ public class Card_1271_002_Tests {
         assertTrue(s.IsAboardAsPilot(ship, vader));
         assertEquals(5, s.GetPower(ship));
     }
+
+    private void applyAtAnotherBattle(boolean controlsVaderSite) {
+        var s = board(null);
+        var vader = s.GetDSCard("vader");
+        var farm = s.GetLSCard("farm");
+        s.MoveCardsToLocation(farm, s.GetDSCard("trooper"), s.GetLSCard("luke"));
+        if (!controlsVaderSite) s.MoveCardsToLocation(s.GetDSStartingLocation(), s.GetLSCard("obi"));
+        s.SkipToDSTurn(Phase.CONTROL);
+        s.EnsureDSForcePile(5);
+        s.SkipToPhase(Phase.BATTLE);
+        s.StartBattleAndSkipToWeaponsSegment(s.DS, farm);
+        s.PrepareDSDestiny(5);
+        s.PrepareLSDestiny(0);
+        assertEquals(controlsVaderSite, s.DSCardActionAvailable(vader, "Apply Vader's ability"));
+        if (controlsVaderSite) {
+            s.DSUseCardAction(vader, "Apply Vader's ability");
+            s.PassAllResponses();
+        }
+        s.SkipToDamageSegment(true);
+        assertEquals(controlsVaderSite ? 5 : 0, s.GetDSTotalDestiny());
+        assertTrue(s.CardsAtLocation(s.GetDSStartingLocation(), vader));
+    }
+
+    @Test public void DarthVaderMoreMachineThanManAppliesAbilityToActualBattleAtAnotherSite() {
+        applyAtAnotherBattle(true);
+    }
+
+    @Test public void DarthVaderMoreMachineThanManCannotApplyAbilityIfHeDoesNotControlHisSite() {
+        applyAtAnotherBattle(false);
+    }
 }

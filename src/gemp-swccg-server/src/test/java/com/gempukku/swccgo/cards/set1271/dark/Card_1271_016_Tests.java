@@ -39,4 +39,20 @@ public class Card_1271_016_Tests {
         assertTrue(s.CardsAtLocation(farm, vader));
         assertTrue(s.LSDecisionAvailable("Choose Force to lose"));
     }
+
+    @Test public void VadersHelmetPlacesAnActualJournalAtSameSiteOnTheBottomOfLostPile() {
+        var s = board("helmet");
+        var obi = s.GetLSCard("obi");
+        var journal = s.GetLSCard("journal");
+        var priorLost = s.GetLSCard("luke");
+        s.MoveCardsToLocation(s.GetDSStartingLocation(), obi);
+        s.AttachCardsTo(obi, journal);
+        s.MoveCardsToTopOfLSLostPile(priorLost);
+        s.SkipToDSTurn(Phase.CONTROL);
+        s.DSUseCardAction(s.GetDSCard("helmet"), "Place Obi-Wan's Journal on bottom");
+        if (s.DSHasCardChoiceAvailable(journal)) s.DSChooseCard(journal);
+        s.PassAllResponses();
+        assertEquals(priorLost, s.GetLSLostPile().getFirst());
+        assertEquals(journal, s.GetLSLostPile().getLast());
+    }
 }
