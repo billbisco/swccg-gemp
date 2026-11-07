@@ -17,7 +17,7 @@ public class Card_1261_016_Tests {
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>(Map.of("luke", "1_19")),
                 new HashMap<>(Map.of("cecius", "1261_16", "tactical", "3_136", "trooper", "1_194",
-                        "vader", "1_168", "city", "5_165", "other", "5_169")),
+                        "vader", "1_168", "city", "5_166", "other", "5_169")),
                 23, 23, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -80,8 +80,8 @@ public class Card_1261_016_Tests {
             scn.MoveCardsToTopOfDSReserveDeck(trooper);
             scn.DSPlayCard(tactical, "Take troopers into hand");
             scn.PassAllResponses();
-            if (scn.DSHasCardChoiceAvailable(scn.GetTopOfDSForcePile()))
-                scn.DSPayForceLossFromForcePile();
+            if (scn.DSDecisionAvailable("Choose Force to lose"))
+                scn.DSChooseCard(scn.GetTopOfDSForcePile());
             scn.PassAllResponses();
             if (scn.DSHasCardChoiceAvailable(trooper))
                 scn.DSChooseCard(trooper);
