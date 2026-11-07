@@ -14,9 +14,9 @@ import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
 import com.gempukku.swccgo.logic.effects.LoseCardFromTableEffect;
 import com.gempukku.swccgo.logic.effects.PutStackedCardInUsedPileEffect;
-import com.gempukku.swccgo.logic.effects.StackOneCardFromLostPileEffect;
 import com.gempukku.swccgo.logic.effects.UseForceEffect;
 import com.gempukku.swccgo.logic.effects.choose.ChooseStackedCardEffect;
+import com.gempukku.swccgo.logic.effects.choose.StackOneCardFromLostPileEffect;
 import com.gempukku.swccgo.logic.timing.EffectResult;
 import com.gempukku.swccgo.logic.timing.results.LostFromTableResult;
 
