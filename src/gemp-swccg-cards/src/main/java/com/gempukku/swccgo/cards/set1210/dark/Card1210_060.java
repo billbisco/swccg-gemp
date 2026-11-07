@@ -10,6 +10,7 @@ import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.InterruptPersonaReferences;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.GameUtils;
@@ -40,10 +41,10 @@ public class Card1210_060 extends AbstractLostInterrupt {
 
     @Override
     protected List<PlayInterruptAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self) {
-        Filter targetFilter = Filters.and(Filters.character, Filters.at(Filters.sameSystemAs(self, Filters.Vader)));
+        Filter targetFilter = Filters.and(Filters.character, Filters.at(Filters.sameSystemAs(self, InterruptPersonaReferences.vader(game, self))));
 
         // Check condition(s)
-        if (GameConditions.canSpot(game, self, Filters.and(Filters.Vader, Filters.at(Filters.system)))
+        if (GameConditions.canSpot(game, self, Filters.and(InterruptPersonaReferences.vader(game, self), Filters.at(Filters.system)))
                 && GameConditions.canTarget(game, self, targetFilter)) {
 
             final PlayInterruptAction action = new PlayInterruptAction(game, self);

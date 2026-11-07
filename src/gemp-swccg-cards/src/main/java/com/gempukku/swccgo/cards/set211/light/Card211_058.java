@@ -13,6 +13,7 @@ import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Species;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.LegacyFilters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.GameUtils;
@@ -54,7 +55,7 @@ public class Card211_058 extends AbstractRebel {
         GameTextActionId gameTextActionId = GameTextActionId.OTHER_CARD_ACTION_1;
 
         boolean orConditions = GameConditions.canSpot(game, self, Filters.delivered_Stolen_Data_Tapes)
-                || GameConditions.canSpot(game, self, Filters.liberated_system)
+                || GameConditions.canSpot(game, self, LegacyFilters.liberatedSystem)
                 || GameConditions.canSpot(game, self, Filters.and(Filters.your(playerId), Filters.spy, Filters.hasAttached(Filters.Stardust)));
 
         // Check condition(s)

@@ -8,6 +8,7 @@ import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.InterruptPersonaReferences;
 import com.gempukku.swccgo.game.AbstractActionProxy;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
@@ -57,7 +58,7 @@ public class Card11_082 extends AbstractLostInterrupt {
         final String opponent = game.getOpponent(self.getOwner());
 
         // Check condition(s)
-        if (TriggerConditions.justHitBy(game, effectResult, Filters.Luke, Filters.lightsaber, Filters.Vader)
+        if (TriggerConditions.justHitBy(game, effectResult, Filters.Luke, Filters.lightsaber, InterruptPersonaReferences.vader(game, self))
                 && GameConditions.canUseForceToPlayInterrupt(game, playerId, self, 3)) {
             final PhysicalCard luke = ((HitResult) effectResult).getCardHit();
             if (GameConditions.canTarget(game, self, luke)) {

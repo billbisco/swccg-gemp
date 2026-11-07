@@ -39,6 +39,7 @@ public class CollectionsManager {
         addCardsToDefaultCollection(library, CardCounts.FULL_SETS_CARD_COUNTS, 1, _defaultCollection);
         addCardsToDefaultCollection(library, CardCounts.PREMIUM_SETS_CARD_COUNTS, 101, _defaultCollection);
         addCardsToDefaultCollection(library, CardCounts.VIRTUAL_SETS_CARD_COUNTS, 200, _defaultCollection);
+        addCardsToDefaultCollection(library, CardCounts.ORIGINAL_VIRTUAL_SETS_CARD_COUNTS, 1100, _defaultCollection);
         addCardsToDefaultCollection(library, CardCounts.VIRTUAL_PREMIUM_SETS_CARD_COUNTS, 301, _defaultCollection);
         addCardsToDefaultCollection(library, CardCounts.DREAM_CARD_SETS_CARD_COUNTS, 401, _defaultCollection);
         addCardsToDefaultCollection(library, CardCounts.LEGACY_SETS_CARD_COUNTS, 601, _defaultCollection);
@@ -49,6 +50,7 @@ public class CollectionsManager {
         addCardsToDefaultCollection(library, CardCounts.FULL_SETS_CARD_COUNTS, 1, _defaultCollectionWithPlaytesting);
         addCardsToDefaultCollection(library, CardCounts.PREMIUM_SETS_CARD_COUNTS, 101, _defaultCollectionWithPlaytesting);
         addCardsToDefaultCollection(library, CardCounts.VIRTUAL_SETS_CARD_COUNTS, 200, _defaultCollectionWithPlaytesting);
+        addCardsToDefaultCollection(library, CardCounts.ORIGINAL_VIRTUAL_SETS_CARD_COUNTS, 1100, _defaultCollectionWithPlaytesting);
         addCardsToDefaultCollection(library, CardCounts.VIRTUAL_PREMIUM_SETS_CARD_COUNTS, 301, _defaultCollectionWithPlaytesting);
         addCardsToDefaultCollection(library, CardCounts.DREAM_CARD_SETS_CARD_COUNTS, 401, _defaultCollectionWithPlaytesting);
         addCardsToDefaultCollection(library, CardCounts.PLAYTESTING_SETS_CARD_COUNTS, 501, _defaultCollectionWithPlaytesting);
