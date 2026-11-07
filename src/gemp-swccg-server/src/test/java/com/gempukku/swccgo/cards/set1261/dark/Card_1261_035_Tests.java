@@ -81,6 +81,9 @@ public class Card_1261_035_Tests {
             scn.DSChooseCard(shield);
             scn.PassAllResponses();
             assertEquals(Zone.SIDE_OF_TABLE, shield.getZone());
+            if (scn.AwaitingLSControlPhaseActions())
+                scn.LSPass();
+            assertTrue(scn.AwaitingDSControlPhaseActions());
         }
         assertEquals(3, scn.GetStackedCards(effect).size());
         assertEquals(Zone.STACKED_FACE_DOWN, nonShield.getZone());
