@@ -19,6 +19,7 @@ import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 public class Card_1104_041_Tests {
     protected VirtualTableScenario GetScenario() {
@@ -29,6 +30,7 @@ public class Card_1104_041_Tests {
                 new HashMap<>() {{
                     put("bones", "1104_41");
                     put("wampa", "3_93");
+                    put("mynock", "4_110");
                     put("cave", "3_150");
                 }},
                 10, 10,
@@ -105,6 +107,26 @@ public class Card_1104_041_Tests {
             }
             scn.PassAllResponses();
         }
+        assertEquals(Zone.HAND, wampa.getZone());
+    }
+
+    @Test
+    public void KraytDragonBonesSearchDoesNotAllowAParasite() {
+        var scn = GetScenario();
+        var bones = scn.GetDSCard("bones");
+        var wampa = scn.GetDSCard("wampa");
+        var mynock = scn.GetDSCard("mynock");
+        scn.StartGame();
+        scn.MoveCardsToDSSideOfTable(bones);
+        scn.SkipToDSTurn(Phase.CONTROL);
+        scn.MoveCardsToTopOfDSReserveDeck(wampa, mynock);
+        scn.DSUseCardAction(bones, "Take card into hand from Reserve Deck");
+        scn.PassAllResponses();
+        int parasiteIndex = scn.DSGetADParamAsList("blueprintId").indexOf(mynock.getBlueprintId(true));
+        assertTrue(parasiteIndex >= 0);
+        assertFalse(Boolean.parseBoolean(scn.DSGetADParam("selectable")[parasiteIndex]));
+        scn.DSChooseCard(wampa);
+        scn.PassAllResponses();
         assertEquals(Zone.HAND, wampa.getZone());
     }
 }

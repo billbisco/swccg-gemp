@@ -14,6 +14,7 @@ import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.LegacyFilters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.conditions.OrCondition;
@@ -54,7 +55,7 @@ public class Card223_012 extends AbstractCapitalStarship {
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
         HasPilotingCondition hasThrawnPiloting = new HasPilotingCondition(self, Filters.Thrawn);
-        OnTableCondition probedOrLiberatedSystemOnTable = new OnTableCondition(self, Filters.or(Filters.liberated_system, Filters.probeCard));
+        OnTableCondition probedOrLiberatedSystemOnTable = new OnTableCondition(self, Filters.or(LegacyFilters.liberatedSystem, Filters.probeCard));
 
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new ImmuneToAttritionLessThanModifier(self, new ConditionEvaluator(4, 6,

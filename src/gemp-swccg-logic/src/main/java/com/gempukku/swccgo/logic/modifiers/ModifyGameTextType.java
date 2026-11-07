@@ -154,7 +154,12 @@ public enum ModifyGameTextType {
     LEGACY__INTERRUPTS__VADER_MAY_BE_MAUL_OR_MARA_JADE("'Vader' may be treated as 'Maul or Mara Jade'"),
     LEGACY__ROYAL_ESCORT_V__EMPEROR_MAY_BE_TREATED_AS_SIDIOUS("'Emperor' may be treated as 'Sidious'"),
 
+    LEGACY__DROID_RACKS__WHERE_ARE_THOSE_DROIDEKAS_IGNORES_NEIMOIDIANS("Ignores Neimoidians"),
+    LEGACY__HUTT_INFLUENCE__HUMAN_SHIELD_IMPERIAL_MAY_BE_BOUNTY_HUNTER("'Imperial' may be treated as 'bounty hunter'"),
+    LEGACY__MOS_ESPA_V__YOURE_A_SLAVE_FREE_IS_2_FORCE("'Free' treated as '2 Force'"),
+    LEGACY__SO_BE_IT_JEDI__LUKE_DEPLOYS_TO_VADERS_SITE("Luke deploys to Vader's site (if possible)"),
     ;
+
 
     private String _humanReadable;
 

@@ -50,7 +50,7 @@ public class Card1261_008 extends AbstractImperial {
             return null;
         OptionalGameTextTriggerAction action = new OptionalGameTextTriggerAction(self, gameTextSourceCardId);
         action.setText("Draw two weapon destiny and choose one");
-        action.appendEffect(DrawDestinyAndChooseInsteadEffect.mayTakeOtherIntoHand(action, 2, 1));
+        action.appendEffect(new DrawDestinyAndChooseInsteadEffect(action, 2, 1, false).setMayTakeOtherIntoHand(true));
         return List.of(action);
     }
 }

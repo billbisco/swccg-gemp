@@ -190,6 +190,14 @@ public class ForceRetrievalEffect extends AbstractSubActionEffect {
     }
 
     /**
+     * Determines if the amount of Force retrieved by this retrieval may not be reduced (it may still be increased).
+     * @return true or false
+     */
+    public boolean mayNotBeReduced() {
+        return false;
+    }
+
+    /**
      * Determines if the retrieval may not be canceled, including modifiers that prevent canceling retrieval from the source card.
      * @param game the game
      * @return true or false
@@ -334,6 +342,10 @@ public class ForceRetrievalEffect extends AbstractSubActionEffect {
                                                 return;
 
                                             float updatedAmount = modifiersQuerying.getForceToRetrieve(gameState, _playerToRetrieveForce, _action.getActionSource(), _amountToRetrieve);
+                                            if (updatedAmount < _amountToRetrieve && mayNotBeReduced()) {
+                                                gameState.sendMessage(_playerToRetrieveForce + "'s Force retrieval may not be reduced");
+                                                updatedAmount = _amountToRetrieve;
+                                            }
                                             if (updatedAmount > _amountToRetrieve) {
                                                 gameState.sendMessage(_playerToRetrieveForce + "'s Force retrieval amount increased to " + GuiUtils.formatAsString(updatedAmount));
                                             }
@@ -596,7 +608,7 @@ public class ForceRetrievalEffect extends AbstractSubActionEffect {
                                             gameState.addCardToTopOfZone(_currentCardToRetrieve, _retrieveCurrentCardToZone, _playerToRetrieveForce);
 
                                             // Emit the result effect that can trigger other cards
-                                            game.getActionsEnvironment().emitEffectResult(new RetrieveForceResult(_sourceCard, _playerToRetrieveForce, _cardsRetrieved.size(), _currentCardToRetrieve));
+                                            game.getActionsEnvironment().emitEffectResult(new RetrieveForceResult(_sourceCard, _playerToRetrieveForce, _cardsRetrieved.size(), _currentCardToRetrieve, _initialAmount));
                                         }
                                     }
                             );

@@ -41,17 +41,13 @@ public class DrawDestinyAndChooseInsteadEffect extends AbstractSuccessfulEffect 
     }
 
     /**
-     * Creates an effect that causes the current destiny draw to instead draw X and choose Y, where each unchosen destiny
-     * may be taken into hand.
-     * @param action the action performing this effect
-     * @param drawX number of destiny to draw
-     * @param chooseY number of destiny to choose
-     * @return the effect
+     * Allows each unchosen destiny to optionally be taken into hand (otherwise it is handled as normal).
+     * @param mayTakeOtherIntoHand true if each unchosen destiny may be taken into hand
+     * @return this effect
      */
-    public static DrawDestinyAndChooseInsteadEffect mayTakeOtherIntoHand(Action action, int drawX, int chooseY) {
-        DrawDestinyAndChooseInsteadEffect effect = new DrawDestinyAndChooseInsteadEffect(action, drawX, chooseY, false);
-        effect._mayTakeOtherIntoHand = true;
-        return effect;
+    public DrawDestinyAndChooseInsteadEffect setMayTakeOtherIntoHand(boolean mayTakeOtherIntoHand) {
+        _mayTakeOtherIntoHand = mayTakeOtherIntoHand;
+        return this;
     }
 
     @Override
