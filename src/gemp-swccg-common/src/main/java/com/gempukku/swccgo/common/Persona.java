@@ -273,6 +273,7 @@ public enum Persona implements Filterable {
 
     // Append new personas so existing serialized enum ordinals remain stable.
     BIGGS("Biggs"),
+    KIR_KANOS("Kir Kanos"),
 
     ;
 
