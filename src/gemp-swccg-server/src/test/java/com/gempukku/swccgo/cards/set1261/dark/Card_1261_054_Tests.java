@@ -80,7 +80,8 @@ public class Card_1261_054_Tests {
         scn.game().getModifiersEnvironment().addUntilEndOfTurnModifier(
                 new PowerModifier(scn.GetDSCard("trooper"), Filters.or(host, unrelated), -1));
         assertEquals(host.getBlueprint().getPower(), scn.GetPower(host), scn.epsilon);
-        assertEquals(unrelated.getBlueprint().getPower() - 1, scn.GetPower(unrelated), scn.epsilon);
+        // Both players added lasting penalties; the unrelated ship keeps both.
+        assertEquals(unrelated.getBlueprint().getPower() - 2, scn.GetPower(unrelated), scn.epsilon);
         assertEquals(Float.MAX_VALUE, scn.game().getModifiersQuerying()
                 .getImmunityToAttritionLessThan(scn.gameState(), host), 0);
     }
