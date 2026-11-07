@@ -299,7 +299,7 @@ public class Card_1240_026_Tests {
         int force = scn.GetDSForcePileCount();
         scn.DSPlayCard(scn.GetDSCard("he"));
         scn.PassAllResponses();
-        if (amount > 2) scn.DSPayRemainingForceLossFromReserveDeck();
+        if (scn.AwaitingDSForceLossPayment()) scn.DSPayRemainingForceLossFromReserveDeck();
         scn.PassAllResponses();
         assertEquals(lost + Math.max(0, amount - 2), scn.GetDSLostPileCount());
         assertEquals(force, scn.GetDSForcePileCount());

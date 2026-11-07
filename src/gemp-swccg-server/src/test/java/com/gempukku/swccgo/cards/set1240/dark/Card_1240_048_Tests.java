@@ -19,6 +19,7 @@ public class Card_1240_048_Tests {
         return new VirtualTableScenario(new HashMap<>() {{
             put("corvette", "1_140"); put("red1", "1_144"); put("luke", "1_19"); put("cannon", "1_159");
             put("spin", "7_85"); put("signal", "6_77"); put("planners", "1_60");
+            put("corvette2", "1_140"); put("cannon2", "1_159");
         }}, new HashMap<>() {{
             put("rebels", "1240_48"); put("stinger", "10_49"); put("virago", "10_54");
             put("dread", "106_13"); put("sector", "4_155");
@@ -370,5 +371,41 @@ public class Card_1240_048_Tests {
         scn.PassAllResponses();
         assertInZone(Zone.HAND, scn.GetLSCard("planners"));
         assertInZone(Zone.HAND, scn.GetDSCard("rebels"));
+    }
+
+    @Test
+    public void ThoseRebelsWontEscapeUsProtectionPersistsIntoAnotherBattleDuringSameTurn() {
+        var scn = Ready(true, Phase.CONTROL);
+        var first = scn.GetDSStartingLocation();
+        var second = scn.GetLSStartingLocation();
+        scn.MoveCardsToLocation(first, scn.GetLSCard("corvette"), scn.GetLSCard("red1"), scn.GetDSCard("stinger"));
+        scn.BoardAsPilot(scn.GetLSCard("red1"), scn.GetLSCard("luke"));
+        scn.AttachCardsTo(scn.GetLSCard("corvette"), scn.GetLSCard("cannon"));
+        scn.MoveCardsToLocation(second, scn.GetLSCard("corvette2"), scn.GetDSCard("virago"), scn.GetDSCard("dread"));
+        scn.AttachCardsTo(scn.GetLSCard("corvette2"), scn.GetLSCard("cannon2"));
+        scn.SkipToPhase(Phase.BATTLE);
+        scn.LSInitiateBattle(first);
+        Protect(scn);
+        scn.SkipToDamageSegment(false);
+        scn.DSPayRemainingBattleDamageFromReserveDeck();
+        scn.PassAllResponses();
+        for (int i = 0; i < 12 && !scn.AwaitingLSBattlePhaseActions(); i++) scn.PlayerPass(scn.GetDecidingPlayer());
+        assertTrue(scn.AwaitingLSBattlePhaseActions());
+        scn.LSInitiateBattle(second);
+        scn.PassAllResponses();
+        scn.SkipToWeaponsSegment();
+        if (scn.DSAnyDecisionsAvailable()) {
+            assertTrue(scn.DSGetDecision().getText().toLowerCase().contains("weapon"));
+            scn.DSPass();
+        }
+        assertTrue(scn.LSCardActionAvailable(scn.GetLSCard("cannon2"), "Fire"));
+        scn.PrepareLSDestiny(7);
+        scn.LSUseCardAction(scn.GetLSCard("cannon2"), "Fire");
+        assertFalse(IsSelectable(scn, scn.LS, scn.GetDSCard("virago")));
+        assertTrue(IsSelectable(scn, scn.LS, scn.GetDSCard("dread")));
+        scn.LSChooseCard(scn.GetDSCard("dread"));
+        scn.PassAllResponses();
+        assertTrue(scn.GetDSCard("dread").isHit());
+        assertFalse(scn.GetDSCard("virago").isHit());
     }
 }

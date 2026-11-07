@@ -282,6 +282,7 @@ public class Card_1240_072_Tests {
         var scn = SpaceReady(false);
         PlayLateralDamage(scn);
         assertTrue(IsSelectable(scn, scn.GetLSCard("consular")));
+        assertTrue(IsSelectable(scn, scn.GetLSCard("corvette")));
         scn.DSChooseCard(scn.GetLSCard("consular"));
         scn.PassAllResponses();
         assertEquals(0, scn.GetPower(scn.GetLSCard("consular")));
