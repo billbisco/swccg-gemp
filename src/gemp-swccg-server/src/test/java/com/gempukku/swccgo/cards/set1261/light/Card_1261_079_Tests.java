@@ -260,7 +260,7 @@ public class Card_1261_079_Tests {
     @Test public void rebelsIgnorePowerMinusOneInTheirOwnGameText() {
         var scn = extraFixture(); var trooper = scn.GetLSCard("echoTrooper");
         scn.MoveCardsToLocation(scn.GetLSStartingLocation(), trooper);
-        int printed = (int) trooper.getBlueprint().getPower();
+        int printed = Math.round(trooper.getBlueprint().getPower());
         assertEquals(printed - 1, scn.GetPower(trooper));
         scn.MoveCardsToLSSideOfTable(scn.GetLSCard("combo"));
         assertEquals(printed, scn.GetPower(trooper));
@@ -270,8 +270,8 @@ public class Card_1261_079_Tests {
         var scn = extraFixture(); var trooper = scn.GetLSCard("echoTrooper");
         scn.MoveCardsToLocation(scn.GetLSStartingLocation(), trooper);
         scn.MoveCardsToLSSideOfTable(scn.GetLSCard("combo"));
-        int printed = (int) trooper.getBlueprint().getPower();
-        scn.ApplyAdHocModifier(new com.gempukku.swccgo.logic.modifiers.PowerModifier(scn.GetDSCard("vader"), trooper, -1));
+        int printed = Math.round(trooper.getBlueprint().getPower());
+        scn.ApplyAdHocModifier(new com.gempukku.swccgo.logic.modifiers.PowerModifier(scn.GetLSCard("combo"), trooper, -1));
         assertEquals(printed - 1, scn.GetPower(trooper));
     }
 
@@ -284,7 +284,7 @@ public class Card_1261_079_Tests {
         var elsewhere = scn.GetLSStartingLocation();
         scn.MoveLocationToTable(backDoor);
         scn.MoveCardsToLSHand(chewie);
-        int printed = (int) chewie.getBlueprint().getDeployCost();
+        int printed = Math.round(chewie.getBlueprint().getDeployCost());
         assertEquals(printed - 2, deployCostTo(scn, chewie, backDoor));
         assertEquals(printed, deployCostTo(scn, chewie, elsewhere));
         scn.MoveCardsToLSSideOfTable(scn.GetLSCard("combo"));
