@@ -47,12 +47,13 @@ public class Card_1261_045_Tests {
         var card = scn.GetDSCard(name);
         // Use the engine's complete loss pipeline and its real just-lost event, not a direct zone swap.
         scn.DSExecuteAdHocEffect(card, new LoseCardFromTableEffect(new TopLevelGameTextAction(card, card.getCardId()), card));
+        scn.PassResponses("ABOUT_TO_BE_LOST_FROM_TABLE");
     }
 
     private void recover(String lost, String counterpart) {
         var scn = lossSetup(lost, counterpart, true); var card = scn.GetDSCard(lost); var spot = scn.GetDSCard("spot");
         int force = scn.GetDSForcePileCount(); lose(scn, lost);
-        assertTrue("Just-lost response must offer the Interrupt", playable(scn)); scn.DSPlayCard(spot); scn.PassAllResponses();
+        assertTrue("Just-lost response must offer the Interrupt; current=" + scn.GetCurrentDecision().getText() + " lostZone=" + card.getZone(), playable(scn)); scn.DSPlayCard(spot); scn.PassAllResponses();
         com.gempukku.swccgo.framework.Assertions.assertInZone(Zone.USED_PILE, card);
         com.gempukku.swccgo.framework.Assertions.assertInZone(Zone.USED_PILE, spot);
         assertEquals(force, scn.GetDSForcePileCount()); assertEquals(Zone.AT_LOCATION, scn.GetDSCard(counterpart).getZone());
@@ -63,10 +64,11 @@ public class Card_1261_045_Tests {
 
     @Test public void OneBrightSpotActuallyRecoversGalenAfterForfeitWithJunoOnTable() {
         var scn = lossSetup("galen", "juno", true); var site = scn.GetDSStartingLocation(); var galen = scn.GetDSCard("galen");
-        scn.MoveCardsToLocation(site, scn.GetLSCard("obiwan"), scn.GetLSCard("han")); scn.DSStartBattleAndSkipToWeaponsSegment(site);
+        scn.MoveCardsToLocation(site, scn.GetLSCard("obiwan")); scn.DSStartBattleAndSkipToWeaponsSegment(site);
         scn.PrepareDSDestiny(0); scn.PrepareLSDestiny(6); scn.SkipToDamageSegment(true); scn.PassDamageSegmentActions();
         scn.DSPayRemainingBattleDamageFromReserveDeck(); scn.PassAllResponses(); assertTrue(scn.AwaitingDSAttritionPayment());
-        scn.DSChooseCard(galen); assertTrue("Forfeit must preserve just-lost recovery window", playable(scn));
+        scn.DSChooseCard(galen); scn.PassResponses("ABOUT_TO_BE_FORFEITED_TO_FROM_TABLE");
+        assertTrue("Forfeit must preserve just-lost recovery window; current=" + scn.GetCurrentDecision().getText(), playable(scn));
         scn.DSPlayCard(scn.GetDSCard("spot")); scn.PassAllResponses();
         com.gempukku.swccgo.framework.Assertions.assertInZone(Zone.USED_PILE, galen);
     }
@@ -97,17 +99,17 @@ public class Card_1261_045_Tests {
         var scn = scenario(); scn.StartGame(); var site = scn.GetDSStartingLocation();
         scn.MoveCardsToDSHand(scn.GetDSCard("spot"));
         if (galenInHand) scn.MoveCardsToDSHand(scn.GetDSCard("galen"));
-        scn.MoveCardsToLocation(site, scn.GetLSCard("obiwan"), scn.GetLSCard("han"));
+        scn.MoveCardsToLocation(site, scn.GetLSCard("obiwan"));
         if (junoInBattle) scn.MoveCardsToLocation(site, scn.GetDSCard("juno"));
         else { scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetDSCard("juno")); scn.MoveCardsToLocation(site, scn.GetDSCard("officer")); }
-        if (galenOnTable) scn.MoveCardsToLocation(site, scn.GetDSCard("galen"));
+        if (galenOnTable) scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetDSCard("galen"));
         scn.DSStartBattleAndSkipToWeaponsSegment(site); scn.PrepareDSDestiny(0); scn.PrepareLSDestiny(6);
         scn.SkipToDamageSegment(true); scn.PassDamageSegmentActions(); return scn;
     }
 
     @Test public void OneBrightSpotLosesGalenFromHandAndActuallySatisfiesBothDamageAndAttrition() {
         var scn = damage(true, true, false); var galen = scn.GetDSCard("galen"); var spot = scn.GetDSCard("spot");
-        assertTrue(scn.GetUnpaidDSBattleDamage() > 0); assertTrue(scn.GetUnpaidDSAttrition() > 0);
+        assertTrue("Expected real damage; current=" + scn.GetCurrentDecision().getText(), scn.GetUnpaidDSBattleDamage() > 0); assertTrue("Expected real attrition; current=" + scn.GetCurrentDecision().getText(), scn.GetUnpaidDSAttrition() > 0);
         assertTrue(playable(scn)); int force = scn.GetDSForcePileCount(); scn.DSPlayCard(spot);
         if (scn.DSHasCardChoiceAvailable(galen)) scn.DSChooseCard(galen); scn.PassAllResponses();
         com.gempukku.swccgo.framework.Assertions.assertInZone(Zone.LOST_PILE, galen);
@@ -118,17 +120,17 @@ public class Card_1261_045_Tests {
     }
 
     @Test public void OneBrightSpotRequiresGalenActuallyInHandForDamagePayment() {
-        var scn = damage(true, false, false); assertTrue(scn.GetUnpaidDSBattleDamage() > 0); assertTrue(scn.GetUnpaidDSAttrition() > 0);
+        var scn = damage(true, false, false); assertTrue("Expected real damage; current=" + scn.GetCurrentDecision().getText(), scn.GetUnpaidDSBattleDamage() > 0); assertTrue("Expected real attrition; current=" + scn.GetCurrentDecision().getText(), scn.GetUnpaidDSAttrition() > 0);
         assertFalse(playable(scn)); assertEquals(Zone.AT_LOCATION, scn.GetDSCard("juno").getZone());
     }
 
     @Test public void OneBrightSpotGalenOnTableCannotPayHandCardCost() {
-        var scn = damage(true, false, true); assertTrue(scn.GetUnpaidDSBattleDamage() > 0); assertTrue(scn.GetUnpaidDSAttrition() > 0);
+        var scn = damage(true, false, true); assertTrue("Expected real damage; current=" + scn.GetCurrentDecision().getText(), scn.GetUnpaidDSBattleDamage() > 0); assertTrue("Expected real attrition; current=" + scn.GetCurrentDecision().getText(), scn.GetUnpaidDSAttrition() > 0);
         assertFalse(playable(scn)); assertEquals(Zone.AT_LOCATION, scn.GetDSCard("galen").getZone());
     }
 
     @Test public void OneBrightSpotJunoAtAnotherSiteDoesNotEnableDamageMode() {
-        var scn = damage(false, true, false); assertTrue(scn.GetUnpaidDSBattleDamage() > 0); assertTrue(scn.GetUnpaidDSAttrition() > 0); assertFalse(playable(scn));
+        var scn = damage(false, true, false); assertTrue("Expected real damage; current=" + scn.GetCurrentDecision().getText(), scn.GetUnpaidDSBattleDamage() > 0); assertTrue("Expected real attrition; current=" + scn.GetCurrentDecision().getText(), scn.GetUnpaidDSAttrition() > 0); assertFalse(playable(scn));
         assertEquals(Zone.HAND, scn.GetDSCard("galen").getZone());
     }
 
