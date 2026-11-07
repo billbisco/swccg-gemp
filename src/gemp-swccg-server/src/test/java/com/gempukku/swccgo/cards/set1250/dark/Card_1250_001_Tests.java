@@ -20,18 +20,25 @@ public class Card_1250_001_Tests {
     private static final String BOOST = "Add 1 to this Force drain";
 
     private VirtualTableScenario scenario(boolean orderOnTable) {
-        var scn = new VirtualTableScenario(
-                new HashMap<>(Map.of("capital", "2_73", "rebel", "1_28")),
-                new HashMap<>(Map.ofEntries(Map.entry("order", "1250_1"), Map.entry("system", "1_289"),
+        return scenario(orderOnTable, false);
+    }
+
+    private VirtualTableScenario scenario(boolean orderOnTable, boolean withObjective) {
+        var light = new HashMap<>(Map.of("capital", "2_73"));
+        if (!withObjective) light.put("rebel", "1_28");
+        var dark = new HashMap<>(Map.ofEntries(Map.entry("order", "1250_1"), Map.entry("system", "1_289"),
                         Map.entry("cantina", "1_290"), Map.entry("capital", "1_301"),
                         Map.entry("trooper", "1_194"), Map.entry("presence", "14_69"), Map.entry("bespin", "5_164"),
                         Map.entry("sector", "5_165"), Map.entry("car", "5_178"), Map.entry("vaderShip", "1_306"),
                         Map.entry("freighter", "4_168"), Map.entry("bosskShip", "7_301"), Map.entry("scout", "1_305"),
-                        Map.entry("cantinaTrooper", "1_194"), Map.entry("objective", "7_296"))),
-                28, 28, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
+                        Map.entry("cantinaTrooper", "1_194")));
+        if (withObjective) dark.put("market", "12_176");
+        var scn = new VirtualTableScenario(light, dark, 28, 28, StartingSetup.DefaultLSGroundLocation,
+                withObjective ? StartingSetup.CarbonChamberObjective : StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
         scn.StartGame();
+        if (withObjective) scn.MoveLocationToTable(scn.GetDSCard("market"));
         for (String location : List.of("system", "cantina", "bespin", "sector")) {
             scn.MoveLocationToTable(scn.GetDSCard(location));
         }
@@ -142,11 +149,13 @@ public class Card_1250_001_Tests {
     }
 
     @Test public void NothingCanGetThroughOurShieldCannotBoostWithOwnObjectiveOnTable() {
-        var scn = scenario(true);
+        var scn = scenario(true, true);
         scn.MoveCardsToLocation(scn.GetDSCard("system"), scn.GetDSCard("capital"));
-        scn.MoveCardsToSideOfTable(scn.GetDSCard("objective"));
-        prepareDrainSites(scn);
-        drain(scn, scn.GetDSStartingLocation(), false, false, 1);
+        assertInZone(Zone.SIDE_OF_TABLE, scn.GetDSCard("testing"));
+        var market = scn.GetDSCard("market");
+        scn.MoveCardsToLocation(market, scn.GetDSCard("trooper"));
+        scn.SkipToPhase(Phase.CONTROL);
+        drain(scn, market, false, false, 1);
     }
 
     private void prepareDrainSites(VirtualTableScenario scn) {
