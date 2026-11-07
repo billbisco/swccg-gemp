@@ -22,7 +22,7 @@ public class Card_1240_048_Tests {
             put("corvette2", "1_140"); put("cannon2", "1_159");
         }}, new HashMap<>() {{
             put("rebels", "1240_48"); put("stinger", "10_49"); put("virago", "10_54");
-            put("dread", "106_13"); put("sector", "4_155");
+            put("dread", "106_13"); put("sector", "5_165");
         }}, 40, 40, StartingSetup.DefaultLSSpaceSystem, StartingSetup.DefaultDSSpaceSystem,
                 StartingSetup.DeclineLSStartingInterrupt, StartingSetup.DeclineDSStartingInterrupt,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -236,6 +236,7 @@ public class Card_1240_048_Tests {
     }
 
     @Test public void ThoseRebelsWontEscapeUsProtectsBothNamedFightersButNotOtherShipAtSystem() { ProtectedWeaponTargets(false); }
+    @Test public void ThoseRebelsWontEscapeUsProtectsBothNamedFightersAtSector() { ProtectedWeaponTargets(true); }
 
     private void ProtectOnlyNamedFighter(String name) {
         var scn = BattleReady(true, true, false, true, name);
@@ -368,7 +369,7 @@ public class Card_1240_048_Tests {
     }
 
     @Test
-    public void ThoseRebelsWontEscapeUsProtectionPersistsIntoAnotherBattleDuringSameTurn() {
+    public void ThoseRebelsWontEscapeUsDoesNotProtectAStarfighterAtAnotherSystem() {
         var scn = Ready(true, Phase.CONTROL);
         var first = scn.GetDSStartingLocation();
         var second = scn.GetLSStartingLocation();
@@ -395,11 +396,11 @@ public class Card_1240_048_Tests {
         assertTrue(scn.LSCardActionAvailable(scn.GetLSCard("cannon2"), "Fire"));
         scn.PrepareLSDestiny(7);
         scn.LSUseCardAction(scn.GetLSCard("cannon2"), "Fire");
-        assertFalse(IsSelectable(scn, scn.LS, scn.GetDSCard("virago")));
+        // Only the Stinger at the first battle was protected; this Virago was elsewhere when it was played.
+        assertTrue(IsSelectable(scn, scn.LS, scn.GetDSCard("virago")));
         assertTrue(IsSelectable(scn, scn.LS, scn.GetDSCard("dread")));
-        scn.LSChooseCard(scn.GetDSCard("dread"));
+        scn.LSChooseCard(scn.GetDSCard("virago"));
         scn.PassAllResponses();
-        assertTrue(scn.GetDSCard("dread").isHit());
-        assertFalse(scn.GetDSCard("virago").isHit());
+        assertTrue(scn.GetDSCard("virago").isHit());
     }
 }

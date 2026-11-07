@@ -13,6 +13,7 @@ import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
+import com.gempukku.swccgo.logic.GameUtils;
 import com.gempukku.swccgo.logic.TriggerConditions;
 import com.gempukku.swccgo.logic.actions.CancelCardActionBuilder;
 import com.gempukku.swccgo.logic.actions.PlayInterruptAction;
@@ -20,11 +21,12 @@ import com.gempukku.swccgo.logic.effects.AddUntilEndOfTurnModifierEffect;
 import com.gempukku.swccgo.logic.effects.RespondablePlayCardEffect;
 import com.gempukku.swccgo.logic.effects.UseForceEffect;
 import com.gempukku.swccgo.logic.effects.choose.TakeCardIntoHandFromReserveDeckEffect;
-import com.gempukku.swccgo.logic.modifiers.MayNotBeTargetedByModifier;
+import com.gempukku.swccgo.logic.modifiers.MayNotBeTargetedByWeaponsModifier;
 import com.gempukku.swccgo.logic.timing.Action;
 import com.gempukku.swccgo.logic.timing.Effect;
 import com.gempukku.swccgo.logic.timing.EffectResult;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -62,18 +64,23 @@ public class Card1240_048 extends AbstractUsedInterrupt {
         Filter stingerOrVirago = Filters.or(Filters.title("Stinger"), Filters.title("Virago"));
 
         if (TriggerConditions.battleInitiatedAt(game, effectResult, opponent, Filters.sameSystemOrSectorAs(self, stingerOrVirago))) {
+            // "Those starfighters": the Stinger and Virago at the battle's system or sector when this is played.
+            PhysicalCard battleLocation = game.getGameState().getBattleLocation();
+            final Collection<PhysicalCard> those = battleLocation == null ? Collections.emptyList()
+                    : Filters.filterActive(game, self, Filters.and(stingerOrVirago, Filters.atLocation(battleLocation)));
+            if (those.isEmpty()) {
+                return null;
+            }
             final PlayInterruptAction action = new PlayInterruptAction(game, self);
             action.setText("Protect Stinger and Virago from weapons");
-            action.allowResponses("Prevent opponent from targeting Stinger or Virago with weapons for remainder of turn",
+            action.allowResponses("Prevent opponent from targeting " + GameUtils.getAppendedNames(those) + " with weapons for remainder of turn",
                     new RespondablePlayCardEffect(action) {
                         @Override
                         protected void performActionResults(Action targetingAction) {
                             action.appendEffect(
                                     new AddUntilEndOfTurnModifierEffect(action,
-                                            new MayNotBeTargetedByModifier(self,
-                                                    Filters.or(Filters.title("Stinger"), Filters.title("Virago")),
-                                                    Filters.and(Filters.opponents(self), Filters.weapon)),
-                                            "Stinger and Virago may not be targeted by weapons"));
+                                            new MayNotBeTargetedByWeaponsModifier(self, Filters.in(those)),
+                                            GameUtils.getAppendedNames(those) + " may not be targeted by weapons"));
                         }
                     }
             );

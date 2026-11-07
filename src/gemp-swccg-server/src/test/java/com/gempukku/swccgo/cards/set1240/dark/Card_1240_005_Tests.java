@@ -42,7 +42,7 @@ public class Card_1240_005_Tests {
                         Map.entry("punishing", "4_171"), Map.entry("ig", "4_169"),
                         Map.entry("capital", "1_302"), Map.entry("system", "1_289"),
                         Map.entry("otherSystem", "1_288"), Map.entry("related", "1_293"),
-                        Map.entry("garindan", "1_177"), Map.entry("junk", "1_249"))),
+                        Map.entry("garindan", "1_177"), Map.entry("junk", "1_249"), Map.entry("tie", "1_303"))),
                 15, 15, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.DeclineLSStartingInterrupt, StartingSetup.DeclineDSStartingInterrupt,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -117,6 +117,36 @@ public class Card_1240_005_Tests {
         assertInZone(Zone.LOST_PILE, hunter, punishing);
         assertAtLocation(system, pulsar, ship);
         assertInHand(ig);
+    }
+
+    @Test
+    public void GrandAdmiralThrawnMakesYourIndependentStarshipDeployedLaterLostButNotOthers() {
+        // Mist Hunter (no permanent pilot) cannot deploy unpiloted here, so it arrives by cheat while Thrawn is on
+        // table; the next table change (a TIE Advanced x1 deploying) makes it lost while the TIE stays.
+        var scn = scenario();
+        var system = scn.GetDSCard("system");
+        var ship = scn.GetDSCard("devastator");
+        var hunter = scn.GetDSCard("hunter");
+        var tie = scn.GetDSCard("tie");
+        scn.StartGame();
+        scn.MoveLocationToTable(system);
+        scn.MoveCardsToLocation(system, ship);
+        attachPilot(scn, scn.GetDSCard("thrawn"), ship);
+        scn.MoveCardsToDSHand(tie);
+        scn.SkipToDSTurn(Phase.CONTROL);
+        scn.EnsureDSForcePile(12);
+        scn.SkipToPhase(Phase.DEPLOY);
+        scn.MoveCardsToLocation(system, hunter);
+
+        scn.DSDeployCard(tie);
+        if (scn.DSHasCardChoiceAvailable(system)) scn.DSChooseCard(system);
+        passOptional(scn);
+        for (int i = 0; i < 4 && scn.DSDecisionAvailable("Choose card to be lost"); i++) {
+            scn.DSChooseCard(hunter);
+            passOptional(scn);
+        }
+        assertInZone(Zone.LOST_PILE, hunter);
+        assertAtLocation(system, tie, ship);
     }
 
     @Test

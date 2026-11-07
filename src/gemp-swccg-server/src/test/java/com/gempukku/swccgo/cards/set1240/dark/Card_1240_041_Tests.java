@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.gempukku.swccgo.framework.Assertions.assertAtLocation;
 import static com.gempukku.swccgo.framework.Assertions.assertInZone;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -33,11 +34,12 @@ public class Card_1240_041_Tests {
         return new VirtualTableScenario(new HashMap<>(Map.ofEntries(
                 Map.entry("han", "1_11"), Map.entry("remote", "1_28"), Map.entry("luke", "1_19"),
                 Map.entry("crawler", "1_150"), Map.entry("speeder", "1_149"), Map.entry("redThree", "1_145"),
-                Map.entry("computer", "1_39"), Map.entry("sense", "1_109"))),
+                Map.entry("computer", "1_39"), Map.entry("sense", "1_109"), Map.entry("flaps", "1261_82"))),
                 new HashMap<>(Map.ofEntries(
                         Map.entry("effect", "1240_41"), Map.entry("vader", "1_168"), Map.entry("galen", "601_81"),
                         Map.entry("trooper", "1_181"), Map.entry("parry", "11_83"), Map.entry("orders", "106_17"),
-                        Map.entry("conflict", "11_88"), Map.entry("other", "1_249"))),
+                        Map.entry("conflict", "11_88"), Map.entry("other", "1_249"),
+                        Map.entry("system", "1_289"), Map.entry("tie", "1_303"), Map.entry("bay", "1_291"))),
                 12, 12, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.DeclineLSStartingInterrupt, StartingSetup.DeclineDSStartingInterrupt,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -51,11 +53,11 @@ public class Card_1240_041_Tests {
         assertEquals(Uniqueness.UNIQUE, card.getUniqueness());
         assertFalse(card.hasVirtualSuffix());
         assertEquals(Side.DARK, card.getSide());
-        assertTrue(card.getCardTypes().contains(CardType.EFFECT));
+        assertTrue(card.getCardTypes().contains(CardType.EPIC_EVENT));
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_4, card.getExpansionSet());
         assertEquals(Rarity.V, card.getRarity());
         assertEquals(0, card.getDestiny(), scn.epsilon);
-        scn.BlueprintIconCheck(card, new ArrayList<>(List.of(Icon.EFFECT, Icon.CLOUD_CITY, Icon.LEGACY_BLOCK_4)));
+        scn.BlueprintIconCheck(card, new ArrayList<>(List.of(Icon.EPIC_EVENT, Icon.CLOUD_CITY, Icon.LEGACY_BLOCK_4)));
         scn.BlueprintKeywordCheck(card, new ArrayList<>());
     }
 
@@ -124,6 +126,63 @@ public class Card_1240_041_Tests {
         assertTrue(scn.GetDSUsedPile().contains(parry));
     }
 
+
+    @Test
+    public void TheForceUnleashedThrowRespectsManeuveringFlapsButStillAddsPrintedDefense() {
+        var scn = scenario();
+        scn.StartGame();
+        var site = scn.GetDSStartingLocation();
+        var speeder = scn.GetLSCard("speeder");
+        var luke = scn.GetLSCard("luke");
+        scn.MoveCardsToDSSideOfTable(scn.GetDSCard("effect"));
+        scn.MoveCardsToLSSideOfTable(scn.GetLSCard("flaps"));
+        scn.MoveCardsToLocation(site, scn.GetDSCard("vader"), scn.GetDSCard("trooper"), speeder);
+        scn.RemoveCardZone(luke);
+        scn.gameState().attachCardInPilotCapacitySlot(luke, speeder);
+        scn.MoveCardsToDSHand(scn.GetDSCard("parry"));
+        scn.DSActivateForceCheat(2);
+        scn.DSStartBattleAndSkipToWeaponsSegment(site);
+        int power = scn.GetDSTotalPower();
+        scn.PrepareDSDestiny(3);
+        scn.DSUseCardAction(scn.GetDSCard("parry"), THROW);
+        scn.DSChooseCard(speeder);
+        passOptional(scn);
+
+        assertFalse(speeder.isHit());
+        assertAtLocation(site, speeder);
+        // Luke's X-34 Landspeeder: printed maneuver 5.
+        assertEquals(power + 5, scn.GetDSTotalPower());
+    }
+
+    @Test
+    public void TheForceUnleashedThrowsAnOpponentsLandedStarship() {
+        // Vader must be "present": a pilot aboard a starship at a system is not present there, so the starship
+        // case is a starship landed at a docking bay where Vader is present.
+        var scn = scenario();
+        scn.StartGame();
+        var bay = scn.GetDSCard("bay");
+        var vader = scn.GetDSCard("vader");
+        var redThree = scn.GetLSCard("redThree");
+        var luke = scn.GetLSCard("luke");
+        scn.MoveLocationToTable(bay);
+        scn.MoveCardsToDSSideOfTable(scn.GetDSCard("effect"));
+        scn.MoveCardsToLocation(bay, vader, scn.GetDSCard("trooper"), redThree);
+        scn.RemoveCardZone(luke);
+        scn.gameState().attachCardInPilotCapacitySlot(luke, redThree);
+        scn.MoveCardsToDSHand(scn.GetDSCard("orders"));
+        scn.DSActivateForceCheat(2);
+        scn.DSStartBattleAndSkipToWeaponsSegment(bay);
+        int power = scn.GetDSTotalPower();
+        scn.PrepareDSDestiny(3);
+        assertTrue(scn.DSCardActionAvailable(scn.GetDSCard("orders"), THROW));
+        scn.DSUseCardAction(scn.GetDSCard("orders"), THROW);
+        scn.DSChooseCard(redThree);
+        passOptional(scn);
+
+        assertTrue(redThree.isHit());
+        // Red 3: printed maneuver 4, no armor.
+        assertEquals(power + 4, scn.GetDSTotalPower());
+    }
 
     @Test
     public void TheForceUnleashedChokesOnlyWhenDestinyExceedsAbility() {

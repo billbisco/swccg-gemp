@@ -215,8 +215,8 @@ public class Card_1240_037_Tests {
     }
 
     @Test
-    public void DuelingMaraAddsExactlyOneActualBattleDestinyAfterDeepHatredLeaves() {
-        for (boolean light : List.of(false)) {
+    public void EitherSidesDuelingMaraAddsExactlyOneActualBattleDestinyAfterDeepHatredLeaves() {
+        for (boolean light : List.of(false, true)) {
             var scn = aftermathBattle(light);
             scn.SkipToEndOfPowerSegment(true);
             assertEquals(light ? 2 : 1, scn.GetLSBattleDestinyCount());
@@ -225,39 +225,39 @@ public class Card_1240_037_Tests {
     }
 
     @Test
-    public void DuelingMaraCancelsOneActualDestinyPerBattle() {
-        for (boolean light : List.of(false)) {
+    public void EitherSidesDuelingMaraCancelsOneActualDestinyPerBattle() {
+        for (boolean light : List.of(false, true)) {
             var scn = aftermathBattle(light);
             var mara = scn.GetDSCard("mara");
             String player = light ? scn.LS : scn.DS;
             scn.SkipToPowerSegment();
-            assertTrue(scn.DecisionAvailable(player, "battle destiny?"));
-            scn.PlayerChooseYes(player);
-            passUntilAction(scn, player, mara, CANCEL_DESTINY);
-            if (light) scn.LSUseCardAction(mara, CANCEL_DESTINY);
-            else scn.DSUseCardAction(mara, CANCEL_DESTINY);
-
+            boolean used = false;
             boolean laterDestinyWindow = false;
-            boolean remainingPlayerChoseToDraw = false;
-            for (int i = 0; i < 50; i++) {
+            for (int i = 0; i < 80; i++) {
                 String decision = scn.GetCurrentDecision().getText();
                 if (decision.contains("INITIAL_ATTRITION_CALCULATED")) break;
                 if (decision.contains("battle destiny?")) {
-                    remainingPlayerChoseToDraw = true;
                     scn.PlayerChooseYes(scn.GetDecidingPlayer());
                 } else if (decision.toLowerCase().contains("optional response")) {
-                    if (remainingPlayerChoseToDraw && decision.contains("DESTINY_DRAWN")) {
+                    boolean mine = scn.GetDecidingPlayer().equals(player) && scn.GetADParam(player, "actionText") != null;
+                    boolean offered = mine && scn.ActionAvailable(player, mara, CANCEL_DESTINY);
+                    if (!used && offered) {
+                        if (light) scn.LSUseCardAction(mara, CANCEL_DESTINY);
+                        else scn.DSUseCardAction(mara, CANCEL_DESTINY);
+                        used = true;
+                        continue;
+                    }
+                    if (used && mine && decision.contains("DESTINY")) {
                         laterDestinyWindow = true;
-                        if (scn.GetDecidingPlayer().equals(player)) {
-                            assertFalse(scn.ActionAvailable(player, mara, CANCEL_DESTINY));
-                        }
+                        assertFalse("Only once per battle", offered);
                     }
                     scn.PlayerPass(scn.GetDecidingPlayer());
                 } else {
                     throw new AssertionError("Unexpected battle decision: " + decision);
                 }
             }
-            assertTrue("Opponent's actual subsequent destiny must have a response window", laterDestinyWindow);
+            assertTrue((light ? "Light" : "Dark") + " Mara's cancel must be offered", used);
+            assertTrue("A later destiny must have a response window", laterDestinyWindow);
         }
     }
 
@@ -272,9 +272,10 @@ public class Card_1240_037_Tests {
         scn.MoveOutOfPlay(scn.GetDSCard("deep"));
         var site = scn.GetDSStartingLocation();
         if (light) {
+            // Still the Dark Side's turn: Vader battles the Light Side Mara (and Luke) right away, no turn skip.
             scn.MoveCardsToLocation(site, scn.GetDSCard("vader"));
-            scn.EnsureLSForcePile(1);
-            scn.LSStartBattleAndSkipToWeaponsSegment(site);
+            scn.EnsureDSForcePile(1);
+            scn.DSStartBattleAndSkipToWeaponsSegment(site);
         } else {
             scn.MoveCardsToLocation(site, scn.GetLSCard("obi"));
             scn.EnsureDSForcePile(1);

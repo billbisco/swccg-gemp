@@ -1,6 +1,6 @@
 package com.gempukku.swccgo.cards.set1240.dark;
 
-import com.gempukku.swccgo.cards.AbstractNormalEffect;
+import com.gempukku.swccgo.cards.AbstractEpicEventDeployable;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.common.CardSubtype;
 import com.gempukku.swccgo.common.ExpansionSet;
@@ -24,6 +24,7 @@ import com.gempukku.swccgo.logic.effects.ModifyTotalPowerUntilEndOfBattleEffect;
 import com.gempukku.swccgo.logic.effects.PlayoutDecisionEffect;
 import com.gempukku.swccgo.logic.effects.RespondablePlayCardEffect;
 import com.gempukku.swccgo.logic.effects.TargetCardOnTableEffect;
+import com.gempukku.swccgo.logic.effects.ThrowCardEffect;
 import com.gempukku.swccgo.logic.effects.choose.ChooseCardOnTableEffect;
 import com.gempukku.swccgo.logic.modifiers.LegacyMayPlayInterruptAsModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
@@ -38,14 +39,13 @@ import java.util.List;
  * Type: Effect
  * Title: The Force Unleashed
  */
-public class Card1240_041 extends AbstractNormalEffect {
+public class Card1240_041 extends AbstractEpicEventDeployable {
     private static final String CHOKE = "Choke";
     private static final String DRAIN = "Drain of life";
 
     public Card1240_041() {
-        super(Side.DARK, 0, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "The Force Unleashed",
-                Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_4, Rarity.V);
-        setLore("");
+        super(Side.DARK, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "The Force Unleashed", Uniqueness.UNIQUE,
+                ExpansionSet.VIRTUAL_BLOCK_4, Rarity.V);
         setGameText("Deploy on table. During battle, you may play Lightsaber Parry, Tarkin's Orders, and There Is No Conflict as follows: 'If Vader or Galen present: USED: Target a vehicle or starship present. Draw destiny. If destiny > 2, target 'thrown' (hit and adds its printed defense value to your total power). LOST: Target opponent's character present and choose (then draw destiny): If destiny > ability, target 'choked' (lost). OR If destiny +1 > ability, target 'drained of life' (hit and opponent loses 2 Force).'");
         addIcons(Icon.CLOUD_CITY);
         setAsLegacy(true);
@@ -123,7 +123,9 @@ public class Card1240_041 extends AbstractNormalEffect {
                             protected void destinyDraws(SwccgGame game, List<PhysicalCard> cards,
                                                          List<Float> values, Float total) {
                                 if (total != null && total > 2) {
-                                    action.appendEffect(new HitCardEffect(action, target, interrupt));
+                                    // 'Thrown': hit unless something says it is not hit when 'thrown' (Maneuvering Flaps);
+                                    // its printed defense value is added either way.
+                                    action.appendEffect(new ThrowCardEffect(action, target, interrupt));
                                     action.appendEffect(new ModifyTotalPowerUntilEndOfBattleEffect(action,
                                             printedDefense(target), playerId,
                                             "Add the thrown card's printed defense value to total power"));

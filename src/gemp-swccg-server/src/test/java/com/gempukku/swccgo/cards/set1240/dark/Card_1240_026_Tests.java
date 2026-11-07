@@ -66,11 +66,16 @@ public class Card_1240_026_Tests {
     }
 
     private VirtualTableScenario Ready() {
+        return Ready(new String[0]);
+    }
+
+    private VirtualTableScenario Ready(String... extraLightHand) {
         var scn = GetScenario();
         scn.StartGame();
         scn.SkipToLSTurn(Phase.ACTIVATE);
         scn.MoveCardsToDSHand(scn.GetDSCard("he"), scn.GetDSCard("he2"));
         scn.MoveCardsToLSHand(scn.GetLSCard("lando"), scn.GetLSCard("chewie"), scn.GetLSCard("luke"), scn.GetLSCard("leia"));
+        for (String key : extraLightHand) scn.MoveCardsToLSHand(scn.GetLSCard(key));
         scn.EnsureLSForcePile(12);
         scn.EnsureDSForcePile(10);
         scn.SkipToPhase(Phase.DEPLOY);
@@ -509,6 +514,29 @@ public class Card_1240_026_Tests {
         assertInZone(Zone.LOST_PILE, scn.GetDSCard("trooper"));
         assertEquals(1, scn.GetDSLostPileCount());
         assertEquals(reserve, scn.GetDSReserveDeckCount());
+    }
+
+    @Test
+    public void HeIsNotReadyCannotBeCanceledByControlButAnotherImmediateEffectCan() {
+        var scn = Ready("control");
+        Attach(scn, "lando");
+        PayInitialLoss(scn);
+        var control = scn.GetLSCard("control");
+        var bombing = scn.GetDSCard("bombing");
+        if (scn.GetADParam(scn.LS, "actionText") != null) {
+            assertFalse(scn.LSCardPlayAvailable(control));
+        }
+        // Positive control: a non-immune Immediate Effect on table can be canceled by the same Control.
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), bombing);
+        scn.SkipToPhase(Phase.BATTLE);
+        if (!scn.LSDecisionAvailable("Battle action")) scn.PlayerPass(scn.GetDecidingPlayer());
+        assertTrue(scn.LSCardPlayAvailable(control));
+        scn.LSPlayCard(control);
+        assertFalse(scn.LSHasCardChoiceAvailable(scn.GetDSCard("he")));
+        if (scn.LSHasCardChoiceAvailable(bombing)) scn.LSChooseCard(bombing);
+        passOptional(scn);
+        assertInZone(Zone.LOST_PILE, bombing);
+        assertEquals(scn.GetLSCard("lando"), scn.GetDSCard("he").getAttachedTo());
     }
 
     /** Passes every pending optional-response window (PassAllResponses stops after 20), then any remaining responses. */
