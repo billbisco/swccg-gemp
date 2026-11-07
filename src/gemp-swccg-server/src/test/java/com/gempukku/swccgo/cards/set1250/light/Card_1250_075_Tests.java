@@ -112,10 +112,9 @@ public class Card_1250_075_Tests {
     @Test
     public void ActualForestDeploymentLosesNudjsAtBothOtherSitesButNotAnotherCreature() {
         var s = scenario(); s.StartGame(); var plains = s.GetLSCard("plains"); var bog = s.GetLSCard("bog");
-        s.SkipToLSTurn(Phase.CONTROL);
+        var forest = s.GetLSCard("forest"); s.MoveCardsToHand(forest); s.SkipToLSTurn(Phase.DEPLOY);
         s.MoveLocationToTable(plains); s.MoveLocationToTable(bog);
         s.MoveCardsToLocation(plains, s.GetLSCard("nudj")); s.MoveCardsToLocation(bog, s.GetLSCard("second"), s.GetLSCard("vine"));
-        var forest = s.GetLSCard("forest"); s.MoveCardsToHand(forest); s.SkipToPhase(Phase.DEPLOY);
         s.LSDeployLocation(forest); s.PassAllResponses();
         if (s.LSDecisionAvailable("Choose card to put on Lost Pile")) s.LSChooseCard(s.GetLSCard("nudj"));
         if (s.LSDecisionAvailable("Choose card to put on Lost Pile")) s.LSChooseCard(s.GetLSCard("second"));
