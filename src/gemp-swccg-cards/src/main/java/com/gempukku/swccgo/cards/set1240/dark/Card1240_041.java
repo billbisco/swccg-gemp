@@ -57,6 +57,7 @@ public class Card1240_041 extends AbstractNormalEffect {
                 Filters.or(Filters.title("Lightsaber Parry"), Filters.title("Tarkin's Orders"),
                         Filters.title("There Is No Conflict")));
         return List.of(
+                // Both grants come from this card, so they must be cumulative or only one of them would apply.
                 new LegacyMayPlayInterruptAsModifier(self, interrupts, CardSubtype.USED,
                         new LegacyMayPlayInterruptAsModifier.PlayMode() {
                             @Override
@@ -64,7 +65,12 @@ public class Card1240_041 extends AbstractNormalEffect {
                                                                     PhysicalCard source, PhysicalCard interrupt) {
                                 return createThrow(playerId, game, source, interrupt);
                             }
-                        }),
+                        }) {
+                    @Override
+                    public boolean isCumulative() {
+                        return true;
+                    }
+                },
                 new LegacyMayPlayInterruptAsModifier(self, interrupts, CardSubtype.LOST,
                         new LegacyMayPlayInterruptAsModifier.PlayMode() {
                             @Override
@@ -72,7 +78,12 @@ public class Card1240_041 extends AbstractNormalEffect {
                                                                     PhysicalCard source, PhysicalCard interrupt) {
                                 return createCharacterPlay(playerId, game, source, interrupt);
                             }
-                        }));
+                        }) {
+                    @Override
+                    public boolean isCumulative() {
+                        return true;
+                    }
+                });
     }
 
     private static Filter presenceInBattle(String playerId, SwccgGame game, PhysicalCard source) {

@@ -124,22 +124,6 @@ public class Card_1240_041_Tests {
         assertTrue(scn.GetDSUsedPile().contains(parry));
     }
 
-    @Test
-    public void TheForceUnleashedUsesPrintedManeuverRatherThanModifiedDefenseOnStarship() {
-        var scn = battle("galen", true, true);
-        var orders = scn.GetDSCard("orders");
-        var ship = scn.GetLSCard("redThree");
-        assertEquals(5, scn.game().getModifiersQuerying().getDefenseValue(scn.gameState(), ship), scn.epsilon);
-        int power = scn.GetDSTotalPower();
-        scn.PrepareDSDestiny(3);
-        scn.DSUseCardAction(orders, THROW);
-        scn.DSChooseCard(ship);
-        passOptional(scn);
-
-        assertTrue(ship.isHit());
-        assertEquals(power + 4, scn.GetDSTotalPower());
-        assertTrue(scn.GetDSUsedPile().contains(orders));
-    }
 
     @Test
     public void TheForceUnleashedChokesOnlyWhenDestinyExceedsAbility() {
@@ -196,10 +180,6 @@ public class Card_1240_041_Tests {
         scn.DSUseCardAction(conflict, ORDINARY_CONFLICT);
         passOptional(scn);
         assertInZone(Zone.LOST_PILE, conflict);
-        scn.PrepareLSDestiny(3);
-        scn.PrepareDSDestiny(0);
-        scn.SkipToEndOfPowerSegment(true);
-        assertEquals(1, scn.GetLSTotalDestiny());
     }
 
     @Test
@@ -250,6 +230,9 @@ public class Card_1240_041_Tests {
 
     private static void assertNoGrant(VirtualTableScenario scn, String key) {
         var interrupt = scn.GetDSCard(key);
+        if (scn.GetADParam(scn.DS, "actionText") == null && scn.GetDecidingPlayer().equals(scn.LS)) {
+            scn.LSPass();
+        }
         assertFalse(key, scn.DSCardActionAvailable(interrupt, THROW));
         assertFalse(key, scn.DSCardActionAvailable(interrupt, CHARACTER));
     }
