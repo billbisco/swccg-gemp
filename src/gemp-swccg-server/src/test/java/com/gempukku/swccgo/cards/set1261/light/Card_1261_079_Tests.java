@@ -49,12 +49,12 @@ public class Card_1261_079_Tests {
         scn.MoveCardsToLSHand(commander, luke, obi, combo);
         scn.SkipToLSTurn(Phase.DEPLOY); scn.EnsureLSForcePile(12);
         assertFalse(scn.LSCardPlayAvailable(commander));
-        assertEquals((int) commander.getBlueprint().getDeployCost() + 2, scn.GetDeployCost(commander));
+        assertEquals(commander.getBlueprint().getDeployCost().intValue() + 2, scn.GetDeployCost(commander));
         scn.LSPlayCard(combo); scn.PassAllResponses();
         assertEquals(Zone.SIDE_OF_TABLE, combo.getZone());
-        assertEquals((int) commander.getBlueprint().getDeployCost(), scn.GetDeployCost(commander));
-        assertEquals((int) luke.getBlueprint().getDeployCost() + 2, scn.GetDeployCost(luke));
-        assertEquals((int) obi.getBlueprint().getDeployCost() + 2, scn.GetDeployCost(obi));
+        assertEquals(commander.getBlueprint().getDeployCost().intValue(), scn.GetDeployCost(commander));
+        assertEquals(luke.getBlueprint().getDeployCost().intValue() + 2, scn.GetDeployCost(luke));
+        assertEquals(obi.getBlueprint().getDeployCost().intValue() + 2, scn.GetDeployCost(obi));
         if (scn.DSGetDecision() != null) scn.DSPass();
         assertTrue(scn.LSCardPlayAvailable(commander));
         scn.LSPlayCard(commander); scn.PassForceUseResponses(); scn.PassAllResponses();
