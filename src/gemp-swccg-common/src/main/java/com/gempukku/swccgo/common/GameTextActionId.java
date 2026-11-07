@@ -1773,8 +1773,6 @@ public enum GameTextActionId {
     LEGACY__OUT_OF_SOMEWHERE__DEPLOY_OR_RETRIEVE(true),
     LEGACY__SOLO_HAN__DEPLOY_OR_RETRIEVE(true),
     LEGACY__WARRIORS_COURAGE__DEPLOY_OR_RETRIEVE(true),
-    // Any card's attempt to 'operate' on a character (lets other cards recognize and respond to the attempt)
-    ANY_CARD__OPERATE_ON_CHARACTER,
     LEGACY__LOCAL_UPRISING__DEPLOY_SITE_OR_REBEL(true),
     LEGACY__LIBERATION__TAKE_ANY_CARD(true),
     LEGACY__TIE_AVENGER_V__DEPLOY_ASTROMECH_ABOARD(true),
@@ -1800,6 +1798,8 @@ public enum GameTextActionId {
     LEGACY__SENATOR_PADME_AMIDALA__DEPLOY_REBEL(true),
     LEGACY__MIND_WHAT_YOU_HAVE_LEARNED__DEPLOY_TO_DAGOBAH(true),
     LEGACY__FLAPS_NICK_OF_TIME__DEPLOY_MATCHING(true),
+    // Any card's attempt to 'operate' on a character (lets other cards recognize and respond to the attempt)
+    ANY_CARD__OPERATE_ON_CHARACTER,
     ;
 
     private boolean _searchCardPile;
