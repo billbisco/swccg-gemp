@@ -64,7 +64,7 @@ public class Card_1230_002_Tests {
             add(Keyword.LEADER);
         }});
         scn.BlueprintPersonaCheck(card, new ArrayList<>() {{
-
+            add(Persona.BIB);
         }});
         scn.BlueprintIconCheck(card, new ArrayList<>() {{
             add(Icon.ALIEN);
@@ -75,4 +75,77 @@ public class Card_1230_002_Tests {
         assertEquals(Rarity.V, card.getRarity());
     }
 
+    protected VirtualTableScenario GetPersonaScenario() {
+        return new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("luke", "1_19");
+                }},
+                new HashMap<>() {{
+                    put("bib", "1230_2");
+                    put("oldbib", "6_98");
+                    put("cavern", "6_165");
+                }},
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+    }
+
+    @Test
+    public void BibFortunaCountsAsBibForEntranceCavernDeployDiscount() {
+        var scn = GetPersonaScenario();
+        var bib = scn.GetDSCard("bib");
+        var cavern = scn.GetDSCard("cavern");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(cavern);
+        scn.MoveCardsToDSHand(bib);
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.EnsureDSForcePile(5);
+        int before = scn.GetDSForcePileCount();
+        assertTrue(scn.DSCardPlayAvailable(bib));
+        scn.DSPlayCard(bib);
+        scn.DSChooseCard(cavern);
+        scn.PassAllResponses();
+        assertEquals(cavern, bib.getAtLocation());
+        // Entrance Cavern: "Bib Fortuna deploys -3 here" (Filters.Bib = persona BIB): 3 - 3 = 0.
+        assertEquals(before, scn.GetDSForcePileCount());
+    }
+
+    @Test
+    public void BibFortunaMayDeployWhileNoOtherVersionIsOnTable() {
+        var scn = GetPersonaScenario();
+        var bib = scn.GetDSCard("bib");
+        var cavern = scn.GetDSCard("cavern");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(cavern);
+        scn.MoveCardsToDSHand(bib);
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.EnsureDSForcePile(8);
+        assertTrue(scn.DSCardPlayAvailable(bib, "Deploy"));
+    }
+
+    @Test
+    public void BibFortunaMayNotDeployWhileAnotherBibIsOnTable() {
+        var scn = GetPersonaScenario();
+        var bib = scn.GetDSCard("bib");
+        var oldbib = scn.GetDSCard("oldbib");
+        var cavern = scn.GetDSCard("cavern");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(cavern);
+        scn.MoveCardsToLocation(cavern, oldbib);
+        scn.MoveCardsToDSHand(bib);
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.EnsureDSForcePile(8);
+        assertFalse(scn.DSCardPlayAvailable(bib, "Deploy"));
+        // Same persona on table: only persona replacement is offered.
+        assertTrue(scn.DSCardPlayAvailable(bib, "Persona replace"));
+    }
 }

@@ -17,7 +17,7 @@ import java.util.Set;
  * same side. A Light Side card that makes "Light Side go first" makes its owner go first (Massassi Throne Room: you go
  * first); a Dark Side card makes its owner's opponent go first (Death Star: your opponent goes first). In a Light vs Dark
  * game both always name the Light Side seat, as before. When two cards name different players (both players started at
- * Death Star, or both at Massassi Throne Room) the claims cancel and the Dark Side seat goes first.
+ * Death Star, or both at Massassi Throne Room) the claims tie, and (Bill 2026-11-07) a coin toss decides who goes first.
  */
 public final class FirstTurn {
     private FirstTurn() {
@@ -31,7 +31,30 @@ public final class FirstTurn {
         Set<String> claims = claims(game);
         if (claims.size() == 1)
             return claims.iterator().next();
+        if (claims.size() > 1)
+            return coinTossWinner(gameState);
         return gameState.getDarkPlayer();
+    }
+
+    /**
+     * @return true when cards claim the first turn for both players, so a coin toss decides who goes first
+     */
+    public static boolean claimsTie(SwccgGame game) {
+        return claims(game).size() > 1;
+    }
+
+    /**
+     * Tosses the coin for a tie of first-turn claims, once per game, with the game's seeded random; later calls return
+     * the stored result. Parity of a whole 64-bit draw, as for the seating toss: the first nextBoolean() of nearby
+     * seeds is nearly constant.
+     */
+    private static String coinTossWinner(GameState gameState) {
+        String winner = gameState.getFirstTurnCoinTossWinner();
+        if (winner == null) {
+            winner = Long.bitCount(gameState.getRandom().nextLong()) % 2 == 1 ? gameState.getLightPlayer() : gameState.getDarkPlayer();
+            gameState.setFirstTurnCoinTossWinner(winner);
+        }
+        return winner;
     }
 
     /**

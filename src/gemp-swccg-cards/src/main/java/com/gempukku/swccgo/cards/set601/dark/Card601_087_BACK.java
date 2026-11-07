@@ -13,17 +13,13 @@ import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.SpotOverride;
 import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.filters.Filters;
-import com.gempukku.swccgo.game.AbstractActionProxy;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.TriggerConditions;
 import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
-import com.gempukku.swccgo.logic.actions.TriggerAction;
 import com.gempukku.swccgo.logic.conditions.TrueCondition;
-import com.gempukku.swccgo.logic.effects.AddUntilEndOfTurnActionProxyEffect;
 import com.gempukku.swccgo.logic.effects.FlipCardEffect;
-import com.gempukku.swccgo.logic.effects.LoseForceTargetingCardEffect;
 import com.gempukku.swccgo.logic.effects.RetrieveForceEffect;
 import com.gempukku.swccgo.logic.effects.UseForceEffect;
 import com.gempukku.swccgo.logic.effects.choose.TakeCardIntoHandFromReserveDeckEffect;
@@ -122,45 +118,14 @@ public class Card601_087_BACK extends AbstractObjective {
             return Collections.singletonList(action);
         }
 
-        GameTextActionId gameTextActionId = GameTextActionId.OTHER_CARD_ACTION_1;
         // Whenever a character hit by Galen's Lightsaber or Vader's Lightsaber leaves table, opponent loses 2 Force.
-        if (TriggerConditions.justHitBy(game, effectResult, Filters.and(Filters.opponents(self), Filters.character), Filters.or(Persona.GALENS_LIGHTSABER, Persona.VADERS_LIGHTSABER))) {
+        // Even if the hit character already left table: a character hit outside battle is also lost by rule in response
+        // to the same hit, and the owner may resolve that first (Bill, 2026-11-07: both apply).
+        if (TriggerConditions.justHitByEvenIfLeftTable(game, effectResult, Filters.and(Filters.opponents(self), Filters.character), Filters.or(Persona.GALENS_LIGHTSABER, Persona.VADERS_LIGHTSABER))) {
             PhysicalCard justHitCard = ((HitResult)effectResult).getCardHit();
 
             if (justHitCard != null) {
-                RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId, gameTextActionId);
-                action.skipInitialMessageAndAnimation();
-                action.setSingletonTrigger(true);
-                action.setActionMsg(null);
-
-                final int permCardIdSelf = self.getPermanentCardId();
-                final int permCardIdHitCharacter = justHitCard.getPermanentCardId();
-                action.appendEffect(new AddUntilEndOfTurnActionProxyEffect(action, new AbstractActionProxy() {
-                    @Override
-                    public List<TriggerAction> getRequiredAfterTriggers(SwccgGame game, EffectResult effectResult) {
-                        List<TriggerAction> actions1 = new LinkedList<TriggerAction>();
-
-                        //might need to check for being restored to normal
-
-                        PhysicalCard objective = game.findCardByPermanentId(permCardIdSelf);
-                        PhysicalCard hitCharacter = game.findCardByPermanentId(permCardIdHitCharacter);
-
-                        if (TriggerConditions.leavesTable(game, effectResult, Filters.samePermanentCardId(hitCharacter))) {
-                            // Own action id: the leave-table that loses the Force can also be the table change that flips
-                            // this objective, and two singleton triggers with the same id collapse into one.
-                            RequiredGameTextTriggerAction action1 = new RequiredGameTextTriggerAction(self, gameTextSourceCardId, GameTextActionId.LEGACY__HUNT_DOWN_V__HIT_CHARACTER_LEAVES_TABLE_LOSE_2_FORCE);
-                            action1.setPerformingPlayer(objective.getOwner());
-                            action1.setSingletonTrigger(true);
-                            action1.setText("Lose 2 Force");
-                            action1.setActionMsg("Lose 2 Force whenever a character hit by Galen's Lightsaber or Vader's Lightsaber leaves table");
-                            action1.appendEffect(new LoseForceTargetingCardEffect(action1, game.getOpponent(objective.getOwner()), 2, hitCharacter));
-                            actions1.add(action1);
-                        }
-                        return actions1;
-                    }
-                }));
-
-                actions.add(action);
+                actions.add(Card601_087.getHitCharacterLeavesTableTrigger(game, self, gameTextSourceCardId, justHitCard));
             }
         }
         return actions;

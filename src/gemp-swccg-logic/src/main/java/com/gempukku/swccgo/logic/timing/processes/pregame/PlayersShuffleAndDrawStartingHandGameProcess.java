@@ -69,8 +69,9 @@ public class PlayersShuffleAndDrawStartingHandGameProcess implements GameProcess
             String firstPlayer = FirstTurn.firstPlayer(game);
             gameState.setFirstPlayer(firstPlayer);
             if (gameState.isSameSideGame()) {
-                if (FirstTurn.claims(game).size() > 1)
-                    gameState.sendMessage("Both players' cards claim the first turn; they cancel, so the Dark Side seat goes first");
+                if (FirstTurn.claimsTie(game))
+                    gameState.sendMessage("Both players' cards claim the first turn and the claims tie; a coin toss decides who goes first: "
+                            + firstPlayer + " wins the toss");
                 gameState.sendMessage(firstPlayer + " goes first");
             }
             else if (firstPlayer.equals(_lightPlayerId))

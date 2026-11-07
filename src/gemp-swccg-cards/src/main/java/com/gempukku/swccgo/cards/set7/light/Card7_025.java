@@ -8,6 +8,7 @@ import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.GameTextActionId;
 import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Keyword;
+import com.gempukku.swccgo.common.Persona;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Species;
@@ -43,6 +44,7 @@ public class Card7_025 extends AbstractAlien {
         setLore("Pacithhip scout. From an unknown system on the Outer Rim. Spends most of his time talking to pilots and travelers at local docking bays.");
         setGameText("Adds 2 to power of anything he pilots. Once per turn, may exchange a docking bay from hand with top card of Lost Pile. Your docking bay transit is free when moving to or from same site.");
         setSpecies(Species.PACITHHIP);
+        addPersona(Persona.KETWOL);
         addIcons(Icon.SPECIAL_EDITION, Icon.PILOT);
         addKeywords(Keyword.SCOUT);
     }
