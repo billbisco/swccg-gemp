@@ -57,7 +57,9 @@ public class Card_1261_014_Tests {
     }
 
     @Test public void P13AndP14SecondFiringLosesTwoForceAndCannotFireThirdTime() {
-        var scn = battle(); fire(scn, "obiwan", 0); int force = scn.GetDSForcePileCount(); int lost = scn.GetDSLostPileCount();
+        var scn = battle(); fire(scn, "obiwan", 0);
+        if (scn.AwaitingLSWeaponsSegmentActions()) scn.LSPass();
+        int force = scn.GetDSForcePileCount(); int lost = scn.GetDSLostPileCount();
         scn.PrepareDSDestiny(0); scn.DSUseCardAction(scn.GetDSCard("pair"), "Fire");
         if (scn.DSHasCardChoiceAvailable(scn.GetLSCard("han"))) scn.DSChooseCard(scn.GetLSCard("han")); scn.PassAllResponses();
         for (int i = 0; i < 2; i++) { assertTrue(scn.AwaitingDSForceLossPayment()); scn.DSPayForceLossFromReserveDeck(); scn.PassAllResponses(); }
@@ -82,7 +84,9 @@ public class Card_1261_014_Tests {
     }
 
     private void attrition(int destiny, boolean immune) {
-        var scn = battle(); var pair = scn.GetDSCard("pair"); scn.PrepareLSDestiny(destiny);
+        var scn = scenario(); scn.StartGame(); var pair = scn.GetDSCard("pair"); var site = scn.GetDSStartingLocation();
+        scn.MoveCardsToLocation(site, pair, scn.GetLSCard("obiwan")); scn.DSStartBattleAndSkipToWeaponsSegment(site);
+        scn.PrepareLSDestiny(destiny);
         scn.SkipToDamageSegment(true); scn.PassDamageSegmentActions(); scn.DSPayRemainingBattleDamageFromReserveDeck(); scn.PassAllResponses();
         assertEquals(immune ? "0" : "1", scn.GetADParam(scn.DS, "min")[0]);
         if (immune) { scn.DSPass(); scn.PassAllResponses(); assertEquals(Zone.AT_LOCATION, pair.getZone()); }
@@ -100,7 +104,10 @@ public class Card_1261_014_Tests {
         scn.MoveCardsToLocation(plains, pair); scn.MoveCardsToLocation(mountains, scn.GetLSCard("obiwan"));
         scn.SkipToLSTurn(Phase.CONTROL); scn.DSActivateForceCheat(1); int force = scn.GetDSForcePileCount();
         scn.LSPlayCard(mountains, "drain"); assertTrue(scn.DSCardActionAvailable(pair, "Move"));
-        scn.DSUseCardAction(pair, "Move"); scn.PassAllResponses();
+        scn.DSUseCardAction(pair, "Move");
+        if (scn.DSHasCardChoiceAvailable(mountains)) scn.DSChooseCard(mountains);
+        if (scn.DSHasCardChoiceAvailable(pair)) scn.DSChooseCard(pair);
+        scn.PassAllResponses();
         assertEquals(mountains, pair.getAtLocation()); assertEquals(force - 1, scn.GetDSForcePileCount()); assertFalse(scn.AwaitingDSForceLossPayment());
     }
 
