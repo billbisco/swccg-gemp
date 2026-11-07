@@ -27,30 +27,23 @@ public class Card_1240_092_Tests {
     private static final String ADD = "Make total ability +";
 
     private static final StartingSetup WATCH_YOUR_STEP = new StartingSetup() {
-        @Override public HashMap<String, String> Cards() { return new HashMap<>(Map.of("objective", "10_26")); }
+        @Override public HashMap<String, String> Cards() {
+            return new HashMap<>(Map.of("objective", "10_26", "cantina", "1_128", "bay", "1_129", "tatooine", "1_127"));
+        }
 
         @Override public void Setup(VirtualTableScenario scn) {
-            assertTrue(scn.LSDecisionAvailable("starting"));
-            scn.LSChooseCard(scn.GetLSCard("objective"));
-            for (int i = 0; i < 22; i++) {
-                if (scn.LSDecisionAvailable("Choose Cantina to deploy")) scn.LSChooseCard(scn.GetLSCard("cantina"));
-                else if (scn.LSDecisionAvailable("Choose Docking Bay 94 to deploy")) scn.LSChooseCard(scn.GetLSCard("bay"));
-                else if (scn.LSDecisionAvailable("Choose Tatooine system to deploy")) scn.LSChooseCard(scn.GetLSCard("tatooine"));
-                else if (scn.LSDecisionAvailable("On which side")) scn.LSChoose("Left");
-                else if (scn.LSDecisionAvailable("optional response") || scn.DSDecisionAvailable("optional response")) scn.PassAllResponses();
-                else break;
-            }
-            assertInZone(Zone.SIDE_OF_TABLE, scn.GetLSCard("objective"));
-            assertInZone(Zone.LOCATIONS, scn.GetLSCard("cantina"));
-            assertInZone(Zone.LOCATIONS, scn.GetLSCard("bay"));
-            assertInZone(Zone.LOCATIONS, scn.GetLSCard("tatooine"));
+            while (scn.LSDecisionAvailable("On which side")) scn.LSChoose("Left");
         }
     };
 
     private VirtualTableScenario Started(boolean objective) {
         var ls = new HashMap<>(Map.of("mask", "1240_92", "dash", "10_6", "karrde", "10_24", "luke", "1_19",
-                "jawa", "1_12", "mos", "1_133", "hut", "1_134", "dune", "1_130", "cantina", "1_128", "bay", "1_129"));
-        ls.put("tatooine", "1_127");
+                "jawa", "1_12", "mos", "1_133", "hut", "1_134", "dune", "1_130"));
+        if (!objective) {
+            // The starting location is the Cantina; the system and docking bay are added separately.
+            ls.put("bay", "1_129");
+            ls.put("tatooine", "1_127");
+        }
         ls.put("otherPlanet", "5_79");
         ls.put("red", "1_144");
         var scn = new VirtualTableScenario(ls, new HashMap<>(Map.of("trooper", "1_194", "second", "1_194", "tie", "1_305")),
@@ -58,6 +51,11 @@ public class Card_1240_092_Tests {
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts, StartingSetup.NoLSShields, StartingSetup.NoDSShields,
                 VirtualTableScenario.Open);
         scn.StartGame();
+        while (scn.LSDecisionAvailable("On which side")) scn.LSChoose("Left");
+        if (objective) {
+            assertInZone(Zone.SIDE_OF_TABLE, scn.GetLSCard("objective"));
+            assertInZone(Zone.LOCATIONS, scn.GetLSCard("cantina"));
+        }
         scn.MoveLocationToTable(scn.GetLSCard("mos"));
         scn.MoveLocationToTable(scn.GetLSCard("dune"));
         scn.MoveLocationToTable(scn.GetLSCard("hut"));
