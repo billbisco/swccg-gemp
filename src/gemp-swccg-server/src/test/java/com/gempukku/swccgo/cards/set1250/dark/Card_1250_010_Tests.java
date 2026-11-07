@@ -59,10 +59,12 @@ public class Card_1250_010_Tests {
         scn.DSStartBattleAndSkipToWeaponsSegment(site);scn.PrepareDSDestiny(6);scn.MoveCardsToTopOfDSReserveDeck(scn.GetDSCard("device"));
         scn.MoveCardsToTopOfLSReserveDeck(scn.GetLSCard("leia"));return scn;
     }
-    private com.gempukku.swccgo.logic.effects.DrawDestinyEffect reachDraw(VirtualTableScenario scn,boolean dark) {
+    private com.gempukku.swccgo.logic.effects.DrawDestinyEffect reachDraw(VirtualTableScenario scn,boolean dark) { return reachDraw(scn,dark,null); }
+    private com.gempukku.swccgo.logic.effects.DrawDestinyEffect reachDraw(VirtualTableScenario scn,boolean dark,com.gempukku.swccgo.game.PhysicalCard previous) {
         for(int i=0;i<60;i++) {
             var state=scn.game().getGameState().getTopDrawDestinyState();
             if(state!=null && state.getDrawDestinyEffect().getDrawnDestinyCard()!=null
+                    && state.getDrawDestinyEffect().getDrawnDestinyCard()!=previous
                     && state.getDrawDestinyEffect().getPlayerDrawingDestiny().equals(dark?scn.DS:scn.LS)
                     && (scn.DSDecisionAvailable("DESTINY_DRAWN")||scn.DSDecisionAvailable("Just drew")))return state.getDrawDestinyEffect();
             if(scn.DSDecisionAvailable("battle destiny?"))scn.DSChooseYes();else if(scn.LSDecisionAvailable("battle destiny?"))scn.LSChooseYes();
@@ -100,7 +102,7 @@ public class Card_1250_010_Tests {
     }
     @Test public void SebulbaCannotRedrawTheReplacementAgainInSameTurn() {
         var scn=battle(1,true,true,true,false,null);reachDraw(scn,true);scn.DSUseCardAction(scn.GetDSCard("sebulba"),REDRAW);
-        var replacement=reachDraw(scn,true);assertEquals(6,replacement.getDrawnDestinyCard().getBlueprint().getDestiny(),scn.epsilon);assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("sebulba"),REDRAW));assertEquals(Zone.HAND,scn.GetDSCard("device").getZone());
+        var replacement=reachDraw(scn,true,scn.GetDSCard("device"));assertEquals(6,replacement.getDrawnDestinyCard().getBlueprint().getDestiny(),scn.epsilon);assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("sebulba"),REDRAW));assertEquals(Zone.HAND,scn.GetDSCard("device").getZone());
     }
     @Test public void SebulbaGrantsOneActualBattleDestinyWhenOtherwiseUnable() {
         var scn=scenario();scn.StartGame();scn.MoveCardsToLocation(scn.GetDSStartingLocation(),scn.GetDSCard("sebulba"),scn.GetLSCard("luke"));
