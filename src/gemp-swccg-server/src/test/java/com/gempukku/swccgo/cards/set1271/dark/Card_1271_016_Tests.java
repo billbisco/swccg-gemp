@@ -40,6 +40,24 @@ public class Card_1271_016_Tests {
         assertTrue(s.LSDecisionAvailable("Choose Force to lose"));
     }
 
+    @Test public void VadersHelmetRaisesOneBattleDestinyToExactlyTwoAgainstHigherAbility() {
+        checkBattleDestiny("obi", 2);
+        checkBattleDestiny("luke", 1);
+    }
+
+    private void checkBattleDestiny(String opponent, int expectedDraws) {
+        var s = board("helmet");
+        var site = s.GetDSStartingLocation();
+        s.MoveCardsToLocation(site, s.GetLSCard(opponent));
+        s.SkipToDSTurn(Phase.CONTROL);
+        s.EnsureDSForcePile(8);
+        s.SkipToPhase(Phase.BATTLE);
+        s.StartBattleAndSkipToWeaponsSegment(s.DS, site);
+        s.SkipToPowerSegment();
+        s.PassResponses("BEFORE_BATTLE_DESTINY_DRAWS");
+        assertTrue(s.DSDecisionAvailable("Do you want to draw " + expectedDraws + " battle destiny?"));
+    }
+
     @Test public void VadersHelmetPlacesAnActualJournalAtSameSiteOnTheBottomOfLostPile() {
         var s = board("helmet");
         var obi = s.GetLSCard("obi");
