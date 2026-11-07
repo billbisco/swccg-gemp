@@ -4,6 +4,7 @@ import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import com.gempukku.swccgo.game.PhysicalCardImpl;
+import com.gempukku.swccgo.logic.modifiers.AddsBattleDestinyModifier;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ public class Card_1250_066_Tests {
             put("mace", "12_13"); put("hallway", "14_51");
         }}, new HashMap<>() {{
             put("emperor", "9_109"); put("lightning", "9_136"); put("vader", "1_168"); put("saber", "1_324");
-            put("podrace", "11_79"); put("arena", "11_94");
+            put("djas", "1_171"); put("podrace", "11_79"); put("arena", "11_94");
         }}, 35, 35, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -177,5 +178,71 @@ public class Card_1250_066_Tests {
         s.LSPlayCard(odds, CHANGE); s.PassAllResponses();
         assertTrue(s.GetDSForcePile().contains(last)); assertEquals(0, s.GetDSReserveDeckCount());
         assertEquals(site, target.getAtLocation()); assertTrue(s.GetLSUsedPile().contains(odds));
+    }
+    private static final String REDRAW = "Cancel and redraw both battle destinies";
+
+    private boolean redrawOffered(VirtualTableScenario s) {
+        return s.GetADParam(s.LS, "cardId") != null && s.GetADParam(s.LS, "actionText") != null
+                && s.LSCardPlayAvailable(s.GetLSCard("odds"), REDRAW);
+    }
+
+    /** Battle at the Dark starting site where each player draws battle destiny when offered. */
+    private VirtualTableScenario battleDestinies(boolean darkDrawsTwo) {
+        var s = scenario(); s.StartGame(); var site = s.GetDSStartingLocation();
+        var djas = s.GetDSCard("djas");
+        s.MoveCardsToLocation(site, djas, s.GetLSCard("luke"), s.GetLSCard("guard"));
+        if (darkDrawsTwo) s.game().getModifiersEnvironment().addUntilEndOfGameModifier(
+                new AddsBattleDestinyModifier(djas, 1, s.DS));
+        s.MoveCardsToHand(s.GetLSCard("odds")); s.DSActivateForceCheat(6);
+        s.SkipToDSTurn(Phase.BATTLE);
+        // Redraws come second in each deck; the first draw comes from the top.
+        s.PrepareDSDestiny(5); s.PrepareDSDestiny(2); if (darkDrawsTwo) s.PrepareDSDestiny(3);
+        s.PrepareLSDestiny(6); s.PrepareLSDestiny(1);
+        s.DSInitiateBattle(site); s.SkipToPowerSegment();
+        s.PassResponses("BEFORE_BATTLE_DESTINY_DRAWS");
+        assertTrue(s.DSDecisionAvailable("battle destiny")); s.DSChooseYes(); s.PassDestinyDrawResponses();
+        if (darkDrawsTwo) s.PassDestinyDrawResponses();
+        s.PassResponses("BATTLE_DESTINY_DRAWS_COMPLETE_FOR_PLAYER");
+        assertTrue(s.LSDecisionAvailable("battle destiny")); s.LSChooseYes(); s.PassDestinyDrawResponses();
+        for (int i = 0; i < 20 && !redrawOffered(s)
+                && s.GetCurrentDecision().getText().contains("Optional responses"); i++) {
+            s.PlayerPass(s.GetDecidingPlayer());
+        }
+        return s;
+    }
+
+    @Test
+    public void BothPlayersDrawingOneBattleDestinyCanBeCanceledAndRedrawn() {
+        var s = battleDestinies(false);
+        assertEquals(2, s.GetDSTotalDestiny()); assertEquals(1, s.GetLSTotalDestiny());
+        assertTrue(s.GetCurrentDecision().getText(), redrawOffered(s));
+        var odds = s.GetLSCard("odds");
+        var battle = s.gameState().getBattleState();
+        var lightDraw = (PhysicalCardImpl) battle.getBattleDestinyDraws(s.LS).get(0);
+        var darkDraw = (PhysicalCardImpl) battle.getBattleDestinyDraws(s.DS).get(0);
+        var lightRedraw = s.GetTopOfLSReserveDeck(); var darkRedraw = s.GetTopOfDSReserveDeck();
+        assertEquals(6, lightRedraw.getBlueprint().getDestiny(), s.epsilon);
+        assertEquals(5, darkRedraw.getBlueprint().getDestiny(), s.epsilon);
+        s.LSPlayCard(odds, REDRAW); s.PassAllResponses();
+        // The player of Changing The Odds picks the draw to cancel for each player (one each here).
+        assertTrue(s.LSDecisionAvailable("to cancel")); s.LSChooseCard(lightDraw); s.PassAllResponses();
+        assertTrue(s.LSDecisionAvailable("to cancel")); s.LSChooseCard(darkDraw);
+        for (int i = 0; i < 40 && !battle.getBattleDestinyDraws(s.DS).contains(darkRedraw)
+                && s.GetCurrentDecision().getText().contains("Optional responses"); i++) {
+            s.PlayerPass(s.GetDecidingPlayer());
+        }
+        assertEquals(s.GetCurrentDecision().getText() + " by " + s.GetDecidingPlayer() + " DS " + battle.getBattleDestinyDraws(s.DS)
+                + " redraw zones " + lightRedraw.getZone() + "/" + darkRedraw.getZone(),
+                List.of(lightRedraw), battle.getBattleDestinyDraws(s.LS));
+        assertEquals(List.of(darkRedraw), battle.getBattleDestinyDraws(s.DS));
+        assertEquals(5, s.GetDSTotalDestiny()); assertEquals(6, s.GetLSTotalDestiny());
+        assertTrue(s.GetLSUsedPile().contains(odds));
+    }
+
+    @Test
+    public void RedrawIsNotOfferedWhenAPlayerDrewTwoBattleDestinies() {
+        var s = battleDestinies(true);
+        assertEquals(2, s.GetDSBattleDestinyCount()); assertEquals(1, s.GetLSBattleDestinyCount());
+        assertFalse(redrawOffered(s)); assertTrue(s.GetLSHand().contains(s.GetLSCard("odds")));
     }
 }
