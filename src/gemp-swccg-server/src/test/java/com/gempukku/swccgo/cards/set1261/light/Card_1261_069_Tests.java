@@ -110,12 +110,14 @@ public class Card_1261_069_Tests {
         assertTrue(scn.GetLSAvailableActions().toString(), scn.LSCardActionAvailable(scn.GetLSCard("leia"), "Move using landspeed as a 'react"));
         scn.LSUseCardAction(scn.GetLSCard("leia"), "Move using landspeed as a 'react");
         if (scn.LSHasCardChoiceAvailable(target)) scn.LSChooseCard(target);
+        scn.PassForceUseResponses();
         for (int i = 0; i < 18 && scn.GetLSAvailableActions().stream().noneMatch(x -> x.contains(COMPANION)); i++) {
             var d = scn.GetCurrentDecision();
             if (d == null || !d.getText().toLowerCase().contains("response")) break;
             scn.PlayerPass(scn.LSGetDecision() != null ? scn.LS : scn.DS);
         }
-        assertTrue(scn.GetLSAvailableActions().toString(), scn.LSCardActionAvailable(scn.GetLSCard("leia"), COMPANION));
+        assertTrue("Expected companion at: " + (scn.GetCurrentDecision() == null ? "no decision" : scn.GetCurrentDecision().getText()),
+                scn.GetLSAvailableActions().stream().anyMatch(x -> x.contains(COMPANION)));
         return scn;
     }
 

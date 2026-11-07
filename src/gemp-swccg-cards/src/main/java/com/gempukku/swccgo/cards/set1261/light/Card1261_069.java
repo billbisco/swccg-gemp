@@ -51,11 +51,13 @@ public class Card1261_069 extends AbstractRebel {
             return null;
         }
         var movement = (MovingUsingLandspeedResult) result;
-        if (!movement.isReact()) {
+        var react = game.getGameState().getMoveAsReactState();
+        if (!movement.isReact() || react == null || !react.canContinue() || !self.equals(react.getReactingCard())) {
             return null;
         }
         Filter companion = Filters.and(Filters.your(self), Filters.Rebel, Filters.other(self), Filters.present(self),
-                Filters.not(Filters.in(movement.getAllCardsMoving())), Filters.isCardEligibleToJoinMoveAsReact,
+                Filters.not(Filters.in(movement.getAllCardsMoving())), Filters.not(Filters.in(react.getCardsParticipatingInReact())),
+                Filters.notPreventedFromParticipatingInReact,
                 Filters.movableAsRegularMoveUsingLandspeed(playerId, true, movement.isMoveAway(), true, 0, null,
                         Filters.sameCardId(movement.getMovingTo())));
         if (!GameConditions.canTarget(game, self, companion)) {
