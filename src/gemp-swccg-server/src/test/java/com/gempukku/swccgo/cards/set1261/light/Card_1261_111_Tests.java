@@ -66,10 +66,15 @@ public class Card_1261_111_Tests {
         return scn;
     }
     private void takePoint(VirtualTableScenario scn, String key) {
+        long before = pointsInHand(scn);
         scn.LSUseCardAction(scn.GetLSCard("echo"), "Take Rendezvous Point"); scn.PassAllResponses();
         assertTrue(scn.LSHasCardChoiceAvailable(scn.GetLSCard(key)));
         scn.LSChooseCard(scn.GetLSCard(key)); scn.PassAllResponses();
-        assertInHand(scn.GetLSCard(key));
+        // Reserve choices identify a blueprint, not a particular physical copy of the same card.
+        assertEquals(before + 1, pointsInHand(scn));
+    }
+    private long pointsInHand(VirtualTableScenario scn) {
+        return scn.gameState().getHand(scn.LS).stream().filter(c -> c.getBlueprint().getTitle().equals(Title.Rendezvous_Point)).count();
     }
     private boolean offersSearch(VirtualTableScenario scn) {
         return scn.GetLSAvailableActions().stream().anyMatch(s -> s.contains("Take Rendezvous Point"));
@@ -77,7 +82,8 @@ public class Card_1261_111_Tests {
     @Test public void EchoCommandCenterActuallyTakesRendezvousForOneForce() {
         var scn = search(1, true, Phase.CONTROL, true); takePoint(scn, "point");
         assertEquals(0, scn.GetLSForcePileCount());
-        assertInZone(Zone.RESERVE_DECK, scn.GetLSCard("point2"));
+        assertEquals(1, pointsInHand(scn));
+        assertTrue(scn.GetLSCard("point").getZone() == Zone.RESERVE_DECK || scn.GetLSCard("point2").getZone() == Zone.RESERVE_DECK);
     }
     @Test public void EchoCommandCenterSearchHasNoInventedOncePerTurnLimit() {
         var scn = search(2, true, Phase.CONTROL, true); takePoint(scn, "point");
@@ -102,7 +108,7 @@ public class Card_1261_111_Tests {
         assertNotNull(ids); assertNotNull(enabled);
         for (int i = 0; i < ids.length; i++)
             if (Boolean.parseBoolean(enabled[i])) assertEquals("7_123", ids[i]);
-        scn.LSChooseCard(scn.GetLSCard("point")); scn.PassAllResponses(); assertInHand(scn.GetLSCard("point"));
+        scn.LSChooseCard(scn.GetLSCard("point")); scn.PassAllResponses(); assertEquals(1, pointsInHand(scn));
     }
     @Test public void EchoCommandCenterBoostsOwnTransportsGloballyWithoutLocalUprising() {
         var scn = started(); var a = scn.GetLSCard("transport"); var b = scn.GetLSCard("transport2");
@@ -139,12 +145,20 @@ public class Card_1261_111_Tests {
         assertFalse(q.cannotBeConverted(scn.gameState(), scn.GetLSCard("ridge")));
     }
     private VirtualTableScenario cancellation(int related, boolean echo, boolean contested) {
-        var scn = started(); scn.AttachCardsTo(scn.GetLSCard("kessel"), scn.GetLSCard("first"));
+        var scn = started();
+        scn.MoveCardsToLocation(scn.GetLSCard("perimeter"), scn.GetLSCard("transport"));
+        scn.MoveCardsToLSHand(scn.GetLSCard("first"));
         scn.MoveCardsToDSHand(scn.GetDSCard("catch"));
         String[] sites = {"perimeter", "ridge", "generators"}; String[] men = {"trooper", "trooper2", "trooper3"};
         for (int i = 0; i < related; i++) scn.MoveCardsToLocation(scn.GetLSCard(sites[i]), scn.GetDSCard(men[i]));
         if (echo) scn.MoveCardsToLocation(scn.GetLSCard("echo"), scn.GetDSCard("trooper"));
         if (contested) scn.MoveCardsToLocation(scn.GetLSCard(echo ? "echo" : "perimeter"), scn.GetLSCard("luke"));
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        scn.LSDeployCard(scn.GetLSCard("first"));
+        if (scn.LSHasCardChoiceAvailable(scn.GetLSCard("kessel"))) scn.LSChooseCard(scn.GetLSCard("kessel"));
+        if (scn.LSHasCardChoiceAvailable(scn.GetLSCard("transport"))) scn.LSChooseCard(scn.GetLSCard("transport"));
+        scn.PassAllResponses();
+        assertEquals(scn.GetLSCard("kessel"), scn.GetLSCard("first").getAttachedTo());
         scn.SkipToDSTurn(Phase.CONTROL); return scn;
     }
     private void assertProtected(VirtualTableScenario scn) {
