@@ -13,7 +13,7 @@ public class Card_1261_073_Tests extends LegacyInsertPodraceShieldTests {
     protected String conversionId() { return "1261_75"; }
     protected String title() { return "Your Insight Serves You Well"; }
 
-    @Test public void WattosBoxSuspensionBeginsAtThreeBattlegroundsIncludesFourAndEndsBelowThree() {
+    @Test public void YourInsightServesYouWellWattosBoxSuspensionBeginsAtThreeBattlegroundsIncludesFourAndEndsBelowThree() {
         var s = ready(true); var box = s.GetDSCard("wattos"); table(s, false, box);
         s.MoveLocationToTable(s.GetLSCard("cantina")); s.MoveLocationToTable(s.GetLSCard("farm"));
         s.MoveCardsToLocation(s.GetLSStartingLocation(), s.GetLSCard("char1"));
@@ -27,7 +27,7 @@ public class Card_1261_073_Tests extends LegacyInsertPodraceShieldTests {
         s.SkipToPhase(Phase.DRAW); assertFalse(box.isSuspended());
     }
 
-    @Test public void TwoBattlegroundsPlusANonBattlegroundDoNotSuspendWattosBox() {
+    @Test public void YourInsightServesYouWellTwoBattlegroundsPlusANonBattlegroundDoNotSuspendWattosBox() {
         var s = ready(true); var box = s.GetDSCard("wattos"); table(s, false, box);
         s.MoveLocationToTable(s.GetLSCard("nonBattleground"));
         s.MoveCardsToLocation(s.GetLSStartingLocation(), s.GetLSCard("char1"));
@@ -36,11 +36,23 @@ public class Card_1261_073_Tests extends LegacyInsertPodraceShieldTests {
         s.SkipToPhase(Phase.DEPLOY); assertFalse(box.isSuspended());
     }
 
-    @Test public void ScanningCrewIsActuallyCanceledBeforeItCanMoveTheRebelFromHand() {
+    @Test public void YourInsightServesYouWellScanningCrewIsActuallyCanceledBeforeItCanMoveTheRebelFromHand() {
         var s = ready(true); var scanner = s.GetDSCard("scanner"); var luke = s.GetLSCard("char1");
         hand(s, true, luke); hand(s, false, scanner); turn(s, false, Phase.DEPLOY); force(s, false, 5);
         int before = force(s, false); s.DSPlayCard(scanner); s.PassAllResponses();
         assertTrue(s.GetDSLostPile().contains(scanner)); assertEquals(Zone.HAND, luke.getZone());
         assertEquals(before - 1, force(s, false));
     }
+    @Test public void YourInsightServesYouWellFinalPrintedStatsIconsAndKeywordsAreCorrect() { checkFinalPrintedStatsIconsAndKeywordsAreCorrect(); }
+    @Test public void YourInsightServesYouWellBothPrintingLookupsRetainPhysicalImageIdsAndOneCanonicalRuleClass() { checkBothPrintingLookupsRetainPhysicalImageIdsAndOneCanonicalRuleClass(); }
+    @Test public void YourInsightServesYouWellShieldActuallyPlaysFromTheStartingEffectForFree() { checkShieldActuallyPlaysFromTheStartingEffectForFree(); }
+    @Test public void YourInsightServesYouWellASecondPrintingCannotBePlayedAlongsideTheSameShieldTitle() { checkASecondPrintingCannotBePlayedAlongsideTheSameShieldTitle(); }
+    @Test public void YourInsightServesYouWellBothPrintingsCountTowardTheExistingOutsideDeckShieldCap() throws com.gempukku.swccgo.game.DeckInvalidException { checkBothPrintingsCountTowardTheExistingOutsideDeckShieldCap(); }
+    @Test public void YourInsightServesYouWellAnOpponentsActualInsertPlayIsCanceled() { checkAnOpponentsActualInsertPlayIsCanceled(); }
+    @Test public void YourInsightServesYouWellAnOwnersActualInsertPlayIsAlsoCanceled() { checkAnOwnersActualInsertPlayIsAlsoCanceled(); }
+    @Test public void YourInsightServesYouWellCancelingARevealedInsertAllowsActualActivationToContinue() { checkCancelingARevealedInsertAllowsActualActivationToContinue(); }
+    @Test public void YourInsightServesYouWellShieldDoesNotCancelAnOrdinaryCharacterDeployment() { checkShieldDoesNotCancelAnOrdinaryCharacterDeployment(); }
+    @Test public void YourInsightServesYouWellActualPodraceFromOwnersCardProtectsLossAndOpponentsRetrieval() { checkActualPodraceFromOwnersCardProtectsLossAndOpponentsRetrieval(); }
+    @Test public void YourInsightServesYouWellActualPodraceFromOpponentsCardAlsoProtectsLossAndRetrieval() { checkActualPodraceFromOpponentsCardAlsoProtectsLossAndRetrieval(); }
+    @Test public void YourInsightServesYouWellWithoutTheShieldTheSameRaceLosesForceAndRetrievalCanBeCanceled() { checkWithoutTheShieldTheSameRaceLosesForceAndRetrievalCanBeCanceled(); }
 }
