@@ -22,7 +22,7 @@ public class Card_1263_012_Tests {
     private VirtualTableScenario scenario() {
         var scn = new VirtualTableScenario(new HashMap<>(),
                 new HashMap<>(Map.of("plan", "1263_12", "immediate", "1112_26", "free", "9_134",
-                        "paid", "9_127", "trooper", "1_194")),
+                        "paid", "9_127", "trooper", "1_194", "grotto", "1263_4", "decipherGrotto", "12_107")),
                 30, 30, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -61,18 +61,21 @@ public class Card_1263_012_Tests {
         }
     }
 
-    @Test public void OperationalAsPlannedActuallyTakesImmediateOrFreeEffectAndReshuffles() {
-        for (int cost : List.of(1, 2)) {
+    @Test public void OperationalAsPlannedActuallyTakesBlockSixGrottoImmediateOrFreeEffectAndReshuffles() {
+        for (String selection : List.of("grotto", "immediate", "free")) {
+            int cost = selection.equals("free") ? 2 : 1;
             var scn = scenario();
             var plan = scn.GetDSCard("plan");
             var immediate = scn.GetDSCard("immediate");
             var free = scn.GetDSCard("free");
             var paid = scn.GetDSCard("paid");
-            var target = cost == 1 ? immediate : free;
+            var grotto = scn.GetDSCard("grotto");
+            var decipher = scn.GetDSCard("decipherGrotto");
+            var target = scn.GetDSCard(selection);
             var wrong = cost == 1 ? free : immediate;
             scn.MoveCardsToDSHand(plan);
             scn.SkipToPhase(Phase.CONTROL);
-            scn.MoveCardsToTopOfDSReserveDeck(immediate, free, paid, scn.GetDSCard("trooper"));
+            scn.MoveCardsToTopOfDSReserveDeck(immediate, free, paid, grotto, decipher, scn.GetDSCard("trooper"));
             setForce(scn, cost);
             scn.SkipToPhase(Phase.DEPLOY);
             var remaining = new ArrayList<>(scn.GetDSReserveDeck());
@@ -88,7 +91,9 @@ public class Card_1263_012_Tests {
                     int targetIndex = choices.indexOf(target.getBlueprintId(true));
                     int wrongIndex = choices.indexOf(wrong.getBlueprintId(true));
                     int paidIndex = choices.indexOf(paid.getBlueprintId(true));
-                    assertTrue(targetIndex >= 0 && wrongIndex >= 0 && paidIndex >= 0);
+                    int decipherIndex = choices.indexOf(decipher.getBlueprintId(true));
+                    assertTrue(targetIndex >= 0 && wrongIndex >= 0 && paidIndex >= 0 && decipherIndex >= 0);
+                    assertEquals("The same-title Decipher printing is not Block 6", "false", selectable[decipherIndex]);
                     assertEquals("true", selectable[targetIndex]);
                     assertEquals("false", selectable[wrongIndex]);
                     assertEquals("false", selectable[paidIndex]);
