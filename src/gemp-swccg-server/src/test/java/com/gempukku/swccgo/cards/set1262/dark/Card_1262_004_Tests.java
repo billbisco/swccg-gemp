@@ -75,10 +75,11 @@ public class Card_1262_004_Tests {
             var bearerSite = distance == 0 ? site : distance == 1 ? scn.GetDSCard("cantina") : scn.GetLSStartingLocation();
             if (distance == 1) assertTrue(scn.IsAdjacentTo(site, bearerSite));
             var vader = scn.GetDSCard("vader");
+            var link = scn.GetDSCard("link");
             var backup = scn.GetDSCard("reserve");
             var weapon = scn.GetDSCard("weapon");
             scn.MoveCardsToLocation(bearerSite, vader);
-            scn.AttachCardsTo(vader, scn.GetDSCard("link"));
+            scn.AttachCardsTo(vader, link);
             scn.MoveCardsToLocation(site, scn.GetDSCard("trooper"), scn.GetLSCard("ben"));
             scn.MoveCardsToDSHand(backup, weapon);
             scn.SkipToLSTurn(Phase.ACTIVATE);
@@ -88,12 +89,14 @@ public class Card_1262_004_Tests {
             scn.LSInitiateBattle(site);
             boolean reacted = false;
             for (int i = 0; i < 50 && !scn.AwaitingLSWeaponsSegmentActions(); i++) {
-                if (scn.DSHasCardChoiceAvailable(site)) scn.DSChooseCard(site);
-                else if (scn.DSGetDecision() instanceof CardActionSelectionDecision
-                        && scn.DSCardPlayAvailable(backup)) {
+                if (scn.DSHasCardChoiceAvailable(backup)) {
+                    assertFalse(scn.DSHasCardChoiceAvailable(weapon));
+                    scn.DSChooseCard(backup);
+                } else if (scn.DSHasCardChoiceAvailable(site)) scn.DSChooseCard(site);
+                else if (!reacted && scn.DSGetDecision() instanceof CardActionSelectionDecision
+                        && scn.DSCardActionAvailable(link, "Deploy a character as a 'react'")) {
                     assertTrue(distance < 2);
-                    assertFalse(scn.DSCardPlayAvailable(weapon));
-                    scn.DSPlayCard(backup);
+                    scn.DSUseCardAction(link, "Deploy a character as a 'react'");
                     reacted = true;
                 } else if (scn.LSGetDecision() instanceof CardActionSelectionDecision) scn.LSPass();
                 else if (scn.DSGetDecision() instanceof CardActionSelectionDecision) scn.DSPass();
