@@ -21,7 +21,7 @@ public class Card_1261_047_Tests {
                 new HashMap<>(Map.of("luke", "1_19", "han", "1_11", "obi", "1_21", "enemyShip", "1_146")),
                 new HashMap<>(Map.ofEntries(
                         Map.entry("combo", "1261_47"), Map.entry("trooper", "1_194"),
-                        Map.entry("pilot", "1_173"), Map.entry("admiral", "1220_1"),
+                        Map.entry("crew", "1_166"), Map.entry("admiral", "1220_1"),
                         Map.entry("abilityThree", "1_178"), Map.entry("alien", "4_100"),
                         Map.entry("ship", "1_302"), Map.entry("system", "1_282"),
                         Map.entry("vader", "1_168"), Map.entry("blaster", "1_317"),
@@ -56,7 +56,7 @@ public class Card_1261_047_Tests {
         var scn = scenario();
         var combo = scn.GetDSCard("combo");
         var ship = scn.GetDSCard("ship");
-        var pilot = scn.GetDSCard("pilot");
+        var crew = scn.GetDSCard("crew");
         var system = scn.GetDSCard("system");
         scn.StartGame();
         scn.MoveLocationToTable(system);
@@ -64,7 +64,7 @@ public class Card_1261_047_Tests {
         scn.MoveCardsToDSHand(combo);
         scn.SkipToLSTurn(Phase.DEPLOY);
         scn.EnsureDSForcePile(6);
-        for (String key : List.of("pilot", "abilityThree", "admiral", "alien"))
+        for (String key : List.of("crew", "abilityThree", "admiral", "alien"))
             scn.MoveCardsToTopOfOwnReserveDeck(scn.GetDSCard(key));
         if (scn.AwaitingLSDeployPhaseActions())
             scn.LSPass();
@@ -76,15 +76,15 @@ public class Card_1261_047_Tests {
         scn.DSPlayCard(combo, DEPLOY);
         scn.PassAllResponses();
         assertTrue(scn.DSDecisionAvailable("Choose card to deploy"));
-        assertTrue(selectable(scn, pilot));
+        assertTrue(selectable(scn, crew));
         assertFalse(selectable(scn, scn.GetDSCard("abilityThree")));
         assertFalse(selectable(scn, scn.GetDSCard("admiral")));
         assertFalse(selectable(scn, scn.GetDSCard("alien")));
-        scn.DSChooseCard(pilot);
+        scn.DSChooseCard(crew);
         if (scn.DSHasCardChoiceAvailable(ship))
             scn.DSChooseCard(ship);
         scn.PassAllResponses();
-        assertEquals(ship, pilot.getAttachedTo());
+        assertEquals("Aboard deployment must resolve; decision: " + scn.GetCurrentDecision(), ship, crew.getAttachedTo());
         assertEquals(before - 2, scn.GetDSForcePileCount());
         assertEquals(Zone.TOP_OF_USED_PILE, combo.getZone());
         assertTrue(scn.GetDSReserveDeck().contains(revealed));
@@ -179,7 +179,7 @@ public class Card_1261_047_Tests {
         scn.DSInitiateBattle(site);
         scn.PassAllResponses();
         scn.PrepareDSDestiny(4);
-        scn.PrepareLSDestiny(0);
+        scn.PrepareLSDestiny(4);
         scn.SkipToDamageSegment(true);
         scn.PassResponses("Just drew");
         scn.PassDestinyDrawResponses();
@@ -200,7 +200,11 @@ public class Card_1261_047_Tests {
         if (scn.AwaitingDSBattleDamagePayment())
             scn.DSPayRemainingBattleDamageFromReserveDeck();
         scn.PassAllResponses();
-        scn.SkipToLSTurn(Phase.CONTROL);
+        String battleTurn = scn.GetCurrentPlayer();
+        scn.SkipToPhase(Phase.DRAW);
+        scn.PassDrawActions();
+        scn.PassResponses("RECIRCULATED");
+        assertNotEquals("The actual turn must end before checking expiry", battleTurn, scn.GetCurrentPlayer());
         assertFalse(bountyProhibited(scn, luke));
     }
 
