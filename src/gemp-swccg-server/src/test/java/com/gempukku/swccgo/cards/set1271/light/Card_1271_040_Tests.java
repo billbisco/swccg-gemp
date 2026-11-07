@@ -2,6 +2,7 @@ package com.gempukku.swccgo.cards.set1271.light;
 
 import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.LegacyFilters;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import org.junit.Test;
@@ -132,4 +133,25 @@ public class Card_1271_040_Tests {
 
     @Test public void MassassiBaseSentryActuallyRetrievesWhenLightControlsYavinAndDrainsAtAnotherLiberatedSystem() { retrieve(true); }
     @Test public void MassassiBaseSentryDoesNotRetrieveWhenLightDoesNotControlYavin() { retrieve(false); }
+
+    @Test public void MassassiBaseSentryLiberatesYavinWithoutAStackedCardAndRestoreFreedomBoostsItsDrain() {
+        var s = deploySentry(false, true);
+        var yavin = s.GetLSCard("yavin");
+        var sentry = s.GetLSCard("sentry");
+        var restore = s.GetLSCard("restore");
+        var query = s.game().getModifiersQuerying();
+        assertTrue(LegacyFilters.liberatedSystem.accepts(s.game(), yavin));
+        assertTrue(s.GetStackedCards(yavin).isEmpty());
+        float base = query.getForceDrainAmount(s.gameState(), yavin, s.LS);
+        if (s.LSGetDecision() == null && s.DSGetDecision() != null) s.DSPass();
+        s.LSDeployCard(restore);
+        if (s.LSHasCardChoiceAvailable(yavin)) s.LSChooseCard(yavin);
+        s.PassAllResponses();
+        assertEquals(yavin, restore.getAttachedTo());
+        assertEquals(base + 1, query.getForceDrainAmount(s.gameState(), yavin, s.LS), s.epsilon);
+        s.MoveOutOfPlay(sentry);
+        assertFalse(LegacyFilters.liberatedSystem.accepts(s.game(), yavin));
+        assertEquals(base, query.getForceDrainAmount(s.gameState(), yavin, s.LS), s.epsilon);
+        assertTrue(s.GetStackedCards(yavin).isEmpty());
+    }
 }

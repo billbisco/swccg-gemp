@@ -7,6 +7,7 @@ import com.gempukku.swccgo.cards.effects.usage.OncePerTurnEffect;
 import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.LegacyFilters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.TriggerConditions;
@@ -15,6 +16,8 @@ import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
 import com.gempukku.swccgo.logic.effects.AddUntilEndOfBattleModifierEffect;
 import com.gempukku.swccgo.logic.effects.RetrieveForceEffect;
 import com.gempukku.swccgo.logic.modifiers.PowerModifier;
+import com.gempukku.swccgo.logic.modifiers.LiberatedSystemModifier;
+import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.timing.EffectResult;
 import com.gempukku.swccgo.logic.timing.PassthruEffect;
 
@@ -22,7 +25,7 @@ import java.util.List;
 
 /** Massassi Base Sentry, final Virtual Block 7.1 errata. */
 public class Card1271_040 extends AbstractNormalEffect {
-    private static final Filter OTHER_LIBERATED_SYSTEM = Filters.and(Filters.liberated_system, Filters.not(Filters.Yavin_4_system));
+    private static final Filter OTHER_LIBERATED_SYSTEM = Filters.and(LegacyFilters.liberatedSystem, Filters.not(Filters.Yavin_4_system));
     private static final Filter WARRIOR_IN_BATTLE = Filters.and(Filters.Rebel, Filters.warrior, Filters.participatingInBattle);
 
     public Card1271_040() {
@@ -42,6 +45,12 @@ public class Card1271_040 extends AbstractNormalEffect {
     @Override
     protected Filter getGameTextValidTargetFilterToRemainAttachedTo(SwccgGame game, PhysicalCard self) {
         return Filters.Yavin_4_system;
+    }
+
+    @Override
+    protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, PhysicalCard self) {
+        PhysicalCard yavin = self.getAttachedTo();
+        return yavin == null ? List.of() : List.of(new LiberatedSystemModifier(self, yavin));
     }
 
     @Override
