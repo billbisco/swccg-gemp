@@ -1799,6 +1799,9 @@ public enum GameTextActionId {
     LEGACY__MIND_WHAT_YOU_HAVE_LEARNED__DEPLOY_TO_DAGOBAH(true),
     LEGACY__FLAPS_NICK_OF_TIME__DEPLOY_MATCHING(true),
     LEGACY__GENERAL_SOLOMAHAL__REARRANGE_SITES(false, true),
+    LEGACY__OUTPOST__DEPLOY_DEVICE_OR_EFFECT(true, true),
+    LEGACY__KESSEL_SPICE_MINES_PRISON__RETRIEVE_FORCE(false, false, true, false),
+    OVS__ALDERAAN_CONSULAR_SHIP__DEPLOY_SENATOR(true, true),
     ;
 
     private boolean _searchCardPile;

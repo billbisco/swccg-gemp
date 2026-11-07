@@ -2,6 +2,7 @@ package com.gempukku.swccgo.logic.effects;
 
 import com.gempukku.swccgo.common.Filterable;
 import com.gempukku.swccgo.common.Zone;
+import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
@@ -856,8 +857,10 @@ public class PlaySabaccEffect extends AbstractSubActionEffect {
                             final String losingPlayerId = game.getOpponent(_winningPlayerId);
                             Collection<PhysicalCard> losersSabaccHand = game.getGameState().getSabaccHand(losingPlayerId);
                             int numberOfCardsAffected = _winsDouble ? 2 : 1;
-                            Collection<PhysicalCard> cardsToStealFrom = Filters.filter(losersSabaccHand, game, _stakes);
-                            Collection<PhysicalCard> cardsToLoseFrom = Filters.filter(losersSabaccHand, game, Filters.not(Filters.and(_stakes)));
+                            // Cards that may never be won in sabacc are never stakes (they may still be chosen to be lost)
+                            Filter stakesFilter = Filters.and(_stakes, Filters.not(Filters.mayNeverBeWonInSabacc));
+                            Collection<PhysicalCard> cardsToStealFrom = Filters.filter(losersSabaccHand, game, stakesFilter);
+                            Collection<PhysicalCard> cardsToLoseFrom = Filters.filter(losersSabaccHand, game, Filters.not(stakesFilter));
 
                             int numberOfCardsToSteal = Math.min(numberOfCardsAffected, cardsToStealFrom.size());
                             int numberOfCardsToLose = Math.min(numberOfCardsAffected - numberOfCardsToSteal, cardsToLoseFrom.size());

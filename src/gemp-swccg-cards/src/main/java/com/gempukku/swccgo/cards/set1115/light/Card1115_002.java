@@ -53,9 +53,9 @@ public class Card1115_002 extends AbstractCapitalStarship {
 
     @Override
     protected List<TopLevelGameTextAction> getGameTextTopLevelActionsEvenIfUnpiloted(String playerId, SwccgGame game, PhysicalCard self, int gameTextSourceCardId) {
-        GameTextActionId gameTextActionId = GameTextActionId.OTHER_CARD_ACTION_1;
+        GameTextActionId gameTextActionId = GameTextActionId.OVS__ALDERAAN_CONSULAR_SHIP__DEPLOY_SENATOR;
         if (GameConditions.isOncePerGame(game, self, gameTextActionId)
-                && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, GameTextActionId.LEGACY__THERE_IS_NO_TRY_V__DEPLOY_LASER_GATE_OR_POLITICAL_EFFECT)) {
+                && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, gameTextActionId)) {
             final TopLevelGameTextAction action = new TopLevelGameTextAction(self, gameTextSourceCardId, gameTextActionId);
             action.setText("Deploy a senator aboard");
             action.appendUsage(new OncePerGameEffect(action));
