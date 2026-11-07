@@ -72,7 +72,7 @@ public class Card1250_029 extends Card1110_013 {
                                     protected void performActionResults(Action targetingAction) {
                                         action.appendEffect(new DuelEffect(action,
                                                 action.getPrimaryTargetCard(vaderGroup), action.getPrimaryTargetCard(jediGroup),
-                                                duelDirections(self)));
+                                                duelDirections()));
                                     }
                                 });
                     }
@@ -82,7 +82,7 @@ public class Card1250_029 extends Card1110_013 {
         return List.of(action);
     }
 
-    private DuelDirections duelDirections(PhysicalCard source) {
+    private DuelDirections duelDirections() {
         return new DuelDirections() {
             @Override public boolean isEpicDuel() { return true; }
             @Override public boolean isCrossOverToDarkSideAttempt() { return false; }
@@ -109,7 +109,7 @@ public class Card1250_029 extends Card1110_013 {
                 PhysicalCard winner = duel.getWinningCharacter();
                 if (loser == null || winner == null) return;
 
-                if (GameConditions.canSpot(game, source, Filters.Epic_Duel)) {
+                if (!Filters.filterAllOnTable(game, Filters.Epic_Duel).isEmpty()) {
                     action.appendEffect(new LoseCardFromTableEffect(action, loser));
                 } else {
                     action.appendEffect(new PlaceCardInUsedPileFromTableEffect(action, loser));

@@ -1,6 +1,7 @@
 package com.gempukku.swccgo.cards.set1250.dark;
 
 import com.gempukku.swccgo.common.*;
+import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import com.gempukku.swccgo.logic.GameUtils;
@@ -34,7 +35,7 @@ public class Card_1250_029_Tests {
         scn.MoveCardsToLSHand(scn.GetLSCard("prevent"));
         scn.MoveCardsToTopOfDSLostPile(scn.GetDSCard("loss1"), scn.GetDSCard("loss2"), scn.GetDSCard("loss3"));
         scn.MoveCardsToTopOfLSLostPile(scn.GetLSCard("loss1"), scn.GetLSCard("loss2"), scn.GetLSCard("loss3"));
-        if (epic) scn.MoveCardsToSideOfTable(scn.GetDSCard("epic"));
+        if (epic) scn.MoveCardsToSideOfTable(scn.GetDSCard("epic")); else scn.MoveCardsToDSHand(scn.GetDSCard("epic"));
         return scn;
     }
 
@@ -88,6 +89,7 @@ public class Card_1250_029_Tests {
         scn.PrepareLSDestiny(l2);
         scn.PrepareLSDestiny(l1);
         assertTrue(scn.DSCardPlayAvailable(scn.GetDSCard("anger"), DUEL));
+        if (lightTurn) assertTrue(Filters.filterAllOnTable(scn.game(), Filters.Epic_Duel).isEmpty());
         scn.DSPlayCard(scn.GetDSCard("anger"), DUEL);
         boolean epicSeen = false;
         boolean offerSeen = false;
@@ -98,10 +100,14 @@ public class Card_1250_029_Tests {
                 epicSeen = true;
             }
             if (scn.AwaitingDSMovePhaseActions() || scn.AwaitingLSMovePhaseActions()) break;
-            if (scn.DSHasCardChoiceAvailable(scn.GetLSCard("obi"))) scn.DSChooseCard(scn.GetLSCard("obi"));
+            if (scn.AwaitingLSForceLossPayment()) scn.LSPayRemainingForceLossFromReserveDeck();
+            else if (scn.AwaitingDSForceLossPayment()) {
+                if (lightTurn) assertInZone(Zone.USED_PILE, scn.GetDSCard("vader"));
+                scn.DSPayRemainingForceLossFromReserveDeck();
+            }
+           
+            else if (scn.DSHasCardChoiceAvailable(scn.GetLSCard("obi"))) scn.DSChooseCard(scn.GetLSCard("obi"));
             else if (scn.DSHasCardChoiceAvailable(scn.GetDSCard("vader"))) scn.DSChooseCard(scn.GetDSCard("vader"));
-            else if (scn.AwaitingLSForceLossPayment()) scn.LSPayRemainingForceLossFromReserveDeck();
-            else if (scn.AwaitingDSForceLossPayment()) scn.DSPayRemainingForceLossFromReserveDeck();
             else if (scn.DSDecisionAvailable("Retrieve 2 Force?")) {
                 offerSeen = true;
                 if (acceptRetrieval) scn.DSChooseYes(); else scn.DSChooseNo();
