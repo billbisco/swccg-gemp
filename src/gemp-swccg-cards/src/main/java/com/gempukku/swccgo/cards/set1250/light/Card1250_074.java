@@ -17,7 +17,7 @@ import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
 import com.gempukku.swccgo.logic.effects.choose.DeployCardFromReserveDeckEffect;
-import com.gempukku.swccgo.logic.modifiers.MayDeployToLocationModifier;
+import com.gempukku.swccgo.logic.modifiers.MayDeployAsLandedToLocationModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 
@@ -36,7 +36,7 @@ public class Card1250_074 extends AbstractSite {
 
     @Override
     protected List<Modifier> getGameTextLightSideWhileActiveModifiers(String playerId, SwccgGame game, PhysicalCard self) {
-        return List.of(new MayDeployToLocationModifier(self, Filters.starship, self));
+        return List.of(new MayDeployAsLandedToLocationModifier(self, Filters.starship, self));
     }
 
     @Override

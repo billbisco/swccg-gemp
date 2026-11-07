@@ -17,7 +17,7 @@ public class Card_1250_074_Tests {
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>() {{
             put("platform", "1250_74"); put("dock", "12_74"); put("fighter", "1_146"); put("home", "9_74");
-            put("bay", "9_57"); put("room", "9_58"); put("other", "12_83");
+            put("bay", "9_57"); put("room", "9_58"); put("other", "12_83"); put("plains", "12_79");
         }}, new HashMap<>(), 35, 35, StartingSetup.DefaultLSSpaceSystem, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -39,12 +39,15 @@ public class Card_1250_074_Tests {
     @Test
     public void ActualStarfighterCanDeployAtPlatformButNotOrdinaryExteriorSite() {
         var s = scenario(); s.StartGame(); var platform = s.GetLSCard("platform"); var dock = s.GetLSCard("dock");
-        var fighter = s.GetLSCard("fighter");
-        s.MoveLocationToTable(platform); s.MoveLocationToTable(dock); s.MoveCardsToHand(fighter);
+        var fighter = s.GetLSCard("fighter"); var plains = s.GetLSCard("plains");
+        s.MoveLocationToTable(platform); s.MoveLocationToTable(dock); s.MoveLocationToTable(plains);
+        s.MoveCardsToHand(fighter);
         s.SkipToLSTurn(Phase.DEPLOY);
         if (s.GetLSForcePileCount() < 2) s.LSActivateForceCheat(2 - s.GetLSForcePileCount());
         assertTrue(s.LSDeployAvailable(fighter)); s.LSDeployCard(fighter); s.PassAllResponses();
-        assertTrue(s.LSHasCardChoicesAvailable(platform)); assertFalse(s.LSHasCardChoicesAvailable(dock));
+        assertTrue("Printed site permission", s.LSHasCardChoicesAvailable(platform));
+        assertTrue("Normal docking bay permission remains", s.LSHasCardChoicesAvailable(dock));
+        assertFalse("Ordinary exterior site", s.LSHasCardChoicesAvailable(plains));
         s.LSChooseCard(platform); s.PassAllResponses();
         assertEquals(platform, fighter.getAtLocation());
     }
