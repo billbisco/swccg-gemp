@@ -24,7 +24,7 @@ public class Card1261_034 extends AbstractEffect {
             Filters.or(Filters.starship_site, Filters.vehicle_site));
 
     public Card1261_034() {
-        super(Side.DARK, 3, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Fleet Security Protocols",
+        super(Side.DARK, 3f, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Fleet Security Protocols",
                 Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
         setLore("Since the debacle at Yavin, the Emperor places a premium on the security of his costly war machine.");
         setGameText("Deploy on table. During battle involving your starship (or vehicle), it is power +2 for each of your characters at its related sites (they may be forfeited to reduce battle damage and attrition). Once per turn, may [Deploy] a non-unique starship (or vehicle) site (if such sites leave table, place them and all your cards there in Used Pile). [Immune to Alter.]");
