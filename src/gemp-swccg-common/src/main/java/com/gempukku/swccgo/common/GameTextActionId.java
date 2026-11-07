@@ -1709,6 +1709,7 @@ public enum GameTextActionId {
     LEGACY__OH_HES_NOT_DEAD_NOT_YET__DEPLOY_CHARACTER(true, true),
     LEGACY__OH_HES_NOT_DEAD_NOT_YET__TAKE_GRABBER(true),
     LEGACY__OH_HES_NOT_DEAD_NOT_YET__SEARCH_FORCE_PILE(true),
+    LEGACY__JEDI_ARCHIVES__TAKE_SPEAK_WITH_COUNCIL(true, true),
     ;
 
     private boolean _searchCardPile;
