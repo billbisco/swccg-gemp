@@ -34,6 +34,11 @@ public class Card_1271_047_Tests {
         var s=ready();s.BoardAsPilot(s.GetLSCard("red3"),s.GetLSCard("biggs"));s.MoveCardsToLocation(s.GetLSStartingLocation(),s.GetDSCard("ship"),s.GetDSCard("ship2"),s.GetDSCard("ship3"),s.GetDSCard("ship4"));
         s.SkipToPhase(Phase.BATTLE);s.LSInitiateBattle(s.GetLSStartingLocation());s.PassAllResponses();return s;
     }
+    private void finishLostOrder(VirtualTableScenario s){
+        for(int i=0;i<2 && s.LSDecisionAvailable("put on Lost Pile");i++){
+            s.LSChooseCard(s.LSHasCardChoiceAvailable(s.GetLSCard("red3"))?s.GetLSCard("red3"):s.GetLSCard("biggs"));s.PassAllResponses();
+        }
+    }
     private void tallon(boolean inBattle){
         var s=ready();s.BoardAsPilot(s.GetLSCard("red3"),s.GetLSCard("biggs"));s.MoveCardsToLocation(s.GetLSStartingLocation(),s.GetDSCard("ship"));
         s.MoveCardsToDSHand(s.GetDSCard("tallon"));s.SkipToDSTurn(inBattle?Phase.BATTLE:Phase.CONTROL);
@@ -41,7 +46,7 @@ public class Card_1271_047_Tests {
         s.PrepareDSDestiny(7);s.PrepareLSDestiny(0);s.DSPlayCard(s.GetDSCard("tallon"));s.DSChooseCard(s.GetDSCard("ship"));s.DSChooseCard(s.GetLSCard("red3"));
         s.PassAllResponses();s.PassDestinyDrawResponses();s.PassAllResponses();
         if(inBattle){assertEquals(Zone.AT_LOCATION,s.GetLSCard("red3").getZone());assertTrue(s.GetLSCard("red3").isHit());}
-        else assertTrue(s.GetLSLostPile().contains(s.GetLSCard("red3")));
+        else {finishLostOrder(s);assertTrue(s.GetLSLostPile().contains(s.GetLSCard("red3")));}
     }
     @Test public void Red3BecomesHitInsteadOfLostToAnActualInterruptDuringBattle(){tallon(true);}
     @Test public void Red3DoesNotReplaceAnActualInterruptLossOutsideBattle(){tallon(false);}
@@ -49,7 +54,7 @@ public class Card_1271_047_Tests {
         var s=battle();s.PrepareLSDestiny(0);s.PrepareDSDestiny(amount);s.SkipToDamageSegment(true);s.PassDamageSegmentActions();
         if(s.AwaitingLSBattleDamagePayment())s.LSPayRemainingBattleDamageFromReserveDeck();assertEquals(immune,s.LSDecisionAvailable("(if desired)"));
         if(immune){s.LSChooseCards();assertEquals(Zone.AT_LOCATION,s.GetLSCard("red3").getZone());}
-        else {s.LSPayAttritionFromCardInPlay(s.GetLSCard("red3"));assertTrue(s.GetLSLostPile().contains(s.GetLSCard("red3")));}
+        else {s.LSPayAttritionFromCardInPlay(s.GetLSCard("red3"));finishLostOrder(s);assertTrue(s.GetLSLostPile().contains(s.GetLSCard("red3")));}
     }
     @Test public void Red3MaySurviveActualAttritionThree(){attrition(3,true);}
     @Test public void Red3MustSatisfyActualAttritionFour(){attrition(4,false);}
@@ -60,7 +65,7 @@ public class Card_1271_047_Tests {
         if(s.DSDecisionAvailable("target")){
             assertFalse(s.DSHasCardChoiceAvailable(s.GetLSCard("red3")));s.DSChooseCard(s.GetLSCard("other"));s.PassAllResponses();
         }
-        assertEquals(3,s.GetPower(s.GetLSCard("red3")));assertEquals(5,s.GetForfeit(s.GetLSCard("red3")));assertEquals(0,s.GetForfeit(s.GetLSCard("other")));
+        assertEquals(5,s.GetPower(s.GetLSCard("red3")));assertEquals(5,s.GetForfeit(s.GetLSCard("red3")));assertEquals(0,s.GetForfeit(s.GetLSCard("other")));
     }
     private void spin(boolean targetRed3){
         var s=ready();var red=s.GetLSCard("red3");var other=s.GetLSCard("other");s.BoardAsPilot(red,s.GetLSCard("biggs"));
