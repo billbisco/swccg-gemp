@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
 public class Card_1263_033_Tests {
     private VirtualTableScenario fixture() {
         return new VirtualTableScenario(new HashMap<>(Map.of("fighter", "1263_33", "jedi", "9_24",
-                "pilot", "1_19", "nonpilot", "1_21", "hoth", "3_55", "otherShip", "1_146")),
+                "pilot", "1_19", "nonpilot", "1_21", "hoth", "3_55", "otherShip", "12_90")),
                 new HashMap<>(), 40, 40, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, "legacy");

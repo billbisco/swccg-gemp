@@ -4,6 +4,7 @@ import com.gempukku.swccgo.cards.AbstractPermanentAboard;
 import com.gempukku.swccgo.cards.AbstractPermanentPilot;
 import com.gempukku.swccgo.cards.AbstractStarfighter;
 import com.gempukku.swccgo.cards.conditions.HasPilotSeatOccupiedCondition;
+import com.gempukku.swccgo.cards.evaluators.CardMatchesEvaluator;
 import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
@@ -37,8 +38,7 @@ public class Card1263_033 extends AbstractStarfighter {
 
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, PhysicalCard self) {
-        return List.of(
-                new DeployCostToTargetModifier(self, Filters.and(Filters.pilot, Filters.not(Filters.Jedi)), -1, self),
-                new DeployCostToTargetModifier(self, Filters.and(Filters.pilot, Filters.Jedi), -2, self));
+        return List.of(new DeployCostToTargetModifier(self, Filters.pilot, null,
+                new CardMatchesEvaluator(-1, -2, Filters.Jedi), self));
     }
 }
