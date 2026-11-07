@@ -90,7 +90,7 @@ public class Card_1250_051_Tests {
         var luke = s.GetLSCard("luke");
         assertTrue(choices.contains(Integer.toString(luke.getCardId())));
         resolveEmperor(s, luke);
-        assertEquals(Zone.LOST_PILE, luke.getZone());
+        assertTrue(s.GetLSLostPile().contains(luke));
     }
 
     @Test
@@ -98,7 +98,7 @@ public class Card_1250_051_Tests {
         var s = emperor(false); var bail = s.GetLSCard("bail");
         assertTrue(s.DSGetCardChoices().contains(Integer.toString(bail.getCardId())));
         resolveEmperor(s, bail);
-        assertEquals(Zone.LOST_PILE, bail.getZone());
+        assertTrue(s.GetLSLostPile().contains(bail));
     }
 
     private void resolveEmperor(VirtualTableScenario s, PhysicalCardImpl target) {
@@ -186,6 +186,37 @@ public class Card_1250_051_Tests {
         advanceToDrawResponse(s);
         finishTake(s, s.GetLSDestiny(4));
         finishLightDraws(s, 2, 7);
+    }
+
+    @Test
+    public void LaterDarkTurnAllowsANewLightBattleDestinyRecovery() {
+        var s = battle(true, null);
+        beginDraws(s); finishTake(s, s.GetLSDestiny(3)); finishLightDraws(s, 2, 7);
+        s.PassResponses("BATTLE_DESTINY_DRAWS_COMPLETE_FOR_PLAYER");
+        assertTrue(s.DSDecisionAvailable("battle destiny?")); s.DSChooseNo();
+        for (int i = 0; i < 45 && s.gameState().getBattleState() != null; i++) {
+            String prompt = s.GetCurrentDecision().getText();
+            if (s.DSDecisionAvailable("card from battle to forfeit")) s.DSChooseCard(s.GetDSCard("vader"));
+            else {
+                assertTrue(prompt, prompt.contains("Optional responses") || prompt.contains("action to play or Pass"));
+                s.PlayerPass(s.GetDecidingPlayer());
+            }
+        }
+        assertNull(s.gameState().getBattleState());
+        assertTrue(s.GetDSLostPile().contains(s.GetDSCard("vader")));
+
+        var secondSite = s.GetDSStartingLocation();
+        s.MoveCardsToLocation(secondSite, s.GetLSCard("luke"), s.GetDSCard("trooper"));
+        advanceToDarkControl(s);
+        s.DSActivateForceCheat(2);
+        s.SkipToPhase(Phase.BATTLE);
+        s.DSUseCardAction(secondSite, "Initiate battle");
+        s.SkipToPowerSegment();
+        if (s.DSDecisionAvailable("battle destiny?")) s.DSChooseNo();
+        s.PassResponses("BATTLE_DESTINY_DRAWS_COMPLETE_FOR_PLAYER");
+        assertTrue(s.LSDecisionAvailable("1 battle destiny?"));
+        s.PrepareLSDestiny(2); s.LSChooseYes(); advanceToDrawResponse(s);
+        finishTake(s, s.GetLSDestiny(2)); finishLightDraws(s, 1, 2);
     }
 
     @Test
