@@ -91,14 +91,15 @@ public class Card_1261_086_Tests {
         test.setTargetedCard(TargetId.JEDI_TEST_APPRENTICE, null, leia, Filters.sameCardId(leia));
         if (boost) scn.AttachCardsTo(leia, scn.GetLSCard("reflection"));
         scn.SkipToLSTurn(Phase.CONTROL);
-        scn.PrepareLSDestiny(7);
+        // Yoda adds 1 to total training destiny; decline the optional Dagobah-site bonus.
+        scn.PrepareLSDestiny(6);
         assertTrue(scn.GetLSAvailableActions().toString(), scn.GetLSAvailableActions().stream().anyMatch(x -> x.contains("Attempt Jedi Test")));
         scn.LSUseCardAction(test, "Attempt Jedi Test");
         scn.PassAllResponses(); scn.PassDestinyDrawResponses(); scn.PassAllResponses();
         return GameConditions.isJediTestCompleted(scn.game(), test);
     }
 
-    @Test public void trainingDestinySevenBeatsTheActualFirstTestOnlyWithReflection() {
+    @Test public void trainingDestinySixWithYodaBeatsTheActualFirstTestOnlyWithReflection() {
         assertTrue(completeTest(true));
         assertFalse(completeTest(false));
     }
