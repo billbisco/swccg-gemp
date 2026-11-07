@@ -78,7 +78,7 @@ public class Card_1261_084_Tests {
         scn.PassAllResponses(); assertInZone(Zone.USED_PILE, scn.GetLSCard(target));
     }
     private boolean selectable(VirtualTableScenario scn, String key) {
-        int index = scn.LSGetADParamAsList("cardId").indexOf(Integer.toString(scn.GetLSCard(key).getCardId()));
+        int index = scn.LSGetBPChoices().indexOf(scn.GetLSCard(key).getBlueprintId(true));
         return index >= 0 && Boolean.parseBoolean(scn.LSGetADParamAsList("selectable").get(index));
     }
     @Test public void RepublicLogisticsPaysLostJawaAndRetrievesActualAbilityFourCharacter() {

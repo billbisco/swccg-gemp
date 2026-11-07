@@ -53,7 +53,7 @@ public class Card_1263_031_Tests {
         assertTrue(scn.gameState().isCardRevealedFromPile(scn.GetLSCard("xwing")));
     }
     private boolean selectable(VirtualTableScenario scn, String key) {
-        int index = scn.LSGetADParamAsList("cardId").indexOf(Integer.toString(scn.GetLSCard(key).getCardId()));
+        int index = scn.LSGetBPChoices().indexOf(scn.GetLSCard(key).getBlueprintId(true));
         return index >= 0 && Boolean.parseBoolean(scn.LSGetADParamAsList("selectable").get(index));
     }
     @Test public void FaultPaysOneToTakeAnImmediateEffectAndReshuffle() {
