@@ -142,8 +142,15 @@ public class Card_1271_023_Tests {
         assertEquals(2, q.getForceGenerationFromLocation(s.gameState(), chamber, s.DS), s.epsilon);
         s.gameState().flipCard(s.game(), rough, true);
         assertEquals(Title.This_Place_Can_Be_A_Little_Rough, rough.getTitle());
+        assertTrue(Filters.Executor_site.accepts(s.game(), chamber));
+        assertTrue(Filters.non_battleground_location.accepts(s.game(), chamber));
+        assertFalse(q.isImmuneToForceGenerationLimit(s.gameState(), s.DS, chamber, rough));
+        assertTrue(q.isImmuneToForceGenerationLimit(s.gameState(), s.DS, s.GetDSCard("warRoom"), rough));
+        assertTrue(q.isImmuneToForceGenerationLimit(s.gameState(), s.DS, s.GetDSCard("deathStar"), rough));
         assertEquals(2, q.getForceGenerationFromLocation(s.gameState(), s.GetDSCard("warRoom"), s.DS), s.epsilon);
         assertEquals(3, q.getForceGenerationFromLocation(s.gameState(), s.GetDSCard("deathStar"), s.DS), s.epsilon);
+        assertFalse("Flipped Objective must apply the existing generation limit to Executor sites",
+            q.getModifiersAffectingCard(s.gameState(), com.gempukku.swccgo.logic.modifiers.ModifierType.LIMIT_FORCE_GENERATION_AT_LOCATION, chamber).isEmpty());
         assertEquals(1, q.getForceGenerationFromLocation(s.gameState(), chamber, s.DS), s.epsilon);
     }
 
