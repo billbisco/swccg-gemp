@@ -39,7 +39,7 @@ public class Card_1263_005_Tests {
         scn.PassAllResponses();scn.LSChooseYes();
     }
     private void reachCapture(VirtualTableScenario scn) {
-        for(int i=0;i<30&&!scn.DSCardActionAvailable(scn.GetDSCard("jodo"),CAPTURE);i++) {
+        for(int i=0;i<30&&!(scn.DSGetDecision()!=null&&scn.DSCardActionAvailable(scn.GetDSCard("jodo"),CAPTURE));i++) {
             assertNotNull(scn.GetCurrentDecision());assertTrue(scn.GetCurrentDecision().getText().toLowerCase().contains("optional"));
             if(scn.DSGetDecision()!=null)scn.DSPass();else scn.LSPass();
         }
@@ -115,7 +115,7 @@ public class Card_1263_005_Tests {
         var scn=movement();var sites=pair(scn,4);scn.MoveCardsToLocation(sites[0],scn.GetDSCard("jodo"));scn.SkipToDSTurn(Phase.MOVE);scn.DSUseCardAction(scn.GetDSCard("jodo"),"Move");assertFalse(scn.DSHasCardChoiceAvailable(sites[1]));
     }
     @Test public void JodoKastDoesNotCaptureCharacterRelocatedByAnotherTransportInterrupt() {
-        var scn=transport(true,"luke");var elis=scn.GetDSCard("elis");elis.setOwner(scn.LS);scn.MoveCardsToLSHand(elis);
+        var scn=transport(true,"luke");var elis=scn.GetDSCard("elis");elis.setOwner(scn.LS);scn.MoveCardsToLSHand(elis);scn.LSPass();scn.DSPass();
         move(scn,elis,scn.GetLSCard("luke"),scn.GetDSStartingLocation());scn.PassAllResponses();assertEquals(scn.GetDSStartingLocation(),scn.GetLSCard("luke").getAtLocation());assertFalse(scn.GetLSCard("luke").isCaptive());assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("jodo"),CAPTURE));
     }
     @Test public void JodoKastDoesNotCaptureWhenNabrunTransportIsDeclined() {
