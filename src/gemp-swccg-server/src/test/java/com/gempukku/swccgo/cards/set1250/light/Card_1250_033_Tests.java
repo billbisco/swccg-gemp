@@ -175,6 +175,7 @@ public class Card_1250_033_Tests {
         s.MoveCardsToLocation(s.GetLSCard("otherSite"), s.GetLSCard("trooper"));
         advance(s, s.LS, Phase.CONTROL);
         lightDrain(s, "site", true, true, 3, 2);
+        advance(s, s.LS, Phase.CONTROL);
         lightDrain(s, "otherSite", true, true, 2, 2);
     }
 
@@ -214,4 +215,23 @@ public class Card_1250_033_Tests {
 
     @Test
     public void RelatedNonBattlegroundDoesNotGetTheBoost() { fleetBoundary(true, false, "nonBg", false, 2); }
+
+    @Test
+    public void OpposingCapitalDoesNotGrantTheOpponentTheDrainBonus() {
+        var s = setup(); var site = s.GetLSCard("site");
+        s.MoveCardsToLocation(s.GetLSCard("endor"), s.GetDSCard("capital"));
+        s.MoveCardsToLocation(site, s.GetDSCard("trooper"));
+        advance(s, s.DS, Phase.CONTROL);
+        assertTrue(s.DSForceDrainAvailable(site));
+        int initial = s.GetLSLostPileCount();
+        s.DSForceDrainAt(site);
+        assertFalse(boostOffered(s));
+        s.PassAllResponses();
+        assertEquals(2, s.GetForceDrainTotal());
+        for (int i = 0; i < 8 && s.AwaitingLSForceLossPayment(); i++) {
+            s.LSPayForceLossFromReserveDeck(); s.PassAllResponses();
+        }
+        assertEquals(2, s.GetLSLostPileCount() - initial);
+        assertFalse(s.IsActiveForceDrain());
+    }
 }
