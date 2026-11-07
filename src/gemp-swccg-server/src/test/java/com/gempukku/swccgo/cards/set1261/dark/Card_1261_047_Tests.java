@@ -64,6 +64,8 @@ public class Card_1261_047_Tests {
         scn.MoveCardsToDSHand(combo);
         scn.SkipToLSTurn(Phase.DEPLOY);
         scn.EnsureDSForcePile(6);
+        for (String key : List.of("pilot", "abilityThree", "admiral", "alien"))
+            scn.MoveCardsToTopOfOwnReserveDeck(scn.GetDSCard(key));
         if (scn.AwaitingLSDeployPhaseActions())
             scn.LSPass();
         assertTrue(scn.DSCardPlayAvailable(combo, DEPLOY));
@@ -193,6 +195,11 @@ public class Card_1261_047_Tests {
         scn.PassAllResponses();
         assertEquals(0, scn.GetUnpaidLSAttrition());
         assertTrue(bountyProhibited(scn, luke));
+        if (scn.AwaitingLSBattleDamagePayment())
+            scn.LSPayRemainingBattleDamageFromReserveDeck();
+        if (scn.AwaitingDSBattleDamagePayment())
+            scn.DSPayRemainingBattleDamageFromReserveDeck();
+        scn.PassAllResponses();
         scn.SkipToLSTurn(Phase.CONTROL);
         assertFalse(bountyProhibited(scn, luke));
     }
@@ -216,7 +223,10 @@ public class Card_1261_047_Tests {
         for (int i = 0; i < 30; i++) {
             if (scn.DSDecisionAvailable("Optional response") && scn.DSCardPlayAvailable(card, text))
                 return;
-            passOptional(scn);
+            if (scn.AwaitingDSForceLossPayment())
+                scn.DSPayRemainingForceLossFromReserveDeck();
+            else
+                passOptional(scn);
         }
         fail("No live interrupt response: " + text);
     }
