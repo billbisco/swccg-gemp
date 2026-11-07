@@ -35,6 +35,7 @@ public class Card_1240_090_Tests {
                 }},
                 new HashMap<>() {{
                     put("trooper", "1_194");
+                    put("secretplans", "12_135");
                 }},
                 10, 10,
                 StartingSetup.DefaultLSGroundLocation,
@@ -170,5 +171,43 @@ public class Card_1240_090_Tests {
             }
         }
         assertEquals(ridge, tauntaun.getAtLocation());
+    }
+
+    /** Has a card retrieve 3 Force for Light Side with Secret Plans on table; returns the Secret Plans prompt. */
+    private String secretPlansPromptForRetrievalBy(boolean withBones, String sourceKey) {
+        var scn = GetScenario();
+        var bones = scn.GetLSCard("bones");
+        var source = scn.GetLSCard(sourceKey);
+        var jungle = scn.GetLSCard("jungle");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(jungle);
+        scn.MoveCardsToLocation(jungle, source);
+        scn.MoveCardsToDSSideOfTable(scn.GetDSCard("secretplans"));
+        if (withBones) {
+            scn.MoveCardsToLSSideOfTable(bones);
+        }
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        scn.EnsureForcePile(scn.LS, 6);
+        scn.MoveCardsToTopOfLSLostPile(scn.GetTopOfLSReserveDeck());
+        scn.MoveCardsToTopOfLSLostPile(scn.GetTopOfLSReserveDeck());
+        scn.MoveCardsToTopOfLSLostPile(scn.GetTopOfLSReserveDeck());
+        scn.LSExecuteAdHocEffect(source, new com.gempukku.swccgo.logic.effects.RetrieveForceEffect(
+                new com.gempukku.swccgo.logic.actions.TopLevelGameTextAction(source, scn.LS, source.getCardId()), scn.LS, 3));
+        for (int i = 0; i < 6 && !scn.LSDecisionAvailable("Force to proceed with Force retrieval"); i++) {
+            scn.PassAllResponses();
+        }
+        return scn.LSGetDecision() == null ? "" : scn.LSGetDecision().getText();
+    }
+
+    @Test
+    public void TauntaunBonesVCreatureRetrievalNeedsOnlyXMinus2ForceForSecretPlans() {
+        assertTrue(secretPlansPromptForRetrievalBy(true, "worrt").contains("use 1 Force"));
+    }
+
+    @Test
+    public void TauntaunBonesVSecretPlansUnchangedWithoutBonesOrForNonCreatureRetrieval() {
+        assertTrue(secretPlansPromptForRetrievalBy(false, "worrt").contains("use 3 Force"));
+        assertTrue(secretPlansPromptForRetrievalBy(true, "tauntaun").contains("use 3 Force"));
     }
 }
