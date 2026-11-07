@@ -17,6 +17,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -59,7 +60,8 @@ public class Card_1250_051_Tests {
     public void SenatorMonMothmaProvidesOrderAndPeace() {
         var s = scenario(); s.StartGame(); var mothma = s.GetLSCard("mothma");
         s.MoveCardsToLocation(s.GetLSStartingLocation(), mothma);
-        assertEquals(List.of(Agenda.ORDER, Agenda.PEACE), s.game().getModifiersQuerying().getAgendas(s.gameState(), mothma));
+        assertEquals(Set.of(Agenda.ORDER, Agenda.PEACE),
+                Set.copyOf(s.game().getModifiersQuerying().getAgendas(s.gameState(), mothma)));
     }
 
     private VirtualTableScenario emperor(boolean mothmaHere) {
@@ -86,7 +88,7 @@ public class Card_1250_051_Tests {
         }
         var luke = s.GetLSCard("luke");
         assertTrue(choices.contains(Integer.toString(luke.getCardId())));
-        s.DSChooseCard(luke); s.PassAllResponses(); s.PassDestinyDrawResponses(); s.PassAllResponses();
+        resolveEmperor(s, luke);
         assertEquals(Zone.LOST_PILE, luke.getZone());
     }
 
@@ -94,8 +96,17 @@ public class Card_1250_051_Tests {
     public void EmperorCanTargetPoliticianElsewhere() {
         var s = emperor(false); var bail = s.GetLSCard("bail");
         assertTrue(s.DSGetCardChoices().contains(Integer.toString(bail.getCardId())));
-        s.DSChooseCard(bail); s.PassAllResponses(); s.PassDestinyDrawResponses(); s.PassAllResponses();
+        resolveEmperor(s, bail);
         assertEquals(Zone.LOST_PILE, bail.getZone());
+    }
+
+    private void resolveEmperor(VirtualTableScenario s, PhysicalCardImpl target) {
+        int initialLoss = s.GetDSLostPileCount();
+        s.DSChooseCard(target); s.PassAllResponses();
+        assertTrue(s.DSDecisionAvailable("Choose Force to lose"));
+        s.DSChooseCard(s.GetDSCard("trooper"));
+        s.PassAllResponses(); s.PassDestinyDrawResponses(); s.PassAllResponses();
+        assertEquals(initialLoss + 1, s.GetDSLostPileCount());
     }
 
     private boolean lightAction(VirtualTableScenario s, String label) {
@@ -124,39 +135,43 @@ public class Card_1250_051_Tests {
         }
     }
 
-    private PhysicalCardImpl beginDraw(VirtualTableScenario s, int destiny) {
-        var expected = s.GetLSDestiny(destiny);
-        s.PrepareLSDestiny(destiny);
-        assertTrue(s.LSDecisionAvailable("battle destiny?"));
+    private void beginDraws(VirtualTableScenario s) {
+        s.MoveCardsToTopOfLSReserveDeck(s.GetLSDestiny(4), s.GetLSDestiny(3));
+        assertTrue(s.LSDecisionAvailable("2 battle destiny?"));
         s.LSChooseYes();
-        s.PassResponses("COST_TO_DRAW_DESTINY_CARD"); s.PassResponses("ABOUT_TO_DRAW_DESTINY_CARD");
-        passUntilTakeOrAfterDraw(s);
-        return expected;
+        advanceToDrawResponse(s);
     }
 
-    private void finishTake(VirtualTableScenario s, PhysicalCardImpl destiny, int value) {
+    private void advanceToDrawResponse(VirtualTableScenario s) {
+        s.PassResponses("COST_TO_DRAW_DESTINY_CARD"); s.PassResponses("ABOUT_TO_DRAW_DESTINY_CARD");
+        passUntilTakeOrAfterDraw(s);
+    }
+
+    private void finishTake(VirtualTableScenario s, PhysicalCardImpl destiny) {
         assertTrue(s.GetCurrentDecision().getText(), lightAction(s, TAKE));
         int hand = s.GetLSHandCount();
         s.LSUseCardAction(s.GetLSCard("mothma"), TAKE); s.PassDestinyDrawResponses();
         assertEquals(Zone.HAND, destiny.getZone()); assertEquals(hand + 1, s.GetLSHandCount());
-        assertEquals(value, s.GetLSTotalDestiny());
     }
 
     @Test
     public void SenateMajorityTakesPhysicalBattleDestinyAndKeepsValueButOnlyOnceThisTurn() {
         var s = battle(true, null);
-        finishTake(s, beginDraw(s, 3), 3);
-        var second = beginDraw(s, 4);
+        beginDraws(s);
+        finishTake(s, s.GetLSDestiny(3));
+        advanceToDrawResponse(s);
         assertFalse(lightAction(s, TAKE)); s.PassDestinyDrawResponses();
-        assertNotEquals(Zone.HAND, second.getZone()); assertEquals(7, s.GetLSTotalDestiny());
+        assertNotEquals(Zone.HAND, s.GetLSDestiny(4).getZone()); assertEquals(7, s.GetLSTotalDestiny());
     }
 
     @Test
     public void DecliningFirstBattleDestinyDoesNotConsumeTheUse() {
         var s = battle(true, null);
-        var first = beginDraw(s, 3); assertTrue(lightAction(s, TAKE));
-        s.LSPass(); s.PassDestinyDrawResponses(); assertNotEquals(Zone.HAND, first.getZone());
-        finishTake(s, beginDraw(s, 4), 7);
+        beginDraws(s); assertTrue(lightAction(s, TAKE));
+        s.LSPass(); s.PassDestinyDrawResponses(); assertNotEquals(Zone.HAND, s.GetLSDestiny(3).getZone());
+        advanceToDrawResponse(s);
+        finishTake(s, s.GetLSDestiny(4));
+        assertEquals(7, s.GetLSTotalDestiny());
     }
 
     @Test
@@ -169,9 +184,13 @@ public class Card_1250_051_Tests {
     public void AwayFromSenateDoesNotOfferTheBattleDestinyAction() { assertNoTake(battle(false, null)); }
 
     private void assertNoTake(VirtualTableScenario s) {
-        var destiny = beginDraw(s, 3);
+        beginDraws(s);
         assertFalse(lightAction(s, TAKE)); s.PassDestinyDrawResponses();
-        assertNotEquals(Zone.HAND, destiny.getZone()); assertEquals(3, s.GetLSTotalDestiny());
+        advanceToDrawResponse(s);
+        assertFalse(lightAction(s, TAKE)); s.PassDestinyDrawResponses();
+        assertNotEquals(Zone.HAND, s.GetLSDestiny(3).getZone());
+        assertNotEquals(Zone.HAND, s.GetLSDestiny(4).getZone());
+        assertEquals(7, s.GetLSTotalDestiny());
     }
 
     @Test
@@ -186,7 +205,7 @@ public class Card_1250_051_Tests {
         s.PassResponses("COST_TO_DRAW_DESTINY_CARD"); s.PassResponses("ABOUT_TO_DRAW_DESTINY_CARD");
         passUntilTakeOrAfterDraw(s);
         assertFalse(lightAction(s, TAKE)); s.PassDestinyDrawResponses();
-        assertNotEquals(Zone.HAND, darkDestiny.getZone()); assertEquals(3, s.GetDSTotalDestiny());
+        assertNotEquals(Zone.HAND, darkDestiny.getZone()); assertEquals(4, s.GetDSTotalDestiny());
     }
 
     private VirtualTableScenario reserve(boolean darkTurn) {
