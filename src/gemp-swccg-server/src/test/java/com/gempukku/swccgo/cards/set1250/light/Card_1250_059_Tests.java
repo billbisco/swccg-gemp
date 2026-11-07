@@ -184,6 +184,9 @@ public class Card_1250_059_Tests {
         for (int i = 0; i < 20 && s.GetCurrentPhase() == Phase.ACTIVATE; i++) passDecision(s);
         assertEquals(Phase.CONTROL, s.GetCurrentPhase());
         assertEquals(force, s.GetLSForcePileCount());
+        assertFalse(canDownload(s));
+        s.SkipToPhase(Phase.DEPLOY);
+        assertTrue(s.AwaitingLSDeployPhaseActions());
         return s;
     }
 
@@ -221,16 +224,19 @@ public class Card_1250_059_Tests {
     public void AJedisPlansCannotDownloadWithOneForce() { assertFalse(canDownload(downloadSetup(1))); }
 
     @Test
-    public void AJedisPlansOncePerTurnSpansPhasesAndResetsNextTurn() {
+    public void AJedisPlansDownloadsOnceDuringEachLightDeployPhase() {
         var s = downloadSetup(4);
         int oldTurn = s.gameState().getPlayersLatestTurnNumber(s.LS);
-        download(s, "archives", false); s.SkipToPhase(Phase.MOVE);
-        assertEquals(oldTurn, s.gameState().getPlayersLatestTurnNumber(s.LS));
-        assertTrue(s.AwaitingLSMovePhaseActions()); assertFalse(canDownload(s));
+        download(s, "archives", false);
+        if (s.AwaitingDSDeployPhaseActions()) s.DSPass();
+        assertTrue(s.AwaitingLSDeployPhaseActions()); assertFalse(canDownload(s));
         for (int i = 0; i < 100 && !(s.GetCurrentPlayer().equals(s.DS)
                 && s.GetCurrentPhase() == Phase.CONTROL); i++) passDecision(s);
         assertEquals(s.DS, s.GetCurrentPlayer()); assertEquals(Phase.CONTROL, s.GetCurrentPhase());
         if (s.DSAnyDecisionsAvailable()) s.DSPass();
+        assertFalse(canDownload(s));
+        s.SkipToLSTurn(Phase.DEPLOY);
+        assertEquals(oldTurn + 1, s.gameState().getPlayersLatestTurnNumber(s.LS));
         download(s, "system", false);
     }
 

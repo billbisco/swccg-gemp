@@ -82,7 +82,7 @@ public class Card1250_059 extends AbstractNormalEffect {
             PhysicalCard self, int gameTextSourceCardId) {
         GameTextActionId id = GameTextActionId.LEGACY__A_JEDIS_PLANS__DEPLOY_LOCATION;
         if (!GameConditions.isOncePerTurn(game, self, playerId, gameTextSourceCardId, id)
-                || !GameConditions.canDeployCardFromReserveDeck(game, playerId, self, id, true, false)
+                || !GameConditions.canDeployCardFromReserveDeck(game, playerId, self, id)
                 || !GameConditions.canUseForce(game, playerId, 2)) return null;
 
         Filter eligible = Filters.and(Filters.not(Filters.sameTitleAs(self, Filters.onTable)),
