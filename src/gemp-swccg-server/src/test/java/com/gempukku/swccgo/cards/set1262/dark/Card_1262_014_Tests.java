@@ -121,7 +121,8 @@ public class Card_1262_014_Tests {
         var scn=battle(add);var draw=reachDraw(scn,type);var card=draw.getDrawnDestinyCard();var why=scn.GetDSCard("why");
         assertTrue(scn.IsReachedPowerSegment());assertFalse(draw.isDestinyCanceled());
         assertTrue(scn.DSCardPlayAvailable(why,CANCEL));scn.DSPlayCard(why,CANCEL);scn.PassAllResponses();
-        assertTrue(draw.isDestinyCanceled());assertInZone(Zone.USED_PILE,why);assertInZone(Zone.USED_PILE,card);
+        assertTrue(draw.isDestinyCanceled());assertInZone(Zone.USED_PILE,why);
+        assertTrue(scn.game().getGameState().getUsedPile(scn.LS).contains(card));
     }
     @Test public void WhyDidntYouTellMeCancelsActualPowerDestinyDuringPowerSegment() {
         cancelAddedDraw("Add one destiny to total power",DestinyType.DESTINY_TO_TOTAL_POWER);
@@ -139,5 +140,19 @@ public class Card_1262_014_Tests {
         var scn=battle("Add one destiny to total power");var draw=reachDraw(scn,DestinyType.DESTINY_TO_TOTAL_POWER);
         assertTrue(scn.DSCardPlayAvailable(scn.GetDSCard("why"),CANCEL));scn.PassDestinyDrawResponses();
         assertFalse(draw.isDestinyCanceled());assertEquals(Zone.HAND,scn.GetDSCard("why").getZone());
+    }
+    @Test public void WhyDidntYouTellMeCannotCancelWeaponDestinyDuringWeaponsSegment() {
+        var scn=scenario();scn.StartGame();var site=scn.GetDSStartingLocation();
+        scn.MoveCardsToLocation(site,scn.GetDSCard("veers"),scn.GetLSCard("luke"));
+        scn.AttachCardsTo(scn.GetLSCard("luke"),scn.GetLSCard("blaster"));
+        scn.MoveCardsToDSHand(scn.GetDSCard("why"));scn.PrepareLSDestiny(6);
+        scn.LSStartBattleAndSkipToWeaponsSegment(site);
+        scn.LSUseCardAction(scn.GetLSCard("blaster"),"Fire");scn.LSChooseCard(scn.GetDSCard("veers"));
+        scn.PassForceUseResponses();scn.PassResponses("Fire ");
+        var draw=reachDraw(scn,DestinyType.WEAPON_DESTINY);
+        assertFalse(scn.IsReachedPowerSegment());assertFalse(scn.DSCardPlayAvailable(scn.GetDSCard("why"),CANCEL));
+        scn.PassDestinyDrawResponses();scn.PassResponses("ABOUT_TO_BE_HIT");
+        assertFalse(draw.isDestinyCanceled());assertTrue(scn.GetDSCard("veers").isHit());
+        assertEquals(Zone.HAND,scn.GetDSCard("why").getZone());
     }
 }
