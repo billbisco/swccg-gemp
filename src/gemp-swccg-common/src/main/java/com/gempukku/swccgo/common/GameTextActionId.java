@@ -1719,6 +1719,7 @@ public enum GameTextActionId {
     LEGACY__ARTOO_BRAVE_LITTLE_DROID_V__TARGET_DROIDS(false, true),
     LEGACY__HOTH_ICE_PLAINS__TAKE_AT_AT(true, true),
     LEGACY__JODO_KAST_V__CAPTURE(false, true),
+    LEGACY__AURRA_SING_V__FIRE_WEAPON(false, true),
     ;
     LEGACY__QUEENS_LANDING_SITE__DOWNLOAD(true);
     LEGACY__HAN_CHEWIE_AND_THE_FALCON__TAKE_A_FEW_MANEUVERS(true, true);
