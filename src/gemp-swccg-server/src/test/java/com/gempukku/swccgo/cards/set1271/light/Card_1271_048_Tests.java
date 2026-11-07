@@ -89,6 +89,7 @@ public class Card_1271_048_Tests {
             else break;
             s.PassResponses("ABOUT_TO_LOSE_CARD_FROM_TABLE");
         }
+        assertTrue("Temporary forfeiture diagnostic: zone="+s.GetDSCard(name).getZone()+" LS="+(s.LSGetDecision()==null?null:s.LSGetDecision().getText())+" DS="+(s.DSGetDecision()==null?null:s.DSGetDecision().getText()),s.GetDSLostPile().contains(s.GetDSCard(name)));
     }
     @Test public void PlanetDefenderIonCannonActuallyTradesItselfOutOfPlayForTheForfeitedTargetInHand() {
         var s=ready(true);shoot(s,3,4);forfeitTarget(s);assertTrue(s.LSCardActionAvailable(s.GetLSCard("cannon"),"Steal"));
