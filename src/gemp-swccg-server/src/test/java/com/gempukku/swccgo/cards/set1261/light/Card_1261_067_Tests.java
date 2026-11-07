@@ -4,6 +4,9 @@ import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
+import com.gempukku.swccgo.logic.effects.LoseCardFromTableEffect;
+import com.gempukku.swccgo.logic.effects.ReleaseCaptiveEffect;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -41,7 +44,7 @@ public class Card_1261_067_Tests {
             @Override public HashMap<String, String> Cards() { return new HashMap<>(Map.of("prize", "1261_67")); }
             @Override public void Setup(VirtualTableScenario scn) {}
         };
-        return new VirtualTableScenario(light, new HashMap<>(Map.of("spacePresence", "1_299", "darkPilot", "1_173")), 40, 40, StartingSetup.DefaultLSGroundLocation,
+        return new VirtualTableScenario(light, new HashMap<>(Map.of("spacePresence", "1_299", "darkPilot", "1_173", "vader", "1_168", "audience", "6_162")), 40, 40, StartingSetup.DefaultLSGroundLocation,
                 darkStart, StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 outside, StartingSetup.NoDSShields, "legacy");
     }
@@ -85,4 +88,44 @@ public class Card_1261_067_Tests {
         assertTrue(Filters.Corran_Horn.accepts(scn.game(), prize));
         assertEquals(Zone.OUT_OF_PLAY, scn.GetDSCard("darkPrize").getZone());
     }
+    private void leavesTable(boolean release) {
+        var scn = fixture(true); scn.StartGame();
+        var prize = scn.GetLSCard("prize");
+        assertTrue(Filters.frozenCaptive.accepts(scn.game(), prize));
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        var site = scn.GetLSStartingLocation();
+        var action = new TopLevelGameTextAction(site, scn.LS, site.getCardId());
+        if (release) action.appendEffect(new ReleaseCaptiveEffect(action, prize));
+        else action.appendEffect(new LoseCardFromTableEffect(action, prize));
+        scn.carryOutEffectInPhaseActionByPlayer(scn.LS, action);
+        if (scn.LSHasCardChoiceAvailable(prize)) scn.LSChooseCard(prize);
+        if (scn.LSHasCardChoiceAvailable(scn.GetDSCard("tower"))) scn.LSChooseCard(scn.GetDSCard("tower"));
+        scn.PassAllResponses();
+        assertEquals(Zone.OUT_OF_PLAY, prize.getZone());
+        assertFalse(Filters.Corran_Horn.accepts(scn.game(), prize));
+        assertFalse(scn.GetLSLostPile().contains(prize));
+    }
+
+    @Test public void nativeReleasePlacesPrizeOutOfPlayInsteadOfKeepingCorran() { leavesTable(true); }
+    @Test public void nativeLossPlacesTheCaptiveOutOfPlayInsteadOfInLostPile() { leavesTable(false); }
+
+    private void audienceBattle(boolean atAudience) {
+        var scn = fixture(true); scn.StartGame();
+        var prize = scn.GetLSCard("prize"); var audience = scn.GetDSCard("audience");
+        scn.MoveLocationToTable(audience);
+        scn.gameState().imprisonCharacter(scn.game(), prize, audience);
+        assertTrue(Filters.imprisonedIn(audience).accepts(scn.game(), prize));
+        assertTrue(Filters.frozenCaptive.accepts(scn.game(), prize));
+        var site = atAudience ? audience : scn.GetLSStartingLocation();
+        scn.MoveCardsToLocation(site, scn.GetLSCard("pilot"), scn.GetDSCard("vader"));
+        scn.LSActivateForceCheat(8); scn.SkipToLSTurn(Phase.BATTLE);
+        scn.LSInitiateBattle(site);
+        scn.PrepareLSDestiny(3); scn.PrepareDSDestiny(3);
+        scn.SkipToEndOfPowerSegment(true);
+        assertEquals(3, scn.GetLSTotalDestiny());
+        assertEquals(atAudience ? 5 : 4, scn.GetDSTotalDestiny());
+    }
+
+    @Test public void captiveAddsOneToTheOpponentsActualAudienceChamberBattleDraw() { audienceBattle(true); }
+    @Test public void captiveDoesNotAddToAnActualBattleDrawAtADifferentSite() { audienceBattle(false); }
 }
