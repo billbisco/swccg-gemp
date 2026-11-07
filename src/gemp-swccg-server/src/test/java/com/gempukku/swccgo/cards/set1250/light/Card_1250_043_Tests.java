@@ -39,11 +39,13 @@ public class Card_1250_043_Tests {
 
     @Test
     public void ActualPilotSlotAddsTwoPowerButPassengerDoesNot() {
-        var s = scenario(); s.StartGame(); var ship = s.GetLSCard("tantive"); var williams = s.GetLSCard("williams");
+        var piloted = battle("radiant", true, false);
+        assertEquals(7, piloted.GetPower(piloted.GetLSCard("radiant")));
+
+        var s = scenario(); s.StartGame(); var ship = s.GetLSCard("tantive");
         s.MoveCardsToLocation(s.GetLSStartingLocation(), ship);
         int base = s.GetPower(ship);
-        s.BoardAsPassenger(ship, williams); assertEquals(base, s.GetPower(ship));
-        s.BoardAsPilot(ship, williams); assertEquals(base + 2, s.GetPower(ship));
+        s.BoardAsPassenger(ship, s.GetLSCard("williams")); assertEquals(base, s.GetPower(ship));
     }
 
     private VirtualTableScenario battle(String piloted, boolean sameSystem, boolean extraAbility) {
