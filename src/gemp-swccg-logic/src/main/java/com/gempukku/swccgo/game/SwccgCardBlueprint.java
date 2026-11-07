@@ -1265,6 +1265,15 @@ public interface SwccgCardBlueprint {
     boolean isInactiveInsteadOfActive(final SwccgGame game, final PhysicalCard self);
 
     /**
+     * Determines if the card remains active while attached to a captive (cards attached to a captive are normally
+     * inactive along with the captive). Used by cards whose game text explicitly works on the captive.
+     * @return true if the card stays active while attached to a captive, otherwise false
+     */
+    default boolean isActiveWhileAttachedToCaptive() {
+        return false;
+    }
+
+    /**
      * Gets a filter for the cards the specified card is not prohibited from moving to.
      * @param playerId the player
      * @param game the game
