@@ -153,6 +153,7 @@ public enum ModifyGameTextType {
     LEGACY__SQUABBLING_DELEGATES__SENATORS_ARE_CORUSCANT_GUARDS("'Senators' treated as 'Coruscant Guards'"),
     LEGACY__INTERRUPTS__VADER_MAY_BE_MAUL_OR_MARA_JADE("'Vader' may be treated as 'Maul or Mara Jade'"),
     LEGACY__OBI_WAN_CRAZY_WIZARD__OLD_BEN_MAY_TARGET_SITE("May target Obi-Wan, Crazy Wizard's site even if not a Tatooine site"),
+    LEGACY__YODA_SENIOR_COUNCIL_MEMBER__JEDI_COUNCIL_CHAMBER_IS_EPISODE_I_BATTLEGROUND_SITES("'Jedi Council Chamber' may be treated as '[Episode I] battleground sites'"),
 
     LEGACY__DROID_RACKS__WHERE_ARE_THOSE_DROIDEKAS_IGNORES_NEIMOIDIANS("Ignores Neimoidians"),
     LEGACY__HUTT_INFLUENCE__HUMAN_SHIELD_IMPERIAL_MAY_BE_BOUNTY_HUNTER("'Imperial' may be treated as 'bounty hunter'"),
