@@ -258,10 +258,14 @@ public class Card_1250_051_Tests {
         var s = scenario(); s.StartGame();
         s.MoveCardsToLocation(s.GetLSStartingLocation(), s.GetLSCard("mothma"));
         if (darkTurn) s.SkipToDSTurn(Phase.CONTROL); else s.SkipToLSTurn(Phase.DEPLOY);
-        s.MoveCardsToTopOfLSReserveDeck(s.GetLSCard("endor"), s.GetLSCard("endorSite"),
-                s.GetLSCard("chamber"), s.GetLSCard("naboo"));
+        stockReserve(s);
         if (darkTurn && s.DSAnyDecisionsAvailable()) s.DSPass();
         return s;
+    }
+
+    private void stockReserve(VirtualTableScenario s) {
+        s.MoveCardsToTopOfLSReserveDeck(s.GetLSCard("endor"), s.GetLSCard("endorSite"),
+                s.GetLSCard("chamber"), s.GetLSCard("naboo"));
     }
 
     private void selectable(VirtualTableScenario s, String label, boolean expected) {
@@ -299,7 +303,10 @@ public class Card_1250_051_Tests {
     public void ReserveSearchCannotDeployDuringDarkTurn() {
         var s = reserve(true);
         assertFalse(lightAction(s, DOWNLOAD));
-        s.SkipToLSTurn(Phase.DEPLOY);
+        s.SkipToLSTurn(Phase.CONTROL);
+        // Activation can move the previous top cards out of Reserve Deck.
+        stockReserve(s);
+        s.SkipToPhase(Phase.DEPLOY);
         download(s, "naboo", false);
     }
 
