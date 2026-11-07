@@ -12,12 +12,14 @@ import static com.gempukku.swccgo.framework.Assertions.*;
 import static org.junit.Assert.*;
 
 public class Card_1261_062_Tests {
-    private VirtualTableScenario scenario() {
+    private VirtualTableScenario scenario() { return scenario(false, false); }
+
+    private VirtualTableScenario scenario(boolean ownStarter, boolean opposingStarter) {
         return new VirtualTableScenario(new HashMap<>() {{
             put("baragwin", "1261_62"); put("baragwin2", "1261_62"); put("momaw", "1_20"); put("gungan", "12_7");
             put("luke", "1_19"); put("threepio", "1_5"); put("speeder", "3_69"); put("falcon", "1_143");
-            put("system", "1_135"); put("throne", "1_138"); put("starter", "13_5"); put("traffic", "1_66");
-        }}, new HashMap<>() {{ put("vader", "1_168"); put("ephant", "6_101"); put("starter", "13_69"); }}, 60, 60,
+            put("system", "1_135"); put("throne", "1_138"); put("traffic", "1_66"); if (ownStarter) put("starter", "13_5");
+        }}, new HashMap<>() {{ put("vader", "1_168"); put("ephant", "6_101"); if (opposingStarter) put("starter", "13_69"); }}, 60, 60,
                 StartingSetup.LSStartingLocation("1_136"), StartingSetup.DSStartingLocation("12_176"),
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -68,17 +70,17 @@ public class Card_1261_062_Tests {
     @Test public void BaragwinDoesNotResetPilotAtSystemAndRestoresPowerWhenLeavingPlay() {
         var scn = start(true, false); var system = scn.GetLSCard("system"); scn.MoveLocationToTable(system);
         scn.MoveCardsToLocation(system, scn.GetLSCard("falcon")); scn.BoardAsPilot(scn.GetLSCard("falcon"), scn.GetLSCard("luke"));
-        assertEquals(3, scn.GetPower(scn.GetLSCard("luke"))); assertEquals(9, scn.GetForfeit(scn.GetLSCard("luke")));
+        assertEquals(3, scn.GetPower(scn.GetLSCard("luke"))); assertEquals(7, scn.GetForfeit(scn.GetLSCard("luke")));
         scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetLSCard("luke")); assertEquals(0, scn.GetPower(scn.GetLSCard("luke")));
         scn.MoveCardsToLSHand(scn.GetLSCard("baragwin")); assertEquals(3, scn.GetPower(scn.GetLSCard("luke")));
-        assertEquals(9, scn.GetForfeit(scn.GetLSCard("luke")));
+        assertEquals(7, scn.GetForfeit(scn.GetLSCard("luke")));
     }
 
     @Test public void BaragwinResetIncludesNonAliensInsideEnclosedVehicleAtSite() {
         var scn = start(true, false); scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetLSCard("speeder"));
         scn.BoardAsPassenger(scn.GetLSCard("speeder"), scn.GetLSCard("luke"));
         assertEquals(0, scn.GetPower(scn.GetLSCard("luke"))); assertEquals(0, scn.GetForfeit(scn.GetLSCard("luke")));
-        assertEquals(2, scn.GetPower(scn.GetLSCard("speeder")));
+        assertEquals(3, scn.GetPower(scn.GetLSCard("speeder")));
     }
 
     @Test public void BaragwinResetChangesActualBattlePower() {
@@ -95,11 +97,10 @@ public class Card_1261_062_Tests {
         if (twoAliens) scn.MoveCardsToLocation(target, scn.GetLSCard("gungan"));
         else scn.MoveCardsToLocation(target, scn.GetLSCard("luke"));
         scn.SkipToLSTurn(Phase.CONTROL); int lost = scn.GetDSLostPileCount();
-        if (expected == 0) assertFalse(scn.LSForceDrainAvailable(target));
-        else {
-            scn.LSForceDrainAt(target); scn.PassForceDrainStartResponses();
-            scn.DSPayRemainingForceLossFromReserveDeck(); scn.PassAllResponses();
-        }
+        scn.LSForceDrainAt(target); scn.PassForceDrainStartResponses();
+        if (expected == 0) assertFalse(scn.AwaitingDSForceLossPayment());
+        else scn.DSPayRemainingForceLossFromReserveDeck();
+        scn.PassAllResponses();
         assertEquals(lost + expected, scn.GetDSLostPileCount());
     }
     @Test public void BaragwinBoostsActualRemoteBattlegroundDrainWithTwoAliens() { drain(true, false, true, false, 2); }
@@ -127,7 +128,7 @@ public class Card_1261_062_Tests {
     @Test public void BaragwinNotPresentInsideEnclosedVehicleDoesNotRetrieve() { retrieval(true, true, false, 0); }
 
     private void deploymentWithEffect(boolean darkStarter, boolean ordinaryEffect, boolean addLater) {
-        var scn = scenario(); scn.StartGame(); var throne = scn.GetLSCard("throne"); scn.MoveLocationToTable(throne);
+        var scn = scenario(!ordinaryEffect && !darkStarter, darkStarter); scn.StartGame(); var throne = scn.GetLSCard("throne"); scn.MoveLocationToTable(throne);
         var effect = darkStarter ? scn.GetDSCard("starter") : scn.GetLSCard(ordinaryEffect ? "traffic" : "starter");
         if (addLater) scn.MoveCardsToLocation(throne, scn.GetLSCard("baragwin"));
         scn.MoveCardsToSideOfTable(effect);

@@ -101,21 +101,21 @@ public class Card_1262_026_Tests {
     }
 
     private VirtualTableScenario attack(boolean ridden) {
-        var scn = scenario(); scn.StartGame(); var swamp = scn.GetLSCard("swamp"); scn.MoveLocationToTable(swamp);
+        var scn = scenario(); scn.StartGame(); var swamp = scn.GetLSCard("jungle"); scn.MoveLocationToTable(swamp);
         scn.MoveCardsToLocation(swamp, scn.GetLSCard("kaadu"));
         if (ridden) scn.BoardAsPassenger(scn.GetLSCard("kaadu"), scn.GetLSCard("rider"));
         else scn.MoveCardsToLocation(swamp, scn.GetLSCard("rider"));
-        scn.SkipToDSTurn(Phase.BATTLE); scn.MoveCardsToLocation(swamp, scn.GetDSCard("snake"));
+        scn.SkipToDSTurn(Phase.DEPLOY); scn.MoveCardsToLocation(swamp, scn.GetDSCard("snake")); scn.SkipToPhase(Phase.BATTLE);
         return scn;
     }
     @Test public void KaaduBeastRiderPreventsActualCreatureAttackAction() {
         var scn = attack(true); assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("snake"), "Initiate attack"));
-        assertAtLocation(scn.GetLSCard("swamp"), scn.GetLSCard("kaadu"));
+        assertAtLocation(scn.GetLSCard("jungle"), scn.GetLSCard("kaadu"));
     }
     @Test public void KaaduWithoutMountedBeastRiderCanActuallyBeEaten() {
         var scn = attack(false); scn.PrepareDSDestiny(4); scn.DSUseCardAction(scn.GetDSCard("snake"), "Initiate attack");
         scn.PassAllResponses(); scn.PassWeaponsSegmentActions(); scn.PassAllResponses(); scn.PassDestinyDrawResponses(); scn.PassAllResponses();
-        assertInZone(Zone.LOST_PILE, scn.GetLSCard("kaadu")); assertAtLocation(scn.GetLSCard("swamp"), scn.GetLSCard("rider"));
+        assertInZone(Zone.LOST_PILE, scn.GetLSCard("kaadu")); assertAtLocation(scn.GetLSCard("jungle"), scn.GetLSCard("rider"));
     }
 
     private void attrition(int destiny, boolean immune, boolean forfeitRider) {
@@ -130,7 +130,7 @@ public class Card_1262_026_Tests {
             scn.LSChooseCards(); assertAtLocation(site, scn.GetLSCard("kaadu"));
             assertEquals(scn.GetLSCard("kaadu"), scn.GetLSCard("rider").getAttachedTo());
         } else {
-            var target = scn.GetLSCard(forfeitRider ? "rider" : "kaadu"); scn.LSPayAttritionFromCardInPlay(target);
+            var target = scn.GetLSCard(forfeitRider ? "rider" : "kaadu"); scn.LSPayAttritionFromCardInPlay(target); scn.PassAllResponses();
             assertInZone(Zone.LOST_PILE, target);
         }
     }

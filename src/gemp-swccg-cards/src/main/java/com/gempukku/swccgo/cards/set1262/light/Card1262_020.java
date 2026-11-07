@@ -65,7 +65,8 @@ public class Card1262_020 extends AbstractRepublic {
     protected List<TopLevelGameTextAction> getGameTextTopLevelActions(String playerId, SwccgGame game,
             PhysicalCard self, int gameTextSourceCardId) {
         GameTextActionId actionId = GameTextActionId.LEGACY__BEAST_RIDER__DEPLOY_KAADU;
-        if (GameConditions.isOncePerTurn(game, self, playerId, gameTextSourceCardId, actionId)
+        if (GameConditions.hasReserveDeck(game, playerId)
+                && GameConditions.isOncePerTurn(game, self, playerId, gameTextSourceCardId, actionId)
                 && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, actionId, true, false)) {
             TopLevelGameTextAction action = new TopLevelGameTextAction(self, gameTextSourceCardId, actionId);
             action.setText("Deploy Kaadu here from Reserve Deck"); action.appendUsage(new OncePerTurnEffect(action));

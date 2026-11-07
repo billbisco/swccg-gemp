@@ -140,7 +140,8 @@ public class Card_1262_020_Tests {
         var scn = start(); var site = scn.GetLSStartingLocation();
         if (!sameSite) { site = scn.GetLSCard("swamp"); scn.MoveLocationToTable(site); }
         scn.MoveCardsToLocation(site, ownVictim ? scn.GetLSCard("trooper") : scn.GetDSCard("trooper"));
-        scn.SkipToDSTurn(Phase.BATTLE); scn.MoveCardsToLocation(site, scn.GetDSCard("snake"));
+        scn.SkipToDSTurn(Phase.DEPLOY); scn.MoveCardsToLocation(site, scn.GetDSCard("snake"));
+        scn.SkipToPhase(Phase.BATTLE);
         scn.MoveCardsToTopOfLSLostPile(scn.GetLSFillerRange(5)); scn.PrepareDSDestiny(4);
         scn.DSUseCardAction(scn.GetDSCard("snake"), "Initiate attack"); return scn;
     }
