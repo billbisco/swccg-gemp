@@ -133,7 +133,8 @@ public interface GameText extends BaseQuery, Piloting {
      * @return true if canceled, otherwise false
      */
     default boolean isGameTextCanceled(GameState gameState, PhysicalCard card, boolean allowIfOnlyLanded, boolean skipUnpilotedCheck) {
-        if (card.isDejarikHologramAtHolosite())
+        // A dejarik/hologram at a holosite has its game text suspended by 'Dejarik Rules', unless it may not be suspended
+        if (card.isDejarikHologramAtHolosite() && !isProhibitedFromBeingSuspended(gameState, card))
             return true;
 
         if (card.isGameTextCanceled() || card.isBlownAway() || card.isCollapsed())

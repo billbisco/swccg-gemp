@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.set1240.light;
 
+import com.gempukku.swccgo.cards.legacy.EyesInTheDarkDejarikTestBase;
 import com.gempukku.swccgo.common.CardSubtype;
 import com.gempukku.swccgo.common.CardType;
 import com.gempukku.swccgo.common.ExpansionSet;
@@ -21,7 +22,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class Card_1240_085_Tests {
+public class Card_1240_085_Tests extends EyesInTheDarkDejarikTestBase {
+    @Override
+    protected String eyesBlueprintId() {
+        return "1240_85";
+    }
+
     protected VirtualTableScenario GetScenario() {
         return new VirtualTableScenario(
                 new HashMap<>() {{

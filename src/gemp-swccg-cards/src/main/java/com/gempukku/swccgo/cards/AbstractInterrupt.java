@@ -86,6 +86,16 @@ public abstract class AbstractInterrupt extends AbstractSwccgCardBlueprint {
     }
 
     /**
+     * An Interrupt deployed to a holosite as a dejarik may be played from there as if from hand when a card allows it
+     * (e.g. Eyes In The Dark (V): "may play your Interrupts here as if from hand").
+     */
+    @Override
+    protected boolean mayPlayFromTableAsIfFromHand(SwccgGame game, PhysicalCard self) {
+        return self.isDejarikHologramAtHolosite()
+                && game.getModifiersQuerying().mayDeployAsIfFromHand(game.getGameState(), self);
+    }
+
+    /**
      * Face-down stacked cards skip normal interrupt play unless they may play as if from hand
      * (e.g. Cyborg Construct). While-stacked game text is gathered only when the blueprint
      * opts in via visitCardWhenStackedFaceDown().

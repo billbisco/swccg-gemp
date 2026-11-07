@@ -51,7 +51,7 @@ public class Card10_001 extends AbstractUsedOrLostInterrupt {
 
     @Override
     protected List<PlayInterruptAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self) {
-        final Filter effectFilter = Filters.and(Filters.Effect, Filters.not(Filters.dejarikHologramAtHolosite));
+        final Filter effectFilter = Filters.or(Filters.and(Filters.Effect, Filters.not(Filters.dejarikHologramAtHolosite)), Filters.treatedAsEffectOnCard(self));
         final Filter characterFilter = Filters.and(Filters.your(self), Filters.highestAbilityCharacter(self, playerId), Filters.notPreventedFromApplyingAbilityForSenseAlterDestiny);
 
         // Check condition(s)
