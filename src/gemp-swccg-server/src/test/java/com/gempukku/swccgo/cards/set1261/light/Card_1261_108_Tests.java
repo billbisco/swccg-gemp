@@ -31,6 +31,8 @@ public class Card_1261_108_Tests {
         ls.put("hothOnlyLuke", "3_3");
         ls.put("hope", "4_44");
         ls.put("peace", "1262_22");
+        ls.put("stockDaughter", "8_8");
+        ls.put("ordinaryLeia", "1_17");
         return new VirtualTableScenario(ls, new HashMap<>(Map.of("cantina", "1_290", "vader", "1_168",
                 "bad", "4_116", "darkAlter", "1_234", "sense", "1_267", "darkDagobah", "7_279")), 40, 40,
                 new StartingSetup() {
@@ -121,30 +123,35 @@ public class Card_1261_108_Tests {
         var hut = scn.GetLSCard("hut"); var strong = scn.GetLSCard("strong");
         var luke = scn.GetLSCard("luke"); var yoda = scn.GetLSCard("yoda");
         var test = scn.GetLSCard(fifth ? "testFive" : "testOne"); var loss = scn.GetLSCard("loss");
-        scn.MoveLocationToTable(hut); scn.MoveCardsToLocation(hut, luke, yoda);
+        scn.MoveLocationToTable(hut);
+        if (atPeaceInPlay) {
+            var peace = scn.GetLSCard("peace");
+            scn.MoveCardsToLSHand(peace);
+            scn.LSActivateForceCheat(8); scn.SkipToLSTurn(Phase.DEPLOY);
+            assertTrue(scn.GetLSAvailableActions().toString(), scn.LSDeployAvailable(peace));
+            scn.LSDeployCard(peace);
+            scn.PassAllResponses();
+            if (scn.LSHasCardChoiceAvailable(hut)) scn.LSChooseCard(hut);
+            scn.PassAllResponses();
+            assertEquals(hut, peace.getAttachedTo());
+            if (scn.DSGetDecision() != null) scn.DSPass();
+            if (pay) {
+                int before = scn.GetLSForcePileCount();
+                scn.LSUseCardAction(peace, "Use 1 Force to protect training destiny this turn");
+                scn.PassForceUseResponses(); scn.PassAllResponses();
+                assertEquals(1, before - scn.GetLSForcePileCount());
+                if (scn.DSGetDecision() != null) scn.DSPass();
+            }
+            if (nextTurn) scn.SkipToLSTurn(Phase.DEPLOY);
+        }
+        scn.MoveCardsToLocation(hut, luke, yoda);
         scn.AttachCardsTo(hut, test);
         test.setTargetedCard(TargetId.JEDI_TEST_MENTOR, null, yoda, Filters.sameCardId(yoda));
         test.setTargetedCard(TargetId.JEDI_TEST_APPRENTICE, null, luke, Filters.sameCardId(luke));
         if (available == 4) scn.MoveCardsToTopOfLSLostPile(loss, scn.GetLSCard("lossTwo"),
                 scn.GetLSCard("lossThree"), scn.GetLSCard("lossFour"));
         else scn.MoveCardsToTopOfLSLostPile(loss);
-        if (atPeaceInPlay) {
-            var peace = scn.GetLSCard("peace");
-            scn.LSActivateForceCheat(8);
-            scn.MoveCardsToBottomOfLSReserveDeck(peace);
-            scn.SkipToLSTurn(Phase.CONTROL);
-            assertEquals(Zone.RESERVE_DECK, peace.getZone());
-            resolveDownload(scn, scn.GetLSCard("objective"), peace, hut, scn.GetDSStartingLocation(), Zone.ATTACHED);
-            assertEquals(hut, peace.getAttachedTo());
-            if (pay) {
-                int before = scn.GetLSForcePileCount();
-                scn.LSUseCardAction(peace, "Use 1 Force to protect training destiny this turn");
-                scn.PassForceUseResponses(); scn.PassAllResponses();
-                assertEquals(1, before - scn.GetLSForcePileCount());
-            }
-            if (nextTurn) scn.SkipToLSTurn(Phase.DEPLOY);
-            else scn.SkipToPhase(Phase.DEPLOY);
-        } else scn.SkipToLSTurn(Phase.DEPLOY);
+        if (!atPeaceInPlay) scn.SkipToLSTurn(Phase.DEPLOY);
         var action = new TopLevelGameTextAction(test, scn.LS, test.getCardId());
         action.appendEffect(new CompleteJediTestEffect(action, test));
         scn.carryOutEffectInPhaseActionByPlayer(scn.LS, action);
@@ -527,6 +534,20 @@ public class Card_1261_108_Tests {
     }
 
 
+    @Test public void objectiveDownloadsActualAtPeaceOntoYodasHut() {
+        var scn = fixture(0); scn.StartGame();
+        var objective = scn.GetLSCard("objective"); var hut = scn.GetLSCard("hut");
+        var peace = scn.GetLSCard("peace");
+        scn.MoveLocationToTable(hut);
+        scn.LSActivateForceCheat(8); scn.MoveCardsToBottomOfLSReserveDeck(peace);
+        scn.SkipToLSTurn(Phase.CONTROL);
+        assertEquals(Zone.RESERVE_DECK, peace.getZone());
+        assertTrue(scn.GetCurrentDecision().getText() + " " + scn.GetLSAvailableActions(),
+                scn.GetLSAvailableActions().stream().anyMatch(action -> action.contains("Deploy card to Dagobah")));
+        resolveDownload(scn, objective, peace, hut, scn.GetDSStartingLocation(), Zone.ATTACHED);
+        assertEquals(hut, peace.getAttachedTo());
+    }
+
     @Test public void paidAtPeaceStopsTheActualStrongIsVaderRetrievalThisTurn() {
         var scn = completeTest(false, 4, true, true, true, false);
         var source = scn.GetLSCard("ordinaryEffect");
@@ -544,4 +565,29 @@ public class Card_1261_108_Tests {
     @Test public void thePaidAtPeaceRestrictionExpiresBeforeNextTurnsActualRetrieval() {
         completeTest(false, 4, true, true, true, true);
     }
+
+    @Test public void stockDaughterSwitchesTheNativeDiscountAndReserveDeploymentToLeia() {
+        var scn = fixture(0); scn.StartGame();
+        var objective = scn.GetLSCard("objective"); var hut = scn.GetLSCard("hut");
+        var daughter = scn.GetLSCard("stockDaughter"); var leia = scn.GetLSCard("ordinaryLeia");
+        var luke = scn.GetLSCard("luke"); var remote = scn.GetDSStartingLocation();
+        scn.MoveLocationToTable(hut);
+        scn.LSActivateForceCheat(10);
+        scn.MoveCardsToBottomOfLSReserveDeck(daughter, leia, luke);
+        scn.SkipToLSTurn(Phase.CONTROL);
+        assertEquals(Zone.RESERVE_DECK, daughter.getZone());
+        int before = scn.GetLSForcePileCount();
+        resolveDownload(scn, objective, daughter, hut, remote, Zone.AT_LOCATION);
+        assertEquals(4, before - scn.GetLSForcePileCount());
+        assertTrue(GameConditions.hasGameTextModification(scn.game(), objective,
+                com.gempukku.swccgo.logic.modifiers.ModifyGameTextType.MIND_WHAT_YOU_HAVE_LEARNED_SAVE_YOU_IT_CAN__TARGETS_LEIA_INSTEAD_OF_LUKE));
+        scn.MoveCardsToTopOfLSLostPile(daughter);
+        scn.SkipToPhase(Phase.DEPLOY);
+        before = scn.GetLSForcePileCount();
+        resolveDownload(scn, objective, leia, hut, remote, Zone.AT_LOCATION);
+        assertEquals(hut, leia.getAtLocation());
+        assertEquals(Zone.RESERVE_DECK, luke.getZone());
+        assertEquals(before, scn.GetLSForcePileCount());
+    }
+
 }
