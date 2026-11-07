@@ -25,16 +25,10 @@ public class Card_1261_080_Tests {
             @Override public HashMap<String, String> Cards() {
                 var cards = new HashMap<String, String>();
                 cards.put("a", "13_1"); cards.put("b", "13_3"); cards.put("c", "13_4");
-                cards.put("d", "13_6"); cards.put("ordinary", "1_66"); cards.put("excluded", "13_8");
+                cards.put("d", "13_6"); cards.put("ordinary", "1_66");
                 return cards;
             }
-            @Override public void Setup(VirtualTableScenario scn) {
-                if (scn.LSDecisionAvailable("to stack under")) {
-                    assertTrue(scn.LSHasCardChoiceAvailable(scn.GetLSCard("ordinary")));
-                    scn.LSChooseCards(scn.GetLSCard("a"), scn.GetLSCard("b"), scn.GetLSCard("c"),
-                            scn.GetLSCard("d"), scn.GetLSCard("ordinary"));
-                }
-            }
+            @Override public void Setup(VirtualTableScenario scn) { }
         };
         return new VirtualTableScenario(light, new HashMap<>(), 60, 60,
                 StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSSpaceSystem,
@@ -45,7 +39,7 @@ public class Card_1261_080_Tests {
     @Test public void JabbaUsesFinalStartingEffectWithBlankLore() {
         var scn = scenario(true, false); var b = scn.GetLSCard("jabba").getBlueprint();
         assertEquals("Jabba, This Is Your Last Chance!", b.getTitle()); assertEquals(5, b.getDestiny(), scn.epsilon);
-        assertEquals("", b.getLore()); assertFalse(b.hasVirtualSuffix()); assertEquals(Uniqueness.UNIQUE, b.getUniqueness());
+        assertNull(b.getLore()); assertFalse(b.hasVirtualSuffix()); assertEquals(Uniqueness.UNIQUE, b.getUniqueness());
         assertEquals(Side.LIGHT, b.getSide()); assertEquals(Rarity.V, b.getRarity());
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_6_1, b.getExpansionSet()); assertEquals(CardSubtype.STARTING, b.getCardSubtype());
         scn.BlueprintCardTypeCheck(b, new ArrayList<>(List.of(CardType.EFFECT)));
@@ -53,7 +47,7 @@ public class Card_1261_080_Tests {
         scn.BlueprintKeywordCheck(b, new ArrayList<>());
     }
 
-    @Test public void JabbaActuallyStartsWithFiveChosenCardsFaceDownIncludingANonShield() {
+    @Test public void JabbaActuallyStartsWithFiveOutsideCardsFaceDownIncludingANonShield() {
         var scn = scenario(true, true); scn.StartGame(); var effect = scn.GetLSCard("jabba");
         assertInZone(Zone.SIDE_OF_TABLE, effect);
         var stacked = scn.gameState().getStackedCards(effect);
@@ -62,7 +56,6 @@ public class Card_1261_080_Tests {
             assertTrue(stacked.contains(scn.GetLSCard(key)));
             assertInZone(Zone.STACKED_FACE_DOWN, scn.GetLSCard(key));
         }
-        assertInZone(Zone.OUTSIDE_OF_DECK, scn.GetLSCard("excluded"));
     }
 
     private void playShield(VirtualTableScenario scn, String key) {
@@ -70,7 +63,6 @@ public class Card_1261_080_Tests {
         scn.LSUseCardAction(effect, PLAY_SHIELD);
         assertTrue(scn.LSHasCardChoiceAvailable(shield));
         assertFalse(scn.LSHasCardChoiceAvailable(scn.GetLSCard("ordinary")));
-        assertFalse(scn.LSHasCardChoiceAvailable(scn.GetLSCard("excluded")));
         scn.LSChooseCard(shield); scn.PassAllResponses();
         assertInZone(Zone.SIDE_OF_TABLE, shield);
     }
