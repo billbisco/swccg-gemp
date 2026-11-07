@@ -47,20 +47,28 @@ public class Card_1261_087_Tests {
     }
 
 
-    @Test public void theSet25VirtualObjectiveAlsoAllowsStrongToDeploy() {
-        var scn = new VirtualTableScenario(new HashMap<>(Map.of("v25", "225_53", "strong", "1261_87")),
+    // GEMP offers Strong Is Vader through the objective's deployment rather than from hand, so these check the
+    // printed deploy requirement ("If [Virtual] Mind What You Have Learned on table") directly.
+    @Test public void theSet25VirtualObjectiveSatisfiesTheDeployRequirement() { assertTrue(requirementWith("225_53")); }
+    @Test public void theLegacyVirtualObjectiveSatisfiesTheDeployRequirement() { assertTrue(requirementWith("1261_108")); }
+    @Test public void theOriginalSpecialEditionObjectiveDoesNotSatisfyTheDeployRequirement() { assertFalse(requirementWith("7_138")); }
+    @Test public void noObjectiveOnTableDoesNotSatisfyTheDeployRequirement() { assertFalse(requirementWith(null)); }
+
+    private boolean requirementWith(String objective) {
+        var ls = new HashMap<String, String>(Map.of("strong", "1261_87"));
+        if (objective != null) ls.put("objective", objective);
+        var scn = new VirtualTableScenario(ls,
                 new HashMap<>(), 40, 40, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, "legacy");
         scn.StartGame();
-        var v25 = scn.GetLSCard("v25");
-        scn.MoveCardsToLSSideOfTable(v25);
-        assertEquals(Title.Mind_What_You_Have_Learned, v25.getBlueprint().getTitle());
-        assertTrue(v25.getBlueprint().hasVirtualSuffix());
+        if (objective != null) {
+            var card = scn.GetLSCard("objective");
+            scn.MoveCardsToLSSideOfTable(card);
+            assertEquals(Title.Mind_What_You_Have_Learned, card.getBlueprint().getTitle());
+        }
         var strong = scn.GetLSCard("strong");
-        scn.MoveCardsToLSHand(strong); scn.SkipToLSTurn(Phase.DEPLOY);
-        scn.EnsureLSForcePile(5);
-        assertTrue(scn.LSDeployAvailable(strong));
+        return new Card1261_087().checkGameTextDeployRequirements(scn.LS, scn.game(), strong, null, false);
     }
 
 }
