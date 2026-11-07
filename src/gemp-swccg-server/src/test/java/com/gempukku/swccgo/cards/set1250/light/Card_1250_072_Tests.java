@@ -74,7 +74,7 @@ public class Card_1250_072_Tests {
         if (s.GetLSForcePileCount() < 7) s.LSActivateForceCheat(7 - s.GetLSForcePileCount());
         if (seedUsed) s.MoveCardsToTopOfLSUsedPile(s.GetLSCard("patience"), s.GetLSCard("sense"));
         s.LSDeployCard(deploying);
-        if (s.LSDecisionAvailable("Choose location where to deploy")) s.LSChooseCard(chamber);
+        if (s.LSDecisionAvailable("Choose where to deploy")) s.LSChooseCard(chamber);
         for (int i = 0; i < 12 && !takeOffered(s)
                 && s.GetCurrentDecision().getText().contains("Optional responses"); i++) {
             s.PlayerPass(s.GetDecidingPlayer());
