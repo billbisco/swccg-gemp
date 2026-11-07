@@ -442,11 +442,121 @@ public interface Destiny extends BaseQuery {
             result += modifier.getNumDestinyDrawsToPowerOnlyModifier(player, gameState, query());
 
         if (isGetLimit) {
-            // TODO: See getNumBattleDestinyDraws() for what to do here.
-            return Integer.MAX_VALUE;
+            // Limit is the "may not add more than X destiny to power" cap, less destiny already added to power in this battle
+            Integer cap = getMaxDestinyAddedToPower(gameState, player);
+            if (cap == null)
+                return Integer.MAX_VALUE;
+            return Math.max(0, cap - battleState.getNumDestinyToTotalPowerDrawn(player));
         }
 
         return Math.max(0, result);
+    }
+
+    /**
+     * Gets the maximum number of destiny the specified player may add to power (or total power) in the current battle,
+     * as set by "may not add more than X destiny to power" modifiers (lowest applies). Ordinary battle destiny is not
+     * counted against this limit.
+     * @param gameState the game state
+     * @param player the player
+     * @return the maximum, or null if not limited
+     */
+    default Integer getMaxDestinyAddedToPower(GameState gameState, String player) {
+        return getMaxDestinyAdded(gameState, player, ModifierType.MAX_DESTINY_DRAWS_TO_POWER);
+    }
+
+    /**
+     * Gets the maximum number of destiny the specified player may add to total attrition in the current battle,
+     * as set by "may not add more than X destiny to attrition" modifiers (lowest applies). Ordinary battle destiny is
+     * not counted against this limit.
+     * @param gameState the game state
+     * @param player the player
+     * @return the maximum, or null if not limited
+     */
+    default Integer getMaxDestinyAddedToAttrition(GameState gameState, String player) {
+        return getMaxDestinyAdded(gameState, player, ModifierType.MAX_DESTINY_DRAWS_TO_ATTRITION);
+    }
+
+    private Integer getMaxDestinyAdded(GameState gameState, String player, ModifierType modifierType) {
+        BattleState battleState = gameState.getBattleState();
+        if (battleState == null)
+            return null;
+
+        Integer cap = null;
+        for (Modifier modifier : getModifiersAffectingCard(gameState, modifierType, battleState.getBattleLocation())) {
+            if (modifier.isForPlayer(player)) {
+                int limit = (int) modifier.getValue(gameState, query(), battleState.getBattleLocation());
+                if (cap == null || limit < cap)
+                    cap = limit;
+            }
+        }
+        return cap;
+    }
+
+    /**
+     * Determines if the specified player may add another destiny to power (or total power) in the current battle:
+     * not prevented from adding destiny to power, and not already at the "may not add more than X destiny to power"
+     * limit (counting destiny already added to power, or that will be added, in this battle).
+     * @param gameState the game state
+     * @param player the player
+     * @return true or false
+     */
+    default boolean mayAddAnotherDestinyToPower(GameState gameState, String player) {
+        if (mayNotAddDestinyDrawsToPower(gameState, player))
+            return false;
+        Integer cap = getMaxDestinyAddedToPower(gameState, player);
+        if (cap == null)
+            return true;
+        BattleState battleState = gameState.getBattleState();
+        int alreadyAdded = Math.max(getNumDestinyDrawsToTotalPowerOnly(gameState, player, false, false), battleState.getNumDestinyToTotalPowerDrawn(player));
+        return alreadyAdded < cap;
+    }
+
+    /**
+     * Determines if the specified player may add another destiny to total attrition in the current battle:
+     * not prevented from adding destiny to attrition, and not already at the "may not add more than X destiny to
+     * attrition" limit (counting destiny already added to attrition, or that will be added, in this battle).
+     * @param gameState the game state
+     * @param player the player
+     * @return true or false
+     */
+    default boolean mayAddAnotherDestinyToAttrition(GameState gameState, String player) {
+        if (mayNotAddDestinyDrawsToAttrition(gameState, player))
+            return false;
+        Integer cap = getMaxDestinyAddedToAttrition(gameState, player);
+        if (cap == null)
+            return true;
+        BattleState battleState = gameState.getBattleState();
+        int alreadyAdded = Math.max(getNumDestinyDrawsToAttritionOnly(gameState, player, false, false), battleState.getNumDestinyToAttritionDrawn(player));
+        return alreadyAdded < cap;
+    }
+
+    /**
+     * Gets the bonus added to the destiny drawn to power only, from sources that add a destiny with a bonus (for
+     * example "adds one destiny to power (add 1 for each character present)"). Draws are allotted to the sources in
+     * order, so a source whose destiny was not drawn (limit reached, Reserve Deck empty, draw canceled) gives no bonus.
+     * @param gameState the game state
+     * @param player the player
+     * @param numDestinyDrawn the number of destiny to power only successfully drawn
+     * @return the bonus
+     */
+    default float getBonusForDestinyDrawsToTotalPowerOnly(GameState gameState, String player, int numDestinyDrawn) {
+        BattleState battleState = gameState.getBattleState();
+        if (battleState == null)
+            return 0;
+
+        float bonus = 0;
+        int drawsLeft = numDestinyDrawn;
+        for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.NUM_DESTINY_DRAWS_TO_POWER_ONLY, battleState.getBattleLocation())) {
+            if (drawsLeft <= 0)
+                break;
+            int numFromSource = modifier.getNumDestinyDrawsToPowerOnlyModifier(player, gameState, query());
+            if (numFromSource <= 0)
+                continue;
+            int numDrawnForSource = Math.min(numFromSource, drawsLeft);
+            drawsLeft -= numDrawnForSource;
+            bonus += numDrawnForSource * modifier.getBonusForEachDestinyDrawToPowerOnly(player, gameState, query());
+        }
+        return bonus;
     }
 
     default int getNumDestinyDrawsToAttritionOnly(GameState gameState, String player, boolean isGetLimit, boolean isForGui) {
@@ -459,8 +569,11 @@ public interface Destiny extends BaseQuery {
             result += modifier.getNumDestinyDrawsToAttritionOnlyModifier(player, gameState, query());
 
         if (isGetLimit) {
-            // TODO: See getNumBattleDestinyDraws() for what to do here.
-            return Integer.MAX_VALUE;
+            // Limit is the "may not add more than X destiny to attrition" cap, less destiny already added to attrition in this battle
+            Integer cap = getMaxDestinyAddedToAttrition(gameState, player);
+            if (cap == null)
+                return Integer.MAX_VALUE;
+            return Math.max(0, cap - battleState.getNumDestinyToAttritionDrawn(player));
         }
 
         return Math.max(0, result);
