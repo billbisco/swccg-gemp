@@ -147,20 +147,11 @@ public class Card_1262_023_Tests {
                 new AddsDestinyToAttritionModifier(scn.GetLSCard("luke"), count, player, true));
     }
 
-    private int powerDrawn(VirtualTableScenario scn, String player) {
-        return scn.gameState().getBattleState().getNumDestinyToTotalPowerDrawn(player);
-    }
-
-    private int attritionDrawn(VirtualTableScenario scn, String player) {
-        return scn.gameState().getBattleState().getNumDestinyToAttritionDrawn(player);
-    }
-
     private int powerDrawnWith(boolean effect, String side, int sources) {
         var scn = battle(effect, false);
         String player = side.equals("LS") ? scn.LS : scn.DS;
         addPowerSources(scn, player, sources);
-        DestinyAddedCapTests.advanceToDamageSegment(scn, false);
-        return powerDrawn(scn, player);
+        return DestinyAddedCapTests.advanceToDamageSegment(scn, false).getNumDestinyToTotalPowerDrawn(player);
     }
 
     private int attritionDrawnWith(boolean effect, String side, int sources) {
@@ -168,8 +159,7 @@ public class Card_1262_023_Tests {
         var scn = battle(effect, true);
         String player = side.equals("LS") ? scn.LS : scn.DS;
         addAttritionSources(scn, player, sources);
-        DestinyAddedCapTests.advanceToDamageSegment(scn, true);
-        return attritionDrawn(scn, player);
+        return DestinyAddedCapTests.advanceToDamageSegment(scn, true).getNumDestinyToAttritionDrawn(player);
     }
 
     @Test public void lightSideMayAddNoMoreThanTwoDestinyToPower() {
