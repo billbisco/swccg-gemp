@@ -59,6 +59,7 @@ public class Card_1261_014_Tests {
     @Test public void P13AndP14SecondFiringLosesTwoForceAndCannotFireThirdTime() {
         var scn = battle(); fire(scn, "obiwan", 0);
         if (scn.AwaitingLSWeaponsSegmentActions()) scn.LSPass();
+        assertTrue("Second shot must remain available in weapons segment", scn.AwaitingDSWeaponsSegmentActions());
         int force = scn.GetDSForcePileCount(); int lost = scn.GetDSLostPileCount();
         scn.PrepareDSDestiny(0); scn.DSUseCardAction(scn.GetDSCard("pair"), "Fire");
         if (scn.DSHasCardChoiceAvailable(scn.GetLSCard("han"))) scn.DSChooseCard(scn.GetLSCard("han")); scn.PassAllResponses();
