@@ -16,8 +16,8 @@ public class Card_1263_026_Tests {
     private VirtualTableScenario fixture() {
         return new VirtualTableScenario(
                 new HashMap<>(Map.of("phylo", "1263_26", "local", "1_28", "remote", "1_30",
-                        "ship", "1_146", "system", "3_62")),
-                new HashMap<>(Map.of("vader", "1_168", "saber", "1_324", "beaten", "5_163")),
+                        "ship", "1_146", "system", "3_55")),
+                new HashMap<>(Map.of("vader", "1_168", "saber", "1_324", "beaten", "5_163", "otherDark", "1_173")),
                 40, 40, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, "legacy");
@@ -31,9 +31,8 @@ public class Card_1263_026_Tests {
         assertEquals(1, bp.getPower(), scn.epsilon); assertEquals(4, bp.getAbility(), scn.epsilon);
         assertEquals(4, bp.getForfeit(), scn.epsilon);
         assertEquals(Rarity.V, bp.getRarity()); assertEquals(ExpansionSet.VIRTUAL_BLOCK_6_3, bp.getExpansionSet());
-        assertEquals(CardSubtype.ALIEN, bp.getCardSubtype());
         scn.BlueprintCardTypeCheck(bp, new ArrayList<>(List.of(CardType.ALIEN)));
-        scn.BlueprintIconCheck(bp, new ArrayList<>(List.of(Icon.PILOT, Icon.EPISODE_I, Icon.CORUSCANT, Icon.LEGACY_BLOCK_6)));
+        scn.BlueprintIconCheck(bp, new ArrayList<>(List.of(Icon.ALIEN, Icon.PILOT, Icon.EPISODE_I, Icon.CORUSCANT, Icon.LEGACY_BLOCK_6)));
         scn.BlueprintKeywordCheck(bp, new ArrayList<>(List.of(Keyword.FEMALE)));
     }
 
@@ -69,8 +68,8 @@ public class Card_1263_026_Tests {
         var here = scn.GetLSStartingLocation(); var away = scn.GetDSStartingLocation();
         var phylo = scn.GetLSCard("phylo"); var local = scn.GetLSCard("local");
         var vader = scn.GetDSCard("vader"); var saber = scn.GetDSCard("saber"); var beaten = scn.GetDSCard("beaten");
-        scn.MoveCardsToLocation(here, phylo, local, vader); scn.AttachCardsTo(vader, saber);
-        scn.MoveCardsToDSHand(beaten); scn.SkipToDSTurn(Phase.CONTROL); scn.EnsureDSForcePile(6);
+        scn.MoveCardsToLocation(here, phylo, local, vader, scn.GetDSCard("otherDark")); scn.AttachCardsTo(vader, saber);
+        scn.MoveCardsToDSHand(beaten); scn.DSActivateForceCheat(8); scn.SkipToDSTurn(Phase.CONTROL);
         scn.DSPlayCard(beaten, "Prevent character from moving or battling");
         assertFalse(scn.DSHasCardChoiceAvailable(phylo));
         assertFalse(scn.DSHasCardChoiceAvailable(local));
