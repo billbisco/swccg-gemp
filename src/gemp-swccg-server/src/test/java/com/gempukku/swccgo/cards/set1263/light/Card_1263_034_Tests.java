@@ -156,7 +156,9 @@ public class Card_1263_034_Tests {
         var scn = overloadSetup(true, true, true);
         assertEquals(4, scn.GetUnpaidLSAttrition()); assertEquals(0, scn.GetUnpaidLSBattleDamage());
         assertTrue(Filters.canBeTargetedBy(scn.GetDSCard("overload"), TargetingReason.TO_BE_LOST).accepts(scn.game(), scn.GetLSCard("rogue")));
-        scn.LSPayAttritionFromCardInPlay(scn.GetLSCard("rogue")); finishOrderedLosses(scn);
+        scn.LSPayAttritionFromCardInPlay(scn.GetLSCard("rogue"));
+        assertTrue(scn.LSDecisionAvailable("Do you still want to forfeit it?")); scn.LSChooseYes();
+        finishOrderedLosses(scn);
         assertInZone(Zone.LOST_PILE, scn.GetLSCard("rogue"));
     }
     @Test public void RogueSquadronXwingRebelAcesDoesNotPreventLossOutsideBattle() {
