@@ -50,7 +50,7 @@ public class Card_1250_002_Tests {
         assertEquals(Phase.CONTROL,scn.gameState().getCurrentPhase());
     }
     private void relocate(VirtualTableScenario scn,PhysicalCardImpl site) {
-        assertTrue(scn.DSCardActionAvailable(scn.GetDSCard("aurra"),RELOCATE));scn.DSUseCardAction(scn.GetDSCard("aurra"),RELOCATE);scn.DSChooseCard(site);scn.PassAllResponses();assertEquals(site,scn.GetDSCard("aurra").getAtLocation());
+        assertTrue(scn.DSCardActionAvailable(scn.GetDSCard("aurra"),RELOCATE));scn.DSUseCardAction(scn.GetDSCard("aurra"),RELOCATE);if(scn.DSDecisionAvailable("Choose site with opponent"))scn.DSChooseCard(site);scn.PassAllResponses();assertEquals(site,scn.GetDSCard("aurra").getAtLocation());
     }
     @Test public void AurraSingActuallyRelocatesAcrossSystemsToOpponentsJediSiteForFree() {var scn=relocation("knight");int before=scn.GetDSForcePileCount();relocate(scn,scn.GetLSStartingLocation());assertEquals(before,scn.GetDSForcePileCount());}
     @Test public void AurraSingCannotRelocateTwiceInSameOpponentActivatePhase() {
@@ -60,7 +60,9 @@ public class Card_1250_002_Tests {
         var scn=relocation("knight");relocate(scn,scn.GetLSStartingLocation());finishOpponentActivation(scn);scn.SkipToLSTurn(Phase.ACTIVATE);darkActivateWindow(scn);relocate(scn,scn.GetLSCard("chamber"));
     }
     @Test public void AurraSingRelocationDoesNotOfferSiteWithOnlyNonJedi() {
-        var scn=relocation("leia");scn.DSUseCardAction(scn.GetDSCard("aurra"),RELOCATE);assertTrue(scn.DSHasCardChoiceAvailable(scn.GetLSCard("chamber")));assertFalse(scn.DSHasCardChoiceAvailable(scn.GetLSStartingLocation()));
+        var scn=relocation("leia");scn.DSUseCardAction(scn.GetDSCard("aurra"),RELOCATE);
+        if(scn.DSDecisionAvailable("Choose site with opponent")){assertFalse(scn.DSHasCardChoiceAvailable(scn.GetLSStartingLocation()));scn.DSChooseCard(scn.GetLSCard("chamber"));}
+        scn.PassAllResponses();assertEquals(scn.GetLSCard("chamber"),scn.GetDSCard("aurra").getAtLocation());
     }
     @Test public void AurraSingRelocationExcludesSiteWithOnlyHerOwnersJedi() {
         var scn=scenario();scn.StartGame();scn.GetLSCard("knight").setOwner(scn.DS);scn.MoveCardsToLocation(scn.GetLSStartingLocation(),scn.GetLSCard("knight"));scn.MoveCardsToLocation(scn.GetDSStartingLocation(),scn.GetDSCard("aurra"));scn.SkipToLSTurn(Phase.ACTIVATE);darkActivateWindow(scn);assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("aurra"),RELOCATE));
@@ -84,9 +86,9 @@ public class Card_1250_002_Tests {
         scn.SkipToDSTurn(Phase.CONTROL);force(scn,amount);scn.SkipToPhase(Phase.MOVE);return scn;
     }
     private void fire(VirtualTableScenario scn,int destiny) {
-        assertTrue(scn.DSCardActionAvailable(scn.GetDSCard("aurra"),FIRE));scn.PrepareDSDestiny(destiny);scn.DSUseCardAction(scn.GetDSCard("aurra"),FIRE);
+        int force=scn.GetDSForcePileCount();assertTrue(scn.DSCardActionAvailable(scn.GetDSCard("aurra"),FIRE));scn.PrepareDSDestiny(destiny);scn.DSUseCardAction(scn.GetDSCard("aurra"),FIRE);
         if(scn.DSDecisionAvailable("Choose Aurra's weapon"))scn.DSChooseCard(scn.GetDSCard("blaster"));
-        scn.DSChooseCard(scn.GetLSCard("obi"));scn.PassForceUseResponses();scn.PassWeaponFireWithDestinyDraw();scn.PassAllResponses();
+        if(scn.DSDecisionAvailable("Choose target"))scn.DSChooseCard(scn.GetLSCard("obi"));scn.PassForceUseResponses();scn.PassWeaponFireWithDestinyDraw();scn.PassAllResponses();assertEquals(force-1,scn.GetDSForcePileCount());
     }
     @Test public void AurraSingMovePhaseShotPaysNormalWeaponCostAndLosesHitJedi() {
         var scn=shot("obi",1,true,true);fire(scn,7);assertEquals(0,scn.GetDSForcePileCount());assertInZone(Zone.LOST_PILE,scn.GetLSCard("obi"));
