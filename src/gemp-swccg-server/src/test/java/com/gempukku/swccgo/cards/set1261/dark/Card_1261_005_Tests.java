@@ -13,7 +13,7 @@ public class Card_1261_005_Tests {
         return new VirtualTableScenario(new HashMap<>() {{ put("obiwan", "1_21"); put("han", "1_11"); }},
                 new HashMap<>() {{ put("boba", "1261_5"); put("blaster", "5_179"); put("sword", "1_324");
                     put("officer", "1_166"); put("scout", "3_156"); put("ship", "1_306");
-                    put("hoth", "3_143"); put("bay", "1_285"); put("otherBay", "1_291"); }}, 30, 30,
+                    put("hoth", "3_143"); put("camp", "1_292"); put("farm", "1_294"); put("canyon", "7_293"); put("pass", "7_294"); put("bay", "1_285"); put("otherBay", "1_291"); }}, 30, 30,
                 StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -144,5 +144,37 @@ public class Card_1261_005_Tests {
 
     @Test public void RelentlessBobaSurvivesTwoAttritionButMustSatisfyThree() {
         attrition(2, true); attrition(3, false);
+    }
+    @Test
+    public void RelentlessBobaActuallyFliesThreeSitesButCannotFlyFour() {
+        var scn = scenario(); scn.StartGame(); var b = scn.GetDSCard("boba");
+        var start = scn.GetDSStartingLocation(); var camp = scn.GetDSCard("camp"); var farm = scn.GetDSCard("farm");
+        var canyon = scn.GetDSCard("canyon"); var far = scn.GetDSCard("pass");
+        var previous = start;
+        for (var next : new com.gempukku.swccgo.game.PhysicalCardImpl[] {camp, farm, canyon, far}) {
+            scn.MoveLocationToTable(next, new com.gempukku.swccgo.game.layout.LocationPlacement(
+                    "Tatooine", null, null, previous, LocationPlacementDirection.RIGHT_OF));
+            previous = next;
+        }
+        assertEquals(Integer.valueOf(3), scn.game().getModifiersQuerying().getDistanceBetweenSites(scn.gameState(), start, canyon));
+        assertEquals(Integer.valueOf(4), scn.game().getModifiersQuerying().getDistanceBetweenSites(scn.gameState(), start, far));
+        scn.MoveCardsToLocation(start, b); scn.SkipToDSTurn(Phase.MOVE);
+        int force = scn.GetDSForcePileCount();
+        scn.DSUseCardAction(b, "Move");
+        assertTrue(isSelectable(scn, canyon)); assertFalse(isSelectable(scn, far));
+        scn.DSChooseCard(canyon); scn.PassAllResponses();
+        assertEquals(canyon, b.getAtLocation()); assertEquals(force - 1, scn.GetDSForcePileCount());
+    }
+
+    private boolean isSelectable(VirtualTableScenario scn, com.gempukku.swccgo.game.PhysicalCardImpl card) {
+        var blueprints = scn.GetADParam(scn.DS, "blueprintId");
+        var ids = scn.GetADParam(scn.DS, "cardId");
+        var allowed = scn.GetADParam(scn.DS, "selectable");
+        int length = blueprints != null ? blueprints.length : ids.length;
+        for (int i = 0; i < length; i++) {
+            if (blueprints != null ? blueprints[i].equals(card.getBlueprintId(true)) : ids[i].equals(String.valueOf(card.getCardId())))
+                return allowed == null || Boolean.parseBoolean(allowed[i]);
+        }
+        return false;
     }
 }
