@@ -6,7 +6,6 @@ import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Keyword;
 import com.gempukku.swccgo.common.Phase;
 import com.gempukku.swccgo.common.Uniqueness;
-import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import org.junit.Test;
@@ -52,12 +51,12 @@ public class Card_1250_038_Tests {
         var site = s.GetLSStartingLocation();
         s.MoveCardsToLocation(site, clone, s.GetLSCard("luke"));
         s.MoveCardsToLocation(s.GetDSStartingLocation(), palpatine);
-        var heroic = Filters.keyword(Keyword.HEROIC);
-        assertFalse(heroic.accepts(s.game(), clone));
+        var query = s.game().getModifiersQuerying();
+        assertFalse(query.hasKeyword(s.gameState(), clone, Keyword.HEROIC));
         s.MoveCardsToLocation(site, palpatine);
-        assertTrue(heroic.accepts(s.game(), clone));
+        assertTrue(query.hasKeyword(s.gameState(), clone, Keyword.HEROIC));
         s.MoveCardsToLocation(s.GetDSStartingLocation(), palpatine);
-        assertFalse(heroic.accepts(s.game(), clone));
+        assertFalse(query.hasKeyword(s.gameState(), clone, Keyword.HEROIC));
     }
 
     @Test
