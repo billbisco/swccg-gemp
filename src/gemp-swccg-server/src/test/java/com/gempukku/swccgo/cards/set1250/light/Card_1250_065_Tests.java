@@ -170,11 +170,11 @@ public class Card_1250_065_Tests {
     }
 
     @Test
-    public void AmbushCanDownloadDuringOpponentsControlPhase() {
-        var s = download(Phase.CONTROL, true, 3);
-        play(s, DEPLOY); chooseClone(s, "clone1");
-        assertEquals(0, s.GetLSForcePileCount());
-        assertTrue(s.GetLSReserveDeck().contains(s.GetLSCard("clone2")));
+    public void AmbushCloneDeploymentRequiresLightsDeployPhase() {
+        var lightControl = download(Phase.CONTROL, false, 3);
+        var darkControl = download(Phase.CONTROL, true, 3);
+        assertFalse(mode(lightControl, DEPLOY));
+        assertFalse(mode(darkControl, DEPLOY));
     }
 
     private VirtualTableScenario retrieval(String third, boolean coruscant, boolean darkTurn, int force, boolean withLost) {

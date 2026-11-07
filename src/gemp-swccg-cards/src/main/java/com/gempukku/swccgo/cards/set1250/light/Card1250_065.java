@@ -40,7 +40,7 @@ public class Card1250_065 extends AbstractLostInterrupt {
         List<PlayInterruptAction> actions = new ArrayList<>();
         GameTextActionId deployId = GameTextActionId.LEGACY__AMBUSH_V__DEPLOY_CLONES;
         if (GameConditions.canUseForceToPlayInterrupt(game, playerId, self, 1)
-                && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, deployId, true, false)) {
+                && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, deployId)) {
             PlayInterruptAction action = new PlayInterruptAction(game, self, deployId);
             action.setText("Deploy up to two clones");
             action.appendCost(new UseForceEffect(action, playerId, 1));
