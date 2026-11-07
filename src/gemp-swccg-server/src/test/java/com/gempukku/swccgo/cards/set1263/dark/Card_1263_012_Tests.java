@@ -72,12 +72,13 @@ public class Card_1263_012_Tests {
             var wrong = cost == 1 ? free : immediate;
             scn.MoveCardsToDSHand(plan);
             scn.SkipToPhase(Phase.CONTROL);
-            setForce(scn, cost);
             scn.MoveCardsToTopOfDSReserveDeck(immediate, free, paid, scn.GetDSCard("trooper"));
+            setForce(scn, cost);
             scn.SkipToPhase(Phase.DEPLOY);
             var remaining = new ArrayList<>(scn.GetDSReserveDeck());
             remaining.remove(target);
             scn.gameState().getRandom().setSeed(4096);
+            assertEquals(cost, scn.GetDSForcePileCount());
             scn.DSPlayCard(plan, cost == 1 ? IMMEDIATE : FREE);
             boolean selected = false;
             for (int i = 0; i < 45 && !scn.AwaitingDSDeployPhaseActions(); i++) {
