@@ -15,7 +15,7 @@ public class Card_1271_037_Tests {
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(
             new HashMap<>(Map.of("plans", "1271_37", "door", "8_69", "spy", "1_17", "room", "1_139",
-                "adjacent", "1_138", "luke", "1_19", "nabrun", "1_97", "undercover", "2_40")),
+                "adjacent", "1_138", "luke", "1_19", "nabrun", "1_97", "undercover", "2_40", "dressing", "1271_38")),
             new HashMap<>(Map.of("vader", "1_168", "darkRoom", "1_287")), 40, 40,
             StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
             StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
@@ -180,9 +180,22 @@ public class Card_1271_037_Tests {
         assertEquals(3, s.GetForfeit(spy), s.epsilon);
         assertEquals(Math.max(0, luke.getBlueprint().getForfeit() - 5), s.GetForfeit(luke), s.epsilon);
         assertTrue(s.GetForfeit(luke) < 3);
-        // A reset to 0 is also a reduction that may not go below 3.
+        // A plain reset to 0 is also a reduction that may not go below 3.
         s.ApplyAdHocModifier(new com.gempukku.swccgo.logic.modifiers.ResetForfeitModifier(s.GetLSCard("door"), spy, 0));
         assertEquals(3, s.GetForfeit(spy), s.epsilon);
+    }
+
+    @Test public void FieldDressingForfeitZeroSupersedesEmperorsSinisterPlansFloor() {
+        // Ruling: Field Dressing's "(even if forfeit may not normally be reduced)" overrides "may not have their
+        // forfeit reduced below 3".
+        var s = ready(true, true);
+        var spy = s.GetLSCard("spy");
+        playPlans(s);
+        completeWithLandspeed(s);
+        assertEquals(6, s.GetForfeit(spy), s.epsilon);
+        s.AttachCardsTo(spy, s.GetLSCard("dressing"));
+        assertEquals(spy, s.GetLSCard("dressing").getAttachedTo());
+        assertEquals(0, s.GetForfeit(spy), s.epsilon);
     }
 
     @Test public void EmperorsSinisterPlansFloorDoesNotRaiseOrBlockSmallReductions() {
