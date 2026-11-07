@@ -108,7 +108,8 @@ public class Card_1271_037_Tests {
         s.PrepareDSDestiny(5);
         s.PrepareLSDestiny(1);
         s.SkipToDamageSegment(true);
-        assertEquals(completed ? 4 : 5, s.GetDSTotalDestiny());
+        // Premiere Vader adds one to the actual five-destiny draw.
+        assertEquals(completed ? 5 : 6, s.GetDSTotalDestiny());
         assertEquals(1, s.GetLSTotalDestiny());
     }
 
