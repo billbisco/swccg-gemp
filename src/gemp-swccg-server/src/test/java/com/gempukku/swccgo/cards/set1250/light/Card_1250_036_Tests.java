@@ -76,12 +76,18 @@ public class Card_1250_036_Tests {
         assertTrue(scn.DSCardActionAvailable(decree, "Reduce Force loss"));
         scn.DSUseCardAction(decree, "Reduce Force loss");
         scn.PassAllResponses();
-        for (int i = 0; i < 3; i++) {
+        loseFromReserve(scn, 3);
+        assertEquals(life - 3, scn.GetDSLifeForceRemaining());
+        assertEquals(site, droid.getAtLocation());
+    }
+
+    private void loseFromReserve(VirtualTableScenario scn, int amount) {
+        for (int i = 0; i < amount; i++) {
+            assertTrue("Force loss ended before unit " + (i + 1), scn.DSDecisionAvailable("Choose Force to lose"));
             scn.DSChooseCard(scn.GetTopOfDSReserveDeck());
             scn.PassAllResponses();
         }
-        assertEquals(life - 3, scn.GetDSLifeForceRemaining());
-        assertEquals(site, droid.getAtLocation());
+        assertFalse("An extra unit of Force loss was requested", scn.DSDecisionAvailable("Choose Force to lose"));
     }
 
     private void checkChoice(boolean two, boolean loseForce, boolean darkTurn) {
@@ -89,7 +95,7 @@ public class Card_1250_036_Tests {
         target(scn, two);
         if (loseForce) {
             scn.DSChooseOption("Lose 4 Force"); scn.PassAllResponses();
-            for (int i = 0; i < 4; i++) { scn.DSChooseCard(scn.GetTopOfDSReserveDeck()); scn.PassAllResponses(); }
+            loseFromReserve(scn, 4);
             assertEquals(life - 4, scn.GetDSLifeForceRemaining());
             assertEquals(scn.GetLSStartingLocation(), scn.GetDSCard("droid1").getAtLocation());
             assertEquals(scn.GetLSStartingLocation(), scn.GetDSCard("droid2").getAtLocation());
