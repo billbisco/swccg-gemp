@@ -53,7 +53,12 @@ public class Card_1261_085_Tests {
         scn.MoveCardsToLocation(scn.GetLSCard("remote"), scn.GetLSCard("leia"));
         assertEquals(4, scn.GetPower(scn.GetLSCard("luke"))); assertEquals(5, scn.GetPower(scn.GetLSCard("obi"))); assertEquals(3, scn.GetPower(scn.GetLSCard("leia")));
         scn.SkipToLSTurn(Phase.CONTROL); assertEquals(site, scn.GetLSCard("return").getAttachedTo());
-        scn.SkipToDSTurn(Phase.CONTROL); assertInZone(Zone.LOST_PILE, scn.GetLSCard("return")); assertEquals(3, scn.GetPower(scn.GetLSCard("luke")));
+        scn.SkipToPhase(Phase.DRAW); scn.PassDrawActions(); scn.PassResponses("RECIRCULATED"); scn.PassAllResponses();
+        if (scn.LSHasCardChoiceAvailable(scn.GetLSCard("return"))) scn.LSChooseCard(scn.GetLSCard("return"));
+        if (scn.DSHasCardChoiceAvailable(scn.GetLSCard("return"))) scn.DSChooseCard(scn.GetLSCard("return"));
+        scn.PassAllResponses();
+        assertEquals(scn.GetCurrentDecision().getText(), Zone.LOST_PILE, com.gempukku.swccgo.logic.GameUtils.getZoneFromZoneTop(scn.GetLSCard("return").getZone()));
+        assertEquals(3, scn.GetPower(scn.GetLSCard("luke")));
     }
     @Test public void ReturnCannotDeployOnAnOrdinarySiteWithoutDrain() {
         var scn = started(); scn.SkipToLSTurn(Phase.DEPLOY); assertFalse(scn.LSCardPlayAvailable(scn.GetLSCard("return")));

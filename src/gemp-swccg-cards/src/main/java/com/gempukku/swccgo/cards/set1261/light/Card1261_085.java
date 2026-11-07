@@ -12,7 +12,7 @@ import com.gempukku.swccgo.logic.TriggerConditions;
 import com.gempukku.swccgo.logic.actions.CancelCardActionBuilder;
 import com.gempukku.swccgo.logic.actions.PlayCardAction;
 import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
-import com.gempukku.swccgo.logic.effects.PlaceCardsInCardPileFromTableSimultaneouslyEffect;
+import com.gempukku.swccgo.logic.effects.PlaceCardInLostPileFromTableEffect;
 import com.gempukku.swccgo.logic.modifiers.MayNotTargetToBePlacedOutOfPlayModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.modifiers.PowerModifier;
@@ -94,7 +94,7 @@ public class Card1261_085 extends AbstractImmediateEffect {
         if (onSite(game, self) && TriggerConditions.isEndOfYourTurn(game, result, self)) {
             RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
             action.setText("Place Return Of The Jedi in Lost Pile");
-            action.appendEffect(new PlaceCardsInCardPileFromTableSimultaneouslyEffect(action, Collections.singleton(self), Zone.LOST_PILE, false, true));
+            action.appendEffect(new PlaceCardInLostPileFromTableEffect(action, self));
             return Collections.singletonList(action);
         }
         return null;
