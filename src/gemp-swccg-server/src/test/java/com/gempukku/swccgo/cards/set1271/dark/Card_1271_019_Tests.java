@@ -65,6 +65,8 @@ public class Card_1271_019_Tests {
         s.gameState().addCardToZone(duplicate, Zone.RESERVE_DECK, s.DS);
         playPreparedDefenses(s);
 
+        assertFalse(s.DSDecisionAvailable("Verify Reserve Deck"));
+        assertFalse(s.LSDecisionAvailable("Verify Reserve Deck"));
         assertFalse(s.DSHasCardChoiceAvailable(s.GetDSCard("rise")));
         assertFalse(s.GetDSCard("rise").getZone().isInPlay());
         assertFalse(s.gameState().hasPlayedStartingEpicEvent(s.DS));
