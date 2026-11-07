@@ -6,6 +6,7 @@ import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
+import com.gempukku.swccgo.logic.effects.CancelCardOnTableEffect;
 import com.gempukku.swccgo.logic.effects.LoseCardFromTableEffect;
 import org.junit.Test;
 
@@ -166,4 +167,36 @@ public class Card_1261_079_Tests {
 
     @Test public void deferredCharacterMayForfeitButPaysZeroActualAttrition() { normalBattle(true); }
     @Test public void deferredCharacterIsLostAtTheEndOfAnUncancelledBattle() { normalBattle(false); }
+    @Test public void explicitNativeCancellationCannotCancelTheCombo() {
+        var scn = fixture(); var combo = scn.GetLSCard("combo"); var ordinary = scn.GetLSCard("ordinary");
+        scn.MoveCardsToLSSideOfTable(combo, ordinary);
+        scn.SkipToDSTurn(Phase.CONTROL);
+        var source = scn.GetDSStartingLocation();
+        var action = new TopLevelGameTextAction(source, scn.DS, source.getCardId());
+        action.appendEffect(new CancelCardOnTableEffect(action, ordinary));
+        action.appendEffect(new CancelCardOnTableEffect(action, combo));
+        scn.carryOutEffectInPhaseActionByPlayer(scn.DS, action); scn.PassAllResponses();
+        assertTrue(scn.GetLSLostPile().contains(ordinary));
+        assertTrue(scn.IsCardActive(combo));
+    }
+
+    private void unprotectedLoss(boolean anotherBattle) {
+        var scn = fixture();
+        var combo = scn.GetLSCard("combo"); var here = scn.GetLSStartingLocation(); var away = scn.GetDSStartingLocation();
+        var target = scn.GetLSCard("trooper");
+        scn.MoveCardsToLSSideOfTable(combo);
+        scn.MoveCardsToLocation(away, target);
+        if (anotherBattle) {
+            scn.MoveCardsToLocation(here, scn.GetLSCard("han"), scn.GetDSCard("vader"));
+            scn.LSActivateForceCheat(8); scn.SkipToLSTurn(Phase.BATTLE);
+            scn.LSStartBattleAndSkipToWeaponsSegment(here);
+        } else scn.SkipToLSTurn(Phase.CONTROL);
+        var action = new TopLevelGameTextAction(away, scn.LS, away.getCardId());
+        action.appendEffect(new LoseCardFromTableEffect(action, target));
+        scn.carryOutEffectInPhaseActionByPlayer(scn.LS, action); scn.PassAllResponses();
+        assertTrue(scn.GetLSLostPile().contains(target));
+    }
+
+    @Test public void theComboDoesNotDeferLossOutsideBattle() { unprotectedLoss(false); }
+    @Test public void theComboDoesNotDeferLossOfANonparticipant() { unprotectedLoss(true); }
 }
