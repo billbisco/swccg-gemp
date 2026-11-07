@@ -92,5 +92,27 @@ public class Card_1250_052_Tests {
         assertEquals(force - leia.getBlueprint().getDeployCost(), s.GetLSForcePileCount(), s.epsilon);
         if (s.AwaitingDSDeployPhaseActions()) s.DSPass();
         assertTrue(s.AwaitingLSDeployPhaseActions()); assertFalse(offered(s));
+
+        // The limit follows the current turn, even when the next turn belongs to Dark.
+        s.SkipToDSTurn(Phase.CONTROL);
+        assertTrue(s.AwaitingDSControlPhaseActions());
+        s.DSPass();
+        assertTrue(offered(s));
+        var secondPayment = s.GetTopOfLSReserveDeck();
+        var han = s.GetLSCard("han");
+        force = s.GetLSForcePileCount();
+        s.LSUseCardAction(padme, DEPLOY);
+        s.PassAllResponses();
+        assertTrue(s.AwaitingLSForceLossPayment());
+        s.LSChooseCard(secondPayment);
+        s.PassAllResponses();
+        s.LSChooseCard(han);
+        s.PassAllResponses();
+        if (s.LSDecisionAvailable("Choose where to deploy")) s.LSChooseCard(home);
+        s.PassAllResponses();
+        assertTrue(s.GetLSLostPile().contains(secondPayment));
+        assertFalse(s.GetLSLostPile().contains(han));
+        assertEquals(home, han.getAtLocation());
+        assertEquals(force - han.getBlueprint().getDeployCost(), s.GetLSForcePileCount(), s.epsilon);
     }
 }
