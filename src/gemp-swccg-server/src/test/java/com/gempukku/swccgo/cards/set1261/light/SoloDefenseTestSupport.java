@@ -193,8 +193,7 @@ public abstract class SoloDefenseTestSupport {
             if (scn.LSHasCardChoiceAvailable(person)) scn.LSChooseCard(person);
         }
         scn.MoveCardsToTopOfLSReserveDeck(scn.GetLSDestiny(3), scn.GetLSDestiny(2));
-        DestinyAddedCapTests.advanceToDamageSegment(scn, false);
-        var state = scn.gameState().getBattleState();
+        var state = DestinyAddedCapTests.advanceToDamageSegment(scn, false);
         assertEquals(protect ? 1 : 0, state.getNumDestinyToTotalPowerDrawn(scn.LS));
         return state.getTotalDestinyToPowerOnly(scn.LS);
     }
