@@ -129,8 +129,9 @@ public class Card_1261_033_Tests {
 
     private VirtualTableScenario fullScenario() {
         return new VirtualTableScenario(new HashMap<>(Map.of("luke", "1_19")),
-                new HashMap<>(Map.of("waters", "1261_33", "pit", "6_166", "chamber", "6_162",
-                        "wampa", "3_93", "womprat", "7_215", "trooper", "1_194", "trooper2", "1_194")),
+                new HashMap<>(Map.of("waters", "1261_33", "pit", "6_166", "chamber", "6_162", "wampa", "3_93",
+                        "womprat", "7_215", "trooper", "1_194", "trooper2", "1_194", "rancor", "6_139",
+                        "imperialcity", "7_277")),
                 26, 26, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -152,7 +153,11 @@ public class Card_1261_033_Tests {
             scn.SkipToDSTurn(Phase.DEPLOY);
             scn.EnsureDSForcePile(10);
             assertEquals(inPlay, scn.DSDeployAvailable(wampa));
-            assertFalse(scn.DSDeployAvailable(womprat));
+            var game = scn.game();
+            assertEquals(inPlay, game.getModifiersQuerying().isGrantedToDeployTo(scn.gameState(), wampa, pit, null));
+            assertEquals(inPlay, wampa.getBlueprint().getHabitatFilter(game, wampa).accepts(game, pit));
+            assertFalse(game.getModifiersQuerying().isGrantedToDeployTo(scn.gameState(), womprat, pit, null));
+            assertFalse(womprat.getBlueprint().getHabitatFilter(game, womprat).accepts(game, pit));
             if (inPlay) {
                 scn.DSDeployCard(wampa);
                 if (scn.DSHasCardChoiceAvailable(pit))
@@ -206,26 +211,35 @@ public class Card_1261_033_Tests {
         assertFalse(deployPhase.DSCardActionAvailable(deployPhase.GetDSCard("waters"), RELOCATE));
     }
 
+    private static boolean dsHas(VirtualTableScenario scn, PhysicalCardImpl card, String text) {
+        try {
+            return scn.DSCardActionAvailable(card, text);
+        } catch (IllegalStateException e) {
+            return false;
+        }
+    }
+
     private Float attackAndMaybeSubstitute(VirtualTableScenario scn, boolean atPit, boolean substitute) {
         var pit = scn.GetDSCard("pit");
         var waters = scn.GetDSCard("waters");
-        var wampa = scn.GetDSCard("wampa");
+        var wampa = scn.GetDSCard("rancor");
         var luke = scn.GetLSCard("luke");
-        var where = atPit ? pit : scn.GetDSStartingLocation();
+        var where = atPit ? pit : scn.GetDSCard("imperialcity");
         scn.StartGame();
         scn.MoveLocationToTable(pit);
+        scn.MoveLocationToTable(scn.GetDSCard("imperialcity"));
         scn.AttachCardsTo(pit, waters);
-        scn.MoveCardsToLocation(where, wampa, luke);
         scn.SkipToDSTurn(Phase.BATTLE);
+        scn.MoveCardsToLocation(where, wampa, luke);
         scn.PrepareLSDestiny(1);
         scn.PrepareDSDestiny(6);
         scn.carryOutEffectInPhaseActionByPlayer(scn.DS, new InitiateAttackNonCreatureAction(wampa));
         if (scn.DSGetDecision() != null && scn.DSHasCardChoicesAvailable(luke))
             scn.DSChooseCard(luke);
         boolean offered = false;
-        for (int i = 0; i < 60 && scn.gameState().getAttackState() != null
-                && scn.gameState().getAttackState().getFerocityDestinyTotal(wampa) == null; i++) {
-            if (scn.DSCardActionAvailable(waters, "for ferocity")) {
+        for (int i = 0; i < 60 && !(scn.gameState().getAttackState() != null
+                && scn.gameState().getAttackState().getFerocityDestinyTotal(wampa) != null); i++) {
+            if (dsHas(scn, waters, "for ferocity")) {
                 offered = true;
                 if (substitute) {
                     scn.DSUseCardAction(waters, "for ferocity");
@@ -239,14 +253,14 @@ public class Card_1261_033_Tests {
             }
             scn.PlayerPass(scn.GetDecidingPlayer());
         }
-        assertEquals(atPit, offered);
+        assertEquals(String.join("\n", scn.gameState().getLastMessages()) + "\nDS=" + scn.DSGetDecision() + " LS=" + scn.LSGetDecision(), atPit, offered);
         return scn.gameState().getAttackState().getFerocityDestinyTotal(wampa);
     }
 
     @Test(timeout = 20000)
     public void creatureHereMayUseItsDestinyNumberInsteadOfDrawingFerocityDestiny() {
         var scn = fullScenario();
-        assertEquals(3f, attackAndMaybeSubstitute(scn, true, true), scn.epsilon);
+        assertEquals(1f, attackAndMaybeSubstitute(scn, true, true), scn.epsilon);
     }
 
     @Test(timeout = 20000)

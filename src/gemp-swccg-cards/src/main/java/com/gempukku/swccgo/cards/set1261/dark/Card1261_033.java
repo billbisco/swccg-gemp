@@ -20,6 +20,7 @@ import com.gempukku.swccgo.logic.effects.RespondableEffect;
 import com.gempukku.swccgo.logic.effects.RetrieveForceEffect;
 import com.gempukku.swccgo.logic.effects.SubstituteDestinyEffect;
 import com.gempukku.swccgo.logic.effects.TargetCardOnTableEffect;
+import com.gempukku.swccgo.logic.modifiers.HabitatIncludesLocationModifier;
 import com.gempukku.swccgo.logic.modifiers.MayDeployToLocationModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.timing.Action;
@@ -52,7 +53,9 @@ public class Card1261_033 extends AbstractNormalEffect {
 
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, PhysicalCard self) {
-        return List.of(new MayDeployToLocationModifier(self, NON_SELECTIVE_FEROCIOUS_CREATURE, Filters.hasAttached(self)));
+        // Deploying here also makes here part of the creature's habitat, so the habitat rule does not lose it.
+        return List.of(new MayDeployToLocationModifier(self, NON_SELECTIVE_FEROCIOUS_CREATURE, Filters.hasAttached(self)),
+                new HabitatIncludesLocationModifier(self, NON_SELECTIVE_FEROCIOUS_CREATURE, Filters.hasAttached(self)));
     }
 
     @Override
