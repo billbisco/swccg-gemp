@@ -127,7 +127,7 @@ public class Card_1261_092_Tests {
         passResponsesUntil(scn, () -> available(scn, "Cancel Lateral Damage"));
         assertTrue(available(scn, "Cancel Lateral Damage"));
         scn.LSPlayCard(scn.GetLSCard("combo"), "Cancel Lateral Damage");
-        assertFalse(scn.GetDSAvailableActions().stream().anyMatch(x -> x.contains("Draw destiny to cancel")));
+        assertFalse("Sense must stay unavailable through all cancellation response windows", senseCanRespond(scn));
         scn.PassAllResponses();
         assertFalse(scn.GetDSCard("damage").getZone().isInPlay());
         assertTrue(scn.GetPower(scn.GetLSCard("home")) > 0);
@@ -217,6 +217,27 @@ public class Card_1261_092_Tests {
         assertTrue(scn.GetLSLostPile().contains(combo));
         assertFalse(available(scn, RETRIEVE));
     }
+
+    private boolean senseCanRespond(VirtualTableScenario scn) {
+        passResponsesUntil(scn, () -> scn.GetDSAvailableActions().stream().anyMatch(x -> x.contains("Draw destiny to cancel")));
+        return scn.GetDSAvailableActions().stream().anyMatch(x -> x.contains("Draw destiny to cancel"));
+    }
+
+    @Test public void realSenseCanRespondToTheUsedDeploymentMode() {
+        var scn = setup();
+        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetLSCard("home"));
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("vader"));
+        scn.MoveCardsToLSHand(scn.GetLSCard("combo"));
+        scn.MoveCardsToDSHand(scn.GetDSCard("sense"));
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.LSActivateForceCheat(5);
+        scn.MoveCardsToTopOfLSReserveDeck(scn.GetLSCard("trooper"));
+        if (scn.DSGetDecision() != null) scn.DSPass();
+        scn.LSPlayCard(scn.GetLSCard("combo"), DEPLOY);
+        assertTrue("Sense should be offered against this Used mode", senseCanRespond(scn));
+        assertTrue(scn.DSCardPlayAvailable(scn.GetDSCard("sense")));
+    }
+
 
     @Test public void realSenseCanRespondToTheLostModeButNotTheCancellationMode() {
         var vulnerable = retrieval(false);
