@@ -35,6 +35,7 @@ public class StackCardsFromOutsideDeckEffect extends AbstractSubActionEffect {
     private Collection<PhysicalCard> _cardsStacked = new ArrayList<PhysicalCard>();
     private boolean _stackAsManyAsPossible;
     private StackCardsFromOutsideDeckEffect _that;
+    private boolean _startingEffectCapacityApplied;
 
     /**
      * Creates an effect that stacks cards from outside of deck on a specified card.
@@ -117,6 +118,21 @@ public class StackCardsFromOutsideDeckEffect extends AbstractSubActionEffect {
         final Collection<PhysicalCard> collectionOutsideOfDeck = Filters.filter(game.getGameState().getOutsideOfDeck(_playerId), game, _cardFilter);
         final List<PhysicalCard> outsideOfDeck = new ArrayList<>(collectionOutsideOfDeck);
 
+        // Cards outside of deck that subtract from the number of cards a player may place under their Starting
+        // Effect (e.g. Light Side Jabba's Prize) reduce this stack's limits and are never stacked themselves.
+        if (isStackingUnderStartingEffect()) {
+            int reduction = 0;
+            for (PhysicalCard card : game.getGameState().getOutsideOfDeck(_playerId)) {
+                reduction += Math.max(0, card.getBlueprint().getStartingEffectCapacityReduction());
+            }
+            outsideOfDeck.removeIf(card -> card.getBlueprint().getStartingEffectCapacityReduction() > 0);
+            if (reduction > 0 && !_startingEffectCapacityApplied) {
+                _startingEffectCapacityApplied = true;
+                _max = Math.max(0, _max - reduction);
+                _min = Math.min(_min, _max);
+            }
+        }
+
         if (_sortByDestiny)
         {
             outsideOfDeck.sort(
@@ -176,6 +192,11 @@ public class StackCardsFromOutsideDeckEffect extends AbstractSubActionEffect {
         }
 
         return subAction;
+    }
+
+    private boolean isStackingUnderStartingEffect() {
+        return _stackOn.getBlueprint().getCardCategory() == CardCategory.EFFECT
+                && _stackOn.getBlueprint().getCardSubtype() == CardSubtype.STARTING;
     }
 
     @Override

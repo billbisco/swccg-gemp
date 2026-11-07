@@ -96,6 +96,14 @@ public interface Cards extends BaseQuery, Captives, Battle {
             return CardState.ACTIVE;
         }
 
+        if (physicalCard.getAttachedTo() != null
+                && physicalCard.getAttachedTo().isCaptive()
+                && physicalCard.getBlueprint().isActiveWhileAttachedToCaptive()
+                && zone.isInPlay()
+                && !physicalCard.getBlueprint().isInactiveInsteadOfActive(gameState.getGame(), physicalCard)) {
+            return CardState.ACTIVE;
+        }
+
         if (physicalCard.getAttachedTo() != null) {
             //While a parasite is attached to an inactive host, the parasite remains active. This is a specific exception to the Inactive rules.
             if(physicalCard.getBlueprint().hasKeyword(Keyword.PARASITE) &&
