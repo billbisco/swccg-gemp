@@ -62,4 +62,55 @@ public class Card_1271_019_Tests {
         if (s.DSGetDecision() == null && s.LSGetDecision() != null) s.LSPass();
         assertFalse(s.DSAnyActionsAvailable() && s.DSCardActionAvailable(rise, "Deploy a Vader Effect from here"));
     }
+
+    @Test public void RiseOfTheDarkLordStopsAnActualDarkJediPresenceFromDoublingAnImperialsPower() {
+        checkDarkJediPresence(true);
+        checkDarkJediPresence(false);
+    }
+
+    private void checkDarkJediPresence(boolean withRise) {
+        var s = board(null);
+        if (!withRise) s.MoveOutOfPlay(s.GetDSCard("rise"));
+        var site = s.GetDSStartingLocation();
+        var trooper = s.GetDSCard("trooper");
+        var vader = s.GetDSCard("vader");
+        var interrupt = s.GetDSCard("darkJediPresence");
+        s.MoveCardsToLocation(site, trooper, s.GetLSCard("luke"));
+        s.MoveCardsToDSHand(interrupt);
+        s.SkipToDSTurn(Phase.CONTROL);
+        s.EnsureDSForcePile(8);
+        s.SkipToPhase(Phase.BATTLE);
+        s.StartBattleAndSkipToWeaponsSegment(s.DS, site);
+        float initialPower = s.GetPower(trooper);
+        s.DSPlayCard(interrupt);
+        if (s.DSHasCardChoiceAvailable(vader)) s.DSChooseCard(vader);
+        s.PassAllResponses();
+        assertEquals(withRise ? initialPower : initialPower * 2, s.GetPower(trooper), s.epsilon);
+        assertTrue(s.GetDSLostPile().contains(interrupt));
+    }
+
+    @Test public void RiseOfTheDarkLordLetsDarkTakeAnActualVaderIconCardDrawnForDestiny() {
+        var s = board(null);
+        var site = s.GetDSStartingLocation();
+        var rise = s.GetDSCard("rise");
+        var cape = s.GetDSCard("cape");
+        s.MoveCardsToLocation(site, s.GetLSCard("luke"));
+        s.SkipToDSTurn(Phase.CONTROL);
+        s.EnsureDSForcePile(8);
+        s.SkipToPhase(Phase.BATTLE);
+        s.StartBattleAndSkipToWeaponsSegment(s.DS, site);
+        s.MoveCardsToTopOfDSReserveDeck(cape);
+        s.SkipToPowerSegment();
+        s.PassResponses("BEFORE_BATTLE_DESTINY_DRAWS");
+        s.DSChooseYes();
+        String take = "Take Vader destiny card into hand";
+        for (int i = 0; i < 16 && !(s.DSAnyActionsAvailable() && s.DSCardActionAvailable(rise, take)); i++) {
+            if (!s.GetCurrentDecision().getText().toLowerCase(java.util.Locale.ROOT).contains("optional response")) break;
+            s.PlayerPass(s.GetDecidingPlayer());
+        }
+        assertTrue(s.DSCardActionAvailable(rise, take));
+        s.DSUseCardAction(rise, take);
+        s.PassAllResponses();
+        assertTrue(s.GetDSHand().contains(cape));
+    }
 }

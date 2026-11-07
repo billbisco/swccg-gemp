@@ -32,6 +32,7 @@ final class LegacyVaderScenario {
         dark.put("premiereVader", "1_168");
         dark.put("lightsaber", "1_314");
         dark.put("trooper", "1_194");
+        dark.put("darkJediPresence", "1_240");
         dark.put("devastator", "1_301");
         dark.put("customTie", "1_306");
         dark.put("system", "1_282");

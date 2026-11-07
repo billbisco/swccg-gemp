@@ -92,6 +92,7 @@ public class Card_1271_015_Tests {
         s.LSInitiateBattle(farm);
         assertTrue(s.DSDecisionAvailable("Battle just initiated"));
         s.DSUseCardAction(equipment, "Move Vader as a 'react'");
+        if (s.DSHasCardChoiceAvailable(vader)) s.DSChooseCard(vader);
         if (s.DSHasCardChoiceAvailable(farm)) s.DSChooseCard(farm);
         s.PassAllResponses();
         assertTrue(s.CardsAtLocation(farm, vader));
