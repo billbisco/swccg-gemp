@@ -68,6 +68,7 @@ public class Card_1261_072_Tests {
     }
 
     private void startLightDrain(VirtualTableScenario scn) {
+        scn.MoveCardsToLocation(scn.GetDSCard("forest"), scn.GetLSCard("luke"));
         nextLightControl(scn);
         scn.LSForceDrainAt(scn.GetDSCard("forest"));
         scn.PassAllResponses();
@@ -240,6 +241,7 @@ public class Card_1261_072_Tests {
     @Test
     public void OuneeTaDoesNotProtectTheDrainFromCancellation() {
         var scn = ready(true, true);
+        scn.MoveCardsToLocation(scn.GetDSCard("forest"), scn.GetLSCard("luke"));
         scn.MoveCardsToDSHand(scn.GetDSCard("control"));
         nextLightControl(scn);
         scn.LSForceDrainAt(scn.GetDSCard("forest"));
@@ -252,12 +254,14 @@ public class Card_1261_072_Tests {
     private int activateWithSleen(boolean shield) {
         var scn = scenario();
         scn.StartGame();
-        scn.SkipToLSTurn(Phase.ACTIVATE);
+        scn.SkipToLSTurn(Phase.CONTROL);
         scn.MoveLocationToTable(scn.GetLSCard("alderaan"));
         scn.MoveLocationToTable(scn.GetDSCard("forest"));
         scn.MoveCardsToLocation(scn.GetDSCard("forest"), scn.GetDSCard("sleen"));
         if (shield)
             scn.MoveCardsToLSSideOfTable(scn.GetLSCard("shield"));
+        scn.SkipToDSTurn(Phase.CONTROL);
+        scn.SkipToLSTurn(Phase.ACTIVATE);
         assertEquals(shield ? 1 : 0, scn.game().getModifiersQuerying().getIconCount(scn.gameState(), scn.GetDSCard("forest"), Icon.LIGHT_FORCE));
         return scn.LSActivateMaxForceAndPass();
     }

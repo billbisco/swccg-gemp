@@ -73,7 +73,7 @@ public class Card_1261_077_Tests {
         scn.MoveCardsToLSSideOfTable(scn.GetLSCard("shield"));
         scn.SkipToPhase(Phase.DEPLOY);
         scn.PassAllResponses();
-        assertEquals(Zone.LOST_PILE, scn.GetLSCard("ounee").getZone());
+        assertTrue(scn.GetLSLostPile().contains(scn.GetLSCard("ounee")));
     }
 
     @Test
@@ -83,7 +83,7 @@ public class Card_1261_077_Tests {
         scn.SkipToPhase(Phase.DEPLOY);
         scn.LSPlayCard(scn.GetLSCard("ounee"));
         scn.PassAllResponses();
-        assertEquals(Zone.LOST_PILE, scn.GetLSCard("ounee").getZone());
+        assertTrue(scn.GetLSLostPile().contains(scn.GetLSCard("ounee")));
     }
 
     @Test
@@ -92,7 +92,7 @@ public class Card_1261_077_Tests {
         scn.MoveCardsToLSSideOfTable(scn.GetLSCard("ouneeShield"), scn.GetLSCard("shield"));
         scn.SkipToPhase(Phase.DEPLOY);
         scn.PassAllResponses();
-        assertEquals(Zone.LOST_PILE, scn.GetLSCard("ouneeShield").getZone());
+        assertTrue(scn.GetLSLostPile().contains(scn.GetLSCard("ouneeShield")));
     }
 
     @Test
