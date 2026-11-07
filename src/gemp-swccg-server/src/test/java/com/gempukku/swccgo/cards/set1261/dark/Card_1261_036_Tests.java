@@ -163,9 +163,11 @@ public class Card_1261_036_Tests {
         var failure = scn.GetDSCard("failure");
         var vader = scn.GetDSCard("vader");
         targetArtoo(scn);
+        scn.MoveCardsToTopOfDSReserveDeck(vader);
         scn.LSChoose(PLACE_IN_LOST_PILE);
         assertTrue(scn.GetDSLostPile().contains(failure));
         assertFalse(scn.game().getModifiersQuerying().isGameTextCanceled(scn.gameState(), artoo));
+        scn.PassAllResponses();
         scn.DSChooseYes();
         assertTrue(scn.DSHasCardChoiceAvailable(vader));
         scn.DSChooseCard(vader);
@@ -178,6 +180,7 @@ public class Card_1261_036_Tests {
         var scn = droidScenario();
         targetArtoo(scn);
         scn.LSChoose(PLACE_IN_LOST_PILE);
+        scn.PassAllResponses();
         int hand = scn.GetDSHandCount();
         scn.DSChooseNo();
         scn.PassAllResponses();
