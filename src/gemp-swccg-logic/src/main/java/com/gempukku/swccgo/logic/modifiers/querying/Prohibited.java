@@ -342,4 +342,22 @@ public interface Prohibited extends BaseQuery, Flags {
     default boolean mayNotBeThrown(GameState gameState, PhysicalCard card) {
         return !getModifiersAffectingCard(gameState, ModifierType.MAY_NOT_BE_THROWN, card).isEmpty();
     }
+
+    /**
+     * Determines if the card that just retrieved Force may not be stacked on the specified card.
+     * @param gameState the game state
+     * @param retrievalSource the card that just retrieved Force
+     * @param amountRetrieved the amount of Force just retrieved
+     * @param stackOn the card to stack on
+     * @return true if the card may not be stacked there, otherwise false
+     */
+    default boolean mayNotStackRetrievalSourceOn(GameState gameState, PhysicalCard retrievalSource, int amountRetrieved, PhysicalCard stackOn) {
+        for (Modifier modifier : getModifiers(gameState, ModifierType.RETRIEVAL_SOURCE_MAY_NOT_BE_STACKED_ON)) {
+            if (modifier instanceof RetrievalSourceMayNotBeStackedOnModifier
+                    && ((RetrievalSourceMayNotBeStackedOnModifier) modifier).mayNotBeStackedOn(gameState, query(), retrievalSource, amountRetrieved, stackOn)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
