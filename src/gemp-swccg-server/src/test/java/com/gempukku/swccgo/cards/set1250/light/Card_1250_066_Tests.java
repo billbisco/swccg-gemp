@@ -156,4 +156,26 @@ public class Card_1250_066_Tests {
         passUntilOffer(s);
         return s;
     }
+
+    @Test
+    public void ActivatingTheLastReserveCardLeavesNoCardForTheOriginalDraw() {
+        var s = scenario(); s.StartGame(); var site = s.GetDSStartingLocation();
+        var lightning = s.GetDSCard("lightning"); var target = s.GetLSCard("luke");
+        s.MoveCardsToLocation(site, s.GetDSCard("emperor"), target);
+        s.MoveCardsToHand(lightning, s.GetLSCard("odds"));
+        s.DSActivateForceCheat(4); s.SkipToPhase(Phase.CONTROL);
+        var last = s.GetDSDestiny(6);
+        for (var card : List.copyOf(s.GetDSReserveDeck())) s.MoveOutOfPlay((PhysicalCardImpl) card);
+        s.MoveCardsToTopOfDSReserveDeck(last);
+        assertEquals(1, s.GetDSReserveDeckCount());
+        s.DSPlayCard(lightning, "Make target lost");
+        if (s.DSDecisionAvailable("Choose Emperor")) s.DSChooseCard(s.GetDSCard("emperor"));
+        if (s.DSDecisionAvailable("Choose character")) s.DSChooseCard(target);
+        passUntilOffer(s);
+        assertTrue(s.GetCurrentDecision().getText(), offered(s));
+        var odds = s.GetLSCard("odds");
+        s.LSPlayCard(odds, CHANGE); s.PassAllResponses();
+        assertTrue(s.GetDSForcePile().contains(last)); assertEquals(0, s.GetDSReserveDeckCount());
+        assertEquals(site, target.getAtLocation()); assertTrue(s.GetLSUsedPile().contains(odds));
+    }
 }
