@@ -19,7 +19,7 @@ public class Card_1262_008_Tests {
 
     private VirtualTableScenario scenario() {
         var scn = new VirtualTableScenario(
-                new HashMap<>(Map.of("lando", "112_3", "ben", "1_21", "alter", "1_71")),
+                new HashMap<>(Map.of("han", "108_1", "luke", "1_19", "ben", "1_21", "alter", "1_71")),
                 new HashMap<>(Map.of("drop", "1262_8", "aplek", "222_2", "trooper", "1_194", "spare", "1_324")),
                 30, 30, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
@@ -77,7 +77,7 @@ public class Card_1262_008_Tests {
             var scn = scenario();
             var drop = scn.GetDSCard("drop");
             var site = scn.GetDSStartingLocation();
-            scn.MoveCardsToLocation(site, scn.GetDSCard("aplek"), scn.GetDSCard("trooper"), scn.GetLSCard("lando"));
+            scn.MoveCardsToLocation(site, scn.GetDSCard("aplek"), scn.GetDSCard("trooper"), scn.GetLSCard("han"), scn.GetLSCard("luke"));
             if (dropOnTable) scn.MoveCardsToDSSideOfTable(drop);
             scn.EnsureDSForcePile(2);
             scn.SkipToPhase(Phase.BATTLE);
