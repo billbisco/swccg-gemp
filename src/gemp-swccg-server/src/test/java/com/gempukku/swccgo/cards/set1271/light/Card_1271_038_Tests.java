@@ -118,8 +118,8 @@ public class Card_1271_038_Tests {
         if (s.LSGetDecision() == null && s.DSGetDecision() != null) s.DSPass();
         s.LSUseCardAction(firstAid, "Place Field Dressing in Used Pile");
         s.PassAllResponses();
-        assertEquals(Zone.USED_PILE, firstAid.getZone());
-        assertEquals(Zone.USED_PILE, s.GetLSCard("dressing").getZone());
+        assertTrue(s.GetLSUsedPile().contains(firstAid));
+        assertTrue(s.GetLSUsedPile().contains(s.GetLSCard("dressing")));
         assertEquals(s.GetLSCard("patient").getBlueprint().getForfeit(), s.GetForfeit(s.GetLSCard("patient")), s.epsilon);
     }
 }
