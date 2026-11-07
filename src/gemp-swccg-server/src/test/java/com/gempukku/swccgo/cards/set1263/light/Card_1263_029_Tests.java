@@ -35,11 +35,11 @@ public class Card_1263_029_Tests {
             put("rescueInterrupt", "1263_29"); put("otherCopy", "1263_29");
             put("cell", "601_129"); put("immune", "9_47"); put("ordinary", "1_66");
             put("hero", "2_14"); put("r2", "1271_35"); put("leia", "1_17"); put("ally", "1_28");
-            put("mos", "1_295"); put("otherSite", "1_136");
+            put("otherSite", "1_136");
         }};
         if (!startObjective) ls.put("objective", "7_139");
         return new VirtualTableScenario(ls, new HashMap<>() {{
-            put("gravel", "1_247"); put("vader", "1_168"); put("sense", "1_267");
+            put("mos", "1_295"); put("gravel", "1_247"); put("vader", "1_168"); put("sense", "1_267");
         }}, 60, 60, startObjective ? StartingSetup.RescueThePrincessVObjective : StartingSetup.DefaultLSGroundLocation,
                 StartingSetup.DefaultDSSpaceSystem,
                 startObjective ? starting : StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
@@ -53,6 +53,7 @@ public class Card_1263_029_Tests {
         assertEquals(Side.LIGHT, b.getSide()); assertEquals(Rarity.V, b.getRarity());
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_6_3, b.getExpansionSet()); assertEquals(CardSubtype.LOST_OR_STARTING, b.getCardSubtype());
         scn.BlueprintCardTypeCheck(b, new ArrayList<>(List.of(CardType.INTERRUPT)));
+        scn.BlueprintKeywordCheck(b, new ArrayList<>());
         scn.BlueprintIconCheck(b, new ArrayList<>(List.of(Icon.INTERRUPT, Icon.A_NEW_HOPE, Icon.LEGACY_BLOCK_6)));
     }
 
@@ -66,7 +67,7 @@ public class Card_1263_029_Tests {
     private VirtualTableScenario setup(boolean objective, boolean alone, String droid) {
         var scn = scenario(false); scn.StartGame();
         if (objective) scn.MoveCardsToLSSideOfTable(scn.GetLSCard("objective"));
-        var mos = scn.GetLSCard("mos"); var battle = scn.GetLSCard("otherSite");
+        var mos = scn.GetDSCard("mos"); var battle = scn.GetLSCard("otherSite");
         scn.MoveLocationToTable(mos); scn.MoveLocationToTable(battle);
         scn.MoveCardsToLocation(mos, scn.GetLSCard(droid));
         scn.MoveCardsToLocation(battle, scn.GetLSCard("leia"), scn.GetDSCard("vader"));
@@ -101,7 +102,7 @@ public class Card_1263_029_Tests {
     @Test public void RescueYouSavesRealNonHeroicArtooAndTheOtherCopyCannotCancelABattle() {
         var scn = storm(true, "r2"); assertTrue(has(scn, SAVE));
         scn.LSPlayCard(scn.GetLSCard("rescueInterrupt"), SAVE); scn.PassAllResponses();
-        assertAtLocation(scn.GetLSCard("mos"), scn.GetLSCard("r2"));
+        assertAtLocation(scn.GetDSCard("mos"), scn.GetLSCard("r2"));
         assertInZone(Zone.LOST_PILE, scn.GetLSCard("rescueInterrupt")); assertInHand(scn.GetLSCard("otherCopy"));
         scn.SkipToPhase(Phase.BATTLE); scn.DSInitiateBattle(scn.GetLSCard("otherSite"));
         assertNotNull(scn.gameState().getBattleState()); assertFalse(has(scn, CANCEL));
