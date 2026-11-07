@@ -20,7 +20,7 @@ public class Card_1261_092_Tests {
     private VirtualTableScenario setup() {
         var scn = new VirtualTableScenario(new HashMap<>(Map.ofEntries(
                 Map.entry("combo", "1261_92"), Map.entry("other", "1210_160"),
-                Map.entry("trooper", "1_28"), Map.entry("red", "1_144"),
+                Map.entry("trooper", "2_18"), Map.entry("red", "1_144"),
                 Map.entry("home", "9_74"), Map.entry("admiral", "203_9"),
                 Map.entry("leia", "1_17"), Map.entry("nonrebel", "1_66"),
                 Map.entry("oldUsed", "1_146"), Map.entry("site", "1_136"))),
@@ -79,11 +79,14 @@ public class Card_1261_092_Tests {
         var admiral = scn.GetLSCard("admiral");
         scn.MoveCardsToLocation(scn.GetLSStartingLocation(), home, scn.GetDSCard("tie"));
         scn.MoveCardsToLSHand(combo);
-        scn.MoveCardsToTopOfLSReserveDeck(trooper, leia, admiral);
         scn.SkipToLSTurn(Phase.DEPLOY);
         assertFalse(available(scn, DEPLOY));
         scn.SkipToDSTurn(Phase.DEPLOY);
         scn.LSActivateForceCheat(5);
+        scn.MoveCardsToTopOfLSReserveDeck(trooper, leia, admiral);
+        var marker = scn.GetLSCard("nonrebel");
+        scn.MoveCardsToTopOfLSReserveDeck(marker);
+        scn.gameState().markCardsRevealedFromPile(List.of(marker));
         if (scn.DSGetDecision() != null) scn.DSPass();
         assertTrue(available(scn, DEPLOY));
         int before = scn.GetLSForcePileCount();
@@ -98,7 +101,8 @@ public class Card_1261_092_Tests {
         scn.PassForceUseResponses();
         scn.PassAllResponses();
         assertEquals("Pending after deploy: " + scn.GetCurrentDecision(), home, trooper.getAttachedTo());
-        assertEquals(before - 1, scn.GetLSForcePileCount());
+        assertEquals(before - 2, scn.GetLSForcePileCount());
+        assertFalse(scn.gameState().isCardRevealedFromPile(marker));
         assertEquals(Zone.RESERVE_DECK, admiral.getZone());
         assertEquals(Zone.RESERVE_DECK, leia.getZone());
     }
@@ -137,6 +141,7 @@ public class Card_1261_092_Tests {
         scn.SkipToLSTurn(Phase.CONTROL);
         assertTrue(scn.GetLSAvailableActions().toString(), available(scn, "Cancel Lateral Damage"));
         scn.LSPlayCard(scn.GetLSCard("combo"), "Cancel Lateral Damage");
+        if (scn.LSHasCardChoiceAvailable(scn.GetDSCard("damage"))) scn.LSChooseCard(scn.GetDSCard("damage"));
         scn.PassAllResponses();
         assertFalse(scn.GetDSCard("damage").getZone().isInPlay());
         assertTrue(scn.GetPower(home) > 0); assertTrue(scn.GetForfeit(home) > 0);
@@ -204,8 +209,9 @@ public class Card_1261_092_Tests {
             break;
         }
         assertTrue("The actual retrieval must offer the optional hand selection: " + trace, handChoice);
-        assertEquals(takeOne ? Zone.HAND : Zone.USED_PILE, trooper.getZone());
-        if (amount == 2) assertEquals(Zone.USED_PILE, red.getZone());
+        if (takeOne) assertEquals(Zone.HAND, trooper.getZone());
+        else assertTrue(scn.GetLSUsedPile().contains(trooper));
+        if (amount == 2) assertTrue(scn.GetLSUsedPile().contains(red));
         else assertTrue(scn.GetLSLostPile().contains(red));
         assertTrue(scn.GetLSLostPile().contains(other));
         assertTrue(scn.GetLSLostPile().contains(combo));
