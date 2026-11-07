@@ -10,6 +10,7 @@ import com.gempukku.swccgo.logic.effects.FlipCardEffect;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,16 @@ public class Card_1262_003_Tests {
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
         scn.StartGame();
+        for (int i = 0; i < 25 && !scn.AwaitingDSActivatePhaseActions(); i++) {
+            if (scn.DSHasCardChoiceAvailable(scn.GetDSCard("chamber"))) scn.DSChooseCard(scn.GetDSCard("chamber"));
+            else if (scn.DSDecisionAvailable("On which side")) scn.DSChoose("Left");
+            else if (scn.GetADParam(scn.DS, "results") != null
+                    && Arrays.asList(scn.GetADParam(scn.DS, "results")).contains("No")) scn.DSChooseNo();
+            else if (scn.LSGetDecision() instanceof CardActionSelectionDecision) scn.LSPass();
+            else if (scn.DSGetDecision() instanceof CardActionSelectionDecision) scn.DSPass();
+            else fail("Unexpected Cloud City setup: " + scn.GetCurrentDecision().getText());
+        }
+        assertTrue(scn.AwaitingDSActivatePhaseActions());
         scn.MoveLocationToTable(scn.GetDSCard("bespin"));
         scn.MoveLocationToTable(scn.GetDSCard("sector"));
         scn.MoveLocationToTable(scn.GetDSCard("dining"));
