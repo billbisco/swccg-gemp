@@ -67,13 +67,15 @@ public class Card_1271_039_Tests {
 
     @Test public void LukeTrustMeCannotDeployAfterItsOwnersStartingEpicEventLeavesTheTable() {
         var s = new VirtualTableScenario(
-            new HashMap<>(Map.of("trust", "1271_39", "interrupt", "216_39", "communing", "216_24", "kenobi", "216_36")),
+            new HashMap<>(Map.of("trust", "1271_39", "interrupt", "216_39", "communing", "216_24",
+                "kenobi", "216_36", "aimHigh", "8_34")),
             new HashMap<>(), 30, 30,
             StartingSetup.LSStartingLocation("216_43"), StartingSetup.DefaultDSSpaceSystem,
             StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
             StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
         var communing = s.GetLSCard("communing");
         var kenobi = s.GetLSCard("kenobi");
+        var aimHigh = s.GetLSCard("aimHigh");
         var trust = s.GetLSCard("trust");
         s.MoveCardsToLSHand(trust);
         s.DSDecided("0");
@@ -86,7 +88,10 @@ public class Card_1271_039_Tests {
         s.LSChooseCard(s.GetLSCard("interrupt"));
         if (s.LSHasCardChoiceAvailable(communing)) s.LSChooseCard(communing);
         if (s.LSHasCardChoiceAvailable(kenobi)) s.LSChooseCard(kenobi);
+        if (s.LSHasCardChoiceAvailable(aimHigh)) s.LSChooseCard(aimHigh);
         assertEquals(Zone.SIDE_OF_TABLE, communing.getZone());
+        assertEquals(communing, kenobi.getStackedOn());
+        assertEquals(Zone.SIDE_OF_TABLE, aimHigh.getZone());
         assertTrue(s.gameState().hasPlayedStartingEpicEvent(s.LS));
 
         s.MoveOutOfPlay(communing);
