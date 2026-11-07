@@ -94,8 +94,10 @@ public class Card_1261_092_Tests {
         assertFalse(selectable(scn, admiral));
         scn.LSChooseCard(trooper);
         if (scn.LSHasCardChoiceAvailable(home)) scn.LSChooseCard(home);
+        if (scn.LSGetMultipleChoices() != null && scn.LSGetMultipleChoices().contains("Passenger")) scn.LSChoose("Passenger");
+        scn.PassForceUseResponses();
         scn.PassAllResponses();
-        assertEquals(home, trooper.getAttachedTo());
+        assertEquals("Pending after deploy: " + scn.GetCurrentDecision(), home, trooper.getAttachedTo());
         assertEquals(before - 1, scn.GetLSForcePileCount());
         assertEquals(Zone.RESERVE_DECK, admiral.getZone());
         assertEquals(Zone.RESERVE_DECK, leia.getZone());
@@ -132,8 +134,8 @@ public class Card_1261_092_Tests {
         scn.PassAllResponses();
         assertEquals(0, scn.GetPower(home)); assertEquals(0, scn.GetForfeit(home));
         scn.MoveCardsToLSHand(scn.GetLSCard("combo"));
-        if (scn.DSGetDecision() != null) scn.DSPass();
-        assertTrue(available(scn, "Cancel Lateral Damage"));
+        scn.SkipToLSTurn(Phase.CONTROL);
+        assertTrue(scn.GetLSAvailableActions().toString(), available(scn, "Cancel Lateral Damage"));
         scn.LSPlayCard(scn.GetLSCard("combo"), "Cancel Lateral Damage");
         scn.PassAllResponses();
         assertFalse(scn.GetDSCard("damage").getZone().isInPlay());
@@ -166,7 +168,10 @@ public class Card_1261_092_Tests {
         scn.PassAllResponses();
         scn.PassDestinyDrawResponses();
         boolean handChoice = false;
+        var trace = new ArrayList<String>();
         for (int i = 0; i < 30; i++) {
+            var d = scn.GetCurrentDecision();
+            trace.add(d == null ? "none" : d.getText());
             if (scn.LSDecisionAvailable("Choose a retrieved")) {
                 assertTrue(selectable(scn, trooper));
                 assertEquals(amount == 2, selectable(scn, red));
@@ -190,9 +195,15 @@ public class Card_1261_092_Tests {
                 scn.LSChooseCard(red); continue;
             }
             if (combo.getZone() == Zone.LOST_PILE || combo.getZone() == Zone.TOP_OF_LOST_PILE) break;
-            passResponsesUntil(scn, () -> scn.LSGetDecision() != null);
+            if (d == null) break;
+            String prompt = d.getText().toLowerCase();
+            if (prompt.contains("optional") || prompt.contains("or pass") || prompt.contains("response")) {
+                scn.PlayerPass(scn.LSGetDecision() != null ? scn.LS : scn.DS);
+                continue;
+            }
+            break;
         }
-        assertTrue("The actual retrieval must offer the optional hand selection", handChoice);
+        assertTrue("The actual retrieval must offer the optional hand selection: " + trace, handChoice);
         assertEquals(takeOne ? Zone.HAND : Zone.USED_PILE, trooper.getZone());
         if (amount == 2) assertEquals(Zone.USED_PILE, red.getZone());
         else assertTrue(scn.GetLSLostPile().contains(red));
