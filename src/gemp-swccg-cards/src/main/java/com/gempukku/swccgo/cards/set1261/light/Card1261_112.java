@@ -18,6 +18,7 @@ import com.gempukku.swccgo.logic.TriggerConditions;
 import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
 import com.gempukku.swccgo.logic.effects.LoseForceEffect;
 import com.gempukku.swccgo.logic.modifiers.IsPoweredModifier;
+import com.gempukku.swccgo.logic.modifiers.MayNotBeThrownModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.modifiers.UnderHothEnergyShieldModifier;
 import com.gempukku.swccgo.logic.timing.EffectResult;
@@ -66,7 +67,8 @@ public class Card1261_112 extends AbstractSite {
         };
         return List.of(new UnderHothEnergyShieldModifier(self, Filters.or(
                 Filters.sameCardId(self), Filters.Echo_site,
-                Filters.and(Filters.or(Filters.Second_Marker, Filters.Third_Marker), outsideLiberationCoverage))));
+                Filters.and(Filters.or(Filters.Second_Marker, Filters.Third_Marker), outsideLiberationCoverage))),
+                new MayNotBeThrownModifier(self, Filters.and(Filters.unique, Filters.speeder)));
     }
 
     @Override

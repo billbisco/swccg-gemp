@@ -5158,6 +5158,29 @@ public class GameConditions {
     }
 
     /**
+     * Determines if just drawn destiny can be canceled by the specified player using the specified card's game text.
+     * @param game the game
+     * @param playerId the player
+     * @param cancelingCard the card whose game text would cancel the destiny
+     * @return true or false
+     */
+    public static boolean canCancelDestiny(SwccgGame game, String playerId, PhysicalCard cancelingCard) {
+        return !game.getModifiersQuerying().mayNotCancelDestinyDraw(game.getGameState(), playerId, false, cancelingCard);
+    }
+
+    /**
+     * Determines if just drawn destiny can be canceled by the specified player (and cause a redraw) using the
+     * specified card's game text.
+     * @param game the game
+     * @param playerId the player
+     * @param cancelingCard the card whose game text would cancel the destiny
+     * @return true or false
+     */
+    public static boolean canCancelDestinyAndCauseRedraw(SwccgGame game, String playerId, PhysicalCard cancelingCard) {
+        return !game.getModifiersQuerying().mayNotCancelDestinyDraw(game.getGameState(), playerId, true, cancelingCard);
+    }
+
+    /**
      * Determines if at least one battle destiny drawn by the opponent can be canceled by another specified player.
      * @param game the game
      * @param playerId the player to cancel battle destinies

@@ -25,6 +25,8 @@ import com.gempukku.swccgo.logic.effects.PlaceCardOutOfPlayFromTableEffect;
 import com.gempukku.swccgo.logic.effects.ReduceForceLossEffect;
 import com.gempukku.swccgo.logic.effects.UseForceEffect;
 import com.gempukku.swccgo.logic.effects.choose.TakeCardIntoHandFromReserveDeckEffect;
+import com.gempukku.swccgo.logic.modifiers.MayNotCancelBattleDestinyUsingCardModifier;
+import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.timing.EffectResult;
 
 import java.util.LinkedList;
@@ -41,6 +43,13 @@ public class Card1220_163_BACK extends AbstractObjective {
         setVirtualSuffix(true);
         setGameText("While this side up, Wedge may not cancel battle destiny draws on Hoth. During your control phase: opponent loses 1 Force for each battleground marker site you control with both a T-47 and a Rebel, and you may use 2 Force to take any one card into hand from Reserve Deck; reshuffle. Whenever you must lose Force (except from your card, battle damage, or a Force drain at a battleground), reduce the loss (to a minimum of 1) by the number of Hoth locations you occupy. Flip this card if you do not control two exterior Hoth sites. Place out of play if Main Power Generators 'blown away.'");
         addIcons(Icon.SPECIAL_EDITION);
+    }
+
+    @Override
+    protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
+        List<Modifier> modifiers = new LinkedList<Modifier>();
+        modifiers.add(new MayNotCancelBattleDestinyUsingCardModifier(self, Filters.Hoth_site, Filters.Wedge, null));
+        return modifiers;
     }
 
     @Override

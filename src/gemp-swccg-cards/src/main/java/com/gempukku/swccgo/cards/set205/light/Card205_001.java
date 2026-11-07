@@ -72,7 +72,7 @@ public class Card205_001 extends AbstractRebel {
                 && GameConditions.isOncePerBattle(game, self, playerId, gameTextSourceCardId)
                 && GameConditions.isInBattle(game, self)
                 && GameConditions.isPiloting(game, self, Filters.T_47)
-                && GameConditions.canCancelDestiny(game, playerId)) {
+                && GameConditions.canCancelDestiny(game, playerId, self)) {
             DestinyDrawnResult destinyDrawnResult = (DestinyDrawnResult) effectResult;
             if (destinyDrawnResult.getNumDestinyDrawnSoFar() > 1) {
 

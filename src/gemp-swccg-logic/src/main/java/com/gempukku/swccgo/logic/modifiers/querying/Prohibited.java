@@ -329,4 +329,14 @@ public interface Prohibited extends BaseQuery, Flags {
     default boolean isAttachingCardProhibited(GameState gameState, PhysicalCard card) {
         return !getModifiersAffectingCard(gameState, ModifierType.MAY_NOT_ATTACH, card).isEmpty();
     }
+
+    /**
+     * Determines if the specified card may not be 'thrown'.
+     * @param gameState the game state
+     * @param card the card
+     * @return true if the card may not be 'thrown', otherwise false
+     */
+    default boolean mayNotBeThrown(GameState gameState, PhysicalCard card) {
+        return !getModifiersAffectingCard(gameState, ModifierType.MAY_NOT_BE_THROWN, card).isEmpty();
+    }
 }

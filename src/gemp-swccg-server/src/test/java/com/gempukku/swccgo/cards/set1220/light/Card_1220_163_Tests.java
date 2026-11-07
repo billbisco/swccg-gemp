@@ -8,6 +8,7 @@ import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
 import com.gempukku.swccgo.logic.effects.BlowAwayEffect;
 import com.gempukku.swccgo.logic.effects.LoseCardFromTableEffect;
 import com.gempukku.swccgo.logic.effects.LoseForceEffect;
+import com.gempukku.swccgo.logic.modifiers.AddsBattleDestinyModifier;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -35,6 +36,8 @@ public class Card_1220_163_Tests {
         ls.put("formation", "7_107");
         ls.put("nonBattleground", "1_134");
         ls.put("secondFormation", "7_107");
+        ls.put("wedge", "205_1");
+        ls.put("wedgeSpeeder", "3_69");
         var ds = new HashMap<>(Map.of("dsArtillery", "3_159", "vader", "1_168", "sense", "1_267",
                 "garrisonOne", "104_7", "garrisonTwo", "104_7", "cantina", "1_290"));
         return new VirtualTableScenario(ls, ds, 40, 40, new StartingSetup() {
@@ -396,5 +399,60 @@ public class Card_1220_163_Tests {
         int before = scn.GetLSLostPileCount();
         scn.LSPayRemainingBattleDamageFromReserveDeck(); scn.PassAllResponses();
         assertEquals(amount, scn.GetLSLostPileCount() - before);
+    }
+
+    /**
+     * Wedge (piloting a T-47) battles Vader at the given site while Dark Side draws two battle destinies. Returns
+     * whether Wedge offered to cancel the second Dark Side battle destiny.
+     */
+    private boolean wedgeMayCancelSecondDarkDestiny(VirtualTableScenario scn, com.gempukku.swccgo.game.PhysicalCardImpl site) {
+        var wedge = scn.GetLSCard("wedge"); var speeder = scn.GetLSCard("wedgeSpeeder"); var vader = scn.GetDSCard("vader");
+        scn.MoveCardsToLocation(site, speeder, vader);
+        scn.BoardAsPilot(speeder, wedge);
+        scn.ApplyAdHocModifier(new AddsBattleDestinyModifier(vader, 1, scn.DS));
+        scn.SkipToDSTurn(Phase.BATTLE);
+        scn.DSInitiateBattle(site);
+        scn.SkipToPowerSegment();
+        boolean offered = false;
+        var trace = new ArrayList<String>();
+        for (int i = 0; i < 60 && scn.GetCurrentDecision() != null; i++) {
+            var text = scn.GetCurrentDecision().getText();
+            var decider = scn.GetDecidingPlayer();
+            trace.add(decider + ":" + text);
+            if (text.contains("BATTLE_DESTINY_DRAWS_COMPLETE_FOR_PLAYER")) break;
+            if (text.contains("battle destiny?")) { scn.PlayerChooseYes(decider); continue; }
+            if (decider.equals(scn.LS) && scn.LSCardActionAvailable(wedge, "Cancel opponent's destiny")) { offered = true; break; }
+            scn.PlayerPass(decider);
+        }
+        assertTrue(trace.toString(), trace.stream().anyMatch(t -> t.contains("battle destiny?") || t.contains("DESTINY_DRAWN")));
+        return offered;
+    }
+
+    private VirtualTableScenario liberationWithThreeControlledSites() {
+        var scn = liberationWithTwoControlledSites(false);
+        var perimeter = scn.GetLSCard("perimeter"); var ridge = scn.GetLSCard("ridge");
+        scn.MoveLocationToTable(perimeter); scn.MoveLocationToTable(ridge);
+        scn.MoveCardsToLocation(perimeter, scn.GetLSCard("thirdRebel"));
+        return scn;
+    }
+
+    @Test public void liberationStopsWedgeCancelingBattleDestinyOnHoth() {
+        var scn = liberationWithThreeControlledSites();
+        assertFalse(wedgeMayCancelSecondDarkDestiny(scn, scn.GetLSCard("ridge")));
+        assertEquals(Title.Liberation, scn.GetLSCard("objective").getBlueprint().getTitle());
+    }
+
+    @Test public void liberationDoesNotStopWedgeCancelingBattleDestinyAwayFromHoth() {
+        var scn = liberationWithThreeControlledSites();
+        assertTrue(wedgeMayCancelSecondDarkDestiny(scn, scn.GetDSStartingLocation()));
+        assertEquals(Title.Liberation, scn.GetLSCard("objective").getBlueprint().getTitle());
+    }
+
+    @Test public void localUprisingDoesNotStopWedgeCancelingBattleDestinyOnHoth() {
+        var scn = start();
+        var ridge = scn.GetLSCard("ridge");
+        scn.MoveLocationToTable(ridge);
+        assertEquals("Local Uprising", scn.GetLSCard("objective").getBlueprint().getTitle());
+        assertTrue(wedgeMayCancelSecondDarkDestiny(scn, ridge));
     }
 }
