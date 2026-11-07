@@ -2,6 +2,7 @@ package com.gempukku.swccgo.cards.set1220.light;
 
 import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.framework.StartingSetup;
+import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
 import com.gempukku.swccgo.logic.effects.BlowAwayEffect;
@@ -28,9 +29,10 @@ public class Card_1220_163_Tests {
                 Map.entry("speeder", "3_69"), Map.entry("secondSpeeder", "3_69"),
                 Map.entry("lsArtillery", "3_72"), Map.entry("take", "2_18")));
         ls.put("formation", "7_107");
+        ls.put("nonBattleground", "1_134");
         ls.put("secondFormation", "7_107");
         var ds = new HashMap<>(Map.of("dsArtillery", "3_159", "vader", "1_168", "sense", "1_267",
-                "garrisonOne", "104_7", "garrisonTwo", "104_7"));
+                "garrisonOne", "104_7", "garrisonTwo", "104_7", "cantina", "1_290"));
         return new VirtualTableScenario(ls, ds, 40, 40, new StartingSetup() {
             @Override public HashMap<String, String> Cards() {
                 return new HashMap<>(Map.of("objective", "1220_163", "hoth", "3_55",
@@ -320,4 +322,58 @@ public class Card_1220_163_Tests {
     @Test public void liberationReducesOtherForceLossByTwoOccupiedHothLocations() { resolveForceLoss(false, 5, 3); }
     @Test public void liberationCannotReduceOtherForceLossBelowOne() { resolveForceLoss(false, 2, 1); }
     @Test public void liberationDoesNotReduceForceLossFromOwnCard() { resolveForceLoss(true, 5, 5); }
+    @Test public void actualRebelDownloadPaysNormalCostAndRequiresNonUniqueRebelAtHoth() {
+        var scn = start();
+        var objective = scn.GetLSCard("objective"); var rebel = scn.GetLSCard("rebel");
+        var unique = scn.GetLSCard("unique"); var generator = scn.GetLSCard("generators");
+        var outside = scn.GetDSStartingLocation();
+        scn.LSActivateForceCheat(8); scn.SkipToLSTurn(Phase.DEPLOY);
+        scn.MoveCardsToTopOfLSReserveDeck(rebel, unique);
+        scn.gameState().markCardsRevealedFromPile(List.of(unique));
+        int before = scn.GetLSForcePileCount();
+        scn.LSUseCardAction(objective, "Deploy a non-unique Rebel");
+        if (scn.LSDecisionAvailable("Choose card to deploy")) {
+            assertFalse(selectable(scn, unique.getBlueprintId(true)));
+            scn.LSChooseCard(rebel);
+        }
+        scn.PassAllResponses();
+        if (scn.LSHasCardChoiceAvailable(generator)) {
+            assertFalse(scn.LSHasCardChoiceAvailable(outside));
+            scn.LSChooseCard(generator);
+        }
+        scn.PassForceUseResponses(); scn.PassAllResponses();
+        assertEquals(generator, rebel.getAtLocation());
+        assertEquals(rebel.getBlueprint().getDeployCost().intValue(), before - scn.GetLSForcePileCount());
+        assertFalse(scn.gameState().isCardRevealedFromPile(unique));
+    }
+
+    private void actualDrain(boolean battleground) {
+        var scn = liberationWithTwoControlledSites(false);
+        var drainAt = battleground ? scn.GetDSCard("cantina") : scn.GetLSCard("nonBattleground");
+        scn.MoveLocationToTable(drainAt);
+        scn.MoveCardsToLocation(drainAt, scn.GetDSCard("vader"));
+        assertEquals(battleground, Filters.battleground.accepts(scn.game(), drainAt));
+        scn.SkipToDSTurn(Phase.CONTROL);
+        int before = scn.GetLSLostPileCount();
+        scn.DSForceDrainAt(drainAt); scn.PassAllResponses();
+        scn.LSPayRemainingForceLossFromReserveDeck(); scn.PassAllResponses();
+        assertEquals(battleground ? 2 : 1, scn.GetLSLostPileCount() - before);
+    }
+
+    @Test public void actualBattlegroundDrainIsNotReduced() { actualDrain(true); }
+    @Test public void actualNonBattlegroundDrainIsReduced() { actualDrain(false); }
+
+    @Test public void actualBattleDamageIsNotReduced() {
+        var scn = liberationWithTwoControlledSites(false);
+        var site = scn.GetDSStartingLocation();
+        scn.MoveCardsToLocation(site, scn.GetDSCard("vader"), scn.GetLSCard("unique"));
+        scn.DSActivateForceCheat(8); scn.SkipToDSTurn(Phase.BATTLE);
+        scn.DSInitiateBattle(site);
+        scn.SkipToDamageSegment(false);
+        scn.PassDamageSegmentActions();
+        int amount = scn.GetUnpaidLSBattleDamage(); assertTrue(amount > 1);
+        int before = scn.GetLSLostPileCount();
+        scn.LSPayRemainingBattleDamageFromReserveDeck(); scn.PassAllResponses();
+        assertEquals(amount, scn.GetLSLostPileCount() - before);
+    }
 }
