@@ -115,6 +115,8 @@ public class Card_1250_058_Tests {
         if (sidious) s.MoveCardsToLocation(s.GetDSStartingLocation(), s.GetDSCard("sidious"));
         PhysicalCard canceler = cancelFromOpponent ? s.GetDSCard("vader") : s.GetLSCard("ordinary");
         s.ApplyAdHocModifier(new CancelImmunityToAttritionModifier(canceler, Filters.or(Filters.sameCardId(obiWan), Filters.sameCardId(leia))));
+        // Let the game loop pick up the ad hoc modifier.
+        s.SkipToLSTurn(Phase.CONTROL);
         var q = s.game().getModifiersQuerying();
         return new float[] {q.getImmunityToAttritionLessThan(s.gameState(), obiWan), q.getImmunityToAttritionLessThan(s.gameState(), leia)};
     }
@@ -142,6 +144,7 @@ public class Card_1250_058_Tests {
         var s = scenario(); s.StartGame(); var obiWan = s.GetLSCard("jedi");
         s.MoveCardsToLSSideOfTable(s.GetLSCard("cunning"));
         s.MoveCardsToLocation(s.GetLSStartingLocation(), obiWan);
+        s.SkipToLSTurn(Phase.CONTROL);
         assertEquals(5, s.game().getModifiersQuerying().getImmunityToAttritionLessThan(s.gameState(), obiWan), 0.01);
     }
 }
