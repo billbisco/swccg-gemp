@@ -18,7 +18,7 @@ public class Card_1261_111_Tests {
             put("transport", "3_65"); put("transport2", "3_65"); put("corvette", "1_140");
             put("first", "3_39"); put("hoth", "3_55"); put("perimeter", "3_56");
             put("ridge", "3_62"); put("generators", "3_61"); put("kessel", "1_126");
-            put("luke", "1_19"); put("rebel", "1_28");
+            put("luke", "1_19"); put("rebel", "1_28"); put("farm", "7_120");
         }}, new HashMap<>() {{
             put("catch", "3_131"); put("trooper", "1_194"); put("trooper2", "1_194"); put("trooper3", "1_194");
             put("devastator", "1_301");
@@ -28,9 +28,11 @@ public class Card_1261_111_Tests {
     }
     private VirtualTableScenario started() {
         var scn = scenario(); scn.StartGame();
+        assertTrue(scn.LSDecisionAvailable("Choose site to deploy"));
+        scn.LSChooseCard(scn.GetLSCard("farm")); scn.PassAllResponses();
+        assertEquals(Phase.ACTIVATE, scn.gameState().getCurrentPhase());
         for (String key : new String[]{"echo", "hoth", "perimeter", "ridge", "generators", "kessel"})
             scn.MoveLocationToTable(scn.GetLSCard(key));
-        System.out.println("ECHO START " + scn.gameState().getCurrentPhase() + " " + scn.GetCurrentDecision().getText());
         return scn;
     }
     @Test public void EchoCommandCenterStatsMatchPrintedLegacyMaster() {
@@ -48,11 +50,12 @@ public class Card_1261_111_Tests {
     }
     private VirtualTableScenario search(int force, boolean local, Phase phase, boolean lsTurn) {
         var scn = started();
-        if (local) scn.MoveCardsToLSSideOfTable(scn.GetLSCard("local"));
+        if (!local) scn.MoveCardsToLSHand(scn.GetLSCard("local"));
         if (lsTurn) scn.SkipToLSTurn(Phase.CONTROL); else scn.SkipToDSTurn(Phase.CONTROL);
-        scn.MoveCardsToTopOfLSReserveDeck(scn.GetLSCard("point"), scn.GetLSCard("point2"));
+        scn.MoveCardsToLSHand(scn.GetLSCard("point"), scn.GetLSCard("point2"));
         while (scn.GetLSForcePileCount() > 0) scn.MoveCardsToTopOfLSReserveDeck(scn.GetTopOfLSForcePile());
         scn.LSActivateForceCheat(force);
+        scn.MoveCardsToTopOfLSReserveDeck(scn.GetLSCard("point"), scn.GetLSCard("point2"));
         // Refresh the decision after moving fixture cards out of piles.
         if (lsTurn) {
             scn.LSPass(); scn.DSPass();
@@ -61,7 +64,6 @@ public class Card_1261_111_Tests {
         return scn;
     }
     private void takePoint(VirtualTableScenario scn, String key) {
-        System.out.println("ECHO SEARCH " + scn.gameState().getCurrentPhase() + " " + scn.GetCurrentDecision().getText() + " " + scn.GetLSAvailableActions());
         scn.LSUseCardAction(scn.GetLSCard("echo"), "Take Rendezvous Point"); scn.PassAllResponses();
         assertTrue(scn.LSHasCardChoiceAvailable(scn.GetLSCard(key)));
         scn.LSChooseCard(scn.GetLSCard(key)); scn.PassAllResponses();
@@ -102,6 +104,7 @@ public class Card_1261_111_Tests {
     }
     @Test public void EchoCommandCenterBoostsOwnTransportsGloballyWithoutLocalUprising() {
         var scn = started(); var a = scn.GetLSCard("transport"); var b = scn.GetLSCard("transport2");
+        scn.MoveCardsToLSHand(scn.GetLSCard("local"));
         scn.MoveCardsToLocation(scn.GetLSStartingLocation(), a); scn.MoveCardsToLocation(scn.GetLSCard("kessel"), b);
         assertEquals(6, scn.GetHyperspeed(a)); assertEquals(6, scn.GetHyperspeed(b));
     }
