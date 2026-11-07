@@ -19,7 +19,7 @@ public class Card_1271_042_Tests {
     }
     private VirtualTableScenario ready() {
         var s=scenario(true);s.StartGame();s.SkipToLSTurn(Phase.CONTROL);s.AttachCardsTo(s.GetLSStartingLocation(),s.GetLSCard("foils"));
-        s.MoveLocationToTable(s.GetLSCard("away"));s.MoveCardsToLSLostPile(s.GetLSCard("lost"),s.GetLSCard("lost2"));s.EnsureLSForcePile(20);return s;
+        s.MoveLocationToTable(s.GetLSCard("away"));s.MoveCardsToTopOfLSLostPile(s.GetLSCard("lost"),s.GetLSCard("lost2"));s.EnsureLSForcePile(20);return s;
     }
     @Test public void SFoilsPrintedStatsIconsAndKeywordsAreCorrect() {
         var s=scenario(true);var b=s.GetLSCard("foils").getBlueprint();assertEquals("S-foils",b.getTitle());assertTrue(b.hasVirtualSuffix());
