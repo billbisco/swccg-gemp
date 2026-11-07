@@ -81,11 +81,6 @@ public class Card1271_038 extends AbstractImmediateEffect {
                 if (Filters.at(site).accepts(game, patient) && patient.getZone().isInPlay()) {
                     if (patient.isHit()) action.appendEffect(new RestoreCardToNormalEffect(action, patient));
                     action.appendEffect(new AttachCardFromTableEffect(action, self, patient));
-                    action.appendEffect(new PassthruEffect(action) {
-                        @Override protected void doPlayEffect(SwccgGame game) {
-                            if (patient.equals(self.getAttachedTo())) game.getGameState().reapplyAffectingForCard(game, self);
-                        }
-                    });
                 } else {
                     action.appendEffect(new LoseCardFromTableEffect(action, self));
                 }

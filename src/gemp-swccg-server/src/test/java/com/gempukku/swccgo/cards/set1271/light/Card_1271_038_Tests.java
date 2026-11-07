@@ -69,13 +69,18 @@ public class Card_1271_038_Tests {
         }
         assertTrue(s.CardsAtLocation(site, patient));
         assertEquals(patient, dressing.getAttachedTo());
+        assertFalse(s.GetLSLostPile().contains(patient));
+        // An Old Ben-style return does not put the character back in the battle being resolved.
+        s.PassAllResponses();
+        if (s.AwaitingLSBattleDamagePayment()) s.LSPayRemainingBattleDamageFromReserveDeck();
+        s.SkipToLSTurn(Phase.CONTROL);
         var q = s.game().getModifiersQuerying();
+        assertTrue("Dressing must be active after the battle ends; zone=" + dressing.getZone(), s.gameState().isCardInPlayActive(dressing));
         assertTrue("The dressing's host filter must match the revived card", com.gempukku.swccgo.filters.Filters.hasAttached(dressing).accepts(s.game(), patient));
         assertFalse("Premiere Luke does not protect his forfeit", q.isProhibitedFromHavingForfeitReduced(s.gameState(), patient));
         assertFalse("Attached dressing must supply an active forfeit reset",
             q.getModifiersAffectingCard(s.gameState(), com.gempukku.swccgo.logic.modifiers.ModifierType.UNMODIFIABLE_FORFEIT_VALUE, patient).isEmpty());
         assertEquals(0, s.GetForfeit(patient));
-        assertFalse(s.GetLSLostPile().contains(patient));
     }
 
     @Test public void FieldDressingPrintedStatsIconsAndKeywordsAreCorrect() {
@@ -108,8 +113,6 @@ public class Card_1271_038_Tests {
     @Test public void FieldDressingLetsFirstAidRemoveItToUsedAndRestoresForfeit() {
         var s = justForfeited("1_19");
         playDressing(s);
-        s.PassAllResponses();
-        s.SkipToLSTurn(Phase.CONTROL);
         var firstAid = s.GetLSCard("firstAid");
         s.LSUseCardAction(firstAid, "Place Field Dressing in Used Pile");
         s.PassAllResponses();
