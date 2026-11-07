@@ -13,11 +13,13 @@ import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
+import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.logic.TriggerConditions;
 import com.gempukku.swccgo.logic.actions.OptionalGameTextTriggerAction;
 import com.gempukku.swccgo.logic.effects.choose.TakeCardIntoHandFromUsedPileEffect;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.modifiers.SuspendsCardModifier;
+import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 import com.gempukku.swccgo.logic.timing.EffectResult;
 
 import java.util.List;
@@ -53,8 +55,12 @@ public class Card1250_072 extends AbstractSite {
 
     @Override
     protected List<Modifier> getGameTextDarkSideWhileActiveModifiers(String playerId, SwccgGame game, PhysicalCard self) {
-        Filter noRelatedLocations = (state, modifiers, card) ->
-                !Filters.canSpot(state.getGame(), self, Filters.relatedLocation(card));
+        Filter noRelatedLocations = new Filter() {
+            @Override
+            public boolean accepts(GameState state, ModifiersQuerying modifiers, PhysicalCard card) {
+                return !Filters.canSpot(state.getGame(), self, Filters.relatedLocation(card));
+            }
+        };
         Filter isolated = Filters.and(Filters.your(playerId), Filters.site, Filters.not(Filters.battleground), noRelatedLocations);
         if (!GameConditions.controls(game, playerId, Filters.battleground_site)
                 || GameConditions.canSpot(game, self, isolated)) {

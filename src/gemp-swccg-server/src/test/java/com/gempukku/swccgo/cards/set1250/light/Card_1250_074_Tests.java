@@ -46,7 +46,7 @@ public class Card_1250_074_Tests {
         assertTrue(s.LSDeployAvailable(fighter)); s.LSDeployCard(fighter); s.PassAllResponses();
         assertTrue(s.LSHasCardChoicesAvailable(platform)); assertFalse(s.LSHasCardChoicesAvailable(dock));
         s.LSChooseCard(platform); s.PassAllResponses();
-        assertEquals(platform, fighter.getAttachedTo());
+        assertEquals(platform, fighter.getAtLocation());
     }
 
     private boolean searchOffered(VirtualTableScenario s) {

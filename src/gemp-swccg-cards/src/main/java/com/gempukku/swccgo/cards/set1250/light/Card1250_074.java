@@ -14,10 +14,12 @@ import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
+import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
 import com.gempukku.swccgo.logic.effects.choose.DeployCardFromReserveDeckEffect;
 import com.gempukku.swccgo.logic.modifiers.MayDeployToLocationModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
+import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 
 import java.util.List;
 
@@ -44,8 +46,12 @@ public class Card1250_074 extends AbstractSite {
         if (!GameConditions.isOncePerTurn(game, self, playerId, gameTextSourceCardId, id)
                 || !GameConditions.canDeployCardFromReserveDeck(game, playerId, self, id)) return null;
 
-        Filter relatedShipOnTable = (state, modifiers, site) -> Filters.canSpot(state.getGame(), self,
-                Filters.and(Filters.starship, Filters.relatedStarshipOrVehicle(site)));
+        Filter relatedShipOnTable = new Filter() {
+            @Override
+            public boolean accepts(GameState state, ModifiersQuerying modifiers, PhysicalCard site) {
+                return Filters.canSpot(state.getGame(), self, Filters.and(Filters.starship, Filters.relatedStarshipOrVehicle(site)));
+            }
+        };
         TopLevelGameTextAction action = new TopLevelGameTextAction(self, playerId, gameTextSourceCardId, id);
         action.setText("Deploy a starship site from Reserve Deck");
         action.appendUsage(new OncePerTurnEffect(action));

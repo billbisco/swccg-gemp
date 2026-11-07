@@ -79,7 +79,7 @@ public class Card_1250_072_Tests {
                 && s.GetCurrentDecision().getText().contains("Optional responses"); i++) {
             s.PlayerPass(s.GetDecidingPlayer());
         }
-        assertEquals(chamber, deploying.getAttachedTo());
+        assertEquals(chamber, deploying.getAtLocation());
         return s;
     }
 
