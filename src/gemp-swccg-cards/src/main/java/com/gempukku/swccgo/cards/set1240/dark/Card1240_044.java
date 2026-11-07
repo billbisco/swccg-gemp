@@ -7,6 +7,7 @@ import com.gempukku.swccgo.common.GameTextActionId;
 import com.gempukku.swccgo.common.Phase;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
+import com.gempukku.swccgo.common.SpotOverride;
 import com.gempukku.swccgo.common.TargetingReason;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filter;
@@ -94,7 +95,7 @@ public class Card1240_044 extends AbstractUsedInterrupt {
         PlayInterruptAction action = new PlayInterruptAction(game, self);
         action.setText("Release captive to a related pit");
         action.appendTargeting(new TargetCardOnTableEffect(action, playerId, "Choose non-frozen captive",
-                TargetingReason.TO_BE_RELEASED, Filters.and(Filters.captive, Filters.in(captives))) {
+                SpotOverride.INCLUDE_CAPTIVE, TargetingReason.TO_BE_RELEASED, Filters.and(Filters.captive, Filters.in(captives))) {
             @Override
             protected void cardTargeted(int group, PhysicalCard captive) {
                 action.appendTargeting(new ChooseCardOnTableEffect(action, playerId, "Choose an unoccupied related pit",

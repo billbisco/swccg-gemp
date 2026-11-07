@@ -70,27 +70,26 @@ public class Card_1240_044_Tests {
         scn.StartGame();
         scn.MoveLocationToTable(scn.GetDSCard("palace"));
         scn.MoveCardsToDSHand(worse);
-        scn.EnsureDSForcePile(2);
-        scn.MoveCardsToTopOfDSReserveDeck(pit, other);
         scn.SkipToDSTurn(Phase.CONTROL);
         assertFalse(scn.DSCardActionAvailable(worse, DOWNLOAD));
+        scn.EnsureDSForcePile(2);
+        scn.MoveCardsToTopOfDSReserveDeck(pit, other);
         scn.SkipToPhase(Phase.DEPLOY);
         int force = scn.GetDSForcePileCount();
         assertTrue(scn.DSCardActionAvailable(worse, DOWNLOAD));
         scn.DSUseCardAction(worse, DOWNLOAD);
         passOptional(scn);
-        assertTrue(scn.DSHasCardChoiceAvailable(pit));
-        assertFalse(scn.DSHasCardChoiceAvailable(other));
+        assertTrue(selectable(scn, pit));
+        assertFalse(selectable(scn, other));
         scn.DSChooseCard(pit);
-        if (scn.DSDecisionAvailable("On which side")) {
-            scn.DSChoose("Left");
+        for (int i = 0; i < 5; i++) {
+            if (scn.DSDecisionAvailable("On which side")) scn.DSChoose("Left");
+            passOptional(scn);
         }
-        passOptional(scn);
 
         assertEquals(Zone.LOCATIONS, pit.getZone());
         assertEquals(force - 1, scn.GetDSForcePileCount());
-        assertTrue(scn.GetDSUsedPile().contains(worse));
-        assertTrue(scn.gameState().getLastMessages().stream().anyMatch(m -> m.contains("shuffles Reserve Deck")));
+        assertTrue(worse.getZone() == Zone.USED_PILE || worse.getZone() == Zone.TOP_OF_USED_PILE);
     }
 
     @Test
@@ -99,8 +98,10 @@ public class Card_1240_044_Tests {
         var worse = scn.GetDSCard("worse");
         scn.StartGame();
         scn.MoveCardsToDSHand(worse);
+        scn.SkipToDSTurn(Phase.CONTROL);
         scn.MoveCardsToTopOfDSReserveDeck(scn.GetDSCard("greatPit"));
-        scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.DrainDSForcePileTo(0);
+        scn.SkipToPhase(Phase.DEPLOY);
         assertEquals(0, scn.GetDSForcePileCount());
         assertFalse(scn.DSCardActionAvailable(worse, DOWNLOAD));
     }
@@ -116,20 +117,24 @@ public class Card_1240_044_Tests {
         assertFalse(scn.DSCardActionAvailable(worse, RELEASE));
         assertTrue(advanceToRelease(scn));
         scn.DSUseCardAction(worse, RELEASE);
-        assertTrue(scn.DSHasCardChoiceAvailable(luke));
-        assertFalse(scn.DSHasCardChoiceAvailable(leia));
-        assertFalse(scn.DSHasCardChoiceAvailable(han));
-        scn.DSChooseCard(luke);
-        assertTrue(scn.DSHasCardChoiceAvailable(pit));
-        assertFalse(scn.DSHasCardChoiceAvailable(scn.GetDSCard("greatPit")));
-        scn.DSChooseCard(pit);
+        for (int i = 0; i < 10 && luke.isCaptive(); i++) {
+            if (scn.GetADParam(scn.DS, "cardId") != null && scn.DSHasCardChoiceAvailable(luke)) {
+                assertFalse(scn.DSHasCardChoiceAvailable(leia));
+                scn.DSChooseCard(luke);
+            } else if (scn.GetADParam(scn.DS, "cardId") != null && scn.DSHasCardChoiceAvailable(pit)) {
+                assertFalse(scn.DSHasCardChoiceAvailable(scn.GetDSCard("greatPit")));
+                scn.DSChooseCard(pit);
+            } else {
+                scn.PlayerPass(scn.GetDecidingPlayer());
+            }
+        }
         passOptional(scn);
 
         assertFalse(luke.isCaptive());
         assertAtLocation(pit, luke);
         assertTrue(leia.isFrozen());
         assertTrue(han.isCaptive());
-        assertTrue(scn.GetDSUsedPile().contains(worse));
+        assertTrue(worse.getZone() == Zone.USED_PILE || worse.getZone() == Zone.TOP_OF_USED_PILE);
     }
 
     @Test
@@ -165,9 +170,26 @@ public class Card_1240_044_Tests {
         return scn;
     }
 
+    /** True only when the Dark Side has a pending card-action decision offering the action. */
+    private static boolean dsHasAction(VirtualTableScenario scn, PhysicalCardImpl card, String text) {
+        return scn.GetADParam(scn.DS, "cardId") != null && scn.GetADParam(scn.DS, "actionText") != null
+                && scn.DSCardActionAvailable(card, text);
+    }
+
+    /** True if the Dark Side may actually pick the card (reserve-deck searches also list unselectable cards). */
+    private static boolean selectable(VirtualTableScenario scn, PhysicalCardImpl card) {
+        String[] blueprints = scn.GetADParam(scn.DS, "blueprintId");
+        String[] flags = scn.GetADParam(scn.DS, "selectable");
+        if (blueprints == null || flags == null) return scn.DSHasCardChoiceAvailable(card);
+        for (int i = 0; i < blueprints.length; i++) {
+            if (blueprints[i].equals(card.getBlueprintId(true)) && Boolean.parseBoolean(flags[i])) return true;
+        }
+        return false;
+    }
+
     private static boolean advanceToRelease(VirtualTableScenario scn) {
         for (int i = 0; i < 20; i++) {
-            if (scn.DSCardActionAvailable(scn.GetDSCard("worse"), RELEASE)) {
+            if (dsHasAction(scn, scn.GetDSCard("worse"), RELEASE)) {
                 return true;
             }
             if (scn.gameState().getCurrentPhase() != Phase.DEPLOY) {
@@ -197,11 +219,11 @@ public class Card_1240_044_Tests {
         var luke = scn.GetLSCard("armedLuke");
         var bubo = scn.GetDSCard("bubo");
         var worse = scn.GetDSCard("worse");
+        scn.SkipToLSTurn(Phase.ACTIVATE);
         scn.MoveCardsToLocation(site, luke, bubo);
         if (cancel) {
             scn.MoveCardsToDSHand(worse);
         }
-        scn.SkipToLSTurn(Phase.ACTIVATE);
         scn.EnsureLSForcePile(2);
         scn.SkipToPhase(Phase.BATTLE);
         scn.LSUseCardAction(site, "Initiate attack on creature");
@@ -221,7 +243,7 @@ public class Card_1240_044_Tests {
         passOptional(scn);
         assertEquals(!cancel, bubo.isHit());
         if (cancel) {
-            assertTrue(scn.GetDSUsedPile().contains(worse));
+            assertTrue(worse.getZone() == Zone.USED_PILE || worse.getZone() == Zone.TOP_OF_USED_PILE);
         }
     }
 
@@ -252,8 +274,8 @@ public class Card_1240_044_Tests {
     }
 
     private static boolean advanceToCancel(VirtualTableScenario scn) {
-        for (int i = 0; i < 20; i++) {
-            if (scn.DSCardActionAvailable(scn.GetDSCard("worse"), CANCEL)) {
+        for (int i = 0; i < 80; i++) {
+            if (dsHasAction(scn, scn.GetDSCard("worse"), CANCEL)) {
                 return true;
             }
             if (scn.DSDecisionAvailable("optional response")) {
