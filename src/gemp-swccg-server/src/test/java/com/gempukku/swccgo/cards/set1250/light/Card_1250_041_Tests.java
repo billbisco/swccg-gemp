@@ -86,6 +86,8 @@ public class Card_1250_041_Tests {
         assertEquals(1, query.getFireWeaponCost(s.gameState(), blaster, survivor, target, 1), s.epsilon);
         assertEquals(0, s.GetLSForcePileCount());
         s.DSInitiateBattle(site);
+        if (s.AwaitingDSWeaponsSegmentActions()) s.DSPass();
+        assertTrue(s.AwaitingLSWeaponsSegmentActions());
         assertTrue(s.LSCardActionAvailable(survivor)); s.LSUseCardAction(survivor);
         if (s.LSHasCardChoiceAvailable(saber)) s.LSChooseCard(saber);
         if (s.LSHasCardChoiceAvailable(target)) s.LSChooseCard(target);
@@ -94,7 +96,8 @@ public class Card_1250_041_Tests {
     }
 
     private void toMaintenance(VirtualTableScenario s) {
-        s.SkipToLSTurn(Phase.DRAW);
+        if (s.GetCurrentPlayer().equals(s.LS)) s.SkipToPhase(Phase.DRAW);
+        else s.SkipToLSTurn(Phase.DRAW);
         for (int i = 0; i < 25 && !s.LSDecisionAvailable("Choose maintenance option"); i++) {
             String prompt = s.GetCurrentDecision().getText();
             assertTrue(prompt, prompt.contains("action or Pass") || prompt.contains("Optional responses")
@@ -124,7 +127,7 @@ public class Card_1250_041_Tests {
         var s = scenario(); s.StartGame(); var survivor = s.GetLSCard("survivor");
         s.MoveCardsToLocation(s.GetLSStartingLocation(), survivor); s.AttachCardsTo(survivor, s.GetLSCard("saber"));
         var payment = s.GetLSCard("payment"); s.MoveCardsToHand(payment); s.LSActivateForceCheat(4); toMaintenance(s);
-        assertTrue(s.LSChoiceAvailable("Lose 1 Force to recycle")); s.LSChoose("to recycle");
+        assertTrue(s.LSChoiceAvailable("to recycle")); s.LSChoose("to recycle");
         s.PassAllResponses(); assertTrue(s.AwaitingLSForceLossPayment()); s.LSChooseCard(payment);
         s.PassAllResponses();
         assertTrue(s.GetLSLostPile().contains(payment));
