@@ -23,7 +23,7 @@ public class Card_1263_011_Tests {
         var scn = new VirtualTableScenario(
                 new HashMap<>(Map.of("luke", "601_52", "ben", "1_21", "alter", "1_71")),
                 new HashMap<>(Map.of("effect", "1263_11", "emperor", "9_109", "guard", "9_119",
-                        "anotherGuard", "9_119", "trooper", "1_194", "lightning", "9_136")),
+                        "anotherGuard", "9_118", "trooper", "1_194", "lightning", "9_136")),
                 30, 30, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -88,7 +88,9 @@ public class Card_1263_011_Tests {
             int force = scn.GetDSForcePileCount();
             scn.DSUseCardAction(effect, GUARD);
             assertTrue(scn.DSHasCardChoiceAvailable(guard));
-            assertFalse(scn.DSHasCardChoiceAvailable(trooper));
+            int trooperIndex = scn.DSGetBPChoices().indexOf(trooper.getBlueprintId(true));
+            assertTrue("Trooper is visible in the Reserve search", trooperIndex >= 0);
+            assertEquals("false", scn.GetADParam(scn.DS, "selectable")[trooperIndex]);
             scn.DSChooseCard(guard);
             if (scn.DSHasCardChoiceAvailable(site)) scn.DSChooseCard(site);
             scn.PassAllResponses();
