@@ -52,7 +52,7 @@ public class Card1109_050 extends AbstractNormalEffect {
     }
 
     private Filter opponentsIsolatedNonBattlegroundSite(PhysicalCard self, String opponent) {
-        return Filters.and(Filters.owner(opponent), Filters.site, Filters.not(Filters.battleground), new Filter() {
+        return Filters.and(Filters.owner(opponent), Filters.site, Filters.not(Filters.battleground), Filters.notIgnoredByGameTextOf(self), new Filter() {
             @Override
             public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard) {
                 return !Filters.canSpot(gameState.getGame(), self, Filters.relatedLocation(physicalCard));
@@ -64,12 +64,13 @@ public class Card1109_050 extends AbstractNormalEffect {
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
         String playerId = self.getOwner();
         String opponent = game.getOpponent(playerId);
+        Filter battlegroundSite = Filters.and(Filters.battleground_site, Filters.notIgnoredByGameTextOf(self));
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new EachWeaponDestinyModifier(self, Icon.PERMANENT_WEAPON,
-                new NotCondition(new ControlsCondition(playerId, Filters.battleground_site)),
+                new NotCondition(new ControlsCondition(playerId, battlegroundSite)),
                 Filters.owner(playerId), -2));
         modifiers.add(new EachWeaponDestinyModifier(self, Icon.PERMANENT_WEAPON,
-                new NotCondition(new ControlsCondition(opponent, Filters.battleground_site)),
+                new NotCondition(new ControlsCondition(opponent, battlegroundSite)),
                 Filters.owner(opponent), -2));
         return modifiers;
     }

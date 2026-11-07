@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.logic.modifiers;
 
+import com.gempukku.swccgo.common.Filterable;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.logic.conditions.Condition;
@@ -33,5 +34,15 @@ public class MayMoveAsReactModifier extends MayMoveAsReactToLocationModifier {
      */
     public MayMoveAsReactModifier(PhysicalCard source, Condition condition) {
         super(source, condition, Filters.any);
+    }
+
+    /**
+     * Creates a modifier that allows cards accepted by the affect filter to move as a 'react'.
+     * @param source the source of the modifier
+     * @param affectFilter the filter for cards that may move as a 'react'
+     * @param condition the condition that must be fulfilled for the modifier to be in effect
+     */
+    public MayMoveAsReactModifier(PhysicalCard source, Filterable affectFilter, Condition condition) {
+        super(source, affectFilter, condition, Filters.any, 0);
     }
 }

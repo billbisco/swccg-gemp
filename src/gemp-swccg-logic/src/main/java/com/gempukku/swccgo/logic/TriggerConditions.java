@@ -2439,6 +2439,25 @@ public class TriggerConditions {
     }
 
     /**
+     * Determines if a character accepted by the filter is about to go 'missing'.
+     * @param game the game
+     * @param effectResult the effect result
+     * @param filter the filter
+     * @return true or false
+     */
+    public static boolean isAboutToGoMissing(SwccgGame game, EffectResult effectResult, Filterable filter) {
+        if (effectResult.getType() == EffectResult.Type.ABOUT_TO_GO_MISSING) {
+            AboutToGoMissingResult result = (AboutToGoMissingResult) effectResult;
+            PhysicalCard card = result.getCardToGoMissing();
+
+            return card.getZone().isInPlay()
+                    && !result.getPreventableCardEffect().isEffectOnCardPrevented(card)
+                    && Filters.and(filter).accepts(game.getGameState(), game.getModifiersQuerying(), card);
+        }
+        return false;
+    }
+
+    /**
      * Determines if a card accepted by the filter was just lost (and still in Lost Pile).
      * @param game the game
      * @param effectResult the effect result

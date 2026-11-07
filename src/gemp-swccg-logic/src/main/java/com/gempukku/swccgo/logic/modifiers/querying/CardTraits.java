@@ -219,6 +219,17 @@ public interface CardTraits extends BaseQuery, Limits, Piloting, Weapons {
     }
 
     /**
+     * Determines if the specified site, when it leaves table (instead of being lost), is placed in its owner's Used Pile
+     * together with all cards there.
+     * @param gameState the game state
+     * @param site the site
+     * @return true or false
+     */
+    default boolean isSiteAndCardsTherePlacedInUsedPileWhenLeavesTable(GameState gameState, PhysicalCard site) {
+        return !getModifiersAffectingCard(gameState, ModifierType.SITE_AND_CARDS_THERE_TO_USED_PILE_WHEN_LEAVES_TABLE, site).isEmpty();
+    }
+
+    /**
      * Determines if a card is lost anytime it is about to be stolen.
      * @param gameState the game state
      * @param card a card
