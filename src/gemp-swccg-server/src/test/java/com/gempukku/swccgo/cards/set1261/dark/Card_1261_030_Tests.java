@@ -16,17 +16,18 @@ public class Card_1261_030_Tests {
             put("beggar", "1_44"); put("frozen", "5_23"); put("chances", "1_77");
             put("flaps", "7_69"); put("foils", "7_75"); put("speeder", "3_69");
             put("xwing", "1_146"); put("otherXwing", "1_146"); put("luke", "1_19");
-            put("weapon", "1_153");
+            put("weapon", "1_153"); put("farm", "1_132");
         }}, new HashMap<>() {{
             put("shield", "1261_30"); put("fear", "13_69"); put("trooper", "1_194");
             put("weapon", "1_312"); put("vehicle", "7_315"); put("tie", "1_303");
             put("system", "1_282"); put("otherSystem", "1_296");
-        }}, 40, 40, StartingSetup.LSStartingLocation("1_132"), StartingSetup.DefaultDSGroundLocation,
+        }}, 40, 40, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
             StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
             StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
     }
     private VirtualTableScenario ready(boolean shield) {
         var s = scenario(); s.StartGame(); s.SkipToDSTurn(Phase.ACTIVATE); s.SkipToPhase(Phase.CONTROL);
+        s.MoveLocationToTable(s.GetLSCard("farm"));
         if (shield) s.MoveCardsToDSSideOfTable(s.GetDSCard("shield"));
         return s;
     }
@@ -49,7 +50,7 @@ public class Card_1261_030_Tests {
         assertEquals(Zone.SIDE_OF_TABLE,s.GetDSCard("shield").getZone());assertEquals(force,s.GetDSForcePileCount());
     }
     @Test public void WellLetFateADecideHuhCancelsAnAlreadyDeployedBeggar() {
-        var s=ready(false);var c=s.GetLSCard("beggar");s.AttachCardsTo(s.GetLSStartingLocation(),c);
+        var s=ready(false);var c=s.GetLSCard("beggar");s.AttachCardsTo(s.GetLSCard("farm"),c);
         playShield(s);assertTrue(s.GetLSLostPile().contains(c));
     }
     @Test public void WellLetFateADecideHuhCancelsAlreadyDeployedFrozenAssets() {
@@ -58,7 +59,7 @@ public class Card_1261_030_Tests {
     }
     @Test public void WellLetFateADecideHuhCancelsAnActualBeggarDeploymentAfterItsCost() {
         var s=ready(true);var c=s.GetLSCard("beggar");s.MoveCardsToLSHand(c);s.SkipToLSTurn(Phase.DEPLOY);s.EnsureLSForcePile(5);
-        s.LSPlayCard(c);s.LSChooseCard(s.GetLSStartingLocation());s.PassAllResponses();
+        s.LSPlayCard(c);s.LSChooseCard(s.GetLSCard("farm"));s.PassAllResponses();
         assertTrue(s.GetLSLostPile().contains(c));assertEquals(2,s.GetLSForcePileCount());
     }
     @Test public void WellLetFateADecideHuhCancelsAnActualFrozenAssetsPlay() {
@@ -67,25 +68,25 @@ public class Card_1261_030_Tests {
     }
     @Test public void WellLetFateADecideHuhCancelsTheActualBattleDamageInterrupt() {
         var s=ready(true);var c=s.GetLSCard("chances");s.MoveCardsToLSHand(c);
-        s.MoveCardsToLocation(s.GetLSStartingLocation(),s.GetDSCard("trooper"),s.GetLSCard("luke"));
-        s.SkipToPhase(Phase.BATTLE);s.DSUseCardAction(s.GetLSStartingLocation(),"Initiate battle");s.PassForceUseResponses();
+        s.MoveCardsToLocation(s.GetLSCard("farm"),s.GetDSCard("trooper"),s.GetLSCard("luke"));
+        s.SkipToPhase(Phase.BATTLE);s.DSUseCardAction(s.GetLSCard("farm"),"Initiate battle");s.PassForceUseResponses();
         if (s.GetDecidingPlayer().equals(s.DS)) s.DSPass();
         s.LSPlayCard(c);s.PassAllResponses();assertTrue(s.GetLSLostPile().contains(c));
     }
     private VirtualTableScenario flaps() {
-        var s=ready(true);s.MoveCardsToLocation(s.GetLSStartingLocation(),s.GetLSCard("speeder"));
+        var s=ready(true);s.MoveCardsToLocation(s.GetLSCard("farm"),s.GetLSCard("speeder"));
         s.MoveCardsToLSSideOfTable(s.GetLSCard("flaps"));s.SkipToLSTurn(Phase.CONTROL);s.EnsureLSForcePile(5);
         assertEquals(3,s.GetPower(s.GetLSCard("speeder")));s.LSUseCardAction(s.GetLSCard("flaps"),"Engage Maneuvering Flaps");s.PassAllResponses();
         assertEquals(5,s.GetPower(s.GetLSCard("speeder")));return s;
     }
     @Test public void WellLetFateADecideHuhOwnWeaponPresentSuspendsFlapsAndLeavingRestoresThem() {
         var s=flaps();var trooper=s.GetDSCard("trooper");var weapon=s.GetDSCard("weapon");
-        s.MoveCardsToLocation(s.GetLSStartingLocation(),trooper);s.AttachCardsTo(trooper,weapon);s.SkipToPhase(Phase.DEPLOY);
+        s.MoveCardsToLocation(s.GetLSCard("farm"),trooper);s.AttachCardsTo(trooper,weapon);s.SkipToPhase(Phase.DEPLOY);
         assertEquals(3,s.GetPower(s.GetLSCard("speeder")));s.MoveCardsToDSHand(weapon);s.SkipToPhase(Phase.BATTLE);
         assertEquals(5,s.GetPower(s.GetLSCard("speeder")));
     }
     @Test public void WellLetFateADecideHuhOpponentsWeaponDoesNotSuspendFlaps() {
-        var s=flaps();var luke=s.GetLSCard("luke");s.MoveCardsToLocation(s.GetLSStartingLocation(),luke);
+        var s=flaps();var luke=s.GetLSCard("luke");s.MoveCardsToLocation(s.GetLSCard("farm"),luke);
         s.AttachCardsTo(luke,s.GetLSCard("weapon"));s.SkipToPhase(Phase.DEPLOY);assertEquals(5,s.GetPower(s.GetLSCard("speeder")));
     }
     @Test public void WellLetFateADecideHuhWeaponAtAnotherLocationDoesNotSuspendFlapsHere() {
@@ -93,11 +94,11 @@ public class Card_1261_030_Tests {
         s.AttachCardsTo(s.GetDSCard("trooper"),s.GetDSCard("weapon"));s.SkipToPhase(Phase.DEPLOY);assertEquals(5,s.GetPower(s.GetLSCard("speeder")));
     }
     @Test public void WellLetFateADecideHuhVehicleManeuverThreeDoesNotSuspendFlaps() {
-        var s=flaps();var v=s.GetDSCard("vehicle");s.MoveCardsToLocation(s.GetLSStartingLocation(),v);s.SkipToPhase(Phase.DEPLOY);
+        var s=flaps();var v=s.GetDSCard("vehicle");s.MoveCardsToLocation(s.GetLSCard("farm"),v);s.SkipToPhase(Phase.DEPLOY);
         assertEquals(3,s.GetManeuver(v));assertEquals(5,s.GetPower(s.GetLSCard("speeder")));
     }
     @Test public void WellLetFateADecideHuhVehicleModifiedManeuverFourSuspendsFlaps() {
-        var s=flaps();var v=s.GetDSCard("vehicle");s.MoveCardsToLocation(s.GetLSStartingLocation(),v);
+        var s=flaps();var v=s.GetDSCard("vehicle");s.MoveCardsToLocation(s.GetLSCard("farm"),v);
         s.ApplyAdHocModifier(new ManeuverModifier(null,Filters.sameCardId(v),null,1));s.SkipToPhase(Phase.DEPLOY);
         assertEquals(4,s.GetManeuver(v));assertEquals(3,s.GetPower(s.GetLSCard("speeder")));
     }
@@ -123,5 +124,10 @@ public class Card_1261_030_Tests {
         var s=foils();var tie=s.GetDSCard("tie");s.MoveCardsToLocation(s.GetDSCard("system"),tie);
         s.AttachCardsTo(tie,s.GetDSCard("trooper"));s.AttachCardsTo(s.GetDSCard("trooper"),s.GetDSCard("weapon"));s.SkipToPhase(Phase.DEPLOY);
         assertEquals(3,s.GetManeuver(tie));assertEquals(5,s.GetPower(s.GetLSCard("xwing")));
+    }
+    @Test public void WellLetFateADecideHuhDoesNotCancelAnOrdinaryCharacterDeployment() {
+        var s=ready(true);var trooper=s.GetDSCard("trooper");s.MoveCardsToDSHand(trooper);
+        s.SkipToPhase(Phase.DEPLOY);s.EnsureDSForcePile(5);s.DSDeployCard(trooper);s.DSChooseCard(s.GetDSStartingLocation());s.PassAllResponses();
+        assertEquals(s.GetDSStartingLocation(),trooper.getAtLocation());assertEquals(4,s.GetDSForcePileCount());
     }
 }
