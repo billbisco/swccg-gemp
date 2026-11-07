@@ -67,6 +67,7 @@ public class Card_1271_044_Tests {
     @Test public void HeadingForTheMedicalFrigateUsedStillGoesToUsedWhenNoQualifyingCardIsFound(){
         var s=used();s.MoveCardsToLSHand(s.GetLSCard("redemption"),s.GetLSCard("masanya"));var observer=LegacyShuffleObserver.observe(s);
         s.LSPlayCard(s.GetLSCard("frigate"));s.PassAllResponses();s.LSDecided("");s.PassAllResponses();
+        assertTrue(s.DSDecisionAvailable("Verify Reserve Deck"));s.DSDecided("");s.PassAllResponses();
         assertTrue("Used Interrupt must finish resolving",s.GetLSUsedPile().contains(s.GetLSCard("frigate")));
         assertTrue("Reserve Deck must reshuffle after unsuccessful search",observer.sawOwnedShuffle(s.LS,Zone.RESERVE_DECK));
     }
