@@ -106,7 +106,7 @@ public class Card_1240_048_Tests {
     public void ThoseRebelsWontEscapeUsCannotSearchWithZeroActivatedForce() {
         var scn = Ready(false, Phase.CONTROL);
         scn.MoveCardsToTopOfDSReserveDeck(scn.GetDSCard("stinger"));
-        scn.EnsureDSForcePile(0);
+        scn.DrainDSForcePileTo(0);
         assertFalse(scn.DSCardPlayAvailable(scn.GetDSCard("rebels"), SEARCH));
         assertInZone(Zone.HAND, scn.GetDSCard("rebels"));
     }
@@ -249,7 +249,7 @@ public class Card_1240_048_Tests {
     @Test
     public void ThoseRebelsWontEscapeUsProtectionDoesNotRequireTheSearchModesOneForce() {
         var scn = BattleReady(true, true, false, true);
-        scn.EnsureDSForcePile(0);
+        scn.DrainDSForcePileTo(0);
         Protect(scn);
         scn.PrepareLSDestiny(7);
         FireCannon(scn);
@@ -344,7 +344,7 @@ public class Card_1240_048_Tests {
     @Test
     public void ThoseRebelsWontEscapeUsActuallyCancelsDarklighterSpinAtNoForceCost() {
         var scn = SpinReady();
-        scn.EnsureDSForcePile(0);
+        scn.DrainDSForcePileTo(0);
         ReachDS(scn, "Cancel");
         int force = scn.GetDSForcePileCount();
         scn.DSPlayCard(scn.GetDSCard("rebels"), "Cancel");

@@ -503,7 +503,7 @@ public class Card_1240_026_Tests {
     @Test
     public void HeIsNotReadyExtraMaintenanceLosesLifeForceWithoutRequiringActivatedForce() {
         var scn = MaintenanceReady();
-        scn.EnsureLSForcePile(0);
+        scn.DrainLSForcePileTo(0);
         int lost = scn.GetLSLostPileCount();
         scn.LSChooseOption("Lose 1 Force");
         scn.PassAllResponses();
@@ -559,7 +559,7 @@ public class Card_1240_026_Tests {
     @Test
     public void HeIsNotReadyExtraMaintenanceStopsAtExactlyOneAfterAllLossIsPaid() {
         var scn = MaintenanceReady();
-        scn.EnsureLSForcePile(0);
+        scn.DrainLSForcePileTo(0);
         int lost = scn.GetLSLostPileCount();
         scn.LSChooseOption("Lose 1 Force");
         scn.PassAllResponses();
