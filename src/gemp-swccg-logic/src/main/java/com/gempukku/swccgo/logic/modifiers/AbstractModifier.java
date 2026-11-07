@@ -36,6 +36,7 @@ public abstract class AbstractModifier implements Modifier {
     private boolean _fromPermanentPilot;
     private boolean _fromPermanentAstromech;
     private boolean _cumulative;
+    private boolean _onlyIfNoOtherBonus;
     /**
      * Which portion of the source card's game text produced this modifier.
      * Null is the default clause for this title and modifier type.
@@ -136,6 +137,16 @@ public abstract class AbstractModifier implements Modifier {
     @Override
     public void setCumulative(boolean value) {
         _cumulative = value;
+    }
+
+    @Override
+    public boolean isOnlyIfNoOtherBonus() {
+        return _onlyIfNoOtherBonus;
+    }
+
+    @Override
+    public void setOnlyIfNoOtherBonus(boolean value) {
+        _onlyIfNoOtherBonus = value;
     }
 
     @Override
@@ -1051,6 +1062,11 @@ public abstract class AbstractModifier implements Modifier {
 
     @Override
     public int getNumDestinyDrawsToAttritionOnlyModifier(String playerId, GameState gameState, ModifiersQuerying modifiersQuerying) {
+        return 0;
+    }
+
+    @Override
+    public float getBonusForEachDestinyDrawToPowerOnly(String playerId, GameState gameState, ModifiersQuerying modifiersQuerying) {
         return 0;
     }
 
