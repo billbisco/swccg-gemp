@@ -33,6 +33,10 @@ public class Card_1261_099_Tests {
                     if (decision == null) break;
                     var prompt = decision.getText();
                     trace.add(prompt);
+                    if (prompt.startsWith("Verify ")) {
+                        if (scn.LSGetDecision() != null) scn.LSDecided(""); else scn.DSDecided("");
+                        continue;
+                    }
                     if (scn.LSGetDecision() != null && prompt.contains("to deploy from Reserve Deck")) {
                         var cards = scn.LSGetBPChoices();
                         var enabled = scn.LSGetADParamAsList("selectable");
