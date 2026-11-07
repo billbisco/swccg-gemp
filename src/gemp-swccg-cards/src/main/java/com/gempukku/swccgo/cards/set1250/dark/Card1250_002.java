@@ -48,7 +48,7 @@ public class Card1250_002 extends Card1112_024 {
             var action = new TopLevelGameTextAction(self, playerId, sourceId);
             action.setText("Relocate to opponent's Jedi site");
             action.appendUsage(new OncePerPhaseEffect(action));
-            action.appendTargeting(new ChooseCardOnTableEffect(action, playerId, "Choose site with opponent's Jedi", destination) {
+            action.appendEffect(new ChooseCardOnTableEffect(action, playerId, "Choose site with opponent's Jedi", destination) {
                 @Override
                 protected void cardSelected(PhysicalCard site) {
                     action.appendEffect(new RelocateBetweenLocationsEffect(action, self, site));
@@ -66,7 +66,7 @@ public class Card1250_002 extends Card1112_024 {
             var action = new TopLevelGameTextAction(self, playerId, sourceId, id);
             action.setText("Fire weapon at a Jedi");
             action.appendUsage(new OncePerGameEffect(action));
-            action.appendTargeting(new ChooseCardOnTableEffect(action, playerId, "Choose Aurra's weapon", weapon) {
+            action.appendEffect(new ChooseCardOnTableEffect(action, playerId, "Choose Aurra's weapon", weapon) {
                 @Override
                 protected void cardSelected(PhysicalCard selectedWeapon) {
                     action.appendEffect(new FireWeaponEffect(action, selectedWeapon, false, Filters.Jedi) {
