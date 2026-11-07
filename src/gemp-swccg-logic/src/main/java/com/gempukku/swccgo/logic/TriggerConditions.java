@@ -1094,6 +1094,19 @@ public class TriggerConditions {
     }
 
     /**
+     * Determines if the specified player is about to use Force that may come from somewhere other than their own
+     * Force Pile (e.g. opponent's Force via Beggar). False for payments limited to the player's own Force Pile cards
+     * (UseForceEffect with onlyOwnForce, e.g. Greedo's threat cancel).
+     * @param game the game
+     * @param effect the effect
+     * @param playerId the player
+     * @return true or false
+     */
+    public static boolean isUsingForceNotLimitedToOwnForcePile(SwccgGame game, Effect effect, String playerId) {
+        return isUsingForce(game, effect, playerId) && !((UseForceEffect) effect).canOnlyUseOwnForce();
+    }
+
+    /**
      * Determines if the specified player is about to draw a card from Force Pile.
      * @param game the game
      * @param effectResult the effect result

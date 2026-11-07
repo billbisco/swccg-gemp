@@ -169,7 +169,7 @@ public class Card11_080 extends AbstractEpicEventDeployable {
         GameTextActionId gameTextActionId = GameTextActionId.OTHER_CARD_ACTION_2;
 
         // Check condition(s)
-        if (TriggerConditions.isUsingForce(game, effect, playerId)
+        if (TriggerConditions.isUsingForceNotLimitedToOwnForcePile(game, effect, playerId)
                 && GameConditions.isDuringYourTurn(game, self)
                 && GameConditions.canSpot(game, self, Filters.and(Filters.Maul, Filters.escorting(Filters.Amidala))))  {
             final UseForceEffect useForceEffect = (UseForceEffect) effect;
@@ -210,7 +210,7 @@ public class Card11_080 extends AbstractEpicEventDeployable {
         String playerId = self.getOwner();
 
         // Check condition(s)
-        if (TriggerConditions.isUsingForce(game, effect, playerId)
+        if (TriggerConditions.isUsingForceNotLimitedToOwnForcePile(game, effect, playerId)
                 && GameConditions.isDuringYourTurn(game, self)
                 && GameConditions.canSpot(game, self, Filters.and(Filters.Maul, Filters.escorting(Filters.Amidala)))) {
             final UseForceEffect useForceEffect = (UseForceEffect) effect;

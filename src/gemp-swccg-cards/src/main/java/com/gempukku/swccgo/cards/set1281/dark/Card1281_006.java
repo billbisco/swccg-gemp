@@ -84,7 +84,7 @@ public class Card1281_006 extends AbstractAlien {
         GameTextActionId gameTextActionId = GameTextActionId.LEGACY__RTIC_HWEEI__USE_FORCE_IN_OPPONENTS_FORCE_PILE;
 
         // Check condition(s)
-        if (TriggerConditions.isUsingForce(game, effect, playerId)
+        if (TriggerConditions.isUsingForceNotLimitedToOwnForcePile(game, effect, playerId)
                 && GameConditions.isOncePerTurn(game, self, playerId, gameTextSourceCardId, gameTextActionId)
                 && GameConditions.isPresentAt(game, self, Filters.and(Filters.Tatooine_location, Filters.battleground)))  {
             final UseForceEffect useForceEffect = (UseForceEffect) effect;
