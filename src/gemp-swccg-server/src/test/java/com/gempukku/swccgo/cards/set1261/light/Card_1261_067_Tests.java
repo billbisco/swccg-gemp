@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
 public class Card_1261_067_Tests {
     private VirtualTableScenario fixture(boolean darkStartsPrize) {
         var light = new HashMap<>(Map.of("maintenance", "13_21", "regularFalcon", "1_143",
-                "space", "6_87", "effect", "13_5"));
+                "space", "6_87", "effect", "13_5", "lsPresence", "1_146", "pilot", "1_19"));
         StartingSetup darkStart = darkStartsPrize ? new StartingSetup() {
             @Override public HashMap<String, String> Cards() {
                 return new HashMap<>(Map.of("cct", "7_296", "chamber", "5_166", "console", "5_107",
@@ -26,6 +26,7 @@ public class Card_1261_067_Tests {
                 for (int i = 0; i < 20 && scn.GetCurrentDecision() != null; i++) {
                     var prompt = scn.GetCurrentDecision().getText();
                     if (prompt.contains("On which side of")) scn.DSChooseOption("Left");
+                    else if (prompt.startsWith("Choose a location to deploy")) scn.DSChooseCard(scn.GetDSCard("chamber"));
                     else if (prompt.contains("Choose Carbonite Chamber Console")) scn.DSChooseCard(scn.GetDSCard("console"));
                     else if (prompt.contains("Choose Carbonite Chamber to deploy")) scn.DSChooseCard(scn.GetDSCard("chamber"));
                     else if (prompt.contains("Choose Security Tower to deploy")) scn.DSChooseCard(scn.GetDSCard("tower"));
@@ -40,7 +41,7 @@ public class Card_1261_067_Tests {
             @Override public HashMap<String, String> Cards() { return new HashMap<>(Map.of("prize", "1261_67")); }
             @Override public void Setup(VirtualTableScenario scn) {}
         };
-        return new VirtualTableScenario(light, new HashMap<>(), 40, 40, StartingSetup.DefaultLSGroundLocation,
+        return new VirtualTableScenario(light, new HashMap<>(Map.of("spacePresence", "1_299")), 40, 40, StartingSetup.DefaultLSGroundLocation,
                 darkStart, StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 outside, StartingSetup.NoDSShields, "legacy");
     }
@@ -66,7 +67,9 @@ public class Card_1261_067_Tests {
         assertEquals(scn.GetCurrentDecision().getText(), Zone.OUT_OF_PLAY, prize.getZone());
         assertFalse(Filters.Corran_Horn.accepts(scn.game(), prize));
         var space = scn.GetLSCard("space"); var normal = scn.GetLSCard("regularFalcon"); var maintenance = scn.GetLSCard("maintenance");
-        scn.MoveLocationToTable(space); scn.MoveCardsToLSHand(normal, maintenance);
+        scn.MoveLocationToTable(space); scn.MoveCardsToLocation(space, scn.GetDSCard("spacePresence"), scn.GetLSCard("lsPresence"));
+        scn.BoardAsPilot(scn.GetLSCard("lsPresence"), scn.GetLSCard("pilot"));
+        scn.MoveCardsToLSHand(normal, maintenance);
         scn.SkipToLSTurn(Phase.DEPLOY); scn.EnsureLSForcePile(12);
         assertTrue(scn.LSCardPlayAvailable(normal));
         assertFalse(scn.LSCardPlayAvailable(maintenance));
