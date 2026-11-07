@@ -3,6 +3,8 @@ package com.gempukku.swccgo.cards.set1263.light;
 import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
+import com.gempukku.swccgo.logic.effects.LoseCardFromTableEffect;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -75,4 +77,57 @@ public class Card_1263_024_Tests {
 
     @Test public void actualXWingHyperspeedMoveCostsNoForce() { actualStarshipMove("xwing", 0); }
     @Test public void actualFalconHyperspeedMoveStillCostsOne() { actualStarshipMove("falcon", 1); }
+
+    private void resolveTableLoss(String vehicle, int availableForce, boolean offersReplacement, boolean accept) {
+        var scn = fixture();
+        scn.StartGame();
+        var location = scn.GetLSCard(vehicle.equals("speeder") || vehicle.isEmpty() ? "from" : "hoth");
+        var rogue = scn.GetLSCard("rogue");
+        scn.MoveLocationToTable(location);
+        if (vehicle.isEmpty()) {
+            scn.MoveCardsToLocation(location, rogue);
+        } else {
+            var ship = scn.GetLSCard(vehicle);
+            scn.MoveCardsToLocation(location, ship);
+            scn.BoardAsPilot(ship, rogue);
+        }
+        scn.SkipToDSTurn(Phase.CONTROL);
+        scn.EnsureLSForcePile(availableForce);
+        scn.DrainLSForcePileTo(availableForce);
+        var forceBefore = List.copyOf(scn.GetLSForcePile());
+        assertEquals(availableForce, forceBefore.size());
+
+        var source = scn.GetDSStartingLocation();
+        var loss = new TopLevelGameTextAction(source, scn.DS, source.getCardId());
+        loss.appendEffect(new LoseCardFromTableEffect(loss, rogue));
+        scn.carryOutEffectInPhaseActionByPlayer(scn.DS, loss);
+        if (scn.DSDecisionAvailable("optional response")) {
+            scn.DSPass();
+        }
+        String replacement = "Place Veteran Rogue in Used Pile instead";
+        assertEquals(offersReplacement, scn.LSCardActionAvailable(rogue, replacement));
+        if (accept) {
+            scn.LSUseCardAction(rogue, replacement);
+        }
+        scn.PassAllResponses();
+
+        if (accept) {
+            assertTrue(scn.GetLSUsedPile().contains(rogue));
+            assertTrue(scn.GetLSUsedPile().contains(forceBefore.getFirst()));
+            assertEquals(0, scn.GetLSForcePile().size());
+        } else {
+            assertTrue(scn.GetLSLostPile().contains(rogue));
+            assertEquals(forceBefore, scn.GetLSForcePile());
+        }
+        if (!vehicle.isEmpty()) {
+            assertEquals(location, scn.GetLSCard(vehicle).getAtLocation());
+        }
+    }
+
+    @Test public void paysOneForceToReplaceActualXWingPilotLoss() { resolveTableLoss("xwing", 1, true, true); }
+    @Test public void paysOneForceToReplaceActualT47PilotLoss() { resolveTableLoss("speeder", 1, true, true); }
+    @Test public void mayDeclineActualLossReplacement() { resolveTableLoss("xwing", 1, true, false); }
+    @Test public void cannotReplaceActualLossWithZeroForce() { resolveTableLoss("xwing", 0, false, false); }
+    @Test public void cannotReplaceActualFalconPilotLoss() { resolveTableLoss("falcon", 1, false, false); }
+    @Test public void cannotReplaceActualLossWhileOnFoot() { resolveTableLoss("", 1, false, false); }
 }
