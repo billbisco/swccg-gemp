@@ -53,9 +53,12 @@ public class Card_1261_058_Tests {
             assertTrue("Expected an optional response before the download", scn.GetCurrentDecision().getText().toLowerCase().contains("optional"));
             scn.PlayerPass(scn.GetDecidingPlayer());
         }
+        int messages = scn.gameState().getLastMessages().size();
         scn.DSUseCardAction(b, "Deploy a non-pilot Imperial warrior from Reserve Deck"); scn.PassAllResponses();
         scn.PassCardAndForceUseResponses(); assertTrue(scn.DSHasCardChoiceAvailable(trooper)); assertFalse(isSelectable(scn, piett)); scn.DSChooseCard(trooper); scn.PassAllResponses();
         assertEquals(b, trooper.getAttachedTo()); assertTrue(trooper.isPassengerOf());
+        assertTrue("Completed warrior download must reshuffle Reserve Deck", scn.gameState().getLastMessages()
+                .subList(messages, scn.gameState().getLastMessages().size()).stream().anyMatch(x -> x.contains("shuffles") && x.contains("Reserve Deck")));
         assertEquals(Zone.RESERVE_DECK, piett.getZone()); assertEquals(force - 6, scn.GetDSForcePileCount());
     }
 
