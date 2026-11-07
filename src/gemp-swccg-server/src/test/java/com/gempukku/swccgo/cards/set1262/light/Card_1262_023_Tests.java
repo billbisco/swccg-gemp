@@ -21,7 +21,7 @@ public class Card_1262_023_Tests {
         var scn = new VirtualTableScenario(new HashMap<>(Map.of(
                 "thrown", "1262_23", "han", "108_1", "lando", "13_27", "luke", "1_19",
                 "ordinary", "1_66", "spare", "9_47")),
-                new HashMap<>(Map.of("ig88", "109_11", "vader", "1_168", "alter", "1_234", "fett", "13_59")),
+                new HashMap<>(Map.of("ig88", "109_11", "vader", "1_168", "alter", "1_234", "fett", "13_59", "bossk", "4_92")),
                 42, 42, StartingSetup.LSStartingLocation("1_136"), StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, "legacy");
@@ -80,11 +80,12 @@ public class Card_1262_023_Tests {
 
     private VirtualTableScenario battle(boolean effect, boolean maintenance) {
         var scn = scenario(); var site = scn.GetLSStartingLocation();
+        scn.SkipToLSTurn(Phase.CONTROL);
         if (effect) scn.MoveCardsToLSSideOfTable(scn.GetLSCard("thrown"));
         scn.MoveCardsToLocation(site, scn.GetLSCard("luke"), scn.GetLSCard(maintenance ? "lando" : "han"));
         if (maintenance) scn.MoveCardsToLocation(site, scn.GetDSCard("vader"), scn.GetDSCard("fett"));
-        else scn.MoveCardsToLocation(site, scn.GetDSCard("ig88"));
-        scn.SkipToLSTurn(Phase.BATTLE);
+        else scn.MoveCardsToLocation(site, scn.GetDSCard("ig88"), scn.GetDSCard("bossk"));
+        scn.LSActivateForceCheat(4); scn.SkipToPhase(Phase.BATTLE);
         scn.LSInitiateBattle(site); scn.PassAllResponses();
         return scn;
     }
@@ -96,7 +97,7 @@ public class Card_1262_023_Tests {
     @Test public void permanentWeaponSourcesOnBothSidesCannotAddButOrdinaryDestinyRemains() {
         var baseline = battle(false, false);
         assertEquals(2, draws(baseline, baseline.LS));
-        assertEquals(1, draws(baseline, baseline.DS)); // IG-88 has ability 3; his bonus supplies the draw.
+        assertEquals(1, draws(baseline, baseline.DS)); // Bossk supplies presence, but not enough ability for a regular draw.
         var restricted = battle(true, false);
         assertEquals(1, draws(restricted, restricted.LS));
         assertEquals(0, draws(restricted, restricted.DS));
@@ -116,10 +117,12 @@ public class Card_1262_023_Tests {
         var alter = scn.GetDSCard("alter");
         scn.MoveCardsToDSHand(alter); scn.SkipToDSTurn(Phase.CONTROL); scn.DSActivateForceCheat(5);
         assertTrue(scn.DSCardPlayAvailable(alter));
-        scn.DSPlayCard(alter, "Cancel");
+        scn.PrepareDSDestiny(1);
+        scn.DSPlayCard(alter, "Draw destiny to cancel Effect");
         assertFalse(scn.DSHasCardChoiceAvailable(effect));
         if (scn.DSHasCardChoiceAvailable(ordinary)) scn.DSChooseCard(ordinary);
-        scn.PassAllResponses();
+        if (scn.DSHasCardChoiceAvailable(scn.GetDSCard("vader"))) scn.DSChooseCard(scn.GetDSCard("vader"));
+        scn.PassAllResponses(); scn.PassDestinyDrawResponses(); scn.PassAllResponses();
         assertInZone(Zone.SIDE_OF_TABLE, effect);
         assertFalse(ordinary.getZone().isInPlay());
     }
