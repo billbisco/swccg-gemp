@@ -21,7 +21,7 @@ public class Card_1261_033_Tests {
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>(Map.of("luke", "1_19", "mynock", "4_4")),
                 new HashMap<>(Map.of("waters", "1261_33", "pit", "6_166", "rancor", "6_139",
-                        "dragon", "7_211")),
+                        "dragon", "7_211", "trooper", "1_194")),
                 26, 26, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -42,7 +42,7 @@ public class Card_1261_033_Tests {
         assertTrue(bp.getTitles().containsAll(List.of(Title.Dark_Waters, Title.Krayt_Dragon_Bones)));
         scn.BlueprintCardTypeCheck(bp, new ArrayList<>(List.of(CardType.EFFECT)));
         scn.BlueprintIconCheck(bp, new ArrayList<>(List.of(Icon.EFFECT, Icon.A_NEW_HOPE, Icon.LEGACY_BLOCK_6)));
-        scn.BlueprintKeywordCheck(bp, new ArrayList<>());
+        scn.BlueprintKeywordCheck(bp, new ArrayList<>(List.of(Keyword.DEPLOYS_ON_LOCATION)));
         assertTrue(bp.isImmuneToCardTitle(Title.Alter));
     }
 
@@ -76,8 +76,8 @@ public class Card_1261_033_Tests {
             scn.StartGame();
             scn.MoveLocationToTable(pit);
             scn.AttachCardsTo(pit, waters);
+            openControl(scn);
             scn.MoveCardsToLocation(atPit ? pit : scn.GetDSStartingLocation(), creature);
-            scn.SkipToDSTurn(Phase.CONTROL);
             scn.EnsureDSForcePile(10);
             scn.EnsureLSForcePile(10);
             int beforeDS = scn.GetDSLostPileCount();
@@ -103,8 +103,8 @@ public class Card_1261_033_Tests {
             scn.MoveLocationToTable(pit);
             if (inPlay)
                 scn.AttachCardsTo(pit, waters);
+            openControl(scn);
             scn.MoveCardsToLocation(pit, rancor, luke);
-            scn.SkipToDSTurn(Phase.CONTROL);
             scn.MoveCardsToTopOfDSLostPile(scn.GetDSReserveDeck().stream().limit(13)
                     .map(PhysicalCardImpl.class::cast).toArray(PhysicalCardImpl[]::new));
             int before = scn.GetDSLostPileCount();
@@ -112,9 +112,20 @@ public class Card_1261_033_Tests {
             var action = new TopLevelGameTextAction(rancor, rancor.getCardId());
             scn.DSExecuteAdHocEffect(rancor, new TriggeringResultEffect(action,
                     new EatenResult(luke, null, null, forfeit, false, rancor, pit)));
+            for (int i = 0; i < 8 && scn.DSDecisionAvailable("Required responses"); i++) {
+                if (scn.DSCardActionAvailable(waters, "Retrieve 3 Force"))
+                    scn.DSUseCardAction(waters, "Retrieve 3 Force");
+                else
+                    scn.DSUseCardAction(pit);
+            }
             scn.PassAllResponses();
             assertEquals(before - forfeit - (inPlay ? 3 : 0), scn.GetDSLostPileCount());
         }
+    }
+
+    private void openControl(VirtualTableScenario scn) {
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("trooper"));
+        scn.SkipToDSTurn(Phase.CONTROL);
     }
 
     private void resolveLoss(VirtualTableScenario scn) {
