@@ -32,7 +32,7 @@ public class Card_1271_038_Tests {
         s.MoveCardsToLSHand(s.GetLSCard("dressing"), s.GetLSCard("firstAid"));
         s.SkipToDSTurn(Phase.CONTROL);
         s.EnsureDSForcePile(4);
-        s.PrepareDSDestiny(5);
+        s.PrepareDSDestiny(2);
         s.PrepareLSDestiny(0);
         s.SkipToPhase(Phase.BATTLE);
         s.DSInitiateBattle(site);
@@ -73,7 +73,8 @@ public class Card_1271_038_Tests {
         // An Old Ben-style return does not put the character back in the battle being resolved.
         s.PassAllResponses();
         if (s.AwaitingLSBattleDamagePayment()) s.LSPayRemainingBattleDamageFromReserveDeck();
-        s.SkipToLSTurn(Phase.CONTROL);
+        s.SkipToPhase(Phase.MOVE);
+        assertFalse(s.gameState().isDuringBattle());
         var q = s.game().getModifiersQuerying();
         assertTrue("Dressing must be active after the battle ends; zone=" + dressing.getZone(), s.gameState().isCardInPlayActive(dressing));
         assertTrue("The dressing's host filter must match the revived card", com.gempukku.swccgo.filters.Filters.hasAttached(dressing).accepts(s.game(), patient));
@@ -114,6 +115,7 @@ public class Card_1271_038_Tests {
         var s = justForfeited("1_19");
         playDressing(s);
         var firstAid = s.GetLSCard("firstAid");
+        if (s.LSGetDecision() == null && s.DSGetDecision() != null) s.DSPass();
         s.LSUseCardAction(firstAid, "Place Field Dressing in Used Pile");
         s.PassAllResponses();
         assertEquals(Zone.USED_PILE, firstAid.getZone());
