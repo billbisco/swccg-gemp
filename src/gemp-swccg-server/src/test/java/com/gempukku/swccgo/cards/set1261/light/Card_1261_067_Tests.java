@@ -41,7 +41,7 @@ public class Card_1261_067_Tests {
             @Override public HashMap<String, String> Cards() { return new HashMap<>(Map.of("prize", "1261_67")); }
             @Override public void Setup(VirtualTableScenario scn) {}
         };
-        return new VirtualTableScenario(light, new HashMap<>(Map.of("spacePresence", "1_299")), 40, 40, StartingSetup.DefaultLSGroundLocation,
+        return new VirtualTableScenario(light, new HashMap<>(Map.of("spacePresence", "1_299", "darkPilot", "1_173")), 40, 40, StartingSetup.DefaultLSGroundLocation,
                 darkStart, StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 outside, StartingSetup.NoDSShields, "legacy");
     }
@@ -69,10 +69,11 @@ public class Card_1261_067_Tests {
         var space = scn.GetLSCard("space"); var normal = scn.GetLSCard("regularFalcon"); var maintenance = scn.GetLSCard("maintenance");
         scn.MoveLocationToTable(space); scn.MoveCardsToLocation(space, scn.GetDSCard("spacePresence"), scn.GetLSCard("lsPresence"));
         scn.BoardAsPilot(scn.GetLSCard("lsPresence"), scn.GetLSCard("pilot"));
+        scn.BoardAsPilot(scn.GetDSCard("spacePresence"), scn.GetDSCard("darkPilot"));
         scn.MoveCardsToLSHand(normal, maintenance);
-        scn.SkipToLSTurn(Phase.DEPLOY); scn.EnsureLSForcePile(12);
-        assertTrue(scn.LSCardPlayAvailable(normal));
-        assertFalse(scn.LSCardPlayAvailable(maintenance));
+        scn.LSActivateForceCheat(12); scn.SkipToLSTurn(Phase.DEPLOY);
+        assertTrue(scn.GetLSAvailableActions().toString(), scn.LSDeployAvailable(normal));
+        assertFalse(scn.LSDeployAvailable(maintenance));
     }
 
     @Test public void replacesActualDarkJabbasPrizeAtCarbonChamberTestingSetup() {
