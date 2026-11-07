@@ -42,6 +42,17 @@ public class LegacyCardPoolTests {
     }
 
     @Test
+    public void NumberedShieldConversionsAreAvailableInTheNormalCollection() {
+        var result = new SortAndFilterCards().process("format:anything_goes set:1261",
+                collections.getDefaultCollection(false).getAll().values(), library, formats, Collections.emptyMap());
+        for (String id : new String[]{"1261_24", "1261_25"}) {
+            assertTrue(result.stream().anyMatch(item -> item.getBlueprintId().equals(id)));
+            assertEquals(60, collections.getDefaultCollection(true).getItemCount(id));
+        }
+        assertEquals(0, collections.getDefaultCollection(false).getItemCount("1281_28ai"));
+    }
+
+    @Test
     public void LegacyPoolOmitsUnimplementedSlotsWithoutHidingImplementedCards() {
         //test1: Simulate one published slot without a blueprint, independent of future card waves.
         var partialLibrary = new SwccgCardBlueprintLibrary() {

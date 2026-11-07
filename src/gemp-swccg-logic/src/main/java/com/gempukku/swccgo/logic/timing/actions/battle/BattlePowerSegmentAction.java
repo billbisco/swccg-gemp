@@ -11,13 +11,17 @@ import com.gempukku.swccgo.logic.actions.SystemQueueAction;
 import com.gempukku.swccgo.logic.decisions.MultipleChoiceAwaitingDecision;
 import com.gempukku.swccgo.logic.effects.DrawDestinyEffect;
 import com.gempukku.swccgo.logic.effects.TriggeringResultEffect;
+import com.gempukku.swccgo.logic.modifiers.Modifier;
+import com.gempukku.swccgo.logic.modifiers.ModifierType;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 import com.gempukku.swccgo.logic.timing.AbstractSubActionEffect;
 import com.gempukku.swccgo.logic.timing.AbstractSuccessfulEffect;
+import com.gempukku.swccgo.logic.timing.GuiUtils;
 import com.gempukku.swccgo.logic.timing.Action;
 import com.gempukku.swccgo.logic.timing.PassthruEffect;
 import com.gempukku.swccgo.logic.timing.StandardEffect;
 import com.gempukku.swccgo.logic.timing.results.BattleDestinyDrawsCompleteForBothPlayersResult;
+import com.gempukku.swccgo.logic.timing.results.DestinyAddedToTotalPowerOrAttritionResult;
 import com.gempukku.swccgo.logic.timing.results.BattleDestinyDrawsCompleteForPlayerResult;
 import com.gempukku.swccgo.logic.timing.results.BeforeBattleDestinyDrawsResult;
 import com.gempukku.swccgo.logic.timing.results.InitialAttritionCalculatedResult;
@@ -97,6 +101,31 @@ public class BattlePowerSegmentAction extends SystemQueueAction {
     /**
      * A private effect that causes the specified player to draw destiny to power only.
      */
+    /**
+     * Emits a result for each card whose modifier caused the player to draw destiny to total power only or attrition only.
+     */
+    private static void emitDestinyAddedResults(SwccgGame game, ModifierType modifierType, String playerId, float totalDestiny, boolean toPower, boolean toAttrition) {
+        GameState gameState = game.getGameState();
+        BattleState battleState = gameState.getBattleState();
+        if (battleState == null)
+            return;
+        PhysicalCard battleLocation = battleState.getBattleLocation();
+        ModifiersQuerying modifiersQuerying = game.getModifiersQuerying();
+        List<PhysicalCard> sources = new ArrayList<PhysicalCard>();
+        for (Modifier modifier : modifiersQuerying.getModifiersAffectingCard(gameState, modifierType, battleLocation)) {
+            int num = toPower ? modifier.getNumDestinyDrawsToPowerOnlyModifier(playerId, gameState, modifiersQuerying)
+                    : modifier.getNumDestinyDrawsToAttritionOnlyModifier(playerId, gameState, modifiersQuerying);
+            PhysicalCard source = modifier.getSource(gameState);
+            if (num > 0 && source != null && !sources.contains(source)) {
+                sources.add(source);
+            }
+        }
+        for (PhysicalCard source : sources) {
+            game.getActionsEnvironment().emitEffectResult(
+                    new DestinyAddedToTotalPowerOrAttritionResult(source, playerId, battleLocation, totalDestiny, toPower, toAttrition));
+        }
+    }
+
     private class DrawDestinyToPowerOnlyEffect extends AbstractSubActionEffect {
         private String _playerId;
 
@@ -134,7 +163,12 @@ public class BattlePowerSegmentAction extends SystemQueueAction {
                                 @Override
                                 protected void destinyDraws(SwccgGame game, List<PhysicalCard> destinyCardDraws, List<Float> destinyDrawValues, Float totalDestiny) {
                                     if (totalDestiny != null) {
-                                        battleState.increaseTotalDestinyToPowerOnly(_playerId, totalDestiny, destinyCardDraws.size());
+                                        float bonus = game.getModifiersQuerying().getBonusForDestinyDrawsToTotalPowerOnly(game.getGameState(), _playerId, destinyCardDraws.size());
+                                        if (bonus != 0) {
+                                            game.getGameState().sendMessage(_playerId + " adds " + GuiUtils.formatAsString(bonus) + " to destiny drawn to power");
+                                        }
+                                        battleState.increaseTotalDestinyToPowerOnly(_playerId, totalDestiny + bonus, destinyCardDraws.size());
+                                        emitDestinyAddedResults(game, ModifierType.NUM_DESTINY_DRAWS_TO_POWER_ONLY, _playerId, totalDestiny + bonus, true, false);
                                     }
                                 }
                             });
@@ -280,6 +314,7 @@ public class BattlePowerSegmentAction extends SystemQueueAction {
                                 protected void destinyDraws(SwccgGame game, List<PhysicalCard> destinyCardDraws, List<Float> destinyDrawValues, Float totalDestiny) {
                                     if (totalDestiny != null) {
                                         battleState.increaseAttritionFromDestinyToAttritionDrawn(_playerId, totalDestiny, destinyCardDraws.size());
+                                        emitDestinyAddedResults(game, ModifierType.NUM_DESTINY_DRAWS_TO_ATTRITION_ONLY, _playerId, totalDestiny, false, true);
                                     }
                                 }
                             });

@@ -45,12 +45,21 @@ public class LegacyFilters {
         };
     }
 
+    /** Systems liberated by either a stacked liberation card or an active card modifier. */
+    public static final Filter liberatedSystem = Filters.and(Filters.system, Filters.or(Filters.liberated_system,
+            new Filter() {
+                @Override
+                public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard) {
+                    return !modifiersQuerying.getModifiersAffectingCard(gameState, ModifierType.LIBERATED_SYSTEM, physicalCard).isEmpty();
+                }
+            }));
+
     /**
      * Filter that accepts systems that can be 'liberated': a battleground system that is not already 'liberated' and
      * is not protected from it.
      */
     public static Filter canBeLiberated() {
-        return Filters.and(Filters.battleground_system, Filters.except(Filters.liberated_system), Filters.except(mayNotBeLiberated()));
+        return Filters.and(Filters.battleground_system, Filters.except(liberatedSystem), Filters.except(mayNotBeLiberated()));
     }
 
     /**

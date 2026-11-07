@@ -98,6 +98,7 @@ public class PhysicalCardImpl implements PhysicalCard, Cloneable {
     private Float _destinyValueToUse;
     private CardState _previousCardState;
     private boolean _previouslyArmedWithLightsaber;
+    private boolean _previouslyInPilotCapacitySlot;
     private boolean _previouslyHit;
     private boolean _previouslyCanceledGameText;
     private Collection<PhysicalCard> _cardsPreviouslyAttached = new LinkedList<PhysicalCard>();
@@ -221,6 +222,7 @@ public class PhysicalCardImpl implements PhysicalCard, Cloneable {
         snapshot._destinyValueToUse = _destinyValueToUse;
         snapshot._previousCardState = _previousCardState;
         snapshot._previouslyArmedWithLightsaber = _previouslyArmedWithLightsaber;
+        snapshot._previouslyInPilotCapacitySlot = _previouslyInPilotCapacitySlot;
         snapshot._previouslyHit = _previouslyHit;
         snapshot._previouslyCanceledGameText = _previouslyCanceledGameText;
         for (PhysicalCard card : _cardsPreviouslyAttached) {
@@ -647,12 +649,14 @@ public class PhysicalCardImpl implements PhysicalCard, Cloneable {
         if (!_zone.isInPlay()) {
             _cardsPreviouslyAttached.clear();
             _previouslyArmedWithLightsaber = false;
+            _previouslyInPilotCapacitySlot = false;
             _previouslyHit = false;
             _previouslyCanceledGameText = false;
             return;
         }
 
         // Remember if this card was armed with a lightsaber
+        _previouslyInPilotCapacitySlot = _inPilotCapacitySlot;
         _previouslyArmedWithLightsaber = Filters.armedWith(Filters.lightsaber).accepts(game, this);
 
         // Remember if this card was 'hit'
@@ -669,6 +673,11 @@ public class PhysicalCardImpl implements PhysicalCard, Cloneable {
     @Override
     public Collection<PhysicalCard> getCardsPreviouslyAttached() {
         return _cardsPreviouslyAttached;
+    }
+
+    @Override
+    public boolean wasPreviouslyInPilotCapacitySlot() {
+        return _previouslyInPilotCapacitySlot;
     }
 
     @Override

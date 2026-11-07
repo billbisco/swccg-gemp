@@ -8,6 +8,7 @@ import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.InterruptPersonaReferences;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.actions.PlayInterruptAction;
@@ -36,7 +37,7 @@ public class Card1_277 extends AbstractLostInterrupt {
         // Check condition(s)
         if (GameConditions.isDuringBattleAt(game, Filters.site)
                 && GameConditions.canAddBattleDestinyDraws(game, self)) {
-            if (GameConditions.isDuringBattleWithParticipant(game, Filters.and(Filters.Vader, Filters.defendingBattle, Filters.alone))) {
+            if (GameConditions.isDuringBattleWithParticipant(game, Filters.and(InterruptPersonaReferences.vader(game, self), Filters.defendingBattle, Filters.alone))) {
 
                 final PlayInterruptAction action = new PlayInterruptAction(game, self);
                 action.setText("Add 1 to power and add one battle destiny");

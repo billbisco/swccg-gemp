@@ -47,6 +47,19 @@ public interface Modifier {
     void setCumulative(boolean value);
 
     /**
+     * True if this modifier is a bonus that applies only if no other bonus of the same kind applies
+     * (for example "if no other bonus to your Force drain" or "unless it has another forfeit bonus").
+     * Honored for Force drain amount and forfeit value modifiers; see {@link OnlyIfNoOtherBonusResolver}.
+     */
+    boolean isOnlyIfNoOtherBonus();
+
+    /**
+     * Marks this modifier as a bonus that applies only if no other bonus of the same kind applies.
+     * @param value true to make the bonus conditional on no other bonus applying
+     */
+    void setOnlyIfNoOtherBonus(boolean value);
+
+    /**
      * Identifies which portion of a card's game text produced this modifier.
      * Null means the default unspecified clause for this card title and modifier type.
      * Same title + type + clause may not stack unless the modifier is marked Cumulatively.
@@ -332,6 +345,15 @@ public interface Modifier {
 
     float getForfeitModifier(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard);
     float getUnmodifiableForfeit(GameState gameState, ModifiersQuerying modifiersLogic, PhysicalCard physicalCard);
+
+    /**
+     * Determines if this forfeit reset applies even to a card whose forfeit may not otherwise be reduced
+     * (for example, "forfeit = 0 (even if forfeit may not normally be reduced)").
+     * @return true if the reset ignores "may not have forfeit reduced", otherwise false
+     */
+    default boolean isForfeitResetEvenIfMayNotBeReduced() {
+        return false;
+    }
 
     float getImmunityToAttritionLessThanModifier(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard);
     float getImmunityToAttritionOfExactlyModifier(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard);
@@ -686,6 +708,16 @@ public interface Modifier {
 
     int getNumDestinyDrawsToPowerOnlyModifier(String playerId, GameState gameState, ModifiersQuerying modifiersQuerying);
     int getNumDestinyDrawsToAttritionOnlyModifier(String playerId, GameState gameState, ModifiersQuerying modifiersQuerying);
+
+    /**
+     * Gets the bonus added to each destiny drawn to power only that comes from this modifier's source (for example
+     * "adds one destiny to power (add 1 for each character present)").
+     * @param playerId the player drawing the destiny
+     * @param gameState the game state
+     * @param modifiersQuerying the modifiers querying
+     * @return the bonus
+     */
+    float getBonusForEachDestinyDrawToPowerOnly(String playerId, GameState gameState, ModifiersQuerying modifiersQuerying);
 
     float getWeaponDestinyModifier(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard weaponUser, PhysicalCard weaponCard, SwccgBuiltInCardBlueprint permanentWeapon, Collection<PhysicalCard> weaponTargets);
     float getTotalWeaponDestinyModifier(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard weaponUser, PhysicalCard weaponCard, SwccgBuiltInCardBlueprint permanentWeapon, Collection<PhysicalCard> weaponTargets);

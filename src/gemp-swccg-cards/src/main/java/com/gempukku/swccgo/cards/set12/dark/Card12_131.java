@@ -64,7 +64,8 @@ public class Card12_131 extends AbstractNormalEffect {
         // Check condition(s)
         if (TriggerConditions.justRetrievedForceUsingCard(game, effectResult, opponent, Filters.or(Filters.Interrupt, Filters.Utinni_Effect))) {
             PhysicalCard sourceCard = ((RetrieveForceResult) effectResult).getSourceCard();
-            if (GameConditions.canBeGrabbed(game, self, sourceCard)) {
+            if (GameConditions.canBeGrabbed(game, self, sourceCard)
+                    && GameConditions.canStackRetrievalSourceOn(game, (RetrieveForceResult) effectResult, self)) {
 
                 OptionalGameTextTriggerAction action = new OptionalGameTextTriggerAction(self, gameTextSourceCardId);
                 action.setText("Stack " + GameUtils.getFullName(sourceCard) + " here");

@@ -420,6 +420,9 @@ public class DefaultSwccgFormat implements SwccgFormat {
             SwccgCardBlueprint card = library.getSwccgoCardBlueprint(blueprintId);
             if (card != null && card.getCardCategory() == CardCategory.DEFENSIVE_SHIELD)
                 defensiveShieldCount++;
+            // Cards such as Light Side Jabba's Prize subtract from the number of cards the Starting Effect may hold
+            if (card != null)
+                maxOutsideDeckShields -= Math.max(0, card.getStartingEffectCapacityReduction());
         }
         if (defensiveShieldCount > maxOutsideDeckShields) {
             throw new DeckInvalidException("Invalid deck.  More defensive shields in outside of deck area than what starting effect allows.");
@@ -577,6 +580,7 @@ public class DefaultSwccgFormat implements SwccgFormat {
         addCardsToDefaultCollection(_library, CardCounts.FULL_SETS_CARD_COUNTS, 1, _allCardBlueprints);
         addCardsToDefaultCollection(_library, CardCounts.PREMIUM_SETS_CARD_COUNTS, 101, _allCardBlueprints);
         addCardsToDefaultCollection(_library, CardCounts.VIRTUAL_SETS_CARD_COUNTS, 200, _allCardBlueprints);
+        addCardsToDefaultCollection(_library, CardCounts.ORIGINAL_VIRTUAL_SETS_CARD_COUNTS, 1100, _allCardBlueprints);
         addCardsToDefaultCollection(_library, CardCounts.VIRTUAL_PREMIUM_SETS_CARD_COUNTS, 301, _allCardBlueprints);
         addCardsToDefaultCollection(_library, CardCounts.DREAM_CARD_SETS_CARD_COUNTS, 401, _allCardBlueprints);
         addCardsToDefaultCollection(_library, CardCounts.PLAYTESTING_SETS_CARD_COUNTS, 501, _allCardBlueprints);
