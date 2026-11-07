@@ -55,6 +55,9 @@ public class Card_1220_163_Tests {
                     } else if (prompt.contains("Choose Hoth system to deploy")) {
                         scn.LSChooseCard(scn.GetLSCard("hoth"));
                     } else if (prompt.contains("Choose Main Power Generators to deploy")) {
+                        int original = scn.LSGetBPChoices().indexOf(scn.GetLSCard("original").getBlueprintId(true));
+                        assertTrue("Stock generators were selectable", original < 0
+                                || !Boolean.parseBoolean(scn.LSGetADParamAsList("selectable").get(original)));
                         scn.LSChooseCard(scn.GetLSCard("generators"));
                     } else if (prompt.equals("Deploy Echo Base Garrison?")) {
                         if (chooseGarrison) scn.LSChooseYes(); else scn.LSChooseNo();
