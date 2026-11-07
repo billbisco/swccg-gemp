@@ -29,7 +29,7 @@ public class Card_1271_044_Tests {
                 if(inspect!=null)inspect.accept(s);
                 for(String name:choices){
                     s.LSChooseCard(s.GetLSCard(name));s.PassAllResponses();
-                    if(name.equals("setup")){s.LSChooseCard(s.GetLSStartingLocation());s.PassAllResponses();}
+                    if(name.equals("setup") && s.GetLSCard(name).getAttachedTo()==null){s.LSChooseCard(s.GetLSStartingLocation());s.PassAllResponses();}
                 }
                 if(choices.size()<3){s.LSDecided("");s.PassAllResponses();}
             }
@@ -67,7 +67,8 @@ public class Card_1271_044_Tests {
     @Test public void HeadingForTheMedicalFrigateUsedStillGoesToUsedWhenNoQualifyingCardIsFound(){
         var s=used();s.MoveCardsToLSHand(s.GetLSCard("redemption"),s.GetLSCard("masanya"));var observer=LegacyShuffleObserver.observe(s);
         s.LSPlayCard(s.GetLSCard("frigate"));s.PassAllResponses();s.LSDecided("");s.PassAllResponses();
-        assertTrue(s.GetLSUsedPile().contains(s.GetLSCard("frigate")));assertTrue(observer.sawOwnedShuffle(s.LS,Zone.RESERVE_DECK));
+        assertTrue("Used Interrupt must finish resolving",s.GetLSUsedPile().contains(s.GetLSCard("frigate")));
+        assertTrue("Reserve Deck must reshuffle after unsuccessful search",observer.sawOwnedShuffle(s.LS,Zone.RESERVE_DECK));
     }
     @Test public void HeadingForTheMedicalFrigateStartingMayDeployZeroCardsAndGoesToLost(){
         var s=scenario(true,List.of(),null);s.StartGame();assertTrue(s.GetLSLostPile().contains(s.GetLSCard("frigate")));
