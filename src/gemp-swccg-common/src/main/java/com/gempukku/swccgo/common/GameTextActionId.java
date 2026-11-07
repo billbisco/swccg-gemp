@@ -1814,6 +1814,9 @@ public enum GameTextActionId {
     LEGACY__FLEET_SECURITY_PROTOCOLS__DEPLOY_VESSEL_SITE(true),
     LEGACY__ROYAL_ESCORT_V__DEPLOY_FORCE_PIKE(true),
     LEGACY__STAR_DESTROYER_COMMAND_STATION__DEPLOY_JIR(true, true),
+    LEGACY__GENERAL_SOLOMAHAL__REARRANGE_SITES(false, true),
+    // Any card's attempt to 'operate' on a character (lets other cards recognize and respond to the attempt)
+    ANY_CARD__OPERATE_ON_CHARACTER,
     ;
 
     private boolean _searchCardPile;

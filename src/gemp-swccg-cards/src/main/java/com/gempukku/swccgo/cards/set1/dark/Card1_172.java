@@ -3,6 +3,7 @@ package com.gempukku.swccgo.cards.set1.dark;
 import com.gempukku.swccgo.cards.AbstractAlien;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.common.ExpansionSet;
+import com.gempukku.swccgo.common.GameTextActionId;
 import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Keyword;
 import com.gempukku.swccgo.common.Rarity;
@@ -28,8 +29,10 @@ import com.gempukku.swccgo.logic.timing.results.DisarmedResult;
 import com.gempukku.swccgo.logic.timing.results.HitResult;
 
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Set: Premiere
@@ -56,14 +59,15 @@ public class Card1_172 extends AbstractAlien {
     @Override
     protected List<OptionalGameTextTriggerAction> getGameTextOptionalAfterTriggers(final String playerId, SwccgGame game, EffectResult effectResult, final PhysicalCard self, int gameTextSourceCardId) {
         Filter otherCharacterPresent = Filters.and(Filters.other(self), Filters.character, Filters.present(self));
-        TargetingReason targetingReason = TargetingReason.TO_BE_LOST;
+        Set<TargetingReason> targetingReason = EnumSet.of(TargetingReason.TO_BE_LOST, TargetingReason.TO_BE_OPERATED_ON);
+        GameTextActionId gameTextActionId = GameTextActionId.ANY_CARD__OPERATE_ON_CHARACTER;
 
         // Check condition(s)
         if (TriggerConditions.justHit(game, effectResult, otherCharacterPresent)) {
             PhysicalCard cardHit = ((HitResult) effectResult).getCardHit();
             if (GameConditions.canTarget(game, self, targetingReason, cardHit)) {
 
-                final OptionalGameTextTriggerAction action = new OptionalGameTextTriggerAction(self, gameTextSourceCardId);
+                final OptionalGameTextTriggerAction action = new OptionalGameTextTriggerAction(self, gameTextSourceCardId, gameTextActionId);
                 action.setText("'Operate' on " + GameUtils.getFullName(cardHit));
                 // Choose target(s)
                 action.appendTargeting(
@@ -96,7 +100,7 @@ public class Card1_172 extends AbstractAlien {
             PhysicalCard cardDisarmed = ((DisarmedResult) effectResult).getCardDisarmed();
             if (GameConditions.canTarget(game, self, targetingReason, cardDisarmed)) {
 
-                final OptionalGameTextTriggerAction action = new OptionalGameTextTriggerAction(self, gameTextSourceCardId);
+                final OptionalGameTextTriggerAction action = new OptionalGameTextTriggerAction(self, gameTextSourceCardId, gameTextActionId);
                 action.setText("'Operate' on " + GameUtils.getFullName(cardDisarmed));
                 // Choose target(s)
                 action.appendTargeting(

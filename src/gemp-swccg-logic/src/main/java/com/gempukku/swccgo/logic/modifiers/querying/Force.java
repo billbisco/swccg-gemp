@@ -188,8 +188,26 @@ public interface Force extends BaseQuery, PrivateQuery, Flags, Icons, Captives, 
     default int getForceAvailableToUse(GameState gameState, String playerId) {
         int playersForcePileSize = gameState.getForcePile(playerId).size();
         int opponentsForceAvailable = getOpponentsForceAvailableToUse(gameState, playerId);
+        int substitutesAvailable = getForceUseSubstitutesAvailable(gameState, playerId);
 
-        return Math.max(0, playersForcePileSize + opponentsForceAvailable);
+        return Math.max(0, playersForcePileSize + opponentsForceAvailable + substitutesAvailable);
+    }
+
+    /**
+     * Gets the amount of Force the player may currently replace with something else ("instead of using X Force"),
+     * from MAY_SUBSTITUTE_FOR_USING_FORCE modifiers.
+     * @param gameState the game state
+     * @param playerId the player
+     * @return the amount of Force
+     */
+    default int getForceUseSubstitutesAvailable(GameState gameState, String playerId) {
+        int total = 0;
+        for (Modifier modifier : getModifiers(gameState, ModifierType.MAY_SUBSTITUTE_FOR_USING_FORCE)) {
+            if (modifier.isForPlayer(playerId)) {
+                total += Math.max(0, (int) modifier.getValue(gameState, query(), (PhysicalCard) null));
+            }
+        }
+        return total;
     }
 
     /**

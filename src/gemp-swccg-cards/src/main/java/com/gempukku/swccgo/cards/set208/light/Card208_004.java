@@ -10,6 +10,7 @@ import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Keyword;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
+import com.gempukku.swccgo.common.TargetingReason;
 import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filter;
@@ -32,6 +33,7 @@ import com.gempukku.swccgo.logic.timing.results.HitResult;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Set: Set 8
@@ -70,13 +72,14 @@ public class Card208_004 extends AbstractRebel {
             actions.add(action);
         }
 
-        gameTextActionId = GameTextActionId.OTHER_CARD_ACTION_1;
+        gameTextActionId = GameTextActionId.ANY_CARD__OPERATE_ON_CHARACTER;
+        Set<TargetingReason> operateOn = Collections.singleton(TargetingReason.TO_BE_OPERATED_ON);
         Filter disarmedCharacterFilter = Filters.and(Filters.your(self), Filters.disarmed_character, Filters.present(self));
 
         // Check condition(s)
         if (GameConditions.isPresentAt(game, self, Filters.site)
                 && GameConditions.isOncePerTurn(game, self, playerId, gameTextSourceCardId, gameTextActionId)
-                && GameConditions.canTarget(game, self, disarmedCharacterFilter)) {
+                && GameConditions.canTarget(game, self, operateOn, disarmedCharacterFilter)) {
 
             final TopLevelGameTextAction action = new TopLevelGameTextAction(self, gameTextSourceCardId, gameTextActionId);
             action.setText("'Operate' on Disarmed character");
@@ -85,7 +88,7 @@ public class Card208_004 extends AbstractRebel {
                     new OncePerTurnEffect(action));
             // Choose target(s)
             action.appendTargeting(
-                    new TargetCardOnTableEffect(action, playerId, "Target character to restore to normal", disarmedCharacterFilter) {
+                    new TargetCardOnTableEffect(action, playerId, "Target character to restore to normal", operateOn, disarmedCharacterFilter) {
                         @Override
                         protected void cardTargeted(final int targetGroupId, PhysicalCard cardTargeted) {
                             action.addAnimationGroup(cardTargeted);
@@ -119,14 +122,14 @@ public class Card208_004 extends AbstractRebel {
     @Override
     protected List<OptionalGameTextTriggerAction> getGameTextOptionalAfterTriggers(final String playerId, SwccgGame game, EffectResult effectResult, final PhysicalCard self, int gameTextSourceCardId) {
         Filter characterFilter = Filters.and(Filters.your(self), Filters.non_droid_character, Filters.abilityLessThan(4), Filters.present(self));
-        GameTextActionId gameTextActionId = GameTextActionId.OTHER_CARD_ACTION_1;
+        GameTextActionId gameTextActionId = GameTextActionId.ANY_CARD__OPERATE_ON_CHARACTER;
 
         // Check condition(s)
         if (TriggerConditions.justHit(game, effectResult, characterFilter)
                 && GameConditions.isPresentAt(game, self, Filters.site)
                 && GameConditions.isOncePerTurn(game, self, playerId, gameTextSourceCardId, gameTextActionId)) {
             PhysicalCard cardHit = ((HitResult) effectResult).getCardHit();
-            if (GameConditions.canTarget(game, self, cardHit)) {
+            if (GameConditions.canTarget(game, self, Collections.singleton(TargetingReason.TO_BE_OPERATED_ON), cardHit)) {
 
                 final OptionalGameTextTriggerAction action = new OptionalGameTextTriggerAction(self, gameTextSourceCardId, gameTextActionId);
                 action.setText("'Operate' on " + GameUtils.getFullName(cardHit));
@@ -135,7 +138,7 @@ public class Card208_004 extends AbstractRebel {
                         new OncePerTurnEffect(action));
                 // Choose target(s)
                 action.appendTargeting(
-                        new TargetCardOnTableEffect(action, playerId, "Target character to restore to normal", cardHit) {
+                        new TargetCardOnTableEffect(action, playerId, "Target character to restore to normal", Collections.singleton(TargetingReason.TO_BE_OPERATED_ON), cardHit) {
                             @Override
                             protected void cardTargeted(final int targetGroupId, PhysicalCard cardTargeted) {
                                 action.addAnimationGroup(cardTargeted);
