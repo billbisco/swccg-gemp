@@ -3,11 +3,18 @@ package com.gempukku.swccgo.cards.set1261.dark;
 import com.gempukku.swccgo.cards.AbstractPermanentAboard;
 import com.gempukku.swccgo.cards.AbstractStarfighter;
 import com.gempukku.swccgo.common.*;
+import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
+import com.gempukku.swccgo.game.state.ForceRetrievalState;
+import com.gempukku.swccgo.game.state.GameState;
+import com.gempukku.swccgo.logic.evaluators.BaseEvaluator;
+import com.gempukku.swccgo.logic.modifiers.ForceRetrievalModifier;
 import com.gempukku.swccgo.logic.modifiers.ImmuneToAttritionLessThanModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
+import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 
+import java.util.Collection;
 import java.util.List;
 
 /** Legacy Block 6.1 DS-61-11 In Black 11. */
@@ -29,6 +36,37 @@ public class Card1261_057 extends AbstractStarfighter {
 
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, PhysicalCard self) {
-        return List.of(new ImmuneToAttritionLessThanModifier(self, 5));
+        String owner = self.getOwner();
+        return List.of(
+                new ForceRetrievalModifier(self, new BaseEvaluator() {
+                    @Override
+                    public float evaluateExpression(GameState state, ModifiersQuerying modifiers, PhysicalCard source) {
+                        return isSienarRetrievalForTieDeployedWithPilot(state, modifiers, source, owner) ? 1 : 0;
+                    }
+                }, owner),
+                new ImmuneToAttritionLessThanModifier(self, 5));
+    }
+
+    /** Whether the Force retrieval in progress is from your Sienar Fleet Systems for your TIE that was just deployed
+     * simultaneously with your pilot character. */
+    private static boolean isSienarRetrievalForTieDeployedWithPilot(GameState state, ModifiersQuerying modifiers,
+            PhysicalCard source, String owner) {
+        if (source == null || !owner.equals(source.getOwner())
+                || !Filters.Sienar_Fleet_Systems.accepts(state, modifiers, source))
+            return false;
+        ForceRetrievalState retrieval = state.getTopForceRetrievalState();
+        if (retrieval == null)
+            return false;
+        Collection<PhysicalCard> involved = retrieval.getForceRetrievalEffect().getAdditionalCardsInvolvedInForceRetrieval();
+        if (involved == null)
+            return false;
+        for (PhysicalCard card : involved) {
+            PhysicalCard deployedWith = card.getDeployedSimultaneouslyWith();
+            if (owner.equals(card.getOwner()) && Filters.TIE.accepts(state, modifiers, card)
+                    && deployedWith != null && owner.equals(deployedWith.getOwner())
+                    && Filters.pilot_character.accepts(state, modifiers, deployedWith))
+                return true;
+        }
+        return false;
     }
 }

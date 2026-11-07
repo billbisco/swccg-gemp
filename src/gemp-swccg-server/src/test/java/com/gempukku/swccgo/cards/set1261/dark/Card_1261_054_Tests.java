@@ -18,7 +18,7 @@ import static org.junit.Assert.*;
 
 public class Card_1261_054_Tests {
     private VirtualTableScenario scenario() {
-        return new VirtualTableScenario(new HashMap<>(Map.of("luke", "1_19")), new HashMap<>(Map.of(
+        return new VirtualTableScenario(new HashMap<>(Map.of("luke", "1_19", "corvette", "1_140")), new HashMap<>(Map.of(
                 "station", "1261_54", "devastator", "1_301", "destroyer", "1_302", "trooper", "1_194")),
                 18, 18, StartingSetup.DefaultLSSpaceSystem, StartingSetup.DefaultDSSpaceSystem,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
@@ -109,5 +109,32 @@ public class Card_1261_054_Tests {
                 .filter(p -> p.getParentStarshipOrVehicleCard() == host).findFirst().orElseThrow();
         scn.MoveLocationToTable(station, placement);
         assertSame(host, station.getRelatedStarshipOrVehicle());
+    }
+
+    private boolean hostMayReactToLightBattle(boolean darkControlsStation) {
+        var scn = scenario();
+        scn.StartGame();
+        var station = scn.GetDSCard("station");
+        var host = scn.GetDSCard("devastator");
+        setupHost(scn, station, host, null);
+        if (darkControlsStation)
+            scn.MoveCardsToLocation(station, scn.GetDSCard("trooper"));
+        var lsSystem = scn.GetLSStartingLocation();
+        var corvette = scn.GetLSCard("corvette");
+        scn.MoveCardsToLocation(lsSystem, corvette, scn.GetDSCard("destroyer"));
+        scn.BoardAsPilot(corvette, scn.GetLSCard("luke"));
+        scn.LSStartBattleAndSkipToWeaponsSegment(lsSystem);
+        return scn.game().getModifiersQuerying().getMoveAsReactOption(scn.gameState(), host, null, false,
+                com.gempukku.swccgo.filters.Filters.any) != null;
+    }
+
+    @Test(timeout = 10000)
+    public void whileDarkControlsRelatedStarshipMayMoveAsReact() {
+        assertTrue(hostMayReactToLightBattle(true));
+    }
+
+    @Test(timeout = 10000)
+    public void withoutControlRelatedStarshipHasNoReact() {
+        assertFalse(hostMayReactToLightBattle(false));
     }
 }

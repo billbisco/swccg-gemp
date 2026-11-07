@@ -24,7 +24,7 @@ public class Card1261_054 extends AbstractNonuniqueStarshipSite {
     public Card1261_054() {
         super(Side.DARK, "Star Destroyer: Command Station", Filters.Star_Destroyer,
                 Uniqueness.RESTRICTED_3, ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
-        setLocationDarkSideGameText("If you control, related starship may not have its power reduced and may move as a 'react.' Once per game, if Devastator on table, may [download] Jir here.");
+        setLocationDarkSideGameText("While you control, related starship may not have its power reduced and may move as a 'react.' Once per game, if Devastator on table, may deploy Jir here from Reserve Deck; reshuffle.");
         setLocationLightSideGameText("Unless you control, related starship is immune to attrition < 4 or adds 2 to immunity (if on Devastator and opponent controls this site, immune to attrition).");
         addIcon(Icon.DARK_FORCE, 1);
         addIcons(Icon.INTERIOR_SITE, Icon.MOBILE, Icon.STARSHIP_SITE, Icon.SCOMP_LINK, Icon.DAGOBAH);
@@ -35,7 +35,8 @@ public class Card1261_054 extends AbstractNonuniqueStarshipSite {
         var related = Filters.relatedStarshipOrVehicle(self);
         var controls = new ControlsCondition(player, self);
         return List.of(new MayNotHavePowerReducedModifier(self, related, controls, player),
-                new MayNotHavePowerReducedModifier(self, related, controls, game.getOpponent(player)));
+                new MayNotHavePowerReducedModifier(self, related, controls, game.getOpponent(player)),
+                new MayMoveAsReactModifier(self, related, controls));
     }
 
     @Override
