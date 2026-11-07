@@ -623,6 +623,11 @@ public interface SwccgCardBlueprint {
      */
     boolean playableAsStartingInterrupt(SwccgGame game, PhysicalCard self);
 
+    /** Whether this Epic Event's own text allows it to be chosen from Reserve Deck at game start. */
+    default boolean isStartingEpicEvent() {
+        return false;
+    }
+
     /**
      * Gets the action playing this card as a starting interrupt.
      * @param playerId the player

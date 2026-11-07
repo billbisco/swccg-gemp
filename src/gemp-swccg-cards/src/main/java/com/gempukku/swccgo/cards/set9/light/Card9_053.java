@@ -11,6 +11,7 @@ import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.InterruptPersonaReferences;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.GameUtils;
@@ -76,7 +77,8 @@ public class Card9_053 extends AbstractUsedOrLostInterrupt {
 
         // Check condition(s)
         if (GameConditions.isDuringBattleWithParticipant(game, Filters.Luke)
-                && !GameConditions.isDuringBattleWithParticipant(game, Filters.Vader)) {
+                && InterruptPersonaReferences.vaderInterpretations(game, self).stream()
+                .anyMatch(reference -> !GameConditions.isDuringBattleWithParticipant(game, reference))) {
 
             final PlayInterruptAction action = new PlayInterruptAction(game, self, CardSubtype.LOST);
             action.setText("Subtract 2 from battle destiny draws");

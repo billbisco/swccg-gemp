@@ -577,6 +577,7 @@ public class DefaultSwccgFormat implements SwccgFormat {
         addCardsToDefaultCollection(_library, CardCounts.FULL_SETS_CARD_COUNTS, 1, _allCardBlueprints);
         addCardsToDefaultCollection(_library, CardCounts.PREMIUM_SETS_CARD_COUNTS, 101, _allCardBlueprints);
         addCardsToDefaultCollection(_library, CardCounts.VIRTUAL_SETS_CARD_COUNTS, 200, _allCardBlueprints);
+        addCardsToDefaultCollection(_library, CardCounts.ORIGINAL_VIRTUAL_SETS_CARD_COUNTS, 1100, _allCardBlueprints);
         addCardsToDefaultCollection(_library, CardCounts.VIRTUAL_PREMIUM_SETS_CARD_COUNTS, 301, _allCardBlueprints);
         addCardsToDefaultCollection(_library, CardCounts.DREAM_CARD_SETS_CARD_COUNTS, 401, _allCardBlueprints);
         addCardsToDefaultCollection(_library, CardCounts.PLAYTESTING_SETS_CARD_COUNTS, 501, _allCardBlueprints);

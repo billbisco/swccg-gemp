@@ -62,7 +62,7 @@ public class PlayStartingLocationsAndObjectivesGameProcess implements GameProces
     public PlayStartingLocationsAndObjectivesGameProcess(SwccgGame game) {
         _darkPlayerId = game.getDarkPlayer();
         _lightPlayerId = game.getLightPlayer();
-        _followingGameProcess = new PlayStartingInterruptsGameProcess(game);
+        _followingGameProcess = new PlayStartingEpicEventsGameProcess(game);
         _nextProcess = this;
     }
 

@@ -12,6 +12,7 @@ import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.InterruptPersonaReferences;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.GameUtils;
@@ -53,7 +54,7 @@ public class Card221_041 extends AbstractLostInterrupt {
         if (rots != null
                 && GameConditions.cardHasWhileInPlayDataSet(rots)
                 && rots.getWhileInPlayData().getTextValue() != null) {
-            return "Vader".equals(rots.getWhileInPlayData().getTextValue());
+            return InterruptPersonaReferences.isVaderName(game, self, rots.getWhileInPlayData().getTextValue());
         }
         return false;
     }
@@ -118,7 +119,7 @@ public class Card221_041 extends AbstractLostInterrupt {
     protected List<PlayInterruptAction> getGameTextOptionalAfterActions(final String playerId, final SwccgGame game, EffectResult effectResult, PhysicalCard self) {
         List<PlayInterruptAction> actions = new LinkedList<>();
 
-        final Filter vaderFilter = Filters.or(Filters.Vader, Filters.grantedMayBeTargetedBy(self));
+        final Filter vaderFilter = Filters.or(InterruptPersonaReferences.vader(game, self), Filters.grantedMayBeTargetedBy(self));
 
         // Check condition(s)
         if (TriggerConditions.isStartOfYourPhase(game, effectResult, Phase.BATTLE, playerId)

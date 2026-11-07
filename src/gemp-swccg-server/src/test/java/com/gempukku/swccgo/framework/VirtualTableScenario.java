@@ -308,6 +308,10 @@ public class VirtualTableScenario implements TestBase, Actions, AdHocEffects, Ba
             LSObjectiveOrLocation.Setup(this);
         }
 
+        while (DSDecisionAvailable("Choose starting Epic Event") || LSDecisionAvailable("Choose starting Epic Event")) {
+            PlayerDecided(GetDecidingPlayer(), "");
+        }
+
         DSStartingInterrupts.Setup(this);
         LSStartingInterrupts.Setup(this);
 
