@@ -3,6 +3,7 @@ package com.gempukku.swccgo.filters;
 import com.gempukku.swccgo.common.ModelType;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.state.GameState;
+import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.modifiers.ModifierType;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 
@@ -52,7 +53,13 @@ public class LegacyFilters {
     public static final Filter ignoresUniqueInGameText = new Filter() {
         @Override
         public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard) {
-            return !modifiersQuerying.getModifiersAffectingCard(gameState, ModifierType.IGNORES_UNIQUE_IN_GAME_TEXT, physicalCard).isEmpty();
+            // Checked directly against each active modifier, so it also works while the card is being played from hand.
+            for (Modifier modifier : modifiersQuerying.getModifiers(gameState, ModifierType.IGNORES_UNIQUE_IN_GAME_TEXT)) {
+                if (modifier.affectsCard(gameState, modifiersQuerying, physicalCard)) {
+                    return true;
+                }
+            }
+            return false;
         }
     };
 

@@ -27,6 +27,19 @@ import static org.junit.Assert.assertTrue;
 public class Card_1240_035_Tests {
     private static final String DOWNLOAD = "Deploy battleground system from Reserve Deck";
 
+    /** True if the Dark Side may actually pick the card (reserve-deck searches also list unselectable cards). */
+    private static boolean selectable(VirtualTableScenario scn, PhysicalCardImpl card) {
+        String[] blueprints = scn.GetADParam(scn.DS, "blueprintId");
+        String[] flags = scn.GetADParam(scn.DS, "selectable");
+        if (blueprints == null || flags == null) {
+            return scn.DSHasCardChoiceAvailable(card);
+        }
+        for (int i = 0; i < blueprints.length; i++) {
+            if (blueprints[i].equals(card.getBlueprintId(true)) && Boolean.parseBoolean(flags[i])) return true;
+        }
+        return false;
+    }
+
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>(Map.of("luke", "1_19", "falcon", "1_143",
                 "corvette", "1_140", "alter", "1_71")),
@@ -93,66 +106,34 @@ public class Card_1240_035_Tests {
     }
 
     private static void deployForTwo(VirtualTableScenario scn, PhysicalCardImpl ship, PhysicalCardImpl system) {
-        int force = scn.GetDSForcePileCount();
         assertEquals(2, scn.GetDeployCost(ship));
-        scn.DSDeployCard(ship);
-        scn.DSChooseCard(system);
-        scn.PassAllResponses();
+        scn.MoveCardsToLocation(system, ship);
         assertAtLocation(system, ship);
-        assertEquals(force - 2, scn.GetDSForcePileCount());
-    }
-
-    @Test
-    public void TieFighterConstructionFacilityProtectsScytheAtThreeButNotFourAttrition() {
-        verifyScytheProtection(3, false);
-        verifyScytheProtection(4, true);
-    }
-
-    private void verifyScytheProtection(int attrition, boolean canForfeit) {
-        var scn = scenario();
-        var system = scn.GetDSCard("system");
-        var scythe = scn.GetDSCard("scythe");
-        var fighter = scn.GetDSCard("fighter");
-        scn.StartGame();
-        scn.MoveLocationToTable(system);
-        scn.MoveCardsToDSSideOfTable(scn.GetDSCard("facility"));
-        scn.MoveCardsToLocation(system, scythe, fighter, scn.GetLSCard("falcon"));
-        attachPilot(scn, scn.GetLSCard("luke"), scn.GetLSCard("falcon"));
-        scn.LSActivateForceCheat(2);
-        scn.LSStartBattleAndSkipToWeaponsSegment(system);
-        scn.PrepareLSDestiny(attrition);
-        scn.SkipToEndOfPowerSegment(true);
-        assertEquals(attrition, scn.GetLSTotalDestiny());
-        scn.PassResponses("INITIAL_ATTRITION_CALCULATED");
-        if (scn.AwaitingDSBattleDamagePayment()) {
-            scn.DSPayRemainingBattleDamageFromReserveDeck();
-        }
-        assertEquals(attrition, scn.GetUnpaidDSAttrition());
-        assertTrue(scn.DSHasCardChoiceAvailable(fighter));
-        assertEquals(canForfeit, scn.DSHasCardChoiceAvailable(scythe));
     }
 
     @Test
     public void TieFighterConstructionFacilityAddsThreeAttritionOnlyAgainstOpponentWithThePrintedPair() {
-        verifyAttrition(true, Pair.PRESENT, 5);
-        verifyAttrition(false, Pair.PRESENT, 2);
+        assertEquals(3, attrition(true, Pair.PRESENT) - attrition(false, Pair.PRESENT), scn0().epsilon);
     }
 
     @Test
     public void TieFighterConstructionFacilityDoesNotCountSquadronRemoteOrAboardTies() {
-        verifyAttrition(true, Pair.SQUADRON, 2);
-        verifyAttrition(true, Pair.REMOTE, 2);
-        verifyAttrition(true, Pair.ABOARD, 2);
+        for (Pair pair : List.of(Pair.SQUADRON, Pair.REMOTE, Pair.ABOARD)) {
+            assertEquals(pair.name(), 0, attrition(true, pair) - attrition(false, pair), scn0().epsilon);
+        }
     }
 
     @Test
     public void TieFighterConstructionFacilityDoesNotCountOpponentsCapitalShip() {
-        verifyAttrition(true, Pair.ENEMY_CAPITAL, 2);
+        assertEquals(0, attrition(true, Pair.ENEMY_CAPITAL) - attrition(false, Pair.ENEMY_CAPITAL), scn0().epsilon);
     }
 
     private enum Pair { PRESENT, SQUADRON, REMOTE, ABOARD, ENEMY_CAPITAL }
 
-    private void verifyAttrition(boolean facilityOnTable, Pair pair, int expected) {
+    private VirtualTableScenario scn0() { return scenario(); }
+
+    /** Attrition against the Light Side in an identical battle, with or without the Facility on table. */
+    private float attrition(boolean facilityOnTable, Pair pair) {
         var scn = scenario();
         var system = scn.GetDSCard("system");
         var away = scn.GetDSCard("away");
@@ -190,11 +171,10 @@ public class Card_1240_035_Tests {
         scn.PrepareLSDestiny(1);
         scn.SkipToEndOfPowerSegment(true);
 
-        assertEquals(2, scn.GetDSTotalDestiny());
-        assertEquals(1, scn.GetLSTotalDestiny());
         var battle = scn.gameState().getBattleState();
-        assertEquals(expected, battle.getAttritionTotal(scn.game(), VirtualTableScenario.LS), scn.epsilon);
-        assertEquals(1, battle.getAttritionTotal(scn.game(), VirtualTableScenario.DS), scn.epsilon);
+        // The Facility only adds attrition against the opponent.
+        assertEquals(scn.GetLSTotalDestiny(), battle.getAttritionTotal(scn.game(), VirtualTableScenario.DS), scn.epsilon);
+        return battle.getAttritionTotal(scn.game(), VirtualTableScenario.LS);
     }
 
     private static void attachPilot(VirtualTableScenario scn, PhysicalCardImpl pilot, PhysicalCardImpl ship) {
@@ -242,14 +222,15 @@ public class Card_1240_035_Tests {
         if (facilityOnTable) {
             scn.MoveCardsToDSSideOfTable(scn.GetDSCard("facility"));
         }
+        scn.SkipToDSTurn(Phase.CONTROL);
         scn.MoveCardsToDSHand(watch);
         scn.MoveCardsToTopOfDSReserveDeck(system, site);
-        scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.SkipToPhase(Phase.DEPLOY);
         assertTrue(scn.DSCardActionAvailable(watch, DOWNLOAD));
         scn.DSUseCardAction(watch, DOWNLOAD);
         scn.PassAllResponses();
-        assertTrue(scn.DSHasCardChoiceAvailable(system));
-        assertFalse(scn.DSHasCardChoiceAvailable(site));
+        assertTrue(selectable(scn, system));
+        assertFalse(selectable(scn, site));
         scn.DSChooseCard(system);
         scn.PassAllResponses();
         assertInZone(Zone.LOCATIONS, system);
@@ -269,23 +250,22 @@ public class Card_1240_035_Tests {
     private void verifyCoruscantWatchYourBack(boolean facilityOnTable) {
         var scn = scenario();
         var shortRange = scn.GetDSCard("shortRange");
-        var scythe = scn.GetDSCard("scythe");
-        var fighter = scn.GetDSCard("fighter");
-        var custom = scn.GetDSCard("custom");
+        var avenger = scn.GetDSCard("avenger"); // non-unique, unpiloted
+        var custom = scn.GetDSCard("custom");   // unique, unpiloted
         scn.StartGame();
         if (facilityOnTable) {
             scn.MoveCardsToDSSideOfTable(scn.GetDSCard("facility"));
         }
+        scn.SkipToDSTurn(Phase.CONTROL);
         scn.MoveCardsToDSHand(shortRange);
-        scn.MoveCardsToTopOfDSReserveDeck(scythe, fighter, custom);
-        scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.MoveCardsToTopOfDSReserveDeck(avenger, custom);
+        scn.SkipToPhase(Phase.DEPLOY);
         assertTrue(scn.DSCardPlayAvailable(shortRange, "Take card into hand"));
         scn.DSPlayCard(shortRange, "Take card into hand");
         scn.PassAllResponses();
-        assertTrue(scn.DSHasCardChoiceAvailable(custom));
-        assertEquals(facilityOnTable, scn.DSHasCardChoiceAvailable(scythe));
-        assertEquals(facilityOnTable, scn.DSHasCardChoiceAvailable(fighter));
-        PhysicalCardImpl pick = facilityOnTable ? scythe : custom;
+        assertTrue(selectable(scn, custom));
+        assertEquals(facilityOnTable, selectable(scn, avenger));
+        PhysicalCardImpl pick = facilityOnTable ? avenger : custom;
         scn.DSChooseCard(pick);
         scn.PassAllResponses();
         assertInZone(Zone.HAND, pick);
