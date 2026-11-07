@@ -64,7 +64,7 @@ public class Card_1261_042_Tests {
         assertEquals(8, scn.GetLSHandCount());
         for (String pick : picks)
             assertEquals(Zone.HAND, scn.GetDSCard(pick).getZone());
-        assertEquals(Zone.LOST_PILE, scn.GetDSCard("interrupt").getZone());
+        assertEquals(Zone.TOP_OF_LOST_PILE, scn.GetDSCard("interrupt").getZone());
     }
 
     @Test
