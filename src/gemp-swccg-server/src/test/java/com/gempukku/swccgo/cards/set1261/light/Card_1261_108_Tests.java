@@ -603,4 +603,46 @@ public class Card_1261_108_Tests {
         assertEquals(before, scn.GetLSForcePileCount());
     }
 
+
+    private void nativeApprenticeSelection(boolean legacyObjective) {
+        var scn = legacyObjective ? fixture(0) : new VirtualTableScenario(
+                new HashMap<>(Map.of("hut", "4_89", "luke", "1_19", "yoda", "4_2", "han", "1_11", "testOne", "4_77")),
+                new HashMap<>(), 40, 40, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields, StartingSetup.NoDSShields, "legacy");
+        scn.StartGame();
+        var hut = scn.GetLSCard("hut"); var luke = scn.GetLSCard("luke");
+        var yoda = scn.GetLSCard("yoda"); var han = scn.GetLSCard("han");
+        var test = scn.GetLSCard("testOne");
+        scn.MoveLocationToTable(hut);
+        scn.MoveCardsToLocation(hut, yoda, luke, han);
+        scn.MoveCardsToLSHand(test);
+        scn.LSActivateForceCheat(8); scn.SkipToLSTurn(Phase.DEPLOY);
+        scn.LSDeployCard(test);
+        var trace = new ArrayList<String>();
+        for (int i = 0; i < 15 && test.getZone() != Zone.ATTACHED; i++) {
+            var prompt = scn.GetCurrentDecision().getText(); trace.add(prompt);
+            if (prompt.startsWith("Choose how to target apprentice")) {
+                scn.LSChooseOption("Target an apprentice on table");
+            } else if (prompt.startsWith("Choose apprentice")) {
+                assertTrue(trace.toString(), scn.LSHasCardChoiceAvailable(luke));
+                assertEquals(trace.toString(), !legacyObjective, scn.LSHasCardChoiceAvailable(han));
+                scn.LSChooseCard(legacyObjective ? luke : han);
+            } else if (prompt.startsWith("Choose mentor") && scn.LSHasCardChoiceAvailable(yoda)) {
+                scn.LSChooseCard(yoda);
+            } else if (scn.LSHasCardChoiceAvailable(hut)) {
+                scn.LSChooseCard(hut);
+            } else if (prompt.toLowerCase().contains("optional response")) {
+                scn.PlayerPass(scn.GetDecidingPlayer());
+            } else break;
+        }
+        scn.PassAllResponses();
+        assertEquals(trace.toString(), hut, test.getAttachedTo());
+        assertEquals(trace.toString(), legacyObjective ? luke : han,
+                test.getTargetedCard(scn.gameState(), TargetId.JEDI_TEST_APPRENTICE));
+    }
+
+    @Test public void onlyLukeCanBeChosenByTheActualTestWhileTheObjectiveApplies() { nativeApprenticeSelection(true); }
+    @Test public void theSameActualTestCanNormallyChooseHan() { nativeApprenticeSelection(false); }
+
 }
