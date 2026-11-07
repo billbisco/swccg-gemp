@@ -36,6 +36,8 @@ public class Card_1250_082_Tests {
             put("luke", "1_19"); put("trooper", "1_26"); put("home", "9_74"); put("tibrin", "6_87");
             put("test", "4_75"); put("other", "1_109"); put("another", "11_28");
             put("plains", "12_79"); put("cantina", "1_128");
+            put("obi", "1_21"); put("saber", "1_157"); put("bunker", "8_70");
+            put("warroom", "1_139"); put("dock", "1_136");
         }}, new HashMap<>() {{
             put("trooper", "1_194"); put("vader", "1_168");
         }}, 40, 40, councilStart(chamberId), StartingSetup.DefaultDSGroundLocation,
@@ -277,5 +279,72 @@ public class Card_1250_082_Tests {
         var card = (PhysicalCardImpl) s.gameState().createPhysicalCard(s.DS, VirtualTableScenario._cardLibrary, id);
         s.gameState().addCardToZone(card, Zone.HAND, s.DS, true, false, false);
         return card;
+    }
+
+    private int drainWithSaberAndDecree(boolean withDecree, boolean withSaber) {
+        var s = start(); stageFlip(s, true);
+        var bunker = s.GetLSCard("bunker"); var warroom = s.GetLSCard("warroom"); var dock = s.GetLSCard("dock");
+        var obi = s.GetLSCard("obi"); var saber = s.GetLSCard("saber");
+        s.MoveLocationToTable(bunker); s.MoveLocationToTable(warroom); s.MoveLocationToTable(dock);
+        s.MoveCardsToLocation(warroom, s.GetDSCard("trooper")); s.MoveCardsToLocation(dock, s.GetDSCard("vader"));
+        s.MoveCardsToLocation(bunker, obi);
+        if (withSaber) s.AttachCardsTo(obi, saber);
+        if (withDecree) s.MoveCardsToDSSideOfTable(createDarkCard(s, "5_120"));
+        s.SkipToLSTurn(Phase.DEPLOY); fund(s, 8); deployAt(s, s.GetLSCard("yoda"), s.GetLSCard("chamber"));
+        assertTrue(s.GetLSCard("objective").isFlipped());
+        s.SkipToLSTurn(Phase.CONTROL); s.LSForceDrainAt(bunker);
+        if (withSaber) {
+            String add = "Add 1 to Force drain";
+            for (int i = 0; i < 30 && !s.AwaitingDSForceLossPayment(); i++) {
+                if (s.GetADParam(s.LS, "cardId") != null && s.GetADParam(s.LS, "actionText") != null
+                        && s.LSCardActionAvailable(saber, add)) {
+                    s.LSUseCardAction(saber, add);
+                    break;
+                }
+                if (!s.GetCurrentDecision().getText().contains("Optional responses")) break;
+                s.PlayerPass(s.GetDecidingPlayer());
+            }
+        }
+        s.PassAllResponses();
+        assertTrue(s.AwaitingDSForceLossPayment());
+        return s.GetForceDrainTotal();
+    }
+
+    @Test
+    public void ImperialDecreeCancelsTheSiteBonusButTheActualLightsaberBonusSurvives() {
+        assertEquals(3, drainWithSaberAndDecree(false, true));
+        assertEquals(2, drainWithSaberAndDecree(true, true));
+        assertEquals(1, drainWithSaberAndDecree(true, false));
+    }
+
+    @Test
+    public void ActualYourDestinyDoesNotTakeForceAfterTheObjectiveFlips() {
+        var s = start(); stageFlip(s, true);
+        var bhbm = createDarkCard(s, "9_151"); var destiny = createDarkCard(s, "9_134");
+        s.MoveCardsToDSSideOfTable(bhbm); bhbm.setObjectiveDeploymentComplete(true);
+        s.AttachCardsTo(bhbm, destiny);
+        s.MoveCardsToLocation(s.GetDSStartingLocation(), s.GetDSCard("vader"));
+        s.SkipToLSTurn(Phase.DEPLOY); fund(s, 8); deployAt(s, s.GetLSCard("yoda"), s.GetLSCard("chamber"));
+        assertTrue(s.GetLSCard("objective").isFlipped());
+        int lost = s.GetLSLostPileCount();
+        s.SkipToDSTurn();
+        assertTrue(s.GetCurrentDecision().getText(), s.AwaitingDSActivatePhaseActions());
+        assertEquals(lost, s.GetLSLostPileCount());
+    }
+
+    @Test
+    public void DarkInitiatingBattleWithALightJediDoesNotOfferRetrieval() {
+        var s = start(); stageFlip(s, true); var site = s.GetDSStartingLocation();
+        s.MoveCardsToLocation(site, s.GetDSCard("trooper"), s.GetLSCard("plo"));
+        s.SkipToLSTurn(Phase.DEPLOY); fund(s, 8); deployAt(s, s.GetLSCard("yoda"), s.GetLSCard("chamber"));
+        assertTrue(s.GetLSCard("objective").isFlipped());
+        s.MoveCardsToTopOfLSLostPile(s.GetLSCard("other"), s.GetLSCard("another"));
+        s.DSActivateForceCheat(4); s.SkipToDSTurn(Phase.BATTLE);
+        s.DSInitiateBattle(site);
+        for (int i = 0; i < 18 && !retrieveOffered(s)
+                && s.GetCurrentDecision().getText().contains("Optional responses"); i++) {
+            s.PlayerPass(s.GetDecidingPlayer());
+        }
+        assertFalse(retrieveOffered(s)); assertEquals(2, s.GetLSLostPileCount());
     }
 }
