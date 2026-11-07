@@ -46,6 +46,7 @@ public class Card_1271_038_Tests {
         s.PassResponses("ABOUT_TO_BE_LOST_FROM_TABLE");
         s.PassResponses("ABOUT_TO_LOSE_FORCE_NOT_FROM_BATTLE_DAMAGE");
         assertTrue(s.GetLSLostPile().contains(patient));
+        if (s.DSDecisionAvailable("FORFEITED_TO_LOST_PILE_FROM_TABLE")) s.DSPass();
         return s;
     }
 
@@ -53,7 +54,9 @@ public class Card_1271_038_Tests {
         var dressing = s.GetLSCard("dressing");
         var patient = s.GetLSCard("patient");
         var site = s.GetDSStartingLocation();
-        assertTrue(s.LSCardActionAvailable(dressing, RETURN_PATIENT));
+        assertTrue("LS: " + (s.LSGetDecision() == null ? "none" : s.LSGetDecision().getText())
+            + "; DS: " + (s.DSGetDecision() == null ? "none" : s.DSGetDecision().getText()),
+            s.LSAnyActionsAvailable() && s.LSCardActionAvailable(dressing, RETURN_PATIENT));
         s.LSUseCardAction(dressing, RETURN_PATIENT);
         s.PassAllResponses();
         if (s.LSHasCardChoiceAvailable(patient)) {
