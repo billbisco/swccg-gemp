@@ -97,6 +97,7 @@ public class Card_1261_013_Tests {
     }
 
     private void fire(VirtualTableScenario scn, int first, int second) {
+        assertNotEquals("The rig reuses one physical fixture per destiny value", first, second);
         scn.PrepareDSDestiny(second); scn.PrepareDSDestiny(first); int reserve = scn.GetDSReserveDeckCount();
         scn.DSUseCardAction(scn.GetDSCard("superlaser"), "Fire");
         if (scn.DSHasCardChoiceAvailable(scn.GetLSCard("tantive"))) scn.DSChooseCard(scn.GetLSCard("tantive"));
@@ -105,19 +106,19 @@ public class Card_1261_013_Tests {
 
     @Test public void MoffTarkinCommandantActualSuperlaserFireIsFreeAndHitReducesForfeitByFour() {
         var scn = superlaser(true); int force = scn.GetDSForcePileCount(); int forfeit = scn.GetForfeit(scn.GetLSCard("tantive"));
-        fire(scn, 3, 3); assertTrue(scn.GetLSCard("tantive").isHit());
+        fire(scn, 3, 4); assertTrue(scn.GetLSCard("tantive").isHit());
         assertEquals(forfeit - 4, scn.GetForfeit(scn.GetLSCard("tantive"))); assertEquals(force, scn.GetDSForcePileCount());
     }
 
     @Test public void MoffTarkinCommandantSuperlaserEqualDefenseMissesWithoutForfeitReduction() {
         var scn = superlaser(true); assertEquals(4, scn.GetDefense(scn.GetLSCard("tantive")));
-        int forfeit = scn.GetForfeit(scn.GetLSCard("tantive")); fire(scn, 2, 2);
+        int forfeit = scn.GetForfeit(scn.GetLSCard("tantive")); fire(scn, 0, 4);
         assertFalse(scn.GetLSCard("tantive").isHit()); assertEquals(forfeit, scn.GetForfeit(scn.GetLSCard("tantive")));
     }
 
     @Test public void SuperlaserWithoutMoffTarkinStillCostsFourAndLeavesHitForfeitUnchanged() {
         var scn = superlaser(false); int force = scn.GetDSForcePileCount(); int forfeit = scn.GetForfeit(scn.GetLSCard("tantive"));
-        fire(scn, 3, 3); assertTrue(scn.GetLSCard("tantive").isHit());
+        fire(scn, 3, 4); assertTrue(scn.GetLSCard("tantive").isHit());
         assertEquals(force - 4, scn.GetDSForcePileCount()); assertEquals(forfeit, scn.GetForfeit(scn.GetLSCard("tantive")));
     }
 
