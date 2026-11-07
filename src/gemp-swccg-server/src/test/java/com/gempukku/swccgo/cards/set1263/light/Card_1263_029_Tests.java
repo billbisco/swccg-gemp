@@ -103,6 +103,15 @@ public class Card_1263_029_Tests {
         }
     }
 
+    private void assertSenseCannotRespond(VirtualTableScenario scn) {
+        for (int i = 0; i < 16; i++) {
+            assertFalse(scn.GetDSAvailableActions().stream().anyMatch(x -> x.contains("Draw destiny to cancel")));
+            var decision = scn.GetCurrentDecision();
+            if (decision == null || !decision.getText().toLowerCase().contains("response")) return;
+            scn.PlayerPass(scn.LSGetDecision() != null ? scn.LS : scn.DS);
+        }
+    }
+
     private VirtualTableScenario storm(boolean objective, String droid) {
         var scn = setup(objective, true, droid); enterTurn(scn, scn.DS, Phase.CONTROL);
         scn.DSActivateForceCheat(6); scn.PrepareDSDestiny(5);
@@ -117,7 +126,7 @@ public class Card_1263_029_Tests {
 
     @Test public void RescueYouSavesRealNonHeroicArtooAndTheOtherCopyCannotCancelABattle() {
         var scn = storm(true, "r2"); assertTrue(has(scn, SAVE));
-        scn.LSPlayCard(scn.GetLSCard("rescueInterrupt"), SAVE); scn.PassAllResponses();
+        scn.LSPlayCard(scn.GetLSCard("rescueInterrupt"), SAVE); assertSenseCannotRespond(scn); scn.PassAllResponses();
         assertAtLocation(scn.GetDSStartingLocation(), scn.GetLSCard("r2"));
         assertInZone(Zone.LOST_PILE, scn.GetLSCard("rescueInterrupt")); assertInHand(scn.GetLSCard("otherCopy"));
         scn.SkipToPhase(Phase.BATTLE); scn.DSInitiateBattle(scn.GetLSStartingLocation());
@@ -142,7 +151,7 @@ public class Card_1263_029_Tests {
         assertTrue(has(scn, CANCEL)); scn.LSPlayCard(scn.GetLSCard("rescueInterrupt"), CANCEL);
         scn.PassAllResponses();
         scn.LSChooseCard(scn.GetTopOfLSReserveDeck()); scn.PassAllResponses();
-        scn.LSChooseCard(scn.GetTopOfLSReserveDeck()); scn.PassAllResponses();
+        scn.LSChooseCard(scn.GetTopOfLSReserveDeck()); assertSenseCannotRespond(scn); scn.PassAllResponses();
         assertEquals(lost + 3, scn.GetLSLostPileCount()); assertNull(scn.gameState().getBattleState());
         assertAtLocation(site, scn.GetLSCard("leia"), scn.GetDSCard("vader"));
     }
