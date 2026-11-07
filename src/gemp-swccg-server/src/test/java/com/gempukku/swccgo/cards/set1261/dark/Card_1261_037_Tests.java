@@ -67,7 +67,7 @@ public class Card_1261_037_Tests {
     }
 
     @Test public void TdoshokHuntingVowBonusesRevokeWhenEffectLeavesPlay() {
-        var scn = battle(2, false, false, false, false); scn.MoveCardsToDSLostPile(scn.GetDSCard("vow"));
+        var scn = battle(2, false, false, false, false); scn.MoveCardsToTopOfDSLostPile(scn.GetDSCard("vow"));
         assertEquals(0, scn.GetDSBattleDestinyCount()); assertEquals(5, scn.GetLSTotalPower());
     }
 
@@ -76,7 +76,7 @@ public class Card_1261_037_Tests {
         scn.MoveCardsToDSSideOfTable(scn.GetDSCard("vow")); scn.MoveCardsToLocation(scn.GetDSStartingLocation(), bossk, dengar);
         assertEquals(5, scn.GetPower(bossk)); assertEquals(5, scn.GetForfeit(bossk)); assertEquals(3, scn.GetForfeit(dengar));
         scn.MoveCardsToLocation(scn.GetLSStartingLocation(), bossk); assertEquals(5, scn.GetPower(bossk)); assertEquals(5, scn.GetForfeit(bossk));
-        scn.MoveCardsToDSLostPile(scn.GetDSCard("vow")); assertEquals(4, scn.GetPower(bossk)); assertEquals(3, scn.GetForfeit(bossk));
+        scn.MoveCardsToTopOfDSLostPile(scn.GetDSCard("vow")); assertEquals(4, scn.GetPower(bossk)); assertEquals(3, scn.GetForfeit(bossk));
     }
 
     @Test public void TdoshokHuntingVowBosskInAudienceChamberOrOffTableDoesNotGrantBonuses() {
@@ -92,7 +92,7 @@ public class Card_1261_037_Tests {
         // Registered minimal Block6 counterpart pins only the printed exclusion; no unimplemented real card behavior is simulated.
         var block6 = com.gempukku.swccgo.cards.legacy.MissionTestSupport.putInHand(scn, 9037, scn.DS,
                 new com.gempukku.swccgo.cards.AbstractNormalEffect(Side.DARK, 4, PlayCardZoneOption.YOUR_SIDE_OF_TABLE,
-                        "Molator", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V) {});
+                        "Molator", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V) {{ addIcon(Icon.LEGACY_BLOCK_6); }});
         assertEquals(1, block6.getBlueprint().getIconCount(Icon.LEGACY_BLOCK_6));
         scn.MoveCardsToTopOfDSReserveDeck(molator, block6, scn.GetDSCard("officer"));
         var remaining = scn.GetDSReserveDeck().stream().filter(c -> c != molator).findFirst().orElseThrow();
