@@ -13,8 +13,11 @@ import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import com.gempukku.swccgo.logic.modifiers.ForceDrainModifier;
 import com.gempukku.swccgo.game.DeckInvalidException;
+import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgCardBlueprintLibrary;
 import com.gempukku.swccgo.game.formats.DefaultSwccgFormat;
+import com.gempukku.swccgo.game.state.GameCommunicationChannel;
+import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.logic.vo.SwccgDeck;
 import org.junit.Test;
 import java.util.ArrayList;
@@ -79,11 +82,23 @@ public class Card_1261_077_Tests {
     @Test
     public void LetsKeepALittleOptimismHereCancelsAnOuneeTaEffectAsItIsPlayed() {
         var scn = ready(true);
-        scn.MoveCardsToLSHand(scn.GetLSCard("ounee"));
+        var ounee = scn.GetLSCard("ounee");
+        var observedZones = new ArrayList<Zone>();
+        scn.MoveCardsToLSHand(ounee);
         scn.SkipToPhase(Phase.DEPLOY);
-        scn.LSPlayCard(scn.GetLSCard("ounee"));
+        scn.game().addGameStateListener(scn.LS, new GameCommunicationChannel(scn.LS, 1) {
+            @Override public void cardCreated(PhysicalCard card, GameState state, boolean restoreSnapshot) {
+                if (card == ounee) observedZones.add(card.getZone());
+            }
+            @Override public void cardMoved(PhysicalCard card, GameState state) {
+                if (card == ounee) observedZones.add(card.getZone());
+            }
+        });
+        scn.LSPlayCard(ounee);
         scn.PassAllResponses();
-        assertTrue(scn.GetLSLostPile().contains(scn.GetLSCard("ounee")));
+        assertTrue(scn.GetLSLostPile().contains(ounee));
+        assertFalse("Ounee Ta entered play before cancellation: " + observedZones,
+                observedZones.stream().anyMatch(Zone::isInPlay));
     }
 
     @Test
