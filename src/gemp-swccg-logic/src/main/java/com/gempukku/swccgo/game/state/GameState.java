@@ -541,10 +541,10 @@ public class GameState implements Snapshotable<GameState> {
         if (newTopOrder == null || newTopOrder.isEmpty()) {
             return true;
         }
-        LocationGroup group = _locationsLayout.findGroupContaining(newTopOrder.get(0));
         boolean result = _locationsLayout.reorderTopLocationsInGroup(_game, filter, newTopOrder);
         if (result) {
-            notifyLocationsReordered(group);
+            // Looked up after the reorder: a filtered rearrange can merge several groups into one.
+            notifyLocationsReordered(_locationsLayout.findGroupContaining(newTopOrder.get(0)));
         }
         return result;
     }
