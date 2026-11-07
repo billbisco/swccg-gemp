@@ -11,6 +11,7 @@ import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.InterruptPersonaReferences;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.GameUtils;
@@ -103,7 +104,7 @@ public class Card1220_062 extends AbstractUsedInterrupt {
                                         @Override
                                         protected void performActionResults(Action targetingAction) {
                                             PhysicalCard finalTarget = action.getPrimaryTargetCard(targetGroupId);
-                                            int amount = GameConditions.canSpot(game, self, Filters.and(Filters.Vader, Filters.presentInBattle)) ? 3 : 2;
+                                            int amount = GameConditions.canSpot(game, self, Filters.and(InterruptPersonaReferences.vader(game, self), Filters.presentInBattle)) ? 3 : 2;
                                             action.appendCost(
                                                     new PlaceCardInUsedPileFromTableEffect(action, finalTarget));
                                             action.appendEffect(

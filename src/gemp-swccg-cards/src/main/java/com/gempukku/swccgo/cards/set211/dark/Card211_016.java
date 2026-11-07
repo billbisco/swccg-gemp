@@ -9,6 +9,7 @@ import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.InterruptPersonaReferences;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.GameUtils;
@@ -23,7 +24,6 @@ import com.gempukku.swccgo.logic.timing.Effect;
 import com.gempukku.swccgo.logic.timing.EffectResult;
 import com.gempukku.swccgo.logic.timing.results.MovedResult;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -44,19 +44,25 @@ public class Card211_016 extends AbstractUsedInterrupt {
 
     @Override
     protected List<PlayInterruptAction> getGameTextOptionalAfterActions(final String playerId, SwccgGame game, EffectResult effectResult, PhysicalCard self) {
-        if (TriggerConditions.movedFromOrThroughLocationToLocation(game, effectResult, Filters.and(Filters.opponents(self), Filters.character), Filters.sameLocationAs(self, Filters.Vader), Filters.location)
-                && GameConditions.canTarget(game, self, Filters.Vader)) {
+        if (TriggerConditions.movedFromOrThroughLocationToLocation(game, effectResult, Filters.and(Filters.opponents(self), Filters.character), Filters.sameLocationAs(self, InterruptPersonaReferences.vader(game, self)), Filters.location)
+                && GameConditions.canTarget(game, self, InterruptPersonaReferences.vader(game, self))) {
 
             MovedResult movedResult = (MovedResult) effectResult;
             if (movedResult.isMoveComplete()) {
                 final PhysicalCard toLocation = movedResult.getMovedTo();
 
-                final PhysicalCard vader = Filters.findFirstActive(game, self, Filters.and(Filters.Vader, Filters.movableAsRegularMoveUsingLandspeed(playerId, false, false, true, 0, null, Filters.sameLocation(toLocation))));
-
-                if (vader != null) {
+                List<PlayInterruptAction> actions = new LinkedList<>();
+                for (final PhysicalCard vader : Filters.filterActive(game, self, Filters.and(
+                        InterruptPersonaReferences.vader(game, self), Filters.canBeTargetedBy(self),
+                        Filters.movableAsRegularMoveUsingLandspeed(playerId, false, false, true, 0, null, Filters.sameLocation(toLocation))))) {
+                    if (!TriggerConditions.movedFromOrThroughLocationToLocation(game, effectResult,
+                            Filters.and(Filters.opponents(self), Filters.character),
+                            Filters.sameLocation(vader), Filters.location)) {
+                        continue;
+                    }
                     PhysicalCard cardToFollow = movedResult.getMovedCards().iterator().next();
                     final PlayInterruptAction action = new PlayInterruptAction(game, self);
-                    action.setText("Follow " + GameUtils.getFullName(cardToFollow));
+                    action.setText("Follow " + GameUtils.getFullName(cardToFollow) + " with " + GameUtils.getFullName(vader));
                     action.setActionMsg("Follow " + GameUtils.getCardLink(cardToFollow) + " for free using landspeed");
 
                     action.allowResponses(new RespondablePlayCardEffect(action) {
@@ -68,8 +74,9 @@ public class Card211_016 extends AbstractUsedInterrupt {
                         }
                     });
 
-                    return Collections.singletonList(action);
+                    actions.add(action);
                 }
+                return actions;
             }
         }
 
@@ -82,7 +89,7 @@ public class Card211_016 extends AbstractUsedInterrupt {
 
         // Check condition(s)
         if (GameConditions.canTargetToCancel(game, self, Filters.Its_A_Trap)
-                && GameConditions.isDuringBattleWithParticipant(game, Filters.Vader)) {
+                && GameConditions.isDuringBattleWithParticipant(game, InterruptPersonaReferences.vader(game, self))) {
 
             final PlayInterruptAction action = new PlayInterruptAction(game, self);
             // Build action using common utility
@@ -92,7 +99,7 @@ public class Card211_016 extends AbstractUsedInterrupt {
 
         // Check condition(s)
         if (GameConditions.canTargetToCancel(game, self, Filters.Dodge)
-                && GameConditions.isDuringBattleWithParticipant(game, Filters.Vader)) {
+                && GameConditions.isDuringBattleWithParticipant(game, InterruptPersonaReferences.vader(game, self))) {
 
             final PlayInterruptAction action = new PlayInterruptAction(game, self);
             // Build action using common utility
@@ -102,7 +109,7 @@ public class Card211_016 extends AbstractUsedInterrupt {
 
         // Check condition(s)
         if (GameConditions.canTargetToCancel(game, self, Filters.ObiWans_Journal)
-                && GameConditions.isDuringBattleWithParticipant(game, Filters.Vader)) {
+                && GameConditions.isDuringBattleWithParticipant(game, InterruptPersonaReferences.vader(game, self))) {
 
             final PlayInterruptAction action = new PlayInterruptAction(game, self);
             // Build action using common utility
@@ -111,7 +118,7 @@ public class Card211_016 extends AbstractUsedInterrupt {
         }
 
         // Check condition(s)
-        if (GameConditions.isDuringBattleWithParticipant(game, Filters.and(Filters.Vader, Filters.alone))) {
+        if (GameConditions.isDuringBattleWithParticipant(game, Filters.and(InterruptPersonaReferences.vader(game, self), Filters.alone))) {
             final int count = Filters.countActive(game, self, Filters.and(Filters.character, Filters.participatingInBattle));
             if (count > 0) {
 
@@ -142,7 +149,7 @@ public class Card211_016 extends AbstractUsedInterrupt {
         // Check condition(s)
         if (TriggerConditions.isPlayingCard(game, effect, Filters.or(Filters.Its_A_Trap, Filters.Dodge, Filters.ObiWans_Journal))
                 && GameConditions.canCancelCardBeingPlayed(game, self, effect)
-                && GameConditions.isDuringBattleWithParticipant(game, Filters.Vader)) {
+                && GameConditions.isDuringBattleWithParticipant(game, InterruptPersonaReferences.vader(game, self))) {
 
             PlayInterruptAction action = new PlayInterruptAction(game, self);
             // Build action using common utility

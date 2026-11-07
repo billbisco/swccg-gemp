@@ -10,6 +10,7 @@ import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.InterruptPersonaReferences;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.actions.PlayInterruptAction;
@@ -41,7 +42,7 @@ public class Card1292_003 extends AbstractLostInterrupt {
         Filter opponentsCharacterOfAbilityMoreThan2 = Filters.and(Filters.owner(opponent), Filters.character, Filters.abilityMoreThan(2));
 
         // Check condition(s)
-        if (GameConditions.isDuringBattleWithParticipant(game, Filters.and(Filters.owner(playerId), Filters.Vader))
+        if (GameConditions.isDuringBattleWithParticipant(game, Filters.and(Filters.owner(playerId), InterruptPersonaReferences.vader(game, self)))
                 && GameConditions.isDuringBattleWithParticipant(game, opponentsCharacterOfAbilityMoreThan2)
                 && GameConditions.canAddBattleDestinyDraws(game, self)) {
 

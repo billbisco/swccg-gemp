@@ -11,6 +11,7 @@ import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.InterruptPersonaReferences;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.GameUtils;
@@ -74,7 +75,7 @@ public class Card11_033 extends AbstractUsedOrLostInterrupt {
             actions.add(action);
         }
 
-        Filter vaderFilter = Filters.Vader;
+        Filter vaderFilter = InterruptPersonaReferences.vader(game, self);
 
         // Check condition(s)
         if (GameConditions.canUseForceToPlayInterrupt(game, playerId, self, 4)

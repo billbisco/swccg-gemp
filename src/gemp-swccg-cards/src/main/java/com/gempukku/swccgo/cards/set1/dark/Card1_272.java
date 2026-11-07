@@ -9,6 +9,7 @@ import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.InterruptPersonaReferences;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.actions.PlayInterruptAction;
@@ -37,7 +38,7 @@ public class Card1_272 extends AbstractLostInterrupt {
     @Override
     protected List<PlayInterruptAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self) {
         List<PlayInterruptAction> actions = new LinkedList<PlayInterruptAction>();
-        final Filter filter = Filters.or(Filters.Vader, Filters.Tarkin, Filters.Motti, Filters.Tagge);
+        final Filter filter = Filters.or(InterruptPersonaReferences.vader(game, self), Filters.Tarkin, Filters.Motti, Filters.Tagge);
 
         GameTextActionId gameTextActionId = GameTextActionId.THE_EMPIRES_BACK__RETRIEVE_VADER_TARKIN_MOTTI_OR_TAGGE;
 

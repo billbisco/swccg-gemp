@@ -14,6 +14,7 @@ import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.InterruptPersonaReferences;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.GameUtils;
@@ -40,8 +41,10 @@ import com.gempukku.swccgo.logic.timing.EffectResult;
 import com.gempukku.swccgo.logic.timing.GuiUtils;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -82,9 +85,9 @@ public class Card601_098 extends AbstractUsedOrLostInterrupt {
         List<PlayInterruptAction> actions = new LinkedList<>();
 
         boolean mayTreatVaderAsGalen = game.getModifiersQuerying().hasGameTextModification(game.getGameState(), self, ModifyGameTextType.LEGACY__THE_EMPIRES_BACK__VADER_MAY_BE_TREATED_AS_GALEN);
-        Filter vaderFilter = Filters.Vader;
+        Filter vaderFilter = InterruptPersonaReferences.vader(game, self);
         if (mayTreatVaderAsGalen) {
-            vaderFilter = Filters.or(Filters.Vader, Filters.Galen);
+            vaderFilter = Filters.or(InterruptPersonaReferences.vader(game, self), Filters.Galen);
         }
 
         //Cancel Disarmed (if it's on table)
@@ -151,9 +154,11 @@ public class Card601_098 extends AbstractUsedOrLostInterrupt {
         gameTextActionId = GameTextActionId.LEGACY__WEAPON_LEVITATION_THE_EMPIRES_BACK__DEPLOY_OR_RETRIEVE_VADER;
         final Filter searchFilter = Filters.and(vaderFilter);
 
+        Set<Persona> deployPersonas = new HashSet<>(InterruptPersonaReferences.vaderPersonas(game, self));
+        if (mayTreatVaderAsGalen)
+            deployPersonas.add(Persona.GALEN);
         if (GameConditions.canUseForceToPlayInterrupt(game, playerId, self, 1)
-            && (GameConditions.canDeployCardFromReserveDeck(game, playerId, self, gameTextActionId, Persona.VADER)
-            || (mayTreatVaderAsGalen && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, gameTextActionId, Persona.GALEN)))) {
+            && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, gameTextActionId, deployPersonas)) {
 
             String text = "Deploy Vader from Reserve Deck";
             if (mayTreatVaderAsGalen)
@@ -211,9 +216,9 @@ public class Card601_098 extends AbstractUsedOrLostInterrupt {
     @Override
     protected List<PlayInterruptAction> getGameTextOptionalAfterActions(final String playerId, SwccgGame game, final EffectResult effectResult, final PhysicalCard self) {
         boolean mayTreatVaderAsGalen = game.getModifiersQuerying().hasGameTextModification(game.getGameState(), self, ModifyGameTextType.LEGACY__THE_EMPIRES_BACK__VADER_MAY_BE_TREATED_AS_GALEN);
-        Filter vaderFilter = Filters.Vader;
+        Filter vaderFilter = InterruptPersonaReferences.vader(game, self);
         if (mayTreatVaderAsGalen) {
-            vaderFilter = Filters.or(Filters.Vader, Filters.Galen);
+            vaderFilter = Filters.or(InterruptPersonaReferences.vader(game, self), Filters.Galen);
         }
 
         final String opponent = game.getOpponent(playerId);

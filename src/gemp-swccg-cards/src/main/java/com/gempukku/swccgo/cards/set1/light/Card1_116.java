@@ -10,6 +10,7 @@ import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.InterruptPersonaReferences;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.GameUtils;
@@ -66,7 +67,7 @@ public class Card1_116 extends AbstractLostInterrupt {
                                             @Override
                                             protected void cardTargeted(final int targetGroupId2, PhysicalCard targetedImperial) {
                                                 action.addAnimationGroup(targetedLuke, targetedImperial);
-                                                int numToAdd = Filters.Vader.accepts(game, targetedImperial) ? 2 : 1;
+                                                int numToAdd = InterruptPersonaReferences.vader(game, self).accepts(game, targetedImperial) ? 2 : 1;
                                                 // Allow response(s)
                                                 action.allowResponses("Add " + numToAdd + " battle destiny by targeting " + GameUtils.getAppendedNames(Arrays.asList(targetedLuke, targetedImperial)),
                                                         new RespondablePlayCardEffect(action) {
@@ -75,7 +76,7 @@ public class Card1_116 extends AbstractLostInterrupt {
                                                                 // Get the final targeted card(s)
                                                                 final PhysicalCard finalImperial = targetingAction.getPrimaryTargetCard(targetGroupId2);
                                                                 // Perform result(s)
-                                                                int finalNumToAdd = Filters.Vader.accepts(game, finalImperial) ? 2 : 1;
+                                                                int finalNumToAdd = InterruptPersonaReferences.vader(game, self).accepts(game, finalImperial) ? 2 : 1;
                                                                 action.appendEffect(
                                                                         new AddBattleDestinyEffect(action, finalNumToAdd));
                                                             }
