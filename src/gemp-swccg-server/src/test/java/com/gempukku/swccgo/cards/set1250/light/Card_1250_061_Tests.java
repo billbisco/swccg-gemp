@@ -166,7 +166,14 @@ public class Card_1250_061_Tests {
     @Test
     public void WesaReadySaveAllowanceResetsOnNextTurn() {
         var scn = scenario(); setupLoss(scn); lightning(scn, "lightning", "gungan"); save(scn);
-        scn.SkipToLSTurn(Phase.CONTROL); scn.SkipToDSTurn(Phase.CONTROL);
+        try {
+            scn.SkipToLSTurn(Phase.CONTROL); scn.SkipToDSTurn(Phase.CONTROL);
+        }
+        catch (RuntimeException failure) {
+            throw new AssertionError("Reset transition: player=" + scn.gameState().getCurrentPlayerId()
+                    + ", phase=" + scn.gameState().getCurrentPhase() + ", decision="
+                    + (scn.GetCurrentDecision() == null ? "none" : scn.GetCurrentDecision().getText()), failure);
+        }
         lightning(scn, "lightning3", "ewok"); save(scn); assertTrue(scn.GetLSUsedPile().contains(scn.GetLSCard("ewok")));
     }
     @Test
