@@ -26,7 +26,10 @@ import java.util.List;
 public class Card1263_022 extends AbstractRepublic {
     private static final GameTextActionId REARRANGE = GameTextActionId.LEGACY__GENERAL_SOLOMAHAL__REARRANGE_SITES;
     private static final GameTextActionId ADD_DESTINY = GameTextActionId.OTHER_CARD_ACTION_1;
-    private static final Filter FLAGSHIP_SITES = Filters.siteOfStarshipOrVehicle(Persona.BLOCKADE_FLAGSHIP, false);
+    // Rearranged sites must still follow the location deployment pattern (Retract The Bridge ruling), so the
+    // Docking Bay stays at the end and only the interior Blockade Flagship sites (one layout group) are rearranged.
+    private static final Filter FLAGSHIP_SITES = Filters.and(Filters.interior_site, Filters.not(Filters.exterior_site),
+            Filters.siteOfStarshipOrVehicle(Persona.BLOCKADE_FLAGSHIP, false));
     private static final Filter BLOCK_FIVE_PALPATINE = Filters.and(Icon.LEGACY_BLOCK_5, Filters.Palpatine);
 
     public Card1263_022() {
@@ -45,7 +48,7 @@ public class Card1263_022 extends AbstractRepublic {
             return null;
         }
         TopLevelGameTextAction action = new TopLevelGameTextAction(self, gameTextSourceCardId, REARRANGE);
-        action.setText("Rearrange all Blockade Flagship sites");
+        action.setText("Rearrange Blockade Flagship interior sites");
         action.appendUsage(new OncePerGameEffect(action));
         action.appendEffect(new ChooseAndRearrangeRelatedSitesEffect(action, playerId, FLAGSHIP_SITES));
         return List.of(action);

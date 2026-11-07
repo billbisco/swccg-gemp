@@ -296,38 +296,6 @@ public class LocationGroup implements Snapshotable<LocationGroup> {
     }
 
     /**
-     * Replaces this group's stacks with the given stacks (which may come from other groups
-     * of the same layout), in the given left-to-right order. Between-sites cards from
-     * oldGaps are rebound as for reorderStacks.
-     * @param stacksInNewOrder the location stacks, left to right
-     * @param oldTops the previous left-to-right tops of all the stacks
-     * @param oldGaps the previous gaps between oldTops (gap i sits between oldTops i and i+1)
-     */
-    public void replaceStacks(List<List<PhysicalCard>> stacksInNewOrder, List<PhysicalCard> oldTops, List<List<PhysicalCard>> oldGaps) {
-        _cardsInGroup.clear();
-        _cardsInGroup.addAll(stacksInNewOrder);
-        rebindGapsAfterReorder(oldTops, oldGaps);
-    }
-
-    /**
-     * Replaces the filter for locations that belong to this group (used when groups are merged by a rearrange,
-     * so later deployments go to the group that now holds those sites).
-     * @param filters the new filter
-     */
-    void setFilters(Filter filters) {
-        _filters = filters;
-    }
-
-    /**
-     * Removes every location stack and gap from this group (used when its stacks are
-     * merged into another group).
-     */
-    public void clearLocations() {
-        _cardsInGroup.clear();
-        _betweenGaps.clear();
-    }
-
-    /**
      * After a stack permutation, put each old gap's cards on the first hop from
      * the left-er of that pair toward the right-er in the new order.
      */
