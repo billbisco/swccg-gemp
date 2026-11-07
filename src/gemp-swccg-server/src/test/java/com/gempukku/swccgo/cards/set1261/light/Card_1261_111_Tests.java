@@ -8,6 +8,7 @@ import com.gempukku.swccgo.framework.VirtualTableScenario;
 import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import static com.gempukku.swccgo.framework.Assertions.*;
 import static org.junit.Assert.*;
@@ -89,6 +90,16 @@ public class Card_1261_111_Tests {
     @Test public void EchoCommandCenterSearchHasNoInventedOncePerTurnLimit() {
         var scn = search(2, true, Phase.CONTROL, true); takePoint(scn, "point");
         scn.DSPass(); takePoint(scn, "point2"); assertEquals(0, scn.GetLSForcePileCount());
+    }
+    @Test public void EchoCommandCenterSearchActuallyReshufflesRemainingReserveDeck() {
+        var scn = search(1, true, Phase.CONTROL, true); var revealed = scn.GetLSCard("rebel");
+        scn.MoveCardsToTopOfLSReserveDeck(revealed);
+        scn.gameState().markCardsRevealedFromPile(Collections.singletonList(revealed));
+        assertTrue(scn.gameState().isCardRevealedFromPile(revealed));
+        takePoint(scn, "point");
+        assertInZone(Zone.RESERVE_DECK, revealed);
+        // Shuffling ends revealed-state even for cards that remain in the deck.
+        assertFalse(scn.gameState().isCardRevealedFromPile(revealed));
     }
     @Test public void EchoCommandCenterSearchWorksDuringOwnMovePhase() {
         var scn = search(1, true, Phase.MOVE, true); takePoint(scn, "point"); assertEquals(0, scn.GetLSForcePileCount());
