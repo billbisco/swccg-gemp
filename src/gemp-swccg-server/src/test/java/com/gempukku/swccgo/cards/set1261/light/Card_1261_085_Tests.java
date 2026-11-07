@@ -13,11 +13,11 @@ import static org.junit.Assert.*;
 public class Card_1261_085_Tests {
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>() {{
-            put("return", "1261_85"); put("luke", "1_19"); put("leia", "1_17"); put("obi", "1_21");
+            put("return", "1261_85"); put("luke", "1_19"); put("leia", "1_17"); put("obi", "1_21"); put("jedi", "9_24");
             put("remote", "1_136"); put("normalImmediate", "1106_11"); put("system", "2_65");
         }}, new HashMap<>() {{
             put("sidious", "14_78"); put("emperor", "1230_19"); put("ordinaryEmperor", "9_109"); put("trooper", "1_194");
-            put("lightning", "9_136"); put("gravel", "1_247"); put("mos", "1_295"); put("control", "4_139"); put("tie", "1_304");
+            put("lightning", "9_136"); put("vader", "9_113"); put("mos", "1_295"); put("control", "4_139"); put("tie", "1_304");
         }}, 60, 60, StartingSetup.LSStartingLocation("1_129"), StartingSetup.DefaultDSSpaceSystem,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -91,21 +91,21 @@ public class Card_1261_085_Tests {
         assertEquals(3, scn.GetPower(scn.GetLSCard("luke")));
     }
     private VirtualTableScenario sidiousLoss(boolean protect) {
-        var scn = host("sidious", false); if (protect) deployOn(scn, "sidious");
-        scn.MoveCardsToLocation(scn.GetDSCard("mos"), scn.GetLSCard("obi")); scn.MoveCardsToDSHand(scn.GetDSCard("gravel"));
-        scn.SkipToDSTurn(Phase.CONTROL); scn.PrepareDSDestiny(7);
-        scn.DSPlayCard(scn.GetDSCard("gravel")); scn.DSChooseCard(scn.GetLSCard("obi"));
-        scn.PassCardAndForceUseResponses(); scn.PassDestinyDrawResponses(); scn.PassResponses("ABOUT_TO_BE_LOST");
-        assertInZone(Zone.LOST_PILE, scn.GetLSCard("obi")); return scn;
+        var scn = started(); scn.MoveCardsToLocation(scn.GetDSCard("mos"), scn.GetDSCard("sidious"));
+        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetLSCard("jedi"), scn.GetDSCard("vader"));
+        scn.SkipToLSTurn(Phase.CONTROL); if (protect) deployOn(scn, "sidious");
+        scn.SkipToDSTurn(Phase.BATTLE); scn.DSInitiateBattle(scn.GetLSStartingLocation()); scn.SkipToDamageSegment(false);
+        assertTrue(scn.DSWonBattle()); assertTrue(scn.AwaitingLSBattleDamagePayment());
+        scn.LSChooseCard(scn.GetLSCard("jedi")); assertInZone(Zone.LOST_PILE, scn.GetLSCard("jedi")); return scn;
     }
     @Test public void ReturnOnSidiousBlocksHisActualJustLostJediOutOfPlayAction() {
         var scn = sidiousLoss(true); assertFalse(scn.GetDSAvailableActions().stream().anyMatch(x -> x.contains("out of play")));
-        assertInZone(Zone.LOST_PILE, scn.GetLSCard("obi"));
+        assertInZone(Zone.LOST_PILE, scn.GetLSCard("jedi"));
     }
     @Test public void ReturnAbsentSameSidiousCanActuallyPlaceJediOutOfPlay() {
         var scn = sidiousLoss(false); scn.DSUseCardAction(scn.GetDSCard("sidious"), "out of play");
         scn.PassAllResponses(); scn.DSChooseCard(scn.GetTopOfDSReserveDeck());
-        scn.PassAllResponses(); assertInZone(Zone.OUT_OF_PLAY, scn.GetLSCard("obi"));
+        scn.PassAllResponses(); assertInZone(Zone.OUT_OF_PLAY, scn.GetLSCard("jedi"));
     }
     @Test public void ReturnImmuneToActualControlWithOrdinaryImmediateEffectAsControl() {
         var scn = host("emperor", false); deployOn(scn, "emperor");
