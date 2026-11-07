@@ -27,7 +27,7 @@ public class Card_1250_044_Tests {
         return new VirtualTableScenario(new HashMap<>() {{
             put("qui", "1250_44"); put("chamber", "12_76"); put("naboo", "12_83");
             put("credits", "12_42"); put("episode", "12_68"); put("control", "12_57");
-            put("oldInterrupt", "1_109"); put("token", "1_17"); put("luke", "1_19");
+            put("oldInterrupt", "1_109"); put("token", "1_17"); put("otherToken", "1_28"); put("luke", "1_19");
             put("quiWeapon", "11_49"); put("lukeWeapon", "9_90");
         }}, new HashMap<>() {{
             put("search", "8_131"); put("vader", "1_168"); put("trooper", "1_194");
@@ -83,7 +83,7 @@ public class Card_1250_044_Tests {
         s.MoveCardsToLocation(s.GetLSStartingLocation(), s.GetDSCard("trooper"));
         s.MoveCardsToDSSideOfTable(s.GetDSCard("search"));
         if (credits) s.MoveCardsToLSSideOfTable(s.GetLSCard("credits"));
-        s.MoveCardsToHand(s.GetLSCard("token"));
+        s.MoveCardsToHand(s.GetLSCard("token"), s.GetLSCard("otherToken"));
         assertEquals(s.DS, s.GetCurrentPlayer());
         s.SkipToPhase(Phase.DRAW);
         assertTrue(s.GetCurrentDecision().getText(), s.AwaitingDSDrawPhaseActions());
@@ -126,9 +126,10 @@ public class Card_1250_044_Tests {
     public void OpponentEffectLossMayStackFromHandInsteadOfUploading() {
         var s = lossToEffect(true); var token = s.GetLSCard("token"); var credits = s.GetLSCard("credits");
         s.LSUseCardAction(s.GetLSCard("qui"), STACK); s.PassAllResponses();
-        assertTrue(s.LSDecisionAvailable("to stack"));
+        assertTrue(s.GetCurrentDecision().getText(), s.LSDecisionAvailable("to stack"));
         s.LSChooseCard(token); s.PassAllResponses();
         assertEquals(credits, token.getStackedOn());
+        assertTrue(s.GetLSHand().contains(s.GetLSCard("otherToken")));
         assertFalse(s.GetLSHand().contains(token));
         assertTrue(s.GetLSReserveDeck().contains(s.GetLSCard("episode")));
         assertFalse(action(s, UPLOAD));
@@ -211,6 +212,7 @@ public class Card_1250_044_Tests {
             String prompt = s.GetCurrentDecision().getText();
             if (s.DSDecisionAvailable("card from battle to forfeit")) s.DSChooseCard(s.GetDSCard("vader"));
             else if (s.AwaitingLSBattleDamagePayment()) s.LSChooseCard(s.GetTopOfLSReserveDeck());
+            else if (s.LSDecisionAvailable("forfeit (if desired)")) s.LSChooseCards();
             else {
                 assertTrue("Qui-Gon should not be required to forfeit: " + prompt,
                         prompt.contains("Optional responses") || prompt.contains("action to play or Pass"));
