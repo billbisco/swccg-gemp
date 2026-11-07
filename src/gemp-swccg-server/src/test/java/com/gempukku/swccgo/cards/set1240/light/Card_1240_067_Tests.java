@@ -119,8 +119,11 @@ public class Card_1240_067_Tests {
         var scn = Started();
         scn.MoveCardsToLocation(scn.GetLSCard("docking"), scn.GetLSCard("chewie"));
         scn.SkipToLSTurn(Phase.ACTIVATE);
+        // Held aside while the Force Pile is set, so that none of them is counted as Force.
+        scn.MoveCardsToLSHand(scn.GetLSCard("boushh"), scn.GetLSCard("ax"), scn.GetLSCard("lando"));
         LeaveActivateWithForce(scn, true, force);
         scn.MoveCardsToTopOfLSReserveDeck(scn.GetLSCard("boushh"), scn.GetLSCard("ax"), scn.GetLSCard("lando"));
+        assertEquals(force, scn.GetLSForcePileCount());
         scn.SkipToPhase(phase);
         return scn;
     }
