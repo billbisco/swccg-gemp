@@ -485,4 +485,5 @@ public enum ModifierType {
     ALIGN_ATTEMPT,
     LIBERATED_SYSTEM,
     LIMIT_FORCE_DRAIN_BONUSES,
+    MAY_NOT_GO_MISSING,
 }
