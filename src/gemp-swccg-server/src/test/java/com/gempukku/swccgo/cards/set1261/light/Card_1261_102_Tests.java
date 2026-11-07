@@ -26,4 +26,9 @@ public class Card_1261_102_Tests extends SoloDefenseTestSupport {
         var scn = battle("inverse", true, true);
         assertFalse(scn.GetLSAvailableActions().stream().anyMatch(x -> x.contains(PROTECT)));
     }
+
+    @Test public void warriorCourageAddsNoSecondBattleDestinyWhenLeiaCanAlreadyDrawOne() {
+        nativeDraws("daughter", false, true);
+        nativeDraws("daughter", true, true);
+    }
 }
