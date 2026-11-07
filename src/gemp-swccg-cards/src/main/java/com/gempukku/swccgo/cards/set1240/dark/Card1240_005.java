@@ -56,7 +56,9 @@ public class Card1240_005 extends AbstractImperial {
     @Override
     protected List<RequiredGameTextTriggerAction> getGameTextRequiredAfterTriggers(
             SwccgGame game, EffectResult result, PhysicalCard self, int gameTextSourceCardId) {
-        if (!TriggerConditions.isTableChanged(game, result)) {
+        if (!TriggerConditions.isTableChanged(game, result)
+                && !TriggerConditions.justDeployed(game, result, self)
+                && !TriggerConditions.justDeployed(game, result, Filters.and(Filters.your(self), Filters.starship, Icon.INDEPENDENT))) {
             return null;
         }
         Collection<PhysicalCard> ships = Filters.filterActive(game, self,
