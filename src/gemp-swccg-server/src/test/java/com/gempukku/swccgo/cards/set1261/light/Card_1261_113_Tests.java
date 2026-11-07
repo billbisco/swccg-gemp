@@ -19,7 +19,7 @@ public class Card_1261_113_Tests {
             put("wookiee", "7_50"); put("wookiee2", "7_50"); put("wookiee3", "7_50"); put("wookiee4", "7_50");
             put("luke", "1_19"); put("trooper", "1_28"); put("speeder", "3_69"); put("ship", "12_91");
             put("sacred", "1116_16"); put("haven", "1116_17");
-            put("kashyyyk", "2_64"); put("falcon", "1_143"); put("safeSite", "1_136");
+            put("kashyyyk", "2_64"); put("tarfful", "1272_18"); put("falcon", "1_143"); put("safeSite", "1_136");
         }}, new HashMap<>() {{
             put("skyhook", "601_14"); put("vader", "1_168"); put("walker", "3_156"); put("shuttle", "7_309"); put("tie", "1_304");
         }}, 50, 50, StartingSetup.LSStartingLocation("1261_113"), StartingSetup.DefaultDSGroundLocation,
@@ -135,4 +135,49 @@ public class Card_1261_113_Tests {
     @Test public void KashyyykForestDepthsRejectsDarkSideVehicleDeployment() { deployment(false, false); }
     @Test public void KashyyykForestDepthsRejectsLightSideStarshipDeployment() { deployment(true, true); }
     @Test public void KashyyykForestDepthsRejectsDarkSideStarshipDeployment() { deployment(false, true); }
+
+    // Tarfful, Wookiee Insurgent (1272_18): "Occupy on Forest Depths is treated as 'control.'"
+    private VirtualTableScenario tarfful_battle(boolean tarffulOnTable) {
+        var scn = scenario(); scn.StartGame(); var forest = scn.GetLSStartingLocation();
+        var sacred = scn.GetLSCard("sacred"); scn.MoveLocationToTable(sacred);
+        scn.MoveCardsToLocation(sacred, scn.GetLSCard("wookiee"));
+        scn.MoveCardsToLocation(forest, scn.GetLSCard("luke"), scn.GetDSCard("vader"),
+                scn.GetLSCard(tarffulOnTable ? "tarfful" : "wookiee2"));
+        scn.SkipToLSTurn(Phase.BATTLE); scn.PrepareLSDestiny(0); scn.PrepareDSDestiny(0);
+        scn.LSInitiateBattle(forest); scn.PassAllResponses(); scn.SkipToDamageSegment(true);
+        return scn;
+    }
+
+    @Test
+    public void KashyyykForestDepthsWithTarffulCountsOnlyControlledKashyyykLocations() {
+        //test1: with Tarfful on table, the contested battle site (occupied, not controlled) no longer counts;
+        //the uncontrolled-by-opponent site with a Wookiee still does.
+        var scn = tarfful_battle(true);
+        assertEquals(1, scn.GetUnpaidDSAttrition()); //test1
+    }
+
+    @Test
+    public void KashyyykForestDepthsWithoutTarffulCountsContestedOccupiedLocation() {
+        //test1: same board with a plain Wookiee instead of Tarfful: both occupied locations count.
+        var scn = tarfful_battle(false);
+        assertEquals(2, scn.GetUnpaidDSAttrition()); //test1
+    }
+
+    private void tarfful_generation(boolean tarffulOnTable, boolean contested) {
+        var scn = scenario(); scn.StartGame(); var forest = scn.GetLSStartingLocation();
+        var sacred = scn.GetLSCard("sacred"); scn.MoveLocationToTable(sacred);
+        if (tarffulOnTable) scn.MoveCardsToLocation(sacred, scn.GetLSCard("tarfful"));
+        scn.MoveCardsToLocation(forest, scn.GetDSCard("vader"));
+        if (contested) scn.MoveCardsToLocation(forest, scn.GetLSCard("trooper"));
+        int expected = (tarffulOnTable && contested) ? 0 : 1;
+        assertEquals(expected,
+                scn.game().getModifiersQuerying().getForceGenerationFromLocation(scn.gameState(), forest, scn.DS), scn.epsilon);
+        scn.SkipToDSTurn(Phase.ACTIVATE); int before = scn.GetDSForcePileCount();
+        // 2 from the DS starting site and Forest Depths icons, +1 from the added Kashyyyk site.
+        assertEquals(3 + expected, scn.DSActivateMaxForceAndPass());
+        assertEquals(before + 3 + expected, scn.GetDSForcePileCount());
+    }
+    @Test public void KashyyykForestDepthsWithTarffulCancelsContestedDarkSideGeneration() { tarfful_generation(true, true); }
+    @Test public void KashyyykForestDepthsWithTarffulKeepsControlledDarkSideGeneration() { tarfful_generation(true, false); }
+    @Test public void KashyyykForestDepthsWithoutTarffulKeepsContestedDarkSideGeneration() { tarfful_generation(false, true); }
 }

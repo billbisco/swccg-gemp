@@ -18802,6 +18802,20 @@ public class Filters {
     public static final Filter holocron = Filters.and(Filters.device, Filters.titleContains("holocron"));
     public static final Filter hologram = Filters.keyword(Keyword.HOLOGRAM);
     public static final Filter holosite = Filters.keyword(Keyword.HOLOSITE);
+
+    /**
+     * Filter that accepts locations that the game text of the specified card does not ignore.
+     * @param card the card whose game text is checked
+     * @return Filter
+     */
+    public static Filter notIgnoredByGameTextOf(final PhysicalCard card) {
+        return new Filter() {
+            @Override
+            public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard location) {
+                return !modifiersQuerying.isLocationIgnoredByGameTextOf(gameState, card, location);
+            }
+        };
+    }
     public static final Filter Holotheatre = Filters.title(Title.Holotheatre);
     public static final Filter Home_One = Filters.persona(Persona.HOME_ONE);
     public static final Filter Honor_Of_The_Jedi = Filters.title(Title.Honor_Of_The_Jedi);

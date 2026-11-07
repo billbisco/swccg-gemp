@@ -14,6 +14,23 @@ import java.util.*;
 public interface Locations extends BaseQuery, Flags, Icons, Presence, Podracing {
 
     /**
+     * Determines if the game text of the specified card ignores the specified location.
+     *
+     * @param gameState the game state
+     * @param card      the card whose game text is checked
+     * @param location  the location
+     * @return true if an active modifier causes the card's game text to ignore the location, otherwise false
+     */
+    default boolean isLocationIgnoredByGameTextOf(GameState gameState, PhysicalCard card, PhysicalCard location) {
+        for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.IGNORES_LOCATIONS_IN_GAME_TEXT, card)) {
+            if (((IgnoresLocationsInGameTextModifier) modifier).getLocationFilter().accepts(gameState, (ModifiersQuerying) this, location)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Determines if the two specified cards are adjacent sectors.
      *
      * @param gameState the game state

@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.set8.light;
 
+import com.gempukku.swccgo.cards.AimHighRules;
 import com.gempukku.swccgo.cards.AbstractNormalEffect;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.conditions.FiredWeaponsInBattleCondition;
@@ -58,7 +59,7 @@ public class Card8_034 extends AbstractNormalEffect {
 
         // Check condition(s)
         if (TriggerConditions.isAboutToRetrieveForce(game, effectResult, opponent)) {
-            final float amountOfForce = ((AboutToRetrieveForceResult) effectResult).getAmountOfForceToRetrieve();
+            final float amountOfForce = AimHighRules.forceToUse(game, self, opponent, (AboutToRetrieveForceResult) effectResult);
 
             final RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
             action.setText("Use Force or cancel retrieval");

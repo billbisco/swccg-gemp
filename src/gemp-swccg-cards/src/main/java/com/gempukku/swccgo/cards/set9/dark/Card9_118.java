@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.set9.dark;
 
+import com.gempukku.swccgo.cards.set1261.dark.Card1261_038;
 import com.gempukku.swccgo.cards.AbstractImperial;
 import com.gempukku.swccgo.cards.conditions.ArmedWithCondition;
 import com.gempukku.swccgo.common.ExpansionSet;
@@ -39,7 +40,7 @@ public class Card9_118 extends AbstractImperial {
 
     @Override
     protected Filter getGameTextValidDeployTargetFilter(final SwccgGame game, final PhysicalCard self, PlayCardOptionId playCardOptionId, boolean asReact) {
-        return Filters.or(Filters.Deploys_on_Coruscant, Filters.locationAndCardsAtLocation(Filters.sameOrRelatedSiteAs(self, Filters.Emperor)));
+        return Filters.or(Filters.Deploys_on_Coruscant, Filters.locationAndCardsAtLocation(Filters.sameOrRelatedSiteAs(self, Card1261_038.emperorOnRoyalGuard(self))));
     }
 
     @Override
