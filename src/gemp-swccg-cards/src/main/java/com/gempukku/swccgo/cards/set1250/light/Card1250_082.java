@@ -67,7 +67,7 @@ public class Card1250_082 extends AbstractObjective {
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, PhysicalCard self) {
         return List.of(new DeployCostToLocationModifier(self, Filters.Yoda, -3, Filters.Jedi_Council_Chamber),
-                new ForceDrainModifier(self, -1, self.getOwner()));
+                new ForceDrainModifier(self, Filters.location, -1, self.getOwner()));
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.gempukku.swccgo.cards.set1250.light;
 
 import com.gempukku.swccgo.common.*;
+import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import com.gempukku.swccgo.game.PhysicalCardImpl;
@@ -69,9 +70,19 @@ public class Card_1250_082_Tests {
     }
 
     private void deployAt(VirtualTableScenario s, PhysicalCardImpl card, PhysicalCardImpl site) {
+        waitForLightDeploy(s);
         assertTrue(s.LSDeployAvailable(card)); s.LSDeployCard(card);
         if (s.LSDecisionAvailable("Choose where to deploy")) s.LSChooseCard(site);
         s.PassAllResponses(); assertEquals(site, card.getAtLocation());
+    }
+
+    private void waitForLightDeploy(VirtualTableScenario s) {
+        for (int i = 0; i < 8 && !s.AwaitingLSDeployPhaseActions(); i++) {
+            if (s.AwaitingDSDeployPhaseActions()) s.DSPass();
+            else if (s.GetCurrentDecision().getText().contains("Optional responses")) s.PlayerPass(s.GetDecidingPlayer());
+            else break;
+        }
+        assertTrue(s.AwaitingLSDeployPhaseActions());
     }
 
     private void stageFlip(VirtualTableScenario s, boolean twoOtherJedi) {
@@ -112,6 +123,7 @@ public class Card_1250_082_Tests {
         assertTrue(s.LSDeployAvailable(s.GetLSCard("plo")));
         deployAt(s, s.GetLSCard("yoda"), s.GetLSCard("chamber"));
         assertTrue(s.GetLSCard("objective").isFlipped());
+        waitForLightDeploy(s);
         for (var blocked : List.of(affect, senate, luke, newRepublic, home)) {
             assertFalse(blocked.getBlueprint().getTitle(), s.LSDeployAvailable(blocked));
         }
@@ -198,11 +210,16 @@ public class Card_1250_082_Tests {
         s.MoveCardsToHand(plains, cantina); fund(s, 8); s.SkipToLSTurn(Phase.DEPLOY);
         deployAt(s, s.GetLSCard("yoda"), chamber); assertTrue(objective.isFlipped());
         s.MoveCardsToLocation(away, s.GetLSCard("depa"), s.GetLSCard("mace"));
+        waitForLightDeploy(s);
         s.LSDeployLocation(plains); s.PassAllResponses();
         assertTrue(objective.isFlipped());
 
-        s.AttachCardsTo(away, test);
+        var apprentice = s.GetLSCard("depa");
+        test.setTargetedCard(TargetId.JEDI_TEST_APPRENTICE, null, apprentice, Filters.sameCardId(apprentice));
+        test.setJediTestStatus(JediTestStatus.COMPLETED);
+        s.AttachCardsTo(apprentice, test);
         s.MoveCardsToLocation(away, s.GetLSCard("yoda"));
+        waitForLightDeploy(s);
         s.LSDeployLocation(cantina); s.PassAllResponses();
         assertFalse(objective.isFlipped()); assertTrue(s.GetLSUsedPile().contains(test));
     }
