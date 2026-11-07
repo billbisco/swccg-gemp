@@ -59,7 +59,7 @@ public class Card1250_049 extends AbstractJediMaster {
             PhysicalCard self, int gameTextSourceCardId) {
         GameTextActionId id = GameTextActionId.LEGACY__PLO_KOON_V__DEPLOY_WEAPON;
         if (!GameConditions.isOncePerGame(game, self, id)
-                || !GameConditions.canDeployCardFromReserveDeck(game, playerId, self, id, true, false)) return null;
+                || !GameConditions.canDeployCardFromReserveDeck(game, playerId, self, id)) return null;
 
         TopLevelGameTextAction action = new TopLevelGameTextAction(self, playerId, gameTextSourceCardId, id);
         action.setText("Deploy a weapon here from Reserve Deck");

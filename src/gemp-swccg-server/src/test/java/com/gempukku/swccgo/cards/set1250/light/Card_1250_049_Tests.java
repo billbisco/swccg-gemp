@@ -106,7 +106,7 @@ public class Card_1250_049_Tests {
         var s = scenario(); s.StartGame();
         s.MoveCardsToLocation(s.GetLSStartingLocation(), s.GetLSCard("plo"), s.GetLSCard("warrior"));
         s.MoveCardsToLocation(s.GetDSStartingLocation(), s.GetLSCard("otherWarrior"));
-        if (darkTurn) s.SkipToDSTurn(Phase.CONTROL); else s.SkipToLSTurn(Phase.CONTROL);
+        if (darkTurn) s.SkipToDSTurn(Phase.CONTROL); else s.SkipToLSTurn(Phase.DEPLOY);
         if (s.GetLSForcePileCount() < 2) s.LSActivateForceCheat(2);
         s.MoveOutOfPlay(s.GetLSCard("cost"));
         s.MoveCardsToTopOfLSReserveDeck(s.GetLSCard("rifle"), s.GetLSCard("nonWeapon"));
@@ -140,8 +140,8 @@ public class Card_1250_049_Tests {
     }
 
     @Test
-    public void PloKoonCanDownloadDuringOpponentsControlPhase() {
-        deployWeapon(download(true), false);
+    public void PloKoonCannotDownloadDuringOpponentsControlPhase() {
+        assertFalse(action(download(true), DOWNLOAD));
     }
 
     @Test
@@ -150,7 +150,7 @@ public class Card_1250_049_Tests {
         int old = s.gameState().getPlayersLatestTurnNumber(s.LS);
         for (int i = 0; i < 200; i++) {
             if (s.GetCurrentPlayer().equals(s.LS) && s.gameState().getPlayersLatestTurnNumber(s.LS) == old + 1
-                    && s.GetCurrentPhase() == Phase.CONTROL) break;
+                    && s.GetCurrentPhase() == Phase.DEPLOY) break;
             String prompt = s.GetCurrentDecision().getText();
             if (prompt.equals("You have not activated Force. Do you want to Pass?")) {
                 if (s.DSDecisionAvailable(prompt)) s.DSChooseYes(); else s.LSChooseYes();
@@ -161,8 +161,8 @@ public class Card_1250_049_Tests {
             }
         }
         assertEquals(old + 1, s.gameState().getPlayersLatestTurnNumber(s.LS));
-        assertEquals(Phase.CONTROL, s.GetCurrentPhase());
-        assertTrue(s.AwaitingLSControlPhaseActions());
+        assertEquals(Phase.DEPLOY, s.GetCurrentPhase());
+        assertTrue(s.AwaitingLSDeployPhaseActions());
         assertFalse(action(s, DOWNLOAD));
     }
 
