@@ -5,6 +5,7 @@ import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import org.junit.Test;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,9 +15,9 @@ public class Card_1261_042_Tests {
     private static final String CHOOSE_PILOT = "Choose Bossk, Dengar";
 
     private VirtualTableScenario scenario(Map<String, String> darkCards) {
-        var cards = new java.util.HashMap<>(darkCards);
+        var cards = new HashMap<>(darkCards);
         cards.put("interrupt", "1261_42");
-        return new VirtualTableScenario(Map.of(), cards, 24, 24,
+        return new VirtualTableScenario(new HashMap<>(), cards, 24, 24,
                 StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
