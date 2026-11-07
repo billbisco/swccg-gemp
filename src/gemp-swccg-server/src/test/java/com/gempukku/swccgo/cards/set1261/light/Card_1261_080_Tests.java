@@ -69,7 +69,9 @@ public class Card_1261_080_Tests {
 
     @Test public void JabbaActuallyPlaysTwoShieldsAndCannotPlayAThirdNextTurn() {
         var scn = scenario(true, true); scn.StartGame(); scn.SkipToLSTurn(Phase.CONTROL);
-        playShield(scn, "a"); playShield(scn, "b");
+        playShield(scn, "a");
+        if (scn.GetAwaitingDecision(scn.DS) != null) scn.DSPass();
+        playShield(scn, "b");
         scn.SkipToLSTurn(Phase.CONTROL);
         assertFalse(scn.LSCardActionAvailable(scn.GetLSCard("jabba"), PLAY_SHIELD));
         assertInZone(Zone.STACKED_FACE_DOWN, scn.GetLSCard("c"), scn.GetLSCard("d"), scn.GetLSCard("ordinary"));
