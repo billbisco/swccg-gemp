@@ -107,15 +107,12 @@ public class Card_1261_055_Tests {
         restoreDarkPriority(scn);
         scn.SkipToPhase(Phase.DEPLOY);
         assertEquals(Title.Youre_A_Slave, slave.getTitle());
+        slave.setObjectiveDeploymentComplete(true);
         scn.EnsureDSForcePile(10);
         scn.EnsureLSForcePile(5);
         int dsBefore = scn.GetDSForcePileCount();
         int lsBefore = scn.GetLSForcePileCount();
 
-        System.out.println("DIAG phase=" + scn.GetCurrentPhase() + " zone=" + slave.getZone() + " DS=" + scn.DSGetDecision()
-                + " DSparams=" + (scn.DSGetDecision() == null ? null : java.util.Arrays.toString(scn.DSGetDecision().getDecisionParameters().get("actionText")))
-                + " text=" + (scn.DSGetDecision() == null ? null : scn.DSGetDecision().getText())
-                + " LS=" + scn.LSGetDecision() + " hand=" + scn.GetDSHandCount());
         scn.DSUseCardAction(slave, "Place card face down on side of table");
         scn.DSChooseCard(vader);
         assertTrue(scn.LSChoiceAvailable(mosEspa.equals("1261_55")
