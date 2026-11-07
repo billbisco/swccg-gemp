@@ -67,10 +67,11 @@ public class Card_1240_043_Tests {
     private VirtualTableScenario UsedReady() {
         var scn = Scenario(false, StartingSetup.NoDSStartingInterrupts);
         scn.StartGame();
-        scn.SkipToDSTurn(Phase.CONTROL);
+        scn.SkipToDSTurn(Phase.ACTIVATE);
         scn.MoveCardsToDSHand(scn.GetDSCard("cylinder"));
         scn.MoveCardsToTopOfDSReserveDeck(scn.GetDSCard("station"), scn.GetDSCard("beacon"), scn.GetDSCard("kessel"), scn.GetDSCard("war"));
         scn.DrainDSForcePileTo(0);
+        scn.SkipToPhase(Phase.CONTROL);
         return scn;
     }
 
