@@ -1,0 +1,261 @@
+package com.gempukku.swccgo.cards.set1250.light;
+
+import com.gempukku.swccgo.common.Agenda;
+import com.gempukku.swccgo.common.CardType;
+import com.gempukku.swccgo.common.ExpansionSet;
+import com.gempukku.swccgo.common.Icon;
+import com.gempukku.swccgo.common.Keyword;
+import com.gempukku.swccgo.common.Persona;
+import com.gempukku.swccgo.common.Phase;
+import com.gempukku.swccgo.common.Uniqueness;
+import com.gempukku.swccgo.common.Zone;
+import com.gempukku.swccgo.framework.StartingSetup;
+import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.game.PhysicalCardImpl;
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import static org.junit.Assert.*;
+
+public class Card_1250_051_Tests {
+    private static final String TAKE = "Take battle destiny card into hand";
+    private static final String DOWNLOAD = "Deploy a battleground except Endor system";
+    private static final String EMPEROR = "Target a character present";
+
+    private VirtualTableScenario scenario() {
+        return new VirtualTableScenario(new HashMap<>() {{
+            put("mothma", "1250_51"); put("senate", "12_75"); put("chamber", "12_76");
+            put("endor", "8_68"); put("endorSite", "8_69"); put("naboo", "12_78");
+            put("luke", "1_19"); put("leia", "1_17"); put("bail", "1116_1");
+        }}, new HashMap<>() {{
+            put("emperor", "1106_46"); put("aks", "12_97"); put("lott", "12_110");
+            put("vader", "1_168"); put("trooper", "1_194");
+        }}, 35, 35, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
+    }
+
+    @Test
+    public void SenatorMonMothmaMatchesFinal51EPrinting() {
+        var s = scenario(); var bp = s.GetLSCard("mothma").getBlueprint();
+        assertEquals("Senator Mon Mothma", bp.getTitle()); assertFalse(bp.hasVirtualSuffix());
+        assertEquals(Uniqueness.UNIQUE, bp.getUniqueness());
+        assertEquals(ExpansionSet.VIRTUAL_BLOCK_5, bp.getExpansionSet());
+        assertEquals(1, bp.getDestiny(), s.epsilon); assertEquals(3, bp.getDeployCost(), s.epsilon);
+        assertEquals(3, bp.getPower(), s.epsilon); assertEquals(4, bp.getAbility(), s.epsilon);
+        assertEquals(3, bp.getPolitics(), s.epsilon); assertEquals(6, bp.getForfeit(), s.epsilon);
+        assertEquals(List.of(Persona.MON_MOTHMA), bp.getPersonas().stream().toList());
+        assertEquals("Native of Chandrila. Leader of the Alliance. A former member of the Imperial Senate "
+                + "where she was a formidable opponent of then-Senator Palpatine. Friend of Bail Organa.", bp.getLore());
+        s.BlueprintCardTypeCheck(bp, new ArrayList<>(List.of(CardType.REBEL, CardType.REPUBLIC)));
+        s.BlueprintIconCheck(bp, new ArrayList<>(List.of(Icon.REBEL, Icon.REPUBLIC, Icon.ENDOR, Icon.LEGACY_BLOCK_5)));
+        s.BlueprintKeywordCheck(bp, new ArrayList<>(List.of(Keyword.FEMALE, Keyword.SENATOR, Keyword.LEADER)));
+    }
+
+    @Test
+    public void SenatorMonMothmaProvidesOrderAndPeace() {
+        var s = scenario(); s.StartGame(); var mothma = s.GetLSCard("mothma");
+        s.MoveCardsToLocation(s.GetLSStartingLocation(), mothma);
+        assertEquals(List.of(Agenda.ORDER, Agenda.PEACE), s.game().getModifiersQuerying().getAgendas(s.gameState(), mothma));
+    }
+
+    private VirtualTableScenario emperor(boolean mothmaHere) {
+        var s = scenario(); s.StartGame(); var senate = s.GetLSCard("senate");
+        s.MoveLocationToTable(senate);
+        s.MoveCardsToLocation(mothmaHere ? senate : s.GetLSStartingLocation(), s.GetLSCard("mothma"));
+        s.MoveCardsToLocation(senate, s.GetLSCard("bail"), s.GetLSCard("luke"),
+                s.GetDSCard("emperor"), s.GetDSCard("aks"));
+        s.SkipToDSTurn(Phase.CONTROL);
+        if (s.GetDSForcePileCount() == 0) s.DSActivateForceCheat(2);
+        s.PrepareDSDestiny(5);
+        assertTrue(s.DSCardActionAvailable(s.GetDSCard("emperor"), EMPEROR));
+        s.DSUseCardAction(s.GetDSCard("emperor"), EMPEROR); s.PassAllResponses();
+        assertTrue(s.DSDecisionAvailable("Choose character"));
+        return s;
+    }
+
+    @Test
+    public void EmperorCannotTargetEitherPlayersPoliticiansHereButCanMakeLukeLost() {
+        var s = emperor(true);
+        var choices = s.DSGetCardChoices();
+        for (var politician : List.of(s.GetLSCard("mothma"), s.GetLSCard("bail"), s.GetDSCard("aks"))) {
+            assertFalse(politician.toString(), choices.contains(Integer.toString(politician.getCardId())));
+        }
+        var luke = s.GetLSCard("luke");
+        assertTrue(choices.contains(Integer.toString(luke.getCardId())));
+        s.DSChooseCard(luke); s.PassAllResponses(); s.PassDestinyDrawResponses(); s.PassAllResponses();
+        assertEquals(Zone.LOST_PILE, luke.getZone());
+    }
+
+    @Test
+    public void EmperorCanTargetPoliticianElsewhere() {
+        var s = emperor(false); var bail = s.GetLSCard("bail");
+        assertTrue(s.DSGetCardChoices().contains(Integer.toString(bail.getCardId())));
+        s.DSChooseCard(bail); s.PassAllResponses(); s.PassDestinyDrawResponses(); s.PassAllResponses();
+        assertEquals(Zone.LOST_PILE, bail.getZone());
+    }
+
+    private boolean lightAction(VirtualTableScenario s, String label) {
+        return s.GetADParam(s.LS, "cardId") != null && s.GetADParam(s.LS, "actionText") != null
+                && s.LSCardActionAvailable(s.GetLSCard("mothma"), label);
+    }
+
+    private VirtualTableScenario battle(boolean atSenate, String opposition) {
+        var s = scenario(); s.StartGame(); var senate = s.GetLSCard("senate"); var site = s.GetLSStartingLocation();
+        s.MoveLocationToTable(senate);
+        s.MoveCardsToLocation(atSenate ? senate : s.GetDSStartingLocation(), s.GetLSCard("mothma"));
+        if (opposition != null) s.MoveCardsToLocation(senate, s.GetDSCard(opposition));
+        s.MoveCardsToLocation(site, s.GetLSCard("bail"), s.GetLSCard("leia"), s.GetDSCard("vader"));
+        s.LSActivateForceCheat(2);
+        s.LSStartBattleAndSkipToWeaponsSegment(site);
+        s.PassWeaponsSegmentActions(); s.PassResponses("BEFORE_BATTLE_DESTINY_DRAWS");
+        assertTrue("Light must be offered two real battle destiny draws", s.GetLSBattleDestinyCount() >= 2);
+        return s;
+    }
+
+    private void passUntilTakeOrAfterDraw(VirtualTableScenario s) {
+        for (int i = 0; i < 30 && !lightAction(s, TAKE); i++) {
+            String prompt = s.GetCurrentDecision().getText();
+            if (!prompt.contains("DESTINY_DRAWN")) return;
+            if (s.LSDecisionAvailable(prompt)) s.LSPass(); else s.DSPass();
+        }
+    }
+
+    private PhysicalCardImpl beginDraw(VirtualTableScenario s, int destiny) {
+        var expected = s.GetLSDestiny(destiny);
+        s.PrepareLSDestiny(destiny);
+        assertTrue(s.LSDecisionAvailable("battle destiny?"));
+        s.LSChooseYes();
+        s.PassResponses("COST_TO_DRAW_DESTINY_CARD"); s.PassResponses("ABOUT_TO_DRAW_DESTINY_CARD");
+        passUntilTakeOrAfterDraw(s);
+        return expected;
+    }
+
+    private void finishTake(VirtualTableScenario s, PhysicalCardImpl destiny, int value) {
+        assertTrue(s.GetCurrentDecision().getText(), lightAction(s, TAKE));
+        int hand = s.GetLSHandCount();
+        s.LSUseCardAction(s.GetLSCard("mothma"), TAKE); s.PassDestinyDrawResponses();
+        assertEquals(Zone.HAND, destiny.getZone()); assertEquals(hand + 1, s.GetLSHandCount());
+        assertEquals(value, s.GetLSTotalDestiny());
+    }
+
+    @Test
+    public void SenateMajorityTakesPhysicalBattleDestinyAndKeepsValueButOnlyOnceThisTurn() {
+        var s = battle(true, null);
+        finishTake(s, beginDraw(s, 3), 3);
+        var second = beginDraw(s, 4);
+        assertFalse(lightAction(s, TAKE)); s.PassDestinyDrawResponses();
+        assertNotEquals(Zone.HAND, second.getZone()); assertEquals(7, s.GetLSTotalDestiny());
+    }
+
+    @Test
+    public void DecliningFirstBattleDestinyDoesNotConsumeTheUse() {
+        var s = battle(true, null);
+        var first = beginDraw(s, 3); assertTrue(lightAction(s, TAKE));
+        s.LSPass(); s.PassDestinyDrawResponses(); assertNotEquals(Zone.HAND, first.getZone());
+        finishTake(s, beginDraw(s, 4), 7);
+    }
+
+    @Test
+    public void TiedSenateDoesNotOfferTheBattleDestinyAction() { assertNoTake(battle(true, "aks")); }
+
+    @Test
+    public void OpposingSenateMajorityDoesNotOfferTheBattleDestinyAction() { assertNoTake(battle(true, "lott")); }
+
+    @Test
+    public void AwayFromSenateDoesNotOfferTheBattleDestinyAction() { assertNoTake(battle(false, null)); }
+
+    private void assertNoTake(VirtualTableScenario s) {
+        var destiny = beginDraw(s, 3);
+        assertFalse(lightAction(s, TAKE)); s.PassDestinyDrawResponses();
+        assertNotEquals(Zone.HAND, destiny.getZone()); assertEquals(3, s.GetLSTotalDestiny());
+    }
+
+    @Test
+    public void SenatorMonMothmaDoesNotTakeOpponentsBattleDestiny() {
+        var s = battle(true, null);
+        assertTrue(s.LSDecisionAvailable("battle destiny?"));
+        s.LSChooseNo(); s.PassResponses("BATTLE_DESTINY_DRAWS_COMPLETE_FOR_PLAYER");
+        var darkDestiny = s.GetDSDestiny(3);
+        s.PrepareDSDestiny(3);
+        assertTrue(s.DSDecisionAvailable("battle destiny?"));
+        s.DSChooseYes();
+        s.PassResponses("COST_TO_DRAW_DESTINY_CARD"); s.PassResponses("ABOUT_TO_DRAW_DESTINY_CARD");
+        passUntilTakeOrAfterDraw(s);
+        assertFalse(lightAction(s, TAKE)); s.PassDestinyDrawResponses();
+        assertNotEquals(Zone.HAND, darkDestiny.getZone()); assertEquals(3, s.GetDSTotalDestiny());
+    }
+
+    private VirtualTableScenario reserve(boolean darkTurn) {
+        var s = scenario(); s.StartGame();
+        s.MoveCardsToLocation(s.GetLSStartingLocation(), s.GetLSCard("mothma"));
+        if (darkTurn) s.SkipToDSTurn(Phase.CONTROL); else s.SkipToLSTurn(Phase.CONTROL);
+        s.MoveCardsToTopOfLSReserveDeck(s.GetLSCard("endor"), s.GetLSCard("endorSite"),
+                s.GetLSCard("chamber"), s.GetLSCard("naboo"));
+        if (darkTurn && s.DSAnyDecisionsAvailable()) s.DSPass();
+        return s;
+    }
+
+    private void selectable(VirtualTableScenario s, String label, boolean expected) {
+        var ids = s.LSGetADParamAsList("blueprintId");
+        int index = ids.indexOf(s.GetLSCard(label).getBlueprintId(true));
+        assertTrue(label + " should be in Reserve", index >= 0);
+        assertEquals(label, Boolean.toString(expected), s.LSGetADParam("selectable")[index]);
+    }
+
+    private void download(VirtualTableScenario s, String label, boolean audit) {
+        int force = s.GetLSForcePileCount();
+        assertTrue(lightAction(s, DOWNLOAD));
+        s.LSUseCardAction(s.GetLSCard("mothma"), DOWNLOAD); s.PassAllResponses();
+        if (audit) {
+            selectable(s, "endor", false); selectable(s, "chamber", false);
+            selectable(s, "endorSite", true); selectable(s, "naboo", true);
+        }
+        var card = s.GetLSCard(label);
+        s.LSChooseCard(card); s.PassAllResponses();
+        if (s.LSDecisionAvailable("On which side")) s.LSChooseOption("Right");
+        s.PassAllResponses();
+        assertEquals(Zone.LOCATIONS, card.getZone()); assertEquals(force, s.GetLSForcePileCount());
+    }
+
+    @Test
+    public void ReserveSearchExcludesOnlyEndorSystemAndNonBattlegroundsAndReshuffles() {
+        var s = reserve(false); var marker = s.GetLSCard("endor");
+        s.gameState().markCardsRevealedFromPile(List.of(marker));
+        assertTrue(s.gameState().isCardRevealedFromPile(marker));
+        download(s, "endorSite", true);
+        assertFalse(s.gameState().isCardRevealedFromPile(marker));
+    }
+
+    @Test
+    public void ReserveSearchCanDeployANonEndorBattlegroundSystemOnDarkTurn() {
+        download(reserve(true), "naboo", false);
+    }
+
+    @Test
+    public void ReserveSearchRemainsExhaustedOnLaterTurn() {
+        var s = reserve(false); download(s, "naboo", false);
+        s.SkipToPhase(Phase.MOVE); assertTrue(s.AwaitingLSMovePhaseActions()); assertFalse(lightAction(s, DOWNLOAD));
+        advanceToDarkControl(s);
+        if (s.DSAnyDecisionsAvailable()) s.DSPass();
+        assertFalse(lightAction(s, DOWNLOAD));
+        assertEquals(Zone.RESERVE_DECK, s.GetLSCard("endorSite").getZone());
+    }
+
+    private void advanceToDarkControl(VirtualTableScenario s) {
+        for (int i = 0; i < 100 && !(s.GetCurrentPlayer().equals(s.DS) && s.GetCurrentPhase() == Phase.CONTROL); i++) {
+            String prompt = s.GetCurrentDecision().getText();
+            if (prompt.equals("You have not activated Force. Do you want to Pass?")) {
+                if (s.DSDecisionAvailable(prompt)) s.DSChooseYes(); else s.LSChooseYes();
+            } else {
+                assertTrue(prompt, prompt.contains("action or Pass") || prompt.contains("Optional responses")
+                        || prompt.contains("RECIRCULATED"));
+                if (s.DSDecisionAvailable(prompt)) s.DSPass(); else s.LSPass();
+            }
+        }
+        assertEquals(s.DS, s.GetCurrentPlayer()); assertEquals(Phase.CONTROL, s.GetCurrentPhase());
+    }
+}
