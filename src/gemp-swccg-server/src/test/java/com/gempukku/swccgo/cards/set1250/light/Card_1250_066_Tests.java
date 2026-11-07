@@ -49,7 +49,7 @@ public class Card_1250_066_Tests {
 
     private void checkActivationAndShuffle(VirtualTableScenario s) {
         var top = s.GetDSDestiny(6); var marker = s.GetDSDestiny(3);
-        s.MoveCardsToTopOfDSReserveDeck(top, marker);
+        s.MoveCardsToTopOfDSReserveDeck(marker, top);
         assertEquals(top, s.GetTopOfDSReserveDeck());
         s.gameState().markCardsRevealedFromPile(List.of(marker));
         assertTrue(s.GetCurrentDecision().getText(), offered(s));
