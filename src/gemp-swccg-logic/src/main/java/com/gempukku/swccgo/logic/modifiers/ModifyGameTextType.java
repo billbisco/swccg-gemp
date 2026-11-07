@@ -154,6 +154,7 @@ public enum ModifyGameTextType {
     LEGACY__INTERRUPTS__VADER_MAY_BE_MAUL_OR_MARA_JADE("'Vader' may be treated as 'Maul or Mara Jade'"),
     LEGACY__DROID_RACKS__WHERE_ARE_THOSE_DROIDEKAS_IGNORES_NEIMOIDIANS("Ignores Neimoidians"),
     LEGACY__HUTT_INFLUENCE__HUMAN_SHIELD_IMPERIAL_MAY_BE_BOUNTY_HUNTER("'Imperial' may be treated as 'bounty hunter'"),
+    LEGACY__MOS_ESPA_V__YOURE_A_SLAVE_FREE_IS_2_FORCE("'Free' treated as '2 Force'"),
 
     ;
 

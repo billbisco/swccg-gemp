@@ -1767,6 +1767,7 @@ public enum GameTextActionId {
     LEGACY__SECURITY_BREACH__REDUCE_BATTLE_DAMAGE(false, true),
     LEGACY__HES_NO_JEDI__PLAY_SHIELD(false, true),
     LEGACY__HUTT_INFLUENCE_V__UPLOAD_ALL_WRAPPED_UP(true, true),
+    LEGACY__MOS_ESPA_V__PREVENT_SLAVE_LOSS(false, true),
     ;
 
     private boolean _searchCardPile;
