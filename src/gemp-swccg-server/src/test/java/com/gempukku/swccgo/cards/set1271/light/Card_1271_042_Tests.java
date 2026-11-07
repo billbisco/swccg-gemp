@@ -113,7 +113,7 @@ public class Card_1271_042_Tests {
     @Test public void SFoilsIsSuspendedAndDoesNotRewardDeploymentIfDeathStarWasAlreadyBlownAway() {
         var s=scenario(true);s.StartGame();s.SkipToLSTurn(Phase.CONTROL);s.EnsureLSForcePile(20);
         var deathStar=s.GetDSCard("deathStar");s.MoveLocationToTable(deathStar);
-        s.game().getModifiersEnvironment().blownAway(deathStar);
+        s.game().getModifiersQuerying().blownAway(deathStar);
         s.game().getGameState().flipBlownAwayLocations(s.game(),List.of(deathStar));
         s.MoveCardsToLSHand(s.GetLSCard("foils"),s.GetLSCard("red3"),s.GetLSCard("biggs"));s.SkipToPhase(Phase.DEPLOY);
         s.LSDeployCard(s.GetLSCard("foils"));s.PassAllResponses();if(s.GetLSCard("foils").getAttachedTo()==null){s.LSChooseCard(s.GetLSStartingLocation());s.PassAllResponses();}
