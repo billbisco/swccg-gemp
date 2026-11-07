@@ -46,15 +46,16 @@ public class Card_1263_004_Tests {
     }
 
     @Test public void GrottoWerribeeAddsTwoToShipPowerOnlyWhenPiloting() {
-        var scn = scenario();
-        var ship = scn.GetDSCard("ship");
-        var grotto = scn.GetDSCard("grotto");
-        scn.MoveCardsToLocation(scn.GetDSCard("system"), ship);
-        int power = scn.GetPower(ship);
-        scn.BoardAsPassenger(ship, grotto);
-        assertEquals(power, scn.GetPower(ship));
-        scn.BoardAsPilot(ship, grotto);
-        assertEquals(power + 2, scn.GetPower(ship));
+        for (boolean piloting : List.of(false, true)) {
+            var scn = scenario();
+            var ship = scn.GetDSCard("ship");
+            var grotto = scn.GetDSCard("grotto");
+            scn.MoveCardsToLocation(scn.GetDSCard("system"), ship);
+            int power = scn.GetPower(ship);
+            if (piloting) scn.BoardAsPilot(ship, grotto);
+            else scn.BoardAsPassenger(ship, grotto);
+            assertEquals(power + (piloting ? 2 : 0), scn.GetPower(ship));
+        }
     }
 
     @Test public void GrottoWerribeeGrantsImmunityToActualClashOnlyAtHisLocation() {
