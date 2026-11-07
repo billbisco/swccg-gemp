@@ -2767,6 +2767,9 @@ public class ModifiersLogic implements ModifiersEnvironment, ModifiersState, Mod
         if (weapon.getAttachedTo() != null) {
             hitOrMadeLostByWeapon.add(weapon.getAttachedTo());
         }
+        if (_swccgGame != null && _swccgGame.getGameState() != null && _swccgGame.getGameState().getWeaponFiringState() != null) {
+            _swccgGame.getGameState().getWeaponFiringState().recordHitOrMadeLost(target);
+        }
     }
 
     /**

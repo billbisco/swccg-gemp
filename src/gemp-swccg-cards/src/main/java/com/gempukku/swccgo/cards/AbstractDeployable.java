@@ -435,6 +435,40 @@ public abstract class AbstractDeployable extends AbstractNonLocationPlaysToTable
         }
 
         boolean asReactAway = Filters.at(battleOrForceDrainLocation).accepts(game, self);
+        // While checking a 'react' toward the battle (or Force drain), let the movement queries know so that
+        // effects that may not prevent such movement (see MayNotPreventMovingAsReactModifier) are ignored.
+        GameState gameState = game.getGameState();
+        boolean wasCheckingReactTowardBattle = gameState.isCheckingMoveAsReactTowardBattle();
+        gameState.setCheckingMoveAsReactTowardBattle(!asReactAway);
+        try {
+            return getMoveAsReactAction(playerId, game, self, reactActionFromOtherCard, moveTargetFilter, battleOrForceDrainLocation, asReactAway);
+        }
+        finally {
+            gameState.setCheckingMoveAsReactTowardBattle(wasCheckingReactTowardBattle);
+        }
+    }
+
+    /**
+     * Wraps a 'react' move target filter so that, whenever it is checked (including later, when the destination is
+     * chosen), movement queries know whether this is a 'react' toward the battle or Force drain.
+     */
+    private static Filter withMoveAsReactContext(final Filter filter, final boolean towardBattle) {
+        return new Filter() {
+            @Override
+            public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard) {
+                boolean wasChecking = gameState.isCheckingMoveAsReactTowardBattle();
+                gameState.setCheckingMoveAsReactTowardBattle(towardBattle);
+                try {
+                    return filter.accepts(gameState, modifiersQuerying, physicalCard);
+                }
+                finally {
+                    gameState.setCheckingMoveAsReactTowardBattle(wasChecking);
+                }
+            }
+        };
+    }
+
+    private Action getMoveAsReactAction(String playerId, SwccgGame game, PhysicalCard self, ReactActionOption reactActionFromOtherCard, Filter moveTargetFilter, PhysicalCard battleOrForceDrainLocation, boolean asReactAway) {
         Filter completeMoveTargetFilter = Filters.and(moveTargetFilter, Filters.location, asReactAway ? Filters.not(battleOrForceDrainLocation) : battleOrForceDrainLocation);
 
         // Get the react option, if any.
@@ -450,28 +484,28 @@ public abstract class AbstractDeployable extends AbstractNonLocationPlaysToTable
         Action moveUsingLandspeedAction = getMoveUsingLandspeedAction(playerId, game, self, isReactForFree, reactActionOption.getChangeInCost(), true, reactActionOption.isReactAway(), true, false, null, completeMoveTargetFilter);
         if (moveUsingLandspeedAction != null) {
             Filter moveUsingLandspeedTargetFilter = getMoveUsingLandspeedFilter(playerId, game, self, isReactForFree, reactActionOption.getChangeInCost(), true, reactActionOption.isReactAway(), null, completeMoveTargetFilter);
-            moveAsReactActions.add(new MoveAsReactAction(playerId, self, reactActionOption, Effect.Type.MOVING_AS_REACT_USING_LANDSPEED, moveUsingLandspeedTargetFilter));
+            moveAsReactActions.add(new MoveAsReactAction(playerId, self, reactActionOption, Effect.Type.MOVING_AS_REACT_USING_LANDSPEED, withMoveAsReactContext(moveUsingLandspeedTargetFilter, !asReactAway)));
         }
 
         // Move as 'react' using hyperspeed
         Action moveUsingHyperspeedAction = getMoveUsingHyperspeedAction(playerId, game, self, isReactForFree, true, reactActionOption.isReactAway(), true, false, completeMoveTargetFilter);
         if (moveUsingHyperspeedAction != null) {
             Filter moveUsingHyperspeedTargetFilter = getMoveUsingHyperspeedFilter(playerId, game, self, isReactForFree, true, completeMoveTargetFilter);
-            moveAsReactActions.add(new MoveAsReactAction(playerId, self, reactActionOption, Effect.Type.MOVING_AS_REACT_USING_HYPERSPEED, moveUsingHyperspeedTargetFilter));
+            moveAsReactActions.add(new MoveAsReactAction(playerId, self, reactActionOption, Effect.Type.MOVING_AS_REACT_USING_HYPERSPEED, withMoveAsReactContext(moveUsingHyperspeedTargetFilter, !asReactAway)));
         }
 
         // Move as 'react' without using hyperspeed
         Action moveWithoutUsingHyperspeedAction = getMoveWithoutUsingHyperspeedAction(playerId, game, self, isReactForFree, true, reactActionOption.isReactAway(), true, false, completeMoveTargetFilter);
         if (moveWithoutUsingHyperspeedAction != null) {
             Filter moveWithoutUsingHyperspeedTargetFilter = getMoveUsingWithoutHyperspeedFilter(playerId, game, self, isReactForFree, true, completeMoveTargetFilter);
-            moveAsReactActions.add(new MoveAsReactAction(playerId, self, reactActionOption, Effect.Type.MOVING_AS_REACT_WITHOUT_USING_HYPERSPEED, moveWithoutUsingHyperspeedTargetFilter));
+            moveAsReactActions.add(new MoveAsReactAction(playerId, self, reactActionOption, Effect.Type.MOVING_AS_REACT_WITHOUT_USING_HYPERSPEED, withMoveAsReactContext(moveWithoutUsingHyperspeedTargetFilter, !asReactAway)));
         }
 
         // Move as 'react' using sector movement
         Action moveUsingSectorMovementAction = getMoveUsingSectorMovementAction(playerId, game, self, isReactForFree, true, reactActionOption.isReactAway(), true, false, completeMoveTargetFilter);
         if (moveUsingSectorMovementAction != null) {
             Filter moveUsingSectorMovementTargetFilter = getMoveUsingSectorMovementFilter(playerId, game, self, isReactForFree, true, completeMoveTargetFilter);
-            moveAsReactActions.add(new MoveAsReactAction(playerId, self, reactActionOption, Effect.Type.MOVING_AS_REACT_USING_SECTOR_MOVEMENT, moveUsingSectorMovementTargetFilter));
+            moveAsReactActions.add(new MoveAsReactAction(playerId, self, reactActionOption, Effect.Type.MOVING_AS_REACT_USING_SECTOR_MOVEMENT, withMoveAsReactContext(moveUsingSectorMovementTargetFilter, !asReactAway)));
         }
 
         if (!asReactAway) {
@@ -479,28 +513,28 @@ public abstract class AbstractDeployable extends AbstractNonLocationPlaysToTable
             Action landAction = getLandAction(playerId, game, self, isReactForFree, true, true, false, false, completeMoveTargetFilter);
             if (landAction != null) {
                 Filter landTargetFilter = getLandFilter(playerId, game, self, isReactForFree, true, completeMoveTargetFilter);
-                moveAsReactActions.add(new MoveAsReactAction(playerId, self, reactActionOption, Effect.Type.LANDING_AS_REACT, landTargetFilter));
+                moveAsReactActions.add(new MoveAsReactAction(playerId, self, reactActionOption, Effect.Type.LANDING_AS_REACT, withMoveAsReactContext(landTargetFilter, !asReactAway)));
             }
 
             // Move as 'react' by taking off
             Action takeOffAction = getTakeOffAction(playerId, game, self, isReactForFree, true, true, false, false, completeMoveTargetFilter);
             if (takeOffAction != null) {
                 Filter takeOffTargetFilter = getTakeOffFilter(playerId, game, self, isReactForFree, true, completeMoveTargetFilter);
-                moveAsReactActions.add(new MoveAsReactAction(playerId, self, reactActionOption, Effect.Type.TAKING_OFF_AS_REACT, takeOffTargetFilter));
+                moveAsReactActions.add(new MoveAsReactAction(playerId, self, reactActionOption, Effect.Type.TAKING_OFF_AS_REACT, withMoveAsReactContext(takeOffTargetFilter, !asReactAway)));
             }
 
             // Move as 'react' by entering starship or vehicle site
             Action enterAction = getEnterStarshipOrVehicleSiteAction(playerId, game, self, isReactForFree, true, true, false, completeMoveTargetFilter);
             if (enterAction != null) {
                 Filter enterTargetFilter = getEnterStarshipOrVehicleSiteFilter(playerId, game, self, isReactForFree, true, completeMoveTargetFilter);
-                moveAsReactActions.add(new MoveAsReactAction(playerId, self, reactActionOption, Effect.Type.ENTERING_STARSHIP_VEHICLE_SITE_AS_REACT, enterTargetFilter));
+                moveAsReactActions.add(new MoveAsReactAction(playerId, self, reactActionOption, Effect.Type.ENTERING_STARSHIP_VEHICLE_SITE_AS_REACT, withMoveAsReactContext(enterTargetFilter, !asReactAway)));
             }
 
             // Move as 'react' by exiting starship or vehicle site
             Action exitAction = getExitStarshipOrVehicleSiteAction(playerId, game, self, isReactForFree, true, true, false, completeMoveTargetFilter);
             if (exitAction != null) {
                 Filter exitTargetFilter = getExitStarshipOrVehicleSiteFilter(playerId, game, self, isReactForFree, true, completeMoveTargetFilter);
-                moveAsReactActions.add(new MoveAsReactAction(playerId, self, reactActionOption, Effect.Type.EXITING_STARSHIP_VEHICLE_SITE_AS_REACT, exitTargetFilter));
+                moveAsReactActions.add(new MoveAsReactAction(playerId, self, reactActionOption, Effect.Type.EXITING_STARSHIP_VEHICLE_SITE_AS_REACT, withMoveAsReactContext(exitTargetFilter, !asReactAway)));
             }
         }
 

@@ -944,6 +944,24 @@ public interface Deploy extends BaseQuery, Attributes, CardTraits, Destiny, Loca
         return (!getModifiersAffectingCard(gameState, ModifierType.APPLIES_OWN_DEPLOYMENT_MODIFIERS_AT_ANY_LOCATION, card).isEmpty());
     }
 
+    /**
+     * Determines if the specified card applies its own deployment modifier with the specified target filter at any
+     * location, because the modifier is for locations (e.g. Endor) whose deployment modifiers the card applies anywhere.
+     * @param gameState the game state
+     * @param card the card
+     * @param targetFilter the target filter of the card's own deployment modifier
+     * @return true or false
+     */
+    default boolean appliesOwnLocationDeploymentModifierAtAnyLocation(GameState gameState, PhysicalCard card, Filter targetFilter) {
+        for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.APPLIES_OWN_LOCATION_DEPLOYMENT_MODIFIERS_AT_ANY_LOCATION, card)) {
+            if (modifier instanceof ApplyOwnLocationDeploymentModifiersAtAnyLocationModifier
+                    && ((ApplyOwnLocationDeploymentModifiersAtAnyLocationModifier) modifier).isDeploymentModifierForCoveredLocation(gameState, query(), targetFilter)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
 
     /**

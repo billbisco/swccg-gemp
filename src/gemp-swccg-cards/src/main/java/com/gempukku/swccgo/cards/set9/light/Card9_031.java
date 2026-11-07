@@ -59,7 +59,7 @@ public class Card9_031 extends AbstractRebel {
     protected List<OptionalGameTextTriggerAction> getGameTextOptionalAfterTriggers(final String playerId, SwccgGame game, EffectResult effectResult, final PhysicalCard self, int gameTextSourceCardId) {
         // Check condition(s)
         if (TriggerConditions.isBattleDestinyJustDrawn(game, effectResult)
-                && GameConditions.canCancelDestiny(game, playerId)
+                && GameConditions.canCancelDestiny(game, playerId, self)
                 && GameConditions.isOncePerBattle(game, self, playerId, gameTextSourceCardId)
                 && GameConditions.isInBattleWith(game, self, Filters.or(Filters.Red_Squadron_pilot, Filters.Rogue_Squadron_pilot))) {
 
