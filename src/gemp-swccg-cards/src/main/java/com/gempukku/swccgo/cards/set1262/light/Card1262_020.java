@@ -48,11 +48,10 @@ public class Card1262_020 extends AbstractRepublic {
                 for (PhysicalCard creature : Filters.filterActive(gameState.getGame(), self,
                         SpotOverride.INCLUDE_EXCLUDED_FROM_BATTLE,
                         Filters.and(Filters.creature, Filters.not(Filters.and(Keyword.PARASITE)), Filters.here(self)))) {
-                    // Historical ferocious definition; current non-parasite is a broader category.
-                    boolean ferocious = modifiersQuerying.getDefenseValue(gameState, creature) > 2
-                            && !Filters.title("Mynock").accepts(gameState, modifiersQuerying, creature)
-                            && !Filters.title("Vine Snake").accepts(gameState, modifiersQuerying, creature);
-                    bonus += ferocious ? 4 : 2;
+                    // AR2.0: a non-parasite is ferocious unless it is a selective landspeed>1 packhunter.
+                    boolean packhunter = Filters.and(Icon.SELECTIVE_CREATURE).accepts(gameState, modifiersQuerying, creature)
+                            && modifiersQuerying.getLandspeed(gameState, creature) > 1;
+                    bonus += packhunter ? 2 : 4;
                 }
                 return bonus;
             }
@@ -65,8 +64,7 @@ public class Card1262_020 extends AbstractRepublic {
     protected List<TopLevelGameTextAction> getGameTextTopLevelActions(String playerId, SwccgGame game,
             PhysicalCard self, int gameTextSourceCardId) {
         GameTextActionId actionId = GameTextActionId.LEGACY__BEAST_RIDER__DEPLOY_KAADU;
-        if (GameConditions.hasReserveDeck(game, playerId)
-                && GameConditions.isOncePerTurn(game, self, playerId, gameTextSourceCardId, actionId)
+        if (GameConditions.isOncePerTurn(game, self, playerId, gameTextSourceCardId, actionId)
                 && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, actionId, true, false)) {
             TopLevelGameTextAction action = new TopLevelGameTextAction(self, gameTextSourceCardId, actionId);
             action.setText("Deploy Kaadu here from Reserve Deck"); action.appendUsage(new OncePerTurnEffect(action));

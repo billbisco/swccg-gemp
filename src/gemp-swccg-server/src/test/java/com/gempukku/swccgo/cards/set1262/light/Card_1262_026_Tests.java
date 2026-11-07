@@ -101,11 +101,11 @@ public class Card_1262_026_Tests {
     }
 
     private VirtualTableScenario attack(boolean ridden) {
-        var scn = scenario(); scn.StartGame(); var swamp = scn.GetLSCard("jungle"); scn.MoveLocationToTable(swamp);
-        scn.MoveCardsToLocation(swamp, scn.GetLSCard("kaadu"));
+        var scn = scenario(); scn.StartGame(); var site = scn.GetLSCard("jungle"); scn.MoveLocationToTable(site);
+        scn.MoveCardsToLocation(site, scn.GetLSCard("kaadu"));
         if (ridden) scn.BoardAsPassenger(scn.GetLSCard("kaadu"), scn.GetLSCard("rider"));
-        else scn.MoveCardsToLocation(swamp, scn.GetLSCard("rider"));
-        scn.SkipToDSTurn(Phase.DEPLOY); scn.MoveCardsToLocation(swamp, scn.GetDSCard("snake")); scn.SkipToPhase(Phase.BATTLE);
+        else scn.MoveCardsToLocation(site, scn.GetLSCard("rider"));
+        scn.SkipToDSTurn(Phase.DEPLOY); scn.MoveCardsToLocation(site, scn.GetDSCard("snake")); scn.SkipToPhase(Phase.BATTLE);
         return scn;
     }
     @Test public void KaaduBeastRiderPreventsActualCreatureAttackAction() {
@@ -130,7 +130,12 @@ public class Card_1262_026_Tests {
             scn.LSChooseCards(); assertAtLocation(site, scn.GetLSCard("kaadu"));
             assertEquals(scn.GetLSCard("kaadu"), scn.GetLSCard("rider").getAttachedTo());
         } else {
-            var target = scn.GetLSCard(forfeitRider ? "rider" : "kaadu"); scn.LSPayAttritionFromCardInPlay(target); scn.PassAllResponses();
+            var target = scn.GetLSCard(forfeitRider ? "rider" : "kaadu"); scn.LSPayAttritionFromCardInPlay(target);
+            if (!forfeitRider) {
+                assertTrue(scn.LSCardActionAvailable(scn.GetLSCard("rider"), "Jump off"));
+                scn.LSUseCardAction(scn.GetLSCard("rider"), "Jump off"); scn.PassAllResponses();
+                if (scn.LSHasCardChoiceAvailable(site)) { scn.LSChooseCard(site); scn.PassAllResponses(); }
+            } else scn.PassAllResponses();
             assertInZone(Zone.LOST_PILE, target);
         }
     }

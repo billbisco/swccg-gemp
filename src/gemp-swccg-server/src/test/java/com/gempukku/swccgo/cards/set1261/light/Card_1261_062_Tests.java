@@ -86,8 +86,9 @@ public class Card_1261_062_Tests {
     @Test public void BaragwinResetChangesActualBattlePower() {
         var scn = start(true, false); var site = scn.GetLSStartingLocation();
         scn.MoveCardsToLocation(site, scn.GetLSCard("luke"), scn.GetDSCard("vader")); scn.SkipToLSTurn(Phase.BATTLE);
-        scn.LSInitiateBattle(site); scn.PassAllResponses(); scn.SkipToDamageSegment(false);
-        assertEquals(1, scn.GetLSTotalPower()); assertEquals(5, scn.GetUnpaidLSBattleDamage());
+        scn.LSInitiateBattle(site); scn.PassAllResponses(); scn.SkipToEndOfPowerSegment(false);
+        assertEquals(1, scn.GetLSTotalPower());
+        scn.PassResponses("INITIAL_ATTRITION_CALCULATED"); assertEquals(5, scn.GetUnpaidLSBattleDamage());
     }
 
     private void drain(boolean sourceAtBattleground, boolean enclosed, boolean twoAliens, boolean nonBattlegroundTarget, int expected) {

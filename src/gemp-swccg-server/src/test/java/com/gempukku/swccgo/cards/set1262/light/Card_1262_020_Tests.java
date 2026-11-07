@@ -20,9 +20,9 @@ public class Card_1262_020_Tests {
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>() {{
             put("rider", "1262_20"); put("kaadu", "1262_26"); put("oldKaadu", "14_61"); put("speeder", "3_69");
-            put("nudj", "4_5"); put("nudj2", "4_5"); put("trooper", "1_28"); put("dock", "1_136"); put("swamp", "4_87");
+            put("scurrier", "7_52"); put("nudj", "4_5"); put("nudj2", "4_5"); put("trooper", "1_28"); put("dock", "1_136"); put("swamp", "4_87");
         }}, new HashMap<>() {{
-            put("vader", "1_168"); put("trooper", "1_194"); put("snake", "4_109"); put("sleen", "4_111");
+            put("vader", "1_168"); put("trooper", "1_194"); put("rockwart", "7_213"); put("snake", "4_109"); put("sleen", "4_111");
             put("mynock", "4_110"); put("vine", "4_113");
         }}, 60, 60, StartingSetup.LSStartingLocation("1_137"), StartingSetup.DSStartingLocation("12_176"),
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
@@ -64,9 +64,9 @@ public class Card_1262_020_Tests {
         scn.SkipToEndOfPowerSegment(false); assertEquals(expected, scn.GetLSTotalPower());
     }
     @Test public void BeastRiderAddsNoPowerWithoutCreature() { power(null, false, false, false, 2); }
-    @Test public void BeastRiderCountsOwnNonFerociousNudj() { power("nudj", true, false, false, 4); }
-    @Test public void BeastRiderCountsEachNonParasiteCreatureSeparately() { power("nudj", true, false, true, 6); }
-    @Test public void BeastRiderCountsOpposingDefenseTwoCreatureAsTwoPower() { power("sleen", false, false, false, 4); }
+    @Test public void BeastRiderCountsOwnFerociousNudjDespiteDefenseOne() { power("nudj", true, false, false, 6); }
+    @Test public void BeastRiderCountsEachNonParasiteCreatureSeparately() { power("nudj", true, false, true, 10); }
+    @Test public void BeastRiderCountsOpposingSleenAsFerociousDespiteDefenseTwo() { power("sleen", false, false, false, 6); }
     @Test public void BeastRiderCountsOpposingDefenseThreeCreatureAsFourPower() { power("snake", false, false, false, 6); }
     @Test public void BeastRiderDoesNotCountCreatureAtAnotherSite() { power("sleen", false, true, false, 2); }
     @Test public void BeastRiderDoesNotCountMynockParasiteEvenAtDefenseThree() { power("mynock", false, false, false, 2); }
@@ -147,9 +147,10 @@ public class Card_1262_020_Tests {
     }
     private void retrieve(int amount) {
         var scn = eaten(true, false); assertTrue(reach(scn, () -> retrievalAvailable(scn)));
-        assertInZone(Zone.LOST_PILE, scn.GetDSCard("trooper")); int lost = scn.GetLSLostPileCount();
-        scn.LSUseCardAction(scn.GetLSCard("rider"), "Retrieve up to 4"); scn.LSChoose(Integer.toString(amount)); scn.PassAllResponses();
+        int lost = scn.GetLSLostPileCount();
+        scn.LSUseCardAction(scn.GetLSCard("rider"), "Retrieve up to 4"); scn.LSDecided(amount); scn.PassAllResponses();
         assertEquals(lost - amount, scn.GetLSLostPileCount());
+        assertInZone(Zone.LOST_PILE, scn.GetDSCard("trooper"));
     }
     @Test public void BeastRiderRetrievesFourWhenOpponentsCardIsActuallyEatenHere() { retrieve(4); }
     @Test public void BeastRiderMayChooseLessThanFourRetrieval() { retrieve(2); }
@@ -211,8 +212,15 @@ public class Card_1262_020_Tests {
     @Test public void BeastRiderDoesNotSearchAnEmptyReserveDeck() {
         var scn = start(); scn.SkipToLSTurn(Phase.CONTROL);
         scn.MoveCardsToLSHand(scn.GetLSReserveDeck().toArray(PhysicalCardImpl[]::new));
-        assertEquals(0, scn.GetLSReserveDeckCount());
+        assertEquals(0, scn.GetLSReserveDeckCount()); scn.SkipToPhase(Phase.DEPLOY);
         assertFalse(scn.LSCardActionAvailable(scn.GetLSCard("rider"), "Deploy Kaadu here"));
+    }
+
+    @Test public void BeastRiderCountsSelectiveLandspeedTwoScurrierAsPackhunterInsteadOfFerocious() {
+        power("scurrier", true, false, false, 4);
+    }
+    @Test public void BeastRiderCountsOpposingSelectiveLandspeedTwoRockWartAsPackhunter() {
+        power("rockwart", false, false, false, 4);
     }
 
 }
