@@ -45,6 +45,17 @@ public class LegacyFilters {
         };
     }
 
+    /**
+     * Filter that accepts cards whose game text is read ignoring 'unique (•)' requirements
+     * (TIE Fighter Construction Facility 1240_35 on Watch Your Back!).
+     */
+    public static final Filter ignoresUniqueInGameText = new Filter() {
+        @Override
+        public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard) {
+            return !modifiersQuerying.getModifiersAffectingCard(gameState, ModifierType.IGNORES_UNIQUE_IN_GAME_TEXT, physicalCard).isEmpty();
+        }
+    };
+
     /** Systems liberated by either a stacked liberation card or an active card modifier. */
     public static final Filter liberatedSystem = Filters.and(Filters.system, Filters.or(Filters.liberated_system,
             new Filter() {

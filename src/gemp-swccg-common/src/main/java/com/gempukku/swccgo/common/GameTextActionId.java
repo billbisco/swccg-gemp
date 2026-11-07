@@ -1709,6 +1709,8 @@ public enum GameTextActionId {
     LEGACY__OH_HES_NOT_DEAD_NOT_YET__DEPLOY_CHARACTER(true, true),
     LEGACY__OH_HES_NOT_DEAD_NOT_YET__TAKE_GRABBER(true),
     LEGACY__OH_HES_NOT_DEAD_NOT_YET__SEARCH_FORCE_PILE(true),
+    LEGACY__GRAND_ADMIRAL_THRAWN_V__DEPLOY_DREADNAUGHT(true),
+    LEGACY__ITS_WORSE_V__DEPLOY_PIT(true),
     ;
 
     private boolean _searchCardPile;
