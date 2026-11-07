@@ -70,7 +70,7 @@ public class Card1240_005 extends AbstractImperial {
         action.setSingletonTrigger(true);
         action.setText("Make your Independent starships lost");
         action.setActionMsg("Make " + GameUtils.getAppendedNames(ships) + " lost");
-        action.appendEffect(new LoseCardsFromTableEffect(action, ships));
+        action.appendEffect(new LoseCardsFromTableEffect(action, ships, true));
         return List.of(action);
     }
 

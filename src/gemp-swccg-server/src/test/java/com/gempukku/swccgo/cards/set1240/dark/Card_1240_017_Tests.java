@@ -72,7 +72,7 @@ public class Card_1240_017_Tests {
         assertTrue(scn.DSHasCardChoiceAvailable(indoor));
         assertTrue(scn.DSHasCardChoiceAvailable(scn.GetDSStartingLocation()));
         scn.DSChooseCard(indoor);
-        scn.PassAllResponses();
+        passOptional(scn);
         assertTrue(scn.CardsAtLocation(indoor, ysalamir));
         assertEquals(force - 2, scn.GetDSForcePileCount());
     }
@@ -149,7 +149,7 @@ public class Card_1240_017_Tests {
         assertFalse(scn.LSCardActionAvailable(site, "Initiate attack on creature"));
         assertTrue(scn.LSCardActionAvailable(other, "Initiate attack on creature"));
         scn.LSInitiateBattle(site);
-        scn.PassAllResponses();
+        passOptional(scn);
         assertTrue(scn.AwaitingLSWeaponsSegmentActions());
 
         // Independently examine the Dark creature's genuine action window.
@@ -184,7 +184,7 @@ public class Card_1240_017_Tests {
         scn.SkipToPhase(Phase.MOVE);
         scn.DSUseCardAction(host, "Embark");
         scn.DSChooseCard(vehicle);
-        scn.PassAllResponses();
+        passOptional(scn);
         assertTrue(scn.IsAttachedTo(vehicle, host));
         assertTrue(scn.IsAttachedTo(host, ysalamir));
         assertEquals(1, query.getForceGenerationFromLocation(scn.gameState(), site, scn.LS), scn.epsilon);
@@ -218,7 +218,7 @@ public class Card_1240_017_Tests {
         scn.PrepareLSDestiny(1);
         scn.LSUseCardAction(han, "Fire");
         scn.LSChooseCard(victim);
-        scn.PassAllResponses();
+        passOptional(scn);
         assertTrue(victim.isHit());
     }
 
@@ -250,7 +250,7 @@ public class Card_1240_017_Tests {
             scn.DSUseCardAction(shooter, "Fire");
             scn.DSChooseCard(victim);
         }
-        scn.PassAllResponses();
+        passOptional(scn);
         // A single reduction still hits; reducing both draws reaches equality and misses.
         assertEquals(!attached || !sameSite, victim.isHit());
     }
@@ -270,7 +270,7 @@ public class Card_1240_017_Tests {
         scn.SkipToPhase(Phase.DEPLOY);
         scn.DSDeployCard(ysalamir);
         scn.DSChooseCard(site);
-        scn.PassAllResponses();
+        passOptional(scn);
     }
 
     private void attachParasite(VirtualTableScenario scn, PhysicalCardImpl ysalamir, PhysicalCardImpl host) {
@@ -278,9 +278,18 @@ public class Card_1240_017_Tests {
         assertTrue(scn.DSCardActionAvailable(ysalamir, "Initiate attack"));
         scn.DSUseCardAction(ysalamir, "Initiate attack");
         assertFalse(scn.DSDecisionAvailable("Choose whose non-creature to attack"));
-        scn.PassAllResponses();
+        passOptional(scn);
         scn.PassWeaponsSegmentActions();
-        scn.PassAllResponses();
+        passOptional(scn);
         assertTrue(scn.IsAttachedTo(host, ysalamir));
+    }
+
+    /** Passes every pending optional-response window (PassAllResponses stops after 20), then any remaining responses. */
+    private static void passOptional(VirtualTableScenario scn) {
+        for (int i = 0; i < 100; i++) {
+            var decision = scn.GetCurrentDecision();
+            if (decision == null || !decision.getText().toLowerCase().contains("optional response")) break;
+            scn.PlayerPass(scn.GetDecidingPlayer());
+        }
     }
 }

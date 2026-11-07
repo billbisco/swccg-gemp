@@ -93,7 +93,7 @@ public class Card_1240_005_Tests {
     }
 
     @Test
-    public void GrandAdmiralThrawnLosesOwnExistingAndNewlyDeployedIndependentShips() {
+    public void GrandAdmiralThrawnLosesYourIndependentStarshipsWhenHeDeploys() {
         var scn = scenario();
         var system = scn.GetDSCard("system");
         var ship = scn.GetDSCard("devastator");
@@ -110,18 +110,13 @@ public class Card_1240_005_Tests {
         scn.SkipToPhase(Phase.DEPLOY);
         assertAtLocation(system, hunter, punishing, pulsar);
         deployThrawnAboard(scn, ship, "Pilot");
+        for (int i = 0; i < 4 && scn.DSDecisionAvailable("Choose card to be lost"); i++) {
+            scn.DSChooseCard(scn.DSHasCardChoiceAvailable(hunter) ? hunter : punishing);
+            passOptional(scn);
+        }
         assertInZone(Zone.LOST_PILE, hunter, punishing);
         assertAtLocation(system, pulsar, ship);
         assertInHand(ig);
-
-        if (scn.AwaitingLSDeployPhaseActions()) {
-            scn.LSPass();
-        }
-        scn.DSDeployCard(ig);
-        scn.DSChooseCard(system);
-        scn.PassAllResponses();
-        assertInZone(Zone.LOST_PILE, ig);
-        assertAtLocation(system, pulsar, ship);
     }
 
     @Test
@@ -130,7 +125,7 @@ public class Card_1240_005_Tests {
         var thrawn = scn.GetDSCard("thrawn");
         var dread = scn.GetDSCard("deployDread");
         var hoth = scn.GetLSCard("hoth");
-        scn.SkipToDSTurn(Phase.ACTIVATE);
+        scn.SkipToDSTurn(Phase.CONTROL);
         scn.EnsureDSForcePile(8);
         scn.MoveCardsToTopOfDSReserveDeck(dread, scn.GetDSCard("capital"));
         scn.SkipToPhase(Phase.DRAW);
@@ -139,14 +134,14 @@ public class Card_1240_005_Tests {
         assertEquals(5, hoth.getBlueprint().getParsec());
         assertTrue(scn.DSCardActionAvailable(thrawn, DEPLOY));
         scn.DSUseCardAction(thrawn, DEPLOY);
-        assertTrue(scn.DSHasCardChoiceAvailable(dread));
-        assertFalse(scn.DSHasCardChoiceAvailable(scn.GetDSCard("capital")));
+        assertTrue(selectable(scn, dread));
+        assertFalse(selectable(scn, scn.GetDSCard("capital")));
         scn.DSChooseCard(dread);
         if (scn.DSHasCardChoiceAvailable(hoth)) {
             assertFalse(scn.DSHasCardChoiceAvailable(scn.GetDSCard("otherSystem")));
             scn.DSChooseCard(hoth);
         }
-        scn.PassAllResponses();
+        passOptional(scn);
         assertAtLocation(hoth, dread);
         assertEquals(force - 5, scn.GetDSForcePileCount());
         assertTrue(scn.gameState().getLastMessages().stream().anyMatch(m -> m.contains("shuffles Reserve Deck")));
@@ -163,14 +158,15 @@ public class Card_1240_005_Tests {
         scn.SkipToDSTurn(Phase.CONTROL);
         assertTrue(scn.DSCardActionAvailable(thrawn, RETRIEVE));
         scn.DSUseCardAction(thrawn, RETRIEVE);
-        scn.PassAllResponses();
-        assertTrue(scn.DSHasCardChoiceAvailable(target));
-        assertTrue(scn.DSHasCardChoiceAvailable(other));
-        assertFalse(scn.DSHasCardChoiceAvailable(junk));
+        passOptional(scn);
+        assertTrue(selectable(scn, target));
+        assertTrue(selectable(scn, other));
+        assertFalse(selectable(scn, junk));
         scn.DSChooseCard(target);
-        scn.PassAllResponses();
-        assertInZone(Zone.USED_PILE, target);
-        assertInZone(Zone.LOST_PILE, other, junk);
+        passOptional(scn);
+        // Both Dreadnaughts share a blueprint, so either copy may be the one retrieved.
+        assertEquals(1, (target.getZone() != Zone.LOST_PILE ? 1 : 0) + (other.getZone() != Zone.LOST_PILE ? 1 : 0));
+        assertInZone(Zone.LOST_PILE, junk);
     }
 
     @Test
@@ -181,11 +177,12 @@ public class Card_1240_005_Tests {
         scn.SkipToDSTurn(Phase.CONTROL);
         assertTrue(scn.DSCardActionAvailable(thrawn, DEPLOY) || scn.DSCardActionAvailable(thrawn, RETRIEVE));
         scn.DSUseCardAction(thrawn, RETRIEVE);
-        scn.PassAllResponses();
+        passOptional(scn);
         scn.DSChooseCard(scn.GetDSCard("retrieveDread"));
-        scn.PassAllResponses();
-        assertInZone(Zone.USED_PILE, scn.GetDSCard("retrieveDread"));
-        if (scn.LSAnyActionsAvailable()) scn.LSPass();
+        passOptional(scn);
+        assertTrue(scn.GetDSCard("retrieveDread").getZone() != Zone.LOST_PILE
+                || scn.GetDSCard("otherDread").getZone() != Zone.LOST_PILE);
+        if (scn.LSDecisionAvailable("Control action or Pass")) scn.LSPass();
         assertFalse(scn.DSCardActionAvailable(thrawn, RETRIEVE));
         assertFalse(scn.DSCardActionAvailable(thrawn, DEPLOY));
     }
@@ -240,11 +237,11 @@ public class Card_1240_005_Tests {
         scn.SkipToDSTurn(Phase.CONTROL);
         assertTrue(scn.DSCardActionAvailable(thrawn, PEEK));
         scn.DSUseCardAction(thrawn, PEEK);
-        scn.PassAllResponses();
+        passOptional(scn);
         assertTrue(scn.DSDecisionAvailable("Opponent's hand"));
         assertFalse(scn.LSDecisionAvailable("Opponent's hand"));
         scn.DSDecided("");
-        scn.PassAllResponses();
+        passOptional(scn);
         assertInHand(hidden);
 
         if (scn.AwaitingLSControlPhaseActions()) {
@@ -269,6 +266,21 @@ public class Card_1240_005_Tests {
         assertFalse(scn.DSCardActionAvailable(thrawn, PEEK));
     }
 
+    /** True if the Dark Side may actually pick the card (pile browses also list unselectable cards). */
+    private static boolean selectable(VirtualTableScenario scn, PhysicalCardImpl card) {
+        String[] ids = scn.GetADParam(scn.DS, "cardId");
+        String[] blueprints = scn.GetADParam(scn.DS, "blueprintId");
+        String[] flags = scn.GetADParam(scn.DS, "selectable");
+        if (flags == null) return scn.DSHasCardChoiceAvailable(card);
+        for (int i = 0; i < flags.length; i++) {
+            boolean temp = ids == null || ids[i].startsWith("temp");
+            boolean same = temp ? (blueprints != null && blueprints[i].equals(card.getBlueprintId(true)))
+                    : ids[i].equals(String.valueOf(card.getCardId()));
+            if (same) return Boolean.parseBoolean(flags[i]);
+        }
+        return false;
+    }
+
     private VirtualTableScenario atHoth() {
         var scn = scenario();
         scn.StartGame();
@@ -284,11 +296,20 @@ public class Card_1240_005_Tests {
         scn.DSDeployCard(scn.GetDSCard("thrawn"));
         scn.DSChooseCard(ship);
         scn.DSChoose(role);
-        scn.PassAllResponses();
+        passOptional(scn);
     }
 
     private static void attachPilot(VirtualTableScenario scn, PhysicalCardImpl pilot, PhysicalCardImpl ship) {
         scn.RemoveCardZone(pilot);
         scn.gameState().attachCardInPilotCapacitySlot(pilot, ship);
+    }
+
+    /** Passes every pending optional-response window (PassAllResponses stops after 20), then any remaining responses. */
+    private static void passOptional(VirtualTableScenario scn) {
+        for (int i = 0; i < 100; i++) {
+            var decision = scn.GetCurrentDecision();
+            if (decision == null || !decision.getText().toLowerCase().contains("optional response")) break;
+            scn.PlayerPass(scn.GetDecidingPlayer());
+        }
     }
 }

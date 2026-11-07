@@ -101,7 +101,7 @@ public class Card_1240_026_Tests {
         int force = scn.GetDSForcePileCount();
         scn.DSPlayCard(scn.GetDSCard("he"));
         if (scn.DSHasCardChoiceAvailable(scn.GetLSCard(host))) scn.DSChooseCard(scn.GetLSCard(host));
-        scn.PassAllResponses();
+        passOptional(scn);
         assertEquals(scn.GetLSCard(host), scn.GetDSCard("he").getAttachedTo());
         assertEquals(force, scn.GetDSForcePileCount());
     }
@@ -109,7 +109,7 @@ public class Card_1240_026_Tests {
     private void PayInitialLoss(VirtualTableScenario scn) {
         assertTrue(scn.AwaitingLSForceLossPayment());
         scn.LSPayForceLossFromReserveDeck();
-        scn.PassAllResponses();
+        passOptional(scn);
     }
 
     private void PassWithoutOffer(VirtualTableScenario scn, String action) {
@@ -154,7 +154,7 @@ public class Card_1240_026_Tests {
         Reach(scn, "Retrieve");
         int reserve = scn.GetDSReserveDeckCount();
         scn.DSUseCardAction(scn.GetDSCard("he"), "Retrieve");
-        scn.PassAllResponses();
+        passOptional(scn);
         assertInZone(Zone.USED_PILE, scn.GetDSCard("lost"));
         assertEquals(reserve, scn.GetDSReserveDeckCount());
     }
@@ -240,7 +240,7 @@ public class Card_1240_026_Tests {
         Attach(scn, "lando");
         PayInitialLoss(scn);
         scn.SkipToPhase(Phase.DRAW);
-        scn.PassAllResponses();
+        passOptional(scn);
         assertTrue(scn.LSDecisionAvailable("Choose extra maintenance option"));
         return scn;
     }
@@ -250,9 +250,9 @@ public class Card_1240_026_Tests {
         var scn = MaintenanceReady();
         int lost = scn.GetLSLostPileCount();
         scn.LSChooseOption("Lose 1 Force");
-        scn.PassAllResponses();
+        passOptional(scn);
         scn.LSPayForceLossFromReserveDeck();
-        scn.PassAllResponses();
+        passOptional(scn);
         assertEquals(lost + 1, scn.GetLSLostPileCount());
         assertEquals(scn.GetLSCard("lando"), scn.GetDSCard("he").getAttachedTo());
     }
@@ -261,7 +261,7 @@ public class Card_1240_026_Tests {
     public void HeIsNotReadyDrawPhaseMaintenanceMayLoseTargetAndEffectReturnsToUsed() {
         var scn = MaintenanceReady();
         scn.LSChooseOption("Place target in Lost Pile");
-        scn.PassAllResponses();
+        passOptional(scn);
         assertInZone(Zone.LOST_PILE, scn.GetLSCard("lando"));
         assertInZone(Zone.USED_PILE, scn.GetDSCard("he"));
         assertFalse(scn.GetLSCard("lando").getZone() == Zone.OUT_OF_PLAY);
@@ -271,11 +271,11 @@ public class Card_1240_026_Tests {
     public void HeIsNotReadyAdditionalDrawPhaseCostDoesNotReplacePrintedEndTurnMaintenance() {
         var scn = MaintenanceReady();
         scn.LSChooseOption("Lose 1 Force");
-        scn.PassAllResponses();
+        passOptional(scn);
         scn.LSPayForceLossFromReserveDeck();
-        scn.PassAllResponses();
+        passOptional(scn);
         scn.SkipToPhase(Phase.END_OF_TURN);
-        scn.PassAllResponses();
+        passOptional(scn);
         assertTrue(scn.LSDecisionAvailable("maintenance"));
         assertEquals(scn.GetLSCard("lando"), scn.GetDSCard("he").getAttachedTo());
     }
@@ -298,9 +298,9 @@ public class Card_1240_026_Tests {
         int lost = scn.GetDSLostPileCount();
         int force = scn.GetDSForcePileCount();
         scn.DSPlayCard(scn.GetDSCard("he"));
-        scn.PassAllResponses();
+        passOptional(scn);
         if (scn.AwaitingDSForceLossPayment()) scn.DSPayRemainingForceLossFromReserveDeck();
-        scn.PassAllResponses();
+        passOptional(scn);
         assertEquals(lost + Math.max(0, amount - 2), scn.GetDSLostPileCount());
         assertEquals(force, scn.GetDSForcePileCount());
         assertInZone(Zone.SIDE_OF_TABLE, scn.GetDSCard("he"));
@@ -315,9 +315,9 @@ public class Card_1240_026_Tests {
     public void HeIsNotReadyAndImperialPropagandaMayBeDeclinedAndFullForceLossIsPaid() {
         var scn = DrainReady(3);
         int lost = scn.GetDSLostPileCount();
-        scn.PassAllResponses();
+        passOptional(scn);
         scn.DSPayRemainingForceLossFromReserveDeck();
-        scn.PassAllResponses();
+        passOptional(scn);
         assertEquals(lost + 3, scn.GetDSLostPileCount());
         assertInZone(Zone.HAND, scn.GetDSCard("he"));
     }
@@ -327,17 +327,17 @@ public class Card_1240_026_Tests {
         var scn = DrainReady(3);
         Reach(scn, "Reduce Force loss");
         scn.DSPlayCard(scn.GetDSCard("he"));
-        scn.PassAllResponses();
+        passOptional(scn);
         scn.DSPayRemainingForceLossFromReserveDeck();
-        scn.PassAllResponses();
+        passOptional(scn);
         scn.MoveCardsToDSHand(scn.GetDSCard("he2"));
         scn.MoveCardsToBottomOfDSReserveDeck(scn.GetDSCard("he2"));
         scn.SkipToLSTurn(Phase.CONTROL);
         int lost = scn.GetDSLostPileCount();
         scn.LSForceDrainAt(scn.GetDSCard("deathstar"));
-        scn.PassAllResponses();
+        passOptional(scn);
         scn.DSPayRemainingForceLossFromReserveDeck();
-        scn.PassAllResponses();
+        passOptional(scn);
         assertEquals(lost + 3, scn.GetDSLostPileCount());
     }
 
@@ -348,7 +348,7 @@ public class Card_1240_026_Tests {
         int lost = scn.GetLSLostPileCount();
         Reach(scn, "Reduce Force loss");
         scn.DSPlayCard(scn.GetDSCard("he"));
-        scn.PassAllResponses();
+        passOptional(scn);
         assertEquals(lost, scn.GetLSLostPileCount());
         assertInZone(Zone.LOST_PILE, scn.GetDSCard("lost"));
         assertFalse(scn.DSAnyActionsAvailable() && scn.DSCardActionAvailable(scn.GetDSCard("he"), "Retrieve"));
@@ -370,7 +370,7 @@ public class Card_1240_026_Tests {
         int force = scn.GetDSForcePileCount();
         scn.DSUseCardAction(scn.GetDSCard("he"), "Play a Defensive Shield");
         scn.DSChooseCard(scn.GetDSCard("s4"));
-        scn.PassAllResponses();
+        passOptional(scn);
         assertTrue(scn.GetDSCard("s4").getZone().isInPlay());
         assertEquals(force, scn.GetDSForcePileCount());
         assertFalse(scn.IsStackedOn(scn.GetDSCard("fear"), scn.GetDSCard("s4")));
@@ -395,7 +395,7 @@ public class Card_1240_026_Tests {
             assertTrue(scn.DSCardActionAvailable(scn.GetDSCard("fear"), "Defensive Shield"));
             scn.DSUseCardAction(scn.GetDSCard("fear"), "Defensive Shield");
             scn.DSChooseCard(scn.GetDSCard(name));
-            scn.PassAllResponses();
+            passOptional(scn);
             assertTrue(scn.GetDSCard(name).getZone().isInPlay());
         }
         for (int i = 0; i < 12 && !scn.AwaitingDSControlPhaseActions(); i++) scn.PlayerPass(scn.GetDecidingPlayer());
@@ -407,7 +407,7 @@ public class Card_1240_026_Tests {
         Reach(scn, "Play a Defensive Shield");
         scn.DSUseCardAction(scn.GetDSCard("he"), "Play a Defensive Shield");
         scn.DSChooseCard(scn.GetDSCard("s4"));
-        scn.PassAllResponses();
+        passOptional(scn);
         assertTrue(scn.GetDSCard("s4").getZone().isInPlay());
     }
 
@@ -429,7 +429,7 @@ public class Card_1240_026_Tests {
         Reach(scn, "Reduce Force loss");
         scn.DSPlayCard(scn.GetDSCard("he"));
         PassWithoutOffer(scn, "Play a Defensive Shield");
-        scn.PassAllResponses();
+        passOptional(scn);
         assertTrue(scn.IsStackedOn(scn.GetDSCard("fear"), scn.GetDSCard("s4")));
     }
 
@@ -463,12 +463,12 @@ public class Card_1240_026_Tests {
         scn.LSPlayCard(scn.GetLSCard("sacrifice"));
         if (scn.LSHasCardChoiceAvailable(scn.GetDSCard("garrison"))) scn.LSChooseCard(scn.GetDSCard("garrison"));
         PassWithoutOffer(scn, "Reduce Force loss");
-        scn.PassAllResponses();
+        passOptional(scn);
         assertEquals(scn.GetDSCard("garrison"), scn.GetLSCard("sacrifice").getAttachedTo());
         int lost = scn.GetDSLostPileCount();
         assertTrue(scn.AwaitingDSForceLossPayment());
         scn.DSPayForceLossFromReserveDeck();
-        scn.PassAllResponses();
+        passOptional(scn);
         assertEquals(lost + 1, scn.GetDSLostPileCount());
         assertInZone(Zone.HAND, scn.GetDSCard("he"));
     }
@@ -484,7 +484,7 @@ public class Card_1240_026_Tests {
         assertTrue(scn.LSCardPlayAvailable(scn.GetLSCard("control")));
         scn.LSPlayCard(scn.GetLSCard("control"));
         if (scn.LSHasCardChoiceAvailable(scn.GetDSCard("bombing"))) scn.LSChooseCard(scn.GetDSCard("bombing"));
-        scn.PassAllResponses();
+        passOptional(scn);
         assertInZone(Zone.LOST_PILE, scn.GetDSCard("bombing"));
         assertEquals(scn.GetLSCard("lando"), scn.GetDSCard("he").getAttachedTo());
     }
@@ -494,9 +494,9 @@ public class Card_1240_026_Tests {
         var scn = DrainReady(1);
         scn.MoveCardsToTopOfDSReserveDeck(scn.GetDSCard("he"));
         scn.MoveCardsToBottomOfDSReserveDeck(scn.GetDSCard("he2"));
-        scn.PassAllResponses();
+        passOptional(scn);
         scn.DSPayForceLossFromReserveDeck();
-        scn.PassAllResponses();
+        passOptional(scn);
         assertInZone(Zone.LOST_PILE, scn.GetDSCard("he"));
     }
 
@@ -506,9 +506,9 @@ public class Card_1240_026_Tests {
         scn.DrainLSForcePileTo(0);
         int lost = scn.GetLSLostPileCount();
         scn.LSChooseOption("Lose 1 Force");
-        scn.PassAllResponses();
+        passOptional(scn);
         scn.LSPayForceLossFromReserveDeck();
-        scn.PassAllResponses();
+        passOptional(scn);
         assertEquals(0, scn.GetLSForcePileCount());
         assertEquals(lost + 1, scn.GetLSLostPileCount());
         assertEquals(scn.GetLSCard("lando"), scn.GetDSCard("he").getAttachedTo());
@@ -537,9 +537,9 @@ public class Card_1240_026_Tests {
         int lost = scn.GetDSLostPileCount();
         scn.DSPlayCard(scn.GetDSCard("advisor"));
         PassWithoutOffer(scn, "Reduce Force loss");
-        scn.PassAllResponses();
+        passOptional(scn);
         scn.DSChooseCard(scn.GetDSCard("he2"));
-        scn.PassAllResponses();
+        passOptional(scn);
         assertEquals(0, scn.GetDSForcePileCount());
         assertEquals(lost, scn.GetDSLostPileCount());
         assertInZone(Zone.HAND, scn.GetDSCard("he"));
@@ -551,7 +551,7 @@ public class Card_1240_026_Tests {
         int lost = scn.GetLSLostPileCount();
         Attach(scn, "lando");
         scn.LSPayRemainingForceLossFromReserveDeck();
-        scn.PassAllResponses();
+        passOptional(scn);
         assertEquals(lost + 1, scn.GetLSLostPileCount());
         assertFalse(scn.AwaitingLSForceLossPayment());
     }
@@ -562,9 +562,9 @@ public class Card_1240_026_Tests {
         scn.DrainLSForcePileTo(0);
         int lost = scn.GetLSLostPileCount();
         scn.LSChooseOption("Lose 1 Force");
-        scn.PassAllResponses();
+        passOptional(scn);
         scn.LSPayRemainingForceLossFromReserveDeck();
-        scn.PassAllResponses();
+        passOptional(scn);
         assertEquals(lost + 1, scn.GetLSLostPileCount());
         assertEquals(0, scn.GetLSForcePileCount());
         assertFalse(scn.AwaitingLSForceLossPayment());
@@ -579,10 +579,19 @@ public class Card_1240_026_Tests {
         Reach(scn, "Retrieve");
         int reserve = scn.GetDSReserveDeckCount();
         scn.DSUseCardAction(scn.GetDSCard("he"), "Retrieve");
-        scn.PassAllResponses();
+        passOptional(scn);
         assertInZone(Zone.USED_PILE, scn.GetDSCard("lost"));
         assertInZone(Zone.LOST_PILE, scn.GetDSCard("trooper"));
         assertEquals(1, scn.GetDSLostPileCount());
         assertEquals(reserve, scn.GetDSReserveDeckCount());
+    }
+
+    /** Passes every pending optional-response window (PassAllResponses stops after 20), then any remaining responses. */
+    private static void passOptional(VirtualTableScenario scn) {
+        for (int i = 0; i < 100; i++) {
+            var decision = scn.GetCurrentDecision();
+            if (decision == null || !decision.getText().toLowerCase().contains("optional response")) break;
+            scn.PlayerPass(scn.GetDecidingPlayer());
+        }
     }
 }

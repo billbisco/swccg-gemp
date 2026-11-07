@@ -71,7 +71,7 @@ public class Card_1240_023_Tests {
         scn.SkipToPhase(Phase.DEPLOY);
         int force = scn.GetDSForcePileCount();
         scn.DSPlayCard(scn.GetDSCard("dreaded"));
-        scn.PassAllResponses();
+        passOptional(scn);
         assertInZone(Zone.SIDE_OF_TABLE, scn.GetDSCard("dreaded"));
         assertEquals(force, scn.GetDSForcePileCount());
     }
@@ -93,7 +93,7 @@ public class Card_1240_023_Tests {
         int force = scn.GetDSForcePileCount();
         scn.DSDeployCard(scn.GetDSCard(key));
         scn.DSChooseCard(scn.GetDSStartingLocation());
-        scn.PassAllResponses();
+        passOptional(scn);
         assertAtLocation(scn.GetDSStartingLocation(), scn.GetDSCard(key));
         assertEquals(force - expected, scn.GetDSForcePileCount());
     }
@@ -123,7 +123,7 @@ public class Card_1240_023_Tests {
         int force = scn.GetDSForcePileCount();
         scn.DSDeployCard(scn.GetDSCard("capital"));
         scn.DSChooseCard(scn.GetDSCard("deathStar"));
-        scn.PassAllResponses();
+        passOptional(scn);
         assertAtLocation(scn.GetDSCard("deathStar"), scn.GetDSCard("capital"));
         assertEquals(force - 5, scn.GetDSForcePileCount());
     }
@@ -135,7 +135,7 @@ public class Card_1240_023_Tests {
         int force = scn.GetDSForcePileCount();
         scn.DSDeployCard(scn.GetDSCard("fighter"));
         scn.DSChooseCard(scn.GetDSStartingLocation());
-        scn.PassAllResponses();
+        passOptional(scn);
         assertAtLocation(scn.GetDSStartingLocation(), scn.GetDSCard("fighter"));
         assertEquals(force - 1, scn.GetDSForcePileCount());
     }
@@ -157,7 +157,7 @@ public class Card_1240_023_Tests {
         int force = scn.GetDSForcePileCount();
         scn.DSDeployCard(scn.GetDSCard("victory"));
         scn.DSChooseCard(scn.GetDSCard("rendili"));
-        scn.PassAllResponses();
+        passOptional(scn);
         assertAtLocation(scn.GetDSCard("rendili"), scn.GetDSCard("victory"));
         assertEquals(force - 3, scn.GetDSForcePileCount());
     }
@@ -195,9 +195,9 @@ public class Card_1240_023_Tests {
         order.remove(scn.GetDSCard("squadron"));
         scn.gameState().setRandomSeed(124023);
         scn.DSUseCardAction(scn.GetDSCard("dreaded"), DOWNLOAD);
-        scn.PassAllResponses();
+        passOptional(scn);
         scn.DSChooseCard(scn.GetDSCard("squadron"));
-        scn.PassAllResponses();
+        passOptional(scn);
         assertAtLocation(scn.GetDSStartingLocation(), scn.GetDSCard("squadron"));
         assertEquals(force, scn.GetDSForcePileCount());
         assertNotEquals(order, new ArrayList<>(scn.gameState().getReserveDeck(scn.DS)));
@@ -207,7 +207,7 @@ public class Card_1240_023_Tests {
     public void DreadedImperialStarfleetDownloadRequiresBothSquadronTypeAndAPrintedSetIcon() {
         var scn = SquadronReady();
         scn.DSUseCardAction(scn.GetDSCard("dreaded"), DOWNLOAD);
-        scn.PassAllResponses();
+        passOptional(scn);
         assertTrue(IsSelectable(scn, scn.GetDSCard("squadron")));
         assertTrue(IsSelectable(scn, scn.GetDSCard("replacement")));
         assertFalse(IsSelectable(scn, scn.GetDSCard("wrongIcon")));
@@ -219,9 +219,9 @@ public class Card_1240_023_Tests {
         var scn = SquadronReady();
         int force = scn.GetDSForcePileCount();
         scn.DSUseCardAction(scn.GetDSCard("dreaded"), DOWNLOAD);
-        scn.PassAllResponses();
+        passOptional(scn);
         scn.DSChooseCard(scn.GetDSCard("replacement"));
-        scn.PassAllResponses();
+        passOptional(scn);
         assertAtLocation(scn.GetDSStartingLocation(), scn.GetDSCard("replacement"));
         assertAtLocation(scn.GetDSStartingLocation(), scn.GetDSCard("isd"));
         assertEquals(force, scn.GetDSForcePileCount());
@@ -230,7 +230,7 @@ public class Card_1240_023_Tests {
     @Test
     public void DreadedImperialStarfleetMayDeclineItsSquadronDownload() {
         var scn = SquadronReady();
-        scn.PassAllResponses();
+        passOptional(scn);
         assertInZone(Zone.RESERVE_DECK, scn.GetDSCard("squadron"), scn.GetDSCard("replacement"));
         assertTrue(scn.AwaitingDSDeployPhaseActions() || scn.AwaitingLSDeployPhaseActions());
     }
@@ -263,7 +263,7 @@ public class Card_1240_023_Tests {
         int force = scn.GetLSForcePileCount();
         scn.LSDeployCard(scn.GetLSCard("corvette"));
         scn.LSChooseCard(scn.GetLSStartingLocation());
-        scn.PassAllResponses();
+        passOptional(scn);
         assertAtLocation(scn.GetLSStartingLocation(), scn.GetLSCard("corvette"));
         assertEquals(force - 4, scn.GetLSForcePileCount()); // Original Corvette1_140 deploys4.
     }
@@ -282,5 +282,14 @@ public class Card_1240_023_Tests {
         scn.LSPlayCard(scn.GetLSCard("alter"));
         assertTrue(scn.LSHasCardChoiceAvailable(scn.GetDSCard("terminal")));
         assertTrue(scn.LSHasCardChoiceNotAvailable(scn.GetDSCard("dreaded")));
+    }
+
+    /** Passes every pending optional-response window (PassAllResponses stops after 20), then any remaining responses. */
+    private static void passOptional(VirtualTableScenario scn) {
+        for (int i = 0; i < 100; i++) {
+            var decision = scn.GetCurrentDecision();
+            if (decision == null || !decision.getText().toLowerCase().contains("optional response")) break;
+            scn.PlayerPass(scn.GetDecidingPlayer());
+        }
     }
 }

@@ -117,7 +117,7 @@ public class Card_1240_041_Tests {
         assertFalse(scn.DSHasCardChoiceAvailable(scn.GetLSCard("han")));
         assertFalse(scn.DSHasCardChoiceAvailable(scn.GetLSCard("speeder")));
         scn.DSChooseCard(target);
-        scn.PassAllResponses();
+        passOptional(scn);
 
         assertEquals(succeeds, target.isHit());
         assertEquals(power + (succeeds ? 3 : 0), scn.GetDSTotalPower());
@@ -134,7 +134,7 @@ public class Card_1240_041_Tests {
         scn.PrepareDSDestiny(3);
         scn.DSUseCardAction(orders, THROW);
         scn.DSChooseCard(ship);
-        scn.PassAllResponses();
+        passOptional(scn);
 
         assertTrue(ship.isHit());
         assertEquals(power + 4, scn.GetDSTotalPower());
@@ -153,7 +153,7 @@ public class Card_1240_041_Tests {
         var han = scn.GetLSCard("han");
         int lost = scn.GetLSLostPileCount();
         chooseCharacterMode(scn, orders, han, destiny, "Choke");
-        scn.PassAllResponses();
+        passOptional(scn);
 
         assertFalse(han.isHit());
         assertInZone(succeeds ? Zone.LOST_PILE : Zone.AT_LOCATION, han);
@@ -173,7 +173,7 @@ public class Card_1240_041_Tests {
         var han = scn.GetLSCard("han");
         int lost = scn.GetLSLostPileCount();
         chooseCharacterMode(scn, conflict, han, destiny, "Drain of life");
-        scn.PassAllResponses();
+        passOptional(scn);
 
         assertEquals(succeeds, han.isHit());
         assertInZone(Zone.AT_LOCATION, han);
@@ -194,7 +194,7 @@ public class Card_1240_041_Tests {
         assertTrue(scn.DSCardActionAvailable(conflict, CHARACTER));
         assertTrue(scn.DSCardActionAvailable(conflict, ORDINARY_CONFLICT));
         scn.DSUseCardAction(conflict, ORDINARY_CONFLICT);
-        scn.PassAllResponses();
+        passOptional(scn);
         assertInZone(Zone.LOST_PILE, conflict);
         scn.PrepareLSDestiny(3);
         scn.PrepareDSDestiny(0);
@@ -224,7 +224,7 @@ public class Card_1240_041_Tests {
         if (scn.LSHasCardChoiceAvailable(scn.GetLSCard("luke"))) {
             scn.LSChooseCard(scn.GetLSCard("luke"));
         }
-        scn.PassAllResponses();
+        passOptional(scn);
 
         assertInZone(Zone.LOST_PILE, conflict);
         assertFalse(target.isHit());
@@ -284,5 +284,14 @@ public class Card_1240_041_Tests {
         scn.DSActivateForceCheat(2);
         scn.DSStartBattleAndSkipToWeaponsSegment(site);
         return scn;
+    }
+
+    /** Passes every pending optional-response window (PassAllResponses stops after 20), then any remaining responses. */
+    private static void passOptional(VirtualTableScenario scn) {
+        for (int i = 0; i < 100; i++) {
+            var decision = scn.GetCurrentDecision();
+            if (decision == null || !decision.getText().toLowerCase().contains("optional response")) break;
+            scn.PlayerPass(scn.GetDecidingPlayer());
+        }
     }
 }

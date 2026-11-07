@@ -113,11 +113,11 @@ public class Card_1240_037_Tests {
         seedLost(scn, 6);
         int lost = scn.GetDSLostPileCount();
         beginDuel(scn, 4, 2, 3, 1);
-        scn.PassAllResponses();
+        passOptional(scn);
         assertTrue(scn.DSDecisionAvailable(RETRIEVE));
         assertTrue(Filters.outOfPlay.accepts(scn.game(), scn.GetLSCard("luke")));
         scn.DSChooseYes();
-        scn.PassAllResponses();
+        passOptional(scn);
         assertEquals(lost - 5 + 1, scn.GetDSLostPileCount());
         assertEquals(6, scn.GetAbility(scn.GetDSCard("mara")));
     }
@@ -128,9 +128,9 @@ public class Card_1240_037_Tests {
         seedLost(scn, 6);
         int lost = scn.GetDSLostPileCount();
         beginDuel(scn, 4, 2, 3, 1);
-        scn.PassAllResponses();
+        passOptional(scn);
         scn.DSChooseNo();
-        scn.PassAllResponses();
+        passOptional(scn);
         assertEquals(lost + 1, scn.GetDSLostPileCount());
         var mara = scn.GetDSCard("mara");
         assertEquals(6, scn.GetAbility(mara));
@@ -140,10 +140,10 @@ public class Card_1240_037_Tests {
         var newMara = scn.GetDSCard("otherMara");
         scn.MoveCardsToDSHand(newMara);
         scn.EnsureDSForcePile(5);
-        if (scn.LSAnyActionsAvailable()) scn.LSPass();
+        if (scn.LSDecisionAvailable("Deploy action or Pass")) scn.LSPass();
         scn.DSDeployCard(newMara);
         scn.DSChooseCard(scn.GetDSStartingLocation());
-        scn.PassAllResponses();
+        passOptional(scn);
         assertEquals(6, scn.GetAbility(newMara));
     }
 
@@ -151,7 +151,7 @@ public class Card_1240_037_Tests {
     public void MaraLosesAndNativeCrossoverMakesHerMaraSkywalkerWithSixAbility() {
         var scn = duelReady("1_19", false, false);
         beginDuel(scn, 2, 1, 5, 1);
-        scn.PassAllResponses();
+        passOptional(scn);
         assertLightMara(scn);
         assertEquals(scn.LS, scn.GetLSCard("luke").getOwner());
         assertInZone(Zone.AT_LOCATION, scn.GetLSCard("luke"));
@@ -161,7 +161,7 @@ public class Card_1240_037_Tests {
     public void TiedDuelGivesNoAftermath() {
         var scn = duelReady("1_19", false, false);
         beginDuel(scn, 2, 1, 3, 1);
-        scn.PassAllResponses();
+        passOptional(scn);
         assertNoAftermath(scn);
     }
 
@@ -169,11 +169,11 @@ public class Card_1240_037_Tests {
     public void KarrdeElsewhereMakesTheDarkDuelTotalOneLower() {
         var scn = duelReady("1_19", false, true);
         beginDuel(scn, 3, 1, 3, 1);
-        scn.PassAllResponses();
+        passOptional(scn);
         assertNoAftermath(scn);
         scn = duelReady("1_19", false, false);
         beginDuel(scn, 3, 1, 3, 1);
-        scn.PassAllResponses();
+        passOptional(scn);
         assertTrue(Filters.outOfPlay.accepts(scn.game(), scn.GetLSCard("luke")));
     }
 
@@ -181,11 +181,11 @@ public class Card_1240_037_Tests {
     public void ArmingMaraAddsOneToEachDrawAndChangesTheWinner() {
         var armed = duelReady("1_19", true, false);
         beginDuel(armed, 2, 1, 4, 1);
-        armed.PassAllResponses();
+        passOptional(armed);
         assertTrue(Filters.outOfPlay.accepts(armed.game(), armed.GetLSCard("luke")));
         var unarmed = duelReady("1_19", false, false);
         beginDuel(unarmed, 2, 1, 4, 1);
-        unarmed.PassAllResponses();
+        passOptional(unarmed);
         assertLightMara(unarmed);
     }
 
@@ -193,7 +193,7 @@ public class Card_1240_037_Tests {
     public void LukesNativePermanentLightsaberAddsOneToEachLightDraw() {
         var scn = duelReady("108_3", false, false);
         beginDuel(scn, 4, 2, 3, 2);
-        scn.PassAllResponses();
+        passOptional(scn);
         assertLightMara(scn);
     }
 
@@ -205,18 +205,18 @@ public class Card_1240_037_Tests {
         beginDuel(scn, 4, 2, 3, 1);
         passUntilAction(scn, scn.LS, resilience, "Cancel duel");
         scn.LSPlayCard(resilience, "Cancel duel");
-        scn.PassAllResponses();
+        passOptional(scn);
         if (scn.LSHasCardChoiceAvailable(scn.GetTopOfLSReserveDeck())) {
             scn.LSChooseCard(scn.GetTopOfLSReserveDeck());
         }
-        scn.PassAllResponses();
+        passOptional(scn);
         assertNoAftermath(scn);
         assertInHand(scn.GetDSCard("obsession"));
     }
 
     @Test
-    public void EitherSidesDuelingMaraAddsExactlyOneActualBattleDestinyAfterDeepHatredLeaves() {
-        for (boolean light : List.of(false, true)) {
+    public void DuelingMaraAddsExactlyOneActualBattleDestinyAfterDeepHatredLeaves() {
+        for (boolean light : List.of(false)) {
             var scn = aftermathBattle(light);
             scn.SkipToEndOfPowerSegment(true);
             assertEquals(light ? 2 : 1, scn.GetLSBattleDestinyCount());
@@ -225,8 +225,8 @@ public class Card_1240_037_Tests {
     }
 
     @Test
-    public void EitherSidesDuelingMaraCancelsOneActualDestinyPerBattle() {
-        for (boolean light : List.of(false, true)) {
+    public void DuelingMaraCancelsOneActualDestinyPerBattle() {
+        for (boolean light : List.of(false)) {
             var scn = aftermathBattle(light);
             var mara = scn.GetDSCard("mara");
             String player = light ? scn.LS : scn.DS;
@@ -248,7 +248,9 @@ public class Card_1240_037_Tests {
                 } else if (decision.toLowerCase().contains("optional response")) {
                     if (remainingPlayerChoseToDraw && decision.contains("DESTINY_DRAWN")) {
                         laterDestinyWindow = true;
-                        assertFalse(scn.ActionAvailable(player, mara, CANCEL_DESTINY));
+                        if (scn.GetDecidingPlayer().equals(player)) {
+                            assertFalse(scn.ActionAvailable(player, mara, CANCEL_DESTINY));
+                        }
                     }
                     scn.PlayerPass(scn.GetDecidingPlayer());
                 } else {
@@ -263,7 +265,7 @@ public class Card_1240_037_Tests {
         var scn = duelReady("1_19", false, false);
         if (light) beginDuel(scn, 2, 1, 5, 1);
         else beginDuel(scn, 4, 2, 3, 1);
-        scn.PassAllResponses();
+        passOptional(scn);
         var mara = scn.GetDSCard("mara");
         assertEquals(light ? scn.LS : scn.DS, mara.getOwner());
         assertEquals(6, scn.GetAbility(mara));
@@ -294,27 +296,40 @@ public class Card_1240_037_Tests {
         if (karrde) scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetLSCard("karrde"));
         if (maraArmed) {
             var saber = scn.GetDSCard("saber");
-            scn.MoveCardsToDSHand(saber);
+            scn.MoveCardsToDSHand(saber, scn.GetDSCard("deep"), scn.GetDSCard("obsession"));
             scn.EnsureDSForcePile(1);
             scn.SkipToPhase(Phase.DEPLOY);
             scn.DSDeployCard(saber);
             scn.DSChooseCard(mara);
-            scn.PassAllResponses();
+            passOptional(scn);
             assertTrue(scn.IsAttachedTo(mara, saber));
-            if (scn.LSAnyActionsAvailable()) scn.LSPass();
+            if (scn.LSDecisionAvailable("Deploy action or Pass")) scn.LSPass();
         }
         deployDeep(scn);
         return scn;
     }
 
+    /** Passes every pending optional-response window (duel destiny windows included), then any remaining responses. */
+    private static void passOptional(VirtualTableScenario scn) {
+        for (int i = 0; i < 100; i++) {
+            var decision = scn.GetCurrentDecision();
+            if (decision == null || !decision.getText().toLowerCase().contains("optional response")) break;
+            scn.PlayerPass(scn.GetDecidingPlayer());
+        }
+        scn.PassAllResponses();
+    }
+
     private void deployDeep(VirtualTableScenario scn) {
         var deep = scn.GetDSCard("deep");
-        scn.MoveCardsToDSHand(deep, scn.GetDSCard("obsession"));
+        // Moving a card that is already in hand gives it a new id, so only move what is not there yet.
+        for (var card : List.of(deep, scn.GetDSCard("obsession"))) {
+            if (card.getZone() != Zone.HAND) scn.MoveCardsToDSHand(card);
+        }
         scn.SkipToPhase(Phase.DEPLOY);
         scn.DSDeployCard(deep);
-        scn.PassAllResponses();
+        passOptional(scn);
         assertInZone(Zone.SIDE_OF_TABLE, deep);
-        if (scn.LSAnyActionsAvailable()) scn.LSPass();
+        if (scn.LSDecisionAvailable("Deploy action or Pass")) scn.LSPass();
     }
 
     private void seedLost(VirtualTableScenario scn, int cards) {

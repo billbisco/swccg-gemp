@@ -82,12 +82,12 @@ public class Card_1240_042_Tests {
 
     private void PeekReserveAndPlay(VirtualTableScenario scn) {
         scn.DSUseCardAction(scn.GetDSCard("r2"), "Peek at top 3 cards of Reserve Deck");
-        scn.PassAllResponses();
+        passOptional(scn);
         assertTrue(scn.DSDecisionAvailable("Top cards of Reserve Deck"));
         scn.DSPass();
         Reach(scn, scn.GetDSCard("frustration"), "Peek at and reorder top 3");
         scn.DSPlayCard(scn.GetDSCard("frustration"), "Peek at and reorder top 3");
-        scn.PassAllResponses();
+        passOptional(scn);
     }
 
     private void ReorderThree(VirtualTableScenario scn) {
@@ -104,7 +104,7 @@ public class Card_1240_042_Tests {
         PeekReserveAndPlay(scn);
         ReorderThree(scn);
         scn.DSChooseNo();
-        scn.PassAllResponses();
+        passOptional(scn);
         assertEquals(List.of(scn.GetDSCard("c"), scn.GetDSCard("a"), scn.GetDSCard("b")),
                 scn.GetDSReserveDeck().subList(0, 3));
         assertEquals(hand - 1, scn.GetDSHandCount());
@@ -117,7 +117,7 @@ public class Card_1240_042_Tests {
         PeekReserveAndPlay(scn);
         ReorderThree(scn);
         scn.DSChooseYes();
-        scn.PassAllResponses();
+        passOptional(scn);
         assertInZone(Zone.HAND, scn.GetDSCard("c"));
         assertEquals(scn.GetDSCard("a"), scn.GetTopOfDSReserveDeck());
         assertInZone(Zone.USED_PILE, scn.GetDSCard("frustration"));
@@ -130,16 +130,16 @@ public class Card_1240_042_Tests {
             scn.MoveCardsToDSHand((PhysicalCardImpl) scn.GetDSReserveDeck().getLast());
         }
         scn.DSUseCardAction(scn.GetDSCard("r2"), "Peek at top 3 cards of Reserve Deck");
-        scn.PassAllResponses();
+        passOptional(scn);
         scn.DSPass();
         Reach(scn, scn.GetDSCard("frustration"), "Peek at and reorder top 3");
         scn.DSPlayCard(scn.GetDSCard("frustration"), "Peek at and reorder top 3");
-        scn.PassAllResponses();
+        passOptional(scn);
         assertEquals(2, scn.DSGetCardChoiceCount());
         scn.DSChooseCard(scn.GetDSCard("a"));
         scn.DSChooseCard(scn.GetDSCard("b"));
         scn.DSChooseNo();
-        scn.PassAllResponses();
+        passOptional(scn);
         assertEquals(List.of(scn.GetDSCard("b"), scn.GetDSCard("a")), scn.GetDSReserveDeck());
     }
 
@@ -153,17 +153,17 @@ public class Card_1240_042_Tests {
         scn.SkipToPhase(Phase.CONTROL);
         scn.MoveCardsToTopOfDSForcePile(scn.GetDSCard("c"), scn.GetDSCard("b"), scn.GetDSCard("a"));
         scn.DSPlayCard(scn.GetDSCard("through"), "Peek at top card of Force Pile");
-        scn.PassAllResponses();
+        passOptional(scn);
         assertTrue(scn.DSDecisionAvailable("Top card of Force Pile"));
         scn.DSPass();
         Reach(scn, scn.GetDSCard("frustration"), "Peek at and reorder top 3");
         scn.DSPlayCard(scn.GetDSCard("frustration"), "Peek at and reorder top 3");
-        scn.PassAllResponses();
+        passOptional(scn);
         ReorderThree(scn);
         scn.DSChooseYes();
-        scn.PassAllResponses();
+        passOptional(scn);
         scn.DSChoose("Return it");
-        scn.PassAllResponses();
+        passOptional(scn);
         assertInZone(Zone.HAND, scn.GetDSCard("c"));
         assertEquals(scn.GetDSCard("a"), scn.GetTopOfDSForcePile());
         assertInZone(Zone.USED_PILE, scn.GetDSCard("frustration"));
@@ -193,14 +193,14 @@ public class Card_1240_042_Tests {
         var top = new ArrayList<>(scn.GetDSUsedPile().subList(0, 3));
         Reach(scn, scn.GetDSCard("frustration"), "Peek at and reorder top 3");
         scn.DSPlayCard(scn.GetDSCard("frustration"), "Peek at and reorder top 3");
-        scn.PassAllResponses();
+        passOptional(scn);
         scn.DSChooseCard((PhysicalCardImpl) top.get(0));
         scn.DSChooseCard((PhysicalCardImpl) top.get(1));
         scn.DSChooseCard((PhysicalCardImpl) top.get(2));
         scn.DSChooseYes();
-        scn.PassAllResponses();
+        passOptional(scn);
         scn.DSChooseNo(); // Tech Mo'r does not reshuffle after Frustration's reorder.
-        scn.PassAllResponses();
+        passOptional(scn);
         assertInZone(Zone.HAND, (PhysicalCardImpl) top.get(2));
         assertInZone(Zone.USED_PILE, scn.GetDSCard("frustration"));
         assertTrue(scn.GetDSUsedPile().indexOf(top.get(1)) < scn.GetDSUsedPile().indexOf(top.get(0)));
@@ -212,7 +212,7 @@ public class Card_1240_042_Tests {
         PassResponsesWithoutFrustration(scn);
         assertTrue(scn.DSDecisionAvailable("Do you want to re-shuffle this card pile?"));
         scn.DSChooseNo();
-        scn.PassAllResponses();
+        passOptional(scn);
         assertInZone(Zone.HAND, scn.GetDSCard("frustration"));
     }
 
@@ -229,7 +229,7 @@ public class Card_1240_042_Tests {
         scn.EnsureDSForcePile(10);
         scn.SkipToPhase(Phase.BATTLE);
         scn.DSInitiateBattle(site);
-        scn.PassAllResponses();
+        passOptional(scn);
         return scn;
     }
 
@@ -237,9 +237,9 @@ public class Card_1240_042_Tests {
     public void FrustrationLostAddsFiveToActualBattleDestinyAndMayRetrieveOneForce() {
         var scn = BattleReady(true, true);
         scn.DSPlayCard(scn.GetDSCard("frustration"), LOST);
-        scn.PassAllResponses();
+        passOptional(scn);
         scn.DSChooseYes();
-        scn.PassAllResponses();
+        passOptional(scn);
         assertInZone(Zone.USED_PILE, scn.GetDSCard("a"));
         assertInZone(Zone.LOST_PILE, scn.GetDSCard("frustration"));
         scn.PrepareDSDestiny(2);
@@ -252,9 +252,9 @@ public class Card_1240_042_Tests {
     public void FrustrationLostMayDeclineRetrievalWithoutLosingTheBattleDestinyBonus() {
         var scn = BattleReady(true, true);
         scn.DSPlayCard(scn.GetDSCard("frustration"), LOST);
-        scn.PassAllResponses();
+        passOptional(scn);
         scn.DSChooseNo();
-        scn.PassAllResponses();
+        passOptional(scn);
         assertInZone(Zone.LOST_PILE, scn.GetDSCard("a"), scn.GetDSCard("frustration"));
         scn.PrepareDSDestiny(2);
         scn.PrepareLSDestiny(0);
@@ -288,9 +288,9 @@ public class Card_1240_042_Tests {
     public void FrustrationLostBattleDestinyBonusExpiresBeforeTheNextBattle() {
         var scn = BattleReady(true, true);
         scn.DSPlayCard(scn.GetDSCard("frustration"), LOST);
-        scn.PassAllResponses();
+        passOptional(scn);
         scn.DSChooseNo();
-        scn.PassAllResponses();
+        passOptional(scn);
         scn.PrepareDSDestiny(2);
         scn.PrepareLSDestiny(0);
         scn.SkipToEndOfPowerSegment(true);
@@ -318,7 +318,7 @@ public class Card_1240_042_Tests {
         scn.EnsureDSForcePile(5);
         scn.SkipToPhase(Phase.CONTROL);
         scn.DSUseCardAction(scn.GetDSCard("scan"), "Peek at top of opponent's Reserve Deck");
-        scn.PassAllResponses();
+        passOptional(scn);
         assertTrue(scn.DSDecisionAvailable("Top card"));
         scn.DSPass();
         PassResponsesWithoutFrustration(scn);
@@ -339,16 +339,25 @@ public class Card_1240_042_Tests {
         scn.SkipToPhase(Phase.CONTROL);
         scn.MoveCardsToTopOfDSForcePile(scn.GetDSCard("c"), scn.GetDSCard("b"), scn.GetDSCard("a"));
         scn.DSUseCardAction(scn.GetDSCard("dodo"), "Peak at top 1 cards");
-        scn.PassAllResponses();
+        passOptional(scn);
         scn.DSChooseCard(scn.GetDSCard("a"));
         Reach(scn, scn.GetDSCard("frustration"), "Peek at and reorder top 3");
         scn.DSPlayCard(scn.GetDSCard("frustration"), "Peek at and reorder top 3");
-        scn.PassAllResponses();
+        passOptional(scn);
         ReorderThree(scn);
         scn.DSChooseNo();
-        scn.PassAllResponses();
+        passOptional(scn);
         assertEquals(List.of(scn.GetDSCard("c"), scn.GetDSCard("a"), scn.GetDSCard("b")),
                 scn.GetDSForcePile().subList(0, 3));
         assertInZone(Zone.USED_PILE, scn.GetDSCard("frustration"));
+    }
+
+    /** Passes every pending optional-response window (PassAllResponses stops after 20), then any remaining responses. */
+    private static void passOptional(VirtualTableScenario scn) {
+        for (int i = 0; i < 100; i++) {
+            var decision = scn.GetCurrentDecision();
+            if (decision == null || !decision.getText().toLowerCase().contains("optional response")) break;
+            scn.PlayerPass(scn.GetDecidingPlayer());
+        }
     }
 }

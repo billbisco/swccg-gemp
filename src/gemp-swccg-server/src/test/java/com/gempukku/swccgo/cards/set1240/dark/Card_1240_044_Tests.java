@@ -78,14 +78,14 @@ public class Card_1240_044_Tests {
         int force = scn.GetDSForcePileCount();
         assertTrue(scn.DSCardActionAvailable(worse, DOWNLOAD));
         scn.DSUseCardAction(worse, DOWNLOAD);
-        scn.PassAllResponses();
+        passOptional(scn);
         assertTrue(scn.DSHasCardChoiceAvailable(pit));
         assertFalse(scn.DSHasCardChoiceAvailable(other));
         scn.DSChooseCard(pit);
         if (scn.DSDecisionAvailable("On which side")) {
             scn.DSChoose("Left");
         }
-        scn.PassAllResponses();
+        passOptional(scn);
 
         assertEquals(Zone.LOCATIONS, pit.getZone());
         assertEquals(force - 1, scn.GetDSForcePileCount());
@@ -123,7 +123,7 @@ public class Card_1240_044_Tests {
         assertTrue(scn.DSHasCardChoiceAvailable(pit));
         assertFalse(scn.DSHasCardChoiceAvailable(scn.GetDSCard("greatPit")));
         scn.DSChooseCard(pit);
-        scn.PassAllResponses();
+        passOptional(scn);
 
         assertFalse(luke.isCaptive());
         assertAtLocation(pit, luke);
@@ -208,7 +208,7 @@ public class Card_1240_044_Tests {
         if (scn.LSHasCardChoiceAvailable(bubo)) {
             scn.LSChooseCard(bubo);
         }
-        scn.PassAllResponses();
+        passOptional(scn);
         assertTrue(scn.gameState().isDuringAttack());
         assertEquals(5, scn.game().getModifiersQuerying().getDefenseValue(scn.gameState(), bubo), scn.epsilon);
 
@@ -218,7 +218,7 @@ public class Card_1240_044_Tests {
         if (cancel) {
             scn.DSUseCardAction(worse, CANCEL);
         }
-        scn.PassAllResponses();
+        passOptional(scn);
         assertEquals(!cancel, bubo.isHit());
         if (cancel) {
             assertTrue(scn.GetDSUsedPile().contains(worse));
@@ -239,7 +239,7 @@ public class Card_1240_044_Tests {
         scn.LSStartBattleAndSkipToWeaponsSegment(site);
         fire(scn, luke, vader);
         assertFalse(advanceToCancel(scn));
-        scn.PassAllResponses();
+        passOptional(scn);
         assertTrue(vader.isHit());
         assertTrue(scn.GetDSHand().contains(worse));
     }
@@ -265,5 +265,14 @@ public class Card_1240_044_Tests {
             }
         }
         throw new AssertionError("Weapon draw did not finish");
+    }
+
+    /** Passes every pending optional-response window (PassAllResponses stops after 20), then any remaining responses. */
+    private static void passOptional(VirtualTableScenario scn) {
+        for (int i = 0; i < 100; i++) {
+            var decision = scn.GetCurrentDecision();
+            if (decision == null || !decision.getText().toLowerCase().contains("optional response")) break;
+            scn.PlayerPass(scn.GetDecidingPlayer());
+        }
     }
 }
