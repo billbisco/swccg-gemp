@@ -38,14 +38,17 @@ public class Card_1271_013_Tests {
         s.MoveCardsToLocation(s.GetDSStartingLocation(), luke);
         s.SkipToDSTurn(Phase.CONTROL);
         s.EnsureDSForcePile(10);
-        s.PrepareDSDestiny(destiny);
         s.SkipToPhase(Phase.BATTLE);
         s.StartBattleAndSkipToWeaponsSegment(s.DS, s.GetDSStartingLocation());
+        s.PrepareDSDestiny(destiny);
+        assertEquals(s.GetDSDestiny(destiny), s.gameState().getTopOfReserveDeck(s.DS));
+        assertEquals(4, s.GetAbility(luke));
         s.DSUseCardAction(s.GetDSCard("limbs"), "'Choke' a character");
         if (s.DSHasCardChoiceAvailable(luke)) s.DSChooseCard(luke);
         s.PassAllResponses();
         s.PassDestinyDrawResponses();
         s.PassAllResponses();
+        assertNotEquals("Choke must draw the prepared card", s.GetDSDestiny(destiny), s.gameState().getTopOfReserveDeck(s.DS));
         assertEquals("Luke's zone is " + luke.getZone() + "; DS decision " + s.DSGetDecision() + "; LS decision " + s.LSGetDecision(),
             lost, s.GetLSLostPile().contains(luke));
     }

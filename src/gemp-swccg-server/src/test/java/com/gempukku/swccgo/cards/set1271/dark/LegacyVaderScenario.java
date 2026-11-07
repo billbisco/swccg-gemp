@@ -73,9 +73,9 @@ final class LegacyVaderScenario {
         s.AttachCardsTo(fambaa, s.GetLSCard("booma"));
         s.SkipToLSTurn(Phase.CONTROL);
         s.EnsureLSForcePile(10);
-        s.PrepareLSDestiny(0);
         s.SkipToPhase(Phase.BATTLE);
         s.StartBattleAndSkipToWeaponsSegment(s.LS, s.GetDSStartingLocation());
+        s.PrepareLSDestiny(0);
         return s;
     }
 
@@ -84,6 +84,7 @@ final class LegacyVaderScenario {
         s.LSUseCardAction(weapon, "Fire");
         s.PassAllResponses();
         s.PassDestinyDrawResponses();
+        assertNotEquals("Booma must draw the prepared card", s.GetLSDestiny(0), s.gameState().getTopOfReserveDeck(s.LS));
         if (s.DSHasCardChoiceAvailable(s.GetDSCard("vader"))) s.DSChooseCard(s.GetDSCard("vader"));
     }
 }

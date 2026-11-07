@@ -57,8 +57,15 @@ public class Card_1271_002_Tests {
         var system = s.GetDSCard("system");
         s.MoveLocationToTable(system);
         s.MoveCardsToLocation(system, ship);
-        s.BoardAsPilot(ship, s.GetDSCard("vader"));
-        assertTrue(s.IsAboardAsPilot(ship, s.GetDSCard("vader")));
+        var vader = s.GetDSCard("vader");
+        s.MoveCardsToDSHand(vader);
+        s.SkipToDSTurn(Phase.CONTROL);
+        s.EnsureDSForcePile(10);
+        s.SkipToPhase(Phase.DEPLOY);
+        s.DSDeployCard(vader);
+        s.DSChooseCard(ship);
+        s.PassAllResponses();
+        assertTrue(s.IsAboardAsPilot(ship, vader));
         assertEquals(5, s.GetPower(ship));
     }
 }
