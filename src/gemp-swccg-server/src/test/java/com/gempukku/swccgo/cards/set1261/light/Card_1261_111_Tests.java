@@ -30,6 +30,7 @@ public class Card_1261_111_Tests {
         var scn = scenario(); scn.StartGame();
         for (String key : new String[]{"echo", "hoth", "perimeter", "ridge", "generators", "kessel"})
             scn.MoveLocationToTable(scn.GetLSCard(key));
+        System.out.println("ECHO START " + scn.gameState().getCurrentPhase() + " " + scn.GetCurrentDecision().getText());
         return scn;
     }
     @Test public void EchoCommandCenterStatsMatchPrintedLegacyMaster() {
@@ -60,6 +61,7 @@ public class Card_1261_111_Tests {
         return scn;
     }
     private void takePoint(VirtualTableScenario scn, String key) {
+        System.out.println("ECHO SEARCH " + scn.gameState().getCurrentPhase() + " " + scn.GetCurrentDecision().getText() + " " + scn.GetLSAvailableActions());
         scn.LSUseCardAction(scn.GetLSCard("echo"), "Take Rendezvous Point"); scn.PassAllResponses();
         assertTrue(scn.LSHasCardChoiceAvailable(scn.GetLSCard(key)));
         scn.LSChooseCard(scn.GetLSCard(key)); scn.PassAllResponses();
