@@ -148,7 +148,7 @@ public class Card_1220_072_Tests {
     }
 
     @Test(timeout = 10000)
-    public void walkerGarrisonRemainsUsedButCannotBePlayedAgainAndWalkersCostLessOnlyAtMarkers() {
+    public void walkerGarrisonRetainsItsPrintedLostSubtypeButCannotBePlayedAgainAndWalkersCostLessOnlyAtMarkers() {
         var scn = scenario();
         var ice = setup(scn);
         var walker = scn.GetDSCard("walker");
@@ -169,7 +169,7 @@ public class Card_1220_072_Tests {
         if (scn.DSHasCardChoiceAvailable(walker))
             scn.DSChooseCard(walker);
         scn.PassAllResponses();
-        assertTrue(scn.GetDSUsedPile().contains(garrison));
+        assertTrue(scn.GetDSLostPile().contains(garrison));
         assertTrue(scn.GetDSHand().contains(walker));
         scn.MoveCardsToDSHand(garrison);
         scn.MoveCardsToTopOfDSReserveDeck(walker);
@@ -255,7 +255,7 @@ public class Card_1220_072_Tests {
         var mods = scn.game().getModifiersQuerying();
         assertFalse(mods.isForceDrainModifierCanceled(scn.gameState(), ice, veers, scn.DS, scn.DS, 1));
         scn.MoveCardsToLocation(ice, rebel);
-        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), veers);
+        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), veers);
         scn.SkipToPhase(Phase.BATTLE);
         assertTrue(mods.isForceDrainModifierCanceled(scn.gameState(), ice, veers, scn.DS, scn.DS, 1));
     }
@@ -289,6 +289,7 @@ public class Card_1220_072_Tests {
                 fail("Expected actual AT-AT deployment to offer retrieval");
         }
         scn.DSUseCardAction(obj, "Retrieve a card into hand");
+        scn.PassAllResponses();
         if (scn.DSHasCardChoiceAvailable(vader))
             scn.DSChooseCard(vader);
         scn.PassAllResponses();
