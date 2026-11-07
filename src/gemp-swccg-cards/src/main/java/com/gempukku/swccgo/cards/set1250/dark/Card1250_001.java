@@ -38,7 +38,8 @@ public class Card1250_001 extends Card1114_029 {
         return Filters.and(Filters.system, systemState, new Filter() {
             @Override
             public boolean accepts(GameState state, ModifiersQuerying querying, PhysicalCard system) {
-                Filter ownShips = Filters.and(Filters.owner(playerId), Filters.starship, Filters.presentAt(system));
+                Filter ownShips = Filters.and(Filters.owner(playerId), Filters.starship,
+                        Filters.presentAt(Filters.sameCardId(system)));
                 if (Filters.canSpot(state.getGame(), self, Filters.and(ownShips, Filters.capital_starship))) {
                     return true;
                 }
