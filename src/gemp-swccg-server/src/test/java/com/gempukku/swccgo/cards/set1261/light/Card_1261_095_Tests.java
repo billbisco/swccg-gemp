@@ -34,10 +34,10 @@ public class Card_1261_095_Tests {
         scn.MoveLocationToTable(scn.GetLSCard("remote")); scn.MoveCardsToLSHand(scn.GetLSCard("scum"), scn.GetLSCard("scum2"));
         return scn;
     }
-    @Test public void ScumStatsMatchFinalMasterRatherThanEarlierFiveDestinyImage() {
+    @Test public void ScumRetainsFiveDestinyFromTheFullCard() {
         var scn = scenario(); var b = scn.GetLSCard("scum").getBlueprint();
         assertEquals(Title.I_Dont_Need_Their_Scum_Either, b.getTitle()); assertEquals(Side.LIGHT, b.getSide());
-        assertEquals(6, b.getDestiny(), scn.epsilon); assertEquals(CardSubtype.USED_OR_LOST, b.getCardSubtype());
+        assertEquals(5, b.getDestiny(), scn.epsilon); assertEquals(CardSubtype.USED_OR_LOST, b.getCardSubtype());
         assertEquals(Uniqueness.UNIQUE, b.getUniqueness()); assertTrue(b.hasVirtualSuffix());
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_6_1, b.getExpansionSet()); assertEquals(Rarity.V, b.getRarity());
         scn.BlueprintCardTypeCheck(b, new ArrayList<>(Arrays.asList(CardType.INTERRUPT)));

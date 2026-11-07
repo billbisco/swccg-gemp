@@ -22,10 +22,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/** Final Legacy master list, page 34 (destiny 6; earlier full-card image has 5). */
+/** Final Legacy master list, page 34; full card supplies unchanged destiny 5. */
 public class Card1261_095 extends AbstractUsedOrLostInterrupt {
     public Card1261_095() {
-        super(Side.LIGHT, 6, Title.I_Dont_Need_Their_Scum_Either, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
+        super(Side.LIGHT, 5, Title.I_Dont_Need_Their_Scum_Either, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("Of all the scum and villainy Lando had dealt with (pirates, smugglers, con-artists, thieves, swindlers, politicians and Imperial lackeys), he hated bounty hunters the most.");
         setGameText("USED: Cancel Lando System?. OR If Lando piloting Falcon, it draws two battle destiny if not able to otherwise. LOST: Retrieve your just lost gambler (except Dash) into hand. OR Place a copy of Eject! Eject! deployed on table in your Used Pile.");
