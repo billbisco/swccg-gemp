@@ -46,4 +46,21 @@ public class Card_1261_087_Tests {
         assertEquals(Zone.HAND, strong.getZone());
     }
 
+
+    @Test public void theSet25VirtualObjectiveAlsoAllowsStrongToDeploy() {
+        var scn = new VirtualTableScenario(new HashMap<>(Map.of("v25", "225_53", "strong", "1261_87")),
+                new HashMap<>(), 40, 40, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields, StartingSetup.NoDSShields, "legacy");
+        scn.StartGame();
+        var v25 = scn.GetLSCard("v25");
+        scn.MoveCardsToLSSideOfTable(v25);
+        assertEquals(Title.Mind_What_You_Have_Learned, v25.getBlueprint().getTitle());
+        assertTrue(v25.getBlueprint().hasVirtualSuffix());
+        var strong = scn.GetLSCard("strong");
+        scn.MoveCardsToLSHand(strong); scn.SkipToLSTurn(Phase.DEPLOY);
+        scn.EnsureLSForcePile(5);
+        assertTrue(scn.LSDeployAvailable(strong));
+    }
+
 }

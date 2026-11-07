@@ -4,10 +4,12 @@ import com.gempukku.swccgo.cards.AbstractEpicEventDeployable;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.set1262.light.Card1262_022;
 import com.gempukku.swccgo.common.*;
+import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.game.state.ForRemainderOfGameData;
+import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.logic.TriggerConditions;
 import com.gempukku.swccgo.logic.actions.OptionalGameTextTriggerAction;
 import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
@@ -16,6 +18,7 @@ import com.gempukku.swccgo.logic.decisions.DecisionResultInvalidException;
 import com.gempukku.swccgo.logic.effects.PlayoutDecisionEffect;
 import com.gempukku.swccgo.logic.effects.RetrieveForceEffect;
 import com.gempukku.swccgo.logic.modifiers.*;
+import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 import com.gempukku.swccgo.logic.timing.EffectResult;
 import com.gempukku.swccgo.logic.timing.PassthruEffect;
 import com.gempukku.swccgo.logic.timing.results.JediTestCompletedResult;
@@ -32,9 +35,17 @@ public class Card1261_087 extends AbstractEpicEventDeployable {
         addIcons(Icon.DEATH_STAR_II);
     }
 
+    private static final Filter VIRTUAL_PRINTING = new Filter() {
+        @Override
+        public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard card) {
+            return card.getBlueprint().hasVirtualSuffix();
+        }
+    };
+
     @Override
     protected boolean checkGameTextDeployRequirements(String playerId, SwccgGame game, PhysicalCard self, PlayCardOptionId option, boolean asReact) {
-        return GameConditions.canSpot(game, self, Filters.and(Filters.your(self), Filters.Mind_What_You_Have_Learned, Icon.LEGACY_BLOCK_6));
+        // Any [Virtual] Mind What You Have Learned (e.g. Set 25 or Legacy Block 6), not the original Special Edition printing.
+        return GameConditions.canSpot(game, self, Filters.and(Filters.your(self), Filters.Mind_What_You_Have_Learned, VIRTUAL_PRINTING));
     }
 
     @Override
