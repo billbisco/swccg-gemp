@@ -118,7 +118,8 @@ public class Card_1261_066_Tests {
     }
     @Test public void CourageousHanMayDeclineSubstitutionAndActuallyDrawZero() {
         var scn = fire(true); assertTrue(scn.GetCurrentDecision().getText(), scn.GetLSAvailableActions().stream().anyMatch(x -> x.contains(ABILITY)));
-        scn.PassWeaponFireWithDestinyDraw();
+        scn.LSPass();
+        scn.PassAllResponses(); scn.PassWeaponFireWithDestinyDraw();
         assertFalse(scn.GetDSCard("trooper").isHit()); assertInZone(Zone.USED_PILE, scn.GetLSDestiny(0));
     }
     @Test public void CourageousHanDoesNotSubstituteForOtherCharactersWeapon() {
