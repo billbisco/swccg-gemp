@@ -142,7 +142,12 @@ public class Card_1261_039_Tests {
             scn.DSChooseCard(vader);
         if (scn.DSHasCardChoiceAvailable(light))
             scn.DSChooseCard(light);
-        scn.PassAllResponses();
+        for (int i = 0; i < 70 && scn.GetCurrentDecision().getText().toLowerCase().contains("optional response"); i++) {
+            if (scn.DSGetDecision() != null)
+                scn.DSPass();
+            else
+                scn.LSPass();
+        }
         return scn;
     }
 
