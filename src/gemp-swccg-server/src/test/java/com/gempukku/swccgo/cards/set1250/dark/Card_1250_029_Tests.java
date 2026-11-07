@@ -3,6 +3,7 @@ package com.gempukku.swccgo.cards.set1250.dark;
 import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.logic.GameUtils;
 import com.gempukku.swccgo.logic.decisions.CardActionSelectionDecision;
 import org.junit.Test;
 
@@ -90,7 +91,7 @@ public class Card_1250_029_Tests {
         scn.DSPlayCard(scn.GetDSCard("anger"), DUEL);
         boolean epicSeen = false;
         boolean offerSeen = false;
-        for (int i = 0; i < 65; i++) {
+        for (int i = 0; i < 140; i++) {
             var live = scn.gameState().getDuelState();
             if (live != null) {
                 assertTrue(live.isEpicDuel());
@@ -118,12 +119,13 @@ public class Card_1250_029_Tests {
         }
         assertTrue(epicSeen);
         assertEquals(expectRetrieval, offerSeen);
-        assertTrue(scn.AwaitingDSMovePhaseActions() || scn.AwaitingLSMovePhaseActions());
+        assertTrue("Duel did not return to Move actions: " + scn.GetCurrentDecision().getText(),
+                scn.AwaitingDSMovePhaseActions() || scn.AwaitingLSMovePhaseActions());
         assertInZone(Zone.USED_PILE, scn.GetDSDestiny(d1));
         assertInZone(Zone.USED_PILE, scn.GetDSDestiny(d2));
         assertInZone(Zone.USED_PILE, scn.GetLSDestiny(l1));
         assertInZone(Zone.USED_PILE, scn.GetLSDestiny(l2));
-        var interruptZone = scn.GetDSCard("anger").getZone();
+        var interruptZone = GameUtils.getZoneFromZoneTop(scn.GetDSCard("anger").getZone());
         assertTrue(interruptZone == Zone.LOST_PILE || interruptZone == Zone.USED_PILE);
     }
 

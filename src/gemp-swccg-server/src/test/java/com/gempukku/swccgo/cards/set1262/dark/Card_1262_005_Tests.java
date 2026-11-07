@@ -5,6 +5,7 @@ import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.game.PhysicalCardImpl;
 import com.gempukku.swccgo.logic.decisions.CardActionSelectionDecision;
 import org.junit.Test;
 
@@ -157,7 +158,20 @@ public class Card_1262_005_Tests {
     }
 
     @Test public void BrokenConcentrationTrainingTestDoesNotPassAtExactThreshold() {
-        attemptTraining(false, 5, false);
+        // Four drawn, one from Yoda, three non-generic sites, four apprentice ability.
+        attemptTraining(false, 4, false);
+    }
+
+    private boolean reachReductionWindow(VirtualTableScenario scn, PhysicalCardImpl effect) {
+        for (int i = 0; i < 18; i++) {
+            var decision = scn.GetCurrentDecision();
+            if (!(decision instanceof CardActionSelectionDecision)) return false;
+            if (scn.DSGetDecision() != null && scn.DSCardActionAvailable(effect, REDUCE)) return true;
+            if (scn.AwaitingDSBattlePhaseActions() || scn.AwaitingLSBattlePhaseActions()) return false;
+            if (scn.DSGetDecision() != null) scn.DSPass(); else scn.LSPass();
+        }
+        fail("No payment window after battle damage responses");
+        return false;
     }
 
     private VirtualTableScenario damage(int destiny) {
@@ -177,7 +191,7 @@ public class Card_1262_005_Tests {
         var effect = scn.GetDSCard("effect");
         assertEquals(2 + destiny, scn.GetUnpaidDSBattleDamage());
         assertEquals(destiny, scn.GetUnpaidDSAttrition());
-        assertTrue(scn.DSCardActionAvailable(effect, REDUCE));
+        assertTrue(reachReductionWindow(scn, effect));
         scn.DSUseCardAction(effect, REDUCE);
         scn.PassAllResponses();
         assertInZone(Zone.OUT_OF_PLAY, effect);
@@ -203,6 +217,7 @@ public class Card_1262_005_Tests {
         scn.DSInitiateBattle(site);
         scn.SkipToDamageSegment(true);
         assertEquals(4, scn.GetUnpaidDSBattleDamage());
+        assertTrue(reachReductionWindow(scn, first));
         scn.DSUseCardAction(first, REDUCE);
         scn.PassAllResponses();
         assertInZone(Zone.OUT_OF_PLAY, first);
@@ -221,7 +236,7 @@ public class Card_1262_005_Tests {
         scn.DSInitiateBattle(site);
         scn.SkipToDamageSegment(true);
         assertEquals(4, scn.GetUnpaidDSBattleDamage());
-        assertFalse(scn.DSCardActionAvailable(second, REDUCE));
+        assertFalse(reachReductionWindow(scn, second));
     }
 
     @Test public void BrokenConcentrationCannotBeUsedOutsideBattleDamage() {
