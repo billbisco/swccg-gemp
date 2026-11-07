@@ -114,6 +114,9 @@ public class Card_1250_058_Tests {
         s.MoveCardsToLocation(site, obiWan, leia);
         if (sidious) s.MoveCardsToLocation(s.GetDSStartingLocation(), s.GetDSCard("sidious"));
         PhysicalCard canceler = cancelFromOpponent ? s.GetDSCard("vader") : s.GetLSCard("ordinary");
+        // The canceling card must be active on table for its modifier to apply.
+        if (cancelFromOpponent) s.MoveCardsToLocation(s.GetDSStartingLocation(), s.GetDSCard("vader"));
+        else s.MoveCardsToLSSideOfTable(s.GetLSCard("ordinary"));
         s.ApplyAdHocModifier(new CancelImmunityToAttritionModifier(canceler, Filters.or(Filters.sameCardId(obiWan), Filters.sameCardId(leia))));
         // Let the game loop pick up the ad hoc modifier.
         s.SkipToLSTurn(Phase.CONTROL);
