@@ -120,8 +120,9 @@ public class Card_1261_055_Tests {
         int lsBefore = scn.GetLSForcePileCount();
 
         scn.DSUseCardAction(slave, "Place card face down on side of table");
-        scn.DSChooseCard(vader);
-        assertTrue(scn.LSChoiceAvailable(mosEspa.equals("1261_55")
+        if (scn.DSHasCardChoiceAvailable(vader)) // a single card in hand is chosen automatically
+            scn.DSChooseCard(vader);
+        assertTrue("LS=" + (scn.LSGetDecision() == null ? null : scn.LSGetDecision().getText()), scn.LSChoiceAvailable(mosEspa.equals("1261_55")
                 ? "Use 2 Force (opponent deploys card for 2 Force)" : "Use 2 Force (opponent deploys card for free)"));
         scn.LSChooseOption("Use 2 Force");
         for (int i = 0; i < 10 && vader.getZone() != Zone.AT_LOCATION; i++) {
