@@ -41,7 +41,7 @@ public class Card_1240_023_Tests {
             put("hoth", "3_143"); put("deathStar", "2_143"); put("rendili", "7_287");
             put("yards", "7_238"); put("piett", "9_98"); put("terminal", "1_228");
         }}, 40, 40, StartingSetup.DefaultLSSpaceSystem, StartingSetup.DefaultDSSpaceSystem,
-                StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.DeclineLSStartingInterrupt, StartingSetup.DeclineDSStartingInterrupt,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
     }
 

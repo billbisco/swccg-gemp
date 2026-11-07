@@ -21,7 +21,7 @@ public class Card_1240_006_Tests {
             put("droid", "4_91"); put("ship", "1_301"); put("bike", "8_169");
             put("city", "7_277"); put("trooper", "1_194"); put("system", "1_282");
         }}, 40, 40, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
-                StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.DeclineLSStartingInterrupt, StartingSetup.DeclineDSStartingInterrupt,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
     }
 

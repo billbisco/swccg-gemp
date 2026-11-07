@@ -40,7 +40,7 @@ public class Card_1240_013_Tests {
             put("unexpected", "4_152"); put("ship", "1_301");
             put("bike", "8_169"); put("system", "1_282");
         }}, 40, 40, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
-                StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.DeclineLSStartingInterrupt, StartingSetup.DeclineDSStartingInterrupt,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
     }
 

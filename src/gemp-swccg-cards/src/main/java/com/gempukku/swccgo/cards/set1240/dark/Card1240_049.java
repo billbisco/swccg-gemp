@@ -61,10 +61,10 @@ public class Card1240_049 extends AbstractSite {
         PhysicalCard played = ((RespondablePlayingCardEffect) effect).getCard();
         if (!TriggerConditions.isPlayingCard(game, effect, game.getOpponent(playerOnDarkSideOfLocation), Filters.and(Filters.Interrupt, Filters.titleContains("Rebel")))
                 || !GameConditions.canBeGrabbed(game, self, played)
-                || !GameConditions.isOncePerGame(game, self, GameTextActionId.OTHER_CARD_ACTION_1)) {
+                || !GameConditions.isOncePerGame(game, self, GameTextActionId.LEGACY__CARIDA_ISB_TRAINING_ACADEMY__STACK_REBEL_INTERRUPT)) {
             return null;
         }
-        final OptionalGameTextTriggerAction action = new OptionalGameTextTriggerAction(self, playerOnDarkSideOfLocation, gameTextSourceCardId, GameTextActionId.OTHER_CARD_ACTION_1);
+        final OptionalGameTextTriggerAction action = new OptionalGameTextTriggerAction(self, playerOnDarkSideOfLocation, gameTextSourceCardId, GameTextActionId.LEGACY__CARIDA_ISB_TRAINING_ACADEMY__STACK_REBEL_INTERRUPT);
         action.setText("Stack " + GameUtils.getFullName(played));
         action.appendUsage(new OncePerGameEffect(action));
         action.appendEffect(new StackCardFromVoidEffect(action, played, self));

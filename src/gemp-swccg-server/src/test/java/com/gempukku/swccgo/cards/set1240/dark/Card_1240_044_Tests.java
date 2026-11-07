@@ -40,7 +40,7 @@ public class Card_1240_044_Tests {
                         Map.entry("pitGuard", "1_194"), Map.entry("extraGuard", "1_194"),
                         Map.entry("bubo", "6_138"))),
                 12, 12, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
-                StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.DeclineLSStartingInterrupt, StartingSetup.DeclineDSStartingInterrupt,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
     }
 

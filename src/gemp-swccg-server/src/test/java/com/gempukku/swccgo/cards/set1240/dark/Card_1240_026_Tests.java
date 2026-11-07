@@ -40,7 +40,7 @@ public class Card_1240_026_Tests {
             put("deathstar", "2_143"); put("lost", "1_172");
             put("garrison", "13_87"); put("bombing", "4_117"); put("advisor", "6_160");
         }}, 40, 40, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
-                StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.DeclineLSStartingInterrupt, StartingSetup.DeclineDSStartingInterrupt,
                 lightShields, shields, VirtualTableScenario.Open);
     }
 

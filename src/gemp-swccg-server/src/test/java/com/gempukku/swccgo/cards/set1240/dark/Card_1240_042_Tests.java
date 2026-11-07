@@ -25,7 +25,7 @@ public class Card_1240_042_Tests {
             put("dodo", "7_176"); put("scan", "1_224");
             put("a", "1_194"); put("b", "1_164"); put("c", "1_172");
         }}, 60, 60, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
-                StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.DeclineLSStartingInterrupt, StartingSetup.DeclineDSStartingInterrupt,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
     }
 

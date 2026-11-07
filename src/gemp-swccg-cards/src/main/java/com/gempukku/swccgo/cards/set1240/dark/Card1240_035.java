@@ -39,7 +39,7 @@ public class Card1240_035 extends AbstractNormalEffect {
 
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, PhysicalCard self) {
-        Filter ties = Filters.or(ModelType.TIE_AD, Filters.and(Filters.TIE, Uniqueness.RESTRICTED_3));
+        Filter ties = Filters.or(ModelType.TIE_AD, Filters.and(Filters.TIE, Filters.uniqueness(Uniqueness.RESTRICTED_3)));
         Filter nonSquadronTie = Filters.and(Filters.TIE, Filters.not(Filters.squadron));
         Filter ownCapitalWithTie = Filters.and(Filters.your(self), Filters.capital_starship,
                 Filters.presentWith(self, nonSquadronTie));

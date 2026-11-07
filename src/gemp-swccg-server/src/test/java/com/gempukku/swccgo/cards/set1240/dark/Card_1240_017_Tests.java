@@ -30,7 +30,7 @@ public class Card_1240_017_Tests {
                 new HashMap<>(Map.of("ysalamir", "1240_17", "trooper", "1_194", "garindan", "1_177",
                         "vader", "108_6", "localRat", "7_215", "otherRat", "7_215", "blizzard", "3_154")),
                 10, 10, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
-                StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.DeclineLSStartingInterrupt, StartingSetup.DeclineDSStartingInterrupt,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
     }
 

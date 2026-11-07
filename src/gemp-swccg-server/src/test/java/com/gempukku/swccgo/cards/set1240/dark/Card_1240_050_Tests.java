@@ -43,7 +43,7 @@ public class Card_1240_050_Tests {
                 "blount", "9_21", "han", "108_1", "mess", "2_57", "revolution", "1_62")),
                 dark, 10, 10, StartingSetup.DefaultLSGroundLocation,
                 objective ? isbOperations() : StartingSetup.DSStartingLocation("1240_50"),
-                StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.DeclineLSStartingInterrupt, StartingSetup.DeclineDSStartingInterrupt,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
     }
 

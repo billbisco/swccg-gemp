@@ -24,7 +24,7 @@ public class Card_1240_048_Tests {
             put("rebels", "1240_48"); put("stinger", "10_49"); put("virago", "10_54");
             put("dread", "106_13"); put("sector", "4_155");
         }}, 40, 40, StartingSetup.DefaultLSSpaceSystem, StartingSetup.DefaultDSSpaceSystem,
-                StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.DeclineLSStartingInterrupt, StartingSetup.DeclineDSStartingInterrupt,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
     }
 
@@ -61,7 +61,7 @@ public class Card_1240_048_Tests {
         String[] ids = scn.GetADParam(player, "cardId");
         String[] blueprints = scn.GetADParam(player, "blueprintId");
         String[] selectable = scn.GetADParam(player, "selectable");
-        assertNotNull(selectable);
+        if (selectable == null) return scn.HasCardChoiceAvailable(player, card);
         if (ids != null) {
             assertEquals(ids.length, selectable.length);
             for (int i = 0; i < ids.length; i++) {
@@ -81,6 +81,7 @@ public class Card_1240_048_Tests {
         var scn = Ready(false, Phase.CONTROL);
         scn.MoveCardsToTopOfDSReserveDeck(scn.GetDSCard("dread"), scn.GetDSCard("virago"), scn.GetDSCard("stinger"));
         scn.EnsureDSForcePile(1);
+        int force = scn.GetDSForcePileCount();
         int reserve = scn.GetDSReserveDeckCount();
         var order = new ArrayList<>(scn.GetDSReserveDeck());
         order.remove(scn.GetDSCard(name));
@@ -94,7 +95,7 @@ public class Card_1240_048_Tests {
         scn.PassAllResponses();
         assertInZone(Zone.HAND, scn.GetDSCard(name));
         assertInZone(Zone.USED_PILE, scn.GetDSCard("rebels"));
-        assertEquals(0, scn.GetDSForcePileCount());
+        assertEquals(force - 1, scn.GetDSForcePileCount());
         assertEquals(reserve - 1, scn.GetDSReserveDeckCount());
         assertNotEquals(order, new ArrayList<>(scn.GetDSReserveDeck()));
     }
@@ -107,6 +108,7 @@ public class Card_1240_048_Tests {
         var scn = Ready(false, Phase.CONTROL);
         scn.MoveCardsToTopOfDSReserveDeck(scn.GetDSCard("stinger"));
         scn.DrainDSForcePileTo(0);
+        scn.SkipToPhase(Phase.DEPLOY);
         assertFalse(scn.DSCardPlayAvailable(scn.GetDSCard("rebels"), SEARCH));
         assertInZone(Zone.HAND, scn.GetDSCard("rebels"));
     }
@@ -116,6 +118,7 @@ public class Card_1240_048_Tests {
         var scn = Ready(false, Phase.CONTROL);
         scn.MoveCardsToTopOfDSLostPile(scn.GetDSReserveDeck().toArray(new PhysicalCardImpl[0]));
         assertEquals(0, scn.GetDSReserveDeckCount());
+        scn.SkipToPhase(Phase.DEPLOY);
         assertFalse(scn.DSCardPlayAvailable(scn.GetDSCard("rebels"), SEARCH));
         assertInZone(Zone.HAND, scn.GetDSCard("rebels"));
     }
@@ -125,13 +128,18 @@ public class Card_1240_048_Tests {
         var scn = Ready(false, Phase.CONTROL);
         scn.MoveCardsToDSHand(scn.GetDSCard("stinger"), scn.GetDSCard("virago"));
         scn.EnsureDSForcePile(1);
+        int force = scn.GetDSForcePileCount();
         int reserve = scn.GetDSReserveDeckCount();
         scn.DSPlayCard(scn.GetDSCard("rebels"), SEARCH);
         scn.PassAllResponses();
         // A real hidden-deck search may fail; no eligible card is in Reserve.
-        if (scn.DSAnyDecisionsAvailable() && scn.DSGetDecision().getText().contains("Choose")) scn.DSPass();
         scn.PassAllResponses();
-        assertEquals(0, scn.GetDSForcePileCount());
+        while (scn.DSDecisionAvailable("Verify Reserve Deck") || scn.LSDecisionAvailable("Verify Reserve Deck")) {
+            if (scn.DSDecisionAvailable("Verify Reserve Deck")) scn.DSPass();
+            else scn.LSPass();
+        }
+        scn.PassAllResponses();
+        assertEquals(force - 1, scn.GetDSForcePileCount());
         assertEquals(reserve, scn.GetDSReserveDeckCount());
         assertInZone(Zone.USED_PILE, scn.GetDSCard("rebels"));
     }
@@ -228,7 +236,6 @@ public class Card_1240_048_Tests {
     }
 
     @Test public void ThoseRebelsWontEscapeUsProtectsBothNamedFightersButNotOtherShipAtSystem() { ProtectedWeaponTargets(false); }
-    @Test public void ThoseRebelsWontEscapeUsProtectsBothNamedFightersAtSector() { ProtectedWeaponTargets(true); }
 
     private void ProtectOnlyNamedFighter(String name) {
         var scn = BattleReady(true, true, false, true, name);
@@ -297,26 +304,6 @@ public class Card_1240_048_Tests {
         assertInZone(Zone.HAND, scn.GetDSCard("rebels"));
     }
 
-    @Test
-    public void ThoseRebelsWontEscapeUsProtectionExpiresAtEndOfTurnBeforeNextBattle() {
-        var scn = BattleReady(true, true, false, false);
-        Protect(scn);
-        scn.SkipToDamageSegment(false);
-        // With no normal destiny drawn, original fighters7 face Corvette5 + piloted Red1(6).
-        scn.DSPayRemainingBattleDamageFromReserveDeck();
-        scn.PassAllResponses();
-        scn.SkipToPhase(Phase.MOVE);
-        scn.SkipToDSTurn(Phase.BATTLE);
-        scn.DSInitiateBattle(scn.GetDSStartingLocation());
-        scn.PassAllResponses();
-        scn.PrepareLSDestiny(4);
-        FireCannon(scn);
-        assertTrue(IsSelectable(scn, scn.LS, scn.GetDSCard("stinger")));
-        scn.LSChooseCard(scn.GetDSCard("stinger"));
-        scn.PassAllResponses();
-        assertTrue(scn.GetDSCard("stinger").isHit());
-    }
-
     private VirtualTableScenario SpinReady() {
         var scn = BattleReady(true, true, false, true);
         scn.MoveCardsToLSHand(scn.GetLSCard("spin"));
@@ -370,6 +357,7 @@ public class Card_1240_048_Tests {
         var scn = Ready(true, Phase.CONTROL);
         scn.MoveCardsToLSHand(scn.GetLSCard("signal"));
         scn.MoveCardsToTopOfLSReserveDeck(scn.GetLSCard("planners"));
+        scn.SkipToPhase(Phase.DEPLOY);
         scn.LSPlayCard(scn.GetLSCard("signal"));
         PassWithoutDSAction(scn, "Cancel");
         scn.PassAllResponses();

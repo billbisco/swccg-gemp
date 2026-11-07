@@ -44,7 +44,7 @@ public class Card_1240_005_Tests {
                         Map.entry("otherSystem", "1_288"), Map.entry("related", "1_293"),
                         Map.entry("garindan", "1_177"), Map.entry("junk", "1_249"))),
                 15, 15, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
-                StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.DeclineLSStartingInterrupt, StartingSetup.DeclineDSStartingInterrupt,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
     }
 

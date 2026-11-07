@@ -38,7 +38,7 @@ public class Card_1240_035_Tests {
                         Map.entry("site", "1_293"), Map.entry("watch", "1210_70"), Map.entry("blastDoors", "1_210"),
                         Map.entry("shortRange", "12_158"))),
                 15, 15, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
-                StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.DeclineLSStartingInterrupt, StartingSetup.DeclineDSStartingInterrupt,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
     }
 

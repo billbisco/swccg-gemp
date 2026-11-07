@@ -39,7 +39,7 @@ public class Card_1240_041_Tests {
                         Map.entry("trooper", "1_181"), Map.entry("parry", "11_83"), Map.entry("orders", "106_17"),
                         Map.entry("conflict", "11_88"), Map.entry("other", "1_249"))),
                 12, 12, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
-                StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.DeclineLSStartingInterrupt, StartingSetup.DeclineDSStartingInterrupt,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
     }
 

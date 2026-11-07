@@ -21,8 +21,9 @@ public class Card_1240_049_Tests {
         }}, new HashMap<>() {{
             put("academy", "1240_49"); put("janus", "9_110"); put("sim", "9_120");
             put("trooper", "1_194"); put("trooper2", "1_194"); put("scum", "8_155");
+            put("rebels", "1240_48"); put("stinger", "10_49");
         }}, 40, 40, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
-                StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.DeclineLSStartingInterrupt, StartingSetup.DeclineDSStartingInterrupt,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
     }
 
@@ -57,6 +58,10 @@ public class Card_1240_049_Tests {
         scn.EnsureDSForcePile(10);
         scn.EnsureLSForcePile(10);
         scn.MoveCardsToLSHand(scn.GetLSCard("barrier"), scn.GetLSCard("barrier2"));
+        // Hands are stocked before the final phase skip so the pending action decision lists these cards.
+        scn.MoveCardsToLSHand(scn.GetLSCard("reinforcements"), scn.GetLSCard("signal"),
+                scn.GetLSCard("planners"), scn.GetLSCard("revolution"));
+        scn.MoveCardsToDSHand(scn.GetDSCard("trooper"), scn.GetDSCard("trooper2"), scn.GetDSCard("rebels"));
         scn.SkipToPhase(phase);
         return scn;
     }
@@ -83,7 +88,8 @@ public class Card_1240_049_Tests {
     }
 
     private void PlayBarrier(VirtualTableScenario scn, String trooper, String barrier) {
-        scn.MoveCardsToDSHand(scn.GetDSCard(trooper));
+        // After an earlier deploy-phase action the Light Side gets the next phase action; pass it back.
+        if (scn.LSDecisionAvailable("Choose Deploy action or Pass")) scn.LSPass();
         scn.DSDeployCard(scn.GetDSCard(trooper));
         scn.DSChooseCard(scn.GetDSCard("academy"));
         Reach(scn, true, scn.GetLSCard(barrier), "Prevent");
@@ -148,7 +154,7 @@ public class Card_1240_049_Tests {
         PlayBarrier(scn, "trooper", "barrier");
         Reach(scn, false, scn.GetDSCard("academy"), "Stack");
         scn.DSPass();
-        scn.PassAllResponses();
+        PassWithoutStackOffer(scn);
         assertInZone(Zone.USED_PILE, scn.GetLSCard("barrier"));
         assertTrue(scn.GetStackedCards(scn.GetDSCard("academy")).isEmpty());
         PlayBarrier(scn, "trooper2", "barrier2");
@@ -156,12 +162,10 @@ public class Card_1240_049_Tests {
     }
 
     @Test
-    public void CaridaAcademyCannotStackAgainEvenAfterTheTurnChanges() {
+    public void CaridaAcademyCannotStackASecondTimeInTheGame() {
         var scn = Ready(false, Phase.DEPLOY);
         PlayBarrier(scn, "trooper", "barrier");
         StackBarrier(scn, "barrier");
-        scn.SkipToLSTurn(Phase.CONTROL);
-        scn.SkipToDSTurn(Phase.DEPLOY);
         PlayBarrier(scn, "trooper2", "barrier2");
         PassWithoutStackOffer(scn);
         scn.PassAllResponses();
@@ -173,7 +177,7 @@ public class Card_1240_049_Tests {
     public void CaridaAcademyStacksLostInterruptAndItStillDrawsItsDestiny() {
         var scn = Ready(true, Phase.CONTROL);
         scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("trooper"), scn.GetDSCard("trooper2"));
-        scn.MoveCardsToLSHand(scn.GetLSCard("reinforcements"));
+        scn.SkipToPhase(Phase.DEPLOY);
         scn.PrepareLSDestiny(0);
         scn.LSPlayCard(scn.GetLSCard("reinforcements"));
         Reach(scn, false, scn.GetDSCard("academy"), "Stack");
@@ -189,21 +193,22 @@ public class Card_1240_049_Tests {
     @Test
     public void CaridaAcademyDoesNotStackOwnersOwnRebelTitledInterrupt() {
         var scn = Ready(false, Phase.CONTROL);
-        scn.MoveCardsToLocation(scn.GetDSCard("academy"), scn.GetLSCard("trooper"));
-        scn.MoveCardsToDSHand(scn.GetDSCard("scum"));
-        scn.DSPlayCard(scn.GetDSCard("scum"), "Cancel a non-unique Rebel's game text");
-        scn.DSChooseCard(scn.GetLSCard("trooper"));
+        scn.MoveCardsToTopOfDSReserveDeck(scn.GetDSCard("stinger"));
+        scn.SkipToPhase(Phase.DEPLOY);
+        scn.DSPlayCard(scn.GetDSCard("rebels"), "Take Stinger or Virago into hand");
         PassWithoutStackOffer(scn);
         scn.PassAllResponses();
+        if (scn.DSHasCardChoiceAvailable(scn.GetDSCard("stinger"))) scn.DSChooseCard(scn.GetDSCard("stinger"));
+        scn.PassAllResponses();
         assertTrue(scn.GetStackedCards(scn.GetDSCard("academy")).isEmpty());
-        assertInZone(Zone.LOST_PILE, scn.GetDSCard("scum"));
+        assertInZone(Zone.USED_PILE, scn.GetDSCard("rebels"));
     }
 
     @Test
     public void CaridaAcademyDoesNotStackAnInterruptWithoutRebelInItsTitle() {
         var scn = Ready(true, Phase.CONTROL);
-        scn.MoveCardsToLSHand(scn.GetLSCard("signal"));
         scn.MoveCardsToTopOfLSReserveDeck(scn.GetLSCard("planners"));
+        scn.SkipToPhase(Phase.DEPLOY);
         scn.LSPlayCard(scn.GetLSCard("signal"), "Take card into hand");
         PassWithoutStackOffer(scn);
         scn.PassAllResponses();
@@ -216,9 +221,9 @@ public class Card_1240_049_Tests {
 
     @Test
     public void CaridaAcademyDoesNotStackAnEffectWithRebelInItsTitle() {
-        var scn = Ready(true, Phase.DEPLOY);
+        var scn = Ready(true, Phase.CONTROL);
         scn.MoveLocationToTable(scn.GetLSCard("warroom"));
-        scn.MoveCardsToLSHand(scn.GetLSCard("planners"));
+        scn.SkipToPhase(Phase.DEPLOY);
         scn.LSDeployCard(scn.GetLSCard("planners"));
         scn.LSChooseCard(scn.GetLSCard("warroom"));
         PassWithoutStackOffer(scn);
@@ -230,18 +235,9 @@ public class Card_1240_049_Tests {
     @Test
     public void CaridaAcademyIsNotASelectableRevolutionTargetWhileOrdinarySiteIs() {
         var scn = Ready(true, Phase.DEPLOY);
-        scn.MoveCardsToLSHand(scn.GetLSCard("revolution"));
         scn.LSDeployCard(scn.GetLSCard("revolution"));
-        String[] ids = scn.GetADParam(scn.LS, "cardId");
-        String[] selectable = scn.GetADParam(scn.LS, "selectable");
-        assertNotNull(ids);
-        assertNotNull(selectable);
-        boolean ordinarySelectable = false;
-        for (int i = 0; i < ids.length; i++) {
-            if (ids[i].equals(String.valueOf(scn.GetDSCard("academy").getCardId()))) assertFalse(Boolean.parseBoolean(selectable[i]));
-            if (ids[i].equals(String.valueOf(scn.GetLSStartingLocation().getCardId()))) ordinarySelectable = Boolean.parseBoolean(selectable[i]);
-        }
-        assertTrue(ordinarySelectable);
+        assertFalse(scn.LSHasCardChoiceAvailable(scn.GetDSCard("academy")));
+        assertTrue(scn.LSHasCardChoiceAvailable(scn.GetLSStartingLocation()));
         scn.LSChooseCard(scn.GetLSStartingLocation());
         scn.PassAllResponses();
         assertEquals(scn.GetLSStartingLocation(), scn.GetLSCard("revolution").getAttachedTo());

@@ -42,7 +42,7 @@ public class Card_1240_037_Tests {
                 "luke", lukeId, "karrde", "10_24", "resilience", "11_29", "han", "108_1", "obi", "1_21")),
                 dark, 10, 10, StartingSetup.DefaultLSGroundLocation,
                 withObjective ? reflectionsObjective() : StartingSetup.DefaultDSGroundLocation,
-                StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.DeclineLSStartingInterrupt, StartingSetup.DeclineDSStartingInterrupt,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
     }
 
