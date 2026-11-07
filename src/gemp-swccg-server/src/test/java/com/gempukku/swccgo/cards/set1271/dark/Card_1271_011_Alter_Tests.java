@@ -44,7 +44,7 @@ public class Card_1271_011_Alter_Tests {
         assertTrue(scn.LSHasCardChoiceAvailable(scn.GetLSCard("obiwan")));
         scn.LSChooseCard(scn.GetLSCard("obiwan"));
         scn.PassAllResponses();
-        assertEquals(Zone.LOST_PILE, scn.GetDSCard("rack").getZone());
+        assertTrue(scn.GetDSLostPile().contains(scn.GetDSCard("rack")));
         assertEquals(Zone.SIDE_OF_TABLE, scn.GetDSCard("myself").getZone());
     }
 }
