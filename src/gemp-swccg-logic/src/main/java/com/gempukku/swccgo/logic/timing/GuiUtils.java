@@ -92,7 +92,8 @@ public class GuiUtils {
         if (battleState == null || battleState.isBaseAttritionCalculated())
             return 0;
 
-        return game.getModifiersQuerying().getNumDestinyDrawsToTotalPowerOnly(game.getGameState(), playerId, false, true) - battleState.getNumDestinyToTotalPowerDrawn(playerId);
+        int numDraws = game.getModifiersQuerying().getNumDestinyDrawsToTotalPowerOnly(game.getGameState(), playerId, false, true) - battleState.getNumDestinyToTotalPowerDrawn(playerId);
+        return Math.min(numDraws, game.getModifiersQuerying().getNumDestinyDrawsToTotalPowerOnly(game.getGameState(), playerId, true, true));
     }
 
     /**
@@ -106,7 +107,8 @@ public class GuiUtils {
         if (battleState == null || battleState.isBaseAttritionCalculated())
             return 0;
 
-        return game.getModifiersQuerying().getNumDestinyDrawsToAttritionOnly(game.getGameState(), playerId, false, true) - battleState.getNumDestinyToAttritionDrawn(playerId);
+        int numDraws = game.getModifiersQuerying().getNumDestinyDrawsToAttritionOnly(game.getGameState(), playerId, false, true) - battleState.getNumDestinyToAttritionDrawn(playerId);
+        return Math.min(numDraws, game.getModifiersQuerying().getNumDestinyDrawsToAttritionOnly(game.getGameState(), playerId, true, true));
     }
 
     public static float getBattleDamageRemaining(SwccgGame game, String playerId) {

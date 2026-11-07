@@ -17,7 +17,7 @@ import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.TriggerConditions;
 import com.gempukku.swccgo.logic.actions.OptionalGameTextTriggerAction;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
-import com.gempukku.swccgo.logic.effects.CancelDestinyEffect;
+import com.gempukku.swccgo.logic.effects.RespondableCancelDestinyEffect;
 import com.gempukku.swccgo.logic.effects.UseForceEffect;
 import com.gempukku.swccgo.logic.effects.choose.TakeCardIntoHandFromReserveDeckEffect;
 import com.gempukku.swccgo.logic.modifiers.DeployCostToLocationModifier;
@@ -94,7 +94,7 @@ public class Card1111_011 extends AbstractRepublic {
             final OptionalGameTextTriggerAction action = new OptionalGameTextTriggerAction(self, gameTextSourceCardId);
             action.setText("Cancel opponent's destiny");
             action.appendCost(new UseForceEffect(action, playerId, 1));
-            action.appendEffect(new CancelDestinyEffect(action));
+            action.allowResponses("Cancel opponent's destiny", new RespondableCancelDestinyEffect(action, game));
             actions.add(action);
         }
         return actions;
