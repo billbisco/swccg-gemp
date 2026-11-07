@@ -20,7 +20,7 @@ public class Card_1261_032_Tests {
         return new VirtualTableScenario(new HashMap<>(Map.of("goo", "7_62", "luke", "1_19")),
                 new HashMap<>(Map.of("hutt", "1261_32", "rancor", "6_166", "carkoon", "6_170",
                         "nal", "6_168", "objective", "110_6", "zuckuss", "4_107", "creature", "6_139", "vader", "1_168",
-                        "wrapped", "6_141", "spare", "6_141")),
+                        "wrapped", "6_141")),
                 23, 23, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -76,7 +76,6 @@ public class Card_1261_032_Tests {
                 scn.gameState().flipCard(scn.game(), objective, true);
             }
             scn.MoveCardsToLocation(scn.GetDSStartingLocation(), zuckuss, vader);
-            scn.SkipToDSTurn(Phase.CONTROL);
             assertEquals(flipped, objective.isFlipped());
             assertEquals(zuckuss.getBlueprint().getForfeit() + (flipped ? 2 : 0), scn.GetForfeit(zuckuss), scn.epsilon);
             assertEquals(vader.getBlueprint().getForfeit(), scn.GetForfeit(vader), scn.epsilon);
@@ -91,24 +90,21 @@ public class Card_1261_032_Tests {
             var scn = scenario();
             var hutt = scn.GetDSCard("hutt");
             var wrapped = scn.GetDSCard("wrapped");
-            var spare = scn.GetDSCard("spare");
             start(scn);
             scn.AttachCardsTo(scn.GetDSCard("rancor"), hutt);
             if (nalOnTable)
                 scn.MoveLocationToTable(scn.GetDSCard("nal"));
-            scn.MoveCardsToTopOfDSReserveDeck(wrapped, spare);
             scn.SkipToDSTurn(Phase.CONTROL);
+            scn.MoveCardsToTopOfDSReserveDeck(wrapped);
             assertEquals(nalOnTable, scn.DSCardActionAvailable(hutt, UPLOAD));
             if (!nalOnTable)
                 continue;
             scn.DSUseCardAction(hutt, UPLOAD);
             if (scn.DSHasCardChoiceAvailable(wrapped))
                 scn.DSChooseCard(wrapped);
-            else if (scn.DSHasCardChoiceAvailable(spare))
-                scn.DSChooseCard(spare);
             scn.PassAllResponses();
-            assertTrue(scn.GetDSHand().contains(wrapped) ^ scn.GetDSHand().contains(spare));
-            assertTrue(scn.GetDSReserveDeck().contains(wrapped) ^ scn.GetDSReserveDeck().contains(spare));
+            assertTrue(scn.GetDSHand().contains(wrapped));
+            scn.MoveCardsToTopOfDSReserveDeck(wrapped);
             if (scn.AwaitingLSControlPhaseActions())
                 scn.LSPass();
             assertFalse(scn.DSCardActionAvailable(hutt, UPLOAD));
