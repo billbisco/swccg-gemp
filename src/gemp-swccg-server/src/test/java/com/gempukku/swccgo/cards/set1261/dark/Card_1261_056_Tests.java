@@ -86,9 +86,12 @@ public class Card_1261_056_Tests {
     @Test
     public void BlackOneActuallyUploadsOnlyBlackSquadronTieForOneForceOncePerTurn() {
         var scn = search(); var black = scn.GetDSCard("black"); var target = scn.GetDSCard("blacktwo");
-        int force = scn.GetDSForcePileCount(); scn.DSUseCardAction(black, "Take Black Squadron TIE"); scn.PassAllResponses();
+        int force = scn.GetDSForcePileCount(); int messages = scn.gameState().getLastMessages().size();
+        scn.DSUseCardAction(black, "Take Black Squadron TIE"); scn.PassAllResponses();
         assertTrue(selectable(scn, target)); assertFalse(selectable(scn, scn.GetDSCard("tie"))); assertFalse(selectable(scn, scn.GetDSCard("juno")));
         scn.DSChooseCard(target); scn.PassAllResponses(); assertEquals(Zone.HAND, target.getZone());
+        var newMessages = scn.gameState().getLastMessages().subList(messages, scn.gameState().getLastMessages().size());
+        assertTrue("Completed search must actually reshuffle Reserve Deck", newMessages.stream().anyMatch(x -> x.contains("shuffles") && x.contains("Reserve Deck")));
         assertEquals(force - 1, scn.GetDSForcePileCount());
         if (scn.LSGetDecision() != null) scn.LSPass(); assertFalse(scn.DSCardActionAvailable(black, "Take Black Squadron TIE"));
     }
