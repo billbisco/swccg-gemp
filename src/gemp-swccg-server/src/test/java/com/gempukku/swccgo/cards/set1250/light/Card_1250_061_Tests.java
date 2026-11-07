@@ -142,10 +142,15 @@ public class Card_1250_061_Tests {
         var scn = scenario(); setupLoss(scn); lightning(scn, "lightning", "gungan"); assertTrue(offer(scn));
         scn.LSPass(); scn.PassAllResponses(); assertTrue(scn.GetLSLostPile().contains(scn.GetLSCard("gungan")));
     }
+    private void forfeitSecondNative(VirtualTableScenario scn) {
+        scn.DSStartBattleAndSkipToWeaponsSegment(scn.GetLSStartingLocation());
+        scn.PrepareDSDestiny(3); scn.SkipToDamageSegment(true);
+        assertTrue(scn.LSDecisionAvailable("card from battle to forfeit")); scn.LSChooseCard(scn.GetLSCard("gungan2"));
+    }
     @Test
-    public void WesaReadySaveIsOncePerTurnAndResetsNextTurn() {
+    public void WesaReadySaveIsOncePerTurnAcrossPhasesAndResetsNextTurn() {
         var scn = scenario(); setupLoss(scn); lightning(scn, "lightning", "gungan"); save(scn);
-        lightning(scn, "lightning2", "gungan2"); assertFalse(offer(scn)); scn.PassAllResponses();
+        forfeitSecondNative(scn); assertFalse(offer(scn)); scn.PassAllResponses();
         assertTrue(scn.GetLSLostPile().contains(scn.GetLSCard("gungan2")));
         scn.SkipToLSTurn(Phase.CONTROL); scn.SkipToDSTurn(Phase.CONTROL);
         lightning(scn, "lightning3", "ewok"); save(scn); assertTrue(scn.GetLSUsedPile().contains(scn.GetLSCard("ewok")));
@@ -153,9 +158,8 @@ public class Card_1250_061_Tests {
     @Test
     public void WesaReadyDecliningDoesNotUseTurnAllowance() {
         var scn = scenario(); setupLoss(scn); lightning(scn, "lightning", "gungan"); assertTrue(offer(scn)); scn.LSPass(); scn.PassAllResponses();
-        lightning(scn, "lightning2", "gungan2"); save(scn); assertTrue(scn.GetLSUsedPile().contains(scn.GetLSCard("gungan2")));
+        forfeitSecondNative(scn); save(scn); assertTrue(scn.GetLSUsedPile().contains(scn.GetLSCard("gungan2")));
     }
-
     @Test
     public void WesaReadyIsExcludedFromActualAlterWhileOrdinaryEffectCanBeCanceled() {
         var scn = scenario(); scn.StartGame(); var system = scn.GetLSCard("endor"); var bay = scn.GetLSCard("bay");
