@@ -31,7 +31,7 @@ public class Card_1250_001_Tests {
                         Map.entry("trooper", "1_194"), Map.entry("presence", "14_69"), Map.entry("bespin", "5_164"),
                         Map.entry("sector", "5_165"), Map.entry("car", "5_178"), Map.entry("vaderShip", "1_306"),
                         Map.entry("obsidian1", "7_305"), Map.entry("obsidian2", "7_306"),
-                        Map.entry("bosskShip", "7_301"), Map.entry("scout", "1_305"),
+                        Map.entry("shuttle", "7_309"), Map.entry("scout", "1_305"),
                         Map.entry("cantinaTrooper", "1_194")));
         if (withObjective) dark.put("market", "12_176");
         var scn = new VirtualTableScenario(light, dark, 28, 28, StartingSetup.DefaultLSGroundLocation,
@@ -76,6 +76,8 @@ public class Card_1250_001_Tests {
         float original = deployCost(scn, trooper, site);
         scn.DSDeployCard(order);
         scn.PassAllResponses();
+        if (scn.LSGetDecision() instanceof CardActionSelectionDecision) scn.LSPass();
+        assertTrue(scn.AwaitingDSDeployPhaseActions());
         assertInZone(Zone.SIDE_OF_TABLE, order);
         assertEquals(original - 1, deployCost(scn, trooper, site), scn.epsilon);
         scn.EnsureDSForcePile((int) original - 1);
@@ -116,7 +118,7 @@ public class Card_1250_001_Tests {
         assertEquals(darkBase, deployCost(scn, trooper, site), scn.epsilon);
         scn.MoveCardsToLSHand(lightCapital);
         scn.MoveCardsToLocation(system, scn.GetDSCard("obsidian1"), scn.GetDSCard("obsidian2"),
-                scn.GetDSCard("bosskShip"));
+                scn.GetDSCard("shuttle"));
         assertEquals(darkBase, deployCost(scn, trooper, site), scn.epsilon);
     }
 
@@ -146,7 +148,7 @@ public class Card_1250_001_Tests {
                 scn.GetDSCard("scout"));
         prepareDrainSites(scn);
         drain(scn, scn.GetDSStartingLocation(), false, false, 1);
-        scn.MoveCardsToLocation(system, scn.GetDSCard("bosskShip"));
+        scn.MoveCardsToLocation(system, scn.GetDSCard("shuttle"));
         drain(scn, scn.GetDSCard("cantina"), true, false, 2);
     }
 
