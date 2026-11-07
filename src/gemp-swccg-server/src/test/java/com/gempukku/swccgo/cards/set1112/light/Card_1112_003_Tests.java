@@ -12,10 +12,12 @@ import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.common.Zone;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.game.PhysicalCardImpl;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -108,5 +110,60 @@ public class Card_1112_003_Tests {
         scn.PassAllResponses();
         assertEquals(forceBefore + 1, scn.GetLSForcePileCount());
         assertTrue(odds.getZone() == Zone.USED_PILE || odds.getZone() == Zone.TOP_OF_USED_PILE);
+    }
+
+    private static final String REDRAW = "Cancel and redraw both battle destinies";
+
+    private VirtualTableScenario redrawScenario() {
+        return new VirtualTableScenario(new HashMap<>() {{
+            put("odds", "1112_3"); put("luke", "1_19"); put("guard", "1_26");
+        }}, new HashMap<>() {{
+            put("djas", "1_171");
+        }}, 35, 35, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
+    }
+
+    private boolean redrawOffered(VirtualTableScenario s) {
+        return s.GetADParam(s.LS, "cardId") != null && s.GetADParam(s.LS, "actionText") != null
+                && s.LSCardPlayAvailable(s.GetLSCard("odds"), REDRAW);
+    }
+
+    @Test
+    public void ChangingTheOddsRedrawnBattleDestiniesCountTowardBattleTotals() {
+        var s = redrawScenario(); s.StartGame(); var site = s.GetDSStartingLocation();
+        s.MoveCardsToLocation(site, s.GetDSCard("djas"), s.GetLSCard("luke"), s.GetLSCard("guard"));
+        s.MoveCardsToHand(s.GetLSCard("odds")); s.DSActivateForceCheat(6);
+        s.SkipToDSTurn(Phase.BATTLE);
+        // Redraws come second in each deck; the first draw comes from the top.
+        s.PrepareDSDestiny(5); s.PrepareDSDestiny(2);
+        s.PrepareLSDestiny(6); s.PrepareLSDestiny(1);
+        s.DSInitiateBattle(site); s.SkipToPowerSegment();
+        s.PassResponses("BEFORE_BATTLE_DESTINY_DRAWS");
+        assertTrue(s.DSDecisionAvailable("battle destiny")); s.DSChooseYes(); s.PassDestinyDrawResponses();
+        s.PassResponses("BATTLE_DESTINY_DRAWS_COMPLETE_FOR_PLAYER");
+        assertTrue(s.LSDecisionAvailable("battle destiny")); s.LSChooseYes(); s.PassDestinyDrawResponses();
+        for (int i = 0; i < 20 && !redrawOffered(s)
+                && s.GetCurrentDecision().getText().contains("Optional responses"); i++) {
+            s.PlayerPass(s.GetDecidingPlayer());
+        }
+        assertEquals(2, s.GetDSTotalDestiny()); assertEquals(1, s.GetLSTotalDestiny());
+        assertTrue(s.GetCurrentDecision().getText(), redrawOffered(s));
+        var odds = s.GetLSCard("odds");
+        var battle = s.gameState().getBattleState();
+        var lightDraw = (PhysicalCardImpl) battle.getBattleDestinyDraws(s.LS).get(0);
+        var darkDraw = (PhysicalCardImpl) battle.getBattleDestinyDraws(s.DS).get(0);
+        var lightRedraw = s.GetTopOfLSReserveDeck(); var darkRedraw = s.GetTopOfDSReserveDeck();
+        s.LSPlayCard(odds, REDRAW); s.PassAllResponses();
+        if (s.LSDecisionAvailable("to cancel")) { s.LSChooseCard(lightDraw); s.PassAllResponses(); }
+        if (s.LSDecisionAvailable("to cancel")) { s.LSChooseCard(darkDraw); }
+        for (int i = 0; i < 40 && !battle.getBattleDestinyDraws(s.DS).contains(darkRedraw)
+                && s.GetCurrentDecision().getText().contains("Optional responses"); i++) {
+            s.PlayerPass(s.GetDecidingPlayer());
+        }
+        assertEquals(List.of(lightRedraw), battle.getBattleDestinyDraws(s.LS));
+        assertEquals(List.of(darkRedraw), battle.getBattleDestinyDraws(s.DS));
+        assertEquals(5, s.GetDSTotalDestiny()); assertEquals(6, s.GetLSTotalDestiny());
+        assertTrue(s.GetLSUsedPile().contains(odds));
     }
 }
