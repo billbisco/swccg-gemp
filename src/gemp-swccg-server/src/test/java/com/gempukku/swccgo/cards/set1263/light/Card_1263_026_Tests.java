@@ -16,7 +16,7 @@ public class Card_1263_026_Tests {
     private VirtualTableScenario fixture() {
         return new VirtualTableScenario(
                 new HashMap<>(Map.of("phylo", "1263_26", "local", "1_28", "remote", "1_30",
-                        "ship", "1_146", "system", "3_55")),
+                        "ship", "1_146", "system", "3_55", "obi", "1_21")),
                 new HashMap<>(Map.of("vader", "1_168", "saber", "1_324", "beaten", "5_163", "otherDark", "1_173", "secondDark", "1_179")),
                 40, 40, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
@@ -86,4 +86,31 @@ public class Card_1263_026_Tests {
 
     @Test public void actualYouAreBeatenCannotTargetOwnCharactersAtPhylosSite() { playYouAreBeaten(true); }
     @Test public void actualYouAreBeatenCanTargetAnAllyAtADifferentSiteFromPhylo() { playYouAreBeaten(false); }
+    private void actualAttrition(int attrition) {
+        var scn = fixture(); scn.StartGame();
+        var site = scn.GetLSStartingLocation();
+        var phylo = scn.GetLSCard("phylo"); var local = scn.GetLSCard("local");
+        scn.MoveCardsToLocation(site, phylo, local, scn.GetLSCard("obi"), scn.GetDSCard("vader"));
+        scn.LSActivateForceCheat(8); scn.SkipToLSTurn(Phase.BATTLE);
+        scn.LSInitiateBattle(site);
+        scn.PrepareLSDestiny(3);
+        scn.PrepareDSDestiny(attrition - 1); // Premiere Vader adds +1 to the actual draw.
+        scn.SkipToDamageSegment(true);
+        scn.PassDamageSegmentActions();
+        assertEquals(0, scn.GetUnpaidLSBattleDamage());
+        assertEquals(attrition, scn.GetUnpaidLSAttrition());
+        assertEquals(attrition == 2 ? "Choose a card from battle to forfeit (if desired)"
+                : "Choose a card from battle to forfeit", scn.GetCurrentDecision().getText());
+        if (attrition == 2) {
+            scn.LSPass();
+            assertTrue(phylo.getZone().isInPlay());
+            assertTrue(local.getZone().isInPlay());
+        } else {
+            scn.LSPayAttritionFromCardInPlay(phylo);
+            assertTrue(scn.GetLSLostPile().contains(phylo));
+        }
+    }
+
+    @Test public void canDeclineForfeitAtActualAttritionTwo() { actualAttrition(2); }
+    @Test public void mustForfeitAtActualAttritionThree() { actualAttrition(3); }
 }
