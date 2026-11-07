@@ -216,9 +216,6 @@ public interface Prohibited extends BaseQuery, Flags {
      * @return true if card may not be canceled, otherwise false
      */
     default boolean mayNotBeCanceled(GameState gameState, PhysicalCard card) {
-        if (card.getBlueprint().isCardTypeMayNotBeCanceled())
-            return false;
-
         return (!getModifiersAffectingCard(gameState, ModifierType.MAY_NOT_BE_CANCELED, card).isEmpty());
     }
 
@@ -241,6 +238,9 @@ public interface Prohibited extends BaseQuery, Flags {
      */
     default boolean mayNotBePlacedInUsedPile(GameState gameState, PhysicalCard card, String placingPlayer) {
         for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.MAY_NOT_BE_PLACED_IN_USED_PILE, card)) {
+            if (modifier instanceof MayNotBePlacedInUsedPileByAnyPlayerModifier) {
+                return true;
+            }
             PhysicalCard source = modifier.getSource(gameState);
             if (source != null && placingPlayer != null && !placingPlayer.equals(source.getOwner())) {
                 return true;
@@ -331,5 +331,33 @@ public interface Prohibited extends BaseQuery, Flags {
      */
     default boolean isAttachingCardProhibited(GameState gameState, PhysicalCard card) {
         return !getModifiersAffectingCard(gameState, ModifierType.MAY_NOT_ATTACH, card).isEmpty();
+    }
+
+    /**
+     * Determines if the specified card may not be 'thrown'.
+     * @param gameState the game state
+     * @param card the card
+     * @return true if the card may not be 'thrown', otherwise false
+     */
+    default boolean mayNotBeThrown(GameState gameState, PhysicalCard card) {
+        return !getModifiersAffectingCard(gameState, ModifierType.MAY_NOT_BE_THROWN, card).isEmpty();
+    }
+
+    /**
+     * Determines if the card that just retrieved Force may not be stacked on the specified card.
+     * @param gameState the game state
+     * @param retrievalSource the card that just retrieved Force
+     * @param amountRetrieved the amount of Force just retrieved
+     * @param stackOn the card to stack on
+     * @return true if the card may not be stacked there, otherwise false
+     */
+    default boolean mayNotStackRetrievalSourceOn(GameState gameState, PhysicalCard retrievalSource, int amountRetrieved, PhysicalCard stackOn) {
+        for (Modifier modifier : getModifiers(gameState, ModifierType.RETRIEVAL_SOURCE_MAY_NOT_BE_STACKED_ON)) {
+            if (modifier instanceof RetrievalSourceMayNotBeStackedOnModifier
+                    && ((RetrievalSourceMayNotBeStackedOnModifier) modifier).mayNotBeStackedOn(gameState, query(), retrievalSource, amountRetrieved, stackOn)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

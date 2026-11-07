@@ -14,6 +14,7 @@ import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.SpotOverride;
 import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.LegacyFilters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.TriggerConditions;
@@ -60,7 +61,7 @@ public class Card208_026_BACK extends AbstractObjective {
         // Check condition(s)
         if (GameConditions.isOnceDuringYourPhase(game, self, playerId, gameTextSourceCardId, gameTextActionId, Phase.DRAW)
                 && GameConditions.hasLostPile(game, playerId)
-                && GameConditions.canSpotLocation(game, Filters.liberated_system)) {
+                && GameConditions.canSpotLocation(game, LegacyFilters.liberatedSystem)) {
 
             final TopLevelGameTextAction action = new TopLevelGameTextAction(self, gameTextSourceCardId, gameTextActionId);
             action.setText("Retrieve 1 Force");

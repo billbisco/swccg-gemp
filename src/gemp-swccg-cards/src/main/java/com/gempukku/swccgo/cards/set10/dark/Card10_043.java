@@ -7,6 +7,7 @@ import com.gempukku.swccgo.cards.effects.usage.OncePerPhaseEffect;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Keyword;
+import com.gempukku.swccgo.common.Persona;
 import com.gempukku.swccgo.common.Phase;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
@@ -45,6 +46,7 @@ public class Card10_043 extends AbstractImperial {
         setGameText("When armed with a Force pike, adds one battle destiny. Once during each of your deploy phases, lose 1 Force or place Kanos and cards deployed on him in owner's Used Pile (if Emperor on table, may use 1 Force instead).");
         addIcons(Icon.REFLECTIONS_II, Icon.WARRIOR);
         addKeywords(Keyword.ROYAL_GUARD);
+        addPersona(Persona.KIR_KANOS);
     }
 
     @Override
