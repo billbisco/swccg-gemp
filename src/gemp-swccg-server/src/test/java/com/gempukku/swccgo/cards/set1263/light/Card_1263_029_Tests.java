@@ -35,13 +35,12 @@ public class Card_1263_029_Tests {
             put("rescueInterrupt", "1263_29"); put("otherCopy", "1263_29");
             put("cell", "601_129"); put("immune", "9_47"); put("ordinary", "1_66");
             put("hero", "2_14"); put("r2", "1271_35"); put("leia", "1_17"); put("ally", "1_28");
-            put("otherSite", "1_136");
         }};
         if (!startObjective) ls.put("objective", "7_139");
         return new VirtualTableScenario(ls, new HashMap<>() {{
-            put("mos", "1_295"); put("gravel", "1_247"); put("vader", "1_168"); put("sense", "1_267");
-        }}, 60, 60, startObjective ? StartingSetup.RescueThePrincessVObjective : StartingSetup.DefaultLSGroundLocation,
-                StartingSetup.DefaultDSSpaceSystem,
+            put("gravel", "1_247"); put("vader", "1_168"); put("sense", "1_267");
+        }}, 60, 60, startObjective ? StartingSetup.RescueThePrincessVObjective : StartingSetup.LSStartingLocation("1_136"),
+                startObjective ? StartingSetup.DefaultDSSpaceSystem : StartingSetup.DSStartingLocation("1_295"),
                 startObjective ? starting : StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, startObjective ? "anything_goes" : "legacy");
     }
@@ -67,8 +66,7 @@ public class Card_1263_029_Tests {
     private VirtualTableScenario setup(boolean objective, boolean alone, String droid) {
         var scn = scenario(false); scn.StartGame();
         if (objective) scn.MoveCardsToLSSideOfTable(scn.GetLSCard("objective"));
-        var mos = scn.GetDSCard("mos"); var battle = scn.GetLSCard("otherSite");
-        scn.MoveLocationToTable(mos); scn.MoveLocationToTable(battle);
+        var mos = scn.GetDSStartingLocation(); var battle = scn.GetLSStartingLocation();
         scn.MoveCardsToLocation(mos, scn.GetLSCard(droid));
         scn.MoveCardsToLocation(battle, scn.GetLSCard("leia"), scn.GetDSCard("vader"));
         if (!alone) scn.MoveCardsToLocation(battle, scn.GetLSCard("ally"));
@@ -84,6 +82,10 @@ public class Card_1263_029_Tests {
         else scn.SkipToLSTurn(phase);
         assertEquals(player, scn.gameState().getCurrentPlayerId());
         assertEquals(phase, scn.gameState().getCurrentPhase());
+        scn.PassAllResponses();
+        if (phase == Phase.BATTLE) {
+            if (player.equals(scn.DS)) scn.DSActivateForceCheat(4); else scn.LSActivateForceCheat(4);
+        }
     }
 
     private boolean has(VirtualTableScenario scn, String mode) {
@@ -101,7 +103,9 @@ public class Card_1263_029_Tests {
     private VirtualTableScenario storm(boolean objective, String droid) {
         var scn = setup(objective, true, droid); enterTurn(scn, scn.DS, Phase.CONTROL);
         scn.DSActivateForceCheat(6); scn.PrepareDSDestiny(5);
-        scn.DSPass(); scn.LSPass();
+        scn.PassAllResponses();
+        if (scn.LSGetDecision() != null) scn.LSPass();
+        assertTrue(scn.GetDSAvailableActions().toString(), scn.GetDSAvailableActions().stream().anyMatch(x -> x.contains("Target a character")));
         scn.DSPlayCard(scn.GetDSCard("gravel"), "Target a character");
         if (scn.DSHasCardChoiceAvailable(scn.GetLSCard(droid))) scn.DSChooseCard(scn.GetLSCard(droid));
         untilSaveOrResolved(scn);
@@ -111,9 +115,9 @@ public class Card_1263_029_Tests {
     @Test public void RescueYouSavesRealNonHeroicArtooAndTheOtherCopyCannotCancelABattle() {
         var scn = storm(true, "r2"); assertTrue(has(scn, SAVE));
         scn.LSPlayCard(scn.GetLSCard("rescueInterrupt"), SAVE); scn.PassAllResponses();
-        assertAtLocation(scn.GetDSCard("mos"), scn.GetLSCard("r2"));
+        assertAtLocation(scn.GetDSStartingLocation(), scn.GetLSCard("r2"));
         assertInZone(Zone.LOST_PILE, scn.GetLSCard("rescueInterrupt")); assertInHand(scn.GetLSCard("otherCopy"));
-        scn.SkipToPhase(Phase.BATTLE); scn.DSInitiateBattle(scn.GetLSCard("otherSite"));
+        scn.SkipToPhase(Phase.BATTLE); scn.DSInitiateBattle(scn.GetLSStartingLocation());
         assertNotNull(scn.gameState().getBattleState()); assertFalse(has(scn, CANCEL));
     }
 
@@ -130,7 +134,7 @@ public class Card_1263_029_Tests {
 
     @Test public void RescueYouLosesTwoForceToCancelActualBattleWithLeiaDefendingAlone() {
         var scn = setup(true, true, "r2"); enterTurn(scn, scn.DS, Phase.BATTLE);
-        var site = scn.GetLSCard("otherSite"); int lost = scn.GetLSLostPileCount();
+        var site = scn.GetLSStartingLocation(); int lost = scn.GetLSLostPileCount();
         scn.DSInitiateBattle(site);
         assertTrue(has(scn, CANCEL)); scn.LSPlayCard(scn.GetLSCard("rescueInterrupt"), CANCEL);
         scn.PassAllResponses();
@@ -142,13 +146,13 @@ public class Card_1263_029_Tests {
 
     @Test public void RescueYouCannotCancelAnActualBattleWhenLeiaHasAnAlly() {
         var scn = setup(true, false, "r2"); enterTurn(scn, scn.DS, Phase.BATTLE);
-        scn.DSInitiateBattle(scn.GetLSCard("otherSite"));
+        scn.DSInitiateBattle(scn.GetLSStartingLocation());
         assertNotNull(scn.gameState().getBattleState()); assertFalse(has(scn, CANCEL));
     }
 
     @Test public void RescueYouCannotCancelAnActualBattleThatLeiaInitiated() {
         var scn = setup(true, true, "r2"); enterTurn(scn, scn.LS, Phase.BATTLE);
-        scn.LSInitiateBattle(scn.GetLSCard("otherSite"));
+        scn.LSInitiateBattle(scn.GetLSStartingLocation());
         assertNotNull(scn.gameState().getBattleState()); assertFalse(has(scn, CANCEL));
     }
 }
