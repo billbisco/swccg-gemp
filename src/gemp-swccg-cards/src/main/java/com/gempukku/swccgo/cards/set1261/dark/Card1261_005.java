@@ -6,6 +6,7 @@ import com.gempukku.swccgo.cards.effects.AddDestinyToAttritionEffect;
 import com.gempukku.swccgo.cards.effects.AddDestinyToTotalPowerEffect;
 import com.gempukku.swccgo.cards.effects.PayRelocateBetweenLocationsCostEffect;
 import com.gempukku.swccgo.cards.effects.usage.OncePerBattleEffect;
+import com.gempukku.swccgo.cards.effects.usage.OncePerPhaseEffect;
 import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
@@ -59,12 +60,15 @@ public class Card1261_005 extends AbstractAlien {
                 actions.add(action);
             }
         }
-        if (GameConditions.isDuringYourPhase(game, self, Phase.MOVE) && GameConditions.isEscortingCaptive(game, self)) {
+        GameTextActionId relocateId = GameTextActionId.OTHER_CARD_ACTION_2;
+        if (GameConditions.isOnceDuringYourPhase(game, self, playerId, sourceId, relocateId, Phase.MOVE)
+                && GameConditions.isEscortingCaptive(game, self)) {
             Filter destination = Filters.and(Filters.docking_bay,
                     Filters.locationCanBeRelocatedTo(self, false, true, false, 2, false));
             if (GameConditions.canSpotLocation(game, destination)) {
-                TopLevelGameTextAction action = new TopLevelGameTextAction(self, sourceId, GameTextActionId.OTHER_CARD_ACTION_2);
+                TopLevelGameTextAction action = new TopLevelGameTextAction(self, sourceId, relocateId);
                 action.setText("Relocate with captive to docking bay");
+                action.appendUsage(new OncePerPhaseEffect(action));
                 action.appendTargeting(new ChooseCardOnTableEffect(action, playerId, "Choose docking bay", destination) {
                     @Override
                     protected void cardSelected(PhysicalCard bay) {

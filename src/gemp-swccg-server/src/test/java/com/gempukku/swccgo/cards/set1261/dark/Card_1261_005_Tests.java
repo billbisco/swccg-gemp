@@ -104,7 +104,7 @@ public class Card_1261_005_Tests {
         scn.SkipToPhase(phase); assertEquals(force, scn.GetDSForcePileCount()); return scn;
     }
 
-    @Test public void RelentlessBobaPaysTwoToRelocateAcrossSystemsWithCaptiveAndCanRepeat() {
+    @Test public void RelentlessBobaPaysTwoToRelocateWithCaptiveOncePerMovePhaseAndAgainNextTurn() {
         var scn = escort(true, 4, Phase.MOVE); var boba = scn.GetDSCard("boba"); var han = scn.GetLSCard("han");
         assertEquals(Zone.ATTACHED, han.getZone()); assertTrue(han.isCaptive()); assertSame(boba, han.getAttachedTo());
         scn.DSUseCardAction(boba, "Relocate with captive to docking bay");
@@ -113,10 +113,17 @@ public class Card_1261_005_Tests {
         assertSame(boba, han.getAttachedTo()); assertEquals(Zone.ATTACHED, han.getZone()); assertTrue(han.isCaptive());
         if (scn.AwaitingLSMovePhaseActions()) scn.LSPass();
         assertTrue(scn.AwaitingDSMovePhaseActions());
+        // Same move phase: still escorting and 2 Force available, but the action is limited to once per move phase.
+        assertEquals(2, scn.GetDSForcePileCount());
+        assertFalse(scn.DSCardActionAvailable(boba, "Relocate with captive to docking bay"));
+        // Next own move phase: offered again.
+        scn.SkipToDSTurn(Phase.CONTROL); scn.EnsureDSForcePile(4); scn.SkipToPhase(Phase.MOVE);
+        assertSame(boba, han.getAttachedTo());
         assertTrue(scn.DSCardActionAvailable(boba, "Relocate with captive to docking bay"));
+        int force = scn.GetDSForcePileCount();
         scn.DSUseCardAction(boba, "Relocate with captive to docking bay");
         if (scn.DSHasCardChoiceAvailable(scn.GetDSCard("otherBay"))) scn.DSChooseCard(scn.GetDSCard("otherBay")); scn.PassAllResponses();
-        assertEquals(scn.GetDSCard("otherBay"), boba.getAtLocation()); assertEquals(0, scn.GetDSForcePileCount());
+        assertEquals(scn.GetDSCard("otherBay"), boba.getAtLocation()); assertEquals(force - 2, scn.GetDSForcePileCount());
         assertSame(boba, han.getAttachedTo());
     }
 
