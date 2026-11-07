@@ -22,6 +22,7 @@ public class Card_1261_082_Tests {
     private VirtualTableScenario fixture() {
         var ls = new HashMap<>(Map.of("flaps", "1261_82", "luke", "3_3", "rogue", "3_66", "differentPilot", "3_27",
                 "differentVehicle", "3_68", "artillery", "3_72", "tactics", "7_86", "top", "2_18", "controlEffect", "1_66"));
+        ls.put("hoth", "3_63");
         var ds = new HashMap<>(Map.of("vader", "1_168", "alter", "1_234"));
         return new VirtualTableScenario(ls, ds, 40, 40, StartingSetup.DefaultLSGroundLocation,
                 StartingSetup.DefaultDSGroundLocation, StartingSetup.NoLSStartingInterrupts,
@@ -48,7 +49,8 @@ public class Card_1261_082_Tests {
         var hand = scn.GetLSCard(pilotFromHand ? "luke" : "rogue");
         var reserve = scn.GetLSCard(pilotFromHand ? "rogue" : "luke");
         var wrong = scn.GetLSCard(pilotFromHand ? "differentVehicle" : "differentPilot");
-        var site = scn.GetLSStartingLocation();
+        var site = scn.GetLSCard("hoth");
+        scn.MoveLocationToTable(site);
         scn.MoveCardsToLSSideOfTable(flaps);
         scn.MoveCardsToLSHand(hand);
         scn.SkipToLSTurn(Phase.CONTROL);
@@ -111,7 +113,7 @@ public class Card_1261_082_Tests {
         assertTrue(scn.LSCardActionAvailable(flaps, DRAW));
         if (accept) scn.LSUseCardAction(flaps, DRAW); else scn.LSPass();
         scn.PassAllResponses();
-        assertEquals(accept ? Zone.HAND : Zone.RESERVE_DECK, top.getZone());
+        if (accept) assertEquals(Zone.HAND, top.getZone()); else assertEquals(top, scn.GetTopOfLSReserveDeck());
     }
 
     @Test public void actualDesperateTacticsOffersTheTopReserveCard() { tacticsDraw(true); }
