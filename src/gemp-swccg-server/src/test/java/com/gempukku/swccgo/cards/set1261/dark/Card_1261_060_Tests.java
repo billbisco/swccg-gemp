@@ -97,7 +97,7 @@ public class Card_1261_060_Tests {
         var scn = scenario(); scn.StartGame(); var rifle = scn.GetDSCard("rifle"); var delivery = scn.GetDSCard("delivery");
         scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("boba")); scn.AttachCardsTo(scn.GetDSCard("boba"), rifle);
         scn.SkipToDSTurn(Phase.DEPLOY); scn.MoveCardsToTopOfDSReserveDeck(delivery);
-        assertEquals(Zone.RESERVE_DECK, delivery.getZone()); int force = scn.GetDSForcePileCount();
+        com.gempukku.swccgo.framework.Assertions.assertInZone(Zone.RESERVE_DECK, delivery); int force = scn.GetDSForcePileCount();
         var remaining = scn.GetDSReserveDeck().stream().filter(c -> c != delivery).findFirst().orElseThrow();
         scn.gameState().markCardsRevealedFromPile(java.util.Collections.singletonList(remaining));
         assertTrue(scn.gameState().isCardRevealedFromPile(remaining));
