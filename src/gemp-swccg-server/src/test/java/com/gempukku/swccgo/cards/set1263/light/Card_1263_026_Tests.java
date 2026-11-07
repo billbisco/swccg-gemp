@@ -136,7 +136,8 @@ public class Card_1263_026_Tests {
             var text = scn.GetCurrentDecision().getText(); var decider = scn.GetDecidingPlayer();
             trace.add(decider + ":" + text);
             if (text.contains("INITIAL_ATTRITION_CALCULATED") || text.toLowerCase().contains("damage segment")) break;
-            if (decider.equals(scn.LS) && scn.LSCardActionAvailable(phylo, "Draw two destiny")) {
+            if (text.contains("battle destiny?")) { scn.PlayerChooseYes(decider); continue; }
+            if (decider.equals(scn.LS) && lsMayUse(scn, phylo, "Draw two destiny")) {
                 int before = scn.GetDSTotalPower();
                 scn.PrepareLSDestiny(3); scn.PrepareLSDestiny(2);
                 scn.LSUseCardAction(phylo, "Draw two destiny");
@@ -144,20 +145,28 @@ public class Card_1263_026_Tests {
                     var t = scn.GetCurrentDecision().getText(); var d = scn.GetDecidingPlayer();
                     if (scn.gameState().getBattleState() == null || t.contains("INITIAL_ATTRITION_CALCULATED")) break;
                     if (d.equals(scn.LS) && t.contains("destiny") && t.startsWith("Choose 1")) {
-                        scn.LSChooseAnyCard();
+                        scn.PlayerDecided(scn.LS, scn.LSGetCardChoices().get(0));
                         continue;
                     }
                     if (scn.GetDSTotalPower() < before) break;
+                    if (t.contains("battle destiny?")) { scn.PlayerChooseYes(d); continue; }
                     scn.PlayerPass(d);
                 }
                 assertTrue(trace.toString(), scn.GetDSTotalPower() < before);
                 return true;
             }
-            if (text.contains("battle destiny?")) { scn.PlayerChooseYes(decider); continue; }
             scn.PlayerPass(decider);
         }
         assertTrue(trace.toString(), trace.stream().anyMatch(t -> t.contains("BATTLE_DESTINY_DRAWS") || t.contains("DESTINY_DRAWN")));
         return false;
+    }
+
+    private static boolean lsMayUse(VirtualTableScenario scn, com.gempukku.swccgo.game.PhysicalCardImpl card, String text) {
+        try {
+            return scn.LSCardActionAvailable(card, text);
+        } catch (IllegalStateException notACardActionDecision) {
+            return false;
+        }
     }
 
     @Test public void respondsWhenOpponentsBlockSixCardAddsDestinyToTotalPowerHere() {
