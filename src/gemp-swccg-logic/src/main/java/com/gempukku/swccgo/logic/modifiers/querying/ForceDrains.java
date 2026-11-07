@@ -136,9 +136,13 @@ public interface ForceDrains extends BaseQuery, CardTraits, Icons, Captives, Pil
         }
         float bonusRemaining = limit == null ? Float.POSITIVE_INFINITY : limit.getLimit();
         boolean limitedBonus = false;
+        OnlyIfNoOtherBonusResolver onlyIfNoOtherBonus = new OnlyIfNoOtherBonusResolver();
         for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.FORCE_DRAIN_AMOUNT, location)) {
             if (modifier.isForPlayer(performingPlayerId)) {
                 float amount = modifier.getForceDrainModifier(performingPlayerId, gameState, query(), location);
+                if (onlyIfNoOtherBonus.defer(modifier, amount)) {
+                    continue;
+                }
                 if (limit != null && amount > 0) {
                     float allowed = Math.min(amount, bonusRemaining);
                     limitedBonus |= allowed < amount;
@@ -149,6 +153,13 @@ public interface ForceDrains extends BaseQuery, CardTraits, Icons, Captives, Pil
                 modifierCollector.addModifier(modifier);
             }
         }
+        float conditionalBonus = onlyIfNoOtherBonus.resolve(modifierCollector);
+        if (limit != null && conditionalBonus > 0) {
+            float allowed = Math.min(conditionalBonus, bonusRemaining);
+            limitedBonus |= allowed < conditionalBonus;
+            conditionalBonus = allowed;
+        }
+        result += conditionalBonus;
         if (limitedBonus) modifierCollector.addModifier(limit);
 
         for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.UNMODIFIABLE_FORCE_DRAIN_AMOUNT, location)) {
