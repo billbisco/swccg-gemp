@@ -251,8 +251,12 @@ public class Card_1262_002_Tests {
         assertTrue(scn.AwaitingDSDeployPhaseActions());
         assertEquals(3, scn.GetDSForcePileCount());
         assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("witch"), DOWNLOAD));
-        scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.SkipToDSTurn(Phase.CONTROL);
+        setForce(scn, 3);
+        scn.MoveCardsToTopOfDSReserveDeck(scn.GetDSCard("mount2"));
+        scn.SkipToPhase(Phase.DEPLOY);
         download(scn, scn.GetDSCard("mount2"));
+        assertEquals(0, scn.GetDSForcePileCount());
     }
 
     @Test public void DathomirWitchCannotDownloadInMovePhaseOrFromOffTable() {
