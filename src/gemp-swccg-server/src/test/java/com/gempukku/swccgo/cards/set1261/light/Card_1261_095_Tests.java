@@ -141,7 +141,7 @@ public class Card_1261_095_Tests {
         scn.PassResponses("ABOUT_TO_BE_LOST"); return scn;
     }
     private void assertNoRetrieval(VirtualTableScenario scn, com.gempukku.swccgo.game.PhysicalCard victim) {
-        assertInZone(Zone.LOST_PILE, victim);
+        assertEquals(Zone.LOST_PILE, victim.getZone());
         // If no response is legal the engine advances without an LS action decision.
         assertFalse(scn.GetLSAvailableActions().stream().anyMatch(text -> text.contains("Retrieve") && text.contains("into hand")));
     }
