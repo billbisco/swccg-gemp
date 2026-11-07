@@ -148,6 +148,7 @@ public class Card_1240_005_Tests {
         scn.PassAllResponses();
         assertAtLocation(hoth, dread);
         assertEquals(force - 5, scn.GetDSForcePileCount());
+        assertTrue(scn.gameState().getLastMessages().stream().anyMatch(m -> m.contains("shuffles Reserve Deck")));
     }
 
     @Test

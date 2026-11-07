@@ -5,6 +5,7 @@ import com.gempukku.swccgo.common.CardType;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Phase;
+import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
@@ -26,7 +27,7 @@ public class Card_1240_101_Tests {
     private static final String EFFECT = "Deploy an Effect on a character here from Reserve Deck";
 
     private VirtualTableScenario scenario() {
-        return new VirtualTableScenario(new HashMap<>(Map.ofEntries(
+        var scn = new VirtualTableScenario(new HashMap<>(Map.ofEntries(
                 Map.entry("outpost", "1240_101"), Map.entry("forest", "7_121"),
                 Map.entry("city", "7_125"),
                 Map.entry("kiffex", "6_83"), Map.entry("bothawui", "7_110"),
@@ -39,6 +40,8 @@ public class Card_1240_101_Tests {
                 Map.entry("kiffexOperative", "7_26"), Map.entry("bothawuiOperative", "7_6"),
                 Map.entry("creature", "4_3"))), new HashMap<>(Map.of(
                 "premium", "112_16", "shield", "13_78", "darkOperative", "7_185")));
+        scn.StartGame();
+        return scn;
     }
 
     @Test
@@ -51,11 +54,13 @@ public class Card_1240_101_Tests {
         assertEquals(CardSubtype.SITE, card.getCardSubtype());
         assertEquals(Uniqueness.DIAMOND_1, card.getUniqueness());
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_4, card.getExpansionSet());
+        assertEquals(Rarity.V, card.getRarity());
         assertFalse(card.hasVirtualSuffix());
         assertTrue(card.getLocationLightSideGameText().contains("Dantooine"));
         assertTrue(card.getLocationDarkSideGameText().contains("matching operative"));
         scn.BlueprintIconCheck(card, new ArrayList<>(List.of(Icon.LIGHT_FORCE, Icon.DARK_FORCE,
                 Icon.HOTH, Icon.EXTERIOR_SITE, Icon.PLANET, Icon.LEGACY_BLOCK_4)));
+        scn.BlueprintKeywordCheck(card, new ArrayList<>());
     }
 
     @Test
@@ -85,6 +90,7 @@ public class Card_1240_101_Tests {
         scn.PassAllResponses();
         scn.PassCardAndForceUseResponses();
         assertTrue(scn.IsAttachedTo(scn.GetLSCard("falcon"), computer));
+        assertTrue(scn.gameState().getLastMessages().stream().anyMatch(m -> m.contains("shuffles Reserve Deck")));
         assertEquals(0, scn.GetLSForcePileCount());
         assertFalse(scn.LSCardActionAvailable(outpost, DEVICE));
         assertFalse(scn.LSCardActionAvailable(outpost, EFFECT));
@@ -110,6 +116,7 @@ public class Card_1240_101_Tests {
         }
         scn.PassAllResponses();
         assertTrue(scn.IsAttachedTo(luke, rycar));
+        assertTrue(scn.gameState().getLastMessages().stream().anyMatch(m -> m.contains("shuffles Reserve Deck")));
         assertFalse(scn.LSCardActionAvailable(outpost, DEVICE));
     }
 
@@ -202,11 +209,11 @@ public class Card_1240_101_Tests {
         scn.MoveLocationToTable(outpost);
         scn.MoveCardsToLocation(local ? outpost : remote, scn.GetLSCard("falcon"), scn.GetLSCard("luke"));
         scn.MoveCardsToLocation(remote, scn.GetLSCard("boshek"));
+        scn.SkipToLSTurn(Phase.CONTROL);
+        scn.EnsureLSForcePile(force);
+        scn.DrainLSForcePileTo(force);
         scn.MoveCardsToTopOfLSReserveDeck(scn.GetLSCard("computer"), scn.GetLSCard("rycar"),
                 scn.GetLSCard("savrip"), scn.GetLSCard("comlink"));
-        scn.EnsureLSForcePile(force);
-        scn.SkipToLSTurn(Phase.CONTROL);
-        scn.DrainLSForcePileTo(force);
         scn.SkipToPhase(Phase.DEPLOY);
         return scn;
     }
