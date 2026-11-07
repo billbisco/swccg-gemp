@@ -162,4 +162,41 @@ public class Card_1271_019_Tests {
         s.PassAllResponses();
         assertTrue(s.GetDSHand().contains(cape));
     }
+
+    private VirtualTableScenario playEmpiresBack(String deployKey) {
+        var s = scenario();
+        s.StartGame();
+        s.MoveCardsToDSSideOfTable(s.GetDSCard("rise"));
+        var interrupt = s.GetDSCard("empiresBack");
+        s.SkipToDSTurn(Phase.CONTROL);
+        s.MoveCardsToDSHand(interrupt);
+        s.EnsureDSForcePile(12);
+        s.SkipToPhase(Phase.DEPLOY);
+        var target = s.GetDSCard(deployKey);
+        assertTrue(s.DSCardPlayAvailable(interrupt, "Deploy from Reserve Deck"));
+        s.DSPlayCard(interrupt, "Deploy from Reserve Deck");
+        s.PassAllResponses();
+        for (int i = 0; i < 6 && !target.getZone().isInPlay(); i++) {
+            if (s.DSHasCardChoiceAvailable(target)) s.DSChooseCard(target);
+            else if (s.DSHasCardChoiceAvailable(s.GetDSStartingLocation())) s.DSChooseCard(s.GetDSStartingLocation());
+            else if (s.LSGetDecision() != null && s.DSGetDecision() == null) s.LSPass();
+            else break;
+            s.PassAllResponses();
+        }
+        s.PassAllResponses();
+        assertTrue(s.CardsAtLocation(s.GetDSStartingLocation(), target));
+        return s;
+    }
+
+    @Test public void RiseOfTheDarkLordMakesTheEmpiresBackAUsedInterruptWhenItDeploysVader() {
+        var s = playEmpiresBack("vader");
+        assertTrue(s.GetDSUsedPile().contains(s.GetDSCard("empiresBack")));
+        assertFalse(s.GetDSLostPile().contains(s.GetDSCard("empiresBack")));
+    }
+
+    @Test public void RiseOfTheDarkLordLeavesTheEmpiresBackLostWhenItDeploysSomeoneElse() {
+        var s = playEmpiresBack("tarkin");
+        assertTrue(s.GetDSLostPile().contains(s.GetDSCard("empiresBack")));
+        assertFalse(s.GetDSUsedPile().contains(s.GetDSCard("empiresBack")));
+    }
 }

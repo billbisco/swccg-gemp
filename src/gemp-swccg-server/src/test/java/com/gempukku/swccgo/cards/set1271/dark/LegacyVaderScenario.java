@@ -36,6 +36,8 @@ final class LegacyVaderScenario {
         dark.put("devastator", "1_301");
         dark.put("customTie", "1_306");
         dark.put("system", "1_282");
+        dark.put("empiresBack", "1210_67");
+        dark.put("tarkin", "1_179");
         return new VirtualTableScenario(light, dark, 40, 40,
             StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
             StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,

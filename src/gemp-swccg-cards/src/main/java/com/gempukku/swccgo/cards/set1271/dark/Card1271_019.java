@@ -9,9 +9,12 @@ import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.game.state.GameState;
+import com.gempukku.swccgo.game.state.actions.PlayCardState;
 import com.gempukku.swccgo.logic.TriggerConditions;
 import com.gempukku.swccgo.logic.actions.CancelCardActionBuilder;
 import com.gempukku.swccgo.logic.actions.OptionalGameTextTriggerAction;
+import com.gempukku.swccgo.logic.actions.PlayCardAction;
+import com.gempukku.swccgo.logic.actions.PlayInterruptAction;
 import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
 import com.gempukku.swccgo.logic.effects.choose.DeployStackedCardEffect;
@@ -23,6 +26,7 @@ import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 import com.gempukku.swccgo.logic.timing.Effect;
 import com.gempukku.swccgo.logic.timing.EffectResult;
+import com.gempukku.swccgo.logic.timing.PassthruEffect;
 import com.gempukku.swccgo.logic.timing.results.DestinyDrawnResult;
 import com.gempukku.swccgo.logic.timing.results.LostFromTableResult;
 
@@ -89,12 +93,39 @@ public class Card1271_019 extends AbstractEpicEventDeployable {
             action.appendEffect(new StackOneCardFromLostPileEffect(action, lost, self, true, false, true));
             actions.add(action);
         }
+        if (TriggerConditions.justDeployed(game, result, Filters.and(Filters.your(self), Filters.Vader))) {
+            PlayInterruptAction empiresBack = empiresBackBeingPlayed(game, self);
+            if (empiresBack != null) {
+                RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, sourceId);
+                action.setText("Make The Empire's Back a Used Interrupt");
+                action.setActionMsg("Make " + com.gempukku.swccgo.logic.GameUtils.getCardLink(empiresBack.getPlayedCard()) + " a Used Interrupt");
+                action.appendEffect(new PassthruEffect(action) {
+                    @Override protected void doPlayEffect(SwccgGame game) {
+                        empiresBack.setPlayedAsSubtype(CardSubtype.USED);
+                    }
+                });
+                actions.add(action);
+            }
+        }
         if (TriggerConditions.isTableChanged(game, result) && GameConditions.canTargetToCancel(game, self, CANCELED)) {
             RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, sourceId);
             CancelCardActionBuilder.buildCancelCardAction(action, CANCELED, "card canceled by Rise Of The Dark Lord");
             actions.add(action);
         }
         return actions;
+    }
+
+    /** The Empire's Back you are playing (currently resolving) as a Lost Interrupt, if any. */
+    private PlayInterruptAction empiresBackBeingPlayed(SwccgGame game, PhysicalCard self) {
+        for (PlayCardState state : game.getGameState().getPlayCardStates()) {
+            PlayCardAction playAction = state.getPlayCardAction();
+            if (playAction instanceof PlayInterruptAction interrupt
+                    && interrupt.getPlayedAsSubtype() == CardSubtype.LOST
+                    && Filters.and(Filters.your(self), Filters.title(Title.The_Empires_Back)).accepts(game, interrupt.getPlayedCard())) {
+                return interrupt;
+            }
+        }
+        return null;
     }
 
     @Override

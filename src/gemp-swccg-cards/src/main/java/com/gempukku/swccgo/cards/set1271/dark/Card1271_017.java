@@ -6,13 +6,19 @@ import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
+import com.gempukku.swccgo.logic.TriggerConditions;
+import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
 import com.gempukku.swccgo.logic.conditions.Condition;
 import com.gempukku.swccgo.logic.effects.CancelCardOnTableEffect;
+import com.gempukku.swccgo.logic.effects.LoseForceEffect;
 import com.gempukku.swccgo.logic.effects.MoveCardAsRegularMoveEffect;
 import com.gempukku.swccgo.logic.modifiers.ImmuneToAttritionModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.modifiers.PowerModifier;
+import com.gempukku.swccgo.logic.timing.EffectResult;
+import com.gempukku.swccgo.logic.timing.results.MovingResult;
+import com.gempukku.swccgo.logic.GameUtils;
 
 import java.util.List;
 
@@ -33,6 +39,24 @@ public class Card1271_017 extends LegacyVaderEquipment {
             && GameConditions.isDuringBattleWithParticipant(game, wearer);
         return List.of(new PowerModifier(self, wearer, defendingAtOpponentsSite, 2),
             new ImmuneToAttritionModifier(self, wearer, defendingAtOpponentsSite));
+    }
+
+    @Override
+    protected List<RequiredGameTextTriggerAction> getGameTextRequiredAfterTriggers(SwccgGame game, EffectResult result,
+            PhysicalCard self, int sourceId) {
+        // "In order for opponent's character to move away from here using landspeed, opponent must first lose 1 Force."
+        String opponent = game.getOpponent(self.getOwner());
+        Filter opponentsCharacter = Filters.and(Filters.owner(opponent), Filters.character);
+        if (self.getAttachedTo() == null
+                || !TriggerConditions.movingUsingLandspeed(game, result, opponentsCharacter)
+                || !TriggerConditions.movingFromLocation(game, result, opponentsCharacter, Filters.sameLocation(self))) return null;
+
+        PhysicalCard moving = ((MovingResult) result).getCardMoving();
+        RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, sourceId);
+        action.setText("Make " + opponent + " lose 1 Force to move away");
+        action.setActionMsg("Make " + opponent + " lose 1 Force to move " + GameUtils.getCardLink(moving) + " away from Vader");
+        action.appendEffect(new LoseForceEffect(action, opponent, 1));
+        return List.of(action);
     }
 
     @Override

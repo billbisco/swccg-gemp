@@ -98,4 +98,20 @@ public class Card_1271_002_Tests {
     @Test public void DarthVaderMoreMachineThanManCannotApplyAbilityIfHeDoesNotControlHisSite() {
         applyAtAnotherBattle(false);
     }
+
+    @Test public void DarthVaderMoreMachineThanManIsImmuneToClashOfSabersAndAttritionBelowFiveAndMayNotBeDisarmed() {
+        var s = board(null);
+        var vader = s.GetDSCard("vader");
+        var premiereVader = s.GetDSCard("premiereVader");
+        s.SkipToDSTurn(Phase.CONTROL);
+        var q = s.game().getModifiersQuerying();
+        assertEquals(5f, q.getImmunityToAttritionLessThan(s.gameState(), vader), s.epsilon);
+        assertTrue(q.isImmuneToCardTitle(s.gameState(), vader, Title.Clash_Of_Sabers));
+        assertFalse(q.getModifiersAffectingCard(s.gameState(),
+            com.gempukku.swccgo.logic.modifiers.ModifierType.MAY_NOT_BE_DISARMED, vader).isEmpty());
+        // Inverse: another Vader (not in play) has none of these defenses.
+        assertFalse(q.isImmuneToCardTitle(s.gameState(), premiereVader, Title.Clash_Of_Sabers));
+        assertTrue(q.getModifiersAffectingCard(s.gameState(),
+            com.gempukku.swccgo.logic.modifiers.ModifierType.MAY_NOT_BE_DISARMED, premiereVader).isEmpty());
+    }
 }
