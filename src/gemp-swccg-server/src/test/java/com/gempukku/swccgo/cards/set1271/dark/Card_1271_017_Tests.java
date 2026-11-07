@@ -30,4 +30,23 @@ public class Card_1271_017_Tests {
         assertTrue(s.CardsAtLocation(farm, vader));
         assertEquals(Zone.STACKED_FACE_DOWN, mask.getZone());
     }
+
+    @Test public void VadersMaskGrantsPowerAndFullAttritionImmunityOnlyWhenDefendingAtAnOpponentsSite() {
+        checkDefending(true);
+        checkDefending(false);
+    }
+
+    private void checkDefending(boolean opponentOwnsSite) {
+        var s = board("mask");
+        var vader = s.GetDSCard("vader");
+        var site = opponentOwnsSite ? s.GetLSCard("farm") : s.GetDSStartingLocation();
+        s.MoveCardsToLocation(site, vader, s.GetLSCard("luke"));
+        s.SkipToLSTurn(Phase.CONTROL);
+        s.EnsureLSForcePile(8);
+        s.SkipToPhase(Phase.BATTLE);
+        s.StartBattleAndSkipToWeaponsSegment(s.LS, site);
+        assertEquals(opponentOwnsSite ? 8 : 6, s.GetPower(vader), s.epsilon);
+        assertEquals(opponentOwnsSite ? Float.MAX_VALUE : 5f,
+                s.game().getModifiersQuerying().getImmunityToAttritionLessThan(s.gameState(), vader), s.epsilon);
+    }
 }

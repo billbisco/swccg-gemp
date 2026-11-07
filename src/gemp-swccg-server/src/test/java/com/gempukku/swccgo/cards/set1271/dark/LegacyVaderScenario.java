@@ -20,6 +20,7 @@ final class LegacyVaderScenario {
         light.put("clash", "5_38");
         light.put("farm", "1_132");
         light.put("journal", "10_15");
+        light.put("fury", "5_29");
         var dark = new HashMap<String, String>();
         dark.put("vader", "1271_2");
         dark.put("rise", "1271_19");

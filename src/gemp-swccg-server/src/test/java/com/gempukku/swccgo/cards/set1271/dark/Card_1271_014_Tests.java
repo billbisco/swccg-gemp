@@ -54,8 +54,7 @@ public class Card_1271_014_Tests {
         assertEquals(4, s.GetDefense(luke));
         s.DSUseCardAction(lightsaber, "Fire");
         if (s.DSHasCardChoiceAvailable(luke)) s.DSChooseCard(luke);
-        s.PassAllResponses();
-        s.PassDestinyDrawResponses();
+        s.PassWeaponFireWithDestinyDraw(2);
         s.PassAllResponses();
         assertEquals(cape, luke.isHit());
     }

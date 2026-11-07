@@ -48,4 +48,53 @@ public class Card_1271_015_Tests {
         assertEquals(lost + 4, s.GetDSLostPileCount());
         assertEquals(Zone.STACKED_FACE_DOWN, equipment.getZone());
     }
+
+    @Test public void VadersCyberneticEnhancementsCancelsActualUncontrollableFuryWithoutCancelingFriendlyEquipment() {
+        var s = board("cybernetic");
+        var vader = s.GetDSCard("vader");
+        var fury = s.GetLSCard("fury");
+        var cape = s.GetDSCard("cape");
+        s.AttachCardsTo(vader, cape);
+        s.MoveCardsToLSHand(fury);
+        s.SkipToLSTurn(Phase.DEPLOY);
+        s.LSDeployCard(fury);
+        if (s.LSHasCardChoiceAvailable(vader)) s.LSChooseCard(vader);
+        s.PassAllResponses();
+        if (s.DSHasCardChoiceAvailable(fury)) s.DSChooseCard(fury);
+        s.PassAllResponses();
+        assertTrue(s.GetLSLostPile().contains(fury));
+        assertEquals(vader, cape.getAttachedTo());
+    }
+
+    @Test public void VadersCyberneticEnhancementsAddsOneToDarkBattleDestinyAtVadersSite() {
+        var s = board("cybernetic");
+        var site = s.GetDSStartingLocation();
+        s.MoveCardsToLocation(site, s.GetLSCard("luke"));
+        s.SkipToDSTurn(Phase.CONTROL);
+        s.EnsureDSForcePile(8);
+        s.SkipToPhase(Phase.BATTLE);
+        s.StartBattleAndSkipToWeaponsSegment(s.DS, site);
+        s.PrepareDSDestiny(3);
+        s.PrepareLSDestiny(2);
+        s.SkipToEndOfPowerSegment(true);
+        assertEquals(4, s.GetDSTotalDestiny());
+        assertEquals(2, s.GetLSTotalDestiny());
+    }
+
+    @Test public void VadersCyberneticEnhancementsLetsVaderReactIntoAnActualAdjacentBattle() {
+        var s = board("cybernetic");
+        var vader = s.GetDSCard("vader");
+        var equipment = s.GetDSCard("cybernetic");
+        var farm = s.GetLSCard("farm");
+        s.MoveCardsToLocation(farm, s.GetLSCard("luke"), s.GetDSCard("trooper"));
+        s.SkipToLSTurn(Phase.BATTLE);
+        s.DSActivateForceCheat(4);
+        s.LSInitiateBattle(farm);
+        assertTrue(s.DSDecisionAvailable("Battle just initiated"));
+        s.DSUseCardAction(equipment, "Move Vader as a 'react'");
+        if (s.DSHasCardChoiceAvailable(farm)) s.DSChooseCard(farm);
+        s.PassAllResponses();
+        assertTrue(s.CardsAtLocation(farm, vader));
+        assertTrue(s.gameState().getBattleState().getCardsParticipating(s.DS).contains(vader));
+    }
 }
