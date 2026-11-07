@@ -1769,6 +1769,7 @@ public enum GameTextActionId {
     LEGACY__HUTT_INFLUENCE_V__UPLOAD_ALL_WRAPPED_UP(true, true),
     LEGACY__MOS_ESPA_V__PREVENT_SLAVE_LOSS(false, true),
     LEGACY__SACRED_FOREST__DEPLOY_YARNA(true),
+    LEGACY__DARK_WATERS_AND_KRAYT_DRAGON_BONES__RELOCATE_CAPTIVE,
     ;
 
     private boolean _searchCardPile;
