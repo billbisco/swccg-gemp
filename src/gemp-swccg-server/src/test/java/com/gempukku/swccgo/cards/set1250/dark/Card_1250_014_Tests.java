@@ -27,7 +27,7 @@ public class Card_1250_014_Tests {
                         Map.entry("sidious", "1116_46"), Map.entry("trooper", "1_194"), Map.entry("mara", "110_10"),
                         Map.entry("maul", "11_54"), Map.entry("alien", "13_59"), Map.entry("senator", "12_110"),
                         Map.entry("independent", "4_168"), Map.entry("imperialShip", "1_301"),
-                        Map.entry("system", "1_289"), Map.entry("ice", "3_148"))),
+                        Map.entry("system", "1_289"), Map.entry("ice", "3_148"), Map.entry("galen", "601_81"))),
                 30, 30, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -154,11 +154,11 @@ public class Card_1250_014_Tests {
 
     private void checkDrain(int politics, boolean withImperial, int expectedLoss) {
         var scn = scenario();
-        setPolitics(scn, politics);
         var site = scn.GetDSStartingLocation();
         var trooper = scn.GetDSCard("trooper");
-        scn.MoveCardsToLocation(site, scn.GetDSCard("mara"));
+        scn.MoveCardsToLocation(site, scn.GetDSCard("galen"));
         scn.MoveCardsToLocation(withImperial ? site : scn.GetDSCard("ice"), trooper);
+        setPolitics(scn, politics);
         var q = scn.game().getModifiersQuerying();
         assertEquals(0, q.getForceDrainAmount(scn.gameState(), scn.GetDSCard("ice"), scn.DS), scn.epsilon);
         scn.SkipToPhase(Phase.CONTROL);
@@ -184,7 +184,7 @@ public class Card_1250_014_Tests {
         var scn = scenario();
         setPolitics(scn, politics);
         var site = scn.GetDSStartingLocation();
-        scn.MoveCardsToLocation(site, scn.GetDSCard("mara"), scn.GetLSCard("luke"));
+        scn.MoveCardsToLocation(site, scn.GetDSCard("galen"), scn.GetLSCard("luke"));
         scn.MoveCardsToLocation(withImperial ? site : scn.GetDSCard("ice"), scn.GetDSCard("trooper"));
         scn.ApplyAdHocModifier(new AddsBattleDestinyModifier(site, 1, scn.DS));
         scn.EnsureDSForcePile(1);
