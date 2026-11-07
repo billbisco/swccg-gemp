@@ -9,11 +9,11 @@ import static org.junit.Assert.*;
 public class Card_1271_048_Tests {
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>() {{
-            put("cannon","1271_48");put("jungle","1_137");put("farm","1_132");put("interior","1_139");
+            put("cannon","1271_48");put("powerSite","3_61");put("unpoweredSite","3_62");put("farm","1_132");put("interior","1_139");
             put("ship","1_140");put("luke","1_19");
         }},new HashMap<>() {{
             put("target","1_301");put("otherCapital","1_302");put("executor","4_167");put("fighter","1_304");put("weapon","1_318");
-        }},40,40,StartingSetup.LSStartingLocation("1_135"),StartingSetup.DefaultDSSpaceSystem,
+        }},40,40,StartingSetup.LSStartingLocation("3_55"),StartingSetup.DefaultDSSpaceSystem,
             StartingSetup.NoLSStartingInterrupts,StartingSetup.NoDSStartingInterrupts,
             StartingSetup.NoLSShields,StartingSetup.NoDSShields,VirtualTableScenario.Open);
     }
@@ -36,11 +36,13 @@ public class Card_1271_048_Tests {
         var s=scenario();s.StartGame();s.SkipToLSTurn(Phase.CONTROL);s.MoveLocationToTable(s.GetLSCard("interior"));s.MoveCardsToLSHand(s.GetLSCard("cannon"));s.SkipToPhase(Phase.DEPLOY);
         assertFalse(s.LSCardPlayAvailable(s.GetLSCard("cannon")));
     }
-    private VirtualTableScenario ready(boolean atRelatedSystem) {
-        var s=scenario();s.StartGame();s.SkipToLSTurn(Phase.CONTROL);s.MoveLocationToTable(s.GetLSCard("jungle"));s.AttachCardsTo(s.GetLSCard("jungle"),s.GetLSCard("cannon"));
+    private VirtualTableScenario ready(boolean atRelatedSystem) { return ready(atRelatedSystem,true,false); }
+    private VirtualTableScenario ready(boolean atRelatedSystem,boolean powered,boolean extraTargets) {
+        var s=scenario();s.StartGame();s.SkipToLSTurn(Phase.CONTROL);var site=s.GetLSCard(powered?"powerSite":"unpoweredSite");s.MoveLocationToTable(site);s.AttachCardsTo(site,s.GetLSCard("cannon"));
         var system=atRelatedSystem?s.GetLSStartingLocation():s.GetDSStartingLocation();
         s.MoveCardsToLocation(system,s.GetLSCard("ship"),s.GetDSCard("target"));s.BoardAsPilot(s.GetLSCard("ship"),s.GetLSCard("luke"));
-        s.AttachCardsTo(s.GetDSCard("target"),s.GetDSCard("weapon"));s.SkipToPhase(Phase.BATTLE);s.LSInitiateBattle(system);s.PassAllResponses();return s;
+        s.AttachCardsTo(s.GetDSCard("target"),s.GetDSCard("weapon"));
+        if(extraTargets)s.MoveCardsToLocation(system,s.GetDSCard("executor"),s.GetDSCard("fighter"));s.SkipToPhase(Phase.BATTLE);s.LSInitiateBattle(system);s.PassAllResponses();return s;
     }
     private void shoot(VirtualTableScenario s,int first,int second) {
         s.MoveCardsToTopOfLSReserveDeck(s.GetLSDestiny(first),s.GetLSDestiny(second));
@@ -64,11 +66,12 @@ public class Card_1271_048_Tests {
         var s=ready(false);assertFalse(s.LSCardActionAvailable(s.GetLSCard("cannon"),"Fire"));
     }
     @Test public void PlanetDefenderIonCannonExcludesExecutorAndStarfightersFromActualTargetChoices() {
-        var s=ready(true);s.MoveCardsToLocation(s.GetLSStartingLocation(),s.GetDSCard("executor"),s.GetDSCard("fighter"));
-        // Refresh the live weapon-action decision after installing the additional legal table fixtures.
-        s.LSPass();s.DSPass();s.LSUseCardAction(s.GetLSCard("cannon"),"Fire");
+        var s=ready(true,true,true);s.LSUseCardAction(s.GetLSCard("cannon"),"Fire");
         assertTrue(s.LSHasCardChoiceAvailable(s.GetDSCard("target")));assertFalse(s.LSHasCardChoiceAvailable(s.GetDSCard("executor")));assertFalse(s.LSHasCardChoiceAvailable(s.GetDSCard("fighter")));
         s.LSChooseCard(s.GetDSCard("target"));s.PassWeaponFireWithDestinyDraw(2);s.PassAllResponses();
+    }
+    @Test public void PlanetDefenderIonCannonCannotFireWithoutTheNormalArtilleryPowerSource() {
+        var s=ready(true,false,false);assertFalse(s.LSCardActionAvailable(s.GetLSCard("cannon"),"Fire"));
     }
     private void forfeitTarget(VirtualTableScenario s) { forfeit(s,"target"); }
     private void forfeit(VirtualTableScenario s,String name) {
@@ -88,11 +91,11 @@ public class Card_1271_048_Tests {
     }
     @Test public void PlanetDefenderIonCannonMayDeclineTheOptionalTheftAndKeepTheWeapon() {
         var s=ready(true);shoot(s,3,4);forfeitTarget(s);assertTrue(s.LSCardActionAvailable(s.GetLSCard("cannon"),"Steal"));s.PassAllResponses();
-        assertEquals(s.GetLSCard("jungle"),s.GetLSCard("cannon").getAttachedTo());assertTrue(s.GetDSLostPile().contains(s.GetDSCard("target")));
+        assertEquals(s.GetLSCard("powerSite"),s.GetLSCard("cannon").getAttachedTo());assertTrue(s.GetDSLostPile().contains(s.GetDSCard("target")));
     }
     @Test public void PlanetDefenderIonCannonDoesNotOfferTheftAfterAnUnsuccessfulShot() {
         var s=ready(true);shoot(s,2,4);forfeitTarget(s);assertFalse(s.LSAnyActionsAvailable() && s.LSCardActionAvailable(s.GetLSCard("cannon"),"Steal"));s.PassAllResponses();
-        assertEquals(s.GetLSCard("jungle"),s.GetLSCard("cannon").getAttachedTo());assertTrue(s.GetDSLostPile().contains(s.GetDSCard("target")));
+        assertEquals(s.GetLSCard("powerSite"),s.GetLSCard("cannon").getAttachedTo());assertTrue(s.GetDSLostPile().contains(s.GetDSCard("target")));
     }    @Test public void PlanetDefenderIonCannonDoesNotStealADifferentForfeitedCapital() {
         var s=ready(true);s.MoveCardsToLocation(s.GetLSStartingLocation(),s.GetDSCard("otherCapital"));shoot(s,3,4);forfeit(s,"otherCapital");
         assertFalse(s.LSAnyActionsAvailable() && s.LSCardActionAvailable(s.GetLSCard("cannon"),"Steal"));s.PassAllResponses();
@@ -102,7 +105,7 @@ public class Card_1271_048_Tests {
         var s=ready(true);shoot(s,3,4);s.SkipToDamageSegment(false);s.PassDamageSegmentActions();s.DSPayRemainingBattleDamageFromReserveDeck();s.PassAllResponses();
         s.SkipToPhase(Phase.DRAW);s.SkipToLSTurn(Phase.BATTLE);s.LSInitiateBattle(s.GetLSStartingLocation());s.PassAllResponses();forfeitTarget(s);
         assertFalse(s.LSAnyActionsAvailable() && s.LSCardActionAvailable(s.GetLSCard("cannon"),"Steal"));s.PassAllResponses();
-        assertTrue(s.GetDSLostPile().contains(s.GetDSCard("target")));assertEquals(s.GetLSCard("jungle"),s.GetLSCard("cannon").getAttachedTo());
+        assertTrue(s.GetDSLostPile().contains(s.GetDSCard("target")));assertEquals(s.GetLSCard("powerSite"),s.GetLSCard("cannon").getAttachedTo());
     }
 
 }
