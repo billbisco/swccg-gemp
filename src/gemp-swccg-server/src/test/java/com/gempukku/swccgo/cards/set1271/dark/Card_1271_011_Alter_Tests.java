@@ -38,6 +38,11 @@ public class Card_1271_011_Alter_Tests {
         assertTrue(scn.LSCardPlayAvailable(scn.GetLSCard("alter")));
         scn.PrepareLSDestiny(1);
         scn.LSPlayCard(scn.GetLSCard("alter"));
+        assertFalse(scn.LSHasCardChoiceAvailable(scn.GetDSCard("myself")));
+        assertTrue(scn.LSHasCardChoiceAvailable(scn.GetDSCard("rack")));
+        scn.LSChooseCard(scn.GetDSCard("rack"));
+        assertTrue(scn.LSHasCardChoiceAvailable(scn.GetLSCard("obiwan")));
+        scn.LSChooseCard(scn.GetLSCard("obiwan"));
         scn.PassAllResponses();
         assertEquals(Zone.LOST_PILE, scn.GetDSCard("rack").getZone());
         assertEquals(Zone.SIDE_OF_TABLE, scn.GetDSCard("myself").getZone());
