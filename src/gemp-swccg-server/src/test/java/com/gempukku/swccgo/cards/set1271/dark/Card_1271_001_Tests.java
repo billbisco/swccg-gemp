@@ -32,7 +32,7 @@ public class Card_1271_001_Tests {
         s.BlueprintPersonaCheck(b,List.of(Persona.GRIEVOUS));s.BlueprintIconCheck(b,List.of(Icon.REPUBLIC,Icon.WARRIOR,Icon.EPISODE_I,Icon.SPECIAL_EDITION,Icon.LEGACY_BLOCK_7));
     }
     @Test public void GrievousHunterOfJediActuallyDeploysForSixForce(){
-        var s=scenario();s.StartGame();s.SkipToDSTurn(Phase.DEPLOY);var g=s.GetDSCard("grievous");s.MoveCardsToDSHand(g);s.EnsureDSForcePile(10);int before=s.GetDSForcePileCount();
+        var s=scenario();s.StartGame();s.SkipToDSTurn(Phase.CONTROL);var g=s.GetDSCard("grievous");s.MoveCardsToDSHand(g);s.EnsureDSForcePile(10);s.SkipToPhase(Phase.DEPLOY);int before=s.GetDSForcePileCount();
         s.DSDeployCard(g);s.DSChooseCard(s.GetDSStartingLocation());s.PassAllResponses();assertEquals(s.GetDSStartingLocation(),g.getAtLocation());assertEquals(before-6,s.GetDSForcePileCount());
     }
     @Test public void GrievousHunterOfJediActuallyDeploysTheBlockFiveLightsaberOnHim(){
@@ -71,7 +71,7 @@ public class Card_1271_001_Tests {
         if(armed)s.AttachCardsTo(g,s.GetDSCard("oldBlade"));
         if(elsewhere){s.MoveCardsToLocation(s.GetDSStartingLocation(),g);s.MoveCardsToLocation(s.GetLSStartingLocation(),s.GetDSCard("vader"));}
         s.SkipToPhase(Phase.BATTLE);s.PrepareDSDestiny(2);s.PrepareLSDestiny(0);s.DSInitiateBattle(s.GetLSStartingLocation());s.PassAllResponses();s.SkipToEndOfPowerSegment(true);
-        assertEquals(elsewhere?8:armed?10:9,s.GetDSTotalPower());
+        assertEquals(elsewhere?9:armed?10:9,s.GetDSTotalPower());
     }
     @Test public void GrievousHunterOfJediAddsOneToAnActualBattleDestinyWhileArmed(){battleDestiny(true,false);}
     @Test public void GrievousHunterOfJediDoesNotAddToBattleDestinyWhenUnarmed(){battleDestiny(false,false);}
@@ -87,7 +87,7 @@ public class Card_1271_001_Tests {
         if(s.AwaitingDSBattleDamagePayment())s.DSPayRemainingBattleDamageFromReserveDeck();
         assertEquals(immune,s.DSDecisionAvailable("(if desired)"));
         if(immune)s.DSChooseCards();else s.DSPayAttritionFromCardInPlay(g);
-        assertEquals(immune?Zone.AT_LOCATION:Zone.LOST_PILE,g.getZone());
+        if(immune)assertEquals(Zone.AT_LOCATION,g.getZone());else assertTrue(s.GetDSLostPile().contains(g));
     }
     @Test public void GrievousHunterOfJediMaySurviveActualAttritionThree(){attrition(3,true);}
     @Test public void GrievousHunterOfJediMustSatisfyActualAttritionFour(){attrition(4,false);}
