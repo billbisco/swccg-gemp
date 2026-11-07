@@ -25,7 +25,8 @@ public class Card_1261_055_Tests {
     private VirtualTableScenario scenario(String mosEspa) {
         return new VirtualTableScenario(new HashMap<>(Map.of("revolution", "1_62")),
                 new HashMap<>(Map.of("mos", mosEspa, "slave", "12_180", "unrelated", "1_168",
-                        "shield", "601_78", "trooper", "1_194")),
+                        "shield", "601_78", "trooper", "1_194",
+                        "watto", "11_65", "junkyard", "12_178")),
                 28, 28, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -104,6 +105,10 @@ public class Card_1261_055_Tests {
         var vader = scn.GetDSCard("unrelated");
         start(scn);
         // Its setup is complete, as if deployed normally and flipped; this must be set before the deploy phase opens.
+        // Keep it on this side: Watto present at Watto's Junkyard and Dark occupies Mos Espa.
+        scn.MoveLocationToTable(scn.GetDSCard("junkyard"));
+        scn.MoveCardsToLocation(scn.GetDSCard("junkyard"), scn.GetDSCard("watto"));
+        scn.MoveCardsToLocation(scn.GetDSCard("mos"), scn.GetDSCard("trooper"));
         slave.setObjectiveDeploymentComplete(true);
         scn.MoveCardsToDSHand(vader);
         restoreDarkPriority(scn);
