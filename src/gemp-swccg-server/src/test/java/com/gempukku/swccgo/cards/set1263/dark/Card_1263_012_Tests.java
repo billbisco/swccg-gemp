@@ -101,4 +101,87 @@ public class Card_1263_012_Tests {
         assertInZone(Zone.HAND, scn.GetDSCard("drop"));
         assertEquals(0, scn.GetDSForcePileCount());
     }
+
+    // ---- Taken into hand using Protocol Failure ----
+
+    private static final String REVEAL = "Reveal to return Protocol Failure to hand";
+
+    private VirtualTableScenario protocolFailureScenario() {
+        return new VirtualTableScenario(
+                new HashMap<>() {{ put("artoo", "14_3"); }},
+                new HashMap<>() {{ put("oap", "1263_12"); put("failure", "1261_36"); put("trooper", "1_194"); put("vader", "1_168"); }},
+                25, 25, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
+    }
+
+    /** Protocol Failure targets Artoo, LS sends it to Lost Pile, DS takes the given card from Reserve Deck. */
+    private void protocolFailureTakes(VirtualTableScenario scn, com.gempukku.swccgo.game.PhysicalCardImpl cardToTake) {
+        var artoo = scn.GetLSCard("artoo");
+        var failure = scn.GetDSCard("failure");
+        scn.StartGame();
+        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), artoo);
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("trooper"));
+        scn.MoveCardsToDSHand(failure);
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.MoveCardsToTopOfDSReserveDeck(cardToTake);
+        scn.DSUseCardAction(failure, "Target a unique");
+        if (scn.DSHasCardChoiceAvailable(artoo))
+            scn.DSChooseCard(artoo);
+        scn.PassAllResponses();
+        scn.LSChoose("Place Protocol Failure in Lost Pile");
+        scn.PassAllResponses();
+        scn.DSChooseYes();
+        scn.DSChooseCard(cardToTake);
+        // Light Side responds first to the card being taken into hand
+        for (int i = 0; i < 5 && scn.LS.equals(scn.GetDecidingPlayer()); i++)
+            scn.LSPass();
+    }
+
+    @Test(timeout = 15000)
+    public void OperationalAsPlannedVTakenIntoHandUsingProtocolFailureMayBeRevealedToReturnProtocolFailure() {
+        var scn = protocolFailureScenario();
+        var oap = scn.GetDSCard("oap");
+        var failure = scn.GetDSCard("failure");
+        protocolFailureTakes(scn, oap);
+        assertInZone(Zone.HAND, oap);
+        assertTrue(scn.GetDSLostPile().contains(failure));
+
+        assertTrue(scn.DSCardActionAvailable(oap, REVEAL));
+        scn.DSUseCardAction(oap, REVEAL);
+        scn.LSDismissRevealedCards();
+        scn.PassAllResponses();
+
+        assertInZone(Zone.HAND, failure);
+        assertInZone(Zone.HAND, oap);
+    }
+
+    @Test(timeout = 15000)
+    public void OperationalAsPlannedVRevealIsOptional() {
+        var scn = protocolFailureScenario();
+        var oap = scn.GetDSCard("oap");
+        var failure = scn.GetDSCard("failure");
+        protocolFailureTakes(scn, oap);
+        assertTrue(scn.DSCardActionAvailable(oap, REVEAL));
+        scn.PassAllResponses();
+
+        assertTrue(scn.GetDSLostPile().contains(failure));
+        assertInZone(Zone.HAND, oap);
+    }
+
+    @Test(timeout = 15000)
+    public void OperationalAsPlannedVAlreadyInHandCannotRevealWhenProtocolFailureTakesAnotherCard() {
+        var scn = protocolFailureScenario();
+        var oap = scn.GetDSCard("oap");
+        var vader = scn.GetDSCard("vader");
+        var failure = scn.GetDSCard("failure");
+        scn.MoveCardsToDSHand(oap);
+        protocolFailureTakes(scn, vader);
+        assertInZone(Zone.HAND, vader);
+        assertInZone(Zone.HAND, oap);
+
+        assertFalse(scn.DSCardActionAvailable(oap, REVEAL));
+        scn.PassAllResponses();
+        assertTrue(scn.GetDSLostPile().contains(failure));
+    }
 }
