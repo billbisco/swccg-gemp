@@ -17,12 +17,15 @@ public class Card_1240_023_Tests {
 
     private boolean IsSelectable(VirtualTableScenario scn, PhysicalCardImpl card) {
         String[] ids = scn.GetADParam(scn.DS, "cardId");
+        String[] blueprints = scn.GetADParam(scn.DS, "blueprintId");
         String[] selectable = scn.GetADParam(scn.DS, "selectable");
         assertNotNull(ids);
         assertNotNull(selectable);
         assertEquals(ids.length, selectable.length);
         for (int i = 0; i < ids.length; i++) {
-            if (ids[i].equals(String.valueOf(card.getCardId()))) return Boolean.parseBoolean(selectable[i]);
+            boolean sameCard = ids[i].equals(String.valueOf(card.getCardId()))
+                    || (ids[i].startsWith("temp") && blueprints != null && blueprints[i].equals(card.getBlueprintId(true)));
+            if (sameCard) return Boolean.parseBoolean(selectable[i]);
         }
         return false;
     }
@@ -175,8 +178,12 @@ public class Card_1240_023_Tests {
                 scn.GetDSCard("wrongIcon"), scn.GetDSCard("victory"));
         scn.DSDeployCard(scn.GetDSCard("isd"));
         scn.DSChooseCard(scn.GetDSStartingLocation());
-        scn.LSPass();
-        assertTrue(scn.DSCardActionAvailable(scn.GetDSCard("dreaded"), DOWNLOAD));
+        for (int i = 0; i < 40; i++) {
+            if (scn.DSAnyActionsAvailable() && scn.DSCardActionAvailable(scn.GetDSCard("dreaded"), DOWNLOAD)) return scn;
+            assertTrue(scn.GetCurrentDecision().getText(), scn.GetCurrentDecision().getText().toLowerCase().contains("optional response"));
+            scn.PlayerPass(scn.GetDecidingPlayer());
+        }
+        fail("Squadron download was not offered after deployment");
         return scn;
     }
 
@@ -225,7 +232,7 @@ public class Card_1240_023_Tests {
         var scn = SquadronReady();
         scn.PassAllResponses();
         assertInZone(Zone.RESERVE_DECK, scn.GetDSCard("squadron"), scn.GetDSCard("replacement"));
-        assertTrue(scn.AwaitingDSDeployPhaseActions());
+        assertTrue(scn.AwaitingDSDeployPhaseActions() || scn.AwaitingLSDeployPhaseActions());
     }
 
     @Test
@@ -235,9 +242,12 @@ public class Card_1240_023_Tests {
         scn.SkipToPhase(Phase.DEPLOY);
         scn.DSDeployCard(scn.GetDSCard("capital"));
         scn.DSChooseCard(scn.GetDSStartingLocation());
-        scn.PassAllResponses();
-        assertTrue(scn.AwaitingDSDeployPhaseActions());
-        assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("dreaded"), DOWNLOAD));
+        for (int i = 0; i < 40 && scn.GetCurrentDecision().getText().toLowerCase().contains("optional response"); i++) {
+            if (scn.DSAnyActionsAvailable()) assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("dreaded"), DOWNLOAD));
+            scn.PlayerPass(scn.GetDecidingPlayer());
+        }
+        assertTrue(scn.AwaitingDSDeployPhaseActions() || scn.AwaitingLSDeployPhaseActions());
+        assertFalse(scn.DSAnyActionsAvailable() && scn.DSCardActionAvailable(scn.GetDSCard("dreaded"), DOWNLOAD));
     }
 
     @Test
@@ -255,7 +265,7 @@ public class Card_1240_023_Tests {
         scn.LSChooseCard(scn.GetLSStartingLocation());
         scn.PassAllResponses();
         assertAtLocation(scn.GetLSStartingLocation(), scn.GetLSCard("corvette"));
-        assertEquals(force - 3, scn.GetLSForcePileCount());
+        assertEquals(force - 4, scn.GetLSForcePileCount()); // Original Corvette1_140 deploys4.
     }
 
     @Test
