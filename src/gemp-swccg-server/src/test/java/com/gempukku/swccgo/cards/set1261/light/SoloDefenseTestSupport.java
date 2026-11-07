@@ -6,6 +6,7 @@ import com.gempukku.swccgo.framework.VirtualTableScenario;
 import com.gempukku.swccgo.game.PhysicalCardImpl;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -118,21 +119,29 @@ public abstract class SoloDefenseTestSupport {
         if (protect) {
             scn.LSPlayCard(interrupt, PROTECT);
             if (scn.LSHasCardChoiceAvailable(person)) scn.LSChooseCard(person);
-            scn.PassAllResponses();
         }
         var power = scn.GetLSDestiny(2); var battle = scn.GetLSDestiny(3);
         // The helper puts the last listed card on top. Power-only destiny resolves first.
         scn.MoveCardsToTopOfLSReserveDeck(battle, power);
         scn.PrepareDSDestiny(0);
-        scn.PassBattleStartResponses();
-        scn.PassWeaponsSegmentActions();
-        scn.PassPowerSegmentActions();
-        scn.PassDestinyDrawResponses();
-        scn.SkipBattleDestinyDraws(true);
+        var trace = new ArrayList<String>();
+        for (int i = 0; i < 45 && scn.GetCurrentDecision() != null; i++) {
+            String prompt = scn.GetCurrentDecision().getText(); trace.add(prompt);
+            String decider = scn.GetDecidingPlayer();
+            if (prompt.contains("INITIAL_ATTRITION_CALCULATED")) break;
+            if (prompt.contains("Do you want to draw") && prompt.contains("battle destiny")) {
+                scn.PlayerChooseYes(decider);
+            } else if (prompt.toLowerCase().contains("optional response")
+                    || prompt.contains("Choose weapons segment action")
+                    || prompt.contains("Choose power segment action")) {
+                scn.PlayerPass(decider);
+            } else break;
+        }
         var state = scn.gameState().getBattleState();
-        var trace = scn.GetCurrentDecision().getText() + " " + scn.gameState().getLastMessages();
-        assertEquals(trace, protect ? 1 : 0, state.getNumDestinyToTotalPowerDrawn(scn.LS));
-        assertEquals(protect || hasOrdinaryBattleDestiny ? 1 : 0, state.getNumUncanceledBattleDestinyDrawn(scn.LS));
+        String context = trace + " " + scn.gameState().getLastMessages();
+        assertTrue(context, state.isReachedPowerSegment());
+        assertEquals(context, protect ? 1 : 0, state.getNumDestinyToTotalPowerDrawn(scn.LS));
+        assertEquals(context, protect || hasOrdinaryBattleDestiny ? 1 : 0, state.getNumUncanceledBattleDestinyDrawn(scn.LS));
         assertEquals(protect ? 3 : hasOrdinaryBattleDestiny ? 2 : 0, scn.GetLSTotalDestiny());
         assertEquals(protect || hasOrdinaryBattleDestiny, scn.GetLSUsedPile().contains(power));
         assertEquals(protect, scn.GetLSUsedPile().contains(battle));
