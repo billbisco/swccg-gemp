@@ -23,24 +23,49 @@ public class Card_1261_099_Tests {
             @Override public HashMap<String, String> Cards() { return new HashMap<>(); }
             @Override public void Setup(VirtualTableScenario scn) {
                 if (!scn.LSDecisionAvailable("Choose starting interrupt")) return;
+                if (effects < 0) { scn.LSDecided(""); return; }
                 assertTrue(kashyyykStart);
                 scn.LSChooseCard(scn.GetLSCard("protector"));
-                for (String key : List.of("immune", "cell")) {
-                    if (!scn.LSDecisionAvailable("to deploy from Reserve Deck")) break;
-                    int ordinary = scn.LSGetBPChoices().indexOf("1_66");
-                    assertTrue(ordinary < 0 || !Boolean.parseBoolean(scn.LSGetADParamAsList("selectable").get(ordinary)));
-                    if (effects == 0) { scn.LSDecided(""); break; }
-                    scn.LSChooseCard(scn.GetLSCard(key));
-                    scn.PassAllResponses();
+                int chosen = 0;
+                var trace = new ArrayList<String>();
+                for (int i = 0; i < 22 && !scn.GetLSHand().contains(scn.GetLSCard("protector")); i++) {
+                    var decision = scn.GetCurrentDecision();
+                    if (decision == null) break;
+                    var prompt = decision.getText();
+                    trace.add(prompt);
+                    if (scn.LSGetDecision() != null && prompt.contains("to deploy from Reserve Deck")) {
+                        var cards = scn.LSGetBPChoices();
+                        var enabled = scn.LSGetADParamAsList("selectable");
+                        int ordinary = cards.indexOf("1_66");
+                        assertTrue(ordinary < 0 || !Boolean.parseBoolean(enabled.get(ordinary)));
+                        String key = chosen == 0 ? "immune" : "cell";
+                        int option = cards.indexOf(scn.GetLSCard(key).getBlueprintId(true));
+                        if (effects > chosen && option >= 0 && Boolean.parseBoolean(enabled.get(option))) {
+                            scn.LSChooseCard(scn.GetLSCard(key));
+                            chosen++;
+                        } else {
+                            scn.LSDecided("");
+                        }
+                        continue;
+                    }
+                    String lower = prompt.toLowerCase();
+                    if (lower.contains("response") || lower.contains("or pass") || lower.contains("viewing")) {
+                        scn.PlayerPass(scn.LSGetDecision() != null ? scn.LS : scn.DS);
+                        continue;
+                    }
+                    break;
                 }
+                assertEquals(trace.toString(), effects, chosen);
+                assertTrue(trace.toString(), scn.GetLSHand().contains(scn.GetLSCard("protector")));
                 scn.PassAllResponses();
+
             }
         };
         return new VirtualTableScenario(new HashMap<>(Map.of(
                 "protector", "1261_99", "immune", "9_47", "cell", "601_129", "ordinary", "1_66")),
                 new HashMap<>(Map.of("conversion", "2_146", "sense", "1_267", "vader", "1_168", "site", "1_295")),
                 40, 40, kashyyykStart ? StartingSetup.LSStartingLocation("2_64") : StartingSetup.DefaultLSGroundLocation,
-                StartingSetup.DefaultDSSpaceSystem, effects < 0 ? StartingSetup.NoLSStartingInterrupts : starting,
+                StartingSetup.DefaultDSSpaceSystem, starting,
                 StartingSetup.NoDSStartingInterrupts, StartingSetup.NoLSShields, StartingSetup.NoDSShields, "legacy");
     }
 
