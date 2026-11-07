@@ -170,25 +170,30 @@ public class Card_1250_062_Tests {
 
     @Test
     public void StackedCardActionIsRefusedWhenAnotherSourceAlreadyAddsADestiny() {
-        var s = battle(true);
-        assertTrue(offered(s, SPEND));
+        // Same battle setup as battle(true), with another destiny-to-power source added before Light Side's decision.
+        var s = scenario(); s.StartGame(); var site = s.GetDSStartingLocation();
+        s.MoveCardsToLSSideOfTable(s.GetLSCard("roar"));
+        s.MoveCardsToLocation(site, s.GetLSCard("guard"), s.GetDSCard("trooper"));
+        s.StackCardsOn(s.GetLSCard("roar"), s.GetLSCard("marker"), s.GetLSCard("second"));
+        s.DSActivateForceCheat(4); s.SkipToDSTurn(Phase.BATTLE);
+        s.DSInitiateBattle(site); s.PassAllResponses();
         addPowerSources(s, s.LS, 1);
+        if (s.DSAnyDecisionsAvailable()) s.DSPass();
         assertFalse(offered(s, SPEND));
+        assertEquals(2, s.GetStackedCards(s.GetLSCard("roar")).size());
     }
 
     @Test
     public void OtherSourcesAreCappedAtOneDestinyToPower() {
         var s = battle(false);
         addPowerSources(s, s.LS, 2);
-        DestinyAddedCapTests.advanceToDamageSegment(s, false);
-        assertEquals(1, s.gameState().getBattleState().getNumDestinyToTotalPowerDrawn(s.LS));
+        assertEquals(1, DestinyAddedCapTests.advanceToDamageSegment(s, false).getNumDestinyToTotalPowerDrawn(s.LS));
     }
 
     @Test
     public void OpponentIsNotCapped() {
         var s = battle(false);
         addPowerSources(s, s.DS, 2);
-        DestinyAddedCapTests.advanceToDamageSegment(s, false);
-        assertEquals(2, s.gameState().getBattleState().getNumDestinyToTotalPowerDrawn(s.DS));
+        assertEquals(2, DestinyAddedCapTests.advanceToDamageSegment(s, false).getNumDestinyToTotalPowerDrawn(s.DS));
     }
 }
