@@ -231,6 +231,34 @@ public interface Destiny extends BaseQuery {
 
 
     /**
+     * Determines if the current destiny draw may not be canceled by the specified player using the specified card's
+     * game text. This includes every restriction checked without a canceling card, plus restrictions on specific
+     * cards canceling battle destiny draws.
+     * @param gameState the game state
+     * @param playerId the player
+     * @param isCancelAndRedraw true if cancel and redraw, otherwise cancel only
+     * @param cancelingCard the card whose game text would cancel the destiny, or null
+     * @return true if destiny may not be canceled, otherwise false
+     */
+    default boolean mayNotCancelDestinyDraw(GameState gameState, String playerId, boolean isCancelAndRedraw, PhysicalCard cancelingCard) {
+        if (mayNotCancelDestinyDraw(gameState, playerId, isCancelAndRedraw))
+            return true;
+        if (cancelingCard == null)
+            return false;
+        DrawDestinyEffect drawDestinyEffect = gameState.getTopDrawDestinyState().getDrawDestinyEffect();
+        if (drawDestinyEffect.getDestinyType() == DestinyType.BATTLE_DESTINY) {
+            PhysicalCard battleLocation = gameState.getBattleLocation();
+            for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.MAY_NOT_CANCEL_BATTLE_DESTINY_USING_CARD, battleLocation)) {
+                if (modifier instanceof MayNotCancelBattleDestinyUsingCardModifier
+                        && ((MayNotCancelBattleDestinyUsingCardModifier) modifier).mayNotCancelBattleDestinyUsingCard(gameState, query(), cancelingCard)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * Determines if the current destiny draw may not be canceled by the specified player.
      * @param gameState the game state
      * @param playerId the player
