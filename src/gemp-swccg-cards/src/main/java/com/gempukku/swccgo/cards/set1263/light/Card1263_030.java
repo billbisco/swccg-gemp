@@ -10,6 +10,7 @@ import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
 import com.gempukku.swccgo.logic.effects.LoseForceEffect;
 import com.gempukku.swccgo.logic.effects.RetrieveCardIntoHandEffect;
 import com.gempukku.swccgo.logic.modifiers.ForceDrainModifier;
+import com.gempukku.swccgo.logic.modifiers.MayNotPreventMovingAsReactModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 
 import java.util.List;
@@ -34,7 +35,7 @@ public class Card1263_030 extends AbstractSystem {
                 || !GameConditions.canSearchLostPile(game, playerId, self, RETRIEVE)) {
             return null;
         }
-        TopLevelGameTextAction action = new TopLevelGameTextAction(self, gameTextSourceCardId, RETRIEVE);
+        TopLevelGameTextAction action = new TopLevelGameTextAction(self, playerId, gameTextSourceCardId, RETRIEVE);
         action.setText("Lose 1 Force to retrieve a trooper into hand");
         action.appendCost(new LoseForceEffect(action, playerId, 1, true));
         action.appendEffect(new RetrieveCardIntoHandEffect(action, playerId, Filters.trooper));
@@ -43,6 +44,7 @@ public class Card1263_030 extends AbstractSystem {
 
     @Override
     protected List<Modifier> getGameTextDarkSideWhileActiveModifiers(String playerId, SwccgGame game, PhysicalCard self) {
-        return List.of(new ForceDrainModifier(self, self, -1, playerId));
+        return List.of(new ForceDrainModifier(self, self, -1, playerId),
+                new MayNotPreventMovingAsReactModifier(self, Filters.Despair));
     }
 }

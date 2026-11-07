@@ -3,6 +3,7 @@ package com.gempukku.swccgo.game.layout;
 import com.gempukku.swccgo.common.CardCategory;
 import com.gempukku.swccgo.common.CardCounts;
 import com.gempukku.swccgo.common.CardSubtype;
+import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Persona;
 import com.gempukku.swccgo.common.Title;
@@ -69,6 +70,12 @@ public class LocationsLayout implements Snapshotable<LocationsLayout> {
         findSystemsAndStarshipsAndVehiclesForLayout(library, CardCounts.PLAYTESTING_SETS_CARD_COUNTS, 501, systems, starshipsAndVehicles);
         findSystemsAndStarshipsAndVehiclesForLayout(library, CardCounts.LEGACY_SETS_CARD_COUNTS, 601, systems, starshipsAndVehicles);
         findSystemsAndStarshipsAndVehiclesForLayout(library, CardCounts.LEGACY_SETS_CARD_COUNTS, 1210, systems, starshipsAndVehicles);
+        // Later Virtual Block sets (1220 and up), so systems first printed there (for example Dressel) get a layout.
+        for (ExpansionSet expansionSet : ExpansionSet.values()) {
+            if (expansionSet.getSetNumber() > 1210) {
+                findSystemsAndStarshipsAndVehiclesForLayout(library, CardCounts.LEGACY_SETS_CARD_COUNTS, expansionSet.getSetNumber(), systems, starshipsAndVehicles);
+            }
+        }
 
 
         // Add a layout for holosites
