@@ -127,12 +127,18 @@ public interface ForceDrains extends BaseQuery, CardTraits, Icons, Captives, Pil
         Icon icon = (gameState.getSide(performingPlayerId) == Side.DARK) ? Icon.LIGHT_FORCE : Icon.DARK_FORCE;
 
         int result = getIconCount(gameState, location, icon);
+        OnlyIfNoOtherBonusResolver onlyIfNoOtherBonus = new OnlyIfNoOtherBonusResolver();
         for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.FORCE_DRAIN_AMOUNT, location)) {
             if (modifier.isForPlayer(performingPlayerId)) {
-                result += modifier.getForceDrainModifier(performingPlayerId, gameState, query(), location);
+                float modifierAmount = modifier.getForceDrainModifier(performingPlayerId, gameState, query(), location);
+                if (onlyIfNoOtherBonus.defer(modifier, modifierAmount)) {
+                    continue;
+                }
+                result += modifierAmount;
                 modifierCollector.addModifier(modifier);
             }
         }
+        result += onlyIfNoOtherBonus.resolve(modifierCollector);
 
         for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.UNMODIFIABLE_FORCE_DRAIN_AMOUNT, location)) {
             if (modifier.isForPlayer(performingPlayerId)) {

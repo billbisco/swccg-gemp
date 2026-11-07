@@ -47,6 +47,19 @@ public interface Modifier {
     void setCumulative(boolean value);
 
     /**
+     * True if this modifier is a bonus that applies only if no other bonus of the same kind applies
+     * (for example "if no other bonus to your Force drain" or "unless it has another forfeit bonus").
+     * Honored for Force drain amount and forfeit value modifiers; see {@link OnlyIfNoOtherBonusResolver}.
+     */
+    boolean isOnlyIfNoOtherBonus();
+
+    /**
+     * Marks this modifier as a bonus that applies only if no other bonus of the same kind applies.
+     * @param value true to make the bonus conditional on no other bonus applying
+     */
+    void setOnlyIfNoOtherBonus(boolean value);
+
+    /**
      * Identifies which portion of a card's game text produced this modifier.
      * Null means the default unspecified clause for this card title and modifier type.
      * Same title + type + clause may not stack unless the modifier is marked Cumulatively.
