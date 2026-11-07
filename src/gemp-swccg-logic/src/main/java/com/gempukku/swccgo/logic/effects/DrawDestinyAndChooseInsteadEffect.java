@@ -41,11 +41,12 @@ public class DrawDestinyAndChooseInsteadEffect extends AbstractSuccessfulEffect 
     }
 
     /**
-     * Makes each unchosen destiny optionally able to be taken into hand ("may take other into hand").
+     * Allows each unchosen destiny to optionally be taken into hand (otherwise it is handled as normal).
+     * @param mayTakeOtherIntoHand true if each unchosen destiny may be taken into hand
      * @return this effect
      */
-    public DrawDestinyAndChooseInsteadEffect mayTakeOtherIntoHand() {
-        _mayTakeOtherIntoHand = true;
+    public DrawDestinyAndChooseInsteadEffect setMayTakeOtherIntoHand(boolean mayTakeOtherIntoHand) {
+        _mayTakeOtherIntoHand = mayTakeOtherIntoHand;
         return this;
     }
 

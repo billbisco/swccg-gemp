@@ -15,7 +15,7 @@ import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.TriggerConditions;
 import com.gempukku.swccgo.logic.actions.OptionalGameTextTriggerAction;
-import com.gempukku.swccgo.logic.effects.CancelDestinyEffect;
+import com.gempukku.swccgo.logic.effects.RespondableCancelDestinyEffect;
 import com.gempukku.swccgo.logic.effects.LoseForceEffect;
 import com.gempukku.swccgo.logic.modifiers.DeployCostToLocationModifier;
 import com.gempukku.swccgo.logic.modifiers.ImmuneToAttritionLessThanModifier;
@@ -76,8 +76,8 @@ public class Card601_161 extends AbstractRepublic {
             action.appendCost(
                     new LoseForceEffect(action, playerId, 1));
             // Perform result(s)
-            action.appendEffect(
-                    new CancelDestinyEffect(action));
+            action.allowResponses("Cancel opponent's destiny",
+                    new RespondableCancelDestinyEffect(action, game));
 
             actions.add(action);
         }
@@ -97,8 +97,8 @@ public class Card601_161 extends AbstractRepublic {
             action.appendCost(
                     new LoseForceEffect(action, playerId, 1));
             // Perform result(s)
-            action.appendEffect(
-                    new CancelDestinyEffect(action));
+            action.allowResponses("Cancel opponent's destiny",
+                    new RespondableCancelDestinyEffect(action, game));
 
             actions.add(action);
         }
