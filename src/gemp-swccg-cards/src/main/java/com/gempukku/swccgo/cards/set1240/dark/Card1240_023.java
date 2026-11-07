@@ -12,6 +12,10 @@ import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.Filter;
+import com.gempukku.swccgo.logic.modifiers.MayDeployToTargetModifier;
+import com.gempukku.swccgo.logic.timing.PassthruEffect;
+import com.gempukku.swccgo.logic.effects.AddUntilEndOfTurnModifierEffect;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.GameUtils;
@@ -76,10 +80,30 @@ public class Card1240_023 extends AbstractNormalEffect {
                 final OptionalGameTextTriggerAction action = new OptionalGameTextTriggerAction(self, playerId, gameTextSourceCardId, gameTextActionId);
                 action.setText("Deploy a squadron there");
                 action.setActionMsg("Deploy a [Death Star II] or [A New Hope] squadron for free to same location as " + GameUtils.getCardLink(starDestroyer) + " from Reserve Deck");
+                final Filter squadrons = Filters.and(Filters.squadron, Filters.or(Icon.DEATH_STAR_II, Icon.A_NEW_HOPE));
+                // "No replacement necessary": only while this download resolves.
+                final boolean[] downloading = {false};
+                MayDeployToTargetModifier allowSquadron = new MayDeployToTargetModifier(self, squadrons,
+                        Filters.sameLocation(starDestroyer));
+                allowSquadron.appendCondition((gameState, modifiersQuerying) -> downloading[0]);
+                action.appendEffect(new AddUntilEndOfTurnModifierEffect(action, allowSquadron, null));
                 action.appendEffect(
-                        new DeployCardToTargetFromReserveDeckEffect(action,
-                                Filters.and(Filters.squadron, Filters.or(Icon.DEATH_STAR_II, Icon.A_NEW_HOPE)),
+                        new PassthruEffect(action) {
+                            @Override
+                            protected void doPlayEffect(SwccgGame game) {
+                                downloading[0] = true;
+                            }
+                        });
+                action.appendEffect(
+                        new DeployCardToTargetFromReserveDeckEffect(action, squadrons,
                                 Filters.sameLocation(starDestroyer), true, true));
+                action.appendEffect(
+                        new PassthruEffect(action) {
+                            @Override
+                            protected void doPlayEffect(SwccgGame game) {
+                                downloading[0] = false;
+                            }
+                        });
                 return Collections.singletonList(action);
             }
         }

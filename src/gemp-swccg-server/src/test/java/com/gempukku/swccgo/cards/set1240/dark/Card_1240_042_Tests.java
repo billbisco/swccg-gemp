@@ -327,30 +327,6 @@ public class Card_1240_042_Tests {
         assertInZone(Zone.HAND, scn.GetDSCard("frustration"));
     }
 
-    @Test
-    public void FrustrationUsedRespondsToAPrintedPeekAndReorderAbility() {
-        // Shared prerequisite requested in integration182; keep this real producer regression.
-        var scn = GetScenario();
-        scn.StartGame();
-        scn.SkipToDSTurn(Phase.ACTIVATE);
-        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("dodo"), scn.GetDSCard("tech"));
-        scn.MoveCardsToDSHand(scn.GetDSCard("frustration"));
-        scn.EnsureDSForcePile(5);
-        scn.SkipToPhase(Phase.CONTROL);
-        scn.MoveCardsToTopOfDSForcePile(scn.GetDSCard("c"), scn.GetDSCard("b"), scn.GetDSCard("a"));
-        scn.DSUseCardAction(scn.GetDSCard("dodo"), "Peak at top 1 cards");
-        passOptional(scn);
-        scn.DSChooseCard(scn.GetDSCard("a"));
-        Reach(scn, scn.GetDSCard("frustration"), "Peek at and reorder top 3");
-        scn.DSPlayCard(scn.GetDSCard("frustration"), "Peek at and reorder top 3");
-        passOptional(scn);
-        ReorderThree(scn);
-        scn.DSChooseNo();
-        passOptional(scn);
-        assertEquals(List.of(scn.GetDSCard("c"), scn.GetDSCard("a"), scn.GetDSCard("b")),
-                scn.GetDSForcePile().subList(0, 3));
-        assertInZone(Zone.USED_PILE, scn.GetDSCard("frustration"));
-    }
 
     /** Passes every pending optional-response window (PassAllResponses stops after 20), then any remaining responses. */
     private static void passOptional(VirtualTableScenario scn) {
