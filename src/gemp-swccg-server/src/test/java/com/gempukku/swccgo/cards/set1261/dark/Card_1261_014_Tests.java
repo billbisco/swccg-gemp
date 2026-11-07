@@ -27,7 +27,7 @@ public class Card_1261_014_Tests {
         scn.BlueprintCardTypeCheck(b, new ArrayList<>() {{ add(CardType.DROID); }});
         scn.BlueprintKeywordCheck(b, new ArrayList<>());
         scn.BlueprintModelTypeCheck(b, new ArrayList<>() {{ add(ModelType.DESTROYER); }});
-        scn.BlueprintIconCheck(b, new ArrayList<>() {{ add(Icon.PERMANENT_WEAPON); add(Icon.PRESENCE); add(Icon.THEED_PALACE); add(Icon.EPISODE_I); add(Icon.LEGACY_BLOCK_6); }});
+        scn.BlueprintIconCheck(b, new ArrayList<>() {{ add(Icon.DROID); add(Icon.PERMANENT_WEAPON); add(Icon.PRESENCE); add(Icon.THEED_PALACE); add(Icon.EPISODE_I); add(Icon.LEGACY_BLOCK_6); }});
     }
 
     private VirtualTableScenario battle() {
