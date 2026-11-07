@@ -9,6 +9,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.gempukku.swccgo.framework.Assertions.assertInZone;
 import static org.junit.Assert.*;
@@ -36,10 +37,10 @@ public class Card_1261_080_Tests {
                 outsideCards ? shields : StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
     }
 
-    @Test public void JabbaUsesFinalStartingEffectWithBlankLore() {
+    @Test public void JabbaUsesFinalStartingEffectWithPrintedLore() {
         var scn = scenario(true, false); var b = scn.GetLSCard("jabba").getBlueprint();
         assertEquals("Jabba, This Is Your Last Chance!", b.getTitle()); assertEquals(5, b.getDestiny(), scn.epsilon);
-        assertNull(b.getLore()); assertFalse(b.hasVirtualSuffix()); assertEquals(Uniqueness.UNIQUE, b.getUniqueness());
+        assertEquals("With a quick motion of his hand, Luke signaled Artoo and dramatically changed the situation.", b.getLore()); assertFalse(b.hasVirtualSuffix()); assertEquals(Uniqueness.UNIQUE, b.getUniqueness());
         assertEquals(Side.LIGHT, b.getSide()); assertEquals(Rarity.V, b.getRarity());
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_6_1, b.getExpansionSet()); assertEquals(CardSubtype.STARTING, b.getCardSubtype());
         scn.BlueprintCardTypeCheck(b, new ArrayList<>(List.of(CardType.EFFECT)));
@@ -95,5 +96,66 @@ public class Card_1261_080_Tests {
         var scn = celebration(true); assertInZone(Zone.LOST_PILE, scn.GetLSCard("celebration"));
         var ordinary = celebration(false);
         assertEquals(ordinary.GetLSCard("bespin"), ordinary.GetLSCard("celebration").getAttachedTo());
+    }
+
+    private VirtualTableScenario saberScenario(boolean qmc) {
+        var light = new HashMap<String, String>(Map.of("jabba", "1261_80", "qmc", "109_4",
+                "luke", "9_24", "lukeSaber", "9_90"));
+        var dark = new HashMap<String, String>(Map.of("vader", "1_168", "vaderSaber", "1110_8", "maul", "14_77"));
+        var scn = new VirtualTableScenario(light, dark, 40, 40,
+                StartingSetup.DefaultLSGroundLocation, StartingSetup.DSStartingLocation("1_295"),
+                StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
+        // Keep the Objective out of the starting choice; it is placed on table directly when the test needs it.
+        scn.MoveOutOfPlay(scn.GetLSCard("qmc"));
+        scn.StartGame();
+        if (qmc) scn.MoveCardsToLSSideOfTable(scn.GetLSCard("qmc"));
+        return scn;
+    }
+
+    private int vaderDrainTotal(boolean qmc) {
+        var scn = saberScenario(qmc); var site = scn.GetLSStartingLocation();
+        var vader = scn.GetDSCard("vader");
+        if (site.getZone() != Zone.LOCATIONS) scn.MoveLocationToTable(site);
+        scn.MoveCardsToLocation(site, vader); scn.AttachCardsTo(vader, scn.GetDSCard("vaderSaber"));
+        scn.SkipToDSTurn(Phase.CONTROL);
+        scn.DSForceDrainAt(site);
+        scn.PassForceDrainStartResponses();
+        assertTrue(scn.IsActiveForceDrain());
+        return scn.GetForceDrainTotal();
+    }
+
+    @Test public void JabbaStopsLightsaberDrainBonusOnlyWhileQuietMiningColonyOnTable() {
+        int off = vaderDrainTotal(false); int on = vaderDrainTotal(true);
+        assertEquals(off - 1, on);
+        assertTrue(on >= 1);
+    }
+
+    private boolean maulCanSwingAgain(boolean qmc) {
+        var scn = saberScenario(qmc); var luke = scn.GetLSCard("luke"); var maul = scn.GetDSCard("maul");
+        var battle = scn.GetDSStartingLocation();
+        scn.MoveCardsToLocation(battle, luke, maul);
+        scn.AttachCardsTo(luke, scn.GetLSCard("lukeSaber"));
+        var modifiers = scn.game().getModifiersQuerying();
+        assertEquals(qmc, modifiers.mayFireOnlyOncePerBattle(scn.gameState(), scn.GetLSCard("lukeSaber")));
+        scn.DSActivateForceCheat(4);
+        scn.DSStartBattleAndSkipToWeaponsSegment(battle);
+        assertTrue(scn.IsBattleStarted());
+        assertTrue(scn.DSCardActionAvailable(maul, "Fire"));
+        scn.MoveCardsToTopOfDSReserveDeck(scn.GetDSDestiny(0), scn.GetDSDestiny(1));
+        scn.DSUseCardAction(maul, "Fire");
+        if (scn.DSHasCardChoiceAvailable(luke)) scn.DSChooseCard(luke);
+        scn.PassAllResponses(); scn.PassWeaponFireWithDestinyDraw(2);
+        assertFalse(luke.isHit());
+        if (scn.AwaitingLSWeaponsSegmentActions()) scn.LSPass();
+        return scn.GetDSAvailableActions().stream().anyMatch(x -> x.contains("Double-Bladed Lightsaber"));
+    }
+
+    @Test public void JabbaLimitsLightsabersToOneSwingWhileQuietMiningColonyOnTable() {
+        assertFalse(maulCanSwingAgain(true));
+    }
+
+    @Test public void LightsabersMaySwingTwiceWithoutQuietMiningColonyOrIndependentOperation() {
+        assertTrue(maulCanSwingAgain(false));
     }
 }

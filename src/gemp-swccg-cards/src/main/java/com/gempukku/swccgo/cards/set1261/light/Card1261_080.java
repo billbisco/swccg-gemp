@@ -2,6 +2,7 @@ package com.gempukku.swccgo.cards.set1261.light;
 
 import com.gempukku.swccgo.cards.AbstractStartingEffect;
 import com.gempukku.swccgo.cards.GameConditions;
+import com.gempukku.swccgo.cards.conditions.OnTableCondition;
 import com.gempukku.swccgo.cards.effects.usage.TwicePerGameEffect;
 import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.filters.Filter;
@@ -12,6 +13,10 @@ import com.gempukku.swccgo.logic.TriggerConditions;
 import com.gempukku.swccgo.logic.actions.CancelCardActionBuilder;
 import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
+import com.gempukku.swccgo.logic.conditions.Condition;
+import com.gempukku.swccgo.logic.modifiers.CancelForceDrainBonusesFromCardModifier;
+import com.gempukku.swccgo.logic.modifiers.MayFireOnlyOncePerBattleModifier;
+import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.effects.choose.ChooseStackedCardEffect;
 import com.gempukku.swccgo.logic.effects.choose.PlayStackedCardEffect;
 import com.gempukku.swccgo.logic.effects.choose.StackCardsFromOutsideDeckEffect;
@@ -26,8 +31,17 @@ public class Card1261_080 extends AbstractStartingEffect {
 
     public Card1261_080() {
         super(Side.LIGHT, 5, "Jabba, This Is Your Last Chance!", ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
-        setGameText("Deploy on table with 5 cards from outside your deck face down under here. Twice per game, may play a Defensive Shield from here (as if from hand). If Quiet Mining Colony or Independent Operation on table, lightsabers may not add to Force drains. Cloud City Celebration is canceled.");
+        setGameText("Deploy on table with 5 cards from outside your deck face down under here. Twice per game, may play a Defensive Shield from here (as if from hand). If Quiet Mining Colony or Independent Operation on table, lightsabers may not add to Force drains or 'swing' more than once per battle. Cloud City Celebration is canceled.");
+        setLore("With a quick motion of his hand, Luke signaled Artoo and dramatically changed the situation.");
         addIcons(Icon.JABBAS_PALACE);
+    }
+
+    @Override
+    protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, PhysicalCard self) {
+        Condition qmcOrIo = new OnTableCondition(self, Filters.or(Filters.Quiet_Mining_Colony, Filters.Independent_Operation));
+        return List.of(new CancelForceDrainBonusesFromCardModifier(self, Filters.lightsaber, qmcOrIo),
+                new MayFireOnlyOncePerBattleModifier(self,
+                        Filters.or(Filters.lightsaber, Filters.hasPermanentWeapon(Filters.lightsaber)), qmcOrIo));
     }
 
     @Override
