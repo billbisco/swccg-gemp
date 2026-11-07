@@ -61,6 +61,7 @@ public class Card_1250_078_Tests {
         }}, new HashMap<>() {{
             put("trooper", "1_194"); put("vader", "1_168");
             put("emperor", "9_109"); put("lightning", "9_136"); put("monnok", "2_135");
+            put("destroyer", "12_104"); put("p59", "12_114");
         }}, 40, 40, realStartup ? setup : StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 realStartup ? StartingSetup.NoLSShields : outsideDeck, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -265,5 +266,35 @@ public class Card_1250_078_Tests {
         assertEquals(before + 1, s.GetLSLostPileCount());
         var inverse = loseCharacterToLightning("clone");
         assertFalse(inverse.AwaitingLSForceLossPayment()); assertEquals(1, inverse.GetLSLostPileCount());
+    }
+
+    private VirtualTableScenario opposingDrain(boolean twoCloneBattlegrounds, String... occupants) {
+        var s = flipAndSearch();
+        var dock = s.GetLSCard("dock"); var cantina = s.GetLSCard("cantina");
+        s.MoveLocationToTable(cantina);
+        s.MoveCardsToLocation(dock, s.GetLSCard("clone"));
+        if (twoCloneBattlegrounds) s.MoveCardsToLocation(cantina, s.GetLSCard("secondclone"));
+        for (String occupant : occupants) s.MoveCardsToLocation(s.GetDSStartingLocation(), s.GetDSCard(occupant));
+        s.SkipToDSTurn(Phase.CONTROL);
+        return s;
+    }
+
+    @Test
+    public void TwoPresenceDroidsQualifyButOneDroidAndOneCardWithAbilityDoNot() {
+        var mixed = opposingDrain(true, "destroyer", "vader");
+        assertFalse(mixed.DSForceDrainAvailable(mixed.GetDSStartingLocation()));
+
+        var twoDroids = opposingDrain(true, "destroyer", "p59");
+        var location = twoDroids.GetDSStartingLocation();
+        assertTrue(twoDroids.DSForceDrainAvailable(location));
+        twoDroids.DSForceDrainAt(location); twoDroids.PassAllResponses();
+        assertTrue(twoDroids.AwaitingLSForceLossPayment());
+    }
+
+    @Test
+    public void OnlyOneControlledCloneBattlegroundDoesNotRestrictAnActualDarkDrain() {
+        var s = opposingDrain(false, "vader"); var site = s.GetDSStartingLocation();
+        assertTrue(s.DSForceDrainAvailable(site)); s.DSForceDrainAt(site); s.PassAllResponses();
+        assertTrue(s.AwaitingLSForceLossPayment());
     }
 }
