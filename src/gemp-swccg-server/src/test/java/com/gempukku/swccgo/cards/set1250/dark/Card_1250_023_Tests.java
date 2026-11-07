@@ -13,8 +13,8 @@ public class Card_1250_023_Tests {
     private static final String CANCEL="Stack clone or Coruscant guard to cancel Force drain";
     private VirtualTableScenario scenario() {
         // No equivalent Decipher Dark clone exists; use the already released Legacy clone printing.
-        return new VirtualTableScenario(new HashMap<>() {{put("luke","1_19");put("leia","1_17");put("guard","12_3");}},
-                new HashMap<>() {{put("reserves","1250_23");put("guard","12_100");put("guard2","12_100");put("clone","1250_6");put("veers","3_87");put("trooper","1_194");put("blaster","1_317");put("device","1_201");put("alter","1_234");}},
+        return new VirtualTableScenario(new HashMap<>() {{put("luke","1_19");put("leia","1_17");put("guard","12_3");put("controlEffect","1_45");}},
+                new HashMap<>() {{put("reserves","1250_23");put("guard","12_100");put("guard2","12_100");put("clone","1250_6");put("veers","3_87");put("trooper","1_194");put("blaster","1_317");put("device","1_201");put("alter","1_234");put("jabba","6_109");}},
                 12,12,StartingSetup.DefaultLSGroundLocation,StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts,StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields,StartingSetup.NoDSShields,VirtualTableScenario.Open);
@@ -50,12 +50,14 @@ public class Card_1250_023_Tests {
     }
     private void cancel(VirtualTableScenario scn,String troop,boolean own) {
         int life=scn.GetDSLifeForceRemaining(),lightLife=scn.GetLSLifeForceRemaining();var card=scn.GetDSCard(troop);
-        startDrain(scn,own);assertTrue(scn.DSCardActionAvailable(scn.GetDSCard("reserves"),CANCEL));
+        startDrain(scn,own);var drain=scn.game().getGameState().getForceDrainState();assertTrue(drain.canContinue());
+        assertTrue(scn.DSCardActionAvailable(scn.GetDSCard("reserves"),CANCEL));
         scn.DSUseCardAction(scn.GetDSCard("reserves"),CANCEL);
         for(int i=0;i<12 && card.getZone()!=Zone.STACKED;i++) {
             if(scn.DSHasCardChoiceAvailable(card))scn.DSChooseCard(card);else scn.PassAllResponses();
         }
         scn.PassAllResponses();assertEquals(Zone.STACKED,card.getZone());assertEquals(scn.GetDSCard("reserves"),card.getStackedOn());
+        assertFalse(drain.canContinue());assertNull(scn.game().getGameState().getForceDrainState());
         assertEquals(life,scn.GetDSLifeForceRemaining());assertEquals(lightLife,scn.GetLSLifeForceRemaining());
     }
     @Test public void StrategicReservesCancelsActualOpponentDrainByStackingOriginalCoruscantGuard() {cancel(drain(true,false),"guard",false);}
@@ -137,17 +139,15 @@ public class Card_1250_023_Tests {
     }
     @Test public void StrategicReservesDoesNotIncreaseGuardDrawnForAnOrdinaryInterruptDestiny() {
         var scn=scenario();scn.StartGame();scn.MoveCardsToDSSideOfTable(scn.GetDSCard("reserves"));
-        scn.MoveCardsToLocation(scn.GetDSStartingLocation(),scn.GetDSCard("veers"));scn.MoveCardsToDSHand(scn.GetDSCard("alter"));
-        scn.SkipToDSTurn(Phase.DEPLOY);scn.MoveCardsToTopOfDSReserveDeck(scn.GetDSCard("guard"));scn.DSPlayCard(scn.GetDSCard("alter"));
-        com.gempukku.swccgo.logic.effects.DrawDestinyEffect draw=null;
-        for(int i=0;i<40;i++) {
-            var state=scn.game().getGameState().getTopDrawDestinyState();
-            if(state!=null && scn.GetDSCard("guard").equals(state.getDrawDestinyEffect().getDrawnDestinyCard())
-                    && (scn.DSDecisionAvailable("DESTINY_DRAWN")||scn.LSDecisionAvailable("DESTINY_DRAWN")||scn.DSDecisionAvailable("Just drew")||scn.LSDecisionAvailable("Just drew"))) {draw=state.getDrawDestinyEffect();break;}
-            if(scn.DSHasCardChoiceAvailable(scn.GetDSCard("reserves")))scn.DSChooseCard(scn.GetDSCard("reserves"));
-            else if(scn.DSGetDecision()!=null)scn.DSPass();else if(scn.LSGetDecision()!=null)scn.LSPass();else fail("Strategic Reserves needs an actual ordinary destiny response");
-        }
-        assertNotNull(draw);assertEquals(DestinyType.DESTINY,draw.getDestinyType());assertEquals(3,draw.getDestinyDrawValue(),scn.epsilon);
-        scn.PassAllResponses();assertInZone(Zone.USED_PILE,scn.GetDSCard("guard"));
+        scn.MoveCardsToLSSideOfTable(scn.GetLSCard("controlEffect"));
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(),scn.GetDSCard("jabba"));scn.MoveCardsToDSHand(scn.GetDSCard("alter"));
+        scn.SkipToDSTurn(Phase.DEPLOY);assertEquals(4,scn.GetAbility(scn.GetDSCard("jabba")));
+        scn.MoveCardsToTopOfDSReserveDeck(scn.GetDSCard("guard"));scn.DSPlayCard(scn.GetDSCard("alter"));
+        scn.DSChooseCard(scn.GetLSCard("controlEffect"));
+        if(scn.DSHasCardChoiceAvailable(scn.GetDSCard("jabba")))scn.DSChooseCard(scn.GetDSCard("jabba"));
+        scn.PassAllResponses();
+        // Guard's printed 3 is below ability4; an incorrect generic +1 would make Alter fail.
+        assertInZone(Zone.USED_PILE,scn.GetDSCard("guard"));assertInZone(Zone.LOST_PILE,scn.GetLSCard("controlEffect"));
+        assertEquals(Zone.SIDE_OF_TABLE,scn.GetDSCard("reserves").getZone());
     }
 }
