@@ -14,9 +14,9 @@ import static org.junit.Assert.*;
 public class Card_1261_078_Tests {
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(
-            new HashMap<>(Map.of("shield", "1261_78", "obi", "1_21", "luke", "1_19")),
+            new HashMap<>(Map.of("shield", "1261_78", "obi", "1_21", "luke", "1_19", "warRoom", "1_139")),
             new HashMap<>(Map.of("vader", "1_168", "event", "5_129", "circle", "1_271",
-                "feeling", "4_116", "command", "3_109")), 40, 40,
+                "feeling", "4_116", "command", "3_109", "danger", "4_136", "chances", "1_279")), 40, 40,
             StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
             StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
             StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -91,5 +91,60 @@ public class Card_1261_078_Tests {
         s.DSDeployCard(feeling);
         s.PassAllResponses();
         assertTrue(s.GetDSLostPile().contains(feeling));
+    }
+
+    @Test public void HeCanGoAboutHisBusinessCancelsTheUsedADangerousTimeAsLost() {
+        var s = scenario();
+        s.StartGame();
+        var danger = s.GetDSCard("danger");
+        s.MoveCardsToLSSideOfTable(s.GetLSCard("shield"));
+        s.MoveCardsToDSHand(danger);
+        s.SkipToDSTurn(Phase.CONTROL);
+        s.EnsureLSForcePile(4);
+        s.DSPlayCard(danger, "Examine and reorder");
+        s.PassAllResponses();
+        assertTrue(s.GetDSLostPile().contains(danger));
+        assertFalse(s.GetDSUsedPile().contains(danger));
+    }
+
+    @Test public void HeCanGoAboutHisBusinessCancelsActualResponsibilityOfCommandAtARebelWarRoom() {
+        var s = scenario();
+        s.StartGame();
+        var command = s.GetDSCard("command");
+        var room = s.GetLSCard("warRoom");
+        var luke = s.GetLSCard("luke");
+        s.MoveLocationToTable(room);
+        s.MoveCardsToLocation(s.GetLSStartingLocation(), luke);
+        s.MoveCardsToLSSideOfTable(s.GetLSCard("shield"));
+        s.MoveCardsToDSHand(command);
+        s.SkipToDSTurn(Phase.DEPLOY);
+        s.EnsureDSForcePile(4);
+        s.DSDeployCard(command);
+        if (s.DSHasCardChoiceAvailable(room)) s.DSChooseCard(room);
+        if (s.DSHasCardChoiceAvailable(luke)) s.DSChooseCard(luke);
+        s.PassAllResponses();
+        assertTrue(s.GetDSLostPile().contains(command));
+    }
+
+    @Test public void HeCanGoAboutHisBusinessCancelsTheActualChancesInterruptAfterLightInitiatesBattle() {
+        var s = scenario();
+        s.StartGame();
+        var chances = s.GetDSCard("chances");
+        var site = s.GetDSStartingLocation();
+        s.MoveCardsToLocation(site, s.GetLSCard("luke"), s.GetDSCard("vader"));
+        s.MoveCardsToLSSideOfTable(s.GetLSCard("shield"));
+        s.MoveCardsToDSHand(chances);
+        s.SkipToLSTurn(Phase.BATTLE);
+        s.EnsureLSForcePile(3);
+        s.LSInitiateBattle(site);
+        s.PassForceUseResponses();
+        if (s.DSGetDecision() == null && s.LSGetDecision() != null) s.LSPass();
+        s.DSPlayCard(chances, "Triple battle damage");
+        s.PassAllResponses();
+        assertTrue(s.GetDSLostPile().contains(chances));
+        s.PrepareLSDestiny(0);
+        s.PrepareDSDestiny(1);
+        s.SkipToDamageSegment(true);
+        assertEquals(5, s.GetUnpaidLSBattleDamage());
     }
 }
