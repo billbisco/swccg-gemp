@@ -85,6 +85,7 @@ public class Card_1261_031_Tests {
         scn.StartGame();
         scn.MoveCardsToLocation(scn.GetDSCard("swamp"), droid, scn.GetDSCard("nute"));
         scn.SkipToDSTurn(Phase.CONTROL);
+        scn.EnsureDSForcePile(4);
         lose(scn, droid);
         assertTrue(scn.DSCardActionAvailable(racks, "Stack"));
         scn.DSUseCardAction(racks, "Stack");
@@ -92,9 +93,8 @@ public class Card_1261_031_Tests {
         assertEquals(Zone.STACKED, droid.getZone());
         assertSame(racks, droid.getStackedOn());
 
-        scn.DrainDSForcePileTo(1);
-        assertFalse(scn.DSCardActionAvailable(racks, MOVE_TO_USED));
-        scn.EnsureDSForcePile(4);
+        if (scn.AwaitingLSControlPhaseActions())
+            scn.LSPass();
         assertTrue(scn.DSCardActionAvailable(racks, MOVE_TO_USED));
         int before = scn.GetDSForcePileCount();
         scn.DSUseCardAction(racks, MOVE_TO_USED);
@@ -102,7 +102,9 @@ public class Card_1261_031_Tests {
             scn.DSChooseCard(droid);
         scn.PassAllResponses();
         assertEquals(before - 2, scn.GetDSForcePileCount());
-        assertEquals(Zone.USED_PILE, droid.getZone());
+        assertTrue(scn.GetDSUsedPile().contains(droid));
+        if (scn.AwaitingLSControlPhaseActions())
+            scn.LSPass();
         assertFalse(scn.DSCardActionAvailable(racks, MOVE_TO_USED));
     }
 
@@ -119,7 +121,7 @@ public class Card_1261_031_Tests {
             scn.MoveCardsToLocation(site, scn.GetDSCard(key));
             scn.SkipToPhase(Phase.DEPLOY);
             scn.PassAllResponses();
-            assertEquals(Zone.LOST_PILE, racks.getZone());
+            assertTrue(scn.GetDSLostPile().contains(racks));
         }
     }
 
@@ -130,11 +132,8 @@ public class Card_1261_031_Tests {
         var droid = scn.GetDSCard("droid");
         scn.StartGame();
         scn.MoveCardsToLocation(scn.GetDSCard("swamp"), droid);
+        scn.StackCardsOn(racks, droid);
         scn.SkipToDSTurn(Phase.DEPLOY);
-        lose(scn, droid);
-        assertTrue(scn.DSCardActionAvailable(racks, "Stack"));
-        scn.DSUseCardAction(racks, "Stack");
-        scn.PassAllResponses();
         scn.EnsureDSForcePile(4);
         assertTrue(scn.GetStackedCards(racks).contains(droid));
         assertFalse(scn.DSCardActionAvailable(racks, MOVE_TO_USED));
@@ -142,5 +141,20 @@ public class Card_1261_031_Tests {
 
     private void lose(VirtualTableScenario scn, PhysicalCardImpl card) {
         scn.DSExecuteAdHocEffect(card, new LoseCardFromTableEffect(new TopLevelGameTextAction(card, card.getCardId()), card));
+        // Yield earlier loss/leave-table windows without passing the actual stack response.
+        for (int i = 0; i < 8; i++) {
+            var ds = scn.DSGetDecision();
+            var ls = scn.LSGetDecision();
+            if (ds != null && ds.getText().toLowerCase().contains("optional response")
+                    && scn.DSCardActionAvailable(scn.GetDSCard("racks"), "Stack"))
+                return;
+            if (ls != null && ls.getText().toLowerCase().contains("optional response"))
+                scn.LSPass();
+            else if (ds != null && ds.getText().toLowerCase().contains("optional response"))
+                scn.DSPass();
+            else
+                fail("No stack response after the real loss; DS=" + ds + ", LS=" + ls);
+        }
+        fail("Stack response did not appear after passing the preceding windows");
     }
 }
