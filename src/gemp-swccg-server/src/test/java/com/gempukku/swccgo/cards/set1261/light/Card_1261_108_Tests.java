@@ -9,6 +9,7 @@ import com.gempukku.swccgo.game.PhysicalCardImpl;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
 import com.gempukku.swccgo.logic.effects.CompleteJediTestEffect;
 import com.gempukku.swccgo.logic.effects.CrossOverCharacterEffect;
+import com.gempukku.swccgo.logic.effects.LoseCardFromTableEffect;
 import com.gempukku.swccgo.logic.effects.PlaceCardOutOfPlayFromTableEffect;
 import org.junit.Test;
 
@@ -22,7 +23,7 @@ import static org.junit.Assert.*;
 public class Card_1261_108_Tests {
     private VirtualTableScenario fixture(int stack) {
         var ls = new HashMap<>(Map.of("hut", "4_89", "jungle", "4_86", "luke", "1_19", "yoda", "4_2", "han", "1_11",
-                "loss", "2_18", "testOne", "4_77", "testFive", "4_78", "backpack", "4_12"));
+                "loss", "2_18", "testOne", "4_77", "testFive", "4_78", "backpack", "4_12", "commander", "3_3"));
         return new VirtualTableScenario(ls, new HashMap<>(), 40, 40,
                 new StartingSetup() {
                     @Override public HashMap<String, String> Cards() {
@@ -98,7 +99,7 @@ public class Card_1261_108_Tests {
     @Test public void objectiveStartsStrongAndAllowsASubsetOfTests() { actualStack(2); }
     @Test public void objectiveStartsStrongAndAllowsSixTestsWithoutTakingTheSeventh() { actualStack(6); }
 
-    private void completeTest(boolean fifth) {
+    private VirtualTableScenario completeTest(boolean fifth) {
         var scn = fixture(0); scn.StartGame();
         var hut = scn.GetLSCard("hut"); var strong = scn.GetLSCard("strong");
         var luke = scn.GetLSCard("luke"); var yoda = scn.GetLSCard("yoda");
@@ -139,6 +140,7 @@ public class Card_1261_108_Tests {
         assertTrue(GameConditions.isJediTestCompleted(scn.game(), test));
         assertTrue(trace.toString(), retrieved);
         assertTrue(scn.GetLSUsedPile().contains(loss));
+        return scn;
     }
 
     @Test public void firstTestGoesOnTableAndRetrievesWithoutFlippingTheObjective() { completeTest(false); }
@@ -184,4 +186,64 @@ public class Card_1261_108_Tests {
         assertEquals(before - 3, scn.GetLSForcePileCount());
         assertTrue(scn.IsCardActive(objective));
     }
+    private void trainingChoice(boolean chooseHigh) {
+        var scn = fixture(0); scn.StartGame();
+        var site = scn.GetLSCard("hut"); var luke = scn.GetLSCard("commander");
+        var yoda = scn.GetLSCard("yoda"); var test = scn.GetLSCard("testOne");
+        scn.MoveLocationToTable(site); scn.MoveCardsToLocation(site, luke, yoda);
+        scn.AttachCardsTo(site, test);
+        test.setTargetedCard(TargetId.JEDI_TEST_MENTOR, null, yoda, Filters.sameCardId(yoda));
+        test.setTargetedCard(TargetId.JEDI_TEST_APPRENTICE, null, luke, Filters.sameCardId(luke));
+        scn.SkipToLSTurn(Phase.CONTROL);
+        var low = scn.GetLSDestiny(0); var high = scn.GetLSDestiny(7);
+        scn.MoveCardsToTopOfLSReserveDeck(low, high);
+        scn.LSUseCardAction(test, "Attempt Jedi Test #1");
+        scn.PassAllResponses();
+        var trace = new ArrayList<String>();
+        for (int i = 0; i < 30 && !scn.LSDecisionAvailable("Choose 1 destiny"); i++) {
+            var d = scn.GetCurrentDecision();
+            if (d == null) break;
+            trace.add(d.getText());
+            if (!d.getText().toLowerCase().contains("optional response")) break;
+            scn.PlayerPass(scn.GetDecidingPlayer());
+        }
+        assertTrue(trace.toString(), scn.LSDecisionAvailable("Choose 1 destiny"));
+        var ids = scn.LSGetBPChoices();
+        int lowIndex = ids.indexOf(low.getBlueprintId(true)); int highIndex = ids.indexOf(high.getBlueprintId(true));
+        assertTrue(ids.toString(), lowIndex >= 0 && highIndex >= 0 && ids.size() == 2);
+        scn.PlayerDecided(scn.LS, scn.LSGetCardChoices().get(chooseHigh ? highIndex : lowIndex));
+        scn.PassAllResponses();
+        assertEquals(chooseHigh, GameConditions.isJediTestCompleted(scn.game(), test));
+    }
+
+    @Test public void strongOffersTwoActualTrainingCardsAndHighChoiceCompletesTheTest() { trainingChoice(true); }
+    @Test public void choosingTheLowTrainingCardDoesNotCompleteTheTest() { trainingChoice(false); }
+
+    private void apprenticeLeavesTraining(boolean completed) {
+        var scn = completed ? completeTest(false) : fixture(0);
+        var site = scn.GetLSCard("hut"); var luke = scn.GetLSCard("luke"); var test = scn.GetLSCard("testOne");
+        if (!completed) {
+            scn.StartGame();
+            scn.MoveLocationToTable(site); scn.MoveCardsToLocation(site, luke, scn.GetLSCard("yoda"));
+            scn.AttachCardsTo(site, test);
+            test.setTargetedCard(TargetId.JEDI_TEST_MENTOR, null, scn.GetLSCard("yoda"), Filters.sameCardId(scn.GetLSCard("yoda")));
+            test.setTargetedCard(TargetId.JEDI_TEST_APPRENTICE, null, luke, Filters.sameCardId(luke));
+        }
+        scn.SkipToDSTurn(Phase.CONTROL);
+        var source = scn.GetDSStartingLocation();
+        var action = new TopLevelGameTextAction(source, scn.DS, source.getCardId());
+        action.appendEffect(new LoseCardFromTableEffect(action, luke));
+        scn.carryOutEffectInPhaseActionByPlayer(scn.DS, action);
+        scn.PassAllResponses();
+        assertTrue(scn.GetLSLostPile().contains(luke));
+        if (completed) {
+            assertEquals(Zone.SIDE_OF_TABLE, test.getZone());
+            assertFalse(scn.IsCardActive(test));
+            scn.MoveCardsToLocation(site, luke);
+            assertTrue(scn.IsCardActive(test));
+        } else assertTrue(scn.GetLSLostPile().contains(test));
+    }
+
+    @Test public void strongSuspendsACompletedTestUntilTheApprenticeReturns() { apprenticeLeavesTraining(true); }
+    @Test public void unfinishedTestIsStillLostWhenTheApprenticeLeaves() { apprenticeLeavesTraining(false); }
 }

@@ -64,7 +64,7 @@ public class Card1261_087 extends AbstractEpicEventDeployable {
                 new MayNotDeployModifier(self, Filters.or(Filters.asteroid_sector, Icon.MAINTENANCE, Icon.PERMANENT_WEAPON), player),
                 new SpecialFlagModifier(self, ModifierFlag.DRAW_TWO_AND_CHOOSE_ONE_FOR_TRAINING_DESTINY, player),
                 new PlaceJediTestOnTableWhenCompletedModifier(self, yourTests, null),
-                new JediTestSuspendedInsteadOfLostModifier(self, yourTests, null));
+                new JediTestSuspendedInsteadOfLostModifier(self, Filters.and(yourTests, Filters.completed_Jedi_Test), null));
     }
 
     @Override
