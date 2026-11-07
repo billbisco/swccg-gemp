@@ -67,7 +67,7 @@ public class Card1271_022 extends AbstractSite {
             EffectResult result, PhysicalCard self, int sourceId) {
         Filter orbitedWreck = Filters.and(BLOWN_AWAY_SYSTEM, Filters.isOrbitedBy(Filters.Death_Star_system));
         if (!TriggerConditions.forceDrainInitiatedBy(game, result, darkPlayer, orbitedWreck)
-                || !GameConditions.canRetrieveForce(game, darkPlayer, self)) return null;
+                || !GameConditions.hasLostPile(game, darkPlayer)) return null;
 
         OptionalGameTextTriggerAction action = new OptionalGameTextTriggerAction(self, darkPlayer, sourceId);
         action.setText("Retrieve 1 Force at the blown-away system");
