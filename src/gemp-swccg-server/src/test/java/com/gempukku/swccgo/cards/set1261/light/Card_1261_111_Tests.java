@@ -2,6 +2,7 @@ package com.gempukku.swccgo.cards.set1261.light;
 
 import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.cards.GameConditions;
+import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import org.junit.Test;
@@ -21,7 +22,7 @@ public class Card_1261_111_Tests {
             put("luke", "1_19"); put("rebel", "1_28"); put("farm", "7_120");
         }}, new HashMap<>() {{
             put("catch", "3_131"); put("trooper", "1_194"); put("trooper2", "1_194"); put("trooper3", "1_194");
-            put("devastator", "1_301");
+            put("devastator", "1_301"); put("mist", "110_12");
         }}, 60, 60, StartingSetup.LSStartingLocation("2_65"), StartingSetup.DefaultDSSpaceSystem,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -123,6 +124,10 @@ public class Card_1261_111_Tests {
     @Test public void EchoCommandCenterDoesNotBoostOpposingStarships() {
         var scn = started(); var ship = scn.GetDSCard("devastator"); scn.MoveCardsToLocation(scn.GetLSStartingLocation(), ship);
         assertEquals(3, scn.GetHyperspeed(ship));
+    }
+    @Test public void EchoCommandCenterDoesNotBoostActualOpposingTransport() {
+        var scn = started(); var ship = scn.GetDSCard("mist"); scn.MoveCardsToLocation(scn.GetLSStartingLocation(), ship);
+        assertTrue(Filters.transport.accepts(scn.game(), ship)); assertEquals(5, scn.GetHyperspeed(ship));
     }
     @Test public void EchoCommandCenterTransportBonusEndsWhenSourceLeavesTable() {
         var scn = started(); var ship = scn.GetLSCard("transport"); scn.MoveCardsToLocation(scn.GetLSStartingLocation(), ship);
