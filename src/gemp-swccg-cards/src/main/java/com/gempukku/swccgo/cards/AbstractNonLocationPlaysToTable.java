@@ -453,7 +453,8 @@ public abstract class AbstractNonLocationPlaysToTable extends AbstractSwccgCardB
             return Filters.none;
 
         // Filter cards that this card is not prohibited from being at or deploying to
-        Filter filter = Filters.and(Filters.not(Filters.holosite), Filters.notProhibitedFromTarget(self), Filters.notProhibitedFromDeployingTo(self, deploymentRestrictionsOption));
+        // (holosites are off-limits unless this card's game text deploys it on a holosite)
+        Filter filter = Filters.and(mayDeployOnHolosite() ? Filters.any : Filters.not(Filters.holosite), Filters.notProhibitedFromTarget(self), Filters.notProhibitedFromDeployingTo(self, deploymentRestrictionsOption));
         if (playToZone == Zone.ATTACHED) {
             filter = Filters.and(filter, Filters.notProhibitedFromCarrying(self), Filters.canBeTargetedBy(self));
         }
@@ -539,6 +540,15 @@ public abstract class AbstractNonLocationPlaysToTable extends AbstractSwccgCardB
      */
     protected Filter getValidDeployTargetFilterForCardType(String playerId, final SwccgGame game, final PhysicalCard self, boolean isSimDeployAttached, boolean ignorePresenceOrForceIcons, DeploymentRestrictionsOption deploymentRestrictionsOption, DeployAsCaptiveOption deployAsCaptiveOption) {
         return Filters.any;
+    }
+
+    /**
+     * Determines if this card's game text lets it deploy on a holosite (for example "Deploy on a holosite."). Holosites
+     * are otherwise not valid deploy targets.
+     * @return true if this card may deploy on a holosite, otherwise false
+     */
+    protected boolean mayDeployOnHolosite() {
+        return false;
     }
 
     /**

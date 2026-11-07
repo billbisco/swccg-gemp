@@ -11,6 +11,7 @@ import com.gempukku.swccgo.logic.effects.DrawDestinyEffect;
 import com.gempukku.swccgo.logic.effects.RespondablePlayingCardEffect;
 import com.gempukku.swccgo.logic.timing.*;
 import com.gempukku.swccgo.logic.timing.results.DestinyDrawnResult;
+import com.gempukku.swccgo.logic.timing.results.PlayCardResult;
 import com.google.common.base.Objects;
 
 import java.util.*;
@@ -94,6 +95,11 @@ public class DefaultActionsEnvironment implements ActionsEnvironment {
 
     @Override
     public void emitEffectResult(EffectResult effectResult) {
+        if (effectResult instanceof PlayCardResult play
+                && play.getPlayedCard().getBlueprint().getCardCategory() == CardCategory.EPIC_EVENT
+                && _swccgGame.getGameState().getCurrentPhase() == Phase.PLAY_STARTING_CARDS) {
+            _swccgGame.getGameState().recordStartingEpicEventPlayed(play.getPerformingPlayerId());
+        }
         _effectResults.add(effectResult);
     }
 

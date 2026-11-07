@@ -2,6 +2,7 @@ package com.gempukku.swccgo.cards.set1210.light;
 
 import com.gempukku.swccgo.cards.AbstractUsedOrStartingInterrupt;
 import com.gempukku.swccgo.cards.GameConditions;
+import com.gempukku.swccgo.cards.set1240.light.Card1240_071;
 import com.gempukku.swccgo.common.CardSubtype;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.GameTextActionId;
@@ -41,7 +42,7 @@ public class Card1210_154 extends AbstractUsedOrStartingInterrupt {
     }
 
     @Override
-    protected List<PlayInterruptAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self) {
+    protected List<PlayInterruptAction> getGameTextTopLevelActions(final String playerId, final SwccgGame game, final PhysicalCard self) {
         List<PlayInterruptAction> actions = new LinkedList<PlayInterruptAction>();
         GameTextActionId gameTextActionId = GameTextActionId.LEGACY__HARVEST_V__RETRIEVE_OR_TAKE_DEVICE;
 
@@ -54,7 +55,7 @@ public class Card1210_154 extends AbstractUsedOrStartingInterrupt {
                         @Override
                         protected void performActionResults(Action targetingAction) {
                             action.appendEffect(
-                                    new RetrieveCardEffect(action, playerId, Filters.device));
+                                    new RetrieveCardEffect(action, playerId, Card1240_071.harvestDevice(game, playerId)));
                         }
                     }
             );
@@ -70,7 +71,7 @@ public class Card1210_154 extends AbstractUsedOrStartingInterrupt {
                         @Override
                         protected void performActionResults(Action targetingAction) {
                             action.appendEffect(
-                                    new TakeCardIntoHandFromReserveDeckEffect(action, playerId, Filters.device, true));
+                                    new TakeCardIntoHandFromReserveDeckEffect(action, playerId, Card1240_071.harvestDevice(game, playerId), true));
                         }
                     }
             );
