@@ -2,6 +2,8 @@ package com.gempukku.swccgo.cards.set1250.light;
 
 import com.gempukku.swccgo.cards.AbstractSite;
 import com.gempukku.swccgo.cards.GameConditions;
+import com.gempukku.swccgo.cards.conditions.DuringForceDrainAtCondition;
+import com.gempukku.swccgo.cards.conditions.OnTableCondition;
 import com.gempukku.swccgo.cards.effects.usage.OncePerTurnEffect;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.GameTextActionId;
@@ -18,9 +20,14 @@ import com.gempukku.swccgo.logic.TriggerConditions;
 import com.gempukku.swccgo.logic.actions.OptionalGameTextTriggerAction;
 import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
+import com.gempukku.swccgo.logic.conditions.AndCondition;
+import com.gempukku.swccgo.logic.conditions.NotCondition;
 import com.gempukku.swccgo.logic.effects.LoseCardsFromTableSimultaneouslyEffect;
 import com.gempukku.swccgo.logic.effects.choose.DeployCardFromReserveDeckEffect;
 import com.gempukku.swccgo.logic.effects.choose.DrawCardsIntoHandFromReserveDeckEffect;
+import com.gempukku.swccgo.logic.modifiers.Modifier;
+import com.gempukku.swccgo.logic.modifiers.ModifierFlag;
+import com.gempukku.swccgo.logic.modifiers.SpecialFlagModifier;
 import com.gempukku.swccgo.logic.timing.EffectResult;
 
 import java.util.List;
@@ -66,6 +73,15 @@ public class Card1250_075 extends AbstractSite {
         action.appendUsage(new OncePerTurnEffect(action));
         action.appendEffect(new DeployCardFromReserveDeckEffect(action, Filters.title(Title.Yarna_dal_Gargan), true));
         return List.of(action);
+    }
+
+    @Override
+    protected List<Modifier> getGameTextDarkSideWhileActiveModifiers(String playerOnDarkSideOfLocation, SwccgGame game, PhysicalCard self) {
+        // Only the opponent loses Force from the dark side player's Force drains, so scoping the flag to them limits it to those drains.
+        String opponent = game.getOpponent(playerOnDarkSideOfLocation);
+        return List.of(new SpecialFlagModifier(self,
+                new AndCondition(new DuringForceDrainAtCondition(self), new NotCondition(new OnTableCondition(self, Filters.Mosep))),
+                ModifierFlag.FORCE_DRAIN_LOST_FROM_HAND, opponent));
     }
 
     @Override

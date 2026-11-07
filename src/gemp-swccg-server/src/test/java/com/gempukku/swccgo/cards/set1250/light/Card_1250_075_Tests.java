@@ -20,7 +20,7 @@ public class Card_1250_075_Tests {
             put("forest", "1250_75"); put("haven", "1116_17"); put("wookiee", "7_50"); put("chewie", "2_3");
             put("luke", "1_19"); put("droid", "1_18"); put("yarna", "6_59"); put("other", "1_60");
             put("nudj", "4_5"); put("second", "4_5"); put("vine", "4_7"); put("bog", "4_85"); put("plains", "12_79");
-        }}, new HashMap<>() {{ put("trooper", "1_194"); }}, 35, 35,
+        }}, new HashMap<>() {{ put("trooper", "1_194"); put("mosep", "2_97"); put("dshand", "1_195"); }}, 35, 35,
                 StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -136,5 +136,70 @@ public class Card_1250_075_Tests {
         assertTrue(s.GetCurrentDecision().getText() + "; Nudj zones " + nudjs.stream().map(c -> c.getZone()).toList(),
                 s.GetLSLostPile().containsAll(nudjs));
         assertEquals(bog, s.GetLSCard("vine").getAtLocation());
+    }
+
+    /** Dark side Force drains at the Forest; returns the scenario at Light's first "Choose Force to lose" decision. */
+    private VirtualTableScenario dsDrainsAtForest(boolean lsHand, boolean mosep) {
+        var s = scenario(); s.StartGame(); var forest = s.GetLSCard("forest");
+        s.MoveLocationToTable(forest);
+        s.MoveCardsToLocation(forest, s.GetDSCard("trooper"));
+        if (mosep) s.MoveCardsToLocation(s.GetDSStartingLocation(), s.GetDSCard("mosep"));
+        if (lsHand) s.MoveCardsToLSHand(s.GetLSCard("other"), s.GetLSCard("droid"));
+        s.DSActivateForceCheat(2);
+        s.SkipToDSTurn(Phase.CONTROL);
+        s.DSForceDrainAt(forest);
+        s.PassForceDrainStartResponses();
+        assertTrue(s.LSDecisionAvailable("Choose Force to lose"));
+        return s;
+    }
+
+    @Test
+    public void DarkDrainLossHereMustComeFromLightsHand() {
+        var s = dsDrainsAtForest(true, false);
+        var other = s.GetLSCard("other"); var droid = s.GetLSCard("droid");
+        assertTrue(s.LSHasCardChoicesAvailable(other, droid));
+        assertFalse(s.LSHasCardChoiceAvailable(s.GetTopOfLSReserveDeck()));
+        s.LSChooseCard(other); s.PassForceDrainPendingResponses();
+        assertTrue(s.LSDecisionAvailable("Choose Force to lose"));
+        assertFalse(s.LSHasCardChoiceAvailable(s.GetTopOfLSReserveDeck()));
+        s.LSChooseCard(droid); s.PassForceDrainEndResponses();
+        assertTrue(s.GetLSLostPile().containsAll(List.of(other, droid)));
+        assertEquals(0, s.GetLSHandCount());
+    }
+
+    @Test
+    public void EmptyHandFallsBackToNormalDrainLoss() {
+        var s = dsDrainsAtForest(false, false);
+        assertEquals(0, s.GetLSHandCount());
+        var top = s.GetTopOfLSReserveDeck();
+        assertTrue(s.LSHasCardChoiceAvailable(top));
+        s.LSChooseCard(top);
+        assertTrue(s.GetLSLostPile().contains(top));
+    }
+
+    @Test
+    public void MosepOnTableLiftsTheHandRequirement() {
+        var s = dsDrainsAtForest(true, true);
+        var top = s.GetTopOfLSReserveDeck();
+        assertTrue(s.LSHasCardChoiceAvailable(top));
+        s.LSChooseCard(top);
+        assertTrue(s.GetLSLostPile().contains(top));
+    }
+
+    @Test
+    public void LightDrainHereDoesNotForceDarkToLoseFromHand() {
+        var s = scenario(); s.StartGame(); var forest = s.GetLSCard("forest");
+        s.MoveLocationToTable(forest);
+        s.MoveCardsToLocation(forest, s.GetLSCard("wookiee"));
+        s.MoveCardsToDSHand(s.GetDSCard("dshand"));
+        s.LSActivateForceCheat(2);
+        s.SkipToLSTurn(Phase.CONTROL);
+        s.LSForceDrainAt(forest);
+        s.PassForceDrainStartResponses();
+        assertTrue(s.DSDecisionAvailable("Choose Force to lose"));
+        var top = s.GetTopOfDSReserveDeck();
+        assertTrue(s.DSHasCardChoiceAvailable(top));
+        s.DSChooseCard(top);
+        assertTrue(s.GetDSLostPile().contains(top));
     }
 }
