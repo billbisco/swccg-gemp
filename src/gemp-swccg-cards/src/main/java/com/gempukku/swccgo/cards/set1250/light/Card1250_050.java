@@ -43,7 +43,7 @@ public class Card1250_050 extends AbstractAlienRepublic {
 
     @Override
     protected List<Modifier> getGameTextAlwaysOnModifiers(SwccgGame game, PhysicalCard self) {
-        return List.of(new AgendaModifier(self, Agenda.JUSTICE), new AgendaModifier(self, Agenda.ORDER));
+        return List.of(new AgendaModifier(self, Agenda.JUSTICE, Agenda.ORDER));
     }
 
     @Override
