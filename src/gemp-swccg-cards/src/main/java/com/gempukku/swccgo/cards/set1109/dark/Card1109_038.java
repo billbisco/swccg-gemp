@@ -13,6 +13,7 @@ import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.common.Zone;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.InterruptPersonaReferences;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.TriggerConditions;
@@ -68,9 +69,9 @@ public class Card1109_038 extends AbstractUsedOrLostInterrupt {
     @Override
     protected List<PlayInterruptAction> getGameTextOptionalAfterActions(final String playerId, SwccgGame game, final EffectResult effectResult, final PhysicalCard self) {
         List<PlayInterruptAction> actions = new LinkedList<PlayInterruptAction>();
-        if (TriggerConditions.wonBattleAt(game, effectResult, playerId, Filters.and(Filters.site, Filters.sameSiteAs(self, Filters.Vader)))
-                && GameConditions.canSpot(game, self, Filters.and(Filters.Vader, Filters.participatingInBattle))) {
-            Filter alienAtSite = Filters.and(Filters.alien, Filters.sameSiteAs(self, Filters.Vader));
+        if (TriggerConditions.wonBattleAt(game, effectResult, playerId, Filters.and(Filters.site, Filters.sameSiteAs(self, InterruptPersonaReferences.vader(game, self))))
+                && GameConditions.canSpot(game, self, Filters.and(InterruptPersonaReferences.vader(game, self), Filters.participatingInBattle))) {
+            Filter alienAtSite = Filters.and(Filters.alien, Filters.sameSiteAs(self, InterruptPersonaReferences.vader(game, self)));
             if (GameConditions.canTarget(game, self, alienAtSite)) {
                 final PlayInterruptAction action = new PlayInterruptAction(game, self, CardSubtype.USED);
                 action.setText("Place alien out of play");

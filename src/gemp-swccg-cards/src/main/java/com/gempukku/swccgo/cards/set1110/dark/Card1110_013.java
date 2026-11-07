@@ -11,6 +11,7 @@ import com.gempukku.swccgo.common.TargetingReason;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.InterruptPersonaReferences;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.game.state.DuelState;
@@ -54,7 +55,7 @@ public class Card1110_013 extends AbstractLostInterrupt {
     @Override
     public Filter getValidDuelParticipant(Side side, SwccgGame game, final PhysicalCard self) {
         if (side == Side.DARK)
-            return Filters.Vader;
+            return InterruptPersonaReferences.vader(game, self);
         else
             return Filters.Jedi;
     }
@@ -163,7 +164,7 @@ public class Card1110_013 extends AbstractLostInterrupt {
 
     @Override
     protected List<PlayInterruptAction> getGameTextOptionalAfterActions(final String playerId, SwccgGame game, EffectResult effectResult, final PhysicalCard self) {
-        if (TriggerConditions.justHitBy(game, effectResult, Filters.Jedi, Filters.any, Filters.Vader)) {
+        if (TriggerConditions.justHitBy(game, effectResult, Filters.Jedi, Filters.any, InterruptPersonaReferences.vader(game, self))) {
             final PlayInterruptAction action = new PlayInterruptAction(game, self);
             action.setText("Retrieve any three cards");
             action.allowResponses(

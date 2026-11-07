@@ -14,6 +14,7 @@ import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.InterruptPersonaReferences;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.GameUtils;
@@ -104,9 +105,9 @@ public class Card223_020 extends AbstractUsedOrLostInterrupt {
         }
 
         GameTextActionId gameTextActionId3 = GameTextActionId.OTHER_CARD_ACTION_2;
-        Filter characterFilter = Filters.and(Filters.opponents(self), Filters.character, Filters.abilityLessThan(4), Filters.participatingInBattle, Filters.presentWith(self, Filters.Vader));
+        Filter characterFilter = Filters.and(Filters.opponents(self), Filters.character, Filters.abilityLessThan(4), Filters.participatingInBattle, Filters.presentWith(self, InterruptPersonaReferences.vader(game, self)));
 
-        if (GameConditions.isDuringBattleWithParticipant(game, Filters.Vader)
+        if (GameConditions.isDuringBattleWithParticipant(game, InterruptPersonaReferences.vader(game, self))
                 && GameConditions.canSpot(game, self, 2, characterFilter)){
 
             final Filter trooperFilter = Filters.and(characterFilter, Filters.Rebel, Filters.trooper, Filters.canBeTargetedBy(self, TargetingReason.TO_BE_LOST), Filters.canBeTargetedBy(self, TargetingReason.TO_BE_CHOKED));
