@@ -110,6 +110,12 @@ public class Card_1261_081_Tests {
         scn.LSChooseNo(); scn.PassAllResponses();
     }
 
+    private void assertNoRetrieve(VirtualTableScenario scn) {
+        // Return the priority window to Light Side before testing a negative action condition.
+        if (scn.AwaitingDSControlPhaseActions()) scn.DSPass();
+        assertFalse(scn.GetLSAvailableActions().stream().anyMatch(text -> text.contains("Retrieve a Y-wing or Z-95")));
+    }
+
     private void retrieve(String key) {
         var scn = started(true); var card = scn.GetLSCard(key);
         scn.MoveCardsToTopOfLSLostPile(card); scn.MoveCardsToTopOfLSLostPile(scn.GetLSFiller(1));
@@ -117,7 +123,7 @@ public class Card_1261_081_Tests {
         scn.LSUseCardAction(scn.GetLSCard("incom"), "Retrieve a Y-wing or Z-95"); scn.PassAllResponses();
         assertTrue(scn.LSHasCardChoiceAvailable(card)); scn.LSChooseCard(card); scn.PassAllResponses();
         assertInZone(Zone.USED_PILE, card); assertInZone(Zone.LOST_PILE, scn.GetLSFiller(1));
-        assertEquals(lost - 1, scn.GetLSLostPileCount()); assertFalse(scn.GetLSAvailableActions().stream().anyMatch(text -> text.contains("Retrieve a Y-wing or Z-95")));
+        assertEquals(lost - 1, scn.GetLSLostPileCount()); assertNoRetrieve(scn);
     }
     @Test public void IncomKoensayrRetrievesOneYwingEvenBelowNonmatchingTopCard() { retrieve("ywing"); }
     @Test public void IncomKoensayrRetrievesOneZ95() { retrieve("z95"); }
@@ -128,20 +134,20 @@ public class Card_1261_081_Tests {
     }
     @Test public void IncomKoensayrRetrievalIsOnlyDuringOwnersControlPhase() {
         var scn = started(true); scn.MoveCardsToTopOfLSLostPile(scn.GetLSCard("ywing"));
-        scn.SkipToLSTurn(Phase.DEPLOY); assertFalse(scn.GetLSAvailableActions().stream().anyMatch(text -> text.contains("Retrieve a Y-wing or Z-95")));
-        scn.SkipToDSTurn(Phase.CONTROL); assertFalse(scn.GetLSAvailableActions().stream().anyMatch(text -> text.contains("Retrieve a Y-wing or Z-95")));
+        scn.SkipToLSTurn(Phase.DEPLOY); assertNoRetrieve(scn);
+        scn.SkipToDSTurn(Phase.CONTROL); assertNoRetrieve(scn);
     }
     @Test public void IncomKoensayrRetrievalResetsNextOwnControlPhase() {
         var scn = started(true); var effect = scn.GetLSCard("incom");
         scn.MoveCardsToTopOfLSLostPile(scn.GetLSCard("ywing"), scn.GetLSCard("z95")); scn.SkipToLSTurn(Phase.CONTROL);
         scn.LSUseCardAction(effect, "Retrieve"); scn.PassAllResponses(); scn.LSChooseCard(scn.GetLSCard("ywing")); scn.PassAllResponses();
-        assertFalse(scn.GetLSAvailableActions().stream().anyMatch(text -> text.contains("Retrieve a Y-wing or Z-95"))); scn.SkipToLSTurn(Phase.CONTROL);
+        assertNoRetrieve(scn); scn.SkipToLSTurn(Phase.CONTROL);
         scn.LSUseCardAction(effect, "Retrieve"); scn.PassAllResponses(); scn.LSChooseCard(scn.GetLSCard("z95")); scn.PassAllResponses();
         assertInZone(Zone.USED_PILE, scn.GetLSCard("z95"));
     }
     @Test public void IncomKoensayrEmptyLostPileOffersNoRetrieval() {
         var scn = started(true); scn.SkipToLSTurn(Phase.CONTROL); assertEquals(0, scn.GetLSLostPileCount());
-        assertFalse(scn.GetLSAvailableActions().stream().anyMatch(text -> text.contains("Retrieve a Y-wing or Z-95")));
+        assertNoRetrieve(scn);
     }
 
     @Test public void IncomKoensayrSuspendsAndResumesWithoutBeingCanceled() {
@@ -150,7 +156,7 @@ public class Card_1261_081_Tests {
         scn.MoveCardsToLocation(site, scn.GetDSCard("trooper")); scn.MoveCardsToTopOfLSLostPile(scn.GetLSCard("z95"));
         scn.SkipToLSTurn(Phase.CONTROL); assertTrue(effect.isSuspended()); assertEquals(site, effect.getAttachedTo());
         assertEquals(1, scn.GetBattleDestinyAbility(ship)); assertEquals(2, scn.GetPower(ship));
-        assertFalse(scn.GetLSAvailableActions().stream().anyMatch(text -> text.contains("Retrieve a Y-wing or Z-95")));
+        assertNoRetrieve(scn);
         scn.MoveCardsToLocation(site, scn.GetLSCard("luke")); scn.SkipToPhase(Phase.DEPLOY);
         assertFalse(effect.isSuspended()); assertEquals(2, scn.GetBattleDestinyAbility(ship)); assertEquals(3, scn.GetPower(ship));
         scn.SkipToLSTurn(Phase.CONTROL); assertTrue(scn.LSCardActionAvailable(effect, "Retrieve"));
