@@ -72,7 +72,7 @@ public class Card_1261_034_Tests {
         int legal = 0;
         for (int i = 0; i < ids.length; i++) {
             if ("true".equals(selectable[i])) {
-                assertEquals(launch.getBlueprintId(), ids[i]);
+                assertEquals(launch.getBlueprintId(true), ids[i]);
                 legal++;
             }
         }
