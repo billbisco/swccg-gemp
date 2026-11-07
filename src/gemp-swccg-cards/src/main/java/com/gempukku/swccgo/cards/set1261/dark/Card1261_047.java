@@ -70,8 +70,7 @@ public class Card1261_047 extends AbstractUsedOrLostInterrupt {
                 return List.of(capture(playerId, game, self, loss.getCardToBeLost(), loss.getPreventableCardEffect()));
         } else if (TriggerConditions.isAboutToBeForfeited(game, result, character)) {
             var forfeit = (AboutToForfeitCardFromTableResult) result;
-            if (forfeit.isToBeForfeitedToLostPile())
-                return List.of(capture(playerId, game, self, forfeit.getCardToBeForfeited(), forfeit.getPreventableCardEffect()));
+            return List.of(capture(playerId, game, self, forfeit.getCardToBeForfeited(), forfeit.getPreventableCardEffect()));
         }
         return null;
     }
