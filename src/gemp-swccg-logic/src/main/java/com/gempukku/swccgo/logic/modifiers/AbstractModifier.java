@@ -1066,6 +1066,11 @@ public abstract class AbstractModifier implements Modifier {
     }
 
     @Override
+    public float getBonusForEachDestinyDrawToPowerOnly(String playerId, GameState gameState, ModifiersQuerying modifiersQuerying) {
+        return 0;
+    }
+
+    @Override
     public float getTotalTractorBeamDestinyModifier(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard tractorBeam) {
         return 0;
     }
