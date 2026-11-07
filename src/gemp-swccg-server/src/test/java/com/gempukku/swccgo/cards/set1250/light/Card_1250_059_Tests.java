@@ -169,11 +169,18 @@ public class Card_1250_059_Tests {
         var s = scenario(); s.StartGame(); attach(s);
         s.MoveLocationToTable(s.GetLSCard("onTableForest"));
         s.SkipToLSTurn(Phase.ACTIVATE);
+        var candidates = List.of(s.GetLSCard("archives"), s.GetLSCard("system"), s.GetLSCard("forest"),
+                s.GetLSCard("council"), s.GetLSCard("sector"), s.GetLSCard("otherSite"));
+        s.MoveCardsToTopOfLSReserveDeck(candidates.toArray(PhysicalCardImpl[]::new));
         int current = s.GetLSForcePileCount();
         if (current > force) s.UseForceCheat(s.LS, current - force);
-        if (current < force) s.LSActivateForceCheat(force - current);
-        s.MoveCardsToTopOfLSReserveDeck(s.GetLSCard("archives"), s.GetLSCard("system"),
-                s.GetLSCard("forest"), s.GetLSCard("council"), s.GetLSCard("sector"), s.GetLSCard("otherSite"));
+        if (current < force) {
+            // Fund with ordinary Reserve cards after placing the search candidates, so neither step removes the other fixture.
+            var fuel = s.GetLSReserveDeck().stream().filter(card -> !candidates.contains(card)).limit(force - current)
+                    .map(card -> (PhysicalCardImpl) card).toArray(PhysicalCardImpl[]::new);
+            assertEquals(force - current, fuel.length);
+            s.MoveCardsToTopOfLSReserveDeck(fuel); s.LSActivateForceCheat(fuel.length);
+        }
         for (int i = 0; i < 20 && s.GetCurrentPhase() == Phase.ACTIVATE; i++) passDecision(s);
         assertEquals(Phase.CONTROL, s.GetCurrentPhase());
         assertEquals(force, s.GetLSForcePileCount());
