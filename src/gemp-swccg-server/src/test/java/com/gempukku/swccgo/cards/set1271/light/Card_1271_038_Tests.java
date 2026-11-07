@@ -45,7 +45,7 @@ public class Card_1271_038_Tests {
         s.PassResponses("ABOUT_TO_BE_FORFEITED");
         s.PassResponses("ABOUT_TO_BE_LOST_FROM_TABLE");
         s.PassResponses("ABOUT_TO_LOSE_FORCE_NOT_FROM_BATTLE_DAMAGE");
-        assertEquals(Zone.LOST_PILE, patient.getZone());
+        assertTrue(s.GetLSLostPile().contains(patient));
         return s;
     }
 
@@ -94,7 +94,7 @@ public class Card_1271_038_Tests {
     @Test public void FieldDressingCannotReturnAnAbilitySixCharacter() {
         var s = justForfeited("1_21");
         assertFalse(s.LSAnyActionsAvailable() && s.LSCardActionAvailable(s.GetLSCard("dressing"), RETURN_PATIENT));
-        assertEquals(Zone.LOST_PILE, s.GetLSCard("patient").getZone());
+        assertTrue(s.GetLSLostPile().contains(s.GetLSCard("patient")));
     }
 
     @Test public void FieldDressingLetsFirstAidRemoveItToUsedAndRestoresForfeit() {
