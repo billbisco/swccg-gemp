@@ -48,8 +48,8 @@ public class Card_1263_002_Tests {
         var scn = ships(); var brangus = scn.GetDSCard("brangus"); var ship = scn.GetDSCard("ship");
         scn.MoveCardsToLocation(scn.GetDSStartingLocation(), brangus); scn.SkipToDSTurn(Phase.CONTROL); assertEquals(4, scn.GetForfeit(brangus));
         scn.MoveCardsToLocation(scn.GetDSCard("bay"), brangus); assertEquals(5, scn.GetForfeit(brangus));
-        scn.BoardAsPassenger(ship, brangus); assertEquals(5, scn.GetForfeit(brangus));
-        scn.MoveCardsToDSHand(brangus); scn.BoardAsPilot(scn.GetDSCard("fighter"), brangus); scn.MoveCardsToLocation(scn.GetDSCard("bay"), scn.GetDSCard("fighter")); assertEquals(5, scn.GetForfeit(brangus));
+        scn.MoveCardsToDSHand(brangus); scn.BoardAsPassenger(ship, brangus); assertEquals(5, scn.GetForfeit(brangus));
+        scn.MoveCardsToDSHand(brangus); scn.MoveCardsToLocation(scn.GetDSCard("bay"), scn.GetDSCard("fighter")); scn.BoardAsPilot(scn.GetDSCard("fighter"), brangus); assertEquals(5, scn.GetForfeit(brangus));
         scn.MoveCardsToDSHand(brangus); scn.BoardAsPassenger(scn.GetDSCard("vehicle"), brangus); assertEquals(4, scn.GetForfeit(brangus));
     }
     private void deploy(String target, int force, int spent) {
@@ -62,6 +62,7 @@ public class Card_1263_002_Tests {
         if (scn.DSDecisionAvailable("Choose capacity slot")) scn.DSChoose("Pilot");
         scn.PassAllResponses(); assertEquals(force - spent, scn.GetDSForcePileCount());
         assertEquals(destination, target.equals("ship") ? brangus.getAttachedTo() : brangus.getAtLocation());
+        assertEquals(target.equals("ordinary") ? 4 : 5, scn.GetForfeit(brangus));
     }
     @Test public void BrangusGleeDeploysToBayForExactlyTwoForce() { deploy("bay", 2, 2); }
     @Test public void BrangusGleeDeploysAboardStarshipForExactlyTwoForce() { deploy("ship", 2, 2); }
