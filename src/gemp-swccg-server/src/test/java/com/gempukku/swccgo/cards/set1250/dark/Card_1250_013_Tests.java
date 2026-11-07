@@ -130,7 +130,10 @@ public class Card_1250_013_Tests {
     @Test public void AtLastWeAreGettingResultsAbsentAllowsHitAtOriginalDefenseThreshold() { weaponThreshold(false, 2, true); }
     private void maulDeployment(boolean effect) {
         var scn = active(effect); var maul = scn.GetDSCard("maul"); var vader = scn.GetDSCard("vader");
-        scn.MoveCardsToDSSideOfTable(scn.GetDSCard("objective")); scn.MoveCardsToDSHand(maul, vader); scn.SkipToDSTurn(Phase.DEPLOY); scn.EnsureDSForcePile(10);
+        // This controlled fixture represents a fully deployed Objective; the action under test is Maul's deployment.
+        scn.GetDSCard("objective").setObjectiveDeploymentComplete(true);
+        scn.MoveCardsToDSSideOfTable(scn.GetDSCard("objective")); scn.MoveCardsToDSHand(maul, vader);
+        scn.EnsureDSForcePile(10); scn.SkipToDSTurn(Phase.DEPLOY);
         assertEquals(effect, scn.DSDeployAvailable(maul)); assertFalse(scn.DSDeployAvailable(vader));
         if (effect) { scn.DSDeployCard(maul); scn.DSChooseCard(scn.GetDSStartingLocation()); scn.PassAllResponses(); assertInZone(Zone.AT_LOCATION, maul); }
     }
