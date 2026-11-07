@@ -69,7 +69,7 @@ public class Card_1271_039_Tests {
         var s = new VirtualTableScenario(
             new HashMap<>(Map.of("trust", "1271_39", "interrupt", "216_39", "communing", "216_24", "kenobi", "216_36")),
             new HashMap<>(), 30, 30,
-            StartingSetup.LSStartingLocation("216_43"), StartingSetup.DefaultDSGroundLocation,
+            StartingSetup.LSStartingLocation("216_43"), StartingSetup.DefaultDSSpaceSystem,
             StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
             StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
         var communing = s.GetLSCard("communing");
@@ -78,10 +78,11 @@ public class Card_1271_039_Tests {
         s.MoveCardsToLSHand(trust);
         s.DSDecided("0");
         s.LSDecided("0");
-        StartingSetup.DefaultDSGroundLocation.Setup(s);
+        StartingSetup.DefaultDSSpaceSystem.Setup(s);
         s.LSChooseCard(s.GetLSCard("starting-location"));
 
-        assertTrue(s.LSDecisionAvailable("Choose starting interrupt"));
+        assertTrue("Expected the starting interrupt choice, got " + s.LSGetDecision(),
+            s.LSDecisionAvailable("Choose starting interrupt"));
         s.LSChooseCard(s.GetLSCard("interrupt"));
         if (s.LSHasCardChoiceAvailable(communing)) s.LSChooseCard(communing);
         if (s.LSHasCardChoiceAvailable(kenobi)) s.LSChooseCard(kenobi);
