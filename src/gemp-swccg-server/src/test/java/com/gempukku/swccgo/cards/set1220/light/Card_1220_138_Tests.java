@@ -174,4 +174,68 @@ public class Card_1220_138_Tests {
         assertTrue(scn.GetDSHand().contains(scn.GetDSCard("darkWeapon")));
         assertTrue(scn.GetLSHand().contains(scn.GetLSCard("ordinary")));
     }
+
+    private static final String FACE_DOWN = "face down instead of using Force to stack a card from hand";
+
+    @Test public void jediMayTurnXCardsFaceDownInsteadOfUsingXForce() {
+        var scn = begin(false, null); var event = scn.GetLSCard("future");
+        var first = scn.GetLSCard("stackOne"); var second = scn.GetLSCard("stackTwo");
+        var third = scn.GetLSCard("stackThree"); var fourth = scn.GetLSCard("ordinary");
+        scn.MoveCardsToLSHand(first, second, third, fourth);
+        scn.SkipToLSTurn(Phase.DEPLOY); scn.EnsureLSForcePile(6);
+        // Nothing stacked yet: no Force to replace, so the face-down payment is not offered.
+        assertFalse(scn.LSCardActionAvailable(event, FACE_DOWN));
+        scn.LSUseCardAction(event, "Stack a card from hand face up");
+        scn.LSChooseCard(first); scn.PassAllResponses();
+        if (scn.DSGetDecision() != null) scn.DSPass();
+        // X = 1 and one face-up card here: may turn it face down instead of using 1 Force.
+        assertTrue(scn.LSCardActionAvailable(event, FACE_DOWN));
+        scn.LSUseCardAction(event, "Stack a card from hand face up");
+        scn.PassForceUseResponses();
+        scn.LSChooseCard(second); scn.PassAllResponses();
+        if (scn.DSGetDecision() != null) scn.DSPass();
+        // X = 2 with two face-up cards: turn both face down instead of using 2 Force.
+        int before = scn.GetLSForcePileCount();
+        assertTrue(scn.GetLSAvailableActions().toString(), scn.LSCardActionAvailable(event, FACE_DOWN));
+        scn.LSUseCardAction(event, FACE_DOWN);
+        scn.LSChooseCard(third); scn.PassAllResponses();
+        assertEquals("No Force used", before, scn.GetLSForcePileCount());
+        assertEquals(Zone.STACKED_FACE_DOWN, first.getZone());
+        assertEquals(Zone.STACKED_FACE_DOWN, second.getZone());
+        assertEquals(Zone.STACKED, third.getZone());
+        assertEquals(event, third.getStackedOn());
+        if (scn.DSGetDecision() != null) scn.DSPass();
+        // X = 3 but only one card here is face up: the face-down payment is not available (Force still is).
+        assertFalse(scn.LSCardActionAvailable(event, FACE_DOWN));
+        assertTrue(scn.LSCardActionAvailable(event, "Stack a card from hand face up"));
+        // Face-down cards are turned face up again at the start of LS's next turn.
+        scn.SkipToLSTurn(Phase.CONTROL);
+        assertEquals(Zone.STACKED, first.getZone());
+        assertEquals(Zone.STACKED, second.getZone());
+    }
+
+    private float duelTotalModifiers(VirtualTableScenario scn, com.gempukku.swccgo.game.PhysicalCard character) {
+        float total = 0;
+        for (var modifier : scn.game().getModifiersQuerying().getModifiersAffectingCard(scn.gameState(),
+                com.gempukku.swccgo.logic.modifiers.ModifierType.DUEL_TOTAL, character)) {
+            total += modifier.getValue(scn.gameState(), scn.game().getModifiersQuerying(), character);
+        }
+        return total;
+    }
+
+    @Test public void agentAddsTwoToOpponentsDuelTotalOnly() {
+        var scn = begin(true, null);
+        var site = scn.GetLSStartingLocation();
+        scn.MoveCardsToLocation(site, scn.GetLSCard("luke"), scn.GetDSCard("vader"));
+        assertEquals(2, duelTotalModifiers(scn, scn.GetDSCard("vader")), scn.epsilon);
+        assertEquals(0, duelTotalModifiers(scn, scn.GetLSCard("luke")), scn.epsilon);
+    }
+
+    @Test public void jediModeDoesNotModifyDuelTotals() {
+        var scn = begin(false, null);
+        var site = scn.GetLSStartingLocation();
+        scn.MoveCardsToLocation(site, scn.GetLSCard("luke"), scn.GetDSCard("vader"));
+        assertEquals(0, duelTotalModifiers(scn, scn.GetDSCard("vader")), scn.epsilon);
+        assertEquals(0, duelTotalModifiers(scn, scn.GetLSCard("luke")), scn.epsilon);
+    }
 }

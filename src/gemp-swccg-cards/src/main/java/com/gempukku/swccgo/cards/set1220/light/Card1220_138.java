@@ -21,6 +21,7 @@ import com.gempukku.swccgo.logic.effects.*;
 import com.gempukku.swccgo.logic.effects.choose.DeployCardFromReserveDeckEffect;
 import com.gempukku.swccgo.logic.effects.choose.StackCardFromHandEffect;
 import com.gempukku.swccgo.logic.effects.choose.TakeCardIntoHandFromReserveDeckEffect;
+import com.gempukku.swccgo.logic.modifiers.DuelTotalModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.modifiers.TotalBattleDestinyModifier;
 import com.gempukku.swccgo.logic.timing.Action;
@@ -124,7 +125,9 @@ public class Card1220_138 extends AbstractEpicEventDeployable {
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, PhysicalCard self) {
         if (self.getZone() == Zone.SIDE_OF_TABLE && game.getOpponent(self.getOwner()).equals(self.getZoneOwner())) {
-            return List.of(new TotalBattleDestinyModifier(self, 2, self.getZoneOwner()));
+            String opponent = self.getZoneOwner();
+            return List.of(new TotalBattleDestinyModifier(self, 2, opponent),
+                    new DuelTotalModifier(self, Filters.and(Filters.owner(opponent), Filters.character), 2));
         }
         return List.of();
     }
@@ -160,11 +163,32 @@ public class Card1220_138 extends AbstractEpicEventDeployable {
         if (!playerId.equals(self.getOwner()) || !onJediSide(self)
                 || !GameConditions.isDuringYourTurn(game, playerId) || !GameConditions.hasHand(game, playerId)) return List.of();
         int cost = game.getGameState().getStackedCards(self).size();
-        if (cost > 0 && !GameConditions.canUseForce(game, playerId, cost)) return List.of();
-        var action = new TopLevelGameTextAction(self, playerId, sourceId);
-        action.setText("Stack a card from hand face up");
-        if (cost > 0) action.appendCost(new UseForceEffect(action, playerId, cost));
-        action.appendEffect(new StackCardFromHandEffect(action, playerId, self));
-        return List.of(action);
+        List<TopLevelGameTextAction> actions = new ArrayList<>();
+        if (cost == 0 || GameConditions.canUseForce(game, playerId, cost)) {
+            var action = new TopLevelGameTextAction(self, playerId, sourceId);
+            action.setText("Stack a card from hand face up");
+            if (cost > 0) action.appendCost(new UseForceEffect(action, playerId, cost));
+            action.appendEffect(new StackCardFromHandEffect(action, playerId, self));
+            actions.add(action);
+        }
+        // Instead of using X Force, may turn X cards here face down.
+        if (cost > 0 && Filters.filter(game.getGameState().getStackedCards(self), game, Zone.STACKED).size() >= cost) {
+            var action = new TopLevelGameTextAction(self, playerId, sourceId);
+            action.setText("Turn " + cost + " card(s) here face down instead of using Force to stack a card from hand");
+            action.appendCost(new PassthruEffect(action) {
+                @Override
+                protected void doPlayEffect(SwccgGame game) {
+                    var state = game.getGameState();
+                    var faceUp = new ArrayList<>(Filters.filter(state.getStackedCards(self), game, Zone.STACKED));
+                    for (var card : faceUp.subList(0, Math.min(cost, faceUp.size()))) {
+                        state.relocateCardAsStacked(card, self, true, false);
+                    }
+                    state.sendMessage(self.getOwner() + " turns " + cost + " cards stacked on It Is The Future You See face down");
+                }
+            });
+            action.appendEffect(new StackCardFromHandEffect(action, playerId, self));
+            actions.add(action);
+        }
+        return actions;
     }
 }
