@@ -40,6 +40,7 @@ public class Card_1261_032_Tests {
         assertEquals(PlayCardZoneOption.ATTACHED, bp.getSinglePlayCardZoneOption());
         scn.BlueprintCardTypeCheck(bp, new ArrayList<>(List.of(CardType.EFFECT)));
         scn.BlueprintIconCheck(bp, new ArrayList<>(List.of(Icon.EFFECT, Icon.PREMIUM, Icon.LEGACY_BLOCK_6)));
+        scn.BlueprintKeywordCheck(bp, new ArrayList<>());
         assertTrue(bp.isImmuneToCardTitle(Title.Alter));
     }
 
