@@ -6,6 +6,7 @@ import com.gempukku.swccgo.cards.effects.usage.OncePerTurnEffect;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.GameTextActionId;
 import com.gempukku.swccgo.common.Icon;
+import com.gempukku.swccgo.common.Persona;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Uniqueness;
@@ -33,6 +34,7 @@ public class Card1116_067 extends AbstractAlien {
         super(Side.DARK, 3, 2, 3, 2, 4, "Watto", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_ORIGINAL_SET_16, Rarity.V);
         setVirtualSuffix(true);
         setGameText("'Free' on You're A Slave? is treated as '2 Force.' Once per turn, may shuffle Reserve Deck and draw destiny. If destiny is odd, for remainder of turn your Force drains at [Episode I] sites are +1; if even, may take card drawn into hand.");
+        addPersona(Persona.WATTO);
         addIcons(Icon.TATOOINE);
     }
 

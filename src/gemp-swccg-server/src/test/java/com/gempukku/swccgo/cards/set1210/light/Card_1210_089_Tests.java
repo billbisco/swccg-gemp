@@ -4,6 +4,7 @@ import com.gempukku.swccgo.common.CardType;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Keyword;
+import com.gempukku.swccgo.common.Persona;
 import com.gempukku.swccgo.common.Phase;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class Card_1210_089_Tests {
@@ -132,5 +134,82 @@ public class Card_1210_089_Tests {
         scn.StartGame();
         scn.MoveCardsToLocation(site, boshek);
         assertEquals(3, scn.game().getModifiersQuerying().getImmunityToAttritionLessThan(scn.gameState(), boshek), scn.epsilon);
+    }
+
+    protected VirtualTableScenario GetPersonaScenario() {
+        return new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("boshek", "1210_89");
+                    put("oldboshek", "1_4");
+                    put("freighter", "1116_25");
+                    put("tatooine", "1_127");
+                    put("cantina", "1_128");
+                }},
+                new HashMap<>() {{
+                    put("tie", "1_304");
+                }},
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+    }
+
+    @Test
+    public void BoShekHasBoShekPersona() {
+        var scn = GetPersonaScenario();
+        var card = scn.GetLSCard("boshek").getBlueprint();
+        scn.BlueprintPersonaCheck(card, new ArrayList<>() {{
+            add(Persona.BOSHEK);
+        }});
+    }
+
+    @Test
+    public void BoShekCountsAsBoShekForBoSheksModifiedLightFreighter() {
+        var scn = GetPersonaScenario();
+        var boshek = scn.GetLSCard("boshek");
+        var freighter = scn.GetLSCard("freighter");
+        var tatooine = scn.GetLSCard("tatooine");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(tatooine);
+        scn.MoveCardsToLocation(tatooine, freighter);
+        scn.BoardAsPilot(freighter, boshek);
+        // "While BoShek piloting: maneuver ... +2" (Filters.persona(BOSHEK))
+        assertEquals(5, scn.GetManeuver(freighter));
+    }
+
+    @Test
+    public void BoShekMayDeployWhileNoOtherVersionIsOnTable() {
+        var scn = GetPersonaScenario();
+        var boshek = scn.GetLSCard("boshek");
+        var cantina = scn.GetLSCard("cantina");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(cantina);
+        scn.MoveCardsToLSHand(boshek);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        scn.EnsureLSForcePile(8);
+        assertTrue(scn.LSCardPlayAvailable(boshek, "Deploy"));
+    }
+
+    @Test
+    public void BoShekMayNotDeployWhileAnotherBoShekIsOnTable() {
+        var scn = GetPersonaScenario();
+        var boshek = scn.GetLSCard("boshek");
+        var oldboshek = scn.GetLSCard("oldboshek");
+        var cantina = scn.GetLSCard("cantina");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(cantina);
+        scn.MoveCardsToLocation(cantina, oldboshek);
+        scn.MoveCardsToLSHand(boshek);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        scn.EnsureLSForcePile(8);
+        assertFalse(scn.LSCardPlayAvailable(boshek, "Deploy"));
     }
 }
