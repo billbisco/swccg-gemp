@@ -39,7 +39,7 @@ public class Card_1240_017_Tests {
         var scn = scenario();
         var card = scn.GetDSCard("ysalamir").getBlueprint();
         assertEquals("Thrawn's Ysalamir", card.getTitle());
-        assertEquals(CardType.CREATURE, card.getCardType());
+        assertTrue(card.getCardTypes().contains(CardType.CREATURE));
         assertEquals(Uniqueness.UNIQUE, card.getUniqueness());
         assertEquals(Side.DARK, card.getSide());
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_4, card.getExpansionSet());

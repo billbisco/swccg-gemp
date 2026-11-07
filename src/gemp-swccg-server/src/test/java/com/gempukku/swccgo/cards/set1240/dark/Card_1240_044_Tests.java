@@ -52,7 +52,7 @@ public class Card_1240_044_Tests {
         assertEquals(Uniqueness.UNRESTRICTED, card.getUniqueness());
         assertTrue(card.hasVirtualSuffix());
         assertEquals(Side.DARK, card.getSide());
-        assertEquals(CardType.INTERRUPT, card.getCardType());
+        assertTrue(card.getCardTypes().contains(CardType.INTERRUPT));
         assertEquals(CardSubtype.USED, card.getCardSubtype());
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_4, card.getExpansionSet());
         assertEquals(Rarity.V, card.getRarity());

@@ -72,7 +72,7 @@ public class Card_1240_037_Tests {
         assertTrue(card.hasVirtualSuffix());
         assertEquals(0, card.getDestiny(), scn.epsilon);
         assertEquals(Side.DARK, card.getSide());
-        assertEquals(CardType.EPIC_EVENT, card.getCardType());
+        assertTrue(card.getCardTypes().contains(CardType.EPIC_EVENT));
         assertEquals(Uniqueness.UNIQUE, card.getUniqueness());
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_4, card.getExpansionSet());
         assertEquals(Rarity.V, card.getRarity());

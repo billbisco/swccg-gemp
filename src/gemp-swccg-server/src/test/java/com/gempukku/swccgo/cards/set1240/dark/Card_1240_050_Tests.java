@@ -69,7 +69,7 @@ public class Card_1240_050_Tests {
         assertEquals("Coruscant: ISB Central Office", card.getTitle());
         assertEquals(Side.DARK, card.getSide());
         assertEquals(Uniqueness.UNIQUE, card.getUniqueness());
-        assertEquals(CardType.LOCATION, card.getCardType());
+        assertTrue(card.getCardTypes().contains(CardType.LOCATION));
         assertEquals(CardSubtype.SITE, card.getCardSubtype());
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_4, card.getExpansionSet());
         assertEquals(Rarity.V, card.getRarity());
