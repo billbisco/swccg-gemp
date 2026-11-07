@@ -127,7 +127,7 @@ public class Card_1261_092_Tests {
         passResponsesUntil(scn, () -> available(scn, "Cancel Lateral Damage"));
         assertTrue(available(scn, "Cancel Lateral Damage"));
         scn.LSPlayCard(scn.GetLSCard("combo"), "Cancel Lateral Damage");
-        assertFalse(scn.GetDSAvailableActions().stream().anyMatch(x -> x.contains("Sense")));
+        assertFalse(scn.GetDSAvailableActions().stream().anyMatch(x -> x.contains("Draw destiny to cancel")));
         scn.PassAllResponses();
         assertFalse(scn.GetDSCard("damage").getZone().isInPlay());
         assertTrue(scn.GetPower(scn.GetLSCard("home")) > 0);
@@ -217,6 +217,32 @@ public class Card_1261_092_Tests {
         assertTrue(scn.GetLSLostPile().contains(combo));
         assertFalse(available(scn, RETRIEVE));
     }
+
+    @Test public void realSenseCanRespondToTheLostModeButNotTheCancellationMode() {
+        var vulnerable = retrieval(false);
+        vulnerable.MoveCardsToDSHand(vulnerable.GetDSCard("sense"));
+        vulnerable.LSPlayCard(vulnerable.GetLSCard("combo"), RETRIEVE);
+        passResponsesUntil(vulnerable, () -> vulnerable.GetDSAvailableActions().stream().anyMatch(x -> x.contains("Draw destiny to cancel")));
+        assertTrue(vulnerable.GetDSAvailableActions().toString(), vulnerable.DSCardPlayAvailable(vulnerable.GetDSCard("sense")));
+        vulnerable.PrepareDSDestiny(1);
+        vulnerable.DSPlayCard(vulnerable.GetDSCard("sense"), "Draw destiny to cancel");
+        if (vulnerable.DSHasCardChoiceAvailable(vulnerable.GetDSCard("vader"))) vulnerable.DSChooseCard(vulnerable.GetDSCard("vader"));
+        vulnerable.PassAllResponses(); vulnerable.PassDestinyDrawResponses(); vulnerable.PassAllResponses();
+        assertTrue(vulnerable.GetLSLostPile().contains(vulnerable.GetLSCard("red")));
+        assertTrue(vulnerable.GetLSLostPile().contains(vulnerable.GetLSCard("trooper")));
+    }
+
+    @Test public void zeroDestinyDoesNotRetrieveAndStillConsumesTheGameUse() {
+        var scn = retrieval(false);
+        scn.PrepareLSDestiny(0);
+        scn.LSPlayCard(scn.GetLSCard("combo"), RETRIEVE);
+        scn.PassAllResponses(); scn.PassDestinyDrawResponses(); scn.PassAllResponses();
+        assertTrue(scn.GetLSLostPile().contains(scn.GetLSCard("red")));
+        assertTrue(scn.GetLSLostPile().contains(scn.GetLSCard("trooper")));
+        assertTrue(scn.GetLSLostPile().contains(scn.GetLSCard("combo")));
+        assertFalse(available(scn, RETRIEVE));
+    }
+
 
     @Test public void retrieveBothRealCardKindsAndTakeOnlyOneIntoHand() {
         resolveRetrieval(retrieval(false), 2, true);
