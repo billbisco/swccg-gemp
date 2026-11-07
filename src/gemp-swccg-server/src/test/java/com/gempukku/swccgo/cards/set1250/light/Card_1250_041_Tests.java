@@ -159,4 +159,82 @@ public class Card_1250_041_Tests {
         assertEquals(Zone.OUT_OF_PLAY, s.GetLSCard("survivor").getZone());
         assertEquals(before, s.GetLSForcePileCount());
     }
+
+    private VirtualTableScenario sabaccScenario() {
+        return new VirtualTableScenario(new HashMap<>() {{
+            put("survivor", "1250_41"); put("wolfman", "1_30"); put("destiny3", "1_47");
+            put("sabacc", "6_67"); put("han", "1_11"); put("chamber", "6_81");
+        }}, new HashMap<>() {{
+            put("ds5a", "200_120"); put("ds5b", "200_120");
+        }}, 10, 10, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
+    }
+
+    /**
+     * Light plays Jabba's Palace Sabacc (stakes: a character weapon or non-unique alien) with Han and loses
+     * 7 to 10 while holding the given alien plus a destiny 3 card. Returns the scenario once Dark is asked to
+     * collect its winnings.
+     */
+    private VirtualTableScenario loseSabaccHolding(String alienName) {
+        var s = sabaccScenario(); s.StartGame();
+        var alien = s.GetLSCard(alienName); var destiny3 = s.GetLSCard("destiny3");
+        var chamber = s.GetLSCard("chamber");
+        s.MoveLocationToTable(chamber);
+        s.MoveCardsToLocation(chamber, s.GetLSCard("han"));
+        s.MoveCardsToHand(s.GetLSCard("sabacc"));
+        s.MoveCardsToHand(s.GetLSCard(alienName.equals("survivor") ? "wolfman" : "survivor"));
+        s.MoveCardsToTopOfDSReserveDeck(s.GetDSCard("ds5a"), s.GetDSCard("ds5b"));
+        s.MoveCardsToTopOfLSReserveDeck(alien, destiny3);
+
+        s.DSPass(); s.DSChoose("yes");
+        assertTrue(s.AwaitingLSActivatePhaseActions());
+        s.LSPlayCard(s.GetLSCard("sabacc"));
+        s.LSChooseCard(s.GetLSCard("han"));
+        for (int i = 0; i < 30 && !s.LSDecisionAvailable("set sabacc value"); i++) {
+            if (s.GetCurrentDecision().getText().contains("draw another")) s.PlayerChooseNo(s.GetDecidingPlayer());
+            else s.PlayerPass(s.GetDecidingPlayer());
+        }
+        // The alien is a clone card (aliens are clone cards); Han is a gambler, so it may be used as a 4
+        assertTrue(s.LSHasCardChoiceAvailable(alien));
+        assertFalse(s.LSHasCardChoiceAvailable(destiny3));
+        s.LSChooseCard(alien);
+        assertTrue(s.LSDecisionAvailable("use 4 as the clone card value"));
+        s.LSChoose("Yes");
+        assertEquals(7, s.GetLSSabaccTotal());
+        assertEquals(10, s.GetDSSabaccTotal());
+        s.PassAllResponses(); // total calculated
+        s.PassAllResponses(); // winner determined
+        return s;
+    }
+
+    @Test
+    public void ActualJabbasPalaceSabaccNeverWinsSurvivorAsStakes() {
+        var s = loseSabaccHolding("survivor");
+        var survivor = s.GetLSCard("survivor"); var destiny3 = s.GetLSCard("destiny3");
+        // Survivor is a non-unique alien but may never be won: no stake is available, so Dark only chooses a card to be lost
+        assertTrue(s.DSDecisionAvailable("to be lost"));
+        assertTrue(s.DSHasCardChoiceAvailable(survivor));
+        assertTrue(s.DSHasCardChoiceAvailable(destiny3));
+        s.DSChooseCard(survivor);
+        s.PassAllResponses();
+        assertTrue(s.GetLSLostPile().contains(survivor));
+        assertFalse(s.GetDSUsedPile().contains(survivor));
+    }
+
+    @Test
+    public void ActualJabbasPalaceSabaccStillWinsAnOrdinaryNonUniqueAlien() {
+        var s = loseSabaccHolding("wolfman");
+        var wolfman = s.GetLSCard("wolfman"); var destiny3 = s.GetLSCard("destiny3");
+        // The Wolfman is the only stake, so it is won (placed in the winner's Used Pile) rather than chosen to be lost
+        assertFalse(s.DSDecisionAvailable("to be lost"));
+        if (s.DSDecisionAvailable("place in your Used Pile")) {
+            assertTrue(s.DSHasCardChoiceAvailable(wolfman));
+            assertFalse(s.DSHasCardChoiceAvailable(destiny3));
+            s.DSChooseCard(wolfman);
+        }
+        s.PassAllResponses();
+        assertTrue(s.GetDSUsedPile().contains(wolfman));
+        assertFalse(s.GetLSLostPile().contains(wolfman));
+    }
 }

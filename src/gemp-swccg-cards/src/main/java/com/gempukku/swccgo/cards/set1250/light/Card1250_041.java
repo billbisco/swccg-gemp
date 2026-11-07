@@ -36,6 +36,7 @@ public class Card1250_041 extends AbstractAlien {
         setGameText("When deployed, you may not initiate battle here this turn. While at opponent's site, adds one [Light Side Force] and one [Dark Side Force]. May 'swing' lightsabers for free. May never be won in sabacc. Immune to attrition < 5. End of your turn: Use 1 Force to maintain OR Lose 1 Force to place in Used Pile OR Place out of play.");
         addIcons(Icon.SPECIAL_EDITION, Icon.EPISODE_I, Icon.WARRIOR, Icon.MAINTENANCE);
         addKeyword(Keyword.FEMALE);
+        setMayNeverBeWonInSabacc(true);
     }
 
     @Override
