@@ -76,7 +76,7 @@ public class Card_1261_003_Tests {
     }
 
     @Test
-    public void AtAtDriverDeploysVehicleSiteOnlyOnHisWalkerForOneForceAndCannotRepeat() {
+    public void AtAtDriverDeploysVehicleSitesOnlyOnHisWalkerForOneForceEachWithoutInventedTurnLimit() {
         var scn = scenario(); scn.StartGame(); var driver = scn.GetDSCard("driver"); var walker = scn.GetDSCard("walker");
         scn.MoveCardsToLocation(scn.GetDSStartingLocation(), walker, scn.GetDSCard("otherWalker")); scn.BoardAsPilot(walker, driver);
         scn.SkipToDSTurn(Phase.DEPLOY); scn.EnsureDSForcePile(4);
@@ -98,7 +98,17 @@ public class Card_1261_003_Tests {
         assertFalse("Completed location search must end revealed-state by reshuffling", scn.gameState().isCardRevealedFromPile(revealed));
         assertEquals(Zone.LOCATIONS, site.getZone()); assertEquals(force - 1, scn.GetDSForcePileCount());
         if (scn.AwaitingLSDeployPhaseActions()) scn.LSPass();
-        assertFalse(scn.DSCardActionAvailable(driver, "Deploy vehicle site from Reserve Deck"));
+        assertTrue("No printed timeframe limits this download to once per turn", scn.DSCardActionAvailable(driver, "Deploy vehicle site from Reserve Deck"));
+        var secondSite = MissionTestSupport.putInReserve(scn, 1261032, scn.DS,
+                new AbstractNonuniqueVehicleSite(Side.DARK, "AT-AT: Test Cargo Hold", Filters.AT_AT,
+                        Uniqueness.UNRESTRICTED, ExpansionSet.HOTH, Rarity.C1) {
+                    { addIcons(Icon.INTERIOR_SITE, Icon.MOBILE); addIcon(Icon.DARK_FORCE, 1); }
+                });
+        scn.DSUseCardAction(driver, "Deploy vehicle site from Reserve Deck"); scn.PassAllResponses();
+        scn.DSChooseCard(secondSite); scn.PassAllResponses();
+        if (scn.DSDecisionAvailable("On which side of")) { scn.DSChooseOption("Right"); scn.PassAllResponses(); }
+        assertEquals(walker, secondSite.getRelatedStarshipOrVehicle()); assertEquals(Zone.LOCATIONS, secondSite.getZone());
+        assertEquals(force - 2, scn.GetDSForcePileCount());
     }
 
     @Test

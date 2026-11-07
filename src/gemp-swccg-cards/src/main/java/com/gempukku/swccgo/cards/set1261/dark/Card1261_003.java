@@ -3,7 +3,6 @@ package com.gempukku.swccgo.cards.set1261.dark;
 import com.gempukku.swccgo.cards.AbstractImperial;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.conditions.PilotingCondition;
-import com.gempukku.swccgo.cards.effects.usage.OncePerTurnEffect;
 import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
@@ -43,13 +42,11 @@ public class Card1261_003 extends AbstractImperial {
             PhysicalCard self, int gameTextSourceCardId) {
         GameTextActionId id = GameTextActionId.LEGACY__AT_AT_DRIVER__DEPLOY_VEHICLE_SITE;
         if (GameConditions.isPiloting(game, self, Filters.AT_AT)
-                && GameConditions.isOncePerTurn(game, self, playerId, gameTextSourceCardId, id)
                 && GameConditions.canUseForce(game, playerId, 1)
                 && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, id)) {
             PhysicalCard walker = self.getAttachedTo();
             TopLevelGameTextAction action = new TopLevelGameTextAction(self, gameTextSourceCardId, id);
             action.setText("Deploy vehicle site from Reserve Deck");
-            action.appendUsage(new OncePerTurnEffect(action));
             action.appendCost(new UseForceEffect(action, playerId, 1));
             action.appendEffect(new DeployCardFromReserveDeckEffect(action,
                     Filters.vehicle_site, Filters.siteOfStarshipOrVehicle(walker), true));
