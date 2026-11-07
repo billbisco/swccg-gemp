@@ -29,10 +29,10 @@ public class Card_1250_049_Tests {
             put("plo", "1250_49"); put("yoda", "4_2"); put("ship", "1_140"); put("system", "1_135");
             put("speeder", "3_69"); put("cost", "1_153"); put("rifle", "1_153");
             put("warrior", "1_28"); put("madakor", "12_1"); put("otherWarrior", "1_28");
-            put("luke", "1_19"); put("nonWeapon", "1_5");
+            put("luke", "1_19"); put("nonWeapon", "1_5"); put("naboo", "12_83");
         }}, new HashMap<>() {{
             put("trooper", "1_194"); put("yularen", "1_166"); put("rifle", "1_312");
-            put("scout", "8_175"); put("cannon", "8_178");
+            put("scout", "8_175"); put("cannon", "8_178"); put("vader", "1_168");
         }}, 30, 30, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 objectiveOutsideDeck, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -107,14 +107,10 @@ public class Card_1250_049_Tests {
         s.MoveCardsToLocation(s.GetLSStartingLocation(), s.GetLSCard("plo"), s.GetLSCard("warrior"));
         s.MoveCardsToLocation(s.GetDSStartingLocation(), s.GetLSCard("otherWarrior"));
         if (darkTurn) s.SkipToDSTurn(Phase.CONTROL); else s.SkipToLSTurn(Phase.CONTROL);
+        if (s.GetLSForcePileCount() < 2) s.LSActivateForceCheat(2);
         s.MoveOutOfPlay(s.GetLSCard("cost"));
         s.MoveCardsToTopOfLSReserveDeck(s.GetLSCard("rifle"), s.GetLSCard("nonWeapon"));
-        if (darkTurn) {
-            s.LSActivateForceCheat(4);
-            if (s.DSAnyDecisionsAvailable()) s.DSPass();
-        } else if (s.GetLSForcePileCount() < 2) {
-            s.LSActivateForceCheat(2);
-        }
+        if (darkTurn && s.DSAnyDecisionsAvailable()) s.DSPass();
         return s;
     }
 
@@ -175,11 +171,13 @@ public class Card_1250_049_Tests {
         var plo = s.GetLSCard("plo"); var speeder = s.GetLSCard("speeder");
         s.MoveCardsToLocation(site, plo, speeder, s.GetLSCard("warrior"), s.GetLSCard("luke"), s.GetDSCard("trooper"));
         if (piloting) s.BoardAsPilot(speeder, plo); else s.BoardAsPassenger(speeder, plo);
+        // Keep the back side up: the printed Objective flips without a Dark Jedi at an interior Naboo battleground.
+        var naboo = s.GetLSCard("naboo"); s.MoveLocationToTable(naboo); s.MoveCardsToLocation(naboo, s.GetDSCard("vader"));
         var objective = s.GetLSCard("objective"); s.MoveCardsToLSSideOfTable(objective);
         objective.setObjectiveDeploymentComplete(true); s.gameState().flipCard(s.game(), objective, true);
-        assertEquals("Duel Of The Fates", objective.getBlueprint().getTitle());
         if (yodaRestriction) s.MoveCardsToLocation(site, s.GetLSCard("yoda"));
         s.SkipToLSTurn(Phase.BATTLE);
+        assertEquals("Duel Of The Fates", objective.getBlueprint().getTitle());
         return s;
     }
 
