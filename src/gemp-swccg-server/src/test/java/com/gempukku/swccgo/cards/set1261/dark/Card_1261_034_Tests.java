@@ -132,4 +132,30 @@ public class Card_1261_034_Tests {
         assertEquals(shipPower + 4, scn.GetPower(ship), scn.epsilon);
         assertEquals(otherPower, scn.GetPower(other), scn.epsilon);
     }
+
+    @Test(timeout = 10000)
+    public void actualVehicleBattleUsesCharactersAtTheRelatedVehicleSite() {
+        var scn = new VirtualTableScenario(new HashMap<>(Map.of("luke", "1_19")),
+                new HashMap<>(Map.of("protocols", "1261_34", "walker", "3_157",
+                        "platform", "1220_67", "trooper", "1_194")),
+                18, 18, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
+        scn.StartGame();
+        var ground = scn.GetDSStartingLocation();
+        var walker = scn.GetDSCard("walker");
+        var platform = scn.GetDSCard("platform");
+        scn.MoveCardsToLocation(ground, walker, scn.GetLSCard("luke"));
+        var placement = scn.gameState().getLocationPlacement(scn.game(), platform, null, null).stream()
+                .filter(p -> p.getParentStarshipOrVehicleCard() == walker).findFirst().orElseThrow();
+        scn.MoveLocationToTable(platform, placement);
+        assertSame(walker, platform.getRelatedStarshipOrVehicle());
+        scn.MoveCardsToLocation(platform, scn.GetDSCard("trooper"));
+        scn.MoveCardsToDSSideOfTable(scn.GetDSCard("protocols"));
+        var unmodified = scn.GetPower(walker);
+        scn.DSStartBattleAndSkipToWeaponsSegment(ground);
+        assertTrue(scn.IsActiveBattle());
+        assertEquals(unmodified + 2, scn.GetPower(walker), scn.epsilon);
+    }
+
 }
