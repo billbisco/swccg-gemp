@@ -26,6 +26,10 @@ public class Card_1240_029_Tests {
     protected VirtualTableScenario GetScenario() {
         return new VirtualTableScenario(
                 new HashMap<>() {{
+                    put("aimhigh", "13_4");
+                    put("aimhighde", "8_34");
+                    put("aimhighv", "1100_2");
+                    put("insurrectionaimhigh", "12_44");
                 }},
                 new HashMap<>() {{
                     put("bones", "1240_29");
@@ -134,5 +138,50 @@ public class Card_1240_029_Tests {
         Block4DarkTestSupport.advanceUntil(scn, scn::AwaitingDSDeployPhaseActions, 10);
 
         assertFalse(scn.DSCardActionAvailable(bones, "Deploy creature or dewback from Reserve Deck"));
+    }
+
+    /** Has a Dark Side card retrieve 3 Force with an Aim High printing on table; returns the Aim High prompt. */
+    private String aimHighPromptForRetrievalBy(boolean withBones, String sourceKey, String aimHighKey) {
+        var scn = GetScenario();
+        var bones = scn.GetDSCard("bones");
+        var source = scn.GetDSCard(sourceKey);
+        var site = scn.GetDSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, source);
+        scn.MoveCardsToLSSideOfTable(scn.GetLSCard(aimHighKey));
+        if (withBones) {
+            scn.MoveCardsToDSSideOfTable(bones);
+        }
+        scn.SkipToPhase(Phase.DEPLOY);
+        scn.EnsureForcePile(scn.DS, 6);
+        scn.MoveCardsToTopOfDSLostPile(scn.GetTopOfDSReserveDeck());
+        scn.MoveCardsToTopOfDSLostPile(scn.GetTopOfDSReserveDeck());
+        scn.MoveCardsToTopOfDSLostPile(scn.GetTopOfDSReserveDeck());
+        scn.DSExecuteAdHocEffect(source, new com.gempukku.swccgo.logic.effects.RetrieveForceEffect(
+                new com.gempukku.swccgo.logic.actions.TopLevelGameTextAction(source, scn.DS, source.getCardId()), scn.DS, 3));
+        for (int i = 0; i < 6 && !scn.DSDecisionAvailable("Force to proceed with Force retrieval"); i++) {
+            scn.PassAllResponses();
+        }
+        return scn.DSGetDecision() == null ? "" : scn.DSGetDecision().getText();
+    }
+
+    @Test
+    public void KraytDragonBonesVCreatureRetrievalNeedsOnlyXMinus2ForceForAimHigh() {
+        assertTrue(aimHighPromptForRetrievalBy(true, "womp", "aimhigh").contains("use 1 Force"));
+    }
+
+    @Test
+    public void KraytDragonBonesVAimHighUnchangedWithoutBonesOrForNonCreatureRetrieval() {
+        assertTrue(aimHighPromptForRetrievalBy(false, "womp", "aimhigh").contains("use 3 Force"));
+        assertTrue(aimHighPromptForRetrievalBy(true, "trooper", "aimhigh").contains("use 3 Force"));
+    }
+
+    @Test
+    public void KraytDragonBonesVReducesEveryAimHighPrinting() {
+        assertTrue(aimHighPromptForRetrievalBy(true, "womp", "aimhighde").contains("use 1 Force"));
+        assertTrue(aimHighPromptForRetrievalBy(true, "womp", "aimhighv").contains("use 1 Force"));
+        assertTrue(aimHighPromptForRetrievalBy(true, "womp", "insurrectionaimhigh").contains("use 1 Force"));
+        assertTrue(aimHighPromptForRetrievalBy(false, "womp", "aimhighv").contains("use 3 Force"));
     }
 }

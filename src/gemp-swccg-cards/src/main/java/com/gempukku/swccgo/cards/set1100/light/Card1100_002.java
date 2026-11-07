@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.set1100.light;
 
+import com.gempukku.swccgo.cards.AimHighRules;
 import com.gempukku.swccgo.cards.AbstractDefensiveShield;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.effects.CancelForceRetrievalEffect;
@@ -41,7 +42,7 @@ public class Card1100_002 extends AbstractDefensiveShield {
 
         // Check condition(s)
         if (TriggerConditions.isAboutToRetrieveForce(game, effectResult, opponent)) {
-            final float amountOfForce = ((AboutToRetrieveForceResult) effectResult).getAmountOfForceToRetrieve();
+            final float amountOfForce = AimHighRules.forceToUse(game, self, opponent, (AboutToRetrieveForceResult) effectResult);
 
             final RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
             action.setText("Use Force or cancel retrieval");
