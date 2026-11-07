@@ -36,8 +36,8 @@ public class Card_1262_014_Tests {
         var scn=scenario(); scn.StartGame();
         scn.MoveCardsToDSHand(scn.GetDSCard("why"),scn.GetDSCard("cost"));
         scn.MoveCardsToTopOfDSForcePile(scn.GetDSCard("force1"),scn.GetDSCard("force2"),scn.GetDSCard("force3"));
-        scn.MoveCardsToTopOfDSUsedPile(scn.GetDSCard("used"));
         if(darkTurn) scn.SkipToDSTurn(Phase.DRAW); else scn.SkipToLSTurn(Phase.DRAW);
+        scn.MoveCardsToTopOfDSUsedPile(scn.GetDSCard("used"));
         if(!darkTurn && scn.LSGetDecision()!=null) scn.LSPass();
         return scn;
     }
@@ -63,8 +63,9 @@ public class Card_1262_014_Tests {
     }
     @Test public void WhyDidntYouTellMeCannotSearchEmptyForcePile() {
         var scn=scenario();scn.StartGame();scn.MoveCardsToDSHand(scn.GetDSCard("why"),scn.GetDSCard("cost"));
-        scn.SkipToDSTurn(Phase.ACTIVATE);scn.DSPass();if(scn.DSDecisionAvailable("activate"))scn.DSChooseYes();scn.SkipToPhase(Phase.DRAW);
+        scn.SkipToDSTurn(Phase.CONTROL);
         scn.MoveCardsToDSHand(scn.game().getGameState().getForcePile(scn.DS).toArray(new com.gempukku.swccgo.game.PhysicalCardImpl[0]));
+        scn.SkipToPhase(Phase.DRAW);
         assertNotNull(scn.DSGetDecision());assertFalse(scn.DSCardPlayAvailable(scn.GetDSCard("why"),TAKE));
     }
     @Test public void WhyDidntYouTellMeDrawModeUnavailableDuringDeploy() {
@@ -98,8 +99,9 @@ public class Card_1262_014_Tests {
     private VirtualTableScenario battle(String add) {
         var scn=scenario();scn.StartGame();var site=scn.GetDSStartingLocation();
         scn.MoveCardsToLocation(site,scn.GetDSCard("veers"),scn.GetLSCard("leia"),scn.GetLSCard("luke"));
-        scn.MoveCardsToDSHand(scn.GetDSCard("why"));scn.PrepareLSDestiny(4);scn.PrepareDSDestiny(3);
+        scn.MoveCardsToDSHand(scn.GetDSCard("why"));
         scn.LSStartBattleAndSkipToWeaponsSegment(site);
+        scn.PrepareLSDestiny(4);scn.PrepareDSDestiny(3);
         if(add!=null) {scn.LSUseCardAction(scn.GetLSCard("leia"),add);scn.PassAllResponses();}
         return scn;
     }
@@ -107,7 +109,8 @@ public class Card_1262_014_Tests {
         for(int i=0;i<80;i++) {
             var state=scn.game().getGameState().getTopDrawDestinyState();
             if(state!=null && state.getDrawDestinyEffect().getDestinyType()==type
-                    && state.getDrawDestinyEffect().getDrawnDestinyCard()!=null && scn.DSDecisionAvailable("DESTINY_DRAWN"))
+                    && state.getDrawDestinyEffect().getDrawnDestinyCard()!=null
+                    && (scn.DSDecisionAvailable("DESTINY_DRAWN") || scn.DSDecisionAvailable("Just drew")))
                 return state.getDrawDestinyEffect();
             if(scn.DSDecisionAvailable("battle destiny?"))scn.DSChooseYes();
             else if(scn.LSDecisionAvailable("battle destiny?"))scn.LSChooseYes();
@@ -138,15 +141,16 @@ public class Card_1262_014_Tests {
     }
     @Test public void WhyDidntYouTellMeMayDeclineCancellationAndKeepInterruptInHand() {
         var scn=battle("Add one destiny to total power");var draw=reachDraw(scn,DestinyType.DESTINY_TO_TOTAL_POWER);
-        assertTrue(scn.DSCardPlayAvailable(scn.GetDSCard("why"),CANCEL));scn.PassDestinyDrawResponses();
+        assertTrue(scn.DSCardPlayAvailable(scn.GetDSCard("why"),CANCEL));scn.DSPass();scn.PassAllResponses();
         assertFalse(draw.isDestinyCanceled());assertEquals(Zone.HAND,scn.GetDSCard("why").getZone());
     }
     @Test public void WhyDidntYouTellMeCannotCancelWeaponDestinyDuringWeaponsSegment() {
         var scn=scenario();scn.StartGame();var site=scn.GetDSStartingLocation();
         scn.MoveCardsToLocation(site,scn.GetDSCard("veers"),scn.GetLSCard("luke"));
         scn.AttachCardsTo(scn.GetLSCard("luke"),scn.GetLSCard("blaster"));
-        scn.MoveCardsToDSHand(scn.GetDSCard("why"));scn.PrepareLSDestiny(6);
+        scn.MoveCardsToDSHand(scn.GetDSCard("why"));
         scn.LSStartBattleAndSkipToWeaponsSegment(site);
+        scn.PrepareLSDestiny(6);
         scn.LSUseCardAction(scn.GetLSCard("blaster"),"Fire");scn.LSChooseCard(scn.GetDSCard("veers"));
         scn.PassForceUseResponses();scn.PassResponses("Fire ");
         var draw=reachDraw(scn,DestinyType.WEAPON_DESTINY);
