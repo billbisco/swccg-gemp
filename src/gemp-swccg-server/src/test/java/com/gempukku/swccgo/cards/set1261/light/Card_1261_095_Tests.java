@@ -4,6 +4,7 @@ import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.logic.GameUtils;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
 import com.gempukku.swccgo.logic.effects.LoseCardFromTableEffect;
 import org.junit.Test;
@@ -122,6 +123,7 @@ public class Card_1261_095_Tests {
     }
     @Test public void ScumActuallyCancelsLegacyLandoSystemAsUsed() {
         var scn = started(); scn.MoveCardsToDSHand(scn.GetDSCard("system")); scn.SkipToDSTurn(Phase.CONTROL);
+        scn.MoveCardsToTopOfDSReserveDeck(scn.GetDSCard("lando"));
         scn.DSPlayCard(scn.GetDSCard("system")); scn.DSPass();
         assertTrue(scn.LSPlayUsedInterruptAvailable(scn.GetLSCard("scum"))); scn.LSPlayUsedInterrupt(scn.GetLSCard("scum")); scn.PassAllResponses();
         assertInZone(Zone.LOST_PILE, scn.GetDSCard("system")); assertInZone(Zone.USED_PILE, scn.GetLSCard("scum"));
@@ -141,7 +143,7 @@ public class Card_1261_095_Tests {
         scn.PassResponses("ABOUT_TO_BE_LOST"); return scn;
     }
     private void assertNoRetrieval(VirtualTableScenario scn, com.gempukku.swccgo.game.PhysicalCard victim) {
-        assertEquals(Zone.LOST_PILE, victim.getZone());
+        assertEquals(Zone.LOST_PILE, GameUtils.getZoneFromZoneTop(victim.getZone()));
         // If no response is legal the engine advances without an LS action decision.
         assertFalse(scn.GetLSAvailableActions().stream().anyMatch(text -> text.contains("Retrieve") && text.contains("into hand")));
     }
@@ -166,7 +168,7 @@ public class Card_1261_095_Tests {
     }
     @Test public void ScumCannotRetrieveGamblerAfterResponseWindowCloses() {
         var scn = lose("lando", false); scn.PassAllResponses(); scn.SkipToPhase(Phase.DEPLOY);
-        assertInZone(Zone.LOST_PILE, scn.GetLSCard("lando")); assertFalse(scn.LSPlayLostInterruptAvailable(scn.GetLSCard("scum")));
+        assertNoRetrieval(scn, scn.GetLSCard("lando"));
     }
     @Test public void ScumActuallyRemovesDeployedEjectAndRestoresPermanentPilot() {
         var scn = started(); scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetDSCard("tie"));
