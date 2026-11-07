@@ -7,7 +7,15 @@ import com.gempukku.swccgo.framework.VirtualTableScenario;
 import com.gempukku.swccgo.game.DeployAsCaptiveOption;
 import com.gempukku.swccgo.game.PhysicalCardImpl;
 import com.gempukku.swccgo.game.SwccgCardBlueprint;
+import com.gempukku.swccgo.game.PhysicalCard;
+import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
+import com.gempukku.swccgo.logic.effects.CaptureCharacterOnTableEffect;
+import com.gempukku.swccgo.logic.effects.GoMissingEffect;
+import com.gempukku.swccgo.logic.effects.LoseCardFromTableEffect;
+import com.gempukku.swccgo.logic.effects.PlaceCardOutOfPlayFromTableEffect;
 import com.gempukku.swccgo.logic.modifiers.KeywordModifier;
+import com.gempukku.swccgo.logic.timing.StandardEffect;
+import java.util.function.BiFunction;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -326,5 +334,87 @@ public class Card_1250_078_Tests {
         if (s.LSDecisionAvailable("Choose where to deploy")) s.LSChooseCard(dock);
         s.PassAllResponses();
         assertEquals(dock, trooper.getAtLocation()); assertFalse(objective.isFlipped());
+    }
+    /** Back side up with Palpatine on Coruscant, then the given effect is about to remove him. */
+    private VirtualTableScenario removePalpatine(boolean withPrison,
+            BiFunction<VirtualTableScenario, PhysicalCard, StandardEffect> effect) {
+        var s = flipAndSearch(withPrison); var palpatine = s.GetLSCard("palpatine"); var dock = s.GetLSCard("dock");
+        palpatine.setImprisoned(false);
+        assertTrue(s.GetLSCard("objective").isFlipped()); assertEquals(dock, palpatine.getAtLocation());
+        assertFalse(palpatine.isImprisoned());
+        if (s.AwaitingDSDeployPhaseActions()) s.DSPass();
+        s.LSExecuteAdHocEffect(dock, effect.apply(s, palpatine));
+        if (s.LSDecisionAvailable("Choose prison")) s.LSChooseCard(s.GetLSCard("prison"));
+        s.PassAllResponses();
+        return s;
+    }
+
+    private static TopLevelGameTextAction lsAction(VirtualTableScenario s) {
+        var dock = s.GetLSCard("dock");
+        return new TopLevelGameTextAction(dock, s.LS, dock.getCardId());
+    }
+
+    private void assertFlippedAndImprisoned(VirtualTableScenario s) {
+        var palpatine = s.GetLSCard("palpatine"); var prison = s.GetLSCard("prison");
+        assertFalse("objective flipped back; palpatine " + palpatine.getZone() + " decision " + s.GetCurrentDecision().getText() + " by " + s.GetDecidingPlayer(), s.GetLSCard("objective").isFlipped());
+        assertTrue(palpatine.isImprisoned()); assertEquals(prison, palpatine.getAttachedTo());
+        assertFalse(palpatine.isMissing());
+        assertFalse(s.GetLSLostPile().contains(palpatine));
+        assertTrue(Filters.imprisonedIn(prison).accepts(s.game(), palpatine));
+    }
+
+    @Test
+    public void PalpatineAboutToBeLostFlipsAndIsRelocatedAndImprisonedAtPrison() {
+        assertFlippedAndImprisoned(removePalpatine(true, (s, p) -> new LoseCardFromTableEffect(lsAction(s), p)));
+    }
+
+    @Test
+    public void PalpatineAboutToGoMissingFlipsAndIsImprisonedInsteadOfMissing() {
+        assertFlippedAndImprisoned(removePalpatine(true, (s, p) -> new GoMissingEffect(lsAction(s), p)));
+    }
+
+    @Test
+    public void PalpatineAboutToBeCapturedFlipsAndIsImprisonedAtPrisonInsteadOfCaptured() {
+        assertFlippedAndImprisoned(removePalpatine(true, (s, p) -> {
+            var vader = s.GetDSCard("vader");
+            return new CaptureCharacterOnTableEffect(new TopLevelGameTextAction(vader, s.DS, vader.getCardId()), p);
+        }));
+    }
+
+    @Test
+    public void PalpatineAboutToBePlacedOutOfPlayFlipsAndIsImprisonedAtPrison() {
+        assertFlippedAndImprisoned(removePalpatine(true, (s, p) -> new PlaceCardOutOfPlayFromTableEffect(lsAction(s), p)));
+    }
+
+    @Test
+    public void WithoutAPrisonOnTablePalpatineIsStillLostButTheCardFlips() {
+        var s = removePalpatine(false, (sc, p) -> new LoseCardFromTableEffect(lsAction(sc), p));
+        var palpatine = s.GetLSCard("palpatine");
+        assertFalse(s.GetLSCard("objective").isFlipped());
+        assertTrue(s.GetLSLostPile().contains(palpatine)); assertFalse(palpatine.isImprisoned());
+    }
+
+    @Test
+    public void OpponentsPalpatineFlipsTheCardButIsNotImprisoned() {
+        var s = flipAndSearch(true); var objective = s.GetLSCard("objective");
+        var emperor = s.GetDSCard("emperor"); var site = s.GetDSStartingLocation();
+        // Light's own Palpatine leaves Coruscant so the front does not flip straight back.
+        s.MoveCardsToLocation(site, emperor, s.GetLSCard("palpatine"));
+        if (s.AwaitingDSDeployPhaseActions()) s.DSPass();
+        s.LSExecuteAdHocEffect(s.GetLSCard("dock"), new LoseCardFromTableEffect(lsAction(s), emperor));
+        assertFalse(s.LSDecisionAvailable("Choose prison"));
+        s.PassAllResponses();
+        assertFalse(objective.isFlipped()); assertTrue(s.GetDSLostPile().contains(emperor));
+        assertFalse(emperor.isImprisoned());
+    }
+
+    @Test
+    public void LosingANonPalpatineCharacterDoesNotFlipTheBack() {
+        var s = flipAndSearch(true); var objective = s.GetLSCard("objective"); var clone = s.GetLSCard("clone");
+        s.MoveCardsToLocation(s.GetLSCard("dock"), clone);
+        if (s.AwaitingDSDeployPhaseActions()) s.DSPass();
+        s.LSExecuteAdHocEffect(s.GetLSCard("dock"), new LoseCardFromTableEffect(lsAction(s), clone));
+        s.PassAllResponses();
+        assertTrue(objective.isFlipped()); assertTrue(s.GetLSLostPile().contains(clone));
     }
 }

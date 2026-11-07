@@ -57,6 +57,7 @@ public class PlayoutOptionalAfterResponsesEffect extends AbstractSuccessfulEffec
                         || effectResult.getType() == EffectResult.Type.ABOUT_TO_DRAW_CARD_FROM_FORCE_PILE
                         || effectResult.getType() == EffectResult.Type.ABOUT_TO_LOSE_OR_FORFEIT_DURING_DAMAGE_SEGMENT
                         || effectResult.getType() == EffectResult.Type.ABOUT_TO_BE_FORFEITED_TO_FROM_TABLE
+                        || effectResult.getType() == EffectResult.Type.ABOUT_TO_GO_MISSING
                         || effectResult.getType() == EffectResult.Type.FORCE_LOST
                         || effectResult.getType() == EffectResult.Type.BATTLE_WEAPONS_SEGMENT_COMPLETED
                         || effectResult.getType() == EffectResult.Type.BATTLE_RESULT_DETERMINED

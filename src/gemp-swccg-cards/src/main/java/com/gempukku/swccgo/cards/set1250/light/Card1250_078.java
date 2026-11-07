@@ -111,6 +111,9 @@ public class Card1250_078 extends AbstractObjective {
     @Override
     protected List<RequiredGameTextTriggerAction> getGameTextRequiredAfterTriggers(SwccgGame game,
             EffectResult result, PhysicalCard self, int gameTextSourceCardId) {
+        // Not in response to this card's own flip: when the back flips this side up because Palpatine is about to
+        // leave, he is still on Coruscant at that moment.
+        if (TriggerConditions.cardFlipped(game, result, self)) return null;
         if (!TriggerConditions.isTableChanged(game, result) || !GameConditions.canBeFlipped(game, self)
                 || !Filters.canSpot(game, self, Filters.and(Filters.your(self), Filters.Palpatine,
                         Filters.on(Title.Coruscant)))) return null;

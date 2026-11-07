@@ -15,6 +15,14 @@ import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.logic.TriggerConditions;
+import com.gempukku.swccgo.logic.GameUtils;
+import com.gempukku.swccgo.logic.effects.FlipCardEffect;
+import com.gempukku.swccgo.logic.effects.PreventableCardEffect;
+import com.gempukku.swccgo.logic.effects.choose.ChooseCardOnTableEffect;
+import com.gempukku.swccgo.logic.timing.results.AboutToCaptureCardResult;
+import com.gempukku.swccgo.logic.timing.results.AboutToGoMissingResult;
+import com.gempukku.swccgo.logic.timing.results.AboutToLeaveTableResult;
+import com.gempukku.swccgo.logic.timing.results.AboutToLoseCardFromTableResult;
 import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
 import com.gempukku.swccgo.logic.effects.LoseForceEffect;
@@ -27,6 +35,7 @@ import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 import com.gempukku.swccgo.logic.timing.EffectResult;
 import com.gempukku.swccgo.logic.timing.results.LostFromTableResult;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /** Legacy Block 5 They Will Be Lost And Confused, back of printing 78. */
@@ -81,12 +90,84 @@ public class Card1250_078_BACK extends AbstractObjective {
             action.appendEffect(new TakeCardIntoHandFromReserveDeckEffect(action, self.getOwner(), true));
             return List.of(action);
         }
+        List<RequiredGameTextTriggerAction> actions = new ArrayList<>();
         if (TriggerConditions.justLost(game, result, Filters.abilityMoreThan(2))) {
             var action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
             action.setText("Owner loses 1 Force");
             action.appendEffect(new LoseForceEffect(action, ((LostFromTableResult) result).getCard().getOwner(), 1));
-            return List.of(action);
+            actions.add(action);
         }
-        return null;
+        var flipAction = getPalpatineAboutToLeaveAction(game, result, self, gameTextSourceCardId);
+        if (flipAction != null) {
+            actions.add(flipAction);
+        }
+        return actions.isEmpty() ? null : actions;
+    }
+
+    /**
+     * Flip this card (and if possible, relocate Palpatine to a prison and imprison him there) if Palpatine is about
+     * to be captured, lost, missing, or removed from table.
+     */
+    private RequiredGameTextTriggerAction getPalpatineAboutToLeaveAction(SwccgGame game, EffectResult result,
+            PhysicalCard self, int gameTextSourceCardId) {
+        if (!GameConditions.canBeFlipped(game, self)) return null;
+
+        PhysicalCard palpatine;
+        PreventableCardEffect preventable;
+        boolean leavingTable = false;
+        boolean canBeSaved = true;
+        if (TriggerConditions.isAboutToBeCaptured(game, result, Filters.Palpatine)) {
+            var captureResult = (AboutToCaptureCardResult) result;
+            palpatine = captureResult.getCardToBeCaptured();
+            preventable = captureResult.getPreventableCardEffect();
+        } else if (TriggerConditions.isAboutToGoMissing(game, result, Filters.Palpatine)) {
+            var missingResult = (AboutToGoMissingResult) result;
+            palpatine = missingResult.getCardToGoMissing();
+            preventable = missingResult.getPreventableCardEffect();
+        } else if (TriggerConditions.isAboutToLeaveTable(game, result, Filters.Palpatine)) {
+            var leaveResult = (AboutToLeaveTableResult) result;
+            palpatine = leaveResult.getCardAboutToLeaveTable();
+            preventable = leaveResult.getPreventableCardEffect();
+            leavingTable = true;
+            // In an "all cards situation" no individual card may be saved.
+            canBeSaved = !(result instanceof AboutToLoseCardFromTableResult loseResult
+                    && loseResult.isAllCardsSituation());
+        } else {
+            return null;
+        }
+
+        var action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
+        action.setText("Flip");
+        action.setActionMsg("Flip " + GameUtils.getCardLink(self));
+
+        // Only a character the Light Side player owns can be held as an imprisoned captive.
+        var prisons = Filters.filterTopLocationsOnTable(game, Filters.prison);
+        if (canBeSaved && preventable != null && !prisons.isEmpty()
+                && palpatine.getOwner().equals(self.getOwner())
+                && Filters.character.accepts(game, palpatine)) {
+            final boolean preventAttached = leavingTable;
+            action.setText("Flip and imprison Palpatine");
+            action.appendEffect(new ChooseCardOnTableEffect(action, self.getOwner(),
+                    "Choose prison to relocate " + GameUtils.getCardLink(palpatine) + " to", prisons) {
+                @Override
+                protected void cardSelected(PhysicalCard prison) {
+                    preventable.preventEffectOnCard(palpatine);
+                    if (preventAttached) {
+                        for (PhysicalCard attached : game.getGameState().getAllAttachedRecursively(palpatine)) {
+                            preventable.preventEffectOnCard(attached);
+                        }
+                    }
+                    if (!palpatine.getZone().isInPlay()) return;
+                    game.getGameState().sendMessage(GameUtils.getCardLink(self) + " relocates "
+                            + GameUtils.getCardLink(palpatine) + " to " + GameUtils.getCardLink(prison)
+                            + " and imprisons him there");
+                    game.getGameState().cardAffectsCard(self.getOwner(), self, palpatine);
+                    game.getGameState().imprisonCharacter(game, palpatine, prison);
+                }
+            });
+        }
+        // Flip last: once flipped, this side's game text (and its pending effects) is no longer active.
+        action.appendEffect(new FlipCardEffect(action, self));
+        return action;
     }
 }

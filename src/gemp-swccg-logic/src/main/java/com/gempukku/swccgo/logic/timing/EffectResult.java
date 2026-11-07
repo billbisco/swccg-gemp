@@ -383,6 +383,9 @@ public abstract class EffectResult implements Snapshotable<EffectResult> {
         IMMUNITY_GRANTED,
 
         CHOICE_MADE,
+
+        // Missing (about to)
+        ABOUT_TO_GO_MISSING,
     }
 
     private Type _type;
