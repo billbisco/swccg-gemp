@@ -18,7 +18,7 @@ public class Card_1263_031_Tests {
 
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>() {{
-            put("fault", "1263_31"); put("immediate", "9_44"); put("traffic", "1_66"); put("paid", "2_32");
+            put("fault", "1263_31"); put("immediate", "9_44"); put("traffic", "1_66"); put("paid", "2_32"); put("free", "9_47");
             put("oldPhylo", "12_20"); put("xwing", "1_146");
         }}, new HashMap<>() {{ put("vader", "1_168"); put("trooper", "1_194"); }},
                 60, 60, StartingSetup.LSStartingLocation("1_129"), StartingSetup.DefaultDSSpaceSystem,
@@ -41,7 +41,7 @@ public class Card_1263_031_Tests {
         scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetDSCard("trooper")); scn.SkipToLSTurn(Phase.CONTROL);
         while (scn.GetLSForcePileCount() > 0) scn.MoveCardsToTopOfLSReserveDeck(scn.GetTopOfLSForcePile());
         if (force > 0) scn.LSActivateForceCheat(force);
-        for (String key : new String[]{"immediate", "traffic", "paid", "oldPhylo", "xwing"}) scn.MoveCardsToTopOfLSReserveDeck(scn.GetLSCard(key));
+        for (String key : new String[]{"immediate", "traffic", "paid", "free", "oldPhylo", "xwing"}) scn.MoveCardsToTopOfLSReserveDeck(scn.GetLSCard(key));
         scn.LSPass(); scn.DSPass();
         return scn;
     }
@@ -65,10 +65,10 @@ public class Card_1263_031_Tests {
     }
     @Test public void FaultPaysTwoToTakeFreeEffectAndReshuffle() {
         var scn = ready(2, "hand"); markReserve(scn); scn.LSPlayCard(scn.GetLSCard("fault"), FREE); scn.PassAllResponses();
-        assertTrue(selectable(scn, "traffic"));
-        assertFalse(selectable(scn, "paid")); assertFalse(selectable(scn, "xwing"));
-        scn.LSChooseCard(scn.GetLSCard("traffic")); scn.PassAllResponses();
-        assertInHand(scn.GetLSCard("traffic")); assertInZone(Zone.USED_PILE, scn.GetLSCard("fault")); assertEquals(0, scn.GetLSForcePileCount()); assertReshuffled(scn);
+        assertTrue(selectable(scn, "free"));
+        assertFalse(selectable(scn, "traffic")); assertFalse(selectable(scn, "paid")); assertFalse(selectable(scn, "xwing"));
+        scn.LSChooseCard(scn.GetLSCard("free")); scn.PassAllResponses();
+        assertInHand(scn.GetLSCard("free")); assertInZone(Zone.USED_PILE, scn.GetLSCard("fault")); assertEquals(0, scn.GetLSForcePileCount()); assertReshuffled(scn);
     }
     @Test public void FaultZeroForceCannotUseEitherPaidSearchMode() {
         var scn = ready(0, "hand"); assertFalse(scn.LSCardPlayAvailable(scn.GetLSCard("fault"), IMMEDIATE));
