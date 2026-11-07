@@ -113,8 +113,7 @@ public class Card_1261_009_Tests {
         var scn = scenario(); scn.StartGame(); var site = scn.GetLSStartingLocation(); var jir = scn.GetDSCard("jir");
         scn.MoveLocationToTable(scn.GetLSCard("cantina")); scn.MoveCardsToLocation(scn.GetLSCard("cantina"), scn.GetLSCard("han"));
         scn.MoveCardsToLocation(site, jir); scn.MoveCardsToDSHand(scn.GetDSCard("trooper"), scn.GetDSCard("yularen"));
-        var objective = new PhysicalCardImpl(126109, "1210_68", "1210_68_BACK", scn.DS,
-                new com.gempukku.swccgo.cards.set1210.dark.Card1210_068(), new com.gempukku.swccgo.cards.set1210.dark.Card1210_068_BACK());
+        var objective = (PhysicalCardImpl) scn.gameState().createPhysicalCard(scn.DS, VirtualTableScenario._cardLibrary, "1210_68");
         scn.gameState().addCardToZone(objective, Zone.HAND, scn.DS, true, false, false);
         scn.MoveCardsToDSSideOfTable(objective); objective.setObjectiveDeploymentComplete(true); scn.gameState().flipCard(scn.game(), objective, true);
         assertFalse(GameConditions.canBeFlipped(scn.game(), objective)); scn.SkipToDSTurn(Phase.DEPLOY);
