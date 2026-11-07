@@ -11,7 +11,7 @@ import static org.junit.Assert.*;
 public class Card_1261_056_Tests {
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>() {{ put("xwing", "1_146"); put("xwingtwo", "1_146"); put("xwingthree", "1_146"); put("xwingfour", "1_146"); put("cocky", "1_76"); }},
-                new HashMap<>() {{ put("black", "1261_56"); put("juno", "601_89"); put("vader", "1_168");
+                new HashMap<>() {{ put("black", "1261_56"); put("juno", "601_89"); put("blackpilot", "1_173"); put("vader", "1_168");
                     put("blacktwo", "1_299"); put("tie", "1_304"); put("destroyer", "1_301"); }}, 30, 30,
                 StartingSetup.DefaultLSSpaceSystem, StartingSetup.DefaultDSSpaceSystem,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
@@ -40,7 +40,8 @@ public class Card_1261_056_Tests {
         var pilots = black.getBlueprint().getValidPilotFilter(scn.DS, scn.game(), black, true);
         assertTrue(pilots.accepts(scn.game(), scn.GetDSCard("juno"))); assertFalse(pilots.accepts(scn.game(), scn.GetDSCard("vader")));
         assertEquals(0, scn.GetBattleDestinyAbility(black));
-        scn.BoardAsPilot(black, scn.GetDSCard("juno")); assertEquals(3, scn.GetBattleDestinyAbility(black));
+        scn.BoardAsPilot(black, scn.GetDSCard("juno")); assertEquals(3, scn.GetBattleDestinyAbility(scn.GetDSCard("juno")));
+        assertEquals(5, scn.GetPower(black));
     }
 
     private VirtualTableScenario battle(boolean natural) {
@@ -59,6 +60,7 @@ public class Card_1261_056_Tests {
         var scn = scenario(); scn.StartGame(); var black = scn.GetDSCard("black"); var tie = scn.GetDSCard("tie");
         scn.MoveCardsToLocation(scn.GetDSStartingLocation(), black, scn.GetDSCard("destroyer"));
         scn.MoveCardsToLocation(scn.GetLSStartingLocation(), tie, scn.GetLSCard("xwing"));
+        scn.BoardAsPilot(black, scn.GetDSCard("juno"));
         var q = scn.game().getModifiersQuerying();
         assertTrue(q.isImmuneToCardTitle(scn.gameState(), tie, Title.Dont_Get_Cocky));
         assertTrue(q.isImmuneToCardTitle(scn.gameState(), black, Title.Dont_Get_Cocky));
@@ -69,8 +71,9 @@ public class Card_1261_056_Tests {
 
     private VirtualTableScenario search() {
         var scn = scenario(); scn.StartGame(); scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("black"));
+        scn.BoardAsPilot(scn.GetDSCard("black"), scn.GetDSCard("juno"));
         scn.SkipToDSTurn(Phase.CONTROL);
-        scn.MoveCardsToTopOfDSReserveDeck(scn.GetDSCard("blacktwo"), scn.GetDSCard("tie"), scn.GetDSCard("juno")); return scn;
+        scn.MoveCardsToTopOfDSReserveDeck(scn.GetDSCard("blacktwo"), scn.GetDSCard("tie"), scn.GetDSCard("blackpilot")); return scn;
     }
 
     private boolean selectable(VirtualTableScenario scn, com.gempukku.swccgo.game.PhysicalCardImpl card) {
@@ -88,7 +91,7 @@ public class Card_1261_056_Tests {
         var scn = search(); var black = scn.GetDSCard("black"); var target = scn.GetDSCard("blacktwo");
         int force = scn.GetDSForcePileCount(); int messages = scn.gameState().getLastMessages().size();
         scn.DSUseCardAction(black, "Take Black Squadron TIE"); scn.PassAllResponses();
-        assertTrue(selectable(scn, target)); assertFalse(selectable(scn, scn.GetDSCard("tie"))); assertFalse(selectable(scn, scn.GetDSCard("juno")));
+        assertTrue(selectable(scn, target)); assertFalse(selectable(scn, scn.GetDSCard("tie"))); assertFalse(selectable(scn, scn.GetDSCard("blackpilot")));
         scn.DSChooseCard(target); scn.PassAllResponses(); assertEquals(Zone.HAND, target.getZone());
         var newMessages = scn.gameState().getLastMessages().subList(messages, scn.gameState().getLastMessages().size());
         assertTrue("Completed search must actually reshuffle Reserve Deck", newMessages.stream().anyMatch(x -> x.contains("shuffles") && x.contains("Reserve Deck")));
@@ -109,12 +112,49 @@ public class Card_1261_056_Tests {
         scn.DSPayRemainingBattleDamageFromReserveDeck(); scn.PassAllResponses();
         assertEquals(immune ? "0" : "1", scn.GetADParam(scn.DS, "min")[0]);
         if (immune) { scn.DSPass(); scn.PassAllResponses(); assertEquals(system, black.getAtLocation()); }
-        else { scn.DSPayAttritionFromCardInPlay(black); scn.PassAllResponses(); com.gempukku.swccgo.framework.Assertions.assertInZone(Zone.LOST_PILE, black); }
+        else { scn.DSChooseCard(black); assertTrue(scn.DSDecisionAvailable("Do you still want to forfeit it?")); scn.DSChooseYes(); scn.PassAllResponses(); com.gempukku.swccgo.framework.Assertions.assertInZone(Zone.LOST_PILE, black); }
     }
 
     @Test
     public void BlackOneActuallySurvivesFourAttritionButMustSatisfyFive() {
         attritionBoundary(4, true); attritionBoundary(5, false);
+    }
+
+    private VirtualTableScenario cockyResponse(boolean protectedTie) {
+        var scn = scenario(); scn.StartGame(); var system = scn.GetDSStartingLocation();
+        scn.MoveCardsToLocation(system, scn.GetDSCard("tie"), scn.GetLSCard("xwing"));
+        if (protectedTie) {
+            scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetDSCard("black"));
+            scn.BoardAsPilot(scn.GetDSCard("black"), scn.GetDSCard("juno"));
+        }
+        else scn.MoveCardsToDSHand(scn.GetDSCard("black"));
+        scn.MoveCardsToLSHand(scn.GetLSCard("cocky")); scn.SkipToDSTurn(Phase.BATTLE);
+        scn.DSUseCardAction(system, "Initiate battle"); return scn;
+    }
+
+    @Test
+    public void BlackOneBlocksActualDontGetCockyAgainstTieAtAnotherSystem() {
+        var scn = cockyResponse(true);
+        for (int i = 0; i < 20 && !scn.AwaitingDSWeaponsSegmentActions(); i++) {
+            assertFalse(scn.GetLSAvailableActions().stream().anyMatch(x -> x.contains("Make a TIE/ln lost")));
+            scn.PlayerPass(scn.GetDecidingPlayer());
+        }
+        assertTrue(scn.AwaitingDSWeaponsSegmentActions());
+        assertEquals(scn.GetDSStartingLocation(), scn.GetDSCard("tie").getAtLocation());
+    }
+
+    @Test
+    public void BlackOneAbsentAllowsActualDontGetCockyToLoseTie() {
+        var scn = cockyResponse(false); var cocky = scn.GetLSCard("cocky");
+        for (int i = 0; i < 20; i++) {
+            if (scn.GetLSAvailableActions().stream().anyMatch(x -> x.contains("Make a TIE/ln lost"))) break;
+            scn.PlayerPass(scn.GetDecidingPlayer());
+        }
+        assertTrue(scn.LSCardPlayAvailable(cocky, "Make a TIE/ln lost"));
+        scn.LSPlayCard(cocky, "Make a TIE/ln lost"); scn.PassAllResponses();
+        if (scn.LSHasCardChoiceAvailable(scn.GetDSCard("tie"))) scn.LSChooseCard(scn.GetDSCard("tie"));
+        scn.PassAllResponses();
+        com.gempukku.swccgo.framework.Assertions.assertInZone(Zone.LOST_PILE, scn.GetDSCard("tie"));
     }
 
 }
