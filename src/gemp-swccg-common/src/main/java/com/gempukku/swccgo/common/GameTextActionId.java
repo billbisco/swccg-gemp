@@ -1701,6 +1701,7 @@ public enum GameTextActionId {
     LEGACY__OUR_ONLY_HOPE__TAKE_ANY_CARD(true),
     LEGACY__A_JEDIS_PATIENCE__DUEL(false, true),
     LEGACY__THE_TIME_FOR_OUR_ATTACK_HAS_COME__DEPLOY_STARSHIP(true),
+    LEGACY__HEADING_FOR_THE_MEDICAL_FRIGATE__TAKE_STARSHIP(true),
     ;
 
     private boolean _searchCardPile;
