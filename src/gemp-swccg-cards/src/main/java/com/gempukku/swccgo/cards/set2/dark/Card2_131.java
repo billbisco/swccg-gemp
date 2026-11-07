@@ -11,6 +11,7 @@ import com.gempukku.swccgo.common.TargetingReason;
 import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.InterruptPersonaReferences;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.GameUtils;
@@ -76,7 +77,7 @@ public class Card2_131 extends AbstractUsedOrLostInterrupt {
     @Override
     protected List<PlayInterruptAction> getGameTextOptionalAfterActions(final String playerId, SwccgGame game, EffectResult effectResult, final PhysicalCard self) {
         // Check condition(s)
-        if (TriggerConditions.justLost(game, effectResult, Filters.or(Filters.Vader, Filters.Vaders_Custom_TIE))
+        if (TriggerConditions.justLost(game, effectResult, Filters.or(InterruptPersonaReferences.vader(game, self), Filters.Vaders_Custom_TIE))
                 || TriggerConditions.justLostFromLocation(game, effectResult, Filters.Imperial, Filters.Death_Star_location)) {
             final PhysicalCard justLostCard = ((LostFromTableResult) effectResult).getCard();
 

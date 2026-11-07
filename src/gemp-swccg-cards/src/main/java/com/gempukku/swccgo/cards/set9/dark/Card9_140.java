@@ -13,6 +13,7 @@ import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.common.Zone;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.InterruptPersonaReferences;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.GameUtils;
@@ -45,7 +46,7 @@ public class Card9_140 extends AbstractLostInterrupt {
     protected List<PlayInterruptAction> getGameTextTopLevelActions(final String playerId, final SwccgGame game, final PhysicalCard self) {
         List<PlayInterruptAction> actions = new LinkedList<PlayInterruptAction>();
 
-        Filter vaderFilter1 = Filters.and(Filters.Vader, Filters.at(Filters.controls(playerId)));
+        Filter vaderFilter1 = Filters.and(InterruptPersonaReferences.vader(game, self), Filters.at(Filters.controls(playerId)));
 
         // Check condition(s)
         if (GameConditions.canSpot(game, self, Filters.and(Filters.Emperor, Filters.on(Title.Death_Star_II)))
@@ -77,7 +78,7 @@ public class Card9_140 extends AbstractLostInterrupt {
             actions.add(action);
         }
 
-        Filter vaderFilter2 = Filters.and(Filters.Vader, Filters.escorting(Filters.or(Filters.Luke, Filters.Leia)),
+        Filter vaderFilter2 = Filters.and(InterruptPersonaReferences.vader(game, self), Filters.escorting(Filters.or(Filters.Luke, Filters.Leia)),
                 Filters.at(Filters.and(Filters.site, Filters.controls(playerId))), Filters.canBeRelocatedToLocation(Filters.Death_Star_II_Docking_Bay, false, true, false, 0, false));
 
         // Check condition(s)

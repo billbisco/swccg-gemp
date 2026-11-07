@@ -11,6 +11,7 @@ import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.InterruptPersonaReferences;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.TriggerConditions;
@@ -74,13 +75,13 @@ public class Card213_020 extends AbstractUsedOrLostInterrupt {
 
         // Check condition(s)
         if (GameConditions.canTakeCardsIntoHandFromReserveDeck(game, playerId, self, gameTextActionId)
-                && GameConditions.hasInHand(game, playerId, Filters.or(Filters.Vader, Filters.inquisitor))) {
+                && GameConditions.hasInHand(game, playerId, Filters.or(InterruptPersonaReferences.vader(game, self), Filters.inquisitor))) {
 
             final PlayInterruptAction action = new PlayInterruptAction(game, self, gameTextActionId, CardSubtype.LOST);
             action.setText("Take inquisitors into hand from Reserve Deck");
             // Pay cost(s)
             action.appendCost(
-                    new ChooseAndLoseCardFromHandEffect(action, playerId, Filters.or(Filters.Vader, Filters.inquisitor)));
+                    new ChooseAndLoseCardFromHandEffect(action, playerId, Filters.or(InterruptPersonaReferences.vader(game, self), Filters.inquisitor)));
             // Allow response(s)
             action.allowResponses("Take up to 2 inquisitors into hand from Reserve Deck",
                     new RespondablePlayCardEffect(action) {

@@ -12,6 +12,7 @@ import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.InterruptPersonaReferences;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.actions.PlayInterruptAction;
@@ -24,6 +25,8 @@ import com.gempukku.swccgo.logic.timing.Action;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 
 
 /**
@@ -44,7 +47,7 @@ public class Card1210_067 extends AbstractLostInterrupt {
     protected List<PlayInterruptAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self) {
         List<PlayInterruptAction> actions = new LinkedList<PlayInterruptAction>();
         final String opponent = game.getOpponent(playerId);
-        final Filter uniqueFilter = Filters.or(Filters.Motti, Filters.Tagge, Filters.Tarkin, Filters.Vader);
+        final Filter uniqueFilter = Filters.or(Filters.Motti, Filters.Tagge, Filters.Tarkin, InterruptPersonaReferences.vader(game, self));
         GameTextActionId searchActionId = GameTextActionId.LEGACY__THE_EMPIRES_BACK_V__DEPLOY_OR_RETRIEVE_UNIQUE;
 
         if (GameConditions.canUseForceToPlayInterrupt(game, playerId, self, 1)
@@ -85,26 +88,31 @@ public class Card1210_067 extends AbstractLostInterrupt {
             actions.add(action);
         }
 
-        Filter battlegrounds = Filters.and(Filters.battleground,
-                Filters.controlsWith(playerId, self, Filters.or(Filters.Motti, Filters.Tagge, Filters.Tarkin, Filters.Vader)));
-        final int count = Filters.countTopLocationsOnTable(game, battlegrounds);
-        if (GameConditions.isOnceDuringYourPhase(game, self, playerId, self.getCardId(), Phase.CONTROL)
-                && count > 0) {
+        List<Filter> interpretations = InterruptPersonaReferences.vaderInterpretations(game, self);
+        Set<Integer> offeredCounts = new HashSet<>();
+        for (Filter vaderReference : interpretations) {
+            Filter battlegrounds = Filters.and(Filters.battleground,
+                    Filters.controlsWith(playerId, self, Filters.or(Filters.Motti, Filters.Tagge, Filters.Tarkin, vaderReference)));
+            final int count = Filters.countTopLocationsOnTable(game, battlegrounds);
+            if (GameConditions.isOnceDuringYourPhase(game, self, playerId, self.getCardId(), Phase.CONTROL)
+                    && count > 0 && offeredCounts.add(count)) {
 
-            final PlayInterruptAction action = new PlayInterruptAction(game, self);
-            action.setText("Make opponent lose Force");
-            action.appendUsage(
-                    new OncePerPhaseEffect(action));
-            action.allowResponses("Make opponent lose " + count + " Force",
-                    new RespondablePlayCardEffect(action) {
-                        @Override
-                        protected void performActionResults(Action targetingAction) {
-                            action.appendEffect(
-                                    new LoseForceEffect(action, opponent, count));
+                final PlayInterruptAction action = new PlayInterruptAction(game, self);
+                action.setText("Make opponent lose Force" + (interpretations.size() > 1
+                        ? " (" + (vaderReference == Filters.Vader ? "Vader" : "Maul or Mara Jade") + ": " + count + ")" : ""));
+                action.appendUsage(
+                        new OncePerPhaseEffect(action));
+                action.allowResponses("Make opponent lose " + count + " Force",
+                        new RespondablePlayCardEffect(action) {
+                            @Override
+                            protected void performActionResults(Action targetingAction) {
+                                action.appendEffect(
+                                        new LoseForceEffect(action, opponent, count));
+                            }
                         }
-                    }
-            );
-            actions.add(action);
+                );
+                actions.add(action);
+            }
         }
 
         return actions;

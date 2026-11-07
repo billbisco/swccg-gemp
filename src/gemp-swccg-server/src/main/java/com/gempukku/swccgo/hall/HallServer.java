@@ -25,6 +25,7 @@ import com.gempukku.swccgo.chat.ChatCommandErrorException;
 import com.gempukku.swccgo.chat.ChatRoomMediator;
 import com.gempukku.swccgo.chat.ChatServer;
 import com.gempukku.swccgo.collection.CollectionsManager;
+import com.gempukku.swccgo.collection.LegacyCardPool;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.ApplicationConfiguration;
 import com.gempukku.swccgo.db.BotStatsDAO;
@@ -1744,7 +1745,7 @@ public class HallServer extends AbstractServer {
         if ("default".equals(collectionType.getCode())) {
             CardCollection ownedCollection = _collectionsManager.getPlayerCollection(player, "permanent");
 
-            // Replace any special cards (foils, etc.) not owned with the base card
+            // Replace unowned special cards (such as foils) with their normal printing.
             SwccgDeck filteredDeck = new SwccgDeck(swccgDeck.getDeckName());
             Map<String, Integer> cardCountSoFar = new HashMap<String, Integer>();
 
@@ -1764,7 +1765,7 @@ public class HallServer extends AbstractServer {
                 }
 
                 if (owned < countSoFar) {
-                    blueprintId = _library.getBaseBlueprintId(blueprintId);
+                    blueprintId = LegacyCardPool.defaultDeckPrinting(_library, blueprintId);
                 }
                 filteredDeck.addCard(blueprintId);
             }
@@ -1784,7 +1785,7 @@ public class HallServer extends AbstractServer {
                 }
 
                 if (owned < countSoFar) {
-                    blueprintId = _library.getBaseBlueprintId(blueprintId);
+                    blueprintId = LegacyCardPool.defaultDeckPrinting(_library, blueprintId);
                 }
                 filteredDeck.addCardOutsideDeck(blueprintId);
             }
