@@ -18,7 +18,7 @@ public class Card_1271_017_Tests {
     @Test public void VadersMaskCanCancelItselfForAnActualRegularMoveDuringTheDarkBattlePhase() {
         var s = board("mask");
         var vader = s.GetDSCard("vader");
-        var farm = s.GetDSCard("farm");
+        var farm = s.GetLSCard("farm");
         var mask = s.GetDSCard("mask");
         s.SkipToDSTurn(Phase.CONTROL);
         s.EnsureDSForcePile(10);

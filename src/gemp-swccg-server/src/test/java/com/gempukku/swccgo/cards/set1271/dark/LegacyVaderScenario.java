@@ -18,6 +18,7 @@ final class LegacyVaderScenario {
         light.put("fambaa", "14_59");
         light.put("booma", "14_63");
         light.put("clash", "5_38");
+        light.put("farm", "1_132");
         var dark = new HashMap<String, String>();
         dark.put("vader", "1271_2");
         dark.put("rise", "1271_19");
@@ -28,7 +29,6 @@ final class LegacyVaderScenario {
         dark.put("mask", "1271_17");
         dark.put("premiereVader", "1_168");
         dark.put("trooper", "1_194");
-        dark.put("farm", "1_132");
         dark.put("devastator", "1_301");
         dark.put("system", "1_282");
         return new VirtualTableScenario(light, dark, 40, 40,
@@ -42,7 +42,7 @@ final class LegacyVaderScenario {
         s.StartGame();
         s.MoveCardsToDSSideOfTable(s.GetDSCard("rise"));
         s.MoveCardsToLocation(s.GetDSStartingLocation(), s.GetDSCard("vader"));
-        s.MoveLocationToTable(s.GetDSCard("farm"));
+        s.MoveLocationToTable(s.GetLSCard("farm"));
         if (equipment != null) s.AttachCardsTo(s.GetDSCard("vader"), s.GetDSCard(equipment));
         return s;
     }

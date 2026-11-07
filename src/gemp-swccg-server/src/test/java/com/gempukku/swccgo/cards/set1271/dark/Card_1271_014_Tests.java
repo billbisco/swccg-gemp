@@ -18,7 +18,7 @@ public class Card_1271_014_Tests {
     @Test public void VadersCapeMakesActualLandspeedMoveFree() {
         var s = board("cape");
         var vader = s.GetDSCard("vader");
-        var farm = s.GetDSCard("farm");
+        var farm = s.GetLSCard("farm");
         s.SkipToDSTurn(Phase.CONTROL);
         s.DrainDSForcePileTo(0);
         s.SkipToPhase(Phase.MOVE);

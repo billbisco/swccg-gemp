@@ -29,7 +29,7 @@ public class Card_1271_016_Tests {
     @Test public void VadersHelmetMakesOpponentLoseForceWhenVaderActuallyMovesToASkywalker() {
         var s = board("helmet");
         var vader = s.GetDSCard("vader");
-        var farm = s.GetDSCard("farm");
+        var farm = s.GetLSCard("farm");
         s.MoveCardsToLocation(farm, s.GetLSCard("luke"));
         s.SkipToDSTurn(Phase.CONTROL);
         s.EnsureDSForcePile(10);
