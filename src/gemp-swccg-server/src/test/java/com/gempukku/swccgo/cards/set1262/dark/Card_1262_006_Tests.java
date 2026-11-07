@@ -24,7 +24,8 @@ public class Card_1262_006_Tests {
         var scn = new VirtualTableScenario(new HashMap<>(Map.of("obi", "1_21", "alter", "1_71")),
                 new HashMap<>(Map.ofEntries(Map.entry("orders", "1262_6"), Map.entry("craft", "7_307"),
                         Map.entry("otherCraft", "7_307"), Map.entry("scout", "1_305"), Map.entry("tank", "14_121"),
-                        Map.entry("pilot", "14_74"), Map.entry("presence", "14_69"),
+                        Map.entry("pilot", "14_74"), Map.entry("nextPilot", "14_83"),
+                        Map.entry("presence", "14_69"),
                         Map.entry("neimoidian", "14_81"), Map.entry("trooper", "1_194"),
                         Map.entry("system", "1_289"), Map.entry("bay", "1_291"))),
                 30, 30, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
@@ -148,10 +149,12 @@ public class Card_1262_006_Tests {
         var vehicle = scn.GetDSCard(vehicleKey);
         var pilot = scn.GetDSCard(pilotKey);
         var destination = scn.GetDSCard(destinationKey);
-        scn.MoveCardsToDSHand(revealed, scn.GetDSCard("presence"), scn.GetDSCard("scout"));
+        var secondCraft = scn.GetDSCard("otherCraft");
+        var secondPilot = scn.GetDSCard("nextPilot");
+        scn.MoveCardsToDSHand(revealed, secondCraft, scn.GetDSCard("presence"), scn.GetDSCard("scout"));
         scn.SkipToPhase(Phase.CONTROL);
-        scn.EnsureDSForcePile(10);
-        scn.MoveCardsToTopOfDSReserveDeck(searched, scn.GetDSCard("trooper"));
+        scn.EnsureDSForcePile(16);
+        scn.MoveCardsToTopOfDSReserveDeck(searched, secondPilot, scn.GetDSCard("trooper"));
         scn.SkipToPhase(Phase.DEPLOY);
         var remaining = new ArrayList<>(scn.GetDSReserveDeck());
         remaining.remove(searched);
@@ -184,7 +187,16 @@ public class Card_1262_006_Tests {
                 - (int) (float) pilot.getBlueprint().getDeployCost(), scn.GetDSForcePileCount());
         assertEquals(new HashSet<>(remaining), new HashSet<>(scn.GetDSReserveDeck()));
         assertNotEquals(remaining, scn.GetDSReserveDeck());
-        assertFalse(scn.DSCardActionAvailable(orders, PAIR));
+
+        // The same second pair was already in place when the new action choices were generated.
+        assertInZone(Zone.HAND, secondCraft);
+        assertInZone(Zone.RESERVE_DECK, secondPilot);
+        assertFalse("The second pair cannot be offered in the same turn", scn.DSCardActionAvailable(orders, PAIR));
+
+        scn.SkipToDSTurn(Phase.CONTROL);
+        scn.EnsureDSForcePile(10);
+        scn.SkipToPhase(Phase.DEPLOY);
+        assertTrue("The same second pair is available next turn", scn.DSCardActionAvailable(orders, PAIR));
     }
 
     @Test public void DeploymentOrdersDoesNotRevealAnUnrelatedVehicleOrNonPilotDroid() {
