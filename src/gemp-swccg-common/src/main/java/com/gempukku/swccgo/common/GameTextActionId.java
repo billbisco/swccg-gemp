@@ -1712,6 +1712,7 @@ public enum GameTextActionId {
     LEGACY__ALDERAAN_CONSULAR_SHIP__DEPLOY_SENATOR(true, true),
     ;
     LEGACY__QUEENS_LANDING_SITE__DOWNLOAD(true);
+    LEGACY__HAN_CHEWIE_AND_THE_FALCON__TAKE_A_FEW_MANEUVERS(true, true);
 
     private boolean _searchCardPile;
     private boolean _perGame;
