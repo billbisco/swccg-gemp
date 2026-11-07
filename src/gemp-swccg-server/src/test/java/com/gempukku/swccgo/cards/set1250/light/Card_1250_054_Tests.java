@@ -207,6 +207,12 @@ public class Card_1250_054_Tests {
         assertTrue(scn.LSDecisionAvailable("Draw top card"));
         if (draw) scn.LSChooseYes(); else scn.LSChooseNo();
         scn.PassAllResponses();
+        if (scn.LSDecisionAvailable("Choose card to put on Lost Pile")) {
+            scn.LSChooseCard(wookiee); scn.PassAllResponses();
+        }
+        if (scn.LSDecisionAvailable("Choose card to put on Lost Pile")) {
+            scn.LSChooseCard(weapon); scn.PassAllResponses();
+        }
         assertTrue(scn.GetLSLostPile().contains(wookiee));
         assertEquals(hand + (draw ? 1 : 0), scn.GetLSHandCount());
         assertEquals(draw, scn.GetLSHand().contains(top));
