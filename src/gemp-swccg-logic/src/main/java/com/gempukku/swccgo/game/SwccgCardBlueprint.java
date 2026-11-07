@@ -250,6 +250,15 @@ public interface SwccgCardBlueprint {
     boolean isDoesNotCountTowardDeckLimit();
 
     /**
+     * Gets the number this card (while outside of its owner's deck) subtracts from the number of cards its owner may
+     * place under their Starting Effect.
+     * @return the reduction, or 0
+     */
+    default int getStartingEffectCapacityReduction() {
+        return 0;
+    }
+
+    /**
      * Determines if this card may not be placed in Reserve Deck.
      * @return true if may not be placed in Reserve Deck, otherwise false
      */

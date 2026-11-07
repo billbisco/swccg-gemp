@@ -420,6 +420,9 @@ public class DefaultSwccgFormat implements SwccgFormat {
             SwccgCardBlueprint card = library.getSwccgoCardBlueprint(blueprintId);
             if (card != null && card.getCardCategory() == CardCategory.DEFENSIVE_SHIELD)
                 defensiveShieldCount++;
+            // Cards such as Light Side Jabba's Prize subtract from the number of cards the Starting Effect may hold
+            if (card != null)
+                maxOutsideDeckShields -= Math.max(0, card.getStartingEffectCapacityReduction());
         }
         if (defensiveShieldCount > maxOutsideDeckShields) {
             throw new DeckInvalidException("Invalid deck.  More defensive shields in outside of deck area than what starting effect allows.");
