@@ -1,6 +1,6 @@
 package com.gempukku.swccgo.cards.set1261.dark;
 
-import com.gempukku.swccgo.cards.AbstractEffect;
+import com.gempukku.swccgo.cards.AbstractNormalEffect;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.effects.usage.OncePerTurnEffect;
 import com.gempukku.swccgo.common.*;
@@ -19,7 +19,7 @@ import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 import java.util.List;
 
 /** Legacy Block 6.1 Fleet Security Protocols. */
-public class Card1261_034 extends AbstractEffect {
+public class Card1261_034 extends AbstractNormalEffect {
     private static final Filter DOWNLOADABLE_SITE = Filters.and(Filters.non_unique, Filters.site,
             Filters.or(Filters.starship_site, Filters.vehicle_site));
 

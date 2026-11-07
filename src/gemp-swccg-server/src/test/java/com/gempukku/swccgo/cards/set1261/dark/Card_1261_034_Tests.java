@@ -66,10 +66,18 @@ public class Card_1261_034_Tests {
         assertTrue(scn.DSCardActionAvailable(effect, "Deploy non-unique starship or vehicle site"));
         scn.DSUseCardAction(effect, "Deploy non-unique starship or vehicle site");
         scn.PassAllResponses();
-        assertFalse(scn.DSHasCardChoiceAvailable(unique));
-        assertFalse(scn.DSHasCardChoiceAvailable(ground));
-        if (scn.DSHasCardChoiceAvailable(launch))
-            scn.DSChooseCard(launch);
+        var choices = scn.DSGetDecision().getDecisionParameters();
+        var ids = choices.get("blueprintId");
+        var selectable = choices.get("selectable");
+        int legal = 0;
+        for (int i = 0; i < ids.length; i++) {
+            if ("true".equals(selectable[i])) {
+                assertEquals(launch.getBlueprintId(), ids[i]);
+                legal++;
+            }
+        }
+        assertTrue("At least one legal launch bay", legal > 0);
+        scn.DSChooseCard(launch);
         if (scn.DSHasCardChoiceAvailable(ship))
             scn.DSChooseCard(ship);
         scn.PassAllResponses();
