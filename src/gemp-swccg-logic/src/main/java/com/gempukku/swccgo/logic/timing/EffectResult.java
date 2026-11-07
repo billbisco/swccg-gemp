@@ -383,6 +383,9 @@ public abstract class EffectResult implements Snapshotable<EffectResult> {
         IMMUNITY_GRANTED,
 
         CHOICE_MADE,
+
+        // A destiny was just added to total power and/or attrition by a card
+        DESTINY_ADDED_TO_TOTAL_POWER_OR_ATTRITION,
     }
 
     private Type _type;

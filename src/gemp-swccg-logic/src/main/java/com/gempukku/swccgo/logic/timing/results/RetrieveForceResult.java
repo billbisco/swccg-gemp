@@ -11,6 +11,7 @@ public class RetrieveForceResult extends EffectResult {
     private PhysicalCard _source;
     private PhysicalCard _mostRecentCardRetrieved;
     private int _amount;
+    private float _initialAmountToRetrieve = -1;
 
     /**
      * Creates a result to trigger after a unit of Force has been retrieved by the player.
@@ -24,6 +25,27 @@ public class RetrieveForceResult extends EffectResult {
         _source = source;
         _amount = amount;
         _mostRecentCardRetrieved = mostRecentCardRetrieved;
+    }
+
+    /**
+     * Creates a result to trigger after a unit of Force has been retrieved by the player.
+     * @param source the source card
+     * @param playerId the player
+     * @param amount the amount of Force retrieved so far as part of this Force retrieval
+     * @param mostRecentCardRetrieved the most recent card retrieved
+     * @param initialAmountToRetrieve the amount of Force the source said to retrieve (before modifiers)
+     */
+    public RetrieveForceResult(PhysicalCard source, String playerId, int amount, PhysicalCard mostRecentCardRetrieved, float initialAmountToRetrieve) {
+        this(source, playerId, amount, mostRecentCardRetrieved);
+        _initialAmountToRetrieve = initialAmountToRetrieve;
+    }
+
+    /**
+     * Gets the amount of Force the source said to retrieve (before modifiers), or -1 if unknown.
+     * @return the initial amount to retrieve
+     */
+    public float getInitialAmountToRetrieve() {
+        return _initialAmountToRetrieve;
     }
 
     /**

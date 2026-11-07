@@ -40,6 +40,19 @@ public class DeployCardFromLostPileEffect extends DeployCardFromPileEffect {
      * @param forFree true if deploying for free, otherwise false
      * @param reshuffle true if pile is reshuffled, otherwise false
      */
+    /**
+     * Creates an effect that causes the player performing the action to choose and deploy a card accepted by the card filter
+     * from Lost Pile to a location that also satisfies the special location conditions.
+     * @param action the action performing this effect
+     * @param cardFilter the card filter
+     * @param specialLocationConditions a filter for special conditions that deployed location must satisfy, or null
+     * @param forFree true if deploying for free, otherwise false
+     * @param reshuffle true if pile is reshuffled, otherwise false
+     */
+    public DeployCardFromLostPileEffect(Action action, Filter cardFilter, Filter specialLocationConditions, boolean forFree, boolean reshuffle) {
+        super(action, Zone.LOST_PILE, cardFilter, null, specialLocationConditions, forFree, 0, null, false, reshuffle);
+    }
+
     public DeployCardFromLostPileEffect(Action action, PhysicalCard card, boolean forFree, boolean reshuffle) {
         super(action, Zone.LOST_PILE, card, null, forFree, 0, false, reshuffle);
     }
