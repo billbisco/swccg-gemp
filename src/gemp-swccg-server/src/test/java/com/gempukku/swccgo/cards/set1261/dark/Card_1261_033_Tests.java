@@ -113,10 +113,13 @@ public class Card_1261_033_Tests {
             scn.DSExecuteAdHocEffect(rancor, new TriggeringResultEffect(action,
                     new EatenResult(luke, null, null, forfeit, false, rancor, pit)));
             for (int i = 0; i < 8 && scn.DSDecisionAvailable("Required responses"); i++) {
-                if (scn.DSActionAvailable("Retrieve 3 Force"))
-                    scn.DSChooseAction("Retrieve 3 Force");
-                else
-                    scn.DSChooseAction("Retrieve " + forfeit + " Force");
+                var choices = scn.DSGetDecision().getDecisionParameters();
+                var sources = java.util.Arrays.asList(choices.get("blueprintId"));
+                int index = sources.indexOf(inPlay ? "1261_33" : "6_166");
+                if (index < 0)
+                    index = sources.indexOf("6_166");
+                assertTrue("Missing native retrieval choice: " + sources, index >= 0);
+                scn.DSDecided(choices.get("actionId")[index]);
             }
             scn.PassAllResponses();
             assertEquals(before - forfeit - (inPlay ? 3 : 0), scn.GetDSLostPileCount());
