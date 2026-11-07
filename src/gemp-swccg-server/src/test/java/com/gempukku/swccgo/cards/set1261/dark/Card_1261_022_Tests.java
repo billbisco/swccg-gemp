@@ -12,6 +12,10 @@ import com.gempukku.swccgo.common.Zone;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import com.gempukku.swccgo.logic.modifiers.ForceDrainModifier;
+import com.gempukku.swccgo.game.DeckInvalidException;
+import com.gempukku.swccgo.game.SwccgCardBlueprintLibrary;
+import com.gempukku.swccgo.game.formats.DefaultSwccgFormat;
+import com.gempukku.swccgo.logic.vo.SwccgDeck;
 import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,6 +35,7 @@ public class Card_1261_022_Tests {
             put("control", "4_48");
         }}, new HashMap<>() {{
             put("shield", shieldId());
+            put("otherPrinting", shieldId().equals("1261_22") ? "1261_25" : "1261_22");
             put("fear", "13_69");
             put("operative", "7_174");
             put("vader", "1_168");
@@ -65,6 +70,43 @@ public class Card_1261_022_Tests {
         nextDarkControl(scn);
         scn.DSForceDrainAt(scn.GetLSCard("forest"));
         scn.PassAllResponses();
+    }
+
+    @Test
+    public void NoEscapeConversionPrintingCountsTowardTheExistingOutsideDeckShieldCap() throws DeckInvalidException {
+        var library = new SwccgCardBlueprintLibrary();
+        assertEquals("1261_22", library.getBaseBlueprintId(shieldId()));
+        var deck = new SwccgDeck("shield-cap");
+        deck.addCard("13_69");
+        for (int i = 0; i < 10; i++)
+            deck.addCardOutsideDeck(shieldId());
+        DefaultSwccgFormat.validateOriginalStartingEffectOutsideDeckShieldCap(library, deck);
+        deck.addCardOutsideDeck(shieldId());
+        try {
+            DefaultSwccgFormat.validateOriginalStartingEffectOutsideDeckShieldCap(library, deck);
+            org.junit.Assert.fail("The eleventh physical shield must exceed the original Starting Effect cap");
+        } catch (DeckInvalidException expected) {
+            assertTrue(expected.getMessage().contains("More defensive shields"));
+        }
+    }
+
+    @Test
+    public void NoEscapePrintingsKeepTheirOwnImageIdsButShareRulesAndUniqueness() {
+        var scn = scenario();
+        var shield = scn.GetDSCard("shield");
+        var other = scn.GetDSCard("otherPrinting");
+        assertEquals(shieldId(), shield.getBlueprintId(true));
+        assertFalse(shield.getBlueprintId(true).equals(other.getBlueprintId(true)));
+        assertEquals(shield.getBlueprint().getClass(), other.getBlueprint().getClass());
+        assertEquals(shield.getBlueprint().getTitle(), other.getBlueprint().getTitle());
+        scn.StartGame();
+        scn.SkipToDSTurn(Phase.CONTROL);
+        scn.MoveCardsToDSSideOfTable(shield, scn.GetDSCard("fear"));
+        scn.StackCardsOn(scn.GetDSCard("fear"), other);
+        scn.SkipToPhase(Phase.DEPLOY);
+        assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("fear"), "Defensive Shield"));
+        assertEquals(Zone.SIDE_OF_TABLE, shield.getZone());
+        assertEquals(Zone.STACKED, other.getZone());
     }
 
     @Test
