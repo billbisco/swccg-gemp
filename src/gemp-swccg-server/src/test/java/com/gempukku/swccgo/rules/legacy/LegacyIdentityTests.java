@@ -17,6 +17,8 @@ import org.junit.Test;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -130,6 +132,35 @@ public class LegacyIdentityTests {
         assertNotNull(alternates);
         assertTrue(alternates.contains("1272_9"));
         assertTrue(alternates.contains("1200_5"));
+    }
+
+    @Test
+    public void Block5AlternateImagePrintingsLoadTheirBaseBlueprintAndOwnImage() throws Exception {
+        String images = Files.readString(Path.of("../gemp-swccg-async/src/main/web/js/gemp-016/cards/CardImages.js"));
+        String[][] printings = {
+                {"1250_36ai", "1250_36", "Artoo, Brave Little Droid", "VirtualBlock5-Light/large/artoobravelittledroidai.gif"},
+                {"1250_44ai", "1250_44", "Master Qui-Gon", "VirtualBlock5-Light/large/masterquigonai.gif"},
+                {"1250_50ai", "1250_50", "Senator Jar Jar Binks", "VirtualBlock5-Light/large/senatorjarjarbinksai.gif"},
+                {"1250_10ai", "1250_10", "Sebulba", "VirtualBlock5-Dark/large/sebulbaai.gif"},
+                {"1250_12ai", "1250_12", "Watto", "VirtualBlock5-Dark/large/wattoai.gif"},
+                {"1250_2ai", "1250_2", "Aurra Sing", "VirtualBlock5-Dark/large/aurrasingai.gif"},
+        };
+        for (String[] p : printings) {
+            //test1: the (AI) printing aliases its Legacy base, not an older PC id.
+            assertEquals(p[0], p[1], library.getBaseBlueprintId(p[0]));
+            SwccgCardBlueprint alt = library.getSwccgoCardBlueprint(p[0]);
+            SwccgCardBlueprint base = library.getSwccgoCardBlueprint(p[1]);
+            assertNotNull(p[0], alt);
+            assertNotNull(p[1], base);
+            //test2: same implementation, title and side as the base printing.
+            assertEquals(p[0], base.getClass(), alt.getClass());
+            assertEquals(p[0], p[2], alt.getTitle());
+            assertEquals(p[0], base.getSide(), alt.getSide());
+            assertTrue(p[0] + " is a Legacy card", alt.isLegacy());
+            //test3: the printing has its own (AI) image, distinct from the base printing's.
+            assertTrue(p[0] + " image", images.contains("\"" + p[0] + "\":\"https://res.starwarsccg.org/cards/legacy/" + p[3] + "\""));
+            assertTrue(p[1] + " image", images.contains("\"" + p[1] + "\":"));
+        }
     }
 
     @Test
