@@ -22,7 +22,7 @@ public class Card_1263_012_Tests {
     private VirtualTableScenario scenario() {
         var scn = new VirtualTableScenario(new HashMap<>(),
                 new HashMap<>(Map.of("plan", "1263_12", "immediate", "1112_26", "free", "9_134",
-                        "paid", "9_127", "trooper", "1_194", "grotto", "1263_4", "decipherGrotto", "12_107")),
+                        "paid", "9_127", "trooper", "1_194", "grotto", "1263_4", "decipherGrotto", "12_107", "unexpected", "4_152")),
                 30, 30, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -111,6 +111,32 @@ public class Card_1263_012_Tests {
             assertNotEquals(remaining, scn.GetDSReserveDeck());
         }
     }
+    @Test public void OperationalAsPlannedStaysInHandWhenRetrievedByARealUnrelatedSearch() {
+        var scn = scenario();
+        var plan = scn.GetDSCard("plan");
+        var unexpected = scn.GetDSCard("unexpected");
+        scn.MoveCardsToDSHand(unexpected);
+        scn.SkipToPhase(Phase.CONTROL);
+        scn.MoveCardsToTopOfDSReserveDeck(plan);
+        setForce(scn, 2);
+        scn.SkipToPhase(Phase.DEPLOY);
+        scn.DSPlayCard(unexpected, "Take Interrupt into hand from Reserve Deck");
+        boolean selected = false;
+        for (int i = 0; i < 40 && !scn.AwaitingDSDeployPhaseActions(); i++) {
+            if (!selected && scn.DSHasCardChoiceAvailable(plan)) {
+                scn.DSChooseCard(plan);
+                selected = true;
+            } else if (scn.DSGetDecision() instanceof CardActionSelectionDecision) {
+                assertFalse(scn.DSCardActionAvailable(plan, "Reveal Operational As Planned"));
+                scn.DSPass();
+            } else if (scn.LSGetDecision() instanceof CardActionSelectionDecision) scn.LSPass();
+            else fail("Unexpected unrelated search decision: " + scn.GetCurrentDecision().getText());
+        }
+        assertTrue(selected);
+        assertInZone(Zone.HAND, plan);
+        assertInZone(Zone.LOST_PILE, unexpected);
+    }
+
     private void setForce(VirtualTableScenario scn, int amount) {
         scn.EnsureDSForcePile(amount);
         while (scn.GetDSForcePileCount() > amount) {
