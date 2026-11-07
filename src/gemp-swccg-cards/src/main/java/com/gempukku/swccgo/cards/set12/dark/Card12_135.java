@@ -2,9 +2,9 @@ package com.gempukku.swccgo.cards.set12.dark;
 
 import com.gempukku.swccgo.cards.AbstractNormalEffect;
 import com.gempukku.swccgo.cards.GameConditions;
+import com.gempukku.swccgo.cards.SecretPlansRules;
 import com.gempukku.swccgo.cards.effects.CancelForceRetrievalEffect;
 import com.gempukku.swccgo.cards.effects.usage.OncePerPhaseEffect;
-import com.gempukku.swccgo.cards.set1240.light.Card1240_090;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.GameTextActionId;
 import com.gempukku.swccgo.common.Icon;
@@ -14,7 +14,6 @@ import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
-import com.gempukku.swccgo.common.Variable;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
@@ -89,13 +88,7 @@ public class Card12_135 extends AbstractNormalEffect {
         if (TriggerConditions.isAboutToRetrieveForce(game, effectResult, opponent)) {
             AboutToRetrieveForceResult result = (AboutToRetrieveForceResult) effectResult;
             if (result.getSourceCard() == null || !game.getModifiersQuerying().isForceRetrievalImmuneToSecretPlans(game.getGameState(), result.getSourceCard())) {
-                float x = game.getModifiersQuerying().getVariableValue(game.getGameState(), self, Variable.X, result.getAmountOfForceToRetrieve());
-                // Tauntaun Bones (V): retrieval because a creature has eaten a card needs only X-2 Force (minimum 1)
-                if (result.getSourceCard() != null && Filters.creature.accepts(game, result.getSourceCard())
-                        && GameConditions.canSpot(game, self, Card1240_090.reducesSecretPlansForCreatureRetrieval(opponent))) {
-                    x = Math.max(1, x - 2);
-                }
-                final float amountOfForce = x;
+                final float amountOfForce = SecretPlansRules.forceToUse(game, self, opponent, result);
 
                 final RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
                 action.setText("Use Force or cancel retrieval");

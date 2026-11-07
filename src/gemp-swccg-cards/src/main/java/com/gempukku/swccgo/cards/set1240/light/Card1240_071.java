@@ -4,9 +4,12 @@ import com.gempukku.swccgo.cards.AbstractDroid;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.conditions.AtCondition;
 import com.gempukku.swccgo.cards.effects.ConvertLocationByRaisingToTopEffect;
+import com.gempukku.swccgo.cards.effects.usage.OncePerPhaseEffect;
 import com.gempukku.swccgo.common.ExpansionSet;
+import com.gempukku.swccgo.common.GameTextActionId;
 import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.ModelType;
+import com.gempukku.swccgo.common.Phase;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Uniqueness;
@@ -16,10 +19,12 @@ import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.GameUtils;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
+import com.gempukku.swccgo.logic.effects.PlaceHandInUsedPileEffect;
+import com.gempukku.swccgo.logic.effects.PutStackedCardInReserveDeckEffect;
+import com.gempukku.swccgo.logic.effects.choose.ChooseStackedCardEffect;
 import com.gempukku.swccgo.logic.modifiers.ForfeitModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -54,14 +59,19 @@ public class Card1240_071 extends AbstractDroid {
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
         List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new ForfeitModifier(self, Filters.and(Filters.your(self), Filters.character, Filters.presentWith(self)),
+        modifiers.add(new ForfeitModifier(self, Filters.and(Filters.your(self), Filters.character, Filters.or(self, Filters.presentWith(self))),
                 new AtCondition(self, Filters.farm), 3));
         return modifiers;
     }
 
     @Override
-    protected List<TopLevelGameTextAction> getGameTextTopLevelActions(String playerId, SwccgGame game, PhysicalCard self, int gameTextSourceCardId) {
-        if (GameConditions.isAtLocation(game, self, Filters.and(Filters.farm, Filters.site, Filters.canBeConvertedByRaisingYourLocationToTop(playerId)))) {
+    protected List<TopLevelGameTextAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
+        List<TopLevelGameTextAction> actions = new LinkedList<TopLevelGameTextAction>();
+        if (!GameConditions.isAtLocation(game, self, Filters.farm)) {
+            return null;
+        }
+
+        if (GameConditions.isAtLocation(game, self, Filters.and(Filters.site, Filters.canBeConvertedByRaisingYourLocationToTop(playerId)))) {
             final PhysicalCard location = game.getModifiersQuerying().getLocationThatCardIsAt(game.getGameState(), self);
             if (location != null) {
                 final TopLevelGameTextAction action = new TopLevelGameTextAction(self, gameTextSourceCardId);
@@ -70,9 +80,33 @@ public class Card1240_071 extends AbstractDroid {
                 action.addAnimationGroup(location);
                 action.appendEffect(
                         new ConvertLocationByRaisingToTopEffect(action, location, true));
-                return Collections.singletonList(action);
+                actions.add(action);
             }
         }
-        return null;
+
+        // 'Crop': the card stacked on your Lars' Hydroponics Station
+        GameTextActionId cropActionId = GameTextActionId.LEGACY__LARS_PROTOCOL_DROID__PLACE_CROP_ON_RESERVE_DECK;
+        final PhysicalCard station = Filters.findFirstActive(game, self,
+                Filters.and(Filters.your(self), Filters.title("Lars' Hydroponics Station"), Filters.hasStacked(Filters.any)));
+        if (station != null
+                && GameConditions.isOnceDuringEitherPlayersPhase(game, self, playerId, gameTextSourceCardId, cropActionId, Phase.MOVE)) {
+            final TopLevelGameTextAction action = new TopLevelGameTextAction(self, gameTextSourceCardId, cropActionId);
+            action.setText("Place a 'crop' on Reserve Deck");
+            action.setActionMsg("Put hand in Used Pile to place a 'crop' on Reserve Deck");
+            action.appendUsage(
+                    new OncePerPhaseEffect(action));
+            action.appendCost(
+                    new PlaceHandInUsedPileEffect(action, playerId));
+            action.appendEffect(
+                    new ChooseStackedCardEffect(action, playerId, station, Filters.any) {
+                        @Override
+                        protected void cardSelected(PhysicalCard crop) {
+                            action.appendEffect(
+                                    new PutStackedCardInReserveDeckEffect(action, playerId, crop, false));
+                        }
+                    });
+            actions.add(action);
+        }
+        return actions.isEmpty() ? null : actions;
     }
 }

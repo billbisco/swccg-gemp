@@ -41,16 +41,6 @@ public class Card1240_090 extends AbstractNormalEffect {
         addImmuneToCardTitle(Title.Alter);
     }
 
-    /**
-     * The cards that let the specified player use only X-2 Force (minimum 1) for Secret Plans when retrieving Force
-     * because a creature has eaten a card (a retrieval from a creature's game text).
-     * @param playerId the player retrieving Force
-     * @return the filter
-     */
-    public static Filter reducesSecretPlansForCreatureRetrieval(String playerId) {
-        return Filters.and(Filters.owner(playerId), Filters.title("Tauntaun Bones"), Icon.LEGACY_BLOCK_4);
-    }
-
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
         Filter yourFerociousCreatures = Filters.and(Filters.your(self), LegacyCreatureFilters.ferocious);

@@ -29,6 +29,9 @@ public class Card_1240_071_Tests {
                     put("boshek", "1_4");
                     put("harvest", "1210_154");
                     put("r5d4", "2_15");
+                    put("station", "1210_117"); // Lars' Hydroponics Station
+                    put("crop", "1_4");         // any card to be the 'crop'
+                    put("handcard", "2_14");
                 }},
                 new HashMap<>() {{
                     put("dsfarm", "1_294");
@@ -83,10 +86,14 @@ public class Card_1240_071_Tests {
         scn.MoveLocationToTable(farm);
         scn.MoveCardsToLocation(site, droid, boshek);
         int printed = scn.GetForfeit(boshek);
+        assertEquals(3, scn.GetForfeit(droid));
         assertEquals(printed, scn.GetForfeit(boshek));
 
+        int droidPrinted = scn.GetForfeit(droid);
         scn.MoveCardsToLocation(farm, droid, boshek);
         assertEquals(printed + 3, scn.GetForfeit(boshek));
+        // The droid itself is one of your characters present.
+        assertEquals(droidPrinted + 3, scn.GetForfeit(droid));
     }
 
     @Test
@@ -160,5 +167,80 @@ public class Card_1240_071_Tests {
         int index = scn.LSGetADParamAsList("blueprintId").indexOf(r5d4.getBlueprintId(true));
         assertTrue(index >= 0);
         assertFalse(Boolean.parseBoolean(scn.LSGetADParam("selectable")[index]));
+    }
+
+    private VirtualTableScenario cropScenario(boolean atFarm, boolean withCrop) {
+        var scn = GetScenario();
+        var droid = scn.GetLSCard("droid");
+        var farm = scn.GetLSCard("farm");
+        var station = scn.GetLSCard("station");
+        var crop = scn.GetLSCard("crop");
+        var handcard = scn.GetLSCard("handcard");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(farm);
+        scn.AttachCardsTo(farm, station);
+        if (withCrop) {
+            scn.StackCardsOn(station, crop);
+        }
+        scn.MoveCardsToLocation(atFarm ? farm : scn.GetLSStartingLocation(), droid);
+        scn.MoveCardsToLSHand(handcard);
+        scn.SkipToLSTurn(Phase.MOVE);
+        return scn;
+    }
+
+    @Test
+    public void LarsProtocolDroidOncePerMovePhasePutsHandInUsedPileToPlaceCropOnReserveDeck() {
+        var scn = cropScenario(true, true);
+        var droid = scn.GetLSCard("droid");
+        var crop = scn.GetLSCard("crop");
+        var handcard = scn.GetLSCard("handcard");
+
+        assertTrue(scn.LSCardActionAvailable(droid, "Place a 'crop' on Reserve Deck"));
+        scn.LSUseCardAction(droid, "Place a 'crop' on Reserve Deck");
+        for (int i = 0; i < 6 && crop.getZone() != Zone.TOP_OF_RESERVE_DECK && crop.getZone() != Zone.RESERVE_DECK; i++) {
+            if (scn.LSHasCardChoiceAvailable(crop)) {
+                scn.LSChooseCard(crop);
+            }
+            else {
+                scn.PassAllResponses();
+            }
+        }
+        assertEquals(crop, scn.GetTopOfLSReserveDeck());
+        assertEquals(0, scn.GetLSHandCount());
+        assertTrue(handcard.getZone() == Zone.USED_PILE || handcard.getZone() == Zone.TOP_OF_USED_PILE);
+
+        scn.PassAllResponses();
+        if (scn.DSGetDecision() != null) {
+            scn.DSPass();
+        }
+        if (scn.LSGetDecision() != null && scn.GetCurrentPhase() == Phase.MOVE) {
+            assertFalse(scn.LSCardActionAvailable(droid, "Place a 'crop' on Reserve Deck"));
+        }
+    }
+
+    @Test
+    public void LarsProtocolDroidNoCropActionAwayFromFarmOrWithoutCrop() {
+        var scn = cropScenario(false, true);
+        assertFalse(scn.LSCardActionAvailable(scn.GetLSCard("droid"), "Place a 'crop' on Reserve Deck"));
+
+        var scn2 = cropScenario(true, false);
+        assertFalse(scn2.LSCardActionAvailable(scn2.GetLSCard("droid"), "Place a 'crop' on Reserve Deck"));
+    }
+
+    @Test
+    public void LarsProtocolDroidNoCropActionOutsideMovePhase() {
+        var scn = GetScenario();
+        var droid = scn.GetLSCard("droid");
+        var farm = scn.GetLSCard("farm");
+        var station = scn.GetLSCard("station");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(farm);
+        scn.AttachCardsTo(farm, station);
+        scn.StackCardsOn(station, scn.GetLSCard("crop"));
+        scn.MoveCardsToLocation(farm, droid);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        assertFalse(scn.LSCardActionAvailable(droid, "Place a 'crop' on Reserve Deck"));
     }
 }

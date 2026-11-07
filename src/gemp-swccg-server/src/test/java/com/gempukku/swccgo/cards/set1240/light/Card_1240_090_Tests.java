@@ -36,6 +36,8 @@ public class Card_1240_090_Tests {
                 new HashMap<>() {{
                     put("trooper", "1_194");
                     put("secretplans", "12_135");
+                    put("secretplansshield", "1100_16"); // Secret Plans (V) Defensive Shield
+                    put("secretplansse", "7_240");
                 }},
                 10, 10,
                 StartingSetup.DefaultLSGroundLocation,
@@ -175,6 +177,10 @@ public class Card_1240_090_Tests {
 
     /** Has a card retrieve 3 Force for Light Side with Secret Plans on table; returns the Secret Plans prompt. */
     private String secretPlansPromptForRetrievalBy(boolean withBones, String sourceKey) {
+        return secretPlansPromptForRetrievalBy(withBones, sourceKey, "secretplans");
+    }
+
+    private String secretPlansPromptForRetrievalBy(boolean withBones, String sourceKey, String secretPlansKey) {
         var scn = GetScenario();
         var bones = scn.GetLSCard("bones");
         var source = scn.GetLSCard(sourceKey);
@@ -183,7 +189,7 @@ public class Card_1240_090_Tests {
         scn.StartGame();
         scn.MoveLocationToTable(jungle);
         scn.MoveCardsToLocation(jungle, source);
-        scn.MoveCardsToDSSideOfTable(scn.GetDSCard("secretplans"));
+        scn.MoveCardsToDSSideOfTable(scn.GetDSCard(secretPlansKey));
         if (withBones) {
             scn.MoveCardsToLSSideOfTable(bones);
         }
@@ -209,5 +215,12 @@ public class Card_1240_090_Tests {
     public void TauntaunBonesVSecretPlansUnchangedWithoutBonesOrForNonCreatureRetrieval() {
         assertTrue(secretPlansPromptForRetrievalBy(false, "worrt").contains("use 3 Force"));
         assertTrue(secretPlansPromptForRetrievalBy(true, "tauntaun").contains("use 3 Force"));
+    }
+
+    @Test
+    public void TauntaunBonesVReducesEverySecretPlansPrinting() {
+        assertTrue(secretPlansPromptForRetrievalBy(true, "worrt", "secretplansshield").contains("use 1 Force"));
+        assertTrue(secretPlansPromptForRetrievalBy(false, "worrt", "secretplansshield").contains("use 3 Force"));
+        assertTrue(secretPlansPromptForRetrievalBy(true, "worrt", "secretplansse").contains("use 1 Force"));
     }
 }
