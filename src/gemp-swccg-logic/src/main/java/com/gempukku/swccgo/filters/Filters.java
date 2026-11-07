@@ -1395,6 +1395,16 @@ public class Filters {
             return physicalCard.getBlueprint().isMayNotBePlacedInReserveDeck();
         }
     };
+
+    /**
+     * Filter that accepts cards that may never be won in sabacc.
+     */
+    public static final Filter mayNeverBeWonInSabacc = new Filter() {
+        @Override
+        public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard) {
+            return physicalCard.getBlueprint().isMayNeverBeWonInSabacc();
+        }
+    };
     /**
      * Wrapper method to allow other static filters to access the wrapped filter.
      */
@@ -18792,6 +18802,20 @@ public class Filters {
     public static final Filter holocron = Filters.and(Filters.device, Filters.titleContains("holocron"));
     public static final Filter hologram = Filters.keyword(Keyword.HOLOGRAM);
     public static final Filter holosite = Filters.keyword(Keyword.HOLOSITE);
+
+    /**
+     * Filter that accepts locations that the game text of the specified card does not ignore.
+     * @param card the card whose game text is checked
+     * @return Filter
+     */
+    public static Filter notIgnoredByGameTextOf(final PhysicalCard card) {
+        return new Filter() {
+            @Override
+            public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard location) {
+                return !modifiersQuerying.isLocationIgnoredByGameTextOf(gameState, card, location);
+            }
+        };
+    }
     public static final Filter Holotheatre = Filters.title(Title.Holotheatre);
     public static final Filter Home_One = Filters.persona(Persona.HOME_ONE);
     public static final Filter Honor_Of_The_Jedi = Filters.title(Title.Honor_Of_The_Jedi);
@@ -18953,6 +18977,29 @@ public class Filters {
     public static final Filter Jedi = Filters.and(Filters.side(Side.LIGHT), Filters.character, Filters.abilityMoreThanOrEqualTo(6));
     public static final Filter Jedi_Business = Filters.title(Title.Jedi_Business);
     public static final Filter Jedi_Council_Chamber = Filters.title(Title.Jedi_Council_Chamber);
+
+    /**
+     * Filter for what 'Jedi Council Chamber' means in the specified card's game text: Jedi Council Chamber, or also
+     * [Episode I] battleground sites while that card's game text is modified to treat it that way.
+     *
+     * @param card the card whose game text refers to Jedi Council Chamber
+     * @return Filter
+     */
+    public static Filter jediCouncilChamberInGameTextOf(PhysicalCard card) {
+        final int permCardId = card.getPermanentCardId();
+        final Filter episodeIBattlegroundSite = Filters.and(Filters.site, Icon.EPISODE_I, Filters.battleground);
+        return new Filter() {
+            @Override
+            public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard) {
+                if (Jedi_Council_Chamber.accepts(gameState, modifiersQuerying, physicalCard))
+                    return true;
+                PhysicalCard self = gameState.findCardByPermanentId(permCardId);
+                return self != null
+                        && episodeIBattlegroundSite.accepts(gameState, modifiersQuerying, physicalCard)
+                        && modifiersQuerying.hasGameTextModification(gameState, self, ModifyGameTextType.LEGACY__YODA_SENIOR_COUNCIL_MEMBER__JEDI_COUNCIL_CHAMBER_IS_EPISODE_I_BATTLEGROUND_SITES);
+            }
+        };
+    }
     public static final Filter Jedi_Council_member = Filters.keyword(Keyword.JEDI_COUNCIL_MEMBER);
     public static final Filter Jedi_Knight = Filters.and(Filters.Jedi, Filters.abilityEqualTo(6));
     public static final Filter Jedi_Lightsaber = Filters.title(Title.Jedi_Lightsaber);

@@ -439,6 +439,8 @@ public class DeployMultipleCardsSimultaneouslyEffect extends AbstractSubActionEf
                                                         PlayCardResult playCardResult2 = new PlayCardResult(_performingPlayerId, _cardToPlay2, _playedFromZone2, _cardToPlay1, null, locationCardIsAt, true, _asReact);
                                                         playCardResult.setOtherPlayedCard(_cardToPlay2);
                                                         playCardResult2.setOtherPlayedCard(_cardToPlay1);
+                                                        _cardToPlay1.setDeployedSimultaneouslyWith(_cardToPlay2);
+                                                        _cardToPlay2.setDeployedSimultaneouslyWith(_cardToPlay1);
                                                         playCardResult.setPlayedToSiteWithoutPresenceOrForceIcons(playedToSiteWithoutPresenceOrForceIcons);
                                                         playCardResult2.setPlayedToSiteWithoutPresenceOrForceIcons(playedToSiteWithoutPresenceOrForceIcons);
                                                         playCardResult.setPlayedToSiteControlledByOpponent(playedToSiteControlledByOpponent);

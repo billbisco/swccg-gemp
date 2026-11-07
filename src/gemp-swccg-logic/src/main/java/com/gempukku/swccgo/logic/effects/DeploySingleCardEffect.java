@@ -510,6 +510,7 @@ public class DeploySingleCardEffect extends AbstractSubActionEffect implements P
 
                                                         // Emit the effect result
                                                         PlayCardResult playCardResult = new PlayCardResult(_performingPlayerId, _cardToPlay, _playedFromZone, attachTo, _playedToLocation, locationCardIsAt, isDeploy, _asReact);
+                                                        _cardToPlay.setDeployedSimultaneouslyWith(null);
                                                         playCardResult.setPlayedToSiteWithoutPresenceOrForceIcons(playedToSiteWithoutPresenceOrForceIcons);
                                                         playCardResult.setPlayedToSiteControlledByOpponent(playedToSiteControlledByOpponent);
                                                         actionsEnvironment.emitEffectResult(playCardResult);

@@ -679,6 +679,9 @@ public class BattleState implements Snapshotable<BattleState> {
                 totalBattleDestiny += value;
             }
             _totalBattleDestinyFromDraws.put(player, totalBattleDestiny);
+            // Keep the running total in step, so a battle destiny drawn later (a redraw) adds to the right base.
+            Float diffFromDraws = _totalBattleDestinyDiffFromDraws.get(player);
+            _totalBattleDestiny.put(player, totalBattleDestiny + (diffFromDraws != null ? diffFromDraws : 0f));
         }
     }
 
