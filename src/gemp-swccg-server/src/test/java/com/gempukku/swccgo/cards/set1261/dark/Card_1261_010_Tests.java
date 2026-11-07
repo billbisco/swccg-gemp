@@ -51,18 +51,22 @@ public class Card_1261_010_Tests {
 
     @Test
     public void addsThreePowerOnlyWhilePilotingAndHasPrintedAttritionBoundary() {
-        var scn = scenario();
-        var ship = scn.GetDSCard("ship");
-        var vader = scn.GetDSCard("vader");
-        scn.StartGame();
-        scn.MoveLocationToTable(scn.GetDSCard("system"));
-        scn.MoveCardsToLocation(scn.GetDSCard("system"), ship);
-        int printed = scn.GetPower(ship);
-        scn.BoardAsPassenger(ship, vader);
-        assertEquals(printed, scn.GetPower(ship));
-        scn.BoardAsPilot(ship, vader);
-        assertEquals(printed + 3, scn.GetPower(ship));
-        assertEquals(5, immunity(scn, vader), scn.epsilon);
+        for (boolean piloting : List.of(false, true)) {
+            var scn = scenario();
+            var ship = scn.GetDSCard("ship");
+            var vader = scn.GetDSCard("vader");
+            var system = scn.GetDSCard("system");
+            scn.StartGame();
+            scn.MoveLocationToTable(system);
+            scn.MoveCardsToLocation(system, ship);
+            if (piloting)
+                scn.BoardAsPilot(ship, vader);
+            else
+                scn.BoardAsPassenger(ship, vader);
+            scn.SkipToDSTurn(Phase.CONTROL);
+            assertEquals(ship.getBlueprint().getPower() + (piloting ? 3 : 0), scn.GetPower(ship), scn.epsilon);
+            assertEquals(5, immunity(scn, vader), scn.epsilon);
+        }
     }
 
     @Test
@@ -142,26 +146,31 @@ public class Card_1261_010_Tests {
 
     @Test
     public void localAttachedAndPermanentLightsabersCannotUseRepeatPermission() {
-        var scn = scenario();
-        var vader = scn.GetDSCard("vader");
-        var mace = scn.GetLSCard("mace");
-        var saber = scn.GetLSCard("saber");
-        var luke = scn.GetLSCard("luke");
-        var remoteSaber = scn.GetLSCard("remoteSaber");
-        var site = scn.GetDSStartingLocation();
-        scn.StartGame();
-        scn.MoveCardsToLocation(site, vader, mace, luke);
-        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetLSCard("obi"));
-        scn.AttachCardsTo(mace, saber);
-        scn.AttachCardsTo(scn.GetLSCard("obi"), remoteSaber);
-        var mods = scn.game().getModifiersQuerying();
-        assertTrue(mods.mayFireOnlyOncePerBattle(scn.gameState(), saber));
-        assertTrue(mods.mayFireOnlyOncePerBattle(scn.gameState(), luke));
-        assertFalse(mods.mayFireOnlyOncePerBattle(scn.gameState(), remoteSaber));
-        assertFalse(mods.mayFireWeaponTwicePerBattle(scn.gameState(), mace, saber));
-        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), mace);
-        assertTrue(mods.mayFireWeaponTwicePerBattle(scn.gameState(), mace, saber));
-        assertFalse(mods.mayFireOnlyOncePerBattle(scn.gameState(), luke));
+        for (boolean vaderHere : List.of(true, false)) {
+            var scn = scenario();
+            var vader = scn.GetDSCard("vader");
+            var mace = scn.GetLSCard("mace");
+            var saber = scn.GetLSCard("saber");
+            var luke = scn.GetLSCard("luke");
+            var remoteSaber = scn.GetLSCard("remoteSaber");
+            var site = scn.GetDSStartingLocation();
+            var remote = scn.GetLSStartingLocation();
+            scn.StartGame();
+            scn.MoveCardsToLocation(site, mace, luke, scn.GetDSCard("trooper"));
+            scn.MoveCardsToLocation(vaderHere ? site : remote, vader);
+            scn.MoveCardsToLocation(remote, scn.GetLSCard("obi"));
+            scn.AttachCardsTo(mace, saber);
+            scn.AttachCardsTo(scn.GetLSCard("obi"), remoteSaber);
+            scn.SkipToDSTurn(Phase.BATTLE);
+            scn.EnsureDSForcePile(6);
+            scn.DSInitiateBattle(site);
+            scn.PassAllResponses();
+            var mods = scn.game().getModifiersQuerying();
+            assertEquals(vaderHere, mods.mayFireOnlyOncePerBattle(scn.gameState(), saber));
+            assertEquals(vaderHere, mods.mayFireOnlyOncePerBattle(scn.gameState(), luke));
+            assertFalse(mods.mayFireOnlyOncePerBattle(scn.gameState(), remoteSaber));
+            assertEquals(!vaderHere, mods.mayFireWeaponTwicePerBattle(scn.gameState(), mace, saber));
+        }
     }
 
     private float immunity(VirtualTableScenario scn, PhysicalCardImpl card) {
