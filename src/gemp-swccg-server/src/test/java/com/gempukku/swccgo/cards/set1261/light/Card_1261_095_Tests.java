@@ -1,0 +1,150 @@
+package com.gempukku.swccgo.cards.set1261.light;
+
+import com.gempukku.swccgo.common.*;
+import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.framework.StartingSetup;
+import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
+import com.gempukku.swccgo.logic.effects.LoseCardFromTableEffect;
+import org.junit.Test;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import static com.gempukku.swccgo.framework.Assertions.*;
+import static org.junit.Assert.*;
+
+public class Card_1261_095_Tests {
+    private VirtualTableScenario scenario() {
+        return new VirtualTableScenario(new HashMap<>() {{
+            put("scum", "1261_95"); put("scum2", "1261_95"); put("lando", "5_5"); put("dash", "10_6");
+            put("luke", "1_19"); put("leia", "1_17"); put("falcon", "1_143"); put("landoFalcon", "109_2");
+            put("red1", "1_144"); put("eject", "2_32"); put("eject2", "2_32"); put("skywalkers", "1_110");
+            put("site", "1_129"); put("remote", "1_135");
+        }}, new HashMap<>() {{
+            put("devastator", "1_301"); put("vader", "1_168"); put("tie", "1_304");
+            put("system", "1220_61"); put("lando", "5_99"); put("gravel", "1_249");
+        }}, 60, 60, StartingSetup.LSStartingLocation("2_65"), StartingSetup.DefaultDSSpaceSystem,
+                StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
+    }
+    private VirtualTableScenario started() {
+        var scn = scenario(); scn.StartGame(); scn.MoveLocationToTable(scn.GetLSCard("site"));
+        scn.MoveLocationToTable(scn.GetLSCard("remote")); scn.MoveCardsToLSHand(scn.GetLSCard("scum"), scn.GetLSCard("scum2"));
+        return scn;
+    }
+    @Test public void ScumStatsMatchFinalMasterRatherThanEarlierFiveDestinyImage() {
+        var scn = scenario(); var b = scn.GetLSCard("scum").getBlueprint();
+        assertEquals(Title.I_Dont_Need_Their_Scum_Either, b.getTitle()); assertEquals(Side.LIGHT, b.getSide());
+        assertEquals(6, b.getDestiny(), scn.epsilon); assertEquals(CardSubtype.USED_OR_LOST, b.getCardSubtype());
+        assertEquals(Uniqueness.UNIQUE, b.getUniqueness()); assertTrue(b.hasVirtualSuffix());
+        assertEquals(ExpansionSet.VIRTUAL_BLOCK_6_1, b.getExpansionSet()); assertEquals(Rarity.V, b.getRarity());
+        scn.BlueprintCardTypeCheck(b, new ArrayList<>(Arrays.asList(CardType.INTERRUPT)));
+        scn.BlueprintIconCheck(b, new ArrayList<>(Arrays.asList(Icon.INTERRUPT, Icon.CLOUD_CITY, Icon.LEGACY_BLOCK_6)));
+        scn.BlueprintKeywordCheck(b, new ArrayList<>());
+    }
+    private VirtualTableScenario spaceBattle(String ship, String pilot, boolean extraAbility) {
+        var scn = started(); var craft = scn.GetLSCard(ship);
+        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), craft, scn.GetDSCard("devastator"));
+        if (pilot != null) { scn.MoveCardsToLSHand(scn.GetLSCard(pilot)); scn.BoardAsPilot(craft, scn.GetLSCard(pilot)); }
+        if (extraAbility) { scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetLSCard("red1")); scn.BoardAsPilot(scn.GetLSCard("red1"), scn.GetLSCard("luke")); }
+        scn.SkipToLSTurn(Phase.BATTLE); scn.LSInitiateBattle(scn.GetLSStartingLocation()); scn.PassAllResponses();
+        return scn;
+    }
+    private void playDestiny(VirtualTableScenario scn, String ship) {
+        scn.LSPlayCard(scn.GetLSCard("scum"), "Falcon draws two");
+        if (scn.LSHasCardChoiceAvailable(scn.GetLSCard(ship))) scn.LSChooseCard(scn.GetLSCard(ship));
+        scn.PassAllResponses(); assertInZone(Zone.USED_PILE, scn.GetLSCard("scum"));
+    }
+    private void draw(VirtualTableScenario scn) {
+        scn.MoveCardsToTopOfLSReserveDeck(scn.GetLSDestiny(2), scn.GetLSDestiny(3), scn.GetLSDestiny(4)); scn.PrepareDSDestiny(0);
+        for (int i = 0; i < 4; i++) {
+            scn.SkipToEndOfPowerSegment(true);
+            if (scn.LSDecisionAvailable("Do you want to draw") && scn.LSDecisionAvailable("battle destiny")) scn.LSChooseYes();
+            if (scn.DSDecisionAvailable("Do you want to draw") && scn.DSDecisionAvailable("battle destiny")) scn.DSChooseYes();
+            scn.PassDestinyDrawResponses();
+        }
+    }
+    @Test public void ScumRaisesZeroNaturalDestiniesToTwoForLandoPilotingFalcon() {
+        var scn = spaceBattle("falcon", "lando", false); playDestiny(scn, "falcon"); draw(scn); assertEquals(5, scn.GetLSTotalDestiny());
+    }
+    @Test public void ScumRaisesOneNaturalDestinyToTwoRatherThanAddingTwo() {
+        var scn = spaceBattle("falcon", "lando", true); playDestiny(scn, "falcon"); draw(scn); assertEquals(5, scn.GetLSTotalDestiny());
+    }
+    @Test public void ScumRecognizesPermanentLandoPilot() {
+        var scn = spaceBattle("landoFalcon", null, false); playDestiny(scn, "landoFalcon"); draw(scn); assertEquals(5, scn.GetLSTotalDestiny());
+    }
+    @Test public void ScumAbsentLandoFalconWithThreeAbilityCannotDraw() {
+        var scn = spaceBattle("falcon", "lando", false); draw(scn); assertEquals(0, scn.GetLSTotalDestiny());
+    }
+    @Test public void ScumCannotUseFalconModeWithLukePiloting() {
+        var scn = spaceBattle("falcon", "luke", false); assertFalse(scn.LSCardPlayAvailable(scn.GetLSCard("scum")));
+    }
+    @Test public void ScumCannotUseFalconModeWithLandoPilotingAnotherShip() {
+        var scn = spaceBattle("red1", "lando", false); assertFalse(scn.LSCardPlayAvailable(scn.GetLSCard("scum")));
+    }
+    @Test public void ScumCannotUseFalconModeOutsideBattle() {
+        var scn = started(); scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetLSCard("falcon"));
+        scn.BoardAsPilot(scn.GetLSCard("falcon"), scn.GetLSCard("lando")); scn.SkipToLSTurn(Phase.CONTROL);
+        assertFalse(scn.LSCardPlayAvailable(scn.GetLSCard("scum")));
+    }
+    @Test public void ScumCannotUseRemoteLandoFalconToModifyThisBattle() {
+        var scn = spaceBattle("red1", "luke", false);
+        scn.MoveCardsToLocation(scn.GetLSCard("remote"), scn.GetLSCard("landoFalcon"));
+        scn.LSPass(); scn.DSPass(); assertFalse(scn.LSCardPlayAvailable(scn.GetLSCard("scum")));
+    }
+    @Test public void ScumLandoPassengerIsNotPilot() {
+        var scn = spaceBattle("falcon", "luke", false); scn.BoardAsPassenger(scn.GetLSCard("falcon"), scn.GetLSCard("lando"));
+        scn.LSPass(); scn.DSPass(); assertFalse(scn.LSCardPlayAvailable(scn.GetLSCard("scum")));
+    }
+    @Test public void ScumActuallyCancelsLegacyLandoSystemAsUsed() {
+        var scn = started(); scn.MoveCardsToDSHand(scn.GetDSCard("system")); scn.SkipToDSTurn(Phase.CONTROL);
+        scn.DSPlayCard(scn.GetDSCard("system")); scn.DSPass();
+        assertTrue(scn.LSPlayUsedInterruptAvailable(scn.GetLSCard("scum"))); scn.LSPlayUsedInterrupt(scn.GetLSCard("scum")); scn.PassAllResponses();
+        assertInZone(Zone.LOST_PILE, scn.GetDSCard("system")); assertInZone(Zone.USED_PILE, scn.GetLSCard("scum"));
+        assertInZone(Zone.RESERVE_DECK, scn.GetDSCard("lando"));
+    }
+    private VirtualTableScenario lose(String key, boolean opponent) {
+        var scn = started(); var victim = opponent ? scn.GetDSCard(key) : scn.GetLSCard(key);
+        scn.MoveCardsToLocation(scn.GetLSCard("site"), victim); scn.SkipToLSTurn(Phase.CONTROL);
+        scn.LSExecuteAdHocEffect(scn.GetLSCard("scum"), new LoseCardFromTableEffect(new TopLevelGameTextAction(scn.GetLSCard("scum"), scn.GetLSCard("scum").getCardId()), victim));
+        scn.PassResponses("ABOUT_TO_BE_LOST"); return scn;
+    }
+    @Test public void ScumRetrievesActuallyJustLostGamblerIntoHandAsLost() {
+        var scn = lose("lando", false); assertTrue(scn.LSPlayLostInterruptAvailable(scn.GetLSCard("scum")));
+        scn.LSPlayLostInterrupt(scn.GetLSCard("scum")); scn.PassAllResponses();
+        assertInHand(scn.GetLSCard("lando")); assertInZone(Zone.LOST_PILE, scn.GetLSCard("scum"));
+    }
+    @Test public void ScumCannotRetrieveDashEvenThoughHeIsGambler() {
+        var scn = lose("dash", false); assertTrue(Filters.gambler.accepts(scn.game(), scn.GetLSCard("dash")));
+        assertFalse(scn.LSPlayLostInterruptAvailable(scn.GetLSCard("scum")));
+    }
+    @Test public void ScumCannotRetrieveNonGambler() {
+        var scn = lose("luke", false); assertFalse(scn.LSPlayLostInterruptAvailable(scn.GetLSCard("scum")));
+    }
+    @Test public void ScumCannotRetrieveOpponentsJustLostGambler() {
+        var scn = lose("lando", true); assertFalse(scn.LSPlayLostInterruptAvailable(scn.GetLSCard("scum")));
+    }
+    @Test public void ScumCannotRetrieveOldLostGamblerOutsideJustLostWindow() {
+        var scn = started(); scn.MoveCardsToLSLostPile(scn.GetLSCard("lando")); scn.SkipToLSTurn(Phase.CONTROL);
+        assertFalse(scn.LSPlayLostInterruptAvailable(scn.GetLSCard("scum")));
+    }
+    @Test public void ScumCannotRetrieveGamblerAfterResponseWindowCloses() {
+        var scn = lose("lando", false); scn.PassAllResponses(); scn.SkipToPhase(Phase.DEPLOY);
+        assertInZone(Zone.LOST_PILE, scn.GetLSCard("lando")); assertFalse(scn.LSPlayLostInterruptAvailable(scn.GetLSCard("scum")));
+    }
+    @Test public void ScumActuallyRemovesDeployedEjectAndRestoresPermanentPilot() {
+        var scn = started(); scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetDSCard("tie"));
+        scn.MoveCardsToLSHand(scn.GetLSCard("eject")); scn.SkipToLSTurn(Phase.DEPLOY); scn.LSActivateForceCheat(2);
+        assertEquals(1, scn.GetBattleDestinyAbility(scn.GetDSCard("tie"))); scn.PrepareLSDestiny(3);
+        scn.LSDeployCard(scn.GetLSCard("eject")); scn.LSChooseCard(scn.GetDSCard("tie")); scn.PassAllResponses(); scn.PassDestinyDrawResponses(); scn.PassAllResponses();
+        assertEquals(scn.GetDSCard("tie"), scn.GetLSCard("eject").getAttachedTo()); assertEquals(0, scn.GetBattleDestinyAbility(scn.GetDSCard("tie")));
+        scn.DSPass(); scn.LSPlayCard(scn.GetLSCard("scum"), "Place Eject!");
+        if (scn.LSHasCardChoiceAvailable(scn.GetLSCard("eject"))) scn.LSChooseCard(scn.GetLSCard("eject")); scn.PassAllResponses();
+        assertInZone(Zone.USED_PILE, scn.GetLSCard("eject")); assertInZone(Zone.LOST_PILE, scn.GetLSCard("scum"));
+        assertEquals(1, scn.GetBattleDestinyAbility(scn.GetDSCard("tie")));
+    }
+    @Test public void ScumCannotMoveEjectFromHandOrReserveDeck() {
+        var scn = started(); scn.MoveCardsToLSHand(scn.GetLSCard("eject")); scn.SkipToLSTurn(Phase.CONTROL);
+        assertFalse(scn.LSPlayLostInterruptAvailable(scn.GetLSCard("scum"))); assertInZone(Zone.RESERVE_DECK, scn.GetLSCard("eject2"));
+    }
+}
