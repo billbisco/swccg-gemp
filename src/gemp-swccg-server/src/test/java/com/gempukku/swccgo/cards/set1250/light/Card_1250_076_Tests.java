@@ -16,7 +16,7 @@ public class Card_1250_076_Tests {
         HashMap<String, String> light = new HashMap<>();
         if (!starting) light.put("kashyyyk", "1250_76");
         light.put("forest", "1116_16"); light.put("haven", "1116_17");
-        light.put("otherSite", "1_132"); light.put("interrupt", "1_109");
+        light.put("otherSite", "1_132"); light.put("interrupt", "1116_14");
         light.put("tantive", "2_73"); light.put("biggs", "1_3"); light.put("tatooine", "1_127");
         return new VirtualTableScenario(light, new HashMap<>() {{
             put("destroyer", "1_301"); put("motti", "1_164"); put("darkKashyyyk", "2_146");
@@ -151,6 +151,9 @@ public class Card_1250_076_Tests {
     @Test
     public void KashyyykDarkAbilityFiveStillDrawsAtOtherSystem() { checkBattle(5, false, 4); }
 
+    @Test
+    public void KashyyykDarkAbilitySevenAlsoDrawsBattleDestinyHere() { checkBattle(7, true, 4); }
+
     private void checkBattle(int darkAbility, boolean atKashyyyk, int expectedDestiny) {
         var scn = scenario(true);
         scn.StartGame();
@@ -164,6 +167,10 @@ public class Card_1250_076_Tests {
         scn.MoveCardsToLocation(system, tantive, destroyer);
         scn.BoardAsPilot(tantive, scn.GetLSCard("biggs"));
         if (darkAbility == 5) scn.BoardAsPilot(destroyer, scn.GetDSCard("motti"));
+        else if (darkAbility == 7) {
+            scn.BoardAsPilot(destroyer, scn.GetDSCard("motti"));
+            scn.BoardAsPilot(destroyer, scn.GetDSCard("pilot1"));
+        }
         else {
             scn.BoardAsPilot(destroyer, scn.GetDSCard("pilot1"));
             scn.BoardAsPilot(destroyer, scn.GetDSCard("pilot2"));
