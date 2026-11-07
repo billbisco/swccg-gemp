@@ -34,7 +34,7 @@ public class Card1271_044 extends AbstractUsedOrStartingInterrupt {
         action.allowResponses(new RespondablePlayCardEffect(action) {
             @Override protected void performActionResults(Action targetingAction) {
                 action.appendEffect(new TakeCardIntoHandFromReserveDeckEffect(action, playerId,
-                    Filters.and(Filters.canBeTargetedBy(self), Filters.or(Filters.Redemption,
+                    Filters.and(Filters.canBeTargetedBy(self), Filters.or(Filters.title("Redemption"),
                         Filters.and(Icon.DEATH_STAR_II, Filters.capital_starship, Filters.not(Filters.Star_Cruiser)))), true));
             }
         });
