@@ -37,4 +37,31 @@ public class Card_1271_014_Tests {
         s.MoveCardsToLocation(s.GetLSStartingLocation(), s.GetLSCard("luke"));
         assertEquals(before, s.GetDefense(vader));
     }
+
+    private void fireAtLuke(boolean cape) {
+        var s = board(cape ? "cape" : null);
+        var vader = s.GetDSCard("vader");
+        var lightsaber = s.GetDSCard("lightsaber");
+        var luke = s.GetLSCard("luke");
+        var site = s.GetDSStartingLocation();
+        s.AttachCardsTo(vader, lightsaber);
+        s.MoveCardsToLocation(site, luke);
+        s.SkipToDSTurn(Phase.CONTROL);
+        s.EnsureDSForcePile(8);
+        s.SkipToPhase(Phase.BATTLE);
+        s.StartBattleAndSkipToWeaponsSegment(s.DS, site);
+        s.MoveCardsToTopOfDSReserveDeck(s.GetDSDestiny(1), s.GetDSDestiny(3));
+        assertEquals(4, s.GetDefense(luke));
+        s.DSUseCardAction(lightsaber, "Fire");
+        if (s.DSHasCardChoiceAvailable(luke)) s.DSChooseCard(luke);
+        s.PassAllResponses();
+        s.PassDestinyDrawResponses();
+        s.PassAllResponses();
+        assertEquals(cape, luke.isHit());
+    }
+
+    @Test public void VadersCapeTurnsAnActualBoundaryLightsaberSwingIntoAHitAgainstLuke() {
+        fireAtLuke(false);
+        fireAtLuke(true);
+    }
 }
