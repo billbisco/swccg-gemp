@@ -137,7 +137,8 @@ public class Card_1250_020_Tests {
             scn.AttachCardsTo(onJedi ? quiGon : sidious, order);
             scn.DSInitiateBattle(site);
             scn.PassAllResponses();
-            scn.MoveCardsToTopOfDSReserveDeck(scn.GetDSDestiny(3), scn.GetDSDestiny(2));
+            scn.PrepareDSDestiny(2);
+            scn.PrepareDSDestiny(3);
             scn.PrepareLSDestiny(3);
             scn.SkipToPowerSegment();
             assertTrue(scn.DSDecisionAvailable("battle destiny?"));

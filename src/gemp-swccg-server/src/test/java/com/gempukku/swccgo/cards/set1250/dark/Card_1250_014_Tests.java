@@ -139,10 +139,11 @@ public class Card_1250_014_Tests {
         var sidious = scn.GetDSCard("sidious");
         scn.MoveCardsToLocation(senate, sidious);
         scn.AttachCardsTo(senate, scn.GetDSCard("expand"));
-        var query = scn.game().getModifiersQuerying();
-        float before = query.getTotalPoliticsAtGalacticSenate(scn.gameState(), scn.DS);
         // Seed exact boundaries without adding a senator the Effect would be required to lose.
-        scn.ApplyAdHocModifier(new PoliticsModifier(sidious, sidious, politics - before));
+        // This Original Virtual Sidious has 4 politics at his own Senate.
+        scn.ApplyAdHocModifier(new PoliticsModifier(sidious, sidious, politics - 4));
+        scn.SkipToPhase(Phase.CONTROL);
+        var query = scn.game().getModifiersQuerying();
         assertEquals(politics, query.getTotalPoliticsAtGalacticSenate(scn.gameState(), scn.DS), scn.epsilon);
     }
 
