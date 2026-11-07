@@ -101,6 +101,8 @@ public class Card_1250_076_Tests {
         assertTrue(scn.LSCardActionAvailable(scn.GetLSStartingLocation(), "Deploy a Kashyyyk site"));
         scn.LSUseCardAction(scn.GetLSStartingLocation(), "Deploy a Kashyyyk site");
         scn.LSChooseCard(scn.GetLSCard("haven"));
+        assertTrue(scn.LSDecisionAvailable("On which side"));
+        scn.LSChooseOption("Right");
         scn.PassAllResponses();
         assertEquals(Zone.LOCATIONS, scn.GetLSCard("haven").getZone());
     }
@@ -116,7 +118,7 @@ public class Card_1250_076_Tests {
         assertFalse(system.isStartingLocation());
         assertNotNull(scn.GetADParam(scn.LS, "actionText"));
         assertFalse(scn.LSCardActionAvailable(system, "Deploy a Kashyyyk site"));
-        assertEquals(Zone.RESERVE_DECK, scn.GetLSCard("forest").getZone());
+        assertTrue(scn.GetLSReserveDeck().contains(scn.GetLSCard("forest")));
     }
 
     @Test
