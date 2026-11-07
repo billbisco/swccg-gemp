@@ -26,15 +26,23 @@ public class Card_1220_072_Tests {
 
         @Override
         public void Setup(VirtualTableScenario scn) {
-            for (String key : List.of("objective", "hoth", "generators", "decree")) {
-                if (scn.DSHasCardChoiceAvailable(scn.GetDSCard(key)))
-                    scn.DSChooseCard(scn.GetDSCard(key));
-                if (key.equals("hoth")) {
-                    var ice = scn.GetDSReserveDeck().stream().filter(c -> Filters.Ice_Plains.accepts(scn.game(), c)
-                            && c.getBlueprint().getIconCount(Icon.LEGACY_BLOCK_6) > 0).findFirst();
-                    if (ice.isPresent() && scn.DSHasCardChoiceAvailable((PhysicalCardImpl) ice.get()))
-                        scn.DSChooseCard((PhysicalCardImpl) ice.get());
+            for (int step = 0; step < 12; step++) {
+                if (scn.DSDecisionAvailable("On which side")) {
+                    scn.DSChoose("Left");
+                    continue;
                 }
+                if (scn.DSDecisionAvailable("Choose Block 6 Ice Plains")) {
+                    var ice = scn.GetDSReserveDeck().stream().filter(c -> Filters.Ice_Plains.accepts(scn.game(), c)
+                            && c.getBlueprint().getIconCount(Icon.LEGACY_BLOCK_6) > 0).findFirst().orElseThrow();
+                    scn.DSChooseCard((PhysicalCardImpl) ice);
+                    continue;
+                }
+                var next = List.of("objective", "hoth", "generators", "decree").stream()
+                        .map(scn::GetDSCard).filter(scn::DSHasCardChoiceAvailable).findFirst();
+                if (next.isPresent())
+                    scn.DSChooseCard(next.get());
+                else
+                    break;
             }
         }
     };
@@ -44,7 +52,8 @@ public class Card_1220_072_Tests {
                 new HashMap<>(Map.ofEntries(Map.entry("hoth", "3_143"), Map.entry("generators", "1282_8"),
                         Map.entry("decipherIce", "3_148"), Map.entry("decree", "1220_38"), Map.entry("blockade", "1220_31"),
                         Map.entry("cannon", "3_158"), Map.entry("landing", "11_77"), Map.entry("landing8", "1282_3"),
-                        Map.entry("garrison", "104_7"), Map.entry("marker", "3_149"), Map.entry("vader", "1_168"))),
+                        Map.entry("garrison", "104_7"), Map.entry("marker", "3_149"), Map.entry("vader", "1_168"),
+                        Map.entry("veers", "3_87"), Map.entry("walker", "3_157"), Map.entry("marker2", "3_144"))),
                 30, 30, StartingSetup.DefaultLSGroundLocation, START,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -56,6 +65,7 @@ public class Card_1220_072_Tests {
                 new AbstractSite(Side.DARK, Title.Ice_Plains, Title.Hoth, Uniqueness.UNIQUE,
                         ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V) {
                     {
+                        addIcon(Icon.DARK_FORCE, 2);
                         addIcons(Icon.EXTERIOR_SITE, Icon.PLANET, Icon.HOTH);
                         addKeywords(Keyword.MARKER_5);
                     }
@@ -89,7 +99,8 @@ public class Card_1220_072_Tests {
         var ice = setup(scn);
         assertEquals(Zone.LOCATIONS, scn.GetDSCard("hoth").getZone());
         assertEquals(Zone.LOCATIONS, ice.getZone());
-        assertEquals(Zone.LOCATIONS, scn.GetDSCard("generators").getZone());
+        assertEquals("Pregame decision: " + scn.GetCurrentDecision().getText(),
+                Zone.LOCATIONS, scn.GetDSCard("generators").getZone());
         assertFalse(scn.GetDSCard("decipherIce").getZone().isInPlay());
         assertTrue(scn.game().getModifiersQuerying().isImmuneToCardTitle(scn.gameState(), scn.GetDSCard("garrison"), Title.Sense));
     }
@@ -132,4 +143,77 @@ public class Card_1220_072_Tests {
         scn.SkipToPhase(Phase.BATTLE);
         assertFalse(obj.isFlipped());
     }
+
+    @Test(timeout = 10000)
+    public void walkerGarrisonRemainsUsedButCannotBePlayedAgainAndWalkersCostLessOnlyAtMarkers() {
+        var scn = scenario();
+        var ice = setup(scn);
+        var walker = scn.GetDSCard("walker");
+        var garrison = scn.GetDSCard("garrison");
+        scn.MoveCardsToLocation(ice, scn.GetDSCard("veers"));
+        scn.MoveCardsToDSHand(garrison, walker);
+        assertEquals(walker.getBlueprint().getDeployCost() - 1, costAt(scn, walker, ice), scn.epsilon);
+        assertEquals(walker.getBlueprint().getDeployCost(), costAt(scn, walker, scn.GetLSStartingLocation()), scn.epsilon);
+        scn.SkipToDSTurn(Phase.CONTROL);
+        scn.EnsureDSForcePile(6);
+        scn.MoveCardsToTopOfDSReserveDeck(walker);
+        assertTrue(scn.DSCardPlayAvailable(garrison, "Take an AT-AT"));
+        scn.DSPlayCard(garrison, "Take an AT-AT");
+        scn.PassAllResponses();
+        if (scn.DSHasCardChoiceAvailable(walker))
+            scn.DSChooseCard(walker);
+        scn.PassAllResponses();
+        assertTrue(scn.GetDSUsedPile().contains(garrison));
+        assertTrue(scn.GetDSHand().contains(walker));
+        scn.MoveCardsToDSHand(garrison);
+        scn.MoveCardsToTopOfDSReserveDeck(walker);
+        if (scn.AwaitingLSControlPhaseActions())
+            scn.LSPass();
+        assertFalse(scn.DSCardPlayAvailable(garrison, "Take an AT-AT"));
+    }
+
+    @Test(timeout = 10000)
+    public void nonBlockEightLandingIsCanceledWithoutRemovingThePrintedBlockEightVersion() {
+        var scn = scenario();
+        setup(scn);
+        var oldLanding = scn.GetDSCard("landing");
+        var finalLanding = scn.GetDSCard("landing8");
+        scn.MoveCardsToDSSideOfTable(oldLanding, finalLanding);
+        scn.SkipToDSTurn(Phase.CONTROL);
+        scn.PassAllResponses();
+        assertTrue(scn.GetDSLostPile().contains(oldLanding));
+        assertTrue(finalLanding.getZone().isInPlay());
+    }
+
+    @Test(timeout = 10000)
+    public void backDeploysTwoDifferentMarkerSitesInTheSameDeployPhase() {
+        var scn = scenario();
+        setup(scn);
+        var obj = scn.GetDSCard("objective");
+        var blockade = scn.GetDSCard("blockade");
+        scn.gameState().flipBlownAwayLocations(scn.game(), List.of(scn.GetDSCard("generators")));
+        scn.AttachCardsTo(scn.GetDSCard("hoth"), blockade);
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        assertTrue(obj.isFlipped());
+        for (String key : List.of("marker", "marker2")) {
+            var marker = scn.GetDSCard(key);
+            scn.MoveCardsToTopOfDSReserveDeck(marker);
+            assertTrue(scn.DSCardActionAvailable(obj, "Deploy a marker site"));
+            scn.DSUseCardAction(obj, "Deploy a marker site");
+            if (scn.DSHasCardChoiceAvailable(marker))
+                scn.DSChooseCard(marker);
+            if (scn.DSDecisionAvailable("On which side"))
+                scn.DSChoose("Left");
+            scn.PassAllResponses();
+            assertEquals(Zone.LOCATIONS, marker.getZone());
+            if (scn.AwaitingLSDeployPhaseActions())
+                scn.LSPass();
+        }
+    }
+
+    private float costAt(VirtualTableScenario scn, PhysicalCardImpl card, PhysicalCardImpl site) {
+        return scn.game().getModifiersQuerying().getDeployCost(scn.gameState(), card, card, site,
+                false, null, false, 0, null, false);
+    }
+
 }
