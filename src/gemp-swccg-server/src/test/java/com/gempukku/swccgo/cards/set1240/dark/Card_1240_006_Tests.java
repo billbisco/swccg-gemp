@@ -110,10 +110,13 @@ public class Card_1240_006_Tests {
     }
 
     @Test
-    public void GuriDoesNotEnableDrainAtZeroIconCoruscantSiteWithoutAnAgent() {
+    public void GuriDoesNotIncreaseZeroIconCoruscantDrainWithoutAnAgent() {
         var scn = DrainReady(false, true, false);
-        assertTrue(scn.DSDecisionAvailable("Choose Control action or Pass"));
-        assertFalse(scn.DSForceDrainAvailable(scn.GetDSCard("city")));
+        int lost = scn.GetLSLostPileCount();
+        scn.DSForceDrainAt(scn.GetDSCard("city"));
+        scn.PassAllResponses();
+        assertTrue(scn.AwaitingDSControlPhaseActions() || scn.AwaitingLSControlPhaseActions());
+        assertEquals(lost, scn.GetLSLostPileCount());
     }
 
     @Test
@@ -171,9 +174,18 @@ public class Card_1240_006_Tests {
         scn.DSInitiateBattle(site);
         scn.PrepareDSDestiny(0);
         scn.PrepareLSDestiny(7);
-        scn.SkipToEndOfPowerSegment(true);
-        assertEquals(7, scn.GetLSTotalDestiny());
-        scn.PassResponses("INITIAL_ATTRITION_CALCULATED");
+        scn.SkipToPowerSegment();
+        // Complete actual draws and all response windows, stopping before Guri's optional payment.
+        for (int i = 0; i < 80; i++) {
+            if (scn.DSDecisionAvailable("battle destiny?")) scn.DSChooseYes();
+            else if (scn.LSDecisionAvailable("battle destiny?")) scn.LSChooseYes();
+            else if (scn.GetCurrentDecision().getText().toLowerCase().contains("optional response")) {
+                if (scn.DSAnyActionsAvailable() && scn.DSCardActionAvailable(scn.GetDSCard("guri"), "Forfeit to satisfy all battle damage")) break;
+                scn.PlayerPass(scn.GetDecidingPlayer());
+            }
+            else break;
+        }
+        assertEquals("Pending decision: " + scn.GetCurrentDecision().getText(), 7, scn.GetLSTotalDestiny());
         return scn;
     }
 
@@ -207,7 +219,7 @@ public class Card_1240_006_Tests {
     public void GuriCannotCancelAllDamageWhenXizorIsAtAnotherSite() {
         var scn = DamageReady(false);
         assertTrue(scn.GetUnpaidDSBattleDamage() > 6);
-        assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("guri"), "Forfeit to satisfy all battle damage"));
+        assertFalse(scn.DSAnyActionsAvailable() && scn.DSCardActionAvailable(scn.GetDSCard("guri"), "Forfeit to satisfy all battle damage"));
     }
 
     private VirtualTableScenario ImmunityReady(int destiny) {

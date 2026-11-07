@@ -16,13 +16,14 @@ public class Card_1240_013_Tests {
     private static final String SEARCH = "Take Unexpected Interruption into hand";
 
     private boolean IsSelectable(VirtualTableScenario scn, PhysicalCardImpl card) {
-        String[] ids = scn.GetADParam(scn.DS, "cardId");
+        // Reserve popups use temporary card IDs; eligibility follows the parallel blueprint vector.
+        String[] ids = scn.GetADParam(scn.DS, "blueprintId");
         String[] selectable = scn.GetADParam(scn.DS, "selectable");
         assertNotNull(ids);
         assertNotNull(selectable);
         assertEquals(ids.length, selectable.length);
         for (int i = 0; i < ids.length; i++) {
-            if (ids[i].equals(String.valueOf(card.getCardId()))) return Boolean.parseBoolean(selectable[i]);
+            if (ids[i].equals(card.getBlueprintId(true))) return Boolean.parseBoolean(selectable[i]);
         }
         return false;
     }
