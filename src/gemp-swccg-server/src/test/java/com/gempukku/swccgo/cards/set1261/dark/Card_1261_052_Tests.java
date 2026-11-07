@@ -94,7 +94,7 @@ public class Card_1261_052_Tests {
         var objective = (PhysicalCardImpl) scn.gameState().createPhysicalCard(scn.DS, VirtualTableScenario._cardLibrary, "7_298");
         scn.gameState().addCardToZone(objective, Zone.HAND, scn.DS); scn.MoveCardsToDSSideOfTable(objective);
         // Isolate the actual registered front/back title reference, without executing the Objective's own flip actions.
-        scn.gameState().setObjectiveDeploymentComplete(true);
+        objective.setObjectiveDeploymentComplete(true);
         assertEquals(0, scn.GetIconCount(plains, Icon.LIGHT_FORCE));
         scn.gameState().flipCard(scn.game(), objective, true);
         assertEquals(1, scn.GetIconCount(plains, Icon.LIGHT_FORCE)); assertEquals(1, scn.GetIconCount(mountains, Icon.LIGHT_FORCE));
