@@ -13,6 +13,7 @@ import java.util.Collection;
  */
 public class ForfeitedCardToLostPileFromTableResult extends EffectResult implements LostFromTableResult {
     private PhysicalCard _card;
+    private boolean _wasInPilotCapacitySlot;
     private PhysicalCard _lostFromAttachedTo;
     private PhysicalCard _lostFromLocation;
     private Collection<PhysicalCard> _wasPresentWith;
@@ -41,6 +42,7 @@ public class ForfeitedCardToLostPileFromTableResult extends EffectResult impleme
     public ForfeitedCardToLostPileFromTableResult(Action action, String performingPlayerId, PhysicalCard card, PhysicalCard lostFromAttachedTo, PhysicalCard lostFromLocation, Collection<PhysicalCard> wasPresentWith) {
         super(Type.FORFEITED_TO_LOST_PILE_FROM_TABLE, performingPlayerId);
         _card = card;
+        _wasInPilotCapacitySlot = lostFromAttachedTo != null && card.wasPreviouslyInPilotCapacitySlot();
         _lostFromAttachedTo = lostFromAttachedTo;
         _lostFromLocation = lostFromLocation;
         _wasPresentWith = wasPresentWith;
@@ -62,6 +64,11 @@ public class ForfeitedCardToLostPileFromTableResult extends EffectResult impleme
     @Override
     public PhysicalCard getFromAttachedTo() {
         return _lostFromAttachedTo;
+    }
+
+    @Override
+    public boolean wasInPilotCapacitySlot() {
+        return _wasInPilotCapacitySlot;
     }
 
     /**

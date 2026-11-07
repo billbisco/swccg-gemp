@@ -13,6 +13,7 @@ import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.LegacyFilters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
@@ -99,7 +100,7 @@ public class Card1281_043 extends AbstractSite {
     @Override
     protected List<Modifier> getGameTextDarkSideWhileActiveModifiers(String playerOnDarkSideOfLocation, SwccgGame game, PhysicalCard self) {
         List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new LimitForceLossFromForceDrainModifier(self, Filters.and(Filters.system, Filters.not(Filters.liberated_system)), 2, playerOnDarkSideOfLocation));
+        modifiers.add(new LimitForceLossFromForceDrainModifier(self, Filters.and(Filters.system, Filters.not(LegacyFilters.liberatedSystem)), 2, playerOnDarkSideOfLocation));
         return modifiers;
     }
 }
