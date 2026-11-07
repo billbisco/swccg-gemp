@@ -153,6 +153,7 @@ public enum ModifyGameTextType {
     LEGACY__SQUABBLING_DELEGATES__SENATORS_ARE_CORUSCANT_GUARDS("'Senators' treated as 'Coruscant Guards'"),
     LEGACY__INTERRUPTS__VADER_MAY_BE_MAUL_OR_MARA_JADE("'Vader' may be treated as 'Maul or Mara Jade'"),
 
+    OCCUPY_IN_GAME_TEXT_IS_CONTROL("'Occupy' in game text is treated as 'control'"),
     ;
 
     private String _humanReadable;

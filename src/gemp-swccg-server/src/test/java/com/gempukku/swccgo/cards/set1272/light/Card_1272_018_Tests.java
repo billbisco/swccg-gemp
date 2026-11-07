@@ -11,6 +11,7 @@ import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.common.Zone;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.filters.GameTextOccupationFilters;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -78,7 +79,7 @@ public class Card_1272_018_Tests {
     }
 
     @Test
-    public void TarffulOccupyOnForestDepthsIsTreatedAsControl() {
+    public void TarffulDoesNotGrantControlOrForceDrainsAtContestedForestDepths() {
         var scn = GetScenario();
         var tarfful = scn.GetLSCard("tarfful");
         var forest = scn.GetLSCard("forest");
@@ -88,14 +89,14 @@ public class Card_1272_018_Tests {
         scn.MoveLocationToTable(forest);
         scn.MoveCardsToLocation(forest, tarfful, trooper);
         scn.SkipToLSTurn(Phase.CONTROL);
-        assertTrue(scn.LSForceDrainAvailable(forest));
-        scn.LSForceDrainAt(forest);
-        scn.PassForceDrainStartResponses();
-        assertTrue(scn.GetForceDrainTotal() >= 1);
+        assertFalse(scn.LSForceDrainAvailable(forest));
+        assertFalse(GameTextOccupationFilters.occupies(scn.LS, forest).accepts(scn.game(), forest));
+        assertFalse(GameTextOccupationFilters.occupies(scn.DS, forest).accepts(scn.game(), forest));
+        assertEquals(3, scn.GetDestiny(tarfful));
     }
 
     @Test
-    public void TarffulOccupyOnForestDepthsIsTreatedAsControlWhileTarffulIsElsewhere() {
+    public void TarffulChangesForestDepthsTextWhileElsewhereWithoutGrantingControl() {
         var scn = GetScenario();
         var tarfful = scn.GetLSCard("tarfful");
         var forest = scn.GetLSCard("forest");
@@ -108,7 +109,8 @@ public class Card_1272_018_Tests {
         scn.MoveCardsToLocation(forest, luke, trooper);
         scn.MoveCardsToLocation(site, tarfful);
         scn.SkipToLSTurn(Phase.CONTROL);
-        assertTrue(scn.LSForceDrainAvailable(forest));
+        assertFalse(scn.LSForceDrainAvailable(forest));
+        assertFalse(GameTextOccupationFilters.occupies(scn.LS, forest).accepts(scn.game(), forest));
     }
 
     @Test
@@ -123,6 +125,21 @@ public class Card_1272_018_Tests {
         scn.MoveCardsToLocation(forest, luke, trooper);
         scn.SkipToLSTurn(Phase.CONTROL);
         assertFalse(scn.LSForceDrainAvailable(forest));
+        assertTrue(GameTextOccupationFilters.occupies(scn.LS, forest).accepts(scn.game(), forest));
+    }
+
+    @Test
+    public void TarffulRetainsGenuineControlAndModernForestDepthsDestinyBonus() {
+        var scn = GetScenario();
+        var tarfful = scn.GetLSCard("tarfful");
+        var forest = scn.GetLSCard("forest");
+        scn.StartGame();
+        scn.MoveLocationToTable(forest);
+        scn.MoveCardsToLocation(forest, tarfful);
+        scn.SkipToLSTurn(Phase.CONTROL);
+        assertTrue(scn.LSForceDrainAvailable(forest));
+        assertTrue(GameTextOccupationFilters.occupies(scn.LS, forest).accepts(scn.game(), forest));
+        assertEquals(4, scn.GetDestiny(tarfful));
     }
 
     @Test
