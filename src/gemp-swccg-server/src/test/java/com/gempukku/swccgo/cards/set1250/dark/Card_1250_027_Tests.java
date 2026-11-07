@@ -14,14 +14,16 @@ public class Card_1250_027_Tests {
     private static final String REDRAW="Take character destiny into hand and redraw";
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>() {{ put("luke","1_19");put("leia","1_17"); }},
-                new HashMap<>() {{ put("fury","1250_27");put("vader","1_168");put("veers","3_87");put("character","1_194");put("device","1_201"); }},
+                new HashMap<>() {{ put("fury","1250_27");put("vader","1_168");put("veers","3_87");put("character","1_194");put("device","1_201");put("droid","1_193");put("walker","3_154");put("cannon","3_158"); }},
                 15,15,StartingSetup.DefaultLSGroundLocation,StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts,StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields,StartingSetup.NoDSShields,VirtualTableScenario.Open);
     }
     @Test public void SithFuryStatsIconsAndKeywordsMatchPrintedImage() {
         var scn=scenario();var b=scn.GetDSCard("fury").getBlueprint();
-        assertEquals("Sith Fury",b.getTitle());assertTrue(b.hasVirtualSuffix());assertEquals(Side.DARK,b.getSide());
+        assertEquals("Sith Fury",b.getTitle());assertTrue(b.hasVirtualSuffix());assertTrue(b.isLegacy());assertEquals(Side.DARK,b.getSide());
+        assertTrue(GameTextActionId.LEGACY__SITH_FURY_V__DEPLOY_DARK_JEDI.isSearchCardPile());
+        assertTrue(GameTextActionId.LEGACY__SITH_FURY_V__DEPLOY_DARK_JEDI.isPerGame());
         assertEquals(4,b.getDestiny(),scn.epsilon);assertEquals(Uniqueness.UNIQUE,b.getUniqueness());
         assertEquals(CardSubtype.USED_OR_LOST,b.getCardSubtype());assertEquals(ExpansionSet.VIRTUAL_BLOCK_5,b.getExpansionSet());assertEquals(Rarity.V,b.getRarity());
         assertEquals("At his peak, no one could stand up to the Dark Lord of the Sith. His superior tactics devastated those who opposed him.",b.getLore());
@@ -96,7 +98,8 @@ public class Card_1250_027_Tests {
         assertEquals(Zone.HAND,scn.GetDSCard("character").getZone());assertInZone(Zone.USED_PILE,scn.GetDSCard("fury"));
         scn.PassDestinyDrawResponses();scn.PassAllResponses();
         assertTrue(scn.game().getGameState().getUsedPile(scn.DS).contains(scn.GetDSCard("device")));
-        assertEquals(scn.GetDSCard("device").getBlueprint().getDestiny(),scn.GetDSTotalDestiny(),scn.epsilon);
+        // Original Darth Vader adds 1 to the replacement Comlink's printed destiny of 3.
+        assertEquals(4,scn.GetDSTotalDestiny());
     }
     @Test public void SithFuryUsedUnavailableForNonCharacterDestiny() {
         var scn=battle(false);var draw=reachDraw(scn,true);assertEquals(scn.GetDSCard("device"),draw.getDrawnDestinyCard());
@@ -115,5 +118,27 @@ public class Card_1250_027_Tests {
         var draw=reachDraw(scn,false);assertEquals(scn.GetLSCard("leia"),draw.getDrawnDestinyCard());
         assertFalse(scn.DSCardPlayAvailable(scn.GetDSCard("fury"),REDRAW));assertFalse(draw.isDestinyCanceled());
         assertEquals(Zone.HAND,scn.GetDSCard("fury").getZone());
+    }
+    @Test public void SithFuryLostAlsoDeploysDarkJediDuringMovePhase() {
+        var scn=deploy(10);scn.SkipToPhase(Phase.MOVE);openDeploy(scn);
+        assertTrue(selectable(scn,"1_168"));scn.DSChooseCard(scn.GetDSCard("vader"));scn.DSChooseCard(scn.GetDSStartingLocation());scn.PassAllResponses();
+        assertEquals(Zone.AT_LOCATION,scn.GetDSCard("vader").getZone());assertInZone(Zone.LOST_PILE,scn.GetDSCard("fury"));assertEquals(0,scn.GetDSForcePileCount());
+    }
+    @Test public void SithFuryUsedAlsoTakesADroidDrawnForDestiny() {
+        var scn=battle(true);scn.MoveCardsToTopOfDSReserveDeck(scn.GetDSCard("droid"));var draw=reachDraw(scn,true);
+        assertEquals(scn.GetDSCard("droid"),draw.getDrawnDestinyCard());assertTrue(scn.DSCardPlayAvailable(scn.GetDSCard("fury"),REDRAW));
+        scn.DSPlayCard(scn.GetDSCard("fury"),REDRAW);scn.PassAllResponses();assertEquals(Zone.HAND,scn.GetDSCard("droid").getZone());assertInZone(Zone.USED_PILE,scn.GetDSCard("fury"));
+    }
+    @Test public void SithFuryUsedWorksForActualWeaponDestinyAndReplacementCanHit() {
+        var scn=scenario();scn.StartGame();var site=scn.GetDSStartingLocation();
+        scn.MoveCardsToLocation(site,scn.GetDSCard("walker"),scn.GetLSCard("luke"));
+        scn.MoveCardsToDSHand(scn.GetDSCard("veers"),scn.GetDSCard("fury"));scn.BoardAsPilot(scn.GetDSCard("walker"),scn.GetDSCard("veers"));
+        scn.AttachCardsTo(scn.GetDSCard("walker"),scn.GetDSCard("cannon"));scn.DSStartBattleAndSkipToWeaponsSegment(site);
+        scn.PrepareDSDestiny(6);scn.MoveCardsToTopOfDSReserveDeck(scn.GetDSCard("character"));
+        scn.DSUseCardAction(scn.GetDSCard("cannon"),"Fire");scn.DSChooseCard(scn.GetLSCard("luke"));scn.PassForceUseResponses();scn.PassResponses("Fire ");
+        var draw=reachDraw(scn,true);assertEquals(DestinyType.WEAPON_DESTINY,draw.getDestinyType());
+        assertTrue(scn.DSCardPlayAvailable(scn.GetDSCard("fury"),REDRAW));scn.DSPlayCard(scn.GetDSCard("fury"),REDRAW);scn.PassAllResponses();
+        scn.PassDestinyDrawResponses();scn.PassAllResponses();scn.PassResponses("ABOUT_TO_BE_HIT");
+        assertEquals(Zone.HAND,scn.GetDSCard("character").getZone());assertInZone(Zone.USED_PILE,scn.GetDSCard("fury"));assertTrue(scn.GetLSCard("luke").isHit());
     }
 }
