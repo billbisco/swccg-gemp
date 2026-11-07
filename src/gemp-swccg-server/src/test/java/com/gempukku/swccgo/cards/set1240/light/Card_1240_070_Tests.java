@@ -68,7 +68,7 @@ public class Card_1240_070_Tests {
     @Test
     public void FixerActuallyDeploysForTwoWithoutCamieAtDestination() {
         var scn = Ready(true, Phase.ACTIVATE);
-        scn.DrainLSForcePileTo(2);
+        LeaveActivateWithForce(scn, true, 2);
         scn.SkipToPhase(Phase.DEPLOY);
         DeployFixer(scn);
         assertEquals(0, scn.GetLSForcePileCount());
@@ -78,7 +78,7 @@ public class Card_1240_070_Tests {
     @Test
     public void FixerCannotDeployForOneWithoutCamieAtDestination() {
         var scn = Ready(true, Phase.ACTIVATE);
-        scn.DrainLSForcePileTo(1);
+        LeaveActivateWithForce(scn, true, 1);
         scn.SkipToPhase(Phase.DEPLOY);
         assertFalse(scn.LSDeployAvailable(scn.GetLSCard("fixer")));
         assertInZone(Zone.HAND, scn.GetLSCard("fixer"));
@@ -88,7 +88,7 @@ public class Card_1240_070_Tests {
     public void FixerActuallyDeploysForOneToSameSiteAsCamie() {
         var scn = Ready(true, Phase.ACTIVATE);
         scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetLSCard("camie"));
-        scn.DrainLSForcePileTo(1);
+        LeaveActivateWithForce(scn, true, 1);
         scn.SkipToPhase(Phase.DEPLOY);
         DeployFixer(scn);
         assertEquals(0, scn.GetLSForcePileCount());
@@ -102,7 +102,7 @@ public class Card_1240_070_Tests {
         scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetLSCard("rogue"));
         scn.BoardAsPilot(scn.GetLSCard("rogue"), scn.GetLSCard("luke"));
         scn.BoardAsPassenger(scn.GetLSCard("rogue"), scn.GetLSCard("camie"));
-        scn.DrainLSForcePileTo(1);
+        LeaveActivateWithForce(scn, true, 1);
         scn.SkipToPhase(Phase.DEPLOY);
         DeployFixer(scn);
         assertEquals(0, scn.GetLSForcePileCount());
@@ -112,7 +112,7 @@ public class Card_1240_070_Tests {
     public void FixerDoesNotReceiveDestinationReductionWhenCamieIsElsewhere() {
         var scn = Ready(true, Phase.ACTIVATE);
         scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetLSCard("camie"));
-        scn.DrainLSForcePileTo(2);
+        LeaveActivateWithForce(scn, true, 2);
         scn.SkipToPhase(Phase.DEPLOY);
         DeployFixer(scn);
         assertEquals(0, scn.GetLSForcePileCount());
@@ -213,7 +213,7 @@ public class Card_1240_070_Tests {
     @Test
     public void FixerUsesExactlyOneForceToMoveSelectedDroidFromMemorialToUsed() {
         var scn = MemorialReady(true);
-        scn.DrainLSForcePileTo(1);
+        LeaveActivateWithForce(scn, true, 1);
         UseMemorialCard(scn, "droid");
         assertEquals(0, scn.GetLSForcePileCount());
         assertTrue(scn.IsStackedOn(scn.GetLSCard("memorial"), scn.GetLSCard("rogue")));
@@ -231,7 +231,7 @@ public class Card_1240_070_Tests {
     @Test
     public void FixerCannotMoveMemorialCardWithZeroActivatedForce() {
         var scn = MemorialReady(true);
-        scn.DrainLSForcePileTo(0);
+        LeaveActivateWithForce(scn, true, 0);
         AwaitLSControl(scn);
         assertFalse(scn.LSCardActionAvailable(scn.GetLSCard("fixer"), UNSTACK));
         assertTrue(scn.IsStackedOn(scn.GetLSCard("memorial"), scn.GetLSCard("droid")));
@@ -405,5 +405,18 @@ public class Card_1240_070_Tests {
         assertTrue(scn.GetLSCard("memorial").getZone().isInPlay());
         assertTrue(scn.IsStackedOn(scn.GetLSCard("memorial"), scn.GetLSCard("droid")));
         assertTrue(scn.IsStackedOn(scn.GetLSCard("memorial"), scn.GetLSCard("rogue")));
+    }
+
+    /**
+     * From the given player's activate phase, sets that player's Force Pile to exactly force and leaves the phase
+     * without activating, so the next phase's actions are offered against that Force.
+     */
+    static void LeaveActivateWithForce(VirtualTableScenario scn, boolean light, int force) {
+        String player = light ? scn.LS : scn.DS;
+        scn.EnsureForcePile(player, force);
+        scn.DrainForcePileTo(player, force);
+        if (light) scn.LSPass(); else scn.DSPass();
+        if (scn.DecisionAvailable(player, "You have not activated Force")) scn.ChooseOption(player, "Yes");
+        scn.PassActivateActions();
     }
 }

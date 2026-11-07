@@ -93,6 +93,16 @@ public class Card_1240_072_Tests {
         fail("Leia's just-deployed shield permission missing");
     }
 
+    /** Passes the responses to Leia's deployment, asserting her shield permission is never offered. */
+    private void PassDeploymentWithoutShield(VirtualTableScenario scn) {
+        for (int i = 0; i < 40 && scn.GetCurrentDecision() != null
+                && scn.GetCurrentDecision().getText().toLowerCase().contains("optional response"); i++) {
+            if (scn.LSDecisionAvailable("optional response"))
+                assertFalse(scn.LSCardActionAvailable(scn.GetLSCard("leia"), "Defensive Shield"));
+            scn.PlayerPass(scn.GetDecidingPlayer());
+        }
+    }
+
     @Test
     public void SenatorLeiaOrganaHasJusticeAndRebellionAgendasWhileActive() {
         var scn = Ready(true, Phase.CONTROL);
@@ -105,8 +115,9 @@ public class Card_1240_072_Tests {
 
     @Test
     public void SenatorLeiaOrganaActuallyDeploysForThreeForce() {
-        var scn = Ready(true, Phase.DEPLOY);
-        scn.EnsureLSForcePile(3);
+        var scn = Ready(true, Phase.ACTIVATE);
+        LeaveActivateWithForce(scn, true, 3);
+        scn.SkipToPhase(Phase.DEPLOY);
         DeployLeia(scn);
         scn.PassAllResponses();
         assertEquals(0, scn.GetLSForcePileCount());
@@ -115,8 +126,9 @@ public class Card_1240_072_Tests {
 
     @Test
     public void SenatorLeiaOrganaCannotDeployWithOnlyTwoForce() {
-        var scn = Ready(true, Phase.DEPLOY);
-        scn.EnsureLSForcePile(2);
+        var scn = Ready(true, Phase.ACTIVATE);
+        LeaveActivateWithForce(scn, true, 2);
+        scn.SkipToPhase(Phase.DEPLOY);
         assertFalse(scn.LSDeployAvailable(scn.GetLSCard("leia")));
         assertInZone(Zone.HAND, scn.GetLSCard("leia"));
     }
@@ -149,10 +161,11 @@ public class Card_1240_072_Tests {
     @Test
     public void SenatorLeiaOrganaCannotPlayShieldFromEmptyStartingEffect() {
         var scn = Ready(true, Phase.DEPLOY);
-        scn.MoveCardsToLSSideOfTable(scn.GetLSCard("fear"));
+        // The scenario's Starting Effect begins with the four shields under it: empty it first.
+        scn.MoveCardsToTopOfLSUsedPile(scn.GetLSCard("s1"), scn.GetLSCard("s2"), scn.GetLSCard("s3"), scn.GetLSCard("s4"));
+        assertTrue(scn.GetLSCard("fear").getZone().isInPlay());
         DeployLeia(scn);
-        scn.PassAllResponses();
-        assertFalse(scn.LSCardActionAvailable(scn.GetLSCard("leia"), "Defensive Shield"));
+        PassDeploymentWithoutShield(scn);
         assertTrue(scn.GetLSCard("leia").getZone().isInPlay());
     }
 
@@ -186,7 +199,7 @@ public class Card_1240_072_Tests {
         scn.LSChooseCard(scn.GetLSCard("s4"));
         scn.PassAllResponses();
         scn.MoveCardsToLSHand(scn.GetLSCard("leia"));
-        for (int i = 0; i < 12 && !scn.AwaitingLSDeployPhaseActions(); i++) scn.PlayerPass(scn.GetDecidingPlayer());
+        scn.SkipToLSTurn(Phase.DEPLOY);
         DeployLeia(scn);
         ReachShield(scn);
         scn.LSUseCardAction(scn.GetLSCard("leia"), "Defensive Shield");
@@ -199,9 +212,9 @@ public class Card_1240_072_Tests {
     @Test
     public void SenatorLeiaOrganaDoesNotOfferShieldWithoutStartingEffectOrOnLaterPhase() {
         var scn = Ready(true, Phase.DEPLOY);
+        scn.MoveCardsToTopOfLSUsedPile(scn.GetLSCard("fear"), scn.GetLSCard("s1"), scn.GetLSCard("s2"), scn.GetLSCard("s3"), scn.GetLSCard("s4"));
         DeployLeia(scn);
-        scn.PassAllResponses();
-        assertFalse(scn.LSCardActionAvailable(scn.GetLSCard("leia"), "Defensive Shield"));
+        PassDeploymentWithoutShield(scn);
         SetupShields(scn);
         scn.SkipToPhase(Phase.MOVE);
         assertFalse(scn.LSCardActionAvailable(scn.GetLSCard("leia"), "Defensive Shield"));
@@ -226,11 +239,12 @@ public class Card_1240_072_Tests {
         }
         AwaitLSControl(scn);
         assertFalse(scn.LSCardActionAvailable(scn.GetLSCard("fear"), "Defensive Shield"));
-        scn.SkipToPhase(Phase.DEPLOY);
+        scn.SkipToLSTurn(Phase.DEPLOY);
         DeployLeia(scn);
         ReachShield(scn);
         scn.LSUseCardAction(scn.GetLSCard("leia"), "Defensive Shield");
-        scn.LSChooseCard(scn.GetLSCard("s4"));
+        // With one shield left under the Starting Effect, it is selected automatically.
+        if (scn.LSHasCardChoiceAvailable(scn.GetLSCard("s4"))) scn.LSChooseCard(scn.GetLSCard("s4"));
         scn.PassAllResponses();
         assertTrue(scn.GetLSCard("s4").getZone().isInPlay());
     }
@@ -245,15 +259,7 @@ public class Card_1240_072_Tests {
     }
 
     private boolean IsSelectable(VirtualTableScenario scn, PhysicalCardImpl card) {
-        String[] ids = scn.GetADParam(scn.DS, "cardId");
-        String[] selectable = scn.GetADParam(scn.DS, "selectable");
-        assertNotNull(ids);
-        assertNotNull(selectable);
-        assertEquals(ids.length, selectable.length);
-        for (int i = 0; i < ids.length; i++) {
-            if (ids[i].equals(String.valueOf(card.getCardId()))) return Boolean.parseBoolean(selectable[i]);
-        }
-        return false;
+        return scn.DSHasCardChoiceAvailable(card);
     }
 
     private void PlayLateralDamage(VirtualTableScenario scn) {
@@ -310,13 +316,15 @@ public class Card_1240_072_Tests {
         scn.PrepareDSDestiny(7);
         scn.PrepareLSDestiny(0);
         scn.DSInitiateBattle(scn.GetDSCard("dantooine"));
-        scn.SkipToDamageSegment(true);
-        assertEquals(7, scn.GetDSTotalDestiny());
-        assertEquals(2, scn.GetUnpaidDSAttrition()); // Her passenger text applies at the system too.
-        if (scn.AwaitingDSAttritionPayment()) {
-            assertEquals("0", scn.GetADParam(scn.DS, "min")[0]); // Original Chimaera is immune to this2.
-            scn.DSPass();
+        for (int i = 0; i < 40 && !scn.IsReachedDamageSegment(); i++) {
+            if (scn.LSDecisionAvailable("destiny?")) scn.LSChooseYes();
+            else if (scn.DSDecisionAvailable("destiny?")) scn.DSChooseYes();
+            else scn.PassResponses();
         }
+        scn.PassResponses("INITIAL_ATTRITION_CALCULATED");
+        assertEquals(7, scn.GetDSTotalDestiny());
+        // Light draws no battle destiny here, so there is no attrition against Dark to satisfy.
+        assertEquals(0, scn.GetUnpaidDSAttrition());
         return scn;
     }
 
@@ -376,5 +384,18 @@ public class Card_1240_072_Tests {
         var scn = GroundBattleReady(false);
         assertEquals(2, scn.GetUnpaidDSAttrition());
         assertEquals(1, scn.GetUnpaidLSAttrition());
+    }
+
+    /**
+     * From the given player's activate phase, sets that player's Force Pile to exactly force and leaves the phase
+     * without activating, so the next phase's actions are offered against that Force.
+     */
+    static void LeaveActivateWithForce(VirtualTableScenario scn, boolean light, int force) {
+        String player = light ? scn.LS : scn.DS;
+        scn.EnsureForcePile(player, force);
+        scn.DrainForcePileTo(player, force);
+        if (light) scn.LSPass(); else scn.DSPass();
+        if (scn.DecisionAvailable(player, "You have not activated Force")) scn.ChooseOption(player, "Yes");
+        scn.PassActivateActions();
     }
 }

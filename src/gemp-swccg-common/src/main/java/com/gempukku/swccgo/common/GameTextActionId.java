@@ -1711,6 +1711,7 @@ public enum GameTextActionId {
     LEGACY__OH_HES_NOT_DEAD_NOT_YET__SEARCH_FORCE_PILE(true),
     LEGACY__OUTPOST__DEPLOY_DEVICE_OR_EFFECT(true, true),
     LEGACY__KESSEL_SPICE_MINES_PRISON__RETRIEVE_FORCE(false, false, true, false),
+    OVS__ALDERAAN_CONSULAR_SHIP__DEPLOY_SENATOR(true, true),
     ;
 
     private boolean _searchCardPile;
