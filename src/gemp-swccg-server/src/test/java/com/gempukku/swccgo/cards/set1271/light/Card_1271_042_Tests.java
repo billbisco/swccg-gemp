@@ -11,7 +11,8 @@ public class Card_1271_042_Tests {
     private VirtualTableScenario scenario(boolean rebelBase) {
         return new VirtualTableScenario(new HashMap<>() {{
             put("foils","1271_42");put("red3","1_145");put("red1","1_144");put("biggs","1_3");put("luke","1_19");
-            put("capital","5_87");put("presence","1_146");put("lost","1_28");put("lost2","1_2");put("away","3_55");
+            put("capital","221_058");put("navy","221_060");put("kilian","217_026");
+            put("presence","1_146");put("lost","1_28");put("lost2","1_2");put("away","3_55");
         }},new HashMap<>() {{
             put("ground","12_176");put("vader","1_168");put("tie","1_306");put("alter","1_234");put("crossfire","13_63");put("deathStar","2_143");
         }},40,40,StartingSetup.LSStartingLocation(rebelBase?"1_135":"6_87"),StartingSetup.DefaultDSSpaceSystem,
@@ -89,7 +90,13 @@ public class Card_1271_042_Tests {
         assertFalse(reachReward(s));s.PassAllResponses();assertEquals(Zone.AT_LOCATION,s.GetLSCard("presence").getZone());
     }
     @Test public void SFoilsDoesNotRewardASimultaneouslyDeployedCapitalStarship() {
-        var s=ready();deployPair(s,"capital","biggs",false);assertFalse(reachReward(s));s.PassAllResponses();assertEquals(s.GetLSCard("capital"),s.GetLSCard("biggs").getAttachedTo());
+        var s=ready();var navy=s.GetLSCard("navy");var capital=s.GetLSCard("capital");var pilot=s.GetLSCard("kilian");
+        s.MoveCardsToLSSideOfTable(navy);s.MoveCardsToLSHand(capital);s.SkipToPhase(Phase.DEPLOY);
+        s.LSUseCardAction(navy,"Reveal starship or pilot from hand");s.LSChooseCard(capital);s.PassAllResponses();
+        s.LSChooseCard(pilot);s.PassAllResponses();
+        if(s.LSHasCardChoiceAvailable(s.GetLSStartingLocation()))s.LSChooseCard(s.GetLSStartingLocation());
+        if(s.LSDecisionAvailable("capacity slot"))s.LSDecided("0");
+        assertFalse(reachReward(s));s.PassAllResponses();assertTrue(s.IsAboardAsPilot(capital,pilot));
     }
     @Test public void SFoilsCanRewardTwoDifferentQualifyingPairsInTheSameTurn() {
         var s=ready();s.MoveCardsToLSHand(s.GetLSCard("red1"),s.GetLSCard("luke"));int lost=s.GetLSLostPileCount();deployPair(s,"red3","biggs",false);resolveReward(s,true,false);
@@ -117,7 +124,10 @@ public class Card_1271_042_Tests {
         s.game().getGameState().flipBlownAwayLocations(s.game(),List.of(deathStar));
         s.MoveCardsToLSHand(s.GetLSCard("foils"),s.GetLSCard("red3"),s.GetLSCard("biggs"));s.SkipToPhase(Phase.DEPLOY);
         s.LSDeployCard(s.GetLSCard("foils"));s.PassAllResponses();if(s.GetLSCard("foils").getAttachedTo()==null){s.LSChooseCard(s.GetLSStartingLocation());s.PassAllResponses();}
-        assertTrue(s.GetLSCard("foils").isSuspended());if(s.AwaitingDSDeployPhaseActions())s.DSPass();
-        deployPair(s,"red3","biggs",false);assertFalse(reachReward(s));s.PassAllResponses();assertTrue(s.GetLSCard("foils").isSuspended());
+        assertTrue(s.GetLSCard("foils").isSuspended());
+        s.SkipToPhase(Phase.DRAW);s.SkipToLSTurn(Phase.CONTROL);s.EnsureLSForcePile(20);
+        deployPair(s,"red3","biggs",false);assertFalse(reachReward(s));s.PassAllResponses();
+        assertTrue(s.IsAboardAsPilot(s.GetLSCard("red3"),s.GetLSCard("biggs")));
+        assertTrue(s.GetLSCard("foils").isSuspended());
     }
 }
