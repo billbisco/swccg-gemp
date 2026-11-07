@@ -1,0 +1,170 @@
+package com.gempukku.swccgo.cards.set1261.dark;
+
+import com.gempukku.swccgo.common.*;
+import com.gempukku.swccgo.framework.StartingSetup;
+import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.game.PhysicalCardImpl;
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.*;
+
+public class Card_1261_010_Tests {
+    private static final String ADD = "Add one battle destiny";
+
+    private VirtualTableScenario scenario() {
+        return new VirtualTableScenario(
+                new HashMap<>(Map.of("obi", "13_33", "oldObi", "1_21", "mace", "601_163",
+                        "saber", "201_21", "luke", "108_3", "remoteSaber", "13_34")),
+                new HashMap<>(Map.of("vader", "1261_10", "circle", "1_271", "ship", "1_301",
+                        "system", "1_282", "trooper", "1_194")),
+                24, 24, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
+    }
+
+    @Test
+    public void printedImperialVaderIdentity() {
+        var scn = scenario();
+        var bp = scn.GetDSCard("vader").getBlueprint();
+        assertEquals("Darth Vader, Betrayer Of The Jedi", bp.getTitle());
+        assertTrue(bp.getPersonas().contains(Persona.VADER));
+        assertEquals(Side.DARK, bp.getSide());
+        assertEquals(ExpansionSet.VIRTUAL_BLOCK_6_1, bp.getExpansionSet());
+        assertEquals(Rarity.V, bp.getRarity());
+        assertEquals(Uniqueness.UNIQUE, bp.getUniqueness());
+        assertFalse(bp.hasVirtualSuffix());
+        assertEquals(1, bp.getDestiny(), scn.epsilon);
+        assertEquals(6, bp.getDeployCost(), scn.epsilon);
+        assertEquals(6, bp.getPower(), scn.epsilon);
+        assertEquals(6, bp.getAbility(), scn.epsilon);
+        assertEquals(8, bp.getForfeit(), scn.epsilon);
+        scn.BlueprintCardTypeCheck(bp, new ArrayList<>(List.of(CardType.IMPERIAL)));
+        scn.BlueprintIconCheck(bp, new ArrayList<>(List.of(Icon.IMPERIAL, Icon.WARRIOR, Icon.PILOT,
+                Icon.DEATH_STAR_II, Icon.LEGACY_BLOCK_6)));
+        scn.BlueprintKeywordCheck(bp, new ArrayList<>());
+    }
+
+    @Test
+    public void addsThreePowerOnlyWhilePilotingAndHasPrintedAttritionBoundary() {
+        var scn = scenario();
+        var ship = scn.GetDSCard("ship");
+        var vader = scn.GetDSCard("vader");
+        scn.StartGame();
+        scn.MoveLocationToTable(scn.GetDSCard("system"));
+        scn.MoveCardsToLocation(scn.GetDSCard("system"), ship);
+        int printed = scn.GetPower(ship);
+        scn.BoardAsPassenger(ship, vader);
+        assertEquals(printed, scn.GetPower(ship));
+        scn.BoardAsPilot(ship, vader);
+        assertEquals(printed + 3, scn.GetPower(ship));
+        assertEquals(5, immunity(scn, vader), scn.epsilon);
+    }
+
+    @Test
+    public void cancelsCircleBeforeTheDuelStarts() {
+        var scn = scenario();
+        var vader = scn.GetDSCard("vader");
+        var obi = scn.GetLSCard("oldObi");
+        var circle = scn.GetDSCard("circle");
+        scn.StartGame();
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), vader, obi);
+        scn.MoveCardsToDSHand(circle);
+        scn.SkipToDSTurn(Phase.CONTROL);
+        scn.EnsureDSForcePile(5);
+        assertTrue(scn.DSCardPlayAvailable(circle, "Initiate duel"));
+        scn.DSPlayCard(circle, "Initiate duel");
+        if (scn.DSHasCardChoiceAvailable(obi))
+            scn.DSChooseCard(obi);
+        if (scn.DSHasCardChoiceAvailable(vader))
+            scn.DSChooseCard(vader);
+        scn.PassAllResponses();
+        assertTrue(scn.GetDSLostPile().contains(circle));
+        assertTrue(vader.getZone().isInPlay());
+        assertTrue(obi.getZone().isInPlay());
+        assertNull(scn.gameState().getDuelState());
+    }
+
+    @Test
+    public void reflectionsObiOrCouncilIsRequiredAndTheirOwnAttritionImmunityIsCanceled() {
+        for (String key : List.of("obi", "oldObi", "mace")) {
+            var scn = scenario();
+            var vader = scn.GetDSCard("vader");
+            var jedi = scn.GetLSCard(key);
+            var site = scn.GetDSStartingLocation();
+            scn.StartGame();
+            scn.MoveCardsToLocation(site, vader, jedi);
+            if (key.equals("oldObi"))
+                assertEquals(5, immunity(scn, jedi), scn.epsilon);
+            else
+                assertFalse(scn.game().getModifiersQuerying().hasAnyImmunityToAttrition(scn.gameState(), jedi));
+            assertEquals(5, immunity(scn, vader), scn.epsilon);
+            scn.SkipToDSTurn(Phase.BATTLE);
+            scn.EnsureDSForcePile(6);
+            scn.DSInitiateBattle(site);
+            scn.PassAllResponses();
+            assertTrue(scn.AwaitingDSWeaponsSegmentActions());
+            if (key.equals("oldObi")) {
+                assertFalse(scn.DSCardActionAvailable(vader, ADD));
+            } else {
+                int before = scn.GetDSBattleDestinyCount();
+                assertTrue(scn.DSCardActionAvailable(vader, ADD));
+                scn.DSUseCardAction(vader, ADD);
+                scn.PassAllResponses();
+                assertEquals(before + 1, scn.GetDSBattleDestinyCount());
+                if (scn.AwaitingLSWeaponsSegmentActions())
+                    scn.LSPass();
+                assertTrue(scn.AwaitingDSWeaponsSegmentActions());
+                assertFalse(scn.DSCardActionAvailable(vader, ADD));
+            }
+        }
+    }
+
+    @Test
+    public void qualifyingPairCannotAddDestinyToABattleElsewhere() {
+        var scn = scenario();
+        var vader = scn.GetDSCard("vader");
+        var site = scn.GetDSStartingLocation();
+        scn.StartGame();
+        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), vader, scn.GetLSCard("mace"));
+        scn.MoveCardsToLocation(site, scn.GetDSCard("trooper"), scn.GetLSCard("luke"));
+        scn.SkipToDSTurn(Phase.BATTLE);
+        scn.EnsureDSForcePile(6);
+        scn.DSInitiateBattle(site);
+        scn.PassAllResponses();
+        assertTrue(scn.AwaitingDSWeaponsSegmentActions());
+        assertFalse(scn.DSCardActionAvailable(vader, ADD));
+    }
+
+    @Test
+    public void localAttachedAndPermanentLightsabersCannotUseRepeatPermission() {
+        var scn = scenario();
+        var vader = scn.GetDSCard("vader");
+        var mace = scn.GetLSCard("mace");
+        var saber = scn.GetLSCard("saber");
+        var luke = scn.GetLSCard("luke");
+        var remoteSaber = scn.GetLSCard("remoteSaber");
+        var site = scn.GetDSStartingLocation();
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, vader, mace, luke);
+        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetLSCard("obi"));
+        scn.AttachCardsTo(mace, saber);
+        scn.AttachCardsTo(scn.GetLSCard("obi"), remoteSaber);
+        var mods = scn.game().getModifiersQuerying();
+        assertTrue(mods.mayFireOnlyOncePerBattle(scn.gameState(), saber));
+        assertTrue(mods.mayFireOnlyOncePerBattle(scn.gameState(), luke));
+        assertFalse(mods.mayFireOnlyOncePerBattle(scn.gameState(), remoteSaber));
+        assertFalse(mods.mayFireWeaponTwicePerBattle(scn.gameState(), mace, saber));
+        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), mace);
+        assertTrue(mods.mayFireWeaponTwicePerBattle(scn.gameState(), mace, saber));
+        assertFalse(mods.mayFireOnlyOncePerBattle(scn.gameState(), luke));
+    }
+
+    private float immunity(VirtualTableScenario scn, PhysicalCardImpl card) {
+        return scn.game().getModifiersQuerying().getImmunityToAttritionLessThan(scn.gameState(), card);
+    }
+}
