@@ -56,6 +56,7 @@ public class Card1271_018 extends AbstractEpicEventDeployable {
         if (superlaser == null || !superlaser.getAttachedTo().equals(self.getAttachedTo())) return null;
 
         RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, sourceId);
+        action.setPerformingPlayer(self.getOwner());
         action.setText("Fire Superlaser at Alderaan");
         appendShot(action, self, superlaser, alderaan, true);
         return List.of(action);
