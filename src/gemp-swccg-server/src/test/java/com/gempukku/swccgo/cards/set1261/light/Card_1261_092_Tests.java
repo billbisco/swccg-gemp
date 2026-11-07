@@ -264,6 +264,10 @@ public class Card_1261_092_Tests {
         assertTrue(scn.GetLSLostPile().contains(scn.GetLSCard("trooper")));
         assertTrue(scn.GetLSLostPile().contains(scn.GetLSCard("combo")));
         assertEquals(Zone.HAND, copy.getZone());
+        // Hand the action window back to LS (DS acts next after LS played the Interrupt).
+        if (scn.LSGetDecision() == null && scn.DSGetDecision() != null) scn.DSPass();
+        assertNotNull("LS should have a card-action decision again", scn.LSGetDecision());
+        assertTrue("Control-phase action window should be back with LS", scn.GetLSAvailableActions() != null);
         assertFalse(scn.LSCardPlayAvailable(copy, RETRIEVE));
     }
 
