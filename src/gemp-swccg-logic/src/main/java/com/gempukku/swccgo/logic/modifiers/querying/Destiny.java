@@ -435,12 +435,13 @@ public interface Destiny extends BaseQuery {
         for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.NUM_DESTINY_DRAWS_TO_POWER_ONLY, battleState.getBattleLocation()))
             result += modifier.getNumDestinyDrawsToPowerOnlyModifier(player, gameState, query());
 
+        int limit = getDestinyDrawsAddedLimit(gameState, player, ModifierType.LIMIT_DESTINY_DRAWS_ADDED_TO_POWER);
         if (isGetLimit) {
             // TODO: See getNumBattleDestinyDraws() for what to do here.
-            return Integer.MAX_VALUE;
+            return limit;
         }
 
-        return Math.max(0, result);
+        return Math.max(0, Math.min(result, limit));
     }
 
     default int getNumDestinyDrawsToAttritionOnly(GameState gameState, String player, boolean isGetLimit, boolean isForGui) {
@@ -452,12 +453,30 @@ public interface Destiny extends BaseQuery {
         for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.NUM_DESTINY_DRAWS_TO_ATTRITION_ONLY, battleState.getBattleLocation()))
             result += modifier.getNumDestinyDrawsToAttritionOnlyModifier(player, gameState, query());
 
+        int limit = getDestinyDrawsAddedLimit(gameState, player, ModifierType.LIMIT_DESTINY_DRAWS_ADDED_TO_ATTRITION);
         if (isGetLimit) {
             // TODO: See getNumBattleDestinyDraws() for what to do here.
-            return Integer.MAX_VALUE;
+            return limit;
         }
 
-        return Math.max(0, result);
+        return Math.max(0, Math.min(result, limit));
+    }
+
+    /**
+     * Gets the limit (if any) on the number of destiny draws the player may add to power or to attrition.
+     * @param gameState the game state
+     * @param player the player
+     * @param limitType LIMIT_DESTINY_DRAWS_ADDED_TO_POWER or LIMIT_DESTINY_DRAWS_ADDED_TO_ATTRITION
+     * @return the limit, or Integer.MAX_VALUE if no limit
+     */
+    default int getDestinyDrawsAddedLimit(GameState gameState, String player, ModifierType limitType) {
+        int limit = Integer.MAX_VALUE;
+        for (Modifier modifier : getModifiers(gameState, limitType)) {
+            if (modifier instanceof com.gempukku.swccgo.logic.modifiers.LimitDestinyDrawsAddedModifier && modifier.isForPlayer(player)) {
+                limit = Math.min(limit, ((com.gempukku.swccgo.logic.modifiers.LimitDestinyDrawsAddedModifier) modifier).getLimit());
+            }
+        }
+        return limit;
     }
 
     /**

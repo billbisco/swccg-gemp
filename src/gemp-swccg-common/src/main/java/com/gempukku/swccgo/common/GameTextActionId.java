@@ -1770,6 +1770,7 @@ public enum GameTextActionId {
     LEGACY__JANGO_FETT__DEPLOY_JET_PACK(true),
     LEGACY__NUTE_GUNRAYS_BOUNTY__CAPTURE,
     LEGACY__NUTE_GUNRAYS_BOUNTY__FORCE_LOSS,
+    LEGACY__DROP_V__PLACE_CARD_FROM_HAND_IN_USED_PILE,
     ;
 
     private boolean _searchCardPile;
