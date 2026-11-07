@@ -41,8 +41,9 @@ public class Card_1263_026_Tests {
         var system = scn.GetLSCard("system"); var ship = scn.GetLSCard("ship"); var phylo = scn.GetLSCard("phylo");
         scn.MoveLocationToTable(system); scn.MoveCardsToLocation(system, ship);
         int without = scn.GetPower(ship);
+        assertEquals(0, without);
         scn.BoardAsPilot(ship, phylo);
-        assertEquals(without + 2, scn.GetPower(ship));
+        assertEquals(ship.getBlueprint().getPower() + 2, scn.GetPower(ship), scn.epsilon);
         scn.MoveCardsToLocation(scn.GetLSStartingLocation(), phylo);
         assertEquals(without, scn.GetPower(ship));
     }
