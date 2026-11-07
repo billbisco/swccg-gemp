@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
 
 public class Card_1261_037_Tests {
     private VirtualTableScenario scenario() {
-        return new VirtualTableScenario(new HashMap<>() {{ put("obiwan", "1_21"); put("jawa", "1_12"); put("alter", "1_71"); }},
+        return new VirtualTableScenario(new HashMap<>() {{ put("obiwan", "1_21"); put("jawa", "1_12"); put("jawa2", "1_12"); put("alter", "1_71"); }},
                 new HashMap<>() {{ put("vow", "1261_37"); put("jawa1", "1_182"); put("jawa2", "1_182"); put("bossk", "4_92");
                     put("dengar", "4_100"); put("officer", "1_166"); put("vader", "1_168"); put("chamber", "6_162"); put("molator", "1_225"); }}, 30, 30,
                 StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
@@ -50,6 +50,14 @@ public class Card_1261_037_Tests {
     @Test public void TdoshokHuntingVowTwoOwnNonUniqueAliensGrantOneDestinyAndReduceOnlyOpponentPowerByThree() {
         var scn = battle(2, false, false, false, false);
         assertEquals(1, scn.GetDSBattleDestinyCount()); assertEquals(2, scn.GetLSTotalPower()); assertEquals(2, scn.GetDSTotalPower());
+    }
+
+    @Test public void TdoshokHuntingVowDestinyGrantIsOnlyForItsOwner() {
+        var scn = scenario(); scn.StartGame(); var site = scn.GetDSStartingLocation();
+        scn.MoveCardsToDSSideOfTable(scn.GetDSCard("vow"));
+        scn.MoveCardsToLocation(site, scn.GetDSCard("jawa1"), scn.GetDSCard("jawa2"), scn.GetLSCard("jawa"), scn.GetLSCard("jawa2"));
+        scn.DSStartBattleAndSkipToWeaponsSegment(site);
+        assertEquals(1, scn.GetDSBattleDestinyCount()); assertEquals(0, scn.GetLSBattleDestinyCount());
     }
 
     @Test public void TdoshokHuntingVowDoesNotAddExtraDestinyWhenAlreadyAble() {
