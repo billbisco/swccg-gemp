@@ -19,7 +19,7 @@ import static org.junit.Assert.*;
 public class Card_1261_067_Tests {
     private VirtualTableScenario fixture(boolean darkStartsPrize) {
         var light = new HashMap<>(Map.of("maintenance", "13_21", "regularFalcon", "1_143",
-                "space", "6_87", "effect", "13_5", "lsPresence", "1_146", "pilot", "1_19"));
+                "space", "6_87", "effect", "13_5", "lsPresence", "1_146", "pilot", "1_19", "falconPilot", "1_11"));
         StartingSetup darkStart = darkStartsPrize ? new StartingSetup() {
             @Override public HashMap<String, String> Cards() {
                 return new HashMap<>(Map.of("cct", "7_296", "chamber", "5_166", "console", "5_107",
@@ -44,7 +44,7 @@ public class Card_1261_067_Tests {
             @Override public HashMap<String, String> Cards() { return new HashMap<>(Map.of("prize", "1261_67")); }
             @Override public void Setup(VirtualTableScenario scn) {}
         };
-        return new VirtualTableScenario(light, new HashMap<>(Map.of("spacePresence", "1_299", "darkPilot", "1_173", "vader", "1_168", "audience", "6_162")), 40, 40, StartingSetup.DefaultLSGroundLocation,
+        return new VirtualTableScenario(light, new HashMap<>(Map.of("spacePresence", "1_299", "darkPilot", "1_173", "vader", "1_168", "audience", "6_162")), 40, 40, darkStartsPrize ? StartingSetup.DefaultLSGroundLocation : StartingSetup.DefaultLSSpaceSystem,
                 darkStart, StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 outside, StartingSetup.NoDSShields, "legacy");
     }
@@ -69,13 +69,13 @@ public class Card_1261_067_Tests {
         var scn = fixture(false); scn.StartGame(); var prize = scn.GetLSCard("prize");
         assertEquals(scn.GetCurrentDecision().getText(), Zone.OUT_OF_PLAY, prize.getZone());
         assertFalse(Filters.Corran_Horn.accepts(scn.game(), prize));
-        var space = scn.GetLSCard("space"); var normal = scn.GetLSCard("regularFalcon"); var maintenance = scn.GetLSCard("maintenance");
-        scn.MoveLocationToTable(space); scn.MoveCardsToLocation(space, scn.GetDSCard("spacePresence"), scn.GetLSCard("lsPresence"));
+        var space = scn.GetLSStartingLocation(); var normal = scn.GetLSCard("regularFalcon"); var maintenance = scn.GetLSCard("maintenance");
+        scn.MoveCardsToLocation(space, scn.GetDSCard("spacePresence"), scn.GetLSCard("lsPresence"));
         scn.BoardAsPilot(scn.GetLSCard("lsPresence"), scn.GetLSCard("pilot"));
         scn.BoardAsPilot(scn.GetDSCard("spacePresence"), scn.GetDSCard("darkPilot"));
-        scn.MoveCardsToLSHand(normal, maintenance);
+        scn.MoveCardsToLSHand(normal, maintenance, scn.GetLSCard("falconPilot"));
         scn.LSActivateForceCheat(12); scn.SkipToLSTurn(Phase.DEPLOY);
-        assertTrue(scn.GetLSAvailableActions().toString(), scn.LSDeployAvailable(normal));
+        assertTrue(scn.GetCurrentDecision().getText() + " " + scn.GetLSAvailableActions(), scn.LSDeployAvailable(normal));
         assertFalse(scn.LSDeployAvailable(maintenance));
     }
 
