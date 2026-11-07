@@ -608,7 +608,7 @@ public class ForceRetrievalEffect extends AbstractSubActionEffect {
                                             gameState.addCardToTopOfZone(_currentCardToRetrieve, _retrieveCurrentCardToZone, _playerToRetrieveForce);
 
                                             // Emit the result effect that can trigger other cards
-                                            game.getActionsEnvironment().emitEffectResult(new RetrieveForceResult(_sourceCard, _playerToRetrieveForce, _cardsRetrieved.size(), _currentCardToRetrieve));
+                                            game.getActionsEnvironment().emitEffectResult(new RetrieveForceResult(_sourceCard, _playerToRetrieveForce, _cardsRetrieved.size(), _currentCardToRetrieve, _initialAmount));
                                         }
                                     }
                             );

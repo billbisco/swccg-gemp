@@ -82,7 +82,7 @@ public class Card601_093 extends AbstractUsedOrStartingInterrupt {
                         // Perform result(s)
                         action.appendEffect(
                                 new DeployCardsFromReserveDeckEffect(action, Filters.or(Icon.SETUP, Filters.and(Filters.Effect, Filters.deploysForFree, Filters.always_immune_to_Alter,
-                                        Filters.or(Filters.gameTextContains("deploy on table"), Filters.gameTextContains("deploy on your side of table")))), 1, 3, true, false));
+                                        Filters.or(Filters.gameTextContains("deploy on table"), Filters.gameTextContains("deploy on your side of table")))), 0, 3, true, false));
                         action.appendEffect(
                                 new PutCardFromVoidInLostPileEffect(action, playerId, self));
                     }
