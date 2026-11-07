@@ -122,6 +122,10 @@ public class Card_1250_075_Tests {
             if (s.LSDecisionAvailable("Choose card to put on Lost Pile")) {
                 var choice = nudjs.stream().filter(s::LSHasCardChoiceAvailable).findFirst().orElseThrow();
                 s.LSChooseCard(choice);
+            } else if (prompt.contains("Required responses")) {
+                var player = s.GetDecidingPlayer();
+                var choices = s.GetADParamAsList(player, "actionText");
+                s.ChooseAction(player, choices.contains("All Nudjs are lost") ? "All Nudjs are lost" : choices.getFirst());
             } else if (prompt.contains("Optional responses")) {
                 s.PlayerPass(s.GetDecidingPlayer());
             } else {
