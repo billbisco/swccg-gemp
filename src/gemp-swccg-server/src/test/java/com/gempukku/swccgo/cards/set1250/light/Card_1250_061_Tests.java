@@ -143,7 +143,10 @@ public class Card_1250_061_Tests {
         scn.LSPass(); scn.PassAllResponses(); assertTrue(scn.GetLSLostPile().contains(scn.GetLSCard("gungan")));
     }
     private void forfeitSecondNative(VirtualTableScenario scn) {
-        scn.DSStartBattleAndSkipToWeaponsSegment(scn.GetLSStartingLocation());
+        int turn = scn.gameState().getPlayersLatestTurnNumber(scn.DS);
+        scn.SkipToPhase(Phase.BATTLE); scn.DSInitiateBattle(scn.GetLSStartingLocation()); scn.PassAllResponses();
+        assertEquals(turn, scn.gameState().getPlayersLatestTurnNumber(scn.DS));
+        assertTrue(scn.AwaitingDSWeaponsSegmentActions());
         scn.PrepareDSDestiny(3); scn.SkipToDamageSegment(true);
         assertTrue(scn.LSDecisionAvailable("card from battle to forfeit")); scn.LSChooseCard(scn.GetLSCard("gungan2"));
     }
