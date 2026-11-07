@@ -1796,6 +1796,7 @@ public enum GameTextActionId {
     LEGACY__DRESSEL__RETRIEVE_TROOPER(true),
     LEGACY__AN_ENEMY_OF_THE_REPUBLIC__TAKE_INTO_HAND(true),
     LEGACY__SENATOR_PADME_AMIDALA__DEPLOY_REBEL(true),
+    LEGACY__MIND_WHAT_YOU_HAVE_LEARNED__DEPLOY_TO_DAGOBAH(true),
     ;
 
     private boolean _searchCardPile;
