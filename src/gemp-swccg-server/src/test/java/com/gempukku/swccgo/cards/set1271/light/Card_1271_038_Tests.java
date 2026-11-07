@@ -81,7 +81,7 @@ public class Card_1271_038_Tests {
         assertEquals(CardSubtype.IMMEDIATE, b.getCardSubtype());
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_7_1, b.getExpansionSet());
         assertFalse(b.hasVirtualSuffix());
-        s.BlueprintCardTypeCheck(b, List.of(CardType.IMMEDIATE_EFFECT));
+        s.BlueprintCardTypeCheck(b, List.of(CardType.EFFECT));
         s.BlueprintIconCheck(b, List.of(Icon.SPECIAL_EDITION, Icon.EFFECT, Icon.LEGACY_BLOCK_7));
         s.BlueprintKeywordCheck(b, List.of());
     }
