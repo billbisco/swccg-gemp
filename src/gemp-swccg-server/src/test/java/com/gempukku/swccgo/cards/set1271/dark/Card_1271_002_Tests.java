@@ -53,12 +53,12 @@ public class Card_1271_002_Tests {
 
     @Test public void DarthVaderMoreMachineThanManAddsThreePowerWhenHePilots() {
         var s = board(null);
-        var ship = s.GetDSCard("devastator");
+        var ship = s.GetDSCard("customTie");
         var system = s.GetDSCard("system");
         s.MoveLocationToTable(system);
         s.MoveCardsToLocation(system, ship);
-        assertEquals(9, s.GetPower(ship));
         s.BoardAsPilot(ship, s.GetDSCard("vader"));
-        assertEquals(12, s.GetPower(ship));
+        assertTrue(s.IsAboardAsPilot(ship, s.GetDSCard("vader")));
+        assertEquals(5, s.GetPower(ship));
     }
 }

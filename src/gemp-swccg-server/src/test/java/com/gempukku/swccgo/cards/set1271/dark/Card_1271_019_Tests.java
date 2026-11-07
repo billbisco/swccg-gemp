@@ -51,6 +51,7 @@ public class Card_1271_019_Tests {
         if (s.DSHasCardChoiceAvailable(vader)) s.DSChooseCard(vader);
         s.PassAllResponses();
         assertEquals(vader, limbs.getAttachedTo());
+        if (s.AwaitingLSDeployPhaseActions()) s.LSPass();
         s.DSUseCardAction(rise, "Cancel your Vader Effect");
         if (s.DSHasCardChoiceAvailable(limbs)) s.DSChooseCard(limbs);
         s.PassAllResponses();

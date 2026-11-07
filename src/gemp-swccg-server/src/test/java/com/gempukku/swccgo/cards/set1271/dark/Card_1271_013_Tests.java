@@ -46,6 +46,7 @@ public class Card_1271_013_Tests {
         s.PassAllResponses();
         s.PassDestinyDrawResponses();
         s.PassAllResponses();
-        assertEquals(lost, s.GetLSLostPile().contains(luke));
+        assertEquals("Luke's zone is " + luke.getZone() + "; DS decision " + s.DSGetDecision() + "; LS decision " + s.LSGetDecision(),
+            lost, s.GetLSLostPile().contains(luke));
     }
 }

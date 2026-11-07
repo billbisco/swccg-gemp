@@ -30,6 +30,7 @@ final class LegacyVaderScenario {
         dark.put("premiereVader", "1_168");
         dark.put("trooper", "1_194");
         dark.put("devastator", "1_301");
+        dark.put("customTie", "1_306");
         dark.put("system", "1_282");
         return new VirtualTableScenario(light, dark, 40, 40,
             StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
@@ -68,7 +69,7 @@ final class LegacyVaderScenario {
     static VirtualTableScenario prepareBoomaBattle(String equipment) {
         var s = board(equipment);
         var fambaa = s.GetLSCard("fambaa");
-        s.MoveCardsToLocation(s.GetDSStartingLocation(), fambaa);
+        s.MoveCardsToLocation(s.GetDSStartingLocation(), fambaa, s.GetLSCard("luke"));
         s.AttachCardsTo(fambaa, s.GetLSCard("booma"));
         s.SkipToLSTurn(Phase.CONTROL);
         s.EnsureLSForcePile(10);
