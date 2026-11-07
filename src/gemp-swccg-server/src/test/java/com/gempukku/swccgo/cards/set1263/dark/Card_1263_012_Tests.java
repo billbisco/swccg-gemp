@@ -54,7 +54,7 @@ public class Card_1263_012_Tests {
             var plan = scn.GetDSCard("plan");
             scn.MoveCardsToDSHand(plan);
             scn.SkipToPhase(Phase.CONTROL);
-            scn.EnsureDSForcePile(force);
+            setForce(scn, force);
             scn.SkipToPhase(Phase.DEPLOY);
             assertEquals(force >= 1, scn.DSCardPlayAvailable(plan, IMMEDIATE));
             assertEquals(force >= 2, scn.DSCardPlayAvailable(plan, FREE));
@@ -72,7 +72,7 @@ public class Card_1263_012_Tests {
             var wrong = cost == 1 ? free : immediate;
             scn.MoveCardsToDSHand(plan);
             scn.SkipToPhase(Phase.CONTROL);
-            scn.EnsureDSForcePile(cost);
+            setForce(scn, cost);
             scn.MoveCardsToTopOfDSReserveDeck(immediate, free, paid, scn.GetDSCard("trooper"));
             scn.SkipToPhase(Phase.DEPLOY);
             var remaining = new ArrayList<>(scn.GetDSReserveDeck());
@@ -103,6 +103,13 @@ public class Card_1263_012_Tests {
             assertEquals(0, scn.GetDSForcePileCount());
             assertEquals(new HashSet<>(remaining), new HashSet<>(scn.GetDSReserveDeck()));
             assertNotEquals(remaining, scn.GetDSReserveDeck());
+        }
+    }
+    private void setForce(VirtualTableScenario scn, int amount) {
+        scn.EnsureDSForcePile(amount);
+        while (scn.GetDSForcePileCount() > amount) {
+            scn.MoveCardsToTopOfDSReserveDeck((com.gempukku.swccgo.game.PhysicalCardImpl)
+                    scn.gameState().getForcePile(scn.DS).getFirst());
         }
     }
 }
