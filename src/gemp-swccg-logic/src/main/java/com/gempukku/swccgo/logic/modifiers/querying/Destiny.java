@@ -139,6 +139,12 @@ public interface Destiny extends BaseQuery {
             result *= 2;
         }
 
+        // Destiny draws for some action sources (for example, Sense and Alter) may not be modified
+        if (destinyDrawActionSource != null
+                && !getModifiersAffectingCard(gameState, ModifierType.MAY_NOT_MODIFY_DESTINY_DRAWS_FOR_ACTION_SOURCE, destinyDrawActionSource).isEmpty()) {
+            return result;
+        }
+
         for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.DESTINY, card)) {
             if (!mayNotModifyDestinyDraw(gameState, modifier.getSource(gameState) != null ? modifier.getSource(gameState).getOwner() : null)) {
                 result += modifier.getDestinyModifier(gameState, query(), card);
