@@ -82,8 +82,11 @@ final class LegacyVaderScenario {
     static void fireBooma(VirtualTableScenario s) {
         var weapon = s.GetLSCard("booma");
         s.LSUseCardAction(weapon, "Fire");
-        s.PassResponses("WEAPON_FIRING_EFFECT");
-        s.PassDestinyDrawResponses();
+        for (int i = 0; i < 20; i++) {
+            if (s.DSAnyActionsAvailable() && s.DSActionAvailable("Lose 4 Force to take Vader")) break;
+            if (!s.GetCurrentDecision().getText().toLowerCase(java.util.Locale.ROOT).contains("optional response")) break;
+            s.PlayerPass(s.GetDecidingPlayer());
+        }
         assertNotEquals("Booma must draw the prepared card", s.GetLSDestiny(0), s.gameState().getTopOfReserveDeck(s.LS));
         if (s.DSHasCardChoiceAvailable(s.GetDSCard("vader"))) s.DSChooseCard(s.GetDSCard("vader"));
     }
