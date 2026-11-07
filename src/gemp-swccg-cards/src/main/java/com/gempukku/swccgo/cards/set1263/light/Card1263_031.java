@@ -16,10 +16,10 @@ import com.gempukku.swccgo.logic.timing.Action;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Final Legacy master list, page 34 (destiny 6; earlier full-card image has 5). */
+/** Final Legacy master list, page 34; full card supplies unchanged destiny 5. */
 public class Card1263_031 extends AbstractUsedInterrupt {
     public Card1263_031() {
-        super(Side.LIGHT, 6, "It's Not My Fault!", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_6_3, Rarity.V);
+        super(Side.LIGHT, 5, "It's Not My Fault!", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_6_3, Rarity.V);
         setVirtualSuffix(true);
         setLore("\"It's not fair! The transfer circuits are working!\"");
         setGameText("Use 1 Force to take [Virtual Block 6] Phylo Gandish or an Immediate Effect into hand from Reserve Deck; reshuffle. OR Use 2 Force to take an Effect that deploys for free into hand from Reserve Deck; reshuffle. OR If a Dark Jedi on table, retrieve Return Of The Jedi into hand.");

@@ -25,9 +25,9 @@ public class Card_1263_031_Tests {
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
     }
-    @Test public void FaultUsesFinalSixDestinyLegacyPrinting() {
+    @Test public void FaultRetainsFiveDestinyFromTheFullCard() {
         var scn = scenario(); var b = scn.GetLSCard("fault").getBlueprint();
-        assertEquals("It's Not My Fault!", b.getTitle()); assertEquals(6, b.getDestiny(), scn.epsilon);
+        assertEquals("It's Not My Fault!", b.getTitle()); assertEquals(5, b.getDestiny(), scn.epsilon);
         assertEquals(Side.LIGHT, b.getSide()); assertEquals(Uniqueness.UNIQUE, b.getUniqueness()); assertTrue(b.hasVirtualSuffix());
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_6_3, b.getExpansionSet()); assertEquals(Rarity.V, b.getRarity()); assertEquals(CardSubtype.USED, b.getCardSubtype());
         scn.BlueprintCardTypeCheck(b, new ArrayList<>(Arrays.asList(CardType.INTERRUPT)));
