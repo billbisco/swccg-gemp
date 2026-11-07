@@ -4,6 +4,7 @@ import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import com.gempukku.swccgo.game.PhysicalCardImpl;
+import com.gempukku.swccgo.logic.actions.InitiateAttackNonCreatureAction;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
 import com.gempukku.swccgo.logic.effects.LoseCardFromTableEffect;
 import com.gempukku.swccgo.logic.effects.TriggeringResultEffect;
@@ -124,6 +125,136 @@ public class Card_1261_033_Tests {
             scn.PassAllResponses();
             assertEquals(before - forfeit - (inPlay ? 3 : 0), scn.GetDSLostPileCount());
         }
+    }
+
+    private VirtualTableScenario fullScenario() {
+        return new VirtualTableScenario(new HashMap<>(Map.of("luke", "1_19")),
+                new HashMap<>(Map.of("waters", "1261_33", "pit", "6_166", "chamber", "6_162",
+                        "wampa", "3_93", "womprat", "7_215", "trooper", "1_194", "trooper2", "1_194")),
+                26, 26, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
+    }
+
+    @Test(timeout = 15000)
+    public void nonSelectiveFerociousCreatureMayDeployHereButSelectiveOneAndNoWatersMayNot() {
+        for (boolean inPlay : List.of(true, false)) {
+            var scn = fullScenario();
+            var pit = scn.GetDSCard("pit");
+            var wampa = scn.GetDSCard("wampa");
+            var womprat = scn.GetDSCard("womprat");
+            scn.StartGame();
+            scn.MoveLocationToTable(pit);
+            if (inPlay)
+                scn.AttachCardsTo(pit, scn.GetDSCard("waters"));
+            scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("trooper"));
+            scn.MoveCardsToDSHand(wampa, womprat);
+            scn.SkipToDSTurn(Phase.DEPLOY);
+            scn.EnsureDSForcePile(10);
+            assertEquals(inPlay, scn.DSDeployAvailable(wampa));
+            assertFalse(scn.DSDeployAvailable(womprat));
+            if (inPlay) {
+                scn.DSDeployCard(wampa);
+                if (scn.DSHasCardChoiceAvailable(pit))
+                    scn.DSChooseCard(pit);
+                scn.PassAllResponses();
+                assertSame(pit, scn.game().getModifiersQuerying().getLocationThatCardIsAt(scn.gameState(), wampa));
+            }
+        }
+    }
+
+    private void captiveSetup(VirtualTableScenario scn, boolean presenceAtPit, Phase phase) {
+        var pit = scn.GetDSCard("pit");
+        var chamber = scn.GetDSCard("chamber");
+        scn.StartGame();
+        scn.MoveLocationToTable(pit);
+        scn.MoveLocationToTable(chamber);
+        scn.AttachCardsTo(pit, scn.GetDSCard("waters"));
+        scn.MoveCardsToLocation(chamber, scn.GetDSCard("trooper"));
+        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetLSCard("luke"));
+        scn.CaptureCardWith(scn.GetDSCard("trooper"), scn.GetLSCard("luke"));
+        if (presenceAtPit)
+            scn.MoveCardsToLocation(pit, scn.GetDSCard("trooper2"));
+        scn.SkipToDSTurn(phase);
+    }
+
+    private static final String RELOCATE = "Relocate captive";
+
+    @Test(timeout = 15000)
+    public void inYourBattlePhaseWithNoPresenceHereMayRelocateACaptiveFromAudienceChamber() {
+        var scn = fullScenario();
+        captiveSetup(scn, false, Phase.BATTLE);
+        var waters = scn.GetDSCard("waters");
+        var luke = scn.GetLSCard("luke");
+        assertTrue(luke.isCaptive());
+        assertTrue(scn.DSCardActionAvailable(waters, RELOCATE));
+        scn.DSUseCardAction(waters, RELOCATE);
+        if (scn.DSHasCardChoiceAvailable(luke))
+            scn.DSChooseCard(luke);
+        scn.PassAllResponses();
+        assertSame(scn.GetDSCard("pit"), scn.game().getModifiersQuerying().getLocationThatCardIsAt(scn.gameState(), luke));
+    }
+
+    @Test(timeout = 15000)
+    public void captiveRelocationNeedsYourBattlePhaseAndNoPresenceHere() {
+        var withPresence = fullScenario();
+        captiveSetup(withPresence, true, Phase.BATTLE);
+        assertFalse(withPresence.DSCardActionAvailable(withPresence.GetDSCard("waters"), RELOCATE));
+
+        var deployPhase = fullScenario();
+        captiveSetup(deployPhase, false, Phase.DEPLOY);
+        assertFalse(deployPhase.DSCardActionAvailable(deployPhase.GetDSCard("waters"), RELOCATE));
+    }
+
+    private Float attackAndMaybeSubstitute(VirtualTableScenario scn, boolean atPit, boolean substitute) {
+        var pit = scn.GetDSCard("pit");
+        var waters = scn.GetDSCard("waters");
+        var wampa = scn.GetDSCard("wampa");
+        var luke = scn.GetLSCard("luke");
+        var where = atPit ? pit : scn.GetDSStartingLocation();
+        scn.StartGame();
+        scn.MoveLocationToTable(pit);
+        scn.AttachCardsTo(pit, waters);
+        scn.MoveCardsToLocation(where, wampa, luke);
+        scn.SkipToDSTurn(Phase.BATTLE);
+        scn.PrepareLSDestiny(1);
+        scn.PrepareDSDestiny(6);
+        scn.carryOutEffectInPhaseActionByPlayer(scn.DS, new InitiateAttackNonCreatureAction(wampa));
+        if (scn.DSGetDecision() != null && scn.DSHasCardChoicesAvailable(luke))
+            scn.DSChooseCard(luke);
+        boolean offered = false;
+        for (int i = 0; i < 60 && scn.gameState().getAttackState() != null
+                && scn.gameState().getAttackState().getFerocityDestinyTotal(wampa) == null; i++) {
+            if (scn.DSCardActionAvailable(waters, "for ferocity")) {
+                offered = true;
+                if (substitute) {
+                    scn.DSUseCardAction(waters, "for ferocity");
+                    continue;
+                }
+            }
+            if (scn.DSDecisionAvailable("weapons segment") || scn.LSDecisionAvailable("weapons segment")
+                    || scn.DSDecisionAvailable("Choose weapons") || scn.LSDecisionAvailable("Choose weapons")) {
+                scn.PassWeaponsSegmentActions();
+                continue;
+            }
+            scn.PlayerPass(scn.GetDecidingPlayer());
+        }
+        assertEquals(atPit, offered);
+        return scn.gameState().getAttackState().getFerocityDestinyTotal(wampa);
+    }
+
+    @Test(timeout = 20000)
+    public void creatureHereMayUseItsDestinyNumberInsteadOfDrawingFerocityDestiny() {
+        var scn = fullScenario();
+        assertEquals(3f, attackAndMaybeSubstitute(scn, true, true), scn.epsilon);
+    }
+
+    @Test(timeout = 20000)
+    public void ferocitySubstitutionIsOptionalAndOnlyForCreaturesHere() {
+        var declined = fullScenario();
+        assertEquals(6f, attackAndMaybeSubstitute(declined, true, false), declined.epsilon);
+        var elsewhere = fullScenario();
+        assertEquals(6f, attackAndMaybeSubstitute(elsewhere, false, false), elsewhere.epsilon);
     }
 
     private void openControl(VirtualTableScenario scn) {

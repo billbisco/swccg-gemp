@@ -24,6 +24,7 @@ import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.game.state.MoveAsReactState;
 import com.gempukku.swccgo.game.state.UsingTractorBeamState;
 import com.gempukku.swccgo.game.state.WeaponFiringState;
+import com.gempukku.swccgo.logic.effects.DrawFerocityDestinyEffect;
 import com.gempukku.swccgo.logic.effects.LookAtCardsInOpponentsHandEffect;
 import com.gempukku.swccgo.logic.effects.MovingAsReactEffect;
 import com.gempukku.swccgo.logic.effects.RespondableDeployMultipleCardsSimultaneouslyEffect;
@@ -3742,6 +3743,24 @@ public class TriggerConditions {
             DestinyDrawCompleteResult destinyDrawCompleteResult = (DestinyDrawCompleteResult) effectResult;
             return playerId.equals(destinyDrawCompleteResult.getPerformingPlayerId())
                     && destinyDrawCompleteResult.getDestinyType() == DestinyType.BATTLE_DESTINY;
+        }
+        return false;
+    }
+
+    /**
+     * Determines if a creature accepted by the creature filter is about to draw destiny for ferocity.
+     * @param game the game
+     * @param effectResult the effect result
+     * @param creatureFilter the creature filter
+     * @return true or false
+     */
+    public static boolean isAboutToDrawFerocityDestiny(SwccgGame game, EffectResult effectResult, Filterable creatureFilter) {
+        if (effectResult.getType() == EffectResult.Type.ABOUT_TO_DRAW_DESTINY_CARD) {
+            AboutToDrawDestinyCardResult result = (AboutToDrawDestinyCardResult) effectResult;
+            return !result.isSubstituteDestiny()
+                    && result.getDrawDestinyEffect() instanceof DrawFerocityDestinyEffect.FerocityDestinyDrawEffect
+                    && Filters.and(creatureFilter).accepts(game,
+                    ((DrawFerocityDestinyEffect.FerocityDestinyDrawEffect) result.getDrawDestinyEffect()).getCreature());
         }
         return false;
     }
