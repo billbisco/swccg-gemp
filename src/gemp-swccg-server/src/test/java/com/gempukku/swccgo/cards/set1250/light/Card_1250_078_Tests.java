@@ -89,7 +89,7 @@ public class Card_1250_078_Tests {
                         + "; persona=" + Filters.Palpatine.accepts(s.game(), palpatine)
                         + "; legal actions=" + palpatine.getBlueprint().getPlayCardActions(s.LS, s.game(), palpatine,
                                 objective, true, 0, null, null, DeployAsCaptiveOption.deployAsImprisonedCaptive(),
-                                null, null, false, 0, prison, null).size(),
+                                null, null, false, 0, Filters.sameCardId(prison), null).size(),
                 objective.isObjectiveDeploymentComplete());
         assertFalse(objective.isFlipped());
         assertEquals(Zone.LOCATIONS, s.GetLSCard("coruscant").getZone()); assertEquals(Zone.LOCATIONS, prison.getZone());
