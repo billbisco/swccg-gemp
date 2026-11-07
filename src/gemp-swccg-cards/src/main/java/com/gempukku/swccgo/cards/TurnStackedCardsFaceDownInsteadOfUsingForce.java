@@ -112,7 +112,9 @@ public final class TurnStackedCardsFaceDownInsteadOfUsingForce {
         if (!TriggerConditions.isUsingForce(game, effect, self.getOwner())
                 || !GameConditions.isDuringYourTurn(game, self.getOwner()))
             return null;
-        return (UseForceEffect) effect;
+        UseForceEffect useForceEffect = (UseForceEffect) effect;
+        // A payment limited to the Force Pile cards (e.g. Greedo's "use all Force Pile cards") may not be substituted
+        return useForceEffect.canOnlyUseOwnForce() ? null : useForceEffect;
     }
 
     private static int ownForceToUse(UseForceEffect useForceEffect) {

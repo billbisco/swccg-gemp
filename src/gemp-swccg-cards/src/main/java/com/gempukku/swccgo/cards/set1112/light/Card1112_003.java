@@ -13,6 +13,7 @@ import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
+import com.gempukku.swccgo.game.state.BattleState;
 import com.gempukku.swccgo.logic.TriggerConditions;
 import com.gempukku.swccgo.logic.actions.PlayInterruptAction;
 import com.gempukku.swccgo.logic.effects.ActivateForceEffect;
@@ -24,7 +25,7 @@ import com.gempukku.swccgo.logic.timing.Action;
 import com.gempukku.swccgo.logic.timing.EffectResult;
 import com.gempukku.swccgo.logic.timing.results.AboutToDrawDestinyCardResult;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -78,20 +79,33 @@ public class Card1112_003 extends AbstractUsedInterrupt {
             protected void performActionResults(Action targetingAction) {
                 action.appendEffect(new CancelPreviousBattleDestinyDrawsEffect(action, playerId, 0));
                 action.appendEffect(new CancelPreviousBattleDestinyDrawsEffect(action, opponent, 0));
-                action.appendEffect(new DrawDestinyEffect(action, playerId, 1, DestinyType.BATTLE_DESTINY) {
-                    @Override
-                    protected void destinyDraws(SwccgGame game, List<PhysicalCard> destinyCardDraws, List<Float> destinyDrawValues, Float totalDestiny) {
-                    }
-                });
-                action.appendEffect(new DrawDestinyEffect(action, opponent, 1, DestinyType.BATTLE_DESTINY) {
-                    @Override
-                    protected void destinyDraws(SwccgGame game, List<PhysicalCard> destinyCardDraws, List<Float> destinyDrawValues, Float totalDestiny) {
-                    }
-                });
+                action.appendEffect(redraw(action, playerId));
+                action.appendEffect(redraw(action, opponent));
             }
         });
             actions.add(action);
         }
         return actions;
+    }
+
+    /**
+     * Redraws one battle destiny for the player and records it as that player's battle destiny draw (the canceled draw
+     * was removed from the battle totals, so the redraw has to be added back for it to count).
+     */
+    private static DrawDestinyEffect redraw(PlayInterruptAction action, final String player) {
+        return new DrawDestinyEffect(action, player, 1, DestinyType.BATTLE_DESTINY) {
+            @Override
+            protected void destinyDraws(SwccgGame game, List<PhysicalCard> destinyCardDraws,
+                    List<Float> destinyDrawValues, Float totalDestiny) {
+                BattleState battleState = game.getGameState().getBattleState();
+                if (totalDestiny == null || battleState == null) return;
+                boolean cancelable = !game.getModifiersQuerying().mayNotCancelBattleDestinyDraws(game.getGameState(),
+                        player, game.getOpponent(player), false);
+                List<Boolean> cancelableByOpponent = new ArrayList<Boolean>();
+                for (PhysicalCard drawn : destinyCardDraws) cancelableByOpponent.add(cancelable && drawn != null);
+                battleState.increaseTotalBattleDestinyFromDraws(player, destinyCardDraws, cancelableByOpponent,
+                        destinyDrawValues, totalDestiny);
+            }
+        };
     }
 }

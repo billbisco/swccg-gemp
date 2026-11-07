@@ -304,6 +304,14 @@ public abstract class AbstractInterrupt extends AbstractSwccgCardBlueprint {
 
         removeDueToMayNotBePlayedUnlessImmuneToSpecificTitleModifier(game, self, actions);
 
+        // Game text actions performed from hand without playing the Interrupt (e.g. revealing it)
+        if (self.getZone() == Zone.HAND && playerId.equals(self.getOwner())) {
+            List<TopLevelGameTextAction> actionList4 = getGameTextOptionalInHandAfterActions(playerId, game, effectResult, self, self.getCardId());
+            if (actionList4 != null) {
+                actions.addAll(actionList4);
+            }
+        }
+
         return actions;
     }
 
@@ -684,6 +692,20 @@ public abstract class AbstractInterrupt extends AbstractSwccgCardBlueprint {
      * @return the actions, or null
      */
     protected List<TopLevelGameTextAction> getGameTextTopLevelInHandActions(String playerId, SwccgGame game, PhysicalCard self, int gameTextSourceCardId) {
+        return null;
+    }
+
+    /**
+     * This method is overridden by individual cards to specify optional "after" responses to the specified effect result
+     * that are performed while this Interrupt is in its owner's hand, without playing it (for example, revealing it).
+     * @param playerId the player
+     * @param game the game
+     * @param effectResult the effect result
+     * @param self the card
+     * @param gameTextSourceCardId the card id of the game text for this action comes from (when copied from another card)
+     * @return the actions, or null
+     */
+    protected List<TopLevelGameTextAction> getGameTextOptionalInHandAfterActions(String playerId, SwccgGame game, EffectResult effectResult, PhysicalCard self, int gameTextSourceCardId) {
         return null;
     }
 

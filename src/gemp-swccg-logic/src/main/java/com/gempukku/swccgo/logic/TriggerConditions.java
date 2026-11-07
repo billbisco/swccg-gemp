@@ -1094,6 +1094,19 @@ public class TriggerConditions {
     }
 
     /**
+     * Determines if the specified player is about to use Force that may come from somewhere other than their own
+     * Force Pile (e.g. opponent's Force via Beggar). False for payments limited to the player's own Force Pile cards
+     * (UseForceEffect with onlyOwnForce, e.g. Greedo's threat cancel).
+     * @param game the game
+     * @param effect the effect
+     * @param playerId the player
+     * @return true or false
+     */
+    public static boolean isUsingForceNotLimitedToOwnForcePile(SwccgGame game, Effect effect, String playerId) {
+        return isUsingForce(game, effect, playerId) && !((UseForceEffect) effect).canOnlyUseOwnForce();
+    }
+
+    /**
      * Determines if the specified player is about to draw a card from Force Pile.
      * @param game the game
      * @param effectResult the effect result
@@ -5799,6 +5812,28 @@ public class TriggerConditions {
 
             return !aboutToBeHitResult.getPreventableCardEffect().isEffectOnCardPrevented(card)
                     && Filters.and(Filters.onTable, filter).accepts(game.getGameState(), game.getModifiersQuerying(), card);
+        }
+        return false;
+    }
+
+    /**
+     * Determines if a card accepted by the card filter was just put into hand from off table (e.g. taken into hand from a
+     * card pile) by an action whose source card is accepted by the source filter.
+     * @param game the game
+     * @param effectResult the effect result
+     * @param cardFilter the filter for the card put into hand
+     * @param sourceFilter the filter for the source card of the action that put the card into hand
+     * @return true or false
+     */
+    public static boolean justPutIntoHandFromOffTableBy(SwccgGame game, EffectResult effectResult, Filterable cardFilter, Filterable sourceFilter) {
+        if (effectResult.getType() == EffectResult.Type.PUT_TO_HAND_FROM_OFF_TABLE) {
+            PutCardToHandFromOffTableResult result = (PutCardToHandFromOffTableResult) effectResult;
+            PhysicalCard card = result.getCard();
+            Action action = result.getAction();
+            PhysicalCard source = action != null ? action.getActionSource() : null;
+            return card != null && source != null
+                    && Filters.and(cardFilter).accepts(game, card)
+                    && Filters.and(sourceFilter).accepts(game, source);
         }
         return false;
     }

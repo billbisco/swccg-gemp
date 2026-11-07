@@ -10,6 +10,7 @@ import com.gempukku.swccgo.logic.timing.EffectResult;
  */
 public class PutCardToHandFromOffTableResult extends EffectResult {
     private PhysicalCard _card;
+    private Action _action;
 
     /**
      * Creates an effect result that is triggered when a card is returned to hand that was not on the table (e.g. in a
@@ -32,6 +33,15 @@ public class PutCardToHandFromOffTableResult extends EffectResult {
     public PutCardToHandFromOffTableResult(Action action, String performingPlayerId, PhysicalCard card) {
         super(Type.PUT_TO_HAND_FROM_OFF_TABLE, performingPlayerId);
         _card = card;
+        _action = action;
+    }
+
+    /**
+     * Gets the action that put the card into hand (e.g. to check which card's game text took the card into hand).
+     * @return the action
+     */
+    public Action getAction() {
+        return _action;
     }
 
     /**

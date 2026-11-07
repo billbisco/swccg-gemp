@@ -1,6 +1,7 @@
 package com.gempukku.swccgo.cards.set1117.dark;
 
 import com.gempukku.swccgo.cards.AbstractCharacterWeapon;
+import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Keyword;
@@ -20,7 +21,9 @@ import com.gempukku.swccgo.logic.actions.FireWeaponAction;
 import com.gempukku.swccgo.logic.actions.FireWeaponActionBuilder;
 import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
 import com.gempukku.swccgo.logic.conditions.Condition;
+import com.gempukku.swccgo.logic.effects.AddUntilEndOfAttackModifierEffect;
 import com.gempukku.swccgo.logic.effects.AddUntilEndOfBattleModifierEffect;
+import com.gempukku.swccgo.logic.effects.AddUntilEndOfTurnModifierEffect;
 import com.gempukku.swccgo.logic.modifiers.ImmunityToAttritionChangeModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.modifiers.PowerModifier;
@@ -81,8 +84,15 @@ public class Card1117_015 extends AbstractCharacterWeapon {
             final PhysicalCard hit = ((HitResult) effectResult).getCardHit();
             RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
             action.setText("Target is power -3");
-            action.appendEffect(new AddUntilEndOfBattleModifierEffect(action,
-                    new PowerModifier(self, hit, -3), "Target is power -3"));
+            // Weapons fire during a battle or during an attack; the power reduction lasts for that combat.
+            PowerModifier powerMinusThree = new PowerModifier(self, hit, -3);
+            if (GameConditions.isDuringBattle(game)) {
+                action.appendEffect(new AddUntilEndOfBattleModifierEffect(action, powerMinusThree, "Target is power -3"));
+            } else if (GameConditions.isDuringAttack(game)) {
+                action.appendEffect(new AddUntilEndOfAttackModifierEffect(action, powerMinusThree, "Target is power -3"));
+            } else {
+                action.appendEffect(new AddUntilEndOfTurnModifierEffect(action, powerMinusThree, "Target is power -3"));
+            }
             return Collections.singletonList(action);
         }
         return null;

@@ -2,6 +2,7 @@ package com.gempukku.swccgo.cards.set1240.light;
 
 import com.gempukku.swccgo.cards.AbstractUsedInterrupt;
 import com.gempukku.swccgo.cards.GameConditions;
+import com.gempukku.swccgo.cards.effects.CancelCardResultEffect;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.GameTextActionId;
 import com.gempukku.swccgo.common.Icon;
@@ -15,6 +16,7 @@ import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.filters.LegacyCreatureFilters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
+import com.gempukku.swccgo.logic.TriggerConditions;
 import com.gempukku.swccgo.logic.actions.PlayInterruptAction;
 import com.gempukku.swccgo.logic.effects.AttackEffect;
 import com.gempukku.swccgo.logic.effects.LoseCardFromTableEffect;
@@ -61,6 +63,22 @@ public class Card1240_096 extends AbstractUsedInterrupt {
                         protected void performActionResults(Action targetingAction) {
                             performingAction.appendCost(
                                     new com.gempukku.swccgo.logic.timing.FailCostEffect(performingAction));
+                            action.appendEffect(
+                                    new LoseCardFromTableEffect(action, reegesk));
+                        }
+                    });
+            actions.add(action);
+        }
+        else if (TriggerConditions.isPerformingGameTextActionType(game, effect, Filters.Reegesk, GameTextActionId.LEGACY__REEGESK_V__STEAL_FROM_LOST_PILE)) {
+            final PhysicalCard reegesk = source;
+            final PlayInterruptAction action = new PlayInterruptAction(game, self);
+            action.setText("Cancel Reegesk steal; Reegesk is lost");
+            action.allowResponses(
+                    new RespondablePlayCardEffect(action) {
+                        @Override
+                        protected void performActionResults(Action targetingAction) {
+                            action.appendEffect(
+                                    new CancelCardResultEffect(action, effect));
                             action.appendEffect(
                                     new LoseCardFromTableEffect(action, reegesk));
                         }

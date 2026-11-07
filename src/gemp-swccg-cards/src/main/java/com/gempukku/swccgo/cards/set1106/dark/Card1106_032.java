@@ -46,12 +46,14 @@ public class Card1106_032 extends AbstractNormalEffect {
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
         String playerId = self.getOwner();
         String opponent = game.getOpponent(playerId);
+        // 'Your' frozen captive is one you hold: a captive is owned by the opponent of the player holding it.
+        Filter yourFrozenCaptive = Filters.and(Filters.opponents(self), Filters.frozenCaptive);
         Filter jabbasPrizeSite = Filters.sameSiteAs(self, SpotOverride.INCLUDE_CAPTIVE, Filters.Jabbas_Prize);
 
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new MayNotMoveModifier(self, Filters.and(Filters.opponents(self), Filters.onTable),
                 new AndCondition(new PhaseCondition(Phase.BATTLE, playerId),
-                        new UnlessCondition(new CantSpotCondition(self, SpotOverride.INCLUDE_CAPTIVE, Filters.and(Filters.your(self), Filters.frozenCaptive))))));
+                        new UnlessCondition(new CantSpotCondition(self, SpotOverride.INCLUDE_CAPTIVE, yourFrozenCaptive)))));
         modifiers.add(new DeployCostToLocationModifier(self, Filters.and(Filters.opponents(self), Filters.or(Filters.character, Filters.starship, Filters.vehicle, Filters.weapon, Filters.device, Filters.Effect)), 1, jabbasPrizeSite));
         modifiers.add(new ForceDrainModifier(self, jabbasPrizeSite, 2, playerId));
         modifiers.add(new MayNotBePlacedOutOfPlayModifier(self, Filters.My_Favorite_Decoration));

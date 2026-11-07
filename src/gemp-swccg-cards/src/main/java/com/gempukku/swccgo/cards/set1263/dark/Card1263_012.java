@@ -20,6 +20,16 @@ import com.gempukku.swccgo.logic.effects.UseForceEffect;
 import com.gempukku.swccgo.logic.effects.choose.TakeCardIntoHandFromReserveDeckEffect;
 import com.gempukku.swccgo.logic.timing.Action;
 
+import com.gempukku.swccgo.cards.effects.RevealCardFromOwnHandEffect;
+import com.gempukku.swccgo.cards.effects.usage.OncePerTurnEffect;
+import com.gempukku.swccgo.common.Zone;
+import com.gempukku.swccgo.logic.GameUtils;
+import com.gempukku.swccgo.logic.TriggerConditions;
+import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
+import com.gempukku.swccgo.logic.effects.choose.TakeCardIntoHandFromLostPileEffect;
+import com.gempukku.swccgo.logic.timing.EffectResult;
+import com.gempukku.swccgo.logic.timing.results.PutCardToHandFromOffTableResult;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -30,12 +40,36 @@ import java.util.List;
  * Title: Operational As Planned (V)
  */
 public class Card1263_012 extends AbstractUsedInterrupt {
+    private static final String PROTOCOL_FAILURE = "Protocol Failure";
+
     public Card1263_012() {
         super(Side.DARK, 5, Title.Operational_As_Planned, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_6_3, Rarity.V);
         setVirtualSuffix(true);
         setLore("'We shall double our efforts.'");
         setGameText("Once per turn, if taken into hand using Protocol Failure, may immediately reveal this Interrupt to return Protocol Failure from Lost Pile to hand. Use 1 Force to take [Virtual Block 6] Grotto Werribee or an Immediate Effect into hand from Reserve Deck; reshuffle. OR Use 2 Force to take an Effect that deploys for free into hand from Reserve Deck; reshuffle.");
         addIcons(Icon.DEATH_STAR_II);
+    }
+
+    @Override
+    protected List<TopLevelGameTextAction> getGameTextOptionalInHandAfterActions(final String playerId, SwccgGame game, EffectResult effectResult, final PhysicalCard self, int gameTextSourceCardId) {
+        GameTextActionId gameTextActionId = GameTextActionId.LEGACY__OPERATIONAL_AS_PLANNED_V__RETURN_PROTOCOL_FAILURE;
+        if (TriggerConditions.justPutIntoHandFromOffTableBy(game, effectResult, self, Filters.title(PROTOCOL_FAILURE))
+                && GameConditions.isOncePerTurn(game, self, playerId, gameTextSourceCardId, gameTextActionId)) {
+            final PhysicalCard protocolFailure = ((PutCardToHandFromOffTableResult) effectResult).getAction().getActionSource();
+            if (Filters.zoneOfPlayer(Zone.LOST_PILE, playerId).accepts(game, protocolFailure)) {
+                final TopLevelGameTextAction action = new TopLevelGameTextAction(self, playerId, gameTextSourceCardId, gameTextActionId);
+                action.setText("Reveal to return Protocol Failure to hand");
+                action.setActionMsg("Reveal " + GameUtils.getCardLink(self) + " to return " + GameUtils.getCardLink(protocolFailure) + " from Lost Pile to hand");
+                action.appendUsage(
+                        new OncePerTurnEffect(action));
+                action.appendEffect(
+                        new RevealCardFromOwnHandEffect(action, playerId, self));
+                action.appendEffect(
+                        new TakeCardIntoHandFromLostPileEffect(action, playerId, protocolFailure, false, false));
+                return Collections.singletonList(action);
+            }
+        }
+        return null;
     }
 
     @Override
