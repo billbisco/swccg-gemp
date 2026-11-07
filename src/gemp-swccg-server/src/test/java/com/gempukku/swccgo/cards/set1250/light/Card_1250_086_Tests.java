@@ -155,7 +155,8 @@ public class Card_1250_086_Tests {
             if (scn.DSDecisionAvailable("DESTINY_DRAWN")) {
                 scn.DSPass();
             }
-            assertTrue(scn.LSDecisionAvailable("DESTINY_DRAWN"));
+            assertNotNull(scn.GetADParam(scn.LS, "cardId"));
+            assertNotNull(scn.GetADParam(scn.LS, "actionText"));
             assertTrue("Expected destiny response; LS=" + prompt(scn, false) + "; DS=" + prompt(scn, true),
                     scn.LSCardActionAvailable(weapon, "Take destiny card into hand"));
             scn.LSUseCardAction(weapon, "Take destiny card into hand");

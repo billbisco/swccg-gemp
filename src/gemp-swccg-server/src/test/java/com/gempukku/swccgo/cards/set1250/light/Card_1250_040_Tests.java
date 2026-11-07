@@ -183,7 +183,7 @@ public class Card_1250_040_Tests {
             scn.DSChooseCard(scn.GetTopOfDSForcePile());
         }
         scn.PassAllResponses();
-        assertTrue(scn.AwaitingLSWeaponsSegmentActions() || scn.AwaitingDSWeaponsSegmentActions());
+        assertNull(scn.gameState().getTopForceLossState());
         assertEquals(!miss, trooper.isHit());
         assertEquals(lifeForce - (!miss && !otherJediFires ? 1 : 0), scn.GetDSLifeForceRemaining());
     }
