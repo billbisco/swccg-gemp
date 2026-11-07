@@ -17,8 +17,9 @@ public class Card_1220_138_Tests {
         var ls = new HashMap<>(Map.of("future", "1220_138", "battlePlan", "8_35", "doNot", "4_21",
                 "immune", "9_47", "ordinary", "1_66", "luke", "1_19", "site", "3_63",
                 "stackOne", "2_18", "stackTwo", "2_23", "stackThree", "2_27"));
+        if (purge == null) ls.putAll(Map.of("tableMaintenance", "13_9", "handWeapon", "108_3", "forceRevolution", "1_62"));
         if (purge != null) ls.put("purge", purge);
-        var ds = new HashMap<>(Map.of("darkInsert", "1_208", "darkWeapon", "108_6", "vader", "1_168"));
+        var ds = new HashMap<>(Map.of("darkInsert", "1_208", "darkWeapon", "108_6", "vader", "1_168", "darkMaintenance", "13_59"));
         return new VirtualTableScenario(ls, ds, 40, 40, StartingSetup.LSStartingLocation(start),
                 StartingSetup.DefaultDSGroundLocation, StartingSetup.NoLSStartingInterrupts,
                 StartingSetup.NoDSStartingInterrupts, StartingSetup.NoLSShields, StartingSetup.NoDSShields, "legacy");
@@ -53,9 +54,18 @@ public class Card_1220_138_Tests {
         assertFalse(scn.LSCardPlayAvailable(event));
     }
 
-    private VirtualTableScenario begin(boolean agent, String purge) {
+    private VirtualTableScenario begin(boolean agent, String purge) { return begin(agent, purge, false); }
+
+    private VirtualTableScenario begin(boolean agent, String purge, boolean arrangeZones) {
         var scn = fixture("5_79", purge);
         scn.StartGame();
+        if (arrangeZones) {
+            scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetLSCard("tableMaintenance"));
+            scn.MoveCardsToLSHand(scn.GetLSCard("handWeapon"), scn.GetLSCard("ordinary"));
+            scn.MoveCardsToTopOfLSForcePile(scn.GetLSCard("forceRevolution"));
+            scn.MoveCardsToTopOfDSUsedPile(scn.GetDSCard("darkInsert"));
+            scn.MoveCardsToDSHand(scn.GetDSCard("darkMaintenance"), scn.GetDSCard("darkWeapon"));
+        }
         assertTrue(scn.LSDecisionAvailable("Choose starting interrupt"));
         scn.LSChooseCard(scn.GetLSCard("future"));
         var needed = new ArrayList<>(List.of("battlePlan", "doNot", "immune"));
@@ -152,4 +162,14 @@ public class Card_1220_138_Tests {
 
     @Test public void actualAgentBattleAddsTwoToDarkSidesTotalOnly() { battleDestiny(true); }
     @Test public void actualJediModeDoesNotModifyEitherSidesBattleDestiny() { battleDestiny(false); }
+    @Test public void startupPurgeSpansTableHandForceAndUsedWithExactOwnerScope() {
+        var scn = begin(false, null, true);
+        for (String key : List.of("tableMaintenance", "handWeapon", "forceRevolution")) {
+            assertTrue(key, scn.GetLSLostPile().contains(scn.GetLSCard(key)));
+        }
+        assertTrue(scn.GetDSLostPile().contains(scn.GetDSCard("darkInsert")));
+        assertTrue(scn.GetDSHand().contains(scn.GetDSCard("darkMaintenance")));
+        assertTrue(scn.GetDSHand().contains(scn.GetDSCard("darkWeapon")));
+        assertTrue(scn.GetLSHand().contains(scn.GetLSCard("ordinary")));
+    }
 }
