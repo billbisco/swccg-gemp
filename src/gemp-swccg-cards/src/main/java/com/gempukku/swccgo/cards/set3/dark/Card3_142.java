@@ -6,25 +6,31 @@ import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
+import com.gempukku.swccgo.common.SpotOverride;
 import com.gempukku.swccgo.common.TargetingReason;
 import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.LegacyCreatureFilters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.logic.GameUtils;
+import com.gempukku.swccgo.logic.TriggerConditions;
 import com.gempukku.swccgo.logic.actions.PlayInterruptAction;
 import com.gempukku.swccgo.logic.effects.AddUntilEndOfGameModifierEffect;
 import com.gempukku.swccgo.logic.effects.CalculateFerocityEffect;
 import com.gempukku.swccgo.logic.effects.LoseCardFromTableEffect;
+import com.gempukku.swccgo.logic.effects.PlaceCardInLostPileFromTableEffect;
+import com.gempukku.swccgo.logic.effects.ReduceBattleDamageEffect;
 import com.gempukku.swccgo.logic.effects.RespondablePlayCardEffect;
 import com.gempukku.swccgo.logic.effects.TargetCardOnTableEffect;
 import com.gempukku.swccgo.logic.effects.TriggeringResultEffect;
 import com.gempukku.swccgo.logic.modifiers.FerocityModifier;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 import com.gempukku.swccgo.logic.timing.Action;
+import com.gempukku.swccgo.logic.timing.EffectResult;
 import com.gempukku.swccgo.logic.timing.GuiUtils;
 import com.gempukku.swccgo.logic.timing.results.EatenResult;
 
@@ -122,6 +128,42 @@ public class Card3_142 extends AbstractUsedInterrupt {
                                                         }
                                                     }
                                             );
+                                        }
+                                    }
+                            );
+                        }
+                    }
+            );
+            return Collections.singletonList(action);
+        }
+        return null;
+    }
+
+    @Override
+    protected List<PlayInterruptAction> getGameTextOptionalAfterActions(final String playerId, SwccgGame game, EffectResult effectResult, final PhysicalCard self) {
+        // Frozen Dinner (V) (Virtual Block 4): 'USED: During battle, place a ferocious creature there (even if excluded)
+        // in Lost Pile to reduce your battle damage by 5.'
+        final Filter creatureInBattle = Filters.and(LegacyCreatureFilters.ferocious, Filters.atLocation(Filters.battleLocation));
+        if (TriggerConditions.isResolvingBattleDamageAndAttrition(game, effectResult, playerId)
+                && GameConditions.canSpot(game, self, Filters.and(Filters.your(playerId), Filters.Effect, Filters.title("Frozen Dinner")))
+                && GameConditions.isBattleDamageRemaining(game, playerId)
+                && GameConditions.canSpot(game, self, SpotOverride.INCLUDE_EXCLUDED_FROM_BATTLE, creatureInBattle)) {
+
+            final PlayInterruptAction action = new PlayInterruptAction(game, self);
+            action.setText("Place creature in Lost Pile to reduce battle damage");
+            action.appendTargeting(
+                    new TargetCardOnTableEffect(action, playerId, "Choose ferocious creature", SpotOverride.INCLUDE_EXCLUDED_FROM_BATTLE, creatureInBattle) {
+                        @Override
+                        protected void cardTargeted(final int targetGroupId, PhysicalCard targetedCard) {
+                            action.addAnimationGroup(targetedCard);
+                            action.appendCost(
+                                    new PlaceCardInLostPileFromTableEffect(action, targetedCard));
+                            action.allowResponses("Reduce battle damage by 5",
+                                    new RespondablePlayCardEffect(action) {
+                                        @Override
+                                        protected void performActionResults(Action targetingAction) {
+                                            action.appendEffect(
+                                                    new ReduceBattleDamageEffect(action, playerId, 5));
                                         }
                                     }
                             );

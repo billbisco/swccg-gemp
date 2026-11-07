@@ -9,7 +9,9 @@ import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 public class CardsLeavePlayUtils {
 
@@ -144,5 +146,38 @@ public class CardsLeavePlayUtils {
                 cardsToLeavePlay(game, cardsLeavingPlay, stackedCard, false, additionalToLeavePlay, releasedCaptives);
             }
         }
+    }
+
+    /**
+     * Of the cards about to leave the table (to the Lost Pile), figures out which ones go to Used Pile instead, because
+     * they are sites whose leaving table is modified to place them and all cards there in Used Pile, or cards at such sites.
+     * Must be called while the cards are still on table.
+     * @param game the game
+     * @param cardsLeavingTable the cards about to leave the table
+     * @return the cards that go to Used Pile instead
+     */
+    public static Set<PhysicalCard> cardsToUsedPileBecauseSiteLeavesTable(SwccgGame game, Collection<PhysicalCard> cardsLeavingTable) {
+        GameState gameState = game.getGameState();
+        ModifiersQuerying modifiersQuerying = game.getModifiersQuerying();
+        Set<PhysicalCard> sites = new LinkedHashSet<PhysicalCard>();
+        for (PhysicalCard card : cardsLeavingTable) {
+            if (card.getZone() == Zone.LOCATIONS
+                    && modifiersQuerying.isSiteAndCardsTherePlacedInUsedPileWhenLeavesTable(gameState, card)) {
+                sites.add(card);
+            }
+        }
+        Set<PhysicalCard> result = new LinkedHashSet<PhysicalCard>(sites);
+        if (sites.isEmpty()) {
+            return result;
+        }
+        for (PhysicalCard card : cardsLeavingTable) {
+            if (sites.contains(card))
+                continue;
+            PhysicalCard location = modifiersQuerying.getLocationThatCardIsAt(gameState, card);
+            if (location != null && sites.contains(location)) {
+                result.add(card);
+            }
+        }
+        return result;
     }
 }

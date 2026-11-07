@@ -105,6 +105,7 @@ public class PhysicalCardImpl implements PhysicalCard, Cloneable {
     private List<ModifierHook> _modifierHooks = new LinkedList<ModifierHook>();
     private WhileInPlayData _whileInPlayData;
     private boolean _leavingTable;
+    private PhysicalCard _deployedSimultaneouslyWith;
     private JediTestStatus _jediTestStatus;
     private UtinniEffectStatus _utinniEffectStatus;
     private Map<TargetId, Integer> _targetGroupIds = new HashMap<TargetId, Integer>();
@@ -233,6 +234,7 @@ public class PhysicalCardImpl implements PhysicalCard, Cloneable {
         }
         snapshot._whileInPlayData = snapshotData.getDataForSnapshot(_whileInPlayData);
         snapshot._leavingTable = _leavingTable;
+        snapshot._deployedSimultaneouslyWith = snapshotData.getDataForSnapshot(_deployedSimultaneouslyWith);
         snapshot._jediTestStatus = _jediTestStatus;
         snapshot._utinniEffectStatus = _utinniEffectStatus;
         snapshot._targetGroupIds.putAll(_targetGroupIds);
@@ -1036,6 +1038,16 @@ public class PhysicalCardImpl implements PhysicalCard, Cloneable {
     @Override
     public boolean isLeavingTable() {
         return _leavingTable;
+    }
+
+    @Override
+    public void setDeployedSimultaneouslyWith(PhysicalCard card) {
+        _deployedSimultaneouslyWith = card;
+    }
+
+    @Override
+    public PhysicalCard getDeployedSimultaneouslyWith() {
+        return _deployedSimultaneouslyWith;
     }
 
     /**

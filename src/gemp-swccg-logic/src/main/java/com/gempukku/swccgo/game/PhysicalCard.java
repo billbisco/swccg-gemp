@@ -247,6 +247,13 @@ public interface PhysicalCard extends Filterable, Snapshotable<PhysicalCard> {
     boolean isLeavingTable();
 
     /**
+     * Records the card this card was deployed simultaneously with when it was most recently deployed (null if it
+     * was deployed by itself).
+     */
+    void setDeployedSimultaneouslyWith(PhysicalCard card);
+    PhysicalCard getDeployedSimultaneouslyWith();
+
+    /**
      * Sets the Jedi Test status. This is only relevant if the card is a Jedi Test in play.
      * @param status the Jedi Test status
      */
