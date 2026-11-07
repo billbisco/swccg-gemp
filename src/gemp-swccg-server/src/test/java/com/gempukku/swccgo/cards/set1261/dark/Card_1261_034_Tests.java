@@ -106,17 +106,24 @@ public class Card_1261_034_Tests {
         assertFalse(scn.DSCardActionAvailable(effect, "Deploy non-unique starship or vehicle site"));
     }
 
-    @Test(timeout = 10000)
-    public void realSpaceBattleAddsTwoPerOwnCharacterToOnlyTheRelatedShip() {
+    private static boolean inUsed(com.gempukku.swccgo.game.PhysicalCard c) {
+        return c.getZone() == Zone.USED_PILE || c.getZone() == Zone.TOP_OF_USED_PILE;
+    }
+
+    private static boolean inLost(com.gempukku.swccgo.game.PhysicalCard c) {
+        return c.getZone() == Zone.LOST_PILE || c.getZone() == Zone.TOP_OF_LOST_PILE;
+    }
+
+    /** Destroyer and Victory at the DS system with a Corvette; Launch Bay related to the Destroyer holds two DS
+     * characters and Luke. */
+    private VirtualTableScenario spaceSetup(boolean effectOnTable) {
         var scn = scenario();
-        var effect = scn.GetDSCard("protocols");
         var launch = scn.GetDSCard("launch");
         var ship = scn.GetDSCard("destroyer");
-        var other = scn.GetDSCard("other");
         var corvette = scn.GetLSCard("corvette");
         scn.StartGame();
         var system = scn.GetDSStartingLocation();
-        scn.MoveCardsToLocation(system, ship, other, corvette);
+        scn.MoveCardsToLocation(system, ship, scn.GetDSCard("other"), corvette);
         scn.BoardAsPilot(corvette, scn.GetLSCard("han"));
         var placement = scn.gameState().getLocationPlacement(scn.game(), launch, null, null).stream()
                 .filter(p -> p.getParentStarshipOrVehicleCard() == ship).findFirst().orElseThrow();
@@ -124,17 +131,37 @@ public class Card_1261_034_Tests {
         assertSame(ship, launch.getRelatedStarshipOrVehicle());
         scn.MoveCardsToLocation(launch, scn.GetDSCard("trooper"), scn.GetDSCard("officer"),
                 scn.GetLSCard("luke"));
-        scn.MoveCardsToDSSideOfTable(effect);
+        if (effectOnTable)
+            scn.MoveCardsToDSSideOfTable(scn.GetDSCard("protocols"));
+        return scn;
+    }
+
+    private int dsTotalPowerInSpaceBattle(boolean effectOnTable) {
+        var scn = spaceSetup(effectOnTable);
+        var ship = scn.GetDSCard("destroyer");
         var shipPower = scn.GetPower(ship);
-        var otherPower = scn.GetPower(other);
-        scn.DSStartBattleAndSkipToWeaponsSegment(system);
-        assertTrue(scn.IsActiveBattle());
-        assertEquals(shipPower + 4, scn.GetPower(ship), scn.epsilon);
-        assertEquals(otherPower, scn.GetPower(other), scn.epsilon);
+        scn.DSStartBattleAndSkipToWeaponsSegment(scn.GetDSStartingLocation());
+        assertEquals("Vessel power itself is not modified", shipPower, scn.GetPower(ship), scn.epsilon);
+        scn.SkipToEndOfPowerSegment(false);
+        return scn.GetDSTotalPower();
     }
 
     @Test(timeout = 10000)
-    public void actualVehicleBattleUsesCharactersAtTheRelatedVehicleSite() {
+    public void ownCharactersAtRelatedStarshipSiteEachAddTwoToTotalPower() {
+        int without = dsTotalPowerInSpaceBattle(false);
+        int with = dsTotalPowerInSpaceBattle(true);
+        // Two DS characters at the related Launch Bay; Luke (opponent's) does not count.
+        assertEquals(without + 4, with);
+    }
+
+    @Test(timeout = 10000)
+    public void actualVehicleBattleAddsTwoToTotalPowerForCharacterAtRelatedVehicleSite() {
+        int without = vehicleBattleTotalPower(false);
+        int with = vehicleBattleTotalPower(true);
+        assertEquals(without + 2, with);
+    }
+
+    private int vehicleBattleTotalPower(boolean effectOnTable) {
         var scn = new VirtualTableScenario(new HashMap<>(Map.of("luke", "1_19")),
                 new HashMap<>(Map.of("protocols", "1261_34", "walker", "3_157",
                         "platform", "1220_67", "trooper", "1_194", "veers", "3_87")),
@@ -152,11 +179,134 @@ public class Card_1261_034_Tests {
         scn.MoveLocationToTable(platform, placement);
         assertSame(walker, platform.getRelatedStarshipOrVehicle());
         scn.MoveCardsToLocation(platform, scn.GetDSCard("trooper"));
-        scn.MoveCardsToDSSideOfTable(scn.GetDSCard("protocols"));
-        var unmodified = scn.GetPower(walker);
+        if (effectOnTable)
+            scn.MoveCardsToDSSideOfTable(scn.GetDSCard("protocols"));
+        var walkerPower = scn.GetPower(walker);
         scn.DSStartBattleAndSkipToWeaponsSegment(ground);
         assertTrue(scn.IsActiveBattle());
-        assertEquals(unmodified + 2, scn.GetPower(walker), scn.epsilon);
+        assertEquals(walkerPower, scn.GetPower(walker), scn.epsilon);
+        scn.SkipToEndOfPowerSegment(false);
+        return scn.GetDSTotalPower();
     }
 
+    @Test(timeout = 10000)
+    public void characterAtRelatedSiteMayBeForfeitedToReduceBattleDamage() {
+        var scn = spaceSetup(true);
+        var effect = scn.GetDSCard("protocols");
+        var trooper = scn.GetDSCard("trooper");
+        var luke = scn.GetLSCard("luke");
+        var corvette = scn.GetLSCard("corvette");
+        scn.ApplyAdHocModifier(new com.gempukku.swccgo.logic.modifiers.PowerModifier(corvette, corvette, 40));
+        scn.DSStartBattleAndSkipToWeaponsSegment(scn.GetDSStartingLocation());
+        scn.SkipToDamageSegment(false);
+        scn.PassDamageSegmentActions();
+        int damage = scn.GetUnpaidDSBattleDamage();
+        assertTrue("DS lost the battle", damage > 2);
+        assertTrue(scn.DSCardActionAvailable(effect, "Forfeit character at related site"));
+        scn.DSUseCardAction(effect, "Forfeit character at related site");
+        assertTrue(scn.DSHasCardChoiceAvailable(trooper));
+        assertFalse("Opponent's character is not offered", scn.DSHasCardChoiceAvailable(luke));
+        scn.DSChooseCard(trooper);
+        scn.PassAllResponses();
+        assertTrue(inLost(trooper));
+        assertEquals("Stormtrooper forfeit 2 reduces battle damage", damage - 2, scn.GetUnpaidDSBattleDamage());
+    }
+
+    @Test(timeout = 10000)
+    public void forfeitOptionIsNotOfferedWithoutBattleDamageOrAttrition() {
+        var scn = spaceSetup(true);
+        var effect = scn.GetDSCard("protocols");
+        scn.DSStartBattleAndSkipToWeaponsSegment(scn.GetDSStartingLocation());
+        scn.SkipToDamageSegment(false);
+        assertEquals(0, scn.GetUnpaidDSBattleDamage());
+        assertEquals(0, scn.GetUnpaidDSAttrition());
+        assertTrue(scn.DSGetDecision() == null || scn.GetDSAvailableActions() == null
+                || !scn.GetDSAvailableActions().toString().contains("Forfeit character at related site"));
+    }
+
+    /** Answers pending decisions (picking the first card for pile-order choices, passing otherwise) until done. */
+    private static void resolveUntil(VirtualTableScenario scn, java.util.function.BooleanSupplier done) {
+        for (int i = 0; i < 40 && !done.getAsBoolean(); i++) {
+            var decision = scn.GetCurrentDecision();
+            if (decision == null)
+                break;
+            String player = scn.DSGetDecision() != null ? scn.DS : scn.LS;
+            var ids = decision.getDecisionParameters().get("cardId");
+            var min = decision.getDecisionParameters().get("min");
+            if (ids != null && ids.length > 0 && min != null && !"0".equals(min[0])) {
+                scn.PlayerDecided(player, ids[0]);
+            } else if (player.equals(scn.DS)) {
+                scn.DSPass();
+            } else {
+                scn.LSPass();
+            }
+        }
+        if (!done.getAsBoolean()) {
+            var decision = scn.GetCurrentDecision();
+            fail("Unresolved: " + (decision == null ? "no decision" : decision.getText()));
+        }
+    }
+
+    private void loseDestroyer(VirtualTableScenario scn) {
+        var ship = scn.GetDSCard("destroyer");
+        scn.SkipToDSTurn(Phase.BATTLE);
+        scn.DSExecuteAdHocEffect(ship, new com.gempukku.swccgo.logic.effects.LoseCardFromTableEffect(
+                new com.gempukku.swccgo.logic.actions.TopLevelGameTextAction(ship, ship.getCardId()), ship));
+        resolveUntil(scn, () -> inLost(ship) && scn.GetDSCard("launch").getZone() != Zone.LOCATIONS
+                && scn.GetDSCard("launch").getZone() != Zone.VOID);
+    }
+
+    @Test(timeout = 10000)
+    public void starshipSiteLeavingTablePlacesItAndAllCardsThereInOwnersUsedPile() {
+        var scn = spaceSetup(true);
+        loseDestroyer(scn);
+        assertTrue(inUsed(scn.GetDSCard("launch")));
+        assertTrue(inUsed(scn.GetDSCard("trooper")));
+        assertTrue(inUsed(scn.GetDSCard("officer")));
+        var luke = scn.GetLSCard("luke");
+        assertTrue("Opponent's card there goes to its owner's Used Pile", inUsed(luke));
+        assertTrue(scn.gameState().getUsedPile(scn.LS).contains(luke));
+    }
+
+    @Test(timeout = 10000)
+    public void withoutTheEffectStarshipSiteAndCardsThereAreLost() {
+        var scn = spaceSetup(false);
+        loseDestroyer(scn);
+        assertTrue(inLost(scn.GetDSCard("launch")));
+        assertTrue(inLost(scn.GetDSCard("trooper")));
+        assertTrue(inLost(scn.GetLSCard("luke")));
+    }
+
+    @Test(timeout = 10000)
+    public void characterLostFromRelatedSiteThatStaysOnTableStillGoesToLostPile() {
+        var scn = spaceSetup(true);
+        var trooper = scn.GetDSCard("trooper");
+        scn.SkipToDSTurn(Phase.BATTLE);
+        scn.DSExecuteAdHocEffect(trooper, new com.gempukku.swccgo.logic.effects.LoseCardFromTableEffect(
+                new com.gempukku.swccgo.logic.actions.TopLevelGameTextAction(trooper, trooper.getCardId()), trooper));
+        scn.PassAllResponses();
+        assertTrue(inLost(trooper));
+        assertEquals(Zone.LOCATIONS, scn.GetDSCard("launch").getZone());
+    }
+
+    @Test(timeout = 10000)
+    public void forfeitedStarshipTakesItsSiteAndCardsThereToUsedPile() {
+        var scn = spaceSetup(true);
+        var ship = scn.GetDSCard("destroyer");
+        var corvette = scn.GetLSCard("corvette");
+        scn.ApplyAdHocModifier(new com.gempukku.swccgo.logic.modifiers.PowerModifier(corvette, corvette, 40));
+        scn.DSStartBattleAndSkipToWeaponsSegment(scn.GetDSStartingLocation());
+        scn.SkipToDamageSegment(false);
+        scn.PassDamageSegmentActions();
+        // Decline the optional forfeit of a character at the related site first.
+        if (!scn.AwaitingDSBattleDamagePayment() && scn.DSGetDecision() != null)
+            scn.DSPass();
+        assertTrue(scn.AwaitingDSBattleDamagePayment());
+        scn.DSChooseCard(ship);
+        resolveUntil(scn, () -> inLost(ship) && scn.GetDSCard("launch").getZone() != Zone.LOCATIONS
+                && scn.GetDSCard("launch").getZone() != Zone.VOID);
+        assertTrue(inUsed(scn.GetDSCard("launch")));
+        assertTrue(inUsed(scn.GetDSCard("trooper")));
+        assertTrue(inUsed(scn.GetLSCard("luke")));
+    }
 }
