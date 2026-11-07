@@ -14,9 +14,9 @@ public class Card_1262_014_Tests {
     private static final String RETURN = "Place IL-19 in owner's Used Pile";
     private static final String CANCEL = "Cancel just drawn destiny";
     private VirtualTableScenario scenario() {
-        // IL-19 has no Decipher printing. Leia's V text supplies the power/attrition draw under test.
+        // IL-19 has no Decipher printing. Leia's V text supplies an attrition-only draw.
         return new VirtualTableScenario(new HashMap<>() {{ put("il19", "1115_13"); put("leia", "202_1"); put("luke", "1_19"); put("blaster", "1_153"); }},
-                new HashMap<>() {{ put("why", "1262_14"); put("vader", "1_168"); put("veers", "3_87"); put("cost", "1_201"); put("force1", "1_194"); put("force2", "1_317"); put("force3", "3_154"); put("used", "1_299"); }},
+                new HashMap<>() {{ put("why", "1262_14"); put("vader", "1_168"); put("veers", "3_87"); put("cost", "1_201"); put("force1", "1_194"); put("force2", "1_317"); put("force3", "3_154"); put("used", "1_299"); put("sunsdown","1_230");put("tatooine","1_289"); }},
                 10, 10, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -57,6 +57,17 @@ public class Card_1262_014_Tests {
     }
     @Test public void WhyDidntYouTellMePaysHandCardUnderUsedToTakeAnyForceCardDuringOwnDraw() { take(draw(true),"force2"); }
     @Test public void WhyDidntYouTellMeTakesDifferentCardDuringOpponentsDraw() { take(draw(false),"force3"); }
+    @Test public void WhyDidntYouTellMeActuallyReshufflesRemainingForcePileWithoutChangingItsCards() {
+        boolean reordered=false;
+        for(long seed:new long[]{0,4096,8192,12288}) {
+            var scn=draw(true);var before=new ArrayList<>(scn.game().getGameState().getForcePile(scn.DS));
+            before.remove(scn.GetDSCard("force2"));scn.game().getGameState().getRandom().setSeed(seed);take(scn,"force2");
+            var after=new ArrayList<>(scn.game().getGameState().getForcePile(scn.DS));
+            assertEquals(before.size(),after.size());assertEquals(new java.util.HashSet<>(before),new java.util.HashSet<>(after));
+            reordered|=!before.equals(after);
+        }
+        assertTrue(reordered);
+    }
     @Test public void WhyDidntYouTellMeCannotPayWithTheInterruptItself() {
         var scn=scenario();scn.StartGame();scn.MoveCardsToDSHand(scn.GetDSCard("why"));scn.SkipToDSTurn(Phase.DRAW);
         assertNotNull(scn.DSGetDecision());assertFalse(scn.DSCardPlayAvailable(scn.GetDSCard("why"),TAKE));
@@ -106,9 +117,13 @@ public class Card_1262_014_Tests {
         return scn;
     }
     private com.gempukku.swccgo.logic.effects.DrawDestinyEffect reachDraw(VirtualTableScenario scn,DestinyType type) {
+        return reachDraw(scn,type,null);
+    }
+    private com.gempukku.swccgo.logic.effects.DrawDestinyEffect reachDraw(VirtualTableScenario scn,DestinyType type,String player) {
         for(int i=0;i<80;i++) {
             var state=scn.game().getGameState().getTopDrawDestinyState();
             if(state!=null && state.getDrawDestinyEffect().getDestinyType()==type
+                    && (player==null || player.equals(state.getDrawDestinyEffect().getPlayerDrawingDestiny()))
                     && state.getDrawDestinyEffect().getDrawnDestinyCard()!=null
                     && (scn.DSDecisionAvailable("DESTINY_DRAWN") || scn.DSDecisionAvailable("Just drew")))
                 return state.getDrawDestinyEffect();
@@ -159,4 +174,18 @@ public class Card_1262_014_Tests {
         assertFalse(draw.isDestinyCanceled());assertTrue(scn.GetDSCard("veers").isHit());
         assertEquals(Zone.HAND,scn.GetDSCard("why").getZone());
     }
+    private void sunsdown(boolean own,int destiny) {
+        var scn=scenario();scn.StartGame();scn.MoveLocationToTable(scn.GetDSCard("tatooine"));
+        scn.AttachCardsTo(scn.GetDSCard("tatooine"),scn.GetDSCard("sunsdown"));
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(),scn.GetDSCard("veers"),scn.GetLSCard("luke"));
+        scn.MoveCardsToDSHand(scn.GetDSCard("why"));scn.LSStartBattleAndSkipToWeaponsSegment(scn.GetDSStartingLocation());
+        if(own)scn.PrepareDSDestiny(destiny);else scn.PrepareLSDestiny(destiny);
+        var draw=reachDraw(scn,DestinyType.DESTINY_TO_TOTAL_POWER,own?scn.DS:scn.LS);var card=draw.getDrawnDestinyCard();
+        assertEquals(destiny,draw.getDestinyDrawValue(),scn.epsilon);assertTrue(scn.DSCardPlayAvailable(scn.GetDSCard("why"),CANCEL));
+        scn.DSPlayCard(scn.GetDSCard("why"),CANCEL);scn.PassAllResponses();assertTrue(draw.isDestinyCanceled());
+        assertInZone(Zone.USED_PILE,scn.GetDSCard("why"));assertTrue(scn.game().getGameState().getUsedPile(own?scn.DS:scn.LS).contains(card));
+    }
+    @Test public void WhyDidntYouTellMeCancelsOpponentsPowerDrawFromOriginalEffect() {sunsdown(false,4);}
+    @Test public void WhyDidntYouTellMeMayAlsoCancelItsOwnersPowerDraw() {sunsdown(true,3);}
+    @Test public void WhyDidntYouTellMeMayCancelZeroValuedPowerDestiny() {sunsdown(false,0);}
 }
