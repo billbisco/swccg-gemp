@@ -63,7 +63,6 @@ public class Card1261_085 extends AbstractImmediateEffect {
                     Filters.and(site), null);
             if (action != null) {
                 action.setText("Deploy to cancel the Force drain");
-                action.appendEffect(new CancelForceDrainEffect(action));
                 return Collections.singletonList(action);
             }
         }
@@ -84,6 +83,14 @@ public class Card1261_085 extends AbstractImmediateEffect {
 
     @Override
     protected List<RequiredGameTextTriggerAction> getGameTextRequiredAfterTriggers(SwccgGame game, EffectResult result, PhysicalCard self, int gameTextSourceCardId) {
+        if (onSite(game, self) && TriggerConditions.justDeployed(game, result, self)
+                && GameConditions.canCancelForceDrain(game, self)
+                && self.getAttachedTo().equals(game.getGameState().getForceDrainState().getLocation())) {
+            RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
+            action.setText("Cancel the Force drain here");
+            action.appendEffect(new CancelForceDrainEffect(action));
+            return Collections.singletonList(action);
+        }
         if (onSite(game, self) && TriggerConditions.isEndOfYourTurn(game, result, self)) {
             RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
             action.setText("Place Return Of The Jedi in Lost Pile");
