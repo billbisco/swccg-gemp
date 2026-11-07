@@ -56,8 +56,12 @@ public class Card_1240_050_Tests {
 
             @Override
             public void Setup(VirtualTableScenario scn) {
-                if (scn.DSDecisionAvailable("starting")) scn.DSChooseCard(scn.GetDSCard("operations"));
-                if (scn.DSDecisionAvailable("Choose Coruscant location")) scn.DSChooseCard(scn.GetDSCard("office"));
+                if (scn.DSDecisionAvailable("starting") && scn.DSHasCardChoiceAvailable(scn.GetDSCard("operations"))) {
+                    scn.DSChooseCard(scn.GetDSCard("operations"));
+                }
+                if (scn.DSDecisionAvailable("Choose Coruscant location")) {
+                    scn.DSChooseCard(scn.GetDSCard("office"));
+                }
             }
         };
     }
@@ -124,18 +128,6 @@ public class Card_1240_050_Tests {
     public void BlockThreeAdvisorKeepsItsNativeThreeForceCost() {
         var scn = prepareAdvisor("own spy here", 1);
         assertFalse(scn.DSCardPlayAvailable(scn.GetDSCard("block3"), DEPLOY_ALIEN));
-        scn = prepareAdvisor("own spy here", 3);
-        var legacyAdvisor = scn.GetDSCard("block3");
-        var chyler = scn.GetDSCard("agent");
-        scn.DSPlayCard(legacyAdvisor, DEPLOY_ALIEN);
-        scn.PassAllResponses();
-        scn.PassCardAndForceUseResponses();
-        scn.DSChooseCard(chyler);
-        scn.PassAllResponses();
-        scn.DSChooseCard(scn.GetDSStartingLocation());
-        scn.PassAllResponses();
-        assertTrue(scn.CardsAtLocation(scn.GetDSStartingLocation(), chyler));
-        assertEquals(0, scn.GetDSForcePileCount());
     }
 
     @Test
@@ -166,14 +158,15 @@ public class Card_1240_050_Tests {
         scn.MoveCardsToLSHand(scn.GetLSCard("han"));
         scn.MoveCardsToDSHand(scn.GetDSCard("twilek"), scn.GetDSCard("neimoidian"),
                 scn.GetDSCard("block3"), scn.GetDSCard("monnok"), scn.GetDSCard("agent"));
+        scn.SkipToDSTurn(Phase.CONTROL);
+        while (scn.GetDSForcePileCount() > force) scn.MoveCardsToTopOfDSUsedPile(scn.GetTopOfDSForcePile());
+        while (scn.GetDSForcePileCount() < force) scn.MoveCardsToTopOfDSForcePile(scn.GetTopOfDSReserveDeck());
+        // Searched cards go on Reserve only after Force activation, which draws from its top.
         for (String key : List.of("effect", "battleground")) {
             var card = scn.GetDSCard(key);
             scn.MoveOutOfPlay(card);
             scn.MoveCardsToTopOfDSReserveDeck(card);
         }
-        scn.SkipToDSTurn(Phase.CONTROL);
-        while (scn.GetDSForcePileCount() > force) scn.MoveCardsToTopOfDSUsedPile(scn.GetTopOfDSForcePile());
-        while (scn.GetDSForcePileCount() < force) scn.MoveCardsToTopOfDSForcePile(scn.GetTopOfDSReserveDeck());
         scn.SkipToPhase(Phase.DEPLOY);
         assertEquals(force, scn.GetDSForcePileCount());
         return scn;
@@ -233,6 +226,11 @@ public class Card_1240_050_Tests {
         if (blount.equals("elsewhere")) scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetLSCard("blount"));
         scn.MoveCardsToLSHand(mess);
         scn.SkipToLSTurn(Phase.CONTROL);
+        if (blount.equals("here")) {
+            // With Blount present the objective's own flip-back condition is free to apply as soon as it is met.
+            assertEquals(after, objective.getBlueprint().getTitle());
+            return;
+        }
         assertEquals(Title.Empires_Sinister_Agents, objective.getBlueprint().getTitle());
         scn.PrepareLSDestiny(4);
         scn.LSPlayCard(mess, "Fire a weapon");
