@@ -43,7 +43,7 @@ public class Card_1263_019_Tests {
         assertEquals(Rarity.V, b.getRarity());
         assertTrue(b.hasVirtualSuffix());
         assertTrue(b.isLegacy());
-        scn.BlueprintIconCheck(b, new ArrayList<>(List.of(Icon.DAGOBAH, Icon.NAV_COMPUTER, Icon.SCOMP_LINK, Icon.LEGACY_BLOCK_6)));
+        scn.BlueprintIconCheck(b, new ArrayList<>(List.of(Icon.STARSHIP, Icon.DAGOBAH, Icon.NAV_COMPUTER, Icon.SCOMP_LINK, Icon.LEGACY_BLOCK_6)));
         assertEquals(1, b.getPilotCapacity());
         assertEquals(1, scn.gameState().getAvailablePassengerCapacityForAstromech(scn.game().getModifiersQuerying(),
                 scn.GetDSCard("tie"), null));
