@@ -32,7 +32,7 @@ public class Card1261_068 extends AbstractRebel {
         setVirtualSuffix(true);
         setLore("With a silvery tongue or a rapid-fire blaster, Lando prides himself on being able to get out of tight situations. Is at his best when cornered.");
         setGameText("Adds 2 to power of anything he pilots. Once per game, may convert opponent's Lando present at a site (may retrieve 2 Force). Adds one battle destiny if with your alien or Rebel. Immune to attrition < 3 (< 5 if your Effect with 'Lando' in lore on table).");
-        addIcons(Icon.PILOT, Icon.WARRIOR);
+        addIcons(Icon.PILOT, Icon.WARRIOR, Icon.CLOUD_CITY);
         addPersona(Persona.LANDO);
         addKeywords(Keyword.SCOUNDREL);
         setMatchingStarshipFilter(Filters.Falcon);

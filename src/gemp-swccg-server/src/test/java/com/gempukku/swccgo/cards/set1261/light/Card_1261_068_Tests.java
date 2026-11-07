@@ -36,7 +36,7 @@ public class Card_1261_068_Tests {
         assertEquals(CardCategory.CHARACTER, b.getCardCategory()); assertNull(b.getCardSubtype());
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_6_1, b.getExpansionSet()); assertEquals(Rarity.V, b.getRarity());
         scn.BlueprintCardTypeCheck(b, new ArrayList<>(Arrays.asList(CardType.REBEL)));
-        scn.BlueprintIconCheck(b, new ArrayList<>(Arrays.asList(Icon.REBEL, Icon.PILOT, Icon.WARRIOR, Icon.LEGACY_BLOCK_6)));
+        scn.BlueprintIconCheck(b, new ArrayList<>(Arrays.asList(Icon.REBEL, Icon.PILOT, Icon.WARRIOR, Icon.CLOUD_CITY, Icon.LEGACY_BLOCK_6)));
         scn.BlueprintKeywordCheck(b, new ArrayList<>(Arrays.asList(Keyword.SCOUNDREL)));
         scn.BlueprintPersonaCheck(b, new ArrayList<>(Arrays.asList(Persona.LANDO)));
     }
