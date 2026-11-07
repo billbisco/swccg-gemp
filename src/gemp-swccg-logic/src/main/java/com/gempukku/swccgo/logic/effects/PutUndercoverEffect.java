@@ -28,6 +28,10 @@ public class PutUndercoverEffect extends AbstractSuccessfulEffect {
     protected void doPlayEffect(SwccgGame game) {
         if (_card.isUndercover())
             return;
+        if (game.getModifiersQuerying().mayNotBeUndercover(game.getGameState(), _card)) {
+            game.getGameState().sendMessage(GameUtils.getCardLink(_card) + " may not be 'undercover'");
+            return;
+        }
 
         GameState gameState = game.getGameState();
         gameState.sendMessage(GameUtils.getCardLink(_card) + " is 'undercover'");
