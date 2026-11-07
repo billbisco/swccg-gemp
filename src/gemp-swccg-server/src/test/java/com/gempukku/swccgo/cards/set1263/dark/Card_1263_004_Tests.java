@@ -16,7 +16,7 @@ public class Card_1263_004_Tests {
     private VirtualTableScenario scenario() {
         var scn = new VirtualTableScenario(
                 new HashMap<>(Map.of("ben", "1_21", "saber", "1_157", "clash", "5_38")),
-                new HashMap<>(Map.of("grotto", "1263_4", "trooper", "1_194", "ship", "7_307", "system", "1_289")),
+                new HashMap<>(Map.of("grotto", "1263_4", "trooper", "1_194", "vader", "1_168", "ship", "7_307", "system", "1_289")),
                 30, 30, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -55,6 +55,32 @@ public class Card_1263_004_Tests {
             if (piloting) scn.BoardAsPilot(ship, grotto);
             else scn.BoardAsPassenger(ship, grotto);
             assertEquals(power + (piloting ? 2 : 0), scn.GetPower(ship));
+        }
+    }
+
+    @Test public void GrottoWerribeeProtectsAgainstTwoAttritionButNotThree() {
+        for (int destiny : List.of(2, 3)) {
+            var scn = scenario();
+            var site = scn.GetDSStartingLocation();
+            var trooper = scn.GetDSCard("trooper");
+            scn.MoveCardsToLocation(site, scn.GetLSCard("ben"), trooper, scn.GetDSCard("vader"), scn.GetDSCard("grotto"));
+            scn.SkipToDSTurn(Phase.BATTLE);
+            scn.PrepareDSDestiny(0);
+            scn.PrepareLSDestiny(destiny);
+            scn.DSInitiateBattle(site);
+            scn.SkipToDamageSegment(true);
+            scn.PassDamageSegmentActions();
+            assertEquals(destiny, scn.GetUnpaidDSAttrition());
+            assertTrue(scn.DSDecisionAvailable("Choose a card from battle to forfeit"));
+            assertEquals(destiny == 2, scn.DSDecisionAvailable("(if desired)"));
+            if (destiny == 2) {
+                scn.DSPass();
+                assertEquals(Zone.AT_LOCATION, trooper.getZone());
+            } else {
+                scn.DSChooseCard(trooper);
+                scn.PassAllResponses();
+                assertTrue(scn.GetDSLostPile().contains(trooper));
+            }
         }
     }
 
