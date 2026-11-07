@@ -72,7 +72,8 @@ public class Card_1261_039_Tests {
         settle(scn, true);
         assertTrue(scn.GetLSLostPile().contains(scn.GetLSCard("obi")));
         assertEquals(3, scn.GetLSLostPileCount());
-        assertEquals(1, scn.GetDSLostPileCount());
+        assertEquals(2, scn.GetDSLostPileCount());
+        assertTrue(scn.GetDSLostPile().contains(scn.GetDSCard("circle")));
         assertTrue(scn.GetDSCard("vader").getZone().isInPlay());
     }
 
