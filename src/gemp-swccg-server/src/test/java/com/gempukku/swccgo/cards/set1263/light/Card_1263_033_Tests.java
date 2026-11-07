@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
 public class Card_1263_033_Tests {
     private VirtualTableScenario fixture() {
         return new VirtualTableScenario(new HashMap<>(Map.of("fighter", "1263_33", "jedi", "9_24",
-                "pilot", "1_19", "nonpilot", "1_21", "hoth", "3_55", "otherShip", "1_143")),
+                "pilot", "1_19", "nonpilot", "1_21", "hoth", "3_55", "otherShip", "1_146")),
                 new HashMap<>(), 40, 40, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, "legacy");
@@ -44,7 +44,8 @@ public class Card_1263_033_Tests {
         scn.MoveLocationToTable(system); scn.MoveCardsToLocation(system, ship);
         assertEquals(1, scn.GetBattleDestinyAbility(ship));
         scn.BoardAsPilot(ship, pilot);
-        assertEquals(scn.GetBattleDestinyAbility(pilot), scn.GetBattleDestinyAbility(ship));
+        assertEquals(0, scn.GetBattleDestinyAbility(ship));
+        assertEquals(scn.GetBattleDestinyAbility(pilot), scn.GetLSAbilityAtLocation(system));
         scn.MoveCardsToLocation(scn.GetLSStartingLocation(), pilot);
         assertEquals(1, scn.GetBattleDestinyAbility(ship));
     }
@@ -53,9 +54,11 @@ public class Card_1263_033_Tests {
         var scn = fixture(); scn.StartGame();
         var system = scn.GetLSCard("hoth"); var ship = scn.GetLSCard(to); var pilot = scn.GetLSCard(who);
         scn.MoveLocationToTable(system); scn.MoveCardsToLocation(system, ship);
-        scn.MoveCardsToLSHand(pilot); scn.SkipToLSTurn(Phase.DEPLOY); scn.EnsureLSForcePile(14);
+        scn.MoveCardsToLSHand(pilot); scn.LSActivateForceCheat(14); scn.SkipToLSTurn(Phase.DEPLOY);
         int before = scn.GetLSForcePile().size();
-        scn.LSDeployCard(pilot); scn.LSChooseCard(ship); scn.PassAllResponses();
+        scn.LSDeployCard(pilot);
+        if (scn.LSHasCardChoiceAvailable(ship)) scn.LSChooseCard(ship);
+        scn.PassAllResponses();
         assertEquals(ship, pilot.getAttachedTo());
         assertEquals(pilot.getBlueprint().getDeployCost() - discount, before - scn.GetLSForcePile().size(), scn.epsilon);
     }
