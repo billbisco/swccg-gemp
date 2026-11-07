@@ -203,6 +203,17 @@ public class ForceRetrievalEffect extends AbstractSubActionEffect {
      * @return true or false
      */
     public boolean mayNotBeCanceled(SwccgGame game) {
+        return mayNotBeCanceled(game, null);
+    }
+
+    /**
+     * Determines if the retrieval may not be canceled by the specified card, including modifiers that prevent canceling
+     * retrieval from the source card (unless they allow that canceling card).
+     * @param game the game
+     * @param cancelingCard the card attempting to cancel the retrieval, or null
+     * @return true or false
+     */
+    public boolean mayNotBeCanceled(SwccgGame game, PhysicalCard cancelingCard) {
         if (mayNotBeCanceled()) {
             return true;
         }
@@ -214,7 +225,7 @@ public class ForceRetrievalEffect extends AbstractSubActionEffect {
         if (source == null) {
             return false;
         }
-        return game.getModifiersQuerying().isForceRetrievalFromCardMayNotBeCanceled(game.getGameState(), source, _playerToRetrieveForce);
+        return game.getModifiersQuerying().isForceRetrievalFromCardMayNotBeCanceled(game.getGameState(), source, _playerToRetrieveForce, cancelingCard);
     }
 
     /**
