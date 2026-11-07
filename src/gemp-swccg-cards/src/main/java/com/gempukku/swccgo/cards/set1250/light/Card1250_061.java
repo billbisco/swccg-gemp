@@ -74,7 +74,7 @@ public class Card1250_061 extends AbstractNormalEffect {
     protected List<OptionalGameTextTriggerAction> getGameTextOptionalAfterTriggers(String playerId, SwccgGame game, EffectResult effectResult, PhysicalCard self, int gameTextSourceCardId) {
         if (TriggerConditions.justLost(game, effectResult, Filters.and(Filters.your(self), Filters.or(Filters.Ewok, Filters.Gungan)))
                 && GameConditions.isOncePerTurn(game, self, playerId, gameTextSourceCardId, com.gempukku.swccgo.common.GameTextActionId.OTHER_CARD_ACTION_1)) {
-            final OptionalGameTextTriggerAction action = new OptionalGameTextTriggerAction(self, playerId, gameTextSourceCardId);
+            final OptionalGameTextTriggerAction action = new OptionalGameTextTriggerAction(self, playerId, gameTextSourceCardId, com.gempukku.swccgo.common.GameTextActionId.OTHER_CARD_ACTION_1);
             action.setText("Place lost Ewok or Gungan in Used Pile");
             action.appendUsage(new OncePerTurnEffect(action));
             PhysicalCard justLost = ((LostFromTableResult) effectResult).getCard();
