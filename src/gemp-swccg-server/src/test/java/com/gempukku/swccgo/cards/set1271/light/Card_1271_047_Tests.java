@@ -54,17 +54,20 @@ public class Card_1271_047_Tests {
         var s=battle();s.PrepareLSDestiny(0);s.PrepareDSDestiny(amount);s.SkipToDamageSegment(true);s.PassDamageSegmentActions();
         if(s.AwaitingLSBattleDamagePayment())s.LSPayRemainingBattleDamageFromReserveDeck();assertEquals(immune,s.LSDecisionAvailable("(if desired)"));
         if(immune){s.LSChooseCards();assertEquals(Zone.AT_LOCATION,s.GetLSCard("red3").getZone());}
-        else {s.LSPayAttritionFromCardInPlay(s.GetLSCard("red3"));finishLostOrder(s);assertTrue(s.GetLSLostPile().contains(s.GetLSCard("red3")));}
+        else {s.LSPayAttritionFromCardInPlay(s.GetLSCard("red3"));finishLostOrder(s);assertTrue("Temporary loss diagnostic: zone="+s.GetLSCard("red3").getZone()+" LS="+(s.LSGetDecision()==null?null:s.LSGetDecision().getText())+" DS="+(s.DSGetDecision()==null?null:s.DSGetDecision().getText()),s.GetLSLostPile().contains(s.GetLSCard("red3")));}
     }
     @Test public void Red3MaySurviveActualAttritionThree(){attrition(3,true);}
     @Test public void Red3MustSatisfyActualAttritionFour(){attrition(4,false);}
     @Test public void Red3CannotBeTargetedByLateralDamageWhileAnotherShipCan(){
         var s=ready();s.BoardAsPilot(s.GetLSCard("red3"),s.GetLSCard("biggs"));s.MoveCardsToLocation(s.GetLSStartingLocation(),s.GetLSCard("other"));s.MoveCardsToDSHand(s.GetDSCard("damage"));s.SkipToDSTurn(Phase.DEPLOY);
         s.DSDeployCard(s.GetDSCard("damage"));s.PassAllResponses();
-        if(s.GetDSCard("damage").getZone()==Zone.VOID){s.DSChooseCard(s.GetLSStartingLocation());s.PassAllResponses();}
-        if(s.DSDecisionAvailable("target")){
-            assertFalse(s.DSHasCardChoiceAvailable(s.GetLSCard("red3")));s.DSChooseCard(s.GetLSCard("other"));s.PassAllResponses();
+        for(int i=0;i<3;i++){
+            if(s.DSHasCardChoiceAvailable(s.GetLSCard("other"))){assertFalse(s.DSHasCardChoiceAvailable(s.GetLSCard("red3")));s.DSChooseCard(s.GetLSCard("other"));}
+            else if(s.DSHasCardChoiceAvailable(s.GetLSStartingLocation()))s.DSChooseCard(s.GetLSStartingLocation());
+            else break;
+            s.PassAllResponses();
         }
+        assertEquals(s.GetLSCard("other"),s.GetDSCard("damage").getTargetedCard(s.gameState(),TargetId.UTINNI_EFFECT_TARGET_1));
         assertEquals(5,s.GetPower(s.GetLSCard("red3")));assertEquals(5,s.GetForfeit(s.GetLSCard("red3")));assertEquals(0,s.GetForfeit(s.GetLSCard("other")));
     }
     private void spin(boolean targetRed3){
