@@ -15,7 +15,7 @@ import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.logic.actions.PlayInterruptAction;
-import com.gempukku.swccgo.logic.effects.AddUntilEndOfGameTextActionModifierEffect;
+import com.gempukku.swccgo.logic.effects.AddUntilEndOfCardPlayedModifierEffect;
 import com.gempukku.swccgo.logic.effects.RespondablePlayCardEffect;
 import com.gempukku.swccgo.logic.effects.choose.ChooseStackedCardEffect;
 import com.gempukku.swccgo.logic.effects.choose.DeployStackedCardToTargetEffect;
@@ -96,7 +96,7 @@ public class Card1250_068 extends AbstractUsedInterrupt {
                 action.appendEffect(new ChooseStackedCardEffect(action, action.getPerformingPlayer(), roar, eligible) {
                     @Override
                     protected void cardSelected(PhysicalCard chosen) {
-                        action.appendEffect(new AddUntilEndOfGameTextActionModifierEffect(action, action,
+                        action.appendEffect(new AddUntilEndOfCardPlayedModifierEffect(action, self,
                                 new MayDeployAsIfFromHandModifier(self, Filters.sameCardId(chosen)), null));
                         action.appendEffect(new DeployStackedCardToTargetEffect(action, chosen, target));
                     }
