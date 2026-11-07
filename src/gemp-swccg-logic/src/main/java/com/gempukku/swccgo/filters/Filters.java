@@ -1395,6 +1395,16 @@ public class Filters {
             return physicalCard.getBlueprint().isMayNotBePlacedInReserveDeck();
         }
     };
+
+    /**
+     * Filter that accepts cards that may never be won in sabacc.
+     */
+    public static final Filter mayNeverBeWonInSabacc = new Filter() {
+        @Override
+        public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard) {
+            return physicalCard.getBlueprint().isMayNeverBeWonInSabacc();
+        }
+    };
     /**
      * Wrapper method to allow other static filters to access the wrapped filter.
      */
