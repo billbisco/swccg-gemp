@@ -15,7 +15,7 @@ public class Card_1240_060_Tests {
     private VirtualTableScenario GetScenario() {
         return new VirtualTableScenario(new HashMap<>() {{
                     // Existing Legacy exclusion is a secondary fixture: no original card excludes a capital ship in place.
-                    put("maneuvers", "1230_102"); put("red1", "1_144"); put("red3", "1_145"); put("jek", "1_13");
+                    put("tactics", "1230_102"); put("red5", "2_71"); put("red2", "2_70"); put("han", "1_11");
                     put("corvette", "1_140"); put("corvette2", "1_140"); put("luke", "1_19"); put("cannon", "1_159");
                 }},
                 new HashMap<>() {{
@@ -217,17 +217,16 @@ public class Card_1240_060_Tests {
         var scn = Ready();
         var system = scn.GetDSStartingLocation();
         scn.MoveCardsToDSHand(scn.GetDSCard("devastator"));
-        scn.MoveCardsToLocation(system, scn.GetLSCard("red1"), scn.GetLSCard("red3"));
-        scn.BoardAsPilot(scn.GetLSCard("red1"), scn.GetLSCard("luke"));
-        scn.BoardAsPilot(scn.GetLSCard("red3"), scn.GetLSCard("jek"));
-        scn.MoveCardsToLSHand(scn.GetLSCard("maneuvers"));
-        scn.EnsureDSForcePile(5);
-        scn.SkipToPhase(Phase.BATTLE);
-        scn.DSInitiateBattle(system);
-        if (scn.DSAnyActionsAvailable()) scn.DSPass();
+        scn.MoveCardsToLocation(system, scn.GetLSCard("red5"), scn.GetLSCard("red2"));
+        scn.BoardAsPilot(scn.GetLSCard("red5"), scn.GetLSCard("luke"));
+        scn.BoardAsPilot(scn.GetLSCard("red2"), scn.GetLSCard("han"));
+        scn.MoveCardsToLSHand(scn.GetLSCard("tactics"));
+        scn.EnsureLSForcePile(5);
+        scn.SkipToLSTurn(Phase.BATTLE);
+        scn.LSInitiateBattle(system);
         scn.PrepareLSDestiny(1);
-        scn.LSPlayCard(scn.GetLSCard("maneuvers"), "Draw destiny to exclude a starship");
-        scn.PassAllResponses();
+        assertTrue(scn.LSCardPlayAvailable(scn.GetLSCard("tactics"), "Draw destiny to exclude"));
+        scn.LSPlayCardAndPassResponses(scn.GetLSCard("tactics"), "Draw destiny to exclude");
         scn.LSChooseCard(scn.GetDSCard("katana"));
         scn.PassAllResponses();
         assertFalse(scn.gameState().isParticipatingInBattle(scn.GetDSCard("katana")));
