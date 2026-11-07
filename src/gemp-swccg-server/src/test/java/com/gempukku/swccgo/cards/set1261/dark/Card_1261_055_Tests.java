@@ -103,11 +103,12 @@ public class Card_1261_055_Tests {
         var slave = scn.GetDSCard("slave");
         var vader = scn.GetDSCard("unrelated");
         start(scn);
+        // Its setup is complete, as if deployed normally and flipped; this must be set before the deploy phase opens.
+        slave.setObjectiveDeploymentComplete(true);
         scn.MoveCardsToDSHand(vader);
         restoreDarkPriority(scn);
         scn.SkipToPhase(Phase.DEPLOY);
         assertEquals(Title.Youre_A_Slave, slave.getTitle());
-        slave.setObjectiveDeploymentComplete(true);
         scn.EnsureDSForcePile(10);
         scn.EnsureLSForcePile(5);
         int dsBefore = scn.GetDSForcePileCount();
@@ -124,7 +125,8 @@ public class Card_1261_055_Tests {
             else
                 scn.PassAllResponses();
         }
-        assertEquals(Zone.AT_LOCATION, vader.getZone());
+        assertEquals("DS=" + (scn.DSGetDecision() == null ? null : scn.DSGetDecision().getText())
+                + " LS=" + (scn.LSGetDecision() == null ? null : scn.LSGetDecision().getText()), Zone.AT_LOCATION, vader.getZone());
         assertEquals(lsBefore - 2, scn.GetLSForcePileCount());
         return dsBefore - scn.GetDSForcePileCount();
     }
