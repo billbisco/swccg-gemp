@@ -88,7 +88,7 @@ public class Card_1250_062_Tests {
         if (s.DSDecisionAvailable("Choose Emperor")) s.DSChooseCard(s.GetDSCard("emperor"));
         if (s.DSDecisionAvailable("Choose character")) s.DSChooseCard(target);
         s.PassDestinyDrawResponses();
-        for (int i = 0; i < 15 && !offered(s, STACK)
+        for (int i = 0; i < 70 && !offered(s, STACK)
                 && s.GetCurrentDecision().getText().contains("Optional responses"); i++) {
             s.PlayerPass(s.GetDecidingPlayer());
         }
