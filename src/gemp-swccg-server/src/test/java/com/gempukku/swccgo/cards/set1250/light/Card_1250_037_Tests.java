@@ -138,7 +138,7 @@ public class Card_1250_037_Tests {
         scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetLSCard("chewie"));
         scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("yularen")); scn.MoveCardsToHand(scn.GetDSCard("alter"));
         scn.SkipToDSTurn(Phase.CONTROL); scn.MoveCardsToTopOfDSReserveDeck(scn.GetDSCard("snoova"));
-        assertEquals(2, scn.GetAbility(scn.GetDSCard("yularen"))); scn.DSPlayCard(scn.GetDSCard("alter"), "Cancel Effect");
+        assertEquals(2, scn.GetAbility(scn.GetDSCard("yularen"))); scn.DSPlayCard(scn.GetDSCard("alter"), "cancel Effect");
         if (scn.DSDecisionAvailable("Choose Effect")) scn.DSChooseCard(planners);
         if (scn.DSDecisionAvailable("Choose a character")) scn.DSChooseCard(scn.GetDSCard("yularen"));
         scn.PassAllResponses(); assertTrue(scn.GetLSLostPile().contains(planners));
