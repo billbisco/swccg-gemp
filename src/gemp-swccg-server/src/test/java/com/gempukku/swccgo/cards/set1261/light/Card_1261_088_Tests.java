@@ -20,7 +20,7 @@ public class Card_1261_088_Tests {
             put("hoth", "3_55"); put("rdv", "7_123"); put("kessel", "1_126");
             put("bay", "3_59"); put("third", "3_56"); put("fourth", "3_62"); put("ordinaryMarker", "3_61");
             put("luminous", "9_77"); put("transport", "8_80"); put("remoteTransport", "5_86"); put("xwing", "1_146");
-            put("trooper", "1_28"); put("obi", "1_21"); put("han", "1_11"); put("traffic", "1_66");
+            put("trooper", "1_28"); put("obi", "1_21"); put("traffic", "1_66");
         }}, new HashMap<>() {{
             put("virtualMarker", "1282_8"); put("surprise", "5_156"); put("alter", "1_234"); put("control", "4_139");
             put("vader", "1_168");
@@ -41,11 +41,16 @@ public class Card_1261_088_Tests {
     }
 
     private VirtualTableScenario setup(boolean virtual, boolean includeOtherTargets) {
+        return setup(virtual, includeOtherTargets, false);
+    }
+
+    private VirtualTableScenario setup(boolean virtual, boolean includeOtherTargets, boolean stockUtinni) {
         var scn = scenario(); scn.StartGame();
         for (var key : List.of("hoth", "rdv", "kessel", "bay", "third", "fourth")) scn.MoveLocationToTable(scn.GetLSCard(key));
         scn.MoveLocationToTable(virtual ? scn.GetDSCard("virtualMarker") : scn.GetLSCard("ordinaryMarker"));
         scn.MoveCardsToLocation(scn.GetLSCard("hoth"), scn.GetLSCard("luminous"), scn.GetLSCard("xwing"));
         scn.MoveCardsToLocation(scn.GetLSCard("kessel"), scn.GetLSCard("remoteTransport"));
+        if (stockUtinni) scn.MoveCardsToLocation(scn.GetLSCard("bay"), scn.GetLSCard("luminous"), scn.GetLSCard("remoteTransport"));
         if (includeOtherTargets) scn.MoveCardsToLocation(scn.GetLSCard("hoth"), scn.GetLSCard("transport"));
         scn.MoveCardsToLocation(scn.GetLSCard("third"), scn.GetLSCard("trooper"));
         scn.MoveCardsToLocation(scn.GetLSCard("fourth"), scn.GetLSCard("obi"));
@@ -122,7 +127,7 @@ public class Card_1261_088_Tests {
         assertTrue(Filters.underHothEnergyShield().accepts(scn.game(), scn.GetLSCard("third")));
         assertFalse(Filters.underHothEnergyShield().accepts(scn.game(), scn.GetLSCard("fourth")));
         assertEquals(2, amount(scn, "fourth", scn.LS));
-        assertEquals(1, amount(scn, "third", scn.LS));
+        assertEquals(2, amount(scn, "third", scn.LS)); // Defensive Perimeter already adds 1 for control.
         assertEquals(1, amount(scn, "fourth", scn.DS));
     }
 
@@ -142,20 +147,16 @@ public class Card_1261_088_Tests {
     }
 
     @Test public void FirstTransportIsImmuneToActualSurpriseAndAlterWhileOrdinaryUtinniIsTargetable() {
-        var scn = setup(true, false);
+        var scn = setup(true, true);
         var effect = scn.GetLSCard("first");
-        var ship = scn.GetLSCard("luminous"); var other = scn.GetLSCard("remoteTransport");
-        scn.MoveCardsToLocation(scn.GetLSCard("hoth"), other);
-        scn.LSPass(); scn.DSPass();
+        var ship = scn.GetLSCard("luminous");
         deploy(scn, "first", scn.GetLSCard("rdv"), ship);
         scn.SkipToDSTurn(Phase.CONTROL);
         assertFalse(scn.GetDSAvailableActions().stream().anyMatch(x -> x.contains("Re-target Utinni Effect")));
         assertFalse(scn.DSCardPlayAvailable(scn.GetDSCard("alter")));
         assertNotNull(effect.getAttachedTo());
 
-        var stock = setup(true, false); var stockShip = stock.GetLSCard("luminous");
-        stock.MoveCardsToLocation(stock.GetLSCard("bay"), stockShip, stock.GetLSCard("remoteTransport"));
-        stock.LSPass(); stock.DSPass();
+        var stock = setup(true, false, true); var stockShip = stock.GetLSCard("luminous");
         deploy(stock, "base", stock.GetLSCard("kessel"), stockShip);
         stock.SkipToDSTurn(Phase.CONTROL);
         assertTrue(stock.GetDSAvailableActions().stream().anyMatch(x -> x.contains("Re-target Utinni Effect")));
