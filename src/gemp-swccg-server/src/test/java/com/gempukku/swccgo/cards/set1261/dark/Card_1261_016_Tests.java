@@ -4,6 +4,7 @@ import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import com.gempukku.swccgo.game.PhysicalCardImpl;
+import com.gempukku.swccgo.logic.GameUtils;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -87,8 +88,10 @@ public class Card_1261_016_Tests {
                 scn.DSChooseCard(trooper);
             scn.PassAllResponses();
             assertTrue(scn.GetDSHand().contains(trooper));
-            assertEquals(active, scn.GetDSUsedPile().contains(tactical));
-            assertEquals(!active, scn.GetDSLostPile().contains(tactical));
+            String state = "active=" + active + "; Tactical Support=" + tactical.getZone()
+                    + "; decision=" + scn.GetCurrentDecision().getText();
+            assertEquals(state, active ? Zone.USED_PILE : Zone.LOST_PILE,
+                    GameUtils.getZoneFromZoneTop(tactical.getZone()));
         }
     }
 
