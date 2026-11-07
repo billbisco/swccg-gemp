@@ -310,6 +310,15 @@ public class LocationGroup implements Snapshotable<LocationGroup> {
     }
 
     /**
+     * Replaces the filter for locations that belong to this group (used when groups are merged by a rearrange,
+     * so later deployments go to the group that now holds those sites).
+     * @param filters the new filter
+     */
+    void setFilters(Filter filters) {
+        _filters = filters;
+    }
+
+    /**
      * Removes every location stack and gap from this group (used when its stacks are
      * merged into another group).
      */

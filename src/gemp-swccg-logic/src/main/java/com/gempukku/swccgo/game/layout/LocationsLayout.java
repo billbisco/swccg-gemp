@@ -751,10 +751,18 @@ public class LocationsLayout implements Snapshotable<LocationsLayout> {
             }
             newStacks.add(stack);
         }
+        // The surviving group now accepts every site any merged group accepted, and the emptied groups accept
+        // nothing, so later deployments (placement, conversion, uniqueness) look at the merged row.
+        Filter[] mergedFilters = new Filter[involved.size()];
+        for (int i = 0; i < involved.size(); i++) {
+            mergedFilters[i] = involved.get(i).getFilters();
+        }
         for (int i = 1; i < involved.size(); i++) {
             involved.get(i).clearLocations();
+            involved.get(i).setFilters(Filters.none);
         }
         involved.get(0).replaceStacks(newStacks, oldTops, oldGaps);
+        involved.get(0).setFilters(Filters.or(mergedFilters));
         return true;
     }
 

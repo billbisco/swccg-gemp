@@ -25,7 +25,7 @@ public class Card_1263_022_Tests {
             put("general", "1263_22"); put("general2", "1263_22"); put("prison", "1116_7");
             put("dock", "14_48"); put("luke", "1_19"); put("palpatine", "12_28"); put("jawa", "1_12");
         }}, new HashMap<>() {{
-            put("bridge", "12_164"); put("hallway", "13_57"); put("trooper", "1_194"); put("trooper2", "1_194");
+            put("bridge", "12_164"); put("hallway", "13_57"); put("trooper", "1_194"); put("trooper2", "1_194"); put("dsdock", "14_111");
         }}, 60, 60, StartingSetup.LSStartingLocation("1_129"), StartingSetup.DefaultDSSpaceSystem,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -249,4 +249,71 @@ public class Card_1263_022_Tests {
         assertEquals(seen.toString(), 7, scn.GetLSTotalDestiny()); // 3 + 1 + 3
     }
 
+
+    /** Solomahal rearranges the given Flagship sites into the given left-to-right order. */
+    private void rearrange(VirtualTableScenario scn, PhysicalCardImpl general, List<PhysicalCardImpl> order) {
+        scn.LSUseCardAction(general, REARRANGE);
+        for (int i = 0; i < order.size() - 1; i++) scn.LSChooseCard(order.get(i));
+        if (scn.LSHasCardChoiceAvailable(order.get(order.size() - 1))) scn.LSChooseCard(order.get(order.size() - 1));
+        for (int i = 1; i < order.size(); i++) {
+            assertTrue(order.get(i - 1).getLocationZoneIndex() < order.get(i).getLocationZoneIndex());
+        }
+    }
+
+    /** The Docking Bay ends up between two interior sites: Prison, Docking Bay, Bridge. */
+    private List<PhysicalCardImpl> dockBetweenInteriors(VirtualTableScenario scn, PhysicalCardImpl general, PhysicalCardImpl dock) {
+        var prison = scn.GetLSCard("prison"); var bridge = scn.GetDSCard("bridge");
+        for (var site : List.of(bridge, dock, prison)) scn.MoveLocationToTable(site);
+        scn.SkipToLSTurn(Phase.CONTROL);
+        var order = List.of(prison, dock, bridge);
+        rearrange(scn, general, order);
+        return order;
+    }
+
+    private void deploySiteNextTo(VirtualTableScenario scn, String player, PhysicalCardImpl site, PhysicalCardImpl nextTo, String side) {
+        boolean ls = player.equals(scn.LS);
+        assertTrue(ls ? scn.LSDeployAvailable(site) : scn.DSDeployAvailable(site));
+        if (ls) scn.LSDeployCard(site); else scn.DSDeployCard(site);
+        if (ls ? scn.LSHasCardChoiceAvailable(nextTo) : scn.DSHasCardChoiceAvailable(nextTo)) {
+            if (ls) scn.LSChooseCard(nextTo); else scn.DSChooseCard(nextTo);
+        }
+        if (ls ? scn.LSDecisionAvailable("On which side") : scn.DSDecisionAvailable("On which side")) {
+            if (ls) scn.LSChooseOption(side); else scn.DSChooseOption(side);
+        }
+        scn.PassAllResponses();
+    }
+
+    @Test public void AfterRearrangeLightDockingBayStillConvertsDarkDockingBayInPlace() {
+        // (14_48 may not be converted itself, so the Light copy converts the Dark one.)
+        var scn = scenario(); var general = start(scn);
+        var dsDock = scn.GetDSCard("dsdock"); var dock = scn.GetLSCard("dock");
+        scn.MoveCardsToLSHand(dock);
+        var order = dockBetweenInteriors(scn, general, dsDock);
+        int dockIndex = dsDock.getLocationZoneIndex();
+        scn.SkipToPhase(Phase.DEPLOY); scn.EnsureLSForcePile(4);
+        deploySiteNextTo(scn, scn.LS, dock, dsDock, "Convert");
+        assertEquals(Zone.LOCATIONS, dock.getZone());
+        assertEquals(Zone.CONVERTED_LOCATIONS, dsDock.getZone());
+        assertEquals(dockIndex, dock.getLocationZoneIndex());
+        assertTrue(order.get(0).getLocationZoneIndex() < dock.getLocationZoneIndex());
+        assertTrue(dock.getLocationZoneIndex() < order.get(2).getLocationZoneIndex());
+        var layout = scn.gameState().getLocationsLayout();
+        assertSame(layout.findGroupContaining(dock), layout.findGroupContaining(order.get(0)));
+    }
+
+    @Test public void AfterRearrangeNewFlagshipSiteDeploysIntoTheRearrangedRow() {
+        var scn = scenario(); var general = start(scn);
+        var hallway = scn.GetDSCard("hallway"); var dock = scn.GetLSCard("dock");
+        var order = dockBetweenInteriors(scn, general, dock);
+        scn.MoveCardsToDSHand(hallway);
+        scn.SkipToDSTurn(Phase.DEPLOY); scn.EnsureDSForcePile(4);
+        deploySiteNextTo(scn, scn.DS, hallway, dock, "Right");
+        assertEquals(Zone.LOCATIONS, hallway.getZone());
+        // Prison, Docking Bay, Hallway, Bridge: in the same row, right of the Docking Bay.
+        assertEquals(dock.getLocationZoneIndex() + 1, hallway.getLocationZoneIndex());
+        assertEquals(hallway.getLocationZoneIndex() + 1, order.get(2).getLocationZoneIndex());
+        var layout = scn.gameState().getLocationsLayout();
+        assertSame(layout.findGroupContaining(dock), layout.findGroupContaining(hallway));
+        assertSame(layout.findGroupContaining(dock), layout.findGroupContaining(order.get(0)));
+    }
 }
