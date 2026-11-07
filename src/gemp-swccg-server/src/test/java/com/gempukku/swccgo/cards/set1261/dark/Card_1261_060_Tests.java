@@ -57,8 +57,8 @@ public class Card_1261_060_Tests {
         scn.MoveCardsToLocation(site, scn.GetDSCard("boba"), scn.GetLSCard("obiwan"), scn.GetLSCard("han"));
         if (rifle) scn.AttachCardsTo(scn.GetDSCard("boba"), scn.GetDSCard("rifle"));
         if (naturalAbility) scn.MoveCardsToLocation(site, scn.GetDSCard("vader"));
-        scn.MoveCardsToDSHand(scn.GetDSCard("hidden")); scn.PrepareDSDestiny(4);
-        scn.DSStartBattleAndSkipToWeaponsSegment(site); return scn;
+        scn.MoveCardsToDSHand(scn.GetDSCard("hidden"));
+        scn.DSStartBattleAndSkipToWeaponsSegment(site); scn.PrepareDSDestiny(4); return scn;
     }
 
     @Test public void FettsBlasterRifleGrantsExactlyOneBattleDestinyWhenOtherwiseUnable() {
@@ -96,7 +96,8 @@ public class Card_1261_060_Tests {
     @Test public void FettsBlasterRifleActuallyDeploysSpecialDeliveryAndReshufflesWithoutPrintedTurnCap() {
         var scn = scenario(); scn.StartGame(); var rifle = scn.GetDSCard("rifle"); var delivery = scn.GetDSCard("delivery");
         scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("boba")); scn.AttachCardsTo(scn.GetDSCard("boba"), rifle);
-        scn.MoveCardsToTopOfDSReserveDeck(delivery); scn.SkipToDSTurn(Phase.DEPLOY); int force = scn.GetDSForcePileCount();
+        scn.SkipToDSTurn(Phase.DEPLOY); scn.MoveCardsToTopOfDSReserveDeck(delivery);
+        assertEquals(Zone.RESERVE_DECK, delivery.getZone()); int force = scn.GetDSForcePileCount();
         var remaining = scn.GetDSReserveDeck().stream().filter(c -> c != delivery).findFirst().orElseThrow();
         scn.gameState().markCardsRevealedFromPile(java.util.Collections.singletonList(remaining));
         assertTrue(scn.gameState().isCardRevealedFromPile(remaining));
@@ -121,7 +122,7 @@ public class Card_1261_060_Tests {
         scn.DSPlayCard(scn.GetDSCard("hidden"));
         if (scn.DSHasCardChoiceAvailable(scn.GetLSCard("obiwan"))) scn.DSChooseCard(scn.GetLSCard("obiwan"));
         scn.PassAllResponses();
-        assertEquals(Zone.LOST_PILE, scn.GetDSCard("hidden").getZone());
+        com.gempukku.swccgo.framework.Assertions.assertInZone(Zone.LOST_PILE, scn.GetDSCard("hidden"));
         assertFalse(scn.GetLSCard("obiwan").isHit()); assertEquals(reserve, scn.GetDSReserveDeckCount());
     }
 
