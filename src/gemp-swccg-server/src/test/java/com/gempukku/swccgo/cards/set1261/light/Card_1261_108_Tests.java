@@ -25,7 +25,7 @@ public class Card_1261_108_Tests {
         var ls = new HashMap<>(Map.of("hut", "4_89", "jungle", "4_86", "luke", "1_19", "yoda", "4_2", "han", "1_11",
                 "loss", "2_18", "testOne", "4_77", "testFive", "4_78", "backpack", "4_12", "commander", "601_52"));
         ls.putAll(Map.of("trainingArea", "4_88", "anoat", "4_80", "asteroid", "4_81",
-                "maintenance", "13_9", "permanentWeapon", "108_3"));
+                "maintenance", "13_9", "permanentWeapon", "108_3", "otherYoda", "12_35"));
         return new VirtualTableScenario(ls, new HashMap<>(Map.of("cantina", "1_290")), 40, 40,
                 new StartingSetup() {
                     @Override public HashMap<String, String> Cards() {
@@ -284,4 +284,30 @@ public class Card_1261_108_Tests {
 
     @Test public void strongBlocksDagobahDrainAndOnlyTheThreePrintedDeploymentKinds() { strongRestrictions(true); }
     @Test public void theSameDrainAndCardDeploymentsAreLegalWithoutStrong() { strongRestrictions(false); }
+    @Test public void frontDownloadsDagobahYodaOutsideDeployAndAppliesThePrintedDiscount() {
+        var scn = fixture(0); scn.StartGame();
+        var objective = scn.GetLSCard("objective"); var yoda = scn.GetLSCard("yoda");
+        var otherYoda = scn.GetLSCard("otherYoda"); var hut = scn.GetLSCard("hut");
+        scn.MoveLocationToTable(hut);
+        scn.LSActivateForceCheat(8); scn.SkipToLSTurn(Phase.CONTROL);
+        scn.MoveCardsToTopOfLSReserveDeck(yoda, otherYoda);
+        scn.gameState().markCardsRevealedFromPile(List.of(otherYoda));
+        int before = scn.GetLSForcePileCount();
+        scn.LSUseCardAction(objective, "Deploy card to Dagobah from Reserve Deck");
+        var trace = new ArrayList<String>();
+        for (int i = 0; i < 12 && yoda.getZone() != Zone.AT_LOCATION; i++) {
+            var prompt = scn.GetCurrentDecision().getText(); trace.add(prompt);
+            if (scn.LSGetDecision() != null && scn.LSGetBPChoices().contains(yoda.getBlueprintId(true))) {
+                int wrong = scn.LSGetBPChoices().indexOf(otherYoda.getBlueprintId(true));
+                assertTrue(wrong < 0 || !Boolean.parseBoolean(scn.LSGetADParamAsList("selectable").get(wrong)));
+                scn.LSChooseCard(yoda);
+            } else if (scn.LSHasCardChoiceAvailable(hut)) scn.LSChooseCard(hut);
+            else if (prompt.toLowerCase().contains("optional response")) scn.PlayerPass(scn.GetDecidingPlayer());
+            else break;
+        }
+        scn.PassAllResponses();
+        assertEquals(trace.toString(), hut, yoda.getAtLocation());
+        assertEquals(2, before - scn.GetLSForcePileCount());
+        assertFalse(scn.gameState().isCardRevealedFromPile(otherYoda));
+    }
 }
