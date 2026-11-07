@@ -14,6 +14,7 @@ import com.gempukku.swccgo.logic.effects.TriggeringResultEffect;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 import com.gempukku.swccgo.logic.timing.AbstractSubActionEffect;
 import com.gempukku.swccgo.logic.timing.AbstractSuccessfulEffect;
+import com.gempukku.swccgo.logic.timing.GuiUtils;
 import com.gempukku.swccgo.logic.timing.Action;
 import com.gempukku.swccgo.logic.timing.PassthruEffect;
 import com.gempukku.swccgo.logic.timing.StandardEffect;
@@ -134,7 +135,11 @@ public class BattlePowerSegmentAction extends SystemQueueAction {
                                 @Override
                                 protected void destinyDraws(SwccgGame game, List<PhysicalCard> destinyCardDraws, List<Float> destinyDrawValues, Float totalDestiny) {
                                     if (totalDestiny != null) {
-                                        battleState.increaseTotalDestinyToPowerOnly(_playerId, totalDestiny, destinyCardDraws.size());
+                                        float bonus = game.getModifiersQuerying().getBonusForDestinyDrawsToTotalPowerOnly(game.getGameState(), _playerId, destinyCardDraws.size());
+                                        if (bonus != 0) {
+                                            game.getGameState().sendMessage(_playerId + " adds " + GuiUtils.formatAsString(bonus) + " to destiny drawn to power");
+                                        }
+                                        battleState.increaseTotalDestinyToPowerOnly(_playerId, totalDestiny + bonus, destinyCardDraws.size());
                                     }
                                 }
                             });

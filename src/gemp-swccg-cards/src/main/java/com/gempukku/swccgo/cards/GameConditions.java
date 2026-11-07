@@ -5099,23 +5099,25 @@ public class GameConditions {
     }
 
     /**
-     * Determines if the specified player is not prevented from adding destiny draws to power.
+     * Determines if the specified player is not prevented from adding destiny draws to power, and has not already
+     * reached a "may not add more than X destiny to power" limit in the current battle.
      * @param game the game
      * @param playerId the player
      * @return true or false
      */
     public static boolean canAddDestinyDrawsToPower(SwccgGame game, String playerId) {
-        return !game.getModifiersQuerying().mayNotAddDestinyDrawsToPower(game.getGameState(), playerId);
+        return game.getModifiersQuerying().mayAddAnotherDestinyToPower(game.getGameState(), playerId);
     }
 
     /**
-     * Determines if the specified player is not prevented from adding destiny draws to attrition.
+     * Determines if the specified player is not prevented from adding destiny draws to attrition, and has not already
+     * reached a "may not add more than X destiny to attrition" limit in the current battle.
      * @param game the game
      * @param playerId the player
      * @return true or false
      */
     public static boolean canAddDestinyDrawsToAttrition(SwccgGame game, String playerId) {
-        return !game.getModifiersQuerying().mayNotAddDestinyDrawsToAttrition(game.getGameState(), playerId);
+        return game.getModifiersQuerying().mayAddAnotherDestinyToAttrition(game.getGameState(), playerId);
     }
 
     /**

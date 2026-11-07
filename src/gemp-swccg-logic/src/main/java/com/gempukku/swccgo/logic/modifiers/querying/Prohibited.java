@@ -216,9 +216,6 @@ public interface Prohibited extends BaseQuery, Flags {
      * @return true if card may not be canceled, otherwise false
      */
     default boolean mayNotBeCanceled(GameState gameState, PhysicalCard card) {
-        if (card.getBlueprint().isCardTypeMayNotBeCanceled())
-            return false;
-
         return (!getModifiersAffectingCard(gameState, ModifierType.MAY_NOT_BE_CANCELED, card).isEmpty());
     }
 
@@ -241,6 +238,9 @@ public interface Prohibited extends BaseQuery, Flags {
      */
     default boolean mayNotBePlacedInUsedPile(GameState gameState, PhysicalCard card, String placingPlayer) {
         for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.MAY_NOT_BE_PLACED_IN_USED_PILE, card)) {
+            if (modifier instanceof MayNotBePlacedInUsedPileByAnyPlayerModifier) {
+                return true;
+            }
             PhysicalCard source = modifier.getSource(gameState);
             if (source != null && placingPlayer != null && !placingPlayer.equals(source.getOwner())) {
                 return true;
