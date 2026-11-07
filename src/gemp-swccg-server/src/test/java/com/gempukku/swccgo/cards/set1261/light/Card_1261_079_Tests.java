@@ -242,4 +242,89 @@ public class Card_1261_079_Tests {
         assertTrue(scn.GetLSLostPile().contains(leia));
         assertTrue(scn.GetLSLostPile().contains(trooper));
     }
+
+    // ---- 'power -1', Endor deployment modifiers and Do They Have A Code Clearance? ----
+
+    private VirtualTableScenario extraFixture() {
+        var ls = new HashMap<>(Map.of("combo", "1261_79", "echoTrooper", "3_6", "chewie", "8_2",
+                "backDoor", "8_69", "attackRun", "2_43", "retort", "6_63", "lostOne", "1_28", "lostTwo", "1_28",
+                "lostThree", "1_28"));
+        var ds = new HashMap<>(Map.of("dthacc", "13_66", "vader", "1_168"));
+        var scn = new VirtualTableScenario(ls, ds, 40, 40, StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation, StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts, StartingSetup.NoLSShields, StartingSetup.NoDSShields, "legacy");
+        scn.StartGame();
+        return scn;
+    }
+
+    @Test public void rebelsIgnorePowerMinusOneInTheirOwnGameText() {
+        var scn = extraFixture(); var trooper = scn.GetLSCard("echoTrooper");
+        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), trooper);
+        int printed = (int) trooper.getBlueprint().getPower();
+        assertEquals(printed - 1, scn.GetPower(trooper));
+        scn.MoveCardsToLSSideOfTable(scn.GetLSCard("combo"));
+        assertEquals(printed, scn.GetPower(trooper));
+    }
+
+    @Test public void powerMinusOneFromAnotherCardIsStillApplied() {
+        var scn = extraFixture(); var trooper = scn.GetLSCard("echoTrooper");
+        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), trooper);
+        scn.MoveCardsToLSSideOfTable(scn.GetLSCard("combo"));
+        int printed = (int) trooper.getBlueprint().getPower();
+        scn.ApplyAdHocModifier(new com.gempukku.swccgo.logic.modifiers.PowerModifier(scn.GetDSCard("vader"), trooper, -1));
+        assertEquals(printed - 1, scn.GetPower(trooper));
+    }
+
+    private int deployCostTo(VirtualTableScenario scn, com.gempukku.swccgo.game.PhysicalCardImpl card, com.gempukku.swccgo.game.PhysicalCardImpl target) {
+        return Math.round(scn.game().getModifiersQuerying().getDeployCost(scn.gameState(), null, card, target, false, null, false, 0, null, false));
+    }
+
+    @Test public void rebelsApplyTheirEndorDeploymentModifiersAtAnyLocation() {
+        var scn = extraFixture(); var chewie = scn.GetLSCard("chewie"); var backDoor = scn.GetLSCard("backDoor");
+        var elsewhere = scn.GetLSStartingLocation();
+        scn.MoveLocationToTable(backDoor);
+        scn.MoveCardsToLSHand(chewie);
+        int printed = (int) chewie.getBlueprint().getDeployCost();
+        assertEquals(printed - 2, deployCostTo(scn, chewie, backDoor));
+        assertEquals(printed, deployCostTo(scn, chewie, elsewhere));
+        scn.MoveCardsToLSSideOfTable(scn.GetLSCard("combo"));
+        assertEquals(printed - 2, deployCostTo(scn, chewie, elsewhere));
+        assertEquals(printed - 2, deployCostTo(scn, chewie, backDoor));
+    }
+
+    /** Light retrieves Force with the given Interrupt; returns whether Dark may stack it on Do They Have A Code Clearance?. */
+    private boolean darkMayStackRetrievingInterrupt(boolean combo, String interrupt, int amount) {
+        var scn = extraFixture(); var dthacc = scn.GetDSCard("dthacc"); var source = scn.GetLSCard(interrupt);
+        scn.MoveCardsToDSSideOfTable(dthacc);
+        if (combo) scn.MoveCardsToLSSideOfTable(scn.GetLSCard("combo"));
+        scn.MoveCardsToTopOfLSLostPile(scn.GetLSCard("lostOne"), scn.GetLSCard("lostTwo"), scn.GetLSCard("lostThree"));
+        scn.MoveCardsToLSHand(source);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        var action = new TopLevelGameTextAction(source, scn.LS, source.getCardId());
+        action.appendEffect(new com.gempukku.swccgo.logic.effects.RetrieveForceEffect(source, action, scn.LS, amount));
+        scn.carryOutEffectInPhaseActionByPlayer(scn.LS, action);
+        for (int i = 0; i < 20 && scn.GetCurrentDecision() != null; i++) {
+            var decider = scn.GetDecidingPlayer();
+            if (decider.equals(scn.DS) && scn.DSCardActionAvailable(dthacc, "Stack")) return true;
+            if (decider.equals(scn.LS) && scn.GetCurrentDecision().getText().toLowerCase().contains("deploy action")) return false;
+            scn.PlayerPass(decider);
+        }
+        return false;
+    }
+
+    @Test public void yourInterruptRetrievingExactlyOneIsNotStackedOnCodeClearance() {
+        assertFalse(darkMayStackRetrievingInterrupt(true, "attackRun", 1));
+    }
+
+    @Test public void withoutTheComboAnInterruptRetrievingOneMayBeStacked() {
+        assertTrue(darkMayStackRetrievingInterrupt(false, "attackRun", 1));
+    }
+
+    @Test public void anInterruptRetrievingTwoMayStillBeStacked() {
+        assertTrue(darkMayStackRetrievingInterrupt(true, "attackRun", 2));
+    }
+
+    @Test public void corellianRetortRetrievingOneMayStillBeStacked() {
+        assertTrue(darkMayStackRetrievingInterrupt(true, "retort", 1));
+    }
 }

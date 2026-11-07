@@ -1244,6 +1244,22 @@ public class GameConditions {
     }
 
     /**
+     * Determines if the card that just retrieved Force may be stacked on the specified card (for example,
+     * Do They Have A Code Clearance?), considering modifiers that prevent it.
+     * @param game the game
+     * @param retrieveForceResult the result of the Force retrieval
+     * @param stackOn the card to stack on
+     * @return true or false
+     */
+    public static boolean canStackRetrievalSourceOn(SwccgGame game, com.gempukku.swccgo.logic.timing.results.RetrieveForceResult retrieveForceResult, PhysicalCard stackOn) {
+        // "Retrieve exactly N Force" is the amount the source says to retrieve (before modifiers), when known
+        float initialAmount = retrieveForceResult.getInitialAmountToRetrieve();
+        int amount = initialAmount >= 0 ? Math.round(initialAmount) : retrieveForceResult.getAmountOfForceRetrieved();
+        return !game.getModifiersQuerying().mayNotStackRetrievalSourceOn(game.getGameState(),
+                retrieveForceResult.getSourceCard(), amount, stackOn);
+    }
+
+    /**
      * Determines if the specified card can be grabbed by the specified card.
      *
      * @param game       the game
