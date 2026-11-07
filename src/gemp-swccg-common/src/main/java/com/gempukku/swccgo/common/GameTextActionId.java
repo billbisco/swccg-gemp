@@ -1820,6 +1820,8 @@ public enum GameTextActionId {
     LEGACY__BEAST_RIDER__DEPLOY_KAADU(true),
     LEGACY__LANDO_SCOUNDREL__CONVERT(false, true),
     LEGACY__JABBA_LAST_CHANCE__PLAY_SHIELD(false, true),
+    LEGACY__IM_HERE_TO_RESCUE_YOU__LOST(false, true),
+    LEGACY__IM_HERE_TO_RESCUE_YOU__STARTING(true),
     ;
 
     private boolean _searchCardPile;
