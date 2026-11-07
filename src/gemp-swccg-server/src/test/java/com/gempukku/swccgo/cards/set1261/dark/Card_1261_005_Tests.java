@@ -105,11 +105,11 @@ public class Card_1261_005_Tests {
 
     @Test public void RelentlessBobaPaysTwoToRelocateAcrossSystemsWithCaptiveAndCanRepeat() {
         var scn = escort(true, 4, Phase.MOVE); var boba = scn.GetDSCard("boba"); var han = scn.GetLSCard("han");
-        assertEquals(Zone.CAPTIVE, han.getZone()); assertSame(boba, han.getAttachedTo());
+        assertEquals(Zone.ATTACHED, han.getZone()); assertTrue(han.isCaptive()); assertSame(boba, han.getAttachedTo());
         scn.DSUseCardAction(boba, "Relocate with captive to docking bay");
         if (scn.DSHasCardChoiceAvailable(scn.GetDSCard("bay"))) scn.DSChooseCard(scn.GetDSCard("bay")); scn.PassAllResponses();
         assertEquals(scn.GetDSCard("bay"), boba.getAtLocation()); assertEquals(2, scn.GetDSForcePileCount());
-        assertSame(boba, han.getAttachedTo()); assertEquals(Zone.CAPTIVE, han.getZone());
+        assertSame(boba, han.getAttachedTo()); assertEquals(Zone.ATTACHED, han.getZone()); assertTrue(han.isCaptive());
         if (scn.LSDecisionAvailable("move phase")) scn.LSPass();
         assertTrue(scn.DSCardActionAvailable(boba, "Relocate with captive to docking bay"));
         scn.DSUseCardAction(boba, "Relocate with captive to docking bay");
