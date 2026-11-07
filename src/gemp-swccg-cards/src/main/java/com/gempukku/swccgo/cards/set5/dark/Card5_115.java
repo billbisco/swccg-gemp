@@ -47,13 +47,36 @@ public class Card5_115 extends AbstractNormalEffect {
 
     @Override
     protected Filter getGameTextValidDeployTargetFilter(SwccgGame game, PhysicalCard self, PlayCardOptionId playCardOptionId, boolean asReact) {
-        return Filters.Bespin_Cloud_City;
+        String playerId = self.getOwner();
+        Filter targets = Filters.none;
+        if (meetsPrintedDeployRequirements(playerId, game, self)) {
+            targets = Filters.or(targets, Filters.Bespin_Cloud_City);
+        }
+        if (meetsAlteringTheDealDeployRequirements(playerId, game, self)) {
+            targets = Filters.or(targets, diningRoomWithAlteringTheDeal(playerId));
+        }
+        return targets;
     }
 
     @Override
     protected boolean checkGameTextDeployRequirements(String playerId, SwccgGame game, PhysicalCard self, PlayCardOptionId playCardOptionId, boolean asReact) {
+        return meetsPrintedDeployRequirements(playerId, game, self)
+                || meetsAlteringTheDealDeployRequirements(playerId, game, self);
+    }
+
+    private boolean meetsPrintedDeployRequirements(String playerId, SwccgGame game, PhysicalCard self) {
         return GameConditions.controls(game, playerId, Filters.Bespin_Cloud_City)
                 && GameConditions.controls(game, playerId, 3, Filters.relatedSiteTo(self, Filters.Bespin_Cloud_City));
+    }
+
+    // Legacy Altering The Deal: "Dark Deal may deploy here [Dining Room] if you control three Bespin sites."
+    private boolean meetsAlteringTheDealDeployRequirements(String playerId, SwccgGame game, PhysicalCard self) {
+        return GameConditions.canSpot(game, self, diningRoomWithAlteringTheDeal(playerId))
+                && GameConditions.controls(game, playerId, 3, Filters.and(Filters.site, Filters.Bespin_location));
+    }
+
+    private static Filter diningRoomWithAlteringTheDeal(String playerId) {
+        return Filters.and(Filters.Dining_Room, Filters.hasAttached(Filters.and(Filters.owner(playerId), Filters.title(Title.Altering_The_Deal))));
     }
 
     @Override

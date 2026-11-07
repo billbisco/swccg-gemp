@@ -11,6 +11,7 @@ import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 
 public class NumDestinyDrawsToPowerOnlyModifier extends AbstractModifier {
     private Evaluator _evaluator;
+    private Evaluator _bonusEvaluator;
 
     public NumDestinyDrawsToPowerOnlyModifier(PhysicalCard source, int modifier, String playerId, Filterable affectFilter) {
         this(source, null, modifier, playerId, affectFilter);
@@ -37,6 +38,24 @@ public class NumDestinyDrawsToPowerOnlyModifier extends AbstractModifier {
             return "Dark Side: Add " + value + " destiny to power only";
         else
             return "Light Side: Add " + value + " destiny to power only";
+    }
+
+    /**
+     * Sets a bonus added to each destiny drawn to power from this modifier's source, for example
+     * "adds one destiny to power (add 1 for each character and vehicle present)".
+     * @param bonusEvaluator the evaluator that calculates the bonus when the destiny is drawn
+     * @return this modifier
+     */
+    public NumDestinyDrawsToPowerOnlyModifier setBonusForEachDestinyDraw(Evaluator bonusEvaluator) {
+        _bonusEvaluator = bonusEvaluator;
+        return this;
+    }
+
+    @Override
+    public float getBonusForEachDestinyDrawToPowerOnly(String playerId, GameState gameState, ModifiersQuerying modifiersQuerying) {
+        if (_bonusEvaluator == null || !_playerId.equals(playerId))
+            return 0;
+        return _bonusEvaluator.evaluateExpression(gameState, modifiersQuerying, getSource(gameState));
     }
 
     @Override

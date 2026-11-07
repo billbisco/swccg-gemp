@@ -48,7 +48,7 @@ public class Card1240_107_BACK extends AbstractObjective {
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, PhysicalCard self) {
         String playerId = self.getOwner();
-        Filter atRelevantLocation = Filters.at(Filters.or(Filters.titleContains("Rebel Cell"), Filters.sector, Filters.battleground_system));
+        Filter atRelevantLocation = Filters.at(Filters.or(Filters.titleContains("Rebel Cell"), Filters.sector, Card1240_087.objectiveBattlegroundSystem(self)));
         Filter affected = Filters.and(Filters.your(playerId), Filters.or(
                 Filters.and(Filters.character, Filters.abilityLessThan(4)),
                 Filters.and(Icon.HOTH, Filters.artillery_weapon),
@@ -56,7 +56,7 @@ public class Card1240_107_BACK extends AbstractObjective {
         Filter alreadyHasImmunity = Filters.alreadyHasImmunityToAttrition(self);
 
         List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new ForceDrainModifier(self, Filters.battleground_system, 1, playerId));
+        modifiers.add(new ForceDrainModifier(self, Card1240_087.objectiveBattlegroundSystem(self), 1, playerId));
         modifiers.add(new ImmuneToAttritionLessThanModifier(self, Filters.and(affected, Filters.not(alreadyHasImmunity)), 4));
         modifiers.add(new ImmunityToAttritionChangeModifier(self, Filters.and(affected, alreadyHasImmunity), 2));
         modifiers.add(new WidenIncomKoensayrScopeModifier(self));
@@ -74,7 +74,7 @@ public class Card1240_107_BACK extends AbstractObjective {
             action.appendUsage(
                     new OncePerTurnEffect(action));
             action.appendEffect(
-                    new DeployCardFromReserveDeckEffect(action, Filters.battleground_system, true));
+                    new DeployCardFromReserveDeckEffect(action, Card1240_087.objectiveBattlegroundSystem(self), true));
             return Collections.singletonList(action);
         }
         return null;
