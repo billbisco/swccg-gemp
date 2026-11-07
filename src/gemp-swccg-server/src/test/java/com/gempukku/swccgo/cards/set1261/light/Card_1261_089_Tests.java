@@ -36,7 +36,7 @@ public class Card_1261_089_Tests {
         var scn = scenario(); var b = scn.GetLSCard("contacts").getBlueprint();
         assertEquals(Title.Underworld_Contacts, b.getTitle()); assertEquals(Side.LIGHT, b.getSide());
         assertEquals(Uniqueness.UNIQUE, b.getUniqueness()); assertTrue(b.hasVirtualSuffix()); assertEquals(4, b.getDestiny(), scn.epsilon);
-        assertEquals(0, b.getDeployCost(), scn.epsilon); assertEquals(CardSubtype.NORMAL, b.getCardSubtype());
+        assertNull(b.getDeployCost()); assertEquals(CardSubtype.NORMAL, b.getCardSubtype());
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_6_1, b.getExpansionSet()); assertEquals(Rarity.V, b.getRarity());
         scn.BlueprintCardTypeCheck(b, new ArrayList<>(Arrays.asList(CardType.EFFECT)));
         scn.BlueprintIconCheck(b, new ArrayList<>(Arrays.asList(Icon.EFFECT, Icon.PREMIUM, Icon.LEGACY_BLOCK_6)));
@@ -49,7 +49,13 @@ public class Card_1261_089_Tests {
     }
     private void finishDestinies(VirtualTableScenario scn) {
         // Resolve each actual draw, including up to3 LS and2 DS draws in uncapped controls.
-        for (int i = 0; i < 4; i++) { scn.SkipToEndOfPowerSegment(true); scn.PassDestinyDrawResponses(); }
+        for (int i = 0; i < 4; i++) {
+            scn.SkipToEndOfPowerSegment(true);
+            // The standard shortcut misses questions containing "battle destiny (limited to ...)?".
+            if (scn.LSDecisionAvailable("Do you want to draw") && scn.LSDecisionAvailable("battle destiny")) scn.LSChooseYes();
+            if (scn.DSDecisionAvailable("Do you want to draw") && scn.DSDecisionAvailable("battle destiny")) scn.DSChooseYes();
+            scn.PassDestinyDrawResponses();
+        }
     }
     private VirtualTableScenario lowAbility(boolean contacts, String[] ls, String[] ds) {
         var scn = started(contacts);
@@ -121,7 +127,8 @@ public class Card_1261_089_Tests {
         var scn = highAbility(true, true, false, false, false);
         assertEquals(3, scn.GetLSBattleDestinyCount()); assertEquals(2, scn.GetDSBattleDestinyCount());
         assertEquals(1, scn.GetLSBattleDestinyLimit()); assertEquals(1, scn.GetDSBattleDestinyLimit()); finishDestinies(scn);
-        assertTrue(Set.of(1, 2, 4).contains(scn.GetLSTotalDestiny())); assertTrue(Set.of(2, 3).contains(scn.GetDSTotalDestiny()));
+        assertTrue(scn.GetCurrentDecision().getText(), Set.of(1, 2, 4).contains(scn.GetLSTotalDestiny()));
+        assertTrue(scn.GetCurrentDecision().getText(), Set.of(2, 3).contains(scn.GetDSTotalDestiny()));
     }
     @Test public void UnderworldContactsAbsentSamePartiesDrawAllThreeAndTwo() {
         var scn = highAbility(false, true, false, false, false); finishDestinies(scn); assertEquals(7, scn.GetLSTotalDestiny()); assertEquals(5, scn.GetDSTotalDestiny());
@@ -138,7 +145,8 @@ public class Card_1261_089_Tests {
     }
     @Test public void UnderworldContactsPairRemovalImmediatelyRemovesBothLimits() {
         var scn = highAbility(true, true, false, false, false); assertEquals(1, scn.GetLSBattleDestinyLimit());
-        scn.MoveCardsToLSHand(scn.GetLSCard("jawa2")); assertEquals(3, scn.GetLSBattleDestinyLimit()); assertEquals(2, scn.GetDSBattleDestinyLimit());
+        scn.MoveCardsToLSHand(scn.GetLSCard("jawa2"));
+        assertEquals(Integer.MAX_VALUE, scn.GetLSBattleDestinyLimit()); assertEquals(Integer.MAX_VALUE, scn.GetDSBattleDestinyLimit());
         finishDestinies(scn); assertEquals(7, scn.GetLSTotalDestiny()); assertEquals(5, scn.GetDSTotalDestiny());
     }
     @Test public void UnderworldContactsLeavingTableImmediatelyRemovesBothLimits() {
@@ -192,7 +200,8 @@ public class Card_1261_089_Tests {
         scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetDSCard("vader")); scn.MoveCardsToDSHand(scn.GetDSCard("alter"));
         scn.SkipToDSTurn(Phase.CONTROL); scn.PrepareDSDestiny(0); scn.DSPlayCard(scn.GetDSCard("alter"));
         assertFalse(scn.DSHasCardChoiceAvailable(scn.GetLSCard("contacts"))); assertTrue(scn.DSHasCardChoiceAvailable(scn.GetLSCard("traffic")));
-        scn.DSChooseCard(scn.GetLSCard("traffic")); scn.PassAllResponses();
+        scn.DSChooseCard(scn.GetLSCard("traffic")); scn.DSChooseCard(scn.GetDSCard("vader"));
+        scn.PassAllResponses(); scn.PassDestinyDrawResponses(); scn.PassAllResponses();
         assertInZone(Zone.LOST_PILE, scn.GetLSCard("traffic")); assertInZone(Zone.SIDE_OF_TABLE, scn.GetLSCard("contacts"));
         assertInZone(Zone.SIDE_OF_TABLE, scn.GetLSCard("traffic2")); assertInZone(Zone.USED_PILE, scn.GetDSCard("alter"));
     }
