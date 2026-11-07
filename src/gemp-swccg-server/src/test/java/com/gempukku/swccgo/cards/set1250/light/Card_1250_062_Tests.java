@@ -83,7 +83,7 @@ public class Card_1250_062_Tests {
         var target = s.GetLSCard(name); var lightning = s.GetDSCard("lightning");
         s.MoveCardsToLSSideOfTable(s.GetLSCard("roar"));
         s.MoveCardsToLocation(s.GetLSStartingLocation(), target, s.GetDSCard("emperor"));
-        s.MoveCardsToHand(lightning); s.SkipToDSTurn(Phase.CONTROL); s.PrepareDSDestiny(3);
+        s.MoveCardsToHand(lightning); s.SkipToDSTurn(Phase.CONTROL); s.PrepareDSDestiny(6);
         s.DSPlayCard(lightning, "Make target lost");
         if (s.DSDecisionAvailable("Choose Emperor")) s.DSChooseCard(s.GetDSCard("emperor"));
         if (s.DSDecisionAvailable("Choose character")) s.DSChooseCard(target);
