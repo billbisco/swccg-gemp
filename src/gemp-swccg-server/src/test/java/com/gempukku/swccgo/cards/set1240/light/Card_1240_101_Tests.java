@@ -64,12 +64,12 @@ public class Card_1240_101_Tests {
     }
 
     @Test
-    public void OutpostMayJoinHothButNoneOfItsFiveForbiddenSystems() {
+    public void OutpostMayJoinAnotherPlanetButNoneOfItsFiveForbiddenSystems() {
         var scn = scenario();
-        for (String key : List.of("hoth", "bespin", "coruscant", "dantooine", "kessel", "tatooine"))
+        for (String key : List.of("kiffex", "bespin", "coruscant", "dantooine", "kessel", "tatooine"))
             scn.MoveLocationToTable(scn.GetLSCard(key));
         var outpost = scn.GetLSCard("outpost");
-        assertFalse(scn.gameState().getLocationPlacement(scn.game(), outpost, Title.Hoth, null).isEmpty());
+        assertFalse(scn.gameState().getLocationPlacement(scn.game(), outpost, Title.Kiffex, null).isEmpty());
         for (String system : List.of(Title.Bespin, Title.Coruscant, Title.Dantooine, Title.Kessel, Title.Tatooine))
             assertTrue(system, scn.gameState().getLocationPlacement(scn.game(), outpost, system, null).isEmpty());
     }
@@ -82,7 +82,7 @@ public class Card_1240_101_Tests {
         assertTrue(scn.LSCardActionAvailable(outpost, EFFECT));
         scn.LSUseCardAction(outpost, DEVICE);
         scn.PassAllResponses();
-        assertTrue(scn.LSHasCardChoiceNotAvailable(scn.GetLSCard("comlink")));
+        assertFalse(SelectableInReserve(scn, scn.GetLSCard("comlink")));
         scn.LSChooseCard(computer);
         scn.PassAllResponses();
         if (scn.LSHasCardChoiceAvailable(scn.GetLSCard("falcon")))
@@ -92,6 +92,7 @@ public class Card_1240_101_Tests {
         assertTrue(scn.IsAttachedTo(scn.GetLSCard("falcon"), computer));
         assertTrue(scn.gameState().getLastMessages().stream().anyMatch(m -> m.contains("shuffles Reserve Deck")));
         assertEquals(0, scn.GetLSForcePileCount());
+        if (scn.GetAwaitingDecision(scn.DS) != null && scn.DSDecisionAvailable("action or Pass")) scn.DSPass();
         assertFalse(scn.LSCardActionAvailable(outpost, DEVICE));
         assertFalse(scn.LSCardActionAvailable(outpost, EFFECT));
         scn.SkipToDSTurn(Phase.DEPLOY);
@@ -107,7 +108,7 @@ public class Card_1240_101_Tests {
         var luke = scn.GetLSCard("luke");
         scn.LSUseCardAction(outpost, EFFECT);
         scn.PassAllResponses();
-        assertTrue(scn.LSHasCardChoiceNotAvailable(scn.GetLSCard("savrip")));
+        assertFalse(SelectableInReserve(scn, scn.GetLSCard("savrip")));
         scn.LSChooseCard(rycar);
         scn.PassAllResponses();
         if (scn.LSHasCardChoiceAvailable(luke)) {
@@ -117,6 +118,7 @@ public class Card_1240_101_Tests {
         scn.PassAllResponses();
         assertTrue(scn.IsAttachedTo(luke, rycar));
         assertTrue(scn.gameState().getLastMessages().stream().anyMatch(m -> m.contains("shuffles Reserve Deck")));
+        if (scn.GetAwaitingDecision(scn.DS) != null && scn.DSDecisionAvailable("action or Pass")) scn.DSPass();
         assertFalse(scn.LSCardActionAvailable(outpost, DEVICE));
     }
 
@@ -125,7 +127,7 @@ public class Card_1240_101_Tests {
         var scn = downloads(true, 1);
         scn.LSUseCardAction(scn.GetLSCard("outpost"), DEVICE);
         scn.PassAllResponses();
-        assertTrue(scn.LSHasCardChoiceNotAvailable(scn.GetLSCard("computer")));
+        assertFalse(SelectableInReserve(scn, scn.GetLSCard("computer")));
         assertEquals(1, scn.GetLSForcePileCount());
     }
 
@@ -135,7 +137,8 @@ public class Card_1240_101_Tests {
         var outpost = scn.GetLSCard("outpost");
         var luke = scn.GetLSCard("luke");
         var comlink = scn.GetLSCard("comlink");
-        scn.MoveLocationToTable(outpost);
+        scn.MoveLocationToTable(scn.GetLSCard("kiffex"));
+        place(scn, "outpost", Title.Kiffex);
         scn.MoveCardsToLocation(outpost, luke);
         scn.MoveCardsToHand(comlink);
         scn.SkipToLSTurn(Phase.CONTROL);
@@ -160,7 +163,7 @@ public class Card_1240_101_Tests {
         assertFalse(scn.LSCardActionAvailable(outpost, EFFECT));
         scn.LSUseCardAction(outpost, DEVICE);
         scn.PassAllResponses();
-        assertTrue(scn.LSHasCardChoiceNotAvailable(scn.GetLSCard("computer")));
+        assertFalse(SelectableInReserve(scn, scn.GetLSCard("computer")));
         assertEquals(2, scn.GetLSForcePileCount());
     }
 
@@ -206,16 +209,31 @@ public class Card_1240_101_Tests {
         var scn = scenario();
         var outpost = scn.GetLSCard("outpost");
         var remote = scn.GetLSStartingLocation();
-        scn.MoveLocationToTable(outpost);
+        scn.MoveLocationToTable(scn.GetLSCard("kiffex"));
+        place(scn, "outpost", Title.Kiffex);
         scn.MoveCardsToLocation(local ? outpost : remote, scn.GetLSCard("falcon"), scn.GetLSCard("luke"));
         scn.MoveCardsToLocation(remote, scn.GetLSCard("boshek"));
         scn.SkipToLSTurn(Phase.CONTROL);
+        var searched = new PhysicalCardImpl[] {scn.GetLSCard("computer"), scn.GetLSCard("rycar"),
+                scn.GetLSCard("savrip"), scn.GetLSCard("comlink")};
+        // Held aside while the Force Pile is set, so that none of them is counted as Force.
+        scn.MoveCardsToLSHand(searched);
         scn.EnsureLSForcePile(force);
         scn.DrainLSForcePileTo(force);
-        scn.MoveCardsToTopOfLSReserveDeck(scn.GetLSCard("computer"), scn.GetLSCard("rycar"),
-                scn.GetLSCard("savrip"), scn.GetLSCard("comlink"));
+        scn.MoveCardsToTopOfLSReserveDeck(searched);
+        assertEquals(force, scn.GetLSForcePileCount());
         scn.SkipToPhase(Phase.DEPLOY);
         return scn;
+    }
+
+    private static boolean SelectableInReserve(VirtualTableScenario scn, PhysicalCardImpl card) {
+        var blueprints = scn.GetADParam(scn.LS, "blueprintId");
+        var selectable = scn.GetADParam(scn.LS, "selectable");
+        if (blueprints == null || selectable == null) return false;
+        for (int i = 0; i < blueprints.length; i++) {
+            if (blueprints[i].equals(card.getBlueprintId(true)) && Boolean.parseBoolean(selectable[i])) return true;
+        }
+        return false;
     }
 
     private VirtualTableScenario operativeLocations() {
