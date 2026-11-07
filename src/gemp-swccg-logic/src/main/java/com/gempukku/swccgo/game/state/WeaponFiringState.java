@@ -20,6 +20,7 @@ public class WeaponFiringState {
     private Collection<PhysicalCard> _targets = new LinkedList<PhysicalCard>();
     private PhysicalCard _cardFiringWeapon;
     private RespondableEffect _weaponFiringEffect;
+    private Collection<Integer> _targetsHitOrMadeLost = new LinkedList<Integer>();
 
     public WeaponFiringState(SwccgGame game, PhysicalCard weaponFiring, SwccgBuiltInCardBlueprint permanentWeapon) {
         _game = game;
@@ -91,5 +92,38 @@ public class WeaponFiringState {
      */
     public RespondableEffect getWeaponFiringEffect() {
         return _weaponFiringEffect;
+    }
+
+    /**
+     * Records that the specified card was 'hit' (or made lost) during this weapon firing.
+     * @param card the card
+     */
+    public void recordHitOrMadeLost(PhysicalCard card) {
+        if (!_targetsHitOrMadeLost.contains(card.getPermanentCardId())) {
+            _targetsHitOrMadeLost.add(card.getPermanentCardId());
+        }
+    }
+
+    /**
+     * Determines if the specified card was 'hit' (or made lost) during this weapon firing.
+     * @param card the card
+     * @return true or false
+     */
+    public boolean wasHitOrMadeLost(PhysicalCard card) {
+        return _targetsHitOrMadeLost.contains(card.getPermanentCardId());
+    }
+
+    /**
+     * Gets the targets of this weapon firing that were not 'hit' (or made lost) during this weapon firing.
+     * @return the targets not 'hit'
+     */
+    public Collection<PhysicalCard> getTargetsNotHitOrMadeLost() {
+        Collection<PhysicalCard> notHit = new LinkedList<PhysicalCard>();
+        for (PhysicalCard target : _targets) {
+            if (!wasHitOrMadeLost(target)) {
+                notHit.add(target);
+            }
+        }
+        return notHit;
     }
 }
