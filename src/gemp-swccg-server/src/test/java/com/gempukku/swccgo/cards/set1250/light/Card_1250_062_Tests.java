@@ -92,13 +92,16 @@ public class Card_1250_062_Tests {
                 && s.GetCurrentDecision().getText().contains("Optional responses"); i++) {
             s.PlayerPass(s.GetDecidingPlayer());
         }
+        assertTrue("Lightning target " + target.getZone() + "; pending " + s.GetCurrentDecision().getText(),
+                s.GetLSLostPile().contains(target));
         return s;
     }
 
     @Test
     public void ActualJustLostWookieeCanStackAndNonWookieeCannot() {
         var s = lightningLoss("wookiee");
-        assertTrue(offered(s, STACK)); s.LSUseCardAction(s.GetLSCard("roar"), STACK); s.PassAllResponses();
+        assertTrue(s.GetCurrentDecision().getText(), offered(s, STACK));
+        s.LSUseCardAction(s.GetLSCard("roar"), STACK); s.PassAllResponses();
         assertEquals(List.of(s.GetLSCard("wookiee")), s.GetStackedCards(s.GetLSCard("roar")));
         var other = lightningLoss("guard");
         assertFalse(offered(other, STACK)); assertTrue(other.GetLSLostPile().contains(other.GetLSCard("guard")));
