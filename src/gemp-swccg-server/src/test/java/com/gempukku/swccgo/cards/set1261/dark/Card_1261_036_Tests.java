@@ -108,4 +108,91 @@ public class Card_1261_036_Tests {
         return scn.game().getModifiersQuerying().getDeployCost(scn.gameState(), card, card, site,
                 false, null, false, 0, null, false);
     }
+
+    // ---- Droid mode ----
+
+    private static final String TARGET_DROID = "Target a unique";
+    private static final String DEPLOY_ON_DROID = "Deploy Protocol Failure on droid (its game text is canceled)";
+    private static final String PLACE_IN_LOST_PILE = "Place Protocol Failure in Lost Pile";
+
+    private VirtualTableScenario droidScenario() {
+        return new VirtualTableScenario(new HashMap<>(Map.of("artoo", "14_3", "threepio", "1_5")),
+                new HashMap<>(Map.of("failure", "1261_36", "pitdroid", "11_60", "trooper", "1_194", "vader", "1_168")),
+                25, 25, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
+    }
+
+    private void targetArtoo(VirtualTableScenario scn) {
+        var site = scn.GetLSStartingLocation();
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, scn.GetLSCard("artoo"));
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("trooper"));
+        scn.MoveCardsToDSHand(scn.GetDSCard("failure"));
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        assertTrue(scn.DSCardActionAvailable(scn.GetDSCard("failure"), TARGET_DROID));
+        scn.DSUseCardAction(scn.GetDSCard("failure"), TARGET_DROID);
+        if (scn.DSHasCardChoiceAvailable(scn.GetLSCard("artoo")))
+            scn.DSChooseCard(scn.GetLSCard("artoo"));
+        scn.PassAllResponses();
+    }
+
+    @Test(timeout = 15000)
+    public void opponentMayChooseToHaveItDeployedOnTheTargetedDroidCancelingItsGameText() {
+        var scn = droidScenario();
+        var artoo = scn.GetLSCard("artoo");
+        var failure = scn.GetDSCard("failure");
+        targetArtoo(scn);
+        assertTrue(scn.LSChoiceAvailable(DEPLOY_ON_DROID));
+        assertTrue(scn.LSChoiceAvailable(PLACE_IN_LOST_PILE));
+        scn.LSChoose(DEPLOY_ON_DROID);
+        if (scn.DSGetDecision() != null && scn.DSHasCardChoiceAvailable(artoo))
+            scn.DSChooseCard(artoo);
+        scn.PassAllResponses();
+        assertSame(artoo, failure.getAttachedTo());
+        assertTrue(scn.game().getModifiersQuerying().isGameTextCanceled(scn.gameState(), artoo));
+        // Not on a site: no end-of-turn self-loss.
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        assertSame(artoo, failure.getAttachedTo());
+    }
+
+    @Test(timeout = 15000)
+    public void opponentMayInsteadSendItToLostPileAndYouMayTakeAnyCardFromReserveDeck() {
+        var scn = droidScenario();
+        var artoo = scn.GetLSCard("artoo");
+        var failure = scn.GetDSCard("failure");
+        var vader = scn.GetDSCard("vader");
+        targetArtoo(scn);
+        scn.LSChoose(PLACE_IN_LOST_PILE);
+        assertTrue(scn.GetDSLostPile().contains(failure));
+        assertFalse(scn.game().getModifiersQuerying().isGameTextCanceled(scn.gameState(), artoo));
+        scn.DSChooseYes();
+        assertTrue(scn.DSHasCardChoiceAvailable(vader));
+        scn.DSChooseCard(vader);
+        scn.PassAllResponses();
+        assertTrue(scn.GetDSHand().contains(vader));
+    }
+
+    @Test(timeout = 15000)
+    public void reserveDeckTakeIsOptional() {
+        var scn = droidScenario();
+        targetArtoo(scn);
+        scn.LSChoose(PLACE_IN_LOST_PILE);
+        int hand = scn.GetDSHandCount();
+        scn.DSChooseNo();
+        scn.PassAllResponses();
+        assertEquals(hand, scn.GetDSHandCount());
+        assertTrue(scn.GetDSLostPile().contains(scn.GetDSCard("failure")));
+    }
+
+    @Test(timeout = 15000)
+    public void droidModeNeedsAUniqueEpisodeIDroid() {
+        var scn = droidScenario();
+        scn.StartGame();
+        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetLSCard("threepio"));
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("pitdroid"));
+        scn.MoveCardsToDSHand(scn.GetDSCard("failure"));
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("failure"), TARGET_DROID));
+    }
 }
