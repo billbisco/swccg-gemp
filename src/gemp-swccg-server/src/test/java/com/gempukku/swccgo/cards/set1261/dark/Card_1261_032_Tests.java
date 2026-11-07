@@ -159,7 +159,8 @@ public class Card_1261_032_Tests {
             scn.PassCardPlayResponses();
             scn.PassAllResponses();
             assertFalse(escort.isHit());
-            assertTrue(chewie.isHit());
+            // A captive that is 'hit' is lost.
+            assertTrue(chewie.isHit() || scn.GetLSLostPile().contains(chewie));
         }
         return playable;
     }

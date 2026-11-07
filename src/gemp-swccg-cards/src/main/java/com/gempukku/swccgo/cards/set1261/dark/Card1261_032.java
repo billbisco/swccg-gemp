@@ -42,7 +42,8 @@ public class Card1261_032 extends AbstractNormalEffect {
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, PhysicalCard self) {
         var watching = new OnTableCondition(self, Filters.I_Shall_Enjoy_Watching_You_Die);
         return List.of(
-                new ModifyGameTextModifier(self, Filters.Human_Shield,
+                // Title.Human_Shield ("Human_Shield") does not match the printed title, so match "Human Shield" directly.
+                new ModifyGameTextModifier(self, Filters.title("Human Shield"),
                         ModifyGameTextType.LEGACY__HUTT_INFLUENCE__HUMAN_SHIELD_IMPERIAL_MAY_BE_BOUNTY_HUNTER),
                 new ForfeitModifier(self, Filters.bounty_hunter, watching, 2),
                 new ImmuneToTitleModifier(self, Filters.bounty_hunter, watching, Title.Goo_Nee_Tay),
