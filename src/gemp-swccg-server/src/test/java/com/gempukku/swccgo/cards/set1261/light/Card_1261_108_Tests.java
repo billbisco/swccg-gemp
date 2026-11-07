@@ -139,7 +139,7 @@ public class Card_1261_108_Tests {
                 scn.PlayerDecided(scn.GetDecidingPlayer(), "");
             } else if (fifth && scn.LSGetDecision() != null
                     && prompt.startsWith("Choose destiny card to stack") && !scn.LSGetCardChoices().isEmpty()) {
-                scn.LSChooseAnyCard();
+                scn.PlayerDecided(scn.LS, scn.LSGetCardChoices().getFirst());
             } else break;
         }
         assertEquals(trace.toString(), fifth ? Title.Save_You_It_Can : Title.Mind_What_You_Have_Learned,
