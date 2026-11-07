@@ -14,7 +14,7 @@ public class Card_1250_034_Tests {
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>() {{
             put("bail", "1250_34"); put("leia", "1_17"); put("luke", "1_19"); put("trooper", "1_28");
-            put("panaka", "12_2"); put("senator", "12_28"); put("political", "12_40");
+            put("panaka", "12_2"); put("valorum", "12_30"); put("senator", "12_28"); put("political", "12_40");
             put("senate", "12_75"); put("platform", "1113_3"); put("cantina", "1_128");
             put("retrieve1", "1_28"); put("retrieve2", "1_28");
         }}, new HashMap<>() {{
@@ -68,7 +68,9 @@ public class Card_1250_034_Tests {
     @Test
     public void BailOrganaDeploymentLosesOnlyYourCoruscantSenatorsAndPoliticalEffects() {
         var scn = scenario(); scn.StartGame(); var bail = scn.GetLSCard("bail");
-        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetLSCard("senator"), scn.GetLSCard("leia"), scn.GetLSCard("panaka"), scn.GetDSCard("senator"));
+        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetLSCard("senator"), scn.GetLSCard("leia"), scn.GetLSCard("panaka"), scn.GetLSCard("valorum"), scn.GetDSCard("senator"));
+        assertEquals(5, scn.GetLSCard("valorum").getBlueprint().getPolitics(), scn.epsilon);
+        assertFalse(scn.GetLSCard("valorum").getBlueprint().hasKeyword(Keyword.SENATOR));
         scn.MoveCardsToLSSideOfTable(scn.GetLSCard("political"));
         scn.MoveCardsToDSSideOfTable(scn.GetDSCard("political"));
         scn.MoveCardsToHand(bail); scn.LSActivateForceCheat(6); scn.SkipToLSTurn(Phase.DEPLOY);
@@ -79,6 +81,7 @@ public class Card_1250_034_Tests {
         assertEquals(force - 2, scn.GetLSForcePileCount());
         assertEquals(scn.GetLSStartingLocation(), scn.GetLSCard("leia").getAtLocation());
         assertEquals(scn.GetLSStartingLocation(), scn.GetLSCard("panaka").getAtLocation());
+        assertEquals(scn.GetLSStartingLocation(), scn.GetLSCard("valorum").getAtLocation());
         assertEquals(scn.GetLSStartingLocation(), scn.GetDSCard("senator").getAtLocation());
         assertEquals(Zone.SIDE_OF_TABLE, scn.GetDSCard("political").getZone());
     }
