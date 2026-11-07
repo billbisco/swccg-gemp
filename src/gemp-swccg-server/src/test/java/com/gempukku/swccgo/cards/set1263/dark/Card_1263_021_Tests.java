@@ -12,7 +12,7 @@ import static com.gempukku.swccgo.framework.Assertions.assertInZone;
 
 public class Card_1263_021_Tests {
     private VirtualTableScenario scenario() {
-        return new VirtualTableScenario(new HashMap<>() {{put("luke","1_19");put("leia","1_17");put("mtt","14_122");}},
+        return new VirtualTableScenario(new HashMap<>() {{put("luke","1_19");put("leia","1_17");}},
                 new HashMap<>() {{put("walker","1263_21");put("mtt","14_122");put("mtt2","14_122");put("cannon","3_158");put("other","3_154");put("trooper","1_194");put("vader","1_168");put("veers","3_87");put("rifle","1_317");}},
                 12,12,StartingSetup.DefaultLSGroundLocation,StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts,StartingSetup.NoDSStartingInterrupts,
@@ -33,7 +33,11 @@ public class Card_1263_021_Tests {
     private VirtualTableScenario deploy(String mtt,int count,int force) {
         var scn=scenario();scn.StartGame();var site=scn.GetDSStartingLocation();
         scn.MoveCardsToDSHand(scn.GetDSCard("walker"));
-        if(mtt!=null)scn.MoveCardsToLocation("otherSite".equals(mtt)?scn.GetLSStartingLocation():site,"opponent".equals(mtt)?scn.GetLSCard("mtt"):scn.GetDSCard("mtt"));
+        if(mtt!=null) {
+            var transport=scn.GetDSCard("mtt");
+            if("opponent".equals(mtt))transport.setOwner(scn.LS);
+            scn.MoveCardsToLocation("otherSite".equals(mtt)?scn.GetLSStartingLocation():site,transport);
+        }
         if(count==2)scn.MoveCardsToLocation(site,scn.GetDSCard("mtt2"));
         scn.SkipToDSTurn(Phase.CONTROL);scn.EnsureDSForcePile(force);
         while(scn.GetDSForcePileCount()>force)scn.MoveCardsToTopOfDSReserveDeck((PhysicalCardImpl)scn.game().getGameState().getForcePile(scn.DS).getFirst());
