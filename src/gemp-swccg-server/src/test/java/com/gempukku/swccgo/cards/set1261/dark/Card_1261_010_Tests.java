@@ -168,7 +168,7 @@ public class Card_1261_010_Tests {
             var mods = scn.game().getModifiersQuerying();
             assertEquals(vaderHere, mods.mayFireOnlyOncePerBattle(scn.gameState(), saber));
             assertEquals(vaderHere, mods.mayFireOnlyOncePerBattle(scn.gameState(), luke));
-            assertFalse(mods.mayFireOnlyOncePerBattle(scn.gameState(), remoteSaber));
+            assertEquals(!vaderHere, mods.mayFireOnlyOncePerBattle(scn.gameState(), remoteSaber));
             assertEquals(!vaderHere, mods.mayFireWeaponTwicePerBattle(scn.gameState(), mace, saber));
         }
     }
