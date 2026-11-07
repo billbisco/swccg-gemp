@@ -129,6 +129,7 @@ public class GameState implements Snapshotable<GameState> {
     private PhysicalCard _lightSideObjective;
     private PhysicalCard _darkSideStartingInterrupt;
     private PhysicalCard _lightSideStartingInterrupt;
+    private final Set<String> _playersWhoPlayedStartingEpicEvent = new HashSet<>();
     private List<PhysicalCard> _darkSideRevealedAfterStartingEffect = new ArrayList<PhysicalCard>();
     private List<PhysicalCard> _lightSideRevealedAfterStartingEffect = new ArrayList<PhysicalCard>();
     private PhysicalCard _darkSideRep;
@@ -445,6 +446,7 @@ public class GameState implements Snapshotable<GameState> {
         snapshot._lightSideObjective = snapshotData.getDataForSnapshot(_lightSideObjective);
         snapshot._darkSideStartingInterrupt = snapshotData.getDataForSnapshot(_darkSideStartingInterrupt);
         snapshot._lightSideStartingInterrupt = snapshotData.getDataForSnapshot(_lightSideStartingInterrupt);
+        snapshot._playersWhoPlayedStartingEpicEvent.addAll(_playersWhoPlayedStartingEpicEvent);
         for (PhysicalCard card : _darkSideRevealedAfterStartingEffect) {
             snapshot._darkSideRevealedAfterStartingEffect.add(snapshotData.getDataForSnapshot(card));
         }
@@ -5160,6 +5162,15 @@ public class GameState implements Snapshotable<GameState> {
             return _darkSideStartingInterrupt;
         else
             return _lightSideStartingInterrupt;
+    }
+
+    /** Returns whether the player successfully played an Epic Event during starting-card setup. */
+    public boolean hasPlayedStartingEpicEvent(String playerId) {
+        return _playersWhoPlayedStartingEpicEvent.contains(playerId);
+    }
+
+    public void recordStartingEpicEventPlayed(String playerId) {
+        _playersWhoPlayedStartingEpicEvent.add(playerId);
     }
 
     public void setStartingInterruptPlayed(String playerId, PhysicalCard startingInterrupt) {
