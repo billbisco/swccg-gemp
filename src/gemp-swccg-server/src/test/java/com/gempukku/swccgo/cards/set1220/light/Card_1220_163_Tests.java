@@ -19,6 +19,10 @@ import static org.junit.Assert.*;
 
 public class Card_1220_163_Tests {
     private VirtualTableScenario fixture(boolean chooseOptional) {
+        return fixture(chooseOptional, chooseOptional);
+    }
+
+    private VirtualTableScenario fixture(boolean chooseGarrison, boolean chooseFlaps) {
         var ls = new HashMap<>(Map.ofEntries(
                 Map.entry("original", "3_61"), Map.entry("trench", "3_63"),
                 Map.entry("perimeter", "3_56"), Map.entry("ridge", "3_62"),
@@ -52,12 +56,14 @@ public class Card_1220_163_Tests {
                         scn.LSChooseCard(scn.GetLSCard("hoth"));
                     } else if (prompt.contains("Choose Main Power Generators to deploy")) {
                         scn.LSChooseCard(scn.GetLSCard("generators"));
-                    } else if (prompt.equals("Deploy Echo Base Garrison?") || prompt.equals("Deploy Maneuvering Flaps?")) {
-                        if (chooseOptional) scn.LSChooseYes(); else scn.LSChooseNo();
+                    } else if (prompt.equals("Deploy Echo Base Garrison?")) {
+                        if (chooseGarrison) scn.LSChooseYes(); else scn.LSChooseNo();
+                    } else if (prompt.equals("Deploy Maneuvering Flaps?")) {
+                        if (chooseFlaps) scn.LSChooseYes(); else scn.LSChooseNo();
                     } else if (prompt.contains("Choose Echo Base Garrison to deploy")) {
-                        if (chooseOptional) scn.LSChooseCard(scn.GetLSCard("garrison")); else scn.LSPass();
+                        if (chooseGarrison) scn.LSChooseCard(scn.GetLSCard("garrison")); else scn.LSPass();
                     } else if (prompt.contains("Choose Maneuvering Flaps to deploy")) {
-                        if (chooseOptional) scn.LSChooseCard(scn.GetLSCard("flaps")); else scn.LSPass();
+                        if (chooseFlaps) scn.LSChooseCard(scn.GetLSCard("flaps")); else scn.LSPass();
                     } else if (prompt.toLowerCase().contains("optional response")) {
                         scn.PlayerPass(scn.GetDecidingPlayer());
                     } else {
@@ -106,6 +112,18 @@ public class Card_1220_163_Tests {
             assertTrue(name, scn.IsCardActive(scn.GetLSCard(name)));
         }
         assertFalse(scn.IsCardActive(scn.GetLSCard("original")));
+    }
+
+    @Test public void actualSetupMayTakeOnlyGarrisonAndDeclineFlaps() {
+        var scn = fixture(true, false); scn.StartGame();
+        assertTrue(scn.IsCardActive(scn.GetLSCard("garrison")));
+        assertFalse(scn.IsCardActive(scn.GetLSCard("flaps")));
+    }
+
+    @Test public void actualSetupMayDeclineGarrisonAndTakeOnlyFlaps() {
+        var scn = fixture(false, true); scn.StartGame();
+        assertFalse(scn.IsCardActive(scn.GetLSCard("garrison")));
+        assertTrue(scn.IsCardActive(scn.GetLSCard("flaps")));
     }
 
     @Test public void actualSetupMayDeclineBothEffects() {
