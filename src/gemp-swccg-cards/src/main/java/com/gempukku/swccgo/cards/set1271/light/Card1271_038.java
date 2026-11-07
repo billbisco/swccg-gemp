@@ -29,12 +29,12 @@ import com.gempukku.swccgo.logic.timing.results.LostFromTableResult;
 
 import java.util.List;
 
-/** Field Dressing, final Virtual Block 7.1 errata. */
+/** Field Dressing (Virtual Block 7.1). */
 public class Card1271_038 extends AbstractImmediateEffect {
     public Card1271_038() {
         super(Side.LIGHT, 3, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Field Dressing", Uniqueness.RESTRICTED_2, ExpansionSet.VIRTUAL_BLOCK_7_1, Rarity.V);
         setLore("The Alliance lost many fine soldiers at conflicts such as the Battle of Hoth. The Rebel High Command is aware of the cost of freedom from Imperial tyranny.");
-        setGameText("If you just forfeited a character of ability < 5 present at a site, return that character to the same site from your Lost Pile and deploy this card on him or her. Character is forfeit = 0 (even if forfeit may not be normally reduced). May play First Aid to place this card in Used Pile. Immune to your Control.");
+        setGameText("If you just forfeited a character of ability < 5 present at a site, deploy on that character (who remains at same site and, if 'hit,' is restored to normal). Character is forfeit = 0 (even if forfeit may not normally be reduced). May play First Aid to place this card in Used Pile. Immune to your Control.");
         addIcons(Icon.SPECIAL_EDITION);
     }
 
@@ -91,7 +91,7 @@ public class Card1271_038 extends AbstractImmediateEffect {
 
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, PhysicalCard self) {
-        return List.of(new ResetForfeitModifier(self, Filters.hasAttached(self), 0),
+        return List.of(new ResetForfeitModifier(self, Filters.hasAttached(self), null, 0, true),
             new LegacyMayPlayInterruptAsModifier(self, Filters.and(Filters.your(self), Filters.title("First Aid")),
                 CardSubtype.USED, new LegacyMayPlayInterruptAsModifier.PlayMode() {
                     @Override public PlayInterruptAction createAction(String playerId, SwccgGame game, PhysicalCard source,

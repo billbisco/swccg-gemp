@@ -16,7 +16,7 @@ public class Card_1271_038_Tests {
 
     private VirtualTableScenario scenario(String patientId) {
         return new VirtualTableScenario(
-            new HashMap<>(Map.of("dressing", "1271_38", "patient", patientId, "firstAid", "7_89", "control", "4_48")),
+            new HashMap<>(Map.of("dressing", "1271_38", "patient", patientId, "firstAid", "7_89", "control", "4_48", "delevar", "8_5")),
             new HashMap<>(Map.of("vader", "1_168", "darkControl", "4_139")), 40, 40,
             StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
             StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
@@ -109,6 +109,27 @@ public class Card_1271_038_Tests {
         var s = justForfeited("1_21");
         assertFalse(s.LSAnyActionsAvailable() && s.LSCardActionAvailable(s.GetLSCard("dressing"), RETURN_PATIENT));
         assertTrue(s.GetLSLostPile().contains(s.GetLSCard("patient")));
+    }
+
+    @Test public void FieldDressingCannotReturnAnAbilityFiveCharacter() {
+        // Luke With Lightsaber is ability 5: "ability < 5" excludes him.
+        var s = justForfeited("108_3");
+        assertEquals(5, s.GetLSCard("patient").getBlueprint().getAbility(), s.epsilon);
+        assertFalse(s.LSAnyActionsAvailable() && s.LSCardActionAvailable(s.GetLSCard("dressing"), RETURN_PATIENT));
+        assertTrue(s.GetLSLostPile().contains(s.GetLSCard("patient")));
+    }
+
+    @Test public void FieldDressingForfeitZeroAppliesEvenIfForfeitMayNotBeReduced() {
+        var s = justForfeited("1_19");
+        playDressing(s);
+        var patient = s.GetLSCard("patient");
+        // Corporal Delevar: "Prevents your characters from having their forfeit reduced at same location."
+        s.MoveCardsToLocation(s.GetDSStartingLocation(), s.GetLSCard("delevar"));
+        var q = s.game().getModifiersQuerying();
+        assertTrue(q.isProhibitedFromHavingForfeitReduced(s.gameState(), patient));
+        assertEquals(0, s.GetForfeit(patient), s.epsilon);
+        // Delevar's own forfeit is untouched by the dressing.
+        assertEquals(4, s.GetForfeit(s.GetLSCard("delevar")), s.epsilon);
     }
 
     @Test public void FieldDressingLetsFirstAidRemoveItToUsedAndRestoresForfeit() {

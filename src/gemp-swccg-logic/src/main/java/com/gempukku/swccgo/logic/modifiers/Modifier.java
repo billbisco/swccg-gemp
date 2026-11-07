@@ -333,6 +333,15 @@ public interface Modifier {
     float getForfeitModifier(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard);
     float getUnmodifiableForfeit(GameState gameState, ModifiersQuerying modifiersLogic, PhysicalCard physicalCard);
 
+    /**
+     * Determines if this forfeit reset applies even to a card whose forfeit may not otherwise be reduced
+     * (for example, "forfeit = 0 (even if forfeit may not normally be reduced)").
+     * @return true if the reset ignores "may not have forfeit reduced", otherwise false
+     */
+    default boolean isForfeitResetEvenIfMayNotBeReduced() {
+        return false;
+    }
+
     float getImmunityToAttritionLessThanModifier(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard);
     float getImmunityToAttritionOfExactlyModifier(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard);
     float getImmunityToAttritionChangedModifier(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard);

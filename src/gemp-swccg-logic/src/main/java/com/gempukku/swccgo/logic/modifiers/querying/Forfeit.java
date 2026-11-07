@@ -124,7 +124,7 @@ public interface Forfeit extends BaseQuery, Attributes, Destiny, Flags, Keywords
         Float lowestResetValue = null;
         for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.UNMODIFIABLE_FORFEIT_VALUE, physicalCard)) {
             float modifierAmount = modifier.getUnmodifiableForfeit(gameState, query(), physicalCard);
-            if (modifierAmount >= result || !forfeitMayNotBeReduced) {
+            if (modifierAmount >= result || !forfeitMayNotBeReduced || modifier.isForfeitResetEvenIfMayNotBeReduced()) {
                 lowestResetValue = (lowestResetValue != null) ? Math.min(lowestResetValue, modifierAmount) : modifierAmount;
                 modifierCollector.addModifier(modifier);
             }
