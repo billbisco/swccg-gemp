@@ -155,6 +155,9 @@ public class Card_1250_021_Tests {
         scn.SkipToDSTurn(Phase.CONTROL);
         assertTrue(scn.DSCardPlayAvailable(interrupt, "Initiate epic duel"));
         scn.MoveOutOfPlay(trained);
+        assertFalse(InterruptPersonaReferences.mayTreatVaderAsMaulOrMara(scn.game(), interrupt));
+        scn.SkipToPhase(Phase.DEPLOY);
+        scn.SkipToDSTurn(Phase.CONTROL);
         assertFalse(scn.DSCardPlayAvailable(interrupt, "Initiate epic duel"));
     }
 
@@ -190,7 +193,7 @@ public class Card_1250_021_Tests {
             scn.MoveCardsToLocation(skillSite, trooper);
             scn.AttachCardsTo(trooper, scn.GetDSCard("skill"));
             scn.MoveCardsToLocation(site, scn.GetDSCard("maul"), scn.GetLSCard("luke"));
-            scn.ApplyAdHocModifier(new AddsBattleDestinyModifier(site, 1));
+            scn.ApplyAdHocModifier(new AddsBattleDestinyModifier(site, 1, scn.DS));
             scn.SkipToDSTurn(Phase.BATTLE);
             scn.EnsureDSForcePile(2);
             scn.DSInitiateBattle(site);
