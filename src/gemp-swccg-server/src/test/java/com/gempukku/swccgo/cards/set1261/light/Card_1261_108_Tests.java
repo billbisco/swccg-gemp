@@ -47,6 +47,8 @@ public class Card_1261_108_Tests {
                             } else if (prompt.contains("Choose Strong Is Vader to deploy")) {
                                 scn.LSChooseCard(scn.GetLSCard("strong"));
                             } else if (prompt.contains("Choose up to six Jedi Tests to stack")) {
+                                assertEquals("0", scn.LSGetADParamAsList("min").getFirst());
+                                assertEquals("6", scn.LSGetADParamAsList("max").getFirst());
                                 if (stack == 0) scn.LSPass();
                                 else {
                                     PhysicalCardImpl[] chosen = new PhysicalCardImpl[stack];
@@ -128,8 +130,10 @@ public class Card_1261_108_Tests {
         else scn.MoveCardsToTopOfLSLostPile(loss);
         if (atPeaceInPlay) {
             var peace = scn.GetLSCard("peace");
-            scn.LSActivateForceCheat(8); scn.SkipToLSTurn(Phase.CONTROL);
+            scn.LSActivateForceCheat(8);
             scn.MoveCardsToTopOfLSReserveDeck(peace);
+            scn.SkipToLSTurn(Phase.CONTROL);
+            assertEquals(Zone.RESERVE_DECK, peace.getZone());
             resolveDownload(scn, scn.GetLSCard("objective"), peace, hut, scn.GetDSStartingLocation(), Zone.ATTACHED);
             assertEquals(hut, peace.getAttachedTo());
             if (pay) {
