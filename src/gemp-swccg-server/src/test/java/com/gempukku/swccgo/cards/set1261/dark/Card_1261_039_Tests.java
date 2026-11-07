@@ -115,13 +115,14 @@ public class Card_1261_039_Tests {
             scn.SkipToDSTurn(Phase.CONTROL);
         var query = scn.game().getModifiersQuerying();
         assertTrue(query.getInitiateEpicDuelActions(scn.gameState(), play).isEmpty());
-        scn.SkipToPhase(Phase.MOVE);
-        assertTrue(query.getInitiateEpicDuelActions(scn.gameState(), play).isEmpty());
         scn.MoveCardsToLocation(site, light);
         if (saber)
             scn.AttachCardsTo(vader, scn.GetDSCard("saber"));
         scn.EnsureDSForcePile(6);
         scn.EnsureLSForcePile(6);
+        scn.SkipToPhase(Phase.MOVE);
+        assertFalse("Native matching should find the real duelists",
+                query.getInitiateEpicDuelActions(scn.gameState(), play).isEmpty());
         var stash = target.equals("obi") ? scn.GetDSReserveDeck() : scn.GetLSReserveDeck();
         var stashCards = stash.stream().filter(c -> !List.of(scn.GetDSCard("dLow1"), scn.GetDSCard("dLow2"),
                 scn.GetLSCard("lHigh1"), scn.GetLSCard("lHigh2")).contains(c)).limit(3)
@@ -148,6 +149,7 @@ public class Card_1261_039_Tests {
     private void assertDuelTotals(VirtualTableScenario scn, int dark, int light) {
         var duel = scn.gameState().getDuelState();
         assertNotNull("The duel must remain live for its loss decisions", duel);
+        assertTrue("Before totals: " + scn.GetCurrentDecision().getText(), duel.isReachedResults());
         assertEquals(dark, duel.getFinalDuelTotal(scn.DS), scn.epsilon);
         assertEquals(light, duel.getFinalDuelTotal(scn.LS), scn.epsilon);
     }
