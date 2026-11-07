@@ -7,6 +7,7 @@ import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.GameTextActionId;
 import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Keyword;
+import com.gempukku.swccgo.common.Persona;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Uniqueness;
@@ -37,6 +38,7 @@ public class Card208_032 extends AbstractImperial {
         setGameText("When deployed, may [upload] a Royal Guard. During battle, if with an Imperial and present at a site, once per game may cancel a non-[Immune to Sense] Interrupt.");
         addIcons(Icon.REFLECTIONS_II, Icon.WARRIOR, Icon.VIRTUAL_SET_8);
         addKeywords(Keyword.ROYAL_GUARD);
+        addPersona(Persona.KIR_KANOS);
     }
 
     @Override
