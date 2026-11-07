@@ -173,7 +173,7 @@ public class Card_1250_056_Tests {
         scn.DSChooseCard(scn.GetTopOfDSForcePile());
         scn.PassAllResponses();
         assertEquals(lifeForce - 1, scn.GetDSLifeForceRemaining());
-        assertEquals(Phase.MOVE, scn.GetCurrentPhase());
+        assertEquals(Phase.BATTLE, scn.GetCurrentPhase());
     }
 
     private void setHand(VirtualTableScenario scn, int size) {
@@ -204,7 +204,7 @@ public class Card_1250_056_Tests {
             scn.PassAllResponses();
         }
         assertEquals(lifeForce - (losesForce ? 1 : 0), scn.GetDSLifeForceRemaining());
-        assertEquals(Phase.MOVE, scn.GetCurrentPhase());
+        assertEquals(Phase.BATTLE, scn.GetCurrentPhase());
     }
 
     @Test
@@ -221,7 +221,7 @@ public class Card_1250_056_Tests {
         scn.LSPass();
         scn.PassAllResponses();
         assertEquals(lifeForce, scn.GetDSLifeForceRemaining());
-        assertEquals(Phase.MOVE, scn.GetCurrentPhase());
+        assertEquals(Phase.BATTLE, scn.GetCurrentPhase());
     }
 
     @Test
@@ -240,7 +240,7 @@ public class Card_1250_056_Tests {
         scn.DSPass();
         scn.PassAllResponses();
         assertEquals(lifeForce, scn.GetDSLifeForceRemaining());
-        assertEquals(Phase.MOVE, scn.GetCurrentPhase());
+        assertEquals(Phase.BATTLE, scn.GetCurrentPhase());
     }
 
     @Test
