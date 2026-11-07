@@ -93,10 +93,13 @@ public class Card_1250_052_Tests {
         if (s.AwaitingDSDeployPhaseActions()) s.DSPass();
         assertTrue(s.AwaitingLSDeployPhaseActions()); assertFalse(offered(s));
 
-        // The limit follows the current turn, even when the next turn belongs to Dark.
+        // The use limit resets, but deployment still follows the normal deploy phase.
         s.SkipToDSTurn(Phase.CONTROL);
         assertTrue(s.AwaitingDSControlPhaseActions());
         s.DSPass();
+        assertFalse(offered(s));
+        s.SkipToLSTurn(Phase.DEPLOY);
+        assertTrue(s.AwaitingLSDeployPhaseActions());
         assertTrue(offered(s));
         var secondPayment = s.GetTopOfLSReserveDeck();
         var han = s.GetLSCard("han");
