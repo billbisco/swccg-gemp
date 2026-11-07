@@ -16,6 +16,8 @@ import com.gempukku.swccgo.logic.effects.IncreaseForceLossEffect;
 import com.gempukku.swccgo.logic.effects.ReduceForceLossToAmountEffect;
 import com.gempukku.swccgo.logic.modifiers.ImmuneToTitleModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
+import com.gempukku.swccgo.logic.modifiers.ModifyGameTextModifier;
+import com.gempukku.swccgo.logic.modifiers.ModifyGameTextType;
 import com.gempukku.swccgo.logic.timing.Effect;
 import com.gempukku.swccgo.logic.timing.EffectResult;
 import com.gempukku.swccgo.logic.timing.results.AboutToLoseForceResult;
@@ -46,6 +48,13 @@ public class Card1261_055 extends AbstractSite {
         action.appendUsage(new OncePerForceLossEffect(action));
         action.appendEffect(new IncreaseForceLossEffect(action, playerId, amount));
         return List.of(action);
+    }
+
+    @Override
+    protected List<Modifier> getGameTextDarkSideWhileActiveModifiers(String playerId, SwccgGame game,
+            PhysicalCard self) {
+        return List.of(new ModifyGameTextModifier(self, Filters.and(Filters.Youre_A_Slave, Filters.owner(playerId)),
+                ModifyGameTextType.LEGACY__MOS_ESPA_V__YOURE_A_SLAVE_FREE_IS_2_FORCE));
     }
 
     @Override

@@ -19,8 +19,12 @@ public class Card_1261_055_Tests {
     private static final String REDUCE = "Reduce Force loss from You're A Slave? to zero";
 
     private VirtualTableScenario scenario() {
+        return scenario("1261_55");
+    }
+
+    private VirtualTableScenario scenario(String mosEspa) {
         return new VirtualTableScenario(new HashMap<>(Map.of("revolution", "1_62")),
-                new HashMap<>(Map.of("mos", "1261_55", "slave", "12_180", "unrelated", "1_168",
+                new HashMap<>(Map.of("mos", mosEspa, "slave", "12_180", "unrelated", "1_168",
                         "shield", "601_78", "trooper", "1_194")),
                 28, 28, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
@@ -91,6 +95,47 @@ public class Card_1261_055_Tests {
         scn.SkipToPhase(Phase.DEPLOY);
         scn.PassAllResponses();
         assertTrue(scn.GetDSLostPile().contains(shield));
+    }
+
+    /** DS places Vader face down with You're A Slave?, LS uses 2 Force; returns Force DS spent to deploy Vader. */
+    private int forceDarkPaysWhenLightUsesTwoForce(String mosEspa) {
+        var scn = scenario(mosEspa);
+        var slave = scn.GetDSCard("slave");
+        var vader = scn.GetDSCard("unrelated");
+        start(scn);
+        scn.MoveCardsToDSHand(vader);
+        restoreDarkPriority(scn);
+        scn.SkipToPhase(Phase.DEPLOY);
+        assertEquals(Title.Youre_A_Slave, slave.getTitle());
+        scn.EnsureDSForcePile(10);
+        scn.EnsureLSForcePile(5);
+        int dsBefore = scn.GetDSForcePileCount();
+        int lsBefore = scn.GetLSForcePileCount();
+
+        scn.DSUseCardAction(slave, "Place card face down on side of table");
+        scn.DSChooseCard(vader);
+        assertTrue(scn.LSChoiceAvailable(mosEspa.equals("1261_55")
+                ? "Use 2 Force (opponent deploys card for 2 Force)" : "Use 2 Force (opponent deploys card for free)"));
+        scn.LSChooseOption("Use 2 Force");
+        for (int i = 0; i < 10 && vader.getZone() != Zone.AT_LOCATION; i++) {
+            if (scn.DSHasCardChoiceAvailable(scn.GetDSStartingLocation()))
+                scn.DSChooseCard(scn.GetDSStartingLocation());
+            else
+                scn.PassAllResponses();
+        }
+        assertEquals(Zone.AT_LOCATION, vader.getZone());
+        assertEquals(lsBefore - 2, scn.GetLSForcePileCount());
+        return dsBefore - scn.GetDSForcePileCount();
+    }
+
+    @Test(timeout = 20000)
+    public void darkTextTreatsFreeOnYoureASlaveAsTwoForce() {
+        assertEquals(2, forceDarkPaysWhenLightUsesTwoForce("1261_55"));
+    }
+
+    @Test(timeout = 20000)
+    public void withoutMosEspaVYoureASlaveStillDeploysForFree() {
+        assertEquals(0, forceDarkPaysWhenLightUsesTwoForce("11_93"));
     }
 
     private void start(VirtualTableScenario scn) {
