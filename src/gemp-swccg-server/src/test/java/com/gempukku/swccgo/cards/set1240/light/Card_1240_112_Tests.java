@@ -243,7 +243,14 @@ public class Card_1240_112_Tests {
         assertEquals(4, scn.GetUnpaidLSAttrition());
         assertEquals("1", scn.GetADParam(scn.LS, "min")[0]);
         scn.LSPayAttritionFromCardInPlay(scn.GetLSCard("infinity"));
+        assertTrue(scn.LSDecisionAvailable("still want to forfeit"));
+        scn.LSChooseYes();
+        scn.PassAllResponses();
+        assertTrue(scn.LSDecisionAvailable("Choose card to put on Lost Pile"));
+        scn.LSChooseCard(scn.GetLSCard("infinity"));
+        scn.PassAllResponses();
         assertInZone(Zone.LOST_PILE, scn.GetLSCard("infinity"));
+        assertInZone(Zone.LOST_PILE, scn.GetLSCard("boshek"));
     }
 
     private VirtualTableScenario BattleReady(int destiny) {
