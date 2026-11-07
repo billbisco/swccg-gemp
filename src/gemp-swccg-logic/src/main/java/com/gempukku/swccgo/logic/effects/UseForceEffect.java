@@ -86,7 +86,8 @@ public class UseForceEffect extends AbstractSubActionEffect {
      * @return the amount of Force
      */
     public int getSubstitutesStillAvailable(SwccgGame game) {
-        if (_substitutionDeclined)
+        // "Only own Force" means the Force Pile cards themselves (e.g. Greedo's threat cancel), so nothing may stand in
+        if (_substitutionDeclined || _onlyOwnForce)
             return 0;
         return game.getModifiersQuerying().getForceUseSubstitutesAvailable(game.getGameState(), _playerId);
     }
