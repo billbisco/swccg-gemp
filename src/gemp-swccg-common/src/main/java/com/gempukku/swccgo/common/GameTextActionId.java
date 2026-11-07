@@ -1797,6 +1797,7 @@ public enum GameTextActionId {
     LEGACY__AN_ENEMY_OF_THE_REPUBLIC__TAKE_INTO_HAND(true),
     LEGACY__SENATOR_PADME_AMIDALA__DEPLOY_REBEL(true),
     LEGACY__MIND_WHAT_YOU_HAVE_LEARNED__DEPLOY_TO_DAGOBAH(true),
+    LEGACY__FLAPS_NICK_OF_TIME__DEPLOY_MATCHING(true),
     ;
 
     private boolean _searchCardPile;
