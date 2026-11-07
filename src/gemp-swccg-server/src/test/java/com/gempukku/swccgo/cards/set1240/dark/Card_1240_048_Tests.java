@@ -114,7 +114,7 @@ public class Card_1240_048_Tests {
     @Test
     public void ThoseRebelsWontEscapeUsCannotSearchAnEmptyReserveDeck() {
         var scn = Ready(false, Phase.CONTROL);
-        scn.MoveCardsToDSLostPile(scn.GetDSReserveDeck().toArray(new PhysicalCardImpl[0]));
+        scn.MoveCardsToTopOfDSLostPile(scn.GetDSReserveDeck().toArray(new PhysicalCardImpl[0]));
         assertEquals(0, scn.GetDSReserveDeckCount());
         assertFalse(scn.DSCardPlayAvailable(scn.GetDSCard("rebels"), SEARCH));
         assertInZone(Zone.HAND, scn.GetDSCard("rebels"));
@@ -189,8 +189,14 @@ public class Card_1240_048_Tests {
         assertEquals(force, scn.GetDSForcePileCount());
     }
 
+    private void ReachWeaponsSegment(VirtualTableScenario scn) {
+        scn.PassAllResponses();
+        assertTrue("Expected an actual weapons segment action decision",
+                scn.AwaitingLSWeaponsSegmentActions() || scn.AwaitingDSWeaponsSegmentActions());
+    }
+
     private void FireCannon(VirtualTableScenario scn) {
-        scn.SkipToWeaponsSegment();
+        ReachWeaponsSegment(scn);
         for (int i = 0; i < 12; i++) {
             if (scn.LSAnyActionsAvailable() && scn.LSCardActionAvailable(scn.GetLSCard("cannon"), "Fire")) {
                 scn.LSUseCardAction(scn.GetLSCard("cannon"), "Fire");
@@ -286,7 +292,7 @@ public class Card_1240_048_Tests {
     public void ThoseRebelsWontEscapeUsCannotWaitUntilWeaponsSegmentToPlayProtection() {
         var scn = BattleReady(true, true, false, true);
         scn.PassAllResponses();
-        scn.SkipToWeaponsSegment();
+        ReachWeaponsSegment(scn);
         if (scn.DSAnyActionsAvailable()) assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("rebels"), PROTECT));
         assertInZone(Zone.HAND, scn.GetDSCard("rebels"));
     }
@@ -393,7 +399,7 @@ public class Card_1240_048_Tests {
         assertTrue(scn.AwaitingLSBattlePhaseActions());
         scn.LSInitiateBattle(second);
         scn.PassAllResponses();
-        scn.SkipToWeaponsSegment();
+        ReachWeaponsSegment(scn);
         if (scn.DSAnyDecisionsAvailable()) {
             assertTrue(scn.DSGetDecision().getText().toLowerCase().contains("weapon"));
             scn.DSPass();
