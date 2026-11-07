@@ -130,7 +130,7 @@ public class Card_1261_108_Tests {
             if (scn.GetLSAvailableActions().stream().anyMatch(x -> x.contains("Retrieve 3 Force"))) {
                 scn.LSUseCardAction(strong, "Retrieve 3 Force"); retrieved = true;
             } else if (scn.GetLSAvailableActions().stream().anyMatch(x -> x.contains("Flip"))) {
-                scn.LSUseCardAction(objective, "Flip");
+                scn.LSChooseAction("Flip");
             } else if (scn.GetLSAvailableActions().stream().anyMatch(x -> x.contains("Reveal top two"))) {
                 scn.LSUseCardAction(test, "Reveal top two");
             } else if (prompt.toLowerCase().contains("optional response")) {
