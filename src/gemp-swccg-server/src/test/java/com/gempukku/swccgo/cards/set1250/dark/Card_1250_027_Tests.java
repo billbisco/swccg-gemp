@@ -6,16 +6,18 @@ import com.gempukku.swccgo.framework.VirtualTableScenario;
 import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import static org.junit.Assert.*;
 import static com.gempukku.swccgo.framework.Assertions.assertInZone;
 
 public class Card_1250_027_Tests {
     private static final String DEPLOY="Deploy a Dark Jedi from Reserve Deck";
     private static final String REDRAW="Take character destiny into hand and redraw";
-    private VirtualTableScenario scenario() {
+    private VirtualTableScenario scenario() { return scenario(15); }
+    private VirtualTableScenario scenario(int filler) {
         return new VirtualTableScenario(new HashMap<>() {{ put("luke","1_19");put("leia","1_17"); }},
                 new HashMap<>() {{ put("fury","1250_27");put("vader","1_168");put("veers","3_87");put("character","1_194");put("device","1_201");put("droid","1_193");put("walker","3_154");put("cannon","3_158"); }},
-                15,15,StartingSetup.DefaultLSGroundLocation,StartingSetup.DefaultDSGroundLocation,
+                filler,filler,StartingSetup.DefaultLSGroundLocation,StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts,StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields,StartingSetup.NoDSShields,VirtualTableScenario.Open);
     }
@@ -31,8 +33,9 @@ public class Card_1250_027_Tests {
         scn.BlueprintIconCheck(b,new ArrayList<>() {{add(Icon.INTERRUPT);add(Icon.TATOOINE);add(Icon.LEGACY_BLOCK_5);}});
         scn.BlueprintKeywordCheck(b,new ArrayList<Keyword>());
     }
-    private VirtualTableScenario deploy(int force) {
-        var scn=scenario();scn.StartGame();scn.MoveCardsToDSHand(scn.GetDSCard("fury"),scn.GetDSCard("vader"),scn.GetDSCard("character"));
+    private VirtualTableScenario deploy(int force) { return deploy(force, 15); }
+    private VirtualTableScenario deploy(int force, int filler) {
+        var scn=scenario(filler);scn.StartGame();scn.MoveCardsToDSHand(scn.GetDSCard("fury"),scn.GetDSCard("vader"),scn.GetDSCard("character"));
         scn.SkipToDSTurn(Phase.CONTROL);scn.EnsureDSForcePile(force);
         while(scn.GetDSForcePileCount()>force)scn.MoveCardsToTopOfDSReserveDeck((com.gempukku.swccgo.game.PhysicalCardImpl)scn.game().getGameState().getForcePile(scn.DS).getFirst());
         scn.MoveCardsToTopOfDSReserveDeck(scn.GetDSCard("vader"),scn.GetDSCard("character"));
@@ -52,6 +55,21 @@ public class Card_1250_027_Tests {
         scn.DSChooseCard(scn.GetDSCard("vader"));scn.DSChooseCard(scn.GetDSStartingLocation());scn.PassAllResponses();
         assertEquals(Zone.AT_LOCATION,scn.GetDSCard("vader").getZone());assertEquals(scn.GetDSStartingLocation(),scn.GetDSCard("vader").getAtLocation());
         assertEquals(0,scn.GetDSForcePileCount());assertInZone(Zone.LOST_PILE,scn.GetDSCard("fury"));
+    }
+    @Test public void SithFuryLostActuallyReshufflesRemainingReserveCards() {
+        var scn = deploy(10, 30);
+        var vader = scn.GetDSCard("vader");
+        openDeploy(scn);
+        var remaining = new ArrayList<>(scn.GetDSReserveDeck());
+        assertTrue(remaining.remove(vader));
+        assertTrue(remaining.size() > 2);
+        scn.gameState().getRandom().setSeed(4096);
+        scn.DSChooseCard(vader);
+        scn.DSChooseCard(scn.GetDSStartingLocation());
+        scn.PassAllResponses();
+        assertInZone(Zone.AT_LOCATION, vader);
+        assertEquals(new HashSet<>(remaining), new HashSet<>(scn.GetDSReserveDeck()));
+        assertNotEquals(remaining, scn.GetDSReserveDeck());
     }
     @Test public void SithFuryLostCannotBePlayedWithThreeForce() {
         var scn=deploy(3);assertNotNull(scn.DSGetDecision());assertFalse(scn.DSCardPlayAvailable(scn.GetDSCard("fury"),DEPLOY));
