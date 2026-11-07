@@ -70,7 +70,7 @@ public class Card_1250_082_Tests {
 
     private void deployAt(VirtualTableScenario s, PhysicalCardImpl card, PhysicalCardImpl site) {
         assertTrue(s.LSDeployAvailable(card)); s.LSDeployCard(card);
-        if (s.LSDecisionAvailable("Choose location where to deploy")) s.LSChooseCard(site);
+        if (s.LSDecisionAvailable("Choose where to deploy")) s.LSChooseCard(site);
         s.PassAllResponses(); assertEquals(site, card.getAtLocation());
     }
 
@@ -126,7 +126,7 @@ public class Card_1250_082_Tests {
         assertTrue(s.LSCardPlayAvailable(speak, "Deploy a Jedi Council member"));
         s.LSPlayCard(speak, "Deploy a Jedi Council member"); s.PassAllResponses();
         s.LSChooseCard(depa); s.PassAllResponses();
-        if (s.LSDecisionAvailable("Choose location where to deploy")) s.LSChooseCard(s.GetLSCard("chamber"));
+        if (s.LSDecisionAvailable("Choose where to deploy")) s.LSChooseCard(s.GetLSCard("chamber"));
         s.PassAllResponses();
         assertEquals(s.GetLSCard("chamber"), depa.getAtLocation());
         assertTrue(s.GetLSUsedPile().contains(speak)); assertFalse(s.GetLSLostPile().contains(speak));
@@ -183,7 +183,11 @@ public class Card_1250_082_Tests {
         s.MoveCardsToLocation(cantina, s.GetLSCard("trooper"));
         s.SkipToLSTurn(Phase.CONTROL);
         assertFalse(s.GetLSCard("objective").isFlipped()); s.LSForceDrainAt(cantina);
+        s.PassAllResponses();
         assertEquals(1, s.GetForceDrainTotal());
+        assertTrue(s.AwaitingDSForceLossPayment());
+        int before = s.GetDSLostPileCount(); s.DSPayForceLossFromReserveDeck(); s.PassAllResponses();
+        assertEquals(before + 1, s.GetDSLostPileCount());
     }
 
     @Test

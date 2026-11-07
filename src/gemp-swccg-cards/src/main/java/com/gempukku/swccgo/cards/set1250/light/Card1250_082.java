@@ -16,6 +16,7 @@ import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
 import com.gempukku.swccgo.logic.effects.AddUntilEndOfGameModifierEffect;
 import com.gempukku.swccgo.logic.effects.FlipCardEffect;
 import com.gempukku.swccgo.logic.effects.choose.DeployCardFromReserveDeckEffect;
+import com.gempukku.swccgo.logic.modifiers.CancelIconModifier;
 import com.gempukku.swccgo.logic.modifiers.DeployCostToLocationModifier;
 import com.gempukku.swccgo.logic.modifiers.ForceDrainModifier;
 import com.gempukku.swccgo.logic.modifiers.MayNotDeployModifier;
@@ -54,6 +55,9 @@ public class Card1250_082 extends AbstractObjective {
         action.appendRequiredEffect(new AddUntilEndOfGameModifierEffect(action,
                 new NoForceLossFromCardModifier(self, Filters.or(Filters.Vengeance_Of_The_Dark_Prince, Filters.Your_Destiny), playerId),
                 "Lose no Force to Vengeance Of The Dark Prince or Your Destiny"));
+        action.appendRequiredEffect(new AddUntilEndOfGameModifierEffect(action,
+                new CancelIconModifier(self, Filters.title("Jedi Survivor"), Icon.MAINTENANCE),
+                "Jedi Survivor's maintenance is canceled"));
         action.appendRequiredEffect(new AddUntilEndOfGameModifierEffect(action,
                 new UsedInterruptModifier(self, Filters.title("Speak With The Jedi Council")),
                 "Speak With The Jedi Council is a Used Interrupt"));
