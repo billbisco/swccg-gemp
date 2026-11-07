@@ -21,12 +21,15 @@ import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 import com.gempukku.swccgo.logic.timing.SnapshotData;
 import com.gempukku.swccgo.logic.timing.Snapshotable;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -670,15 +673,121 @@ public class LocationsLayout implements Snapshotable<LocationsLayout> {
         if (group == null) {
             return false;
         }
+        boolean sameGroup = true;
         for (PhysicalCard card : newTopOrder) {
             if (findGroupContaining(card) != group) {
-                return false;
+                sameGroup = false;
             }
             if (filter != null && game != null && !filter.accepts(game, card)) {
                 return false;
             }
         }
-        return group.reorderTopLocations(newTopOrder);
+        if (sameGroup) {
+            return group.reorderTopLocations(newTopOrder);
+        }
+        // Sites in different groups can only be rearranged as a whole row chosen by a
+        // filter (for example all sites of one starship), never by the unfiltered helper.
+        if (filter == null || game == null) {
+            return false;
+        }
+        return reorderTopLocationsAcrossGroups(newTopOrder);
+    }
+
+    /**
+     * Rearranges sites that span several adjacent groups of one layout (for example a
+     * starship's interior sites and its docking bay). newTopOrder must contain every top
+     * location of each group involved, and those groups must be next to each other.
+     * The stacks are merged into the leftmost involved group in the new order and the
+     * other involved groups become empty. Converted cards stay under their tops.
+     * @param newTopOrder requested left-to-right order of top location cards
+     * @return true if applied; false if the cards are not a complete run of whole groups in one layout
+     */
+    private boolean reorderTopLocationsAcrossGroups(List<? extends PhysicalCard> newTopOrder) {
+        AbstractLocationLayout layout = null;
+        List<LocationLayout> layouts = new ArrayList<LocationLayout>();
+        layouts.add(_holositeLayout);
+        layouts.addAll(_locationLayouts);
+        for (LocationLayout candidate : layouts) {
+            if (candidate instanceof AbstractLocationLayout
+                    && ((AbstractLocationLayout) candidate).findGroupContaining(newTopOrder.get(0)) != null) {
+                layout = (AbstractLocationLayout) candidate;
+                break;
+            }
+        }
+        if (layout == null) {
+            return false;
+        }
+        Set<Integer> requested = new HashSet<Integer>();
+        for (PhysicalCard card : newTopOrder) {
+            if (!requested.add(card.getCardId()) || layout.findGroupContaining(card) == null) {
+                return false;
+            }
+        }
+        List<LocationGroup> groupsInOrder = layout.getExistingGroupsInOrder();
+        List<LocationGroup> involved = new ArrayList<LocationGroup>();
+        int firstIndex = -1;
+        for (int i = 0; i < groupsInOrder.size(); i++) {
+            LocationGroup candidate = groupsInOrder.get(i);
+            boolean any = false;
+            for (PhysicalCard top : candidate.getTopCardsInGroup()) {
+                if (requested.contains(top.getCardId())) {
+                    any = true;
+                }
+            }
+            if (any) {
+                if (firstIndex >= 0 && firstIndex + involved.size() != i) {
+                    return false; // involved groups are not adjacent
+                }
+                if (firstIndex < 0) {
+                    firstIndex = i;
+                }
+                involved.add(candidate);
+            }
+        }
+        Map<Integer, List<PhysicalCard>> stackByTop = new HashMap<Integer, List<PhysicalCard>>();
+        List<PhysicalCard> oldTops = new ArrayList<PhysicalCard>();
+        List<List<PhysicalCard>> oldGaps = new ArrayList<List<PhysicalCard>>();
+        for (LocationGroup candidate : involved) {
+            if (!oldTops.isEmpty()) {
+                oldGaps.add(new LinkedList<PhysicalCard>()); // no gap list between two groups
+            }
+            List<List<PhysicalCard>> stacks = candidate.getCardsInGroup();
+            for (int s = 0; s < stacks.size(); s++) {
+                List<PhysicalCard> stack = stacks.get(s);
+                if (stack.isEmpty()) {
+                    continue;
+                }
+                stackByTop.put(stack.get(0).getCardId(), stack);
+                oldTops.add(stack.get(0));
+            }
+            for (List<PhysicalCard> gap : candidate.getBetweenGaps()) {
+                oldGaps.add(new LinkedList<PhysicalCard>(gap));
+            }
+        }
+        if (stackByTop.size() != newTopOrder.size()) {
+            return false; // must rearrange every site of each involved group
+        }
+        List<List<PhysicalCard>> newStacks = new ArrayList<List<PhysicalCard>>();
+        for (PhysicalCard card : newTopOrder) {
+            List<PhysicalCard> stack = stackByTop.get(card.getCardId());
+            if (stack == null) {
+                return false; // not a top location
+            }
+            newStacks.add(stack);
+        }
+        // The surviving group now accepts every site any merged group accepted, and the emptied groups accept
+        // nothing, so later deployments (placement, conversion, uniqueness) look at the merged row.
+        Filter[] mergedFilters = new Filter[involved.size()];
+        for (int i = 0; i < involved.size(); i++) {
+            mergedFilters[i] = involved.get(i).getFilters();
+        }
+        for (int i = 1; i < involved.size(); i++) {
+            involved.get(i).clearLocations();
+            involved.get(i).setFilters(Filters.none);
+        }
+        involved.get(0).replaceStacks(newStacks, oldTops, oldGaps);
+        involved.get(0).setFilters(Filters.or(mergedFilters));
+        return true;
     }
 
     /**
