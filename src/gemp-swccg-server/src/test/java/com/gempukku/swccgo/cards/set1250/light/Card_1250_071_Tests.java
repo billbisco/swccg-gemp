@@ -19,7 +19,7 @@ public class Card_1250_071_Tests {
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>() {{
             put("archives", "1250_71"); put("council", "12_76"); put("dock", "12_74");
-            put("nightclub", "1116_30"); put("speak", "12_69"); put("other", "1_19");
+            put("nightclub", "1116_30"); put("meditation", "216_25"); put("speak", "12_69"); put("other", "1_19");
         }}, new HashMap<>() {{
             put("trooper", "1_194");
         }}, 25, 25, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
@@ -142,10 +142,16 @@ public class Card_1250_071_Tests {
         var s = scenario(); s.StartGame(); var archives = s.GetLSCard("archives"); var council = s.GetLSCard("council");
         var first = archiveSecond ? council : archives;
         var second = archiveSecond ? archives : council;
-        var dock = s.GetLSCard("dock"); var nightclub = s.GetLSCard("nightclub");
-        s.MoveLocationToTable(first); s.MoveLocationToTable(dock, rightOf(first));
-        s.MoveLocationToTable(nightclub, rightOf(dock));
-        assertTrue(placements(s, second).stream().noneMatch(p -> p.getOtherCard() == nightclub));
+        var middle = s.GetLSCard("meditation"); var far = s.GetLSCard("nightclub");
+        s.MoveLocationToTable(first); s.MoveLocationToTable(middle, rightOf(first));
+        s.MoveLocationToTable(far, rightOf(middle));
+        var modifiers = s.game().getModifiersQuerying();
+        assertTrue(modifiers.isAdjacentSites(s.gameState(), first, middle));
+        assertTrue(modifiers.isAdjacentSites(s.gameState(), middle, far));
+        assertFalse(modifiers.isAdjacentSites(s.gameState(), first, far));
+        s.MoveCardsToHand(second);
+        assertTrue("No remote placement beyond two interior sites",
+                placements(s, second).stream().noneMatch(p -> p.getOtherCard() == far));
         deploy(s, second, first); assertTrue(adjacent(s));
     }
 
