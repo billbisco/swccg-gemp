@@ -46,8 +46,8 @@ public class Card_1261_042_Tests {
 
     private boolean selectable(VirtualTableScenario scn, String key) {
         assertTrue("Expected live selection decision", scn.DSDecisionAvailable(CHOOSE_PILOT));
-        var ids = scn.DSGetADParamAsList("cardId");
-        int index = ids.indexOf(Integer.toString(scn.GetDSCard(key).getCardId()));
+        var ids = scn.DSGetADParamAsList("blueprintId");
+        int index = ids.indexOf(scn.GetDSCard(key).getBlueprintId(true));
         assertTrue("Card is missing from the Reserve Deck choice: " + key, index >= 0);
         return Boolean.parseBoolean(scn.DSGetADParamAsList("selectable").get(index));
     }
@@ -168,6 +168,6 @@ public class Card_1261_042_Tests {
         passResponses(scn);
         assertEquals(force + 1, scn.GetDSForcePileCount());
         assertEquals(reserve - 1, scn.GetDSReserveDeckCount());
-        assertEquals(Zone.USED_PILE, interrupt.getZone());
+        assertEquals(Zone.TOP_OF_USED_PILE, interrupt.getZone());
     }
 }
