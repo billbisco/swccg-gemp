@@ -66,7 +66,7 @@ public class Card_1250_078_Tests {
                 realStartup ? StartingSetup.NoLSShields : outsideDeck, StartingSetup.NoDSShields, VirtualTableScenario.Open);
         // The provisional OVS fixture omits the keyword that is native to the Block 5 Prison.
         if (realStartup) s.game().getModifiersEnvironment().addUntilEndOfGameModifier(
-                new KeywordModifier(null, s.GetLSCard("prison"), Keyword.PRISON));
+                new KeywordModifier(null, Filters.samePermanentCardId(s.GetLSCard("prison")), Keyword.PRISON));
         return s;
     }
 
@@ -136,9 +136,10 @@ public class Card_1250_078_Tests {
         var dock = s.GetLSCard("dock"); var palpatine = s.GetLSCard("palpatine");
         var clone = s.GetLSCard("clone"); var marker = s.GetLSCard("marker"); var trooper = s.GetLSCard("trooper");
         s.MoveLocationToTable(dock);
-        s.SkipToLSTurn(Phase.DEPLOY); s.LSActivateForceCheat(8);
+        s.MoveCardsToHand(trooper); s.LSActivateForceCheat(8);
+        s.SkipToLSTurn(Phase.DEPLOY);
         s.MoveCardsToLocation(dock, palpatine);
-        s.MoveCardsToHand(trooper); s.MoveCardsToTopOfLSReserveDeck(marker, clone);
+        s.MoveCardsToTopOfLSReserveDeck(marker, clone);
         s.gameState().markCardsRevealedFromPile(List.of(marker));
         assertTrue(s.LSDeployAvailable(trooper)); s.LSDeployCard(trooper);
         if (s.LSDecisionAvailable("Choose where to deploy")) s.LSChooseCard(dock);
@@ -198,6 +199,8 @@ public class Card_1250_078_Tests {
 
     private VirtualTableScenario resolveMonnok(int handSize) {
         var s = scenario(false); s.StartGame();
+        assertTrue("Actual startup is required to test the permanent Monnok clause",
+                s.GetLSCard("objective").isObjectiveDeploymentComplete());
         var clone = s.GetLSCard("clone"); var second = s.GetLSCard("secondclone");
         var monnok = s.GetDSCard("monnok");
         s.MoveCardsToHand(clone, second, monnok);
