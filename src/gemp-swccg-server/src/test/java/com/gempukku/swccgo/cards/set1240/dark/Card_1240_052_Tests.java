@@ -34,6 +34,7 @@ public class Card_1240_052_Tests {
                     put("womp", "7_215");
                     put("trooper", "1_194");
                     put("trooper2", "1_194");
+                    put("bogwing", "4_108"); // parasite
                 }},
                 10,
                 10,
@@ -125,6 +126,10 @@ public class Card_1240_052_Tests {
     }
 
     private boolean trooperCanMoveFromArena(boolean creatureHere) {
+        return trooperCanMoveFromArena(creatureHere ? "womp" : null);
+    }
+
+    private boolean trooperCanMoveFromArena(String creatureKey) {
         var scn = GetScenario();
         var arena = scn.GetDSCard("arena");
         var womp = scn.GetDSCard("womp");
@@ -133,8 +138,8 @@ public class Card_1240_052_Tests {
         scn.StartGame();
         scn.MoveLocationToTable(arena);
         scn.MoveCardsToLocation(arena, trooper);
-        if (creatureHere)
-            scn.MoveCardsToLocation(arena, womp);
+        if (creatureKey != null)
+            scn.MoveCardsToLocation(arena, scn.GetDSCard(creatureKey));
         scn.SkipToPhase(Phase.MOVE);
         scn.EnsureDSForcePile(5);
         return scn.DSCardActionAvailable(trooper, "Move");
@@ -144,6 +149,7 @@ public class Card_1240_052_Tests {
     public void ExecutionArenaPitCharactersCannotMoveFromHereWhileCreatureHere() {
         assertTrue(trooperCanMoveFromArena(false));
         assertFalse(trooperCanMoveFromArena(true));
+        assertTrue(trooperCanMoveFromArena("bogwing")); // a parasite is not a ferocious creature
     }
 
     @Test
@@ -178,6 +184,26 @@ public class Card_1240_052_Tests {
 
         scn.StartGame();
         scn.MoveLocationToTable(arena);
+        scn.MoveCardsToLocation(dsSite, trooper);
+
+        int lifeBefore = scn.GetLSLifeForceRemaining();
+        scn.SkipToPhase(Phase.CONTROL);
+        Block4DarkTestSupport.advanceUntil(scn, scn::AwaitingLSForceLossPayment, 10);
+        assertFalse(scn.AwaitingLSForceLossPayment());
+        assertEquals(lifeBefore, scn.GetLSLifeForceRemaining());
+    }
+
+    @Test
+    public void ExecutionArenaPitNoForceLossWithOnlyAParasiteHere() {
+        var scn = GetScenario();
+        var arena = scn.GetDSCard("arena");
+        var bogwing = scn.GetDSCard("bogwing");
+        var trooper = scn.GetDSCard("trooper");
+        var dsSite = scn.GetDSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveLocationToTable(arena);
+        scn.MoveCardsToLocation(arena, bogwing);
         scn.MoveCardsToLocation(dsSite, trooper);
 
         int lifeBefore = scn.GetLSLifeForceRemaining();

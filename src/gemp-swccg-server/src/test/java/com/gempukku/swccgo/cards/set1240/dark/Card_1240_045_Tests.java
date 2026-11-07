@@ -32,6 +32,7 @@ public class Card_1240_045_Tests {
                     put("letspass", "1240_45");
                     put("womp", "7_215");
                     put("trooper", "1_194");
+                    put("bogwing", "4_108"); // parasite
                 }},
                 10,
                 10,
@@ -184,5 +185,21 @@ public class Card_1240_045_Tests {
         scn.SkipToDSTurn();
         scn.PassAllResponses();
         assertEquals(dsLostBefore, scn.GetDSLostPileCount());
+    }
+
+    @Test
+    public void LetsPassOnThatParasiteIsNotAFerociousCreatureToAttack() {
+        var scn = GetScenario();
+        var letspass = scn.GetDSCard("letspass");
+        var bogwing = scn.GetDSCard("bogwing");
+        var luke = scn.GetLSCard("luke");
+        var site = scn.GetDSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToHand(letspass);
+        scn.SkipToLSTurn(Phase.CONTROL);
+        scn.MoveCardsToLocation(site, bogwing, luke);
+        scn.LSPass();
+        assertFalse(scn.DSCardPlayAvailable(letspass, "Have ferocious creature attack"));
     }
 }

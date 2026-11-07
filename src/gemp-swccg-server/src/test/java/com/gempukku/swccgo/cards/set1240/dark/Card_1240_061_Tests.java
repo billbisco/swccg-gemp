@@ -32,6 +32,7 @@ public class Card_1240_061_Tests {
                     put("rodian", "2_104"); // non-smuggler alien pilot
                     put("trooper", "1_194"); // non-alien
                     put("kessel", "1_288");
+                    put("bast", "1_165"); // non-alien pilot
                 }},
                 10,
                 10,
@@ -70,6 +71,7 @@ public class Card_1240_061_Tests {
         scn.BlueprintIconCheck(card, new ArrayList<>() {{
             add(Icon.INDEPENDENT);
             add(Icon.STARSHIP);
+            add(Icon.SPECIAL_EDITION);
             add(Icon.NAV_COMPUTER);
             add(Icon.SCOMP_LINK);
             add(Icon.LEGACY_BLOCK_4);
@@ -157,5 +159,41 @@ public class Card_1240_061_Tests {
         scn.DSInitiateBattle(kessel);
         scn.PassAllResponses();
         assertEquals(0, scn.GetDSBattleDestinyCount());
+    }
+
+    @Test
+    public void RaiderCraftSmugglerPassengerAddsOneManeuverAndDrawsBattleDestiny() {
+        var scn = GetScenario();
+        var raider = scn.GetDSCard("raider");
+        var evazan = scn.GetDSCard("evazan");
+        var rodian = scn.GetDSCard("rodian");
+        var kessel = scn.GetDSCard("kessel");
+        var xwing = scn.GetLSCard("xwing");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(kessel);
+        scn.MoveCardsToLocation(kessel, raider, xwing);
+        scn.BoardAsPilot(raider, rodian);
+        scn.BoardAsPassenger(raider, evazan);
+        assertEquals(4, scn.GetManeuver(raider));
+
+        scn.SkipToPhase(Phase.BATTLE);
+        scn.EnsureDSForcePile(2);
+        scn.DSInitiateBattle(kessel);
+        scn.PassAllResponses();
+        assertEquals(1, scn.GetDSBattleDestinyCount());
+    }
+
+    @Test
+    public void RaiderCraftOnlyAlienPilotsMayPilot() {
+        var scn = GetScenario();
+        var raider = scn.GetDSCard("raider");
+        var bast = scn.GetDSCard("bast");
+        var rodian = scn.GetDSCard("rodian");
+
+        scn.StartGame();
+        var pilotFilter = raider.getBlueprint().getValidPilotFilter(scn.DS, scn.game(), raider, false);
+        assertFalse(pilotFilter.accepts(scn.game(), bast));
+        assertTrue(pilotFilter.accepts(scn.game(), rodian));
     }
 }

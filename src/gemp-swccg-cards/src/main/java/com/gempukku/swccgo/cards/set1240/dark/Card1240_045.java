@@ -10,6 +10,7 @@ import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.LegacyCreatureFilters;
 import com.gempukku.swccgo.game.AbstractActionProxy;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
@@ -55,7 +56,7 @@ public class Card1240_045 extends AbstractUsedInterrupt {
         final String opponent = game.getOpponent(playerId);
 
         // During opponent's control phase, your ferocious creature attacks.
-        final Filter creatureThatCanAttack = Filters.and(Filters.your(playerId), Filters.creature, new Filter() {
+        final Filter creatureThatCanAttack = Filters.and(Filters.your(playerId), LegacyCreatureFilters.ferocious, new Filter() {
             @Override
             public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard) {
                 return Filters.canSpot(game, self, Filters.nonCreatureCanBeAttackedByCreature(physicalCard, false));

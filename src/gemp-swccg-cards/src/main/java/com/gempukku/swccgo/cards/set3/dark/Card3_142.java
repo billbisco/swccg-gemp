@@ -12,6 +12,7 @@ import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.LegacyCreatureFilters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.game.state.GameState;
@@ -142,7 +143,7 @@ public class Card3_142 extends AbstractUsedInterrupt {
     protected List<PlayInterruptAction> getGameTextOptionalAfterActions(final String playerId, SwccgGame game, EffectResult effectResult, final PhysicalCard self) {
         // Frozen Dinner (V) (Virtual Block 4): 'USED: During battle, place a ferocious creature there (even if excluded)
         // in Lost Pile to reduce your battle damage by 5.'
-        final Filter creatureInBattle = Filters.and(Filters.creature, Filters.atLocation(Filters.battleLocation));
+        final Filter creatureInBattle = Filters.and(LegacyCreatureFilters.ferocious, Filters.atLocation(Filters.battleLocation));
         if (TriggerConditions.isResolvingBattleDamageAndAttrition(game, effectResult, playerId)
                 && GameConditions.canSpot(game, self, Filters.and(Filters.your(playerId), Filters.Effect, Filters.title("Frozen Dinner")))
                 && GameConditions.isBattleDamageRemaining(game, playerId)

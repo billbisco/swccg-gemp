@@ -37,6 +37,7 @@ public class Card_1240_024_Tests {
                     put("yaggle", "3_142");
                     put("womp", "7_215");
                     put("trooper", "1_194");
+                    put("bogwing", "4_108"); // parasite
                 }},
                 10,
                 10,
@@ -114,9 +115,13 @@ public class Card_1240_024_Tests {
     }
 
     private void setUpLostBattle(VirtualTableScenario scn, boolean withDinner) {
+        setUpLostBattle(scn, withDinner, "womp");
+    }
+
+    private void setUpLostBattle(VirtualTableScenario scn, boolean withDinner, String creatureKey) {
         var dinner = scn.GetDSCard("dinner");
         var yaggle = scn.GetDSCard("yaggle");
-        var womp = scn.GetDSCard("womp");
+        var womp = scn.GetDSCard(creatureKey);
         var trooper = scn.GetDSCard("trooper");
         var luke = scn.GetLSCard("luke");
         var leia = scn.GetLSCard("leia");
@@ -159,6 +164,16 @@ public class Card_1240_024_Tests {
     public void YaggleGakkleAlternatePlayNotAvailableWithoutFrozenDinnerV() {
         var scn = GetScenario();
         setUpLostBattle(scn, false);
+        var yaggle = scn.GetDSCard("yaggle");
+
+        assertFalse(Block4DarkTestSupport.advanceUntil(scn,
+                () -> Block4DarkTestSupport.dsActionAvailable(scn, yaggle, "Place creature in Lost Pile"), 10));
+    }
+
+    @Test
+    public void FrozenDinnerVYaggleGakkleCannotPlaceAParasite() {
+        var scn = GetScenario();
+        setUpLostBattle(scn, true, "bogwing");
         var yaggle = scn.GetDSCard("yaggle");
 
         assertFalse(Block4DarkTestSupport.advanceUntil(scn,

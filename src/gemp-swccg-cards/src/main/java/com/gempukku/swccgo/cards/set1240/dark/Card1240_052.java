@@ -14,6 +14,7 @@ import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.LegacyCreatureFilters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.TriggerConditions;
@@ -107,7 +108,7 @@ public class Card1240_052 extends AbstractSite {
 
     @Override
     protected List<Modifier> getGameTextLightSideWhileActiveModifiers(String playerOnLightSideOfLocation, SwccgGame game, PhysicalCard self) {
-        Condition ferociousCreatureHere = new AtCondition(self, Filters.creature, self);
+        Condition ferociousCreatureHere = new AtCondition(self, LegacyCreatureFilters.ferocious, self);
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new MayNotMoveFromLocationModifier(self, Filters.or(Filters.character, Filters.creature), ferociousCreatureHere, self));
         return modifiers;
@@ -117,7 +118,7 @@ public class Card1240_052 extends AbstractSite {
     protected List<RequiredGameTextTriggerAction> getGameTextLightSideRequiredAfterTriggers(String playerOnLightSideOfLocation, SwccgGame game, EffectResult effectResult, PhysicalCard self, int gameTextSourceCardId) {
         String opponent = game.getOpponent(playerOnLightSideOfLocation);
         if (TriggerConditions.isStartOfOpponentsPhase(game, effectResult, Phase.CONTROL, playerOnLightSideOfLocation)
-                && GameConditions.canSpot(game, self, Filters.and(Filters.creature, Filters.at(self)))
+                && GameConditions.canSpot(game, self, Filters.and(LegacyCreatureFilters.ferocious, Filters.at(self)))
                 && GameConditions.controls(game, opponent, Filters.adjacentSite(self))) {
             RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
             action.setText("Lose 1 Force");

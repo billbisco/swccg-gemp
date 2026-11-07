@@ -123,20 +123,36 @@ public class Card1240_018 extends AbstractDevice {
 
     @Override
     protected List<RequiredGameTextTriggerAction> getGameTextRequiredAfterTriggers(SwccgGame game, EffectResult effectResult, final PhysicalCard self, int gameTextSourceCardId) {
-        Filter passer = Filters.and(Filters.opponents(self), Filters.character, Filters.not(Filters.aboard(Filters.Lift_Tube)));
         if (self.getZone() == Zone.BETWEEN_SITES
-                && TriggerConditions.moving(game, effectResult, passer)) {
+                && TriggerConditions.moving(game, effectResult, Filters.any)) {
             MovingResult movingResult = (MovingResult) effectResult;
+            PhysicalCard moving = movingResult.getCardMoving();
             PhysicalCard fromLocation = movingResult.getMovingFrom() != null ? game.getModifiersQuerying().getLocationHere(game.getGameState(), movingResult.getMovingFrom()) : null;
             PhysicalCard toLocation = movingResult.getMovingTo() != null ? game.getModifiersQuerying().getLocationHere(game.getGameState(), movingResult.getMovingTo()) : null;
-            if (fromLocation != null && toLocation != null
-                    && Filters.in(game.getGameState().getBetweenSiteCardsCrossed(fromLocation, toLocation)).accepts(game, self)) {
+            if (moving == null || fromLocation == null || toLocation == null
+                    || !Filters.in(game.getGameState().getBetweenSiteCardsCrossed(fromLocation, toLocation)).accepts(game, self)) {
+                return null;
+            }
+
+            // Unless aboard a Lift Tube, each of opponent's characters that passes (moving itself, or aboard any
+            // other moving vehicle or starship) costs opponent 1 Force.
+            Filter opponentsCharacter = Filters.and(Filters.opponents(self), Filters.character);
+            int charactersPassing = 0;
+            if (opponentsCharacter.accepts(game, moving)) {
+                if (!Filters.aboard(Filters.Lift_Tube).accepts(game, moving)) {
+                    charactersPassing = 1;
+                }
+            }
+            else if (!Filters.Lift_Tube.accepts(game, moving)) {
+                charactersPassing = Filters.countActive(game, self, Filters.and(opponentsCharacter, Filters.aboard(moving)));
+            }
+
+            if (charactersPassing > 0) {
                 String opponent = game.getOpponent(self.getOwner());
-                PhysicalCard moving = movingResult.getCardMoving();
                 final RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
-                action.setText("Lose 1 Force to pass");
-                action.setActionMsg("Make " + opponent + " lose 1 Force to pass " + GameUtils.getCardLink(self) + " with " + GameUtils.getCardLink(moving));
-                action.appendEffect(new LoseForceEffect(action, opponent, 1));
+                action.setText("Lose " + charactersPassing + " Force to pass");
+                action.setActionMsg("Make " + opponent + " lose " + charactersPassing + " Force to pass " + GameUtils.getCardLink(self) + " with " + GameUtils.getCardLink(moving));
+                action.appendEffect(new LoseForceEffect(action, opponent, charactersPassing));
                 return Collections.singletonList(action);
             }
         }

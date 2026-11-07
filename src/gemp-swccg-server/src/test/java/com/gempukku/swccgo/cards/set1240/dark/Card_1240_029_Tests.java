@@ -96,13 +96,16 @@ public class Card_1240_029_Tests {
         var onearm = scn.GetDSCard("onearm");
         var site = scn.GetDSStartingLocation();
 
+        var bogwing = scn.GetDSCard("bogwing");
         scn.StartGame();
-        scn.MoveCardsToHand(onearm);
+        scn.MoveCardsToHand(onearm, bogwing);
         int deployBefore = scn.GetDeployCost(onearm);
+        int bogwingBefore = scn.GetDeployCost(bogwing);
 
         scn.MoveCardsToSideOfTable(bones);
         scn.SkipToPhase(Phase.DEPLOY);
         assertEquals(deployBefore - 2, scn.GetDeployCost(onearm));
+        assertEquals(bogwingBefore, scn.GetDeployCost(bogwing)); // parasite is not a ferocious creature
 
         scn.MoveCardsToLocation(site, onearm);
         assertEquals(4, scn.game().getModifiersQuerying().getFerocity(scn.gameState(), onearm, null), scn.epsilon);

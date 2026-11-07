@@ -26,6 +26,8 @@ public class Card_1240_018_Tests {
                 new HashMap<>() {{
                     put("luke", "1_19");
                     put("leia", "1_17");
+                    put("lifttube", "1_148");
+                    put("landspeeder", "1_151");
                 }},
                 new HashMap<>() {{
                     put("gate", "1240_18");
@@ -170,5 +172,44 @@ public class Card_1240_018_Tests {
         assertFalse(scn.AwaitingLSForceLossPayment());
         assertEquals(lostBefore, scn.GetDSLostPileCount());
         assertEquals(lsLostBefore, scn.GetLSLostPileCount());
+    }
+
+    /** Emits a "moving using landspeed" result for the LS vehicle from corridor to military (across the gate). */
+    private int lsForceLostWhenVehicleCrossesGate(String vehicleKey) {
+        var scn = GetScenario();
+        var gate = scn.GetDSCard("gate");
+        var corridor = scn.GetDSCard("corridor");
+        var military = scn.GetDSCard("military");
+        var vehicle = scn.GetLSCard(vehicleKey);
+        var luke = scn.GetLSCard("luke");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(corridor);
+        scn.MoveLocationToTable(military);
+        scn.PlaceBetweenSites(corridor, military, gate);
+        scn.MoveCardsToLocation(corridor, vehicle);
+        scn.BoardAsPassenger(vehicle, luke);
+
+        scn.SkipToLSTurn(Phase.MOVE);
+        int lifeBefore = scn.GetLSLifeForceRemaining();
+        scn.LSExecuteAdHocEffect(vehicle, new com.gempukku.swccgo.logic.effects.TriggeringResultEffect(
+                new com.gempukku.swccgo.logic.actions.TopLevelGameTextAction(vehicle, scn.LS, vehicle.getCardId()),
+                new com.gempukku.swccgo.logic.timing.results.MovingUsingLandspeedResult(vehicle, scn.LS, corridor, military, false, false, null)));
+        com.gempukku.swccgo.cards.set1240.dark.Block4DarkTestSupport.advanceUntil(scn, scn::AwaitingLSForceLossPayment, 10);
+        if (scn.AwaitingLSForceLossPayment()) {
+            scn.LSPayRemainingForceLossFromReserveDeck();
+        }
+        scn.PassAllResponses();
+        return lifeBefore - scn.GetLSLifeForceRemaining();
+    }
+
+    @Test
+    public void LaserGateVCharacterAboardOtherVehicleMustLoseOneForceToPass() {
+        assertEquals(1, lsForceLostWhenVehicleCrossesGate("landspeeder"));
+    }
+
+    @Test
+    public void LaserGateVCharacterAboardLiftTubePassesFree() {
+        assertEquals(0, lsForceLostWhenVehicleCrossesGate("lifttube"));
     }
 }

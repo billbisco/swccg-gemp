@@ -13,6 +13,7 @@ import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.filters.LegacyCreatureFilters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
@@ -43,7 +44,7 @@ public class Card1240_029 extends AbstractNormalEffect {
 
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
-        Filter yourFerociousCreatures = Filters.and(Filters.your(self), Filters.creature);
+        Filter yourFerociousCreatures = Filters.and(Filters.your(self), LegacyCreatureFilters.ferocious);
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new CancelIconModifier(self, Filters.womp_rat, Icon.SELECTIVE_CREATURE));
         modifiers.add(new DeployCostModifier(self, yourFerociousCreatures, -2));
