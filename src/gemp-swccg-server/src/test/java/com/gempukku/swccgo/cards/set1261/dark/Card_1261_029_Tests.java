@@ -77,11 +77,11 @@ public class Card_1261_029_Tests {
         assertTrue(scn.DSCardActionAvailable(combo, SEARCH));
         scn.DSUseCardAction(combo, SEARCH);
         scn.PassAllResponses();
-        assertTrue(scn.DSHasCardChoiceAvailable(locationEffect));
-        assertTrue(scn.DSHasCardChoiceAvailable(siteEffect));
-        assertFalse(scn.DSHasCardChoiceAvailable(scn.GetDSCard("expand")));
-        assertFalse(scn.DSHasCardChoiceAvailable(scn.GetDSCard("ordinaryEffect")));
-        assertFalse(scn.DSHasCardChoiceAvailable(scn.GetDSCard("device")));
+        assertTrue(selectable(scn, locationEffect));
+        assertTrue(selectable(scn, siteEffect));
+        assertFalse(selectable(scn, scn.GetDSCard("expand")));
+        assertFalse(selectable(scn, scn.GetDSCard("ordinaryEffect")));
+        assertFalse(selectable(scn, scn.GetDSCard("device")));
         scn.DSChooseCard(siteEffect);
         scn.PassAllResponses();
         assertEquals(Zone.HAND, siteEffect.getZone());
@@ -120,12 +120,12 @@ public class Card_1261_029_Tests {
         scn.StartGame();
         scn.MoveCardsToDSHand(tagge, vader, maintenance, permanent);
         scn.MoveCardsToLSSideOfTable(scn.GetLSCard("goo"));
-        assertEquals(5, scn.GetDeployCost(tagge));
+        assertEquals(5, deployCostAtSite(scn, tagge), scn.epsilon);
         scn.MoveCardsToDSSideOfTable(combo);
-        assertEquals(3, scn.GetDeployCost(tagge));
-        assertEquals(8, scn.GetDeployCost(vader));
-        assertEquals(7, scn.GetDeployCost(maintenance));
-        assertEquals(7, scn.GetDeployCost(permanent));
+        assertEquals(3, deployCostAtSite(scn, tagge), scn.epsilon);
+        assertEquals(8, deployCostAtSite(scn, vader), scn.epsilon);
+        assertEquals(7, deployCostAtSite(scn, maintenance), scn.epsilon);
+        assertEquals(7, deployCostAtSite(scn, permanent), scn.epsilon);
     }
 
     @Test
@@ -175,12 +175,26 @@ public class Card_1261_029_Tests {
         assertTrue(scn.GetDSLostPile().contains(own));
     }
 
+    private boolean selectable(VirtualTableScenario scn, PhysicalCardImpl card) {
+        var ids = scn.DSGetADParamAsList("blueprintId");
+        int index = ids.indexOf(card.getBlueprintId(true));
+        if (index < 0)
+            return false;
+        var flags = scn.DSGetADParamAsList("selectable");
+        return flags == null || flags.isEmpty() || Boolean.parseBoolean(flags.get(index));
+    }
+
+    private float deployCostAtSite(VirtualTableScenario scn, PhysicalCardImpl card) {
+        return scn.game().getModifiersQuerying().getDeployCost(scn.gameState(), card, card,
+                scn.GetDSStartingLocation(), false, null, false, 0, null, false);
+    }
+
     private void loseAtCurrentBattleWindow(VirtualTableScenario scn, PhysicalCardImpl card) {
         assertTrue("Loss must be injected before the damage segment", scn.gameState().isDuringBattle()
                 && !scn.gameState().getBattleState().isReachedDamageSegment());
         var action = new SystemQueueAction();
         action.setPerformingPlayer(scn.GetCurrentPlayer());
-        action.appendEffect(new LoseCardFromTableEffect(action, card, true));
+        action.appendEffect(new LoseCardFromTableEffect(action, card, false));
         scn.game().getActionsEnvironment().addActionToStack(action);
         if (scn.GetCurrentDecision() != null)
             scn.PlayerPass(scn.GetDecidingPlayer());
