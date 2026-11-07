@@ -225,7 +225,7 @@ public class Card_1240_070_Tests {
     @Test
     public void FixerCannotMoveMemorialCardWithZeroActivatedForce() {
         var scn = MemorialReady(true);
-        scn.EnsureLSForcePile(0);
+        scn.DrainLSForcePileTo(0);
         assertFalse(scn.LSCardActionAvailable(scn.GetLSCard("fixer"), UNSTACK));
         assertTrue(scn.IsStackedOn(scn.GetLSCard("memorial"), scn.GetLSCard("droid")));
     }
@@ -316,7 +316,7 @@ public class Card_1240_070_Tests {
     @Test
     public void FixerSavesAllMemorialCardsInUsedWhenOpponentActuallyCancelsIt() {
         var scn = MemorialReady(false);
-        scn.EnsureLSForcePile(0);
+        scn.DrainLSForcePileTo(0);
         PlayAlter(scn, false, "memorial");
         ResolvePileOrder(scn);
         assertInZone(Zone.LOST_PILE, scn.GetLSCard("memorial"));
