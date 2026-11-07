@@ -4608,6 +4608,45 @@ public class TriggerConditions {
     }
 
     /**
+     * Determines if a weapon card (not a permanent weapon) accepted by the weapon filter, fired by a card accepted by the
+     * fired by filter, just failed to 'hit' a target accepted by the target filter (the target was fired at but was not
+     * 'hit' or made lost by that weapon firing).
+     * @param game the game
+     * @param effectResult the effect result
+     * @param weaponFilter the weapon filter
+     * @param firedByFilter the fired by filter
+     * @param targetFilter the target filter
+     * @return true or false
+     */
+    public static boolean weaponCardJustFailedToHit(SwccgGame game, EffectResult effectResult, Filterable weaponFilter, Filterable firedByFilter, Filterable targetFilter) {
+        return !getTargetsWeaponCardJustFailedToHit(game, effectResult, weaponFilter, firedByFilter, targetFilter).isEmpty();
+    }
+
+    /**
+     * Gets the targets accepted by the target filter that a weapon card (not a permanent weapon) accepted by the weapon
+     * filter, fired by a card accepted by the fired by filter, just failed to 'hit'.
+     * @param game the game
+     * @param effectResult the effect result
+     * @param weaponFilter the weapon filter
+     * @param firedByFilter the fired by filter
+     * @param targetFilter the target filter
+     * @return the targets the weapon just failed to 'hit' (empty if none)
+     */
+    public static Collection<PhysicalCard> getTargetsWeaponCardJustFailedToHit(SwccgGame game, EffectResult effectResult, Filterable weaponFilter, Filterable firedByFilter, Filterable targetFilter) {
+        if (effectResult.getType() == EffectResult.Type.FIRED_WEAPON) {
+            FiredWeaponResult weaponFiredResult = (FiredWeaponResult) effectResult;
+            PhysicalCard weaponCardFired = weaponFiredResult.getWeaponCardFired();
+            PhysicalCard cardFiringWeapon = weaponFiredResult.getCardFiringWeapon();
+            if (weaponCardFired != null && weaponFiredResult.getPermanentWeaponFired() == null
+                    && Filters.and(weaponFilter).accepts(game.getGameState(), game.getModifiersQuerying(), weaponCardFired)
+                    && cardFiringWeapon != null && Filters.and(firedByFilter).accepts(game.getGameState(), game.getModifiersQuerying(), cardFiringWeapon)) {
+                return Filters.filter(weaponFiredResult.getTargetsNotHit(), game, targetFilter);
+            }
+        }
+        return Collections.emptyList();
+    }
+
+    /**
      * Determines if a card accepted by cardHitFilter was just 'hit'.
      * @param game the game
      * @param effectResult the effect result
@@ -5611,6 +5650,27 @@ public class TriggerConditions {
     public static boolean justRetrievedForce(SwccgGame game, EffectResult effectResult, String playerId) {
         if (effectResult.getType() == EffectResult.Type.RETRIEVED_FORCE) {
             return playerId.equals(effectResult.getPerformingPlayerId());
+        }
+        return false;
+    }
+
+    /**
+     * Determines if a card accepted by the source filter just added a destiny to the specified player's total power
+     * or attrition at a location accepted by the location filter.
+     * @param game the game
+     * @param effectResult the effect result
+     * @param playerId the player whose total power or attrition the destiny was added to
+     * @param sourceFilter the filter for the card that added the destiny
+     * @param locationFilter the location filter
+     * @return true or false
+     */
+    public static boolean isDestinyJustAddedToTotalPowerOrAttritionBy(SwccgGame game, EffectResult effectResult, String playerId, Filterable sourceFilter, Filterable locationFilter) {
+        if (effectResult.getType() == EffectResult.Type.DESTINY_ADDED_TO_TOTAL_POWER_OR_ATTRITION
+                && playerId.equals(effectResult.getPerformingPlayerId())) {
+            DestinyAddedToTotalPowerOrAttritionResult result = (DestinyAddedToTotalPowerOrAttritionResult) effectResult;
+            return result.getSourceCard() != null && result.getLocation() != null
+                    && Filters.and(sourceFilter).accepts(game, result.getSourceCard())
+                    && Filters.and(locationFilter).accepts(game, result.getLocation());
         }
         return false;
     }

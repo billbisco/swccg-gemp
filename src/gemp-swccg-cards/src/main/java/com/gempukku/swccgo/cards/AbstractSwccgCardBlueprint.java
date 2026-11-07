@@ -54,6 +54,7 @@ public abstract class AbstractSwccgCardBlueprint implements SwccgCardBlueprint {
     private boolean _hasVirtualSuffix;
     private boolean _mayNotBePlacedInReserveDeck;
     private boolean _doesNotCountTowardDeckLimit;
+    private int _startingEffectCapacityReduction;
     private boolean _isLegacy;
     private boolean _excludeFromDeckBuilder;
     private boolean _isHorizontal;
@@ -562,6 +563,20 @@ public abstract class AbstractSwccgCardBlueprint implements SwccgCardBlueprint {
      */
     public void setDoesNotCountTowardDeckLimit(boolean value) {
         _doesNotCountTowardDeckLimit = value;
+    }
+
+    @Override
+    public int getStartingEffectCapacityReduction() {
+        return _startingEffectCapacityReduction;
+    }
+
+    /**
+     * Sets the number this card (while outside of its owner's deck) subtracts from the number of cards its owner may
+     * place under their Starting Effect.
+     * @param value the reduction
+     */
+    public void setStartingEffectCapacityReduction(int value) {
+        _startingEffectCapacityReduction = value;
     }
 
     @Override
