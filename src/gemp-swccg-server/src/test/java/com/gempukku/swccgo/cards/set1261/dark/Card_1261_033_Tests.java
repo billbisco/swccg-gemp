@@ -220,7 +220,15 @@ public class Card_1261_033_Tests {
         assertTrue(scn.DSCardActionAvailable(waters, RELOCATE));
         scn.DSUseCardAction(waters, RELOCATE);
         scn.DSChooseCard(luke);
-        scn.PassAllResponses();
+        for (int i = 0; i < 20 && !scn.AwaitingDSBattlePhaseActions(); i++) {
+            if (scn.LSReleaseDecisionAvailable())
+                scn.LSChooseRally();
+            else if (scn.GetCurrentDecision().getText().toLowerCase().contains("optional"))
+                scn.PlayerPass(scn.GetDecidingPlayer());
+            else
+                fail("Unexpected decision: " + scn.GetCurrentDecision().getText());
+        }
+        assertTrue(scn.AwaitingDSBattlePhaseActions());
         assertSame(pit, scn.game().getModifiersQuerying().getLocationThatCardIsAt(scn.gameState(), luke));
         assertTrue(rebel.isCaptive());
         assertSame(chamber, scn.game().getModifiersQuerying().getLocationThatCardIsAt(scn.gameState(), rebel));
