@@ -61,7 +61,7 @@ public class Card1250_036 extends AbstractDroid {
                             boolean canPlaceAll = targets.stream().noneMatch(card -> game.getModifiersQuerying()
                                     .mayNotBePlacedInUsedPile(game.getGameState(), card, opponent));
                             if (!canPlaceAll) {
-                                action.appendEffect(new LoseForceEffect(action, opponent, 4, true));
+                                action.appendEffect(new LoseForceEffect(action, opponent, 4));
                                 return;
                             }
                             action.appendEffect(new PlayoutDecisionEffect(action, opponent,
@@ -70,7 +70,7 @@ public class Card1250_036 extends AbstractDroid {
                                         @Override
                                         protected void validDecisionMade(int index, String result) {
                                             if (index == 0) action.appendEffect(new PlaceCardsInUsedPileFromTableEffect(action, opponent, targets));
-                                            else action.appendEffect(new LoseForceEffect(action, opponent, 4, true));
+                                            else action.appendEffect(new LoseForceEffect(action, opponent, 4));
                                         }
                                     }));
                         }

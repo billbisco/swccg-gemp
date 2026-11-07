@@ -16,7 +16,7 @@ public class Card_1250_036_Tests {
             put("senate", "12_75"); put("chamber", "1116_29"); put("archives", "1117_4"); put("platform", "1113_3");
         }}, new HashMap<>() {{
             put("droid1", "1_163"); put("droid2", "1_186"); put("trooper", "1_194");
-            put("destroyer", "1_301"); put("motti", "1_164");
+            put("destroyer", "1_301"); put("motti", "1_164"); put("decree", "1106_38");
         }}, 25, 25, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -56,6 +56,34 @@ public class Card_1250_036_Tests {
     public void ArtooDroidOwnerMayLoseExactlyFourForceInstead() { checkChoice(true, true, false); }
     @Test
     public void ArtooMayUseDroidActionDuringOpponentsTurn() { checkChoice(true, false, true); }
+
+    @Test
+    public void ArtooForceLossCanBeReducedByImperialDecree() {
+        var scn = scenario();
+        scn.StartGame();
+        var site = scn.GetLSStartingLocation();
+        var droid = scn.GetDSCard("droid1");
+        var decree = scn.GetDSCard("decree");
+        scn.MoveCardsToLocation(site, scn.GetLSCard("artoo"), droid);
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("motti"));
+        scn.MoveCardsToDSSideOfTable(decree);
+        scn.SkipToLSTurn(Phase.CONTROL);
+        int life = scn.GetDSLifeForceRemaining();
+        target(scn, false);
+        scn.DSChooseOption("Lose 4 Force");
+        scn.PassResponses("FORCE_LOSS_INITIATED");
+        scn.LSPass();
+        assertTrue(scn.DSCardActionAvailable(decree, "Reduce Force loss"));
+        scn.DSUseCardAction(decree, "Reduce Force loss");
+        scn.PassAllResponses();
+        for (int i = 0; i < 3; i++) {
+            scn.DSChooseCard(scn.GetTopOfDSReserveDeck());
+            scn.PassAllResponses();
+        }
+        assertEquals(life - 3, scn.GetDSLifeForceRemaining());
+        assertEquals(site, droid.getAtLocation());
+    }
+
     private void checkChoice(boolean two, boolean loseForce, boolean darkTurn) {
         var scn = scenario(); setupDroids(scn, true, darkTurn); int life = scn.GetDSLifeForceRemaining();
         target(scn, two);
