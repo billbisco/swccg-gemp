@@ -2,12 +2,14 @@ package com.gempukku.swccgo.cards.set1250.dark;
 
 import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.framework.StartingSetup;
+import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import com.gempukku.swccgo.logic.decisions.CardActionSelectionDecision;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -167,11 +169,17 @@ public class Card_1250_018_Tests {
         assertTrue(scn.DSCardPlayAvailable(sniper));
         scn.DSPlayCard(sniper);
         boolean offered = false;
+        List<PhysicalCard> remaining = null;
         for (int i = 0; i < 100 && !scn.AwaitingDSControlPhaseActions(); i++) {
             if (scn.DSDecisionAvailable("Take any card into hand from Reserve Deck?")) {
                 assertSame(sidious, enemy.getAttachedTo());
                 offered = true;
-                if (take) scn.DSChooseYes(); else scn.DSChooseNo();
+                remaining = new ArrayList<>(scn.GetDSReserveDeck());
+                if (take) {
+                    assertTrue(remaining.remove(upload));
+                    scn.gameState().getRandom().setSeed(4096);
+                    scn.DSChooseYes();
+                } else scn.DSChooseNo();
             } else if (scn.DSHasCardChoiceAvailable(saber)) scn.DSChooseCard(saber);
             else if (scn.DSHasCardChoiceAvailable(victim)) scn.DSChooseCard(victim);
             else if (scn.DSHasCardChoiceAvailable(upload)) scn.DSChooseCard(upload);
@@ -185,5 +193,10 @@ public class Card_1250_018_Tests {
         if (withSidious) assertSame(sidious, enemy.getAttachedTo());
         else assertInZone(Zone.LOST_PILE, enemy);
         assertInZone(take ? Zone.HAND : Zone.RESERVE_DECK, upload);
+        if (take) {
+            assertNotNull(remaining);
+            assertEquals(new HashSet<>(remaining), new HashSet<>(scn.GetDSReserveDeck()));
+            assertNotEquals(remaining, scn.GetDSReserveDeck());
+        } else if (remaining != null) assertEquals(remaining, scn.GetDSReserveDeck());
     }
 }
