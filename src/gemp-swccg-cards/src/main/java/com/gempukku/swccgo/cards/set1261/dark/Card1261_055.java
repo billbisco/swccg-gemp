@@ -27,7 +27,7 @@ public class Card1261_055 extends AbstractSite {
     public Card1261_055() {
         super(Side.DARK, Title.Mos_Espa, Title.Tatooine, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
         setVirtualSuffix(true);
-        setLocationDarkSideGameText("'Free' on You're A Slave? is treated as '2 Force'. Your Force loss from You're A Slave? is doubled.");
+        setLocationDarkSideGameText("'Free' on You're A Slave? is treated as '2 Force.' Your Force loss from You're A Slave? is doubled.");
         setLocationLightSideGameText("Endor Shield is canceled. Once per game, may reduce Force loss from You're A Slave? to zero. Immune to Revolution.");
         addIcon(Icon.DARK_FORCE, 2);
         addIcon(Icon.LIGHT_FORCE, 1);
