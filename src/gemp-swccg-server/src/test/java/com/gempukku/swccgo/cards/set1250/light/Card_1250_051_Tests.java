@@ -210,11 +210,12 @@ public class Card_1250_051_Tests {
         advanceToDarkControl(s);
         s.DSActivateForceCheat(2);
         s.SkipToPhase(Phase.BATTLE);
-        s.DSUseCardAction(secondSite, "Initiate battle");
+        s.DSInitiateBattle(secondSite);
+        s.PassAllResponses();
         s.SkipToPowerSegment();
         if (s.DSDecisionAvailable("battle destiny?")) s.DSChooseNo();
         s.PassResponses("BATTLE_DESTINY_DRAWS_COMPLETE_FOR_PLAYER");
-        assertTrue(s.LSDecisionAvailable("1 battle destiny?"));
+        assertTrue(s.GetCurrentDecision().getText(), s.LSDecisionAvailable("1 battle destiny?"));
         s.PrepareLSDestiny(2); s.LSChooseYes(); advanceToDrawResponse(s);
         finishTake(s, s.GetLSDestiny(2)); finishLightDraws(s, 1, 2);
     }
