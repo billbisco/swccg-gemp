@@ -46,6 +46,7 @@ public class Card_1250_013_Tests {
     private VirtualTableScenario ScenarioWithInvasionOutOfPlay() {
         var scn = GetScenario();
         scn.MoveOutOfPlay(scn.GetDSCard("invasion"));
+        scn.MoveOutOfPlay(scn.GetDSCard("objective"));
         return scn;
     }
 
