@@ -17,7 +17,7 @@ public class Card_1271_038_Tests {
     private VirtualTableScenario scenario(String patientId) {
         return new VirtualTableScenario(
             new HashMap<>(Map.of("dressing", "1271_38", "patient", patientId, "firstAid", "7_89", "control", "4_48")),
-            new HashMap<>(Map.of("vader", "1_168")), 40, 40,
+            new HashMap<>(Map.of("vader", "1_168", "darkControl", "4_139")), 40, 40,
             StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
             StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
             StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -121,5 +121,24 @@ public class Card_1271_038_Tests {
         assertTrue(s.GetLSUsedPile().contains(firstAid));
         assertTrue(s.GetLSUsedPile().contains(s.GetLSCard("dressing")));
         assertEquals(s.GetLSCard("patient").getBlueprint().getForfeit(), s.GetForfeit(s.GetLSCard("patient")), s.epsilon);
+    }
+
+    @Test public void FieldDressingIsImmuneToActualLightControlButNotDarkControl() {
+        var s = justForfeited("1_19");
+        playDressing(s);
+        var dressing = s.GetLSCard("dressing");
+        var lightControl = s.GetLSCard("control");
+        var darkControl = s.GetDSCard("darkControl");
+        s.MoveCardsToLSHand(lightControl);
+        s.MoveCardsToDSHand(darkControl);
+        if (s.LSGetDecision() == null && s.DSGetDecision() != null) s.DSPass();
+        assertTrue(s.LSAnyActionsAvailable());
+        assertFalse(s.LSCardPlayAvailable(lightControl));
+        s.LSPass();
+        assertTrue(s.DSCardPlayAvailable(darkControl));
+        s.DSPlayCard(darkControl);
+        if (s.DSHasCardChoiceAvailable(dressing)) s.DSChooseCard(dressing);
+        s.PassAllResponses();
+        assertTrue(s.GetLSLostPile().contains(dressing));
     }
 }
