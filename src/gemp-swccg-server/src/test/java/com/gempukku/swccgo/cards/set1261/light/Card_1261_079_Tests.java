@@ -150,14 +150,18 @@ public class Card_1261_079_Tests {
             scn.LSPayAttritionFromCardInPlay(leia);
             assertTrue(scn.GetLSLostPile().contains(leia));
             assertEquals(2, scn.GetUnpaidLSAttrition());
-            assertTrue(scn.AwaitingLSAttritionPayment());
-        } else {
-            scn.LSPayAttritionFromCardInPlay(trooper);
             scn.PassAllResponses();
-            assertTrue(scn.GetLSLostPile().contains(trooper));
-            assertTrue(scn.GetLSLostPile().contains(leia));
-            assertFalse(scn.gameState().isDuringBattle());
+            if (scn.DSDecisionAvailable("if desired")) scn.DSPass();
+            scn.PassAllResponses();
+            assertTrue(scn.GetCurrentDecision().getText(), scn.LSHasCardChoiceAvailable(trooper));
         }
+        scn.LSPayAttritionFromCardInPlay(trooper);
+        scn.PassAllResponses();
+        if (scn.DSDecisionAvailable("if desired")) scn.DSPass();
+        scn.PassAllResponses();
+        assertTrue(scn.GetLSLostPile().contains(trooper));
+        assertTrue(scn.GetCurrentDecision().getText() + " " + scn.gameState().getLastMessages(), scn.GetLSLostPile().contains(leia));
+        assertFalse(scn.gameState().isDuringBattle());
     }
 
     @Test public void deferredCharacterMayForfeitButPaysZeroActualAttrition() { normalBattle(true); }
