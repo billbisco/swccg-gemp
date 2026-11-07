@@ -19,7 +19,7 @@ public class Card_1262_022_Tests {
 
     private VirtualTableScenario fixture() {
         var ls = new HashMap<>(Map.of("peace", "1262_22", "hut", "4_89", "jungle", "4_86",
-                "testOne", "4_77", "testFive", "4_78", "luke", "9_24", "han", "1_11"));
+                "testOne", "4_77", "testFive", "4_78", "luke", "9_24", "han", "1_11", "mentor", "4_2"));
         var ds = new HashMap<>(Map.of("broken", "4_118", "vader", "1_168", "saber", "1_324"));
         var scn = new VirtualTableScenario(ls, ds, 40, 40, StartingSetup.DefaultLSGroundLocation,
                 StartingSetup.DefaultDSGroundLocation, StartingSetup.NoLSStartingInterrupts,
@@ -59,6 +59,8 @@ public class Card_1262_022_Tests {
         scn.MoveLocationToTable(hut); scn.AttachCardsTo(hut, peace, test);
         scn.MoveCardsToLocation(hut, luke);
         test.setTargetedCard(TargetId.JEDI_TEST_APPRENTICE, null, luke, Filters.sameCardId(luke));
+        var mentor = scn.GetLSCard("mentor");
+        test.setTargetedCard(TargetId.JEDI_TEST_MENTOR, null, mentor, Filters.sameCardId(mentor));
         scn.MoveCardsToDSSideOfTable(broken);
         scn.SkipToLSTurn(Phase.CONTROL); scn.EnsureLSForcePile(2);
         var query = scn.game().getModifiersQuerying();
@@ -91,8 +93,12 @@ public class Card_1262_022_Tests {
         scn.MoveCardsToTopOfDSReserveDeck(scn.GetDSDestiny(6), scn.GetDSDestiny(7));
         scn.DSUseCardAction(saber, "Fire");
         if (scn.DSHasCardChoiceAvailable(luke)) scn.DSChooseCard(luke);
+        scn.PassResponses("Fire ");
         for (int i = 0; i < 2; i++) scn.PassDestinyDrawResponses();
-        assertEquals(completed, scn.GetLSAvailableActions().stream().anyMatch(x -> x.contains(PREVENT)));
+        if (scn.DSDecisionAvailable("ABOUT_TO_BE_HIT")) scn.DSPass();
+        assertEquals("decision=" + scn.GetCurrentDecision().getText() + " test=" + test.getZone()
+                        + "/" + test.getJediTestStatus() + " peace=" + peace.getZone() + " hit=" + luke.isHit(),
+                completed, scn.GetLSAvailableActions().stream().anyMatch(x -> x.contains(PREVENT)));
         if (accept) scn.LSUseCardAction(peace, PREVENT);
         scn.PassAllResponses();
         assertEquals(!accept, luke.isHit());
