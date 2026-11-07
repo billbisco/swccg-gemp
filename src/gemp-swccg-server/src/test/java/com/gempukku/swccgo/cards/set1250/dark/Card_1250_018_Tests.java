@@ -69,11 +69,11 @@ public class Card_1250_018_Tests {
         assertSame(sidious, enemy.getAttachedTo());
     }
 
-    @Test public void AnEnemyOfTheRepublicLetsLightChooseParticipatingDroidInBattleAwayFromSenate() {
+    @Test public void AnEnemyOfTheRepublicRelocatesToNonDroidNotParticipatingDroidInBattleAwayFromSenate() {
         var scn = battle(true, true);
-        var droid = scn.GetLSCard("droid");
         var enemy = scn.GetDSCard("enemy");
-        assertSame(droid, enemy.getAttachedTo());
+        assertNotSame(scn.GetLSCard("droid"), enemy.getAttachedTo());
+        assertSame(scn.GetLSCard("obi"), enemy.getAttachedTo());
         assertSame(scn.GetDSStartingLocation(), scn.gameState().getBattleLocation());
     }
 
@@ -82,7 +82,27 @@ public class Card_1250_018_Tests {
         assertSame(scn.GetDSCard("sidious"), scn.GetDSCard("enemy").getAttachedTo());
     }
 
-    private VirtualTableScenario battle(boolean atSenate, boolean chooseDroid) {
+    @Test public void AnEnemyOfTheRepublicStaysOnSidiousWhenOnlyADroidParticipates() {
+        var scn = scenario();
+        var sidious = scn.GetDSCard("sidious");
+        var site = scn.GetDSStartingLocation();
+        scn.MoveCardsToLocation(scn.GetDSCard("senate"), sidious);
+        scn.AttachCardsTo(sidious, scn.GetDSCard("enemy"));
+        scn.MoveCardsToLocation(site, scn.GetDSCard("vader"), scn.GetLSCard("droid"));
+        scn.EnsureDSForcePile(1);
+        scn.SkipToPhase(Phase.BATTLE);
+        scn.DSInitiateBattle(site);
+        for (int i = 0; i < 35 && !scn.AwaitingDSWeaponsSegmentActions(); i++) {
+            assertFalse(scn.LSDecisionAvailable("Choose your participating non-droid character"));
+            if (scn.LSGetDecision() instanceof CardActionSelectionDecision) scn.LSPass();
+            else if (scn.DSGetDecision() instanceof CardActionSelectionDecision) scn.DSPass();
+            else fail("Unexpected battle-start decision: " + scn.GetCurrentDecision().getText());
+        }
+        assertTrue(scn.AwaitingDSWeaponsSegmentActions());
+        assertSame(sidious, scn.GetDSCard("enemy").getAttachedTo());
+    }
+
+    private VirtualTableScenario battle(boolean atSenate, boolean withDroid) {
         var scn = scenario();
         var sidious = scn.GetDSCard("sidious");
         var site = scn.GetDSStartingLocation();
@@ -91,7 +111,8 @@ public class Card_1250_018_Tests {
         var offSite = scn.GetLSCard("luke");
         scn.MoveCardsToLocation(atSenate ? scn.GetDSCard("senate") : scn.GetLSStartingLocation(), sidious);
         scn.AttachCardsTo(sidious, scn.GetDSCard("enemy"));
-        scn.MoveCardsToLocation(site, scn.GetDSCard("vader"), obi, droid);
+        scn.MoveCardsToLocation(site, scn.GetDSCard("vader"), obi);
+        if (withDroid) scn.MoveCardsToLocation(site, droid);
         scn.MoveCardsToLocation(scn.GetLSStartingLocation(), offSite);
         scn.MoveCardsToLSHand(scn.GetLSCard("cancel"));
         scn.EnsureDSForcePile(1);
@@ -99,11 +120,11 @@ public class Card_1250_018_Tests {
         scn.SkipToPhase(Phase.BATTLE);
         scn.DSInitiateBattle(site);
         for (int i = 0; i < 35 && !scn.AwaitingDSWeaponsSegmentActions(); i++) {
-            if (scn.LSDecisionAvailable("Choose your participating character")) {
+            if (scn.LSDecisionAvailable("Choose your participating non-droid character")) {
                 assertTrue(scn.LSHasCardChoiceAvailable(obi));
-                assertTrue(scn.LSHasCardChoiceAvailable(droid));
+                assertFalse(scn.LSHasCardChoiceAvailable(droid));
                 assertFalse(scn.LSHasCardChoiceAvailable(offSite));
-                scn.LSChooseCard(chooseDroid ? droid : obi);
+                scn.LSChooseCard(obi);
             } else if (scn.LSGetDecision() instanceof CardActionSelectionDecision) scn.LSPass();
             else if (scn.DSGetDecision() instanceof CardActionSelectionDecision) scn.DSPass();
             else fail("Unexpected battle-start decision: " + scn.GetCurrentDecision().getText());

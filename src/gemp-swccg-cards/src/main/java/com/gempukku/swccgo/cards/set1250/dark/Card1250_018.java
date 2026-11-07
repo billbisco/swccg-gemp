@@ -25,7 +25,7 @@ import java.util.List;
 /** Legacy Block 5: An Enemy Of The Republic. */
 public class Card1250_018 extends Card1116_040 {
     public Card1250_018() {
-        setGameText("Deploy on Sidious. While at Senate, if battle was just initiated anywhere, opponent must relocate this card to their participating character; during battle here, your destiny draws may not be canceled. If character about to be lost, relocate to Sidious; may take any one card into hand from Reserve Deck; reshuffle.");
+        setGameText("Deploy on Sidious. While at Senate, if battle was just initiated anywhere, opponent must relocate this card to their participating non-droid character; during battle here, your destiny draws may not be canceled. If character about to be lost, relocate to Sidious; may take any one card into hand from Reserve Deck; reshuffle.");
         addIcons(Icon.SIDIOUS, Icon.LEGACY_BLOCK_5);
         setAsLegacy(true);
     }
@@ -66,12 +66,12 @@ public class Card1250_018 extends Card1116_040 {
         var battle = game.getGameState().getBattleState();
         if (battle == null) return null;
         var targets = Filters.filter(battle.getCardsParticipating(opponent), game,
-                Filters.and(Filters.character, Filters.your(opponent)));
+                Filters.and(Filters.character, Filters.not(Filters.droid), Filters.your(opponent)));
         if (targets.isEmpty()) return null;
 
         var action = new RequiredGameTextTriggerAction(self, sourceId);
-        action.setText("Relocate to a participating character");
-        action.appendEffect(new ChooseCardOnTableEffect(action, opponent, "Choose your participating character", targets) {
+        action.setText("Relocate to a participating non-droid character");
+        action.appendEffect(new ChooseCardOnTableEffect(action, opponent, "Choose your participating non-droid character", targets) {
             @Override
             protected void cardSelected(PhysicalCard target) {
                 action.appendEffect(new AttachCardFromTableEffect(action, self, target));
