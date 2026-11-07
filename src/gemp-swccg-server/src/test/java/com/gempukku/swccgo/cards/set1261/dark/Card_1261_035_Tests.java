@@ -34,6 +34,7 @@ public class Card_1261_035_Tests {
     private VirtualTableScenario scenario(boolean startingEffect, int outsideCount) {
         var dark = new HashMap<>(Map.of("deal", "109_12", "occupation", "7_223",
                 "bespin", "5_164", "platform", "5_169", "trooperA", "1_194", "trooperB", "1_194"));
+        dark.put("maul", "208_34"); dark.put("ventress", "221_8"); dark.put("ventressSabers", "221_9");
         if (startingEffect)
             dark.put("jedi", "1261_35");
         return new VirtualTableScenario(new HashMap<>(Map.of("saber", "13_34", "obi", "13_33", "blaster", "1_148")),
@@ -119,7 +120,6 @@ public class Card_1261_035_Tests {
         assertTrue(mods.isForceDrainModifierCanceled(scn.gameState(), site, saber, scn.LS, scn.LS, 1));
         assertFalse(mods.isForceDrainModifierCanceled(scn.gameState(), site, obi, scn.LS, scn.LS, 1));
         assertFalse(mods.isForceDrainModifierCanceled(scn.gameState(), site, blaster, scn.LS, scn.LS, 1));
-        assertFalse(mods.mayFireOnlyOncePerBattle(scn.gameState(), saber));
 
         scn.MoveCardsToTopOfDSLostPile(deal, effect);
         assertTrue(mods.isForceDrainModifierCanceled(scn.gameState(), site, saber, scn.LS, scn.LS, 1));
@@ -155,5 +155,87 @@ public class Card_1261_035_Tests {
     private void startWithoutObjective(VirtualTableScenario scn) {
         scn.MoveCardsToDSHand(scn.GetDSCard("deal"));
         scn.StartGame();
+    }
+
+    @Test
+    public void permanentWeaponLightsaberDrainBonusIsCanceledOnlyAfterDeal() {
+        var scn = scenario(true, 5);
+        startWithoutObjective(scn);
+        var site = scn.GetDSStartingLocation();
+        var maul = scn.GetDSCard("maul");
+        var trooper = scn.GetDSCard("trooperA");
+        scn.MoveCardsToLocation(site, maul, trooper);
+        var mods = scn.game().getModifiersQuerying();
+        // Lord Maul With Lightsaber's permanent-weapon drain bonus is sourced from Maul himself.
+        assertFalse(mods.isForceDrainModifierCanceled(scn.gameState(), site, maul, scn.DS, scn.DS, 1));
+        scn.MoveCardsToDSSideOfTable(scn.GetDSCard("deal"));
+        scn.SkipToDSTurn(Phase.CONTROL);
+        assertTrue(mods.isForceDrainModifierCanceled(scn.gameState(), site, maul, scn.DS, scn.DS, 1));
+        assertFalse(mods.isForceDrainModifierCanceled(scn.gameState(), site, trooper, scn.DS, scn.DS, 1));
+    }
+
+    @Test
+    public void lightsabersIncludingPermanentOnesMaySwingOnlyOncePerBattleAfterDeal() {
+        var scn = scenario(true, 5);
+        startWithoutObjective(scn);
+        var site = scn.GetDSStartingLocation();
+        var maul = scn.GetDSCard("maul");
+        var ventress = scn.GetDSCard("ventress");
+        var sabers = scn.GetDSCard("ventressSabers");
+        var trooper = scn.GetDSCard("trooperA");
+        var obi = scn.GetLSCard("obi");
+        var saber = scn.GetLSCard("saber");
+        var blaster = scn.GetLSCard("blaster");
+        scn.MoveCardsToLocation(site, maul, ventress, trooper);
+        scn.AttachCardsTo(ventress, sabers);
+        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), obi);
+        scn.AttachCardsTo(obi, saber, blaster);
+        var mods = scn.game().getModifiersQuerying();
+        // Before the Deal: Ventress' Lightsabers may fire twice per battle on Ventress; nothing is limited.
+        assertTrue(mods.mayBeFiredTwicePerBattle(scn.gameState(), sabers));
+        for (var card : List.of(sabers, maul, saber, blaster))
+            assertFalse(mods.mayFireOnlyOncePerBattle(scn.gameState(), card));
+
+        scn.MoveCardsToDSSideOfTable(scn.GetDSCard("deal"));
+        scn.SkipToDSTurn(Phase.CONTROL);
+        assertFalse(mods.mayBeFiredTwicePerBattle(scn.gameState(), sabers));
+        assertTrue(mods.mayFireOnlyOncePerBattle(scn.gameState(), sabers));
+        assertTrue(mods.mayFireOnlyOncePerBattle(scn.gameState(), maul));
+        assertTrue(mods.mayFireOnlyOncePerBattle(scn.gameState(), saber));
+        // Not a lightsaber: blaster, a character without a permanent lightsaber.
+        assertFalse(mods.mayFireOnlyOncePerBattle(scn.gameState(), blaster));
+        assertFalse(mods.mayFireOnlyOncePerBattle(scn.gameState(), ventress));
+        assertFalse(mods.mayFireOnlyOncePerBattle(scn.gameState(), trooper));
+
+        // Persists after both sources leave.
+        scn.MoveCardsToTopOfDSLostPile(scn.GetDSCard("deal"), scn.GetDSCard("jedi"));
+        assertTrue(mods.mayFireOnlyOncePerBattle(scn.gameState(), sabers));
+    }
+
+    @Test
+    public void ventressLightsabersActuallySwingOnlyOnceInBattleAfterDeal() {
+        for (boolean deal : List.of(false, true)) {
+            var scn = scenario(true, 5);
+            startWithoutObjective(scn);
+            var site = scn.GetDSStartingLocation();
+            var ventress = scn.GetDSCard("ventress");
+            var sabers = scn.GetDSCard("ventressSabers");
+            var obi = scn.GetLSCard("obi");
+            var trooperB = scn.GetDSCard("trooperB");
+            scn.MoveCardsToLocation(site, ventress, obi);
+            scn.AttachCardsTo(ventress, sabers);
+            if (deal) scn.MoveCardsToDSSideOfTable(scn.GetDSCard("deal"));
+            scn.SkipToDSTurn(Phase.CONTROL);
+            scn.EnsureDSForcePile(6);
+            scn.DSStartBattleAndSkipToWeaponsSegment(site);
+            assertTrue(scn.DSCardActionAvailable(sabers, "Fire"));
+            scn.PrepareDSDestiny(1); scn.PrepareDSDestiny(1);
+            scn.DSUseCardAction(sabers, "Fire");
+            if (scn.DSHasCardChoiceAvailable(obi)) scn.DSChooseCard(obi);
+            scn.PassAllResponses();
+            assertFalse(obi.isHit());
+            if (scn.AwaitingLSWeaponsSegmentActions()) scn.LSPass();
+            assertEquals("second swing only without the Deal", !deal, scn.DSCardActionAvailable(sabers, "Fire"));
+        }
     }
 }
