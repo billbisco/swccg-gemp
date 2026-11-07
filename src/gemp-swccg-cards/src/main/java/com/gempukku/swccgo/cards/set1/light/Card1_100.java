@@ -8,6 +8,8 @@ import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.logic.modifiers.ModifyGameTextType;
+import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.GameUtils;
@@ -38,9 +40,15 @@ public class Card1_100 extends AbstractLostInterrupt {
 
     @Override
     protected List<PlayInterruptAction> getGameTextOptionalAfterActions(final String playerId, SwccgGame game, EffectResult effectResult, final PhysicalCard self) {
+        // Sites that may be targeted (a card may let Old Ben target its site even if not a Tatooine site)
+        Filter siteFilter = Filters.Tatooine_site;
+        for (PhysicalCard source : game.getModifiersQuerying().getGameTextModificationSources(game.getGameState(), self, ModifyGameTextType.LEGACY__OBI_WAN_CRAZY_WIZARD__OLD_BEN_MAY_TARGET_SITE)) {
+            siteFilter = Filters.or(siteFilter, Filters.sameSite(source));
+        }
+
         // Check condition(s)
         if (TriggerConditions.justForfeitedToLostPileFromLocation(game, effectResult, Filters.and(Filters.your(self),
-                Filters.character, Filters.except(Filters.ObiWan), Filters.canBeTargetedBy(self)), Filters.Tatooine_site)
+                Filters.character, Filters.except(Filters.ObiWan), Filters.canBeTargetedBy(self)), siteFilter)
                 && GameConditions.canUseForceToPlayInterrupt(game, playerId, self, 1)
                 && GameConditions.canReviveCharacters(game)) {
             LostFromTableResult lostFromTableResult = (LostFromTableResult) effectResult;
