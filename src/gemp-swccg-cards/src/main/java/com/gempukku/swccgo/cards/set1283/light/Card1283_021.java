@@ -48,7 +48,7 @@ import java.util.List;
 public class Card1283_021 extends AbstractNormalEffect {
     public Card1283_021() {
         super(Side.LIGHT, 2, PlayCardZoneOption.ATTACHED, "Underworld Contacts & Uncharted Settlements", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_3, Rarity.V);
-        setGameText("Deploy on [Virtual Block 4] Hidden Base; you must choose alien/[Independent] starship. You may not deploy Ellors Madak, Revolution or operatives. Your Destiny is canceled. Opponent generates no Force at Hidden Landing Site. [Virtual Block 1] Yerka Mig may deploy on a Rebel Cell Site, may be placed in Used Pile if it was just lost, and you may retrieve Force with it only once per turn. While Systems Will Slip Through Your Fingers on table, attrition against opponent is +1 for each Rebel Cell site you occupy with an alien. (Immune to Alter.)");
+        setGameText("Deploy on [Virtual Block 4] Hidden Base; you must choose alien/[Independent] starship. You may not deploy Ellorrs Madak, Revolution or operatives. Your Destiny is canceled. Opponent generates no Force at Hidden Landing Site. [Virtual Block 1] Yerka Mig may deploy on a Rebel Cell Site, may be placed in Used Pile if it was just lost, and you may retrieve Force with it only once per turn. While Systems Will Slip Through Your Fingers on table, attrition against opponent is +1 for each Rebel Cell site you occupy with an alien. (Immune to Alter.)");
         addImmuneToCardTitle(Title.Alter);
     }
 
