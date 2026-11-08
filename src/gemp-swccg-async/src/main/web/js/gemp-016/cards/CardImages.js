@@ -6705,6 +6705,7 @@ const fixedImages = {
 "2250_2":"https://wiki.swccg.com/images/f/ff/VB5-02-Aurra_Sing.png",
 "2250_14":"https://wiki.swccg.com/images/b/b6/VB5-18-Expand_The_Empire.png",
 "2250_1022":"https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Dark/large/withthunderousapplause.gif",
+"2250_25":"https://wiki.swccg.com/images/8/82/VB5-24-Wipe_Them_Out_All_Of_Them.png",
 // END VB5-VB6 phase 2
 "2210_6":"https://wiki.swccg.com/images/9/97/VB1-06-Danz_Borin.png",
 "2210_8":"https://wiki.swccg.com/images/8/8d/VB1-08-Death_Star_Gunner.png",
