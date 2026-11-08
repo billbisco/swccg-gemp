@@ -49,7 +49,7 @@ public class Card1274_005 extends AbstractImmediateEffect {
         super(Side.DARK, 5, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Desperate Counter", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_4, Rarity.V);
         setVirtualSuffix(true);
         setLore("The Empire relied on the skill of its pilot corps to defend the Death Star reactor core from attack.");
-        setGameText("Unless Imperial Propaganda on table, if you are about to lose Force during opponent's control phase, deploy on table to reduce loss by 4 (ignore other modifiers); opponent may take any one card into hand from Reserve Deck; reshuffle. (Immune to Control.) OR Use 2 Force to deploy on table and stack a just-played Interrupt here.");
+        setGameText("Unless Imperial Propaganda on table, if you are about to lose Force during opponent's control phase, deploy on table to reduce loss by 4 (ignore other modifiers); opponent may immediately take any one card into hand from Reserve Deck; reshuffle. [Immune to Control]. OR Use 2 Force to deploy on table and stack one just-played interrupt here.");
         addIcons(Icon.DEATH_STAR_II, Icon.GRABBER);
         addImmuneToCardTitle(Title.Control);
     }

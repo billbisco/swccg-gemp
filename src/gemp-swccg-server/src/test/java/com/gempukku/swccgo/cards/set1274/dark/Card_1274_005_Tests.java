@@ -184,4 +184,12 @@ public class Card_1274_005_Tests {
         assertTrue(scn.IsStackedOn(counter, leadership));
         assertFalse(admiral.getZone() == Zone.HAND);
     }
+
+    @Test
+    public void DesperateCounterShowsTheLatestText() {
+        String t = com.gempukku.swccgo.framework.VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("1274_5").getGameText();
+        org.junit.Assert.assertEquals("Unless Imperial Propaganda on table, if you are about to lose Force during opponent's control phase, deploy on table to reduce loss by 4 (ignore other modifiers); opponent may immediately take any one card into hand from Reserve Deck; reshuffle. [Immune to Control]. OR Use 2 Force to deploy on table and stack one just-played interrupt here.", t);
+        org.junit.Assert.assertFalse(t.contains("(Immune to Control.)"));
+        org.junit.Assert.assertFalse(t.contains("stack a just-played"));
+    }
 }
