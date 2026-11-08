@@ -44,8 +44,10 @@ import static org.mockito.Mockito.when;
 public class LegacyVersionPrintedTitleTests {
     /** Version id -> printed title (release sheet slip), per legacy-versions-v3.json printed_title. */
     private static final Map<String, String> PRINTED_TITLES = new LinkedHashMap<>() {{
+        put("2240_2", "Black Leader (V)");
         put("2240_8", "Galen, Secret Apprentice (V)");
         put("2240_59", "Galen's Fighter");
+        put("2261_93", "Krayt Dragon Howl & Armed And Dangerous");
         put("2271_1", "Cyborg Commander, Hunter Of Jedi");
         put("2273_6", "IG Bodyguard Droid");
         put("2274_4", "Floating Refinery (V)");
