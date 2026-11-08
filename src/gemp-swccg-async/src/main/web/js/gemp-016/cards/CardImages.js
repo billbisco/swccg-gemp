@@ -6619,5 +6619,6 @@ const fixedImages = {
 "2261_33":"https://wiki.swccg.com/images/c/cd/VB6-32-Dark_Waters_Krayt_Dragon_Bones.png",
 "2272_23":"https://wiki.swccg.com/images/a/a0/VB7-04-Rogue_Insertion.png",
 "2210_6":"https://wiki.swccg.com/images/9/97/VB1-06-Danz_Borin.png",
+"2210_8":"https://wiki.swccg.com/images/8/8d/VB1-08-Death_Star_Gunner.png",
 
 };
