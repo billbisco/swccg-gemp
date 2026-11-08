@@ -6624,5 +6624,6 @@ const fixedImages = {
 "2240_8":"https://wiki.swccg.com/images/9/93/VB4-04-Galen_Marek_Starkiller.png",
 "2240_27":"https://wiki.swccg.com/images/3/33/VB4-26-Imperial_Propaganda.png",
 "2240_31":"https://wiki.swccg.com/images/d/d9/VB4-29E-Knowledge_And_Defense.png",
+"2240_37":"https://wiki.swccg.com/images/f/f0/VB4-36-Deep_Hatred.png",
 
 };
