@@ -14,6 +14,8 @@ import java.util.Map;
 import static org.junit.Assert.*;
 
 public abstract class SoloDefenseTestSupport {
+    // Solo Han's current text (PC-E1) moves the per-character bonus to his power: Card_1261_101_Tests overrides the
+    // added-destiny tests, and Card_2261_101_Tests runs them on the original text.
     protected static final String PROTECT = "Protect solo defender";
     protected final String printing;
     private final String matching;
@@ -76,7 +78,7 @@ public abstract class SoloDefenseTestSupport {
         return battle(defender, alone, defending, false);
     }
 
-    private VirtualTableScenario battle(String defender, boolean alone, boolean defending, boolean armedVader, String... dsExtras) {
+    protected VirtualTableScenario battle(String defender, boolean alone, boolean defending, boolean armedVader, String... dsExtras) {
         var scn = fixture(); var at = scn.GetLSStartingLocation(); var vader = scn.GetDSCard("vader");
         scn.MoveCardsToLocation(at, scn.GetLSCard(defender), vader);
         for (String extra : dsExtras) scn.MoveCardsToLocation(at, scn.GetDSCard(extra));
@@ -183,7 +185,7 @@ public abstract class SoloDefenseTestSupport {
 
     // "adds one destiny to power (add 1 for each character and vehicle present)": the defender and each other
     // character and vehicle present at the site count.
-    private float destinyToPowerWith(boolean protect, String... dsExtras) {
+    protected float destinyToPowerWith(boolean protect, String... dsExtras) {
         var scn = battle("person", true, true, false, dsExtras);
         var person = scn.GetLSCard("person");
         scn.MoveCardsToTopOfLSUsedPile(scn.GetLSForcePile().stream()
