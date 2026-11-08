@@ -42,7 +42,7 @@ public class Card1220_036 extends AbstractNormalEffect {
         super(Side.DARK, 5, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.Im_Sorry, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_2, Rarity.V);
         setVirtualSuffix(true);
         setLore("'I'm sorry, too.'");
-        setGameText("Deploy on table. Floating Refinery is suspended on opponent's turn. During your deploy phase, may deploy a Floating Refinery, a cloud sector (to Bespin), or an Obsidian squadron TIE from Reserve Deck; reshuffle. During your turn, if you control 2 cloud sectors with TIEs, opponent loses 1 Force. (Immune to Alter.)");
+        setGameText("Deploy on table. Floating Refinery is suspended during opponent's turn. During your deploy phase, may deploy a Floating Refinery, a cloud sector (to Bespin), or an Obsidian squadron TIE from Reserve Deck; reshuffle. During your turn, if you control two cloud sectors with TIEs, opponent loses 1 Force. (Immune to Alter.)");
         addIcons(Icon.TATOOINE);
         addImmuneToCardTitle(Title.Alter);
     }
