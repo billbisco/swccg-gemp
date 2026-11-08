@@ -6622,5 +6622,6 @@ const fixedImages = {
 "2210_8":"https://wiki.swccg.com/images/8/8d/VB1-08-Death_Star_Gunner.png",
 "2210_110":"https://wiki.swccg.com/images/e/e1/VB1-110E-Rebel_Tech.png",
 "2210_159":"https://wiki.swccg.com/images/f/f7/VB1-160-Precise_Hit.png",
+"2220_35":"https://wiki.swccg.com/images/6/64/VB2-35-I_Want_That_Ship.png",
 
 };
