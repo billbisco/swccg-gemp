@@ -28,7 +28,7 @@ public class Card1250_034 extends AbstractRebelRepublic {
         super(Side.LIGHT, 3, 2, 3, 3, 5, "Bail Organa", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_5, Rarity.V);
         setPolitics(2);
         setLore("Leader. Senator.");
-        setGameText("Agenda: rebellion. Adds one battle destiny with Leia. Your [Coruscant] senators and [Coruscant] Political Effects are lost. While at Senate: unique (•) Rebels of ability < 4 are power +2, and, if opponent just lost Force to a Force drain by a Rebel, may retrieve 1 Force.");
+        setGameText("Agenda: rebellion. Adds one battle destiny with Leia. Your [Coruscant] senators and [Coruscant] Political Effects are lost. While at Senate: unique (•) Rebels of ability < 4 are power +2, and, if you just Force drained with a Rebel, may retrieve 1 Force.");
         addIcons(Icon.SPECIAL_EDITION, Icon.EPISODE_I);
         addPersona(Persona.BAIL);
         addKeywords(Keyword.LEADER, Keyword.SENATOR);
@@ -67,8 +67,8 @@ public class Card1250_034 extends AbstractRebelRepublic {
     protected List<OptionalGameTextTriggerAction> getGameTextOptionalAfterTriggers(String playerId, SwccgGame game,
             EffectResult effectResult, PhysicalCard self, int gameTextSourceCardId) {
         if (GameConditions.isAtLocation(game, self, Filters.Galactic_Senate)
-                && TriggerConditions.justLostForceFromForceDrainAt(game, effectResult, game.getOpponent(playerId),
-                        Filters.sameLocationAs(self, Filters.and(Filters.your(self), Filters.Rebel)), true)
+                && TriggerConditions.forceDrainCompleted(game, effectResult, playerId,
+                        Filters.sameLocationAs(self, Filters.and(Filters.your(self), Filters.Rebel)))
                 && GameConditions.hasLostPile(game, playerId)) {
             OptionalGameTextTriggerAction action = new OptionalGameTextTriggerAction(self, gameTextSourceCardId);
             action.setText("Retrieve 1 Force");

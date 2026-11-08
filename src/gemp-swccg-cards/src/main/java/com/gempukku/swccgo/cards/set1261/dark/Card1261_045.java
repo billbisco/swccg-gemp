@@ -23,7 +23,7 @@ public class Card1261_045 extends AbstractUsedInterrupt {
     public Card1261_045() {
         super(Side.DARK, 4, "One Bright Spot", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
         setLore("Even a Jedi cannot always foresee future events.");
-        setGameText("If Galen was just lost and Juno Eclipse is on table (or vice versa), place the just-lost character on your Used Pile instead. OR If Juno Eclipse is participating in a battle, you may lose Galen from hand to satisfy all battle damage and attrition against you.");
+        setGameText("If Galen was just lost and Juno Eclipse is on table (or vice versa), place the just-lost character on your Used Pile instead. OR If Juno Eclipse is participating in a battle, may lose Galen from hand to satisfy all battle damage and attrition against you.");
         addIcons(Icon.DAGOBAH);
     }
 

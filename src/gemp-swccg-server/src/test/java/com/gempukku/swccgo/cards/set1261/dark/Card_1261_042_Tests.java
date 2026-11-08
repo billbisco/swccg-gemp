@@ -170,4 +170,18 @@ public class Card_1261_042_Tests {
         assertEquals(reserve - 1, scn.GetDSReserveDeckCount());
         assertEquals(Zone.TOP_OF_USED_PILE, interrupt.getZone());
     }
+
+    @org.junit.Test
+    public void CurrentTextIsTheLatestVersion() {
+        // Virtual Cards Master List (PC-E3, 2013-04-27) is the latest text; GEMP's former wording matched no published version.
+        var scn = new com.gempukku.swccgo.framework.VirtualTableScenario(new java.util.HashMap<>(), new java.util.HashMap<>(java.util.Map.of("c", "1261_42")), 10, 10,
+                com.gempukku.swccgo.framework.StartingSetup.DefaultLSGroundLocation, com.gempukku.swccgo.framework.StartingSetup.DefaultDSGroundLocation,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSStartingInterrupts, com.gempukku.swccgo.framework.StartingSetup.NoDSStartingInterrupts,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSShields, com.gempukku.swccgo.framework.StartingSetup.NoDSShields,
+                com.gempukku.swccgo.framework.VirtualTableScenario.Open);
+        var text = scn.GetDSCard("c").getBlueprint().getGameText();
+        org.junit.Assert.assertEquals("USED: Activate 1 Force. STARTING: ▲ Bossk, Dengar, DS-61-2, Guri, or Juno Eclipse (may also ▲ a system with exactly 1 [Dark Side Force], a matching starship, and an always [Immune to Alter] Effect.) When drawing your starting hand, draw four cards instead of eight. Place this Interrupt in Lost Pile.", text);
+        org.junit.Assert.assertFalse(text.contains("Place Interrupt in Lost Pile"));
+        org.junit.Assert.assertNull(scn.GetDSCard("c").getBlueprint().getLegacyVersion());
+    }
 }

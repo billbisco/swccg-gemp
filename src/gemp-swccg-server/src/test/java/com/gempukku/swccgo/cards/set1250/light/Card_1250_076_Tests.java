@@ -187,4 +187,18 @@ public class Card_1250_076_Tests {
         assertEquals(expectedDestiny, scn.GetDSTotalDestiny());
         assertEquals(3, scn.GetLSTotalDestiny());
     }
+
+    @org.junit.Test
+    public void CurrentTextIsTheLatestVersion() {
+        // Virtual Block 5 sheet (75E) is the only published text; GEMP's former 'if this was' / 'one' wording was a PC data error.
+        var scn = new com.gempukku.swccgo.framework.VirtualTableScenario(new java.util.HashMap<>(java.util.Map.of("c", "1250_76")), new java.util.HashMap<>(), 10, 10,
+                com.gempukku.swccgo.framework.StartingSetup.DefaultLSGroundLocation, com.gempukku.swccgo.framework.StartingSetup.DefaultDSGroundLocation,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSStartingInterrupts, com.gempukku.swccgo.framework.StartingSetup.NoDSStartingInterrupts,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSShields, com.gempukku.swccgo.framework.StartingSetup.NoDSShields,
+                com.gempukku.swccgo.framework.VirtualTableScenario.Open);
+        var bp = scn.GetLSCard("c").getBlueprint();
+        org.junit.Assert.assertEquals("Once per turn, if Kashyyyk was your starting location, may deploy a Kashyyyk site from Reserve Deck; reshuffle.", bp.getLocationLightSideGameText());
+        org.junit.Assert.assertEquals("Total ability of 6 or more required for you to draw battle destiny here.", bp.getLocationDarkSideGameText());
+        org.junit.Assert.assertNull(scn.GetLSCard("c").getBlueprint().getLegacyVersion());
+    }
 }

@@ -210,4 +210,18 @@ public class Card_1263_029_Tests {
         scn.LSInitiateBattle(scn.GetLSStartingLocation());
         assertNotNull(scn.gameState().getBattleState()); assertFalse(has(scn, CANCEL));
     }
+
+    @org.junit.Test
+    public void CurrentTextIsTheLatestVersion() {
+        // PC card list (PC-E1) is the latest text (spacing and the bracketed Immune to Sense normalised); GEMP's wording was no version.
+        var scn = new com.gempukku.swccgo.framework.VirtualTableScenario(new java.util.HashMap<>(java.util.Map.of("c", "1263_29")), new java.util.HashMap<>(), 10, 10,
+                com.gempukku.swccgo.framework.StartingSetup.DefaultLSGroundLocation, com.gempukku.swccgo.framework.StartingSetup.DefaultDSGroundLocation,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSStartingInterrupts, com.gempukku.swccgo.framework.StartingSetup.NoDSStartingInterrupts,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSShields, com.gempukku.swccgo.framework.StartingSetup.NoDSShields,
+                com.gempukku.swccgo.framework.VirtualTableScenario.Open);
+        var text = scn.GetLSCard("c").getBlueprint().getGameText();
+        org.junit.Assert.assertEquals("If Rescue The Princess on table, LOST: Once per game, choose: Cancel an attempt to make non-Heroic R2-D2 lost. OR Lose 2 Force to cancel a battle just initiated if Leia defending alone. (Immune to Sense.) STARTING: Deploy from Reserve Deck Cell 2187 and one always-[Immune to Alter] Effect. Place this Interrupt in hand.", text);
+        org.junit.Assert.assertFalse(text.contains("always-immune-to-Alter"));
+        org.junit.Assert.assertNull(scn.GetLSCard("c").getBlueprint().getLegacyVersion());
+    }
 }

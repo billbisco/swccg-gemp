@@ -38,7 +38,7 @@ public class Card1261_050 extends AbstractUsedOrLostInterrupt {
         super(Side.DARK, 5, Title.TIE_Sentry_Ships, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("Several TIEs were assigned to patrol Cloud City prior to the Imperial occupation of Bespin. Their instructions were to herd any vessels attempting to escape toward the Executor.");
-        setGameText("USED: If you just drew a unique (•) Imperial starship for destiny, take that starship into hand to cancel and redraw that destiny. LOST: Use 3 Force to retrieve a unique (•) Imperial starship into hand.");
+        setGameText("USED: If you just drew a unique (•) Imperial starship for destiny, take that starship into hand to cancel and redraw the destiny. LOST: Use 3 Force to retrieve a unique (•) Imperial starship into hand.");
         addIcons(Icon.CLOUD_CITY);
     }
 

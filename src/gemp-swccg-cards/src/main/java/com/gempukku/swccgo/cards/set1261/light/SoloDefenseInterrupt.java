@@ -20,6 +20,7 @@ import com.gempukku.swccgo.logic.effects.TargetCardOnTableEffect;
 import com.gempukku.swccgo.logic.modifiers.AddsDestinyToPowerModifier;
 import com.gempukku.swccgo.logic.modifiers.DrawsBattleDestinyIfUnableToOtherwiseModifier;
 import com.gempukku.swccgo.logic.modifiers.MayNotHaveForfeitValueReducedModifier;
+import com.gempukku.swccgo.logic.modifiers.PowerModifier;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 import com.gempukku.swccgo.logic.timing.Action;
 import com.gempukku.swccgo.logic.timing.EffectResult;
@@ -28,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** Shared play modes of the three Block 6 solo-defense Interrupts. */
-abstract class SoloDefenseInterrupt extends AbstractLostInterrupt {
+public abstract class SoloDefenseInterrupt extends AbstractLostInterrupt {
     private final Filter searchFilter;
     private final Filter defender;
     private final GameTextActionId searchId;
@@ -47,6 +48,19 @@ abstract class SoloDefenseInterrupt extends AbstractLostInterrupt {
                         && personaOnPhysicalPrinting.accepts(state, querying, card);
             }
         };
+    }
+
+    /** The cards the first mode deploys from Reserve Deck or retrieves. */
+    protected Filter searchFilter() {
+        return searchFilter;
+    }
+
+    /**
+     * Solo Han's PC card-list text (PC-E1): "he is power +1 for each character and vehicle present ... he adds one
+     * destiny to power"; the sheet text adds the bonus to the destiny instead ("one destiny to power (+1 for each ...)").
+     */
+    protected boolean bonusIsPowerNotDestiny() {
+        return false;
     }
 
     @Override
@@ -69,8 +83,8 @@ abstract class SoloDefenseInterrupt extends AbstractLostInterrupt {
         action.allowResponses(new RespondablePlayCardEffect(action) {
             @Override
             protected void performActionResults(Action targetingAction) {
-                action.appendEffect(retrieve ? new RetrieveCardEffect(action, playerId, searchFilter)
-                        : new DeployCardFromReserveDeckEffect(action, searchFilter, true));
+                action.appendEffect(retrieve ? new RetrieveCardEffect(action, playerId, searchFilter())
+                        : new DeployCardFromReserveDeckEffect(action, searchFilter(), true));
             }
         });
         return action;
@@ -95,9 +109,16 @@ abstract class SoloDefenseInterrupt extends AbstractLostInterrupt {
                         var defender = action.getPrimaryTargetCard(group);
                         action.appendEffect(new AddUntilEndOfBattleModifierEffect(action,
                                 new MayNotHaveForfeitValueReducedModifier(self, defender), null));
-                        action.appendEffect(new AddUntilEndOfBattleModifierEffect(action,
-                                new AddsDestinyToPowerModifier(defender, 1, playerId).setBonusForEachDestinyDraw(
-                                        new PresentEvaluator(defender, Filters.or(Filters.character, Filters.vehicle))), null));
+                        var present = new PresentEvaluator(defender, Filters.or(Filters.character, Filters.vehicle));
+                        if (bonusIsPowerNotDestiny()) {
+                            action.appendEffect(new AddUntilEndOfBattleModifierEffect(action,
+                                    new PowerModifier(self, defender, present), null));
+                            action.appendEffect(new AddUntilEndOfBattleModifierEffect(action,
+                                    new AddsDestinyToPowerModifier(defender, 1, playerId), null));
+                        } else {
+                            action.appendEffect(new AddUntilEndOfBattleModifierEffect(action,
+                                    new AddsDestinyToPowerModifier(defender, 1, playerId).setBonusForEachDestinyDraw(present), null));
+                        }
                         action.appendEffect(new AddUntilEndOfBattleModifierEffect(action,
                                 new DrawsBattleDestinyIfUnableToOtherwiseModifier(self, defender, 1), null));
                     }

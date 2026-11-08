@@ -28,7 +28,7 @@ public class Card1250_033 extends AbstractAdmiralsOrder {
         super(Side.LIGHT, "Let's Go Left", ExpansionSet.VIRTUAL_BLOCK_5, Rarity.V);
         setVirtualSuffix(true);
         addIcons(Icon.THEED_PALACE, Icon.EPISODE_I);
-        setGameText("At each system a player controls with a capital starship, their non-[Presence] characters (and vehicles) deploy -1 to related sites and sectors. If you occupy a system with a capital starship (or three unique starships) and have no Objective on table, may add 1 to each of your Force drains at related battleground sites (opponent loses no more than 2 Force from those drains).");
+        setGameText("At each system a player controls with a capital starship, their non-[Presence] characters and vehicles deploy -1 to related sites and sectors. If you occupy a system with a capital starship (or three unique starships) and have no Objective on table, may add 1 to each of your Force drains at related battleground sites (opponent loses no more than 2 Force from those drains).");
     }
 
     private Filter fleetAtSystem(PhysicalCard self, String playerId, boolean allowThreeUnique) {
@@ -43,9 +43,14 @@ public class Card1250_033 extends AbstractAdmiralsOrder {
         };
     }
 
+    /** "their" non-[Presence] characters and vehicles: only the controlling player's cards get the discount. */
+    protected boolean discountOnlyControllersCards() {
+        return true;
+    }
+
     private Modifier deployDiscount(PhysicalCard self, String playerId) {
-        Filter eligibleCards = Filters.and(Filters.your(playerId),
-                Filters.or(Filters.and(Filters.character, Filters.not(Icon.PRESENCE)), Filters.vehicle));
+        Filter eligibleCards = Filters.or(Filters.and(Filters.character, Filters.not(Icon.PRESENCE)), Filters.vehicle);
+        if (discountOnlyControllersCards()) eligibleCards = Filters.and(Filters.your(playerId), eligibleCards);
         Filter system = Filters.and(Filters.system, Filters.controls(playerId), fleetAtSystem(self, playerId, false));
         Filter destination = Filters.or(Filters.relatedSiteTo(self, system), Filters.relatedSectorTo(self, system));
         return new DeployCostToTargetModifier(self, eligibleCards, -1, destination);

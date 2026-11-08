@@ -202,4 +202,18 @@ public class Card_1261_114_Tests {
         scn.LSPayRemainingForceLossFromReserveDeck(); scn.PassAllResponses();
         assertEquals(2, scn.GetLSLostPileCount() - before);
     }
+
+    @org.junit.Test
+    public void CurrentTextIsTheLatestVersion() {
+        // Virtual Block 6.1 sheet text ("Ric Olié") is the only published version; GEMP's "Olie" spelling came from the PC data.
+        var scn = new com.gempukku.swccgo.framework.VirtualTableScenario(new java.util.HashMap<>(java.util.Map.of("c", "1261_114")), new java.util.HashMap<>(), 10, 10,
+                com.gempukku.swccgo.framework.StartingSetup.DefaultLSGroundLocation, com.gempukku.swccgo.framework.StartingSetup.DefaultDSGroundLocation,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSStartingInterrupts, com.gempukku.swccgo.framework.StartingSetup.NoDSStartingInterrupts,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSShields, com.gempukku.swccgo.framework.StartingSetup.NoDSShields,
+                com.gempukku.swccgo.framework.VirtualTableScenario.Open);
+        var bp = scn.GetLSCard("c").getBlueprint();
+        org.junit.Assert.assertEquals("Once per turn, may deploy Ric Olié and/or a 327 Nubian here (for -1 Force each) from Reserve Deck; reshuffle.", bp.getLocationLightSideGameText());
+        org.junit.Assert.assertEquals("Force drain +1 here. Opponent may not Force drain here.", bp.getLocationDarkSideGameText());
+        org.junit.Assert.assertFalse(bp.getLocationLightSideGameText().contains("Ric Olie"));
+    }
 }

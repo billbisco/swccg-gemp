@@ -12,9 +12,11 @@ import java.util.HashMap;
 import static org.junit.Assert.*;
 
 public class Card_1261_065_Tests {
+    private String boshekId = "1261_65";
+
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>() {{
-            put("boshek", "1261_65"); put("falcon", "1_143"); put("red5", "2_71");
+            put("boshek", boshekId); put("falcon", "1_143"); put("red5", "2_71");
             put("home", "9_74"); put("pilot", "1_27"); put("luke", "1_19");
             put("launch", "9_36"); put("kessel", "1_126");
         }}, new HashMap<>() {{
@@ -150,4 +152,32 @@ public class Card_1261_065_Tests {
     @Test public void BoShekBrashSmugglerLeavesThreeForceDrainAtThree() { forceDrain(true, true, false, 3); }
     @Test public void BoShekBrashSmugglerFourForceDrainControlWithoutBoShek() { forceDrain(false, false, true, 4); }
     @Test public void BoShekBrashSmugglerDoesNotCapDrainAtAnotherSystem() { forceDrain(true, false, true, 4); }
+
+    @Test
+    public void OriginalVersionAttritionAgainstOpponentIsNotLimitedToHere() {
+        // 2261_65 (Virtual Block 6.1 sheet): "adds 1 to attrition against opponent" with no "here" (read literally:
+        // in battles at other locations too). The current Master List text adds "here".
+        boshekId = "2261_65";
+        var scn = scenario(); start(scn); pilot(scn, "falcon", scn.GetLSCard("kessel"));
+        assertTrue(com.gempukku.swccgo.filters.Filters.battleground.accepts(scn.game(), scn.GetLSCard("kessel")));
+        var system = scn.GetLSStartingLocation();
+        scn.MoveCardsToLocation(system, scn.GetLSCard("red5"), scn.GetDSCard("tie"));
+        scn.BoardAsPilot(scn.GetLSCard("red5"), scn.GetLSCard("luke"));
+        scn.SkipToLSTurn(Phase.BATTLE); scn.PrepareLSDestiny(0);
+        scn.LSInitiateBattle(system); scn.PassAllResponses(); scn.SkipToDamageSegment(true);
+        assertEquals(1, scn.GetUnpaidDSAttrition());
+    }
+
+    @org.junit.Test
+    public void CurrentTextIsTheLatestVersion() {
+        // Virtual Cards Master List (PC-E2) is the latest text.
+        var scn = new com.gempukku.swccgo.framework.VirtualTableScenario(new java.util.HashMap<>(java.util.Map.of("c", "1261_65")), new java.util.HashMap<>(), 10, 10,
+                com.gempukku.swccgo.framework.StartingSetup.DefaultLSGroundLocation, com.gempukku.swccgo.framework.StartingSetup.DefaultDSGroundLocation,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSStartingInterrupts, com.gempukku.swccgo.framework.StartingSetup.NoDSStartingInterrupts,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSShields, com.gempukku.swccgo.framework.StartingSetup.NoDSShields,
+                com.gempukku.swccgo.framework.VirtualTableScenario.Open);
+        var text = scn.GetLSCard("c").getBlueprint().getGameText();
+        org.junit.Assert.assertEquals("Adds 3 to power of anything he pilots. While piloting a freighter at a battleground system, adds 1 to attrition against opponent here and their starships here may not 'cloak.' Opponent loses no more than 3 Force to your Force drains at same system.", text);
+        org.junit.Assert.assertNull(scn.GetLSCard("c").getBlueprint().getLegacyVersion());
+    }
 }

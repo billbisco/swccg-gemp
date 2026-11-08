@@ -176,4 +176,18 @@ public class Card_1261_010_Tests {
     private float immunity(VirtualTableScenario scn, PhysicalCardImpl card) {
         return scn.game().getModifiersQuerying().getImmunityToAttritionLessThan(scn.gameState(), card);
     }
+
+    @org.junit.Test
+    public void CurrentTextIsTheLatestVersion() {
+        // Virtual Cards Master List (PC-E1, 2013-04-27) is the latest text (clauses reordered; same play).
+        var scn = new com.gempukku.swccgo.framework.VirtualTableScenario(new java.util.HashMap<>(), new java.util.HashMap<>(java.util.Map.of("c", "1261_10")), 10, 10,
+                com.gempukku.swccgo.framework.StartingSetup.DefaultLSGroundLocation, com.gempukku.swccgo.framework.StartingSetup.DefaultDSGroundLocation,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSStartingInterrupts, com.gempukku.swccgo.framework.StartingSetup.NoDSStartingInterrupts,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSShields, com.gempukku.swccgo.framework.StartingSetup.NoDSShields,
+                com.gempukku.swccgo.framework.VirtualTableScenario.Open);
+        var text = scn.GetDSCard("c").getBlueprint().getGameText();
+        org.junit.Assert.assertEquals("[Pilot] 3. The Circle Is Now Complete is canceled. While present with [Reflections III] Obi-Wan or a Jedi Council Member, may add one battle destiny, lightsabers here may not be 'swung' twice, and their immunity to attrition is canceled. Immune to attrition < 5.", text);
+        org.junit.Assert.assertFalse(text.contains("and you may add one battle destiny"));
+        org.junit.Assert.assertNull(scn.GetDSCard("c").getBlueprint().getLegacyVersion());
+    }
 }

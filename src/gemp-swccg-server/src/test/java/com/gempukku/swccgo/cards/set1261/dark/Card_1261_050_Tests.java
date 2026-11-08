@@ -92,4 +92,18 @@ public class Card_1261_050_Tests {
         }
         return false;
     }
+
+    @org.junit.Test
+    public void CurrentTextIsTheLatestVersion() {
+        // PC card list (PC-E1) is the latest text ("redraw the destiny"; same play).
+        var scn = new com.gempukku.swccgo.framework.VirtualTableScenario(new java.util.HashMap<>(), new java.util.HashMap<>(java.util.Map.of("c", "1261_50")), 10, 10,
+                com.gempukku.swccgo.framework.StartingSetup.DefaultLSGroundLocation, com.gempukku.swccgo.framework.StartingSetup.DefaultDSGroundLocation,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSStartingInterrupts, com.gempukku.swccgo.framework.StartingSetup.NoDSStartingInterrupts,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSShields, com.gempukku.swccgo.framework.StartingSetup.NoDSShields,
+                com.gempukku.swccgo.framework.VirtualTableScenario.Open);
+        var text = scn.GetDSCard("c").getBlueprint().getGameText();
+        org.junit.Assert.assertEquals("USED: If you just drew a unique (•) Imperial starship for destiny, take that starship into hand to cancel and redraw the destiny. LOST: Use 3 Force to retrieve a unique (•) Imperial starship into hand.", text);
+        org.junit.Assert.assertFalse(text.contains("redraw that destiny"));
+        org.junit.Assert.assertNull(scn.GetDSCard("c").getBlueprint().getLegacyVersion());
+    }
 }

@@ -41,7 +41,7 @@ public class Card1261_033 extends AbstractNormalEffect {
         super(Side.DARK, 1, PlayCardZoneOption.ATTACHED, "Dark Waters & Krayt Dragon Bones", Uniqueness.UNIQUE,
                 ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
         addComboCardTitles(Title.Dark_Waters, Title.Krayt_Dragon_Bones);
-        setGameText("Deploy on Rancor Pit. During your battle phase, if you have no presence here, may relocate a captive from Audience Chamber to here. If opponent's character here was just eaten, retrieve 3 Force. If a creature here is lost, owner loses Force equal to half its printed deploy cost (round up). Once per turn, if a creature here is about to draw destiny for ferocity, may instead use its destiny number. May ▼ a non-[Selective] ferocious creature here. (Immune to Alter.)");
+        setGameText("Deploy on Rancor Pit. May deploy a non-[Selective] ferocious creature here. During your battle phase, if you have no presence here, may relocate a captive from Audience Chamber to here. If opponent's character here was just eaten, retrieve 3 Force. If a creature here is lost, owner loses Force equal to half its printed deploy cost (round up). Once per turn, if a creature here is about to draw destiny for ferocity, may instead use its destiny number. (Immune to Alter.)");
         addIcons(Icon.A_NEW_HOPE);
         addKeywords(Keyword.DEPLOYS_ON_LOCATION);
         addImmuneToCardTitle(Title.Alter);
@@ -53,13 +53,21 @@ public class Card1261_033 extends AbstractNormalEffect {
         return Filters.Rancor_Pit;
     }
 
+    /**
+     * PC card list (PC-E2): "May deploy a non-[Selective] ferocious creature here." Read literally: such a creature may
+     * deploy here from your hand (no Reserve Deck search). The 2010 errata (PC-E1, 2261_1033) said "May [download]".
+     */
+    protected boolean downloadsCreature() {
+        return false;
+    }
+
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, PhysicalCard self) {
-        // "May [download] a non-[Selective] ferocious creature here": here is part of the habitat of such a creature in
-        // its owner's Reserve Deck (so the download may target here) and of one on table (so the habitat rule does not
-        // lose it once here). A creature in hand gets no habitat change, so this clause gives no deploy from hand.
+        // Here is part of the habitat of such a creature in the zone it deploys from (your hand, or your Reserve Deck
+        // for the [download] text) and of one on table (so the habitat rule does not lose it once here).
+        Zone from = downloadsCreature() ? Zone.RESERVE_DECK : Zone.HAND;
         return List.of(new HabitatIncludesLocationModifier(self, Filters.and(NON_SELECTIVE_FEROCIOUS_CREATURE,
-                Filters.or(Filters.onTable, Filters.zoneOfPlayer(Zone.RESERVE_DECK, self.getOwner()))),
+                Filters.or(Filters.onTable, Filters.zoneOfPlayer(from, self.getOwner()))),
                 Filters.hasAttached(self)));
     }
 
@@ -99,7 +107,7 @@ public class Card1261_033 extends AbstractNormalEffect {
         }
 
         var deployId = GameTextActionId.LEGACY__DARK_WATERS_AND_KRAYT_DRAGON_BONES__DEPLOY_CREATURE;
-        if (GameConditions.canDeployCardFromReserveDeck(game, playerId, self, deployId)) {
+        if (downloadsCreature() && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, deployId)) {
             var action = new TopLevelGameTextAction(self, playerId, sourceId, deployId);
             action.setText("Deploy creature from Reserve Deck");
             action.setActionMsg("Deploy a non-[Selective] ferocious creature to " + GameUtils.getCardLink(pit) + " from Reserve Deck");

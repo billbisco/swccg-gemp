@@ -332,3 +332,5 @@
 2291_29,1291_29
 2291_29_BACK,1291_29_BACK
 2291_58,1291_58
+# Removed Legacy version ids (VB6, live since r16) -> their current cards, which now play that text (docs/legacy-versions.md)
+2261_1045,1261_45

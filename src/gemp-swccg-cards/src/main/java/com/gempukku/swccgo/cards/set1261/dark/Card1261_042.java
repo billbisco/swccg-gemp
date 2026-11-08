@@ -40,7 +40,7 @@ public class Card1261_042 extends AbstractUsedOrStartingInterrupt {
         super(Side.DARK, 4, "Lone Pilot", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("One lone TIE fighter, acting as a scout near the Death Star, suddenly encountered the Millennium Falcon.");
-        setGameText("USED: Activate 1 Force. STARTING: Take into hand from Reserve Deck Bossk, Dengar, DS-61-2, Guri, or Juno Eclipse (may also take into hand from Reserve Deck a system with exactly 1 [Dark Side Force], a matching starship, and an always [Immune to Alter] Effect). When drawing your starting hand, draw four cards instead of eight. Place Interrupt in Lost Pile.");
+        setGameText("USED: Activate 1 Force. STARTING: ▲ Bossk, Dengar, DS-61-2, Guri, or Juno Eclipse (may also ▲ a system with exactly 1 [Dark Side Force], a matching starship, and an always [Immune to Alter] Effect.) When drawing your starting hand, draw four cards instead of eight. Place this Interrupt in Lost Pile.");
     }
 
     @Override

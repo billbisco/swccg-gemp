@@ -10,6 +10,7 @@ import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
+import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
@@ -31,8 +32,13 @@ public class Card1250_065 extends AbstractLostInterrupt {
         super(Side.LIGHT, 3, Title.Ambush, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_5, Rarity.V);
         setVirtualSuffix(true);
         setLore("\"Well done. Hold them in the security tower, and keep it quiet. Move.\"");
-        setGameText("Use 1 Force to deploy up to two clones from Reserve Deck; reshuffle. OR If your clones occupy three related battlegrounds during your control phase, use 2 Force (free if at Coruscant) to retrieve any one card into hand. OR If your clone in battle, add one battle destiny.");
+        setGameText("Use 1 Force to deploy up to two clones from Reserve Deck; reshuffle. OR If your clones occupy three related battlegrounds during your control phase, use 2 Force (free if on Coruscant) to retrieve any one card into hand. OR If your clone in battle, add one battle destiny.");
         addIcons(Icon.CLOUD_CITY, Icon.EPISODE_I);
+    }
+
+    /** "free if on Coruscant" (PC card list): Coruscant sites. The original sheet said "at Coruscant". */
+    protected Filter freeRetrievalLocations() {
+        return Filters.Coruscant_site;
     }
 
     @Override
@@ -59,7 +65,7 @@ public class Card1250_065 extends AbstractLostInterrupt {
             List<PhysicalCard> occupied = new ArrayList<>(Filters.filterTopLocationsOnTable(game,
                     Filters.and(Filters.battleground, Filters.occupiesWith(playerId, self, Filters.clone))));
             List<PhysicalCard> coruscant = occupied.stream()
-                    .filter(location -> Filters.Coruscant_location.accepts(game.getGameState(), game.getModifiersQuerying(), location))
+                    .filter(location -> freeRetrievalLocations().accepts(game.getGameState(), game.getModifiersQuerying(), location))
                     .toList();
             boolean free = hasRelatedTriple(game, coruscant);
             int cost = free ? 0 : 2;

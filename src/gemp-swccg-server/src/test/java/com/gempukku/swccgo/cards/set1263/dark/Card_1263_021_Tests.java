@@ -133,4 +133,18 @@ public class Card_1263_021_Tests {
         scn.MoveCardsToDSHand(scn.GetDSCard("trooper"));scn.SkipToDSTurn(Phase.DEPLOY);scn.DSDeployCard(scn.GetDSCard("trooper"));
         assertFalse(scn.DSHasCardChoiceAvailable(scn.GetDSCard("walker")));assertTrue(scn.DSHasCardChoiceAvailable(scn.GetDSCard("other")));
     }
+
+    @org.junit.Test
+    public void CurrentTextIsTheLatestVersion() {
+        // PC card list (PC-E1) is the latest text ("cannot be used"; same play).
+        var scn = new com.gempukku.swccgo.framework.VirtualTableScenario(new java.util.HashMap<>(), new java.util.HashMap<>(java.util.Map.of("c", "1263_21")), 10, 10,
+                com.gempukku.swccgo.framework.StartingSetup.DefaultLSGroundLocation, com.gempukku.swccgo.framework.StartingSetup.DefaultDSGroundLocation,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSStartingInterrupts, com.gempukku.swccgo.framework.StartingSetup.NoDSStartingInterrupts,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSShields, com.gempukku.swccgo.framework.StartingSetup.NoDSShields,
+                com.gempukku.swccgo.framework.VirtualTableScenario.Open);
+        var text = scn.GetDSCard("c").getBlueprint().getGameText();
+        org.junit.Assert.assertEquals("Deploys -1 to same site as your MTT. AT-AT Cannon may deploy aboard, and targets it hits cannot be used to satisfy attrition. Unless alone, draws one battle destiny if not able to otherwise.", text);
+        org.junit.Assert.assertFalse(text.contains("may not be used"));
+        org.junit.Assert.assertNull(scn.GetDSCard("c").getBlueprint().getLegacyVersion());
+    }
 }

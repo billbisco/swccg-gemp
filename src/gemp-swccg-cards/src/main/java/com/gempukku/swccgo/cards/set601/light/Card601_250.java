@@ -39,7 +39,7 @@ import java.util.List;
 public class Card601_250 extends AbstractStarfighter {
     public Card601_250() {
         super(Side.LIGHT, 3, 2, 3, null, 4, 3, 5, "Overseer", Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
-        setGameText("May add Harc as a pilot. During battle, adds one destiny to total power. If a Dark Jedi or Sith was just deployed to a related site, may [download] a related location. Immune to attrition < 4 (or < 6 at Bespin).");
+        setGameText("May add Harc as a pilot. During battle, adds one destiny to total power. If opponent just deployed a Dark Jedi or Sith to a related site, may deploy a related location from Reserve Deck; reshuffle. Immune to attrition < 4 (< 6 while at Bespin).");
         addIcons(Icon.PREMIUM, Icon.INDEPENDENT, Icon.NAV_COMPUTER, Icon.SCOMP_LINK, Icon.LEGACY_BLOCK_6);
         addModelType(ModelType.Z_95_HEADHUNTER);
         setPilotCapacity(1);
@@ -57,7 +57,7 @@ public class Card601_250 extends AbstractStarfighter {
         GameTextActionId gameTextActionId = GameTextActionId.OVERSEER__DOWNLOAD_RELATED_LOCATION;
 
         // Check condition(s)
-        if (TriggerConditions.justDeployedTo(game, effectResult, Filters.or(Filters.Dark_Jedi, Filters.Sith), Filters.relatedSite(self))
+        if (TriggerConditions.justDeployedTo(game, effectResult, Filters.and(Filters.opponents(self), Filters.or(Filters.Dark_Jedi, Filters.Sith)), Filters.relatedSite(self))
                 && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, gameTextActionId, true, false)) {
 
             final OptionalGameTextTriggerAction action = new OptionalGameTextTriggerAction(self, gameTextSourceCardId);

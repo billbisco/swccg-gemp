@@ -19,6 +19,7 @@ import com.gempukku.swccgo.logic.effects.choose.ChooseStackedCardEffect;
 import com.gempukku.swccgo.logic.effects.choose.PlayStackedDefensiveShieldEffect;
 import com.gempukku.swccgo.logic.effects.choose.StackCardsFromOutsideDeckEffect;
 import com.gempukku.swccgo.logic.modifiers.CancelForceDrainBonusesFromCardModifier;
+import com.gempukku.swccgo.logic.modifiers.MayFireOnlyOncePerBattleModifier;
 import com.gempukku.swccgo.logic.timing.Effect;
 import com.gempukku.swccgo.logic.timing.EffectResult;
 
@@ -30,8 +31,13 @@ public class Card1261_035 extends AbstractStartingEffect {
     public Card1261_035() {
         super(Side.DARK, 5, "He's No Jedi", ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
         setLore("'He's no Jedi.'");
-        setGameText("Deploy on table with 5 cards from outside your deck face down under here. Twice per game, may play a Defensive Shield from here (as if from hand). If This Deal Is Getting Worse All The Time on table, for remainder of game lightsabers may not add to Force drains. Cloud City Occupation is canceled.");
+        setGameText("Deploy on table with 5 cards from outside your deck face down under here. Twice per game, may play a Defensive Shield from here (as if from hand). If This Deal Is Getting Worse All The Time on table, for remainder of game lightsabers may not add to Force Drains or 'swing' more than once per battle. Cloud City Occupation is canceled.");
         addIcons(Icon.JABBAS_PALACE);
+    }
+
+    /** PC card list (PC-E1): "or 'swing' more than once per battle". The 2009 sheet (2261_35) has no swing clause. */
+    protected boolean limitsLightsaberSwings() {
+        return true;
     }
 
     @Override
@@ -50,11 +56,15 @@ public class Card1261_035 extends AbstractStartingEffect {
                 var action = new RequiredGameTextTriggerAction(self, sourceId);
                 action.appendEffect(new SetForRemainderOfGameDataEffect(action, self, new ForRemainderOfGameData()));
                 // Lightsaber cards and characters whose permanent weapon is a lightsaber (a permanent
-                // weapon's Force drain bonus is tracked on the character card).
+                // weapon's Force drain bonus and firing limit are tracked on the character card).
                 Filter lightsabers = Filters.or(Filters.lightsaber, Filters.hasPermanentWeapon(Filters.lightsaber));
                 action.appendEffect(new AddUntilEndOfGameModifierEffect(action,
                         new CancelForceDrainBonusesFromCardModifier(self, lightsabers),
                         "Lightsabers may not add to Force drains for the remainder of the game"));
+                if (limitsLightsaberSwings())
+                    action.appendEffect(new AddUntilEndOfGameModifierEffect(action,
+                            new MayFireOnlyOncePerBattleModifier(self, lightsabers),
+                            "Lightsabers may not 'swing' more than once per battle for the remainder of the game"));
                 actions.add(action);
             }
             if (GameConditions.canTargetToCancel(game, self, Filters.Cloud_City_Occupation)) {

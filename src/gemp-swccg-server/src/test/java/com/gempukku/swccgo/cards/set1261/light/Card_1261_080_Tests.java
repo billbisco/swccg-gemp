@@ -39,8 +39,7 @@ public class Card_1261_080_Tests {
 
     @Test public void JabbaUsesFinalStartingEffectWithPrintedLore() {
         var scn = scenario(true, false); var b = scn.GetLSCard("jabba").getBlueprint();
-        assertEquals("Jabba, This Is Your Last Chance!", b.getTitle());
-        assertEquals("Deploy on table with 5 cards from outside your deck face down under here. Twice per game, may play a Defensive Shield from here (as if from hand). If Quiet Mining Colony or Independent Operation on table, lightsabers may not add to Force drains. Cloud City Celebration is canceled.", b.getGameText()); assertEquals(5, b.getDestiny(), scn.epsilon);
+        assertEquals("Jabba, This Is Your Last Chance!", b.getTitle()); assertEquals(5, b.getDestiny(), scn.epsilon);
         assertEquals("With a quick motion of his hand, Luke signaled Artoo and dramatically changed the situation.", b.getLore()); assertFalse(b.hasVirtualSuffix()); assertEquals(Uniqueness.UNIQUE, b.getUniqueness());
         assertEquals(Side.LIGHT, b.getSide()); assertEquals(Rarity.V, b.getRarity());
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_6_1, b.getExpansionSet()); assertEquals(CardSubtype.STARTING, b.getCardSubtype());
@@ -99,8 +98,10 @@ public class Card_1261_080_Tests {
         assertEquals(ordinary.GetLSCard("bespin"), ordinary.GetLSCard("celebration").getAttachedTo());
     }
 
+    private String jabbaId = "1261_80";
+
     private VirtualTableScenario saberScenario(boolean qmc) {
-        var light = new HashMap<String, String>(Map.of("jabba", "1261_80", "qmc", "109_4",
+        var light = new HashMap<String, String>(Map.of("jabba", jabbaId, "qmc", "109_4",
                 "luke", "9_24", "lukeSaber", "9_90"));
         var dark = new HashMap<String, String>(Map.of("vader", "1_168", "vaderSaber", "1110_8", "maul", "14_77"));
         var scn = new VirtualTableScenario(light, dark, 40, 40,
@@ -138,7 +139,7 @@ public class Card_1261_080_Tests {
         scn.MoveCardsToLocation(battle, luke, maul);
         scn.AttachCardsTo(luke, scn.GetLSCard("lukeSaber"));
         var modifiers = scn.game().getModifiersQuerying();
-        assertFalse(modifiers.mayFireOnlyOncePerBattle(scn.gameState(), scn.GetLSCard("lukeSaber")));
+        assertEquals(qmc && jabbaId.equals("1261_80"), modifiers.mayFireOnlyOncePerBattle(scn.gameState(), scn.GetLSCard("lukeSaber")));
         scn.DSActivateForceCheat(4);
         scn.DSStartBattleAndSkipToWeaponsSegment(battle);
         assertTrue(scn.IsBattleStarted());
@@ -152,12 +153,31 @@ public class Card_1261_080_Tests {
         return scn.GetDSAvailableActions().stream().anyMatch(x -> x.contains("Double-Bladed Lightsaber"));
     }
 
-    @Test public void JabbaAddsNoSwingLimitEvenWhileQuietMiningColonyOnTable() {
-        // Master List 2014 and card image: "lightsabers may not add to Force drains." (no "swing" clause).
-        assertTrue(maulCanSwingAgain(true));
+    @Test public void JabbaLimitsLightsabersToOneSwingWhileQuietMiningColonyOnTable() {
+        assertFalse(maulCanSwingAgain(true));
     }
 
     @Test public void LightsabersMaySwingTwiceWithoutQuietMiningColonyOrIndependentOperation() {
         assertTrue(maulCanSwingAgain(false));
+    }
+
+    @Test public void OriginalVersionAddsNoSwingLimitEvenWhileQuietMiningColonyOnTable() {
+        // 2261_80 (Virtual Block 6.1 sheet, Sep 2009): "lightsabers may not add to Force drains." (no swing clause).
+        jabbaId = "2261_80";
+        assertTrue(maulCanSwingAgain(true));
+        assertEquals(vaderDrainTotal(false) - 1, vaderDrainTotal(true));
+    }
+
+    @org.junit.Test
+    public void CurrentTextIsTheLatestVersion() {
+        // PC card list (PC-E1, by 2012-07-21) adds "or 'swing' more than once per battle"; it is the latest text (Bill option b).
+        var scn = new com.gempukku.swccgo.framework.VirtualTableScenario(new java.util.HashMap<>(java.util.Map.of("c", "1261_80")), new java.util.HashMap<>(), 10, 10,
+                com.gempukku.swccgo.framework.StartingSetup.DefaultLSGroundLocation, com.gempukku.swccgo.framework.StartingSetup.DefaultDSGroundLocation,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSStartingInterrupts, com.gempukku.swccgo.framework.StartingSetup.NoDSStartingInterrupts,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSShields, com.gempukku.swccgo.framework.StartingSetup.NoDSShields,
+                com.gempukku.swccgo.framework.VirtualTableScenario.Open);
+        var text = scn.GetLSCard("c").getBlueprint().getGameText();
+        org.junit.Assert.assertEquals("Deploy on table with 5 cards from outside your deck face down under here. Twice per game, may play a Defensive Shield from here (as if from hand). If Quiet Mining Colony or Independent Operation on table, lightsabers may not add to Force drains or 'swing' more than once per battle. Cloud City Celebration is canceled.", text);
+        org.junit.Assert.assertNull(scn.GetLSCard("c").getBlueprint().getLegacyVersion());
     }
 }

@@ -30,7 +30,7 @@ public class Card1263_006 extends AbstractAlien {
     public Card1263_006() {
         super(Side.DARK, 2, 2, 2, 2, 3, "Mercenary Shadow Pirate", Uniqueness.UNRESTRICTED, ExpansionSet.VIRTUAL_BLOCK_6_3, Rarity.V);
         setLore("ISB. Female.");
-        setGameText("Adds 2 to power of anything she pilots. Opponent may not add destiny draws to power or attrition here. Ice Storm and Sandwhirl are canceled at same and related locations.");
+        setGameText("Adds 2 to power of anything she pilots. Opponent may not add destiny draws to power or attrition here. Sandwhirl and Ice Storm are canceled at same and related locations.");
         addIcons(Icon.PILOT, Icon.WARRIOR, Icon.SPECIAL_EDITION, Icon.LEGACY_BLOCK_6);
         addKeywords(Keyword.ISB_AGENT, Keyword.FEMALE);
         setAsLegacy(true);

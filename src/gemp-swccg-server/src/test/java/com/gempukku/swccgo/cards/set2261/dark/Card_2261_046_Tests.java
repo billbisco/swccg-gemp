@@ -17,7 +17,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-/** Pre-errata One Beautiful Thing (Sep 2009 sheet) and its PC-E1 (2013 Master List) text, versions of 1261_46. */
+/** Pre-errata One Beautiful Thing (Sep 2009 sheet), a version of 1261_46 (PC-E1 is tested in Card_2261_1046_Tests). */
 public class Card_2261_046_Tests {
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>(Map.of()),
@@ -32,18 +32,8 @@ public class Card_2261_046_Tests {
         var scn = scenario();
         var bp = scn.GetDSCard("original").getBlueprint();
         assertLegacyVersion(bp, scn.GetDSCard("current").getBlueprint(), "1261_46", "",
-                LocalDate.of(2009, 9, 4), LocalDate.of(2013, 4, 27),
+                LocalDate.of(2009, 9, 4), LocalDate.of(2012, 7, 21),
                 "Lose 1 Force to ▲ (or retrieve) Black Leader. OR During battle where you have no Dark Jedi or droids and only two cards with ability there (a male and a female), add one destiny to total power (and attrition against you = 0).");
-        assertEquals(CardSubtype.USED, bp.getCardSubtype());
-    }
-
-    @Test
-    public void OneBeautifulThingPCE1Identity() {
-        var scn = scenario();
-        var bp = scn.GetDSCard("e1").getBlueprint();
-        assertLegacyVersion(bp, scn.GetDSCard("current").getBlueprint(), "1261_46", "PC-E1",
-                LocalDate.of(2013, 4, 27), null,
-                "Lose 1 Force to ▲ (or retrieve) Juno Eclipse. OR During battle where you have no Dark Jedi or droids and only two cards with ability there (a male and a female), add one destiny to total power (and attrition against you = 0).");
         assertEquals(CardSubtype.USED, bp.getCardSubtype());
     }
 

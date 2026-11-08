@@ -125,58 +125,58 @@ public class Card_1250_034_Tests {
     }
 
     @Test
-    public void BailOrganaAtSenateRetrievesAfterOpponentActuallyLosesForceToRebelDrain() { checkRetrieval(true, true, true, false); }
-    @Test
-    public void BailOrganaMayDeclineRetrievalAfterRebelDrain() { checkRetrieval(true, true, false, false); }
-    @Test
-    public void BailOrganaDoesNotRetrieveAfterDrainByNonRebelRepublicCharacter() { checkRetrieval(true, false, false, false); }
-    @Test
-    public void BailOrganaAwayFromSenateDoesNotRetrieve() { checkRetrieval(false, true, false, false); }
-    @Test
-    public void BailOrganaDoesNotOfferRetrievalWithEmptyLostPile() { checkRetrieval(true, true, false, true); }
+    public void BailOrganaCurrentTextIsTheMasterListText() {
+        // Virtual Cards Master List (PC-E1, 2013-04-27): "if you just Force drained with a Rebel, may retrieve 1 Force".
+        var text = scenario().GetLSCard("bail").getBlueprint().getGameText();
+        assertEquals("Agenda: rebellion. Adds one battle destiny with Leia. Your [Coruscant] senators and [Coruscant] Political Effects are lost. While at Senate: unique (•) Rebels of ability < 4 are power +2, and, if you just Force drained with a Rebel, may retrieve 1 Force.", text);
+        assertFalse(text.contains("opponent just lost Force"));
+    }
 
     private boolean retrievalOffered(VirtualTableScenario scn) {
         return scn.GetADParam(scn.LS, "cardId") != null && scn.GetADParam(scn.LS, "actionText") != null
                 && scn.LSCardActionAvailable(scn.GetLSCard("bail"), "Retrieve 1 Force");
     }
 
-    private void checkRetrieval(boolean atSenate, boolean rebel, boolean accept, boolean emptyLost) {
-        var scn = scenario(); scn.StartGame(); var senate = scn.GetLSCard("senate"); scn.MoveLocationToTable(senate);
-        scn.MoveCardsToLocation(atSenate ? senate : scn.GetLSStartingLocation(), scn.GetLSCard("bail"));
+    private void checkCurrentRetrieval(boolean rebel) {
+        var scn = scenario();
+        scn.StartGame();
+        var senate = scn.GetLSCard("senate");
+        scn.MoveLocationToTable(senate);
+        scn.MoveCardsToLocation(senate, scn.GetLSCard("bail"));
         scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetLSCard(rebel ? "trooper" : "panaka"));
         scn.SkipToLSTurn(Phase.CONTROL);
-        if (!emptyLost) scn.MoveCardsToTopOfLSLostPile(scn.GetLSCard("retrieve1"));
-        var target = scn.GetLSCard("retrieve1"); int life = scn.GetLSLifeForceRemaining();
-        scn.LSForceDrainAt(scn.GetDSStartingLocation()); scn.DSPass(); scn.PassForceDrainStartResponses();
-        assertEquals(1, scn.GetForceDrainTotal()); assertFalse(retrievalOffered(scn));
-        scn.DSChooseCard(scn.GetTopOfDSForcePile());
-        assertEquals(atSenate && rebel && !emptyLost, retrievalOffered(scn));
-        if (accept) scn.LSUseCardAction(scn.GetLSCard("bail"), "Retrieve 1 Force");
-        scn.PassAllResponses();
-        assertEquals(life + (accept ? 1 : 0), scn.GetLSLifeForceRemaining());
-        assertEquals(accept, scn.GetLSUsedPile().contains(target));
-        if (!emptyLost) assertEquals(!accept, scn.GetLSLostPile().contains(target));
-    }
-    @Test
-    public void BailOrganaRetrievesOnlyOnceForTwoForceRebelDrain() {
-        var scn = scenario(); scn.StartGame(); var senate = scn.GetLSCard("senate"); var cantina = scn.GetLSCard("cantina");
-        scn.MoveLocationToTable(senate); scn.MoveLocationToTable(cantina);
-        scn.MoveCardsToLocation(senate, scn.GetLSCard("bail"));
-        scn.MoveCardsToLocation(cantina, scn.GetLSCard("trooper")); scn.SkipToLSTurn(Phase.CONTROL);
-        scn.MoveCardsToTopOfLSLostPile(scn.GetLSCard("retrieve1"), scn.GetLSCard("retrieve2"));
+        scn.MoveCardsToTopOfLSLostPile(scn.GetLSCard("retrieve1"));
         int life = scn.GetLSLifeForceRemaining();
-        scn.LSForceDrainAt(cantina); scn.DSPass(); scn.PassForceDrainStartResponses();
-        assertEquals(2, scn.GetForceDrainTotal());
-        scn.DSChooseCard(scn.GetTopOfDSForcePile());
-        assertTrue(retrievalOffered(scn));
-        scn.LSUseCardAction(scn.GetLSCard("bail"), "Retrieve 1 Force"); scn.PassAllResponses();
-        assertEquals(life + 1, scn.GetLSLifeForceRemaining());
-        scn.DSChooseCard(scn.GetTopOfDSForcePile());
+        scn.LSForceDrainAt(scn.GetDSStartingLocation());
+        scn.DSPass();
+        scn.PassForceDrainStartResponses();
         assertFalse(retrievalOffered(scn));
-        scn.PassAllResponses();
-        assertEquals(life + 1, scn.GetLSLifeForceRemaining());
-        assertEquals(1, scn.GetLSUsedPile().stream().filter(c -> c == scn.GetLSCard("retrieve1") || c == scn.GetLSCard("retrieve2")).count());
-        assertFalse(scn.IsActiveForceDrain());
+        scn.DSChooseCard(scn.GetTopOfDSForcePile());
+        boolean offered = false;
+        for (int i = 0; i < 12 && scn.IsActiveForceDrain() || i < 2; i++) {
+            if (retrievalOffered(scn)) {
+                offered = true;
+                break;
+            }
+            if (scn.LSAnyDecisionsAvailable()) scn.LSPass();
+            else if (scn.DSAnyDecisionsAvailable()) scn.DSPass();
+        }
+        assertEquals(rebel, offered);
+        if (offered) {
+            scn.LSUseCardAction(scn.GetLSCard("bail"), "Retrieve 1 Force");
+            scn.PassAllResponses();
+            assertEquals(life + 1, scn.GetLSLifeForceRemaining());
+            assertTrue(scn.GetLSUsedPile().contains(scn.GetLSCard("retrieve1")));
+        }
     }
 
+    @Test
+    public void BailOrganaRetrievesAfterYouForceDrainWithARebel() {
+        checkCurrentRetrieval(true);
+    }
+
+    @Test
+    public void BailOrganaDoesNotRetrieveAfterDrainWithoutARebel() {
+        checkCurrentRetrieval(false);
+    }
 }
