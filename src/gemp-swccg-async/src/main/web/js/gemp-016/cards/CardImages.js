@@ -6630,5 +6630,6 @@ const fixedImages = {
 "2220_72_BACK":"https://res.starwarsccg.org/cards/legacy/VirtualBlock2-Dark/large/imperialcontrol.gif",
 "2220_111":"https://wiki.swccg.com/images/7/71/VB2-112-Advantage.png",
 "2220_128":"https://wiki.swccg.com/images/f/fa/VB2-128-Maneuvering_Flaps.png",
+"2220_136":"https://wiki.swccg.com/images/9/93/VB2-135-Wars_Not_Make_One_Great.png",
 
 };
