@@ -17,6 +17,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.gempukku.swccgo.cards.Vb89VersionAsserts.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -151,5 +152,12 @@ public class Card_1281_039_Tests {
         scn.LSChooseCard(rest);
         scn.PassAllResponses();
         assertEquals(force - leiaPrinted, scn.GetLSForcePileCount());
+    }
+
+    /** Virtual Block 8.1 sheet text (2012-05-11), the latest and only published version; GEMP showed a PC data-error wording. Same play. */
+    @Test
+    public void NarShaddaaScoundrelSRestCurrentCardIsTheLatestText() {
+        assertCurrentCard("1281_39", "Nar Shaddaa: Scoundrel's Rest",
+                "Light: Characters (except bounty hunters and scoundrels) are deploy +1 to Nar Shaddaa. Dark: If you occupy, opponent's game text here is canceled.");
     }
 }
