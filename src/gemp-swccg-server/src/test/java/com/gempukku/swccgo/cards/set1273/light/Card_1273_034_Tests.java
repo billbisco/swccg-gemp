@@ -123,4 +123,44 @@ public class Card_1273_034_Tests {
         // X = 1: only one option; Use The Force left hand, two cards were drawn
         assertEquals(hand - 1 + 2, scn.GetLSHandCount());
     }
+
+    @Test
+    public void UseTheForceShowsTheCardListPcE1Text() {
+        String t = com.gempukku.swccgo.framework.VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("1273_34").getGameText();
+        org.junit.Assert.assertEquals("Choose up to X of the following in any order, where X = the number of cards stacked on Communing: peek at the top card of any deck or pile: may then shuffle it. OR draw 2 cards from reserve deck. OR retrieve 1 force. OR activate X force. OR your next destiny draw is + X.", t);
+        org.junit.Assert.assertFalse(t.contains("this turn"));
+    }
+
+    /** Plays Use The Force (X = 1) for the destiny option, then has Light draw a destiny of 3 in a later turn; returns the total. */
+    public static float destinyDrawnNextTurn(VirtualTableScenario scn, String key, String option) {
+        var communing = scn.GetLSCard("communing");
+        var card = scn.GetLSCard(key);
+        scn.StartGame();
+        scn.MoveCardsToLSSideOfTable(communing);
+        scn.StackCardsOn(communing, scn.GetLSCard("stacked1"));
+        scn.MoveCardsToLSHand(card);
+        scn.SkipToLSTurn(Phase.CONTROL);
+        scn.LSUseCardAction(card, "Choose up to");
+        Vb81RestTestSupport.passUntil(scn, () -> scn.LSGetMultipleChoices() != null && scn.LSGetMultipleChoices().contains(option));
+        scn.LSChooseOption(option);
+        scn.PassAllResponses();
+        scn.SkipToDSTurn(Phase.CONTROL);
+        scn.PrepareLSDestiny(3);
+        final float[] total = new float[]{-1};
+        var source = scn.GetLSCard("lost");
+        scn.DSExecuteAdHocEffect(source, new com.gempukku.swccgo.logic.effects.DrawDestinyEffect(
+                new com.gempukku.swccgo.logic.actions.TopLevelGameTextAction(source, scn.DS, source.getCardId()), scn.LS) {
+            @Override
+            protected void destinyDraws(com.gempukku.swccgo.game.SwccgGame game, java.util.List<com.gempukku.swccgo.game.PhysicalCard> cards, java.util.List<Float> values, Float totalDestiny) {
+                total[0] = totalDestiny == null ? -1 : totalDestiny;
+            }
+        });
+        scn.PassAllResponses();
+        return total[0];
+    }
+
+    @Test
+    public void UseTheForceDestinyBonusIsNotLimitedToThisTurn() {
+        assertEquals(4f, destinyDrawnNextTurn(GetScenario(), "usetheforce", "Your next destiny draw is +X"), 0.01f);
+    }
 }
