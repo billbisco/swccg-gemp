@@ -102,9 +102,9 @@ public abstract class AbstractCreature extends AbstractDeployable {
     @Override
     protected final Filter getValidDeployTargetFilterForCardType(String playerId, final SwccgGame game, final PhysicalCard self, boolean isSimDeployAttached, boolean ignorePresenceOrForceIcons, DeploymentRestrictionsOption deploymentRestrictionsOption, DeployAsCaptiveOption deployAsCaptiveOption) {
         if (habitatIncludesAboardStarship())
-            return Filters.and(Filters.or(Filters.location, Filters.starship), Filters.or(getGameTextHabitatFilter(playerId, game, self), Filters.habitatIncludedByModifiers(self)));
+            return Filters.and(Filters.or(Filters.location, Filters.starship), getGameTextHabitatFilter(playerId, game, self));
         else
-            return Filters.and(Filters.location, Filters.or(getGameTextHabitatFilter(playerId, game, self), Filters.habitatIncludedByModifiers(self)));
+            return Filters.and(Filters.location, getGameTextHabitatFilter(playerId, game, self));
     }
 
     /**
@@ -118,7 +118,7 @@ public abstract class AbstractCreature extends AbstractDeployable {
      */
     @Override
     protected final Filter getValidMoveTargetFilterForCardType(String playerId, final SwccgGame game, final PhysicalCard self) {
-        return Filters.and(Filters.location, Filters.or(getGameTextHabitatFilter(playerId, game, self), Filters.habitatIncludedByModifiers(self)));
+        return Filters.and(Filters.location, getGameTextHabitatFilter(playerId, game, self));
     }
 
     /**
@@ -265,7 +265,7 @@ public abstract class AbstractCreature extends AbstractDeployable {
      */
     @Override
     public Filter getHabitatFilter(final SwccgGame game, final PhysicalCard self) {
-        return Filters.or(getGameTextHabitatFilter(self.getOwner(), game, self), Filters.habitatIncludedByModifiers(self));
+        return getGameTextHabitatFilter(self.getOwner(), game, self);
     }
 
     /**
