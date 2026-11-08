@@ -180,7 +180,7 @@ public class Card_1273_019_Tests {
     @Test
     public void SpiceMineOperationsShowsThePcE1Text() {
         String t = com.gempukku.swccgo.framework.VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("1273_19").getGameText();
-        org.junit.Assert.assertEquals("If your Kessel office on table, deploy on table. Program Trap is canceled. Cards stacked here are 'spice' cards. Once per turn, if you control Extraction Facility, may place a 'spice' card in owner's Lost Pile to draw up to 2 cards from Reserve Deck. Once during your turn, may: use 2 Force to stack a card from Lost Pile here, deploy a non-character card with \"Kessel\" in title from Reserve Deck; reshuffle, and/or 'mine' (opponent draws destiny; draw up to X destiny, where X = 1 plus number of Kessel locations you occupy; if any of the printed destiny numbers match, stack opponent's destiny or top card of your Lost Pile here).", t);
+        org.junit.Assert.assertEquals("If your [Virtual Block 7] Kessel office on table, deploy on table. Program Trap is canceled. Cards stacked here are 'spice' cards. Once per turn, if you control Extraction Facility, may place a 'spice' card in owner's Lost Pile to draw up to 2 cards from Reserve Deck. Once during your turn, may: use 2 Force to stack a card from Lost Pile here, deploy a non-character card with \"Kessel\" in title from Reserve Deck; reshuffle, and/or 'mine' (opponent draws destiny; draw up to X destiny, where X = 1 plus number of Kessel locations you occupy; if any of the printed destiny numbers match, stack opponent's destiny or top card of your Lost Pile here).", t);
         org.junit.Assert.assertFalse(t.contains("[Virtual Block 7] office"));
     }
 }

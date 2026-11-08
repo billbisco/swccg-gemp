@@ -1,6 +1,7 @@
 package com.gempukku.swccgo.cards.set2250.dark;
 
 import com.gempukku.swccgo.cards.set601.dark.Card601_080;
+import com.gempukku.swccgo.common.CardSubtype;
 import com.gempukku.swccgo.common.LegacyVersion;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.common.GameTextActionId;
@@ -29,13 +30,13 @@ import java.time.LocalDate;
  * Set: Virtual Block 5
  * Type: Interrupt
  * Title: Force Push (V)
- * Pre-errata version of 1250_26: the Virtual Block 5 release sheet text (Dec 2009), without "Once per game"
- * (added on the Virtual Cards Master List, 2013-04-27). Anything Goes only (docs/legacy-versions.md).
- * The sheet slip is headed "Out Of Play Interrupt"; GEMP has no such subtype, so it stays a Lost Interrupt like the
- * current card.
+ * Pre-errata version of 1250_26: the Virtual Block 5 release sheet text (Dec 2009), an Out Of Play Interrupt without
+ * "Once per game"; the Virtual Cards Master List (2013-04-27) made it a Lost Interrupt usable once per game.
+ * Anything Goes only (docs/legacy-versions.md).
  */
 public class Card2250_026 extends Card601_080 {
     public Card2250_026() {
+        setCardSubtype(CardSubtype.OUT_OF_PLAY);
         setGameText("During battle, use 2 Force to target your Dark Jedi and opponent's character of equal or lesser ability present. Both targets are excluded from battle. OR Exchange two cards from hand with any one card from Force Pile; reshuffle.");
         setLegacyVersion(new LegacyVersion("1250_26", "",
                 "Virtual Block 5 release sheet (2009-12-07), card #26", LocalDate.of(2009, 12, 7), LocalDate.of(2013, 4, 27)));

@@ -13,7 +13,7 @@ import java.util.HashMap;
 import static com.gempukku.swccgo.framework.Assertions.*;
 import static org.junit.Assert.*;
 
-/** Wookiee Strangle: original (pre-errata) version of 1220_160. */
+/** Wookiee Strangle: original (pre-errata) version of 1220_160 (Out Of Play Interrupt, no once-per-game limit). */
 public class Card_2220_160_Tests {
     protected VirtualTableScenario GetScenario() {
         return new VirtualTableScenario(
@@ -75,7 +75,7 @@ public class Card_2220_160_Tests {
         if (scn.LSHasCardChoiceAvailable(chewie))
             scn.LSChooseCard(chewie);
         for (int i = 0; i < 24; i++) {
-            if ((strangle.getZone() == Zone.LOST_PILE || strangle.getZone() == Zone.TOP_OF_LOST_PILE)
+            if (strangle.getZone() == Zone.OUT_OF_PLAY
                     && (target.getZone() == Zone.LOST_PILE || target.getZone() == Zone.TOP_OF_LOST_PILE))
                 break;
             if (scn.LSHasCardChoiceAvailable(target)) {
@@ -89,6 +89,15 @@ public class Card_2220_160_Tests {
             scn.PassAllResponses();
         }
         assertInZone(Zone.LOST_PILE, target);
+        assertInZone(Zone.OUT_OF_PLAY, strangle); // Out Of Play Interrupt
+    }
+
+    @Test
+    public void IsAnOutOfPlayInterrupt() {
+        var scn = GetScenario();
+        //test1: the sheet slip prints an Out Of Play Interrupt; the current card is a Lost Interrupt
+        assertEquals(CardSubtype.OUT_OF_PLAY, scn.GetLSCard("version").getBlueprint().getCardSubtype()); //test1
+        assertEquals(CardSubtype.LOST, scn.GetLSCard("current").getBlueprint().getCardSubtype());
     }
 
     @Test

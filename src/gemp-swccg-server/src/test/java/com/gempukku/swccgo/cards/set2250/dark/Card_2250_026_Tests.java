@@ -1,6 +1,8 @@
 package com.gempukku.swccgo.cards.set2250.dark;
 
+import com.gempukku.swccgo.common.CardSubtype;
 import com.gempukku.swccgo.common.Phase;
+import com.gempukku.swccgo.common.Zone;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import org.junit.Test;
@@ -10,10 +12,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.gempukku.swccgo.cards.LegacyVersionAssertions.assertLegacyVersion;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-/** Pre-errata Force Push (V) (Dec 2009 sheet), a version of 1250_26: no once-per-game limit. */
+/** Pre-errata Force Push (V) (Dec 2009 sheet), a version of 1250_26: Out Of Play Interrupt, no once-per-game limit. */
 public class Card_2250_026_Tests {
     private VirtualTableScenario scenario(String first, String second) {
         return new VirtualTableScenario(new HashMap<>(Map.of()),
@@ -63,6 +66,36 @@ public class Card_2250_026_Tests {
         scn.EnsureDSForcePile(5);
         assertTrue(scn.AwaitingDSDeployPhaseActions());
         return scn.DSActionAvailable("Exchange cards with card in Force Pile");
+    }
+
+    @Test
+    public void ForcePushOriginalIsAnOutOfPlayInterrupt() {
+        var scn = scenario("2250_26", "2250_26");
+        var one = scn.GetDSCard("first");
+        //test1: Out Of Play Interrupt (sheet slip); the current card is a Lost Interrupt
+        //test2: placed out of play after use
+        assertEquals(CardSubtype.OUT_OF_PLAY, one.getBlueprint().getCardSubtype()); //test1
+        assertEquals(CardSubtype.LOST, scn.GetDSCard("current").getBlueprint().getCardSubtype());
+        scn.StartGame();
+        scn.MoveCardsToDSHand(one, scn.GetDSCard("a"), scn.GetDSCard("b"));
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.EnsureDSForcePile(5);
+        assertTrue(scn.DSCardPlayAvailable(one, "Exchange"));
+        scn.DSPlayCard(one, "Exchange");
+        scn.PassAllResponses();
+        for (int i = 0; i < 10 && one.getZone() != Zone.OUT_OF_PLAY; i++) {
+            if (scn.DSAnyDecisionsAvailable() && scn.DSHasCardChoiceAvailable(scn.GetDSCard("a")))
+                scn.DSChooseCard(scn.GetDSCard("a"));
+            else if (scn.DSAnyDecisionsAvailable() && scn.DSHasCardChoiceAvailable(scn.GetDSCard("b")))
+                scn.DSChooseCard(scn.GetDSCard("b"));
+            else if (scn.DSAnyDecisionsAvailable() && !scn.DSGetCardChoices().isEmpty())
+                scn.DSChoose(new String[]{scn.DSGetCardChoices().getFirst()});
+            else if (scn.LSAnyDecisionsAvailable())
+                scn.LSPass();
+            else
+                scn.PassAllResponses();
+        }
+        assertEquals(Zone.OUT_OF_PLAY, one.getZone()); //test2
     }
 
     @Test

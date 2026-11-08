@@ -44,7 +44,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-/** Original Spice Mine Operations (Virtual Block 7.3 sheet, 2011-06-03), a version of 1273_19: deploys if your [Virtual Block 7] office on table; replaced by PC-E1 (by 2012-07-21: "your Kessel office"). Anything Goes only (docs/legacy-versions.md). */
+/** Original Spice Mine Operations (Virtual Block 7.3 sheet, 2011-06-03), a version of 1273_19: deploys if your [Virtual Block 7] office on table; replaced by PC-E1 (by 2012-07-21: "your [Virtual Block 7] Kessel office"). Anything Goes only (docs/legacy-versions.md). */
 public class Card2273_019 extends AbstractMission {
     static final Filter EXTRACTION_FACILITY = Filters.and(Filters.site, Filters.titleContains("Extraction Facility"));
     static final Filter KESSEL_LOCATION = Filters.or(Filters.Kessel_system, Filters.partOfSystem(Title.Kessel));

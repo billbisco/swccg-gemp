@@ -48,10 +48,11 @@ import java.util.List;
  * Type: Mission
  * Title: In The Hands Of The ISB
  * Pre-errata version of 1271_27 (Virtual Block 7.1 release sheet text, Jun 2010), replaced by the Virtual Cards Master List text (Ice-Heart renamed Ysanne Isard). Anything Goes only (docs/legacy-versions.md).
+ * Printed as a Critical Mission (sheet slip); AR 2.0 Appendix A errata made the card a normal Mission (the current card).
  */
 public class Card2271_027 extends AbstractMission {
     public Card2271_027() {
-        super(Side.DARK, 2, PlayCardZoneOption.ATTACHED, "In The Hands Of The ISB", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_1, Rarity.V, false);
+        super(Side.DARK, 2, PlayCardZoneOption.ATTACHED, "In The Hands Of The ISB", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_1, Rarity.V, true);
         setGameText("Deploy on ISB Central Office. This site is a prison (if opponent controls, all captives here are released). Total ability of 6 or more required for opponent to draw battle destiny here. Whenever an ISB agent delivers a captive here, opponent loses 4 Force (once per captive per captivity). ISB agents may escort captives and, if escorting a captive during your move phase, may use 1 Force to relocate escort and captive to a related docking bay (as a regular move). Once during your move phase, may use 2 Force to relocate (as a regular move) an ISB agent present with Ice-Heart here to a site you control.");
         setLegacyVersion(new LegacyVersion("1271_27", "",
                 "Virtual Block 7.1 release sheet (2010-06-18)", LocalDate.of(2010, 6, 18), LocalDate.of(2013, 4, 27)));

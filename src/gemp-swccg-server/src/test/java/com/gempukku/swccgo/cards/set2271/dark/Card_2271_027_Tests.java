@@ -1,6 +1,7 @@
 package com.gempukku.swccgo.cards.set2271.dark;
 
 import com.gempukku.swccgo.cards.legacy.MissionTestSupport;
+import com.gempukku.swccgo.common.CardSubtype;
 import com.gempukku.swccgo.common.Keyword;
 import com.gempukku.swccgo.common.Phase;
 import com.gempukku.swccgo.framework.StartingSetup;
@@ -17,7 +18,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-/** Original In The Hands Of The ISB (Jun 2010 slip: "with Ice-Heart"), a version of 1271_27. */
+/** Original In The Hands Of The ISB (Jun 2010 slip: Critical Mission, "with Ice-Heart"), a version of 1271_27. */
 public class Card_2271_027_Tests {
     private static final String RELOCATE = "Relocate ISB agent to a site you control";
 
@@ -40,7 +41,10 @@ public class Card_2271_027_Tests {
         var s = scenario();
         assertVersion(s.GetDSCard("isb").getBlueprint(), s.GetDSCard("current").getBlueprint(), "1271_27", "",
                 LocalDate.of(2010, 6, 18), LocalDate.of(2013, 4, 27),
-                "Deploy on ISB Central Office. This site is a prison (if opponent controls, all captives here are released). Total ability of 6 or more required for opponent to draw battle destiny here. Whenever an ISB agent delivers a captive here, opponent loses 4 Force (once per captive per captivity). ISB agents may escort captives and, if escorting a captive during your move phase, may use 1 Force to relocate escort and captive to a related docking bay (as a regular move). Once during your move phase, may use 2 Force to relocate (as a regular move) an ISB agent present with Ice-Heart here to a site you control.");
+                "Deploy on ISB Central Office. This site is a prison (if opponent controls, all captives here are released). Total ability of 6 or more required for opponent to draw battle destiny here. Whenever an ISB agent delivers a captive here, opponent loses 4 Force (once per captive per captivity). ISB agents may escort captives and, if escorting a captive during your move phase, may use 1 Force to relocate escort and captive to a related docking bay (as a regular move). Once during your move phase, may use 2 Force to relocate (as a regular move) an ISB agent present with Ice-Heart here to a site you control.",
+                CardSubtype.CRITICAL);
+        // printed as a Critical Mission; AR 2.0 Appendix A errata: the current card is a normal Mission
+        assertEquals(CardSubtype.NORMAL, s.GetDSCard("current").getBlueprint().getCardSubtype());
     }
 
     @Test
