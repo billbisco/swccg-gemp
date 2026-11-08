@@ -58,6 +58,7 @@ public abstract class AbstractSwccgCardBlueprint implements SwccgCardBlueprint {
     private int _startingEffectCapacityReduction;
     private boolean _isLegacy;
     private LegacyVersion _legacyVersion;
+    private String _printedTitle;
     private boolean _excludeFromDeckBuilder;
     private boolean _isHorizontal;
     private ExpansionSet _expansionSet;
@@ -3031,6 +3032,23 @@ public abstract class AbstractSwccgCardBlueprint implements SwccgCardBlueprint {
      */
     protected void setLegacyVersion(LegacyVersion version) {
         _legacyVersion = version;
+    }
+
+    @Override
+    public String getPrintedTitle() {
+        return _printedTitle;
+    }
+
+    /**
+     * Sets the title printed on a pre-errata Legacy version that was printed under an older name. Display only:
+     * {@link #getTitle()} stays the current card's title, so uniqueness, persona and "title" rules are unchanged.
+     * Call it after {@link #setLegacyVersion(LegacyVersion)} (docs/legacy-versions.md, "Printed title").
+     * @param printedTitle the title as printed, without uniqueness dots (e.g. "Cyborg Commander, Hunter Of Jedi")
+     */
+    protected void setPrintedTitle(String printedTitle) {
+        if (_legacyVersion == null)
+            throw new IllegalStateException("A printed title is only for pre-errata Legacy versions; call setLegacyVersion first");
+        _printedTitle = (printedTitle == null || printedTitle.isEmpty() || printedTitle.equals(getTitle())) ? null : printedTitle;
     }
 
     @Override

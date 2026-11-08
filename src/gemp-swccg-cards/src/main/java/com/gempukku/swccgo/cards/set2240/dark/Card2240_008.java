@@ -19,5 +19,6 @@ public class Card2240_008 extends Card601_081 {
         setGameText("Galen's forfeit may not be reduced. Power and defense value +2 while with Fallen Jedi. If defending a battle alone (or defending with Black Leader), may be targeted by Force Lightning. Immune to Clash Of Sabers and attrition < 4.");
         setLegacyVersion(new LegacyVersion("1240_8", "",
                 "Virtual Block 4 release sheet (2009-12-07), card #4 (printed as Galen, Secret Apprentice)", LocalDate.of(2009, 12, 7), LocalDate.of(2013, 4, 27)));
+        setPrintedTitle("Galen, Secret Apprentice (V)");
     }
 }

@@ -46,6 +46,7 @@ public class Card2274_004 extends AbstractLocationDevice {
         setGameText("Deploy on a cloud sector (limit one per sector). Your Force generation is +1 at cloud sectors you occupy. Once during your control phase, if you occupy this sector, may draw destiny. If destiny > 2, retrieve 1 Force. If lost from table, place this Device in Used Pile.");
         setLegacyVersion(new LegacyVersion("1274_4", "",
                 "Virtual Block 7.4 release sheet (2011-12-16)", LocalDate.of(2011, 12, 16), LocalDate.of(2013, 4, 27)));
+        setPrintedTitle("Floating Refinery (V)");
     }
 
     @Override

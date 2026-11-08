@@ -22,7 +22,12 @@ public class GameUtils {
      * @return the card title
      */
     public static String getFullName(PhysicalCard card) {
-        return card.getTitle() + getTitleSuffix(card.getBlueprint());     
+        SwccgCardBlueprint blueprint = card.getBlueprint();
+        String title = card.getTitle();
+        // Pre-errata Legacy version printed under an older name: show that name (display only, docs/legacy-versions.md)
+        if (blueprint.getPrintedTitle() != null && title != null && title.equals(blueprint.getTitle()))
+            title = blueprint.getPrintedTitle();
+        return title + getTitleSuffix(blueprint);
     }
 
     /**
@@ -31,7 +36,28 @@ public class GameUtils {
      * @return the card title
      */
     public static String getFullName(SwccgCardBlueprint blueprint) {
+        return getDisplayTitle(blueprint) + getTitleSuffix(blueprint);
+    }
+
+    /**
+     * Gets the full name of the card by its rules title ({@link SwccgCardBlueprint#getTitle()}), ignoring a printed
+     * title of a pre-errata Legacy version, e.g. "Grievous, Hunter Of Jedi" for the version printed as
+     * "Cyborg Commander, Hunter Of Jedi". Use it to look a card up by its current name.
+     * @param blueprint the card blueprint
+     * @return the full name by the rules title
+     */
+    public static String getRulesFullName(SwccgCardBlueprint blueprint) {
         return blueprint.getTitle() + getTitleSuffix(blueprint);
+    }
+
+    /**
+     * Gets the title to show for the card: its printed title when it is a pre-errata Legacy version printed under an
+     * older name, otherwise its title. Display only; rules use {@link SwccgCardBlueprint#getTitle()}.
+     * @param blueprint the card blueprint
+     * @return the title to display
+     */
+    public static String getDisplayTitle(SwccgCardBlueprint blueprint) {
+        return blueprint.getPrintedTitle() != null ? blueprint.getPrintedTitle() : blueprint.getTitle();
     }
 
     /**
@@ -180,7 +206,10 @@ public class GameUtils {
     public static String getCardLink(String blueprintId, SwccgCardBlueprint blueprint, SwccgCardBlueprint otherSideBlueprint) {
         String testingText = blueprint.getTestingText();
 
-        String fullTitle = blueprint.getTitleComponents().stream()
+        // Pre-errata Legacy version printed under an older name: link shows that name (display only)
+        String fullTitle = blueprint.getPrintedTitle() != null
+                ? (blueprint.getUniqueness() != null ? blueprint.getUniqueness().getHumanReadable() : "") + blueprint.getPrintedTitle()
+                : blueprint.getTitleComponents().stream()
                 .map(component -> component.uniqueness().getHumanReadable() + component.name())
                 .collect(java.util.stream.Collectors.joining(" & "));
         fullTitle += getTitleSuffix(blueprint);
