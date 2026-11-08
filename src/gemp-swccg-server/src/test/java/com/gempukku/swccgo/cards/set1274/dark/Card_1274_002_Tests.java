@@ -208,7 +208,7 @@ public class Card_1274_002_Tests {
     @Test
     public void OOMCommandBattleDroidShowsTheLatestText() {
         String t = com.gempukku.swccgo.framework.VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("1274_2").getGameText();
-        org.junit.Assert.assertEquals("[Pilot]2: any vehicle. While piloting a [Theed Palace] vehicle at a battleground site: adds 1 [Dark Side] here and may add 1 to your Force drains here. Once per game, may take into hand any a card with 'fire' in title from reserve deck; reshuffle.", t);
+        org.junit.Assert.assertEquals("[Pilot] 2: any vehicle. While piloting a [Theed Palace] vehicle at a battleground site, adds one [Dark Side] and may add 1 to your Force drains here. Once per game, may [upload] a card with 'fire' in title.", t);
         org.junit.Assert.assertFalse(t.contains("adds one [Dark Side]"));
     }
 }

@@ -6693,7 +6693,7 @@ const fixedImages = {
 "2273_1027":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/masterkenobi.gif",
 "2273_1033":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/communing.gif",
 "2273_1041":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/coruscant.gif",
-"2274_2":"https://wiki.swccg.com/images/f/ff/VB7-03-OOM_Command_Battle_Droid.png",
+"2274_2":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Dark/large/oomcommandbattledroid.gif",
 "2274_3":"https://wiki.swccg.com/images/9/9b/VB7-05-Baktoid_Armor_Workshop.png",
 "2274_5":"https://wiki.swccg.com/images/3/36/VB7-p2-133-Desperate_Counter.png",
 "2274_7":"https://wiki.swccg.com/images/b/b2/VB7-04-Occupied_Territory.png",
