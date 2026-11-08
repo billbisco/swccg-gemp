@@ -6625,5 +6625,8 @@ const fixedImages = {
 "2250_34":"https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/bailorgana.gif",
 "2261_10":"https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/darthvaderbetrayerofthejedi.gif",
 "2261_34":"https://wiki.swccg.com/images/b/b9/VB6-34-Fleet_Security_Protocols.png",
+"2261_42":"https://wiki.swccg.com/images/c/c2/VB6-45-Lone_Pilot.png",
+"2261_1042":"https://wiki.swccg.com/images/c/c2/VB6-45-Lone_Pilot.png",
+"2261_2042":"https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/lonepilot.gif",
 
 };
