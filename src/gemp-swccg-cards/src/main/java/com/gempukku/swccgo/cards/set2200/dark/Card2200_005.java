@@ -5,9 +5,9 @@ import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.conditions.OccupiesCondition;
 import com.gempukku.swccgo.cards.effects.usage.OncePerGameEffect;
 import com.gempukku.swccgo.common.ExpansionSet;
-import com.gempukku.swccgo.common.LegacyVersion;
 import com.gempukku.swccgo.common.GameTextActionId;
 import com.gempukku.swccgo.common.Icon;
+import com.gempukku.swccgo.common.LegacyVersion;
 import com.gempukku.swccgo.common.PlayCardZoneOption;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
@@ -34,18 +34,18 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Set: Virtual Shields
+ * Set: Block D
  * Type: Defensive Shield
  * Title: Fanfare (V)
- * Original version of 1200_5 (Virtual Shields sheet, May 2013): without the later Lost In The Wilderness clause. Anything Goes only (docs/legacy-versions.md).
+ * Original version of 1200_5 (v3: the text GEMP played, by 2012-07-21; no published PC source found): adds "'Missing' on Lost In The Wilderness is treated as 'landspeed = 0 for remainder of turn'." The Virtual Shields sheet (May 2013) has no such clause. Anything Goes only (docs/legacy-versions.md).
  */
 public class Card2200_005 extends AbstractDefensiveShield {
     public Card2200_005() {
         super(Side.DARK, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Fanfare", ExpansionSet.LEGACY, Rarity.V);
         setVirtualSuffix(true);
         setLore("The Boonta Eve crowds are always looking for new and exciting developments at every Podrace.");
-        setGameText("Plays on table. Cancels Order To Engage and Scramble. Once per game, you may [upload] an Immediate Effect. While opponent occupies no battleground systems, Staging Areas is suspended.");
-        setLegacyVersion(new LegacyVersion("1200_5", "", "Virtual Shields sheet (2013-05-21)", LocalDate.of(2013, 5, 21), LocalDate.of(2014, 2, 4)));
+        setGameText("Plays on table. Cancels Order To Engage and Scramble. Once per game, may [upload] an Immediate Effect. While opponent occupies no battleground systems, Staging Areas is suspended. 'Missing' on Lost In The Wilderness is treated as 'landspeed = 0 for remainder of turn'.");
+        setLegacyVersion(new LegacyVersion("1200_5", "", "GEMP card text (by 2012-07-21; no published PC source found)", LocalDate.of(2012, 7, 21), LocalDate.of(2013, 5, 21)));
         addIcons(Icon.REFLECTIONS_III, Icon.LEGACY_BLOCK_D);
         setAsLegacy(true);
     }
@@ -116,6 +116,7 @@ public class Card2200_005 extends AbstractDefensiveShield {
 
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new SuspendsCardModifier(self, Filters.Staging_Areas, new NotCondition(new OccupiesCondition(opponent, Filters.battleground_system))));
+        modifiers.add(new ModifyGameTextModifier(self, Filters.Lost_In_The_Wilderness, ModifyGameTextType.LOST_IN_THE_WILDERNESS__MISSING_TREATED_AS_LANDSPEED_0));
         return modifiers;
     }
 }

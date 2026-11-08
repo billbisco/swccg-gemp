@@ -12,7 +12,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-/** Original Fanfare (V) (Virtual Shields sheet, May 2013), a version of 1200_5. */
+/** Original Fanfare (V) (the text GEMP played, by 2012-07-21, with the Lost In The Wilderness clause), a version of 1200_5; the current card is the Virtual Shields sheet text (May 2013). */
 public class Card_2200_005_Tests {
     protected VirtualTableScenario GetScenario() {
         return new VirtualTableScenario(
@@ -41,14 +41,14 @@ public class Card_2200_005_Tests {
 
         assertEquals("Fanfare", card.getTitle());
         assertTrue(card.isLegacy());
-        assertEquals("Plays on table. Cancels Order To Engage and Scramble. Once per game, you may [upload] an Immediate Effect. While opponent occupies no battleground systems, Staging Areas is suspended.",
+        assertEquals("Plays on table. Cancels Order To Engage and Scramble. Once per game, may [upload] an Immediate Effect. While opponent occupies no battleground systems, Staging Areas is suspended. 'Missing' on Lost In The Wilderness is treated as 'landspeed = 0 for remainder of turn'.",
                 card.getGameText());
         var version = card.getLegacyVersion();
         org.junit.Assert.assertNotNull(version);
         assertEquals("1200_5", version.currentPrintingId());
         assertEquals("", version.label());
-        assertEquals(java.time.LocalDate.of(2013, 5, 21), version.printedOn());
-        assertEquals(java.time.LocalDate.of(2014, 2, 4), version.supersededOn());
+        assertEquals(java.time.LocalDate.of(2012, 7, 21), version.printedOn());
+        assertEquals(java.time.LocalDate.of(2013, 5, 21), version.supersededOn());
         assertEquals("Fanfare (V)", com.gempukku.swccgo.logic.GameUtils.getFullName(card));
     }
 
@@ -58,20 +58,26 @@ public class Card_2200_005_Tests {
     }
 
     @Test
-    public void OriginalFanfareHasNoLostInTheWildernessClause() {
-        var scn = GetScenario();
-        scn.StartGame();
-        scn.MoveCardsToLSHand(scn.GetLSCard("litw"));
-        scn.MoveCardsToDSSideOfTable(scn.GetDSCard("fanfare"));
-        assertFalse(missingTreatedAsLandspeedZero(scn));
+    public void CurrentFanfareIsTheVirtualShieldsSheetText() {
+        com.gempukku.swccgo.cards.Vb89VersionAsserts.assertCurrentCard("1200_5", "Fanfare",
+                "Plays on table. Cancels Order To Engage and Scramble. Once per game, you may [upload] an Immediate Effect. While opponent occupies no battleground systems, Staging Areas is suspended.");
     }
 
     @Test
-    public void CurrentFanfareTreatsMissingOnLostInTheWildernessAsLandspeedZero() {
+    public void CurrentFanfareHasNoLostInTheWildernessClause() {
         var scn = GetScenario();
         scn.StartGame();
         scn.MoveCardsToLSHand(scn.GetLSCard("litw"));
         scn.MoveCardsToDSSideOfTable(scn.GetDSCard("current"));
+        assertFalse(missingTreatedAsLandspeedZero(scn));
+    }
+
+    @Test
+    public void OriginalFanfareTreatsMissingOnLostInTheWildernessAsLandspeedZero() {
+        var scn = GetScenario();
+        scn.StartGame();
+        scn.MoveCardsToLSHand(scn.GetLSCard("litw"));
+        scn.MoveCardsToDSSideOfTable(scn.GetDSCard("fanfare"));
         assertTrue(missingTreatedAsLandspeedZero(scn));
     }
 
