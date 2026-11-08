@@ -267,4 +267,46 @@ public class Card_1250_065_Tests {
         var s = battle(false); assertFalse(mode(s, DESTINY));
         assertEquals(1, s.GetLSBattleDestinyCount());
     }
+
+    private VirtualTableScenario coruscantSystemRetrieval(String ambushId, int force) {
+        var s = new VirtualTableScenario(new HashMap<>() {{
+            put("ambush", ambushId); put("clone1", "1116_8"); put("clone2", "1116_9"); put("clone3", "200_6");
+            put("dock", "12_74"); put("club", "1116_30"); put("coruscant", "12_73"); put("cruiser", "12_93");
+            put("older", "1_60"); put("newer", "1_5");
+        }}, new HashMap<>() {{
+            put("trooper", "1_194");
+        }}, 30, 30, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
+        s.StartGame(); s.MoveCardsToHand(s.GetLSCard("ambush"));
+        for (String location : List.of("coruscant", "dock", "club")) s.MoveLocationToTable(s.GetLSCard(location));
+        s.MoveCardsToLocation(s.GetLSCard("dock"), s.GetLSCard("clone2"));
+        s.MoveCardsToLocation(s.GetLSCard("club"), s.GetLSCard("clone3"));
+        s.MoveCardsToLocation(s.GetLSCard("coruscant"), s.GetLSCard("cruiser"));
+        s.BoardAsPilot(s.GetLSCard("cruiser"), s.GetLSCard("clone1"));
+        s.MoveCardsToTopOfLSLostPile(s.GetLSCard("older"), s.GetLSCard("newer"));
+        reachPhaseWithForce(s, false, Phase.CONTROL, force, () -> {});
+        return s;
+    }
+
+    @Test
+    public void AmbushCurrentTextIsThePCCardListText() {
+        var text = scenario().GetLSCard("ambush").getBlueprint().getGameText();
+        assertEquals("Use 1 Force to deploy up to two clones from Reserve Deck; reshuffle. OR If your clones occupy three related battlegrounds during your control phase, use 2 Force (free if on Coruscant) to retrieve any one card into hand. OR If your clone in battle, add one battle destiny.", text);
+        assertFalse(text.contains("free if at Coruscant"));
+    }
+
+    @Test
+    public void AmbushRetrievalWithTheCoruscantSystemAmongTheBattlegroundsIsNotFree() {
+        // PC card list (PC-E1): "free if on Coruscant" = Coruscant sites; a clone aboard a starship at the Coruscant
+        // system occupies a related battleground but is not on Coruscant, so the retrieval costs 2 Force.
+        assertTrue(mode(coruscantSystemRetrieval("1250_65", 2), RETRIEVE));
+        assertFalse(mode(coruscantSystemRetrieval("1250_65", 0), RETRIEVE));
+    }
+
+    @Test
+    public void AmbushOriginalVersionRetrievalIsFreeAtCoruscantIncludingItsSystem() {
+        // 2250_65 (Virtual Block 5 sheet): "free if at Coruscant" counts the Coruscant system too.
+        assertTrue(mode(coruscantSystemRetrieval("2250_65", 0), RETRIEVE));
+    }
 }
