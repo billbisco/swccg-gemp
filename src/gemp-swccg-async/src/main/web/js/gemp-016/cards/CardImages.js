@@ -6630,5 +6630,7 @@ const fixedImages = {
 "2283_12":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Dark/large/spaceportdockingbay.gif",
 "2283_21":"https://wiki.swccg.com/images/0/09/VB8-02-Underworld_Contacts_Uncharted_Settlements.png",
 "2291_19":"https://wiki.swccg.com/images/d/d2/VB9-p4-20-Geonosis_Separatist_Council_Room.png",
+"2291_29":"https://wiki.swccg.com/images/4/40/VB9-00-Separatist_Uprising_At_War_With_Itself.png",
+"2291_29_BACK":"https://res.starwarsccg.org/cards/legacy/VirtualBlock9-Dark/large/atwarwithitself.gif",
 
 };
