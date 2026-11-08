@@ -6618,5 +6618,6 @@ const fixedImages = {
 // Image = the wiki slip crop of the release sheet that printed that text (wiki page field image2).
 "2261_33":"https://wiki.swccg.com/images/c/cd/VB6-32-Dark_Waters_Krayt_Dragon_Bones.png",
 "2272_23":"https://wiki.swccg.com/images/a/a0/VB7-04-Rogue_Insertion.png",
+"2230_7":"https://wiki.swccg.com/images/7/75/VB3-07E-Hermi_Odle.png",
 
 };
