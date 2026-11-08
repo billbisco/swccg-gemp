@@ -29,7 +29,7 @@ public class Card1220_093 extends AbstractAlien {
         super(Side.LIGHT, 3, 3, 1, 2, 5, "Kebyc", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_2, Rarity.V);
         setVirtualSuffix(true);
         setLore("Senior accountant for the Cloud City Miner's Guild. Administrates the annual dues and fights corruption among her fellow guild members.");
-        setGameText("Deploys free to Cloud City. You generate +1 Force for every Cloud City site you occupy. Your aliens are deploy -1 here. Opponent's aliens are deploy +1 here.");
+        setGameText("Deploys free to Cloud City. You activate +1 Force for every Cloud City site you occupy. Your aliens are deploy -1 here. Opponent's aliens are deploy +1 here.");
         addIcons(Icon.CLOUD_CITY);
     }
 
