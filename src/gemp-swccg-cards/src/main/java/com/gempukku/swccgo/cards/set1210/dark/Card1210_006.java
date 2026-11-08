@@ -39,7 +39,7 @@ public class Card1210_006 extends AbstractAlien {
         super(Side.DARK, 3, 2, 2, 2, 4, Title.Danz_Borin, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("Cocky gunner and bounty hunter. Maintains a residence on Nar Shaddaa, the spaceport moon of the Hutt homeworld. To his companions' delight, he's nearly as good as he boasts.");
-        setGameText("Adds 3 to power of anything he pilots. May add 1 to Force drains at same Nal Hutta location. Danz is a matching pilot for any [Independent Starship] starship and while piloting one, may not draw more than one battle destiny here (your battle destinies here may not be canceled or modified by opponent).");
+        setGameText("Adds 3 to power of anything he pilots. May add 1 to Force drains at same Nal Hutta location. Danz is a matching pilot for any [Independent Starship] starship and, while piloting one, may not draw more than one battle destiny here (your battle destinies here may not be canceled or modified by opponent).");
         addIcons(Icon.A_NEW_HOPE, Icon.PILOT);
         addKeywords(Keyword.GUNNER, Keyword.BOUNTY_HUNTER);
         setMatchingStarshipFilter(Filters.and(Filters.starship, Icon.INDEPENDENT));

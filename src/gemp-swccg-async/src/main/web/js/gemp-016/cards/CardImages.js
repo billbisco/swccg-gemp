@@ -6618,6 +6618,18 @@ const fixedImages = {
 // Each line overrides the generated entry above (a later key wins) with a CardMaker recreation of the latest version,
 // uploaded to the wiki (File page describes the source). Keep outside the generated legacy block.
 "1210_124":"https://wiki.swccg.com/images/c/c5/VB1-123-Faithful_Service-PC-E1-cardmaker.png",
+// Batch B03 (Virtual Block 1): PC-E1 CardMaker recreations (601_152 = current class of 1210_17 Prophetess (V)).
+"1210_4":"https://wiki.swccg.com/images/1/17/VB1-04-Commander_Praji-PC-E1-cardmaker.png",
+"1210_6":"https://wiki.swccg.com/images/3/34/VB1-06-Danz_Borin-PC-E1-cardmaker.png",
+"1210_15":"https://wiki.swccg.com/images/7/7d/VB1-15-Kitik_Keed_kak-PC-E1-cardmaker.png",
+"1210_17":"https://wiki.swccg.com/images/a/a3/VB1-17-Prophetess-PC-E1-cardmaker.png",
+"601_152":"https://wiki.swccg.com/images/a/a3/VB1-17-Prophetess-PC-E1-cardmaker.png",
+"1210_26":"https://wiki.swccg.com/images/d/d7/VB1-26-Ur_Ru_r-PC-E1-cardmaker.png",
+"1210_30":"https://wiki.swccg.com/images/2/2f/VB1-30-A_Disturbance_In_The_Force-PC-E1-cardmaker.png",
+"1210_43":"https://wiki.swccg.com/images/0/03/VB1-38E-Imperial_Detainment-PC-E1-cardmaker.png",
+"1210_44":"https://wiki.swccg.com/images/9/92/VB1-44E-Luke_Luuuuke-PC-E1-cardmaker.png",
+"1210_45":"https://wiki.swccg.com/images/3/38/VB1-45-Maneuver_Check-PC-E1-cardmaker.png",
+"1210_56":"https://wiki.swccg.com/images/5/50/VB1-56-Coordinated_Attack-PC-E1-cardmaker.png",
 
 // Legacy pre-errata versions (docs/legacy-versions.md; keep outside the generated legacy block).
 // Image = the wiki slip crop of the release sheet that printed that text (wiki page field image2).
@@ -6698,6 +6710,8 @@ const fixedImages = {
 "2273_1010":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Dark/large/kesselsurveillancesystem.gif",
 "2273_1027":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/masterkenobi.gif",
 "2273_1033":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/communing.gif",
+// Batch B03: Through The Force Things You Will See (V) PC-E1 (2012 card list text), CardMaker recreation; 2220_156 keeps the slip, 1220_156 the PC image (PC-E2).
+"2220_1156":"https://wiki.swccg.com/images/b/ba/VB2-156-Through_The_Force_Things_You_Will_See-PC-E1-cardmaker.png",
 "2273_1041":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/coruscant.gif",
 "2274_2":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Dark/large/oomcommandbattledroid.gif",
 "2274_3":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Dark/large/baktoidarmorworkshop.gif",
