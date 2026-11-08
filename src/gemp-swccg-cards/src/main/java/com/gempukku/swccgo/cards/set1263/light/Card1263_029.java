@@ -33,7 +33,7 @@ public class Card1263_029 extends AbstractLostOrStartingInterrupt {
         super(Side.LIGHT, 6, Title.Im_Here_To_Rescue_You, Uniqueness.UNRESTRICTED, ExpansionSet.VIRTUAL_BLOCK_6_3, Rarity.V);
         setVirtualSuffix(true);
         setLore("'Huh?'");
-        setGameText("If Rescue The Princess on table, LOST: Once per game, choose: Cancel an attempt to make non-Heroic R2-D2 lost. OR Lose 2 Force to cancel a battle just initiated if Leia defending alone. (Immune to Sense.) STARTING: Deploy from Reserve Deck Cell 2187 and one always-[Immune to Alter] Effect. Place this Interrupt in hand.");
+        setGameText("If Rescue The Princess on table, LOST: Once per game, choose: Cancel an attempt to make non-Heroic R2-D2 lost. OR Lose 2 Force to cancel a battle just initiated if Leia defending alone. (Immune to Sense.) STARTING: ▼ Cell 2187 and one always-[Immune to Alter] Effect. Place this Interrupt in hand.");
         addIcons(Icon.A_NEW_HOPE);
     }
 
