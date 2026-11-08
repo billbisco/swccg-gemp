@@ -6666,6 +6666,7 @@ const fixedImages = {
 "2282_1014":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/landocalrissianunlikelyhero.gif",
 "2281_1":"https://wiki.swccg.com/images/7/7b/VB8-01-Aurra_Sing_Deadly_Assassin.png",
 "2281_4":"https://wiki.swccg.com/images/6/6a/VB8-03-Bossk_With_Mortar_Gun.png",
+"2281_8":"https://wiki.swccg.com/images/8/87/VB8-p2-08-Jet_Pack.png",
 "2230_13":"https://wiki.swccg.com/images/5/57/VB3-13E-Lord_Vader.png",
 "2230_77":"https://wiki.swccg.com/images/d/dc/VB3-78-Orrimaarko.png",
 "2273_13":"https://wiki.swccg.com/images/d/d3/VB7-00-Insidious_Prisoner.png",

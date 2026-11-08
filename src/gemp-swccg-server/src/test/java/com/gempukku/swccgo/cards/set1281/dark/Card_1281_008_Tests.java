@@ -15,6 +15,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.gempukku.swccgo.cards.Vb89VersionAsserts.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -160,5 +161,12 @@ public class Card_1281_008_Tests {
         scn.PassAllResponses();
         assertEquals(db94, bossk.getAtLocation());
         assertEquals(force - 2, scn.GetDSForcePile().size());
+    }
+
+    /** PC website card list text (2012-07-21, PC-E1): the latest version under Bill's option (b); wording only. */
+    @Test
+    public void JetPackCurrentCardIsTheLatestText() {
+        assertCurrentCard("1281_8", "Jet Pack",
+                "Use 2 Force to deploy on your alien warrior (free Jodo Kast or any Fett). Character 'flies' (landspeed = 3 and maneuver = 6), may fire weapons for free, and may move as a 'react' for +1 Force.");
     }
 }
