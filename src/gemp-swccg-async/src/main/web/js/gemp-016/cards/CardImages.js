@@ -6717,6 +6717,7 @@ const fixedImages = {
 "2210_158":"https://wiki.swccg.com/images/a/a1/VB1-159-Panic.png",
 "2210_160":"https://wiki.swccg.com/images/2/2f/VB1-161-Rebel_Reinforcements.png",
 "2210_161":"https://wiki.swccg.com/images/d/dd/VB1-162-Return_Of_A_Jedi.png",
+"2210_17":"https://wiki.swccg.com/images/d/df/VB1-17-Prophetess.png",
 "2220_35":"https://wiki.swccg.com/images/6/64/VB2-35-I_Want_That_Ship.png",
 "2220_36":"https://wiki.swccg.com/images/f/f6/VB2-36-I_m_Sorry.png",
 "2220_50":"https://wiki.swccg.com/images/5/52/VB2-50E-Vader_s_Bounty.png",
