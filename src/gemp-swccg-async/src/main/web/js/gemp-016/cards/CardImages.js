@@ -6634,5 +6634,6 @@ const fixedImages = {
 "2273_1036":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/theshieldisdown.gif",
 "2274_4":"https://wiki.swccg.com/images/9/99/VB7-p2-132-Tibanna_Floating_Refinery.png",
 "2274_11":"https://wiki.swccg.com/images/9/9a/VB7-01-Grievous_Lightsabers.png",
+"2274_18":"https://wiki.swccg.com/images/4/48/VB7-p4-146-Hindsight.png",
 
 };
