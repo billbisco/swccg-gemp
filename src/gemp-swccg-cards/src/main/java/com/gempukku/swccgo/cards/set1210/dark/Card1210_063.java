@@ -46,8 +46,8 @@ public class Card1210_063 extends AbstractLostInterrupt {
     public Card1210_063() {
         super(Side.DARK, 4, Title.Local_Trouble, Uniqueness.UNRESTRICTED, ExpansionSet.VIRTUAL_BLOCK_1, Rarity.V);
         setVirtualSuffix(true);
-        setLore("'Look like somebody's beginning to take an interest in your handiwork.' Imperial stormtroopers coerce local residents to assist them in the apprehension of Rebel scum.");
-        setGameText("At the beginning of your battle phase, use 1 Force to initiate a battle between two Imperials and an opponent's character present at same interior site. For remainder of turn, no other battles may occur here and opponent takes no battle damage here.");
+        setLore("'Looks like somebody's beginning to take an interest in your handiwork.' Imperial stormtroopers coerce local residents to assist them in the apprehension of Rebel scum.");
+        setGameText("At the beginning of your battle phase, use 1 Force to initate a battle between two Imperials and an opponent's character present at same interior site. For remainder of turn, no other battles may occur here and opponent takes no battle damage here.");
     }
 
     @Override
