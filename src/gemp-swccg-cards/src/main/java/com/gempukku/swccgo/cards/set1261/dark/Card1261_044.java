@@ -36,7 +36,7 @@ public class Card1261_044 extends AbstractUsedInterrupt {
         super(Side.DARK, 4, "Lana Dobreed & Sacrifice", Uniqueness.UNIQUE,
                 ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
         addComboCardTitles(Title.Lana_Dobreed, Title.Sacrifice);
-        setGameText("If your character's forfeit was just reduced to 0, use 1 Force (free if forfeit reduced by a [Permanent Weapon] weapon) to restore it to normal. (Immune to Sense.) OR Lose 2 Force to cancel an attempt by Yoda or Obi-Wan to cancel your Interrupt or your just drawn weapon destiny. OR During your move phase, target any or all of your characters at one site to 'transport' (relocate) to an exterior or battleground site. Draw destiny. Use that much Force to 'transport,' or place Interrupt in Lost Pile.");
+        setGameText("If your character's forfeit was just reduced to 0, use 1 Force (free if forfeit reduced by a [Permanent Weapon] weapon) to restore it to normal. (Immune to Sense.) OR Lose 2 Force to cancel an attempt by Yoda or Obi-Wan to cancel your Interrupt or your just drawn weapon destiny. OR During your move phase, target any or all of your characters at one site to 'transport' (relocate) to an exterior or battleground site. Draw destiny. Use that much Force to 'transport,' or place this Interrupt in Lost Pile.");
         addIcons(Icon.EPISODE_I, Icon.CORUSCANT);
     }
 

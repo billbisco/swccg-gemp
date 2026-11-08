@@ -43,7 +43,7 @@ public class Card601_094 extends AbstractNormalEffect {
     public Card601_094() {
         super(Side.DARK, 6, PlayCardZoneOption.ATTACHED, "Revenge Of The Sith", Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
         setLore("A symbol of the Dark Lord of the Sith, and of the seductive power of the dark side. Hologram.");
-        setGameText("Deploy on Vader. [Coruscant] holograms are lost. Opponent may not add destiny draws to total power or attrition here. While with a Skywalker or Jedi, Vader's defense value is +2 (to a maximum of 8) and his immunity to attrition is +2.  When Vader leaves table, place Effect in Used Pile. (Immune to Alter.)");
+        setGameText("Deploy on Vader. [Coruscant] holograms are lost. Opponent may not add destiny draws to total power or attrition here. While with a Skywalker or Jedi, Vader's defense value is +2 (maximum of 8) and his immunity to attrition is +2. When Vader leaves table, place Effect in Used Pile. (Immune to Alter.)");
         addIcons(Icon.CLOUD_CITY, Icon.LEGACY_BLOCK_6);
         addKeywords(Keyword.HOLOGRAM, Keyword.DEPLOYS_ON_CHARACTERS);
         addImmuneToCardTitle(Title.Alter);
