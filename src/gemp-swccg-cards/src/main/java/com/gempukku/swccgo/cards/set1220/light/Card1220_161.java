@@ -2,7 +2,9 @@ package com.gempukku.swccgo.cards.set1220.light;
 
 import com.gempukku.swccgo.cards.AbstractSite;
 import com.gempukku.swccgo.cards.GameConditions;
+import com.gempukku.swccgo.cards.conditions.ControlsCondition;
 import com.gempukku.swccgo.cards.conditions.HereCondition;
+import com.gempukku.swccgo.logic.conditions.AndCondition;
 import com.gempukku.swccgo.cards.effects.usage.OncePerPhaseEffect;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.GameTextActionId;
@@ -29,14 +31,18 @@ import java.util.List;
  * Type: Location
  * Subtype: Site
  * Title: Hoth: Echo Med Lab
+ *
+ * Latest version (Virtual Block 2 release sheet, Dec 2009, card #162): the Dark Side Force drain +1 needs the Dark Side
+ * player to control this site with an Imperial present. The earlier GEMP text "If your Imperial present" was an undated
+ * PC Legacy JSON revision, not a published version.
  */
 public class Card1220_161 extends AbstractSite {
     public Card1220_161() {
         super(Side.LIGHT, Title.Echo_Med_Lab, Title.Hoth, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_2, Rarity.V);
         setVirtualSuffix(true);
         setLocationLightSideGameText("During your deploy phase, may deploy a medical droid here from Reserve Deck; reshuffle.");
-        setLocationDarkSideGameText("If your Imperial present, Force drain +1 here.");
-        setGameText("Light: During your deploy phase, may deploy a medical droid here from Reserve Deck; reshuffle. Dark: If your Imperial present, Force drain +1 here.");
+        setLocationDarkSideGameText("If you control, with an Imperial present, Force drain +1 here.");
+        setGameText("Light: During your deploy phase, may deploy a medical droid here from Reserve Deck; reshuffle. Dark: If you control, with an Imperial present, Force drain +1 here.");
         addIcon(Icon.LIGHT_FORCE, 1);
         addIcons(Icon.HOTH, Icon.UNDERGROUND, Icon.INTERIOR_SITE, Icon.PLANET, Icon.SCOMP_LINK);
     }
@@ -45,7 +51,8 @@ public class Card1220_161 extends AbstractSite {
     protected List<Modifier> getGameTextDarkSideWhileActiveModifiers(String playerOnDarkSideOfLocation, SwccgGame game, PhysicalCard self) {
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new ForceDrainModifier(self,
-                new HereCondition(self, Filters.and(Filters.your(playerOnDarkSideOfLocation), Filters.Imperial)),
+                new AndCondition(new ControlsCondition(playerOnDarkSideOfLocation, self),
+                        new HereCondition(self, Filters.and(Filters.your(playerOnDarkSideOfLocation), Filters.Imperial))),
                 1, playerOnDarkSideOfLocation));
         return modifiers;
     }

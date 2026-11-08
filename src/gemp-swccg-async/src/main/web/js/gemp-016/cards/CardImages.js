@@ -6720,7 +6720,6 @@ const fixedImages = {
 "2220_136":"https://wiki.swccg.com/images/9/93/VB2-135-Wars_Not_Make_One_Great.png",
 "2220_156":"https://wiki.swccg.com/images/8/80/VB2-156-Through_The_Force_Things_You_Will_See.png",
 "2220_160":"https://wiki.swccg.com/images/f/f1/VB2-160E-Wookiee_Strangle.png",
-"2220_161":"https://wiki.swccg.com/images/d/db/VB2-162-Hoth_Echo_Med_Lab.png",
 "2220_163":"https://wiki.swccg.com/images/3/35/VB2-164E-Local_Uprising.png",
 "2220_163_BACK":"https://res.starwarsccg.org/cards/legacy/VirtualBlock2-Light/large/liberation.gif",
 "2220_169":"https://wiki.swccg.com/images/9/91/VB2-169-Luke_s_Blaster_Pistol.png",

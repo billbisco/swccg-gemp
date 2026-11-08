@@ -27,6 +27,7 @@ public class Card_1220_161_Tests {
                 new HashMap<>() {{
                     put("medlab", "1220_161");
                     put("tooonebee", "3_1");
+                    put("luke", "1_19");
                 }},
                 new HashMap<>() {{
                     put("stormtrooper", "1_194");
@@ -132,5 +133,44 @@ public class Card_1220_161_Tests {
 
         float amount = scn.game().getModifiersQuerying().getForceDrainAmount(scn.gameState(), medlab, scn.DS);
         assertEquals(1, amount, scn.epsilon);
+    }
+
+    @Test
+    public void HothEchoMedLabForceDrainBonusNeedsDarkSideToControlWithAnImperialPresent() {
+        var scn = GetScenario();
+        var medlab = scn.GetLSCard("medlab");
+        var stormtrooper = scn.GetDSCard("stormtrooper");
+        var luke = scn.GetLSCard("luke");
+        var mods = scn.game().getModifiersQuerying();
+
+        //test1: Imperial present but Luke there too: Dark Side does not control, no +1 (the old GEMP text gave +1)
+        //test2: Dark Side controls with an Imperial present: +1
+        scn.StartGame();
+        scn.MoveLocationToTable(medlab);
+        float base = mods.getForceDrainAmount(scn.gameState(), medlab, scn.DS);
+        scn.MoveCardsToLocation(medlab, stormtrooper, luke);
+        assertEquals(base, mods.getForceDrainAmount(scn.gameState(), medlab, scn.DS), scn.epsilon); //test1
+        scn.MoveCardsToLSHand(luke);
+        assertEquals(base + 1, mods.getForceDrainAmount(scn.gameState(), medlab, scn.DS), scn.epsilon); //test2
+    }
+
+    @org.junit.Test
+    public void HothEchoMedLabHasTheLatestText() {
+        var scn = new com.gempukku.swccgo.framework.VirtualTableScenario(
+                new java.util.HashMap<String, String>() {{ put("latest", "1220_161"); }},
+                new java.util.HashMap<String, String>() {{  }},
+                10, 10,
+                com.gempukku.swccgo.framework.StartingSetup.DefaultLSGroundLocation,
+                com.gempukku.swccgo.framework.StartingSetup.DefaultDSGroundLocation,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSStartingInterrupts,
+                com.gempukku.swccgo.framework.StartingSetup.NoDSStartingInterrupts,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSShields,
+                com.gempukku.swccgo.framework.StartingSetup.NoDSShields,
+                com.gempukku.swccgo.framework.VirtualTableScenario.Open);
+        var card = scn.GetLSCard("latest").getBlueprint();
+        org.junit.Assert.assertEquals("Light: During your deploy phase, may deploy a medical droid here from Reserve Deck; reshuffle. Dark: If you control, with an Imperial present, Force drain +1 here.",
+                card.getGameText());
+        org.junit.Assert.assertNull(card.getLegacyVersion());
+        org.junit.Assert.assertFalse(card.getGameText().contains("If your Imperial present"));
     }
 }
