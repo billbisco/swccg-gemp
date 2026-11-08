@@ -26,13 +26,14 @@ public class Card_1210_170_Tests {
         return new VirtualTableScenario(
                 new HashMap<>() {{
                     put("blaster", "1210_170");
-                    put("han", "1_11");
                     put("beckett", "213_42");
+                    put("han", "1_11");
+                    put("tk422", "7_48");
                 }},
                 new HashMap<>() {{
                     put("trooper", "1_194");
-                    put("rifle", "1_311");
-                    put("bast", "1_165");
+                    put("mynock", "4_110");
+                    put("vader", "1_168");
                 }},
                 10, 10,
                 StartingSetup.DefaultLSGroundLocation,
@@ -89,25 +90,41 @@ public class Card_1210_170_Tests {
     }
 
     @Test
-    public void HansHeavyBlasterPistolDeploysOnBeckett() {
+    public void HansHeavyBlasterPistolDoesNotDeployOnTk422() {
         var scn = GetScenario();
         var blaster = scn.GetLSCard("blaster");
-        var beckett = scn.GetLSCard("beckett");
+        var tk422 = scn.GetLSCard("tk422");
         var site = scn.GetLSStartingLocation();
 
         scn.StartGame();
-        scn.MoveCardsToLocation(site, beckett);
+        scn.MoveCardsToLocation(site, tk422);
         scn.MoveCardsToLSHand(blaster);
         scn.SkipToLSTurn(Phase.DEPLOY);
-        assertTrue(scn.LSDeployAvailable(blaster));
-        scn.LSDeployCard(blaster);
-        scn.LSChooseCard(beckett);
-        scn.PassAllResponses();
-        assertTrue(scn.IsAttachedTo(beckett, blaster));
+        assertFalse(scn.LSDeployAvailable(blaster));
     }
 
     @Test
-    public void HansHeavyBlasterPistolHitsTargetAndSetsForfeitToZero() {
+    public void HansHeavyBlasterPistolDeploysAsReactToBattleAtHansSite() {
+        var scn = GetScenario();
+        var blaster = scn.GetLSCard("blaster");
+        var han = scn.GetLSCard("han");
+        var vader = scn.GetDSCard("vader");
+        var site = scn.GetLSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, han, vader);
+        scn.MoveCardsToLSHand(blaster);
+        scn.SkipToDSTurn(Phase.BATTLE);
+        scn.DSInitiateBattle(site);
+        assertTrue(scn.LSCardPlayAvailable(blaster));
+        scn.LSPlayCard(blaster);
+        scn.LSChooseCard(han);
+        scn.PassAllResponses();
+        assertTrue(scn.IsAttachedTo(han, blaster));
+    }
+
+    @Test
+    public void HansHeavyBlasterPistolHitsCharacterSetsForfeitToZeroAndOpponentLosesOneForce() {
         var scn = GetScenario();
         var blaster = scn.GetLSCard("blaster");
         var han = scn.GetLSCard("han");
@@ -117,20 +134,50 @@ public class Card_1210_170_Tests {
         scn.StartGame();
         scn.MoveCardsToLocation(site, han, trooper);
         scn.AttachCardsTo(han, blaster);
+        scn.LSStartBattleAndSkipToWeaponsSegment(site);
+        scn.PrepareLSDestiny(5);
+        int dsLife = scn.GetDSLifeForceRemaining();
+        assertTrue(scn.LSCardActionAvailable(blaster, "Fire"));
+        scn.LSUseCardAction(blaster, "Fire");
+        scn.LSChooseCard(trooper);
+        scn.PassWeaponFireWithDestinyDraw();
+        scn.PassAllResponses();
+        scn.DSChooseCard(scn.GetTopOfDSForcePile());
+        scn.PassAllResponses();
+        assertTrue(trooper.isHit());
+        assertEquals(0, scn.GetForfeit(trooper));
+        assertEquals(dsLife - 1, scn.GetDSLifeForceRemaining());
+    }
+
+    @Test
+    public void HansHeavyBlasterPistolMayTargetACreature() {
+        var scn = GetScenario();
+        var blaster = scn.GetLSCard("blaster");
+        var han = scn.GetLSCard("han");
+        var mynock = scn.GetDSCard("mynock");
+        var site = scn.GetDSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, han, mynock);
+        scn.AttachCardsTo(han, blaster);
+        scn.LSActivateForceCheat(2);
         scn.SkipToLSTurn(Phase.BATTLE);
-        scn.LSInitiateBattle(site);
+        assertTrue(scn.LSCardActionAvailable(site, "attack"));
+        scn.LSUseCardAction(site, "attack");
         scn.PassAllResponses();
         scn.PrepareLSDestiny(5);
         assertTrue(scn.LSCardActionAvailable(blaster, "Fire"));
         scn.LSUseCardAction(blaster, "Fire");
-        scn.LSChooseCard(trooper);
+        scn.LSChooseCard(mynock);
+        scn.PassWeaponFireWithDestinyDraw();
         scn.PassAllResponses();
-        assertTrue(trooper.isHit());
-        assertEquals(0, scn.GetForfeit(trooper));
+        assertTrue(mynock.isHit()
+                || mynock.getZone() == Zone.LOST_PILE
+                || mynock.getZone() == Zone.TOP_OF_LOST_PILE);
     }
 
     @Test
-    public void HansHeavyBlasterPistolFiresDuringControlPhaseIfOnHan() {
+    public void HansHeavyBlasterPistolFiresDuringControlPhaseUsingOneForce() {
         var scn = GetScenario();
         var blaster = scn.GetLSCard("blaster");
         var han = scn.GetLSCard("han");
@@ -142,76 +189,96 @@ public class Card_1210_170_Tests {
         scn.AttachCardsTo(han, blaster);
         scn.SkipToLSTurn(Phase.CONTROL);
         assertTrue(scn.AwaitingLSControlPhaseActions());
+        int lsForce = scn.GetLSForcePileCount();
         scn.PrepareLSDestiny(5);
         assertTrue(scn.LSCardActionAvailable(blaster, "Fire during control phase"));
         scn.LSUseCardAction(blaster, "Fire during control phase");
-        scn.PassAllResponses();
+        scn.PassCardAndForceUseResponses();
         if (scn.LSHasCardChoiceAvailable(trooper)) {
             scn.LSChooseCard(trooper);
         }
-        scn.PrepareLSDestiny(5);
-        for (int i = 0; i < 8; i++) {
-            if (scn.GetCurrentDecision() == null) {
-                break;
-            }
-            String text = scn.GetCurrentDecision().getText().toLowerCase();
-            if (text.contains("optional")) {
-                scn.PassResponses("optional");
-            } else if (text.contains("required")) {
-                scn.PassResponses("required");
-            } else if (scn.LSHasCardChoiceAvailable(trooper)) {
-                scn.LSChooseCard(trooper);
-            } else {
-                break;
-            }
-        }
         scn.PassAllResponses();
-        String pending = "hit=" + trooper.isHit()
-                + " zone=" + trooper.getZone()
-                + " LS=" + (scn.LSGetDecision() == null ? "none" : scn.LSGetDecision().getText());
-        assertTrue(pending, trooper.isHit()
+        assertTrue(trooper.isHit()
                 || trooper.getZone() == Zone.LOST_PILE
                 || trooper.getZone() == Zone.TOP_OF_LOST_PILE);
+        assertEquals(lsForce - 1, scn.GetLSForcePileCount());
     }
 
     @Test
-    public void HansHeavyBlasterPistolPlacesInUsedPileToCancelAWeaponDestinyTargetingHan() {
+    public void HansHeavyBlasterPistolGameTextIsOfficialText() {
+        var scn = GetScenario();
+        assertEquals("Deploy on Han (except TK-422), even as a 'react.' May target a character or creature for free. Draw destiny. Target hit, its forfeit = 0, and opponent loses 1 Force if destiny +1 > defense value. Once during your control phase, may fire using 1 Force.",
+                scn.GetLSCard("blaster").getBlueprint().getGameText());
+    }
+
+    @Test
+    public void HansHeavyBlasterPistolDoesNotDeployOnBeckett() {
+        var scn = GetScenario();
+        var blaster = scn.GetLSCard("blaster");
+        var beckett = scn.GetLSCard("beckett");
+        var site = scn.GetLSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, beckett);
+        scn.MoveCardsToLSHand(blaster);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        assertFalse(scn.LSDeployAvailable(blaster));
+    }
+
+    @Test
+    public void HansHeavyBlasterPistolMissesWhenDestinyPlusOneIsNotGreaterThanDefenseValue() {
+        var scn = GetScenario();
+        var blaster = scn.GetLSCard("blaster");
+        var han = scn.GetLSCard("han");
+        var vader = scn.GetDSCard("vader");
+        var site = scn.GetLSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, han, vader);
+        scn.AttachCardsTo(han, blaster);
+        scn.LSStartBattleAndSkipToWeaponsSegment(site);
+        scn.PrepareLSDestiny(5);
+        int dsLife = scn.GetDSLifeForceRemaining();
+        assertTrue(scn.LSCardActionAvailable(blaster, "Fire"));
+        scn.LSUseCardAction(blaster, "Fire");
+        scn.LSChooseCard(vader);
+        scn.PassWeaponFireWithDestinyDraw();
+        scn.PassAllResponses();
+        // 5 + 1 is not > Vader's defense value 6
+        assertFalse(vader.isHit());
+        assertEquals(dsLife, scn.GetDSLifeForceRemaining());
+    }
+
+    @Test
+    public void HansHeavyBlasterPistolFiresOnlyOnceDuringControlPhaseAndHasNoCancelDestinyAction() {
         var scn = GetScenario();
         var blaster = scn.GetLSCard("blaster");
         var han = scn.GetLSCard("han");
         var trooper = scn.GetDSCard("trooper");
-        var rifle = scn.GetDSCard("rifle");
+        var vader = scn.GetDSCard("vader");
         var site = scn.GetLSStartingLocation();
 
         scn.StartGame();
-        scn.MoveCardsToLocation(site, han, trooper);
+        scn.MoveCardsToLocation(site, han, trooper, vader);
         scn.AttachCardsTo(han, blaster);
-        scn.AttachCardsTo(trooper, rifle);
-        scn.DSStartBattleAndSkipToWeaponsSegment(site);
-        scn.PrepareDSDestiny(5);
-        assertTrue(scn.AwaitingDSWeaponsSegmentActions());
-        assertTrue(scn.DSCardActionAvailable(rifle, "Fire"));
-        scn.DSUseCardAction(rifle, "Fire");
-        scn.DSChooseCard(han);
-        scn.PassForceUseResponses();
-        for (int i = 0; i < 8; i++) {
-            if (scn.LSDecisionAvailable("optional") || scn.LSDecisionAvailable("DESTINY")) {
-                try {
-                    scn.LSChooseAction("Place in Used Pile to cancel weapon destiny");
-                    break;
-                } catch (RuntimeException ignored) {
-                    scn.PassResponses("optional");
-                }
-            } else if (scn.GetCurrentDecision() != null
-                    && scn.GetCurrentDecision().getText().toLowerCase().contains("optional")) {
-                scn.PassResponses("optional");
-            } else {
-                break;
-            }
+        scn.SkipToLSTurn(Phase.CONTROL);
+        scn.PrepareLSDestiny(5);
+        assertTrue(scn.LSCardActionAvailable(blaster, "Fire during control phase"));
+        scn.LSUseCardAction(blaster, "Fire during control phase");
+        scn.PassCardAndForceUseResponses();
+        if (scn.LSHasCardChoiceAvailable(trooper)) {
+            scn.LSChooseCard(trooper);
         }
         scn.PassAllResponses();
-        scn.PassAllResponses();
-        assertFalse(han.isHit());
-        assertTrue(blaster.getZone() == Zone.USED_PILE || blaster.getZone() == Zone.TOP_OF_USED_PILE);
+        // opponent loses 1 Force from the hit
+        if (scn.DSDecisionAvailable("Force to lose")) {
+            scn.DSChooseCard(scn.GetTopOfDSForcePile());
+            scn.PassAllResponses();
+        }
+        if (!scn.AwaitingLSControlPhaseActions())
+            scn.DSPass();
+        assertTrue(scn.AwaitingLSControlPhaseActions());
+        assertFalse(scn.LSCardActionAvailable(blaster, "Fire during control phase"));
+        assertFalse(scn.LSCardActionAvailable(blaster, "Place in Used Pile to cancel weapon destiny"));
     }
 }
