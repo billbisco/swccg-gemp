@@ -6683,6 +6683,7 @@ const fixedImages = {
 "2281_32":"https://wiki.swccg.com/images/0/01/VB8-03-Imperial_Navigation_Charts.png",
 "2281_6":"https://wiki.swccg.com/images/d/d0/VB8-03-Rtic_Hweei.png",
 "2281_13":"https://wiki.swccg.com/images/e/e8/VB8-06-The_Inner_Circle.png",
+"2281_17":"https://wiki.swccg.com/images/6/69/VB8-p3-17-Sonic_Bombardment.png",
 "2230_13":"https://wiki.swccg.com/images/5/57/VB3-13E-Lord_Vader.png",
 "2230_77":"https://wiki.swccg.com/images/d/dc/VB3-78-Orrimaarko.png",
 "2273_13":"https://wiki.swccg.com/images/d/d3/VB7-00-Insidious_Prisoner.png",
