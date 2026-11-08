@@ -6630,5 +6630,6 @@ const fixedImages = {
 "2261_2042":"https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/lonepilot.gif",
 "2261_45":"https://wiki.swccg.com/images/a/a5/VB6-46-One_Bright_Spot.png",
 "2261_1045":"https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/onebrightspot.gif",
+"2261_56":"https://wiki.swccg.com/images/c/c4/VB6-56-Black_1.png",
 
 };
