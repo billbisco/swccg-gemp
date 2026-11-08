@@ -275,6 +275,7 @@ public enum Persona implements Filterable {
     BIGGS("Biggs"),
     KIR_KANOS("Kir Kanos"),
     ORTUGG("Ortugg"),
+    YSANNE_ISARD("Ysanne Isard"),
     ;
 
 

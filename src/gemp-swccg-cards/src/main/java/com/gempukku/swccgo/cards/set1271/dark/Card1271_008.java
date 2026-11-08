@@ -28,7 +28,7 @@ public class Card1271_008 extends AbstractNormalEffect {
     public Card1271_008() {
         super(Side.DARK, 4, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "A Sith's Weapon", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_1, Rarity.V);
         setLore("Lightsaber confrontations are a complex dance of feints, strikes, parries and footwork. Mistakes are rarely forgiven.");
-        setGameText("Deploy on table. Once per turn, if your character of ability > 4 just failed to 'hit' an [Episode I] Jedi (or [Virtual Block 6] Luke) with a non-[Permanent Weapon] lightsaber, may lose 1 Force to 'swing' at target again. May place in Used Pile to cancel Obi-Wan's Journal.");
+        setGameText("Deploy on table. Once per turn, if your character of ability > 4 just failed to 'hit' an [Episode I] Jedi (or [Virtual Block 6] Luke) with a non-[Permanent Weapon] lightsaber, may lose 1 Force to 'swing' at target again. May place this Effect in Used Pile to cancel Obi-Wan's Journal.");
         addIcons(Icon.EPISODE_I, Icon.SETUP, Icon.REFLECTIONS_III);
     }
 

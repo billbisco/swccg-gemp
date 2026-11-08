@@ -43,7 +43,7 @@ public class Card1262_006 extends AbstractNormalEffect {
         super(Side.DARK, 4, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Deployment Orders", Uniqueness.UNIQUE,
                 ExpansionSet.VIRTUAL_BLOCK_6_2, Rarity.V);
         setLore("The amount of time it takes for a sub-command to transfer to an officer battle droid, and then to the rest of his regiment, is .396 of a second.");
-        setGameText("Deploy on table. If your Landing Craft just landed, you may use 1 Force to deploy a [Presence] droid or Neimoidian aboard from Reserve Deck; reshuffle. Once per turn, may use 1 Force: reveal a [Theed Palace] vehicle (or Landing Craft) from hand to take a [Presence] droid pilot into hand from Reserve Deck (or vice versa), and deploy both simultaneously; reshuffle. (Immune to Alter.)");
+        setGameText("Deploy on table. If your Landing Craft just landed, may use 1 Force to ▼ a [Presence] droid or Neimoidian aboard. Once per turn, may use 1 Force: reveal a [Theed Palace] vehicle (or Landing Craft) from hand to ▲ a [Presence] droid pilot (or vice versa), and deploy both simultaneously. (Immune to Alter.)");
         addIcons(Icon.THEED_PALACE, Icon.EPISODE_I, Icon.LEGACY_BLOCK_6);
         addImmuneToCardTitle(Title.Alter);
         setAsLegacy(true);

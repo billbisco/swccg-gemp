@@ -38,7 +38,7 @@ public class Card1220_020 extends AbstractCreature {
         super(Side.DARK, 3, 6, 3, 4, 0, Title.One_Arm, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_2, Rarity.V);
         setVirtualSuffix(true);
         setLore("When a wampa is wounded, the other members of its pack band together to repel the threat.");
-        setGameText("Habitat: Hoth sites. Deploys only to a marker site. Wampas are [Selective Creature] creatures. Other wampas are ferocity and defense value +2. Once per game, may deploy Wampa Cave on table from Reserve Deck; reshuffle.");
+        setGameText("Habitat: Hoth sites. Deploys only to a marker site. Wampas are [Selective Creature]. Other wampas are ferocity and defense value +2. Once per game, may [download] Wampa Cave.");
         addModelType(ModelType.SNOW);
         addIcons(Icon.SPECIAL_EDITION);
         addKeyword(Keyword.WAMPA);

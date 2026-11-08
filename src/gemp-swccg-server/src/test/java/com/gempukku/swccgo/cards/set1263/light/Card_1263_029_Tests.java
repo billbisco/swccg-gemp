@@ -213,14 +213,14 @@ public class Card_1263_029_Tests {
 
     @org.junit.Test
     public void CurrentTextIsTheLatestVersion() {
-        // PC card list (PC-E1) is the latest text (spacing and the bracketed Immune to Sense normalised); GEMP's wording was no version.
+        // The release sheet text is the latest version: the PC card list only spelled out the icons (audit 2026-11-08), so it is no version. GEMP's wording before r16 was no version either.
         var scn = new com.gempukku.swccgo.framework.VirtualTableScenario(new java.util.HashMap<>(java.util.Map.of("c", "1263_29")), new java.util.HashMap<>(), 10, 10,
                 com.gempukku.swccgo.framework.StartingSetup.DefaultLSGroundLocation, com.gempukku.swccgo.framework.StartingSetup.DefaultDSGroundLocation,
                 com.gempukku.swccgo.framework.StartingSetup.NoLSStartingInterrupts, com.gempukku.swccgo.framework.StartingSetup.NoDSStartingInterrupts,
                 com.gempukku.swccgo.framework.StartingSetup.NoLSShields, com.gempukku.swccgo.framework.StartingSetup.NoDSShields,
                 com.gempukku.swccgo.framework.VirtualTableScenario.Open);
         var text = scn.GetLSCard("c").getBlueprint().getGameText();
-        org.junit.Assert.assertEquals("If Rescue The Princess on table, LOST: Once per game, choose: Cancel an attempt to make non-Heroic R2-D2 lost. OR Lose 2 Force to cancel a battle just initiated if Leia defending alone. (Immune to Sense.) STARTING: Deploy from Reserve Deck Cell 2187 and one always-[Immune to Alter] Effect. Place this Interrupt in hand.", text);
+        org.junit.Assert.assertEquals("If Rescue The Princess on table, LOST: Once per game, choose: Cancel an attempt to make non-Heroic R2-D2 lost. OR Lose 2 Force to cancel a battle just initiated if Leia defending alone. (Immune to Sense.) STARTING: ▼ Cell 2187 and one always-[Immune to Alter] Effect. Place this Interrupt in hand.", text);
         org.junit.Assert.assertFalse(text.contains("always-immune-to-Alter"));
         org.junit.Assert.assertNull(scn.GetLSCard("c").getBlueprint().getLegacyVersion());
     }

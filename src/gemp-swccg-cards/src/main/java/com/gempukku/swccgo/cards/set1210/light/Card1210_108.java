@@ -39,7 +39,7 @@ public class Card1210_108 extends AbstractRebel {
         addPersona(Persona.OWEN);
         setVirtualSuffix(true);
         setLore("Guardian of Luke Skywalker. Husband of Beru Lars. Brother of Obi- Wan Kenobi. Farmer of moisture. Disapprover of Luke's desire to leave Tatooine.");
-        setGameText("Opponent activates no Force from Beru Stew. While present with Lars' Vaporator: during your control phase, may use 3 Force to exchange one card from hand with one 'crop' card; cards with 'lightsaber' in title may not deploy here.");
+        setGameText("Opponent activates no Force from Beru Stew. While present with Lars' Vaporator: during your control phase, may use 3 Force to exchange a card from hand with a 'crop' card; and cards with 'lightsaber' in title may not deploy here.");
     }
 
     @Override

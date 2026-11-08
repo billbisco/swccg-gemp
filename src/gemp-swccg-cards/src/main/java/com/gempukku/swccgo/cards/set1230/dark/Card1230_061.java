@@ -41,7 +41,7 @@ public class Card1230_061 extends AbstractCharacterWeapon {
         super(Side.DARK, 2, Title.Feltipern_Trevaggs_Stun_Rifle, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_3, Rarity.V);
         setVirtualSuffix(true);
         setLore("Assault rifle modified by Feltipern. Used by the Gotal bounty hunter before he became a tax collector. Occasionally brought along to 'ease' Feltipern's collection duties.");
-        setGameText("Use 1 Force to deploy on your bounty hunter (free on Feltipern Trevagg). May target a character for free. Draw destiny. Target captured (and you may take one Interrupt from Lost Pile into hand) if destiny +2 > defense value.");
+        setGameText("Use 1 Force to deploy on your bounty hunter (free on Feltipern Trevagg). May target a character for free. Draw destiny. Target captured (and may take one Interrupt from Lost Pile into hand) if destiny +2 > defense value.");
         addIcons(Icon.SPECIAL_EDITION);
         addKeywords(Keyword.RIFLE);
         setMatchingCharacterFilter(Filters.Feltipern_Trevagg);

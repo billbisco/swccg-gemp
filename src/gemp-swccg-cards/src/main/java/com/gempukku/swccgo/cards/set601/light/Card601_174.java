@@ -38,8 +38,7 @@ public class Card601_174 extends AbstractUsedOrStartingInterrupt {
         super(Side.LIGHT, 3, Title.Scomp_Link_Access, Uniqueness.UNRESTRICTED, ExpansionSet.LEGACY, Rarity.V);
         setVirtualSuffix(true);
         setLore("A computer connection access port used mainly by droids to plug into database networks and locate information, evaluate threats, execute diagnostics or perform maintenance.");
-        setGameText("USED: Take a non-[Episode I] droid (except IL-19) into hand from Reserve Deck; reshuffle. OR Place a card from hand on Used Pile. " +
-                "STARTING: Deploy from Reserve Deck two always [Immune to Alter] Effects. If you have only one location (with less than 3 [Light Side Force]) (except Massassi Throne Room) on table, may deploy a [Cloud City] site. Place this Interrupt in hand.");
+        setGameText("USED: ▲ a non-[Episode I] droid (except IL-19). OR Place a card from hand on Used Pile. STARTING: ▼ two always [Immune to Alter] Effects. If you have only one location (with < 3 [Light Side Force]) (except Massassi Throne Room) on table, may ▼ a [Cloud City] site. Place this Interrupt in hand.");
         addIcons(Icon.LEGACY_BLOCK_6);
         setAsLegacy(true);
     }

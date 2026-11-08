@@ -34,7 +34,7 @@ public class Card1274_003 extends AbstractNormalEffect {
     public Card1274_003() {
         super(Side.DARK, 5, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Baktoid Armor Workshop", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_4, Rarity.V);
         setLore("Once begun, the occupation of Naboo was swift, and devastatingly effective.");
-        setGameText("Deploy on table. Your [Theed Palace] vehicles are defense value and immunity to attrition +1. May deploy Deployment Orders from Reserve Deck; reshuffle. Once per game, if Deployment Orders on table, may deploy an exterior battleground site not already on table from Reserve Deck; reshuffle. Once per game, may retrieve a [Theed Palace] vehicle into hand. (Immune to Alter)");
+        setGameText("Deploy on table. Your [Theed Palace] vehicles are defense value and immunity to attrition +1. May [download] Deployment Orders. Once per game, if Deployment Orders on table, may [download] an exterior battleground site not on table. Once per game, may retrieve a [Theed Palace] vehicle into hand. (Immune to Alter.)");
         addIcons(Icon.CORUSCANT, Icon.EPISODE_I);
         addImmuneToCardTitle(Title.Alter);
     }

@@ -39,7 +39,7 @@ public class Card1282_025 extends AbstractUsedInterrupt {
         super(Side.LIGHT, 5, "You Will Take Me To Jabba Now", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_2, Rarity.V);
         setVirtualSuffix(true);
         setLore("'Et tu taka bu Jabba now.'");
-        setGameText("When you play this Interrupt, may place a Rep stacked on your Objective in Used Pile. May deploy Seeking An Audience or an alien to Audience Chamber (for -1 Force) from Reserve Deck; reshuffle. OR Reveal up to 3 aliens stacked on I Know That Laugh or from hand (X = number of aliens revealed); activate X Force.");
+        setGameText("When you play this Interrupt, may place a Rep stacked on your Objective in Used Pile. [download] Seeking An Audience or an alien to Audience Chamber (for -1 Force). OR Reveal up to 3 aliens stacked on I Know That Laugh or from hand (X = number of aliens revealed); activate X Force.");
     }
 
     private static List<PhysicalCard> aliensToReveal(SwccgGame game, PhysicalCard self, String playerId) {

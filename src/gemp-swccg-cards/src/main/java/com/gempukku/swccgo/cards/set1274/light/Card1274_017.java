@@ -38,7 +38,7 @@ public class Card1274_017 extends AbstractDevice {
 
     public Card1274_017() {
         super(Side.LIGHT, 4, PlayCardZoneOption.ATTACHED, "Motivator", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_4, Rarity.V);
-        setGameText("Deploy on your non-[Reflections 2] astromech droid. That droid is power +2, gains [Presence Droid] and if present at a site, draws one battle destiny if unable to otherwise. During any move phase, may place this device in Lost Pile to take into hand from reserve deck one What're You Tryin' To Push On Us? or one R2-D2; reshuffle.");
+        setGameText("Deploy on your non-[Reflections 2] astromech droid. Droid is power +2, gains [Presence Droid], and if present at a site, draws one battle destiny if unable to otherwise. During any move phase, may place this device in Lost Pile to [upload] one What're You Tryin' To Push On Us? or R2-D2.");
     }
 
     @Override

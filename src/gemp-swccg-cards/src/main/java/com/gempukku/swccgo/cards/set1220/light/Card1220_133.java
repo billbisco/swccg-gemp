@@ -38,7 +38,7 @@ public class Card1220_133 extends AbstractNormalEffect {
     public Card1220_133() {
         super(Side.LIGHT, 3, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.Rebel_Infantry, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_2, Rarity.V);
         setLore("The Alliance lost many fine soldiers at conflicts such as the Battle of Hoth. The Rebel High Command is aware of the cost of freedom from Imperial tyranny.");
-        setGameText("Deploy on table. Rebel scouts (except pilots) are troopers. Rebel troopers have armor = 4 and are immune to Physical Choke. Whenever you deploy a Rebel trooper, may immediately deploy a Blaster Rifle on that character from Reserve Deck; reshuffle. (Immune to Alter.)");
+        setGameText("Deploy on table. Rebel scouts (except pilots) are troopers. Rebel troopers have armor = 4 and are immune to Physical Choke. Whenever you deploy a Rebel trooper, may immediately [download] Blaster Rifle on that character. (Immune to Alter.)");
         addIcons(Icon.SPECIAL_EDITION);
         addImmuneToCardTitle(Title.Alter);
     }

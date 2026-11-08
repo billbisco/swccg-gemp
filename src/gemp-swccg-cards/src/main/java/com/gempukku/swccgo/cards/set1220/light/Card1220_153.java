@@ -37,7 +37,7 @@ public class Card1220_153 extends AbstractUsedInterrupt {
         super(Side.LIGHT, 5, Title.Shocking_Information, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_2, Rarity.V);
         setVirtualSuffix(true);
         setLore("'R2-D2, you know better than to trust a strange computer.'");
-        setGameText("Unless you have a senate majority, if opponent just took a character into hand from Reserve Deck, deployed a character from Reserve Deck (except with an Effect with 'matching' in game text), or just drew a card from Reserve Deck using a character's game text, they must place 2 other cards from hand on Used Pile (if possible).");
+        setGameText("Unless you have a senate majority, if opponent just [upload] or [download] a character (except with an Effect with 'matching' in game text) or just drew a card from Reserve Deck using a character's game text, they must place 2 other cards from hand on Used Pile (if possible).");
         addIcons(Icon.CLOUD_CITY);
     }
 

@@ -40,7 +40,7 @@ public class Card1230_003 extends AbstractImperial {
         super(Side.DARK, 2, 2, 2, 2, 3, Title.Yorr, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_3, Rarity.V);
         setVirtualSuffix(true);
         setLore("Former member of Imperial Demonstration Team. Flew test flights during development of various TIE prototypes. Jendon's wingman. Has scored 24 combat victories.");
-        setGameText("Adds 2 to power of anything he pilots (3 if piloting any starfighter). If your starship participating in a battle is about to be excluded (even if that starship may not participate in battle) or made lost by opponent, you may choose for it to be 'hit' instead.");
+        setGameText("[Pilot] 2, 3: any starfighter. If your starship participating in battle is about to be excluded (even if that starship may not participate in battle) or made lost by opponent, you may choose for it to be 'hit' instead.");
         addIcons(Icon.PILOT, Icon.DEATH_STAR_II);
     }
 

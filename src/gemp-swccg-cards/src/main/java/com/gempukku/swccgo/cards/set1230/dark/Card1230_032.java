@@ -46,7 +46,7 @@ public class Card1230_032 extends AbstractNormalEffect {
         super(Side.DARK, 5, PlayCardZoneOption.ATTACHED, Title.Flagship_Operations, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_3, Rarity.V);
         setVirtualSuffix(true);
         setLore("'There's too many of them!'");
-        setGameText("Deploy on a system. Your TIEs may relocate (as a regular move) to a system from 0 to 3 parsecs away. For each battleground system you control with two TIEs piloted by Imperials, you may add 3 to your total power in battles. Opponent's Force drain is +3 here. (Immune to Alter.)");
+        setGameText("Deploy on a system. Your TIEs may relocate (as a regular move) to a system from 0 to 3 parsecs away. For each battleground system you control with two TIEs piloted by Imperials, may add 3 to your total power in battles. Opponent's Force drain is +3 here. (Immune to Alter.)");
         addIcons(Icon.DEATH_STAR_II);
         addKeywords(Keyword.DEPLOYS_ON_LOCATION);
         addImmuneToCardTitle(Title.Alter);

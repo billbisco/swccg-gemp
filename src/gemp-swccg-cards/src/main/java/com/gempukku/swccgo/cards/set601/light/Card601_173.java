@@ -35,7 +35,7 @@ public class Card601_173 extends AbstractRepublic {
     public Card601_173() {
         super(Side.LIGHT, 1, 6, 6, 6, 7, "Maris Brood, Fallen Jedi", Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
         setLore("");
-        setGameText("Matching weapon is Elegant Lightsaber and, if Sai'torr Kal Fas on table, may lose 2 Force to deploy it on her from Reserve Deck; reshuffle.  While with Galen or a [Sidious] Effect, adds one battle destiny.  Immune to [Permanent Weapon] weapons and attrition < 5.");
+        setGameText("Matching weapon is Elegant Lightsaber, and, if Sai'torr Kal Fas on table, may lose 2 Force to [download] it on her. While with Galen or a [Sidious] Effect, adds one battle destiny. Immune to [Permanent Weapon] weapons and attrition < 5.");
         addIcons(Icon.CLOUD_CITY, Icon.LEGACY_BLOCK_4);
         addIcon(Icon.WARRIOR, 2);
         addKeywords(Keyword.FEMALE);

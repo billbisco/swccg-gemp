@@ -38,7 +38,7 @@ public class Card1281_012 extends AbstractNormalEffect {
     public Card1281_012() {
         super(Side.DARK, 5, PlayCardZoneOption.ATTACHED, "On The Hunt", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_1, Rarity.V);
         setLore("Blank.");
-        setGameText("Deploy on Contract Killers. Assassins are defense value +1. Once per game may retrieve (Virtual Block 8) Death Mark. At end of opponent's turn, if their character targeted by (Virtual Block 8) Death Mark is at a non-battleground or aboard their starship, opponent loses 3 Force. (Immune to Alter.)");
+        setGameText("Deploy on Contract Killers. Assassins are defense value +1. Once per game may retrieve [Virtual Block 8] Death Mark. At end of opponent's turn, if their character targeted by [Virtual Block 8] Death Mark is at a non-battleground or aboard their starship, opponent loses 3 Force. (Immune to Alter.)");
         addImmuneToCardTitle(Title.Alter);
     }
 

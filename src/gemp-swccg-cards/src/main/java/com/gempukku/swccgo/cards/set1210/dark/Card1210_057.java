@@ -35,7 +35,7 @@ public class Card1210_057 extends AbstractUsedInterrupt {
         super(Side.DARK, 3, Title.Emergency_Deployment, Uniqueness.UNRESTRICTED, ExpansionSet.VIRTUAL_BLOCK_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("TIE fighters are stored in large racks far above the hangar deck. Catapulted into space by powerful tractor beam generators, TIEs can quickly scramble to engage the enemy.");
-        setGameText("Take a device or a non-lightsaber weapon into hand from Reserve Deck; reshuffle. OR If opponent just initiated a battle or Force drain at a system or sector, deploy (as a 'react') an unpiloted TIE and a pilot of ability < 3 (simultaneously) on table from Reserve Deck; reshuffle. (Immune to Sense.)");
+        setGameText("[upload] a device or non-lightsaber weapon. OR If opponent just initiated a battle or Force drain at a system or sector, [download] (as a 'react') an unpiloted TIE and a pilot of ability < 3 (simultaneously). (Immune to Sense.)");
     }
 
     @Override

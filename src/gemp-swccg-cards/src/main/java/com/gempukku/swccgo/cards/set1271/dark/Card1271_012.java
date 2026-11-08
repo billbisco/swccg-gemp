@@ -29,7 +29,7 @@ import java.util.List;
 public class Card1271_012 extends AbstractNormalEffect {
     public Card1271_012() {
         super(Side.DARK, 1, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Imperial Security Bureau", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_1, Rarity.V);
-        setGameText("Deploy on table. Sunsdown is canceled. ISB agents who are leaders deploy -2 to sites with 'ISB' in title. Once per game, may take a [Setup] Mission into hand from Reserve Deck; reshuffle. Look Sir, Droids and your Interrupts with 'advisor' in title may be played as follows: 'USED: Use 1 Force to take an ISB agent into hand from Reserve Deck; reshuffle.' (Immune to Alter.)");
+        setGameText("Deploy on table. Sunsdown is canceled. ISB agents who are leaders are deploy -2 to sites with 'ISB' in title. Once per game, may [upload] a [Setup] Mission. Look Sir, Droids and your Interrupts with 'advisor' in title may be played as follows: 'USED: Use 1 Force to [upload] an ISB agent.' (Immune to Alter.)");
         addIcons(Icon.CLOUD_CITY);
         addImmuneToCardTitle(Title.Alter);
     }

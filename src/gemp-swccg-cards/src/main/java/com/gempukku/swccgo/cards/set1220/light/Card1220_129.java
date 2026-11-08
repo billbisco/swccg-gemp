@@ -41,7 +41,7 @@ public class Card1220_129 extends AbstractNormalEffect {
         super(Side.LIGHT, 2, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.Nick_Of_Time, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_2, Rarity.V);
         setVirtualSuffix(true);
         setLore("Luke barely escaped being crushed by the AT-AT's massive footpad during the Battle of Hoth.");
-        setGameText("Deploy on table. Dack Ralter and Wes Janson add 2 to power of anything either one pilots. During your control phase, may take one Attack Pattern Delta, Desperate Tactics, Lucky Shot, One More Pass, Rapid Fire, or a vehicle weapon into hand from Reserve Deck; reshuffle. May lose 2 Force to cancel Trample or Walker Barrage. (Immune to Alter.)");
+        setGameText("Deploy on table. Dack Ralter and Wes Janson have [Pilot] 2. During your control phase, may [upload] one Attack Pattern Delta, Desperate Tactics, Lucky Shot, One More Pass, Rapid Fire, or a vehicle weapon. May lose 2 Force to cancel Trample or Walker Barrage. (Immune to Alter.)");
         addIcons(Icon.SPECIAL_EDITION);
         addImmuneToCardTitle(Title.Alter);
     }
