@@ -51,6 +51,7 @@ public class Card_1220_169_Tests {
         var card = scn.GetLSCard("blaster").getBlueprint();
 
         assertEquals("Luke's Blaster Pistol", card.getTitle());
+        assertEquals("Deploy on Luke. During battle, opponent may not move from here. May target a character (target loses any immunity to attrition for remainder of turn) or vehicle (with maneuver) for free. Draw destiny. Target hit and forfeit -3 if destiny +2 > defense value.", card.getGameText());
         assertTrue(card.hasVirtualSuffix());
         assertEquals(Uniqueness.UNIQUE, card.getUniqueness());
         assertEquals(Side.LIGHT, card.getSide());
@@ -168,7 +169,8 @@ public class Card_1220_169_Tests {
     }
 
     @Test
-    public void LukesBlasterPistolMayFireOnlyOncePerBattle() {
+    public void LukesBlasterPistolFiresOncePerBattleUnderTheNormalWeaponRule() {
+        // The official text has no "Once per battle"; the normal rule still allows one firing per battle.
         var scn = GetScenario();
         var blaster = scn.GetLSCard("blaster");
         var luke = scn.GetLSCard("luke");
