@@ -6738,6 +6738,7 @@ const fixedImages = {
 "2261_82":"https://wiki.swccg.com/images/c/c3/VB6-81-Maneuvering_Flaps_Nick_Of_Time.png",
 "2261_1087":"https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Light/large/strongisvader.gif",
 "2261_93":"https://wiki.swccg.com/images/c/cd/VB6-91-Armed_And_Dangerous_Krayt_Dragon_Howl.png",
+"2261_97":"https://wiki.swccg.com/images/5/51/VB6-98-Let_The_Wookiee_Win.png",
 // END VB5-VB6 phase 2
 "2210_6":"https://wiki.swccg.com/images/9/97/VB1-06-Danz_Borin.png",
 "2210_8":"https://wiki.swccg.com/images/8/8d/VB1-08-Death_Star_Gunner.png",
