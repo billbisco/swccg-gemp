@@ -6631,5 +6631,6 @@ const fixedImages = {
 "2220_111":"https://wiki.swccg.com/images/7/71/VB2-112-Advantage.png",
 "2220_128":"https://wiki.swccg.com/images/f/fa/VB2-128-Maneuvering_Flaps.png",
 "2220_136":"https://wiki.swccg.com/images/9/93/VB2-135-Wars_Not_Make_One_Great.png",
+"2220_156":"https://wiki.swccg.com/images/8/80/VB2-156-Through_The_Force_Things_You_Will_See.png",
 
 };
