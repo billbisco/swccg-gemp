@@ -6635,5 +6635,6 @@ const fixedImages = {
 "2261_63":"https://wiki.swccg.com/images/8/84/VB6-65-Daughter_Of_Skywalker.png",
 "2261_87":"https://wiki.swccg.com/images/7/71/VB6-89-Strong_Is_Vader.png",
 "2261_90":"https://wiki.swccg.com/images/0/05/VB6-92-Ascension_Guns.png",
+"2262_7":"https://wiki.swccg.com/images/1/10/VB6-09-Power_Of_The_Sith.png",
 
 };
