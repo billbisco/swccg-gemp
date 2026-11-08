@@ -18,6 +18,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.gempukku.swccgo.cards.Vb89VersionAsserts.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -192,5 +193,12 @@ public class Card_1291_052_Tests {
         scn.AttachCardsTo(dockingBay, learn);
         assertFalse(marksDarkSideGameTextCanceled(scn, dockingBay, learn));
         assertEquals(Math.round(genBefore), Math.round(lsForceGeneration(scn, dockingBay)));
+    }
+
+    /** Virtual Block 9.1 sheet text (2014-01-10), the latest and only published version; GEMP showed a PC data-error wording. Same play. */
+    @Test
+    public void MuchToLearnYouStillHaveCurrentCardIsTheLatestText() {
+        assertCurrentCard("1291_52", "Much to Learn, You Still Have",
+                "Deploy on any location. While on a battleground, adds one [Light Side Force] and [Dark Side Force]. While on opponent's non-battleground planet location (except a Kashyyyk location or docking bay), their gametext here is canceled and your Force generation is +1. [Clone Army] troopers are power +1.");
     }
 }
