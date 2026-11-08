@@ -40,7 +40,7 @@ import java.util.List;
 public class Card1272_020 extends AbstractNormalEffect {
     public Card1272_020() {
         super(Side.LIGHT, 5, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Declaration Of Rebellion", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_2, Rarity.V);
-        setGameText("Deploy on table. Bail, Leia, and Mon Mothma are Insurgents. While an Insurgent present at a battleground, your total battle destiny is +1, and, if with your non-unique character, each may forfeit for 4 when hit. Once per game may take one K'lor'slug into hand from Reserve Deck; reshuffle. (Immune to Alter.)");
+        setGameText("Deploy on table. Bail, Leia, and Mon Mothma are Insurgents. While an Insurgent present at a battleground, your total battle destiny is +1, and, if with your non-unique character, each may forfeit for 4 when hit. Once per game may [upload] K'lor'slug. (Immune to Alter.)");
         addIcons(Icon.DEATH_STAR_II);
         addImmuneToCardTitle(Title.Alter);
     }

@@ -43,7 +43,7 @@ public class Card1273_022 extends AbstractRebel {
         super(Side.LIGHT, 2, 2, 2, 2, 4, "Dack Ralter", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_3, Rarity.V);
         setVirtualSuffix(true);
         setLore("Born in an Imperial labor camp on Kalist 6. Joined the Rebellion after his escape. Young student of Commander Skywalker. Experienced crackshot gunner.");
-        setGameText("Adds 2 to the power of anything he pilots. Heroic. Rogue Squadron Pilot. During battle when Dack (or a starship or vehicle he pilots) fires a weapon, may add 1 to total weapon destiny and hit targets are power -2. If Dack is about to leave table may place him in Used Pile instead.");
+        setGameText("[Pilot] 2. Heroic. Rogue Squadron pilot. During battle, when Dack (or a starship or vehicle he pilots) fires a weapon, may add 1 to total weapon destiny and hit targets are power -2. If Dack about to leave table, may place him in Used Pile instead.");
         addIcons(Icon.PILOT, Icon.WARRIOR);
         addKeywords(Keyword.ROGUE_SQUADRON, Keyword.GUNNER, Keyword.HEROIC);
         addPersona(Persona.DACK);
