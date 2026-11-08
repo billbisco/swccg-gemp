@@ -42,6 +42,22 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('unknown_card'), null);
 // Current-card override after // END legacy wins over the generated entry (docs/legacy-versions.md, "Current card image")
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_124'), 'https://wiki.swccg.com/images/c/c5/VB1-123-Faithful_Service-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2210_124'), 'https://wiki.swccg.com/images/5/54/VB1-123-Faithful_Service.png');
+// Batch B03: current cards show the CardMaker image of their latest text; versions keep the slip
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_4'), 'https://wiki.swccg.com/images/1/17/VB1-04-Commander_Praji-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_6'), 'https://wiki.swccg.com/images/3/34/VB1-06-Danz_Borin-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_15'), 'https://wiki.swccg.com/images/7/7d/VB1-15-Kitik_Keed_kak-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_17'), 'https://wiki.swccg.com/images/a/a3/VB1-17-Prophetess-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_152'), 'https://wiki.swccg.com/images/a/a3/VB1-17-Prophetess-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_26'), 'https://wiki.swccg.com/images/d/d7/VB1-26-Ur_Ru_r-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_30'), 'https://wiki.swccg.com/images/2/2f/VB1-30-A_Disturbance_In_The_Force-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_43'), 'https://wiki.swccg.com/images/0/03/VB1-38E-Imperial_Detainment-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_44'), 'https://wiki.swccg.com/images/9/92/VB1-44E-Luke_Luuuuke-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_45'), 'https://wiki.swccg.com/images/3/38/VB1-45-Maneuver_Check-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_56'), 'https://wiki.swccg.com/images/5/50/VB1-56-Coordinated_Attack-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2210_4'), 'https://wiki.swccg.com/images/2/28/VB1-04-Commander_Praji.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2220_1156'), 'https://wiki.swccg.com/images/b/ba/VB2-156-Through_The_Force_Things_You_Will_See-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2220_156'), 'https://wiki.swccg.com/images/8/80/VB2-156-Through_The_Force_Things_You_Will_See.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1220_156'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock2-Light/large/throughtheforcethingsyouwillsee.gif');
 // Batch B05 (Virtual Block 2): current cards and PC-E1 version cards show the CardMaker image of their own text
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1220_60'), 'https://wiki.swccg.com/images/f/fa/VB2-60-He_s_All_Yours_Bounty_Hunter-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1220_64'), 'https://wiki.swccg.com/images/0/03/VB2-64-Release_Your_Anger-PC-E2-cardmaker.png');

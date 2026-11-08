@@ -33,7 +33,8 @@ import java.util.List;
  * Title: Through The Force Things You Will See
  *
  * Original version of 1220_156 (Virtual Block 2 release sheet, Dec 2009, card #156): an Out Of Play Interrupt with no
- * once-per-game limit; the Virtual Cards Master List (2013-04-27) made it a Lost Interrupt usable once per game.
+ * once-per-game limit. The PC website card list (by 2012-07-21, PC-E1, 2220_1156) reworded it ("than in Force Pile");
+ * the Virtual Cards Master List (2013-04-27, PC-E2) made it a Lost Interrupt usable once per game.
  * Anything Goes only (docs/legacy-versions.md).
  */
 public class Card2220_156 extends AbstractLostInterrupt {
@@ -44,7 +45,7 @@ public class Card2220_156 extends AbstractLostInterrupt {
         setLore("One training exercise for a Jedi's apprentice is to invert one's view to see things from a different perspective. 'The future, the past. Old friends long gone.'");
         setGameText("If you are about to recirculate at the end of your turn, and you have fewer cards in Used Pile than Force Pile, place your Used Pile under your Force Pile instead. OR Place the top card of your Used Pile on top of your Force Pile.");
         setLegacyVersion(new LegacyVersion("1220_156", "",
-                "Virtual Block 2 release sheet (2009-12-07), card #156", LocalDate.of(2009, 12, 7), LocalDate.of(2013, 4, 27)));
+                "Virtual Block 2 release sheet (2009-12-07), card #156; superseded by the PC card list text (by 2012-07-21)", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21)));
         addIcons(Icon.DAGOBAH);
     }
 
