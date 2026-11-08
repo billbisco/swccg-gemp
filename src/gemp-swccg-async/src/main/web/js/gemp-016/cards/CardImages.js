@@ -6643,5 +6643,6 @@ const fixedImages = {
 "2261_20":"https://wiki.swccg.com/images/5/56/VB6-19-A_Useless_Gesture.png",
 "2261_46":"https://wiki.swccg.com/images/b/bf/VB6-47-One_Beautiful_Thing.png",
 "2261_1046":"https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/onebeautifulthing.gif",
+"2250_26":"https://wiki.swccg.com/images/2/2c/VB5-26-Force_Push.png",
 
 };
