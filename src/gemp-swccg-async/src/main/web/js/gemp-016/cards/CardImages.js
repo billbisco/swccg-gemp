@@ -6700,6 +6700,9 @@ const fixedImages = {
 "2261_46":"https://wiki.swccg.com/images/b/bf/VB6-47-One_Beautiful_Thing.png",
 "2261_1046":"https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/onebeautifulthing.gif",
 "2250_26":"https://wiki.swccg.com/images/2/2c/VB5-26-Force_Push.png",
+// Legacy VB5-VB6 phase 2 versions
+"2250_1":"https://wiki.swccg.com/images/7/75/VB5-01E-Nothing_Can_Get_Through_Our_Shield.png",
+// END VB5-VB6 phase 2
 "2210_6":"https://wiki.swccg.com/images/9/97/VB1-06-Danz_Borin.png",
 "2210_8":"https://wiki.swccg.com/images/8/8d/VB1-08-Death_Star_Gunner.png",
 "2210_110":"https://wiki.swccg.com/images/e/e1/VB1-110E-Rebel_Tech.png",
