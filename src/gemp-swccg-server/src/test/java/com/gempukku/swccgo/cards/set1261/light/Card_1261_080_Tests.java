@@ -39,7 +39,8 @@ public class Card_1261_080_Tests {
 
     @Test public void JabbaUsesFinalStartingEffectWithPrintedLore() {
         var scn = scenario(true, false); var b = scn.GetLSCard("jabba").getBlueprint();
-        assertEquals("Jabba, This Is Your Last Chance!", b.getTitle()); assertEquals(5, b.getDestiny(), scn.epsilon);
+        assertEquals("Jabba, This Is Your Last Chance!", b.getTitle());
+        assertEquals("Deploy on table with 5 cards from outside your deck face down under here. Twice per game, may play a Defensive Shield from here (as if from hand). If Quiet Mining Colony or Independent Operation on table, lightsabers may not add to Force drains. Cloud City Celebration is canceled.", b.getGameText()); assertEquals(5, b.getDestiny(), scn.epsilon);
         assertEquals("With a quick motion of his hand, Luke signaled Artoo and dramatically changed the situation.", b.getLore()); assertFalse(b.hasVirtualSuffix()); assertEquals(Uniqueness.UNIQUE, b.getUniqueness());
         assertEquals(Side.LIGHT, b.getSide()); assertEquals(Rarity.V, b.getRarity());
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_6_1, b.getExpansionSet()); assertEquals(CardSubtype.STARTING, b.getCardSubtype());
@@ -137,7 +138,7 @@ public class Card_1261_080_Tests {
         scn.MoveCardsToLocation(battle, luke, maul);
         scn.AttachCardsTo(luke, scn.GetLSCard("lukeSaber"));
         var modifiers = scn.game().getModifiersQuerying();
-        assertEquals(qmc, modifiers.mayFireOnlyOncePerBattle(scn.gameState(), scn.GetLSCard("lukeSaber")));
+        assertFalse(modifiers.mayFireOnlyOncePerBattle(scn.gameState(), scn.GetLSCard("lukeSaber")));
         scn.DSActivateForceCheat(4);
         scn.DSStartBattleAndSkipToWeaponsSegment(battle);
         assertTrue(scn.IsBattleStarted());
@@ -151,8 +152,9 @@ public class Card_1261_080_Tests {
         return scn.GetDSAvailableActions().stream().anyMatch(x -> x.contains("Double-Bladed Lightsaber"));
     }
 
-    @Test public void JabbaLimitsLightsabersToOneSwingWhileQuietMiningColonyOnTable() {
-        assertFalse(maulCanSwingAgain(true));
+    @Test public void JabbaAddsNoSwingLimitEvenWhileQuietMiningColonyOnTable() {
+        // Master List 2014 and card image: "lightsabers may not add to Force drains." (no "swing" clause).
+        assertTrue(maulCanSwingAgain(true));
     }
 
     @Test public void LightsabersMaySwingTwiceWithoutQuietMiningColonyOrIndependentOperation() {
