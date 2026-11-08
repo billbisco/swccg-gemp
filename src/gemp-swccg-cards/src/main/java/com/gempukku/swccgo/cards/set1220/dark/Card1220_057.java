@@ -36,7 +36,7 @@ public class Card1220_057 extends AbstractUsedInterrupt {
         super(Side.DARK, 5, Title.Debris_Zone, Uniqueness.UNRESTRICTED, ExpansionSet.VIRTUAL_BLOCK_2, Rarity.V);
         setVirtualSuffix(true);
         setLore("A reactor core explosion in a destroyed AT-AT causes a plasma release which shatters its armor, showering the immediate area with molten projectiles.");
-        setGameText("Once per turn, may take one Crash Landing or Weapon Malfunction into hand from Reserve Deck; reshuffle. OR if you have a piloted AT-AT on Hoth, target artillery weapon at a related site is lost. (Immune to Sense.)");
+        setGameText("Once per turn, [upload] Crash Landing or Weapon Malfunction. OR If you have a piloted AT-AT on Hoth, target artillery weapon at a related site is lost. (Immune to Sense.)");
         addIcons(Icon.HOTH);
         addImmuneToCardTitle(Title.Sense);
     }

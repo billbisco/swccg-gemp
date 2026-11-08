@@ -39,7 +39,7 @@ public class Card1220_097 extends AbstractRebel {
         super(Side.LIGHT, 1, 3, 3, 4, 7, "Princess Leia", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_2, Rarity.V);
         setVirtualSuffix(true);
         setLore("Prominent leader in the struggling Alliance. Former member of the Imperial Senate. Beginning to discover her true heritage. Likes scoundrels.");
-        setGameText("May deploy or move as a 'react' to same site as an Imperial. Adds one battle destiny if with Han or Vader. During your deploy phase, may deploy one Leia Of Alderaan, Reflection, or a matching blaster on Leia from Reserve Deck; reshuffle. Immune to attrition < 4.");
+        setGameText("May deploy or move as a 'react' to same site as an Imperial. Adds one battle destiny if with Han or Vader. During your deploy phase, may [download] one Leia Of Alderaan, Reflection, or matching blaster on Leia. Immune to attrition < 4.");
         addIcons(Icon.PILOT, Icon.WARRIOR, Icon.CLOUD_CITY);
         addPersona(Persona.LEIA);
     }
