@@ -6763,5 +6763,6 @@ const fixedImages = {
 "2220_57":"https://wiki.swccg.com/images/c/c4/VB2-57-Debris_Zone.png",
 "2220_60":"https://wiki.swccg.com/images/2/22/VB2-60-He_s_All_Yours_Bounty_Hunter.png",
 "2220_66":"https://wiki.swccg.com/images/e/e7/VB2-66-Shocking_Revelation.png",
+"2220_83":"https://wiki.swccg.com/images/3/30/VB2-83-AT_AT_Cannon.png",
 
 };
