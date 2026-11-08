@@ -6727,5 +6727,6 @@ const fixedImages = {
 "2220_10":"https://wiki.swccg.com/images/e/e1/VB2-10-Dengar.png",
 "2220_121":"https://wiki.swccg.com/images/1/18/VB2-121-Evacuation_Control.png",
 "2220_1121":"https://res.starwarsccg.org/cards/legacy/VirtualBlock2-Light/large/evacuationcontrol.gif",
+"2220_145":"https://wiki.swccg.com/images/a/a3/VB2-145-Impressive_Most_Impressive.png",
 
 };
