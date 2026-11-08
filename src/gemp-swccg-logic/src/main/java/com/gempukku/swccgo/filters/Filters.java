@@ -13812,29 +13812,6 @@ public class Filters {
     }
 
     /**
-     * Gets a filter representing the locations added to the specified creature's habitat by modifiers.
-     * @param creature the creature
-     * @return the filter
-     */
-    public static Filter habitatIncludedByModifiers(PhysicalCard creature) {
-        final Integer permCreatureCardId = creature.getPermanentCardId();
-        return new Filter() {
-            @Override
-            public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard) {
-                PhysicalCard creatureCard = gameState.findCardByPermanentId(permCreatureCardId);
-                if (creatureCard == null)
-                    return false;
-                for (com.gempukku.swccgo.logic.modifiers.Modifier modifier : modifiersQuerying.getModifiersAffectingCard(gameState,
-                        com.gempukku.swccgo.logic.modifiers.ModifierType.HABITAT_INCLUDES_LOCATION, creatureCard)) {
-                    if (modifier.isAffectedTarget(gameState, modifiersQuerying, physicalCard))
-                        return true;
-                }
-                return false;
-            }
-        };
-    }
-
-    /**
      * Gets a filter representing the card the specified card is granted the ability to deploy to.
      * @param cardToDeploy the card to deploy
      * @param reactActionOption a 'react' action option, or null if not a 'react'
