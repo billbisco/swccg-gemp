@@ -6756,5 +6756,6 @@ const fixedImages = {
 "2220_93":"https://wiki.swccg.com/images/a/ad/VB2-93-Kebyc.png",
 "2220_125":"https://wiki.swccg.com/images/9/9c/VB2-125-Hopping_Mad.png",
 "2220_129":"https://wiki.swccg.com/images/7/78/VB2-129-Nick_Of_Time.png",
+"2220_139":"https://wiki.swccg.com/images/a/a0/VB2-139E-Away_Put_Your_Weapon.png",
 
 };
