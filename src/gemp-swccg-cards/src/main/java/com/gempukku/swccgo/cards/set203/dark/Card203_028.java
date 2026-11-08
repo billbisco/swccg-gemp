@@ -41,6 +41,7 @@ public class Card203_028 extends AbstractAlien {
         setLore("Gamorrean in charge of the Gamorreans at Jabba's palace. Posted to stand guard at the entrance cavern. Assigned by Jabba to keep an eye on Tessek.");
         setGameText("Permanent weapon is •Ortugg's Ax (may target a character or creature for free; draw destiny; target hit, and its forfeit = 0, if destiny +1 > defense value). While Ortugg is your Rep, your non-unique Gamorreans are deploy -1 and forfeit +3.");
         addIcons(Icon.JABBAS_PALACE, Icon.WARRIOR, Icon.PERMANENT_WEAPON, Icon.VIRTUAL_SET_3);
+        addPersona(Persona.ORTUGG);
         setSpecies(Species.GAMORREAN);
         addKeywords(Keyword.GUARD);
     }
