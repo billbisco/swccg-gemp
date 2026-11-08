@@ -6629,5 +6629,6 @@ const fixedImages = {
 "2273_6":"https://wiki.swccg.com/images/6/6f/VL-history-1273-6-front-original.png",
 "2273_10":"https://wiki.swccg.com/images/a/a1/VB7-00-Kessel_Surveillance_System.png",
 "2273_11":"https://wiki.swccg.com/images/7/7e/VB7-06-Trophy_Of_A_Kill.png",
+"2273_27":"https://wiki.swccg.com/images/f/fe/VB7-01-Master_Kenobi.png",
 
 };
