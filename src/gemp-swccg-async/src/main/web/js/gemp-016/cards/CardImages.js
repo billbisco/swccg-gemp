@@ -6627,5 +6627,6 @@ const fixedImages = {
 "2272_5":"https://wiki.swccg.com/images/f/fc/VB7-04-Imperial_Stockpile.png",
 "2272_22":"https://wiki.swccg.com/images/7/76/VB7-04-Rebel_Gunrunner.png",
 "2273_6":"https://wiki.swccg.com/images/6/6f/VL-history-1273-6-front-original.png",
+"2273_10":"https://wiki.swccg.com/images/a/a1/VB7-00-Kessel_Surveillance_System.png",
 
 };
