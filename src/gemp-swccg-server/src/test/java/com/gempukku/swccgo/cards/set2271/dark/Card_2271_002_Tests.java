@@ -34,7 +34,7 @@ public class Card_2271_002_Tests {
     public void OriginalVaderIsTheCurrentCardWithTheJune2010Text() {
         var s = scenario();
         assertVersion(s.GetDSCard("vader").getBlueprint(), s.GetDSCard("current").getBlueprint(), "1271_2", "",
-                LocalDate.of(2010, 6, 18), LocalDate.of(2013, 4, 27),
+                LocalDate.of(2010, 6, 18), LocalDate.of(2012, 7, 21),
                 "Adds 3 to power of anything he pilots. [Vader] cards never deploy unless Rise Of The Dark Lord on table. Once per turn, if at a site you control, may apply his ability to draw battle destiny elsewhere. Immune to Clash Of Sabers, Disarmed, and attrition < 5.");
     }
 
