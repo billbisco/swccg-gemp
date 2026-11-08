@@ -74,10 +74,10 @@ public class LegacyVersionPrintedTitleTests {
             assertEquals(id, current.getTitles(), version.getTitles());
             assertEquals(id, GameUtils.getFullName(current), GameUtils.getRulesFullName(version));
         }
-        // A later version printed under the current name shows the current name, with its label
+        // 2281_1047 (PC-E1, printed under the current name) was retired in r17 and aliases the current card: no printed title
         SwccgCardBlueprint renamed = library.getSwccgoCardBlueprint("2281_1047");
         assertEquals(null, renamed.getPrintedTitle());
-        assertEquals("Kyle Katarn's Blaster Rifle [PC-E1]", GameUtils.getFullName(renamed));
+        assertEquals("Kyle Katarn's Blaster Rifle", GameUtils.getFullName(renamed));
         // A card that is not a version has no printed title
         assertEquals(null, library.getSwccgoCardBlueprint("1271_1").getPrintedTitle());
         assertEquals("Grievous, Hunter Of Jedi", GameUtils.getFullName(library.getSwccgoCardBlueprint("1271_1")));
