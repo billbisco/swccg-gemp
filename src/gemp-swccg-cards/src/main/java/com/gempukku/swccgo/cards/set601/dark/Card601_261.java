@@ -43,7 +43,7 @@ public class Card601_261 extends AbstractNormalEffect {
         super(Side.DARK, 5, PlayCardZoneOption.ATTACHED, Title.Ominous_Rumors, Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
         setVirtualSuffix(true);
         setLore("Rumors of a new 'technological terror' filled the galaxy with dread.");
-        setGameText("Deploy on Bunker. Your scouts aboard speeder bikes are defense value = 5 and immune to Clash of Sabers. Once per turn, if you control Bunker, may deploy an [Endor] Imperial here (except Fenson or Grond) or a forest from Reserve Deck; reshuffle. Canceled if opponent controls at least three Endor Sites. (Immune to Alter.)");
+        setGameText("Deploy on Bunker. Your scouts aboard speeder bikes are defense value = 5 and immune to Clash Of Sabers. Once per turn, if you control Bunker, may deploy an [Endor] Imperial here (except Fenson or Grond) or a forest from Reserve Deck; reshuffle. Canceled if opponent controls three Endor sites. (Immune to Alter.)");
         addKeywords(Keyword.DEPLOYS_ON_SITE);
         addIcons(Icon.ENDOR, Icon.LEGACY_BLOCK_9);
         addImmuneToCardTitle(Title.Alter);
