@@ -6632,5 +6632,6 @@ const fixedImages = {
 "2261_1045":"https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/onebrightspot.gif",
 "2261_56":"https://wiki.swccg.com/images/c/c4/VB6-56-Black_1.png",
 "2261_107":"https://wiki.swccg.com/images/f/f9/VB6-112-Wedge_In_Red_Squadron_1.png",
+"2261_63":"https://wiki.swccg.com/images/8/84/VB6-65-Daughter_Of_Skywalker.png",
 
 };
