@@ -6871,7 +6871,7 @@ const fixedImages = {
 "2210_159":"https://wiki.swccg.com/images/f/f7/VB1-160-Precise_Hit.png",
 "2210_105":"https://res.starwarsccg.org/cards/legacy/VirtualBlock1-Light/large/lukeskywalker.gif",
 "2210_107":"https://wiki.swccg.com/images/0/03/VB1-107-Obi_Wan_Kenobi.png",
-"2210_150":"https://wiki.swccg.com/images/5/50/VB1-151-Don_t_Tread_On_Me.png",
+"2210_150":"https://res.starwarsccg.org/cards/legacy/VirtualBlock1-Light/large/donttreadonme.gif",
 "2210_43":"https://wiki.swccg.com/images/f/fe/VB1-38E-Imperial_Detainment.png",
 "2210_44":"https://wiki.swccg.com/images/8/86/VB1-44E-Luke_Luuuuke.png",
 "2210_108":"https://wiki.swccg.com/images/2/2b/VB1-108-Owen_Lars.png",
