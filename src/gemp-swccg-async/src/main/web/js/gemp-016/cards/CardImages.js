@@ -6633,5 +6633,6 @@ const fixedImages = {
 "2220_136":"https://wiki.swccg.com/images/9/93/VB2-135-Wars_Not_Make_One_Great.png",
 "2220_156":"https://wiki.swccg.com/images/8/80/VB2-156-Through_The_Force_Things_You_Will_See.png",
 "2220_160":"https://wiki.swccg.com/images/f/f1/VB2-160E-Wookiee_Strangle.png",
+"2220_161":"https://wiki.swccg.com/images/d/db/VB2-162-Hoth_Echo_Med_Lab.png",
 
 };
