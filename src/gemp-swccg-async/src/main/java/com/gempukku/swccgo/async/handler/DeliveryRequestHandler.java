@@ -6,6 +6,7 @@ import com.gempukku.swccgo.collection.TransferDAO;
 import com.gempukku.swccgo.game.CardCollection;
 import com.gempukku.swccgo.game.Player;
 import com.gempukku.swccgo.game.SwccgCardBlueprint;
+import com.gempukku.swccgo.logic.GameUtils;
 import com.gempukku.swccgo.game.SwccgCardBlueprintLibrary;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpRequest;
@@ -65,7 +66,7 @@ public class DeliveryRequestHandler extends SwccgoServerRequestHandler implement
                         if (blueprint != null) {
                             card.setAttribute("horizontal", String.valueOf(blueprint.isHorizontal()));
                             if (blueprint.getTitle() != null)
-                                card.setAttribute("title", blueprint.getTitle());
+                                card.setAttribute("title", GameUtils.getDisplayTitle(blueprint));
                         }
                         collectionTypeElem.appendChild(card);
                     } else {

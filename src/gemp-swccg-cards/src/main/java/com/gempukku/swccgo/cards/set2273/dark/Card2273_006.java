@@ -46,6 +46,7 @@ public class Card2273_006 extends AbstractDroid {
         setGameText("Shockstaff deploys and fires for free on this droid. While on Blockade Flagship or Coruscant (or with Cyborg Commander), this droid is Heroic and power +2. Your characters here are immune to Ambush, Clash Of Sabers, and attrition < 4.");
         setLegacyVersion(new LegacyVersion("1273_6", "",
                 "Virtual Block 7.3 release sheet (2011-06-03)", LocalDate.of(2011, 6, 3), LocalDate.of(2013, 4, 27)));
+        setPrintedTitle("IG Bodyguard Droid");
         addIcons(Icon.WARRIOR, Icon.PRESENCE);
         addModelType(ModelType.GUARD);
     }

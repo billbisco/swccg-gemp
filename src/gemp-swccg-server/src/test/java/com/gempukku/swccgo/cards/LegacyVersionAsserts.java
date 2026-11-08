@@ -51,8 +51,8 @@ public final class LegacyVersionAsserts {
         assertEquals(supersededOn, info.supersededOn());
         assertFalse(info.source().isEmpty());
         if (label.isEmpty())
-            assertEquals(GameUtils.getFullName(current), GameUtils.getFullName(version));
+            assertEquals(GameUtils.getFullName(current), GameUtils.getRulesFullName(version));
         else
-            assertEquals(GameUtils.getFullName(current) + " [" + label + "]", GameUtils.getFullName(version));
+            assertEquals(GameUtils.getFullName(current) + " [" + label + "]", GameUtils.getRulesFullName(version));
     }
 }
