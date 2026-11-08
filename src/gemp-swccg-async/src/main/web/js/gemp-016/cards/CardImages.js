@@ -6702,6 +6702,7 @@ const fixedImages = {
 "2250_26":"https://wiki.swccg.com/images/2/2c/VB5-26-Force_Push.png",
 // Legacy VB5-VB6 phase 2 versions
 "2250_1":"https://wiki.swccg.com/images/7/75/VB5-01E-Nothing_Can_Get_Through_Our_Shield.png",
+"2250_2":"https://wiki.swccg.com/images/f/ff/VB5-02-Aurra_Sing.png",
 // END VB5-VB6 phase 2
 "2210_6":"https://wiki.swccg.com/images/9/97/VB1-06-Danz_Borin.png",
 "2210_8":"https://wiki.swccg.com/images/8/8d/VB1-08-Death_Star_Gunner.png",
