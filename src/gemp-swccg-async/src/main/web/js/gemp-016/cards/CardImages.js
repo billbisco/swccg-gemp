@@ -6742,6 +6742,7 @@ const fixedImages = {
 "2261_98":"https://wiki.swccg.com/images/f/fb/VB6-99-Out_Of_Somewhere.png",
 "2261_101":"https://wiki.swccg.com/images/4/4f/VB6-102-Solo_Han.png",
 "2261_102":"https://wiki.swccg.com/images/1/11/VB6-103-Warriors_Courage.png",
+"2261_105":"https://wiki.swccg.com/images/8/85/VB6-95-Odin_Nesloor_First_Aid.png",
 // END VB5-VB6 phase 2
 "2210_6":"https://wiki.swccg.com/images/9/97/VB1-06-Danz_Borin.png",
 "2210_8":"https://wiki.swccg.com/images/8/8d/VB1-08-Death_Star_Gunner.png",
