@@ -37,7 +37,7 @@ public class Card1274_007 extends AbstractNormalEffect {
     public Card1274_007() {
         super(Side.DARK, 4, PlayCardZoneOption.ATTACHED, "Occupied Territory", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_4, Rarity.V);
         setLore("'I advise everyone to leave before more Imperial troops arrive.'");
-        setGameText("Deploy on a battleground. If you occupy, during battle here or at a related location, may place this Effect in Used Pile and choose: Draw up to two cards from Reserve Deck OR Prevent opponent from drawing any destinies during the power segment of that battle (except battle destiny).");
+        setGameText("Deploy on a battleground. If you occupy, during battle here or at a related location, may place this Effect in Used Pile and choose: Draw up to two cards from Reserve Deck OR Prevent any destinies from being drawn during the power segment of that battle (except battle destiny).");
         addIcons(Icon.SPECIAL_EDITION);
         addKeywords(Keyword.DEPLOYS_ON_LOCATION);
     }
@@ -70,20 +70,24 @@ public class Card1274_007 extends AbstractNormalEffect {
         }
 
         TopLevelGameTextAction action = new TopLevelGameTextAction(self, gameTextSourceCardId, gameTextActionId);
-        action.setText("Place in Used Pile to prevent opponent's power segment destiny draws");
-        action.setActionMsg("Prevent opponent from drawing any destinies during the power segment of this battle (except battle destiny)");
+        action.setText("Place in Used Pile to prevent power segment destiny draws");
+        action.setActionMsg("Prevent any destinies from being drawn during the power segment of this battle (except battle destiny)");
         action.appendCost(
                 new PlaceCardInUsedPileFromTableEffect(action, self));
-        action.appendEffect(
-                new AddUntilEndOfBattleModifierEffect(action,
-                        new MayNotDrawDestinyExceptBattleDestinyModifier(self, new Condition() {
-                            @Override
-                            public boolean isFulfilled(GameState gameState, ModifiersQuerying modifiersQuerying) {
-                                BattleState battleState = gameState.getBattleState();
-                                return battleState != null && battleState.isReachedPowerSegment() && !battleState.isReachedDamageSegment();
-                            }
-                        }, opponent),
-                        "Prevents opponent from drawing any destinies during the power segment of this battle (except battle destiny)"));
+        Condition duringPowerSegment = new Condition() {
+            @Override
+            public boolean isFulfilled(GameState gameState, ModifiersQuerying modifiersQuerying) {
+                BattleState battleState = gameState.getBattleState();
+                return battleState != null && battleState.isReachedPowerSegment() && !battleState.isReachedDamageSegment();
+            }
+        };
+        // PC card list: "Prevent any destinies from being drawn" (both players)
+        for (String player : new String[]{opponent, playerId}) {
+            action.appendEffect(
+                    new AddUntilEndOfBattleModifierEffect(action,
+                            new MayNotDrawDestinyExceptBattleDestinyModifier(self, duringPowerSegment, player),
+                            player.equals(opponent) ? "Prevents any destinies from being drawn during the power segment of this battle (except battle destiny)" : null));
+        }
         actions.add(action);
         return actions;
     }
