@@ -6628,5 +6628,6 @@ const fixedImages = {
 "2281_1047":"https://wiki.swccg.com/images/2/2b/VL-history-1281-47-front-master.png",
 "2282_14":"https://wiki.swccg.com/images/0/03/VB8-03-Lando_Calrissian_Unlikely_Hero.png",
 "2283_12":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Dark/large/spaceportdockingbay.gif",
+"2283_21":"https://wiki.swccg.com/images/0/09/VB8-02-Underworld_Contacts_Uncharted_Settlements.png",
 
 };
