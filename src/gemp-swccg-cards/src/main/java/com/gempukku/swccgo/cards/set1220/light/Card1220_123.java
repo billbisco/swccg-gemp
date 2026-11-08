@@ -41,7 +41,7 @@ public class Card1220_123 extends AbstractNormalEffect {
         super(Side.LIGHT, 4, PlayCardZoneOption.ATTACHED, Title.Frostbite, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_2, Rarity.V);
         setVirtualSuffix(true);
         setLore("'Then I'll see you in hell!'");
-        setGameText("Deploy on the Hoth system if you control two exterior Hoth sites. During your control phase, may retrieve 1 Force for each Hoth site you control with a unique (•) combat vehicle. If opponent controls this system, this Effect lost. While you occupy 1st marker, immune to Alter.");
+        setGameText("Deploy on Hoth system if you control two exterior Hoth sites. During your control phase, may retrieve 1 Force for each Hoth site you control with a unique (•) combat vehicle. If opponent controls this system, this Effect lost. While you occupy 1st marker, [Immune to Alter]");
         addKeywords(Keyword.DEPLOYS_ON_LOCATION);
         addIcons(Icon.HOTH);
     }

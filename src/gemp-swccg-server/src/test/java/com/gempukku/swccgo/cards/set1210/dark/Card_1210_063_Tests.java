@@ -81,7 +81,7 @@ public class Card_1210_063_Tests {
 
         assertEquals("Local Trouble", card.getTitle());
         assertTrue(card.hasVirtualSuffix());
-        assertEquals(Uniqueness.UNIQUE, card.getUniqueness());
+        assertEquals(Uniqueness.UNRESTRICTED, card.getUniqueness()); // no dot on the PC image or the VB1 sheet slip
         assertEquals(Side.DARK, card.getSide());
         assertEquals(4, card.getDestiny(), scn.epsilon);
         assertEquals(CardSubtype.LOST, card.getCardSubtype());

@@ -155,7 +155,7 @@ public class Card_1210_101_Tests {
                 com.gempukku.swccgo.framework.StartingSetup.NoDSShields,
                 com.gempukku.swccgo.framework.VirtualTableScenario.Open);
         var card = scn.GetLSCard("latest").getBlueprint();
-        org.junit.Assert.assertEquals("Adds 3 to power of anything he pilots. Cards with 'Han' in title are destiny +3. May use 1 Force to cancel Boba Fett's or Jabba's game text for remainder of turn. If opponent just initiated battle here, may use 1 Force to take the first weapons segment action.",
+        org.junit.Assert.assertEquals("[Pilot] 3. Cards with 'Han' in title are destiny +3. May use 1 Force to cancel Boba Fett's or Jabba's game text for remainder of turn. If opponent just initiated battle here, may use 1 Force to take the first weapons segment action.",
                 card.getGameText());
         org.junit.Assert.assertNull(card.getLegacyVersion());
         org.junit.Assert.assertFalse(card.getGameText().contains("Boba Fett or Jabba"));

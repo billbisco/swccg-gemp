@@ -168,7 +168,7 @@ public class Card_1220_161_Tests {
                 com.gempukku.swccgo.framework.StartingSetup.NoDSShields,
                 com.gempukku.swccgo.framework.VirtualTableScenario.Open);
         var card = scn.GetLSCard("latest").getBlueprint();
-        org.junit.Assert.assertEquals("Light: During your deploy phase, may deploy a medical droid here from Reserve Deck; reshuffle. Dark: If you control, with an Imperial present, Force drain +1 here.",
+        org.junit.Assert.assertEquals("Light: During your deploy phase, may [download] a medical droid here. Dark: If you control, with an Imperial present, Force drain +1 here.",
                 card.getGameText());
         org.junit.Assert.assertNull(card.getLegacyVersion());
         org.junit.Assert.assertFalse(card.getGameText().contains("If your Imperial present"));
