@@ -26,6 +26,7 @@ import com.gempukku.swccgo.logic.effects.choose.TakeCardIntoHandFromReserveDeckE
 import com.gempukku.swccgo.logic.modifiers.CancelOpponentsForceDrainBonusesModifier;
 import com.gempukku.swccgo.logic.modifiers.ForceDrainsMayNotBeCanceledModifier;
 import com.gempukku.swccgo.logic.modifiers.MayNotPlayModifier;
+import com.gempukku.swccgo.logic.modifiers.DestinyDrawForActionSourceModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.timing.EffectResult;
 import com.gempukku.swccgo.logic.timing.results.HitResult;
@@ -43,8 +44,8 @@ public class Card601_087_BACK extends AbstractObjective {
     public Card601_087_BACK() {
         super(Side.DARK, 7, Title.Their_Fire_Has_Gone_Out_Of_The_Universe, ExpansionSet.LEGACY, Rarity.V);
         setVirtualSuffix(true);
-        setGameText("While this side up, opponent's Force drain bonuses are canceled and your Force drains at battlegrounds may not be canceled.  During your control phase, may retrieve 1 Force.  During your control phase, may use 2 Force to take any one card without ability into hand from Reserve Deck; reshuffle.  If targeting a vehicle or starship with Lightsaber Parry, Tarkin's Orders, or There Is No Conflict, that destiny draw is +2.\n" +
-                "Flip this card if opponent has a unique (•) character of ability > 3 present at a battleground site.");
+        setGameText("While this side up, opponent's Force drain bonuses are canceled and your Force drains at battlegrounds may not be canceled. During your control phase, may retrieve 1 Force. During your control phase, may use 2 Force to ▲ any one card without ability. If targeting a vehicle or starship with Lightsaber Parry, Tarkin's Orders, or There Is No Conflict, that destiny draw is +2.\n" +
+                "Flip this card if opponent has a unique (•) character of ability > 3 present at a battleground site or if neither Vader nor Galen is on table.");
         addIcons(Icon.SPECIAL_EDITION, Icon.LEGACY_BLOCK_4);
         setAsLegacy(true);
     }
@@ -58,7 +59,12 @@ public class Card601_087_BACK extends AbstractObjective {
 
         modifiers.add(new CancelOpponentsForceDrainBonusesModifier(self, new TrueCondition()));
         modifiers.add(new ForceDrainsMayNotBeCanceledModifier(self, Filters.battleground, playerId));
-        //TODO If targeting a vehicle or starship with Lightsaber Parry, Tarkin's Orders, or There Is No Conflict, that destiny draw is +2.
+        // If targeting a vehicle or starship with Lightsaber Parry, Tarkin's Orders, or There Is No Conflict (as The Force
+        // Unleashed lets them be played), that destiny draw is +2.
+        modifiers.add(new DestinyDrawForActionSourceModifier(self,
+                Filters.and(Filters.or(Filters.title("Lightsaber Parry"), Filters.title("Tarkin's Orders"), Filters.title("There Is No Conflict")),
+                        Filters.cardBeingPlayedTargeting(self, Filters.or(Filters.vehicle, Filters.starship))),
+                2, playerId));
         return modifiers;
     }
 
