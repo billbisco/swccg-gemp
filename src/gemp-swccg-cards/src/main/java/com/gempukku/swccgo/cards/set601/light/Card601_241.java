@@ -37,7 +37,7 @@ public class Card601_241 extends AbstractUsedOrStartingInterrupt {
         super(Side.LIGHT, 5, "Don't Tread On Me", Uniqueness.UNRESTRICTED, ExpansionSet.LEGACY, Rarity.V);
         setVirtualSuffix(true);
         setLore("Han did not take kindly to Jabba's posturing.");
-        setGameText("USED: Use 1 Force to [download] an Effect that deploys for free on table (or your side of table) and is always immune to Alter. STARTING: When drawing your starting hand, draw up to 12 cards instead of 8. Place this Interrupt in Reserve Deck.");
+        setGameText("USED: Use 1 Force to deploy an Effect that deploys for free on table (or on your side of table) and is always Immune to Alter from Reserve Deck; reshuffle. STARTING: When drawing your starting hand, draw up to 12 cards instead of 8. Place this Interrupt in Reserve Deck.");
         addIcons(Icon.SPECIAL_EDITION, Icon.LEGACY_BLOCK_1);
         setAsLegacy(true);
     }
