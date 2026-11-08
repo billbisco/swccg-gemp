@@ -6619,5 +6619,6 @@ const fixedImages = {
 "2261_33":"https://wiki.swccg.com/images/c/cd/VB6-32-Dark_Waters_Krayt_Dragon_Bones.png",
 "2272_23":"https://wiki.swccg.com/images/a/a0/VB7-04-Rogue_Insertion.png",
 "2271_1":"https://wiki.swccg.com/images/8/81/VL-history-1271-1-front-original.png",
+"2271_2":"https://wiki.swccg.com/images/1/10/VB7-01-Darth_Vader_More_Machine_Than_Man.png",
 
 };
