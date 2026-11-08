@@ -6710,6 +6710,7 @@ const fixedImages = {
 "2250_35":"https://wiki.swccg.com/images/1/14/VB5-37-Clone_Pilot.png",
 "2250_41":"https://wiki.swccg.com/images/7/75/VB5-41-Jedi_Survivor.png",
 "2250_1044":"https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/masterquigon.gif",
+"2250_45":"https://wiki.swccg.com/images/a/a3/VB5-44E-Mace_Windu.png",
 // END VB5-VB6 phase 2
 "2210_6":"https://wiki.swccg.com/images/9/97/VB1-06-Danz_Borin.png",
 "2210_8":"https://wiki.swccg.com/images/8/8d/VB1-08-Death_Star_Gunner.png",
