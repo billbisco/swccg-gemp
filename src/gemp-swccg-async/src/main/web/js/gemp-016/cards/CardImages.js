@@ -6724,5 +6724,6 @@ const fixedImages = {
 "2220_163":"https://wiki.swccg.com/images/3/35/VB2-164E-Local_Uprising.png",
 "2220_163_BACK":"https://res.starwarsccg.org/cards/legacy/VirtualBlock2-Light/large/liberation.gif",
 "2220_169":"https://wiki.swccg.com/images/9/91/VB2-169-Luke_s_Blaster_Pistol.png",
+"2220_10":"https://wiki.swccg.com/images/e/e1/VB2-10-Dengar.png",
 
 };
