@@ -47,7 +47,7 @@ public class Card601_175 extends AbstractStarfighter {
         super(Side.LIGHT, 3, 3, 3, null, 5, 3, 4, Title.Bravo_Fighter, Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
         setVirtualSuffix(true);
         setLore("Flown by an unknown pilot who likes to spin a lot. Played the deciding role in the attack against the Droid Control Ship.");
-        setGameText("Permanent pilot provides ability of 4. May add 1 astromech. During battle, may target a starship with no character piloting. Draw destiny. If destiny > defense value, target hit. Immune to attrition < 3.");
+        setGameText("May add one astromech. During battle, may target a starship with no character piloting. Draw destiny. If destiny > defense value, target hit. Permanent pilot provides ability of 4. Immune to attrition < 3.");
         addIcons(Icon.THEED_PALACE, Icon.EPISODE_I, Icon.REPUBLIC, Icon.PILOT, Icon.NAV_COMPUTER, Icon.LEGACY_BLOCK_5);
         addKeywords(Keyword.BRAVO_SQUADRON);
         addModelType(ModelType.N_1_STARFIGHTER);
