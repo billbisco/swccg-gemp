@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Shared clause of the Virtual Block 7.4 lightsabers (Cyborg Commander's Lightsabers, Sidious' Lightsaber):
+ * Shared clause of the Virtual Block 7.4 lightsabers (Grievous' Lightsabers, Sidious' Lightsaber):
  * "Target hit, and may not satisfy attrition (or be removed from Lost Pile this turn)". The hit and attrition part is
  * the fire action; this adds the Lost Pile part when the weapon hits a card.
  */
