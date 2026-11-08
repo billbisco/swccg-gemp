@@ -94,10 +94,21 @@ setPrintedTitle("Cyborg Commander, Hunter Of Jedi");
 - Image: the wiki slip crop of the release sheet that printed that text (the wiki page's `image2` file), added to
   `CardImages.js` after `// END legacy`. Get the URL from the wiki API:
   `https://wiki.swccg.com/api.php?action=query&prop=imageinfo&iiprop=url&format=json&titles=File:<image2>`
-  (reachable from Bill's PC shell). Check by eye that the slip shows the old text; if no slip exists, reuse the
-  current image URL and rely on the label.
+  (reachable from Bill's PC shell). Check by eye that the slip shows the old text; if no published image shows it,
+  make a CardMaker image of that text (ai-team-skills `shared/swccg-cardmaker/LEGACY-VERSION-IMAGES.md`), upload it to
+  the wiki and use its URL (batch method, Bill 2026-11-08: every version shows its own text).
 - `printedOn` / `supersededOn` are for the period-accurate formats epic (swccg-guild/work#225). When the exact errata
   date is unknown, use the Virtual Cards Master List date (2014-02-04) as an upper bound and say so in the source.
+
+## Current card image (Bill, 2026-11-08)
+
+The current card (12xx/601 id) must show the **latest** text. The generated `// BEGIN legacy … // END legacy` block in
+`CardImages.js` takes the PC's card image, which often shows the original text. When it does, add an override line
+for the current id in the "Current Legacy cards whose image … shows an older text" section right after `// END legacy`
+(a later key in the object literal wins, and the generator only rewrites the block between the markers). The URL is
+the published image of the latest text, or a CardMaker recreation uploaded to the wiki
+(`shared/swccg-cardmaker/LEGACY-VERSION-IMAGES.md` in ai-team-skills). Example: `1210_124` Faithful Service (V),
+PC-E1 → `VB1-123-Faithful_Service-PC-E1-cardmaker.png`; its original version `2210_124` keeps the release-sheet slip.
 
 ## Checklist: add a pre-errata version
 
