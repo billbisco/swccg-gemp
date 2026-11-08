@@ -65,7 +65,8 @@ import java.util.Map;
  * Title: Deep Hatred (V)
  * Original version of 1240_37: the Virtual Block 4 release sheet text (Dec 2009). Deploys unless any of your Objectives is on
  * table (not only a [Reflections III] one), and after the duel only the Mara who dueled is ability = 6, adds one battle
- * destiny and may cancel a just drawn destiny (the later text gives this to any Mara). Anything Goes only
+ * destiny and may cancel a just drawn destiny (the later text gives this to any Mara). Superseded by the PC website card list
+ * text (by Jul 2012, PC-E1; Bill 2026-11-08 option (b)). Anything Goes only
  * (docs/legacy-versions.md).
  */
 public class Card2240_037 extends AbstractEpicEventDeployable {
@@ -74,7 +75,7 @@ public class Card2240_037 extends AbstractEpicEventDeployable {
         setVirtualSuffix(true);
         setGameText("Unless your Objective on table, deploy on table. Vader's Obsession may be played to initiate an epic duel as follows: If Mara is present with Luke, each player draws two destiny (if armed with a lightsaber, each destiny is +1). Add character's ability. If Karrde on table, your total is -1. Higher total wins. If Luke loses, place him out of play and you may retrieve 5 Force. If Mara loses, cross her to the Light Side (she is now Mara Skywalker). After the duel (unless it was canceled or tied) Mara is ability = 6, adds one battle destiny, and once per battle involving her, may cancel one just drawn destiny.");
         setLegacyVersion(new LegacyVersion("1240_37", "",
-                "Virtual Block 4 release sheet (2009-12-07), card #36", LocalDate.of(2009, 12, 7), LocalDate.of(2014, 2, 4)));
+                "Virtual Block 4 release sheet (2009-12-07), card #36", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21)));
         addIcons(Icon.EPISODE_I, Icon.REFLECTIONS_III);
     }
 

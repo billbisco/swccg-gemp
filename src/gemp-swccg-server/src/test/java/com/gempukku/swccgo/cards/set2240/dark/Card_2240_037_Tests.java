@@ -64,7 +64,7 @@ public class Card_2240_037_Tests {
         var scn = scenario("1_19", false);
         LegacyVersionAsserts.assertVersionOf(scn.GetDSCard("otherDeep").getBlueprint(), scn.GetDSCard("deep").getBlueprint(),
                 "Unless your Objective on table, deploy on table. Vader's Obsession may be played to initiate an epic duel as follows: If Mara is present with Luke, each player draws two destiny (if armed with a lightsaber, each destiny is +1). Add character's ability. If Karrde on table, your total is -1. Higher total wins. If Luke loses, place him out of play and you may retrieve 5 Force. If Mara loses, cross her to the Light Side (she is now Mara Skywalker). After the duel (unless it was canceled or tied) Mara is ability = 6, adds one battle destiny, and once per battle involving her, may cancel one just drawn destiny.",
-                "1240_37", "", LocalDate.of(2009, 12, 7), LocalDate.of(2014, 2, 4));
+                "1240_37", "", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21));
     }
 
     @Test
