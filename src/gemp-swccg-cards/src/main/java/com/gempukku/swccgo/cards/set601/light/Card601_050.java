@@ -108,7 +108,7 @@ public class Card601_050 extends AbstractAlien {
                     }
                 }
             });
-            Collections.singletonList(action);
+            return Collections.singletonList(action);
         }
 
         return null;
