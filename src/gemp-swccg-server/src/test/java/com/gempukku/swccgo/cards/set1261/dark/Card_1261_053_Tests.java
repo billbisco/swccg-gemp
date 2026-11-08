@@ -191,4 +191,18 @@ public class Card_1261_053_Tests {
         var flags = scn.DSGetADParamAsList("selectable");
         return flags == null || flags.isEmpty() || Boolean.parseBoolean(flags.get(index));
     }
+
+    @org.junit.Test
+    public void CurrentTextIsTheLatestVersion() {
+        // Virtual Block 6.1 sheet text is the only published version; GEMP's 'same site or related site' was a PC data error.
+        var scn = new com.gempukku.swccgo.framework.VirtualTableScenario(new java.util.HashMap<>(), new java.util.HashMap<>(java.util.Map.of("c", "1261_53")), 10, 10,
+                com.gempukku.swccgo.framework.StartingSetup.DefaultLSGroundLocation, com.gempukku.swccgo.framework.StartingSetup.DefaultDSGroundLocation,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSStartingInterrupts, com.gempukku.swccgo.framework.StartingSetup.NoDSStartingInterrupts,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSShields, com.gempukku.swccgo.framework.StartingSetup.NoDSShields,
+                com.gempukku.swccgo.framework.VirtualTableScenario.Open);
+        var bp = scn.GetDSCard("c").getBlueprint();
+        org.junit.Assert.assertEquals("Unless opponent's Sleen or matching operative at same or related site, those sites are immune to Ounee Ta.", bp.getLocationLightSideGameText());
+        org.junit.Assert.assertEquals("May not deploy to Bespin, Coruscant, Kessel, Ralltiir, or Tatooine. Once per game, may deploy an Effect that deploys on a character or a device here from Reserve Deck; reshuffle.", bp.getLocationDarkSideGameText());
+        org.junit.Assert.assertFalse(bp.getLocationLightSideGameText().contains("same site or related site"));
+    }
 }
