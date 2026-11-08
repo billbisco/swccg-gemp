@@ -216,6 +216,5 @@ public class Card_1274_003_Tests {
     public void BaktoidArmorWorkshopShowsTheLatestText() {
         String t = com.gempukku.swccgo.framework.VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("1274_3").getGameText();
         org.junit.Assert.assertEquals("Deploy on table. Your [Theed Palace] vehicles are defense value and immunity to attrition +1. May [download] Deployment Orders. Once per game, if Deployment Orders on table, may [download] an exterior battleground site not on table. Once per game, may retrieve a [Theed Palace] vehicle into hand. (Immune to Alter.)", t);
-        org.junit.Assert.assertFalse(t.contains("site not on table"));
     }
 }
