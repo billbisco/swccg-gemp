@@ -6676,7 +6676,7 @@ const fixedImages = {
 "2272_7":"https://wiki.swccg.com/images/f/fe/VB7-04-Where_Are_You_Taking_Them.png",
 "2272_20":"https://wiki.swccg.com/images/3/3d/VB7-05-Declaration_Of_Rebellion.png",
 "2272_28":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/roche.gif",
-"2273_4":"https://wiki.swccg.com/images/6/64/VL-history-1273-4-front-master.png",
+"2273_4":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Dark/large/garindan.gif",
 "2273_15":"https://wiki.swccg.com/images/6/62/VB7-p3-93-Evacuate.png",
 "2273_17":"https://wiki.swccg.com/images/9/93/VB7-p4-95-Coruscant_Palpatines_Quarters.png",
 "2273_19":"https://wiki.swccg.com/images/0/03/VB7-00-Spice_Mine_Operations.png",
