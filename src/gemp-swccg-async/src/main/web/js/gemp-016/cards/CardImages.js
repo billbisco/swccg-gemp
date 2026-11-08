@@ -6754,5 +6754,6 @@ const fixedImages = {
 "2220_1064":"https://res.starwarsccg.org/cards/legacy/VirtualBlock2-Dark/large/releaseyouranger.gif",
 "2220_92":"https://wiki.swccg.com/images/4/44/VB2-92-Jeroen_Webb.png",
 "2220_93":"https://wiki.swccg.com/images/a/ad/VB2-93-Kebyc.png",
+"2220_125":"https://wiki.swccg.com/images/9/9c/VB2-125-Hopping_Mad.png",
 
 };
