@@ -6661,7 +6661,7 @@ const fixedImages = {
 "2271_12":"https://wiki.swccg.com/images/7/75/VB7-01-Imperial_Security_Bureau.png",
 "2271_17":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Dark/large/vadersmask.gif",
 "2271_22":"https://wiki.swccg.com/images/5/50/VB7-p5-22-Death_Star_Central_Core.png",
-"2271_31":"https://wiki.swccg.com/images/f/fd/VB7-02-Biggs_Rogue_Legend.png",
+"2271_31":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/biggsroguelegend.gif",
 "2271_34":"https://wiki.swccg.com/images/7/7c/VB7-01-Princess_Leia_Lost_Scion.png",
 "2271_40":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/massassibasesentry.gif",
 "2271_41":"https://wiki.swccg.com/images/2/25/VB7-05-Oh_Hes_Not_Dead_Not_Yet.png",
