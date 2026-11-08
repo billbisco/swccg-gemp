@@ -6622,5 +6622,6 @@ const fixedImages = {
 "2250_18":"https://wiki.swccg.com/images/1/13/VB5-15-An_Enemy_Of_The_Republic.png",
 "2250_22":"https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Dark/large/withthunderousapplause.gif",
 "2250_28":"https://wiki.swccg.com/images/f/f7/VB5-28E-Trade_Federation_Tactics.png",
+"2250_34":"https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/bailorgana.gif",
 
 };
