@@ -305,12 +305,25 @@ public class DefaultSwccgFormat implements SwccgFormat {
                 }
         }
 
-        // Banned cards
+        // Banned cards (a pre-errata Legacy version is banned with its current card)
+        String sameCardId = sameCardBlueprintId(listedBlueprintId);
         Set<String> allAlternates = _library.getAllAlternates(blueprintId);
+        Set<String> currentAlternates = _library.getAllAlternates(sameCardId);
         for (String bannedBlueprintId : _bannedCards) {
-            if (bannedBlueprintId.equals(blueprintId) || (allAlternates != null && allAlternates.contains(bannedBlueprintId)))
+            if (bannedBlueprintId.equals(blueprintId) || bannedBlueprintId.equals(sameCardId)
+                    || (allAlternates != null && allAlternates.contains(bannedBlueprintId))
+                    || (currentAlternates != null && currentAlternates.contains(bannedBlueprintId)))
                 throw new DeckInvalidException("Deck contains a copy of banned card: <span class=\"validate-invalid-card\">" + fullName + "</span>");
         }
+    }
+
+    /**
+     * The base blueprint id that identifies the card for deck counts and bans: a pre-errata Legacy version
+     * (sets 2200-2292) counts as its current printing, so mixing versions never adds copies.
+     */
+    String sameCardBlueprintId(String blueprintId) {
+        String current = LegacyVersion.currentPrintingIdOf(blueprintId);
+        return _library.getBaseBlueprintId(current != null ? current : blueprintId);
     }
 
     /** Rules source hashed into the deck-format index stamp; the format library adds a chosen deck size to it. */
@@ -619,7 +632,7 @@ public class DefaultSwccgFormat implements SwccgFormat {
     private void processCardCounts(String blueprintId, Map<String, Integer> cardCountByName, Map<String, Integer> cardCountByBaseBlueprintId) {
         SwccgCardBlueprint cardBlueprint = _library.getSwccgoCardBlueprint(blueprintId);
         increaseCount(cardCountByName, cardBlueprint.getTitle());
-        increaseCount(cardCountByBaseBlueprintId, _library.getBaseBlueprintId(blueprintId));
+        increaseCount(cardCountByBaseBlueprintId, sameCardBlueprintId(blueprintId));
     }
 
     private void increaseCount(Map<String, Integer> counts, String name) {
