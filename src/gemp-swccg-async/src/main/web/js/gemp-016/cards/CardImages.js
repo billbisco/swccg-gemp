@@ -6679,7 +6679,7 @@ const fixedImages = {
 "2250_22":"https://wiki.swccg.com/images/4/41/VB5-25-With_Thunderous_Applause.png",
 "2250_28":"https://wiki.swccg.com/images/f/f7/VB5-28E-Trade_Federation_Tactics.png",
 "2250_34":"https://wiki.swccg.com/images/e/eb/VB5-35-Bail_Organa.png",
-"2261_10":"https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/darthvaderbetrayerofthejedi.gif",
+"2261_10":"https://wiki.swccg.com/images/7/79/VB6-10-Darth_Vader_Betrayer_Of_The_Jedi.png",
 "2261_34":"https://wiki.swccg.com/images/b/b9/VB6-34-Fleet_Security_Protocols.png",
 "2261_42":"https://wiki.swccg.com/images/c/c2/VB6-45-Lone_Pilot.png",
 "2261_1042":"https://wiki.swccg.com/images/c/c2/VB6-45-Lone_Pilot.png",
