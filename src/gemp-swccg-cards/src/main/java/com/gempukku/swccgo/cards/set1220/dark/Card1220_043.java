@@ -44,7 +44,7 @@ public class Card1220_043 extends AbstractNormalEffect {
         super(Side.DARK, 3, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.Precision_Targeting, Uniqueness.UNRESTRICTED, ExpansionSet.VIRTUAL_BLOCK_2, Rarity.V);
         setVirtualSuffix(true);
         setLore("'Sir, we just lost the main rear deflector shield. One more direct hit on the back quarter and we're done for!'");
-        setGameText("Deploy on table. Your capital starship weapon destiny draws are +1. During your deploy phase, may use 1 Force to [download] a starship weapon (for free) on your capital starship. If a starship was just hit, may place this Effect in Lost Pile to make that starship forfeit = 0.");
+        setGameText("Deploy on table. Your capital starship weapon destiny draws are +1. During your deploy phase, may use 1 Force to [download] a starship weapon (for free) on you capital starship. If a starship was just hit, may place this Effect in Lost Pile to make that starship forfeit = 0.");
         addIcons(Icon.DAGOBAH);
     }
 

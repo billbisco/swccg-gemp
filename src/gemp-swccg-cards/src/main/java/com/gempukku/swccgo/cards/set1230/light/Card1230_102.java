@@ -39,7 +39,7 @@ public class Card1230_102 extends AbstractUsedOrLostInterrupt {
         super(Side.LIGHT, 4, Title.Diversionary_Tactics, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_3, Rarity.V);
         setVirtualSuffix(true);
         setLore("Rebel pilots understand that what they lack in numbers, they must make up for in strategy. They often use diversions to remove dangerous opponents from a conflict.");
-        setGameText("USED: Target one piloted starship at a system. That starship is hyperspeed -1 for remainder of turn. LOST: If you have two unique (•) piloted Rebel (or [Republic]) starfighters in battle at a system, draw destiny. If destiny < 4, exclude one starship from that battle.");
+        setGameText("USED: Target one piloted starship at a system. That starship is hyperspeed -1 for remainder of turn. LOST: If you have 2 unique (•) piloted Rebel (or [Republic]) starfighters in battle at a system, draw destiny. If destiny < 4, exclude one starship from that battle.");
         addIcons(Icon.REFLECTIONS_III);
     }
 
