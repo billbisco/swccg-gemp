@@ -4800,7 +4800,8 @@ public class GameConditions {
                 && player.equals(game.getLightPlayer())
                 && self.getBlueprint().isSpecialRuleInEffectHere(SpecialRule.BLUFF_RULES, self)
                 && isPhaseForPlayer(game, Phase.DEPLOY, game.getDarkPlayer())
-                && Filters.canSpot(game.getGameState().getStackedCards(self), game, Filters.bluffCard);
+                && Filters.canSpot(game.getGameState().getStackedCards(self), game, Filters.bluffCard)
+                && canUseForce(game, player, game.getModifiersQuerying().getExtraForceCostToFlipBluffCard(game.getGameState(), self, player));
     }
 
     /**

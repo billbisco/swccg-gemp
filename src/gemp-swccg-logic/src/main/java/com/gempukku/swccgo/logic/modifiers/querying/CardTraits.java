@@ -230,6 +230,24 @@ public interface CardTraits extends BaseQuery, Limits, Piloting, Weapons {
     }
 
     /**
+     * Gets the amount of extra Force the specified player must first use to flip over a 'bluff card' at the specified
+     * location.
+     * @param gameState the game state
+     * @param location the location the 'bluff cards' are stacked on
+     * @param playerId the player flipping the 'bluff card'
+     * @return the amount of Force
+     */
+    default int getExtraForceCostToFlipBluffCard(GameState gameState, PhysicalCard location, String playerId) {
+        int result = 0;
+        for (Modifier modifier : getModifiersAffectingCard(gameState, ModifierType.EXTRA_FORCE_COST_TO_FLIP_BLUFF_CARD, location)) {
+            if (modifier.isForPlayer(playerId)) {
+                result += modifier.getValue(gameState, query(), location);
+            }
+        }
+        return Math.max(0, result);
+    }
+
+    /**
      * Determines if the specified card at the specified site goes to Used Pile with the site when the site leaves table
      * (see isSiteAndCardsTherePlacedInUsedPileWhenLeavesTable).
      * @param gameState the game state

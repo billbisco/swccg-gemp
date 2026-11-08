@@ -347,8 +347,15 @@ public abstract class AbstractLocation extends AbstractSwccgCardBlueprint {
             actions.add(new StackBluffCardAction(playerId, self));
 
         // Bluff rules (flip 'bluff card')
-        if (GameConditions.canFlipBluffCardAtLocation(playerId, game, self))
-            actions.add(new FlipBluffCardAction(playerId, self));
+        if (GameConditions.canFlipBluffCardAtLocation(playerId, game, self)) {
+            FlipBluffCardAction flipBluffCardAction = new FlipBluffCardAction(playerId, self);
+            int extraForceToFlip = game.getModifiersQuerying().getExtraForceCostToFlipBluffCard(game.getGameState(), self, playerId);
+            if (extraForceToFlip > 0) {
+                flipBluffCardAction.appendCost(
+                        new com.gempukku.swccgo.logic.effects.UseForceEffect(flipBluffCardAction, playerId, extraForceToFlip));
+            }
+            actions.add(flipBluffCardAction);
+        }
 
         // If location if blown away, then skip the other actions.
         if (self.isBlownAway())
