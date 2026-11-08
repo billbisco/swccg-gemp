@@ -34,7 +34,7 @@ public class Card1220_006 extends AbstractImperial {
         super(Side.DARK, 2, 3, 2, 3, 4, "Captain Piett", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_2, Rarity.V);
         setVirtualSuffix(true);
         setLore("Captain on the Executor. Monitored probe droid telemetry. His flawless record of arrests and suppressions has contributed to an impressive rise through the ranks.");
-        setGameText("Adds 3 to power of anything he pilots. Twice per game during opponent's turn, may place three cards from hand on your Force Pile to draw top two cards from Reserve Deck.");
+        setGameText("Adds 2 to power of anything he pilots. Twice per game during opponent's turn, may place three cards from hand on your Force Pile to draw top two cards from Reserve Deck.");
         addPersona(Persona.PIETT);
         addIcons(Icon.PILOT, Icon.HOTH);
         addKeywords(Keyword.CAPTAIN);
@@ -43,7 +43,7 @@ public class Card1220_006 extends AbstractImperial {
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
         List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new AddsPowerToPilotedBySelfModifier(self, 3));
+        modifiers.add(new AddsPowerToPilotedBySelfModifier(self, 2));
         return modifiers;
     }
 
