@@ -45,7 +45,7 @@ public class Card1261_082 extends AbstractNormalEffect {
                 Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
         setTitleComponents(new TitleComponent(Title.Maneuvering_Flaps, Uniqueness.UNIQUE),
                 new TitleComponent("Nick Of Time", Uniqueness.UNIQUE));
-        setGameText("Deploy on table. Your vehicles with a pilot character or gunner aboard are not hit when 'thrown.' During your deploy phase, may reveal an unpiloted combat vehicle from hand to take its matching pilot character (or vice versa) from Reserve Deck and deploy both simultaneously; reshuffle. Whenever you play Desperate Tactics, Lucky Shot, On Target, Rapid Fire, or Steady Aim, may draw top card from Reserve Deck. May not be suspended. (Immune to Alter.)");
+        setGameText("Deploy on table. Your vehicles with a pilot character or gunner aboard are not hit when 'thrown.' During your deploy phase, may reveal an unpiloted combat vehicle from hand to take its matching pilot character (or vice versa) from Reserve Deck and deploy both simultaneously; reshuffle. Whenever you play Desperate Tactics, Lucky Shot, On Target, Rapid Fire, or Steady Aim, may draw top card from Reserve Deck. (Immune to Alter.)");
         addIcons(Icon.SPECIAL_EDITION);
         addImmuneToCardTitle(Title.Alter);
     }
@@ -88,10 +88,17 @@ public class Card1261_082 extends AbstractNormalEffect {
         return null;
     }
 
+    /** The PC card list text (PC-E1, the latest) has no "May not be suspended." (2261_82, the sheet text, has it). */
+    protected boolean mayNotBeSuspended() {
+        return false;
+    }
+
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, PhysicalCard self) {
         Filter yourVehiclesWithPilotOrGunnerAboard = Filters.and(Filters.your(self), Filters.vehicle,
                 Filters.hasAboard(self, Filters.or(PILOT_CHARACTER, Filters.gunner)));
+        if (!mayNotBeSuspended())
+            return List.of(new NotHitWhenThrownModifier(self, yourVehiclesWithPilotOrGunnerAboard));
         return List.of(new NotHitWhenThrownModifier(self, yourVehiclesWithPilotOrGunnerAboard),
                 new MayNotBeSuspendedModifier(self));
     }
