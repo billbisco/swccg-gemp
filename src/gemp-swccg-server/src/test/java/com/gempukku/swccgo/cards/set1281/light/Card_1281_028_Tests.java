@@ -17,6 +17,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.gempukku.swccgo.cards.Vb89VersionAsserts.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -247,5 +248,12 @@ public class Card_1281_028_Tests {
         assertFalse(scn.DSDecisionAvailable("Battle just initiated"));
         assertTrue(scn.AwaitingLSWeaponsSegmentActions());
         assertEquals(scn.GetLSCard("cantina"), scn.GetDSCard("zuckuss").getAtLocation());
+    }
+
+    /** Virtual Block 8.1 sheet text (2012-05-11), the latest and only published version (also 1281_28ai), with the [Scoundrel] icon the text extraction drops; GEMP showed a PC data-error wording. Same play. */
+    @Test
+    public void KyleKatarnCurrentCardIsTheLatestText() {
+        assertCurrentCard("1281_28", "Kyle Katarn",
+                "May use any stolen weapon. Opponent may not 'react' to or from same site. Your total battle destiny here is +1 for each [Scoundrel] Effect on table. Once per game, may make a regular move during your control phase. Immune to attrition < 4 (< 5 if armed).");
     }
 }
