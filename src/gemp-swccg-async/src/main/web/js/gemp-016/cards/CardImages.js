@@ -6620,5 +6620,7 @@ const fixedImages = {
 "2272_23":"https://wiki.swccg.com/images/a/a0/VB7-04-Rogue_Insertion.png",
 "2281_24":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Dark/large/contractkillers.gif",
 "2281_24_BACK":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Dark/large/fearedthroughoutthegalaxy.gif",
+"2281_44":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/infiltration.gif",
+"2281_44_BACK":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/unlikelyallies.gif",
 
 };
