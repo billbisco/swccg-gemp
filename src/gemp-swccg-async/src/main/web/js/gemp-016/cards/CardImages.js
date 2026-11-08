@@ -6670,6 +6670,7 @@ const fixedImages = {
 "2281_11":"https://wiki.swccg.com/images/7/7c/VB8-04-Join_Us_Or_Die.png",
 "2281_16":"https://wiki.swccg.com/images/0/0c/VB8-p3-16-Abyssin_Ornament.png",
 "2281_25":"https://wiki.swccg.com/images/8/81/VB8-p5-26-Mara_Jades_Lightsaber.png",
+"2281_26":"https://wiki.swccg.com/images/4/4b/VB8-02-Chewbacca_Walking_Carpet.png",
 "2230_13":"https://wiki.swccg.com/images/5/57/VB3-13E-Lord_Vader.png",
 "2230_77":"https://wiki.swccg.com/images/d/dc/VB3-78-Orrimaarko.png",
 "2273_13":"https://wiki.swccg.com/images/d/d3/VB7-00-Insidious_Prisoner.png",
