@@ -18,7 +18,7 @@ public class Card_2261_034_Tests {
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(
                 new HashMap<>(Map.of("corvette", "1_140", "han", "1_11", "luke", "1_19")),
-                new HashMap<>(Map.of("protocols", "2261_34", "current", "1261_34", "destroyer", "1_302", "other", "2_155",
+                new HashMap<>(Map.of("protocols", "2261_34", "current", "1261_34", "e1", "2261_1034", "destroyer", "1_302", "other", "2_155",
                         "launch", "4_165", "trooper", "1_194", "officer", "1_192")),
                 20, 20, StartingSetup.DefaultLSSpaceSystem, StartingSetup.DefaultDSSpaceSystem,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
@@ -56,6 +56,9 @@ public class Card_2261_034_Tests {
     @Test
     public void FleetSecurityProtocolsOriginalCountsOpponentsCharactersAtRelatedSitesToo() {
         assertEquals(6, shipPowerBonusInBattle("protocols"), 0.001f);
-        assertEquals(4, shipPowerBonusInBattle("current"), 0.001f);
+        // PC-E1 (2261_1034, revised 2010 sheet): "for each of your characters" (the current PC-E2 card adds to total
+        // power instead of the starship's power).
+        assertEquals(4, shipPowerBonusInBattle("e1"), 0.001f);
+        assertEquals(0, shipPowerBonusInBattle("current"), 0.001f);
     }
 }
