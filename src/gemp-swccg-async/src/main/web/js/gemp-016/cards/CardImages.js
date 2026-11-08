@@ -6662,7 +6662,6 @@ const fixedImages = {
 "2282_14":"https://wiki.swccg.com/images/0/03/VB8-03-Lando_Calrissian_Unlikely_Hero.png",
 "2283_12":"https://wiki.swccg.com/images/f/fc/VB8-p3-97-Spaceport_Docking_Bay.png",
 "2283_21":"https://wiki.swccg.com/images/0/09/VB8-02-Underworld_Contacts_Uncharted_Settlements.png",
-"2291_58":"https://wiki.swccg.com/images/e/ea/VB9-p10-60-Geonosis_Petranaki_Arena.png",
 "2200_5":"https://res.starwarsccg.org/cards/legacy/VirtualBlockDS-Dark/large/fanfare.gif",
 "2282_1014":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/landocalrissianunlikelyhero.gif",
 "2230_13":"https://wiki.swccg.com/images/5/57/VB3-13E-Lord_Vader.png",
