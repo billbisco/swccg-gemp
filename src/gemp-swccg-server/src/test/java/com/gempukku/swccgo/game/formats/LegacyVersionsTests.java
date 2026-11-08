@@ -74,7 +74,8 @@ public class LegacyVersionsTests {
             assertEquals(id, current.getPersonas(), version.getPersonas());
             assertEquals(id, current.getExpansionSet(), version.getExpansionSet());
             assertTrue(id, version.isLegacy());
-            assertFalse(id, version.getGameText().equals(current.getGameText()));
+            assertTrue(id + ": a version differs from its current card in game text (or, for an icon-only errata, in icons)",
+                !printedText(version).equals(printedText(current)) || !iconCounts(version).equals(iconCounts(current)));
             assertTrue(id + ": label shown in full name",
                     info.label().isEmpty() ? !GameUtils.getFullName(version).contains("[")
                             : GameUtils.getFullName(version).endsWith(" [" + info.label() + "]"));
@@ -181,5 +182,19 @@ public class LegacyVersionsTests {
                 assertTrue(expected.getMessage(), expected.getMessage().contains("banned card"));
             }
         }
+    }
+
+    /** Game text of any card, both location texts included (locations have no plain game text). */
+    private static String printedText(SwccgCardBlueprint blueprint) {
+        if (blueprint.getCardCategory() != com.gempukku.swccgo.common.CardCategory.LOCATION)
+            return blueprint.getGameText();
+        return blueprint.getGameText() + " | " + blueprint.getLocationLightSideGameText() + " | " + blueprint.getLocationDarkSideGameText();
+    }
+
+    private static java.util.Map<com.gempukku.swccgo.common.Icon, Integer> iconCounts(SwccgCardBlueprint blueprint) {
+        java.util.Map<com.gempukku.swccgo.common.Icon, Integer> counts = new java.util.EnumMap<>(com.gempukku.swccgo.common.Icon.class);
+        for (com.gempukku.swccgo.common.Icon icon : com.gempukku.swccgo.common.Icon.values())
+            counts.put(icon, blueprint.getIconCount(icon));
+        return counts;
     }
 }
