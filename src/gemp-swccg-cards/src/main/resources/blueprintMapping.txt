@@ -336,3 +336,4 @@
 2261_1045,1261_45
 # Removed Legacy version ids (icon-loss false versions, audit 2026-11-08: only icons/notation differed) -> the current card (or the version with the same real text) (docs/legacy-versions.md)
 2261_1033,1261_33
+2261_2042,2261_1042
