@@ -6636,5 +6636,6 @@ const fixedImages = {
 "2240_64":"https://wiki.swccg.com/images/0/0d/VB4-63-Galens_Lightsaber.png",
 "2240_78":"https://wiki.swccg.com/images/8/84/VB4-77E-Anger_Fear_Aggression.png",
 "2240_86":"https://wiki.swccg.com/images/3/39/VB4-85-Imperial_Atrocity.png",
+"2240_101":"https://wiki.swccg.com/images/0/00/VB4-100E-Outpost.png",
 
 };
