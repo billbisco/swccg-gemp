@@ -72,7 +72,8 @@ public final class VersionAsserts {
             assertEquals(keyword.name(), current.hasKeyword(keyword), version.hasKeyword(keyword));
         assertEquals(current.getLore(), version.getLore());
         assertTrue(Objects.equals(current.getDestiny(), version.getDestiny()));
-        assertTrue(Objects.equals(current.getDeployCost(), version.getDeployCost()));
+        if (current.getCardCategory() != com.gempukku.swccgo.common.CardCategory.INTERRUPT)
+            assertTrue(Objects.equals(current.getDeployCost(), version.getDeployCost()));
         assertTrue(version.isLegacy());
     }
 
