@@ -33,9 +33,9 @@ import java.util.List;
 public class Card1291_019 extends AbstractSite {
     public Card1291_019() {
         super(Side.DARK, Title.Geonosis_Separatist_Council_Room, Title.Geonosis, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_9_1, Rarity.V);
-        setLocationDarkSideGameText("May deploy Gunray from Reserve Deck; reshuffle. While two senators here, they are in a senate majority.");
+        setLocationDarkSideGameText("May deploy Gunray from Reserve Deck; reshuffle. While two senators here, they may use their game text as if in a senate majority.");
         setLocationLightSideGameText("While Gunray or opponent's senator here, your spies may not deploy here.");
-        setGameText("Dark: May deploy Gunray from Reserve Deck; reshuffle. While two senators here, they are in a senate majority. Light: While Gunray or opponent's senator here, your spies may not deploy here.");
+        setGameText("Dark: May deploy Gunray from Reserve Deck; reshuffle. While two senators here, they may use their game text as if in a senate majority. Light: While Gunray or opponent's senator here, your spies may not deploy here.");
         addIcon(Icon.DARK_FORCE, 2);
         addIcons(Icon.EPISODE_I, Icon.INTERIOR_SITE, Icon.UNDERGROUND, Icon.PLANET, Icon.SCOMP_LINK);
     }

@@ -34,7 +34,8 @@ import java.util.List;
 public class Card1291_011 extends AbstractNormalEffect {
     public Card1291_011() {
         super(Side.DARK, 4, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.War_Has_Begun, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_9_1, Rarity.V);
-        setGameText("If Separatist Uprising on table, deploy on table. Your Seperatist Council Room gains one [Dark Side Icon]. Your Force generation is +1 at each of your battlegrounds you control with a [Separatist] card. Once per turn you may take a [Seperatist] Mission into hand from Reserve Deck; reshuffle.");
+        setGameText("If Separatist Uprising on table, deploy on table. Your Separatist Council Room gains one [Dark Side]. Your Force generation is +1 at each of your battlegrounds you control with a [Separatist] card. Once per turn, may take a [Separatist] Mission into hand from Reserve Deck; reshuffle. (Immune to Alter.)");
+        addImmuneToCardTitle(Title.Alter);
         addIcons(Icon.EPISODE_I);
     }
 

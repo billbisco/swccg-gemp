@@ -789,4 +789,19 @@ public class Card_1291_029_Tests {
         scn.PassResponses("DOUBLE_SIDED_CARD_FLIPPED");
         assertTrue(scn.AwaitingDSDeployPhaseActions());
     }
+
+    @Test
+    public void SeparatistUprisingIsTheSheetText() {
+        var scn = GetScenario();
+        var card = scn.GetDSCard("uprising").getBlueprint();
+        assertEquals("Separatist Uprising: Deploy Separatist Council Room and War Has Begun. For remainder of game, Galen, Imperials, and Imperial starships are lost. Your Republic characters and [Episode I] vehicles gain [Separatist]. You may forfeit non-lightsaber weapons (using forfeit value = 3); place your just forfeited weapon in Used Pile. While this side up, once per turn, may use 1 Force to deploy an [Episode I] battleground from Reserve Deck; reshuffle. Flip this card if a complete [Separatist] Mission on table. At War With Itself: Immediately, may retrieve up to 3 Force (Force retrieved this way may be taken into hand) once per game. While this side up, opponent's battle destiny draws are -1. Once during your control phase, may use 2 Force to take a [Separatist] character, vehicle, or starship into hand from Reserve Deck; reshuffle. Your total power in battles is +X, and whenever you win a battle, opponent loses X Force, where X = the number of complete [Separatist] Missions on table. Flip this card if no complete [Separatist] Missions on table.",
+                card.getGameText());
+        org.junit.Assert.assertNull(card.getLegacyVersion());
+
+        scn.StartGame();
+        var back = scn.GetDSCard("uprising").getOtherSideBlueprint();
+        assertEquals("At War With Itself", back.getTitle());
+        assertEquals(card.getGameText(), back.getGameText());
+        org.junit.Assert.assertNull(back.getLegacyVersion());
+    }
 }

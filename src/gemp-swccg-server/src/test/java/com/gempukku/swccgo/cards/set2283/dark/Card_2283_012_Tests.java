@@ -144,27 +144,40 @@ public class Card_2283_012_Tests {
     }
 
     @Test
-    public void SpaceportDockingBayVPcE1IdentityAndText() {
+    public void SpaceportDockingBayVOriginalIdentityAndText() {
         var scn = GetScenario();
         var card = scn.GetDSCard("spaceport").getBlueprint();
 
         assertEquals("Spaceport Docking Bay", card.getTitle());
         assertTrue(card.isLegacy());
-        assertEquals("Dark: Your docking bay transit from here requires 2 Force. Your starfighters deploy -1 (or -2 if freighter) here. Immune to [Reflections III] Ounee Ta. Light: May not be deployed to Bespin, Dagobah, Endor, Hoth or Yavin 4. Your docking bay transit from here requires 3 Force. Your pilots deploy +1 here.",
+        assertEquals("Dark: Your docking bay transit from here requires 2 Force. Your starfighters deploy -1 (or -2 if freighter) here. Immune to [Reflections III] Ounee Ta. Light: May not be deployed to Bespin, Dagobah, Endor, Hoth or Yavin 4. Your docking bay transit from here requires 3 Force.",
                 card.getGameText());
         var version = card.getLegacyVersion();
         org.junit.Assert.assertNotNull(version);
         assertEquals("1283_12", version.currentPrintingId());
-        assertEquals("PC-E1", version.label());
-        assertEquals(java.time.LocalDate.of(2013, 4, 27), version.printedOn());
-        assertEquals(null, version.supersededOn());
-        assertEquals("Spaceport Docking Bay (V) [PC-E1]", com.gempukku.swccgo.logic.GameUtils.getFullName(card));
+        assertEquals("", version.label());
+        assertEquals(java.time.LocalDate.of(2013, 3, 28), version.printedOn());
+        assertEquals(java.time.LocalDate.of(2013, 4, 27), version.supersededOn());
+        assertEquals("Spaceport Docking Bay (V)", com.gempukku.swccgo.logic.GameUtils.getFullName(card));
     }
 
     @Test
-    public void SpaceportDockingBayVPcE1LightSidePilotsDeployPlus1Here() {
+    public void OriginalSpaceportDockingBayVHasNoPilotDeployClause() {
         var scn = GetScenario();
-        var spaceport = scn.GetDSCard("spaceport");
+        var current = scn.GetDSCard("spaceport");
+        var db94 = scn.GetDSCard("db94");
+        var luke = scn.GetLSCard("luke");
+        scn.StartGame();
+        scn.MoveLocationToTable(db94);
+        float lukeElsewhere = deployCostTo(scn, luke, db94);
+        scn.MoveLocationToTable(current);
+        assertEquals(lukeElsewhere, deployCostTo(scn, luke, current), scn.epsilon);
+    }
+
+    @Test
+    public void CurrentSpaceportDockingBayVLightSidePilotsDeployPlus1Here() {
+        var scn = GetScenario();
+        var spaceport = scn.GetDSCard("current");
         var db94 = scn.GetDSCard("db94");
         var luke = scn.GetLSCard("luke"); // pilot
         var momaw = scn.GetLSCard("momaw"); // not a pilot
@@ -178,18 +191,5 @@ public class Card_2283_012_Tests {
         assertEquals(lukeElsewhere + 1, deployCostTo(scn, luke, spaceport), scn.epsilon);
         assertEquals(momawElsewhere, deployCostTo(scn, momaw, spaceport), scn.epsilon);
         assertEquals(vaderElsewhere, deployCostTo(scn, vader, spaceport), scn.epsilon);
-    }
-
-    @Test
-    public void CurrentSpaceportDockingBayVHasNoPilotDeployClause() {
-        var scn = GetScenario();
-        var current = scn.GetDSCard("current");
-        var db94 = scn.GetDSCard("db94");
-        var luke = scn.GetLSCard("luke");
-        scn.StartGame();
-        scn.MoveLocationToTable(db94);
-        float lukeElsewhere = deployCostTo(scn, luke, db94);
-        scn.MoveLocationToTable(current);
-        assertEquals(lukeElsewhere, deployCostTo(scn, luke, current), scn.epsilon);
     }
 }

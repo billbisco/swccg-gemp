@@ -197,4 +197,10 @@ public class Card_1281_047_Tests {
 
         assertFalse(tempest.isHit());
     }
+
+    @Test
+    public void KyleKatarnsBlasterRifleIsTheMasterListText() {
+        com.gempukku.swccgo.cards.Vb89VersionAsserts.assertCurrentCard("1281_47", "Kyle Katarn's Blaster Rifle",
+                "Deploy on Kyle Katarn. May target a character, creature or vehicle for free. Draw destiny (two if Scoundrel's Luck on table). Character or creature hit, and its forfeit = 0, if total destiny > defense value. Vehicle hit if total destiny -2 > defense value.");
+    }
 }

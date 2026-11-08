@@ -3,6 +3,7 @@ package com.gempukku.swccgo.cards.set1282.light;
 import com.gempukku.swccgo.cards.AbstractNewRepublic;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.conditions.ArmedWithCondition;
+import com.gempukku.swccgo.cards.effects.usage.OncePerBattleEffect;
 import com.gempukku.swccgo.cards.effects.usage.OncePerTurnEffect;
 import com.gempukku.swccgo.cards.evaluators.ConditionEvaluator;
 import com.gempukku.swccgo.common.ExpansionSet;
@@ -25,6 +26,7 @@ import com.gempukku.swccgo.logic.modifiers.MayUseWeaponModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.modifiers.PowerModifier;
 import com.gempukku.swccgo.logic.timing.EffectResult;
+import com.gempukku.swccgo.logic.timing.UsageEffect;
 import com.gempukku.swccgo.logic.timing.results.LostFromTableResult;
 
 import java.util.Collections;
@@ -43,7 +45,7 @@ public class Card1282_012 extends AbstractNewRepublic {
     public Card1282_012() {
         super(Side.LIGHT, 2, 3, 2, 4, 4, "Anakin Solo", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_2, Rarity.V);
         setLore("Padawan.");
-        setGameText("Power +2 while armed with a lightsaber. May use any 'stolen' lightsaber. Once per turn, where present, may steal an opponent's just-lost lightsaber. Immune to attrition < 3 (< 5 while armed with a 'stolen' lightsaber).");
+        setGameText("Power +2 while armed with a lightsaber. May use any 'stolen' lightsaber. Once during battle, where present, may steal an opponent's just-lost lightsaber. Immune to attrition <3 (<5 while armed with a 'stolen' lightsaber).");
         addIcons(Icon.PILOT, Icon.WARRIOR);
         addKeywords(Keyword.PADAWAN);
     }
@@ -58,9 +60,19 @@ public class Card1282_012 extends AbstractNewRepublic {
         return modifiers;
     }
 
+    /** PC website card list text (Dec 2012): "Once during battle" (the release sheet said "Once per turn"). */
+    protected boolean mayStealNow(SwccgGame game, PhysicalCard self, String playerId, int gameTextSourceCardId) {
+        return GameConditions.isDuringBattle(game)
+                && GameConditions.isOncePerBattle(game, self, playerId, gameTextSourceCardId);
+    }
+
+    protected UsageEffect stealUsageLimit(OptionalGameTextTriggerAction action) {
+        return new OncePerBattleEffect(action);
+    }
+
     @Override
     protected List<OptionalGameTextTriggerAction> getGameTextOptionalAfterTriggers(final String playerId, SwccgGame game, EffectResult effectResult, final PhysicalCard self, int gameTextSourceCardId) {
-        if (!GameConditions.isOncePerTurn(game, self, playerId, gameTextSourceCardId)) {
+        if (!mayStealNow(game, self, playerId, gameTextSourceCardId)) {
             return null;
         }
         Filter opponentsLightsaberInLostPile = Filters.and(Filters.lightsaber, Filters.inLostPile(game.getOpponent(playerId)));
@@ -86,7 +98,7 @@ public class Card1282_012 extends AbstractNewRepublic {
             action.setText("Steal " + GameUtils.getFullName(cardToSteal));
             action.setActionMsg("Steal " + GameUtils.getCardLink(cardToSteal));
             action.appendUsage(
-                    new OncePerTurnEffect(action));
+                    stealUsageLimit(action));
             action.appendEffect(
                     new StealCardAndAttachFromLostPileEffect(action, playerId, self, Filters.sameCardId(cardToSteal)));
             actions.add(action);

@@ -140,4 +140,10 @@ public class Card_1283_012_Tests {
         assertFalse(qs.canBeTargetedBy(scn.game().getGameState(), spaceport, ouneeta3));
         assertTrue(qs.canBeTargetedBy(scn.game().getGameState(), spaceport, ouneeta));
     }
+
+    @Test
+    public void SpaceportDockingBayVIsTheMasterListText() {
+        com.gempukku.swccgo.cards.Vb89VersionAsserts.assertCurrentCard("1283_12", "Spaceport Docking Bay",
+                "Dark: Your docking bay transit from here requires 2 Force. Your starfighters deploy -1 (or -2 if freighter) here. Immune to [Reflections III] Ounee Ta. Light: May not be deployed to Bespin, Dagobah, Endor, Hoth or Yavin 4. Your docking bay transit from here requires 3 Force. Your pilots deploy +1 here.");
+    }
 }

@@ -11,6 +11,7 @@ import com.gempukku.swccgo.common.Persona;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Uniqueness;
+import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
@@ -37,7 +38,7 @@ public class Card601_024 extends AbstractStarfighter {
     public Card601_024() {
         super(Side.DARK, 2, 4, 4, null, 4, 4, 6, "Slave I, Symbol Of Fear", Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
         setLore("Originally designed as a planetary defense craft. Uses restricted jamming technology, allowing it to appear out of nowhere. Contains many hidden armaments.");
-        setGameText("May reveal from hand to take a [Block 8] Fett from Reserve Deck; reshuffle; and deploy both simultaneously. May add 2 pilots and 2 passengers. [Block 8] Fetts deploy -2 aboard. Immune to attrition < 5.");
+        setGameText("May reveal from hand to take a [Virtual Block 8] Fett from Reserve Deck; reshuffle; and deploy both simultaneously. May add 2 pilots and 2 passengers. Your [Virtual Block 8] Fetts deploy -2 aboard. Immune to attrition < 5.");
         addPersona(Persona.SLAVE_I);
         addIcons(Icon.CLOUD_CITY, Icon.INDEPENDENT, Icon.NAV_COMPUTER, Icon.SCOMP_LINK, Icon.LEGACY_BLOCK_8);
         addModelType(ModelType.FIRESPRAY_CLASS_ATTACK_SHIP);
@@ -47,17 +48,27 @@ public class Card601_024 extends AbstractStarfighter {
         setAsLegacy(true);
     }
 
+    /** PC website card list text (Jul 2012): "take a [Virtual Block 8] Fett". */
+    protected Filter fettToTake() {
+        return Filters.and(Filters.Fett, Icon.LEGACY_BLOCK_8);
+    }
+
+    /** PC website card list text (Jul 2012): "Your [Virtual Block 8] Fetts deploy -2 aboard". */
+    protected Filter fettsDeployMinus2(PhysicalCard self) {
+        return Filters.and(Filters.owner(self.getOwner()), Filters.Fett, Icon.LEGACY_BLOCK_8);
+    }
+
     @Override
     protected List<Modifier> getGameTextAlwaysOnModifiers(SwccgGame game, PhysicalCard self) {
         List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new DeployCostForSimultaneouslyDeployingPilotModifier(self, Filters.and(Filters.Fett, Icon.LEGACY_BLOCK_8), -2));
+        modifiers.add(new DeployCostForSimultaneouslyDeployingPilotModifier(self, fettsDeployMinus2(self), -2));
         return modifiers;
     }
 
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiersEvenIfUnpiloted(SwccgGame game, final PhysicalCard self) {
         List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new DeployCostToTargetModifier(self, Filters.and(Filters.Fett, Icon.LEGACY_BLOCK_8), -2, self));
+        modifiers.add(new DeployCostToTargetModifier(self, fettsDeployMinus2(self), -2, self));
         return modifiers;
     }
     @Override
@@ -83,7 +94,7 @@ public class Card601_024 extends AbstractStarfighter {
             action.appendEffect(
                     new ShowCardOnScreenEffect(action, self));
             action.appendEffect(
-                    new DeployCardFromReserveDeckSimultaneouslyWithCardEffect(action, self, Filters.and(Filters.Fett, Icon.LEGACY_BLOCK_8), true));
+                    new DeployCardFromReserveDeckSimultaneouslyWithCardEffect(action, self, fettToTake(), true));
             return Collections.singletonList(action);
         }
 

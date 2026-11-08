@@ -16,6 +16,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.gempukku.swccgo.cards.Vb89VersionAsserts.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -129,5 +130,12 @@ public class Card_1281_041_Tests {
         // With Undercity: the Guild is immune to No Escape, and the Light Side's generation there is +1.
         assertEquals(dsWithNoEscape - 1, mq.getForceGenerationFromLocation(scn.gameState(), guild, scn.DS), scn.epsilon);
         assertEquals(lsBase + 1, mq.getForceGenerationFromLocation(scn.gameState(), guild, scn.LS), scn.epsilon);
+    }
+
+    /** Virtual Block 8.1 sheet text (2012-05-11), the latest and only published version; GEMP showed a PC data-error wording. Same play. */
+    @Test
+    public void NarShaddaaUndercityCurrentCardIsTheLatestText() {
+        assertCurrentCard("1281_41", "Nar Shaddaa: Undercity",
+                "Light: Scoundrels Guild is immune to No Escape and your Force generation there is +1. Dark: Bounty hunters on Nar Shaddaa are power +1.");
     }
 }

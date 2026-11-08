@@ -52,7 +52,7 @@ public class Card1281_004 extends AbstractAlien {
         setVirtualSuffix(true);
         setArmor(4);
         setLore("Trandoshan assassin and slaver.");
-        setGameText("Adds 2 to the power of anything he pilots. May not be targeted by weapons unless your other slavers present are each 'hit.' Permanent weapon is •Bossk's Mortar Gun (may target a character for free; draw destiny; target hit, and its forfeit = 0, if destiny = target's destiny number).");
+        setGameText("Adds 2 to the power of anything he pilots. May not be targeted by weapons unless your other slavers present are each 'hit'. Permanent weapon is •Bossk's Mortar Gun (may target a character for free. Draw destiny. Target hit and forfeit =0, if destiny matches target's destiny number).");
         addPersona(Persona.BOSSK);
         addIcons(Icon.PILOT, Icon.WARRIOR, Icon.PERMANENT_WEAPON);
         addKeywords(Keyword.ASSASSIN, Keyword.SLAVER);

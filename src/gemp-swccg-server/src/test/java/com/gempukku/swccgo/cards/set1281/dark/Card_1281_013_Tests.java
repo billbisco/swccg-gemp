@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
+import static com.gempukku.swccgo.cards.Vb89VersionAsserts.*;
 import static com.gempukku.swccgo.framework.Assertions.assertAtLocation;
 import static com.gempukku.swccgo.framework.Assertions.assertInZone;
 import static org.junit.Assert.assertEquals;
@@ -217,5 +218,12 @@ public class Card_1281_013_Tests {
         assertFalse(scn.game().getModifiersQuerying().canBeTargetedBy(scn.gameState(), circle, trooper, cancel));
         assertTrue(scn.game().getModifiersQuerying().canBeTargetedBy(scn.gameState(), circle, luke, cancel));
         assertTrue(scn.game().getModifiersQuerying().mayNotBePlacedInUsedPile(scn.gameState(), circle, scn.LS));
+    }
+
+    /** PC website card list text (2012-07-21, PC-E1): the latest version under Bill's option (b). GEMP's earlier text was no published version. */
+    @Test
+    public void TheInnerCircleCurrentCardIsTheLatestText() {
+        assertCurrentCard("1281_13", "The Inner Circle",
+                "Deploy on Conference Room (only at start of game); deploy Sim Aloo here and (Virtual Block 4) There is No Try from Reserve Deck; reshuffle. Players may initiate battle here for free. Once per game may deploy Ord Mantell from Reserve Deck; reshuffle. May not be canceled (except by opponent) or placed in Used Pile. Immune to Ineffective Maneuver.");
     }
 }

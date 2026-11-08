@@ -71,6 +71,11 @@ public class Card1281_037 extends AbstractNormalEffect {
         addImmuneToCardTitle(Title.Alter);
     }
 
+    /** Sheet / Master List text: "stack all [Scoundrel] Effects under here (even if inactive)". */
+    protected boolean stackAtStartOfTurnEvenIfInactive() {
+        return true;
+    }
+
     @Override
     protected Filter getGameTextValidDeployTargetFilter(SwccgGame game, PhysicalCard self, PlayCardOptionId playCardOptionId, boolean asReact) {
         return Filters.title("Infiltration");
@@ -115,10 +120,12 @@ public class Card1281_037 extends AbstractNormalEffect {
         }
 
         if (TriggerConditions.isStartOfYourTurn(game, effectResult, playerId)) {
-            Collection<PhysicalCard> onTable = Filters.filterActive(game, self, SpotOverride.INCLUDE_ALL, scoundrelEffect);
+            Collection<PhysicalCard> onTable = stackAtStartOfTurnEvenIfInactive()
+                    ? Filters.filterActive(game, self, SpotOverride.INCLUDE_ALL, scoundrelEffect)
+                    : Filters.filterActive(game, self, scoundrelEffect);
             if (!onTable.isEmpty()) {
                 RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
-                action.setText("Stack all [Scoundrel] Effects here (even if inactive)");
+                action.setText(stackAtStartOfTurnEvenIfInactive() ? "Stack all [Scoundrel] Effects here (even if inactive)" : "Stack all [Scoundrel] Effects here");
                 action.appendEffect(new StackCardsFromTableEffect(action, onTable, self, true));
                 actions.add(action);
             }

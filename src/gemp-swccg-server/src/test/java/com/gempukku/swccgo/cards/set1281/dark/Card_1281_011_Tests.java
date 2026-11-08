@@ -26,6 +26,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.gempukku.swccgo.cards.Vb89VersionAsserts.*;
 import static com.gempukku.swccgo.framework.Assertions.assertAtLocation;
 import static com.gempukku.swccgo.framework.Assertions.assertInZone;
 import static org.junit.Assert.assertEquals;
@@ -247,5 +248,12 @@ public class Card_1281_011_Tests {
         scn.AttachCardsTo(throne, juod);
         scn.DSPass();
         assertTrue(GameConditions.hasGameTextModification(scn.game(), rebellion, ModifyGameTextType.LEGACY__JOIN_US_OR_DIE__BATTLE_IS_BATTLE_OR_DUEL));
+    }
+
+    /** PC website card list text (2012-07-21, PC-E1): the latest version under Bill's option (b); wording only. */
+    @Test
+    public void JoinUsOrDieCurrentCardIsTheLatestText() {
+        assertCurrentCard("1281_11", "Join Us Or Die",
+                "Deploy on your Throne Room. While Emperor and Vader here, Take Your Father's Place does not deplete Life Force or cause Force loss. Once per turn, may deploy a docking bay or So Be It, Jedi from Reserve Deck; reshuffle. 'Battle' on Insignificant Rebellion is treated as 'battle or duel. (Immune to Alter.)");
     }
 }

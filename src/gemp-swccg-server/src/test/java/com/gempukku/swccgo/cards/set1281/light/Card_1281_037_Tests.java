@@ -64,9 +64,13 @@ public class Card_1281_037_Tests {
     }
 
     protected VirtualTableScenario GetScenario(HashMap<String, String> extraDS) {
+        return GetScenario("1281_37", extraDS);
+    }
+
+    protected VirtualTableScenario GetScenario(String luckId, HashMap<String, String> extraDS) {
         return new VirtualTableScenario(
                 new HashMap<>() {{
-                    put("luck", "1281_37");
+                    put("luck", luckId);
                     put("bravado", "1281_34");
                     put("charm", "1281_35");
                     put("ingenuity", "1281_36");
@@ -398,11 +402,11 @@ public class Card_1281_037_Tests {
                 card.getGameText());
     }
 
-    @Test
-    public void ScoundrelsLuckStacksInactiveScoundrelEffectsAtStartOfTurn() {
-        //test1: Bravado on a missing (inactive) Lando is inactive
-        //test2: it is stacked here at the start of your turn anyway ("(even if inactive)")
-        var scn = GetScenario();
+    /** Bravado on a missing (inactive) Lando: is it stacked under this Scoundrel's Luck at the start of your turn? */
+    public boolean inactiveScoundrelEffectStackedAtStartOfTurn(String luckId) {
+        var scn = GetScenario(luckId, new HashMap<>() {{
+            put("trooper", "1_194");
+        }});
         var luck = scn.GetLSCard("luck");
         var bravado = scn.GetLSCard("bravado");
         var charm = scn.GetLSCard("charm");
@@ -415,10 +419,17 @@ public class Card_1281_037_Tests {
         setupLuckStacked(scn, luck, bravado, charm, ingenuity);
         scn.AttachCardsTo(lando, bravado);
         scn.MakeCardGoMissing(lando);
-        assertFalse(GameConditions.canSpot(scn.game(), luck, com.gempukku.swccgo.filters.Filters.sameCardId(bravado))); //test1
+        assertFalse(GameConditions.canSpot(scn.game(), luck, com.gempukku.swccgo.filters.Filters.sameCardId(bravado)));
         scn.SkipToLSTurn();
         scn.PassAllResponses();
-        assertTrue(scn.GetStackedCards(luck).contains(bravado)); //test2
+        return scn.GetStackedCards(luck).contains(bravado);
+    }
+
+    @Test
+    public void ScoundrelsLuckStacksInactiveScoundrelEffectsAtStartOfTurn() {
+        //test1: Bravado on a missing (inactive) Lando is inactive
+        //test2: it is stacked here at the start of your turn anyway ("(even if inactive)")
+        assertTrue(inactiveScoundrelEffectStackedAtStartOfTurn("1281_37"));
     }
 
     @Test

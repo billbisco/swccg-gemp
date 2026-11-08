@@ -233,4 +233,10 @@ public class Card_1291_019_Tests {
 
         assertAtLocation(council, luke);
     }
+
+    @Test
+    public void SeparatistCouncilRoomIsTheSheetText() {
+        com.gempukku.swccgo.cards.Vb89VersionAsserts.assertCurrentCard("1291_19", "Geonosis: Separatist Council Room",
+                "Dark: May deploy Gunray from Reserve Deck; reshuffle. While two senators here, they may use their game text as if in a senate majority. Light: While Gunray or opponent's senator here, your spies may not deploy here.");
+    }
 }

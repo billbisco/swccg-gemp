@@ -50,7 +50,7 @@ public class Card_2282_014_Tests {
         assertEquals("1282_14", version.currentPrintingId());
         assertEquals("", version.label());
         assertEquals(java.time.LocalDate.of(2012, 9, 14), version.printedOn());
-        assertEquals(java.time.LocalDate.of(2013, 4, 27), version.supersededOn());
+        assertEquals(java.time.LocalDate.of(2012, 12, 12), version.supersededOn());
         assertEquals("Lando Calrissian, Unlikely Hero", com.gempukku.swccgo.logic.GameUtils.getFullName(card));
     }
 

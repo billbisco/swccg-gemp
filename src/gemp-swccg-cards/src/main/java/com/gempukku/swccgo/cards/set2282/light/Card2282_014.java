@@ -39,7 +39,7 @@ public class Card2282_014 extends AbstractAlien {
         super(Side.LIGHT, 3, 3, 3, 3, 5, "Lando Calrissian, Unlikely Hero", Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
         setLore("Ever since Lando's 'little' maneuver at the Battle of Taanab, his piloting skills had become legendary. Gambler. Scoundrel.");
         setGameText("Adds 3 to power of anything he pilots. May reveal from hand to take Luxury Yacht into hand from Reserve Deck; reshuffle; and deploy both simultaneously. While piloting (or with a female), adds one battle destiny. During battle, may draw destiny. If destiny < twice the number of scoundrels here, reset a participating card's forfeit to 0.");
-        setLegacyVersion(new LegacyVersion("1282_14", "", "Virtual Block 8.2 release sheet (2012-09-14)", LocalDate.of(2012, 9, 14), LocalDate.of(2013, 4, 27)));
+        setLegacyVersion(new LegacyVersion("1282_14", "", "Virtual Block 8.2 release sheet (2012-09-14)", LocalDate.of(2012, 9, 14), LocalDate.of(2012, 12, 12)));
         addIcons(Icon.PILOT, Icon.WARRIOR, Icon.LEGACY_BLOCK_8, Icon.CLOUD_CITY);
         addKeywords(Keyword.GAMBLER, Keyword.SCOUNDREL);
         addPersona(Persona.LANDO);

@@ -28,9 +28,9 @@ import java.util.List;
 public class Card1281_041 extends AbstractSite {
     public Card1281_041() {
         super(Side.LIGHT, "Nar Shaddaa: Undercity", Title.Nar_Shaddaa, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_1, Rarity.V);
-        setLocationLightSideGameText("Scoundrel's Guild is immune to No Escape and your force generation there is +1.");
-        setLocationDarkSideGameText("Bounty Hunters are power +1 while on Nar Shaddaa.");
-        setGameText("Light: Scoundrel's Guild is immune to No Escape and your force generation there is +1. Dark: Bounty Hunters are power +1 while on Nar Shaddaa.");
+        setLocationLightSideGameText("Scoundrels Guild is immune to No Escape and your Force generation there is +1.");
+        setLocationDarkSideGameText("Bounty hunters on Nar Shaddaa are power +1.");
+        setGameText("Light: Scoundrels Guild is immune to No Escape and your Force generation there is +1. Dark: Bounty hunters on Nar Shaddaa are power +1.");
         addIcon(Icon.LIGHT_FORCE, 2);
         addIcons(Icon.EXTERIOR_SITE, Icon.PLANET, Icon.UNDERGROUND);
     }
