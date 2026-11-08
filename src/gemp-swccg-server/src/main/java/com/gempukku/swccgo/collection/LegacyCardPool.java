@@ -39,11 +39,14 @@ public final class LegacyCardPool {
         List<String> ids = new ArrayList<>();
         for (int[] sheet : SHEETS) {
             for (int number = 1; number <= sheet[1]; number++) {
-                for (int k = 0; k < LegacyVersion.MAX_VERSIONS_PER_CARD; k++) {
-                    String id = LegacyVersion.versionIdOf(sheet[0] + "_" + number, k);
-                    // A retired version id aliased to its current card (blueprintMapping.txt) is no version any more.
-                    if (library.getBaseBlueprintId(id).equals(id) && library.getSwccgoCardBlueprint(id) != null)
-                        ids.add(id);
+                // the printing and its alternate-image (AI) printing, e.g. 1250_45 and 1250_45ai
+                for (String printing : new String[]{sheet[0] + "_" + number, sheet[0] + "_" + number + LegacyVersion.ALTERNATE_IMAGE_SUFFIX}) {
+                    for (int k = 0; k < LegacyVersion.MAX_VERSIONS_PER_CARD; k++) {
+                        String id = LegacyVersion.versionIdOf(printing, k);
+                        // A retired version id aliased to its current card (blueprintMapping.txt) is no version any more.
+                        if (library.getBaseBlueprintId(id).equals(id) && library.getSwccgoCardBlueprint(id) != null)
+                            ids.add(id);
+                    }
                 }
             }
         }
