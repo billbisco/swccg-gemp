@@ -6638,6 +6638,7 @@ const fixedImages = {
 "2271_1":"https://wiki.swccg.com/images/8/81/VL-history-1271-1-front-original.png",
 "2271_2":"https://wiki.swccg.com/images/1/10/VB7-01-Darth_Vader_More_Machine_Than_Man.png",
 "2271_27":"https://wiki.swccg.com/images/9/92/VB7-02-In_The_Hands_Of_The_ISB.png",
+"2271_5":"https://wiki.swccg.com/images/5/53/VB7-03-Ysanne_Isard.png",
 "2271_38":"https://wiki.swccg.com/images/3/30/VB7-03-Field_Dressing.png",
 "2271_39":"https://wiki.swccg.com/images/6/63/VB7-03-Luke_Trust_Me.png",
 "2271_46":"https://wiki.swccg.com/images/6/67/VB7-00-Restore_Freedom_To_The_Galaxy.png",

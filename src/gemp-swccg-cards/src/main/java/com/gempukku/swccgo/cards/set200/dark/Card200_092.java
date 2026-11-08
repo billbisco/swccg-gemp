@@ -9,6 +9,7 @@ import com.gempukku.swccgo.cards.effects.usage.OncePerPhaseEffect;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Keyword;
+import com.gempukku.swccgo.common.Persona;
 import com.gempukku.swccgo.common.Phase;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
@@ -45,6 +46,7 @@ import java.util.List;
 public class Card200_092 extends AbstractImperial {
     public Card200_092() {
         super(Side.DARK, 3, 4, 2, 4, 5, "Ysanne Isard", Uniqueness.UNIQUE, ExpansionSet.SET_0, Rarity.V);
+        addPersona(Persona.YSANNE_ISARD);
         setLore("Female ISB leader. Spy.");
         setGameText("Power +3 while defending a battle with a spy. While with a non-frozen captive, attrition against opponent everywhere is +2. During your move phase, may use 1 Force to 'break cover' of an Undercover spy here. Immune to attrition < 3.");
         addIcons(Icon.A_NEW_HOPE, Icon.WARRIOR, Icon.VIRTUAL_SET_0);

@@ -74,10 +74,11 @@ public class LegacyVersionsTests {
             assertEquals(id, current.getPersonas(), version.getPersonas());
             assertEquals(id, current.getExpansionSet(), version.getExpansionSet());
             assertTrue(id, version.isLegacy());
-            assertTrue(id + ": differs from its current card in game text (incl. location texts) or printed stats/icons",
+            assertTrue(id + ": differs from its current card in game text (incl. location texts), printed stats/icons or printed title",
                     differsInGameTextOrPrintedData(current, version)
                             || !printedText(version).equals(printedText(current))
-                            || !iconCounts(version).equals(iconCounts(current)));
+                            || !iconCounts(version).equals(iconCounts(current))
+                            || version.getPrintedTitle() != null);
             assertTrue(id + ": label shown in full name",
                     info.label().isEmpty() ? !GameUtils.getFullName(version).contains("[")
                             : GameUtils.getFullName(version).endsWith(" [" + info.label() + "]"));
