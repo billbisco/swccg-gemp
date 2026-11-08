@@ -39,7 +39,7 @@ public class Card1210_064 extends AbstractUsedOrStartingInterrupt {
         super(Side.DARK, 3, Title.Look_Sir_Droids, Uniqueness.UNRESTRICTED, ExpansionSet.VIRTUAL_BLOCK_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("Trooper 1124, Davin Felth, discovered droid plating dropped by R2- D2 and C-3PO when exiting escape pod.");
-        setGameText("USED: Take into hand from Reserve Deck a non-[Droid with Presence], non-[Permanent Weapon] droid. OR Place a card from hand on Used Pile. STARTING: Deploy from Reserve Deck two Effects which are always immune to Alter. If you have only one location (with < 3 [Dark Side Force]) on table, may deploy from Reserve Deck Central Office or Mos Eisley. Place this interrupt in hand.");
+        setGameText("USED: [upload] a non-[Droid with Presence], non-[Permanent Weapon] droid. OR Place a card from hand on Used Pile. STARTING: [download] two always [Immune to Alter] Effects. If you have only one location (with < 3 [Dark Side Force]) on table, may [download] Central Office or Mos Eisley. Place this Interrupt in hand.");
     }
 
     @Override

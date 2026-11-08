@@ -37,7 +37,7 @@ public class Card1210_154 extends AbstractUsedOrStartingInterrupt {
         super(Side.LIGHT, 5, Title.Harvest, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("'Harvest is when I need you the most. It's only one season more. This year we'll make enough on the harvest that I'll be able to hire some more hands.'");
-        setGameText("USED: Retrieve a device, or take a device into hand from Reserve Deck; reshuffle. (Immune to Sense.) STARTING: If your starting location was a Tatooine location, deploy from Reserve Deck a farm, two devices, and two Effects that are always [Immune to Alter]. Place this Interrupt in Reserve Deck.");
+        setGameText("USED: [upload] (or retrieve) a device. (Immune to Sense.) STARTING: If your starting location was a Tatooine location, [download] a farm, two devices, and two Effects that are always [Immune to Alter]. Place this Interrupt in Reserve Deck.");
         addIcons(Icon.SPECIAL_EDITION);
     }
 
