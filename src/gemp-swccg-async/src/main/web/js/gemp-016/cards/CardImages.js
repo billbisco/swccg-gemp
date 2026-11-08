@@ -6854,7 +6854,7 @@ const fixedImages = {
 "2261_1087":"https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Light/large/strongisvader.gif",
 "2261_93":"https://wiki.swccg.com/images/c/cd/VB6-91-Armed_And_Dangerous_Krayt_Dragon_Howl.png",
 "2261_97":"https://wiki.swccg.com/images/5/51/VB6-98-Let_The_Wookiee_Win.png",
-"2261_98":"https://wiki.swccg.com/images/f/fb/VB6-99-Out_Of_Somewhere.png",
+"2261_98":"https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Light/large/outofsomewhere.gif",
 "2261_101":"https://wiki.swccg.com/images/4/4f/VB6-102-Solo_Han.png",
 "2261_102":"https://wiki.swccg.com/images/1/11/VB6-103-Warriors_Courage.png",
 "2261_105":"https://wiki.swccg.com/images/8/85/VB6-95-Odin_Nesloor_First_Aid.png",
