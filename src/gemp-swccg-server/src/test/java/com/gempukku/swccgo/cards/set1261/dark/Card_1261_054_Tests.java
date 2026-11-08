@@ -137,4 +137,18 @@ public class Card_1261_054_Tests {
     public void withoutControlRelatedStarshipHasNoReact() {
         assertFalse(hostMayReactToLightBattle(false));
     }
+
+    @org.junit.Test
+    public void CurrentTextIsTheLatestVersion() {
+        // Virtual Block 6.1 sheet text is the only published version; GEMP's 'While you control ... its power' was a PC data error.
+        var scn = new com.gempukku.swccgo.framework.VirtualTableScenario(new java.util.HashMap<>(), new java.util.HashMap<>(java.util.Map.of("c", "1261_54")), 10, 10,
+                com.gempukku.swccgo.framework.StartingSetup.DefaultLSGroundLocation, com.gempukku.swccgo.framework.StartingSetup.DefaultDSGroundLocation,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSStartingInterrupts, com.gempukku.swccgo.framework.StartingSetup.NoDSStartingInterrupts,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSShields, com.gempukku.swccgo.framework.StartingSetup.NoDSShields,
+                com.gempukku.swccgo.framework.VirtualTableScenario.Open);
+        var bp = scn.GetDSCard("c").getBlueprint();
+        org.junit.Assert.assertEquals("Unless you control, related starship is immune to attrition < 4 or adds 2 to immunity (if on Devastator and opponent controls this site, immune to attrition).", bp.getLocationLightSideGameText());
+        org.junit.Assert.assertEquals("If you control, related starship may not have power reduced and may move as a 'react'. Once per game, if Devastator on table, may deploy Jir here from Reserve Deck; reshuffle.", bp.getLocationDarkSideGameText());
+        org.junit.Assert.assertFalse(bp.getLocationDarkSideGameText().contains("While you control"));
+    }
 }
