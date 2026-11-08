@@ -54,6 +54,7 @@ public class Card_1200_008_Tests {
         var card = scn.GetLSCard("dont").getBlueprint();
 
         assertEquals("Don't Do That Again", card.getTitle());
+        assertEquals("Plays on table. Once per game, may take an Immediate Effect into hand from Reserve Deck; reshuffle. While opponent occupies no battleground systems, Mobilization Points is suspended. 'Missing' on Always Thinking With Your Stomach is treated as 'landspeed = 0 for remainder of turn.'", card.getGameText());
         assertTrue(card.hasVirtualSuffix());
         assertEquals(Uniqueness.UNIQUE, card.getUniqueness());
         assertEquals(Side.LIGHT, card.getSide());
@@ -72,7 +73,8 @@ public class Card_1200_008_Tests {
     }
 
     @Test
-    public void DontDoThatAgainVCancelsIceStormAndSandwhirl() {
+    public void DontDoThatAgainVNoLongerCancelsIceStormOrSandwhirl() {
+        // Master List 2014 and card image: no "are canceled" clause.
         var scn = GetScenario();
         var dont = scn.GetLSCard("dont");
         var icestorm = scn.GetDSCard("icestorm");
@@ -80,16 +82,15 @@ public class Card_1200_008_Tests {
 
         scn.StartGame();
         scn.MoveCardsToLSSideOfTable(dont);
-        scn.MoveCardsToDSSideOfTable(icestorm);
-        AdvanceTableChanged(scn);
-        assertInZone(Zone.LOST_PILE, icestorm);
-        scn.MoveCardsToDSSideOfTable(sandwhirl);
-        AdvanceTableChanged(scn);
-        assertInZone(Zone.LOST_PILE, sandwhirl);
+        // Past the control phase, so the mobile Effects do not try to move.
+        scn.SkipToPhase(Phase.DEPLOY);
+        scn.AttachCardsTo(scn.GetLSStartingLocation(), icestorm);
+        scn.AttachCardsTo(scn.GetDSStartingLocation(), sandwhirl);
+        scn.SkipToPhase(Phase.BATTLE);
+        assertInZone(Zone.ATTACHED, icestorm, sandwhirl);
     }
 
-    @Test
-    public void DontDoThatAgainVCancelsAlwaysThinkingWhenPlayedToCancelAForceDrain() {
+    private VirtualTableScenario alwaysThinkingSucceedsAgainstLuke(boolean dontOnTable) {
         var scn = GetScenario();
         var dont = scn.GetLSCard("dont");
         var stomach = scn.GetDSCard("stomach");
@@ -97,17 +98,45 @@ public class Card_1200_008_Tests {
         var site = scn.GetDSStartingLocation();
 
         scn.StartGame();
-        scn.MoveCardsToLSSideOfTable(dont);
+        if (dontOnTable)
+            scn.MoveCardsToLSSideOfTable(dont);
         scn.MoveCardsToLocation(site, luke);
         scn.MoveCardsToDSHand(stomach);
         scn.SkipToLSTurn(Phase.CONTROL);
+        scn.EnsureDSForcePile(4);
         assertTrue(scn.LSForceDrainAvailable(site));
         scn.LSForceDrainAt(site);
         scn.LSPass();
         assertTrue(dsMayPlay(scn, stomach, "Cancel Force drain"));
         scn.DSPlayCard(stomach, "Cancel Force drain");
+        scn.PrepareDSDestiny(5);
+        var q = scn.game().getModifiersQuerying();
+        // Luke is the only character there, so he is chosen automatically once the destiny (5 > 1) succeeds.
+        for (int i = 0; i < 40 && !luke.isMissing() && q.getLandspeed(scn.gameState(), luke) != 0; i++) {
+            if (scn.GetDecidingPlayer() == null)
+                break;
+            if (scn.DSHasCardChoiceAvailable(luke))
+                scn.DSChooseCard(luke);
+            else
+                scn.PlayerPass(scn.GetDecidingPlayer());
+        }
         scn.PassAllResponses();
         assertInZone(Zone.LOST_PILE, stomach);
+        return scn;
+    }
+
+    @Test
+    public void DontDoThatAgainVTurnsAlwaysThinkingMissingIntoLandspeedZero() {
+        var scn = alwaysThinkingSucceedsAgainstLuke(true);
+        var luke = scn.GetLSCard("luke");
+        assertFalse(luke.isMissing());
+        assertEquals(0, scn.game().getModifiersQuerying().getLandspeed(scn.gameState(), luke), scn.epsilon);
+    }
+
+    @Test
+    public void WithoutDontDoThatAgainVAlwaysThinkingMakesTheCharacterMissing() {
+        var scn = alwaysThinkingSucceedsAgainstLuke(false);
+        assertTrue(scn.GetLSCard("luke").isMissing());
     }
 
     @Test

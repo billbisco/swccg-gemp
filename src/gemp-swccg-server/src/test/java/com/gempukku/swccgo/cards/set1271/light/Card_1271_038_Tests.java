@@ -88,6 +88,7 @@ public class Card_1271_038_Tests {
         var s = scenario("1_19");
         var b = s.GetLSCard("dressing").getBlueprint();
         assertEquals("Field Dressing", b.getTitle());
+        assertEquals("If you just forfeited a character of ability < 5 present at a site, return that character to the same site from your Lost Pile and deploy this card on him or her. Character is forfeit = 0 (even if forfeit may not be normally reduced). May play First Aid to place this card in Used Pile. Immune to your Control.", b.getGameText());
         assertEquals(Side.LIGHT, b.getSide());
         assertEquals(3, b.getDestiny(), s.epsilon);
         assertEquals(Uniqueness.RESTRICTED_2, b.getUniqueness());

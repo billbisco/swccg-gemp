@@ -52,6 +52,7 @@ public class Card_1273_010_Tests {
         var scn = GetScenario();
         var card = scn.GetDSCard("surveillance").getBlueprint();
         assertEquals("Kessel Surveillance System", card.getTitle());
+        assertEquals("Deploy on a Kessel site. Opponent's Force drains are -1 here. Once per turn, if you are about to lose Force from Reserve Deck, may place a 'spice' card in owner's Lost Pile to make that Force satisfy 1 additional Force loss. Once per game may deploy Moruth Doole here from Reserve Deck; reshuffle.", card.getGameText());
         assertFalse(card.hasVirtualSuffix());
         assertEquals(Uniqueness.UNIQUE, card.getUniqueness());
         assertEquals(Side.DARK, card.getSide());
@@ -91,15 +92,19 @@ public class Card_1273_010_Tests {
     }
 
     @Test
-    public void KesselSurveillanceSystemDeploysSpiceMineAdministratorHereOncePerGame() {
+    public void KesselSurveillanceSystemDeploysMoruthDooleHereOncePerGame() {
         var scn = onOffice();
         var doole = scn.GetDSCard("doole");
         var surveillance = scn.GetDSCard("surveillance");
         scn.SkipToDSTurn(Phase.DEPLOY);
         scn.MoveCardsToTopOfDSReserveDeck(doole);
-        scn.DSUseCardAction(surveillance, "Deploy Spice Mine Administrator here");
+        assertEquals("Moruth Doole, Kessel Administrator", doole.getBlueprint().getTitle());
+        scn.DSUseCardAction(surveillance, "Deploy Moruth Doole here");
         LegacyVb73DarkTestSupport.resolveUntil(scn, () -> doole.getZone() == Zone.AT_LOCATION);
         assertEquals(scn.GetDSCard("office"), doole.getAtLocation());
+        // Once per game: not offered again, even on a later turn.
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        assertFalse(scn.DSCardActionAvailable(surveillance, "Deploy Moruth Doole here"));
     }
 
     @Test

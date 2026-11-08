@@ -49,6 +49,7 @@ public class Card_1273_006_Tests {
         var scn = GetScenario();
         var card = scn.GetDSCard("magnaguard").getBlueprint();
         assertEquals("IG-100 MagnaGuard", card.getTitle());
+        assertEquals("Shockstaff deploys and fires for free on this droid. While on Blockade Flagship or Coruscant (or with Grievous), this droid is Heroic and power +2. Your characters here are immune to Ambush, Clash Of Sabers, and attrition < 4.", card.getGameText());
         assertFalse(card.hasVirtualSuffix());
         assertEquals(Uniqueness.RESTRICTED_3, card.getUniqueness());
         assertEquals(Side.DARK, card.getSide());

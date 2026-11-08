@@ -12,7 +12,6 @@ import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.common.Zone;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
-import com.gempukku.swccgo.logic.modifiers.EachWeaponDestinyForWeaponTargetingModifier;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -29,6 +28,7 @@ public class Card_1272_023_Tests {
                 new HashMap<>() {{
                     put("insertion", "1272_23");
                     put("hobbie", "3_5");
+                    put("wedge", "9_31");
                     put("luke", "1_19");
                     put("obiwan", "1_21");
                     put("senate", "12_75");
@@ -54,6 +54,7 @@ public class Card_1272_023_Tests {
         var card = scn.GetLSCard("insertion").getBlueprint();
 
         assertEquals("Rogue Insertion", card.getTitle());
+        assertEquals("Deploy on table. Canceled if your Senate or [Reflections 2] objective on table. Unless your character of ability > 4 at a site, Rogue Squadron pilots are power +1 (power +2 if ability < 3), and armor = 4. (Immune to Alter.)", card.getGameText());
         assertFalse(card.hasVirtualSuffix());
         assertEquals(Uniqueness.UNIQUE, card.getUniqueness());
         assertEquals(Side.LIGHT, card.getSide());
@@ -82,30 +83,40 @@ public class Card_1272_023_Tests {
     }
 
     @Test
-    public void RogueInsertionRogueSquadronPilotsAreSpiesWithPowerArmorAndAttritionImmunity() {
+    public void RogueInsertionRogueSquadronPilotsGetPowerByAbilityAndArmorFour() {
         var scn = GetScenario();
         var insertion = scn.GetLSCard("insertion");
         var hobbie = scn.GetLSCard("hobbie");
+        var wedge = scn.GetLSCard("wedge");
         var luke = scn.GetLSCard("luke");
         var site = scn.GetLSStartingLocation();
 
-        //test1: Rogue Squadron pilots are spies
-        //test2: power +2
-        //test3: armor = 4
-        //test4: immune to attrition < 4
-        //test5: other characters are not affected
         scn.StartGame();
-        scn.MoveCardsToLocation(site, hobbie, luke);
-        assertFalse(scn.HasKeyword(hobbie, Keyword.SPY));
+        scn.MoveCardsToLocation(site, hobbie, wedge, luke);
         assertEquals(2, scn.GetPower(hobbie));
-        assertFalse(scn.IsImmuneToAttrition(hobbie));
+        assertEquals(3, scn.GetPower(wedge));
         scn.MoveCardsToLSSideOfTable(insertion);
-        assertTrue(scn.HasKeyword(hobbie, Keyword.SPY)); //test1
-        assertEquals(4, scn.GetPower(hobbie)); //test2
-        assertEquals(4, scn.GetArmor(hobbie)); //test3
-        assertEquals(4, scn.game().getModifiersQuerying().getImmunityToAttritionLessThan(scn.gameState(), hobbie), scn.epsilon); //test4
-        assertFalse(scn.HasKeyword(luke, Keyword.SPY)); //test5
-        assertEquals(3, scn.GetPower(luke)); //test5
+        assertEquals(2, scn.GetAbility(hobbie), scn.epsilon);
+        assertEquals("ability < 3: power +2", 4, scn.GetPower(hobbie));
+        assertEquals(3, scn.GetAbility(wedge), scn.epsilon);
+        assertEquals("ability 3: power +1 only", 4, scn.GetPower(wedge));
+        assertEquals(4, scn.GetArmor(hobbie));
+        assertEquals(4, scn.GetArmor(wedge));
+        // Not a Rogue Squadron pilot: unaffected.
+        assertEquals(3, scn.GetPower(luke));
+    }
+
+    @Test
+    public void RogueInsertionNoLongerGrantsSpyOrAttritionImmunity() {
+        var scn = GetScenario();
+        var insertion = scn.GetLSCard("insertion");
+        var hobbie = scn.GetLSCard("hobbie");
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), hobbie);
+        scn.MoveCardsToLSSideOfTable(insertion);
+        assertFalse(scn.HasKeyword(hobbie, Keyword.SPY));
+        assertFalse(scn.IsImmuneToAttrition(hobbie));
     }
 
     @Test
@@ -113,25 +124,20 @@ public class Card_1272_023_Tests {
         var scn = GetScenario();
         var insertion = scn.GetLSCard("insertion");
         var hobbie = scn.GetLSCard("hobbie");
+        var wedge = scn.GetLSCard("wedge");
         var obiwan = scn.GetLSCard("obiwan");
         var site = scn.GetLSStartingLocation();
 
-        //test1: still a spy
-        //test2: no power, armor or immunity bonus
         scn.StartGame();
         scn.MoveCardsToLSSideOfTable(insertion);
-        scn.MoveCardsToLocation(site, hobbie);
+        scn.MoveCardsToLocation(site, hobbie, wedge);
         scn.MoveCardsToLocation(scn.GetDSStartingLocation(), obiwan);
-        assertTrue(scn.HasKeyword(hobbie, Keyword.SPY)); //test1
-        assertEquals(2, scn.GetPower(hobbie)); //test2
-        assertFalse(scn.IsImmuneToAttrition(hobbie)); //test2
+        assertEquals(2, scn.GetPower(hobbie));
+        assertEquals(3, scn.GetPower(wedge));
+        assertFalse(scn.GetArmor(hobbie) == 4);
     }
 
     private void fireImperialBlasterAtHobbie(VirtualTableScenario scn, boolean insertionOnTable, int destiny) {
-        fireImperialBlasterAtHobbie(scn, insertionOnTable, destiny, 0);
-    }
-
-    private void fireImperialBlasterAtHobbie(VirtualTableScenario scn, boolean insertionOnTable, int destiny, int extraModifier) {
         var insertion = scn.GetLSCard("insertion");
         var hobbie = scn.GetLSCard("hobbie");
         var trooper = scn.GetDSCard("trooper");
@@ -143,8 +149,6 @@ public class Card_1272_023_Tests {
             scn.MoveCardsToLSSideOfTable(insertion);
         scn.MoveCardsToLocation(site, hobbie, trooper);
         scn.AttachCardsTo(trooper, blaster);
-        if (extraModifier != 0)
-            scn.ApplyAdHocModifier(new EachWeaponDestinyForWeaponTargetingModifier(trooper, hobbie, extraModifier));
         scn.DSActivateForceCheat(4);
         scn.DSStartBattleAndSkipToWeaponsSegment(site);
         scn.PrepareDSDestiny(destiny);
@@ -156,15 +160,18 @@ public class Card_1272_023_Tests {
     }
 
     @Test
-    public void RogueInsertionWeaponDestinyTargetingRogueSquadronPilotIsMinusOne() {
+    public void RogueInsertionArmorFourStopsDestinyFourButWeaponDestinyIsNoLongerReduced() {
         var scn = GetScenario();
         var hobbie = scn.GetLSCard("hobbie");
+        fireImperialBlasterAtHobbie(scn, true, 4);
+        assertEquals(4, scn.GetDefense(hobbie));
+        assertFalse(hobbie.isHit());
 
-        //test1: armor = 4 is the defense value
-        //test2: destiny 5 - 1 is not more than defense value 4
-        fireImperialBlasterAtHobbie(scn, true, 5);
-        assertEquals(4, scn.GetDefense(hobbie)); //test1
-        assertFalse(hobbie.isHit()); //test2
+        // Old slip's "-1 to weapon destiny" is gone: destiny 5 > armor 4 hits.
+        var scn2 = GetScenario();
+        var hobbie2 = scn2.GetLSCard("hobbie");
+        fireImperialBlasterAtHobbie(scn2, true, 5);
+        assertTrue(hobbie2.isHit());
     }
 
     @Test
@@ -174,16 +181,6 @@ public class Card_1272_023_Tests {
 
         fireImperialBlasterAtHobbie(scn, false, 3);
         assertTrue(hobbie.isHit());
-    }
-
-    @Test
-    public void RogueInsertionWeaponDestinyTargetingRogueSquadronPilotMayNotBeFurtherReduced() {
-        var scn = GetScenario();
-        var hobbie = scn.GetLSCard("hobbie");
-
-        //test1: an extra -1 is ignored, so destiny 6 is only reduced to 5, which is more than defense value 4
-        fireImperialBlasterAtHobbie(scn, true, 6, -1);
-        assertTrue(hobbie.isHit()); //test1
     }
 
     @Test

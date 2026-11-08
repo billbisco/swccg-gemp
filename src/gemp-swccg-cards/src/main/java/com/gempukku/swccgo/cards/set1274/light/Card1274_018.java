@@ -50,7 +50,7 @@ public class Card1274_018 extends AbstractImmediateEffect {
         super(Side.LIGHT, 5, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Hindsight", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_4, Rarity.V);
         setVirtualSuffix(true);
         setLore("'I'm backwards! You fleabitten furball...only an overgrown mophead like you would be stupid enough--'");
-        setGameText("Unless Imperial Atrocity on table, if you are about to lose Force during opponent's control phase, deploy on table to reduce loss by 4 (ignore other modifiers); opponent may take any one card into hand from Reserve Deck; reshuffle. Immune to Control. OR Use 2 Force to deploy on table and stack one just-played Interrupt here.");
+        setGameText("Unless Imperial Atrocity on table, if you are about to lose Force during opponent's control phase, deploy on table to reduce loss by 6 (ignore other modifiers); opponent may take any one card into hand from Reserve Deck; reshuffle. Immune to Control. OR Use 2 Force to deploy on table and stack one just-played Interrupt here.");
         addIcons(Icon.GRABBER);
         addImmuneToCardTitle(Title.Control);
     }
@@ -63,7 +63,7 @@ public class Card1274_018 extends AbstractImmediateEffect {
                 && !GameConditions.canSpot(game, self, Filters.Imperial_Atrocity)) {
             PlayCardAction action = getPlayCardAction(playerId, game, self, self, false, 0, null, null, null, null, null, false, 0, Filters.none, null);
             if (action != null) {
-                action.setText("Deploy to reduce Force loss by 4");
+                action.setText("Deploy to reduce Force loss by 6");
                 action.appendBeforeCost(
                         new SetWhileInPlayDataEffect(action, self, new WhileInPlayData(game.getGameState().getTopForceLossState())));
                 return Collections.singletonList(action);
@@ -102,14 +102,14 @@ public class Card1274_018 extends AbstractImmediateEffect {
         final String opponent = game.getOpponent(playerId);
 
         if (TriggerConditions.justDeployed(game, effectResult, self)) {
-            // Mode 1: reduce Force loss by 4
+            // Mode 1: reduce Force loss by 6 (Master List 2014 and card image; the 2011 Block 7.4 slip said 4)
             if (self.getWhileInPlayData() != null
                     && self.getWhileInPlayData().getForceLossState() != null) {
                 ForceLossState forceLossState = self.getWhileInPlayData().getForceLossState();
 
                 final RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId, GameTextActionId.LEGACY__HINDSIGHT_V__REDUCE_FORCE_LOSS);
                 action.setPerformingPlayer(playerId);
-                action.setText("Reduce Force loss by 4");
+                action.setText("Reduce Force loss by 6");
                 action.appendUsage(
                         new OncePerForceLossEffect(action));
                 action.appendCost(
@@ -117,7 +117,7 @@ public class Card1274_018 extends AbstractImmediateEffect {
                 // Perform result(s)
                 if (GameConditions.canReduceForceLoss(game)) {
                     action.appendEffect(
-                            new ReduceForceLossEffect(action, playerId, 4, 0, false, forceLossState));
+                            new ReduceForceLossEffect(action, playerId, 6, 0, false, forceLossState));
                 }
                 if (GameConditions.canTakeCardsIntoHandFromReserveDeck(game, opponent, self, GameTextActionId.LEGACY__HINDSIGHT_V__OPPONENT_TAKES_CARD)) {
                     action.appendEffect(

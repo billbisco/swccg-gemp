@@ -39,6 +39,11 @@ public class Card_1272_022_Tests {
                     put("enemyBlaster", "1_317");
                     put("strike", "5_135");
                     put("leader", "2_140");
+                    put("vader", "1_168");
+                    put("levitation", "5_160");
+                    put("trooper2", "1_194");
+                    put("enemyBlaster2", "1_317");
+                    put("dontMove", "8_140");
                 }},
                 10, 10,
                 StartingSetup.DefaultLSGroundLocation,
@@ -57,6 +62,7 @@ public class Card_1272_022_Tests {
         var card = scn.GetLSCard("gunrunner").getBlueprint();
 
         assertEquals("Rebel Gunrunner", card.getTitle());
+        assertEquals("Deploy on table; take and stack a non-lightsaber weapon (without 'lost' in game text) here from Reserve Deck; reshuffle. If a battle was just initiated, may deploy weapon here on a participating card. Return weapon here at end of weapons segment (if possible), at end of battle, or if it is about to leave table, be stolen, or become inactive. (Immune to Alter.)", card.getGameText());
         assertFalse(card.hasVirtualSuffix());
         assertEquals(Uniqueness.UNIQUE, card.getUniqueness());
         assertEquals(Side.LIGHT, card.getSide());
@@ -236,6 +242,131 @@ public class Card_1272_022_Tests {
         assertNull(scn.gameState().getBattleState()); //test2
         assertInZone(Zone.STACKED, blaster); //test2
         assertEquals(gunrunner, blaster.getStackedOn()); //test2
+    }
+
+    /** LS initiates a battle with Luke and the Gunrunner blaster deployed on him; DS has the given cards present. */
+    private void battleWithGunrunnerBlasterOnLuke(VirtualTableScenario scn, boolean fromGunrunner, PhysicalCardImpl... darkPresent) {
+        var gunrunner = scn.GetLSCard("gunrunner");
+        var blaster = scn.GetLSCard("blaster");
+        var luke = scn.GetLSCard("luke");
+        var site = scn.GetDSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLSSideOfTable(gunrunner);
+        scn.MoveCardsToLocation(site, luke);
+        scn.MoveCardsToLocation(site, darkPresent);
+        if (java.util.Arrays.asList(darkPresent).contains(scn.GetDSCard("trooper2"))) {
+            // Don't Move! needs two of your troopers armed with weapons.
+            scn.AttachCardsTo(scn.GetDSCard("trooper"), scn.GetDSCard("enemyBlaster"));
+            scn.AttachCardsTo(scn.GetDSCard("trooper2"), scn.GetDSCard("enemyBlaster2"));
+        }
+        if (fromGunrunner)
+            scn.StackCardsOn(gunrunner, blaster);
+        else
+            scn.AttachCardsTo(luke, blaster);
+        scn.SkipToLSTurn(Phase.BATTLE);
+        scn.EnsureDSForcePile(6);
+        scn.LSInitiateBattle(site);
+        if (fromGunrunner) {
+            for (int i = 0; i < 20 && !(scn.GetDecidingPlayer().equals(scn.LS)
+                    && scn.LSCardActionAvailable(gunrunner, "Deploy")); i++)
+                scn.PlayerPass(scn.GetDecidingPlayer());
+            scn.LSUseCardAction(gunrunner, "Deploy");
+            if (scn.LSHasCardChoiceAvailable(luke))
+                scn.LSChooseCard(luke);
+            for (int i = 0; i < 20 && blaster.getAttachedTo() != luke; i++)
+                scn.PlayerPass(scn.GetDecidingPlayer());
+        }
+        assertEquals(luke, blaster.getAttachedTo());
+    }
+
+    private void stealBlasterWithWeaponLevitation(VirtualTableScenario scn) {
+        var levitation = scn.GetDSCard("levitation");
+        ReachDarkInterrupt(scn, levitation, "Steal");
+        scn.DSPlayCard(levitation, "Steal");
+        if (scn.DSHasCardChoiceAvailable(scn.GetLSCard("blaster")))
+            scn.DSChooseCard(scn.GetLSCard("blaster"));
+        if (scn.DSHasCardChoiceAvailable(scn.GetDSCard("vader")))
+            scn.DSChooseCard(scn.GetDSCard("vader"));
+        scn.PassAllResponses();
+    }
+
+    @Test
+    public void RebelGunrunnerReturnsWeaponHereInsteadOfItBeingStolen() {
+        var scn = GetScenario();
+        var gunrunner = scn.GetLSCard("gunrunner");
+        var blaster = scn.GetLSCard("blaster");
+        var vader = scn.GetDSCard("vader");
+        scn.MoveCardsToDSHand(scn.GetDSCard("levitation"));
+        battleWithGunrunnerBlasterOnLuke(scn, true, vader);
+        stealBlasterWithWeaponLevitation(scn);
+        assertInZone(Zone.STACKED, blaster);
+        assertEquals(gunrunner, blaster.getStackedOn());
+        assertEquals(scn.LS, blaster.getOwner());
+        assertFalse(vader == blaster.getAttachedTo());
+    }
+
+    @Test
+    public void AWeaponNotDeployedFromRebelGunrunnerIsStolenNormally() {
+        var scn = GetScenario();
+        var blaster = scn.GetLSCard("blaster");
+        var vader = scn.GetDSCard("vader");
+        scn.MoveCardsToDSHand(scn.GetDSCard("levitation"));
+        battleWithGunrunnerBlasterOnLuke(scn, false, vader);
+        stealBlasterWithWeaponLevitation(scn);
+        assertEquals(vader, blaster.getAttachedTo());
+    }
+
+    private void captureLukeWithDontMove(VirtualTableScenario scn) {
+        var dontMove = scn.GetDSCard("dontMove");
+        for (int i = 0; i < 20 && !(scn.GetDecidingPlayer().equals(scn.DS) && scn.DSCardPlayAvailable(dontMove)); i++)
+            scn.PlayerPass(scn.GetDecidingPlayer());
+        assertTrue(scn.DSCardPlayAvailable(dontMove));
+        scn.PrepareDSDestiny(6);
+        scn.DSPlayCard(dontMove);
+        if (scn.DSHasCardChoiceAvailable(scn.GetLSCard("luke")))
+            scn.DSChooseCard(scn.GetLSCard("luke"));
+        for (int i = 0; i < 30 && scn.GetLSCard("luke").getZone().isInPlay() && !scn.GetLSCard("luke").isCaptive(); i++) {
+            var decider = scn.GetDecidingPlayer();
+            if (decider == null) break;
+            if (decider.equals(scn.DS) && scn.DSCaptureDecisionAvailable())
+                scn.DSChooseSeizeCaptive();
+            else if (decider.equals(scn.DS) && scn.DSHasCardChoiceAvailable(scn.GetDSCard("trooper")))
+                scn.DSChooseCard(scn.GetDSCard("trooper"));
+            else
+                scn.PlayerPass(decider);
+        }
+    }
+
+    @Test
+    public void RebelGunrunnerReturnsWeaponWhenItsCarrierIsAboutToBeCaptured() {
+        var scn = GetScenario();
+        var gunrunner = scn.GetLSCard("gunrunner");
+        var blaster = scn.GetLSCard("blaster");
+        var luke = scn.GetLSCard("luke");
+        var trooper = scn.GetDSCard("trooper");
+        var trooper2 = scn.GetDSCard("trooper2");
+        scn.MoveCardsToDSHand(scn.GetDSCard("dontMove"));
+        battleWithGunrunnerBlasterOnLuke(scn, true, trooper, trooper2);
+        captureLukeWithDontMove(scn);
+        assertTrue(luke.isCaptive());
+        assertInZone(Zone.STACKED, blaster);
+        assertEquals(gunrunner, blaster.getStackedOn());
+    }
+
+    @Test
+    public void AWeaponNotDeployedFromRebelGunrunnerStaysOnItsCapturedCarrier() {
+        var scn = GetScenario();
+        var gunrunner = scn.GetLSCard("gunrunner");
+        var blaster = scn.GetLSCard("blaster");
+        var luke = scn.GetLSCard("luke");
+        var trooper = scn.GetDSCard("trooper");
+        var trooper2 = scn.GetDSCard("trooper2");
+        scn.MoveCardsToDSHand(scn.GetDSCard("dontMove"));
+        battleWithGunrunnerBlasterOnLuke(scn, false, trooper, trooper2);
+        captureLukeWithDontMove(scn);
+        assertTrue(luke.isCaptive());
+        assertFalse(gunrunner == blaster.getStackedOn());
     }
 
     private void ReachDarkInterrupt(VirtualTableScenario scn, PhysicalCardImpl card, String action) {

@@ -24,6 +24,7 @@ import com.gempukku.swccgo.logic.effects.choose.DeployStackedCardEffect;
 import com.gempukku.swccgo.logic.effects.choose.StackCardFromReserveDeckEffect;
 import com.gempukku.swccgo.logic.timing.EffectResult;
 import com.gempukku.swccgo.logic.timing.PassthruEffect;
+import com.gempukku.swccgo.logic.timing.results.AboutToBeStolenResult;
 import com.gempukku.swccgo.logic.timing.results.AboutToLeaveTableResult;
 
 import java.util.ArrayList;
@@ -39,7 +40,7 @@ public class Card1272_005 extends AbstractNormalEffect {
     public Card1272_005() {
         super(Side.DARK, 4, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Imperial Stockpile", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_2, Rarity.V);
         setLore("The Empire's efficient, fear-driven logistical systems can quickly divert weapons and equipment from one conflict to another, focusing on regions of highest strategic priority.");
-        setGameText("Deploy on table; take into hand from Reserve Deck and stack a non-lightsaber weapon (without 'lost' in game text) here; reshuffle. If a battle was just initiated, may deploy weapon here on a participating card. Return weapon here at end of weapons segment (if possible), if it leaves table, or at end of battle. (Immune to Alter.)");
+        setGameText("Deploy on table; take into hand from Reserve Deck and stack a non-lightsaber weapon (without 'lost' in game text) here; reshuffle. If a battle was just initiated, may deploy weapon here on a participating card. Return weapon here at end of weapons segment (if possible), at end of battle, or if it is about to leave table, be stolen, or become inactive. (Immune to Alter.)");
         addIcons(Icon.HOTH);
         addImmuneToCardTitle(Title.Alter);
     }
@@ -89,7 +90,7 @@ public class Card1272_005 extends AbstractNormalEffect {
     }
 
     @Override
-    protected List<RequiredGameTextTriggerAction> getGameTextRequiredAfterTriggers(SwccgGame game, EffectResult effectResult, final PhysicalCard self, int gameTextSourceCardId) {
+    protected List<RequiredGameTextTriggerAction> getGameTextRequiredAfterTriggers(SwccgGame game, final EffectResult effectResult, final PhysicalCard self, int gameTextSourceCardId) {
         final String playerId = self.getOwner();
 
         // Deploy on table; take a weapon from Reserve Deck and stack it here
@@ -126,6 +127,32 @@ public class Card1272_005 extends AbstractNormalEffect {
                         @Override
                         protected void doPlayEffect(SwccgGame game) {
                             result.getPreventableCardEffect().preventEffectOnCard(weapon);
+                            self.setWhileInPlayData(null);
+                        }
+                    });
+            action.appendEffect(
+                    new StackCardFromTableEffect(action, weapon, self));
+            return Collections.singletonList(action);
+        }
+
+        // Return weapon here if it is about to be stolen (the steal is prevented), or about to become inactive
+        // (the card it is on is about to be captured or go 'missing').
+        final PhysicalCard carrier = weapon.getZone() != null && weapon.getZone().isInPlay() ? weapon.getAttachedTo() : null;
+        final boolean aboutToBeStolen = TriggerConditions.isAboutToBeStolen(game, effectResult, weapon);
+        if (aboutToBeStolen
+                || (carrier != null && (TriggerConditions.isAboutToBeCaptured(game, effectResult, carrier)
+                    || TriggerConditions.isAboutToGoMissing(game, effectResult, carrier)))) {
+            final RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
+            action.setText("Return " + GameUtils.getFullName(weapon) + " here");
+            action.setActionMsg("Return " + GameUtils.getCardLink(weapon) + " to " + GameUtils.getCardLink(self));
+            // Perform result(s)
+            action.appendEffect(
+                    new PassthruEffect(action) {
+                        @Override
+                        protected void doPlayEffect(SwccgGame game) {
+                            if (aboutToBeStolen) {
+                                ((AboutToBeStolenResult) effectResult).getPreventableCardEffect().preventEffectOnCard(weapon);
+                            }
                             self.setWhileInPlayData(null);
                         }
                     });
