@@ -6717,6 +6717,7 @@ const fixedImages = {
 "2250_85":"https://wiki.swccg.com/images/2/29/VB5-86-Elegant_Lightsaber.png",
 "2261_16":"https://wiki.swccg.com/images/2/20/VB6-12-Lieutenant_Cecius.png",
 "2261_24":"https://wiki.swccg.com/images/8/8c/VB6-23-Leave_Them_To_Me_Death_Star_II.png",
+"2261_1033":"https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/darkwaters&kraytdragonbones.gif",
 // END VB5-VB6 phase 2
 "2210_6":"https://wiki.swccg.com/images/9/97/VB1-06-Danz_Borin.png",
 "2210_8":"https://wiki.swccg.com/images/8/8d/VB1-08-Death_Star_Gunner.png",
