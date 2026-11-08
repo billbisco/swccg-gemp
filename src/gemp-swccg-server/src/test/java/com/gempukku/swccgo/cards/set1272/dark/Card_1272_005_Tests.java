@@ -26,6 +26,7 @@ public class Card_1272_005_Tests {
         return new VirtualTableScenario(
                 new HashMap<>() {{
                     put("luke", "1_19");
+                    put("levitation", "6_79");
                 }},
                 new HashMap<>() {{
                     put("stockpile", "1272_5");
@@ -65,6 +66,7 @@ public class Card_1272_005_Tests {
         var card = scn.GetDSCard("stockpile").getBlueprint();
 
         assertEquals("Imperial Stockpile", card.getTitle());
+        assertEquals("Deploy on table; take into hand from Reserve Deck and stack a non-lightsaber weapon (without 'lost' in game text) here; reshuffle. If a battle was just initiated, may deploy weapon here on a participating card. Return weapon here at end of weapons segment (if possible), at end of battle, or if it is about to leave table, be stolen, or become inactive. (Immune to Alter.)", card.getGameText());
         assertFalse(card.hasVirtualSuffix());
         assertEquals(Uniqueness.UNIQUE, card.getUniqueness());
         assertEquals(Side.DARK, card.getSide());
@@ -158,5 +160,64 @@ public class Card_1272_005_Tests {
 
         scn.DSInitiateBattle(site);
         assertFalse(scn.DSCardActionAvailable(stockpile, "Deploy weapon on a participating card")); //test1
+    }
+
+    private void battleWithRifleOnTrooper(VirtualTableScenario scn, boolean fromStockpile) {
+        var stockpile = scn.GetDSCard("stockpile");
+        var rifle = scn.GetDSCard("rifle");
+        var trooper = scn.GetDSCard("trooper");
+        var luke = scn.GetLSCard("luke");
+        var site = scn.GetDSStartingLocation();
+        scn.StartGame();
+        scn.MoveCardsToDSSideOfTable(stockpile);
+        if (fromStockpile)
+            scn.StackCardsOn(stockpile, rifle);
+        scn.MoveCardsToLocation(site, trooper, luke);
+        if (!fromStockpile)
+            scn.AttachCardsTo(trooper, rifle);
+        scn.MoveCardsToLSHand(scn.GetLSCard("levitation"));
+        scn.EnsureDSForcePile(6);
+        scn.EnsureLSForcePile(6);
+        scn.SkipToDSTurn(Phase.BATTLE);
+        scn.DSInitiateBattle(site);
+        if (fromStockpile) {
+            for (int i = 0; i < 20 && !(scn.GetDecidingPlayer().equals(scn.DS)
+                    && scn.DSCardActionAvailable(stockpile, "Deploy weapon on a participating card")); i++)
+                scn.PlayerPass(scn.GetDecidingPlayer());
+            scn.DSUseCardAction(stockpile, "Deploy weapon on a participating card");
+            if (scn.DSHasCardChoiceAvailable(rifle)) scn.DSChooseCard(rifle);
+            if (scn.DSHasCardChoiceAvailable(trooper)) scn.DSChooseCard(trooper);
+            for (int i = 0; i < 20 && rifle.getAttachedTo() != trooper; i++)
+                scn.PlayerPass(scn.GetDecidingPlayer());
+        }
+        assertTrue(scn.IsAttachedTo(trooper, rifle));
+    }
+
+    private void lukeStealsRifle(VirtualTableScenario scn) {
+        var levitation = scn.GetLSCard("levitation");
+        for (int i = 0; i < 20 && !(scn.GetDecidingPlayer().equals(scn.LS) && scn.LSCardPlayAvailable(levitation, "Steal")); i++)
+            scn.PlayerPass(scn.GetDecidingPlayer());
+        assertTrue(scn.LSCardPlayAvailable(levitation, "Steal"));
+        scn.LSPlayCard(levitation, "Steal");
+        if (scn.LSHasCardChoiceAvailable(scn.GetDSCard("rifle"))) scn.LSChooseCard(scn.GetDSCard("rifle"));
+        if (scn.LSHasCardChoiceAvailable(scn.GetLSCard("luke"))) scn.LSChooseCard(scn.GetLSCard("luke"));
+        scn.PassAllResponses();
+    }
+
+    @Test
+    public void ImperialStockpileReturnsWeaponHereInsteadOfItBeingStolen() {
+        var scn = GetScenario();
+        battleWithRifleOnTrooper(scn, true);
+        lukeStealsRifle(scn);
+        assertTrue(scn.IsStackedOn(scn.GetDSCard("stockpile"), scn.GetDSCard("rifle")));
+        assertFalse(scn.GetLSCard("luke") == scn.GetDSCard("rifle").getAttachedTo());
+    }
+
+    @Test
+    public void AWeaponNotDeployedFromImperialStockpileIsStolenNormally() {
+        var scn = GetScenario();
+        battleWithRifleOnTrooper(scn, false);
+        lukeStealsRifle(scn);
+        assertEquals(scn.GetLSCard("luke"), scn.GetDSCard("rifle").getAttachedTo());
     }
 }
