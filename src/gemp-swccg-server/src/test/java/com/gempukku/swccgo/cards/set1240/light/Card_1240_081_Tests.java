@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.set1240.light;
 
+import static org.junit.Assert.assertNull;
 import com.gempukku.swccgo.common.CardSubtype;
 import com.gempukku.swccgo.common.CardType;
 import com.gempukku.swccgo.common.ExpansionSet;
@@ -293,5 +294,16 @@ public class Card_1240_081_Tests {
         scn.DSUseCardAction(eject, "Use 1 Force to apply");
         scn.PassAllResponses();
         assertTrue(mq.getModifiersAffectingCard(scn.gameState(), ModifierType.MAY_NOT_APPLY_ABILITY_FOR_BATTLE_DESTINY, garrison).isEmpty());
+    }
+
+    @Test
+    public void EjectEjectHasTheLatestText() {
+        var scn = GetScenario();
+        var card = scn.GetLSCard("eject").getBlueprint();
+        assertEquals("Deploy on opponent's just deployed [Reflections III][Maintenance] card; opponent loses 1 Force, and you may retrieve 1 Force and/or play a Defensive Shield from under your Starting Effect. That card is power -3, opponent must use 1 Force for that card to apply its ability towards drawing battle destiny, and, during opponent's draw phase, opponent must lose 1 Force or place that card in Lost Pile. If just lost, place this card in Used Pile. (Immune to Control.) OR If you are about to lose Force during opponent's control phase, deploy on table to reduce loss by 2.",
+                card.getGameText());
+        assertNull(card.getLegacyVersion());
+        // the undated PC card-data wording ("Target is power -3 and opponent must use 1 Force") is gone
+        assertFalse(card.getGameText().contains("Target is power -3"));
     }
 }

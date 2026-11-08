@@ -34,6 +34,6 @@ public class Card_2230_047_Tests {
         var scn = GetScenario();
         LegacyVersionAsserts.assertVersionOf(scn.GetDSCard("current").getBlueprint(), scn.GetDSCard("recon").getBlueprint(),
                 "Find one of your missing characters. OR During battle, activate 1 Force for each of your scouts participating. OR During battle, if your Imperial with opponent's alien, your total battle destiny is +3.",
-                "1230_47", "", LocalDate.of(2009, 12, 7), LocalDate.of(2014, 2, 4));
+                "1230_47", "", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21));
     }
 }

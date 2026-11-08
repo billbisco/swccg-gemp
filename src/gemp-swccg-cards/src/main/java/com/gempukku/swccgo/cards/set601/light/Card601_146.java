@@ -51,7 +51,6 @@ public class Card601_146 extends AbstractObjective {
                 "Flip this card if you occupy Corellia system and control two Corellia battleground sites with Corellians.");
         addIcons(Icon.REFLECTIONS_II, Icon.LEGACY_BLOCK_4);
         setAsLegacy(true);
-        hideFromDeckBuilder();
     }
 
     @Override

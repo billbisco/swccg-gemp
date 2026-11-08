@@ -321,3 +321,6 @@
 # END legacy
 # Removed Legacy version ids (live since r16), Virtual Block 2 -> their current cards, which now play that text (docs/legacy-versions.md)
 2220_161,1220_161
+# Removed Legacy version ids (live since r16, Virtual Block 4) -> their current cards, which now play that text (docs/legacy-versions.md)
+2240_2058,1240_58
+2240_2058_BACK,1240_58_BACK

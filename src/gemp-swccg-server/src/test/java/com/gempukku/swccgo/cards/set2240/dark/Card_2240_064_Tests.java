@@ -34,6 +34,6 @@ public class Card_2240_064_Tests {
         var scn = GetScenario();
         LegacyVersionAsserts.assertVersionOf(scn.GetDSCard("current").getBlueprint(), scn.GetDSCard("saber").getBlueprint(),
                 "Deploy on Galen. While Galen defending a battle, his and Black Leader's immunity to attrition is +2. May target a character or creature for free. Draw two destiny. Target hit, power -3, and may not be used to satisfy attrition if total destiny > defense value.",
-                "1240_64", "", LocalDate.of(2009, 12, 7), LocalDate.of(2013, 4, 27));
+                "1240_64", "", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21));
     }
 }

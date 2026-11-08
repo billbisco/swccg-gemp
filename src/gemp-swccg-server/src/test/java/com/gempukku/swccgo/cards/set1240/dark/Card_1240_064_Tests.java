@@ -295,4 +295,15 @@ public class Card_1240_064_Tests {
         assertTrue(mynock.isHit() || mynock.getZone() == Zone.LOST_PILE);
         assertEquals(force, scn.GetDSForcePileCount());
     }
+
+    @Test
+    public void GalensLightsaberHasTheMasterListText() {
+        var scn = Started();
+        var card = scn.GetDSCard("saber").getBlueprint();
+        assertEquals("Deploy on Galen. While Galen defending a battle, his and Juno Eclipse's immunity to attrition is +2. May target a character or creature for free. Draw two destiny. Target hit, power -3, and may not be used to satisfy attrition if total destiny > defense value.",
+                card.getGameText());
+        assertNull(card.getLegacyVersion());
+        // the card-list wording ("If total destiny > defense value, target hit ...") is the PC-E1 version 2240_1064
+        assertFalse(card.getGameText().contains("If total destiny"));
+    }
 }

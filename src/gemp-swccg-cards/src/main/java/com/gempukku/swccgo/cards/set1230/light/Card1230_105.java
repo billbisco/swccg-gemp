@@ -34,7 +34,7 @@ public class Card1230_105 extends AbstractUsedInterrupt {
         super(Side.LIGHT, 5, "Ke Chu Ke Kukuta?", Uniqueness.UNRESTRICTED, ExpansionSet.VIRTUAL_BLOCK_3, Rarity.V);
         setVirtualSuffix(true);
         setLore("'Balka. Hachu ma blinki?'");
-        setGameText("If you have an information broker on table, draw destiny. If destiny > the number of opponent's characters on table, may use 1 Force to take any one card into hand from Reserve Deck; reshuffle.");
+        setGameText("If you have an information broker on table, draw destiny. If destiny > the number of opponent's characters on table, you may use 1 Force to take any one card into hand from Reserve Deck; reshuffle.");
         addIcons(Icon.JABBAS_PALACE);
     }
 

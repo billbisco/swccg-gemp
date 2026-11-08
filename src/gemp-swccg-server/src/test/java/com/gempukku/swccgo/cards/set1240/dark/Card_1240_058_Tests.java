@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.set1240.dark;
 
+import static org.junit.Assert.assertNull;
 import com.gempukku.swccgo.common.CardType;
 import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Keyword;
@@ -361,5 +362,92 @@ public class Card_1240_058_Tests {
         }
         assertEquals(2, lifeForceBefore - scn.GetLSLifeForceRemaining()); //test3
         assertTrue(scn.AwaitingLSBattleDamagePayment()); // back to the remaining battle damage
+    }
+
+    @Test
+    public void HuntDownAndDestroyTheJediHasTheMasterListText() {
+        var scn = GetScenario();
+        var front = VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("1240_58");
+        var back = VirtualTableScenario._cardLibrary.getSwccgoCardBlueprintBack("1240_58");
+        assertEquals("Deploy Coruscant system, Imperial City, and A Sith's Plans. May also deploy Your Spies Have Located A Jedi?.\nFor remainder of game, you may not deploy [Episode I] Dark Jedi. Opponent loses 2 Force when a character hit by Vader's (or Galen's) Lightsaber leaves table on the same turn.\nWhile this side up, may ▲ Rogue Shadow. Galen's immunity to attrition is +2 for each Jedi present.\nFlip this card if Galen or Vader at a battleground site and opponent does not have a unique (•) character of ability > 3 present at a battleground site.",
+                front.getGameText());
+        assertEquals("While this side up, opponent's Force drain bonuses are canceled and your Force drains at battlegrounds may not be canceled. During your control phase, may retrieve 1 Force. During your control phase, may use 2 Force to ▲ any one card without ability. If targeting a vehicle or starship with Lightsaber Parry, Tarkin's Orders, or There Is No Conflict, that destiny draw is +2.\nFlip this card if opponent has a unique (•) character of ability > 3 present at a battleground site or if neither Vader nor Galen is on table.",
+                back.getGameText());
+        assertNull(front.getLegacyVersion());
+        assertNull(back.getLegacyVersion());
+        // GEMP's old text (no published version): If The Trace Was Correct, "Whenever a character hit ...", no back flip
+        // when neither Vader nor Galen is on table
+        assertFalse(front.getGameText().contains("If The Trace Was Correct"));
+        assertFalse(front.getGameText().contains("Whenever a character hit"));
+    }
+
+    @Test
+    public void HuntDownAndDestroyTheJediMayAlsoDeployOnlyYourSpiesHaveLocatedAJedi() {
+        // The Master List names "Your Spies Have Located A Jedi?" (no card has that title), not If The Trace Was Correct,
+        // which the older versions 2240_58 and 2240_1058 keep.
+        assertEquals("Your Spies Have Located A Jedi?", com.gempukku.swccgo.cards.set601.dark.Card601_087.YOUR_SPIES_HAVE_LOCATED_A_JEDI);
+    }
+
+    private VirtualTableScenario forceUnleashedBattle(boolean objectiveBackSideUp) {
+        var scn = new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("han", "1_11");
+                    put("crawler", "1_150"); // Sandcrawler (vehicle)
+                }},
+                new HashMap<>() {{
+                    put("hunt", "1240_58");
+                    put("effect", "1240_41"); // The Force Unleashed
+                    put("vader", "1_168");
+                    put("trooper", "1_181");
+                    put("parry", "11_83"); // Lightsaber Parry
+                }},
+                12, 12,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.DeclineLSStartingInterrupt,
+                StartingSetup.DeclineDSStartingInterrupt,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+        var hunt = scn.GetDSCard("hunt");
+        scn.MoveOutOfPlay(hunt);
+        scn.StartGame();
+        var site = scn.GetDSStartingLocation();
+        if (objectiveBackSideUp) {
+            scn.MoveCardsToDSSideOfTable(hunt);
+            hunt.setObjectiveDeploymentComplete(true);
+            scn.gameState().flipCard(scn.game(), hunt, true);
+        }
+        scn.MoveCardsToDSSideOfTable(scn.GetDSCard("effect"));
+        scn.MoveCardsToLocation(site, scn.GetDSCard("vader"), scn.GetDSCard("trooper"), scn.GetLSCard("han"), scn.GetLSCard("crawler"));
+        scn.MoveCardsToDSHand(scn.GetDSCard("parry"));
+        scn.DSActivateForceCheat(2);
+        scn.DSStartBattleAndSkipToWeaponsSegment(site);
+        return scn;
+    }
+
+    private boolean throwsTheSandcrawlerWithDestiny(boolean objectiveBackSideUp, int destiny) {
+        var scn = forceUnleashedBattle(objectiveBackSideUp);
+        if (objectiveBackSideUp)
+            assertEquals(Title.Their_Fire_Has_Gone_Out_Of_The_Universe, scn.GetDSCard("hunt").getBlueprint().getTitle());
+        var crawler = scn.GetLSCard("crawler");
+        scn.PrepareDSDestiny(destiny);
+        scn.DSUseCardAction(scn.GetDSCard("parry"), "USED: Throw a vehicle or starship");
+        scn.DSChooseCard(crawler);
+        for (int i = 0; i < 100; i++) {
+            var decision = scn.GetCurrentDecision();
+            if (decision == null || !decision.getText().toLowerCase().contains("optional response")) break;
+            scn.PlayerPass(scn.GetDecidingPlayer());
+        }
+        return crawler.isHit();
+    }
+
+    @Test
+    public void TheirFireHasGoneOutOfTheUniverseAddsTwoToLightsaberParryDestinyTargetingAVehicle() {
+        //test1: The Force Unleashed's 'throw' needs destiny > 2: a destiny of 1 fails without the objective
+        //test2: with Their Fire Has Gone Out Of The Universe up, that destiny draw is +2 (1 + 2 = 3 > 2): thrown
+        assertFalse(throwsTheSandcrawlerWithDestiny(false, 1)); //test1
+        assertTrue(throwsTheSandcrawlerWithDestiny(true, 1)); //test2
     }
 }
