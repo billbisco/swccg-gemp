@@ -31,7 +31,7 @@ public class Card1281_047 extends AbstractCharacterWeapon {
     public Card1281_047() {
         super(Side.LIGHT, 2, "Kyle Katarn's Blaster Rifle", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_1, Rarity.V);
         setLore("BlasTech E-11 blaster rifle. Standard issue for Imperial forces. So numerous that many have been stolen by Rebels. Extendable stock. Carries energy for 100 shots.");
-        setGameText("Deploy on Kyle Katarn. May target a character, creature or vehicle for free. Draw destiny (two if Scoundrel's Luck on table). Character or Creature hit, and it's forfeit = 0, if destiny > defense value. Vehicle hit, if destiny -2 > defense value.");
+        setGameText("Deploy on Kyle Katarn. May target a character, creature or vehicle for free. Draw destiny (two if Scoundrel's Luck on table). Character or creature hit, and its forfeit = 0, if total destiny > defense value. Vehicle hit if total destiny -2 > defense value.");
         addKeywords(Keyword.BLASTER_RIFLE);
         setMatchingCharacterFilter(Filters.persona(Persona.KYLE_KATARN));
     }
