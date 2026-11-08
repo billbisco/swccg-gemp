@@ -6769,7 +6769,7 @@ const fixedImages = {
 "2230_76":"https://wiki.swccg.com/images/8/8b/VB3-77-Master_Luke.png",
 "2230_85":"https://wiki.swccg.com/images/8/87/VB3-86-Commando_Training.png",
 "2230_104":"https://wiki.swccg.com/images/4/4e/VB3-105-Endor_Celebration.png",
-"2230_105":"https://wiki.swccg.com/images/9/95/VB3-106-Ke_Chu_Ke_Kukuta.png",
+"2230_105":"https://res.starwarsccg.org/cards/legacy/VirtualBlock3-Light/large/kechukekukuta.gif",
 "2230_113":"https://wiki.swccg.com/images/a/a4/VB3-116-Red_Squadron_7.png",
 "2230_114":"https://wiki.swccg.com/images/a/a2/VB3-117-Tydirium.png",
 "2230_116":"https://wiki.swccg.com/images/f/ff/VB3-115-Mon_Calamari_Star_Cruiser.png",

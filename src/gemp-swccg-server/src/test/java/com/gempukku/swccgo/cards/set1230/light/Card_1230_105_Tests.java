@@ -176,10 +176,10 @@ public class Card_1230_105_Tests {
     public void KeChuKeKukutaHasTheLatestText() {
         var scn = GetScenario();
         var card = scn.GetLSCard("kechu").getBlueprint();
-        assertEquals("If you have an information broker on table, draw destiny. If destiny > the number of opponent's characters on table, you may use 1 Force to take any one card into hand from Reserve Deck; reshuffle.",
+        assertEquals("If you have an information broker on table, draw destiny. If destiny > the number of opponent's characters on table, may use 1 Force to [upload] any one card.",
                 card.getGameText());
         assertNull(card.getLegacyVersion());
-        // the sheet wording is the original version 2230_105
-        assertFalse(card.getGameText().contains("on table, may use 1 Force"));
+        // The card-list "you may use 1 Force to take ... into hand from Reserve Deck; reshuffle" only spelled out the icon
+        // (audit 2026-11-08), so it is no version; 2230_105 aliases this card.
     }
 }
