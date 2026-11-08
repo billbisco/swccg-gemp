@@ -19,4 +19,22 @@ public class Card_2271_022_Tests {
                 "May deploy Superlaser from Reserve Deck; reshuffle. At 'blown away' systems, adds one [Light Side] and one [Dark Side]. Whenever you Force drain at a 'blown away' system Death Star orbits, may retrieve 1 Force.", false);
         assertEquals(current.getLocationDarkSideGameText(), version.getLocationDarkSideGameText());
     }
+
+    private VirtualTableScenario scenario() {
+        return new VirtualTableScenario(new java.util.HashMap<>() {{
+        }}, new java.util.HashMap<>() {{
+            put("version", "2271_22");
+            put("current", "1271_22");
+        }}, 30, 30, com.gempukku.swccgo.framework.StartingSetup.DefaultLSGroundLocation,
+                com.gempukku.swccgo.framework.StartingSetup.DefaultDSGroundLocation, com.gempukku.swccgo.framework.StartingSetup.NoLSStartingInterrupts,
+                com.gempukku.swccgo.framework.StartingSetup.NoDSStartingInterrupts, com.gempukku.swccgo.framework.StartingSetup.NoLSShields,
+                com.gempukku.swccgo.framework.StartingSetup.NoDSShields, VirtualTableScenario.Open);
+    }
+
+    @Test
+    public void ErrataDeathStarCentralCoreIsTheSameUniqueCardAsTheCurrentCard() {
+        com.gempukku.swccgo.cards.set2271.VersionAsserts.assertSameUniqueCard(this::scenario, true, "version", "current", (s, c) -> {
+            if (c != null) s.MoveLocationToTable(c);
+        });
+    }
 }
