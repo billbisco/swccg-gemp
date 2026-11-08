@@ -43,7 +43,7 @@ public class Card_2230_007_Tests {
         var scn = GetScenario();
         LegacyVersionAsserts.assertVersionOf(scn.GetDSCard("current").getBlueprint(), scn.GetDSCard("hermi").getBlueprint(),
                 "Aliens at same and related sites may not have their weapons stolen or be targeted by Disarmed, and, while armed with a non-lightsaber, non-[Permanent Weapon] weapon: their weapon destiny draws are +1 and opponent's [Permanent Weapon] characters are power -1 there.",
-                "1230_7", "", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 8, 27));
+                "1230_7", "", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21));
     }
 
     @Test

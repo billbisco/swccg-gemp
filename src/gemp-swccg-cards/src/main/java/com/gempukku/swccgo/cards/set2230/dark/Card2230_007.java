@@ -26,15 +26,15 @@ import java.util.List;
  * Subtype: Alien
  * Title: Hermi Odle (V)
  * Original version of 1230_7: the Virtual Block 3 release sheet text (Dec 2009). Aliens here "may not ... be targeted by
- * Disarmed" (only the card Disarmed is stopped; other cards may still disarm them), where the current text (AR 2.0 Appendix A,
- * by Aug 2012) says they may not "be Disarmed" at all. Anything Goes only (docs/legacy-versions.md).
+ * Disarmed" (only the card Disarmed is stopped; other cards may still disarm them), where the current text (PC website card list by Jul 2012,
+ * then AR 2.0 Appendix A by Aug 2012) says they may not "be Disarmed" at all. Anything Goes only (docs/legacy-versions.md).
  */
 public class Card2230_007 extends Card1230_007 {
     public Card2230_007() {
         super();
         setGameText("Aliens at same and related sites may not have their weapons stolen or be targeted by Disarmed, and, while armed with a non-lightsaber, non-[Permanent Weapon] weapon: their weapon destiny draws are +1 and opponent's [Permanent Weapon] characters are power -1 there.");
         setLegacyVersion(new LegacyVersion("1230_7", "",
-                "Virtual Block 3 release sheet (2009-12-07), card #07E", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 8, 27)));
+                "Virtual Block 3 release sheet (2009-12-07), card #07E", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21)));
     }
 
     @Override
