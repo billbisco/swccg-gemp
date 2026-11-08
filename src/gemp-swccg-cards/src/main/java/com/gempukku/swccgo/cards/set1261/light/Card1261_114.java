@@ -24,7 +24,7 @@ import java.util.List;
 public class Card1261_114 extends AbstractSite {
     public Card1261_114() {
         super(Side.LIGHT, "Tatooine: Queen's Landing Site", Title.Tatooine, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
-        setLocationLightSideGameText("Once per turn, may deploy Ric Olie and/or a 327 Nubian here (for -1 Force each) from Reserve Deck; reshuffle.");
+        setLocationLightSideGameText("Once per turn, may deploy Ric Olié and/or a 327 Nubian here (for -1 Force each) from Reserve Deck; reshuffle.");
         setLocationDarkSideGameText("Force drain +1 here. Opponent may not Force drain here.");
         addIcon(Icon.LIGHT_FORCE, 1);
         addIcons(Icon.PREMIUM, Icon.EPISODE_I, Icon.EXTERIOR_SITE, Icon.PLANET);

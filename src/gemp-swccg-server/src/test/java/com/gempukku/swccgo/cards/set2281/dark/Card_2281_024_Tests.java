@@ -416,31 +416,31 @@ public class Card_2281_024_Tests {
     }
 
     @Test
-    public void ContractKillersPcE1IdentityAndText() {
+    public void ContractKillersOriginalIdentityAndText() {
         var scn = GetScenario();
         var card = scn.GetDSCard("killers").getBlueprint();
 
         assertEquals("Contract Killers", card.getTitle());
         assertTrue(card.isLegacy());
-        assertEquals("Contract Killers: Deploy Coruscant system, Sub City Lair and On The Hunt. For remainder of game, Aurra, Galen, Mara, and your aliens with 'plotting to kill Jabba' in lore are assassins. Your cards with ability are deploy +3 except assassins and starships. Characters add 1 to their Death Mark total for each weapon or device they carry. Once per turn, may deploy a Coruscant battleground from Reserve Deck; reshuffle. Flip this card if assassins control two battlegrounds (unless opponent's non-droid character at a battleground site) or a Death Mark attempt is made. Feared Throughout The Galaxy: While this side up, during your control phase, opponent loses 1 Force. If two assassins (except Galen) are in battle, add one battle destiny. Once per turn, if opponent just lost a character, an assassin there may gain 'reputation;' retrieve any one card (may only be canceled by Aim High) and stack it face down on that assassin. Assassins with 'reputation' may add 1 to Force drains where present. Flip this card at the end of any turn if opponent's non-droid character at a battleground site (unless Death Mark is on your side of the table).",
+        assertEquals("Contract Killers: Deploy Coruscant system, Sub City Lair and On The Hunt. For remainder of game, Aurra, Galen, Mara, and your aliens with 'plotting to kill Jabba' in lore are assassins. Your cards with ability are deploy +3 except assassins and starships. Characters add 1 to their Death Mark total for each weapon or device they carry. Once per turn, may deploy a Coruscant battleground from Reserve Deck; reshuffle. Flip this card if assassins control two battlegrounds (unless opponent's non-droid character at a battleground site) or you just drew destiny for Death Mark. Feared Throughout The Galaxy: While this side up, during your control phase, opponent loses 1 Force. If two assassins (except Galen) are in battle, add one battle destiny. Once per turn, if opponent just lost a character, an assassin there may gain 'reputation;' retrieve any one card (may only be canceled by Aim High) and stack it face down on that assassin. Assassins with 'reputation' may add 1 to Force drains where present. Flip this card at the end of any turn if opponent's non-droid character at a battleground site (unless Death Mark is on your side of the table).",
                 card.getGameText());
         var version = card.getLegacyVersion();
         assertEquals("1281_24", version.currentPrintingId());
-        assertEquals("PC-E1", version.label());
-        assertEquals(java.time.LocalDate.of(2013, 4, 27), version.printedOn());
-        assertEquals(null, version.supersededOn());
-        assertEquals("Contract Killers [PC-E1]", com.gempukku.swccgo.logic.GameUtils.getFullName(card));
+        assertEquals("", version.label());
+        assertEquals(java.time.LocalDate.of(2012, 5, 11), version.printedOn());
+        assertEquals(java.time.LocalDate.of(2013, 4, 27), version.supersededOn());
+        assertEquals("Contract Killers", com.gempukku.swccgo.logic.GameUtils.getFullName(card));
 
         startGame(scn);
         var back = scn.GetDSCard("killers").getOtherSideBlueprint();
         assertEquals("Feared Throughout The Galaxy", back.getTitle());
         assertEquals(card.getGameText(), back.getGameText());
         assertEquals("1281_24_BACK", back.getLegacyVersion().currentPrintingId());
-        assertEquals("Feared Throughout The Galaxy [PC-E1]", com.gempukku.swccgo.logic.GameUtils.getFullName(back));
+        assertEquals("Feared Throughout The Galaxy", com.gempukku.swccgo.logic.GameUtils.getFullName(back));
     }
 
     @Test
-    public void ContractKillersPcE1FlipsWhenADeathMarkAttemptIsMade() {
+    public void ContractKillersOriginalDoesNotFlipWhenADeathMarkAttemptIsMadeWithoutDestiny() {
         var scn = GetScenario();
         var killers = scn.GetDSCard("killers");
         var luke = scn.GetLSCard("luke");
@@ -453,24 +453,8 @@ public class Card_2281_024_Tests {
         scn.SkipToDSTurn(Phase.DEPLOY);
         assertEquals("Contract Killers", killers.getBlueprint().getTitle());
 
-        // The attempt is made when Death Mark is reached by its target, before any destiny is drawn.
+        // The original flips only when you just drew destiny for Death Mark, not when the attempt is made.
         deathMark.setUtinniEffectStatus(com.gempukku.swccgo.common.UtinniEffectStatus.REACHED);
-        scn.SkipToPhase(Phase.BATTLE);
-        assertEquals("Feared Throughout The Galaxy", killers.getBlueprint().getTitle());
-    }
-
-    @Test
-    public void ContractKillersPcE1DoesNotFlipWhileDeathMarkIsNotReached() {
-        var scn = GetScenario();
-        var killers = scn.GetDSCard("killers");
-        var luke = scn.GetLSCard("luke");
-        var lair = scn.GetDSCard("lair");
-
-        startGame(scn);
-        PhysicalCardImpl deathMark = MissionTestSupport.putInReserve(scn, 98502, scn.DS, Vb81RestTestSupport.deathMark());
-        scn.MoveCardsToLocation(lair, luke);
-        scn.AttachCardsTo(luke, deathMark);
-        scn.SkipToDSTurn(Phase.DEPLOY);
         scn.SkipToPhase(Phase.BATTLE);
         assertEquals("Contract Killers", killers.getBlueprint().getTitle());
     }

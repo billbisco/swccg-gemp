@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.set1240.light;
 
+import static org.junit.Assert.assertNull;
 import com.gempukku.swccgo.common.CardSubtype;
 import com.gempukku.swccgo.common.CardType;
 import com.gempukku.swccgo.common.ExpansionSet;
@@ -470,4 +471,60 @@ public class Card_1240_105_Tests {
             }
         }
     };
+
+    @Test
+    public void RebelCellSituationRoomHasTheLatestText() {
+        var scn = GetScenario();
+        var card = scn.GetLSCard("room").getBlueprint();
+        assertEquals("Light: Deploys only to same planet system as Rebel Cell - Hidden Landing Site. For each of your characters here, your power is +1 at related system. Dark: For each of your characters here, your power is +1 at related system.",
+                card.getGameText());
+        assertNull(card.getLegacyVersion());
+        assertEquals("For each of your characters here, your power is +1 at related system.", card.getLocationDarkSideGameText());
+        // the PC card data copied the Light deploy restriction onto the Dark side instead of the power bonus
+        assertFalse(card.getLocationDarkSideGameText().contains("Deploys only"));
+    }
+
+    @Test
+    public void RebelCellSituationRoomAddsDarkSidePowerAtRelatedSystemPerDarkCharacter() {
+        var scn = new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("hls", "1240_102");
+                    put("room", "1240_105");
+                    put("tat", "1_127");
+                    put("luke", "1_19");
+                }},
+                new HashMap<>() {{
+                    put("trooper", "1_194");
+                    put("trooper2", "1_194");
+                }},
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+        var room = scn.GetLSCard("room");
+        var tat = scn.GetLSCard("tat");
+        scn.StartGame();
+        scn.MoveLocationToTable(tat);
+        scn.MoveLocationToTable(scn.GetLSCard("hls"));
+        scn.MoveLocationToTable(room);
+
+        float d0 = scn.game().getModifiersQuerying().getTotalPowerAtLocation(scn.gameState(), tat, scn.DS, false, false);
+        scn.MoveCardsToLocation(room, scn.GetDSCard("trooper"));
+        float d1 = scn.game().getModifiersQuerying().getTotalPowerAtLocation(scn.gameState(), tat, scn.DS, false, false);
+        scn.MoveCardsToLocation(room, scn.GetDSCard("trooper2"));
+        float d2 = scn.game().getModifiersQuerying().getTotalPowerAtLocation(scn.gameState(), tat, scn.DS, false, false);
+        float l2 = scn.game().getModifiersQuerying().getTotalPowerAtLocation(scn.gameState(), tat, scn.LS, false, false);
+        scn.MoveCardsToLocation(room, scn.GetLSCard("luke"));
+        float d3 = scn.game().getModifiersQuerying().getTotalPowerAtLocation(scn.gameState(), tat, scn.DS, false, false);
+
+        assertEquals(Math.round(d0) + 1, Math.round(d1));
+        assertEquals(Math.round(d0) + 2, Math.round(d2));
+        assertEquals(0, Math.round(l2)); // the Dark side bonus is the Dark Side player's only
+        assertEquals(Math.round(d2), Math.round(d3)); // Light characters here do not add to Dark power
+    }
 }

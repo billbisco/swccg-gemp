@@ -13,6 +13,7 @@ import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.SpotOverride;
 import com.gempukku.swccgo.common.Title;
+import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.AbstractActionProxy;
 import com.gempukku.swccgo.game.PhysicalCard;
@@ -44,15 +45,17 @@ import java.util.List;
  * Set: Block 4
  * Type: Objective
  * Title: Hunt Down And Destroy The Jedi / Their Fire Has Gone Out Of The Universe (V)
+ * Text: the Virtual Cards Master List (2013-04-27, PC-E2), the latest version. The older versions are 2240_58 (sheet) and
+ * 2240_1058 (AR 2.0, PC-E1).
  */
 public class Card601_087 extends AbstractObjective {
     public Card601_087() {
         super(Side.DARK, 0, Title.Hunt_Down_And_Destroy_The_Jedi, ExpansionSet.LEGACY, Rarity.V);
         setFrontOfDoubleSidedCard(true);
         setVirtualSuffix(true);
-        setGameText("Deploy Coruscant system, Imperial City, and A Sith's Plans.  May deploy If The Trace Was Correct.\n" +
-                "For remainder of game, you may not deploy [Episode I] Dark Jedi.  Whenever a character hit by Galen's Lightsaber or Vader's Lightsaber leaves table, opponent loses 2 Force.\n" +
-                "While this side up, may take Rogue Shadow into hand from Reserve Deck; reshuffle.  Galen's immunity to attrition is +2 for each Jedi present.\n" +
+        setGameText("Deploy Coruscant system, Imperial City, and A Sith's Plans. May also deploy Your Spies Have Located A Jedi?.\n" +
+                "For remainder of game, you may not deploy [Episode I] Dark Jedi. Opponent loses 2 Force when a character hit by Vader's (or Galen's) Lightsaber leaves table on the same turn.\n" +
+                "While this side up, may ▲ Rogue Shadow. Galen's immunity to attrition is +2 for each Jedi present.\n" +
                 "Flip this card if Galen or Vader at a battleground site and opponent does not have a unique (•) character of ability > 3 present at a battleground site.");
         addIcons(Icon.SPECIAL_EDITION, Icon.LEGACY_BLOCK_4);
         setAsLegacy(true);
@@ -83,12 +86,25 @@ public class Card601_087 extends AbstractObjective {
                     }
                 });
         action.appendOptionalEffect(
-                new DeployCardsFromReserveDeckEffect(action, Filters.If_The_Trace_Was_Correct, 0, 1, true, false) {
+                new DeployCardsFromReserveDeckEffect(action, optionalDeployFilter(), 0, 1, true, false) {
                     public String getChoiceText(int numCardsToChoose) {
-                        return "Choose If The Trace Was Correct to deploy";
+                        return "Choose " + optionalDeployTitle() + " to deploy";
                     }
                 });
         return action;
+    }
+
+    /** The Virtual Cards Master List (PC-E2) names this card; no card of this title exists, so the optional deploy finds nothing. */
+    public static final String YOUR_SPIES_HAVE_LOCATED_A_JEDI = "Your Spies Have Located A Jedi?";
+
+    /** Title of the card the objective "may also deploy" (the older versions name If The Trace Was Correct). */
+    protected String optionalDeployTitle() {
+        return YOUR_SPIES_HAVE_LOCATED_A_JEDI;
+    }
+
+    /** Filter for the card the objective "may also deploy". */
+    protected Filter optionalDeployFilter() {
+        return Filters.title(optionalDeployTitle());
     }
 
     @Override

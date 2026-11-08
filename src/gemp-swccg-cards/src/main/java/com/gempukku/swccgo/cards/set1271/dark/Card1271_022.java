@@ -34,7 +34,7 @@ public class Card1271_022 extends AbstractSite {
         super(Side.DARK, Title.Death_Star_Central_Core, Title.Death_Star, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_1, Rarity.V);
         setVirtualSuffix(true);
         setLocationDarkSideGameText("May deploy Superlaser from Reserve Deck; reshuffle. At 'blown away' systems, adds one [Light Side] and one [Dark Side]. Whenever you Force drain at a 'blown away' system Death Star orbits, may retrieve 1 Force.");
-        setLocationLightSideGameText("Opponent's Force drain bonuses at systems (except your systems) are limited to 1. Immune to Expand The Empire.");
+        setLocationLightSideGameText("Opponent's Force drain bonuses at systems (except your systems) are limited to 1. Immue to Expand The Empire.");
         addIcon(Icon.DARK_FORCE, 1);
         addIcons(Icon.INTERIOR_SITE, Icon.MOBILE, Icon.SCOMP_LINK);
     }

@@ -89,4 +89,24 @@ public class Card_1220_064_Tests {
         assertInHand(powers);
         assertInZone(Zone.USED_PILE, anger);
     }
+
+    @org.junit.Test
+    public void ReleaseYourAngerHasTheLatestText() {
+        var scn = new com.gempukku.swccgo.framework.VirtualTableScenario(
+                new java.util.HashMap<String, String>() {{  }},
+                new java.util.HashMap<String, String>() {{ put("latest", "1220_64"); }},
+                10, 10,
+                com.gempukku.swccgo.framework.StartingSetup.DefaultLSGroundLocation,
+                com.gempukku.swccgo.framework.StartingSetup.DefaultDSGroundLocation,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSStartingInterrupts,
+                com.gempukku.swccgo.framework.StartingSetup.NoDSStartingInterrupts,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSShields,
+                com.gempukku.swccgo.framework.StartingSetup.NoDSShields,
+                com.gempukku.swccgo.framework.VirtualTableScenario.Open);
+        var card = scn.GetDSCard("latest").getBlueprint();
+        org.junit.Assert.assertEquals("Destiny +2 when drawn for lightsaber combat or weapon destiny. USED: Take Your Powers Are Weak, Old Man into hand from Reserve Deck; reshuffle. LOST: If you just lost a character armed with a non-[Permanent Weapon] lightsaber, lose 1 Force to take that character (or lightsaber) into hand.",
+                card.getGameText());
+        org.junit.Assert.assertNull(card.getLegacyVersion());
+        org.junit.Assert.assertFalse(card.getGameText().contains("weapon or lightsaber"));
+    }
 }

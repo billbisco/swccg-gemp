@@ -19,6 +19,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.gempukku.swccgo.cards.Vb89VersionAsserts.*;
 import static com.gempukku.swccgo.framework.Assertions.assertInZone;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -33,6 +34,7 @@ public class Card_1281_015_Tests {
                     put("cantina", "1_128"); // Tatooine: Cantina
                     put("tatooine", "1_127"); // Tatooine system
                     put("luke", "1_19");
+                    put("jawa", "1_12"); // Jawa: Light Side non-unique alien
                 }},
                 new HashMap<>() {{
                     put("wellguarded", "1281_15");
@@ -191,5 +193,35 @@ public class Card_1281_015_Tests {
         var scn = GetScenario();
         BattleWithGuards(scn, false);
         assertEquals(0, scn.GetForfeit(scn.GetDSCard("guard1")));
+    }
+
+    /** PC website card list text (2012-07-21, PC-E1): "Non-unique aliens" (any player's) are immune. */
+    @Test
+    public void WellGuardedVOpponentsNonUniqueAliensAreImmuneToo() {
+        var scn = GetScenario();
+        var wellguarded = scn.GetDSCard("wellguarded");
+        var camp = scn.GetLSCard("camp");
+        var grimtaash = scn.GetLSCard("grimtaash");
+        var jawa = scn.GetLSCard("jawa");
+        var luke = scn.GetLSCard("luke");
+        scn.StartGame();
+        scn.MoveCardsToLSHand(jawa, luke);
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        var query = scn.game().getModifiersQuerying();
+        assertFalse(query.isImmuneToCardTitle(scn.gameState(), jawa, Title.The_Camp));
+        scn.MoveCardsToDSSideOfTable(wellguarded);
+        scn.DSPass();
+        if (scn.AwaitingLSDeployPhaseActions()) {
+            scn.LSPass();
+        }
+        assertTrue(query.isImmuneToCardTitle(scn.gameState(), jawa, Title.The_Camp));
+        assertTrue(query.isImmuneToCardTitle(scn.gameState(), jawa, Title.Grimtaash));
+        assertFalse(query.isImmuneToCardTitle(scn.gameState(), luke, Title.The_Camp));
+    }
+
+    @Test
+    public void WellGuardedVCurrentCardIsTheLatestText() {
+        assertCurrentCard("1281_15", "Well Guarded",
+                "Deploy on table. Non-unique aliens are immune to Grimtaash (While you have < 13 cards in hand) , The Camp, and deployment conditions on Watch Your Step. During battle with two non-unique aliens of your Rep's species, your aliens there may not have their forfeit reduced. (Immune to Alter.)");
     }
 }

@@ -18,6 +18,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.gempukku.swccgo.cards.Vb89VersionAsserts.*;
 import static com.gempukku.swccgo.framework.Assertions.assertAtLocation;
 import static com.gempukku.swccgo.framework.Assertions.assertInHand;
 import static com.gempukku.swccgo.framework.Assertions.assertInZone;
@@ -153,5 +154,12 @@ public class Card_1281_016_Tests {
         assertInHand(assassin);
         assertInZone(Zone.LOST_PILE, ornament);
         assertEquals(force - 1, scn.GetDSForcePileCount());
+    }
+
+    /** PC website card list text (2012-07-21, PC-E1): the latest version under Bill's option (b); wording only. */
+    @Test
+    public void AbyssinOrnamentCurrentCardIsTheLatestText() {
+        assertCurrentCard("1281_16", "Abyssin Ornament",
+                "USED: Cancel an attempt to target your non-droid assassin (or a starship piloted by one) with a weapon. LOST: Use 1 Force to take a just lost non-droid assassin into hand.");
     }
 }

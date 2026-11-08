@@ -43,7 +43,7 @@ public class Card1220_064 extends AbstractUsedOrLostInterrupt {
         super(Side.DARK, 4, Title.Release_Your_Anger, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_2, Rarity.V);
         setVirtualSuffix(true);
         setLore("'Only your hatred can destroy me.'");
-        setGameText("Destiny +2 when drawn for weapon or lightsaber combat destiny. USED: Take Your Powers Are Weak, Old Man into hand from Reserve Deck; reshuffle. LOST: If you just lost a character armed with a non-[Permanent Weapon] lightsaber, lose 1 Force to take that character (or lightsaber) into hand.");
+        setGameText("Destiny +2 when drawn for lightsaber combat or weapon destiny. USED: Take Your Powers Are Weak, Old Man into hand from Reserve Deck; reshuffle. LOST: If you just lost a character armed with a non-[Permanent Weapon] lightsaber, lose 1 Force to take that character (or lightsaber) into hand.");
         addIcons(Icon.CLOUD_CITY);
     }
 

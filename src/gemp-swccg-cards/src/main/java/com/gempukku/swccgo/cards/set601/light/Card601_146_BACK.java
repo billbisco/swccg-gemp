@@ -47,10 +47,9 @@ public class Card601_146_BACK extends AbstractObjective {
     public Card601_146_BACK() {
         super(Side.LIGHT, 7, Title.This_Place_Can_Be_A_Little_Rough, ExpansionSet.LEGACY, Rarity.V);
         setVirtualSuffix(true);
-        setGameText("While this side up, your Force generation is +1 at each system you control with a smuggler. Opponent's Force generation at non-battleground locations is limited to 1. When you have two or more smugglers in a battle, add one battle destiny. Each of your smugglers is forfeit +2. Once during each turn, may play one interrupt from Lost Pile as if from hand (then place that card out of play). Sense, Alter, and Keep Your Eyes Open may not be played. Flip this card if you do not occupy two battlegrounds (unless you have completed two Kessel Runs).");
+        setGameText("While this side up, non-blaster character weapon destiny draws are -2 at Corellia sites. Your Force generation at Corellia spaceport sites is +1. Your combat vehicles may deploy or move only to same Corellia site as opponent's vehicle. 'Audience Chamber' on Palejo Reshad is treated as 'Corellia.' During your deploy phase, may deploy one BoShek or a Corellian of ability < 3 from Reserve Deck; reshuffle. At the end of each turn, may use 1 Force to draw the bottom card of your Reserve Deck. Flip this card if you do not occupy two battlegrounds.");
         addIcons(Icon.REFLECTIONS_II, Icon.LEGACY_BLOCK_4);
         setAsLegacy(true);
-        hideFromDeckBuilder();
     }
 
     @Override

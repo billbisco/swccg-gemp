@@ -37,7 +37,7 @@ import java.util.List;
 public class Card1273_023 extends AbstractRebel {
     public Card1273_023() {
         super(Side.LIGHT, 3, 2, 2, 2, 4, "Captain Antilles", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_3, Rarity.V);
-        setGameText("Adds 2 to the power of anything he pilots, 3: any corvette. While piloting a corvette, it is immune to attrition < 5 and, once per turn, may peek at a card in opponent's hand. Once per game, during battle (unless Vader here) may use 2 Force to move starship he pilots away (for free).");
+        setGameText("Adds 2 to the power of anything he pilots, 3: any corvette. While piloting a corvette it is immune to attrition <5 and, once per turn, may peek at a card in opponent's hand. Once per game, during battle (unless Vader here) may use 2 force to move ship away (for free).");
         addIcons(Icon.PILOT);
         addKeywords(Keyword.CAPTAIN);
         setMatchingStarshipFilter(Filters.corvette);

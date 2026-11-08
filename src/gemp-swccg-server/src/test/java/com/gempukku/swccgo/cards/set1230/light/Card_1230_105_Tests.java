@@ -1,5 +1,8 @@
 package com.gempukku.swccgo.cards.set1230.light;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import com.gempukku.swccgo.common.CardSubtype;
 import com.gempukku.swccgo.common.CardType;
 import com.gempukku.swccgo.common.ExpansionSet;
@@ -21,10 +24,15 @@ import static com.gempukku.swccgo.framework.Assertions.assertInZone;
 import static org.junit.Assert.*;
 
 public class Card_1230_105_Tests {
+    /** The blueprint under test (a version test subclass overrides it). */
+    protected String cardId() {
+        return "1230_105";
+    }
+
     protected VirtualTableScenario GetScenario() {
         return new VirtualTableScenario(
                 new HashMap<>() {{
-                    put("kechu", "1230_105");
+                    put("kechu", cardId());
                     put("leebo", "10_9");
                     put("any", "1_11");
                     put("luke", "1_19");
@@ -162,5 +170,16 @@ public class Card_1230_105_Tests {
         assertFalse(scn.LSChoiceAvailable("Yes")); assertEquals(2, scn.GetLSForcePileCount());
         assertInZone(Zone.USED_PILE, scn.GetLSCard("kechu"));
         assertInZone(Zone.USED_PILE, scn.GetLSDestiny(1));
+    }
+
+    @Test
+    public void KeChuKeKukutaHasTheLatestText() {
+        var scn = GetScenario();
+        var card = scn.GetLSCard("kechu").getBlueprint();
+        assertEquals("If you have an information broker on table, draw destiny. If destiny > the number of opponent's characters on table, you may use 1 Force to take any one card into hand from Reserve Deck; reshuffle.",
+                card.getGameText());
+        assertNull(card.getLegacyVersion());
+        // the sheet wording is the original version 2230_105
+        assertFalse(card.getGameText().contains("on table, may use 1 Force"));
     }
 }

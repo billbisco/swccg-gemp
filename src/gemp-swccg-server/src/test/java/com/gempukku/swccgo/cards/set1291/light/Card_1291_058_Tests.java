@@ -196,4 +196,44 @@ public class Card_1291_058_Tests {
         assertEquals(Zone.LOCATIONS, petranaki.getZone());
         assertEquals(Zone.CONVERTED_LOCATIONS, dsPetranaki.getZone());
     }
+
+    @Test
+    public void GeonosisPetranakiArenaIsTheSheetText() {
+        com.gempukku.swccgo.cards.Vb89VersionAsserts.assertCurrentCard("1291_58", "Geonosis: Petranaki Arena",
+                "Light: Amidala, Anakin, and Obi-Wan deploy -1 here. Dark: Once per turn, if you control, may raise your converted Petranaki Arena to the top.");
+    }
+
+    /**
+     * Dark Side raises its converted Petranaki Arena with the given Light Side copy's Dark Side text during its control
+     * phase. Returns whether that copy's raise is still unused this turn afterwards.
+     */
+    private boolean raiseStillUnusedAfterRaising(VirtualTableScenario scn, String lightCopy) {
+        var petranaki = scn.GetLSCard(lightCopy);
+        var dsPetranaki = scn.GetDSCard("dspetranaki");
+        var vader = scn.GetDSCard("vader");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(dsPetranaki);
+        scn.MoveCardsToLSHand(petranaki);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        scn.LSDeployCard(petranaki);
+        scn.PassAllResponses();
+        assertEquals(Zone.CONVERTED_LOCATIONS, dsPetranaki.getZone());
+        scn.MoveCardsToLocation(petranaki, vader);
+        scn.SkipToDSTurn(Phase.CONTROL);
+        scn.DSUseCardAction(petranaki, "Raise converted Petranaki Arena");
+        scn.DSChooseCard(petranaki);
+        scn.PassAllResponses();
+        assertEquals(Zone.LOCATIONS, dsPetranaki.getZone());
+        assertEquals(Zone.CONVERTED_LOCATIONS, petranaki.getZone());
+        // The usage is recorded against the card the game hands the action as its source (here the Dark Side copy
+        // beneath), so check both copies.
+        return com.gempukku.swccgo.cards.GameConditions.isOncePerTurn(scn.game(), petranaki, scn.DS, petranaki.getCardId())
+                && com.gempukku.swccgo.cards.GameConditions.isOncePerTurn(scn.game(), dsPetranaki, scn.DS, dsPetranaki.getCardId());
+    }
+
+    @Test
+    public void GeonosisPetranakiArenaDarkSideRaiseIsOncePerTurn() {
+        assertFalse(raiseStillUnusedAfterRaising(GetScenario(), "petranaki"));
+    }
 }

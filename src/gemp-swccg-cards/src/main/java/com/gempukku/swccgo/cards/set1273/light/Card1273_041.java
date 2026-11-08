@@ -38,8 +38,8 @@ public class Card1273_041 extends AbstractSystem {
         super(Side.LIGHT, Title.Coruscant, 0, ExpansionSet.VIRTUAL_BLOCK_7_3, Rarity.V);
         setVirtualSuffix(true);
         setLocationLightSideGameText("If just converted, may raise this system to the top.");
-        setLocationDarkSideGameText("If your Coruscant system was converted, Force generation +1 here.");
-        setGameText("Light: If just converted, may raise this system to the top. Dark: If your Coruscant system was converted, Force generation +1 here.");
+        setLocationDarkSideGameText("If your Coruscant system was converted, your Force generation is +1 here.");
+        setGameText("LIGHT: If just converted, may raise this system to the top. DARK: If your Coruscant system was converted, your Force generation is +1 here.");
         addIcon(Icon.LIGHT_FORCE, 2);
         addIcon(Icon.DARK_FORCE, 1);
         addIcons(Icon.PLANET);

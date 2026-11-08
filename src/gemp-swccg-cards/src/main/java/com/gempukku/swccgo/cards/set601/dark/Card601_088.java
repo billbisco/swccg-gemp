@@ -140,16 +140,17 @@ public class Card601_088 extends AbstractImmediateEffect {
                 actions.add(action);
             }
         }
-/*
-        // Check condition(s)
+        // Whenever you lose Force during opponent's control phase (except from a Force drain at a battleground or your card),
+        // that loss is cumulatively -1 (to a minimum of 1).
+        gameTextActionId = GameTextActionId.OTHER_CARD_ACTION_3;
         if (TriggerConditions.isAboutToLoseForce(game, effectResult, playerId)
                 && GameConditions.isDuringOpponentsPhase(game, playerId, Phase.CONTROL)
                 && !TriggerConditions.isAboutToLoseForceFromCard(game, effectResult, playerId, Filters.or(Filters.your(self), Filters.immuneToCardTitle(self.getTitle())))
                 && !TriggerConditions.isAboutToLoseForceFromForceDrainAt(game, effectResult, playerId, Filters.battleground)
                 && GameConditions.canReduceForceLoss(game)
-                && GameConditions.isOncePerForceLoss(game, self, gameTextSourceCardId)) {
+                && GameConditions.isOncePerForceLoss(game, self, gameTextSourceCardId, gameTextActionId)) {
 
-            final RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
+            final RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId, gameTextActionId);
             action.setPerformingPlayer(playerId);
             action.setText("Cumulatively reduce Force loss by 1");
             action.setActionMsg("Cumulatively reduce Force loss by 1 (to a minimum of 1)");
@@ -160,7 +161,7 @@ public class Card601_088 extends AbstractImmediateEffect {
             action.appendEffect(
                     new ReduceForceLossEffect(action, playerId, 1, 1));
             actions.add(action);
-        }*/
+        }
 
 
         gameTextActionId = GameTextActionId.OTHER_CARD_ACTION_2;

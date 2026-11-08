@@ -10,6 +10,7 @@ import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
+import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
@@ -40,8 +41,7 @@ public class Card601_051 extends AbstractUsedOrStartingInterrupt {
         super(Side.LIGHT, 5, Title.Let_The_Wookiee_Win, Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
         setVirtualSuffix(true);
         setLore("'It's not wise to upset a Wookiee.' 'But sir, nobody worries about upsetting a droid.' 'That's cause a droid don't pull people's arms out of their sockets when they lose.'");
-        setGameText("USED: Reveal the top 3 cards of Reserve Deck; place one in hand, and the others on bottom of Used Pile (in any order).\n" +
-                "STARTING: If your starting location was a non-[Special Edition] location, deploy from Reserve Deck an always [Immune to Alter] Effect and any number of <> sites with < 3 total [Light Side Force]. Place this Interrupt in hand.");
+        setGameText("USED: Reveal the top 3 cards of Reserve Deck; place one in hand, and the others on bottom of Used Pile (in any order). STARTING: If your starting location was a non-[Special Edition] location, deploy from Reserve Deck an always [Immune to Alter] Effect and two <> sites with < 3 total [Light Side Force]. Place this Interrupt in hand.");
         addIcons(Icon.A_NEW_HOPE, Icon.LEGACY_BLOCK_6);
         setVirtualSuffix(true);
         setAsLegacy(true);
@@ -92,6 +92,16 @@ public class Card601_051 extends AbstractUsedOrStartingInterrupt {
         return actions;
     }
 
+    /** PC card list (PC-E1): "an always [Immune to Alter] Effect". The 2009 sheet (2261_97) says "an [Immune to Alter] Effect". */
+    protected Filter startingEffectFilter() {
+        return Filters.and(Filters.Effect, Filters.always_immune_to_Alter);
+    }
+
+    /** PC card list (PC-E1): "two <> sites". The 2009 sheet (2261_97) says "any number of <> sites". */
+    protected int maxStartingSites() {
+        return 2;
+    }
+
     @Override
     protected PlayInterruptAction getGameTextStartingAction(final String playerId, final SwccgGame game, final PhysicalCard self) {
         // Check condition(s)
@@ -107,10 +117,10 @@ public class Card601_051 extends AbstractUsedOrStartingInterrupt {
                         protected void performActionResults(Action targetingAction) {
                             // Perform result(s)
                             action.appendEffect(
-                                    new DeployCardFromReserveDeckEffect(action, Filters.and(Filters.Effect, Filters.always_immune_to_Alter), true, false));
+                                    new DeployCardFromReserveDeckEffect(action, startingEffectFilter(), true, false));
                             //TODO this doesn't actually enforce the icon limit. something like ChooseCardCombinationFromHandAndOrCardPileEffect where you say what the valid combinations are seems like the right way to go
                             action.appendEffect(
-                                    new DeployCardsFromReserveDeckEffect(action, Filters.generic_site, 1, 2, true, false));
+                                    new DeployCardsFromReserveDeckEffect(action, Filters.generic_site, 1, maxStartingSites(), true, false));
 //                            action.appendEffect(
 //                                    new ChooseCardCombinationFromCardPileEffect(action, playerId, Zone.RESERVE_DECK) {
 //

@@ -23,7 +23,7 @@ public class Card2271_039 extends LegacySetupSearchEffect {
         setLore("Luke's piloting skills and Force abilities made his X-wing a difficult target for Darth Vader as they raced down the Death Star trench.");
         setGameText("Unless your Epic Event on table, deploy on table. Once per game, may take a [Setup] card into hand from Reserve Deck; reshuffle. May place this Effect in Used Pile to take an Immediate Effect into hand from Reserve Deck; reshuffle. May place this Effect in Lost Pile to cancel a Force drain. (Immune to Alter.)");
         setLegacyVersion(new LegacyVersion("1271_39", "",
-                "Virtual Block 7.1 release sheet (2010-06-18)", LocalDate.of(2010, 6, 18), LocalDate.of(2013, 4, 27)));
+                "Virtual Block 7.1 release sheet (2010-06-18)", LocalDate.of(2010, 6, 18), LocalDate.of(2012, 7, 21)));
     }
 
     @Override

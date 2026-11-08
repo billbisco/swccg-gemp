@@ -141,36 +141,9 @@ public class Card_1261_034_Tests {
         var ship = scn.GetDSCard("destroyer");
         var shipPower = scn.GetPower(ship);
         scn.DSStartBattleAndSkipToWeaponsSegment(scn.GetDSStartingLocation());
-        // Two DS characters at the Destroyer's related Launch Bay; Luke (opponent's) does not count.
-        assertEquals("Vessel itself is power +2 per your character at its related sites",
-                shipPower + (effectOnTable ? 4 : 0), scn.GetPower(ship), scn.epsilon);
+        assertEquals("Vessel power itself is not modified", shipPower, scn.GetPower(ship), scn.epsilon);
         scn.SkipToEndOfPowerSegment(false);
         return scn.GetDSTotalPower();
-    }
-
-    @Test(timeout = 10000)
-    public void vesselPowerIsNotModifiedOutsideBattle() {
-        var scn = spaceSetup(false);
-        var ship = scn.GetDSCard("destroyer");
-        var before = scn.GetPower(ship);
-        scn.MoveCardsToDSSideOfTable(scn.GetDSCard("protocols"));
-        assertEquals(before, scn.GetPower(ship), scn.epsilon);
-    }
-
-    @Test(timeout = 10000)
-    public void vesselWithoutCharactersAtItsRelatedSitesGetsNoPower() {
-        var scn = spaceSetup(true);
-        var other = scn.GetDSCard("other");
-        var before = scn.GetPower(other);
-        scn.DSStartBattleAndSkipToWeaponsSegment(scn.GetDSStartingLocation());
-        assertEquals(before, scn.GetPower(other), scn.epsilon);
-    }
-
-    @Test
-    public void gameTextIsOfficialText() {
-        var scn = scenario();
-        assertEquals("Deploy on table. During battle involving your starship (or vehicle), it is power +2 for each of your characters at its related sites (they may be forfeited to reduce battle damage and attrition). Once per turn, may deploy a non-unique starship (or vehicle) site from Reserve Deck; reshuffle (if such sites leave table, place them and all your cards there in Used Pile). (Immune to Alter.)",
-                scn.GetDSCard("protocols").getBlueprint().getGameText());
     }
 
     @Test(timeout = 10000)
@@ -211,7 +184,7 @@ public class Card_1261_034_Tests {
         var walkerPower = scn.GetPower(walker);
         scn.DSStartBattleAndSkipToWeaponsSegment(ground);
         assertTrue(scn.IsActiveBattle());
-        assertEquals(walkerPower + (effectOnTable ? 2 : 0), scn.GetPower(walker), scn.epsilon);
+        assertEquals(walkerPower, scn.GetPower(walker), scn.epsilon);
         scn.SkipToEndOfPowerSegment(false);
         return scn.GetDSTotalPower();
     }
@@ -284,29 +257,15 @@ public class Card_1261_034_Tests {
     }
 
     @Test(timeout = 10000)
-    public void starshipSiteLeavingTablePlacesItAndAllYourCardsThereInUsedPile() {
+    public void starshipSiteLeavingTablePlacesItAndAllCardsThereInOwnersUsedPile() {
         var scn = spaceSetup(true);
         loseDestroyer(scn);
         assertTrue(inUsed(scn.GetDSCard("launch")));
         assertTrue(inUsed(scn.GetDSCard("trooper")));
         assertTrue(inUsed(scn.GetDSCard("officer")));
         var luke = scn.GetLSCard("luke");
-        assertTrue("Opponent's card there is lost as normal", inLost(luke));
-    }
-
-    @Test(timeout = 10000)
-    public void onlyNonUniqueStarshipOrVehicleSitesGoToUsedPile() {
-        var scn = scenario();
-        var executor = scn.GetDSCard("executor");
-        var station = scn.GetDSCard("unique");
-        scn.StartGame();
-        var system = scn.GetDSStartingLocation();
-        scn.MoveCardsToLocation(system, executor);
-        var placements = scn.gameState().getLocationPlacement(scn.game(), station, null, null);
-        assertFalse("placements: " + placements, placements.isEmpty());
-        scn.MoveLocationToTable(station, placements.get(0));
-        scn.MoveCardsToDSSideOfTable(scn.GetDSCard("protocols"));
-        assertFalse(scn.game().getModifiersQuerying().isSiteAndCardsTherePlacedInUsedPileWhenLeavesTable(scn.gameState(), station));
+        assertTrue("Opponent's card there goes to its owner's Used Pile", inUsed(luke));
+        assertTrue(scn.gameState().getUsedPile(scn.LS).contains(luke));
     }
 
     @Test(timeout = 10000)
@@ -348,6 +307,20 @@ public class Card_1261_034_Tests {
                 && scn.GetDSCard("launch").getZone() != Zone.VOID);
         assertTrue(inUsed(scn.GetDSCard("launch")));
         assertTrue(inUsed(scn.GetDSCard("trooper")));
-        assertTrue(inLost(scn.GetLSCard("luke")));
+        assertTrue(inUsed(scn.GetLSCard("luke")));
+    }
+
+    @org.junit.Test
+    public void CurrentTextIsTheLatestVersion() {
+        // PC card list (PC-E2, by 2012-07-21) rewrite is the latest text (Bill option b); restored from before PR #732.
+        var scn = new com.gempukku.swccgo.framework.VirtualTableScenario(new java.util.HashMap<>(), new java.util.HashMap<>(java.util.Map.of("c", "1261_34")), 10, 10,
+                com.gempukku.swccgo.framework.StartingSetup.DefaultLSGroundLocation, com.gempukku.swccgo.framework.StartingSetup.DefaultDSGroundLocation,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSStartingInterrupts, com.gempukku.swccgo.framework.StartingSetup.NoDSStartingInterrupts,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSShields, com.gempukku.swccgo.framework.StartingSetup.NoDSShields,
+                com.gempukku.swccgo.framework.VirtualTableScenario.Open);
+        var text = scn.GetDSCard("c").getBlueprint().getGameText();
+        org.junit.Assert.assertEquals("Deploy on table. Once per turn, may deploy a non-unique starship (or vehicle) site from Reserve Deck; reshuffle. During battle where you have a starship or vehicle, characters at related starship (or vehicle) sites cumulatively add 2 to your total power and may be forfeited to reduce battle damage or attrition. When a starship (or vehicle) site leaves table, place it and all cards there in owner's Used Pile. (Immune to Alter.)", text);
+        org.junit.Assert.assertFalse(text.contains("for each of your characters at its related sites"));
+        org.junit.Assert.assertNull(scn.GetDSCard("c").getBlueprint().getLegacyVersion());
     }
 }

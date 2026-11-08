@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.set1240.light;
 
+import static org.junit.Assert.assertNull;
 import com.gempukku.swccgo.common.CardType;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
@@ -884,5 +885,18 @@ public class Card_1240_107_Tests {
             }
         }
         return false;
+    }
+
+    @Test
+    public void HiddenBaseHasTheSheetText() {
+        var scn = GetScenario();
+        var front = VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("1240_107");
+        var back = VirtualTableScenario._cardLibrary.getSwccgoCardBlueprintBack("1240_107");
+        assertEquals("Hidden Base: Deploy a battleground system (with Hidden Landing Site there) and Uncharted Settlements. Choose: Rebel/Rebel starship, Alien/[Independent Starship] starship, or Republic/[Republic] starship. {For} remainder of game, you may not deploy cards with ability except vehicles, Jedi Masters, and the pair you chose. Once per turn, may deploy a battleground system from Reserve Deck; reshuffle. {While} this side up, once per turn, may deploy from Reserve Deck a Rebel Cell site and/or a character of ability 2 or 3 to a Rebel Cell site; reshuffle. {Flip} this card if you occupy three Rebel Cell sites (and opponent controls no Rebel Cell sites). Systems Will Slip Through Your Fingers (V): {While} this side up, your Force drains are +1 at each battleground system. Once per turn, may lose 1 Force to cancel a Force drain at an opponent's location. At Rebel Cell sites, sectors, and each battleground system: your characters of ability < 4, [Hoth] artillery weapons, and starships are immune to attrition < 4 (or add 2 to immunity). Koensayr Manufacturing and Incom Corporation instead affect all your non-unique starships (except squadrons and corvettes) and T-47s. {Flip} this card if opponent controls two Rebel Cell sites.",
+                front.getGameText());
+        assertEquals(front.getGameText(), back.getGameText());
+        assertNull(front.getLegacyVersion());
+        // the PC card data left out "or" before Republic
+        assertFalse(front.getGameText().contains("starship, Republic/"));
     }
 }

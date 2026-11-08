@@ -16,6 +16,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.gempukku.swccgo.cards.Vb89VersionAsserts.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -105,7 +106,7 @@ public class Card_1282_019_Tests {
         assertFalse(scn.LSCardActionAvailable(rennek, "Stack"));
     }
 
-    private void battleWithRennekStacked(VirtualTableScenario scn) {
+    void battleWithRennekStacked(VirtualTableScenario scn) {
         var rennek = scn.GetLSCard("rennek");
         var laugh = scn.GetLSCard("laugh");
         var ithorian = scn.GetLSCard("ithorian");
@@ -161,5 +162,49 @@ public class Card_1282_019_Tests {
 
         assertFalse(scn.LSHasCardChoiceAvailable(trooper));
         assertEquals(forfeit, scn.GetForfeit(trooper));
+    }
+
+    /** PC website card list text (2012-12-12, PC-E1): the latest version under Bill's option (b). */
+    @Test
+    public void RennekCurrentCardIsTheLatestText() {
+        assertCurrentCard("1282_19", "Rennek",
+                "May be stacked on I Know That Laugh from hand for 2 force. While stacked on I Know That Laugh, stack face-up and during any battle may draw destiny. If destiny < number of your aliens in battle, reduce a participating character's forfeit to 0.");
+    }
+
+    /** Rennek's destiny succeeds while the trooper may not have its forfeit reduced: may the trooper be chosen? */
+    public static boolean rennekMayChooseCharacterWhoseForfeitMayNotBeReduced(String rennekId) {
+        var scn = new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("rennek", rennekId);
+                    put("laugh", "1282_21");
+                    put("ithorian", "6_20");
+                    put("devaronian", "6_10");
+                }},
+                new HashMap<>() {{
+                    put("trooper", "1_194");
+                }},
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open);
+        var rennek = scn.GetLSCard("rennek");
+        var trooper = scn.GetDSCard("trooper");
+        var ithorian = scn.GetLSCard("ithorian");
+        new Card_1282_019_Tests().battleWithRennekStacked(scn);
+        scn.ApplyAdHocModifier(new com.gempukku.swccgo.logic.modifiers.MayNotHaveForfeitValueReducedModifier(trooper, trooper));
+        scn.PrepareLSDestiny(1);
+        scn.LSUseCardAction(rennek, "Draw destiny");
+        scn.PassAllResponses();
+        assertTrue(scn.LSHasCardChoiceAvailable(ithorian));
+        return scn.LSHasCardChoiceAvailable(trooper);
+    }
+
+    @Test
+    public void RennekVMayNotChooseACharacterWhoseForfeitMayNotBeReduced() {
+        assertFalse(rennekMayChooseCharacterWhoseForfeitMayNotBeReduced("1282_19"));
     }
 }

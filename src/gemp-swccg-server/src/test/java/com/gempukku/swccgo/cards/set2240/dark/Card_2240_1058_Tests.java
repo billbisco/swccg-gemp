@@ -16,6 +16,7 @@ import java.util.HashMap;
 
 import static com.gempukku.swccgo.framework.Assertions.assertInZone;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -67,10 +68,20 @@ public class Card_2240_1058_Tests {
     }
 
     @Test
-    public void BackIsTheSameCardWithTheOldText() {
-        LegacyVersionAsserts.assertVersionOf(library.getSwccgoCardBlueprintBack("1240_58"), library.getSwccgoCardBlueprintBack("2240_1058"),
-                "While this side up, opponent's Force drain bonuses are canceled and your Force drains at battlegrounds may not be canceled. During your control phase, may retrieve 1 Force. During your control phase, may use 2 Force to ▲ any one card without ability. If targeting a vehicle or starship with Lightsaber Parry, Tarkin's Orders, or There Is No Conflict, that destiny draw is +2.\nFlip this card if opponent has a unique (•) character of ability > 3 present at a battleground site or if neither Vader nor Galen is on table.",
-                "1240_58_BACK", "PC-E1", LocalDate.of(2012, 8, 27), LocalDate.of(2013, 4, 27));
+    public void BackHasTheSameTextAsTheCurrentBack() {
+        // The Virtual Cards Master List (PC-E2, the current card) did not change the back: the PC-E1 back text is the
+        // current back text, so this back differs from the current back only in its version info.
+        var current = library.getSwccgoCardBlueprintBack("1240_58");
+        var version = library.getSwccgoCardBlueprintBack("2240_1058");
+        assertEquals("While this side up, opponent's Force drain bonuses are canceled and your Force drains at battlegrounds may not be canceled. During your control phase, may retrieve 1 Force. During your control phase, may use 2 Force to ▲ any one card without ability. If targeting a vehicle or starship with Lightsaber Parry, Tarkin's Orders, or There Is No Conflict, that destiny draw is +2.\nFlip this card if opponent has a unique (•) character of ability > 3 present at a battleground site or if neither Vader nor Galen is on table.",
+                version.getGameText());
+        assertEquals(current.getGameText(), version.getGameText());
+        assertEquals(current.getTitle(), version.getTitle());
+        assertNull(current.getLegacyVersion());
+        assertEquals("1240_58_BACK", version.getLegacyVersion().currentPrintingId());
+        assertEquals("PC-E1", version.getLegacyVersion().label());
+        assertEquals(LocalDate.of(2012, 8, 27), version.getLegacyVersion().printedOn());
+        assertEquals(LocalDate.of(2013, 4, 27), version.getLegacyVersion().supersededOn());
     }
 
     @Test

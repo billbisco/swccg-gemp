@@ -6,9 +6,9 @@ import com.gempukku.swccgo.cards.LegacyReputation;
 import com.gempukku.swccgo.cards.effects.AddToForceDrainEffect;
 import com.gempukku.swccgo.cards.effects.usage.OncePerTurnEffect;
 import com.gempukku.swccgo.common.ExpansionSet;
-import com.gempukku.swccgo.common.LegacyVersion;
 import com.gempukku.swccgo.common.GameTextActionId;
 import com.gempukku.swccgo.common.Icon;
+import com.gempukku.swccgo.common.LegacyVersion;
 import com.gempukku.swccgo.common.Phase;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
@@ -47,13 +47,13 @@ import java.util.List;
  * Set: Virtual Block 8.1
  * Type: Objective
  * Title: Contract Killers / Feared Throughout The Galaxy
- * PC-E1 version of 1281_24 (back side). Anything Goes only (docs/legacy-versions.md).
+ * Original version of 1281_24 (back side). Anything Goes only (docs/legacy-versions.md).
  */
 public class Card2281_024_BACK extends AbstractObjective {
     public Card2281_024_BACK() {
         super(Side.DARK, 7, "Feared Throughout The Galaxy", ExpansionSet.VIRTUAL_BLOCK_8_1, Rarity.V);
         setGameText(Card2281_024.SHEET_GAMETEXT);
-        setLegacyVersion(new LegacyVersion("1281_24_BACK", "PC-E1", "Virtual Cards Master List (official text 2013-04-27)", LocalDate.of(2013, 4, 27), null));
+        setLegacyVersion(new LegacyVersion("1281_24_BACK", "", "Virtual Block 8.1 release sheet (2012-05-11)", LocalDate.of(2012, 5, 11), LocalDate.of(2013, 4, 27)));
         addIcons(Icon.CLOUD_CITY);
     }
 

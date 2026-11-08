@@ -27,7 +27,7 @@ public class Card2271_002 extends AbstractImperial {
         setLore("Dark Lord of the Sith. Servant of Emperor. Encased in armor with cybernetic life support. Student of Obi-Wan Kenobi. Was the best starpilot in the galaxy. Cunning warrior.");
         setGameText("Adds 3 to power of anything he pilots. [Vader] cards never deploy unless Rise Of The Dark Lord on table. Once per turn, if at a site you control, may apply his ability to draw battle destiny elsewhere. Immune to Clash Of Sabers, Disarmed, and attrition < 5.");
         setLegacyVersion(new LegacyVersion("1271_2", "",
-                "Virtual Block 7.1 release sheet (2010-06-18)", LocalDate.of(2010, 6, 18), LocalDate.of(2013, 4, 27)));
+                "Virtual Block 7.1 release sheet (2010-06-18)", LocalDate.of(2010, 6, 18), LocalDate.of(2012, 7, 21)));
         addPersona(Persona.VADER);
         addIcons(Icon.VADER, Icon.PILOT, Icon.WARRIOR);
         addImmuneToCardTitle(Title.Clash_Of_Sabers);

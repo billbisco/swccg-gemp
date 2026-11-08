@@ -49,7 +49,7 @@ public class Card2261_033 extends AbstractNormalEffect {
         addComboCardTitles(Title.Dark_Waters, Title.Krayt_Dragon_Bones);
         setGameText("Deploy on a site with \"Waters\" in game text. During your battle phase, if on Rancor Pit, may relocate a captive from Audience Chamber to here. If opponent's character here was just eaten, retrieve 3 Force. If a creature here is lost, owner loses Force equal to half its printed deploy cost (round up). Once per turn, if a creature here is about to draw destiny for ferocity, may instead use its destiny number. May use 1 Force to ▼ a non-[Selective] ferocious creature here. (Immune to Alter.)");
         setLegacyVersion(new LegacyVersion("1261_33", "",
-                "Virtual Block 6.1 release sheet (2009-09-04), card #32", LocalDate.of(2009, 9, 4), LocalDate.of(2014, 2, 4)));
+                "Virtual Block 6.1 release sheet (2009-09-04), card #32", LocalDate.of(2009, 9, 4), LocalDate.of(2010, 7, 26)));
         addIcons(Icon.A_NEW_HOPE);
         addKeywords(Keyword.DEPLOYS_ON_LOCATION);
         addImmuneToCardTitle(Title.Alter);

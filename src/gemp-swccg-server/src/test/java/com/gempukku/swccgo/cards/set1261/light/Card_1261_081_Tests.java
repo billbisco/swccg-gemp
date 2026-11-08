@@ -13,9 +13,11 @@ import static com.gempukku.swccgo.framework.Assertions.*;
 import static org.junit.Assert.*;
 
 public class Card_1261_081_Tests {
+    private String incomId = "1261_81";
+
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>() {{
-            put("incom", "1261_81"); put("warRoom", "1_139"); put("echoRoom", "3_57");
+            put("incom", incomId); put("warRoom", "1_139"); put("echoRoom", "3_57");
             put("shipRoom", "9_58"); put("system", "1_135"); put("jungle", "1_137"); put("throne", "1_138"); put("generators", "3_61");
             put("echoBay", "3_59"); put("echoMed", "3_60"); put("rebel1", "1_28"); put("rebel2", "1_28"); put("rebel3", "1_28");
             put("ebo", "3_34"); put("xwing", "1_146"); put("xwing2", "1_146"); put("ywing", "1_147");
@@ -165,12 +167,14 @@ public class Card_1261_081_Tests {
         var scn = started(true); scn.MoveCardsToLocation(scn.GetLSCard("echoRoom"), scn.GetDSCard("trooper"));
         scn.SkipToLSTurn(Phase.CONTROL); assertFalse(scn.GetLSCard("incom").isSuspended());
     }
-    @Test public void IncomKoensayrCancelsPreviouslyDeployedEchoBaseOperations() {
+    @Test public void OriginalIncomKoensayrCancelsPreviouslyDeployedEchoBaseOperations() {
+        incomId = "2261_81"; // the 2010 sheet / Master List text cancels Echo Base Operations
         var scn = started(false); var ebo = scn.GetLSCard("ebo"); scn.AttachCardsTo(scn.GetLSCard("generators"), ebo);
         scn.SkipToLSTurn(Phase.DEPLOY); scn.LSDeployCard(scn.GetLSCard("incom"));
         scn.LSChooseCard(scn.GetLSCard("warRoom")); scn.PassAllResponses(); assertInZone(Zone.LOST_PILE, ebo);
     }
-    @Test public void IncomKoensayrCancelsEchoBaseOperationsActuallyBeingDeployed() {
+    @Test public void OriginalIncomKoensayrCancelsEchoBaseOperationsActuallyBeingDeployed() {
+        incomId = "2261_81"; // the 2010 sheet / Master List text cancels Echo Base Operations
         var scn = started(true);
         scn.MoveLocationToTable(scn.GetLSCard("echoBay")); scn.MoveLocationToTable(scn.GetLSCard("echoMed"));
         scn.MoveCardsToLocation(scn.GetLSCard("echoRoom"), scn.GetLSCard("rebel1"));
@@ -181,7 +185,8 @@ public class Card_1261_081_Tests {
         scn.PassAllResponses(); assertInZone(Zone.LOST_PILE, scn.GetLSCard("ebo"));
         assertEquals(scn.GetLSCard("warRoom"), scn.GetLSCard("incom").getAttachedTo());
     }
-    @Test public void IncomKoensayrSuspendedEffectDoesNotCancelEchoBaseOperations() {
+    @Test public void OriginalIncomKoensayrSuspendedEffectDoesNotCancelEchoBaseOperations() {
+        incomId = "2261_81"; // the 2010 sheet / Master List text cancels Echo Base Operations
         var scn = started(true); var site = scn.GetLSCard("warRoom"); scn.MoveCardsToLocation(site, scn.GetDSCard("trooper"));
         scn.SkipToLSTurn(Phase.CONTROL); assertTrue(scn.GetLSCard("incom").isSuspended());
         var ebo = scn.GetLSCard("ebo"); scn.AttachCardsTo(scn.GetLSCard("generators"), ebo); scn.SkipToPhase(Phase.DEPLOY);
@@ -208,5 +213,27 @@ public class Card_1261_081_Tests {
         assertEquals(2, scn.GetBattleDestinyAbility(ship)); assertEquals(5, scn.GetPower(ship));
         scn.LSUseCardAction(scn.GetLSCard("incom"), "Retrieve"); scn.PassAllResponses();
         scn.LSChooseCard(scn.GetLSCard("xwing")); scn.PassAllResponses(); assertInZone(Zone.USED_PILE, scn.GetLSCard("xwing"));
+    }
+    @Test public void IncomKoensayrNoLongerCancelsEchoBaseOperations() {
+        // PC card list (PC-E1, the latest text) drops "Echo Base Operations is canceled."
+        var scn = started(false); var ebo = scn.GetLSCard("ebo"); scn.AttachCardsTo(scn.GetLSCard("generators"), ebo);
+        scn.SkipToLSTurn(Phase.DEPLOY); scn.LSDeployCard(scn.GetLSCard("incom"));
+        scn.LSChooseCard(scn.GetLSCard("warRoom")); scn.PassAllResponses();
+        assertEquals(scn.GetLSCard("generators"), ebo.getAttachedTo());
+        assertFalse(scn.GetLSCard("incom").getBlueprint().getGameText().contains("Echo Base Operations"));
+    }
+
+    @org.junit.Test
+    public void CurrentTextIsTheLatestVersion() {
+        // PC card list (PC-E1, by 2012-07-21) is the latest text (Bill option b); it has no Echo Base Operations clause.
+        var scn = new com.gempukku.swccgo.framework.VirtualTableScenario(new java.util.HashMap<>(java.util.Map.of("c", "1261_81")), new java.util.HashMap<>(), 10, 10,
+                com.gempukku.swccgo.framework.StartingSetup.DefaultLSGroundLocation, com.gempukku.swccgo.framework.StartingSetup.DefaultDSGroundLocation,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSStartingInterrupts, com.gempukku.swccgo.framework.StartingSetup.NoDSStartingInterrupts,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSShields, com.gempukku.swccgo.framework.StartingSetup.NoDSShields,
+                com.gempukku.swccgo.framework.VirtualTableScenario.Open);
+        var text = scn.GetLSCard("c").getBlueprint().getGameText();
+        org.junit.Assert.assertEquals("Deploy on a Rebel Base war room. Your ability-1 permanent pilots aboard T-47s, X-wings, Y-wings, and Z-95s (except squadrons) are replaced by ability-2 permanent pilots who add 1 to power. During your control phase, may retrieve one Y-wing or Z-95. Suspended if opponent controls this site. (Immune to Alter.)", text);
+        org.junit.Assert.assertFalse(text.contains("Echo Base Operations is canceled"));
+        org.junit.Assert.assertNull(scn.GetLSCard("c").getBlueprint().getLegacyVersion());
     }
 }

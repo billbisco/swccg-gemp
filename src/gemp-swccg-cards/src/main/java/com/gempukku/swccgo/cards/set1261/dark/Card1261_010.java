@@ -28,7 +28,7 @@ public class Card1261_010 extends AbstractImperial {
         super(Side.DARK, 1, 6, 6, 6, 8, "Darth Vader, Betrayer Of The Jedi", Uniqueness.UNIQUE,
                 ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
         setLore("'I will deal with them myself.'");
-        setGameText("[Pilot] 3. The Circle Is Now Complete is canceled. While present with [Reflections III] Obi-Wan or a Jedi Council Member, lightsabers here may not be 'swung' twice, their immunity to attrition is canceled and you may add one battle destiny. Immune to attrition < 5.");
+        setGameText("[Pilot] 3. The Circle Is Now Complete is canceled. While present with [Reflections III] Obi-Wan or a Jedi Council Member, may add one battle destiny, lightsabers here may not be 'swung' twice, and their immunity to attrition is canceled. Immune to attrition < 5.");
         addPersona(Persona.VADER);
         addIcons(Icon.PILOT, Icon.WARRIOR, Icon.DEATH_STAR_II);
     }

@@ -15,6 +15,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.gempukku.swccgo.cards.Vb89VersionAsserts.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -139,5 +140,60 @@ public class Card_1282_012_Tests {
         scn.PassAllResponses();
 
         assertTrue(scn.IsAttachedTo(anakin, vadersaber));
+    }
+
+    /** PC website card list text (2012-12-12, PC-E1): the latest version under Bill's option (b). */
+    @Test
+    public void AnakinSoloCurrentCardIsTheLatestText() {
+        assertCurrentCard("1282_12", "Anakin Solo",
+                "Power +2 while armed with a lightsaber. May use any 'stolen' lightsaber. Once during battle, where present, may steal an opponent's just-lost lightsaber. Immune to attrition <3 (<5 while armed with a 'stolen' lightsaber).");
+    }
+
+    /** An opponent's lightsaber is lost (with its character) where Anakin is present, outside battle. */
+    public static boolean anakinMayStealOutsideBattle(String anakinId) {
+        var scn = new com.gempukku.swccgo.framework.VirtualTableScenario(
+                new java.util.HashMap<>() {{
+                    put("anakin", anakinId);
+                }},
+                new java.util.HashMap<>() {{
+                    put("trooper", "1_194");
+                    put("vadersaber", "1_324");
+                }},
+                20, 20,
+                com.gempukku.swccgo.framework.StartingSetup.DefaultLSGroundLocation,
+                com.gempukku.swccgo.framework.StartingSetup.DefaultDSGroundLocation,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSStartingInterrupts,
+                com.gempukku.swccgo.framework.StartingSetup.NoDSStartingInterrupts,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSShields,
+                com.gempukku.swccgo.framework.StartingSetup.NoDSShields,
+                com.gempukku.swccgo.framework.VirtualTableScenario.Open);
+        var anakin = scn.GetLSCard("anakin");
+        var trooper = scn.GetDSCard("trooper");
+        var vadersaber = scn.GetDSCard("vadersaber");
+        var site = scn.GetLSStartingLocation();
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, anakin, trooper);
+        scn.AttachCardsTo(trooper, vadersaber);
+        scn.SkipToLSTurn(com.gempukku.swccgo.common.Phase.CONTROL);
+        scn.LSExecuteAdHocEffect(anakin, new com.gempukku.swccgo.logic.effects.LoseCardFromTableEffect(
+                new com.gempukku.swccgo.logic.actions.TopLevelGameTextAction(anakin, anakin.getCardId()), trooper));
+        for (int i = 0; i < 10 && vadersaber.getZone() != com.gempukku.swccgo.common.Zone.LOST_PILE; i++) {
+            if (scn.DSHasCardChoiceAvailable(vadersaber))
+                scn.DSChooseCard(vadersaber);
+            else if (scn.LSHasCardChoiceAvailable(vadersaber))
+                scn.LSChooseCard(vadersaber);
+            else
+                scn.PassResponses();
+        }
+        // Dark Side responds first to the loss; then Light Side may respond with Anakin.
+        if (scn.DSGetDecision() != null)
+            scn.DSPass();
+        org.junit.Assert.assertEquals(com.gempukku.swccgo.common.Zone.LOST_PILE, vadersaber.getZone());
+        return scn.LSCardActionAvailable(anakin, "Steal");
+    }
+
+    @Test
+    public void AnakinSoloMayNotStealOutsideBattle() {
+        assertFalse(anakinMayStealOutsideBattle("1282_12"));
     }
 }

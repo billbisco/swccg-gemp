@@ -18,6 +18,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.gempukku.swccgo.cards.Vb89VersionAsserts.*;
 import static com.gempukku.swccgo.framework.Assertions.assertAtLocation;
 import static com.gempukku.swccgo.framework.Assertions.assertInZone;
 import static org.junit.Assert.assertEquals;
@@ -498,4 +499,11 @@ public class Card_1283_021_Tests {
             assertTrue(scn.AwaitingDSActivatePhaseActions());
         }
     };
+
+    /** Virtual Cards Master List text (2013-04-27, PC-E1), the latest version; GEMP showed a PC data-error wording ('Ellors'). Same play. */
+    @Test
+    public void UnderworldContactsUnchartedSettlementsCurrentCardIsTheLatestText() {
+        assertCurrentCard("1283_21", "Underworld Contacts & Uncharted Settlements",
+                "Deploy on [Virtual Block 4] Hidden Base; you must choose alien/[Independent] starship. You may not deploy Ellorrs Madak, Revolution or operatives. Your Destiny is canceled. Opponent generates no Force at Hidden Landing Site. [Virtual Block 1] Yerka Mig may deploy on a Rebel Cell Site, may be placed in Used Pile if it was just lost, and you may retrieve Force with it only once per turn. While Systems Will Slip Through Your Fingers on table, attrition against opponent is +1 for each Rebel Cell site you occupy with an alien. (Immune to Alter.)");
+    }
 }

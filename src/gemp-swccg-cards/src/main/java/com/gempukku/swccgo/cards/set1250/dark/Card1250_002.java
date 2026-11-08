@@ -22,7 +22,7 @@ import java.util.List;
 /** Legacy Block 5 retains the predecessor's printed stats and attrition immunity. */
 public class Card1250_002 extends Card1112_024 {
     public Card1250_002() {
-        setGameText("Once during opponent's activate phase, may relocate Aurra to same site as a Jedi. Once per game, during your move phase, may fire her weapon at a Jedi; hit target is lost. Immune to attrition < 4.");
+        setGameText("Once during opponent's activate phase, may relocate Aurra to a site where opponent has a Jedi. Once per game, during your move phase, may fire her weapon at a Jedi; hit target is lost. Immune to attrition < 4.");
         addIcon(Icon.LEGACY_BLOCK_5);
         setAsLegacy(true);
     }
@@ -44,7 +44,7 @@ public class Card1250_002 extends Card1112_024 {
         if (GameConditions.isOnceDuringOpponentsPhase(game, self, playerId, sourceId, Phase.ACTIVATE)
                 && GameConditions.canSpot(game, self, destination)) {
             var action = new TopLevelGameTextAction(self, playerId, sourceId);
-            action.setText("Relocate to same site as a Jedi");
+            action.setText("Relocate to a site where opponent has a Jedi"); // Jedi are Light Side characters
             action.appendUsage(new OncePerPhaseEffect(action));
             action.appendEffect(new ChooseCardOnTableEffect(action, playerId, "Choose site with a Jedi", destination) {
                 @Override

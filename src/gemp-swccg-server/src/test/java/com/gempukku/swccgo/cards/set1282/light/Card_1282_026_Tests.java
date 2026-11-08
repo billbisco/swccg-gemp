@@ -17,6 +17,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.gempukku.swccgo.cards.Vb89VersionAsserts.*;
 import static com.gempukku.swccgo.framework.Assertions.assertInHand;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -244,5 +245,12 @@ public class Card_1282_026_Tests {
         // 4 + 3 > Luke's defense value 4: hit; reduced by 3 to 4 it is not
         assertTrue(lukeHitByVadersLightsaber(GetScenario(), false));
         assertFalse(lukeHitByVadersLightsaber(GetScenario(), true));
+    }
+
+    /** PC website card list text (2012-12-12, PC-E1): the latest version under Bill's option (b); wording only. */
+    @Test
+    public void UnderJabbaSProtectionCurrentCardIsTheLatestText() {
+        assertCurrentCard("1282_26", "Under Jabba's Protection",
+                "When you play this Interrupt, may place a Rep on your objective in Used Pile. Lose X cards stacked on I Know That Laugh to reduce a weapon or battle destiny total by X. OR Use 1 Force to: take a card stacked on I Know That Laugh in hand (or stack top card of lost pile on it).");
     }
 }

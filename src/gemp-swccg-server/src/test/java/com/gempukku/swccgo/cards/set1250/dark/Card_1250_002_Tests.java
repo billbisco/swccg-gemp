@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
 import static com.gempukku.swccgo.framework.Assertions.assertInZone;
 
 public class Card_1250_002_Tests {
-    private static final String RELOCATE="Relocate to same site as a Jedi",FIRE="Fire weapon at a Jedi";
+    private static final String RELOCATE="Relocate to a site where opponent has a Jedi",FIRE="Fire weapon at a Jedi";
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>() {{put("luke","1_19");put("knight","9_24");put("obi","1_21");put("leia","1_17");put("chamber","12_76");}},
                 new HashMap<>() {{put("aurra","1250_2");put("blaster","1_317");put("rifle","1_312");put("trooper","1_194");put("device","1_201");}},
@@ -23,7 +23,7 @@ public class Card_1250_002_Tests {
     @Test public void AurraSingStatsIconsAndKeywordsMatchPrintedImageAndSourcePack() {
         var scn=scenario();var b=scn.GetDSCard("aurra").getBlueprint();
         assertEquals("Aurra Sing",b.getTitle());
-        assertEquals("Once during opponent's activate phase, may relocate Aurra to same site as a Jedi. Once per game, during your move phase, may fire her weapon at a Jedi; hit target is lost. Immune to attrition < 4.",b.getGameText());assertTrue(b.hasVirtualSuffix());assertTrue(b.isLegacy());assertEquals(Side.DARK,b.getSide());assertEquals(Uniqueness.UNIQUE,b.getUniqueness());
+        assertEquals("Once during opponent's activate phase, may relocate Aurra to a site where opponent has a Jedi. Once per game, during your move phase, may fire her weapon at a Jedi; hit target is lost. Immune to attrition < 4.",b.getGameText());assertTrue(b.hasVirtualSuffix());assertTrue(b.isLegacy());assertEquals(Side.DARK,b.getSide());assertEquals(Uniqueness.UNIQUE,b.getUniqueness());
         assertEquals(1,b.getDestiny(),scn.epsilon);assertEquals(4,b.getDeployCost(),scn.epsilon);assertEquals(4,b.getPower(),scn.epsilon);assertEquals(4,b.getAbility(),scn.epsilon);assertEquals(3,b.getForfeit(),scn.epsilon);
         assertTrue(b.hasPersona(Persona.AURRA));assertTrue(GameTextActionId.LEGACY__AURRA_SING_V__FIRE_WEAPON.isPerGame());assertEquals(ExpansionSet.VIRTUAL_BLOCK_5,b.getExpansionSet());assertEquals(Rarity.V,b.getRarity());
         assertEquals("Bounty hunter. Former student of the Force. After failing her Jedi training, Aurra became known for hunting down and killing Jedi Knights.",b.getLore());

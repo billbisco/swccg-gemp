@@ -17,6 +17,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.gempukku.swccgo.cards.Vb89VersionAsserts.*;
 import static com.gempukku.swccgo.framework.Assertions.assertInZone;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -203,5 +204,12 @@ public class Card_1282_015_Tests {
         assertTrue(scn.DSPlayUsedInterruptAvailable(watch));
         scn.DSPlayUsedInterrupt(watch);
         assertFalse(scn.LSCardActionAvailable(verrack, "cancel"));
+    }
+
+    /** PC website card list text (2012-12-12, PC-E1): the latest version under Bill's option (b); wording only. */
+    @Test
+    public void CaptainVerrackCurrentCardIsTheLatestText() {
+        assertCurrentCard("1282_15", "Captain Verrack",
+                "Adds 1 to power of anything he pilots. While aboard your starship, adds 1 to its total weapon destiny. Whenever you hit a starship here, opponent loses 1 Force. During battle, may lose 1 Force to cancel [Coruscant] Watch Your Back!.");
     }
 }

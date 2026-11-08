@@ -44,7 +44,7 @@ public class Card2261_046 extends AbstractUsedInterrupt {
         addIcons(Icon.DAGOBAH, Icon.LEGACY_BLOCK_6);
         setAsLegacy(true);
         setLegacyVersion(new LegacyVersion("1261_46", "",
-                "Virtual Block 6.1 release sheet (2009-09-04), card #47", LocalDate.of(2009, 9, 4), LocalDate.of(2013, 4, 27)));
+                "Virtual Block 6.1 release sheet (2009-09-04), card #47", LocalDate.of(2009, 9, 4), LocalDate.of(2012, 7, 21)));
     }
 
     @Override

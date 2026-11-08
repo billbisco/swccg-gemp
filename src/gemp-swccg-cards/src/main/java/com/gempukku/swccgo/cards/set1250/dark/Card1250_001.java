@@ -49,9 +49,14 @@ public class Card1250_001 extends Card1114_029 {
         });
     }
 
+    /** "his" non-[Presence] characters and vehicles: only the controlling player's cards get the discount. */
+    protected boolean discountOnlyControllersCards() {
+        return true;
+    }
+
     private Modifier discount(PhysicalCard self, String playerId) {
-        Filter eligible = Filters.and(Filters.owner(playerId), Filters.or(Filters.character, Filters.vehicle),
-                Filters.not(Icon.PRESENCE));
+        Filter eligible = Filters.and(Filters.or(Filters.character, Filters.vehicle), Filters.not(Icon.PRESENCE));
+        if (discountOnlyControllersCards()) eligible = Filters.and(Filters.owner(playerId), eligible);
         Filter relatedPlaces = Filters.and(Filters.or(Filters.site, Filters.sector),
                 Filters.relatedLocationTo(self, systemWithFleet(self, playerId, true)));
         return new DeployCostToLocationModifier(self, eligible, -1, relatedPlaces);

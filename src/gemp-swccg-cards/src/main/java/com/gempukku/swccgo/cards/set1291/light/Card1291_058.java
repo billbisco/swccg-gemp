@@ -2,6 +2,7 @@ package com.gempukku.swccgo.cards.set1291.light;
 
 import com.gempukku.swccgo.cards.AbstractSite;
 import com.gempukku.swccgo.cards.GameConditions;
+import com.gempukku.swccgo.cards.effects.usage.OncePerTurnEffect;
 import com.gempukku.swccgo.cards.effects.ConvertLocationByRaisingToTopEffect;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
@@ -34,9 +35,9 @@ import java.util.List;
 public class Card1291_058 extends AbstractSite {
     public Card1291_058() {
         super(Side.LIGHT, Title.Geonosis_Petranaki_Arena, Title.Geonosis, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_9_1, Rarity.V);
-        setLocationLightSideGameText("Amidala, Anakin and Obi-Wan deploy -1 here.");
-        setLocationDarkSideGameText("If you control, may raise your converted Petranaki Arena to the top.");
-        setGameText("Light: Amidala, Anakin and Obi-Wan deploy -1 here. Dark: If you control, may raise your converted Petranaki Arena to the top.");
+        setLocationLightSideGameText("Amidala, Anakin, and Obi-Wan deploy -1 here.");
+        setLocationDarkSideGameText("Once per turn, if you control, may raise your converted Petranaki Arena to the top.");
+        setGameText("Light: Amidala, Anakin, and Obi-Wan deploy -1 here. Dark: Once per turn, if you control, may raise your converted Petranaki Arena to the top.");
         addIcon(Icon.LIGHT_FORCE, 2);
         addIcon(Icon.DARK_FORCE, 1);
         addIcons(Icon.EPISODE_I, Icon.PLANET, Icon.EXTERIOR_SITE);
@@ -52,10 +53,12 @@ public class Card1291_058 extends AbstractSite {
     @Override
     protected List<TopLevelGameTextAction> getGameTextDarkSideTopLevelActions(final String playerOnDarkSideOfLocation, SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
         Filter converted = Filters.and(Filters.title(Title.Geonosis_Petranaki_Arena), Filters.canBeConvertedByRaisingYourLocationToTop(playerOnDarkSideOfLocation));
-        if (GameConditions.controls(game, playerOnDarkSideOfLocation, self)
+        if (GameConditions.isOncePerTurn(game, self, playerOnDarkSideOfLocation, gameTextSourceCardId)
+                && GameConditions.controls(game, playerOnDarkSideOfLocation, self)
                 && GameConditions.canTarget(game, self, converted)) {
             final TopLevelGameTextAction action = new TopLevelGameTextAction(self, playerOnDarkSideOfLocation, gameTextSourceCardId);
             action.setText("Raise converted Petranaki Arena");
+            action.appendUsage(new OncePerTurnEffect(action));
             action.appendTargeting(
                     new TargetCardOnTableEffect(action, playerOnDarkSideOfLocation, "Choose converted Petranaki Arena", converted) {
                         @Override

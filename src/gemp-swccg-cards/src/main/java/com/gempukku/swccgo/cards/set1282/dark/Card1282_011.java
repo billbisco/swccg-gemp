@@ -21,6 +21,7 @@ import com.gempukku.swccgo.logic.actions.FireWeaponAction;
 import com.gempukku.swccgo.logic.actions.FireWeaponActionBuilder;
 import com.gempukku.swccgo.logic.actions.OptionalGameTextTriggerAction;
 import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
+import com.gempukku.swccgo.logic.effects.AddUntilEndOfGameModifierEffect;
 import com.gempukku.swccgo.logic.effects.AddUntilEndOfTurnModifierEffect;
 import com.gempukku.swccgo.logic.effects.PlaceCardInUsedPileFromTableEffect;
 import com.gempukku.swccgo.logic.effects.RetrieveForceEffect;
@@ -28,7 +29,9 @@ import com.gempukku.swccgo.logic.effects.choose.ChooseCardOnTableEffect;
 import com.gempukku.swccgo.logic.modifiers.MayNotTargetToBeCapturedModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.modifiers.PowerModifier;
+import com.gempukku.swccgo.logic.timing.Action;
 import com.gempukku.swccgo.logic.timing.EffectResult;
+import com.gempukku.swccgo.logic.timing.StandardEffect;
 import com.gempukku.swccgo.logic.timing.results.HitResult;
 
 import java.util.Collections;
@@ -44,7 +47,7 @@ import java.util.List;
 public class Card1282_011 extends AbstractCharacterWeapon {
     public Card1282_011() {
         super(Side.DARK, 3, "Assassin's Blaster Rifle", Uniqueness.RESTRICTED_2, ExpansionSet.VIRTUAL_BLOCK_8_2, Rarity.V);
-        setGameText("Deploy on your assassin; assassin is power +1. May target a character at same or adjacent site for free. Draw destiny. If destiny +1 > defense value: target hit, may not be captured this turn, and you may place a bounty on target in Used Pile to retrieve 2 Force.");
+        setGameText("Deploy on an assassin; assassin is power +1. May target a character at same or adjacent site for free. Draw destiny. If destiny +1 > defense value: target hit, may not be captured, and you may place a bounty on target in Used Pile to retrieve 2 Force.");
         addIcons(Icon.A_NEW_HOPE);
         addKeywords(Keyword.BLASTER_RIFLE);
         setMatchingCharacterFilter(Filters.assassin);
@@ -88,12 +91,17 @@ public class Card1282_011 extends AbstractCharacterWeapon {
             action.setText("Make " + GameUtils.getFullName(cardHit) + " not able to be captured");
             // Perform result(s)
             action.appendEffect(
-                    new AddUntilEndOfTurnModifierEffect(action,
-                            new MayNotTargetToBeCapturedModifier(self, cardHit),
-                            GameUtils.getCardLink(cardHit) + " may not be captured this turn"));
+                    mayNotBeCapturedEffect(action, self, cardHit));
             return Collections.singletonList(action);
         }
         return null;
+    }
+
+    /** PC website card list text (Dec 2012): the target "may not be captured" (no longer only "this turn"). */
+    protected StandardEffect mayNotBeCapturedEffect(Action action, PhysicalCard self, PhysicalCard cardHit) {
+        return new AddUntilEndOfGameModifierEffect(action,
+                new MayNotTargetToBeCapturedModifier(self, cardHit),
+                GameUtils.getCardLink(cardHit) + " may not be captured");
     }
 
     @Override

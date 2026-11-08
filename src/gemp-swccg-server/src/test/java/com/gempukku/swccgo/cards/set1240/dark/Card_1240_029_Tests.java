@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.set1240.dark;
 
+import static org.junit.Assert.assertNull;
 import com.gempukku.swccgo.common.CardSubtype;
 import com.gempukku.swccgo.common.CardCategory;
 import com.gempukku.swccgo.common.CardType;
@@ -186,5 +187,15 @@ public class Card_1240_029_Tests {
         assertTrue(aimHighPromptForRetrievalBy(true, "womp", "aimhighv").contains("use 1 Force"));
         assertTrue(aimHighPromptForRetrievalBy(true, "womp", "insurrectionaimhigh").contains("use 1 Force"));
         assertTrue(aimHighPromptForRetrievalBy(false, "womp", "aimhighv").contains("use 3 Force"));
+    }
+
+    @Test
+    public void KraytDragonBonesHasTheLatestText() {
+        var scn = GetScenario();
+        var card = scn.GetDSCard("bones").getBlueprint();
+        assertEquals("Deploy on table. Womp Rats are not [Selective Creature]. Once per turn, may deploy a creature (except a parasite) or a dewback from Reserve Deck; reshuffle. Your ferocious creatures are deploy -2 and ferocity +1. Whenever you retrieve Force because a creature has eaten a card, you need only use X-2 Force for Aim High (to a minimum of 1). (Immune to Alter.)",
+                card.getGameText());
+        assertNull(card.getLegacyVersion());
+        assertFalse(card.getGameText().contains("creatue"));
     }
 }

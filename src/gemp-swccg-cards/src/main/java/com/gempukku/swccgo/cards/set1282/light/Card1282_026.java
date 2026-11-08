@@ -39,7 +39,7 @@ import java.util.List;
 public class Card1282_026 extends AbstractUsedInterrupt {
     public Card1282_026() {
         super(Side.LIGHT, 4, "Under Jabba's Protection", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_2, Rarity.V);
-        setGameText("When you play this Interrupt, may place a Rep on your Objective in Used Pile. Lose X cards stacked on I Know That Laugh to reduce a weapon or battle destiny total by X. OR Use 1 Force to take a card stacked on I Know That Laugh into hand (or stack top card of Lost Pile on it).");
+        setGameText("When you play this Interrupt, may place a Rep on your objective in Used Pile. Lose X cards stacked on I Know That Laugh to reduce a weapon or battle destiny total by X. OR Use 1 Force to: take a card stacked on I Know That Laugh in hand (or stack top card of lost pile on it).");
     }
 
     @Override

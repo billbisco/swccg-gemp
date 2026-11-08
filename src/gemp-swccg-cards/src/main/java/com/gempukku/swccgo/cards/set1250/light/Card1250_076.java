@@ -20,7 +20,7 @@ public class Card1250_076 extends AbstractSystem {
     public Card1250_076() {
         super(Side.LIGHT, Title.Kashyyyk, 6, ExpansionSet.VIRTUAL_BLOCK_5, Rarity.V);
         setVirtualSuffix(true);
-        setLocationLightSideGameText("Once per turn, if this was your starting location, may deploy one Kashyyyk site from Reserve Deck; reshuffle.");
+        setLocationLightSideGameText("Once per turn, if Kashyyyk was your starting location, may deploy a Kashyyyk site from Reserve Deck; reshuffle.");
         setLocationDarkSideGameText("Total ability of 6 or more required for you to draw battle destiny here.");
         addIcon(Icon.LIGHT_FORCE, 2);
         addIcon(Icon.DARK_FORCE, 1);

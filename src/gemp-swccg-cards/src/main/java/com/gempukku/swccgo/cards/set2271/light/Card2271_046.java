@@ -58,8 +58,8 @@ public class Card2271_046 extends AbstractMission {
     public Card2271_046() {
         super(Side.LIGHT, 0, PlayCardZoneOption.ATTACHED, "Restore Freedom To The Galaxy", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_1, Rarity.V, true);
         setGameText("Deploy on Yavin 4. Once per turn, may deploy a battleground system or an interior Yavin 4 site from Reserve Deck; reshuffle. Whenever you Force drain at another battleground system, may draw destiny. Add 1 for each Yavin 4 site on table (2 if you occupy). If total destiny > 6, stack top card from either player's Reserve Deck face up there (limit one per system) to 'liberate' the system. At 'liberated' systems: Force drains are +1, and at same and related locations your total power is +3 and you draw one battle destiny if not able to otherwise. If opponent Force drains at a 'liberated' system, place stacked card in owner's Used Pile.");
-        setLegacyVersion(new LegacyVersion("1271_46", "",
-                "Virtual Block 7.1 release sheet (2010-06-18)", LocalDate.of(2010, 6, 18), LocalDate.of(2013, 4, 27)));
+        setLegacyVersion(new LegacyVersion("1271_46", "PC-E1",
+                "PC news \"Some minor errors and clarifications\" (2010-06-28); Virtual Block 7.1 sheet re-made 2010-07-28", LocalDate.of(2010, 6, 28), LocalDate.of(2012, 7, 21)));
         addIcons(Icon.SETUP, Icon.DEATH_STAR_II);
         addKeywords(Keyword.DEPLOYS_ON_LOCATION);
     }

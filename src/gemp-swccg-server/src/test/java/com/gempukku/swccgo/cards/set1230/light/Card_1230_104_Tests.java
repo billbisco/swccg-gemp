@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.set1230.light;
 
+import static org.junit.Assert.assertNull;
 import com.gempukku.swccgo.common.CardSubtype;
 import com.gempukku.swccgo.common.CardType;
 import com.gempukku.swccgo.common.ExpansionSet;
@@ -24,10 +25,15 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class Card_1230_104_Tests {
+    /** The blueprint under test (a version test subclass overrides it). */
+    protected String cardId() {
+        return "1230_104";
+    }
+
     protected VirtualTableScenario GetScenario() {
         return new VirtualTableScenario(
                 new HashMap<>() {{
-                    put("celebration", "1230_104");
+                    put("celebration", cardId());
                     put("door", "8_69"); put("forest", "8_72");
                     put("scout", "8_5"); put("alien", "1_30"); put("han", "1_11");
                 }},
@@ -164,5 +170,16 @@ public class Card_1230_104_Tests {
         var scn = GetScenario(); scn.StartGame(); scn.MoveLocationToTable(scn.GetDSCard("bespin")); scn.MoveLocationToTable(scn.GetDSCard("chamber"));
         scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetDSCard("trooper")); scn.MoveCardsToLocation(scn.GetDSCard("chamber"), scn.GetDSCard("trooper2"));
         scn.MoveCardsToLSHand(scn.GetLSCard("celebration")); return scn;
+    }
+
+    @Test
+    public void EndorCelebrationHasTheLatestText() {
+        var scn = GetScenario();
+        var card = scn.GetLSCard("celebration").getBlueprint();
+        assertEquals("Cancel an Effect with 'occupation' in title. (Immune to Sense.) OR During your draw phase, if you have a Rebel scout alone at Back Door, draw destiny. Activate or retrieve 5 Force and place this Interrupt on bottom of Lost Pile if destiny < the number of your scouts on table.",
+                card.getGameText());
+        assertNull(card.getLegacyVersion());
+        // the sheet wording ("If destiny < ..., activate or retrieve") is the original version 2230_104
+        assertFalse(card.getGameText().contains("If destiny < the number of your scouts on table, activate"));
     }
 }

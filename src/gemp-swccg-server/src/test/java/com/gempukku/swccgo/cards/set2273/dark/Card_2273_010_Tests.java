@@ -38,7 +38,7 @@ public class Card_2273_010_Tests {
     public void OriginalKesselSurveillanceSystemIsTheCurrentCardWithTheJune2011Text() {
         var s = scenario();
         assertVersion(s.GetDSCard("surveillance").getBlueprint(), s.GetDSCard("current").getBlueprint(), "1273_10", "",
-                LocalDate.of(2011, 6, 3), LocalDate.of(2013, 4, 27),
+                LocalDate.of(2011, 6, 3), LocalDate.of(2012, 7, 21),
                 "Deploy on a Kessel site. Opponent's Force drains are -1 here. Once per turn, if you are about to lose Force from Reserve Deck, may place a 'spice' card in owner's Lost Pile to make that Force satisfy 1 additional Force loss. Once per game, may deploy Spice Mine Administrator here from Reserve Deck; reshuffle.");
     }
 

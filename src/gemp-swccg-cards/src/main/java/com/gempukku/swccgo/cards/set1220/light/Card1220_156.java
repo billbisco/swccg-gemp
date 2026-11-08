@@ -35,7 +35,7 @@ public class Card1220_156 extends AbstractLostInterrupt {
         super(Side.LIGHT, 3, Title.Through_The_Force_Things_You_Will_See, Uniqueness.UNRESTRICTED, ExpansionSet.VIRTUAL_BLOCK_2, Rarity.V);
         setVirtualSuffix(true);
         setLore("One training exercise for a Jedi's apprentice is to invert one's view to see things from a different perspective. 'The future, the past. Old friends long gone.'");
-        setGameText("Once per game, choose: if you are about to recirculate at the end of your turn, and you have fewer cards in Used Pile than in Force Pile, place your Used Pile under your Force Pile instead. OR Place the top card of your Used Pile on top of your Force Pile.");
+        setGameText("Once per game, choose: if you are about to recirculate at the end of your turn, and you have fewer cards in Used Pile than Force Pile, place your Used Pile under your Force Pile instead. OR Place the top card of your Used Pile on top of your Force Pile.");
         addIcons(Icon.DAGOBAH);
     }
 

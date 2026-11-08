@@ -17,6 +17,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.gempukku.swccgo.cards.Vb89VersionAsserts.*;
 import static com.gempukku.swccgo.framework.Assertions.assertInZone;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -130,5 +131,12 @@ public class Card_1281_006_Tests {
             scn.LSPass();
         }
         assertFalse(scn.DSActionAvailable("Use 1 Force in opponent's Force Pile"));
+    }
+
+    /** PC website card list text (2012-07-21, PC-E1): the latest version under Bill's option (b). GEMP's earlier text was no published version. */
+    @Test
+    public void RTicHWeeiCurrentCardIsTheLatestText() {
+        assertCurrentCard("1281_6", "R'tic H'weei",
+                "Once per game, may take one Jawa Blaster or a card with 'sandcrawler' in title or gametext into hand from Reserve Deck; reshuffle. If present at a Tatooine battleground, once per turn, if there is more than 1 card in opponent's Force Pile, may use 1 Force in opponent's Force Pile.");
     }
 }

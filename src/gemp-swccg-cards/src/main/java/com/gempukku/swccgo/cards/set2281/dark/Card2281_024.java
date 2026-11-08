@@ -5,10 +5,10 @@ import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.actions.ObjectiveDeployedTriggerAction;
 import com.gempukku.swccgo.cards.effects.usage.OncePerTurnEffect;
 import com.gempukku.swccgo.common.ExpansionSet;
-import com.gempukku.swccgo.common.LegacyVersion;
 import com.gempukku.swccgo.common.GameTextActionId;
 import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Keyword;
+import com.gempukku.swccgo.common.LegacyVersion;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Title;
@@ -37,16 +37,16 @@ import java.util.List;
  * Set: Virtual Block 8.1
  * Type: Objective
  * Title: Contract Killers / Feared Throughout The Galaxy
- * PC-E1 version of 1281_24: the Virtual Cards Master List text (Apr 2013) flips the card when a Death Mark attempt is made. Anything Goes only (docs/legacy-versions.md).
+ * Original version of 1281_24 (Virtual Block 8.1 release sheet, May 2012): flips when you just drew destiny for Death Mark (the Virtual Cards Master List, Apr 2013, flips it when a Death Mark attempt is made). Anything Goes only (docs/legacy-versions.md).
  */
 public class Card2281_024 extends AbstractObjective {
-    public static final String SHEET_GAMETEXT = "Contract Killers: Deploy Coruscant system, Sub City Lair and On The Hunt. For remainder of game, Aurra, Galen, Mara, and your aliens with 'plotting to kill Jabba' in lore are assassins. Your cards with ability are deploy +3 except assassins and starships. Characters add 1 to their Death Mark total for each weapon or device they carry. Once per turn, may deploy a Coruscant battleground from Reserve Deck; reshuffle. Flip this card if assassins control two battlegrounds (unless opponent's non-droid character at a battleground site) or a Death Mark attempt is made. Feared Throughout The Galaxy: While this side up, during your control phase, opponent loses 1 Force. If two assassins (except Galen) are in battle, add one battle destiny. Once per turn, if opponent just lost a character, an assassin there may gain 'reputation;' retrieve any one card (may only be canceled by Aim High) and stack it face down on that assassin. Assassins with 'reputation' may add 1 to Force drains where present. Flip this card at the end of any turn if opponent's non-droid character at a battleground site (unless Death Mark is on your side of the table).";
+    public static final String SHEET_GAMETEXT = "Contract Killers: Deploy Coruscant system, Sub City Lair and On The Hunt. For remainder of game, Aurra, Galen, Mara, and your aliens with 'plotting to kill Jabba' in lore are assassins. Your cards with ability are deploy +3 except assassins and starships. Characters add 1 to their Death Mark total for each weapon or device they carry. Once per turn, may deploy a Coruscant battleground from Reserve Deck; reshuffle. Flip this card if assassins control two battlegrounds (unless opponent's non-droid character at a battleground site) or you just drew destiny for Death Mark. Feared Throughout The Galaxy: While this side up, during your control phase, opponent loses 1 Force. If two assassins (except Galen) are in battle, add one battle destiny. Once per turn, if opponent just lost a character, an assassin there may gain 'reputation;' retrieve any one card (may only be canceled by Aim High) and stack it face down on that assassin. Assassins with 'reputation' may add 1 to Force drains where present. Flip this card at the end of any turn if opponent's non-droid character at a battleground site (unless Death Mark is on your side of the table).";
 
     public Card2281_024() {
         super(Side.DARK, 0, "Contract Killers", ExpansionSet.VIRTUAL_BLOCK_8_1, Rarity.V);
         setFrontOfDoubleSidedCard(true);
         setGameText(SHEET_GAMETEXT);
-        setLegacyVersion(new LegacyVersion("1281_24", "PC-E1", "Virtual Cards Master List (official text 2013-04-27)", LocalDate.of(2013, 4, 27), null));
+        setLegacyVersion(new LegacyVersion("1281_24", "", "Virtual Block 8.1 release sheet (2012-05-11)", LocalDate.of(2012, 5, 11), LocalDate.of(2013, 4, 27)));
         addIcons(Icon.CLOUD_CITY);
     }
 
@@ -133,8 +133,7 @@ public class Card2281_024 extends AbstractObjective {
         // Check condition(s)
         if (GameConditions.canBeFlipped(game, self)
                 && ((TriggerConditions.isTableChanged(game, effectResult) && assassinsControlTwoBattlegrounds(game, self))
-                || TriggerConditions.isDestinyJustDrawnFor(game, effectResult, playerId, deathMark())
-                || (TriggerConditions.isTableChanged(game, effectResult) && deathMarkAttemptMade(game, self)))) {
+                || TriggerConditions.isDestinyJustDrawnFor(game, effectResult, playerId, deathMark()))) {
 
             RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
             action.setSingletonTrigger(true);
@@ -156,18 +155,6 @@ public class Card2281_024 extends AbstractObjective {
 
     static boolean opponentsNonDroidCharacterAtBattlegroundSite(SwccgGame game, PhysicalCard self) {
         return GameConditions.canSpot(game, self, Filters.and(Filters.opponents(self), Filters.non_droid_character, Filters.at(Filters.battleground_site)));
-    }
-
-    /**
-     * A Death Mark attempt is made once your (Virtual Block 8) Death Mark is reached by its target, before any destiny is drawn.
-     */
-    private static boolean deathMarkAttemptMade(SwccgGame game, PhysicalCard self) {
-        for (PhysicalCard card : Filters.filterAllOnTable(game, Filters.and(Filters.owner(self.getOwner()), deathMark()))) {
-            if (card.getAttachedTo() != null && GameConditions.isUtinniEffectReached(game, card)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     static boolean deathMarkOnYourSideOfTable(SwccgGame game, PhysicalCard self) {

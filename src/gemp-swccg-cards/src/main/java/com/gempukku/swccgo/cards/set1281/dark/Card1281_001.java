@@ -47,7 +47,7 @@ public class Card1281_001 extends AbstractRepublic {
     public Card1281_001() {
         super(Side.DARK, 1, 4, 4, 4, 6, "Aurra Sing, Deadly Assassin", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_1, Rarity.V);
         setLore("On her assignment to kill Sharad Hett, Aurra used her patience and cunning to help track down the Jedi Master.");
-        setGameText("Once per game, may deploy a device on Aurra from Reserve Deck; reshuffle. While armed with a [Reflections III] rifle: it may not be retargeted or stolen, her total weapon destiny is +1, and characters she hits may not be used to satisfy attrition. Immune to attrition < 3 (< 4 while armed with a rifle).");
+        setGameText("Once per game, deploy a device on Aurra from Reserve Deck; reshuffle. While armed with a [Reflections III] rifle, it may not be retargeted or stolen, her total weapon destiny is +1, and characters she hits may not be used to satisfy attrition. Immune to attrition < 3 (or < 4 if armed with a rifle).");
         addPersona(Persona.AURRA);
         addIcons(Icon.WARRIOR, Icon.EPISODE_I);
         addKeywords(Keyword.FEMALE);

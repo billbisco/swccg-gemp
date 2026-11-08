@@ -18,6 +18,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.gempukku.swccgo.cards.Vb89VersionAsserts.*;
 import static com.gempukku.swccgo.framework.Assertions.assertInHand;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -152,5 +153,12 @@ public class Card_1281_030_Tests {
 
     private static float deployCostTo(VirtualTableScenario scn, com.gempukku.swccgo.game.PhysicalCard card, com.gempukku.swccgo.game.PhysicalCard target) {
         return scn.game().getModifiersQuerying().getDeployCost(scn.gameState(), card, card, target, false, null, false, 0, null, false);
+    }
+
+    /** PC website card list text (2012-07-21, PC-E1): the latest version under Bill's option (b); wording only. */
+    @Test
+    public void SupremeChancellorValorumCurrentCardIsTheLatestText() {
+        assertCurrentCard("1281_30", "Supreme Chancellor Valorum",
+                "Agendas: order. May be targeted by Might Of The Republic. Your characters with politics (except Wedge and senators) are deploy -1 and gain [Republic] here. During your turn, may use 1 Force to take into hand a card with 'Valorum', 'governor' or 'political' in lore from Reserve Deck; reshuffle.");
     }
 }

@@ -43,7 +43,7 @@ public class Card601_121 extends AbstractUsedOrStartingInterrupt {
         super(Side.DARK, 5, "Twi'lek Advisor", Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
         setVirtualSuffix(true);
         setLore("'He's no Jedi.'");
-        setGameText("USED: Use 3 Force to deploy a unique (•) alien (for free) from hand or Used Pile; reshuffle. STARTING: Take into hand and/or deploy from Reserve Deck up to three Effects of any kind with 'Jabba' in lore or game text on table from Reserve Deck; reshuffle. Place this Interrupt in Reserve Deck.");
+        setGameText("USED: Use 3 Force to deploy a unique (•) alien (for free) from hand or Used Pile; reshuffle. STARTING: Take into hand and/or deploy from Reserve Deck up to three Effects of any kind with 'Jabba' in lore or game text; reshuffle. Place this Interrupt in Reserve Deck.");
         addIcons(Icon.JABBAS_PALACE, Icon.LEGACY_BLOCK_3);
         setAsLegacy(true);
     }

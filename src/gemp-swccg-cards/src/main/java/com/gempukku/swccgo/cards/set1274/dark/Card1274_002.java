@@ -41,7 +41,7 @@ public class Card1274_002 extends AbstractDroid {
         super(Side.DARK, 3, 2, 0, 4, "OOM Command Battle Droid", Uniqueness.RESTRICTED_2, ExpansionSet.VIRTUAL_BLOCK_7_4, Rarity.V);
         setArmor(3);
         setLore("Commander. Leader.");
-        setGameText("[Pilot] 2: any vehicle. While piloting a [Theed Palace] vehicle at a battleground site, adds one [Dark Side] and may add 1 to your Force drains here. Once per game, may take a card with \"fire\" in title into hand from Reserve Deck; reshuffle.");
+        setGameText("[Pilot]2: any vehicle. While piloting a [Theed Palace] vehicle at a battleground site: adds 1 [Dark Side] here and may add 1 to your Force drains here. Once per game, may take into hand any a card with 'fire' in title from reserve deck; reshuffle.");
         addIcons(Icon.PILOT, Icon.PRESENCE, Icon.EPISODE_I, Icon.THEED_PALACE);
         addKeywords(Keyword.COMMANDER, Keyword.LEADER);
         addModelType(ModelType.BATTLE);

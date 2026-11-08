@@ -36,7 +36,7 @@ public class Card1282_019 extends AbstractAlien {
         super(Side.LIGHT, 2, 2, 3, 1, 3, Title.Rennek, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_2, Rarity.V);
         setVirtualSuffix(true);
         setLore("Nerf herder. Personally oversees the herding of Jabba's nerfs. Scruffy-looking appearance conceals his expertise in unusual combat techniques.");
-        setGameText("May be stacked on I Know That Laugh from hand, using 2 Force. While stacked on I Know That Laugh, stack face-up and during any battle may draw destiny. If destiny < number of your aliens in battle, reset a participating character's forfeit to 0.");
+        setGameText("May be stacked on I Know That Laugh from hand for 2 force. While stacked on I Know That Laugh, stack face-up and during any battle may draw destiny. If destiny < number of your aliens in battle, reduce a participating character's forfeit to 0.");
         addIcons(Icon.WARRIOR);
     }
 
@@ -57,6 +57,14 @@ public class Card1282_019 extends AbstractAlien {
         return null;
     }
 
+    /**
+     * PC website card list text (Dec 2012): "reduce a participating character's forfeit to 0", so a character whose
+     * forfeit may not be reduced may not be chosen (the release sheet said "reset").
+     */
+    protected Filter forfeitTargetFilter() {
+        return Filters.and(Filters.character, Filters.participatingInBattle, Filters.forfeitMayBeReduced);
+    }
+
     @Override
     protected List<TopLevelGameTextAction> getGameTextTopLevelWhileStackedActions(final String playerId, SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
         // Stacked face up (I Know That Laugh and Under Jabba's Protection stack this card face up)
@@ -65,10 +73,10 @@ public class Card1282_019 extends AbstractAlien {
                 && GameConditions.isDuringBattle(game)
                 && GameConditions.isOncePerBattle(game, self, playerId, gameTextSourceCardId)
                 && GameConditions.canDrawDestiny(game, playerId)) {
-            final Filter participatingCharacter = Filters.and(Filters.character, Filters.participatingInBattle);
+            final Filter participatingCharacter = forfeitTargetFilter();
             final TopLevelGameTextAction action = new TopLevelGameTextAction(self, playerId, gameTextSourceCardId);
             action.setText("Draw destiny");
-            action.setActionMsg("Draw destiny to reset a participating character's forfeit to 0");
+            action.setActionMsg("Draw destiny to reduce a participating character's forfeit to 0");
             action.appendUsage(
                     new OncePerBattleEffect(action));
             action.appendEffect(
@@ -79,7 +87,7 @@ public class Card1282_019 extends AbstractAlien {
                             if (totalDestiny != null && totalDestiny < aliens) {
                                 game.getGameState().sendMessage("Result: Succeeded");
                                 action.appendEffect(
-                                        new ChooseCardOnTableEffect(action, playerId, "Choose character to reset forfeit to 0", participatingCharacter) {
+                                        new ChooseCardOnTableEffect(action, playerId, "Choose character to reduce forfeit to 0", participatingCharacter) {
                                             @Override
                                             protected void cardSelected(PhysicalCard selectedCard) {
                                                 action.appendEffect(

@@ -348,4 +348,24 @@ public class Card_1210_043_Tests {
             break;
         }
     }
+
+    @org.junit.Test
+    public void ImperialDetainmentHasTheLatestText() {
+        var scn = new com.gempukku.swccgo.framework.VirtualTableScenario(
+                new java.util.HashMap<String, String>() {{  }},
+                new java.util.HashMap<String, String>() {{ put("latest", "1210_43"); }},
+                10, 10,
+                com.gempukku.swccgo.framework.StartingSetup.DefaultLSGroundLocation,
+                com.gempukku.swccgo.framework.StartingSetup.DefaultDSGroundLocation,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSStartingInterrupts,
+                com.gempukku.swccgo.framework.StartingSetup.NoDSStartingInterrupts,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSShields,
+                com.gempukku.swccgo.framework.StartingSetup.NoDSShields,
+                com.gempukku.swccgo.framework.VirtualTableScenario.Open);
+        var card = scn.GetDSCard("latest").getBlueprint();
+        org.junit.Assert.assertEquals("Deploy on table. We Have A Prisoner is a Used Interrupt. TIEs are deploy +1 to Launch Bay. During your deploy phase, may deploy from Reserve Deck (or retrieve) one Besieged or a Launch Bay; reshuffle. Once per turn, when your Imperial captures (seizes) a character, opponent loses 1 Force. (Immune to Alter.)",
+                card.getGameText());
+        org.junit.Assert.assertNull(card.getLegacyVersion());
+        org.junit.Assert.assertFalse(card.getGameText().contains("captures a character"));
+    }
 }

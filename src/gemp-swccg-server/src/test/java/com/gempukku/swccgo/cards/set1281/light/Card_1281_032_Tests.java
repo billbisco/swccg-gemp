@@ -17,6 +17,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.gempukku.swccgo.cards.Vb89VersionAsserts.*;
 import static com.gempukku.swccgo.framework.Assertions.assertInZone;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -259,5 +260,12 @@ public class Card_1281_032_Tests {
 
         assertEquals(Zone.SIDE_OF_TABLE, charts.getZone());
         assertEquals(scn.LS, charts.getOwner());
+    }
+
+    /** PC website card list text (2012-07-21, PC-E1): "may 'steal'" (optional), the latest version under Bill's option (b). GEMP already played the steal as optional. */
+    @Test
+    public void ImperialNavigationChartsCurrentCardIsTheLatestText() {
+        assertCurrentCard("1281_32", "Imperial Navigation Charts",
+                "Deploy on a Nar Shaddaa battleground site. If you control three Nar Shaddaa locations or just won a battle (or initiated a Force drain) here, may 'steal' (relocate to your side of table). Place in Used Pile if opponent controls three Nar Shaddaa locations. (Immune to Alter).");
     }
 }

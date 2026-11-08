@@ -10,6 +10,7 @@ import com.gempukku.swccgo.common.Persona;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Uniqueness;
+import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
@@ -35,13 +36,18 @@ public class Card1261_065 extends AbstractAlien {
         addPersona(Persona.BOSHEK);
     }
 
+    /** "adds 1 to attrition against opponent here" (Master List). The 2009 sheet (2261_65) has no "here". */
+    protected Filter attritionLocations(PhysicalCard self) {
+        return Filters.sameLocation(self);
+    }
+
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, PhysicalCard self) {
         String opponent = game.getOpponent(self.getOwner());
         Condition pilotingFreighterAtBattlegroundSystem = new AndCondition(new PilotingCondition(self, Filters.freighter),
                 new AtCondition(self, Filters.and(Filters.system, Filters.battleground)));
         return Arrays.asList(new AddsPowerToPilotedBySelfModifier(self, 3),
-                new AttritionModifier(self, Filters.sameLocation(self), pilotingFreighterAtBattlegroundSystem, 1, opponent),
+                new AttritionModifier(self, attritionLocations(self), pilotingFreighterAtBattlegroundSystem, 1, opponent),
                 new MayNotCloakModifier(self, Filters.and(Filters.opponents(self), Filters.starship, Filters.here(self)),
                         pilotingFreighterAtBattlegroundSystem),
                 new LimitForceLossFromForceDrainModifier(self, Filters.and(Filters.system, Filters.sameLocation(self)), 3, opponent));

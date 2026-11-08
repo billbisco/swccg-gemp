@@ -34,14 +34,22 @@ public class Card1281_015 extends AbstractNormalEffect {
         super(Side.DARK, 6, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.Well_Guarded, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("Most of Jabba's guards had been sold to the Hutt and were too scared (or too dumb) to leave. Jabba assigned his best guards to watch over his most prized possessions.");
-        setGameText("Deploy on table. Your non-unique aliens are immune to Grimtaash (while you have < 13 cards in hand), The Camp, and deployment costs on Watch Your Step. During battle with two non-unique aliens of your Rep's species, your aliens there may not have their forfeit reduced. (Immune to Alter.)");
+        setGameText("Deploy on table. Non-unique aliens are immune to Grimtaash (While you have < 13 cards in hand) , The Camp, and deployment conditions on Watch Your Step. During battle with two non-unique aliens of your Rep's species, your aliens there may not have their forfeit reduced. (Immune to Alter.)");
         addImmuneToCardTitle(Title.Alter);
+    }
+
+    /**
+     * The aliens immune to Grimtaash, The Camp and Watch Your Step: non-unique aliens (any player's; the PC card list
+     * text says "Non-unique aliens", the release sheet said "Your non-unique aliens").
+     */
+    protected Filter immuneAliens(String playerId) {
+        return Filters.and(Filters.non_unique, Filters.alien);
     }
 
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
         final String playerId = self.getOwner();
-        Filter yourNonUniqueAliens = Filters.and(Filters.owner(playerId), Filters.non_unique, Filters.alien);
+        Filter yourNonUniqueAliens = immuneAliens(playerId);
         final Filter yourAliensInBattle = Filters.and(Filters.owner(playerId), Filters.alien, Filters.participatingInBattle);
 
         List<Modifier> modifiers = new LinkedList<Modifier>();

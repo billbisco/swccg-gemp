@@ -32,7 +32,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Set: Block D
+ * Set: Virtual Shields
  * Type: Defensive Shield
  * Title: Fanfare (V)
  */
@@ -41,7 +41,7 @@ public class Card601_035 extends AbstractDefensiveShield {
         super(Side.DARK, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Fanfare", ExpansionSet.LEGACY, Rarity.V);
         setVirtualSuffix(true);
         setLore("The Boonta Eve crowds are always looking for new and exciting developments at every Podrace.");
-        setGameText("Plays on table. Cancels Order To Engage and Scramble. Once per game, may [upload] an Immediate Effect. While opponent occupies no battleground systems, Staging Areas is suspended. 'Missing' on Lost In The Wilderness is treated as 'landspeed = 0 for remainder of turn'.");
+        setGameText("Plays on table. Cancels Order To Engage and Scramble. Once per game, you may [upload] an Immediate Effect. While opponent occupies no battleground systems, Staging Areas is suspended.");
         addIcons(Icon.REFLECTIONS_III, Icon.LEGACY_BLOCK_D);
         setAsLegacy(true);
     }
@@ -112,7 +112,6 @@ public class Card601_035 extends AbstractDefensiveShield {
 
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new SuspendsCardModifier(self, Filters.Staging_Areas, new NotCondition(new OccupiesCondition(opponent, Filters.battleground_system))));
-        modifiers.add(new ModifyGameTextModifier(self, Filters.Lost_In_The_Wilderness, ModifyGameTextType.LOST_IN_THE_WILDERNESS__MISSING_TREATED_AS_LANDSPEED_0));
         return modifiers;
     }
 }

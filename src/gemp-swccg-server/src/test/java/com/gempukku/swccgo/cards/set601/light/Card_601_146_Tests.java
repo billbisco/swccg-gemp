@@ -133,4 +133,36 @@ public class Card_601_146_Tests {
         scn.PassAllResponses();
         assertAtLocation(dsSite, luke); //test2
     }
+
+    @Test
+    public void WatchYourStepBackHasTheVirtualBlock4Text() {
+        var scn = GetScenario();
+        var front = VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("601_146");
+        var back = VirtualTableScenario._cardLibrary.getSwccgoCardBlueprintBack("601_146");
+        assertEquals("This Place Can Be A Little Rough", back.getTitle());
+        assertEquals("While this side up, non-blaster character weapon destiny draws are -2 at Corellia sites. Your Force generation at Corellia spaceport sites is +1. Your combat vehicles may deploy or move only to same Corellia site as opponent's vehicle. 'Audience Chamber' on Palejo Reshad is treated as 'Corellia.' During your deploy phase, may deploy one BoShek or a Corellian of ability < 3 from Reserve Deck; reshuffle. At the end of each turn, may use 1 Force to draw the bottom card of your Reserve Deck. Flip this card if you do not occupy two battlegrounds.",
+                back.getGameText());
+        // the back carried the Reflections II objective's text (smugglers, Kessel Runs)
+        assertFalse(back.getGameText().contains("smuggler"));
+        assertFalse(back.getGameText().contains("Kessel"));
+        assertTrue(front.getGameText().startsWith("Deploy Corellia system"));
+    }
+
+    @Test
+    public void WatchYourStepIsInTheDeckBuilder() {
+        GetScenario();
+        assertFalse(VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("601_146").excludeFromDeckBuilder());
+        assertFalse(VirtualTableScenario._cardLibrary.getSwccgoCardBlueprintBack("601_146").excludeFromDeckBuilder());
+    }
+
+    @Test
+    public void ThisPlaceCanBeALittleRoughAddsOneToYourForceGenerationAtCorelliaSpaceportSites() {
+        var scn = GetScenario();
+        scn.StartGame();
+        var city = scn.GetLSCard("city");
+        float before = scn.game().getModifiersQuerying().getForceGenerationFromLocation(scn.gameState(), city, scn.LS);
+        scn.gameState().flipCard(scn.game(), scn.GetLSCard("wys"), true);
+        float after = scn.game().getModifiersQuerying().getForceGenerationFromLocation(scn.gameState(), city, scn.LS);
+        assertEquals(before + 1, after, scn.epsilon);
+    }
 }

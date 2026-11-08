@@ -36,7 +36,7 @@ public class Card1220_092 extends AbstractRebel implements ConditionalUndercover
         super(Side.LIGHT, 2, 2, 1, 2, 4, Title.Jeroen_Webb, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_2, Rarity.V);
         setVirtualSuffix(true);
         setLore("Native of Ralltiir. Spy for Ralltiir's underground network after his homeworld was subjugated.");
-        setGameText("If deploying to opponent's mobile site, deploys -2 as an Undercover spy. Nevar Yalnal may not target spies here. Opponent's total influence here is -1 for each of your spies at sites.");
+        setGameText("If deploying to opponent's mobile site, deploys as an Undercover spy (deploy -2). Nevar Yalnal may not target spies at Webb's site. Opponent's total influence here is -1 for each of your spies at sites.");
         setArmor(4);
         addIcons(Icon.HOTH, Icon.PILOT);
         addKeywords(Keyword.SPY);

@@ -109,4 +109,12 @@ public class Card_1273_017_Tests {
         scn.AttachCardsTo(quarters, prisoner);
         assertEquals(Float.MAX_VALUE, qs.getImmunityToAttritionLessThan(scn.gameState(), grievous), scn.epsilon);
     }
+
+    @Test
+    public void PalpatinesQuartersShowsTheMasterListPcE1Text() {
+        var b = com.gempukku.swccgo.framework.VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("1273_17");
+        org.junit.Assert.assertEquals("Force drain -1 here. Jedi here may not have their power reduced.", b.getLocationLightSideGameText());
+        org.junit.Assert.assertEquals("While Insidious Prisoner on table, Grievous is immune to attrition.", b.getLocationDarkSideGameText());
+        org.junit.Assert.assertFalse(b.getLocationLightSideGameText().contains("Cyborg Commander") || b.getLocationDarkSideGameText().contains("Cyborg Commander"));
+    }
 }

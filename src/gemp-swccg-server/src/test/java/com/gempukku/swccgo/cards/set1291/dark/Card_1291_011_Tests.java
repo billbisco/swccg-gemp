@@ -17,6 +17,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.gempukku.swccgo.cards.Vb89VersionAsserts.*;
 import static com.gempukku.swccgo.framework.Assertions.assertInHand;
 import static com.gempukku.swccgo.framework.Assertions.assertInZone;
 import static org.junit.Assert.assertEquals;
@@ -237,5 +238,18 @@ public class Card_1291_011_Tests {
         scn.PassAllResponses();
 
         assertInHand(defense);
+    }
+
+    /** Virtual Block 9.1 sheet text (2014-01-10), the latest and only published version; GEMP showed a PC data-error wording without the sheet's Immune to Alter. */
+    @Test
+    public void WarHasBegunCurrentCardIsTheLatestText() {
+        assertCurrentCard("1291_11", "War Has Begun",
+                "If Separatist Uprising on table, deploy on table. Your Separatist Council Room gains one [Dark Side]. Your Force generation is +1 at each of your battlegrounds you control with a [Separatist] card. Once per turn, may take a [Separatist] Mission into hand from Reserve Deck; reshuffle. (Immune to Alter.)");
+    }
+
+    /** The sheet marks War Has Begun Immune to Alter (GEMP's earlier text dropped it). */
+    @Test
+    public void WarHasBegunIsImmuneToAlter() {
+        org.junit.Assert.assertTrue(blueprint("1291_11").isImmuneToCardTitle(com.gempukku.swccgo.common.Title.Alter));
     }
 }

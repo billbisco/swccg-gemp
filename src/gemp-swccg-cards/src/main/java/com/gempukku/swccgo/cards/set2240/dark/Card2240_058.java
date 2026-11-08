@@ -4,6 +4,7 @@ import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.set601.dark.Card601_087;
 import com.gempukku.swccgo.common.GameTextActionId;
 import com.gempukku.swccgo.common.LegacyVersion;
+import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Persona;
 import com.gempukku.swccgo.common.SpotOverride;
 import com.gempukku.swccgo.filters.Filters;
@@ -132,5 +133,10 @@ public class Card2240_058 extends Card601_087 {
             }
         });
         return action;
+    }
+
+    @Override
+    protected String optionalDeployTitle() {
+        return Title.If_The_Trace_Was_Correct;
     }
 }

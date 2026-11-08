@@ -127,4 +127,24 @@ public class Card_1220_092_Tests {
     private float Influence(VirtualTableScenario scn, PhysicalCardImpl site) {
         return scn.game().getModifiersQuerying().getTotalInfluenceAtLocation(scn.gameState(), scn.DS, site);
     }
+
+    @org.junit.Test
+    public void JeroenWebbHasTheLatestText() {
+        var scn = new com.gempukku.swccgo.framework.VirtualTableScenario(
+                new java.util.HashMap<String, String>() {{ put("latest", "1220_92"); }},
+                new java.util.HashMap<String, String>() {{  }},
+                10, 10,
+                com.gempukku.swccgo.framework.StartingSetup.DefaultLSGroundLocation,
+                com.gempukku.swccgo.framework.StartingSetup.DefaultDSGroundLocation,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSStartingInterrupts,
+                com.gempukku.swccgo.framework.StartingSetup.NoDSStartingInterrupts,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSShields,
+                com.gempukku.swccgo.framework.StartingSetup.NoDSShields,
+                com.gempukku.swccgo.framework.VirtualTableScenario.Open);
+        var card = scn.GetLSCard("latest").getBlueprint();
+        org.junit.Assert.assertEquals("If deploying to opponent's mobile site, deploys as an Undercover spy (deploy -2). Nevar Yalnal may not target spies at Webb's site. Opponent's total influence here is -1 for each of your spies at sites.",
+                card.getGameText());
+        org.junit.Assert.assertNull(card.getLegacyVersion());
+        org.junit.Assert.assertFalse(card.getGameText().contains("spies here"));
+    }
 }

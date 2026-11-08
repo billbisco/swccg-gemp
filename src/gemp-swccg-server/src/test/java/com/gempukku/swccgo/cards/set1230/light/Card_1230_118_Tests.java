@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.set1230.light;
 
+import static org.junit.Assert.assertNull;
 import com.gempukku.swccgo.common.CardType;
 import com.gempukku.swccgo.common.CardSubtype;
 import com.gempukku.swccgo.common.Zone;
@@ -23,10 +24,15 @@ import static org.junit.Assert.assertFalse;
 import static com.gempukku.swccgo.framework.Assertions.assertInZone;
 
 public class Card_1230_118_Tests {
+    /** The blueprint under test (a version test subclass overrides it). */
+    protected String cardId() {
+        return "1230_118";
+    }
+
     protected VirtualTableScenario GetScenario() {
         return new VirtualTableScenario(new HashMap<>() {{
 
-            put("torps", "1230_118");
+            put("torps", cardId());
             put("xwing", "1_146");
             put("heroic", "1230_113");
 
@@ -199,5 +205,16 @@ public class Card_1230_118_Tests {
         scn.DSPass();
         assertTrue(scn.LSDecisionAvailable("Optional responses"));
         return scn;
+    }
+
+    @Test
+    public void EnhancedProtonTorpedoesHasTheLatestText() {
+        var scn = GetScenario();
+        var card = scn.GetLSCard("torps").getBlueprint();
+        assertEquals("Use 1 Force to deploy on your starfighter. May target a starship for free. Draw destiny. If on a Heroic starfighter, may use 1 Force to add 3 to total. Target hit if destiny > defense value.",
+                card.getGameText());
+        assertNull(card.getLegacyVersion());
+        // the sheet wording is the original version 2230_118
+        assertFalse(card.getGameText().contains("may first use 1 Force"));
     }
 }

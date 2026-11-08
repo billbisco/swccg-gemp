@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
+import static com.gempukku.swccgo.cards.Vb89VersionAsserts.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -212,5 +213,12 @@ public class Card_1281_001_Tests {
         scn.AttachCardsTo(aurra, blaster);
         scn.DSPass();
         assertEquals(4, scn.game().getModifiersQuerying().getImmunityToAttritionLessThan(scn.gameState(), aurra), scn.epsilon);
+    }
+
+    /** PC website card list text (2012-07-21, PC-E1): the latest version under Bill's option (b); wording only. */
+    @Test
+    public void AurraSingDeadlyAssassinCurrentCardIsTheLatestText() {
+        assertCurrentCard("1281_1", "Aurra Sing, Deadly Assassin",
+                "Once per game, deploy a device on Aurra from Reserve Deck; reshuffle. While armed with a [Reflections III] rifle, it may not be retargeted or stolen, her total weapon destiny is +1, and characters she hits may not be used to satisfy attrition. Immune to attrition < 3 (or < 4 if armed with a rifle).");
     }
 }

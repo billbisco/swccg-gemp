@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.set1230.light;
 
+import static org.junit.Assert.assertNull;
 import com.gempukku.swccgo.common.CardSubtype;
 import com.gempukku.swccgo.common.CardType;
 import com.gempukku.swccgo.common.ExpansionSet;
@@ -25,9 +26,14 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class Card_1230_114_Tests {
+    /** The blueprint under test (a version test subclass overrides it). */
+    protected String cardId() {
+        return "1230_114";
+    }
+
     protected VirtualTableScenario GetScenario() {
         return new VirtualTableScenario(new HashMap<>() {{
-            put("tydirium", "1230_114");
+            put("tydirium", cardId());
             put("han", "1_11");
             put("pilot", "2_23");
             put("scout", "8_10");
@@ -188,5 +194,16 @@ public class Card_1230_114_Tests {
         scn.SkipToDamageSegment(true);
         if (scn.DSDecisionAvailable("Optional responses")) scn.DSPass();
         return scn;
+    }
+
+    @Test
+    public void TydiriumHasTheLatestText() {
+        var scn = GetScenario();
+        var card = scn.GetLSCard("tydirium").getBlueprint();
+        assertEquals("May deploy (with a pilot) without presence or Force icons. May add 2 pilots and 6 passengers. May forfeit a scout aboard to cancel all remaining battle damage against you.",
+                card.getGameText());
+        assertNull(card.getLegacyVersion());
+        // the sheet wording is the original version 2230_114
+        assertFalse(card.getGameText().contains("against you here"));
     }
 }

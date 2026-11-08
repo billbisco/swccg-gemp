@@ -40,7 +40,7 @@ public class Card1230_118 extends AbstractStarshipWeapon {
         super(Side.LIGHT, 3, "Enhanced Proton Torpedoes", Uniqueness.UNRESTRICTED, ExpansionSet.VIRTUAL_BLOCK_3, Rarity.V);
         setVirtualSuffix(true);
         setLore("Often modified by Rebellion technicians. Heavy warhead provides increased armor penetration. Decreased maneuverability and effectiveness against starfighters.");
-        setGameText("Use 1 Force to deploy on your starfighter. May target a starship for free. Draw destiny (If on a Heroic starfighter, may first use 1 Force to add 3 to total). Target hit if total destiny > defense value.");
+        setGameText("Use 1 Force to deploy on your starfighter. May target a starship for free. Draw destiny. If on a Heroic starfighter, may use 1 Force to add 3 to total. Target hit if destiny > defense value.");
         addIcons(Icon.DEATH_STAR_II);
         addKeywords(Keyword.PROTON_TORPEDOES, Keyword.STARSHIP_WEAPON_THAT_DEPLOYS_ON_STARFIGHTERS);
     }

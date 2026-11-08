@@ -17,6 +17,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.gempukku.swccgo.cards.Vb89VersionAsserts.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -199,5 +200,12 @@ public class Card_1281_025_Tests {
         scn.PassAllResponses();
 
         assertFalse(luke.isHit());
+    }
+
+    /** PC website card list text (2012-07-21, PC-E1): the latest version under Bill's option (b); wording only. */
+    @Test
+    public void MaraJadeSLightsaberCurrentCardIsTheLatestText() {
+        assertCurrentCard("1281_25", "Mara Jade's Lightsaber",
+                "Deploy on Mara Jade. May add 1 to Force drain where present. During battle, Mara may use a blaster and this weapon. May target a character or creature for free. Draw two destiny. Target hit, and forfeit = 0, if total destiny > defense value.");
     }
 }

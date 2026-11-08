@@ -1,5 +1,8 @@
 package com.gempukku.swccgo.cards.set1240.dark;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
@@ -546,5 +549,16 @@ public class Card_1240_026_Tests {
             if (decision == null || !decision.getText().toLowerCase().contains("optional response")) break;
             scn.PlayerPass(scn.GetDecidingPlayer());
         }
+    }
+
+    @Test
+    public void HeIsNotReadyHasTheLatestText() {
+        var scn = GetScenario();
+        var card = scn.GetDSCard("he").getBlueprint();
+        assertEquals("Deploy on opponent's just deployed [Reflections III][Maintenance] card; opponent loses 1 Force, and you may retrieve 1 Force and/or play a Defensive Shield from under your Starting Effect. That card is power -3, may not apply its ability towards drawing battle destiny, and, during opponent's draw phase, opponent must lose 1 Force or place that card in Lost Pile. If just lost, place this card in Used Pile. Immune to Honor Of The Jedi. [Immune to Control] OR If you are about to lose Force during opponent's control phase, deploy on table to reduce loss by 2.",
+                card.getGameText());
+        assertNull(card.getLegacyVersion());
+        // GEMP-only wording ("Target is power -3 and cannot apply target's ability") is gone
+        assertFalse(card.getGameText().contains("Target is power -3"));
     }
 }

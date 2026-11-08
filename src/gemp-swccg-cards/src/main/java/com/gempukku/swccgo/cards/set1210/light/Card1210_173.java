@@ -40,8 +40,8 @@ public class Card1210_173 extends AbstractSystem {
     public Card1210_173() {
         super(Side.LIGHT, Title.Alderaan_Blown_Away, 2, ExpansionSet.VIRTUAL_BLOCK_1, Rarity.V);
         setLocationLightSideGameText("May not be deployed if an Alderaan site (or sector) on table. Star Cruisers ignore location deployment restrictions in their game text.");
-        setLocationDarkSideGameText("When deployed, you choose: flip Set Your Course For Alderaan immediately or at the end of your next turn.");
-        setGameText("Light: May not be deployed if an Alderaan site (or sector) on table. Star Cruisers ignore location deployment restrictions in their game text. Dark: When deployed, you choose: flip Set Your Course For Alderaan immediately or at the end of your next turn.");
+        setLocationDarkSideGameText("When deployed, choose: flip Set Your Course For Alderaan immediately or at the end of your next turn.");
+        setGameText("Light: May not be deployed if an Alderaan site (or sector) on table. Star Cruisers ignore location deployment restrictions in their game text. Dark: When deployed, choose: flip Set Your Course For Alderaan immediately or at the end of your next turn.");
         addIcon(Icon.LIGHT_FORCE, 2);
         addIcon(Icon.DARK_FORCE, 0);
         addIcons(Icon.SPACE, Icon.SPECIAL_EDITION, Icon.DAGOBAH);

@@ -27,9 +27,9 @@ import java.util.List;
 public class Card1281_039 extends AbstractSite {
     public Card1281_039() {
         super(Side.LIGHT, "Nar Shaddaa: Scoundrel's Rest", Title.Nar_Shaddaa, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_1, Rarity.V);
-        setLocationLightSideGameText("Characters (except scoundrels and bounty hunters) are deploy +1 to Nar Shaddaa.");
+        setLocationLightSideGameText("Characters (except bounty hunters and scoundrels) are deploy +1 to Nar Shaddaa.");
         setLocationDarkSideGameText("If you occupy, opponent's game text here is canceled.");
-        setGameText("Light: Characters (except scoundrels and bounty hunters) are deploy +1 to Nar Shaddaa. Dark: If you occupy, opponent's game text here is canceled.");
+        setGameText("Light: Characters (except bounty hunters and scoundrels) are deploy +1 to Nar Shaddaa. Dark: If you occupy, opponent's game text here is canceled.");
         addIcon(Icon.LIGHT_FORCE, 2);
         addIcon(Icon.DARK_FORCE, 2);
         addIcons(Icon.INTERIOR_SITE, Icon.PLANET);

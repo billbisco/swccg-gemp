@@ -39,7 +39,7 @@ public class Card1281_008 extends AbstractCharacterDevice {
         super(Side.DARK, 4, Title.Jet_Pack, Uniqueness.RESTRICTED_3, ExpansionSet.VIRTUAL_BLOCK_8_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("Mitrinomon Z-6 jet pack. Exhaust vents are used to maneuver in midflight. Gyro-stabilizer automatically applies counterthrust when landing.");
-        setGameText("Use 2 Force to deploy on your alien warrior (free on Jodo Kast or any Fett). Character 'flies' (landspeed = 3 and maneuver = 6), may fire weapons for free, and may move as a 'react' for +1 Force.");
+        setGameText("Use 2 Force to deploy on your alien warrior (free Jodo Kast or any Fett). Character 'flies' (landspeed = 3 and maneuver = 6), may fire weapons for free, and may move as a 'react' for +1 Force.");
     }
 
     @Override

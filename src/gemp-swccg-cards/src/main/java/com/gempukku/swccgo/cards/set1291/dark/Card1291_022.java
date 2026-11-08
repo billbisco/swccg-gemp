@@ -30,8 +30,8 @@ public class Card1291_022 extends AbstractSite {
     public Card1291_022() {
         super(Side.DARK, "Muunilinst: City Of Harnaidan", Card1291_020.SYSTEM_NAME, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_9_1, Rarity.V);
         setLocationDarkSideGameText("Your combat vehicles here are power +1 and may move to and from here for free.");
-        setLocationLightSideGameText("Unless your combat vehicles or [Clone Army] card here, Force drain -1 here.");
-        setGameText("Dark: Your combat vehicles here are power +1 and may move to and from here for free  Light: Unless your combat vehicles or [Clone Army] card here, Force drain -1 here.");
+        setLocationLightSideGameText("Unless your [Clone Army] card or combat vehicle here, Force drain -1 here.");
+        setGameText("Dark: Your combat vehicles here are power +1 and may move to and from here for free. Light: Unless your [Clone Army] card or combat vehicle here, Force drain -1 here.");
         addIcon(Icon.LIGHT_FORCE, 1);
         addIcon(Icon.DARK_FORCE, 2);
         addIcons(Icon.EPISODE_I, Icon.PLANET, Icon.EXTERIOR_SITE, Icon.INTERIOR_SITE);

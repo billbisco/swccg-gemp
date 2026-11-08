@@ -38,7 +38,7 @@ public class Card1281_016 extends AbstractUsedOrLostInterrupt {
         super(Side.DARK, 5, Title.Abyssin_Ornament, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("The Abyssins are known for their regenerative abilities. Jabba keeps several statue heads of Abyssin creatures on his repulsor sled.");
-        setGameText("USED: Cancel an attempt to target your non-droid assassin (or a starship piloted by a non-droid assassin) with a weapon. LOST: Use 1 Force to take a just-lost non-droid assassin into hand.");
+        setGameText("USED: Cancel an attempt to target your non-droid assassin (or a starship piloted by one) with a weapon. LOST: Use 1 Force to take a just lost non-droid assassin into hand.");
     }
 
     private static Filter nonDroidAssassin() {

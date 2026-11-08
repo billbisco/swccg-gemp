@@ -15,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-/** Original Restore Freedom To The Galaxy (Jun 2010 slip), a version of 1271_46: same play, older wording. */
+/** Restore Freedom To The Galaxy PC-E1 (2010-06-28 correction), a version of 1271_46: same play, older wording. */
 public class Card_2271_046_Tests {
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>() {{
@@ -32,15 +32,15 @@ public class Card_2271_046_Tests {
     }
 
     @Test
-    public void OriginalRestoreFreedomIsTheCurrentCardWithTheJune2010Text() {
+    public void CorrectedRestoreFreedomIsTheCurrentCardWithTheJune2010Text() {
         var s = scenario();
-        assertVersion(s.GetLSCard("restore").getBlueprint(), s.GetLSCard("current").getBlueprint(), "1271_46", "",
-                LocalDate.of(2010, 6, 18), LocalDate.of(2013, 4, 27),
+        assertVersion(s.GetLSCard("restore").getBlueprint(), s.GetLSCard("current").getBlueprint(), "1271_46", "PC-E1",
+                LocalDate.of(2010, 6, 28), LocalDate.of(2012, 7, 21),
                 "Deploy on Yavin 4. Once per turn, may deploy a battleground system or an interior Yavin 4 site from Reserve Deck; reshuffle. Whenever you Force drain at another battleground system, may draw destiny. Add 1 for each Yavin 4 site on table (2 if you occupy). If total destiny > 6, stack top card from either player's Reserve Deck face up there (limit one per system) to 'liberate' the system. At 'liberated' systems: Force drains are +1, and at same and related locations your total power is +3 and you draw one battle destiny if not able to otherwise. If opponent Force drains at a 'liberated' system, place stacked card in owner's Used Pile.");
     }
 
     @Test
-    public void OriginalRestoreFreedomIsTheSameUniqueCardAsTheCurrentVersion() {
+    public void CorrectedRestoreFreedomIsTheSameUniqueCardAsTheCurrentVersion() {
         for (boolean currentOnTable : List.of(true, false)) {
             for (boolean otherOut : List.of(false, true)) {
                 var s = scenario();
@@ -59,7 +59,7 @@ public class Card_2271_046_Tests {
     }
 
     @Test
-    public void OriginalRestoreFreedomStacksTheLiberatingCardFaceUp() {
+    public void CorrectedRestoreFreedomStacksTheLiberatingCardFaceUp() {
         var s = scenario();
         var restore = s.GetLSCard("restore");
         var yavin = s.GetLSCard("yavin");

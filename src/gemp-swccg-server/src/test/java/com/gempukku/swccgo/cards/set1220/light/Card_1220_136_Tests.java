@@ -20,6 +20,7 @@ import java.util.HashMap;
 
 import static com.gempukku.swccgo.framework.Assertions.assertInZone;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class Card_1220_136_Tests {
@@ -128,5 +129,21 @@ public class Card_1220_136_Tests {
         scn.LSChooseCard(inner);
         scn.PassAllResponses();
         assertEquals(Zone.HAND, inner.getZone());
+    }
+
+    @Test
+    public void WarsNotMakeOneGreatTakeIsOnlyDuringYourTurnAndOncePerTurn() {
+        var scn = GetScenario();
+        var wars = scn.GetLSCard("wars");
+        var inner = scn.GetLSCard("inner");
+
+        scn.StartGame();
+        scn.MoveCardsToLSSideOfTable(wars);
+        scn.MoveCardsToTopOfLSReserveDeck(inner);
+        scn.SkipToDSTurn(Phase.CONTROL);
+        scn.DSPass();
+        assertFalse(scn.LSCardActionAvailable(wars, "Take Inner Strength into hand from Reserve Deck"));
+        scn.SkipToLSTurn(Phase.CONTROL);
+        assertTrue(scn.LSCardActionAvailable(wars, "Take Inner Strength into hand from Reserve Deck"));
     }
 }

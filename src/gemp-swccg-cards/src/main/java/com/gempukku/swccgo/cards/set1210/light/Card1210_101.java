@@ -45,7 +45,7 @@ public class Card1210_101 extends AbstractRebel {
         super(Side.LIGHT, 1, 3, 4, 3, 6, Title.Han_Solo, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("Smuggler, gambler and 'freelance law-bender'. Crafty Corellian pirate. Rebel hero. Owns Millennium Falcon. Co-pilot Chewbacca promised him 'life-debt'. Has bounty on head.");
-        setGameText("Adds 3 to power of anything he pilots. Cards with 'Han' in title are destiny +3. May use 1 Force to cancel Boba Fett or Jabba's game text for remainder of turn. If opponent just initiated battle here, may use 1 Force to take the first weapons segment action.");
+        setGameText("Adds 3 to power of anything he pilots. Cards with 'Han' in title are destiny +3. May use 1 Force to cancel Boba Fett's or Jabba's game text for remainder of turn. If opponent just initiated battle here, may use 1 Force to take the first weapons segment action.");
         addPersona(Persona.HAN);
         addIcons(Icon.PILOT, Icon.WARRIOR);
         addKeywords(Keyword.SMUGGLER, Keyword.GAMBLER, Keyword.PIRATE);

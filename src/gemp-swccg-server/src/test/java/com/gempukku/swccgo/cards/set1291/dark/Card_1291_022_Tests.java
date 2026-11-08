@@ -16,6 +16,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.gempukku.swccgo.cards.Vb89VersionAsserts.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -116,5 +117,12 @@ public class Card_1291_022_Tests {
         scn.MoveCardsToLocation(harnaidan, cody);
 
         assertEquals(2, Math.round(scn.game().getModifiersQuerying().getForceDrainAmount(scn.gameState(), harnaidan, scn.LS)));
+    }
+
+    /** Virtual Block 9.1 sheet text (2014-01-10), the latest and only published version; GEMP showed a PC data-error wording. Same play. */
+    @Test
+    public void MuunilinstCityOfHarnaidanCurrentCardIsTheLatestText() {
+        assertCurrentCard("1291_22", "Muunilinst: City Of Harnaidan",
+                "Dark: Your combat vehicles here are power +1 and may move to and from here for free. Light: Unless your [Clone Army] card or combat vehicle here, Force drain -1 here.");
     }
 }

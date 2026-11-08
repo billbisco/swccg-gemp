@@ -31,7 +31,7 @@ public class Card1291_052 extends AbstractNormalEffect {
     public Card1291_052() {
         super(Side.LIGHT, 2, PlayCardZoneOption.ATTACHED, "Much to Learn, You Still Have", Uniqueness.UNRESTRICTED, ExpansionSet.VIRTUAL_BLOCK_9_1, Rarity.V);
         setLore("Yoda calls upon the Force often to try and foresee what destiny has in store.");
-        setGameText("Deploy on any location. While on a battleground, adds one [Light Side Force] icon and one [Dark Side Force] icon. While on opponents non-battleground planet location (except a Kashyyyk location or docking bay), their gametext here is canceled and your Force Generation is +1. [Clone Army Icon] troopers are power + 1.");
+        setGameText("Deploy on any location. While on a battleground, adds one [Light Side Force] and [Dark Side Force]. While on opponent's non-battleground planet location (except a Kashyyyk location or docking bay), their gametext here is canceled and your Force generation is +1. [Clone Army] troopers are power +1.");
     }
 
     @Override

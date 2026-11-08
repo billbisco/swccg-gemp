@@ -32,7 +32,7 @@ public class Card1261_053 extends AbstractSite {
     public Card1261_053() {
         super(Side.DARK, "Remote Depot", Uniqueness.DIAMOND_1, ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
         setLocationDarkSideGameText("May not deploy to Bespin, Coruscant, Kessel, Ralltiir, or Tatooine. Once per game, may deploy an Effect that deploys on a character or a device here from Reserve Deck; reshuffle.");
-        setLocationLightSideGameText("Unless opponent's Sleen or matching operative at same site or related site, those sites are immune to Ounee Ta.");
+        setLocationLightSideGameText("Unless opponent's Sleen or matching operative at same or related site, those sites are immune to Ounee Ta.");
         setGameText("Dark: May not deploy to Bespin, Coruscant, Kessel, Ralltiir, or Tatooine. Once per game, may deploy an Effect that deploys on a character or a device here from Reserve Deck; reshuffle. Light: Unless opponent's Sleen or matching operative at same site or related site, those sites are immune to Ounee Ta.");
         addIcon(Icon.DARK_FORCE, 1);
         addIcon(Icon.LIGHT_FORCE, 1);

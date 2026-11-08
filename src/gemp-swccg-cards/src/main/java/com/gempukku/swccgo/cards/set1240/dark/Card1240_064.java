@@ -45,7 +45,7 @@ public class Card1240_064 extends AbstractCharacterWeapon {
     public Card1240_064() {
         super(Side.DARK, 1, "Galen's Lightsaber", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_4, Rarity.V);
         setLore("");
-        setGameText("Deploy on Galen. While Galen defending a battle, his and Juno Eclipse's immunity to attrition is +2. May target a character or creature for free. Draw two destiny. If total destiny > defense value, target hit, power -3, and may not be used to satisfy attrition.");
+        setGameText("Deploy on Galen. While Galen defending a battle, his and Juno Eclipse's immunity to attrition is +2. May target a character or creature for free. Draw two destiny. Target hit, power -3, and may not be used to satisfy attrition if total destiny > defense value.");
         addKeywords(Keyword.LIGHTSABER);
         addIcons(Icon.CLOUD_CITY);
         addPersona(Persona.GALENS_LIGHTSABER);

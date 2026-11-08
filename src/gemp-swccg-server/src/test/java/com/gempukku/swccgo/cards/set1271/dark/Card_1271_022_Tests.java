@@ -137,4 +137,12 @@ public class Card_1271_022_Tests {
     private void addDrainModifier(VirtualTableScenario s, PhysicalCard location, String player, int amount) {
         s.ApplyAdHocModifier(new ForceDrainModifier(s.GetLSStartingLocation(), location, amount, player));
     }
+
+    @Test
+    public void DeathStarCentralCoreShowsTheMasterListPcE2LightText() {
+        var b = com.gempukku.swccgo.framework.VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("1271_22");
+        org.junit.Assert.assertEquals("Opponent's Force drain bonuses at systems (except your systems) are limited to 1. Immue to Expand The Empire.", b.getLocationLightSideGameText());
+        org.junit.Assert.assertEquals("May deploy Superlaser from Reserve Deck; reshuffle. At 'blown away' systems, adds one [Light Side] and one [Dark Side]. Whenever you Force drain at a 'blown away' system Death Star orbits, may retrieve 1 Force.", b.getLocationDarkSideGameText());
+        org.junit.Assert.assertFalse(b.getLocationLightSideGameText().contains("Immune"));
+    }
 }
