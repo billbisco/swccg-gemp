@@ -6672,7 +6672,7 @@ const fixedImages = {
 "2271_1046":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/restorefreedomtothegalaxy.gif",
 "2271_2040":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/massassibasesentry.gif",
 "2271_2046":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/restorefreedomtothegalaxy.gif",
-"2272_1":"https://wiki.swccg.com/images/9/95/VB7-02-General_Nevar.png",
+"2272_1":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Dark/large/generalnevar.gif",
 "2272_7":"https://wiki.swccg.com/images/f/fe/VB7-04-Where_Are_You_Taking_Them.png",
 "2272_20":"https://wiki.swccg.com/images/3/3d/VB7-05-Declaration_Of_Rebellion.png",
 "2272_28":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/roche.gif",
