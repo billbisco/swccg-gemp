@@ -6869,7 +6869,7 @@ const fixedImages = {
 "2210_8":"https://wiki.swccg.com/images/8/8d/VB1-08-Death_Star_Gunner.png",
 "2210_110":"https://wiki.swccg.com/images/e/e1/VB1-110E-Rebel_Tech.png",
 "2210_159":"https://wiki.swccg.com/images/f/f7/VB1-160-Precise_Hit.png",
-"2210_105":"https://wiki.swccg.com/images/7/72/VB1-105-Luke_Skywalker.png",
+"2210_105":"https://res.starwarsccg.org/cards/legacy/VirtualBlock1-Light/large/lukeskywalker.gif",
 "2210_107":"https://wiki.swccg.com/images/0/03/VB1-107-Obi_Wan_Kenobi.png",
 "2210_150":"https://wiki.swccg.com/images/5/50/VB1-151-Don_t_Tread_On_Me.png",
 "2210_43":"https://wiki.swccg.com/images/f/fe/VB1-38E-Imperial_Detainment.png",
