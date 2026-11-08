@@ -42,7 +42,7 @@ public class Card1240_068 extends AbstractDroid {
         setVirtualSuffix(true);
         setArmor(4);
         setLore("Smuggler. Heavily modified Cybot Galactica LE-series repair droid. Information broker. Provides information gained through underworld channels to the Alliance.");
-        setGameText("May be battled. If with Dash Rendar, adds one destiny to attrition only. Once per turn, if at a battleground, you may peek at top card of opponent's Reserve Deck; may place that card on top of opponent's Used Pile.");
+        setGameText("May be battled. If with Dash Rendar, adds one destiny to attrition only. Once per turn, if at a battleground, you may peek at the top card of opponent's Reserve Deck; may place that card on top of opponent's Used Pile.");
         addIcons(Icon.REFLECTIONS_II, Icon.PILOT, Icon.LEGACY_BLOCK_4);
         addKeywords(Keyword.SMUGGLER, Keyword.INFORMATION_BROKER);
         addModelTypes(ModelType.MAINTENANCE);

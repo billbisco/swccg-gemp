@@ -41,7 +41,7 @@ public class Card601_180 extends AbstractAlienImperial {
         super(Side.DARK, 1, 5, 4, 5, 7, "Arica", Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
         setVirtualSuffix(true);
         setLore("Mara Jade posed as a dancer at Jabba's Palace in an attempt to complete her master's task and kill Luke. Musician. Spy. Unable to convince Jabba to take her on his skiff.");
-        setGameText("Power +1 on Tatooine. Once per game, during your move phase, may relocate Arica to Luke's location. During your control phase, if present at a battleground (and Luke is not), may retrieve 1 Force. Immue to Undercover and attrition < 4.");
+        setGameText("Power +1 on Tatooine. Once per game, during your move phase, may relocate Arica to Luke's location. During your control phase, if present at a battleground (and Luke is not), may retrieve 1 Force. Immune to Undercover and attrition < 4.");
         addPersona(Persona.MARA_JADE);
         addIcons(Icon.REFLECTIONS_II, Icon.PILOT, Icon.WARRIOR, Icon.LEGACY_BLOCK_4);
         addKeywords(Keyword.FEMALE, Keyword.MUSICIAN, Keyword.SPY);

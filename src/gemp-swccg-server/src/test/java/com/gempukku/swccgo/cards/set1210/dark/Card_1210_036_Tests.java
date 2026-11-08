@@ -200,9 +200,9 @@ public class Card_1210_036_Tests {
                 com.gempukku.swccgo.framework.StartingSetup.NoDSShields,
                 com.gempukku.swccgo.framework.VirtualTableScenario.Open);
         var card = scn.GetDSCard("latest").getBlueprint();
-        org.junit.Assert.assertEquals("Deploy on table. Your troopers are Heroic. Opponent's total weapon destiny targeting your Heroic card is +2. When opponent is about to remove their last card from Life Force, you may first place all your troopers in Used Pile (last card must still be removed). (Immune to Alter.)",
+        org.junit.Assert.assertEquals("Deploy on table. Your troopers are Heroic. Opponent's total weapon destiny targeting your Heroic cards is +2. When opponent is about to remove their last card from Life Force, you may first place all your troopers in Used Pile (last card must still be removed). (Immune to Alter.)",
                 card.getGameText());
         org.junit.Assert.assertNull(card.getLegacyVersion());
-        org.junit.Assert.assertFalse(card.getGameText().contains("Heroic cards"));
+        org.junit.Assert.assertFalse(card.getGameText().contains("Heroic card is"));
     }
 }
