@@ -1,0 +1,150 @@
+package com.gempukku.swccgo.cards.set2273.light;
+
+import com.gempukku.swccgo.common.LegacyVersion;
+import java.time.LocalDate;
+import com.gempukku.swccgo.cards.AbstractEpicEventDeployable;
+import com.gempukku.swccgo.cards.GameConditions;
+import com.gempukku.swccgo.cards.effects.PeekAtTopCardOfForcePileAndReserveDeckAndUsedPileAndReturnOneCardToEachEffect;
+import com.gempukku.swccgo.cards.effects.usage.OncePerTurnEffect;
+import com.gempukku.swccgo.cards.evaluators.StackedEvaluator;
+import com.gempukku.swccgo.common.ExpansionSet;
+import com.gempukku.swccgo.common.GameTextActionId;
+import com.gempukku.swccgo.common.Icon;
+import com.gempukku.swccgo.common.PlayCardZoneOption;
+import com.gempukku.swccgo.common.Rarity;
+import com.gempukku.swccgo.common.Side;
+import com.gempukku.swccgo.common.Title;
+import com.gempukku.swccgo.common.Uniqueness;
+import com.gempukku.swccgo.common.Zone;
+import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.game.PhysicalCard;
+import com.gempukku.swccgo.game.SwccgGame;
+import com.gempukku.swccgo.game.state.EpicEventState;
+import com.gempukku.swccgo.logic.GameUtils;
+import com.gempukku.swccgo.logic.TriggerConditions;
+import com.gempukku.swccgo.logic.actions.CancelCardActionBuilder;
+import com.gempukku.swccgo.logic.actions.OptionalGameTextTriggerAction;
+import com.gempukku.swccgo.logic.actions.PlayCardAction;
+import com.gempukku.swccgo.logic.actions.PlayEpicEventAction;
+import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
+import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
+import com.gempukku.swccgo.logic.effects.DeploySingleCardEffect;
+import com.gempukku.swccgo.logic.effects.RespondablePlayCardEffect;
+import com.gempukku.swccgo.logic.effects.UseForceEffect;
+import com.gempukku.swccgo.logic.effects.choose.DeployCardsFromReserveDeckEffect;
+import com.gempukku.swccgo.logic.effects.choose.StackCardFromReserveDeckEffect;
+import com.gempukku.swccgo.logic.effects.choose.StackOneCardFromLostPileEffect;
+import com.gempukku.swccgo.logic.modifiers.CommuningModifier;
+import com.gempukku.swccgo.logic.modifiers.ConsideredOutOfPlayModifier;
+import com.gempukku.swccgo.logic.modifiers.Modifier;
+import com.gempukku.swccgo.logic.modifiers.TotalForceGenerationModifier;
+import com.gempukku.swccgo.logic.timing.Action;
+import com.gempukku.swccgo.logic.timing.Effect;
+import com.gempukku.swccgo.logic.timing.EffectResult;
+import com.gempukku.swccgo.logic.timing.results.LostFromTableResult;
+import com.gempukku.swccgo.logic.timing.results.PlacedCardOutOfPlayFromTableResult;
+
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
+/** Original Communing (Virtual Block 7.3, first printing 2011-06-03; the PC website card list kept this text), a version of 1273_33: no "I Can't Believe He's Gone is canceled" and no once-per-turn look at top cards; replaced by the 2011-06-23 CBT errata (PC-E1). Anything Goes only (docs/legacy-versions.md). */
+public class Card2273_033 extends AbstractEpicEventDeployable {
+    public Card2273_033() {
+        super(Side.LIGHT, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.Communing, Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
+        setGameText("If your starting location has exactly 2 [Light Side Force], play instead of a starting interrupt. [download] two always [Immune to Alter] Effects. Deploy on table; [upload] and stack a Jedi here (that Jedi is 'communing'). Luminous Beings: Whenever a Jedi is lost (or placed out of play) from table, may stack it here. Jedi stacked here are considered out of play. You generate +1 Force for each card stacked here.");
+        setLegacyVersion(new LegacyVersion("1273_33", "",
+                "Virtual Block 7.3, first printing (2011-06-03; text as kept on the PC website card list)", LocalDate.of(2011, 6, 3), LocalDate.of(2011, 6, 23)));
+        addIcons(Icon.SPECIAL_EDITION, Icon.LEGACY_BLOCK_7);
+        setAsLegacy(true);
+    }
+
+    @Override
+    protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
+        List<Modifier> modifiers = new LinkedList<Modifier>();
+        modifiers.add(new TotalForceGenerationModifier(self, new StackedEvaluator(self, self), self.getOwner()));
+        modifiers.add(new CommuningModifier(self, Filters.and(Filters.stackedOn(self), Filters.Jedi)));
+        modifiers.add(new ConsideredOutOfPlayModifier(self, Filters.stackedOn(self)));
+        return modifiers;
+    }
+
+
+    @Override
+    protected List<OptionalGameTextTriggerAction> getGameTextOptionalAfterTriggers(final String playerId, SwccgGame game, final EffectResult effectResult, final PhysicalCard self, int gameTextSourceCardId) {
+        List<OptionalGameTextTriggerAction> actions = new LinkedList<>();
+
+
+        // Check condition(s)
+        if(TriggerConditions.justLost(game,effectResult,Filters.Jedi)
+                ||TriggerConditions.justPlacedOutOfPlayFromTable(game,effectResult,Filters.Jedi)) {
+
+            final PhysicalCard jedi;
+            if (TriggerConditions.justLost(game, effectResult, Filters.Jedi)) {
+                LostFromTableResult result = (LostFromTableResult) effectResult;
+                jedi = result.getCard();
+            } else {
+                PlacedCardOutOfPlayFromTableResult result = (PlacedCardOutOfPlayFromTableResult) effectResult;
+                jedi = result.getCard();
+            }
+
+            if (jedi != null) {
+
+                final OptionalGameTextTriggerAction action = new OptionalGameTextTriggerAction(self, gameTextSourceCardId);
+                action.setText("Stack " + GameUtils.getFullName(jedi) + " here");
+                action.setActionMsg("Stack " + GameUtils.getCardLink(jedi) + " on " + GameUtils.getCardLink(self));
+                // Perform result(s)
+                if (TriggerConditions.justLost(game, effectResult, Filters.Jedi)) {
+                    action.appendEffect(new StackOneCardFromLostPileEffect(action, jedi, self, false, false, true));
+                } else {
+                    //TODO probably need a new StackCardFromOutOfPlayEffect
+                }
+                actions.add(action);
+            }
+        }
+        return actions;
+    }
+
+
+
+
+
+    @Override
+    public boolean playableAsStartingInterrupt(SwccgGame game, PhysicalCard self) {
+        return true;
+    }
+
+    @Override
+    public PlayCardAction getStartingInterruptAction(final String playerId, final SwccgGame game, final PhysicalCard self) {
+        // Check condition(s)
+        final PhysicalCard startingLocation = game.getModifiersQuerying().getStartingLocation(playerId);
+        if (startingLocation != null && Filters.iconCount(Icon.LIGHT_FORCE, 2).accepts(game, startingLocation)) {
+            final PlayEpicEventAction action = new PlayEpicEventAction(self);
+            action.setEpicEventState(new EpicEventState(self, EpicEventState.Type.PLAY_INSTEAD_OF_STARTING_INTERRUPT) {
+                @Override
+                public PhysicalCard getEpicEvent() {
+                    return super.getEpicEvent();
+                }
+            });
+
+            action.setText("Deploy Effects from Reserve Deck");
+            // Allow response(s)
+            action.allowResponses("Deploy up to two Effects from Reserve Deck",
+                    new RespondablePlayCardEffect(action) {
+                        @Override
+                        protected void performActionResults(Action targetingAction) {
+                            action.appendEffect(
+                                    new DeployCardsFromReserveDeckEffect(action, Filters.and(Filters.Effect, Filters.always_immune_to_Alter), 1, 2, true, false));
+                            action.appendEffect(new DeploySingleCardEffect(action, self, Zone.SIDE_OF_TABLE, false, null, false));
+                            action.appendEffect(
+                                    new StackCardFromReserveDeckEffect(action, self, Filters.Jedi, true));
+
+                        }
+                    }
+            );
+            return action;
+
+        }
+
+        return null;
+    }
+}

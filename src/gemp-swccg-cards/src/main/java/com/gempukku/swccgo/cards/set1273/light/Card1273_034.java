@@ -20,7 +20,7 @@ import com.gempukku.swccgo.logic.actions.TriggerAction;
 import com.gempukku.swccgo.logic.decisions.MultipleChoiceAwaitingDecision;
 import com.gempukku.swccgo.logic.decisions.YesNoDecision;
 import com.gempukku.swccgo.logic.effects.ActivateForceEffect;
-import com.gempukku.swccgo.logic.effects.AddUntilEndOfTurnActionProxyEffect;
+import com.gempukku.swccgo.logic.effects.AddUntilEndOfGameActionProxyEffect;
 import com.gempukku.swccgo.logic.effects.ModifyDestinyEffect;
 import com.gempukku.swccgo.logic.effects.PlayoutDecisionEffect;
 import com.gempukku.swccgo.logic.effects.RespondablePlayCardEffect;
@@ -48,13 +48,13 @@ public class Card1273_034 extends AbstractUsedInterrupt {
     static final String DRAW = "Draw 2 cards from Reserve Deck";
     static final String RETRIEVE = "Retrieve 1 Force";
     static final String ACTIVATE = "Activate X Force";
-    static final String DESTINY = "Your next destiny draw this turn is +X";
+    static final String DESTINY = "Your next destiny draw is +X";
     static final String DONE = "Done";
 
     public Card1273_034() {
         super(Side.LIGHT, 4, "Use The Force", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_3, Rarity.V);
         setLore("'Use the Force. Yes... Now, the stone. Feel it.'");
-        setGameText("Choose up to X of the following in any order, where X = number of cards stacked on Communing: Peek at the top card of any deck or pile; may then shuffle it. OR Draw 2 cards from Reserve Deck. OR Retrieve 1 Force. OR Activate X Force. OR Your next destiny draw this turn is +X.");
+        setGameText("Choose up to X of the following in any order, where X = the number of cards stacked on Communing: peek at the top card of any deck or pile: may then shuffle it. OR draw 2 cards from reserve deck. OR retrieve 1 force. OR activate X force. OR your next destiny draw is + X.");
     }
 
     @Override
@@ -167,7 +167,7 @@ public class Card1273_034 extends AbstractUsedInterrupt {
                 final String playerId = _playerId;
                 final PhysicalCard self = _self;
                 _action.appendEffect(
-                        new AddUntilEndOfTurnActionProxyEffect(_action,
+                        new AddUntilEndOfGameActionProxyEffect(_action,
                                 new AbstractActionProxy() {
                                     @Override
                                     public List<TriggerAction> getRequiredAfterTriggers(SwccgGame game, EffectResult effectResult) {

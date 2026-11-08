@@ -43,7 +43,7 @@ import java.util.List;
  * Title: A Stunning Move / A Valuable Hostage
  */
 public class Card1273_020 extends AbstractObjective {
-    public static final String PRINTED_GAMETEXT = "A Stunning Move: Deploy Palpatine's Quarters, Private Platform, and Insidious Prisoner. For remainder of game, Sidious and Imperials are lost. Once per turn, may deploy a Blockade Flagship site from Reserve Deck; reshuffle. Blockade Flagship may not be 'blown away.' While this side up, Insidious Prisoner only follows opponent's characters when moving to Palpatine's Quarters. Once per game, may deploy (for -2 Force) Cyborg Commander or The Count to a site you occupy from Reserve Deck; reshuffle. Flip this card if Insidious Prisoner is on Blockade Flagship. "
+    public static final String PRINTED_GAMETEXT = "A Stunning Move: Deploy Palpatine's Quarters, Private Platform, and Insidious Prisoner. For remainder of game, Sidious and Imperials are lost. Once per turn, may deploy a Blockade Flagship site from Reserve Deck; reshuffle. Blockade Flagship may not be 'blown away.' While this side up, Insidious Prisoner only follows opponent's characters when moving to Palpatine's Quarters. Once per game, may deploy (for -2 Force) Dooku or Grievous to a site you occupy from Reserve Deck; reshuffle. Flip this card if Insidious Prisoner is on Blockade Flagship. "
             + "A Valuable Hostage: Immediately take into hand from Reserve Deck; reshuffle (or retrieve into hand) a [Presence] droid. While this side up, immunity to attrition of opponent's Jedi, starships, and vehicles is limited to < 5. During your control phase, opponent loses 1 Force for each battleground you control. Once during your turn, may search your Force Pile and reveal any one card; reshuffle. Opponent may lose 2 Force to place that card on bottom of your Used Pile; otherwise, take it into hand. Flip this card if Insidious Prisoner not at a Blockade Flagship site.";
 
     static final Filter BLOCKADE_FLAGSHIP_SITE = Filters.siteOfStarshipOrVehicle(Persona.BLOCKADE_FLAGSHIP, true);
@@ -138,7 +138,7 @@ public class Card1273_020 extends AbstractObjective {
             actions.add(deploySite);
         }
 
-        // Cyborg Commander and The Count are Grievous's and Dooku's printed titles on the Virtual Block 7 sheets
+        // Master List: "Dooku or Grievous" (any Dooku or Grievous)
         GameTextActionId gameTextActionId = GameTextActionId.LEGACY__A_STUNNING_MOVE__DEPLOY_GRIEVOUS_OR_DOOKU;
         if (GameConditions.isOncePerGame(game, self, gameTextActionId)
                 && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, gameTextActionId)) {

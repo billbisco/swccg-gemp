@@ -194,4 +194,12 @@ public class Card_1272_007_Tests {
     private float immunity(VirtualTableScenario scn, PhysicalCardImpl card) {
         return scn.game().getModifiersQuerying().getImmunityToAttritionLessThan(scn.gameState(), card);
     }
+
+    @Test
+    public void WhereAreYouTakingThemShowsTheLatestText() {
+        String t = com.gempukku.swccgo.framework.VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("1272_7").getGameText();
+        org.junit.Assert.assertEquals("Deploy on table. At non-[Episode I] sites, immunity to attrition of [Coruscant] Jedi is limited to < 5. Your game text on [Coruscant] systems is canceled. During your control phase, may say 'Coruscant?' and lose 1 Force to place a just-played Interrupt in owners Lost Pile. (Immune to Alter.)", t);
+        org.junit.Assert.assertFalse(t.contains("just-resolved"));
+        org.junit.Assert.assertFalse(t.contains("gametext"));
+    }
 }

@@ -15,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-/** Original Field Dressing (Jun 2010 slip: the forfeited character "remains at same site"), a version of 1271_38. */
+/** Field Dressing as on the re-made 7.1 sheet (2010-07-28, PC-E2: the forfeited character "remains at same site"), a version of 1271_38. */
 public class Card_2271_038_Tests {
     private static final String DEPLOY = "Deploy Field Dressing on just-forfeited character";
     private static final String CURRENT_RETURN = "Return just-forfeited character with Field Dressing";
@@ -58,15 +58,15 @@ public class Card_2271_038_Tests {
     }
 
     @Test
-    public void OriginalFieldDressingIsTheCurrentCardWithTheJune2010Text() {
+    public void SheetFieldDressingIsTheCurrentCardWithTheJuly2010Text() {
         var s = scenario();
-        assertVersion(s.GetLSCard("dressing").getBlueprint(), s.GetLSCard("current").getBlueprint(), "1271_38", "",
-                LocalDate.of(2010, 6, 18), LocalDate.of(2013, 4, 27),
+        assertVersion(s.GetLSCard("dressing").getBlueprint(), s.GetLSCard("current").getBlueprint(), "1271_38", "PC-E2",
+                LocalDate.of(2010, 7, 28), LocalDate.of(2013, 4, 27),
                 "If you just forfeited a character of ability < 5 present at a site, deploy on that character (who remains at same site and, if 'hit,' is restored to normal). Character is forfeit = 0 (even if its forfeit may not normally be reduced). May play First Aid to place this card in Used Pile. Immune to your Control.");
     }
 
     @Test
-    public void OriginalFieldDressingKeepsTheForfeitedCharacterAtTheSameSite() {
+    public void SheetFieldDressingKeepsTheForfeitedCharacterAtTheSameSite() {
         var s = justForfeited(false);
         var dressing = s.GetLSCard("dressing");
         var patient = s.GetLSCard("patient");
@@ -92,7 +92,7 @@ public class Card_2271_038_Tests {
     }
 
     @Test
-    public void OriginalFieldDressingIsNotStoppedByAMayNotBeRevivedRuleButTheCurrentCardIs() {
+    public void SheetFieldDressingIsNotStoppedByAMayNotBeRevivedRuleButTheCurrentCardIs() {
         // The original never takes the character out of Lost Pile ('revives' it): it just stays at the site.
         var s = justForfeited(true);
         assertFalse(s.LSCardActionAvailable(s.GetLSCard("current"), CURRENT_RETURN));

@@ -13,7 +13,7 @@ import static com.gempukku.swccgo.cards.set2271.VersionAsserts.assertVersion;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-/** Original Master Kenobi (Jun 2011 slip: free "may place one just forfeited in Used Pile"), a version of 1273_27. */
+/** Master Kenobi PC-E1 (2011-06-23 errata: free "may place one just forfeited in Used Pile"), a version of 1273_27. */
 public class Card_2273_027_Tests {
     private static final String PLACE = "Place forfeited Rebel in Used Pile";
 
@@ -27,15 +27,15 @@ public class Card_2273_027_Tests {
     }
 
     @Test
-    public void OriginalMasterKenobiIsTheCurrentCardWithTheJune2011Text() {
+    public void ErrataMasterKenobiIsTheCurrentCardWithTheJune2011Text() {
         var s = scenario();
-        assertVersion(s.GetLSCard("kenobi").getBlueprint(), s.GetLSCard("current").getBlueprint(), "1273_27", "",
-                LocalDate.of(2011, 6, 3), LocalDate.of(2013, 4, 27),
+        assertVersion(s.GetLSCard("kenobi").getBlueprint(), s.GetLSCard("current").getBlueprint(), "1273_27", "PC-E1",
+                LocalDate.of(2011, 6, 23), LocalDate.of(2012, 7, 21),
                 "While 'communing': you may not deploy [Maintenance] cards or [Episode I] Jedi; Rebels of ability < 5 draw one battle destiny if unable to otherwise and, once per turn, may place one just forfeited in Used Pile; Once per turn, may deploy from Reserve Deck a Tatooine battleground (or Obi-Wan's Hut); reshuffle.");
     }
 
     @Test
-    public void OriginalMasterKenobiIsTheSameUniqueCardAsTheCurrentVersion() {
+    public void ErrataMasterKenobiIsTheSameUniqueCardAsTheCurrentVersion() {
         // Persona Obi-Wan and the same title: with one of them 'communing', the other may not deploy
         var s = scenario();
         var communing = s.GetLSCard("communing");
@@ -50,7 +50,7 @@ public class Card_2273_027_Tests {
     }
 
     @Test
-    public void OriginalMasterKenobiPlacesAJustForfeitedRebelInUsedPileForFree() {
+    public void ErrataMasterKenobiPlacesAJustForfeitedRebelInUsedPileForFree() {
         var s = scenario();
         var communing = s.GetLSCard("communing");
         var kenobi = s.GetLSCard("kenobi");

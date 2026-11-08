@@ -29,9 +29,9 @@ import java.util.List;
 public class Card1273_017 extends AbstractSite {
     public Card1273_017() {
         super(Side.DARK, "Coruscant: Palpatine's Quarters", Title.Coruscant, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_3, Rarity.V);
-        setLocationDarkSideGameText("While Insidious Prisoner on table, Cyborg Commander is immune to attrition.");
+        setLocationDarkSideGameText("While Insidious Prisoner on table, Grievous is immune to attrition.");
         setLocationLightSideGameText("Force drain -1 here. Jedi here may not have their power reduced.");
-        setGameText("Dark: While Insidious Prisoner on table, Cyborg Commander is immune to attrition. Light: Force drain -1 here. Jedi here may not have their power reduced.");
+        setGameText("Dark: While Insidious Prisoner on table, Grievous is immune to attrition. Light: Force drain -1 here. Jedi here may not have their power reduced.");
         addIcon(Icon.DARK_FORCE, 2);
         addIcon(Icon.LIGHT_FORCE, 1);
         addIcons(Icon.INTERIOR_SITE, Icon.EPISODE_I, Icon.PLANET);
@@ -39,7 +39,7 @@ public class Card1273_017 extends AbstractSite {
 
     @Override
     protected List<Modifier> getGameTextDarkSideWhileActiveModifiers(String playerOnDarkSideOfLocation, SwccgGame game, PhysicalCard self) {
-        // Cyborg Commander is Grievous's printed title on the Virtual Block 7 sheets
+        // Master List: "Grievous" (any Grievous)
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new ImmuneToAttritionModifier(self, Filters.Grievous, new OnTableCondition(self, Filters.Insidious_Prisoner)));
         return modifiers;

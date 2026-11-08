@@ -34,7 +34,7 @@ public class Card1271_010 extends AbstractNormalEffect {
         super(Side.DARK, 3, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "I Want Every Part Of This Ship Checked",
                 Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_1, Rarity.V);
         setLore("Imperials use sensitive equipment to search captured ships for shielded compartments. Scanning crew BT-445 planned to search the Millennium Falcon.");
-        setGameText("Deploy on table. Once per game, if Obi-Wan on table, may deploy Vader from Reserve Deck; reshuffle. May place this Effect in Used Pile to take a [Grabber] into hand from Reserve Deck; reshuffle. If you just attempted to take a card into hand or deploy a card from Reserve Deck, and the card was not found, may place this Effect in Lost Pile to search your Force Pile for that card; reshuffle.");
+        setGameText("Deploy on table. Once per game, if Obi-Wan on table, may deploy Vader from Reserve Deck; reshuffle. May place this Effect in Used Pile to take a [Grabber] into hand from Reserve Deck; reshuffle. If you just attempted to take a card into hand or deploy a card from Reserve Deck, and the card was not found, may place this Effect in Lost Pile to search your Force Pile for that card instead.");
         addIcons(Icon.SETUP);
     }
 

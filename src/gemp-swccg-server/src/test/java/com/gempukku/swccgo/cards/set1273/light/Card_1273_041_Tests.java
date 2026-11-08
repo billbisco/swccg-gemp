@@ -116,4 +116,12 @@ public class Card_1273_041_Tests {
         assertEquals(Zone.LOCATIONS, coruscant.getZone());
         assertEquals(Zone.CONVERTED_LOCATIONS, dscoruscant.getZone());
     }
+
+    @Test
+    public void CoruscantShowsThePcE2Text() {
+        var b = com.gempukku.swccgo.framework.VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("1273_41");
+        org.junit.Assert.assertEquals("If just converted, may raise this system to the top.", b.getLocationLightSideGameText());
+        org.junit.Assert.assertEquals("If your Coruscant system was converted, your Force generation is +1 here.", b.getLocationDarkSideGameText());
+        org.junit.Assert.assertFalse(b.getLocationLightSideGameText().contains("converted, Force generation") || b.getLocationDarkSideGameText().contains("converted, Force generation"));
+    }
 }

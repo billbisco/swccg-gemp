@@ -8,8 +8,8 @@ import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 
 /** Common attachment and immunity printed on the Block 7 Vader Effects. */
-abstract class LegacyVaderEquipment extends AbstractNormalEffect {
-    LegacyVaderEquipment(float destiny, String title) {
+public abstract class LegacyVaderEquipment extends AbstractNormalEffect {
+    protected LegacyVaderEquipment(float destiny, String title) {
         super(Side.DARK, destiny, PlayCardZoneOption.ATTACHED, title, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_1, Rarity.V);
         addIcons(Icon.VADER);
         addImmuneToCardTitle(Title.Alter);

@@ -151,7 +151,7 @@ public class Card_1274_007_Tests {
     }
 
     @Test
-    public void OccupiedTerritoryPreventsOpponentFromDrawingDestinyDuringPowerSegment() {
+    public void OccupiedTerritoryPreventsAnyPowerSegmentDestinyDraws() {
         var scn = GetScenario();
         var territory = scn.GetDSCard("territory");
         var trooper = scn.GetDSCard("trooper");
@@ -176,7 +176,9 @@ public class Card_1274_007_Tests {
         assertTrue(passUntil(scn, () -> scn.gameState().getBattleState() != null && scn.IsReachedPowerSegment() && lsCan(scn, scum, null)));
         assertTrue(MayNotDrawDestinyExceptBattleDestinyModifier.mayNotDrawDestiny(scn.game(), scn.LS, DestinyType.DESTINY_TO_REDUCE_ATTRITION_POWER));
         assertFalse(MayNotDrawDestinyExceptBattleDestinyModifier.mayNotDrawDestiny(scn.game(), scn.LS, DestinyType.BATTLE_DESTINY));
-        assertFalse(MayNotDrawDestinyExceptBattleDestinyModifier.mayNotDrawDestiny(scn.game(), scn.DS, DestinyType.DESTINY_TO_REDUCE_ATTRITION_POWER));
+        // card-list errata (PC-E1): "Prevent any destinies from being drawn" also stops your own power-segment draws
+        assertTrue(MayNotDrawDestinyExceptBattleDestinyModifier.mayNotDrawDestiny(scn.game(), scn.DS, DestinyType.DESTINY_TO_REDUCE_ATTRITION_POWER));
+        assertFalse(MayNotDrawDestinyExceptBattleDestinyModifier.mayNotDrawDestiny(scn.game(), scn.DS, DestinyType.BATTLE_DESTINY));
         int reserveBefore = scn.GetLSReserveDeckCount();
         scn.LSUseCardAction(scum);
         scn.PassAllResponses();
@@ -208,5 +210,12 @@ public class Card_1274_007_Tests {
         scn.LSUseCardAction(scum);
         scn.PassAllResponses();
         assertEquals(reserveBefore - 2, scn.GetLSReserveDeckCount());
+    }
+
+    @Test
+    public void OccupiedTerritoryShowsTheCardListPcE1Text() {
+        String t = com.gempukku.swccgo.framework.VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("1274_7").getGameText();
+        org.junit.Assert.assertEquals("Deploy on a battleground. If you occupy, during battle here or at a related location, may place this Effect in Used Pile and choose: Draw up to two cards from Reserve Deck OR Prevent any destinies from being drawn during the power segment of that battle (except battle destiny).", t);
+        org.junit.Assert.assertFalse(t.contains("Prevent opponent from drawing"));
     }
 }

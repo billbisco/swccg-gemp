@@ -265,4 +265,12 @@ public class Card_1273_020_Tests {
         assertFalse(asm.isFlipped());
         assertEquals("A Stunning Move", asm.getTitle());
     }
+
+    @Test
+    public void AStunningMoveShowsTheMasterListPcE1FrontText() {
+        String t = com.gempukku.swccgo.framework.VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("1273_20").getGameText();
+        org.junit.Assert.assertEquals("A Stunning Move: Deploy Palpatine's Quarters, Private Platform, and Insidious Prisoner. For remainder of game, Sidious and Imperials are lost. Once per turn, may deploy a Blockade Flagship site from Reserve Deck; reshuffle. Blockade Flagship may not be 'blown away.' While this side up, Insidious Prisoner only follows opponent's characters when moving to Palpatine's Quarters. Once per game, may deploy (for -2 Force) Dooku or Grievous to a site you occupy from Reserve Deck; reshuffle. Flip this card if Insidious Prisoner is on Blockade Flagship. A Valuable Hostage: Immediately take into hand from Reserve Deck; reshuffle (or retrieve into hand) a [Presence] droid. While this side up, immunity to attrition of opponent's Jedi, starships, and vehicles is limited to < 5. During your control phase, opponent loses 1 Force for each battleground you control. Once during your turn, may search your Force Pile and reveal any one card; reshuffle. Opponent may lose 2 Force to place that card on bottom of your Used Pile; otherwise, take it into hand. Flip this card if Insidious Prisoner not at a Blockade Flagship site.", t);
+        org.junit.Assert.assertFalse(t.contains("Cyborg Commander"));
+        org.junit.Assert.assertFalse(t.contains("The Count"));
+    }
 }

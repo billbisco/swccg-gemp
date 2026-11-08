@@ -31,7 +31,7 @@ public class Card_2271_039_Tests {
     public void OriginalLukeTrustMeIsTheCurrentCardWithTheJune2010Text() {
         var s = scenario();
         assertVersion(s.GetLSCard("trust").getBlueprint(), s.GetLSCard("current").getBlueprint(), "1271_39", "",
-                LocalDate.of(2010, 6, 18), LocalDate.of(2013, 4, 27),
+                LocalDate.of(2010, 6, 18), LocalDate.of(2012, 7, 21),
                 "Unless your Epic Event on table, deploy on table. Once per game, may take a [Setup] card into hand from Reserve Deck; reshuffle. May place this Effect in Used Pile to take an Immediate Effect into hand from Reserve Deck; reshuffle. May place this Effect in Lost Pile to cancel a Force drain. (Immune to Alter.)");
     }
 

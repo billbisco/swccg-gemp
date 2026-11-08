@@ -214,4 +214,11 @@ public class Card_1273_023_Tests {
     private static float immunityLessThan(VirtualTableScenario scn, com.gempukku.swccgo.game.PhysicalCardImpl card) {
         return scn.game().getModifiersQuerying().getImmunityToAttritionLessThan(scn.gameState(), card);
     }
+
+    @Test
+    public void CaptainAntillesShowsTheLatestText() {
+        String t = com.gempukku.swccgo.framework.VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("1273_23").getGameText();
+        org.junit.Assert.assertEquals("Adds 2 to the power of anything he pilots, 3: any corvette. While piloting a corvette it is immune to attrition <5 and, once per turn, may peek at a card in opponent's hand. Once per game, during battle (unless Vader here) may use 2 force to move ship away (for free).", t);
+        org.junit.Assert.assertFalse(t.contains("move starship he pilots away"));
+    }
 }
