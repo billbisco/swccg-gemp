@@ -323,7 +323,10 @@ public class DefaultSwccgFormat implements SwccgFormat {
      */
     String sameCardBlueprintId(String blueprintId) {
         String current = LegacyVersion.currentPrintingIdOf(blueprintId);
-        return _library.getBaseBlueprintId(current != null ? current : blueprintId);
+        String printing = current != null ? current : _library.stripBlueprintModifiers(blueprintId);
+        // An AI printing (with or without a class of its own) counts as its base printing
+        String base = _library.getBaseBlueprintId(printing);
+        return base.equals(printing) ? _library.getBaseBlueprintId(LegacyIds.withoutAlternateImageSuffix(printing)) : base;
     }
 
     /** Rules source hashed into the deck-format index stamp; the format library adds a chosen deck size to it. */

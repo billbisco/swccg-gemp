@@ -6935,5 +6935,13 @@ const fixedImages = {
 "2220_67":"https://res.starwarsccg.org/cards/legacy/VirtualBlock2-Dark/large/atatdeploymentplatform.gif",
 "2220_1169":"https://res.starwarsccg.org/cards/legacy/VirtualBlock2-Light/large/lukesblasterpistol.gif",
 "2220_161":"https://res.starwarsccg.org/cards/legacy/VirtualBlock2-Light/large/hothechomedlab.gif",
+// AI printings' pre-errata versions (docs/legacy-versions.md, "AI printings"): the AI image showing that text;
+// 2240_8ai and 2250_44ai reuse the current AI image (it shows the current text) until a CardMaker image exists.
+"2240_3":"https://wiki.swccg.com/images/f/f9/VB4-02AI-Juno_Eclipse_Black_Leader_AI.png",
+"2240_8ai":"https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/galenmarekstarkillerai.gif",
+"2250_2ai":"https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Dark/large/aurrasingai.gif",
+"2250_44ai":"https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/masterquigonai.gif",
+"2250_45ai":"https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/macewinduai.gif",
+"2281_30ai":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/supremechancellorvalorumai.gif",
 
 };
