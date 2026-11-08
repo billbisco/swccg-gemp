@@ -1,5 +1,7 @@
 package com.gempukku.swccgo.cards.set1230.light;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import com.gempukku.swccgo.common.CardSubtype;
 import com.gempukku.swccgo.common.CardType;
 import com.gempukku.swccgo.common.ExpansionSet;
@@ -20,9 +22,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class Card_1230_116_Tests {
+    /** The blueprint under test (a version test subclass overrides it). */
+    protected String cardId() {
+        return "1230_116";
+    }
+
     protected VirtualTableScenario GetScenario() {
         return new VirtualTableScenario(new HashMap<>() {{
-            put("cruiser", "1230_116"); put("other", "1_140"); put("han", "1_11");
+            put("cruiser", cardId()); put("other", "1_140"); put("han", "1_11");
         }}, new HashMap<>() {{
             for (int i = 1; i <= 6; i++) put("tie" + i, "1_304");
             put("independent", "5_177"); put("bay", "7_276"); put("vader", "1_168");
@@ -83,5 +90,16 @@ public class Card_1230_116_Tests {
         int force = scn.GetLSForcePileCount(); scn.LSDeployCard(scn.GetLSCard("cruiser"));
         scn.LSChooseCard(scn.GetLSStartingLocation()); scn.PassAllResponses();
         assertEquals(force - expected, scn.GetLSForcePileCount()); assertAtLocation(scn.GetLSStartingLocation(), scn.GetLSCard("cruiser"));
+    }
+
+    @Test
+    public void MonCalamariStarCruiserHasTheLatestText() {
+        var scn = GetScenario();
+        var card = scn.GetLSCard("cruiser").getBlueprint();
+        assertEquals("For each Imperial starship on table, deploys -1 (to a minimum of 3). May add 5 pilots, 6 passengers, 1 vehicle, and 3 starfighters. Permanent pilot provides ability of 2.",
+                card.getGameText());
+        assertNull(card.getLegacyVersion());
+        // the sheet wording is the original version 2230_116
+        assertFalse(card.getGameText().startsWith("Deploys -1"));
     }
 }
