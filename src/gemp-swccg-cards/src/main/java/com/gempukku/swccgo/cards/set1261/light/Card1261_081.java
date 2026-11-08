@@ -28,7 +28,7 @@ public class Card1261_081 extends AbstractNormalEffect {
                 Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
         setTitleComponents(new TitleComponent("Incom Corporation", Uniqueness.UNIQUE),
                 new TitleComponent("Koensayr Manufacturing", Uniqueness.UNIQUE));
-        setGameText("Deploy on a Rebel Base war room. Echo Base Operations is canceled. Your ability-1 permanent pilots aboard T-47s, X-wings, Y-wings, and Z-95s (except squadrons) are replaced by ability-2 permanent pilots who add 1 to power. During your control phase, may retrieve one Y-wing or Z-95. Suspended if opponent controls this site. (Immune to Alter.)");
+        setGameText("Deploy on a Rebel Base war room. Your ability-1 permanent pilots aboard T-47s, X-wings, Y-wings, and Z-95s (except squadrons) are replaced by ability-2 permanent pilots who add 1 to power. During your control phase, may retrieve one Y-wing or Z-95. Suspended if opponent controls this site. (Immune to Alter.)");
         addKeywords(Keyword.DEPLOYS_ON_SITE); addIcons(Icon.SPECIAL_EDITION); addImmuneToCardTitle(Title.Alter);
     }
 
@@ -68,10 +68,18 @@ public class Card1261_081 extends AbstractNormalEffect {
         return null;
     }
 
+    /**
+     * The PC card list text (PC-E1, the latest) has no "Echo Base Operations is canceled." (on the 2010 sheet and the
+     * Master List; 2261_81 keeps it).
+     */
+    protected boolean cancelsEchoBaseOperations() {
+        return false;
+    }
+
     @Override
     protected List<RequiredGameTextTriggerAction> getGameTextRequiredBeforeTriggers(SwccgGame game, Effect effect,
             PhysicalCard self, int gameTextSourceCardId) {
-        if (TriggerConditions.isPlayingCard(game, effect, Filters.Echo_Base_Operations)
+        if (cancelsEchoBaseOperations() && TriggerConditions.isPlayingCard(game, effect, Filters.Echo_Base_Operations)
                 && GameConditions.canCancelCardBeingPlayed(game, self, effect)) {
             RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
             CancelCardActionBuilder.buildCancelCardBeingPlayedAction(action, effect);
@@ -83,7 +91,7 @@ public class Card1261_081 extends AbstractNormalEffect {
     @Override
     protected List<RequiredGameTextTriggerAction> getGameTextRequiredAfterTriggers(SwccgGame game, EffectResult effectResult,
             PhysicalCard self, int gameTextSourceCardId) {
-        if (TriggerConditions.isTableChanged(game, effectResult)
+        if (cancelsEchoBaseOperations() && TriggerConditions.isTableChanged(game, effectResult)
                 && GameConditions.canTargetToCancel(game, self, Filters.Echo_Base_Operations)) {
             RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
             CancelCardActionBuilder.buildCancelCardAction(action, Filters.Echo_Base_Operations, Title.Echo_Base_Operations);

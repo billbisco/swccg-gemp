@@ -6734,6 +6734,7 @@ const fixedImages = {
 "2261_65":"https://wiki.swccg.com/images/f/fd/VB6-63-BoShek_Brash_Smuggler.png",
 "2261_1065":"https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Light/large/boshekbrashsmuggler.gif",
 "2261_67":"https://wiki.swccg.com/images/3/35/VB6-65-Jabbas_Prize.png",
+"2261_81":"https://wiki.swccg.com/images/0/03/VB6-80-Incom_Corporation_Koensayr_Manufacturing.png",
 // END VB5-VB6 phase 2
 "2210_6":"https://wiki.swccg.com/images/9/97/VB1-06-Danz_Borin.png",
 "2210_8":"https://wiki.swccg.com/images/8/8d/VB1-08-Death_Star_Gunner.png",
