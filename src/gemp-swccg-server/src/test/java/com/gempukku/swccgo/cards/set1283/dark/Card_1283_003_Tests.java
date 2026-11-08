@@ -11,6 +11,7 @@ import com.gempukku.swccgo.common.Species;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.logic.modifiers.ModifyGameTextType;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -33,6 +34,9 @@ public class Card_1283_003_Tests {
                     put("jabba", "6_109");
                     put("no_bargain", "1115_56"); // non-[Lightsaber] alien females are Mistryl
                     put("trooper", "1_194");
+                    put("prize", "10_42"); // Jabba's Prize
+                    put("original", "2283_3");
+                    put("current", "1283_3");
                 }},
                 10, 10,
                 StartingSetup.DefaultLSGroundLocation,
@@ -194,5 +198,55 @@ public class Card_1283_003_Tests {
 
         scn.SkipToLSTurn();
         assertFalse(scn.HasKeyword(valarian, Keyword.HEROIC)); //test2
+    }
+    @Test
+    public void LadyValarianHasTheMasterListText() {
+        var scn = GetScenario();
+        var card = scn.GetDSCard("current").getBlueprint();
+        assertEquals("Your total battle destiny here is +1. Unless Jabba on table, 'Jabba' in the game text of your cards (except Hutt Bounty and Jabba's Prize) may be treated as 'Lady Valarian.' Once per turn, may target a Mistryl of ability > 2 here; target is Heroic until end of turn.",
+                card.getGameText());
+        assertEquals(null, card.getLegacyVersion());
+    }
+
+    /** Whether 'Jabba' in the game text of Bib Fortuna / Jabba's Prize may be treated as 'Lady Valarian' with the given version on table. */
+    protected static boolean[] jabbaMayBeLadyValarianOnBibAndPrize(VirtualTableScenario scn, String valarianKey) {
+        var valarian = scn.GetDSCard(valarianKey);
+        var bib = scn.GetDSCard("bib");
+        var prize = scn.GetDSCard("prize");
+        var site = scn.GetDSStartingLocation();
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, valarian, bib, prize);
+        var type = ModifyGameTextType.LEGACY__LADY_VALARIAN__JABBA_MAY_BE_TREATED_AS_LADY_VALARIAN;
+        return new boolean[] {
+                scn.game().getModifiersQuerying().hasGameTextModification(scn.gameState(), bib, type),
+                scn.game().getModifiersQuerying().hasGameTextModification(scn.gameState(), prize, type) };
+    }
+
+    @Test
+    public void LadyValarianJabbaInJabbasPrizeIsNotTreatedAsLadyValarian() {
+        //test1: still applies to your other cards (Bib Fortuna)
+        //test2: not to Jabba's Prize (Master List "(except Hutt Bounty and Jabba's Prize)")
+        var result = jabbaMayBeLadyValarianOnBibAndPrize(GetScenario(), "current");
+        assertTrue(result[0]); //test1
+        assertFalse(result[1]); //test2
+    }
+
+    @Test
+    public void LadyValarianAndHerOriginalVersionAreTheSameUniqueCard() {
+        for (boolean currentOnTable : java.util.List.of(true, false)) {
+            for (boolean otherOut : java.util.List.of(false, true)) {
+                var scn = GetScenario();
+                var onTable = scn.GetDSCard(currentOnTable ? "current" : "original");
+                var inHand = scn.GetDSCard(currentOnTable ? "original" : "current");
+                scn.StartGame();
+                if (otherOut)
+                    scn.MoveCardsToLocation(scn.GetDSStartingLocation(), onTable);
+                scn.MoveCardsToDSHand(inHand);
+                scn.EnsureDSForcePile(8);
+                scn.SkipToDSTurn(Phase.DEPLOY);
+                assertEquals("current on table=" + currentOnTable + ", other version out=" + otherOut,
+                        !otherOut, scn.DSDeployAvailable(inHand));
+            }
+        }
     }
 }

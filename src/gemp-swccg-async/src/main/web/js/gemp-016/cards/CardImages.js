@@ -6670,5 +6670,9 @@ const fixedImages = {
 "2291_29_BACK":"https://res.starwarsccg.org/cards/legacy/VirtualBlock9-Dark/large/atwarwithitself.gif",
 "2291_58":"https://wiki.swccg.com/images/e/ea/VB9-p10-60-Geonosis_Petranaki_Arena.png",
 "2200_5":"https://res.starwarsccg.org/cards/legacy/VirtualBlockDS-Dark/large/fanfare.gif",
+"2230_13":"https://wiki.swccg.com/images/5/57/VB3-13E-Lord_Vader.png",
+"2230_77":"https://wiki.swccg.com/images/d/dc/VB3-78-Orrimaarko.png",
+"2273_13":"https://wiki.swccg.com/images/d/d3/VB7-00-Insidious_Prisoner.png",
+"2283_3":"https://wiki.swccg.com/images/0/09/VB8-02-Lady_Valarian.png",
 
 };

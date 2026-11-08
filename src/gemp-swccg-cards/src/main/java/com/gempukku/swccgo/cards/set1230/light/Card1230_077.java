@@ -4,7 +4,6 @@ import com.gempukku.swccgo.cards.AbstractRebel;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.conditions.AloneCondition;
 import com.gempukku.swccgo.cards.conditions.AtCondition;
-import com.gempukku.swccgo.cards.conditions.UndercoverCondition;
 import com.gempukku.swccgo.cards.effects.usage.OncePerGameEffect;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.GameTextActionId;
@@ -20,7 +19,6 @@ import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
 import com.gempukku.swccgo.logic.conditions.AndCondition;
-import com.gempukku.swccgo.logic.conditions.NotCondition;
 import com.gempukku.swccgo.logic.effects.choose.TakeCardsIntoHandFromReserveDeckEffect;
 import com.gempukku.swccgo.logic.modifiers.EachWeaponDestinyModifier;
 import com.gempukku.swccgo.logic.modifiers.ImmuneToAttritionLessThanModifier;
@@ -35,13 +33,15 @@ import java.util.List;
  * Type: Character
  * Subtype: Rebel
  * Title: Orrimaarko
+ * Text: AR 2.0 Appendix A / Virtual Cards Master List (PC errata dropping "Unless Undercover," from the Block 3 sheet
+ * text; that original is 2230_77).
  */
 public class Card1230_077 extends AbstractRebel {
     public Card1230_077() {
         super(Side.LIGHT, 1, 5, 4, 4, 4, Title.Orrimaarko, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_3, Rarity.V);
         setVirtualSuffix(true);
         setLore("Dresselian Scout and resistance leader. Worked tirelessly to combat the subjugation of his homeworld before Bothans brought him into contact with the Alliance.");
-        setGameText("Once per game, may take a rifle and/or an Interrupt with 'scout' in game text into hand from Reserve Deck; reshuffle. Unless Undercover, while alone at an exterior site, opponent's weapon destiny draws here are -2. Immune to attrition < 4.");
+        setGameText("Once per game, may take a rifle and/or an Interrupt with 'scout' in game text into hand from Reserve Deck; reshuffle. While alone at an exterior site, opponent's weapon destiny draws here are -2. Immune to attrition < 4.");
         addIcons(Icon.WARRIOR, Icon.ENDOR);
         setSpecies(Species.DRESSELIAN);
         addKeywords(Keyword.SCOUT, Keyword.LEADER);
@@ -51,7 +51,7 @@ public class Card1230_077 extends AbstractRebel {
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new EachWeaponDestinyModifier(self, Filters.and(Filters.opponents(self), Filters.weapon, Filters.here(self)),
-                new AndCondition(new NotCondition(new UndercoverCondition(self)), new AloneCondition(self), new AtCondition(self, Filters.exterior_site)), -2));
+                new AndCondition(new AloneCondition(self), new AtCondition(self, Filters.exterior_site)), -2));
         modifiers.add(new ImmuneToAttritionLessThanModifier(self, 4));
         return modifiers;
     }

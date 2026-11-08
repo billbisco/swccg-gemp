@@ -9,8 +9,8 @@ import com.gempukku.swccgo.logic.modifiers.ModifyGameTextType;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 
 /**
- * Lady Valarian (Virtual Block 8.3): "Unless Jabba on table, 'Jabba' in the game text of your cards (except Hutt
- * Bounty) may be treated as 'Lady Valarian.'"
+ * Lady Valarian (Virtual Block 8.3; Master List text): "Unless Jabba on table, 'Jabba' in the game text of your cards (except Hutt
+ * Bounty and Jabba's Prize) may be treated as 'Lady Valarian.'" (the original 2283_3 excepts Hutt Bounty only)
  * <p>
  * Lady Valarian puts a game text modification on your cards; a curated set of Dark Side cards that mention Jabba
  * use {@link #jabba(PhysicalCard)} in place of {@code Filters.Jabba}.

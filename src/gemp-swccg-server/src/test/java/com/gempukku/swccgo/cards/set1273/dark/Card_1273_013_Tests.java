@@ -18,6 +18,10 @@ import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
 import com.gempukku.swccgo.logic.effects.LoseCardFromTableEffect;
+import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.game.SwccgGame;
+import com.gempukku.swccgo.logic.timing.PassthruEffect;
+import com.gempukku.swccgo.logic.effects.choose.DeployCardToTargetFromReserveDeckEffect;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -42,6 +46,8 @@ public class Card_1273_013_Tests {
                     put("quarters", "1273_17");
                     put("platform", "601_150"); // Coruscant: Private Platform (Docking Bay)
                     put("trooper", "1_194");
+                    put("original", "2273_13");
+                    put("current", "1273_13");
                 }},
                 10, 10,
                 StartingSetup.DefaultLSGroundLocation,
@@ -108,31 +114,127 @@ public class Card_1273_013_Tests {
         assertFalse(deployAvailable(false));
     }
 
-    @Test
-    public void InsidiousPrisonerOpponentMayDeployJediAndLightsaberHereWhenDeployed() {
+    /** Puts A Stunning Move and Palpatine's Quarters on table and skips to the Dark Side deploy phase. */
+    protected VirtualTableScenario stunningMoveSetup(String... dsHand) {
         var scn = GetScenario();
-        var prisoner = scn.GetDSCard("prisoner");
-        var quarters = scn.GetDSCard("quarters");
-        var obiwan = scn.GetLSCard("obiwan");
         scn.StartGame();
-        scn.MoveLocationToTable(quarters);
+        for (String key : dsHand)
+            scn.MoveCardsToDSHand(scn.GetDSCard(key));
+        scn.MoveLocationToTable(scn.GetDSCard("quarters"));
         MissionTestSupport.putOnTable(scn, 7314, scn.DS, stunningMove());
-        scn.MoveCardsToDSHand(prisoner);
         scn.SkipToDSTurn(Phase.DEPLOY);
         scn.LSActivateForceCheat(6);
+        return scn;
+    }
+
+    /**
+     * Deploys Insidious Prisoner from Reserve Deck on Palpatine's Quarters during the start-of-game phase, as
+     * A Stunning Move does before starting hands are drawn (the phase is replayed for this one action).
+     */
+    private void deployPrisonerAtStartOfGame(VirtualTableScenario scn) {
+        var prisoner = scn.GetDSCard("prisoner");
+        scn.MoveCardsToTopOfOwnReserveDeck(prisoner);
+        var action = new TopLevelGameTextAction(prisoner, scn.DS, prisoner.getCardId());
+        action.appendEffect(new PassthruEffect(action) {
+            @Override
+            protected void doPlayEffect(SwccgGame game) {
+                game.getGameState().setCurrentPhase(Phase.PLAY_STARTING_CARDS);
+            }
+        });
+        action.appendEffect(new DeployCardToTargetFromReserveDeckEffect(action, scn.DS, Filters.sameCardId(prisoner),
+                Filters.title("Coruscant: Palpatine's Quarters"), true, null, null, false));
+        scn.carryOutEffectInPhaseActionByPlayer(scn.DS, action);
+    }
+
+    /** Resolves decisions (choosing the first selectable cards) until the player is offered the action, or gives up. */
+    protected static boolean offeredAction(VirtualTableScenario scn, String player, String text) {
+        for (int i = 0; i < 40; i++) {
+            var mine = scn.GetAwaitingDecision(player);
+            String[] texts = mine == null ? null : mine.getDecisionParameters().get("actionText");
+            if (texts != null && java.util.Arrays.stream(texts).anyMatch(t -> t != null && t.contains(text)))
+                return true;
+            String decider = scn.GetDecidingPlayer();
+            var d = decider == null ? null : scn.GetAwaitingDecision(decider);
+            if (d == null)
+                return false;
+            var params = d.getDecisionParameters();
+            if (params.get("min") != null && params.get("cardId") != null && params.get("actionText") == null) {
+                String[] ids = params.get("cardId");
+                String[] selectable = params.get("selectable");
+                int max = Integer.parseInt(params.get("max")[0]);
+                java.util.List<String> chosen = new java.util.ArrayList<>();
+                for (int j = 0; j < ids.length && chosen.size() < max; j++)
+                    if (selectable == null || "true".equals(selectable[j]))
+                        chosen.add(ids[j]);
+                scn.PlayerDecided(decider, String.join(",", chosen));
+            } else if (params.get("results") != null) {
+                scn.PlayerDecided(decider, "0");
+            } else {
+                scn.PlayerPass(decider);
+            }
+        }
+        return false;
+    }
+
+    @Test
+    public void InsidiousPrisonerOpponentMayDeployJediAndLightsaberHereBeforeDrawingStartingHand() {
+        //test1: deployed at start of game: opponent may deploy a Jedi here from Reserve Deck
+        //test2: and a lightsaber on that Jedi
+        var scn = stunningMoveSetup();
+        var quarters = scn.GetDSCard("quarters");
+        var obiwan = scn.GetLSCard("obiwan");
+        var saber = scn.GetLSCard("saber");
         scn.MoveCardsToTopOfLSReserveDeck(obiwan);
-        scn.DSDeployCard(prisoner);
-        LegacyVb73DarkTestSupport.passUntilAction(scn, scn.LS, "Deploy a Jedi here");
+        deployPrisonerAtStartOfGame(scn);
+        assertTrue(offeredAction(scn, scn.LS, "Deploy a Jedi here")); //test1
         scn.LSChooseAction("Deploy a Jedi here");
         LegacyVb73DarkTestSupport.resolveUntil(scn, () -> obiwan.getZone() == Zone.AT_LOCATION);
-        assertEquals(quarters, obiwan.getAtLocation());
+        assertEquals(quarters, obiwan.getAtLocation()); //test1
 
-        var saber = scn.GetLSCard("saber");
         scn.MoveCardsToTopOfLSReserveDeck(saber);
-        LegacyVb73DarkTestSupport.passUntilAction(scn, scn.LS, "Deploy a lightsaber here");
+        assertTrue(offeredAction(scn, scn.LS, "Deploy a lightsaber here")); //test2
         scn.LSChooseAction("Deploy a lightsaber here");
         LegacyVb73DarkTestSupport.resolveUntil(scn, () -> saber.getZone() == Zone.ATTACHED);
-        assertTrue(scn.IsAttachedTo(obiwan, saber));
+        assertTrue(scn.IsAttachedTo(obiwan, saber)); //test2
+    }
+
+    @Test
+    public void InsidiousPrisonerDeployedDuringATurnLetsOpponentDeployNothing() {
+        // Master List: only "before drawing a starting hand" (the sheet text had no timing)
+        var scn = stunningMoveSetup("prisoner");
+        var prisoner = scn.GetDSCard("prisoner");
+        scn.MoveCardsToTopOfLSReserveDeck(scn.GetLSCard("obiwan"));
+        scn.DSDeployCard(prisoner);
+        assertFalse(offeredAction(scn, scn.LS, "Deploy a Jedi here"));
+        assertTrue(scn.IsAttachedTo(scn.GetDSCard("quarters"), prisoner));
+    }
+
+    @Test
+    public void InsidiousPrisonerHasTheMasterListText() {
+        var card = GetScenario().GetDSCard("current").getBlueprint();
+        assertEquals("If A Stunning Move on table, deploy on Palpatine's Quarters (if [Virtual Block 5] We Have A Plan on table, this card always relocates to Palpatine if possible (even if a captive)); before drawing a starting hand opponent may deploy a Jedi and/or a lightsaber here from Reserve Deck; reshuffle. Evil Is Everywhere: Opponent may not Force drain here. Adds one [Dark Side] at same site. If just lost, relocate to Blockade Flagship: Prison. Once per turn, if a player controls this site, they may have this card (unless on Palpatine) follow their first character to move from here using landspeed or docking bay transit to a non-shielded site.",
+                card.getGameText());
+        assertEquals(null, card.getLegacyVersion());
+    }
+
+    @Test
+    public void InsidiousPrisonerAndItsOriginalVersionAreTheSameUniqueCard() {
+        for (boolean currentOnTable : java.util.List.of(true, false)) {
+            for (boolean otherOut : java.util.List.of(false, true)) {
+                var scn = GetScenario();
+                var onTable = scn.GetDSCard(currentOnTable ? "current" : "original");
+                var inHand = scn.GetDSCard(currentOnTable ? "original" : "current");
+                scn.StartGame();
+                scn.MoveLocationToTable(scn.GetDSCard("quarters"));
+                MissionTestSupport.putOnTable(scn, 7314, scn.DS, stunningMove());
+                if (otherOut)
+                    scn.AttachCardsTo(scn.GetDSCard("quarters"), onTable);
+                scn.MoveCardsToDSHand(inHand);
+                scn.SkipToDSTurn(Phase.DEPLOY);
+                assertEquals("current on table=" + currentOnTable + ", other version out=" + otherOut,
+                        !otherOut, scn.DSDeployAvailable(inHand));
+            }
+        }
     }
 
     @Test
