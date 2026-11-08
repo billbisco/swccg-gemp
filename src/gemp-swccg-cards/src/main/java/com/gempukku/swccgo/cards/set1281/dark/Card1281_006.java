@@ -43,7 +43,7 @@ public class Card1281_006 extends AbstractAlien {
     public Card1281_006() {
         super(Side.DARK, 3, 2, 2, 2, 3, "R'tic H'weei", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_1, Rarity.V);
         setLore("Jawa.");
-        setGameText("Once per game, may take Jawa Blaster or a card with 'sandcrawler' in title or gametext into hand from Reserve Deck; reshuffle. Once per turn, if present at a Tatooine battleground and there is more than 1 Force in opponent's Force Pile, you may use 1 Force in opponent's Force Pile.");
+        setGameText("Once per game, may take one Jawa Blaster or a card with 'sandcrawler' in title or gametext into hand from Reserve Deck; reshuffle. If present at a Tatooine battleground, once per turn, if there is more than 1 card in opponent's Force Pile, may use 1 Force in opponent's Force Pile.");
         setSpecies(Species.JAWA);
     }
 
