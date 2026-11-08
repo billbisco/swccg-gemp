@@ -2,9 +2,9 @@ package com.gempukku.swccgo.cards.set2283.dark;
 
 import com.gempukku.swccgo.cards.AbstractSite;
 import com.gempukku.swccgo.common.ExpansionSet;
-import com.gempukku.swccgo.common.LegacyVersion;
 import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Keyword;
+import com.gempukku.swccgo.common.LegacyVersion;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Title;
@@ -27,16 +27,16 @@ import java.util.List;
  * Type: Location
  * Subtype: Site
  * Title: Spaceport Docking Bay (V)
- * PC-E1 version of 1283_12: the Virtual Cards Master List text (Apr 2013) adds "Your pilots deploy +1 here." to the Light Side half. Anything Goes only (docs/legacy-versions.md).
+ * Original version of 1283_12 (Virtual Block 8.3 release sheet, Mar 2013): without "Your pilots deploy +1 here." on the Light Side half (added by the Virtual Cards Master List, Apr 2013). Anything Goes only (docs/legacy-versions.md).
  */
 public class Card2283_012 extends AbstractSite {
     public Card2283_012() {
         super(Side.DARK, "Spaceport Docking Bay", Uniqueness.DIAMOND_1, ExpansionSet.VIRTUAL_BLOCK_8_3, Rarity.V);
         setVirtualSuffix(true);
         setLocationDarkSideGameText("Your docking bay transit from here requires 2 Force. Your starfighters deploy -1 (or -2 if freighter) here. Immune to [Reflections III] Ounee Ta.");
-        setLocationLightSideGameText("May not be deployed to Bespin, Dagobah, Endor, Hoth or Yavin 4. Your docking bay transit from here requires 3 Force. Your pilots deploy +1 here.");
-        setGameText("Dark: Your docking bay transit from here requires 2 Force. Your starfighters deploy -1 (or -2 if freighter) here. Immune to [Reflections III] Ounee Ta. Light: May not be deployed to Bespin, Dagobah, Endor, Hoth or Yavin 4. Your docking bay transit from here requires 3 Force. Your pilots deploy +1 here.");
-        setLegacyVersion(new LegacyVersion("1283_12", "PC-E1", "Virtual Cards Master List (official text 2013-04-27)", LocalDate.of(2013, 4, 27), null));
+        setLocationLightSideGameText("May not be deployed to Bespin, Dagobah, Endor, Hoth or Yavin 4. Your docking bay transit from here requires 3 Force.");
+        setGameText("Dark: Your docking bay transit from here requires 2 Force. Your starfighters deploy -1 (or -2 if freighter) here. Immune to [Reflections III] Ounee Ta. Light: May not be deployed to Bespin, Dagobah, Endor, Hoth or Yavin 4. Your docking bay transit from here requires 3 Force.");
+        setLegacyVersion(new LegacyVersion("1283_12", "", "Virtual Block 8.3 release sheet (2013-03-28)", LocalDate.of(2013, 3, 28), LocalDate.of(2013, 4, 27)));
         addIcon(Icon.DARK_FORCE, 1);
         addIcon(Icon.LIGHT_FORCE, 1);
         addIcons(Icon.EXTERIOR_SITE, Icon.PLANET, Icon.SCOMP_LINK);
@@ -60,7 +60,6 @@ public class Card2283_012 extends AbstractSite {
     protected List<Modifier> getGameTextLightSideWhileActiveModifiers(String playerOnLightSideOfLocation, SwccgGame game, PhysicalCard self) {
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new DockingBayTransitFromCostModifier(self, 3, playerOnLightSideOfLocation));
-        modifiers.add(new DeployCostToLocationModifier(self, Filters.and(Filters.your(playerOnLightSideOfLocation), Filters.pilot), 1, self, true));
         return modifiers;
     }
 }
