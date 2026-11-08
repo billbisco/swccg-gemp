@@ -31,7 +31,7 @@ import java.util.List;
 public class Card1250_022 extends Card1116_050 {
     public Card1250_022() {
         setLore("With enough political support, any number of devious plans can be put into motion.");
-        setGameText("Deploy on Sidious. At start of your turn, if at Senate, may draw 2 cards from Reserve Deck. During your move phase, relocate this Effect to a Rebel or Jedi at a battleground; that character loses all immunity to attrition. If this Effect just lost, relocate it to Sidious.");
+        setGameText("Deploy on Sidious. At start of your turn, if at Senate, may draw 2 cards from Reserve Deck. During your move phase, relocate this Effect to a Rebel or Jedi at a battleground; that character loses any immunity to attrition. If this Effect just lost, relocate it to Sidious.");
         addIcons(Icon.CORUSCANT, Icon.SIDIOUS, Icon.EPISODE_I, Icon.LEGACY_BLOCK_5);
         setAsLegacy(true);
     }

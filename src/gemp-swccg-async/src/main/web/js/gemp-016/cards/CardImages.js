@@ -6676,7 +6676,7 @@ const fixedImages = {
 "2283_3":"https://wiki.swccg.com/images/0/09/VB8-02-Lady_Valarian.png",
 "2250_15":"https://wiki.swccg.com/images/8/82/VB5-13-Mandalorian_Armor.png",
 "2250_18":"https://wiki.swccg.com/images/1/13/VB5-15-An_Enemy_Of_The_Republic.png",
-"2250_22":"https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Dark/large/withthunderousapplause.gif",
+"2250_22":"https://wiki.swccg.com/images/4/41/VB5-25-With_Thunderous_Applause.png",
 "2250_28":"https://wiki.swccg.com/images/f/f7/VB5-28E-Trade_Federation_Tactics.png",
 "2250_34":"https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/bailorgana.gif",
 "2261_10":"https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/darthvaderbetrayerofthejedi.gif",
@@ -6704,6 +6704,7 @@ const fixedImages = {
 "2250_1":"https://wiki.swccg.com/images/7/75/VB5-01E-Nothing_Can_Get_Through_Our_Shield.png",
 "2250_2":"https://wiki.swccg.com/images/f/ff/VB5-02-Aurra_Sing.png",
 "2250_14":"https://wiki.swccg.com/images/b/b6/VB5-18-Expand_The_Empire.png",
+"2250_1022":"https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Dark/large/withthunderousapplause.gif",
 // END VB5-VB6 phase 2
 "2210_6":"https://wiki.swccg.com/images/9/97/VB1-06-Danz_Borin.png",
 "2210_8":"https://wiki.swccg.com/images/8/8d/VB1-08-Death_Star_Gunner.png",
