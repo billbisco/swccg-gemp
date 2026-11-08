@@ -9,13 +9,14 @@ import java.time.LocalDate;
  * Set: Virtual Block 6.3
  * Type: Character
  * Title: Mercenary Shadow Pirate
- * PC-E1 version of 1263_6: the Virtual Cards Master List wording (2013-04-27), Sandwhirl named first; same play as the Mar 2010 sheet text GEMP's current card shows.
+ * Original version of 1263_6: the Virtual Block 6.3 release sheet text, "Ice Storm and Sandwhirl" (the Virtual Cards
+ * Master List, PC-E1 and now the current card, names Sandwhirl first). Same play.
  * Anything Goes only (docs/legacy-versions.md).
  */
 public class Card2263_006 extends Card1263_006 {
     public Card2263_006() {
-        setGameText("[Pilot] 2. Opponent may not add destiny draws to power or attrition here. Sandwhirl and Ice Storm are canceled at same and related locations.");
-        setLegacyVersion(new LegacyVersion("1263_6", "PC-E1",
-                "Virtual Cards Master List (2013-04-27)", LocalDate.of(2013, 4, 27), null));
+        setGameText("[Pilot] 2. Opponent may not add destiny draws to power or attrition here. Ice Storm and Sandwhirl are canceled at same and related locations.");
+        setLegacyVersion(new LegacyVersion("1263_6", "",
+                "Virtual Block 6.3 release sheet (2010-03-15), card #3-06", LocalDate.of(2010, 3, 15), LocalDate.of(2013, 4, 27)));
     }
 }
