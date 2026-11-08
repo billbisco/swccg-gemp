@@ -78,4 +78,24 @@ public class Card_1220_043_Tests {
         scn.PassAllResponses();
         assertInZone(Zone.SIDE_OF_TABLE, targeting);
     }
+
+    @org.junit.Test
+    public void PrecisionTargetingHasTheLatestText() {
+        var scn = new com.gempukku.swccgo.framework.VirtualTableScenario(
+                new java.util.HashMap<String, String>() {{  }},
+                new java.util.HashMap<String, String>() {{ put("latest", "1220_43"); }},
+                10, 10,
+                com.gempukku.swccgo.framework.StartingSetup.DefaultLSGroundLocation,
+                com.gempukku.swccgo.framework.StartingSetup.DefaultDSGroundLocation,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSStartingInterrupts,
+                com.gempukku.swccgo.framework.StartingSetup.NoDSStartingInterrupts,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSShields,
+                com.gempukku.swccgo.framework.StartingSetup.NoDSShields,
+                com.gempukku.swccgo.framework.VirtualTableScenario.Open);
+        var card = scn.GetDSCard("latest").getBlueprint();
+        org.junit.Assert.assertEquals("Deploy on table. Your capital starship weapon destiny draws are +1. During your deploy phase, may use 1 Force to deploy a starship weapon (for free) on your capital starship from Reserve Deck; reshuffle. If a starship was just hit, may place this Effect in Lost Pile to make that starship forfeit = 0.",
+                card.getGameText());
+        org.junit.Assert.assertNull(card.getLegacyVersion());
+        org.junit.Assert.assertFalse(card.getGameText().contains("on you capital"));
+    }
 }
