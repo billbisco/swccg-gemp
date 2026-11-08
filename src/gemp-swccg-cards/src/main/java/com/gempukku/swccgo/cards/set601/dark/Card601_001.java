@@ -40,7 +40,7 @@ public class Card601_001 extends AbstractStartingEffect {
         super(Side.DARK, 4, "Knowledge And Defense", ExpansionSet.LEGACY, Rarity.V);
         setVirtualSuffix(true);
         setLore("'A Jedi uses the Force for knowledge and defense, never for attack.'");
-        setGameText("Deploy on table with up to 15 cards from outside your deck face-down under here. Four times per game, may play a card from here (as if from hand). Unless canceling your Interrupt, opponent may not play Recoil In Fear until the end of your first turn.");
+        setGameText("Deploy on table with up to 15 cards from outside your deck face-down under here. Four times per game, may play a Defensive Shield from here (as if from hand). Unless canceling your Interrupt, opponent may not play Recoil In Fear until the end of your first turn.");
         addIcons(Icon.DAGOBAH, Icon.LEGACY_BLOCK_4);
         setAsLegacy(true);
     }
@@ -75,14 +75,14 @@ public class Card601_001 extends AbstractStartingEffect {
     @Override
     protected List<TopLevelGameTextAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
         GameTextActionId gameTextActionId = GameTextActionId.KNOWLEDGE_AND_DEFENSE__PLAY_CARD;
-        Filter filter = Filters.playable(self);
+        Filter filter = Filters.and(Filters.Defensive_Shield, Filters.playable(self));
 
         // Check condition(s)
         if (GameConditions.isFourTimesPerGame(game, self, gameTextActionId)
                 && GameConditions.hasStackedCards(game, self, filter)) {
 
             final TopLevelGameTextAction action = new TopLevelGameTextAction(self, gameTextSourceCardId, gameTextActionId);
-            action.setText("Play a card");
+            action.setText("Play a Defensive Shield");
             // Update usage limit(s)
             action.appendUsage(
                     new FourTimesPerGameEffect(action));
