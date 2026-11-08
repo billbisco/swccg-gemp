@@ -6637,5 +6637,6 @@ const fixedImages = {
 "2261_90":"https://wiki.swccg.com/images/0/05/VB6-92-Ascension_Guns.png",
 "2262_7":"https://wiki.swccg.com/images/1/10/VB6-09-Power_Of_The_Sith.png",
 "2263_6":"https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/mercenaryshadowpirate.gif",
+"2250_44":"https://wiki.swccg.com/images/2/2e/VB5-45-Master_Qui_Gon.png",
 
 };
