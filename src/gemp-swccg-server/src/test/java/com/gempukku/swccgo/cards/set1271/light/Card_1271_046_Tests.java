@@ -337,4 +337,28 @@ public class Card_1271_046_Tests {
         assertTrue(junk.getZone() == Zone.USED_PILE || junk.getZone() == Zone.TOP_OF_USED_PILE
                 || scn.GetStackedCards(bespin).isEmpty());
     }
+
+    @Test
+    public void RestoreFreedomShowsTheMasterListPcE3Text() {
+        String t = com.gempukku.swccgo.framework.VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("1271_46").getGameText();
+        org.junit.Assert.assertEquals("Deploy on Yavin 4. Once per turn, may deploy a battleground system or an interior Yavin 4 site from Reserve Deck; reshuffle. Whenever you Force drain at another battleground system, may draw destiny. Add 1 for each Yavin 4 site on table (2 if you occupy). If total destiny > 6, stack top card from any Reserve Deck face up there (limit one per system), and, while stacked there, system is 'liberated.' At 'liberated' systems: Force drains are +1, and at same and related locations your total power is +3 and you draw one battle destiny if not able to otherwise. If opponent Force drains at a 'liberated' system, place stacked card in owner's Used Pile.", t);
+        org.junit.Assert.assertFalse(t.contains("either player's Reserve Deck"));
+        org.junit.Assert.assertFalse(t.contains("to 'liberate' the system"));
+    }
+
+    @Test
+    public void RestoreFreedomSystemIsLiberatedOnlyWhileTheCardIsStackedThere() {
+        var scn = GetScenario();
+        var bespin = scn.GetLSCard("bespin");
+        var junk = scn.GetLSCard("luke");
+        scn.StartGame();
+        scn.MoveLocationToTable(bespin);
+        scn.StackCardsOn(bespin, junk);
+        junk.setLiberationCard(true);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        assertTrue(com.gempukku.swccgo.filters.LegacyFilters.liberatedSystem.accepts(scn.game(), bespin));
+        scn.MoveCardsToTopOfLSUsedPile(junk);
+        scn.PassAllResponses();
+        assertFalse(com.gempukku.swccgo.filters.LegacyFilters.liberatedSystem.accepts(scn.game(), bespin));
+    }
 }
