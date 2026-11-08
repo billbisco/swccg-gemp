@@ -16,6 +16,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.gempukku.swccgo.cards.Vb89VersionAsserts.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -246,5 +247,40 @@ public class Card_1200_011_Tests {
             break;
         }
         assertTrue(scn.AwaitingLSControlPhaseActions());
+    }
+
+    /** Virtual Shields sheet text (2013-05-21, PC-E1): the latest version. */
+    @Test
+    public void ThereIsAnotherCurrentCardIsTheLatestText() {
+        assertCurrentCard("1200_11", "There is Another",
+                "Unless you have deployed a Skywalker this game, plays on table. 'Luke' and 'Son Of Vader' on opponent's cards are treated as 'Leia' and 'Lady Vader,' respectively. Once during your turn, opponent may activate 1 Force.");
+    }
+
+    /** Is an opponent's card without the [Death Star II] icon (Vader, Premiere) affected? */
+    public static boolean thereIsAnotherAffectsOpponentsNonDeathStarIICard(String id) {
+        var scn = new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("another", id);
+                }},
+                new HashMap<>() {{
+                    put("vader", "1_168");
+                }},
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open);
+        scn.StartGame();
+        scn.MoveCardsToLSSideOfTable(scn.GetLSCard("another"));
+        return scn.game().getModifiersQuerying().hasGameTextModification(scn.gameState(), scn.GetDSCard("vader"),
+                ModifyGameTextType.BRING_HIM_BEFORE_ME__TARGETS_LEIA_INSTEAD_OF_LUKE);
+    }
+
+    @Test
+    public void ThereIsAnotherAffectsAllOfOpponentsCards() {
+        assertTrue(thereIsAnotherAffectsOpponentsNonDeathStarIICard("1200_11"));
     }
 }

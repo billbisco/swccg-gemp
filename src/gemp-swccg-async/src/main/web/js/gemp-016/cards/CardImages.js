@@ -6678,6 +6678,7 @@ const fixedImages = {
 "2282_11":"https://wiki.swccg.com/images/7/78/VB8-03-Assassins_Blaster_Rifle.png",
 "2282_12":"https://wiki.swccg.com/images/b/b2/VB8-02-Anakin_Solo.png",
 "2282_19":"https://wiki.swccg.com/images/f/fd/VB8-p4-76-Rennek.png",
+"2200_11":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/thereisanother.gif",
 "2230_13":"https://wiki.swccg.com/images/5/57/VB3-13E-Lord_Vader.png",
 "2230_77":"https://wiki.swccg.com/images/d/dc/VB3-78-Orrimaarko.png",
 "2273_13":"https://wiki.swccg.com/images/d/d3/VB7-00-Insidious_Prisoner.png",
