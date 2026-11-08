@@ -37,7 +37,7 @@ public class Card1220_066 extends AbstractUsedInterrupt {
         super(Side.DARK, 5, Title.Shocking_Revelation, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_2, Rarity.V);
         setVirtualSuffix(true);
         setLore("'Well, don't blame me. I'm an interpreter. I'm not supposed to know a power socket from a computer terminal.'");
-        setGameText("Unless you have a senate majority, if opponent just took into hand or deployed character (except with an Effect with 'matching' in game text) from Reserve Deck or just drew a card from Reserve Deck using a character's game text, they must place 2 other cards from hand on Used Pile (if possible).");
+        setGameText("Unless you have a senate majority, if opponent just [upload] or [download] a character (except with an Effect with 'matching' in game text) or just drew a card from Reserve Deck using a character's game text, they must place 2 other cards from hand on Used Pile (if possible).");
         addIcons(Icon.CLOUD_CITY);
     }
 

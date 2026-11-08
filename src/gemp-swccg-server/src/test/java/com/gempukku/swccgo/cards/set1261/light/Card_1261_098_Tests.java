@@ -24,15 +24,15 @@ public class Card_1261_098_Tests extends SoloDefenseTestSupport {
 
     @org.junit.Test
     public void CurrentTextIsTheLatestVersion() {
-        // PC card list (PC-E1) is the latest text; GEMP's former wording matched no published version.
+        // The release sheet text is the latest version: the PC card list only spelled out the icons (audit 2026-11-08), so it is no version. GEMP's wording before r16 matched no published version.
         var scn = new com.gempukku.swccgo.framework.VirtualTableScenario(new java.util.HashMap<>(java.util.Map.of("c", "1261_98")), new java.util.HashMap<>(), 10, 10,
                 com.gempukku.swccgo.framework.StartingSetup.DefaultLSGroundLocation, com.gempukku.swccgo.framework.StartingSetup.DefaultDSGroundLocation,
                 com.gempukku.swccgo.framework.StartingSetup.NoLSStartingInterrupts, com.gempukku.swccgo.framework.StartingSetup.NoDSStartingInterrupts,
                 com.gempukku.swccgo.framework.StartingSetup.NoLSShields, com.gempukku.swccgo.framework.StartingSetup.NoDSShields,
                 com.gempukku.swccgo.framework.VirtualTableScenario.Open);
         var text = scn.GetLSCard("c").getBlueprint().getGameText();
-        org.junit.Assert.assertEquals("Use 1 Force to deploy (or retrieve) Lando from Reserve Deck; reshuffle. OR If a battle just initiated, and your Lando defending alone at a site, his forfeit cannot be reduced, he adds one destiny to power (add 1 for each character and vehicle present), and draws one battle destiny if not able to otherwise. (Immune to Sense.)", text);
-        org.junit.Assert.assertFalse(text.contains("(+1 for each"));
+        org.junit.Assert.assertEquals("Use 1 Force to ▼ (or retrieve) Lando. OR If a battle just initiated, and your Lando defending alone at a site, his forfeit cannot be reduced, he adds one destiny to power (+1 for each character and vehicle present), and draws one battle destiny if not able to otherwise. (Immune to Sense.)", text);
+        org.junit.Assert.assertFalse(text.contains("your Lando is defending"));
         org.junit.Assert.assertNull(scn.GetLSCard("c").getBlueprint().getLegacyVersion());
     }
 }

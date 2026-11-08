@@ -41,7 +41,7 @@ public class Card1230_045 extends AbstractUsedOrLostInterrupt {
         super(Side.DARK, 4, Title.Imperial_Tyranny, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_3, Rarity.V);
         setVirtualSuffix(true);
         setLore("The Empire considers alien species to be inferior.");
-        setGameText("USED: Deploy Empire's New Order on table from Reserve Deck; reshuffle. OR If Vader just won a battle at the same site as an alien, place that alien out of play. LOST: If a battle was just initiated where you have a character weapon card, place the top card of your Lost Pile on top of your Reserve Deck.");
+        setGameText("USED: [download] Empire's New Order. OR If Vader just won a battle at same site as an alien, place that alien out of play. LOST: If a battle was just initiated where you have a character weapon card, place the top card of your Lost Pile on top of Reserve Deck.");
         addIcons(Icon.ENDOR);
     }
 

@@ -39,7 +39,7 @@ import java.util.List;
 public class Card601_182 extends AbstractImperial {
     public Card601_182() {
         super(Side.DARK, 2, 2, 2, 2, 5, Title.DS_61_5, Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
-        setGameText("Adds 2 to power of anything he pilots, 3 when piloting Black 5. While piloting Black 5, it is maneuver +1 and he draws one battle destiny if not able to otherwise. If at opponent's system, instead of Force draining here, may take any card into hand from Force Pile; reshuffle.");
+        setGameText("[Pilot] 2, 3: Black 5. While piloting Black 5, it is maneuver +1 and he draws one battle destiny if not able to otherwise. If at opponent's system, instead of Force draining here, may take any one card into hand from Force Pile; reshuffle.");
         addIcons(Icon.DEATH_STAR_II, Icon.PILOT, Icon.LEGACY_BLOCK_7);
         addKeywords(Keyword.BLACK_SQUADRON);
         setMatchingStarshipFilter(Filters.Black_5);

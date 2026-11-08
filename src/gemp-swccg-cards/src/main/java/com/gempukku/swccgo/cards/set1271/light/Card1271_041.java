@@ -34,7 +34,7 @@ public class Card1271_041 extends AbstractNormalEffect {
         super(Side.LIGHT, 5, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Oh, He's Not Dead, Not Yet",
                 Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_1, Rarity.V);
         setLore("'Where did you dig up that old fossil?' 'I don't think he exists anymore.' 'Surely he must be dead by now.' 'I can't believe he's gone.' 'Oh, he's not dead, not yet.' Obi's back!");
-        setGameText("Deploy on table. Once per game, if Vader on table, may deploy Obi-Wan from Reserve Deck; reshuffle. May place this Effect in Used Pile to take a [Grabber] into hand from Reserve Deck; reshuffle. If you just attempted to take into hand or deploy a card from Reserve Deck, and the card was not found, may place this Effect in Lost Pile to search your Force Pile for that card; reshuffle.");
+        setGameText("Deploy on table. Once per game, if Vader on table, may [download] Obi-Wan. May place this Effect in Used Pile to [upload] a [Grabber]. If you just attempted to [download] or [upload] a card, and the card was not found, may place this Effect in Lost Pile to search your Force Pile for that card; reshuffle.");
         addIcons(Icon.SETUP);
     }
 

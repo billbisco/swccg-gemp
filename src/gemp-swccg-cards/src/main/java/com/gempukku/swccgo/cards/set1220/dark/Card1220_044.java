@@ -43,7 +43,7 @@ public class Card1220_044 extends AbstractImmediateEffect {
         super(Side.DARK, 3, PlayCardZoneOption.ATTACHED, Title.Pride_Of_The_Empire, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_2, Rarity.V);
         setVirtualSuffix(true);
         setLore("Imperial starships that perform with distinction are highly publicized in an attempt to make the pilots look like heroes to the citizens of the Empire.");
-        setGameText("If you just deployed a TIE/SA, deploy on a unique TIE/SA. Bombing Run is Immune to Control. May place this card in Used Pile to take Bombing Run or ComScan Detection into hand from Reserve Deck; reshuffle (or, once per game, retrieve); opponent loses 1 Force. (Immune to Control.)");
+        setGameText("If you just deployed a TIE/sa, deploy on a unique (•) TIE/sa. Bombing Run is [Immune to Control]. May place this card in Used Pile to [upload] (or, once per game, retrieve) Bombing Run or ComScan Detection; opponent loses 1 Force. (Immune to Control.)");
         addIcons(Icon.SPECIAL_EDITION);
         addImmuneToCardTitle(Title.Control);
     }

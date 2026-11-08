@@ -35,7 +35,7 @@ public class Card1210_158 extends AbstractUsedInterrupt {
         super(Side.LIGHT, 4, Title.Panic, Uniqueness.UNRESTRICTED, ExpansionSet.VIRTUAL_BLOCK_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("Cornered by Imperial troops, Han's gambler reflexes led him to do what comes naturally - attack! Surprise assaults work...sometimes.");
-        setGameText("Take a device or a non-lightsaber weapon into hand from Reserve Deck; reshuffle. OR If opponent just initiated a battle or Force drain at a system or sector, deploy (as a 'react') an unpiloted Rebel starfighter and a pilot of ability < 3 (simultaneously) on table from Reserve Deck; reshuffle. (Immune to Sense.)");
+        setGameText("[upload] a device or non-lightsaber weapon. OR If opponent just initiated a battle or Force drain at a system or sector, [download] (as a 'react') an unpiloted Rebel starfighter and a pilot of ability < 3 (simultaneously). (Immune to Sense.)");
     }
 
     @Override

@@ -42,7 +42,7 @@ public class Card1230_021 extends AbstractAlien {
         super(Side.DARK, 3, 2, 2, 2, 4, Title.Wooof, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_3, Rarity.V);
         setVirtualSuffix(true);
         setLore("Kadas'sa'Nikto. One of Jabba's best pilots. Often pilots Jabba's space yacht. Smuggler. Prefers to be flying combat starfighters.");
-        setGameText("Adds 3 to power of anything he pilots. Wooof may deploy with any cruiser using Combat Response. When deployed, may draw top card from Reserve Deck. During your deploy phase, if piloting Jabba's Space Cruiser, may deploy one Jabba aboard (for free) from Reserve Deck; reshuffle.");
+        setGameText("[Pilot] 3. Wooof may deploy with any cruiser using Combat Response. When deployed, may draw top card from Reserve Deck. During your deploy phase, if piloting Jabba's Space Cruiser, may [download] Jabba aboard (for free).");
         addIcons(Icon.PILOT, Icon.JABBAS_PALACE);
         addKeywords(Keyword.SMUGGLER);
         setSpecies(Species.NIKTO);

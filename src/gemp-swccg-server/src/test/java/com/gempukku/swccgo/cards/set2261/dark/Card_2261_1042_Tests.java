@@ -19,7 +19,7 @@ public class Card_2261_1042_Tests {
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
         assertLegacyVersion(scn.GetDSCard("v").getBlueprint(), scn.GetDSCard("current").getBlueprint(), "1261_42", "PC-E1",
-                LocalDate.of(2010, 4, 20), LocalDate.of(2012, 7, 21),
+                LocalDate.of(2010, 4, 20), LocalDate.of(2013, 4, 27),
                 "USED: Activate 1 Force. STARTING: ▲ Black Leader, Bossk, Dengar, DS-61-2, or Guri (may also ▲ a system with exactly 1 [Dark Side Force], a matching starship, and an always [Immune to Alter] Effect.) When drawing your starting hand, draw four cards instead of eight. Place this Interrupt in Lost Pile.");
     }
 }

@@ -39,7 +39,7 @@ import java.util.List;
 public class Card1271_031 extends AbstractRebel {
     public Card1271_031() {
         super(Side.LIGHT, 2, 2, 2, 2, 5, "Biggs, Rogue Legend", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_1, Rarity.V);
-        setGameText("Adds 2 to power of anything he pilots, 3 on Red 3. While piloting Red 3, it is maneuver +1 and he draws one battle destiny if not able to otherwise. If at opponent's system, instead of Force draining here, may take any card into hand from Force Pile; reshuffle.");
+        setGameText("[Pilot] 2, 3: Red 3. While piloting Red 3, it is maneuver +1 and he draws one battle destiny if not able to otherwise. If at opponent's system, instead of Force draining here, may take any one card into hand from Force Pile; reshuffle.");
         setLore("Piloted Red 3 at Battle of Yavin. Childhood friend of Luke. Led mutiny on Rand Ecliptic and theft of Ecliptic from shipyards on Bestine. Ecliptic Evaders emblem on helmet.");
         addIcons(Icon.PILOT, Icon.WARRIOR);
         addPersona(Persona.BIGGS);

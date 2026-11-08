@@ -181,7 +181,6 @@ public class Card_1274_017_Tests {
     @Test
     public void MotivatorShowsTheLatestText() {
         String t = com.gempukku.swccgo.framework.VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("1274_17").getGameText();
-        org.junit.Assert.assertEquals("Deploy on your non-[Reflections 2] astromech droid. That droid is power +2, gains [Presence Droid] and if present at a site, draws one battle destiny if unable to otherwise. During any move phase, may place this device in Lost Pile to take into hand from reserve deck one What're You Tryin' To Push On Us? or one R2-D2; reshuffle.", t);
-        org.junit.Assert.assertFalse(t.contains("Droid is power +2"));
+        org.junit.Assert.assertEquals("Deploy on your non-[Reflections 2] astromech droid. Droid is power +2, gains [Presence Droid], and if present at a site, draws one battle destiny if unable to otherwise. During any move phase, may place this device in Lost Pile to [upload] one What're You Tryin' To Push On Us? or R2-D2.", t);
     }
 }

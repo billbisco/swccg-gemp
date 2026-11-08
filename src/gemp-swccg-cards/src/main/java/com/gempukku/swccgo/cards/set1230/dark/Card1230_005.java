@@ -37,7 +37,7 @@ public class Card1230_005 extends AbstractAlien {
         super(Side.DARK, 2, 2, 1, 1, 3, Title.Fozec, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_3, Rarity.V);
         setVirtualSuffix(true);
         setLore("Spy for the Empire. Keeping tabs on Jabba's activities for the ISB. Secretly hoping to leave the Empire and pursue lucrative opportunities in the underworld.");
-        setGameText("Adds 2 to power of anything he pilots. While Undercover, opponent's Force drains at related locations are -1. Once during battle, if with an ISB agent, may cause opponent to draw destiny. You may retrieve 2 Force if destiny > 2.");
+        setGameText("[Pilot] 2. While Undercover, opponent's Force drains at related locations are -1. Once during battle, if with an ISB agent, may cause opponent to draw destiny; may retrieve 2 Force if destiny > 2.");
         addIcons(Icon.PILOT, Icon.JABBAS_PALACE);
         addKeywords(Keyword.SPY);
     }

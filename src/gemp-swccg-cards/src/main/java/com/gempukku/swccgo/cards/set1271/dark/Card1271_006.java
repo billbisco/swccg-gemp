@@ -45,7 +45,7 @@ public class Card1271_006 extends AbstractImperial {
     public Card1271_006() {
         super(Side.DARK, 3, 2, 2, 2, 4, "Saber Squadron Pilot", Uniqueness.RESTRICTED_3, ExpansionSet.VIRTUAL_BLOCK_7_1, Rarity.V);
         setLore("-");
-        setGameText("Adds 2 to power of anything he pilots. Matching pilot for Saber Squadron TIE and while piloting it: it may relocate using [Virtual Block 7] Combat Response, adds one destiny to total power only, and may add 1 to Force drains here (opponent loses no more than 2 Force to that drain).");
+        setGameText("[Pilot] 2. Matching pilot for Saber Squadron TIE and while piloting it: it may relocate using [Virtual Block 7] Combat Response, adds one destiny to total power only, and may add 1 to Force drains here (opponent loses no more than 2 Force to that Force drain).");
         addIcons(Icon.PILOT, Icon.DEATH_STAR_II);
         setMatchingStarshipFilter(Filters.title("Saber Squadron TIE"));
     }
