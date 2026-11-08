@@ -6618,5 +6618,7 @@ const fixedImages = {
 // Image = the wiki slip crop of the release sheet that printed that text (wiki page field image2).
 "2261_33":"https://wiki.swccg.com/images/c/cd/VB6-32-Dark_Waters_Krayt_Dragon_Bones.png",
 "2272_23":"https://wiki.swccg.com/images/a/a0/VB7-04-Rogue_Insertion.png",
+"2281_24":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Dark/large/contractkillers.gif",
+"2281_24_BACK":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Dark/large/fearedthroughoutthegalaxy.gif",
 
 };
