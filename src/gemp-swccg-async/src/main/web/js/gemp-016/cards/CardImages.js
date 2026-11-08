@@ -6662,7 +6662,6 @@ const fixedImages = {
 "2282_14":"https://wiki.swccg.com/images/0/03/VB8-03-Lando_Calrissian_Unlikely_Hero.png",
 "2283_12":"https://wiki.swccg.com/images/f/fc/VB8-p3-97-Spaceport_Docking_Bay.png",
 "2283_21":"https://wiki.swccg.com/images/0/09/VB8-02-Underworld_Contacts_Uncharted_Settlements.png",
-"2291_19":"https://wiki.swccg.com/images/d/d2/VB9-p4-20-Geonosis_Separatist_Council_Room.png",
 "2291_29":"https://wiki.swccg.com/images/4/40/VB9-00-Separatist_Uprising_At_War_With_Itself.png",
 "2291_29_BACK":"https://res.starwarsccg.org/cards/legacy/VirtualBlock9-Dark/large/atwarwithitself.gif",
 "2291_58":"https://wiki.swccg.com/images/e/ea/VB9-p10-60-Geonosis_Petranaki_Arena.png",
