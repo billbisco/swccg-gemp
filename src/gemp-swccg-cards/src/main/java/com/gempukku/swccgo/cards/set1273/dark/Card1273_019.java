@@ -54,13 +54,13 @@ public class Card1273_019 extends AbstractMission {
 
     public Card1273_019() {
         super(Side.DARK, 0, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, LegacySpiceCards.SPICE_MINE_OPERATIONS, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_3, Rarity.V, true);
-        setGameText("If your [Virtual Block 7] office on table, deploy on table. Program Trap is canceled. Cards stacked here are 'spice' cards. Once per turn, if you control Extraction Facility, may place a 'spice' card in owner's Lost Pile to draw up to 2 cards from Reserve Deck. Once during your turn, may: use 2 Force to stack a card from Lost Pile here, deploy a non-character card with \"Kessel\" in title from Reserve Deck; reshuffle, and/or 'mine' (opponent draws destiny; draw up to X destiny, where X = 1 plus number of Kessel locations you occupy; if any of the printed destiny numbers match, stack opponent's destiny or top card of your Lost Pile here).");
+        setGameText("If your Kessel office on table, deploy on table. Program Trap is canceled. Cards stacked here are 'spice' cards. Once per turn, if you control Extraction Facility, may place a 'spice' card in owner's Lost Pile to draw up to 2 cards from Reserve Deck. Once during your turn, may: use 2 Force to stack a card from Lost Pile here, deploy a non-character card with \"Kessel\" in title from Reserve Deck; reshuffle, and/or 'mine' (opponent draws destiny; draw up to X destiny, where X = 1 plus number of Kessel locations you occupy; if any of the printed destiny numbers match, stack opponent's destiny or top card of your Lost Pile here).");
         addIcons(Icon.SETUP);
     }
 
     @Override
     protected boolean checkGameTextDeployRequirements(String playerId, SwccgGame game, PhysicalCard self, PlayCardOptionId playCardOptionId, boolean asReact) {
-        return GameConditions.canSpot(game, self, Filters.and(Filters.your(playerId), Filters.site, Icon.LEGACY_BLOCK_7, Filters.titleContains("Office")));
+        return GameConditions.canSpot(game, self, Filters.and(Filters.your(playerId), Filters.site, Filters.titleContains("Kessel"), Filters.titleContains("Office")));
     }
 
     @Override
