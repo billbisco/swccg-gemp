@@ -10,6 +10,7 @@ import com.gempukku.swccgo.common.PlayCardOptionId;
 import com.gempukku.swccgo.common.PlayCardZoneOption;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
+import com.gempukku.swccgo.common.SpotOverride;
 import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.common.Zone;
@@ -59,12 +60,14 @@ import java.util.List;
  * Set: Virtual Block 8.1
  * Type: Effect
  * Title: Scoundrel's Luck
+ * Text: the Virtual Block 8.1 release sheet and the Virtual Cards Master List (both "(even if inactive)"; the PC card
+ * image and PC card data lack it).
  */
 public class Card1281_037 extends AbstractNormalEffect {
     public Card1281_037() {
         super(Side.LIGHT, 3, PlayCardZoneOption.ATTACHED, "Scoundrel's Luck", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_1, Rarity.V);
         setLore("'You said you wanted to be around when I made a mistake, well, this could be it, sweetheart.'");
-        setGameText("Deploy on Infiltration with three [Scoundrel] cards from Reserve Deck face down under here. Once during your turn, at any time, may deploy a [Scoundrel] Effect from here. If a [Scoundrel] Effect just left table, stack it under here. At the start of your turn, stack all [Scoundrel] Effects under here. Once per turn, may place any card in Lost Pile out of play to deploy a character weapon (except a grenade) from Lost Pile. While two non-droid scoundrels present at battlegrounds, Their Fire Has Gone Out Of The Universe flips and may not flip back. (Immune to Alter.)");
+        setGameText("Deploy on Infiltration with three [Scoundrel] cards from Reserve Deck face down under here. Once during your turn, at any time, may deploy a [Scoundrel] Effect from here. If a [Scoundrel] Effect just left table, stack it under here. At the start of your turn, stack all [Scoundrel] Effects under here (even if inactive). Once per turn, may place any card in Lost Pile out of play to deploy a character weapon (except a grenade) from Lost Pile. While two non-droid scoundrels present at battlegrounds, Their Fire Has Gone Out Of The Universe flips and may not flip back. (Immune to Alter.)");
         addImmuneToCardTitle(Title.Alter);
     }
 
@@ -112,10 +115,10 @@ public class Card1281_037 extends AbstractNormalEffect {
         }
 
         if (TriggerConditions.isStartOfYourTurn(game, effectResult, playerId)) {
-            Collection<PhysicalCard> onTable = Filters.filterActive(game, self, scoundrelEffect);
+            Collection<PhysicalCard> onTable = Filters.filterActive(game, self, SpotOverride.INCLUDE_ALL, scoundrelEffect);
             if (!onTable.isEmpty()) {
                 RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
-                action.setText("Stack all [Scoundrel] Effects here");
+                action.setText("Stack all [Scoundrel] Effects here (even if inactive)");
                 action.appendEffect(new StackCardsFromTableEffect(action, onTable, self, true));
                 actions.add(action);
             }

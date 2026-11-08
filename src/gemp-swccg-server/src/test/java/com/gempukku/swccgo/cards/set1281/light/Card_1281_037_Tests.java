@@ -392,6 +392,36 @@ public class Card_1281_037_Tests {
     }
 
     @Test
+    public void ScoundrelsLuckHasTheSheetAndMasterListText() {
+        var card = GetScenario().GetLSCard("luck").getBlueprint();
+        assertEquals("Deploy on Infiltration with three [Scoundrel] cards from Reserve Deck face down under here. Once during your turn, at any time, may deploy a [Scoundrel] Effect from here. If a [Scoundrel] Effect just left table, stack it under here. At the start of your turn, stack all [Scoundrel] Effects under here (even if inactive). Once per turn, may place any card in Lost Pile out of play to deploy a character weapon (except a grenade) from Lost Pile. While two non-droid scoundrels present at battlegrounds, Their Fire Has Gone Out Of The Universe flips and may not flip back. (Immune to Alter.)",
+                card.getGameText());
+    }
+
+    @Test
+    public void ScoundrelsLuckStacksInactiveScoundrelEffectsAtStartOfTurn() {
+        //test1: Bravado on a missing (inactive) Lando is inactive
+        //test2: it is stacked here at the start of your turn anyway ("(even if inactive)")
+        var scn = GetScenario();
+        var luck = scn.GetLSCard("luck");
+        var bravado = scn.GetLSCard("bravado");
+        var charm = scn.GetLSCard("charm");
+        var ingenuity = scn.GetLSCard("ingenuity");
+        var lando = scn.GetLSCard("lando");
+        var site = scn.GetLSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, lando);
+        setupLuckStacked(scn, luck, bravado, charm, ingenuity);
+        scn.AttachCardsTo(lando, bravado);
+        scn.MakeCardGoMissing(lando);
+        assertFalse(GameConditions.canSpot(scn.game(), luck, com.gempukku.swccgo.filters.Filters.sameCardId(bravado))); //test1
+        scn.SkipToLSTurn();
+        scn.PassAllResponses();
+        assertTrue(scn.GetStackedCards(luck).contains(bravado)); //test2
+    }
+
+    @Test
     public void ScoundrelsLuckSecondCopyMayNotDeploy() {
         var scn = GetScenario();
         var luck = scn.GetLSCard("luck");

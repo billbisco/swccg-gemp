@@ -38,12 +38,14 @@ import java.util.List;
  * Type: Character
  * Subtype: Alien
  * Title: Lady Valarian
+ * Text: the Virtual Cards Master List (PC errata of the Block 8.3 sheet text "(except Hutt Bounty)" / "target gains
+ * Heroic"; that original is 2283_3).
  */
 public class Card1283_003 extends AbstractAlien {
     public Card1283_003() {
         super(Side.DARK, 2, 3, 3, 3, 5, LegacyLadyValarian.TITLE, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_3, Rarity.V);
         setLore("Whiphid female gangster and leader.");
-        setGameText("Your total battle destiny here is +1. Unless Jabba on table, 'Jabba' in the game text of your cards (except Hutt Bounty) may be treated as 'Lady Valarian.' Once per turn, may target a Mistryl of ability > 2 here; target gains Heroic until end of turn.");
+        setGameText("Your total battle destiny here is +1. Unless Jabba on table, 'Jabba' in the game text of your cards (except Hutt Bounty and Jabba's Prize) may be treated as 'Lady Valarian.' Once per turn, may target a Mistryl of ability > 2 here; target is Heroic until end of turn.");
         addIcons(Icon.JABBAS_PALACE);
         addKeywords(Keyword.FEMALE, Keyword.GANGSTER, Keyword.LEADER);
         setSpecies(Species.WHIPHID);
@@ -54,7 +56,7 @@ public class Card1283_003 extends AbstractAlien {
         String playerId = self.getOwner();
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new TotalBattleDestinyModifier(self, Filters.here(self), 1, playerId));
-        modifiers.add(new ModifyGameTextModifier(self, Filters.and(Filters.your(self), Filters.not(Filters.Hutt_Bounty)),
+        modifiers.add(new ModifyGameTextModifier(self, Filters.and(Filters.your(self), Filters.not(Filters.or(Filters.Hutt_Bounty, Filters.Jabbas_Prize))),
                 new UnlessCondition(new OnTableCondition(self, Filters.Jabba)),
                 ModifyGameTextType.LEGACY__LADY_VALARIAN__JABBA_MAY_BE_TREATED_AS_LADY_VALARIAN));
         return modifiers;

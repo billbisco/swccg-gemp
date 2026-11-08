@@ -380,6 +380,7 @@ public class DefaultSwccgFormat implements SwccgFormat {
      *   <li>Originals An Unusual Amount Of Fear / Fear Is My Ally (13_5 / 13_69): max 10</li>
      *   <li>Legacy Virtual Anger, Fear, Aggression (V) / Knowledge And Defense (V)
      *       (601_39 / 601_1, or those titles when Legacy / set 601): max 15</li>
+     *   <li>Their pre-errata versions (2240_78 / 2240_31, Virtual Block 4 sheet, Dec 2009): max 12</li>
      *   <li>Modern Virtual Anger, Fear, Aggression (V) / Knowledge And Defense (V)
      *       (200_35 / 200_110): uncapped (any number)</li>
      * </ul>
@@ -388,6 +389,8 @@ public class DefaultSwccgFormat implements SwccgFormat {
      */
     public static final int ORIGINAL_STARTING_EFFECT_MAX_OUTSIDE_DECK_SHIELDS = 10;
     public static final int LEGACY_STARTING_EFFECT_MAX_OUTSIDE_DECK_SHIELDS = 15;
+    /** Pre-errata (Dec 2009 sheet) Anger, Fear, Aggression (V) / Knowledge And Defense (V): "up to 12 cards". */
+    public static final int LEGACY_VERSION_STARTING_EFFECT_MAX_OUTSIDE_DECK_SHIELDS = 12;
 
     /**
      * Fails if the deck uses a capped Starting Effect with more OOD Defensive Shields than
@@ -420,7 +423,8 @@ public class DefaultSwccgFormat implements SwccgFormat {
                     maxOutsideDeckShields = Math.max(maxOutsideDeckShields, ORIGINAL_STARTING_EFFECT_MAX_OUTSIDE_DECK_SHIELDS);
                 }
                 else if (isLegacyVirtualSE) {
-                    maxOutsideDeckShields = Math.max(maxOutsideDeckShields, LEGACY_STARTING_EFFECT_MAX_OUTSIDE_DECK_SHIELDS);
+                    maxOutsideDeckShields = Math.max(maxOutsideDeckShields, LegacyVersion.isVersionBlueprint(baseBlueprintId)
+                            ? LEGACY_VERSION_STARTING_EFFECT_MAX_OUTSIDE_DECK_SHIELDS : LEGACY_STARTING_EFFECT_MAX_OUTSIDE_DECK_SHIELDS);
                 }
                 // modern Virtual 200_35 / 200_110: leave uncapped
             }
