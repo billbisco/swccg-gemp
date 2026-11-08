@@ -34,21 +34,14 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-
-/**
- * Set: Block 7
- * Type: Character
- * Subtype: Rebel
- * Title: Master Kenobi
- * Pre-errata version of 1273_27 (Virtual Block 7.3 release sheet text, Jun 2011), replaced by the Virtual Cards Master List text (lose 1 Force or use 2 Force to place a just-forfeited Rebel in Used Pile). Anything Goes only (docs/legacy-versions.md).
- */
+/** Master Kenobi as errata'd 2011-06-23 (PC-E1: adds [Maintenance] cards to the restriction), a version of 1273_27; replaced by the PC card-list errata (PC-E2, by 2012-07-21: lose 1 Force or use 2 Force to place a just-forfeited Rebel in Used Pile). Anything Goes only (docs/legacy-versions.md). */
 public class Card2273_027 extends AbstractRebel {
     public Card2273_027() {
         super(Side.LIGHT, 1, 5, 5, 6, 9, "Master Kenobi", Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
         setLore("A user of the Force can alter the environment to affect the minds of others. 'The Force can have a strong influence on the weak-minded.'");
         setGameText("While 'communing': you may not deploy [Maintenance] cards or [Episode I] Jedi; Rebels of ability < 5 draw one battle destiny if unable to otherwise and, once per turn, may place one just forfeited in Used Pile; Once per turn, may deploy from Reserve Deck a Tatooine battleground (or Obi-Wan's Hut); reshuffle.");
-        setLegacyVersion(new LegacyVersion("1273_27", "",
-                "Virtual Block 7.3 release sheet (2011-06-03)", LocalDate.of(2011, 6, 3), LocalDate.of(2013, 4, 27)));
+        setLegacyVersion(new LegacyVersion("1273_27", "PC-E1",
+                "PC news \"5 immediate changes from the CBT\" (2011-06-23); Virtual Block 7.3 sheet re-made 2011-07-25", LocalDate.of(2011, 6, 23), LocalDate.of(2012, 7, 21)));
         addIcons(Icon.WARRIOR, Icon.LEGACY_BLOCK_7);
         addPersona(Persona.OBIWAN);
         setAsLegacy(true);
