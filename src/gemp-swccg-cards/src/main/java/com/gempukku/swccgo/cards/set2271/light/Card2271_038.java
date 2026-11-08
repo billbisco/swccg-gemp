@@ -30,17 +30,14 @@ import com.gempukku.swccgo.logic.timing.results.LostFromTableResult;
 import java.time.LocalDate;
 import java.util.List;
 
-/**
- * Field Dressing (Virtual Block 7.1).
- * Pre-errata version of 1271_38 (Virtual Block 7.1 release sheet text, Jun 2010), replaced by the Virtual Cards Master List text (return the character from Lost Pile). Anything Goes only (docs/legacy-versions.md).
- */
+/** Field Dressing as on the re-made Virtual Block 7.1 sheet (2010-07-28, PC-E2: "even if its forfeit"), a version of 1271_38; replaced by the Virtual Cards Master List text (PC-E3, 2013-04-27: return the character from Lost Pile). Anything Goes only (docs/legacy-versions.md). */
 public class Card2271_038 extends AbstractImmediateEffect {
     public Card2271_038() {
         super(Side.LIGHT, 3, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Field Dressing", Uniqueness.RESTRICTED_2, ExpansionSet.VIRTUAL_BLOCK_7_1, Rarity.V);
         setLore("The Alliance lost many fine soldiers at conflicts such as the Battle of Hoth. The Rebel High Command is aware of the cost of freedom from Imperial tyranny.");
         setGameText("If you just forfeited a character of ability < 5 present at a site, deploy on that character (who remains at same site and, if 'hit,' is restored to normal). Character is forfeit = 0 (even if its forfeit may not normally be reduced). May play First Aid to place this card in Used Pile. Immune to your Control.");
-        setLegacyVersion(new LegacyVersion("1271_38", "",
-                "Virtual Block 7.1 release sheet (2010-06-18)", LocalDate.of(2010, 6, 18), LocalDate.of(2013, 4, 27)));
+        setLegacyVersion(new LegacyVersion("1271_38", "PC-E2",
+                "Virtual Block 7.1 release sheet as re-made 2010-07-28", LocalDate.of(2010, 7, 28), LocalDate.of(2013, 4, 27)));
         addIcons(Icon.SPECIAL_EDITION);
     }
 
