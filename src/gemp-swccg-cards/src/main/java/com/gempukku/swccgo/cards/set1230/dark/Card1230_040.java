@@ -42,7 +42,7 @@ public class Card1230_040 extends AbstractUsedOrStartingInterrupt {
         super(Side.DARK, 2, "Abyssin Ornament & Wounded Wookiee", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_3, Rarity.V);
         addComboCardTitles(Title.Abyssin_Ornament, Title.Wounded_Wookiee);
         setVirtualSuffix(true);
-        setGameText("USED: Creature attacks at pits are immune to At Peace and Yarna d'al' Gargan until end of your next turn. (Immune to Sense) OR Cancel an attempt to target a rancor with a character weapon. OR Use 1 Force (2 if a rancor on table) to deploy Nal Hutta from Reserve Deck; reshuffle. STARTING: If Great Pit Of Carkoon on table, deploy from Reserve Deck an Effect that is always [Immune to Alter] and choose to deploy from Reserve Deck: Rancor Pit and a rancor there, OR Power Of The Hutt and Sarlacc. Place this Interrupt in hand.");
+        setGameText("USED: Creature attacks at pits are immune to At Peace and Yarna d'al' Gargan until end of your next turn. (Immune to Sense.) OR Cancel an attempt to target a rancor with a character weapon. OR Use 1 Force (2 if a rancor on table) to [download] Nal Hutta. STARTING: If Great Pit Of Carkoon on table, [download] an Effect that is always [Immune to Alter] and choose: [download] Rancor Pit and a rancor there, OR [download] Power Of The Hutt and Sarlacc. Place this Interrupt in hand.");
         addIcons(Icon.REFLECTIONS_II);
     }
 

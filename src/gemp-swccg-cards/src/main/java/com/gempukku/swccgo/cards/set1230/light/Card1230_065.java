@@ -38,7 +38,7 @@ public class Card1230_065 extends AbstractAlien {
         super(Side.LIGHT, 3, 2, 1, 3, 4, Title.Aved_Luun, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_3, Rarity.V);
         setVirtualSuffix(true);
         setLore("Shaman of her Jawa tribe. Mate of Kalit. Suspects betrayal from her mate's rival, Wittin.");
-        setGameText("Deploys only on Tatooine. Adds one battle destiny with Kalit. Your Jawas and sandcrawlers are destiny +2. May deploy Jawa Camp, Sergeant Doallyn, or Thedit on table from Reserve Deck; reshuffle.");
+        setGameText("Deploys only on Tatooine. Adds one battle destiny with Kalit. Your Jawas and sandcrawlers are destiny +2. May [download] one Jawa Camp, Sergeant Doallyn, or Thedit.");
         addIcons(Icon.JABBAS_PALACE);
         addKeywords(Keyword.FEMALE);
         setSpecies(Species.JAWA);

@@ -36,7 +36,7 @@ public class Card1230_046 extends AbstractUsedInterrupt {
         super(Side.DARK, 6, Title.Outflank, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_3, Rarity.V);
         setVirtualSuffix(true);
         setLore("Commander Igar's defense of Endor called for the use of speeder bikes to harass any attacking Rebels.");
-        setGameText("If opponent just initiated battle at a site where their total power is greater than yours, you may use 1 Force (or cause opponent to use 1 Force) to relocate one of your characters or vehicles to that site from a related location.");
+        setGameText("If opponent just initiated battle at a site where their total power is greater than yours, may use 1 Force (or cause opponent to use 1 Force) to relocate one of your characters or vehicles to that site from a related location.");
         addIcons(Icon.ENDOR);
     }
 

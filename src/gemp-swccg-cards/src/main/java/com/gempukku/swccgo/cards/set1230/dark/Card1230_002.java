@@ -37,7 +37,7 @@ public class Card1230_002 extends AbstractAlien {
         super(Side.DARK, 1, 3, 3, 1, 4, Title.Bib, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_3, Rarity.V);
         setVirtualSuffix(true);
         setLore("Twi'lek leader and majordomo of Jabba's palace. Succeeded Jabba's last majordomo, Naroon Cuthus. Plotting to kill Jabba.");
-        setGameText("Opponent's non-Jedi characters are deploy +1 to [Jabba's Palace] sites. Once during your control phase, you may place three cards from hand in Used Pile to reveal top card of Reserve Deck; if it is an alien, take it into hand.");
+        setGameText("Opponent's non-Jedi characters are deploy +1 to [Jabba's Palace] sites. Once during your control phase, may place three cards from hand in Used Pile to reveal top card of Reserve Deck; if it is an alien, take it into hand.");
         addPersona(Persona.BIB);
         addIcons(Icon.JABBAS_PALACE);
         addKeywords(com.gempukku.swccgo.common.Keyword.LEADER);
