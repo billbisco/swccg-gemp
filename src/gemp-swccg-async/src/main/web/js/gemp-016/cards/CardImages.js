@@ -6640,5 +6640,6 @@ const fixedImages = {
 "2250_44":"https://wiki.swccg.com/images/2/2e/VB5-45-Master_Qui_Gon.png",
 "2250_82":"https://wiki.swccg.com/images/b/be/VB5-79-Well_Handle_This.png",
 "2250_82_BACK":"https://wiki.swccg.com/images/d/db/VB5-79-Duel_Of_The_Fates.png",
+"2261_20":"https://wiki.swccg.com/images/5/56/VB6-19-A_Useless_Gesture.png",
 
 };
