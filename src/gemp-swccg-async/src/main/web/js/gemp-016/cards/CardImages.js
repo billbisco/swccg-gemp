@@ -6715,6 +6715,7 @@ const fixedImages = {
 "2250_65":"https://wiki.swccg.com/images/4/4a/VB5-65-Ambush.png",
 "2250_80":"https://wiki.swccg.com/images/d/d2/VB5-81-Bravo_Fighter.png",
 "2250_85":"https://wiki.swccg.com/images/2/29/VB5-86-Elegant_Lightsaber.png",
+"2261_16":"https://wiki.swccg.com/images/2/20/VB6-12-Lieutenant_Cecius.png",
 // END VB5-VB6 phase 2
 "2210_6":"https://wiki.swccg.com/images/9/97/VB1-06-Danz_Borin.png",
 "2210_8":"https://wiki.swccg.com/images/8/8d/VB1-08-Death_Star_Gunner.png",
