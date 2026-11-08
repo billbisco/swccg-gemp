@@ -334,3 +334,5 @@
 2291_58,1291_58
 # Removed Legacy version ids (VB6, live since r16) -> their current cards, which now play that text (docs/legacy-versions.md)
 2261_1045,1261_45
+# Removed Legacy version ids (icon-loss false versions, audit 2026-11-08: only icons/notation differed) -> the current card (or the version with the same real text) (docs/legacy-versions.md)
+2261_1033,1261_33
