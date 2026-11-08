@@ -1,0 +1,91 @@
+package com.gempukku.swccgo.cards.set2271;
+
+import com.gempukku.swccgo.common.Icon;
+import com.gempukku.swccgo.common.Keyword;
+import com.gempukku.swccgo.common.LegacyVersion;
+import com.gempukku.swccgo.game.SwccgCardBlueprint;
+import com.gempukku.swccgo.logic.GameUtils;
+
+import java.time.LocalDate;
+import java.util.Objects;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+/**
+ * Identity checks shared by the Virtual Block 7 pre-errata version tests: the version is the current card in every
+ * printed respect except its game text and version info.
+ */
+public final class VersionAsserts {
+    private VersionAsserts() {
+    }
+
+    public static void assertVersion(SwccgCardBlueprint version, SwccgCardBlueprint current, String currentPrintingId,
+                                     String label, LocalDate printedOn, LocalDate supersededOn, String gameText) {
+        assertEquals(gameText, version.getGameText());
+        assertFalse(gameText.equals(current.getGameText()));
+        LegacyVersion info = version.getLegacyVersion();
+        assertNotNull(info);
+        assertEquals(currentPrintingId, info.currentPrintingId());
+        assertEquals(label, info.label());
+        assertEquals(printedOn, info.printedOn());
+        assertEquals(supersededOn, info.supersededOn());
+        assertEquals(label.isEmpty() ? GameUtils.getFullName(current) : GameUtils.getFullName(current) + " [" + label + "]",
+                GameUtils.getFullName(version));
+
+        assertEquals(current.getTitle(), version.getTitle());
+        assertEquals(current.getTitles(), version.getTitles());
+        assertEquals(current.getSide(), version.getSide());
+        assertEquals(current.getUniqueness(), version.getUniqueness());
+        assertEquals(current.getCardCategory(), version.getCardCategory());
+        assertEquals(current.getCardTypes(), version.getCardTypes());
+        assertEquals(current.getCardSubtype(), version.getCardSubtype());
+        assertEquals(current.getPersonas(), version.getPersonas());
+        assertEquals(current.getExpansionSet(), version.getExpansionSet());
+        assertEquals(current.getRarity(), version.getRarity());
+        assertEquals(current.hasVirtualSuffix(), version.hasVirtualSuffix());
+        for (Icon icon : Icon.values())
+            assertEquals(icon.name(), current.getIconCount(icon), version.getIconCount(icon));
+        for (Keyword keyword : Keyword.values())
+            assertEquals(keyword.name(), current.hasKeyword(keyword), version.hasKeyword(keyword));
+        assertEquals(current.getLore(), version.getLore());
+        assertTrue(Objects.equals(current.getDestiny(), version.getDestiny()));
+        assertTrue(Objects.equals(current.getDeployCost(), version.getDeployCost()));
+        assertTrue(version.isLegacy());
+    }
+
+    /**
+     * Resolves pending decisions until done: card selections take the first selectable cards (as many as allowed),
+     * multiple choices take the first option, everything else is passed.
+     */
+    public static void resolveUntil(com.gempukku.swccgo.framework.VirtualTableScenario scn, java.util.function.BooleanSupplier done) {
+        for (int i = 0; i < 40 && !done.getAsBoolean(); i++) {
+            String decider = scn.GetDecidingPlayer();
+            var d = scn.GetAwaitingDecision(decider);
+            if (d == null) {
+                return;
+            }
+            var params = d.getDecisionParameters();
+            if (params.get("min") != null && params.get("cardId") == null && params.get("max") != null) {
+                scn.PlayerDecided(decider, params.get("max")[0]);
+            } else if (params.get("min") != null && params.get("cardId") != null && params.get("actionText") == null) {
+                String[] ids = params.get("cardId");
+                String[] selectable = params.get("selectable");
+                int max = Integer.parseInt(params.get("max")[0]);
+                java.util.List<String> chosen = new java.util.ArrayList<>();
+                for (int j = 0; j < ids.length && chosen.size() < max; j++) {
+                    if (selectable == null || "true".equals(selectable[j])) {
+                        chosen.add(ids[j]);
+                    }
+                }
+                scn.PlayerDecided(decider, String.join(",", chosen));
+            } else if (params.get("results") != null) {
+                scn.PlayerDecided(decider, "0");
+            } else {
+                scn.PlayerPass(decider);
+            }
+        }
+    }
+}
