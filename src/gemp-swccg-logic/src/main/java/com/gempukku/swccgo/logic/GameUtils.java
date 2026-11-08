@@ -41,7 +41,8 @@ public class GameUtils {
      */
     private static String getTitleSuffix(SwccgCardBlueprint blueprint) {
         return (blueprint.hasAlternateImageSuffix() ? " (AI)" : "") + (blueprint.hasVirtualSuffix() ? " (V)" : "")
-                + (blueprint.getLegacyVersion() != null ? " [" + blueprint.getLegacyVersion().label() + "]" : "");
+                + (blueprint.getLegacyVersion() != null && !blueprint.getLegacyVersion().label().isEmpty()
+                    ? " [" + blueprint.getLegacyVersion().label() + "]" : "");
     }
 
     /**

@@ -35,8 +35,9 @@ current printing (`DefaultSwccgFormat.sameCardBlueprintId`), and banning the cur
 ## Display
 
 - `setLegacyVersion(new LegacyVersion(currentId, label, source, printedOn, supersededOn))` in the constructor.
-- The label is appended to the full name everywhere (game log, deck validation): `Rogue Insertion [Original (Dec 2010 slip)]`.
-  In-game card info shows `Version: <label> (pre-errata; Anything Goes only)`.
+- **Label (Bill, 2026-11-08):** the original printing has **no label** (pass `""`). Every later version is `<Issuer>-E<n>`: `PC-E1`, `PC-E2`, … (`D-E1` for Decipher); n counts every published change to the card, rephrases included, in date order. Rephrase-only versions get their own card too ("a change is a change is a change").
+- A non-empty label is appended to the full name everywhere (game log, deck validation): `Rogue Insertion [PC-E1]`; an original shows the plain title.
+  In-game card info shows `Version: <label or Original printing> (<source>; Anything Goes only)`.
 - Image: the wiki slip crop of the release sheet that printed that text (the wiki page's `image2` file), added to
   `CardImages.js` after `// END legacy`. Get the URL from the wiki API:
   `https://wiki.swccg.com/api.php?action=query&prop=imageinfo&iiprop=url&format=json&titles=File:<image2>`

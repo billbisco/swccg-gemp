@@ -29,14 +29,14 @@ public record LegacyVersion(String currentPrintingId, String label, String sourc
     /** Card number of the (k+1)-th older version = current card number + k * this. */
     public static final int VERSION_NUMBER_STEP = 1000;
     /** Number of older versions per card the card pool looks for (k = 0 .. MAX_VERSIONS_PER_CARD - 1). */
-    public static final int MAX_VERSIONS_PER_CARD = 3;
+    public static final int MAX_VERSIONS_PER_CARD = 5;
 
     public static final int FIRST_VERSION_SET = 1200 + VERSION_SET_OFFSET;
     public static final int LAST_VERSION_SET = 1292 + VERSION_SET_OFFSET;
 
     public LegacyVersion {
-        if (currentPrintingId == null || label == null || label.isEmpty() || printedOn == null)
-            throw new IllegalArgumentException("A Legacy version needs its current printing id, a label and a date");
+        if (currentPrintingId == null || label == null || printedOn == null)
+            throw new IllegalArgumentException("A Legacy version needs its current printing id, a label (empty for the original printing) and a date");
     }
 
     /** True when the blueprint id (modifiers such as * ^ and _BACK allowed) is a pre-errata Legacy version. */

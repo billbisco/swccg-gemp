@@ -76,7 +76,8 @@ public class LegacyVersionsTests {
             assertTrue(id, version.isLegacy());
             assertFalse(id, version.getGameText().equals(current.getGameText()));
             assertTrue(id + ": label shown in full name",
-                    GameUtils.getFullName(version).endsWith(" [" + info.label() + "]"));
+                    info.label().isEmpty() ? !GameUtils.getFullName(version).contains("[")
+                            : GameUtils.getFullName(version).endsWith(" [" + info.label() + "]"));
         }
     }
 
@@ -138,7 +139,7 @@ public class LegacyVersionsTests {
             formats.getFormat("legacy").validateDeck(deck("2261_33"));
             fail("Legacy deck with a pre-errata version");
         } catch (DeckInvalidException expected) {
-            assertTrue(expected.getMessage(), expected.getMessage().contains("Dark Waters & Krayt Dragon Bones [Original (Sep 2009 slip)]"));
+            assertTrue(expected.getMessage(), expected.getMessage().contains("Dark Waters & Krayt Dragon Bones"));
         }
     }
 

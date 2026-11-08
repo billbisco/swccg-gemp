@@ -76,9 +76,9 @@ public class Card_2272_023_Tests {
                 card.getGameText());
         var version = card.getLegacyVersion();
         assertEquals("1272_23", version.currentPrintingId());
-        assertEquals("Original (Dec 2010 slip)", version.label());
+        assertEquals("", version.label());
         assertEquals(java.time.LocalDate.of(2010, 12, 15), version.printedOn());
-        assertEquals("Rogue Insertion [Original (Dec 2010 slip)]", com.gempukku.swccgo.logic.GameUtils.getFullName(card));
+        assertEquals("Rogue Insertion", com.gempukku.swccgo.logic.GameUtils.getFullName(card));
     }
 
     @Test

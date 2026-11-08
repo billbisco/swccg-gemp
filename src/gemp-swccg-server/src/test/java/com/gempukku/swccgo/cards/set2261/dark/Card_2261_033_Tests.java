@@ -49,9 +49,9 @@ public class Card_2261_033_Tests {
         assertTrue(bp.isLegacy());
         var version = bp.getLegacyVersion();
         assertEquals("1261_33", version.currentPrintingId());
-        assertEquals("Original (Sep 2009 slip)", version.label());
+        assertEquals("", version.label());
         assertEquals(java.time.LocalDate.of(2009, 9, 4), version.printedOn());
-        assertEquals("Dark Waters & Krayt Dragon Bones [Original (Sep 2009 slip)]",
+        assertEquals("Dark Waters & Krayt Dragon Bones",
                 com.gempukku.swccgo.logic.GameUtils.getFullName(bp));
         assertEquals("Deploy on a site with \"Waters\" in game text. During your battle phase, if on Rancor Pit, may relocate a captive from Audience Chamber to here. If opponent's character here was just eaten, retrieve 3 Force. If a creature here is lost, owner loses Force equal to half its printed deploy cost (round up). Once per turn, if a creature here is about to draw destiny for ferocity, may instead use its destiny number. May use 1 Force to ▼ a non-[Selective] ferocious creature here. (Immune to Alter.)", bp.getGameText());
     }

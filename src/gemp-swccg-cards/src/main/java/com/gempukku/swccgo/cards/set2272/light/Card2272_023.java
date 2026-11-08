@@ -52,7 +52,7 @@ public class Card2272_023 extends AbstractNormalEffect {
         setLore("Each Rebel soldier is driven by bravery and a belief in the Rebel Alliance's ideal of freedom. Courageous and quick-thinking Rebels often defeat Imperial legions.");
         setGameText("Deploy on table. Canceled if your Senate or [Reflections 2] objective on table. Rogue Squadron pilots are spies, and, unless your character of ability > 4 at a site, power +2, armor = 4, immune to attrition < 4, and weapon destiny draws targeting them are -1 (may not be further reduced). (Immune to Alter.)");
         addImmuneToCardTitle(Title.Alter);
-        setLegacyVersion(new LegacyVersion("1272_23", "Original (Dec 2010 slip)",
+        setLegacyVersion(new LegacyVersion("1272_23", "",
                 "Virtual Block 7.2 release sheet (2010-12-15)", LocalDate.of(2010, 12, 15), LocalDate.of(2014, 2, 4)));
     }
 
