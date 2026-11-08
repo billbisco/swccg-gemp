@@ -19,6 +19,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.gempukku.swccgo.cards.Vb89VersionAsserts.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -206,5 +207,12 @@ public class Card_1281_004_Tests {
         scn.LSStartBattleAndSkipToWeaponsSegment(site);
         scn.LSUseCardAction(blaster, "Fire");
         assertTrue(scn.LSHasCardChoiceAvailable(bossk));
+    }
+
+    /** PC website card list text (2012-07-21, PC-E1): the latest version under Bill's option (b); wording only. */
+    @Test
+    public void BosskWithMortarGunCurrentCardIsTheLatestText() {
+        assertCurrentCard("1281_4", "Bossk With Mortar Gun",
+                "Adds 2 to the power of anything he pilots. May not be targeted by weapons unless your other slavers present are each 'hit'. Permanent weapon is •Bossk's Mortar Gun (may target a character for free. Draw destiny. Target hit and forfeit =0, if destiny matches target's destiny number).");
     }
 }
