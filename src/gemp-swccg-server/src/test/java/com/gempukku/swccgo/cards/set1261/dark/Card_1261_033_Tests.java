@@ -45,6 +45,7 @@ public class Card_1261_033_Tests {
         scn.BlueprintIconCheck(bp, new ArrayList<>(List.of(Icon.EFFECT, Icon.A_NEW_HOPE, Icon.LEGACY_BLOCK_6)));
         scn.BlueprintKeywordCheck(bp, new ArrayList<>(List.of(Keyword.DEPLOYS_ON_LOCATION)));
         assertTrue(bp.isImmuneToCardTitle(Title.Alter));
+        assertEquals("Deploy on Rancor Pit. During your battle phase, if you have no presence here, may relocate a captive from Audience Chamber to here. If opponent's character here was just eaten, retrieve 3 Force. If a creature here is lost, owner loses Force equal to half its printed deploy cost (round up). Once per turn, if a creature here is about to draw destiny for ferocity, may instead use its destiny number. May ▼ a non-[Selective] ferocious creature here. (Immune to Alter.)", bp.getGameText());
     }
 
     @Test
@@ -137,35 +138,87 @@ public class Card_1261_033_Tests {
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
     }
 
+    private VirtualTableScenario downloadScenario() {
+        return new VirtualTableScenario(new HashMap<>(Map.of("luke", "1_19")),
+                new HashMap<>(Map.of("waters", "1261_33", "pit", "6_166", "krayt", "7_211", "krayt2", "7_211",
+                        "womprat", "7_215", "ysalamir", "1240_17", "trooper", "1_194")),
+                26, 26, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
+    }
+
+    private static List<String> selectableBlueprints(VirtualTableScenario scn) {
+        var params = scn.DSGetDecision().getDecisionParameters();
+        var ids = params.get("blueprintId");
+        var selectable = params.get("selectable");
+        List<String> result = new ArrayList<>();
+        for (int i = 0; ids != null && i < ids.length; i++)
+            if (selectable == null || "true".equals(selectable[i]))
+                result.add(ids[i]);
+        return result;
+    }
+
+    private static final String DEPLOY_CREATURE = "Deploy creature from Reserve Deck";
+
     @Test(timeout = 15000)
-    public void nonSelectiveFerociousCreatureMayDeployHereButSelectiveOneAndNoWatersMayNot() {
-        for (boolean inPlay : List.of(true, false)) {
-            var scn = fullScenario();
-            var pit = scn.GetDSCard("pit");
-            var wampa = scn.GetDSCard("wampa");
-            var womprat = scn.GetDSCard("womprat");
-            scn.StartGame();
-            scn.MoveLocationToTable(pit);
-            if (inPlay)
-                scn.AttachCardsTo(pit, scn.GetDSCard("waters"));
-            scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("trooper"));
-            scn.MoveCardsToDSHand(wampa, womprat);
-            scn.SkipToDSTurn(Phase.DEPLOY);
-            scn.EnsureDSForcePile(10);
-            assertEquals(inPlay, scn.DSDeployAvailable(wampa));
-            var game = scn.game();
-            assertEquals(inPlay, game.getModifiersQuerying().isGrantedToDeployTo(scn.gameState(), wampa, pit, null));
-            assertEquals(inPlay, wampa.getBlueprint().getHabitatFilter(game, wampa).accepts(game, pit));
-            assertFalse(game.getModifiersQuerying().isGrantedToDeployTo(scn.gameState(), womprat, pit, null));
-            assertFalse(womprat.getBlueprint().getHabitatFilter(game, womprat).accepts(game, pit));
-            if (inPlay) {
-                scn.DSDeployCard(wampa);
-                if (scn.DSHasCardChoiceAvailable(pit))
-                    scn.DSChooseCard(pit);
-                scn.PassAllResponses();
-                assertSame(pit, scn.game().getModifiersQuerying().getLocationThatCardIsAt(scn.gameState(), wampa));
-            }
+    public void mayDeployNonSelectiveFerociousCreatureHereFromReserveDeckEvenOutsideItsHabitat() {
+        var scn = downloadScenario();
+        var waters = scn.GetDSCard("waters");
+        var pit = scn.GetDSCard("pit");
+        var krayt = scn.GetDSCard("krayt");
+        var womprat = scn.GetDSCard("womprat");
+        var ysalamir = scn.GetDSCard("ysalamir");
+        scn.StartGame();
+        scn.MoveLocationToTable(pit);
+        scn.AttachCardsTo(pit, waters);
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("trooper"));
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.EnsureDSForcePile(12);
+        scn.MoveCardsToTopOfDSReserveDeck(krayt, womprat, ysalamir);
+        int force = scn.GetDSForcePileCount();
+        assertTrue(scn.DSCardActionAvailable(waters, DEPLOY_CREATURE));
+        scn.DSUseCardAction(waters, DEPLOY_CREATURE);
+        scn.PassAllResponses();
+        var offered = selectableBlueprints(scn);
+        assertTrue(offered.toString(), offered.contains(krayt.getBlueprintId(true)));
+        assertFalse("selective creature offered", offered.contains(womprat.getBlueprintId(true)));
+        assertFalse("non-ferocious creature offered", offered.contains(ysalamir.getBlueprintId(true)));
+        scn.DSChooseCard(krayt);
+        scn.PassAllResponses();
+        // Krayt Dragon's own habitat (deserts and Tatooine exterior sites) does not include the interior Rancor Pit.
+        assertSame(pit, scn.game().getModifiersQuerying().getLocationThatCardIsAt(scn.gameState(), krayt));
+        assertEquals(force - krayt.getBlueprint().getDeployCost().intValue(), scn.GetDSForcePileCount());
+        assertEquals(Zone.AT_LOCATION, krayt.getZone());
+    }
+
+    @Test(timeout = 15000)
+    public void thisClauseGivesNoDeployHereFromHandAndNoDownloadOutsideDeployPhase() {
+        var scn = downloadScenario();
+        var waters = scn.GetDSCard("waters");
+        var pit = scn.GetDSCard("pit");
+        var krayt2 = scn.GetDSCard("krayt2");
+        scn.StartGame();
+        scn.MoveLocationToTable(pit);
+        scn.AttachCardsTo(pit, waters);
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("trooper"));
+        scn.MoveCardsToDSHand(krayt2);
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.EnsureDSForcePile(12);
+        var game = scn.game();
+        assertFalse(krayt2.getBlueprint().getHabitatFilter(game, krayt2).accepts(game, pit));
+        if (scn.DSDeployAvailable(krayt2)) {
+            scn.DSDeployCard(krayt2);
+            assertFalse(scn.DSHasCardChoiceAvailable(pit));
         }
+
+        var battle = downloadScenario();
+        var waters2 = battle.GetDSCard("waters");
+        battle.StartGame();
+        battle.MoveLocationToTable(battle.GetDSCard("pit"));
+        battle.AttachCardsTo(battle.GetDSCard("pit"), waters2);
+        battle.MoveCardsToLocation(battle.GetDSStartingLocation(), battle.GetDSCard("trooper"));
+        battle.SkipToDSTurn(Phase.BATTLE);
+        assertFalse(dsHas(battle, waters2, DEPLOY_CREATURE));
     }
 
     private void captiveSetup(VirtualTableScenario scn, boolean presenceAtPit, Phase phase) {
