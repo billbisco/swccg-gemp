@@ -6712,6 +6712,7 @@ const fixedImages = {
 "2210_108":"https://wiki.swccg.com/images/2/2b/VB1-108-Owen_Lars.png",
 "2210_124":"https://wiki.swccg.com/images/5/54/VB1-123-Faithful_Service.png",
 "2210_147":"https://wiki.swccg.com/images/1/13/VB1-148-Beru_Stew.png",
+"2210_15":"https://wiki.swccg.com/images/2/29/VB1-15-Kitik_Keed_kak.png",
 "2220_35":"https://wiki.swccg.com/images/6/64/VB2-35-I_Want_That_Ship.png",
 "2220_36":"https://wiki.swccg.com/images/f/f6/VB2-36-I_m_Sorry.png",
 "2220_50":"https://wiki.swccg.com/images/5/52/VB2-50E-Vader_s_Bounty.png",
