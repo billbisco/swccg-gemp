@@ -40,7 +40,7 @@ public class Card1273_006 extends AbstractDroid {
     public Card1273_006() {
         super(Side.DARK, 3, 4, 3, 4, "IG-100 MagnaGuard", Uniqueness.RESTRICTED_3, ExpansionSet.VIRTUAL_BLOCK_7_3, Rarity.V);
         setArmor(4);
-        setGameText("Shockstaff deploys and fires for free on this droid. While on Blockade Flagship or Coruscant (or with Cyborg Commander), this droid is Heroic and power +2. Your characters here are immune to Ambush, Clash Of Sabers, and attrition < 4.");
+        setGameText("Shockstaff deploys and fires for free on this droid. While on Blockade Flagship or Coruscant (or with Grievous), this droid is Heroic and power +2. Your characters here are immune to Ambush, Clash Of Sabers, and attrition < 4.");
         addIcons(Icon.WARRIOR, Icon.PRESENCE);
         addModelType(ModelType.GUARD);
     }
@@ -48,7 +48,7 @@ public class Card1273_006 extends AbstractDroid {
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
         Filter shockstaff = Filters.and(Filters.weapon, Filters.titleContains("Shockstaff"));
-        // Cyborg Commander is Grievous's printed title on the Virtual Block 7 sheets
+        // "with Grievous" (Master List 2014 and card image; the 2011 slip said Cyborg Commander)
         Condition onFlagshipOrCoruscantOrWithGrievous = new OrCondition(
                 new AtCondition(self, Filters.or(Filters.siteOfStarshipOrVehicle(Persona.BLOCKADE_FLAGSHIP, false), Filters.Coruscant_location)),
                 new AboardCondition(self, Filters.Blockade_Flagship),
