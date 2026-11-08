@@ -17,7 +17,7 @@ public class Card1271_001 extends AbstractRepublic {
     public Card1271_001() {
         super(Side.DARK, 1, 6, 7, 5, 8, "Grievous, Hunter Of Jedi", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_1, Rarity.V);
         setLore("Commander. Leader.");
-        setGameText("[Virtual Block 5] Dark Jedi Lightsaber may deploy on Grievous. Jedi present are power -1 (-2 if a Jedi Council Member). While armed with a lightsaber, your battle destiny draws are +1 here and his forfeit may not be reduced. Immune to attrition < 4.");
+        setGameText("[Virtual Block 5] Dark Jedi Lightsaber may deploy on Grievous. Jedi present are power -1 (-2 if a Jedi Council Member). While armed with a lightsaber, your battle destiny draws here are +1 and his forfeit may not be reduced. Immune to attrition < 4.");
         addPersona(Persona.GRIEVOUS);
         addKeywords(Keyword.COMMANDER, Keyword.LEADER);
         addIcons(Icon.WARRIOR, Icon.EPISODE_I, Icon.SPECIAL_EDITION);

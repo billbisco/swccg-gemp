@@ -95,4 +95,11 @@ public class Card_1271_001_Tests {
         var s=ready();s.MoveCardsToLocation(s.GetLSStartingLocation(),s.GetDSCard("vehicle"),s.GetLSCard("obi"));
         s.BoardAsPilot(s.GetDSCard("vehicle"),s.GetDSCard("grievous"));s.SkipToPhase(Phase.DEPLOY);assertEquals(5,s.GetPower(s.GetLSCard("obi")));
     }
+
+    @Test
+    public void GrievousHunterOfJediShowsTheMasterListPcE1Text() {
+        String t = com.gempukku.swccgo.framework.VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("1271_1").getGameText();
+        org.junit.Assert.assertEquals("[Virtual Block 5] Dark Jedi Lightsaber may deploy on Grievous. Jedi present are power -1 (-2 if a Jedi Council Member). While armed with a lightsaber, your battle destiny draws here are +1 and his forfeit may not be reduced. Immune to attrition < 4.", t);
+        org.junit.Assert.assertFalse(t.contains("draws are +1 here"));
+    }
 }
