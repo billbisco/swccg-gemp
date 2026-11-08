@@ -6691,6 +6691,7 @@ const fixedImages = {
 "2281_33":"https://wiki.swccg.com/images/e/ee/VB8-04-Redeemed_Apprentice.png",
 "2281_36":"https://wiki.swccg.com/images/e/ea/VB8-00-Scoundrels_Ingenuity.png",
 "2281_46":"https://wiki.swccg.com/images/9/9e/VB8-03-Hans_Blaster_So_Uncivilized.png",
+"2282_25":"https://wiki.swccg.com/images/3/3a/VB8-p4-81-You_Will_Take_Me_To_Jabba_Now.png",
 "2230_13":"https://wiki.swccg.com/images/5/57/VB3-13E-Lord_Vader.png",
 "2230_77":"https://wiki.swccg.com/images/d/dc/VB3-78-Orrimaarko.png",
 "2273_13":"https://wiki.swccg.com/images/d/d3/VB7-00-Insidious_Prisoner.png",
