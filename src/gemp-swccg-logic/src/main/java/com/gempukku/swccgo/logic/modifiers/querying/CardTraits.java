@@ -500,12 +500,29 @@ public interface CardTraits extends BaseQuery, Limits, Piloting, Weapons {
         return card.getBlueprint().getUniqueness();
     }
 
+    /**
+     * Gets the subtype the Interrupt is played as. A card that makes an Interrupt an Out Of Play Interrupt
+     * ({@link ChangeCardSubtypeModifier} to {@link CardSubtype#OUT_OF_PLAY}, e.g. Hoth objectives making T-47 Battle
+     * Formation or Walker Garrison "an Out Of Play Interrupt") wins over Lost/Used Interrupt modifiers, so the
+     * Interrupt is placed out of play when completed.
+     * @param gameState the game state
+     * @param card the Interrupt
+     * @return the subtype
+     */
     default CardSubtype getInterruptType(GameState gameState, PhysicalCard card) {
+        CardSubtype modifiedSubtype = card.getBlueprint().getCardCategory() == CardCategory.INTERRUPT
+                ? getModifiedSubtype(gameState, card) : null;
+        if (modifiedSubtype == CardSubtype.OUT_OF_PLAY)
+            return CardSubtype.OUT_OF_PLAY;
+
         if (!getModifiersAffectingCard(gameState, ModifierType.LOST_INTERRUPT, card).isEmpty())
             return CardSubtype.LOST;
 
         if (!getModifiersAffectingCard(gameState, ModifierType.USED_INTERRUPT, card).isEmpty())
             return CardSubtype.USED;
+
+        if (modifiedSubtype != null)
+            return modifiedSubtype;
 
         return card.getBlueprint().getCardSubtype();
     }

@@ -676,8 +676,15 @@ public class SortAndFilterCards {
         if (blueprint == null)
             return false;
 
+        // A pre-errata Legacy version printed under an older name is found by either name (docs/legacy-versions.md)
+        return containsAllWords(GameUtils.getFullName(blueprint), words)
+                || (blueprint.getPrintedTitle() != null && containsAllWords(GameUtils.getRulesFullName(blueprint), words));
+    }
+
+    private static boolean containsAllWords(String name, List<String> words) {
+        String lowerName = name.toLowerCase();
         for (String word : words) {
-            if (!GameUtils.getFullName(blueprint).toLowerCase().contains(word.toLowerCase())) {
+            if (!lowerName.contains(word.toLowerCase())) {
                 return false;
             }
         }

@@ -28,9 +28,33 @@ The **Legacy** format always uses the latest text of every card.
 
 ## Same card
 
-A version keeps the current card's title, uniqueness, persona, side, type and `ExpansionSet` (the sheet it was printed
+A version keeps the current card's title (a different printed name is display only, see "Printed title"), uniqueness, persona, side, type and `ExpansionSet` (the sheet it was printed
 on), so uniqueness, persona and "title" rules see one card. Deck counts (restricted list, bans) count a version as its
 current printing (`DefaultSwccgFormat.sameCardBlueprintId`), and banning the current card bans its versions.
+
+## Printed title
+
+Some versions were printed under an older name (e.g. Grievous, Hunter Of Jedi was printed as Cyborg Commander, Hunter
+Of Jedi). Keep the class title the current card's title and add one line after `setLegacyVersion(...)`:
+
+```java
+setPrintedTitle("Cyborg Commander, Hunter Of Jedi");
+```
+
+- Display only: the game log (card links and full names), deck lists, deck validation messages, the deck builder's
+  name sort and the `title` attribute of deck/delivery XML show the printed title (`GameUtils.getFullName`,
+  `getCardLink`, `getDisplayTitle`). In-game card info adds "Printed as <printed title>; the same card as <current
+  title> for every rule".
+- Rules never see it: `getTitle()`/`getTitles()` stay the current title, so uniqueness, persona, `Filters.title`,
+  `titleContains`, `sameTitle`, deck limits and cards that name the current title all treat the version as the current
+  card. `GameUtils.getRulesFullName` gives the current name.
+- Deck builder name search finds the version by either name.
+- Write it without uniqueness dots, as printed on the release sheet slip (`printed_title` in
+  `ai-team-skills/shared/gemp-legacy-cards/versions/legacy-versions-v3.json`), including "(V)" when the slip has it.
+  Only the versions printed before the rename get it (the Master List renames are 2013-04-27); a later version printed
+  under the current name has none. `setPrintedTitle` throws unless `setLegacyVersion` was called first.
+- Names inside game text (Black Leader, Fallen Jedi, Cyborg Commander in other cards' text) are text, not titles.
+- Checked by `LegacyVersionPrintedTitleTests`.
 
 ## Display
 
@@ -53,6 +77,9 @@ current printing (`DefaultSwccgFormat.sameCardBlueprintId`), and banning the cur
 3. Copy the current class to `cards/set22xx/<side>/Card22xx_NNN.java` (or restore the old class from git history),
    rename the class, set the old game text/behaviour, keep title/uniqueness/persona/`ExpansionSet` the same, and call
    `setLegacyVersion(...)`. Reuse the current card's `GameTextActionId`s; add new ones only at the end of the enum.
+   If the version was printed under an older name, add `setPrintedTitle("…")` (see "Printed title").
+   "X is an Out Of Play Interrupt": `ChangeCardSubtypeModifier(self, <X>, CardSubtype.OUT_OF_PLAY)` alone places X out
+   of play when completed (`getInterruptType` honours it); no `InterruptPlacedOutOfPlayWhenCompletedModifier` needed.
 4. Add the image line to `CardImages.js` (after `// END legacy`).
 5. Tests in `src/test/.../cards/set22xx/<side>/Card_22xx_NNN_Tests.java`: identity with the exact old text and version
    info, gameplay tests for each clause that differs from the current card, and a uniqueness test with the current

@@ -33,7 +33,7 @@ public final class VersionAsserts {
         assertEquals(printedOn, info.printedOn());
         assertEquals(supersededOn, info.supersededOn());
         assertEquals(label.isEmpty() ? GameUtils.getFullName(current) : GameUtils.getFullName(current) + " [" + label + "]",
-                GameUtils.getFullName(version));
+                GameUtils.getRulesFullName(version));
 
         assertEquals(current.getTitle(), version.getTitle());
         assertEquals(current.getTitles(), version.getTitles());

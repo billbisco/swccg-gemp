@@ -364,7 +364,8 @@ public abstract class AbstractInterrupt extends AbstractSwccgCardBlueprint {
                 }
 
                 // LOST
-                if (subtype == CardSubtype.LOST || subtype == CardSubtype.USED_OR_LOST || subtype == CardSubtype.LOST_OR_STARTING) {
+                if (subtype == CardSubtype.LOST || subtype == CardSubtype.USED_OR_LOST || subtype == CardSubtype.LOST_OR_STARTING
+                        || subtype == CardSubtype.OUT_OF_PLAY) {
 
                     final PlayInterruptAction action = new PlayInterruptAction(game, self, CardSubtype.LOST);
                     action.setText("Cancel Force drain");

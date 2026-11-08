@@ -214,7 +214,7 @@ public class Card_2281_047_Tests {
         assertEquals("", version.label());
         assertEquals(java.time.LocalDate.of(2012, 5, 11), version.printedOn());
         assertEquals(java.time.LocalDate.of(2013, 4, 27), version.supersededOn());
-        assertEquals("Kyle Katarn's Blaster Rifle", com.gempukku.swccgo.logic.GameUtils.getFullName(card));
+        assertEquals("Rebel Agent's Blaster Rifle", com.gempukku.swccgo.logic.GameUtils.getFullName(card));
     }
 
     @Test

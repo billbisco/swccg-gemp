@@ -1830,6 +1830,18 @@ public interface SwccgCardBlueprint {
     }
 
     /**
+     * Gets the title printed on this card when it differs from {@link #getTitle()}: a pre-errata Legacy version that was
+     * printed under an older name (e.g. "Cyborg Commander, Hunter Of Jedi" for a version of Grievous, Hunter Of Jedi).
+     * Display only (game log, card info, deck lists, deck builder). Every rule (uniqueness, persona, title matching,
+     * deck limits) keeps using {@link #getTitle()}, so the version stays the same card as its current printing.
+     * See docs/legacy-versions.md.
+     * @return the printed title, or null if the card was printed under its current title
+     */
+    default String getPrintedTitle() {
+        return null;
+    }
+
+    /**
      * Returns if this should be excluded from the deck builder
      * @return true if this should be excluded from the deck buider
      */
