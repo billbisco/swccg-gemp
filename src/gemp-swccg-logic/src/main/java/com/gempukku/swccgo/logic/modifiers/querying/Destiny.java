@@ -683,6 +683,7 @@ public interface Destiny extends BaseQuery {
         }
 
         result = LegacyWeaponDestinyMayNotBeFurtherReducedModifier.applyLimit(gameState, query(), physicalCard, result);
+        result = WeaponDestinyMayNotBeIncreasedAbovePrintedModifier.applyLimit(gameState, query(), physicalCard, result);
         return result;
     }
 

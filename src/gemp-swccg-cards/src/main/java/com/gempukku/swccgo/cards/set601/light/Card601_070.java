@@ -18,6 +18,7 @@ import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
 import com.gempukku.swccgo.logic.effects.PlaceCardsInUsedPileFromTableEffect;
 import com.gempukku.swccgo.logic.modifiers.ExtraForceCostToDeployCardToLocationModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
+import com.gempukku.swccgo.logic.modifiers.WeaponDestinyMayNotBeIncreasedAbovePrintedModifier;
 import com.gempukku.swccgo.logic.timing.Effect;
 import com.gempukku.swccgo.logic.timing.EffectResult;
 
@@ -36,7 +37,7 @@ public class Card601_070 extends AbstractDefensiveShield {
         super(Side.LIGHT, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.Yavin_Sentry, ExpansionSet.LEGACY, Rarity.V);
         setVirtualSuffix(true);
         setLore("Rebel sentries are stationed on raised sensor platforms. On watch for Imperial scouts and other hazards, they supplement data gathered by Yavin Base's main sensors.");
-        setGameText("Plays on table. Colo Claw Fish is canceled. Opponent must first use X Force to deploy a non-unique card (except a Jawa or Tusken Raider) to a location, where X = the number of copies of that card at that location.");
+        setGameText("Plays on table. Colo Claw Fish is canceled. Opponent must first use X Force to deploy a non-unique card (except a Jawa or Tusken Raider) to a location, where X = the number of copies of that card at that location. [Episode I] lightsaber weapon destiny draws cannot be increased above their printed value.");
         addIcons(Icon.REFLECTIONS_III, Icon.LEGACY_BLOCK_D);
         setAsLegacy(true);
     }
@@ -91,6 +92,9 @@ public class Card601_070 extends AbstractDefensiveShield {
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new ExtraForceCostToDeployCardToLocationModifier(self, Filters.and(Filters.opponents(self), Filters.non_unique, Filters.except(Filters.or(Filters.Jawa, Filters.Tusken_Raider))),
                 new NumCopiesOfCardAtLocationEvaluator(self)));
+        // Master List (2014) and card image: last sentence (lightsaber cards, or characters with a permanent lightsaber).
+        modifiers.add(new WeaponDestinyMayNotBeIncreasedAbovePrintedModifier(self,
+                Filters.and(Icon.EPISODE_I, Filters.or(Filters.lightsaber, Filters.hasPermanentWeapon(Filters.lightsaber))), null));
         return modifiers;
     }
 }
