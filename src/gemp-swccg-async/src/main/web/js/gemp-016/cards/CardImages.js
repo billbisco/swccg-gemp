@@ -6633,5 +6633,6 @@ const fixedImages = {
 "2240_2058":"https://wiki.swccg.com/images/1/1f/VL-history-1240-58-front-master.png",
 "2240_2058_BACK":"https://wiki.swccg.com/images/1/18/VL-history-1240-58-back-master.png",
 "2240_59":"https://wiki.swccg.com/images/3/3f/VB4-58-Rogue_Shadow.png",
+"2240_64":"https://wiki.swccg.com/images/0/0d/VB4-63-Galens_Lightsaber.png",
 
 };
