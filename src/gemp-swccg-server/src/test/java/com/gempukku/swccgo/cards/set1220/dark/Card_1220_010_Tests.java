@@ -51,6 +51,7 @@ public class Card_1220_010_Tests {
         var card = scn.GetDSCard("dengar").getBlueprint();
 
         assertEquals("Dengar", card.getTitle());
+        assertEquals("Adds 2 to power of anything he pilots. Deploys free aboard Punishing One, and while piloting it, draws one battle destiny if unable to otherwise. At same site, Han's game text is canceled. May not be attacked. Immune to Fallen Portal.", card.getGameText());
         assertTrue(card.hasVirtualSuffix());
         assertEquals(Uniqueness.UNIQUE, card.getUniqueness());
         assertEquals(Side.DARK, card.getSide());
@@ -138,5 +139,19 @@ public class Card_1220_010_Tests {
     private float deployCostTo(VirtualTableScenario scn, PhysicalCardImpl card, PhysicalCardImpl target) {
         return scn.game().getModifiersQuerying().getDeployCost(
                 scn.gameState(), card, card, target, false, null, false, 0, null, false);
+    }
+
+    @Test
+    public void DengarVMayNotBeAttackedButOtherCharactersMay() {
+        var scn = GetScenario();
+        var dengar = scn.GetDSCard("dengar");
+        var luke = scn.GetLSCard("luke");
+        var site = scn.GetDSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, dengar, luke);
+        var q = scn.game().getModifiersQuerying();
+        assertTrue(q.isProhibitedFromAttackingTarget(scn.gameState(), luke, dengar));
+        assertFalse(q.isProhibitedFromAttackingTarget(scn.gameState(), dengar, luke));
     }
 }
