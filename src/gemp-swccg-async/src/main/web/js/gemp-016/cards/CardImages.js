@@ -6628,5 +6628,7 @@ const fixedImages = {
 "2240_40":"https://wiki.swccg.com/images/6/67/VB4-37-If_The_Trace_Was_Correct.png",
 "2240_58":"https://wiki.swccg.com/images/d/d2/VL-history-1240-58-front-original.png",
 "2240_58_BACK":"https://wiki.swccg.com/images/0/0e/VL-history-1240-58-back-original.png",
+"2240_1058":"https://wiki.swccg.com/images/d/d2/VL-history-1240-58-front-original.png",
+"2240_1058_BACK":"https://wiki.swccg.com/images/1/18/VL-history-1240-58-back-master.png",
 
 };
