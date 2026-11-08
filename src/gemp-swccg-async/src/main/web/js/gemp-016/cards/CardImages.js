@@ -6625,5 +6625,6 @@ const fixedImages = {
 "2271_39":"https://wiki.swccg.com/images/6/63/VB7-03-Luke_Trust_Me.png",
 "2271_46":"https://wiki.swccg.com/images/6/67/VB7-00-Restore_Freedom_To_The_Galaxy.png",
 "2272_5":"https://wiki.swccg.com/images/f/fc/VB7-04-Imperial_Stockpile.png",
+"2272_22":"https://wiki.swccg.com/images/7/76/VB7-04-Rebel_Gunrunner.png",
 
 };
