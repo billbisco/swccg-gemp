@@ -41,6 +41,9 @@ public final class LegacyCardPool {
             for (int number = 1; number <= sheet[1]; number++) {
                 for (int k = 0; k < LegacyVersion.MAX_VERSIONS_PER_CARD; k++) {
                     String id = LegacyVersion.versionIdOf(sheet[0] + "_" + number, k);
+                    // A retired version id aliased to its current card in blueprintMapping.txt is not a version
+                    if (!id.equals(library.getBaseBlueprintId(id)))
+                        continue;
                     if (library.getSwccgoCardBlueprint(id) != null)
                         ids.add(id);
                 }

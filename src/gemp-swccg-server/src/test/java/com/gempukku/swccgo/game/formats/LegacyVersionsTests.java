@@ -182,4 +182,22 @@ public class LegacyVersionsTests {
             }
         }
     }
+
+    @Test
+    public void RetiredVersionIdLoadsAsItsCurrentCardAndValidatesInAnythingGoes() throws DeckInvalidException {
+        // 2220_161 (Hoth: Echo Med Lab original) was live from r16; its text became the current card's, so the id is
+        // an alias of 1220_161 in blueprintMapping.txt. Saved decks with it must still load and validate.
+        assertEquals("1220_161", library.getBaseBlueprintId("2220_161"));
+        SwccgCardBlueprint retired = library.getSwccgoCardBlueprint("2220_161");
+        assertNotNull(retired);
+        assertEquals(library.getSwccgoCardBlueprint("1220_161").getGameText(), retired.getGameText());
+        assertNull(retired.getLegacyVersion());
+        assertFalse(LegacyCardPool.implementedVersionIds(library).contains("2220_161"));
+        formats.getFormat("anything_goes").validateCard("2220_161", false);
+        SwccgDeck lightDeck = new SwccgDeck("retired version");
+        lightDeck.addCard("2220_161");
+        while (lightDeck.getCards().size() < 60)
+            lightDeck.addCard("1_28"); // Rebel Trooper
+        formats.getFormat("anything_goes").validateDeck(lightDeck);
+    }
 }

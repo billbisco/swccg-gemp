@@ -319,3 +319,5 @@
 1292_8ai,1292_8
 1272_19,1200_18
 # END legacy
+# Retired version ids, Virtual Block 1/2 (live since r16; the current card now plays that text)
+2220_161,1220_161
