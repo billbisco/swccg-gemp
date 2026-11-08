@@ -6698,7 +6698,7 @@ const fixedImages = {
 "2274_5":"https://wiki.swccg.com/images/3/36/VB7-p2-133-Desperate_Counter.png",
 "2274_7":"https://wiki.swccg.com/images/b/b2/VB7-04-Occupied_Territory.png",
 "2274_8":"https://wiki.swccg.com/images/e/e7/VB7-05-Shadows_Of_The_Empire.png",
-"2274_17":"https://wiki.swccg.com/images/2/24/VB7-04-Motivator.png",
+"2274_17":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/motivator.gif",
 "2281_24":"https://wiki.swccg.com/images/9/93/VB8-D-contractkillers-pre.gif",
 "2281_24_BACK":"https://wiki.swccg.com/images/d/d6/VB8-D-fearedthroughoutthegalaxy-pre.gif",
 "2281_44":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/infiltration.gif",
