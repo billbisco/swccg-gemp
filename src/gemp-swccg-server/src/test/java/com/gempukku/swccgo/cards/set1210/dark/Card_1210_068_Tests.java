@@ -448,4 +448,24 @@ public class Card_1210_068_Tests {
         assertTrue(objective.isFlipped());
         assertEquals("No One To Stop Us This Time", objective.getTitle());
     }
+
+    @org.junit.Test
+    public void ImperialEntanglementsHasTheLatestText() {
+        var scn = new com.gempukku.swccgo.framework.VirtualTableScenario(
+                new java.util.HashMap<String, String>() {{  }},
+                new java.util.HashMap<String, String>() {{ put("latest", "1210_68"); }},
+                10, 10,
+                com.gempukku.swccgo.framework.StartingSetup.DefaultLSGroundLocation,
+                com.gempukku.swccgo.framework.StartingSetup.DefaultDSGroundLocation,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSStartingInterrupts,
+                com.gempukku.swccgo.framework.StartingSetup.NoDSStartingInterrupts,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSShields,
+                com.gempukku.swccgo.framework.StartingSetup.NoDSShields,
+                com.gempukku.swccgo.framework.VirtualTableScenario.Open);
+        var card = scn.GetDSCard("latest").getBlueprint();
+        org.junit.Assert.assertEquals("Imperial Entanglements: Deploy Tatooine (with Devastator there) and a non-Jabba's Palace Tatooine battleground site. {For} remainder of game, you may not deploy Jabba's Palace sites, non-Imperial characters, non-Imperial starships, or systems. {While} this side up, once per turn, may deploy from Reserve Deck a Tatooine battleground site; reshuffle. Opponent loses no Force to Tatooine Occupation or your Force drains at Tatooine system. {Flip} this card if you control three Tatooine sites and opponent controls less than three Tatooine sites. No One To Stop Us This Time: {While} this side up, wherever you have a trooper 'riding' a dewback, add one battle destiny. [Virtual Block 1] Local Trouble may be played at exterior Tatooine sites. Once during your control phase, may peek at the top X cards of your Reserve Deck, where X = the number of Tatooine locations you occupy; take one into hand and reshuffle. Opponent's characters require +1 Force to move from Tatooine sites using their landspeed. {Flip} this card if opponent controls more Tatooine sites than you.",
+                card.getGameText());
+        org.junit.Assert.assertNull(card.getLegacyVersion());
+        org.junit.Assert.assertFalse(card.getGameText().contains("maybe played"));
+    }
 }
