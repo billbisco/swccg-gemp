@@ -1,0 +1,108 @@
+package com.gempukku.swccgo.cards.set2220.dark;
+
+import com.gempukku.swccgo.cards.AbstractNormalEffect;
+import com.gempukku.swccgo.cards.GameConditions;
+import com.gempukku.swccgo.common.ExpansionSet;
+import com.gempukku.swccgo.common.LegacyVersion;
+import com.gempukku.swccgo.common.Icon;
+import com.gempukku.swccgo.common.PlayCardZoneOption;
+import com.gempukku.swccgo.common.Rarity;
+import com.gempukku.swccgo.common.Side;
+import com.gempukku.swccgo.common.Title;
+import com.gempukku.swccgo.common.Uniqueness;
+import com.gempukku.swccgo.filters.Filter;
+import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.game.PhysicalCard;
+import com.gempukku.swccgo.game.SwccgGame;
+import com.gempukku.swccgo.logic.TriggerConditions;
+import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
+import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
+import com.gempukku.swccgo.logic.effects.AddUntilDamageSegmentOfBattleModifierEffect;
+import com.gempukku.swccgo.logic.effects.AddUntilEndOfTurnModifierEffect;
+import com.gempukku.swccgo.logic.effects.PlaceCardInLostPileFromTableEffect;
+import com.gempukku.swccgo.logic.modifiers.DestinyWhenDrawnForBattleDestinyModifier;
+import com.gempukku.swccgo.logic.modifiers.DestinyWhenDrawnForWeaponDestinyModifier;
+import com.gempukku.swccgo.logic.modifiers.MayNotBeExcludedFromBattle;
+import com.gempukku.swccgo.logic.modifiers.MayNotTargetToBeLostModifier;
+import com.gempukku.swccgo.logic.modifiers.Modifier;
+import com.gempukku.swccgo.logic.modifiers.TotalWeaponDestinyModifier;
+import com.gempukku.swccgo.logic.timing.EffectResult;
+
+import java.time.LocalDate;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
+/**
+ * Set: Virtual Block 2
+ * Type: Effect
+ * Title: Vader's Bounty
+ *
+ * Original version of 1220_50 (Virtual Block 2 release sheet, Dec 2009, card #50): the Lost Pile clause is not limited
+ * to battles where Boba Fett is with Vader. Played as the Virtual Set 6 card with this text (1106_48): at any time,
+ * Boba Fett's total weapon destiny is +3 for the rest of the turn.
+ * Anything Goes only (docs/legacy-versions.md).
+ */
+public class Card2220_050 extends AbstractNormalEffect {
+    public Card2220_050() {
+        super(Side.DARK, 4, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.Vaders_Bounty, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_2, Rarity.V);
+        setVirtualSuffix(true);
+        setLore("'We would be honored if you would join us.'");
+        setGameText("Deploy on table. During battle, while non-[Reflections 3] Boba Fett with Vader, neither may be excluded or lost until the damage segment. Slave I is destiny +2 when drawn for weapon or battle destiny. May place this Effect in Lost Pile to make Boba Fett's total weapon destiny +3.");
+        setLegacyVersion(new LegacyVersion("1220_50", "",
+                "Virtual Block 2 release sheet (2009-12-07), card #50", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 8, 27)));
+        addIcons(Icon.CLOUD_CITY);
+    }
+
+    private Filter nonReflections3BobaWithVader(PhysicalCard self) {
+        return Filters.and(Filters.Boba_Fett, Filters.not(Icon.REFLECTIONS_III), Filters.participatingInBattle, Filters.with(self, Filters.Vader));
+    }
+
+    private Filter vaderWithNonReflections3Boba(PhysicalCard self) {
+        return Filters.and(Filters.Vader, Filters.participatingInBattle, Filters.with(self, Filters.and(Filters.Boba_Fett, Filters.not(Icon.REFLECTIONS_III))));
+    }
+
+    private Filter bobaAndVaderTogether(PhysicalCard self) {
+        return Filters.or(nonReflections3BobaWithVader(self), vaderWithNonReflections3Boba(self));
+    }
+
+    @Override
+    protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
+        List<Modifier> modifiers = new LinkedList<Modifier>();
+        modifiers.add(new DestinyWhenDrawnForWeaponDestinyModifier(self, Filters.Slave_I, 2));
+        modifiers.add(new DestinyWhenDrawnForBattleDestinyModifier(self, Filters.Slave_I, 2));
+        modifiers.add(new MayNotBeExcludedFromBattle(self, bobaAndVaderTogether(self)));
+        return modifiers;
+    }
+
+    @Override
+    protected List<RequiredGameTextTriggerAction> getGameTextRequiredAfterTriggers(SwccgGame game, EffectResult effectResult, final PhysicalCard self, int gameTextSourceCardId) {
+        if (TriggerConditions.battleInitiated(game, effectResult)
+                && GameConditions.canSpot(game, self, nonReflections3BobaWithVader(self))) {
+            RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
+            action.setText("May not be lost until damage segment");
+            action.appendEffect(
+                    new AddUntilDamageSegmentOfBattleModifierEffect(action,
+                            new MayNotTargetToBeLostModifier(self, bobaAndVaderTogether(self)),
+                            "Boba Fett and Vader may not be lost until the damage segment"));
+            return Collections.singletonList(action);
+        }
+        return null;
+    }
+
+    @Override
+    protected List<TopLevelGameTextAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
+        if (GameConditions.canSpot(game, self, Filters.Boba_Fett)) {
+            final TopLevelGameTextAction action = new TopLevelGameTextAction(self, gameTextSourceCardId);
+            action.setText("Place in Lost Pile to add 3 to Boba Fett's total weapon destiny");
+            action.appendCost(
+                    new PlaceCardInLostPileFromTableEffect(action, self));
+            action.appendEffect(
+                    new AddUntilEndOfTurnModifierEffect(action,
+                            new TotalWeaponDestinyModifier(self, Filters.any, Filters.Boba_Fett, 3),
+                            "Boba Fett's total weapon destiny is +3"));
+            return Collections.singletonList(action);
+        }
+        return null;
+    }
+}
