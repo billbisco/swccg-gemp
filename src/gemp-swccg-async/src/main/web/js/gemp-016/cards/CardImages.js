@@ -6680,6 +6680,7 @@ const fixedImages = {
 "2282_19":"https://wiki.swccg.com/images/f/fd/VB8-p4-76-Rennek.png",
 "2200_11":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/thereisanother.gif",
 "2281_23":"https://wiki.swccg.com/images/5/50/VB8-02-Slave_I_Symbol_Of_Fear.png",
+"2281_32":"https://wiki.swccg.com/images/0/01/VB8-03-Imperial_Navigation_Charts.png",
 "2230_13":"https://wiki.swccg.com/images/5/57/VB3-13E-Lord_Vader.png",
 "2230_77":"https://wiki.swccg.com/images/d/dc/VB3-78-Orrimaarko.png",
 "2273_13":"https://wiki.swccg.com/images/d/d3/VB7-00-Insidious_Prisoner.png",

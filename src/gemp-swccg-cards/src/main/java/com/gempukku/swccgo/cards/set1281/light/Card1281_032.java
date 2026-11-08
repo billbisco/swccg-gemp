@@ -35,7 +35,7 @@ import java.util.List;
 public class Card1281_032 extends AbstractNormalEffect {
     public Card1281_032() {
         super(Side.LIGHT, 3, PlayCardZoneOption.ATTACHED, "Imperial Navigation Charts", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_1, Rarity.V);
-        setGameText("Deploy on a Nar Shaddaa battleground site. If you control three Nar Shaddaa locations or just won a battle (or initiated a Force drain) here, 'steal' (relocate to your side of table). Place in Used Pile if opponent controls three Nar Shaddaa locations. (Immune to Alter.)");
+        setGameText("Deploy on a Nar Shaddaa battleground site. If you control three Nar Shaddaa locations or just won a battle (or initiated a Force drain) here, may 'steal' (relocate to your side of table). Place in Used Pile if opponent controls three Nar Shaddaa locations. (Immune to Alter).");
         addImmuneToCardTitle(Title.Alter);
     }
 
@@ -101,11 +101,11 @@ public class Card1281_032 extends AbstractNormalEffect {
         return null;
     }
 
-    private boolean alreadyOnYourSideOfTable(PhysicalCard self, String playerId) {
+    protected boolean alreadyOnYourSideOfTable(PhysicalCard self, String playerId) {
         return self.getZone() == Zone.SIDE_OF_TABLE;
     }
 
-    private RelocateCardToSideOfTableEffect stealToSideOfTable(final com.gempukku.swccgo.logic.timing.Action action, final PhysicalCard self, final String playerId) {
+    protected RelocateCardToSideOfTableEffect stealToSideOfTable(final com.gempukku.swccgo.logic.timing.Action action, final PhysicalCard self, final String playerId) {
         return new RelocateCardToSideOfTableEffect(action, self, playerId);
     }
 }
