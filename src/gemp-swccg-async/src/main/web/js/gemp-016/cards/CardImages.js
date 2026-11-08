@@ -6620,5 +6620,6 @@ const fixedImages = {
 "2272_23":"https://wiki.swccg.com/images/a/a0/VB7-04-Rogue_Insertion.png",
 "2230_7":"https://wiki.swccg.com/images/7/75/VB3-07E-Hermi_Odle.png",
 "2230_47":"https://wiki.swccg.com/images/a/a0/VB3-48-Scout_Recon.png",
+"2230_109":"https://wiki.swccg.com/images/3/36/VB3-110-Rebel_Leadership.png",
 
 };
