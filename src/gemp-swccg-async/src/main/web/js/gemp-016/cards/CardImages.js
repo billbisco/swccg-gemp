@@ -6720,6 +6720,7 @@ const fixedImages = {
 "2261_1033":"https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/darkwaters&kraytdragonbones.gif",
 "2261_1034":"https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/fleetsecurityprotocols.gif",
 "2261_35":"https://wiki.swccg.com/images/2/2b/VB6-35-Hes_No_Jedi.png",
+"2261_80":"https://wiki.swccg.com/images/c/c7/VB6-79-Jabba_This_Is_Your_Last_Chance.png",
 // END VB5-VB6 phase 2
 "2210_6":"https://wiki.swccg.com/images/9/97/VB1-06-Danz_Borin.png",
 "2210_8":"https://wiki.swccg.com/images/8/8d/VB1-08-Death_Star_Gunner.png",
