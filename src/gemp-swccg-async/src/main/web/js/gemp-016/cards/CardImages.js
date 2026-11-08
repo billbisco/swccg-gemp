@@ -6726,6 +6726,7 @@ const fixedImages = {
 "2261_44":"https://wiki.swccg.com/images/c/cc/VB6-43-Lana_Dobreed_Sacrifice.png",
 "2261_70":"https://wiki.swccg.com/images/7/77/VB6-68-Obi_Wan_Crazy_Wizard.png",
 "2261_71":"https://wiki.swccg.com/images/2/2d/VB6-67-Luke_Skywalker_Strong_In_The_Force.png",
+"2261_96":"https://wiki.swccg.com/images/4/48/VB6-97-Ive_Decided_To_Go_Back.png",
 // END VB5-VB6 phase 2
 "2210_6":"https://wiki.swccg.com/images/9/97/VB1-06-Danz_Borin.png",
 "2210_8":"https://wiki.swccg.com/images/8/8d/VB1-08-Death_Star_Gunner.png",
