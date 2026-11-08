@@ -39,7 +39,7 @@ public class Card1282_015 extends AbstractRebel {
         super(Side.LIGHT, 3, 2, 2, 2, 4, "Captain Verrack", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_2, Rarity.V);
         setVirtualSuffix(true);
         setLore("Mon Calamari computer technician. Expert in power systems. His skills are desperately needed by Rebel fleet. Gunner.");
-        setGameText("Adds 1 to power of anything he pilots. While aboard your starship, its total weapon destiny is +1. Whenever you hit a starship here, opponent loses 1 Force. During battle, may lose 1 Force to cancel [Coruscant] Watch Your Back!.");
+        setGameText("Adds 1 to power of anything he pilots. While aboard your starship, adds 1 to its total weapon destiny. Whenever you hit a starship here, opponent loses 1 Force. During battle, may lose 1 Force to cancel [Coruscant] Watch Your Back!.");
         addIcons(Icon.PILOT);
         addKeywords(Keyword.GUNNER, Keyword.CAPTAIN);
         setSpecies(Species.MON_CALAMARI);
