@@ -6729,5 +6729,7 @@ const fixedImages = {
 "2220_145":"https://wiki.swccg.com/images/a/a3/VB2-145-Impressive_Most_Impressive.png",
 "2220_58":"https://wiki.swccg.com/images/d/db/VB2-58-Defensive_Fire.png",
 "2220_6":"https://wiki.swccg.com/images/a/a1/VB2-06-Captain_Piett.png",
+"2220_64":"https://wiki.swccg.com/images/c/ca/VB2-64-Release_Your_Anger.png",
+"2220_1064":"https://res.starwarsccg.org/cards/legacy/VirtualBlock2-Dark/large/releaseyouranger.gif",
 
 };
