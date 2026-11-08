@@ -21,8 +21,9 @@ import com.gempukku.swccgo.logic.effects.RespondableEffect;
 import com.gempukku.swccgo.logic.effects.RetrieveForceEffect;
 import com.gempukku.swccgo.logic.effects.SubstituteDestinyEffect;
 import com.gempukku.swccgo.logic.effects.TargetCardOnTableEffect;
-import com.gempukku.swccgo.logic.effects.UseForceEffect;
 import com.gempukku.swccgo.logic.effects.choose.DeployCardToLocationFromReserveDeckEffect;
+import com.gempukku.swccgo.logic.modifiers.HabitatIncludesLocationModifier;
+import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.timing.Action;
 import com.gempukku.swccgo.logic.timing.EffectResult;
 import com.gempukku.swccgo.logic.timing.GuiUtils;
@@ -40,7 +41,7 @@ public class Card1261_033 extends AbstractNormalEffect {
         super(Side.DARK, 1, PlayCardZoneOption.ATTACHED, "Dark Waters & Krayt Dragon Bones", Uniqueness.UNIQUE,
                 ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
         addComboCardTitles(Title.Dark_Waters, Title.Krayt_Dragon_Bones);
-        setGameText("Deploy on a site with \"Waters\" in game text. During your battle phase, if on Rancor Pit, may relocate a captive from Audience Chamber to here. If opponent's character here was just eaten, retrieve 3 Force. If a creature here is lost, owner loses Force equal to half its printed deploy cost (round up). Once per turn, if a creature here is about to draw destiny for ferocity, may instead use its destiny number. May use 1 Force to ▼ a non-[Selective] ferocious creature here. (Immune to Alter.)");
+        setGameText("Deploy on Rancor Pit. During your battle phase, if you have no presence here, may relocate a captive from Audience Chamber to here. If opponent's character here was just eaten, retrieve 3 Force. If a creature here is lost, owner loses Force equal to half its printed deploy cost (round up). Once per turn, if a creature here is about to draw destiny for ferocity, may instead use its destiny number. May ▼ a non-[Selective] ferocious creature here. (Immune to Alter.)");
         addIcons(Icon.A_NEW_HOPE);
         addKeywords(Keyword.DEPLOYS_ON_LOCATION);
         addImmuneToCardTitle(Title.Alter);
@@ -49,23 +50,32 @@ public class Card1261_033 extends AbstractNormalEffect {
     @Override
     protected Filter getGameTextValidDeployTargetFilter(SwccgGame game, PhysicalCard self,
             PlayCardOptionId id, boolean asReact) {
-        return Filters.and(Filters.site, Filters.gameTextContains("Waters"));
+        return Filters.Rancor_Pit;
+    }
+
+    @Override
+    protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, PhysicalCard self) {
+        // "May [download] a non-[Selective] ferocious creature here": here is part of the habitat of such a creature in
+        // its owner's Reserve Deck (so the download may target here) and of one on table (so the habitat rule does not
+        // lose it once here). A creature in hand gets no habitat change, so this clause gives no deploy from hand.
+        return List.of(new HabitatIncludesLocationModifier(self, Filters.and(NON_SELECTIVE_FEROCIOUS_CREATURE,
+                Filters.or(Filters.onTable, Filters.zoneOfPlayer(Zone.RESERVE_DECK, self.getOwner()))),
+                Filters.hasAttached(self)));
     }
 
     @Override
     protected List<TopLevelGameTextAction> getGameTextTopLevelActions(String playerId, SwccgGame game,
             PhysicalCard self, int sourceId) {
-        var here = self.getAttachedTo();
-        if (here == null)
+        var pit = self.getAttachedTo();
+        if (pit == null)
             return null;
         List<TopLevelGameTextAction> actions = new ArrayList<>();
 
-        // Printed text has no limit; "During your battle phase, ... may" is used once per battle phase.
         var relocateId = GameTextActionId.LEGACY__DARK_WATERS_AND_KRAYT_DRAGON_BONES__RELOCATE_CAPTIVE;
         Filter captive = Filters.and(Filters.captive, Filters.at(Filters.Audience_Chamber),
-                Filters.canBeRelocatedToLocation(Filters.sameCardId(here), false, false, true, 0, false));
-        if (Filters.Rancor_Pit.accepts(game, here)
-                && GameConditions.isOnceDuringYourPhase(game, self, playerId, sourceId, relocateId, Phase.BATTLE)
+                Filters.canBeRelocatedToLocation(Filters.sameCardId(pit), false, false, true, 0, false));
+        if (GameConditions.isOnceDuringYourPhase(game, self, playerId, sourceId, relocateId, Phase.BATTLE)
+                && !GameConditions.occupies(game, playerId, pit)
                 && GameConditions.canTarget(game, self, SpotOverride.INCLUDE_CAPTIVE, captive)) {
             var action = new TopLevelGameTextAction(self, playerId, sourceId, relocateId);
             action.setText("Relocate captive from Audience Chamber");
@@ -75,12 +85,12 @@ public class Card1261_033 extends AbstractNormalEffect {
                 @Override
                 protected void cardTargeted(int targetGroupId, PhysicalCard target) {
                     action.addAnimationGroup(target);
-                    action.allowResponses("Relocate " + GameUtils.getCardLink(target) + " to " + GameUtils.getCardLink(here),
+                    action.allowResponses("Relocate " + GameUtils.getCardLink(target) + " to " + GameUtils.getCardLink(pit),
                             new RespondableEffect(action) {
                                 @Override
                                 protected void performActionResults(Action targetingAction) {
                                     action.appendEffect(new RelocateBetweenLocationsEffect(action,
-                                            action.getPrimaryTargetCard(targetGroupId), here));
+                                            action.getPrimaryTargetCard(targetGroupId), pit));
                                 }
                             });
                 }
@@ -89,14 +99,12 @@ public class Card1261_033 extends AbstractNormalEffect {
         }
 
         var deployId = GameTextActionId.LEGACY__DARK_WATERS_AND_KRAYT_DRAGON_BONES__DEPLOY_CREATURE;
-        if (GameConditions.canDeployCardFromReserveDeck(game, playerId, self, deployId)
-                && GameConditions.canUseForce(game, playerId, 1)) {
+        if (GameConditions.canDeployCardFromReserveDeck(game, playerId, self, deployId)) {
             var action = new TopLevelGameTextAction(self, playerId, sourceId, deployId);
             action.setText("Deploy creature from Reserve Deck");
-            action.setActionMsg("Deploy a non-[Selective] ferocious creature to " + GameUtils.getCardLink(here) + " from Reserve Deck");
-            action.appendCost(new UseForceEffect(action, playerId, 1));
+            action.setActionMsg("Deploy a non-[Selective] ferocious creature to " + GameUtils.getCardLink(pit) + " from Reserve Deck");
             action.appendEffect(new DeployCardToLocationFromReserveDeckEffect(action, NON_SELECTIVE_FEROCIOUS_CREATURE,
-                    Filters.sameCardId(here), true));
+                    Filters.sameCardId(pit), true));
             actions.add(action);
         }
         return actions;
