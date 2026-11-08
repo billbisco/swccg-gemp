@@ -6724,6 +6724,7 @@ const fixedImages = {
 "2261_39":"https://wiki.swccg.com/images/4/49/VB6-41-Epic_Duel.png",
 "2261_40":"https://wiki.swccg.com/images/c/cb/VB6-40-Tarkins_Bounty.png",
 "2261_44":"https://wiki.swccg.com/images/c/cc/VB6-43-Lana_Dobreed_Sacrifice.png",
+"2261_70":"https://wiki.swccg.com/images/7/77/VB6-68-Obi_Wan_Crazy_Wizard.png",
 // END VB5-VB6 phase 2
 "2210_6":"https://wiki.swccg.com/images/9/97/VB1-06-Danz_Borin.png",
 "2210_8":"https://wiki.swccg.com/images/8/8d/VB1-08-Death_Star_Gunner.png",
