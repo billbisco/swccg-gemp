@@ -5,6 +5,7 @@ import com.gempukku.swccgo.cards.AbstractNormalEffect;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.conditions.OnTableCondition;
 import com.gempukku.swccgo.cards.evaluators.OnTableEvaluator;
+import com.gempukku.swccgo.cards.effects.usage.OncePerTurnEffect;
 import com.gempukku.swccgo.common.CardType;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.GameTextActionId;
@@ -40,7 +41,7 @@ public class Card1273_036 extends AbstractNormalEffect {
         super(Side.LIGHT, 5, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "The Shield Is Down!", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_3, Rarity.V);
         setVirtualSuffix(true);
         setLore("Lando's confidence in the Rebel strike team on the forest moon was rewarded, and proved to be a decisive factor at the Battle of Endor.");
-        setGameText("If [Virtual Block 7] Rebel Strike Team on table, deploy on table. Your [Endor] Epic Event total is +1 for each non-Jedi scout at Bunker. For each of your non-Jedi scouts in battle, attrition against opponent is +1. While opponent's [Endor] objective on table, Bunker may not be converted. May take Bunker into hand from Reserve Deck; reshuffle. (Immune to Alter.)");
+        setGameText("If [Virtual Block 7] Rebel Strike Team on table, deploy on table. Your [Endor] Epic Event total is +1 for each of your non-Jedi scouts at Bunker. For each of your non-Jedi scouts in battle, attrition against opponent is +1. While opponent's [Endor] objective on table, Bunker may not be converted. Once per turn may take Bunker into hand from Reserve Deck; reshuffle. (Immune to Alter.)");
         addImmuneToCardTitle(Title.Alter);
     }
 
@@ -60,7 +61,7 @@ public class Card1273_036 extends AbstractNormalEffect {
 
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new EpicEventCalculationTotalModifier(self, Filters.and(Filters.your(playerId), CardType.EPIC_EVENT, Icon.ENDOR), null,
-                new OnTableEvaluator(self, Filters.and(nonJediScout(), Filters.at(Filters.Bunker))), true));
+                new OnTableEvaluator(self, Filters.and(Filters.your(playerId), nonJediScout(), Filters.at(Filters.Bunker))), true));
         modifiers.add(new AttritionModifier(self, new OnTableEvaluator(self, Filters.and(Filters.your(playerId), nonJediScout(), Filters.participatingInBattle)), opponent));
         modifiers.add(new MayNotBeConvertedModifier(self, Filters.Bunker,
                 new OnTableCondition(self, Filters.and(Filters.opponents(playerId), CardType.OBJECTIVE, Icon.ENDOR))));
@@ -72,10 +73,12 @@ public class Card1273_036 extends AbstractNormalEffect {
         GameTextActionId gameTextActionId = GameTextActionId.LEGACY__THE_SHIELD_IS_DOWN_V__UPLOAD_BUNKER;
 
         // Check condition(s)
-        if (GameConditions.canTakeCardsIntoHandFromReserveDeck(game, playerId, self, gameTextActionId)) {
+        if (GameConditions.isOncePerTurn(game, self, playerId, gameTextSourceCardId, gameTextActionId)
+                && GameConditions.canTakeCardsIntoHandFromReserveDeck(game, playerId, self, gameTextActionId)) {
 
             final TopLevelGameTextAction action = new TopLevelGameTextAction(self, playerId, gameTextSourceCardId, gameTextActionId);
             action.setText("Take Bunker into hand from Reserve Deck");
+            action.appendUsage(new OncePerTurnEffect(action));
             // Perform result(s)
             action.appendEffect(
                     new TakeCardIntoHandFromReserveDeckEffect(action, playerId, Filters.Bunker, true));
