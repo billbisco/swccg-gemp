@@ -6658,8 +6658,6 @@ const fixedImages = {
 "2281_24_BACK":"https://wiki.swccg.com/images/d/d6/VB8-D-fearedthroughoutthegalaxy-pre.gif",
 "2281_44":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/infiltration.gif",
 "2281_44_BACK":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/unlikelyallies.gif",
-"2281_1044":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/infiltration.gif",
-"2281_1044_BACK":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/unlikelyallies.gif",
 "2281_47":"https://wiki.swccg.com/images/b/bd/VB8-02-Kyle_Katarns_Blaster_Rifle.png",
 "2281_1047":"https://wiki.swccg.com/images/2/2b/VL-history-1281-47-front-master.png",
 "2282_14":"https://wiki.swccg.com/images/0/03/VB8-03-Lando_Calrissian_Unlikely_Hero.png",

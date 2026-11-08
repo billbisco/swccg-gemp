@@ -563,4 +563,51 @@ public class Card_1281_044_Tests {
         assertInZone(Zone.USED_PILE, charts);
         assertEquals("Unlikely Allies", infiltration.getBlueprint().getTitle());
     }
+
+    @Test
+    public void InfiltrationIsTheMasterListText() {
+        var scn = GetScenario();
+        var card = scn.GetLSCard("infiltration").getBlueprint();
+
+        assertEquals("Infiltration", card.getTitle());
+        assertEquals("Infiltration: Deploy Nar Shaddaa, Undercity and Scoundrel's Luck. For reminder of game, your gamblers, information brokers, and spies are scoundrels. You may not deploy Nightfall or cards with ability except scoundrels and [Independent] starships. 'Luke' on opponent's [Reflections II] objective is treated as 'Kyle Katarn.' Once per turn, may deploy a battleground site to Nar Shaddaa from Reserve Deck; reshuffle. While this side up, your Force drains at systems are -1. May use 1 Force to take Imperial Navigation Charts into hand from Reserve Deck; reshuffle. Flip this card if Imperial Navigation Charts is 'stolen.' Unlikely Allies: While this side up, your scoundrels are forfeit +1. Your Force generation is +1 for each battleground you occupy with a scoundrel (to a maximum of +2). 'Once' on Scoundrel's Luck is treated as 'twice.' During your control phase, may retrieve 1 Force. Once during your turn, may place a card from hand in your Used Pile or Lost Pile, shuffle that pile and take the top card into hand. Flip this card if Imperial Navigation Charts is not on table (unless you have completed a Kessel Run).",
+                card.getGameText());
+        org.junit.Assert.assertNull(card.getLegacyVersion());
+        assertEquals("Infiltration", com.gempukku.swccgo.logic.GameUtils.getFullName(card));
+
+        scn.StartGame();
+        var back = scn.GetLSCard("infiltration").getOtherSideBlueprint();
+        assertEquals("Unlikely Allies", back.getTitle());
+        assertEquals(card.getGameText(), back.getGameText());
+        org.junit.Assert.assertNull(back.getLegacyVersion());
+    }
+
+    @Test
+    public void InfiltrationMayUseOneForceToTakeImperialNavigationChartsIntoHand() {
+        var scn = GetScenario();
+        var infiltration = scn.GetLSCard("infiltration");
+        var charts = scn.GetLSCard("charts");
+        var rest = scn.GetLSCard("rest");
+
+        scn.StartGame();
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        scn.MoveCardsToTopOfLSReserveDeck(rest);
+        assertEquals(Zone.RESERVE_DECK, charts.getZone());
+        int force = scn.GetLSForcePileCount();
+
+        assertTrue(scn.LSCardActionAvailable(infiltration, "Take Imperial Navigation Charts into hand"));
+        scn.LSUseCardAction(infiltration, "Take Imperial Navigation Charts into hand");
+        scn.PassResponses("Use 1 Force");
+        assertTrue(scn.LSDecisionAvailable("Choose card to take into hand"));
+        assertTrue(scn.LSHasCardChoiceAvailable(charts));
+        scn.LSChooseCard(charts);
+        scn.PassAllResponses();
+
+        assertEquals(Zone.HAND, charts.getZone());
+        assertEquals(force - 1, scn.GetLSForcePileCount());
+        // The once-per-turn battleground site deployment is unaffected.
+        scn.DSPass();
+        assertTrue(scn.AwaitingLSDeployPhaseActions());
+        assertTrue(scn.LSCardActionAvailable(infiltration, "Deploy battleground site"));
+    }
 }

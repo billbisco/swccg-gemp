@@ -20,6 +20,8 @@ import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
 import com.gempukku.swccgo.logic.effects.AddUntilEndOfGameModifierEffect;
 import com.gempukku.swccgo.logic.effects.FlipCardEffect;
+import com.gempukku.swccgo.logic.effects.UseForceEffect;
+import com.gempukku.swccgo.logic.effects.choose.TakeCardIntoHandFromReserveDeckEffect;
 import com.gempukku.swccgo.logic.effects.choose.DeployCardFromReserveDeckEffect;
 import com.gempukku.swccgo.logic.effects.choose.DeployCardToSystemFromReserveDeckEffect;
 import com.gempukku.swccgo.logic.modifiers.ForceDrainModifier;
@@ -40,7 +42,7 @@ import java.util.List;
  * Title: Infiltration / Unlikely Allies
  */
 public class Card1281_044 extends AbstractObjective {
-    public static final String PACK_GAMETEXT = "Infiltration: Deploy Nar Shaddaa, Undercity and Scoundrel's Luck. {For} remainder of game, your gamblers, information brokers, and spies are scoundrels. You may not deploy Nightfall or cards with ability except scoundrels and Independent Starships. 'Luke' on opponent's (Reflection II) objective is treated as 'Kyle Katarn.' Once per turn, may deploy a battleground site to Nar Shaddaa from Reserve Deck; reshuffle. {While} this side up, your Force drains at systems are -1. {Flip} this card if If Imperial Navigation Charts is 'stolen'. Unlikely Allies: {While} this side up, your scoundrels are forfeit +1. Your Force Generation is +1 for each battlegound you occupy with a scoundrel (to a maximum of +2). 'Once' on Scoundrel's Luck is treated as 'twice.' During your control phase, may retrieve 1 Force. Once during your turn, may place a card from hand in your Used Pile or Lost Pile, shuffle that pile and take the top card into hand. {Flip} this card if Imperial Navigation Charts is not on table (unless you have completed a (v) Kessel Run).";
+    public static final String PACK_GAMETEXT = "Infiltration: Deploy Nar Shaddaa, Undercity and Scoundrel's Luck. For reminder of game, your gamblers, information brokers, and spies are scoundrels. You may not deploy Nightfall or cards with ability except scoundrels and [Independent] starships. 'Luke' on opponent's [Reflections II] objective is treated as 'Kyle Katarn.' Once per turn, may deploy a battleground site to Nar Shaddaa from Reserve Deck; reshuffle. While this side up, your Force drains at systems are -1. May use 1 Force to take Imperial Navigation Charts into hand from Reserve Deck; reshuffle. Flip this card if Imperial Navigation Charts is 'stolen.' Unlikely Allies: While this side up, your scoundrels are forfeit +1. Your Force generation is +1 for each battleground you occupy with a scoundrel (to a maximum of +2). 'Once' on Scoundrel's Luck is treated as 'twice.' During your control phase, may retrieve 1 Force. Once during your turn, may place a card from hand in your Used Pile or Lost Pile, shuffle that pile and take the top card into hand. Flip this card if Imperial Navigation Charts is not on table (unless you have completed a Kessel Run).";
 
     public Card1281_044() {
         super(Side.LIGHT, 0, "Infiltration", ExpansionSet.VIRTUAL_BLOCK_8_1, Rarity.V);
@@ -111,7 +113,25 @@ public class Card1281_044 extends AbstractObjective {
 
     @Override
     protected List<TopLevelGameTextAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
-        return battlegroundSiteAction(playerId, game, self, gameTextSourceCardId);
+        List<TopLevelGameTextAction> actions = new LinkedList<TopLevelGameTextAction>();
+        List<TopLevelGameTextAction> siteActions = battlegroundSiteAction(playerId, game, self, gameTextSourceCardId);
+        if (siteActions != null)
+            actions.addAll(siteActions);
+
+        // May use 1 Force to take Imperial Navigation Charts into hand from Reserve Deck; reshuffle.
+        // Reuses the card's Reserve Deck search action id (no usage limit is recorded under it here).
+        GameTextActionId chartsActionId = GameTextActionId.LEGACY__INFILTRATION__DEPLOY_BATTLEGROUND_SITE;
+        if (GameConditions.canUseForce(game, playerId, 1)
+                && GameConditions.canTakeCardsIntoHandFromReserveDeck(game, playerId, self, chartsActionId)) {
+            TopLevelGameTextAction action = new TopLevelGameTextAction(self, gameTextSourceCardId, chartsActionId);
+            action.setText("Take Imperial Navigation Charts into hand from Reserve Deck");
+            action.setActionMsg("Take Imperial Navigation Charts into hand from Reserve Deck");
+            action.appendCost(new UseForceEffect(action, playerId, 1));
+            action.appendEffect(
+                    new TakeCardIntoHandFromReserveDeckEffect(action, playerId, Filters.title("Imperial Navigation Charts"), true));
+            actions.add(action);
+        }
+        return actions.isEmpty() ? null : actions;
     }
 
     static List<TopLevelGameTextAction> battlegroundSiteAction(final String playerId, SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
