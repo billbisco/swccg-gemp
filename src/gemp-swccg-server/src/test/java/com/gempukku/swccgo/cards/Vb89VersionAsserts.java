@@ -1,13 +1,19 @@
 package com.gempukku.swccgo.cards;
 
 import com.gempukku.swccgo.common.LegacyVersion;
+import com.gempukku.swccgo.common.Phase;
+import com.gempukku.swccgo.common.Side;
+import com.gempukku.swccgo.framework.StartingSetup;
+import com.gempukku.swccgo.framework.VirtualTableScenario;
 import com.gempukku.swccgo.game.SwccgCardBlueprint;
 import com.gempukku.swccgo.game.SwccgCardBlueprintLibrary;
 import com.gempukku.swccgo.logic.GameUtils;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -53,7 +59,8 @@ public final class Vb89VersionAsserts {
         assertEquals(label, version.label());
         assertEquals(printedOn, version.printedOn());
         assertEquals(supersededOn, version.supersededOn());
-        assertEquals(label.isEmpty() ? title : title + " [" + label + "]", GameUtils.getFullName(card));
+        String currentName = GameUtils.getFullName(blueprint(currentId));
+        assertEquals(label.isEmpty() ? currentName : currentName + " [" + label + "]", GameUtils.getFullName(card));
     }
 
     /** A version is the same card as its current printing (uniqueness and persona rules see one card). */
@@ -67,5 +74,48 @@ public final class Vb89VersionAsserts {
         assertEquals(current.getSide(), version.getSide());
         assertEquals(current.getCardCategory(), version.getCardCategory());
         assertNotEquals(current.getGameText(), version.getGameText());
+    }
+
+    /**
+     * Gameplay check for a character: each may deploy alone, but not while the other is on table (same unique
+     * card).
+     */
+    public static void assertCharacterMayNotDeployWhileOtherIsOnTable(String versionId, String currentId) {
+        boolean dark = blueprint(currentId).getSide() == Side.DARK;
+        for (int otherOut = 0; otherOut < 3; otherOut++) {
+            boolean currentOnTable = otherOut == 1;
+            HashMap<String, String> cards = new HashMap<>();
+            cards.put("version", versionId);
+            cards.put("current", currentId);
+            var scn = new VirtualTableScenario(
+                    dark ? new HashMap<>() : cards,
+                    dark ? cards : new HashMap<>(),
+                    30, 30,
+                    StartingSetup.DefaultLSGroundLocation,
+                    StartingSetup.DefaultDSGroundLocation,
+                    StartingSetup.NoLSStartingInterrupts,
+                    StartingSetup.NoDSStartingInterrupts,
+                    StartingSetup.NoLSShields,
+                    StartingSetup.NoDSShields,
+                    VirtualTableScenario.Open);
+            var onTable = dark ? scn.GetDSCard(currentOnTable ? "current" : "version") : scn.GetLSCard(currentOnTable ? "current" : "version");
+            var inHand = dark ? scn.GetDSCard(currentOnTable ? "version" : "current") : scn.GetLSCard(currentOnTable ? "version" : "current");
+            scn.StartGame();
+            if (dark) {
+                if (otherOut > 0)
+                    scn.MoveCardsToLocation(scn.GetDSStartingLocation(), onTable);
+                scn.MoveCardsToDSHand(inHand);
+                scn.SkipToDSTurn(Phase.DEPLOY);
+                scn.EnsureDSForcePile(10);
+                assertEquals("other copy on table: " + otherOut, otherOut == 0, scn.DSDeployAvailable(inHand));
+            } else {
+                if (otherOut > 0)
+                    scn.MoveCardsToLocation(scn.GetLSStartingLocation(), onTable);
+                scn.MoveCardsToLSHand(inHand);
+                scn.SkipToLSTurn(Phase.DEPLOY);
+                scn.EnsureLSForcePile(10);
+                assertEquals("other copy on table: " + otherOut, otherOut == 0, scn.LSDeployAvailable(inHand));
+            }
+        }
     }
 }
