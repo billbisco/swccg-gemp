@@ -25,4 +25,20 @@ public final class LegacyIds {
             return false;
         }
     }
+
+    /**
+     * The printing an alternate-image (AI) Legacy printing is the same card as: "1281_30ai" -> "1281_30".
+     * Any other id is returned unchanged. An AI printing with a class of its own (docs/legacy-versions.md) is still
+     * the same card as its base printing for deck counts and bans.
+     */
+    public static String withoutAlternateImageSuffix(String blueprintId) {
+        if (blueprintId == null || !isLegacyBlueprint(blueprintId))
+            return blueprintId;
+        String[] parts = blueprintId.split("_", 3);
+        if (parts.length < 2 || !parts[1].endsWith("ai") || parts[1].length() <= 2
+                || !parts[1].substring(0, parts[1].length() - 2).chars().allMatch(Character::isDigit))
+            return blueprintId;
+        String base = parts[0] + "_" + parts[1].substring(0, parts[1].length() - 2);
+        return parts.length > 2 ? base + "_" + parts[2] : base;
+    }
 }

@@ -17,13 +17,36 @@ The **Legacy** format always uses the latest text of every card.
   (blueprintMapping alias), e.g. a version of `1240_8` is `2240_8`.
 - **k = 0 is the first older version added** for a card; a later addition takes the next free k (+1000).
   The date order is in the metadata (`printedOn`), not the id.
-- The card pool looks at k = 0, 1, 2 (`LegacyVersion.MAX_VERSIONS_PER_CARD`).
+- The card pool looks at k = 0 .. 4 (`LegacyVersion.MAX_VERSIONS_PER_CARD`).
 
 - A version may differ from its current card only in a printed stat or icon (Bill: "a change is a change is a change"),
   e.g. Dewback (V) `2210_80` printed MANEUVER 4 where the errata'd card has ARMOR 4.
 - **Retired version ids:** if a version id that was already released stops being a version (its text became the
   current card's), keep it as an alias of the current card in `blueprintMapping.txt` (after `# END legacy`) so saved
   decks still load, e.g. `2220_161,1220_161`. The version pool skips aliased ids.
+
+## AI printings (Bill, 2026-11-08)
+
+An alternate-image (AI) printing that had its own published text gets its own version cards ("Why wouldn't they?
+They are a different image"). An AI printing is the same card as its base printing (title, uniqueness, persona,
+deck counts, bans).
+
+- **Version id:** the AI printing's id through the same scheme, keeping the suffix: `1250_45ai` → `2250_45ai`
+  (k = 0), `2250_1045ai` (k = 1); class `cards/set2250/light/Card2250_045ai.java` (the class loader pads the number
+  and keeps `ai`). An AI printing with a plain numeric id uses the plain scheme: `1240_3` (Juno Eclipse AI) → `2240_3`.
+- `currentPrintingId` is the AI printing (`1250_45ai`); `LegacyVersion.currentPrintingIdOf("2250_45ai")` → `1250_45ai`.
+- **Class:** extend the base printing's version (`Card2250_045ai extends Card2250_045`) and call `setLegacyVersion`
+  with the AI printing's id and source; the text, behaviour and dates are the base version's (errata apply to the card,
+  not to one printing). The card pool lists AI versions next to the others (it tries `n` and `nai` for every sheet number).
+- **Image:** the AI image that shows that text. If none shows it, reuse the current AI image and list the card as
+  needing a CardMaker image.
+- **Own current class (only when needed):** an AI printing whose latest text differs from its base card's gets a class
+  `cards/set12xx/<side>/Card12xx_NNNai.java`; remove its `12xx_NNai,…` alias from `blueprintMapping.txt`. Deck counts and
+  bans still count it as the base printing (`LegacyIds.withoutAlternateImageSuffix` in
+  `DefaultSwccgFormat.sameCardBlueprintId`). None needed so far (2026-11-08): every AI printing's latest text is its base
+  card's latest text.
+- Done: `2240_3` (Juno Eclipse AI), `2240_8ai` (Galen Marek AI), `2250_2ai` (Aurra Sing AI), `2250_44ai`
+  (Master Qui-Gon AI), `2250_45ai` (Mace Windu AI), `2281_30ai` (Supreme Chancellor Valorum AI).
 
 ## Formats
 

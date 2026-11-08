@@ -48,7 +48,14 @@ public class LegacyVersionsTests {
         assertEquals("1291_29_BACK", LegacyVersion.currentPrintingIdOf("2291_29_BACK"));
         assertEquals("2261_33", LegacyVersion.versionIdOf("1261_33", 0));
         assertEquals("2261_1033", LegacyVersion.versionIdOf("1261_33", 1));
-        for (String notAVersion : new String[]{"1261_33", "601_81", "1_19", "200_35", "2293_1", "2199_1", "2261_1000", "2261_x"})
+        // AI printings keep their suffix (docs/legacy-versions.md, "AI printings")
+        assertEquals("1250_45ai", LegacyVersion.currentPrintingIdOf("2250_45ai"));
+        assertEquals("1250_45ai", LegacyVersion.currentPrintingIdOf("2250_1045ai*"));
+        assertEquals("2250_45ai", LegacyVersion.versionIdOf("1250_45ai", 0));
+        assertEquals("2250_1045ai", LegacyVersion.versionIdOf("1250_45ai", 1));
+        assertEquals("1240_3", LegacyVersion.currentPrintingIdOf("2240_3"));
+        for (String notAVersion : new String[]{"1261_33", "601_81", "1_19", "200_35", "2293_1", "2199_1", "2261_1000", "2261_x",
+                "1250_45ai", "2250_ai", "2250_1000ai", "2250_45xai"})
             assertNull(notAVersion, LegacyVersion.currentPrintingIdOf(notAVersion));
     }
 
@@ -222,6 +229,74 @@ public class LegacyVersionsTests {
                 assertTrue(expected.getMessage(), expected.getMessage().contains("banned card"));
             }
         }
+    }
+
+    /** Pre-errata versions of AI printings (docs/legacy-versions.md, "AI printings"). */
+    private static final List<String> AI_VERSIONS = List.of("2240_3", "2240_8ai", "2250_2ai", "2250_44ai", "2250_45ai", "2281_30ai");
+
+    @Test
+    public void AiPrintingVersionsAreInThePoolForAnythingGoesOnly() throws DeckInvalidException {
+        List<String> versions = LegacyCardPool.implementedVersionIds(library);
+        for (String id : AI_VERSIONS) {
+            assertTrue(id, versions.contains(id));
+            assertEquals(id, 60, collections.getDefaultCollection(false).getItemCount(id));
+            formats.getFormat("anything_goes").validateCard(id, false);
+            try {
+                formats.getFormat("legacy").validateCard(id, false);
+                fail(id + " must not be legal in Legacy");
+            } catch (DeckInvalidException expected) {
+                assertTrue(expected.getMessage(), expected.getMessage().contains("from set banned in this format"));
+            }
+        }
+    }
+
+    @Test
+    public void AnAiPrintingAndItsVersionsAreTheSameCardAsTheBasePrinting() {
+        DefaultSwccgFormat format = aiFormat(null, null);
+        for (String[] sameCard : new String[][]{{"2250_45ai", "1250_45ai", "2250_45", "1250_45"}, {"2240_3", "1240_3", "2240_2", "1240_2"},
+                {"2281_30ai", "1281_30ai", "2281_30", "1281_30"}, {"2250_44ai", "1250_44ai", "2250_1044", "1250_44"}}) {
+            for (String id : sameCard)
+                assertEquals(id, format.sameCardBlueprintId(sameCard[3]), format.sameCardBlueprintId(id));
+        }
+        assertEquals("1281_30", com.gempukku.swccgo.common.LegacyIds.withoutAlternateImageSuffix("1281_30ai"));
+        assertEquals("1281_30", com.gempukku.swccgo.common.LegacyIds.withoutAlternateImageSuffix("1281_30"));
+        assertEquals("200_1ai", com.gempukku.swccgo.common.LegacyIds.withoutAlternateImageSuffix("200_1ai"));
+        assertEquals("2250_45ai", com.gempukku.swccgo.common.LegacyIds.withoutAlternateImageSuffix("2250_45ai"));
+    }
+
+    @Test
+    public void MixingAnAiVersionWithTheBasePrintingDoesNotAddCopiesOfARestrictedCard() throws DeckInvalidException {
+        var restricted = aiFormat("1250_2", null);
+        restricted.validateDeck(deck("2250_2ai"));
+        for (String[] pair : new String[][]{{"1250_2", "2250_2ai"}, {"1250_2ai", "2250_2ai"}, {"2250_2", "2250_2ai"}}) {
+            try {
+                restricted.validateDeck(deck(pair));
+                fail("Two copies of a restricted card: " + String.join(",", pair));
+            } catch (DeckInvalidException expected) {
+                assertTrue(expected.getMessage(), expected.getMessage().contains("more than one copy of an restricted card"));
+            }
+        }
+        var banned = aiFormat(null, "1250_2");
+        for (String id : new String[]{"1250_2ai", "2250_2ai"}) {
+            try {
+                banned.validateCard(id, false);
+                fail(id + " must be banned with 1250_2");
+            } catch (DeckInvalidException expected) {
+                assertTrue(expected.getMessage(), expected.getMessage().contains("banned card"));
+            }
+        }
+    }
+
+    private static DefaultSwccgFormat aiFormat(String restricted, String banned) {
+        DefaultSwccgFormat format = new DefaultSwccgFormat(library, "ai versions test", false, false, false, false);
+        format.setCode("ai_versions_test");
+        for (int set : new int[]{1, 601, 1240, 1250, 1281, 2240, 2250, 2281})
+            format.addValidSet(set);
+        if (restricted != null)
+            format.addRestrictedCard(restricted);
+        if (banned != null)
+            format.addBannedCard(banned);
+        return format;
     }
 
     /** Game text of any card, both location texts included (locations have no plain game text). */

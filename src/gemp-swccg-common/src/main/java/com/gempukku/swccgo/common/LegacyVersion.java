@@ -11,6 +11,9 @@ import java.time.LocalDate;
  * Dark Waters &amp; Krayt Dragon Bones (1261_33) is 2261_33. Version sets 2200–2292 are in Anything Goes
  * and not in Legacy, so Legacy keeps only the latest text of every card.
  * <p>
+ * An alternate-image (AI) printing keeps its "ai" suffix: the first older version of 1250_45ai is 2250_45ai
+ * (class Card2250_045ai), the next 2250_1045ai. An AI printing with a numeric id (1240_3) uses the plain scheme.
+ * <p>
  * A version is the same card as its current printing: same title, uniqueness and persona, so uniqueness,
  * persona and "title" rules treat the two as one card, and deck counts (restricted/banned) count the version
  * as its current printing.
@@ -57,24 +60,37 @@ public record LegacyVersion(String currentPrintingId, String label, String sourc
             return null;
         try {
             int set = Integer.parseInt(parts[0]);
-            int number = Integer.parseInt(parts[1]);
+            String suffix = alternateImageSuffixOf(parts[1]);
+            int number = Integer.parseInt(parts[1].substring(0, parts[1].length() - suffix.length()));
             if (set < FIRST_VERSION_SET || set > LAST_VERSION_SET || number <= 0)
                 return null;
             int currentNumber = number % VERSION_NUMBER_STEP;
             if (currentNumber == 0)
                 return null;
-            String current = (set - VERSION_SET_OFFSET) + "_" + currentNumber;
+            String current = (set - VERSION_SET_OFFSET) + "_" + currentNumber + suffix;
             return parts.length > 2 ? current + "_" + parts[2] : current;
         } catch (NumberFormatException e) {
             return null;
         }
     }
 
-    /** The id of the (k+1)-th older version of a published sheet card ("1261_33", 0 -> "2261_33"). */
+    /**
+     * The id of the (k+1)-th older version of a published sheet card ("1261_33", 0 -> "2261_33"; an AI printing
+     * keeps its suffix: "1250_45ai", 0 -> "2250_45ai").
+     */
     public static String versionIdOf(String currentPrintingId, int k) {
         String[] parts = currentPrintingId.split("_");
         int set = Integer.parseInt(parts[0]);
-        int number = Integer.parseInt(parts[1]);
-        return (set + VERSION_SET_OFFSET) + "_" + (number + k * VERSION_NUMBER_STEP);
+        String suffix = alternateImageSuffixOf(parts[1]);
+        int number = Integer.parseInt(parts[1].substring(0, parts[1].length() - suffix.length()));
+        return (set + VERSION_SET_OFFSET) + "_" + (number + k * VERSION_NUMBER_STEP) + suffix;
+    }
+
+    /** Card-number suffix of an alternate-image (AI) printing. */
+    public static final String ALTERNATE_IMAGE_SUFFIX = "ai";
+
+    private static String alternateImageSuffixOf(String cardNumber) {
+        return cardNumber.endsWith(ALTERNATE_IMAGE_SUFFIX) && cardNumber.length() > ALTERNATE_IMAGE_SUFFIX.length()
+                ? ALTERNATE_IMAGE_SUFFIX : "";
     }
 }

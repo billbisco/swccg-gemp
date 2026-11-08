@@ -222,7 +222,12 @@ public class SwccgCardBlueprintLibrary {
         }
     }
 
+    /** Suffix of a Legacy alternate-image (AI) printing that has a class of its own, e.g. 2250_45ai -> Card2250_045ai. */
+    private static final String ALTERNATE_IMAGE_SUFFIX = "ai";
+
     private String normalizeId(String blueprintPart) {
+        if (blueprintPart.endsWith(ALTERNATE_IMAGE_SUFFIX) && blueprintPart.length() > ALTERNATE_IMAGE_SUFFIX.length())
+            return normalizeId(blueprintPart.substring(0, blueprintPart.length() - ALTERNATE_IMAGE_SUFFIX.length())) + ALTERNATE_IMAGE_SUFFIX;
         int id = Integer.parseInt(blueprintPart);
         if (id < 10)
             return "00" + id;
