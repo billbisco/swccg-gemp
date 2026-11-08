@@ -35,7 +35,7 @@ public class Card601_009 extends AbstractAlien {
         super(Side.DARK, 1, 4, 3, 4, 7, "Jabba The Hutt", Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
         setVirtualSuffix(true);
         setLore("Jabba Desilijic Tiure. Male heir to Zorba the Hutt. Gangster. Leader of one of the largest criminal organizations in the galaxy. Over six hundred years old.");
-        setGameText("While with your alien leader, Jabba is immune to attrition any may not be targeted by Interrupts or weapons. May [download] one Scum And Villainy. During battle may use 1 Force to double the power of one other non-[Maintenance] alien present.");
+        setGameText("While with your alien leader, Jabba is immune to attrition and may not be targeted by Interrupts or weapons. May [download] one Scum And Villainy. During battle, may use 1 Force to double the power of one other non-[Maintenance] alien present.");
         addIcons(Icon.JABBAS_PALACE, Icon.LEGACY_BLOCK_3);
         addPersona(Persona.JABBA);
         setSpecies(Species.HUTT);

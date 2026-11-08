@@ -40,9 +40,9 @@ public class Card1220_161 extends AbstractSite {
     public Card1220_161() {
         super(Side.LIGHT, Title.Echo_Med_Lab, Title.Hoth, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_2, Rarity.V);
         setVirtualSuffix(true);
-        setLocationLightSideGameText("During your deploy phase, may deploy a medical droid here from Reserve Deck; reshuffle.");
+        setLocationLightSideGameText("During your deploy phase, may [download] a medical droid here.");
         setLocationDarkSideGameText("If you control, with an Imperial present, Force drain +1 here.");
-        setGameText("Light: During your deploy phase, may deploy a medical droid here from Reserve Deck; reshuffle. Dark: If you control, with an Imperial present, Force drain +1 here.");
+        setGameText("Light: During your deploy phase, may [download] a medical droid here. Dark: If you control, with an Imperial present, Force drain +1 here.");
         addIcon(Icon.LIGHT_FORCE, 1);
         addIcons(Icon.HOTH, Icon.UNDERGROUND, Icon.INTERIOR_SITE, Icon.PLANET, Icon.SCOMP_LINK);
     }

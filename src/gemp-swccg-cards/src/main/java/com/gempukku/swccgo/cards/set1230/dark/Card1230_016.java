@@ -39,7 +39,7 @@ public class Card1230_016 extends AbstractAlien {
         super(Side.DARK, 3, 1, 2, 1, 3, Title.Nizuc_Bek, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_3, Rarity.V);
         setVirtualSuffix(true);
         setLore("Guard from Corulag. Former bouncer at the Mos Eisley cantina. Assigned by Jabba to guard celebrities visiting Jabba's palace. Friend of Wuher. Loves juri juice.");
-        setGameText("Whenever opponent Force drains at a non-battleground, may retrieve 1 Force. During your deploy phase, may deploy an Effect with 'matching' in game text from Reserve Deck; reshuffle. Once per turn, may place Juri Juice from hand on Force Pile to cancel a Force drain.");
+        setGameText("Whenever opponent Force drains at a non-battleground, may retrieve 1 Force. During your deploy phase, may [download] an Effect with 'matching' in game text. Once per turn, may place Juri Juice from hand on Force Pile to cancel a Force drain.");
         addIcons(Icon.WARRIOR, Icon.JABBAS_PALACE);
     }
 
