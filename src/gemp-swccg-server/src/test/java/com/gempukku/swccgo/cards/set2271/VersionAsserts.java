@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.set2271;
 
+import com.gempukku.swccgo.common.CardSubtype;
 import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Keyword;
 import com.gempukku.swccgo.common.LegacyVersion;
@@ -33,18 +34,28 @@ public final class VersionAsserts {
         assertEquals(darkText, version.getLocationDarkSideGameText());
         if (!iconsDiffer)
             assertFalse(lightText.equals(current.getLocationLightSideGameText()) && darkText.equals(current.getLocationDarkSideGameText()));
-        assertIdentity(version, current, currentPrintingId, label, printedOn, supersededOn, !iconsDiffer);
+        assertIdentity(version, current, currentPrintingId, label, printedOn, supersededOn, !iconsDiffer, current.getCardSubtype());
     }
 
     public static void assertVersion(SwccgCardBlueprint version, SwccgCardBlueprint current, String currentPrintingId,
                                      String label, LocalDate printedOn, LocalDate supersededOn, String gameText) {
         assertEquals(gameText, version.getGameText());
         assertFalse(gameText.equals(current.getGameText()));
-        assertIdentity(version, current, currentPrintingId, label, printedOn, supersededOn, true);
+        assertIdentity(version, current, currentPrintingId, label, printedOn, supersededOn, true, current.getCardSubtype());
+    }
+
+    /** As {@link #assertVersion}, for a version printed with another subtype (e.g. Critical Mission before an errata). */
+    public static void assertVersion(SwccgCardBlueprint version, SwccgCardBlueprint current, String currentPrintingId,
+                                     String label, LocalDate printedOn, LocalDate supersededOn, String gameText,
+                                     CardSubtype versionSubtype) {
+        assertEquals(gameText, version.getGameText());
+        assertFalse(gameText.equals(current.getGameText()));
+        assertIdentity(version, current, currentPrintingId, label, printedOn, supersededOn, true, versionSubtype);
     }
 
     private static void assertIdentity(SwccgCardBlueprint version, SwccgCardBlueprint current, String currentPrintingId,
-                                       String label, LocalDate printedOn, LocalDate supersededOn, boolean sameIcons) {
+                                       String label, LocalDate printedOn, LocalDate supersededOn, boolean sameIcons,
+                                       CardSubtype versionSubtype) {
         LegacyVersion info = version.getLegacyVersion();
         assertNotNull(info);
         assertEquals(currentPrintingId, info.currentPrintingId());
@@ -60,7 +71,7 @@ public final class VersionAsserts {
         assertEquals(current.getUniqueness(), version.getUniqueness());
         assertEquals(current.getCardCategory(), version.getCardCategory());
         assertEquals(current.getCardTypes(), version.getCardTypes());
-        assertEquals(current.getCardSubtype(), version.getCardSubtype());
+        assertEquals(versionSubtype, version.getCardSubtype());
         assertEquals(current.getPersonas(), version.getPersonas());
         assertEquals(current.getExpansionSet(), version.getExpansionSet());
         assertEquals(current.getRarity(), version.getRarity());

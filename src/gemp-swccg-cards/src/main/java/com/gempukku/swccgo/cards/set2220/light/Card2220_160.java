@@ -2,6 +2,7 @@ package com.gempukku.swccgo.cards.set2220.light;
 
 import com.gempukku.swccgo.cards.AbstractLostInterrupt;
 import com.gempukku.swccgo.cards.GameConditions;
+import com.gempukku.swccgo.common.CardSubtype;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.LegacyVersion;
 import com.gempukku.swccgo.common.GameTextActionId;
@@ -35,16 +36,17 @@ import java.util.List;
 /**
  * Set: Virtual Block 2
  * Type: Interrupt
- * Subtype: Lost
+ * Subtype: Out Of Play
  * Title: Wookiee Strangle
  *
- * Original version of 1220_160 (Virtual Block 2 release sheet, Dec 2009, card #160E): no once-per-game limit (added on
- * the Virtual Cards Master List, 2013-04-27).
+ * Original version of 1220_160 (Virtual Block 2 release sheet, Dec 2009, card #160E): an Out Of Play Interrupt with no
+ * once-per-game limit; the Virtual Cards Master List (2013-04-27) made it a Lost Interrupt usable once per game.
  * Anything Goes only (docs/legacy-versions.md).
  */
 public class Card2220_160 extends AbstractLostInterrupt {
     public Card2220_160() {
         super(Side.LIGHT, 3, Title.Wookiee_Strangle, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_2, Rarity.V);
+        setCardSubtype(CardSubtype.OUT_OF_PLAY);
         setVirtualSuffix(true);
         setLore("Wookiees have been known to dislocate more than just arms.");
         setGameText("During your move phase, target opponent's character present with your Wookiee. Both players draw destiny. Add Wookiee's power; opponent adds target's defense value. Target lost if your total destiny +2 > opponent's total destiny.");
