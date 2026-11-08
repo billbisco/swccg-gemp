@@ -2,7 +2,6 @@ package com.gempukku.swccgo.cards.set1261.dark;
 
 import com.gempukku.swccgo.cards.AbstractNormalEffect;
 import com.gempukku.swccgo.cards.GameConditions;
-import com.gempukku.swccgo.cards.conditions.DuringBattleWithParticipantCondition;
 import com.gempukku.swccgo.cards.effects.usage.OncePerTurnEffect;
 import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.filters.Filter;
@@ -19,7 +18,7 @@ import com.gempukku.swccgo.logic.effects.choose.DeployCardFromReserveDeckEffect;
 import com.gempukku.swccgo.logic.evaluators.BaseEvaluator;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.modifiers.SiteAndCardsThereToUsedPileWhenLeavesTableModifier;
-import com.gempukku.swccgo.logic.modifiers.TotalPowerDuringBattleModifier;
+import com.gempukku.swccgo.logic.modifiers.PowerModifier;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 import com.gempukku.swccgo.logic.timing.EffectResult;
 
@@ -37,7 +36,7 @@ public class Card1261_034 extends AbstractNormalEffect {
         super(Side.DARK, 3f, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Fleet Security Protocols",
                 Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
         setLore("Since the debacle at Yavin, the Emperor places a premium on the security of his costly war machine.");
-        setGameText("Deploy on table. Once per turn, may deploy a non-unique starship (or vehicle) site from Reserve Deck; reshuffle. During battle where you have a starship or vehicle, characters at related starship (or vehicle) sites cumulatively add 2 to your total power and may be forfeited to reduce battle damage or attrition. When a starship (or vehicle) site leaves table, place it and all cards there in owner's Used Pile. (Immune to Alter.)");
+        setGameText("Deploy on table. During battle involving your starship (or vehicle), it is power +2 for each of your characters at its related sites (they may be forfeited to reduce battle damage and attrition). Once per turn, may deploy a non-unique starship (or vehicle) site from Reserve Deck; reshuffle (if such sites leave table, place them and all your cards there in Used Pile). (Immune to Alter.)");
         addIcons(Icon.DEATH_STAR_II);
         addImmuneToCardTitle(Title.Alter);
     }
@@ -58,18 +57,25 @@ public class Card1261_034 extends AbstractNormalEffect {
         return characters;
     }
 
+    /** Your characters at the related sites of the specified starship or vehicle. */
+    private static int yourCharactersAtRelatedSites(SwccgGame game, PhysicalCard self, PhysicalCard vessel) {
+        return Filters.countActive(game, self, Filters.and(Filters.your(self), Filters.character,
+                Filters.at(Filters.siteOfStarshipOrVehicle(vessel))));
+    }
+
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, PhysicalCard self) {
         return List.of(
-                new TotalPowerDuringBattleModifier(self, new DuringBattleWithParticipantCondition(yourVesselsInBattle(self)),
+                new PowerModifier(self, yourVesselsInBattle(self),
                         new BaseEvaluator() {
                             @Override
-                            public float evaluateExpression(GameState state, ModifiersQuerying modifiers, PhysicalCard location) {
-                                return 2 * charactersAtRelatedSites(state.getGame(), self).size();
+                            public float evaluateExpression(GameState state, ModifiersQuerying modifiers, PhysicalCard vessel) {
+                                if (!state.isDuringBattle())
+                                    return 0;
+                                return 2 * yourCharactersAtRelatedSites(state.getGame(), self, vessel);
                             }
-                        }, self.getOwner()),
-                new SiteAndCardsThereToUsedPileWhenLeavesTableModifier(self,
-                        Filters.and(Filters.site, Filters.or(Filters.starship_site, Filters.vehicle_site))));
+                        }),
+                new SiteAndCardsThereToUsedPileWhenLeavesTableModifier(self, DOWNLOADABLE_SITE, null, self.getOwner()));
     }
 
     @Override

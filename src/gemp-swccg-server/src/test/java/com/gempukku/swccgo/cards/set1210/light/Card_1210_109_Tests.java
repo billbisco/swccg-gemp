@@ -35,10 +35,14 @@ public class Card_1210_109_Tests {
                     put("wedge", "2_23");
                     put("kessel", "1_126");
                     put("luke", "1_19");
+                    put("threepio", "1_5");
+                    for (int i = 1; i <= 13; i++)
+                        put("filler" + i, "2_25");
                 }},
                 new HashMap<>() {{
                     put("trooper", "1_194");
                     put("blaster", "1_317");
+                    put("defensivefire", "4_140");
                 }},
                 10, 10,
                 StartingSetup.DefaultLSGroundLocation,
@@ -104,7 +108,14 @@ public class Card_1210_109_Tests {
     }
 
     @Test
-    public void R2D2AddsOneLightForceIconWhilePresentWithAScompLink() {
+    public void R2D2GameTextIsOfficialText() {
+        var scn = GetScenario();
+        assertEquals("During battle with C-3PO, may not be targeted by weapons. While aboard a starfighter, it is power, maneuver, and hyperspeed +3. Unless you have 13 or more cards in hand, opponent may not place those cards in Used Pile.",
+                scn.GetLSCard("r2").getBlueprint().getGameText());
+    }
+
+    @Test
+    public void R2D2NoLongerAddsALightForceIconWithAScompLink() {
         var scn = GetScenario();
         var r2 = scn.GetLSCard("r2");
         var farm = scn.GetLSCard("farm");
@@ -113,24 +124,11 @@ public class Card_1210_109_Tests {
         scn.MoveLocationToTable(farm);
         int before = scn.GetIconCount(farm, Icon.LIGHT_FORCE);
         scn.MoveCardsToLocation(farm, r2);
-        assertEquals(before + 1, scn.GetIconCount(farm, Icon.LIGHT_FORCE));
+        assertEquals(before, scn.GetIconCount(farm, Icon.LIGHT_FORCE));
     }
 
     @Test
-    public void R2D2DoesNotAddALightForceIconWithoutAScompLink() {
-        var scn = GetScenario();
-        var r2 = scn.GetLSCard("r2");
-        var cantina = scn.GetLSCard("cantina");
-
-        scn.StartGame();
-        scn.MoveLocationToTable(cantina);
-        int before = scn.GetIconCount(cantina, Icon.LIGHT_FORCE);
-        scn.MoveCardsToLocation(cantina, r2);
-        assertEquals(before, scn.GetIconCount(cantina, Icon.LIGHT_FORCE));
-    }
-
-    @Test
-    public void R2D2AddsTwoToPowerManeuverAndHyperspeedOfAStarfighterHeIsAboard() {
+    public void R2D2AddsThreeToPowerManeuverAndHyperspeedOfAStarfighterHeIsAboard() {
         var scn = GetScenario();
         var r2 = scn.GetLSCard("r2");
         var red2 = scn.GetLSCard("red2");
@@ -145,13 +143,13 @@ public class Card_1210_109_Tests {
         int maneuver = scn.GetManeuver(red2);
         int hyperspeed = scn.GetHyperspeed(red2);
         scn.BoardAsPassenger(red2, r2);
-        assertEquals(power + 2, scn.GetPower(red2));
-        assertEquals(maneuver + 2, scn.GetManeuver(red2));
-        assertEquals(hyperspeed + 2, scn.GetHyperspeed(red2));
+        assertEquals(power + 3, scn.GetPower(red2));
+        assertEquals(maneuver + 3, scn.GetManeuver(red2));
+        assertEquals(hyperspeed + 3, scn.GetHyperspeed(red2));
     }
 
     @Test
-    public void R2D2IsImmuneToFireExtinguisher() {
+    public void R2D2IsNoLongerImmuneToFireExtinguisher() {
         var scn = GetScenario();
         var r2 = scn.GetLSCard("r2");
         var fe = scn.GetLSCard("fe");
@@ -162,32 +160,105 @@ public class Card_1210_109_Tests {
         scn.MoveCardsToLSHand(fe);
         scn.LSActivateForceCheat(6);
         scn.SkipToLSTurn(Phase.DEPLOY);
-        assertFalse("Fire Extinguisher deployed on leftover R2-D2. decision=" + scn.LSGetDecision(),
+        assertTrue("Fire Extinguisher should deploy on R2-D2. decision=" + scn.LSGetDecision(),
                 scn.LSCardActionAvailable(fe, "Deploy"));
-        assertNull(fe.getAttachedTo());
     }
 
     @Test
-    public void R2D2ImmunityDoesNotStopFireExtinguisherOnAnotherAstromech() {
+    public void R2D2MayNotBeTargetedByWeaponsDuringBattleWithC3PO() {
         var scn = GetScenario();
         var r2 = scn.GetLSCard("r2");
-        var r5 = scn.GetLSCard("r5");
-        var fe = scn.GetLSCard("fe");
+        var threepio = scn.GetLSCard("threepio");
+        var luke = scn.GetLSCard("luke");
+        var trooper = scn.GetDSCard("trooper");
+        var blaster = scn.GetDSCard("blaster");
+        var site = scn.GetDSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, r2, threepio, luke, trooper);
+        scn.AttachCardsTo(trooper, blaster);
+        scn.DSActivateForceCheat(4);
+        scn.SkipToDSTurn(Phase.BATTLE);
+        scn.DSStartBattleAndSkipToWeaponsSegment(site);
+        assertTrue(scn.DSCardActionAvailable(blaster, "Fire"));
+        scn.DSUseCardAction(blaster, "Fire");
+        assertTrue(scn.DSHasCardChoiceAvailable(luke));
+        assertTrue(scn.DSHasCardChoiceNotAvailable(r2));
+    }
+
+    @Test
+    public void R2D2MayBeTargetedByWeaponsInBattleWithoutC3PO() {
+        var scn = GetScenario();
+        var r2 = scn.GetLSCard("r2");
+        var luke = scn.GetLSCard("luke");
+        var trooper = scn.GetDSCard("trooper");
+        var blaster = scn.GetDSCard("blaster");
+        var site = scn.GetDSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, r2, luke, trooper);
+        scn.AttachCardsTo(trooper, blaster);
+        scn.DSActivateForceCheat(4);
+        scn.SkipToDSTurn(Phase.BATTLE);
+        scn.DSStartBattleAndSkipToWeaponsSegment(site);
+        assertTrue(scn.DSCardActionAvailable(blaster, "Fire"));
+        scn.DSUseCardAction(blaster, "Fire");
+        assertTrue(scn.DSHasCardChoiceAvailable(r2));
+    }
+
+    @Test
+    public void R2D2StopsOpponentPlacingCardsFromHandInUsedPileWithFewerThan13Cards() {
+        var scn = GetScenario();
+        var r2 = scn.GetLSCard("r2");
+        var fire = scn.GetDSCard("defensivefire");
         var site = scn.GetLSStartingLocation();
 
         scn.StartGame();
-        scn.MoveCardsToLocation(site, r2, r5);
-        scn.MoveCardsToLSHand(fe);
-        scn.LSActivateForceCheat(6);
-        scn.SkipToLSTurn(Phase.DEPLOY);
-        assertTrue("Fire Extinguisher should still deploy on another astromech. decision=" + scn.LSGetDecision(),
-                scn.LSCardActionAvailable(fe, "Deploy"));
-        scn.LSPlayCard(fe);
-        assertTrue(scn.LSHasCardChoiceAvailable(r5));
-        assertTrue(scn.LSHasCardChoiceNotAvailable(r2));
-        scn.LSChooseCard(r5);
+        scn.MoveCardsToLocation(site, r2);
+        for (int i = 1; i <= 12; i++)
+            scn.MoveCardsToLSHand(scn.GetLSCard("filler" + i));
+        scn.MoveCardsToDSHand(fire);
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        int hand = scn.GetLSHandCount();
+        int used = scn.GetLSUsedPileCount();
+        assertTrue(hand < 13);
+        assertTrue(scn.game().getModifiersQuerying().mayNotBePlacedInUsedPile(scn.gameState(), scn.GetLSCard("filler1"), scn.GetDSCard("defensivefire").getOwner()));
+        scn.DSPlayCard(fire, "Place card from opponent's hand in Used Pile");
         scn.PassAllResponses();
-        assertEquals(r5, fe.getAttachedTo());
+        assertEquals(hand, scn.GetLSHandCount());
+        assertEquals(used, scn.GetLSUsedPileCount());
+    }
+
+    @Test
+    public void R2D2DoesNotProtectHandOf13OrMoreCards() {
+        var scn = GetScenario();
+        var r2 = scn.GetLSCard("r2");
+        var fire = scn.GetDSCard("defensivefire");
+        var site = scn.GetLSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, r2);
+        for (int i = 1; i <= 13; i++)
+            scn.MoveCardsToLSHand(scn.GetLSCard("filler" + i));
+        scn.MoveCardsToDSHand(fire);
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        int hand = scn.GetLSHandCount();
+        assertTrue(hand >= 13);
+        scn.DSPlayCard(fire, "Place card from opponent's hand in Used Pile");
+        scn.PassAllResponses();
+        assertEquals(hand - 1, scn.GetLSHandCount());
+    }
+
+    @Test
+    public void R2D2HandProtectionDoesNotStopOwnerPlacingOwnCards() {
+        var scn = GetScenario();
+        var r2 = scn.GetLSCard("r2");
+        var site = scn.GetLSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, r2);
+        scn.MoveCardsToLSHand(scn.GetLSCard("filler1"));
+        assertFalse(scn.game().getModifiersQuerying().mayNotBePlacedInUsedPile(scn.gameState(), scn.GetLSCard("filler1"), r2.getOwner()));
     }
 
     @Test

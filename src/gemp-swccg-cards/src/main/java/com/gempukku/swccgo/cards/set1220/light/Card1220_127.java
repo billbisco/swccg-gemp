@@ -1,14 +1,9 @@
 package com.gempukku.swccgo.cards.set1220.light;
 
 import com.gempukku.swccgo.cards.AbstractNormalEffect;
-import com.gempukku.swccgo.cards.GameConditions;
-import com.gempukku.swccgo.cards.conditions.AttachedCondition;
-import com.gempukku.swccgo.cards.effects.usage.OncePerBattleEffect;
 import com.gempukku.swccgo.common.ExpansionSet;
-import com.gempukku.swccgo.common.GameTextActionId;
 import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Keyword;
-import com.gempukku.swccgo.common.Persona;
 import com.gempukku.swccgo.common.PlayCardOptionId;
 import com.gempukku.swccgo.common.PlayCardZoneOption;
 import com.gempukku.swccgo.common.Rarity;
@@ -19,17 +14,11 @@ import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
-import com.gempukku.swccgo.logic.GameUtils;
-import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
-import com.gempukku.swccgo.logic.conditions.Condition;
-import com.gempukku.swccgo.logic.effects.CancelGameTextUntilEndOfTurnEffect;
-import com.gempukku.swccgo.logic.effects.TargetCardOnTableEffect;
-import com.gempukku.swccgo.logic.effects.UnrespondableEffect;
-import com.gempukku.swccgo.logic.modifiers.ForceDrainsMayNotBeCanceledModifier;
-import com.gempukku.swccgo.logic.modifiers.ForceDrainsMayNotBeReducedModifier;
+import com.gempukku.swccgo.logic.modifiers.DeployCostModifier;
+import com.gempukku.swccgo.logic.modifiers.DeployCostToLocationModifier;
+import com.gempukku.swccgo.logic.modifiers.ForfeitModifier;
+import com.gempukku.swccgo.logic.modifiers.ImmunityToAttritionChangeModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
-import com.gempukku.swccgo.logic.modifiers.PowerModifier;
-import com.gempukku.swccgo.logic.timing.Action;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -44,70 +33,32 @@ public class Card1220_127 extends AbstractNormalEffect {
         super(Side.LIGHT, 3, PlayCardZoneOption.ATTACHED, Title.Leia_Of_Alderaan, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_2, Rarity.V);
         setVirtualSuffix(true);
         setLore("The face that launched a thousand starships.");
-        setGameText("Deploy on Leia (or your female of ability < 4). Opponent may not cancel or reduce Force drains at same battleground. If on Leia, she is power +2 and, once per battle, may cancel the game text of an opponent's leader of ability < 4 here.");
+        setGameText("Deploy on Leia. At same location, your unique (•) Rebels are deploy -1 and their immunity to attrition is +1. Dark Side Republic characters are deploy +2 and forfeit -2. (Immune to Alter.)");
         addKeywords(Keyword.DEPLOYS_ON_CHARACTERS);
         addIcons(Icon.CLOUD_CITY);
+        addImmuneToCardTitle(Title.Alter);
     }
 
     @Override
     protected Filter getGameTextValidDeployTargetFilter(SwccgGame game, PhysicalCard self, PlayCardOptionId playCardOptionId, boolean asReact) {
-        return Filters.or(Persona.LEIA, Filters.and(Filters.your(self), Filters.female, Filters.abilityLessThan(4)));
+        return Filters.Leia;
     }
 
     @Override
     protected Filter getGameTextValidTargetFilterToRemainAttachedToAfterCrossingOver(final SwccgGame game, final PhysicalCard self, PlayCardOptionId playCardOptionId) {
-        return Filters.or(Persona.LEIA, Filters.and(Filters.female, Filters.abilityLessThan(4)));
+        return Filters.Leia;
     }
 
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
-        String opponent = game.getOpponent(self.getOwner());
-        Filter sameBattleground = Filters.and(Filters.sameLocation(self), Filters.battleground);
-        Condition isOnLeia = new AttachedCondition(self, Filters.Leia);
-        Filter attachedTo = Filters.hasAttached(self);
+        Filter yourUniqueRebels = Filters.and(Filters.your(self), Filters.unique, Filters.Rebel);
+        Filter darkSideRepublicCharacters = Filters.and(Filters.Dark_Side, Filters.Republic_character);
 
         List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new ForceDrainsMayNotBeCanceledModifier(self, sameBattleground, opponent, null));
-        modifiers.add(new ForceDrainsMayNotBeReducedModifier(self, sameBattleground, opponent, null));
-        modifiers.add(new PowerModifier(self, attachedTo, isOnLeia, 2));
+        modifiers.add(new DeployCostToLocationModifier(self, yourUniqueRebels, -1, Filters.sameLocation(self)));
+        modifiers.add(new ImmunityToAttritionChangeModifier(self, Filters.and(yourUniqueRebels, Filters.atSameLocation(self)), 1));
+        modifiers.add(new DeployCostModifier(self, darkSideRepublicCharacters, 2));
+        modifiers.add(new ForfeitModifier(self, darkSideRepublicCharacters, -2));
         return modifiers;
-    }
-
-    @Override
-    protected List<TopLevelGameTextAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
-        List<TopLevelGameTextAction> actions = new LinkedList<TopLevelGameTextAction>();
-        GameTextActionId gameTextActionId = GameTextActionId.OTHER_CARD_ACTION_2;
-        final Filter leaderFilter = Filters.and(Filters.leader, Filters.opponents(self), Filters.with(self), Filters.abilityLessThan(4));
-
-        if (GameConditions.isOncePerBattle(game, self, playerId, gameTextSourceCardId, gameTextActionId)
-                && GameConditions.isInBattle(game, self)
-                && GameConditions.canTarget(game, self, leaderFilter)
-                && GameConditions.isAttachedTo(game, self, Filters.Leia)) {
-
-            final TopLevelGameTextAction action = new TopLevelGameTextAction(self, playerId, gameTextSourceCardId, gameTextActionId);
-            action.setText("Cancel a leader's game text");
-            action.appendUsage(
-                    new OncePerBattleEffect(action));
-            action.appendTargeting(
-                    new TargetCardOnTableEffect(action, playerId, "Choose leader", leaderFilter) {
-                        @Override
-                        protected void cardTargeted(final int targetGroupId, final PhysicalCard targetedCard) {
-                            action.addAnimationGroup(targetedCard);
-                            action.allowResponses("Cancel " + GameUtils.getCardLink(targetedCard) + "'s game text",
-                                    new UnrespondableEffect(action) {
-                                        @Override
-                                        protected void performActionResults(Action targetingAction) {
-                                            PhysicalCard target = action.getPrimaryTargetCard(targetGroupId);
-                                            action.appendEffect(
-                                                    new CancelGameTextUntilEndOfTurnEffect(action, target));
-                                        }
-                                    }
-                            );
-                        }
-                    }
-            );
-            actions.add(action);
-        }
-        return actions;
     }
 }

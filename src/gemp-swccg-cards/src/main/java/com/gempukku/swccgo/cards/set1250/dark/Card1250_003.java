@@ -14,6 +14,7 @@ import java.util.List;
 /** Virtual Block 5 printing of the unchanged Original Virtual Chokk text. */
 public class Card1250_003 extends Card1115_040 {
     public Card1250_003() {
+        setGameText("Deploys -1 to Tatooine. While with your non-droid character, if a battle was just initiated here, may use 1 Force to place Chokk in Used Pile; Interrupts may not be played until the weapons segment ends.");
         addIcons(Icon.LEGACY_BLOCK_5);
         setAsLegacy(true);
     }

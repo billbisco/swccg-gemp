@@ -2,11 +2,11 @@ package com.gempukku.swccgo.cards.set1240.dark;
 
 import com.gempukku.swccgo.cards.AbstractNormalEffect;
 import com.gempukku.swccgo.cards.GameConditions;
+import com.gempukku.swccgo.cards.effects.usage.OncePerBattleEffect;
 import com.gempukku.swccgo.cards.effects.usage.OncePerGameEffect;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.GameTextActionId;
 import com.gempukku.swccgo.common.Icon;
-import com.gempukku.swccgo.common.Keyword;
 import com.gempukku.swccgo.common.PlayCardZoneOption;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
@@ -15,24 +15,23 @@ import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
+import com.gempukku.swccgo.game.ReactActionOption;
 import com.gempukku.swccgo.game.SwccgGame;
-import com.gempukku.swccgo.logic.GameUtils;
+import com.gempukku.swccgo.game.state.GameState;
+import com.gempukku.swccgo.logic.TriggerConditions;
+import com.gempukku.swccgo.logic.actions.OptionalGameTextTriggerAction;
+import com.gempukku.swccgo.logic.actions.PlayCardAction;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
-import com.gempukku.swccgo.logic.decisions.MultipleChoiceAwaitingDecision;
-import com.gempukku.swccgo.logic.decisions.YesNoDecision;
-import com.gempukku.swccgo.logic.effects.AddUntilEndOfGameModifierEffect;
-import com.gempukku.swccgo.logic.effects.PlayoutDecisionEffect;
-import com.gempukku.swccgo.logic.effects.SendMessageEffect;
-import com.gempukku.swccgo.logic.effects.ShowCardOnScreenEffect;
-import com.gempukku.swccgo.logic.effects.ShuffleReserveDeckEffect;
-import com.gempukku.swccgo.logic.effects.choose.ChooseCardFromHandEffect;
-import com.gempukku.swccgo.logic.effects.choose.ChooseCardsFromHandEffect;
-import com.gempukku.swccgo.logic.effects.choose.ChooseCardsFromReserveDeckEffect;
-import com.gempukku.swccgo.logic.modifiers.DestinyModifier;
-import com.gempukku.swccgo.logic.modifiers.KeywordModifier;
+import com.gempukku.swccgo.logic.effects.choose.ChooseCardEffect;
+import com.gempukku.swccgo.logic.effects.choose.DeployCardFromReserveDeckEffect;
+import com.gempukku.swccgo.logic.evaluators.BaseEvaluator;
+import com.gempukku.swccgo.logic.modifiers.ExtraForceCostToFlipBluffCardModifier;
+import com.gempukku.swccgo.logic.modifiers.IconModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
+import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
+import com.gempukku.swccgo.logic.timing.EffectResult;
+import com.gempukku.swccgo.logic.timing.PassthruEffect;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -40,13 +39,13 @@ import java.util.List;
 /**
  * Set: Virtual Block 4
  * Type: Effect
- * Title: Quietly Observing (V)
+ * Title: Quietly Observing
  */
 public class Card1240_032 extends AbstractNormalEffect {
     public Card1240_032() {
         super(Side.DARK, 4, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.Quietly_Observing, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_4, Rarity.V);
         setLore("On her assignment to kill Sharad Hett, Aurra used her patience and cunning to help track down the Jedi Master.");
-        setGameText("Deploy on table. Aurra, Bossk, and Cad are destiny +2. Once per game, may reveal up to two unique (•) aliens from hand and/or Reserve Deck (reshuffle); for remainder of game, those cards are assassins and Black Sun agents. (Immune to Alter.)");
+        setGameText("Deploy on table. Once per game, may deploy Bluffs from Reserve Deck; reshuffle. Bluffs gains one [Light Side] and one [Dark Side]. Once per battle, may deploy a bluff card (if it is a character or vehicle) as a 'react.' To reveal a bluff card, opponent must first use X Force, where X = 4 - number of bluff cards. (Immune to Alter.)");
         addIcons(Icon.EPISODE_I, Icon.TATOOINE);
         setVirtualSuffix(true);
         addImmuneToCardTitle(Title.Alter);
@@ -54,127 +53,87 @@ public class Card1240_032 extends AbstractNormalEffect {
 
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
+        String opponent = game.getOpponent(self.getOwner());
         List<Modifier> modifiers = new LinkedList<>();
-        modifiers.add(new DestinyModifier(self, Filters.or(Filters.Aurra, Filters.Bossk, Filters.Cad), 2));
+        modifiers.add(new IconModifier(self, Filters.Bluffs, Icon.LIGHT_FORCE, 1));
+        modifiers.add(new IconModifier(self, Filters.Bluffs, Icon.DARK_FORCE, 1));
+        modifiers.add(new ExtraForceCostToFlipBluffCardModifier(self, Filters.Bluffs, null,
+                new BaseEvaluator() {
+                    @Override
+                    public float evaluateExpression(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard location) {
+                        return 4 - Filters.filter(gameState.getStackedCards(location), gameState.getGame(), Filters.bluffCard).size();
+                    }
+                }, opponent));
         return modifiers;
     }
 
     @Override
     protected List<TopLevelGameTextAction> getGameTextTopLevelActions(final String playerId, final SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
-        GameTextActionId gameTextActionId = GameTextActionId.QUIETLY__OBSERVING_REVEAL;
-        final Filter uniqueAliens = Filters.and(Filters.unique, Filters.alien);
-        final Collection<PhysicalCard> cardsInHand = game.getGameState().getHand(playerId);
-        final Collection<PhysicalCard> uniqueAliensInHand = Filters.filter(cardsInHand, game, uniqueAliens);
-
-        // Check condition(s)
-        if (GameConditions.isOncePerGame(game, self, gameTextActionId)) {
+        GameTextActionId gameTextActionId = GameTextActionId.LEGACY__QUIETLY_OBSERVING_V__DEPLOY_BLUFFS;
+        if (GameConditions.isOncePerGame(game, self, gameTextActionId)
+                && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, gameTextActionId, Title.Bluffs)) {
             final TopLevelGameTextAction action = new TopLevelGameTextAction(self, gameTextSourceCardId, gameTextActionId);
-            action.setText("Reveal up to two unique (•) aliens");
+            action.setText("Deploy Bluffs from Reserve Deck");
             action.appendUsage(
-                    new OncePerGameEffect(action)
-            );
-
-
-            if (!uniqueAliensInHand.isEmpty()) {
-                int numAliensInHand = Math.min(2, uniqueAliensInHand.size());
-                String[] possibleResults = new String[numAliensInHand + 1];
-                for (int i = 0; i < numAliensInHand + 1; i++) {
-                    possibleResults[i] = String.valueOf(i);
-                }
-
-                action.appendEffect(
-                        new PlayoutDecisionEffect(action, playerId,
-                                new MultipleChoiceAwaitingDecision("Choose number of aliens to reveal from hand", possibleResults) {
-                                    @Override
-                                    protected void validDecisionMade(int index, String result) {
-                                        switch (index) {
-                                            case 0:
-                                                chooseCardFromReserveDeck(action, playerId, uniqueAliens, self, 2);
-                                                break;
-                                            case 1:
-                                                action.appendEffect(
-                                                        new ChooseCardFromHandEffect(action, playerId, uniqueAliens) {
-                                                            @Override
-                                                            protected void cardSelected(SwccgGame game, PhysicalCard selectedCard) {
-                                                                action.appendEffect(
-                                                                        new PlayoutDecisionEffect(action, playerId,
-                                                                                new YesNoDecision("Reveal another alien from Reserve Deck?") {
-                                                                                    @Override
-                                                                                    protected void yes() {
-                                                                                        chooseCardFromReserveDeck(action, playerId, uniqueAliens, self, 1);
-                                                                                    }
-                                                                                }
-                                                                        )
-                                                                );
-                                                                appendEffects(game, self, selectedCard, action, false);
-                                                            }
-                                                        }
-                                                );
-                                                break;
-                                            case 2:
-                                                action.appendEffect(
-                                                        new ChooseCardsFromHandEffect(action, playerId, 0, 2, uniqueAliens) {
-                                                            @Override
-                                                            protected void cardsSelected(SwccgGame game, Collection<PhysicalCard> selectedCards) {
-                                                                for (PhysicalCard selectedCard : selectedCards) {
-                                                                    appendEffects(game, self, selectedCard, action, false);
-                                                                }
-                                                            }
-                                                        }
-                                                );
-                                                break;
-                                        }
-                                    }
-                                })
-                );
-            } else {
-                chooseCardFromReserveDeck(action, playerId, uniqueAliens, self, 2);
-            }
+                    new OncePerGameEffect(action));
+            action.appendEffect(
+                    new DeployCardFromReserveDeckEffect(action, Filters.Bluffs, true));
             return Collections.singletonList(action);
         }
-
         return null;
     }
 
-    private void chooseCardFromReserveDeck(final TopLevelGameTextAction action, String playerId, Filter uniqueAliens, final PhysicalCard self, int max) {
-        action.appendEffect(
-                new ChooseCardsFromReserveDeckEffect(action, playerId, 0, max, uniqueAliens) {
-                    @Override
-                    protected void cardsSelected(SwccgGame game, Collection<PhysicalCard> selectedCards) {
-                        for (PhysicalCard selectedCard : selectedCards) {
-                            appendEffects(game, self, selectedCard, action, true);
-                        }
-                    }
-                }
-        );
-        action.appendEffect(
-                new ShuffleReserveDeckEffect(action)
-        );
+    /** Your 'bluff cards' that are characters or vehicles. */
+    private static Filter bluffCharactersAndVehicles(PhysicalCard self) {
+        return Filters.and(Filters.owner(self.getOwner()), Filters.bluffCard, Filters.or(Filters.character, Filters.vehicle));
     }
 
-    private void appendEffects(SwccgGame game, PhysicalCard self, PhysicalCard selectedCard, TopLevelGameTextAction action, boolean fromReserveDeck) {
-        String revealedFromLocation;
-        Filter filter = Filters.sameTitleAs(selectedCard, true);
-        if(fromReserveDeck){
-            revealedFromLocation = "Reserve Deck";
-        }else{
-            revealedFromLocation = "Hand";
+    @Override
+    protected List<OptionalGameTextTriggerAction> getGameTextOptionalAfterTriggers(final String playerId, final SwccgGame game, EffectResult effectResult, final PhysicalCard self, int gameTextSourceCardId) {
+        GameTextActionId gameTextActionId = GameTextActionId.LEGACY__QUIETLY_OBSERVING_V__DEPLOY_BLUFF_CARD_AS_REACT;
+        String opponent = game.getOpponent(playerId);
+        if (!TriggerConditions.battleInitiated(game, effectResult, opponent)
+                || !GameConditions.isOncePerBattle(game, self, playerId, gameTextSourceCardId, gameTextActionId))
+            return null;
+        final PhysicalCard battleLocation = game.getGameState().getBattleLocation();
+        if (battleLocation == null)
+            return null;
+        final Filter targetFilter = Filters.locationAndCardsAtLocation(Filters.sameCardId(battleLocation));
+        final List<PhysicalCard> deployable = new LinkedList<>();
+        for (PhysicalCard bluffs : Filters.filterTopLocationsOnTable(game, Filters.Bluffs)) {
+            for (PhysicalCard stacked : game.getGameState().getStackedCards(bluffs)) {
+                if (bluffCharactersAndVehicles(self).accepts(game, stacked)
+                        && Filters.deployableToLocation(self, Filters.sameCardId(battleLocation), false, 0).accepts(game, stacked)) {
+                    deployable.add(stacked);
+                }
+            }
         }
+        if (deployable.isEmpty())
+            return null;
+
+        final OptionalGameTextTriggerAction action = new OptionalGameTextTriggerAction(self, playerId, gameTextSourceCardId, gameTextActionId);
+        action.setText("Deploy a 'bluff card' as a 'react'");
+        action.appendUsage(
+                new OncePerBattleEffect(action));
         action.appendEffect(
-                new ShowCardOnScreenEffect(action, selectedCard)
-        );
-        action.appendEffect(
-                new SendMessageEffect(action, self.getOwner() + " reveals " + GameUtils.getCardLink(selectedCard) + " from " + revealedFromLocation)
-        );
-        action.appendEffect(
-                new AddUntilEndOfGameModifierEffect(
-                        action, new KeywordModifier(self, filter, Keyword.ASSASSIN), GameUtils.getCardLink(selectedCard) + " is an Assassin for remainder of Game "
-                )
-        );
-        action.appendEffect(
-                new AddUntilEndOfGameModifierEffect(
-                        action, new KeywordModifier(self, filter, Keyword.BLACK_SUN_AGENT), GameUtils.getCardLink(selectedCard) + " is a Black Sun Agent for remainder of Game"
-                )
-        );
+                new ChooseCardEffect(action, playerId, "Choose 'bluff card' to deploy as a 'react'", deployable) {
+                    @Override
+                    protected void cardSelected(final PhysicalCard bluffCard) {
+                        final ReactActionOption react = new ReactActionOption(self, false, 0, false, "Deploy as a 'react'",
+                                Filters.sameCardId(bluffCard), targetFilter, null, true);
+                        action.appendEffect(
+                                new PassthruEffect(action) {
+                                    @Override
+                                    protected void doPlayEffect(SwccgGame game) {
+                                        PlayCardAction play = bluffCard.getBlueprint().getPlayCardAction(playerId, game, bluffCard, self, false, 0, null, null, null, react, null, false, 0, targetFilter, null);
+                                        if (play != null) {
+                                            game.getActionsEnvironment().addActionToStack(play);
+                                        }
+                                    }
+                                }
+                        );
+                    }
+                });
+        return Collections.singletonList(action);
     }
 }

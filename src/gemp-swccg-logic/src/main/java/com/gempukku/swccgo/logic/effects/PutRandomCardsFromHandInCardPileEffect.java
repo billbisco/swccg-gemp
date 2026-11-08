@@ -13,6 +13,7 @@ import com.gempukku.swccgo.logic.timing.Action;
 import com.gempukku.swccgo.logic.timing.PassthruEffect;
 import com.gempukku.swccgo.logic.timing.StandardEffect;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -108,7 +109,16 @@ class PutRandomCardsFromHandInCardPileEffect extends AbstractSubActionEffect {
                     _downToSize -= 3;
                 }
                 if (_that.isPlayableInFull(game)) {
-                    List<PhysicalCard> randomCards = GameUtils.getRandomCards(game, game.getGameState().getHand(_handOwner), 1);
+                    // Cards in hand that the placing player may not place in Used Pile are not selectable
+                    List<PhysicalCard> selectable = new ArrayList<PhysicalCard>(game.getGameState().getHand(_handOwner));
+                    if (_zone == Zone.USED_PILE) {
+                        selectable.removeIf(c -> game.getModifiersQuerying().mayNotBePlacedInUsedPile(game.getGameState(), c, _playerId));
+                        if (selectable.isEmpty()) {
+                            game.getGameState().sendMessage(_playerId + " may not place cards from " + _handOwner + "'s hand in Used Pile");
+                            return;
+                        }
+                    }
+                    List<PhysicalCard> randomCards = GameUtils.getRandomCards(game, selectable, 1);
                     if (!randomCards.isEmpty()) {
                         final PhysicalCard card = randomCards.get(0);
                         String cardInfo = _hidden ? "a card" : GameUtils.getCardLink(card);
