@@ -413,4 +413,53 @@ public class Card_1281_024_Tests {
         endDarkSideTurn(scn);
         assertEquals("Feared Throughout The Galaxy", killers.getBlueprint().getTitle());
     }
+
+    @Test
+    public void ContractKillersIsTheMasterListText() {
+        var scn = GetScenario();
+        var card = scn.GetDSCard("killers").getBlueprint();
+
+        assertEquals("Contract Killers", card.getTitle());
+        assertTrue(card.getGameText().contains("or a Death Mark attempt is made."));
+        assertFalse(card.getGameText().contains("you just drew destiny for Death Mark"));
+        assertEquals(com.gempukku.swccgo.cards.set1281.dark.Card1281_024.SHEET_GAMETEXT, card.getGameText());
+        org.junit.Assert.assertNull(card.getLegacyVersion());
+        assertEquals("Contract Killers", com.gempukku.swccgo.logic.GameUtils.getFullName(card));
+    }
+
+    @Test
+    public void ContractKillersFlipsWhenADeathMarkAttemptIsMade() {
+        var scn = GetScenario();
+        var killers = scn.GetDSCard("killers");
+        var luke = scn.GetLSCard("luke");
+        var lair = scn.GetDSCard("lair");
+
+        startGame(scn);
+        PhysicalCardImpl deathMark = MissionTestSupport.putInReserve(scn, 98502, scn.DS, Vb81RestTestSupport.deathMark());
+        scn.MoveCardsToLocation(lair, luke);
+        scn.AttachCardsTo(luke, deathMark);
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        assertEquals("Contract Killers", killers.getBlueprint().getTitle());
+
+        // The attempt is made when Death Mark is reached by its target, before any destiny is drawn.
+        deathMark.setUtinniEffectStatus(com.gempukku.swccgo.common.UtinniEffectStatus.REACHED);
+        scn.SkipToPhase(Phase.BATTLE);
+        assertEquals("Feared Throughout The Galaxy", killers.getBlueprint().getTitle());
+    }
+
+    @Test
+    public void ContractKillersDoesNotFlipWhileDeathMarkIsNotReached() {
+        var scn = GetScenario();
+        var killers = scn.GetDSCard("killers");
+        var luke = scn.GetLSCard("luke");
+        var lair = scn.GetDSCard("lair");
+
+        startGame(scn);
+        PhysicalCardImpl deathMark = MissionTestSupport.putInReserve(scn, 98502, scn.DS, Vb81RestTestSupport.deathMark());
+        scn.MoveCardsToLocation(lair, luke);
+        scn.AttachCardsTo(luke, deathMark);
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.SkipToPhase(Phase.BATTLE);
+        assertEquals("Contract Killers", killers.getBlueprint().getTitle());
+    }
 }

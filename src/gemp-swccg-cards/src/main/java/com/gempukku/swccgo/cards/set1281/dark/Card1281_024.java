@@ -37,7 +37,7 @@ import java.util.List;
  * Title: Contract Killers / Feared Throughout The Galaxy
  */
 public class Card1281_024 extends AbstractObjective {
-    public static final String SHEET_GAMETEXT = "Contract Killers: Deploy Coruscant system, Sub City Lair and On The Hunt. For remainder of game, Aurra, Galen, Mara, and your aliens with 'plotting to kill Jabba' in lore are assassins. Your cards with ability are deploy +3 except assassins and starships. Characters add 1 to their Death Mark total for each weapon or device they carry. Once per turn, may deploy a Coruscant battleground from Reserve Deck; reshuffle. Flip this card if assassins control two battlegrounds (unless opponent's non-droid character at a battleground site) or you just drew destiny for Death Mark. Feared Throughout The Galaxy: While this side up, during your control phase, opponent loses 1 Force. If two assassins (except Galen) are in battle, add one battle destiny. Once per turn, if opponent just lost a character, an assassin there may gain 'reputation;' retrieve any one card (may only be canceled by Aim High) and stack it face down on that assassin. Assassins with 'reputation' may add 1 to Force drains where present. Flip this card at the end of any turn if opponent's non-droid character at a battleground site (unless Death Mark is on your side of the table).";
+    public static final String SHEET_GAMETEXT = "Contract Killers: Deploy Coruscant system, Sub City Lair and On The Hunt. For remainder of game, Aurra, Galen, Mara, and your aliens with 'plotting to kill Jabba' in lore are assassins. Your cards with ability are deploy +3 except assassins and starships. Characters add 1 to their Death Mark total for each weapon or device they carry. Once per turn, may deploy a Coruscant battleground from Reserve Deck; reshuffle. Flip this card if assassins control two battlegrounds (unless opponent's non-droid character at a battleground site) or a Death Mark attempt is made. Feared Throughout The Galaxy: While this side up, during your control phase, opponent loses 1 Force. If two assassins (except Galen) are in battle, add one battle destiny. Once per turn, if opponent just lost a character, an assassin there may gain 'reputation;' retrieve any one card (may only be canceled by Aim High) and stack it face down on that assassin. Assassins with 'reputation' may add 1 to Force drains where present. Flip this card at the end of any turn if opponent's non-droid character at a battleground site (unless Death Mark is on your side of the table).";
 
     public Card1281_024() {
         super(Side.DARK, 0, "Contract Killers", ExpansionSet.VIRTUAL_BLOCK_8_1, Rarity.V);
@@ -129,7 +129,8 @@ public class Card1281_024 extends AbstractObjective {
         // Check condition(s)
         if (GameConditions.canBeFlipped(game, self)
                 && ((TriggerConditions.isTableChanged(game, effectResult) && assassinsControlTwoBattlegrounds(game, self))
-                || TriggerConditions.isDestinyJustDrawnFor(game, effectResult, playerId, deathMark()))) {
+                || TriggerConditions.isDestinyJustDrawnFor(game, effectResult, playerId, deathMark())
+                || (TriggerConditions.isTableChanged(game, effectResult) && deathMarkAttemptMade(game, self)))) {
 
             RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
             action.setSingletonTrigger(true);
@@ -151,6 +152,18 @@ public class Card1281_024 extends AbstractObjective {
 
     static boolean opponentsNonDroidCharacterAtBattlegroundSite(SwccgGame game, PhysicalCard self) {
         return GameConditions.canSpot(game, self, Filters.and(Filters.opponents(self), Filters.non_droid_character, Filters.at(Filters.battleground_site)));
+    }
+
+    /**
+     * A Death Mark attempt is made once your (Virtual Block 8) Death Mark is reached by its target, before any destiny is drawn.
+     */
+    private static boolean deathMarkAttemptMade(SwccgGame game, PhysicalCard self) {
+        for (PhysicalCard card : Filters.filterAllOnTable(game, Filters.and(Filters.owner(self.getOwner()), deathMark()))) {
+            if (card.getAttachedTo() != null && GameConditions.isUtinniEffectReached(game, card)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     static boolean deathMarkOnYourSideOfTable(SwccgGame game, PhysicalCard self) {
