@@ -6759,5 +6759,6 @@ const fixedImages = {
 "2220_139":"https://wiki.swccg.com/images/a/a0/VB2-139E-Away_Put_Your_Weapon.png",
 "2220_153":"https://wiki.swccg.com/images/e/e9/VB2-153-Shocking_Information.png",
 "2220_20":"https://wiki.swccg.com/images/5/50/VB2-20-One_Arm.png",
+"2220_44":"https://wiki.swccg.com/images/1/1d/VB2-44-Pride_Of_The_Empire.png",
 
 };
