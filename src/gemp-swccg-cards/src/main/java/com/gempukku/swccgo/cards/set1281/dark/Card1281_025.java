@@ -41,7 +41,7 @@ public class Card1281_025 extends AbstractCharacterWeapon {
         super(Side.DARK, 1, "Mara Jade's Lightsaber", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("As part of her training to become the Emperor's hand, Mara Jade learned from Palpatine himself how to effectively fight with a lightsaber.");
-        setGameText("Deploy on Mara Jade. May add 1 to Force drain where present. During battle, Mara may use a blaster and this weapon. May target a character or creature for free. Draw two destiny. Target hit, and its forfeit = 0, if total destiny > defense value.");
+        setGameText("Deploy on Mara Jade. May add 1 to Force drain where present. During battle, Mara may use a blaster and this weapon. May target a character or creature for free. Draw two destiny. Target hit, and forfeit = 0, if total destiny > defense value.");
         addPersona(Persona.MARA_JADES_LIGHTSABER);
         addKeywords(Keyword.LIGHTSABER);
         setMatchingCharacterFilter(Filters.Mara_Jade);
