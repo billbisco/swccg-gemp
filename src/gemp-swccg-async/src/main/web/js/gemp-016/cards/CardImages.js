@@ -6819,7 +6819,7 @@ const fixedImages = {
 "2250_2":"https://wiki.swccg.com/images/f/ff/VB5-02-Aurra_Sing.png",
 "2250_14":"https://wiki.swccg.com/images/b/b6/VB5-18-Expand_The_Empire.png",
 "2250_1022":"https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Dark/large/withthunderousapplause.gif",
-"2250_25":"https://wiki.swccg.com/images/8/82/VB5-24-Wipe_Them_Out_All_Of_Them.png",
+"2250_25":"https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Dark/large/wipethemoutallofthem.gif",
 "2250_33":"https://wiki.swccg.com/images/5/5a/VB5-33E-Lets_Go_Left.png",
 "2250_35":"https://wiki.swccg.com/images/1/14/VB5-37-Clone_Pilot.png",
 "2250_41":"https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/jedisurvivor.gif",
