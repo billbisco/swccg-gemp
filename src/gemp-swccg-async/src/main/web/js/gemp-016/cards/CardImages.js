@@ -6621,5 +6621,6 @@ const fixedImages = {
 "2230_13":"https://wiki.swccg.com/images/5/57/VB3-13E-Lord_Vader.png",
 "2230_77":"https://wiki.swccg.com/images/d/dc/VB3-78-Orrimaarko.png",
 "2273_13":"https://wiki.swccg.com/images/d/d3/VB7-00-Insidious_Prisoner.png",
+"2283_3":"https://wiki.swccg.com/images/0/09/VB8-02-Lady_Valarian.png",
 
 };
