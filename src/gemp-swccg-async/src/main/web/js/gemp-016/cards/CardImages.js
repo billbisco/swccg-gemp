@@ -6836,7 +6836,7 @@ const fixedImages = {
 "2261_35":"https://wiki.swccg.com/images/2/2b/VB6-35-Hes_No_Jedi.png",
 "2261_80":"https://wiki.swccg.com/images/c/c7/VB6-79-Jabba_This_Is_Your_Last_Chance.png",
 "2261_39":"https://wiki.swccg.com/images/4/49/VB6-41-Epic_Duel.png",
-"2261_40":"https://wiki.swccg.com/images/c/cb/VB6-40-Tarkins_Bounty.png",
+"2261_40":"https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/tarkinsbounty.gif",
 "2261_44":"https://wiki.swccg.com/images/c/cc/VB6-43-Lana_Dobreed_Sacrifice.png",
 "2261_70":"https://wiki.swccg.com/images/7/77/VB6-68-Obi_Wan_Crazy_Wizard.png",
 "2261_71":"https://wiki.swccg.com/images/2/2d/VB6-67-Luke_Skywalker_Strong_In_The_Force.png",
