@@ -6625,5 +6625,6 @@ const fixedImages = {
 "2220_35":"https://wiki.swccg.com/images/6/64/VB2-35-I_Want_That_Ship.png",
 "2220_36":"https://wiki.swccg.com/images/f/f6/VB2-36-I_m_Sorry.png",
 "2220_50":"https://wiki.swccg.com/images/5/52/VB2-50E-Vader_s_Bounty.png",
+"2220_68":"https://wiki.swccg.com/images/d/d5/VB2-67-Slip_Sliding_Away.png",
 
 };
