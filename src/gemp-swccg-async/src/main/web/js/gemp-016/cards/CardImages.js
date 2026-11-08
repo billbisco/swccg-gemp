@@ -6653,7 +6653,7 @@ const fixedImages = {
 "2274_11":"https://wiki.swccg.com/images/9/9a/VB7-01-Grievous_Lightsabers.png",
 "2274_18":"https://wiki.swccg.com/images/4/48/VB7-p4-146-Hindsight.png",
 // Virtual Block 7 versions added in phase 2 (legacy/p2-vb7); a res.starwarsccg.org URL = current card image reused (no slip shows that text).
-"2271_3":"https://wiki.swccg.com/images/5/58/VB7-02-DS_61_5.png",
+"2271_3":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Dark/large/ds615.gif",
 "2271_6":"https://wiki.swccg.com/images/1/1d/VB7-03-Saber_Squadron_Pilot.png",
 "2271_8":"https://wiki.swccg.com/images/e/ec/VB7-04-A_Siths_Weapon.png",
 "2271_10":"https://wiki.swccg.com/images/b/b9/VB7-03-I_Want_Every_Part_Of_This_Ship_Checked.png",
