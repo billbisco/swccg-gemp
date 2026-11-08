@@ -6625,5 +6625,6 @@ const fixedImages = {
 "2240_27":"https://wiki.swccg.com/images/3/33/VB4-26-Imperial_Propaganda.png",
 "2240_31":"https://wiki.swccg.com/images/d/d9/VB4-29E-Knowledge_And_Defense.png",
 "2240_37":"https://wiki.swccg.com/images/f/f0/VB4-36-Deep_Hatred.png",
+"2240_40":"https://wiki.swccg.com/images/6/67/VB4-37-If_The_Trace_Was_Correct.png",
 
 };
