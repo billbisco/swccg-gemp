@@ -30,28 +30,28 @@ import java.util.List;
  * Set: Virtual Block 7.4
  * Type: Weapon
  * Subtype: Character
- * Title: Cyborg Commander's Lightsabers (renamed Grievous' Lightsabers by later errata)
+ * Title: Grievous' Lightsabers (Virtual Cards Master List 2014 and card image; the 2011 slip said Cyborg Commander's Lightsabers)
  */
 public class Card1274_011 extends AbstractCharacterWeapon {
     public Card1274_011() {
-        super(Side.DARK, 1, "Cyborg Commander's Lightsabers", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_4, Rarity.V);
-        setGameText("Deploy on Cyborg Commander. May add 1 to Force drain where present. May target a character or creature for free. Draw two destiny. Target hit, and may not satisfy attrition (or be removed from Lost Pile this turn), if total destiny > defense value.");
+        super(Side.DARK, 1, "Grievous' Lightsabers", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_4, Rarity.V);
+        setGameText("Deploy on Grievous. May add 1 to Force drain where present. May target a character or creature for free. Draw two destiny. Target hit, and may not satisfy attrition (or be removed from Lost Pile this turn), if total destiny > defense value.");
         addIcons(Icon.EPISODE_I);
         addKeywords(Keyword.LIGHTSABER);
-        setMatchingCharacterFilter(CYBORG_COMMANDER);
+        setMatchingCharacterFilter(GRIEVOUS);
     }
 
-    // Cyborg Commander, Hunter Of Jedi (Virtual Block 7.1) is the Grievous persona; match the persona or the printed title
-    private static final Filter CYBORG_COMMANDER = Filters.or(Filters.Grievous, Filters.titleContains("Cyborg Commander"));
+    // Grievous: the Grievous persona (Cyborg Commander, Hunter Of Jedi is a Grievous card), or that printed title
+    private static final Filter GRIEVOUS = Filters.or(Filters.Grievous, Filters.titleContains("Cyborg Commander"));
 
     @Override
     protected Filter getGameTextValidDeployTargetFilter(SwccgGame game, PhysicalCard self, PlayCardOptionId playCardOptionId, boolean asReact) {
-        return Filters.and(Filters.your(self), CYBORG_COMMANDER);
+        return Filters.and(Filters.your(self), GRIEVOUS);
     }
 
     @Override
     protected Filter getGameTextValidToUseWeaponFilter(final SwccgGame game, final PhysicalCard self) {
-        return CYBORG_COMMANDER;
+        return GRIEVOUS;
     }
 
     @Override

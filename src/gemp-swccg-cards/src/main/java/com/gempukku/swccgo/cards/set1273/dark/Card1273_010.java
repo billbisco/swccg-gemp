@@ -39,13 +39,13 @@ import java.util.List;
  * Title: Kessel Surveillance System
  */
 public class Card1273_010 extends AbstractLocationDevice {
-    /** Spice Mine Administrator is Moruth Doole's printed title on the Virtual Block 7.3 sheet. */
-    static final Filter SPICE_MINE_ADMINISTRATOR = Filters.titleContains("Moruth Doole");
+    /** Master List (2014) and card image: "Once per game may [download] Moruth Doole here." (the 2011 slip said Spice Mine Administrator). */
+    static final Filter MORUTH_DOOLE = Filters.titleContains("Moruth Doole");
 
     public Card1273_010() {
         super(Side.DARK, 0, "Kessel Surveillance System", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_3, Rarity.V);
         setLore("Remote surveillance viewers with droid controllers supplement security. Can activate alarms and automated weapons when needed, bringing help to endangered locations.");
-        setGameText("Deploy on a Kessel site. Opponent's Force drains are -1 here. Once per turn, if you are about to lose Force from Reserve Deck, may place a 'spice' card in owner's Lost Pile to make that Force satisfy 1 additional Force loss. Once per game, may deploy Spice Mine Administrator here from Reserve Deck; reshuffle.");
+        setGameText("Deploy on a Kessel site. Opponent's Force drains are -1 here. Once per turn, if you are about to lose Force from Reserve Deck, may place a 'spice' card in owner's Lost Pile to make that Force satisfy 1 additional Force loss. Once per game may deploy Moruth Doole here from Reserve Deck; reshuffle.");
         addKeywords(Keyword.DEPLOYS_ON_SITE);
     }
 
@@ -96,11 +96,11 @@ public class Card1273_010 extends AbstractLocationDevice {
         if (GameConditions.isOncePerGame(game, self, gameTextActionId)
                 && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, gameTextActionId)) {
             TopLevelGameTextAction action = new TopLevelGameTextAction(self, gameTextSourceCardId, gameTextActionId);
-            action.setText("Deploy Spice Mine Administrator here from Reserve Deck");
-            action.setActionMsg("Deploy Spice Mine Administrator to " + GameUtils.getCardLink(self.getAttachedTo()) + " from Reserve Deck");
+            action.setText("Deploy Moruth Doole here from Reserve Deck");
+            action.setActionMsg("Deploy Moruth Doole to " + GameUtils.getCardLink(self.getAttachedTo()) + " from Reserve Deck");
             action.appendUsage(new OncePerGameEffect(action));
             action.appendEffect(
-                    new DeployCardToLocationFromReserveDeckEffect(action, SPICE_MINE_ADMINISTRATOR, Filters.sameLocation(self), true));
+                    new DeployCardToLocationFromReserveDeckEffect(action, MORUTH_DOOLE, Filters.sameLocation(self), true));
             return Collections.singletonList(action);
         }
         return null;

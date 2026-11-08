@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class Card_1220_017_Tests {
@@ -33,6 +34,14 @@ public class Card_1220_017_Tests {
                     put("marker", "104_4");
                     put("tatooine", "1_289");
                     put("devastator", "1_301");
+                    put("plains", "3_148");
+                    put("ridge", "3_149");
+                    put("walker", "3_157");
+                    put("walker2", "3_157");
+                    put("walker3", "3_157");
+                    put("trooper", "1_180");
+                    put("trooper2", "1_180");
+                    put("tonnika", "1_195");
                 }},
                 10, 10,
                 StartingSetup.DefaultLSGroundLocation,
@@ -80,6 +89,13 @@ public class Card_1220_017_Tests {
     }
 
     @Test
+    public void VeersGameTextIsOfficialText() {
+        var scn = GetScenario();
+        assertEquals("Adds 3 to power of anything he pilots. Deploys -2 to Hoth. Your combat vehicles are defense value +1 at same and related locations. While on Hoth, your AT-ATs and Imperials are deploy -1 and forfeit +1 at related locations.",
+                scn.GetDSCard("veers").getBlueprint().getGameText());
+    }
+
+    @Test
     public void VeersAddsThreeToPowerOfAnythingHePilots() {
         var scn = GetScenario();
         var veers = scn.GetDSCard("veers");
@@ -94,7 +110,20 @@ public class Card_1220_017_Tests {
     }
 
     @Test
-    public void VeersDeploysFreeAboardBlizzard1() {
+    public void VeersDeploysMinusTwoToHothOnly() {
+        var scn = GetScenario();
+        var veers = scn.GetDSCard("veers");
+        var plains = scn.GetDSCard("plains");
+        var site = scn.GetDSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveLocationToTable(plains);
+        assertEquals(1, deployCostTo(scn, veers, plains), scn.epsilon);
+        assertEquals(3, deployCostTo(scn, veers, site), scn.epsilon);
+    }
+
+    @Test
+    public void VeersNoLongerDeploysFreeAboardBlizzard1() {
         var scn = GetScenario();
         var veers = scn.GetDSCard("veers");
         var blizzard = scn.GetDSCard("blizzard");
@@ -102,11 +131,11 @@ public class Card_1220_017_Tests {
 
         scn.StartGame();
         scn.MoveCardsToLocation(site, blizzard);
-        assertEquals(0, deployCostTo(scn, veers, blizzard), scn.epsilon);
+        assertEquals(3, deployCostTo(scn, veers, blizzard), scn.epsilon);
     }
 
     @Test
-    public void VeersRevealsFromHandToDeploySixthMarkerToHoth() {
+    public void VeersHasNoRevealActionFromHand() {
         var scn = GetScenario();
         var veers = scn.GetDSCard("veers");
         var hoth = scn.GetDSCard("hoth");
@@ -115,16 +144,84 @@ public class Card_1220_017_Tests {
         scn.StartGame();
         scn.MoveLocationToTable(hoth);
         scn.MoveCardsToDSHand(veers);
-        scn.SkipToDSTurn(Phase.DEPLOY);
         scn.MoveCardsToTopOfDSReserveDeck(marker);
-        assertTrue(scn.DSCardActionAvailable(veers, "Reveal to deploy 6th Marker or Blizzard 1"));
-        scn.DSUseCardAction(veers, "Reveal to deploy 6th Marker or Blizzard 1");
-        scn.PassAllResponses();
-        scn.PassCardAndForceUseResponses();
-        scn.DSChooseCard(marker);
-        scn.PassAllResponses();
-        assertEquals(hoth.getTitle(), marker.getPartOfSystem() == null ? hoth.getTitle() : marker.getPartOfSystem());
-        assertTrue(marker.getZone().isInPlay());
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        assertFalse(scn.DSCardActionAvailable(veers, "Reveal to deploy 6th Marker or Blizzard 1"));
+    }
+
+    @Test
+    public void VeersCombatVehiclesAreDefenseValuePlusOneAtSameAndRelatedLocations() {
+        var scn = GetScenario();
+        var veers = scn.GetDSCard("veers");
+        var plains = scn.GetDSCard("plains");
+        var ridge = scn.GetDSCard("ridge");
+        var walker = scn.GetDSCard("walker");
+        var walker2 = scn.GetDSCard("walker2");
+        var walker3 = scn.GetDSCard("walker3");
+        var site = scn.GetDSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveLocationToTable(plains);
+        scn.MoveLocationToTable(ridge);
+        scn.MoveCardsToLocation(site, walker3);
+        int base = scn.GetDefense(walker3);
+        scn.MoveCardsToLocation(plains, veers, walker);
+        scn.MoveCardsToLocation(ridge, walker2);
+        assertEquals(base + 1, scn.GetDefense(walker));
+        assertEquals(base + 1, scn.GetDefense(walker2));
+        assertEquals(base, scn.GetDefense(walker3));
+    }
+
+    @Test
+    public void VeersOnHothMakesAtAtsAndImperialsDeployMinusOneAndForfeitPlusOneAtRelatedLocations() {
+        var scn = GetScenario();
+        var veers = scn.GetDSCard("veers");
+        var plains = scn.GetDSCard("plains");
+        var ridge = scn.GetDSCard("ridge");
+        var trooper = scn.GetDSCard("trooper");
+        var trooper2 = scn.GetDSCard("trooper2");
+        var walker = scn.GetDSCard("walker");
+        var walker2 = scn.GetDSCard("walker2");
+        var tonnika = scn.GetDSCard("tonnika");
+
+        scn.StartGame();
+        scn.MoveLocationToTable(plains);
+        scn.MoveLocationToTable(ridge);
+        assertEquals(2, deployCostTo(scn, trooper, ridge), scn.epsilon);
+        scn.MoveCardsToLocation(plains, veers);
+        // deploy -1 to related locations only
+        assertEquals(1, deployCostTo(scn, trooper, ridge), scn.epsilon);
+        assertEquals(2, deployCostTo(scn, trooper, plains), scn.epsilon);
+        assertEquals(5, deployCostTo(scn, walker, ridge), scn.epsilon);
+        assertEquals(6, deployCostTo(scn, walker, plains), scn.epsilon);
+        assertEquals(2, deployCostTo(scn, tonnika, ridge), scn.epsilon);
+
+        // forfeit +1 at related locations only
+        scn.MoveCardsToLocation(ridge, trooper, walker, tonnika);
+        scn.MoveCardsToLocation(plains, trooper2, walker2);
+        assertEquals(3, scn.GetForfeit(trooper));
+        assertEquals(2, scn.GetForfeit(trooper2));
+        assertEquals(7, scn.GetForfeit(walker));
+        assertEquals(6, scn.GetForfeit(walker2));
+        assertEquals(2, scn.GetForfeit(tonnika));
+    }
+
+    @Test
+    public void VeersNotOnHothGivesNoDeployOrForfeitBonus() {
+        var scn = GetScenario();
+        var veers = scn.GetDSCard("veers");
+        var plains = scn.GetDSCard("plains");
+        var ridge = scn.GetDSCard("ridge");
+        var trooper = scn.GetDSCard("trooper");
+        var site = scn.GetDSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveLocationToTable(plains);
+        scn.MoveLocationToTable(ridge);
+        scn.MoveCardsToLocation(site, veers);
+        assertEquals(2, deployCostTo(scn, trooper, ridge), scn.epsilon);
+        scn.MoveCardsToLocation(ridge, trooper);
+        assertEquals(2, scn.GetForfeit(trooper));
     }
 
     private float deployCostTo(VirtualTableScenario scn, PhysicalCardImpl card, PhysicalCardImpl target) {

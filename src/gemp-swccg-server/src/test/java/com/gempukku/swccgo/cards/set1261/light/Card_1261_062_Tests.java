@@ -27,7 +27,8 @@ public class Card_1261_062_Tests {
 
     @Test public void BaragwinStatsMatchFinalMasterInsteadOfOriginal() {
         var scn = scenario(); var b = scn.GetLSCard("baragwin").getBlueprint();
-        assertEquals("Baragwin", b.getTitle()); assertTrue(b.hasVirtualSuffix()); assertEquals(Side.LIGHT, b.getSide());
+        assertEquals("Baragwin", b.getTitle());
+        assertEquals("Lost if a Starting Effect on table. Your non-alien characters are power and forfeit = 0. If present at a battleground site, your Force drains at battleground sites where you have two aliens are +1, and when you deploy an alien, retrieve 1 Force.", b.getGameText()); assertTrue(b.hasVirtualSuffix()); assertEquals(Side.LIGHT, b.getSide());
         assertEquals(Uniqueness.RESTRICTED_3, b.getUniqueness()); assertNull(b.getCardSubtype());
         assertEquals(3, b.getDestiny(), scn.epsilon); assertEquals(2, b.getDeployCost(), scn.epsilon);
         assertEquals(1, b.getPower(), scn.epsilon); assertEquals(2, b.getAbility(), scn.epsilon); assertEquals(5, b.getForfeit(), scn.epsilon);
@@ -67,11 +68,11 @@ public class Card_1261_062_Tests {
         assertEquals(0, scn.GetPower(scn.GetLSCard("luke"))); assertEquals(0, scn.GetForfeit(scn.GetLSCard("luke")));
     }
 
-    @Test public void BaragwinDoesNotResetPilotAtSystemAndRestoresPowerWhenLeavingPlay() {
+    @Test public void BaragwinAlsoResetsPilotAtSystemAndRestoresPowerWhenLeavingPlay() {
+        // Master List 2014 and card image: "Your non-alien characters are power and forfeit = 0" (not only at sites).
         var scn = start(true, false); var system = scn.GetLSCard("system"); scn.MoveLocationToTable(system);
         scn.MoveCardsToLocation(system, scn.GetLSCard("falcon")); scn.BoardAsPilot(scn.GetLSCard("falcon"), scn.GetLSCard("luke"));
-        assertEquals(3, scn.GetPower(scn.GetLSCard("luke"))); assertEquals(7, scn.GetForfeit(scn.GetLSCard("luke")));
-        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetLSCard("luke")); assertEquals(0, scn.GetPower(scn.GetLSCard("luke")));
+        assertEquals(0, scn.GetPower(scn.GetLSCard("luke"))); assertEquals(0, scn.GetForfeit(scn.GetLSCard("luke")));
         scn.MoveCardsToLSHand(scn.GetLSCard("baragwin")); assertEquals(3, scn.GetPower(scn.GetLSCard("luke")));
         assertEquals(7, scn.GetForfeit(scn.GetLSCard("luke")));
     }

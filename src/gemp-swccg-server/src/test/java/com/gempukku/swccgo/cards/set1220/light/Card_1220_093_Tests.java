@@ -46,6 +46,7 @@ public class Card_1220_093_Tests {
         var card = scn.GetLSCard("kebyc").getBlueprint();
 
         assertEquals("Kebyc", card.getTitle());
+        assertEquals("Deploys free to Cloud City. You generate +1 Force for every Cloud City site you occupy. Your aliens are deploy -1 here. Opponent's aliens are deploy +1 here.", card.getGameText());
         assertTrue(card.hasVirtualSuffix());
         assertEquals(Uniqueness.UNIQUE, card.getUniqueness());
         assertEquals(Side.LIGHT, card.getSide());

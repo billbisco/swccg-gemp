@@ -41,7 +41,7 @@ public class Card601_039 extends AbstractStartingEffect {
         super(Side.LIGHT, 4, Title.Anger_Fear_Aggression, ExpansionSet.LEGACY, Rarity.V);
         setVirtualSuffix(true);
         setLore("'The dark side of the Force are they. Easily they flow, quick to join you in a fight.'");
-        setGameText("Deploy on table with up to 15 cards from outside your deck face-down under here. Four times per game, may play a card from here (as if from hand). Unless canceling your Interrupt, opponent may not play Recoil In Fear until the end of your first turn.");
+        setGameText("Deploy on table with up to 15 cards from outside your deck face-down under here. Four times per game, may play a Defensive Shield from here (as if from hand). Unless canceling your Interrupt, opponent may not play Uncertain Is The Future until the end of your first turn.");
         addIcons(Icon.DAGOBAH, Icon.LEGACY_BLOCK_4);
         setAsLegacy(true);
     }
@@ -76,14 +76,14 @@ public class Card601_039 extends AbstractStartingEffect {
     @Override
     protected List<TopLevelGameTextAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
         GameTextActionId gameTextActionId = GameTextActionId.ANGER_FEAR_AGGRESSION__PLAY_CARD;
-        Filter filter = Filters.playable(self);
+        Filter filter = Filters.and(Filters.Defensive_Shield, Filters.playable(self));
 
         // Check condition(s)
         if (GameConditions.isFourTimesPerGame(game, self, gameTextActionId)
                 && GameConditions.hasStackedCards(game, self, filter)) {
 
             final TopLevelGameTextAction action = new TopLevelGameTextAction(self, gameTextSourceCardId, gameTextActionId);
-            action.setText("Play a card");
+            action.setText("Play a Defensive Shield");
             // Update usage limit(s)
             action.appendUsage(
                     new FourTimesPerGameEffect(action));

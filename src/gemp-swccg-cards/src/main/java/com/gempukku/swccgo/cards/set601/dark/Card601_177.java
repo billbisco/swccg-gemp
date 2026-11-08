@@ -40,7 +40,7 @@ public class Card601_177 extends AbstractDroid {
         setVirtualSuffix(true);
         setArmor(3);
         setLore("Accomplished thief and information broker. Modified by Jabba to be an effective bounty hunter. The Hutt often teams 4-LOM with other hired killers.");
-        setGameText("Permanent weapon is •4-LOM's Concussion Rifle (may target a character for free; target is power -1 until end of turn). Once per turn, may place a card from hand on bottom of Used Pile to draw top card from Reserve Deck.");
+        setGameText("Permanent weapon is •4-LOM's Concussion Rifle (may target a character for free; target is power -1). Once per turn, may place a card from hand on bottom of Used Pile to draw top card from Reserve Deck.");
         addPersona(Persona._4_LOM);
         addIcons(Icon.PREMIUM, Icon.WARRIOR, Icon.PERMANENT_WEAPON, Icon.LEGACY_BLOCK_6);
         addKeywords(Keyword.THIEF, Keyword.INFORMATION_BROKER, Keyword.BOUNTY_HUNTER);
@@ -59,7 +59,8 @@ public class Card601_177 extends AbstractDroid {
                 if (actionBuilder != null) {
 
                     // Build action using common utility
-                    FireWeaponAction action = actionBuilder.buildFireWeaponModifyPowerAction(-1, true);
+                    // Master List and card image: "target is power -1" (no "until end of turn"; a weapon's modifier lasts while the target is in play)
+                    FireWeaponAction action = actionBuilder.buildFireWeaponModifyPowerAction(-1, false);
                     return Collections.singletonList(action);
                 }
                 return null;

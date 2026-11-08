@@ -36,12 +36,13 @@ public class Card601_027 extends AbstractUsedInterrupt {
         super(Side.DARK, 4, Title.Sonic_Bombardment, Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
         setVirtualSuffix(true);
         setLore("Oouioouioouioouioouioouioouioouioouioouioouioouioouioouioouioouioouioouioouioouioouioouioo-");
-        setGameText("Once per game, may take into hand a prison from Reserve Deck; reshuffle. OR Use 1 Force to take into hand a non-droid assassin (or slaver) of ability < 5 from Reserve Deck; reshuffle. OR During battle involving an assassin, each of opponent's battle destiny draws is -1. OR Cancel opponent's attempt to modify the power of a starship piloted by your alien.");
+        setGameText("Once per game, may take into hand a prison from Reserve Deck; reshuffle. OR Use 1 Force to take into hand a non-droid assassin (or slaver) of ability < 5 from Reserve Deck; reshuffle. OR During battle involving an assassin, each of opponent's battle destiny draws is -1. OR Cancel opponent's attempt to modify the power of a starfighter piloted by your alien.");
         addIcons(Icon.CLOUD_CITY, Icon.LEGACY_BLOCK_8);
         setAsLegacy(true);
     }
 
-    //TODO Cancel opponent's attempt to modify the power of a starship piloted by your alien.
+    //TODO Cancel opponent's attempt to modify the power of a starfighter piloted by your alien (no engine hook for
+    // canceling an attempt to modify power yet; this option is not offered).
 
     @Override
     protected List<PlayInterruptAction> getGameTextTopLevelActions(final String playerId, final SwccgGame game, final PhysicalCard self) {

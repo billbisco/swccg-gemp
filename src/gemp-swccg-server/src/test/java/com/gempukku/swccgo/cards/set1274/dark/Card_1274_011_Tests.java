@@ -43,11 +43,12 @@ public class Card_1274_011_Tests {
     }
 
     @Test
-    public void CyborgCommandersLightsabersStatsIconsAndKeywordsAreCorrect() {
+    public void GrievousLightsabersStatsIconsAndKeywordsAreCorrect() {
         var scn = GetScenario();
         var card = scn.GetDSCard("sabers").getBlueprint();
 
-        assertEquals("Cyborg Commander's Lightsabers", card.getTitle());
+        assertEquals("Grievous' Lightsabers", card.getTitle());
+        assertEquals("Deploy on Grievous. May add 1 to Force drain where present. May target a character or creature for free. Draw two destiny. Target hit, and may not satisfy attrition (or be removed from Lost Pile this turn), if total destiny > defense value.", card.getGameText());
         assertFalse(card.hasVirtualSuffix());
         assertEquals(Uniqueness.UNIQUE, card.getUniqueness());
         assertEquals(Side.DARK, card.getSide());

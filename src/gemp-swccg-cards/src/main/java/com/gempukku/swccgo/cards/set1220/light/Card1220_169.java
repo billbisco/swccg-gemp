@@ -44,7 +44,7 @@ public class Card1220_169 extends AbstractCharacterWeapon {
         super(Side.LIGHT, 3, Title.Lukes_Blaster_Pistol, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_2, Rarity.V);
         setVirtualSuffix(true);
         setLore("Merr-Sonn Model 57. Part of an arms lot purchased for the Alliance from a black market dealer on Ord Mantell. Carried by Luke as a backup for his father's lightsaber.");
-        setGameText("Deploy on Luke. During battle, opponent may not move from here. Once per battle, may target a character (target loses immunity to attrition for remainder of turn) or vehicle (with maneuver) for free. Draw destiny. Target hit and forfeit -3 if destiny +2 > defense value.");
+        setGameText("Deploy on Luke. During battle, opponent may not move from here. May target a character (target loses any immunity to attrition for remainder of turn) or vehicle (with maneuver) for free. Draw destiny. Target hit and forfeit -3 if destiny +2 > defense value.");
         addIcons(Icon.CLOUD_CITY);
         addKeywords(Keyword.BLASTER);
         setMatchingCharacterFilter(Filters.Luke);

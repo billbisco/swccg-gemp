@@ -19,6 +19,13 @@ public class Card_1250_003_Tests {
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
     }
     @Test
+    public void ChokkGameTextIsOfficialText() {
+        var scn = scenario();
+        assertEquals("Deploys -1 to Tatooine. While with your non-droid character, if a battle was just initiated here, may use 1 Force to place Chokk in Used Pile; Interrupts may not be played until the weapons segment ends.",
+                scn.GetDSCard("chokk").getBlueprint().getGameText());
+    }
+
+    @Test
     public void ChokkStatsIconsAndKeywordsMatchPrintedImage() {
         var scn = scenario(); var bp = scn.GetDSCard("chokk").getBlueprint();
         assertEquals("Chokk", bp.getTitle()); assertTrue(bp.hasVirtualSuffix());

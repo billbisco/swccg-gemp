@@ -36,6 +36,7 @@ public class Card_1273_036_Tests {
                 }},
                 new HashMap<>() {{
                     put("trooper", "1_194");
+                    put("grond", "8_102");
                 }},
                 10, 10,
                 StartingSetup.DefaultLSGroundLocation,
@@ -54,6 +55,7 @@ public class Card_1273_036_Tests {
         var card = scn.GetLSCard("shieldisdown").getBlueprint();
 
         assertEquals("The Shield Is Down!", card.getTitle());
+        assertEquals("If [Virtual Block 7] Rebel Strike Team on table, deploy on table. Your [Endor] Epic Event total is +1 for each of your non-Jedi scouts at Bunker. For each of your non-Jedi scouts in battle, attrition against opponent is +1. While opponent's [Endor] objective on table, Bunker may not be converted. Once per turn may take Bunker into hand from Reserve Deck; reshuffle. (Immune to Alter.)", card.getGameText());
         assertTrue(card.hasVirtualSuffix());
         assertEquals(Uniqueness.UNIQUE, card.getUniqueness());
         assertEquals(Side.LIGHT, card.getSide());
@@ -105,6 +107,11 @@ public class Card_1273_036_Tests {
         assertEquals(10, scn.game().getModifiersQuerying().getEpicEventCalculationTotal(scn.gameState(), dtsg, 10), scn.epsilon);
         scn.MoveCardsToLSSideOfTable(shieldisdown);
         assertEquals(12, scn.game().getModifiersQuerying().getEpicEventCalculationTotal(scn.gameState(), dtsg, 10), scn.epsilon);
+        // Only YOUR non-Jedi scouts count: an opponent's scout at Bunker adds nothing.
+        var barich = scn.GetDSCard("grond");
+        assertTrue(com.gempukku.swccgo.filters.Filters.scout.accepts(scn.game(), barich));
+        scn.MoveCardsToLocation(bunker, barich);
+        assertEquals(12, scn.game().getModifiersQuerying().getEpicEventCalculationTotal(scn.gameState(), dtsg, 10), scn.epsilon);
     }
 
     @Test
@@ -139,6 +146,32 @@ public class Card_1273_036_Tests {
         }
         scn.PassAllResponses();
         assertEquals(Zone.HAND, bunker.getZone());
+    }
+
+    @Test
+    public void TheShieldIsDownVTakesBunkerOnlyOncePerTurn() {
+        var scn = GetScenario();
+        var shieldisdown = scn.GetLSCard("shieldisdown");
+        var bunker = scn.GetLSCard("bunker");
+
+        scn.StartGame();
+        scn.MoveCardsToLSSideOfTable(shieldisdown);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        scn.LSUseCardAction(shieldisdown, "Take Bunker into hand from Reserve Deck");
+        if (Vb81RestTestSupport.passUntil(scn, () -> scn.LSHasCardChoiceAvailable(bunker))) {
+            scn.LSChooseCard(bunker);
+        }
+        scn.PassAllResponses();
+        assertEquals(Zone.HAND, bunker.getZone());
+        // Put Bunker back: the action is spent for this turn, available again next turn.
+        scn.MoveCardsToTopOfLSReserveDeck(bunker);
+        if (scn.DS.equals(scn.GetDecidingPlayer()))
+            scn.DSPass();
+        assertEquals(scn.LS, scn.GetDecidingPlayer());
+        assertTrue(scn.GetCurrentPhase() == Phase.DEPLOY || scn.GetCurrentPhase() == Phase.BATTLE);
+        assertFalse(scn.LSCardActionAvailable(shieldisdown, "Take Bunker into hand from Reserve Deck"));
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        assertTrue(scn.LSCardActionAvailable(shieldisdown, "Take Bunker into hand from Reserve Deck"));
     }
 
     @Test

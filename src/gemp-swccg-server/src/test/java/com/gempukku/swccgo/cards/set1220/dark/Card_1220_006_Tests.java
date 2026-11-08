@@ -54,6 +54,7 @@ public class Card_1220_006_Tests {
         var card = scn.GetDSCard("piett").getBlueprint();
 
         assertEquals("Captain Piett", card.getTitle());
+        assertEquals("Adds 3 to power of anything he pilots. Twice per game during opponent's turn, may place three cards from hand on your Force Pile to draw top two cards from Reserve Deck.", card.getGameText());
         assertTrue(card.hasVirtualSuffix());
         assertEquals(Uniqueness.UNIQUE, card.getUniqueness());
         assertEquals(Side.DARK, card.getSide());
@@ -82,7 +83,7 @@ public class Card_1220_006_Tests {
     }
 
     @Test
-    public void CaptainPiettAddsTwoToPowerOfAnythingHePilots() {
+    public void CaptainPiettAddsThreeToPowerOfAnythingHePilots() {
         var scn = GetScenario();
         var piett = scn.GetDSCard("piett");
         var devastator = scn.GetDSCard("devastator");
@@ -91,8 +92,10 @@ public class Card_1220_006_Tests {
         scn.StartGame();
         scn.MoveLocationToTable(tatooine);
         scn.MoveCardsToLocation(tatooine, devastator);
+        int unpiloted = devastator.getBlueprint().getPower().intValue();
         scn.BoardAsPilot(devastator, piett);
-        assertEquals(11, scn.GetPower(devastator));
+        assertEquals(9, unpiloted);
+        assertEquals(unpiloted + 3, scn.GetPower(devastator));
     }
 
     @Test

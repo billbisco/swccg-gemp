@@ -82,6 +82,7 @@ public class Card_1274_018_Tests {
         var card = scn.GetLSCard("hindsight").getBlueprint();
 
         assertEquals("Hindsight", card.getTitle());
+        assertEquals("Unless Imperial Atrocity on table, if you are about to lose Force during opponent's control phase, deploy on table to reduce loss by 6 (ignore other modifiers); opponent may take any one card into hand from Reserve Deck; reshuffle. Immune to Control. OR Use 2 Force to deploy on table and stack one just-played Interrupt here.", card.getGameText());
         assertTrue(card.hasVirtualSuffix());
         assertEquals(Uniqueness.UNIQUE, card.getUniqueness());
         assertEquals(Side.LIGHT, card.getSide());
@@ -101,30 +102,28 @@ public class Card_1274_018_Tests {
         assertEquals(Rarity.V, card.getRarity());
     }
 
-    /** Sets up a Dark Side Force drain of 6 at Tatooine: Marketplace during Dark Side's control phase. */
-    private void startDrainOfSix(VirtualTableScenario scn) {
+    /** Sets up a Dark Side Force drain of the given size at the Dark Side starting site during Dark Side's control phase. */
+    private void startDrainOf(VirtualTableScenario scn, int drain) {
         var trooper = scn.GetDSCard("trooper");
         var site = scn.GetDSStartingLocation();
         scn.StartGame();
         scn.MoveCardsToHand(scn.GetLSCard("hindsight"));
         scn.MoveCardsToLocation(site, trooper);
         scn.SkipToDSTurn(Phase.CONTROL);
-        scn.ApplyAdHocModifier(new ForceDrainModifier(trooper, Filters.sameCardId(site), 6 - scn.GetDSIconsOnLocation(site), scn.DS));
+        scn.ApplyAdHocModifier(new ForceDrainModifier(trooper, Filters.sameCardId(site), drain - scn.GetDSIconsOnLocation(site), scn.DS));
         assertTrue(scn.AwaitingDSControlPhaseActions());
         scn.DSForceDrainAt(site);
     }
 
-    @Test
-    public void HindsightVDeploysToReduceForceLossDuringOpponentsControlPhaseByFour() {
-        var scn = GetScenario();
+    private int lifeForceLostToDrainWithHindsight(VirtualTableScenario scn, int drain) {
         var hindsight = scn.GetLSCard("hindsight");
         var vader = scn.GetDSCard("vader");
-        startDrainOfSix(scn);
+        startDrainOf(scn, drain);
 
-        passUntil(scn, () -> lsHasAction(scn, hindsight, "Deploy to reduce Force loss by 4"));
-        assertTrue(lsHasAction(scn, hindsight, "Deploy to reduce Force loss by 4"));
+        passUntil(scn, () -> lsHasAction(scn, hindsight, "Deploy to reduce Force loss by 6"));
+        assertTrue(lsHasAction(scn, hindsight, "Deploy to reduce Force loss by 6"));
         int lifeForceBefore = scn.GetLSLifeForceRemaining();
-        scn.LSUseCardAction(hindsight, "Deploy to reduce Force loss by 4");
+        scn.LSUseCardAction(hindsight, "Deploy to reduce Force loss by 6");
         scn.MoveCardsToTopOfOwnReserveDeck(vader);
         passUntil(scn, () -> scn.DSDecisionAvailable("take any one card into hand from Reserve Deck"));
 
@@ -138,7 +137,18 @@ public class Card_1274_018_Tests {
             scn.PassAllResponses();
         }
         assertInZone(Zone.HAND, vader);
-        assertEquals(lifeForceBefore - 2, scn.GetLSLifeForceRemaining());
+        return lifeForceBefore - scn.GetLSLifeForceRemaining();
+    }
+
+    @Test
+    public void HindsightVReducesADrainOfEightBySixLeavingTwo() {
+        assertEquals(2, lifeForceLostToDrainWithHindsight(GetScenario(), 8));
+    }
+
+    @Test
+    public void HindsightVReducesADrainOfSixToNothing() {
+        // The 2011 slip's "reduce loss by 4" would leave 2 here.
+        assertEquals(0, lifeForceLostToDrainWithHindsight(GetScenario(), 6));
     }
 
     @Test
@@ -157,7 +167,7 @@ public class Card_1274_018_Tests {
 
         final boolean[] offered = {false};
         passUntil(scn, () -> {
-            if (lsHasAction(scn, hindsight, "Deploy to reduce Force loss by 4"))
+            if (lsHasAction(scn, hindsight, "Deploy to reduce Force loss by 6"))
                 offered[0] = true;
             return offered[0] || scn.AwaitingDSControlPhaseActions() || scn.AwaitingLSForceLossPayment();
         });
