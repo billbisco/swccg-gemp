@@ -6722,6 +6722,7 @@ const fixedImages = {
 "2261_35":"https://wiki.swccg.com/images/2/2b/VB6-35-Hes_No_Jedi.png",
 "2261_80":"https://wiki.swccg.com/images/c/c7/VB6-79-Jabba_This_Is_Your_Last_Chance.png",
 "2261_39":"https://wiki.swccg.com/images/4/49/VB6-41-Epic_Duel.png",
+"2261_40":"https://wiki.swccg.com/images/c/cb/VB6-40-Tarkins_Bounty.png",
 // END VB5-VB6 phase 2
 "2210_6":"https://wiki.swccg.com/images/9/97/VB1-06-Danz_Borin.png",
 "2210_8":"https://wiki.swccg.com/images/8/8d/VB1-08-Death_Star_Gunner.png",

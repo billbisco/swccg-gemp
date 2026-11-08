@@ -41,7 +41,7 @@ public class Card601_028 extends AbstractNormalEffect {
         super(Side.DARK, 5, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Tarkin's Bounty", Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
         setVirtualSuffix(true);
         setLore("'You don't know how hard I found it signing the order to terminate your life.'");
-        setGameText("Deploy on table.  Each Amidala stacked on a Political Effect is a senator.  While you have < 13 cards in hand, opponent may not peek at or remove them (except with Grimtaash).  Once per turn, may take one [Virtual] Astromech Shortage into hand from Reserve Deck; reshuffle, or lose 2 Force to cancel a Political Effect. (Immune to Alter.)");
+        setGameText("Deploy on table. Each Amidala stacked on a Political Effect is a senator. While you have < 13 cards in hand, opponent may not peek at or remove them (except with Grimtaash). Once per turn, may take one [Virtual] Astromech Shortage into hand from Reserve Deck; reshuffle, or lose 2 Force to cancel a Political Effect. (Immune to Alter.)");
         addIcons(Icon.SPECIAL_EDITION, Icon.LEGACY_BLOCK_6);
         addKeywords(Keyword.BOUNTY);
         setAsLegacy(true);
