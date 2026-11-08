@@ -74,11 +74,50 @@ public class LegacyVersionsTests {
             assertEquals(id, current.getPersonas(), version.getPersonas());
             assertEquals(id, current.getExpansionSet(), version.getExpansionSet());
             assertTrue(id, version.isLegacy());
-            assertFalse(id, version.getGameText().equals(current.getGameText()));
+            assertTrue(id + ": differs from its current card in game text or printed stats/icons",
+                    differsInGameTextOrPrintedData(current, version));
             assertTrue(id + ": label shown in full name",
                     info.label().isEmpty() ? !GameUtils.getFullName(version).contains("[")
                             : GameUtils.getFullName(version).endsWith(" [" + info.label() + "]"));
         }
+    }
+
+    /** "A change is a change is a change" (Bill): a version differs in game text or in a printed stat or icon. */
+    static boolean differsInGameTextOrPrintedData(SwccgCardBlueprint current, SwccgCardBlueprint version) {
+        if (!java.util.Objects.equals(current.getGameText(), version.getGameText()))
+            return true;
+        List<java.util.function.Function<SwccgCardBlueprint, Object>> stats = List.of(
+                SwccgCardBlueprint::getDestiny, SwccgCardBlueprint::getDeployCost, SwccgCardBlueprint::getPower,
+                SwccgCardBlueprint::getAbility, SwccgCardBlueprint::getArmor, SwccgCardBlueprint::getManeuver,
+                SwccgCardBlueprint::getLandspeed, SwccgCardBlueprint::getHyperspeed, SwccgCardBlueprint::getForfeit);
+        for (var stat : stats) {
+            if (!java.util.Objects.equals(printedStat(stat, current), printedStat(stat, version)))
+                return true;
+        }
+        for (com.gempukku.swccgo.common.Icon icon : com.gempukku.swccgo.common.Icon.values()) {
+            if (current.getIconCount(icon) != version.getIconCount(icon))
+                return true;
+        }
+        return false;
+    }
+
+    /** A stat the card type does not have (the getter throws) counts as "none". */
+    private static Object printedStat(java.util.function.Function<SwccgCardBlueprint, Object> stat, SwccgCardBlueprint card) {
+        try {
+            return stat.apply(card);
+        } catch (UnsupportedOperationException notThisType) {
+            return "n/a";
+        }
+    }
+
+    @Test
+    public void AVersionMayDifferOnlyInAPrintedStat() {
+        // Dewback (V): the original printed MANEUVER 4; AR 2.0 errata made it ARMOR 4 with the same game text
+        SwccgCardBlueprint current = library.getSwccgoCardBlueprint("1210_80");
+        SwccgCardBlueprint version = library.getSwccgoCardBlueprint("2210_80");
+        assertEquals(current.getGameText(), version.getGameText());
+        assertTrue(differsInGameTextOrPrintedData(current, version));
+        assertFalse(differsInGameTextOrPrintedData(current, current));
     }
 
     @Test

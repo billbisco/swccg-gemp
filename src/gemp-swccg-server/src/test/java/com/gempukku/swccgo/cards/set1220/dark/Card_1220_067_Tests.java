@@ -36,6 +36,7 @@ public class Card_1220_067_Tests {
                     put("walker", "104_5");
                     put("gear", "8_119");
                     put("rack", "1_211");
+                    put("rack2", "1_211");
                 }},
                 10, 10,
                 StartingSetup.DefaultLSGroundLocation,
@@ -201,5 +202,48 @@ public class Card_1220_067_Tests {
 
         scn.MoveCardsToLocation(platform, luke);
         assertEquals(0, scn.game().getModifiersQuerying().getImmunityToAttritionLessThan(scn.gameState(), walker), scn.epsilon);
+    }
+
+    private static final String NAMED = "Deploy a card from Biker Scout Gear game text";
+
+    private boolean deployNamed(VirtualTableScenario scn, com.gempukku.swccgo.game.PhysicalCardImpl platform, com.gempukku.swccgo.game.PhysicalCardImpl card) {
+        if (!scn.DSCardActionAvailable(platform, NAMED))
+            return false;
+        scn.DSUseCardAction(platform, NAMED);
+        if (scn.DSHasCardChoiceAvailable(card))
+            scn.DSChooseCard(card);
+        scn.PassAllResponses();
+        return true;
+    }
+
+    @Test
+    public void ATATDeploymentPlatformDeploysACardFromBikerScoutGearTextOnlyOncePerTurn() {
+        var scn = GetScenario();
+        var platform = scn.GetDSCard("platform");
+        var blizzard = scn.GetDSCard("blizzard");
+        var veers = scn.GetDSCard("veers");
+        var gear = scn.GetDSCard("gear");
+        var rack = scn.GetDSCard("rack");
+        var rack2 = scn.GetDSCard("rack2");
+        var site = scn.GetDSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, blizzard);
+        scn.BoardAsPilot(blizzard, veers);
+        scn.MoveCardsToHand(platform);
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.DSDeployCard(platform);
+        scn.PassAllResponses();
+        scn.MoveCardsToDSSideOfTable(gear);
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.MoveCardsToTopOfDSReserveDeck(rack, rack2);
+
+        assertTrue(deployNamed(scn, platform, rack));
+        var first = rack.getZone() == Zone.SIDE_OF_TABLE ? rack : rack2;
+        var second = first == rack ? rack2 : rack;
+        assertInZone(Zone.SIDE_OF_TABLE, first);
+        if (scn.DSGetDecision() == null && scn.LSGetDecision() != null)
+            scn.LSPass();
+        assertFalse(scn.DSCardActionAvailable(platform, NAMED)); //once per turn (2010-06-28 errata)
     }
 }

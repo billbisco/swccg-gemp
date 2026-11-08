@@ -43,7 +43,7 @@ public class Card601_248 extends AbstractStarfighter {
         super(Side.LIGHT, 2, 3, 4, null, 3, 4, 4, "Gold Leader In Gold 1", Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
         setVirtualSuffix(true);
         setLore("At the Battle of Yavin, Dutch led his squadron of outdated but reliable Y-wings in the first wave of the assault against the Death Star.");
-        setGameText("May add 1 pilot or passenger. Permanent pilot aboard is •Dutch, who provides ability of 2. Opponent may not 'react' to here and must first use 1 Force to draw a card for battle destiny here.");
+        setGameText("May add 1 pilot or passenger. Permanent pilot is •Dutch, who provides ability of 2. Opponent may not 'react' to here and must first use 1 Force to draw a card for battle destiny here.");
         addPersonas(Persona.GOLD_1);
         addIcons(Icon.PREMIUM, Icon.PILOT, Icon.NAV_COMPUTER, Icon.SCOMP_LINK, Icon.LEGACY_BLOCK_1);
         addKeywords(Keyword.GOLD_SQUADRON);

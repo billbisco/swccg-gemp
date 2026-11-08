@@ -39,7 +39,7 @@ public class Card1210_044 extends AbstractUtinniEffect {
         super(Side.DARK, 4, PlayCardZoneOption.ATTACHED, "Luke? Luuuuke!", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("'All right. I'll be right there, Aunt Beru.'");
-        setGameText("Deploy on your non-droid character present at a battleground site; character may not be carried from here or move. Target a Jedi at a site. You lose no more than 1 Force to Force drains at target's location. This Utinni Effect canceled when reached by target.");
+        setGameText("Deploy on your non-droid character present at a battleground site; character may not be carried from here or move. Target a Jedi at a site. You lose no more than 1 Force to Force drains at target's location. This Utinni Effect cancelled when reached by target.");
         addKeywords(Keyword.DEPLOYS_ON_CHARACTERS);
     }
 

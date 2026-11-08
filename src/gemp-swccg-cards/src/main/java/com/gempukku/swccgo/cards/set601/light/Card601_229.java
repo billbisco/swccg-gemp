@@ -37,7 +37,7 @@ public class Card601_229 extends AbstractRebel {
         super(Side.LIGHT, 1, 3, 3, 4, 7, "Luke Skywalker", Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
         setVirtualSuffix(true);
         setLore("Son of Anakin Skywalker. Student of Obi-Wan Kenobi. Honed piloting skills while bullseyeing womp rats in Beggar's Canyon aboard T-16 skyhopper.");
-        setGameText("[Pilot] 3. If piloting lead starfighter, Attack Run total is +3. During your control phase, if piloting at a battleground, may [upload] one Darklighter Spin or retrieve 1 Force.");
+        setGameText("Adds 3 to power of anything he pilots. If piloting lead starfighter, Attack Run total is +3. During your control phase, if piloting at a battleground, may take Darklighter Spin into hand from Reserve Deck; reshuffle or retrieve 1 Force.");
         addPersona(Persona.LUKE);
         addIcons(Icon.PILOT, Icon.WARRIOR, Icon.LEGACY_BLOCK_1);
         setAsLegacy(true);

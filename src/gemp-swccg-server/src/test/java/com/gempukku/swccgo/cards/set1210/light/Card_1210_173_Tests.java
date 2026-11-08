@@ -224,4 +224,24 @@ public class Card_1210_173_Tests {
             assertInZone(Zone.LOCATIONS, alderaan);
         }
     }
+
+    @org.junit.Test
+    public void AlderaanBlownAwayHasTheLatestText() {
+        var scn = new com.gempukku.swccgo.framework.VirtualTableScenario(
+                new java.util.HashMap<String, String>() {{ put("latest", "1210_173"); }},
+                new java.util.HashMap<String, String>() {{  }},
+                10, 10,
+                com.gempukku.swccgo.framework.StartingSetup.DefaultLSGroundLocation,
+                com.gempukku.swccgo.framework.StartingSetup.DefaultDSGroundLocation,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSStartingInterrupts,
+                com.gempukku.swccgo.framework.StartingSetup.NoDSStartingInterrupts,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSShields,
+                com.gempukku.swccgo.framework.StartingSetup.NoDSShields,
+                com.gempukku.swccgo.framework.VirtualTableScenario.Open);
+        var card = scn.GetLSCard("latest").getBlueprint();
+        org.junit.Assert.assertEquals("Light: May not be deployed if an Alderaan site (or sector) on table. Star Cruisers ignore location deployment restrictions in their game text. Dark: When deployed, choose: flip Set Your Course For Alderaan immediately or at the end of your next turn.",
+                card.getGameText());
+        org.junit.Assert.assertNull(card.getLegacyVersion());
+        org.junit.Assert.assertFalse(card.getGameText().contains("you choose"));
+    }
 }

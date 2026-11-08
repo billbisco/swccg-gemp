@@ -34,7 +34,7 @@ public class Card1210_107 extends AbstractRebel {
         super(Side.LIGHT, 1, 5, 5, 6, 9, "Obi-Wan Kenobi", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("Jedi Knight. Trained by Yoda. Friend of Bail Organa. General Kenobi became a hero of the Old Republic during the Clone Wars. Mentor of Anakin and Luke Skywalker.");
-        setGameText("Obi-Wan's game text may not be canceled and he may not be targeted by cards that capture. Unless another Jedi present, may Force drain here regardless of Objective restrictions. Immune to attrition < 5 (< 8 if with a Dark Jedi).");
+        setGameText("Obi-Wan's game text may not be canceled and he may never be targeted by cards that capture. Unless another Jedi present, may Force drain here regardless of Objective restrictions. Immune to attrition < 5 (< 8 if with a Dark Jedi).");
         addPersona(Persona.OBIWAN);
         addIcons(Icon.WARRIOR);
         addKeywords(Keyword.GENERAL);

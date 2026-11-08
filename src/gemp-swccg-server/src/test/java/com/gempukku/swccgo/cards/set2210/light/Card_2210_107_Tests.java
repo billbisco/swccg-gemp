@@ -1,4 +1,4 @@
-package com.gempukku.swccgo.cards.set2220.light;
+package com.gempukku.swccgo.cards.set2210.light;
 
 import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.framework.StartingSetup;
@@ -13,17 +13,16 @@ import java.util.HashMap;
 import static com.gempukku.swccgo.framework.Assertions.*;
 import static org.junit.Assert.*;
 
-/** Hoth: Echo Med Lab: original (pre-errata) version of 1220_161. */
-public class Card_2220_161_Tests {
+/** Original version of 1210_107 (Anything Goes only). */
+public class Card_2210_107_Tests {
     protected VirtualTableScenario GetScenario() {
         return new VirtualTableScenario(
                 new HashMap<>() {{
-                    put("luke", "1_19");
-                    put("version", "2220_161");
-                    put("current", "1220_161");
+                    put("version", "2210_107");
+                    put("current", "1210_107");
+                    put("dsite", "1_128");
                 }},
                 new HashMap<>() {{
-                    put("stormtrooper", "1_194");
                 }},
                 10, 10,
                 StartingSetup.DefaultLSGroundLocation,
@@ -37,7 +36,7 @@ public class Card_2220_161_Tests {
     }
 
     @Test
-    public void VersionHasTheOldTextAndVersionInfo() {
+    public void VersionHasItsTextAndVersionInfo() {
         var scn = GetScenario();
         var card = scn.GetLSCard("version").getBlueprint();
         var current = scn.GetLSCard("current").getBlueprint();
@@ -49,34 +48,37 @@ public class Card_2220_161_Tests {
         assertEquals(current.getCardTypes(), card.getCardTypes());
         for (Icon icon : Icon.values())
             assertEquals(icon.name(), current.getIconCount(icon), card.getIconCount(icon));
-        assertEquals(ExpansionSet.VIRTUAL_BLOCK_2, card.getExpansionSet());
+        assertEquals(ExpansionSet.VIRTUAL_BLOCK_1, card.getExpansionSet());
         assertTrue(card.isLegacy());
-        assertEquals("Light: During your deploy phase, may deploy a medical droid here from Reserve Deck; reshuffle. Dark: If you control, with an Imperial present, Force drain +1 here.",
+        assertEquals("Obi-Wan's game text may not be canceled and he may not be targeted by cards that capture. Unless another Jedi present, may Force drain here regardless of Objective restrictions. Immune to attrition < 5 (< 8 if with a Dark Jedi).",
                 card.getGameText());
+        assertNotEquals(current.getGameText(), card.getGameText());
         var version = card.getLegacyVersion();
-        assertEquals("1220_161", version.currentPrintingId());
+        assertEquals("1210_107", version.currentPrintingId());
         assertEquals("", version.label());
         assertEquals(LocalDate.of(2009, 12, 7), version.printedOn());
-        assertEquals(LocalDate.of(2014, 2, 4), version.supersededOn());
+        assertEquals(LocalDate.of(2013, 4, 27), version.supersededOn());
         assertEquals(GameUtils.getFullName(current), GameUtils.getFullName(card));
     }
 
     @Test
-    public void ForceDrainPlusOneOnlyIfDarkSideControlsWithAnImperialPresent() {
-        var scn = GetScenario();
-        var medlab = scn.GetLSCard("version");
-        var stormtrooper = scn.GetDSCard("stormtrooper");
-        var luke = scn.GetLSCard("luke");
-        var mods = scn.game().getModifiersQuerying();
-
-        //test1: Imperial present but Luke there too: Dark Side does not control, no +1 (the current card: +1)
-        //test2: Dark Side controls with an Imperial present: +1
-        scn.StartGame();
-        scn.MoveLocationToTable(medlab);
-        float base = mods.getForceDrainAmount(scn.gameState(), medlab, scn.DS);
-        scn.MoveCardsToLocation(medlab, stormtrooper, luke);
-        assertEquals(base, mods.getForceDrainAmount(scn.gameState(), medlab, scn.DS), scn.epsilon); //test1
-        scn.MoveCardsToLSHand(luke);
-        assertEquals(base + 1, mods.getForceDrainAmount(scn.gameState(), medlab, scn.DS), scn.epsilon); //test2
+    public void VersionIsTheSameUniqueCardAsTheCurrentPrinting() {
+        for (boolean currentOnTable : java.util.List.of(true, false)) {
+            for (boolean otherOut : java.util.List.of(false, true)) {
+                var scn = GetScenario();
+                var onTable = scn.GetLSCard(currentOnTable ? "current" : "version");
+                var inHand = scn.GetLSCard(currentOnTable ? "version" : "current");
+                scn.StartGame();
+                var site = scn.GetLSCard("dsite");
+                scn.MoveLocationToTable(site);
+                if (otherOut)
+                    scn.MoveCardsToLocation(site, onTable);
+                scn.MoveCardsToLSHand(inHand);
+                scn.SkipToLSTurn(Phase.DEPLOY);
+                scn.EnsureLSForcePile(8);
+                assertEquals("current on table=" + currentOnTable + ", other version out=" + otherOut,
+                        !otherOut, scn.LSCardPlayAvailable(inHand));
+            }
+        }
     }
 }

@@ -52,7 +52,7 @@ public class Card2220_169 extends AbstractCharacterWeapon {
         setLore("Merr-Sonn Model 57. Part of an arms lot purchased for the Alliance from a black market dealer on Ord Mantell. Carried by Luke as a backup for his father's lightsaber.");
         setGameText("Deploy on Luke. During battle, opponent may not move from here. Twice per battle, may target a character (target loses immunity to attrition for remainder of turn) or vehicle (with maneuver) for free. Draw destiny. Target hit and forfeit -3 if destiny +2 > defense value.");
         setLegacyVersion(new LegacyVersion("1220_169", "",
-                "Virtual Block 2 release sheet (2009-12-07), card #169", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 8, 27)));
+                "Virtual Block 2 release sheet (2009-12-07), card #169; superseded by the PC card list errata (by 2012-07-21)", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21)));
         addIcons(Icon.CLOUD_CITY);
         addKeywords(Keyword.BLASTER);
         setMatchingCharacterFilter(Filters.Luke);

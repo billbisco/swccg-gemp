@@ -185,4 +185,24 @@ public class Card_1210_036_Tests {
     private boolean dsHasCardActions(VirtualTableScenario scn) {
         return scn.DSGetDecision() != null && scn.DSGetADParam("cardId") != null;
     }
+
+    @org.junit.Test
+    public void ForcedServitudeHasTheLatestText() {
+        var scn = new com.gempukku.swccgo.framework.VirtualTableScenario(
+                new java.util.HashMap<String, String>() {{  }},
+                new java.util.HashMap<String, String>() {{ put("latest", "1210_36"); }},
+                10, 10,
+                com.gempukku.swccgo.framework.StartingSetup.DefaultLSGroundLocation,
+                com.gempukku.swccgo.framework.StartingSetup.DefaultDSGroundLocation,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSStartingInterrupts,
+                com.gempukku.swccgo.framework.StartingSetup.NoDSStartingInterrupts,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSShields,
+                com.gempukku.swccgo.framework.StartingSetup.NoDSShields,
+                com.gempukku.swccgo.framework.VirtualTableScenario.Open);
+        var card = scn.GetDSCard("latest").getBlueprint();
+        org.junit.Assert.assertEquals("Deploy on table. Your troopers are Heroic. Opponent's total weapon destiny targeting your Heroic card is +2. When opponent is about to remove their last card from Life Force, you may first place all your troopers in Used Pile (last card must still be removed). (Immune to Alter.)",
+                card.getGameText());
+        org.junit.Assert.assertNull(card.getLegacyVersion());
+        org.junit.Assert.assertFalse(card.getGameText().contains("Heroic cards"));
+    }
 }

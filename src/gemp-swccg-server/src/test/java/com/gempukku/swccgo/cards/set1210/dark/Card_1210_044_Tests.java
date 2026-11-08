@@ -176,4 +176,24 @@ public class Card_1210_044_Tests {
 
         assertInZone(Zone.LOST_PILE, lukeCall);
     }
+
+    @org.junit.Test
+    public void LukeLuuuukeHasTheLatestText() {
+        var scn = new com.gempukku.swccgo.framework.VirtualTableScenario(
+                new java.util.HashMap<String, String>() {{  }},
+                new java.util.HashMap<String, String>() {{ put("latest", "1210_44"); }},
+                10, 10,
+                com.gempukku.swccgo.framework.StartingSetup.DefaultLSGroundLocation,
+                com.gempukku.swccgo.framework.StartingSetup.DefaultDSGroundLocation,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSStartingInterrupts,
+                com.gempukku.swccgo.framework.StartingSetup.NoDSStartingInterrupts,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSShields,
+                com.gempukku.swccgo.framework.StartingSetup.NoDSShields,
+                com.gempukku.swccgo.framework.VirtualTableScenario.Open);
+        var card = scn.GetDSCard("latest").getBlueprint();
+        org.junit.Assert.assertEquals("Deploy on your non-droid character present at a battleground site; character may not be carried from here or move. Target a Jedi at a site. You lose no more than 1 Force to Force drains at target's location. This Utinni Effect cancelled when reached by target.",
+                card.getGameText());
+        org.junit.Assert.assertNull(card.getLegacyVersion());
+        org.junit.Assert.assertFalse(card.getGameText().contains("canceled when"));
+    }
 }
