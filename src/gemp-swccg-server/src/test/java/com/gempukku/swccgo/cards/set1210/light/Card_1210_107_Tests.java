@@ -162,4 +162,24 @@ public class Card_1210_107_Tests {
         assertTrue(scn.AwaitingLSControlPhaseActions());
         assertFalse(scn.LSForceDrainAvailable(training));
     }
+
+    @org.junit.Test
+    public void ObiWanHasTheLatestText() {
+        var scn = new com.gempukku.swccgo.framework.VirtualTableScenario(
+                new java.util.HashMap<String, String>() {{ put("latest", "1210_107"); }},
+                new java.util.HashMap<String, String>() {{  }},
+                10, 10,
+                com.gempukku.swccgo.framework.StartingSetup.DefaultLSGroundLocation,
+                com.gempukku.swccgo.framework.StartingSetup.DefaultDSGroundLocation,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSStartingInterrupts,
+                com.gempukku.swccgo.framework.StartingSetup.NoDSStartingInterrupts,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSShields,
+                com.gempukku.swccgo.framework.StartingSetup.NoDSShields,
+                com.gempukku.swccgo.framework.VirtualTableScenario.Open);
+        var card = scn.GetLSCard("latest").getBlueprint();
+        org.junit.Assert.assertEquals("Obi-Wan's game text may not be canceled and he may never be targeted by cards that capture. Unless another Jedi present, may Force drain here regardless of Objective restrictions. Immune to attrition < 5 (< 8 if with a Dark Jedi).",
+                card.getGameText());
+        org.junit.Assert.assertNull(card.getLegacyVersion());
+        org.junit.Assert.assertFalse(card.getGameText().contains("may not be targeted"));
+    }
 }
