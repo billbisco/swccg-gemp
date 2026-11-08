@@ -19,6 +19,12 @@ The **Legacy** format always uses the latest text of every card.
   The date order is in the metadata (`printedOn`), not the id.
 - The card pool looks at k = 0, 1, 2 (`LegacyVersion.MAX_VERSIONS_PER_CARD`).
 
+- A version may differ from its current card only in a printed stat or icon (Bill: "a change is a change is a change"),
+  e.g. Dewback (V) `2210_80` printed MANEUVER 4 where the errata'd card has ARMOR 4.
+- **Retired version ids:** if a version id that was already released stops being a version (its text became the
+  current card's), keep it as an alias of the current card in `blueprintMapping.txt` (after `# END legacy`) so saved
+  decks still load, e.g. `2220_161,1220_161`. The version pool skips aliased ids.
+
 ## Formats
 
 - `swccgFormats.json`: Anything Goes lists sets 2200, 2210, … 2292 (all 18 sheets, so new versions need no format
@@ -57,6 +63,6 @@ current printing (`DefaultSwccgFormat.sameCardBlueprintId`), and banning the cur
 5. Tests in `src/test/.../cards/set22xx/<side>/Card_22xx_NNN_Tests.java`: identity with the exact old text and version
    info, gameplay tests for each clause that differs from the current card, and a uniqueness test with the current
    card. `LegacyVersionsTests.EveryImplementedVersionIsTheSameCardAsItsCurrentPrinting` checks every version
-   automatically (same title/uniqueness/persona/etc., text differs, label in full name); add the id to
+   automatically (same title/uniqueness/persona/etc., differs in game text or printed stats/icons, label in full name); add the id to
    `PILOT_VERSIONS` there only if you want the explicit format/deck-builder checks.
 6. Nothing else: formats, card pool and the set filter pick the new class up by id.
