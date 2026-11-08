@@ -41,6 +41,8 @@ import java.util.List;
  * Set: Virtual Block 7.3
  * Type: Epic Event
  * Title: Insidious Prisoner
+ * Text: the Virtual Cards Master List (PC errata adding "before drawing a starting hand" and the deploy-from-Reserve-Deck
+ * icon to the Block 7.3 sheet text "opponent may deploy a Jedi and/or a lightsaber here"; that original is 2273_13).
  */
 public class Card1273_013 extends AbstractEpicEventDeployable {
     static final Filter PALPATINES_QUARTERS = Filters.title("Coruscant: Palpatine's Quarters");
@@ -48,7 +50,7 @@ public class Card1273_013 extends AbstractEpicEventDeployable {
 
     public Card1273_013() {
         super(Side.DARK, PlayCardZoneOption.ATTACHED, Title.Insidious_Prisoner, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_3, Rarity.V);
-        setGameText("If A Stunning Move on table, deploy on Palpatine's Quarters (if [Virtual Block 5] We Have A Plan on table, this card always relocates to Palpatine if possible (even if a captive)); opponent may deploy a Jedi and/or a lightsaber here. Evil Is Everywhere: Opponent may not Force drain here. Adds one [Dark Side] at same site. If just lost, relocate to Blockade Flagship: Prison. Once per turn, if a player controls this site, they may have this card (unless on Palpatine) follow their first character to move from here using landspeed or docking bay transit to a non-shielded site.");
+        setGameText("If A Stunning Move on table, deploy on Palpatine's Quarters (if [Virtual Block 5] We Have A Plan on table, this card always relocates to Palpatine if possible (even if a captive)); before drawing a starting hand opponent may deploy a Jedi and/or a lightsaber here from Reserve Deck; reshuffle. Evil Is Everywhere: Opponent may not Force drain here. Adds one [Dark Side] at same site. If just lost, relocate to Blockade Flagship: Prison. Once per turn, if a player controls this site, they may have this card (unless on Palpatine) follow their first character to move from here using landspeed or docking bay transit to a non-shielded site.");
         addIcons(Icon.EPISODE_I, Icon.CORUSCANT);
     }
 
@@ -130,8 +132,10 @@ public class Card1273_013 extends AbstractEpicEventDeployable {
     protected List<OptionalGameTextTriggerAction> getOpponentsCardGameTextOptionalAfterTriggers(final String playerId, SwccgGame game, EffectResult effectResult, final PhysicalCard self, int gameTextSourceCardId) {
         List<OptionalGameTextTriggerAction> actions = new LinkedList<OptionalGameTextTriggerAction>();
 
-        // When deployed, opponent may deploy a Jedi and/or a lightsaber here from Reserve Deck (even outside their deploy phase)
-        if (TriggerConditions.justDeployed(game, effectResult, self)) {
+        // When deployed before starting hands are drawn (the start-of-game phase), opponent may deploy a Jedi and/or a
+        // lightsaber here from Reserve Deck
+        if (TriggerConditions.justDeployed(game, effectResult, self)
+                && GameConditions.isDuringStartOfGame(game)) {
             final PhysicalCard site = game.getModifiersQuerying().getLocationThatCardIsAt(game.getGameState(), self);
             if (site != null) {
                 GameTextActionId jediActionId = GameTextActionId.LEGACY__INSIDIOUS_PRISONER__DEPLOY_JEDI;
