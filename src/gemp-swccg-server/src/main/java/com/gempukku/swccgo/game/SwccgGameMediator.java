@@ -13,6 +13,7 @@ import com.gempukku.swccgo.common.CardType;
 import com.gempukku.swccgo.common.GameEndReason;
 import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Keyword;
+import com.gempukku.swccgo.common.LegacyVersion;
 import com.gempukku.swccgo.common.MovementDirection;
 import com.gempukku.swccgo.common.Phase;
 import com.gempukku.swccgo.common.Side;
@@ -415,6 +416,15 @@ public class SwccgGameMediator {
             }
             if (!visible) {
                 return sb.toString();
+            }
+
+            // Pre-errata Legacy version (docs/legacy-versions.md): say which text this copy has
+            LegacyVersion legacyVersion = card.getBlueprint().getLegacyVersion();
+            if (legacyVersion != null) {
+                // Bill 2026-11-08: the original printing has no label; later versions are <Issuer>-E<n>
+                sb.append("<div>").append("Version: ")
+                        .append(legacyVersion.label().isEmpty() ? "Original printing" : legacyVersion.label())
+                        .append(" (").append(legacyVersion.source()).append("; Anything Goes only)").append("</div>");
             }
 
             // Show special card indicators

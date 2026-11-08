@@ -1821,6 +1821,15 @@ public interface SwccgCardBlueprint {
     boolean isLegacy();
 
     /**
+     * Gets the historical (pre-errata) version information when this blueprint is an older version of a
+     * Legacy card (blueprint sets 2200-2292, see docs/legacy-versions.md).
+     * @return the version information, or null if this is not an older version
+     */
+    default LegacyVersion getLegacyVersion() {
+        return null;
+    }
+
+    /**
      * Returns if this should be excluded from the deck builder
      * @return true if this should be excluded from the deck buider
      */

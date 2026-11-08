@@ -40,7 +40,9 @@ public class GameUtils {
      * @return the card title suffix
      */
     private static String getTitleSuffix(SwccgCardBlueprint blueprint) {
-        return (blueprint.hasAlternateImageSuffix() ? " (AI)" : "") + (blueprint.hasVirtualSuffix() ? " (V)" : "");
+        return (blueprint.hasAlternateImageSuffix() ? " (AI)" : "") + (blueprint.hasVirtualSuffix() ? " (V)" : "")
+                + (blueprint.getLegacyVersion() != null && !blueprint.getLegacyVersion().label().isEmpty()
+                    ? " [" + blueprint.getLegacyVersion().label() + "]" : "");
     }
 
     /**

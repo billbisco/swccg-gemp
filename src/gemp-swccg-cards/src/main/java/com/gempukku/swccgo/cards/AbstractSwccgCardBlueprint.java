@@ -57,6 +57,7 @@ public abstract class AbstractSwccgCardBlueprint implements SwccgCardBlueprint {
     private boolean _doesNotCountTowardDeckLimit;
     private int _startingEffectCapacityReduction;
     private boolean _isLegacy;
+    private LegacyVersion _legacyVersion;
     private boolean _excludeFromDeckBuilder;
     private boolean _isHorizontal;
     private ExpansionSet _expansionSet;
@@ -3016,6 +3017,20 @@ public abstract class AbstractSwccgCardBlueprint implements SwccgCardBlueprint {
      */
     public void setAsLegacy(boolean value) {
         _isLegacy = value;
+    }
+
+    @Override
+    public LegacyVersion getLegacyVersion() {
+        return _legacyVersion;
+    }
+
+    /**
+     * Marks this blueprint as a historical (pre-errata) version of a Legacy card. Its title, uniqueness and
+     * persona must match the current card, which is the card at {@code version.currentPrintingId()}.
+     * @param version the version information
+     */
+    protected void setLegacyVersion(LegacyVersion version) {
+        _legacyVersion = version;
     }
 
     @Override

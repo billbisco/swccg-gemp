@@ -252,6 +252,7 @@ var CardFilter = Class.extend({
             + "<option value='227'>Set 27</option>"
             + "<option value='301'>Virtual Premium Set</option>"
             + "<option value='601'>Legacy</option>"
+            + "<option value='legacy_versions'>Legacy (pre-errata versions)</option>"
             //+ "<option value='401'>Dream Cards</option>"
             + "<option value='501'>Playtesting</option>"
             + "</select>");

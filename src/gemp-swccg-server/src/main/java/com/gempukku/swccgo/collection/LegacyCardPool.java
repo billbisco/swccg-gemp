@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.collection;
 
+import com.gempukku.swccgo.common.LegacyVersion;
 import com.gempukku.swccgo.game.DeckInvalidException;
 import com.gempukku.swccgo.game.DefaultCardCollection;
 import com.gempukku.swccgo.game.SwccgCardBlueprint;
@@ -25,6 +26,27 @@ public final class LegacyCardPool {
         for (String id : implementedSheetIds(library, true)) {
             collection.addItem(id, 60);
         }
+        for (String id : implementedVersionIds(library)) {
+            collection.addItem(id, 60);
+        }
+    }
+
+    /**
+     * Pre-errata versions (sets 2200-2292, docs/legacy-versions.md) that have a card class: for each published
+     * sheet card, the ids of its older versions k = 0 .. MAX_VERSIONS_PER_CARD - 1.
+     */
+    public static List<String> implementedVersionIds(SwccgCardBlueprintLibrary library) {
+        List<String> ids = new ArrayList<>();
+        for (int[] sheet : SHEETS) {
+            for (int number = 1; number <= sheet[1]; number++) {
+                for (int k = 0; k < LegacyVersion.MAX_VERSIONS_PER_CARD; k++) {
+                    String id = LegacyVersion.versionIdOf(sheet[0] + "_" + number, k);
+                    if (library.getSwccgoCardBlueprint(id) != null)
+                        ids.add(id);
+                }
+            }
+        }
+        return ids;
     }
 
     /** Numbered printings on the same published sheet keep their own artwork in All Cards decks. */
@@ -57,6 +79,7 @@ public final class LegacyCardPool {
         // The original implementation set is not included in DefaultSwccgFormat's ordinary ranges.
         appendImplementedIds(library, ids, 601, 999, false);
         ids.addAll(implementedSheetIds(library, false));
+        ids.addAll(implementedVersionIds(library));
         for (String id : ids) {
             try {
                 format.validateCard(id, true);

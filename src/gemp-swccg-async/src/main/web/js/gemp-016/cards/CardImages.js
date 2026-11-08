@@ -6614,4 +6614,9 @@ const fixedImages = {
 "1292_11":"https://res.starwarsccg.org/cards/legacy/VirtualBlock9-Light/large/mandalorianmishapjedimindtrick.gif",
 // END legacy
 
+// Legacy pre-errata versions (docs/legacy-versions.md; keep outside the generated legacy block).
+// Image = the wiki slip crop of the release sheet that printed that text (wiki page field image2).
+"2261_33":"https://wiki.swccg.com/images/c/cd/VB6-32-Dark_Waters_Krayt_Dragon_Bones.png",
+"2272_23":"https://wiki.swccg.com/images/a/a0/VB7-04-Rogue_Insertion.png",
+
 };
