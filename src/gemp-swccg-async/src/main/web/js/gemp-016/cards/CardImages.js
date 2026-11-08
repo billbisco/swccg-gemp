@@ -6632,5 +6632,6 @@ const fixedImages = {
 "2273_27":"https://wiki.swccg.com/images/f/fe/VB7-01-Master_Kenobi.png",
 "2273_36":"https://wiki.swccg.com/images/8/87/VB7-p6-117-The_Shield_Is_Down.png",
 "2273_1036":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/theshieldisdown.gif",
+"2274_4":"https://wiki.swccg.com/images/9/99/VB7-p2-132-Tibanna_Floating_Refinery.png",
 
 };
