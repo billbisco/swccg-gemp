@@ -6767,5 +6767,6 @@ const fixedImages = {
 "2220_66":"https://wiki.swccg.com/images/e/e7/VB2-66-Shocking_Revelation.png",
 "2220_83":"https://wiki.swccg.com/images/3/30/VB2-83-AT_AT_Cannon.png",
 "2220_67":"https://res.starwarsccg.org/cards/legacy/VirtualBlock2-Dark/large/atatdeploymentplatform.gif",
+"2220_1169":"https://res.starwarsccg.org/cards/legacy/VirtualBlock2-Light/large/lukesblasterpistol.gif",
 
 };
