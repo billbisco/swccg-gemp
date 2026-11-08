@@ -39,7 +39,7 @@ public class Card1281_030 extends AbstractRepublic {
         setVirtualSuffix(true);
         setPolitics(3);
         setLore("Although Finis Valorum maintains the Galactic Senate's ultimate title, his real power is mired by endless bureaucracy, petty corruption, and incessant plotting.");
-        setGameText("Agenda: order. May be targeted by Might Of The Republic. Your characters with politics (except Wedge and senators) are deploy -1 (and gain [Republic]) here. During your turn, may use 1 Force to take into hand from Reserve Deck a card with 'governor,' 'political,' or 'Valorum' in lore; reshuffle.");
+        setGameText("Agendas: order. May be targeted by Might Of The Republic. Your characters with politics (except Wedge and senators) are deploy -1 and gain [Republic] here. During your turn, may use 1 Force to take into hand a card with 'Valorum', 'governor' or 'political' in lore from Reserve Deck; reshuffle.");
         addIcons(Icon.EPISODE_I);
     }
 
