@@ -130,12 +130,12 @@ public final class VersionAsserts {
             var inHand = mode == 1 ? current : version;
             scn.MoveCardsToHand(inHand);
             if (dark) {
-                scn.SkipToDSTurn(com.gempukku.swccgo.common.Phase.DEPLOY);
                 scn.EnsureDSForcePile(12);
+                scn.SkipToDSTurn(com.gempukku.swccgo.common.Phase.DEPLOY);
                 assertEquals("mode " + mode, mode == 2, scn.DSDeployAvailable(inHand));
             } else {
-                scn.SkipToLSTurn(com.gempukku.swccgo.common.Phase.DEPLOY);
                 scn.EnsureLSForcePile(12);
+                scn.SkipToLSTurn(com.gempukku.swccgo.common.Phase.DEPLOY);
                 assertEquals("mode " + mode, mode == 2, scn.LSDeployAvailable(inHand));
             }
         }
