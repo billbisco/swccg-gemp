@@ -6622,5 +6622,7 @@ const fixedImages = {
 "2281_24_BACK":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Dark/large/fearedthroughoutthegalaxy.gif",
 "2281_44":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/infiltration.gif",
 "2281_44_BACK":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/unlikelyallies.gif",
+"2281_1044":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/infiltration.gif",
+"2281_1044_BACK":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/unlikelyallies.gif",
 
 };
