@@ -174,7 +174,8 @@ public class CardsLeavePlayUtils {
             if (sites.contains(card))
                 continue;
             PhysicalCard location = modifiersQuerying.getLocationThatCardIsAt(gameState, card);
-            if (location != null && sites.contains(location)) {
+            if (location != null && sites.contains(location)
+                    && modifiersQuerying.isCardPlacedInUsedPileWhenSiteLeavesTable(gameState, location, card)) {
                 result.add(card);
             }
         }
