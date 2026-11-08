@@ -26,13 +26,13 @@ public class Card1261_062 extends AbstractAlien {
         super(Side.LIGHT, 3, 2, 1, 2, 5, "Baragwin", Uniqueness.RESTRICTED_3, ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("Hunchbacked scavengers. Found in separate groups throughout the galaxy. Good at finding missing items. Make excellent gun runners. Some work with the Rebellion.");
-        setGameText("Lost if a Starting Effect on table. Your non-alien characters at sites are power and forfeit = 0. If present at a battleground site, your Force drains at battleground sites where you have two aliens are +1, and whenever you deploy an alien, retrieve 1 Force.");
+        setGameText("Lost if a Starting Effect on table. Your non-alien characters are power and forfeit = 0. If present at a battleground site, your Force drains at battleground sites where you have two aliens are +1, and when you deploy an alien, retrieve 1 Force.");
         addIcons(Icon.JABBAS_PALACE); addKeywords(Keyword.SCAVENGER); setSpecies(Species.BARAGWIN);
     }
 
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, PhysicalCard self) {
-        Filter nonAliensAtSites = Filters.and(Filters.your(self), Filters.character, Filters.not(Filters.alien), Filters.at(Filters.site));
+        Filter yourNonAliens = Filters.and(Filters.your(self), Filters.character, Filters.not(Filters.alien));
         Filter twoAliens = new Filter() {
             @Override
             public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard location) {
@@ -40,8 +40,8 @@ public class Card1261_062 extends AbstractAlien {
                         Filters.and(Filters.your(self), Filters.alien, Filters.at(location)));
             }
         };
-        return Arrays.asList(new ResetPowerModifier(self, nonAliensAtSites, 0),
-                new ResetForfeitModifier(self, nonAliensAtSites, 0),
+        return Arrays.asList(new ResetPowerModifier(self, yourNonAliens, 0),
+                new ResetForfeitModifier(self, yourNonAliens, 0),
                 new ForceDrainModifier(self, Filters.and(Filters.battleground_site, twoAliens),
                         new PresentAtCondition(self, Filters.battleground_site), 1, self.getOwner()));
     }
