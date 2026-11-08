@@ -6614,6 +6614,11 @@ const fixedImages = {
 "1292_11":"https://res.starwarsccg.org/cards/legacy/VirtualBlock9-Light/large/mandalorianmishapjedimindtrick.gif",
 // END legacy
 
+// Current Legacy cards whose image in the generated block shows an older text (docs/legacy-versions.md, "Current card image").
+// Each line overrides the generated entry above (a later key wins) with a CardMaker recreation of the latest version,
+// uploaded to the wiki (File page describes the source). Keep outside the generated legacy block.
+"1210_124":"https://wiki.swccg.com/images/c/c5/VB1-123-Faithful_Service-PC-E1-cardmaker.png",
+
 // Legacy pre-errata versions (docs/legacy-versions.md; keep outside the generated legacy block).
 // Image = the wiki slip crop of the release sheet that printed that text (wiki page field image2).
 "2261_33":"https://wiki.swccg.com/images/c/cd/VB6-32-Dark_Waters_Krayt_Dragon_Bones.png",

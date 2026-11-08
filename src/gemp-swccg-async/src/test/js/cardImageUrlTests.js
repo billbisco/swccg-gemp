@@ -39,4 +39,7 @@ assert.strictEqual(defaults.CardUnderTest.resUrl('https://wiki.swccg.com/images/
 assert.strictEqual(defaults.CardUnderTest.resUrl(null), null);
 assert.strictEqual(defaults.CardUnderTest.resUrl(undefined), undefined);
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('unknown_card'), null);
+// Current-card override after // END legacy wins over the generated entry (docs/legacy-versions.md, "Current card image")
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_124'), 'https://wiki.swccg.com/images/c/c5/VB1-123-Faithful_Service-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2210_124'), 'https://wiki.swccg.com/images/5/54/VB1-123-Faithful_Service.png');
 console.log('card image URL routing passed: ' + legacy.length + ' Legacy mappings');
