@@ -6784,7 +6784,7 @@ const fixedImages = {
 "2240_47":"https://wiki.swccg.com/images/8/88/VB4-47-Unexpected_Interruption.png",
 "2240_63":"https://wiki.swccg.com/images/0/07/VB4-62-Stinger.png",
 "2240_92":"https://wiki.swccg.com/images/2/20/VB4-90E-Tusken_Breath_Mask.png",
-"2240_94":"https://wiki.swccg.com/images/0/03/VB4-93E-Careful_Planning.png",
+"2240_94":"https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Light/large/carefulplanning.gif",
 "2240_1064":"https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/galenslightsaber.gif",
 // removed version id 2240_2058 (r16) -> current card image
 "2240_2058":"https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/huntdownanddestroythejedi.gif",
