@@ -35,7 +35,7 @@ public class Card601_084 extends AbstractImperial {
     public Card601_084() {
         super(Side.DARK, 2, 3, 3, 2, 4, "General Nevar", Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
         setLore("Leader.");
-        setGameText("[Pilot] 2, 3: Blizzard 2. Deploys -1 on Hoth. Once per game, may deploy a marker site with < 2 [Dark Side] or a battleground (except Endor system or a war room). Once per game, if piloting at a site where no characters present, may peek at opponent's hand.");
+        setGameText("Adds 2 to the power of anything he pilots (3 if Blizzard 2.) Deploys -1 on Hoth. Once per game, may deploy a marker site with < 2 [Dark Side] or a battleground (except Endor system or a war room). Once per game, if piloting at a site where no characters present, may peek at opponent's hand.");
         addIcons(Icon.PILOT, Icon.DAGOBAH, Icon.LEGACY_BLOCK_7);
         addKeywords(Keyword.GENERAL, Keyword.LEADER);
         setMatchingVehicleFilter(Filters.Blizzard_2);
