@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.function.BooleanSupplier;
 
+import static com.gempukku.swccgo.cards.Vb89VersionAsserts.*;
 import static com.gempukku.swccgo.framework.Assertions.assertInZone;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -211,5 +212,22 @@ public class Card_1282_011_Tests {
 
         assertInZone(Zone.USED_PILE, bounty);
         assertEquals(lostPile - 2, scn.GetDSLostPileCount());
+    }
+
+    /** PC website card list text (2012-12-12, PC-E1): the latest version under Bill's option (b). */
+    @Test
+    public void AssassinSBlasterRifleCurrentCardIsTheLatestText() {
+        assertCurrentCard("1282_11", "Assassin's Blaster Rifle",
+                "Deploy on an assassin; assassin is power +1. May target a character at same or adjacent site for free. Draw destiny. If destiny +1 > defense value: target hit, may not be captured, and you may place a bounty on target in Used Pile to retrieve 2 Force.");
+    }
+
+    /** Card list text: the hit target "may not be captured" for the rest of the game, not only "this turn". */
+    @Test
+    public void AssassinsBlasterRifleHitTargetMayNotBeCapturedForRemainderOfGame() {
+        var scn = GetScenario();
+        scn.StartGame();
+        var rifle = (Card1282_011) scn.GetDSCard("rifle").getBlueprint();
+        var effect = rifle.mayNotBeCapturedEffect(null, scn.GetDSCard("rifle"), scn.GetLSCard("leia"));
+        assertTrue(effect instanceof com.gempukku.swccgo.logic.effects.AddUntilEndOfGameModifierEffect);
     }
 }
