@@ -6624,5 +6624,6 @@ const fixedImages = {
 "2250_28":"https://wiki.swccg.com/images/f/f7/VB5-28E-Trade_Federation_Tactics.png",
 "2250_34":"https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/bailorgana.gif",
 "2261_10":"https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/darthvaderbetrayerofthejedi.gif",
+"2261_34":"https://wiki.swccg.com/images/b/b9/VB6-34-Fleet_Security_Protocols.png",
 
 };
