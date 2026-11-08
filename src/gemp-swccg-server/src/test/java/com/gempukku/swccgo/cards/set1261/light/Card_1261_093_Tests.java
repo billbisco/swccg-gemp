@@ -193,4 +193,18 @@ public class Card_1261_093_Tests {
         assertFalse(hasAction(opponentBattle("obi", false), PROTECT));
     }
     @Test public void KraytCannotProtectAnAttackingObiWan() { assertFalse(hasAction(weapons(true), PROTECT)); }
+
+    @org.junit.Test
+    public void CurrentTextIsTheLatestVersion() {
+        // PC card list (PC-E1) is the latest text; GEMP's former wording matched no published version.
+        var scn = new com.gempukku.swccgo.framework.VirtualTableScenario(new java.util.HashMap<>(java.util.Map.of("c", "1261_93")), new java.util.HashMap<>(), 10, 10,
+                com.gempukku.swccgo.framework.StartingSetup.DefaultLSGroundLocation, com.gempukku.swccgo.framework.StartingSetup.DefaultDSGroundLocation,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSStartingInterrupts, com.gempukku.swccgo.framework.StartingSetup.NoDSStartingInterrupts,
+                com.gempukku.swccgo.framework.StartingSetup.NoLSShields, com.gempukku.swccgo.framework.StartingSetup.NoDSShields,
+                com.gempukku.swccgo.framework.VirtualTableScenario.Open);
+        var text = scn.GetLSCard("c").getBlueprint().getGameText();
+        org.junit.Assert.assertEquals("USED: Cancel Disarmed or Stunning Leader. OR If a battle was just initiated, deploy a character weapon on your participating character from Reserve Deck (or hand); reshuffle. LOST: Use 1 Force to deploy (or retrieve) non-[Reflections 3] Obi-Wan from Reserve Deck; reshuffle. OR If opponent just initiated a battle against non-[Reflections 3] Obi-Wan alone at a site, his forfeit cannot be reduced.", text);
+        org.junit.Assert.assertFalse(text.contains("reshuffle Reserve Deck if searched"));
+        org.junit.Assert.assertNull(scn.GetLSCard("c").getBlueprint().getLegacyVersion());
+    }
 }
