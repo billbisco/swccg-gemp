@@ -6709,6 +6709,9 @@ const fixedImages = {
 "2240_92":"https://wiki.swccg.com/images/2/20/VB4-90E-Tusken_Breath_Mask.png",
 "2240_94":"https://wiki.swccg.com/images/0/03/VB4-93E-Careful_Planning.png",
 "2240_1064":"https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/galenslightsaber.gif",
+// removed version id 2240_2058 (r16) -> current card image
+"2240_2058":"https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/huntdownanddestroythejedi.gif",
+"2240_2058_BACK":"https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/theirfirehasgoneoutoftheuniverse.gif",
 "2250_15":"https://wiki.swccg.com/images/8/82/VB5-13-Mandalorian_Armor.png",
 "2250_18":"https://wiki.swccg.com/images/1/13/VB5-15-An_Enemy_Of_The_Republic.png",
 "2250_22":"https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Dark/large/withthunderousapplause.gif",
