@@ -6613,6 +6613,18 @@ const fixedImages = {
 "1292_10":"https://res.starwarsccg.org/cards/legacy/VirtualBlock9-Light/large/majorhaashn.gif",
 "1292_11":"https://res.starwarsccg.org/cards/legacy/VirtualBlock9-Light/large/mandalorianmishapjedimindtrick.gif",
 // END legacy
+// Batch B27 (Virtual Block 7): current cards show the image of their latest text, CardMaker recreations of the 2012 card-list texts (PC-E1);
+// 601_178 / 601_222 are the classes of 1273_1 / 1273_24. The original versions 2272_26 / 2273_1 / 2273_2 / 2273_24 show the PC card images (they print the originals).
+"1272_26":"https://wiki.swccg.com/images/7/7e/VB7-p4-76-The_Camp-PC-E1-cardmaker.png",
+"1273_1":"https://wiki.swccg.com/images/f/f4/VB7-p2-79-5D6_RA_7_Fivedesix-PC-E1-cardmaker.png",
+"601_178":"https://wiki.swccg.com/images/f/f4/VB7-p2-79-5D6_RA_7_Fivedesix-PC-E1-cardmaker.png",
+"1273_2":"https://wiki.swccg.com/images/c/c0/VB7-02-Admiral_Pellaeon-PC-E1-cardmaker.png",
+"1273_24":"https://wiki.swccg.com/images/f/f9/VB7-p5-105-Derek_Hobbie_Klivian-PC-E1-cardmaker.png",
+"601_222":"https://wiki.swccg.com/images/f/f9/VB7-p5-105-Derek_Hobbie_Klivian-PC-E1-cardmaker.png",
+"2272_26":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/thecamp.gif",
+"2273_1":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Dark/large/5d6ra7.gif",
+"2273_2":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Dark/large/admiralpellaeon.gif",
+"2273_24":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/derekhobbieklivian.gif",
 // Batch B26 (Virtual Block 6): current cards show a CardMaker recreation of their PC-E1 card-list text (601_98 = current class of 1261_48); the version cards 2261_48 / 2261_79 / 2263_9 (originals) show the release-sheet slips, which print the original text.
 "1261_48":"https://wiki.swccg.com/images/4/47/VB6-51-Weapon_Levitation_The_Empires_Back-PC-E1-cardmaker.png",
 "601_98":"https://wiki.swccg.com/images/4/47/VB6-51-Weapon_Levitation_The_Empires_Back-PC-E1-cardmaker.png",
