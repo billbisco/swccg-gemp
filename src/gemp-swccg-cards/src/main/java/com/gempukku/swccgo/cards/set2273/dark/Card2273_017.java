@@ -27,10 +27,10 @@ public class Card2273_017 extends AbstractSite {
     public Card2273_017() {
         super(Side.DARK, "Coruscant: Palpatine's Quarters", Title.Coruscant, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_3, Rarity.V);
         setLocationDarkSideGameText("While Insidious Prisoner on table, Cyborg Commander is immune to attrition.");
-        setLocationLightSideGameText("Force drain -1 here. Jedi here may not have their power reduced.");
+        setLocationLightSideGameText("Force drain -1 here . Jedi here may not have their power reduced.");
         setLegacyVersion(new LegacyVersion("1273_17", "",
                 "Virtual Block 7.3 release sheet (2011-06-03)", LocalDate.of(2011, 6, 3), LocalDate.of(2013, 4, 27)));
-        setGameText("Dark: While Insidious Prisoner on table, Cyborg Commander is immune to attrition. Light: Force drain -1 here. Jedi here may not have their power reduced.");
+        setGameText("Dark: While Insidious Prisoner on table, Cyborg Commander is immune to attrition. Light: Force drain -1 here . Jedi here may not have their power reduced.");
         addIcon(Icon.DARK_FORCE, 2);
         addIcon(Icon.LIGHT_FORCE, 1);
         addIcons(Icon.INTERIOR_SITE, Icon.EPISODE_I, Icon.PLANET);

@@ -15,7 +15,7 @@ import java.time.LocalDate;
 public class Card2281_001 extends Card1281_001 {
     public Card2281_001() {
         super();
-        setGameText("Once per game, may deploy a device on Aurra from Reserve Deck; reshuffle. While armed with a [Reflections III] rifle: it may not be retargeted or stolen, her total weapon destiny is +1, and characters she hits may not be used to satisfy attrition. Immune to attrition < 3 (< 4 while armed with a rifle).");
+        setGameText("Once per game may deploy a device on Aurra from Reserve Deck; reshuffle. While armed with a [Reflections III] rifle: it may not be retargeted or stolen, her total weapon destiny is +1, and characters she hits may not be used to satisfy attrition. Immune to attrition < 3 (< 4 while armed with a rifle).");
         setLegacyVersion(new LegacyVersion("1281_1", "", "Virtual Block 8.1 release sheet (2012-05-11)", LocalDate.of(2012, 5, 11), LocalDate.of(2012, 7, 21)));
     }
 }

@@ -56,7 +56,7 @@ public class Card_2274_018_Tests {
     public void OriginalHindsightIsTheCurrentCardWithTheDecember2011Text() {
         var s = scenario();
         assertVersion(s.GetLSCard("hindsight").getBlueprint(), s.GetLSCard("current").getBlueprint(), "1274_18", "",
-                LocalDate.of(2011, 12, 16), LocalDate.of(2012, 8, 27),
+                LocalDate.of(2011, 12, 16), LocalDate.of(2012, 7, 21),
                 "Unless Imperial Atrocity on table, if you are about to lose Force during opponent's control phase, deploy on table to reduce loss by 4 (ignore other modifiers); opponent may take any one card into hand from Reserve Deck; reshuffle. Immune to Control. OR Use 2 Force to deploy on table and stack one just-played Interrupt here.");
     }
 

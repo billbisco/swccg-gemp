@@ -49,7 +49,7 @@ public class Card1274_018 extends AbstractImmediateEffect {
     public Card1274_018() {
         super(Side.LIGHT, 5, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Hindsight", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_4, Rarity.V);
         setVirtualSuffix(true);
-        setLore("'I'm backwards! You fleabitten furball...only an overgrown mophead like you would be stupid enough--'");
+        setLore("\"I'm backwards! You fleabitten furball...only an overgrown mophead like you would be stupid enough—\"");
         setGameText("Unless Imperial Atrocity on table, if you are about to lose Force during opponent's control phase, deploy on table to reduce loss by 6 (ignore other modifiers); opponent may take any one card into hand from Reserve Deck; reshuffle. Immune to Control. OR Use 2 Force to deploy on table and stack one just-played Interrupt here.");
         addIcons(Icon.GRABBER);
         addImmuneToCardTitle(Title.Control);

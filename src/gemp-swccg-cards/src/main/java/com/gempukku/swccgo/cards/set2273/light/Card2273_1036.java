@@ -37,7 +37,7 @@ import java.util.List;
  * Set: Virtual Block 7.3
  * Type: Effect
  * Title: The Shield Is Down! (V)
- * Pre-errata version of 1273_36 (PC-E1: Advanced Rules 2.0 Appendix A text, by Aug 2012), replaced by the Virtual Cards Master List text (counts only your non-Jedi scouts at Bunker). Anything Goes only (docs/legacy-versions.md).
+ * Pre-errata version of 1273_36 (PC-E1: PC website card list by 2012-07-21; Advanced Rules 2.0 Appendix A by Aug 2012), replaced by the Virtual Cards Master List text (counts only your non-Jedi scouts at Bunker). Anything Goes only (docs/legacy-versions.md).
  */
 public class Card2273_1036 extends AbstractNormalEffect {
     public Card2273_1036() {
@@ -46,7 +46,7 @@ public class Card2273_1036 extends AbstractNormalEffect {
         setLore("Lando's confidence in the Rebel strike team on the forest moon was rewarded, and proved to be a decisive factor at the Battle of Endor.");
         setGameText("If [Virtual Block 7] Rebel Strike Team on table, deploy on table. Your [Endor] Epic Event total is +1 for each non-Jedi scout at Bunker. For each of your non-Jedi scouts in battle, attrition against opponent is +1. While opponent's [Endor] objective on table, Bunker may not be converted. Once per turn may take Bunker into hand from Reserve Deck; reshuffle. (Immune to Alter.)");
         setLegacyVersion(new LegacyVersion("1273_36", "PC-E1",
-                "Advanced Rules 2.0 Appendix A (by 2012-08-27)", LocalDate.of(2012, 8, 27), LocalDate.of(2013, 4, 27)));
+                "PC website card list (by 2012-07-21); Advanced Rules 2.0 Appendix A (by 2012-08-27)", LocalDate.of(2012, 7, 21), LocalDate.of(2013, 4, 27)));
         addImmuneToCardTitle(Title.Alter);
     }
 
