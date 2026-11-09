@@ -49,7 +49,7 @@ public class Card_2210_055_Tests {
             assertEquals(icon.name(), current.getIconCount(icon), card.getIconCount(icon));
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_1, card.getExpansionSet());
         assertTrue(card.isLegacy());
-        assertEquals("If you just initiated battle where you have at least two characters (one a trooper and the other a leader), add two battle destiny. Opponent takes no battle damage this battle. OR Deploy one Dewback from Reserve Deck; reshuffle.",
+        assertEquals("If you just initiated battle where you have at least two characters (one a trooper and the other a leader), add two battle destiny. Opponent takes no battle damage this battle. OR ▼ one Dewback",
                 card.getGameText());
         assertNotEquals(current.getGameText(), card.getGameText());
         var version = card.getLegacyVersion();
