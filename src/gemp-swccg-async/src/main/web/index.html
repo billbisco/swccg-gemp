@@ -62,6 +62,8 @@
             var password2 = $("#password2").val();
             if (password != password2) {
                 $(".error").html("Passwords are different! Try again");
+            } else if (password == "") {
+                $(".error").html("Please enter a password.");
             } else {
                 comm.register(login, password, function (_, status, request) {
                     if(status == "202") {
@@ -80,7 +82,13 @@
                                 alert("Unable to connect to server, either server is down or there is a problem" +
                                       " with your internet connection");
                             },
-                            "400":function() {
+                            "400":function(xhr) {
+                                // A rejected password comes back with its reason in the "message" header.
+                                var reason = xhr ? xhr.getResponseHeader("message") : null;
+                                if (reason) {
+                                    $(".error").text(reason);
+                                    return;
+                                }
                                 $(".error").html("Login is invalid. Login must be between 2-10 characters long, and contain only<br/>" +
                                          " english letters, numbers or _ (underscore) and - (dash) characters.");
                             },
@@ -114,7 +122,16 @@
                         $(".error").html();
                         $(".interaction").html(html);
                         $("#registerButton").button().click(register);
+                        $("#login, #password").on("input", showPasswordNameNote);
                     });
+        }
+
+        // Advice only: a password equal to the name (ignoring case) is allowed, but we say why it's risky.
+        // It never blocks or delays signup.
+        function showPasswordNameNote() {
+            var login = ($("#login").val() || "").toLowerCase();
+            var password = ($("#password").val() || "").toLowerCase();
+            $("#passwordNameNote").toggle(login != "" && password == login);
         }
 
         function login() {
