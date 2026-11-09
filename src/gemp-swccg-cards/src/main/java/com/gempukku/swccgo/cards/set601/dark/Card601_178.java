@@ -39,7 +39,7 @@ public class Card601_178 extends AbstractDroid {
         super(Side.DARK, 2, 4, 2, 5, Title._5D6RA7, Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
         setVirtualSuffix(true);
         setLore("Aide to Admiral Motti's staff. Foul-tempered and vindictive. Feared by other droids. A spy for the ISB. Secretly investigates Imperial officers whose loyalties are in question.");
-        setGameText("[Pilot] 2. Power +1 while with your leader. If at a Scomp link when opponent draws destiny of: 1-3, you may activate 1 Force; 4-6, you may draw top card of your Reserve Deck; 0 or 7, you may retrieve 1 Force.");
+        setGameText("Adds 2 to the power of anything he pilots. Power +1 while with your leader. If at a scomp link when opponent draws a destiny of: 1-3, you may activate one force; 4-6, you may draw top card of your reserve deck; 0 or 7 you may retrieve 1 force.");
         addIcons(Icon.PILOT, Icon.LEGACY_BLOCK_7);
         addKeywords(Keyword.SPY);
         addModelType(ModelType.SERVANT);

@@ -375,6 +375,30 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_6'), 'https://wiki.s
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_23'), 'https://wiki.swccg.com/images/5/50/VB8-02-Slave_I_Symbol_Of_Fear.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_25'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Dark/large/marajadeslightsaber.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_25'), 'https://wiki.swccg.com/images/8/81/VB8-p5-26-Mara_Jades_Lightsaber.png');
+// Batch B27 (Virtual Block 7): current cards show CardMaker images of their PC-E1 card-list texts (601_178 / 601_222 are the classes of 1273_1 / 1273_24); originals show the PC card images
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1272_26'), 'https://wiki.swccg.com/images/7/7e/VB7-p4-76-The_Camp-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1273_1'), 'https://wiki.swccg.com/images/f/f4/VB7-p2-79-5D6_RA_7_Fivedesix-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_178'), 'https://wiki.swccg.com/images/f/f4/VB7-p2-79-5D6_RA_7_Fivedesix-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1273_2'), 'https://wiki.swccg.com/images/c/c0/VB7-02-Admiral_Pellaeon-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1273_24'), 'https://wiki.swccg.com/images/f/f9/VB7-p5-105-Derek_Hobbie_Klivian-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_222'), 'https://wiki.swccg.com/images/f/f9/VB7-p5-105-Derek_Hobbie_Klivian-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2272_26'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/thecamp.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2273_1'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Dark/large/5d6ra7.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2273_2'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Dark/large/admiralpellaeon.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2273_24'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/derekhobbieklivian.gif');
+// Batch B26 (Virtual Block 6): current cards show a CardMaker recreation of their PC-E1 card-list text; the originals (22xx) show the release-sheet slips
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_48'), 'https://wiki.swccg.com/images/4/47/VB6-51-Weapon_Levitation_The_Empires_Back-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_98'), 'https://wiki.swccg.com/images/4/47/VB6-51-Weapon_Levitation_The_Empires_Back-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_79'), 'https://wiki.swccg.com/images/7/7e/VB6-78-Commando_Training_Klorslug-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1263_9'), 'https://wiki.swccg.com/images/2/2d/VB6-09-Guild_Of_Assassins-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_48'), 'https://wiki.swccg.com/images/f/f6/VB6-51-Weapon_Levitation_The_Empires_Back.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_79'), 'https://wiki.swccg.com/images/3/36/VB6-78-Commando_Training_Klorslug.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2263_9'), 'https://wiki.swccg.com/images/1/1c/VB6-09-Guild_Of_Assassins.png');
+// Batch B25: Keder The Black (V) and Breached Defenses & Molator PC-E1 (CardMaker), originals on the PC card images
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_9'), 'https://wiki.swccg.com/images/4/4e/VB5-07-Keder_The_Black-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2250_9'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Dark/large/kedertheblack.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_29'), 'https://wiki.swccg.com/images/f/f0/VB6-31-Breached_Defenses_Molator-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_29'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/breacheddefenses&molator.gif');
 // Batch B22 (Virtual Block 8, Virtual Shields): current cards and version cards show the image of their own text
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1282_15'), 'https://wiki.swccg.com/images/3/32/VB8-p3-71-Captain_Verrack-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1282_19'), 'https://wiki.swccg.com/images/6/63/VB8-p4-76-Rennek-PC-E1-cardmaker.png');
