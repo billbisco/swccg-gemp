@@ -112,4 +112,19 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('2240_68'), 'https://wiki.
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1230_102'), 'https://wiki.swccg.com/images/0/0e/VB3-103-Diversionary_Tactics-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2230_102'), 'https://wiki.swccg.com/images/8/89/VB3-103-Diversionary_Tactics.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_180'), 'https://wiki.swccg.com/images/3/33/VB4-01-Arica-PC-E1-cardmaker.png');
+// Batch B07 (Virtual Block 3-4): current cards show the CardMaker image of their PC-E1 text; originals keep their slips
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1230_114'), 'https://wiki.swccg.com/images/7/70/VB3-117-Tydirium-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1230_116'), 'https://wiki.swccg.com/images/e/e1/VB3-115-Mon_Calamari_Star_Cruiser-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1230_118'), 'https://wiki.swccg.com/images/6/60/VB3-120-Enhanced_Proton_Torpedoes-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1240_20'), 'https://wiki.swccg.com/images/e/ea/VB4-21-Dark_Reconnaissance-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1240_21'), 'https://wiki.swccg.com/images/4/41/VB4-19-Blown_Clear-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1240_22'), 'https://wiki.swccg.com/images/7/7f/VB4-20-Crush_The_Rebellion-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1240_36'), 'https://wiki.swccg.com/images/8/8b/VB4-34E-There_Is_No_Try_Oppressive_Enforcement-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1240_47'), 'https://wiki.swccg.com/images/6/67/VB4-47-Unexpected_Interruption-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1240_63'), 'https://wiki.swccg.com/images/c/c9/VB4-62-Stinger-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_211'), 'https://wiki.swccg.com/images/c/c9/VB4-62-Stinger-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1240_92'), 'https://wiki.swccg.com/images/5/56/VB4-90E-Tusken_Breath_Mask-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2230_114'), 'https://wiki.swccg.com/images/a/a2/VB3-117-Tydirium.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2240_36'), 'https://wiki.swccg.com/images/7/74/VB4-34E-There_Is_No_Try_Oppressive_Enforcement.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2240_63'), 'https://wiki.swccg.com/images/0/07/VB4-62-Stinger.png');
 console.log('card image URL routing passed: ' + legacy.length + ' Legacy mappings');

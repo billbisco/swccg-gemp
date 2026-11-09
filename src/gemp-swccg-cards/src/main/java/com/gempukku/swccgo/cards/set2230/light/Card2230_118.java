@@ -18,6 +18,6 @@ public class Card2230_118 extends Card1230_118 {
         super();
         setGameText("Use 1 Force to deploy on your starfighter. May target a starship for free. Draw destiny (If on a Heroic starfighter, may first use 1 Force to add 3 to total). Target hit if total destiny > defense value.");
         setLegacyVersion(new LegacyVersion("1230_118", "",
-                "Virtual Block 3 release sheet (2009-12-07), card #118", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21)));
+                "Virtual Block 3 release sheet (2009-12-07), card #120", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21)));
     }
 }
