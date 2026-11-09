@@ -46,16 +46,16 @@ import java.util.List;
  * Type: Effect
  * Subtype: Immediate
  * Title: Hindsight (V)
- * Pre-errata version of 1274_18 (Virtual Block 7.4 release sheet text, Dec 2011), replaced by the AR 2.0 Appendix A text PC-E1 (reduce loss by 6). Anything Goes only (docs/legacy-versions.md).
+ * Pre-errata version of 1274_18 (Virtual Block 7.4 release sheet text, Dec 2011), replaced by PC-E1 (reduce loss by 6; PC website card list by 2012-07-21, then AR 2.0 Appendix A). Anything Goes only (docs/legacy-versions.md).
  */
 public class Card2274_018 extends AbstractImmediateEffect {
     public Card2274_018() {
         super(Side.LIGHT, 5, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Hindsight", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_4, Rarity.V);
         setVirtualSuffix(true);
-        setLore("'I'm backwards! You fleabitten furball...only an overgrown mophead like you would be stupid enough--'");
+        setLore("\"I'm backwards! You fleabitten furball...only an overgrown mophead like you would be stupid enough—\"");
         setGameText("Unless Imperial Atrocity on table, if you are about to lose Force during opponent's control phase, deploy on table to reduce loss by 4 (ignore other modifiers); opponent may take any one card into hand from Reserve Deck; reshuffle. Immune to Control. OR Use 2 Force to deploy on table and stack one just-played Interrupt here.");
         setLegacyVersion(new LegacyVersion("1274_18", "",
-                "Virtual Block 7.4 release sheet (2011-12-16)", LocalDate.of(2011, 12, 16), LocalDate.of(2012, 8, 27)));
+                "Virtual Block 7.4 release sheet (2011-12-16)", LocalDate.of(2011, 12, 16), LocalDate.of(2012, 7, 21)));
         addIcons(Icon.GRABBER);
         addImmuneToCardTitle(Title.Control);
     }

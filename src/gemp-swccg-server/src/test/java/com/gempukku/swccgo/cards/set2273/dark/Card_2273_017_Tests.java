@@ -16,7 +16,7 @@ public class Card_2273_017_Tests {
         var version = VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("2273_17");
         var current = VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("1273_17");
         assertLocationVersion(version, current, "1273_17", "", LocalDate.of(2011, 6, 3), LocalDate.of(2013, 4, 27),
-                "Force drain -1 here. Jedi here may not have their power reduced.",
+                "Force drain -1 here . Jedi here may not have their power reduced.",
                 "While Insidious Prisoner on table, Cyborg Commander is immune to attrition.", false);
     }
 

@@ -6779,6 +6779,14 @@ const fixedImages = {
 "1240_27":"https://wiki.swccg.com/images/1/12/VB4-26-Imperial_Propaganda-PC-E1-cardmaker.png",
 "601_88":"https://wiki.swccg.com/images/1/12/VB4-26-Imperial_Propaganda-PC-E1-cardmaker.png",
 
+// Batch B19 (Virtual Blocks 7-8): current cards whose generated image shows an older text get the image of their latest text: 1273_41 Coruscant (V) the Master List slip (PC-E2; its PC card image prints a third wording, held for Bill),
+// 1281_1 / 1281_4 / 1281_5 (= 601_17) CardMaker recreations of the card-list text (PC-E1). 1273_17, 1273_20, 1273_36, 1274_4, 1274_11 and 1274_18 keep their PC card image, which shows the latest text.
+"1273_41":"https://wiki.swccg.com/images/4/4d/VL-history-1273-41-front-master.png",
+"1281_1":"https://wiki.swccg.com/images/6/69/VB8-01-Aurra_Sing_Deadly_Assassin-PC-E1-cardmaker.png",
+"1281_4":"https://wiki.swccg.com/images/5/58/VB8-03-Bossk_With_Mortar_Gun-PC-E1-cardmaker.png",
+"1281_5":"https://wiki.swccg.com/images/d/dd/VB8-03-Ket_Maliss_Shadow_Killer-PC-E1-cardmaker.png",
+"601_17":"https://wiki.swccg.com/images/d/dd/VB8-03-Ket_Maliss_Shadow_Killer-PC-E1-cardmaker.png",
+
 // Legacy pre-errata versions (docs/legacy-versions.md; keep outside the generated legacy block).
 // Image = the wiki slip crop of the release sheet that printed that text (wiki page field image2).
 "2210_36":"https://wiki.swccg.com/images/2/2e/VB1-36-Forced_Servitude.png",
@@ -6825,7 +6833,7 @@ const fixedImages = {
 "2273_11":"https://wiki.swccg.com/images/7/7e/VB7-06-Trophy_Of_A_Kill.png",
 "2273_27":"https://wiki.swccg.com/images/f/fe/VB7-01-Master_Kenobi.png",
 "2273_36":"https://wiki.swccg.com/images/8/87/VB7-p6-117-The_Shield_Is_Down.png",
-"2273_1036":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/theshieldisdown.gif",
+"2273_1036":"https://wiki.swccg.com/images/b/b3/VB7-p6-117-The_Shield_Is_Down-PC-E1-cardmaker.png",
 "2274_4":"https://wiki.swccg.com/images/9/99/VB7-p2-132-Tibanna_Floating_Refinery.png",
 "2274_11":"https://wiki.swccg.com/images/9/9a/VB7-01-Grievous_Lightsabers.png",
 "2274_18":"https://wiki.swccg.com/images/4/48/VB7-p4-146-Hindsight.png",
@@ -6872,7 +6880,7 @@ const fixedImages = {
 "2273_1010":"https://wiki.swccg.com/images/0/00/VB7-00-Kessel_Surveillance_System-PC-E1-cardmaker.png",
 // Batch B03: Through The Force Things You Will See (V) PC-E1 (2012 card list text), CardMaker recreation; 2220_156 keeps the slip, 1220_156 the PC image (PC-E2).
 "2220_1156":"https://wiki.swccg.com/images/b/ba/VB2-156-Through_The_Force_Things_You_Will_See-PC-E1-cardmaker.png",
-"2273_1041":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/coruscant.gif",
+"2273_1041":"https://wiki.swccg.com/images/e/e8/VB7-p7-122-Coruscant_Special_Edition.png",
 "2274_2":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Dark/large/oomcommandbattledroid.gif",
 "2274_3":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Dark/large/baktoidarmorworkshop.gif",
 "2274_5":"https://wiki.swccg.com/images/3/36/VB7-p2-133-Desperate_Counter.png",

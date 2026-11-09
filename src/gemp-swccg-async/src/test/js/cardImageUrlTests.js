@@ -266,4 +266,16 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('2220_163'), 'https://wiki
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2230_13'), 'https://wiki.swccg.com/images/5/57/VB3-13E-Lord_Vader.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2240_2'), 'https://wiki.swccg.com/images/a/a9/VB4-02-Juno_Eclipse_Black_Leader.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2240_8'), 'https://wiki.swccg.com/images/9/93/VB4-04-Galen_Marek_Starkiller.png');
+// Batch B19 (Virtual Blocks 7-8): current cards show the image of their latest text; version cards show their own text
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1273_41'), 'https://wiki.swccg.com/images/4/4d/VL-history-1273-41-front-master.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_1'), 'https://wiki.swccg.com/images/6/69/VB8-01-Aurra_Sing_Deadly_Assassin-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_4'), 'https://wiki.swccg.com/images/5/58/VB8-03-Bossk_With_Mortar_Gun-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_5'), 'https://wiki.swccg.com/images/d/dd/VB8-03-Ket_Maliss_Shadow_Killer-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_17'), 'https://wiki.swccg.com/images/d/dd/VB8-03-Ket_Maliss_Shadow_Killer-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2273_1036'), 'https://wiki.swccg.com/images/b/b3/VB7-p6-117-The_Shield_Is_Down-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2273_1041'), 'https://wiki.swccg.com/images/e/e8/VB7-p7-122-Coruscant_Special_Edition.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2273_41'), 'https://wiki.swccg.com/images/e/e8/VB7-p7-122-Coruscant_Special_Edition.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1273_36'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/theshieldisdown.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2273_36'), 'https://wiki.swccg.com/images/8/87/VB7-p6-117-The_Shield_Is_Down.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1274_18'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/hindsight.gif');
 console.log('card image URL routing passed: ' + legacy.length + ' Legacy mappings');
