@@ -57,7 +57,7 @@ public class Card_2220_050_Tests {
         assertEquals("1220_50", version.currentPrintingId());
         assertEquals("", version.label());
         assertEquals(LocalDate.of(2009, 12, 7), version.printedOn());
-        assertEquals(LocalDate.of(2012, 8, 27), version.supersededOn());
+        assertEquals(LocalDate.of(2012, 7, 21), version.supersededOn());
         assertEquals(GameUtils.getFullName(current), GameUtils.getFullName(card));
     }
 

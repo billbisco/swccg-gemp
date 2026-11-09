@@ -42,7 +42,7 @@ public class Card1210_080 extends AbstractCreatureVehicle {
         super(Side.DARK, 5, 2, 2, 4, null, 2, 3, "Dewback", Uniqueness.UNRESTRICTED, ExpansionSet.VIRTUAL_BLOCK_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("Protected by hard skin composed of tough armored scales. Frequently ridden by sandtroopers stationed in desert environments.");
-        setGameText("Deploys only on Tatooine. Ability = 1/4. May add 1 'rider' (passenger). May be targeted by Trample instead of a piloted AT-AT. During battle, may 'roar' to make a character here defense value -1.");
+        setGameText("Deploys only on Tatooine. Ability = ¼. May add 1 'rider' (passenger). May be targeted by Trample instead of a piloted AT-AT. During battle, may 'roar' to make a character here defense value -1.");
         addIcons(Icon.SPECIAL_EDITION);
         addKeywords(Keyword.DEWBACK);
         setPassengerCapacity(1);

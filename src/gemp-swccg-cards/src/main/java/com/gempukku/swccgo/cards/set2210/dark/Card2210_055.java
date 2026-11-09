@@ -39,7 +39,7 @@ public class Card2210_055 extends AbstractUsedInterrupt {
         super(Side.DARK, 4, Title.Collateral_Damage, Uniqueness.UNRESTRICTED, ExpansionSet.VIRTUAL_BLOCK_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("Blast vests and helmets with blast shields cannot protect Rebel soldiers from grenades, panel explosions and other combat hazards.");
-        setGameText("If you just initiated battle where you have at least two characters (one a trooper and the other a leader), add two battle destiny. Opponent takes no battle damage this battle. OR Deploy one Dewback from Reserve Deck; reshuffle.");
+        setGameText("If you just initiated battle where you have at least two characters (one a trooper and the other a leader), add two battle destiny. Opponent takes no battle damage this battle. OR ▼ one Dewback");
         setLegacyVersion(new LegacyVersion("1210_55", "",
                 "Virtual Block 1 release sheet (2009-12-07), card #55; superseded by the PC card list text (by 2012-07-21)", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21)));
     }

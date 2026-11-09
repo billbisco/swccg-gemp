@@ -39,7 +39,7 @@ public class Card1210_110 extends AbstractRebel {
     public Card1210_110() {
         super(Side.LIGHT, 2, 2, 1, 1, 3, Title.Rebel_Tech, Uniqueness.RESTRICTED_3, ExpansionSet.VIRTUAL_BLOCK_1, Rarity.V);
         setVirtualSuffix(true);
-        setLore("Del Goren, typical expert in communications and scanner jamming, served aboard the Rebel privateer corvette Spiral before joining the Alliance High Command.");
+        setLore("Del Goren, typical expert in communications and scanner jamming, served aboard the Rebel privateer corvette Spiral before joing the Alliance High Command.");
         setGameText("While on Yavin 4: cancels Force drain bonuses from Yavin sites' game text, your Attack Run total is cumulatively +1, and during your deploy phase, may place this character in Used Pile to take one Advance Preparation or Death Star: Trench into hand from Reserve Deck; reshuffle.");
         addIcons(Icon.A_NEW_HOPE);
     }

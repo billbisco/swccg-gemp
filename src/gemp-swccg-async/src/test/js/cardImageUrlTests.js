@@ -197,4 +197,20 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_65'), 'https://res.s
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_65'), 'https://wiki.swccg.com/images/f/fd/VB6-63-BoShek_Brash_Smuggler.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_1034'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/fleetsecurityprotocols.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_10'), 'https://wiki.swccg.com/images/7/79/VB6-10-Darth_Vader_Betrayer_Of_The_Jedi.png');
+// Batch B13 (Virtual Block 1-2): current cards show the image of their latest text; 2210_1008 (Death Star Gunner PC-E1) the PC card image; version cards keep the slips
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_8'), 'https://wiki.swccg.com/images/5/58/VB1-08-Death_Star_Gunner-PC-E2-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_31'), 'https://wiki.swccg.com/images/d/df/VB1-31-Astromech_Shortage-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_55'), 'https://wiki.swccg.com/images/8/8b/VB1-55-Collateral_Damage-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_80'), 'https://wiki.swccg.com/images/6/6c/VB1-80E-Dewback-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_159'), 'https://wiki.swccg.com/images/a/a9/VB1-160-Precise_Hit-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1220_50'), 'https://wiki.swccg.com/images/c/c7/VB2-50E-Vader_s_Bounty-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1220_58'), 'https://wiki.swccg.com/images/b/b9/VB2-58-Defensive_Fire-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_198'), 'https://wiki.swccg.com/images/b/b9/VB2-58-Defensive_Fire-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1220_67'), 'https://wiki.swccg.com/images/9/99/VB2-71-AT-AT_Deployment_Platform-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1220_72'), 'https://wiki.swccg.com/images/0/0b/VB2-72E-Imperial_Occupation-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2210_1008'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock1-Dark/large/deathstargunner.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_110'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock1-Light/large/rebeltech.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2210_8'), 'https://wiki.swccg.com/images/8/8d/VB1-08-Death_Star_Gunner.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2210_80'), 'https://wiki.swccg.com/images/b/b3/VB1-80E-Dewback.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2220_72'), 'https://wiki.swccg.com/images/e/e7/VB2-72E-Imperial_Occupation.png');
 console.log('card image URL routing passed: ' + legacy.length + ' Legacy mappings');
