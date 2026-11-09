@@ -33,7 +33,7 @@ public class Card2273_015 extends AbstractUsedOrLostInterrupt {
     public Card2273_015() {
         super(Side.DARK, 6, "Evacuate?", Uniqueness.UNRESTRICTED, ExpansionSet.VIRTUAL_BLOCK_7_3, Rarity.V);
         setVirtualSuffix(true);
-        setLore("Escape pods are on many starships allowing those in peril to flee, an act considered cowardly by Imperial officers. 'We've analyzed their attack, sir, and there is a danger.'");
+        setLore("Escape pods are on many starships allowing those in peril to flee, an act considered cowardly by Imperial officers. 'We've analyzed their attack, sir, and there is a danger . . .'");
         setGameText("Use 1 Force to target your character of ability > 3 alone at a site. USED: During any move phase, take target into hand. LOST: If opponent has exactly one non-spy character at target's site, place target in Used Pile.");
         setLegacyVersion(new LegacyVersion("1273_15", "",
                 "Virtual Block 7.3 release sheet (2011-06-03)", LocalDate.of(2011, 6, 3), LocalDate.of(2012, 7, 21)));

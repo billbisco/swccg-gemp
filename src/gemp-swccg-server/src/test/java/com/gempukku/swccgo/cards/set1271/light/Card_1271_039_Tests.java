@@ -147,9 +147,9 @@ public class Card_1271_039_Tests {
     }
 
     @Test
-    public void LukeTrustMeShowsTheCardListPcE2Text() {
+    public void LukeTrustMeShowsTheMasterListPcE2Text() {
         String t = com.gempukku.swccgo.framework.VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("1271_39").getGameText();
-        org.junit.Assert.assertEquals("If you have no Epic Events on table (and did not play an Epic Even at the start of the game), deploy on table. Once per game, may take a [Setup] card into hand from Reserve Deck; reshuffle. May place this Effect in Used Pile to take an Immediate Effect into hand from Reserve Deck; reshuffle. May place this Effect in Lost Pile to cancel a Force drain. (Immune to Alter.)", t);
-        org.junit.Assert.assertFalse(t.contains("Epic Event at the start"));
+        org.junit.Assert.assertEquals("If you have no Epic Events on table (and did not play an Epic Event at the start of the game), deploy on table. Once per game, may take a [Setup] card into hand from Reserve Deck; reshuffle. May place this Effect in Used Pile to take an Immediate Effect into hand from Reserve Deck; reshuffle. May place this Effect in Lost Pile to cancel a Force drain. (Immune to Alter.)", t);
+        org.junit.Assert.assertFalse(t.contains("Epic Even at the start"));
     }
 }
