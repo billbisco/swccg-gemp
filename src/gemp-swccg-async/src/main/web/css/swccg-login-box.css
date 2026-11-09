@@ -74,7 +74,7 @@
 }
 .sbtn .ico { width: 20px; height: 20px; flex: 0 0 20px; }
 .sbtn[data-idp], .sbtn-passkey { justify-content: flex-start; padding-left: 16px; }
-.sbtn > span:not(.sbox-soon) { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sbtn > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .sbtn-primary { background: var(--sbox-accent); color: var(--sbox-accent-fg); margin-top: 4px; }
 .sbtn-primary:hover { background: var(--sbox-accent-hover); }
 .sbtn[aria-busy="true"] { cursor: progress; opacity: .8; }
@@ -87,18 +87,14 @@
 .sbtn-facebook { background: #1877f2; color: #fff; }
 .sbtn-x        { background: #000; color: #fff; border-color: #536471; }
 .sbtn-telegram { background: #2aabee; color: #fff; }
-.sbtn-google:hover:not(:disabled) { background: #1f1f20; }
-.sbtn-discord:hover:not(:disabled) { background: #4752c4; }
-.sbtn-facebook:hover:not(:disabled) { background: #0d65d9; }
-.sbtn-x:hover:not(:disabled) { background: #16181c; }
-.sbtn-telegram:hover:not(:disabled) { background: #229ed9; }
+.sbtn-google:hover { background: #1f1f20; }
+.sbtn-discord:hover { background: #4752c4; }
+.sbtn-facebook:hover { background: #0d65d9; }
+.sbtn-x:hover { background: #16181c; }
+.sbtn-telegram:hover { background: #229ed9; }
 
-.sbtn:disabled { cursor: not-allowed; opacity: .5; filter: grayscale(.35); }
-.sbox-soon {
-  margin-left: auto; padding: 2px 7px; border-radius: 999px;
-  background: rgba(255,255,255,.16); color: inherit; font-size: 11px; font-weight: 600;
-  white-space: nowrap; flex: 0 0 auto;
-}
+.sbox-pk-hint { margin: -4px 0 8px; color: var(--sbox-muted); font-size: 13px; text-align: center; }
+.sbox-pk-note { margin: -4px 0 8px; color: var(--sbox-fg); font-size: 13px; text-align: center; }
 
 .sbox-links { margin: 2px 0 4px; text-align: center; font-size: 14px; color: var(--sbox-muted); }
 .sbox-link {
@@ -120,9 +116,7 @@
   .sbox-title { font-size: 20px; }
   .sbtn { gap: 8px; font-size: 14px; }
   .sbtn[data-idp], .sbtn-passkey { padding-left: 12px; padding-right: 10px; }
-  .sbox-soon { padding: 2px 6px; }
 }
 @media (forced-colors: active) {
   .sbtn { border: 1px solid ButtonText; }
-  .sbtn:disabled { opacity: 1; color: GrayText; border-color: GrayText; }
 }

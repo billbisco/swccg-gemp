@@ -29,15 +29,19 @@
   var OIDC_FIELDS = ["client_id", "redirect_uri", "response_type", "scope", "state", "nonce",
     "code_challenge", "code_challenge_method"];
 
+  // Reasons that belong to "Create account": only these bring the box back in that mode.
+  var SIGNUP_REASONS = /^(name_invalid|name_taken|weak_password|signup_limited|signup_closed|password_mismatch)$/;
+  // Shown beside the passkey button when a passkey prompt was closed without one (never as an error).
+  var PK_NOT_USED = "No passkey used. Don't have one? Sign in with your password, then add one on your account page.";
+
   var MESSAGES = {
     bad_credentials: "That name and password don't match. Check them and try again.",
     rate_limited: "Too many tries. Wait a few minutes, then try again.",
     unavailable: "Sign-in is having trouble right now. Try again in a minute.",
     blocked: "This account can't sign in right now.",
     reset_required: "Your password was reset. Choose a new password to continue.",
-    passkey_failed: "That passkey didn't work here. Try again, or sign in with your name and password.",
+    passkey_failed: "That passkey isn't on a swccg.com account. Sign in with your name and password first, then add a passkey on your account page.",
     expired: "That took too long. Try again.",
-    cancelled: "Sign-in was cancelled.",
     failed: "Sign-in didn't finish. Try again.",
     name_invalid: "Player names are 2 to 10 letters, digits, - or _, and can't start with a reserved word.",
     name_taken: "That name is taken. Pick another, or sign in if it's yours.",
@@ -104,7 +108,10 @@
     this.mode = $(root, "input[name=mode]");
     this.submit = $(root, ".sbtn-primary");
     this.passkeyBtn = $(root, ".sbtn-passkey");
+    this.pkNote = $(root, ".sbox-pk-note");
     this.conditional = null;
+    this.pkCtl = null; // AbortController of the passkey prompt the button opened
+    this.gen = 0;      // bumped on every mode switch and attempt: late answers from older ones are ignored
     this.busy = false;
     this.inlinePasskey = false; // set once providers.json says the passkey RP ID covers this site
     this.form.setAttribute("action", this.issuer + "/signin/password");
@@ -181,14 +188,28 @@
           history.replaceState(null, "", window.location.pathname + (rest ? "?" + rest : "") + window.location.hash);
       }
     }
+    var savedMode = null;
+    try { savedMode = window.sessionStorage.getItem("sbox:mode"); window.sessionStorage.removeItem("sbox:mode"); } catch (ignore) { }
+    // A message never outlives the page load it came back with, and only a Create-account error
+    // reopens Create account: a passkey or provider problem always comes back to Sign in.
+    // Only a reason this box knows gets a message (a hand-typed ?sso_error=anything shows nothing);
+    // closing a prompt ("cancelled") is not an error. The parameter is stripped either way.
+    if (reason && (reason === "cancelled" || !MESSAGES.hasOwnProperty(reason))) reason = null;
     if (reason) {
-      try { if (window.sessionStorage.getItem("sbox:mode") === "signup") this.setMode("signup", true); } catch (ignore) { }
+      if (SIGNUP_REASONS.test(reason) && savedMode === "signup") this.setMode("signup", true);
       this.fail(reason);
     }
   };
 
   SignInBox.prototype.setMode = function (mode, quiet) {
     var signup = mode === "signup";
+    // End anything still running from the other mode (a passkey prompt or autofill), so its late
+    // answer can't paint a message here, and drop every message.
+    this.gen++;
+    this.abortConditional();
+    this.abortPasskey();
+    this.setBusy(null, false);
+    this.clearError();
     this.mode.value = signup ? "signup" : "signin";
     this.confirmRow.hidden = !signup;
     this.confirm.required = signup;
@@ -199,40 +220,44 @@
     $all(this.root, ".sbox-name-hint").forEach(function (h) { h.hidden = !signup; });
     $all(this.root, "[data-sbox-show=signin]").forEach(function (el) { el.hidden = signup; });
     $all(this.root, "[data-sbox-show=signup]").forEach(function (el) { el.hidden = !signup; });
-    if (!quiet) { this.clearError(); this.name.focus(); }
+    if (!quiet) this.name.focus();
     try { window.sessionStorage.setItem("sbox:mode", this.mode.value); } catch (ignore) { }
   };
 
+  // Buttons under "or": providers start hidden and are shown only when providers.json says they are
+  // on; the rest are removed. The passkey button (always last) goes when passkeys can't work here.
   SignInBox.prototype.loadProviders = function () {
     var self = this;
-    if (this.passkeyBtn && !passkeysSupported()) this.disable(this.passkeyBtn, "not on this browser");
+    if (this.passkeyBtn && !passkeysSupported()) this.dropPasskey();
+    this.tidyDivider();
     if (!window.fetch) return;
     fetch(this.issuer + "/providers.json", { credentials: "omit", cache: "no-cache" })
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (d) {
         if (!d) return;
-        if (self.passkeyBtn && d.passkey === false) self.disable(self.passkeyBtn, "coming soon");
+        if (self.passkeyBtn && d.passkey === false) self.dropPasskey();
         var rp = String(d.passkey_rp_id || ""), host = window.location.hostname;
         self.inlinePasskey = !!rp && (host === rp || host.slice(-(rp.length + 1)) === "." + rp);
-        (d.providers || []).forEach(function (p) {
-          var b = $(self.root, '.sbtn[data-idp="' + String(p.id).replace(/[^a-z0-9_-]/gi, "") + '"]');
-          if (b && p.enabled) self.enable(b);
+        var on = {};
+        (d.providers || []).forEach(function (p) { if (p && p.enabled) on[String(p.id)] = true; });
+        $all(self.root, ".sbtn[data-idp]").forEach(function (b) {
+          if (on[b.getAttribute("data-idp")]) b.hidden = false;
+          else b.parentNode.removeChild(b);
         });
+        self.tidyDivider();
       })
-      .catch(function () { /* providers stay "coming soon" */ });
+      .catch(function () { /* providers stay hidden */ });
   };
 
-  SignInBox.prototype.enable = function (b) {
-    b.disabled = false;
-    b.removeAttribute("aria-disabled");
-    var soon = $(b, ".sbox-soon");
-    if (soon) soon.parentNode.removeChild(soon);
+  SignInBox.prototype.dropPasskey = function () {
+    $all(this.root, ".sbtn-passkey, .sbox-pk-hint, .sbox-pk-note").forEach(function (el) { el.parentNode.removeChild(el); });
+    this.passkeyBtn = null;
+    this.pkNote = null;
   };
-  SignInBox.prototype.disable = function (b, why) {
-    b.disabled = true;
-    var soon = $(b, ".sbox-soon");
-    if (!soon) { soon = document.createElement("span"); soon.className = "sbox-soon"; b.appendChild(soon); }
-    soon.textContent = why;
+  /** "or" only shows when something is under it. */
+  SignInBox.prototype.tidyDivider = function () {
+    var d = $(this.root, ".sbox-divider");
+    if (d) d.hidden = !$all(this.root, ".sbtn-passkey, .sbtn[data-idp]").some(function (b) { return !b.hidden; });
   };
 
   /** A fresh OIDC request: fetched from this site's server, or the one it already rendered. */
@@ -273,6 +298,8 @@
     if (this.mode.value === "signup" && this.password.value !== this.confirm.value)
       return this.fieldError(this.confirm, MESSAGES.password_mismatch);
     this.abortConditional();
+    this.abortPasskey();
+    this.gen++;
     var self = this;
     this.setBusy(this.submit, true);
     try { window.sessionStorage.setItem("sbox:name", name); } catch (ignore) { }
@@ -286,6 +313,7 @@
     if (this.busy) return;
     this.clearError();
     this.abortConditional();
+    this.gen++;
     var self = this;
     btn = btn || $(this.root, '.sbtn[data-idp="' + idp + '"]');
     this.setBusy(btn, true);
@@ -319,8 +347,9 @@
       this.abortConditional();
       this.setBusy(this.passkeyBtn, true);
     }
+    var gen = ++this.gen;
     var ctl = window.AbortController ? new AbortController() : null;
-    if (conditional) this.conditional = ctl;
+    if (conditional) this.conditional = ctl; else this.pkCtl = ctl;
     var flow;
     return this.options().then(function (d) {
       flow = d.flow;
@@ -329,7 +358,8 @@
       if (ctl) req.signal = ctl.signal;
       return navigator.credentials.get(req);
     }).then(function (cred) {
-      if (!cred) throw { reason: "cancelled" };
+      if (gen !== self.gen) return; // the player moved on (switched mode or started something else)
+      if (!cred) throw { name: "NotAllowedError" };
       if (conditional) self.setBusy(self.submit, true);
       return self.params().then(function (p) {
         self.fill(self.pkForm, p);
@@ -339,10 +369,12 @@
       });
     }).catch(function (e) {
       if (conditional && self.conditional === ctl) self.conditional = null;
-      self.setBusy(conditional ? self.submit : self.passkeyBtn, false);
-      if (e && e.name === "AbortError" && conditional) return; // the button or the form took over
-      if (conditional && !(e && e.reason)) return; // autofill just went unused
-      if (e && (e.name === "NotAllowedError" || e.name === "AbortError")) return self.fail("cancelled");
+      if (!conditional && self.pkCtl === ctl) self.pkCtl = null;
+      if (gen !== self.gen) return; // a newer attempt or a mode switch owns the box now
+      self.setBusy(null, false);
+      if (conditional && !(e && e.reason)) return; // autofill went unused or was closed: nothing to say
+      // The prompt was closed, timed out, or had no passkey to offer: no error, one quiet hint.
+      if (e && (e.name === "NotAllowedError" || e.name === "AbortError")) return self.passkeyHint();
       self.fail((e && e.reason) || "passkey_failed");
     });
   };
@@ -357,6 +389,14 @@
       if (!ok) { self.conditional = null; return; }
       self.passkey(true);
     }, function () { self.conditional = null; });
+  };
+  SignInBox.prototype.abortPasskey = function () {
+    var c = this.pkCtl;
+    this.pkCtl = null;
+    if (c && c.abort) c.abort();
+  };
+  SignInBox.prototype.passkeyHint = function () {
+    if (this.pkNote) { this.pkNote.textContent = PK_NOT_USED; this.pkNote.hidden = false; }
   };
   SignInBox.prototype.abortConditional = function () {
     var c = this.conditional;
@@ -373,6 +413,7 @@
   SignInBox.prototype.clearError = function () {
     this.err.hidden = true;
     this.err.textContent = "";
+    if (this.pkNote) { this.pkNote.hidden = true; this.pkNote.textContent = ""; }
     $all(this.root, "[aria-invalid]").forEach(function (i) { i.removeAttribute("aria-invalid"); i.removeAttribute("aria-describedby"); });
   };
   SignInBox.prototype.fieldError = function (input, msg) {
@@ -391,6 +432,8 @@
     try { ev = new CustomEvent("sbox:error", { bubbles: true, cancelable: true, detail: { reason: reason } }); }
     catch (x) { ev = document.createEvent("CustomEvent"); ev.initCustomEvent("sbox:error", true, true, { reason: reason }); }
     if (!this.root.dispatchEvent(ev)) return;
+    if (/^(name_invalid|name_taken|weak_password|password_mismatch)$/.test(reason) && this.mode.value !== "signup")
+      this.setMode("signup", true);
     this.show(MESSAGES[reason]);
     if (reason === "bad_credentials") {
       this.password.value = "";
@@ -398,11 +441,9 @@
       this.password.setAttribute("aria-describedby", this.err.id);
       (this.name.value ? this.password : this.name).focus();
     } else if (/^(name_invalid|name_taken)$/.test(reason)) {
-      this.setMode("signup", true);
       this.name.setAttribute("aria-invalid", "true");
       this.name.focus();
     } else if (/^(weak_password|password_mismatch)$/.test(reason)) {
-      this.setMode("signup", true);
       this.password.setAttribute("aria-invalid", "true");
       this.password.focus();
     } else {
