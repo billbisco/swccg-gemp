@@ -31,7 +31,7 @@ public class Card_2271_2040_Tests {
         assertVersion(VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("2271_2040"),
                 VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("1271_40"), "1271_40", "PC-E2",
                 LocalDate.of(2012, 7, 21), LocalDate.of(2013, 4, 27),
-                "Deploy on Yavin 4; it is 'liberated.' During battle at sites related to other 'liberated' systems, may add 2 to power of each Rebel warrior (to a maximum of 4). Once per turn, while you control this system, may retrieve 1 Force when you Force drain at another 'liberated' system.");
+                "Deploy on Yavin 4; it is 'liberated.' At sites related to other 'liberated' systems, may add 2 to power of each Rebel warrior (to a maximum of 4). Once per turn, while you control this system, may retrieve 1 Force when you Force drain at another 'liberated' system.");
     }
 
     @Test

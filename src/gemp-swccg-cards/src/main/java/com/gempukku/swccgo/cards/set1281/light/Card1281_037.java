@@ -66,7 +66,6 @@ import java.util.List;
 public class Card1281_037 extends AbstractNormalEffect {
     public Card1281_037() {
         super(Side.LIGHT, 3, PlayCardZoneOption.ATTACHED, "Scoundrel's Luck", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_1, Rarity.V);
-        setLore("'You said you wanted to be around when I made a mistake, well, this could be it, sweetheart.'");
         setGameText("Deploy on Infiltration with three [Scoundrel] cards from Reserve Deck face down under here. Once during your turn, at any time, may deploy a [Scoundrel] Effect from here. If a [Scoundrel] Effect just left table, stack it under here. At the start of your turn, stack all [Scoundrel] Effects under here (even if inactive). Once per turn, may place any card in Lost Pile out of play to deploy a character weapon (except a grenade) from Lost Pile. While two non-droid scoundrels present at battlegrounds, Their Fire Has Gone Out Of The Universe flips and may not flip back. (Immune to Alter.)");
         addImmuneToCardTitle(Title.Alter);
     }
