@@ -49,6 +49,8 @@ public class SsoAuthService {
     final KeyedRateLimiter _global = new KeyedRateLimiter(1200, 60_000L);
     final KeyedRateLimiter _passwordSets = new KeyedRateLimiter(5, 60 * 60_000L);
     private final boolean _setPassword;
+    /** Ends every GEMP session (cookie) of a player by name; set when the async server has a LoggedUserHolder. */
+    private volatile java.util.function.Consumer<String> _sessionEnder;
 
     public SsoAuthService(AuthService authService, GempSettingDAO settings, InternalAuthKeysV2 keys) {
         this(authService, settings, keys, false);
@@ -59,6 +61,11 @@ public class SsoAuthService {
         _settings = settings;
         _keys = keys;
         _setPassword = setPassword;
+    }
+
+    /** With {@code "end_sessions": true}, a password set also ends the player's GEMP sessions (classic and SSO). */
+    public void setSessionEnder(java.util.function.Consumer<String> ender) {
+        _sessionEnder = ender;
     }
 
     public WikiAuthService.Result handle(String method, String path, Map<String, String> headers, byte[] body, long nowMillis) {
@@ -195,8 +202,16 @@ public class SsoAuthService {
         if (p == null)
             return result(200, error("not_found"), keyId, nonce);
         _passwordSets.record(idKey, now);
-        LOG.info("sso-auth: password id=" + id + " ip=" + clientIp + " key=" + keyId);
-        return result(200, okUser(p), keyId, nonce);
+        boolean ended = false;
+        java.util.function.Consumer<String> ender = _sessionEnder;
+        if (Boolean.TRUE.equals(json.get("end_sessions")) && ender != null) {
+            ender.accept(p.getName());
+            ended = true;
+        }
+        LOG.info("sso-auth: password id=" + id + " ip=" + clientIp + " key=" + keyId + (ended ? " sessions ended" : ""));
+        JSONObject ok = okUser(p);
+        ok.put("sessions_ended", ended);
+        return result(200, ok, keyId, nonce);
     }
 
     private WikiAuthService.Result status(JSONObject json, String keyId, String nonce) {
