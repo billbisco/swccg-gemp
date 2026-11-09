@@ -23,7 +23,7 @@ public class Card_2261_010_Tests {
     public void IdentityAndVersionInfo() {
         var scn = scenario();
         assertLegacyVersion(scn.GetDSCard("v").getBlueprint(), scn.GetDSCard("current").getBlueprint(), "1261_10", "",
-                LocalDate.of(2009, 9, 4), LocalDate.of(2013, 4, 27),
+                LocalDate.of(2009, 9, 4), LocalDate.of(2012, 7, 21),
                 "[Pilot] 3. The Circle Is Now Complete is canceled. While present with [Reflections III] Obi-Wan or a Jedi Council Member, lightsabers here may not be 'swung' twice, their immunity to attrition is canceled and you may add one battle destiny. Immune to attrition < 5.");
     }
 }

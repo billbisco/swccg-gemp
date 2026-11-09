@@ -6704,6 +6704,24 @@ const fixedImages = {
 "601_158":"https://wiki.swccg.com/images/2/20/VB3-110-Rebel_Leadership-PC-E1-cardmaker.png",
 "1230_113":"https://wiki.swccg.com/images/c/c4/VB3-116-Red_Squadron_7-PC-E1-cardmaker.png",
 
+// Batch B09 (Virtual Block 5-6): CardMaker recreations of the latest text (601_164 / 601_52 = current classes of 1250_85 Elegant Lightsaber / 1261_71 Luke Skywalker, Strong In The Force; 1261_65 keeps its PC card image, which shows PC-E2).
+"601_164":"https://wiki.swccg.com/images/a/a6/VB5-86-Elegant_Lightsaber-PC-E1-cardmaker.png",
+"1250_85":"https://wiki.swccg.com/images/a/a6/VB5-86-Elegant_Lightsaber-PC-E1-cardmaker.png",
+"1261_10":"https://wiki.swccg.com/images/f/f5/VB6-10-Darth_Vader_Betrayer_Of_The_Jedi-PC-E2-cardmaker.png",
+"1261_16":"https://wiki.swccg.com/images/6/69/VB6-12-Lieutenant_Cecius-PC-E1-cardmaker.png",
+"1261_34":"https://wiki.swccg.com/images/9/97/VB6-34-Fleet_Security_Protocols-PC-E2-cardmaker.png",
+"1261_35":"https://wiki.swccg.com/images/3/3d/VB6-35-Hes_No_Jedi-PC-E1-cardmaker.png",
+"1261_39":"https://wiki.swccg.com/images/8/88/VB6-41-Epic_Duel-PC-E1-cardmaker.png",
+"1261_50":"https://wiki.swccg.com/images/a/a3/VB6-49-TIE_Sentry_Ships-PC-E1-cardmaker.png",
+"1261_70":"https://wiki.swccg.com/images/8/85/VB6-68-Obi_Wan_Crazy_Wizard-PC-E1-cardmaker.png",
+"1261_71":"https://wiki.swccg.com/images/9/98/VB6-67-Luke_Skywalker_Strong_In_The_Force-PC-E1-cardmaker.png",
+"601_52":"https://wiki.swccg.com/images/9/98/VB6-67-Luke_Skywalker_Strong_In_The_Force-PC-E1-cardmaker.png",
+"1261_80":"https://wiki.swccg.com/images/6/6b/VB6-79-Jabba_This_Is_Your_Last_Chance-PC-E1-cardmaker.png",
+// Batch B09 version cards: 2261_1010 Darth Vader, Betrayer Of The Jedi PC-E1 (card list) and 2261_1065 BoShek, Brash Smuggler PC-E1 show CardMaker recreations; 2261_34 Fleet Security Protocols original: the slip and PC image both print PC-E1 (2261_1034), so it shows a CardMaker recreation of the first-sheet text.
+"2261_1010":"https://wiki.swccg.com/images/6/65/VB6-10-Darth_Vader_Betrayer_Of_The_Jedi-PC-E1-cardmaker.png",
+"2261_34":"https://wiki.swccg.com/images/4/4a/VB6-34-Fleet_Security_Protocols-original-cardmaker.png",
+"2261_1065":"https://wiki.swccg.com/images/f/f6/VB6-63-BoShek_Brash_Smuggler-PC-E1-cardmaker.png",
+
 // Legacy pre-errata versions (docs/legacy-versions.md; keep outside the generated legacy block).
 // Image = the wiki slip crop of the release sheet that printed that text (wiki page field image2).
 "2210_36":"https://wiki.swccg.com/images/2/2e/VB1-36-Forced_Servitude.png",
@@ -6899,7 +6917,6 @@ const fixedImages = {
 "2250_28":"https://wiki.swccg.com/images/f/f7/VB5-28E-Trade_Federation_Tactics.png",
 "2250_34":"https://wiki.swccg.com/images/e/eb/VB5-35-Bail_Organa.png",
 "2261_10":"https://wiki.swccg.com/images/7/79/VB6-10-Darth_Vader_Betrayer_Of_The_Jedi.png",
-"2261_34":"https://wiki.swccg.com/images/b/b9/VB6-34-Fleet_Security_Protocols.png",
 "2261_42":"https://wiki.swccg.com/images/c/c2/VB6-45-Lone_Pilot.png",
 "2261_1042":"https://wiki.swccg.com/images/c/c2/VB6-45-Lone_Pilot.png",
 "2261_2042":"https://wiki.swccg.com/images/c/c2/VB6-45-Lone_Pilot.png",
@@ -6951,7 +6968,6 @@ const fixedImages = {
 "2261_94":"https://wiki.swccg.com/images/4/46/VB6-94-Dont_Underestimate_Our_Chances.png",
 "2261_50":"https://wiki.swccg.com/images/2/2b/VB6-49-TIE_Sentry_Ships.png",
 "2261_65":"https://wiki.swccg.com/images/f/fd/VB6-63-BoShek_Brash_Smuggler.png",
-"2261_1065":"https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Light/large/boshekbrashsmuggler.gif",
 "2261_67":"https://wiki.swccg.com/images/3/35/VB6-65-Jabbas_Prize.png",
 "2261_81":"https://wiki.swccg.com/images/0/03/VB6-80-Incom_Corporation_Koensayr_Manufacturing.png",
 "2261_82":"https://wiki.swccg.com/images/c/c3/VB6-81-Maneuvering_Flaps_Nick_Of_Time.png",

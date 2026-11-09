@@ -159,4 +159,24 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('2220_1169'), 'https://wik
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1220_169'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock2-Light/large/lukesblasterpistol.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2220_169'), 'https://wiki.swccg.com/images/9/91/VB2-169-Luke_s_Blaster_Pistol.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2230_109'), 'https://wiki.swccg.com/images/3/36/VB3-110-Rebel_Leadership.png');
+// Batch B09 (Virtual Block 5-6): current cards and version cards show the image of their own text
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_164'), 'https://wiki.swccg.com/images/a/a6/VB5-86-Elegant_Lightsaber-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_85'), 'https://wiki.swccg.com/images/a/a6/VB5-86-Elegant_Lightsaber-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_10'), 'https://wiki.swccg.com/images/f/f5/VB6-10-Darth_Vader_Betrayer_Of_The_Jedi-PC-E2-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_16'), 'https://wiki.swccg.com/images/6/69/VB6-12-Lieutenant_Cecius-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_34'), 'https://wiki.swccg.com/images/9/97/VB6-34-Fleet_Security_Protocols-PC-E2-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_35'), 'https://wiki.swccg.com/images/3/3d/VB6-35-Hes_No_Jedi-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_39'), 'https://wiki.swccg.com/images/8/88/VB6-41-Epic_Duel-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_50'), 'https://wiki.swccg.com/images/a/a3/VB6-49-TIE_Sentry_Ships-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_70'), 'https://wiki.swccg.com/images/8/85/VB6-68-Obi_Wan_Crazy_Wizard-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_71'), 'https://wiki.swccg.com/images/9/98/VB6-67-Luke_Skywalker_Strong_In_The_Force-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_52'), 'https://wiki.swccg.com/images/9/98/VB6-67-Luke_Skywalker_Strong_In_The_Force-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_80'), 'https://wiki.swccg.com/images/6/6b/VB6-79-Jabba_This_Is_Your_Last_Chance-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_1010'), 'https://wiki.swccg.com/images/6/65/VB6-10-Darth_Vader_Betrayer_Of_The_Jedi-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_34'), 'https://wiki.swccg.com/images/4/4a/VB6-34-Fleet_Security_Protocols-original-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_1065'), 'https://wiki.swccg.com/images/f/f6/VB6-63-BoShek_Brash_Smuggler-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_65'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Light/large/boshekbrashsmuggler.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_65'), 'https://wiki.swccg.com/images/f/fd/VB6-63-BoShek_Brash_Smuggler.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_1034'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/fleetsecurityprotocols.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_10'), 'https://wiki.swccg.com/images/7/79/VB6-10-Darth_Vader_Betrayer_Of_The_Jedi.png');
 console.log('card image URL routing passed: ' + legacy.length + ' Legacy mappings');

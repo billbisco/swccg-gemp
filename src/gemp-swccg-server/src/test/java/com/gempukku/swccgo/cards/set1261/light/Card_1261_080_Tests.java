@@ -37,10 +37,10 @@ public class Card_1261_080_Tests {
                 outsideCards ? shields : StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
     }
 
-    @Test public void JabbaUsesFinalStartingEffectWithPrintedLore() {
+    @Test public void JabbaUsesFinalStartingEffectWithPrintedEmptyLore() {
         var scn = scenario(true, false); var b = scn.GetLSCard("jabba").getBlueprint();
         assertEquals("Jabba, This Is Your Last Chance!", b.getTitle()); assertEquals(5, b.getDestiny(), scn.epsilon);
-        assertEquals("With a quick motion of his hand, Luke signaled Artoo and dramatically changed the situation.", b.getLore()); assertFalse(b.hasVirtualSuffix()); assertEquals(Uniqueness.UNIQUE, b.getUniqueness());
+        assertTrue("the slip and PC card image print an empty lore box", b.getLore() == null || b.getLore().isEmpty()); assertFalse(b.hasVirtualSuffix()); assertEquals(Uniqueness.UNIQUE, b.getUniqueness());
         assertEquals(Side.LIGHT, b.getSide()); assertEquals(Rarity.V, b.getRarity());
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_6_1, b.getExpansionSet()); assertEquals(CardSubtype.STARTING, b.getCardSubtype());
         scn.BlueprintCardTypeCheck(b, new ArrayList<>(List.of(CardType.EFFECT)));
