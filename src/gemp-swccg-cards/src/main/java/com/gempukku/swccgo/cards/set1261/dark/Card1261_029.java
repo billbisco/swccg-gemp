@@ -28,7 +28,10 @@ import com.gempukku.swccgo.logic.timing.results.AboutToLoseCardFromTableResult;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Legacy Block 6.1 Breached Defenses & Molator. */
+/**
+ * Legacy Block 6.1 Breached Defenses & Molator. Text = PC-E1, the PC website card list (by 2012-07-21): "(except Expand
+ * the Empire)" and "lost at the end of battle" (play unchanged). The release-sheet original is 2261_29.
+ */
 public class Card1261_029 extends AbstractNormalEffect {
     private static final GameTextActionId SEARCH = GameTextActionId.LEGACY__BREACHED_DEFENSES_MOLATOR__TAKE_EFFECT;
     private static final Filter VIRTUAL_CROSSFIRE = Filters.and(Filters.title(Title.Crossfire), new Filter() {
@@ -46,7 +49,7 @@ public class Card1261_029 extends AbstractNormalEffect {
                 Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
         setTitleComponents(new TitleComponent(Title.Breached_Defenses, Uniqueness.UNIQUE),
                 new TitleComponent(Title.Molator, Uniqueness.UNIQUE));
-        setGameText("Deploy on table. Once per game, unless [Virtual] Crossfire on table (or out of play), may use 3 Force to take an Effect that deploys on a location (except Expand The Empire) into hand from Reserve Deck; reshuffle. If your character or non-[Independent Starship] starship in battle is about to be lost before the damage segment, it is instead lost at end of battle (if forfeited, forfeit for 0). Your non-Dark Jedi characters without [Permanent Weapon] or [Maintenance] are immune to Goo Nee Tay. May not be canceled. (Immune to Alter.)");
+        setGameText("Deploy on table. Once per game, unless [Virtual] Crossfire on table (or out of play), may use 3 Force to take an Effect that deploys on a location (except Expand the Empire) into hand from Reserve Deck; reshuffle. If your character or non-[Independent Starship] starship in battle is about to be lost before the damage segment, it is instead lost at the end of battle (if forfeited, forfeit for 0). Your non-Dark Jedi characters without [Permanent Weapon] or [Maintenance] are immune to Goo Nee Tay. May not be canceled. (Immune to Alter.)");
         addIcons(Icon.HOTH);
         addImmuneToCardTitle(Title.Alter);
     }

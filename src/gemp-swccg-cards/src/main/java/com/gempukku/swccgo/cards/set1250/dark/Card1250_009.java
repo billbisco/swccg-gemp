@@ -27,13 +27,17 @@ import com.gempukku.swccgo.logic.timing.Action;
 
 import java.util.List;
 
-/** Legacy Block 5: Keder The Black (V). */
+/**
+ * Legacy Block 5: Keder The Black (V). Text = PC-E1, the PC website card list (by 2012-07-21): the closing quotation mark
+ * after 'senators' is dropped and "Squabbling" is spelled "Squabling" (published typo kept; play unchanged, the card still
+ * affects Squabbling Delegates). The release-sheet original is 2250_9.
+ */
 public class Card1250_009 extends AbstractRepublic {
     public Card1250_009() {
         super(Side.DARK, 1, 3, 4, 3, 6, "Keder The Black", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_5, Rarity.V);
         setVirtualSuffix(true);
         setLore("A highly paid assassin and spy, Keder has infiltrated the Senate disguised as a Coruscant Guard. The identity of his target and his employer remains a mystery to all but him.");
-        setGameText("While at Senate: Sidious is politics +3; 'senators' on Squabbling Delegates is treated as 'Coruscant Guards;' and may lose 1 Force to place Keder and an opponent's [Coruscant] Political Effect (or [Coruscant] senator here) in owner's Lost Pile.");
+        setGameText("While at Senate: Sidious is politics +3; 'senators on Squabling Delegates is treated as 'Coruscant Guards;' and may lose 1 Force to place Keder and an opponent's [Coruscant] Political Effect (or [Coruscant] senator here) in owner's Lost Pile.");
         addIcons(Icon.CORUSCANT, Icon.EPISODE_I, Icon.WARRIOR);
         addKeywords(Keyword.SPY, Keyword.CORUSCANT_GUARD, Keyword.ASSASSIN);
     }

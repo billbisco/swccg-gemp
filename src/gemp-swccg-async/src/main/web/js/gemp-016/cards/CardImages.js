@@ -6613,6 +6613,12 @@ const fixedImages = {
 "1292_10":"https://res.starwarsccg.org/cards/legacy/VirtualBlock9-Light/large/majorhaashn.gif",
 "1292_11":"https://res.starwarsccg.org/cards/legacy/VirtualBlock9-Light/large/mandalorianmishapjedimindtrick.gif",
 // END legacy
+// Batch B25 (Virtual Blocks 4-6): current cards show the image of their latest text, CardMaker recreations of the 2012 card-list texts (PC-E1);
+// the PC card images print the release-sheet originals, kept on the 2250 / 2261 version cards.
+"1250_9":"https://wiki.swccg.com/images/4/4e/VB5-07-Keder_The_Black-PC-E1-cardmaker.png",
+"2250_9":"https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Dark/large/kedertheblack.gif",
+"1261_29":"https://wiki.swccg.com/images/f/f0/VB6-31-Breached_Defenses_Molator-PC-E1-cardmaker.png",
+"2261_29":"https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/breacheddefenses&molator.gif",
 // Batch B22 (Virtual Block 8, Virtual Shields): current cards show the image of their latest text: CardMaker recreations of the 2012 card-list PC-E1 texts for 1282_15 / 1282_19 / 1282_26 (their PC card images print the originals, kept on the 2282 cards);
 // 1283_3 Lady Valarian / 1283_12 Spaceport Docking Bay (V) the Master List slips (PC-E1). 1282_14 (601_50), 1200_1 (601_36), 1200_5 (601_35), 1200_11 and 1200_17 keep their PC card images, which print the latest text.
 "1282_15":"https://wiki.swccg.com/images/3/32/VB8-p3-71-Captain_Verrack-PC-E1-cardmaker.png",

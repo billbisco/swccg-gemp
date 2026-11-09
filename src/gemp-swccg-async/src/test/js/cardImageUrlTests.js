@@ -375,6 +375,11 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_6'), 'https://wiki.s
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_23'), 'https://wiki.swccg.com/images/5/50/VB8-02-Slave_I_Symbol_Of_Fear.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_25'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Dark/large/marajadeslightsaber.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_25'), 'https://wiki.swccg.com/images/8/81/VB8-p5-26-Mara_Jades_Lightsaber.png');
+// Batch B25: Keder The Black (V) and Breached Defenses & Molator PC-E1 (CardMaker), originals on the PC card images
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_9'), 'https://wiki.swccg.com/images/4/4e/VB5-07-Keder_The_Black-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2250_9'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Dark/large/kedertheblack.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_29'), 'https://wiki.swccg.com/images/f/f0/VB6-31-Breached_Defenses_Molator-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_29'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/breacheddefenses&molator.gif');
 // Batch B22 (Virtual Block 8, Virtual Shields): current cards and version cards show the image of their own text
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1282_15'), 'https://wiki.swccg.com/images/3/32/VB8-p3-71-Captain_Verrack-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1282_19'), 'https://wiki.swccg.com/images/6/63/VB8-p4-76-Rennek-PC-E1-cardmaker.png');
