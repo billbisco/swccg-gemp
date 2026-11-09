@@ -53,9 +53,29 @@ public final class VersionAsserts {
         assertIdentity(version, current, currentPrintingId, label, printedOn, supersededOn, true, versionSubtype);
     }
 
+    /**
+     * As {@link #assertVersion}, for a version printed with other lore (e.g. Cyborg Commander, Hunter Of Jedi: "Leader. \"He's no Jedi.\""
+     * before the 2013 persona change made it "Commander. Leader."): checks the version's lore and that the given lore
+     * keywords are on the current card only.
+     */
+    public static void assertVersionWithLore(SwccgCardBlueprint version, SwccgCardBlueprint current, String currentPrintingId,
+                                             String label, LocalDate printedOn, LocalDate supersededOn, String gameText,
+                                             String versionLore, Keyword... currentOnlyKeywords) {
+        assertEquals(gameText, version.getGameText());
+        assertFalse(gameText.equals(current.getGameText()));
+        assertEquals(versionLore, version.getLore());
+        assertIdentity(version, current, currentPrintingId, label, printedOn, supersededOn, true, current.getCardSubtype(), false, currentOnlyKeywords);
+    }
+
     private static void assertIdentity(SwccgCardBlueprint version, SwccgCardBlueprint current, String currentPrintingId,
                                        String label, LocalDate printedOn, LocalDate supersededOn, boolean sameIcons,
                                        CardSubtype versionSubtype) {
+        assertIdentity(version, current, currentPrintingId, label, printedOn, supersededOn, sameIcons, versionSubtype, true);
+    }
+
+    private static void assertIdentity(SwccgCardBlueprint version, SwccgCardBlueprint current, String currentPrintingId,
+                                       String label, LocalDate printedOn, LocalDate supersededOn, boolean sameIcons,
+                                       CardSubtype versionSubtype, boolean sameLore, Keyword... currentOnlyKeywords) {
         LegacyVersion info = version.getLegacyVersion();
         assertNotNull(info);
         assertEquals(currentPrintingId, info.currentPrintingId());
@@ -79,9 +99,16 @@ public final class VersionAsserts {
         if (sameIcons)
             for (Icon icon : Icon.values())
                 assertEquals(icon.name(), current.getIconCount(icon), version.getIconCount(icon));
-        for (Keyword keyword : Keyword.values())
-            assertEquals(keyword.name(), current.hasKeyword(keyword), version.hasKeyword(keyword));
-        assertEquals(current.getLore(), version.getLore());
+        java.util.List<Keyword> currentOnly = java.util.Arrays.asList(currentOnlyKeywords);
+        for (Keyword keyword : Keyword.values()) {
+            if (currentOnly.contains(keyword)) {
+                assertTrue(keyword.name(), current.hasKeyword(keyword));
+                assertFalse(keyword.name(), version.hasKeyword(keyword));
+            } else
+                assertEquals(keyword.name(), current.hasKeyword(keyword), version.hasKeyword(keyword));
+        }
+        if (sameLore)
+            assertEquals(current.getLore(), version.getLore());
         assertTrue(Objects.equals(current.getDestiny(), version.getDestiny()));
         if (current.getCardCategory() != com.gempukku.swccgo.common.CardCategory.INTERRUPT)
             assertTrue(Objects.equals(current.getDeployCost(), version.getDeployCost()));

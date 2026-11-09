@@ -224,6 +224,6 @@ public class Card_1281_013_Tests {
     @Test
     public void TheInnerCircleCurrentCardIsTheLatestText() {
         assertCurrentCard("1281_13", "The Inner Circle",
-                "Deploy on Conference Room (only at start of game); deploy Sim Aloo here and (Virtual Block 4) There is No Try from Reserve Deck; reshuffle. Players may initiate battle here for free. Once per game may deploy Ord Mantell from Reserve Deck; reshuffle. May not be canceled (except by opponent) or placed in Used Pile. Immune to Ineffective Maneuver.");
+                "Deploy on Conference Room (only at start of game); deploy Sim Aloo here and [Virtual Block 4] There is No Try from Reserve Deck; reshuffle. Players may initiate battle here for free. Once per game may deploy Ord Mantell from Reserve Deck; reshuffle. May not be canceled (except by opponent) or placed in Used Pile. Immune to Ineffective Manuever.");
     }
 }

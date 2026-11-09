@@ -9,7 +9,7 @@ public class Card_2281_006_Tests {
     @Test
     public void RTicHWeeiVersionIdentityAndText() {
         assertVersion("2281_6", "1281_6", "R'tic H'weei",
-                "Once per game, may take Jawa Blaster or a card with 'sandcrawler' in title or gametext into hand from Reserve Deck; reshuffle. Once per turn, if present at a Tatooine battleground and there is more than 1 Force in opponent's Force Pile, you may use 1 Force in opponent's Force Pile. In memory of Eric White, 1983 - 2011",
+                "Once per game, may ▲ Jawa Blaster or a card with 'sandcrawler' in title or gametext. Once per turn, if present at a Tatooine battleground and there is more than 1 Force in opponent's Force Pile, you may use 1 Force in opponent's Force Pile.",
                 "", java.time.LocalDate.of(2012, 5, 11), java.time.LocalDate.of(2012, 7, 21));
         assertSameCard("2281_6", "1281_6");
     }

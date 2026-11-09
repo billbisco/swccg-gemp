@@ -14,7 +14,7 @@ import java.time.LocalDate;
 public class Card2281_011 extends Card1281_011 {
     public Card2281_011() {
         super();
-        setGameText("Deploy on your Throne Room. While Emperor and Vader here, Take Your Father's Place does not deplete Life Force or cause Force loss. Once per turn, may deploy So Be It, Jedi or a docking bay from Reserve Deck; reshuffle. 'Battle' on Insignificant Rebellion is treated as 'battle or duel.' (Immune to Alter.)");
+        setGameText("Deploy on your Throne Room. While Emperor and Vader here, Take Your Father's Place does not deplete Life Force or cause Force loss. Once per turn, may ▼ So Be It, Jedi or a docking bay. 'Battle' on Insignificant Rebellion is treated as 'battle or duel.' (Immune to Alter.)");
         setLegacyVersion(new LegacyVersion("1281_11", "", "Virtual Block 8.1 release sheet (2012-05-11)", LocalDate.of(2012, 5, 11), LocalDate.of(2012, 7, 21)));
     }
 }

@@ -56,7 +56,7 @@ public class Card2273_013 extends AbstractEpicEventDeployable {
         setGameText("If A Stunning Move on table, deploy on Palpatine's Quarters (if [Virtual Block 5] We Have A Plan on table, this card always relocates to Palpatine if possible (even if a captive)); opponent may deploy a Jedi and/or a lightsaber here. Evil Is Everywhere: Opponent may not Force drain here. Adds one [Dark Side] at same site. If just lost, relocate to Blockade Flagship: Prison. Once per turn, if a player controls this site, they may have this card (unless on Palpatine) follow their first character to move from here using landspeed or docking bay transit to a non-shielded site.");
         addIcons(Icon.EPISODE_I, Icon.CORUSCANT);
         setLegacyVersion(new LegacyVersion("1273_13", "",
-                "Virtual Block 7.3 release sheet (2011-06-03)", LocalDate.of(2011, 6, 3), LocalDate.of(2013, 4, 27)));
+                "Virtual Block 7.3 release sheet (2011-06-03); superseded by the PC card list text (by 2012-07-21)", LocalDate.of(2011, 6, 3), LocalDate.of(2012, 7, 21)));
     }
 
     @Override
