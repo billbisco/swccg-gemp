@@ -6613,6 +6613,14 @@ const fixedImages = {
 "1292_10":"https://res.starwarsccg.org/cards/legacy/VirtualBlock9-Light/large/majorhaashn.gif",
 "1292_11":"https://res.starwarsccg.org/cards/legacy/VirtualBlock9-Light/large/mandalorianmishapjedimindtrick.gif",
 // END legacy
+// Batch B26 (Virtual Block 6): current cards show a CardMaker recreation of their PC-E1 card-list text (601_98 = current class of 1261_48); the version cards 2261_48 / 2261_79 / 2263_9 (originals) show the release-sheet slips, which print the original text.
+"1261_48":"https://wiki.swccg.com/images/4/47/VB6-51-Weapon_Levitation_The_Empires_Back-PC-E1-cardmaker.png",
+"601_98":"https://wiki.swccg.com/images/4/47/VB6-51-Weapon_Levitation_The_Empires_Back-PC-E1-cardmaker.png",
+"1261_79":"https://wiki.swccg.com/images/7/7e/VB6-78-Commando_Training_Klorslug-PC-E1-cardmaker.png",
+"1263_9":"https://wiki.swccg.com/images/2/2d/VB6-09-Guild_Of_Assassins-PC-E1-cardmaker.png",
+"2261_48":"https://wiki.swccg.com/images/f/f6/VB6-51-Weapon_Levitation_The_Empires_Back.png",
+"2261_79":"https://wiki.swccg.com/images/3/36/VB6-78-Commando_Training_Klorslug.png",
+"2263_9":"https://wiki.swccg.com/images/1/1c/VB6-09-Guild_Of_Assassins.png",
 // Batch B20 (Virtual Block 8): current cards show the image of their latest text. CardMaker recreations of the 2012 card-list texts (the PC card images and slips print the originals, kept on the 2281 version cards); 601_27 / 601_24 are the classes of 1281_17 / 1281_23;
 // 1281_24 Contract Killers shows the Master List slip of its front (PC-E1; the PC card image prints a third wording). 1281_25 keeps its PC card image (it prints PC-E1).
 "1281_6":"https://wiki.swccg.com/images/9/98/VB8-03-Rtic_Hweei-PC-E1-cardmaker.png",

@@ -353,3 +353,11 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_6'), 'https://wiki.s
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_23'), 'https://wiki.swccg.com/images/5/50/VB8-02-Slave_I_Symbol_Of_Fear.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_25'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Dark/large/marajadeslightsaber.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_25'), 'https://wiki.swccg.com/images/8/81/VB8-p5-26-Mara_Jades_Lightsaber.png');
+// Batch B26 (Virtual Block 6): current cards show a CardMaker recreation of their PC-E1 card-list text; the originals (22xx) show the release-sheet slips
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_48'), 'https://wiki.swccg.com/images/4/47/VB6-51-Weapon_Levitation_The_Empires_Back-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_98'), 'https://wiki.swccg.com/images/4/47/VB6-51-Weapon_Levitation_The_Empires_Back-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_79'), 'https://wiki.swccg.com/images/7/7e/VB6-78-Commando_Training_Klorslug-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1263_9'), 'https://wiki.swccg.com/images/2/2d/VB6-09-Guild_Of_Assassins-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_48'), 'https://wiki.swccg.com/images/f/f6/VB6-51-Weapon_Levitation_The_Empires_Back.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_79'), 'https://wiki.swccg.com/images/3/36/VB6-78-Commando_Training_Klorslug.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2263_9'), 'https://wiki.swccg.com/images/1/1c/VB6-09-Guild_Of_Assassins.png');
