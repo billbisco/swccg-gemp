@@ -69,6 +69,7 @@ public class Card_1273_002_Tests {
         scn.BlueprintIconCheck(card, new ArrayList<>() {{
             add(Icon.IMPERIAL);
             add(Icon.PILOT);
+            add(Icon.REFLECTIONS_II); // printed on the 7.3 slip and the Master List slip (batch B27)
             add(Icon.LEGACY_BLOCK_7);
         }});
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_7_3, card.getExpansionSet());
