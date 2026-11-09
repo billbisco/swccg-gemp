@@ -6767,6 +6767,16 @@ const fixedImages = {
 "1240_27":"https://wiki.swccg.com/images/1/12/VB4-26-Imperial_Propaganda-PC-E1-cardmaker.png",
 "601_88":"https://wiki.swccg.com/images/1/12/VB4-26-Imperial_Propaganda-PC-E1-cardmaker.png",
 
+// Batch B17 (Virtual Block 6): current cards whose generated image shows an older text get the image of the latest text: 1261_56 Black 1 the Master List slip (PC-E1),
+// the others CardMaker recreations (601_51 = current class of 1261_97; 1261_67_BACK keeps the PC image of the unchanged back; 1261_46 / 601_92 keep the PC card image, which shows PC-E2).
+"1261_56":"https://wiki.swccg.com/images/0/02/VL-history-1261-56-front-master.png",
+"1261_63":"https://wiki.swccg.com/images/9/9e/VB6-65-Daughter_Of_Skywalker-PC-E1-cardmaker.png",
+"1261_67":"https://wiki.swccg.com/images/7/7a/VB6-65-Jabbas_Prize-PC-E1-cardmaker.png",
+"1261_81":"https://wiki.swccg.com/images/e/ea/VB6-80-Incom_Corporation_Koensayr_Manufacturing-PC-E1-cardmaker.png",
+"1261_93":"https://wiki.swccg.com/images/7/76/VB6-91-Armed_And_Dangerous_Krayt_Dragon_Howl-PC-E1-cardmaker.png",
+"1261_97":"https://wiki.swccg.com/images/1/14/VB6-98-Let_The_Wookiee_Win-PC-E1-cardmaker.png",
+"601_51":"https://wiki.swccg.com/images/1/14/VB6-98-Let_The_Wookiee_Win-PC-E1-cardmaker.png",
+
 // Legacy pre-errata versions (docs/legacy-versions.md; keep outside the generated legacy block).
 // Image = the wiki slip crop of the release sheet that printed that text (wiki page field image2).
 "2210_36":"https://wiki.swccg.com/images/2/2e/VB1-36-Forced_Servitude.png",
@@ -6979,7 +6989,7 @@ const fixedImages = {
 "2250_82_BACK":"https://wiki.swccg.com/images/d/db/VB5-79-Duel_Of_The_Fates.png",
 "2261_20":"https://wiki.swccg.com/images/5/56/VB6-19-A_Useless_Gesture.png",
 "2261_46":"https://wiki.swccg.com/images/b/bf/VB6-47-One_Beautiful_Thing.png",
-"2261_1046":"https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/onebeautifulthing.gif",
+"2261_1046":"https://wiki.swccg.com/images/9/90/VB6-47-One_Beautiful_Thing-PC-E1-cardmaker.png",
 "2250_26":"https://wiki.swccg.com/images/2/2c/VB5-26-Force_Push.png",
 // Legacy VB5-VB6 phase 2 versions
 "2250_1":"https://wiki.swccg.com/images/7/75/VB5-01E-Nothing_Can_Get_Through_Our_Shield.png",

@@ -23,7 +23,7 @@ public class Card1261_056 extends AbstractStarfighter {
     public Card1261_056() {
         super(Side.DARK, 2, 2, 2, null, 5, 3, 5, "Black 1", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
         setLore("TIE advanced x1 fighter boasting improved power plant, stronger shields, armored hull and enhanced weapons. Deployed to elite Imperial Navy pilots.");
-        setGameText("May add Juno Eclipse as pilot. TIEs are immune to Don't Get Cocky. Once per turn, may use 1 Force to take a Black Squadron TIE into hand from Reserve Deck; reshuffle. Draws one battle destiny if not able to otherwise. Immune to attrition < 5.");
+        setGameText("May add Juno Eclipse as pilot. TIEs are immune to Don't Get Cocky. Once per turn, may use 1 Force to ▲ a Black Squadron TIE. Draws one battle destiny if not able to otherwise. Immune to attrition < 5.");
         addIcons(Icon.NAV_COMPUTER, Icon.SCOMP_LINK);
         addModelType(ModelType.TIE_ADVANCED_X1);
         addKeywords(Keyword.BLACK_SQUADRON);
