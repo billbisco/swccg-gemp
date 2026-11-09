@@ -5,7 +5,6 @@ import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.LegacyIKnowThatLaugh;
 import com.gempukku.swccgo.cards.effects.usage.OncePerBattleEffect;
 import com.gempukku.swccgo.common.ExpansionSet;
-import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Title;
@@ -37,7 +36,7 @@ public class Card1282_019 extends AbstractAlien {
         setVirtualSuffix(true);
         setLore("Nerf herder. Personally oversees the herding of Jabba's nerfs. Scruffy-looking appearance conceals his expertise in unusual combat techniques.");
         setGameText("May be stacked on I Know That Laugh from hand for 2 force. While stacked on I Know That Laugh, stack face-up and during any battle may draw destiny. If destiny < number of your aliens in battle, reduce a participating character's forfeit to 0.");
-        addIcons(Icon.WARRIOR);
+        // No warrior icon: the Virtual Block 8.2 slip, the Master List slip and the PC card image print none (Batch B22).
     }
 
     @Override

@@ -33,7 +33,7 @@ public class Card601_036 extends AbstractDefensiveShield {
         super(Side.DARK, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.Firepower, ExpansionSet.LEGACY, Rarity.V);
         setVirtualSuffix(true);
         setLore("'About twenty guns. Some on the surface, some on the towers.'");
-        setGameText("Plays on table. If opponent moves from a location you occupy during your turn, they lose 2 Force. At end of opponent's turn, if you control two battlegrounds (a site and a system) and opponent deployed a card with ability and did not initiate a battle, may retrieve 1 Force.");
+        setGameText("Plays on table. If opponent moves from a location you occupy during your turn, they lose 2 Force. At end of opponent's turn, if you control two battlegrounds (a site and system) and opponent deployed a card with ability and did not initiate a battle, may retrieve 1 Force.");
         addIcons(Icon.REFLECTIONS_III, Icon.LEGACY_BLOCK_D);
         setAsLegacy(true);
     }

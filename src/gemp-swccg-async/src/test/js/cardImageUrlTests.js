@@ -386,3 +386,27 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('2272_26'), 'https://res.s
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2273_1'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Dark/large/5d6ra7.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2273_2'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Dark/large/admiralpellaeon.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2273_24'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/derekhobbieklivian.gif');
+// Batch B26 (Virtual Block 6): current cards show a CardMaker recreation of their PC-E1 card-list text; the originals (22xx) show the release-sheet slips
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_48'), 'https://wiki.swccg.com/images/4/47/VB6-51-Weapon_Levitation_The_Empires_Back-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_98'), 'https://wiki.swccg.com/images/4/47/VB6-51-Weapon_Levitation_The_Empires_Back-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_79'), 'https://wiki.swccg.com/images/7/7e/VB6-78-Commando_Training_Klorslug-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1263_9'), 'https://wiki.swccg.com/images/2/2d/VB6-09-Guild_Of_Assassins-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_48'), 'https://wiki.swccg.com/images/f/f6/VB6-51-Weapon_Levitation_The_Empires_Back.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_79'), 'https://wiki.swccg.com/images/3/36/VB6-78-Commando_Training_Klorslug.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2263_9'), 'https://wiki.swccg.com/images/1/1c/VB6-09-Guild_Of_Assassins.png');
+// Batch B25: Keder The Black (V) and Breached Defenses & Molator PC-E1 (CardMaker), originals on the PC card images
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_9'), 'https://wiki.swccg.com/images/4/4e/VB5-07-Keder_The_Black-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2250_9'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Dark/large/kedertheblack.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_29'), 'https://wiki.swccg.com/images/f/f0/VB6-31-Breached_Defenses_Molator-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_29'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/breacheddefenses&molator.gif');
+// Batch B22 (Virtual Block 8, Virtual Shields): current cards and version cards show the image of their own text
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1282_15'), 'https://wiki.swccg.com/images/3/32/VB8-p3-71-Captain_Verrack-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1282_19'), 'https://wiki.swccg.com/images/6/63/VB8-p4-76-Rennek-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1282_26'), 'https://wiki.swccg.com/images/9/92/VB8-04-Under_Jabbas_Protection-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1283_3'), 'https://wiki.swccg.com/images/9/99/VL-history-1283-3-master.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1283_12'), 'https://wiki.swccg.com/images/d/d4/VL-history-1283-12-master.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2282_1014'), 'https://wiki.swccg.com/images/9/94/VB8-03-Lando_Calrissian_Unlikely_Hero-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2200_1'), 'https://wiki.swccg.com/images/4/4e/VSh-D13-Firepower-original-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2282_14'), 'https://wiki.swccg.com/images/0/03/VB8-03-Lando_Calrissian_Unlikely_Hero.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_50'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/landocalrissianunlikelyhero.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_35'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlockDS-Dark/large/fanfare.gif');

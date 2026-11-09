@@ -43,7 +43,7 @@ public class Card1263_009 extends AbstractNormalEffect {
         super(Side.DARK, 4, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Guild Of Assassins", Uniqueness.UNIQUE,
                 ExpansionSet.VIRTUAL_BLOCK_6_3, Rarity.V);
         setLore("Greedo cheskopokuta klees ruya Solo. Hoko yanee boopa gush Cantina. Cheeco wa Solo's anye nyuma Greedo vakee. Jabba kul steeka et en anpaw.");
-        setGameText("Deploy on table. Maul is lost. Once per character, when you deploy Aurra, Galen, Guri, or Mara to a Coruscant or Tatooine site, may take any one card from Used Pile into hand; reshuffle. At locations you occupy, your Force generation may not be prevented or canceled. (Immune to Alter.)");
+        setGameText("Deploy on table. Maul is lost. Once per character, when you deploy Aura, Galen, Guri, or Mara to a Coruscant or Tatooine site, may take any one card from Used Pile into hand; reshuffle. At locations you occupy, your Force generation may not be prevented or canceled. (Immune to Alter.)");
         addIcons(Icon.A_NEW_HOPE, Icon.LEGACY_BLOCK_6);
         addImmuneToCardTitle(Title.Alter);
         setAsLegacy(true);

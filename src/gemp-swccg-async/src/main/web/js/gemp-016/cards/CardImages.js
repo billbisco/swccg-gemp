@@ -6625,6 +6625,27 @@ const fixedImages = {
 "2273_1":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Dark/large/5d6ra7.gif",
 "2273_2":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Dark/large/admiralpellaeon.gif",
 "2273_24":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/derekhobbieklivian.gif",
+// Batch B26 (Virtual Block 6): current cards show a CardMaker recreation of their PC-E1 card-list text (601_98 = current class of 1261_48); the version cards 2261_48 / 2261_79 / 2263_9 (originals) show the release-sheet slips, which print the original text.
+"1261_48":"https://wiki.swccg.com/images/4/47/VB6-51-Weapon_Levitation_The_Empires_Back-PC-E1-cardmaker.png",
+"601_98":"https://wiki.swccg.com/images/4/47/VB6-51-Weapon_Levitation_The_Empires_Back-PC-E1-cardmaker.png",
+"1261_79":"https://wiki.swccg.com/images/7/7e/VB6-78-Commando_Training_Klorslug-PC-E1-cardmaker.png",
+"1263_9":"https://wiki.swccg.com/images/2/2d/VB6-09-Guild_Of_Assassins-PC-E1-cardmaker.png",
+"2261_48":"https://wiki.swccg.com/images/f/f6/VB6-51-Weapon_Levitation_The_Empires_Back.png",
+"2261_79":"https://wiki.swccg.com/images/3/36/VB6-78-Commando_Training_Klorslug.png",
+"2263_9":"https://wiki.swccg.com/images/1/1c/VB6-09-Guild_Of_Assassins.png",
+// Batch B25 (Virtual Blocks 4-6): current cards show the image of their latest text, CardMaker recreations of the 2012 card-list texts (PC-E1);
+// the PC card images print the release-sheet originals, kept on the 2250 / 2261 version cards.
+"1250_9":"https://wiki.swccg.com/images/4/4e/VB5-07-Keder_The_Black-PC-E1-cardmaker.png",
+"2250_9":"https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Dark/large/kedertheblack.gif",
+"1261_29":"https://wiki.swccg.com/images/f/f0/VB6-31-Breached_Defenses_Molator-PC-E1-cardmaker.png",
+"2261_29":"https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/breacheddefenses&molator.gif",
+// Batch B22 (Virtual Block 8, Virtual Shields): current cards show the image of their latest text: CardMaker recreations of the 2012 card-list PC-E1 texts for 1282_15 / 1282_19 / 1282_26 (their PC card images print the originals, kept on the 2282 cards);
+// 1283_3 Lady Valarian / 1283_12 Spaceport Docking Bay (V) the Master List slips (PC-E1). 1282_14 (601_50), 1200_1 (601_36), 1200_5 (601_35), 1200_11 and 1200_17 keep their PC card images, which print the latest text.
+"1282_15":"https://wiki.swccg.com/images/3/32/VB8-p3-71-Captain_Verrack-PC-E1-cardmaker.png",
+"1282_19":"https://wiki.swccg.com/images/6/63/VB8-p4-76-Rennek-PC-E1-cardmaker.png",
+"1282_26":"https://wiki.swccg.com/images/9/92/VB8-04-Under_Jabbas_Protection-PC-E1-cardmaker.png",
+"1283_3":"https://wiki.swccg.com/images/9/99/VL-history-1283-3-master.png",
+"1283_12":"https://wiki.swccg.com/images/d/d4/VL-history-1283-12-master.png",
 // Batch B21 (Virtual Block 8): current cards show the image of their latest text. CardMaker recreations of the 2012 card-list texts (the PC card images and slips print the originals, kept on the 2281 version cards).
 // 2281_44 shows the release-sheet copy of the Infiltration front (original "Rebel Agent" text; the PC image prints PC-E1); 2281_1047 (Rebel Agent's Blaster Rifle PC-E1) its CardMaker image (edited in place below).
 "1281_26":"https://wiki.swccg.com/images/7/7f/VB8-02-Chewbacca_Walking_Carpet-PC-E1-cardmaker.png",
@@ -6966,7 +6987,7 @@ const fixedImages = {
 "2283_12":"https://wiki.swccg.com/images/f/fc/VB8-p3-97-Spaceport_Docking_Bay.png",
 "2283_21":"https://wiki.swccg.com/images/0/09/VB8-02-Underworld_Contacts_Uncharted_Settlements.png",
 "2200_5":"https://res.starwarsccg.org/cards/legacy/VirtualBlockDS-Dark/large/fanfare.gif",
-"2282_1014":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/landocalrissianunlikelyhero.gif",
+"2282_1014":"https://wiki.swccg.com/images/9/94/VB8-03-Lando_Calrissian_Unlikely_Hero-PC-E1-cardmaker.png",
 "2281_1":"https://wiki.swccg.com/images/7/7b/VB8-01-Aurra_Sing_Deadly_Assassin.png",
 "2281_4":"https://wiki.swccg.com/images/6/6a/VB8-03-Bossk_With_Mortar_Gun.png",
 "2281_8":"https://wiki.swccg.com/images/8/87/VB8-p2-08-Jet_Pack.png",
@@ -6995,7 +7016,7 @@ const fixedImages = {
 "2281_36":"https://wiki.swccg.com/images/e/ea/VB8-00-Scoundrels_Ingenuity.png",
 "2281_46":"https://wiki.swccg.com/images/9/9e/VB8-03-Hans_Blaster_So_Uncivilized.png",
 "2282_25":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/youwilltakemetojabbanow.gif",
-"2200_1":"https://res.starwarsccg.org/cards/legacy/VirtualBlockDS-Dark/large/firepower.gif",
+"2200_1":"https://wiki.swccg.com/images/4/4e/VSh-D13-Firepower-original-cardmaker.png",
 "2281_1044":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/infiltration.gif",
 "2281_1044_BACK":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/unlikelyallies.gif",
 "2281_1047":"https://wiki.swccg.com/images/d/d9/VB8-02-Rebel_Agents_Blaster_Rifle-PC-E1-cardmaker.png",

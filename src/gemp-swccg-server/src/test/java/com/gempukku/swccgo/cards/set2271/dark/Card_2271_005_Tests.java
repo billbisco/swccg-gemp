@@ -64,7 +64,7 @@ public class Card_2271_005_Tests {
         assertEquals("1271_5", info.currentPrintingId());
         assertEquals("", info.label());
         assertEquals(LocalDate.of(2010, 6, 18), info.printedOn());
-        assertEquals(LocalDate.of(2013, 4, 27), info.supersededOn());
+        assertEquals(LocalDate.of(2013, 3, 14), info.supersededOn());
         // The current card keeps the latest title, Ysanne Isard
         assertNull(current.getLegacyVersion());
         assertNull(current.getPrintedTitle());
