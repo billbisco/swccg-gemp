@@ -63,7 +63,7 @@ public class Card_2240_1058_Tests {
     @Test
     public void FrontIsTheSameCardWithTheOldText() {
         LegacyVersionAsserts.assertVersionOf(library.getSwccgoCardBlueprint("1240_58"), library.getSwccgoCardBlueprint("2240_1058"),
-                "Deploy Coruscant system, Imperial City, and A Sith's Plans. May also deploy If The Trace Was Correct.\nFor remainder of game, you may not deploy [Episode I] Dark Jedi. Opponent loses 2 Force when a character hit by Vader's (or Galen's) Lightsaber leaves table on the same turn.\nWhile this side up, may ▲ Galen's Fighter. Galen's immunity to attrition is +2 for each Jedi present.\nFlip this card if Galen or Vader at a battleground site and opponent does not have a unique (•) character of ability > 3 present at a battleground site.",
+                "Deploy Coruscant system, Imperial City, and a Sith's Plans. May also deploy If The Trace Was Correct.\nFor remainder of game, you may not deploy [Episode I] Dark Jedi. Opponent loses 2 Force when a character hit by Vader's (or Galen's) Lightsaber leaves table on the same turn.\nWhile this side up, may ▲ Galen's Fighter. Galen's immunity to attrition is +2 for each Jedi present.\nFlip this card if Galen or Vader at a battleground site and opponent does not have a unique (•) character of ability > 3 present at a battleground site.",
                 "1240_58", "PC-E1", LocalDate.of(2012, 8, 27), LocalDate.of(2013, 4, 27));
     }
 

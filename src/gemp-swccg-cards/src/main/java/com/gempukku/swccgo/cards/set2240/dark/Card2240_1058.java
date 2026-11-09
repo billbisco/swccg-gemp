@@ -18,7 +18,7 @@ import java.time.LocalDate;
 public class Card2240_1058 extends Card601_087 {
     public Card2240_1058() {
         super();
-        setGameText("Deploy Coruscant system, Imperial City, and A Sith's Plans. May also deploy If The Trace Was Correct.\n" +
+        setGameText("Deploy Coruscant system, Imperial City, and a Sith's Plans. May also deploy If The Trace Was Correct.\n" +
                 "For remainder of game, you may not deploy [Episode I] Dark Jedi. Opponent loses 2 Force when a character hit by Vader's (or Galen's) Lightsaber leaves table on the same turn.\n" +
                 "While this side up, may ▲ Galen's Fighter. Galen's immunity to attrition is +2 for each Jedi present.\n" +
                 "Flip this card if Galen or Vader at a battleground site and opponent does not have a unique (•) character of ability > 3 present at a battleground site.");

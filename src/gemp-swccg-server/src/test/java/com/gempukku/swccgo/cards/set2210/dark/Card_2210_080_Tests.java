@@ -49,7 +49,7 @@ public class Card_2210_080_Tests {
             assertEquals(icon.name(), current.getIconCount(icon), card.getIconCount(icon));
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_1, card.getExpansionSet());
         assertTrue(card.isLegacy());
-        assertEquals("Deploys only on Tatooine. Ability = 1/4. May add 1 'rider' (passenger). May be targeted by Trample instead of a piloted AT-AT. During battle, may 'roar' to make a character here defense value -1.",
+        assertEquals("Deploys only on Tatooine. Ability = ¼. May add 1 'rider' (passenger). May be targeted by Trample instead of a piloted AT-AT. During battle, may 'roar' to make a character here defense value -1.",
                 card.getGameText());
         assertEquals(current.getGameText(), card.getGameText()); //stat-only version
         var version = card.getLegacyVersion();

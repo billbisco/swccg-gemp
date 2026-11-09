@@ -43,7 +43,7 @@ public class Card1210_031 extends AbstractNormalEffect {
     public Card1210_031() {
         super(Side.DARK, 3, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.Astromech_Shortage, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_1, Rarity.V);
         setVirtualSuffix(true);
-        setLore("Imperial pilots often target astromech aboard Rebel starfighters in an attempt to prevent hyper-escapes. Scarcity of undamaged astromechs can delay starfighter deployment.");
+        setLore("Imperial pilots often target astromechs aboard Rebel starfighters in an attempt to prevent hyper-escapes. Scarcity of undamaged astromechs can delay starfighter deployment.");
         setGameText("Deploy on table. During the power segment of a battle, may use X Force to reduce a starship's immunity to attrition by X for remainder of turn. Once per turn, may use 2 Force to cancel the game text of a [Maintenance] character or a non-[Theed Palace] senator for remainder of turn.");
         addIcons(Icon.A_NEW_HOPE);
     }

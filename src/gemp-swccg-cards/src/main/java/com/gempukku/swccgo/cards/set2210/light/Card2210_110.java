@@ -44,10 +44,10 @@ public class Card2210_110 extends AbstractRebel {
     public Card2210_110() {
         super(Side.LIGHT, 2, 2, 1, 1, 3, Title.Rebel_Tech, Uniqueness.RESTRICTED_3, ExpansionSet.VIRTUAL_BLOCK_1, Rarity.V);
         setVirtualSuffix(true);
-        setLore("Del Goren, typical expert in communications and scanner jamming, served aboard the Rebel privateer corvette Spiral before joining the Alliance High Command.");
-        setGameText("Dark Side game text on your non-docking bay Yavin 4 sites is canceled. Your Attack Run total is cumulatively +1. During your deploy phase, may place this character in Used Pile to take one Advance Preparation or Death Star: Trench into hand from Reserve Deck; reshuffle.");
+        setLore("Del Goren, typical expert in communications and scanner jamming, served aboard the Rebel privateer corvette Spiral before joing the Alliance High Command.");
+        setGameText("Dark Side game text on your non-docking bay Yavin 4 sites is canceled. Your Attack Run total is cumulatively +1. During your deploy phase, may place this character in Used Pile to ▲ one Advance Preparation or Death Star: Trench.");
         setLegacyVersion(new LegacyVersion("1210_110", "",
-                "Virtual Block 1 release sheet (2009-12-07), card #110", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 8, 27)));
+                "Virtual Block 1 release sheet (2009-12-07), card #110; superseded by the PC errata of 2010-06-17 (news post \"Errata to Death Star Gunner (V)/Rebel Tech (V)\")", LocalDate.of(2009, 12, 7), LocalDate.of(2010, 6, 17)));
         addIcons(Icon.A_NEW_HOPE);
     }
 

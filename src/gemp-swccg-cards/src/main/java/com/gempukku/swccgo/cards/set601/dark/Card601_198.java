@@ -40,7 +40,7 @@ public class Card601_198 extends AbstractUsedInterrupt {
         super(Side.DARK, 3, Title.Defensive_Fire, Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
         setVirtualSuffix(true);
         setLore("275 gunners manning 60 turbolaser batteries provide a wide firing arc. Even so, asteroids are a challenge due to the sluggish recharge rates of the high-powered blasters.");
-        setGameText("If opponent just initiated battle, you may immediately fire one non-lightsaber, non-[Permanent Weapon] weapon present in that battle once (for free), adding 2 to each of its destiny draws. That weapon may fire again this battle.");
+        setGameText("If opponent just initiated battle, you may immediately fire one non-lightsaber, non-Permanent weapon present in that battle once (for free), adding 2 to each of its destiny draws. That weapon may fire again this battle.");
         addIcons(Icon.DAGOBAH, Icon.LEGACY_BLOCK_2);
         setAsLegacy(true);
     }
