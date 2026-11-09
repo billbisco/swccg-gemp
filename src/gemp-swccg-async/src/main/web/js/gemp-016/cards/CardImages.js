@@ -6737,6 +6737,15 @@ const fixedImages = {
 "2261_34":"https://wiki.swccg.com/images/4/4a/VB6-34-Fleet_Security_Protocols-original-cardmaker.png",
 "2261_1065":"https://wiki.swccg.com/images/f/f6/VB6-63-BoShek_Brash_Smuggler-PC-E1-cardmaker.png",
 
+// Batch B14 (Virtual Blocks 2-4): CardMaker recreations of the latest text (601_88 = current class of 1240_27 Imperial Propaganda (V); 1220_163_BACK keeps the PC image of Liberation, whose text did not change).
+"1220_136":"https://wiki.swccg.com/images/2/20/VB2-135-Wars_Not_Make_One_Great-PC-E1-cardmaker.png",
+"1220_163":"https://wiki.swccg.com/images/c/cf/VB2-164E-Local_Uprising-PC-E1-cardmaker.png",
+"1230_13":"https://wiki.swccg.com/images/a/ad/VB3-13E-Lord_Vader-PC-E1-cardmaker.png",
+"1230_77":"https://wiki.swccg.com/images/4/4e/VB3-78-Orrimaarko-PC-E1-cardmaker.png",
+"1240_4":"https://wiki.swccg.com/images/4/47/VB4-03-Colonel_Wullf_Yularen-PC-E1-cardmaker.png",
+"1240_27":"https://wiki.swccg.com/images/1/12/VB4-26-Imperial_Propaganda-PC-E1-cardmaker.png",
+"601_88":"https://wiki.swccg.com/images/1/12/VB4-26-Imperial_Propaganda-PC-E1-cardmaker.png",
+
 // Legacy pre-errata versions (docs/legacy-versions.md; keep outside the generated legacy block).
 // Image = the wiki slip crop of the release sheet that printed that text (wiki page field image2).
 "2210_36":"https://wiki.swccg.com/images/2/2e/VB1-36-Forced_Servitude.png",

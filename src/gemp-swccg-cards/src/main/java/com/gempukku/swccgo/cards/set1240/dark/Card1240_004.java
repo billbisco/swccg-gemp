@@ -42,7 +42,7 @@ public class Card1240_004 extends AbstractImperial {
         super(Side.DARK, 2, 2, 1, 2, 5, Title.Yularen, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_4, Rarity.V);
         setVirtualSuffix(true);
         setInfluence(2);
-        setLore("Imperial Security Bureau (ISB) officer assigned to brief Tarkin. Also ordered to ensure absolute loyalty to the Emperor. Leader. Will stop at nothing to fulfill the Emperor's will.");
+        setLore("Imperial Security Bureau (ISB) officer assigned to brief Tarkin. Also ordered to ensure absolute loyalty to the Emperor. Leader. Will stop at nothing to fulfill Emperor's will.");
         setGameText("Imperial Council Member. Agendas: logistics. ISB Agents are forfeit +1. While at Conference Room with Sim Aloo, may use 1 Force to subtract 1 from an opponent's just drawn non-Epic Event destiny.");
         addIcons(Icon.WARRIOR);
         addKeywords(Keyword.IMPERIAL_COUNCIL_MEMBER, Keyword.LEADER);

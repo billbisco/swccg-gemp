@@ -23,7 +23,7 @@ import java.util.List;
 public class Card2240_027 extends Card601_088 {
     public Card2240_027() {
         super();
-        setGameText("If you are about to lose Force during opponent's control phase, deploy on table to reduce loss by 2. Whenever you lose Force during opponent's control phase (except from a Force drain at a battleground or your card), that loss is cumulatively -1 (to a minimum of 1).");
+        setGameText("If you are about to lose Force during opponent's control phase, deploy on table to reduce loss by 2. Whenever you lose force during opponent's control phase (except from a Force drain at a battleground or your card), that loss is cumulatively -1 (to a minimum of 1).");
         setLegacyVersion(new LegacyVersion("1240_27", "",
                 "Virtual Block 4 release sheet (2009-12-07), card #26", LocalDate.of(2009, 12, 7), LocalDate.of(2013, 4, 27)));
     }

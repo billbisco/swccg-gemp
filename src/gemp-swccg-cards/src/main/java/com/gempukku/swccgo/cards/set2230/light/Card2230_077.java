@@ -45,7 +45,7 @@ public class Card2230_077 extends AbstractRebel {
     public Card2230_077() {
         super(Side.LIGHT, 1, 5, 4, 4, 4, Title.Orrimaarko, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_3, Rarity.V);
         setVirtualSuffix(true);
-        setLore("Dresselian Scout and resistance leader. Worked tirelessly to combat the subjugation of his homeworld before Bothans brought him into contact with the Alliance.");
+        setLore("Dresselian scout and resistance leader. Worked tirelessly to combat the subjugation of his homeworld before Bothans brought him into contact with the Alliance.");
         setGameText("Once per game, may take a rifle and/or an Interrupt with 'scout' in game text into hand from Reserve Deck; reshuffle. Unless Undercover, while alone at an exterior site, opponent's weapon destiny draws here are -2. Immune to attrition < 4.");
         addIcons(Icon.WARRIOR, Icon.ENDOR);
         setSpecies(Species.DRESSELIAN);

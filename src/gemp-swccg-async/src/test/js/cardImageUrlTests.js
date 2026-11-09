@@ -197,4 +197,19 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_65'), 'https://res.s
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_65'), 'https://wiki.swccg.com/images/f/fd/VB6-63-BoShek_Brash_Smuggler.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_1034'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/fleetsecurityprotocols.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_10'), 'https://wiki.swccg.com/images/7/79/VB6-10-Darth_Vader_Betrayer_Of_The_Jedi.png');
+// Batch B14 (Virtual Blocks 2-4): current cards show the CardMaker image of their latest text; version cards and unchanged current images stay
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1220_136'), 'https://wiki.swccg.com/images/2/20/VB2-135-Wars_Not_Make_One_Great-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1220_163'), 'https://wiki.swccg.com/images/c/cf/VB2-164E-Local_Uprising-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1220_163_BACK'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock2-Light/large/liberation.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1230_13'), 'https://wiki.swccg.com/images/a/ad/VB3-13E-Lord_Vader-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1230_77'), 'https://wiki.swccg.com/images/4/4e/VB3-78-Orrimaarko-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1240_4'), 'https://wiki.swccg.com/images/4/47/VB4-03-Colonel_Wullf_Yularen-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1240_27'), 'https://wiki.swccg.com/images/1/12/VB4-26-Imperial_Propaganda-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_88'), 'https://wiki.swccg.com/images/1/12/VB4-26-Imperial_Propaganda-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_237'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock2-Light/large/maneuveringflaps.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2220_128'), 'https://wiki.swccg.com/images/f/fa/VB2-128-Maneuvering_Flaps.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2220_163'), 'https://wiki.swccg.com/images/3/35/VB2-164E-Local_Uprising.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2230_13'), 'https://wiki.swccg.com/images/5/57/VB3-13E-Lord_Vader.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2240_2'), 'https://wiki.swccg.com/images/a/a9/VB4-02-Juno_Eclipse_Black_Leader.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2240_8'), 'https://wiki.swccg.com/images/9/93/VB4-04-Galen_Marek_Starkiller.png');
 console.log('card image URL routing passed: ' + legacy.length + ' Legacy mappings');
