@@ -40,7 +40,7 @@ public class Card1281_027 extends AbstractAlien {
     public Card1281_027() {
         super(Side.LIGHT, 1, 4, 4, 3, 7, "Han Solo, Innocent Scoundrel", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_1, Rarity.V);
         setLore("'Well, that was a long time ago. I'm sure he's forgotten about that.' Since he needed Calrissian's help, Han regretted having introduced Lando to the Tonnika sisters.");
-        setGameText("Adds 3 to the power of anything he pilots. Draws one battle destiny if unable to otherwise. During battle, Han may fire a (Virtual Block 8) blaster twice. Once per turn, if opponent is about to draw a weapon destiny targeting Han, they draw two and you choose one. Immune to attrition < 3 (<4 if armed).");
+        setGameText("Adds 3 to the power of anything he pilots. Draws one battle destiny if unable to otherwise. During battle, Han may fire a [Virtual Block 8] blaster twice. Once per turn, if opponent is about to draw a weapon destiny targeting Han, they draw two and you choose one. Immune to attrition < 3 (<4 if armed).");
         addIcons(Icon.PILOT, Icon.WARRIOR);
         addPersona(Persona.HAN);
     }

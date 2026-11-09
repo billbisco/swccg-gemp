@@ -213,7 +213,7 @@ public class Card_2281_047_Tests {
         assertEquals("1281_47", version.currentPrintingId());
         assertEquals("", version.label());
         assertEquals(java.time.LocalDate.of(2012, 5, 11), version.printedOn());
-        assertEquals(java.time.LocalDate.of(2013, 4, 27), version.supersededOn());
+        assertEquals(java.time.LocalDate.of(2012, 7, 21), version.supersededOn());
         assertEquals("Rebel Agent's Blaster Rifle", com.gempukku.swccgo.logic.GameUtils.getFullName(card));
     }
 
