@@ -6666,6 +6666,18 @@ const fixedImages = {
 "1240_68":"https://wiki.swccg.com/images/5/56/VB4-70-LE_BO2D9_Leebo-PC-E1-cardmaker.png",
 "1230_102":"https://wiki.swccg.com/images/0/0e/VB3-103-Diversionary_Tactics-PC-E1-cardmaker.png",
 "601_180":"https://wiki.swccg.com/images/3/33/VB4-01-Arica-PC-E1-cardmaker.png",
+// Batch B07 (Virtual Block 3-4): CardMaker recreations of the PC-E1 text (601_211 = current class of 1240_63 Stinger (V)).
+"1230_114":"https://wiki.swccg.com/images/7/70/VB3-117-Tydirium-PC-E1-cardmaker.png",
+"1230_116":"https://wiki.swccg.com/images/e/e1/VB3-115-Mon_Calamari_Star_Cruiser-PC-E1-cardmaker.png",
+"1230_118":"https://wiki.swccg.com/images/6/60/VB3-120-Enhanced_Proton_Torpedoes-PC-E1-cardmaker.png",
+"1240_20":"https://wiki.swccg.com/images/e/ea/VB4-21-Dark_Reconnaissance-PC-E1-cardmaker.png",
+"1240_21":"https://wiki.swccg.com/images/4/41/VB4-19-Blown_Clear-PC-E1-cardmaker.png",
+"1240_22":"https://wiki.swccg.com/images/7/7f/VB4-20-Crush_The_Rebellion-PC-E1-cardmaker.png",
+"1240_36":"https://wiki.swccg.com/images/8/8b/VB4-34E-There_Is_No_Try_Oppressive_Enforcement-PC-E1-cardmaker.png",
+"1240_47":"https://wiki.swccg.com/images/6/67/VB4-47-Unexpected_Interruption-PC-E1-cardmaker.png",
+"1240_63":"https://wiki.swccg.com/images/c/c9/VB4-62-Stinger-PC-E1-cardmaker.png",
+"601_211":"https://wiki.swccg.com/images/c/c9/VB4-62-Stinger-PC-E1-cardmaker.png",
+"1240_92":"https://wiki.swccg.com/images/5/56/VB4-90E-Tusken_Breath_Mask-PC-E1-cardmaker.png",
 
 // Batch B06 (Virtual Block 3): CardMaker recreations of the latest text (601_158 = current class of 1230_109 Rebel Leadership (V); 1220_169 keeps its PC card image, which shows PC-E2).
 "1230_10":"https://wiki.swccg.com/images/0/01/VB3-10-Lieutenant_Grond-PC-E1-cardmaker.png",

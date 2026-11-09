@@ -18,6 +18,6 @@ public class Card2230_116 extends Card1230_116 {
         super();
         setGameText("Deploys -1 (to a minimum of 3) for each Imperial starship on table. May add 5 pilots, 6 passengers, 1 vehicle, and 3 starfighters. Permanent pilot provides ability of 2.");
         setLegacyVersion(new LegacyVersion("1230_116", "",
-                "Virtual Block 3 release sheet (2009-12-07), card #116", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21)));
+                "Virtual Block 3 release sheet (2009-12-07), card #115", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21)));
     }
 }
