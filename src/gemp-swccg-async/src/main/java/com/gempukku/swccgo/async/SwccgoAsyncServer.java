@@ -3,6 +3,7 @@ package com.gempukku.swccgo.async;
 import com.gempukku.polling.LongPollingSystem;
 import com.gempukku.swccgo.async.handler.RootUriRequestHandler;
 import com.gempukku.swccgo.async.internal.InternalAuthServer;
+import com.gempukku.swccgo.db.GempSettingDAO;
 import com.gempukku.swccgo.service.AuthService;
 import com.gempukku.swccgo.common.ApplicationConfiguration;
 import io.netty.bootstrap.ServerBootstrap;
@@ -60,9 +61,16 @@ public class SwccgoAsyncServer {
                     .childOption(ChannelOption.SO_KEEPALIVE, true)
                     .childOption(ChannelOption.TCP_NODELAY, true);
 
+            // swccg-login: end its sessions when an admin bans, deactivates or resets a player (off unless configured).
+            com.gempukku.swccgo.async.oidc.SsoRevoker revoker = com.gempukku.swccgo.async.oidc.SsoRevoker.fromEnvironment();
+            Object admin = gempukkuServer.getContext().get(com.gempukku.swccgo.service.AdminService.class);
+            if (revoker != null && admin instanceof com.gempukku.swccgo.service.AdminService)
+                ((com.gempukku.swccgo.service.AdminService) admin).setRevocationListener(revoker);
+
             // Private wiki -> GEMP login check on its own unpublished port (off unless configured).
             InternalAuthServer.startIfConfigured(bossGroup, workerGroup,
-                    (AuthService) gempukkuServer.getContext().get(AuthService.class));
+                    (AuthService) gempukkuServer.getContext().get(AuthService.class),
+                    (GempSettingDAO) gempukkuServer.getContext().get(GempSettingDAO.class));
 
             ChannelFuture bind = b.bind(httpPort);
             bind.sync().channel().closeFuture().sync();
