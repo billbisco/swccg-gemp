@@ -29,7 +29,7 @@ import java.util.List;
  */
 public class Card2261_1034 extends Card1261_034 {
     public Card2261_1034() {
-        setGameText("Deploy on table. During battle involving your starship (or vehicle), it is power +2 for each of your characters at its related sites (they may be forfeited to reduce battle damage and attrition). Once per turn, may deploy a non-unique starship (or vehicle) site from Reserve Deck; reshuffle (if such sites leave table, place them and all your cards there in Used Pile). (Immune to Alter.)");
+        setGameText("Deploy on table. During battle involving your starship (or vehicle), it is power +2 for each of your characters at its related sites (they may be forfeited to reduce battle damage and attrition). Once per turn, may ▼ a non-unique starship (or vehicle) site (if such sites leave table, place them and all your cards there in Used Pile). (Immune to Alter.)");
         setLegacyVersion(new LegacyVersion("1261_34", "PC-E1",
                 "Virtual Block 6.1 release sheet, revised (2010-04-20), card #34", LocalDate.of(2010, 4, 20), LocalDate.of(2012, 7, 21)));
     }

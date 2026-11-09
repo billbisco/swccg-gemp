@@ -172,7 +172,7 @@ public class Card_2261_1034_Tests {
     @Test
     public void gameTextIsOfficialText() {
         var scn = scenario();
-        assertEquals("Deploy on table. During battle involving your starship (or vehicle), it is power +2 for each of your characters at its related sites (they may be forfeited to reduce battle damage and attrition). Once per turn, may deploy a non-unique starship (or vehicle) site from Reserve Deck; reshuffle (if such sites leave table, place them and all your cards there in Used Pile). (Immune to Alter.)",
+        assertEquals("Deploy on table. During battle involving your starship (or vehicle), it is power +2 for each of your characters at its related sites (they may be forfeited to reduce battle damage and attrition). Once per turn, may ▼ a non-unique starship (or vehicle) site (if such sites leave table, place them and all your cards there in Used Pile). (Immune to Alter.)",
                 scn.GetDSCard("protocols").getBlueprint().getGameText());
     }
 
@@ -362,6 +362,6 @@ public class Card_2261_1034_Tests {
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
         assertLegacyVersion(scn.GetDSCard("v").getBlueprint(), scn.GetDSCard("current").getBlueprint(), "1261_34", "PC-E1",
                 LocalDate.of(2010, 4, 20), LocalDate.of(2012, 7, 21),
-                "Deploy on table. During battle involving your starship (or vehicle), it is power +2 for each of your characters at its related sites (they may be forfeited to reduce battle damage and attrition). Once per turn, may deploy a non-unique starship (or vehicle) site from Reserve Deck; reshuffle (if such sites leave table, place them and all your cards there in Used Pile). (Immune to Alter.)");
+                "Deploy on table. During battle involving your starship (or vehicle), it is power +2 for each of your characters at its related sites (they may be forfeited to reduce battle damage and attrition). Once per turn, may ▼ a non-unique starship (or vehicle) site (if such sites leave table, place them and all your cards there in Used Pile). (Immune to Alter.)");
     }
 }
