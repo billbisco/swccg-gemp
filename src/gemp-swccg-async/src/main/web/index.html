@@ -184,11 +184,11 @@
                         loginScreen();
                     },
                     "403": function() {
-                        $(".error").html("You have been permanently banned.  If you believe this was done in error, contact the Communications Advocate at <a href='mailto:communications@starwarsccg.org?subject=Gemp%20Ban'>communications@starwarsccg.org</a>");
+                        $(".error").html("You have been permanently banned.  If you believe this was done in error, email the site contact at <a href='mailto:swccg.contact@proton.me?subject=Gemp%20ban'>swccg.contact@proton.me</a>");
                         $(".interaction").html("");
                     },
                     "409": function() {
-                        $(".error").html("You have been temporarily banned. You can try logging in at a later time. If you believe this was done in error, contact the Communications Advocate at <a href='mailto:communications@starwarsccg.org?subject=Gemp%20Ban'>communications@starwarsccg.org</a>");
+                        $(".error").html("You have been temporarily banned. You can try logging in at a later time. If you believe this was done in error, email the site contact at <a href='mailto:swccg.contact@proton.me?subject=Gemp%20ban'>swccg.contact@proton.me</a>");
                         $(".interaction").html("");
                     },
                     "503": function() {
@@ -210,7 +210,7 @@
             loginButton.click(login);
             
             $(".interaction").append(loginButton);
-            $(".interaction").append("<br/><br/><a href='mailto:communications@starwarsccg.org?subject=Gemp%20Password%20Reset'>Forgot your password? Contact the <span style='color:orange'>Communications Advocate</span></a>.");
+            $(".interaction").append("<br/><br/><a href='mailto:swccg.contact@proton.me?subject=Password%20reset'>Forgot your password? Email the <span style='color:orange'>site contact</span></a>.");
             $(".interaction").append("<br/><br/>Play the LOTR-TCG on GEMP at <a href='https://play.lotrtcgpc.net'>play.lotrtcgpc.net</a>");
             
             $("#password").keypress(function (e) {
@@ -284,7 +284,7 @@
 
 </head>
 <body>
-<div id="signin-page-logo"><a href="http://www.starwarsccg.org/"><img src="https://swccg.com/swccg_gold64.png" style="width:216px;height:147px;" /></div></a>
+<div id="signin-page-logo"><a href="https://swccg.com/"><img src="https://swccg.com/swccg_gold64.png" alt="Star Wars CCG" style="width:216px;height:147px;" /></div></a>
 <div id="signin-page-welcome-message"><h1>Welcome to GEMP-SWCCG!</h1></div>
 <div class="centerContainer">
     <div class="status"></div>
@@ -338,7 +338,7 @@
             <span data-sbox-show="signup" hidden>Have an account? <button type="button" class="sbox-link" data-sbox-toggle="signup">Sign in</button></span>
           </p>
           <div class="sbox-note sbox-forgot" id="sbox-forgot" tabindex="-1" hidden>
-            Email the <a href="mailto:communications@starwarsccg.org?subject=Gemp%20Password%20Reset">Communications Advocate</a> with your player name to reset your password.
+            Email the <a href="mailto:swccg.contact@proton.me?subject=Password%20reset">site contact</a> (swccg.contact@proton.me) with your player name to reset your password.
             Have a passkey or a linked sign-in? Use it below instead.
           </div>
 
@@ -369,20 +369,20 @@
 </div>
 <div id="signin-page-packs">
     <div style="text-align: center;">
-        <a href="https://res.starwarsccg.org/cardlists/PremiereType.html"><img src="https://swccg.com/packs/premiere.jpg" border="0" vspace="25" hspace="1"/></a>
-        <a href="https://res.starwarsccg.org/cardlists/ANewHopeType.html"><img src="https://swccg.com/packs/anewhope.jpg" vspace="25" hspace="1"/></a>
-        <a href="https://res.starwarsccg.org/cardlists/HothType.html"><img src="https://swccg.com/packs/hoth.jpg" vspace="25" hspace="1"/></a>
-        <a href="https://res.starwarsccg.org/cardlists/DagobahType.html"><img src="https://swccg.com/packs/dagobah.jpg" vspace="25" hspace="1"/></a>
-        <a href="https://res.starwarsccg.org/cardlists/CloudCityType.html"><img src="https://swccg.com/packs/cloudcity.jpg" vspace="25" hspace="1"/></a>
-        <a href="https://res.starwarsccg.org/cardlists/JabbasPalaceType.html"><img src="https://swccg.com/packs/jabbaspalace.jpg" vspace="25" hspace="1"/></a>
-        <a href="https://res.starwarsccg.org/cardlists/SpecialEditionType.html"><img src="https://swccg.com/packs/specialedition.jpg" vspace="25" hspace="1"/></a>
-        <a href="https://res.starwarsccg.org/cardlists/EndorType.html"><img src="https://swccg.com/packs/endor.jpg" vspace="25" hspace="1"/></a>
-        <a href="https://res.starwarsccg.org/cardlists/DeathStar2Type.html"><img src="https://swccg.com/packs/deathstar2.jpg" vspace="25" hspace="1"/></a>
-        <a href="https://res.starwarsccg.org/cardlists/ReflectionsType.html"><img src="https://swccg.com/packs/ref2.jpg" vspace="25" hspace="1"/></a>
-        <a href="https://res.starwarsccg.org/cardlists/TatooineType.html"><img src="https://swccg.com/packs/tatooine.jpg" vspace="25" hspace="1"/></a>
-        <a href="https://res.starwarsccg.org/cardlists/CoruscantType.html"><img src="https://swccg.com/packs/coruscant.jpg" vspace="25" hspace="1"/></a>
-        <a href="https://res.starwarsccg.org/cardlists/ReflectionsType.html"><img src="https://swccg.com/packs/ref3.jpg" vspace="25" hspace="1"/></a>
-        <a href="https://res.starwarsccg.org/cardlists/TheedType.html"><img src="https://swccg.com/packs/theedpalace.jpg" vspace="25" hspace="1"/></a>
+        <a href="https://wiki.swccg.com/wiki/Premiere_Limited"><img src="https://swccg.com/packs/premiere.jpg" border="0" vspace="25" hspace="1"/></a>
+        <a href="https://wiki.swccg.com/wiki/A_New_Hope_Limited"><img src="https://swccg.com/packs/anewhope.jpg" vspace="25" hspace="1"/></a>
+        <a href="https://wiki.swccg.com/wiki/Hoth_Limited"><img src="https://swccg.com/packs/hoth.jpg" vspace="25" hspace="1"/></a>
+        <a href="https://wiki.swccg.com/wiki/Dagobah_Limited"><img src="https://swccg.com/packs/dagobah.jpg" vspace="25" hspace="1"/></a>
+        <a href="https://wiki.swccg.com/wiki/Cloud_City_Limited"><img src="https://swccg.com/packs/cloudcity.jpg" vspace="25" hspace="1"/></a>
+        <a href="https://wiki.swccg.com/wiki/Jabba%27s_Palace_Limited"><img src="https://swccg.com/packs/jabbaspalace.jpg" vspace="25" hspace="1"/></a>
+        <a href="https://wiki.swccg.com/wiki/Special_Edition"><img src="https://swccg.com/packs/specialedition.jpg" vspace="25" hspace="1"/></a>
+        <a href="https://wiki.swccg.com/wiki/Endor_(expansion)"><img src="https://swccg.com/packs/endor.jpg" vspace="25" hspace="1"/></a>
+        <a href="https://wiki.swccg.com/wiki/Death_Star_II_(expansion)"><img src="https://swccg.com/packs/deathstar2.jpg" vspace="25" hspace="1"/></a>
+        <a href="https://wiki.swccg.com/wiki/Reflections_II:_Expanding_the_Galaxy"><img src="https://swccg.com/packs/ref2.jpg" vspace="25" hspace="1"/></a>
+        <a href="https://wiki.swccg.com/wiki/Tatooine_(expansion)"><img src="https://swccg.com/packs/tatooine.jpg" vspace="25" hspace="1"/></a>
+        <a href="https://wiki.swccg.com/wiki/Coruscant_(expansion)"><img src="https://swccg.com/packs/coruscant.jpg" vspace="25" hspace="1"/></a>
+        <a href="https://wiki.swccg.com/wiki/Reflections_III:_A_Collector%27s_Bounty"><img src="https://swccg.com/packs/ref3.jpg" vspace="25" hspace="1"/></a>
+        <a href="https://wiki.swccg.com/wiki/Theed_Palace"><img src="https://swccg.com/packs/theedpalace.jpg" vspace="25" hspace="1"/></a>
     </div>
 </div><!-- signin-page-packs -->
 </body>
