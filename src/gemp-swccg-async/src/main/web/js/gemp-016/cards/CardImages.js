@@ -6704,6 +6704,22 @@ const fixedImages = {
 "601_158":"https://wiki.swccg.com/images/2/20/VB3-110-Rebel_Leadership-PC-E1-cardmaker.png",
 "1230_113":"https://wiki.swccg.com/images/c/c4/VB3-116-Red_Squadron_7-PC-E1-cardmaker.png",
 
+// Batch B10 (Virtual Block 6): CardMaker recreations of the latest text (601_258 / 601_169 / 601_250 / 601_253 = current classes of 1261_94 / 1261_96 / 1261_106 / 1261_107; 1261_87 shows PC-E2).
+"1261_82":"https://wiki.swccg.com/images/9/96/VB6-81-Maneuvering_Flaps_Nick_Of_Time-PC-E1-cardmaker.png",
+"1261_87":"https://wiki.swccg.com/images/8/81/VB6-89-Strong_Is_Vader-PC-E2-cardmaker.png",
+"1261_94":"https://wiki.swccg.com/images/b/b8/VB6-94-Dont_Underestimate_Our_Chances-PC-E1-cardmaker.png",
+"601_258":"https://wiki.swccg.com/images/b/b8/VB6-94-Dont_Underestimate_Our_Chances-PC-E1-cardmaker.png",
+"1261_96":"https://wiki.swccg.com/images/0/0f/VB6-97-Ive_Decided_To_Go_Back-PC-E1-cardmaker.png",
+"601_169":"https://wiki.swccg.com/images/0/0f/VB6-97-Ive_Decided_To_Go_Back-PC-E1-cardmaker.png",
+"1261_101":"https://wiki.swccg.com/images/a/aa/VB6-102-Solo_Han-PC-E1-cardmaker.png",
+"1261_105":"https://wiki.swccg.com/images/3/3c/VB6-95-Odin_Nesloor_First_Aid-PC-E1-cardmaker.png",
+"1261_106":"https://wiki.swccg.com/images/3/36/VB6-110-Overseer-PC-E1-cardmaker.png",
+"601_250":"https://wiki.swccg.com/images/3/36/VB6-110-Overseer-PC-E1-cardmaker.png",
+"1261_107":"https://wiki.swccg.com/images/7/72/VB6-112-Wedge_In_Red_Squadron_1-PC-E1-cardmaker.png",
+"601_253":"https://wiki.swccg.com/images/7/72/VB6-112-Wedge_In_Red_Squadron_1-PC-E1-cardmaker.png",
+"1262_11":"https://wiki.swccg.com/images/7/72/VB6-11-So_Be_It_Jedi-PC-E1-cardmaker.png",
+"1263_6":"https://wiki.swccg.com/images/3/3b/VB6-06-Mercenary_Shadow_Pirate-PC-E1-cardmaker.png",
+
 // Legacy pre-errata versions (docs/legacy-versions.md; keep outside the generated legacy block).
 // Image = the wiki slip crop of the release sheet that printed that text (wiki page field image2).
 "2210_36":"https://wiki.swccg.com/images/2/2e/VB1-36-Forced_Servitude.png",
@@ -6907,7 +6923,7 @@ const fixedImages = {
 "2261_56":"https://wiki.swccg.com/images/c/c4/VB6-56-Black_1.png",
 "2261_107":"https://wiki.swccg.com/images/f/f9/VB6-112-Wedge_In_Red_Squadron_1.png",
 "2261_63":"https://wiki.swccg.com/images/8/84/VB6-65-Daughter_Of_Skywalker.png",
-"2261_87":"https://wiki.swccg.com/images/7/71/VB6-89-Strong_Is_Vader.png",
+"2261_87":"https://wiki.swccg.com/images/0/08/VB6-89-Strong_Is_Vader-original-sheet.png",
 "2261_90":"https://wiki.swccg.com/images/0/05/VB6-92-Ascension_Guns.png",
 "2262_7":"https://wiki.swccg.com/images/1/10/VB6-09-Power_Of_The_Sith.png",
 "2263_6":"https://wiki.swccg.com/images/b/b4/VB6-06-Mercenary_Shadow_Pirate.png",
