@@ -15,7 +15,7 @@ import java.time.LocalDate;
 public class Card2281_030 extends Card1281_030 {
     public Card2281_030() {
         super();
-        setGameText("Agenda: order. May be targeted by Might Of The Republic. Your characters with politics (except Wedge and senators) are deploy -1 (and gain [Republic]) here. During your turn, may use 1 Force to take into hand from Reserve Deck a card with 'governor,' 'political,' or 'Valorum' in lore; reshuffle.");
+        setGameText("Agenda: order. May be targeted by Might Of The Republic. Your characters with politics (except Wedge and senators) are deploy -1 (and gain [Republic]) here. During your turn, may use 1 Force to ▲ a card with 'governor,' 'political,' or 'Valorum' in lore.");
         setLegacyVersion(new LegacyVersion("1281_30", "", "Virtual Block 8.1 release sheet (2012-05-11)", LocalDate.of(2012, 5, 11), LocalDate.of(2012, 7, 21)));
     }
 }

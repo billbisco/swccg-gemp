@@ -15,7 +15,7 @@ import java.time.LocalDate;
 public class Card2281_033 extends Card1281_033 {
     public Card2281_033() {
         super();
-        setGameText("If you just forfeited a character (or opponent just drew destiny for Elis Helrot) deploy on table. Whenever you must lose Force from a (Virtual Block 4) objective targeting your non-Jedi character, reduce loss by 1. Elis Helrot and Nabrun Leids are canceled. (Immune to Control.)");
+        setGameText("If you just forfeited a character (or opponent just drew destiny for Elis Helrot) deploy on table. Whenever you must lose Force from a [Virtual Block 4] objective targeting your non-Jedi character, reduce loss by 1. Elis Helrot and Nabrun Leids are canceled. (Immune to Control.)");
         setLegacyVersion(new LegacyVersion("1281_33", "", "Virtual Block 8.1 release sheet (2012-05-11)", LocalDate.of(2012, 5, 11), LocalDate.of(2012, 7, 21)));
     }
 }

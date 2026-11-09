@@ -9,7 +9,7 @@ public class Card_2281_030_Tests {
     @Test
     public void SupremeChancellorValorumVersionIdentityAndText() {
         assertVersion("2281_30", "1281_30", "Supreme Chancellor Valorum",
-                "Agenda: order. May be targeted by Might Of The Republic. Your characters with politics (except Wedge and senators) are deploy -1 (and gain [Republic]) here. During your turn, may use 1 Force to take into hand from Reserve Deck a card with 'governor,' 'political,' or 'Valorum' in lore; reshuffle.",
+                "Agenda: order. May be targeted by Might Of The Republic. Your characters with politics (except Wedge and senators) are deploy -1 (and gain [Republic]) here. During your turn, may use 1 Force to ▲ a card with 'governor,' 'political,' or 'Valorum' in lore.",
                 "", java.time.LocalDate.of(2012, 5, 11), java.time.LocalDate.of(2012, 7, 21));
         assertSameCard("2281_30", "1281_30");
     }
