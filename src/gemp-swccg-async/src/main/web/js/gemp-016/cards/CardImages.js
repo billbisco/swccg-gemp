@@ -6620,6 +6620,21 @@ const fixedImages = {
 "1282_26":"https://wiki.swccg.com/images/9/92/VB8-04-Under_Jabbas_Protection-PC-E1-cardmaker.png",
 "1283_3":"https://wiki.swccg.com/images/9/99/VL-history-1283-3-master.png",
 "1283_12":"https://wiki.swccg.com/images/d/d4/VL-history-1283-12-master.png",
+// Batch B21 (Virtual Block 8): current cards show the image of their latest text. CardMaker recreations of the 2012 card-list texts (the PC card images and slips print the originals, kept on the 2281 version cards).
+// 2281_44 shows the release-sheet copy of the Infiltration front (original "Rebel Agent" text; the PC image prints PC-E1); 2281_1047 (Rebel Agent's Blaster Rifle PC-E1) its CardMaker image (edited in place below).
+"1281_26":"https://wiki.swccg.com/images/7/7f/VB8-02-Chewbacca_Walking_Carpet-PC-E1-cardmaker.png",
+"1281_27":"https://wiki.swccg.com/images/a/a7/VB8-01-Han_Solo_Innocent_Scoundrel-PC-E1-cardmaker.png",
+"1281_30":"https://wiki.swccg.com/images/f/f9/VB8-03-Supreme_Chancellor_Valorum-PC-E1-cardmaker.png",
+"1281_32":"https://wiki.swccg.com/images/4/49/VB8-03-Imperial_Navigation_Charts-PC-E1-cardmaker.png",
+"1281_33":"https://wiki.swccg.com/images/3/31/VB8-04-Redeemed_Apprentice-PC-E1-cardmaker.png",
+"1281_36":"https://wiki.swccg.com/images/2/2e/VB8-00-Scoundrels_Ingenuity-PC-E1-cardmaker.png",
+"1281_46":"https://wiki.swccg.com/images/0/00/VB8-03-Hans_Blaster_So_Uncivilized-PC-E1-cardmaker.png",
+// 601_107 / 601_108 / 601_111 / 601_122 / 601_126 are the PC-alias ids of 1281_27 / 1281_46 / 1281_32 / 1281_33 / 1281_36.
+"601_107":"https://wiki.swccg.com/images/a/a7/VB8-01-Han_Solo_Innocent_Scoundrel-PC-E1-cardmaker.png",
+"601_108":"https://wiki.swccg.com/images/0/00/VB8-03-Hans_Blaster_So_Uncivilized-PC-E1-cardmaker.png",
+"601_111":"https://wiki.swccg.com/images/4/49/VB8-03-Imperial_Navigation_Charts-PC-E1-cardmaker.png",
+"601_122":"https://wiki.swccg.com/images/3/31/VB8-04-Redeemed_Apprentice-PC-E1-cardmaker.png",
+"601_126":"https://wiki.swccg.com/images/2/2e/VB8-00-Scoundrels_Ingenuity-PC-E1-cardmaker.png",
 // Batch B20 (Virtual Block 8): current cards show the image of their latest text. CardMaker recreations of the 2012 card-list texts (the PC card images and slips print the originals, kept on the 2281 version cards); 601_27 / 601_24 are the classes of 1281_17 / 1281_23;
 // 1281_24 Contract Killers shows the Master List slip of its front (PC-E1; the PC card image prints a third wording). 1281_25 keeps its PC card image (it prints PC-E1).
 "1281_6":"https://wiki.swccg.com/images/9/98/VB8-03-Rtic_Hweei-PC-E1-cardmaker.png",
@@ -6937,9 +6952,9 @@ const fixedImages = {
 "2274_7":"https://wiki.swccg.com/images/b/b2/VB7-04-Occupied_Territory.png",
 "2274_8":"https://wiki.swccg.com/images/e/e7/VB7-05-Shadows_Of_The_Empire.png",
 "2274_17":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/motivator.gif",
+"2281_44":"https://wiki.swccg.com/images/3/3b/VL-history-1281-44-front-sheet.png",
 "2281_24":"https://wiki.swccg.com/images/2/21/VB8-00-Contract_Killers_Feared_Throughout_The_Galaxy.png",
 "2281_24_BACK":"https://wiki.swccg.com/images/6/67/VB8-07-Contract_Killers_Feared_Throughout_The_Galaxy.png",
-"2281_44":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/infiltration.gif",
 "2281_44_BACK":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/unlikelyallies.gif",
 "2281_47":"https://wiki.swccg.com/images/b/bd/VB8-02-Kyle_Katarns_Blaster_Rifle.png",
 "2282_14":"https://wiki.swccg.com/images/0/03/VB8-03-Lando_Calrissian_Unlikely_Hero.png",
@@ -6978,7 +6993,7 @@ const fixedImages = {
 "2200_1":"https://wiki.swccg.com/images/4/4e/VSh-D13-Firepower-original-cardmaker.png",
 "2281_1044":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/infiltration.gif",
 "2281_1044_BACK":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/unlikelyallies.gif",
-"2281_1047":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/kylekatarnsblasterrifle.gif",
+"2281_1047":"https://wiki.swccg.com/images/d/d9/VB8-02-Rebel_Agents_Blaster_Rifle-PC-E1-cardmaker.png",
 "2291_19":"https://res.starwarsccg.org/cards/legacy/VirtualBlock9-Dark/large/geonosissepartistcouncilroom.gif",
 "2291_29":"https://res.starwarsccg.org/cards/legacy/VirtualBlock9-Dark/large/separatistuprising.gif",
 "2291_29_BACK":"https://res.starwarsccg.org/cards/legacy/VirtualBlock9-Dark/large/atwarwithitself.gif",

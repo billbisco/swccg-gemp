@@ -15,7 +15,7 @@ import java.time.LocalDate;
 public class Card2281_027 extends Card1281_027 {
     public Card2281_027() {
         super();
-        setGameText("Adds 3 to power of anything he pilots. Draws one battle destiny if unable to otherwise. During battle, may fire a blaster twice. Once per turn, if opponent is about to draw weapon destiny targeting Han, they draw two and you choose one. Immune to attrition < 3 (< 4 if armed).");
+        setGameText("Adds 3 to power of anything he pilots. Draws one battle destiny if unable to otherwise. During battle, may fire a [Virtual Block 8] blaster twice. Once per turn, if opponent is about to draw weapon destiny targeting Han, they draw two and you choose one. Immune to attrition < 3 (< 4 if armed).");
         setLegacyVersion(new LegacyVersion("1281_27", "", "Virtual Block 8.1 release sheet (2012-05-11)", LocalDate.of(2012, 5, 11), LocalDate.of(2012, 12, 12)));
     }
 }

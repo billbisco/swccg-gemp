@@ -35,7 +35,7 @@ public class Card2281_047 extends AbstractCharacterWeapon {
         super(Side.LIGHT, 2, "Kyle Katarn's Blaster Rifle", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_1, Rarity.V);
         setLore("BlasTech E-11 blaster rifle. Standard issue for Imperial forces. So numerous that many have been stolen by Rebels. Extendable stock. Carries energy for 100 shots.");
         setGameText("Deploy on Rebel Agent. May target a character, creature or vehicle for free. Draw destiny (two if Scoundrel's Luck on table). Character or creature hit, and its forfeit = 0, if total destiny > defense value. Vehicle hit if total destiny -2 > defense value.");
-        setLegacyVersion(new LegacyVersion("1281_47", "", "Virtual Block 8.1 release sheet (2012-05-11), printed as Rebel Agent's Blaster Rifle", LocalDate.of(2012, 5, 11), LocalDate.of(2013, 4, 27)));
+        setLegacyVersion(new LegacyVersion("1281_47", "", "Virtual Block 8.1 release sheet (2012-05-11), printed as Rebel Agent's Blaster Rifle", LocalDate.of(2012, 5, 11), LocalDate.of(2012, 7, 21)));
         setPrintedTitle("Rebel Agent's Blaster Rifle");
         addKeywords(Keyword.BLASTER_RIFLE);
         setMatchingCharacterFilter(Filters.persona(Persona.KYLE_KATARN));
