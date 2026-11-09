@@ -6667,6 +6667,19 @@ const fixedImages = {
 "1230_102":"https://wiki.swccg.com/images/0/0e/VB3-103-Diversionary_Tactics-PC-E1-cardmaker.png",
 "601_180":"https://wiki.swccg.com/images/3/33/VB4-01-Arica-PC-E1-cardmaker.png",
 
+// Batch B06 (Virtual Block 3): CardMaker recreations of the latest text (601_158 = current class of 1230_109 Rebel Leadership (V); 1220_169 keeps its PC card image, which shows PC-E2).
+"1230_10":"https://wiki.swccg.com/images/0/01/VB3-10-Lieutenant_Grond-PC-E1-cardmaker.png",
+"1230_24":"https://wiki.swccg.com/images/8/8d/VB3-24-Bantha_Herd-PC-E1-cardmaker.png",
+"1230_28":"https://wiki.swccg.com/images/6/6e/VB3-29-Empires_New_Order-PC-E1-cardmaker.png",
+"1230_41":"https://wiki.swccg.com/images/2/2d/VB3-42-Dead_Ewok-PC-E1-cardmaker.png",
+"1230_47":"https://wiki.swccg.com/images/5/55/VB3-48-Scout_Recon-PC-E1-cardmaker.png",
+"1230_53":"https://wiki.swccg.com/images/4/4d/VB3-53-Accuser-PC-E1-cardmaker.png",
+"1230_76":"https://wiki.swccg.com/images/e/ea/VB3-77-Master_Luke-PC-E1-cardmaker.png",
+"1230_104":"https://wiki.swccg.com/images/f/fb/VB3-105-Endor_Celebration-PC-E1-cardmaker.png",
+"1230_109":"https://wiki.swccg.com/images/2/20/VB3-110-Rebel_Leadership-PC-E1-cardmaker.png",
+"601_158":"https://wiki.swccg.com/images/2/20/VB3-110-Rebel_Leadership-PC-E1-cardmaker.png",
+"1230_113":"https://wiki.swccg.com/images/c/c4/VB3-116-Red_Squadron_7-PC-E1-cardmaker.png",
+
 // Legacy pre-errata versions (docs/legacy-versions.md; keep outside the generated legacy block).
 // Image = the wiki slip crop of the release sheet that printed that text (wiki page field image2).
 "2210_36":"https://wiki.swccg.com/images/2/2e/VB1-36-Forced_Servitude.png",
@@ -7001,7 +7014,7 @@ const fixedImages = {
 "2220_66":"https://res.starwarsccg.org/cards/legacy/VirtualBlock2-Dark/large/shockingrevelation.gif",
 "2220_83":"https://wiki.swccg.com/images/3/30/VB2-83-AT_AT_Cannon.png",
 "2220_67":"https://res.starwarsccg.org/cards/legacy/VirtualBlock2-Dark/large/atatdeploymentplatform.gif",
-"2220_1169":"https://res.starwarsccg.org/cards/legacy/VirtualBlock2-Light/large/lukesblasterpistol.gif",
+"2220_1169":"https://wiki.swccg.com/images/5/57/VB2-169-Luke_s_Blaster_Pistol-PC-E1-cardmaker.png",
 "2220_161":"https://res.starwarsccg.org/cards/legacy/VirtualBlock2-Light/large/hothechomedlab.gif",
 // AI printings' pre-errata versions (docs/legacy-versions.md, "AI printings"): the AI image showing that text;
 // 2240_8ai and 2250_44ai reuse the current AI image (it shows the current text) until a CardMaker image exists.
