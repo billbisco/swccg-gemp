@@ -37,7 +37,7 @@ import java.util.List;
 public class Card1281_035 extends AbstractNormalEffect {
     public Card1281_035() {
         super(Side.LIGHT, 0, PlayCardZoneOption.ATTACHED, "Scoundrel's Charm", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_1, Rarity.V);
-        setLore("Sarcastic, Sardonic, Irreverent. Impertinent. Exasperating. Disrespectful. Outrageous and charming. Han was a scoundrel but Leia began to realize that she loved him.");
+        setLore("Sarcastic. Sardonic. Irreverent. Impertinent. Exasperating. Disrespectful. Outrageous and charming. Han was a scoundrel but Leia began to realize that she loved him.");
         setGameText("Deploy from under Scoundrel's Luck on a scoundrel. Once per turn, may peek at the top 3 cards of your Force pile and take one into hand; reshuffle. Once per turn, may use 1 Force to add or subtract 1 from an opponent's just-drawn destiny.");
         addIcons(Icon.SCOUNDREL);
         addKeywords(Keyword.DEPLOYS_ON_CHARACTERS);

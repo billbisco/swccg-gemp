@@ -41,7 +41,7 @@ public class Card1282_020 extends AbstractNormalEffect {
         super(Side.LIGHT, 5, PlayCardZoneOption.ATTACHED, "A Remote Planet", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_2, Rarity.V);
         setVirtualSuffix(true);
         setLore("In unfamiliar and potentially hostile territory, Qui-Gon knew that success would require patience and caution.");
-        setGameText("Deploy on The Hyperdrive Generator's Gone; treat \"4\" on it as \"2.\" Your Force generation at City Outskirts is +1. May deploy systems regardless of your Objective deployment restrictions. Once per game, may deploy Qui-Gon or Obi-Wan (and/or their matching weapon) from Reserve Deck; reshuffle. (Immune to Alter.)");
+        setGameText("Deploy on The Hyperdrive Generator's Gone: treat '4' on it as '2'. Your Force generation at City Outskirts is +1. May deploy systems regardless of your Objective deployment restrictions. Once per game, may deploy Qui-Gon or Obi-Wan (an/or their matching weapon_ from Reserve Deck; reshuffle. (Immune to Alter.)");
         addIcons(Icon.EPISODE_I, Icon.SETUP);
         addImmuneToCardTitle(Title.Alter);
     }

@@ -32,8 +32,8 @@ import java.util.List;
 public class Card601_204 extends AbstractCapitalStarship {
     public Card601_204() {
         super(Side.DARK, 2, 5, 5, 5, null, 3, 7, Title.Blockade_Support_Ship, Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
-        setLore("These heavily modified battleships are used to control and direct the Trade Federation's automated army. Easily identified by its array of sensors and antennae.");
-        setGameText("Unless Fondor on table, may deploy -3 as a 'react'. May add 3 pilots and 4 passengers. Permanent pilot provides ability of 2.");
+        setLore("These heavily modified battleships are used to control and direct the Trade Federation automated army. Easily identified by its array of sensors and antennae.");
+        setGameText("Unless Fondor on table, may deploy -3 as a 'react.' May add 3 pilots and 4 passengers. Permanent pilot provides ability of 2.");
         addModelType(ModelType.TRADE_FEDERATION_BATTLESHIP);
         addIcons(Icon.CORUSCANT, Icon.EPISODE_I, Icon.TRADE_FEDERATION, Icon.PILOT, Icon.NAV_COMPUTER, Icon.LEGACY_BLOCK_6);
         setPilotCapacity(3);

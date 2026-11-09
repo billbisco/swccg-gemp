@@ -52,7 +52,6 @@ public class Card1291_069 extends AbstractObjective {
         super(Side.LIGHT, 0, TITLE, ExpansionSet.VIRTUAL_BLOCK_9_1, Rarity.V);
         setFrontOfDoubleSidedCard(true);
         setGameText(PRINTED_GAMETEXT);
-        addIcons(Icon.EPISODE_I);
     }
 
     /**

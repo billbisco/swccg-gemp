@@ -39,7 +39,7 @@ public class Card1274_020 extends AbstractNormalEffect {
     public Card1274_020() {
         super(Side.LIGHT, 4, PlayCardZoneOption.ATTACHED, "Temporary Foothold", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_4, Rarity.V);
         setLore("Echo Base heavy weapons units provided covering fire, allowing Alliance personnel to escape Hoth.");
-        setGameText("Deploy on a battleground. While you occupy at least two battlegrounds, your Force drains here may not be canceled. During battle here or at a related location, may place this Effect in Used Pile to draw up to two cards from Reserve Deck.");
+        setGameText("Deploy on a battleground. While you occupy at least two battlegrounds, your Force drains here may not be canceled. During battle here or at a related location, may place this Effect in Used Pile to draw up to 2 cards from Reserve Deck.");
         addKeywords(Keyword.DEPLOYS_ON_LOCATION);
         addIcons(Icon.SETUP);
     }

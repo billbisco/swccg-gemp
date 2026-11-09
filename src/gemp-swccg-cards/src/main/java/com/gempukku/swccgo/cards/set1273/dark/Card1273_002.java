@@ -47,8 +47,8 @@ public class Card1273_002 extends AbstractImperial {
     public Card1273_002() {
         super(Side.DARK, 2, 3, 3, 3, 5, "Admiral Pellaeon", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_3, Rarity.V);
         setLore("Corellian leader. Lied about his age to enter the Academy. Took command of Chimaera when its captain was killed at the Battle of Endor. Admires Grand Admiral Thrawn.");
-        setGameText("Adds 2 to power of anything he pilots. May be revealed from hand to take Justifier into hand from Reserve Deck; reshuffle and deploy both simultaneously (for -1 Force each). Opponent's passengers here are forfeit = 0. Once per game, if aboard Justifier, may lose 1 Force to move away from battle as a 'react' (at hyperspeed +2).");
-        addIcons(Icon.PILOT);
+        setGameText("Adds 2 to power of anything he pilots. May be reveled from hand to take Justifier into hand from reserve deck; reshuffle and deploy both simultaneously (for -1 force each). Opponent's passengers here are forfeit = 0. Once per game, if aboard Justifier may lose one force to move away from battle as a react (at hyperspeed +2).");
+        addIcons(Icon.PILOT, Icon.REFLECTIONS_II);
         addKeywords(Keyword.LEADER, Keyword.ADMIRAL);
     }
 

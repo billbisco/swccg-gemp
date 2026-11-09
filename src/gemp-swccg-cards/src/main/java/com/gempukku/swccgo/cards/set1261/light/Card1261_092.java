@@ -34,7 +34,7 @@ public class Card1261_092 extends AbstractUsedOrLostInterrupt {
     public Card1261_092() {
         super(Side.LIGHT, 5, "Antilles Maneuver & Rebel Reinforcements", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
         setTitleComponents(new TitleComponent("Antilles Maneuver", Uniqueness.UNIQUE), new TitleComponent("Rebel Reinforcements", Uniqueness.UNIQUE));
-        setGameText("USED: Cancel Lateral Damage (Immune to Sense.) OR During opponent's deploy phase, deploy a Rebel of ability < 3 (except an admiral) aboard your starship from Reserve Deck; reshuffle. LOST: Once per game, if opponent has more cards with ability on table than you, draw destiny and retrieve up to that number of Rebels and/or Rebel starships (may take one retrieved card into hand).");
+        setGameText("USED: Cancel Lateral Damage. (Immune to Sense.) OR During opponent's deploy phase, deploy a Rebel of ability < 3 (except an admiral) aboard your starship from Reserve Deck; reshuffle. LOST: Once per game, if opponent has more cards with ability on table than you, draw destiny and retrieve up to that number of Rebels and/or Rebel starships (may take one retrieved card into hand).");
         addIcons(Icon.SPECIAL_EDITION);
     }
 

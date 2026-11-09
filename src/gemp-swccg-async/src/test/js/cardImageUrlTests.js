@@ -426,6 +426,36 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('2250_39'), 'https://res.s
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2250_60'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/anunusualamountoffear.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2250_19'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Dark/large/nutegunraysbounty.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2274_1'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Dark/large/gardullathehutt.gif');
+// Batch B33 (Virtual Blocks 6-9 eye check): current cards show CardMaker images of their PC-E1 card-list texts (601_63 = class of 1273_35); originals show the PC card images; Chasm/Abyss originals (2200_7 / 2200_15) CardMaker
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1273_35'), 'https://wiki.swccg.com/images/8/88/VB7-05-Yub_Yub_Commander-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_63'), 'https://wiki.swccg.com/images/8/88/VB7-05-Yub_Yub_Commander-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1271_45'), 'https://wiki.swccg.com/images/4/41/VB7-02-Rebel_Aces-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1273_14'), 'https://wiki.swccg.com/images/5/5b/VB7-p3-92-A_Dark_Time_For_The_Rebellion-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_18'), 'https://wiki.swccg.com/images/3/35/VB8-00-Give_Yourself_To_The_Dark_Side-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1282_20'), 'https://wiki.swccg.com/images/7/7d/VB8-p4-74-A_Remote_Planet-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2273_35'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/yubyubcommander.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2271_45'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/rebelaces.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2273_14'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Dark/large/adarktimefortherebellion.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_18'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Dark/large/giveyourselftothedarkside.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2282_20'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/aremoteplanet.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2200_7'), 'https://wiki.swccg.com/images/8/8a/VSh-07-Chasm-original-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2200_15'), 'https://wiki.swccg.com/images/b/bc/VSh-15-Abyss-original-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1200_7'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlockDS-Light/large/chasm.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1200_15'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlockDS-Dark/large/abyss.gif');
+// Batch B27 (Virtual Block 7): current cards show CardMaker images of their PC-E1 card-list texts (601_178 / 601_222 are the classes of 1273_1 / 1273_24); originals show the PC card images
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1272_26'), 'https://wiki.swccg.com/images/7/7e/VB7-p4-76-The_Camp-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1273_1'), 'https://wiki.swccg.com/images/f/f4/VB7-p2-79-5D6_RA_7_Fivedesix-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_178'), 'https://wiki.swccg.com/images/f/f4/VB7-p2-79-5D6_RA_7_Fivedesix-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1273_2'), 'https://wiki.swccg.com/images/c/c0/VB7-02-Admiral_Pellaeon-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1273_24'), 'https://wiki.swccg.com/images/f/f9/VB7-p5-105-Derek_Hobbie_Klivian-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_222'), 'https://wiki.swccg.com/images/f/f9/VB7-p5-105-Derek_Hobbie_Klivian-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2272_26'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/thecamp.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2273_1'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Dark/large/5d6ra7.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2273_2'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Dark/large/admiralpellaeon.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2273_24'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/derekhobbieklivian.gif');
+// Batch B34: Jedi Survivor (V) original (destiny 1) shows the release-sheet slip; the current card (destiny 3) the PC card image
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2250_41'), 'https://wiki.swccg.com/images/7/75/VB5-41-Jedi_Survivor.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_41'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/jedisurvivor.gif');
 // Batch B26 (Virtual Block 6): current cards show a CardMaker recreation of their PC-E1 card-list text; the originals (22xx) show the release-sheet slips
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_48'), 'https://wiki.swccg.com/images/4/47/VB6-51-Weapon_Levitation_The_Empires_Back-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_98'), 'https://wiki.swccg.com/images/4/47/VB6-51-Weapon_Levitation_The_Empires_Back-PC-E1-cardmaker.png');
@@ -450,3 +480,16 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('2200_1'), 'https://wiki.s
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2282_14'), 'https://wiki.swccg.com/images/0/03/VB8-03-Lando_Calrissian_Unlikely_Hero.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_50'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/landocalrissianunlikelyhero.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_35'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlockDS-Dark/large/fanfare.gif');
+// Batch B28: Temporary Foothold, Death Mark & Hutt Bounty, Het Nkik (V), Supreme Chancellor Valorum (V) (AI), Scoundrel's Charm, You May Start Your Landing (V) PC-E1 (CardMaker), originals on the PC card images
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1274_20'), 'https://wiki.swccg.com/images/a/af/VB7-04-Temporary_Foothold-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2274_20'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/temporaryfoothold.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_10'), 'https://wiki.swccg.com/images/0/09/VB8-05-Death_Mark_Hutt_Bounty-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_10'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Dark/large/deathmarkandhuttbounty.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_29'), 'https://wiki.swccg.com/images/b/bf/VB8-p5-30-Het_Nkik-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_29'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/hetnkik.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_30ai'), 'https://wiki.swccg.com/images/b/be/VB8-03-Supreme_Chancellor_Valorum_AI-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_35'), 'https://wiki.swccg.com/images/4/41/VB8-00-Scoundrels_Charm-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_125'), 'https://wiki.swccg.com/images/4/41/VB8-00-Scoundrels_Charm-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_35'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/scoundrelscharm.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1282_3'), 'https://wiki.swccg.com/images/4/4c/VB8-p2-56-You_May_Start_Your_Landing-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2282_3'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Dark/large/youmaystartyourlanding.gif');
