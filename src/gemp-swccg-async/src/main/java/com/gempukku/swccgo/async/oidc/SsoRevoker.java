@@ -14,7 +14,9 @@ import java.time.Duration;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
-import java.util.function.IntConsumer;
+import com.gempukku.swccgo.service.AdminService;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Tells swccg-login to end every sign-in session of a player that was just banned, deactivated or
@@ -24,7 +26,7 @@ import java.util.function.IntConsumer;
  * SWCCG_LOGIN_REVOKE_URL=http://swccg-login-test:8091/internal/v1/revoke
  * SWCCG_LOGIN_REVOKE_SECRET=... (at least 32 bytes; from a root-only env file)
  */
-public final class SsoRevoker implements IntConsumer {
+public final class SsoRevoker implements AdminService.RevocationListener {
     private static final Logger LOG = LogManager.getLogger(SsoRevoker.class);
     private static final String KEY_ID = "gemp";
     private final String _url;
@@ -46,11 +48,24 @@ public final class SsoRevoker implements IntConsumer {
         return new SsoRevoker(url, secret);
     }
 
+    /** Delays before each try; a reset is retried so swccg-login really drops the old methods. */
+    private static final long[] RETRY_SECONDS = {0, 2, 10, 60};
+
     @Override
-    public void accept(int playerId) {
+    public void revoked(int playerId, String reason) {
+        send(playerId, reason, 0);
+    }
+
+    /** The JSON body sent to swccg-login; reason is a fixed word. */
+    static byte[] body(int playerId, String reason) {
+        String r = reason == null || !reason.matches("[a-z_]{1,20}") ? "gemp_admin" : reason;
+        return ("{\"gemp_id\":" + playerId + ",\"reason\":\"" + r + "\"}").getBytes(StandardCharsets.UTF_8);
+    }
+
+    private void send(int playerId, String reason, int attempt) {
         try {
             URI uri = URI.create(_url);
-            byte[] body = ("{\"gemp_id\":" + playerId + ",\"reason\":\"gemp_admin\"}").getBytes(StandardCharsets.UTF_8);
+            byte[] body = body(playerId, reason);
             String ts = Long.toString(System.currentTimeMillis() / 1000);
             byte[] n = new byte[24];
             _random.nextBytes(n);
@@ -62,11 +77,21 @@ public final class SsoRevoker implements IntConsumer {
                     .header("X-Gemp-Nonce", nonce).header("X-Gemp-Signature", sig)
                     .POST(HttpRequest.BodyPublishers.ofByteArray(body)).build();
             _http.sendAsync(req, HttpResponse.BodyHandlers.discarding()).whenComplete((r, e) -> {
-                if (e != null || r.statusCode() != 200)
-                    LOG.warn("swccg-login revoke for player id " + playerId + " failed: " + (e != null ? e.getClass().getSimpleName() : r.statusCode()));
+                if (e != null || r.statusCode() != 200) {
+                    LOG.warn("swccg-login revoke (" + reason + ") for player id " + playerId + " failed: " + (e != null ? e.getClass().getSimpleName() : r.statusCode()));
+                    retry(playerId, reason, attempt);
+                }
             });
         } catch (Exception e) {
-            LOG.warn("swccg-login revoke for player id " + playerId + " failed: " + e.getClass().getSimpleName());
+            LOG.warn("swccg-login revoke (" + reason + ") for player id " + playerId + " failed: " + e.getClass().getSimpleName());
+            retry(playerId, reason, attempt);
         }
+    }
+
+    private void retry(int playerId, String reason, int attempt) {
+        if (attempt + 1 >= RETRY_SECONDS.length)
+            return;
+        CompletableFuture.delayedExecutor(RETRY_SECONDS[attempt + 1], TimeUnit.SECONDS)
+                .execute(() -> send(playerId, reason, attempt + 1));
     }
 }

@@ -4,6 +4,7 @@ import com.gempukku.swccgo.async.HttpProcessingException;
 import com.gempukku.swccgo.async.ResponseWriter;
 import com.gempukku.swccgo.async.oidc.JwtVerifier;
 import com.gempukku.swccgo.async.oidc.OidcClient;
+import com.gempukku.swccgo.async.oidc.PendingStarts;
 import com.gempukku.swccgo.game.Player;
 import com.gempukku.swccgo.service.AuthService;
 import io.netty.handler.codec.http.HttpHeaderNames;
@@ -20,7 +21,6 @@ import java.lang.reflect.Type;
 import java.security.MessageDigest;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,9 +29,11 @@ import java.util.concurrent.ConcurrentHashMap;
  * Sign in to GEMP with swccg-login (OpenID Connect authorization code flow with PKCE, state,
  * nonce and RFC 9207 iss). Only routed when SWCCG_LOGIN_ENABLED=true.
  *
+ *   GET  /gemp-swccg-server/oidc/status       {"enabled":true} (the login page shows its button on this)
  *   GET  /gemp-swccg-server/oidc/start        redirect to swccg-login
  *   GET  /gemp-swccg-server/oidc/callback     code -> ID token -> GEMP session by player id (sub)
- *   POST /gemp-swccg-server/oidc/backchannel  OpenID back-channel logout: ends the player's GEMP sessions
+ *   POST /gemp-swccg-server/oidc/backchannel-logout  OpenID back-channel logout: ends the player's GEMP sessions
+ *        ("backchannel" is still accepted as an alias)
  *
  * The player is found by the ID token's sub (the GEMP player id), never by name or email, and
  * GEMP's own ban/deactivation state is checked again here. No rights come from the token.
@@ -41,20 +43,19 @@ public class OidcRequestHandler extends SwccgoServerRequestHandler implements Ur
     static final String BIND_COOKIE = "gempOidcBind";
     private static final long PENDING_TTL_MS = 10 * 60_000L;
     private static final int MAX_PENDING = 20_000;
+    private static final int MAX_PENDING_PER_IP = 20;
 
     private final OidcClient _client;
-    private final Map<String, Pending> _pending = new ConcurrentHashMap<>();
+    private final PendingStarts<Pending> _pending = new PendingStarts<>(MAX_PENDING, MAX_PENDING_PER_IP, PENDING_TTL_MS);
     private final Map<String, Long> _seenJti = new ConcurrentHashMap<>();
 
     static final class Pending {
         final String nonce, verifier, bindHash;
-        final long expires;
 
-        Pending(String nonce, String verifier, String bindHash, long expires) {
+        Pending(String nonce, String verifier, String bindHash) {
             this.nonce = nonce;
             this.verifier = verifier;
             this.bindHash = bindHash;
-            this.expires = expires;
         }
     }
 
@@ -69,20 +70,20 @@ public class OidcRequestHandler extends SwccgoServerRequestHandler implements Ur
         int q = path.indexOf('?');
         if (q >= 0)
             path = path.substring(0, q);
-        if (path.equals("start") && request.method() == HttpMethod.GET)
-            start(responseWriter);
+        if (path.equals("status") && request.method() == HttpMethod.GET) {
+            // The login page shows "Sign in with swccg.com" only when this answers.
+            responseWriter.writeJsonResponse("{\"enabled\":true}");
+        } else if (path.equals("start") && request.method() == HttpMethod.GET)
+            start(responseWriter, remoteIp);
         else if (path.equals("callback") && request.method() == HttpMethod.GET)
             callback(request, responseWriter, remoteIp);
-        else if (path.equals("backchannel") && request.method() == HttpMethod.POST)
+        else if ((path.equals("backchannel-logout") || path.equals("backchannel")) && request.method() == HttpMethod.POST)
             backchannel(request, responseWriter);
         else
             throw new HttpProcessingException(404);
     }
 
-    private void start(ResponseWriter rw) throws Exception {
-        purge();
-        if (_pending.size() >= MAX_PENDING)
-            throw new HttpProcessingException(503);
+    private void start(ResponseWriter rw, String remoteIp) throws Exception {
         String state = _client.random(), nonce = _client.random(), verifier = _client.random(), bind = _client.random();
         String url;
         try {
@@ -91,7 +92,8 @@ public class OidcRequestHandler extends SwccgoServerRequestHandler implements Ur
             LOG.warn("swccg-login discovery failed: " + e.getClass().getSimpleName());
             throw new HttpProcessingException(503);
         }
-        _pending.put(state, new Pending(nonce, verifier, sha256(bind), System.currentTimeMillis() + PENDING_TTL_MS));
+        if (!_pending.put(state, new Pending(nonce, verifier, sha256(bind)), remoteIp, System.currentTimeMillis()))
+            throw new HttpProcessingException(429);
         Map<String, String> h = new HashMap<>();
         h.put("Location", url);
         h.put(HttpHeaderNames.SET_COOKIE.toString(), encodeProtectedCookie(BIND_COOKIE, bind, 600, CookieHeaderNames.SameSite.Lax));
@@ -102,9 +104,9 @@ public class OidcRequestHandler extends SwccgoServerRequestHandler implements Ur
     private void callback(HttpRequest request, ResponseWriter rw, String remoteIp) throws Exception {
         Map<String, List<String>> params = new QueryStringDecoder(request.uri()).parameters();
         String state = first(params, "state");
-        Pending p = state == null ? null : _pending.remove(state);
+        Pending p = _pending.take(state, System.currentTimeMillis());
         String bind = getCookieValue(request, BIND_COOKIE);
-        if (p == null || p.expires < System.currentTimeMillis() || bind == null
+        if (p == null || bind == null
                 || !MessageDigest.isEqual(p.bindHash.getBytes(StandardCharsets.US_ASCII), sha256(bind).getBytes(StandardCharsets.US_ASCII)))
             throw new HttpProcessingException(400);
         String iss = first(params, "iss");
@@ -178,13 +180,6 @@ public class OidcRequestHandler extends SwccgoServerRequestHandler implements Ur
         h.put("Location", location);
         h.put("Cache-Control", "no-store");
         rw.writeError(302, h);
-    }
-
-    private void purge() {
-        long now = System.currentTimeMillis();
-        for (Iterator<Map.Entry<String, Pending>> it = _pending.entrySet().iterator(); it.hasNext(); )
-            if (it.next().getValue().expires < now)
-                it.remove();
     }
 
     private static String first(Map<String, List<String>> p, String k) {
