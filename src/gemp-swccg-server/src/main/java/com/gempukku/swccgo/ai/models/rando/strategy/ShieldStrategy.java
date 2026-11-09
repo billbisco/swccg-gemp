@@ -110,7 +110,7 @@ public class ShieldStrategy {
             "Opponent pays 3 to drain without both theaters", 4));
 
         DARK_SHIELDS.put("Come Here You Big Coward", new ShieldInfo(
-            "Come Here You Big Coward", Arrays.asList("13_61", "225_3"),
+            "Come Here You Big Coward", Arrays.asList("13_61", "225_3", "225_60"),
             ShieldCategory.AUTO_PLAY_EARLY,
             "Punishes stacking at one battleground, stops retrieval",
             null, null, null, 5, 0));
@@ -144,8 +144,8 @@ public class ShieldStrategy {
             null, null, 99, 0));
 
         DARK_SHIELDS.put("You Cannot Hide Forever (V)", new ShieldInfo(
-            "You Cannot Hide Forever (V)", "200_100", ShieldCategory.SITUATIONAL_HIGH,
-            "Stops Podracing damage, cancels inserts", 99));
+            "You Cannot Hide Forever (V)", Arrays.asList("200_100", "200_148"), ShieldCategory.SITUATIONAL_HIGH,
+            "Stops Podracing damage, cancels inserts", null, null, null, 99, 0));
 
         // === SITUATIONAL MEDIUM ===
         DARK_SHIELDS.put("Resistance", new ShieldInfo(
@@ -214,8 +214,8 @@ public class ShieldStrategy {
             null, null, 99, 0));
 
         LIGHT_SHIELDS.put("Your Insight Serves You Well (V)", new ShieldInfo(
-            "Your Insight Serves You Well (V)", "200_32", ShieldCategory.SITUATIONAL_HIGH,
-            "Stops Podracing damage, Scanning Crew, inserts", 99));
+            "Your Insight Serves You Well (V)", Arrays.asList("200_32", "200_150"), ShieldCategory.SITUATIONAL_HIGH,
+            "Stops Podracing damage, Scanning Crew, inserts", null, null, null, 99, 0));
 
         // === SITUATIONAL MEDIUM ===
         LIGHT_SHIELDS.put("Ultimatum", new ShieldInfo(

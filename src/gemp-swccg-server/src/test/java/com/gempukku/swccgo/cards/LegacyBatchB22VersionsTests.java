@@ -82,9 +82,9 @@ public class LegacyBatchB22VersionsTests {
 
     @Test
     public void FanfarePrintingsShareOneCard() {
-        // Not split or merged in B22 (held for Bill): 1200_5 and 1272_9 both play 601_35.
+        // B35 (Bill 2026-11-09): 1200_5 (Reflections III) plays 601_35; 1272_9 (Tatooine) is its own card extending it.
         assertEquals("601_35", library.getBaseBlueprintId("1200_5"));
-        assertEquals("601_35", library.getBaseBlueprintId("1272_9"));
+        assertEquals("1272_9", library.getBaseBlueprintId("1272_9"));
     }
 
     @Test

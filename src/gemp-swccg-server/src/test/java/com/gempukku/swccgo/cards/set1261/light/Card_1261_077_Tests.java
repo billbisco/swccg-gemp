@@ -113,7 +113,7 @@ public class Card_1261_077_Tests {
     @Test
     public void LetsKeepALittleOptimismHereConversionPrintingCountsTowardTheExistingOutsideDeckShieldCap() throws DeckInvalidException {
         var library = new SwccgCardBlueprintLibrary();
-        assertEquals("1261_77", library.getBaseBlueprintId(shieldId()));
+        assertEquals(shieldId(), library.getBaseBlueprintId(shieldId()));
         var deck = new SwccgDeck("shield-cap");
         deck.addCard("13_5");
         for (int i = 0; i < 10; i++)
@@ -135,7 +135,8 @@ public class Card_1261_077_Tests {
         var other = scn.GetLSCard("otherPrinting");
         assertEquals(shieldId(), shield.getBlueprintId(true));
         assertFalse(shield.getBlueprintId(true).equals(other.getBlueprintId(true)));
-        assertEquals(shield.getBlueprint().getClass(), other.getBlueprint().getClass());
+        assertTrue(shield.getBlueprint().getClass().isAssignableFrom(other.getBlueprint().getClass())
+                || other.getBlueprint().getClass().isAssignableFrom(shield.getBlueprint().getClass()));
         assertEquals(shield.getBlueprint().getTitle(), other.getBlueprint().getTitle());
         scn.StartGame();
         scn.SkipToLSTurn(Phase.CONTROL);

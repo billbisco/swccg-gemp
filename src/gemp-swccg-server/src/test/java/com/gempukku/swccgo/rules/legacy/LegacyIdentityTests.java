@@ -26,6 +26,7 @@ import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -120,8 +121,10 @@ public class LegacyIdentityTests {
         SwccgCardBlueprint pc = library.getSwccgoCardBlueprint("601_35");
         assertNotNull(host);
         assertNotNull(pc);
-        assertEquals(pc.getClass(), host.getClass());
-        assertEquals("601_35", library.getBaseBlueprintId("1272_9"));
+        // B35 (Bill 2026-11-09): the Tatooine printing is its own card (own id, Tatooine icon) extending the Reflections III one
+        assertTrue(pc.getClass().isAssignableFrom(host.getClass()));
+        assertNotEquals(pc.getClass(), host.getClass());
+        assertEquals("1272_9", library.getBaseBlueprintId("1272_9"));
         assertEquals("601_35", library.getBaseBlueprintId("1200_5"));
         assertEquals(pc.getTitle(), host.getTitle());
 
@@ -130,7 +133,7 @@ public class LegacyIdentityTests {
         legacy.validateCard("1272_9", false);
         Set<String> alternates = library.getAllAlternates("601_35");
         assertNotNull(alternates);
-        assertTrue(alternates.contains("1272_9"));
+        assertFalse(alternates.contains("1272_9"));
         assertTrue(alternates.contains("1200_5"));
     }
 
