@@ -78,6 +78,26 @@ public class OidcClient {
                 + "&code_challenge=" + enc(challenge(verifier)) + "&code_challenge_method=S256";
     }
 
+    /**
+     * The OpenID Connect request for the in-page sign-in box: the same parameters as
+     * {@link #authorizeUrl}, for the page to post (or append to /authorize with idp=...).
+     * Needs no discovery round trip; the box derives its endpoints from the issuer.
+     */
+    @SuppressWarnings("unchecked")
+    public JSONObject boxParams(String state, String nonce, String verifier) throws Exception {
+        JSONObject o = new JSONObject();
+        o.put("issuer", _cfg.issuer);
+        o.put("client_id", _cfg.clientId);
+        o.put("redirect_uri", _cfg.redirectUri);
+        o.put("response_type", "code");
+        o.put("scope", "openid profile");
+        o.put("state", state);
+        o.put("nonce", nonce);
+        o.put("code_challenge", challenge(verifier));
+        o.put("code_challenge_method", "S256");
+        return o;
+    }
+
     /** Exchanges the code (client_secret_basic + PKCE) and returns the raw ID token. */
     public String exchange(String code, String verifier) throws Exception {
         String body = "grant_type=authorization_code&code=" + enc(code) + "&redirect_uri=" + enc(_cfg.redirectUri)

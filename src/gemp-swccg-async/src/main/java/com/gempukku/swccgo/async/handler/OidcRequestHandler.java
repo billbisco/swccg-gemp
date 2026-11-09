@@ -31,7 +31,11 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  *   GET  /gemp-swccg-server/oidc/status       {"enabled":true} (the login page shows its button on this)
  *   GET  /gemp-swccg-server/oidc/start        redirect to swccg-login
- *   GET  /gemp-swccg-server/oidc/callback     code -> ID token -> GEMP session by player id (sub)
+ *   GET  /gemp-swccg-server/oidc/box          the OIDC request for the in-page sign-in box (JSON);
+ *        the box posts it with the name and password (or a passkey) to swccg-login, or appends
+ *        it to /authorize with idp=google etc. Same pending state, cookie binding and limits as start.
+ *   GET  /gemp-swccg-server/oidc/callback     code -> ID token -> GEMP session by player id (sub);
+ *        an error (bad password etc.) goes back to the login page as ?sso_error=<reason>
  *   POST /gemp-swccg-server/oidc/backchannel-logout  OpenID back-channel logout: ends the player's GEMP sessions
  *        ("backchannel" is still accepted as an alias)
  *
@@ -75,6 +79,8 @@ public class OidcRequestHandler extends SwccgoServerRequestHandler implements Ur
             responseWriter.writeJsonResponse("{\"enabled\":true}");
         } else if (path.equals("start") && request.method() == HttpMethod.GET)
             start(responseWriter, remoteIp);
+        else if (path.equals("box") && request.method() == HttpMethod.GET)
+            box(responseWriter, remoteIp);
         else if (path.equals("callback") && request.method() == HttpMethod.GET)
             callback(request, responseWriter, remoteIp);
         else if ((path.equals("backchannel-logout") || path.equals("backchannel")) && request.method() == HttpMethod.POST)
@@ -101,6 +107,31 @@ public class OidcRequestHandler extends SwccgoServerRequestHandler implements Ur
         rw.writeError(302, h);
     }
 
+    private void box(ResponseWriter rw, String remoteIp) throws Exception {
+        String state = _client.random(), nonce = _client.random(), verifier = _client.random(), bind = _client.random();
+        String json = _client.boxParams(state, nonce, verifier).toJSONString();
+        if (!_pending.put(state, new Pending(nonce, verifier, sha256(bind)), remoteIp, System.currentTimeMillis()))
+            throw new HttpProcessingException(429);
+        Map<String, String> h = new HashMap<>();
+        h.put(HttpHeaderNames.CONTENT_TYPE.toString(), "application/json; charset=UTF-8");
+        h.put(HttpHeaderNames.SET_COOKIE.toString(), encodeProtectedCookie(BIND_COOKIE, bind, 600, CookieHeaderNames.SameSite.Lax));
+        h.put("Cache-Control", "no-store");
+        rw.writeByteResponse(json.getBytes(StandardCharsets.UTF_8), h);
+    }
+
+    /** Reasons the login page knows how to show; anything else is "failed". */
+    static final java.util.Set<String> SSO_REASONS = java.util.Set.of("bad_credentials", "rate_limited", "unavailable",
+            "blocked", "reset_required", "passkey_failed", "expired", "name_invalid", "name_taken", "weak_password",
+            "signup_limited", "signup_closed", "password_mismatch");
+
+    static String ssoErrorReason(String error, String description) {
+        if (description != null && SSO_REASONS.contains(description))
+            return description;
+        if ("access_denied".equals(error))
+            return "cancelled";
+        return "failed";
+    }
+
     private void callback(HttpRequest request, ResponseWriter rw, String remoteIp) throws Exception {
         Map<String, List<String>> params = new QueryStringDecoder(request.uri()).parameters();
         String state = first(params, "state");
@@ -113,7 +144,7 @@ public class OidcRequestHandler extends SwccgoServerRequestHandler implements Ur
         if (iss == null || !iss.equals(_client.config().issuer))
             throw new HttpProcessingException(400);
         if (first(params, "error") != null) {
-            redirect(rw, "/gemp-swccg/", null);
+            redirect(rw, "/gemp-swccg/?sso_error=" + ssoErrorReason(first(params, "error"), first(params, "error_description")), null);
             return;
         }
         String code = first(params, "code");

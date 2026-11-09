@@ -3,12 +3,36 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>Gemp-Swccg</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link rel="stylesheet" type="text/css" href="css/gemp-001/index.css">
     <link rel="stylesheet" type="text/css" href="css/gemp-001/delivery.css?v=20261006h">
     <link rel="stylesheet" type="text/css" href="css/dark-hive/jquery-ui-1.8.16.custom.css">
     <link rel="stylesheet" type="text/css" href="css/jquery.contextMenu.css">
     <link rel="stylesheet" type="text/css" href="js/jquery/styles/jquery.spinnercontrol.css">
+    <link rel="stylesheet" type="text/css" href="css/swccg-login-box.css?v=20261109a">
+    <style type="text/css">
+        /* swccg.com sign-in box on: the page flows top to bottom instead of absolute centring. */
+        body.sbox-pending div.centerContainer div.interaction { visibility: hidden; }
+        body.sbox-on { margin: 0; padding: 0 12px 24px; }
+        body.sbox-on div.centerContainer { position: static !important; width: auto; max-width: 420px; margin: 16px auto 0; }
+        body.sbox-on div.centerContainer div.interaction,
+        body.sbox-on div.centerContainer div.error { display: none; }
+        body.sbox-on div.centerContainer div.status { text-align: center; font-size: 13px; margin: 0 0 16px; }
+        body.sbox-on div.centerContainer div.status br + br { display: none; }
+        body.sbox-on #signin-page-logo img { max-width: 60vw; height: auto !important; }
+        body.sbox-on #signin-page-welcome-message h1 { font-size: 26px; margin: 8px 0 0; }
+        body.sbox-on #signin-page-packs { position: static !important; margin-top: 24px; }
+        body.sbox-on #signin-page-packs img { max-width: 12vw; height: auto; }
+        body.sbox-on .sbox-footer { margin: 14px 0 0; text-align: center; color: #a9abb3; font: 13px/1.4 system-ui, sans-serif; }
+        body.sbox-on .sbox-footer a { color: #a9abb3; }
+        @media (max-width: 420px) {
+            body.sbox-on { padding: 0 8px 16px; }
+            body.sbox-on #signin-page-welcome-message h1 { font-size: 20px; }
+            body.sbox-on #signin-page-packs { display: none; }
+        }
+    </style>
 
     <script type="text/javascript" src="js/jquery/jquery-1.6.2.js"></script>
     <script type="text/javascript" src="js/jquery/jquery-ui-1.8.16.custom.min.js"></script>
@@ -43,6 +67,7 @@
     <script type="text/javascript" src="js/gemp-016/gameUi.js"></script>
     <script type="text/javascript" src="js/gemp-016/gameAnimations.js"></script>
     <script type="text/javascript" src="js/gemp-016/merchantUi.js"></script>
+    <script type="text/javascript" src="js/swccg-login-box.js?v=20261109a"></script>
 
     <script type="text/javascript">
         jQuery.fn.center = function () {
@@ -185,11 +210,6 @@
             loginButton.click(login);
             
             $(".interaction").append(loginButton);
-            // "Sign in with swccg.com" (swccg-login). Shown only when the server has it switched on
-            // (SWCCG_LOGIN_ENABLED); style it with the .sso-signin class in css.
-            $(".interaction").append("<div id='ssoSignIn' style='display:none'><br/>or <a class='sso-signin' href='/gemp-swccg-server/oidc/start'>Sign in with swccg.com</a></div>");
-            $.ajax({type: "GET", url: "/gemp-swccg-server/oidc/status", cache: false, dataType: "json",
-                success: function (s) { if (s && s.enabled) { $("#ssoSignIn a").button(); $("#ssoSignIn").show(); } }});
             $(".interaction").append("<br/><br/><a href='mailto:communications@starwarsccg.org?subject=Gemp%20Password%20Reset'>Forgot your password? Contact the <span style='color:orange'>Communications Advocate</span></a>.");
             $(".interaction").append("<br/><br/>Play the LOTR-TCG on GEMP at <a href='https://play.lotrtcgpc.net'>play.lotrtcgpc.net</a>");
             
@@ -216,7 +236,50 @@
                             });
                     loginScreen();
                     $(".centerContainer").center();
+                    chooseSignIn();
                 });
+
+        // The swccg.com sign-in box (one account for Play, Wiki and Forum) replaces the classic form
+        // when the server has swccg-login switched on (SWCCG_LOGIN_ENABLED). The classic form stays
+        // as the fallback: when the status call fails, and when the box reports reset_required or
+        // unavailable.
+        function chooseSignIn() {
+            var decided = false;
+            function classic() {
+                if (decided) return;
+                decided = true;
+                $("body").removeClass("sbox-pending sbox-on");
+                $(".sbox-wrap").hide();
+                $(".centerContainer").center();
+            }
+            $("body").addClass("sbox-pending");
+            setTimeout(classic, 4000);
+            $.ajax({type: "GET", url: "/gemp-swccg-server/oidc/status", cache: false, dataType: "json", timeout: 3500,
+                success: function (s) {
+                    if (decided) return;
+                    if (!(s && s.enabled) || !window.SwccgSignInBox || !window.fetch) { classic(); return; }
+                    decided = true;
+                    $("body").removeClass("sbox-pending").addClass("sbox-on");
+                    $(".sbox-wrap").show();
+                    var el = $(".sbox-wrap .sbox")[0];
+                    el.sbox = new SwccgSignInBox(el);
+                },
+                error: classic});
+            $(".sbox-wrap .sbox").bind("sbox:error", function (e) {
+                var reason = e.originalEvent && e.originalEvent.detail ? e.originalEvent.detail.reason : "";
+                if (reason != "reset_required" && reason != "unavailable") return;
+                e.preventDefault();
+                var name = $("#sbox-name").val();
+                $("body").removeClass("sbox-on");
+                $(".sbox-wrap").hide();
+                loginScreen();
+                $("#login").val(name);
+                $(".error").text(reason == "reset_required"
+                    ? "Your password has been reset. Log in below to choose a new one."
+                    : "Single sign-on isn't answering right now. Log in below instead.");
+                $(".centerContainer").center();
+            });
+        }
     </script>
 
 </head>
@@ -228,6 +291,80 @@
     <div class="error"></div>
     <div class="interaction">
         
+    </div>
+    <div class="sbox-wrap" style="display:none">
+        <section class="sbox" data-sbox-manual aria-labelledby="sbox-title" data-issuer="https://login.swccg.com" data-params-url="/gemp-swccg-server/oidc/box" data-error-param="sso_error">
+          <h2 class="sbox-title" id="sbox-title">Sign in</h2>
+          <p class="sbox-sub">One account for Play, Wiki and Forum.</p>
+          <div class="sbox-error" id="sbox-error" role="alert" tabindex="-1" hidden></div>
+
+          <form class="sbox-form" method="post" action="https://login.swccg.com/signin/password" novalidate>
+            <input type="hidden" name="mode" value="signin">
+            <input type="hidden" name="client_id" value="">
+            <input type="hidden" name="redirect_uri" value="">
+            <input type="hidden" name="response_type" value="">
+            <input type="hidden" name="scope" value="">
+            <input type="hidden" name="state" value="">
+            <input type="hidden" name="nonce" value="">
+            <input type="hidden" name="code_challenge" value="">
+            <input type="hidden" name="code_challenge_method" value="">
+            <div class="sbox-field">
+              <label for="sbox-name">Player name</label>
+              <input id="sbox-name" name="name" type="text" autocomplete="username webauthn"
+                     autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="40" required>
+              <p class="sbox-hint sbox-name-hint" hidden>2 to 10 letters, digits, - or _. Other players see it.</p>
+            </div>
+            <div class="sbox-field">
+              <label for="sbox-password">Password</label>
+              <div class="sbox-pw">
+                <input id="sbox-password" name="password" type="password" autocomplete="current-password" required>
+                <button type="button" class="sbox-reveal" aria-pressed="false" aria-label="Show password" aria-controls="sbox-password">Show</button>
+              </div>
+            </div>
+            <div class="sbox-field sbox-confirm" hidden>
+              <label for="sbox-confirm">Password again</label>
+              <input id="sbox-confirm" name="confirm" type="password" autocomplete="new-password">
+            </div>
+            <div class="sbox-hp" aria-hidden="true">
+              <label for="sbox-website">Leave this empty</label>
+              <input id="sbox-website" name="website" type="text" tabindex="-1" autocomplete="off">
+            </div>
+            <button type="submit" class="sbtn sbtn-primary">Sign in</button>
+          </form>
+
+          <p class="sbox-links">
+            <span data-sbox-show="signin">New here? <button type="button" class="sbox-link" data-sbox-toggle="signup">Create an account</button>
+              &middot; <button type="button" class="sbox-link" data-sbox-toggle="forgot" aria-expanded="false" aria-controls="sbox-forgot">Forgot password?</button></span>
+            <span data-sbox-show="signup" hidden>Have an account? <button type="button" class="sbox-link" data-sbox-toggle="signup">Sign in</button></span>
+          </p>
+          <div class="sbox-note sbox-forgot" id="sbox-forgot" tabindex="-1" hidden>
+            Email the <a href="mailto:communications@starwarsccg.org?subject=Gemp%20Password%20Reset">Communications Advocate</a> with your player name to reset your password.
+            Have a passkey or a linked sign-in? Use it below instead.
+          </div>
+
+          <div class="sbox-divider" role="separator"><span>or</span></div>
+
+          <button type="button" class="sbtn sbtn-passkey"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="7" r="4"/><path d="M2 21v-1a6 6 0 0 1 9-5.2"/><circle cx="17.5" cy="13.5" r="2.5"/><path d="M17.5 16v6M17.5 19.5h2M17.5 22h2"/></svg><span>Sign in with a passkey</span></button>
+          <button type="button" class="sbtn sbtn-google" data-idp="google" disabled><svg class="ico" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg><span>Continue with Google</span><span class="sbox-soon">coming soon</span></button>
+          <button type="button" class="sbtn sbtn-discord" data-idp="discord" disabled><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/></svg><span>Continue with Discord</span><span class="sbox-soon">coming soon</span></button>
+          <button type="button" class="sbtn sbtn-facebook" data-idp="facebook" disabled><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.350 9.101 11.647Z"/></svg><span>Continue with Facebook</span><span class="sbox-soon">coming soon</span></button>
+          <button type="button" class="sbtn sbtn-x" data-idp="x" disabled><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg><span>Continue with X</span><span class="sbox-soon">coming soon</span></button>
+          <button type="button" class="sbtn sbtn-telegram" data-idp="telegram" disabled><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.230.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg><span>Continue with Telegram</span><span class="sbox-soon">coming soon</span></button>
+
+          <form class="sbox-pk-form" method="post" action="https://login.swccg.com/signin/passkey" hidden>
+            <input type="hidden" name="client_id" value="">
+            <input type="hidden" name="redirect_uri" value="">
+            <input type="hidden" name="response_type" value="">
+            <input type="hidden" name="scope" value="">
+            <input type="hidden" name="state" value="">
+            <input type="hidden" name="nonce" value="">
+            <input type="hidden" name="code_challenge" value="">
+            <input type="hidden" name="code_challenge_method" value="">
+            <input type="hidden" name="flow" value="">
+            <input type="hidden" name="credential" value="">
+          </form>
+        </section>
+        <p class="sbox-footer">Play the LOTR-TCG on GEMP at <a href="https://play.lotrtcgpc.net">play.lotrtcgpc.net</a></p>
     </div>
 </div>
 <div id="signin-page-packs">
