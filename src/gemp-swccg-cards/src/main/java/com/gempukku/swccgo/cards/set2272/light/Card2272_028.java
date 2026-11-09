@@ -35,8 +35,8 @@ public class Card2272_028 extends AbstractSystem {
         setLocationLightSideGameText("Unless opponent controls this system, Commence Primary Ignition may not target it.");
         setLegacyVersion(new LegacyVersion("1272_28", "",
                 "Virtual Block 7 preview (PC news 2010-07-23, effective 2010-07-26)", LocalDate.of(2010, 7, 26), LocalDate.of(2010, 12, 15)));
-        setLocationDarkSideGameText("Force Drain -1 here. If you control, Asteroid Sanctuary at related sector is canceled.");
-        setGameText("Light: Unless opponent controls this system, Commence Primary Ignition may not target it. Dark: Force Drain -1 here. If you control, Asteroid Sanctuary at related sector is canceled.");
+        setLocationDarkSideGameText("Force drain -1 here. If you control, Asteroid Sanctuary at related sector is canceled.");
+        setGameText("Light: Unless opponent controls this system, Commence Primary Ignition may not target it. Dark: Force drain -1 here. If you control, Asteroid Sanctuary at related sector is canceled.");
         addIcon(Icon.LIGHT_FORCE, 2);
         addIcon(Icon.DARK_FORCE, 1);
         addIcons(Icon.SPECIAL_EDITION, Icon.PLANET);

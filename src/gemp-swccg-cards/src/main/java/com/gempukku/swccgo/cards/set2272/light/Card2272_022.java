@@ -45,7 +45,7 @@ public class Card2272_022 extends AbstractNormalEffect {
         setLore("Smugglers from many worlds are hunted by the Empire for providing arms and supplies to the Alliance. The Outer Rim is their refuge.");
         setGameText("Deploy on table; take and stack a non-lightsaber weapon (without 'lost' in game text) here from Reserve Deck; reshuffle. If a battle was just initiated, may deploy weapon here on a participating card. Return weapon here at end of weapons segment (if possible), if it leaves table, or at end of battle. (Immune to Alter.)");
         setLegacyVersion(new LegacyVersion("1272_22", "",
-                "Virtual Block 7.2 release sheet (2010-12-15)", LocalDate.of(2010, 12, 15), LocalDate.of(2013, 4, 27)));
+                "Virtual Block 7.2 release sheet (2010-12-15); superseded by the PC card list text (by 2012-07-21)", LocalDate.of(2010, 12, 15), LocalDate.of(2012, 7, 21)));
         addImmuneToCardTitle(Title.Alter);
     }
 

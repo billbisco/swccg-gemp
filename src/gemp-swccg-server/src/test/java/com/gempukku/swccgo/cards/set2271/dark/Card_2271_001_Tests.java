@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import static com.gempukku.swccgo.cards.set2271.VersionAsserts.assertVersion;
+import static com.gempukku.swccgo.cards.set2271.VersionAsserts.assertVersionWithLore;
+import com.gempukku.swccgo.common.Keyword;
 import static org.junit.Assert.assertEquals;
 
 /** Original Grievous, Hunter Of Jedi (Jun 2010 slip, printed as Cyborg Commander), a version of 1271_1. */
@@ -29,9 +31,11 @@ public class Card_2271_001_Tests {
     @Test
     public void OriginalGrievousIsTheCurrentCardWithTheJune2010Text() {
         var s = scenario();
-        assertVersion(s.GetDSCard("grievous").getBlueprint(), s.GetDSCard("current").getBlueprint(), "1271_1", "",
-                LocalDate.of(2010, 6, 18), LocalDate.of(2013, 4, 27),
-                "[Virtual Block 5] Dark Jedi Lightsaber may deploy on Cyborg Commander. Jedi present are power -1 (-2 if a Jedi Council Member). While armed with a lightsaber, your battle destiny draws here are +1 and his forfeit may not be reduced. Immune to attrition < 4.");
+        // Printed lore "Leader. \"He's no Jedi.\"" (Commander came with the 2013 persona change).
+        assertVersionWithLore(s.GetDSCard("grievous").getBlueprint(), s.GetDSCard("current").getBlueprint(), "1271_1", "",
+                LocalDate.of(2010, 6, 18), LocalDate.of(2012, 7, 21),
+                "[Virtual Block 5] Dark Jedi Lightsaber may deploy on Cyborg Commander. Jedi present are power -1 (-2 if a Jedi Council Member). While armed with a lightsaber, your battle destiny draws here are +1 and his forfeit may not be reduced. Immune to attrition < 4.",
+                "Leader. \"He's no Jedi.\"", Keyword.COMMANDER);
     }
 
     @Test

@@ -44,7 +44,7 @@ public class Card2272_005 extends AbstractNormalEffect {
         setLore("The Empire's efficient, fear-driven logistical systems can quickly divert weapons and equipment from one conflict to another, focusing on regions of highest strategic priority.");
         setGameText("Deploy on table; take into hand from Reserve Deck and stack a non-lightsaber weapon (without 'lost' in game text) here; reshuffle. If a battle was just initiated, may deploy weapon here on a participating card. Return weapon here at end of weapons segment (if possible), if it leaves table, or at end of battle. (Immune to Alter.)");
         setLegacyVersion(new LegacyVersion("1272_5", "",
-                "Virtual Block 7.2 release sheet (2010-12-15)", LocalDate.of(2010, 12, 15), LocalDate.of(2013, 4, 27)));
+                "Virtual Block 7.2 release sheet (2010-12-15); superseded by the PC card list text (by 2012-07-21)", LocalDate.of(2010, 12, 15), LocalDate.of(2012, 7, 21)));
         addIcons(Icon.HOTH);
         addImmuneToCardTitle(Title.Alter);
     }
