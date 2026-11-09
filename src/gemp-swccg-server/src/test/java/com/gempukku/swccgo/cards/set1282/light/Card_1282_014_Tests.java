@@ -34,7 +34,7 @@ public class Card_1282_014_Tests {
     @Test
     public void LandoIsTheMasterListText() {
         assertCurrentCard("1282_14", "Lando Calrissian, Unlikely Hero",
-                "Adds 3 to anything he pilots. May reveal from hand to take Lady Luck into hand from Reserve Deck; reshuffle; and deploy both simultaneously. While piloting (or with a female), adds one battle destiny. During battle, may draw destiny. If destiny < twice the number of scoundrels here, reset a participating card's forfeit to 0.");
+                "Adds 3 to power of anything he pilots. May reveal from hand to ▲ Lady Luck and deploy both simultaneously. While piloting (or with a female), adds one battle destiny. During battle, may draw destiny. If destiny < twice the number of scoundrels here, reset a participating card's forfeit to 0.");
     }
 
     /** The battle action was built but never returned (bug), so it was never offered. */

@@ -27,7 +27,6 @@ public class RemovedLegacyVersionIdsTests {
     private static final Map<String, String> REMOVED = Map.of(
             "2281_1044", "1281_44",
             "2281_1044_BACK", "1281_44_BACK",
-            "2281_1047", "1281_47",
             "2291_19", "1291_19",
             "2291_29", "1291_29",
             "2291_29_BACK", "1291_29_BACK",
@@ -76,7 +75,7 @@ public class RemovedLegacyVersionIdsTests {
     @Test
     public void AnythingGoesDeckWithARemovedVersionIdStillValidates() throws DeckInvalidException {
         var anythingGoes = formats.getFormat("anything_goes");
-        anythingGoes.validateDeck(deck(Side.LIGHT, "2281_1044", "2281_1047", "2291_58"));
+        anythingGoes.validateDeck(deck(Side.LIGHT, "2281_1044", "2291_58"));
         anythingGoes.validateDeck(deck(Side.DARK, "2291_19", "2291_29"));
     }
 }

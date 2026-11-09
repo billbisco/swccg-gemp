@@ -39,7 +39,7 @@ public class Card1281_033 extends AbstractImmediateEffect {
     public Card1281_033() {
         super(Side.LIGHT, 4, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Redeemed Apprentice", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_1, Rarity.V);
         setLore("'I know there is good in you. The Emperor hasn't driven it from you fully.'");
-        setGameText("If you just forfeited a character (or opponent just drew destiny for Elis Helrot) deploy on table. Whenever you must lose Force from a (Virtual Block 4) objective targeting your non-jedi character, reduce that loss by 1. Elis Herlot and Nabrun Leids are canceled. (Immune to Control).");
+        setGameText("If you just forfeited a character (or opponent just drew destiny for Elis Helrot) deploy on table. Whenever you must lose Force from a [Virtual Block 4] objective targeting your non-jedi character, reduce that loss by 1. Elis Herlot and Nabrun Leids are canceled. (Immune to Control).");
         addImmuneToCardTitle(Title.Control);
     }
 

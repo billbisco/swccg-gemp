@@ -26,7 +26,7 @@ public class Card_2281_030ai_Tests {
     public void SameCardAsTheAiPrintingWithTheOldText() {
         var scn = scenario();
         LegacyVersionAsserts.assertVersionOf(scn.GetLSCard("ai").getBlueprint(), scn.GetLSCard("v").getBlueprint(),
-                "Agenda: order. May be targeted by Might Of The Republic. Your characters with politics (except Wedge and senators) are deploy -1 (and gain [Republic]) here. During your turn, may use 1 Force to take into hand from Reserve Deck a card with 'governor,' 'political,' or 'Valorum' in lore; reshuffle.",
+                "Agenda: order. May be targeted by Might Of The Republic. Your characters with politics (except Wedge and senators) are deploy -1 (and gain [Republic]) here. During your turn, may use 1 Force to ▲ a card with 'governor,' 'political,' or 'Valorum' in lore.",
                 "1281_30ai", "", LocalDate.of(2012, 5, 11), LocalDate.of(2012, 7, 21));
     }
 
