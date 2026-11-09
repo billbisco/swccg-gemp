@@ -27,7 +27,7 @@ public class Card1261_069 extends AbstractRebel {
     public Card1261_069() {
         super(Side.LIGHT, 1, 3, 3, 3, 7, "Leia, Optimistic Leader", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
         setLore("Spy. After escaping Detention Block AA-23, Rebels found themselves in the trash compactor. Leia pointed out, \"It could be worse.\" It soon was.");
-        setGameText("Adds 1 to power of anything she pilots. Dark Jedi deploy are +1 here. May move as a 'react' (one other Rebel present may move with her). While armed with Leia's Sporting Blaster, its weapon destiny draws are +1 and Leia is power +1. Immune to attrition < 3.");
+        setGameText("Adds 1 to power of anything she pilots. Dark Jedi deploy +1 here. May move as a 'react' (one other Rebel present may move with her). While armed with Leia's Sporting Blaster, its weapon destiny draws are +1 and Leia is power +1. Immune to attrition < 3.");
         addPersona(Persona.LEIA);
         addIcons(Icon.PILOT, Icon.WARRIOR);
         addKeywords(Keyword.SPY, Keyword.FEMALE);

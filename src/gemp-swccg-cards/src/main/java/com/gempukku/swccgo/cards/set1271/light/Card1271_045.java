@@ -41,7 +41,7 @@ import java.util.List;
 public class Card1271_045 extends AbstractMission {
     public Card1271_045() {
         super(Side.LIGHT, 2, "Rebel Aces", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_1, Rarity.V, false);
-        setGameText("Deploy on table. Your Sandwhirl is canceled. At battleground systems where you have a Rebel of ability = 2 piloting a starfighter, and you have no Force drain bonus (except from the system card itself), your Force drains are +1. Your starfighters with a pilot character aboard are immune to attrition < 4. Once per turn, may deploy Close Air Support from Reserve Deck; reshuffle. Your Rebel starfighters without astromech capacity (except Falcon or Artoo-Detoo In Red 5) gain 'May add 1 astromech.'");
+        setGameText("Deploy on table. Your Sandwhirl is canceled. At battleground systems where you have a Rebel of ability = 2 piloting a starfighter, and you have no Force drain bonus (except from the system card itself), your Force drains are +1. Your starfighters with a pilot character aboard are immune to attrition < 4. Once per turn, may deploy Close Air Support from Reserve Deck; reshuffle. Your Rebel starfighters without astromech capacit (except Falcon or Artoo-Detoo In Red 5) gain 'May add 1 astromech.'");
         addIcons(Icon.SETUP, Icon.DEATH_STAR_II);
     }
 

@@ -44,7 +44,7 @@ public class Card1273_014 extends AbstractUsedInterrupt {
         super(Side.DARK, 4, "A Dark Time For The Rebellion", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_3, Rarity.V);
         setVirtualSuffix(true);
         setLore("Absolute control wielded by the Emperor enables the Imperial forces to dominate planetary systems before the Rebel Alliance can gain a foothold.");
-        setGameText("If opponent went first this game, retrieve 1 Force when you play this Interrupt. Add or subtract 1 from opponent's just drawn destiny. OR Activate up to 2 Force. OR Take Control into hand from Reserve Deck; reshuffle. OR Until end of turn, battle destiny draws may not be modified or canceled (unless being redrawn).");
+        setGameText("If opponent went first this game, retrieve 1 force when you play this Interrupt. Add or subtract 1 from opponent's just drwn destiny. OR Activate up to 2 Force. Or take Control into hand from Reserve Deck; reshuffle. OR Until end of turn, battle destiny draws may not be modified or canceled (unless being redrawn).");
     }
 
     @Override
