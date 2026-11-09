@@ -525,3 +525,16 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('2220_1072'), 'https://wik
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2220_1072_BACK'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock2-Dark/large/imperialcontrol.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2220_72_BACK'), 'https://wiki.swccg.com/images/2/21/VB2-72E-Imperial_Control.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2220_72'), 'https://wiki.swccg.com/images/e/e7/VB2-72E-Imperial_Occupation.png');
+// Batch B38: forum errata of 2014 (R5): current cards show CardMaker recreations of the new text; the originals keep the PC card images
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1263_34'), 'https://wiki.swccg.com/images/1/1b/VB6-34-Rogue_Squadron_X_wing-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1240_79'), 'https://wiki.swccg.com/images/7/7e/VB4-78-Corellian_Engineering_Corporation-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_137'), 'https://wiki.swccg.com/images/7/7e/VB4-78-Corellian_Engineering_Corporation-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_36'), 'https://wiki.swccg.com/images/2/2c/VB6-37-Protocol_Failure-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_85'), 'https://wiki.swccg.com/images/e/e4/VB6-86-Return_Of_The_Jedi-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1262_1'), 'https://wiki.swccg.com/images/0/00/VB6-01-4_LOM_With_Concussion_Rifle-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_177'), 'https://wiki.swccg.com/images/0/00/VB6-01-4_LOM_With_Concussion_Rifle-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2263_34'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Light/large/roguesquadronxwing.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2240_79'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Light/large/corellianengineeringcorporation.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_36'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/protocolfailure.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_85'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Light/large/returnofthejedi.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2262_1'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/4lomwithconcussionrifle.gif');

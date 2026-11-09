@@ -38,7 +38,7 @@ public class Card1261_036 extends AbstractImmediateEffect {
         super(Side.DARK, 4, PlayCardZoneOption.ATTACHED, "Protocol Failure", Uniqueness.UNRESTRICTED,
                 ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
         setLore("'Oh my! Oh, uh, I'm, I'm terribly sorry. I. . . I didn't mean to intrude. No, no, no, please don't get up. No!'");
-        setGameText("Deploy on a site to cancel a Force drain there. Vader is deploy -1 here. At end of your turn, place this Effect in Lost Pile. OR At any time, target a unique (•) [Episode I] droid. Opponent chooses: deploy on droid (its game text is canceled), or place this Effect in Lost Pile (you may take any one card into hand from Reserve Deck; reshuffle). (Immune to Control.)");
+        setGameText("Deploy on a site to cancel a Force drain there. Vader is deploy -1 here. At end of your turn If you control this site, place this Effect in Lost Pile. OR At any time, target a unique (•) [Episode I] droid. Opponent chooses: deploy on droid (its game text is canceled), or place this Effect in Lost Pile (you may ▲ any one card). [Immune to Control]");
         addIcons(Icon.CLOUD_CITY);
         addKeywords(Keyword.DEPLOYS_ON_LOCATION);
         addImmuneToCardTitle(Title.Control);
@@ -135,11 +135,19 @@ public class Card1261_036 extends AbstractImmediateEffect {
             action.appendEffect(new CancelForceDrainEffect(action));
             return List.of(action);
         }
-        if (TriggerConditions.isEndOfYourTurn(game, result, self)) {
+        if (TriggerConditions.isEndOfYourTurn(game, result, self) && isLostAtEndOfTurn(game, self, attachment)) {
             var action = new RequiredGameTextTriggerAction(self, sourceId);
             action.appendEffect(new LoseCardFromTableEffect(action, self));
             return List.of(action);
         }
         return null;
+    }
+
+    /**
+     * "At end of your turn If you control this site, place this Effect in Lost Pile" (Competitive Balance Team errata,
+     * PC forum 2014-04-16). The original (2261_36) is lost at the end of every turn of yours.
+     */
+    protected boolean isLostAtEndOfTurn(SwccgGame game, PhysicalCard self, PhysicalCard site) {
+        return GameConditions.controls(game, self.getOwner(), site);
     }
 }

@@ -38,7 +38,7 @@ public class Card1240_079 extends AbstractNormalEffect {
         super(Side.LIGHT, 4, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.Corellian_Engineering_Corporation, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_4, Rarity.V);
         setVirtualSuffix(true);
         setLore("Only one of the 'Big Three' starship manufacturers to sell primarily to civilians. CEC employees take great delight in calling their highly modifiable designs 'stock'.");
-        setGameText("Deploy on table if [Virtual Block 4] Watch Your Step on table. X = number of spaceport sites controlled by Corellians. While you control Corellia, your total battle destiny is +X, and once per turn, if you are about to lose Force (except from your card), may reduce loss by X. (Immune to Alter.)");
+        setGameText("Deploy on table if [Virtual Block 4] Watch Your Step on table. X = number of your spaceport sites controlled by your Corellians. While you control Corellia, your total battle destiny is +X, and once per turn, if you are about to lose Force (except from your card), may reduce loss by X. [Immune to Alter]");
         addIcons(Icon.SPECIAL_EDITION);
         addImmuneToCardTitle(Title.Alter);
     }

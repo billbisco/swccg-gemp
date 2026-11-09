@@ -11,9 +11,10 @@ import static com.gempukku.swccgo.framework.Assertions.*;
 import static org.junit.Assert.*;
 
 public class Card_1261_085_Tests {
-    private VirtualTableScenario scenario() {
+    private VirtualTableScenario scenario() { return scenario("1261_85"); }
+    private VirtualTableScenario scenario(String returnId) {
         return new VirtualTableScenario(new HashMap<>() {{
-            put("return", "1261_85"); put("luke", "1_19"); put("leia", "1_17"); put("obi", "1_21"); put("jedi", "9_24");
+            put("return", returnId); put("luke", "1_19"); put("leia", "1_17"); put("obi", "1_21"); put("jedi", "9_24");
             put("remote", "1_136"); put("normalImmediate", "1106_11"); put("system", "2_65");
         }}, new HashMap<>() {{
             put("sidious", "14_78"); put("emperor", "1230_19"); put("ordinaryEmperor", "9_109"); put("trooper", "1_194");
@@ -22,21 +23,23 @@ public class Card_1261_085_Tests {
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
     }
-    private VirtualTableScenario started() {
-        var scn = scenario(); scn.StartGame(); scn.MoveCardsToLSHand(scn.GetLSCard("return"));
+    private VirtualTableScenario started() { return started("1261_85"); }
+    private VirtualTableScenario started(String returnId) {
+        var scn = scenario(returnId); scn.StartGame(); scn.MoveCardsToLSHand(scn.GetLSCard("return"));
         scn.MoveLocationToTable(scn.GetLSCard("remote")); scn.MoveLocationToTable(scn.GetDSCard("mos")); return scn;
     }
     @Test public void ReturnUsesNewTitleAndImmediateEffectSubtype() {
         var scn = scenario(); var b = scn.GetLSCard("return").getBlueprint();
         assertEquals(Title.Return_Of_The_Jedi, b.getTitle()); assertEquals(4, b.getDestiny(), scn.epsilon);
-        assertEquals(Side.LIGHT, b.getSide()); assertEquals(Uniqueness.UNRESTRICTED, b.getUniqueness()); assertFalse(b.hasVirtualSuffix());
+        assertEquals(Side.LIGHT, b.getSide()); assertEquals(Uniqueness.UNIQUE, b.getUniqueness()); assertFalse(b.hasVirtualSuffix());
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_6_1, b.getExpansionSet()); assertEquals(Rarity.V, b.getRarity()); assertEquals(CardSubtype.IMMEDIATE, b.getCardSubtype());
         scn.BlueprintCardTypeCheck(b, new ArrayList<>(Arrays.asList(CardType.EFFECT)));
         scn.BlueprintIconCheck(b, new ArrayList<>(Arrays.asList(Icon.EFFECT, Icon.DEATH_STAR_II, Icon.LEGACY_BLOCK_6)));
         scn.BlueprintKeywordCheck(b, new ArrayList<>());
     }
-    private VirtualTableScenario drain() {
-        var scn = started(); scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetDSCard("trooper"));
+    private VirtualTableScenario drain() { return drain("1261_85"); }
+    private VirtualTableScenario drain(String returnId) {
+        var scn = started(returnId); scn.MoveCardsToLocation(scn.GetLSStartingLocation(), scn.GetDSCard("trooper"));
         scn.SkipToDSTurn(Phase.CONTROL); return scn;
     }
     private void cancelDrain(VirtualTableScenario scn) {
@@ -52,6 +55,8 @@ public class Card_1261_085_Tests {
         scn.MoveCardsToLocation(site, scn.GetLSCard("luke"), scn.GetLSCard("obi"));
         scn.MoveCardsToLocation(scn.GetLSCard("remote"), scn.GetLSCard("leia"));
         assertEquals(4, scn.GetPower(scn.GetLSCard("luke"))); assertEquals(5, scn.GetPower(scn.GetLSCard("obi"))); assertEquals(3, scn.GetPower(scn.GetLSCard("leia")));
+        // Errata 2014-04-16: lost at end of your turn only if you control this site (the trooper leaves, so Light controls it)
+        scn.MoveCardsToTopOfOwnLostPile(scn.GetDSCard("trooper"));
         scn.SkipToLSTurn(Phase.CONTROL); assertEquals(site, scn.GetLSCard("return").getAttachedTo());
         scn.SkipToPhase(Phase.DRAW); scn.PassDrawActions(); scn.PassResponses("RECIRCULATED"); scn.PassAllResponses();
         if (scn.LSHasCardChoiceAvailable(scn.GetLSCard("return"))) scn.LSChooseCard(scn.GetLSCard("return"));
@@ -59,6 +64,27 @@ public class Card_1261_085_Tests {
         scn.PassAllResponses();
         assertEquals(scn.GetCurrentDecision().getText(), Zone.LOST_PILE, com.gempukku.swccgo.logic.GameUtils.getZoneFromZoneTop(scn.GetLSCard("return").getZone()));
         assertEquals(3, scn.GetPower(scn.GetLSCard("luke")));
+    }
+    /** Errata 2014-04-16: while the site is contested (opponent's trooper still there), it stays past the end of your turn. */
+    @Test public void ReturnStaysAtEndOfOwnTurnWhenYouDoNotControlTheSite() {
+        var scn = drain(); cancelDrain(scn); var site = scn.GetLSStartingLocation();
+        scn.MoveCardsToLocation(site, scn.GetLSCard("luke"));
+        endLightTurn(scn);
+        assertEquals(site, scn.GetLSCard("return").getAttachedTo());
+    }
+    /** The original (2261_85, release sheet text) is lost at the end of every turn of yours, controlled or not. */
+    @Test public void OriginalVersionIsLostAtEndOfOwnTurnEvenWhenTheSiteIsContested() {
+        var scn = drain("2261_85"); cancelDrain(scn); var site = scn.GetLSStartingLocation();
+        scn.MoveCardsToLocation(site, scn.GetLSCard("luke"));
+        endLightTurn(scn);
+        assertEquals(Zone.LOST_PILE, com.gempukku.swccgo.logic.GameUtils.getZoneFromZoneTop(scn.GetLSCard("return").getZone()));
+    }
+    private void endLightTurn(VirtualTableScenario scn) {
+        scn.SkipToLSTurn(Phase.CONTROL);
+        scn.SkipToPhase(Phase.DRAW); scn.PassDrawActions(); scn.PassResponses("RECIRCULATED"); scn.PassAllResponses();
+        if (scn.LSHasCardChoiceAvailable(scn.GetLSCard("return"))) scn.LSChooseCard(scn.GetLSCard("return"));
+        if (scn.DSHasCardChoiceAvailable(scn.GetLSCard("return"))) scn.DSChooseCard(scn.GetLSCard("return"));
+        scn.PassAllResponses();
     }
     @Test public void ReturnCannotDeployOnAnOrdinarySiteWithoutDrain() {
         var scn = started(); scn.SkipToLSTurn(Phase.DEPLOY); assertFalse(scn.LSCardPlayAvailable(scn.GetLSCard("return")));
