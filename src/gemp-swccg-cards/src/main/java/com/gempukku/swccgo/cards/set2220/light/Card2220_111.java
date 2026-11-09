@@ -40,7 +40,7 @@ public class Card2220_111 extends AbstractNormalEffect {
         setLore("With only a few Jedi remaining in the galaxy, each confrontation between them has far reaching consequences.");
         setGameText("Deploy on your battleground. During battle, whenever opponent's card is hit by a non-[Permanent Weapon] weapon (once per card targeted), opponent's total power is cumulatively -4 (-2 if hit by a lightsaber).");
         setLegacyVersion(new LegacyVersion("1220_111", "",
-                "Virtual Block 2 release sheet (2009-12-07), card #112", LocalDate.of(2009, 12, 7), LocalDate.of(2013, 4, 27)));
+                "Virtual Block 2 release sheet (2009-12-07), card #112", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 9, 21)));
         addIcons(Icon.CLOUD_CITY);
         addKeywords(Keyword.DEPLOYS_ON_LOCATION);
     }

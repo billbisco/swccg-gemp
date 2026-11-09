@@ -31,7 +31,7 @@ public class Card_2250_026_Tests {
     public void ForcePushOriginalIdentity() {
         var scn = scenario("2250_26", "2250_26");
         assertLegacyVersion(scn.GetDSCard("first").getBlueprint(), scn.GetDSCard("current").getBlueprint(), "1250_26", "",
-                LocalDate.of(2009, 12, 7), LocalDate.of(2013, 4, 27),
+                LocalDate.of(2009, 12, 7), LocalDate.of(2012, 11, 19),
                 "During battle, use 2 Force to target your Dark Jedi and opponent's character of equal or lesser ability present. Both targets are excluded from battle. OR Exchange two cards from hand with any one card from Force Pile; reshuffle.");
     }
 

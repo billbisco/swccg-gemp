@@ -58,7 +58,7 @@ public class Card2220_163 extends AbstractObjective {
         setVirtualSuffix(true);
         setGameText("Deploy Hoth system and [Virtual Block 6] Main Power Generators. May deploy Echo Base Garrison and/or Maneuvering Flaps. For remainder of game, you may not deploy Hoth Sentry or non-Hoth locations (except Rendezvous Point). T-47 Battle Formation is an Out Of Play Interrupt and immune to Sense. While this side up, during your deploy phase, may deploy an exterior Hoth site or a non-unique Rebel to Hoth from Reserve Deck; reshuffle. Flip this card during your move phase if you control three exterior Hoth sites with T-47s and/or non-unique Rebels. Place out of play if Main Power Generators 'blown away.'");
         setLegacyVersion(new LegacyVersion("1220_163", "",
-                "Virtual Block 2 release sheet (2009-12-07), card #164", LocalDate.of(2009, 12, 7), LocalDate.of(2013, 4, 27)));
+                "Virtual Block 2 release sheet (2009-12-07), card #164", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 11, 19)));
         addIcons(Icon.SPECIAL_EDITION);
     }
 

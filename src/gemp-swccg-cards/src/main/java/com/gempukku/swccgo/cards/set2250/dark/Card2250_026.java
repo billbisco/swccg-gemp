@@ -39,7 +39,7 @@ public class Card2250_026 extends Card601_080 {
         setCardSubtype(CardSubtype.OUT_OF_PLAY);
         setGameText("During battle, use 2 Force to target your Dark Jedi and opponent's character of equal or lesser ability present. Both targets are excluded from battle. OR Exchange two cards from hand with any one card from Force Pile; reshuffle.");
         setLegacyVersion(new LegacyVersion("1250_26", "",
-                "Virtual Block 5 release sheet (2009-12-07), card #26", LocalDate.of(2009, 12, 7), LocalDate.of(2013, 4, 27)));
+                "Virtual Block 5 release sheet (2009-12-07), card #26", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 11, 19)));
     }
 
     @Override

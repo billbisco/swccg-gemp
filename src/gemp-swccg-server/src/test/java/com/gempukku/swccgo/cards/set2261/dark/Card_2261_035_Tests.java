@@ -23,7 +23,7 @@ public class Card_2261_035_Tests {
     public void IdentityAndVersionInfo() {
         var scn = scenario();
         assertLegacyVersion(scn.GetDSCard("v").getBlueprint(), scn.GetDSCard("current").getBlueprint(), "1261_35", "",
-                LocalDate.of(2009, 9, 4), LocalDate.of(2012, 7, 21),
+                LocalDate.of(2009, 9, 4), LocalDate.of(2010, 5, 29),
                 "Deploy on table with 5 cards from outside your deck face down under here. Twice per game, may play a Defensive Shield from here (as if from hand). If This Deal Is Getting Worse All The Time on table, for remainder of game lightsabers may not add to Force drains. Cloud City Occupation is canceled.");
     }
 }

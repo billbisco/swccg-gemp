@@ -23,7 +23,7 @@ public class Card_2263_021_Tests {
     public void IdentityAndVersionInfo() {
         var scn = scenario();
         assertLegacyVersion(scn.GetDSCard("v").getBlueprint(), scn.GetDSCard("current").getBlueprint(), "1263_21", "",
-                LocalDate.of(2010, 3, 15), LocalDate.of(2012, 7, 21),
+                LocalDate.of(2010, 3, 12), LocalDate.of(2012, 7, 21),
                 "Deploys -1 to same site as your MTT. AT-AT Cannon may deploy aboard, and targets it hits may not be used to satisfy attrition. Unless alone, draws one battle destiny if not able to otherwise.");
     }
 }

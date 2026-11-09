@@ -17,6 +17,6 @@ public class Card2263_006 extends Card1263_006 {
     public Card2263_006() {
         setGameText("[Pilot] 2. Opponent may not add destiny draws to power or attrition here. Ice Storm and Sandwhirl are canceled at same and related locations.");
         setLegacyVersion(new LegacyVersion("1263_6", "",
-                "Virtual Block 6.3 release sheet (2010-03-15), card #3-06", LocalDate.of(2010, 3, 15), LocalDate.of(2013, 4, 27)));
+                "Virtual Block 6.3 release sheet (released 2010-03-12), card #3-06", LocalDate.of(2010, 3, 12), LocalDate.of(2013, 4, 27)));
     }
 }

@@ -35,8 +35,8 @@ public class LegacyBatchB30VersionsTests {
         put("2240_66", new Object[]{"1240_66", "Fallen Jedi", LocalDate.of(2009, 12, 7)});
         put("2240_112", new Object[]{"1240_112", "BoShek's Modified Light Freighter", LocalDate.of(2009, 12, 7)});
         put("2250_8", new Object[]{"1250_8", "The Mandalorian", LocalDate.of(2009, 12, 7)});
-        put("2263_1", new Object[]{"1263_1", "Bane, The Bounty Hunter", LocalDate.of(2010, 3, 15)});
-        put("2263_7", new Object[]{"1263_7", "The Emperor's Reach", LocalDate.of(2010, 3, 15)});
+        put("2263_1", new Object[]{"1263_1", "Bane, The Bounty Hunter", LocalDate.of(2010, 3, 12)});
+        put("2263_7", new Object[]{"1263_7", "The Emperor's Reach", LocalDate.of(2010, 3, 12)});
         put("2272_15", new Object[]{"1272_15", "Blind Jedi", LocalDate.of(2010, 12, 15)});
         put("2272_18", new Object[]{"1272_18", "Kashyyyk Insurgent Leader", LocalDate.of(2010, 12, 15)});
     }};
