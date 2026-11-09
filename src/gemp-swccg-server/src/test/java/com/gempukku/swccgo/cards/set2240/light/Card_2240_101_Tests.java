@@ -36,7 +36,7 @@ public class Card_2240_101_Tests {
         var scn = GetScenario();
         LegacyVersionAsserts.assertVersionOf(scn.GetLSCard("current").getBlueprint(), scn.GetLSCard("outpost").getBlueprint(),
                 "Light: May not deploy to Bespin, Coruscant, Dantooine, Kessel or Tatooine. Once per game, may ▼ a device (except a comlink) or Effect that deploys on a character here. Dark: Unless opponent's matching operative at same or related site, those sites are immune to [Premium] No Escape.",
-                "1240_101", "", LocalDate.of(2009, 12, 7), LocalDate.of(2013, 4, 27));
+                "1240_101", "", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 8, 27));
     }
 
     @Test
