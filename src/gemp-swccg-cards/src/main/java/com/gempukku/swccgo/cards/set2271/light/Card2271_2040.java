@@ -32,7 +32,7 @@ public class Card2271_2040 extends AbstractNormalEffect {
     public Card2271_2040() {
         super(Side.LIGHT, 4, PlayCardZoneOption.ATTACHED, "Massassi Base Sentry", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_1, Rarity.V);
         setLore("Rebel sentries are stationed on raised sensor platforms. On watch for Imperial scouts and other hazards, they supplement data gathered by Yavin Base's main sensors.");
-        setGameText("Deploy on Yavin 4; it is 'liberated.' During battle at sites related to other 'liberated' systems, may add 2 to power of each Rebel warrior (to a maximum of 4). Once per turn, while you control this system, may retrieve 1 Force when you Force drain at another 'liberated' system.");
+        setGameText("Deploy on Yavin 4; it is 'liberated.' At sites related to other 'liberated' systems, may add 2 to power of each Rebel warrior (to a maximum of 4). Once per turn, while you control this system, may retrieve 1 Force when you Force drain at another 'liberated' system.");
         setLegacyVersion(new LegacyVersion("1271_40", "PC-E2",
                 "PC website card list (by 2012-07-21)", LocalDate.of(2012, 7, 21), LocalDate.of(2013, 4, 27)));
         addIcons(Icon.SETUP);
