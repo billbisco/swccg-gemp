@@ -18,6 +18,6 @@ public class Card2230_114 extends Card1230_114 {
         super();
         setGameText("May deploy (with a pilot) without presence or Force icons. May add 2 pilots and 6 passengers. May forfeit a scout aboard to cancel all remaining battle damage against you here.");
         setLegacyVersion(new LegacyVersion("1230_114", "",
-                "Virtual Block 3 release sheet (2009-12-07), card #114", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21)));
+                "Virtual Block 3 release sheet (2009-12-07), card #117", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21)));
     }
 }
