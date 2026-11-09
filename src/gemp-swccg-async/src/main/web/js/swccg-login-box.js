@@ -192,7 +192,9 @@
     try { savedMode = window.sessionStorage.getItem("sbox:mode"); window.sessionStorage.removeItem("sbox:mode"); } catch (ignore) { }
     // A message never outlives the page load it came back with, and only a Create-account error
     // reopens Create account: a passkey or provider problem always comes back to Sign in.
-    if (reason === "cancelled") reason = null; // closing a prompt is not an error
+    // Only a reason this box knows gets a message (a hand-typed ?sso_error=anything shows nothing);
+    // closing a prompt ("cancelled") is not an error. The parameter is stripped either way.
+    if (reason && (reason === "cancelled" || !MESSAGES.hasOwnProperty(reason))) reason = null;
     if (reason) {
       if (SIGNUP_REASONS.test(reason) && savedMode === "signup") this.setMode("signup", true);
       this.fail(reason);
