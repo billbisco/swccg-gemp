@@ -41,7 +41,7 @@ public class Card601_088 extends AbstractImmediateEffect {
         super(Side.DARK, 6, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.Imperial_Propaganda, Uniqueness.UNRESTRICTED, ExpansionSet.LEGACY, Rarity.V);
         setVirtualSuffix(true);
         setLore("Imperial data transmissions depict Rebel incursions as terrorist acts. The Alliance is portrayed as a danger to civilians of the Empire.");
-        setGameText("If you are about to lose Force during opponent's control phase, deploy on table to reduce loss by 2. Whenever you lose Force during opponent's control phase (except from a Force drain at a battleground or your card) that loss is cumulatively -1 (to a minimum of 1). Non-[Virtual Block 4] Imperial Propaganda is canceled.");
+        setGameText("If you are about to lose Force during opponent's control phase, deploy on table to reduce loss by 2. Whenever you lose force during opponent's control phase (except from a Force drain at a battleground or your card), that loss is cumulatively -1 (to a minimum of 1). Non-[Virtual Block 4] Imperial Propaganda is canceled.");
         //TODO the image online doesn't have the errata that added "Non-[Virtual Block 4] Imperial Propaganda is canceled."
         addIcons(Icon.SPECIAL_EDITION, Icon.LEGACY_BLOCK_4);
         setAsLegacy(true);

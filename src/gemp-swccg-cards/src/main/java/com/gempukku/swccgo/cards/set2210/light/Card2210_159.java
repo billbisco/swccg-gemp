@@ -52,7 +52,7 @@ public class Card2210_159 extends AbstractUsedOrLostInterrupt {
         setLore("'Luke, trust me.'");
         setGameText("USED: If you just hit a target with a non-lightsaber non-[Permanent Weapon] weapon, place target (and all cards on it) in owner's Used Pile. LOST: Cancel Heroic (and any immunity to attrition) on a character or starship this turn.");
         setLegacyVersion(new LegacyVersion("1210_159", "",
-                "Virtual Block 1 release sheet (2009-12-07), card #160", LocalDate.of(2009, 12, 7), LocalDate.of(2014, 2, 4)));
+                "Virtual Block 1 release sheet (2009-12-07), card #160; superseded by the PC card list text (by 2012-07-21)", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21)));
         addIcons(Icon.SPECIAL_EDITION);
     }
 

@@ -50,7 +50,7 @@ public class Card2220_050 extends AbstractNormalEffect {
         setLore("'We would be honored if you would join us.'");
         setGameText("Deploy on table. During battle, while non-[Reflections 3] Boba Fett with Vader, neither may be excluded or lost until the damage segment. Slave I is destiny +2 when drawn for weapon or battle destiny. May place this Effect in Lost Pile to make Boba Fett's total weapon destiny +3.");
         setLegacyVersion(new LegacyVersion("1220_50", "",
-                "Virtual Block 2 release sheet (2009-12-07), card #50", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 8, 27)));
+                "Virtual Block 2 release sheet (2009-12-07), card #50; superseded by the PC card list text (by 2012-07-21)", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21)));
         addIcons(Icon.CLOUD_CITY);
     }
 

@@ -45,7 +45,7 @@ public class Card2210_080 extends AbstractCreatureVehicle {
         super(Side.DARK, 5, 2, 2, null, 4, 2, 3, "Dewback", Uniqueness.UNRESTRICTED, ExpansionSet.VIRTUAL_BLOCK_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("Protected by hard skin composed of tough armored scales. Frequently ridden by sandtroopers stationed in desert environments.");
-        setGameText("Deploys only on Tatooine. Ability = 1/4. May add 1 'rider' (passenger). May be targeted by Trample instead of a piloted AT-AT. During battle, may 'roar' to make a character here defense value -1.");
+        setGameText("Deploys only on Tatooine. Ability = ¼. May add 1 'rider' (passenger). May be targeted by Trample instead of a piloted AT-AT. During battle, may 'roar' to make a character here defense value -1.");
         setLegacyVersion(new LegacyVersion("1210_80", "",
                 "Virtual Block 1 release sheet (2009-12-07), card #80 (MANEUVER 4); superseded by AR 2.0 Appendix A errata (by 2012-08-27): ARMOR, not MANEUVER", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 8, 27)));
         addIcons(Icon.SPECIAL_EDITION);

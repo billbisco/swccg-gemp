@@ -36,7 +36,7 @@ public class Card_2240_004_Tests {
     public void ColonelWullfYularenIsTheSameCardWithTheOldText() {
         var scn = GetScenario();
         LegacyVersionAsserts.assertVersionOf(scn.GetDSCard("current").getBlueprint(), scn.GetDSCard("version").getBlueprint(),
-                "Imperial Council Member. Agenda: logistics. ISB Agents are forfeit +1. While at Conference Room with Sim Aloo, may use 1 Force to subtract 1 from an opponent's just drawn non-Epic Event destiny.",
+                "Imperial Council Member. Agenda: logistics. ISB Agents are forfeit +1. While at Conference Room with Sim Aloo, may use 1 Force to subtract 1 from an oponent's just drawn non-Epic Event destiny.",
                 "1240_4", "", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21));
     }
 

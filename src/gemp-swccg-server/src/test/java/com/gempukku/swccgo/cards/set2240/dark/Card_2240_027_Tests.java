@@ -40,7 +40,7 @@ public class Card_2240_027_Tests {
     public void ImperialPropagandaIsTheSameCardWithTheOldText() {
         var scn = GetScenario();
         LegacyVersionAsserts.assertVersionOf(scn.GetDSCard("current").getBlueprint(), scn.GetDSCard("propaganda").getBlueprint(),
-                "If you are about to lose Force during opponent's control phase, deploy on table to reduce loss by 2. Whenever you lose Force during opponent's control phase (except from a Force drain at a battleground or your card), that loss is cumulatively -1 (to a minimum of 1).",
+                "If you are about to lose Force during opponent's control phase, deploy on table to reduce loss by 2. Whenever you lose force during opponent's control phase (except from a Force drain at a battleground or your card), that loss is cumulatively -1 (to a minimum of 1).",
                 "1240_27", "", LocalDate.of(2009, 12, 7), LocalDate.of(2013, 4, 27));
     }
 
