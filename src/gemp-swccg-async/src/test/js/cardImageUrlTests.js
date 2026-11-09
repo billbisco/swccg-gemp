@@ -386,3 +386,16 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('2200_1'), 'https://wiki.s
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2282_14'), 'https://wiki.swccg.com/images/0/03/VB8-03-Lando_Calrissian_Unlikely_Hero.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_50'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/landocalrissianunlikelyhero.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_35'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlockDS-Dark/large/fanfare.gif');
+// Batch B28: Temporary Foothold, Death Mark & Hutt Bounty, Het Nkik (V), Supreme Chancellor Valorum (V) (AI), Scoundrel's Charm, You May Start Your Landing (V) PC-E1 (CardMaker), originals on the PC card images
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1274_20'), 'https://wiki.swccg.com/images/a/af/VB7-04-Temporary_Foothold-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2274_20'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/temporaryfoothold.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_10'), 'https://wiki.swccg.com/images/0/09/VB8-05-Death_Mark_Hutt_Bounty-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_10'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Dark/large/deathmarkandhuttbounty.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_29'), 'https://wiki.swccg.com/images/b/bf/VB8-p5-30-Het_Nkik-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_29'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/hetnkik.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_30ai'), 'https://wiki.swccg.com/images/b/be/VB8-03-Supreme_Chancellor_Valorum_AI-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_35'), 'https://wiki.swccg.com/images/4/41/VB8-00-Scoundrels_Charm-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_125'), 'https://wiki.swccg.com/images/4/41/VB8-00-Scoundrels_Charm-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_35'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/scoundrelscharm.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1282_3'), 'https://wiki.swccg.com/images/4/4c/VB8-p2-56-You_May_Start_Your_Landing-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2282_3'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Dark/large/youmaystartyourlanding.gif');
