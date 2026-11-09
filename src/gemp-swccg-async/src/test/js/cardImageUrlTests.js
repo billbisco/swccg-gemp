@@ -127,4 +127,20 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('1240_92'), 'https://wiki.
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2230_114'), 'https://wiki.swccg.com/images/a/a2/VB3-117-Tydirium.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2240_36'), 'https://wiki.swccg.com/images/7/74/VB4-34E-There_Is_No_Try_Oppressive_Enforcement.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2240_63'), 'https://wiki.swccg.com/images/0/07/VB4-62-Stinger.png');
+// Batch B06 (Virtual Block 3 + Luke's Blaster Pistol (V)): current cards and the PC-E1 version card show the CardMaker image of their own text
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1230_10'), 'https://wiki.swccg.com/images/0/01/VB3-10-Lieutenant_Grond-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1230_24'), 'https://wiki.swccg.com/images/8/8d/VB3-24-Bantha_Herd-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1230_28'), 'https://wiki.swccg.com/images/6/6e/VB3-29-Empires_New_Order-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1230_41'), 'https://wiki.swccg.com/images/2/2d/VB3-42-Dead_Ewok-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1230_47'), 'https://wiki.swccg.com/images/5/55/VB3-48-Scout_Recon-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1230_53'), 'https://wiki.swccg.com/images/4/4d/VB3-53-Accuser-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1230_76'), 'https://wiki.swccg.com/images/e/ea/VB3-77-Master_Luke-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1230_104'), 'https://wiki.swccg.com/images/f/fb/VB3-105-Endor_Celebration-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1230_109'), 'https://wiki.swccg.com/images/2/20/VB3-110-Rebel_Leadership-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_158'), 'https://wiki.swccg.com/images/2/20/VB3-110-Rebel_Leadership-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1230_113'), 'https://wiki.swccg.com/images/c/c4/VB3-116-Red_Squadron_7-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2220_1169'), 'https://wiki.swccg.com/images/5/57/VB2-169-Luke_s_Blaster_Pistol-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1220_169'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock2-Light/large/lukesblasterpistol.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2220_169'), 'https://wiki.swccg.com/images/9/91/VB2-169-Luke_s_Blaster_Pistol.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2230_109'), 'https://wiki.swccg.com/images/3/36/VB3-110-Rebel_Leadership.png');
 console.log('card image URL routing passed: ' + legacy.length + ' Legacy mappings');
