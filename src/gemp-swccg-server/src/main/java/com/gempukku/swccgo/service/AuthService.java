@@ -266,6 +266,29 @@ public class AuthService {
     }
 
     /**
+     * swccg-login self-service reset (the player proved a confirmed email to swccg-login): sets a
+     * new password for the player by id. Compare-and-set on the stored hash, like a reset. Also
+     * burns any admin one-time code and open reset tickets, which the new password replaces.
+     * Nothing else changes (bans, types, decks, passkeys and linked accounts stay as they are).
+     * @return the player, or null if there is no such player or the hash changed meanwhile
+     * @throws WeakPasswordException if the password breaks {@link PasswordPolicy}
+     */
+    public Player setPassword(int playerId, String newPassword) throws SQLException, WeakPasswordException {
+        if (!PasswordPolicy.isAcceptable(newPassword))
+            throw new WeakPasswordException();
+        Player player = _playerDAO.getPlayer(playerId);
+        if (player == null || player.getId() != playerId || Player.isBot(player.getName()))
+            return null;
+        if (!_playerDAO.updatePasswordHash(playerId, player.getPassword(), _hasher.hash(newPassword)))
+            return null;
+        if (_playerDAO.getPasswordResetCode(playerId) != null)
+            _playerDAO.deletePasswordResetCode(playerId);
+        _resetTickets.values().removeIf(t -> t.playerId == playerId);
+        _throttle.recordSuccess(player.getName(), null);
+        return player;
+    }
+
+    /**
      * Registers a new account after applying the password policy and the per-IP signup limit
      * (RegisterNotAllowedException when the IP already made its quota today).
      * @throws WeakPasswordException if the password breaks {@link PasswordPolicy}

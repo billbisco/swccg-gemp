@@ -146,6 +146,21 @@ public class AuthServiceTests {
     }
 
     @Test
+    public void setPasswordByIdReplacesThePasswordAndBurnsAnAdminCode() throws Exception {
+        Player bill = dao.addWithStoredHash("Bill", hasher.hash("oldpassword"), "u", null);
+        String code = auth.issueResetCode("Bill", "AdminAl");
+        assertThrows(AuthService.WeakPasswordException.class, () -> auth.setPassword(bill.getId(), ""));
+        assertNull(auth.setPassword(bill.getId() + 1000, "brand-new-pass"), "no such player");
+
+        Player p = auth.setPassword(bill.getId(), "brand-new-pass");
+        assertNotNull(p);
+        assertEquals("Bill", p.getName());
+        assertEquals(AuthService.Status.OK, auth.verifyCredentials("Bill", "brand-new-pass", IP).getStatus());
+        assertEquals(AuthService.Status.INVALID, auth.verifyCredentials("Bill", "oldpassword", IP).getStatus());
+        assertEquals(AuthService.Status.INVALID, auth.verifyCredentials("Bill", code, IP).getStatus(), "admin code burned");
+    }
+
+    @Test
     public void resetAccountCannotBeClaimedWithoutTheCode() throws Exception {
         dao.addWithStoredHash("Bill", hasher.hash("oldpassword"), "u", null);
         auth.issueResetCode("Bill", "AdminAl");

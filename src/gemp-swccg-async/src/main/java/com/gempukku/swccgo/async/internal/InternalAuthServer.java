@@ -47,7 +47,8 @@ public final class InternalAuthServer {
         }
         WikiAuthService service = v1 ? new WikiAuthService(authService,
                 new InternalAuthSigner(secret, System.getenv("GEMP_INTERNAL_AUTH_SECRET_PREVIOUS"))) : null;
-        SsoAuthService sso = v2 != null ? new SsoAuthService(authService, settings, v2) : null;
+        boolean setPassword = "true".equalsIgnoreCase(System.getenv("GEMP_INTERNAL_AUTH_V2_SET_PASSWORD"));
+        SsoAuthService sso = v2 != null ? new SsoAuthService(authService, settings, v2, setPassword) : null;
         ServerBootstrap b = new ServerBootstrap();
         b.group(boss, workers)
                 .channel(NioServerSocketChannel.class)
@@ -62,7 +63,7 @@ public final class InternalAuthServer {
                 })
                 .childOption(ChannelOption.TCP_NODELAY, true);
         Channel ch = b.bind(port).sync().channel();
-        LOG.info("internal auth listener on port " + port + " (v1 " + (v1 ? "on" : "off") + ", v2 " + (v2 != null ? "on" : "off") + ")");
+        LOG.info("internal auth listener on port " + port + " (v1 " + (v1 ? "on" : "off") + ", v2 " + (v2 != null ? "on" : "off") + ", v2 set-password " + (v2 != null && setPassword ? "on" : "off") + ")");
         return ch;
     }
 
