@@ -26,7 +26,7 @@ public class Card2250_018 extends Card1250_018 {
     public Card2250_018() {
         setGameText("Deploy on Sidious. While at Senate, if battle was just initiated anywhere, opponent must relocate this card to their participating character; during battle here, your destiny draws may not be canceled. If character about to be lost, relocate to Sidious; may ▲ a card.");
         setLegacyVersion(new LegacyVersion("1250_18", "",
-                "Virtual Block 5 release sheet (2009-12-07), card #15", LocalDate.of(2009, 12, 7), LocalDate.of(2014, 2, 4)));
+                "Virtual Block 5 release sheet (2009-12-07), card #15", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21)));
     }
 
     @Override

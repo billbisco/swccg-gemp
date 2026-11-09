@@ -6745,6 +6745,10 @@ const fixedImages = {
 "2261_1010":"https://wiki.swccg.com/images/6/65/VB6-10-Darth_Vader_Betrayer_Of_The_Jedi-PC-E1-cardmaker.png",
 "2261_34":"https://wiki.swccg.com/images/4/4a/VB6-34-Fleet_Security_Protocols-original-cardmaker.png",
 "2261_1065":"https://wiki.swccg.com/images/f/f6/VB6-63-BoShek_Brash_Smuggler-PC-E1-cardmaker.png",
+// Batch B16 (Virtual Blocks 5-6): current cards whose image showed an older text get the image of their latest text (1250_45ai = AI printing of 601_163; 1261_33 Dark Waters shows its PC-E2 card-list text, its PC card image prints PC-E1 and stays on 2261_1033).
+"1250_18":"https://wiki.swccg.com/images/7/78/VB5-15-An_Enemy_Of_The_Republic-PC-E1-cardmaker.png",
+"1250_45ai":"https://wiki.swccg.com/images/1/14/VB5-44EAI-Mace_Windu_AI-PC-E1-cardmaker.png",
+"1261_33":"https://wiki.swccg.com/images/d/d4/VB6-32-Dark_Waters_Krayt_Dragon_Bones-PC-E2-cardmaker.png",
 // Batch B12 (Virtual Block 7-8): CardMaker recreations of the latest text (601_127 / 601_279 are aliases of 1281_37 / 1283_21); 1281_37 Scoundrel's Luck shows the re-made 8.1 sheet slip (PC-E1; its PC card image prints the original, kept on 2281_37);
 // 1273_27 Master Kenobi and 1273_33 Communing keep their PC card images (PC-E3 / PC-E2). Version cards 2273_1027, 2273_2027 and 2273_1033 are set in the versions list below.
 "1273_30":"https://wiki.swccg.com/images/f/fa/VB7-02-Wes_Janson_Rogue_Veteran-PC-E1-cardmaker.png",
@@ -6954,9 +6958,9 @@ const fixedImages = {
 "2250_28":"https://wiki.swccg.com/images/f/f7/VB5-28E-Trade_Federation_Tactics.png",
 "2250_34":"https://wiki.swccg.com/images/e/eb/VB5-35-Bail_Organa.png",
 "2261_10":"https://wiki.swccg.com/images/7/79/VB6-10-Darth_Vader_Betrayer_Of_The_Jedi.png",
-"2261_42":"https://wiki.swccg.com/images/c/c2/VB6-45-Lone_Pilot.png",
+"2261_42":"https://wiki.swccg.com/images/9/94/VB6-45-Lone_Pilot-original-sheet.png",
 "2261_1042":"https://wiki.swccg.com/images/c/c2/VB6-45-Lone_Pilot.png",
-"2261_2042":"https://wiki.swccg.com/images/c/c2/VB6-45-Lone_Pilot.png",
+"2261_2042":"https://wiki.swccg.com/images/c/c2/VB6-45-Lone_Pilot-PC-E2-cardmaker.png",
 "2261_45":"https://wiki.swccg.com/images/a/a5/VB6-46-One_Bright_Spot.png",
 "2261_56":"https://wiki.swccg.com/images/c/c4/VB6-56-Black_1.png",
 "2261_107":"https://wiki.swccg.com/images/f/f9/VB6-112-Wedge_In_Red_Squadron_1.png",
@@ -7094,11 +7098,11 @@ const fixedImages = {
 "2220_1169":"https://wiki.swccg.com/images/5/57/VB2-169-Luke_s_Blaster_Pistol-PC-E1-cardmaker.png",
 "2220_161":"https://res.starwarsccg.org/cards/legacy/VirtualBlock2-Light/large/hothechomedlab.gif",
 // AI printings' pre-errata versions (docs/legacy-versions.md, "AI printings"): the AI image showing that text;
-// 2240_8ai and 2250_44ai reuse the current AI image (it shows the current text) until a CardMaker image exists.
+// 2240_8ai reuses the current AI image (it shows the current text) until a CardMaker image exists; 2250_44ai shows a CardMaker recreation of the original AI text (batch B16).
 "2240_3":"https://wiki.swccg.com/images/f/f9/VB4-02AI-Juno_Eclipse_Black_Leader_AI.png",
 "2240_8ai":"https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/galenmarekstarkillerai.gif",
 "2250_2ai":"https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Dark/large/aurrasingai.gif",
-"2250_44ai":"https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/masterquigonai.gif",
+"2250_44ai":"https://wiki.swccg.com/images/a/ad/VB5-45AI-Master_Qui_Gon_AI-original-cardmaker.png",
 "2250_45ai":"https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/macewinduai.gif",
 "2281_30ai":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/supremechancellorvalorumai.gif",
 

@@ -28,7 +28,7 @@ public class Card2261_020 extends Card601_031 {
     public Card2261_020() {
         setGameText("Plays on table. In order to play an Interrupt from Lost Pile, opponent must first stack it here and use +1 Force for each card here, even if Interrupt is normally free.");
         setLegacyVersion(new LegacyVersion("1261_20", "",
-                "Virtual Block 6.1 release sheet (2009-09-04), card #19", LocalDate.of(2009, 9, 4), LocalDate.of(2012, 8, 27)));
+                "Virtual Block 6.1 release sheet (2009-09-04), card #19", LocalDate.of(2009, 9, 4), LocalDate.of(2012, 7, 21)));
     }
 
     @Override

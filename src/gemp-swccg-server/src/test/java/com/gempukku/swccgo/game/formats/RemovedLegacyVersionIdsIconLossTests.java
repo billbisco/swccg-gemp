@@ -22,14 +22,12 @@ import static org.junit.Assert.assertSame;
 /**
  * Version ids that existed only because of a false version (audit 2026-11-08, Bill: "If there are no changes, there
  * is no errata"): the 2012-13 PC website card list spelled out or dropped icons, and these versions differed from
- * the real text only in that notation. blueprintMapping.txt aliases each to its current card (or, for 2261_2042, to
- * the version that holds the same real text), so decks that use them still load and validate in Anything Goes, and
- * the card pool no longer offers them as versions.
+ * the real text only in that notation. blueprintMapping.txt aliases each to its current card, so decks that use them still load and validate in Anything Goes, and
+ * the card pool no longer offers them as versions. 2261_1033 (Dark Waters PC-E1) and 2261_2042 (Lone Pilot PC-E2) are
+ * versions again (legacy batch B16: the card list also reordered those texts, and reorders are versions).
  */
 public class RemovedLegacyVersionIdsIconLossTests {
     private static final Map<String, String> REMOVED = Map.ofEntries(
-            Map.entry("2261_1033", "1261_33"),
-            Map.entry("2261_2042", "2261_1042"),
             Map.entry("2210_105", "1210_105"),
             Map.entry("2210_150", "1210_150"),
             Map.entry("2230_105", "1230_105"),
@@ -96,7 +94,7 @@ public class RemovedLegacyVersionIdsIconLossTests {
 
     @Test
     public void RemovedVersionIdsLoadTheirTarget() {
-        assertEquals(54, REMOVED.size());
+        assertEquals(52, REMOVED.size());
         REMOVED.forEach((removed, target) -> {
             SwccgCardBlueprint alias = library.getSwccgoCardBlueprint(removed);
             assertNotNull(removed, alias);
@@ -110,21 +108,6 @@ public class RemovedLegacyVersionIdsIconLossTests {
             else
                 assertNull(removed, alias.getLegacyVersion());
         });
-    }
-
-    @Test
-    public void LonePilotCardListIdIsTheSheetRevisionPCE1() {
-        SwccgCardBlueprint alias = library.getSwccgoCardBlueprint("2261_2042");
-        assertEquals("PC-E1", alias.getLegacyVersion().label());
-        assertEquals(java.time.LocalDate.of(2013, 4, 27), alias.getLegacyVersion().supersededOn());
-    }
-
-    @Test
-    public void DarkWatersCurrentCardHasThe2010ErrataText() {
-        SwccgCardBlueprint current = library.getSwccgoCardBlueprint("1261_33");
-        assertEquals(current.getGameText(), library.getSwccgoCardBlueprint("2261_1033").getGameText());
-        assertEquals("Deploy on Rancor Pit. During your battle phase, if you have no presence here, may relocate a captive from Audience Chamber to here. If opponent's character here was just eaten, retrieve 3 Force. If a creature here is lost, owner loses Force equal to half its printed deploy cost (round up). Once per turn, if a creature here is about to draw destiny for ferocity, may instead use its destiny number. May ▼ a non-[Selective] ferocious creature here. (Immune to Alter.)",
-                current.getGameText());
     }
 
     @Test

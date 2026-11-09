@@ -18,7 +18,7 @@ import java.util.List;
 /** Virtual Block 5: Mandalorian Armor (V). */
 public class Card1250_015 extends Card1116_057 {
     public Card1250_015() {
-        setLore("Contains wrist lasers, rocket dart launchers, a flame projector, a projectable grappling hook, a concussion grenade launcher, four kinds of sensors and a broad band antenna.");
+        setLore("Contains wrist lasers, rocket dart launchers, a flame projector, a projected grappling hook, a concussion grenade launcher, four kinds of sensors and a broad band antenna.");
         setGameText("Deploy on your alien of ability < 4. Character gains bounty hunter skill and immunity to attrition < 4. If character just hit, may place this device in Lost Pile (Used Pile if on Jango) to restore it to normal.");
         addIcons(Icon.EPISODE_I, Icon.CLOUD_CITY, Icon.LEGACY_BLOCK_5);
         setAsLegacy(true);
