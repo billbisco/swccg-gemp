@@ -49,8 +49,7 @@ public class Card1281_010 extends AbstractUtinniEffect {
     public Card1281_010() {
         super(Side.DARK, 5, PlayCardZoneOption.ATTACHED, "Death Mark & Hutt Bounty", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_1, Rarity.V);
         addComboCardTitles(Title.Death_Mark, Title.Hutt_Bounty);
-        setLore("'A death mark's not an easy thing to live with. You're a good fighter, Solo. I hate to lose you.'");
-        setGameText("If On The Hunt on table, deploy on a 'mark' (opponent's non-droid character at a battleground site). Target an assassin at another site. During any move phase, when reached by target, draw destiny and add target's power; opponent draws two destiny (choosing one) and adds 'mark's defense value. If your total is higher, 'mark' is 'assassinated': opponent loses 2 Force (4 if a Jedi), 'mark' is lost, and relocate Death Mark to your side of table. Otherwise, place Death Mark (and may place assassin it targets) in Used Pile. May not be canceled. (Immune to Alter.)");
+        setGameText("If on the Hunt on Table, deploy on a 'mark' (opponent's non-droid character at a battleground site). Target an assassin at another site. During any move phase, when reached by target, draw destiny and add target's power; opponent draws two destiny (choosing one) and adds 'mark's defense value. If your total is higher, the 'mark' is 'assassinated': opponent loses 2 Force (4 if a Jedi), the 'mark' is lost, and relocate Death Mark to your side of table. Otherwise, place Death Mark (and may place assassin it targets) in Used Pile. May not be canceled. (Immune to Alter.)");
         addKeywords(Keyword.DEPLOYS_ON_CHARACTERS);
         addImmuneToCardTitle(Title.Alter);
     }

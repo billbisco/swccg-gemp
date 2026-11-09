@@ -6613,6 +6613,21 @@ const fixedImages = {
 "1292_10":"https://res.starwarsccg.org/cards/legacy/VirtualBlock9-Light/large/majorhaashn.gif",
 "1292_11":"https://res.starwarsccg.org/cards/legacy/VirtualBlock9-Light/large/mandalorianmishapjedimindtrick.gif",
 // END legacy
+// Batch B28 (Virtual Blocks 7-9): current cards show the image of their latest text, CardMaker recreations of the 2012 card-list texts (PC-E1);
+// the PC card images print the release-sheet originals, kept on the 2274 / 2281 / 2282 version cards. 601_125 is the PC-alias id of 1281_35.
+// 1281_30ai (AI printing, current = PC-E1) shows a CardMaker recreation with the AI art; 2281_30ai keeps the AI card image (original text).
+"1274_20":"https://wiki.swccg.com/images/a/af/VB7-04-Temporary_Foothold-PC-E1-cardmaker.png",
+"2274_20":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/temporaryfoothold.gif",
+"1281_10":"https://wiki.swccg.com/images/0/09/VB8-05-Death_Mark_Hutt_Bounty-PC-E1-cardmaker.png",
+"2281_10":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Dark/large/deathmarkandhuttbounty.gif",
+"1281_29":"https://wiki.swccg.com/images/b/bf/VB8-p5-30-Het_Nkik-PC-E1-cardmaker.png",
+"2281_29":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/hetnkik.gif",
+"1281_30ai":"https://wiki.swccg.com/images/b/be/VB8-03-Supreme_Chancellor_Valorum_AI-PC-E1-cardmaker.png",
+"1281_35":"https://wiki.swccg.com/images/4/41/VB8-00-Scoundrels_Charm-PC-E1-cardmaker.png",
+"601_125":"https://wiki.swccg.com/images/4/41/VB8-00-Scoundrels_Charm-PC-E1-cardmaker.png",
+"2281_35":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/scoundrelscharm.gif",
+"1282_3":"https://wiki.swccg.com/images/4/4c/VB8-p2-56-You_May_Start_Your_Landing-PC-E1-cardmaker.png",
+"2282_3":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Dark/large/youmaystartyourlanding.gif",
 // Batch B27 (Virtual Block 7): current cards show the image of their latest text, CardMaker recreations of the 2012 card-list texts (PC-E1);
 // 601_178 / 601_222 are the classes of 1273_1 / 1273_24. The original versions 2272_26 / 2273_1 / 2273_2 / 2273_24 show the PC card images (they print the originals).
 "1272_26":"https://wiki.swccg.com/images/7/7e/VB7-p4-76-The_Camp-PC-E1-cardmaker.png",
