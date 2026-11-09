@@ -90,7 +90,7 @@ public class LegacyBatchB09VersionsTests {
         // the original is superseded by the 2012 card list; the card-list text by the 2013 Master List (current card)
         assertEquals(LocalDate.of(2012, 7, 21), library.getSwccgoCardBlueprint("2261_10").getLegacyVersion().supersededOn());
         assertEquals(LocalDate.of(2012, 7, 21), library.getSwccgoCardBlueprint("2261_1010").getLegacyVersion().printedOn());
-        assertEquals(LocalDate.of(2013, 4, 27), library.getSwccgoCardBlueprint("2261_1010").getLegacyVersion().supersededOn());
+        assertEquals(LocalDate.of(2012, 10, 19), library.getSwccgoCardBlueprint("2261_1010").getLegacyVersion().supersededOn()); // PC forum errata 2012-10-19 (Batch B36)
     }
 
     @Test

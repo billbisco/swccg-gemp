@@ -49,7 +49,7 @@ public class Card2220_035 extends AbstractNormalEffect {
         setLore("Like nerf herders herding nerfs, Imperial commanders often use TIE fighters to drive fleeing Rebel ships into tractor beam range.");
         setGameText("Deploy on your battleground. During battle, whenever opponent's card is hit by a non-[Permanent Weapon] weapon (once per card targeted), opponent's total power is cumulatively -4 (-2 if hit by a lightsaber).");
         setLegacyVersion(new LegacyVersion("1220_35", "",
-                "Virtual Block 2 release sheet (2009-12-07), card #35", LocalDate.of(2009, 12, 7), LocalDate.of(2013, 4, 27)));
+                "Virtual Block 2 release sheet (2009-12-07), card #35", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 9, 21)));
         addIcons(Icon.DAGOBAH);
         addKeywords(Keyword.DEPLOYS_ON_LOCATION);
     }

@@ -20,6 +20,6 @@ public class Card2220_1156 extends Card2220_156 {
         super();
         setGameText("If you are about to recirculate at the end of your turn, and you have fewer cards in Used Pile than in Force Pile, place your Used Pile under your Force Pile instead. OR Place the top card of your Used Pile on top of your Force Pile.");
         setLegacyVersion(new LegacyVersion("1220_156", "PC-E1",
-                "PC website card list (S1, seen 2012-07-21 .. 2013-01-11; date is an upper bound)", LocalDate.of(2012, 7, 21), LocalDate.of(2013, 4, 27)));
+                "PC website card list (S1, seen 2012-07-21 .. 2013-01-11; date is an upper bound)", LocalDate.of(2012, 7, 21), LocalDate.of(2012, 11, 19)));
     }
 }

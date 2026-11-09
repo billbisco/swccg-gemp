@@ -18,6 +18,6 @@ public class Card2200_007 extends Card1200_007 {
         super();
         setGameText("Plays on table. Substituted battle destinies do not count against battle destiny limits. If all your battle destinies were canceled (and not redrawn) your total battle destiny = 1. Once per game, may play a Defensive Shield from under your Starting Effect.");
         setLegacyVersion(new LegacyVersion("1200_7", "",
-                "PC website card list (2012-07-21)", LocalDate.of(2012, 7, 21), LocalDate.of(2013, 4, 27)));
+                "PC website card list (2012-07-21)", LocalDate.of(2012, 7, 21), LocalDate.of(2012, 8, 21)));
     }
 }

@@ -73,7 +73,7 @@ public class Card_2220_163_Tests {
         assertEquals("1220_163", version.currentPrintingId());
         assertEquals("", version.label());
         assertEquals(LocalDate.of(2009, 12, 7), version.printedOn());
-        assertEquals(LocalDate.of(2013, 4, 27), version.supersededOn());
+        assertEquals(LocalDate.of(2012, 11, 19), version.supersededOn());
         assertEquals(GameUtils.getFullName(current), GameUtils.getFullName(card));
 
         var back = new Card2220_163_BACK();

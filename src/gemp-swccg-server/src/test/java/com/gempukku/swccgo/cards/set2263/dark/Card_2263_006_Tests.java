@@ -23,7 +23,7 @@ public class Card_2263_006_Tests {
     public void IdentityAndVersionInfo() {
         var scn = scenario();
         assertLegacyVersion(scn.GetDSCard("v").getBlueprint(), scn.GetDSCard("current").getBlueprint(), "1263_6", "",
-                LocalDate.of(2010, 3, 15), LocalDate.of(2013, 4, 27),
+                LocalDate.of(2010, 3, 12), LocalDate.of(2013, 4, 27),
                 "[Pilot] 2. Opponent may not add destiny draws to power or attrition here. Ice Storm and Sandwhirl are canceled at same and related locations.");
     }
 }

@@ -6613,6 +6613,9 @@ const fixedImages = {
 "1292_10":"https://res.starwarsccg.org/cards/legacy/VirtualBlock9-Light/large/majorhaashn.gif",
 "1292_11":"https://res.starwarsccg.org/cards/legacy/VirtualBlock9-Light/large/mandalorianmishapjedimindtrick.gif",
 // END legacy
+// Batch B36 (source research R2-R4): Imperial Occupation (V) PC-E1 (CBT errata of 2012-09-21, replaced 2012-11-19) shows the E-marked PC card image of the 0 side, which prints that text; its 7 side shows the PC card image of Imperial Control (the 2012-09-21 back text, unchanged since). 2220_72_BACK (original back) now shows its release-sheet slip ("At marker sites, AT-ATs move for free"), edited in place below.
+"2220_1072":"https://wiki.swccg.com/images/9/93/VB2-D-imperialoccupation-pre.gif",
+"2220_1072_BACK":"https://res.starwarsccg.org/cards/legacy/VirtualBlock2-Dark/large/imperialcontrol.gif",
 // Batch B30 (title-change versions, Virtual Blocks 4-7; Bill 2026-11-09: a title change is a version): the original-title version cards show their release-sheet slips, which print the old title (the current cards keep their PC card images, which print the new title and the current text). 1240_81 Eject! Eject! (V): the generated PC image was the Virtual Set 3 Eject! Eject! card; it now shows its Master List slip (the current text).
 "2240_17":"https://wiki.swccg.com/images/9/92/VB4-16-Thrawns_Ysalamir.png",
 "2240_66":"https://wiki.swccg.com/images/4/48/VB4-67-Maris_Brood_Fallen_Jedi.png",
@@ -7282,7 +7285,7 @@ const fixedImages = {
 "2220_50":"https://wiki.swccg.com/images/5/52/VB2-50E-Vader_s_Bounty.png",
 "2220_68":"https://wiki.swccg.com/images/d/d5/VB2-67-Slip_Sliding_Away.png",
 "2220_72":"https://wiki.swccg.com/images/e/e7/VB2-72E-Imperial_Occupation.png",
-"2220_72_BACK":"https://res.starwarsccg.org/cards/legacy/VirtualBlock2-Dark/large/imperialcontrol.gif",
+"2220_72_BACK":"https://wiki.swccg.com/images/2/21/VB2-72E-Imperial_Control.png",
 "2220_111":"https://wiki.swccg.com/images/7/71/VB2-112-Advantage.png",
 "2220_128":"https://wiki.swccg.com/images/f/fa/VB2-128-Maneuvering_Flaps.png",
 "2220_136":"https://wiki.swccg.com/images/9/93/VB2-135-Wars_Not_Make_One_Great.png",

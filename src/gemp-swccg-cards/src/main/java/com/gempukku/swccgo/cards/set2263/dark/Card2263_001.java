@@ -21,8 +21,8 @@ public class Card2263_001 extends Card1263_001 {
         super();
         setLore("");
         setLegacyVersion(new LegacyVersion("1263_1", "",
-                "Virtual Block 6.3 release sheet (2010-03-15), card #3-01, printed as Bane, The Bounty Hunter; renamed Cad Bane (PC card list by 2013-03-13, still Bane, The Bounty Hunter on 2013-01-11; Virtual Cards Master List 2013-04-27)",
-                LocalDate.of(2010, 3, 15), LocalDate.of(2013, 4, 27)));
+                "Virtual Block 6.3 release sheet (released 2010-03-12), card #3-01, printed as Bane, The Bounty Hunter; renamed Cad Bane (PC card list by 2013-03-13, still Bane, The Bounty Hunter on 2013-01-11; Virtual Cards Master List 2013-04-27)",
+                LocalDate.of(2010, 3, 12), LocalDate.of(2013, 4, 27)));
         setPrintedTitle("Bane, The Bounty Hunter");
     }
 }

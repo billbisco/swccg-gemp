@@ -18,7 +18,7 @@ public class Card2261_035 extends Card1261_035 {
     public Card2261_035() {
         setGameText("Deploy on table with 5 cards from outside your deck face down under here. Twice per game, may play a Defensive Shield from here (as if from hand). If This Deal Is Getting Worse All The Time on table, for remainder of game lightsabers may not add to Force drains. Cloud City Occupation is canceled.");
         setLegacyVersion(new LegacyVersion("1261_35", "",
-                "Virtual Block 6.1 release sheet (2009-09-04), card #35", LocalDate.of(2009, 9, 4), LocalDate.of(2012, 7, 21)));
+                "Virtual Block 6.1 release sheet (2009-09-04), card #35", LocalDate.of(2009, 9, 4), LocalDate.of(2010, 5, 29)));
     }
 
     @Override

@@ -31,8 +31,8 @@ import java.util.List;
  * Original version of 1220_72 (Virtual Block 2 release sheet, Dec 2009, card #72E): deploys any Main Power Generators
  * (no [Virtual Block 8] icon), makes Walker Garrison an Out Of Play Interrupt, limits opponent's Force loss from your [Special Edition]
  * Effects to 1 and takes a card into hand during your control phase; no You May Start Your Landing clause. The back
- * side (2220_72_BACK) adds "At marker sites, AT-ATs move for free." Both were changed on the Virtual Cards Master List
- * (2013-04-27). Anything Goes only (docs/legacy-versions.md).
+ * side (2220_72_BACK) adds "At marker sites, AT-ATs move for free." Both were changed by the CBT errata of 2012-09-21 (PC forum,
+ * PC-E1 = 2220_1072) and again on 2012-11-19 (the current card). Anything Goes only (docs/legacy-versions.md).
  */
 public class Card2220_072 extends AbstractObjective {
     static final Filter BLOCKADE_ON_HOTH = Filters.and(Filters.title("Hoth Blockade"),
@@ -49,7 +49,7 @@ public class Card2220_072 extends AbstractObjective {
         setVirtualSuffix(true);
         setGameText("Deploy Hoth system, [Virtual Block 6] Ice Plains, and Main Power Generators (Light Side). May deploy Imperial Decree. For remainder of game, Walker Garrison is an Out Of Play Interrupt and [Immune to Sense]. AT-ATs are deploy -1 to marker sites. While this side up, Revolution is canceled. Opponent loses no more than 1 Force to your [Special Edition] Effects. During your control phase, may take one AT-AT Cannon, Hoth Blockade, Electro-Rangefinder, or a [Hoth] Epic Event into hand from Reserve Deck; reshuffle. Flip this card if Main Power Generators 'blown away' and Hoth Blockade on Hoth.");
         setLegacyVersion(new LegacyVersion("1220_72", "",
-                "Virtual Block 2 release sheet (2009-12-07), card #72", LocalDate.of(2009, 12, 7), LocalDate.of(2013, 4, 27)));
+                "Virtual Block 2 release sheet (2009-12-07), card #72", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 9, 21)));
         addIcons(Icon.SPECIAL_EDITION);
     }
 

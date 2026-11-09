@@ -66,13 +66,13 @@ public class LegacyBatchB03Tests {
             assertEquals(id, "", version.label());
             assertEquals(id, LocalDate.of(2009, 12, 7), version.printedOn());
         }
-        // Through The Force Things You Will See (V): original 2009 -> PC-E1 card list 2012 -> PC-E2 Master List 2013 (current)
+        // Through The Force Things You Will See (V): original 2009 -> PC-E1 card list 2012 -> PC-E2 PC forum errata 2012-11-19 (current)
         var original = card("2220_156").getLegacyVersion();
         var pcE1 = card("2220_1156").getLegacyVersion();
         assertEquals("", original.label());
         assertEquals("PC-E1", pcE1.label());
         assertEquals(original.supersededOn(), pcE1.printedOn());
-        assertEquals(LocalDate.of(2013, 4, 27), pcE1.supersededOn());
+        assertEquals(LocalDate.of(2012, 11, 19), pcE1.supersededOn()); // PC forum errata 2012-11-19 (Batch B36)
         assertEquals(CardSubtype.OUT_OF_PLAY, card("2220_1156").getCardSubtype());
         assertEquals(CardSubtype.LOST, card("1220_156").getCardSubtype());
     }
