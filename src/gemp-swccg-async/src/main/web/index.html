@@ -122,7 +122,8 @@
                         $(".error").html();
                         $(".interaction").html(html);
                         $("#registerButton").button().click(register);
-                        $("#login, #password").on("input", showPasswordNameNote);
+                        // This page runs jQuery 1.6, which has no .on(); bind() covers typing and paste.
+                        $("#login, #password").bind("input keyup change", showPasswordNameNote);
                     });
         }
 
