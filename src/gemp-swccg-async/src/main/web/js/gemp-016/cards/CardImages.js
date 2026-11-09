@@ -6845,13 +6845,10 @@ const fixedImages = {
 "2273_33":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/communing.gif",
 "2273_34":"https://wiki.swccg.com/images/d/dc/VB7-04-Use_The_Force.png",
 "2273_41":"https://wiki.swccg.com/images/e/e8/VB7-p7-122-Coruscant_Special_Edition.png",
-"2273_1010":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Dark/large/kesselsurveillancesystem.gif",
 "2273_1027":"https://wiki.swccg.com/images/0/03/VB7-01-Master_Kenobi-original-cardmaker.png",
 "2273_2027":"https://wiki.swccg.com/images/2/2c/VB7-01-Master_Kenobi-PC-E2-cardmaker.png",
 "2273_1033":"https://wiki.swccg.com/images/d/da/VB7-00-Communing-PC-E1-cardmaker.png",
 "2273_1010":"https://wiki.swccg.com/images/0/00/VB7-00-Kessel_Surveillance_System-PC-E1-cardmaker.png",
-"2273_1027":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/masterkenobi.gif",
-"2273_1033":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/communing.gif",
 // Batch B03: Through The Force Things You Will See (V) PC-E1 (2012 card list text), CardMaker recreation; 2220_156 keeps the slip, 1220_156 the PC image (PC-E2).
 "2220_1156":"https://wiki.swccg.com/images/b/ba/VB2-156-Through_The_Force_Things_You_Will_See-PC-E1-cardmaker.png",
 "2273_1041":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/coruscant.gif",
