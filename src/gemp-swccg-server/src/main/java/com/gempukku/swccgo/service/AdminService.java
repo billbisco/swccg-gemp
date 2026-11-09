@@ -12,8 +12,13 @@ public class AdminService {
     private LoggedUserHolder _loggedUserHolder;
     private IpBanDAO _ipBanDAO;
     private AuthService _authService;
-    /** Called with the player id after a ban, deactivation or reset (swccg-login revoke); may be null. */
-    private volatile java.util.function.IntConsumer _revocationListener;
+    /** Told about a ban, deactivation or reset (swccg-login revoke); may be null. */
+    public interface RevocationListener {
+        /** reason is "reset", "deactivate", "ban" or "temp_ban". */
+        void revoked(int playerId, String reason);
+    }
+
+    private volatile RevocationListener _revocationListener;
 
     public AdminService(PlayerDAO playerDAO, IpBanDAO ipBanDAO, LoggedUserHolder loggedUserHolder, AuthService authService) {
         _playerDAO = playerDAO;
@@ -22,18 +27,18 @@ public class AdminService {
         _authService = authService;
     }
 
-    public void setRevocationListener(java.util.function.IntConsumer listener) {
+    public void setRevocationListener(RevocationListener listener) {
         _revocationListener = listener;
     }
 
-    private void notifyRevoked(String login) {
-        java.util.function.IntConsumer l = _revocationListener;
+    private void notifyRevoked(String login, String reason) {
+        RevocationListener l = _revocationListener;
         if (l == null)
             return;
         try {
             Player p = _playerDAO.getPlayer(login, true);
             if (p != null)
-                l.accept(p.getId());
+                l.revoked(p.getId(), reason);
         } catch (Exception ignored) {
             // best effort: swccg-login re-checks the account with GEMP on every sign-in
         }
@@ -56,7 +61,8 @@ public class AdminService {
         if (code == null)
             return null;
         _loggedUserHolder.forceLogoutUser(login);
-        notifyRevoked(login);
+        // "reset" also makes swccg-login drop the account's passkeys and connected accounts.
+        notifyRevoked(login, "reset");
         return code;
     }
 
@@ -66,7 +72,7 @@ public class AdminService {
             return false;
         }
         _loggedUserHolder.forceLogoutUser(login);
-        notifyRevoked(login);
+        notifyRevoked(login, "deactivate");
         return true;
     }
 
@@ -77,7 +83,7 @@ public class AdminService {
                 return false;
             }
             _loggedUserHolder.forceLogoutUser(login);
-            notifyRevoked(login);
+            notifyRevoked(login, "ban");
             return true;
         } catch (SQLException exp) {
             return false;
@@ -91,7 +97,7 @@ public class AdminService {
                 return false;
             }
             _loggedUserHolder.forceLogoutUser(login);
-            notifyRevoked(login);
+            notifyRevoked(login, "temp_ban");
             return true;
         } catch (SQLException exp) {
             return false;

@@ -60,15 +60,18 @@ Off unless `SWCCG_LOGIN_ENABLED=true`. When off, or misconfigured,
 | `SWCCG_LOGIN_CLIENT_SECRET_FILE` | file with the client secret, mode 0400/0600 |
 | `SWCCG_LOGIN_REDIRECT_URI` | `https://<host>/gemp-swccg-server/oidc/callback` |
 | `SWCCG_LOGIN_AFTER_LOGIN_URL` | default `/gemp-swccg/hall.html` |
-| `SWCCG_LOGIN_REVOKE_URL` / `SWCCG_LOGIN_REVOKE_SECRET` | optional: tell swccg-login to end sessions on ban/deactivate/reset |
+| `SWCCG_LOGIN_REVOKE_URL` / `SWCCG_LOGIN_REVOKE_SECRET` | optional: tell swccg-login to end sessions on ban/deactivate/reset. The body names the reason (`reset`, `deactivate`, `ban`, `temp_ban`); on `reset` swccg-login also removes the account's passkeys and connected accounts. Failed calls are retried after 2 s, 10 s and 60 s |
 
-Routes: `GET /gemp-swccg-server/oidc/start` (sends the browser to swccg-login with
-state, nonce and PKCE S256, bound to a `gempOidcBind` cookie),
+Routes: `GET /gemp-swccg-server/oidc/status` (`{"enabled":true}`; the login page shows its
+"Sign in with swccg.com" button only when this answers),
+`GET /gemp-swccg-server/oidc/start` (sends the browser to swccg-login with
+state, nonce and PKCE S256, bound to a `gempOidcBind` cookie; at most 20 open starts per
+client IP (429 beyond), and the oldest are evicted when 20 000 are open),
 `GET /gemp-swccg-server/oidc/callback` (checks state, browser binding and `iss`,
 exchanges the code with client_secret_basic, verifies the RS256 ID token,
 re-checks the account with GEMP and sets the normal session cookie), and
 `POST /gemp-swccg-server/oidc/backchannel-logout` (OIDC back-channel logout:
-logs the player out of GEMP).
+logs the player out of GEMP; `/oidc/backchannel` is kept as an alias).
 
 `sub` is the GEMP player id. The ID-token verifier uses the JDK only (no new
 dependency): RS256 only, RSA ≥ 2048, kid required, JWKS refreshed at most once a

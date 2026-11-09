@@ -185,6 +185,11 @@
             loginButton.click(login);
             
             $(".interaction").append(loginButton);
+            // "Sign in with swccg.com" (swccg-login). Shown only when the server has it switched on
+            // (SWCCG_LOGIN_ENABLED); style it with the .sso-signin class in css.
+            $(".interaction").append("<div id='ssoSignIn' style='display:none'><br/>or <a class='sso-signin' href='/gemp-swccg-server/oidc/start'>Sign in with swccg.com</a></div>");
+            $.ajax({type: "GET", url: "/gemp-swccg-server/oidc/status", cache: false, dataType: "json",
+                success: function (s) { if (s && s.enabled) { $("#ssoSignIn a").button(); $("#ssoSignIn").show(); } }});
             $(".interaction").append("<br/><br/><a href='mailto:communications@starwarsccg.org?subject=Gemp%20Password%20Reset'>Forgot your password? Contact the <span style='color:orange'>Communications Advocate</span></a>.");
             $(".interaction").append("<br/><br/>Play the LOTR-TCG on GEMP at <a href='https://play.lotrtcgpc.net'>play.lotrtcgpc.net</a>");
             
