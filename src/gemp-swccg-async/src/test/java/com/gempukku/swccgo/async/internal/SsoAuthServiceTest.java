@@ -149,4 +149,41 @@ class SsoAuthServiceTest {
     void v1PathNotServedHere() {
         assertEquals(404, call(KEY, "/internal/v1/verify", "{}", NOW).status);
     }
+
+    private static String pw(long id, String password) {
+        return "{\"id\":" + id + ",\"password\":\"" + password + "\",\"client_ip\":\"" + IP + "\"}";
+    }
+
+    @Test
+    void setPasswordIsOffUnlessSwitchedOn() throws Exception {
+        WikiAuthService.Result r = call(KEY, SsoAuthService.PASSWORD, pw(5, "new-pass"), NOW);
+        assertEquals(404, r.status);
+        verify(auth, never()).setPassword(anyInt(), anyString());
+    }
+
+    @Test
+    void setPasswordById() throws Exception {
+        service = new SsoAuthService(auth, settings, keys, true);
+        when(auth.setPassword(5, "new-pass")).thenReturn(player(5, "Bill", "au"));
+        JSONObject r = json(call(KEY, SsoAuthService.PASSWORD, pw(5, "new-pass"), NOW));
+        assertEquals(true, r.get("ok"));
+        assertEquals(5L, ((JSONObject) r.get("user")).get("id"));
+        assertFalse(r.toJSONString().contains("admin"));
+        assertFalse(r.toJSONString().contains("new-pass"));
+    }
+
+    @Test
+    void setPasswordErrorsAndLimit() throws Exception {
+        service = new SsoAuthService(auth, settings, keys, true);
+        when(auth.setPassword(6, "x")).thenReturn(null);
+        when(auth.setPassword(7, "")).thenThrow(new AuthService.WeakPasswordException());
+        assertEquals("not_found", json(call(KEY, SsoAuthService.PASSWORD, pw(6, "x"), NOW)).get("error"));
+        assertEquals("weak_password", json(call(KEY, SsoAuthService.PASSWORD, pw(7, ""), NOW)).get("error"));
+        assertEquals(400, call(KEY, SsoAuthService.PASSWORD, "{\"id\":\"5\",\"password\":\"p\",\"client_ip\":\"" + IP + "\"}", NOW).status);
+        assertEquals(400, call(KEY, SsoAuthService.PASSWORD, "{\"id\":5,\"client_ip\":\"" + IP + "\"}", NOW).status);
+        when(auth.setPassword(eq(8), anyString())).thenReturn(player(8, "Rey", "u"));
+        for (int i = 0; i < 5; i++)
+            assertEquals(200, call(KEY, SsoAuthService.PASSWORD, pw(8, "p" + i), NOW).status);
+        assertEquals(429, call(KEY, SsoAuthService.PASSWORD, pw(8, "p9"), NOW).status, "five password sets per account per hour");
+    }
 }

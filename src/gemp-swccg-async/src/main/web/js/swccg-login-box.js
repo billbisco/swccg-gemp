@@ -16,6 +16,9 @@
  *   data-params-url   same-origin URL returning the OIDC fields as JSON (a fresh request each call).
  *                     Leave it out when the server already rendered them into the hidden inputs.
  *   data-error-param  query parameter carrying the failure reason back to this page (default sso_error)
+ *   data-forgot-idp   optional: "reset" sends "Forgot password?" to <issuer>/reset for this sign-in
+ *                     (via /authorize?...&idp=reset, so the player comes back here signed in);
+ *                     if that can't start, the inline note opens instead
  *   data-forgot-url   optional: where "Forgot password?" goes; otherwise its inline note opens
  * Events (bubbling, on .sbox): "sbox:error" {detail:{reason}}, e.g. fall back to an older form on
  * reset_required or unavailable; call event.preventDefault() to keep the box from showing the message.
@@ -90,6 +93,7 @@
     this.paramsUrl = root.getAttribute("data-params-url") || "";
     this.errorParam = root.getAttribute("data-error-param") || "sso_error";
     this.forgotUrl = root.getAttribute("data-forgot-url") || "";
+    this.forgotIdp = (root.getAttribute("data-forgot-idp") || "").replace(/[^a-z0-9_-]/gi, "");
     this.form = $(root, "form.sbox-form");
     this.pkForm = $(root, "form.sbox-pk-form");
     this.err = $(root, ".sbox-error");
@@ -118,6 +122,23 @@
     });
     var forgot = $(this.root, "[data-sbox-toggle=forgot]");
     if (forgot) forgot.addEventListener("click", function () {
+      if (self.forgotIdp && !self.forgotFailed) {
+        if (self.busy) return;
+        self.clearError();
+        self.abortConditional();
+        self.setBusy(forgot, true);
+        self.params().then(function (p) {
+          var q = [];
+          OIDC_FIELDS.forEach(function (f) { if (p[f]) q.push(encodeURIComponent(f) + "=" + encodeURIComponent(p[f])); });
+          q.push("idp=" + encodeURIComponent(self.forgotIdp));
+          window.location.assign(self.issuer + "/authorize?" + q.join("&"));
+        }).catch(function () {
+          self.setBusy(forgot, false);
+          self.forgotFailed = true; // fall back to the note (mailto) from now on
+          forgot.click();
+        });
+        return;
+      }
       if (self.forgotUrl) { window.location.assign(self.forgotUrl); return; }
       var note = $(self.root, ".sbox-forgot");
       var open = note.hidden;

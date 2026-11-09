@@ -18,7 +18,8 @@ import java.util.regex.Pattern;
 
 /**
  * GEMP-AUTH-V2 for swccg-login (docs/swccg-login-auth-api.md): POST /internal/v2/verify,
- * /internal/v2/register, /internal/v2/players and /internal/v2/status.
+ * /internal/v2/register, /internal/v2/players, /internal/v2/status and, only when switched on
+ * (GEMP_INTERNAL_AUTH_V2_SET_PASSWORD=true), /internal/v2/password.
  *
  * Same order of checks as {@link WikiAuthService}: path, method, size, key id + signature,
  * timestamp skew, nonce replay, rate limits, then GEMP. Answers never carry an admin flag or any
@@ -29,7 +30,9 @@ public class SsoAuthService {
     public static final String REGISTER = "/internal/v2/register";
     public static final String PLAYERS = "/internal/v2/players";
     public static final String STATUS = "/internal/v2/status";
-    public static final Set<String> PATHS = Set.of(VERIFY, REGISTER, PLAYERS, STATUS);
+    /** Set a new password by player id (swccg-login's self-service reset). Off unless switched on. */
+    public static final String PASSWORD = "/internal/v2/password";
+    public static final Set<String> PATHS = Set.of(VERIFY, REGISTER, PLAYERS, STATUS, PASSWORD);
 
     private static final Pattern NONCE = Pattern.compile("^[A-Za-z0-9_-]{16,64}$");
     private static final Pattern IP = Pattern.compile("^[0-9A-Fa-f:.]{2,45}$");
@@ -44,17 +47,24 @@ public class SsoAuthService {
     final KeyedRateLimiter _ipAttempts = new KeyedRateLimiter(30, 5 * 60_000L);
     final KeyedRateLimiter _signupsPerIp = new KeyedRateLimiter(5, 60 * 60_000L);
     final KeyedRateLimiter _global = new KeyedRateLimiter(1200, 60_000L);
+    final KeyedRateLimiter _passwordSets = new KeyedRateLimiter(5, 60 * 60_000L);
+    private final boolean _setPassword;
 
     public SsoAuthService(AuthService authService, GempSettingDAO settings, InternalAuthKeysV2 keys) {
+        this(authService, settings, keys, false);
+    }
+
+    public SsoAuthService(AuthService authService, GempSettingDAO settings, InternalAuthKeysV2 keys, boolean setPassword) {
         _authService = authService;
         _settings = settings;
         _keys = keys;
+        _setPassword = setPassword;
     }
 
     public WikiAuthService.Result handle(String method, String path, Map<String, String> headers, byte[] body, long nowMillis) {
         String nonce = headers.get("x-gemp-nonce");
         String keyId = headers.get("x-gemp-key-id");
-        if (!PATHS.contains(path))
+        if (!PATHS.contains(path) || (PASSWORD.equals(path) && !_setPassword))
             return result(404, error("not_found"), null, null);
         if (!"POST".equals(method))
             return result(405, error("method_not_allowed"), null, null);
@@ -92,6 +102,7 @@ public class SsoAuthService {
                 case VERIFY: return verify(json, keyId, nonce, nowMillis);
                 case REGISTER: return register(json, true, keyId, nonce, nowMillis);
                 case PLAYERS: return register(json, false, keyId, nonce, nowMillis);
+                case PASSWORD: return setPassword(json, keyId, nonce, nowMillis);
                 default: return status(json, keyId, nonce);
             }
         } catch (Exception e) {
@@ -160,6 +171,31 @@ public class SsoAuthService {
             return result(200, error("name_invalid"), keyId, nonce); // reserved prefix
         _signupsPerIp.record(clientIp, now);
         LOG.info("sso-auth: " + (withPassword ? "register" : "players") + " user=" + safe(username) + " ip=" + clientIp + " key=" + keyId);
+        return result(200, okUser(p), keyId, nonce);
+    }
+
+    private WikiAuthService.Result setPassword(JSONObject json, String keyId, String nonce, long now) throws Exception {
+        Object id = json.get("id");
+        String password = asString(json.get("password"));
+        String clientIp = asString(json.get("client_ip"));
+        if (!(id instanceof Long) || (Long) id <= 0 || (Long) id > Integer.MAX_VALUE || password == null
+                || password.length() > 1024 || !validIp(clientIp))
+            return result(400, error("bad_request"), keyId, nonce);
+        String idKey = "id:" + id;
+        long retry = Math.max(_ipAttempts.retryAfterSeconds(clientIp, now), _passwordSets.retryAfterSeconds(idKey, now));
+        if (retry > 0)
+            return throttled(retry, keyId, nonce);
+        _ipAttempts.record(clientIp, now);
+        Player p;
+        try {
+            p = _authService.setPassword(((Long) id).intValue(), password);
+        } catch (AuthService.WeakPasswordException e) {
+            return result(200, error("weak_password"), keyId, nonce);
+        }
+        if (p == null)
+            return result(200, error("not_found"), keyId, nonce);
+        _passwordSets.record(idKey, now);
+        LOG.info("sso-auth: password id=" + id + " ip=" + clientIp + " key=" + keyId);
         return result(200, okUser(p), keyId, nonce);
     }
 
