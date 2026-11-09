@@ -6745,6 +6745,18 @@ const fixedImages = {
 "2261_1010":"https://wiki.swccg.com/images/6/65/VB6-10-Darth_Vader_Betrayer_Of_The_Jedi-PC-E1-cardmaker.png",
 "2261_34":"https://wiki.swccg.com/images/4/4a/VB6-34-Fleet_Security_Protocols-original-cardmaker.png",
 "2261_1065":"https://wiki.swccg.com/images/f/f6/VB6-63-BoShek_Brash_Smuggler-PC-E1-cardmaker.png",
+// Batch B12 (Virtual Block 7-8): CardMaker recreations of the latest text (601_127 / 601_279 are aliases of 1281_37 / 1283_21); 1281_37 Scoundrel's Luck shows the re-made 8.1 sheet slip (PC-E1; its PC card image prints the original, kept on 2281_37);
+// 1273_27 Master Kenobi and 1273_33 Communing keep their PC card images (PC-E3 / PC-E2). Version cards 2273_1027, 2273_2027 and 2273_1033 are set in the versions list below.
+"1273_30":"https://wiki.swccg.com/images/f/fa/VB7-02-Wes_Janson_Rogue_Veteran-PC-E1-cardmaker.png",
+"1273_32":"https://wiki.swccg.com/images/3/3d/VB7-03-Bacta_Infirmary-PC-E1-cardmaker.png",
+"1273_34":"https://wiki.swccg.com/images/1/16/VB7-04-Use_The_Force-PC-E1-cardmaker.png",
+"1274_5":"https://wiki.swccg.com/images/e/ee/VB7-133-Desperate_Counter-PC-E1-cardmaker.png",
+"1274_7":"https://wiki.swccg.com/images/9/98/VB7-04-Occupied_Territory-PC-E1-cardmaker.png",
+"1274_8":"https://wiki.swccg.com/images/2/2f/VB7-05-Shadows_Of_The_Empire-PC-E1-cardmaker.png",
+"1283_21":"https://wiki.swccg.com/images/a/a4/VB8-02-Underworld_Contacts_Uncharted_Settlements-PC-E1-cardmaker.png",
+"1281_37":"https://wiki.swccg.com/images/5/57/VB8-03-Scoundrels_Luck.png",
+"601_127":"https://wiki.swccg.com/images/5/57/VB8-03-Scoundrels_Luck.png",
+"601_279":"https://wiki.swccg.com/images/a/a4/VB8-02-Underworld_Contacts_Uncharted_Settlements-PC-E1-cardmaker.png",
 
 // Legacy pre-errata versions (docs/legacy-versions.md; keep outside the generated legacy block).
 // Image = the wiki slip crop of the release sheet that printed that text (wiki page field image2).
@@ -6833,9 +6845,10 @@ const fixedImages = {
 "2273_33":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/communing.gif",
 "2273_34":"https://wiki.swccg.com/images/d/dc/VB7-04-Use_The_Force.png",
 "2273_41":"https://wiki.swccg.com/images/e/e8/VB7-p7-122-Coruscant_Special_Edition.png",
+"2273_1027":"https://wiki.swccg.com/images/0/03/VB7-01-Master_Kenobi-original-cardmaker.png",
+"2273_2027":"https://wiki.swccg.com/images/2/2c/VB7-01-Master_Kenobi-PC-E2-cardmaker.png",
+"2273_1033":"https://wiki.swccg.com/images/d/da/VB7-00-Communing-PC-E1-cardmaker.png",
 "2273_1010":"https://wiki.swccg.com/images/0/00/VB7-00-Kessel_Surveillance_System-PC-E1-cardmaker.png",
-"2273_1027":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/masterkenobi.gif",
-"2273_1033":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/communing.gif",
 // Batch B03: Through The Force Things You Will See (V) PC-E1 (2012 card list text), CardMaker recreation; 2220_156 keeps the slip, 1220_156 the PC image (PC-E2).
 "2220_1156":"https://wiki.swccg.com/images/b/ba/VB2-156-Through_The_Force_Things_You_Will_See-PC-E1-cardmaker.png",
 "2273_1041":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/coruscant.gif",

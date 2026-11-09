@@ -179,6 +179,24 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('2220_1169'), 'https://wik
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1220_169'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock2-Light/large/lukesblasterpistol.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2220_169'), 'https://wiki.swccg.com/images/9/91/VB2-169-Luke_s_Blaster_Pistol.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2230_109'), 'https://wiki.swccg.com/images/3/36/VB3-110-Rebel_Leadership.png');
+// Batch B12 (Virtual Block 7-8): current cards and version cards show the image of their own text
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1273_30'), 'https://wiki.swccg.com/images/f/fa/VB7-02-Wes_Janson_Rogue_Veteran-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1273_32'), 'https://wiki.swccg.com/images/3/3d/VB7-03-Bacta_Infirmary-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1273_34'), 'https://wiki.swccg.com/images/1/16/VB7-04-Use_The_Force-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1274_5'), 'https://wiki.swccg.com/images/e/ee/VB7-133-Desperate_Counter-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1274_7'), 'https://wiki.swccg.com/images/9/98/VB7-04-Occupied_Territory-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1274_8'), 'https://wiki.swccg.com/images/2/2f/VB7-05-Shadows_Of_The_Empire-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1283_21'), 'https://wiki.swccg.com/images/a/a4/VB8-02-Underworld_Contacts_Uncharted_Settlements-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_37'), 'https://wiki.swccg.com/images/5/57/VB8-03-Scoundrels_Luck.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_127'), 'https://wiki.swccg.com/images/5/57/VB8-03-Scoundrels_Luck.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_279'), 'https://wiki.swccg.com/images/a/a4/VB8-02-Underworld_Contacts_Uncharted_Settlements-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_37'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/scoundrelsluck.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2273_1027'), 'https://wiki.swccg.com/images/0/03/VB7-01-Master_Kenobi-original-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2273_27'), 'https://wiki.swccg.com/images/f/fe/VB7-01-Master_Kenobi.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2273_2027'), 'https://wiki.swccg.com/images/2/2c/VB7-01-Master_Kenobi-PC-E2-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1273_27'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/masterkenobi.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2273_1033'), 'https://wiki.swccg.com/images/d/da/VB7-00-Communing-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1273_33'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/communing.gif');
 // Batch B10 (Virtual Block 6): current cards show the CardMaker image of their latest text; 2261_87 the first-copy slip (original), 2261_1087 the PC image (PC-E1)
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_82'), 'https://wiki.swccg.com/images/9/96/VB6-81-Maneuvering_Flaps_Nick_Of_Time-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_87'), 'https://wiki.swccg.com/images/8/81/VB6-89-Strong_Is_Vader-PC-E2-cardmaker.png');
