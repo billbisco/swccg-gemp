@@ -12,12 +12,31 @@ public class AdminService {
     private LoggedUserHolder _loggedUserHolder;
     private IpBanDAO _ipBanDAO;
     private AuthService _authService;
+    /** Called with the player id after a ban, deactivation or reset (swccg-login revoke); may be null. */
+    private volatile java.util.function.IntConsumer _revocationListener;
 
     public AdminService(PlayerDAO playerDAO, IpBanDAO ipBanDAO, LoggedUserHolder loggedUserHolder, AuthService authService) {
         _playerDAO = playerDAO;
         _ipBanDAO = ipBanDAO;
         _loggedUserHolder = loggedUserHolder;
         _authService = authService;
+    }
+
+    public void setRevocationListener(java.util.function.IntConsumer listener) {
+        _revocationListener = listener;
+    }
+
+    private void notifyRevoked(String login) {
+        java.util.function.IntConsumer l = _revocationListener;
+        if (l == null)
+            return;
+        try {
+            Player p = _playerDAO.getPlayer(login, true);
+            if (p != null)
+                l.accept(p.getId());
+        } catch (Exception ignored) {
+            // best effort: swccg-login re-checks the account with GEMP on every sign-in
+        }
     }
 
     public boolean setUserFlag(String login, Player.Type flag, boolean status) throws SQLException {
@@ -37,6 +56,7 @@ public class AdminService {
         if (code == null)
             return null;
         _loggedUserHolder.forceLogoutUser(login);
+        notifyRevoked(login);
         return code;
     }
 
@@ -46,6 +66,7 @@ public class AdminService {
             return false;
         }
         _loggedUserHolder.forceLogoutUser(login);
+        notifyRevoked(login);
         return true;
     }
 
@@ -56,6 +77,7 @@ public class AdminService {
                 return false;
             }
             _loggedUserHolder.forceLogoutUser(login);
+            notifyRevoked(login);
             return true;
         } catch (SQLException exp) {
             return false;
@@ -69,6 +91,7 @@ public class AdminService {
                 return false;
             }
             _loggedUserHolder.forceLogoutUser(login);
+            notifyRevoked(login);
             return true;
         } catch (SQLException exp) {
             return false;

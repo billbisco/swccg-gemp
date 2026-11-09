@@ -1,5 +1,8 @@
 package com.gempukku.swccgo.async.handler;
 
+import com.gempukku.swccgo.async.oidc.OidcClient;
+import com.gempukku.swccgo.async.oidc.OidcConfig;
+
 import com.gempukku.swccgo.security.OriginPolicy;
 
 import com.gempukku.polling.LongPollingSystem;
@@ -40,6 +43,8 @@ public class RootUriRequestHandler implements UriRequestHandler {
     private final GuestRequestHandler _guestRequestHandler;
 
     private final OriginPolicy _originPolicy;
+    /** Sign-in through swccg-login; null (404) unless SWCCG_LOGIN_ENABLED=true. */
+    private final OidcRequestHandler _oidcRequestHandler;
 
     public RootUriRequestHandler(Map<Type, Object> context, LongPollingSystem longPollingSystem) {
         _webRequestHandler = new WebRequestHandler(ApplicationConfiguration.getProperty("web.path"));
@@ -67,6 +72,21 @@ public class RootUriRequestHandler implements UriRequestHandler {
         _tournamentRequestHandler = new TournamentRequestHandler(context);
         _soloDraftRequestHandler = new SoloDraftRequestHandler(context);
         _guestRequestHandler = new GuestRequestHandler(context);
+        _oidcRequestHandler = createOidcHandler(context);
+    }
+
+    private static OidcRequestHandler createOidcHandler(Map<Type, Object> context) {
+        try {
+            OidcConfig cfg = OidcConfig.fromEnvironment();
+            if (cfg == null)
+                return null;
+            return new OidcRequestHandler(context, new OidcClient(cfg));
+        } catch (Exception e) {
+            // Misconfigured: stay off. The classic login is unaffected.
+            org.apache.logging.log4j.LogManager.getLogger(RootUriRequestHandler.class)
+                    .error("swccg-login sign-in disabled: " + e.getMessage());
+            return null;
+        }
     }
 
     @Override
@@ -75,6 +95,13 @@ public class RootUriRequestHandler implements UriRequestHandler {
             _webRequestHandler.handleRequest(uri.substring(_webContextPath.length()), request, context, responseWriter, remoteIp);
         } else if (uri.equals("/gemp-swccg")) {
             responseWriter.writeError(301, Collections.singletonMap("Location", "/gemp-swccg/"));
+        } else if (uri.startsWith(_serverContextPath + "oidc/")) {
+            // Top-level navigations from swccg-login (GET) and its server-to-server back-channel
+            // logout (POST, signed token, no Origin), so outside the Origin check below.
+            if (_oidcRequestHandler == null)
+                throw new HttpProcessingException(404);
+            _oidcRequestHandler.handleRequest(uri.substring(_serverContextPath.length() + 5), request, context,
+                    responseWriter, remoteIp);
         } else if (uri.equals(_serverContextPath)) {
             _statusRequestHandler.handleRequest(uri.substring(_serverContextPath.length()), request, context, responseWriter, remoteIp);
         } else {

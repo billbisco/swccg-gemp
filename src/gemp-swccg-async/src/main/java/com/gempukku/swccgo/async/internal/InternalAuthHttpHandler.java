@@ -15,12 +15,21 @@ import io.netty.handler.codec.http.HttpVersion;
 import java.util.HashMap;
 import java.util.Map;
 
-/** Netty glue for the internal listener. Only {@link WikiAuthService#PATH} exists on this port. */
+/**
+ * Netty glue for the internal listener: {@link WikiAuthService#PATH} (V1, the wiki) and
+ * {@link SsoAuthService#PATHS} (V2, swccg-login). Either service may be off (null): its paths are 404.
+ */
 public class InternalAuthHttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
     private final WikiAuthService _service;
+    private final SsoAuthService _sso;
 
     public InternalAuthHttpHandler(WikiAuthService service) {
+        this(service, null);
+    }
+
+    public InternalAuthHttpHandler(WikiAuthService service, SsoAuthService sso) {
         _service = service;
+        _sso = sso;
     }
 
     @Override
@@ -34,7 +43,12 @@ public class InternalAuthHttpHandler extends SimpleChannelInboundHandler<FullHtt
             headers.put(h.getKey().toLowerCase(java.util.Locale.ROOT), h.getValue());
         byte[] body = ByteBufUtil.getBytes(request.content());
 
-        WikiAuthService.Result result = _service.handle(request.method().name(), path, headers, body, System.currentTimeMillis());
+        long now = System.currentTimeMillis();
+        WikiAuthService.Result result;
+        if (SsoAuthService.PATHS.contains(path))
+            result = _sso != null ? _sso.handle(request.method().name(), path, headers, body, now) : notFound();
+        else
+            result = _service != null ? _service.handle(request.method().name(), path, headers, body, now) : notFound();
 
         FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1,
                 HttpResponseStatus.valueOf(result.status), Unpooled.wrappedBuffer(result.body));
@@ -44,6 +58,10 @@ public class InternalAuthHttpHandler extends SimpleChannelInboundHandler<FullHtt
         if (result.signature != null)
             response.headers().set("X-Gemp-Signature", result.signature);
         ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
+    }
+
+    private static WikiAuthService.Result notFound() {
+        return new WikiAuthService.Result(404, "{\"ok\":false,\"error\":\"not_found\"}".getBytes(java.nio.charset.StandardCharsets.UTF_8), null);
     }
 
     @Override
