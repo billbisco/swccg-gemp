@@ -26,6 +26,7 @@ import com.gempukku.swccgo.logic.effects.PlaceCardsOutOfPlayFromTableEffect;
 import com.gempukku.swccgo.logic.effects.RespondableEffect;
 import com.gempukku.swccgo.logic.effects.TargetCardOnTableEffect;
 import com.gempukku.swccgo.logic.effects.UnrespondableEffect;
+import com.gempukku.swccgo.logic.conditions.Condition;
 import com.gempukku.swccgo.logic.modifiers.MayNotHaveGameTextCanceledModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.timing.Action;
@@ -46,7 +47,7 @@ public class Card601_227 extends AbstractRebel {
         super(Side.LIGHT, 1, 3, 3, 4, 5, "Leia", Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
         setVirtualSuffix(true);
         setLore("Adopted daughter of the Viceroy and First Chairman of Alderaan. Became a political leader at a young age. The injustices of the New Order led her to join the Rebellion.");
-        setGameText("While at opponent's Galactic Senate, Leia's game text may not be canceled and may lose 1 Force to place Leia and any character present out of play. During battle, may cancel game text of a leader of ability < 5 with Leia for remainder of turn.");
+        setGameText("Leia's game text may not be canceled. While at opponent's Galactic Senate, may lose 1 Force to place Leia and any character present out of play. Once per battle at her location, may cancel game text of opponent's leader of ability < 5 present for remainder of turn.");
         addPersona(Persona.LEIA);
         addIcons(Icon.PREMIUM, Icon.WARRIOR, Icon.LEGACY_BLOCK_1);
         addKeywords(Keyword.LEADER, Keyword.FEMALE);
@@ -57,8 +58,24 @@ public class Card601_227 extends AbstractRebel {
     @Override
     protected List<Modifier> getGameTextWhileInPlayEvenIfGameTextCanceledModifiers(SwccgGame game, PhysicalCard self) {
         List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new MayNotHaveGameTextCanceledModifier(self, new AtCondition(self, Filters.and(Filters.opponents(self), Filters.Galactic_Senate))));
+        Condition condition = gameTextMayNotBeCanceledCondition(self);
+        modifiers.add(condition == null ? new MayNotHaveGameTextCanceledModifier(self) : new MayNotHaveGameTextCanceledModifier(self, condition));
         return modifiers;
+    }
+
+    /** PC-E1 (card list, 2012): "Leia's game text may not be canceled." (anywhere); null = always. */
+    protected Condition gameTextMayNotBeCanceledCondition(PhysicalCard self) {
+        return null;
+    }
+
+    /** PC-E1: "opponent's leader of ability < 5 present". */
+    protected Filter leaderToCancel(PhysicalCard self) {
+        return Filters.and(Filters.opponents(self), Filters.leader, Filters.present(self), Filters.abilityLessThan(5));
+    }
+
+    /** PC-E1: "Once per battle at her location". */
+    protected boolean battleConditionMet(SwccgGame game, PhysicalCard self) {
+        return GameConditions.isDuringBattleAt(game, Filters.sameLocation(self));
     }
 
     @Override
@@ -109,11 +126,11 @@ public class Card601_227 extends AbstractRebel {
 
         gameTextActionId = GameTextActionId.OTHER_CARD_ACTION_2;
 
-        final Filter leaderFilter = Filters.and(Filters.leader, Filters.with(self), Filters.abilityLessThan(5));
+        final Filter leaderFilter = leaderToCancel(self);
 
         // Check condition(s)
         if (GameConditions.isOncePerBattle(game, self, playerId, gameTextSourceCardId, gameTextActionId)
-                && GameConditions.isInBattle(game, self)
+                && battleConditionMet(game, self)
                 && GameConditions.canTarget(game, self, leaderFilter)) {
 
             final TopLevelGameTextAction action = new TopLevelGameTextAction(self, gameTextSourceCardId, gameTextActionId);

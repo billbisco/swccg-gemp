@@ -36,7 +36,7 @@ public class Card1250_019 extends AbstractNormalEffect {
     public Card1250_019() {
         super(Side.DARK, 4, PlayCardZoneOption.ATTACHED, "Nute Gunray's Bounty", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_5, Rarity.V);
         setLore("Palpatine suggested to the Queen that she acquiesce to the Trade Federation, just for the time being");
-        setGameText("Deploy on Amidala or opponent's senator. During your move phase, unless a Jedi here, your alien bounty hunter present may capture and seize that character. During your control phase, if that character is escorted by an alien, opponent loses 1 Force.");
+        setGameText("Deploy on Amidala or opponent's senator. During your move phase, unless a Jedi here, your alien bounty hunter present may capture and sieze that character. During your control phase, if that character is escorted by an alien, opponent loses 1 Force.");
         addIcons(Icon.EPISODE_I, Icon.CORUSCANT);
     }
 

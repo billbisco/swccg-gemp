@@ -33,7 +33,7 @@ public class Card601_228 extends AbstractAlien {
         setVirtualSuffix(true);
         addPersona(Persona.LOBOT);
         setLore("Former criminal. Fitted with a cybernetic device. Now repays his debt to society by ensuring the smooth running of Cloud City. Becomes disoriented when not with a computer.");
-        setGameText("Deploys free to Cloud City or a site with a Scomp link. If a battle was just initiated at same site, may [download] an alien here (free if Lando) as a 'react'. May [download] Cyborg Construct on Lobot.");
+        setGameText("Deploys free to Cloud City or a site with a scomp link. If a battle was just initiated at same site, may deploy an alien here (free if Lando) as 'react' from Reserve Deck; reshuffle. May deploy Cyborg Construct on Lobot from Reserve Deck; reshuffle.");
         addIcons(Icon.CLOUD_CITY, Icon.LEGACY_BLOCK_2);
         setAsLegacy(true);
     }

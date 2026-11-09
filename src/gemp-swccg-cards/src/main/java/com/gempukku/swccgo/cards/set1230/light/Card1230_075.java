@@ -39,7 +39,7 @@ public class Card1230_075 extends AbstractRebel {
         super(Side.LIGHT, 1, 6, 6, 6, 7, Title.Luke_Skywalker_Rebel_Scout, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_3, Rarity.V);
         setVirtualSuffix(true);
         setLore("Resourceful scout and member of the Rebel infiltration team assembled to destroy the shield generator. Surrendered to his father so that he would not endanger the mission.");
-        setGameText("Adds 2 to power of anything he pilots. Deploys -2 to a forest. Luke's weapon destiny draws are +1. At same site, opponent must first use 1 Force to fire a weapon. During opponent's draw phase, if alone on Endor, may retrieve 1 Force. Immune to attrition < 5.");
+        setGameText("Adds 2 to power of anything he pilots. Deploys -2 to a forest. His weapon destiny draws are +1. At same site, opponent must first use 1 Force to fire a weapon. During opponent's draw phase, if alone on Endor, may retrieve 1 Force. Immune to attrition < 5.");
         addPersona(Persona.LUKE);
         addIcons(Icon.PILOT, Icon.WARRIOR, Icon.DEATH_STAR_II, Icon.REFLECTIONS_II);
         addKeywords(Keyword.SCOUT);
