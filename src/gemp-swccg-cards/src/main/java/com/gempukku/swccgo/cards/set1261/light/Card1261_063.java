@@ -22,7 +22,7 @@ public class Card1261_063 extends AbstractRebel {
         super(Side.LIGHT, 1, 5, 4, 5, 8, Title.Daughter_Of_Skywalker, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("Scout. Leader. Made friends with Wicket. Negotiated an alliance with the Ewoks. Leia found out the truth about her father from Luke in the Ewok village.");
-        setGameText("If in hand, may place her under Reserve Deck. May be targeted instead of Luke by Mind What You Have Learned (that card then targets Leia instead of Luke for remainder of game). May deploy Reflection from Reserve Deck; reshuffle. Immune to attrition < 4.");
+        setGameText("If in hand, may place her under Reserve Deck. May be targeted instead of Luke by Mind What You Have Learned (that card then targets Leia instead of Luke for remainder of game). May ▼ Reflection. Immune to attrition < 4.");
         addPersona(Persona.LEIA);
         addIcons(Icon.PILOT, Icon.WARRIOR, Icon.ENDOR);
         addKeywords(Keyword.SCOUT, Keyword.LEADER, Keyword.FEMALE);

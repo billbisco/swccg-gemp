@@ -61,7 +61,7 @@ public class Card2250_028 extends AbstractUsedOrLostInterrupt {
         addIcons(Icon.EPISODE_I, Icon.THEED_PALACE);
         setLegacyVersion(new LegacyVersion("1250_28", "",
                 "Virtual Block 5 release sheet (2009-12-07; slip 28E, sheet copy 2010-04-01), card #28",
-                LocalDate.of(2009, 12, 7), LocalDate.of(2012, 8, 27)));
+                LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21)));
     }
 
     private static Filter yourStarshipWithYourCharacterAboard(PhysicalCard self) {

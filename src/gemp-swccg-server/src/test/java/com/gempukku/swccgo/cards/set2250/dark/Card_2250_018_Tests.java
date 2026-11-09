@@ -36,7 +36,7 @@ public class Card_2250_018_Tests {
     public void AnEnemyOfTheRepublicOriginalIdentity() {
         var scn = scenario();
         assertLegacyVersion(scn.GetDSCard("enemy").getBlueprint(), scn.GetDSCard("current").getBlueprint(), "1250_18", "",
-                LocalDate.of(2009, 12, 7), LocalDate.of(2014, 2, 4),
+                LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21),
                 "Deploy on Sidious. While at Senate, if battle was just initiated anywhere, opponent must relocate this card to their participating character; during battle here, your destiny draws may not be canceled. If character about to be lost, relocate to Sidious; may ▲ a card.");
     }
 

@@ -33,7 +33,7 @@ public class Card_2250_028_Tests {
         var scn = scenario();
         var bp = scn.GetDSCard("tactics").getBlueprint();
         assertLegacyVersion(bp, scn.GetDSCard("current").getBlueprint(), "1250_28", "",
-                LocalDate.of(2009, 12, 7), LocalDate.of(2012, 8, 27),
+                LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21),
                 "USED: For remainder of turn, if your starship is about to be hit (or lost), that action may instead affect your character aboard that starship. LOST: If your [Episode I] character is about to be hit (or lost), that action instead affects your other [Episode I] character present.");
         assertEquals(CardSubtype.USED_OR_LOST, bp.getCardSubtype());
         assertEquals("Trade Federation Tactics", bp.getTitle());

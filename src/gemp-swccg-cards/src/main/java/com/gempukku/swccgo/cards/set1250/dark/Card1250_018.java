@@ -25,7 +25,7 @@ import java.util.List;
 /** Legacy Block 5: An Enemy Of The Republic. */
 public class Card1250_018 extends Card1116_040 {
     public Card1250_018() {
-        setGameText("Deploy on Sidious. While at Senate, if battle was just initiated anywhere, opponent must relocate this card to their participating non-droid character; during battle here, your destiny draws may not be canceled. If character about to be lost, relocate to Sidious; may take any one card into hand from Reserve Deck; reshuffle.");
+        setGameText("Deploy on Sidious. While at Senate, if battle was just initiated anywhere, opponent must relocate this card to their participating non-droid character; during battle here, your destiny draws may not be canceled. If character about to be lost, relocate to Sidious; may ▲ any one card.");
         addIcons(Icon.SIDIOUS, Icon.LEGACY_BLOCK_5);
         setAsLegacy(true);
     }

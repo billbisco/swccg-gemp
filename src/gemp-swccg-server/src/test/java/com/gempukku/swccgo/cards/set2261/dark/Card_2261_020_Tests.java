@@ -28,7 +28,7 @@ public class Card_2261_020_Tests {
     public void AUselessGestureOriginalIdentity() {
         var scn = scenario();
         assertLegacyVersion(scn.GetDSCard("gesture").getBlueprint(), scn.GetDSCard("current").getBlueprint(), "1261_20", "",
-                LocalDate.of(2009, 9, 4), LocalDate.of(2012, 8, 27),
+                LocalDate.of(2009, 9, 4), LocalDate.of(2012, 7, 21),
                 "Plays on table. In order to play an Interrupt from Lost Pile, opponent must first stack it here and use +1 Force for each card here, even if Interrupt is normally free.");
     }
 
