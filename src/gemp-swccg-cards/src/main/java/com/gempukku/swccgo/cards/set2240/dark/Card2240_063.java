@@ -18,6 +18,6 @@ public class Card2240_063 extends Card601_211 {
         super();
         setGameText("May add 1 pilot. Guri deploys -3 aboard. While Guri piloting, during any control phase may draw top card of Reserve Deck (if Chewie or Leia on table, Force Pile instead) and immune to attrition < 5.");
         setLegacyVersion(new LegacyVersion("1240_63", "",
-                "Virtual Block 4 release sheet (2009-12-07), card #63", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21)));
+                "Virtual Block 4 release sheet (2009-12-07), card #62", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21)));
     }
 }

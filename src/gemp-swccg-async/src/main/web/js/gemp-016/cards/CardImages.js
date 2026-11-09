@@ -6618,6 +6618,19 @@ const fixedImages = {
 // Each line overrides the generated entry above (a later key wins) with a CardMaker recreation of the latest version,
 // uploaded to the wiki (File page describes the source). Keep outside the generated legacy block.
 "1210_124":"https://wiki.swccg.com/images/c/c5/VB1-123-Faithful_Service-PC-E1-cardmaker.png",
+// Batch B04 (Virtual Block 1-2): CardMaker recreations of the latest text (601_273 is the alias of 1220_36).
+"1210_84":"https://wiki.swccg.com/images/f/f6/VB1-84E-Han_Seeker-PC-E1-cardmaker.png",
+"1210_96":"https://wiki.swccg.com/images/0/00/VB1-101E-IL_19-PC-E1-cardmaker.png",
+"1210_99":"https://wiki.swccg.com/images/7/73/VB1-98-Debnoli-PC-E1-cardmaker.png",
+"1210_107":"https://wiki.swccg.com/images/1/17/VB1-107-Obi_Wan_Kenobi-PC-E1-cardmaker.png",
+"1210_127":"https://wiki.swccg.com/images/2/27/VB1-127-I_Can_t_Believe_He_s_Gone-PC-E1-cardmaker.png",
+"1210_147":"https://wiki.swccg.com/images/c/c1/VB1-148-Beru_Stew-PC-E1-cardmaker.png",
+"1210_160":"https://wiki.swccg.com/images/b/b0/VB1-161-Rebel_Reinforcements-PC-E1-cardmaker.png",
+"1210_161":"https://wiki.swccg.com/images/4/46/VB1-162-Return_Of_A_Jedi-PC-E1-cardmaker.png",
+"1220_6":"https://wiki.swccg.com/images/f/ff/VB2-06-Captain_Piett-PC-E1-cardmaker.png",
+"1220_10":"https://wiki.swccg.com/images/a/a0/VB2-10-Dengar-PC-E1-cardmaker.png",
+"1220_36":"https://wiki.swccg.com/images/8/8c/VB2-36-I_m_Sorry-PC-E2-cardmaker.png",
+"601_273":"https://wiki.swccg.com/images/8/8c/VB2-36-I_m_Sorry-PC-E2-cardmaker.png",
 // Batch B03 (Virtual Block 1): PC-E1 CardMaker recreations (601_152 = current class of 1210_17 Prophetess (V)).
 "1210_4":"https://wiki.swccg.com/images/1/17/VB1-04-Commander_Praji-PC-E1-cardmaker.png",
 "1210_6":"https://wiki.swccg.com/images/3/34/VB1-06-Danz_Borin-PC-E1-cardmaker.png",
@@ -6665,6 +6678,31 @@ const fixedImages = {
 "1250_65":"https://wiki.swccg.com/images/d/de/VB5-65-Ambush-PC-E1-cardmaker.png",
 "1250_80":"https://wiki.swccg.com/images/9/96/VB5-81-Bravo_Fighter-PC-E1-cardmaker.png",
 "601_175":"https://wiki.swccg.com/images/9/96/VB5-81-Bravo_Fighter-PC-E1-cardmaker.png",
+// Batch B07 (Virtual Block 3-4): CardMaker recreations of the PC-E1 text (601_211 = current class of 1240_63 Stinger (V)).
+"1230_114":"https://wiki.swccg.com/images/7/70/VB3-117-Tydirium-PC-E1-cardmaker.png",
+"1230_116":"https://wiki.swccg.com/images/e/e1/VB3-115-Mon_Calamari_Star_Cruiser-PC-E1-cardmaker.png",
+"1230_118":"https://wiki.swccg.com/images/6/60/VB3-120-Enhanced_Proton_Torpedoes-PC-E1-cardmaker.png",
+"1240_20":"https://wiki.swccg.com/images/e/ea/VB4-21-Dark_Reconnaissance-PC-E1-cardmaker.png",
+"1240_21":"https://wiki.swccg.com/images/4/41/VB4-19-Blown_Clear-PC-E1-cardmaker.png",
+"1240_22":"https://wiki.swccg.com/images/7/7f/VB4-20-Crush_The_Rebellion-PC-E1-cardmaker.png",
+"1240_36":"https://wiki.swccg.com/images/8/8b/VB4-34E-There_Is_No_Try_Oppressive_Enforcement-PC-E1-cardmaker.png",
+"1240_47":"https://wiki.swccg.com/images/6/67/VB4-47-Unexpected_Interruption-PC-E1-cardmaker.png",
+"1240_63":"https://wiki.swccg.com/images/c/c9/VB4-62-Stinger-PC-E1-cardmaker.png",
+"601_211":"https://wiki.swccg.com/images/c/c9/VB4-62-Stinger-PC-E1-cardmaker.png",
+"1240_92":"https://wiki.swccg.com/images/5/56/VB4-90E-Tusken_Breath_Mask-PC-E1-cardmaker.png",
+
+// Batch B06 (Virtual Block 3): CardMaker recreations of the latest text (601_158 = current class of 1230_109 Rebel Leadership (V); 1220_169 keeps its PC card image, which shows PC-E2).
+"1230_10":"https://wiki.swccg.com/images/0/01/VB3-10-Lieutenant_Grond-PC-E1-cardmaker.png",
+"1230_24":"https://wiki.swccg.com/images/8/8d/VB3-24-Bantha_Herd-PC-E1-cardmaker.png",
+"1230_28":"https://wiki.swccg.com/images/6/6e/VB3-29-Empires_New_Order-PC-E1-cardmaker.png",
+"1230_41":"https://wiki.swccg.com/images/2/2d/VB3-42-Dead_Ewok-PC-E1-cardmaker.png",
+"1230_47":"https://wiki.swccg.com/images/5/55/VB3-48-Scout_Recon-PC-E1-cardmaker.png",
+"1230_53":"https://wiki.swccg.com/images/4/4d/VB3-53-Accuser-PC-E1-cardmaker.png",
+"1230_76":"https://wiki.swccg.com/images/e/ea/VB3-77-Master_Luke-PC-E1-cardmaker.png",
+"1230_104":"https://wiki.swccg.com/images/f/fb/VB3-105-Endor_Celebration-PC-E1-cardmaker.png",
+"1230_109":"https://wiki.swccg.com/images/2/20/VB3-110-Rebel_Leadership-PC-E1-cardmaker.png",
+"601_158":"https://wiki.swccg.com/images/2/20/VB3-110-Rebel_Leadership-PC-E1-cardmaker.png",
+"1230_113":"https://wiki.swccg.com/images/c/c4/VB3-116-Red_Squadron_7-PC-E1-cardmaker.png",
 
 // Legacy pre-errata versions (docs/legacy-versions.md; keep outside the generated legacy block).
 // Image = the wiki slip crop of the release sheet that printed that text (wiki page field image2).
@@ -6978,6 +7016,7 @@ const fixedImages = {
 "2220_163":"https://wiki.swccg.com/images/3/35/VB2-164E-Local_Uprising.png",
 "2220_163_BACK":"https://res.starwarsccg.org/cards/legacy/VirtualBlock2-Light/large/liberation.gif",
 "2220_169":"https://wiki.swccg.com/images/9/91/VB2-169-Luke_s_Blaster_Pistol.png",
+"2220_1036":"https://wiki.swccg.com/images/b/b7/VB2-36-I_m_Sorry-PC-E1-cardmaker.png",
 "2220_10":"https://wiki.swccg.com/images/e/e1/VB2-10-Dengar.png",
 "2220_121":"https://wiki.swccg.com/images/1/18/VB2-121-Evacuation_Control.png",
 "2220_1121":"https://wiki.swccg.com/images/7/78/VB2-121-Evacuation_Control-PC-E1-cardmaker.png",
@@ -6999,7 +7038,7 @@ const fixedImages = {
 "2220_66":"https://res.starwarsccg.org/cards/legacy/VirtualBlock2-Dark/large/shockingrevelation.gif",
 "2220_83":"https://wiki.swccg.com/images/3/30/VB2-83-AT_AT_Cannon.png",
 "2220_67":"https://res.starwarsccg.org/cards/legacy/VirtualBlock2-Dark/large/atatdeploymentplatform.gif",
-"2220_1169":"https://res.starwarsccg.org/cards/legacy/VirtualBlock2-Light/large/lukesblasterpistol.gif",
+"2220_1169":"https://wiki.swccg.com/images/5/57/VB2-169-Luke_s_Blaster_Pistol-PC-E1-cardmaker.png",
 "2220_161":"https://res.starwarsccg.org/cards/legacy/VirtualBlock2-Light/large/hothechomedlab.gif",
 // AI printings' pre-errata versions (docs/legacy-versions.md, "AI printings"): the AI image showing that text;
 // 2240_8ai and 2250_44ai reuse the current AI image (it shows the current text) until a CardMaker image exists.

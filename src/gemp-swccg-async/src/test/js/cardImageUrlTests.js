@@ -42,6 +42,22 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('unknown_card'), null);
 // Current-card override after // END legacy wins over the generated entry (docs/legacy-versions.md, "Current card image")
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_124'), 'https://wiki.swccg.com/images/c/c5/VB1-123-Faithful_Service-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2210_124'), 'https://wiki.swccg.com/images/5/54/VB1-123-Faithful_Service.png');
+// Batch B04: current cards show the CardMaker image of their latest text; versions keep their own images
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_84'), 'https://wiki.swccg.com/images/f/f6/VB1-84E-Han_Seeker-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_96'), 'https://wiki.swccg.com/images/0/00/VB1-101E-IL_19-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_99'), 'https://wiki.swccg.com/images/7/73/VB1-98-Debnoli-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_107'), 'https://wiki.swccg.com/images/1/17/VB1-107-Obi_Wan_Kenobi-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_127'), 'https://wiki.swccg.com/images/2/27/VB1-127-I_Can_t_Believe_He_s_Gone-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_147'), 'https://wiki.swccg.com/images/c/c1/VB1-148-Beru_Stew-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_160'), 'https://wiki.swccg.com/images/b/b0/VB1-161-Rebel_Reinforcements-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_161'), 'https://wiki.swccg.com/images/4/46/VB1-162-Return_Of_A_Jedi-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1220_6'), 'https://wiki.swccg.com/images/f/ff/VB2-06-Captain_Piett-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1220_10'), 'https://wiki.swccg.com/images/a/a0/VB2-10-Dengar-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1220_36'), 'https://wiki.swccg.com/images/8/8c/VB2-36-I_m_Sorry-PC-E2-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_273'), 'https://wiki.swccg.com/images/8/8c/VB2-36-I_m_Sorry-PC-E2-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2220_1036'), 'https://wiki.swccg.com/images/b/b7/VB2-36-I_m_Sorry-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2220_36'), 'https://wiki.swccg.com/images/f/f6/VB2-36-I_m_Sorry.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2210_84'), 'https://wiki.swccg.com/images/0/01/VB1-84E-Han_Seeker.png');
 // Batch B03: current cards show the CardMaker image of their latest text; versions keep the slip
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_4'), 'https://wiki.swccg.com/images/1/17/VB1-04-Commander_Praji-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_6'), 'https://wiki.swccg.com/images/3/34/VB1-06-Danz_Borin-PC-E1-cardmaker.png');
@@ -112,4 +128,35 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('2250_1022'), 'https://wik
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2250_1044'), 'https://wiki.swccg.com/images/b/b8/VB5-45-Master_Qui_Gon-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_44'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/masterquigon.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2250_44'), 'https://wiki.swccg.com/images/2/2e/VB5-45-Master_Qui_Gon.png');
+// Batch B07 (Virtual Block 3-4): current cards show the CardMaker image of their PC-E1 text; originals keep their slips
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1230_114'), 'https://wiki.swccg.com/images/7/70/VB3-117-Tydirium-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1230_116'), 'https://wiki.swccg.com/images/e/e1/VB3-115-Mon_Calamari_Star_Cruiser-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1230_118'), 'https://wiki.swccg.com/images/6/60/VB3-120-Enhanced_Proton_Torpedoes-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1240_20'), 'https://wiki.swccg.com/images/e/ea/VB4-21-Dark_Reconnaissance-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1240_21'), 'https://wiki.swccg.com/images/4/41/VB4-19-Blown_Clear-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1240_22'), 'https://wiki.swccg.com/images/7/7f/VB4-20-Crush_The_Rebellion-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1240_36'), 'https://wiki.swccg.com/images/8/8b/VB4-34E-There_Is_No_Try_Oppressive_Enforcement-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1240_47'), 'https://wiki.swccg.com/images/6/67/VB4-47-Unexpected_Interruption-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1240_63'), 'https://wiki.swccg.com/images/c/c9/VB4-62-Stinger-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_211'), 'https://wiki.swccg.com/images/c/c9/VB4-62-Stinger-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1240_92'), 'https://wiki.swccg.com/images/5/56/VB4-90E-Tusken_Breath_Mask-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2230_114'), 'https://wiki.swccg.com/images/a/a2/VB3-117-Tydirium.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2240_36'), 'https://wiki.swccg.com/images/7/74/VB4-34E-There_Is_No_Try_Oppressive_Enforcement.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2240_63'), 'https://wiki.swccg.com/images/0/07/VB4-62-Stinger.png');
+// Batch B06 (Virtual Block 3 + Luke's Blaster Pistol (V)): current cards and the PC-E1 version card show the CardMaker image of their own text
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1230_10'), 'https://wiki.swccg.com/images/0/01/VB3-10-Lieutenant_Grond-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1230_24'), 'https://wiki.swccg.com/images/8/8d/VB3-24-Bantha_Herd-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1230_28'), 'https://wiki.swccg.com/images/6/6e/VB3-29-Empires_New_Order-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1230_41'), 'https://wiki.swccg.com/images/2/2d/VB3-42-Dead_Ewok-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1230_47'), 'https://wiki.swccg.com/images/5/55/VB3-48-Scout_Recon-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1230_53'), 'https://wiki.swccg.com/images/4/4d/VB3-53-Accuser-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1230_76'), 'https://wiki.swccg.com/images/e/ea/VB3-77-Master_Luke-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1230_104'), 'https://wiki.swccg.com/images/f/fb/VB3-105-Endor_Celebration-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1230_109'), 'https://wiki.swccg.com/images/2/20/VB3-110-Rebel_Leadership-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_158'), 'https://wiki.swccg.com/images/2/20/VB3-110-Rebel_Leadership-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1230_113'), 'https://wiki.swccg.com/images/c/c4/VB3-116-Red_Squadron_7-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2220_1169'), 'https://wiki.swccg.com/images/5/57/VB2-169-Luke_s_Blaster_Pistol-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1220_169'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock2-Light/large/lukesblasterpistol.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2220_169'), 'https://wiki.swccg.com/images/9/91/VB2-169-Luke_s_Blaster_Pistol.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2230_109'), 'https://wiki.swccg.com/images/3/36/VB3-110-Rebel_Leadership.png');
 console.log('card image URL routing passed: ' + legacy.length + ' Legacy mappings');

@@ -34,7 +34,7 @@ public class Card1230_053 extends AbstractCapitalStarship {
     public Card1230_053() {
         super(Side.DARK, 1, 8, 7, 5, null, 4, 9, Title.Accuser, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_3, Rarity.V);
         setVirtualSuffix(true);
-        setLore("Modified for optimal crisis response time. Veteran crew experienced at monitoring shipping lanes and Imperial port traffic.");
+        setLore("Patrol ship. Modified for optimal crisis response time. Veteran crew experienced at monitoring shipping lanes and Imperial port traffic.");
         setGameText("Deploy -3 if Death Star II on table. May add 6 pilots, 8 passengers, 2 vehicles, and 4 TIEs. Permanent pilot aboard provides ability of 2. Power and forfeit +1 for each Rebel starship here.");
         addIcons(Icon.PILOT, Icon.NAV_COMPUTER, Icon.SCOMP_LINK, Icon.DEATH_STAR_II);
         addModelType(ModelType.IMPERIAL_CLASS_STAR_DESTROYER);
