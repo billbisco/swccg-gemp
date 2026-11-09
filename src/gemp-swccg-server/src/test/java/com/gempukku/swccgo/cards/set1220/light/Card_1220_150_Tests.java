@@ -50,7 +50,7 @@ public class Card_1220_150_Tests {
 
         assertEquals("NOOOOOOOOOOOO!", card.getTitle());
         assertTrue(card.hasVirtualSuffix());
-        assertEquals(Uniqueness.UNRESTRICTED, card.getUniqueness());
+        assertEquals(Uniqueness.UNIQUE, card.getUniqueness());
         assertEquals(Side.LIGHT, card.getSide());
         assertEquals(5, card.getDestiny(), scn.epsilon);
         assertEquals(CardSubtype.USED, card.getCardSubtype());
