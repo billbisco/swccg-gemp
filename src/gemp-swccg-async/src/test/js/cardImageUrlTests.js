@@ -337,6 +337,28 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_1046'), 'https://wik
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_46'), 'https://wiki.swccg.com/images/b/bf/VB6-47-One_Beautiful_Thing.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_93'), 'https://wiki.swccg.com/images/c/cd/VB6-91-Armed_And_Dangerous_Krayt_Dragon_Howl.png');
 console.log('card image URL routing passed: ' + legacy.length + ' Legacy mappings');
+// Batch B21 (Virtual Block 8): current cards and version cards show the image of their own text
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_26'), 'https://wiki.swccg.com/images/7/7f/VB8-02-Chewbacca_Walking_Carpet-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_27'), 'https://wiki.swccg.com/images/a/a7/VB8-01-Han_Solo_Innocent_Scoundrel-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_107'), 'https://wiki.swccg.com/images/a/a7/VB8-01-Han_Solo_Innocent_Scoundrel-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_30'), 'https://wiki.swccg.com/images/f/f9/VB8-03-Supreme_Chancellor_Valorum-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_32'), 'https://wiki.swccg.com/images/4/49/VB8-03-Imperial_Navigation_Charts-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_111'), 'https://wiki.swccg.com/images/4/49/VB8-03-Imperial_Navigation_Charts-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_33'), 'https://wiki.swccg.com/images/3/31/VB8-04-Redeemed_Apprentice-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_122'), 'https://wiki.swccg.com/images/3/31/VB8-04-Redeemed_Apprentice-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_36'), 'https://wiki.swccg.com/images/2/2e/VB8-00-Scoundrels_Ingenuity-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_126'), 'https://wiki.swccg.com/images/2/2e/VB8-00-Scoundrels_Ingenuity-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_46'), 'https://wiki.swccg.com/images/0/00/VB8-03-Hans_Blaster_So_Uncivilized-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_108'), 'https://wiki.swccg.com/images/0/00/VB8-03-Hans_Blaster_So_Uncivilized-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_1047'), 'https://wiki.swccg.com/images/d/d9/VB8-02-Rebel_Agents_Blaster_Rifle-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_44'), 'https://wiki.swccg.com/images/3/3b/VL-history-1281-44-front-sheet.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_47'), 'https://wiki.swccg.com/images/b/bd/VB8-02-Kyle_Katarns_Blaster_Rifle.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_47'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/kylekatarnsblasterrifle.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2282_11'), 'https://wiki.swccg.com/images/7/78/VB8-03-Assassins_Blaster_Rifle.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1282_11'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Dark/large/assassinsblasterrifle.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2282_12'), 'https://wiki.swccg.com/images/b/b2/VB8-02-Anakin_Solo.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1282_12'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/anakinsolo.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_44'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/infiltration.gif');
 // Batch B20 (Virtual Block 8): current cards and version cards show the image of their own text
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_6'), 'https://wiki.swccg.com/images/9/98/VB8-03-Rtic_Hweei-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_8'), 'https://wiki.swccg.com/images/8/81/VB8-p2-08-Jet_Pack-PC-E1-cardmaker.png');
@@ -358,3 +380,14 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_9'), 'https://wiki.s
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2250_9'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Dark/large/kedertheblack.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_29'), 'https://wiki.swccg.com/images/f/f0/VB6-31-Breached_Defenses_Molator-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_29'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/breacheddefenses&molator.gif');
+// Batch B22 (Virtual Block 8, Virtual Shields): current cards and version cards show the image of their own text
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1282_15'), 'https://wiki.swccg.com/images/3/32/VB8-p3-71-Captain_Verrack-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1282_19'), 'https://wiki.swccg.com/images/6/63/VB8-p4-76-Rennek-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1282_26'), 'https://wiki.swccg.com/images/9/92/VB8-04-Under_Jabbas_Protection-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1283_3'), 'https://wiki.swccg.com/images/9/99/VL-history-1283-3-master.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1283_12'), 'https://wiki.swccg.com/images/d/d4/VL-history-1283-12-master.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2282_1014'), 'https://wiki.swccg.com/images/9/94/VB8-03-Lando_Calrissian_Unlikely_Hero-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2200_1'), 'https://wiki.swccg.com/images/4/4e/VSh-D13-Firepower-original-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2282_14'), 'https://wiki.swccg.com/images/0/03/VB8-03-Lando_Calrissian_Unlikely_Hero.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_50'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/landocalrissianunlikelyhero.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_35'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlockDS-Dark/large/fanfare.gif');

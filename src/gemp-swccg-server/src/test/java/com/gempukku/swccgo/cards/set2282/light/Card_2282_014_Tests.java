@@ -43,7 +43,7 @@ public class Card_2282_014_Tests {
 
         assertEquals("Lando Calrissian, Unlikely Hero", card.getTitle());
         assertTrue(card.isLegacy());
-        assertEquals("Adds 3 to power of anything he pilots. May reveal from hand to take Luxury Yacht into hand from Reserve Deck; reshuffle; and deploy both simultaneously. While piloting (or with a female), adds one battle destiny. During battle, may draw destiny. If destiny < twice the number of scoundrels here, reset a participating card's forfeit to 0.",
+        assertEquals("Adds 3 to power of anything he pilots. May reveal from hand to ▲ Luxury Yacht and deploy both simultaneously. While piloting (or with a female), adds one battle destiny. During battle, may draw destiny. If destiny < twice the number of scoundrels here, reset a participating card's forfeit to 0.",
                 card.getGameText());
         var version = card.getLegacyVersion();
         org.junit.Assert.assertNotNull(version);
