@@ -173,7 +173,7 @@ public class Card_1261_042_Tests {
 
     @org.junit.Test
     public void CurrentTextIsTheLatestVersion() {
-        // Virtual Cards Master List (PC-E2, 2013-04-27) is the latest text (the card-list text in between only spelled out the icons, so it is no version); GEMP's former wording matched no published version.
+        // Virtual Cards Master List (PC-E3, 2013-04-27) is the latest text (the card-list text in between, PC-E2, is 2261_2042); GEMP's former wording matched no published version.
         var scn = new com.gempukku.swccgo.framework.VirtualTableScenario(new java.util.HashMap<>(), new java.util.HashMap<>(java.util.Map.of("c", "1261_42")), 10, 10,
                 com.gempukku.swccgo.framework.StartingSetup.DefaultLSGroundLocation, com.gempukku.swccgo.framework.StartingSetup.DefaultDSGroundLocation,
                 com.gempukku.swccgo.framework.StartingSetup.NoLSStartingInterrupts, com.gempukku.swccgo.framework.StartingSetup.NoDSStartingInterrupts,
