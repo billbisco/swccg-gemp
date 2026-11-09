@@ -54,13 +54,13 @@ public class Card_2210_008_Tests {
             assertEquals(icon.name(), current.getIconCount(icon), card.getIconCount(icon));
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_1, card.getExpansionSet());
         assertTrue(card.isLegacy());
-        assertEquals("While on Death Star: cancels opponent's game text on your non-docking bay Death Star sites, your [A New Hope] Epic Event total is cumulatively +2, and, during your deploy phase, may place this character in Used Pile to take a Superlaser into hand from Reserve Deck; reshuffle.",
+        assertEquals("While on Death Star: cancels opponent's game text on your non-docking bay Death Star sites, your [A New Hope] Epic Event total is cumulatively +2, and, during your deploy phase, may place this character in Used Pile to ▲ Superlaser.",
                 card.getGameText());
         var version = card.getLegacyVersion();
         assertEquals("1210_8", version.currentPrintingId());
         assertEquals("", version.label());
         assertEquals(LocalDate.of(2009, 12, 7), version.printedOn());
-        assertEquals(LocalDate.of(2012, 8, 27), version.supersededOn());
+        assertEquals(LocalDate.of(2010, 6, 17), version.supersededOn());
         assertEquals(GameUtils.getFullName(current), GameUtils.getFullName(card));
     }
 

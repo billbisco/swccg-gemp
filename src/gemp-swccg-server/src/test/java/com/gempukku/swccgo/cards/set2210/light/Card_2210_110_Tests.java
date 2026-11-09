@@ -55,13 +55,13 @@ public class Card_2210_110_Tests {
             assertEquals(icon.name(), current.getIconCount(icon), card.getIconCount(icon));
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_1, card.getExpansionSet());
         assertTrue(card.isLegacy());
-        assertEquals("Dark Side game text on your non-docking bay Yavin 4 sites is canceled. Your Attack Run total is cumulatively +1. During your deploy phase, may place this character in Used Pile to take one Advance Preparation or Death Star: Trench into hand from Reserve Deck; reshuffle.",
+        assertEquals("Dark Side game text on your non-docking bay Yavin 4 sites is canceled. Your Attack Run total is cumulatively +1. During your deploy phase, may place this character in Used Pile to ▲ one Advance Preparation or Death Star: Trench.",
                 card.getGameText());
         var version = card.getLegacyVersion();
         assertEquals("1210_110", version.currentPrintingId());
         assertEquals("", version.label());
         assertEquals(LocalDate.of(2009, 12, 7), version.printedOn());
-        assertEquals(LocalDate.of(2012, 8, 27), version.supersededOn());
+        assertEquals(LocalDate.of(2010, 6, 17), version.supersededOn());
         assertEquals(GameUtils.getFullName(current), GameUtils.getFullName(card));
     }
 

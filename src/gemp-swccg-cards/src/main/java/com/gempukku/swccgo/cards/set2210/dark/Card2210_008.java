@@ -36,8 +36,8 @@ import java.util.List;
  * Title: Death Star Gunner
  *
  * Original version of 1210_8 (Virtual Block 1 release sheet, Dec 2009, card #8): cancels opponent's game text on your
- * non-docking bay Death Star sites, where the AR 2.0 errata (by 2012-08-27) cancels only Force drain bonuses from
- * Death Star sites' game text.
+ * non-docking bay Death Star sites, where the 2010-06-17 errata (PC news post; PC-E1, 2210_1008) cancels only Force
+ * drain bonuses from Death Star sites' game text.
  * Anything Goes only (docs/legacy-versions.md).
  */
 public class Card2210_008 extends AbstractImperial {
@@ -45,9 +45,9 @@ public class Card2210_008 extends AbstractImperial {
         super(Side.DARK, 2, 2, 1, 1, 2, Title.Death_Star_Gunner, Uniqueness.RESTRICTED_3, ExpansionSet.VIRTUAL_BLOCK_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("Most gunners in the Imperial Navy once aspired to be TIE pilots, but lacked sufficient skills to fly starfighters. A few were assigned to the Death Star to man the main artillery.");
-        setGameText("While on Death Star: cancels opponent's game text on your non-docking bay Death Star sites, your [A New Hope] Epic Event total is cumulatively +2, and, during your deploy phase, may place this character in Used Pile to take a Superlaser into hand from Reserve Deck; reshuffle.");
+        setGameText("While on Death Star: cancels opponent's game text on your non-docking bay Death Star sites, your [A New Hope] Epic Event total is cumulatively +2, and, during your deploy phase, may place this character in Used Pile to ▲ Superlaser.");
         setLegacyVersion(new LegacyVersion("1210_8", "",
-                "Virtual Block 1 release sheet (2009-12-07), card #8", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 8, 27)));
+                "Virtual Block 1 release sheet (2009-12-07), card #8", LocalDate.of(2009, 12, 7), LocalDate.of(2010, 6, 17)));
         addIcons(Icon.A_NEW_HOPE);
         addKeywords(Keyword.GUNNER);
     }
