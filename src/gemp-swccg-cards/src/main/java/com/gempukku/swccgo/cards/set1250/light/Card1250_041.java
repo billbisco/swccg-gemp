@@ -31,7 +31,12 @@ import java.util.List;
 /** Legacy Block 5 Jedi Survivor, printing 41. */
 public class Card1250_041 extends AbstractAlien {
     public Card1250_041() {
-        super(Side.LIGHT, 3, 5, 5, 6.0, 5, "Jedi Survivor", Uniqueness.RESTRICTED_3, ExpansionSet.VIRTUAL_BLOCK_5, Rarity.V);
+        this(3);
+    }
+
+    /** @param destiny printed destiny (3 since the PC card image / Master List; the 5.0 release sheet printed 1, see Card2250_041) */
+    protected Card1250_041(float destiny) {
+        super(Side.LIGHT, destiny, 5, 5, 6.0, 5, "Jedi Survivor", Uniqueness.RESTRICTED_3, ExpansionSet.VIRTUAL_BLOCK_5, Rarity.V);
         setLore("Female.");
         setGameText("When deployed, you may not initiate battle here this turn. While at opponent's site, adds one [Light Side Force] and one [Dark Side Force]. May 'swing' lightsabers for free. May never be won in sabacc. Immune to attrition < 5. End of your turn: [Maintenance] Use 1 or [Recycle] Lose 1 or [Skull].");
         addIcons(Icon.SPECIAL_EDITION, Icon.EPISODE_I, Icon.WARRIOR, Icon.MAINTENANCE);

@@ -386,6 +386,9 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('2272_26'), 'https://res.s
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2273_1'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Dark/large/5d6ra7.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2273_2'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Dark/large/admiralpellaeon.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2273_24'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/derekhobbieklivian.gif');
+// Batch B34: Jedi Survivor (V) original (destiny 1) shows the release-sheet slip; the current card (destiny 3) the PC card image
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2250_41'), 'https://wiki.swccg.com/images/7/75/VB5-41-Jedi_Survivor.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_41'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/jedisurvivor.gif');
 // Batch B26 (Virtual Block 6): current cards show a CardMaker recreation of their PC-E1 card-list text; the originals (22xx) show the release-sheet slips
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_48'), 'https://wiki.swccg.com/images/4/47/VB6-51-Weapon_Levitation_The_Empires_Back-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_98'), 'https://wiki.swccg.com/images/4/47/VB6-51-Weapon_Levitation_The_Empires_Back-PC-E1-cardmaker.png');

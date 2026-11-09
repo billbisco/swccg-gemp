@@ -24,14 +24,14 @@ import static org.junit.Assert.assertSame;
  * is no errata"): the 2012-13 PC website card list spelled out or dropped icons, and these versions differed from
  * the real text only in that notation. blueprintMapping.txt aliases each to its current card, so decks that use them still load and validate in Anything Goes, and
  * the card pool no longer offers them as versions. 2261_1033 (Dark Waters PC-E1) and 2261_2042 (Lone Pilot PC-E2) are
- * versions again (legacy batch B16: the card list also reordered those texts, and reorders are versions).
+ * versions again (legacy batch B16: the card list also reordered those texts, and reorders are versions). 2250_41
+ * (Jedi Survivor original, destiny 1) is a version again (legacy batch B34: stat-only changes are versions).
  */
 public class RemovedLegacyVersionIdsIconLossTests {
     private static final Map<String, String> REMOVED = Map.ofEntries(
             Map.entry("2210_105", "1210_105"),
             Map.entry("2210_150", "1210_150"),
             Map.entry("2230_105", "1230_105"),
-            Map.entry("2250_41", "1250_41"),
             Map.entry("2261_40", "1261_40"),
             Map.entry("2261_98", "1261_98"),
             Map.entry("2263_29", "1263_29"),
@@ -94,7 +94,7 @@ public class RemovedLegacyVersionIdsIconLossTests {
 
     @Test
     public void RemovedVersionIdsLoadTheirTarget() {
-        assertEquals(52, REMOVED.size());
+        assertEquals(51, REMOVED.size());
         REMOVED.forEach((removed, target) -> {
             SwccgCardBlueprint alias = library.getSwccgoCardBlueprint(removed);
             assertNotNull(removed, alias);
