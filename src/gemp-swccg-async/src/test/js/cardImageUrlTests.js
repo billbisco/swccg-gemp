@@ -337,3 +337,19 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_1046'), 'https://wik
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_46'), 'https://wiki.swccg.com/images/b/bf/VB6-47-One_Beautiful_Thing.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_93'), 'https://wiki.swccg.com/images/c/cd/VB6-91-Armed_And_Dangerous_Krayt_Dragon_Howl.png');
 console.log('card image URL routing passed: ' + legacy.length + ' Legacy mappings');
+// Batch B20 (Virtual Block 8): current cards and version cards show the image of their own text
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_6'), 'https://wiki.swccg.com/images/9/98/VB8-03-Rtic_Hweei-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_8'), 'https://wiki.swccg.com/images/8/81/VB8-p2-08-Jet_Pack-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_11'), 'https://wiki.swccg.com/images/6/6b/VB8-04-Join_Us_Or_Die-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_13'), 'https://wiki.swccg.com/images/d/dd/VB8-06-The_Inner_Circle-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_15'), 'https://wiki.swccg.com/images/b/ba/VB8-p3-15-Well_Guarded-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_16'), 'https://wiki.swccg.com/images/e/e8/VB8-p3-16-Abyssin_Ornament-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_27'), 'https://wiki.swccg.com/images/6/63/VB8-p3-17-Sonic_Bombardment-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_24'), 'https://wiki.swccg.com/images/0/0d/VB8-02-Slave_I_Symbol_Of_Fear-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_24'), 'https://wiki.swccg.com/images/e/e9/VL-history-1281-24-front-master.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_24'), 'https://wiki.swccg.com/images/2/21/VB8-00-Contract_Killers_Feared_Throughout_The_Galaxy.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_24_BACK'), 'https://wiki.swccg.com/images/6/67/VB8-07-Contract_Killers_Feared_Throughout_The_Galaxy.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_6'), 'https://wiki.swccg.com/images/d/d0/VB8-03-Rtic_Hweei.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_23'), 'https://wiki.swccg.com/images/5/50/VB8-02-Slave_I_Symbol_Of_Fear.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_25'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Dark/large/marajadeslightsaber.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_25'), 'https://wiki.swccg.com/images/8/81/VB8-p5-26-Mara_Jades_Lightsaber.png');

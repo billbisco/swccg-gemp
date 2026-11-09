@@ -66,6 +66,37 @@ public class Card_2281_024_Tests {
         );
     }
 
+    /** Same table plus two starships with permanent pilots (one Independent). */
+    protected VirtualTableScenario GetShipScenario() {
+        return new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("trooper", "1_28");
+                    put("luke", "1_19");
+                }},
+                new HashMap<>() {{
+                    put("coruscant", "7_275");
+                    put("lair", "1281_22");
+                    put("casino", "1281_21");
+                    put("mara", "110_10");
+                    put("aurra", "11_51");
+                    put("vader", "1_168");
+                    put("virago", "10_54");
+                    put("conquest", "2_152");
+                    put("saber", "1281_25");
+                    put("blaster", "1_317");
+                    put("lostcard", "1_194");
+                }},
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                ContractKillersObjective,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+    }
+
     /**
      * Starts the game with an On The Hunt stand-in in the Reserve Deck (the real card is coded in a parallel wave),
      * so Contract Killers can satisfy its deployment requirements.
@@ -181,6 +212,18 @@ public class Card_2281_024_Tests {
         flipByDeathMarkDestiny(scn);
         assertEquals("Feared Throughout The Galaxy", scn.GetDSCard("killers").getBlueprint().getTitle());
         assertTrue(scn.HasKeyword(mara, Keyword.ASSASSIN));
+    }
+
+    /** Slip and Master List: "except assassins and [Independent] starships" (batch B20): only Independent starships are excepted. */
+    @Test
+    public void ContractKillersOnlyIndependentStarshipsAreExcepted() {
+        var scn = GetShipScenario();
+        var virago = scn.GetDSCard("virago");      // Virago: Independent, permanent pilot
+        var conquest = scn.GetDSCard("conquest");  // Conquest: not Independent, permanent pilot
+
+        startGame(scn);
+        assertEquals(virago.getBlueprint().getDeployCost(), scn.game().getModifiersQuerying().getDeployCost(scn.gameState(), virago), scn.epsilon);
+        assertEquals(conquest.getBlueprint().getDeployCost() + 3, scn.game().getModifiersQuerying().getDeployCost(scn.gameState(), conquest), scn.epsilon);
     }
 
     @Test
@@ -422,8 +465,9 @@ public class Card_2281_024_Tests {
 
         assertEquals("Contract Killers", card.getTitle());
         assertTrue(card.isLegacy());
-        assertEquals("Contract Killers: Deploy Coruscant system, Sub City Lair and On The Hunt. For remainder of game, Aurra, Galen, Mara, and your aliens with 'plotting to kill Jabba' in lore are assassins. Your cards with ability are deploy +3 except assassins and starships. Characters add 1 to their Death Mark total for each weapon or device they carry. Once per turn, may deploy a Coruscant battleground from Reserve Deck; reshuffle. Flip this card if assassins control two battlegrounds (unless opponent's non-droid character at a battleground site) or you just drew destiny for Death Mark. Feared Throughout The Galaxy: While this side up, during your control phase, opponent loses 1 Force. If two assassins (except Galen) are in battle, add one battle destiny. Once per turn, if opponent just lost a character, an assassin there may gain 'reputation;' retrieve any one card (may only be canceled by Aim High) and stack it face down on that assassin. Assassins with 'reputation' may add 1 to Force drains where present. Flip this card at the end of any turn if opponent's non-droid character at a battleground site (unless Death Mark is on your side of the table).",
+        assertEquals(com.gempukku.swccgo.cards.set2281.dark.Card2281_024.SHEET_GAMETEXT,
                 card.getGameText());
+                assertTrue(card.getGameText().contains("or you just drew destiny for [Virtual Block 8] Death Mark."));
         var version = card.getLegacyVersion();
         assertEquals("1281_24", version.currentPrintingId());
         assertEquals("", version.label());

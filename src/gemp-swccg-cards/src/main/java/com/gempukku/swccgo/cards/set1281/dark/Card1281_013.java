@@ -40,7 +40,7 @@ public class Card1281_013 extends AbstractNormalEffect {
     public Card1281_013() {
         super(Side.DARK, 6, PlayCardZoneOption.ATTACHED, "The Inner Circle", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_1, Rarity.V);
         setLore("Imperial officers aboard the Death Star considered the Rebellion a minor threat.");
-        setGameText("Deploy on Conference Room (only at start of game); deploy Sim Aloo here and (Virtual Block 4) There is No Try from Reserve Deck; reshuffle. Players may initiate battle here for free. Once per game may deploy Ord Mantell from Reserve Deck; reshuffle. May not be canceled (except by opponent) or placed in Used Pile. Immune to Ineffective Maneuver.");
+        setGameText("Deploy on Conference Room (only at start of game); deploy Sim Aloo here and [Virtual Block 4] There is No Try from Reserve Deck; reshuffle. Players may initiate battle here for free. Once per game may deploy Ord Mantell from Reserve Deck; reshuffle. May not be canceled (except by opponent) or placed in Used Pile. Immune to Ineffective Manuever.");
         addIcons(Icon.SETUP);
         addImmuneToCardTitle(Title.Ineffective_Maneuver);
     }
