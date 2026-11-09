@@ -186,4 +186,22 @@ class SsoAuthServiceTest {
             assertEquals(200, call(KEY, SsoAuthService.PASSWORD, pw(8, "p" + i), NOW).status);
         assertEquals(429, call(KEY, SsoAuthService.PASSWORD, pw(8, "p9"), NOW).status, "five password sets per account per hour");
     }
+
+    @Test
+    void setPasswordEndsGempSessionsOnlyWhenAsked() throws Exception {
+        service = new SsoAuthService(auth, settings, keys, true);
+        java.util.List<String> ended = new java.util.ArrayList<>();
+        service.setSessionEnder(ended::add);
+        when(auth.setPassword(eq(9), anyString())).thenReturn(player(9, "Han", "u"));
+        JSONObject r = json(call(KEY, SsoAuthService.PASSWORD, pw(9, "first"), NOW));
+        assertEquals(false, r.get("sessions_ended"));
+        assertTrue(ended.isEmpty(), "no end_sessions: nobody logged out");
+        String body = "{\"id\":9,\"password\":\"second\",\"client_ip\":\"" + IP + "\",\"end_sessions\":true}";
+        r = json(call(KEY, SsoAuthService.PASSWORD, body, NOW));
+        assertEquals(true, r.get("sessions_ended"));
+        assertEquals(java.util.List.of("Han"), ended);
+        when(auth.setPassword(10, "weak")).thenThrow(new AuthService.WeakPasswordException());
+        call(KEY, SsoAuthService.PASSWORD, "{\"id\":10,\"password\":\"weak\",\"client_ip\":\"" + IP + "\",\"end_sessions\":true}", NOW);
+        assertEquals(1, ended.size(), "a refused password ends nothing");
+    }
 }

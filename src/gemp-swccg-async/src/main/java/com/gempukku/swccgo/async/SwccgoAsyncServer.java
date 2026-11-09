@@ -70,7 +70,8 @@ public class SwccgoAsyncServer {
             // Private wiki -> GEMP login check on its own unpublished port (off unless configured).
             InternalAuthServer.startIfConfigured(bossGroup, workerGroup,
                     (AuthService) gempukkuServer.getContext().get(AuthService.class),
-                    (GempSettingDAO) gempukkuServer.getContext().get(GempSettingDAO.class));
+                    (GempSettingDAO) gempukkuServer.getContext().get(GempSettingDAO.class),
+                    (com.gempukku.swccgo.service.LoggedUserHolder) gempukkuServer.getContext().get(com.gempukku.swccgo.service.LoggedUserHolder.class));
 
             ChannelFuture bind = b.bind(httpPort);
             bind.sync().channel().closeFuture().sync();

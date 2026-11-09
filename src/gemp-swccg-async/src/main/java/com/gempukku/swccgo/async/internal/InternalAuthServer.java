@@ -2,6 +2,7 @@ package com.gempukku.swccgo.async.internal;
 
 import com.gempukku.swccgo.db.GempSettingDAO;
 import com.gempukku.swccgo.service.AuthService;
+import com.gempukku.swccgo.service.LoggedUserHolder;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
@@ -37,6 +38,12 @@ public final class InternalAuthServer {
 
     public static Channel startIfConfigured(EventLoopGroup boss, EventLoopGroup workers, AuthService authService,
                                             GempSettingDAO settings) throws InterruptedException {
+        return startIfConfigured(boss, workers, authService, settings, null);
+    }
+
+    /** @param sessions when set, a password set with end_sessions also logs the player out of GEMP. */
+    public static Channel startIfConfigured(EventLoopGroup boss, EventLoopGroup workers, AuthService authService,
+                                            GempSettingDAO settings, LoggedUserHolder sessions) throws InterruptedException {
         int port = parsePort(System.getenv("INTERNAL_AUTH_PORT"));
         String secret = System.getenv("GEMP_INTERNAL_AUTH_SECRET");
         InternalAuthKeysV2 v2 = InternalAuthKeysV2.parse(System.getenv("GEMP_INTERNAL_AUTH_V2_KEYS"));
@@ -49,6 +56,8 @@ public final class InternalAuthServer {
                 new InternalAuthSigner(secret, System.getenv("GEMP_INTERNAL_AUTH_SECRET_PREVIOUS"))) : null;
         boolean setPassword = "true".equalsIgnoreCase(System.getenv("GEMP_INTERNAL_AUTH_V2_SET_PASSWORD"));
         SsoAuthService sso = v2 != null ? new SsoAuthService(authService, settings, v2, setPassword) : null;
+        if (sso != null && sessions != null)
+            sso.setSessionEnder(sessions::forceLogoutUser);
         ServerBootstrap b = new ServerBootstrap();
         b.group(boss, workers)
                 .channel(NioServerSocketChannel.class)
