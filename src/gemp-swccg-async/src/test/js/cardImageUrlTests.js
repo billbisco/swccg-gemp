@@ -96,4 +96,20 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('2240_68'), 'https://wiki.
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1230_102'), 'https://wiki.swccg.com/images/0/0e/VB3-103-Diversionary_Tactics-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2230_102'), 'https://wiki.swccg.com/images/8/89/VB3-103-Diversionary_Tactics.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_180'), 'https://wiki.swccg.com/images/3/33/VB4-01-Arica-PC-E1-cardmaker.png');
+// Batch B08 (Virtual Block 5): current cards and PC-E1 version cards show the image of their own text
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_2'), 'https://wiki.swccg.com/images/0/07/VB5-02-Aurra_Sing-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_14'), 'https://wiki.swccg.com/images/5/5e/VB5-18-Expand_The_Empire-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_22'), 'https://wiki.swccg.com/images/1/1f/VB5-25-With_Thunderous_Applause-PC-E2-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_33'), 'https://wiki.swccg.com/images/f/f7/VB5-33E-Lets_Go_Left-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_34'), 'https://wiki.swccg.com/images/6/68/VB5-35-Bail_Organa-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_35'), 'https://wiki.swccg.com/images/5/54/VB5-37-Clone_Pilot-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_45'), 'https://wiki.swccg.com/images/8/85/VB5-44E-Mace_Windu-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_163'), 'https://wiki.swccg.com/images/8/85/VB5-44E-Mace_Windu-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_65'), 'https://wiki.swccg.com/images/d/de/VB5-65-Ambush-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_80'), 'https://wiki.swccg.com/images/9/96/VB5-81-Bravo_Fighter-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_175'), 'https://wiki.swccg.com/images/9/96/VB5-81-Bravo_Fighter-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2250_1022'), 'https://wiki.swccg.com/images/b/b9/VB5-25-With_Thunderous_Applause-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2250_1044'), 'https://wiki.swccg.com/images/b/b8/VB5-45-Master_Qui_Gon-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_44'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/masterquigon.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2250_44'), 'https://wiki.swccg.com/images/2/2e/VB5-45-Master_Qui_Gon.png');
 console.log('card image URL routing passed: ' + legacy.length + ' Legacy mappings');

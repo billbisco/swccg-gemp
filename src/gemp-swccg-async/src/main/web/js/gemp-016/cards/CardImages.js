@@ -6653,6 +6653,18 @@ const fixedImages = {
 "1240_68":"https://wiki.swccg.com/images/5/56/VB4-70-LE_BO2D9_Leebo-PC-E1-cardmaker.png",
 "1230_102":"https://wiki.swccg.com/images/0/0e/VB3-103-Diversionary_Tactics-PC-E1-cardmaker.png",
 "601_180":"https://wiki.swccg.com/images/3/33/VB4-01-Arica-PC-E1-cardmaker.png",
+// Batch B08 (Virtual Block 5): CardMaker recreations of the latest text (601_163 / 601_175 = current classes of 1250_45 / 1250_80; 1250_44 keeps its PC card image, which shows PC-E2).
+"1250_2":"https://wiki.swccg.com/images/0/07/VB5-02-Aurra_Sing-PC-E1-cardmaker.png",
+"1250_14":"https://wiki.swccg.com/images/5/5e/VB5-18-Expand_The_Empire-PC-E1-cardmaker.png",
+"1250_22":"https://wiki.swccg.com/images/1/1f/VB5-25-With_Thunderous_Applause-PC-E2-cardmaker.png",
+"1250_33":"https://wiki.swccg.com/images/f/f7/VB5-33E-Lets_Go_Left-PC-E1-cardmaker.png",
+"1250_34":"https://wiki.swccg.com/images/6/68/VB5-35-Bail_Organa-PC-E1-cardmaker.png",
+"1250_35":"https://wiki.swccg.com/images/5/54/VB5-37-Clone_Pilot-PC-E1-cardmaker.png",
+"1250_45":"https://wiki.swccg.com/images/8/85/VB5-44E-Mace_Windu-PC-E1-cardmaker.png",
+"601_163":"https://wiki.swccg.com/images/8/85/VB5-44E-Mace_Windu-PC-E1-cardmaker.png",
+"1250_65":"https://wiki.swccg.com/images/d/de/VB5-65-Ambush-PC-E1-cardmaker.png",
+"1250_80":"https://wiki.swccg.com/images/9/96/VB5-81-Bravo_Fighter-PC-E1-cardmaker.png",
+"601_175":"https://wiki.swccg.com/images/9/96/VB5-81-Bravo_Fighter-PC-E1-cardmaker.png",
 
 // Legacy pre-errata versions (docs/legacy-versions.md; keep outside the generated legacy block).
 // Image = the wiki slip crop of the release sheet that printed that text (wiki page field image2).
@@ -6872,12 +6884,12 @@ const fixedImages = {
 "2250_1":"https://wiki.swccg.com/images/7/75/VB5-01E-Nothing_Can_Get_Through_Our_Shield.png",
 "2250_2":"https://wiki.swccg.com/images/f/ff/VB5-02-Aurra_Sing.png",
 "2250_14":"https://wiki.swccg.com/images/b/b6/VB5-18-Expand_The_Empire.png",
-"2250_1022":"https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Dark/large/withthunderousapplause.gif",
+"2250_1022":"https://wiki.swccg.com/images/b/b9/VB5-25-With_Thunderous_Applause-PC-E1-cardmaker.png",
 "2250_25":"https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Dark/large/wipethemoutallofthem.gif",
 "2250_33":"https://wiki.swccg.com/images/5/5a/VB5-33E-Lets_Go_Left.png",
 "2250_35":"https://wiki.swccg.com/images/1/14/VB5-37-Clone_Pilot.png",
 "2250_41":"https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/jedisurvivor.gif",
-"2250_1044":"https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/masterquigon.gif",
+"2250_1044":"https://wiki.swccg.com/images/b/b8/VB5-45-Master_Qui_Gon-PC-E1-cardmaker.png",
 "2250_45":"https://wiki.swccg.com/images/a/a3/VB5-44E-Mace_Windu.png",
 "2250_55":"https://wiki.swccg.com/images/7/78/VB5-56E-Yoda_Great_Warrior.png",
 "2250_65":"https://wiki.swccg.com/images/4/4a/VB5-65-Ambush.png",
