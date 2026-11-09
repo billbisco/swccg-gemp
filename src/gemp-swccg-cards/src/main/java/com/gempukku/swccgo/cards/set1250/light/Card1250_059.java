@@ -35,7 +35,7 @@ public class Card1250_059 extends AbstractNormalEffect {
     public Card1250_059() {
         super(Side.LIGHT, 3, PlayCardZoneOption.ATTACHED, "A Jedi's Plans", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_5, Rarity.V);
         setLore("The guidance of experienced Jedi allowed Luke to confront Vader.");
-        setGameText("Deploy on a site. Nightfall is canceled. While you have 8 or fewer cards in hand, non-unique characters (except clones), vehicles, starships, weapons, and devices are immune to Monnok. Once per turn, may use 2 Force to deploy Jedi Archives or a battleground planet location (except a sector) not on table from Reserve Deck; reshuffle. (Immune to Alter.)");
+        setGameText("Deploy on a site. Nightfall is cancelled. While you have 8 or fewer cards in hand, non-unique characters (except clones), vehicles, starships, weapons, and devices are immune to Monnok. Once per turn, may use 2 Force to deploy Jedi Archives or a battleground planet location (except sector) not on table from Reserve Deck; reshuffle. (Immune to Alter.)");
         addIcons(Icon.SPECIAL_EDITION);
         addImmuneToCardTitle(Title.Alter);
     }

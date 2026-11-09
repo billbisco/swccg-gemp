@@ -38,7 +38,7 @@ import java.util.List;
 public class Card1240_091 extends AbstractNormalEffect {
     public Card1240_091() {
         super(Side.LIGHT, 2, PlayCardZoneOption.ATTACHED, "Uncharted Settlements", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_4, Rarity.V);
-        setGameText("Deploy on [Virtual Block 4] Hidden Base. Organized Attack, S-foils, Revolution, Your Destiny (unless you chose Rebel/Rebel Starship), and [Virtual Block 4] Ellorrs Madak are canceled. You may not deploy operatives or [Maintenance] cards. Force generation at Endor system may not be canceled. Unless Leave Them To Me on table, opponent's combat vehicles, Dark Jedi, [Maintenance] cards, and [Permanent Weapon] cards are deploy +2 to Rebel Cell sites. Opponent generates no Force at Hidden Landing Site. (Immune to Alter.)");
+        setGameText("Deploy on [Virtual Block 4] Hidden Base. Organized Attack, S-foils, Revolution, Your Destiny (unless you chose Rebel/Rebel Starship), and [Virtual Block 4] Ellors Madak are canceled. You may not deploy operatives or [Maintenance] cards. Force generation at Endor system may not be canceled. Unless Leave Them To Me on table, opponent's combat vehicles, Dark Jedi, [Maintenance] cards, and [Permanent Weapon] cards are deploy +2 to Rebel Cell sites. Opponent generates no Force at Hidden Landing Site. (Immune to Alter.)");
         addIcons(Icon.REFLECTIONS_II);
         addImmuneToCardTitle(Title.Alter);
     }

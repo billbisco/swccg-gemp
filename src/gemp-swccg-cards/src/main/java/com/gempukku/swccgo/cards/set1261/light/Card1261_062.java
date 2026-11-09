@@ -26,13 +26,18 @@ public class Card1261_062 extends AbstractAlien {
         super(Side.LIGHT, 3, 2, 1, 2, 5, "Baragwin", Uniqueness.RESTRICTED_3, ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("Hunchbacked scavengers. Found in separate groups throughout the galaxy. Good at finding missing items. Make excellent gun runners. Some work with the Rebellion.");
-        setGameText("Lost if a Starting Effect on table. Your non-alien characters are power and forfeit = 0. If present at a battleground site, your Force drains at battleground sites where you have two aliens are +1, and when you deploy an alien, retrieve 1 Force.");
+        setGameText("This character is lost if a Starting Effect on table. Your non-alien characters at sites are power and forfeit = 0. If present at a battleground site, your Force drains at battleground sites where you have two aliens are +1, and whenever you deploy an alien, retrieve 1 Force.");
         addIcons(Icon.JABBAS_PALACE); addKeywords(Keyword.SCAVENGER); setSpecies(Species.BARAGWIN);
+    }
+
+    /** PC-E1 (card list, 2012): "Your non-alien characters at sites are power and forfeit = 0." */
+    protected Filter nonAliensReset(PhysicalCard self) {
+        return Filters.and(Filters.your(self), Filters.character, Filters.not(Filters.alien), Filters.at(Filters.site));
     }
 
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, PhysicalCard self) {
-        Filter yourNonAliens = Filters.and(Filters.your(self), Filters.character, Filters.not(Filters.alien));
+        Filter yourNonAliens = nonAliensReset(self);
         Filter twoAliens = new Filter() {
             @Override
             public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard location) {

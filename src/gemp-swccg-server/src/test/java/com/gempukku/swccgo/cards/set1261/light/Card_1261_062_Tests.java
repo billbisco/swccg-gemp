@@ -12,11 +12,13 @@ import static com.gempukku.swccgo.framework.Assertions.*;
 import static org.junit.Assert.*;
 
 public class Card_1261_062_Tests {
+    private String id = "1261_62";
+
     private VirtualTableScenario scenario() { return scenario(false, false); }
 
     private VirtualTableScenario scenario(boolean ownStarter, boolean opposingStarter) {
         return new VirtualTableScenario(new HashMap<>() {{
-            put("baragwin", "1261_62"); put("baragwin2", "1261_62"); put("momaw", "1_20"); put("gungan", "12_7");
+            put("baragwin", id); put("baragwin2", "1261_62"); put("momaw", "1_20"); put("gungan", "12_7");
             put("luke", "1_19"); put("threepio", "1_5"); put("speeder", "3_69"); put("falcon", "1_143");
             put("system", "1_135"); put("throne", "1_138"); put("traffic", "1_66"); if (ownStarter) put("starter", "13_5");
         }}, new HashMap<>() {{ put("vader", "1_168"); put("ephant", "6_101"); if (opposingStarter) put("starter", "13_69"); }}, 60, 60,
@@ -28,7 +30,8 @@ public class Card_1261_062_Tests {
     @Test public void BaragwinStatsMatchFinalMasterInsteadOfOriginal() {
         var scn = scenario(); var b = scn.GetLSCard("baragwin").getBlueprint();
         assertEquals("Baragwin", b.getTitle());
-        assertEquals("Lost if a Starting Effect on table. Your non-alien characters are power and forfeit = 0. If present at a battleground site, your Force drains at battleground sites where you have two aliens are +1, and when you deploy an alien, retrieve 1 Force.", b.getGameText()); assertTrue(b.hasVirtualSuffix()); assertEquals(Side.LIGHT, b.getSide());
+        // Current card = PC card list text (PC-E1, 2012); the release-sheet text is 2261_62 (Legacy batch B32).
+        assertEquals("This character is lost if a Starting Effect on table. Your non-alien characters at sites are power and forfeit = 0. If present at a battleground site, your Force drains at battleground sites where you have two aliens are +1, and whenever you deploy an alien, retrieve 1 Force.", b.getGameText()); assertTrue(b.hasVirtualSuffix()); assertEquals(Side.LIGHT, b.getSide());
         assertEquals(Uniqueness.RESTRICTED_3, b.getUniqueness()); assertNull(b.getCardSubtype());
         assertEquals(3, b.getDestiny(), scn.epsilon); assertEquals(2, b.getDeployCost(), scn.epsilon);
         assertEquals(1, b.getPower(), scn.epsilon); assertEquals(2, b.getAbility(), scn.epsilon); assertEquals(5, b.getForfeit(), scn.epsilon);
@@ -68,8 +71,16 @@ public class Card_1261_062_Tests {
         assertEquals(0, scn.GetPower(scn.GetLSCard("luke"))); assertEquals(0, scn.GetForfeit(scn.GetLSCard("luke")));
     }
 
-    @Test public void BaragwinAlsoResetsPilotAtSystemAndRestoresPowerWhenLeavingPlay() {
-        // Master List 2014 and card image: "Your non-alien characters are power and forfeit = 0" (not only at sites).
+    @Test public void BaragwinCurrentTextDoesNotResetPilotAtSystem() {
+        // PC-E1 (card list 2012): "Your non-alien characters at sites are power and forfeit = 0".
+        var scn = start(true, false); var system = scn.GetLSCard("system"); scn.MoveLocationToTable(system);
+        scn.MoveCardsToLocation(system, scn.GetLSCard("falcon")); scn.BoardAsPilot(scn.GetLSCard("falcon"), scn.GetLSCard("luke"));
+        assertEquals(3, scn.GetPower(scn.GetLSCard("luke"))); assertEquals(7, scn.GetForfeit(scn.GetLSCard("luke")));
+    }
+
+    @Test public void OriginalBaragwinAlsoResetsPilotAtSystemAndRestoresPowerWhenLeavingPlay() {
+        // Release sheet 2009 (2261_62; the Master List reprints it): "Your non-alien characters are power and forfeit = 0" (not only at sites).
+        id = "2261_62";
         var scn = start(true, false); var system = scn.GetLSCard("system"); scn.MoveLocationToTable(system);
         scn.MoveCardsToLocation(system, scn.GetLSCard("falcon")); scn.BoardAsPilot(scn.GetLSCard("falcon"), scn.GetLSCard("luke"));
         assertEquals(0, scn.GetPower(scn.GetLSCard("luke"))); assertEquals(0, scn.GetForfeit(scn.GetLSCard("luke")));

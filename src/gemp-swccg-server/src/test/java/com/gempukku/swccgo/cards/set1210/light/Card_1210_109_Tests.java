@@ -110,7 +110,7 @@ public class Card_1210_109_Tests {
     @Test
     public void R2D2GameTextIsOfficialText() {
         var scn = GetScenario();
-        assertEquals("During battle with C-3PO, may not be targeted by weapons. While aboard a starfighter, it is power, maneuver, and hyperspeed +3. Unless you have 13 or more cards in hand, opponent may not place those cards in Used Pile.",
+        assertEquals("During a battle with C-3PO, may not be targeted by weapons. While aboard a starfighter, it is power, maneuver, and hyperspeed +3. Unless you have 13 or more cards in hand, opponent may not place those cards in Used Pile.",
                 scn.GetLSCard("r2").getBlueprint().getGameText());
     }
 
