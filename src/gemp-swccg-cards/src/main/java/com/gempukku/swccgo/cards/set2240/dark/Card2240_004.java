@@ -16,7 +16,7 @@ import java.time.LocalDate;
 public class Card2240_004 extends Card1240_004 {
     public Card2240_004() {
         super();
-        setGameText("Imperial Council Member. Agenda: logistics. ISB Agents are forfeit +1. While at Conference Room with Sim Aloo, may use 1 Force to subtract 1 from an opponent's just drawn non-Epic Event destiny.");
+        setGameText("Imperial Council Member. Agenda: logistics. ISB Agents are forfeit +1. While at Conference Room with Sim Aloo, may use 1 Force to subtract 1 from an oponent's just drawn non-Epic Event destiny.");
         setLegacyVersion(new LegacyVersion("1240_4", "",
                 "Virtual Block 4 release sheet (2009-12-07), card #03", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21)));
     }
