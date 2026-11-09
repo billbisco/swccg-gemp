@@ -39,8 +39,8 @@ import java.util.List;
 public class Card1272_018 extends AbstractAlien {
     public Card1272_018() {
         super(Side.LIGHT, 3, 4, 6, 2, 5, "Tarfful, Wookiee Insurgent", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_2, Rarity.V);
-        setLore("Leader");
-        setGameText("Occupy on Forest Depths is treated as 'control.' Non-unique Wookiees here are Heroic. Once per game, when deployed, may 'roar' to take one card into hand from Used Pile reshuffle, and/or stack a Wookiee from hand on Grrrghrrrgh!.");
+        setLore("Leader.");
+        setGameText("\"Occupy\" on Forest Depths is treated as \"control.\" Non-unique Wookiees here are Heroic. Once per game, when deployed, may 'roar' to take one card into hand from Used Pile (reshuffle) and/or stack a Wookiee from hand on Grrrghrrrgh!.");
         addIcons(Icon.WARRIOR, Icon.EPISODE_I);
         addKeywords(Keyword.LEADER);
         setSpecies(Species.WOOKIEE);

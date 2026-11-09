@@ -38,7 +38,7 @@ public class Card_1263_001_Tests {
         assertEquals(4, bp.getForfeit(), scn.epsilon);
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_6_3, bp.getExpansionSet());
         assertEquals(Rarity.V, bp.getRarity());
-        assertEquals("Bounty Hunter", bp.getLore());
+        assertEquals("Bounty hunter.", bp.getLore());
         scn.BlueprintCardTypeCheck(bp, new ArrayList<>() {{ add(CardType.ALIEN); }});
         scn.BlueprintIconCheck(bp, new ArrayList<>() {{ add(Icon.ALIEN); add(Icon.PILOT); add(Icon.WARRIOR); add(Icon.EPISODE_I); add(Icon.LEGACY_BLOCK_6); }});
         scn.BlueprintKeywordCheck(bp, new ArrayList<>() {{ add(Keyword.BOUNTY_HUNTER); }});

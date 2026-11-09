@@ -75,7 +75,7 @@ public class Card_1272_018_Tests {
         }});
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_7_2, card.getExpansionSet());
         assertEquals(Rarity.V, card.getRarity());
-        assertEquals("Leader", card.getLore());
+        assertEquals("Leader.", card.getLore());
     }
 
     @Test

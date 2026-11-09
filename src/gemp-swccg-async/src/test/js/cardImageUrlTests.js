@@ -493,3 +493,15 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_125'), 'https://wiki.
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_35'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/scoundrelscharm.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1282_3'), 'https://wiki.swccg.com/images/4/4c/VB8-p2-56-You_May_Start_Your_Landing-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2282_3'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Dark/large/youmaystartyourlanding.gif');
+// Batch B30: title-change versions show their release-sheet slips (old title); the current cards keep their PC card images (new title); 1240_81 Eject! Eject! (V) shows its Master List slip (the generated image was the Virtual Set 3 card)
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2240_17'), 'https://wiki.swccg.com/images/9/92/VB4-16-Thrawns_Ysalamir.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1240_17'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/thrawnsysalamir.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2240_66'), 'https://wiki.swccg.com/images/4/48/VB4-67-Maris_Brood_Fallen_Jedi.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2240_112'), 'https://wiki.swccg.com/images/f/f2/VB4-109E-Infinity.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2250_8'), 'https://wiki.swccg.com/images/6/6e/VB5-11-Jango_Fett.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2263_1'), 'https://wiki.swccg.com/images/7/77/VB6-01-Cad_Bane.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2263_7'), 'https://wiki.swccg.com/images/5/57/VB6-08-Maarek_Stele_The_Emperors_Reach.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2272_15'), 'https://wiki.swccg.com/images/b/b9/VB7-02-Rahm_Kota_Blind_Jedi.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2272_18'), 'https://wiki.swccg.com/images/5/5f/VB7-03-Tarfful_Wookiee_Insurgent.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1272_18'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/tarffulwookieeinsurgent.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1240_81'), 'https://wiki.swccg.com/images/8/8a/VL-history-1240-81-front-master.png');
