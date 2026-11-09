@@ -282,7 +282,7 @@ public class AuthService {
 
     public static class WeakPasswordException extends Exception {
         public WeakPasswordException() {
-            super("Password must be " + PasswordPolicy.MIN_LENGTH + " to " + PasswordPolicy.MAX_LENGTH + " characters.");
+            super(PasswordPolicy.rejectionMessage());
         }
     }
 

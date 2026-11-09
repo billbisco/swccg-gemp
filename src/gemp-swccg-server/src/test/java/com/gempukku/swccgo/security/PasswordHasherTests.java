@@ -68,10 +68,12 @@ public class PasswordHasherTests {
     }
 
     @Test
-    public void passwordPolicyRequiresEightToOneHundredTwentyEightCharacters() {
+    public void passwordPolicyAcceptsAnyNonEmptyPasswordUpToOneHundredTwentyEightCharacters() {
         assertFalse(PasswordPolicy.isAcceptable(null));
-        assertFalse(PasswordPolicy.isAcceptable("1234567"));
-        assertTrue(PasswordPolicy.isAcceptable("12345678"));
+        assertFalse(PasswordPolicy.isAcceptable(""));
+        assertTrue(PasswordPolicy.isAcceptable("1"));
+        assertTrue(PasswordPolicy.isAcceptable("test1"));
+        assertTrue(PasswordPolicy.isAcceptable("1234567"));
         assertTrue(PasswordPolicy.isAcceptable("x".repeat(128)));
         assertFalse(PasswordPolicy.isAcceptable("x".repeat(129)));
     }
