@@ -21,8 +21,8 @@ public class Card2263_007 extends Card601_186 {
         super();
         setGameText("[Pilot] 3. Once per game, may [upload] a TIE Defender. While piloting, opponent may not cancel or substitute battle destiny draws here. While piloting an Imperial starfighter, it is maneuver +2 and he draws one battle destiny if unable to otherwise.");
         setLegacyVersion(new LegacyVersion("1263_7", "",
-                "Virtual Block 6.3 release sheet (2010-03-15; copy re-made 2010-04-04), card #3-08, printed as The Emperor's Reach; renamed Maarek Stele, The Emperor's Reach (PC \"New Persona Changes\" 2013-01-29; PC card list by 2013-03-13; Virtual Cards Master List 2013-04-27)",
-                LocalDate.of(2010, 3, 15), LocalDate.of(2013, 4, 27)));
+                "Virtual Block 6.3 release sheet (released 2010-03-12; copy re-made 2010-04-04), card #3-08, printed as The Emperor's Reach; renamed Maarek Stele, The Emperor's Reach (PC \"New Persona Changes\" 2013-01-29; PC card list by 2013-03-13; Virtual Cards Master List 2013-04-27)",
+                LocalDate.of(2010, 3, 12), LocalDate.of(2013, 4, 27)));
         setPrintedTitle("The Emperor's Reach");
     }
 }

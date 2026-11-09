@@ -32,7 +32,7 @@ public class Card2261_087 extends Card1261_087 {
     public Card2261_087() {
         setGameText("If [Virtual] Mind What You Have Learned on table, deploy on table with up to 6 different Jedi Tests under here from outside your deck. You may not Force drain at Dagobah locations or deploy asteroid sectors, [Maintenance] cards, or [Permanent Weapon] cards. Whenever you draw training destiny, draw two and choose one. You may retrieve 3 Force whenever you complete a Jedi Test (cannot be canceled while you occupy a battleground). Completed Jedi Tests are placed on table and are suspended (not lost) whenever character who completed them not on table.");
         setLegacyVersion(new LegacyVersion("1261_87", "",
-                "Virtual Block 6.1 release sheet (2009-09-04), card #89", LocalDate.of(2009, 9, 4), LocalDate.of(2010, 4, 20)));
+                "Virtual Block 6.1 release sheet (2009-09-04), card #89", LocalDate.of(2009, 9, 4), LocalDate.of(2009, 9, 21)));
     }
 
     @Override

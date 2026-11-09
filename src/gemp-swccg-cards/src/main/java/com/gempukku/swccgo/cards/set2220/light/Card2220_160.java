@@ -51,7 +51,7 @@ public class Card2220_160 extends AbstractLostInterrupt {
         setLore("Wookiees have been known to dislocate more than just arms.");
         setGameText("During your move phase, target opponent's character present with your Wookiee. Both players draw destiny. Add Wookiee's power; opponent adds target's defense value. Target lost if your total destiny +2 > opponent's total destiny.");
         setLegacyVersion(new LegacyVersion("1220_160", "",
-                "Virtual Block 2 release sheet (2009-12-07), card #160", LocalDate.of(2009, 12, 7), LocalDate.of(2013, 4, 27)));
+                "Virtual Block 2 release sheet (2009-12-07), card #160", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 11, 19)));
         addIcons(Icon.CLOUD_CITY);
     }
 

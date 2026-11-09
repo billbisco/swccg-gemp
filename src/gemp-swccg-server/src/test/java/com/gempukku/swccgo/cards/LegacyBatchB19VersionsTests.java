@@ -78,8 +78,11 @@ public class LegacyBatchB19VersionsTests {
         for (String id : new String[]{"2273_36", "2274_18", "2281_1", "2281_4", "2281_5"})
             assertEquals(id, LocalDate.of(2012, 7, 21), library.getSwccgoCardBlueprint(id).getLegacyVersion().supersededOn());
         assertEquals(LocalDate.of(2012, 7, 21), library.getSwccgoCardBlueprint("2273_1036").getLegacyVersion().printedOn());
-        // Master List 2013-04-27 (Grievous persona, Tibanna Floating Refinery, Shield Is Down PC-E2)
-        for (String id : new String[]{"2273_1036", "2273_17", "2273_20", "2274_4", "2274_11"})
+        // Master List 2013-04-27 (Grievous persona); Shield Is Down PC-E2 and Tibanna Floating Refinery: PC forum errata
+        // of 2012-10-19 and 2012-11-02 (Batch B36)
+        assertEquals(LocalDate.of(2012, 10, 19), library.getSwccgoCardBlueprint("2273_1036").getLegacyVersion().supersededOn());
+        assertEquals(LocalDate.of(2012, 11, 2), library.getSwccgoCardBlueprint("2274_4").getLegacyVersion().supersededOn());
+        for (String id : new String[]{"2273_17", "2273_20", "2274_11"})
             assertEquals(id, LocalDate.of(2013, 4, 27), library.getSwccgoCardBlueprint(id).getLegacyVersion().supersededOn());
         // Coruscant (V): Dark Force icon errata 2011-06-23 (PC-E1), AR 2.0 rephrase (PC-E2)
         assertEquals(LocalDate.of(2011, 6, 23), library.getSwccgoCardBlueprint("2273_1041").getLegacyVersion().supersededOn());

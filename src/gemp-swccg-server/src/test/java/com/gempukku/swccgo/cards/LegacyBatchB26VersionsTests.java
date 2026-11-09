@@ -77,6 +77,6 @@ public class LegacyBatchB26VersionsTests {
     public void ReleaseSheetSourcesNameTheSlipNumber() {
         assertEquals("Virtual Block 6.1 release sheet (2009-09-04), card #51", library.getSwccgoCardBlueprint("2261_48").getLegacyVersion().source());
         assertEquals("Virtual Block 6.1 release sheet (2009-09-04), card #78", library.getSwccgoCardBlueprint("2261_79").getLegacyVersion().source());
-        assertEquals("Virtual Block 6.3 release sheet (2010-03-15), card #3-09", library.getSwccgoCardBlueprint("2263_9").getLegacyVersion().source());
+        assertEquals("Virtual Block 6.3 release sheet (released 2010-03-12), card #3-09", library.getSwccgoCardBlueprint("2263_9").getLegacyVersion().source());
     }
 }

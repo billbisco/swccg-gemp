@@ -37,7 +37,7 @@ public class Card_2240_036_Tests {
         var scn = GetScenario();
         LegacyVersionAsserts.assertVersionOf(scn.GetDSCard("current").getBlueprint(), scn.GetDSCard("version").getBlueprint(),
                 "Deploy on Conference Room. Revolution is canceled. You may not deploy aliens (except bounty hunters and Mara Jade) or [Episode I] cards. Emperor and your admirals, generals, and moffs are Imperial Council Members and influence +1. While present, each Imperial Council Member adds one [Dark Side Force]. Once per turn, may use 1 Force to deploy one Laser Gate or a Political Effect from Reserve Deck; reshuffle. Your cards may deploy to table from Political Effects. May place your canceled Political Effect in Used Pile. (Immune to Alter.)",
-                "1240_36", "", LocalDate.of(2009, 12, 7), LocalDate.of(2013, 4, 27));
+                "1240_36", "", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 10, 19));
     }
 
     @Test

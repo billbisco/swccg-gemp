@@ -31,8 +31,8 @@ import java.util.List;
  * Type: Objective
  * Title: Imperial Occupation / Imperial Control (back)
  *
- * Back side of the original Imperial Occupation (2220_72): adds "At marker sites, AT-ATs move for free." (removed on the
- * Virtual Cards Master List, 2013-04-27). Anything Goes only (docs/legacy-versions.md).
+ * Back side of the original Imperial Occupation (2220_72): adds "At marker sites, AT-ATs move for free." (removed by the
+ * CBT errata of 2012-09-21, PC-E1 = 2220_1072_BACK). Anything Goes only (docs/legacy-versions.md).
  */
 public class Card2220_072_BACK extends AbstractObjective {
     private static final Filter RETRIEVABLE = Filters.not(Filters.or(Filters.Interrupt, Filters.vehicle));
@@ -42,7 +42,7 @@ public class Card2220_072_BACK extends AbstractObjective {
         setVirtualSuffix(true);
         setGameText("While this side up, Revolution is canceled. At marker sites, AT-ATs move for free. Rebels are deploy +1 to Hoth sites. Your total battle destiny at Hoth system is +1 for each Imperial there. Unless opponent controls a Hoth location, your Force drain bonuses may not be canceled. Once per turn, when you deploy an AT-AT, may retrieve any one card (except an Interrupt or vehicle) into hand. During your deploy phase, may deploy a marker site from Reserve Deck; reshuffle. Flip this card if Hoth Blockade not on Hoth.");
         setLegacyVersion(new LegacyVersion("1220_72", "",
-                "Virtual Block 2 release sheet (2009-12-07), card #72", LocalDate.of(2009, 12, 7), LocalDate.of(2013, 4, 27)));
+                "Virtual Block 2 release sheet (2009-12-07), card #72", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 9, 21)));
         addIcons(Icon.SPECIAL_EDITION);
     }
 

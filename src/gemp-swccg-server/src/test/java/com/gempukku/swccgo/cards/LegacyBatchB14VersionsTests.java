@@ -84,7 +84,9 @@ public class LegacyBatchB14VersionsTests {
         // Colonel Wullf Yularen (V): card list 2012-07-21; Orrimaarko (V): AR 2.0 (2012-08-27); the rest: Master List 2013-04-27
         assertEquals(LocalDate.of(2012, 7, 21), library.getSwccgoCardBlueprint("2240_4").getLegacyVersion().supersededOn());
         assertEquals(LocalDate.of(2012, 8, 27), library.getSwccgoCardBlueprint("2230_77").getLegacyVersion().supersededOn());
-        for (String id : new String[]{"2220_136", "2220_163", "2230_13", "2240_2", "2240_3", "2240_8", "2240_27"})
+        // Local Uprising (V): PC forum "Current Rulings/Errata", 2012-11-19 (Batch B36)
+        assertEquals(LocalDate.of(2012, 11, 19), library.getSwccgoCardBlueprint("2220_163").getLegacyVersion().supersededOn());
+        for (String id : new String[]{"2220_136", "2230_13", "2240_2", "2240_3", "2240_8", "2240_27"})
             assertEquals(id, LocalDate.of(2013, 4, 27), library.getSwccgoCardBlueprint(id).getLegacyVersion().supersededOn());
     }
 

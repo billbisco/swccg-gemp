@@ -53,7 +53,7 @@ public class Card2283_003 extends AbstractAlien {
         addKeywords(Keyword.FEMALE, Keyword.GANGSTER, Keyword.LEADER);
         setSpecies(Species.WHIPHID);
         setLegacyVersion(new LegacyVersion("1283_3", "",
-                "Virtual Block 8.3 release sheet (2013-03-28)", LocalDate.of(2013, 3, 28), LocalDate.of(2013, 4, 27)));
+                "Virtual Block 8.3 release sheet (2013-03-28)", LocalDate.of(2013, 3, 28), LocalDate.of(2013, 4, 13)));
     }
 
     @Override

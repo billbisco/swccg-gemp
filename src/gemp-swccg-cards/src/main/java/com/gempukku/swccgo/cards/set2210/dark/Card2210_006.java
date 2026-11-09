@@ -48,7 +48,7 @@ public class Card2210_006 extends AbstractAlien {
         setLore("Cocky gunner and bounty hunter. Maintains a residence on Nar Shaddaa, the spaceport moon of the Hutt homeworld. To his companions' delight, he's nearly as good as he boasts.");
         setGameText("Adds 3 to power of anything he pilots. May add 1 to Force drains at same Nal Hutta location. Danz is a matching pilot for any [Independent Starship] starship and, while piloting one, may not draw more than one battle destiny here (that destiny may not be canceled or modified by opponent).");
         setLegacyVersion(new LegacyVersion("1210_6", "",
-                "Virtual Block 1 release sheet (2009-12-07), card #6", LocalDate.of(2009, 12, 7), LocalDate.of(2013, 4, 27)));
+                "Virtual Block 1 release sheet (2009-12-07), card #6", LocalDate.of(2009, 12, 7), LocalDate.of(2013, 4, 13)));
         addIcons(Icon.A_NEW_HOPE, Icon.PILOT);
         addKeywords(Keyword.GUNNER, Keyword.BOUNTY_HUNTER);
         setMatchingStarshipFilter(Filters.and(Filters.starship, Icon.INDEPENDENT));

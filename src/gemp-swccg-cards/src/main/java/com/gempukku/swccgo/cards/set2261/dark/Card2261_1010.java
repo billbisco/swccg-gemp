@@ -34,7 +34,7 @@ public class Card2261_1010 extends Card1261_010 {
     public Card2261_1010() {
         setGameText("[Pilot] 3. The Circle Is Now Complete is canceled. While present with [Reflections III] Obi-Wan or a Jedi Council Member, lightsabers may not be 'swung' twice, their immunity to attrition is canceled and you may add one battle destiny. Immune to attrition < 5.");
         setLegacyVersion(new LegacyVersion("1261_10", "PC-E1",
-                "PC website card list (by 2012-07-21)", LocalDate.of(2012, 7, 21), LocalDate.of(2013, 4, 27)));
+                "PC website card list (by 2012-07-21)", LocalDate.of(2012, 7, 21), LocalDate.of(2012, 10, 19)));
     }
 
     @Override

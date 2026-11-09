@@ -56,7 +56,7 @@ public class Card_2283_003_Tests extends Card_1283_003_Tests {
         assertEquals("1283_3", version.currentPrintingId());
         assertEquals("", version.label());
         assertEquals(LocalDate.of(2013, 3, 28), version.printedOn());
-        assertEquals(LocalDate.of(2013, 4, 27), version.supersededOn());
+        assertEquals(LocalDate.of(2013, 4, 13), version.supersededOn());
         assertEquals("Lady Valarian", GameUtils.getFullName(card));
     }
 

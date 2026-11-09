@@ -60,7 +60,7 @@ public class Card_2220_1156_Tests {
         assertEquals("1220_156", version.currentPrintingId());
         assertEquals("PC-E1", version.label());
         assertEquals(LocalDate.of(2012, 7, 21), version.printedOn());
-        assertEquals(LocalDate.of(2013, 4, 27), version.supersededOn());
+        assertEquals(LocalDate.of(2012, 11, 19), version.supersededOn());
         assertEquals(GameUtils.getFullName(current) + " [PC-E1]", GameUtils.getFullName(card));
         var original = scn.GetLSCard("original").getBlueprint();
         assertEquals(CardSubtype.OUT_OF_PLAY, card.getCardSubtype());

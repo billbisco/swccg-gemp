@@ -520,3 +520,8 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_28'), 'https://res.s
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_45'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/errantventure.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1282_13'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/vilmarhvilliegrahrk.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1282_27'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/ladyluck.gif');
+// Batch B36: Imperial Occupation (V) PC-E1 (2012-09-21 CBT errata) shows the E-marked PC card images; the original back shows its release-sheet slip
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2220_1072'), 'https://wiki.swccg.com/images/9/93/VB2-D-imperialoccupation-pre.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2220_1072_BACK'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock2-Dark/large/imperialcontrol.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2220_72_BACK'), 'https://wiki.swccg.com/images/2/21/VB2-72E-Imperial_Control.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2220_72'), 'https://wiki.swccg.com/images/e/e7/VB2-72E-Imperial_Occupation.png');

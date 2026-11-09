@@ -81,8 +81,8 @@ public class LegacyBatchB10VersionsTests {
     @Test
     public void ReleaseSheetSourcesNameTheSlipNumber() {
         assertEquals("Virtual Block 6.1 release sheet (2009-09-04), card #89", library.getSwccgoCardBlueprint("2261_87").getLegacyVersion().source());
-        assertEquals("Virtual Block 6.1 release sheet, revised (2010-04-20), card #89", library.getSwccgoCardBlueprint("2261_1087").getLegacyVersion().source());
+        assertEquals("PC news \"Strong Is Vader / Rebel Fleet changes\" (2009-09-21: errata, text not quoted; most likely this one); Virtual Block 6.1 release sheet, revised (2010-04-20), card #89", library.getSwccgoCardBlueprint("2261_1087").getLegacyVersion().source());
         assertEquals("Virtual Block 6.1 release sheet (2009-09-04), card #97", library.getSwccgoCardBlueprint("2261_96").getLegacyVersion().source());
-        assertEquals("Virtual Block 6.3 release sheet (2010-03-15), card #3-06", library.getSwccgoCardBlueprint("2263_6").getLegacyVersion().source());
+        assertEquals("Virtual Block 6.3 release sheet (released 2010-03-12), card #3-06", library.getSwccgoCardBlueprint("2263_6").getLegacyVersion().source());
     }
 }
