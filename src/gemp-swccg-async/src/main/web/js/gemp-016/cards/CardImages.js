@@ -6623,6 +6623,15 @@ const fixedImages = {
 "2272_15":"https://wiki.swccg.com/images/b/b9/VB7-02-Rahm_Kota_Blind_Jedi.png",
 "2272_18":"https://wiki.swccg.com/images/5/5f/VB7-03-Tarfful_Wookiee_Insurgent.png",
 "1240_81":"https://wiki.swccg.com/images/8/8a/VL-history-1240-81-front-master.png",
+// Batch B31 (Virtual Blocks 7-8, title changes = versions): the 22xx originals show the release-sheet slips, which print the old titles (Spice Mine Administrator, The Mandalorian, Father Of Fett, Rebel Agent, Booster's Star Destroyer, Devaronian Uncle, Lando's Luxury Yacht); 2281_1009 / 2281_1028 (card-list PC-E1 under the old title) CardMaker recreations. The current cards keep their PC card images (they print the latest title and text).
+"2273_9":"https://wiki.swccg.com/images/e/ef/VB7-03-Moruth_Doole_Kessel_Administrator.png",
+"2281_9":"https://wiki.swccg.com/images/a/a6/VB8-01-Jango_Fett_The_Assassin.png",
+"2281_1009":"https://wiki.swccg.com/images/9/9f/VB8-01-The_Mandalorian_Father_Of_Fett-PC-E1-cardmaker.png",
+"2281_28":"https://wiki.swccg.com/images/1/1d/VB8-01-Kyle_Katarn.png",
+"2281_1028":"https://wiki.swccg.com/images/6/67/VB8-01-Rebel_Agent-PC-E1-cardmaker.png",
+"2281_45":"https://wiki.swccg.com/images/c/c4/VB8-02-Errant_Venture.png",
+"2282_13":"https://wiki.swccg.com/images/d/d6/VB8-03-Vilmarh_Villie_Grahrk.png",
+"2282_27":"https://wiki.swccg.com/images/5/5a/VB8-03-Lady_Luck.png",
 // Batch B32 (hidden card-list versions, Virtual Blocks 1-7): current cards show a CardMaker recreation of their PC-E1 card-list text (601_x = current class of the 12xx printing; 601_278 = alias of 1240_91); Levitation Attack (V) keeps its PC card image, which already prints the PC-E1 text.
 // The original versions 22xx show the PC card images (they print the originals); 2220_62 shows the release-sheet slip.
 "1210_109":"https://wiki.swccg.com/images/8/8b/VB1-109-R2_D2_Artoo_Detoo-PC-E1-cardmaker.png",

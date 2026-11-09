@@ -41,7 +41,7 @@ import java.util.List;
 public class Card1281_028 extends AbstractRebel {
     public Card1281_028() {
         super(Side.LIGHT, 1, 5, 4, 5, 8, "Kyle Katarn", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_1, Rarity.V);
-        setLore("Scoundrel");
+        setLore("Scoundrel.");
         setGameText("May use any stolen weapon. Opponent may not 'react' to or from same site. Your total battle destiny here is +1 for each [Scoundrel] Effect on table. Once per game, may make a regular move during your control phase. Immune to attrition < 4 (< 5 if armed).");
         addIcons(Icon.WARRIOR);
         addKeywords(Keyword.SCOUNDREL);

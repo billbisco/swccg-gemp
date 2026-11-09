@@ -35,7 +35,7 @@ import java.util.List;
 public class Card1281_045 extends AbstractCapitalStarship {
     public Card1281_045() {
         super(Side.LIGHT, 2, 6, 6, 6, null, 3, 8, "Errant Venture", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_1, Rarity.V);
-        setGameText("May add 6 pilots. Permanent pilot provides ability of 3. Unless your [Reflections 2] objective on table, once per game, may deploy a non-[Maintenance] scoundrel aboard from Reserve Deck; reshuffle and while Corran or a Terrik piloting, immune to attrition < 7.");
+        setGameText("May add 6 pilots. Permanent pilot provides ability of 3. Unless your [Reflections II] objective on table, once per game may ▼ a non-[Maintenance] scoundrel aboard and while Corran or a Terrik piloting, immune to attrition < 7.");
         addIcons(Icon.INDEPENDENT, Icon.NAV_COMPUTER, Icon.SCOMP_LINK, Icon.PILOT);
         addModelType(ModelType.IMPERIAL_CLASS_STAR_DESTROYER);
         setPilotCapacity(6);
