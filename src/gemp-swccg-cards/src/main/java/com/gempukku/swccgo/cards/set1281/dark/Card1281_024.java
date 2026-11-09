@@ -37,7 +37,7 @@ import java.util.List;
  * Title: Contract Killers / Feared Throughout The Galaxy
  */
 public class Card1281_024 extends AbstractObjective {
-    public static final String SHEET_GAMETEXT = "Contract Killers: Deploy Coruscant system, Sub City Lair and On The Hunt. For remainder of game, Aurra, Galen, Mara, and your aliens with 'plotting to kill Jabba' in lore are assassins. Your cards with ability are deploy +3 except assassins and starships. Characters add 1 to their Death Mark total for each weapon or device they carry. Once per turn, may deploy a Coruscant battleground from Reserve Deck; reshuffle. Flip this card if assassins control two battlegrounds (unless opponent's non-droid character at a battleground site) or a Death Mark attempt is made. Feared Throughout The Galaxy: While this side up, during your control phase, opponent loses 1 Force. If two assassins (except Galen) are in battle, add one battle destiny. Once per turn, if opponent just lost a character, an assassin there may gain 'reputation;' retrieve any one card (may only be canceled by Aim High) and stack it face down on that assassin. Assassins with 'reputation' may add 1 to Force drains where present. Flip this card at the end of any turn if opponent's non-droid character at a battleground site (unless Death Mark is on your side of the table).";
+    public static final String SHEET_GAMETEXT = "Contract Killers: Deploy Coruscant system, Sub City Lair and On The Hunt. For remainder of game, Aurra, Galen, Mara, and your aliens with 'plotting to kill Jabba' in lore are assassins. Your cards with ability are deploy +3 except assassins and [Independent] starships. Characters add 1 to their Death Mark total for each weapon or device they carry. Once per turn, may ▼ a Coruscant battleground. Flip this card if assassins control two battlegrounds (unless opponent's non-droid character at a battleground site) or a [Virtual Block 8] Death Mark attempt is made. Feared Throughout The Galaxy: While this side up, during your control phase, opponent loses 1 Force. If two assassins (except Galen) are in battle, add one battle destiny. Once per turn, if opponent just lost a character, an assassin there may gain 'reputation;' retrieve any one card (may only be canceled by Aim High) and stack it face down on that assassin. Assassins with 'reputation' may add 1 to Force drains where present. Flip this card at the end of any turn if opponent's non-droid character at a battleground site (unless [Virtual Block 8] Death Mark is on your side of the table).";
 
     public Card1281_024() {
         super(Side.DARK, 0, "Contract Killers", ExpansionSet.VIRTUAL_BLOCK_8_1, Rarity.V);
@@ -94,7 +94,7 @@ public class Card1281_024 extends AbstractObjective {
         action.appendEffect(
                 new AddUntilEndOfGameModifierEffect(action,
                         new DeployCostModifier(self, Filters.and(Filters.your(playerId), Filters.hasAbilityOrHasPermanentPilotWithAbility,
-                                Filters.not(Filters.or(Filters.assassin, Filters.starship))), 3), null));
+                                Filters.not(Filters.or(Filters.assassin, Filters.and(Filters.starship, Icon.INDEPENDENT)))), 3), null));
         action.appendEffect(
                 new AddUntilEndOfGameModifierEffect(action,
                         new DeathMarkTotalModifier(self, Filters.character), null));

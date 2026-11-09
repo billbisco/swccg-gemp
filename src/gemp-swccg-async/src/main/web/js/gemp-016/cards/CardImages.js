@@ -6613,6 +6613,19 @@ const fixedImages = {
 "1292_10":"https://res.starwarsccg.org/cards/legacy/VirtualBlock9-Light/large/majorhaashn.gif",
 "1292_11":"https://res.starwarsccg.org/cards/legacy/VirtualBlock9-Light/large/mandalorianmishapjedimindtrick.gif",
 // END legacy
+// Batch B20 (Virtual Block 8): current cards show the image of their latest text. CardMaker recreations of the 2012 card-list texts (the PC card images and slips print the originals, kept on the 2281 version cards); 601_27 / 601_24 are the classes of 1281_17 / 1281_23;
+// 1281_24 Contract Killers shows the Master List slip of its front (PC-E1; the PC card image prints a third wording). 1281_25 keeps its PC card image (it prints PC-E1).
+"1281_6":"https://wiki.swccg.com/images/9/98/VB8-03-Rtic_Hweei-PC-E1-cardmaker.png",
+"1281_8":"https://wiki.swccg.com/images/8/81/VB8-p2-08-Jet_Pack-PC-E1-cardmaker.png",
+"1281_11":"https://wiki.swccg.com/images/6/6b/VB8-04-Join_Us_Or_Die-PC-E1-cardmaker.png",
+"1281_13":"https://wiki.swccg.com/images/d/dd/VB8-06-The_Inner_Circle-PC-E1-cardmaker.png",
+"1281_15":"https://wiki.swccg.com/images/b/ba/VB8-p3-15-Well_Guarded-PC-E1-cardmaker.png",
+"1281_16":"https://wiki.swccg.com/images/e/e8/VB8-p3-16-Abyssin_Ornament-PC-E1-cardmaker.png",
+"1281_17":"https://wiki.swccg.com/images/6/63/VB8-p3-17-Sonic_Bombardment-PC-E1-cardmaker.png",
+"601_27":"https://wiki.swccg.com/images/6/63/VB8-p3-17-Sonic_Bombardment-PC-E1-cardmaker.png",
+"1281_23":"https://wiki.swccg.com/images/0/0d/VB8-02-Slave_I_Symbol_Of_Fear-PC-E1-cardmaker.png",
+"601_24":"https://wiki.swccg.com/images/0/0d/VB8-02-Slave_I_Symbol_Of_Fear-PC-E1-cardmaker.png",
+"1281_24":"https://wiki.swccg.com/images/e/e9/VL-history-1281-24-front-master.png",
 
 // Current Legacy cards whose image in the generated block shows an older text (docs/legacy-versions.md, "Current card image").
 // Each line overrides the generated entry above (a later key wins) with a CardMaker recreation of the latest version,
@@ -6894,8 +6907,8 @@ const fixedImages = {
 "2274_7":"https://wiki.swccg.com/images/b/b2/VB7-04-Occupied_Territory.png",
 "2274_8":"https://wiki.swccg.com/images/e/e7/VB7-05-Shadows_Of_The_Empire.png",
 "2274_17":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/motivator.gif",
-"2281_24":"https://wiki.swccg.com/images/9/93/VB8-D-contractkillers-pre.gif",
-"2281_24_BACK":"https://wiki.swccg.com/images/d/d6/VB8-D-fearedthroughoutthegalaxy-pre.gif",
+"2281_24":"https://wiki.swccg.com/images/2/21/VB8-00-Contract_Killers_Feared_Throughout_The_Galaxy.png",
+"2281_24_BACK":"https://wiki.swccg.com/images/6/67/VB8-07-Contract_Killers_Feared_Throughout_The_Galaxy.png",
 "2281_44":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/infiltration.gif",
 "2281_44_BACK":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/unlikelyallies.gif",
 "2281_47":"https://wiki.swccg.com/images/b/bd/VB8-02-Kyle_Katarns_Blaster_Rifle.png",

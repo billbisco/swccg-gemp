@@ -65,6 +65,37 @@ public class Card_1281_024_Tests {
         );
     }
 
+    /** Same table plus two starships with permanent pilots (one Independent). */
+    protected VirtualTableScenario GetShipScenario() {
+        return new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("trooper", "1_28");
+                    put("luke", "1_19");
+                }},
+                new HashMap<>() {{
+                    put("coruscant", "7_275");
+                    put("lair", "1281_22");
+                    put("casino", "1281_21");
+                    put("mara", "110_10");
+                    put("aurra", "11_51");
+                    put("vader", "1_168");
+                    put("virago", "10_54");
+                    put("conquest", "2_152");
+                    put("saber", "1281_25");
+                    put("blaster", "1_317");
+                    put("lostcard", "1_194");
+                }},
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                ContractKillersObjective,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+    }
+
     /**
      * Starts the game with an On The Hunt stand-in in the Reserve Deck (the real card is coded in a parallel wave),
      * so Contract Killers can satisfy its deployment requirements.
@@ -180,6 +211,18 @@ public class Card_1281_024_Tests {
         flipByDeathMarkDestiny(scn);
         assertEquals("Feared Throughout The Galaxy", scn.GetDSCard("killers").getBlueprint().getTitle());
         assertTrue(scn.HasKeyword(mara, Keyword.ASSASSIN));
+    }
+
+    /** Slip and Master List: "except assassins and [Independent] starships" (batch B20): only Independent starships are excepted. */
+    @Test
+    public void ContractKillersOnlyIndependentStarshipsAreExcepted() {
+        var scn = GetShipScenario();
+        var virago = scn.GetDSCard("virago");      // Virago: Independent, permanent pilot
+        var conquest = scn.GetDSCard("conquest");  // Conquest: not Independent, permanent pilot
+
+        startGame(scn);
+        assertEquals(virago.getBlueprint().getDeployCost(), scn.game().getModifiersQuerying().getDeployCost(scn.gameState(), virago), scn.epsilon);
+        assertEquals(conquest.getBlueprint().getDeployCost() + 3, scn.game().getModifiersQuerying().getDeployCost(scn.gameState(), conquest), scn.epsilon);
     }
 
     @Test
@@ -420,8 +463,8 @@ public class Card_1281_024_Tests {
         var card = scn.GetDSCard("killers").getBlueprint();
 
         assertEquals("Contract Killers", card.getTitle());
-        assertTrue(card.getGameText().contains("or a Death Mark attempt is made."));
-        assertFalse(card.getGameText().contains("you just drew destiny for Death Mark"));
+        assertTrue(card.getGameText().contains("or a [Virtual Block 8] Death Mark attempt is made."));
+        assertFalse(card.getGameText().contains("you just drew destiny for"));
         assertEquals(com.gempukku.swccgo.cards.set1281.dark.Card1281_024.SHEET_GAMETEXT, card.getGameText());
         org.junit.Assert.assertNull(card.getLegacyVersion());
         assertEquals("Contract Killers", com.gempukku.swccgo.logic.GameUtils.getFullName(card));

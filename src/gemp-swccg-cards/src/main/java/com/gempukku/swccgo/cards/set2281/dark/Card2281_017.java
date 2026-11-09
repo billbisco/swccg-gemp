@@ -15,7 +15,7 @@ import java.time.LocalDate;
 public class Card2281_017 extends Card601_027 {
     public Card2281_017() {
         super();
-        setGameText("Once per game, may take a prison into hand from Reserve Deck; reshuffle. OR Use 1 Force to take a non-droid assassin (or slaver) of ability < 5 into hand from Reserve Deck; reshuffle. OR During battle involving an assassin, opponent's battle destiny draws are -1. OR Cancel opponent's attempt to modify the power of a starfighter piloted by your alien.");
+        setGameText("Once per game ▲ a prison. OR Use 1 Force to ▲ a non-droid assassin (or slaver) of ability < 5. OR During battle involving an assassin, opponent's battle destiny draws are -1. OR Cancel opponent's attempt to modify the power of a starfighter piloted by your alien.");
         setLegacyVersion(new LegacyVersion("1281_17", "", "Virtual Block 8.1 release sheet (2012-05-11)", LocalDate.of(2012, 5, 11), LocalDate.of(2012, 7, 21)));
     }
 }

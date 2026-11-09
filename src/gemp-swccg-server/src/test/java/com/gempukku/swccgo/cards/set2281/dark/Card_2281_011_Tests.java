@@ -9,7 +9,7 @@ public class Card_2281_011_Tests {
     @Test
     public void JoinUsOrDieVersionIdentityAndText() {
         assertVersion("2281_11", "1281_11", "Join Us Or Die",
-                "Deploy on your Throne Room. While Emperor and Vader here, Take Your Father's Place does not deplete Life Force or cause Force loss. Once per turn, may deploy So Be It, Jedi or a docking bay from Reserve Deck; reshuffle. 'Battle' on Insignificant Rebellion is treated as 'battle or duel.' (Immune to Alter.)",
+                "Deploy on your Throne Room. While Emperor and Vader here, Take Your Father's Place does not deplete Life Force or cause Force loss. Once per turn, may ▼ So Be It, Jedi or a docking bay. 'Battle' on Insignificant Rebellion is treated as 'battle or duel.' (Immune to Alter.)",
                 "", java.time.LocalDate.of(2012, 5, 11), java.time.LocalDate.of(2012, 7, 21));
         assertSameCard("2281_11", "1281_11");
     }
