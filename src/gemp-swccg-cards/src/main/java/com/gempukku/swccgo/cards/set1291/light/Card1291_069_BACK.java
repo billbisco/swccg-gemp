@@ -52,7 +52,6 @@ public class Card1291_069_BACK extends AbstractObjective {
     public Card1291_069_BACK() {
         super(Side.LIGHT, 7, TITLE, ExpansionSet.VIRTUAL_BLOCK_9_1, Rarity.V);
         setGameText(Card1291_069.PRINTED_GAMETEXT);
-        addIcons(Icon.EPISODE_I);
     }
 
     private static int completeMissions(SwccgGame game, PhysicalCard self) {
