@@ -47,6 +47,14 @@ public class LegacyVersionPrintedTitleTests {
         put("2240_2", "Black Leader (V)");
         put("2240_8", "Galen, Secret Apprentice (V)");
         put("2240_59", "Galen's Fighter");
+        put("2240_17", "Thrawn's Pet");
+        put("2240_66", "Fallen Jedi");
+        put("2240_112", "BoShek's Modified Light Freighter");
+        put("2250_8", "The Mandalorian");
+        put("2263_1", "Bane, The Bounty Hunter");
+        put("2263_7", "The Emperor's Reach");
+        put("2272_15", "Blind Jedi");
+        put("2272_18", "Kashyyyk Insurgent Leader");
         put("2261_93", "Krayt Dragon Howl & Armed And Dangerous");
         put("2271_1", "Cyborg Commander, Hunter Of Jedi");
         put("2271_5", "Ice-Heart");

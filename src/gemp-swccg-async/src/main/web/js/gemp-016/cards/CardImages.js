@@ -6613,6 +6613,16 @@ const fixedImages = {
 "1292_10":"https://res.starwarsccg.org/cards/legacy/VirtualBlock9-Light/large/majorhaashn.gif",
 "1292_11":"https://res.starwarsccg.org/cards/legacy/VirtualBlock9-Light/large/mandalorianmishapjedimindtrick.gif",
 // END legacy
+// Batch B30 (title-change versions, Virtual Blocks 4-7; Bill 2026-11-09: a title change is a version): the original-title version cards show their release-sheet slips, which print the old title (the current cards keep their PC card images, which print the new title and the current text). 1240_81 Eject! Eject! (V): the generated PC image was the Virtual Set 3 Eject! Eject! card; it now shows its Master List slip (the current text).
+"2240_17":"https://wiki.swccg.com/images/9/92/VB4-16-Thrawns_Ysalamir.png",
+"2240_66":"https://wiki.swccg.com/images/4/48/VB4-67-Maris_Brood_Fallen_Jedi.png",
+"2240_112":"https://wiki.swccg.com/images/f/f2/VB4-109E-Infinity.png",
+"2250_8":"https://wiki.swccg.com/images/6/6e/VB5-11-Jango_Fett.png",
+"2263_1":"https://wiki.swccg.com/images/7/77/VB6-01-Cad_Bane.png",
+"2263_7":"https://wiki.swccg.com/images/5/57/VB6-08-Maarek_Stele_The_Emperors_Reach.png",
+"2272_15":"https://wiki.swccg.com/images/b/b9/VB7-02-Rahm_Kota_Blind_Jedi.png",
+"2272_18":"https://wiki.swccg.com/images/5/5f/VB7-03-Tarfful_Wookiee_Insurgent.png",
+"1240_81":"https://wiki.swccg.com/images/8/8a/VL-history-1240-81-front-master.png",
 // Batch B32 (hidden card-list versions, Virtual Blocks 1-7): current cards show a CardMaker recreation of their PC-E1 card-list text (601_x = current class of the 12xx printing; 601_278 = alias of 1240_91); Levitation Attack (V) keeps its PC card image, which already prints the PC-E1 text.
 // The original versions 22xx show the PC card images (they print the originals); 2220_62 shows the release-sheet slip.
 "1210_109":"https://wiki.swccg.com/images/8/8b/VB1-109-R2_D2_Artoo_Detoo-PC-E1-cardmaker.png",

@@ -46,7 +46,7 @@ public class Card1263_001 extends AbstractAlien {
 
     public Card1263_001() {
         super(Side.DARK, 1, 4, 4, 2, 4, "Cad Bane", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_6_3, Rarity.V);
-        setLore("Bounty Hunter");
+        setLore("Bounty hunter.");
         setGameText("Adds 2 to power of anything he pilots. Ponda Baba's Hold-out Blaster deploys and fires for free on Bane. Once per turn, if Bane just used a weapon to hit a character, may 'annihilate' target (target is placed out of play when forfeited this battle).");
         addIcons(Icon.PILOT, Icon.WARRIOR, Icon.EPISODE_I);
         addKeywords(Keyword.BOUNTY_HUNTER);
