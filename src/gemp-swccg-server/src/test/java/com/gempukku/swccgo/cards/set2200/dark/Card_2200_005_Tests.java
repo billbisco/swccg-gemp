@@ -12,7 +12,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-/** Original Fanfare (V) (the text GEMP played, by 2012-07-21, with the Lost In The Wilderness clause), a version of 1200_5; the current card is the Virtual Shields sheet text (May 2013). */
+/** 2200_5 Fanfare (V) "original" (the PC card list text, by 2012-07-21). Batch B22: the Virtual Shields sheet (May 2013) prints the same text, so the current card 1200_5 plays it too; whether 2200_5 stays a version waits for Bill (shared Fanfare ids are not split or merged). */
 public class Card_2200_005_Tests {
     protected VirtualTableScenario GetScenario() {
         return new VirtualTableScenario(
@@ -60,16 +60,17 @@ public class Card_2200_005_Tests {
     @Test
     public void CurrentFanfareIsTheVirtualShieldsSheetText() {
         com.gempukku.swccgo.cards.Vb89VersionAsserts.assertCurrentCard("1200_5", "Fanfare",
-                "Plays on table. Cancels Order To Engage and Scramble. Once per game, you may [upload] an Immediate Effect. While opponent occupies no battleground systems, Staging Areas is suspended.");
+                "Plays on table. Cancels Order To Engage and Scramble. Once per game, may [upload] an Immediate Effect. While opponent occupies no battleground systems, Staging Areas is suspended. 'Missing' on Lost In The Wilderness is treated as 'landspeed = 0 for remainder of turn.'");
     }
 
     @Test
-    public void CurrentFanfareHasNoLostInTheWildernessClause() {
+    public void CurrentFanfareTreatsMissingOnLostInTheWildernessAsLandspeedZero() {
+        // Batch B22: both •Fanfare (V) slips of the Virtual Shields sheet print the Lost In The Wilderness sentence.
         var scn = GetScenario();
         scn.StartGame();
         scn.MoveCardsToLSHand(scn.GetLSCard("litw"));
         scn.MoveCardsToDSSideOfTable(scn.GetDSCard("current"));
-        assertFalse(missingTreatedAsLandspeedZero(scn));
+        assertTrue(missingTreatedAsLandspeedZero(scn));
     }
 
     @Test

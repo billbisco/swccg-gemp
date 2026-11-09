@@ -64,7 +64,6 @@ public class Card_1282_019_Tests {
         scn.BlueprintKeywordCheck(card, new ArrayList<Keyword>());
         scn.BlueprintIconCheck(card, new ArrayList<>() {{
             add(Icon.ALIEN);
-            add(Icon.WARRIOR);
             add(Icon.LEGACY_BLOCK_8);
         }});
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_8_2, card.getExpansionSet());

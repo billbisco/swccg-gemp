@@ -375,3 +375,14 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_6'), 'https://wiki.s
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_23'), 'https://wiki.swccg.com/images/5/50/VB8-02-Slave_I_Symbol_Of_Fear.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_25'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Dark/large/marajadeslightsaber.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_25'), 'https://wiki.swccg.com/images/8/81/VB8-p5-26-Mara_Jades_Lightsaber.png');
+// Batch B22 (Virtual Block 8, Virtual Shields): current cards and version cards show the image of their own text
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1282_15'), 'https://wiki.swccg.com/images/3/32/VB8-p3-71-Captain_Verrack-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1282_19'), 'https://wiki.swccg.com/images/6/63/VB8-p4-76-Rennek-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1282_26'), 'https://wiki.swccg.com/images/9/92/VB8-04-Under_Jabbas_Protection-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1283_3'), 'https://wiki.swccg.com/images/9/99/VL-history-1283-3-master.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1283_12'), 'https://wiki.swccg.com/images/d/d4/VL-history-1283-12-master.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2282_1014'), 'https://wiki.swccg.com/images/9/94/VB8-03-Lando_Calrissian_Unlikely_Hero-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2200_1'), 'https://wiki.swccg.com/images/4/4e/VSh-D13-Firepower-original-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2282_14'), 'https://wiki.swccg.com/images/0/03/VB8-03-Lando_Calrissian_Unlikely_Hero.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_50'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/landocalrissianunlikelyhero.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_35'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlockDS-Dark/large/fanfare.gif');

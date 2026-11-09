@@ -249,11 +249,11 @@ public class Card_1200_011_Tests {
         assertTrue(scn.AwaitingLSControlPhaseActions());
     }
 
-    /** Virtual Shields sheet text (2013-05-21, PC-E1): the latest version. */
+    /** Virtual Block 8.1 slip (2012-05-11) and Virtual Shields sheet (2013-05-21): the one published text, with the [Death Star II] icon. */
     @Test
     public void ThereIsAnotherCurrentCardIsTheLatestText() {
         assertCurrentCard("1200_11", "There is Another",
-                "Unless you have deployed a Skywalker this game, plays on table. 'Luke' and 'Son Of Vader' on opponent's cards are treated as 'Leia' and 'Lady Vader,' respectively. Once during your turn, opponent may activate 1 Force.");
+                "Unless you have deployed a Skywalker this game, plays on table. 'Luke' and 'Son Of Vader' on opponent's [Death Star II] cards are treated as 'Leia' and 'Lady Vader,' respectively. Once during your turn, opponent may activate 1 Force.");
     }
 
     /** Is an opponent's card without the [Death Star II] icon (Vader, Premiere) affected? */
@@ -280,7 +280,8 @@ public class Card_1200_011_Tests {
     }
 
     @Test
-    public void ThereIsAnotherAffectsAllOfOpponentsCards() {
-        assertTrue(thereIsAnotherAffectsOpponentsNonDeathStarIICard("1200_11"));
+    public void ThereIsAnotherAffectsOnlyOpponentsDeathStarIICards() {
+        // Batch B22: the Virtual Block 8.1 slip and the Virtual Shields sheet print the [Death Star II] icon.
+        assertFalse(thereIsAnotherAffectsOpponentsNonDeathStarIICard("1200_11"));
     }
 }

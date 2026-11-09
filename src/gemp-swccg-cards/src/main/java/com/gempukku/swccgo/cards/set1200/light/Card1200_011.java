@@ -33,7 +33,7 @@ public class Card1200_011 extends AbstractDefensiveShield {
     public Card1200_011() {
         super(Side.LIGHT, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "There is Another", ExpansionSet.VIRTUAL_SHIELDS, Rarity.V);
         setLore("Blank");
-        setGameText("Unless you have deployed a Skywalker this game, plays on table. 'Luke' and 'Son Of Vader' on opponent's cards are treated as 'Leia' and 'Lady Vader,' respectively. Once during your turn, opponent may activate 1 Force.");
+        setGameText("Unless you have deployed a Skywalker this game, plays on table. 'Luke' and 'Son Of Vader' on opponent's [Death Star II] cards are treated as 'Leia' and 'Lady Vader,' respectively. Once during your turn, opponent may activate 1 Force.");
         addIcons(Icon.DEATH_STAR_II, Icon.REFLECTIONS_III);
     }
 
@@ -42,9 +42,9 @@ public class Card1200_011 extends AbstractDefensiveShield {
         return !GameConditions.hasDeployedAtLeastXCardsThisGame(game, playerId, 1, Filters.Skywalker);
     }
 
-    /** Virtual Shields sheet text (May 2013): "Luke" and "Son Of Vader" on any of opponent's cards. */
+    /** Virtual Block 8.1 slip (May 2012) and Virtual Shields sheet (May 2013): "Luke" and "Son Of Vader" on opponent's [Death Star II] cards. */
     protected Filter affectedCards(PhysicalCard self) {
-        return Filters.opponents(self);
+        return Filters.and(Filters.opponents(self), Icon.DEATH_STAR_II);
     }
 
     @Override
