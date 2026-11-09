@@ -159,6 +159,24 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('2220_1169'), 'https://wik
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1220_169'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock2-Light/large/lukesblasterpistol.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2220_169'), 'https://wiki.swccg.com/images/9/91/VB2-169-Luke_s_Blaster_Pistol.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2230_109'), 'https://wiki.swccg.com/images/3/36/VB3-110-Rebel_Leadership.png');
+// Batch B10 (Virtual Block 6): current cards show the CardMaker image of their latest text; 2261_87 the first-copy slip (original), 2261_1087 the PC image (PC-E1)
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_82'), 'https://wiki.swccg.com/images/9/96/VB6-81-Maneuvering_Flaps_Nick_Of_Time-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_87'), 'https://wiki.swccg.com/images/8/81/VB6-89-Strong_Is_Vader-PC-E2-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_94'), 'https://wiki.swccg.com/images/b/b8/VB6-94-Dont_Underestimate_Our_Chances-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_258'), 'https://wiki.swccg.com/images/b/b8/VB6-94-Dont_Underestimate_Our_Chances-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_96'), 'https://wiki.swccg.com/images/0/0f/VB6-97-Ive_Decided_To_Go_Back-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_169'), 'https://wiki.swccg.com/images/0/0f/VB6-97-Ive_Decided_To_Go_Back-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_101'), 'https://wiki.swccg.com/images/a/aa/VB6-102-Solo_Han-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_105'), 'https://wiki.swccg.com/images/3/3c/VB6-95-Odin_Nesloor_First_Aid-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_106'), 'https://wiki.swccg.com/images/3/36/VB6-110-Overseer-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_250'), 'https://wiki.swccg.com/images/3/36/VB6-110-Overseer-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_107'), 'https://wiki.swccg.com/images/7/72/VB6-112-Wedge_In_Red_Squadron_1-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_253'), 'https://wiki.swccg.com/images/7/72/VB6-112-Wedge_In_Red_Squadron_1-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1262_11'), 'https://wiki.swccg.com/images/7/72/VB6-11-So_Be_It_Jedi-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1263_6'), 'https://wiki.swccg.com/images/3/3b/VB6-06-Mercenary_Shadow_Pirate-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_87'), 'https://wiki.swccg.com/images/0/08/VB6-89-Strong_Is_Vader-original-sheet.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_1087'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Light/large/strongisvader.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_82'), 'https://wiki.swccg.com/images/c/c3/VB6-81-Maneuvering_Flaps_Nick_Of_Time.png');
 // Batch B09 (Virtual Block 5-6): current cards and version cards show the image of their own text
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_164'), 'https://wiki.swccg.com/images/a/a6/VB5-86-Elegant_Lightsaber-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_85'), 'https://wiki.swccg.com/images/a/a6/VB5-86-Elegant_Lightsaber-PC-E1-cardmaker.png');
