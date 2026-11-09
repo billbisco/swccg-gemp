@@ -33,7 +33,7 @@ public class Card1240_101 extends AbstractSite {
 
     public Card1240_101() {
         super(Side.LIGHT, "Outpost", Uniqueness.DIAMOND_1, ExpansionSet.VIRTUAL_BLOCK_4, Rarity.V);
-        setLocationLightSideGameText("May not deploy to Bespin, Coruscant, Dantooine, Kessel or Tatooine. Once per game, may deploy an Effect that deploys on a character or a device (except a comlink) here from Reserve Deck; reshuffle.");
+        setLocationLightSideGameText("May not deploy to Bespin, Coruscant, Dantooine, Kessel or Tatooine. Once per game, may ▼ an Effect that deploys on a character or a device (except a comlink) here.");
         setLocationDarkSideGameText("Unless opponent's matching operative at same or related site, those sites are immune to [Premium] No Escape.");
         addIcon(Icon.LIGHT_FORCE, 1);
         addIcon(Icon.DARK_FORCE, 1);

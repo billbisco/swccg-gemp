@@ -6618,6 +6618,17 @@ const fixedImages = {
 // Each line overrides the generated entry above (a later key wins) with a CardMaker recreation of the latest version,
 // uploaded to the wiki (File page describes the source). Keep outside the generated legacy block.
 "1210_124":"https://wiki.swccg.com/images/c/c5/VB1-123-Faithful_Service-PC-E1-cardmaker.png",
+// Batch B15 (Virtual Blocks 4-5): current cards show an image of their latest text: CardMaker recreations (601_1 / 601_39 / 601_110 = current classes of 1240_31 / 1240_78 / 1240_86); 1240_58 / 601_87 the Master List slip of the PC-E2 front (the PC card image prints a third wording, held for Bill; the back image already shows PC-E2).
+"1240_31":"https://wiki.swccg.com/images/d/d5/VB4-29E-Knowledge_And_Defense-PC-E1-cardmaker.png",
+"601_1":"https://wiki.swccg.com/images/d/d5/VB4-29E-Knowledge_And_Defense-PC-E1-cardmaker.png",
+"1240_37":"https://wiki.swccg.com/images/7/77/VB4-36-Deep_Hatred-PC-E1-cardmaker.png",
+"1240_58":"https://wiki.swccg.com/images/1/1f/VL-history-1240-58-front-master.png",
+"601_87":"https://wiki.swccg.com/images/1/1f/VL-history-1240-58-front-master.png",
+"1240_78":"https://wiki.swccg.com/images/6/68/VB4-77E-Anger_Fear_Aggression-PC-E1-cardmaker.png",
+"601_39":"https://wiki.swccg.com/images/6/68/VB4-77E-Anger_Fear_Aggression-PC-E1-cardmaker.png",
+"1240_86":"https://wiki.swccg.com/images/9/95/VB4-85-Imperial_Atrocity-PC-E1-cardmaker.png",
+"601_110":"https://wiki.swccg.com/images/9/95/VB4-85-Imperial_Atrocity-PC-E1-cardmaker.png",
+"1250_2ai":"https://wiki.swccg.com/images/3/32/VB5-02AI-Aurra_Sing-PC-E1-cardmaker.png",
 // Batch B11 (Virtual Blocks 6-7): current cards whose generated image shows an older text get the CardMaker recreation of the latest text (1271_2, 1271_17, 1271_39 and 1273_10 keep their PC card image, which shows the latest text).
 "1263_21":"https://wiki.swccg.com/images/9/9f/VB6-21-Droid_Walker-PC-E1-cardmaker.png",
 "1271_10":"https://wiki.swccg.com/images/2/2f/VB7-03-I_Want_Every_Part_Of_This_Ship_Checked-PC-E1-cardmaker.png",
@@ -6771,9 +6782,9 @@ const fixedImages = {
 "2240_40":"https://wiki.swccg.com/images/6/67/VB4-37-If_The_Trace_Was_Correct.png",
 "2240_58":"https://wiki.swccg.com/images/d/d2/VL-history-1240-58-front-original.png",
 "2240_58_BACK":"https://wiki.swccg.com/images/0/0e/VL-history-1240-58-back-original.png",
-"2240_1058":"https://wiki.swccg.com/images/d/d2/VL-history-1240-58-front-original.png",
+"2240_1058":"https://wiki.swccg.com/images/3/3e/VB4-57-Hunt_Down_And_Destroy_The_Jedi-PC-E1-cardmaker.png",
 "2240_1058_BACK":"https://wiki.swccg.com/images/1/18/VL-history-1240-58-back-master.png",
-"2240_59":"https://wiki.swccg.com/images/3/3f/VB4-58-Rogue_Shadow.png",
+"2240_59":"https://wiki.swccg.com/images/0/00/VB4-D-galensfighter-pre.gif",
 "2240_64":"https://wiki.swccg.com/images/0/0d/VB4-63-Galens_Lightsaber.png",
 "2240_78":"https://wiki.swccg.com/images/8/84/VB4-77E-Anger_Fear_Aggression.png",
 "2240_86":"https://wiki.swccg.com/images/3/39/VB4-85-Imperial_Atrocity.png",
@@ -6931,7 +6942,7 @@ const fixedImages = {
 "2240_63":"https://wiki.swccg.com/images/0/07/VB4-62-Stinger.png",
 "2240_92":"https://wiki.swccg.com/images/2/20/VB4-90E-Tusken_Breath_Mask.png",
 "2240_94":"https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Light/large/carefulplanning.gif",
-"2240_1064":"https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/galenslightsaber.gif",
+"2240_1064":"https://wiki.swccg.com/images/0/0f/VB4-63-Galens_Lightsaber-PC-E1-cardmaker.png",
 // removed version id 2240_2058 (r16) -> current card image
 "2240_2058":"https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/huntdownanddestroythejedi.gif",
 "2240_2058_BACK":"https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/theirfirehasgoneoutoftheuniverse.gif",
