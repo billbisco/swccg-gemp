@@ -29,7 +29,7 @@ public class Card_2250_044ai_Tests {
         var scn = scenario();
         LegacyVersionAsserts.assertVersionOf(scn.GetLSCard("ai").getBlueprint(), scn.GetLSCard("v").getBlueprint(),
                 "Deploys -1 to [Episode I] locations. If you just lost Force from an opponent's Effect, may ▲ an [Episode I] Interrupt (except Control), or place a card from hand under Credits Will Do Fine. Immune to Disarmed, You Are Beaten, and attrition.",
-                "1250_44ai", "", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21));
+                "1250_44ai", "", LocalDate.of(2009, 12, 7), LocalDate.of(2013, 4, 27));
     }
 
     @Test
@@ -39,7 +39,9 @@ public class Card_2250_044ai_Tests {
         var baseVersion = scn.GetLSCard("baseVersion").getBlueprint();
         assertEquals(baseVersion.getGameText(), version.getGameText());
         assertEquals(baseVersion.getLegacyVersion().printedOn(), version.getLegacyVersion().printedOn());
-        assertEquals(baseVersion.getLegacyVersion().supersededOn(), version.getLegacyVersion().supersededOn());
+        // the AI printing kept the old text on the PC card list until the 2013 Master List (legacy batch B16)
+        assertEquals(LocalDate.of(2012, 7, 21), baseVersion.getLegacyVersion().supersededOn());
+        assertEquals(LocalDate.of(2013, 4, 27), version.getLegacyVersion().supersededOn());
         assertEquals("1250_44", baseVersion.getLegacyVersion().currentPrintingId());
         assertEquals(scn.GetLSCard("base").getBlueprint().getTitle(), version.getTitle());
     }
