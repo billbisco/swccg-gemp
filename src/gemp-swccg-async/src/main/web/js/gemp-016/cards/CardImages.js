@@ -6794,6 +6794,12 @@ const fixedImages = {
 "1240_27":"https://wiki.swccg.com/images/1/12/VB4-26-Imperial_Propaganda-PC-E1-cardmaker.png",
 "601_88":"https://wiki.swccg.com/images/1/12/VB4-26-Imperial_Propaganda-PC-E1-cardmaker.png",
 
+// Batch B18 (Virtual Block 7): current cards show the image of their latest text (Master List slips for 1271_22 / 1273_13, CardMaker for 1272_28); 2271_1001 / 2273_1013 = new PC-E1 card-list versions (CardMaker).
+"1271_22":"https://wiki.swccg.com/images/8/85/VL-history-1271-22-front-master.png",
+"1273_13":"https://wiki.swccg.com/images/2/28/VL-history-1273-13-front-master.png",
+"1272_28":"https://wiki.swccg.com/images/5/51/VB7-07-Roche-PC-E1-cardmaker.png",
+"2271_1001":"https://wiki.swccg.com/images/f/fd/VB7-01-Cyborg_Commander_Hunter_Of_Jedi-PC-E1-cardmaker.png",
+"2273_1013":"https://wiki.swccg.com/images/f/fa/VB7-00-Insidious_Prisoner-PC-E1-cardmaker.png",
 // Batch B17 (Virtual Block 6): current cards whose generated image shows an older text get the image of the latest text: 1261_56 Black 1 the Master List slip (PC-E1),
 // the others CardMaker recreations (601_51 = current class of 1261_97; 1261_67_BACK keeps the PC image of the unchanged back; 1261_46 / 601_92 keep the PC card image, which shows PC-E2).
 "1261_56":"https://wiki.swccg.com/images/0/02/VL-history-1261-56-front-master.png",
@@ -6868,7 +6874,7 @@ const fixedImages = {
 "2271_40":"https://wiki.swccg.com/images/8/8f/VB7-04-Massassi_Base_Sentry-original-cardmaker.png",
 "2271_41":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/ohhesnotdeadnotyet.gif",
 "2271_1002":"https://wiki.swccg.com/images/9/9a/VB7-01-Darth_Vader_More_Machine_Than_Man-PC-E1-cardmaker.png",
-"2271_1038":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/fielddressing.gif",
+"2271_1038":"https://wiki.swccg.com/images/3/3b/VB7-03-Field_Dressing-PC-E1-cardmaker.png",
 "2271_1039":"https://wiki.swccg.com/images/f/f3/VB7-03-Luke_Trust_Me-PC-E1-cardmaker.png",
 "2271_1040":"https://wiki.swccg.com/images/7/72/VB7-04-Massassi_Base_Sentry.png",
 "2271_1046":"https://wiki.swccg.com/images/a/ac/VB7-00-Restore_Freedom_To_The_Galaxy-original-cardmaker.png",

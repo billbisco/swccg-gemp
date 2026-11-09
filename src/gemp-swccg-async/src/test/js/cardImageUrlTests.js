@@ -298,6 +298,19 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('2220_163'), 'https://wiki
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2230_13'), 'https://wiki.swccg.com/images/5/57/VB3-13E-Lord_Vader.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2240_2'), 'https://wiki.swccg.com/images/a/a9/VB4-02-Juno_Eclipse_Black_Leader.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2240_8'), 'https://wiki.swccg.com/images/9/93/VB4-04-Galen_Marek_Starkiller.png');
+// Batch B18 (Virtual Block 7): current cards show the image of their latest text; new PC-E1 versions 2271_1001 / 2273_1013 and 2271_1038 show CardMaker images; originals keep their slips / PC images
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1271_22'), 'https://wiki.swccg.com/images/8/85/VL-history-1271-22-front-master.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1273_13'), 'https://wiki.swccg.com/images/2/28/VL-history-1273-13-front-master.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1272_28'), 'https://wiki.swccg.com/images/5/51/VB7-07-Roche-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2271_1001'), 'https://wiki.swccg.com/images/f/fd/VB7-01-Cyborg_Commander_Hunter_Of_Jedi-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2273_1013'), 'https://wiki.swccg.com/images/f/fa/VB7-00-Insidious_Prisoner-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2271_1038'), 'https://wiki.swccg.com/images/3/3b/VB7-03-Field_Dressing-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1271_1'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Dark/large/grievoushunterofjedi.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2271_1'), 'https://wiki.swccg.com/images/8/81/VL-history-1271-1-front-original.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2272_28'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/roche.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2273_13'), 'https://wiki.swccg.com/images/d/d3/VB7-00-Insidious_Prisoner.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2272_5'), 'https://wiki.swccg.com/images/f/fc/VB7-04-Imperial_Stockpile.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2271_38'), 'https://wiki.swccg.com/images/3/30/VB7-03-Field_Dressing.png');
 // Batch B17 (Virtual Block 6): each current card and version card shows the image of its own text
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_56'), 'https://wiki.swccg.com/images/0/02/VL-history-1261-56-front-master.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_63'), 'https://wiki.swccg.com/images/9/9e/VB6-65-Daughter_Of_Skywalker-PC-E1-cardmaker.png');

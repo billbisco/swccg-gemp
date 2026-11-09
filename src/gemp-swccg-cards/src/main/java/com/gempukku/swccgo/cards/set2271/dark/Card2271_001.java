@@ -16,18 +16,20 @@ import java.util.List;
 
 /**
  * Grievous, Hunter Of Jedi (Virtual Block 7.1, printed as Cyborg Commander, Hunter Of Jedi); Republic character, not a droid.
- * Pre-errata version of 1271_1 (Virtual Block 7.1 release sheet text, Jun 2010), replaced by the Virtual Cards Master List text (Cyborg Commander renamed Grievous). Anything Goes only (docs/legacy-versions.md).
+ * Original version of 1271_1: the Virtual Block 7.1 release sheet text (Jun 2010; lore "Leader. \"He's no Jedi.\"", so Leader but not Commander).
+ * Superseded by the PC website card list text (by 2012-07-21, PC-E1, 2271_1001); the current card is the Virtual Cards Master List text
+ * (Apr 2013, PC-E2; Cyborg Commander renamed Grievous on 2013-01-29, lore "Commander. Leader."). Anything Goes only (docs/legacy-versions.md).
  */
 public class Card2271_001 extends AbstractRepublic {
     public Card2271_001() {
         super(Side.DARK, 1, 6, 7, 5, 8, "Grievous, Hunter Of Jedi", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_1, Rarity.V);
-        setLore("Commander. Leader.");
+        setLore("Leader. \"He's no Jedi.\"");
         setGameText("[Virtual Block 5] Dark Jedi Lightsaber may deploy on Cyborg Commander. Jedi present are power -1 (-2 if a Jedi Council Member). While armed with a lightsaber, your battle destiny draws here are +1 and his forfeit may not be reduced. Immune to attrition < 4.");
         setLegacyVersion(new LegacyVersion("1271_1", "",
-                "Virtual Block 7.1 release sheet (2010-06-18)", LocalDate.of(2010, 6, 18), LocalDate.of(2013, 4, 27)));
+                "Virtual Block 7.1 release sheet (2010-06-18); superseded by the PC card list text (by 2012-07-21)", LocalDate.of(2010, 6, 18), LocalDate.of(2012, 7, 21)));
         setPrintedTitle("Cyborg Commander, Hunter Of Jedi");
         addPersona(Persona.GRIEVOUS);
-        addKeywords(Keyword.COMMANDER, Keyword.LEADER);
+        addKeywords(Keyword.LEADER);
         addIcons(Icon.WARRIOR, Icon.EPISODE_I, Icon.SPECIAL_EDITION);
     }
     @Override

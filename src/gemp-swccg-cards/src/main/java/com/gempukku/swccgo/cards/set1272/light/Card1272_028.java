@@ -36,8 +36,8 @@ public class Card1272_028 extends AbstractSystem {
         super(Side.LIGHT, Title.Roche, 7, ExpansionSet.VIRTUAL_BLOCK_7_2, Rarity.V);
         setVirtualSuffix(true);
         setLocationLightSideGameText("Unless opponent controls this system, Commence Primary Ignition may not target Roche.");
-        setLocationDarkSideGameText("Force Drain -1 here. If you control, Asteroid Sanctuary at related sector is canceled.");
-        setGameText("Light: Unless opponent controls this system, Commence Primary Ignition may not target Roche. Dark: Force Drain -1 here. If you control, Asteroid Sanctuary at related sector is canceled.");
+        setLocationDarkSideGameText("Force drain -1 here. If you control, Asteroid Sanctuary at related sector is canceled.");
+        setGameText("Light: Unless opponent controls this system, Commence Primary Ignition may not target Roche. Dark: Force drain -1 here. If you control, Asteroid Sanctuary at related sector is canceled.");
         addIcon(Icon.LIGHT_FORCE, 2);
         addIcon(Icon.DARK_FORCE, 1);
         addIcons(Icon.SPECIAL_EDITION, Icon.PLANET);
