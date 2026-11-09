@@ -23,7 +23,7 @@ public class Card_2261_081_Tests {
     public void IdentityAndVersionInfo() {
         var scn = scenario();
         assertLegacyVersion(scn.GetLSCard("v").getBlueprint(), scn.GetLSCard("current").getBlueprint(), "1261_81", "",
-                LocalDate.of(2010, 4, 20), LocalDate.of(2012, 7, 21),
+                LocalDate.of(2009, 9, 4), LocalDate.of(2012, 7, 21),
                 "Deploy on a Rebel Base war room. Echo Base Operations is canceled. Your ability-1 permanent pilots aboard T-47s, X-wings, Y-wings, and Z-95s (except squadrons) are replaced by ability-2 permanent pilots who add 1 to power. During your control phase, may retrieve one Y-wing or Z-95. Suspended if opponent controls this site. (Immune to Alter.)");
     }
 }
