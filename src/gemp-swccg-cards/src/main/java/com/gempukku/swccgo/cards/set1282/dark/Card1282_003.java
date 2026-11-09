@@ -38,7 +38,7 @@ public class Card1282_003 extends AbstractNormalEffect {
         super(Side.DARK, 4, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.You_May_Start_Your_Landing, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_2, Rarity.V);
         setVirtualSuffix(true);
         setLore("Echo Base was no match for the Imperial war machine.");
-        setGameText("If 5th Marker on table, deploy on table. During your control phase, opponent loses 1 Force for each marker site you control with an AT-AT (limit 1 unless [Virtual Block 2] Imperial Control on table). Once per game, may take Walker Garrison and/or 3rd Marker into hand from Reserve Deck; reshuffle. (Immune to Alter.)");
+        setGameText("If 5th Marker on table, deploy on table. During your control phase, opponent loses 1 Force for each marker site you control with an AT-At (limit 1 unless [Virtual Block 2] Imperial Control on table). Once per game, may take Walker Garrrison and/or 3rd Marker into hand from Reserve Deck; reshuffle. (Immune to Alter.)");
         addIcons(Icon.TATOOINE);
         addImmuneToCardTitle(Title.Alter);
     }

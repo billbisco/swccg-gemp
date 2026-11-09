@@ -111,7 +111,6 @@ public class Card_1291_069_Tests {
         }});
         scn.BlueprintKeywordCheck(card, new ArrayList<Keyword>());
         scn.BlueprintIconCheck(card, new ArrayList<>() {{
-            add(Icon.EPISODE_I);
             add(Icon.OBJECTIVE);
             add(Icon.LEGACY_BLOCK_9);
         }});
@@ -134,7 +133,6 @@ public class Card_1291_069_Tests {
         }});
         scn.BlueprintKeywordCheck(card, new ArrayList<Keyword>());
         scn.BlueprintIconCheck(card, new ArrayList<>() {{
-            add(Icon.EPISODE_I);
             add(Icon.OBJECTIVE);
             add(Icon.LEGACY_BLOCK_9);
         }});
