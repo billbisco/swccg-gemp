@@ -195,7 +195,7 @@ public class Card_1272_028_Tests {
     public void RocheShowsTheSheetPcE1Text() {
         var b = com.gempukku.swccgo.framework.VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("1272_28");
         org.junit.Assert.assertEquals("Unless opponent controls this system, Commence Primary Ignition may not target Roche.", b.getLocationLightSideGameText());
-        org.junit.Assert.assertEquals("Force Drain -1 here. If you control, Asteroid Sanctuary at related sector is canceled.", b.getLocationDarkSideGameText());
+        org.junit.Assert.assertEquals("Force drain -1 here. If you control, Asteroid Sanctuary at related sector is canceled.", b.getLocationDarkSideGameText());
         org.junit.Assert.assertFalse(b.getLocationLightSideGameText().contains("may not target it.") || b.getLocationDarkSideGameText().contains("may not target it."));
     }
 }

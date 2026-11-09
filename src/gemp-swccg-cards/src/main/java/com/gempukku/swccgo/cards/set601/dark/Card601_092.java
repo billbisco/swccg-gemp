@@ -37,7 +37,7 @@ import java.util.List;
 public class Card601_092 extends AbstractUsedInterrupt {
     public Card601_092() {
         super(Side.DARK, 4, "One Beautiful Thing", Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
-        setLore("'I don't know how we're gonna get out of this one.'");
+        setLore("\"I don't know how we're gonna get out of this one.\"");
         setGameText("Lose 1 Force to ▲ (or retrieve) Juno Eclipse. OR During battle where you have no Dark Jedi or droids and only two cards with ability there (a male and a female), add one destiny to total power (and attrition against you = 0).");
         addIcons(Icon.DAGOBAH, Icon.LEGACY_BLOCK_6);
         setAsLegacy(true);

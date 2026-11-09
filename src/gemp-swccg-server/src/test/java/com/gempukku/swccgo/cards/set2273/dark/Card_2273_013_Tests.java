@@ -57,7 +57,7 @@ public class Card_2273_013_Tests extends Card_1273_013_Tests {
         assertEquals("1273_13", version.currentPrintingId());
         assertEquals("", version.label());
         assertEquals(LocalDate.of(2011, 6, 3), version.printedOn());
-        assertEquals(LocalDate.of(2013, 4, 27), version.supersededOn());
+        assertEquals(LocalDate.of(2012, 7, 21), version.supersededOn());
         assertEquals("Insidious Prisoner", GameUtils.getFullName(card));
     }
 

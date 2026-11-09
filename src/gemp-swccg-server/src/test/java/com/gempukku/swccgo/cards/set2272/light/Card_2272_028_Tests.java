@@ -17,7 +17,7 @@ public class Card_2272_028_Tests {
         var current = VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("1272_28");
         assertLocationVersion(version, current, "1272_28", "", LocalDate.of(2010, 7, 26), LocalDate.of(2010, 12, 15),
                 "Unless opponent controls this system, Commence Primary Ignition may not target it.",
-                "Force Drain -1 here. If you control, Asteroid Sanctuary at related sector is canceled.", false);
+                "Force drain -1 here. If you control, Asteroid Sanctuary at related sector is canceled.", false);
     }
 
     private VirtualTableScenario scenario() {

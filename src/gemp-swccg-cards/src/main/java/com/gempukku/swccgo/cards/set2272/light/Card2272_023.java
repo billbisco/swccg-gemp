@@ -53,7 +53,7 @@ public class Card2272_023 extends AbstractNormalEffect {
         setGameText("Deploy on table. Canceled if your Senate or [Reflections 2] objective on table. Rogue Squadron pilots are spies, and, unless your character of ability > 4 at a site, power +2, armor = 4, immune to attrition < 4, and weapon destiny draws targeting them are -1 (may not be further reduced). (Immune to Alter.)");
         addImmuneToCardTitle(Title.Alter);
         setLegacyVersion(new LegacyVersion("1272_23", "",
-                "Virtual Block 7.2 release sheet (2010-12-15)", LocalDate.of(2010, 12, 15), LocalDate.of(2014, 2, 4)));
+                "Virtual Block 7.2 release sheet (2010-12-15); superseded by the PC news post \"5 immediate changes from the CBT\" (2011-06-23)", LocalDate.of(2010, 12, 15), LocalDate.of(2011, 6, 23)));
     }
 
     static Filter cancelingCard(PhysicalCard self) {
