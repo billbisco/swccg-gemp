@@ -49,7 +49,7 @@ public class Card2220_036 extends AbstractNormalEffect {
         setLore("'I'm sorry, too.'");
         setGameText("Deploy on table. Floating Refinery is suspended during opponent's turn. During your deploy phase, may deploy one Floating Refinery, a non-unique cloud sector, or an Obsidian squadron TIE from Reserve Deck; reshuffle. During your turn, if you control two cloud sectors with TIEs, opponent loses 1 Force. (Immune to Alter.)");
         setLegacyVersion(new LegacyVersion("1220_36", "",
-                "Virtual Block 2 release sheet (2009-12-07), card #36", LocalDate.of(2009, 12, 7), LocalDate.of(2013, 4, 27)));
+                "Virtual Block 2 release sheet (2009-12-07), card #36; superseded by the PC website card list (by 2012-07-21)", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21)));
         addIcons(Icon.TATOOINE);
         addImmuneToCardTitle(Title.Alter);
     }

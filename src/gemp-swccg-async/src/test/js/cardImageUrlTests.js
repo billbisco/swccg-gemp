@@ -42,6 +42,22 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('unknown_card'), null);
 // Current-card override after // END legacy wins over the generated entry (docs/legacy-versions.md, "Current card image")
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_124'), 'https://wiki.swccg.com/images/c/c5/VB1-123-Faithful_Service-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2210_124'), 'https://wiki.swccg.com/images/5/54/VB1-123-Faithful_Service.png');
+// Batch B04: current cards show the CardMaker image of their latest text; versions keep their own images
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_84'), 'https://wiki.swccg.com/images/f/f6/VB1-84E-Han_Seeker-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_96'), 'https://wiki.swccg.com/images/0/00/VB1-101E-IL_19-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_99'), 'https://wiki.swccg.com/images/7/73/VB1-98-Debnoli-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_107'), 'https://wiki.swccg.com/images/1/17/VB1-107-Obi_Wan_Kenobi-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_127'), 'https://wiki.swccg.com/images/2/27/VB1-127-I_Can_t_Believe_He_s_Gone-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_147'), 'https://wiki.swccg.com/images/c/c1/VB1-148-Beru_Stew-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_160'), 'https://wiki.swccg.com/images/b/b0/VB1-161-Rebel_Reinforcements-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_161'), 'https://wiki.swccg.com/images/4/46/VB1-162-Return_Of_A_Jedi-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1220_6'), 'https://wiki.swccg.com/images/f/ff/VB2-06-Captain_Piett-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1220_10'), 'https://wiki.swccg.com/images/a/a0/VB2-10-Dengar-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1220_36'), 'https://wiki.swccg.com/images/8/8c/VB2-36-I_m_Sorry-PC-E2-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_273'), 'https://wiki.swccg.com/images/8/8c/VB2-36-I_m_Sorry-PC-E2-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2220_1036'), 'https://wiki.swccg.com/images/b/b7/VB2-36-I_m_Sorry-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2220_36'), 'https://wiki.swccg.com/images/f/f6/VB2-36-I_m_Sorry.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2210_84'), 'https://wiki.swccg.com/images/0/01/VB1-84E-Han_Seeker.png');
 // Batch B03: current cards show the CardMaker image of their latest text; versions keep the slip
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_4'), 'https://wiki.swccg.com/images/1/17/VB1-04-Commander_Praji-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_6'), 'https://wiki.swccg.com/images/3/34/VB1-06-Danz_Borin-PC-E1-cardmaker.png');
