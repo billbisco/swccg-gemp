@@ -6613,6 +6613,13 @@ const fixedImages = {
 "1292_10":"https://res.starwarsccg.org/cards/legacy/VirtualBlock9-Light/large/majorhaashn.gif",
 "1292_11":"https://res.starwarsccg.org/cards/legacy/VirtualBlock9-Light/large/mandalorianmishapjedimindtrick.gif",
 // END legacy
+// Batch B22 (Virtual Block 8, Virtual Shields): current cards show the image of their latest text: CardMaker recreations of the 2012 card-list PC-E1 texts for 1282_15 / 1282_19 / 1282_26 (their PC card images print the originals, kept on the 2282 cards);
+// 1283_3 Lady Valarian / 1283_12 Spaceport Docking Bay (V) the Master List slips (PC-E1). 1282_14 (601_50), 1200_1 (601_36), 1200_5 (601_35), 1200_11 and 1200_17 keep their PC card images, which print the latest text.
+"1282_15":"https://wiki.swccg.com/images/3/32/VB8-p3-71-Captain_Verrack-PC-E1-cardmaker.png",
+"1282_19":"https://wiki.swccg.com/images/6/63/VB8-p4-76-Rennek-PC-E1-cardmaker.png",
+"1282_26":"https://wiki.swccg.com/images/9/92/VB8-04-Under_Jabbas_Protection-PC-E1-cardmaker.png",
+"1283_3":"https://wiki.swccg.com/images/9/99/VL-history-1283-3-master.png",
+"1283_12":"https://wiki.swccg.com/images/d/d4/VL-history-1283-12-master.png",
 // Batch B20 (Virtual Block 8): current cards show the image of their latest text. CardMaker recreations of the 2012 card-list texts (the PC card images and slips print the originals, kept on the 2281 version cards); 601_27 / 601_24 are the classes of 1281_17 / 1281_23;
 // 1281_24 Contract Killers shows the Master List slip of its front (PC-E1; the PC card image prints a third wording). 1281_25 keeps its PC card image (it prints PC-E1).
 "1281_6":"https://wiki.swccg.com/images/9/98/VB8-03-Rtic_Hweei-PC-E1-cardmaker.png",
@@ -6939,7 +6946,7 @@ const fixedImages = {
 "2283_12":"https://wiki.swccg.com/images/f/fc/VB8-p3-97-Spaceport_Docking_Bay.png",
 "2283_21":"https://wiki.swccg.com/images/0/09/VB8-02-Underworld_Contacts_Uncharted_Settlements.png",
 "2200_5":"https://res.starwarsccg.org/cards/legacy/VirtualBlockDS-Dark/large/fanfare.gif",
-"2282_1014":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/landocalrissianunlikelyhero.gif",
+"2282_1014":"https://wiki.swccg.com/images/9/94/VB8-03-Lando_Calrissian_Unlikely_Hero-PC-E1-cardmaker.png",
 "2281_1":"https://wiki.swccg.com/images/7/7b/VB8-01-Aurra_Sing_Deadly_Assassin.png",
 "2281_4":"https://wiki.swccg.com/images/6/6a/VB8-03-Bossk_With_Mortar_Gun.png",
 "2281_8":"https://wiki.swccg.com/images/8/87/VB8-p2-08-Jet_Pack.png",
@@ -6968,7 +6975,7 @@ const fixedImages = {
 "2281_36":"https://wiki.swccg.com/images/e/ea/VB8-00-Scoundrels_Ingenuity.png",
 "2281_46":"https://wiki.swccg.com/images/9/9e/VB8-03-Hans_Blaster_So_Uncivilized.png",
 "2282_25":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/youwilltakemetojabbanow.gif",
-"2200_1":"https://res.starwarsccg.org/cards/legacy/VirtualBlockDS-Dark/large/firepower.gif",
+"2200_1":"https://wiki.swccg.com/images/4/4e/VSh-D13-Firepower-original-cardmaker.png",
 "2281_1044":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/infiltration.gif",
 "2281_1044_BACK":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/unlikelyallies.gif",
 "2281_1047":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/kylekatarnsblasterrifle.gif",
