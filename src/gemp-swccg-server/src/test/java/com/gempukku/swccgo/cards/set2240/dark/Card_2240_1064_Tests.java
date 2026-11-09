@@ -38,7 +38,7 @@ public class Card_2240_1064_Tests {
     public void GalensLightsaberCardListIsTheSameCardWithTheOldText() {
         var scn = GetScenario();
         LegacyVersionAsserts.assertVersionOf(scn.GetDSCard("current").getBlueprint(), scn.GetDSCard("version").getBlueprint(),
-                "Deploy on Galen. While Galen defending a battle, his and Black Leader's immunity to attrition is +2. May target a character or creature for free. Draw two destiny. If total destiny > defense value, target hit, power -3, and may not be used to satisfy attrition.",
+                "Deploy on Galen. While Galen defending a battle, his and Black Leader's immunity to atttition is +2. May target a character or creature for free. Draw two destiny. If total destiny > defense value, target hit, power -3, and may not be used to satisfy attrition.",
                 "1240_64", "PC-E1", LocalDate.of(2012, 7, 21), LocalDate.of(2013, 4, 27));
     }
 
