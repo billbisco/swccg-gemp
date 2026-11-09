@@ -34,7 +34,7 @@ public class Card1261_049 extends AbstractUsedOrLostInterrupt {
         super(Side.DARK, 4, "Tarkin's Orders", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("'Put all sections on alert!'");
-        setGameText("USED: If a battle just initiated at a site, target your Imperial of ability = 3 defending. Target's forfeit cannot be reduced, and draws one battle destiny if not able to otherwise. LOST: Use 1 Force to deploy from Reserve Deck (then reshuffle), or retrieve, Eriadu or an Imperial of ability = 3 (except Veers). (Immune to Sense.)");
+        setGameText("USED: If a battle just initiated at a site, target your Imperial of ability = 3 defending. Target's forfeit cannot be reduced, and draws one battle destiny if not able to otherwise. LOST: Use 1 Force to deploy (or retrieve) Eriadu or an Imperial of ability = 3 (except Veers) from Reserve Deck; reshuffle. (Immune to Sense.)");
         addIcons(Icon.PREMIUM);
     }
 

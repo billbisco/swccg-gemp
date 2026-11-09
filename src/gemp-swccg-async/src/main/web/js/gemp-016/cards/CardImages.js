@@ -6613,6 +6613,22 @@ const fixedImages = {
 "1292_10":"https://res.starwarsccg.org/cards/legacy/VirtualBlock9-Light/large/majorhaashn.gif",
 "1292_11":"https://res.starwarsccg.org/cards/legacy/VirtualBlock9-Light/large/mandalorianmishapjedimindtrick.gif",
 // END legacy
+// Batch B33 (Virtual Blocks 6-9 eye check): current cards show the image of their latest text, CardMaker recreations of the 2012 card-list texts (PC-E1)
+// for 1273_35 (601_63), 1271_45, 1273_14, 1281_18, 1282_20; the originals 2273_35 / 2271_45 / 2273_14 / 2281_18 / 2282_20 show the PC card images (they print the originals).
+// Chasm (V) / Abyss (V): the current cards (1200_7 / 601_65, 1200_15 / 601_32) keep their PC card images (the PC-E1 errata text); the originals 2200_7 / 2200_15 show CardMaker recreations of the earlier card-list text.
+"1273_35":"https://wiki.swccg.com/images/8/88/VB7-05-Yub_Yub_Commander-PC-E1-cardmaker.png",
+"601_63":"https://wiki.swccg.com/images/8/88/VB7-05-Yub_Yub_Commander-PC-E1-cardmaker.png",
+"1271_45":"https://wiki.swccg.com/images/4/41/VB7-02-Rebel_Aces-PC-E1-cardmaker.png",
+"1273_14":"https://wiki.swccg.com/images/5/5b/VB7-p3-92-A_Dark_Time_For_The_Rebellion-PC-E1-cardmaker.png",
+"1281_18":"https://wiki.swccg.com/images/3/35/VB8-00-Give_Yourself_To_The_Dark_Side-PC-E1-cardmaker.png",
+"1282_20":"https://wiki.swccg.com/images/7/7d/VB8-p4-74-A_Remote_Planet-PC-E1-cardmaker.png",
+"2273_35":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/yubyubcommander.gif",
+"2271_45":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/rebelaces.gif",
+"2273_14":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Dark/large/adarktimefortherebellion.gif",
+"2281_18":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Dark/large/giveyourselftothedarkside.gif",
+"2282_20":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/aremoteplanet.gif",
+"2200_7":"https://wiki.swccg.com/images/8/8a/VSh-07-Chasm-original-cardmaker.png",
+"2200_15":"https://wiki.swccg.com/images/b/bc/VSh-15-Abyss-original-cardmaker.png",
 // Batch B27 (Virtual Block 7): current cards show the image of their latest text, CardMaker recreations of the 2012 card-list texts (PC-E1);
 // 601_178 / 601_222 are the classes of 1273_1 / 1273_24. The original versions 2272_26 / 2273_1 / 2273_2 / 2273_24 show the PC card images (they print the originals).
 "1272_26":"https://wiki.swccg.com/images/7/7e/VB7-p4-76-The_Camp-PC-E1-cardmaker.png",
