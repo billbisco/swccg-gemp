@@ -6613,6 +6613,12 @@ const fixedImages = {
 "1292_10":"https://res.starwarsccg.org/cards/legacy/VirtualBlock9-Light/large/majorhaashn.gif",
 "1292_11":"https://res.starwarsccg.org/cards/legacy/VirtualBlock9-Light/large/mandalorianmishapjedimindtrick.gif",
 // END legacy
+// Batch B25 (Virtual Blocks 4-6): current cards show the image of their latest text, CardMaker recreations of the 2012 card-list texts (PC-E1);
+// the PC card images print the release-sheet originals, kept on the 2250 / 2261 version cards.
+"1250_9":"https://wiki.swccg.com/images/4/4e/VB5-07-Keder_The_Black-PC-E1-cardmaker.png",
+"2250_9":"https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Dark/large/kedertheblack.gif",
+"1261_29":"https://wiki.swccg.com/images/f/f0/VB6-31-Breached_Defenses_Molator-PC-E1-cardmaker.png",
+"2261_29":"https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/breacheddefenses&molator.gif",
 // Batch B20 (Virtual Block 8): current cards show the image of their latest text. CardMaker recreations of the 2012 card-list texts (the PC card images and slips print the originals, kept on the 2281 version cards); 601_27 / 601_24 are the classes of 1281_17 / 1281_23;
 // 1281_24 Contract Killers shows the Master List slip of its front (PC-E1; the PC card image prints a third wording). 1281_25 keeps its PC card image (it prints PC-E1).
 "1281_6":"https://wiki.swccg.com/images/9/98/VB8-03-Rtic_Hweei-PC-E1-cardmaker.png",
