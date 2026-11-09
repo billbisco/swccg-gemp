@@ -39,7 +39,7 @@ public class Card601_049 extends AbstractStarfighter {
     public Card601_049() {
         super(Side.LIGHT, 3, 3, 3, null, 5, 4, 5, "Lady Luck", Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
         setLore("");
-        setGameText("May add 2 pilots and 2 passengers. Scoundrels deploy -1 aboard. May reveal from hand to take into hand [Cloud City] Lando from Reserve Deck; reshuffle; and deploy both simultaneously. While Lando piloting, immune to attrition < 5 (< 6 if at Bespin). ");
+        setGameText("May add 2 pilots and 2 passengers. Scoundrels deploy -1 aboard. May reveal from hand to ▲ [Cloud City] Lando and deploy both simultaneously. While Lando piloting, immune to attrition < 5 (< 6 if at Bespin).");
         addIcons(Icon.CORUSCANT, Icon.INDEPENDENT, Icon.NAV_COMPUTER, Icon.SCOMP_LINK, Icon.LEGACY_BLOCK_8);
         addModelType(ModelType.BAUDO_CLASS_STAR_YACHT); //TODO should just be STAR_YACHT
         setPilotCapacity(2);

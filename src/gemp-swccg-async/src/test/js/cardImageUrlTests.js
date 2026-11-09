@@ -505,3 +505,18 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('2272_15'), 'https://wiki.
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2272_18'), 'https://wiki.swccg.com/images/5/5f/VB7-03-Tarfful_Wookiee_Insurgent.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1272_18'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/tarffulwookieeinsurgent.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1240_81'), 'https://wiki.swccg.com/images/8/8a/VL-history-1240-81-front-master.png');
+// Batch B31: title changes are versions; originals (old titles) show the release-sheet slips, card-list PC-E1 versions CardMaker recreations, current cards their PC card images
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2273_9'), 'https://wiki.swccg.com/images/e/ef/VB7-03-Moruth_Doole_Kessel_Administrator.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_9'), 'https://wiki.swccg.com/images/a/a6/VB8-01-Jango_Fett_The_Assassin.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_1009'), 'https://wiki.swccg.com/images/9/9f/VB8-01-The_Mandalorian_Father_Of_Fett-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_28'), 'https://wiki.swccg.com/images/1/1d/VB8-01-Kyle_Katarn.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_1028'), 'https://wiki.swccg.com/images/6/67/VB8-01-Rebel_Agent-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_45'), 'https://wiki.swccg.com/images/c/c4/VB8-02-Errant_Venture.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2282_13'), 'https://wiki.swccg.com/images/d/d6/VB8-03-Vilmarh_Villie_Grahrk.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2282_27'), 'https://wiki.swccg.com/images/5/5a/VB8-03-Lady_Luck.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1273_9'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Dark/large/moruthdoolekesseladministrator.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_9'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Dark/large/jangofetttheassassin.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_28'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/kylekatarn.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_45'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/errantventure.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1282_13'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/vilmarhvilliegrahrk.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1282_27'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/ladyluck.gif');
