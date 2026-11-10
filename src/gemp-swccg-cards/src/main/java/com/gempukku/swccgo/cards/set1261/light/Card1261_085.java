@@ -28,9 +28,9 @@ public class Card1261_085 extends AbstractImmediateEffect {
             Filters.and(Icon.LEGACY_BLOCK_3, Filters.Emperor));
 
     public Card1261_085() {
-        super(Side.LIGHT, 4, PlayCardZoneOption.ATTACHED, Title.Return_Of_The_Jedi, Uniqueness.UNRESTRICTED, ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
+        super(Side.LIGHT, 4, PlayCardZoneOption.ATTACHED, Title.Return_Of_The_Jedi, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
         setLore("'The Emperor knew, as I did, if Anakin were to have any offspring, they would be a threat to him.'");
-        setGameText("Deploy on a site to cancel a Force drain there. Skywalkers are power +1 here. At end of your turn, place this Effect in Lost Pile. OR At any time, deploy on Sidious or [Virtual Block 3] Emperor. Opponent's Interrupts with 'Emperor' in game text are canceled and Sidious may not place Jedi out of play. (Immune to Control.)");
+        setGameText("Deploy on a site to cancel a Force drain there. Skywalkers are power +1 here. At end of your turn If you control this site, place this Effect in Lost Pile. OR At any time, deploy on Sidious or [Virtual Block 3] Emperor. Opponent's Interrupts with “Emperor” in game text are canceled and Sidious may not place Jedi out of play. [Immune to Control]");
         addIcons(Icon.DEATH_STAR_II);
         addImmuneToCardTitle(Title.Control);
     }
@@ -91,7 +91,8 @@ public class Card1261_085 extends AbstractImmediateEffect {
             action.appendEffect(new CancelForceDrainEffect(action));
             return Collections.singletonList(action);
         }
-        if (onSite(game, self) && TriggerConditions.isEndOfYourTurn(game, result, self)) {
+        if (onSite(game, self) && TriggerConditions.isEndOfYourTurn(game, result, self)
+                && isLostAtEndOfTurn(game, self, self.getAttachedTo())) {
             RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
             action.setText("Place Return Of The Jedi in Lost Pile");
             action.appendEffect(new PlaceCardInLostPileFromTableEffect(action, self));
@@ -110,5 +111,13 @@ public class Card1261_085 extends AbstractImmediateEffect {
             return Collections.singletonList(action);
         }
         return null;
+    }
+
+    /**
+     * "At end of your turn If you control this site, place this Effect in Lost Pile" (Competitive Balance Team errata,
+     * PC forum 2014-04-16, which also made the card unique). The original (2261_85) is lost at the end of every turn of yours.
+     */
+    protected boolean isLostAtEndOfTurn(SwccgGame game, PhysicalCard self, PhysicalCard site) {
+        return GameConditions.controls(game, self.getOwner(), site);
     }
 }
