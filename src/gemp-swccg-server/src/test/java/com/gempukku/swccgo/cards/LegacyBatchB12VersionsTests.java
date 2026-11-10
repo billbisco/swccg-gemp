@@ -87,8 +87,8 @@ public class LegacyBatchB12VersionsTests {
         assertEquals("2273_2027", LegacyVersion.versionIdOf("1273_27", 2));
         assertEquals("1273_27", LegacyVersion.currentPrintingIdOf("2273_2027"));
         // original (2011-06-03) -> PC-E1 CBT errata (2011-06-23) -> PC-E2 card list (2012-07-21) -> PC-E3 Master List (2013-04-27, current card)
-        assertEquals(LocalDate.of(2011, 6, 23), library.getSwccgoCardBlueprint("2273_1027").getLegacyVersion().supersededOn());
-        assertEquals(LocalDate.of(2012, 7, 21), library.getSwccgoCardBlueprint("2273_27").getLegacyVersion().supersededOn());
+        assertEquals(LocalDate.of(2011, 6, 22), library.getSwccgoCardBlueprint("2273_1027").getLegacyVersion().supersededOn());
+        assertEquals(LocalDate.of(2012, 4, 20), library.getSwccgoCardBlueprint("2273_27").getLegacyVersion().supersededOn());
         assertEquals(LocalDate.of(2012, 7, 21), library.getSwccgoCardBlueprint("2273_2027").getLegacyVersion().printedOn());
         assertEquals(LocalDate.of(2013, 4, 27), library.getSwccgoCardBlueprint("2273_2027").getLegacyVersion().supersededOn());
         assertEquals("Master Kenobi", library.getSwccgoCardBlueprint("2273_2027").getTitle());

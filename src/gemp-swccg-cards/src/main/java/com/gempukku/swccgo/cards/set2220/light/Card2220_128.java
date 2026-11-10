@@ -45,7 +45,7 @@ public class Card2220_128 extends AbstractNormalEffect {
         setLore("Enhanced steering mechanisms on Rebel T-47s provide increased maneuverability in planetary atmospheres.");
         setGameText("Deploy on table. During your deploy phase, may reveal an unpiloted combat vehicle from hand to [upload] its matching pilot character (or vice versa) and deploy both simultaneously. (Immune to Alter.)");
         setLegacyVersion(new LegacyVersion("1220_128", "",
-                "Virtual Block 2 release sheet (2009-12-07), card #128", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21)));
+                "Virtual Block 2 release sheet (2009-12-07), card #128; superseded by 2012-02-07 (PC forum \"updated errata\")", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 2, 7)));
         addIcons(Icon.SPECIAL_EDITION, Icon.LEGACY_BLOCK_2);
         addImmuneToCardTitle(Title.Alter);
         setAsLegacy(true);

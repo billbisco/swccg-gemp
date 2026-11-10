@@ -51,7 +51,7 @@ public class Card2230_077 extends AbstractRebel {
         setSpecies(Species.DRESSELIAN);
         addKeywords(Keyword.SCOUT, Keyword.LEADER);
         setLegacyVersion(new LegacyVersion("1230_77", "",
-                "Virtual Block 3 release sheet (2009-12-07), card #78", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 8, 27)));
+                "Virtual Block 3 release sheet (2009-12-07), card #78; superseded by the PC forum errata (2012-07-13)", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 13)));
     }
 
     @Override

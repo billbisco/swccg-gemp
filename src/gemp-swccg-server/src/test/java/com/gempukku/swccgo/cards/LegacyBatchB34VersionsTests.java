@@ -51,7 +51,7 @@ public class LegacyBatchB34VersionsTests {
         assertEquals("1250_41", version.currentPrintingId());
         assertEquals("", version.label());
         assertEquals(LocalDate.of(2009, 12, 7), version.printedOn());
-        assertEquals(LocalDate.of(2013, 4, 27), version.supersededOn());
+        assertEquals(LocalDate.of(2010, 7, 27), version.supersededOn()); // PC forum errata "This card is destiny 3." (legacy batch B37)
         assertEquals(current.getTitle(), original.getTitle());
         assertEquals(current.getGameText(), original.getGameText());
         assertEquals(current.getLore(), original.getLore());

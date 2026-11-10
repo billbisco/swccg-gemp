@@ -25,7 +25,7 @@ public class Card2250_044 extends Card1250_044 {
     public Card2250_044() {
         setGameText("Deploys -1 to [Episode I] locations. If you just lost Force from an opponent's Effect, may ▲ an [Episode I] Interrupt (except Control), or place a card from hand under Credits Will Do Fine. Immune to Disarmed, You Are Beaten, and attrition.");
         setLegacyVersion(new LegacyVersion("1250_44", "",
-                "Virtual Block 5 release sheet (2009-12-07), card #45", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21)));
+                "Virtual Block 5 release sheet (2009-12-07), card #45; superseded by 2011-03-21 (PC forum errata)", LocalDate.of(2009, 12, 7), LocalDate.of(2011, 3, 21)));
     }
 
     @Override

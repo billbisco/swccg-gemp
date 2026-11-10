@@ -42,7 +42,7 @@ public class Card_2272_022_Tests {
     public void OriginalRebelGunrunnerIsTheCurrentCardWithTheDecember2010Text() {
         var s = scenario("2272_22");
         assertVersion(s.GetLSCard("gunrunner").getBlueprint(), s.GetLSCard("other").getBlueprint(), "1272_22", "",
-                LocalDate.of(2010, 12, 15), LocalDate.of(2012, 7, 21),
+                LocalDate.of(2010, 12, 15), LocalDate.of(2011, 1, 28),
                 "Deploy on table; take and stack a non-lightsaber weapon (without 'lost' in game text) here from Reserve Deck; reshuffle. If a battle was just initiated, may deploy weapon here on a participating card. Return weapon here at end of weapons segment (if possible), if it leaves table, or at end of battle. (Immune to Alter.)");
     }
 

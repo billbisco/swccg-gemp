@@ -41,7 +41,7 @@ public class Card2273_027 extends AbstractRebel {
         setLore("A user of the Force can alter the environment to affect the minds of others. 'The Force can have a strong influence on the weak-minded.'");
         setGameText("While 'communing': you may not deploy [Maintenance] cards or [Episode I] Jedi; Rebels of ability < 5 draw one battle destiny if unable to otherwise and, once per turn, may place one just forfeited in Used Pile; Once per turn, may deploy from Reserve Deck a Tatooine battleground (or Obi-Wan's Hut); reshuffle.");
         setLegacyVersion(new LegacyVersion("1273_27", "PC-E1",
-                "PC news \"5 immediate changes from the CBT\" (2011-06-23); Virtual Block 7.3 sheet re-made 2011-07-25", LocalDate.of(2011, 6, 23), LocalDate.of(2012, 7, 21)));
+                "PC forum CBT errata 2011-06-22 and PC news \"5 immediate changes from the CBT\" 2011-06-23; superseded by the PC forum errata 2012-04-11 (legal 2012-04-20); Virtual Block 7.3 sheet re-made 2011-07-25", LocalDate.of(2011, 6, 22), LocalDate.of(2012, 4, 20)));
         addIcons(Icon.WARRIOR, Icon.LEGACY_BLOCK_7);
         addPersona(Persona.OBIWAN);
         setAsLegacy(true);

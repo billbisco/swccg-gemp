@@ -106,16 +106,16 @@ public class LegacyBatchB18VersionsTests {
         assertEquals(LocalDate.of(2012, 7, 21), library.getSwccgoCardBlueprint("2273_13").getLegacyVersion().supersededOn());
         LegacyVersion cardList = library.getSwccgoCardBlueprint("2273_1013").getLegacyVersion();
         assertEquals(LocalDate.of(2012, 7, 21), cardList.printedOn());
-        assertEquals(LocalDate.of(2013, 4, 27), cardList.supersededOn());
+        assertEquals(LocalDate.of(2013, 7, 24), cardList.supersededOn()); // PC forum errata (legacy batch B37)
     }
 
     @Test
     public void ErrataDatesFollowTheRecord() {
-        assertEquals(LocalDate.of(2012, 7, 21), library.getSwccgoCardBlueprint("2272_5").getLegacyVersion().supersededOn());
-        assertEquals(LocalDate.of(2012, 7, 21), library.getSwccgoCardBlueprint("2272_22").getLegacyVersion().supersededOn());
-        assertEquals(LocalDate.of(2011, 6, 23), library.getSwccgoCardBlueprint("2272_23").getLegacyVersion().supersededOn());
+        assertEquals(LocalDate.of(2011, 1, 28), library.getSwccgoCardBlueprint("2272_5").getLegacyVersion().supersededOn());
+        assertEquals(LocalDate.of(2011, 1, 28), library.getSwccgoCardBlueprint("2272_22").getLegacyVersion().supersededOn());
+        assertEquals(LocalDate.of(2011, 6, 22), library.getSwccgoCardBlueprint("2272_23").getLegacyVersion().supersededOn());
         assertEquals(LocalDate.of(2010, 7, 28), library.getSwccgoCardBlueprint("2271_1038").getLegacyVersion().supersededOn());
-        assertEquals(LocalDate.of(2013, 4, 27), library.getSwccgoCardBlueprint("2271_38").getLegacyVersion().supersededOn());
+        assertEquals(LocalDate.of(2011, 8, 26), library.getSwccgoCardBlueprint("2271_38").getLegacyVersion().supersededOn());
     }
 
     @Test

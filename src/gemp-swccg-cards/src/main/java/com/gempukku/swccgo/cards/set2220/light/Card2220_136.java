@@ -40,7 +40,7 @@ public class Card2220_136 extends AbstractNormalEffect {
         setLore("A Jedi seeks nonviolent solutions to problems, but may fight to preserve the existence of life. An apprentice must learn which battles to fight and which to avoid.");
         setGameText("Deploy on table. During battles where your Jedi is present, players may not draw more than two battle destiny. During your turn, may take Inner Strength into hand from Reserve Deck; reshuffle. (Immune to Alter.)");
         setLegacyVersion(new LegacyVersion("1220_136", "",
-                "Virtual Block 2 release sheet (2009-12-07), card #135", LocalDate.of(2009, 12, 7), LocalDate.of(2013, 4, 27)));
+                "Virtual Block 2 release sheet (2009-12-07), card #135; superseded by the PC forum errata (2013-07-24)", LocalDate.of(2009, 12, 7), LocalDate.of(2013, 7, 24)));
         addIcons(Icon.DAGOBAH);
         addImmuneToCardTitle(Title.Alter);
     }

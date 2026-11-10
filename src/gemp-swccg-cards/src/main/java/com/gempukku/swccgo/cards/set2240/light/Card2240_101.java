@@ -20,6 +20,6 @@ public class Card2240_101 extends Card1240_101 {
         setLocationDarkSideGameText("Unless opponent's matching operative at same or related site, those sites are immune to [Premium] No Escape.");
         setGameText("Light: May not deploy to Bespin, Coruscant, Dantooine, Kessel or Tatooine. Once per game, may ▼ a device (except a comlink) or Effect that deploys on a character here. Dark: Unless opponent's matching operative at same or related site, those sites are immune to [Premium] No Escape.");
         setLegacyVersion(new LegacyVersion("1240_101", "",
-                "Virtual Block 4 release sheet (2009-12-07), card #100", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 8, 27)));
+                "Virtual Block 4 release sheet (2009-12-07), card #100; superseded by the PC forum errata (2011-08-26)", LocalDate.of(2009, 12, 7), LocalDate.of(2011, 8, 26)));
     }
 }

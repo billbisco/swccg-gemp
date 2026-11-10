@@ -43,7 +43,7 @@ public class Card2210_038 extends AbstractNormalEffect {
         setLore("'There's nothing you could have done Luke, had you been there. You'd have been killed too.'");
         setGameText("Deploy on table; shuffle your Reserve Deck, peek at top three cards, and stack them face-up here. During battle, may take a card here into hand to prevent players from drawing more than one battle destiny (those battle destiny draws may not be modified or canceled). (Immune to Alter.)");
         setLegacyVersion(new LegacyVersion("1210_38", "",
-                "Virtual Block 1 release sheet (2009-12-07), card #39; superseded by the PC card list text (by 2012-07-21)", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21)));
+                "Virtual Block 1 release sheet (2009-12-07), card #39; superseded by the PC forum errata (2011-03-21)", LocalDate.of(2009, 12, 7), LocalDate.of(2011, 3, 21)));
         addIcons(Icon.A_NEW_HOPE);
         addImmuneToCardTitle(Title.Alter);
     }

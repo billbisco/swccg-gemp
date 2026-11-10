@@ -36,7 +36,7 @@ public class Card2273_1041 extends AbstractSystem {
         setVirtualSuffix(true);
         setLocationLightSideGameText("If just converted, may raise this system to the top.");
         setLegacyVersion(new LegacyVersion("1273_41", "",
-                "Virtual Block 7.3 release sheet, first printing (2011-06-03)", LocalDate.of(2011, 6, 3), LocalDate.of(2011, 6, 23)));
+                "Virtual Block 7.3 release sheet, first printing (2011-06-03)", LocalDate.of(2011, 6, 3), LocalDate.of(2011, 6, 22)));
         setLocationDarkSideGameText("If your Coruscant system was converted, Force generation +1 here.");
         setGameText("Light: If just converted, may raise this system to the top. Dark: If your Coruscant system was converted, Force generation +1 here.");
         addIcon(Icon.LIGHT_FORCE, 2);

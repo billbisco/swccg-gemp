@@ -55,7 +55,7 @@ public class Card2274_018 extends AbstractImmediateEffect {
         setLore("\"I'm backwards! You fleabitten furball...only an overgrown mophead like you would be stupid enough—\"");
         setGameText("Unless Imperial Atrocity on table, if you are about to lose Force during opponent's control phase, deploy on table to reduce loss by 4 (ignore other modifiers); opponent may take any one card into hand from Reserve Deck; reshuffle. Immune to Control. OR Use 2 Force to deploy on table and stack one just-played Interrupt here.");
         setLegacyVersion(new LegacyVersion("1274_18", "",
-                "Virtual Block 7.4 release sheet (2011-12-16)", LocalDate.of(2011, 12, 16), LocalDate.of(2012, 7, 21)));
+                "Virtual Block 7.4 release sheet (2011-12-16); superseded by the PC forum CBT errata (2012-04-11, legal 2012-04-20)", LocalDate.of(2011, 12, 16), LocalDate.of(2012, 4, 20)));
         addIcons(Icon.GRABBER);
         addImmuneToCardTitle(Title.Control);
     }

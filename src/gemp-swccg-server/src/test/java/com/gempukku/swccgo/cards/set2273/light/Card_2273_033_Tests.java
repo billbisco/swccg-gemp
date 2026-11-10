@@ -32,7 +32,7 @@ public class Card_2273_033_Tests {
     public void OriginalCommuningIsTheCurrentCardWithItsOwnText() {
         assertVersion(VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("2273_33"),
                 VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("1273_33"), "1273_33", "",
-                LocalDate.of(2011, 6, 3), LocalDate.of(2011, 6, 23),
+                LocalDate.of(2011, 6, 3), LocalDate.of(2011, 6, 22),
                 "If your starting location has exactly 2 [Light Side Force], play instead of a starting interrupt. [download] two always [Immune to Alter] Effects. Deploy on table; [upload] and stack a Jedi here (that Jedi is 'communing'). Luminous Beings: Whenever a Jedi is lost (or placed out of play) from table, may stack it here. Jedi stacked here are considered out of play. You generate +1 Force for each card stacked here.");
     }
 

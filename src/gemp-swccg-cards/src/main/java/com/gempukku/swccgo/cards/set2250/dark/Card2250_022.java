@@ -17,6 +17,6 @@ public class Card2250_022 extends Card1250_022 {
     public Card2250_022() {
         setGameText("Deploy on Sidious. At start of your turn, if at Senate, may draw 2 cards from Reserve Deck. During your move phase, relocate this Effect to a Rebel or Jedi at a battleground; that character loses all immunity to attrition. If this Effect just lost, relocate it to Sidious.");
         setLegacyVersion(new LegacyVersion("1250_22", "",
-                "Virtual Block 5 release sheet (2009-12-07), card #25", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21)));
+                "Virtual Block 5 release sheet (2009-12-07), card #25; superseded by 2011-08-26 (PC forum errata)", LocalDate.of(2009, 12, 7), LocalDate.of(2011, 8, 26)));
     }
 }

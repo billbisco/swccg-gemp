@@ -16,6 +16,6 @@ public class Card2261_063 extends Card1261_063 {
     public Card2261_063() {
         setGameText("If in hand, may place her under Reserve Deck. May be deployed instead of Luke by Mind What You Have Learned (that card then targets Leia instead of Luke for remainder of game). May ▼ Reflection. Immune to attrition < 4.");
         setLegacyVersion(new LegacyVersion("1261_63", "",
-                "Virtual Block 6.1 release sheet (2009-09-04), card #65", LocalDate.of(2009, 9, 4), LocalDate.of(2012, 7, 21)));
+                "Virtual Block 6.1 release sheet (2009-09-04), card #65; superseded by the PC forum errata (2010-10-08)", LocalDate.of(2009, 9, 4), LocalDate.of(2010, 10, 8)));
     }
 }

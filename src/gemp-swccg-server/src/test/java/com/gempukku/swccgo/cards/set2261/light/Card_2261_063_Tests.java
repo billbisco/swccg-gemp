@@ -19,7 +19,7 @@ public class Card_2261_063_Tests {
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
         assertLegacyVersion(scn.GetLSCard("v").getBlueprint(), scn.GetLSCard("current").getBlueprint(), "1261_63", "",
-                LocalDate.of(2009, 9, 4), LocalDate.of(2012, 7, 21),
+                LocalDate.of(2009, 9, 4), LocalDate.of(2010, 10, 8),
                 "If in hand, may place her under Reserve Deck. May be deployed instead of Luke by Mind What You Have Learned (that card then targets Leia instead of Luke for remainder of game). May ▼ Reflection. Immune to attrition < 4.");
     }
 }

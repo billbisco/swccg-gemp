@@ -78,8 +78,10 @@ public class LegacyBatchB17VersionsTests {
         for (String id : new String[]{"2261_46", "2261_56", "2261_63", "2261_67", "2261_81", "2261_93", "2261_97"})
             assertEquals(id, LocalDate.of(2009, 9, 4), library.getSwccgoCardBlueprint(id).getLegacyVersion().printedOn());
         // PC website card list by 2012-07-21 (Daughter Of Skywalker: also AR 2.0 and the Master List)
-        for (String id : new String[]{"2261_46", "2261_63", "2261_67", "2261_81", "2261_93", "2261_97"})
+        for (String id : new String[]{"2261_46", "2261_67", "2261_81", "2261_93", "2261_97"})
             assertEquals(id, LocalDate.of(2012, 7, 21), library.getSwccgoCardBlueprint(id).getLegacyVersion().supersededOn());
+        // Daughter Of Skywalker: PC forum errata of 2010-10-08 (Batch B37)
+        assertEquals(LocalDate.of(2010, 10, 8), library.getSwccgoCardBlueprint("2261_63").getLegacyVersion().supersededOn());
         // Master List 2013-04-27 (Juno Eclipse)
         assertEquals(LocalDate.of(2013, 4, 27), library.getSwccgoCardBlueprint("2261_56").getLegacyVersion().supersededOn());
         assertEquals(LocalDate.of(2012, 7, 21), library.getSwccgoCardBlueprint("2261_1046").getLegacyVersion().printedOn());

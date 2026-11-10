@@ -94,7 +94,7 @@ public class LegacyBatchB13VersionsTests {
     public void ErrataDatesFollowTheRecord() {
         assertEquals(LocalDate.of(2010, 6, 17), library.getSwccgoCardBlueprint("2210_110").getLegacyVersion().supersededOn());
         assertEquals(LocalDate.of(2012, 7, 21), library.getSwccgoCardBlueprint("2210_159").getLegacyVersion().supersededOn());
-        assertEquals(LocalDate.of(2012, 7, 21), library.getSwccgoCardBlueprint("2220_50").getLegacyVersion().supersededOn());
+        assertEquals(LocalDate.of(2010, 12, 8), library.getSwccgoCardBlueprint("2220_50").getLegacyVersion().supersededOn());
     }
 
     @Test

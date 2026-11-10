@@ -26,7 +26,7 @@ public class Card2262_007 extends Card1262_007 {
     public Card2262_007() {
         setGameText("If your character just won an epic duel, deploy on that character. Character is immune to Clash Of Sabers, Disarmed, and Sorry About The Mess. During your control phase, if at a battleground, opponent loses 1 Force. If this card just lost, place it in Used Pile. (Immune to Control.)");
         setLegacyVersion(new LegacyVersion("1262_7", "",
-                "Virtual Block 6.2 release sheet (2009-12-07), card #2-09", LocalDate.of(2009, 12, 7), LocalDate.of(2013, 4, 27)));
+                "Virtual Block 6.2 release sheet (2009-12-07), card #2-09; superseded by the PC forum errata (2011-03-21)", LocalDate.of(2009, 12, 7), LocalDate.of(2011, 3, 21)));
     }
 
     @Override
