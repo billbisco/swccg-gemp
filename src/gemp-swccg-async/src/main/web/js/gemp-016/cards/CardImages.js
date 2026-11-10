@@ -6717,7 +6717,6 @@ const fixedImages = {
 "2274_20":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/temporaryfoothold.gif",
 "1281_10":"https://wiki.swccg.com/images/0/09/VB8-05-Death_Mark_Hutt_Bounty-PC-E1-cardmaker.png",
 "2281_10":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Dark/large/deathmarkandhuttbounty.gif",
-"1281_29":"https://wiki.swccg.com/images/b/bf/VB8-p5-30-Het_Nkik-PC-E1-cardmaker.png",
 "2281_29":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/hetnkik.gif",
 "1281_30ai":"https://wiki.swccg.com/images/b/be/VB8-03-Supreme_Chancellor_Valorum_AI-PC-E1-cardmaker.png",
 "1281_35":"https://wiki.swccg.com/images/4/41/VB8-00-Scoundrels_Charm-PC-E1-cardmaker.png",
@@ -6766,10 +6765,8 @@ const fixedImages = {
 "1281_32":"https://wiki.swccg.com/images/4/49/VB8-03-Imperial_Navigation_Charts-PC-E1-cardmaker.png",
 "1281_33":"https://wiki.swccg.com/images/3/31/VB8-04-Redeemed_Apprentice-PC-E1-cardmaker.png",
 "1281_36":"https://wiki.swccg.com/images/2/2e/VB8-00-Scoundrels_Ingenuity-PC-E1-cardmaker.png",
-"1281_46":"https://wiki.swccg.com/images/0/00/VB8-03-Hans_Blaster_So_Uncivilized-PC-E1-cardmaker.png",
 // 601_107 / 601_108 / 601_111 / 601_122 / 601_126 are the PC-alias ids of 1281_27 / 1281_46 / 1281_32 / 1281_33 / 1281_36.
 "601_107":"https://wiki.swccg.com/images/a/a7/VB8-01-Han_Solo_Innocent_Scoundrel-PC-E1-cardmaker.png",
-"601_108":"https://wiki.swccg.com/images/0/00/VB8-03-Hans_Blaster_So_Uncivilized-PC-E1-cardmaker.png",
 "601_111":"https://wiki.swccg.com/images/4/49/VB8-03-Imperial_Navigation_Charts-PC-E1-cardmaker.png",
 "601_122":"https://wiki.swccg.com/images/3/31/VB8-04-Redeemed_Apprentice-PC-E1-cardmaker.png",
 "601_126":"https://wiki.swccg.com/images/2/2e/VB8-00-Scoundrels_Ingenuity-PC-E1-cardmaker.png",
