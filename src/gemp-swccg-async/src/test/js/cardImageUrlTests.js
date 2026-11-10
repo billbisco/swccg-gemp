@@ -534,8 +534,8 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_36'), 'https://wiki.
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_85'), 'https://wiki.swccg.com/images/e/e4/VB6-86-Return_Of_The_Jedi-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1262_1'), 'https://wiki.swccg.com/images/0/00/VB6-01-4_LOM_With_Concussion_Rifle-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_177'), 'https://wiki.swccg.com/images/0/00/VB6-01-4_LOM_With_Concussion_Rifle-PC-E1-cardmaker.png');
-assert.strictEqual(defaults.CardUnderTest.getImageUrl('2263_34'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Light/large/roguesquadronxwing.gif');
-assert.strictEqual(defaults.CardUnderTest.getImageUrl('2240_79'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Light/large/corellianengineeringcorporation.gif');
-assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_36'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/protocolfailure.gif');
-assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_85'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Light/large/returnofthejedi.gif');
-assert.strictEqual(defaults.CardUnderTest.getImageUrl('2262_1'), 'https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/4lomwithconcussionrifle.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2263_34'), 'https://swccg.com/cards/legacy/VirtualBlock6-Light/large/roguesquadronxwing.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2240_79'), 'https://swccg.com/cards/legacy/VirtualBlock4-Light/large/corellianengineeringcorporation.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_36'), 'https://swccg.com/cards/legacy/VirtualBlock6-Dark/large/protocolfailure.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_85'), 'https://swccg.com/cards/legacy/VirtualBlock6-Light/large/returnofthejedi.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2262_1'), 'https://swccg.com/cards/legacy/VirtualBlock6-Dark/large/4lomwithconcussionrifle.gif');
