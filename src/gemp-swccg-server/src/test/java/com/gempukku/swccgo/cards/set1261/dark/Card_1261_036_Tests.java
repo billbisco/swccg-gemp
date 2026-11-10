@@ -14,9 +14,10 @@ import java.util.Map;
 import static org.junit.Assert.*;
 
 public class Card_1261_036_Tests {
-    private VirtualTableScenario scenario() {
+    private VirtualTableScenario scenario() { return scenario("1261_36"); }
+    private VirtualTableScenario scenario(String failureId) {
         return new VirtualTableScenario(new HashMap<>(Map.of("luke", "1_19")),
-                new HashMap<>(Map.of("failure", "1261_36", "vader", "1_168", "trooper", "1_194")),
+                new HashMap<>(Map.of("failure", failureId, "vader", "1_168", "trooper", "1_194")),
                 25, 25, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -42,8 +43,19 @@ public class Card_1261_036_Tests {
     }
 
     @Test(timeout = 10000)
-    public void realSiteDrainIsCanceledAndOnlyVaderGetsLocalDiscountUntilYourEndOfTurn() {
-        var scn = scenario();
+    public void realSiteDrainIsCanceledVaderGetsLocalDiscountAndItStaysWhileYouDoNotControlTheSite() {
+        // Errata 2014-04-16: lost at end of your turn only if you control this site; Luke still occupies it.
+        drainCanceledThenEndOfDarkTurn("1261_36", false);
+    }
+
+    /** The original (2261_36, release sheet text) is lost at the end of every turn of yours. */
+    @Test(timeout = 10000)
+    public void originalVersionIsLostAtEndOfYourTurnEvenWithoutControl() {
+        drainCanceledThenEndOfDarkTurn("2261_36", true);
+    }
+
+    private void drainCanceledThenEndOfDarkTurn(String failureId, boolean expectLost) {
+        var scn = scenario(failureId);
         var site = scn.GetLSStartingLocation();
         var card = scn.GetDSCard("failure");
         var vader = scn.GetDSCard("vader");
@@ -90,7 +102,8 @@ public class Card_1261_036_Tests {
                 fail("Dark turn stalled before Protocol Failure could expire");
         }
         assertEquals(scn.LS, scn.gameState().getCurrentPlayerId());
-        assertTrue(scn.GetDSLostPile().contains(card));
+        assertEquals(expectLost, scn.GetDSLostPile().contains(card));
+        assertEquals(!expectLost, card.getZone().isInPlay());
     }
 
     @Test

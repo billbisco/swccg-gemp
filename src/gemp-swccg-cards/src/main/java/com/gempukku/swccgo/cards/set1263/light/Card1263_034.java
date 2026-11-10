@@ -27,7 +27,7 @@ public class Card1263_034 extends AbstractStarfighter {
     public Card1263_034() {
         super(Side.LIGHT, 2, 2, 3, null, 4, 5, 4, "Rogue Squadron X-wing",
                 Uniqueness.UNRESTRICTED, ExpansionSet.VIRTUAL_BLOCK_6_3, Rarity.V);
-        setGameText("May add 1 pilot and 1 astromech. While Rebel Aces on table, pilot is forfeit +2 and this starship may not be lost before the damage segment of battle. Matching starship for any Rogue Squadron pilot.");
+        setGameText("May add 1 pilot and 1 astromech. While Rebel Aces on table, pilot is forfeit +2 and, if in battle, this card may not be lost before the damage segment. Matching starship for any Rogue Squadron pilot.");
         addIcons(Icon.SPECIAL_EDITION, Icon.NAV_COMPUTER, Icon.SCOMP_LINK);
         addModelType(ModelType.X_WING); addKeywords(Keyword.ROGUE_SQUADRON);
         setPilotCapacity(1); setAstromechCapacity(1); setMatchingPilotFilter(Filters.Rogue_Squadron_pilot);
