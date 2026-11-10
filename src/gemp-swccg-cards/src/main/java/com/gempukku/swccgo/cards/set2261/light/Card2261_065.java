@@ -22,7 +22,7 @@ public class Card2261_065 extends Card1261_065 {
     public Card2261_065() {
         setGameText("[Pilot] 3. While piloting a freighter at a battleground system, adds 1 to attrition against opponent and their starships here may not 'cloak.' Opponent loses no more than 3 Force to your Force drains at same system.");
         setLegacyVersion(new LegacyVersion("1261_65", "",
-                "Virtual Block 6.1 release sheet (2009-09-04), card #63", LocalDate.of(2009, 9, 4), LocalDate.of(2012, 7, 21)));
+                "Virtual Block 6.1 release sheet (2009-09-04), card #63; superseded by 2012-02-21 (PC forum errata)", LocalDate.of(2009, 9, 4), LocalDate.of(2012, 2, 21)));
     }
 
     @Override

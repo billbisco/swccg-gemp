@@ -23,7 +23,7 @@ public class Card_2261_065_Tests {
     public void IdentityAndVersionInfo() {
         var scn = scenario();
         assertLegacyVersion(scn.GetLSCard("v").getBlueprint(), scn.GetLSCard("current").getBlueprint(), "1261_65", "",
-                LocalDate.of(2009, 9, 4), LocalDate.of(2012, 7, 21),
+                LocalDate.of(2009, 9, 4), LocalDate.of(2012, 2, 21),
                 "[Pilot] 3. While piloting a freighter at a battleground system, adds 1 to attrition against opponent and their starships here may not 'cloak.' Opponent loses no more than 3 Force to your Force drains at same system.");
     }
 }

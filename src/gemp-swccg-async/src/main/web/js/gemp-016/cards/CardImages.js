@@ -6990,6 +6990,20 @@ const fixedImages = {
 "1261_97":"https://wiki.swccg.com/images/1/14/VB6-98-Let_The_Wookiee_Win-PC-E1-cardmaker.png",
 "601_51":"https://wiki.swccg.com/images/1/14/VB6-98-Let_The_Wookiee_Win-PC-E1-cardmaker.png",
 
+// Batch B38 (R1/R5 forum errata 2014): current cards get a CardMaker recreation of the new latest text (601_137 is an alias of 1240_79,
+// 601_177 the current class of 1262_1); the originals 2263_34 / 2240_79 / 2261_36 / 2261_85 / 2262_1 keep the PC card images, which print the release-sheet text.
+"1263_34":"https://wiki.swccg.com/images/1/1b/VB6-34-Rogue_Squadron_X_wing-PC-E1-cardmaker.png",
+"1240_79":"https://wiki.swccg.com/images/7/7e/VB4-78-Corellian_Engineering_Corporation-PC-E1-cardmaker.png",
+"601_137":"https://wiki.swccg.com/images/7/7e/VB4-78-Corellian_Engineering_Corporation-PC-E1-cardmaker.png",
+"1261_36":"https://wiki.swccg.com/images/2/2c/VB6-37-Protocol_Failure-PC-E1-cardmaker.png",
+"1261_85":"https://wiki.swccg.com/images/e/e4/VB6-86-Return_Of_The_Jedi-PC-E1-cardmaker.png",
+"1262_1":"https://wiki.swccg.com/images/0/00/VB6-01-4_LOM_With_Concussion_Rifle-PC-E1-cardmaker.png",
+"601_177":"https://wiki.swccg.com/images/0/00/VB6-01-4_LOM_With_Concussion_Rifle-PC-E1-cardmaker.png",
+"2263_34":"https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Light/large/roguesquadronxwing.gif",
+"2240_79":"https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Light/large/corellianengineeringcorporation.gif",
+"2261_36":"https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/protocolfailure.gif",
+"2261_85":"https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Light/large/returnofthejedi.gif",
+"2262_1":"https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/4lomwithconcussionrifle.gif",
 // Legacy pre-errata versions (docs/legacy-versions.md; keep outside the generated legacy block).
 // Image = the wiki slip crop of the release sheet that printed that text (wiki page field image2).
 "2210_36":"https://wiki.swccg.com/images/2/2e/VB1-36-Forced_Servitude.png",

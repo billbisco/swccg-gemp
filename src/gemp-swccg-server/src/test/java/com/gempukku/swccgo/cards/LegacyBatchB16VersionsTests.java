@@ -90,7 +90,7 @@ public class LegacyBatchB16VersionsTests {
     public void SupersededOnTheDateOfTheNextText() {
         Map<String, LocalDate> superseded = Map.ofEntries(
                 Map.entry("2250_18", LocalDate.of(2012, 7, 21)),
-                Map.entry("2250_28", LocalDate.of(2012, 7, 21)),
+                Map.entry("2250_28", LocalDate.of(2010, 12, 20)),
                 Map.entry("2250_44ai", LocalDate.of(2013, 4, 27)),
                 Map.entry("2250_45ai", LocalDate.of(2012, 7, 21)),
                 Map.entry("2261_20", LocalDate.of(2012, 7, 21)),

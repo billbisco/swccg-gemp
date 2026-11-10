@@ -54,7 +54,7 @@ public class Card2273_1033 extends AbstractEpicEventDeployable {
         super(Side.LIGHT, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.Communing, Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
         setGameText("If your starting location has exactly two [Light Side], play instead of a Starting Interrupt. [download] two always [Immune to Alter] Effects. Deploy on table; [upload] and stack a Jedi here. Luminous Beings: Whenever a Jedi is lost (or placed out of play) from table, may stack it here. Jedi stacked here are 'communing' and considered out of play. You generate +1 Force for each card stacked here. I Can't Believe He's Gone is canceled. Once per turn, if two cards here, may use 1 Force to look at top card of Reserve Deck, Force Pile, and/or Used Pile; return one card to each deck or pile.");
         setLegacyVersion(new LegacyVersion("1273_33", "PC-E1",
-                "PC news \"5 immediate changes from the CBT\" (2011-06-23)", LocalDate.of(2011, 6, 23), LocalDate.of(2011, 7, 25)));
+                "PC forum CBT errata (2011-06-22) and PC news \"5 immediate changes from the CBT\" (2011-06-23)", LocalDate.of(2011, 6, 22), LocalDate.of(2011, 7, 25)));
         addIcons(Icon.SPECIAL_EDITION, Icon.LEGACY_BLOCK_7);
         setAsLegacy(true);
     }

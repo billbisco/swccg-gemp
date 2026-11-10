@@ -40,7 +40,8 @@ public class Card_2250_044ai_Tests {
         assertEquals(baseVersion.getGameText(), version.getGameText());
         assertEquals(baseVersion.getLegacyVersion().printedOn(), version.getLegacyVersion().printedOn());
         // the AI printing kept the old text on the PC card list until the 2013 Master List (legacy batch B16)
-        assertEquals(LocalDate.of(2012, 7, 21), baseVersion.getLegacyVersion().supersededOn());
+        // the base printing's original was superseded by the PC forum errata of 2011-03-21 (legacy batch B37)
+        assertEquals(LocalDate.of(2011, 3, 21), baseVersion.getLegacyVersion().supersededOn());
         assertEquals(LocalDate.of(2013, 4, 27), version.getLegacyVersion().supersededOn());
         assertEquals("1250_44", baseVersion.getLegacyVersion().currentPrintingId());
         assertEquals(scn.GetLSCard("base").getBlueprint().getTitle(), version.getTitle());

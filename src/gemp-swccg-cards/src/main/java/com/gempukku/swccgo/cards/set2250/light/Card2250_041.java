@@ -20,7 +20,7 @@ public class Card2250_041 extends Card1250_041 {
     public Card2250_041() {
         super(1);
         setLegacyVersion(new LegacyVersion("1250_41", "",
-                "Virtual Block 5 release sheet (2009-12-07), card #41, destiny 1; superseded by destiny 3 (Virtual Cards Master List, 2013-04-27)",
-                LocalDate.of(2009, 12, 7), LocalDate.of(2013, 4, 27)));
+                "Virtual Block 5 release sheet (2009-12-07), card #41, destiny 1; superseded by destiny 3 (PC forum errata, 2010-07-27)",
+                LocalDate.of(2009, 12, 7), LocalDate.of(2010, 7, 27)));
     }
 }

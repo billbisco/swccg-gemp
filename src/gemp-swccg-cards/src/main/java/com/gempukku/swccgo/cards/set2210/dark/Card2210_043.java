@@ -45,7 +45,7 @@ public class Card2210_043 extends AbstractNormalEffect {
         setLore("'There'll be no escape for the princess this time.'");
         setGameText("Deploy on table. We Have A Prisoner is a Used Interrupt. TIEs are deploy +1 to Launch Bay. During your deploy phase, may deploy from Reserve Deck (or retrieve) one Besieged or a Launch Bay; reshuffle. Once per turn, when your Imperial captures a character, opponent loses 1 Force. (Immune to Alter.)");
         setLegacyVersion(new LegacyVersion("1210_43", "",
-                "Virtual Block 1 release sheet (2009-12-07), card #38", LocalDate.of(2009, 12, 7), LocalDate.of(2013, 4, 27)));
+                "Virtual Block 1 release sheet (2009-12-07), card #38; superseded by the PC forum errata (2012-04-11)", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 4, 11)));
         addIcons(Icon.SPECIAL_EDITION);
         addImmuneToCardTitle(Title.Alter);
     }

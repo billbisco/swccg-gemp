@@ -30,7 +30,7 @@ public class Card2240_058_BACK extends Card601_087_BACK {
         setGameText("While this side up, opponent's Force drain bonuses are canceled and your Force drains at battlegrounds may not be canceled. During your control phase, may retrieve 1 Force. During your control phase, may use 2 Force to ▲ any one card without ability. If targeting a vehicle or starship with Lightsaber Parry, Tarkin's Orders, or There Is No Conflict, that destiny draw is +2.\n" +
                 "Flip this card if opponent has a unique (•) character of ability > 3 present at a battleground site.");
         setLegacyVersion(new LegacyVersion("1240_58_BACK", "",
-                "Virtual Block 4 release sheet (2009-12-07), card #57", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 8, 27)));
+                "Virtual Block 4 release sheet (2009-12-07), card #57; superseded by the PC forum errata (2011-09-12)", LocalDate.of(2009, 12, 7), LocalDate.of(2011, 9, 12)));
     }
 
     @Override

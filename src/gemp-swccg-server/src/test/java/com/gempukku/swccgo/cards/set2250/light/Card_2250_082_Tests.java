@@ -52,7 +52,7 @@ public class Card_2250_082_Tests {
         var s = scenario("2250_82", true);
         var objective = s.GetLSCard("objective");
         assertLegacyVersion(objective.getBlueprint(), s.GetLSCard("current").getBlueprint(), "1250_82", "",
-                LocalDate.of(2009, 12, 7), LocalDate.of(2012, 8, 27),
+                LocalDate.of(2009, 12, 7), LocalDate.of(2012, 8, 4),
                 "Deploy Jedi Council Chamber. For remainder of game, you may not deploy Affect Mind, Senate, Rebel starships, or Rebels of ability > 2. You lose no Force to Vengeance Of The Dark Prince or Your Destiny. Jedi Survivor's [Maintenance] is canceled. Speak With The Jedi Council is a Used Interrupt. While this side up, Yoda is deploy -3 to Jedi Council Chamber. Your Force drains are -1. Flip this card if Yoda and two other Jedi are at Jedi Council Chamber.");
         var back = objective.getOtherSideBlueprint();
         assertEquals(Title.Duel_Of_The_Fates, back.getTitle());

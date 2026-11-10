@@ -23,7 +23,7 @@ public class Card_2250_022_Tests {
     public void IdentityAndVersionInfo() {
         var scn = scenario();
         assertLegacyVersion(scn.GetDSCard("v").getBlueprint(), scn.GetDSCard("current").getBlueprint(), "1250_22", "",
-                LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21),
+                LocalDate.of(2009, 12, 7), LocalDate.of(2011, 8, 26),
                 "Deploy on Sidious. At start of your turn, if at Senate, may draw 2 cards from Reserve Deck. During your move phase, relocate this Effect to a Rebel or Jedi at a battleground; that character loses all immunity to attrition. If this Effect just lost, relocate it to Sidious.");
     }
 }

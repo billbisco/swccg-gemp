@@ -69,7 +69,7 @@ public class Card_2230_077_Tests extends Card_1230_077_Tests {
         assertEquals("1230_77", version.currentPrintingId());
         assertEquals("", version.label());
         assertEquals(LocalDate.of(2009, 12, 7), version.printedOn());
-        assertEquals(LocalDate.of(2012, 8, 27), version.supersededOn());
+        assertEquals(LocalDate.of(2012, 7, 13), version.supersededOn());
         assertEquals("Orrimaarko (V)", GameUtils.getFullName(card));
     }
 

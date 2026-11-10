@@ -43,7 +43,7 @@ public class Card2240_058 extends Card601_087 {
                 "While this side up, may ▲ Galen's Fighter. Galen's immunity to attrition is +2 for each Jedi present.\n" +
                 "Flip this card if Galen or Vader at a battleground site and opponent does not have a unique (•) character of ability > 3 present at a battleground site.");
         setLegacyVersion(new LegacyVersion("1240_58", "",
-                "Virtual Block 4 release sheet (2009-12-07), card #57", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 8, 27)));
+                "Virtual Block 4 release sheet (2009-12-07), card #57; superseded by the PC forum errata (2011-09-12)", LocalDate.of(2009, 12, 7), LocalDate.of(2011, 9, 12)));
     }
 
     @Override

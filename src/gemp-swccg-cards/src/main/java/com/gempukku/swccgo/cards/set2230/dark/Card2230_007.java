@@ -34,7 +34,7 @@ public class Card2230_007 extends Card1230_007 {
         super();
         setGameText("Aliens at same and related sites may not have their weapons stolen or be targeted by Disarmed, and, while armed with a non-lightsaber, non-[Permanent Weapon] weapon: their weapon destiny draws are +1 and opponent's [Permanent Weapon] characters are power -1 there.");
         setLegacyVersion(new LegacyVersion("1230_7", "",
-                "Virtual Block 3 release sheet (2009-12-07), card #07E", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21)));
+                "Virtual Block 3 release sheet (2009-12-07), card #07E; superseded by the PC forum errata (2011-03-21)", LocalDate.of(2009, 12, 7), LocalDate.of(2011, 3, 21)));
     }
 
     @Override

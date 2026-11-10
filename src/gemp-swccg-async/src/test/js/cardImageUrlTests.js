@@ -536,3 +536,16 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('2263_17'), 'https://swccg
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_108'), 'https://wiki.swccg.com/images/f/ff/VB8-03-Hans_Blaster_So_Uncivilized-PC-E2-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_1046'), 'https://wiki.swccg.com/images/0/00/VB8-03-Hans_Blaster_So_Uncivilized-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_1029'), 'https://wiki.swccg.com/images/b/bf/VB8-p5-30-Het_Nkik-PC-E1-cardmaker.png');
+// Batch B38: forum errata of 2014 (R5): current cards show CardMaker recreations of the new text; the originals keep the PC card images
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1263_34'), 'https://wiki.swccg.com/images/1/1b/VB6-34-Rogue_Squadron_X_wing-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1240_79'), 'https://wiki.swccg.com/images/7/7e/VB4-78-Corellian_Engineering_Corporation-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_137'), 'https://wiki.swccg.com/images/7/7e/VB4-78-Corellian_Engineering_Corporation-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_36'), 'https://wiki.swccg.com/images/2/2c/VB6-37-Protocol_Failure-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_85'), 'https://wiki.swccg.com/images/e/e4/VB6-86-Return_Of_The_Jedi-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1262_1'), 'https://wiki.swccg.com/images/0/00/VB6-01-4_LOM_With_Concussion_Rifle-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_177'), 'https://wiki.swccg.com/images/0/00/VB6-01-4_LOM_With_Concussion_Rifle-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2263_34'), 'https://swccg.com/cards/legacy/VirtualBlock6-Light/large/roguesquadronxwing.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2240_79'), 'https://swccg.com/cards/legacy/VirtualBlock4-Light/large/corellianengineeringcorporation.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_36'), 'https://swccg.com/cards/legacy/VirtualBlock6-Dark/large/protocolfailure.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_85'), 'https://swccg.com/cards/legacy/VirtualBlock6-Light/large/returnofthejedi.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2262_1'), 'https://swccg.com/cards/legacy/VirtualBlock6-Dark/large/4lomwithconcussionrifle.gif');

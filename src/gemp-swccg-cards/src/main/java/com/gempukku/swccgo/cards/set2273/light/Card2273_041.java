@@ -36,7 +36,7 @@ public class Card2273_041 extends AbstractSystem {
         setVirtualSuffix(true);
         setLocationLightSideGameText("If just converted, may raise this system to the top.");
         setLegacyVersion(new LegacyVersion("1273_41", "PC-E1",
-                "PC news \"5 immediate changes from the CBT\" (2011-06-23: Force icons); Virtual Block 7.3 sheet re-made 2011-07-25", LocalDate.of(2011, 6, 23), LocalDate.of(2012, 8, 27)));
+                "PC forum CBT errata 2011-06-22 and PC news \"5 immediate changes from the CBT\" 2011-06-23 (Force icons); superseded by the PC forum errata 2012-03-15; Virtual Block 7.3 sheet re-made 2011-07-25", LocalDate.of(2011, 6, 22), LocalDate.of(2012, 3, 15)));
         setLocationDarkSideGameText("If your Coruscant system was converted, Force generation +1 here.");
         setGameText("Light: If just converted, may raise this system to the top. Dark: If your Coruscant system was converted, Force generation +1 here.");
         addIcon(Icon.LIGHT_FORCE, 2);

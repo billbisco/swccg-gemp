@@ -33,7 +33,7 @@ public class Card_2272_005_Tests {
     public void OriginalImperialStockpileIsTheCurrentCardWithTheDecember2010Text() {
         var s = scenario("2272_5");
         assertVersion(s.GetDSCard("stockpile").getBlueprint(), s.GetDSCard("other").getBlueprint(), "1272_5", "",
-                LocalDate.of(2010, 12, 15), LocalDate.of(2012, 7, 21),
+                LocalDate.of(2010, 12, 15), LocalDate.of(2011, 1, 28),
                 "Deploy on table; take into hand from Reserve Deck and stack a non-lightsaber weapon (without 'lost' in game text) here; reshuffle. If a battle was just initiated, may deploy weapon here on a participating card. Return weapon here at end of weapons segment (if possible), if it leaves table, or at end of battle. (Immune to Alter.)");
     }
 

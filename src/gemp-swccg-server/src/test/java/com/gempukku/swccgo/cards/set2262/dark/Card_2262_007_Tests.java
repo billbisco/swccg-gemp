@@ -28,7 +28,7 @@ public class Card_2262_007_Tests {
     public void PowerOfTheSithOriginalIdentity() {
         var scn = scenario();
         assertLegacyVersion(scn.GetDSCard("power").getBlueprint(), scn.GetDSCard("current").getBlueprint(), "1262_7", "",
-                LocalDate.of(2009, 12, 7), LocalDate.of(2013, 4, 27),
+                LocalDate.of(2009, 12, 7), LocalDate.of(2011, 3, 21),
                 "If your character just won an epic duel, deploy on that character. Character is immune to Clash Of Sabers, Disarmed, and Sorry About The Mess. During your control phase, if at a battleground, opponent loses 1 Force. If this card just lost, place it in Used Pile. (Immune to Control.)");
         assertTrue(scn.GetDSCard("power").getBlueprint().isImmuneToCardTitle(Title.Control));
     }

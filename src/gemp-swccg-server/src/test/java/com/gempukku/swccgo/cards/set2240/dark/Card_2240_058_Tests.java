@@ -63,14 +63,14 @@ public class Card_2240_058_Tests {
     public void FrontIsTheSameCardWithTheOldText() {
         LegacyVersionAsserts.assertVersionOf(library.getSwccgoCardBlueprint("1240_58"), library.getSwccgoCardBlueprint("2240_58"),
                 "Deploy Coruscant system, Imperial City, and A Sith's Plans. May also deploy If The Trace Was Correct.\nFor remainder of game, you may not deploy [Episode I] Dark Jedi. Whenever a character hit by Galen's Lightsaber or Vader's Lightsaber leaves table, opponent loses 2 Force.\nWhile this side up, may ▲ Galen's Fighter. Galen's immunity to attrition is +2 for each Jedi present.\nFlip this card if Galen or Vader at a battleground site and opponent does not have a unique (•) character of ability > 3 present at a battleground site.",
-                "1240_58", "", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 8, 27));
+                "1240_58", "", LocalDate.of(2009, 12, 7), LocalDate.of(2011, 9, 12));
     }
 
     @Test
     public void BackIsTheSameCardWithTheOldText() {
         LegacyVersionAsserts.assertVersionOf(library.getSwccgoCardBlueprintBack("1240_58"), library.getSwccgoCardBlueprintBack("2240_58"),
                 "While this side up, opponent's Force drain bonuses are canceled and your Force drains at battlegrounds may not be canceled. During your control phase, may retrieve 1 Force. During your control phase, may use 2 Force to ▲ any one card without ability. If targeting a vehicle or starship with Lightsaber Parry, Tarkin's Orders, or There Is No Conflict, that destiny draw is +2.\nFlip this card if opponent has a unique (•) character of ability > 3 present at a battleground site.",
-                "1240_58_BACK", "", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 8, 27));
+                "1240_58_BACK", "", LocalDate.of(2009, 12, 7), LocalDate.of(2011, 9, 12));
     }
 
     @Test

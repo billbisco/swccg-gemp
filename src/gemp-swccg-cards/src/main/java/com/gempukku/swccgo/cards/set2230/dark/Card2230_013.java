@@ -59,7 +59,7 @@ public class Card2230_013 extends AbstractImperial {
         addPersona(Persona.VADER);
         addIcons(Icon.PILOT, Icon.WARRIOR, Icon.DEATH_STAR_II);
         setLegacyVersion(new LegacyVersion("1230_13", "",
-                "Virtual Block 3 release sheet (2009-12-07), card #13E", LocalDate.of(2009, 12, 7), LocalDate.of(2013, 4, 27)));
+                "Virtual Block 3 release sheet (2009-12-07), card #13E; superseded by the PC forum errata (2013-12-30)", LocalDate.of(2009, 12, 7), LocalDate.of(2013, 12, 30)));
     }
 
     @Override
