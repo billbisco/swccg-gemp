@@ -15,7 +15,7 @@ public class Card_2273_041_Tests {
     public void ErrataCoruscantIsTheCurrentCardWithItsOwnText() {
         var version = VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("2273_41");
         var current = VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("1273_41");
-        assertLocationVersion(version, current, "1273_41", "PC-E1", LocalDate.of(2011, 6, 23), LocalDate.of(2012, 8, 27),
+        assertLocationVersion(version, current, "1273_41", "PC-E1", LocalDate.of(2011, 6, 22), LocalDate.of(2012, 3, 15),
                 "If just converted, may raise this system to the top.",
                 "If your Coruscant system was converted, Force generation +1 here.", false);
     }

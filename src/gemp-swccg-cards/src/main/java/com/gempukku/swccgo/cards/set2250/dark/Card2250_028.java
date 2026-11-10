@@ -60,8 +60,8 @@ public class Card2250_028 extends AbstractUsedOrLostInterrupt {
         setGameText("USED: For remainder of turn, if your starship is about to be hit (or lost), that action may instead affect your character aboard that starship. LOST: If your [Episode I] character is about to be hit (or lost), that action instead affects your other [Episode I] character present.");
         addIcons(Icon.EPISODE_I, Icon.THEED_PALACE);
         setLegacyVersion(new LegacyVersion("1250_28", "",
-                "Virtual Block 5 release sheet (2009-12-07; slip 28E, sheet copy 2010-04-01), card #28",
-                LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21)));
+                "Virtual Block 5 release sheet (2009-12-07; slip 28E, sheet copy 2010-04-01), card #28; superseded by the PC forum errata (2010-12-20)",
+                LocalDate.of(2009, 12, 7), LocalDate.of(2010, 12, 20)));
     }
 
     private static Filter yourStarshipWithYourCharacterAboard(PhysicalCard self) {

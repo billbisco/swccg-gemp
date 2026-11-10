@@ -37,7 +37,7 @@ public class Card2271_038 extends AbstractImmediateEffect {
         setLore("The Alliance lost many fine soldiers at conflicts such as the Battle of Hoth. The Rebel High Command is aware of the cost of freedom from Imperial tyranny.");
         setGameText("If you just forfeited a character of ability < 5 present at a site, deploy on that character (who remains at same site and, if 'hit,' is restored to normal). Character is forfeit = 0 (even if its forfeit may not normally be reduced). May play First Aid to place this card in Used Pile. Immune to your Control.");
         setLegacyVersion(new LegacyVersion("1271_38", "PC-E2",
-                "Virtual Block 7.1 release sheet as re-made 2010-07-28", LocalDate.of(2010, 7, 28), LocalDate.of(2013, 4, 27)));
+                "Virtual Block 7.1 release sheet as re-made 2010-07-28; superseded by the PC forum errata (2011-08-26)", LocalDate.of(2010, 7, 28), LocalDate.of(2011, 8, 26)));
         addIcons(Icon.SPECIAL_EDITION);
     }
 

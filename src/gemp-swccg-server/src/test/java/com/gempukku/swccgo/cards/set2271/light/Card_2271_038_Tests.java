@@ -61,7 +61,7 @@ public class Card_2271_038_Tests {
     public void SheetFieldDressingIsTheCurrentCardWithTheJuly2010Text() {
         var s = scenario();
         assertVersion(s.GetLSCard("dressing").getBlueprint(), s.GetLSCard("current").getBlueprint(), "1271_38", "PC-E2",
-                LocalDate.of(2010, 7, 28), LocalDate.of(2013, 4, 27),
+                LocalDate.of(2010, 7, 28), LocalDate.of(2011, 8, 26),
                 "If you just forfeited a character of ability < 5 present at a site, deploy on that character (who remains at same site and, if 'hit,' is restored to normal). Character is forfeit = 0 (even if its forfeit may not normally be reduced). May play First Aid to place this card in Used Pile. Immune to your Control.");
     }
 

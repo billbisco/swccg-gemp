@@ -39,7 +39,7 @@ public class Card2210_107 extends AbstractRebel {
         setLore("Jedi Knight. Trained by Yoda. Friend of Bail Organa. General Kenobi became a hero of the Old Republic during the Clone Wars. Mentor of Anakin and Luke Skywalker.");
         setGameText("Obi-Wan's game text may not be canceled and he may not be targeted by cards that capture. Unless another Jedi present, may Force drain here regardless of Objective restrictions. Immune to attrition < 5 (< 8 if with a Dark Jedi).");
         setLegacyVersion(new LegacyVersion("1210_107", "",
-                "Virtual Block 1 release sheet (2009-12-07), card #107", LocalDate.of(2009, 12, 7), LocalDate.of(2013, 4, 27)));
+                "Virtual Block 1 release sheet (2009-12-07), card #107; superseded by the PC forum errata (2014-01-13)", LocalDate.of(2009, 12, 7), LocalDate.of(2014, 1, 13)));
         addPersona(Persona.OBIWAN);
         addIcons(Icon.WARRIOR);
         addKeywords(Keyword.GENERAL);

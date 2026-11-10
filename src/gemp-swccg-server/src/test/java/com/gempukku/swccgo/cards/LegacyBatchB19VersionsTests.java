@@ -75,17 +75,20 @@ public class LegacyBatchB19VersionsTests {
     @Test
     public void DatesFollowTheRecord() {
         // PC website card list by 2012-07-21 (earliest capture with text): Shield Is Down PC-E1, Hindsight PC-E1, the 8.1 rephrases
-        for (String id : new String[]{"2273_36", "2274_18", "2281_1", "2281_4", "2281_5"})
+        for (String id : new String[]{"2281_1", "2281_4", "2281_5"})
             assertEquals(id, LocalDate.of(2012, 7, 21), library.getSwccgoCardBlueprint(id).getLegacyVersion().supersededOn());
-        assertEquals(LocalDate.of(2012, 7, 21), library.getSwccgoCardBlueprint("2273_1036").getLegacyVersion().printedOn());
+        // Shield Is Down PC-E1 and Hindsight PC-E1: PC forum errata of 2012-01-13 and 2012-04-11 (legal 2012-04-20) (Batch B37)
+        assertEquals(LocalDate.of(2012, 1, 13), library.getSwccgoCardBlueprint("2273_36").getLegacyVersion().supersededOn());
+        assertEquals(LocalDate.of(2012, 4, 20), library.getSwccgoCardBlueprint("2274_18").getLegacyVersion().supersededOn());
+        assertEquals(LocalDate.of(2012, 1, 13), library.getSwccgoCardBlueprint("2273_1036").getLegacyVersion().printedOn());
         // Master List 2013-04-27 (Grievous persona); Shield Is Down PC-E2 and Tibanna Floating Refinery: PC forum errata
         // of 2012-10-19 and 2012-11-02 (Batch B36)
         assertEquals(LocalDate.of(2012, 10, 19), library.getSwccgoCardBlueprint("2273_1036").getLegacyVersion().supersededOn());
-        assertEquals(LocalDate.of(2012, 11, 2), library.getSwccgoCardBlueprint("2274_4").getLegacyVersion().supersededOn());
+        assertEquals(LocalDate.of(2012, 10, 30), library.getSwccgoCardBlueprint("2274_4").getLegacyVersion().supersededOn());
         for (String id : new String[]{"2273_17", "2273_20", "2274_11"})
             assertEquals(id, LocalDate.of(2013, 4, 27), library.getSwccgoCardBlueprint(id).getLegacyVersion().supersededOn());
         // Coruscant (V): Dark Force icon errata 2011-06-23 (PC-E1), AR 2.0 rephrase (PC-E2)
-        assertEquals(LocalDate.of(2011, 6, 23), library.getSwccgoCardBlueprint("2273_1041").getLegacyVersion().supersededOn());
+        assertEquals(LocalDate.of(2011, 6, 22), library.getSwccgoCardBlueprint("2273_1041").getLegacyVersion().supersededOn());
         assertEquals("PC-E1", library.getSwccgoCardBlueprint("2273_41").getLegacyVersion().label());
     }
 

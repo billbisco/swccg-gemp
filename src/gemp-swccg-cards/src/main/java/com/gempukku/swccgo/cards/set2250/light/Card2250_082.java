@@ -28,7 +28,7 @@ public class Card2250_082 extends Card1250_082 {
     public Card2250_082() {
         setGameText("Deploy Jedi Council Chamber. For remainder of game, you may not deploy Affect Mind, Senate, Rebel starships, or Rebels of ability > 2. You lose no Force to Vengeance Of The Dark Prince or Your Destiny. Jedi Survivor's [Maintenance] is canceled. Speak With The Jedi Council is a Used Interrupt. While this side up, Yoda is deploy -3 to Jedi Council Chamber. Your Force drains are -1. Flip this card if Yoda and two other Jedi are at Jedi Council Chamber.");
         setLegacyVersion(new LegacyVersion("1250_82", "",
-                "Virtual Block 5 release sheet (2009-12-07), card #79", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 8, 27)));
+                "Virtual Block 5 release sheet (2009-12-07), card #79; superseded by the PC forum errata (2012-08-04)", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 8, 4)));
     }
 
     @Override

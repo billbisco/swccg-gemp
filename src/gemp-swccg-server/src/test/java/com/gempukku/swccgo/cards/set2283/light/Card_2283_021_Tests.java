@@ -512,7 +512,7 @@ public class Card_2283_021_Tests {
         assertEquals("1283_21", version.currentPrintingId());
         assertEquals("", version.label());
         assertEquals(java.time.LocalDate.of(2013, 3, 28), version.printedOn());
-        assertEquals(java.time.LocalDate.of(2013, 4, 27), version.supersededOn());
+        assertEquals(java.time.LocalDate.of(2013, 7, 24), version.supersededOn());
         assertEquals("Underworld Contacts & Uncharted Settlements", com.gempukku.swccgo.logic.GameUtils.getFullName(card));
     }
 

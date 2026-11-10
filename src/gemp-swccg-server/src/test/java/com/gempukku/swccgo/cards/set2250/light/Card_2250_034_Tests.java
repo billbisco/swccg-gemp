@@ -33,7 +33,7 @@ public class Card_2250_034_Tests {
     public void BailOrganaOriginalIdentity() {
         var scn = scenario();
         assertLegacyVersion(scn.GetLSCard("bail").getBlueprint(), scn.GetLSCard("current").getBlueprint(), "1250_34", "",
-                LocalDate.of(2009, 12, 7), LocalDate.of(2013, 4, 27),
+                LocalDate.of(2009, 12, 7), LocalDate.of(2014, 1, 3),
                 "Agenda: rebellion. Adds one battle destiny with Leia. Your [Coruscant] senators and [Coruscant] Political Effects are lost. While at Senate: unique (•) Rebels of ability < 4 are power +2, and, if opponent just lost Force to a Force drain by a Rebel, may retrieve 1 Force.");
     }
 

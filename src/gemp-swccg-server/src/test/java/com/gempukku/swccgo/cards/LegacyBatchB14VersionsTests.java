@@ -80,14 +80,18 @@ public class LegacyBatchB14VersionsTests {
     @Test
     public void SupersededDatesFollowTheRecord() {
         // Maneuvering Flaps (V): PC-E1 shown on the PC website card list by 2012-07-21 (AR 2.0 PDF 2012-08-27)
-        assertEquals(LocalDate.of(2012, 7, 21), library.getSwccgoCardBlueprint("2220_128").getLegacyVersion().supersededOn());
+        assertEquals(LocalDate.of(2012, 2, 7), library.getSwccgoCardBlueprint("2220_128").getLegacyVersion().supersededOn());
         // Colonel Wullf Yularen (V): card list 2012-07-21; Orrimaarko (V): AR 2.0 (2012-08-27); the rest: Master List 2013-04-27
         assertEquals(LocalDate.of(2012, 7, 21), library.getSwccgoCardBlueprint("2240_4").getLegacyVersion().supersededOn());
-        assertEquals(LocalDate.of(2012, 8, 27), library.getSwccgoCardBlueprint("2230_77").getLegacyVersion().supersededOn());
+        assertEquals(LocalDate.of(2012, 7, 13), library.getSwccgoCardBlueprint("2230_77").getLegacyVersion().supersededOn());
         // Local Uprising (V): PC forum "Current Rulings/Errata", 2012-11-19 (Batch B36)
         assertEquals(LocalDate.of(2012, 11, 19), library.getSwccgoCardBlueprint("2220_163").getLegacyVersion().supersededOn());
-        for (String id : new String[]{"2220_136", "2230_13", "2240_2", "2240_3", "2240_8", "2240_27"})
+        for (String id : new String[]{"2240_2", "2240_3", "2240_8"})
             assertEquals(id, LocalDate.of(2013, 4, 27), library.getSwccgoCardBlueprint(id).getLegacyVersion().supersededOn());
+        // PC forum errata dates (Batch B37)
+        assertEquals(LocalDate.of(2013, 7, 24), library.getSwccgoCardBlueprint("2220_136").getLegacyVersion().supersededOn());
+        assertEquals(LocalDate.of(2013, 12, 30), library.getSwccgoCardBlueprint("2230_13").getLegacyVersion().supersededOn());
+        assertEquals(LocalDate.of(2013, 6, 14), library.getSwccgoCardBlueprint("2240_27").getLegacyVersion().supersededOn());
     }
 
     @Test

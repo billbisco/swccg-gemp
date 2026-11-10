@@ -39,7 +39,7 @@ public class Card_2273_036_Tests {
     public void OriginalShieldIsDownIsTheCurrentCardWithItsOlderText() {
         var s = scenario();
         assertVersion(s.GetLSCard("shield").getBlueprint(), s.GetLSCard("current").getBlueprint(), "1273_36", "",
-                LocalDate.of(2011, 6, 3), LocalDate.of(2012, 7, 21),
+                LocalDate.of(2011, 6, 3), LocalDate.of(2012, 1, 13),
                 "If [Virtual Block 7] Rebel Strike Team on table, deploy on table. Your [Endor] Epic Event total is +1 for each non-Jedi scout at Bunker. For each of your non-Jedi scouts in battle, attrition against opponent is +1. While opponent's [Endor] objective on table, Bunker may not be converted. May take Bunker into hand from Reserve Deck; reshuffle. (Immune to Alter.)");
     }
 

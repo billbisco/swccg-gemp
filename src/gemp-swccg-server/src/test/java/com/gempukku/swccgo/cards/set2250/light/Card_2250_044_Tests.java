@@ -27,7 +27,7 @@ public class Card_2250_044_Tests {
     public void MasterQuiGonOriginalIdentity() {
         var scn = scenario();
         assertLegacyVersion(scn.GetLSCard("quigon").getBlueprint(), scn.GetLSCard("current").getBlueprint(), "1250_44", "",
-                LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21),
+                LocalDate.of(2009, 12, 7), LocalDate.of(2011, 3, 21),
                 "Deploys -1 to [Episode I] locations. If you just lost Force from an opponent's Effect, may ▲ an [Episode I] Interrupt (except Control), or place a card from hand under Credits Will Do Fine. Immune to Disarmed, You Are Beaten, and attrition.");
     }
 

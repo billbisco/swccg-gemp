@@ -25,7 +25,7 @@ public class Card2240_086 extends Card601_110 {
         super();
         setGameText("If you are about to lose Force during opponent's control phase, deploy on table to reduce loss by 2. Whenever you lose Force during opponent's control phase (except from a Force drain at a battleground or your card) that loss is cumulatively -1 (to a minimum of 1).");
         setLegacyVersion(new LegacyVersion("1240_86", "",
-                "Virtual Block 4 release sheet (2009-12-07), card #85", LocalDate.of(2009, 12, 7), LocalDate.of(2013, 4, 27)));
+                "Virtual Block 4 release sheet (2009-12-07), card #85; superseded by 2013-06-14 (PC forum repost of a recent CBT errata)", LocalDate.of(2009, 12, 7), LocalDate.of(2013, 6, 14)));
     }
 
     @Override

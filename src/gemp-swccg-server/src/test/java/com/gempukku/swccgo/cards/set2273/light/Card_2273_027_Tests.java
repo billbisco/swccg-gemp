@@ -30,7 +30,7 @@ public class Card_2273_027_Tests {
     public void ErrataMasterKenobiIsTheCurrentCardWithTheJune2011Text() {
         var s = scenario();
         assertVersion(s.GetLSCard("kenobi").getBlueprint(), s.GetLSCard("current").getBlueprint(), "1273_27", "PC-E1",
-                LocalDate.of(2011, 6, 23), LocalDate.of(2012, 7, 21),
+                LocalDate.of(2011, 6, 22), LocalDate.of(2012, 4, 20),
                 "While 'communing': you may not deploy [Maintenance] cards or [Episode I] Jedi; Rebels of ability < 5 draw one battle destiny if unable to otherwise and, once per turn, may place one just forfeited in Used Pile; Once per turn, may deploy from Reserve Deck a Tatooine battleground (or Obi-Wan's Hut); reshuffle.");
     }
 

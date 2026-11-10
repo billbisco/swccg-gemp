@@ -52,7 +52,7 @@ public class Card2283_021 extends AbstractNormalEffect {
     public Card2283_021() {
         super(Side.LIGHT, 2, PlayCardZoneOption.ATTACHED, "Underworld Contacts & Uncharted Settlements", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_3, Rarity.V);
         setGameText("Deploy on [Virtual Block 4] Hidden Base; you must choose alien/[Independent] starship. You may not deploy Ellorrs Madak, Revolution or operatives. Your Destiny is canceled. Opponent generates no Force at Hidden Landing Site. [Virtual Block 1] Yerka Mig may deploy on a Rebel Cell Site, may be placed in Used Pile if it was just canceled, and you may retrieve Force with it only once per turn. While Systems Will Slip Through Your Fingers on table, attrition against opponent is +1 for each Rebel Cell site you occupy with an alien. (Immune to Alter.)");
-        setLegacyVersion(new LegacyVersion("1283_21", "", "Virtual Block 8.3 release sheet (2013-03-28)", LocalDate.of(2013, 3, 28), LocalDate.of(2013, 4, 27)));
+        setLegacyVersion(new LegacyVersion("1283_21", "", "Virtual Block 8.3 release sheet (2013-03-28); superseded by the PC forum errata (2013-07-24)", LocalDate.of(2013, 3, 28), LocalDate.of(2013, 7, 24)));
         addImmuneToCardTitle(Title.Alter);
     }
 

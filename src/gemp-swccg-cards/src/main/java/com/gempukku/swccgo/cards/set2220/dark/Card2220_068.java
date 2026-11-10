@@ -50,7 +50,7 @@ public class Card2220_068 extends AbstractUsedInterrupt {
         setLore("Luke got the shaft.");
         setGameText("Cancel Path Of Least Resistance. (Immune to Sense.) OR During your move phase, target opponent's character at an interior Cloud City site. Draw destiny. Relocate target to Weather Vane if destiny > target's ability. OR Relocate your character at an interior Cloud City site to Weather Vane.");
         setLegacyVersion(new LegacyVersion("1220_68", "",
-                "Virtual Block 2 release sheet (2009-12-07), card #67", LocalDate.of(2009, 12, 7), LocalDate.of(2013, 4, 27)));
+                "Virtual Block 2 release sheet (2009-12-07), card #67; superseded by the PC forum errata (2013-08-01)", LocalDate.of(2009, 12, 7), LocalDate.of(2013, 8, 1)));
         addIcons(Icon.CLOUD_CITY);
     }
 

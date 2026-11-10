@@ -29,7 +29,7 @@ public class Card2250_034 extends Card1250_034 {
     public Card2250_034() {
         setGameText("Agenda: rebellion. Adds one battle destiny with Leia. Your [Coruscant] senators and [Coruscant] Political Effects are lost. While at Senate: unique (•) Rebels of ability < 4 are power +2, and, if opponent just lost Force to a Force drain by a Rebel, may retrieve 1 Force.");
         setLegacyVersion(new LegacyVersion("1250_34", "",
-                "Virtual Block 5 release sheet (2009-12-07), card #35", LocalDate.of(2009, 12, 7), LocalDate.of(2013, 4, 27)));
+                "Virtual Block 5 release sheet (2009-12-07), card #35; superseded by the PC forum errata (2014-01-03)", LocalDate.of(2009, 12, 7), LocalDate.of(2014, 1, 3)));
     }
 
     @Override

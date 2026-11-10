@@ -31,7 +31,7 @@ public class Card_2273_019_Tests {
     public void OriginalSpiceMineOperationsIsTheCurrentCardWithItsOwnText() {
         assertVersion(VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("2273_19"),
                 VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("1273_19"), "1273_19", "",
-                LocalDate.of(2011, 6, 3), LocalDate.of(2012, 7, 21),
+                LocalDate.of(2011, 6, 3), LocalDate.of(2012, 1, 30),
                 "If your [Virtual Block 7] office on table, deploy on table. Program Trap is canceled. Cards stacked here are 'spice' cards. Once per turn, if you control Extraction Facility, may place a 'spice' card in owner's Lost Pile to draw up to 2 cards from Reserve Deck. Once during your turn, may: use 2 Force to stack a card from Lost Pile here, [download] a non-character card with \"Kessel\" in title, and/or 'mine' (opponent draws destiny; draw up to X destiny, where X = 1 plus number of Kessel locations you occupy; if any of the printed destiny numbers match, stack opponent's destiny or top card of your Lost Pile here).");
     }
 

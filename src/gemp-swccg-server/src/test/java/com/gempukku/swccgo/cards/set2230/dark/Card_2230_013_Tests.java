@@ -78,7 +78,7 @@ public class Card_2230_013_Tests {
         assertEquals("1230_13", version.currentPrintingId());
         assertEquals("", version.label());
         assertEquals(LocalDate.of(2009, 12, 7), version.printedOn());
-        assertEquals(LocalDate.of(2013, 4, 27), version.supersededOn());
+        assertEquals(LocalDate.of(2013, 12, 30), version.supersededOn());
         assertEquals("Lord Vader (V)", GameUtils.getFullName(card));
     }
 
