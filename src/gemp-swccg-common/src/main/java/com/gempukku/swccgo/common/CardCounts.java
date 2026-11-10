@@ -11,7 +11,7 @@ public interface CardCounts {
 
     int[] PREMIUM_SETS_CARD_COUNTS = {6, 11, 2, 7, 6, 18, 6, 6, 12, 12, 6, 20};
 
-    int[] VIRTUAL_SETS_CARD_COUNTS = {146, 42, 15, 36, 58, 23, 14, 30, 59, 56, 47, 61, 6, 59, 22, 27, 49, 52, 32, 48, 10, 75, 30, 49, 23, 59, 28, 29};
+    int[] VIRTUAL_SETS_CARD_COUNTS = {150, 42, 15, 36, 58, 23, 14, 30, 59, 56, 47, 61, 6, 59, 22, 27, 50, 52, 32, 48, 10, 75, 30, 49, 23, 61, 28, 29};
 
     // Published numbered slips: Defensive Shields (1100), then Original Virtual Sets 1–17.
     int[] ORIGINAL_VIRTUAL_SETS_CARD_COUNTS = {18, 12, 50, 50, 50, 50, 50, 22, 50, 50, 14, 30, 43, 25, 33, 67, 68, 21};

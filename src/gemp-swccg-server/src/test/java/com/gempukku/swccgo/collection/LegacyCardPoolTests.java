@@ -38,7 +38,9 @@ public class LegacyCardPoolTests {
     public void LegacyPoolKeepsPcCardsWithoutDuplicatingAliases() {
         //test1: A PC implementation remains available under its canonical id.
         assertEquals(60, collections.getDefaultCollection(false).getItemCount("601_35")); //test1
-        assertEquals(0, collections.getDefaultCollection(false).getItemCount("1272_9")); //test1
+        assertEquals(0, collections.getDefaultCollection(false).getItemCount("1200_5")); //test1
+        // B35: the Tatooine printing 1272_9 is its own card now, so it is in the pool
+        assertEquals(60, collections.getDefaultCollection(false).getItemCount("1272_9"));
     }
 
     @Test

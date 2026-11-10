@@ -19,6 +19,8 @@ public abstract class LegacyInsertPodraceShieldTests {
     protected abstract String primaryId();
     protected abstract String conversionId();
     protected abstract String title();
+    /** The set icon printed on this printing: Reflections III, or the base card's icon (B35, two-base printings). */
+    protected Icon printedSetIcon() { return Icon.REFLECTIONS_III; }
 
     protected VirtualTableScenario scenario() {
         var light = new HashMap<String,String>();
@@ -98,15 +100,18 @@ public abstract class LegacyInsertPodraceShieldTests {
         assertEquals(ExpansionSet.VIRTUAL_BLOCK_6_1, b.getExpansionSet()); assertEquals(Rarity.V, b.getRarity());
         s.BlueprintCardTypeCheck(b, new ArrayList<>() {{ add(CardType.DEFENSIVE_SHIELD); }});
         s.BlueprintKeywordCheck(b, new ArrayList<Keyword>());
-        s.BlueprintIconCheck(b, new ArrayList<>() {{ add(Icon.DEFENSIVE_SHIELD); add(Icon.REFLECTIONS_III); add(Icon.LEGACY_BLOCK_6); }});
+        s.BlueprintIconCheck(b, new ArrayList<>() {{ add(Icon.DEFENSIVE_SHIELD); add(printedSetIcon()); add(Icon.LEGACY_BLOCK_6); }});
     }
 
     protected void checkBothPrintingLookupsRetainPhysicalImageIdsAndOneCanonicalRuleClass() {
         var s = scenario(); var a = card(s, true, "shield"); var b = card(s, true, "otherPrinting");
         assertEquals(shieldId(), a.getBlueprintId(true)); assertNotEquals(a.getBlueprintId(true), b.getBlueprintId(true));
-        assertEquals(a.getBlueprint().getClass(), b.getBlueprint().getClass());
+        // B35 (Bill 2026-11-09): each base printing has its own id and class; the second printing extends the first, so
+        // they share the rules and the title (one card for uniqueness and deck limits)
+        assertTrue(a.getBlueprint().getClass().isAssignableFrom(b.getBlueprint().getClass())
+                || b.getBlueprint().getClass().isAssignableFrom(a.getBlueprint().getClass()));
         assertEquals(a.getBlueprint().getTitle(), b.getBlueprint().getTitle());
-        assertEquals(primaryId(), new SwccgCardBlueprintLibrary().getBaseBlueprintId(shieldId()));
+        assertEquals(shieldId(), new SwccgCardBlueprintLibrary().getBaseBlueprintId(shieldId()));
     }
 
     protected void checkShieldActuallyPlaysFromTheStartingEffectForFree() {

@@ -385,6 +385,15 @@ public abstract class AbstractSwccgCardBlueprint implements SwccgCardBlueprint {
     }
 
     /**
+     * Removes the specified icon (a printing of a card on another base card that does not carry an icon of the card it
+     * extends, e.g. the Tatooine printing of a Reflections III shield).
+     * @param icon the icon
+     */
+    protected final void removeIcon(Icon icon) {
+        _icons.remove(icon);
+    }
+
+    /**
      * Gets the model types of the card.
      * @return the model types
      */
@@ -3048,6 +3057,18 @@ public abstract class AbstractSwccgCardBlueprint implements SwccgCardBlueprint {
     protected void setPrintedTitle(String printedTitle) {
         if (_legacyVersion == null)
             throw new IllegalStateException("A printed title is only for pre-errata Legacy versions; call setLegacyVersion first");
+        _printedTitle = (printedTitle == null || printedTitle.isEmpty() || printedTitle.equals(getTitle())) ? null : printedTitle;
+    }
+
+    /**
+     * Sets the title printed on a card that was printed on more than one base card (Bill 2026-11-09, "two-base
+     * printings"): each printing prints its base in its title line, e.g. "Fanfare (Tatooine)" and
+     * "Fanfare (Reflections III)", and has its own blueprint id and image. Display only, like
+     * {@link #setPrintedTitle(String)}: {@link #getTitle()} is unchanged, so both printings are the same card for
+     * uniqueness, persona, title matching and deck limits.
+     * @param printedTitle the title as printed, without uniqueness dots and without the " (V)" suffix
+     */
+    protected final void setBasePrintingTitle(String printedTitle) {
         _printedTitle = (printedTitle == null || printedTitle.isEmpty() || printedTitle.equals(getTitle())) ? null : printedTitle;
     }
 

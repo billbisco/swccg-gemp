@@ -32,12 +32,14 @@ import java.util.List;
 /**
  * Set: Set 0
  * Type: Defensive Shield
- * Title: Don't Do That Again (V)
+ * Title: Don't Do That Again (Reflections III) (V)
+ * Printed on the Reflections III base card (PC card 4404); the Tatooine printing of the same card is 200_149 (Bill 2026-11-09, two-base printings).
  */
 public class Card200_026 extends AbstractDefensiveShield {
     public Card200_026() {
         super(Side.LIGHT, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Don't Do That Again", ExpansionSet.SET_0, Rarity.V);
         setVirtualSuffix(true);
+        setBasePrintingTitle("Don't Do That Again (Reflections III)");
         setLore("The Jedi won't tolerate silly behavior for very long.");
         setGameText("Plays on table. Cancels Always Thinking With Your Stomach, He Hasn't Come Back Yet, Ice Storm, and Sandwhirl. Once per game, may take an Immediate Effect into hand from Reserve Deck; reshuffle. While opponent occupies no battleground systems, Mobilization Points is suspended.");
         addIcons(Icon.REFLECTIONS_III, Icon.EPISODE_I, Icon.VIRTUAL_DEFENSIVE_SHIELD);

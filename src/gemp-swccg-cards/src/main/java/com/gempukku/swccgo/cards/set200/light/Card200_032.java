@@ -32,12 +32,14 @@ import java.util.List;
 /**
  * Set: Set 0
  * Type: Defensive Shield
- * Title: Your Insight Serves You Well (V)
+ * Title: Your Insight Serves You Well (Reflections III) (V)
+ * Printed on the Reflections III base card (PC card 4407); the Death Star II printing of the same card is 200_150 (Bill 2026-11-09, two-base printings).
  */
 public class Card200_032 extends AbstractDefensiveShield {
     public Card200_032() {
         super(Side.LIGHT, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.Your_Insight_Serves_You_Well, ExpansionSet.SET_0, Rarity.V);
         setVirtualSuffix(true);
+        setBasePrintingTitle("Your Insight Serves You Well (Reflections III)");
         setLore("Luke knew that while the dark side was quicker and more seductive, eventually evil would turn on itself.");
         setGameText("Plays on table. Cancels Scanning Crew and 'insert' cards just revealed. Sidious may not place Skywalkers out of play. Let Them Make the First Move may target only Undercover Spies. Unless Inner Strength on table, opponent may only use one combat card per turn.");
         addIcons(Icon.REFLECTIONS_III, Icon.VIRTUAL_DEFENSIVE_SHIELD);
