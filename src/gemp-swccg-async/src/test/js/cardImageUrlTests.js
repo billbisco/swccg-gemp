@@ -349,8 +349,8 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_33'), 'https://wiki.
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_122'), 'https://wiki.swccg.com/images/3/31/VB8-04-Redeemed_Apprentice-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_36'), 'https://wiki.swccg.com/images/2/2e/VB8-00-Scoundrels_Ingenuity-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_126'), 'https://wiki.swccg.com/images/2/2e/VB8-00-Scoundrels_Ingenuity-PC-E1-cardmaker.png');
-assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_46'), 'https://wiki.swccg.com/images/0/00/VB8-03-Hans_Blaster_So_Uncivilized-PC-E1-cardmaker.png');
-assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_108'), 'https://wiki.swccg.com/images/0/00/VB8-03-Hans_Blaster_So_Uncivilized-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_46'), 'https://wiki.swccg.com/images/f/ff/VB8-03-Hans_Blaster_So_Uncivilized-PC-E2-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_108'), 'https://wiki.swccg.com/images/f/ff/VB8-03-Hans_Blaster_So_Uncivilized-PC-E2-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_1047'), 'https://wiki.swccg.com/images/d/d9/VB8-02-Rebel_Agents_Blaster_Rifle-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_44'), 'https://wiki.swccg.com/images/3/3b/VL-history-1281-44-front-sheet.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_47'), 'https://wiki.swccg.com/images/b/bd/VB8-02-Kyle_Katarns_Blaster_Rifle.png');
@@ -486,7 +486,7 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('1274_20'), 'https://wiki.
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2274_20'), 'https://swccg.com/cards/legacy/VirtualBlock7-Light/large/temporaryfoothold.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_10'), 'https://wiki.swccg.com/images/0/09/VB8-05-Death_Mark_Hutt_Bounty-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_10'), 'https://swccg.com/cards/legacy/VirtualBlock8-Dark/large/deathmarkandhuttbounty.gif');
-assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_29'), 'https://wiki.swccg.com/images/b/bf/VB8-p5-30-Het_Nkik-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_29'), 'https://wiki.swccg.com/images/1/18/VB8-p5-30-Het_Nkik-PC-E2-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_29'), 'https://swccg.com/cards/legacy/VirtualBlock8-Light/large/hetnkik.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_30ai'), 'https://wiki.swccg.com/images/b/be/VB8-03-Supreme_Chancellor_Valorum_AI-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_35'), 'https://wiki.swccg.com/images/4/41/VB8-00-Scoundrels_Charm-PC-E1-cardmaker.png');
@@ -526,3 +526,13 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('2220_1072'), 'https://wik
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2220_1072_BACK'), 'https://swccg.com/cards/legacy/VirtualBlock2-Dark/large/imperialcontrol.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2220_72_BACK'), 'https://wiki.swccg.com/images/2/21/VB2-72E-Imperial_Control.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2220_72'), 'https://wiki.swccg.com/images/e/e7/VB2-72E-Imperial_Occupation.png');
+// Batch P1 (swccg-guild/work#236 pilot)
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1240_33'), 'https://wiki.swccg.com/images/8/87/VB4-31E-Kuat_Drive_Yards-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_193'), 'https://wiki.swccg.com/images/8/87/VB4-31E-Kuat_Drive_Yards-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2240_33'), 'https://swccg.com/cards/legacy/VirtualBlock4-Dark/large/kuatdriveyards.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1263_17'), 'https://wiki.swccg.com/images/b/bf/VB6-17-Colonel_Jendon_In_Onyx_1-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_207'), 'https://wiki.swccg.com/images/b/bf/VB6-17-Colonel_Jendon_In_Onyx_1-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2263_17'), 'https://swccg.com/cards/legacy/VirtualBlock6-Dark/large/coloneljendoninonyx1.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_108'), 'https://wiki.swccg.com/images/f/ff/VB8-03-Hans_Blaster_So_Uncivilized-PC-E2-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_1046'), 'https://wiki.swccg.com/images/0/00/VB8-03-Hans_Blaster_So_Uncivilized-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_1029'), 'https://wiki.swccg.com/images/b/bf/VB8-p5-30-Het_Nkik-PC-E1-cardmaker.png');

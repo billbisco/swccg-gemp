@@ -7333,5 +7333,18 @@ const fixedImages = {
 "2250_44ai":"https://wiki.swccg.com/images/a/ad/VB5-45AI-Master_Qui_Gon_AI-original-cardmaker.png",
 "2250_45ai":"https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/macewinduai.gif",
 "2281_30ai":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Light/large/supremechancellorvalorumai.gif",
+// Batch P1 (swccg-guild/work#236 pilot: spelling, capitals and punctuation are versions): current cards show a CardMaker recreation of their latest card-list text; 601_193 / 601_207 / 601_108 are the current classes of 1240_33 / 1263_17 / 1281_46.
+// Kuat Drive Yards (V) PC-E1 "Imperial-Class"; Colonel Jendon In Onyx 1 PC-E1 "•Jendon, who"; Han's Blaster and Het Nkik (V) renumbered: the 2012-07-21 card-list text ("cancelled") is PC-E1 (2281_1046 / 2281_1029), the current text ("canceled", 2012-12-12) PC-E2. The originals 2240_33 / 2263_17 show the PC card images, which print them.
+"1240_33":"https://wiki.swccg.com/images/8/87/VB4-31E-Kuat_Drive_Yards-PC-E1-cardmaker.png",
+"601_193":"https://wiki.swccg.com/images/8/87/VB4-31E-Kuat_Drive_Yards-PC-E1-cardmaker.png",
+"2240_33":"https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/kuatdriveyards.gif",
+"1263_17":"https://wiki.swccg.com/images/b/bf/VB6-17-Colonel_Jendon_In_Onyx_1-PC-E1-cardmaker.png",
+"601_207":"https://wiki.swccg.com/images/b/bf/VB6-17-Colonel_Jendon_In_Onyx_1-PC-E1-cardmaker.png",
+"2263_17":"https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Dark/large/coloneljendoninonyx1.gif",
+"1281_46":"https://wiki.swccg.com/images/f/ff/VB8-03-Hans_Blaster_So_Uncivilized-PC-E2-cardmaker.png",
+"601_108":"https://wiki.swccg.com/images/f/ff/VB8-03-Hans_Blaster_So_Uncivilized-PC-E2-cardmaker.png",
+"2281_1046":"https://wiki.swccg.com/images/0/00/VB8-03-Hans_Blaster_So_Uncivilized-PC-E1-cardmaker.png",
+"1281_29":"https://wiki.swccg.com/images/1/18/VB8-p5-30-Het_Nkik-PC-E2-cardmaker.png",
+"2281_1029":"https://wiki.swccg.com/images/b/bf/VB8-p5-30-Het_Nkik-PC-E1-cardmaker.png",
 
 };

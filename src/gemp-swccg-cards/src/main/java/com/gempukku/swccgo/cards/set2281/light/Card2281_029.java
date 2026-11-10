@@ -10,7 +10,8 @@ import java.time.LocalDate;
  * Type: Character
  * Title: Het Nkik (V)
  * Original version of 1281_29: the Virtual Block 8.1 release sheet text (2012-05-11; the PC card image and the Master List of 2013-04-27
- * print it). The PC website card list (by 2012-07-21) adds "the" ("where X = the number of deserts"). Same play.
+ * print it, the Master List copy being a stale reprint). The PC website card list adds "the" ("where X = the number of
+ * deserts"): PC-E1 (by 2012-07-21, 2281_1029, "cancelled") and PC-E2 (by 2012-12-12, "canceled", the current card). Same play.
  * Anything Goes only (docs/legacy-versions.md).
  */
 public class Card2281_029 extends Card1281_029 {
