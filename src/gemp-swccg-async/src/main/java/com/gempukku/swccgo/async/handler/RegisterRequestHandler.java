@@ -86,6 +86,6 @@ public class RegisterRequestHandler extends SwccgoServerRequestHandler implement
     }
 
     private static String weakPasswordMessage() {
-        return "Password must be at least " + com.gempukku.swccgo.security.PasswordPolicy.MIN_LENGTH + " characters.";
+        return com.gempukku.swccgo.security.PasswordPolicy.rejectionMessage();
     }
 }

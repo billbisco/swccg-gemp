@@ -37,6 +37,7 @@ public class Card1261_073 extends AbstractDefensiveShield {
     public Card1261_073() {
         super(Side.LIGHT, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.Your_Insight_Serves_You_Well, ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
         setVirtualSuffix(true);
+        setBasePrintingTitle("Your Insight Serves You Well (Ref III)");
         setLore("Luke knew that while the dark side was quicker and more seductive, eventually evil would turn on itself.");
         setGameText("Plays on table. Scanning Crew is canceled. If an 'insert' card was just inserted or revealed, it is canceled. You lose no Force to Boonta Eve Podrace, and opponent's retrieval from Boonta Eve Podrace may not be canceled. While you occupy three battlegrounds, Watto's Box is suspended.");
         addIcons(Icon.REFLECTIONS_III);

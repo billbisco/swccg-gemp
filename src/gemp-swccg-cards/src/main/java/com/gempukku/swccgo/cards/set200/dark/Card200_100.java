@@ -29,12 +29,14 @@ import java.util.List;
 /**
  * Set: Set 0
  * Type: Defensive Shield
- * Title: You Cannot Hide Forever (V)
+ * Title: You Cannot Hide Forever (Reflections III) (V)
+ * Printed on the Reflections III base card (PC card 4400); the Death Star II printing of the same card is 200_148 (Bill 2026-11-09, two-base printings).
  */
 public class Card200_100 extends AbstractDefensiveShield {
     public Card200_100() {
         super(Side.DARK, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.You_Cannot_Hide_Forever, ExpansionSet.SET_0, Rarity.V);
         setVirtualSuffix(true);
+        setBasePrintingTitle("You Cannot Hide Forever (Reflections III)");
         setLore("'Give yourself to the dark side. It is the only way you can save your friends.'");
         setGameText("Plays on table. Cancels 'insert' cards just revealed. We'll Handle This may target only Undercover spies and 5D6-RA-7. Unless Deep Hatred on table, opponent may use only one combat card per turn.");
         addIcons(Icon.REFLECTIONS_III, Icon.VIRTUAL_DEFENSIVE_SHIELD);

@@ -266,6 +266,29 @@ public class AuthService {
     }
 
     /**
+     * swccg-login self-service reset (the player proved a confirmed email to swccg-login): sets a
+     * new password for the player by id. Compare-and-set on the stored hash, like a reset. Also
+     * burns any admin one-time code and open reset tickets, which the new password replaces.
+     * Nothing else changes (bans, types, decks, passkeys and linked accounts stay as they are).
+     * @return the player, or null if there is no such player or the hash changed meanwhile
+     * @throws WeakPasswordException if the password breaks {@link PasswordPolicy}
+     */
+    public Player setPassword(int playerId, String newPassword) throws SQLException, WeakPasswordException {
+        if (!PasswordPolicy.isAcceptable(newPassword))
+            throw new WeakPasswordException();
+        Player player = _playerDAO.getPlayer(playerId);
+        if (player == null || player.getId() != playerId || Player.isBot(player.getName()))
+            return null;
+        if (!_playerDAO.updatePasswordHash(playerId, player.getPassword(), _hasher.hash(newPassword)))
+            return null;
+        if (_playerDAO.getPasswordResetCode(playerId) != null)
+            _playerDAO.deletePasswordResetCode(playerId);
+        _resetTickets.values().removeIf(t -> t.playerId == playerId);
+        _throttle.recordSuccess(player.getName(), null);
+        return player;
+    }
+
+    /**
      * Registers a new account after applying the password policy and the per-IP signup limit
      * (RegisterNotAllowedException when the IP already made its quota today).
      * @throws WeakPasswordException if the password breaks {@link PasswordPolicy}
@@ -280,9 +303,61 @@ public class AuthService {
         return _playerDAO.registerPlayer(login, password, remoteIp);
     }
 
+    /**
+     * swccg-login signup: {@link #register} and return the new player.
+     * @return the new player, or null if the name is reserved
+     */
+    public Player registerAndGet(String login, String password, String remoteIp)
+            throws SQLException, LoginInvalidException, RegisterNotAllowedException, WeakPasswordException {
+        if (!register(login, password, remoteIp))
+            return null;
+        return _playerDAO.getPlayer(login);
+    }
+
+    /**
+     * swccg-login signup with Google, Discord or a passkey: a player with no password anyone knows.
+     * The stored hash is of 32 random bytes that are thrown away, so a password login can never
+     * succeed until an admin reset gives the player a password of their own. Same name rules and
+     * per-IP signup cap as {@link #register}.
+     * @return the new player, or null if the name is reserved
+     */
+    public Player createPlayerWithoutPassword(String login, String remoteIp)
+            throws SQLException, LoginInvalidException, RegisterNotAllowedException {
+        if (remoteIp != null && !_signupGuard.allows(remoteIp,
+                _playerDAO.countPlayersCreatedFromIpSince(remoteIp, _clock.getAsLong() - SignupGuard.WINDOW_MILLIS)))
+            throw new RegisterNotAllowedException();
+        byte[] b = new byte[32];
+        _random.nextBytes(b);
+        String unusable = java.util.HexFormat.of().formatHex(b);
+        if (!_playerDAO.registerPlayer(login, unusable, remoteIp))
+            return null;
+        return _playerDAO.getPlayer(login);
+    }
+
+    /**
+     * Whether an account may sign in right now (ban, temporary ban, deactivation), by id.
+     * No password is checked: swccg-login calls this for passkey, social and silent sign-ins.
+     * Status INVALID means no such account.
+     */
+    public AuthResult accountStatus(int playerId) {
+        Player player = _playerDAO.getPlayer(playerId);
+        if (player == null)
+            return new AuthResult(Status.INVALID, null);
+        if (player.hasType(Player.Type.DEACTIVATED))
+            return new AuthResult(Status.DEACTIVATED, player);
+        if (!player.hasType(Player.Type.UNBANNED)) {
+            Date bannedUntil = player.getBannedUntil();
+            if (bannedUntil == null)
+                return new AuthResult(Status.BANNED, player);
+            if (bannedUntil.after(new Date(_clock.getAsLong())))
+                return new AuthResult(Status.TEMP_BANNED, player);
+        }
+        return new AuthResult(Status.OK, player);
+    }
+
     public static class WeakPasswordException extends Exception {
         public WeakPasswordException() {
-            super("Password must be " + PasswordPolicy.MIN_LENGTH + " to " + PasswordPolicy.MAX_LENGTH + " characters.");
+            super(PasswordPolicy.rejectionMessage());
         }
     }
 

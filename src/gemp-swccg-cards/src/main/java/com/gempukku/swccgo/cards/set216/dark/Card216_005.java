@@ -23,12 +23,14 @@ import java.util.List;
 /**
  * Set: Set 16
  * Type: Defensive Shield
- * Title: Crossfire (V)
+ * Title: Crossfire (Reflections III) (V)
+ * Printed on the Reflections III base card (PC card 6908); the Endor printing of the same card is 216_50 (Bill 2026-11-09, two-base printings).
  */
 public class Card216_005 extends AbstractDefensiveShield {
     public Card216_005() {
         super(Side.DARK, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.Crossfire, ExpansionSet.SET_16, Rarity.V);
         setVirtualSuffix(true);
+        setBasePrintingTitle("Crossfire (Reflections III)");
         setLore("Scout walker pilots are trained to set up a deadly heavy fire zone. This tactic can be disrupted by enemy weapons fire.");
         setGameText("Plays on table. S-foils and Maneuvering Flaps are suspended where you have either a weapon present or a starship (or vehicle) with maneuver > 3 present. Your Force generation at opponent's Endor system may not be canceled unless opponent's [Endor] objective on table.");
         addIcons(Icon.REFLECTIONS_III, Icon.VIRTUAL_SET_16);

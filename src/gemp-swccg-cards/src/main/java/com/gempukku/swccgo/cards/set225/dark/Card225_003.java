@@ -28,7 +28,8 @@ import com.gempukku.swccgo.logic.timing.EffectResult;
 /**
  * Set: Set 25
  * Type: Defensive Shield
- * Title: Come Here You Big Coward (V)
+ * Title: Come Here You Big Coward (Reflections III) (V)
+ * Printed on the Reflections III base card (PC card 7386); the Special Edition printing of the same card is 225_60 (Bill 2026-11-09, two-base printings).
  */
 public class Card225_003 extends AbstractDefensiveShield {
     public Card225_003() {
@@ -37,6 +38,7 @@ public class Card225_003 extends AbstractDefensiveShield {
         setGameText("Plays on table. Sectors are not battlegrounds. While you occupy a battleground and opponent occupies less than two battlegrounds, cancels: Asteroid Sanctuary, opponent's Force drains at non-battleground locations, and opponent's Force retrieval.");
         addIcons(Icon.REFLECTIONS_III, Icon.VIRTUAL_SET_25);
         setVirtualSuffix(true);
+        setBasePrintingTitle("Come Here You Big Coward (Reflections III)");
     }
 
     @Override

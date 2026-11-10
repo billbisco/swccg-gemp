@@ -64,11 +64,31 @@ public class AuthServiceTests {
     }
 
     @Test
-    public void registrationRejectsShortPasswordsAndCaseOnlyDuplicates() throws Exception {
-        assertThrows(AuthService.WeakPasswordException.class, () -> auth.register("Newbie", "short", IP));
+    public void registrationRejectsEmptyOrOverlongPasswordsAndCaseOnlyDuplicates() throws Exception {
+        assertThrows(AuthService.WeakPasswordException.class, () -> auth.register("Newbie", "", IP));
+        assertThrows(AuthService.WeakPasswordException.class, () -> auth.register("Newbie", null, IP));
+        assertThrows(AuthService.WeakPasswordException.class, () -> auth.register("Newbie", "x".repeat(129), IP));
         assertTrue(auth.register("Newbie", "longenough", IP));
         assertThrows(LoginInvalidException.class, () -> auth.register("NEWBIE", "longenough", IP));
         assertTrue(dao.storedHash("Newbie").startsWith("pbkdf2-sha256$"), "new accounts are salted from the start");
+    }
+
+    @Test
+    public void shortPasswordsAndPasswordsMatchingTheNameStillRegisterAndLogIn() throws Exception {
+        // No minimum length (Bill, 2026-11-09); a password equal to the name only earns a client-side note.
+        assertTrue(auth.register("test1", "test1", IP));
+        assertEquals(AuthService.Status.OK, auth.verifyCredentials("test1", "test1", IP).getStatus());
+        assertTrue(auth.register("Luke", "LUKE", IP));
+        assertEquals(AuthService.Status.OK, auth.verifyCredentials("Luke", "LUKE", IP).getStatus());
+        assertTrue(auth.register("Short", "1", IP));
+        assertEquals(AuthService.Status.OK, auth.verifyCredentials("Short", "1", IP).getStatus());
+        assertTrue(dao.storedHash("test1").startsWith("pbkdf2-sha256$"), "short passwords are still salted and stretched");
+
+        // The admin reset path follows the same rule.
+        String code = auth.issueResetCode("Short", "AdminAl");
+        String ticket = auth.createResetTicket(auth.verifyCredentials("Short", code, IP).getPlayer());
+        assertEquals(AuthService.ResetOutcome.OK, auth.completeReset(ticket, "Short", "2"));
+        assertEquals(AuthService.Status.OK, auth.verifyCredentials("Short", "2", IP).getStatus());
     }
 
     @Test
@@ -115,13 +135,29 @@ public class AuthServiceTests {
         assertEquals(AuthService.Status.RESET_REQUIRED, withCode.getStatus());
 
         String ticket = auth.createResetTicket(withCode.getPlayer());
-        assertEquals(AuthService.ResetOutcome.WEAK_PASSWORD, auth.completeReset(ticket, "Bill", "short"));
+        assertEquals(AuthService.ResetOutcome.WEAK_PASSWORD, auth.completeReset(ticket, "Bill", ""));
+        assertEquals(AuthService.ResetOutcome.WEAK_PASSWORD, auth.completeReset(ticket, "Bill", "x".repeat(129)));
         assertEquals(AuthService.ResetOutcome.OK, auth.completeReset(ticket, "Bill", "brand-new-pass"));
 
         assertEquals(AuthService.Status.OK, auth.verifyCredentials("Bill", "brand-new-pass", IP).getStatus());
         assertEquals(AuthService.Status.INVALID, auth.verifyCredentials("Bill", code, IP).getStatus(), "code is single use");
         assertEquals(AuthService.ResetOutcome.INVALID_TICKET, auth.completeReset(ticket, "Bill", "another-pass"),
                 "ticket is single use");
+    }
+
+    @Test
+    public void setPasswordByIdReplacesThePasswordAndBurnsAnAdminCode() throws Exception {
+        Player bill = dao.addWithStoredHash("Bill", hasher.hash("oldpassword"), "u", null);
+        String code = auth.issueResetCode("Bill", "AdminAl");
+        assertThrows(AuthService.WeakPasswordException.class, () -> auth.setPassword(bill.getId(), ""));
+        assertNull(auth.setPassword(bill.getId() + 1000, "brand-new-pass"), "no such player");
+
+        Player p = auth.setPassword(bill.getId(), "brand-new-pass");
+        assertNotNull(p);
+        assertEquals("Bill", p.getName());
+        assertEquals(AuthService.Status.OK, auth.verifyCredentials("Bill", "brand-new-pass", IP).getStatus());
+        assertEquals(AuthService.Status.INVALID, auth.verifyCredentials("Bill", "oldpassword", IP).getStatus());
+        assertEquals(AuthService.Status.INVALID, auth.verifyCredentials("Bill", code, IP).getStatus(), "admin code burned");
     }
 
     @Test

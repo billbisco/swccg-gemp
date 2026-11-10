@@ -1,0 +1,122 @@
+/* swccg.com sign-in box (Mockup A). One box on each site: name + password, then passkey and
+   provider buttons, Create account and Forgot password. Theme with the --sbox-* variables. */
+.sbox {
+  --sbox-bg: #111214;
+  --sbox-fg: #f3f3f4;
+  --sbox-muted: #a9abb3;
+  --sbox-border: #33353b;
+  --sbox-input-bg: #1b1c20;
+  --sbox-input-border: #50535c;
+  --sbox-accent: #f5c518;        /* Star Wars gold */
+  --sbox-accent-fg: #111214;
+  --sbox-accent-hover: #ffd84d;
+  --sbox-focus: #7cc4ff;
+  --sbox-error-bg: #3b1416;
+  --sbox-error-border: #a33a40;
+  --sbox-error-fg: #ffd2d4;
+  --sbox-radius: 10px;
+  --sbox-font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 24px 22px 20px;
+  background: var(--sbox-bg);
+  color: var(--sbox-fg);
+  border: 1px solid var(--sbox-border);
+  border-radius: var(--sbox-radius);
+  font: 15px/1.45 var(--sbox-font);
+  text-align: left;
+}
+.sbox *, .sbox *::before, .sbox *::after { box-sizing: border-box; }
+.sbox[hidden], .sbox [hidden] { display: none !important; }
+
+.sbox-title { margin: 0 0 2px; font-size: 22px; line-height: 1.25; font-weight: 700; color: var(--sbox-fg); }
+.sbox-sub { margin: 0 0 16px; color: var(--sbox-muted); font-size: 14px; }
+
+.sbox-error {
+  margin: 0 0 14px; padding: 10px 12px; border-radius: 8px;
+  background: var(--sbox-error-bg); border: 1px solid var(--sbox-error-border); color: var(--sbox-error-fg);
+  font-size: 14px;
+}
+.sbox-error:focus { outline: none; }
+
+.sbox-field { margin: 0 0 12px; }
+.sbox-field label { display: block; margin: 0 0 4px; font-size: 14px; font-weight: 600; color: var(--sbox-fg); }
+.sbox-field input {
+  display: block; width: 100%; min-height: 44px; padding: 10px 12px; margin: 0;
+  background: var(--sbox-input-bg); color: var(--sbox-fg);
+  border: 1px solid var(--sbox-input-border); border-radius: 8px;
+  font: 16px/1.2 var(--sbox-font); /* 16px: no zoom-on-focus on iOS */
+}
+.sbox-field input::placeholder { color: #7d808a; }
+.sbox-field input[aria-invalid="true"] { border-color: var(--sbox-error-border); }
+.sbox-hint { margin: 4px 0 0; color: var(--sbox-muted); font-size: 13px; }
+
+.sbox-pw { position: relative; }
+.sbox-pw input { padding-right: 68px; }
+.sbox-reveal {
+  position: absolute; top: 50%; right: 6px; transform: translateY(-50%);
+  min-height: 32px; padding: 4px 10px; border: 0; border-radius: 6px;
+  background: transparent; color: var(--sbox-muted); font: 600 13px var(--sbox-font); cursor: pointer;
+}
+.sbox-reveal:hover { color: var(--sbox-fg); }
+
+.sbox-hp { position: absolute !important; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+
+.sbtn {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; min-height: 44px; margin: 0 0 10px; padding: 10px 14px;
+  border: 1px solid transparent; border-radius: 8px;
+  font: 600 15px/1.2 var(--sbox-font); text-decoration: none; cursor: pointer;
+  -webkit-appearance: none; appearance: none;
+}
+.sbtn .ico { width: 20px; height: 20px; flex: 0 0 20px; }
+.sbtn[data-idp], .sbtn-passkey { justify-content: flex-start; padding-left: 16px; }
+.sbtn > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sbtn-primary { background: var(--sbox-accent); color: var(--sbox-accent-fg); margin-top: 4px; }
+.sbtn-primary:hover { background: var(--sbox-accent-hover); }
+.sbtn[aria-busy="true"] { cursor: progress; opacity: .8; }
+.sbtn-passkey { background: transparent; color: var(--sbox-fg); border-color: var(--sbox-input-border); }
+.sbtn-passkey:hover { border-color: var(--sbox-fg); }
+
+/* Provider buttons in their own brand styles (dark variants on a dark page). */
+.sbtn-google   { background: #131314; color: #e3e3e3; border-color: #8e918f; font-family: Roboto, var(--sbox-font); font-weight: 500; }
+.sbtn-discord  { background: #5865f2; color: #fff; }
+.sbtn-facebook { background: #1877f2; color: #fff; }
+.sbtn-x        { background: #000; color: #fff; border-color: #536471; }
+.sbtn-telegram { background: #2aabee; color: #fff; }
+.sbtn-google:hover { background: #1f1f20; }
+.sbtn-discord:hover { background: #4752c4; }
+.sbtn-facebook:hover { background: #0d65d9; }
+.sbtn-x:hover { background: #16181c; }
+.sbtn-telegram:hover { background: #229ed9; }
+
+.sbox-pk-hint { margin: -4px 0 8px; color: var(--sbox-muted); font-size: 13px; text-align: center; }
+.sbox-pk-note { margin: -4px 0 8px; color: var(--sbox-fg); font-size: 13px; text-align: center; }
+
+.sbox-links { margin: 2px 0 4px; text-align: center; font-size: 14px; color: var(--sbox-muted); }
+.sbox-link {
+  display: inline-block; padding: 6px 2px; border: 0; background: none;
+  color: var(--sbox-accent); font: inherit; text-decoration: underline; text-underline-offset: 2px; cursor: pointer;
+}
+.sbox-link:hover { color: var(--sbox-accent-hover); }
+.sbox-note { margin: 4px 0 8px; padding: 10px 12px; border-radius: 8px; background: var(--sbox-input-bg); color: var(--sbox-fg); font-size: 14px; }
+.sbox-note a { color: var(--sbox-accent); }
+
+.sbox-divider { display: flex; align-items: center; gap: 12px; margin: 14px 0; color: var(--sbox-muted); font-size: 13px; }
+.sbox-divider::before, .sbox-divider::after { content: ""; flex: 1; height: 1px; background: var(--sbox-border); }
+
+.sbox :focus-visible { outline: 3px solid var(--sbox-focus); outline-offset: 2px; }
+.sbox input:focus-visible { outline-offset: 0; }
+
+@media (max-width: 420px) {
+  .sbox { padding: 18px 16px 14px; border-radius: 8px; }
+  .sbox-title { font-size: 20px; }
+  .sbtn { gap: 8px; font-size: 14px; }
+  .sbtn[data-idp], .sbtn-passkey { padding-left: 12px; padding-right: 10px; }
+}
+@media (forced-colors: active) {
+  .sbtn { border: 1px solid ButtonText; }
+}

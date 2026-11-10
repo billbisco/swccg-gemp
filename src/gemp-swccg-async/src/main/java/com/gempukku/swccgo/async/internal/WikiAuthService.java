@@ -51,7 +51,7 @@ public class WikiAuthService {
         public final byte[] body;
         public final String signature;
 
-        Result(int status, byte[] body, String signature) {
+        public Result(int status, byte[] body, String signature) {
             this.status = status;
             this.body = body;
             this.signature = signature;

@@ -291,10 +291,7 @@ class Card {
             return url;
         var resourceUrl = String(url);
         var resourceOrigin = Card.resOrigin();
-        // The default mirror does not serve the Legacy scan subtree.
-        if (resourceOrigin === "https://swccg.com"
-                && resourceUrl.startsWith("https://res.starwarsccg.org/cards/legacy/"))
-            return resourceUrl;
+        // Rewrite official CDN hosts (including /cards/legacy/) to our origin.
         return resourceUrl.replace("https://res.starwarsccg.org", resourceOrigin);
     }
 

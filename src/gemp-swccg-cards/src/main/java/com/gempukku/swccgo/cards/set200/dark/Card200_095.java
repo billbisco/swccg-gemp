@@ -32,12 +32,14 @@ import java.util.List;
 /**
  * Set: Set 0
  * Type: Effect
- * Title: Fanfare (V)
+ * Title: Fanfare (Reflections III) (V)
+ * Printed on the Reflections III base card (PC card 4402); the Tatooine printing of the same card is 200_147 (Bill 2026-11-09, two-base printings).
  */
 public class Card200_095 extends AbstractDefensiveShield {
     public Card200_095() {
         super(Side.DARK, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Fanfare", ExpansionSet.SET_0, Rarity.V);
         setVirtualSuffix(true);
+        setBasePrintingTitle("Fanfare (Reflections III)");
         setLore("The Boonta Eve crowds are always looking for new and exciting developments at every Podrace.");
         setGameText("Plays on table. Ice Storm, Lost In The Wilderness, Order To Engage, Sandwhirl and Scramble are canceled. Once per game, may take an Immediate Effect into hand from Reserve Deck; reshuffle. While opponent occupies no battleground systems, Staging Areas is suspended.");
         addIcons(Icon.REFLECTIONS_III, Icon.VIRTUAL_DEFENSIVE_SHIELD);

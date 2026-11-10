@@ -26,7 +26,8 @@ import java.util.List;
 /**
  * Set: Set 25
  * Type: Defensive Shield
- * Title: Let's Keep A Little Optimism Here (V)
+ * Title: Let's Keep A Little Optimism Here (Reflections III) (V)
+ * Printed on the Reflections III base card (PC card 7435); the Death Star II printing of the same card is 225_61 (Bill 2026-11-09, two-base printings).
  */
 public class Card225_051 extends AbstractDefensiveShield {
     public Card225_051() {
@@ -35,6 +36,7 @@ public class Card225_051 extends AbstractDefensiveShield {
         setGameText("Plays on table. Do They Have A Code Clearance? does not modify forfeit values. While you occupy a Renegade planet location, operatives are forfeit = 0, operatives do not add to Force drains and your Force drains may not be reduced.");
         addIcons(Icon.REFLECTIONS_III, Icon.VIRTUAL_DEFENSIVE_SHIELD);
         setVirtualSuffix(true);
+        setBasePrintingTitle("Let's Keep A Little Optimism Here (Reflections III)");
     }
 
     @Override
