@@ -72,7 +72,7 @@ public class LegacyBatchB39VersionsTests {
         assertTrue(library.getSwccgoCardBlueprint("1240_26").hasVirtualSuffix());
         assertTrue(library.getSwccgoCardBlueprint("1240_26").getGameText().contains("That [Maintenance] card is power -3, may not apply its ability"));
         assertTrue(library.getSwccgoCardBlueprint("1240_81").getGameText().contains("That [Maintenance] card is power -3, opponent must use 1 Force"));
-        assertTrue(library.getSwccgoCardBlueprint("1282_10_BACK").getGameText().endsWith("Flip this card if opponent controls two Kashyyyk battlegrounds locations."));
+        assertTrue(library.getSwccgoCardBlueprint("1282_10_BACK").getGameText().endsWith("Flip this card if opponent controls two Kashyyyk locations."));
         assertEquals(library.getSwccgoCardBlueprint("601_29_BACK").getGameText(), library.getSwccgoCardBlueprint("1282_10_BACK").getGameText());
     }
 

@@ -14,6 +14,7 @@ import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Species;
 import com.gempukku.swccgo.common.SpotOverride;
 import com.gempukku.swccgo.common.Title;
+import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
@@ -45,14 +46,15 @@ import java.util.List;
  * Set: Block 8
  * Type: Objective
  * Title: Wookiee Slaving Operation / Indentured To The Empire
- * Back text as errata'd by the Competitive Balance Team on 2014-07-23 (PC forum p894811, as posted: "two Kashyyyk
- * battlegrounds locations"; same play). The original back is 2282_10_BACK.
+ * Back text as errata'd by the Competitive Balance Team on 2014-07-23 (PC forum p894811: "battlegrounds" struck,
+ * "locations" added): flips when opponent controls two Kashyyyk locations (any, not only battlegrounds). The original back
+ * (two Kashyyyk battlegrounds) is 2282_10_BACK.
  */
 public class Card601_029_BACK extends AbstractObjective {
     public Card601_029_BACK() {
         super(Side.DARK, 7, Title.Indentured_To_The_Empire, ExpansionSet.LEGACY, Rarity.V);
         setGameText("While this side up, whenever you 'enslave' a character, opponent must choose to use 2 Force or lose 1 Force. Once per turn, during battle may add or subtract up to X from your just drawn destiny, where X = the number of Kashyyyk locations you control with a slaver. Once per turn, if you just retrieved Force during battle, may take a slaver, starship, or vehicle retrieved into hand.\n" +
-                "Flip this card if opponent controls two Kashyyyk battlegrounds locations.");
+                "Flip this card if opponent controls two Kashyyyk locations.");
         addIcons(Icon.CLOUD_CITY, Icon.LEGACY_BLOCK_8);
         setAsLegacy(true);
     }
@@ -72,6 +74,11 @@ public class Card601_029_BACK extends AbstractObjective {
         return modifiers;
     }
 
+    /** Locations opponent must control two of to flip this side back (2014-07-23 errata: any Kashyyyk locations). */
+    protected Filter opponentFlipLocations() {
+        return Filters.Kashyyyk_location;
+    }
+
     @Override
     protected List<RequiredGameTextTriggerAction> getGameTextRequiredAfterTriggers(final SwccgGame game, EffectResult effectResult, PhysicalCard self, int gameTextSourceCardId) {
         final String playerId = self.getOwner();
@@ -84,7 +91,7 @@ public class Card601_029_BACK extends AbstractObjective {
         // Check condition(s)
         if (TriggerConditions.isTableChanged(game, effectResult)
                 && GameConditions.canBeFlipped(game, self)
-                && GameConditions.controls(game, opponent, 2, SpotOverride.INCLUDE_EXCLUDED_FROM_BATTLE, Filters.and(Filters.Kashyyyk_location, Filters.battleground))) {
+                && GameConditions.controls(game, opponent, 2, SpotOverride.INCLUDE_EXCLUDED_FROM_BATTLE, opponentFlipLocations())) {
 
             RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId, gameTextActionId);
             action.setSingletonTrigger(true);
