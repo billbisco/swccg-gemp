@@ -31,7 +31,7 @@ import java.util.List;
 /** Legacy Block 6.2: Broken Concentration (V). */
 public class Card1262_005 extends Card4_118 {
     public Card1262_005() {
-        setGameText("Deploy on table. Cancels game text of [Reflections 3] Naboo sites. Training destiny draws are -X, where X = apprentice's ability - Jedi Test Number. Once per game, may place this Effect out of play to reduce your battle damage by 4. Immune to NOOOOOOOOOOOO!. (Immune to Alter.)");
+        setGameText("Deploy on table. Cancels game text of [Reflections 3] Naboo sites. Training destiny draws are -X, where X = apprentice's ability - Jedi Test number. Once per game, may place this Effect out of play to reduce your battle damage by 4. Immune to NOOOOOOOOOOOO!. (Immune to Alter.)");
         setVirtualSuffix(true);
         addIcon(Icon.LEGACY_BLOCK_6);
         setAsLegacy(true);

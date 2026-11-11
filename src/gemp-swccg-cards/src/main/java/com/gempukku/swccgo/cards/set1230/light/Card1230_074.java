@@ -42,7 +42,7 @@ public class Card1230_074 extends AbstractRebel {
         super(Side.LIGHT, 2, 2, 2, 2, 4, Title.Lieutenant_Blount, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_3, Rarity.V);
         setVirtualSuffix(true);
         setLore("Wingman of Colonel Cracken. Spy and scout. Former agent of the Imperial Security Bureau. Defected and joined Rebel Intelligence. Seasoned combat veteran.");
-        setGameText("Adds 2 to power of anything he pilots. Double Agent is a Used Interrupt. Once per game: may take Double Agent into hand from Reserve Deck; reshuffle. OR if you just targeted with Double Agent, may add 2 to your total destiny. OR may target opponent's bounty hunter with Double Agent instead of their spy.");
+        setGameText("Adds 2 to power of anything he pilots. Double Agent is a Used Interrupt. Once per game: may take Double Agent into hand from Reserve Deck; reshuffle. OR If you just targeted with Double Agent, may add 2 to your total destiny. OR May target opponent's bounty hunter with Double Agent instead of their spy.");
         addIcons(Icon.PILOT, Icon.WARRIOR, Icon.DEATH_STAR_II);
         addKeywords(Keyword.SPY, Keyword.SCOUT);
         addPersona(Persona.BLOUNT);

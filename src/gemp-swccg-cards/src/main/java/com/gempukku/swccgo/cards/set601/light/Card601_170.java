@@ -35,7 +35,7 @@ import java.util.List;
 public class Card601_170 extends AbstractStarfighter {
     public Card601_170() {
         super(Side.LIGHT, 2, 3, 2, null, 0, 6, 5, "Jedi Starfighter", Uniqueness.RESTRICTED_2, ExpansionSet.LEGACY, Rarity.V);
-        setGameText("May add 1 pilot and 1 astromech. * = pilot's ability. Obi-wan and Plo are matching pilots and deploy -2 aboard. While a Jedi aboard, power +2 and immune to Lateral Damage and attrition < 5.");
+        setGameText("May add 1 pilot and 1 astromech. * = pilot's ability. Obi-Wan and Plo are matching pilots and deploy -2 aboard. While a Jedi aboard, power +2 and immune to Lateral Damage and attrition < 5.");
         addIcons(Icon.EPISODE_I, Icon.REPUBLIC, Icon.NAV_COMPUTER, Icon.LEGACY_BLOCK_5, Icon.SCOMP_LINK, Icon.DEATH_STAR_II);
         addModelType(ModelType.JEDI_INTERCEPTOR);
         setPilotCapacity(1);
