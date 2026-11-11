@@ -12,7 +12,7 @@ import java.time.LocalDate;
 public class Card2210_2136 extends Card2210_136 {
     public Card2210_2136() {
         super();
-        setLegacyVersion(new LegacyVersion("1210_136", "PC-E2",
+        setLegacyVersion(new LegacyVersion("1210_136", "PC-E3",
                 "Players Committee Virtual Cards Master List (official text as of 2013-04-27)", LocalDate.of(2013, 4, 27), LocalDate.of(2014, 3, 27)));
     }
 }

@@ -27,7 +27,7 @@ import static org.junit.Assert.fail;
  * same card as their current printing.
  */
 public class LegacyVersionsTests {
-    private static final List<String> REPEATS_OF_CURRENT_TEXT = List.of("2220_3169", "2220_4169", "2261_1033", "2261_5033", "2240_1055", "2273_2010", "2281_32", "2281_1032", "2281_2037", "2261_1024", "2261_3024", "2261_21", "2261_2021", "2261_1093", "2261_2093");
+    private static final List<String> REPEATS_OF_CURRENT_TEXT = List.of("2220_3169", "2220_4169", "2261_1033", "2261_5033", "2240_1055", "2273_2010", "2281_32", "2281_1032", "2281_2037", "2261_1024", "2261_3024", "2261_21", "2261_2021", "2261_1093", "2261_2093", "2261_3093", "2281_3032");
     private static final List<String> PILOT_VERSIONS = List.of("2261_33", "2272_23");
 
     private static SwccgCardBlueprintLibrary library;
