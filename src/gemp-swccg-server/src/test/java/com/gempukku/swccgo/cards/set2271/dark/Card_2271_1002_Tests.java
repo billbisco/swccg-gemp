@@ -30,7 +30,7 @@ public class Card_2271_1002_Tests {
     public void CardListVaderIsTheCurrentCardWithItsOwnText() {
         assertVersion(VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("2271_1002"),
                 VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("1271_2"), "1271_2", "PC-E2",
-                LocalDate.of(2012, 7, 21), LocalDate.of(2013, 4, 27),
+                LocalDate.of(2012, 7, 21), LocalDate.of(2013, 2, 25),
                 "Adds 3 to power of anything he pilots. [Vader] cards never deploy unless Rise Of The Dark Lord on table. Once per turn, if at a site you control, may apply his ability to draw battle destiny elsewhere. Immune to Clash Of Sabers and attrition < 5. May not be Disarmed.");
     }
 

@@ -7418,4 +7418,12 @@ const fixedImages = {
 "2273_4027":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/masterkenobi.gif",
 "1273_27":"https://wiki.swccg.com/images/0/0a/VL-history-1273-27-front-master.png",
 "601_54":"https://wiki.swccg.com/images/0/0a/VL-history-1273-27-front-master.png",
+// Batch S1 (Bill 2026-11-11 09:14): the PC card images of Darth Vader MMTM, Luke Trust Me and BoShek are versions of their own (PC-E3,
+// 25 Feb 2013); the current cards (Master List, PC-E4) show their Master List slips.
+"2271_3002":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Dark/large/darthvadermoremachinethanman.gif",
+"2271_3039":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/luketrustme.gif",
+"2261_3065":"https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Light/large/boshekbrashsmuggler.gif",
+"1271_2":"https://wiki.swccg.com/images/c/c1/VL-history-1271-2-front-master.png",
+"1271_39":"https://wiki.swccg.com/images/6/6e/VL-history-1271-39-front-master.png",
+"1261_65":"https://wiki.swccg.com/images/5/59/VL-history-1261-65-front-master.png",
 };

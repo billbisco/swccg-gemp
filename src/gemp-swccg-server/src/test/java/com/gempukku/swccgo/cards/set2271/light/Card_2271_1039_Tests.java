@@ -29,7 +29,7 @@ public class Card_2271_1039_Tests {
     public void ErrataLukeTrustMeIsTheCurrentCardWithItsOwnText() {
         assertVersion(VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("2271_1039"),
                 VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("1271_39"), "1271_39", "PC-E2",
-                LocalDate.of(2012, 7, 21), LocalDate.of(2013, 4, 27),
+                LocalDate.of(2012, 7, 21), LocalDate.of(2013, 2, 25),
                 "If you have no Epic Events on table (and did not play an Epic Even at the start of the game), deploy on table. Once per game, may take a [Setup] card into hand from Reserve Deck; reshuffle. May place this Effect in Used Pile to take an Immediate Effect into hand from Reserve Deck; reshuffle. May place this Effect in Lost Pile to cancel a Force drain. (Immune to Alter.)");
     }
 

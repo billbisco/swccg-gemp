@@ -60,7 +60,7 @@ public class LegacyVersionsTests {
     }
 
     /** Versions whose words the current text (a later printing) repeats word for word (Batch S1: the PC forum errata texts). */
-    private static final java.util.Set<String> WORD_FOR_WORD_REPEATS = java.util.Set.of("2271_2002", "2250_2044", "2273_3027", "2271_2039", "2261_2065");
+    private static final java.util.Set<String> WORD_FOR_WORD_REPEATS = java.util.Set.of("2271_2002", "2250_2044", "2273_3027", "2271_2039", "2261_2065", "2271_3002", "2271_3039", "2261_3065");
 
     @Test
     public void EveryImplementedVersionIsTheSameCardAsItsCurrentPrinting() {

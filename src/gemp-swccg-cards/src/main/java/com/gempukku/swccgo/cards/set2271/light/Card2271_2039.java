@@ -8,7 +8,7 @@ import java.time.LocalDate;
 /**
  * Title: Luke, Trust Me
  * PC-E1 version of 1271_39 (Batch S1, Bill 2026-11-11: every published text is a version): the PC forum errata of
- * 2012-01-19. The same words return as PC-E3, the current card (Master List 2013-04-27 and PC card image), after the
+ * 2012-01-19. The same words return in the PC card image (PC-E3, by 2013-02-25) and the Master List (PC-E4, the current card; 2013-04-27 ), after the
  * card list's PC-E2 (2271_1039, "Epic Even"). Same text and play as the current card.
  * Anything Goes only (docs/legacy-versions.md).
  */

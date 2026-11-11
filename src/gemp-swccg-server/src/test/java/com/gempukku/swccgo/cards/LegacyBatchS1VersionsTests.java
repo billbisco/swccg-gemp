@@ -28,7 +28,8 @@ public class LegacyBatchS1VersionsTests {
     /** version id -> {current printing id, label, printed on, superseded on} */
     private static final Map<String, String[]> VERSIONS = Map.ofEntries(
             Map.entry("2271_2002", new String[]{"1271_2", "PC-E1", "2011-03-21", "2012-07-21"}),
-            Map.entry("2271_1002", new String[]{"1271_2", "PC-E2", "2012-07-21", "2013-04-27"}),
+            Map.entry("2271_1002", new String[]{"1271_2", "PC-E2", "2012-07-21", "2013-02-25"}),
+            Map.entry("2271_3002", new String[]{"1271_2", "PC-E3", "2013-02-25", "2013-04-27"}),
             Map.entry("2250_2044", new String[]{"1250_44", "PC-E1", "2011-03-21", "2012-07-21"}),
             Map.entry("2250_1044", new String[]{"1250_44", "PC-E2", "2012-07-21", "2013-02-25"}),
             Map.entry("2250_3044", new String[]{"1250_44", "PC-E3", "2013-02-25", "2013-04-27"}),
@@ -36,9 +37,11 @@ public class LegacyBatchS1VersionsTests {
             Map.entry("2273_2027", new String[]{"1273_27", "PC-E3", "2012-07-21", "2013-02-25"}),
             Map.entry("2273_4027", new String[]{"1273_27", "PC-E4", "2013-02-25", "2013-04-27"}),
             Map.entry("2271_2039", new String[]{"1271_39", "PC-E1", "2012-01-19", "2012-07-21"}),
-            Map.entry("2271_1039", new String[]{"1271_39", "PC-E2", "2012-07-21", "2013-04-27"}),
+            Map.entry("2271_1039", new String[]{"1271_39", "PC-E2", "2012-07-21", "2013-02-25"}),
+            Map.entry("2271_3039", new String[]{"1271_39", "PC-E3", "2013-02-25", "2013-04-27"}),
             Map.entry("2261_2065", new String[]{"1261_65", "PC-E1", "2012-02-21", "2012-07-21"}),
-            Map.entry("2261_1065", new String[]{"1261_65", "PC-E2", "2012-07-21", "2013-04-27"}),
+            Map.entry("2261_1065", new String[]{"1261_65", "PC-E2", "2012-07-21", "2013-02-25"}),
+            Map.entry("2261_3065", new String[]{"1261_65", "PC-E3", "2013-02-25", "2013-04-27"}),
             Map.entry("2220_1139", new String[]{"1220_139", "PC-E1", "2009-09-09", "2009-12-07"}),
             Map.entry("2220_139", new String[]{"1220_139", "PC-E2", "2009-12-07", "2012-07-21"}),
             Map.entry("2250_1033", new String[]{"1250_33", "PC-E1", "2009-09-09", "2009-12-07"}),
@@ -55,7 +58,7 @@ public class LegacyBatchS1VersionsTests {
 
     @Test
     public void VersionsAreInDateOrder() {
-        assertEquals(18, VERSIONS.size());
+        assertEquals(21, VERSIONS.size());
         VERSIONS.forEach((id, v) -> {
             SwccgCardBlueprint card = library.getSwccgoCardBlueprint(id);
             assertNotNull(id, card);
@@ -73,7 +76,7 @@ public class LegacyBatchS1VersionsTests {
 
     @Test
     public void ForumVersionsRepeatTheCurrentWords() {
-        for (String[] p : new String[][]{{"2271_2002", "1271_2"}, {"2250_2044", "1250_44"}, {"2273_3027", "1273_27"}, {"2271_2039", "1271_39"}, {"2261_2065", "1261_65"}})
+        for (String[] p : new String[][]{{"2271_2002", "1271_2"}, {"2271_3002", "1271_2"}, {"2271_3039", "1271_39"}, {"2261_3065", "1261_65"}, {"2250_2044", "1250_44"}, {"2273_3027", "1273_27"}, {"2271_2039", "1271_39"}, {"2261_2065", "1261_65"}})
             assertEquals(p[0], library.getSwccgoCardBlueprint(p[1]).getGameText(), library.getSwccgoCardBlueprint(p[0]).getGameText());
         assertTrue(library.getSwccgoCardBlueprint("2250_3044").getGameText().endsWith("Immune to You Are Beaten and attrition."));
         assertTrue(library.getSwccgoCardBlueprint("2273_4027").getGameText().contains("Used Pile; Once per turn"));

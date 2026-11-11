@@ -15,7 +15,7 @@ import com.gempukku.swccgo.logic.modifiers.*;
 
 import java.util.List;
 
-/** Darth Vader, More Machine Than Man as on the PC website card list (PC-E2, by 2012-07-21), a version of 1271_2, after the PC forum errata of 2011-03-21 (PC-E1, 2271_2002) and before the Master List (2013-04-27) and PC card image, which repeat the forum text word for word (PC-E3, the current card). Same play as the current card (sentence order only). Anything Goes only (docs/legacy-versions.md). */
+/** Darth Vader, More Machine Than Man as on the PC website card list (PC-E2, by 2012-07-21), a version of 1271_2, after the PC forum errata of 2011-03-21 (PC-E1, 2271_2002) and before the Master List (2013-04-27) and PC card image, which repeat the forum text word for word (PC card image PC-E3, 2013-02-25; Master List PC-E4, the current card). Same play as the current card (sentence order only). Anything Goes only (docs/legacy-versions.md). */
 public class Card2271_1002 extends AbstractImperial {
     private static final String RISE = "Rise Of The Dark Lord";
 
@@ -24,7 +24,7 @@ public class Card2271_1002 extends AbstractImperial {
         setLore("Dark Lord of the Sith. Servant of Emperor. Encased in armor with cybernetic life support. Student of Obi-Wan Kenobi. Was the best starpilot in the galaxy. Cunning warrior.");
         setGameText("Adds 3 to power of anything he pilots. [Vader] cards never deploy unless Rise Of The Dark Lord on table. Once per turn, if at a site you control, may apply his ability to draw battle destiny elsewhere. Immune to Clash Of Sabers and attrition < 5. May not be Disarmed.");
         setLegacyVersion(new LegacyVersion("1271_2", "PC-E2",
-                "PC website card list (by 2012-07-21)", LocalDate.of(2012, 7, 21), LocalDate.of(2013, 4, 27)));
+                "PC website card list (by 2012-07-21)", LocalDate.of(2012, 7, 21), LocalDate.of(2013, 2, 25)));
         addPersona(Persona.VADER);
         addIcons(Icon.VADER, Icon.PILOT, Icon.WARRIOR);
         addImmuneToCardTitle(Title.Clash_Of_Sabers);

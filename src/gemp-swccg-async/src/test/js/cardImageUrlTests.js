@@ -130,8 +130,6 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('2271_1046'), 'https://wik
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2271_46'), 'https://swccg.com/cards/legacy/VirtualBlock7-Light/large/restorefreedomtothegalaxy.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2271_2046'), 'https://wiki.swccg.com/images/4/4d/VB7-00-Restore_Freedom_To_The_Galaxy-PC-E2-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2273_1010'), 'https://wiki.swccg.com/images/0/00/VB7-00-Kessel_Surveillance_System-PC-E1-cardmaker.png');
-assert.strictEqual(defaults.CardUnderTest.getImageUrl('1271_2'), 'https://swccg.com/cards/legacy/VirtualBlock7-Dark/large/darthvadermoremachinethanman.gif');
-assert.strictEqual(defaults.CardUnderTest.getImageUrl('1271_39'), 'https://swccg.com/cards/legacy/VirtualBlock7-Light/large/luketrustme.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1273_10'), 'https://swccg.com/cards/legacy/VirtualBlock7-Dark/large/kesselsurveillancesystem.gif');
 // Batch B08 (Virtual Block 5): current cards and PC-E1 version cards show the image of their own text
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_2'), 'https://wiki.swccg.com/images/0/07/VB5-02-Aurra_Sing-PC-E1-cardmaker.png');
@@ -230,7 +228,6 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_80'), 'https://wiki.
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_1010'), 'https://wiki.swccg.com/images/6/65/VB6-10-Darth_Vader_Betrayer_Of_The_Jedi-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_34'), 'https://wiki.swccg.com/images/4/4a/VB6-34-Fleet_Security_Protocols-original-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_1065'), 'https://wiki.swccg.com/images/b/ba/VB6-63-BoShek_Brash_Smuggler-PC-E2-cardmaker.png');
-assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_65'), 'https://swccg.com/cards/legacy/VirtualBlock6-Light/large/boshekbrashsmuggler.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_65'), 'https://wiki.swccg.com/images/f/fd/VB6-63-BoShek_Brash_Smuggler.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_1034'), 'https://swccg.com/cards/legacy/VirtualBlock6-Dark/large/fleetsecurityprotocols.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_10'), 'https://wiki.swccg.com/images/7/79/VB6-10-Darth_Vader_Betrayer_Of_The_Jedi.png');
@@ -601,3 +598,10 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('2273_3027'), 'https://wik
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2273_4027'), 'https://swccg.com/cards/legacy/VirtualBlock7-Light/large/masterkenobi.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1273_27'), 'https://wiki.swccg.com/images/0/0a/VL-history-1273-27-front-master.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_54'), 'https://wiki.swccg.com/images/0/0a/VL-history-1273-27-front-master.png');
+// Batch S1: PC card images as versions; current cards show their Master List slips
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2271_3002'), 'https://swccg.com/cards/legacy/VirtualBlock7-Dark/large/darthvadermoremachinethanman.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2271_3039'), 'https://swccg.com/cards/legacy/VirtualBlock7-Light/large/luketrustme.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_3065'), 'https://swccg.com/cards/legacy/VirtualBlock6-Light/large/boshekbrashsmuggler.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1271_2'), 'https://wiki.swccg.com/images/c/c1/VL-history-1271-2-front-master.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1271_39'), 'https://wiki.swccg.com/images/6/6e/VL-history-1271-39-front-master.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_65'), 'https://wiki.swccg.com/images/5/59/VL-history-1261-65-front-master.png');

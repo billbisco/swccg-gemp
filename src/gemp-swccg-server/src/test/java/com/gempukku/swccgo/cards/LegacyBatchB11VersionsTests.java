@@ -91,7 +91,7 @@ public class LegacyBatchB11VersionsTests {
         // The PC website card list (by 2012-07-21, PC-E2 since Batch S1) printed "Epic Even"; the forum errata (2012-01-19, PC-E1, current) and the Master List print "Epic Event".
         LegacyVersion e1 = library.getSwccgoCardBlueprint("2271_1039").getLegacyVersion();
         assertEquals(LocalDate.of(2012, 7, 21), e1.printedOn());
-        assertEquals(LocalDate.of(2013, 4, 27), e1.supersededOn());
+        assertEquals(LocalDate.of(2013, 2, 25), e1.supersededOn());
         assertEquals(true, library.getSwccgoCardBlueprint("1271_39").getGameText().contains("Epic Event at the start"));
     }
 
