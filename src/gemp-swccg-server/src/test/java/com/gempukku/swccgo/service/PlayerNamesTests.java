@@ -73,4 +73,55 @@ public class PlayerNamesTests {
         for (String n : new String[]{"R", "Luke Sky", "Luke_Sky", "José Núñez", "김민준", "Ana María de la Cruz Solo Organa"})
             assertEquals(n, PlayerNames.forDisplay(n), "every well-formed name shows unchanged");
     }
+
+    /** A code point's class from Java's own Character data, the way the name table defines it. */
+    private static char javaClass(int cp) {
+        int type = Character.getType(cp);
+        if (type == Character.DASH_PUNCTUATION)
+            return PlayerNames.DASH;
+        if (Character.isSpaceChar(cp) || (cp >= 0x09 && cp <= 0x0D) || cp == 0x85)   // White_Space
+            return PlayerNames.SPACE;
+        if (type == Character.FORMAT || (cp >= 0xFE00 && cp <= 0xFE0F) || (cp >= 0x180B && cp <= 0x180F)
+                || cp == 0x034F || cp == 0x115F || cp == 0x1160 || cp == 0x17B4 || cp == 0x17B5 || cp == 0x2065
+                || cp == 0x3164 || cp == 0xFFA0 || (cp >= 0xFFF0 && cp <= 0xFFF8))     // Variation_Selector, ODI
+            return PlayerNames.INVISIBLE;
+        if (Character.isLetter(cp) || type == Character.DECIMAL_DIGIT_NUMBER)
+            return PlayerNames.ALNUM;
+        if (type == Character.NON_SPACING_MARK || type == Character.COMBINING_SPACING_MARK)
+            return PlayerNames.MARK;
+        return PlayerNames.OTHER;
+    }
+
+    /** The name table is Unicode 15.0, Java 21's own version: it agrees with Character on every BMP code point. */
+    @Test
+    public void tableIsJavaUnicode() {
+        int differ = 0;
+        for (int cp = 0; cp <= 0xFFFF; cp++) {
+            char t = PlayerNames.classOf(cp), j = javaClass(cp);
+            if (t != j) {
+                // a newer JDK knows characters added after 15.0; the table keeps calling them other
+                assertEquals(PlayerNames.OTHER, t, "U+" + Integer.toHexString(cp));
+                differ++;
+            }
+        }
+        if (Runtime.version().feature() == 21)
+            assertEquals(0, differ);
+        assertEquals(PlayerNames.OTHER, PlayerNames.classOf(0x10000));
+    }
+
+    /**
+     * Letters and marks added in Unicode 16.0 and 17.0 (Go and browsers know them, Java 21 does not) are refused
+     * and not shown, the same way the sign-in service strips them (t130u).
+     */
+    @Test
+    public void newerThan15Refused() {
+        for (String n : new String[]{"Han\u1C89Solo", "Luke\uA7CB", "Leia\uA7F1", "Ben\u0C5C", "Ra\u0897y",
+                "Rey\u1ACF", "\u1C89"})
+            assertFalse(PlayerNames.isWellFormed(n), n);
+        assertEquals("HanSolo", PlayerNames.forDisplay("Han\u1C89Solo"));
+        assertEquals("Ray", PlayerNames.forDisplay("Ra\u0897y"));
+        assertEquals(PlayerNames.DISPLAY_PLACEHOLDER, PlayerNames.forDisplay("\u1C89\u1C8A"));
+        assertTrue(PlayerNames.isWellFormed("\uA7C0\u1C80\u0CDD"));   // letters already in 15.0
+        assertFalse(PlayerNames.isWellFormed("Han\u3164Solo"));         // a Hangul filler is invisible, not a letter
+    }
 }

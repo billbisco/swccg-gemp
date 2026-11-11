@@ -72,11 +72,11 @@ public class PlayerNamesWebClientTests {
     @Test
     public void NameFilterScriptMirrorsPlayerNames() throws Exception {
         //test4: runs src/test/js/playerNamesTests.js when node is installed (it is on the GitHub runners): the
-        // browser filter matches PlayerNames.forDisplay for every assigned BMP character.
+        // browser filter matches PlayerNames.forDisplay for every BMP character (both read the Unicode 15.0 table).
         Assumptions.assumeTrue(nodeAvailable(), "node not installed");
         StringBuilder sb = new StringBuilder();
         for (int cp = 0; cp <= 0xFFFF; cp++) {
-            if (cp >= 0xD800 && cp <= 0xDFFF || !Character.isDefined(cp))
+            if (cp >= 0xD800 && cp <= 0xDFFF)
                 continue;
             String shown = PlayerNames.forDisplay("a" + (char) cp + "b");
             if (shown.indexOf('\n') >= 0 || shown.indexOf('\r') >= 0)
@@ -95,6 +95,20 @@ public class PlayerNamesWebClientTests {
         } finally {
             Files.deleteIfExists(expected);
         }
+    }
+
+    @Test
+    public void NameFilterScriptHasPlayerNamesTable() throws IOException {
+        //test5: js/swccg-names.js carries the same Unicode 15.0 table as PlayerNames (and the sign-in service; all
+        // copies come from the sign-in service's scripts/gen-namechars.py).
+        String js = read("js/swccg-names.js");
+        int a = js.indexOf("var CHARS15 = "), b = js.indexOf("/* END CHARS15 */");
+        assertTrue(a > 0 && b > a, "CHARS15 block");
+        StringBuilder table = new StringBuilder();
+        String[] parts = js.substring(a, b).split("\"", -1);
+        for (int i = 1; i < parts.length; i += 2)
+            table.append(parts[i]);
+        assertEquals(PlayerNames.charTable(), table.toString());
     }
 
     private static boolean nodeAvailable() {
