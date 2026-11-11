@@ -9,10 +9,11 @@ import java.time.LocalDate;
  * Set: Virtual Block 1
  * Type: Effect
  * Title: Hyperwave Scan
- * Original version of 1210_37: the text of the Virtual Block 1 release sheet (2009-12-07), card #37; the PC card
- * image prints it. The PC website card list (by 2012-07-21, PC-E1, 2210_1037) changes it: “3 force” is written “3
- * Force”, with a capital F. The Master List of 2013-04-27 prints the original words again; it is listed as its own
- * version (PC-E2, the current card; Bill 2026-11-11: every publication is a version). Same play. Anything Goes only
+ * Original version of 1210_37. Order (Bill 2026-11-11: every publication is a version; a PC card image is placed at
+ * its server upload date): original (2210_37) = the Virtual Block 1 release sheet (2009-12-07), card #37; PC-E1
+ * (2210_1037) = the PC website card list (by 2012-07-21): “3 force” is written “3 Force”, with a capital F. PC-E2
+ * (2210_2037) = the PC card image (uploaded 2013-02-25; it may have been made earlier), the original words again;
+ * PC-E3 = the Master List (2013-04-27), the original words again, the current card. Same play. Anything Goes only
  * (docs/legacy-versions.md).
  */
 public class Card2210_037 extends Card1210_037 {

@@ -9,11 +9,12 @@ import java.time.LocalDate;
  * Set: Virtual Block 5
  * Type: Card
  * Title: Plo Koon (V) (Virtual Block 5)
- * Original version of 1250_49: the text of the Virtual Block 5 release sheet (2009-12-07), card #48; the PC card
- * image prints it. The PC website card list (by 2012-07-21, PC-E1, 2250_1049) changes it: “regardless of Objective
- * restrictions” is written “regardless of objective restrictions”, with a small o. The Master List of 2013-04-27
- * prints the original words again; it is listed as its own version (PC-E2, the current card; Bill 2026-11-11: every
- * publication is a version). Same play. Anything Goes only (docs/legacy-versions.md).
+ * Original version of 1250_49. Order (Bill 2026-11-11: every publication is a version; a PC card image is placed at
+ * its server upload date): original (2250_49) = the Virtual Block 5 release sheet (2009-12-07), card #48; PC-E1
+ * (2250_1049) = the PC website card list (by 2012-07-21): “regardless of Objective restrictions” is written
+ * “regardless of objective restrictions”, with a small o. PC-E2 (2250_2049) = the PC card image (uploaded 2013-02-25;
+ * it may have been made earlier), the original words again; PC-E3 = the Master List (2013-04-27), the original words
+ * again, the current card. Same play. Anything Goes only (docs/legacy-versions.md).
  */
 public class Card2250_049 extends Card1250_049 {
     public Card2250_049() {

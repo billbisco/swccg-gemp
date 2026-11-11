@@ -9,10 +9,12 @@ import java.time.LocalDate;
  * Set: Virtual Block 8.1
  * Type: Effect
  * Title: You'll Be Dead!
- * PC-E1 version of 1281_14: the PC website card list text (by 2012-07-21; Virtual Block 8 list and Virtual master
- * list to 2013-01-11). Against the original (2281_14): “a Lost Interrupt” is written “a Lost interrupt”, with a small
- * i. The Master List of 2013-04-27 (PC-E2, the current card) prints the original words again (swccg-guild/work#236;
- * Bill 2026-11-11: every publication is a version). Same play. Anything Goes only (docs/legacy-versions.md).
+ * PC-E1 version of 1281_14. Order (Bill 2026-11-11: every publication is a version; a PC card image is placed at its
+ * server upload date): original (2281_14) = the Virtual Block 8.1 release sheet (2012-05-11), card #03; PC-E1
+ * (2281_1014) = the PC website card list (by 2012-07-21): “a Lost Interrupt” is written “a Lost interrupt”, with a
+ * small i. PC-E2 (2281_2014) = the Master List (2013-04-27), the original words again; PC-E3 = the PC card image
+ * (uploaded 2013-05-07; it may have been made earlier), the original words again, the current card. Same play.
+ * Anything Goes only (docs/legacy-versions.md).
  */
 public class Card2281_1014 extends Card601_194 {
     public Card2281_1014() {

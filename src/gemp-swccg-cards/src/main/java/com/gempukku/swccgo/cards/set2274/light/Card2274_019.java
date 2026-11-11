@@ -9,12 +9,13 @@ import java.time.LocalDate;
  * Set: Virtual Block 7.4
  * Type: Effect
  * Title: Rebel Sacrifice
- * Original version of 1274_19: the text of the Virtual Block 7.4 release sheet (2011-12-16), card #05; the PC card
- * image prints it. The PC website card list (by 2012-07-21, PC-E1, 2274_1019) changes it: two changes: the full stop
- * after “Death Star” moves outside the closing quote mark (“Death Star.” becomes “Death Star”.), and “a Force drain”
- * is written “a Force Drain”, with a capital D. The list's missing space after the written-out [Light Side] icon
- * (“[Light Side],and”) is icon notation, not a change. The Master List of 2013-04-27 prints the original words again;
- * it is listed as its own version (PC-E2, the current card; Bill 2026-11-11: every publication is a version). Same
+ * Original version of 1274_19. Order (Bill 2026-11-11: every publication is a version; a PC card image is placed at
+ * its server upload date): original (2274_19) = the Virtual Block 7.4 release sheet (2011-12-16), card #05; PC-E1
+ * (2274_1019) = the PC website card list (by 2012-07-21): two changes: the full stop after “Death Star” moves outside
+ * the closing quote mark (“Death Star.” becomes “Death Star”.), and “a Force drain” is written “a Force Drain”, with
+ * a capital D. The list's missing space after the written-out [Light Side] icon (“[Light Side],and”) is icon
+ * notation, not a change. PC-E2 (2274_2019) = the PC card image (uploaded 2013-02-25; it may have been made earlier),
+ * the original words again; PC-E3 = the Master List (2013-04-27), the original words again, the current card. Same
  * play. Anything Goes only (docs/legacy-versions.md).
  */
 public class Card2274_019 extends Card1274_019 {

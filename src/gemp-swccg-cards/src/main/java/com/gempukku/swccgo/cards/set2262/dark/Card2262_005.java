@@ -9,11 +9,12 @@ import java.time.LocalDate;
  * Set: Virtual Block 6.2
  * Type: Card
  * Title: Broken Concentration (V)
- * Original version of 1262_5: the text of the Virtual Block 6.2 release sheet (2009-12-07), card #05; the PC card
- * image prints it. The PC website card list (by 2012-07-21, PC-E1, 2262_1005) changes it: “Jedi Test number” is
- * written “Jedi Test Number”, with a capital N. The Master List of 2013-04-27 prints the original words again; it is
- * listed as its own version (PC-E2, the current card; Bill 2026-11-11: every publication is a version). Same play.
- * Anything Goes only (docs/legacy-versions.md).
+ * Original version of 1262_5. Order (Bill 2026-11-11: every publication is a version; a PC card image is placed at
+ * its server upload date): original (2262_5) = the Virtual Block 6.2 release sheet (2009-12-07), card #05; PC-E1
+ * (2262_1005) = the PC website card list (by 2012-07-21): “Jedi Test number” is written “Jedi Test Number”, with a
+ * capital N. PC-E2 (2262_2005) = the PC card image (uploaded 2013-02-25; it may have been made earlier), the original
+ * words again; PC-E3 = the Master List (2013-04-27), the original words again, the current card. Same play. Anything
+ * Goes only (docs/legacy-versions.md).
  */
 public class Card2262_005 extends Card1262_005 {
     public Card2262_005() {
