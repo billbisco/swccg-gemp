@@ -576,4 +576,81 @@ public class DbPlayerDAO implements PlayerDAO {
             }
         }
     }
+
+    /** Tables whose name column holds the player's current name; game_history is left as it was at the table. */
+    static final String[][] RENAME_COLUMNS = {
+            {"league_participation", "player_name"},
+            {"league_match", "winner"}, {"league_match", "loser"},
+            {"tournament_player", "player"},
+            {"tournament_match", "player_one"}, {"tournament_match", "player_two"}, {"tournament_match", "winner"},
+            {"transfer", "player"},
+            {"game_save", "owner"}
+    };
+
+    @Override
+    public synchronized String renamePlayer(int playerId, String newName) throws SQLException {
+        if (newName == null || newName.length() < 2 || newName.length() > 10)
+            return "name_invalid";
+        for (int i = 0; i < newName.length(); i++) {
+            char c = newName.charAt(i);
+            if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '-' || c == '_'))
+                return "name_invalid";
+        }
+        String lower = newName.toLowerCase(Locale.ROOT);
+        if (lower.startsWith("admin") || lower.startsWith("guest") || lower.startsWith("system") || lower.startsWith("bye")
+                || Player.isBot(newName))
+            return "name_invalid";
+        try (Connection conn = _dbAccess.getDataSource().getConnection()) {
+            boolean autoCommit = conn.getAutoCommit();
+            conn.setAutoCommit(false);
+            try {
+                String oldName;
+                try (PreparedStatement statement = conn.prepareStatement("SELECT name FROM player WHERE id=? FOR UPDATE")) {
+                    statement.setInt(1, playerId);
+                    try (ResultSet rs = statement.executeQuery()) {
+                        if (!rs.next()) {
+                            conn.rollback();
+                            return "not_found";
+                        }
+                        oldName = rs.getString(1);
+                    }
+                }
+                if (oldName.equals(newName)) {
+                    conn.rollback();
+                    return null;
+                }
+                try (PreparedStatement statement = conn.prepareStatement(
+                        "SELECT 1 FROM player WHERE LOWER(name)=LOWER(?) AND id<>? LIMIT 1")) {
+                    statement.setString(1, newName);
+                    statement.setInt(2, playerId);
+                    try (ResultSet rs = statement.executeQuery()) {
+                        if (rs.next()) {
+                            conn.rollback();
+                            return "name_taken";
+                        }
+                    }
+                }
+                try (PreparedStatement statement = conn.prepareStatement("UPDATE player SET name=? WHERE id=?")) {
+                    statement.setString(1, newName);
+                    statement.setInt(2, playerId);
+                    statement.executeUpdate();
+                }
+                for (String[] tc : RENAME_COLUMNS) {
+                    try (PreparedStatement statement = conn.prepareStatement(
+                            "UPDATE " + tc[0] + " SET " + tc[1] + "=? WHERE " + tc[1] + "=?")) {
+                        statement.setString(1, newName);
+                        statement.setString(2, oldName);
+                        statement.executeUpdate();
+                    }
+                }
+                conn.commit();
+                return null;
+            } catch (SQLException e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(autoCommit);
+            }
+        }
+    }
 }

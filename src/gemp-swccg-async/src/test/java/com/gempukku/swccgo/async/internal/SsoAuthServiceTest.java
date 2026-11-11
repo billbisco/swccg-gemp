@@ -226,7 +226,42 @@ class SsoAuthServiceTest {
         assertEquals(400, r.status);
         assertTrue(r.signature != null);
         verify(auth, never()).closeAccount(anyInt());
-        // Unknown paths stay unsigned 404s (rename is not served until game history is on ids).
-        assertEquals(404, call(KEY, "/internal/v2/rename", "{}", NOW).status);
+        // Unknown paths stay unsigned 404s.
+        assertEquals(404, call(KEY, "/internal/v2/nope", "{}", NOW).status);
+    }
+
+    @Test
+    void renameRenamesEndsTheOldSessionsAndClearsCaches() throws Exception {
+        java.util.List<String> ended = new java.util.ArrayList<>();
+        int[] cleared = {0};
+        service.setSessionEnder(ended::add);
+        service.setRenameHooks(name -> false, () -> cleared[0]++);
+        when(auth.getPlayer(11)).thenReturn(player(11, "Finn", "u"));
+        when(auth.renameAccount(11, "Finn2")).thenReturn(player(11, "Finn2", "u"));
+        JSONObject r = json(call(KEY, SsoAuthService.RENAME, "{\"id\":11,\"username\":\"Finn2\",\"client_ip\":\"" + IP + "\"}", NOW));
+        assertEquals(true, r.get("ok"));
+        assertEquals("Finn2", ((JSONObject) r.get("user")).get("name"));
+        assertEquals(java.util.List.of("Finn"), ended, "sessions of the old name end");
+        assertEquals(1, cleared[0]);
+    }
+
+    @Test
+    void renameRefusals() throws Exception {
+        //test1: a bad name never reaches Play's player table
+        //test2: refused while the player is at a table
+        //test3: Play's own refusals pass through with their code
+        //test4: an empty body is a signed 400, so swccg-login shows the feature
+        service.setRenameHooks(name -> name.equals("Rey"), null);
+        assertEquals("name_invalid", json(call(KEY, SsoAuthService.RENAME, "{\"id\":11,\"username\":\"has space\"}", NOW)).get("error")); //test1
+        verify(auth, never()).renameAccount(anyInt(), org.mockito.ArgumentMatchers.anyString()); //test1
+        when(auth.getPlayer(12)).thenReturn(player(12, "Rey", "u"));
+        assertEquals("busy", json(call(KEY, SsoAuthService.RENAME, "{\"id\":12,\"username\":\"Rey2\"}", NOW)).get("error")); //test2
+        verify(auth, never()).renameAccount(anyInt(), org.mockito.ArgumentMatchers.anyString()); //test2
+        when(auth.getPlayer(13)).thenReturn(player(13, "Poe", "u"));
+        when(auth.renameAccount(13, "Rey")).thenThrow(new AuthService.RenameRefused("name_taken"));
+        assertEquals("name_taken", json(call(KEY, SsoAuthService.RENAME, "{\"id\":13,\"username\":\"Rey\"}", NOW)).get("error")); //test3
+        WikiAuthService.Result probe = call(KEY, SsoAuthService.RENAME, "{}", NOW);
+        assertEquals(400, probe.status); //test4
+        assertTrue(probe.signature != null); //test4
     }
 }

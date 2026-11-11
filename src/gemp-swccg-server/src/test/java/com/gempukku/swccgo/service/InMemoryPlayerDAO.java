@@ -199,4 +199,21 @@ class InMemoryPlayerDAO implements PlayerDAO {
     public List<Player> findSimilarAccounts(String playerName) {
         return Collections.emptyList();
     }
+
+    @Override
+    public String renamePlayer(int playerId, String newName) {
+        Player old = _players.get(playerId);
+        if (old == null)
+            return "not_found";
+        String lower = newName == null ? "" : newName.toLowerCase();
+        if (!newName.matches("^[A-Za-z0-9_-]{2,10}$") || lower.startsWith("admin") || lower.startsWith("guest")
+                || lower.startsWith("system") || lower.startsWith("bye") || Player.isBot(newName))
+            return "name_invalid";
+        for (Player p : _players.values())
+            if (p.getId() != playerId && p.getName().equalsIgnoreCase(newName))
+                return "name_taken";
+        _players.put(playerId, new Player(playerId, newName, old.getPassword(), old.getType(), old.getLastLoginReward(),
+                old.getBannedUntil(), old.getCreateIp(), old.getLastIp()));
+        return null;
+    }
 }

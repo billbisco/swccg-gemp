@@ -66,6 +66,11 @@ public class GameHistoryService {
         return _gameHistoryDAO.getGameHistoryForPlayer(player, start, count);
     }
 
+    /** The account id behind a replay (swccg-guild/work#264), or null. */
+    public Integer getRecordingOwnerId(String tableName, String recordingId) {
+        return _gameHistoryDAO.getRecordingOwnerId(tableName, recordingId);
+    }
+
     public int getActivePlayersCount() {
         return _gameHistoryDAO.getActivePlayersCount();
     }

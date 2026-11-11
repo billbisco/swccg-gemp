@@ -44,6 +44,16 @@ public final class InternalAuthServer {
     /** @param sessions when set, a password set with end_sessions also logs the player out of GEMP. */
     public static Channel startIfConfigured(EventLoopGroup boss, EventLoopGroup workers, AuthService authService,
                                             GempSettingDAO settings, LoggedUserHolder sessions) throws InterruptedException {
+        return startIfConfigured(boss, workers, authService, settings, sessions, null, null);
+    }
+
+    /**
+     * @param atTable     when set, a rename is refused while the player is at a table (#261)
+     * @param afterRename when set, run after a rename (clears the player, league and tournament caches)
+     */
+    public static Channel startIfConfigured(EventLoopGroup boss, EventLoopGroup workers, AuthService authService,
+                                            GempSettingDAO settings, LoggedUserHolder sessions,
+                                            java.util.function.Predicate<String> atTable, Runnable afterRename) throws InterruptedException {
         int port = parsePort(System.getenv("INTERNAL_AUTH_PORT"));
         String secret = System.getenv("GEMP_INTERNAL_AUTH_SECRET");
         InternalAuthKeysV2 v2 = InternalAuthKeysV2.parse(System.getenv("GEMP_INTERNAL_AUTH_V2_KEYS"));
@@ -58,6 +68,8 @@ public final class InternalAuthServer {
         SsoAuthService sso = v2 != null ? new SsoAuthService(authService, settings, v2, setPassword) : null;
         if (sso != null && sessions != null)
             sso.setSessionEnder(sessions::forceLogoutUser);
+        if (sso != null)
+            sso.setRenameHooks(atTable, afterRename);
         ServerBootstrap b = new ServerBootstrap();
         b.group(boss, workers)
                 .channel(NioServerSocketChannel.class)

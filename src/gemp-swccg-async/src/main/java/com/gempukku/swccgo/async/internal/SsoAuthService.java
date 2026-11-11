@@ -19,8 +19,9 @@ import java.util.regex.Pattern;
 /**
  * GEMP-AUTH-V2 for swccg-login (docs/swccg-login-auth-api.md): POST /internal/v2/verify,
  * /internal/v2/register, /internal/v2/players, /internal/v2/status and, only when switched on
- * (GEMP_INTERNAL_AUTH_V2_SET_PASSWORD=true), /internal/v2/password, and /internal/v2/close (a
- * member's self-serve close from swccg-login's account page: deactivate, never delete).
+ * (GEMP_INTERNAL_AUTH_V2_SET_PASSWORD=true), /internal/v2/password, /internal/v2/close (a
+ * member's self-serve close from swccg-login's account page: deactivate, never delete), and
+ * /internal/v2/rename (a rename from the account page; game history keeps the name at the table).
  *
  * Same order of checks as {@link WikiAuthService}: path, method, size, key id + signature,
  * timestamp skew, nonce replay, rate limits, then GEMP. Answers never carry an admin flag or any
@@ -35,7 +36,9 @@ public class SsoAuthService {
     public static final String PASSWORD = "/internal/v2/password";
     /** Self-serve close by player id (#261): deactivates the player and ends their GEMP sessions. */
     public static final String CLOSE = "/internal/v2/close";
-    public static final Set<String> PATHS = Set.of(VERIFY, REGISTER, PLAYERS, STATUS, PASSWORD, CLOSE);
+    /** Rename by player id (#261, #264): refused while the player is at a table; ends their GEMP sessions. */
+    public static final String RENAME = "/internal/v2/rename";
+    public static final Set<String> PATHS = Set.of(VERIFY, REGISTER, PLAYERS, STATUS, PASSWORD, CLOSE, RENAME);
 
     private static final Pattern NONCE = Pattern.compile("^[A-Za-z0-9_-]{16,64}$");
     private static final Pattern IP = Pattern.compile("^[0-9A-Fa-f:.]{2,45}$");
@@ -51,9 +54,14 @@ public class SsoAuthService {
     final KeyedRateLimiter _signupsPerIp = new KeyedRateLimiter(5, 60 * 60_000L);
     final KeyedRateLimiter _global = new KeyedRateLimiter(1200, 60_000L);
     final KeyedRateLimiter _passwordSets = new KeyedRateLimiter(5, 60 * 60_000L);
+    final KeyedRateLimiter _renames = new KeyedRateLimiter(5, 60 * 60_000L);
     private final boolean _setPassword;
     /** Ends every GEMP session (cookie) of a player by name; set when the async server has a LoggedUserHolder. */
     private volatile java.util.function.Consumer<String> _sessionEnder;
+    /** True while a player (by name) is at a table, waiting or playing; a rename is refused then. */
+    private volatile java.util.function.Predicate<String> _atTable;
+    /** Run after a rename, to drop cached copies of the old name (player, league and tournament caches). */
+    private volatile Runnable _afterRename;
 
     public SsoAuthService(AuthService authService, GempSettingDAO settings, InternalAuthKeysV2 keys) {
         this(authService, settings, keys, false);
@@ -69,6 +77,12 @@ public class SsoAuthService {
     /** With {@code "end_sessions": true}, a password set also ends the player's GEMP sessions (classic and SSO). */
     public void setSessionEnder(java.util.function.Consumer<String> ender) {
         _sessionEnder = ender;
+    }
+
+    /** Wires the rename call to the hall (at-table check) and the caches to clear after a rename. */
+    public void setRenameHooks(java.util.function.Predicate<String> atTable, Runnable afterRename) {
+        _atTable = atTable;
+        _afterRename = afterRename;
     }
 
     public WikiAuthService.Result handle(String method, String path, Map<String, String> headers, byte[] body, long nowMillis) {
@@ -114,6 +128,7 @@ public class SsoAuthService {
                 case PLAYERS: return register(json, false, keyId, nonce, nowMillis);
                 case PASSWORD: return setPassword(json, keyId, nonce, nowMillis);
                 case CLOSE: return close(json, keyId, nonce);
+                case RENAME: return rename(json, keyId, nonce, nowMillis);
                 default: return status(json, keyId, nonce);
             }
         } catch (Exception e) {
@@ -231,6 +246,44 @@ public class SsoAuthService {
         if (ender != null)
             ender.accept(p.getName());
         LOG.info("sso-auth: close id=" + id + " key=" + keyId);
+        return result(200, okUser(p), keyId, nonce);
+    }
+
+    private WikiAuthService.Result rename(JSONObject json, String keyId, String nonce, long now) throws Exception {
+        Object id = json.get("id");
+        String username = asString(json.get("username"));
+        String clientIp = asString(json.get("client_ip"));
+        if (!(id instanceof Long) || (Long) id <= 0 || (Long) id > Integer.MAX_VALUE || username == null
+                || username.length() > 64 || (clientIp != null && !clientIp.isEmpty() && !validIp(clientIp)))
+            return result(400, error("bad_request"), keyId, nonce);
+        int playerId = ((Long) id).intValue();
+        String idKey = "id:" + playerId;
+        long retry = _renames.retryAfterSeconds(idKey, now);
+        if (retry > 0)
+            return throttled(retry, keyId, nonce);
+        if (!NAME.matcher(username).matches() || Player.isBot(username))
+            return result(200, error("name_invalid"), keyId, nonce);
+        Player before = _authService.getPlayer(playerId);
+        java.util.function.Predicate<String> atTable = _atTable;
+        if (before != null && atTable != null && atTable.test(before.getName()))
+            return result(200, error("busy"), keyId, nonce);
+        Player p;
+        try {
+            p = _authService.renameAccount(playerId, username);
+        } catch (AuthService.RenameRefused e) {
+            return result(200, error(e.code()), keyId, nonce);
+        }
+        boolean changed = before != null && !before.getName().equals(p.getName());
+        if (changed) {
+            _renames.record(idKey, now);
+            java.util.function.Consumer<String> ender = _sessionEnder;
+            if (ender != null)
+                ender.accept(before.getName());
+            Runnable after = _afterRename;
+            if (after != null)
+                after.run();
+        }
+        LOG.info("sso-auth: rename id=" + playerId + " key=" + keyId + (changed ? " renamed" : " unchanged"));
         return result(200, okUser(p), keyId, nonce);
     }
 
