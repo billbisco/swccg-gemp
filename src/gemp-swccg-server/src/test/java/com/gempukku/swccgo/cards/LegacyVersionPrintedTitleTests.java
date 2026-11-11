@@ -65,7 +65,7 @@ public class LegacyVersionPrintedTitleTests {
         put("2273_9", "Spice Mine Administrator");
         put("2281_9", "The Mandalorian, Father Of Fett");
         put("2281_28", "Rebel Agent");
-        put("2281_45", "Booster's Star Destroyer (V)");
+        put("2281_45", "Booster's Star Destroyer");
         put("2282_13", "Devaronian Uncle");
         put("2282_27", "Lando's Luxury Yacht");
     }};

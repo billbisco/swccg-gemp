@@ -11,6 +11,7 @@ import com.gempukku.swccgo.logic.timing.GuiUtils;
 public class AboutToRetrieveForceResult extends EffectResult {
     private PhysicalCard _source;
     private float _amountToRetrieve;
+    private boolean _becauseCreatureAteCard;
 
     /**
      * Creates an effect result that is triggered during Force retrieval when the Force retrieval amount is set and player
@@ -23,6 +24,27 @@ public class AboutToRetrieveForceResult extends EffectResult {
         super(Type.FORCE_RETRIEVAL_ABOUT_TO_RETRIEVE, performingPlayerId);
         _source = source;
         _amountToRetrieve = amountToRetrieve;
+    }
+
+    /**
+     * Creates an effect result that is triggered during Force retrieval when the Force retrieval amount is set and player
+     * is about to retrieve.
+     * @param source the source card
+     * @param performingPlayerId the player to retrieve Force
+     * @param amountToRetrieve the amount of Force to retrieve
+     * @param becauseCreatureAteCard true if the Force is retrieved because a creature has eaten a card
+     */
+    public AboutToRetrieveForceResult(PhysicalCard source, String performingPlayerId, float amountToRetrieve, boolean becauseCreatureAteCard) {
+        this(source, performingPlayerId, amountToRetrieve);
+        _becauseCreatureAteCard = becauseCreatureAteCard;
+    }
+
+    /**
+     * Determines if the Force is retrieved because a creature has eaten a card.
+     * @return true or false
+     */
+    public boolean isBecauseCreatureAteCard() {
+        return _becauseCreatureAteCard;
     }
 
     /**

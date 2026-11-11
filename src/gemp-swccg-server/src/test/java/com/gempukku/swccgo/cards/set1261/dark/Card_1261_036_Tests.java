@@ -211,4 +211,27 @@ public class Card_1261_036_Tests {
         scn.SkipToDSTurn(Phase.DEPLOY);
         assertFalse(scn.DSCardActionAvailable(scn.GetDSCard("failure"), TARGET_DROID));
     }
+
+    /**
+     * "Deploy on a site": its general deploy target is a site only. The droid is reached only through its own "target a
+     * unique [Episode I] droid" function (opponent's choice), so another card deploying it can never put it on a droid.
+     */
+    @Test(timeout = 15000)
+    public void generalDeployTargetIsASiteNeverADroid() {
+        var scn = droidScenario();
+        var artoo = scn.GetLSCard("artoo");
+        var failure = scn.GetDSCard("failure");
+        var site = scn.GetLSStartingLocation();
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, artoo);
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("trooper"));
+        scn.MoveCardsToDSHand(failure);
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.EnsureDSForcePile(5);
+        var siteTarget = com.gempukku.swccgo.filters.Filters.sameCardId(site);
+        assertNull(failure.getBlueprint().getPlayCardAction(scn.DS, scn.game(), failure, failure, true, 0, null, null, null,
+                null, null, false, 0, com.gempukku.swccgo.filters.Filters.sameCardId(artoo), null));
+        assertNotNull(failure.getBlueprint().getPlayCardAction(scn.DS, scn.game(), failure, failure, true, 0, null, null, null,
+                null, null, false, 0, siteTarget, null));
+    }
 }

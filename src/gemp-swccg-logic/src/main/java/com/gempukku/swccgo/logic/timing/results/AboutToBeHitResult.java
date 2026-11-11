@@ -13,6 +13,7 @@ import com.gempukku.swccgo.logic.timing.EffectResult;
  */
 public class AboutToBeHitResult extends EffectResult {
     private PhysicalCard _source;
+    private Action _action;
     private PhysicalCard _cardToBeHit;
     private PhysicalCard _hitByCard;
     private SwccgBuiltInCardBlueprint _hitByPermanentWeapon;
@@ -31,11 +32,20 @@ public class AboutToBeHitResult extends EffectResult {
     public AboutToBeHitResult(Action action, PhysicalCard cardToBeHit, PhysicalCard hitByCard, SwccgBuiltInCardBlueprint hitByPermanentWeapon, PhysicalCard cardFiringWeapon, PreventableCardEffect effect) {
         super(Type.ABOUT_TO_BE_HIT, action.getPerformingPlayer());
         _source = action.getActionSource();
+        _action = action;
         _cardToBeHit = cardToBeHit;
         _hitByCard = hitByCard;
         _hitByPermanentWeapon = hitByPermanentWeapon;
         _cardFiringWeapon = cardFiringWeapon;
         _effect = effect;
+    }
+
+    /**
+     * Gets the action (or sub-action) causing this result.
+     * @return the action
+     */
+    public Action getAction() {
+        return _action;
     }
 
     /**

@@ -51,10 +51,11 @@ public class Card_1240_026_Tests {
     public void HeIsNotReadyAndImperialPropagandaPrintedIdentityIconsAndBothTitlesAreCorrect() {
         var scn = GetScenario();
         var bp = scn.GetDSCard("he").getBlueprint();
-        assertEquals("He Is Not Ready & Imperial Propaganda", bp.getTitle());
-        assertTrue(bp.isComboCard());
-        assertEquals(List.of(Title.He_Is_Not_Ready, Title.Imperial_Propaganda), bp.getTitles());
-        assertFalse(bp.hasVirtualSuffix());
+        // renamed He Is Not Ready (V) by the PC errata of 2013-06-14 (batch B39); the "&" title is the original, 2240_26
+        assertEquals("He Is Not Ready", bp.getTitle());
+        assertFalse(bp.isComboCard());
+        assertEquals(List.of(Title.He_Is_Not_Ready), bp.getTitles());
+        assertTrue(bp.hasVirtualSuffix());
         assertEquals(Side.DARK, bp.getSide());
         assertEquals(Uniqueness.UNRESTRICTED, bp.getUniqueness());
         assertEquals(5, bp.getDestiny(), scn.epsilon);
@@ -555,7 +556,7 @@ public class Card_1240_026_Tests {
     public void HeIsNotReadyHasTheLatestText() {
         var scn = GetScenario();
         var card = scn.GetDSCard("he").getBlueprint();
-        assertEquals("Deploy on opponent's just deployed [Reflections III][Maintenance] card; opponent loses 1 Force, and you may retrieve 1 Force and/or play a Defensive Shield from under your Starting Effect. That card is power -3, may not apply its ability towards drawing battle destiny, and, during opponent's draw phase, opponent must lose 1 Force or place that card in Lost Pile. If just lost, place this card in Used Pile. Immune to Honor Of The Jedi. [Immune to Control] OR If you are about to lose Force during opponent's control phase, deploy on table to reduce loss by 2.",
+        assertEquals("Deploy on opponent's just deployed [Reflections III][Maintenance] card; opponent loses 1 Force, and you may retrieve 1 Force and/or play a Defensive Shield from under your Starting Effect. That [Maintenance] card is power -3, may not apply its ability towards drawing battle destiny, and, during opponent's draw phase, opponent must lose 1 Force or place that card in Lost Pile. If just lost, place this card in Used Pile. Immune to Honor Of The Jedi. [Immune to Control] OR If you are about to lose Force during opponent's control phase, deploy on table to reduce loss by 2.",
                 card.getGameText());
         assertNull(card.getLegacyVersion());
         // GEMP-only wording ("Target is power -3 and cannot apply target's ability") is gone

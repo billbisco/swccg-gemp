@@ -2,6 +2,7 @@ package com.gempukku.swccgo.cards.set1263.light;
 
 import com.gempukku.swccgo.cards.AbstractSystem;
 import com.gempukku.swccgo.cards.GameConditions;
+import com.gempukku.swccgo.cards.effects.usage.OncePerPhaseEffect;
 import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
@@ -30,13 +31,16 @@ public class Card1263_030 extends AbstractSystem {
 
     @Override
     protected List<TopLevelGameTextAction> getGameTextLightSideTopLevelActions(String playerId, SwccgGame game, PhysicalCard self, int gameTextSourceCardId) {
-        if (!GameConditions.isDuringYourPhase(game, playerId, Phase.CONTROL)
+        // "During your control phase ... may lose 1 Force to retrieve a trooper": a time frame and "a", so once per
+        // control phase (Advanced Rulebook, the One Rule).
+        if (!GameConditions.isOnceDuringYourPhase(game, self, playerId, gameTextSourceCardId, RETRIEVE, Phase.CONTROL)
                 || !GameConditions.occupies(game, playerId, self)
                 || !GameConditions.canSearchLostPile(game, playerId, self, RETRIEVE)) {
             return null;
         }
         TopLevelGameTextAction action = new TopLevelGameTextAction(self, playerId, gameTextSourceCardId, RETRIEVE);
         action.setText("Lose 1 Force to retrieve a trooper into hand");
+        action.appendUsage(new OncePerPhaseEffect(action));
         action.appendCost(new LoseForceEffect(action, playerId, 1, true));
         action.appendEffect(new RetrieveCardIntoHandEffect(action, playerId, Filters.trooper));
         return List.of(action);

@@ -4,7 +4,6 @@ import com.gempukku.swccgo.cards.AbstractAlien;
 import com.gempukku.swccgo.cards.AbstractPermanentWeapon;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.conditions.HasAttachedCondition;
-import com.gempukku.swccgo.cards.effects.usage.OncePerTurnEffect;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.GameTextActionId;
 import com.gempukku.swccgo.common.Icon;
@@ -68,12 +67,12 @@ public class Card1250_008 extends AbstractAlien {
     @Override
     protected List<TopLevelGameTextAction> getGameTextTopLevelActions(String playerId, SwccgGame game, PhysicalCard self, int gameTextSourceCardId) {
         GameTextActionId gameTextActionId = GameTextActionId.LEGACY__JANGO_FETT__DEPLOY_JET_PACK;
-        if (GameConditions.isOncePerTurn(game, self, playerId, gameTextSourceCardId, gameTextActionId)
-                && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, gameTextActionId, Title.Jet_Pack)) {
+        // "May [download] Jet Pack on him for free": no time frame, so no once-per-turn limit (Advanced Rulebook, the One
+        // Rule); deploying from Reserve Deck is still limited to your deploy phase.
+        if (GameConditions.canDeployCardFromReserveDeck(game, playerId, self, gameTextActionId, Title.Jet_Pack)) {
             final TopLevelGameTextAction action = new TopLevelGameTextAction(self, gameTextSourceCardId, gameTextActionId);
             action.setText("Deploy Jet Pack from Reserve Deck");
             action.setActionMsg("Deploy Jet Pack on " + GameUtils.getCardLink(self) + " for free from Reserve Deck");
-            action.appendUsage(new OncePerTurnEffect(action));
             action.appendEffect(new DeployCardToTargetFromReserveDeckEffect(action, Filters.Jet_Pack, Filters.sameCardId(self), true, true));
             return Collections.singletonList(action);
         }

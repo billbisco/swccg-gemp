@@ -163,4 +163,43 @@ public class Card_1250_052_Tests {
         assertTrue(scn.GetLSLostPile().contains(padme));
         assertEquals(dsForceBefore, scn.GetDSLifeForceRemaining());
     }
+
+    /** Loses Padmé (and optionally Vader with her, in one action) at the Dark Side site; returns Padmé's zone. */
+    private Zone loseAtVadersSite(boolean vaderLostTogether, boolean vaderLostFirst) {
+        var scn = scenario(); scn.StartGame();
+        var site = scn.GetDSStartingLocation(); var padme = scn.GetLSCard("padme"); var vader = scn.GetDSCard("vader");
+        scn.MoveCardsToLocation(site, padme, vader);
+        scn.SkipToPhase(Phase.DEPLOY);
+        if (vaderLostFirst) {
+            // Vader has already been lost before her.
+            scn.MoveCardsToTopOfDSLostPile(vader);
+            assertTrue(scn.GetDSLostPile().contains(vader));
+        }
+        var action = new com.gempukku.swccgo.logic.actions.TopLevelGameTextAction(vader, scn.DS, vader.getCardId());
+        var cards = vaderLostTogether ? java.util.List.<com.gempukku.swccgo.game.PhysicalCard>of(padme, vader)
+                : java.util.List.<com.gempukku.swccgo.game.PhysicalCard>of(padme);
+        scn.DSExecuteAdHocEffect(vader, new com.gempukku.swccgo.logic.effects.LoseCardsFromTableSimultaneouslyEffect(action, cards, true, true));
+        for (int i = 0; i < 12 && scn.GetCurrentDecision() != null && padme.getZone() != Zone.OUT_OF_PLAY; i++) {
+            var decision = scn.GetCurrentDecision();
+            var ids = decision.getDecisionParameters().get("cardId");
+            var min = decision.getDecisionParameters().get("min");
+            if (ids != null && ids.length > 0 && min != null && !"0".equals(min[0]))
+                scn.PlayerDecided(scn.GetDecidingPlayer(), ids[0]);
+            else
+                scn.PlayerPass(scn.GetDecidingPlayer());
+        }
+        return padme.getZone();
+    }
+
+    /** Bill 10 Nov: Vader still at the site when she is lost, even when one action loses both: it fires. */
+    @Test
+    public void LostTogetherWithVaderByOneActionStillCountsAsLostFromSameSiteAsVader() {
+        assertEquals(Zone.OUT_OF_PLAY, loseAtVadersSite(true, false));
+    }
+
+    /** Bill 10 Nov: Vader already lost before her: it does not fire. */
+    @Test
+    public void LostAfterVaderWasAlreadyLostDoesNotFire() {
+        assertEquals(Zone.LOST_PILE, com.gempukku.swccgo.logic.GameUtils.getZoneFromZoneTop(loseAtVadersSite(false, true)));
+    }
 }

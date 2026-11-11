@@ -17,8 +17,8 @@ public final class AimHighRules {
 
     /**
      * Gets the amount of Force the retrieving player must use for Aim High.
-     * Krayt Dragon Bones (V): whenever its owner retrieves Force because a creature has eaten a card (a retrieval from a
-     * creature's game text), they need only use X-2 Force (to a minimum of 1).
+     * Krayt Dragon Bones (V): whenever its owner retrieves Force because a creature has eaten a card (any card's
+     * retrieval caused by an eating, e.g. Beast-Rider (V), Sarlacc, Dark Waters; not a creature's other retrievals), they need only use X-2 Force (to a minimum of 1).
      * @param game the game
      * @param aimHigh the Aim High card
      * @param retrievingPlayer the player retrieving Force
@@ -27,8 +27,7 @@ public final class AimHighRules {
      */
     public static float forceToUse(SwccgGame game, PhysicalCard aimHigh, String retrievingPlayer, AboutToRetrieveForceResult result) {
         float x = result.getAmountOfForceToRetrieve();
-        PhysicalCard source = result.getSourceCard();
-        if (source != null && Filters.creature.accepts(game, source)
+        if (result.isBecauseCreatureAteCard()
                 && GameConditions.canSpot(game, aimHigh,
                 Filters.and(Filters.owner(retrievingPlayer), Filters.title(Title.Krayt_Dragon_Bones), Icon.LEGACY_BLOCK_4))) {
             x = Math.max(1, x - 2);

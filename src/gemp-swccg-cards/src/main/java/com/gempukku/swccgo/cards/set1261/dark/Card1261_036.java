@@ -15,6 +15,7 @@ import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
 import com.gempukku.swccgo.logic.decisions.MultipleChoiceAwaitingDecision;
 import com.gempukku.swccgo.logic.decisions.YesNoDecision;
+import com.gempukku.swccgo.logic.effects.AddUntilEndOfGameTextActionModifierEffect;
 import com.gempukku.swccgo.logic.effects.LoseCardFromTableEffect;
 import com.gempukku.swccgo.logic.effects.PlayoutDecisionEffect;
 import com.gempukku.swccgo.logic.effects.PutCardFromHandOnLostPileEffect;
@@ -23,6 +24,7 @@ import com.gempukku.swccgo.logic.effects.choose.DeployCardToTargetFromHandEffect
 import com.gempukku.swccgo.logic.effects.choose.TakeCardIntoHandFromReserveDeckEffect;
 import com.gempukku.swccgo.logic.modifiers.CancelsGameTextModifier;
 import com.gempukku.swccgo.logic.modifiers.DeployCostToLocationModifier;
+import com.gempukku.swccgo.logic.modifiers.MayDeployToTargetModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.timing.EffectResult;
 
@@ -47,7 +49,9 @@ public class Card1261_036 extends AbstractImmediateEffect {
     @Override
     protected Filter getGameTextValidDeployTargetFilter(SwccgGame game, PhysicalCard self,
             PlayCardOptionId id, boolean asReact) {
-        return Filters.or(Filters.site, UNIQUE_EPISODE_I_DROID);
+        // "Deploy on a site": the droid is only reached through this card's own droid function (opponent's choice),
+        // which grants that one droid as a target for the rest of the action; other deploy-from-pile cards put it on a site.
+        return Filters.site;
     }
 
     @Override
@@ -75,6 +79,8 @@ public class Card1261_036 extends AbstractImmediateEffect {
                                                 if (index == 0) {
                                                     game.getGameState().sendMessage(opponent + " chooses to have "
                                                             + GameUtils.getCardLink(self) + " deployed on " + GameUtils.getCardLink(target));
+                                                    action.appendEffect(new AddUntilEndOfGameTextActionModifierEffect(action, action,
+                                                            new MayDeployToTargetModifier(self, self, Filters.sameCardId(target)), null));
                                                     action.appendEffect(new DeployCardToTargetFromHandEffect(action, self,
                                                             Filters.sameCardId(target), true, false));
                                                 } else {

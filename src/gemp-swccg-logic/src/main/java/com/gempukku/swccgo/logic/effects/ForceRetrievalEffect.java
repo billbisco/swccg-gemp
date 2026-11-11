@@ -48,6 +48,7 @@ public class ForceRetrievalEffect extends AbstractSubActionEffect {
     private int _numCountedAsRetrieved;
     private boolean _forceRetrievalComplete;
     private ForceRetrievalEffect _forceRetrievalEffect;
+    private boolean _becauseCreatureAteCard;
 
     /**
      * Creates an effect that causes the specified player to retrieve a specified amount of Force.
@@ -128,6 +129,16 @@ public class ForceRetrievalEffect extends AbstractSubActionEffect {
         _topmost = topmost;
         _filters = filters;
         _forceRetrievalEffect = this;
+    }
+
+    /**
+     * Marks this Force retrieval as caused by a creature having eaten a card (for example "If opponent's character here
+     * was just eaten, retrieve 3 Force"), as checked by Tauntaun Bones (V) and Krayt Dragon Bones (V).
+     * @return this effect
+     */
+    public ForceRetrievalEffect becauseCreatureAteCard() {
+        _becauseCreatureAteCard = true;
+        return this;
     }
 
     @Override
@@ -502,7 +513,7 @@ public class ForceRetrievalEffect extends AbstractSubActionEffect {
 
                                             if (!_emittedAboutToRetrieveForceResult) {
                                                 _emittedAboutToRetrieveForceResult = true;
-                                                game.getActionsEnvironment().emitEffectResult(new AboutToRetrieveForceResult(_sourceCard, _playerToRetrieveForce, _amountToRetrieve));
+                                                game.getActionsEnvironment().emitEffectResult(new AboutToRetrieveForceResult(_sourceCard, _playerToRetrieveForce, _amountToRetrieve, _becauseCreatureAteCard));
                                             }
                                         }
                                     }

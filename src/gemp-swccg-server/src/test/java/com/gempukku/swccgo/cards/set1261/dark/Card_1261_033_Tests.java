@@ -253,6 +253,42 @@ public class Card_1261_033_Tests {
         assertSame(scn.GetDSCard("pit"), scn.game().getModifiersQuerying().getLocationThatCardIsAt(scn.gameState(), luke));
     }
 
+    /**
+     * Advanced Rulebook, Captives: "Removing the escort of a frozen captive will cause the captive to be left
+     * unattended." A frozen captive relocated here away from its escort stays frozen and unattended; it is not released.
+     */
+    @Test(timeout = 15000)
+    public void frozenCaptiveRelocatedHereIsLeftUnattendedNotReleased() {
+        var scn = fullScenario();
+        var pit = scn.GetDSCard("pit");
+        var chamber = scn.GetDSCard("chamber");
+        var waters = scn.GetDSCard("waters");
+        var luke = scn.GetLSCard("luke");
+        scn.StartGame();
+        scn.MoveLocationToTable(pit);
+        scn.MoveLocationToTable(chamber);
+        scn.AttachCardsTo(pit, waters);
+        scn.MoveCardsToLocation(chamber, scn.GetDSCard("trooper"));
+        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), luke);
+        scn.CaptureCardWith(scn.GetDSCard("trooper"), luke);
+        scn.FreezeCard(luke);
+        assertTrue(luke.isFrozen());
+        scn.SkipToDSTurn(Phase.BATTLE);
+        assertTrue(scn.DSCardActionAvailable(waters, RELOCATE));
+        scn.DSUseCardAction(waters, RELOCATE);
+        if (scn.DSHasCardChoiceAvailable(luke))
+            scn.DSChooseCard(luke);
+        for (int i = 0; i < 20 && !scn.AwaitingDSBattlePhaseActions(); i++) {
+            assertFalse("A frozen captive is not released", scn.LSReleaseDecisionAvailable());
+            scn.PlayerPass(scn.GetDecidingPlayer());
+        }
+        assertSame(pit, scn.game().getModifiersQuerying().getLocationThatCardIsAt(scn.gameState(), luke));
+        assertTrue(luke.isFrozen());
+        assertTrue(luke.isCaptive());
+        assertNull(luke.getEscort());
+        assertTrue(com.gempukku.swccgo.filters.Filters.unattendedFrozenCaptive.accepts(scn.game(), luke));
+    }
+
     @Test(timeout = 15000)
     public void captiveRelocationIsOncePerBattlePhase() {
         var scn = fullScenario();

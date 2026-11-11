@@ -66,7 +66,11 @@ public class Card_1263_030_Tests {
         assertInHand(trooper); assertInZone(Zone.LOST_PILE, cost); assertInZone(Zone.LOST_PILE, droid);
         assertEquals(lost, scn.GetLSLostPileCount());
         if (scn.DSDecisionAvailable("Control action")) scn.DSPass(); // players alternate control phase actions
-        // No printed usage limit: still available while another trooper (Echo Base Trooper) is in the Lost Pile.
+        // "During your control phase ... retrieve a trooper": once per control phase (the One Rule), even while another
+        // trooper (Echo Base Trooper) is in the Lost Pile.
+        assertFalse(scn.GetLSAvailableActions().stream().anyMatch(text -> text.contains(RETRIEVE)));
+        // Available again in your next control phase.
+        scn.SkipToLSTurn(Phase.CONTROL);
         assertTrue(scn.GetLSAvailableActions().stream().anyMatch(text -> text.contains(RETRIEVE)));
     }
 
