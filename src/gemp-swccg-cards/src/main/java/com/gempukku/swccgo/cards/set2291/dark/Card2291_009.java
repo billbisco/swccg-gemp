@@ -16,7 +16,7 @@ import java.time.LocalDate;
 public class Card2291_009 extends Card1291_009 {
     public Card2291_009() {
         setLegacyVersion(new LegacyVersion("1291_9", "",
-                "Virtual Block 9.1 release sheet (2014-01-10), printed as Begin Landing Your Troops & The Dark Path", LocalDate.of(2014, 1, 10), LocalDate.of(2014, 5, 2)));
+                "Virtual Block 9.1 release sheet (2014-01-10), printed as Begin Landing Your Troops & The Dark Path", LocalDate.of(2014, 1, 10), LocalDate.of(2014, 2, 3)));
         setPrintedTitle("Begin Landing Your Troops & The Dark Path");
     }
 }

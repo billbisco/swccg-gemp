@@ -27,7 +27,7 @@ public class Card_1281_032_Tests {
     protected VirtualTableScenario GetScenario() {
         return new VirtualTableScenario(
                 new HashMap<>() {{
-                    put("charts", "2281_32"); // the optional steal: the first 8.1 printing (legacy batch B41)
+                    put("charts", "2281_2032"); // the optional steal: the card-list version (legacy batch B41)
                     put("rest", "1281_39");
                     put("street", "1281_40");
                     put("undercity", "1281_41");

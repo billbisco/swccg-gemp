@@ -18,6 +18,6 @@ public class Card2291_069 extends Card1291_069 {
         super();
         setGameText(ORIGINAL_GAMETEXT);
         setLegacyVersion(new LegacyVersion("1291_69", "",
-                "Virtual Block 9.1 release sheet (2014-01-10)", LocalDate.of(2014, 1, 10), LocalDate.of(2014, 8, 8)));
+                "Virtual Block 9.1 release sheet (2014-01-10)", LocalDate.of(2014, 1, 10), LocalDate.of(2014, 2, 3)));
     }
 }

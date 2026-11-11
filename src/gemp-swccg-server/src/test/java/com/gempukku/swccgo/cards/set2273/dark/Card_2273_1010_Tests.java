@@ -36,7 +36,7 @@ public class Card_2273_1010_Tests {
     public void CardListKesselSurveillanceSystemIsTheCurrentCardWithItsOwnText() {
         assertVersion(VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("2273_1010"),
                 VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("1273_10"), "1273_10", "PC-E2",
-                LocalDate.of(2012, 7, 21), LocalDate.of(2013, 4, 27),
+                LocalDate.of(2012, 7, 21), LocalDate.of(2013, 2, 25),
                 "Deploy on a Kessel site. Opponents Force drains are -1 here. Oncer per turn, if you just lost a card from Reserve Deck, may place a 'spice' card in owners Lost Pile to satisfy 1 additional Force loss. Once per game, may deploy Spice Mine Administrator here.");
     }
 

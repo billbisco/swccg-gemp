@@ -19,6 +19,6 @@ public class Card2210_073 extends Card1210_073 {
     public Card2210_073() {
         addIcons(Icon.INTERIOR_SITE);
         setLegacyVersion(new LegacyVersion("1210_73", "",
-                "Virtual Block 1 release sheet (2009-12-07), card #71", LocalDate.of(2009, 12, 7), LocalDate.of(2014, 3, 27)));
+                "Virtual Block 1 release sheet (2009-12-07), card #71", LocalDate.of(2009, 12, 7), LocalDate.of(2013, 2, 25)));
     }
 }

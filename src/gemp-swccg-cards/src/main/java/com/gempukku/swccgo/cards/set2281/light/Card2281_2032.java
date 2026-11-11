@@ -18,7 +18,8 @@ public class Card2281_2032 extends Card1281_032 {
     public Card2281_2032() {
         super();
         setGameText("Deploy on a Nar Shaddaa battleground site. If you control three Nar Shaddaa locations or just won a battle (or initiated a Force drain) here, may 'steal' (relocate to your side of table). Place in Used Pile if opponent controls three Nar Shaddaa locations. (Immune to Alter).");
-        setLegacyVersion(new LegacyVersion("1281_32", "PC-E2", "PC website card list (2012-07-21 to 2013-01-11)", LocalDate.of(2012, 7, 21), LocalDate.of(2013, 4, 27)));
+        setLegacyVersion(new LegacyVersion("1281_32", "PC-E2",
+                "PC website card list (2012-07-21 to 2013-01-11)", LocalDate.of(2012, 7, 21), LocalDate.of(2013, 4, 27)));
     }
 
     @Override

@@ -1,115 +1,19 @@
 package com.gempukku.swccgo.cards.set2273.dark;
 
-import com.gempukku.swccgo.cards.AbstractLocationDevice;
-import com.gempukku.swccgo.cards.GameConditions;
-import com.gempukku.swccgo.cards.LegacySpiceCards;
-import com.gempukku.swccgo.cards.effects.usage.OncePerGameEffect;
-import com.gempukku.swccgo.cards.effects.usage.OncePerTurnEffect;
-import com.gempukku.swccgo.common.ExpansionSet;
-import com.gempukku.swccgo.common.GameTextActionId;
-import com.gempukku.swccgo.common.Keyword;
+import com.gempukku.swccgo.cards.set1273.dark.Card1273_010;
 import com.gempukku.swccgo.common.LegacyVersion;
-import com.gempukku.swccgo.common.PlayCardOptionId;
-import com.gempukku.swccgo.common.Rarity;
-import com.gempukku.swccgo.common.Side;
-import com.gempukku.swccgo.common.Uniqueness;
-import com.gempukku.swccgo.filters.Filter;
-import com.gempukku.swccgo.filters.Filters;
-import com.gempukku.swccgo.game.PhysicalCard;
-import com.gempukku.swccgo.game.SwccgGame;
-import com.gempukku.swccgo.logic.GameUtils;
-import com.gempukku.swccgo.logic.TriggerConditions;
-import com.gempukku.swccgo.logic.actions.OptionalGameTextTriggerAction;
-import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
-import com.gempukku.swccgo.logic.effects.LoseForceFromReserveDeckEffect;
-import com.gempukku.swccgo.logic.effects.PutStackedCardInLostPileEffect;
-import com.gempukku.swccgo.logic.effects.ReduceForceLossEffect;
-import com.gempukku.swccgo.logic.effects.choose.ChooseStackedCardEffect;
-import com.gempukku.swccgo.logic.effects.choose.DeployCardToLocationFromReserveDeckEffect;
-import com.gempukku.swccgo.logic.modifiers.ForceDrainModifier;
-import com.gempukku.swccgo.logic.modifiers.Modifier;
-import com.gempukku.swccgo.logic.timing.EffectResult;
 
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
- * Original version of 1273_10: the first Virtual Block 7.3 printing (official text as of 2011-06-03). No copy of that
- * sheet survives (the surviving sheet was re-made with the 2011-07-14 errata, PC-E1 = 2273_10); the pre-errata wording is
- * inferred from the PC website card list (2012-07-21 to 2013-01-11, PC-E2 = 2273_1010), typos included; the sheet's own
- * spelling is not known. Plays as PC-E1 here: one card lost
- * from Reserve Deck plus a 'spice' card satisfy 2 Force loss (GEMP resolves the 'spice' choice before the loss), and
- * Spice Mine Administrator deploys from Reserve Deck. Anything Goes only (docs/legacy-versions.md).
+ * Kessel Surveillance System PC-E3: the PC card image, word for word the current Master List text. (Until the B41 rework this id was an inferred original; the first printing is lost.)
+ * Anything Goes only (docs/legacy-versions.md; batch B41 rework, Bill's rulings of 2026-11-11: the PC card image and the
+ * Master List are versions of their own, in date order).
  */
-public class Card2273_2010 extends AbstractLocationDevice {
-    /** Spice Mine Administrator: Moruth Doole, Kessel Administrator's printed title on the Virtual Block 7.3 sheet (that card only). */
-    static final Filter SPICE_MINE_ADMINISTRATOR = Filters.title("Moruth Doole, Kessel Administrator");
-
+public class Card2273_2010 extends Card1273_010 {
     public Card2273_2010() {
-        super(Side.DARK, 0, "Kessel Surveillance System", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_3, Rarity.V);
-        setLore("Remote surveillance viewers with droid controllers supplement security. Can activate alarms and automated weapons when needed, bringing help to endangered locations.");
-        setGameText("Deploy on a Kessel site. Opponents Force drains are -1 here. Oncer per turn, if you just lost a card from Reserve Deck, may place a 'spice' card in owners Lost Pile to satisfy 1 additional Force loss. Once per game, may deploy Spice Mine Administrator here.");
-        setLegacyVersion(new LegacyVersion("1273_10", "",
-                "Virtual Block 7.3 (2011-06-03), text as on the PC website card list (2012-07-21)", LocalDate.of(2011, 6, 3), LocalDate.of(2011, 7, 14)));
-        addKeywords(Keyword.DEPLOYS_ON_SITE);
-    }
-
-    @Override
-    protected Filter getGameTextValidDeployTargetFilter(SwccgGame game, PhysicalCard self, PlayCardOptionId playCardOptionId, boolean asReact) {
-        return Filters.Kessel_site;
-    }
-
-    @Override
-    protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
-        List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new ForceDrainModifier(self, Filters.sameLocation(self), -1, game.getOpponent(self.getOwner())));
-        return modifiers;
-    }
-
-    @Override
-    protected List<OptionalGameTextTriggerAction> getGameTextOptionalAfterTriggers(final String playerId, SwccgGame game, EffectResult effectResult, final PhysicalCard self, int gameTextSourceCardId) {
-        // A Force loss of 2 or more: one card lost from Reserve Deck satisfies 2 of it
-        GameTextActionId gameTextActionId = GameTextActionId.LEGACY__KESSEL_SURVEILLANCE_SYSTEM__SPICE_SATISFIES_FORCE_LOSS;
-        if (TriggerConditions.isAboutToLoseForceMoreThan(game, effectResult, playerId, 1)
-                && GameConditions.isOncePerTurn(game, self, playerId, gameTextSourceCardId, gameTextActionId)
-                && GameConditions.hasReserveDeck(game, playerId)
-                && LegacySpiceCards.countSpiceCards(game, self) > 0) {
-            final OptionalGameTextTriggerAction action = new OptionalGameTextTriggerAction(self, gameTextSourceCardId, gameTextActionId);
-            action.setText("Place a 'spice' card in Lost Pile to satisfy 1 additional Force loss");
-            action.setActionMsg("Place a 'spice' card in owner's Lost Pile so that 1 Force lost from Reserve Deck satisfies 2 Force loss");
-            action.appendUsage(new OncePerTurnEffect(action));
-            action.appendTargeting(
-                    new ChooseStackedCardEffect(action, playerId, LegacySpiceCards.SPICE_MINE_OPERATIONS_FILTER) {
-                        @Override
-                        protected void cardSelected(PhysicalCard selectedCard) {
-                            action.appendCost(
-                                    new PutStackedCardInLostPileEffect(action, selectedCard.getOwner(), selectedCard, false));
-                            action.appendEffect(
-                                    new ReduceForceLossEffect(action, playerId, 2));
-                            action.appendEffect(
-                                    new LoseForceFromReserveDeckEffect(action, playerId, 1, true));
-                        }
-                    });
-            return Collections.singletonList(action);
-        }
-        return null;
-    }
-
-    @Override
-    protected List<TopLevelGameTextAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
-        GameTextActionId gameTextActionId = GameTextActionId.LEGACY__KESSEL_SURVEILLANCE_SYSTEM__DEPLOY_SPICE_MINE_ADMINISTRATOR;
-        if (GameConditions.isOncePerGame(game, self, gameTextActionId)
-                && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, gameTextActionId)) {
-            TopLevelGameTextAction action = new TopLevelGameTextAction(self, gameTextSourceCardId, gameTextActionId);
-            action.setText("Deploy Spice Mine Administrator here from Reserve Deck");
-            action.setActionMsg("Deploy Spice Mine Administrator to " + GameUtils.getCardLink(self.getAttachedTo()) + " from Reserve Deck");
-            action.appendUsage(new OncePerGameEffect(action));
-            action.appendEffect(
-                    new DeployCardToLocationFromReserveDeckEffect(action, SPICE_MINE_ADMINISTRATOR, Filters.sameLocation(self), true));
-            return Collections.singletonList(action);
-        }
-        return null;
+        super();
+        setLegacyVersion(new LegacyVersion("1273_10", "PC-E3",
+                "PC card image (image server folder Virtual7-Dark, file dated 2013-02-25)", LocalDate.of(2013, 2, 25), LocalDate.of(2013, 4, 27)));
     }
 }

@@ -18,7 +18,7 @@ import java.time.LocalDate;
 public class Card2282_023 extends Card1282_023 {
     public Card2282_023() {
         setLegacyVersion(new LegacyVersion("1282_23", "",
-                "Virtual Block 8.2 release sheet (2012-09-14), printed as Found Someone You Have & Higher Ground", LocalDate.of(2012, 9, 14), LocalDate.of(2014, 5, 2)));
+                "Virtual Block 8.2 release sheet (2012-09-14), printed as Found Someone You Have & Higher Ground", LocalDate.of(2012, 9, 14), LocalDate.of(2013, 4, 27)));
         setPrintedTitle("Found Someone You Have & Higher Ground");
     }
 }

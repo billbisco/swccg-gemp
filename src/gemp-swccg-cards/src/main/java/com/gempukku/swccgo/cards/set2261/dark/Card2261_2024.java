@@ -18,6 +18,6 @@ public class Card2261_2024 extends Card1261_021 {
     public Card2261_2024() {
         setGameText("Plays on table. At opponent's Dantooine and Subjugated Planet sites, your Imperials are deploy -2 and your Force drains may not be modified or canceled by opponent. Your game text at opponent's <>Swamp and <>Jungle is canceled. Your characters present at opponent's <>Forest are immune to attrition.");
         setLegacyVersion(new LegacyVersion("1261_24", "PC-E2",
-                "PC website card list (2012-07-21 to 2013-02-12)", LocalDate.of(2012, 7, 21), LocalDate.of(2013, 4, 27)));
+                "PC website card list (2012-07-21 to 2013-02-12)", LocalDate.of(2012, 7, 21), LocalDate.of(2013, 2, 25)));
     }
 }

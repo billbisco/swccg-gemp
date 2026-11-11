@@ -51,7 +51,7 @@ public class Card2273_1010 extends AbstractLocationDevice {
         setLore("Remote surveillance viewers with droid controllers supplement security. Can activate alarms and automated weapons when needed, bringing help to endangered locations.");
         setGameText("Deploy on a Kessel site. Opponents Force drains are -1 here. Oncer per turn, if you just lost a card from Reserve Deck, may place a 'spice' card in owners Lost Pile to satisfy 1 additional Force loss. Once per game, may deploy Spice Mine Administrator here.");
         setLegacyVersion(new LegacyVersion("1273_10", "PC-E2",
-                "PC website card list (2012-07-21 to 2013-01-11)", LocalDate.of(2012, 7, 21), LocalDate.of(2013, 4, 27)));
+                "PC website card list (2012-07-21 to 2013-01-11)", LocalDate.of(2012, 7, 21), LocalDate.of(2013, 2, 25)));
         addKeywords(Keyword.DEPLOYS_ON_SITE);
     }
 

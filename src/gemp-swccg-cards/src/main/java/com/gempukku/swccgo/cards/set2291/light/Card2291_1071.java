@@ -21,6 +21,6 @@ public class Card2291_1071 extends Card1291_071 {
         super(3, "May add 1 pilot (suspends permanent pilot). May move as a 'react.' Permanent pilot provides ability of 2. \"T-47\" on [Hoth] weapons may be treated as \"AT-RT\". When deployed, may ▼ Dual Laser Cannon aboard.",
                 false, true, true);
         setLegacyVersion(new LegacyVersion("1291_71", "PC-E1",
-                "Virtual Block 9.1 release sheet as corrected by 2014-01-22 (PC forum p862180)", LocalDate.of(2014, 1, 22), LocalDate.of(2014, 7, 23)));
+                "Virtual Block 9.1 release sheet as corrected by 2014-01-22 (PC forum p862180)", LocalDate.of(2014, 1, 22), LocalDate.of(2014, 2, 3)));
     }
 }

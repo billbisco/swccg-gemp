@@ -21,7 +21,7 @@ public class Card2263_026 extends Card1263_026 {
     public Card2263_026() {
         setGameText("Adds 2 to power of anything she pilots. If opponent's [Virtual Block 6] card just added a destiny to total power or attrition here, draw two destiny, choose one, and subtract it from their attrition and total power. Your characters here are immune to You Are Beaten and attrition < 3.");
         setLegacyVersion(new LegacyVersion("1263_26", "",
-                "Virtual Block 6.3 release sheet (2010-03-15)", LocalDate.of(2010, 3, 12), LocalDate.of(2013, 10, 30)));
+                "Virtual Block 6.3 release sheet (2010-03-15)", LocalDate.of(2010, 3, 12), LocalDate.of(2013, 2, 25)));
     }
 
     @Override

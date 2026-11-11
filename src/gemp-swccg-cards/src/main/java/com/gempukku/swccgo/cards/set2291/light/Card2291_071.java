@@ -20,7 +20,7 @@ public class Card2291_071 extends Card1291_071 {
     public Card2291_071() {
         super(3, "May add 1 pilot (suspends permanent pilot). May move as a 'react.' Permanent pilot provides ability of 2. Dual Laser Cannnon may deploy aboard. When deployed, may ▼ Dual Laser Cannon aboard.",
                 false, true, true);
-        setLegacyVersion(new LegacyVersion("1291_71", "",
-                "Virtual Block 9.1 first release (2014-01-10), text as on the PC card image", LocalDate.of(2014, 1, 10), LocalDate.of(2014, 1, 22)));
+        setLegacyVersion(new LegacyVersion("1291_71", "PC-E3",
+                "PC card image (image server folder Virtual9-Light, file dated 2014-02-18); may print the lost first Virtual Block 9.1 text (2014-01-10)", LocalDate.of(2014, 2, 18), LocalDate.of(2014, 7, 23)));
     }
 }

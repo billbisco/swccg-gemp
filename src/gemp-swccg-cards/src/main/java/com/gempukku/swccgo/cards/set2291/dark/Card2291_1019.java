@@ -21,6 +21,6 @@ public class Card2291_1019 extends Card1291_019 {
         setLocationDarkSideGameText("May deploy Gunray from Reserve Deck; reshuffle. While two senators here, they may use their game text as if in a senate majority.");
         setGameText("Dark: May deploy Gunray from Reserve Deck; reshuffle. While two senators here, they may use their game text as if in a senate majority. Light: While Gunray or opponent's senator here, your spies may not deploy here.");
         setLegacyVersion(new LegacyVersion("1291_19", "",
-                "Virtual Block 9.1 release sheet (2014-01-10)", LocalDate.of(2014, 1, 10), LocalDate.of(2014, 7, 9)));
+                "Virtual Block 9.1 release sheet (2014-01-10)", LocalDate.of(2014, 1, 10), LocalDate.of(2014, 2, 3)));
     }
 }

@@ -20,7 +20,7 @@ public class Card2291_2071 extends Card1291_071 {
     public Card2291_2071() {
         super(1, "May add 1 pilot (suspends permanent pilot). May move as a 'react.' Permanent pilot provides ability of 2 and adds 2 to power. Dual Laser Cannon may deploy aboard. When deployed, may ▼ Dual Laser Cannon aboard.",
                 true, true, true);
-        setLegacyVersion(new LegacyVersion("1291_71", "PC-E2",
+        setLegacyVersion(new LegacyVersion("1291_71", "PC-E4",
                 "Competitive Balance Team errata, PC forum post p894811 (2014-07-23); corrected 2014-07-25 (p895797)", LocalDate.of(2014, 7, 23), LocalDate.of(2014, 7, 25)));
     }
 }

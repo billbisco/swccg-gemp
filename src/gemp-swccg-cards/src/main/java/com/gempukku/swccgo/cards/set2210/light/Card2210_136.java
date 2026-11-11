@@ -18,7 +18,7 @@ public class Card2210_136 extends Card601_101 {
     public Card2210_136() {
         setGameText("Deploy on table. If your character is about to be lost from table, place all devices and Effects on that character in owner's Used Pile. Twice per game, may ▲ a device (or an Effect) that deploys on a character. (Immune to Alter.)");
         setLegacyVersion(new LegacyVersion("1210_136", "",
-                "Virtual Block 1 release sheet (2009-12-07), card #137", LocalDate.of(2009, 12, 7), LocalDate.of(2014, 3, 27)));
+                "Virtual Block 1 release sheet (2009-12-07), card #137", LocalDate.of(2009, 12, 7), LocalDate.of(2013, 2, 25)));
     }
 
     @Override
