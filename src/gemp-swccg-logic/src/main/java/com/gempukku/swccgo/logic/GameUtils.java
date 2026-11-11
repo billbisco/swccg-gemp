@@ -25,9 +25,10 @@ public class GameUtils {
         SwccgCardBlueprint blueprint = card.getBlueprint();
         String title = card.getTitle();
         // Pre-errata Legacy version printed under an older name: show that name (display only, docs/legacy-versions.md)
-        if (blueprint.getPrintedTitle() != null && title != null && title.equals(blueprint.getTitle()))
+        boolean showingPrintedTitle = blueprint.getPrintedTitle() != null && title != null && title.equals(blueprint.getTitle());
+        if (showingPrintedTitle)
             title = blueprint.getPrintedTitle();
-        return title + getTitleSuffix(blueprint);
+        return title + getTitleSuffix(blueprint, showingPrintedTitle);
     }
 
     /**
@@ -36,7 +37,7 @@ public class GameUtils {
      * @return the card title
      */
     public static String getFullName(SwccgCardBlueprint blueprint) {
-        return getDisplayTitle(blueprint) + getTitleSuffix(blueprint);
+        return getDisplayTitle(blueprint) + getTitleSuffix(blueprint, blueprint.getPrintedTitle() != null);
     }
 
     /**
@@ -47,7 +48,7 @@ public class GameUtils {
      * @return the full name by the rules title
      */
     public static String getRulesFullName(SwccgCardBlueprint blueprint) {
-        return blueprint.getTitle() + getTitleSuffix(blueprint);
+        return blueprint.getTitle() + getTitleSuffix(blueprint, false);
     }
 
     /**
@@ -63,10 +64,13 @@ public class GameUtils {
     /**
      * Gets the card title suffix.
      * @param blueprint the card blueprint
+     * @param showingPrintedTitle true if the title shown is the blueprint's printed title; a complete printed title
+     *                            ({@link SwccgCardBlueprint#isPrintedTitleComplete()}) already says whether it has "(V)"
      * @return the card title suffix
      */
-    private static String getTitleSuffix(SwccgCardBlueprint blueprint) {
-        return (blueprint.hasAlternateImageSuffix() ? " (AI)" : "") + (blueprint.hasVirtualSuffix() ? " (V)" : "")
+    private static String getTitleSuffix(SwccgCardBlueprint blueprint, boolean showingPrintedTitle) {
+        return (blueprint.hasAlternateImageSuffix() ? " (AI)" : "")
+                + (blueprint.hasVirtualSuffix() && !(showingPrintedTitle && blueprint.isPrintedTitleComplete()) ? " (V)" : "")
                 + (blueprint.getLegacyVersion() != null && !blueprint.getLegacyVersion().label().isEmpty()
                     ? " [" + blueprint.getLegacyVersion().label() + "]" : "");
     }
@@ -78,7 +82,7 @@ public class GameUtils {
      * @return the full location name
      */
     private static String getGenericLocationFullName(String systemName, SwccgCardBlueprint blueprint) {
-        return systemName + ": " + blueprint.getTitle() + getTitleSuffix(blueprint);
+        return systemName + ": " + blueprint.getTitle() + getTitleSuffix(blueprint, false);
     }
 
     /**
@@ -212,7 +216,7 @@ public class GameUtils {
                 : blueprint.getTitleComponents().stream()
                 .map(component -> component.uniqueness().getHumanReadable() + component.name())
                 .collect(java.util.stream.Collectors.joining(" & "));
-        fullTitle += getTitleSuffix(blueprint);
+        fullTitle += getTitleSuffix(blueprint, blueprint.getPrintedTitle() != null);
 
         String backSideTestingText = otherSideBlueprint != null ? otherSideBlueprint.getTestingText() : null;
 
@@ -239,7 +243,7 @@ public class GameUtils {
         }
 
         String fullTitle = titleToUse;
-        fullTitle += getTitleSuffix(blueprint);
+        fullTitle += getTitleSuffix(blueprint, false);
 
         String backSideTestingText = otherSideBlueprint != null ? otherSideBlueprint.getTestingText() : null;
 

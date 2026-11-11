@@ -84,6 +84,12 @@ setPrintedTitle("Cyborg Commander, Hunter Of Jedi");
 - Deck builder name search finds the version by either name.
 - Write it without uniqueness dots, as printed on the release sheet slip (`printed_title` in
   `ai-team-skills/shared/gemp-legacy-cards/versions/legacy-versions-v3.json`), including "(V)" when the slip has it.
+  **"(V)" follows the printed title (Bill, 2026-11-10):** the sheet's heading over the slip says whether the title has
+  "(V)" (the title bar never prints it): "Galen, Secret Apprentice (V)", "Booster's Star Destroyer (V)", but
+  "Mara Jade With Lightsaber", "He Is Not Ready & Imperial Propaganda". The full name shows a printed title exactly as
+  given; no " (V)" suffix is added to it even when the current card has one (`isPrintedTitleComplete`). A current card
+  whose Master List heading has no "(V)" does not call `setVirtualSuffix(true)` (e.g. Admiral Motti, Battlestation
+  Coordinator). Checked by `LegacyVInTitleTests`.
   Only the versions printed before the rename get it (the Master List renames are 2013-04-27); a later version printed
   under the current name has none. `setPrintedTitle` throws unless `setLegacyVersion` was called first.
 - Names inside game text (Black Leader, Fallen Jedi, Cyborg Commander in other cards' text) are text, not titles.

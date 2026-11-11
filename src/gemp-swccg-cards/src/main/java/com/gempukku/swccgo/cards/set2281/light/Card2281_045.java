@@ -22,6 +22,6 @@ public class Card2281_045 extends Card1281_045 {
         setLegacyVersion(new LegacyVersion("1281_45", "",
                 "Virtual Block 8.1 release sheet (2012-05-11), printed as Booster's Star Destroyer (the sheet heading adds \"(V)\"; the title bar has none)",
                 LocalDate.of(2012, 5, 11), LocalDate.of(2013, 3, 13)));
-        setPrintedTitle("Booster's Star Destroyer");
+        setPrintedTitle("Booster's Star Destroyer (V)");
     }
 }

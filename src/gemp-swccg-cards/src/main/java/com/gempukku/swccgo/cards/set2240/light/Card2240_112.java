@@ -22,6 +22,6 @@ public class Card2240_112 extends Card1240_112 {
         setLegacyVersion(new LegacyVersion("1240_112", "",
                 "Virtual Block 4 release sheet (2009-12-07), card #109E, printed as BoShek's Modified Light Freighter; renamed Infinity (PC \"New Persona Changes\" 2013-01-29; PC card list by 2013-03-15; Virtual Cards Master List 2013-04-27)",
                 LocalDate.of(2009, 12, 7), LocalDate.of(2013, 4, 27)));
-        setPrintedTitle("BoShek's Modified Light Freighter");
+        setPrintedTitle("BoShek's Modified Light Freighter (V)");
     }
 }
