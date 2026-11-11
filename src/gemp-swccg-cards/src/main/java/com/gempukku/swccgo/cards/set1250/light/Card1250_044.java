@@ -28,13 +28,13 @@ import com.gempukku.swccgo.logic.timing.EffectResult;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Legacy Block 5 Master Qui-Gon (V), final standard and alternate faces. */
+/** Legacy Block 5 Master Qui-Gon (V), final standard and alternate faces. Text = the PC forum errata of 2011-03-21 with its comma ("You Are Beaten, and attrition"), as the forum and Master List print it (Bill 2026-11-11). */
 public class Card1250_044 extends AbstractJediMaster {
     public Card1250_044() {
         super(Side.LIGHT, 1, 7, 6, 7, 7, "Master Qui-Gon", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_5, Rarity.V);
         setVirtualSuffix(true);
         setLore("Jedi Master currently not on the Council. Although he serves the Council well, there have been times when he has defied their wishes to pursue a path he believes is right.");
-        setGameText("Deploys -1 to [Episode I] locations. If you just lost Force from an opponent's Effect, may take an [Episode I] Interrupt (except Control) into hand from Reserve Deck; reshuffle, or place a card from hand under Credits Will Do Fine. May not be Disarmed. Immune to You Are Beaten and attrition.");
+        setGameText("Deploys -1 to [Episode I] locations. If you just lost Force from an opponent's Effect, may take an [Episode I] Interrupt (except Control) into hand from Reserve Deck; reshuffle, or place a card from hand under Credits Will Do Fine. May not be Disarmed. Immune to You Are Beaten, and attrition.");
         addPersona(Persona.QUIGON);
         addIcons(Icon.CORUSCANT, Icon.EPISODE_I, Icon.WARRIOR);
     }

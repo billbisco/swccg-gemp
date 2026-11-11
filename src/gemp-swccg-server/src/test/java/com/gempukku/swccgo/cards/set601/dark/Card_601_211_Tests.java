@@ -8,6 +8,7 @@ import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNull;
 
 /** Stinger (V) (1240_63): the PC website card list text (PC-E1), the latest version. */
@@ -34,9 +35,10 @@ public class Card_601_211_Tests {
     public void StingerHasTheLatestText() {
         var scn = GetScenario();
         var card = scn.GetDSCard("stinger").getBlueprint();
-        assertEquals("May add 1 pilot. Guri deploys -3 aboard. While Guri piloting, during any control phase may draw top card of Reserve Deck (if Leia or Chewie on table, Force Pile instead) and immune to attrition < 5.",
+        assertEquals("May add 1 pilot. Guri deploys -3 aboard. While Guri piloting, during any control phase may draw top card of Reserve Deck (if Chewie or Leia on table, Force Pile instead) and immune to attrition < 5.",
                 card.getGameText());
         assertNull(card.getLegacyVersion());
-        assertFalse(card.getGameText().contains("if Chewie or Leia"));
+        // batch R8: the current text is the Master List wording again
+        assertTrue(card.getGameText().contains("if Chewie or Leia"));
     }
 }

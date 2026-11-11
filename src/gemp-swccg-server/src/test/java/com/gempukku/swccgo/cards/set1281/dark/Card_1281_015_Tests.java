@@ -197,7 +197,7 @@ public class Card_1281_015_Tests {
 
     /** PC website card list text (2012-07-21, PC-E1): "Non-unique aliens" (any player's) are immune. */
     @Test
-    public void WellGuardedVOpponentsNonUniqueAliensAreImmuneToo() {
+    public void WellGuardedVOpponentsNonUniqueAliensAreNotImmune() {
         var scn = GetScenario();
         var wellguarded = scn.GetDSCard("wellguarded");
         var camp = scn.GetLSCard("camp");
@@ -214,14 +214,15 @@ public class Card_1281_015_Tests {
         if (scn.AwaitingLSDeployPhaseActions()) {
             scn.LSPass();
         }
-        assertTrue(query.isImmuneToCardTitle(scn.gameState(), jawa, Title.The_Camp));
-        assertTrue(query.isImmuneToCardTitle(scn.gameState(), jawa, Title.Grimtaash));
+        // Master List / PC card image: "Your non-unique aliens" (the opponent's Jawa is not immune)
+        assertFalse(query.isImmuneToCardTitle(scn.gameState(), jawa, Title.The_Camp));
+        assertFalse(query.isImmuneToCardTitle(scn.gameState(), jawa, Title.Grimtaash));
         assertFalse(query.isImmuneToCardTitle(scn.gameState(), luke, Title.The_Camp));
     }
 
     @Test
     public void WellGuardedVCurrentCardIsTheLatestText() {
         assertCurrentCard("1281_15", "Well Guarded",
-                "Deploy on table. Non-unique aliens are immune to Grimtaash (While you have < 13 cards in hand) , The Camp, and deployment conditions on Watch Your Step. During battle with two non-unique aliens of your Rep's species, your aliens there may not have their forfeit reduced. (Immune to Alter.)");
+                "Deploy on table. Your non-unique aliens are immune to Grimtaash (while you have < 13 cards in hand), The Camp, and deployment costs on Watch Your Step. During battle with two non-unique aliens of your Rep's species, your aliens there may not have their forfeit reduced. (Immune to Alter.)");
     }
 }

@@ -35,7 +35,7 @@ public class Card1220_023 extends AbstractNormalEffect {
         super(Side.DARK, 3, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title._3720_To_1, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_2, Rarity.V);
         setVirtualSuffix(true);
         setLore("What are the odds of having a Corellian, a Wookiee and a protocol droid together with an Alderaanian princess who happens to be the daughter of the Dark Lord of the Sith?");
-        setGameText("Deploy on table. Droids are destiny +1. Once per turn, may place the bottom 2 cards in Lost Pile out of play to deploy (from Lost Pile) Forced Servitude, a character weapon, a location, or an Effect that deploys on a location (without 'lose' in game text). (Immune to Alter.)");
+        setGameText("Deploy on table. Droids are destiny +1. Once per turn, may place the bottom two cards in Lost Pile out of play to deploy from Lost Pile: Forced Servitude, a character weapon, a location, or an Effect that deploys on a location (without 'lose' in game text). (Immune to Alter.)");
         addIcons(Icon.DAGOBAH);
         addImmuneToCardTitle(Title.Alter);
     }

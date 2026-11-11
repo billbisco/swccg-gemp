@@ -25,13 +25,16 @@ import com.gempukku.swccgo.logic.timing.EffectResult;
 
 import java.util.List;
 
-/** Jabba, This Is Your Last Chance!, final Light master page 25. */
+/** Jabba, This Is Your Last Chance!, final Light master page 25.
+ * Text: PC-E3, the Virtual Cards Master List (2013-04-27; the PC card image, PC-E2, came first), which repeats the release-sheet words (no 'swing' limit); the
+ * PC card list (Holotable data) text (PC-E1, 2010) is version 2261_1080 (Bill 2026-11-11: every publication is a version).
+ */
 public class Card1261_080 extends AbstractStartingEffect {
     private static final GameTextActionId PLAY_SHIELD = GameTextActionId.LEGACY__JABBA_LAST_CHANCE__PLAY_SHIELD;
 
     public Card1261_080() {
         super(Side.LIGHT, 5, "Jabba, This Is Your Last Chance!", ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
-        setGameText("Deploy on table with 5 cards from outside your deck face down under here. Twice per game, may play a Defensive Shield from here (as if from hand). If Quiet Mining Colony or Independent Operation on table, lightsabers may not add to Force drains or 'swing' more than once per battle. Cloud City Celebration is canceled.");
+        setGameText("Deploy on table with 5 cards from outside your deck face down under here. Twice per game, may play a Defensive Shield from here (as if from hand). If Quiet Mining Colony or Independent Operation on table, lightsabers may not add to Force drains. Cloud City Celebration is canceled.");
         addIcons(Icon.JABBAS_PALACE);
     }
 
@@ -45,9 +48,9 @@ public class Card1261_080 extends AbstractStartingEffect {
                         Filters.or(Filters.lightsaber, Filters.hasPermanentWeapon(Filters.lightsaber)), qmcOrIo));
     }
 
-    /** PC card list (PC-E1): "or 'swing' more than once per battle". The 2009 sheet (2261_80) has no swing clause. */
+    /** Master List (PC-E3) and 2009 sheet: no swing clause; the card list (PC-E1, 2261_1080) adds "or 'swing' more than once per battle". */
     protected boolean limitsLightsaberSwings() {
-        return true;
+        return false;
     }
 
     @Override

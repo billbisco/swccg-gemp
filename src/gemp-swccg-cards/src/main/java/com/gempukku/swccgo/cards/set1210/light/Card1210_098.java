@@ -34,7 +34,7 @@ public class Card1210_098 extends AbstractRebel {
         super(Side.LIGHT, 2, 3, 2, 2, 4, "Commander Vanden Willard", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("Leader of Rebel forces on Yavin 4. Formerly Suolriep sector HQ commander. As a Rebel spy, aided Princess Leia and Bail Organa in the years prior to the Senate's dissolution.");
-        setGameText("Leia is defense value and forfeit +3. Your senators at battleground sites and characters at Yavin 4 locations are forfeit +2. Once per game, may take a non-[Permanent Weapon] Leia into hand from Reserve Deck; reshuffle.");
+        setGameText("Leia is defense value and forfeit +3. Your senators at battleground sites and characters at Yavin 4 locations are forfeit +2. Once per game, may take non-[Permanent Weapon] Leia into hand from Reserve Deck; reshuffle.");
         addIcons(Icon.WARRIOR, Icon.A_NEW_HOPE);
         addKeywords(Keyword.COMMANDER, Keyword.LEADER, Keyword.SPY);
     }

@@ -101,7 +101,10 @@ public class Card_1291_009_Tests {
         var scn = GetScenario();
         var card = scn.GetDSCard("blyt").getBlueprint();
 
-        assertEquals("Begin Landing Your Troops & The Dark Path", card.getTitle());
+        // Retitled 2014-05-02 (PC-E1); printed as Begin Landing Your Troops & The Dark Path (2291_9)
+        assertEquals("Begin Landing Your Troops & Dark Forces", card.getTitle());
+        assertTrue(card.getTitles().contains("Begin Landing Your Troops"));
+        assertTrue(card.getTitles().contains("Dark Forces"));
         assertFalse(card.hasVirtualSuffix());
         assertEquals(Uniqueness.UNIQUE, card.getUniqueness());
         assertEquals(Side.DARK, card.getSide());

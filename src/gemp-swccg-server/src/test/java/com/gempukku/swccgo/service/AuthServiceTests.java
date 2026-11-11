@@ -161,6 +161,89 @@ public class AuthServiceTests {
     }
 
     @Test
+    public void closeAccountDeactivatesWithoutDeleting() throws Exception {
+        Player bill = dao.addWithStoredHash("Bill", hasher.hash("rightpass"), "u", null);
+        assertNull(auth.closeAccount(bill.getId() + 1000), "no such player");
+        assertNotNull(auth.closeAccount(bill.getId()));
+        assertEquals(AuthService.Status.DEACTIVATED, auth.accountStatus(bill.getId()).getStatus());
+        assertEquals(AuthService.Status.DEACTIVATED, auth.verifyCredentials("Bill", "rightpass", IP).getStatus());
+        assertNotNull(dao.getPlayer(bill.getId()), "the row stays");
+        assertNotNull(auth.closeAccount(bill.getId()), "closing twice is fine");
+    }
+
+    @Test
+    public void renameAccountRenamesByIdWithTheNewPlayerRules() throws Exception {
+        //test1: renamed by id; the old name no longer signs in, the new one does
+        //test2: names are unique ignoring case; a change of case to one's own name is fine
+        //test3: reserved prefixes and bad characters are refused
+        //test4: deactivated players and unknown ids are refused
+        Player bill = dao.addWithStoredHash("Bill", hasher.hash("rightpass"), "u", null);
+        dao.addWithStoredHash("Han", hasher.hash("otherpass"), "u", null);
+        assertEquals("Billy", auth.renameAccount(bill.getId(), "Billy").getName()); //test1
+        assertEquals(AuthService.Status.OK, auth.verifyCredentials("Billy", "rightpass", IP).getStatus()); //test1
+        assertEquals(AuthService.Status.INVALID, auth.verifyCredentials("Bill", "rightpass", IP).getStatus()); //test1
+        assertEquals("name_taken", assertThrows(AuthService.RenameRefused.class, () -> auth.renameAccount(bill.getId(), "han")).code()); //test2
+        assertEquals("BILLY", auth.renameAccount(bill.getId(), "BILLY").getName()); //test2
+        assertEquals("name_invalid", assertThrows(AuthService.RenameRefused.class, () -> auth.renameAccount(bill.getId(), "admin1")).code()); //test3
+        assertEquals("name_invalid", assertThrows(AuthService.RenameRefused.class, () -> auth.renameAccount(bill.getId(), "a  b")).code()); //test3
+        auth.closeAccount(bill.getId());
+        assertEquals("deactivated", assertThrows(AuthService.RenameRefused.class, () -> auth.renameAccount(bill.getId(), "Billy2")).code()); //test4
+        assertEquals("not_found", assertThrows(AuthService.RenameRefused.class, () -> auth.renameAccount(bill.getId() + 1000, "Billy2")).code()); //test4
+    }
+
+    @Test
+    public void guestSeatNamesCannotBeRegisteredOrRenamedTo() throws Exception {
+        //test1: "Light Side"/"Dark Side" are guest seat ids in Play now games; "Light_Side" is the same name
+        //test2: a name that only starts like one is fine
+        //test3: classic name + password login for an existing account still works
+        Player bill = dao.addWithStoredHash("Bill", hasher.hash("rightpass"), "u", null);
+        assertFalse(auth.register("Light_Side", "longenough", IP)); //test1
+        assertFalse(auth.register("dark_side", "longenough", IP)); //test1
+        assertFalse(auth.register("Dark_Side", "longenough", IP)); //test1
+        assertEquals("name_invalid", assertThrows(AuthService.RenameRefused.class, () -> auth.renameAccount(bill.getId(), "LIGHT_SIDE")).code()); //test1
+        assertTrue(auth.register("Light_Sid2", "longenough", IP)); //test2
+        assertEquals(AuthService.Status.OK, auth.verifyCredentials("Bill", "rightpass", IP).getStatus()); //test3
+        assertEquals(AuthService.Status.OK, auth.verifyCredentials("Light_Sid2", "longenough", IP).getStatus()); //test3
+    }
+
+    @Test
+    public void underscoreAndSpaceNamesAreDifferentAccounts() throws Exception {
+        //test1: a space and an underscore are different names (t121u); case is still ignored
+        //test2: classic login works for each, by its own name
+        Player spaced = dao.addWithStoredHash("Luke Sky", hasher.hash("spacepass1"), "u", null);
+        assertTrue(auth.register("Luke_Sky", "underpass1", IP)); //test1
+        assertThrows(LoginInvalidException.class, () -> auth.register("LUKE_SKY", "underpass1", IP)); //test1
+        assertEquals(AuthService.Status.OK, auth.verifyCredentials("Luke_Sky", "underpass1", IP).getStatus()); //test2
+        assertEquals(AuthService.Status.OK, auth.verifyCredentials("Luke Sky", "spacepass1", IP).getStatus()); //test2
+        assertEquals(AuthService.Status.INVALID, auth.verifyCredentials("Luke_Sky", "spacepass1", IP).getStatus()); //test2
+        assertEquals("name_taken", assertThrows(AuthService.RenameRefused.class,
+                () -> auth.renameAccount(spaced.getId(), "luke_sky")).code()); //test1
+    }
+
+    @Test
+    public void fullNamesWithSpacesCanBeCreatedStoredAndUsedToSignIn() throws Exception {
+        //test1: a name with a space is kept as typed (t122u), up to 32 characters, and signs in
+        //test2: "Luke Sky" and "Luke_Sky" stay two names; case is still ignored
+        //test3: rename to a name with a space works; the old 2-10 ASCII cap is gone
+        //test4: existing names without spaces still sign in
+        Player old = dao.addWithStoredHash("Han", hasher.hash("oldaccount1"), "u", null);
+        assertTrue(auth.register("Luke Sky", "spacepass1", "203.0.113.21")); //test1
+        assertEquals("Luke Sky", auth.verifyCredentials("Luke Sky", "spacepass1", IP).getCanonicalName()); //test1
+        assertEquals(AuthService.Status.OK, auth.verifyCredentials("luke sky", "spacepass1", IP).getStatus()); //test1
+        assertTrue(auth.register("Luke_Sky", "underpass1", "203.0.113.22")); //test2
+        assertThrows(LoginInvalidException.class, () -> auth.register("LUKE SKY", "x".repeat(12), "203.0.113.23")); //test2
+        assertTrue(auth.register("Ana María de la Cruz Solo Organa", "longpass12", "203.0.113.24")); //test1: 32 characters
+        assertThrows(LoginInvalidException.class, () -> auth.register("Ana María de la Cruz Solo Organa2", "longpass12", "203.0.113.25")); //test1: 33
+        assertTrue(auth.register("R", "onecharname", "203.0.113.26")); //test1: 1 character
+        assertEquals("Obi Wan Kenobi", auth.renameAccount(old.getId(), "Obi Wan Kenobi").getName()); //test3
+        assertEquals(AuthService.Status.OK, auth.verifyCredentials("Obi Wan Kenobi", "oldaccount1", IP).getStatus()); //test3
+        assertEquals(AuthService.Status.OK, auth.verifyCredentials("Luke_Sky", "underpass1", IP).getStatus()); //test4
+        for (String seat : new String[]{"Light Side", "Light_Side", "Dark Side", "Dark_Side", "LIGHT SIDE"})
+            assertFalse(auth.register(seat, "longenough", "203.0.113.27"), seat);
+        assertTrue(auth.register("Light Side 2", "longenough", "203.0.113.28"));
+    }
+
+    @Test
     public void resetAccountCannotBeClaimedWithoutTheCode() throws Exception {
         dao.addWithStoredHash("Bill", hasher.hash("oldpassword"), "u", null);
         auth.issueResetCode("Bill", "AdminAl");

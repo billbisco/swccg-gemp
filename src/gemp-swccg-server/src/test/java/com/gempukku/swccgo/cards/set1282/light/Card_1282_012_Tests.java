@@ -146,7 +146,7 @@ public class Card_1282_012_Tests {
     @Test
     public void AnakinSoloCurrentCardIsTheLatestText() {
         assertCurrentCard("1282_12", "Anakin Solo",
-                "Power +2 while armed with a lightsaber. May use any 'stolen' lightsaber. Once during battle, where present, may steal an opponent's just-lost lightsaber. Immune to attrition <3 (<5 while armed with a 'stolen' lightsaber).");
+                "Power +2 while armed with a lightsaber. May use any 'stolen' lightsaber. Once during battle, where present, may steal an opponent's just-lost lightsaber. Immune to attrition < 3 (< 5 while armed with a 'stolen' lightsaber).");
     }
 
     /** An opponent's lightsaber is lost (with its character) where Anakin is present, outside battle. */

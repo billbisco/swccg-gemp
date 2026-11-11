@@ -20,10 +20,13 @@ import com.gempukku.swccgo.logic.timing.results.ForceDrainInitiatedResult;
 
 import java.util.List;
 
-/** Legacy Block 5: Nothing Can Get Through Our Shield (V). */
+/** Legacy Block 5: Nothing Can Get Through Our Shield (V).
+ * Text: PC-E3, the Virtual Cards Master List (2013-04-27; the PC card image, PC-E2, 2250_2001, came first), which repeats the release-sheet words ("non-[Presence] characters (and vehicles)", both players' cards); the
+ * PC website card list text (PC-E1, 2012) is version 2250_1001 (Bill 2026-11-11: every publication is a version).
+ */
 public class Card1250_001 extends Card1114_029 {
     public Card1250_001() {
-        setGameText("At each system a player controls with a capital starship, his non-[Presence] characters and vehicles deploy -1 to related sites and sectors. If you occupy a system with a capital starship (or three unique starships) and have no Objective on table, may add 1 to each of your Force drains at related battleground sites (opponent loses no more than 2 Force from those drains).");
+        setGameText("At each system a player controls with a capital starship, non-[Presence] characters (and vehicles) deploy -1 to related sites and sectors. If you occupy a system with a capital starship (or three unique starships) and have no Objective on table, may add 1 to each of your Force drains at related battleground sites (opponent loses no more than 2 Force from those drains).");
         addIcons(Icon.EPISODE_I, Icon.LEGACY_BLOCK_5);
         setAsLegacy(true);
     }
@@ -49,9 +52,9 @@ public class Card1250_001 extends Card1114_029 {
         });
     }
 
-    /** "his" non-[Presence] characters and vehicles: only the controlling player's cards get the discount. */
+    /** Master List (PC-E3): "non-[Presence] characters (and vehicles)": both players' cards get the discount (the card list, 2250_1001, says "his"). */
     protected boolean discountOnlyControllersCards() {
-        return true;
+        return false;
     }
 
     private Modifier discount(PhysicalCard self, String playerId) {

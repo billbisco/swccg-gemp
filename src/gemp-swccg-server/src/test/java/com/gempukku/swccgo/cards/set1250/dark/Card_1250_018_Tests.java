@@ -69,14 +69,6 @@ public class Card_1250_018_Tests {
         assertSame(sidious, enemy.getAttachedTo());
     }
 
-    @Test public void AnEnemyOfTheRepublicRelocatesToNonDroidNotParticipatingDroidInBattleAwayFromSenate() {
-        var scn = battle(true, true);
-        var enemy = scn.GetDSCard("enemy");
-        assertNotSame(scn.GetLSCard("droid"), enemy.getAttachedTo());
-        assertSame(scn.GetLSCard("obi"), enemy.getAttachedTo());
-        assertSame(scn.GetDSStartingLocation(), scn.gameState().getBattleLocation());
-    }
-
     @Test public void AnEnemyOfTheRepublicDoesNotRelocateWhenSidiousIsAwayFromSenate() {
         var scn = battle(false, true);
         assertSame(scn.GetDSCard("sidious"), scn.GetDSCard("enemy").getAttachedTo());
@@ -100,9 +92,10 @@ public class Card_1250_018_Tests {
         scn.SkipToPhase(Phase.BATTLE);
         scn.DSInitiateBattle(site);
         for (int i = 0; i < 35 && !scn.AwaitingDSWeaponsSegmentActions(); i++) {
-            if (scn.LSDecisionAvailable("Choose your participating non-droid character")) {
+            if (scn.LSDecisionAvailable("Choose your participating character")) {
                 assertTrue(scn.LSHasCardChoiceAvailable(obi));
-                assertFalse(scn.LSHasCardChoiceAvailable(droid));
+                // Master List (2013, current): "their participating character", droids included (the card list, 2250_1018, says "non-droid")
+                assertEquals(withDroid, scn.LSHasCardChoiceAvailable(droid));
                 assertFalse(scn.LSHasCardChoiceAvailable(offSite));
                 scn.LSChooseCard(obi);
             } else if (scn.LSGetDecision() instanceof CardActionSelectionDecision) scn.LSPass();
@@ -172,7 +165,7 @@ public class Card_1250_018_Tests {
         boolean offered = false;
         List<PhysicalCard> remaining = null;
         for (int i = 0; i < 100 && !scn.AwaitingDSControlPhaseActions(); i++) {
-            if (scn.DSDecisionAvailable("Take any card into hand from Reserve Deck?")) {
+            if (scn.DSDecisionAvailable("Take a card into hand from Reserve Deck?")) {
                 assertSame(sidious, enemy.getAttachedTo());
                 offered = true;
                 remaining = new ArrayList<>(scn.GetDSReserveDeck());

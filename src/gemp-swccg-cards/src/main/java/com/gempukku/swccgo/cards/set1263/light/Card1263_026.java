@@ -20,15 +20,24 @@ import com.gempukku.swccgo.logic.modifiers.Modifier;
 
 import java.util.List;
 
-/** Legacy Block 6: Phylo Gandish (V). */
+/** Legacy Block 6: Phylo Gandish (V). Text: PC-E1, the errata posted on the PC forum on 2013-10-30 (p847474), which added [Virtual Block 4]; the release-sheet text is 2263_26 (legacy batch B41). */
 public class Card1263_026 extends AbstractAlien {
     public Card1263_026() {
         super(Side.LIGHT, 2, 3, 1, 4, 4, "Phylo Gandish", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_6_3, Rarity.V);
         setVirtualSuffix(true);
         setLore("Good-natured former pilot whose family owns a galactic transportation company. Years of travel has enabled her to learn many loopholes in spaceport protocol.");
-        setGameText("Adds 2 to power of anything she pilots. If opponent's [Virtual Block 6] card just added a destiny to total power or attrition here, draw two destiny, choose one, and subtract it from their attrition and total power. Your characters here are immune to You Are Beaten and attrition < 3.");
+        setGameText("Adds 2 to power of anything she pilots. If opponent's [Virtual Block 6] or [Virtual Block 4] card just added a destiny to total power or attrition here (except battle destiny), draw two destiny, choose one, and subtract it from their attrition and total power. Your characters here are immune to You Are Beaten and attrition < 3.");
         addIcons(Icon.PILOT, Icon.EPISODE_I, Icon.CORUSCANT, Icon.LEGACY_BLOCK_6);
         addKeywords(Keyword.FEMALE);
+    }
+
+    /**
+     * PC-E1 (PC forum "Current Rulings/Errata" p847474, 2013-10-30): [Virtual Block 6] or [Virtual Block 4] cards
+     * (to counter Galen's Lightsaber and Vader's Gift). "(except battle destiny)": GEMP raises this trigger only for
+     * destiny draws added to total power or attrition only, never for battle destiny.
+     */
+    protected Filterable opponentsCardIcons() {
+        return Filters.or(Icon.LEGACY_BLOCK_6, Icon.LEGACY_BLOCK_4);
     }
 
     @Override
@@ -45,7 +54,7 @@ public class Card1263_026 extends AbstractAlien {
         final String opponent = game.getOpponent(playerId);
         if (game.getGameState().getBattleState() != null
                 && TriggerConditions.isDestinyJustAddedToTotalPowerOrAttritionBy(game, effectResult, opponent,
-                    Filters.and(Filters.opponents(self), Icon.LEGACY_BLOCK_6), Filters.sameLocation(self))) {
+                    Filters.and(Filters.opponents(self), opponentsCardIcons()), Filters.sameLocation(self))) {
             final OptionalGameTextTriggerAction action = new OptionalGameTextTriggerAction(self, gameTextSourceCardId);
             action.setText("Draw two destiny and choose one");
             action.setActionMsg("Draw two destiny, choose one, and subtract it from opponent's attrition and total power");

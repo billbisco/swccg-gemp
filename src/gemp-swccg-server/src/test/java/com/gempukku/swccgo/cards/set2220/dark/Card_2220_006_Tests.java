@@ -53,7 +53,8 @@ public class Card_2220_006_Tests {
         assertTrue(card.isLegacy());
         assertEquals("Adds 3 to power of anything he pilots. Twice per game during opponent's turn, may place three cards from hand on your Force Pile to draw top two cards from Reserve Deck.",
                 card.getGameText());
-        assertNotEquals(current.getGameText(), card.getGameText());
+        // The current card (Master List, 2013) repeats these words (Bill 2026-11-11).
+        assertEquals(current.getGameText(), card.getGameText());
         var version = card.getLegacyVersion();
         assertEquals("1220_6", version.currentPrintingId());
         assertEquals("", version.label());

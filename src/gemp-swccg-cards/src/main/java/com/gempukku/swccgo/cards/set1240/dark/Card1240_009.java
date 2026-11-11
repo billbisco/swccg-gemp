@@ -37,7 +37,7 @@ public class Card1240_009 extends AbstractImperial {
         super(Side.DARK, 3, 2, 2, 2, 3, "Imperial Stormtrooper", Uniqueness.UNRESTRICTED, ExpansionSet.VIRTUAL_BLOCK_4, Rarity.V);
         setArmor(4);
         setLore("One of countless elite shock troops totally loyal to the Emperor. Unquestioningly follow orders. Willing to sacrifice their lives to accomplish a mission. First-strike forces.");
-        setGameText("Clone. Blaster Rifle deploys (and fires) for free on this trooper. When this trooper fires Blaster Rifle, may draw two weapon destiny and choose one (may take other into hand). Immune to Rebel Barrier.");
+        setGameText("Clone. Blaster Rifle deploys (and fires) for free on this trooper. When this trooper fires Blaster Rifle, may draw two weapon destiny and choose one (may take the other into hand). Immune to Rebel Barrier.");
         addIcons(Icon.EPISODE_I, Icon.WARRIOR);
         addKeywords(Keyword.STORMTROOPER, Keyword.CLONE_TROOPER);
     }

@@ -59,7 +59,7 @@ public class Card_2220_1036_Tests {
         assertEquals("1220_36", version.currentPrintingId());
         assertEquals("PC-E1", version.label());
         assertEquals(LocalDate.of(2012, 7, 21), version.printedOn());
-        assertEquals(LocalDate.of(2013, 4, 27), version.supersededOn());
+        assertEquals(LocalDate.of(2013, 2, 25), version.supersededOn());
         assertEquals(GameUtils.getFullName(current) + " [PC-E1]", GameUtils.getFullName(card));
     }
 

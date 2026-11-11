@@ -41,7 +41,7 @@ public class Card1240_047 extends AbstractUsedInterrupt {
         super(Side.DARK, 2, "Unexpected Interruption", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_4, Rarity.V);
         setVirtualSuffix(true);
         setLore("'Sir! Sir! I've isolated the reverse power flux coupling!'");
-        setGameText("If a battle was just initiated, target an opponent's female non-droid character present with Xizor. Draw destiny. Target excluded from battle and adds her power to Xizor's for remainder of turn if destiny +2 > target's ability.");
+        setGameText("If a battle was just initiated, target an opponent's female non-droid character present with Xizor. Draw destiny. If destiny +2 > target's ability, target excluded from battle and adds her power to Xizor's for remainder of turn.");
         addIcons(Icon.DAGOBAH, Icon.LEGACY_BLOCK_4);
     }
 

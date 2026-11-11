@@ -35,10 +35,11 @@ public class Card_2273_010_Tests {
     }
 
     @Test
-    public void OriginalKesselSurveillanceSystemIsTheCurrentCardWithTheJune2011Text() {
+    public void PcE1KesselSurveillanceSystemIsTheCurrentCardWithTheJuly2011ErrataText() {
+        // Legacy batch B41: the forum errata of 2011-07-14 (p636351) is PC-E1; the re-made 7.3 sheet (2011-07-25) is PC-E2 (2273_3010, batch B41b).
         var s = scenario();
-        assertVersion(s.GetDSCard("surveillance").getBlueprint(), s.GetDSCard("current").getBlueprint(), "1273_10", "",
-                LocalDate.of(2011, 6, 3), LocalDate.of(2012, 7, 21),
+        assertVersion(s.GetDSCard("surveillance").getBlueprint(), s.GetDSCard("current").getBlueprint(), "1273_10", "PC-E1",
+                LocalDate.of(2011, 7, 14), LocalDate.of(2011, 7, 25),
                 "Deploy on a Kessel site. Opponent's Force drains are -1 here. Once per turn, if you are about to lose Force from Reserve Deck, may place a 'spice' card in owner's Lost Pile to make that Force satisfy 1 additional Force loss. Once per game, may deploy Spice Mine Administrator here from Reserve Deck; reshuffle.");
     }
 

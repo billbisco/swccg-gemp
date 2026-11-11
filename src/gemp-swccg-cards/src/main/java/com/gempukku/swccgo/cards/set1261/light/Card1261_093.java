@@ -28,7 +28,12 @@ import com.gempukku.swccgo.logic.timing.StandardEffect;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Armed And Dangerous & Krayt Dragon Howl, final Light master page 32. */
+/**
+ * Armed And Dangerous & Krayt Dragon Howl, final Light master page 32.
+ * Text: PC-E1 = the release-sheet text under the title Armed And Dangerous & Krayt Dragon Howl (retitled 2011-07-14,
+ * PC forum p636351; Master List slip and PC card image). The card list's written-out icons are notation, not a version
+ * (Bill 2026-11-11). The printing titled Krayt Dragon Howl & Armed And Dangerous is 2261_93 (legacy batch B41).
+ */
 public class Card1261_093 extends AbstractUsedOrLostInterrupt {
     private static final Filter CANCEL = Filters.or(Filters.title(Title.Disarmed), Filters.Stunning_Leader);
     private static final Filter OBI_WAN = Filters.and(Filters.ObiWan, Filters.not(Icon.REFLECTIONS_III));
@@ -38,7 +43,7 @@ public class Card1261_093 extends AbstractUsedOrLostInterrupt {
     public Card1261_093() {
         super(Side.LIGHT, 4, "Armed And Dangerous & Krayt Dragon Howl", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
         setTitleComponents(new TitleComponent("Armed And Dangerous", Uniqueness.UNIQUE), new TitleComponent("Krayt Dragon Howl", Uniqueness.UNIQUE));
-        setGameText("USED: Cancel Disarmed or Stunning Leader. OR If a battle was just initiated, deploy a character weapon on your participating character from Reserve Deck (or hand); reshuffle. LOST: Use 1 Force to deploy (or retrieve) non-[Reflections 3] Obi-Wan from Reserve Deck; reshuffle. OR If opponent just initiated a battle against non-[Reflections 3] Obi-Wan alone at a site, his forfeit cannot be reduced.");
+        setGameText("USED: Cancel Disarmed or Stunning Leader. OR If a battle was just initiated, ▼ (or deploy from hand) a character weapon on your participating character. LOST: Use 1 Force to ▼ (or retrieve) non-[Reflections 3] Obi-Wan. OR If opponent just initiated a battle against non-[Reflections 3] Obi-Wan alone at a site, his forfeit cannot be reduced.");
         addIcons(Icon.CLOUD_CITY);
     }
 

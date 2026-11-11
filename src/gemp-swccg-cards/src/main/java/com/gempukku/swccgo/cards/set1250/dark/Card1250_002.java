@@ -19,16 +19,23 @@ import com.gempukku.swccgo.logic.timing.EffectResult;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Legacy Block 5 retains the predecessor's printed stats and attrition immunity. */
+/** Legacy Block 5 retains the predecessor's printed stats and attrition immunity.
+ * Text: PC-E3, the Virtual Cards Master List (2013-04-27; the PC card image, PC-E2, came first), which repeats the 2009 release-sheet words ("same site as a
+ * Jedi"); the PC website card-list text (PC-E1, 2012) is version 2250_1002 (2250_1002ai for the AI printing) (Bill 2026-11-11). */
 public class Card1250_002 extends Card1112_024 {
     public Card1250_002() {
-        setGameText("Once during opponent's activate phase, may relocate Aurra to a site where opponent has a Jedi. Once per game, during your move phase, may fire her weapon at a Jedi; hit target is lost. Immune to attrition < 4.");
+        setGameText("Once during opponent's activate phase, may relocate Aurra to same site as a Jedi. Once per game, during your move phase, may fire her weapon at a Jedi; hit target is lost. Immune to attrition < 4.");
         addIcon(Icon.LEGACY_BLOCK_5);
         setAsLegacy(true);
     }
 
     @Override
     public ExpansionSet getExpansionSet() { return ExpansionSet.VIRTUAL_BLOCK_5; }
+
+    /** Master List (PC-E3) and the 2009 sheet: "same site as a Jedi" (any Jedi; the card list, 2250_1002, says "a site where opponent has a Jedi"). */
+    protected Filter relocationJedi(PhysicalCard self) {
+        return Filters.Jedi;
+    }
 
     @Override
     protected List<TopLevelGameTextAction> getGameTextTopLevelActions(String playerId, SwccgGame game, PhysicalCard self, int sourceId) {
@@ -37,14 +44,14 @@ public class Card1250_002 extends Card1112_024 {
             @Override
             public boolean accepts(GameState state, ModifiersQuerying querying, PhysicalCard site) {
                 return Filters.site.accepts(state, querying, site)
-                        && GameConditions.canSpot(game, self, Filters.and(Filters.Jedi, Filters.at(site)))
+                        && GameConditions.canSpot(game, self, Filters.and(relocationJedi(self), Filters.at(site)))
                         && Filters.canBeRelocatedToLocation(site, false, 0).accepts(state, querying, self);
             }
         };
         if (GameConditions.isOnceDuringOpponentsPhase(game, self, playerId, sourceId, Phase.ACTIVATE)
                 && GameConditions.canSpot(game, self, destination)) {
             var action = new TopLevelGameTextAction(self, playerId, sourceId);
-            action.setText("Relocate to a site where opponent has a Jedi"); // Jedi are Light Side characters
+            action.setText("Relocate to same site as a Jedi");
             action.appendUsage(new OncePerPhaseEffect(action));
             action.appendEffect(new ChooseCardOnTableEffect(action, playerId, "Choose site with a Jedi", destination) {
                 @Override

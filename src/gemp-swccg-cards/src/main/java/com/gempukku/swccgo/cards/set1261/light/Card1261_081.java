@@ -21,14 +21,17 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-/** Incom Corporation & Koensayr Manufacturing, final Virtual Block 6.1. */
+/** Incom Corporation & Koensayr Manufacturing, final Virtual Block 6.1.
+ * Text: PC-E3, the Virtual Cards Master List (2013-04-27; the PC card image, PC-E2, came first), which repeats the release-sheet words ("Echo Base Operations is canceled."); the
+ * PC website card list text (PC-E1, 2012) is version 2261_1081 (Bill 2026-11-11: every publication is a version).
+ */
 public class Card1261_081 extends AbstractNormalEffect {
     public Card1261_081() {
         super(Side.LIGHT, 3, PlayCardZoneOption.ATTACHED, "Incom Corporation & Koensayr Manufacturing",
                 Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
         setTitleComponents(new TitleComponent("Incom Corporation", Uniqueness.UNIQUE),
                 new TitleComponent("Koensayr Manufacturing", Uniqueness.UNIQUE));
-        setGameText("Deploy on a Rebel Base war room. Your ability-1 permanent pilots aboard T-47s, X-wings, Y-wings, and Z-95s (except squadrons) are replaced by ability-2 permanent pilots who add 1 to power. During your control phase, may retrieve one Y-wing or Z-95. Suspended if opponent controls this site. (Immune to Alter.)");
+        setGameText("Deploy on a Rebel Base war room. Echo Base Operations is canceled. Your ability-1 permanent pilots aboard T-47s, X-wings, Y-wings, and Z-95s (except squadrons) are replaced by ability-2 permanent pilots who add 1 to power. During your control phase, may retrieve one Y-wing or Z-95. Suspended if opponent controls this site. (Immune to Alter.)");
         addKeywords(Keyword.DEPLOYS_ON_SITE); addIcons(Icon.SPECIAL_EDITION); addImmuneToCardTitle(Title.Alter);
     }
 
@@ -68,12 +71,9 @@ public class Card1261_081 extends AbstractNormalEffect {
         return null;
     }
 
-    /**
-     * The PC card list text (PC-E1, the latest) has no "Echo Base Operations is canceled." (on the 2010 sheet and the
-     * Master List; 2261_81 keeps it).
-     */
+    /** Master List (PC-E3, current) and the sheet: "Echo Base Operations is canceled." (the card list, 2261_1081, has no such line). */
     protected boolean cancelsEchoBaseOperations() {
-        return false;
+        return true;
     }
 
     @Override

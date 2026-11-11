@@ -44,7 +44,7 @@ public class Card1230_024 extends AbstractNormalEffect {
         super(Side.DARK, 4, PlayCardZoneOption.ATTACHED, Title.Bantha_Herd, Uniqueness.RESTRICTED_2, ExpansionSet.VIRTUAL_BLOCK_3, Rarity.V);
         setVirtualSuffix(true);
         setLore("While banthas are found on many worlds, the largest herds are found on Tatooine. The Sand People of that planet learned to tame the beasts.");
-        setGameText("Deploy on a Tatooine site. Once per turn, may place up to 3 cards from hand face down here. You may 'react' to battles initiated against your lone Tusken Raider by deploying (for free) any Tusken Raider(s) and/or Bantha(s) here. (Immune to Alter.)");
+        setGameText("Deploy on a Tatooine site. Once per turn, may place up to 3 cards from hand face down here. If a battle was just initiated against your lone Tusken Raider, may 'react' by deploying (for free) any Tusken Raider(s) and/or Bantha(s) here. (Immune to Alter.)");
         addIcons(Icon.SPECIAL_EDITION);
         addKeywords(Keyword.DEPLOYS_ON_SITE);
         addImmuneToCardTitle(Title.Alter);

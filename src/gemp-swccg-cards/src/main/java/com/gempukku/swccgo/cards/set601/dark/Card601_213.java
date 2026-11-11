@@ -40,7 +40,7 @@ public class Card601_213 extends AbstractCombatVehicle {
         super(Side.DARK, 2, 6, 6, 8, null, 1, 6, Title.Blizzard_2, Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
         setVirtualSuffix(true);
         setLore("AT-AT commanded by the treacherous General Nevar before he was assassinated. Fortified with an extra layer of armor by the paranoid general. Enclosed.");
-        setGameText("May add 1 pilot and 8 passengers. Permanent pilot provides ability of 2. During your control phase, may take one Trample or Walker Barrage into hand from Reserve Deck; reshuffle. Walker Barage total is +2. Immune to attrition < 4.");
+        setGameText("May add 1 pilot and 8 passengers. Permanent pilot provides ability of 2. During your control phase, may [upload] one Trample or Walker Barrage. Walker Barrage total is +2. Immune to attrition < 4.");
         addModelType(ModelType.AT_AT);
         addIcons(Icon.HOTH, Icon.PILOT, Icon.SCOMP_LINK, Icon.LEGACY_BLOCK_2);
         addKeywords(Keyword.ENCLOSED);

@@ -214,6 +214,27 @@ public class HallServer extends AbstractServer {
      * paused game after the 5-minute channel drop, must leave the lobby list.
      * Rejoin creates a new game channel and presence returns.
      */
+    /**
+     * Whether the player (by name) is at a table: waiting at one, or seated in a game that has not finished.
+     * swccg-login renames are refused then, so a game never ends under a name that no longer exists (#261).
+     */
+    public boolean isAtTable(String playerName) {
+        _hallDataAccessLock.readLock().lock();
+        try {
+            for (AwaitingTable table : _awaitingTables.values())
+                if (table.hasPlayer(playerName))
+                    return true;
+            for (RunningTable table : _runningTables.values()) {
+                SwccgGameMediator mediator = table.getSwccgoGameMediator();
+                if (mediator != null && !mediator.isDestroyed() && !mediator.isFinished() && mediator.isPlayerPlaying(playerName))
+                    return true;
+            }
+            return false;
+        } finally {
+            _hallDataAccessLock.readLock().unlock();
+        }
+    }
+
     private boolean isConnectedToRunningGame(String playerId) {
         _hallDataAccessLock.readLock().lock();
         try {

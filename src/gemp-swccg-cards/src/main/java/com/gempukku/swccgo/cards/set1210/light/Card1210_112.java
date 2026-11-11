@@ -40,7 +40,7 @@ public class Card1210_112 extends AbstractRebel {
         super(Side.LIGHT, 1, 2, 2, 2, 5, "Red Leader", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("X-wing pilot Garven Dreis. Led Red Squadron at the Battle of Yavin, and fired an unsuccessful shot at the Death Star thermal exhaust port. Served at Dantooine Rebel base.");
-        setGameText("Adds 2 to power of anything he pilots. While piloting at Dantooine system, when opponent deploys a character to a related site, they choose: opponent must lose 1 Force. OR that character may not battle or move this turn.");
+        setGameText("Adds 2 to power of anything he pilots. While piloting at Dantooine system, when opponent deploys a character to a related site, they choose: opponent must lose 1 Force, or that character may not battle or move this turn.");
         addPersona(Persona.RED_LEADER);
         addIcons(Icon.PILOT, Icon.WARRIOR);
         addKeywords(Keyword.RED_SQUADRON, Keyword.LEADER);

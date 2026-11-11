@@ -151,41 +151,6 @@ public class Card_1274_007_Tests {
     }
 
     @Test
-    public void OccupiedTerritoryPreventsAnyPowerSegmentDestinyDraws() {
-        var scn = GetScenario();
-        var territory = scn.GetDSCard("territory");
-        var trooper = scn.GetDSCard("trooper");
-        var dengar = scn.GetDSCard("dengar");
-        var vader = scn.GetDSCard("vader");
-        var luke = scn.GetLSCard("luke");
-        var scum = scn.GetLSCard("scum");
-        var site = scn.GetDSStartingLocation();
-
-        scn.StartGame();
-        scn.MoveCardsToLocation(site, trooper, dengar, vader);
-        scn.MoveCardsToLocation(site, luke);
-        scn.AttachCardsTo(site, territory);
-        scn.MoveCardsToLSHand(scum);
-        scn.EnsureDSForcePile(5);
-        scn.EnsureLSForcePile(5);
-        scn.DSStartBattleAndSkipToWeaponsSegment(site);
-        scn.DSUseCardAction(territory, "prevent");
-        scn.PassAllResponses();
-        assertInZone(Zone.USED_PILE, territory);
-
-        assertTrue(passUntil(scn, () -> scn.gameState().getBattleState() != null && scn.IsReachedPowerSegment() && lsCan(scn, scum, null)));
-        assertTrue(MayNotDrawDestinyExceptBattleDestinyModifier.mayNotDrawDestiny(scn.game(), scn.LS, DestinyType.DESTINY_TO_REDUCE_ATTRITION_POWER));
-        assertFalse(MayNotDrawDestinyExceptBattleDestinyModifier.mayNotDrawDestiny(scn.game(), scn.LS, DestinyType.BATTLE_DESTINY));
-        // card-list errata (PC-E1): "Prevent any destinies from being drawn" also stops your own power-segment draws
-        assertTrue(MayNotDrawDestinyExceptBattleDestinyModifier.mayNotDrawDestiny(scn.game(), scn.DS, DestinyType.DESTINY_TO_REDUCE_ATTRITION_POWER));
-        assertFalse(MayNotDrawDestinyExceptBattleDestinyModifier.mayNotDrawDestiny(scn.game(), scn.DS, DestinyType.BATTLE_DESTINY));
-        int reserveBefore = scn.GetLSReserveDeckCount();
-        scn.LSUseCardAction(scum);
-        scn.PassAllResponses();
-        assertEquals(reserveBefore, scn.GetLSReserveDeckCount());
-    }
-
-    @Test
     public void OccupiedTerritoryWithoutPreventionOpponentDrawsPowerSegmentDestiny() {
         var scn = GetScenario();
         var territory = scn.GetDSCard("territory");
@@ -215,7 +180,42 @@ public class Card_1274_007_Tests {
     @Test
     public void OccupiedTerritoryShowsTheCardListPcE1Text() {
         String t = com.gempukku.swccgo.framework.VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("1274_7").getGameText();
-        org.junit.Assert.assertEquals("Deploy on a battleground. If you occupy, during battle here or at a related location, may place this Effect in Used Pile and choose: Draw up to two cards from Reserve Deck OR Prevent any destinies from being drawn during the power segment of that battle (except battle destiny).", t);
-        org.junit.Assert.assertFalse(t.contains("Prevent opponent from drawing"));
+        org.junit.Assert.assertEquals("Deploy on a battleground. If you occupy, during battle here or at a related location, may place this Effect in Used Pile and choose: Draw up to two cards from Reserve Deck OR Prevent opponent from drawing any destinies during the power segment of that battle (except battle destiny).", t);
+        org.junit.Assert.assertTrue(t.contains("Prevent opponent from drawing"));
+    }
+
+    @Test
+    public void OccupiedTerritoryPreventsOnlyOpponentsPowerSegmentDestinyDraws() {
+        var scn = GetScenario();
+        var territory = scn.GetDSCard("territory");
+        var trooper = scn.GetDSCard("trooper");
+        var dengar = scn.GetDSCard("dengar");
+        var vader = scn.GetDSCard("vader");
+        var luke = scn.GetLSCard("luke");
+        var scum = scn.GetLSCard("scum");
+        var site = scn.GetDSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, trooper, dengar, vader);
+        scn.MoveCardsToLocation(site, luke);
+        scn.AttachCardsTo(site, territory);
+        scn.MoveCardsToLSHand(scum);
+        scn.EnsureDSForcePile(5);
+        scn.EnsureLSForcePile(5);
+        scn.DSStartBattleAndSkipToWeaponsSegment(site);
+        scn.DSUseCardAction(territory, "prevent");
+        scn.PassAllResponses();
+        assertInZone(Zone.USED_PILE, territory);
+
+        assertTrue(passUntil(scn, () -> scn.gameState().getBattleState() != null && scn.IsReachedPowerSegment() && lsCan(scn, scum, null)));
+        assertTrue(MayNotDrawDestinyExceptBattleDestinyModifier.mayNotDrawDestiny(scn.game(), scn.LS, DestinyType.DESTINY_TO_REDUCE_ATTRITION_POWER));
+        assertFalse(MayNotDrawDestinyExceptBattleDestinyModifier.mayNotDrawDestiny(scn.game(), scn.LS, DestinyType.BATTLE_DESTINY));
+        // Master List (2013, current): "Prevent opponent from drawing any destinies"; your own draws are not stopped
+        assertFalse(MayNotDrawDestinyExceptBattleDestinyModifier.mayNotDrawDestiny(scn.game(), scn.DS, DestinyType.DESTINY_TO_REDUCE_ATTRITION_POWER));
+        assertFalse(MayNotDrawDestinyExceptBattleDestinyModifier.mayNotDrawDestiny(scn.game(), scn.DS, DestinyType.BATTLE_DESTINY));
+        int reserveBefore = scn.GetLSReserveDeckCount();
+        scn.LSUseCardAction(scum);
+        scn.PassAllResponses();
+        assertEquals(reserveBefore, scn.GetLSReserveDeckCount());
     }
 }

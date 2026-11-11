@@ -12,10 +12,10 @@ public class Card_1261_101_Tests extends SoloDefenseTestSupport {
     public Card_1261_101_Tests() { super("1261_101", "1_11", "13_21", "5_79"); }
 
     @Test public void currentTextIsThePCCardListText() {
-        // PC card list (PC-E1, by 2012-07-21; Bill option b): the latest text. GEMP's former wording was no version.
+        // Master List (2013, PC-E3) is the latest text (Bill 2026-11-11).
         var text = fixture().GetLSCard("interrupt").getBlueprint().getGameText();
-        assertEquals("Use 1 Force to deploy (or retrieve) non-[Permanent Weapon] Han (except Falcon) from Reserve Deck; reshuffle. OR If battle just initiated, and Han defending alone at a site, he is power +1 for each character and vehicle present, his forfeit cannot be reduced, he adds one destiny to power, and he draws one battle destiny if not able to otherwise. (Immune to Sense.)", text);
-        assertFalse(text.contains("Reflections III"));
+        assertEquals("Use 1 Force to ▼ (or retrieve) non-[Reflections III] Han. OR If a battle just initiated, and Han defending alone at a site, his forfeit cannot be reduced, he adds one destiny to power (+1 for each character and vehicle present), and draws one battle destiny if not able to otherwise. (Immune to Sense.)", text);
+        assertTrue(text.contains("Reflections III"));
     }
 
     @Test public void exactFinalLegacyInterrupt() {
@@ -55,29 +55,6 @@ public class Card_1261_101_Tests extends SoloDefenseTestSupport {
         }
         assertTrue(scn.GetLSLostPile().contains(excluded));
     }
-
-    // PC-E1: "he is power +1 for each character and vehicle present ... he adds one destiny to power" (no bonus on
-    // the destiny; the sheet text's "(+1 for each ...)" bonus is tested on 2261_101).
-    @Override @Test public void addedDestinyGainsOneForTheDefenderAndOneOpponentPresent() {
-        assertEquals(2, destinyToPowerWith(true), 0.01);
-    }
-
-    @Override @Test public void addedDestinyGainsOneMoreForASecondOpposingCharacter() {
-        assertEquals(2, destinyToPowerWith(true, "trooper"), 0.01);
-    }
-
-    @Override @Test public void addedDestinyCountsVehiclesPresent() {
-        assertEquals(2, destinyToPowerWith(true, "trooper", "crawler"), 0.01);
-    }
-
-    @Test public void protectedHanIsPowerPlusOneForEachCharacterAndVehiclePresent() {
-        var scn = battle("person", true, true, false, "trooper", "crawler");
-        var han = scn.GetLSCard("person");
-        float before = scn.GetPower(han);
-        scn.LSPlayCard(scn.GetLSCard("interrupt"), PROTECT);
-        if (scn.LSHasCardChoiceAvailable(han)) scn.LSChooseCard(han);
-        scn.PassAllResponses();
-        // Han, Vader, the trooper and the Sandcrawler are present.
-        assertEquals(before + 4, scn.GetPower(han), 0.01);
-    }
+    // The Master List (2013, current) and PC card image put the "(+1 for each character and vehicle present)" on the
+    // added destiny: the shared SoloDefenseTestSupport tests run as written. The card-list overrides are on 2261_1101.
 }

@@ -56,8 +56,10 @@ public class Card_1282_023_Tests {
         var scn = GetScenario();
         var card = scn.GetLSCard("found").getBlueprint();
 
-        assertEquals("Found Someone You Have & Higher Ground", card.getTitle());
-        assertTrue(card.getTitles().contains("Found Someone You Have"));
+        // Retitled 2014-05-02 (PC-E1); printed as Found Someone You Have & Higher Ground (2282_23)
+        assertEquals("A Step Backward & Higher Ground", card.getTitle());
+        assertTrue(card.getTitles().contains("A Step Backward"));
+        assertFalse(card.getTitles().contains("Found Someone You Have"));
         assertTrue(card.getTitles().contains("Higher Ground"));
         assertFalse(card.hasVirtualSuffix());
         assertEquals(Uniqueness.UNIQUE, card.getUniqueness());

@@ -27,7 +27,7 @@ public class LegacyBatchB29VersionsTests {
             Map.entry("1292_1", "Permanent weapon is Twin Blaster Cannons (may target a character or vehicle; draw destiny; add 2 if targeting a vehicle; if total destiny > defense value, target hit and you may activate 1 Force). While with another [Presence] droid at a site, adds one battle destiny."),
             Map.entry("1200_13", "Plays on table. Whenever opponent excludes any character(s) from battle, they lose 2 Force. At end of opponent's turn, if you control two battlegrounds (a site and a system) and opponent deployed a card with ability and did not inititate a battle, may retrieve 1 Force."),
             Map.entry("1292_9", "[Pilot] 2, 3: Moldy Crow. Permanent weapon is Blaster Pistol (may target a character for free; draw destiny; target hit and forfeit -3, if destiny +1 > defense value). Your characters here are immune to Trample and You Are Beaten."),
-            Map.entry("1291_19", "Dark: May deploy Gunray from Reserve Deck; reshuffle. While two senators here, they may use their game text as if in a senate majority. Light: While Gunray or opponent's senator here, your spies may not deploy here."),
+            Map.entry("1291_19", "Dark: May deploy Gunray from Reserve Deck; reshuffle. While two senators here, they use their game text as if in a senate majority. Light: While Gunray or opponent's senator here, your spies may not deploy here."),
             Map.entry("1291_17", "Dark: Dooku and Jango are power +1 here. Imprisoned captives released here may Escape. Light: Once per turn, if you control, may raise your converted Petranaki Arena to the top."));
 
     private static SwccgCardBlueprintLibrary library;

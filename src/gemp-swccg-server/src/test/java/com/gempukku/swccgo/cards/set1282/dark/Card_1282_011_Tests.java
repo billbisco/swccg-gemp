@@ -230,4 +230,15 @@ public class Card_1282_011_Tests {
         var effect = rifle.mayNotBeCapturedEffect(null, scn.GetDSCard("rifle"), scn.GetLSCard("leia"));
         assertTrue(effect instanceof com.gempukku.swccgo.logic.effects.AddUntilEndOfGameModifierEffect);
     }
+
+    @Test
+    public void EveryVersionIsRestrictedTwoAsPrinted() {
+        // The PC card image prints "••Assassin's Blaster Rifle": two may be on table, in every version.
+        for (var version : java.util.List.of(new com.gempukku.swccgo.cards.set2282.dark.Card2282_011(),
+                new com.gempukku.swccgo.cards.set2282.dark.Card2282_1011(),
+                new com.gempukku.swccgo.cards.set2282.dark.Card2282_2011())) {
+            assertEquals(Uniqueness.RESTRICTED_2, version.getUniqueness());
+            assertEquals("••", version.getUniqueness().getHumanReadable());
+        }
+    }
 }

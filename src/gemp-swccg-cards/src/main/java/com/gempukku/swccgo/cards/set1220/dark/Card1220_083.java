@@ -41,7 +41,7 @@ public class Card1220_083 extends AbstractVehicleWeapon {
         super(Side.DARK, 3, Title.AT_AT_Cannon, Uniqueness.UNRESTRICTED, ExpansionSet.VIRTUAL_BLOCK_2, Rarity.V);
         setVirtualSuffix(true);
         setLore("Laser cannons mounted on the head of an Imperial walker provide devastating coordinated firepower. Effective against a wide variety of targets.");
-        setGameText("Deploy on your non-[Maintenance] AT-AT. May target a character or vehicle at same or adjacent site for free. Draw destiny. Target hit if destiny +1 (+2 if a vehicle) > defense value. If lost from table, place this weapon in Used Pile.");
+        setGameText("Deploy on your non-[Maintenance] AT-AT. May target a character or vehicle at same or adjacent site for free. Draw destiny. Target hit if destiny +1 (+2 if a vehicle) > defense value. If just lost from table, place this weapon in Used Pile.");
         addIcons(Icon.HOTH);
         addKeywords(Keyword.AT_AT_CANNON);
     }

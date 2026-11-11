@@ -29,13 +29,16 @@ import java.util.List;
  * Type: Location
  * Subtype: Site
  * Title: Geonosis: Separatist Council Room
+  * Text: PC-E1, the errata posted on the PC forum on 2014-07-09 (p890420; "may" struck from the Dark Side text). GEMP
+ * already treated the senators as in a senate majority (not optional). The release-sheet text is 2291_1019 (legacy batch B41;
+ * 2291_19 is an alias of this card since an earlier release).
  */
 public class Card1291_019 extends AbstractSite {
     public Card1291_019() {
         super(Side.DARK, Title.Geonosis_Separatist_Council_Room, Title.Geonosis, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_9_1, Rarity.V);
-        setLocationDarkSideGameText("May deploy Gunray from Reserve Deck; reshuffle. While two senators here, they may use their game text as if in a senate majority.");
+        setLocationDarkSideGameText("May deploy Gunray from Reserve Deck; reshuffle. While two senators here, they use their game text as if in a senate majority.");
         setLocationLightSideGameText("While Gunray or opponent's senator here, your spies may not deploy here.");
-        setGameText("Dark: May deploy Gunray from Reserve Deck; reshuffle. While two senators here, they may use their game text as if in a senate majority. Light: While Gunray or opponent's senator here, your spies may not deploy here.");
+        setGameText("Dark: May deploy Gunray from Reserve Deck; reshuffle. While two senators here, they use their game text as if in a senate majority. Light: While Gunray or opponent's senator here, your spies may not deploy here.");
         addIcon(Icon.DARK_FORCE, 2);
         addIcons(Icon.EPISODE_I, Icon.INTERIOR_SITE, Icon.UNDERGROUND, Icon.PLANET, Icon.SCOMP_LINK);
     }

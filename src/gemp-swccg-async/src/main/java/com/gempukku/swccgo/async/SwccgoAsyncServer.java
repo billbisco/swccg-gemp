@@ -68,10 +68,24 @@ public class SwccgoAsyncServer {
                 ((com.gempukku.swccgo.service.AdminService) admin).setRevocationListener(revoker);
 
             // Private wiki -> GEMP login check on its own unpublished port (off unless configured).
+            Object hall = gempukkuServer.getContext().get(com.gempukku.swccgo.hall.HallServer.class);
+            Object caches = gempukkuServer.getContext().get(com.gempukku.swccgo.cache.CacheManager.class);
+            Object leagues = gempukkuServer.getContext().get(com.gempukku.swccgo.league.LeagueService.class);
+            Object tournaments = gempukkuServer.getContext().get(com.gempukku.swccgo.tournament.TournamentService.class);
             InternalAuthServer.startIfConfigured(bossGroup, workerGroup,
                     (AuthService) gempukkuServer.getContext().get(AuthService.class),
                     (GempSettingDAO) gempukkuServer.getContext().get(GempSettingDAO.class),
-                    (com.gempukku.swccgo.service.LoggedUserHolder) gempukkuServer.getContext().get(com.gempukku.swccgo.service.LoggedUserHolder.class));
+                    (com.gempukku.swccgo.service.LoggedUserHolder) gempukkuServer.getContext().get(com.gempukku.swccgo.service.LoggedUserHolder.class),
+                    hall instanceof com.gempukku.swccgo.hall.HallServer ? ((com.gempukku.swccgo.hall.HallServer) hall)::isAtTable : null,
+                    () -> {
+                        // a rename (#261): drop cached copies of the old name, as the admin "clear cache" does
+                        if (leagues instanceof com.gempukku.swccgo.league.LeagueService)
+                            ((com.gempukku.swccgo.league.LeagueService) leagues).clearCache();
+                        if (tournaments instanceof com.gempukku.swccgo.tournament.TournamentService)
+                            ((com.gempukku.swccgo.tournament.TournamentService) tournaments).clearCache();
+                        if (caches instanceof com.gempukku.swccgo.cache.CacheManager)
+                            ((com.gempukku.swccgo.cache.CacheManager) caches).clearCaches();
+                    });
 
             ChannelFuture bind = b.bind(httpPort);
             bind.sync().channel().closeFuture().sync();
