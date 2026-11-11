@@ -60,13 +60,14 @@ import java.util.Map;
 /**
  * Set: Virtual Block 4
  * Type: Epic Event
- * Title: Deep Hatred
+ * Title: Deep Hatred (V)
+ * Text: PC-E3, the Virtual Cards Master List (2013-04-27), which repeats the 2009 release-sheet words: after the duel (unless it was canceled or tied) the Mara who dueled is ability = 6, adds one battle destiny and may cancel a just drawn destiny. Older texts: original 2240_37 (sheet), PC-E1 2240_1037 (card list), PC-E2 2240_2037 (PC card image) (Bill 2026-11-11).
  */
 public class Card1240_037 extends AbstractEpicEventDeployable {
     public Card1240_037() {
         super(Side.DARK, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.Deep_Hatred, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_4, Rarity.V);
         setVirtualSuffix(true);
-        setGameText("Unless your [Reflections III] Objective on table, deploy on table. Vader's Obsession may be played to initiate an epic duel as follows: If Mara is present with Luke, each player draws two destiny (if armed with a lightsaber, each destiny is +1). Add character's ability. If Karrde on table, your total is -1. Higher total wins. If Luke loses, place him out of play and you may retrieve 5 Force. If Mara loses, cross her to the Light Side (she is now Mara Skywalker). Unless duel canceled or tied, for remainder of game any Mara is ability = 6, adds one battle destiny, and once per battle involving her, may cancel one just drawn destiny.");
+        setGameText("Unless your [Reflections III] objective on table, deploy on table. Vader's Obsession may be played to initiate an epic duel as follows: If Mara is present with Luke, each player draws two destiny (if armed with a lightsaber, each destiny is +1). Add character's ability. If Karrde on table, your total is -1. Higher total wins. If Luke loses, place him out of play and you may retrieve 5 Force. If Mara loses, cross her to the Light Side (she is now Mara Skywalker). After the duel (unless it was canceled or tied) Mara is ability = 6, adds one battle destiny, and once per battle involving her, may cancel one just drawn destiny.");
         addIcons(Icon.EPISODE_I, Icon.REFLECTIONS_III);
     }
 
@@ -183,12 +184,12 @@ public class Card1240_037 extends AbstractEpicEventDeployable {
     }
 
     private static void grantAftermath(Action action, SwccgGame game, PhysicalCard mara, PhysicalCard initiator) {
-        // "For remainder of game any Mara": applies to every Mara on table, not only the one who fought.
-        Filter anyMara = Filters.and(Filters.onTable, Filters.any_Mara);
+        // "After the duel ... Mara is ability = 6 ...": only the Mara who fought (the later text says "any Mara").
+        Filter thatMara = Filters.and(Filters.onTable, Filters.sameCardId(mara));
         action.appendEffect(new AddUntilEndOfGameModifierEffect(action,
-                new ResetAbilityModifier(mara, anyMara, 6), null));
+                new ResetAbilityModifier(mara, thatMara, 6), null));
         for (String player : List.of(game.getLightPlayer(), game.getDarkPlayer())) {
-            Filter participatingForPlayer = Filters.and(anyMara, Filters.owner(player));
+            Filter participatingForPlayer = Filters.and(thatMara, Filters.owner(player));
             action.appendEffect(new AddUntilEndOfGameModifierEffect(action,
                     new AddsBattleDestinyModifier(mara, new InBattleCondition(mara, participatingForPlayer),
                             1, player, true), null));
@@ -198,7 +199,7 @@ public class Card1240_037 extends AbstractEpicEventDeployable {
         action.appendEffect(new AddUntilEndOfGameActionProxyEffect(action, new AbstractActionProxy() {
             @Override
             public List<TriggerAction> getOptionalAfterTriggers(String player, SwccgGame game, EffectResult result) {
-                Filter yourMara = Filters.and(anyMara, Filters.owner(player), Filters.participatingInBattle);
+                Filter yourMara = Filters.and(thatMara, Filters.owner(player), Filters.participatingInBattle);
                 PhysicalCard maraInBattle = Filters.findFirstActive(game, null, yourMara);
                 if (maraInBattle != null
                         && GameConditions.isOncePerBattle(game, maraInBattle, player, sourceId)

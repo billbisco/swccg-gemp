@@ -63,8 +63,8 @@ import java.util.Map;
  * Set: Virtual Block 4
  * Type: Epic Event
  * Title: Deep Hatred (V)
- * Original version of 1240_37: the Virtual Block 4 release sheet text (Dec 2009). Deploys unless any of your Objectives is on
- * table (not only a [Reflections III] one), and after the duel only the Mara who dueled is ability = 6, adds one battle
+ * Original version of 1240_37: the Virtual Block 4 release sheet text (Dec 2009). Deploys unless your [Reflections III] objective is on
+ * table (as printed; an earlier GEMP class wrongly checked any objective of yours), and after the duel only the Mara who dueled is ability = 6, adds one battle
  * destiny and may cancel a just drawn destiny (the later text gives this to any Mara). Superseded by the PC website card list
  * text (by Jul 2012, PC-E1; Bill 2026-11-08 option (b)). Anything Goes only
  * (docs/legacy-versions.md).
@@ -83,7 +83,7 @@ public class Card2240_037 extends AbstractEpicEventDeployable {
     protected boolean checkGameTextDeployRequirements(String playerId, SwccgGame game, PhysicalCard self, PlayCardOptionId playCardOptionId, boolean asReact) {
         // Let Them Make The First Move supplies this card as part of its required setup.
         return game.getGameState().getCurrentPhase() == Phase.PLAY_STARTING_CARDS
-                || !GameConditions.canSpot(game, self, Filters.and(Filters.your(self), Filters.Objective));
+                || !GameConditions.canSpot(game, self, Filters.and(Filters.your(self), Filters.Objective, Icon.REFLECTIONS_III));
     }
 
     @Override

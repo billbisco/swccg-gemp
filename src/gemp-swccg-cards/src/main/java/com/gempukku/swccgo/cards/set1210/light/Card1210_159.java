@@ -37,13 +37,16 @@ import java.util.List;
  * Type: Interrupt
  * Subtype: Used Or Lost
  * Title: Precise Hit
+ * Text: PC-E3, the Virtual Cards Master List (2013-04-27; the PC card image, PC-E2, came first), which repeats the 2009 release-sheet words: LOST cancels Heroic
+ * (and any immunity to attrition) on any character or starship, Heroic or not. The PC website card-list text (PC-E1,
+ * 2012, a Heroic target only) is version 2210_1159 (Bill 2026-11-11: every publication is a version).
  */
 public class Card1210_159 extends AbstractUsedOrLostInterrupt {
     public Card1210_159() {
         super(Side.LIGHT, 2, Title.Precise_Hit, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("'Luke, trust me.'");
-        setGameText("USED: If you just hit a target with a non-lightsaber non-[Permanent Weapon] weapon, may place target (and all cards on it) in owner's Used Pile. LOST: Target a Heroic character or starship. It loses Heroic and/or immunity to attrition, if any, this turn.");
+        setGameText("USED: If you just hit a target with a non-lightsaber non-[Permanent Weapon] weapon, place target (and all cards on it) in owner's Used Pile. LOST: Cancel Heroic (and any immunity to attrition) on a character or starship this turn.");
         addIcons(Icon.SPECIAL_EDITION);
     }
 
@@ -82,17 +85,17 @@ public class Card1210_159 extends AbstractUsedOrLostInterrupt {
 
     @Override
     protected List<PlayInterruptAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self) {
-        Filter targetFilter = Filters.and(Filters.or(Filters.character, Filters.starship), Keyword.HEROIC, Filters.canBeTargetedBy(self));
+        Filter targetFilter = Filters.and(Filters.or(Filters.character, Filters.starship), Filters.canBeTargetedBy(self));
         if (GameConditions.canTarget(game, self, targetFilter)) {
 
             final PlayInterruptAction action = new PlayInterruptAction(game, self, CardSubtype.LOST);
             action.setText("Cancel Heroic and immunity to attrition");
             action.appendTargeting(
-                    new TargetCardOnTableEffect(action, playerId, "Choose Heroic character or starship", targetFilter) {
+                    new TargetCardOnTableEffect(action, playerId, "Choose character or starship", targetFilter) {
                         @Override
                         protected void cardTargeted(final int targetGroupId, PhysicalCard targetedCard) {
                             action.addAnimationGroup(targetedCard);
-                            action.allowResponses("Make " + GameUtils.getCardLink(targetedCard) + " lose Heroic and/or immunity to attrition this turn",
+                            action.allowResponses("Cancel Heroic (and any immunity to attrition) on " + GameUtils.getCardLink(targetedCard) + " this turn",
                                     new RespondablePlayCardEffect(action) {
                                         @Override
                                         protected void performActionResults(Action targetingAction) {

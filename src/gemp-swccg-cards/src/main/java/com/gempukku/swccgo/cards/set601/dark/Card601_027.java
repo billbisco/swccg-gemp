@@ -30,13 +30,17 @@ import java.util.List;
  * Type: Interrupt
  * Subtype: Used Or Lost
  * Title: Sonic Bombardment (V)
+ * Text: PC-E3, the Players Committee card image sonicbombardment.gif (folder upload date 2013-05-07, after the Master List;
+ * Bill 2026-11-11: the server date places the image): the Master List words with a comma after "Once per game".
+ * Older texts: original 2281_17 (sheet), PC-E1 2281_1017 (card list), PC-E2 2281_2017 (Master List). Same play as the
+ * Master List (the card list's "starship" option is not implemented; see TODO).
  */
 public class Card601_027 extends AbstractUsedInterrupt {
     public Card601_027() {
         super(Side.DARK, 4, Title.Sonic_Bombardment, Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
         setVirtualSuffix(true);
         setLore("Oouioouioouioouioouioouioouioouioouioouioouioouioouioouioouioouioouioouioouioouioouioouioouioouioouioouioo-");
-        setGameText("Once per game, may take into hand a prison from Reserve Deck; reshuffle. OR Use 1 Force to take into hand a non-droid assassin or slaver of ability < 5 from Reserve Deck; reshuffle. OR During battle involving an assassin, each of opponent's battle destiny draws is -1. OR Cancel opponent's attempt to modify the power of a starship piloted by your alien.");
+        setGameText("Once per game, ▲ a prison. OR Use 1 Force to ▲ a non-droid assassin (or slaver) of ability < 5. OR During battle involving an assassin, opponent's battle destiny draws are -1. OR Cancel opponent's attempt to modify the power of a starfighter piloted by your alien.");
         addIcons(Icon.CLOUD_CITY, Icon.LEGACY_BLOCK_8);
         setAsLegacy(true);
     }

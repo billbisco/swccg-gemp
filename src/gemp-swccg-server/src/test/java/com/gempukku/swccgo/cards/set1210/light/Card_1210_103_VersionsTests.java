@@ -44,9 +44,9 @@ public class Card_1210_103_VersionsTests {
     }
 
     @Test
-    public void CurrentLeiaMayNotTargetOwnLeader() {
+    public void CurrentLeiaMayTargetOwnLeaderWithHer() {
         var scn = battle("1210_103", false);
-        assertFalse(scn.LSCardActionAvailable(scn.GetLSCard("leia"), "Cancel a leader's game text"));
+        assertTrue(scn.LSCardActionAvailable(scn.GetLSCard("leia"), "Cancel a leader's game text"));
     }
 
     @Test

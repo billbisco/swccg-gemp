@@ -25,6 +25,7 @@ import static com.gempukku.swccgo.framework.Assertions.assertInZone;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotEquals;
 
 public class Card_1240_037_Tests {
     private static final String EPIC_DUEL = "Initiate epic duel with Deep Hatred";
@@ -120,31 +121,6 @@ public class Card_1240_037_Tests {
         passOptional(scn);
         assertEquals(lost - 5 + 1, scn.GetDSLostPileCount());
         assertEquals(6, scn.GetAbility(scn.GetDSCard("mara")));
-    }
-
-    @Test
-    public void DarkCanDeclineRetrievalAndAnyLaterMaraIsAbilitySixForRemainderOfGame() {
-        var scn = duelReady("1_19", false, false);
-        seedLost(scn, 6);
-        int lost = scn.GetDSLostPileCount();
-        beginDuel(scn, 4, 2, 3, 1);
-        passOptional(scn);
-        scn.DSChooseNo();
-        passOptional(scn);
-        assertEquals(lost + 1, scn.GetDSLostPileCount());
-        var mara = scn.GetDSCard("mara");
-        assertEquals(6, scn.GetAbility(mara));
-        scn.MoveOutOfPlay(scn.GetDSCard("deep"));
-        assertEquals(6, scn.GetAbility(mara));
-        scn.MoveCardsToTopOfDSLostPile(mara);
-        var newMara = scn.GetDSCard("otherMara");
-        scn.MoveCardsToDSHand(newMara);
-        scn.EnsureDSForcePile(5);
-        if (scn.LSDecisionAvailable("Deploy action or Pass")) scn.LSPass();
-        scn.DSDeployCard(newMara);
-        scn.DSChooseCard(scn.GetDSStartingLocation());
-        passOptional(scn);
-        assertEquals(6, scn.GetAbility(newMara));
     }
 
     @Test
@@ -369,5 +345,31 @@ public class Card_1240_037_Tests {
             scn.PlayerPass(scn.GetDecidingPlayer());
         }
         throw new AssertionError("Expected native action " + text);
+    }
+
+    @Test
+    public void DarkCanDeclineRetrievalAndOnlyTheDuelingMaraIsAbilitySix() {
+        var scn = duelReady("1_19", false, false);
+        seedLost(scn, 6);
+        int lost = scn.GetDSLostPileCount();
+        beginDuel(scn, 4, 2, 3, 1);
+        passOptional(scn);
+        scn.DSChooseNo();
+        passOptional(scn);
+        assertEquals(lost + 1, scn.GetDSLostPileCount());
+        var mara = scn.GetDSCard("mara");
+        assertEquals(6, scn.GetAbility(mara));
+        scn.MoveOutOfPlay(scn.GetDSCard("deep"));
+        assertEquals(6, scn.GetAbility(mara));
+        scn.MoveCardsToTopOfDSLostPile(mara);
+        var newMara = scn.GetDSCard("otherMara");
+        scn.MoveCardsToDSHand(newMara);
+        scn.EnsureDSForcePile(5);
+        if (scn.LSDecisionAvailable("Deploy action or Pass")) scn.LSPass();
+        scn.DSDeployCard(newMara);
+        scn.DSChooseCard(scn.GetDSStartingLocation());
+        passOptional(scn);
+        // Master List (2013, current): "After the duel ... Mara is ability = 6": only the Mara who dueled (the card list, 2240_1037, says "any Mara")
+        assertNotEquals(6, scn.GetAbility(newMara), 0.01f);
     }
 }

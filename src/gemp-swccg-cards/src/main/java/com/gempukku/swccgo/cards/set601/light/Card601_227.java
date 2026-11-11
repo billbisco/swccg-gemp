@@ -41,13 +41,15 @@ import java.util.List;
  * Type: Character
  * Subtype: Rebel
  * Title: Leia (V)
+ * Text: PC-E3, the Virtual Cards Master List (2013-04-27; the PC card image, PC-E2, came first), which repeats the 2009 release-sheet words; the PC
+ * website card-list text (PC-E1, 2012) is version 2210_1103 (Bill 2026-11-11: every publication is a version).
  */
 public class Card601_227 extends AbstractRebel {
     public Card601_227() {
         super(Side.LIGHT, 1, 3, 3, 4, 5, "Leia", Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
         setVirtualSuffix(true);
         setLore("Adopted daughter of the Viceroy and First Chairman of Alderaan. Became a political leader at a young age. The injustices of the New Order led her to join the Rebellion.");
-        setGameText("Leia's game text may not be canceled. While at opponent's Galactic Senate, may lose 1 Force to place Leia and any character present out of play. Once per battle at her location, may cancel game text of opponent's leader of ability < 5 present for remainder of turn.");
+        setGameText("While at opponent's Galactic Senate, Leia's game text may not be canceled and may lose 1 Force to place Leia and any character present out of play. During battle, may cancel game text of a leader of ability < 5 with Leia for remainder of turn.");
         addPersona(Persona.LEIA);
         addIcons(Icon.PREMIUM, Icon.WARRIOR, Icon.LEGACY_BLOCK_1);
         addKeywords(Keyword.LEADER, Keyword.FEMALE);
@@ -63,19 +65,19 @@ public class Card601_227 extends AbstractRebel {
         return modifiers;
     }
 
-    /** PC-E1 (card list, 2012): "Leia's game text may not be canceled." (anywhere); null = always. */
+    /** PC-E3 (Master List 2013, = the 2009 sheet words): game text may not be canceled only while at opponent's Galactic Senate; null = always. */
     protected Condition gameTextMayNotBeCanceledCondition(PhysicalCard self) {
-        return null;
+        return new AtCondition(self, Filters.and(Filters.opponents(self), Filters.Galactic_Senate));
     }
 
-    /** PC-E1: "opponent's leader of ability < 5 present". */
+    /** PC-E3: "During battle, may cancel game text of a leader of ability < 5 with Leia" (any leader with her). */
     protected Filter leaderToCancel(PhysicalCard self) {
-        return Filters.and(Filters.opponents(self), Filters.leader, Filters.present(self), Filters.abilityLessThan(5));
+        return Filters.and(Filters.leader, Filters.with(self), Filters.abilityLessThan(5));
     }
 
-    /** PC-E1: "Once per battle at her location". */
+    /** PC-E3: "During battle" (Leia in the battle). */
     protected boolean battleConditionMet(SwccgGame game, PhysicalCard self) {
-        return GameConditions.isDuringBattleAt(game, Filters.sameLocation(self));
+        return GameConditions.isInBattle(game, self);
     }
 
     @Override

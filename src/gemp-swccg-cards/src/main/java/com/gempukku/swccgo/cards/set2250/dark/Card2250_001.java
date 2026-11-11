@@ -20,9 +20,4 @@ public class Card2250_001 extends Card1250_001 {
         setLegacyVersion(new LegacyVersion("1250_1", "",
                 "Virtual Block 5 release sheet (2009-12-07), card #01E", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21)));
     }
-
-    @Override
-    protected boolean discountOnlyControllersCards() {
-        return false;
-    }
 }

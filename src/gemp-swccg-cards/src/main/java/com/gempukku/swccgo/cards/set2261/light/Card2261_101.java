@@ -28,20 +28,4 @@ public class Card2261_101 extends Card1261_101 {
         setLegacyVersion(new LegacyVersion("1261_101", "",
                 "Virtual Block 6.1 release sheet (2009-09-04), card #102", LocalDate.of(2009, 9, 4), LocalDate.of(2012, 7, 21)));
     }
-
-    @Override
-    protected Filter searchFilter() {
-        Filter hanOnPhysicalPrinting = Filters.or(Filters.Han, Filters.hasPermanentAboard(Filters.Han));
-        return new Filter() {
-            @Override
-            public boolean accepts(GameState state, ModifiersQuerying querying, PhysicalCard card) {
-                return !card.getBlueprint().hasIcon(Icon.REFLECTIONS_III) && hanOnPhysicalPrinting.accepts(state, querying, card);
-            }
-        };
-    }
-
-    @Override
-    protected boolean bonusIsPowerNotDestiny() {
-        return false;
-    }
 }
