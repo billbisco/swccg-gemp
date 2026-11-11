@@ -612,7 +612,7 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('2271_1009'), 'https://wik
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2271_1010'), 'https://wiki.swccg.com/images/2/2f/VB7-03-I_Want_Every_Part_Of_This_Ship_Checked-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2271_1018'), 'https://wiki.swccg.com/images/9/90/VB7-00-Commence_Primary_Ignition-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2271_1019'), 'https://wiki.swccg.com/images/6/69/VB7-00-Rise_Of_The_Dark_Lord-PC-E1-cardmaker.png');
-assert.strictEqual(defaults.CardUnderTest.getImageUrl('1271_34'), 'https://wiki.swccg.com/images/7/7c/VB7-01-Princess_Leia_Lost_Scion.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1271_34'), 'https://wiki.swccg.com/images/7/7e/VL-history-1271-34-front-master.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2271_1034'), 'https://swccg.com/cards/legacy/VirtualBlock7-Light/large/princessleialostscion.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2271_1045'), 'https://wiki.swccg.com/images/4/41/VB7-02-Rebel_Aces-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2272_1007'), 'https://wiki.swccg.com/images/2/26/VB7-04-Where_Are_You_Taking_Them-PC-E1-cardmaker.png');
