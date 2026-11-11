@@ -76,11 +76,13 @@ class InMemoryPlayerDAO implements PlayerDAO {
 
     @Override
     public boolean registerPlayer(String playerName, String password, String remoteAddr) throws LoginInvalidException, RegisterNotAllowedException {
+        if (!PlayerNames.isWellFormed(playerName))
+            throw new LoginInvalidException();
+        if (PlayerNames.isReserved(playerName))
+            return false;
         for (Player p : _players.values())
             if (p.getName().equalsIgnoreCase(playerName))
                 throw new LoginInvalidException();
-        if (com.gempukku.swccgo.guest.PlayNowSide.isSeatName(playerName))
-            return false;
         addWithStoredHash(playerName, _hasher.hash(password), "u", null);
         if (remoteAddr != null)
             signupsByIp.merge(remoteAddr, 1, Integer::sum);
@@ -207,10 +209,7 @@ class InMemoryPlayerDAO implements PlayerDAO {
         Player old = _players.get(playerId);
         if (old == null)
             return "not_found";
-        String lower = newName == null ? "" : newName.toLowerCase();
-        if (!newName.matches("^[A-Za-z0-9_-]{2,10}$") || lower.startsWith("admin") || lower.startsWith("guest")
-                || lower.startsWith("system") || lower.startsWith("bye") || Player.isBot(newName)
-                || com.gempukku.swccgo.guest.PlayNowSide.isSeatName(newName))
+        if (!PlayerNames.isAllowedNewName(newName))
             return "name_invalid";
         for (Player p : _players.values())
             if (p.getId() != playerId && p.getName().equalsIgnoreCase(newName))

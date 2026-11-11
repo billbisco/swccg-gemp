@@ -42,7 +42,6 @@ public class SsoAuthService {
 
     private static final Pattern NONCE = Pattern.compile("^[A-Za-z0-9_-]{16,64}$");
     private static final Pattern IP = Pattern.compile("^[0-9A-Fa-f:.]{2,45}$");
-    private static final Pattern NAME = Pattern.compile("^[A-Za-z0-9_-]{2,10}$");
     private static final Logger LOG = LogManager.getLogger(SsoAuthService.class);
 
     private final AuthService _authService;
@@ -179,7 +178,7 @@ public class SsoAuthService {
             return result(200, error("signup_closed"), keyId, nonce);
         if (_signupsPerIp.retryAfterSeconds(clientIp, now) > 0)
             return result(200, error("signup_limited"), keyId, nonce);
-        if (!NAME.matcher(username).matches() || Player.isBot(username))
+        if (!com.gempukku.swccgo.service.PlayerNames.isWellFormed(username) || Player.isBot(username))
             return result(200, error("name_invalid"), keyId, nonce);
         Player p;
         try {
@@ -261,7 +260,7 @@ public class SsoAuthService {
         long retry = _renames.retryAfterSeconds(idKey, now);
         if (retry > 0)
             return throttled(retry, keyId, nonce);
-        if (!NAME.matcher(username).matches() || Player.isBot(username))
+        if (!com.gempukku.swccgo.service.PlayerNames.isWellFormed(username) || Player.isBot(username))
             return result(200, error("name_invalid"), keyId, nonce);
         Player before = _authService.getPlayer(playerId);
         java.util.function.Predicate<String> atTable = _atTable;

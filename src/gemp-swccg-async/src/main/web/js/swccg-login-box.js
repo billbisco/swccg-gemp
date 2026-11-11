@@ -43,7 +43,7 @@
     passkey_failed: "That passkey isn't on a swccg.com account. Sign in with your name and password first, then add a passkey on your account page.",
     expired: "That took too long. Try again.",
     failed: "Sign-in didn't finish. Try again.",
-    name_invalid: "Player names are 2 to 10 letters, digits, - or _, and can't start with a reserved word.",
+    name_invalid: "Player names are up to 32 letters, digits, spaces, - or _, and can't be a reserved name.",
     name_taken: "That name is taken. Pick another, or sign in if it's yours.",
     weak_password: "That password is too short or too common. Choose a longer one.",
     signup_limited: "Too many new accounts from here today. Try again tomorrow.",

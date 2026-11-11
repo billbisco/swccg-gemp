@@ -58,7 +58,14 @@ a name on its 90-day hold after a rename or close, or a name swccg-login has iss
 refused; so is any answer that is unsigned, not 200, or late (fail closed, "try again
 in a few minutes"). The guest seat names "Light Side", "Light_Side", "Dark Side" and
 "Dark_Side" (any case) are refused on Play even without swccg-login. A space and an
-underscore are different names (2026-11-11): "Luke Sky" and "Luke_Sky" are two accounts. Classic name + password
+underscore are different names (2026-11-11): "Luke Sky" and "Luke_Sky" are two accounts.
+
+**Name rule on Play (2026-11-11, t122u).** New names (classic signup, `/internal/v2/register`,
+`/internal/v2/players`, `/internal/v2/rename`) follow `PlayerNames`: 1–32 characters; letters and digits
+from any writing system, space, `-`, `_`; no space or `_` at either end or two in a row. Play stores
+names as 3-byte UTF-8, so characters outside the Basic Multilingual Plane are `name_invalid`.
+`player.name`, `tournament_player.player` and `player_password_reset.created_by` are 32 characters
+(`db-scripts/update_full_names.sql`). Existing names are grandfathered; sign-in is unchanged. Classic name + password
 login is unchanged.
 
 ## 2. OIDC client (GEMP → swccg-login)
