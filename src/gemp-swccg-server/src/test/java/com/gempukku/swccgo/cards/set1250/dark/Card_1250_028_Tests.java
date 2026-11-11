@@ -218,8 +218,9 @@ public class Card_1250_028_Tests {
         assertTrue(scn.GetDSLostPile().contains(sil));
     }
 
+    /** "Retarget an attempt to make your [Episode I] character ... lost": any attempt, including your own card's. */
     @Test
-    public void TradeFederationTacticsVDoesNotRetargetYourOwnAttemptToMakeEpisodeICharacterLost() {
+    public void TradeFederationTacticsVRetargetsYourOwnAttemptToMakeEpisodeICharacterLost() {
         var scn = scenario();
         var site = scn.GetDSStartingLocation();
         var sil = scn.GetDSCard("sil");
@@ -231,9 +232,54 @@ public class Card_1250_028_Tests {
         var action = new com.gempukku.swccgo.logic.actions.TopLevelGameTextAction(jango, scn.DS, jango.getCardId());
         action.appendEffect(new com.gempukku.swccgo.logic.effects.LoseCardFromTableEffect(action, sil));
         scn.carryOutEffectInPhaseActionByPlayer(scn.DS, action);
-        assertFalse(waitForDSPlay(scn, "Re-target loss"));
-        assertTrue(scn.GetDSLostPile().contains(sil));
-        assertEquals(Zone.AT_LOCATION, jango.getZone());
+        assertTrue(waitForDSPlay(scn, "Re-target loss"));
+        scn.DSPlayCard(scn.GetDSCard("tactics"), "Re-target loss");
+        if (scn.DSHasCardChoiceAvailable(jango)) scn.DSChooseCard(jango);
+        scn.PassAllResponses();
+        assertEquals(Zone.AT_LOCATION, sil.getZone());
+        assertTrue(scn.GetDSLostPile().contains(jango));
+    }
+
+    /** Light Side draws a destiny and, as the result of that just drawn destiny, makes the starship lost or 'hit'. */
+    private void lightSideDrawsDestinyThen(VirtualTableScenario scn,
+            java.util.function.Function<com.gempukku.swccgo.logic.timing.Action, com.gempukku.swccgo.logic.timing.StandardEffect> result) {
+        scn.PrepareLSDestiny(5);
+        lightSidePerforms(scn, a -> new com.gempukku.swccgo.logic.effects.DrawDestinyEffect(a, scn.LS) {
+            @Override
+            protected void destinyDraws(com.gempukku.swccgo.game.SwccgGame game, java.util.List<com.gempukku.swccgo.game.PhysicalCard> cards,
+                    java.util.List<Float> values, Float total) {
+                ((com.gempukku.swccgo.logic.actions.TopLevelGameTextAction) a).appendEffect(result.apply(a));
+            }
+        });
+    }
+
+    @Test
+    public void TradeFederationTacticsVRetargetsAnyJustDrawnOpponentDestinyAboutToMakeStarshipLost() {
+        var scn = starshipWithPilotAtSystem();
+        var avenger = scn.GetDSCard("avenger");
+        var jango = scn.GetDSCard("jango");
+        lightSideDrawsDestinyThen(scn, a -> new com.gempukku.swccgo.logic.effects.LoseCardFromTableEffect(a, avenger));
+        assertTrue(waitForDSPlay(scn, "Re-target loss"));
+        scn.DSPlayCard(scn.GetDSCard("tactics"), "Re-target loss");
+        if (scn.DSHasCardChoiceAvailable(jango)) scn.DSChooseCard(jango);
+        scn.PassAllResponses();
+        assertEquals(Zone.AT_LOCATION, avenger.getZone());
+        assertTrue(scn.GetDSLostPile().contains(jango));
+    }
+
+    @Test
+    public void TradeFederationTacticsVRetargetsAnyJustDrawnOpponentDestinyAboutToHitStarship() {
+        var scn = starshipWithPilotAtSystem();
+        var avenger = scn.GetDSCard("avenger");
+        var jango = scn.GetDSCard("jango");
+        var luke = scn.GetLSCard("luke");
+        lightSideDrawsDestinyThen(scn, a -> new com.gempukku.swccgo.logic.effects.HitCardEffect(a, avenger, luke));
+        assertTrue(waitForDSPlay(scn, "Re-target 'hit'"));
+        scn.DSPlayCard(scn.GetDSCard("tactics"), "Re-target 'hit'");
+        if (scn.DSHasCardChoiceAvailable(jango)) scn.DSChooseCard(jango);
+        scn.PassAllResponses();
+        assertFalse(avenger.isHit());
+        assertTrue(jango.isHit() || scn.GetDSLostPile().contains(jango));
     }
 
     private VirtualTableScenario asteroidScenario() {

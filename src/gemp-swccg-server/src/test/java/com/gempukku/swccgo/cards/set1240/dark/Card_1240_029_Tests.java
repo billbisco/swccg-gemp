@@ -146,6 +146,11 @@ public class Card_1240_029_Tests {
 
     /** Has a Dark Side card retrieve 3 Force with an Aim High printing on table; returns the Aim High prompt. */
     private String aimHighPromptForRetrievalBy(boolean withBones, String sourceKey, String aimHighKey) {
+        return aimHighPromptForRetrievalBy(withBones, sourceKey, aimHighKey, true);
+    }
+
+    /** As above; becauseEaten marks the retrieval as caused by a creature having eaten a card. */
+    private String aimHighPromptForRetrievalBy(boolean withBones, String sourceKey, String aimHighKey, boolean becauseEaten) {
         var scn = GetScenario();
         var bones = scn.GetDSCard("bones");
         var source = scn.GetDSCard(sourceKey);
@@ -162,8 +167,12 @@ public class Card_1240_029_Tests {
         scn.MoveCardsToTopOfDSLostPile(scn.GetTopOfDSReserveDeck());
         scn.MoveCardsToTopOfDSLostPile(scn.GetTopOfDSReserveDeck());
         scn.MoveCardsToTopOfDSLostPile(scn.GetTopOfDSReserveDeck());
-        scn.DSExecuteAdHocEffect(source, new com.gempukku.swccgo.logic.effects.RetrieveForceEffect(
-                new com.gempukku.swccgo.logic.actions.TopLevelGameTextAction(source, scn.DS, source.getCardId()), scn.DS, 3));
+        var retrieval = new com.gempukku.swccgo.logic.effects.RetrieveForceEffect(
+                new com.gempukku.swccgo.logic.actions.TopLevelGameTextAction(source, scn.DS, source.getCardId()), scn.DS, 3);
+        if (becauseEaten) {
+            retrieval.becauseCreatureAteCard();
+        }
+        scn.DSExecuteAdHocEffect(source, retrieval);
         for (int i = 0; i < 6 && !scn.DSDecisionAvailable("Force to proceed with Force retrieval"); i++) {
             scn.PassAllResponses();
         }
@@ -178,7 +187,11 @@ public class Card_1240_029_Tests {
     @Test
     public void KraytDragonBonesVAimHighUnchangedWithoutBonesOrForNonCreatureRetrieval() {
         assertTrue(aimHighPromptForRetrievalBy(false, "womp", "aimhigh").contains("use 3 Force"));
-        assertTrue(aimHighPromptForRetrievalBy(true, "trooper", "aimhigh").contains("use 3 Force"));
+        assertTrue(aimHighPromptForRetrievalBy(true, "trooper", "aimhigh", false).contains("use 3 Force"));
+        // "because a creature has eaten a card" is about the cause: a non-creature's retrieval after an eating counts,
+        // a creature's retrieval for any other reason does not.
+        assertTrue(aimHighPromptForRetrievalBy(true, "trooper", "aimhigh", true).contains("use 1 Force"));
+        assertTrue(aimHighPromptForRetrievalBy(true, "womp", "aimhigh", false).contains("use 3 Force"));
     }
 
     @Test

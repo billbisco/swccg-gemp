@@ -842,6 +842,7 @@ public abstract class DrawDestinyEffect extends AbstractSubActionEffect {
                             if (!soc.hasSuccessfulFiringDestiny()) {
                                 totalDestiny = null;
                                 soc.markResolved();
+                                game.getGameState().destinyJustDrawnDuringAction(_performingPlayerId, _action);
                                 destinyDraws(game, _destinyCardDraws, _destinyDrawValues, totalDestiny);
                                 return;
                             }
@@ -858,6 +859,7 @@ public abstract class DrawDestinyEffect extends AbstractSubActionEffect {
                         }
 
                         // Callback
+                        game.getGameState().destinyJustDrawnDuringAction(_performingPlayerId, _action);
                         destinyDraws(game, _destinyCardDraws, _destinyDrawValues, totalDestiny);
                     }
                 }
@@ -989,6 +991,7 @@ public abstract class DrawDestinyEffect extends AbstractSubActionEffect {
         final AbstractAction originalAction = (_action instanceof AbstractAction) ? (AbstractAction) _action : null;
         boolean queued = false;
         try {
+            game.getGameState().destinyJustDrawnDuringAction(_performingPlayerId, _action);
             destinyDraws(game, _destinyCardDraws, _destinyDrawValues, combinedTotal);
             if (originalAction != null && applyToAction instanceof AbstractAction
                     && _action != applyToAction) {

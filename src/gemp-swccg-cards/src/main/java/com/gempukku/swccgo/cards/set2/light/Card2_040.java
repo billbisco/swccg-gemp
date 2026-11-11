@@ -41,7 +41,9 @@ public class Card2_040 extends AbstractNormalEffect {
 
     @Override
     protected Filter getGameTextValidDeployTargetFilter(SwccgGame game, PhysicalCard self, PlayCardOptionId playCardOptionId, boolean asReact) {
-        return Filters.and(Filters.your(self), Filters.spy, Filters.at(Filters.site), Filters.not(Filters.undercover_spy));
+        // A spy that may not be Undercover (e.g. Emperor's Sinister Plans) is not a valid target.
+        return Filters.and(Filters.your(self), Filters.spy, Filters.at(Filters.site), Filters.not(Filters.undercover_spy),
+                Filters.mayBeUndercover);
     }
 
     @Override

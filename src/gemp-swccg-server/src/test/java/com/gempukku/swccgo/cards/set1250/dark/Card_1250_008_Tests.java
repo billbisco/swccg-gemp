@@ -14,7 +14,7 @@ public class Card_1250_008_Tests {
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(
                 new HashMap<>() {{ put("obiwan", "1_21"); put("luke", "1_19"); put("cantina", "1_128"); put("db94", "1_129"); }},
-                new HashMap<>() {{ put("jango", "1250_8"); put("jetpack", "6_140"); put("avenger", "1263_19"); put("system", "1_282"); }},
+                new HashMap<>() {{ put("jango", "1250_8"); put("jetpack", "6_140"); put("jetpack2", "6_140"); put("avenger", "1263_19"); put("system", "1_282"); }},
                 10, 20, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
@@ -56,7 +56,7 @@ public class Card_1250_008_Tests {
     }
 
     @Test
-    public void JangoFettDeploysJetPackOnHimForFreeFromReserveDeckOncePerTurn() {
+    public void JangoFettDeploysJetPackOnHimForFreeFromReserveDeck() {
         var scn = scenario();
         var jango = scn.GetDSCard("jango");
         var jetpack = scn.GetDSCard("jetpack");
@@ -72,7 +72,46 @@ public class Card_1250_008_Tests {
         scn.PassAllResponses();
         assertTrue(scn.IsAttachedTo(jango, jetpack));
         assertEquals(force, scn.GetDSForcePileCount());
+    }
+
+    /** "May [download] Jet Pack on him for free" names no time frame: no once-per-turn limit (the One Rule). */
+    @Test
+    public void JangoFettJetPackDeployHasNoOncePerTurnLimit() {
+        var scn = scenario();
+        var jango = scn.GetDSCard("jango");
+        var jetpack = scn.GetDSCard("jetpack");
+        var jetpack2 = scn.GetDSCard("jetpack2");
+        scn.StartGame();
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), jango);
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.DSActivateForceCheat(4);
+        scn.MoveCardsToTopOfDSReserveDeck(jetpack);
+        scn.DSUseCardAction(jango, "Deploy Jet Pack");
+        if (scn.DSHasCardChoiceAvailable(jetpack)) scn.DSChooseCard(jetpack);
+        scn.PassAllResponses();
+        assertTrue(scn.IsAttachedTo(jango, jetpack));
         if (scn.LSAnyDecisionsAvailable()) scn.LSPass();
+        // The first Jet Pack leaves; Jango may deploy another one in the same turn.
+        scn.MoveCardsToTopOfDSLostPile(jetpack);
+        scn.MoveCardsToTopOfDSReserveDeck(jetpack2);
+        assertTrue(scn.DSCardActionAvailable(jango, "Deploy Jet Pack"));
+        scn.DSUseCardAction(jango, "Deploy Jet Pack");
+        if (scn.DSHasCardChoiceAvailable(jetpack2)) scn.DSChooseCard(jetpack2);
+        scn.PassAllResponses();
+        assertTrue(scn.IsAttachedTo(jango, jetpack2));
+    }
+
+    @Test
+    public void JangoFettJetPackDeployIsLimitedToYourDeployPhase() {
+        var scn = scenario();
+        var jango = scn.GetDSCard("jango");
+        scn.StartGame();
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), jango);
+        scn.MoveCardsToTopOfDSReserveDeck(scn.GetDSCard("jetpack"));
+        scn.SkipToDSTurn(Phase.CONTROL);
+        scn.DSActivateForceCheat(4);
+        assertFalse(scn.DSCardActionAvailable(jango, "Deploy Jet Pack"));
+        scn.SkipToPhase(Phase.MOVE);
         assertFalse(scn.DSCardActionAvailable(jango, "Deploy Jet Pack"));
     }
 

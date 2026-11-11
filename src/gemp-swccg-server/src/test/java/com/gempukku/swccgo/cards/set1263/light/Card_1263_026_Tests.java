@@ -17,7 +17,7 @@ public class Card_1263_026_Tests {
         return new VirtualTableScenario(
                 new HashMap<>(Map.of("phylo", "1263_26", "local", "1_28", "remote", "1_30",
                         "ship", "1_145", "system", "3_55", "obi", "1_21")),
-                new HashMap<>(Map.of("vader", "1_168", "saber", "1_324", "beaten", "5_163", "otherDark", "1_173", "secondDark", "1_179", "blockSix", "1261_21")),
+                new HashMap<>(Map.of("vader", "1_168", "saber", "1_324", "beaten", "5_163", "otherDark", "1_173", "secondDark", "1_179", "blockSix", "1261_21", "obt", "601_92")),
                 40, 40, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, "legacy");
@@ -120,6 +120,14 @@ public class Card_1263_026_Tests {
      * Returns whether Phylo offered her response; if offered, uses it and checks Dark's total power drops.
      */
     private boolean phyloRespondsToAddedDestiny(String sourceName, boolean phyloHere) {
+        return phyloRespondsToAddedDestiny(sourceName, phyloHere, false);
+    }
+
+    /**
+     * As above; with byInterrupt the destiny is added the way an Interrupt adds it ("add one destiny to total power":
+     * AddDestinyToTotalPowerEffect from the played Interrupt, now in its owner's Used Pile) once the battle starts.
+     */
+    private boolean phyloRespondsToAddedDestiny(String sourceName, boolean phyloHere, boolean byInterrupt) {
         var scn = fixture(); scn.StartGame();
         var here = scn.GetLSStartingLocation(); var away = scn.GetDSStartingLocation();
         var phylo = scn.GetLSCard("phylo"); var local = scn.GetLSCard("local");
@@ -127,10 +135,16 @@ public class Card_1263_026_Tests {
         scn.MoveCardsToDSSideOfTable(source);
         scn.MoveCardsToLocation(here, local, vader);
         scn.MoveCardsToLocation(phyloHere ? here : away, phylo);
-        scn.ApplyAdHocModifier(new com.gempukku.swccgo.logic.modifiers.NumDestinyDrawsToPowerOnlyModifier(source, 1, scn.DS, com.gempukku.swccgo.filters.Filters.any));
+        if (!byInterrupt)
+            scn.ApplyAdHocModifier(new com.gempukku.swccgo.logic.modifiers.NumDestinyDrawsToPowerOnlyModifier(source, 1, scn.DS, com.gempukku.swccgo.filters.Filters.any));
+        else
+            scn.MoveCardsToTopOfDSUsedPile(source);
         scn.DSActivateForceCheat(4);
         scn.SkipToDSTurn(Phase.BATTLE);
         scn.DSInitiateBattle(here);
+        if (byInterrupt)
+            scn.DSExecuteAdHocEffect(source, new com.gempukku.swccgo.cards.effects.AddDestinyToTotalPowerEffect(
+                    new com.gempukku.swccgo.logic.actions.TopLevelGameTextAction(source, scn.DS, source.getCardId()), 1));
         var trace = new ArrayList<String>();
         for (int i = 0; i < 60 && scn.GetCurrentDecision() != null; i++) {
             var text = scn.GetCurrentDecision().getText(); var decider = scn.GetDecidingPlayer();
@@ -175,6 +189,15 @@ public class Card_1263_026_Tests {
 
     @Test public void doesNotRespondToADestinyAddedByANonBlockSixCard() {
         assertFalse(phyloRespondsToAddedDestiny("vader", true));
+    }
+
+    /** "Opponent's [Virtual Block 6] card": any such card, an Interrupt included (One Beautiful Thing). */
+    @Test public void respondsWhenOpponentsBlockSixInterruptAddsDestinyToTotalPowerHere() {
+        assertTrue(phyloRespondsToAddedDestiny("obt", true, true));
+    }
+
+    @Test public void doesNotRespondToADestinyAddedByANonBlockSixInterrupt() {
+        assertFalse(phyloRespondsToAddedDestiny("beaten", true, true));
     }
 
     @Test public void doesNotRespondToADestinyAddedElsewhere() {

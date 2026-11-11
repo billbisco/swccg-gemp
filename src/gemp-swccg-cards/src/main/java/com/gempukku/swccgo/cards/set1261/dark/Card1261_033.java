@@ -143,7 +143,7 @@ public class Card1261_033 extends AbstractNormalEffect {
         if (TriggerConditions.justEatenAt(game, result, Filters.and(Filters.opponents(self), Filters.character), pit)) {
             var action = new RequiredGameTextTriggerAction(self, sourceId);
             action.setText("Retrieve 3 Force");
-            action.appendEffect(new RetrieveForceEffect(action, self.getOwner(), 3));
+            action.appendEffect(new RetrieveForceEffect(action, self.getOwner(), 3).becauseCreatureAteCard());
             return List.of(action);
         }
         if (TriggerConditions.justLost(game, result, Filters.creature)) {

@@ -63,7 +63,7 @@ public class Card6_166 extends AbstractSite {
                 action.setText("Retrieve " + forceToRetrieve + " Force");
                 // Perform result(s)
                 action.appendEffect(
-                        new RetrieveForceEffect(action, opponent, forceToRetrieve));
+                        new RetrieveForceEffect(action, opponent, forceToRetrieve).becauseCreatureAteCard());
                 return Collections.singletonList(action);
             }
         }

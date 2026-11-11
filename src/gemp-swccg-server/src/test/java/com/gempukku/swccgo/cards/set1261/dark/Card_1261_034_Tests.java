@@ -310,6 +310,48 @@ public class Card_1261_034_Tests {
         assertTrue(inUsed(scn.GetLSCard("luke")));
     }
 
+    /** "When a starship (or vehicle) site leaves table": every way of leaving table, not only lost or forfeited. */
+    @Test(timeout = 10000)
+    public void starshipSitePlacedOutOfPlayGoesToUsedPileWithAllCardsThere() {
+        var scn = spaceSetup(true);
+        var launch = scn.GetDSCard("launch");
+        scn.SkipToDSTurn(Phase.BATTLE);
+        scn.DSExecuteAdHocEffect(launch, new com.gempukku.swccgo.logic.effects.PlaceCardOutOfPlayFromTableEffect(
+                new com.gempukku.swccgo.logic.actions.TopLevelGameTextAction(launch, scn.DS, launch.getCardId()), launch));
+        resolveUntil(scn, () -> launch.getZone() != Zone.LOCATIONS && launch.getZone() != Zone.VOID);
+        assertTrue(inUsed(launch));
+        assertTrue(inUsed(scn.GetDSCard("trooper")));
+        assertTrue(inUsed(scn.GetDSCard("officer")));
+        assertTrue(scn.gameState().getUsedPile(scn.LS).contains(scn.GetLSCard("luke")));
+    }
+
+    @Test(timeout = 10000)
+    public void starshipReturnedToHandTakesItsSiteAndCardsThereToUsedPile() {
+        var scn = spaceSetup(true);
+        var ship = scn.GetDSCard("destroyer");
+        var launch = scn.GetDSCard("launch");
+        scn.SkipToDSTurn(Phase.BATTLE);
+        scn.DSExecuteAdHocEffect(ship, new com.gempukku.swccgo.logic.effects.ReturnCardToHandFromTableEffect(
+                new com.gempukku.swccgo.logic.actions.TopLevelGameTextAction(ship, ship.getCardId()), ship));
+        resolveUntil(scn, () -> ship.getZone() == Zone.HAND && launch.getZone() != Zone.LOCATIONS
+                && launch.getZone() != Zone.VOID);
+        assertTrue(inUsed(launch));
+        assertTrue(inUsed(scn.GetDSCard("trooper")));
+        assertTrue(scn.gameState().getUsedPile(scn.LS).contains(scn.GetLSCard("luke")));
+    }
+
+    @Test(timeout = 10000)
+    public void withoutTheEffectStarshipSitePlacedOutOfPlayIsOutOfPlayAndCardsThereAreLost() {
+        var scn = spaceSetup(false);
+        var launch = scn.GetDSCard("launch");
+        scn.SkipToDSTurn(Phase.BATTLE);
+        scn.DSExecuteAdHocEffect(launch, new com.gempukku.swccgo.logic.effects.PlaceCardOutOfPlayFromTableEffect(
+                new com.gempukku.swccgo.logic.actions.TopLevelGameTextAction(launch, scn.DS, launch.getCardId()), launch));
+        resolveUntil(scn, () -> launch.getZone() != Zone.LOCATIONS && launch.getZone() != Zone.VOID);
+        assertEquals(Zone.OUT_OF_PLAY, launch.getZone());
+        assertTrue(inLost(scn.GetDSCard("trooper")));
+    }
+
     @org.junit.Test
     public void CurrentTextIsTheLatestVersion() {
         // PC card list (PC-E2, by 2012-07-21) rewrite is the latest text (Bill option b); restored from before PR #732.

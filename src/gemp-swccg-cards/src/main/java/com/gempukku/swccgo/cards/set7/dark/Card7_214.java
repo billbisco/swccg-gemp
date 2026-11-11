@@ -65,7 +65,7 @@ public class Card7_214 extends AbstractCreature {
                 action.setText("Retrieve " + numToRetrieve + " Force");
                 // Perform result(s)
                 action.appendEffect(
-                        new RetrieveForceEffect(action, playerId, numToRetrieve));
+                        new RetrieveForceEffect(action, playerId, numToRetrieve).becauseCreatureAteCard());
                 return Collections.singletonList(action);
             }
         }

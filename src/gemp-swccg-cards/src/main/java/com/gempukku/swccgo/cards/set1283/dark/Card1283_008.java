@@ -77,7 +77,7 @@ public class Card1283_008 extends AbstractCreature {
                                     public void decisionMade(final int amountToRetrieve) throws DecisionResultInvalidException {
                                         if (amountToRetrieve > 0) {
                                             action.appendEffect(
-                                                    new RetrieveForceEffect(action, playerId, amountToRetrieve));
+                                                    new RetrieveForceEffect(action, playerId, amountToRetrieve).becauseCreatureAteCard());
                                         }
                                     }
                                 }));

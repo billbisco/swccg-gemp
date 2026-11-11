@@ -14,6 +14,7 @@ import java.util.Collection;
  */
 public class AboutToLoseCardFromTableResult extends EffectResult implements AboutToLeaveTableResult {
     private PhysicalCard _source;
+    private Action _action;
     private PhysicalCard _cardToBeLost;
     private PreventableCardEffect _effect;
     private boolean _allCardsSituation;
@@ -49,10 +50,19 @@ public class AboutToLoseCardFromTableResult extends EffectResult implements Abou
                                           boolean allCardsSituation, Collection<PhysicalCard> allCardsAboutToBeLost) {
         super(Type.ABOUT_TO_BE_LOST_FROM_TABLE, performingPlayerId);
         _source = action.getActionSource();
+        _action = action;
         _cardToBeLost = cardToBeLost;
         _effect = effect;
         _allCardsSituation = allCardsSituation;
         _allCardsAboutToBeLost = allCardsAboutToBeLost;
+    }
+
+    /**
+     * Gets the action (or sub-action) causing this result.
+     * @return the action
+     */
+    public Action getAction() {
+        return _action;
     }
 
     /**
