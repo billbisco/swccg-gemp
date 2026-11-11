@@ -50,6 +50,16 @@ Rate limits (in-memory): 1200/min overall, 30 per 5 min per client IP, 10 failur
 per 15 min per username, 5 sign-ups per hour per IP. Sign-ups honour the
 “new account registration” setting.
 
+**Play's own classic signup (GEMP → swccg-login, #261).** When `SWCCG_LOGIN_REVOKE_URL`
+and `SWCCG_LOGIN_REVOKE_SECRET` are set, Play's classic signup asks swccg-login first:
+a signed GEMP-AUTH-V2 `POST /internal/v1/name-check` `{name}` (same listener and key id
+`gemp` as revoke; the URL is the revoke URL's host with that path). A reserved name,
+a name on its 90-day hold after a rename or close, or a name swccg-login has issued is
+refused; so is any answer that is unsigned, not 200, or late (fail closed, "try again
+in a few minutes"). The guest seat names "Light Side" and "Dark Side" (any case, `_`
+for the space) are refused on Play even without swccg-login. Classic name + password
+login is unchanged.
+
 ## 2. OIDC client (GEMP → swccg-login)
 
 Off unless `SWCCG_LOGIN_ENABLED=true`. When off, or misconfigured,
