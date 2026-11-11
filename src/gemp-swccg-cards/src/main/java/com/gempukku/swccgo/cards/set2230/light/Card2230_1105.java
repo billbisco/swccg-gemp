@@ -10,7 +10,7 @@ import java.time.LocalDate;
  * Type: Interrupt
  * Title: Ke Chu Ke Kukuta? (V)
  * PC-E1 version of 1230_105 (Batch R8-U): the PC website card list text (by 2012-07-21; the list was generated from the
- * Holotable card data), between the Virtual Block 3 release sheet original (2230_105) and the Virtual Cards Master List
+ * Holotable card data), between the Virtual Block 3 release sheet original (2230_2105) and the Virtual Cards Master List
  * (2013-04-27, PC-E2, the current card), which prints the original words again. Against the original: one change: "you" is added ("you may use").
  * Written-out icons in the list are notation, so the text here uses the icons. Same play as the current card.
  * Anything Goes only (docs/legacy-versions.md).

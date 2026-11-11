@@ -10,7 +10,7 @@ import java.time.LocalDate;
  * Type: Interrupt
  * Title: •Harvest (V)
  * PC-E1 version of 1210_154 (Batch R8-U): the PC website card list text (by 2012-07-21; the list was generated from the
- * Holotable card data), between the Virtual Block 1 release sheet original (2210_154) and the Virtual Cards Master List
+ * Holotable card data), between the Virtual Block 1 release sheet original (2210_2154) and the Virtual Cards Master List
  * (2013-04-27, PC-E2, the current card), which prints the original words again. Against the original: one change: "▲ (or retrieve) a device." is reworded as "Retrieve a device, or ▲ a device.".
  * Written-out icons in the list are notation, so the text here uses the icons. Same play as the current card.
  * Anything Goes only (docs/legacy-versions.md).

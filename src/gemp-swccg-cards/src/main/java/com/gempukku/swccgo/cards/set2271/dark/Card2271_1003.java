@@ -10,7 +10,7 @@ import java.time.LocalDate;
  * Type: Character
  * Title: •DS-61-5
  * PC-E1 version of 1271_3 (Batch R8-U): the PC website card list text (by 2012-07-21; the list was generated from the
- * Holotable card data), between the Virtual Block 7.1 release sheet original (2271_3) and the Virtual Cards Master List
+ * Holotable card data), between the Virtual Block 7.1 release sheet original (2271_2003) and the Virtual Cards Master List
  * (2013-04-27, PC-E2, the current card), which prints the original words again. Against the original: one change: "one" is dropped ("any card").
  * Written-out icons in the list are notation, so the text here uses the icons. Same play as the current card.
  * Anything Goes only (docs/legacy-versions.md).

@@ -10,7 +10,7 @@ import java.time.LocalDate;
  * Type: Interrupt
  * Title: Look Sir, Droids (V)
  * PC-E1 version of 1210_64 (Batch R8-U): the PC website card list text (by 2012-07-21; the list was generated from the
- * Holotable card data), between the Virtual Block 1 release sheet original (2210_64) and the Virtual Cards Master List
+ * Holotable card data), between the Virtual Block 1 release sheet original (2210_2064) and the Virtual Cards Master List
  * (2013-04-27, PC-E2, the current card), which prints the original words again. Against the original: two changes: "two always [Immune to Alter] Effects" is reworded as "two Effects which are always [Immune to Alter]", and "Interrupt" in the last sentence is written "interrupt", with a small i.
  * Written-out icons in the list are notation, so the text here uses the icons. Same play as the current card.
  * Anything Goes only (docs/legacy-versions.md).

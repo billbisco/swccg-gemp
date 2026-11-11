@@ -10,7 +10,7 @@ import java.time.LocalDate;
  * Type: Effect
  * Title: •Baktoid Armor Workshop
  * PC-E1 version of 1274_3 (Batch R8-U): the PC website card list text (by 2012-07-21; the list was generated from the
- * Holotable card data), between the Virtual Block 7.4 release sheet original (2274_3) and the Virtual Cards Master List
+ * Holotable card data), between the Virtual Block 7.4 release sheet original (2274_2003) and the Virtual Cards Master List
  * (2013-04-27, PC-E2, the current card), which prints the original words again. Against the original: one change: "already" is added ("not already on table").
  * Written-out icons in the list are notation, so the text here uses the icons. Same play as the current card.
  * Anything Goes only (docs/legacy-versions.md).

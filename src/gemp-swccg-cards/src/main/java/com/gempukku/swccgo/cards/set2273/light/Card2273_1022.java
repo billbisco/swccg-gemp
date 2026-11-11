@@ -10,7 +10,7 @@ import java.time.LocalDate;
  * Type: Character
  * Title: •Dack Ralter (V)
  * PC-E1 version of 1273_22 (Batch R8-U): the PC website card list text (by 2012-07-21; the list was generated from the
- * Holotable card data), between the Virtual Block 7.3 release sheet original (2273_22) and the Virtual Cards Master List
+ * Holotable card data), between the Virtual Block 7.3 release sheet original (2273_2022) and the Virtual Cards Master List
  * (2013-04-27, PC-E2, the current card), which prints the original words again. Against the original: four changes: "pilot" is written "Pilot", with a capital P; the comma after "During battle" is dropped; "is" is added ("If Dack is about to leave table"); and the comma after "table" is dropped.
  * Written-out icons in the list are notation, so the text here uses the icons. Same play as the current card.
  * Anything Goes only (docs/legacy-versions.md).

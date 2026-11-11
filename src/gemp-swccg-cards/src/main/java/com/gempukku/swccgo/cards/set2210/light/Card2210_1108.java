@@ -10,7 +10,7 @@ import java.time.LocalDate;
  * Type: Character
  * Title: •Owen Lars (V)
  * PC-E1 version of 1210_108 (Batch R8-U): the PC website card list text (by 2012-07-21; the list was generated from the
- * Holotable card data), between the Virtual Block 1 release sheet original (2210_108) and the Virtual Cards Master List
+ * Holotable card data), between the Virtual Block 1 release sheet original (2210_2108) and the Virtual Cards Master List
  * (2013-04-27, PC-E2, the current card), which prints the original words again. Against the original: three changes: "a card … with a 'crop' card" becomes "one card … with one 'crop' card", and "and" before "cards with "lightsaber" in title" is dropped.
  * Written-out icons in the list are notation, so the text here uses the icons. Same play as the current card.
  * Anything Goes only (docs/legacy-versions.md).

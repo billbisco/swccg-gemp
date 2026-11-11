@@ -10,7 +10,7 @@ import java.time.LocalDate;
  * Type: Effect
  * Title: •Tarkin's Bounty (V)
  * PC-E1 version of 1261_40 (Batch R8-U): the PC website card list text (by 2012-07-21; the list was generated from the
- * Holotable card data), between the Virtual Set 6: Reflections IV sheet original (2261_40) and the Virtual Cards Master List
+ * Holotable card data), between the Virtual Set 6: Reflections IV sheet original (2261_2040) and the Virtual Cards Master List
  * (2013-04-27, PC-E2, the current card), which prints the original words again. Against the original: two changes: "one" is added before the card name, and a comma is added after "Astromech Shortage".
  * Written-out icons in the list are notation, so the text here uses the icons. Same play as the current card.
  * Anything Goes only (docs/legacy-versions.md).

@@ -10,7 +10,7 @@ import java.time.LocalDate;
  * Type: Effect
  * Title: •Wipe Them Out, All Of Them (V)
  * PC-E1 version of 1250_25 (Batch R8-U): the PC website card list text (by 2012-07-21; the list was generated from the
- * Holotable card data), between the Virtual Block 5 release sheet original (2250_25) and the Virtual Cards Master List
+ * Holotable card data), between the Virtual Block 5 release sheet original (2250_2025) and the Virtual Cards Master List
  * (2013-04-27, PC-E2, the current card), which prints the original words again. Against the original: one change: "weapon" after the [Permanent Weapon] icon is dropped ("[Permanent Weapon] destiny draws").
  * Written-out icons in the list are notation, so the text here uses the icons. Same play as the current card.
  * Anything Goes only (docs/legacy-versions.md).

@@ -10,7 +10,7 @@ import java.time.LocalDate;
  * Type: Interrupt
  * Title: •Abyssin Ornament & •Wounded Wookiee (V)
  * PC-E1 version of 1230_40 (Batch R8-U): the PC website card list text (by 2012-07-21; the list was generated from the
- * Holotable card data), between the Virtual Block 3 release sheet original (2230_40) and the Virtual Cards Master List
+ * Holotable card data), between the Virtual Block 3 release sheet original (2230_2040) and the Virtual Cards Master List
  * (2013-04-27, PC-E2, the current card), which prints the original words again. Against the original: one change: "choose: ▼ Rancor Pit …, OR ▼ Power Of The Hutt …" becomes "choose to ▼: Rancor Pit …, OR Power Of The Hutt …" (one arrow before the colon instead of one before each choice; the list writes it "choose to deploy from Reserve Deck:").
  * Written-out icons in the list are notation, so the text here uses the icons. Same play as the current card.
  * Anything Goes only (docs/legacy-versions.md).

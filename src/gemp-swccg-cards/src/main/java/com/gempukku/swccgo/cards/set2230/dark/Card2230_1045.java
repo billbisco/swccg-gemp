@@ -10,7 +10,7 @@ import java.time.LocalDate;
  * Type: Interrupt
  * Title: •Imperial Tyranny (V)
  * PC-E1 version of 1230_45 (Batch R8-U): the PC website card list text (by 2012-07-21; the list was generated from the
- * Holotable card data), between the Virtual Block 3 release sheet original (2230_45) and the Virtual Cards Master List
+ * Holotable card data), between the Virtual Block 3 release sheet original (2230_2045) and the Virtual Cards Master List
  * (2013-04-27, PC-E2, the current card), which prints the original words again. Against the original: three changes: "on table" is added after "Empire's New Order", "the" is added ("at the same site"), and "your" is added ("on top of your Reserve Deck").
  * Written-out icons in the list are notation, so the text here uses the icons. Same play as the current card.
  * Anything Goes only (docs/legacy-versions.md).
