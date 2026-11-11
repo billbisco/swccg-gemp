@@ -199,10 +199,25 @@ public class AuthServiceTests {
         Player bill = dao.addWithStoredHash("Bill", hasher.hash("rightpass"), "u", null);
         assertFalse(auth.register("Light_Side", "longenough", IP)); //test1
         assertFalse(auth.register("dark_side", "longenough", IP)); //test1
+        assertFalse(auth.register("Dark_Side", "longenough", IP)); //test1
         assertEquals("name_invalid", assertThrows(AuthService.RenameRefused.class, () -> auth.renameAccount(bill.getId(), "LIGHT_SIDE")).code()); //test1
         assertTrue(auth.register("Light_Sid2", "longenough", IP)); //test2
         assertEquals(AuthService.Status.OK, auth.verifyCredentials("Bill", "rightpass", IP).getStatus()); //test3
         assertEquals(AuthService.Status.OK, auth.verifyCredentials("Light_Sid2", "longenough", IP).getStatus()); //test3
+    }
+
+    @Test
+    public void underscoreAndSpaceNamesAreDifferentAccounts() throws Exception {
+        //test1: a space and an underscore are different names (t121u); case is still ignored
+        //test2: classic login works for each, by its own name
+        Player spaced = dao.addWithStoredHash("Luke Sky", hasher.hash("spacepass1"), "u", null);
+        assertTrue(auth.register("Luke_Sky", "underpass1", IP)); //test1
+        assertThrows(LoginInvalidException.class, () -> auth.register("LUKE_SKY", "underpass1", IP)); //test1
+        assertEquals(AuthService.Status.OK, auth.verifyCredentials("Luke_Sky", "underpass1", IP).getStatus()); //test2
+        assertEquals(AuthService.Status.OK, auth.verifyCredentials("Luke Sky", "spacepass1", IP).getStatus()); //test2
+        assertEquals(AuthService.Status.INVALID, auth.verifyCredentials("Luke_Sky", "spacepass1", IP).getStatus()); //test2
+        assertEquals("name_taken", assertThrows(AuthService.RenameRefused.class,
+                () -> auth.renameAccount(spaced.getId(), "luke_sky")).code()); //test1
     }
 
     @Test

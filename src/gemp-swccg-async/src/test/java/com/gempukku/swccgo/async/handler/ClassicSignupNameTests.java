@@ -36,9 +36,12 @@ public class ClassicSignupNameTests {
 
     @Test
     public void seatNamesAndTheirSpellingsAreReserved() {
-        for (String n : new String[]{"Light Side", "Dark Side", "Light_Side", "dark_side", "LIGHT SIDE", "light  side", " Dark Side "})
+        // all four reserved spellings, any case (t118u, t121u)
+        for (String n : new String[]{"Light Side", "Light_Side", "Dark Side", "Dark_Side", "light side", "LIGHT_SIDE",
+                "dark side", "dark_side", " Dark Side "})
             assertTrue(PlayNowSide.isSeatName(n), n);
-        for (String n : new String[]{"Light Side 2", "Dark_Side2", "Light", "Dark", "Lightside", "DarkSider", "LS", "", null})
+        for (String n : new String[]{"Light Side 2", "Light_Side_2", "Dark_Side2", "Light", "Dark", "Lightside",
+                "DarkSider", "LS", "", null})
             assertFalse(PlayNowSide.isSeatName(n), String.valueOf(n));
     }
 
@@ -46,6 +49,8 @@ public class ClassicSignupNameTests {
     public void seatNamesRefusedEvenWithoutSignInService() {
         assertEquals(RegisterRequestHandler.NAME_RESERVED, RegisterRequestHandler.nameRefusal("Light_Side", null));
         assertEquals(RegisterRequestHandler.NAME_RESERVED, RegisterRequestHandler.nameRefusal("dark_side", null));
+        assertEquals(RegisterRequestHandler.NAME_RESERVED, RegisterRequestHandler.nameRefusal("Dark_Side", null));
+        assertEquals(RegisterRequestHandler.NAME_RESERVED, RegisterRequestHandler.nameRefusal("LIGHT_SIDE", null));
         assertNull(RegisterRequestHandler.nameRefusal("Light_Sid2", null));
         assertNull(RegisterRequestHandler.nameRefusal("Brandnew", null));
     }
