@@ -24,6 +24,6 @@ public class Card_601_027_Tests {
         assertEquals("Sonic Bombardment", b.getTitle());
         assertTrue(b.hasVirtualSuffix());
         assertEquals(Side.DARK, b.getSide());
-        assertEquals("Once per game, may take into hand a prison from Reserve Deck; reshuffle. OR Use 1 Force to take into hand a non-droid assassin or slaver of ability < 5 from Reserve Deck; reshuffle. OR During battle involving an assassin, each of opponent's battle destiny draws is -1. OR Cancel opponent's attempt to modify the power of a starship piloted by your alien.", b.getGameText());
+        assertEquals("Once per game, ▲ a prison. OR Use 1 Force to ▲ a non-droid assassin (or slaver) of ability < 5. OR During battle involving an assassin, opponent's battle destiny draws are -1. OR Cancel opponent's attempt to modify the power of a starfighter piloted by your alien.", b.getGameText());
     }
 }

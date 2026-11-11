@@ -52,7 +52,8 @@ public class Card_2220_010_Tests {
         assertTrue(card.isLegacy());
         assertEquals("Adds 2 to power of anything he pilots. Deploys free aboard Punishing One, and while piloting it, draws one battle destiny if unable to otherwise. At same site, Han's game text is canceled. May not be attacked. Immune to Fallen Portal.",
                 card.getGameText());
-        assertNotEquals(current.getGameText(), card.getGameText());
+        // The current card (Master List, 2013) repeats these words (Bill 2026-11-11).
+        assertEquals(current.getGameText(), card.getGameText());
         var version = card.getLegacyVersion();
         assertEquals("1220_10", version.currentPrintingId());
         assertEquals("", version.label());

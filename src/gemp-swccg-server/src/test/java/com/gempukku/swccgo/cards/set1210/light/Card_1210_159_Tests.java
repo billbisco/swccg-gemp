@@ -178,7 +178,7 @@ public class Card_1210_159_Tests {
     }
 
     @Test
-    public void PreciseHitLostIsNotOfferedAgainstANonHeroicCharacter() {
+    public void PreciseHitLostIsOfferedAgainstANonHeroicCharacter() {
         var scn = GetScenario();
         var precise = scn.GetLSCard("precise");
         var luke = scn.GetLSCard("luke");
@@ -190,7 +190,7 @@ public class Card_1210_159_Tests {
         scn.SkipToLSTurn(Phase.CONTROL);
 
         assertFalse(scn.HasKeyword(luke, Keyword.HEROIC));
-        assertFalse(scn.LSCardPlayAvailable(precise, "Cancel Heroic"));
+        assertTrue(scn.LSCardPlayAvailable(precise, "Cancel Heroic")); // Master List (2013): any character or starship
     }
 
     private void fireUntilHitOptional(VirtualTableScenario scn, int draws) {

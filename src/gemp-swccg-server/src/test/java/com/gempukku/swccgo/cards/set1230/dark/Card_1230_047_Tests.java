@@ -21,6 +21,7 @@ import static com.gempukku.swccgo.framework.Assertions.assertInZone;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertSame;
 
 public class Card_1230_047_Tests {
     protected VirtualTableScenario GetScenario() {
@@ -72,5 +73,13 @@ public class Card_1230_047_Tests {
         scn.SkipToDSTurn();
         assertEquals(Zone.HAND, card.getZone());
         assertEquals(6, scn.GetDestiny(card), scn.epsilon);
+    }
+
+    @Test
+    public void BattleDestinyBonusWorksAtAnyBattleLocationPerTheMasterList() {
+        // Master List (2013, current): "During battle, if your Imperial with opponent's alien" (any battle location);
+        // the card list (2230_1047) needs "a battle at a site".
+        assertSame(com.gempukku.swccgo.filters.Filters.location, new com.gempukku.swccgo.cards.set1230.dark.Card1230_047().battleDestinyBonusLocation());
+        assertSame(com.gempukku.swccgo.filters.Filters.site, ((com.gempukku.swccgo.cards.set1230.dark.Card1230_047) new com.gempukku.swccgo.cards.set2230.dark.Card2230_1047()).battleDestinyBonusLocation());
     }
 }

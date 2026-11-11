@@ -19,7 +19,7 @@ import static org.junit.Assert.assertNull;
  */
 public class LegacyBatchB08VersionsTests {
     private static final Map<String, String> CURRENT_TEXT = Map.ofEntries(
-            Map.entry("1250_2", "Once during opponent's activate phase, may relocate Aurra to a site where opponent has a Jedi. Once per game, during your move phase, may fire her weapon at a Jedi; hit target is lost. Immune to attrition < 4."),
+            Map.entry("1250_2", "Once during opponent's activate phase, may relocate Aurra to same site as a Jedi. Once per game, during your move phase, may fire her weapon at a Jedi; hit target is lost. Immune to attrition < 4."),
             Map.entry("1250_14", "Deploy on Senate. May raise your converted Senate to the top. Jedi here are politics +4. While your total politics here is > 5, at battlegrounds where you have an Imperial, your Force drains and battle destiny draws are +1. Your Maul, aliens (except Mara), [Independent Starship] starships, and senators are lost. (Immune to Alter.)"),
             Map.entry("1250_22", "Deploy on Sidious. At start of your turn, if at Senate, may draw 2 cards from Reserve Deck. During your move phase, relocate this Effect to a Rebel or Jedi at a battleground; that character loses any immunity to attrition. If this Effect just lost, relocate it to Sidious."),
             Map.entry("1250_33", "At each system a player controls with a capital starship, their non-[Presence] characters and vehicles deploy -1 to related sites and sectors. If you occupy a system with a capital starship (or three unique starships) and have no Objective on table, may add 1 to each of your Force drains at related battleground sites (opponent loses no more than 2 Force from those drains)."),

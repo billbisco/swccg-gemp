@@ -73,7 +73,8 @@ public final class Vb89VersionAsserts {
         assertEquals(current.getPersonas(), version.getPersonas());
         assertEquals(current.getSide(), version.getSide());
         assertEquals(current.getCardCategory(), version.getCardCategory());
-        assertTrue(LegacyVersionAssertions.differsOrIsRepeatedByTheCurrentCard(current, version));
+        if (!LegacyRepeatedTexts.isRepeatedByCurrent(version.getLegacyVersion()))
+            assertTrue(LegacyVersionAssertions.differsOrIsRepeatedByTheCurrentCard(current, version));
     }
 
     /**

@@ -24,7 +24,7 @@ public class Card_2240_037_Tests {
 
     private VirtualTableScenario scenario(String lukeId, boolean withObjective) {
         var dark = new HashMap<>(Map.ofEntries(
-                Map.entry("deep", "2240_37"), Map.entry("otherDeep", "1240_37"),
+                Map.entry("deep", "2240_37"), Map.entry("otherDeep", "1240_37"), Map.entry("deep2", "2240_37"),
                 Map.entry("hunt", "601_87"),
                 Map.entry("mara", "110_10"), Map.entry("otherMara", "110_10"),
                 Map.entry("obsession", "101_6"), Map.entry("saber", "110_11"),
@@ -68,9 +68,10 @@ public class Card_2240_037_Tests {
     }
 
     @Test
-    public void AnyObjectiveOfYoursStopsTheOriginalFromDeploying() {
-        //test1: with a non-[Reflections III] objective of yours on table, the original may not deploy
-        //test2: the current card (only stopped by a [Reflections III] objective) may
+    public void NonReflectionsObjectiveDoesNotStopTheOriginalFromDeploying() {
+        // Printed: "Unless your [Reflections III] objective on table". GEMP's old class checked any objective (bug fix).
+        //test1: with a non-[Reflections III] objective of yours on table, the original may deploy
+        //test2: so may the current card
         var scn = scenario("1_19", false);
         var deep = scn.GetDSCard("deep");
         var current = scn.GetDSCard("otherDeep");
@@ -80,8 +81,19 @@ public class Card_2240_037_Tests {
         hunt.setObjectiveDeploymentComplete(true);
         scn.MoveCardsToDSHand(deep, current);
         scn.SkipToPhase(Phase.DEPLOY);
-        assertFalse(scn.DSDeployAvailable(deep)); //test1
+        assertTrue(scn.DSDeployAvailable(deep)); //test1
         assertTrue(scn.DSDeployAvailable(current)); //test2
+    }
+
+    @Test
+    public void ReflectionsObjectiveStopsTheOriginalFromDeploying() {
+        var scn = scenario("1_19", true);
+        scn.StartGame();
+        assertInZone(Zone.SIDE_OF_TABLE, scn.GetDSCard("objective"), scn.GetDSCard("deep"));
+        var other = scn.GetDSCard("deep2");
+        scn.MoveCardsToDSHand(other);
+        scn.SkipToPhase(Phase.DEPLOY);
+        assertFalse(scn.DSDeployAvailable(other));
     }
 
     @Test

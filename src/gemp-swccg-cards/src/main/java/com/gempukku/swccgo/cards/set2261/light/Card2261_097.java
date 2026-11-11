@@ -23,14 +23,4 @@ public class Card2261_097 extends Card601_051 {
         setLegacyVersion(new LegacyVersion("1261_97", "",
                 "Virtual Block 6.1 release sheet (2009-09-04), card #98", LocalDate.of(2009, 9, 4), LocalDate.of(2012, 7, 21)));
     }
-
-    @Override
-    protected Filter startingEffectFilter() {
-        return Filters.and(Filters.Effect, Filters.immune_to_Alter);
-    }
-
-    @Override
-    protected int maxStartingSites() {
-        return Integer.MAX_VALUE;
-    }
 }

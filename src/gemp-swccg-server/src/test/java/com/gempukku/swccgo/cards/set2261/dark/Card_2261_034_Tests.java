@@ -56,9 +56,9 @@ public class Card_2261_034_Tests {
     @Test
     public void FleetSecurityProtocolsOriginalCountsOpponentsCharactersAtRelatedSitesToo() {
         assertEquals(6, shipPowerBonusInBattle("protocols"), 0.001f);
-        // PC-E1 (2261_1034, revised 2010 sheet): "for each of your characters" (the current PC-E2 card adds to total
-        // power instead of the starship's power).
+        // PC-E1 (2261_1034, revised 2010 sheet) and the current card (Master List 2013, PC-E4): "for each of your
+        // characters"; the card list (PC-E2, 2261_2034) adds to total power instead of the starship's power.
         assertEquals(4, shipPowerBonusInBattle("e1"), 0.001f);
-        assertEquals(0, shipPowerBonusInBattle("current"), 0.001f);
+        assertEquals(4, shipPowerBonusInBattle("current"), 0.001f);
     }
 }

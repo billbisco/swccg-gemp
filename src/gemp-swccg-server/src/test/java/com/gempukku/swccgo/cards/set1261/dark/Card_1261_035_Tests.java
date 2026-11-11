@@ -177,71 +177,6 @@ public class Card_1261_035_Tests {
     }
 
     @Test
-    public void lightsabersIncludingPermanentOnesMaySwingOnlyOncePerBattleAfterDeal() {
-        var scn = scenario(true, 5);
-        startWithoutObjective(scn);
-        var site = scn.GetDSStartingLocation();
-        var maul = scn.GetDSCard("maul");
-        var ventress = scn.GetDSCard("ventress");
-        var sabers = scn.GetDSCard("ventressSabers");
-        var trooper = scn.GetDSCard("trooperA");
-        var obi = scn.GetLSCard("obi");
-        var saber = scn.GetLSCard("saber");
-        var blaster = scn.GetLSCard("blaster");
-        scn.MoveCardsToLocation(site, maul, ventress, trooper);
-        scn.AttachCardsTo(ventress, sabers);
-        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), obi);
-        scn.AttachCardsTo(obi, saber, blaster);
-        var mods = scn.game().getModifiersQuerying();
-        // Before the Deal: Ventress' Lightsabers may fire twice per battle on Ventress; nothing is limited.
-        assertTrue(mods.mayBeFiredTwicePerBattle(scn.gameState(), sabers));
-        for (var card : List.of(sabers, maul, saber, blaster))
-            assertFalse(mods.mayFireOnlyOncePerBattle(scn.gameState(), card));
-
-        scn.MoveCardsToDSSideOfTable(scn.GetDSCard("deal"));
-        scn.SkipToDSTurn(Phase.CONTROL);
-        assertFalse(mods.mayBeFiredTwicePerBattle(scn.gameState(), sabers));
-        assertTrue(mods.mayFireOnlyOncePerBattle(scn.gameState(), sabers));
-        assertTrue(mods.mayFireOnlyOncePerBattle(scn.gameState(), maul));
-        assertTrue(mods.mayFireOnlyOncePerBattle(scn.gameState(), saber));
-        // Not a lightsaber: blaster, a character without a permanent lightsaber.
-        assertFalse(mods.mayFireOnlyOncePerBattle(scn.gameState(), blaster));
-        assertFalse(mods.mayFireOnlyOncePerBattle(scn.gameState(), ventress));
-        assertFalse(mods.mayFireOnlyOncePerBattle(scn.gameState(), trooper));
-
-        // Persists after both sources leave.
-        scn.MoveCardsToTopOfDSLostPile(scn.GetDSCard("deal"), scn.GetDSCard("jedi"));
-        assertTrue(mods.mayFireOnlyOncePerBattle(scn.gameState(), sabers));
-    }
-
-    @Test
-    public void ventressLightsabersActuallySwingOnlyOnceInBattleAfterDeal() {
-        for (boolean deal : List.of(false, true)) {
-            var scn = scenario(true, 5);
-            startWithoutObjective(scn);
-            var site = scn.GetDSStartingLocation();
-            var ventress = scn.GetDSCard("ventress");
-            var sabers = scn.GetDSCard("ventressSabers");
-            var obi = scn.GetLSCard("obi");
-            var trooperB = scn.GetDSCard("trooperB");
-            scn.MoveCardsToLocation(site, ventress, obi);
-            scn.AttachCardsTo(ventress, sabers);
-            if (deal) scn.MoveCardsToDSSideOfTable(scn.GetDSCard("deal"));
-            scn.SkipToDSTurn(Phase.CONTROL);
-            scn.EnsureDSForcePile(6);
-            scn.DSStartBattleAndSkipToWeaponsSegment(site);
-            assertTrue(scn.DSCardActionAvailable(sabers, "Fire"));
-            scn.PrepareDSDestiny(1); scn.PrepareDSDestiny(1);
-            scn.DSUseCardAction(sabers, "Fire");
-            if (scn.DSHasCardChoiceAvailable(obi)) scn.DSChooseCard(obi);
-            scn.PassAllResponses();
-            assertFalse(obi.isHit());
-            if (scn.AwaitingLSWeaponsSegmentActions()) scn.LSPass();
-            assertEquals("second swing only without the Deal", !deal, scn.DSCardActionAvailable(sabers, "Fire"));
-        }
-    }
-
-    @Test
     public void originalVersionAddsNoSwingLimitAfterDeal() {
         // 2261_35 (Virtual Block 6.1 sheet, Sep 2009): "lightsabers may not add to Force drains." (no swing clause).
         jediId = "2261_35";
@@ -271,7 +206,29 @@ public class Card_1261_035_Tests {
                 com.gempukku.swccgo.framework.StartingSetup.NoLSShields, com.gempukku.swccgo.framework.StartingSetup.NoDSShields,
                 com.gempukku.swccgo.framework.VirtualTableScenario.Open);
         var text = scn.GetDSCard("c").getBlueprint().getGameText();
-        org.junit.Assert.assertEquals("Deploy on table with 5 cards from outside your deck face down under here. Twice per game, may play a Defensive Shield from here (as if from hand). If This Deal Is Getting Worse All The Time on table, for remainder of game lightsabers may not add to Force Drains or 'swing' more than once per battle. Cloud City Occupation is canceled.", text);
+        org.junit.Assert.assertEquals("Deploy on table with 5 cards from outside your deck face down under here. Twice per game, may play a Defensive Shield from here (as if from hand). If This Deal Is Getting Worse All The Time on table, for remainder of game lightsabers may not add to Force drains. Cloud City Occupation is canceled.", text);
         org.junit.Assert.assertNull(scn.GetDSCard("c").getBlueprint().getLegacyVersion());
+    }
+
+    // Master List (2013, current) and the sheet: no 'swing' limit (the card list, 2261_1035, adds one)
+    @Test
+    public void currentCardAddsNoSwingLimitAfterDeal() {
+        // 2261_35 (Virtual Block 6.1 sheet, Sep 2009): "lightsabers may not add to Force drains." (no swing clause).
+        jediId = "1261_35";
+        var scn = scenario(true, 5);
+        startWithoutObjective(scn);
+        var site = scn.GetDSStartingLocation();
+        var maul = scn.GetDSCard("maul");
+        var ventress = scn.GetDSCard("ventress");
+        var sabers = scn.GetDSCard("ventressSabers");
+        scn.MoveCardsToLocation(site, maul, ventress);
+        scn.AttachCardsTo(ventress, sabers);
+        scn.MoveCardsToDSSideOfTable(scn.GetDSCard("deal"));
+        scn.SkipToDSTurn(Phase.CONTROL);
+        var mods = scn.game().getModifiersQuerying();
+        assertTrue(mods.mayBeFiredTwicePerBattle(scn.gameState(), sabers));
+        for (var card : List.of(sabers, maul))
+            assertFalse(mods.mayFireOnlyOncePerBattle(scn.gameState(), card));
+        assertTrue(mods.isForceDrainModifierCanceled(scn.gameState(), site, maul, scn.DS, scn.DS, 1));
     }
 }

@@ -20,9 +20,4 @@ public class Card2261_080 extends Card1261_080 {
         setLegacyVersion(new LegacyVersion("1261_80", "",
                 "Virtual Block 6.1 release sheet (2009-09-04), card #79", LocalDate.of(2009, 9, 4), LocalDate.of(2010, 5, 29)));
     }
-
-    @Override
-    protected boolean limitsLightsaberSwings() {
-        return false;
-    }
 }

@@ -167,7 +167,7 @@ public class Card_1282_019_Tests {
     @Test
     public void RennekCurrentCardIsTheLatestText() {
         assertCurrentCard("1282_19", "Rennek",
-                "May be stacked on I Know That Laugh from hand for 2 force. While stacked on I Know That Laugh, stack face-up and during any battle may draw destiny. If destiny < number of your aliens in battle, reduce a participating character's forfeit to 0.");
+                "May be stacked on I Know That Laugh from hand, using 2 Force. While stacked on I Know That Laugh, stack face-up and during any battle may draw destiny. If destiny < number of your aliens in battle, reset a participating character's forfeit to 0.");
     }
 
     /** Rennek's destiny succeeds while the trooper may not have its forfeit reduced: may the trooper be chosen? */
@@ -203,7 +203,7 @@ public class Card_1282_019_Tests {
     }
 
     @Test
-    public void RennekVMayNotChooseACharacterWhoseForfeitMayNotBeReduced() {
-        assertFalse(rennekMayChooseCharacterWhoseForfeitMayNotBeReduced("1282_19"));
+    public void RennekVMayResetTheForfeitOfACharacterWhoseForfeitMayNotBeReduced() {
+        assertTrue(rennekMayChooseCharacterWhoseForfeitMayNotBeReduced("1282_19")); // "reset" (Master List / PC card image)
     }
 }

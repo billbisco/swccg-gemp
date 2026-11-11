@@ -33,7 +33,7 @@ public class LegacyBatchB21VersionsTests {
             Map.entry("1281_46", "Deploy on Han. I've Got A Bad Feeling About This is canceled. When fired, Han is cumulatively power +1 until end of turn. May target a character or creature for free. Draw destiny. Target hit, its forfeit = 0 and opponent loses 1 Force if destiny +1 > defense value."),
             Map.entry("1281_47", "Deploy on Kyle Katarn. May target a character, creature or vehicle for free. Draw destiny (two if Scoundrel's Luck on table). Character or creature hit, and its forfeit = 0, if total destiny > defense value. Vehicle hit if total destiny -2 > defense value."),
             Map.entry("1282_11", "Deploy on an assassin; assassin is power +1. May target a character at same or adjacent site for free. Draw destiny. If destiny +1 > defense value: target hit, may not be captured, and you may place a bounty on target in Used Pile to retrieve 2 Force."),
-            Map.entry("1282_12", "Power +2 while armed with a lightsaber. May use any 'stolen' lightsaber. Once during battle, where present, may steal an opponent's just-lost lightsaber. Immune to attrition <3 (<5 while armed with a 'stolen' lightsaber)."));
+            Map.entry("1282_12", "Power +2 while armed with a lightsaber. May use any 'stolen' lightsaber. Once during battle, where present, may steal an opponent's just-lost lightsaber. Immune to attrition < 3 (< 5 while armed with a 'stolen' lightsaber)."));
 
     /** version id -> {current printing id, label, game text, printed on, superseded on} */
     private static final Map<String, String[]> VERSIONS = Map.ofEntries(

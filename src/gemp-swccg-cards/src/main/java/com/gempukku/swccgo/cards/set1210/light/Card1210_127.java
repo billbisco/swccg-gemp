@@ -34,13 +34,14 @@ import java.util.List;
  * Type: Effect
  * Subtype: Immediate
  * Title: I Can't Believe He's Gone
+ * Text: PC-E3, the Virtual Cards Master List (2013-04-27; the PC card image, PC-E2, came first), which repeats the 2009 release-sheet words ("(and not on table)"); the PC website card-list text (PC-E1, 2012) is version 2210_1127 (Bill 2026-11-11: every publication is a version).
  */
 public class Card1210_127 extends AbstractImmediateEffect {
     public Card1210_127() {
         super(Side.LIGHT, 5, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.I_Cant_Believe_Hes_Gone, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("Even though Luke felt the pain of losing his mentor, Obi-Wan continued to give him strength and guidance through the Force.");
-        setGameText("If Obi-Wan is out of play, use 1 Force to deploy on table. During battle, may use 1 Force to add 5 to your total power there for remainder of turn. Once per turn, if Luke a captive, may activate 1 Force. (Immune to Control.)");
+        setGameText("If Obi-Wan is out of play (and not on table), use 1 Force to deploy on table. During battle, may use 1 Force to add 5 to your total power there for remainder of turn. Once per turn, if Luke a captive, may activate 1 Force. (Immune to Control.)");
         addIcons(Icon.TATOOINE);
         addImmuneToCardTitle(Title.Control);
     }
@@ -48,12 +49,14 @@ public class Card1210_127 extends AbstractImmediateEffect {
     @Override
     protected boolean canPlayCardDuringCurrentPhase(String playerId, SwccgGame game, PhysicalCard self) {
         return GameConditions.isDuringYourPhase(game, playerId, Phase.DEPLOY)
-                && GameConditions.isOutOfPlay(game, Filters.ObiWan);
+                && GameConditions.isOutOfPlay(game, Filters.ObiWan)
+                && Filters.countAllOnTable(game, Filters.ObiWan) == 0;
     }
 
     @Override
     protected boolean checkGameTextDeployRequirements(String playerId, SwccgGame game, PhysicalCard self, PlayCardOptionId playCardOptionId, boolean asReact) {
-        return GameConditions.isOutOfPlay(game, Filters.ObiWan);
+        return GameConditions.isOutOfPlay(game, Filters.ObiWan)
+                && Filters.countAllOnTable(game, Filters.ObiWan) == 0;
     }
 
     @Override

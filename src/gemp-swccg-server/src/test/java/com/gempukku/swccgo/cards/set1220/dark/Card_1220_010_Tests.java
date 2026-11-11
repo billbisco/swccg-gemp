@@ -51,7 +51,7 @@ public class Card_1220_010_Tests {
         var card = scn.GetDSCard("dengar").getBlueprint();
 
         assertEquals("Dengar", card.getTitle());
-        assertEquals("Adds 2 to power of anything he pilots. Deploys free aboard Punishing One, and while piloting it, draws one battle destiny if unable to otherwise. At same site, Han's game text is canceled. Immune to Fallen Portal.", card.getGameText());
+        assertEquals("Adds 2 to power of anything he pilots. Deploys free aboard Punishing One, and while piloting it, draws one battle destiny if unable to otherwise. At same site, Han's game text is canceled. May not be attacked. Immune to Fallen Portal.", card.getGameText());
         assertTrue(card.hasVirtualSuffix());
         assertEquals(Uniqueness.UNIQUE, card.getUniqueness());
         assertEquals(Side.DARK, card.getSide());
@@ -142,7 +142,7 @@ public class Card_1220_010_Tests {
     }
 
     @Test
-    public void DengarVMayBeAttackedSinceThePCCardListErrata() {
+    public void DengarVMayNotBeAttackedPerTheMasterList() {
         var scn = GetScenario();
         var dengar = scn.GetDSCard("dengar");
         var luke = scn.GetLSCard("luke");
@@ -151,7 +151,7 @@ public class Card_1220_010_Tests {
         scn.StartGame();
         scn.MoveCardsToLocation(site, dengar, luke);
         var q = scn.game().getModifiersQuerying();
-        assertFalse(q.isProhibitedFromAttackingTarget(scn.gameState(), luke, dengar)); //"May not be attacked" removed (PC-E1)
+        assertTrue(q.isProhibitedFromAttackingTarget(scn.gameState(), luke, dengar)); // "May not be attacked." (Master List 2013)
         assertFalse(q.isProhibitedFromAttackingTarget(scn.gameState(), dengar, luke));
     }
 }
