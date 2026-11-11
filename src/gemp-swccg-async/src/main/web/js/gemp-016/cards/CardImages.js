@@ -7448,8 +7448,6 @@ const fixedImages = {
 "2281_1011":"https://wiki.swccg.com/images/6/6b/VB8-04-Join_Us_Or_Die-PC-E1-cardmaker.png",
 "2281_1016":"https://wiki.swccg.com/images/e/e8/VB8-p3-16-Abyssin_Ornament-PC-E1-cardmaker.png",
 "2281_1018":"https://wiki.swccg.com/images/3/35/VB8-00-Give_Yourself_To_The_Dark_Side-PC-E1-cardmaker.png",
-"1281_25":"https://wiki.swccg.com/images/8/81/VB8-p5-26-Mara_Jades_Lightsaber.png",
-"2281_1025":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Dark/large/marajadeslightsaber.gif",
 "2281_1026":"https://wiki.swccg.com/images/7/7f/VB8-02-Chewbacca_Walking_Carpet-PC-E1-cardmaker.png",
 "2281_2029":"https://wiki.swccg.com/images/1/18/VB8-p5-30-Het_Nkik-PC-E2-cardmaker.png",
 "2281_1030":"https://wiki.swccg.com/images/f/f9/VB8-03-Supreme_Chancellor_Valorum-PC-E1-cardmaker.png",

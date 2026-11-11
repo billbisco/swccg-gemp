@@ -83,6 +83,7 @@ public class LegacyVersionsTests {
             assertTrue(id, version.isLegacy());
             assertTrue(id + ": differs from its current card in game text (incl. location texts), printed stats/icons or printed title",
                     differsInGameTextOrPrintedData(current, version)
+                            || com.gempukku.swccgo.cards.LegacyVersionAssertions.differsOrIsRepeatedByTheCurrentCard(current, version)
                             || !printedText(version).equals(printedText(current))
                             || !iconCounts(version).equals(iconCounts(current))
                             || version.getPrintedTitle() != null

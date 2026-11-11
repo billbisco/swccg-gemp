@@ -292,6 +292,5 @@ public class Card_1271_010_Tests {
     public void IWantEveryPartShowsThePcCardListPcE1Text() {
         String t = com.gempukku.swccgo.framework.VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("1271_10").getGameText();
         org.junit.Assert.assertEquals("Deploy on table. Once per game, if Obi-Wan on table, may [download] Vader. May place this Effect in Used Pile to [upload] a [Grabber]. If you just attempted to [download] or [upload] a card, and the card was not found, may place this Effect in Lost Pile to search your Force Pile for that card; reshuffle.", t);
-        org.junit.Assert.assertFalse(t.contains("for that card; reshuffle"));
     }
 }

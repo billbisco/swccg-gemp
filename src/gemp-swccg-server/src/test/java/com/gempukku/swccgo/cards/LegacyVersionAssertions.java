@@ -23,7 +23,7 @@ public final class LegacyVersionAssertions {
     public static void assertLegacyVersion(SwccgCardBlueprint version, SwccgCardBlueprint current, String currentId,
                                            String label, LocalDate printedOn, LocalDate supersededOn, String gameText) {
         assertEquals(gameText, version.getGameText());
-        assertNotEquals(current.getGameText(), version.getGameText());
+        assertTrue(differsOrIsRepeatedByTheCurrentCard(current, version));
         assertNull(current.getLegacyVersion());
         var info = version.getLegacyVersion();
         assertEquals(currentId, info.currentPrintingId());
@@ -46,5 +46,26 @@ public final class LegacyVersionAssertions {
             assertFalse(fullName, fullName.contains("["));
         else
             assertTrue(fullName, fullName.endsWith(" [" + label + "]"));
+    }
+
+    /**
+     * Every publication is a version (Bill, 2026-11-11): a version may repeat the current text word for word when the
+     * current card is a later publication (Master List, PC card image) that reprinted it after a different text; that
+     * different text must then be its own version (k = 1 .. 3) of the same current printing.
+     */
+    public static boolean differsOrIsRepeatedByTheCurrentCard(SwccgCardBlueprint current, SwccgCardBlueprint version) {
+        if (!java.util.Objects.equals(current.getGameText(), version.getGameText()))
+            return true;
+        var info = version.getLegacyVersion();
+        if (info == null)
+            return false;
+        var library = com.gempukku.swccgo.framework.VirtualTableScenario._cardLibrary;
+        for (int k = 1; k <= 3; k++) {
+            String id = com.gempukku.swccgo.common.LegacyVersion.versionIdOf(info.currentPrintingId(), k);
+            SwccgCardBlueprint other = library.getBaseBlueprintId(id).equals(id) ? library.getSwccgoCardBlueprint(id) : null;
+            if (other != null && other != version && !java.util.Objects.equals(other.getGameText(), current.getGameText()))
+                return true;
+        }
+        return false;
     }
 }

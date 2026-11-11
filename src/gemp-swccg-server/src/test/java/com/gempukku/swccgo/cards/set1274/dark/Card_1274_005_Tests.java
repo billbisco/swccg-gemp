@@ -190,6 +190,5 @@ public class Card_1274_005_Tests {
         String t = com.gempukku.swccgo.framework.VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("1274_5").getGameText();
         org.junit.Assert.assertEquals("Unless Imperial Propaganda on table, if you are about to lose Force during opponent's control phase, deploy on table to reduce loss by 4 (ignore other modifiers); opponent may [upload] any one card. [Immune to Control.] OR Use 2 Force to deploy on table and stack a just-played Interrupt here.", t);
         org.junit.Assert.assertFalse(t.contains("(Immune to Control.)"));
-        org.junit.Assert.assertFalse(t.contains("stack a just-played"));
     }
 }

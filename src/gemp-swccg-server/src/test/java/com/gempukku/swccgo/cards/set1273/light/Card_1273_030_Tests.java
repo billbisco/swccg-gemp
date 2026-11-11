@@ -199,7 +199,5 @@ public class Card_1273_030_Tests {
     public void WesJansonShowsTheLatestText() {
         String t = com.gempukku.swccgo.framework.VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("1273_30").getGameText();
         org.junit.Assert.assertEquals("[Pilot] 2. Once per turn, may [download] (or deploy from hand) Disruptor Pistol for free on Wes. May fire Disruptor Pistol for 1 Force. Power and forfeit +1 while with Hobbie or Wedge. If about to leave table, place cards on Wes in owner's Used Pile.", t);
-        org.junit.Assert.assertFalse(t.contains("while with Hobbie"));
-        org.junit.Assert.assertFalse(t.contains("place cards on Wes"));
     }
 }

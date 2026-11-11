@@ -374,7 +374,6 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_24'), 'https://wiki.
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_24_BACK'), 'https://wiki.swccg.com/images/6/67/VB8-07-Contract_Killers_Feared_Throughout_The_Galaxy.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_6'), 'https://wiki.swccg.com/images/d/d0/VB8-03-Rtic_Hweei.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_23'), 'https://wiki.swccg.com/images/5/50/VB8-02-Slave_I_Symbol_Of_Fear.png');
-assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_25'), 'https://wiki.swccg.com/images/8/81/VB8-p5-26-Mara_Jades_Lightsaber.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_25'), 'https://wiki.swccg.com/images/8/81/VB8-p5-26-Mara_Jades_Lightsaber.png');
 // Batch B32: current cards show CardMaker images of their PC-E1 card-list texts; originals (22xx) show the PC card images (2220_62: the slip)
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_109'), 'https://wiki.swccg.com/images/8/8b/VB1-109-R2_D2_Artoo_Detoo-PC-E1-cardmaker.png');
@@ -639,7 +638,6 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_1008'), 'https://wik
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_1011'), 'https://wiki.swccg.com/images/6/6b/VB8-04-Join_Us_Or_Die-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_1016'), 'https://wiki.swccg.com/images/e/e8/VB8-p3-16-Abyssin_Ornament-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_1018'), 'https://wiki.swccg.com/images/3/35/VB8-00-Give_Yourself_To_The_Dark_Side-PC-E1-cardmaker.png');
-assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_1025'), 'https://swccg.com/cards/legacy/VirtualBlock8-Dark/large/marajadeslightsaber.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_1026'), 'https://wiki.swccg.com/images/7/7f/VB8-02-Chewbacca_Walking_Carpet-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_2029'), 'https://wiki.swccg.com/images/1/18/VB8-p5-30-Het_Nkik-PC-E2-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_1030'), 'https://wiki.swccg.com/images/f/f9/VB8-03-Supreme_Chancellor_Valorum-PC-E1-cardmaker.png');

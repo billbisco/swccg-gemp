@@ -206,6 +206,6 @@ public class Card_1281_025_Tests {
     @Test
     public void MaraJadeSLightsaberCurrentCardIsTheLatestText() {
         assertCurrentCard("1281_25", "Mara Jade's Lightsaber",
-                "Deploy on Mara Jade. May add 1 to Force drain where present. During battle, Mara may use a blaster and this weapon. May target a character or creature for free. Draw two destiny. Target hit, and its forfeit = 0, if total destiny > defense value.");
+                "Deploy on Mara Jade. May add 1 to Force drain where present. During battle, Mara may use a blaster and this weapon. May target a character or creature for free. Draw two destiny. Target hit, and forfeit = 0, if total destiny > defense value.");
     }
 }

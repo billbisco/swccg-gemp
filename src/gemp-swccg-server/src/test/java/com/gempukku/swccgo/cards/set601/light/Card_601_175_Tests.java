@@ -12,7 +12,6 @@ public class Card_601_175_Tests {
                 com.gempukku.swccgo.framework.VirtualTableScenario.Open);
         var text = scn.GetLSCard("c").getBlueprint().getGameText();
         org.junit.Assert.assertEquals("Permanent pilot provides ability of 4. May add 1 astromech. During battle, may target a starship with no character piloting. Draw destiny. If destiny > defense value, target hit. Immune to attrition < 3.", text);
-        org.junit.Assert.assertFalse(text.contains("May add 1 astromech"));
         org.junit.Assert.assertNull(scn.GetLSCard("c").getBlueprint().getLegacyVersion());
     }
 }

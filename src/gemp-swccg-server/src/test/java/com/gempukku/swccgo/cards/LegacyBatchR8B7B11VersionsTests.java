@@ -18,7 +18,11 @@ import static org.junit.Assert.assertNull;
  * Cards Master List (official text 2013-04-27) repeats an earlier text word for word (the release-sheet text, or for
  * Strong Is Vader the revised-sheet PC-E1 text) after the PC website card list had printed a different one; the Master
  * List copy is the latest version and the current card, and the card-list text is its own 22xx card. No play change.
- * Ambush (V) (1250_65) and Baragwin (V) (1261_62) are held: the Master List wording would change play in GEMP.
+ * Bill, 2026-11-11 09:14: a PC card image is a version too, at its server upload date (Virtual Blocks 5-7: 2013-02-25,
+ * between the card list and the Master List; Virtual Block 8: 2013-05-07, after it). The images repeat the same words,
+ * so they need no card of their own. Held: Ambush (V) 1250_65 and Baragwin (V) 1261_62 (the Master List wording would
+ * change play in GEMP) and Mara Jade's Lightsaber (V) 1281_25 (its PC card image, uploaded 2013-05-07 and so the
+ * latest, prints the card-list wording).
  * Images are pinned in cardImageUrlTests.js.
  */
 public class LegacyBatchR8B7B11VersionsTests {
@@ -77,7 +81,6 @@ public class LegacyBatchR8B7B11VersionsTests {
             Map.entry("1281_11", "Deploy on your Throne Room. While Emperor and Vader here, Take Your Father's Place does not deplete Life Force or cause Force loss. Once per turn, may ▼ So Be It, Jedi or a docking bay. 'Battle' on Insignificant Rebellion is treated as 'battle or duel.' (Immune to Alter.)"),
             Map.entry("1281_16", "USED: Cancel an attempt to target your non-droid assassin (or a starship piloted by a non-droid assassin) with a weapon. LOST: Use 1 Force to take a just-lost non-droid assassin into hand."),
             Map.entry("1281_18", "If Bring Him Before Me on table, play instead of a Starting Interrupt. ▼ an Endor site and two always-[Immune to Alter] Effects. Deploy on table; may ▲ and stack Son Of Vader here. A Powerful Ally: While Son Of Vader on table, Jedi, Rebels, and Rebel starships lose all immunity to attrition and opponent loses 1 Force at the end of each turn. When Son Of Vader leaves table, stack him here. If Luke crossed over, Your Destiny is lost and may deploy (or persona replace) Son Of Vader from here as if from hand."),
-            Map.entry("1281_25", "Deploy on Mara Jade. May add 1 to Force drain where present. During battle, Mara may use a blaster and this weapon. May target a character or creature for free. Draw two destiny. Target hit, and its forfeit = 0, if total destiny > defense value."),
             Map.entry("1281_26", "[Pilot] 2. Adds 2 to maneuver of any starfighter he pilots. Your total ability here may not be reduced. Once per game, may lose 1 Force to deploy a droid from Lost Pile. During battle, may target a just-hit character. Target's forfeit is restored to normal."),
             Map.entry("1281_29", "Deploys only on Tatooine. While with another Jawa, your Force drains and Force drain bonuses here may not be canceled. During your control phase, may draw X cards from Reserve Deck, where X = number of deserts you control with a Jawa."),
             Map.entry("1281_30", "Agenda: order. May be targeted by Might Of The Republic. Your characters with politics (except Wedge and senators) are deploy -1 (and gain [Republic]) here. During your turn, may use 1 Force to ▲ a card with 'governor,' 'political,' or 'Valorum' in lore."),
@@ -89,7 +92,7 @@ public class LegacyBatchR8B7B11VersionsTests {
             Map.entry("1282_15", "Adds 1 to power of anything he pilots. While aboard your starship, its total weapon destiny is +1. Whenever you hit a starship here, opponent loses 1 Force. During battle, may lose 1 Force to cancel [Coruscant] Watch Your Back!."),
             Map.entry("1282_20", "Deploy on The Hyperdrive Generator's Gone; treat \"4\" on it as \"2.\" Your Force generation at City Outskirts is +1. May deploy systems regardless of your Objective deployment restrictions. Once per game, may ▼ Qui-Gon or Obi-Wan (and/or their matching weapon). (Immune to Alter.)"),
             Map.entry("1282_26", "When you play this Interrupt, may place a Rep on your Objective in Used Pile. Lose X cards stacked on I Know That Laugh to reduce a weapon or battle destiny total by X. OR Use 1 Force to take a card stacked on I Know That Laugh into hand (or stack top card of Lost Pile on it)."));
-    /** card-list version id -> {current printing id, label, game text, printed on}; all superseded by the Master List on 2013-04-27 */
+    /** card-list version id -> {current printing id, label, game text, printed on}; superseded by the PC card image (2013-02-25, Virtual Blocks 5-7) or the Master List (2013-04-27, Virtual Block 8) */
     private static final Map<String, String[]> VERSIONS = Map.ofEntries(
             Map.entry("2250_1060", new String[]{"1250_60", "PC-E1", "Deploy on Jedi Council Chamber or Yoda's Hut. Once per turn, may use 1 Force to take a card with 'A Jedi's' in title (except A Jedi's Resilience) into hand from Reserve Deck; reshuffle. [Virtual Block 5] Wipe Them Out, All Of Them and opponent's [Sidious] Effects here are cancelled. (Immune to Alter.)", "2012, 7, 21"}),
             Map.entry("2250_1079", new String[]{"1250_79", "PC-E1", "May add 3 pilots and 4 passengers. Permanent pilot provides ability of 2. Opponent must use +2 Force to initiate a battle here. Once per game, may deploy a senator aboard from Reserve Deck; reshuffle.", "2012, 7, 21"}),
@@ -144,7 +147,6 @@ public class LegacyBatchR8B7B11VersionsTests {
             Map.entry("2281_1011", new String[]{"1281_11", "PC-E1", "Deploy on your Throne Room. While Emperor and Vader here, Take Your Father's Place does not deplete Life Force or cause Force loss. Once per turn, may deploy a docking bay or So Be It, Jedi from Reserve Deck; reshuffle. 'Battle' on Insignificant Rebellion is treated as 'battle or duel. (Immune to Alter).", "2012, 7, 21"}),
             Map.entry("2281_1016", new String[]{"1281_16", "PC-E1", "USED: Cancel an attempt to target your non-droid assassin (or a starship piloted by one) with a weapon. LOST: Use 1 Force to take a just lost non-droid assassin into hand.", "2012, 7, 21"}),
             Map.entry("2281_1018", new String[]{"1281_18", "PC-E1", "If Bring Him Before Me on table, play instead of a Starting Interrupt. Deploy an Endor site and two always (Immune to Alter) Effects from Reserve Deck; reshuffle. Deploy on table; may take and stack Son of Vader here from Reserve Deck; reshuffle. A Powerful Ally: While Son of Vader on table, Jedi, Rebels, and Rebel Starships lose all immunity to attrition and opponent loses 1 Force at the end of each turn. When Son Of Vader leaves table, stack him here. If Luke crossed over, Your Destiny is lost and may deploy (or persona replace) Son of Vader as if from hand.", "2012, 7, 21"}),
-            Map.entry("2281_1025", new String[]{"1281_25", "PC-E1", "Deploy on Mara Jade. May add 1 to Force drain where present. During battle, Mara may use a blaster and this weapon. May target a character or creature for free. Draw two destiny. Target hit, and forfeit = 0, if total destiny > defense value.", "2012, 7, 21"}),
             Map.entry("2281_1026", new String[]{"1281_26", "PC-E1", "Adds 2 to the power of anything he pilots. Adds 2 to maneuver of any starfighter he pilots. Your total ability here may not be reduced. Once per game, may lose 1 force to deploy a droid from Lost Pile. During battle, target a just hit character. Target's forfeit is restored to normal.", "2012, 7, 21"}),
             Map.entry("2281_2029", new String[]{"1281_29", "PC-E2", "Deploys only on Tatooine. While with another Jawa, your Force drains and Force drain bonuses here may not be canceled. During your control phase, may draw X cards from Reserve Deck, where X = the number of deserts you control with a Jawa.", "2012, 12, 12"}),
             Map.entry("2281_1030", new String[]{"1281_30", "PC-E1", "Agendas: order. May be targeted by Might Of The Republic. Your characters with politics (except Wedge and senators) are deploy -1 and gain [Republic] here. During your turn, may use 1 Force to take into hand a card with 'Valorum', 'governor' or 'political' in lore from Reserve Deck; reshuffle.", "2012, 7, 21"}),
@@ -172,7 +174,7 @@ public class LegacyBatchR8B7B11VersionsTests {
 
     @Test
     public void CurrentCardsCarryTheMasterListText() {
-        assertEquals(65, CURRENT_TEXT.size());
+        assertEquals(64, CURRENT_TEXT.size());
         CURRENT_TEXT.forEach((id, text) -> {
             SwccgCardBlueprint card = library.getSwccgoCardBlueprint(id);
             assertNotNull(id, card);
@@ -184,7 +186,7 @@ public class LegacyBatchR8B7B11VersionsTests {
 
     @Test
     public void CardListTextsAreTheirOwnCards() {
-        assertEquals(66, VERSIONS.size());
+        assertEquals(65, VERSIONS.size());
         VERSIONS.forEach((id, v) -> {
             SwccgCardBlueprint card = library.getSwccgoCardBlueprint(id);
             assertNotNull(id, card);
@@ -195,7 +197,8 @@ public class LegacyBatchR8B7B11VersionsTests {
             assertEquals(id, v[1], version.label());
             assertEquals(id, v[2], card.getGameText());
             assertEquals(id, date(v[3]), version.printedOn());
-            assertEquals(id, LocalDate.of(2013, 4, 27), version.supersededOn());
+            // Virtual Blocks 5-7: superseded by the PC card image (server upload 2013-02-25); Virtual Block 8: by the Master List
+            assertEquals(id, id.startsWith("228") ? LocalDate.of(2013, 4, 27) : LocalDate.of(2013, 2, 25), version.supersededOn());
             SwccgCardBlueprint current = library.getSwccgoCardBlueprint(v[0]);
             assertEquals(id, current.getTitle(), card.getTitle());
             assertEquals(id, current.getLore(), card.getLore());
