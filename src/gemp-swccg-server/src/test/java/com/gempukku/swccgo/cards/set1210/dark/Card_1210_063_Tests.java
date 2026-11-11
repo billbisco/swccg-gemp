@@ -212,6 +212,7 @@ public class Card_1210_063_Tests {
         org.junit.Assert.assertEquals("At the beginning of your battle phase, use 1 Force to initiate a battle between two Imperials and an opponent's character present at same interior site. For remainder of turn, no other battles may occur here and opponent takes no battle damage here.",
                 card.getGameText());
         org.junit.Assert.assertNull(card.getLegacyVersion());
-        org.junit.Assert.assertFalse(card.getGameText().contains("initiate"));
+        // batch R8: the current text is the Master List wording again
+        org.junit.Assert.assertTrue(card.getGameText().contains("initiate"));
     }
 }

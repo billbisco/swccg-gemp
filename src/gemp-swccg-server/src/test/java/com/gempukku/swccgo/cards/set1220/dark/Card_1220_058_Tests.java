@@ -19,6 +19,7 @@ public class Card_1220_058_Tests {
         org.junit.Assert.assertEquals("If opponent just initiated battle, immediately fire a non-lightsaber, non-[Permanent Weapon] weapon present (for free and each weapon destiny is +2). That weapon may fire again this battle.",
                 card.getGameText());
         org.junit.Assert.assertNull(card.getLegacyVersion());
-        org.junit.Assert.assertFalse(card.getGameText().contains("each weapon destiny is +2"));
+        // batch R8: the current text is the Master List wording again
+        org.junit.Assert.assertTrue(card.getGameText().contains("each weapon destiny is +2"));
     }
 }

@@ -145,6 +145,7 @@ public class Card_1220_092_Tests {
         org.junit.Assert.assertEquals("If deploying to opponent's mobile site, deploys -2 as an Undercover spy. Nevar Yalnal may not target spies here. Opponent's total influence here is -1 for each of your spies at sites.",
                 card.getGameText());
         org.junit.Assert.assertNull(card.getLegacyVersion());
-        org.junit.Assert.assertFalse(card.getGameText().contains("spies here"));
+        // batch R8: the current text is the Master List wording again
+        org.junit.Assert.assertTrue(card.getGameText().contains("spies here"));
     }
 }

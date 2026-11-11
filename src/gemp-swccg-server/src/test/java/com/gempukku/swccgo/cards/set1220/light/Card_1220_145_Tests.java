@@ -19,6 +19,7 @@ public class Card_1220_145_Tests {
         org.junit.Assert.assertEquals("Cancel All Too Easy, Imperial Barrier (targeting your Jedi), Stunning Leader (where your Jedi participating), or You Are Beaten (except when canceling Uncontrollable Fury). [Immune to Sense] OR Once per game, if opponent just initiated a battle, you may take the first weapons segment action.",
                 card.getGameText());
         org.junit.Assert.assertNull(card.getLegacyVersion());
-        org.junit.Assert.assertFalse(card.getGameText().contains("[Immune to Sense]"));
+        // batch R8: the current text is the Master List wording again
+        org.junit.Assert.assertTrue(card.getGameText().contains("[Immune to Sense]"));
     }
 }

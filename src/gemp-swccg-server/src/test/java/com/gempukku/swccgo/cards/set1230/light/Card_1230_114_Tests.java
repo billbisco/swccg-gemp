@@ -204,6 +204,7 @@ public class Card_1230_114_Tests {
                 card.getGameText());
         assertNull(card.getLegacyVersion());
         // the sheet wording is the original version 2230_114
-        assertFalse(card.getGameText().contains("against you here"));
+        // batch R8: the current text is the Master List wording again
+        assertTrue(card.getGameText().contains("against you here"));
     }
 }

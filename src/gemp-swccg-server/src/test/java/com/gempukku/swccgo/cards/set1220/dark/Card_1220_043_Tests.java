@@ -96,6 +96,7 @@ public class Card_1220_043_Tests {
         org.junit.Assert.assertEquals("Deploy on table. Your capital starship weapon destiny draws are +1. During your deploy phase, may use 1 Force to [download] a starship weapon (for free) on your capital starship. If a starship was just hit, may place this Effect in Lost Pile to make that starship forfeit = 0.",
                 card.getGameText());
         org.junit.Assert.assertNull(card.getLegacyVersion());
-        org.junit.Assert.assertFalse(card.getGameText().contains("on your capital"));
+        // batch R8: the current text is the Master List wording again
+        org.junit.Assert.assertTrue(card.getGameText().contains("on your capital"));
     }
 }

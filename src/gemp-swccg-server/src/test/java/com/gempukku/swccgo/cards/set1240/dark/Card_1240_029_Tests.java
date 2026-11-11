@@ -209,6 +209,7 @@ public class Card_1240_029_Tests {
         assertEquals("Deploy on table. Womp Rats are not [Selective Creature]. Once per turn, may [download] a creature (except a parasite) or a dewback. Your ferocious creatures are deploy -2 and ferocity +1. Whenever you retrieve Force because a creature has eaten a card, you need only use X-2 Force for Aim High (to a minimum of 1). (Immune to Alter.)",
                 card.getGameText());
         assertNull(card.getLegacyVersion());
-        assertFalse(card.getGameText().contains("creature has eaten"));
+        // batch R8: the current text is the Master List wording again
+        assertTrue(card.getGameText().contains("creature has eaten"));
     }
 }

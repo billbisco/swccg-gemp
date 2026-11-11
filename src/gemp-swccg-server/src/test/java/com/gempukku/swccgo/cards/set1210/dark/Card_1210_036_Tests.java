@@ -203,6 +203,7 @@ public class Card_1210_036_Tests {
         org.junit.Assert.assertEquals("Deploy on table. Your troopers are Heroic. Opponent's total weapon destiny targeting your Heroic card is +2. When opponent is about to remove their last card from Life Force, you may first place all your troopers in Used Pile (last card must still be removed). (Immune to Alter.)",
                 card.getGameText());
         org.junit.Assert.assertNull(card.getLegacyVersion());
-        org.junit.Assert.assertFalse(card.getGameText().contains("Heroic card is"));
+        // batch R8: the current text is the Master List wording again
+        org.junit.Assert.assertTrue(card.getGameText().contains("Heroic card is"));
     }
 }

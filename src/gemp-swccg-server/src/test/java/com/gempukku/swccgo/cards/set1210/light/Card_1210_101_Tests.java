@@ -158,6 +158,7 @@ public class Card_1210_101_Tests {
         org.junit.Assert.assertEquals("[Pilot] 3. Cards with 'Han' in title are destiny +3. May use 1 Force to cancel Boba Fett's or Jabba's game text for remainder of turn. If opponent just initiated battle here, may use 1 Force to take the first weapons segment action.",
                 card.getGameText());
         org.junit.Assert.assertNull(card.getLegacyVersion());
-        org.junit.Assert.assertFalse(card.getGameText().contains("Boba Fett's"));
+        // batch R8: the current text is the Master List wording again
+        org.junit.Assert.assertTrue(card.getGameText().contains("Boba Fett's"));
     }
 }

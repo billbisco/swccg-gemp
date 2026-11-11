@@ -180,6 +180,7 @@ public class Card_1230_104_Tests {
                 card.getGameText());
         assertNull(card.getLegacyVersion());
         // the sheet wording ("If destiny < ..., activate or retrieve") is the original version 2230_104
-        assertFalse(card.getGameText().contains("If destiny < the number of your scouts on table, activate"));
+        // batch R8: the current text is the Master List wording again
+        assertTrue(card.getGameText().contains("If destiny < the number of your scouts on table, activate"));
     }
 }

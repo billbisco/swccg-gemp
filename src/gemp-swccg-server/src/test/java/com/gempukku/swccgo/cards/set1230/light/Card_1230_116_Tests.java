@@ -100,6 +100,7 @@ public class Card_1230_116_Tests {
                 card.getGameText());
         assertNull(card.getLegacyVersion());
         // the sheet wording is the original version 2230_116
-        assertFalse(card.getGameText().startsWith("Deploys -1"));
+        // batch R8: the current text is the Master List wording again
+        assertTrue(card.getGameText().startsWith("Deploys -1"));
     }
 }

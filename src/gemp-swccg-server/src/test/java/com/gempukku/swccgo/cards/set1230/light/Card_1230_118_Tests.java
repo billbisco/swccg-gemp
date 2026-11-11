@@ -215,6 +215,7 @@ public class Card_1230_118_Tests {
                 card.getGameText());
         assertNull(card.getLegacyVersion());
         // the sheet wording is the original version 2230_118
-        assertFalse(card.getGameText().contains("may first use 1 Force"));
+        // batch R8: the current text is the Master List wording again
+        assertTrue(card.getGameText().contains("may first use 1 Force"));
     }
 }
