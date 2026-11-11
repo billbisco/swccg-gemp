@@ -67,7 +67,7 @@
     <script type="text/javascript" src="js/gemp-016/gameUi.js"></script>
     <script type="text/javascript" src="js/gemp-016/gameAnimations.js"></script>
     <script type="text/javascript" src="js/gemp-016/merchantUi.js"></script>
-    <script type="text/javascript" src="js/swccg-login-box.js?v=20261109d"></script>
+    <script type="text/javascript" src="js/swccg-login-box.js?v=20261111a"></script>
 
     <script type="text/javascript">
         jQuery.fn.center = function () {
@@ -114,8 +114,8 @@
                                     $(".error").text(reason);
                                     return;
                                 }
-                                $(".error").html("Login is invalid. Login must be between 2-10 characters long, and contain only<br/>" +
-                                         " english letters, numbers or _ (underscore) and - (dash) characters.");
+                                $(".error").html("That player name can't be used. Names are 1 to 32 letters or digits (any language),<br/>" +
+                                         " spaces, _ (underscore) or - (dash), without a space or _ at either end, or the name is already taken.");
                             },
                             "401":function() {
                                 $(".error").html("Invalid username or password. Try again.");
@@ -312,7 +312,7 @@
               <label for="sbox-name">Player name</label>
               <input id="sbox-name" name="name" type="text" autocomplete="username webauthn"
                      autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="40" required>
-              <p class="sbox-hint sbox-name-hint" hidden>2 to 10 letters, digits, - or _. Other players see it.</p>
+              <p class="sbox-hint sbox-name-hint" hidden>Up to 32 letters, digits, spaces, - or _. Other players see it.</p>
             </div>
             <div class="sbox-field">
               <label for="sbox-password">Password</label>

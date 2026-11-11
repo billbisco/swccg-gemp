@@ -27,6 +27,7 @@ import static org.junit.Assert.fail;
  * same card as their current printing.
  */
 public class LegacyVersionsTests {
+    private static final List<String> REPEATS_OF_CURRENT_TEXT = List.of("2220_3169", "2220_4169", "2261_1033", "2261_5033", "2240_1055", "2273_2010", "2281_32", "2281_1032", "2281_2037", "2261_1024", "2261_3024", "2261_21", "2261_2021", "2261_1093", "2261_2093");
     private static final List<String> PILOT_VERSIONS = List.of("2261_33", "2272_23");
 
     private static SwccgCardBlueprintLibrary library;
@@ -59,10 +60,14 @@ public class LegacyVersionsTests {
             assertNull(notAVersion, LegacyVersion.currentPrintingIdOf(notAVersion));
     }
 
+    /** Versions whose words the current text (a later printing) repeats word for word (Batch S1: the PC forum errata texts). */
+    private static final java.util.Set<String> WORD_FOR_WORD_REPEATS = java.util.Set.of("2271_2002", "2250_2044", "2273_3027", "2271_2039", "2261_2065", "2271_3002", "2271_3039", "2261_3065");
+
     @Test
     public void EveryImplementedVersionIsTheSameCardAsItsCurrentPrinting() {
         List<String> versions = LegacyCardPool.implementedVersionIds(library);
         assertTrue(versions.toString(), versions.containsAll(PILOT_VERSIONS));
+        List<String> sameAsCurrent = new java.util.ArrayList<>();
         for (String id : versions) {
             SwccgCardBlueprint version = library.getSwccgoCardBlueprint(id);
             LegacyVersion info = version.getLegacyVersion();
@@ -81,17 +86,50 @@ public class LegacyVersionsTests {
             assertEquals(id, current.getPersonas(), version.getPersonas());
             assertEquals(id, current.getExpansionSet(), version.getExpansionSet());
             assertTrue(id, version.isLegacy());
-            assertTrue(id + ": differs from its current card in game text (incl. location texts), printed stats/icons or printed title",
-                    differsInGameTextOrPrintedData(current, version)
-                            || com.gempukku.swccgo.cards.LegacyVersionAssertions.differsOrIsRepeatedByTheCurrentCard(current, version)
-                            || !printedText(version).equals(printedText(current))
-                            || !iconCounts(version).equals(iconCounts(current))
-                            || version.getPrintedTitle() != null
-                            || backSideDiffers(id, info.currentPrintingId()));
+            boolean differs = differsInGameTextOrPrintedData(current, version)
+                    || !printedText(version).equals(printedText(current))
+                    || !iconCounts(version).equals(iconCounts(current))
+                    || version.getPrintedTitle() != null
+                    || backSideDiffers(id, info.currentPrintingId());
+            if (WORD_FOR_WORD_REPEATS.contains(id)) {
+                // Bill 2026-11-11: every published text is a version, even one the current text later repeats word for word.
+                assertTrue(id + ": listed as a repeat but differs", !differsInGameTextOrPrintedData(current, version)
+                        && printedText(version).equals(printedText(current)));
+            } else if (!differs) {
+                if (REPEATS_OF_CURRENT_TEXT.contains(id))
+                    sameAsCurrent.add(id);
+                else
+                    assertTrue(id + ": differs from its current card in game text (incl. location texts), printed stats/icons or printed title",
+                            // batch R8: the current Master List text repeats these word for word (LegacyBatchR8B1B6VersionsTests)
+                            com.gempukku.swccgo.cards.LegacyBatchR8B1B6VersionsTests.REPEATED_BY_CURRENT.contains(id)
+                                    || republishedLater(versions, id, info.currentPrintingId())
+                                    || com.gempukku.swccgo.cards.LegacyVersionAssertions.differsOrIsRepeatedByTheCurrentCard(current, version));
+            }
             assertTrue(id + ": label shown in full name",
                     info.label().isEmpty() ? !GameUtils.getFullName(version).contains("[")
                             : GameUtils.getFullName(version).endsWith(" [" + info.label() + "]"));
         }
+        // A version may repeat the current text word for word when a different text was published in between (Bill's
+        // ruling of 2026-11-11, RULINGS.md: every published text is a version, even a word-for-word repeat; batch B41).
+        // Any other version must differ from its current card in game text (incl. location texts), printed stats/icons or printed title.
+        assertEquals(new java.util.TreeSet<>(REPEATS_OF_CURRENT_TEXT), new java.util.TreeSet<>(sameAsCurrent));
+    }
+
+    /**
+     * Every publication is a version (Bill, 2026-11-11): an older text that a later document printed again word for word
+     * (e.g. the release-sheet original that the 2013 Master List repeats after the 2012 card list changed it) is the
+     * same text as its current card. It is still a version, as long as another version of the same card differs.
+     */
+    private boolean republishedLater(List<String> versions, String versionId, String currentId) {
+        SwccgCardBlueprint current = library.getSwccgoCardBlueprint(currentId);
+        for (String other : versions) {
+            if (other.equals(versionId) || !currentId.equals(LegacyVersion.currentPrintingIdOf(other)))
+                continue;
+            SwccgCardBlueprint sibling = library.getSwccgoCardBlueprint(other);
+            if (differsInGameTextOrPrintedData(current, sibling) || !printedText(sibling).equals(printedText(current)))
+                return library.getSwccgoCardBlueprint(versionId).getLegacyVersion().supersededOn() != null;
+        }
+        return false;
     }
 
     /** A two-sided version whose front is unchanged differs on its back (Wookiee Slaving Operation, 2014 errata to the 7 side; batch B39). */

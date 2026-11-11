@@ -38,7 +38,7 @@ public class Card1210_008 extends AbstractImperial {
         super(Side.DARK, 2, 2, 1, 1, 2, Title.Death_Star_Gunner, Uniqueness.RESTRICTED_3, ExpansionSet.VIRTUAL_BLOCK_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("Most gunners in the Imperial Navy once aspired to be TIE pilots, but lacked sufficient skills to fly starfighters. A few were assigned to the Death Star to man the main artillery.");
-        setGameText("While on Death Star: cancels Force drain bonuses from Death Star sites' game text, your [A New Hope] Epic Event total is cumulatively +2, and during your deploy phase, may place this character in Used Pile to take a Superlaser into hand from Reserve Deck; reshuffle.");
+        setGameText("While on Death Star: cancels Force drain bonuses from Death Star sites' game text, your [A New Hope] Epic Event total is cumulatively +2, and during your deploy phase, may place this character in Used Pile to ▲ Superlaser.");
         addIcons(Icon.A_NEW_HOPE);
         addKeywords(Keyword.GUNNER);
     }

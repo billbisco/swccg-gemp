@@ -40,7 +40,7 @@ public class Card601_167 extends AbstractLostInterrupt {
         super(Side.LIGHT, 6, "Impressive, Most Impressive", Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
         setVirtualSuffix(true);
         setLore("'Obi-Wan has taught you well.'");
-        setGameText("Cancel All Too Easy, Stunning Leader (where your Jedi participating), Imperial Barrier (targeting your Jedi), or You Are Beaten (except when canceling Uncontrollable Fury). (Immune to Sense.) OR Once per game, if opponent just initiated a battle, you may take the first weapons segment action.");
+        setGameText("Cancel All Too Easy, Imperial Barrier (targeting your Jedi), Stunning Leader (where your Jedi participating), or You Are Beaten (except when canceling Uncontrollable Fury). [Immune to Sense] OR Once per game, if opponent just initiated a battle, you may take the first weapons segment action.");
         addIcons(Icon.CLOUD_CITY, Icon.LEGACY_BLOCK_2);
         setAsLegacy(true);
     }

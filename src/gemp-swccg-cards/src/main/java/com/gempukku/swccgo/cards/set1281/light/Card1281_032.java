@@ -31,11 +31,15 @@ import java.util.List;
  * Set: Virtual Block 8.1
  * Type: Effect
  * Title: Imperial Navigation Charts
+ * Text: PC-E1, the errata posted on the PC forum on 2012-07-13 ("Current Rulings/Errata" p739757: "the stealing of the
+ * Charts is no longer optional"); the re-made release sheet (2012-07-18), the Master List and the PC card image print
+ * it. The optional steal of the first 8.1 printing (as the PC website card list kept it to 2013) is 2281_32 (legacy
+ * batch B41).
  */
 public class Card1281_032 extends AbstractNormalEffect {
     public Card1281_032() {
         super(Side.LIGHT, 3, PlayCardZoneOption.ATTACHED, "Imperial Navigation Charts", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_1, Rarity.V);
-        setGameText("Deploy on a Nar Shaddaa battleground site. If you control three Nar Shaddaa locations or just won a battle (or initiated a Force drain) here, may 'steal' (relocate to your side of table). Place in Used Pile if opponent controls three Nar Shaddaa locations. (Immune to Alter).");
+        setGameText("Deploy on a Nar Shaddaa battleground site. If you control three Nar Shaddaa locations or just won a battle (or initiated a Force drain) here, 'steal' this Effect (relocate to your side of table). Place in Used Pile if opponent controls three Nar Shaddaa locations. (Immune to Alter.)");
         addImmuneToCardTitle(Title.Alter);
     }
 
@@ -51,16 +55,22 @@ public class Card1281_032 extends AbstractNormalEffect {
 
     @Override
     protected List<TopLevelGameTextAction> getGameTextTopLevelActions(final String playerId, SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
-        return stealIfControlsThree(playerId, game, self, gameTextSourceCardId);
+        return stealIsOptional() ? stealIfControlsThree(playerId, game, self, gameTextSourceCardId) : null;
     }
 
     @Override
     protected List<OptionalGameTextTriggerAction> getGameTextOptionalAfterTriggers(final String playerId, SwccgGame game, EffectResult effectResult, final PhysicalCard self, int gameTextSourceCardId) {
-        return stealIfWonBattleOrDrainedHere(playerId, game, effectResult, self, gameTextSourceCardId);
+        return stealIsOptional() ? stealIfWonBattleOrDrainedHere(playerId, game, effectResult, self, gameTextSourceCardId) : null;
+    }
+
+    /** PC-E1 (2012-07-13): the steal is not optional. The first 8.1 printing (2281_32): "may 'steal'". */
+    protected boolean stealIsOptional() {
+        return false;
     }
 
     @Override
     protected List<RequiredGameTextTriggerAction> getGameTextRequiredAfterTriggers(SwccgGame game, EffectResult effectResult, PhysicalCard self, int gameTextSourceCardId) {
+        List<RequiredGameTextTriggerAction> actions = new LinkedList<RequiredGameTextTriggerAction>();
         String owner = self.getOwner();
         String opponent = game.getOpponent(owner);
 
@@ -70,9 +80,23 @@ public class Card1281_032 extends AbstractNormalEffect {
             action.setSingletonTrigger(true);
             action.setText("Place in Used Pile");
             action.appendEffect(new PlaceCardInUsedPileFromTableEffect(action, self));
-            return Collections.singletonList(action);
+            actions.add(action);
         }
-        return null;
+        if (!stealIsOptional()) {
+            String playerId = owner;
+            Filter here = Filters.here(self);
+            if (!alreadyOnYourSideOfTable(self, playerId)
+                    && ((TriggerConditions.isTableChanged(game, effectResult) && GameConditions.controls(game, playerId, 3, Filters.partOfSystem(Title.Nar_Shaddaa)))
+                    || TriggerConditions.wonBattleAt(game, effectResult, playerId, here)
+                    || TriggerConditions.forceDrainInitiatedBy(game, effectResult, playerId, here))) {
+                RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
+                action.setSingletonTrigger(true);
+                action.setText("'Steal' Imperial Navigation Charts");
+                action.appendEffect(stealToSideOfTable(action, self, playerId));
+                actions.add(action);
+            }
+        }
+        return actions.isEmpty() ? null : actions;
     }
 
     private List<TopLevelGameTextAction> stealIfControlsThree(final String playerId, SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {

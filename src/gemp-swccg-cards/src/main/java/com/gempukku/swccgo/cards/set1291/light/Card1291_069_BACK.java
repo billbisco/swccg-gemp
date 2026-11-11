@@ -22,6 +22,7 @@ import com.gempukku.swccgo.logic.decisions.IntegerAwaitingDecision;
 import com.gempukku.swccgo.logic.effects.FlipCardEffect;
 import com.gempukku.swccgo.logic.effects.PlayoutDecisionEffect;
 import com.gempukku.swccgo.logic.effects.PutCardFromHandOnBottomOfForcePileEffect;
+import com.gempukku.swccgo.logic.effects.PutCardFromHandOnBottomOfUsedPileEffect;
 import com.gempukku.swccgo.logic.effects.RetrieveForceEffect;
 import com.gempukku.swccgo.logic.effects.UseForceEffect;
 import com.gempukku.swccgo.logic.effects.choose.ChooseCardsFromHandEffect;
@@ -90,12 +91,13 @@ public class Card1291_069_BACK extends AbstractObjective {
     @Override
     protected List<OptionalGameTextTriggerAction> getGameTextOptionalAfterTriggers(final String playerId, final SwccgGame game, EffectResult effectResult, final PhysicalCard self, int gameTextSourceCardId) {
         GameTextActionId drawId = GameTextActionId.LEGACY__AGGRESSIVE_NEGOTIATIONS__DRAW_CARDS;
+        final boolean usedPile = placesOnUsedPile();
         if (TriggerConditions.cardFlipped(game, effectResult, self)
                 && GameConditions.isOncePerGame(game, self, drawId)) {
             final OptionalGameTextTriggerAction action = new OptionalGameTextTriggerAction(self, playerId, gameTextSourceCardId, drawId);
-            action.setText("Place X cards from hand on Force Pile to draw up to X+1 cards");
+            action.setText(usedPile ? "Place X (limit 3) cards from hand on Used Pile, then draw up to X+1 cards" : "Place X cards from hand on Force Pile to draw up to X+1 cards");
             action.appendUsage(new OncePerGameEffect(action));
-            int handSize = game.getGameState().getHand(playerId).size();
+            int handSize = Math.min(game.getGameState().getHand(playerId).size(), placeLimit());
             if (handSize == 0) {
                 action.appendEffect(drawUpTo(action, playerId, 0));
             } else {
@@ -103,14 +105,15 @@ public class Card1291_069_BACK extends AbstractObjective {
                         new ChooseCardsFromHandEffect(action, playerId, 0, handSize) {
                             @Override
                             public String getChoiceText(int numCardsToChoose) {
-                                return "Choose X cards to place on bottom of Force Pile";
+                                return usedPile ? "Choose X (limit 3) cards to place on bottom of Used Pile" : "Choose X cards to place on bottom of Force Pile";
                             }
 
                             @Override
                             protected void cardsSelected(SwccgGame game, Collection<PhysicalCard> selectedCards) {
                                 for (PhysicalCard card : selectedCards) {
-                                    action.appendEffect(
-                                            new PutCardFromHandOnBottomOfForcePileEffect(action, playerId, Filters.sameCardId(card), false));
+                                    action.appendEffect(usedPile
+                                            ? new PutCardFromHandOnBottomOfUsedPileEffect(action, playerId, Filters.sameCardId(card), false)
+                                            : new PutCardFromHandOnBottomOfForcePileEffect(action, playerId, Filters.sameCardId(card), false));
                                 }
                                 action.appendEffect(drawUpTo(action, playerId, selectedCards.size()));
                             }
@@ -119,6 +122,18 @@ public class Card1291_069_BACK extends AbstractObjective {
             return Collections.singletonList(action);
         }
         return null;
+    }
+
+    /**
+     * PC-E1 (Advocate Council errata, PC forum p901169, 2014-08-08): X is limited to 3 and the cards go on the bottom of
+     * the Used Pile (the release sheet: no limit, Force Pile; 2291_69_BACK).
+     */
+    protected boolean placesOnUsedPile() {
+        return true;
+    }
+
+    protected int placeLimit() {
+        return 3;
     }
 
     private static PassthruEffect drawUpTo(final Action action, final String playerId, final int x) {

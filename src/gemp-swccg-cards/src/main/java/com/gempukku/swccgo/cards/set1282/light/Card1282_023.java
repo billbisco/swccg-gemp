@@ -9,6 +9,7 @@ import com.gempukku.swccgo.common.GameTextActionId;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.SpotOverride;
+import com.gempukku.swccgo.common.TitleComponent;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
@@ -40,12 +41,15 @@ import java.util.List;
  * Set: Virtual Block 8.2
  * Type: Interrupt
  * Subtype: Used
- * Title: Found Someone You Have & Higher Ground
+ * Title: A Step Backward & Higher Ground
+ * Retitled on 2014-05-02 (PC forum "Current Rulings/Errata" p879652; PC-E1): "Found Someone You Have" became
+ * "A Step Backward" (as did the physical card under the slip), so that both halves of the combo are unique. The
+ * printing titled Found Someone You Have & Higher Ground is 2282_23 (legacy batch B41).
  */
 public class Card1282_023 extends AbstractUsedInterrupt {
     public Card1282_023() {
-        super(Side.LIGHT, 3, "Found Someone You Have & Higher Ground", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_2, Rarity.V);
-        addComboCardTitles("Found Someone You Have", "Higher Ground");
+        super(Side.LIGHT, 3, "A Step Backward & Higher Ground", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_2, Rarity.V);
+        setTitleComponents(new TitleComponent("A Step Backward", Uniqueness.UNIQUE), new TitleComponent("Higher Ground", Uniqueness.UNIQUE));
         setGameText("During a battle at opponent's site (or your non-<> site), instead of firing one of your character weapons at a target, cause that target to be immunity to attrition -3 (or limited to immunity to attrition < 5) for remainder of turn. OR Find one of your missing characters. OR Cancel a 'react.' OR Once per game, use 1 Force to exchange a card in hand with the top most character of ability < 5 in your Lost Pile.");
     }
 

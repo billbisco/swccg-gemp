@@ -174,4 +174,15 @@ public interface PlayerDAO {
      * @return the list of similar players
      */
     List<Player> findSimilarAccounts(String playerName);
+
+    /**
+     * Renames a player by id for swccg-login (swccg-guild/work#261 and #264). The same name rules as a new
+     * player apply (a change of case to one's own name is allowed). The places that hold the current name
+     * (league and tournament entries and results, transfers, saved Play-now games) follow the player; game
+     * history keeps the name that was at the table (rows are tied to the player by winner_id / loser_id).
+     * @return null when renamed (or already that name), else "not_found", "name_invalid" or "name_taken"
+     */
+    default String renamePlayer(int playerId, String newName) throws SQLException {
+        throw new UnsupportedOperationException("rename");
+    }
 }

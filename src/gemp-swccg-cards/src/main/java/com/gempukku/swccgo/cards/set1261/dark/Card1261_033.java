@@ -33,10 +33,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Legacy Block 6.1 Dark Waters & Krayt Dragon Bones. Text: PC-E2, the PC website card list (by 2012-07-21), which
- * moved the creature sentence to the front (a reorder, so a version: "a change is a change"); the list dropped its
- * ▼ ("May deploy"), restored here as on the slips, so the creature still deploys from Reserve Deck. The 2010 text
- * (PC-E1, reprinted by the 2013 Master List) is 2261_1033 (legacy batch B16).
+ * Legacy Block 6.1 Dark Waters & Krayt Dragon Bones. Text: PC-E5, the Virtual Cards Master List (official text as of
+ * 2013-04-27), word for word the PC-E1 text of 2010 (every published text is a version, Bill 2026-11-11); the PC card image
+ * prints the same words. Older versions (legacy batch B41): 2261_33 original (2009), 2261_1033 PC-E1 (news post
+ * 2010-07-23), 2261_2033 PC-E2 (forum 2010-07-27, creature sentence first), 2261_3033 PC-E3 (forum 2012-05-09: Rancor
+ * Pit or Execution Arena), 2261_4033 PC-E4 (PC website card list 2012-07-21 to 2013-01-11, the PC-E2 words).
  */
 public class Card1261_033 extends AbstractNormalEffect {
     private static final Filter NON_SELECTIVE_FEROCIOUS_CREATURE = Filters.and(LegacyCreatureFilters.ferocious,
@@ -46,7 +47,7 @@ public class Card1261_033 extends AbstractNormalEffect {
         super(Side.DARK, 1, PlayCardZoneOption.ATTACHED, "Dark Waters & Krayt Dragon Bones", Uniqueness.UNIQUE,
                 ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
         addComboCardTitles(Title.Dark_Waters, Title.Krayt_Dragon_Bones);
-        setGameText("Deploy on Rancor Pit. May ▼ a non-[Selective] ferocious creature here. During your battle phase, if you have no presence here, may relocate a captive from Audience Chamber to here. If opponent's character here was just eaten, retrieve 3 Force. If a creature here is lost, owner loses Force equal to half its printed deploy cost (round up). Once per turn, if a creature here is about to draw destiny for ferocity, may instead use its destiny number. (Immune to Alter.)");
+        setGameText("Deploy on Rancor Pit. During your battle phase, if you have no presence here, may relocate a captive from Audience Chamber to here. If opponent's character here was just eaten, retrieve 3 Force. If a creature here is lost, owner loses Force equal to half its printed deploy cost (round up). Once per turn, if a creature here is about to draw destiny for ferocity, may instead use its destiny number. May ▼ a non-[Selective] ferocious creature here. (Immune to Alter.)");
         addIcons(Icon.A_NEW_HOPE);
         addKeywords(Keyword.DEPLOYS_ON_LOCATION);
         addImmuneToCardTitle(Title.Alter);
@@ -55,7 +56,17 @@ public class Card1261_033 extends AbstractNormalEffect {
     @Override
     protected Filter getGameTextValidDeployTargetFilter(SwccgGame game, PhysicalCard self,
             PlayCardOptionId id, boolean asReact) {
+        return deployTarget();
+    }
+
+    /** Rancor Pit (PC-E3 of 2012-05-09, 2261_3033, also allowed Execution Arena (Pit)). */
+    protected Filter deployTarget() {
         return Filters.Rancor_Pit;
+    }
+
+    /** PC-E3 (2261_3033): the captive relocation needs this card to be on Rancor Pit. */
+    protected boolean relocationNeedsRancorPit() {
+        return false;
     }
 
     @Override
@@ -80,6 +91,7 @@ public class Card1261_033 extends AbstractNormalEffect {
         Filter captive = Filters.and(Filters.captive, Filters.at(Filters.Audience_Chamber),
                 Filters.canBeRelocatedToLocation(Filters.sameCardId(pit), false, false, true, 0, false));
         if (GameConditions.isOnceDuringYourPhase(game, self, playerId, sourceId, relocateId, Phase.BATTLE)
+                && (!relocationNeedsRancorPit() || Filters.Rancor_Pit.accepts(game, pit))
                 && !GameConditions.occupies(game, playerId, pit)
                 && GameConditions.canTarget(game, self, SpotOverride.INCLUDE_CAPTIVE, captive)) {
             var action = new TopLevelGameTextAction(self, playerId, sourceId, relocateId);

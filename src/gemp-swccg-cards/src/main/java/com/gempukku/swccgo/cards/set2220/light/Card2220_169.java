@@ -42,7 +42,7 @@ import java.util.List;
  * Title: Luke's Blaster Pistol
  *
  * Original version of 1220_169 (Virtual Block 2 release sheet, Dec 2009, card #169): may be fired twice per battle
- * (once per battle since the AR 2.0 errata, by 2012-08-27).
+ * (the errata posted on the PC forum on 2011-08-26, p644156, kept "Twice per battle" and added "any": 2220_2169).
  * Anything Goes only (docs/legacy-versions.md).
  */
 public class Card2220_169 extends AbstractCharacterWeapon {
@@ -52,7 +52,7 @@ public class Card2220_169 extends AbstractCharacterWeapon {
         setLore("Merr-Sonn Model 57. Part of an arms lot purchased for the Alliance from a black market dealer on Ord Mantell. Carried by Luke as a backup for his father's lightsaber.");
         setGameText("Deploy on Luke. During battle, opponent may not move from here. Twice per battle, may target a character (target loses immunity to attrition for remainder of turn) or vehicle (with maneuver) for free. Draw destiny. Target hit and forfeit -3 if destiny +2 > defense value.");
         setLegacyVersion(new LegacyVersion("1220_169", "",
-                "Virtual Block 2 release sheet (2009-12-07), card #169; superseded by the PC card list errata (by 2012-07-21)", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21)));
+                "Virtual Block 2 release sheet (2009-12-07), card #169; superseded by the PC forum errata p644156 (2011-08-26)", LocalDate.of(2009, 12, 7), LocalDate.of(2011, 8, 26)));
         addIcons(Icon.CLOUD_CITY);
         addKeywords(Keyword.BLASTER);
         setMatchingCharacterFilter(Filters.Luke);

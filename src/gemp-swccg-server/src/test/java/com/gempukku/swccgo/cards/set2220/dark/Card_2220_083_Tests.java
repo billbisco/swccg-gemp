@@ -51,7 +51,7 @@ public class Card_2220_083_Tests {
         assertTrue(card.isLegacy());
         assertEquals("Deploy on your non-[Maintenance] AT-AT. May target a character or vehicle at same or adjacent site for free. Draw destiny. Target hit if destiny +1 (+2 if a vehicle) > defense value. If just lost from table, place this weapon in Used Pile.",
                 card.getGameText());
-        assertNotEquals(current.getGameText(), card.getGameText());
+        assertEquals(current.getGameText(), card.getGameText()); // the Master List (2013-04-27, the current text) repeats it (batch R8)
         var version = card.getLegacyVersion();
         assertEquals("1220_83", version.currentPrintingId());
         assertEquals("", version.label());

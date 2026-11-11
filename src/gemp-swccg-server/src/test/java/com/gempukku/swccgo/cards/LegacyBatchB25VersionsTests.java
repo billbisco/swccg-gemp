@@ -21,7 +21,7 @@ import static org.junit.Assert.assertNull;
  */
 public class LegacyBatchB25VersionsTests {
     private static final Map<String, String> CURRENT_TEXT = Map.ofEntries(
-            Map.entry("1250_9", "While at Senate: Sidious is politics +3; 'senators on Squabling Delegates is treated as 'Coruscant Guards;' and may lose 1 Force to place Keder and an opponent's [Coruscant] Political Effect (or [Coruscant] senator here) in owner's Lost Pile."),
+            Map.entry("1250_9", "While at Senate: Sidious is politics +3; 'senators' on Squabbling Delegates is treated as 'Coruscant Guards;' and may lose 1 Force to place Keder and an opponent's [Coruscant] Political Effect (or [Coruscant] senator here) in owner's Lost Pile."),
             Map.entry("1261_29", "Deploy on table. Once per game, unless [Virtual] Crossfire on table (or out of play), may use 3 Force to [upload] an Effect that deploys on a location (except Expand The Empire). If your character or non-[Independent Starship] starship in battle is about to be lost before the damage segment, it is instead lost at end of battle (if forfeited, forfeit for 0). Your non-Dark Jedi characters without [Permanent Weapon] or [Maintenance] are immune to Goo Nee Tay. May not be canceled. (Immune to Alter.)"));
     /** version id -> {current printing id, label, game text} */
     private static final Map<String, String[]> VERSIONS = Map.ofEntries(

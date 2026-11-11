@@ -27,7 +27,7 @@ import java.util.List;
 public class Card1250_014 extends Card1116_044 {
     public Card1250_014() {
         setLore("The Emperor disbanded the Imperial Senate 'for the duration of the emergency,' seizing absolute power. He planned to extend rule by terrorizing planets into submission.");
-        setGameText("Deploy on Senate. May raise your converted Senate to the top. Jedi here are politics +4. While your total politics here is > 5, at battlegrounds where you have an Imperial, your Force drains and battle destiny draws are +1. Your aliens (except Mara), senators, Maul, and [Independent Starship] starships are lost. (Immune to Alter.)");
+        setGameText("Deploy on Senate. May raise your converted Senate to the top. Jedi here are politics +4. While your total politics here is > 5, at battlegrounds where you have an Imperial, your Force drains and battle destiny draws are +1. Your Maul, aliens (except Mara), [Independent Starship] starships, and senators are lost. (Immune to Alter.)");
         addIcon(Icon.LEGACY_BLOCK_5);
         setAsLegacy(true);
         addImmuneToCardTitle(Title.Alter);

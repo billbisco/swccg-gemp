@@ -32,7 +32,7 @@ public class Card1240_020 extends AbstractNormalEffect {
     public Card1240_020() {
         super(Side.DARK, 4, PlayCardZoneOption.ATTACHED, "Dark Reconnaissance", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_4, Rarity.V);
         setLore("On her assignment to kill Sharad Hett, Aurra used her patience and cunning to help track down the Jedi Master.");
-        setGameText("Deploy on opponent's location. Your Force drains here cannot be modified or canceled by opponent. Wherever you have two Mistryl, your Force drains are +1. 'Stolen' on Swilla Corey is treated as 'placed in owner's Used Pile' and it may target a weapon instead of a device.");
+        setGameText("Deploy on opponent's location. Wherever you have two Mistryl, your Force drains are +1. 'Stolen' on Swilla Corey is treated as 'placed in owner's Used Pile' and it may target a weapon instead of a device. Your Force drains here cannot be modified or canceled by opponent.");
         addIcons(Icon.TATOOINE, Icon.EPISODE_I);
         addKeyword(Keyword.DEPLOYS_ON_LOCATION);
     }

@@ -51,7 +51,7 @@ public class Card_2210_124_Tests {
         assertTrue(card.isLegacy());
         assertEquals("Deploy on table. If opponent is about to remove their last card from Life Force, you may first place all your troopers in Used Pile (last card must still be removed). Your troopers are armor = 4. Your unique (•) [Hoth], [Endor], and [Death Star II] non-pilot warriors of destiny > 1 are troopers. (Immune to Alter.)",
                 card.getGameText());
-        assertNotEquals(current.getGameText(), card.getGameText());
+        assertEquals(current.getGameText(), card.getGameText()); // the Master List (2013-04-27, the current text) repeats it (batch R8)
         var version = card.getLegacyVersion();
         assertEquals("1210_124", version.currentPrintingId());
         assertEquals("", version.label());

@@ -13,7 +13,7 @@ import java.util.HashMap;
 import static com.gempukku.swccgo.framework.Assertions.*;
 import static org.junit.Assert.*;
 
-/** PC-E1 version of 1220_169 (Anything Goes only). */
+/** PC-E3 version of 1220_169 (PC-E1 until legacy batch B41; Anything Goes only). */
 public class Card_2220_1169_Tests {
     protected VirtualTableScenario GetScenario() {
         return new VirtualTableScenario(
@@ -54,9 +54,9 @@ public class Card_2220_1169_Tests {
         assertNotEquals(current.getGameText(), card.getGameText());
         var version = card.getLegacyVersion();
         assertEquals("1220_169", version.currentPrintingId());
-        assertEquals("PC-E1", version.label());
+        assertEquals("PC-E3", version.label());
         assertEquals(LocalDate.of(2012, 7, 21), version.printedOn());
-        assertEquals(LocalDate.of(2012, 8, 27), version.supersededOn());
-        assertEquals(GameUtils.getFullName(current) + " [PC-E1]", GameUtils.getFullName(card));
+        assertEquals(LocalDate.of(2013, 2, 25), version.supersededOn());
+        assertEquals(GameUtils.getFullName(current) + " [PC-E3]", GameUtils.getFullName(card));
     }
 }

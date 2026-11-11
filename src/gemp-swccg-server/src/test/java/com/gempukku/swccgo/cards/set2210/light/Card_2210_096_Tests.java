@@ -52,7 +52,7 @@ public class Card_2210_096_Tests {
         assertTrue(card.isLegacy());
         assertEquals("While at a non-Hoth site, adds one [Light Side Force]. If just forfeited, may use 1 Force to place IL-19 in Used Pile.",
                 card.getGameText());
-        assertNotEquals(current.getGameText(), card.getGameText());
+        assertEquals(current.getGameText(), card.getGameText()); // the Master List (2013-04-27, the current text) repeats it (batch R8)
         var version = card.getLegacyVersion();
         assertEquals("1210_96", version.currentPrintingId());
         assertEquals("", version.label());

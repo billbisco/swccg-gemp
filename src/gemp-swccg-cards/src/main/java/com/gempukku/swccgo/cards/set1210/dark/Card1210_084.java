@@ -22,7 +22,7 @@ public class Card1210_084 extends AbstractSeeker {
         super(Side.DARK, 3, "Han Seeker", Uniqueness.UNRESTRICTED, ExpansionSet.VIRTUAL_BLOCK_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("Military version of a 'remote'. Programmed to stalk specific targets or secondary targets. Heat and light sensors track with fatal accuracy. Can stow away on starships.");
-        setGameText("Use 1 Force to deploy to an unoccupied site. Deploys and moves like an Undercover spy. If present with [Permanent Weapon] Han or a smuggler of ability < 3, this weapon and that character are lost ('all cards' situation).");
+        setGameText("Use 1 Force to deploy to an unoccupied site. Deploys and moves like an Undercover spy. If present with a smuggler of ability < 3 or [Permanent Weapon] Han, this weapon and that character are lost ('all cards' situation).");
     }
 
     @Override

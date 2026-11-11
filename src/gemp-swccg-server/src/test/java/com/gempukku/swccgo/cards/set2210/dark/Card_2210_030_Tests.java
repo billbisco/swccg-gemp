@@ -51,7 +51,7 @@ public class Card_2210_030_Tests {
         assertTrue(card.isLegacy());
         assertEquals("Deploy on table. Whenever you verify opponent's Reserve Deck, may place a card there with 'podracer' in game text out of play or retrieve 1 Force.",
                 card.getGameText());
-        assertNotEquals(current.getGameText(), card.getGameText());
+        assertEquals(current.getGameText(), card.getGameText()); // the Master List (2013-04-27, the current text) repeats it (batch R8)
         var version = card.getLegacyVersion();
         assertEquals("1210_30", version.currentPrintingId());
         assertEquals("", version.label());

@@ -51,7 +51,7 @@ public class Card_2210_004_Tests {
         assertTrue(card.isLegacy());
         assertEquals("Adds 2 to power of anything he pilots. During your control phase (twice if aboard Devastator), may use 1 Force to take an Imperial pilot of ability < 3 into hand from Reserve Deck; reshuffle.",
                 card.getGameText());
-        assertNotEquals(current.getGameText(), card.getGameText());
+        assertEquals(current.getGameText(), card.getGameText()); // the Master List (2013-04-27, the current text) repeats it (batch R8)
         var version = card.getLegacyVersion();
         assertEquals("1210_4", version.currentPrintingId());
         assertEquals("", version.label());

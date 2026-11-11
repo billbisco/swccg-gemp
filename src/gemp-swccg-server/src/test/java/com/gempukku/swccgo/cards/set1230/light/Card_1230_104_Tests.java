@@ -176,10 +176,11 @@ public class Card_1230_104_Tests {
     public void EndorCelebrationHasTheLatestText() {
         var scn = GetScenario();
         var card = scn.GetLSCard("celebration").getBlueprint();
-        assertEquals("Cancel an Effect with 'occupation' in title. (Immune to Sense.) OR During your draw phase, if you have a Rebel scout alone at Back Door, draw destiny. Activate or retrieve 5 Force and place this Interrupt on bottom of Lost Pile if destiny < the number of your scouts on table.",
+        assertEquals("Cancel an Effect with 'occupation' in title. (Immune to Sense.) OR During your draw phase, if you have a Rebel scout alone at Back Door, draw destiny. If destiny < the number of your scouts on table, activate or retrieve 5 Force and place this Interrupt on bottom of Lost Pile.",
                 card.getGameText());
         assertNull(card.getLegacyVersion());
         // the sheet wording ("If destiny < ..., activate or retrieve") is the original version 2230_104
-        assertFalse(card.getGameText().contains("If destiny < the number of your scouts on table, activate"));
+        // batch R8: the current text is the Master List wording again
+        assertTrue(card.getGameText().contains("If destiny < the number of your scouts on table, activate"));
     }
 }

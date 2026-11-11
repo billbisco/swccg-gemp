@@ -52,7 +52,7 @@ public class Card_2210_099_Tests {
         assertTrue(card.isLegacy());
         assertEquals("Adds 2 to power of anything he pilots. If with an Imperial, you may initiate battle here for free. Permanent weapon is blaster rifle (may target a character or creature for free; draw destiny; target hit, and its forfeit = 0, if destiny +1 > defense value).",
                 card.getGameText());
-        assertNotEquals(current.getGameText(), card.getGameText());
+        assertEquals(current.getGameText(), card.getGameText()); // the Master List (2013-04-27, the current text) repeats it (batch R8)
         var version = card.getLegacyVersion();
         assertEquals("1210_99", version.currentPrintingId());
         assertEquals("", version.label());

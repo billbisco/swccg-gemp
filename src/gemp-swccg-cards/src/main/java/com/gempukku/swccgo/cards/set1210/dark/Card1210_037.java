@@ -40,7 +40,7 @@ public class Card1210_037 extends AbstractNormalEffect {
         super(Side.DARK, 5, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.Hyperwave_Scan, Uniqueness.UNRESTRICTED, ExpansionSet.VIRTUAL_BLOCK_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("Full Imperial scans include full-spectrum transceivers, dedicated energy receptors, crystal gravfield traps, and hyperwave signal interceptors.");
-        setGameText("Deploy on table. During opponent's move phase, may use 3 Force to peek at opponent's hand or place a Political Effect (and all cards on it) in owner's Used Pile. Unless you have 13 or more cards in hand, opponent may not place those cards in Used Pile. (Immune to Alter.)");
+        setGameText("Deploy on table. During opponent's move phase, may use 3 force to peek at opponent's hand or place a Political Effect (and all cards on it) in owner's Used Pile. Unless you have 13 or more cards in hand, opponent may not place those cards in Used Pile. (Immune to Alter.)");
         addIcons(Icon.A_NEW_HOPE);
         addImmuneToCardTitle(Title.Alter);
     }

@@ -2590,8 +2590,8 @@ var GempSwccgHallUI = Class.extend({
         s = $.trim(s);
         if (s === "")
             return "";
-        var parts = s.split(/\s+/);
-        return parts[parts.length - 1];
+        // Role markers are gone now; the rest is the name, which may contain spaces (#249, t122u).
+        return s;
     },
 
     bindExclusiveDeckPair:function(playerSelect, librarySelect, onChange) {

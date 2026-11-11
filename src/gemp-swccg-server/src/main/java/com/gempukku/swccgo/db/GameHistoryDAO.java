@@ -17,6 +17,14 @@ public interface GameHistoryDAO {
 
     public List<GameHistoryEntry> getGameHistoryForPlayer(Player player, int start, int count);
 
+    /**
+     * The account id of the player who sat at the table as {@code tableName} in the game whose replay for that seat is
+     * {@code recordingId} (swccg-guild/work#264). Null when the game or the account is unknown (bots, guests).
+     */
+    default Integer getRecordingOwnerId(String tableName, String recordingId) {
+        return null;
+    }
+
     public int getGameHistoryForPlayerCount(Player player);
 
     /** The player's games matching the filter, newest first. */

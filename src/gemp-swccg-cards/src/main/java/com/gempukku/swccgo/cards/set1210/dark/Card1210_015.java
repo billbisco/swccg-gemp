@@ -34,7 +34,7 @@ public class Card1210_015 extends AbstractAlien {
         super(Side.DARK, 2, 4, 8, 1, 4, "Kitik Keed'kak", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("A female insectoid Yam'rii. Very strong and easily angered. Known for stealth, but also has good technological aptitude. Meat eater. Loves eggs.");
-        setGameText("During battle, may add 1 to your attrition against opponent for each opponent's character present. May not deploy to or board starfighters or enclosed vehicles.");
+        setGameText("During battle, may add 1 to your total attrition against opponent for each opponent's character present. May not deploy to or board starfighters or enclosed vehicles.");
         addKeywords(Keyword.FEMALE);
         setSpecies(Species.YAMRII);
     }

@@ -478,21 +478,12 @@ public class DbPlayerDAO implements PlayerDAO {
      * @throws LoginInvalidException an invalid login exception
      */
     private boolean validateNewUser(String playerName) throws SQLException, LoginInvalidException, RegisterNotAllowedException {
-        final String validLoginChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_";
-
-        if (playerName.length() < 2 || playerName.length() > 10) {
+        // The site's name rule (1-32 characters, spaces allowed; swccg-guild/work#249, t122u).
+        if (!com.gempukku.swccgo.service.PlayerNames.isWellFormed(playerName)) {
             throw new LoginInvalidException();
         }
-
-        for (int i = 0; i < playerName.length(); i++) {
-            char c = playerName.charAt(i);
-            if (!validLoginChars.contains("" + c)) {
-                throw new LoginInvalidException();
-            }
-        }
-
-        String lowerCase = playerName.toLowerCase();
-        if (lowerCase.startsWith("admin") || lowerCase.startsWith("guest") || lowerCase.startsWith("system") || lowerCase.startsWith("bye")) {
+        // Reserved prefixes, bots, and the guest seat names in both spellings.
+        if (com.gempukku.swccgo.service.PlayerNames.isReserved(playerName)) {
             return false;
         }
 
@@ -573,6 +564,74 @@ public class DbPlayerDAO implements PlayerDAO {
                         return null;
                     }
                 }
+            }
+        }
+    }
+
+    /** Tables whose name column holds the player's current name; game_history is left as it was at the table. */
+    static final String[][] RENAME_COLUMNS = {
+            {"league_participation", "player_name"},
+            {"league_match", "winner"}, {"league_match", "loser"},
+            {"tournament_player", "player"},
+            {"tournament_match", "player_one"}, {"tournament_match", "player_two"}, {"tournament_match", "winner"},
+            {"transfer", "player"},
+            {"game_save", "owner"}
+    };
+
+    @Override
+    public synchronized String renamePlayer(int playerId, String newName) throws SQLException {
+        if (!com.gempukku.swccgo.service.PlayerNames.isAllowedNewName(newName))
+            return "name_invalid";
+        try (Connection conn = _dbAccess.getDataSource().getConnection()) {
+            boolean autoCommit = conn.getAutoCommit();
+            conn.setAutoCommit(false);
+            try {
+                String oldName;
+                try (PreparedStatement statement = conn.prepareStatement("SELECT name FROM player WHERE id=? FOR UPDATE")) {
+                    statement.setInt(1, playerId);
+                    try (ResultSet rs = statement.executeQuery()) {
+                        if (!rs.next()) {
+                            conn.rollback();
+                            return "not_found";
+                        }
+                        oldName = rs.getString(1);
+                    }
+                }
+                if (oldName.equals(newName)) {
+                    conn.rollback();
+                    return null;
+                }
+                try (PreparedStatement statement = conn.prepareStatement(
+                        "SELECT 1 FROM player WHERE LOWER(name)=LOWER(?) AND id<>? LIMIT 1")) {
+                    statement.setString(1, newName);
+                    statement.setInt(2, playerId);
+                    try (ResultSet rs = statement.executeQuery()) {
+                        if (rs.next()) {
+                            conn.rollback();
+                            return "name_taken";
+                        }
+                    }
+                }
+                try (PreparedStatement statement = conn.prepareStatement("UPDATE player SET name=? WHERE id=?")) {
+                    statement.setString(1, newName);
+                    statement.setInt(2, playerId);
+                    statement.executeUpdate();
+                }
+                for (String[] tc : RENAME_COLUMNS) {
+                    try (PreparedStatement statement = conn.prepareStatement(
+                            "UPDATE " + tc[0] + " SET " + tc[1] + "=? WHERE " + tc[1] + "=?")) {
+                        statement.setString(1, newName);
+                        statement.setString(2, oldName);
+                        statement.executeUpdate();
+                    }
+                }
+                conn.commit();
+                return null;
+            } catch (SQLException e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(autoCommit);
             }
         }
     }

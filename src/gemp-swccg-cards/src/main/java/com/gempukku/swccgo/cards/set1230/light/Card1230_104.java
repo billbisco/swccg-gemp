@@ -41,7 +41,7 @@ public class Card1230_104 extends AbstractUsedInterrupt {
         super(Side.LIGHT, 5, Title.Endor_Celebration, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_3, Rarity.V);
         setVirtualSuffix(true);
         setLore("The Rebel presence on Endor meant that the Ewoks would be able to live free from the Empire's tyranny.");
-        setGameText("Cancel an Effect with 'occupation' in title. (Immune to Sense.) OR During your draw phase, if you have a Rebel scout alone at Back Door, draw destiny. Activate or retrieve 5 Force and place this Interrupt on bottom of Lost Pile if destiny < the number of your scouts on table.");
+        setGameText("Cancel an Effect with 'occupation' in title. (Immune to Sense.) OR During your draw phase, if you have a Rebel scout alone at Back Door, draw destiny. If destiny < the number of your scouts on table, activate or retrieve 5 Force and place this Interrupt on bottom of Lost Pile.");
         addIcons(Icon.ENDOR);
     }
 

@@ -10,6 +10,7 @@ import com.gempukku.swccgo.common.PlayCardZoneOption;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Title;
+import com.gempukku.swccgo.common.TitleComponent;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
@@ -38,11 +39,15 @@ import java.util.List;
 /**
  * Set: Virtual Block 9.1
  * Type: Effect
- * Title: Begin Landing Your Troops & The Dark Path
+ * Title: Begin Landing Your Troops & Dark Forces
+ * Retitled on 2014-05-02 (PC forum "Current Rulings/Errata" p879652; PC-E1): the second title changed from The Dark
+ * Path to Dark Forces, so that both halves of the combo are unique. The printing titled Begin Landing Your Troops &
+ * The Dark Path is 2291_9 (legacy batch B41).
  */
 public class Card1291_009 extends AbstractNormalEffect {
     public Card1291_009() {
-        super(Side.DARK, 4, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Begin Landing Your Troops & The Dark Path", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_9_1, Rarity.V);
+        super(Side.DARK, 4, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Begin Landing Your Troops & Dark Forces", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_9_1, Rarity.V);
+        setTitleComponents(new TitleComponent("Begin Landing Your Troops", Uniqueness.UNIQUE), new TitleComponent(Title.Dark_Forces, Uniqueness.UNIQUE));
         setGameText("Deploy on table. Your [Separatist] droids are power +1 and may shuttle from battleground systems for free. During battle, may place this Effect out of play to cancel and redraw your just-drawn destiny. Once per turn, each player may ignore any deploy cost on [Virtual Block 4] Watch Your Step and once per game, while that Objective on table, you may take a starfighter into hand from Reserve Deck; reshuffle (or draw two cards from Reserve Deck). Jedi Tests may not modify your battle or weapon destiny draws. Lost if your [Virtual Block 4] objective on table. (Immune to Alter.)");
         addIcons(Icon.EPISODE_I);
         addImmuneToCardTitle(Title.Alter);

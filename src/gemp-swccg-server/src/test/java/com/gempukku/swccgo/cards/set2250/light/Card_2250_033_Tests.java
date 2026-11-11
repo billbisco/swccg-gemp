@@ -23,7 +23,7 @@ public class Card_2250_033_Tests {
     @Test
     public void IdentityAndVersionInfo() {
         var scn = scenario();
-        assertLegacyVersion(scn.GetLSCard("v").getBlueprint(), scn.GetLSCard("current").getBlueprint(), "1250_33", "",
+        assertLegacyVersion(scn.GetLSCard("v").getBlueprint(), scn.GetLSCard("current").getBlueprint(), "1250_33", "PC-E2",
                 LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21),
                 "At each system a player controls with a capital starship, non-[Presence] characters (and vehicles) deploy -1 to related sites and sectors. If you occupy a system with a capital starship (or three unique starships) and have no Objective on table, may add 1 to each of your Force drains at related battleground sites (opponent loses no more than 2 Force from those drains).");
     }
