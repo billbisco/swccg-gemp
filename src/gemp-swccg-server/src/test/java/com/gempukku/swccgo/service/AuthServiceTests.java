@@ -172,6 +172,26 @@ public class AuthServiceTests {
     }
 
     @Test
+    public void renameAccountRenamesByIdWithTheNewPlayerRules() throws Exception {
+        //test1: renamed by id; the old name no longer signs in, the new one does
+        //test2: names are unique ignoring case; a change of case to one's own name is fine
+        //test3: reserved prefixes and bad characters are refused
+        //test4: deactivated players and unknown ids are refused
+        Player bill = dao.addWithStoredHash("Bill", hasher.hash("rightpass"), "u", null);
+        dao.addWithStoredHash("Han", hasher.hash("otherpass"), "u", null);
+        assertEquals("Billy", auth.renameAccount(bill.getId(), "Billy").getName()); //test1
+        assertEquals(AuthService.Status.OK, auth.verifyCredentials("Billy", "rightpass", IP).getStatus()); //test1
+        assertEquals(AuthService.Status.INVALID, auth.verifyCredentials("Bill", "rightpass", IP).getStatus()); //test1
+        assertEquals("name_taken", assertThrows(AuthService.RenameRefused.class, () -> auth.renameAccount(bill.getId(), "han")).code()); //test2
+        assertEquals("BILLY", auth.renameAccount(bill.getId(), "BILLY").getName()); //test2
+        assertEquals("name_invalid", assertThrows(AuthService.RenameRefused.class, () -> auth.renameAccount(bill.getId(), "admin1")).code()); //test3
+        assertEquals("name_invalid", assertThrows(AuthService.RenameRefused.class, () -> auth.renameAccount(bill.getId(), "a b")).code()); //test3
+        auth.closeAccount(bill.getId());
+        assertEquals("deactivated", assertThrows(AuthService.RenameRefused.class, () -> auth.renameAccount(bill.getId(), "Billy2")).code()); //test4
+        assertEquals("not_found", assertThrows(AuthService.RenameRefused.class, () -> auth.renameAccount(bill.getId() + 1000, "Billy2")).code()); //test4
+    }
+
+    @Test
     public void resetAccountCannotBeClaimedWithoutTheCode() throws Exception {
         dao.addWithStoredHash("Bill", hasher.hash("oldpassword"), "u", null);
         auth.issueResetCode("Bill", "AdminAl");

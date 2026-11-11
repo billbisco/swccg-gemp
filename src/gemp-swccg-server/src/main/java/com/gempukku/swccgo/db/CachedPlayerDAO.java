@@ -235,4 +235,11 @@ public class CachedPlayerDAO implements PlayerDAO, Cached {
         }
         _similarAccountsByName.clear();
     }
+
+    @Override
+    public String renamePlayer(int playerId, String newName) throws SQLException {
+        String result = _delegate.renamePlayer(playerId, newName);
+        clearCache();
+        return result;
+    }
 }
