@@ -85,10 +85,25 @@ public class LegacyVersionsTests {
                     differsInGameTextOrPrintedData(current, version)
                             || !printedText(version).equals(printedText(current))
                             || !iconCounts(version).equals(iconCounts(current))
-                            || version.getPrintedTitle() != null);
+                            || version.getPrintedTitle() != null
+                            || backSideDiffers(id, info.currentPrintingId()));
             assertTrue(id + ": label shown in full name",
                     info.label().isEmpty() ? !GameUtils.getFullName(version).contains("[")
                             : GameUtils.getFullName(version).endsWith(" [" + info.label() + "]"));
+        }
+    }
+
+    /** A two-sided version whose front is unchanged differs on its back (Wookiee Slaving Operation, 2014 errata to the 7 side; batch B39). */
+    private boolean backSideDiffers(String versionId, String currentId) {
+        if (versionId.endsWith("_BACK"))
+            return false;
+        try {
+            SwccgCardBlueprint versionBack = library.getSwccgoCardBlueprint(versionId + "_BACK");
+            SwccgCardBlueprint currentBack = library.getSwccgoCardBlueprint(currentId + "_BACK");
+            return versionBack != null && currentBack != null
+                    && differsInGameTextOrPrintedData(currentBack, versionBack);
+        } catch (RuntimeException noBackSide) {
+            return false;
         }
     }
 

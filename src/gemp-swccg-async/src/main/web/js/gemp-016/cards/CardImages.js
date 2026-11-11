@@ -6964,7 +6964,7 @@ const fixedImages = {
 "1240_27":"https://wiki.swccg.com/images/1/12/VB4-26-Imperial_Propaganda-PC-E1-cardmaker.png",
 "601_88":"https://wiki.swccg.com/images/1/12/VB4-26-Imperial_Propaganda-PC-E1-cardmaker.png",
 
-// Batch B19 (Virtual Blocks 7-8): current cards whose generated image shows an older text get the image of their latest text: 1273_41 Coruscant (V) the Master List slip (PC-E2; its PC card image prints a third wording, held for Bill),
+// Batch B19 (Virtual Blocks 7-8): current cards whose generated image shows an older text get the image of their latest text: 1273_41 Coruscant (V) the Master List slip (PC-E2; its PC card image shows the Light Side only — no third wording, B39 / R6),
 // 1281_1 / 1281_4 / 1281_5 (= 601_17) CardMaker recreations of the card-list text (PC-E1). 1273_17, 1273_20, 1273_36, 1274_4, 1274_11 and 1274_18 keep their PC card image, which shows the latest text.
 "1273_41":"https://wiki.swccg.com/images/4/4d/VL-history-1273-41-front-master.png",
 "1281_1":"https://wiki.swccg.com/images/6/69/VB8-01-Aurra_Sing_Deadly_Assassin-PC-E1-cardmaker.png",
@@ -7371,4 +7371,5 @@ const fixedImages = {
 "1282_10_BACK":"https://wiki.swccg.com/images/b/b6/VB8-07-Indentured_To_The_Empire-PC-E1-cardmaker.png",
 "2282_10":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Dark/large/wookieeslavingoperation.gif",
 "2282_10_BACK":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Dark/large/indenturedtotheempire.gif",
+"2271_2038":"https://wiki.swccg.com/images/4/41/VB7-03-Field_Dressing-original-cardmaker.png",
 };

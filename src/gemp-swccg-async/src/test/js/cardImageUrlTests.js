@@ -561,3 +561,4 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_29_BACK'), 'https://w
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1282_10_BACK'), 'https://wiki.swccg.com/images/b/b6/VB8-07-Indentured_To_The_Empire-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2282_10'), 'https://swccg.com/cards/legacy/VirtualBlock8-Dark/large/wookieeslavingoperation.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2282_10_BACK'), 'https://swccg.com/cards/legacy/VirtualBlock8-Dark/large/indenturedtotheempire.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2271_2038'), 'https://wiki.swccg.com/images/4/41/VB7-03-Field_Dressing-original-cardmaker.png');

@@ -19,7 +19,7 @@ import static org.junit.Assert.assertTrue;
  * Legacy batch B39 (Bill's rulings of 2026-11-10, ai-team-skills shared/gemp-legacy-cards/RULINGS.md): rescinded errata
  * are versions (Tarfful, Wookiee Insurgent PC-E2 2272_1018 and Wookiee Guide (V) PC-E1 2250_68, posted 2013-04-13 and
  * rescinded 2013-04-15); Communing's original is reconstructed (2273_33 = PC-E1 without "I Can't Believe He's Gone is
- * canceled."); He Is Not Ready / Eject! Eject!: the "&" titles are the originals (2240_26 / 2240_81) and the short titles
+ * canceled.") and so is Field Dressing's (2271_2038 = PC-E1 without "and, if 'hit,' is restored to normal"); He Is Not Ready / Eject! Eject!: the "&" titles are the originals (2240_26 / 2240_81) and the short titles
  * the errata of 2013-06-14 (current cards); one Galen Marek, Starkiller AI version (2240_8ai retired behind an alias);
  * Wookiee Slaving Operation's 7 side errata of 2014-07-23 (originals 2282_10 / 2282_10_BACK). Images are pinned in
  * cardImageUrlTests.js.
@@ -32,6 +32,7 @@ public class LegacyBatchB39VersionsTests {
             Map.entry("2273_33", new String[]{"1273_33", "", "If your starting location has exactly two [Light Side], play instead of a Starting Interrupt. [download] two always [Immune to Alter] Effects. Deploy on table; [upload] and stack a Jedi here. Luminous Beings: Whenever a Jedi is lost (or placed out of play) from table, may stack it here. Jedi stacked here are 'communing' and considered out of play. You generate +1 Force for each card stacked here. Once per turn, if two cards here, may use 1 Force to look at top card of Reserve Deck, Force Pile, and/or Used Pile; return one card to each deck or pile.", "2011-06-03", "2011-06-22", null}),
             Map.entry("2240_26", new String[]{"1240_26", "", null, "2009-12-07", "2013-06-14", "He Is Not Ready & Imperial Propaganda"}),
             Map.entry("2240_81", new String[]{"1240_81", "", null, "2009-12-07", "2013-06-14", "Eject! Eject! & Imperial Atrocity"}),
+            Map.entry("2271_2038", new String[]{"1271_38", "", "If you just forfeited a character of ability < 5 present at a site, deploy on that character (who remains at same site). Character is forfeit = 0 (even if forfeit may not normally be reduced). May play First Aid to place this card in Used Pile. Immune to your Control.", "2010-06-18", "2010-07-26", null}),
             Map.entry("2282_10", new String[]{"1282_10", "", null, "2012-09-14", "2014-07-23", null}),
             Map.entry("2282_10_BACK", new String[]{"1282_10_BACK", "", "While this side up, whenever you 'enslave' a character, opponent must choose to use 2 Force or lose 1 Force. Once per turn, during battle may add or subtract up to X from your just drawn destiny, where X = the number of Kashyyyk locations you control with a slaver. Once per turn, if you just retrieved Force during battle, may take a slaver, starship, or vehicle retrieved into hand.\nFlip this card if opponent controls two Kashyyyk battlegrounds.", "2012-09-14", "2014-07-23", null}));
 
@@ -44,7 +45,7 @@ public class LegacyBatchB39VersionsTests {
 
     @Test
     public void OlderVersionsAreTheirOwnCards() {
-        assertEquals(7, VERSIONS.size());
+        assertEquals(8, VERSIONS.size());
         VERSIONS.forEach((id, v) -> {
             SwccgCardBlueprint card = library.getSwccgoCardBlueprint(id);
             assertNotNull(id, card);
