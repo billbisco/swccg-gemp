@@ -40,7 +40,7 @@ public class Card1220_004 extends AbstractImperial {
         setVirtualSuffix(true);
         setInfluence(1);
         setLore("Tactical officer from Dentaal. Leader. Familiar with utilizing computer controls to lure an invading enemy into a tactically weak position.");
-        setGameText("Agenda: logistics. While at Conference Room, opponent must lose 3 Force to 'react' away from a battle, and, if your total Influence here is > 3, during your turn you may take an Interrupt into hand from Force Pile; reshuffle.");
+        setGameText("Agenda: logistics. While at Conference Room, opponent must lose 3 Force to 'react' away from a battle, and, if your total influence here is > 3, during your turn you may take an Interrupt into hand from Force Pile; reshuffle.");
         addIcons(Icon.WARRIOR, Icon.CLOUD_CITY);
         addKeywords(Keyword.LEADER, Keyword.CAPTAIN);
     }

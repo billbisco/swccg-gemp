@@ -45,7 +45,7 @@ public class Card1240_023 extends AbstractNormalEffect {
         super(Side.DARK, 3, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.Dreaded_Imperial_Starfleet, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_4, Rarity.V);
         setVirtualSuffix(true);
         setLore("The Empire uses short-range fighters and patrol craft to maintain a presence in every system within its scope of power.");
-        setGameText("Deploy on table. While you have more systems on table than opponent, your capital starships may deploy at -2 (to a maximum of -3) to battlegrounds. When you deploy an Imperial-Class Star Destroyer, may deploy (for free) a [Death Star II] or [A New Hope] squadron there (no replacement necessary) from Reserve Deck; reshuffle. (Immune to Alter.)");
+        setGameText("Deploy on table. While you have more systems on table than opponent, your capital starships may deploy at -2 (to a maximum of -3) to battlegrounds. When you deploy an Imperial-class Star Destroyer, may deploy (for free) a [Death Star II] or [A New Hope] squadron there (no replacement necessary) from Reserve Deck; reshuffle. (Immune to Alter.)");
         addIcons(Icon.SPECIAL_EDITION, Icon.LEGACY_BLOCK_4);
         addImmuneToCardTitle(Title.Alter);
     }
