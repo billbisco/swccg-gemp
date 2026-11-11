@@ -549,6 +549,28 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('2240_79'), 'https://swccg
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_36'), 'https://swccg.com/cards/legacy/VirtualBlock6-Dark/large/protocolfailure.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_85'), 'https://swccg.com/cards/legacy/VirtualBlock6-Light/large/returnofthejedi.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2262_1'), 'https://swccg.com/cards/legacy/VirtualBlock6-Dark/large/4lomwithconcussionrifle.gif');
+// Batch C1 (swccg-guild/work#236)
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1220_127'), 'https://wiki.swccg.com/images/6/64/VB2-127-Leia_Of_Alderaan-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2220_127'), 'https://swccg.com/cards/legacy/VirtualBlock2-Light/large/leiaofalderaan.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1240_34'), 'https://wiki.swccg.com/images/d/d8/VB4-32E-No_Bargain-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_149'), 'https://wiki.swccg.com/images/d/d8/VB4-32E-No_Bargain-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2240_34'), 'https://swccg.com/cards/legacy/VirtualBlock4-Dark/large/nobargain.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1240_71'), 'https://wiki.swccg.com/images/d/db/VB4-69-Lars_Protocol_Droid-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2240_71'), 'https://swccg.com/cards/legacy/VirtualBlock4-Light/large/larsprotocoldroid.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_83'), 'https://wiki.swccg.com/images/a/af/VB5-83-Obi_Wan_In_Radiant_VII-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_249'), 'https://wiki.swccg.com/images/a/af/VB5-83-Obi_Wan_In_Radiant_VII-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2250_83'), 'https://swccg.com/cards/legacy/VirtualBlock5-Light/large/obiwaninradiantvii.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1271_18'), 'https://wiki.swccg.com/images/9/90/VB7-00-Commence_Primary_Ignition-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2271_18'), 'https://swccg.com/cards/legacy/VirtualBlock7-Dark/large/commenceprimaryignition.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_102'), 'https://wiki.swccg.com/images/d/db/VB1-102-Jek_Porkins-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2210_102'), 'https://swccg.com/cards/legacy/VirtualBlock1-Light/large/jekporkins.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_112'), 'https://wiki.swccg.com/images/7/7a/VB1-112-Red_Leader-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2210_112'), 'https://swccg.com/cards/legacy/VirtualBlock1-Light/large/redleader.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_116'), 'https://wiki.swccg.com/images/6/68/VB1-118-Tatooine_Utility_Belt-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_103'), 'https://wiki.swccg.com/images/6/68/VB1-118-Tatooine_Utility_Belt-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2210_116'), 'https://swccg.com/cards/legacy/VirtualBlock1-Light/large/tatooineutilitybelt.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_123'), 'https://wiki.swccg.com/images/c/cd/VB1-126E-Hidden_Fortress-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2210_123'), 'https://swccg.com/cards/legacy/VirtualBlock1-Light/large/hiddenfortress.gif');
 // Batch B39: rescinded errata, Communing reconstructed original, "&"-title originals, Rogue Insertion original art, Wookiee Slaving Operation 2014 errata
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2272_1018'), 'https://wiki.swccg.com/images/5/52/VB7-03-Tarfful_Wookiee_Insurgent-PC-E2-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2250_68'), 'https://wiki.swccg.com/images/a/aa/VB5-68-Wookiee_Guide-PC-E1-cardmaker.png');

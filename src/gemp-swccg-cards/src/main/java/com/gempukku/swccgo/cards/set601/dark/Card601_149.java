@@ -37,7 +37,7 @@ public class Card601_149 extends AbstractNormalEffect {
         super(Side.DARK, 4, PlayCardZoneOption.ATTACHED, Title.No_Bargain, Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
         setVirtualSuffix(true);
         setLore("'Zeet tu seet. Jabba no tuzindy honkabee.'");
-        setGameText("Deploy on your [Reflections II] Objective; 'Xizor' on it (and on Guri) is treated as 'Shada'. Non-[Permanent Weapon] alien females are Mistryl and Black Sun agents. You may not deploy cards with ability except Mistryl and [Independent Starship] starships. Mistryl (except Kitik) are power +1 (+2 if unique (*)), and, while Scum And Villainy on table, deploy +1. (Immune to Alter.)");
+        setGameText("Deploy on your [Reflections II] Objective; 'Xizor' on it (and on Guri) is treated as 'Shada'. Non-[Permanent Weapon] alien females are Mistryl and Black Sun agents. You may not deploy cards with ability except Mistryl and [Independent Starship] starships. Mistryl (except Kitik) are power +1 (+2 if unique (•)), and, while Scum And Villainy on table, deploy +1. (Immune to Alter.)");
         addIcons(Icon.SPECIAL_EDITION, Icon.LEGACY_BLOCK_4);
         addImmuneToCardTitle(Title.Alter);
         setAsLegacy(true);

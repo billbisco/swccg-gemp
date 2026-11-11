@@ -79,7 +79,7 @@ public class Card_1220_127_Tests {
     @Test
     public void LeiaOfAlderaanGameTextIsOfficialText() {
         var scn = GetScenario();
-        assertEquals("Deploy on Leia. At same location, your unique (•) Rebels are deploy -1 and their immunity to attrition is +1. Dark Side Republic characters are deploy +2 and forfeit -2. (Immune to Alter.)",
+        assertEquals("Deploy on Leia. At same location, your unique (•) Rebels are deploy -1 and their immunity to attrition is +1. Dark side Republic characters are deploy +2 and forfeit -2. (Immune to Alter.)",
                 scn.GetLSCard("alderaan").getBlueprint().getGameText());
         assertTrue(scn.GetLSCard("alderaan").getBlueprint().isImmuneToCardTitle(Title.Alter));
     }
