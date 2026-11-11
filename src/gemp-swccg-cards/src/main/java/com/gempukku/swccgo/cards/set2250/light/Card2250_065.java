@@ -2,8 +2,6 @@ package com.gempukku.swccgo.cards.set2250.light;
 
 import com.gempukku.swccgo.cards.set1250.light.Card1250_065;
 import com.gempukku.swccgo.common.LegacyVersion;
-import com.gempukku.swccgo.filters.Filter;
-import com.gempukku.swccgo.filters.Filters;
 
 import java.time.LocalDate;
 
@@ -23,8 +21,4 @@ public class Card2250_065 extends Card1250_065 {
                 "Virtual Block 5 release sheet (2009-12-07), card #65", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21)));
     }
 
-    @Override
-    protected Filter freeRetrievalLocations() {
-        return Filters.Coruscant_location;
-    }
 }

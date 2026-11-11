@@ -12,17 +12,16 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Legacy batches R8-B7 .. R8-B11 (Virtual Blocks 5-8). Bill, 2026-11-11: every publication is a version. The Virtual
- * Cards Master List (official text 2013-04-27) repeats an earlier text word for word (the release-sheet text, or for
- * Strong Is Vader the revised-sheet PC-E1 text) after the PC website card list had printed a different one; the Master
- * List copy is the latest version and the current card, and the card-list text is its own 22xx card. No play change.
- * Bill, 2026-11-11 09:14: a PC card image is a version too, at its server upload date (Virtual Blocks 5-7: 2013-02-25,
- * between the card list and the Master List; Virtual Block 8: 2013-05-07, after it). The images repeat the same words,
- * so they need no card of their own. Held: Ambush (V) 1250_65 and Baragwin (V) 1261_62 (the Master List wording would
- * change play in GEMP) and Mara Jade's Lightsaber (V) 1281_25 (its PC card image, uploaded 2013-05-07 and so the
- * latest, prints the card-list wording).
+ * Cards Master List (official text 2013-04-27) and the PC card image (server upload 2013-02-25 for Virtual Blocks 5-7,
+ * 2013-05-07 for Virtual Block 8) repeat an earlier text word for word after the PC website card list had printed a
+ * different one. The last publication is the current card (Master List for VB5-7, PC card image for VB8); the card-list
+ * text and the non-current repeat are their own 22xx cards. Play changes: Ambush (V) 1250_65 ("free if at Coruscant")
+ * and Baragwin (V) 1261_62 (all your non-alien characters reset), lead / Bill 08:12 and 08:45. Mara Jade's Lightsaber
+ * (V) 1281_25 keeps the card-list words, which its PC card image (2013-05-07, the latest publication) prints.
  * Images are pinned in cardImageUrlTests.js.
  */
 public class LegacyBatchR8B7B11VersionsTests {
@@ -35,7 +34,10 @@ public class LegacyBatchR8B7B11VersionsTests {
             Map.entry("1250_85", "Deploy on a Jedi. May add 1 to Force drain at opponent's site where present. May target a character or creature for free. Draw two destiny. Target hit, and may not be used to satisfy attrition If total destiny > defense value."),
             Map.entry("1261_16", "Opponent's characters are deploy +1 to same mobile site. At battlegrounds where you have a unique (•) and non-unique Imperial present (and no other Force drain bonus), your Force drains are +1. Tactical Support is a Used Interrupt."),
             Map.entry("1261_29", "Deploy on table. Once per game, unless [Virtual] Crossfire on table (or out of play), may use 3 Force to [upload] an Effect that deploys on a location (except Expand The Empire). If your character or non-[Independent Starship] starship in battle is about to be lost before the damage segment, it is instead lost at end of battle (if forfeited, forfeit for 0). Your non-Dark Jedi characters without [Permanent Weapon] or [Maintenance] are immune to Goo Nee Tay. May not be canceled. (Immune to Alter.)"),
-            Map.entry("1261_39", "Deploy on table. A Jedi's Resilience may not be played during move phases. The Circle Is Now Complete or Vader's Obsession may be played during any move phase to initiate an epic duel as follows: If Vader present with specified target, each player draws two destiny (if armed with a lightsaber, each destiny is +1); add ability. Loser (lower total) is lost, losing player loses 2 Force, and winning player may retrieve 2 Force."),
+            Map.entry("1261_39", "Deploy on table. A Jedi's Resilience may not be played during move phases. The Circle Is Now Complete or Vader's Obsession may be played during any move phase to initiate an epic duel as follows: If Vader present with specified target, each player draws two destiny (if armed with a lightsaber, each destiny is +1,
+            Map.entry("1250_65", "Use 1 Force to deploy up to two clones from Reserve Deck; reshuffle. OR If your clones occupy three related battlegrounds during your control phase, use 2 Force (free if at Coruscant) to retrieve any one card into hand. OR If your clone in battle, add one battle destiny."),
+            Map.entry("1261_62", "Lost if a Starting Effect on table. Your non-alien characters are power and forfeit = 0. If present at a battleground site, your Force drains at battleground sites where you have two aliens are +1, and when you deploy an alien, retrieve 1 Force."),
+            Map.entry("1281_25", "Deploy on Mara Jade. May add 1 to Force drain where present. During battle, Mara may use a blaster and this weapon. May target a character or creature for free. Draw two destiny. Target hit, and forfeit = 0, if total destiny > defense value.")); add ability. Loser (lower total) is lost, losing player loses 2 Force, and winning player may retrieve 2 Force."),
             Map.entry("1261_48", "USED: Cancel Disarmed or Wookiee Strangle. OR Once per battle involving Vader, reveal a device or character weapon from Used Pile and add its printed destiny number to your total power; reshuffle. LOST: Use 1 Force to ▼ (or retrieve) Vader. OR If opponent just initiated a battle against Vader defending alone at a site, his forfeit cannot be reduced."),
             Map.entry("1261_50", "USED: If you just drew a unique (•) Imperial starship for destiny, take that starship into hand to cancel and redraw that destiny. LOST: Use 3 Force to retrieve a unique (•) Imperial starship into hand."),
             Map.entry("1261_67", "Jabba's Prize is a Light Side card and does not count towards your deck limit (but subtracts one from the number of cards you may place under your Starting Effect). Reveal to opponent when deploying your Starting Effect. For remainder of game, you may not deploy [Maintenance] Falcon. Deploys only at start of game if Jabba's Prize is at Security Tower (replaces opponent's Jabba's Prize imprisoned in Security Tower); otherwise place out of play. May not be placed in Reserve Deck. Jabba's Prize is a persona of Corran Horn only while on table. If Jabba's Prize was just released or leaves table, place it out of play. While Jabba's Prize is at Audience Chamber, opponent's battle destiny draws there are +1."),
@@ -101,7 +103,10 @@ public class LegacyBatchR8B7B11VersionsTests {
             Map.entry("2250_1085", new String[]{"1250_85", "PC-E1", "Deploy on a Jedi. May add 1 to Force drain at opponent's site where present. May target a character or creature for free. Draw two destiny. If total destiny > defense value, target hit and may not be used to satisfy attrition.", "2012, 7, 21"}),
             Map.entry("2261_1016", new String[]{"1261_16", "PC-E1", "Opponent's characters are deploy +1 to same mobile site. At battlegrounds where you have a unique (•) and non-unique Imperial present (and no other bonus to your Force drain), your Force drains are +1. Tactical Support is a Used Interrupt.", "2012, 7, 21"}),
             Map.entry("2261_1029", new String[]{"1261_29", "PC-E1", "Deploy on table. Once per game, unless [Virtual] Crossfire on table (or out of play), may use 3 Force to take an Effect that deploys on a location (except Expand the Empire) into hand from Reserve Deck; reshuffle. If your character or non-[Independent Starship] starship in battle is about to be lost before the damage segment, it is instead lost at the end of battle (if forfeited, forfeit for 0). Your non-Dark Jedi characters without [Permanent Weapon] or [Maintenance] are immune to Goo Nee Tay. May not be canceled. (Immune to Alter.)", "2012, 7, 21"}),
-            Map.entry("2261_1039", new String[]{"1261_39", "PC-E1", "Deploy on table. A Jedi's Resilience may not be played during move phases. The Circle Is Now Complete or Vader's Obsession may be played during any move phase to initiate an epic duel as follows: If Vader present with specified target, each player draws two destiny (if armed with a lightsaber, each destiny is +1); add ability. Loser (lowest total) is lost, losing player loses 2 Force, and winning player may retrieve 2 Force.", "2012, 7, 21"}),
+            Map.entry("2261_1039", new String[]{"1261_39", "PC-E1", "Deploy on table. A Jedi's Resilience may not be played during move phases. The Circle Is Now Complete or Vader's Obsession may be played during any move phase to initiate an epic duel as follows: If Vader present with specified target, each player draws two destiny (if armed with a lightsaber, each destiny is +1,
+            Map.entry("2250_1065", new String[]{"1250_65", "PC-E1", "Use 1 Force to deploy up to two clones from Reserve Deck; reshuffle. OR If your clones occupy three related battlegrounds during your control phase, use 2 Force (free if on Coruscant) to retrieve any one card into hand. OR If your clone in battle, add one battle destiny.", "2012, 7, 21"}),
+            Map.entry("2261_1062", new String[]{"1261_62", "PC-E1", "This character is lost if a Starting Effect on table. Your non-alien characters at sites are power and forfeit = 0. If present at a battleground site, your Force drains at battleground sites where you have two aliens are +1, and whenever you deploy an alien, retrieve 1 Force.", "2012, 7, 21"}),
+            Map.entry("2281_1025", new String[]{"1281_25", "PC-E1", "Deploy on Mara Jade. May add 1 to Force drain where present. During battle, Mara may use a blaster and this weapon. May target a character or creature for free. Draw two destiny. Target hit, and forfeit = 0, if total destiny > defense value.", "2012, 7, 21"})); add ability. Loser (lowest total) is lost, losing player loses 2 Force, and winning player may retrieve 2 Force.", "2012, 7, 21"}),
             Map.entry("2261_1048", new String[]{"1261_48", "PC-E1", "USED: Cancel Disarmed or Wookie Strangle. OR Once per battle involving Vader, reveal a device or character weapon from Used Pile and add its printed destiny number to your total power; reshuffle. \nLOST: Use 1 Force to deploy (or retrieve) Vader from Reserve Deck; reshuffle. OR If opponent just initiated a battle against Vader defending alone at a site, his forfeit cannot be reduced.", "2012, 7, 21"}),
             Map.entry("2261_1050", new String[]{"1261_50", "PC-E1", "USED: If you just drew a unique (•) Imperial starship for destiny, take that starship into hand to cancel and redraw the destiny. LOST: Use 3 Force to retrieve a unique (•) Imperial starship into hand.", "2012, 7, 21"}),
             Map.entry("2261_1067", new String[]{"1261_67", "PC-E1", "Jabba's Prize is a Light Side card and does not count toward your deck limit (but subtracts one from the number of cards you may start under your Starting Effect). Reveal to opponent when deploying your Starting Effect. Deploys only at start of game if Jabba's Prize is at Security Tower (replaces opponent's Jabba's Prize imprisoned in Security Tower); otherwise place out of play. May not be placed in Reserve Deck. Jabba's Prize is a persona of Corran Horn only while on table. If Jabba's Prize was just released or leaves table, place it out of play. For remainder of game, you may not deploy [Maintenance] Falcon. While Jabba's Prize at Audience Chamber, opponent's battle destiny draws there are +1.", "2012, 7, 21"}),
@@ -170,7 +175,10 @@ public class LegacyBatchR8B7B11VersionsTests {
             Map.entry("2250_2085", new String[]{"1250_85", "PC-E2", "Deploy on a Jedi. May add 1 to Force drain at opponent's site where present. May target a character or creature for free. Draw two destiny. Target hit, and may not be used to satisfy attrition If total destiny > defense value.", "2013, 2, 25", "2013, 4, 27"}),
             Map.entry("2261_2016", new String[]{"1261_16", "PC-E2", "Opponent's characters are deploy +1 to same mobile site. At battlegrounds where you have a unique (•) and non-unique Imperial present (and no other Force drain bonus), your Force drains are +1. Tactical Support is a Used Interrupt.", "2013, 2, 25", "2013, 4, 27"}),
             Map.entry("2261_2029", new String[]{"1261_29", "PC-E2", "Deploy on table. Once per game, unless [Virtual] Crossfire on table (or out of play), may use 3 Force to [upload] an Effect that deploys on a location (except Expand The Empire). If your character or non-[Independent Starship] starship in battle is about to be lost before the damage segment, it is instead lost at end of battle (if forfeited, forfeit for 0). Your non-Dark Jedi characters without [Permanent Weapon] or [Maintenance] are immune to Goo Nee Tay. May not be canceled. (Immune to Alter.)", "2013, 2, 25", "2013, 4, 27"}),
-            Map.entry("2261_2039", new String[]{"1261_39", "PC-E2", "Deploy on table. A Jedi's Resilience may not be played during move phases. The Circle Is Now Complete or Vader's Obsession may be played during any move phase to initiate an epic duel as follows: If Vader present with specified target, each player draws two destiny (if armed with a lightsaber, each destiny is +1); add ability. Loser (lower total) is lost, losing player loses 2 Force, and winning player may retrieve 2 Force.", "2013, 2, 25", "2013, 4, 27"}),
+            Map.entry("2261_2039", new String[]{"1261_39", "PC-E2", "Deploy on table. A Jedi's Resilience may not be played during move phases. The Circle Is Now Complete or Vader's Obsession may be played during any move phase to initiate an epic duel as follows: If Vader present with specified target, each player draws two destiny (if armed with a lightsaber, each destiny is +1,
+            Map.entry("2250_2065", new String[]{"1250_65", "PC-E2", "Use 1 Force to deploy up to two clones from Reserve Deck; reshuffle. OR If your clones occupy three related battlegrounds during your control phase, use 2 Force (free if at Coruscant) to retrieve any one card into hand. OR If your clone in battle, add one battle destiny.", "2013, 2, 25", "2013, 4, 27"}),
+            Map.entry("2261_2062", new String[]{"1261_62", "PC-E2", "Lost if a Starting Effect on table. Your non-alien characters are power and forfeit = 0. If present at a battleground site, your Force drains at battleground sites where you have two aliens are +1, and when you deploy an alien, retrieve 1 Force.", "2013, 2, 25", "2013, 4, 27"}),
+            Map.entry("2281_2025", new String[]{"1281_25", "PC-E2", "Deploy on Mara Jade. May add 1 to Force drain where present. During battle, Mara may use a blaster and this weapon. May target a character or creature for free. Draw two destiny. Target hit, and its forfeit = 0, if total destiny > defense value.", "2013, 4, 27", "2013, 5, 7"})); add ability. Loser (lower total) is lost, losing player loses 2 Force, and winning player may retrieve 2 Force.", "2013, 2, 25", "2013, 4, 27"}),
             Map.entry("2261_2048", new String[]{"1261_48", "PC-E2", "USED: Cancel Disarmed or Wookiee Strangle. OR Once per battle involving Vader, reveal a device or character weapon from Used Pile and add its printed destiny number to your total power; reshuffle. LOST: Use 1 Force to ▼ (or retrieve) Vader. OR If opponent just initiated a battle against Vader defending alone at a site, his forfeit cannot be reduced.", "2013, 2, 25", "2013, 4, 27"}),
             Map.entry("2261_2050", new String[]{"1261_50", "PC-E2", "USED: If you just drew a unique (•) Imperial starship for destiny, take that starship into hand to cancel and redraw that destiny. LOST: Use 3 Force to retrieve a unique (•) Imperial starship into hand.", "2013, 2, 25", "2013, 4, 27"}),
             Map.entry("2261_2067", new String[]{"1261_67", "PC-E2", "Jabba's Prize is a Light Side card and does not count towards your deck limit (but subtracts one from the number of cards you may place under your Starting Effect). Reveal to opponent when deploying your Starting Effect. For remainder of game, you may not deploy [Maintenance] Falcon. Deploys only at start of game if Jabba's Prize is at Security Tower (replaces opponent's Jabba's Prize imprisoned in Security Tower); otherwise place out of play. May not be placed in Reserve Deck. Jabba's Prize is a persona of Corran Horn only while on table. If Jabba's Prize was just released or leaves table, place it out of play. While Jabba's Prize is at Audience Chamber, opponent's battle destiny draws there are +1.", "2013, 2, 25", "2013, 4, 27"}),
@@ -230,7 +238,7 @@ public class LegacyBatchR8B7B11VersionsTests {
 
     @Test
     public void RepeatPublicationsAreTheirOwnCards() {
-        assertEquals(64, REPEATS.size());
+        assertEquals(67, REPEATS.size());
         REPEATS.forEach((id, v) -> {
             SwccgCardBlueprint card = library.getSwccgoCardBlueprint(id);
             assertNotNull(id, card);
@@ -260,7 +268,7 @@ public class LegacyBatchR8B7B11VersionsTests {
 
     @Test
     public void CurrentCardsCarryTheMasterListText() {
-        assertEquals(64, CURRENT_TEXT.size());
+        assertEquals(67, CURRENT_TEXT.size());
         CURRENT_TEXT.forEach((id, text) -> {
             SwccgCardBlueprint card = library.getSwccgoCardBlueprint(id);
             assertNotNull(id, card);
@@ -272,7 +280,7 @@ public class LegacyBatchR8B7B11VersionsTests {
 
     @Test
     public void CardListTextsAreTheirOwnCards() {
-        assertEquals(65, VERSIONS.size());
+        assertEquals(68, VERSIONS.size());
         VERSIONS.forEach((id, v) -> {
             SwccgCardBlueprint card = library.getSwccgoCardBlueprint(id);
             assertNotNull(id, card);
@@ -295,6 +303,12 @@ public class LegacyBatchR8B7B11VersionsTests {
     public void ObiWanInRadiantViiCardListTitleMovesToItsVersion() {
         assertEquals("Obi-Wan In Radiant VII", library.getSwccgoCardBlueprint("1250_83").getTitle());
         assertNull(library.getSwccgoCardBlueprint("1250_83").getPrintedTitle());
+    }
+
+    @Test
+    public void AmbushAndBaragwinCardListVersionsPlayTheirOwnText() {
+        assertTrue(library.getSwccgoCardBlueprint("2250_1065") instanceof com.gempukku.swccgo.cards.set2250.light.Card2250_1065);
+        assertTrue(library.getSwccgoCardBlueprint("2261_1062") instanceof com.gempukku.swccgo.cards.set2261.light.Card2261_1062);
         assertEquals("Obi-Wan in Radiant VII", library.getSwccgoCardBlueprint("2250_1083").getPrintedTitle());
     }
 }

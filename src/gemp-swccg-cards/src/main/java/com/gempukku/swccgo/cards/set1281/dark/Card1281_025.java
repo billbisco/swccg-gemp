@@ -35,6 +35,9 @@ import java.util.List;
  * Type: Weapon
  * Subtype: Character
  * Title: Mara Jade's Lightsaber (V)
+ * Every publication is a version (Bill, 2026-11-11): the PC card image (server upload 2013-05-07, after the Master List)
+ * is the latest publication and prints the card-list words, so the current text stays the card-list text (2281_1025 is
+ * that card-list version, 2281_2025 the Master List repeat of the release-sheet words).
  */
 public class Card1281_025 extends AbstractCharacterWeapon {
     public Card1281_025() {

@@ -30,8 +30,8 @@ public class Card_1261_062_Tests {
     @Test public void BaragwinStatsMatchFinalMasterInsteadOfOriginal() {
         var scn = scenario(); var b = scn.GetLSCard("baragwin").getBlueprint();
         assertEquals("Baragwin", b.getTitle());
-        // Current card = PC card list text (PC-E1, 2012); the release-sheet text is 2261_62 (Legacy batch B32).
-        assertEquals("This character is lost if a Starting Effect on table. Your non-alien characters at sites are power and forfeit = 0. If present at a battleground site, your Force drains at battleground sites where you have two aliens are +1, and whenever you deploy an alien, retrieve 1 Force.", b.getGameText()); assertTrue(b.hasVirtualSuffix()); assertEquals(Side.LIGHT, b.getSide());
+        // Current card = Master List text (2013-04-27), which repeats the release sheet (2261_62); the card list is 2261_1062 (batch R8-B7).
+        assertEquals("Lost if a Starting Effect on table. Your non-alien characters are power and forfeit = 0. If present at a battleground site, your Force drains at battleground sites where you have two aliens are +1, and when you deploy an alien, retrieve 1 Force.", b.getGameText()); assertTrue(b.hasVirtualSuffix()); assertEquals(Side.LIGHT, b.getSide());
         assertEquals(Uniqueness.RESTRICTED_3, b.getUniqueness()); assertNull(b.getCardSubtype());
         assertEquals(3, b.getDestiny(), scn.epsilon); assertEquals(2, b.getDeployCost(), scn.epsilon);
         assertEquals(1, b.getPower(), scn.epsilon); assertEquals(2, b.getAbility(), scn.epsilon); assertEquals(5, b.getForfeit(), scn.epsilon);
@@ -71,11 +71,19 @@ public class Card_1261_062_Tests {
         assertEquals(0, scn.GetPower(scn.GetLSCard("luke"))); assertEquals(0, scn.GetForfeit(scn.GetLSCard("luke")));
     }
 
-    @Test public void BaragwinCurrentTextDoesNotResetPilotAtSystem() {
-        // PC-E1 (card list 2012): "Your non-alien characters at sites are power and forfeit = 0".
+    @Test public void CardListBaragwinDoesNotResetPilotAtSystem() {
+        // PC-E1 (card list 2012, 2261_1062): "Your non-alien characters at sites are power and forfeit = 0".
+        id = "2261_1062";
         var scn = start(true, false); var system = scn.GetLSCard("system"); scn.MoveLocationToTable(system);
         scn.MoveCardsToLocation(system, scn.GetLSCard("falcon")); scn.BoardAsPilot(scn.GetLSCard("falcon"), scn.GetLSCard("luke"));
         assertEquals(3, scn.GetPower(scn.GetLSCard("luke"))); assertEquals(7, scn.GetForfeit(scn.GetLSCard("luke")));
+    }
+
+    @Test public void CurrentBaragwinResetsPilotAtSystem() {
+        // Master List 2013-04-27 = release sheet (current; batch R8-B7, a play change): "Your non-alien characters are power and forfeit = 0".
+        var scn = start(true, false); var system = scn.GetLSCard("system"); scn.MoveLocationToTable(system);
+        scn.MoveCardsToLocation(system, scn.GetLSCard("falcon")); scn.BoardAsPilot(scn.GetLSCard("falcon"), scn.GetLSCard("luke"));
+        assertEquals(0, scn.GetPower(scn.GetLSCard("luke"))); assertEquals(0, scn.GetForfeit(scn.GetLSCard("luke")));
     }
 
     @Test public void OriginalBaragwinAlsoResetsPilotAtSystemAndRestoresPowerWhenLeavingPlay() {

@@ -6653,7 +6653,7 @@ const fixedImages = {
 "1250_59":"https://wiki.swccg.com/images/c/c0/VL-history-1250-59-master.png",
 "1250_79":"https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/alderaanconsularship.gif",
 "1261_109":"https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Light/large/dashinrogue10.gif",
-"1261_62":"https://wiki.swccg.com/images/c/c7/VB6-62-Baragwin-PC-E1-cardmaker.png",
+"1261_62":"https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Light/large/baragwin.gif",
 "1261_83":"https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Light/large/moncalamaridockyards.gif",
 "1271_19":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Dark/large/riseofthedarklord.gif",
 "1271_9":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Dark/large/combatresponse.gif",
@@ -6865,7 +6865,7 @@ const fixedImages = {
 "1250_35":"https://wiki.swccg.com/images/8/83/VL-history-1250-35-master.png",
 "1250_45":"https://wiki.swccg.com/images/3/3f/VL-history-1250-45-master.png",
 "601_163":"https://wiki.swccg.com/images/3/3f/VL-history-1250-45-master.png",
-"1250_65":"https://wiki.swccg.com/images/d/de/VB5-65-Ambush-PC-E1-cardmaker.png",
+"1250_65":"https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/ambush.gif",
 "1250_80":"https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/bravofighter.gif",
 "601_175":"https://wiki.swccg.com/images/9/96/VB5-81-Bravo_Fighter-PC-E1-cardmaker.png",
 // Batch B07 (Virtual Block 3-4): CardMaker recreations of the PC-E1 text (601_211 = current class of 1240_63 Stinger (V)).
@@ -7892,4 +7892,11 @@ const fixedImages = {
 "2281_3037":"https://wiki.swccg.com/images/5/57/VB8-03-Scoundrels_Luck.png",
 "2210_3136":"https://wiki.swccg.com/images/e/e2/VB1-137-Rycar_Ryjerd-PC-E1-cardmaker.png",
 "2282_3023":"https://wiki.swccg.com/images/4/4b/VB8-03-Found_Someone_You_Have_Higher_Ground-PC-E1-cardmaker.png",
+// R8-B7 / R8-B11 (lead 2026-11-11): Ambush (V) and Baragwin (V) current = Master List wording (play change); Mara Jade's Lightsaber (V) current = the 2013-05-07 PC card image (card-list words).
+"2250_1065":"https://wiki.swccg.com/images/d/de/VB5-65-Ambush-PC-E1-cardmaker.png",
+"2250_2065":"https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/ambush.gif",
+"2261_1062":"https://wiki.swccg.com/images/c/c7/VB6-62-Baragwin-PC-E1-cardmaker.png",
+"2261_2062":"https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Light/large/baragwin.gif",
+"2281_1025":"https://wiki.swccg.com/images/b/b1/VB8-p5-26-Mara_Jades_Lightsaber-PC-E1-cardmaker.png",
+"2281_2025":"https://wiki.swccg.com/images/8/8a/VL-history-1281-25-front-master.png",
 };

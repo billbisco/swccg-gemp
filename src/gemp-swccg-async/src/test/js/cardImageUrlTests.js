@@ -140,7 +140,7 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_34'), 'https://wiki.
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_35'), 'https://wiki.swccg.com/images/8/83/VL-history-1250-35-master.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_45'), 'https://wiki.swccg.com/images/3/3f/VL-history-1250-45-master.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_163'), 'https://wiki.swccg.com/images/3/3f/VL-history-1250-45-master.png');
-assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_65'), 'https://wiki.swccg.com/images/d/de/VB5-65-Ambush-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_65'), 'https://swccg.com/cards/legacy/VirtualBlock5-Light/large/ambush.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_80'), 'https://swccg.com/cards/legacy/VirtualBlock5-Light/large/bravofighter.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_175'), 'https://wiki.swccg.com/images/9/96/VB5-81-Bravo_Fighter-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2250_1022'), 'https://wiki.swccg.com/images/b/b9/VB5-25-With_Thunderous_Applause-PC-E1-cardmaker.png');
@@ -380,7 +380,7 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('1230_75'), 'https://wiki.
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_59'), 'https://wiki.swccg.com/images/c/c0/VL-history-1250-59-master.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_79'), 'https://swccg.com/cards/legacy/VirtualBlock5-Light/large/alderaanconsularship.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_109'), 'https://swccg.com/cards/legacy/VirtualBlock6-Light/large/dashinrogue10.gif');
-assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_62'), 'https://wiki.swccg.com/images/c/c7/VB6-62-Baragwin-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_62'), 'https://swccg.com/cards/legacy/VirtualBlock6-Light/large/baragwin.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_83'), 'https://swccg.com/cards/legacy/VirtualBlock6-Light/large/moncalamaridockyards.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1271_19'), 'https://swccg.com/cards/legacy/VirtualBlock7-Dark/large/riseofthedarklord.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1271_9'), 'https://swccg.com/cards/legacy/VirtualBlock7-Dark/large/combatresponse.gif');
@@ -1140,3 +1140,10 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_3032'), 'https://wik
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_3037'), 'https://wiki.swccg.com/images/5/57/VB8-03-Scoundrels_Luck.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2210_3136'), 'https://wiki.swccg.com/images/e/e2/VB1-137-Rycar_Ryjerd-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2282_3023'), 'https://wiki.swccg.com/images/4/4b/VB8-03-Found_Someone_You_Have_Higher_Ground-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_25'), 'https://swccg.com/cards/legacy/VirtualBlock8-Dark/large/marajadeslightsaber.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2250_1065'), 'https://wiki.swccg.com/images/d/de/VB5-65-Ambush-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2250_2065'), 'https://swccg.com/cards/legacy/VirtualBlock5-Light/large/ambush.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_1062'), 'https://wiki.swccg.com/images/c/c7/VB6-62-Baragwin-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_2062'), 'https://swccg.com/cards/legacy/VirtualBlock6-Light/large/baragwin.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_1025'), 'https://wiki.swccg.com/images/b/b1/VB8-p5-26-Mara_Jades_Lightsaber-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_2025'), 'https://wiki.swccg.com/images/8/8a/VL-history-1281-25-front-master.png');
