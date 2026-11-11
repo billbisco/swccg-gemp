@@ -52,13 +52,15 @@ import java.util.Set;
  * Type: Interrupt
  * Subtype: Used Or Lost
  * Title: Weapon Levitation & The Empire's Back
+ * Every publication is a version (Bill, 2026-11-11): the Virtual Cards Master List (2013-04-27, PC-E2) repeats the
+ * release-sheet wording word for word (2261_48) and is the current text; the PC website card-list text
+ * (PC-E1) is 2261_1048. Same play.
  */
 public class Card601_098 extends AbstractUsedOrLostInterrupt {
     public Card601_098() {
         super(Side.DARK, 4, "Weapon Levitation & The Empire's Back", Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
         addComboCardTitles("Weapon Levitation", "The Empire's Back");
-        setGameText("USED: Cancel Disarmed or Wookie Strangle. OR Once per battle involving Vader, reveal a device or character weapon from Used Pile and add its printed destiny number to your total power; reshuffle. \n" +
-                "LOST: Use 1 Force to deploy (or retrieve) Vader from Reserve Deck; reshuffle. OR If opponent just initiated a battle against Vader defending alone at a site, his forfeit cannot be reduced.");
+        setGameText("USED: Cancel Disarmed or Wookiee Strangle. OR Once per battle involving Vader, reveal a device or character weapon from Used Pile and add its printed destiny number to your total power; reshuffle. LOST: Use 1 Force to ▼ (or retrieve) Vader. OR If opponent just initiated a battle against Vader defending alone at a site, his forfeit cannot be reduced.");
         addIcons(Icon.CLOUD_CITY, Icon.LEGACY_BLOCK_6);
         setAsLegacy(true);
     }

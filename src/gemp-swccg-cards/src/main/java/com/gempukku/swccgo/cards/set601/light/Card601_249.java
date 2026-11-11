@@ -30,13 +30,15 @@ import java.util.List;
  * Current text: the PC website card list (2012-07-21 to 2013-01-11, PC-E1), which drops the quote marks around 'cloak'
  * and prints the title "Obi-Wan in Radiant VII" (small i). The release-sheet original is 2250_83 (batch C1,
  * swccg-guild/work#236).
+ * Every publication is a version (Bill, 2026-11-11): the Virtual Cards Master List (2013-04-27, PC-E2) repeats the
+ * release-sheet wording word for word (2250_83) and is the current text; the PC website card-list text
+ * (PC-E1) is 2250_1083. Same play.
  */
 public class Card601_249 extends AbstractStarfighter {
     public Card601_249() {
         super(Side.LIGHT, 2, 5, 4, 4, null, 4, 6, "Obi-Wan In Radiant VII", Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
         setLore("Optimized for diplomatic missions with sensor-proof pods that have ejection capabilities. Easily identified by its red coloration.");
-        setGameText("May add 1 pilot. Permanent pilot is •Obi-Wan, who provides ability of 6. Opponent's starships may not cloak. Your total ability here may not be reduced.");
-        setBasePrintingTitle("Obi-Wan in Radiant VII"); // display only: the card-list title of PC-E1; rules use the title above
+        setGameText("May add 1 pilot. Permanent pilot is •Obi-Wan, who provides ability of 6. Opponent's starships may not 'cloak'. Your total ability here may not be reduced.");
         addPersona(Persona.RADIANT_VII);
         addIcons(Icon.CORUSCANT, Icon.EPISODE_I, Icon.REPUBLIC, Icon.PILOT, Icon.NAV_COMPUTER, Icon.LEGACY_BLOCK_5);
         addModelType(ModelType.CORELLIAN_REPUBLIC_CRUISER);

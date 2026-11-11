@@ -41,7 +41,7 @@ public final class VersionAsserts {
                                      String label, LocalDate printedOn, LocalDate supersededOn, String gameText) {
         assertEquals(gameText, version.getGameText());
         if (!com.gempukku.swccgo.cards.LegacyRepeatedTexts.isRepeatedByCurrent(version.getLegacyVersion()))
-            assertFalse(gameText.equals(current.getGameText()));
+            assertTrue(com.gempukku.swccgo.cards.LegacyVersionAssertions.differsOrIsRepeatedByTheCurrentCard(current, version));
         assertIdentity(version, current, currentPrintingId, label, printedOn, supersededOn, true, current.getCardSubtype());
     }
 
@@ -51,7 +51,7 @@ public final class VersionAsserts {
                                      CardSubtype versionSubtype) {
         assertEquals(gameText, version.getGameText());
         if (!com.gempukku.swccgo.cards.LegacyRepeatedTexts.isRepeatedByCurrent(version.getLegacyVersion()))
-            assertFalse(gameText.equals(current.getGameText()));
+            assertTrue(com.gempukku.swccgo.cards.LegacyVersionAssertions.differsOrIsRepeatedByTheCurrentCard(current, version));
         assertIdentity(version, current, currentPrintingId, label, printedOn, supersededOn, true, versionSubtype);
     }
 
@@ -65,7 +65,7 @@ public final class VersionAsserts {
                                              String versionLore, Keyword... currentOnlyKeywords) {
         assertEquals(gameText, version.getGameText());
         if (!com.gempukku.swccgo.cards.LegacyRepeatedTexts.isRepeatedByCurrent(version.getLegacyVersion()))
-            assertFalse(gameText.equals(current.getGameText()));
+            assertTrue(com.gempukku.swccgo.cards.LegacyVersionAssertions.differsOrIsRepeatedByTheCurrentCard(current, version));
         assertEquals(versionLore, version.getLore());
         assertIdentity(version, current, currentPrintingId, label, printedOn, supersededOn, true, current.getCardSubtype(), false, currentOnlyKeywords);
     }

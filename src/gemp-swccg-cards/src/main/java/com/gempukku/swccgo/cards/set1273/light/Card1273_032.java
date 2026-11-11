@@ -38,12 +38,15 @@ import java.util.List;
  * Set: Virtual Block 7.3
  * Type: Effect
  * Title: Bacta Infirmary
+ * Every publication is a version (Bill, 2026-11-11): the Virtual Cards Master List (2013-04-27, PC-E2) repeats the
+ * release-sheet wording word for word (2273_32) and is the current text; the PC website card-list text
+ * (PC-E1) is 2273_1032. Same play.
  */
 public class Card1273_032 extends AbstractNormalEffect {
     public Card1273_032() {
         super(Side.LIGHT, 3, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Bacta Infirmary", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_3, Rarity.V);
         setLore("Medical wonder invented centuries ago by the Vratix insectoid species. Gelatinous red bacta is suspended in a synthetic solution to create a healing bacterial medium.");
-        setGameText("If Center of Tyranny on Table, deploy on table. Insurrection is lost. Rogue Squadron pilots of ability < 3 are forfeit +1 and if lost from table, may be placed here. During your control phase may use 2 force to take a character here into hand. (Immune to Alter.)");
+        setGameText("If Center Of Tyranny on table, deploy on table. Insurrection is lost. Rogue Squadron pilots of ability < 3 are forfeit +1 and, if just lost from table, may be placed here. During your control phase, may use 2 Force to take any character from here into hand. [Immune to Alter.]");
         addImmuneToCardTitle(Title.Alter);
     }
 

@@ -2,9 +2,6 @@ package com.gempukku.swccgo.cards.set2261.light;
 
 import com.gempukku.swccgo.cards.set1261.light.Card1261_062;
 import com.gempukku.swccgo.common.LegacyVersion;
-import com.gempukku.swccgo.filters.Filter;
-import com.gempukku.swccgo.filters.Filters;
-import com.gempukku.swccgo.game.PhysicalCard;
 
 import java.time.LocalDate;
 
@@ -24,9 +21,4 @@ public class Card2261_062 extends Card1261_062 {
                 "Virtual Block 6.1 release sheet (2009-09-04)", LocalDate.of(2009, 9, 4), LocalDate.of(2012, 7, 21)));
     }
 
-    /** The release-sheet text resets all your non-alien characters, not only those at sites. */
-    @Override
-    protected Filter nonAliensReset(PhysicalCard self) {
-        return Filters.and(Filters.your(self), Filters.character, Filters.not(Filters.alien));
-    }
 }

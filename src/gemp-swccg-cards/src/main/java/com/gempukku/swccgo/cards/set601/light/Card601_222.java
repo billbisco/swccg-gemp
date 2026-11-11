@@ -32,13 +32,16 @@ import java.util.List;
  * Type: Character
  * Subtype: Rebel
  * Title: Derek 'Hobbie' Klivian (V)
+ * Every publication is a version (Bill, 2026-11-11): the Virtual Cards Master List (2013-04-27, PC-E2) repeats the
+ * release-sheet wording word for word (2273_24) and is the current text; the PC website card-list text
+ * (PC-E1) is 2273_1024. Same play.
  */
 public class Card601_222 extends AbstractRebel {
     public Card601_222() {
         super(Side.LIGHT, 2, 2, 2, 2, 4, Title.Hobbie, Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
         setVirtualSuffix(true);
         setLore("Defected from the Empire with Biggs Darklighter. Aided in mutiny aboard the transport Rand Ecliptic. Served in the Ecliptic Evaders. Luke's wingman at the Battle of Hoth.");
-        setGameText("Adds 2 to power of anything he pilots. While piloting Rogue 4 (or any X-Wing), draws one battle destiny if unable to otherwise. Permanent weapon is Rogue Blaster (may target a character or creature for free; draw destiny; target hit and it's forfeit = 0, if destiny + 1 > defense value).");
+        setGameText("[Pilot] 2. While piloting Rogue 4 (or any X-wing), draws one battle destiny if unable to otherwise. Permanent weapon is Rogue Blaster (may target a character or creature for free; draw destiny; target hit, and its forfeit = 0, if destiny +1 > defense value).");
         addIcons(Icon.HOTH, Icon.PILOT, Icon.WARRIOR, Icon.PERMANENT_WEAPON, Icon.LEGACY_BLOCK_7);
         addKeywords(Keyword.ROGUE_SQUADRON);
         setMatchingVehicleFilter(Filters.Rogue_4);

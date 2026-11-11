@@ -33,14 +33,16 @@ import java.util.List;
  * Type: Interrupt
  * Subtype: Used or Starting
  * Title: Don't Underestimate Our Chances (V)
+ * Every publication is a version (Bill, 2026-11-11): the Virtual Cards Master List (2013-04-27, PC-E2) repeats the
+ * release-sheet wording word for word (2261_94) and is the current text; the PC website card-list text
+ * (PC-E1) is 2261_1094. Same play.
  */
 public class Card601_258 extends AbstractUsedOrStartingInterrupt {
     public Card601_258() {
         super(Side.LIGHT, 4, Title.Dont_Underestimate_Our_Chances, Uniqueness.UNRESTRICTED, ExpansionSet.LEGACY, Rarity.V);
         setVirtualSuffix(true);
         setLore("'Stand-by alert. Death Star approaching. Estimated time to firing range, fifteen minutes.'");
-        setGameText("USED: Initiate a battle for free. " +
-                "STARTING: If Dantooine Operations on table, deploy from Reserve Deck Operations Center, Dantooine Engineering Corps, and up to two Effects which deploy on table (or your side of table), are always [Immune to Alter], and have no deploy cost. Place this Interrupt in Lost Pile.");
+        setGameText("USED: Initiate a battle for free. STARTING: If Dantooine Base Operations on table, ▼ Operations Center, Dantooine Engineering Corps, and up to two Effects which deploy on table (or your side of table), are always [Immune to Alter], and have no deploy cost. Place this Interrupt in Lost Pile.");
         addIcons(Icon.LEGACY_BLOCK_6);
         setAsLegacy(true);
     }

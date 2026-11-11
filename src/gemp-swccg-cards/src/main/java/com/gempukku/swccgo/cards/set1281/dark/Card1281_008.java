@@ -33,13 +33,16 @@ import java.util.List;
  * Set: Virtual Block 8.1
  * Type: Device
  * Title: Jet Pack (V)
+ * Every publication is a version (Bill, 2026-11-11): the Virtual Cards Master List (2013-04-27, PC-E2) repeats the
+ * release-sheet wording word for word (2281_8) and is the current text; the PC website card-list text
+ * (PC-E1) is 2281_1008. Same play.
  */
 public class Card1281_008 extends AbstractCharacterDevice {
     public Card1281_008() {
         super(Side.DARK, 4, Title.Jet_Pack, Uniqueness.RESTRICTED_3, ExpansionSet.VIRTUAL_BLOCK_8_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("Mitrinomon Z-6 jet pack. Exhaust vents are used to maneuver in midflight. Gyro-stabilizer automatically applies counterthrust when landing.");
-        setGameText("Use 2 Force to deploy on your alien warrior (free Jodo Kast or any Fett). Character 'flies' (landspeed = 3 and maneuver = 6), may fire weapons for free, and may move as a 'react' for +1 Force.");
+        setGameText("Use 2 Force to deploy on your alien warrior (free on Jodo Kast or any Fett). Character 'flies' (landspeed = 3 and maneuver = 6), may fire weapons for free, and may move as a 'react' for +1 Force.");
     }
 
     @Override

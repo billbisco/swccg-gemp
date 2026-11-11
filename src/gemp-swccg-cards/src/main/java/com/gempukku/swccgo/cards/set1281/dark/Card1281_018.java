@@ -64,11 +64,14 @@ import java.util.List;
  * Set: Virtual Block 8.1
  * Type: Epic Event
  * Title: Give Yourself To The Dark Side
+ * Every publication is a version (Bill, 2026-11-11): the Virtual Cards Master List (2013-04-27, PC-E2) repeats the
+ * release-sheet wording word for word (2281_18) and is the current text; the PC website card-list text
+ * (PC-E1) is 2281_1018. Same play.
  */
 public class Card1281_018 extends AbstractEpicEventDeployable {
     public Card1281_018() {
         super(Side.DARK, 0, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Give Yourself To The Dark Side", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_1, Rarity.V);
-        setGameText("If Bring Him Before Me on table, play instead of a Starting Interrupt. Deploy an Endor site and two always (Immune to Alter) Effects from Reserve Deck; reshuffle. Deploy on table; may take and stack Son of Vader here from Reserve Deck; reshuffle. A Powerful Ally: While Son of Vader on table, Jedi, Rebels, and Rebel Starships lose all immunity to attrition and opponent loses 1 Force at the end of each turn. When Son Of Vader leaves table, stack him here. If Luke crossed over, Your Destiny is lost and may deploy (or persona replace) Son of Vader as if from hand.");
+        setGameText("If Bring Him Before Me on table, play instead of a Starting Interrupt. ▼ an Endor site and two always-[Immune to Alter] Effects. Deploy on table; may ▲ and stack Son Of Vader here. A Powerful Ally: While Son Of Vader on table, Jedi, Rebels, and Rebel starships lose all immunity to attrition and opponent loses 1 Force at the end of each turn. When Son Of Vader leaves table, stack him here. If Luke crossed over, Your Destiny is lost and may deploy (or persona replace) Son Of Vader from here as if from hand.");
         addIcons(Icon.DEATH_STAR_II);
     }
 

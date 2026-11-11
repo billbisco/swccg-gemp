@@ -34,13 +34,16 @@ import java.util.List;
  * Type: Character
  * Subtype: Alien
  * Title: Het Nkik (V)
+ * Every publication is a version (Bill, 2026-11-11): the Virtual Cards Master List (2013-04-27, PC-E3) repeats the
+ * release-sheet wording word for word (2281_29) and is the current text; the PC website card-list text
+ * (PC-E2) is 2281_2029. Same play.
  */
 public class Card1281_029 extends AbstractAlien {
     public Card1281_029() {
         super(Side.LIGHT, 3, 2, 1, 2, 3, "Het Nkik", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("Jawa scout. Wants to avenge deaths of relatives killed in stormtrooper assault on sandcrawler. Reegesk pilfered the powerpack from his blaster at a critical moment.");
-        setGameText("Deploys only on Tatooine. While with another Jawa, your Force drains and Force drain bonuses here may not be canceled. During your control phase, may draw X cards from Reserve Deck, where X = the number of deserts you control with a Jawa.");
+        setGameText("Deploys only on Tatooine. While with another Jawa, your Force drains and Force drain bonuses here may not be canceled. During your control phase, may draw X cards from Reserve Deck, where X = number of deserts you control with a Jawa.");
         addKeywords(Keyword.SCOUT);
         setSpecies(Species.JAWA);
         addPersona(Persona.HET);

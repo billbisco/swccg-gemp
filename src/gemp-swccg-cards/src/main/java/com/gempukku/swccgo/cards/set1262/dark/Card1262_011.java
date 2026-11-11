@@ -40,6 +40,9 @@ import java.util.List;
  * Set: Virtual Block 6.2
  * Type: Effect
  * Title: So Be It, Jedi
+ * Every publication is a version (Bill, 2026-11-11): the Virtual Cards Master List (2013-04-27, PC-E2) repeats the
+ * release-sheet wording word for word (2262_11) and is the current text; the PC website card-list text
+ * (PC-E1) is 2262_1011. Same play.
  */
 public class Card1262_011 extends AbstractNormalEffect {
     public static final String SO_BE_IT_JEDI = "So Be It, Jedi";
@@ -48,7 +51,7 @@ public class Card1262_011 extends AbstractNormalEffect {
     public Card1262_011() {
         super(Side.DARK, 5, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, SO_BE_IT_JEDI, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_6_2, Rarity.V);
         setLore("'Now, young Skywalker ... you will die.'");
-        setGameText("Deploy on table. When Luke dpeloys using your Objective, he deploys to Vader's site (if possible). Duels initiated with your Objective may not be canceled. Once per game, may take Rise, My Friend into hand from Reserve Deck; reshuffle. If this Effect canceled by opponent, stack it on Insignificant Rebellion.");
+        setGameText("Deploy on table. When Luke deploys using your Objective, he deploys to Vader's site (if possible). Duels initiated with your Objective may not be canceled. Once per game, may ▲ Rise, My Friend. If this Effect canceled by opponent, stack it on Insignificant Rebellion.");
         addIcons(Icon.DEATH_STAR_II);
     }
 

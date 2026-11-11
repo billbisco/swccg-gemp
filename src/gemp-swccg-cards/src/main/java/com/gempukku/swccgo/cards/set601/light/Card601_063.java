@@ -38,13 +38,15 @@ import java.util.List;
  * Type: Interrupt
  * Subtype: Used
  * Title: Yub Yub, Commander
+ * Every publication is a version (Bill, 2026-11-11): the Virtual Cards Master List (2013-04-27, PC-E2) repeats the
+ * release-sheet wording word for word (2273_35) and is the current text; the PC website card-list text
+ * (PC-E1) is 2273_1035. Same play.
  */
 public class Card601_063 extends AbstractUsedOrLostInterrupt {
     public Card601_063() {
         super(Side.LIGHT, 5, "Yub Yub, Commander", Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
         setLore("");
-        setGameText("USED: Deploy a Rogue Squadron pilot to a location you occupy with a Rogue Squadron pilot from Reserve Deck; reshuffle. \n" +
-                "LOST: Cancel an attempt by opponent to target a Rogue Sqaudron pilot to be captured or excluded from battle. Or if two Rogue Squadron pilots are in battle together, add one battle destiny.");
+        setGameText("USED: ▼ a Rogue Squadron pilot to a location you occupy with a Rogue Squadron pilot. LOST: Cancel an attempt by opponent to target a Rogue Squadron pilot to be captured or excluded from battle. OR If two Rogue Squadron pilots are in battle together, add one battle destiny.");
         addIcons(Icon.LEGACY_BLOCK_7, Icon.ENDOR);
         setAsLegacy(true);
     }

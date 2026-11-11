@@ -160,6 +160,6 @@ public class Card_1281_016_Tests {
     @Test
     public void AbyssinOrnamentCurrentCardIsTheLatestText() {
         assertCurrentCard("1281_16", "Abyssin Ornament",
-                "USED: Cancel an attempt to target your non-droid assassin (or a starship piloted by one) with a weapon. LOST: Use 1 Force to take a just lost non-droid assassin into hand.");
+                "USED: Cancel an attempt to target your non-droid assassin (or a starship piloted by a non-droid assassin) with a weapon. LOST: Use 1 Force to take a just-lost non-droid assassin into hand.");
     }
 }

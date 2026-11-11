@@ -251,6 +251,6 @@ public class Card_1282_026_Tests {
     @Test
     public void UnderJabbaSProtectionCurrentCardIsTheLatestText() {
         assertCurrentCard("1282_26", "Under Jabba's Protection",
-                "When you play this Interrupt, may place a Rep on your objective in Used Pile. Lose X cards stacked on I Know That Laugh to reduce a weapon or battle destiny total by X. OR Use 1 Force to: take a card stacked on I Know That Laugh in hand (or stack top card of lost pile on it).");
+                "When you play this Interrupt, may place a Rep on your Objective in Used Pile. Lose X cards stacked on I Know That Laugh to reduce a weapon or battle destiny total by X. OR Use 1 Force to take a card stacked on I Know That Laugh into hand (or stack top card of Lost Pile on it).");
     }
 }

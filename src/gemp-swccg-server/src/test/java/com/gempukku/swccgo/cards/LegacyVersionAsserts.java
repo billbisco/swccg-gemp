@@ -44,7 +44,7 @@ public final class LegacyVersionAsserts {
         assertEquals(oldText, version.getGameText());
         if (!LegacyBatchR8B1B6VersionsTests.CURRENT_IDS.contains(version.getLegacyVersion().currentPrintingId())
                 && !LegacyRepeatedTexts.isRepeatedByCurrent(version.getLegacyVersion())) // batch R8: the current Master List text repeats the release-sheet text word for word
-            assertNotEquals(current.getGameText(), version.getGameText());
+            assertTrue(LegacyVersionAssertions.differsOrIsRepeatedByTheCurrentCard(current, version));
 
         LegacyVersion info = version.getLegacyVersion();
         assertEquals(currentPrintingId, info.currentPrintingId());

@@ -45,6 +45,9 @@ import java.util.List;
  * Type: Character
  * Subtype: Alien
  * Title: Bossk With Mortar Gun (V)
+ * Every publication is a version (Bill, 2026-11-11): the Virtual Cards Master List (2013-04-27, PC-E2) repeats the
+ * release-sheet wording word for word (2281_4) and is the current text; the PC website card-list text
+ * (PC-E1) is 2281_1004. Same play.
  */
 public class Card1281_004 extends AbstractAlien {
     public Card1281_004() {
@@ -52,7 +55,7 @@ public class Card1281_004 extends AbstractAlien {
         setVirtualSuffix(true);
         setArmor(4);
         setLore("Trandoshan assassin and slaver.");
-        setGameText("Adds 2 to the power of anything he pilots. May not be targeted by weapons unless your other slavers present are each 'hit'. Permanent weapon is •Bossk's Mortar Gun (may target a character for free. Draw destiny. Target hit and forfeit =0, if destiny matches target's destiny number).");
+        setGameText("Adds 2 to the power of anything he pilots. May not be targeted by weapons unless your other slavers present are each 'hit.' Permanent weapon is •Bossk's Mortar Gun (may target a character for free; draw destiny; target hit, and its forfeit = 0, if destiny = target's destiny number).");
         addPersona(Persona.BOSSK);
         addIcons(Icon.PILOT, Icon.WARRIOR, Icon.PERMANENT_WEAPON);
         addKeywords(Keyword.ASSASSIN, Keyword.SLAVER);

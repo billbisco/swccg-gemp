@@ -43,13 +43,16 @@ import java.util.List;
  * Type: Effect
  * Subtype: Immediate
  * Title: Desperate Counter (V)
+ * Every publication is a version (Bill, 2026-11-11): the Virtual Cards Master List (2013-04-27, PC-E2) repeats the
+ * release-sheet wording word for word (2274_5) and is the current text; the PC website card-list text
+ * (PC-E1) is 2274_1005. Same play.
  */
 public class Card1274_005 extends AbstractImmediateEffect {
     public Card1274_005() {
         super(Side.DARK, 5, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Desperate Counter", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_4, Rarity.V);
         setVirtualSuffix(true);
         setLore("The Empire relied on the skill of its pilot corps to defend the Death Star reactor core from attack.");
-        setGameText("Unless Imperial Propaganda on table, if you are about to lose Force during opponent's control phase, deploy on table to reduce loss by 4 (ignore other modifiers); opponent may immediately take any one card into hand from Reserve Deck; reshuffle. [Immune to Control]. OR Use 2 Force to deploy on table and stack one just-played interrupt here.");
+        setGameText("Unless Imperial Propaganda on table, if you are about to lose Force during opponent's control phase, deploy on table to reduce loss by 4 (ignore other modifiers); opponent may [upload] any one card. [Immune to Control.] OR Use 2 Force to deploy on table and stack a just-played Interrupt here.");
         addIcons(Icon.DEATH_STAR_II, Icon.GRABBER);
         addImmuneToCardTitle(Title.Control);
     }

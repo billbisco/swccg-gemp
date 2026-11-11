@@ -37,12 +37,15 @@ import java.util.List;
  * Set: Virtual Block 7.4
  * Type: Effect
  * Title: Shadows Of The Empire
+ * Every publication is a version (Bill, 2026-11-11): the Virtual Cards Master List (2013-04-27, PC-E2) repeats the
+ * release-sheet wording word for word (2274_8) and is the current text; the PC website card-list text
+ * (PC-E1) is 2274_1008. Same play.
  */
 public class Card1274_008 extends AbstractNormalEffect {
     public Card1274_008() {
         super(Side.DARK, 5, PlayCardZoneOption.ATTACHED, "Shadows Of The Empire", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_4, Rarity.V);
         setLore("Imposing. Ominous. Intimidating. Instrument for the evil Emperor's sinister reach across the galaxy. Used on a secret frequency of the Imperial HoloNet.");
-        setGameText("Deploy on Agents Of Black Sun. Mistryl are lost. Once per game may take Secret Plans from Reserve Deck; reshuffle. May use 3 Force to deploy Imperial Square from Reserve Deck; reshuffle, and while Emperor Palpatine there, once per turn, may draw a card from Force Pile (and if you occupy three battlegrounds, opponent loses 1 Force). (Immune to Alter.)");
+        setGameText("Deploy on Agents Of Black Sun. Mistryl are lost. Once per game, may [upload] Secret Plans. May use 3 Force to [download] Imperial Square, and once per turn, if Emperor Palpatine there, may draw a card from Force Pile (and if you occupy three battlegrounds, opponent loses 1 Force). [Immune to Alter.]");
         addIcons(Icon.DAGOBAH);
         addImmuneToCardTitle(Title.Alter);
     }

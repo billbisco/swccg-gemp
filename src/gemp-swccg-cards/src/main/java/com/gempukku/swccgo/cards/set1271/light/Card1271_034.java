@@ -23,11 +23,14 @@ import java.util.List;
  * Type: Character
  * Subtype: Rebel
  * Title: Princess Leia, Lost Scion
+ * Every publication is a version (Bill, 2026-11-11): the Virtual Cards Master List (2013-04-27, PC-E2) repeats the
+ * release-sheet wording word for word (2271_34) and is the current text; the PC website card-list text
+ * (PC-E1) is 2271_1034. Same play.
  */
 public class Card1271_034 extends AbstractRebel {
     public Card1271_034() {
         super(Side.LIGHT, 1, 5, 4, 5, 8, "Princess Leia, Lost Scion", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_1, Rarity.V);
-        setGameText("While present at a battleground, Their Fire Has Gone Out Of The Universe flips and may not flip back. While armed with Anakin's Lightsaber, her forfeit may not be reduced. Immune to attrition < 4.");
+        setGameText("While present at a battleground, Their Fire Has Gone Out Of The Universe flips and may not flip back. While armed with Anakin's Lightsaber, Leia's forfeit may not be reduced. Immune to attrition < 4.");
         addPersona(Persona.LEIA);
         addIcons(Icon.PILOT, Icon.WARRIOR, Icon.CLOUD_CITY);
         addKeywords(Keyword.FEMALE);

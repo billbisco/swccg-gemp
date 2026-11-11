@@ -157,8 +157,6 @@ public class Card_1273_032_Tests {
     @Test
     public void BactaInfirmaryShowsTheLatestText() {
         String t = com.gempukku.swccgo.framework.VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("1273_32").getGameText();
-        org.junit.Assert.assertEquals("If Center of Tyranny on Table, deploy on table. Insurrection is lost. Rogue Squadron pilots of ability < 3 are forfeit +1 and if lost from table, may be placed here. During your control phase may use 2 force to take a character here into hand. (Immune to Alter.)", t);
-        org.junit.Assert.assertFalse(t.contains("if just lost from table"));
-        org.junit.Assert.assertFalse(t.contains("any character from here"));
+        org.junit.Assert.assertEquals("If Center Of Tyranny on table, deploy on table. Insurrection is lost. Rogue Squadron pilots of ability < 3 are forfeit +1 and, if just lost from table, may be placed here. During your control phase, may use 2 Force to take any character from here into hand. [Immune to Alter.]", t);
     }
 }

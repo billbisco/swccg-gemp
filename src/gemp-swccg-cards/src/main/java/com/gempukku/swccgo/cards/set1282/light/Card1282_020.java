@@ -35,13 +35,16 @@ import java.util.List;
  * Set: Virtual Block 8.2
  * Type: Effect
  * Title: A Remote Planet (V)
+ * Every publication is a version (Bill, 2026-11-11): the Virtual Cards Master List (2013-04-27, PC-E2) repeats the
+ * release-sheet wording word for word (2282_20) and is the current text; the PC website card-list text
+ * (PC-E1) is 2282_1020. Same play.
  */
 public class Card1282_020 extends AbstractNormalEffect {
     public Card1282_020() {
         super(Side.LIGHT, 5, PlayCardZoneOption.ATTACHED, "A Remote Planet", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_2, Rarity.V);
         setVirtualSuffix(true);
         setLore("In unfamiliar and potentially hostile territory, Qui-Gon knew that success would require patience and caution.");
-        setGameText("Deploy on The Hyperdrive Generator's Gone: treat '4' on it as '2'. Your Force generation at City Outskirts is +1. May deploy systems regardless of your Objective deployment restrictions. Once per game, may deploy Qui-Gon or Obi-Wan (an/or their matching weapon_ from Reserve Deck; reshuffle. (Immune to Alter.)");
+        setGameText("Deploy on The Hyperdrive Generator's Gone; treat \"4\" on it as \"2.\" Your Force generation at City Outskirts is +1. May deploy systems regardless of your Objective deployment restrictions. Once per game, may ▼ Qui-Gon or Obi-Wan (and/or their matching weapon). (Immune to Alter.)");
         addIcons(Icon.EPISODE_I, Icon.SETUP);
         addImmuneToCardTitle(Title.Alter);
     }

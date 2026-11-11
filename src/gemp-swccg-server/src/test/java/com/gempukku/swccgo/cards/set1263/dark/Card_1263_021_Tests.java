@@ -143,8 +143,7 @@ public class Card_1263_021_Tests {
                 com.gempukku.swccgo.framework.StartingSetup.NoLSShields, com.gempukku.swccgo.framework.StartingSetup.NoDSShields,
                 com.gempukku.swccgo.framework.VirtualTableScenario.Open);
         var text = scn.GetDSCard("c").getBlueprint().getGameText();
-        org.junit.Assert.assertEquals("Deploys -1 to same site as your MTT. AT-AT Cannon may deploy aboard, and targets it hits cannot be used to satisfy attrition. Unless alone, draws one battle destiny if not able to otherwise.", text);
-        org.junit.Assert.assertFalse(text.contains("may not be used"));
+        org.junit.Assert.assertEquals("Deploys -1 to same site as your MTT. AT-AT Cannon may deploy aboard, and targets it hits may not be used to satisfy attrition. Unless alone, draws one battle destiny if not able to otherwise.", text);
         org.junit.Assert.assertNull(scn.GetDSCard("c").getBlueprint().getLegacyVersion());
     }
 }

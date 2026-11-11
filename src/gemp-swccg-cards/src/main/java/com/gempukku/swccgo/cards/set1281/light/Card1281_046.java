@@ -31,11 +31,14 @@ import java.util.List;
  * Type: Weapon
  * Subtype: Character
  * Title: Han's Blaster, So Uncivilized
+ * Every publication is a version (Bill, 2026-11-11): the Virtual Cards Master List (2013-04-27, PC-E3) repeats the
+ * release-sheet wording word for word (2281_46) and is the current text; the PC website card-list text
+ * (PC-E2) is 2281_2046. Same play.
  */
 public class Card1281_046 extends AbstractCharacterWeapon {
     public Card1281_046() {
         super(Side.LIGHT, 3, "Han's Blaster, So Uncivilized", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_1, Rarity.V);
-        setGameText("Deploy on Han. I've Got a Bad Feeling About This is canceled. When fired, Han is cumulatively power +1 until end of turn. May target a character or creature for free. Draw destiny. Target hit, forfeit = 0 and opponent loses 1 Force if destiny +1 > defense value.");
+        setGameText("Deploy on Han. I've Got A Bad Feeling About This is canceled. When fired, Han is cumulatively power +1 until end of turn. May target a character or creature for free. Draw destiny. Target hit, its forfeit = 0 and opponent loses 1 Force if destiny +1 > defense value.");
         addKeywords(Keyword.BLASTER);
         setMatchingCharacterFilter(Filters.Han);
     }

@@ -33,11 +33,14 @@ import java.util.List;
  * Type: Character
  * Subtype: Rebel
  * Title: Captain Antilles
+ * Every publication is a version (Bill, 2026-11-11): the Virtual Cards Master List (2013-04-27, PC-E2) repeats the
+ * release-sheet wording word for word (2273_23) and is the current text; the PC website card-list text
+ * (PC-E1) is 2273_1023. Same play.
  */
 public class Card1273_023 extends AbstractRebel {
     public Card1273_023() {
         super(Side.LIGHT, 3, 2, 2, 2, 4, "Captain Antilles", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_3, Rarity.V);
-        setGameText("Adds 2 to the power of anything he pilots, 3: any corvette. While piloting a corvette it is immune to attrition <5 and, once per turn, may peek at a card in opponent's hand. Once per game, during battle (unless Vader here) may use 2 force to move ship away (for free).");
+        setGameText("[Pilot] 2, 3: any corvette. While piloting a corvette, it is immune to attrition < 5 and, once per turn, may peek at a card in opponent's hand. Once per game, during battle (unless Vader here) may use 2 Force to move starship he pilots away (for free).");
         addIcons(Icon.PILOT);
         addKeywords(Keyword.CAPTAIN);
         setMatchingStarshipFilter(Filters.corvette);

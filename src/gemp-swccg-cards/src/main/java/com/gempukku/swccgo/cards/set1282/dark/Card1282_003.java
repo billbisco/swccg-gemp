@@ -32,13 +32,16 @@ import java.util.List;
  * Set: Virtual Block 8.2
  * Type: Effect
  * Title: You May Start Your Landing (V)
+ * Every publication is a version (Bill, 2026-11-11): the Virtual Cards Master List (2013-04-27, PC-E2) repeats the
+ * release-sheet wording word for word (2282_3) and is the current text; the PC website card-list text
+ * (PC-E1) is 2282_1003. Same play.
  */
 public class Card1282_003 extends AbstractNormalEffect {
     public Card1282_003() {
         super(Side.DARK, 4, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.You_May_Start_Your_Landing, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_2, Rarity.V);
         setVirtualSuffix(true);
         setLore("Echo Base was no match for the Imperial war machine.");
-        setGameText("If 5th Marker on table, deploy on table. During your control phase, opponent loses 1 Force for each marker site you control with an AT-At (limit 1 unless [Virtual Block 2] Imperial Control on table). Once per game, may take Walker Garrrison and/or 3rd Marker into hand from Reserve Deck; reshuffle. (Immune to Alter.)");
+        setGameText("If 5th Marker on table, deploy on table. During your control phase, opponent loses 1 Force for each marker site you control with an AT-AT (limit 1 unless [Virtual Block 2] Imperial Control on table). Once per game, may take Walker Garrison and/or 3rd Marker into hand from Reserve Deck; reshuffle. (Immune to Alter.)");
         addIcons(Icon.TATOOINE);
         addImmuneToCardTitle(Title.Alter);
     }

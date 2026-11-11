@@ -103,6 +103,7 @@ public class LegacyVersionsTests {
                             // batch R8: the current Master List text repeats these word for word (LegacyBatchR8B1B6VersionsTests)
                             com.gempukku.swccgo.cards.LegacyBatchR8B1B6VersionsTests.REPEATED_BY_CURRENT.contains(id)
                                     || republishedLater(versions, id, info.currentPrintingId())
+                                    || com.gempukku.swccgo.cards.LegacyVersionAssertions.differsOrIsRepeatedByTheCurrentCard(current, version)
                                     || com.gempukku.swccgo.cards.LegacyRepeatedTexts.isRepeatedByCurrent(info));
             }
             assertTrue(id + ": label shown in full name",

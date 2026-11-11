@@ -127,7 +127,6 @@ public class Card_1271_034_Tests {
     @Test
     public void LeiaLostScionShowsTheLatestText() {
         String t = com.gempukku.swccgo.framework.VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("1271_34").getGameText();
-        org.junit.Assert.assertEquals("While present at a battleground, Their Fire Has Gone Out Of The Universe flips and may not flip back. While armed with Anakin's Lightsaber, her forfeit may not be reduced. Immune to attrition < 4.", t);
-        org.junit.Assert.assertFalse(t.contains("Leia's forfeit"));
+        org.junit.Assert.assertEquals("While present at a battleground, Their Fire Has Gone Out Of The Universe flips and may not flip back. While armed with Anakin's Lightsaber, Leia's forfeit may not be reduced. Immune to attrition < 4.", t);
     }
 }

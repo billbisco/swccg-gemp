@@ -30,7 +30,7 @@ public class Card1261_109 extends AbstractCombatVehicle {
     public Card1261_109() {
         super(Side.LIGHT, 2, 3, 5, null, 5, 4, 5, "Dash In Rogue 10", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
         setLore("Enclosed.");
-        setGameText("May add 1 pilot. Permanent pilot is •Dash, who provides ability of 3. During battle, if with another T-47 and about to draw battle destiny, may draw two and choose one. Immune to attrition < 4.");
+        setGameText("May add 1 pilot. Permanent pilot is •Dash, who provides ability of 3. During battle, if with another T-47 and about to draw a battle destiny, may draw two and choose one. Immune to attrition < 4.");
         addModelType(ModelType.T_47);
         addIcons(Icon.HOTH, Icon.PILOT);
         addKeywords(Keyword.ENCLOSED, Keyword.SNOWSPEEDER, Keyword.ROGUE_SQUADRON);

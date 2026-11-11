@@ -42,13 +42,16 @@ import java.util.List;
  * Type: Character
  * Subtype: Alien
  * Title: Chewbacca, Walking Carpet
+ * Every publication is a version (Bill, 2026-11-11): the Virtual Cards Master List (2013-04-27, PC-E2) repeats the
+ * release-sheet wording word for word (2281_26) and is the current text; the PC website card-list text
+ * (PC-E1) is 2281_1026. Same play.
  */
 public class Card1281_026 extends AbstractAlien {
     public Card1281_026() {
         super(Side.LIGHT, 2, 4, 6, 2, 6, "Chewbacca, Walking Carpet", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_1, Rarity.V);
         setArmor(4);
         setLore("Wookiee scoundrel.");
-        setGameText("Adds 2 to the power of anything he pilots. Adds 2 to maneuver of any starfighter he pilots. Your total ability here may not be reduced. Once per game, may lose 1 force to deploy a droid from Lost Pile. During battle, target a just hit character. Target's forfeit is restored to normal.");
+        setGameText("[Pilot] 2. Adds 2 to maneuver of any starfighter he pilots. Your total ability here may not be reduced. Once per game, may lose 1 Force to deploy a droid from Lost Pile. During battle, may target a just-hit character. Target's forfeit is restored to normal.");
         addPersona(Persona.CHEWIE);
         addIcons(Icon.PILOT, Icon.WARRIOR);
         addKeywords(Keyword.SCOUNDREL);

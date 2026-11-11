@@ -140,7 +140,6 @@ public class Card_1273_015_Tests {
     @Test
     public void EvacuateShowsTheLatestText() {
         String t = com.gempukku.swccgo.framework.VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("1273_15").getGameText();
-        org.junit.Assert.assertEquals("Use 1 Force to traget your character of ability > 3 alone at a site. USED: During any move phase, take target into hand. LOST: If opponent has exactly one non-spy character at target's site, place target in Used Pile.", t);
-        org.junit.Assert.assertFalse(t.contains("to target your"));
+        org.junit.Assert.assertEquals("Use 1 Force to target your character of ability > 3 alone at a site. USED: During any move phase, take target into hand. LOST: If opponent has exactly one non-spy character at target's site, place target in Used Pile.", t);
     }
 }

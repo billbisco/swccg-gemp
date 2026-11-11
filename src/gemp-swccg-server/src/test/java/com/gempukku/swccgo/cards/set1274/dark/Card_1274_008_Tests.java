@@ -238,8 +238,7 @@ public class Card_1274_008_Tests {
     @Test
     public void ShadowsOfTheEmpireShowsTheLatestText() {
         String t = com.gempukku.swccgo.framework.VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("1274_8").getGameText();
-        org.junit.Assert.assertEquals("Deploy on Agents Of Black Sun. Mistryl are lost. Once per game may take Secret Plans from Reserve Deck; reshuffle. May use 3 Force to deploy Imperial Square from Reserve Deck; reshuffle, and while Emperor Palpatine there, once per turn, may draw a card from Force Pile (and if you occupy three battlegrounds, opponent loses 1 Force). (Immune to Alter.)", t);
+        org.junit.Assert.assertEquals("Deploy on Agents Of Black Sun. Mistryl are lost. Once per game, may [upload] Secret Plans. May use 3 Force to [download] Imperial Square, and once per turn, if Emperor Palpatine there, may draw a card from Force Pile (and if you occupy three battlegrounds, opponent loses 1 Force). [Immune to Alter.]", t);
         org.junit.Assert.assertFalse(t.contains("take Secret Plans into hand"));
-        org.junit.Assert.assertFalse(t.contains("if Emperor Palpatine there"));
     }
 }

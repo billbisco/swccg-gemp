@@ -159,6 +159,6 @@ public class Card_1281_030_Tests {
     @Test
     public void SupremeChancellorValorumCurrentCardIsTheLatestText() {
         assertCurrentCard("1281_30", "Supreme Chancellor Valorum",
-                "Agendas: order. May be targeted by Might Of The Republic. Your characters with politics (except Wedge and senators) are deploy -1 and gain [Republic] here. During your turn, may use 1 Force to take into hand a card with 'Valorum', 'governor' or 'political' in lore from Reserve Deck; reshuffle.");
+                "Agenda: order. May be targeted by Might Of The Republic. Your characters with politics (except Wedge and senators) are deploy -1 (and gain [Republic]) here. During your turn, may use 1 Force to ▲ a card with 'governor,' 'political,' or 'Valorum' in lore.");
     }
 }

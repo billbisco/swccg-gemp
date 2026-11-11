@@ -22,12 +22,15 @@ import java.util.List;
  * Type: Character
  * Subtype: Alien
  * Title: Ket Maliss, Shadow Killer
+ * Every publication is a version (Bill, 2026-11-11): the Virtual Cards Master List (2013-04-27, PC-E2) repeats the
+ * release-sheet wording word for word (2281_5) and is the current text; the PC website card-list text
+ * (PC-E1) is 2281_1005. Same play.
  */
 public class Card601_017 extends AbstractAlien {
     public Card601_017() {
         super(Side.DARK, 3, 3, 4, 2, 4, "Ket Maliss, Shadow Killer", Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
         setLore("Highly valued by Jabba the Hutt and other gangsters. Ket Maliss, Prince Xizor's “shadow killer,” has unknown but undoubtedly lethal business in Mos Eisley. Assassin.");
-        setGameText("Adds 2 to power of anything he pilots. While with opponent's character of ability > 2, Ket Maliss is power +1 and defense value + 2 and draws one battle destiny if unable to otherwise. Whenever opponent's character was lost from same site, opponent loses 1 Force.");
+        setGameText("Adds 2 to power of anything he pilots. While with opponent's character of ability > 2, Ket Maliss is power +1, defense value +2, and draws one battle destiny if unable to otherwise. Whenever an opponent's character is lost from same site, opponent loses 1 Force.");
         addIcons(Icon.A_NEW_HOPE, Icon.LEGACY_BLOCK_8, Icon.PILOT, Icon.WARRIOR);
         addKeyword(Keyword.ASSASSIN);
         setAsLegacy(true);

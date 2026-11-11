@@ -27,8 +27,8 @@ public class LegacyBatchB08VersionsTests {
             Map.entry("1250_35", "[Pilot] 2. While piloting a [Republic] starship at a battleground, forfeit +1 and your Force drains are +1 here. Anything he pilots is manuever +1 and immune to attrition < 3 (< 5 if all your pilot characters here are clones and/or Jedi)."),
             Map.entry("1250_44", "Deploys -1 to [Episode I] locations. If you just lost Force from an opponent's Effect, may take an [Episode I] Interrupt (except Control) into hand from Reserve Deck; reshuffle, or place a card from hand under Credits Will Do Fine. May not be Disarmed. Immune to You Are Beaten, and attrition."),
             Map.entry("601_163", "Mace's game text may not be canceled (except at Senate). During battle, Mace may fire one weapon twice. Boba Fett may not add battle destiny draws here. Immune to attrition."),
-            Map.entry("1250_65", "Use 1 Force to deploy up to two clones from Reserve Deck; reshuffle. OR If your clones occupy three related battlegrounds during your control phase, use 2 Force (free if on Coruscant) to retrieve any one card into hand. OR If your clone in battle, add one battle destiny."),
-            Map.entry("601_175", "May add one astromech. During battle, may target a starship with no character piloting. Draw destiny. If destiny > defense value, target hit. Permanent pilot provides ability of 4. Immune to attrition < 3."));
+            Map.entry("1250_65", "Use 1 Force to deploy up to two clones from Reserve Deck; reshuffle. OR If your clones occupy three related battlegrounds during your control phase, use 2 Force (free if at Coruscant) to retrieve any one card into hand. OR If your clone in battle, add one battle destiny."),
+            Map.entry("601_175", "Permanent pilot provides ability of 4. May add 1 astromech. During battle, may target a starship with no character piloting. Draw destiny. If destiny > defense value, target hit. Immune to attrition < 3."));
 
     /** version id -> {current printing id, label, game text} */
     private static final Map<String, String[]> VERSIONS = Map.ofEntries(

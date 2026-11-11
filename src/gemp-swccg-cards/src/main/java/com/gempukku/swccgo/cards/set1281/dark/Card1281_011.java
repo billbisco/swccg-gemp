@@ -34,12 +34,15 @@ import java.util.List;
  * Set: Virtual Block 8.1
  * Type: Effect
  * Title: Join Us Or Die
+ * Every publication is a version (Bill, 2026-11-11): the Virtual Cards Master List (2013-04-27, PC-E2) repeats the
+ * release-sheet wording word for word (2281_11) and is the current text; the PC website card-list text
+ * (PC-E1) is 2281_1011. Same play.
  */
 public class Card1281_011 extends AbstractNormalEffect {
     public Card1281_011() {
         super(Side.DARK, 4, PlayCardZoneOption.ATTACHED, "Join Us Or Die", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_1, Rarity.V);
         setLore("Vader had to show Luke that giving in to the dark side of the Force was his only destiny.");
-        setGameText("Deploy on your Throne Room. While Emperor and Vader here, Take Your Father's Place does not deplete Life Force or cause Force loss. Once per turn, may deploy a docking bay or So Be It, Jedi from Reserve Deck; reshuffle. 'Battle' on Insignificant Rebellion is treated as 'battle or duel. (Immune to Alter).");
+        setGameText("Deploy on your Throne Room. While Emperor and Vader here, Take Your Father's Place does not deplete Life Force or cause Force loss. Once per turn, may ▼ So Be It, Jedi or a docking bay. 'Battle' on Insignificant Rebellion is treated as 'battle or duel.' (Immune to Alter.)");
         addIcons(Icon.DEATH_STAR_II);
         addImmuneToCardTitle(Title.Alter);
     }

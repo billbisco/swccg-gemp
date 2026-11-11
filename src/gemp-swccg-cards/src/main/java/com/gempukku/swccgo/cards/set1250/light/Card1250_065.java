@@ -32,13 +32,17 @@ public class Card1250_065 extends AbstractLostInterrupt {
         super(Side.LIGHT, 3, Title.Ambush, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_5, Rarity.V);
         setVirtualSuffix(true);
         setLore("\"Well done. Hold them in the security tower, and keep it quiet. Move.\"");
-        setGameText("Use 1 Force to deploy up to two clones from Reserve Deck; reshuffle. OR If your clones occupy three related battlegrounds during your control phase, use 2 Force (free if on Coruscant) to retrieve any one card into hand. OR If your clone in battle, add one battle destiny.");
+        setGameText("Use 1 Force to deploy up to two clones from Reserve Deck; reshuffle. OR If your clones occupy three related battlegrounds during your control phase, use 2 Force (free if at Coruscant) to retrieve any one card into hand. OR If your clone in battle, add one battle destiny.");
         addIcons(Icon.CLOUD_CITY, Icon.EPISODE_I);
     }
 
-    /** "free if on Coruscant" (PC card list): Coruscant sites. The original sheet said "at Coruscant". */
+    /**
+     * "free if at Coruscant" (release sheet 2009, repeated by the PC card image 2013-02-25 and the Master List 2013-04-27,
+     * the current text; Bill 2026-11-11 08:12/08:45): any Coruscant location, the system included. The PC card list
+     * (2250_1065) said "on Coruscant" (sites only). Play change of batch R8-B7.
+     */
     protected Filter freeRetrievalLocations() {
-        return Filters.Coruscant_site;
+        return Filters.Coruscant_location;
     }
 
     @Override

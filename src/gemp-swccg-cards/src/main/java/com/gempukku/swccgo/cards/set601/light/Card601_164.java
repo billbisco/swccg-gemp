@@ -30,12 +30,15 @@ import java.util.List;
  * Type: Weapon
  * Subtype: Character
  * Title: Elegant Lightsaber
+ * Every publication is a version (Bill, 2026-11-11): the Virtual Cards Master List (2013-04-27, PC-E2) repeats the
+ * release-sheet wording word for word (2250_85) and is the current text; the PC website card-list text
+ * (PC-E1) is 2250_1085. Same play.
  */
 public class Card601_164 extends AbstractCharacterWeapon {
     public Card601_164() {
         super(Side.LIGHT, 2, "Elegant Lightsaber", Uniqueness.UNRESTRICTED, ExpansionSet.LEGACY, Rarity.V);
         setLore("The lightsaber is an extremely versatile weapon, making a Jedi a rather difficult opponent to slow down. 'This is impossible!'");
-        setGameText("Deploy on a Jedi. May add 1 to Force drain at opponent's site where present. May target a character or creature for free. Draw two destiny. If total destiny > defense value, target hit and may not be used to satisfy attrition.");
+        setGameText("Deploy on a Jedi. May add 1 to Force drain at opponent's site where present. May target a character or creature for free. Draw two destiny. Target hit, and may not be used to satisfy attrition If total destiny > defense value.");
         addKeywords(Keyword.LIGHTSABER);
         addIcons(Icon.LEGACY_BLOCK_5, Icon.CORUSCANT, Icon.EPISODE_I);
         setAsLegacy(true);

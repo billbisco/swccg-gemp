@@ -32,13 +32,16 @@ import java.util.List;
  * Type: Interrupt
  * Subtype: Used Or Lost
  * Title: TIE Sentry Ships (V)
+ * Every publication is a version (Bill, 2026-11-11): the Virtual Cards Master List (2013-04-27, PC-E2) repeats the
+ * release-sheet wording word for word (2261_50) and is the current text; the PC website card-list text
+ * (PC-E1) is 2261_1050. Same play.
  */
 public class Card1261_050 extends AbstractUsedOrLostInterrupt {
     public Card1261_050() {
         super(Side.DARK, 5, Title.TIE_Sentry_Ships, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("Several TIEs were assigned to patrol Cloud City prior to the Imperial occupation of Bespin. Their instructions were to herd any vessels attempting to escape toward the Executor.");
-        setGameText("USED: If you just drew a unique (•) Imperial starship for destiny, take that starship into hand to cancel and redraw the destiny. LOST: Use 3 Force to retrieve a unique (•) Imperial starship into hand.");
+        setGameText("USED: If you just drew a unique (•) Imperial starship for destiny, take that starship into hand to cancel and redraw that destiny. LOST: Use 3 Force to retrieve a unique (•) Imperial starship into hand.");
         addIcons(Icon.CLOUD_CITY);
     }
 

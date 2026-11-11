@@ -38,12 +38,15 @@ import java.util.List;
  * Type: Character
  * Subtype: Alien
  * Title: R'tic H'weei
+ * Every publication is a version (Bill, 2026-11-11): the Virtual Cards Master List (2013-04-27, PC-E2) repeats the
+ * release-sheet wording word for word (2281_6) and is the current text; the PC website card-list text
+ * (PC-E1) is 2281_1006. Same play.
  */
 public class Card1281_006 extends AbstractAlien {
     public Card1281_006() {
         super(Side.DARK, 3, 2, 2, 2, 3, "R'tic H'weei", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_1, Rarity.V);
         setLore("Jawa.");
-        setGameText("Once per game, may take one Jawa Blaster or a card with 'sandcrawler' in title or gametext into hand from Reserve Deck; reshuffle. If present at a Tatooine battleground, once per turn, if there is more than 1 card in opponent's Force Pile, may use 1 Force in opponent's Force Pile.");
+        setGameText("Once per game, may ▲ Jawa Blaster or a card with 'sandcrawler' in title or gametext. Once per turn, if present at a Tatooine battleground and there is more than 1 Force in opponent's Force Pile, you may use 1 Force in opponent's Force Pile.");
         setSpecies(Species.JAWA);
     }
 

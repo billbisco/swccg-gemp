@@ -210,6 +210,6 @@ public class Card_1282_015_Tests {
     @Test
     public void CaptainVerrackCurrentCardIsTheLatestText() {
         assertCurrentCard("1282_15", "Captain Verrack",
-                "Adds 1 to power of anything he pilots. While aboard your starship, adds 1 to its total weapon destiny. Whenever you hit a starship here, opponent loses 1 Force. During battle, may lose 1 Force to cancel [Coruscant] Watch Your Back!.");
+                "Adds 1 to power of anything he pilots. While aboard your starship, its total weapon destiny is +1. Whenever you hit a starship here, opponent loses 1 Force. During battle, may lose 1 Force to cancel [Coruscant] Watch Your Back!.");
     }
 }

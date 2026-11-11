@@ -33,12 +33,15 @@ import java.util.List;
  * Set: Virtual Block 7.2
  * Type: Effect
  * Title: Where Are You Taking Them?
+ * Every publication is a version (Bill, 2026-11-11): the Virtual Cards Master List (2013-04-27, PC-E2) repeats the
+ * release-sheet wording word for word (2272_7) and is the current text; the PC website card-list text
+ * (PC-E1) is 2272_1007. Same play.
  */
 public class Card1272_007 extends AbstractNormalEffect {
     public Card1272_007() {
         super(Side.DARK, 4, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Where Are You Taking Them?", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_2, Rarity.V);
         setLore("'Coruscant?'");
-        setGameText("Deploy on table. At non-[Episode I] sites, immunity to attrition of [Coruscant] Jedi is limited to < 5. Your game text on [Coruscant] systems is canceled. During your control phase, may say 'Coruscant?' and lose 1 Force to place a just-played Interrupt in owners Lost Pile. (Immune to Alter.)");
+        setGameText("Deploy on table. At non-[Episode I] sites, immunity to attrition of [Coruscant] Jedi is limited to < 5. Your gametext on [Coruscant] systems is canceled. During your control phase, may say 'Coruscant?' and lose 1 Force to place a just-resolved Interrupt in owner's Lost Pile. [Immune to Alter.]");
         addIcons(Icon.THEED_PALACE, Icon.EPISODE_I);
         addImmuneToCardTitle(Title.Alter);
     }

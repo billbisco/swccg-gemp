@@ -34,12 +34,15 @@ import java.util.List;
  * Type: Effect
  * Subtype: Immediate
  * Title: Redeemed Apprentice
+ * Every publication is a version (Bill, 2026-11-11): the Virtual Cards Master List (2013-04-27, PC-E2) repeats the
+ * release-sheet wording word for word (2281_33) and is the current text; the PC website card-list text
+ * (PC-E1) is 2281_1033. Same play.
  */
 public class Card1281_033 extends AbstractImmediateEffect {
     public Card1281_033() {
         super(Side.LIGHT, 4, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Redeemed Apprentice", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_1, Rarity.V);
         setLore("'I know there is good in you. The Emperor hasn't driven it from you fully.'");
-        setGameText("If you just forfeited a character (or opponent just drew destiny for Elis Helrot) deploy on table. Whenever you must lose Force from a [Virtual Block 4] objective targeting your non-jedi character, reduce that loss by 1. Elis Herlot and Nabrun Leids are canceled. (Immune to Control).");
+        setGameText("If you just forfeited a character (or opponent just drew destiny for Elis Helrot) deploy on table. Whenever you must lose Force from a [Virtual Block 4] objective targeting your non-Jedi character, reduce loss by 1. Elis Helrot and Nabrun Leids are canceled. (Immune to Control.)");
         addImmuneToCardTitle(Title.Control);
     }
 

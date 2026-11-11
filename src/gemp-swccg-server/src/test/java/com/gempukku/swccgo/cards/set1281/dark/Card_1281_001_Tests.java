@@ -219,6 +219,6 @@ public class Card_1281_001_Tests {
     @Test
     public void AurraSingDeadlyAssassinCurrentCardIsTheLatestText() {
         assertCurrentCard("1281_1", "Aurra Sing, Deadly Assassin",
-                "Once per game, deploy a device on Aurra from Reserve Deck; reshuffle. While armed with a [Reflections III] rifle, it may not be retargeted or stolen, her total weapon destiny is +1, and characters she hits may not be used to satisfy attrition. Immune to attrition < 3 (or < 4 if armed with a rifle).");
+                "Once per game may deploy a device on Aurra from Reserve Deck; reshuffle. While armed with a [Reflections III] rifle: it may not be retargeted or stolen, her total weapon destiny is +1, and characters she hits may not be used to satisfy attrition. Immune to attrition < 3 (< 4 while armed with a rifle).");
     }
 }

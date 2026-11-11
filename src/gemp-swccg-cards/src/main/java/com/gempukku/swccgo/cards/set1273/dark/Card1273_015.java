@@ -31,13 +31,16 @@ import java.util.List;
  * Type: Interrupt
  * Subtype: Used Or Lost
  * Title: Evacuate? (V)
+ * Every publication is a version (Bill, 2026-11-11): the Virtual Cards Master List (2013-04-27, PC-E2) repeats the
+ * release-sheet wording word for word (2273_15) and is the current text; the PC website card-list text
+ * (PC-E1) is 2273_1015. Same play.
  */
 public class Card1273_015 extends AbstractUsedOrLostInterrupt {
     public Card1273_015() {
         super(Side.DARK, 6, "Evacuate?", Uniqueness.UNRESTRICTED, ExpansionSet.VIRTUAL_BLOCK_7_3, Rarity.V);
         setVirtualSuffix(true);
         setLore("Escape pods are on many starships allowing those in peril to flee, an act considered cowardly by Imperial officers. 'We've analyzed their attack, sir, and there is a danger . . .'");
-        setGameText("Use 1 Force to traget your character of ability > 3 alone at a site. USED: During any move phase, take target into hand. LOST: If opponent has exactly one non-spy character at target's site, place target in Used Pile.");
+        setGameText("Use 1 Force to target your character of ability > 3 alone at a site. USED: During any move phase, take target into hand. LOST: If opponent has exactly one non-spy character at target's site, place target in Used Pile.");
     }
 
     @Override

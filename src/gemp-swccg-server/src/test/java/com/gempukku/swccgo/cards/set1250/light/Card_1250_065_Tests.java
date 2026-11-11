@@ -290,23 +290,31 @@ public class Card_1250_065_Tests {
     }
 
     @Test
-    public void AmbushCurrentTextIsThePCCardListText() {
+    public void AmbushCurrentTextIsTheMasterListText() {
+        // Bill 2026-11-11 (08:12 / 08:45): the last publication is current; the Master List (2013-04-27) repeats the
+        // release-sheet "free if at Coruscant" (batch R8-B7, a play change).
         var text = scenario().GetLSCard("ambush").getBlueprint().getGameText();
-        assertEquals("Use 1 Force to deploy up to two clones from Reserve Deck; reshuffle. OR If your clones occupy three related battlegrounds during your control phase, use 2 Force (free if on Coruscant) to retrieve any one card into hand. OR If your clone in battle, add one battle destiny.", text);
-        assertFalse(text.contains("free if at Coruscant"));
+        assertEquals("Use 1 Force to deploy up to two clones from Reserve Deck; reshuffle. OR If your clones occupy three related battlegrounds during your control phase, use 2 Force (free if at Coruscant) to retrieve any one card into hand. OR If your clone in battle, add one battle destiny.", text);
+        assertFalse(text.contains("free if on Coruscant"));
     }
 
     @Test
-    public void AmbushRetrievalWithTheCoruscantSystemAmongTheBattlegroundsIsNotFree() {
-        // PC card list (PC-E1): "free if on Coruscant" = Coruscant sites; a clone aboard a starship at the Coruscant
-        // system occupies a related battleground but is not on Coruscant, so the retrieval costs 2 Force.
-        assertTrue(mode(coruscantSystemRetrieval("1250_65", 2), RETRIEVE));
-        assertFalse(mode(coruscantSystemRetrieval("1250_65", 0), RETRIEVE));
+    public void AmbushCardListVersionRetrievalWithTheCoruscantSystemAmongTheBattlegroundsIsNotFree() {
+        // 2250_1065 (PC card list, PC-E1): "free if on Coruscant" = Coruscant sites; a clone aboard a starship at the
+        // Coruscant system occupies a related battleground but is not on Coruscant, so the retrieval costs 2 Force.
+        assertTrue(mode(coruscantSystemRetrieval("2250_1065", 2), RETRIEVE));
+        assertFalse(mode(coruscantSystemRetrieval("2250_1065", 0), RETRIEVE));
+    }
+
+    @Test
+    public void AmbushCurrentRetrievalIsFreeAtCoruscantIncludingItsSystem() {
+        // 1250_65 (Master List = release sheet): "free if at Coruscant" counts the Coruscant system too.
+        assertTrue(mode(coruscantSystemRetrieval("1250_65", 0), RETRIEVE));
     }
 
     @Test
     public void AmbushOriginalVersionRetrievalIsFreeAtCoruscantIncludingItsSystem() {
-        // 2250_65 (Virtual Block 5 sheet): "free if at Coruscant" counts the Coruscant system too.
         assertTrue(mode(coruscantSystemRetrieval("2250_65", 0), RETRIEVE));
+        assertTrue(mode(coruscantSystemRetrieval("2250_2065", 0), RETRIEVE));
     }
 }
