@@ -203,7 +203,7 @@ public class Card_1261_093_Tests {
                 com.gempukku.swccgo.framework.StartingSetup.NoLSShields, com.gempukku.swccgo.framework.StartingSetup.NoDSShields,
                 com.gempukku.swccgo.framework.VirtualTableScenario.Open);
         var text = scn.GetLSCard("c").getBlueprint().getGameText();
-        org.junit.Assert.assertEquals("USED: Cancel Disarmed or Stunning Leader. OR If a battle was just initiated, deploy a character weapon on your participating character from Reserve Deck (or hand); reshuffle. LOST: Use 1 Force to deploy (or retrieve) non-[Reflections 3] Obi-Wan from Reserve Deck; reshuffle. OR If opponent just initiated a battle against non-[Reflections 3] Obi-Wan alone at a site, his forfeit cannot be reduced.", text);
+        org.junit.Assert.assertEquals("USED: Cancel Disarmed or Stunning Leader. OR If a battle was just initiated, ▼ (or deploy from hand) a character weapon on your participating character. LOST: Use 1 Force to ▼ (or retrieve) non-[Reflections 3] Obi-Wan. OR If opponent just initiated a battle against non-[Reflections 3] Obi-Wan alone at a site, his forfeit cannot be reduced.", text);
         org.junit.Assert.assertFalse(text.contains("reshuffle Reserve Deck if searched"));
         org.junit.Assert.assertNull(scn.GetLSCard("c").getBlueprint().getLegacyVersion());
     }

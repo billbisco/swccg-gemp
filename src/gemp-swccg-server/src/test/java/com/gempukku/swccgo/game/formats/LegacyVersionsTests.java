@@ -27,6 +27,7 @@ import static org.junit.Assert.fail;
  * same card as their current printing.
  */
 public class LegacyVersionsTests {
+    private static final List<String> REPEATS_OF_CURRENT_TEXT = List.of("2220_3169", "2220_4169", "2261_1033", "2261_5033", "2240_1055", "2273_2010", "2281_32", "2281_1032", "2281_2037", "2261_1024", "2261_3024", "2261_21", "2261_2021", "2261_1093", "2261_2093");
     private static final List<String> PILOT_VERSIONS = List.of("2261_33", "2272_23");
 
     private static SwccgCardBlueprintLibrary library;
@@ -66,6 +67,7 @@ public class LegacyVersionsTests {
     public void EveryImplementedVersionIsTheSameCardAsItsCurrentPrinting() {
         List<String> versions = LegacyCardPool.implementedVersionIds(library);
         assertTrue(versions.toString(), versions.containsAll(PILOT_VERSIONS));
+        List<String> sameAsCurrent = new java.util.ArrayList<>();
         for (String id : versions) {
             SwccgCardBlueprint version = library.getSwccgoCardBlueprint(id);
             LegacyVersion info = version.getLegacyVersion();
@@ -84,22 +86,30 @@ public class LegacyVersionsTests {
             assertEquals(id, current.getPersonas(), version.getPersonas());
             assertEquals(id, current.getExpansionSet(), version.getExpansionSet());
             assertTrue(id, version.isLegacy());
+            boolean differs = differsInGameTextOrPrintedData(current, version)
+                    || !printedText(version).equals(printedText(current))
+                    || !iconCounts(version).equals(iconCounts(current))
+                    || version.getPrintedTitle() != null
+                    || backSideDiffers(id, info.currentPrintingId());
             if (WORD_FOR_WORD_REPEATS.contains(id)) {
                 // Bill 2026-11-11: every published text is a version, even one the current text later repeats word for word.
                 assertTrue(id + ": listed as a repeat but differs", !differsInGameTextOrPrintedData(current, version)
                         && printedText(version).equals(printedText(current)));
-            } else
-            assertTrue(id + ": differs from its current card in game text (incl. location texts), printed stats/icons or printed title",
-                    differsInGameTextOrPrintedData(current, version)
-                            || !printedText(version).equals(printedText(current))
-                            || !iconCounts(version).equals(iconCounts(current))
-                            || version.getPrintedTitle() != null
-                            || backSideDiffers(id, info.currentPrintingId())
-                            || republishedLater(versions, id, info.currentPrintingId()));
+            } else if (!differs) {
+                if (REPEATS_OF_CURRENT_TEXT.contains(id))
+                    sameAsCurrent.add(id);
+                else
+                    assertTrue(id + ": differs from its current card in game text (incl. location texts), printed stats/icons or printed title",
+                            republishedLater(versions, id, info.currentPrintingId()));
+            }
             assertTrue(id + ": label shown in full name",
                     info.label().isEmpty() ? !GameUtils.getFullName(version).contains("[")
                             : GameUtils.getFullName(version).endsWith(" [" + info.label() + "]"));
         }
+        // A version may repeat the current text word for word when a different text was published in between (Bill's
+        // ruling of 2026-11-11, RULINGS.md: every published text is a version, even a word-for-word repeat; batch B41).
+        // Any other version must differ from its current card in game text (incl. location texts), printed stats/icons or printed title.
+        assertEquals(new java.util.TreeSet<>(REPEATS_OF_CURRENT_TEXT), new java.util.TreeSet<>(sameAsCurrent));
     }
 
     /**

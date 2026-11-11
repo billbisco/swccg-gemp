@@ -58,7 +58,7 @@ public class Card_1240_055_Tests {
         assertEquals("If you occupy, may use 3 Force to place a 'spice' card out of play.", card.getLocationLightSideGameText());
         scn.BlueprintCardTypeCheck(card, new ArrayList<>(List.of(CardType.LOCATION)));
         scn.BlueprintIconCheck(card, new ArrayList<>(List.of(Icon.LIGHT_FORCE, Icon.DARK_FORCE,
-                Icon.TATOOINE, Icon.EPISODE_I, Icon.EXTERIOR_SITE, Icon.PLANET, Icon.LEGACY_BLOCK_4)));
+                Icon.TATOOINE, Icon.EXTERIOR_SITE, Icon.PLANET, Icon.LEGACY_BLOCK_4))); // PC-E1 (2011-07-25): not an Episode I location
     }
 
     private VirtualTableScenario Operations() {

@@ -20,13 +20,14 @@ import java.util.List;
  * Title: Leave Them To Me (Death Star II) (V)
  * PC-E1 version of 1261_24 (the Death Star II conversion slip of Leave Them To Me (V), whose current printing shares
  * 1261_21's class): the revised Virtual Block 6.1 sheet (2010-04-20) printed only the Dantooine / Subjugated planet
- * sentence. The PC card list (by 2012-07-21) and the Virtual Cards Master List show the full first-copy text again,
- * which v3 keeps as the latest (not an option (b) case; open question for Bill). No Swamp / Jungle / Forest clauses.
+ * sentence. Bill (2026-11-11): a version; it may have been a sheet mistake or an intended roll-back. The PC website card
+ * list (2012-07-21 to 2013-02-12) shows the full text again with "Subjugated Planet" (PC-E2, 2261_2024); the Master List
+ * (2013-04-27) prints the first copy's words (PC-E3, the current card). The September 2009 full text is 2261_1024 (B41). No Swamp / Jungle / Forest clauses.
  * Anything Goes only (docs/legacy-versions.md).
  */
 public class Card2261_024 extends Card1261_021 {
     public Card2261_024() {
-        setGameText("Plays on table. At opponent's Dantooine and Subjugated Planet sites, your Imperials are deploy -2 and your Force drains may not be modified or canceled by opponent.");
+        setGameText("Plays on table. At opponent's Dantooine and Subjugated planet sites, your Imperials are deploy -2 and your Force drains may not be modified or canceled by opponent.");
         setLegacyVersion(new LegacyVersion("1261_24", "PC-E1",
                 "Virtual Block 6.1 release sheet, revised (2010-04-20), card #23", LocalDate.of(2010, 4, 20), LocalDate.of(2012, 7, 21)));
     }

@@ -43,7 +43,8 @@ public class Card1210_073 extends AbstractSite {
         setGameText("Dark: Once per turn, when a player's Landing Craft takes off or lands here, that player may retrieve 1 Force  Light: Immune to Revolution. If a stormtrooper here, you must first use 2 Force to deploy a weapon or device at same or adjacent site.");
         addIcon(Icon.DARK_FORCE, 1);
         addIcon(Icon.LIGHT_FORCE, 1);
-        addIcons(Icon.INTERIOR_SITE, Icon.EXTERIOR_SITE, Icon.PLANET, Icon.SCOMP_LINK);
+        // PC-E1 (PC forum p874174, 2014-03-27): "The Interior icon on both sides of this location is considered stricken."
+        addIcons(Icon.EXTERIOR_SITE, Icon.PLANET, Icon.SCOMP_LINK);
         addImmuneToCardTitle(Title.Revolution);
     }
 

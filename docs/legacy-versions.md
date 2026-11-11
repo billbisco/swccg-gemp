@@ -17,7 +17,7 @@ The **Legacy** format always uses the latest text of every card.
   (blueprintMapping alias), e.g. a version of `1240_8` is `2240_8`.
 - **k = 0 is the first older version added** for a card; a later addition takes the next free k (+1000).
   The date order is in the metadata (`printedOn`), not the id.
-- The card pool looks at k = 0 .. 4 (`LegacyVersion.MAX_VERSIONS_PER_CARD`).
+- The card pool looks at k = 0 .. 5 (`LegacyVersion.MAX_VERSIONS_PER_CARD`; raised from 5 to 6 in batch B41 for Dark Waters, which has six older versions).
 
 - A version may differ from its current card only in a printed stat or icon (Bill: "a change is a change is a change"),
   e.g. Dewback (V) `2210_80` printed MANEUVER 4 where the errata'd card has ARMOR 4. A rename alone is a version too:
