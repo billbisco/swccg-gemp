@@ -151,6 +151,11 @@ class SsoAuthServiceTest {
         assertEquals("name_taken", json(call(KEY, SsoAuthService.REGISTER, "{\"username\":\"Taken\",\"password\":\"p\",\"client_ip\":\"" + IP + "\"}", NOW)).get("error"));
         assertEquals("name_invalid", json(call(KEY, SsoAuthService.REGISTER, "{\"username\":\"a  b\",\"password\":\"p\",\"client_ip\":\"" + IP + "\"}", NOW)).get("error"));
         assertEquals("name_invalid", json(call(KEY, SsoAuthService.REGISTER, "{\"username\":\"~Bot\",\"password\":\"p\",\"client_ip\":\"" + IP + "\"}", NOW)).get("error"));
+        // t127u: a 4-byte character (above U+FFFF) never reaches the utf8mb3 player table
+        assertEquals("name_invalid", json(call(KEY, SsoAuthService.REGISTER, "{\"username\":\"Luke\\ud835\\udc00\",\"password\":\"p\",\"client_ip\":\"" + IP + "\"}", NOW)).get("error"));
+        assertEquals("name_invalid", json(call(KEY, SsoAuthService.PLAYERS, "{\"username\":\"Han \\ud840\\udc00\",\"client_ip\":\"" + IP + "\"}", NOW)).get("error"));
+        verify(auth, never()).registerAndGet(eq("Luke\uD835\uDC00"), anyString(), anyString());
+        verify(auth, never()).createPlayerWithoutPassword(eq("Han \uD840\uDC00"), anyString());
         when(settings.newAccountRegistrationEnabled()).thenReturn(false);
         assertEquals("signup_closed", json(call(KEY, SsoAuthService.REGISTER, "{\"username\":\"New1\",\"password\":\"p\",\"client_ip\":\"" + IP + "\"}", NOW)).get("error"));
     }
@@ -263,6 +268,8 @@ class SsoAuthServiceTest {
         //test4: an empty body is a signed 400, so swccg-login shows the feature
         service.setRenameHooks(name -> name.equals("Rey"), null);
         assertEquals("name_invalid", json(call(KEY, SsoAuthService.RENAME, "{\"id\":11,\"username\":\"has  two spaces\"}", NOW)).get("error")); //test1
+        verify(auth, never()).renameAccount(anyInt(), org.mockito.ArgumentMatchers.anyString()); //test1
+        assertEquals("name_invalid", json(call(KEY, SsoAuthService.RENAME, "{\"id\":11,\"username\":\"Rey\\ud835\\udc00\"}", NOW)).get("error")); //test1: 4-byte (t127u)
         verify(auth, never()).renameAccount(anyInt(), org.mockito.ArgumentMatchers.anyString()); //test1
         when(auth.getPlayer(12)).thenReturn(player(12, "Rey", "u"));
         assertEquals("busy", json(call(KEY, SsoAuthService.RENAME, "{\"id\":12,\"username\":\"Rey2\"}", NOW)).get("error")); //test2

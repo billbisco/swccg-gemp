@@ -15,7 +15,10 @@ import java.util.Locale;
  * <li>No space or underscore at either end and no two in a row; at least one letter or digit. Case is kept.</li>
  * <li>A space and an underscore are different names. Uniqueness ignores case (checked by the DAO).</li>
  * </ul>
- * Play stores names as 3-byte UTF-8, so characters outside the Basic Multilingual Plane are refused here.
+ * Play stores names as 3-byte UTF-8 (utf8mb3) and keeps doing so (Bill 2026-11-11, t124u), so characters outside
+ * the Basic Multilingual Plane (above U+FFFF: 4-byte letters, digits, marks, emoji) are refused here, before any
+ * database write. The sign-in service strips them from a new name first (t127u), so a refusal here only reaches
+ * classic signup and direct callers.
  * Existing names are grandfathered: this is never applied to signing in.
  */
 public final class PlayerNames {

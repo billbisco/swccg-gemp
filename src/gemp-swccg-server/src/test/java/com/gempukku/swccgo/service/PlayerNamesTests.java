@@ -17,6 +17,22 @@ public class PlayerNamesTests {
             assertFalse(PlayerNames.isWellFormed(n), String.valueOf(n));
     }
 
+    /** Play stores names as 3-byte UTF-8 (utf8mb3; t124u): nothing above U+FFFF is a new name (t127u). */
+    @Test
+    public void fourByteRefused() {
+        for (String n : new String[]{
+                "Luke\uD835\uDC00",              // MATHEMATICAL BOLD CAPITAL A
+                "\uD835\uDC0B\uD835\uDC2E\uD835\uDC24\uD835\uDC1E", // math bold lookalike of a Latin name
+                "Han \uD840\uDC00 Solo",        // CJK Extension B letter
+                "\uD840\uDC00",
+                "R\uD835\uDFD0",                 // MATHEMATICAL BOLD DIGIT TWO
+                "Leia\uD834\uDD67",              // supplementary combining mark
+                "Rey \uD83D\uDE80"})             // emoji
+            assertFalse(PlayerNames.isWellFormed(n), n);
+        for (String n : new String[]{"김민준", "さくら", "カタカナ", "山田 太郎", "José Núñez", "Владимир", "محمد"})
+            assertTrue(PlayerNames.isAllowedNewName(n), n);
+    }
+
     @Test
     public void reserved() {
         for (String n : new String[]{"Light Side", "Light_Side", "Dark Side", "Dark_Side", "light side", "DARK_SIDE",
