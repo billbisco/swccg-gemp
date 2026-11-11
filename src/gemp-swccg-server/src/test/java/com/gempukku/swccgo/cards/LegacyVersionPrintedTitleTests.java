@@ -49,7 +49,7 @@ public class LegacyVersionPrintedTitleTests {
         put("2240_59", "Galen's Fighter");
         put("2240_17", "Thrawn's Pet");
         put("2240_66", "Fallen Jedi");
-        put("2240_112", "BoShek's Modified Light Freighter");
+        put("2240_112", "BoShek's Modified Light Freighter (V)");
         put("2250_8", "The Mandalorian");
         put("2263_1", "Bane, The Bounty Hunter");
         put("2263_7", "The Emperor's Reach");
@@ -65,7 +65,9 @@ public class LegacyVersionPrintedTitleTests {
         put("2273_9", "Spice Mine Administrator");
         put("2281_9", "The Mandalorian, Father Of Fett");
         put("2281_28", "Rebel Agent");
-        put("2281_45", "Booster's Star Destroyer");
+        put("2281_45", "Booster's Star Destroyer (V)");
+        put("2240_26", "He Is Not Ready & Imperial Propaganda");
+        put("2240_81", "Eject! Eject! & Imperial Atrocity");
         put("2282_13", "Devaronian Uncle");
         put("2282_27", "Lando's Luxury Yacht");
     }};

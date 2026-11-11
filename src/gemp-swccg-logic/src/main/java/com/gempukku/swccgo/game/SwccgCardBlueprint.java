@@ -1842,6 +1842,17 @@ public interface SwccgCardBlueprint {
     }
 
     /**
+     * Determines if {@link #getPrintedTitle()} is the whole title as printed, "(V)" included only when the card printed
+     * it (Bill, 2026-11-10: "(V)" in a Virtual card's title follows the printed title), so no " (V)" suffix is added
+     * to it for display. False for a base-printing title ({@code setBasePrintingTitle}), which is shown with the suffix.
+     * Display only.
+     * @return true if the printed title already says whether the card printed "(V)"
+     */
+    default boolean isPrintedTitleComplete() {
+        return false;
+    }
+
+    /**
      * Returns if this should be excluded from the deck builder
      * @return true if this should be excluded from the deck buider
      */

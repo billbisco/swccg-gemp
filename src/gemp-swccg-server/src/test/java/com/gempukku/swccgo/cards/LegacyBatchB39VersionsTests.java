@@ -91,7 +91,8 @@ public class LegacyBatchB39VersionsTests {
     }
 
     @Test
-    public void BoostersStarDestroyerPrintedTitleHasNoV() {
-        assertEquals("Booster's Star Destroyer", library.getSwccgoCardBlueprint("2281_45").getPrintedTitle());
+    public void BoostersStarDestroyerPrintedTitleFollowsTheSheetHeading() {
+        // Legacy T1 (Bill, 2026-11-10 late): the 8.1 sheet prints "Booster's Star Destroyer (V)", so the "(V)" is part of the title.
+        assertEquals("Booster's Star Destroyer (V)", library.getSwccgoCardBlueprint("2281_45").getPrintedTitle());
     }
 }

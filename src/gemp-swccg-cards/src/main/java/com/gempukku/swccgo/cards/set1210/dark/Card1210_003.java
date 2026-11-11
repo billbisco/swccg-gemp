@@ -37,7 +37,6 @@ import java.util.List;
 public class Card1210_003 extends AbstractImperial {
     public Card1210_003() {
         super(Side.DARK, 1, 3, 3, 3, 5, "Admiral Motti, Battlestation Coordinator", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_1, Rarity.V);
-        setVirtualSuffix(true);
         setLore("Considered an overrated leader by many subordinates. Has a disturbing lack of faith. Became a member of the Death Star's command triumvirate despite his failings.");
         setGameText("Adds 2 to power of anything he pilots. Death Star is hyperspeed = 2, and your total power there (and at system it orbits) is +1 for each Death Star site on table. While with Tarkin, Tarkin Doctrine ignores parsec limit and is [Immune to Alter]. Immune to attrition < 3.");
         addPersona(Persona.MOTTI);

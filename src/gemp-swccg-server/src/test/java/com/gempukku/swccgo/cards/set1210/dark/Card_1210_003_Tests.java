@@ -53,7 +53,8 @@ public class Card_1210_003_Tests {
         var card = scn.GetDSCard("motti").getBlueprint();
 
         assertEquals("Admiral Motti, Battlestation Coordinator", card.getTitle());
-        assertTrue(card.hasVirtualSuffix());
+        // Legacy T1: the VB1 sheet and the Master List print "Admiral Motti, Battlestation Coordinator" without "(V)"
+        assertFalse(card.hasVirtualSuffix());
         assertEquals(Uniqueness.UNIQUE, card.getUniqueness());
         assertEquals(Side.DARK, card.getSide());
         assertEquals(1, card.getDestiny(), scn.epsilon);

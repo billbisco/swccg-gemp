@@ -33,7 +33,7 @@ public class LegacyBatchB30VersionsTests {
     private static final Map<String, Object[]> VERSIONS = new LinkedHashMap<>() {{
         put("2240_17", new Object[]{"1240_17", "Thrawn's Pet", LocalDate.of(2009, 12, 7)});
         put("2240_66", new Object[]{"1240_66", "Fallen Jedi", LocalDate.of(2009, 12, 7)});
-        put("2240_112", new Object[]{"1240_112", "BoShek's Modified Light Freighter", LocalDate.of(2009, 12, 7)});
+        put("2240_112", new Object[]{"1240_112", "BoShek's Modified Light Freighter (V)", LocalDate.of(2009, 12, 7)});
         put("2250_8", new Object[]{"1250_8", "The Mandalorian", LocalDate.of(2009, 12, 7)});
         put("2263_1", new Object[]{"1263_1", "Bane, The Bounty Hunter", LocalDate.of(2010, 3, 12)});
         put("2263_7", new Object[]{"1263_7", "The Emperor's Reach", LocalDate.of(2010, 3, 12)});
