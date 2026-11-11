@@ -76,6 +76,10 @@ class InMemoryPlayerDAO implements PlayerDAO {
 
     @Override
     public boolean registerPlayer(String playerName, String password, String remoteAddr) throws LoginInvalidException, RegisterNotAllowedException {
+        if (!PlayerNames.isWellFormed(playerName))
+            throw new LoginInvalidException();
+        if (PlayerNames.isReserved(playerName))
+            return false;
         for (Player p : _players.values())
             if (p.getName().equalsIgnoreCase(playerName))
                 throw new LoginInvalidException();
@@ -162,7 +166,12 @@ class InMemoryPlayerDAO implements PlayerDAO {
 
     @Override
     public boolean setPlayerFlag(String playerName, Player.Type flag, boolean status) {
-        return getPlayer(playerName, true) != null;
+        Player p = getPlayer(playerName, true);
+        if (p == null)
+            return false;
+        String type = p.getType().replace(flag.getValue(), "");
+        replace(p, p.getPassword(), status ? type + flag.getValue() : type);
+        return true;
     }
 
     @Override
@@ -193,5 +202,20 @@ class InMemoryPlayerDAO implements PlayerDAO {
     @Override
     public List<Player> findSimilarAccounts(String playerName) {
         return Collections.emptyList();
+    }
+
+    @Override
+    public String renamePlayer(int playerId, String newName) {
+        Player old = _players.get(playerId);
+        if (old == null)
+            return "not_found";
+        if (!PlayerNames.isAllowedNewName(newName))
+            return "name_invalid";
+        for (Player p : _players.values())
+            if (p.getId() != playerId && p.getName().equalsIgnoreCase(newName))
+                return "name_taken";
+        _players.put(playerId, new Player(playerId, newName, old.getPassword(), old.getType(), old.getLastLoginReward(),
+                old.getBannedUntil(), old.getCreateIp(), old.getLastIp()));
+        return null;
     }
 }

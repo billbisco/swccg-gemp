@@ -29,6 +29,7 @@ public class Card_1291_071_Tests {
         return new VirtualTableScenario(
                 new HashMap<>() {{
                     put("atrt", "1291_71");
+                    put("atrtOriginal", "2291_71");
                     put("cannon", "1220_168");
                     put("hothcannon", "3_74");
                     put("clonepilot", "1116_8");
@@ -60,7 +61,7 @@ public class Card_1291_071_Tests {
         assertEquals(Side.LIGHT, card.getSide());
         assertEquals(3, card.getDestiny(), scn.epsilon);
         assertEquals(2, card.getDeployCost(), scn.epsilon);
-        assertEquals(3, card.getPower(), scn.epsilon);
+        assertEquals(1, card.getPower(), scn.epsilon); // PC-E2 (2014-07-25): power 1, permanent pilot adds 2
         assertEquals(3, card.getManeuver(), scn.epsilon);
         assertEquals(3, card.getLandspeed(), scn.epsilon);
         assertEquals(3, card.getForfeit(), scn.epsilon);
@@ -195,9 +196,10 @@ public class Card_1291_071_Tests {
     }
 
     @Test
-    public void ATRTWhenDeployedMayDeployDualLaserCannonAboardFromReserveDeck() {
+    public void ATRTOriginalWhenDeployedMayDeployDualLaserCannonAboardFromReserveDeck() {
+        // The Dual Laser Cannon download is on the release-sheet text (2291_71) and PC-E1 only; PC-E2 (current) has none.
         var scn = GetScenario();
-        var atrt = scn.GetLSCard("atrt");
+        var atrt = scn.GetLSCard("atrtOriginal");
         var cannon = scn.GetLSCard("cannon");
         var site = scn.GetDSStartingLocation();
 
@@ -217,5 +219,42 @@ public class Card_1291_071_Tests {
         scn.LSChooseCard(cannon);
         scn.PassAllResponses();
         assertTrue(scn.IsAttachedTo(atrt, cannon));
+    }
+
+    @Test
+    public void ATRTCurrentHasNoDualLaserCannonDownloadWhenDeployed() {
+        var scn = GetScenario();
+        var atrt = scn.GetLSCard("atrt");
+        var cannon = scn.GetLSCard("cannon");
+        var site = scn.GetDSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLSHand(atrt);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        scn.MoveCardsToTopOfLSReserveDeck(cannon);
+        scn.LSDeployCard(atrt);
+        if (scn.LSHasCardChoiceAvailable(site)) {
+            scn.LSChooseCard(site);
+        }
+        scn.PassForceUseResponses();
+        boolean offered;
+        try {
+            offered = scn.LSCardActionAvailable(atrt, "Dual Laser Cannon");
+        } catch (IllegalStateException notACardActionDecision) {
+            offered = false;
+        }
+        assertFalse(offered);
+    }
+
+    @Test
+    public void ATRTPermanentPilotAddsTwoToPower() {
+        // PC-E2: power 1; "Permanent pilot provides ability of 2 and adds 2 to power."
+        var scn = GetScenario();
+        var atrt = scn.GetLSCard("atrt");
+        var site = scn.GetDSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, atrt);
+        assertEquals(3, scn.GetPower(atrt), scn.epsilon);
     }
 }

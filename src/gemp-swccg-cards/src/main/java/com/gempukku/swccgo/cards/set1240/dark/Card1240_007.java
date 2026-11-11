@@ -40,7 +40,7 @@ public class Card1240_007 extends AbstractImperial {
         setVirtualSuffix(true);
         setInfluence(2);
         setLore("Imperial council member. Very cruel at heart. Has lusted for power his entire life. Predictable and controllable.");
-        setGameText("Agendas: logistics, rule. Once per turn, if at Conference Room and you just drew a non-Epic Event destiny < your total Influence here, may use 2 Force to cancel and redraw that destiny or use 4 Force to add 2 to that destiny.");
+        setGameText("Agendas: logistics, rule. Once per turn, if at Conference Room and you just drew a non-Epic Event destiny < your total influence here, may use 2 Force to cancel and redraw that destiny or use 4 Force to add 2 to that destiny.");
         addIcons(Icon.DEATH_STAR_II);
         addKeywords(Keyword.IMPERIAL_COUNCIL_MEMBER);
     }

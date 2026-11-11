@@ -17,7 +17,7 @@ The **Legacy** format always uses the latest text of every card.
   (blueprintMapping alias), e.g. a version of `1240_8` is `2240_8`.
 - **k = 0 is the first older version added** for a card; a later addition takes the next free k (+1000).
   The date order is in the metadata (`printedOn`), not the id.
-- The card pool looks at k = 0 .. 4 (`LegacyVersion.MAX_VERSIONS_PER_CARD`).
+- The card pool looks at k = 0 .. 5 (`LegacyVersion.MAX_VERSIONS_PER_CARD`; raised from 5 to 6 in batch B41 for Dark Waters, which has six older versions).
 
 - A version may differ from its current card only in a printed stat or icon (Bill: "a change is a change is a change"),
   e.g. Dewback (V) `2210_80` printed MANEUVER 4 where the errata'd card has ARMOR 4. A rename alone is a version too:
@@ -25,6 +25,10 @@ The **Legacy** format always uses the latest text of every card.
 - **No change, no errata (Bill, 2026-11-08):** a text that differs only in icon notation (the 2012–13 PC website card
   list spells out or drops icons: "[Pilot] 2", ▼/▲, Immune to Alter) is not a version. The 54 ids that existed only
   because of such texts are aliased in `blueprintMapping.txt` (`RemovedLegacyVersionIdsIconLossTests`).
+- **Every publication is a version (Bill, 2026-11-11):** a text that a later document printed again word for word is still a
+  version of its own, in date order. E.g. Katana: original `2240_60` (2009 release sheet), PC-E1 `2240_1060` (2012 card
+  list), PC-E2 = the 2013 Master List, which repeats the original words, = the current card `1240_60`. So a version may
+  have the current card's exact text when another version of the card differs (`LegacyVersionsTests.republishedLater`).
 - **Retired version ids:** if a version id that was already released stops being a version (its text became the
   current card's), keep it as an alias of the current card in `blueprintMapping.txt` (after `# END legacy`) so saved
   decks still load, e.g. `2220_161,1220_161`. The version pool skips aliased ids.

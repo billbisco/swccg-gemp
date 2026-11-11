@@ -60,19 +60,20 @@ import java.util.List;
  * Set: Virtual Block 8.1
  * Type: Effect
  * Title: Scoundrel's Luck
- * Text: the Virtual Block 8.1 release sheet and the Virtual Cards Master List (both "(even if inactive)"; the PC card
- * image and PC card data lack it).
+ * Text: the PC card image (image server folder Virtual8-Light, file dated 2013-05-07), the latest publication (batch B41
+ * rework, Bill's rulings of 2026-11-11): no "(even if inactive)". The re-made sheet (2012-07-18) and the Master List
+ * (2013-04-27) have it; they are versions 2281_1037 and 2281_37.
  */
 public class Card1281_037 extends AbstractNormalEffect {
     public Card1281_037() {
         super(Side.LIGHT, 3, PlayCardZoneOption.ATTACHED, "Scoundrel's Luck", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_1, Rarity.V);
-        setGameText("Deploy on Infiltration with three [Scoundrel] cards from Reserve Deck face down under here. Once during your turn, at any time, may deploy a [Scoundrel] Effect from here. If a [Scoundrel] Effect just left table, stack it under here. At the start of your turn, stack all [Scoundrel] Effects under here (even if inactive). Once per turn, may place any card in Lost Pile out of play to deploy a character weapon (except a grenade) from Lost Pile. While two non-droid scoundrels present at battlegrounds, Their Fire Has Gone Out Of The Universe flips and may not flip back. (Immune to Alter.)");
+        setGameText("Deploy on Infiltration with three [Scoundrel] cards from Reserve Deck face down under here. Once during your turn, at any time, may deploy a [Scoundrel] Effect from here. If a [Scoundrel] Effect just left table, stack it under here. At the start of your turn, stack all [Scoundrel] Effects under here. Once per turn, may place any card in Lost Pile out of play to deploy a character weapon (except a grenade) from Lost Pile. While two non-droid scoundrels present at battlegrounds, Their Fire Has Gone Out Of The Universe flips and may not flip back. (Immune to Alter.)");
         addImmuneToCardTitle(Title.Alter);
     }
 
-    /** Sheet / Master List text: "stack all [Scoundrel] Effects under here (even if inactive)". */
+    /** PC card image text: "stack all [Scoundrel] Effects under here" (only active ones); versions with "(even if inactive)" override. */
     protected boolean stackAtStartOfTurnEvenIfInactive() {
-        return true;
+        return false;
     }
 
     @Override

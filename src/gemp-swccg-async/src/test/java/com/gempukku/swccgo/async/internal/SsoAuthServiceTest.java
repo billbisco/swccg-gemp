@@ -136,11 +136,26 @@ class SsoAuthServiceTest {
     }
 
     @Test
+    void playersKeepsSpacesInFullNames() throws Exception {
+        // t122u: a full name with a space reaches Play as typed, not as "Luke_Sky"
+        when(auth.createPlayerWithoutPassword("Luke Sky", IP)).thenReturn(player(9, "Luke Sky", "u"));
+        JSONObject r = json(call(KEY, SsoAuthService.PLAYERS, "{\"username\":\"Luke Sky\",\"client_ip\":\"" + IP + "\"}", NOW));
+        assertEquals(true, r.get("ok"));
+        assertEquals("Luke Sky", ((JSONObject) r.get("user")).get("name"));
+        verify(auth).createPlayerWithoutPassword("Luke Sky", IP);
+    }
+
+    @Test
     void registerErrors() throws Exception {
         when(auth.registerAndGet(eq("Taken"), anyString(), anyString())).thenThrow(new LoginInvalidException());
         assertEquals("name_taken", json(call(KEY, SsoAuthService.REGISTER, "{\"username\":\"Taken\",\"password\":\"p\",\"client_ip\":\"" + IP + "\"}", NOW)).get("error"));
-        assertEquals("name_invalid", json(call(KEY, SsoAuthService.REGISTER, "{\"username\":\"a b\",\"password\":\"p\",\"client_ip\":\"" + IP + "\"}", NOW)).get("error"));
+        assertEquals("name_invalid", json(call(KEY, SsoAuthService.REGISTER, "{\"username\":\"a  b\",\"password\":\"p\",\"client_ip\":\"" + IP + "\"}", NOW)).get("error"));
         assertEquals("name_invalid", json(call(KEY, SsoAuthService.REGISTER, "{\"username\":\"~Bot\",\"password\":\"p\",\"client_ip\":\"" + IP + "\"}", NOW)).get("error"));
+        // t127u: a 4-byte character (above U+FFFF) never reaches the utf8mb3 player table
+        assertEquals("name_invalid", json(call(KEY, SsoAuthService.REGISTER, "{\"username\":\"Luke\\ud835\\udc00\",\"password\":\"p\",\"client_ip\":\"" + IP + "\"}", NOW)).get("error"));
+        assertEquals("name_invalid", json(call(KEY, SsoAuthService.PLAYERS, "{\"username\":\"Han \\ud840\\udc00\",\"client_ip\":\"" + IP + "\"}", NOW)).get("error"));
+        verify(auth, never()).registerAndGet(eq("Luke\uD835\uDC00"), anyString(), anyString());
+        verify(auth, never()).createPlayerWithoutPassword(eq("Han \uD840\uDC00"), anyString());
         when(settings.newAccountRegistrationEnabled()).thenReturn(false);
         assertEquals("signup_closed", json(call(KEY, SsoAuthService.REGISTER, "{\"username\":\"New1\",\"password\":\"p\",\"client_ip\":\"" + IP + "\"}", NOW)).get("error"));
     }
@@ -203,5 +218,67 @@ class SsoAuthServiceTest {
         when(auth.setPassword(10, "weak")).thenThrow(new AuthService.WeakPasswordException());
         call(KEY, SsoAuthService.PASSWORD, "{\"id\":10,\"password\":\"weak\",\"client_ip\":\"" + IP + "\",\"end_sessions\":true}", NOW);
         assertEquals(1, ended.size(), "a refused password ends nothing");
+    }
+
+    @Test
+    void closeDeactivatesAndEndsSessions() throws Exception {
+        java.util.List<String> ended = new java.util.ArrayList<>();
+        service.setSessionEnder(ended::add);
+        when(auth.closeAccount(11)).thenReturn(player(11, "Finn", "u"));
+        JSONObject r = json(call(KEY, SsoAuthService.CLOSE, "{\"id\":11,\"client_ip\":\"" + IP + "\"}", NOW));
+        assertEquals(true, r.get("ok"));
+        assertEquals(11L, ((JSONObject) r.get("user")).get("id"));
+        assertEquals(java.util.List.of("Finn"), ended);
+        when(auth.closeAccount(12)).thenReturn(null);
+        assertEquals("not_found", json(call(KEY, SsoAuthService.CLOSE, "{\"id\":12}", NOW)).get("error"));
+        assertEquals(1, ended.size(), "nothing ended for an unknown player");
+    }
+
+    @Test
+    void closeEmptyBodyIsSignedBadRequest() throws Exception {
+        // swccg-login probes for the call with {}: a signed 400 means "supported".
+        WikiAuthService.Result r = call(KEY, SsoAuthService.CLOSE, "{}", NOW);
+        assertEquals(400, r.status);
+        assertTrue(r.signature != null);
+        verify(auth, never()).closeAccount(anyInt());
+        // Unknown paths stay unsigned 404s.
+        assertEquals(404, call(KEY, "/internal/v2/nope", "{}", NOW).status);
+    }
+
+    @Test
+    void renameRenamesEndsTheOldSessionsAndClearsCaches() throws Exception {
+        java.util.List<String> ended = new java.util.ArrayList<>();
+        int[] cleared = {0};
+        service.setSessionEnder(ended::add);
+        service.setRenameHooks(name -> false, () -> cleared[0]++);
+        when(auth.getPlayer(11)).thenReturn(player(11, "Finn", "u"));
+        when(auth.renameAccount(11, "Finn2")).thenReturn(player(11, "Finn2", "u"));
+        JSONObject r = json(call(KEY, SsoAuthService.RENAME, "{\"id\":11,\"username\":\"Finn2\",\"client_ip\":\"" + IP + "\"}", NOW));
+        assertEquals(true, r.get("ok"));
+        assertEquals("Finn2", ((JSONObject) r.get("user")).get("name"));
+        assertEquals(java.util.List.of("Finn"), ended, "sessions of the old name end");
+        assertEquals(1, cleared[0]);
+    }
+
+    @Test
+    void renameRefusals() throws Exception {
+        //test1: a bad name never reaches Play's player table
+        //test2: refused while the player is at a table
+        //test3: Play's own refusals pass through with their code
+        //test4: an empty body is a signed 400, so swccg-login shows the feature
+        service.setRenameHooks(name -> name.equals("Rey"), null);
+        assertEquals("name_invalid", json(call(KEY, SsoAuthService.RENAME, "{\"id\":11,\"username\":\"has  two spaces\"}", NOW)).get("error")); //test1
+        verify(auth, never()).renameAccount(anyInt(), org.mockito.ArgumentMatchers.anyString()); //test1
+        assertEquals("name_invalid", json(call(KEY, SsoAuthService.RENAME, "{\"id\":11,\"username\":\"Rey\\ud835\\udc00\"}", NOW)).get("error")); //test1: 4-byte (t127u)
+        verify(auth, never()).renameAccount(anyInt(), org.mockito.ArgumentMatchers.anyString()); //test1
+        when(auth.getPlayer(12)).thenReturn(player(12, "Rey", "u"));
+        assertEquals("busy", json(call(KEY, SsoAuthService.RENAME, "{\"id\":12,\"username\":\"Rey2\"}", NOW)).get("error")); //test2
+        verify(auth, never()).renameAccount(anyInt(), org.mockito.ArgumentMatchers.anyString()); //test2
+        when(auth.getPlayer(13)).thenReturn(player(13, "Poe", "u"));
+        when(auth.renameAccount(13, "Rey")).thenThrow(new AuthService.RenameRefused("name_taken"));
+        assertEquals("name_taken", json(call(KEY, SsoAuthService.RENAME, "{\"id\":13,\"username\":\"Rey\"}", NOW)).get("error")); //test3
+        WikiAuthService.Result probe = call(KEY, SsoAuthService.RENAME, "{}", NOW);
+        assertEquals(400, probe.status); //test4
+        assertTrue(probe.signature != null); //test4
     }
 }

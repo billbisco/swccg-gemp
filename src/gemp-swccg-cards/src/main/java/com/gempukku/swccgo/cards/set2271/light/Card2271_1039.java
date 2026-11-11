@@ -11,15 +11,15 @@ import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 
-/** Luke, Trust Me with the "no Epic Events" errata as on the PC website card list (PC-E1, by 2012-07-21; "Epic Even" as printed there), a version of 1271_39; replaced by the Virtual Cards Master List text (PC-E2, 2013-04-27, "Epic Event"). Same play as the current card. Anything Goes only (docs/legacy-versions.md). */
+/** Luke, Trust Me with the "no Epic Events" errata as on the PC website card list (PC-E2, by 2012-07-21; "Epic Even" as printed there), a version of 1271_39, after the PC forum errata of 2012-01-19 (PC-E1, 2271_2039, "Epic Event") and before the Master List (2013-04-27) and PC card image, which repeat the forum text word for word (PC card image PC-E3, 2013-02-25; Master List PC-E4, the current card). Same play as the current card. Anything Goes only (docs/legacy-versions.md). */
 public class Card2271_1039 extends LegacySetupSearchEffect {
     public Card2271_1039() {
         super(Side.LIGHT, "Luke, Trust Me", GameTextActionId.LEGACY__LUKE_TRUST_ME__TAKE_SETUP,
             GameTextActionId.LEGACY__LUKE_TRUST_ME__TAKE_IMMEDIATE_EFFECT);
         setLore("Luke's piloting skills and Force abilities made his X-wing a difficult target for Darth Vader as they raced down the Death Star trench.");
         setGameText("If you have no Epic Events on table (and did not play an Epic Even at the start of the game), deploy on table. Once per game, may take a [Setup] card into hand from Reserve Deck; reshuffle. May place this Effect in Used Pile to take an Immediate Effect into hand from Reserve Deck; reshuffle. May place this Effect in Lost Pile to cancel a Force drain. (Immune to Alter.)");
-        setLegacyVersion(new LegacyVersion("1271_39", "PC-E1",
-                "PC website card list (by 2012-07-21)", LocalDate.of(2012, 7, 21), LocalDate.of(2013, 4, 27)));
+        setLegacyVersion(new LegacyVersion("1271_39", "PC-E2",
+                "PC website card list (by 2012-07-21)", LocalDate.of(2012, 7, 21), LocalDate.of(2013, 2, 25)));
     }
 
     @Override

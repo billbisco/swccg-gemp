@@ -21,6 +21,7 @@ public class DbGameHistoryDAO implements GameHistoryDAO {
     }
 
     private volatile boolean _setupColumnReady;
+    private volatile boolean _playerIdColumnsReady;
 
     /** Adds game_history.game_setup (#116, approved by Bill in swccg-guild/work#114 Q2). Idempotent. */
     private void ensureSetupColumn(Connection connection) throws SQLException {
@@ -32,13 +33,62 @@ public class DbGameHistoryDAO implements GameHistoryDAO {
         _setupColumnReady = true;
     }
 
+    /**
+     * swccg-guild/work#264: game_history.winner_id / loser_id, the player id beside the name shown at the table, so a
+     * player's games follow the account after a rename while each row keeps the name that was at the table. When the
+     * columns are first added, existing rows are backfilled from the current player names (same as
+     * db-scripts/update_history_player_id.sql). Rows of bots and guests have no player row and keep a null id.
+     * The backfill runs only once, when the columns are created, so a name freed later never adopts old rows.
+     */
+    static final String[] PLAYER_ID_MIGRATION = {
+            "ALTER TABLE game_history ADD COLUMN IF NOT EXISTS winner_id INT(11) NULL, ADD COLUMN IF NOT EXISTS loser_id INT(11) NULL",
+            "ALTER TABLE game_history ADD INDEX IF NOT EXISTS game_history_winner_id (winner_id), ADD INDEX IF NOT EXISTS game_history_loser_id (loser_id)",
+            "UPDATE game_history h JOIN player p ON p.name = h.winner SET h.winner_id = p.id WHERE h.winner_id IS NULL",
+            "UPDATE game_history h JOIN player p ON p.name = h.loser SET h.loser_id = p.id WHERE h.loser_id IS NULL"
+    };
+
+    private void ensurePlayerIdColumns(Connection connection) throws SQLException {
+        if (_playerIdColumnsReady)
+            return;
+        synchronized (this) {
+            if (_playerIdColumnsReady)
+                return;
+            boolean present;
+            try (PreparedStatement check = connection.prepareStatement("SELECT COUNT(*) FROM information_schema.COLUMNS"
+                    + " WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'game_history' AND COLUMN_NAME = 'winner_id'");
+                 ResultSet rs = check.executeQuery()) {
+                present = rs.next() && rs.getInt(1) > 0;
+            }
+            if (!present) {
+                try (java.sql.Statement statement = connection.createStatement()) {
+                    for (String sql : PLAYER_ID_MIGRATION)
+                        statement.execute(sql);
+                }
+            }
+            _playerIdColumnsReady = true;
+        }
+    }
+
+    /** A connection with the game_history columns this DAO reads in place. */
+    private Connection open() throws SQLException {
+        Connection connection = _dbAccess.getDataSource().getConnection();
+        try {
+            ensurePlayerIdColumns(connection);
+        } catch (SQLException e) {
+            connection.close();
+            throw e;
+        }
+        return connection;
+    }
+
     @Override
     public void addGameHistory(String winner, String loser, String winReason, String loseReason, String winRecordingId, String loseRecordingId, String formatName, String tournament, String winnerDeckName, String loserDeckName, String winnerDeckArchetype, String loserDeckArchetype, String winnerSide, String darkDeckString, String lightDeckString, String leagueType, String sealedLeagueType, Date startDate, Date endDate, String gameSetup) {
         try {
-            Connection connection = _dbAccess.getDataSource().getConnection();
+            Connection connection = open();
             try {
                 ensureSetupColumn(connection);
-                PreparedStatement statement = connection.prepareStatement("insert into game_history (winner, loser, win_reason, lose_reason, win_recording_id, lose_recording_id, format_name, tournament, winner_deck_name, loser_deck_name, winner_deck_archetype, loser_deck_archetype, winner_side, dark_deck_string, light_deck_string, league_type, sealed_league_type, start_date, end_date, game_setup) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+                PreparedStatement statement = connection.prepareStatement("insert into game_history (winner, loser, win_reason, lose_reason, win_recording_id, lose_recording_id, format_name, tournament, winner_deck_name, loser_deck_name, winner_deck_archetype, loser_deck_archetype, winner_side, dark_deck_string, light_deck_string, league_type, sealed_league_type, start_date, end_date, game_setup, winner_id, loser_id) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,"
+                        + " (SELECT id FROM player WHERE name = ?), (SELECT id FROM player WHERE name = ?))");
                 try {
                     statement.setString(1, winner);
                     statement.setString(2, loser);
@@ -60,6 +110,8 @@ public class DbGameHistoryDAO implements GameHistoryDAO {
                     statement.setLong(18, startDate.getTime());
                     statement.setLong(19, endDate.getTime());
                     statement.setString(20, gameSetup == null || gameSetup.isEmpty() ? null : gameSetup);
+                    statement.setString(21, winner);
+                    statement.setString(22, loser);
 
                     statement.execute();
                 } finally {
@@ -75,12 +127,12 @@ public class DbGameHistoryDAO implements GameHistoryDAO {
 
     public List<GameHistoryEntry> getGameHistoryForPlayer(Player player, int start, int count) {
         try {
-            Connection connection = _dbAccess.getDataSource().getConnection();
+            Connection connection = open();
             try {
-                PreparedStatement statement = connection.prepareStatement("select winner, loser, win_reason, lose_reason, win_recording_id, lose_recording_id, format_name, tournament, winner_deck_name, winner_deck_archetype, loser_deck_name, loser_deck_archetype, start_date, end_date from game_history where winner=? or loser=? order by end_date desc limit ?, ?");
+                PreparedStatement statement = connection.prepareStatement("select winner, loser, win_reason, lose_reason, win_recording_id, lose_recording_id, format_name, tournament, winner_deck_name, winner_deck_archetype, loser_deck_name, loser_deck_archetype, start_date, end_date from game_history where winner_id=? or loser_id=? order by end_date desc limit ?, ?");
                 try {
-                    statement.setString(1, player.getName());
-                    statement.setString(2, player.getName());
+                    statement.setInt(1, player.getId());
+                    statement.setInt(2, player.getId());
                     statement.setInt(3, start);
                     statement.setInt(4, count);
                     ResultSet rs = statement.executeQuery();
@@ -120,14 +172,33 @@ public class DbGameHistoryDAO implements GameHistoryDAO {
         }
     }
 
+    @Override
+    public Integer getRecordingOwnerId(String tableName, String recordingId) {
+        try (Connection connection = open();
+             PreparedStatement statement = connection.prepareStatement(
+                     "SELECT winner_id FROM game_history WHERE winner = ? AND win_recording_id = ? AND winner_id IS NOT NULL"
+                             + " UNION ALL SELECT loser_id FROM game_history WHERE loser = ? AND lose_recording_id = ? AND loser_id IS NOT NULL"
+                             + " LIMIT 1")) {
+            statement.setString(1, tableName);
+            statement.setString(2, recordingId);
+            statement.setString(3, tableName);
+            statement.setString(4, recordingId);
+            try (ResultSet rs = statement.executeQuery()) {
+                return rs.next() ? rs.getInt(1) : null;
+            }
+        } catch (SQLException exp) {
+            throw new RuntimeException("Unable to find the replay owner", exp);
+        }
+    }
+
     public int getGameHistoryForPlayerCount(Player player) {
         try {
-            Connection connection = _dbAccess.getDataSource().getConnection();
+            Connection connection = open();
             try {
-                PreparedStatement statement = connection.prepareStatement("select count(*) from game_history where winner=? or loser=?");
+                PreparedStatement statement = connection.prepareStatement("select count(*) from game_history where winner_id=? or loser_id=?");
                 try {
-                    statement.setString(1, player.getName());
-                    statement.setString(2, player.getName());
+                    statement.setInt(1, player.getId());
+                    statement.setInt(2, player.getId());
                     ResultSet rs = statement.executeQuery();
                     try {
                         if (rs.next())
@@ -150,7 +221,7 @@ public class DbGameHistoryDAO implements GameHistoryDAO {
 
     public int getActivePlayersCount() {
         try {
-            Connection connection = _dbAccess.getDataSource().getConnection();
+            Connection connection = open();
             try {
                 PreparedStatement statement = connection.prepareStatement(
                         "select count(*) from (SELECT winner FROM game_history union select loser from game_history) as u");
@@ -177,7 +248,7 @@ public class DbGameHistoryDAO implements GameHistoryDAO {
 
     public int getActivePlayersCount(long from, long duration) {
         try {
-            Connection connection = _dbAccess.getDataSource().getConnection();
+            Connection connection = open();
             try {
                 PreparedStatement statement = connection.prepareStatement(
                         "select count(*) from (SELECT winner FROM game_history where end_date>=? and end_date<? union select loser from game_history where end_date>=? and end_date<?) as u");
@@ -208,7 +279,7 @@ public class DbGameHistoryDAO implements GameHistoryDAO {
 
     public int getGamesPlayedCount() {
         try {
-            Connection connection = _dbAccess.getDataSource().getConnection();
+            Connection connection = open();
             try {
                 PreparedStatement statement = connection.prepareStatement("select count(*) from game_history");
                 try {
@@ -234,7 +305,7 @@ public class DbGameHistoryDAO implements GameHistoryDAO {
 
     public int getGamesPlayedCount(long from, long duration) {
         try {
-            Connection connection = _dbAccess.getDataSource().getConnection();
+            Connection connection = open();
             try {
                 PreparedStatement statement = connection.prepareStatement("select count(*) from game_history where end_date>=? and end_date<?");
                 try {
@@ -262,7 +333,7 @@ public class DbGameHistoryDAO implements GameHistoryDAO {
 
     public Map<String, Integer> getCasualGamesPlayedPerFormat(long from, long duration) {
         try {
-            Connection connection = _dbAccess.getDataSource().getConnection();
+            Connection connection = open();
             try {
                 PreparedStatement statement = connection.prepareStatement("select count(*), format_name from game_history where (tournament is null or tournament = 'Casual') and end_date>=? and end_date<? group by format_name");
                 try {
@@ -291,16 +362,16 @@ public class DbGameHistoryDAO implements GameHistoryDAO {
 
     public List<PlayerStatistic> getCasualPlayerStatistics(Player player) {
         try {
-            Connection connection = _dbAccess.getDataSource().getConnection();
+            Connection connection = open();
             try {
                 PreparedStatement statement = connection.prepareStatement(
                         "select deck_name, format_name, sum(win), sum(lose) from" +
-                                " (select winner_deck_name as deck_name, format_name, 1 as win, 0 as lose from game_history where winner=? and (tournament is null or tournament = 'Casual') and (win_reason <> 'Game cancelled due to error')" +
-                                " union all select loser_deck_name as deck_name, format_name, 0 as win, 1 as lose from game_history where loser=? and (tournament is null or tournament = 'Casual') and (win_reason <> 'Game cancelled due to error')) as u" +
+                                " (select winner_deck_name as deck_name, format_name, 1 as win, 0 as lose from game_history where winner_id=? and (tournament is null or tournament = 'Casual') and (win_reason <> 'Game cancelled due to error')" +
+                                " union all select loser_deck_name as deck_name, format_name, 0 as win, 1 as lose from game_history where loser_id=? and (tournament is null or tournament = 'Casual') and (win_reason <> 'Game cancelled due to error')) as u" +
                                 " group by deck_name, format_name order by format_name, deck_name");
                 try {
-                    statement.setString(1, player.getName());
-                    statement.setString(2, player.getName());
+                    statement.setInt(1, player.getId());
+                    statement.setInt(2, player.getId());
                     ResultSet rs = statement.executeQuery();
                     List<PlayerStatistic> result = new LinkedList<PlayerStatistic>();
                     try {
@@ -323,16 +394,16 @@ public class DbGameHistoryDAO implements GameHistoryDAO {
 
     public List<PlayerStatistic> getCompetitivePlayerStatistics(Player player) {
         try {
-            Connection connection = _dbAccess.getDataSource().getConnection();
+            Connection connection = open();
             try {
                 PreparedStatement statement = connection.prepareStatement(
                         "select deck_name, format_name, sum(win), sum(lose) from" +
-                                " (select winner_deck_name as deck_name, format_name, 1 as win, 0 as lose from game_history where winner=? and (tournament is not null and tournament <> 'Casual') and (win_reason <> 'Game cancelled due to error')" +
-                                " union all select loser_deck_name as deck_name, format_name, 0 as win, 1 as lose from game_history where loser=? and (tournament is not null and tournament <> 'Casual') and (win_reason <> 'Game cancelled due to error')) as u" +
+                                " (select winner_deck_name as deck_name, format_name, 1 as win, 0 as lose from game_history where winner_id=? and (tournament is not null and tournament <> 'Casual') and (win_reason <> 'Game cancelled due to error')" +
+                                " union all select loser_deck_name as deck_name, format_name, 0 as win, 1 as lose from game_history where loser_id=? and (tournament is not null and tournament <> 'Casual') and (win_reason <> 'Game cancelled due to error')) as u" +
                                 " group by deck_name, format_name order by format_name, deck_name");
                 try {
-                    statement.setString(1, player.getName());
-                    statement.setString(2, player.getName());
+                    statement.setInt(1, player.getId());
+                    statement.setInt(2, player.getId());
                     ResultSet rs = statement.executeQuery();
                     List<PlayerStatistic> result = new LinkedList<PlayerStatistic>();
                     try {
@@ -355,8 +426,8 @@ public class DbGameHistoryDAO implements GameHistoryDAO {
 
     @Override
     public List<GameHistoryEntry> getGameHistoryForPlayer(Player player, GameHistoryFilter filter, int start, int count) {
-        GameHistoryQuery query = GameHistoryQuery.forPlayer(player.getName(), filter);
-        try (Connection connection = _dbAccess.getDataSource().getConnection();
+        GameHistoryQuery query = GameHistoryQuery.forPlayer(player.getId(), filter);
+        try (Connection connection = open();
              PreparedStatement statement = connection.prepareStatement(query.selectSql())) {
             int index = bind(statement, query.parameters());
             statement.setInt(index++, start);
@@ -378,8 +449,8 @@ public class DbGameHistoryDAO implements GameHistoryDAO {
 
     @Override
     public int getGameHistoryForPlayerCount(Player player, GameHistoryFilter filter) {
-        GameHistoryQuery query = GameHistoryQuery.forPlayer(player.getName(), filter);
-        try (Connection connection = _dbAccess.getDataSource().getConnection();
+        GameHistoryQuery query = GameHistoryQuery.forPlayer(player.getId(), filter);
+        try (Connection connection = open();
              PreparedStatement statement = connection.prepareStatement(query.countSql())) {
             bind(statement, query.parameters());
             try (ResultSet rs = statement.executeQuery()) {
@@ -392,10 +463,10 @@ public class DbGameHistoryDAO implements GameHistoryDAO {
 
     @Override
     public List<String> getGameHistoryFormats(Player player) {
-        try (Connection connection = _dbAccess.getDataSource().getConnection();
+        try (Connection connection = open();
              PreparedStatement statement = connection.prepareStatement(GameHistoryQuery.formatsSql())) {
-            statement.setString(1, player.getName());
-            statement.setString(2, player.getName());
+            statement.setInt(1, player.getId());
+            statement.setInt(2, player.getId());
             return readStrings(statement);
         } catch (SQLException exp) {
             throw new RuntimeException("Unable to get game history formats", exp);
@@ -404,10 +475,10 @@ public class DbGameHistoryDAO implements GameHistoryDAO {
 
     @Override
     public List<String> getGameHistoryEvents(Player player, int limit) {
-        try (Connection connection = _dbAccess.getDataSource().getConnection();
+        try (Connection connection = open();
              PreparedStatement statement = connection.prepareStatement(GameHistoryQuery.eventsSql())) {
-            statement.setString(1, player.getName());
-            statement.setString(2, player.getName());
+            statement.setInt(1, player.getId());
+            statement.setInt(2, player.getId());
             statement.setInt(3, limit);
             return readStrings(statement);
         } catch (SQLException exp) {
@@ -420,6 +491,8 @@ public class DbGameHistoryDAO implements GameHistoryDAO {
         for (Object parameter : parameters) {
             if (parameter instanceof Long)
                 statement.setLong(index++, (Long) parameter);
+            else if (parameter instanceof Integer)
+                statement.setInt(index++, (Integer) parameter);
             else
                 statement.setString(index++, String.valueOf(parameter));
         }
@@ -437,7 +510,7 @@ public class DbGameHistoryDAO implements GameHistoryDAO {
 
     public List<LeagueDecklistEntry> getLeagueDecklists(String leagueId) {
         try {
-            try (Connection connection = _dbAccess.getDataSource().getConnection()) {
+            try (Connection connection = open()) {
                 try (PreparedStatement statement = connection.prepareStatement(
                         "select tournament, start_date, case when winner_side = 'Dark' then winner when winner_side = 'Light' then loser else 'ERROR (game somehow ended without a winner)' end as Player " +
                                 ",'Dark' as Side,dark_deck_string as DeckPlayed " +

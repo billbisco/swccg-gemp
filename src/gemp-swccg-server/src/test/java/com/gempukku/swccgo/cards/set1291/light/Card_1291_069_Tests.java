@@ -189,7 +189,7 @@ public class Card_1291_069_Tests {
         // Dark Side (whose turn it is) responds to the flip first
         assertTrue(scn.DSDecisionAvailable("DOUBLE_SIDED_CARD_FLIPPED"));
         scn.DSPass();
-        assertTrue(scn.LSActionAvailable("Place X cards from hand"));
+        assertTrue(scn.LSActionAvailable("Place X (limit 3) cards from hand"));
         scn.LSDecline();
         scn.PassResponses("DOUBLE_SIDED_CARD_FLIPPED");
         assertTrue(scn.AwaitingDSControlPhaseActions());
@@ -476,12 +476,13 @@ public class Card_1291_069_Tests {
     }
 
     // ----------------------------------------------------------------------------------------------------------
-    // Aggressive Negotiations: Immediately, may place X cards from hand on bottom of Force Pile to draw up to X+1
-    // cards from Reserve Deck once per game.
+    // Aggressive Negotiations (PC-E1, Advocate Council errata 2014-08-08): Immediately place X (limit 3) cards from
+    // hand on bottom of Used Pile then draw up to X+1 cards from Reserve Deck once per game. (The release-sheet text,
+    // Force Pile with no limit, is the version card 2291_69 / 2291_69_BACK.)
     // ----------------------------------------------------------------------------------------------------------
 
     @Test
-    public void AggressiveNegotiationsPlacesXCardsOnForcePileToDrawUpToXPlusOneOncePerGame() {
+    public void AggressiveNegotiationsPlacesXCardsOnUsedPileToDrawUpToXPlusOneOncePerGame() {
         var scn = GetScenario();
         var raw = scn.GetLSCard("raw");
         var h1 = scn.GetLSCard("h1");
@@ -495,16 +496,16 @@ public class Card_1291_069_Tests {
         PutCompleteCloneArmyMissionOnTable(scn);
         int handBefore = scn.GetLSHandCount();
         int reserveBefore = scn.GetLSReserveDeckCount();
-        int forceBefore = scn.GetLSForcePileCount();
+        int usedBefore = scn.GetLSUsedPileCount();
 
         assertTrue(scn.AwaitingDSActivatePhaseActions());
         scn.DSActivateMaxForceAndPass();
         assertTrue(raw.isFlipped());
         scn.DSPass();
-        assertTrue(scn.LSActionAvailable("Place X cards from hand"));
-        scn.LSChooseAction("Place X cards from hand");
+        assertTrue(scn.LSActionAvailable("Place X (limit 3) cards from hand"));
+        scn.LSChooseAction("Place X (limit 3) cards from hand");
 
-        assertTrue(scn.LSDecisionAvailable("Choose X cards to place on bottom of Force Pile"));
+        assertTrue(scn.LSDecisionAvailable("Choose X (limit 3) cards to place on bottom of Used Pile"));
         scn.LSChooseCards(h1, h2);
         scn.PassAllResponses();
 
@@ -514,11 +515,10 @@ public class Card_1291_069_Tests {
         scn.LSDecided(3);
         scn.PassAllResponses();
 
-        // Force Pile was empty: the first card placed is now its top card
-        assertTrue(h1.getZone() == Zone.FORCE_PILE || h1.getZone() == Zone.TOP_OF_FORCE_PILE);
-        assertTrue(h2.getZone() == Zone.FORCE_PILE || h2.getZone() == Zone.TOP_OF_FORCE_PILE);
+        assertTrue(h1.getZone() == Zone.USED_PILE || h1.getZone() == Zone.TOP_OF_USED_PILE);
+        assertTrue(h2.getZone() == Zone.USED_PILE || h2.getZone() == Zone.TOP_OF_USED_PILE);
         assertInHand(h3);
-        assertEquals(forceBefore + 2, scn.GetLSForcePileCount());
+        assertEquals(usedBefore + 2, scn.GetLSUsedPileCount());
         assertEquals(handBefore - 2 + 3, scn.GetLSHandCount());
         assertEquals(reserveBefore - 3, scn.GetLSReserveDeckCount());
 
@@ -531,9 +531,9 @@ public class Card_1291_069_Tests {
         scn.StackCardsOn(assault, junk);
         scn.PassDeployActions();
         assertTrue(raw.isFlipped());
-        assertFalse(scn.GetLSAvailableActions().stream().anyMatch(t -> t.contains("Place X cards from hand")));
+        assertFalse(scn.GetLSAvailableActions().stream().anyMatch(t -> t.contains("Place X (limit 3) cards from hand")));
         scn.PassResponses("DOUBLE_SIDED_CARD_FLIPPED");
-        assertFalse(scn.GetLSAvailableActions().stream().anyMatch(t -> t.contains("Place X cards from hand")));
+        assertFalse(scn.GetLSAvailableActions().stream().anyMatch(t -> t.contains("Place X (limit 3) cards from hand")));
         assertTrue(scn.GetLSHandCount() == 4);
     }
 

@@ -25,7 +25,7 @@ public class Card_2261_024_Tests {
         var scn = scenario();
         assertLegacyVersion(scn.GetDSCard("v").getBlueprint(), scn.GetDSCard("current").getBlueprint(), "1261_24", "PC-E1",
                 LocalDate.of(2010, 4, 20), LocalDate.of(2012, 7, 21),
-                "Plays on table. At opponent's Dantooine and Subjugated Planet sites, your Imperials are deploy -2 and your Force drains may not be modified or canceled by opponent.");
+                "Plays on table. At opponent's Dantooine and Subjugated planet sites, your Imperials are deploy -2 and your Force drains may not be modified or canceled by opponent.");
     }
 
     @Test
