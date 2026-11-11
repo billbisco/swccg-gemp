@@ -57,6 +57,6 @@ public class Card_2220_139_Tests {
         assertEquals("PC-E2", version.label());
         assertEquals(LocalDate.of(2009, 12, 7), version.printedOn());
         assertEquals(LocalDate.of(2012, 7, 21), version.supersededOn());
-        assertEquals(GameUtils.getFullName(current), GameUtils.getFullName(card));
+        assertEquals(GameUtils.getFullName(current) + " [PC-E2]", GameUtils.getFullName(card));
     }
 }

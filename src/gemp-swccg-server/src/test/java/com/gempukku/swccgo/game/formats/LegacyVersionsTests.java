@@ -59,6 +59,9 @@ public class LegacyVersionsTests {
             assertNull(notAVersion, LegacyVersion.currentPrintingIdOf(notAVersion));
     }
 
+    /** Versions whose words the current text (a later printing) repeats word for word (Batch S1: the PC forum errata texts). */
+    private static final java.util.Set<String> WORD_FOR_WORD_REPEATS = java.util.Set.of("2271_2002", "2250_2044", "2273_3027", "2271_2039", "2261_2065");
+
     @Test
     public void EveryImplementedVersionIsTheSameCardAsItsCurrentPrinting() {
         List<String> versions = LegacyCardPool.implementedVersionIds(library);
@@ -81,6 +84,11 @@ public class LegacyVersionsTests {
             assertEquals(id, current.getPersonas(), version.getPersonas());
             assertEquals(id, current.getExpansionSet(), version.getExpansionSet());
             assertTrue(id, version.isLegacy());
+            if (WORD_FOR_WORD_REPEATS.contains(id)) {
+                // Bill 2026-11-11: every published text is a version, even one the current text later repeats word for word.
+                assertTrue(id + ": listed as a repeat but differs", !differsInGameTextOrPrintedData(current, version)
+                        && printedText(version).equals(printedText(current)));
+            } else
             assertTrue(id + ": differs from its current card in game text (incl. location texts), printed stats/icons or printed title",
                     differsInGameTextOrPrintedData(current, version)
                             || !printedText(version).equals(printedText(current))
