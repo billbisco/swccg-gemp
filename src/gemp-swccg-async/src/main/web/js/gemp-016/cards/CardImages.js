@@ -7084,7 +7084,6 @@ const fixedImages = {
 "2273_23":"https://wiki.swccg.com/images/f/fc/VB7-03-Captain_Antilles.png",
 "2273_30":"https://wiki.swccg.com/images/1/1a/VB7-02-Wes_Janson_Rogue_Veteran.png",
 "2273_32":"https://wiki.swccg.com/images/7/7a/VB7-03-Bacta_Infirmary.png",
-"2273_33":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/communing.gif",
 "2273_34":"https://wiki.swccg.com/images/d/dc/VB7-04-Use_The_Force.png",
 "2273_41":"https://wiki.swccg.com/images/e/e8/VB7-p7-122-Coruscant_Special_Edition.png",
 "2273_1027":"https://wiki.swccg.com/images/0/03/VB7-01-Master_Kenobi-original-cardmaker.png",
