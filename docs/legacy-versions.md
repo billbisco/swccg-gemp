@@ -49,7 +49,7 @@ deck counts, bans).
   bans still count it as the base printing (`LegacyIds.withoutAlternateImageSuffix` in
   `DefaultSwccgFormat.sameCardBlueprintId`). None needed so far (2026-11-08): every AI printing's latest text is its base
   card's latest text.
-- Done: `2240_3` (Juno Eclipse AI), `2240_8ai` (Galen Marek AI), `2250_2ai` (Aurra Sing AI), `2250_44ai`
+- Done: `2240_3` (Juno Eclipse AI), `2240_8ai` (Galen Marek AI; retired in batch B39 — one AI version, aliased to `1240_8ai`), `2250_2ai` (Aurra Sing AI), `2250_44ai`
   (Master Qui-Gon AI), `2250_45ai` (Mace Windu AI), `2281_30ai` (Supreme Chancellor Valorum AI).
 
 ## Formats

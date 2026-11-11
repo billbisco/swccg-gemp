@@ -13,7 +13,7 @@ import static com.gempukku.swccgo.cards.set2271.VersionAsserts.assertSameUniqueC
 import static com.gempukku.swccgo.cards.set2271.VersionAsserts.assertVersion;
 import static org.junit.Assert.*;
 
-/** Original Communing (first printing 2011-06-03), a version of 1273_33: no I Can't Believe He's Gone cancel, no look at top cards. An Epic Event played instead of a starting Interrupt (never deployed from hand), so no deploy-from-hand uniqueness test. */
+/** Original Communing (first printing 2011-06-03, reconstructed in batch B39 as PC-E1 without the I Can't Believe He's Gone sentence), a version of 1273_33: no I Can't Believe He's Gone cancel; it has the look at top cards. An Epic Event played instead of a starting Interrupt (never deployed from hand), so no deploy-from-hand uniqueness test. */
 public class Card_2273_033_Tests {
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>() {{
@@ -33,7 +33,7 @@ public class Card_2273_033_Tests {
         assertVersion(VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("2273_33"),
                 VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("1273_33"), "1273_33", "",
                 LocalDate.of(2011, 6, 3), LocalDate.of(2011, 6, 22),
-                "If your starting location has exactly 2 [Light Side Force], play instead of a starting interrupt. [download] two always [Immune to Alter] Effects. Deploy on table; [upload] and stack a Jedi here (that Jedi is 'communing'). Luminous Beings: Whenever a Jedi is lost (or placed out of play) from table, may stack it here. Jedi stacked here are considered out of play. You generate +1 Force for each card stacked here.");
+                "If your starting location has exactly two [Light Side], play instead of a Starting Interrupt. [download] two always [Immune to Alter] Effects. Deploy on table; [upload] and stack a Jedi here. Luminous Beings: Whenever a Jedi is lost (or placed out of play) from table, may stack it here. Jedi stacked here are 'communing' and considered out of play. You generate +1 Force for each card stacked here. Once per turn, if two cards here, may use 1 Force to look at top card of Reserve Deck, Force Pile, and/or Used Pile; return one card to each deck or pile.");
     }
 
     private VirtualTableScenario withTwoStacked(String key) {
@@ -50,9 +50,9 @@ public class Card_2273_033_Tests {
     }
 
     @Test
-    public void OriginalCommuningHasNoLookAtTopCardsActionAndDoesNotCancelICantBelieveHesGone() {
+    public void OriginalCommuningLooksAtTopCardsButDoesNotCancelICantBelieveHesGone() {
         var s = withTwoStacked("version");
-        assertFalse(s.LSCardActionAvailable(s.GetLSCard("version"), "Look at top cards"));
+        assertTrue(s.LSCardActionAvailable(s.GetLSCard("version"), "Look at top cards"));
         assertEquals(Zone.SIDE_OF_TABLE, s.GetLSCard("icbhg").getZone());
     }
 

@@ -62,7 +62,8 @@ public class LegacyBatchB30VersionsTests {
             assertEquals(id, currentId, lv.currentPrintingId());
             assertEquals(id + ": the original printing has no label", "", lv.label());
             assertEquals(id, e.getValue()[2], lv.printedOn());
-            assertEquals(id, LocalDate.of(2013, 4, 27), lv.supersededOn());
+            // 2272_18: the rename took effect on 2013-01-29 (PC "New Persona Changes"); dated so in batch B39, before the rescinded 2013-04-13 errata (2272_1018)
+            assertEquals(id, id.equals("2272_18") ? LocalDate.of(2013, 1, 29) : LocalDate.of(2013, 4, 27), lv.supersededOn());
             assertEquals(id, e.getValue()[1], version.getPrintedTitle());
             assertEquals(id, e.getValue()[1], GameUtils.getFullName(version));
             // same card for every rule

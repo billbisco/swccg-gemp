@@ -50,13 +50,15 @@ import java.util.List;
  * Set: Virtual Block 4: Expanded Universe
  * Type: Effect
  * Subtype: Immediate
- * Title: He Is Not Ready & Imperial Propaganda
+ * Title: He Is Not Ready (V)
+ * Printed as "He Is Not Ready & Imperial Propaganda" until the PC errata of 2013-06-14 renamed it (game text unchanged); that
+ * original is 2240_26 (Bill, 2026-11-10: the "&" title is the original, the short title the June 2013 errata).
  */
 public class Card1240_026 extends AbstractImmediateEffect {
     public Card1240_026() {
-        super(Side.DARK, 5, null, "He Is Not Ready & Imperial Propaganda", Uniqueness.UNRESTRICTED, ExpansionSet.VIRTUAL_BLOCK_4, Rarity.V);
-        addComboCardTitles(Title.He_Is_Not_Ready, Title.Imperial_Propaganda);
-        setGameText("Deploy on opponent's just deployed [Reflections III][Maintenance] card; opponent loses 1 Force, and you may retrieve 1 Force and/or play a Defensive Shield from under your Starting Effect. That card is power -3, may not apply its ability towards drawing battle destiny, and, during opponent's draw phase, opponent must lose 1 Force or place that card in Lost Pile. If just lost, place this card in Used Pile. Immune to Honor Of The Jedi. [Immune to Control] OR If you are about to lose Force during opponent's control phase, deploy on table to reduce loss by 2.");
+        super(Side.DARK, 5, null, Title.He_Is_Not_Ready, Uniqueness.UNRESTRICTED, ExpansionSet.VIRTUAL_BLOCK_4, Rarity.V);
+        setVirtualSuffix(true);
+        setGameText("Deploy on opponent's just deployed [Reflections III][Maintenance] card; opponent loses 1 Force, and you may retrieve 1 Force and/or play a Defensive Shield from under your Starting Effect. That [Maintenance] card is power -3, may not apply its ability towards drawing battle destiny, and, during opponent's draw phase, opponent must lose 1 Force or place that card in Lost Pile. If just lost, place this card in Used Pile. Immune to Honor Of The Jedi. [Immune to Control] OR If you are about to lose Force during opponent's control phase, deploy on table to reduce loss by 2.");
         addIcons(Icon.DAGOBAH, Icon.LEGACY_BLOCK_4);
         addImmuneToCardTitle(Title.Control);
         addImmuneToCardTitle(Title.Honor_Of_The_Jedi);

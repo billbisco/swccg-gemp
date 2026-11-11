@@ -380,3 +380,5 @@
 2273_22,1273_22
 2281_12,1281_12
 2282_25,1282_25
+# Removed Legacy version ids (batch B39, Bill 2026-11-10: one Galen Marek, Starkiller AI version, the Master List text) -> the current AI card (docs/legacy-versions.md)
+2240_8ai,1240_8ai

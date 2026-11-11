@@ -58,12 +58,14 @@ import java.util.List;
  * Type: Effect
  * Subtype: Immediate
  * Title: Eject! Eject! (V)
+ * Printed as "Eject! Eject! & Imperial Atrocity" until the PC errata of 2013-06-14 renamed it (game text unchanged); that
+ * original is 2240_81 (Bill, 2026-11-10).
  */
 public class Card1240_081 extends AbstractImmediateEffect {
     public Card1240_081() {
         super(Side.LIGHT, 5, PlayCardZoneOption.ATTACHED, Title.Eject_Eject, Uniqueness.UNRESTRICTED, ExpansionSet.VIRTUAL_BLOCK_4, Rarity.V);
         setVirtualSuffix(true);
-        setGameText("Deploy on opponent's just deployed [Reflections III][Maintenance] card; opponent loses 1 Force, and you may retrieve 1 Force and/or play a Defensive Shield from under your Starting Effect. That card is power -3, opponent must use 1 Force for that card to apply its ability towards drawing battle destiny, and, during opponent's draw phase, opponent must lose 1 Force or place that card in Lost Pile. If just lost, place this card in Used Pile. (Immune to Control.) OR If you are about to lose Force during opponent's control phase, deploy on table to reduce loss by 2.");
+        setGameText("Deploy on opponent's just deployed [Reflections III][Maintenance] card; opponent loses 1 Force, and you may retrieve 1 Force and/or play a Defensive Shield from under your Starting Effect. That [Maintenance] card is power -3, opponent must use 1 Force for that card to apply its ability towards drawing battle destiny, and, during opponent's draw phase, opponent must lose 1 Force or place that card in Lost Pile. If just lost, place this card in Used Pile. (Immune to Control.) OR If you are about to lose Force during opponent's control phase, deploy on table to reduce loss by 2.");
         addIcons(Icon.A_NEW_HOPE);
         addImmuneToCardTitle(Title.Control);
     }
