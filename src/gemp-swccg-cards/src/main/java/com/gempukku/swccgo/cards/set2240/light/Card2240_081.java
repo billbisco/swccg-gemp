@@ -14,7 +14,7 @@ import java.time.LocalDate;
  * was re-made 2010-04-20), card #83E, printed this card as "Eject! Eject! & Imperial Atrocity". The PC errata of 2013-06-14 (rules
  * forum, Current Rulings/Errata p813434) renamed it Eject! Eject! (V); "Its gametext remains unchanged". Bill
  * (2026-11-10): the "&" title is the original, the short title the June 2013 errata. Same card and persona as the
- * current printing (printed title is display only). Anything Goes only (docs/legacy-versions.md).
+ * current printing (Display Title is display only). Anything Goes only (docs/legacy-versions.md).
  */
 public class Card2240_081 extends Card1240_081 {
     public Card2240_081() {
@@ -22,6 +22,6 @@ public class Card2240_081 extends Card1240_081 {
         setLegacyVersion(new LegacyVersion("1240_81", "",
                 "Virtual Block 4 release sheet (2009-12-07), card #83E, printed as Eject! Eject! & Imperial Atrocity; renamed Eject! Eject! (V) by the PC errata of 2013-06-14",
                 LocalDate.of(2009, 12, 7), LocalDate.of(2013, 6, 14)));
-        setPrintedTitle("Eject! Eject! & Imperial Atrocity");
+        setDisplayTitle("Eject! Eject! & Imperial Atrocity");
     }
 }

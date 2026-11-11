@@ -23,12 +23,12 @@ public class Card_2261_093_Tests {
 
     @Test
     public void IdentityAndVersionInfo() {
-        // Title-order version (batch B41): same game text as the current card, printed title "Krayt Dragon Howl & Armed And Dangerous (V)".
+        // Title-order version (batch B41): same game text as the current card, display title "Krayt Dragon Howl & Armed And Dangerous (V)".
         var scn = scenario();
         var version = scn.GetLSCard("v").getBlueprint();
         var current = scn.GetLSCard("current").getBlueprint();
         assertEquals(current.getGameText(), version.getGameText());
-        assertEquals("Krayt Dragon Howl & Armed And Dangerous", version.getPrintedTitle());
+        assertEquals("Krayt Dragon Howl & Armed And Dangerous", version.getDisplayTitle());
         assertNull(current.getLegacyVersion());
         var info = version.getLegacyVersion();
         assertEquals("1261_93", info.currentPrintingId());

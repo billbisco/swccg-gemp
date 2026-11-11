@@ -11,6 +11,6 @@ package com.gempukku.swccgo.cards.set1261.light;
 public class Card1261_076 extends Card1261_077 {
     public Card1261_076() {
         super();
-        setBasePrintingTitle("Let's Keep A Little Optimism Here (Death Star II)");
+        setBasePrintingDisplayTitle("Let's Keep A Little Optimism Here (Death Star II)");
     }
 }

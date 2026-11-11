@@ -58,8 +58,8 @@ public abstract class AbstractSwccgCardBlueprint implements SwccgCardBlueprint {
     private int _startingEffectCapacityReduction;
     private boolean _isLegacy;
     private LegacyVersion _legacyVersion;
-    private String _printedTitle;
-    private boolean _printedTitleComplete;
+    private String _displayTitle;
+    private boolean _displayTitleComplete;
     private boolean _excludeFromDeckBuilder;
     private boolean _isHorizontal;
     private ExpansionSet _expansionSet;
@@ -3045,40 +3045,41 @@ public abstract class AbstractSwccgCardBlueprint implements SwccgCardBlueprint {
     }
 
     @Override
-    public String getPrintedTitle() {
-        return _printedTitle;
+    public String getDisplayTitle() {
+        return _displayTitle;
     }
 
     @Override
-    public boolean isPrintedTitleComplete() {
-        return _printedTitleComplete;
+    public boolean isDisplayTitleComplete() {
+        return _displayTitleComplete;
     }
 
     /**
-     * Sets the title printed on a pre-errata Legacy version that was printed under an older name. Display only:
-     * {@link #getTitle()} stays the current card's title, so uniqueness, persona and "title" rules are unchanged.
-     * Call it after {@link #setLegacyVersion(LegacyVersion)} (docs/legacy-versions.md, "Printed title").
-     * The printed title is shown as given: it includes "(V)" exactly when the release sheet printed it (Bill, 2026-11-10),
+     * Sets the Display Title of a pre-errata Legacy version that was printed under an older name: the wording on its
+     * face. Display only (Bill, 2026-11-11): {@link #getTitle()} stays the card's title (its label, "(V)" included for
+     * a Virtual card), so uniqueness, persona, title matching and deck limits are unchanged.
+     * Call it after {@link #setLegacyVersion(LegacyVersion)} (docs/legacy-versions.md, "Display Title").
+     * The Display Title is shown as given: it includes "(V)" exactly when the release sheet printed it (Bill, 2026-11-10),
      * and no " (V)" suffix is added to it.
-     * @param printedTitle the title as printed, without uniqueness dots (e.g. "Cyborg Commander, Hunter Of Jedi")
+     * @param displayTitle the title as printed on the face, without uniqueness dots (e.g. "Cyborg Commander, Hunter Of Jedi")
      */
-    protected void setPrintedTitle(String printedTitle) {
+    protected void setDisplayTitle(String displayTitle) {
         if (_legacyVersion == null)
-            throw new IllegalStateException("A printed title is only for pre-errata Legacy versions; call setLegacyVersion first");
-        _printedTitle = (printedTitle == null || printedTitle.isEmpty() || printedTitle.equals(getTitle())) ? null : printedTitle;
-        _printedTitleComplete = _printedTitle != null;
+            throw new IllegalStateException("A display title is only for pre-errata Legacy versions; call setLegacyVersion first");
+        _displayTitle = (displayTitle == null || displayTitle.isEmpty() || displayTitle.equals(getTitle())) ? null : displayTitle;
+        _displayTitleComplete = _displayTitle != null;
     }
 
     /**
-     * Sets the title printed on a card that was printed on more than one base card (Bill 2026-11-09, "two-base
+     * Sets the Display Title of a card that was printed on more than one base card (Bill 2026-11-09, "two-base
      * printings"): each printing prints its base in its title line, e.g. "Fanfare (Tatooine)" and
      * "Fanfare (Reflections III)", and has its own blueprint id and image. Display only, like
-     * {@link #setPrintedTitle(String)}: {@link #getTitle()} is unchanged, so both printings are the same card for
+     * {@link #setDisplayTitle(String)}: {@link #getTitle()} is unchanged, so both printings are the same card for
      * uniqueness, persona, title matching and deck limits.
-     * @param printedTitle the title as printed, without uniqueness dots and without the " (V)" suffix
+     * @param displayTitle the title as printed on the face, without uniqueness dots and without the " (V)" suffix
      */
-    protected final void setBasePrintingTitle(String printedTitle) {
-        _printedTitle = (printedTitle == null || printedTitle.isEmpty() || printedTitle.equals(getTitle())) ? null : printedTitle;
+    protected final void setBasePrintingDisplayTitle(String displayTitle) {
+        _displayTitle = (displayTitle == null || displayTitle.isEmpty() || displayTitle.equals(getTitle())) ? null : displayTitle;
     }
 
     @Override

@@ -11,6 +11,6 @@ package com.gempukku.swccgo.cards.set1261.dark;
 public class Card1261_028 extends Card1261_027 {
     public Card1261_028() {
         super();
-        setBasePrintingTitle("You Cannot Hide Forever (Death Star II)");
+        setBasePrintingDisplayTitle("You Cannot Hide Forever (Death Star II)");
     }
 }

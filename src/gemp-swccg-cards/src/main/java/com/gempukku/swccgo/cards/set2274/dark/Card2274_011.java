@@ -41,13 +41,13 @@ public class Card2274_011 extends AbstractCharacterWeapon {
         setGameText("Deploy on Cyborg Commander. May add 1 to Force drain where present. May target a character or creature for free. Draw two destiny. Target hit, and may not satisfy attrition (or be removed from Lost Pile this turn), if total destiny > defense value.");
         setLegacyVersion(new LegacyVersion("1274_11", "",
                 "Virtual Block 7.4 release sheet (2011-12-16)", LocalDate.of(2011, 12, 16), LocalDate.of(2013, 4, 27)));
-        setPrintedTitle("Cyborg Commander's Lightsabers");
+        setDisplayTitle("Cyborg Commander's Lightsabers");
         addIcons(Icon.EPISODE_I);
         addKeywords(Keyword.LIGHTSABER);
         setMatchingCharacterFilter(CYBORG_COMMANDER);
     }
 
-    // Cyborg Commander: Grievous, Hunter Of Jedi's printed title on the Virtual Block 7.1 sheet (that card only, not other Grievous cards)
+    // Cyborg Commander: Grievous, Hunter Of Jedi's display title on the Virtual Block 7.1 sheet (that card only, not other Grievous cards)
     private static final Filter CYBORG_COMMANDER = Filters.title("Grievous, Hunter Of Jedi");
 
     @Override

@@ -37,13 +37,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Pre-errata Legacy versions printed under an older name (docs/legacy-versions.md, "Printed title"): the printed title is
+ * Pre-errata Legacy versions printed under an older name (docs/legacy-versions.md, "Display Title"): the Display Title is
  * shown everywhere a card name is displayed, while every rule (uniqueness, persona, title matching, deck counts) keeps
  * treating the version as its current card.
  */
-public class LegacyVersionPrintedTitleTests {
-    /** Version id -> printed title (release sheet slip), per legacy-versions-v3.json printed_title. */
-    private static final Map<String, String> PRINTED_TITLES = new LinkedHashMap<>() {{
+public class LegacyVersionDisplayTitleTests {
+    /** Version id -> display title (release sheet slip), per legacy-versions-v3.json printed_title. */
+    private static final Map<String, String> DISPLAY_TITLES = new LinkedHashMap<>() {{
         put("2240_2", "Black Leader (V)");
         put("2240_8", "Galen, Secret Apprentice (V)");
         put("2240_59", "Galen's Fighter");
@@ -81,11 +81,11 @@ public class LegacyVersionPrintedTitleTests {
 
     @Test
     public void VersionsPrintedUnderAnOlderNameShowThatName() {
-        for (var entry : PRINTED_TITLES.entrySet()) {
+        for (var entry : DISPLAY_TITLES.entrySet()) {
             String id = entry.getKey();
             SwccgCardBlueprint version = library.getSwccgoCardBlueprint(id);
             SwccgCardBlueprint current = library.getSwccgoCardBlueprint(version.getLegacyVersion().currentPrintingId());
-            assertEquals(id, entry.getValue(), version.getPrintedTitle());
+            assertEquals(id, entry.getValue(), version.getDisplayTitle());
             assertEquals(id, entry.getValue(), GameUtils.getDisplayTitle(version));
             assertEquals(id, entry.getValue(), GameUtils.getFullName(version));
             // Rules title is the current card's
@@ -93,24 +93,24 @@ public class LegacyVersionPrintedTitleTests {
             assertEquals(id, current.getTitles(), version.getTitles());
             assertEquals(id, GameUtils.getFullName(current), GameUtils.getRulesFullName(version));
         }
-        // A card that is not a version has no printed title
-        assertEquals(null, library.getSwccgoCardBlueprint("1271_1").getPrintedTitle());
+        // A card that is not a version has no display title
+        assertEquals(null, library.getSwccgoCardBlueprint("1271_1").getDisplayTitle());
         assertEquals("Grievous, Hunter Of Jedi", GameUtils.getFullName(library.getSwccgoCardBlueprint("1271_1")));
     }
 
     @Test
-    public void EveryPrintedTitleIsOnAVersionAndDiffersFromTheRulesTitle() {
-        int withPrintedTitle = 0;
+    public void EveryDisplayTitleIsOnAVersionAndDiffersFromTheRulesTitle() {
+        int withDisplayTitle = 0;
         for (String id : LegacyCardPool.implementedVersionIds(library)) {
             SwccgCardBlueprint version = library.getSwccgoCardBlueprint(id);
-            if (version.getPrintedTitle() == null)
+            if (version.getDisplayTitle() == null)
                 continue;
-            withPrintedTitle++;
+            withDisplayTitle++;
             assertNotNull(id, version.getLegacyVersion());
-            assertNotEquals(id, version.getTitle(), version.getPrintedTitle());
-            assertFalse(id + ": printed title without uniqueness dots", version.getPrintedTitle().contains("•"));
+            assertNotEquals(id, version.getTitle(), version.getDisplayTitle());
+            assertFalse(id + ": display title without uniqueness dots", version.getDisplayTitle().contains("•"));
         }
-        assertTrue(String.valueOf(withPrintedTitle), withPrintedTitle >= PRINTED_TITLES.size());
+        assertTrue(String.valueOf(withDisplayTitle), withDisplayTitle >= DISPLAY_TITLES.size());
     }
 
     private static VirtualTableScenario scenario() {
@@ -130,7 +130,7 @@ public class LegacyVersionPrintedTitleTests {
     }
 
     @Test
-    public void InGameTheCardShowsItsPrintedTitleAndCardInfoNamesTheCurrentCard() throws Exception {
+    public void InGameTheCardShowsItsDisplayTitleAndCardInfoNamesTheCurrentCard() throws Exception {
         var scn = scenario();
         var cyborg = scn.GetDSCard("cyborg");
         scn.StartGame();
@@ -164,7 +164,7 @@ public class LegacyVersionPrintedTitleTests {
     }
 
     @Test
-    public void PrintedTitleVersionIsTheSameUniqueCardAndPersonaAsTheCurrentCard() {
+    public void DisplayTitleVersionIsTheSameUniqueCardAndPersonaAsTheCurrentCard() {
         // Unique: the current Grievous, Hunter Of Jedi on table blocks the version (and the other way round);
         // persona: General Grievous on table blocks the version too.
         for (String onTableName : List.of("current", "general")) {

@@ -11,6 +11,6 @@ package com.gempukku.swccgo.cards.set216.dark;
 public class Card216_050 extends Card216_005 {
     public Card216_050() {
         super();
-        setBasePrintingTitle("Crossfire (Endor)");
+        setBasePrintingDisplayTitle("Crossfire (Endor)");
     }
 }

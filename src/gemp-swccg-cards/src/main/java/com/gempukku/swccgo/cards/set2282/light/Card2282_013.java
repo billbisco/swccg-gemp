@@ -22,6 +22,6 @@ public class Card2282_013 extends Card1282_013 {
         setLegacyVersion(new LegacyVersion("1282_13", "",
                 "Virtual Block 8.2 release sheet (2012-09-14), printed as Devaronian Uncle",
                 LocalDate.of(2012, 9, 14), LocalDate.of(2013, 3, 13)));
-        setPrintedTitle("Devaronian Uncle");
+        setDisplayTitle("Devaronian Uncle");
     }
 }

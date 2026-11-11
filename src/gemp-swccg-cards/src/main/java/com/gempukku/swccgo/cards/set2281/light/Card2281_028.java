@@ -21,6 +21,6 @@ public class Card2281_028 extends Card1281_028 {
         setLegacyVersion(new LegacyVersion("1281_28", "",
                 "Virtual Block 8.1 release sheet (2012-05-11), printed as Rebel Agent",
                 LocalDate.of(2012, 5, 11), LocalDate.of(2012, 7, 21)));
-        setPrintedTitle("Rebel Agent");
+        setDisplayTitle("Rebel Agent");
     }
 }

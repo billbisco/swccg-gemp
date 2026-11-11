@@ -90,7 +90,7 @@ public class LegacyBatchB18VersionsTests {
         assertEquals(LocalDate.of(2013, 4, 27), cardList.supersededOn());
         for (String id : new String[]{"2271_1", "2271_1001"}) {
             SwccgCardBlueprint card = library.getSwccgoCardBlueprint(id);
-            assertEquals(id, "Cyborg Commander, Hunter Of Jedi", card.getPrintedTitle());
+            assertEquals(id, "Cyborg Commander, Hunter Of Jedi", card.getDisplayTitle());
             assertEquals(id, "Leader. \"He's no Jedi.\"", card.getLore());
             assertTrue(id, card.hasKeyword(Keyword.LEADER));
             assertFalse(id, card.hasKeyword(Keyword.COMMANDER));

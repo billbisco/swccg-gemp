@@ -21,7 +21,7 @@ The **Legacy** format always uses the latest text of every card.
 
 - A version may differ from its current card only in a printed stat or icon (Bill: "a change is a change is a change"),
   e.g. Dewback (V) `2210_80` printed MANEUVER 4 where the errata'd card has ARMOR 4. A rename alone is a version too:
-  Ice-Heart `2271_5` has the current Ysanne Isard text and differs only in its printed title.
+  Ice-Heart `2271_5` has the current Ysanne Isard text and differs only in its display title.
 - **No change, no errata (Bill, 2026-11-08):** a text that differs only in icon notation (the 2012–13 PC website card
   list spells out or drops icons: "[Pilot] 2", ▼/▲, Immune to Alter) is not a version. The 54 ids that existed only
   because of such texts are aliased in `blueprintMapping.txt` (`RemovedLegacyVersionIdsIconLossTests`).
@@ -65,22 +65,30 @@ deck counts, bans).
 
 ## Same card
 
-A version keeps the current card's title (a different printed name is display only, see "Printed title"), uniqueness, persona, side, type and `ExpansionSet` (the sheet it was printed
+A version keeps the current card's title (a different printed name is its Display Title, display only, see "Display Title"), uniqueness, persona, side, type and `ExpansionSet` (the sheet it was printed
 on), so uniqueness, persona and "title" rules see one card. Deck counts (restricted list, bans) count a version as its
 current printing (`DefaultSwccgFormat.sameCardBlueprintId`), and banning the current card bans its versions.
 
-## Printed title
+## Display Title
+
+**Rule (Bill, 2026-11-11):** a card's title (`getTitle()`) is its label, "(V)" included for a Virtual card: "Bail
+Organa (V)", "Admiral Ackbar (V)", even when the face prints something else ("Bail Organa", "Admiral Ackbar"). The
+face's wording is the card's **Display Title**, set only on cards where it differs. "(V)" never changes the game title:
+Virtual cards "are considered to have the same title as the original card (thus meaning they are identical cards for
+game purposes)". Hunt Down and Hunt Down (V) are both Hunt Down; Luke Skywalker and Luke Skywalker (V) are both lost to
+Monnok. So the Display Title is display only, and every rule (uniqueness, persona, title matching, deck limits) uses
+`getTitle()`.
 
 Some versions were printed under an older name (e.g. Grievous, Hunter Of Jedi was printed as Cyborg Commander, Hunter
 Of Jedi). Keep the class title the current card's title and add one line after `setLegacyVersion(...)`:
 
 ```java
-setPrintedTitle("Cyborg Commander, Hunter Of Jedi");
+setDisplayTitle("Cyborg Commander, Hunter Of Jedi");
 ```
 
 - Display only: the game log (card links and full names), deck lists, deck validation messages, the deck builder's
-  name sort and the `title` attribute of deck/delivery XML show the printed title (`GameUtils.getFullName`,
-  `getCardLink`, `getDisplayTitle`). In-game card info adds "Printed as <printed title>; the same card as <current
+  name sort and the `title` attribute of deck/delivery XML show the Display Title (`GameUtils.getFullName`,
+  `getCardLink`, `GameUtils.getDisplayTitle`). In-game card info adds "Printed as <display title>; the same card as <current
   title> for every rule".
 - Rules never see it: `getTitle()`/`getTitles()` stay the current title, so uniqueness, persona, `Filters.title`,
   `titleContains`, `sameTitle`, deck limits and cards that name the current title all treat the version as the current
@@ -88,16 +96,16 @@ setPrintedTitle("Cyborg Commander, Hunter Of Jedi");
 - Deck builder name search finds the version by either name.
 - Write it without uniqueness dots, as printed on the release sheet slip (`printed_title` in
   `ai-team-skills/shared/gemp-legacy-cards/versions/legacy-versions-v3.json`), including "(V)" when the slip has it.
-  **"(V)" follows the printed title (Bill, 2026-11-10):** the sheet's heading over the slip says whether the title has
+  **"(V)" follows the face (Bill, 2026-11-10):** the sheet's heading over the slip says whether the title has
   "(V)" (the title bar never prints it): "Galen, Secret Apprentice (V)", "Booster's Star Destroyer (V)", but
-  "Mara Jade With Lightsaber", "He Is Not Ready & Imperial Propaganda". The full name shows a printed title exactly as
-  given; no " (V)" suffix is added to it even when the current card has one (`isPrintedTitleComplete`). A current card
+  "Mara Jade With Lightsaber", "He Is Not Ready & Imperial Propaganda". The full name shows a Display Title exactly as
+  given; no " (V)" suffix is added to it even when the current card has one (`isDisplayTitleComplete`). A current card
   whose Master List heading has no "(V)" does not call `setVirtualSuffix(true)` (e.g. Admiral Motti, Battlestation
   Coordinator). Checked by `LegacyVInTitleTests`.
   Only the versions printed before the rename get it (the Master List renames are 2013-04-27); a later version printed
-  under the current name has none. `setPrintedTitle` throws unless `setLegacyVersion` was called first.
+  under the current name has none. `setDisplayTitle` throws unless `setLegacyVersion` was called first.
 - Names inside game text (Black Leader, Fallen Jedi, Cyborg Commander in other cards' text) are text, not titles.
-- Checked by `LegacyVersionPrintedTitleTests`.
+- Checked by `LegacyVersionDisplayTitleTests`.
 
 ## Display
 
@@ -131,7 +139,7 @@ PC-E1 → `VB1-123-Faithful_Service-PC-E1-cardmaker.png`; its original version `
 3. Copy the current class to `cards/set22xx/<side>/Card22xx_NNN.java` (or restore the old class from git history),
    rename the class, set the old game text/behaviour, keep title/uniqueness/persona/`ExpansionSet` the same, and call
    `setLegacyVersion(...)`. Reuse the current card's `GameTextActionId`s; add new ones only at the end of the enum.
-   If the version was printed under an older name, add `setPrintedTitle("…")` (see "Printed title").
+   If the version was printed under an older name, add `setDisplayTitle("…")` (see "Display Title").
    "X is an Out Of Play Interrupt": `ChangeCardSubtypeModifier(self, <X>, CardSubtype.OUT_OF_PLAY)` alone places X out
    of play when completed (`getInterruptType` honours it); no `InterruptPlacedOutOfPlayWhenCompletedModifier` needed.
 4. Add the image line to `CardImages.js` (after `// END legacy`).

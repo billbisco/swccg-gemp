@@ -22,6 +22,6 @@ public class Card2282_027 extends Card601_049 {
         setLegacyVersion(new LegacyVersion("1282_27", "",
                 "Virtual Block 8.2 release sheet (2012-09-14), printed as Lando's Luxury Yacht",
                 LocalDate.of(2012, 9, 14), LocalDate.of(2013, 3, 13)));
-        setPrintedTitle("Lando's Luxury Yacht");
+        setDisplayTitle("Lando's Luxury Yacht");
     }
 }

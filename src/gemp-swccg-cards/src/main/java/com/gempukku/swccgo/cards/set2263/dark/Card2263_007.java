@@ -13,7 +13,7 @@ import java.time.LocalDate;
  * Original version of 1263_7: the Virtual Block 6.3 release sheet printed this card as "The Emperor's Reach". The
  * Players Committee renamed it Maarek Stele, The Emperor's Reach; the game text did not change. The slip has a comma
  * after "Once per game" that the Master List drops (punctuation only, not a separate version). Bill (2026-11-09): a
- * title change is a version. Same card and persona as the current printing (printed title is display only). Anything
+ * title change is a version. Same card and persona as the current printing (Display Title is display only). Anything
  * Goes only (docs/legacy-versions.md).
  */
 public class Card2263_007 extends Card601_186 {
@@ -23,6 +23,6 @@ public class Card2263_007 extends Card601_186 {
         setLegacyVersion(new LegacyVersion("1263_7", "",
                 "Virtual Block 6.3 release sheet (released 2010-03-12; copy re-made 2010-04-04), card #3-08, printed as The Emperor's Reach; renamed Maarek Stele, The Emperor's Reach (PC \"New Persona Changes\" 2013-01-29; PC card list by 2013-03-13; Virtual Cards Master List 2013-04-27)",
                 LocalDate.of(2010, 3, 12), LocalDate.of(2013, 4, 27)));
-        setPrintedTitle("The Emperor's Reach");
+        setDisplayTitle("The Emperor's Reach");
     }
 }

@@ -425,10 +425,10 @@ public class SwccgGameMediator {
                 sb.append("<div>").append("Version: ")
                         .append(legacyVersion.label().isEmpty() ? "Original printing" : legacyVersion.label())
                         .append(" (").append(legacyVersion.source()).append("; Anything Goes only)").append("</div>");
-                // Printed under an older name: same card as the current title for every rule
-                String printedTitle = card.getBlueprint().getPrintedTitle();
-                if (printedTitle != null) {
-                    sb.append("<div>").append("Printed as ").append(printedTitle).append("; the same card as ")
+                // Display Title (printed under an older name): same card as the current title for every rule
+                String displayTitle = card.getBlueprint().getDisplayTitle();
+                if (displayTitle != null) {
+                    sb.append("<div>").append("Printed as ").append(displayTitle).append("; the same card as ")
                             .append(card.getBlueprint().getTitle()).append(" for every rule").append("</div>");
                 }
             }

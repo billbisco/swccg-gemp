@@ -22,6 +22,6 @@ public class Card2273_009 extends Card1273_009 {
         setLegacyVersion(new LegacyVersion("1273_9", "",
                 "Virtual Block 7.3 release sheet (2011-06-03), printed as Spice Mine Administrator; renamed Moruth Doole, Kessel Administrator (PC card list by 2013-03-14, Virtual Cards Master List 2013-04-27)",
                 LocalDate.of(2011, 6, 3), LocalDate.of(2013, 3, 14)));
-        setPrintedTitle("Spice Mine Administrator");
+        setDisplayTitle("Spice Mine Administrator");
     }
 }

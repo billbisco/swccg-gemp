@@ -24,11 +24,11 @@ public class GameUtils {
     public static String getFullName(PhysicalCard card) {
         SwccgCardBlueprint blueprint = card.getBlueprint();
         String title = card.getTitle();
-        // Pre-errata Legacy version printed under an older name: show that name (display only, docs/legacy-versions.md)
-        boolean showingPrintedTitle = blueprint.getPrintedTitle() != null && title != null && title.equals(blueprint.getTitle());
-        if (showingPrintedTitle)
-            title = blueprint.getPrintedTitle();
-        return title + getTitleSuffix(blueprint, showingPrintedTitle);
+        // Card whose face prints another wording: show its Display Title (display only, docs/legacy-versions.md)
+        boolean showingDisplayTitle = blueprint.getDisplayTitle() != null && title != null && title.equals(blueprint.getTitle());
+        if (showingDisplayTitle)
+            title = blueprint.getDisplayTitle();
+        return title + getTitleSuffix(blueprint, showingDisplayTitle);
     }
 
     /**
@@ -37,12 +37,12 @@ public class GameUtils {
      * @return the card title
      */
     public static String getFullName(SwccgCardBlueprint blueprint) {
-        return getDisplayTitle(blueprint) + getTitleSuffix(blueprint, blueprint.getPrintedTitle() != null);
+        return getDisplayTitle(blueprint) + getTitleSuffix(blueprint, blueprint.getDisplayTitle() != null);
     }
 
     /**
-     * Gets the full name of the card by its rules title ({@link SwccgCardBlueprint#getTitle()}), ignoring a printed
-     * title of a pre-errata Legacy version, e.g. "Grievous, Hunter Of Jedi" for the version printed as
+     * Gets the full name of the card by its rules title ({@link SwccgCardBlueprint#getTitle()}), ignoring a Display
+     * Title ({@link SwccgCardBlueprint#getDisplayTitle()}), e.g. "Grievous, Hunter Of Jedi" for the version printed as
      * "Cyborg Commander, Hunter Of Jedi". Use it to look a card up by its current name.
      * @param blueprint the card blueprint
      * @return the full name by the rules title
@@ -52,25 +52,26 @@ public class GameUtils {
     }
 
     /**
-     * Gets the title to show for the card: its printed title when it is a pre-errata Legacy version printed under an
-     * older name, otherwise its title. Display only; rules use {@link SwccgCardBlueprint#getTitle()}.
+     * Gets the title to show for the card: its Display Title ({@link SwccgCardBlueprint#getDisplayTitle()}, the face's
+     * wording, e.g. a pre-errata Legacy version printed under an older name) when it has one, otherwise its title.
+     * Display only (Bill, 2026-11-11); rules use {@link SwccgCardBlueprint#getTitle()}.
      * @param blueprint the card blueprint
      * @return the title to display
      */
     public static String getDisplayTitle(SwccgCardBlueprint blueprint) {
-        return blueprint.getPrintedTitle() != null ? blueprint.getPrintedTitle() : blueprint.getTitle();
+        return blueprint.getDisplayTitle() != null ? blueprint.getDisplayTitle() : blueprint.getTitle();
     }
 
     /**
      * Gets the card title suffix.
      * @param blueprint the card blueprint
-     * @param showingPrintedTitle true if the title shown is the blueprint's printed title; a complete printed title
-     *                            ({@link SwccgCardBlueprint#isPrintedTitleComplete()}) already says whether it has "(V)"
+     * @param showingDisplayTitle true if the title shown is the blueprint's Display Title; a complete Display Title
+     *                            ({@link SwccgCardBlueprint#isDisplayTitleComplete()}) already says whether it has "(V)"
      * @return the card title suffix
      */
-    private static String getTitleSuffix(SwccgCardBlueprint blueprint, boolean showingPrintedTitle) {
+    private static String getTitleSuffix(SwccgCardBlueprint blueprint, boolean showingDisplayTitle) {
         return (blueprint.hasAlternateImageSuffix() ? " (AI)" : "")
-                + (blueprint.hasVirtualSuffix() && !(showingPrintedTitle && blueprint.isPrintedTitleComplete()) ? " (V)" : "")
+                + (blueprint.hasVirtualSuffix() && !(showingDisplayTitle && blueprint.isDisplayTitleComplete()) ? " (V)" : "")
                 + (blueprint.getLegacyVersion() != null && !blueprint.getLegacyVersion().label().isEmpty()
                     ? " [" + blueprint.getLegacyVersion().label() + "]" : "");
     }
@@ -210,13 +211,13 @@ public class GameUtils {
     public static String getCardLink(String blueprintId, SwccgCardBlueprint blueprint, SwccgCardBlueprint otherSideBlueprint) {
         String testingText = blueprint.getTestingText();
 
-        // Pre-errata Legacy version printed under an older name: link shows that name (display only)
-        String fullTitle = blueprint.getPrintedTitle() != null
-                ? (blueprint.getUniqueness() != null ? blueprint.getUniqueness().getHumanReadable() : "") + blueprint.getPrintedTitle()
+        // Card with a Display Title: link shows it (display only)
+        String fullTitle = blueprint.getDisplayTitle() != null
+                ? (blueprint.getUniqueness() != null ? blueprint.getUniqueness().getHumanReadable() : "") + blueprint.getDisplayTitle()
                 : blueprint.getTitleComponents().stream()
                 .map(component -> component.uniqueness().getHumanReadable() + component.name())
                 .collect(java.util.stream.Collectors.joining(" & "));
-        fullTitle += getTitleSuffix(blueprint, blueprint.getPrintedTitle() != null);
+        fullTitle += getTitleSuffix(blueprint, blueprint.getDisplayTitle() != null);
 
         String backSideTestingText = otherSideBlueprint != null ? otherSideBlueprint.getTestingText() : null;
 

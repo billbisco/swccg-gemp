@@ -151,7 +151,7 @@ public class LegacyBatchC2C3VersionsTests {
             assertEquals(id, current.getTitle(), card.getTitle());
             assertEquals(id, current.getLore(), card.getLore());
             assertEquals(id, current.getSide(), card.getSide());
-            assertNull(id, card.getPrintedTitle());
+            assertNull(id, card.getDisplayTitle());
         });
     }
 }

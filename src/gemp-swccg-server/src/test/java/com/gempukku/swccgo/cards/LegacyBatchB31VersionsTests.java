@@ -65,7 +65,7 @@ public class LegacyBatchB31VersionsTests {
             assertEquals(id, v[5], card.getTitle());
             SwccgCardBlueprint current = library.getSwccgoCardBlueprint(v[0]);
             assertNull(v[0], current.getLegacyVersion());
-            assertNull(v[0], current.getPrintedTitle());
+            assertNull(v[0], current.getDisplayTitle());
             assertEquals(id, current.getTitle(), card.getTitle());
             assertEquals(id, current.getPersonas(), card.getPersonas());
         });
@@ -99,8 +99,8 @@ public class LegacyBatchB31VersionsTests {
 
     @Test
     public void CardListVersionsKeepTheOldTitle() {
-        assertEquals("The Mandalorian, Father Of Fett", library.getSwccgoCardBlueprint("2281_1009").getPrintedTitle());
-        assertEquals("Rebel Agent", library.getSwccgoCardBlueprint("2281_1028").getPrintedTitle());
+        assertEquals("The Mandalorian, Father Of Fett", library.getSwccgoCardBlueprint("2281_1009").getDisplayTitle());
+        assertEquals("Rebel Agent", library.getSwccgoCardBlueprint("2281_1028").getDisplayTitle());
         assertEquals("The Mandalorian, Father Of Fett [PC-E1]", com.gempukku.swccgo.logic.GameUtils.getFullName(library.getSwccgoCardBlueprint("2281_1009")).replace("•", ""));
     }
 

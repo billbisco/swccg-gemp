@@ -16,7 +16,7 @@ import static org.junit.Assert.assertTrue;
  * Legacy T1 (Bill, 2026-11-10 late): "(V)" in a Virtual card's title follows the printed title. The release sheets and
  * the Virtual Cards Master List print a heading over each slip; it carries "(V)" for some new-title cards (Galen, Secret
  * Apprentice (V); Booster's Star Destroyer (V)) and not for others (Mara Jade With Lightsaber; The Force Unleashed). The
- * card's full name shows "(V)" exactly when its printing's heading has it. A version's printed title is shown as printed
+ * card's full name shows "(V)" exactly when its printing's heading has it. A version's display title is shown as printed
  * (no " (V)" suffix is added); the rules title and {@link SwccgCardBlueprint#hasVirtualSuffix()} are unchanged.
  */
 public class LegacyVInTitleTests {
@@ -92,7 +92,7 @@ public class LegacyVInTitleTests {
     }
 
     @Test
-    public void APrintedTitleWithoutVKeepsTheRulesSuffixOfItsCurrentCard() {
+    public void ADisplayTitleWithoutVKeepsTheRulesSuffixOfItsCurrentCard() {
         // Display only: the version stays a "(V)" card for rules, like its current printing.
         for (String[] pair : new String[][]{{"2240_26", "1240_26"}, {"2240_81", "1240_81"}}) {
             SwccgCardBlueprint version = library.getSwccgoCardBlueprint(pair[0]);
@@ -104,8 +104,8 @@ public class LegacyVInTitleTests {
     }
 
     @Test
-    public void BasePrintingTitlesStillGetTheSuffix() {
-        // setBasePrintingTitle names the base card only; the "(V)" suffix is still added.
+    public void BasePrintingDisplayTitlesStillGetTheSuffix() {
+        // setBasePrintingDisplayTitle names the base card only; the "(V)" suffix is still added.
         assertEquals("You Cannot Hide Forever (Ref III) (V)", GameUtils.getFullName(library.getSwccgoCardBlueprint("1261_27")));
         assertEquals("Let's Keep A Little Optimism Here (Death Star II) (V)", GameUtils.getFullName(library.getSwccgoCardBlueprint("1261_76")));
     }

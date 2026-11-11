@@ -89,7 +89,7 @@ public class LegacyVersionsTests {
             boolean differs = differsInGameTextOrPrintedData(current, version)
                     || !printedText(version).equals(printedText(current))
                     || !iconCounts(version).equals(iconCounts(current))
-                    || version.getPrintedTitle() != null
+                    || version.getDisplayTitle() != null
                     || backSideDiffers(id, info.currentPrintingId());
             if (WORD_FOR_WORD_REPEATS.contains(id)) {
                 // Bill 2026-11-11: every published text is a version, even one the current text later repeats word for word.
@@ -99,7 +99,7 @@ public class LegacyVersionsTests {
                 if (REPEATS_OF_CURRENT_TEXT.contains(id))
                     sameAsCurrent.add(id);
                 else
-                    assertTrue(id + ": differs from its current card in game text (incl. location texts), printed stats/icons or printed title",
+                    assertTrue(id + ": differs from its current card in game text (incl. location texts), printed stats/icons or display title",
                             // batch R8: the current Master List text repeats these word for word (LegacyBatchR8B1B6VersionsTests)
                             com.gempukku.swccgo.cards.LegacyBatchR8B1B6VersionsTests.REPEATED_BY_CURRENT.contains(id)
                                     || republishedLater(versions, id, info.currentPrintingId())
@@ -112,7 +112,7 @@ public class LegacyVersionsTests {
         }
         // A version may repeat the current text word for word when a different text was published in between (Bill's
         // ruling of 2026-11-11, RULINGS.md: every published text is a version, even a word-for-word repeat; batch B41).
-        // Any other version must differ from its current card in game text (incl. location texts), printed stats/icons or printed title.
+        // Any other version must differ from its current card in game text (incl. location texts), printed stats/icons or display title.
         assertEquals(new java.util.TreeSet<>(REPEATS_OF_CURRENT_TEXT), new java.util.TreeSet<>(sameAsCurrent));
     }
 

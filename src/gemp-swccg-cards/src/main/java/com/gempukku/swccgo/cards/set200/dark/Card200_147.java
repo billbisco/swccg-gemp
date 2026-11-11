@@ -11,6 +11,6 @@ package com.gempukku.swccgo.cards.set200.dark;
 public class Card200_147 extends Card200_095 {
     public Card200_147() {
         super();
-        setBasePrintingTitle("Fanfare (Tatooine)");
+        setBasePrintingDisplayTitle("Fanfare (Tatooine)");
     }
 }

@@ -1830,25 +1830,31 @@ public interface SwccgCardBlueprint {
     }
 
     /**
-     * Gets the title printed on this card when it differs from {@link #getTitle()}: a pre-errata Legacy version that was
-     * printed under an older name (e.g. "Cyborg Commander, Hunter Of Jedi" for a version of Grievous, Hunter Of Jedi).
-     * Display only (game log, card info, deck lists, deck builder). Every rule (uniqueness, persona, title matching,
-     * deck limits) keeps using {@link #getTitle()}, so the version stays the same card as its current printing.
-     * See docs/legacy-versions.md.
-     * @return the printed title, or null if the card was printed under its current title
+     * Gets this card's Display Title: the wording on the card's face, set only when it differs from {@link #getTitle()}.
+     * Rule (Bill, 2026-11-11): the title is the card's label, "(V)" included for a Virtual card ("Bail Organa (V)"),
+     * even when the face prints something else ("Bail Organa"); the face's wording is the Display Title. Examples: a
+     * pre-errata Legacy version printed under an older name ("Cyborg Commander, Hunter Of Jedi" for a version of
+     * Grievous, Hunter Of Jedi) or a card printed on more than one base ("Fanfare (Tatooine)").
+     * <p>
+     * Display only (game log, card info, deck lists, deck builder). "(V)" never changes the game title: Virtual cards
+     * have the same title as the original card, so Hunt Down and Hunt Down (V) are both Hunt Down. Every rule
+     * (uniqueness, persona, title matching, deck limits) keeps using {@link #getTitle()}.
+     * See docs/legacy-versions.md, "Display Title". For the title to show in any case, use
+     * {@code GameUtils.getDisplayTitle(blueprint)}.
+     * @return the Display Title, or null if the face prints the card's title
      */
-    default String getPrintedTitle() {
+    default String getDisplayTitle() {
         return null;
     }
 
     /**
-     * Determines if {@link #getPrintedTitle()} is the whole title as printed, "(V)" included only when the card printed
-     * it (Bill, 2026-11-10: "(V)" in a Virtual card's title follows the printed title), so no " (V)" suffix is added
-     * to it for display. False for a base-printing title ({@code setBasePrintingTitle}), which is shown with the suffix.
-     * Display only.
-     * @return true if the printed title already says whether the card printed "(V)"
+     * Determines if {@link #getDisplayTitle()} is the whole title as printed, "(V)" included only when the face printed
+     * it (Bill, 2026-11-10: "(V)" in a Virtual card's shown name follows the face), so no " (V)" suffix is added
+     * to it for display. False for a base-printing display title ({@code setBasePrintingDisplayTitle}), which is shown
+     * with the suffix. Display only.
+     * @return true if the Display Title already says whether the face printed "(V)"
      */
-    default boolean isPrintedTitleComplete() {
+    default boolean isDisplayTitleComplete() {
         return false;
     }
 
