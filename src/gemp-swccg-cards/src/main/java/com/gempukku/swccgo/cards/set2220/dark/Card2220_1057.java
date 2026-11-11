@@ -10,8 +10,8 @@ import java.time.LocalDate;
  * Type: Interrupt
  * Title: Debris Zone (V)
  * PC-E1 version of 1220_57 (Batch R8-U): the PC website card list text (by 2012-07-21; the list was generated from the
- * Holotable card data), between the Virtual Block 2 release sheet original (2220_2057) and the Virtual Cards Master List
- * (2013-04-27, PC-E2, the current card), which prints the original words again. Against the original: two changes: "may" and "one" are added ("may ▲ one Crash Landing"), and "If" after "OR" is written "if", with a small i.
+ * Holotable card data), after the original (2220_2057) and before the PC card image (on the PC server by 2013-02-25, PC-E2, 2220_3057), which prints the original words again.
+ * Against the original: two changes: "may" and "one" are added ("may ▲ one Crash Landing"), and "If" after "OR" is written "if", with a small i.
  * Written-out icons in the list are notation, so the text here uses the icons. Same play as the current card.
  * Anything Goes only (docs/legacy-versions.md).
  */
@@ -20,6 +20,6 @@ public class Card2220_1057 extends Card1220_057 {
         super();
         setGameText("Once per turn, may [upload] one Crash Landing or Weapon Malfunction. OR if you have a piloted AT-AT on Hoth, target artillery weapon at a related site is lost. (Immune to Sense.)");
         setLegacyVersion(new LegacyVersion("1220_57", "PC-E1",
-                "PC website card list (by 2012-07-21)", LocalDate.of(2012, 7, 21), LocalDate.of(2013, 4, 27)));
+                "PC website card list (by 2012-07-21)", LocalDate.of(2012, 7, 21), LocalDate.of(2013, 2, 25)));
     }
 }

@@ -9,9 +9,9 @@ import java.time.LocalDate;
  * Set: Virtual Block 6.1
  * Type: Interrupt
  * Title: •Lana Dobreed & •Sacrifice
- * Original version of 1261_44 (Batch R8-U, Bill 2026-11-11: every publication is a version): the text of the Virtual Set 6: Reflections IV sheet (2009-09-04), reprinted on the Virtual Block 6.1 release sheet, card #43.
- * The PC website card list (PC-E1, by 2012-07-21, 2261_1044) changed it; the Virtual Cards Master List (official text
- * 2013-04-27, PC-E2, the current card) prints these words again, so this version has the same text and play as the
+ * Original version of 1261_44 (Batch R8-U, Bill 2026-11-11: every publication is a version): the text of the
+ * Virtual Set 6: Reflections IV sheet (2009-09-04), reprinted on the Virtual Block 6.1 release sheet, card #43. Later versions: PC website card list (PC-E1, by 2012-07-21, 2261_1044), PC card image (PC-E2, on the PC server by 2013-02-25, 2261_3044) and Virtual Cards Master List (PC-E3, 2013-04-27, the current card).
+ * The PC card image and the Master List print these words again, so this version has the same text and play as the
  * current card. Id 2261_44 was retired on 2026-11-08 (it aliases the current card in blueprintMapping), so this original takes 2261_2044. Anything Goes only (docs/legacy-versions.md).
  */
 public class Card2261_2044 extends Card1261_044 {

@@ -10,8 +10,8 @@ import java.time.LocalDate;
  * Type: Interrupt
  * Title: •You Will Take Me To Jabba Now (V)
  * PC-E1 version of 1282_25 (Batch R8-U): the PC website card list text (by 2012-12-12; the list was generated from the
- * Holotable card data), between the Virtual Block 8.2 release sheet original (2282_2025) and the Virtual Cards Master List
- * (2013-04-27, PC-E2, the current card), which prints the original words again. Against the original: two changes: "May" is added before the ▼, and the first "aliens" is written "Aliens", with a capital A.
+ * Holotable card data), after the original (2282_2025) and before the Virtual Cards Master List (2013-04-27, PC-E2, 2282_3025), which prints the original words again.
+ * Against the original: two changes: "May" is added before the ▼, and the first "aliens" is written "Aliens", with a capital A.
  * Written-out icons in the list are notation, so the text here uses the icons. Same play as the current card.
  * Anything Goes only (docs/legacy-versions.md).
  */

@@ -9,9 +9,9 @@ import java.time.LocalDate;
  * Set: Virtual Block 2
  * Type: Effect
  * Title: •Pride Of The Empire (V)
- * Original version of 1220_44 (Batch R8-U, Bill 2026-11-11: every publication is a version): the text of the Virtual Block 2 release sheet (2009-12-07), card #44.
- * The PC website card list (PC-E1, by 2012-07-21, 2220_1044) changed it; the Virtual Cards Master List (official text
- * 2013-04-27, PC-E2, the current card) prints these words again, so this version has the same text and play as the
+ * Original version of 1220_44 (Batch R8-U, Bill 2026-11-11: every publication is a version): the text of the
+ * Virtual Block 2 release sheet (2009-12-07), card #44. Later versions: PC website card list (PC-E1, by 2012-07-21, 2220_1044), PC card image (PC-E2, on the PC server by 2013-02-25, 2220_3044) and Virtual Cards Master List (PC-E3, 2013-04-27, the current card).
+ * The PC card image and the Master List print these words again, so this version has the same text and play as the
  * current card. Id 2220_44 was retired on 2026-11-08 (it aliases the current card in blueprintMapping), so this original takes 2220_2044. Anything Goes only (docs/legacy-versions.md).
  */
 public class Card2220_2044 extends Card1220_044 {
