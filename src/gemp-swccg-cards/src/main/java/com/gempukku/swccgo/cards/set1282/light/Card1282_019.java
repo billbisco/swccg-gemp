@@ -29,13 +29,16 @@ import java.util.List;
  * Type: Character
  * Subtype: Alien
  * Title: Rennek (V)
+ * Text: PC-E3, the Players Committee card image (folder upload date 2013-05-07, after the Master List), which prints
+ * the Master List (PC-E2, 2282_2019) and release-sheet words ("reset a participating character's forfeit to 0"); the
+ * PC website card list text (PC-E1, 2012) is version 2282_1019 (Bill 2026-11-11: every publication is a version).
  */
 public class Card1282_019 extends AbstractAlien {
     public Card1282_019() {
         super(Side.LIGHT, 2, 2, 3, 1, 3, Title.Rennek, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_2, Rarity.V);
         setVirtualSuffix(true);
         setLore("Nerf herder. Personally oversees the herding of Jabba's nerfs. Scruffy-looking appearance conceals his expertise in unusual combat techniques.");
-        setGameText("May be stacked on I Know That Laugh from hand for 2 force. While stacked on I Know That Laugh, stack face-up and during any battle may draw destiny. If destiny < number of your aliens in battle, reduce a participating character's forfeit to 0.");
+        setGameText("May be stacked on I Know That Laugh from hand, using 2 Force. While stacked on I Know That Laugh, stack face-up and during any battle may draw destiny. If destiny < number of your aliens in battle, reset a participating character's forfeit to 0.");
         // No warrior icon: the Virtual Block 8.2 slip, the Master List slip and the PC card image print none (Batch B22).
     }
 
@@ -57,11 +60,11 @@ public class Card1282_019 extends AbstractAlien {
     }
 
     /**
-     * PC website card list text (Dec 2012): "reduce a participating character's forfeit to 0", so a character whose
-     * forfeit may not be reduced may not be chosen (the release sheet said "reset").
+     * Master List (PC-E2) and release sheet: "reset a participating character's forfeit to 0", so any participating
+     * character (the card list, 2282_1019, says "reduce": not a character whose forfeit may not be reduced).
      */
     protected Filter forfeitTargetFilter() {
-        return Filters.and(Filters.character, Filters.participatingInBattle, Filters.forfeitMayBeReduced);
+        return Filters.and(Filters.character, Filters.participatingInBattle);
     }
 
     @Override

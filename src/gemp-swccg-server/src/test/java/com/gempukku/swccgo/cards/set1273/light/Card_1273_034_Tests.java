@@ -127,8 +127,8 @@ public class Card_1273_034_Tests {
     @Test
     public void UseTheForceShowsTheCardListPcE1Text() {
         String t = com.gempukku.swccgo.framework.VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("1273_34").getGameText();
-        org.junit.Assert.assertEquals("Choose up to X of the following in any order, where X = the number of cards stacked on Communing: peek at the top card of any deck or pile: may then shuffle it. OR draw 2 cards from reserve deck. OR retrieve 1 force. OR activate X force. OR your next destiny draw is + X.", t);
-        org.junit.Assert.assertFalse(t.contains("this turn"));
+        org.junit.Assert.assertEquals("Choose up to X of the following in any order, where X = number of cards stacked on Communing: Peek at the top card of any deck or pile; may then shuffle it. OR Draw 2 cards from Reserve Deck. OR Retrieve 1 Force. OR Activate X Force. OR Your next destiny draw this turn is +X.", t);
+        org.junit.Assert.assertTrue(t.contains("this turn"));
     }
 
     /** Plays Use The Force (X = 1) for the destiny option, then has Light draw a destiny of 3 in a later turn; returns the total. */
@@ -160,7 +160,8 @@ public class Card_1273_034_Tests {
     }
 
     @Test
-    public void UseTheForceDestinyBonusIsNotLimitedToThisTurn() {
-        assertEquals(4f, destinyDrawnNextTurn(GetScenario(), "usetheforce", "Your next destiny draw is +X"), 0.01f);
+    public void UseTheForceDestinyBonusEndsWithTheTurnPerTheMasterList() {
+        // Master List (2013, current): "Your next destiny draw this turn is +X" (the card list, 2273_1034, has no turn limit)
+        assertEquals(3f, destinyDrawnNextTurn(GetScenario(), "usetheforce", "Your next destiny draw this turn is +X"), 0.01f);
     }
 }

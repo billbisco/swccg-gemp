@@ -35,11 +35,13 @@ import java.util.List;
  * Type: Starship
  * Subtype: Starfighter
  * Title: Overseer
+ * Text: PC-E3, the Virtual Cards Master List (2013-04-27; the PC card image, PC-E2, came first), which repeats the 2009 release-sheet words ("If a Dark Jedi or
+ * Sith was just deployed"); the PC website card-list text (PC-E1, 2012) is version 2261_1106 (Bill 2026-11-11).
  */
 public class Card601_250 extends AbstractStarfighter {
     public Card601_250() {
         super(Side.LIGHT, 3, 2, 3, null, 4, 3, 5, "Overseer", Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
-        setGameText("May add Harc as a pilot. During battle, adds one destiny to total power. If opponent just deployed a Dark Jedi or Sith to a related site, may deploy a related location from Reserve Deck; reshuffle. Immune to attrition < 4 (< 6 while at Bespin).");
+        setGameText("May add Harc as a pilot. During battle, adds one destiny to total power. If a Dark Jedi or Sith was just deployed to a related site, may ▼ a related location. Immune to attrition < 4 (< 6 at Bespin).");
         addIcons(Icon.PREMIUM, Icon.INDEPENDENT, Icon.NAV_COMPUTER, Icon.SCOMP_LINK, Icon.LEGACY_BLOCK_6);
         addModelType(ModelType.Z_95_HEADHUNTER);
         setPilotCapacity(1);
@@ -52,12 +54,17 @@ public class Card601_250 extends AbstractStarfighter {
         return Filters.Harc;
     }
 
+    /** Master List (PC-E3) and the 2009 sheet: "If a Dark Jedi or Sith was just deployed" (by either player; the card list, 2261_1106, says "If opponent just deployed"). */
+    protected Filter justDeployedFilter(PhysicalCard self) {
+        return Filters.or(Filters.Dark_Jedi, Filters.Sith);
+    }
+
     @Override
     protected List<OptionalGameTextTriggerAction> getGameTextOptionalAfterTriggers(final String playerId, final SwccgGame game, EffectResult effectResult, final PhysicalCard self, int gameTextSourceCardId) {
         GameTextActionId gameTextActionId = GameTextActionId.OVERSEER__DOWNLOAD_RELATED_LOCATION;
 
         // Check condition(s)
-        if (TriggerConditions.justDeployedTo(game, effectResult, Filters.and(Filters.opponents(self), Filters.or(Filters.Dark_Jedi, Filters.Sith)), Filters.relatedSite(self))
+        if (TriggerConditions.justDeployedTo(game, effectResult, justDeployedFilter(self), Filters.relatedSite(self))
                 && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, gameTextActionId, true, false)) {
 
             final OptionalGameTextTriggerAction action = new OptionalGameTextTriggerAction(self, gameTextSourceCardId);

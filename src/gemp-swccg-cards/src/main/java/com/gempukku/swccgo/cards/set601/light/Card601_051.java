@@ -35,13 +35,15 @@ import java.util.List;
  * Type: Interrupt
  * Subtype: Used Or Starting
  * Title: Let The Wookiee Win (V)
+ * Text: PC-E3, the Virtual Cards Master List (2013-04-27; the PC card image, PC-E2, came first), which repeats the release-sheet words (an [Immune to Alter] Effect and any number of <> sites); the
+ * PC website card list text (PC-E1, 2012) is version 2261_1097 (Bill 2026-11-11: every publication is a version).
  */
 public class Card601_051 extends AbstractUsedOrStartingInterrupt {
     public Card601_051() {
         super(Side.LIGHT, 5, Title.Let_The_Wookiee_Win, Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
         setVirtualSuffix(true);
         setLore("\"It's not wise to upset a Wookiee.\" \"But sir, nobody worries about upsetting a droid.\" \"That's 'cause a droid don't pull people's arms out of their sockets when they lose.\"");
-        setGameText("USED: Reveal the top 3 cards of Reserve Deck; place one in hand, and the others on bottom of Used Pile (in any order). STARTING: If your starting location was a non-[Special Edition] location, deploy from Reserve Deck an always [Immune to Alter] Effect and two <> sites with < 3 total [Light Side Force]. Place this Interrupt in hand.");
+        setGameText("USED: Reveal the top 3 cards of Reserve Deck; place one in hand, and the others on bottom of Used Pile (in any order). STARTING: If your starting location was a non-[Special Edition] location, ▼ an [Immune to Alter] Effect and any number of <> sites with < 3 total [Light Side Force]. Place this Interrupt in hand.");
         addIcons(Icon.A_NEW_HOPE, Icon.LEGACY_BLOCK_6);
         setVirtualSuffix(true);
         setAsLegacy(true);
@@ -92,14 +94,14 @@ public class Card601_051 extends AbstractUsedOrStartingInterrupt {
         return actions;
     }
 
-    /** PC card list (PC-E1): "an always [Immune to Alter] Effect". The 2009 sheet (2261_97) says "an [Immune to Alter] Effect". */
+    /** Master List (PC-E3) and 2009 sheet: "an [Immune to Alter] Effect" (the card list, 2261_1097, says "an always [Immune to Alter] Effect"). */
     protected Filter startingEffectFilter() {
-        return Filters.and(Filters.Effect, Filters.always_immune_to_Alter);
+        return Filters.and(Filters.Effect, Filters.immune_to_Alter);
     }
 
-    /** PC card list (PC-E1): "two <> sites". The 2009 sheet (2261_97) says "any number of <> sites". */
+    /** Master List (PC-E3) and 2009 sheet: "any number of <> sites" (the card list, 2261_1097, says "two <> sites"). */
     protected int maxStartingSites() {
-        return 2;
+        return Integer.MAX_VALUE;
     }
 
     @Override

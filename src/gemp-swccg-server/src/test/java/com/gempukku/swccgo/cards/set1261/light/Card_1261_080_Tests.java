@@ -139,7 +139,7 @@ public class Card_1261_080_Tests {
         scn.MoveCardsToLocation(battle, luke, maul);
         scn.AttachCardsTo(luke, scn.GetLSCard("lukeSaber"));
         var modifiers = scn.game().getModifiersQuerying();
-        assertEquals(qmc && jabbaId.equals("1261_80"), modifiers.mayFireOnlyOncePerBattle(scn.gameState(), scn.GetLSCard("lukeSaber")));
+        assertEquals(qmc && jabbaId.equals("2261_1080"), modifiers.mayFireOnlyOncePerBattle(scn.gameState(), scn.GetLSCard("lukeSaber")));
         scn.DSActivateForceCheat(4);
         scn.DSStartBattleAndSkipToWeaponsSegment(battle);
         assertTrue(scn.IsBattleStarted());
@@ -151,10 +151,6 @@ public class Card_1261_080_Tests {
         assertFalse(luke.isHit());
         if (scn.AwaitingLSWeaponsSegmentActions()) scn.LSPass();
         return scn.GetDSAvailableActions().stream().anyMatch(x -> x.contains("Double-Bladed Lightsaber"));
-    }
-
-    @Test public void JabbaLimitsLightsabersToOneSwingWhileQuietMiningColonyOnTable() {
-        assertFalse(maulCanSwingAgain(true));
     }
 
     @Test public void LightsabersMaySwingTwiceWithoutQuietMiningColonyOrIndependentOperation() {
@@ -177,7 +173,15 @@ public class Card_1261_080_Tests {
                 com.gempukku.swccgo.framework.StartingSetup.NoLSShields, com.gempukku.swccgo.framework.StartingSetup.NoDSShields,
                 com.gempukku.swccgo.framework.VirtualTableScenario.Open);
         var text = scn.GetLSCard("c").getBlueprint().getGameText();
-        org.junit.Assert.assertEquals("Deploy on table with 5 cards from outside your deck face down under here. Twice per game, may play a Defensive Shield from here (as if from hand). If Quiet Mining Colony or Independent Operation on table, lightsabers may not add to Force drains or 'swing' more than once per battle. Cloud City Celebration is canceled.", text);
+        org.junit.Assert.assertEquals("Deploy on table with 5 cards from outside your deck face down under here. Twice per game, may play a Defensive Shield from here (as if from hand). If Quiet Mining Colony or Independent Operation on table, lightsabers may not add to Force drains. Cloud City Celebration is canceled.", text);
         org.junit.Assert.assertNull(scn.GetLSCard("c").getBlueprint().getLegacyVersion());
+    }
+
+    // Master List (2013, current) and the sheet: no 'swing' limit (the card list, 2261_1080, adds one)
+    @Test public void currentCardAddsNoSwingLimitWhileQuietMiningColonyOnTable() {
+        // 2261_80 (Virtual Block 6.1 sheet, Sep 2009): "lightsabers may not add to Force drains." (no swing clause).
+        jabbaId = "1261_80";
+        assertTrue(maulCanSwingAgain(true));
+        assertEquals(vaderDrainTotal(false) - 1, vaderDrainTotal(true));
     }
 }

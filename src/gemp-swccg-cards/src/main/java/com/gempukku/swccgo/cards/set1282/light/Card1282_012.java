@@ -40,12 +40,16 @@ import java.util.Set;
  * Type: Character
  * Subtype: New Republic
  * Title: Anakin Solo
+ * Text: PC-E3, the Players Committee card image anakinsolo.gif (folder upload date 2013-05-07, after the Master List;
+ * Bill 2026-11-11: the server date places the image), which prints the card-list words ("Once during battle") with
+ * the spaced "< 3 (< 5". Older texts: original 2282_12 (sheet), PC-E1 2282_1012 (card list), PC-E2 2282_2012
+ * (Master List, = sheet words).
  */
 public class Card1282_012 extends AbstractNewRepublic {
     public Card1282_012() {
         super(Side.LIGHT, 2, 3, 2, 4, 4, "Anakin Solo", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_2, Rarity.V);
         setLore("Padawan.");
-        setGameText("Power +2 while armed with a lightsaber. May use any 'stolen' lightsaber. Once during battle, where present, may steal an opponent's just-lost lightsaber. Immune to attrition <3 (<5 while armed with a 'stolen' lightsaber).");
+        setGameText("Power +2 while armed with a lightsaber. May use any 'stolen' lightsaber. Once during battle, where present, may steal an opponent's just-lost lightsaber. Immune to attrition < 3 (< 5 while armed with a 'stolen' lightsaber).");
         addIcons(Icon.PILOT, Icon.WARRIOR);
         addKeywords(Keyword.PADAWAN);
     }

@@ -42,7 +42,8 @@ public final class LegacyVersionAsserts {
         assertTrue(version.isLegacy());
 
         assertEquals(oldText, version.getGameText());
-        assertNotEquals(current.getGameText(), version.getGameText());
+        if (!LegacyRepeatedTexts.isRepeatedByCurrent(version.getLegacyVersion()))
+            assertNotEquals(current.getGameText(), version.getGameText());
 
         LegacyVersion info = version.getLegacyVersion();
         assertEquals(currentPrintingId, info.currentPrintingId());

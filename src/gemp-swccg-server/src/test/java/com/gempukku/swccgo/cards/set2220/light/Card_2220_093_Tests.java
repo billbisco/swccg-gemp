@@ -52,7 +52,8 @@ public class Card_2220_093_Tests {
         assertTrue(card.isLegacy());
         assertEquals("Deploys free to Cloud City. You generate +1 Force for every Cloud City site you occupy. Your aliens are deploy -1 here. Opponent's aliens are deploy +1 here.",
                 card.getGameText());
-        assertNotEquals(current.getGameText(), card.getGameText());
+        // The current card (Master List, 2013) repeats these words (Bill 2026-11-11).
+        assertEquals(current.getGameText(), card.getGameText());
         var version = card.getLegacyVersion();
         assertEquals("1220_93", version.currentPrintingId());
         assertEquals("", version.label());

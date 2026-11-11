@@ -86,7 +86,8 @@ public class LegacyVersionsTests {
                             || !printedText(version).equals(printedText(current))
                             || !iconCounts(version).equals(iconCounts(current))
                             || version.getPrintedTitle() != null
-                            || backSideDiffers(id, info.currentPrintingId()));
+                            || backSideDiffers(id, info.currentPrintingId())
+                            || com.gempukku.swccgo.cards.LegacyRepeatedTexts.isRepeatedByCurrent(info));
             assertTrue(id + ": label shown in full name",
                     info.label().isEmpty() ? !GameUtils.getFullName(version).contains("[")
                             : GameUtils.getFullName(version).endsWith(" [" + info.label() + "]"));

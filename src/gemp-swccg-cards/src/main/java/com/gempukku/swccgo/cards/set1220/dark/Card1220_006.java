@@ -28,13 +28,14 @@ import java.util.List;
  * Type: Character
  * Subtype: Imperial
  * Title: Captain Piett
+ * Text: PC-E3, the Virtual Cards Master List (2013-04-27; the PC card image, PC-E2, came first), which repeats the 2009 release-sheet words ([Pilot] 3); the PC website card-list text (PC-E1, 2012, pilot 2) is version 2220_1006 (Bill 2026-11-11: every publication is a version).
  */
 public class Card1220_006 extends AbstractImperial {
     public Card1220_006() {
         super(Side.DARK, 2, 3, 2, 3, 4, "Captain Piett", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_2, Rarity.V);
         setVirtualSuffix(true);
         setLore("Captain on the Executor. Monitored probe droid telemetry. His flawless record of arrests and suppressions has contributed to an impressive rise through the ranks.");
-        setGameText("Adds 2 to power of anything he pilots. Twice per game during opponent's turn, may place three cards from hand on your Force Pile to draw top two cards from Reserve Deck.");
+        setGameText("Adds 3 to power of anything he pilots. Twice per game during opponent's turn, may place three cards from hand on your Force Pile to draw top two cards from Reserve Deck.");
         addPersona(Persona.PIETT);
         addIcons(Icon.PILOT, Icon.HOTH);
         addKeywords(Keyword.CAPTAIN);
@@ -43,7 +44,7 @@ public class Card1220_006 extends AbstractImperial {
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
         List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new AddsPowerToPilotedBySelfModifier(self, 2));
+        modifiers.add(new AddsPowerToPilotedBySelfModifier(self, 3));
         return modifiers;
     }
 
