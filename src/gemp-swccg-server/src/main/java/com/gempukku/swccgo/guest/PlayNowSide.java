@@ -33,9 +33,9 @@ public enum PlayNowSide {
 
     /**
      * A guest's participant id in the game: "Light Side" or "Dark Side". It only has to be unique within one game.
-     * A space alone does not keep accounts off it: the site's names allow spaces and treat a space and an underscore
-     * as the same, so "Light_Side" is the same name and fits Play's 10 characters. Both names are reserved instead,
-     * on Play ({@link #isSeatName}) and in the sign-in service (dest by Bill, 2026-11-11).
+     * A space alone does not keep accounts off it: the site's names allow spaces, and "Light_Side" fits Play's
+     * 10 characters and reads the same. Both spellings of both names are reserved instead, on Play
+     * ({@link #isSeatName}) and in the sign-in service (dests by Bill, 2026-11-11).
      */
     public String getSeatName() {
         return _seatName;
@@ -50,16 +50,19 @@ public enum PlayNowSide {
     }
 
     /**
-     * Whether a name is one of the guest seat names in any spelling that is the same name: case ignored, an
-     * underscore counts as a space, runs of spaces count as one. "Light Side 2" and the bare words are not.
+     * Whether a name is a reserved guest seat name: "Light Side", "Light_Side", "Dark Side" or "Dark_Side", case
+     * ignored. A space and an underscore are different names on the site (Bill, 2026-11-11, t121u); both spellings
+     * of the seat names are reserved. "Light Side 2" and the bare words are not.
      */
     public static boolean isSeatName(String name) {
         if (name == null)
             return false;
-        String key = String.join(" ", name.replace('_', ' ').trim().toLowerCase(Locale.ROOT).split("\\s+"));
-        for (PlayNowSide side : values())
-            if (side._seatName.toLowerCase(Locale.ROOT).equals(key))
+        String lower = name.trim().toLowerCase(Locale.ROOT);
+        for (PlayNowSide side : values()) {
+            String seat = side._seatName.toLowerCase(Locale.ROOT);
+            if (seat.equals(lower) || seat.replace(' ', '_').equals(lower))
                 return true;
+        }
         return false;
     }
 
