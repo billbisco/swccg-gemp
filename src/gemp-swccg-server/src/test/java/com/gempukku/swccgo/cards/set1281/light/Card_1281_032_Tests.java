@@ -27,7 +27,7 @@ public class Card_1281_032_Tests {
     protected VirtualTableScenario GetScenario() {
         return new VirtualTableScenario(
                 new HashMap<>() {{
-                    put("charts", "1281_32");
+                    put("charts", "2281_32"); // the optional steal: the first 8.1 printing (legacy batch B41)
                     put("rest", "1281_39");
                     put("street", "1281_40");
                     put("undercity", "1281_41");
@@ -262,10 +262,10 @@ public class Card_1281_032_Tests {
         assertEquals(scn.LS, charts.getOwner());
     }
 
-    /** PC website card list text (2012-07-21, PC-E1): "may 'steal'" (optional), the latest version under Bill's option (b). GEMP already played the steal as optional. */
+    /** PC-E1 (PC forum p739757, 2012-07-13): the steal is no longer optional (legacy batch B41; the optional text is 2281_32). */
     @Test
     public void ImperialNavigationChartsCurrentCardIsTheLatestText() {
         assertCurrentCard("1281_32", "Imperial Navigation Charts",
-                "Deploy on a Nar Shaddaa battleground site. If you control three Nar Shaddaa locations or just won a battle (or initiated a Force drain) here, may 'steal' (relocate to your side of table). Place in Used Pile if opponent controls three Nar Shaddaa locations. (Immune to Alter).");
+                "Deploy on a Nar Shaddaa battleground site. If you control three Nar Shaddaa locations or just won a battle (or initiated a Force drain) here, 'steal' this Effect (relocate to your side of table). Place in Used Pile if opponent controls three Nar Shaddaa locations. (Immune to Alter.)");
     }
 }

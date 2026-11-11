@@ -35,7 +35,13 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-/** Kessel Surveillance System as on the PC website card list (PC-E1, by 2012-07-21), a version of 1273_10; replaced by the Virtual Cards Master List text (PC-E2, 2013-04-27: Moruth Doole). Plays as the original (2273_10): one card lost from Reserve Deck plus a 'spice' card satisfy 2 Force loss (GEMP resolves the 'spice' choice before the loss, as the outcome is the same), and Spice Mine Administrator deploys from Reserve Deck (the card list's "may deploy ... here" read as the [download] icon). Anything Goes only (docs/legacy-versions.md). */
+/**
+ * PC-E2 version of 1273_10: the PC website card list (2012-07-21 to 2013-01-11), which printed the pre-errata wording again
+ * after the 2011-07-14 errata (PC-E1, 2273_10), typos included (every published text is a version, Bill 2026-11-11).
+ * Superseded by the Virtual Cards Master List (2013-04-27, PC-E3, the current card: Moruth Doole). Plays as PC-E1 here:
+ * one card lost from Reserve Deck plus a 'spice' card satisfy 2 Force loss (GEMP resolves the 'spice' choice before the
+ * loss), and Spice Mine Administrator deploys from Reserve Deck. Anything Goes only (docs/legacy-versions.md).
+ */
 public class Card2273_1010 extends AbstractLocationDevice {
     /** Spice Mine Administrator: Moruth Doole, Kessel Administrator's printed title on the Virtual Block 7.3 sheet (that card only). */
     static final Filter SPICE_MINE_ADMINISTRATOR = Filters.title("Moruth Doole, Kessel Administrator");
@@ -44,8 +50,8 @@ public class Card2273_1010 extends AbstractLocationDevice {
         super(Side.DARK, 0, "Kessel Surveillance System", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_3, Rarity.V);
         setLore("Remote surveillance viewers with droid controllers supplement security. Can activate alarms and automated weapons when needed, bringing help to endangered locations.");
         setGameText("Deploy on a Kessel site. Opponents Force drains are -1 here. Oncer per turn, if you just lost a card from Reserve Deck, may place a 'spice' card in owners Lost Pile to satisfy 1 additional Force loss. Once per game, may deploy Spice Mine Administrator here.");
-        setLegacyVersion(new LegacyVersion("1273_10", "PC-E1",
-                "PC website card list (by 2012-07-21)", LocalDate.of(2012, 7, 21), LocalDate.of(2013, 4, 27)));
+        setLegacyVersion(new LegacyVersion("1273_10", "PC-E2",
+                "PC website card list (2012-07-21 to 2013-01-11)", LocalDate.of(2012, 7, 21), LocalDate.of(2013, 4, 27)));
         addKeywords(Keyword.DEPLOYS_ON_SITE);
     }
 

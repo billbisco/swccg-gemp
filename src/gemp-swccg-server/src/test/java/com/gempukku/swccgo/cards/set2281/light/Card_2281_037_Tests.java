@@ -10,7 +10,7 @@ public class Card_2281_037_Tests {
     public void ScoundrelSLuckVersionIdentityAndText() {
         assertVersion("2281_37", "1281_37", "Scoundrel's Luck",
                 "Deploy on Infiltration with three [Scoundrel] cards from Reserve Deck face down under here. Once during your turn, at any time, may deploy a [Scoundrel] Effect from here. If a [Scoundrel] Effect just left table, stack it under here. At the start of your turn, stack all [Scoundrel] Effects under here. Once per turn, may place any card in Lost Pile out of play to deploy a character weapon (except a grenade) from Lost Pile. While two non-droid scoundrels present at battlegrounds, Their Fire Has Gone Out Of The Universe flips and may not flip back. (Immune to Alter.)",
-                "", java.time.LocalDate.of(2012, 5, 11), java.time.LocalDate.of(2012, 7, 18));
+                "", java.time.LocalDate.of(2012, 5, 11), java.time.LocalDate.of(2012, 7, 13));
         assertSameCard("2281_37", "1281_37");
     }
 

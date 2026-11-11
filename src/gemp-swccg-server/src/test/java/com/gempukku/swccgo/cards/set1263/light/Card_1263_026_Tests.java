@@ -17,7 +17,7 @@ public class Card_1263_026_Tests {
         return new VirtualTableScenario(
                 new HashMap<>(Map.of("phylo", "1263_26", "local", "1_28", "remote", "1_30",
                         "ship", "1_145", "system", "3_55", "obi", "1_21")),
-                new HashMap<>(Map.of("vader", "1_168", "saber", "1_324", "beaten", "5_163", "otherDark", "1_173", "secondDark", "1_179", "blockSix", "1261_21", "obt", "601_92")),
+                new HashMap<>(Map.of("vader", "1_168", "saber", "1_324", "beaten", "5_163", "otherDark", "1_173", "secondDark", "1_179", "blockSix", "1261_21", "obt", "601_92", "blockFour", "1240_23")),
                 40, 40, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
                 StartingSetup.NoLSShields, StartingSetup.NoDSShields, "legacy");
@@ -198,6 +198,11 @@ public class Card_1263_026_Tests {
 
     @Test public void doesNotRespondToADestinyAddedByANonBlockSixInterrupt() {
         assertFalse(phyloRespondsToAddedDestiny("beaten", true, true));
+    }
+
+    /** PC-E1 (PC forum p847474, 2013-10-30): "[V6] or [V4] card" (legacy batch B41). */
+    @Test public void respondsWhenOpponentsBlockFourCardAddsDestinyToTotalPowerHere() {
+        assertTrue(phyloRespondsToAddedDestiny("blockFour", true));
     }
 
     @Test public void doesNotRespondToADestinyAddedElsewhere() {

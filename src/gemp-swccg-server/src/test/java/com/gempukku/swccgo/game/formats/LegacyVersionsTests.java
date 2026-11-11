@@ -27,6 +27,7 @@ import static org.junit.Assert.fail;
  * same card as their current printing.
  */
 public class LegacyVersionsTests {
+    private static final List<String> REPEATS_OF_CURRENT_TEXT = List.of("2220_3169", "2261_1024", "2261_1033", "2261_21", "2281_1032", "2281_1037");
     private static final List<String> PILOT_VERSIONS = List.of("2261_33", "2272_23");
 
     private static SwccgCardBlueprintLibrary library;
@@ -63,6 +64,7 @@ public class LegacyVersionsTests {
     public void EveryImplementedVersionIsTheSameCardAsItsCurrentPrinting() {
         List<String> versions = LegacyCardPool.implementedVersionIds(library);
         assertTrue(versions.toString(), versions.containsAll(PILOT_VERSIONS));
+        List<String> sameAsCurrent = new java.util.ArrayList<>();
         for (String id : versions) {
             SwccgCardBlueprint version = library.getSwccgoCardBlueprint(id);
             LegacyVersion info = version.getLegacyVersion();
@@ -81,16 +83,21 @@ public class LegacyVersionsTests {
             assertEquals(id, current.getPersonas(), version.getPersonas());
             assertEquals(id, current.getExpansionSet(), version.getExpansionSet());
             assertTrue(id, version.isLegacy());
-            assertTrue(id + ": differs from its current card in game text (incl. location texts), printed stats/icons or printed title",
-                    differsInGameTextOrPrintedData(current, version)
-                            || !printedText(version).equals(printedText(current))
-                            || !iconCounts(version).equals(iconCounts(current))
-                            || version.getPrintedTitle() != null
-                            || backSideDiffers(id, info.currentPrintingId()));
+            boolean differs = differsInGameTextOrPrintedData(current, version)
+                    || !printedText(version).equals(printedText(current))
+                    || !iconCounts(version).equals(iconCounts(current))
+                    || version.getPrintedTitle() != null
+                    || backSideDiffers(id, info.currentPrintingId());
+            if (!differs)
+                sameAsCurrent.add(id);
             assertTrue(id + ": label shown in full name",
                     info.label().isEmpty() ? !GameUtils.getFullName(version).contains("[")
                             : GameUtils.getFullName(version).endsWith(" [" + info.label() + "]"));
         }
+        // A version may repeat the current text word for word when a different text was published in between (Bill's
+        // ruling of 2026-11-11, RULINGS.md: every published text is a version, even a word-for-word repeat; batch B41).
+        // Any other version must differ from its current card in game text (incl. location texts), printed stats/icons or printed title.
+        assertEquals(new java.util.TreeSet<>(REPEATS_OF_CURRENT_TEXT), new java.util.TreeSet<>(sameAsCurrent));
     }
 
     /** A two-sided version whose front is unchanged differs on its back (Wookiee Slaving Operation, 2014 errata to the 7 side; batch B39). */

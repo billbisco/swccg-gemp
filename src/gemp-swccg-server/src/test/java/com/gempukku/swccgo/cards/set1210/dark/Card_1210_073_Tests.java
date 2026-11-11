@@ -57,8 +57,8 @@ public class Card_1210_073_Tests {
             add(CardType.LOCATION);
         }});
         scn.BlueprintKeywordCheck(card, new ArrayList<Keyword>());
+        // PC-E1 (2014-03-27): the Interior icon is struck (the original is 2210_73)
         scn.BlueprintIconCheck(card, new ArrayList<>() {{
-            add(Icon.INTERIOR_SITE);
             add(Icon.EXTERIOR_SITE);
             add(Icon.PLANET);
             add(Icon.SCOMP_LINK);

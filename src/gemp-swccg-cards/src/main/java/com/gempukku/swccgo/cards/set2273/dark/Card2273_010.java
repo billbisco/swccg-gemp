@@ -39,7 +39,10 @@ import java.util.List;
  * Set: Virtual Block 7.3
  * Type: Device
  * Title: Kessel Surveillance System
- * Pre-errata version of 1273_10 (Virtual Block 7.3 release sheet text, Jun 2011), replaced by the Virtual Cards Master List text (Spice Mine Administrator renamed Moruth Doole). Anything Goes only (docs/legacy-versions.md).
+ * PC-E1 version of 1273_10: the errata posted on the PC forum on 2011-07-14 ("Current Rulings/Errata" p636351), which the
+ * surviving (re-made) Virtual Block 7.3 release sheet prints (slip marked E). The PC website card list printed the pre-errata wording again
+ * (PC-E2, 2273_1010); the Virtual Cards Master List (PC-E3, 2013-04-27: Moruth Doole) is current. The first 7.3 printing
+ * (2011-06-03, inferred) is 2273_2010 (legacy batch B41). Anything Goes only (docs/legacy-versions.md).
  */
 public class Card2273_010 extends AbstractLocationDevice {
     /** Spice Mine Administrator: Moruth Doole, Kessel Administrator's printed title on the Virtual Block 7.3 sheet (that card only). */
@@ -49,8 +52,8 @@ public class Card2273_010 extends AbstractLocationDevice {
         super(Side.DARK, 0, "Kessel Surveillance System", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_3, Rarity.V);
         setLore("Remote surveillance viewers with droid controllers supplement security. Can activate alarms and automated weapons when needed, bringing help to endangered locations.");
         setGameText("Deploy on a Kessel site. Opponent's Force drains are -1 here. Once per turn, if you are about to lose Force from Reserve Deck, may place a 'spice' card in owner's Lost Pile to make that Force satisfy 1 additional Force loss. Once per game, may deploy Spice Mine Administrator here from Reserve Deck; reshuffle.");
-        setLegacyVersion(new LegacyVersion("1273_10", "",
-                "Virtual Block 7.3 release sheet (2011-06-03)", LocalDate.of(2011, 6, 3), LocalDate.of(2012, 7, 21)));
+        setLegacyVersion(new LegacyVersion("1273_10", "PC-E1",
+                "PC forum errata post p636351 (2011-07-14); re-made Virtual Block 7.3 release sheet", LocalDate.of(2011, 7, 14), LocalDate.of(2012, 7, 21)));
         addKeywords(Keyword.DEPLOYS_ON_SITE);
     }
 
