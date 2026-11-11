@@ -40,7 +40,7 @@ public class Card1230_113 extends AbstractStarfighter {
         super(Side.LIGHT, 3, 2, 3, null, 3, 5, 4, "Red Squadron 7", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_3, Rarity.V);
         setVirtualSuffix(true);
         setLore("Incom starfighter flown by Keir Santage. Flew twelve sorties against Imperial shipyards at Fondor.");
-        setGameText("Heroic. May add 1 pilot. Once per game may place a non-[Immune to Alter] Effect at same system in owner's Used Pile. Corran Horn and Keir Santage deploy -1 aboard; while either piloting, immune to attrition < 4.");
+        setGameText("Heroic. May add 1 pilot. Once per game may place a non-[Immune to Alter] Effect at same system in owner's Used Pile. Corran Horn and Keir Santage deploy -1 aboard; if either piloting, immune to attrition < 4.");
         addIcons(Icon.NAV_COMPUTER, Icon.SCOMP_LINK, Icon.DEATH_STAR_II);
         addKeywords(Keyword.RED_SQUADRON, Keyword.HEROIC);
         addModelType(ModelType.X_WING);

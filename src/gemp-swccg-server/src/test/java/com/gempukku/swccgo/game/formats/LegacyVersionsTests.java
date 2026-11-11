@@ -100,7 +100,9 @@ public class LegacyVersionsTests {
                     sameAsCurrent.add(id);
                 else
                     assertTrue(id + ": differs from its current card in game text (incl. location texts), printed stats/icons or printed title",
-                            republishedLater(versions, id, info.currentPrintingId()));
+                            // batch R8: the current Master List text repeats these word for word (LegacyBatchR8B1B6VersionsTests)
+                            com.gempukku.swccgo.cards.LegacyBatchR8B1B6VersionsTests.REPEATED_BY_CURRENT.contains(id)
+                                    || republishedLater(versions, id, info.currentPrintingId()));
             }
             assertTrue(id + ": label shown in full name",
                     info.label().isEmpty() ? !GameUtils.getFullName(version).contains("[")

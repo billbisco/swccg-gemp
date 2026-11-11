@@ -51,7 +51,7 @@ public class Card_2210_084_Tests {
         assertTrue(card.isLegacy());
         assertEquals("Use 1 Force to deploy to an unoccupied site. Deploys and moves like an Undercover spy. If present with a smuggler of ability < 3 or [Permanent Weapon] Han, this weapon and that character are lost ('all cards' situation).",
                 card.getGameText());
-        assertNotEquals(current.getGameText(), card.getGameText());
+        assertEquals(current.getGameText(), card.getGameText()); // the Master List (2013-04-27, the current text) repeats it (batch R8)
         var version = card.getLegacyVersion();
         assertEquals("1210_84", version.currentPrintingId());
         assertEquals("", version.label());

@@ -211,10 +211,11 @@ public class Card_1230_118_Tests {
     public void EnhancedProtonTorpedoesHasTheLatestText() {
         var scn = GetScenario();
         var card = scn.GetLSCard("torps").getBlueprint();
-        assertEquals("Use 1 Force to deploy on your starfighter. May target a starship for free. Draw destiny. If on a Heroic starfighter, may use 1 Force to add 3 to total. Target hit if destiny > defense value.",
+        assertEquals("Use 1 Force to deploy on your starfighter. May target a starship for free. Draw destiny (If on a Heroic starfighter, may first use 1 Force to add 3 to total). Target hit if total destiny > defense value.",
                 card.getGameText());
         assertNull(card.getLegacyVersion());
         // the sheet wording is the original version 2230_118
-        assertFalse(card.getGameText().contains("may first use 1 Force"));
+        // batch R8: the current text is the Master List wording again
+        assertTrue(card.getGameText().contains("may first use 1 Force"));
     }
 }

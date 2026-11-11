@@ -36,7 +36,7 @@ public class Card1210_099 extends AbstractAlien {
         super(Side.LIGHT, 2, 3, 3, 2, 4, "Debnoli", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("Good-natured patron of Mos Eisley cantina, until the Empire impounded his starship. Expert marksman. Seeking revenge on the Empire.");
-        setGameText("Adds 2 to power of anything he pilots. While with an Imperial, you may initiate battle here for free. Permanent weapon is blaster rifle (may target a character or creature for free; draw destiny; target hit, and its forfeit = 0, if destiny +1 > defense value).");
+        setGameText("Adds 2 to power of anything he pilots. If with an Imperial, you may initiate battle here for free. Permanent weapon is blaster rifle (may target a character or creature for free; draw destiny; target hit, and its forfeit = 0, if destiny +1 > defense value).");
         addIcons(Icon.PILOT, Icon.WARRIOR, Icon.PERMANENT_WEAPON);
     }
 

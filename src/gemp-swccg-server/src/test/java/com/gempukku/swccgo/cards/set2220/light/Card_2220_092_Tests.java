@@ -52,7 +52,7 @@ public class Card_2220_092_Tests {
         assertTrue(card.isLegacy());
         assertEquals("If deploying to opponent's mobile site, deploys -2 as an Undercover spy. Nevar Yalnal may not target spies here. Opponent's total influence here is -1 for each of your spies at sites.",
                 card.getGameText());
-        assertNotEquals(current.getGameText(), card.getGameText());
+        assertEquals(current.getGameText(), card.getGameText()); // the Master List (2013-04-27, the current text) repeats it (batch R8)
         var version = card.getLegacyVersion();
         assertEquals("1220_92", version.currentPrintingId());
         assertEquals("", version.label());

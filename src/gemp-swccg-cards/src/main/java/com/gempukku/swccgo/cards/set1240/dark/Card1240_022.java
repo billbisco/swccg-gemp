@@ -40,7 +40,7 @@ public class Card1240_022 extends AbstractPoliticalEffect {
         super(Side.DARK, 4, "Crush The Rebellion", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_4, Rarity.V);
         setVirtualSuffix(true);
         setLore("After dueling his son and seizing control of a city in the clouds, Vader resumed his quest to destroy the Alliance.");
-        setGameText("Deploy on table. May place an Imperial Council Member here from hand. Once per turn, if a general or logistics agenda here, may subtract X from the forfeit and immunity to attrition of a character at a site for remainder of turn, where X = total influence at Conference Room.");
+        setGameText("Deploy on table. May place an Imperial Council Member here from hand. Once per turn, if a logistics agenda or general here, may subtract X from forfeit and immunity to attrition of a character at a site for remainder of turn, where X = total influence at Conference Room.");
         addIcons(Icon.PREMIUM);
     }
 

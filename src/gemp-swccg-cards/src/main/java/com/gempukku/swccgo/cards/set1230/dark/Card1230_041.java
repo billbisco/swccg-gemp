@@ -40,7 +40,7 @@ public class Card1230_041 extends AbstractUsedInterrupt {
         super(Side.DARK, 5, Title.Dead_Ewok, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_3, Rarity.V);
         setVirtualSuffix(true);
         setLore("Many Ewoks gave their lives in the Battle of Endor.");
-        setGameText("Cancel Ellors Madak. (Immune to Sense.) OR Use 2 Force to cancel the game text of an opponent's alien for remainder of turn. OR Place an Ewok Catapult in opponent's Used Pile. OR Make an Ewok power and forfeit = 0 for remainder of turn.");
+        setGameText("Cancel Ellorrs Madak. (Immune to Sense.) OR Use 2 Force to cancel the game text of an opponent's alien for remainder of turn. OR Place an Ewok Catapult in opponent's Used Pile. OR Make an Ewok power and forfeit = 0 for remainder of turn.");
         addIcons(Icon.ENDOR);
     }
 

@@ -41,7 +41,7 @@ public class Card1210_161 extends AbstractLostInterrupt {
         super(Side.LIGHT, 3, Title.Return_Of_A_Jedi, Uniqueness.UNRESTRICTED, ExpansionSet.VIRTUAL_BLOCK_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("'Where did you dig up that old fossil?' 'I don't think he exists anymore.' 'Surely he must be dead by now.' 'I can't believe he's gone.' 'Oh, he's not dead, not yet.' Obi's back!");
-        setGameText("Use 1 Force to deploy (or retrieve) Obi-Wan, Obi-Wan's Cape, or Obi-Wan's Lightsaber from Reserve Deck; reshuffle. OR Unless Inner Strength on table, use 1 Force to cancel a just drawn weapon destiny targeting Obi-Wan (or a just drawn duel or lightsaber combat destiny if Obi-Wan is participating).");
+        setGameText("Use 1 Force to deploy (or retrieve) Obi-Wan's Cape, Obi-Wan's Lightsaber, or Obi-Wan from Reserve Deck; reshuffle. OR Unless Inner Strength on table, use 1 Force to cancel a just drawn weapon destiny targeting Obi-Wan (or a just drawn duel or lightsaber combat destiny if Obi-Wan is participating).");
     }
 
     @Override

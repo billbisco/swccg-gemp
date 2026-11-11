@@ -51,7 +51,7 @@ public class Card_2210_161_Tests {
         assertTrue(card.isLegacy());
         assertEquals("Use 1 Force to deploy (or retrieve) Obi-Wan's Cape, Obi-Wan's Lightsaber, or Obi-Wan from Reserve Deck; reshuffle. OR Unless Inner Strength on table, use 1 Force to cancel a just drawn weapon destiny targeting Obi-Wan (or a just drawn duel or lightsaber combat destiny if Obi-Wan is participating).",
                 card.getGameText());
-        assertNotEquals(current.getGameText(), card.getGameText());
+        assertEquals(current.getGameText(), card.getGameText()); // the Master List (2013-04-27, the current text) repeats it (batch R8)
         var version = card.getLegacyVersion();
         assertEquals("1210_161", version.currentPrintingId());
         assertEquals("", version.label());

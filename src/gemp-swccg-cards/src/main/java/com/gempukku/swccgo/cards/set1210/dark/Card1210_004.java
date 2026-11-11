@@ -36,7 +36,7 @@ public class Card1210_004 extends AbstractImperial {
         super(Side.DARK, 2, 2, 1, 2, 3, "Commander Praji", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("Vader's aide on the Devastator. Personally supervised search for Death Star plans on Tatooine by Vader's order. Was graduated with honors from Imperial Navy Academy on Carida.");
-        setGameText("Adds 2 to power of anything he pilots. Once during your control phase (twice if on Devastator) may use 1 Force to take any Imperial pilot of ability < 3 into hand from Reserve Deck; reshuffle.");
+        setGameText("Adds 2 to power of anything he pilots. During your control phase (twice if aboard Devastator), may use 1 Force to take an Imperial pilot of ability < 3 into hand from Reserve Deck; reshuffle.");
         addIcons(Icon.PILOT, Icon.WARRIOR);
         addKeywords(Keyword.COMMANDER);
         addPersona(Persona.PRAJI);

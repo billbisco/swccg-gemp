@@ -52,7 +52,7 @@ public class Card_2210_026_Tests {
         assertTrue(card.isLegacy());
         assertEquals("Deploys only on Tatooine. During your deploy phase, if with URoRRuR'R'R, may deploy a weapon with 'Tusken' in lore here from Reserve Deck; reshuffle; your weapon destiny draws for such weapons are +2. During your deploy phase, Ur'Ru'r may make a regular move.",
                 card.getGameText());
-        assertNotEquals(current.getGameText(), card.getGameText());
+        assertEquals(current.getGameText(), card.getGameText()); // the Master List (2013-04-27, the current text) repeats it (batch R8)
         var version = card.getLegacyVersion();
         assertEquals("1210_26", version.currentPrintingId());
         assertEquals("", version.label());

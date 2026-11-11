@@ -39,7 +39,7 @@ public class Card1210_092 extends AbstractDroid {
         super(Side.LIGHT, 3, 3, 1, 4, "C-3PO (See-Threepio)", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("Cybot Galactica 3PO human-cyborg relations droid. Fluent in over six million forms of communication. 112 years old. Has never been memory-wiped... as far as he knows.");
-        setGameText("During a battle at a site with R2-D2, may not be targeted by weapons, and may draw one destiny; subtract that amount from opponent's total power. Once per game, may place all your non-[Immune to Alter] Effects on table in Used Pile.");
+        setGameText("During battle at a site with R2-D2, may not be targeted by weapons, and may draw one destiny; subtract that amount from opponent's total power. Once per game, may place all your non-[Immune to Alter] Effects on table in Used Pile.");
         addPersona(Persona.C3PO);
         addModelType(ModelType.PROTOCOL);
     }

@@ -38,7 +38,7 @@ public class Card1240_071 extends AbstractDroid {
     public Card1240_071() {
         super(Side.LIGHT, 4, 2, 1, 3, "Lars' Protocol Droid", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_4, Rarity.V);
         addModelType(ModelType.PROTOCOL);
-        setGameText("'Device' on Harvest may be treated as '[A New Hope] or [Hoth] droid'. While at a farm: your characters present are forfeit +3; may raise this site (if converted) to the top; and, once per move phase, may put hand in Used Pile to place a 'crop' on Reserve Deck.");
+        setGameText("'Device' on Harvest may be treated as '[A New Hope] or [Hoth] droid.' While at a farm: your characters present are forfeit +3; may raise this site (if converted) to the top; and, once per move phase, may put hand in Used Pile to place a 'crop' on Reserve Deck.");
         addIcons(Icon.HOTH);
     }
 

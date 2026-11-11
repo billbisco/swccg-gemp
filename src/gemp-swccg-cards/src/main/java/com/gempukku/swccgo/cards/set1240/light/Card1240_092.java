@@ -39,7 +39,7 @@ public class Card1240_092 extends AbstractNormalEffect {
         super(Side.LIGHT, 4, PlayCardZoneOption.ATTACHED, Title.Tusken_Breath_Mask, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_4, Rarity.V);
         setVirtualSuffix(true);
         setLore("Sand People use a special mask to reclaim exhaled moisture in the hot, harsh environment of Tatooine. Protects by filtering blowing sand and dispersing excess heat.");
-        setGameText("Deploy on an exterior Tatooine battleground site. X = the face up destiny number of your Objective. Once per turn, if all your ability on table is provided by aliens, may add X to your total ability during battle at a site. This Effect canceled if opponent controls this site.");
+        setGameText("Deploy on an exterior Tatooine battleground site. X = the face up destiny number of your Objective. Once per turn, if all your ability on table is provided by aliens, may add X to your ability during battle at a site. This Effect canceled if opponent controls this site.");
         addKeywords(Keyword.DEPLOYS_ON_SITE);
     }
 

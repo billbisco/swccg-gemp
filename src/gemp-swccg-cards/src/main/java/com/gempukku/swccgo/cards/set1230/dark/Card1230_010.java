@@ -40,7 +40,7 @@ public class Card1230_010 extends AbstractImperial {
         super(Side.DARK, 2, 2, 2, 2, 3, Title.Grond, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_3, Rarity.V);
         setVirtualSuffix(true);
         setLore("Colonel Dyer's aide. Coordinates scout actions. As a youth, raced swoops on homeworld of Corellia. Formerly served with Emperor's Demonstration Team.");
-        setGameText("Adds 2 to power of anything he pilots. Adds one battle destiny if with Colonel Dyer or if driving a swoop. May place Lieutenant Grond in Used Pile to cancel a Force drain at a related location.");
+        setGameText("Adds 2 to power of anything he pilots. Adds one battle destiny with Colonel Dyer or if driving a swoop. May place Lieutenant Grond in Used Pile to cancel a Force drain at a related location.");
         addIcons(Icon.PILOT, Icon.WARRIOR, Icon.ENDOR);
         addKeywords(Keyword.SCOUT);
     }

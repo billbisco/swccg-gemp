@@ -51,7 +51,7 @@ public class Card_2210_017_Tests {
         assertTrue(card.isLegacy());
         assertEquals("Deploys -1 and forfeit +3 at a site. Once per turn, may peek at top card of opponent's Reserve Deck or Used Pile; may then shuffle that Reserve Deck or Used Pile. Immune to attrition < 3.",
                 card.getGameText());
-        assertNotEquals(current.getGameText(), card.getGameText());
+        assertEquals(current.getGameText(), card.getGameText()); // the Master List (2013-04-27, the current text) repeats it (batch R8)
         var version = card.getLegacyVersion();
         assertEquals("1210_17", version.currentPrintingId());
         assertEquals("", version.label());

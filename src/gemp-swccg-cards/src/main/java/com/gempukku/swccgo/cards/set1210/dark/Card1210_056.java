@@ -44,7 +44,7 @@ public class Card1210_056 extends AbstractUsedOrLostInterrupt {
         super(Side.DARK, 2, Title.Coordinated_Attack, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("'Stay in attack formation.'");
-        setGameText("USED: If you just hit a target with a non-lightsaber non-[Permanent Weapon] weapon, may place target (and all cards on it) in owner's Used Pile. LOST: Cancel Heroic (and any immunity to attrition) on a character or starship this turn.");
+        setGameText("USED: If you just hit a target with a non-lightsaber, non-[Permanent Weapon] weapon, place target (and all cards on it) in owner's Used Pile. LOST: Cancel Heroic (and any immunity to attrition) on a character or starship this turn.");
         addIcons(Icon.SPECIAL_EDITION);
     }
 

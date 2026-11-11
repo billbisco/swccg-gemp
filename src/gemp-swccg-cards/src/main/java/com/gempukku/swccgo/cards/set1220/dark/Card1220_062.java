@@ -42,7 +42,7 @@ public class Card1220_062 extends AbstractUsedInterrupt {
         super(Side.DARK, 4, Title.Levitation_Attack, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_2, Rarity.V);
         setVirtualSuffix(true);
         setLore("Vader used his mastery of the Force to levitate objects from around the room. This calculated attack was designed to break Luke's spirit as well as his body.");
-        setGameText("Deploy (or retrieve) a device (for free) from Reserve Deck; reshuffle. (Immune to Sense.) OR Cancel Sabotage targeting a device. OR During a battle, place your weapon or device present in Used Pile to add 2 to your total power (3 if Vader present).");
+        setGameText("Deploy (or retrieve) a device (for free) from Reserve Deck; reshuffle. (Immune to Sense.) OR Cancel Sabotage targeting a device. OR During battle, place your weapon or device present in Used Pile to add 2 to your total power (3 if Vader present).");
         addIcons(Icon.CLOUD_CITY);
     }
 
