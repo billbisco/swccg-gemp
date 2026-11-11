@@ -110,6 +110,8 @@ public class GameState implements Snapshotable<GameState> {
     private Stack<PlayCardState> _playCardState = new Stack<PlayCardState>();
     private Stack<GameTextActionState> _gameTextActionState = new Stack<GameTextActionState>();
     private Stack<DrawDestinyState> _drawDestinyState = new Stack<DrawDestinyState>();
+    private String _lastDestinyDrawPlayer;
+    private com.gempukku.swccgo.logic.timing.Action _lastDestinyDrawRootAction;
     private Stack<EachDrawnDestinyState> _eachDrawnDestinyState = new Stack<EachDrawnDestinyState>();
     private Stack<BlowAwayState> _blowAwayState = new Stack<BlowAwayState>();
     private Set<String> _apprenticeTitles = new HashSet<String>();
@@ -4792,6 +4794,38 @@ public class GameState implements Snapshotable<GameState> {
     public void beginDrawDestiny(DrawDestinyEffect drawDestinyEffect) {
         int id = _drawDestinyState.size();
         _drawDestinyState.push(new DrawDestinyState(id, drawDestinyEffect));
+    }
+
+    /**
+     * Records that the specified player just drew destiny during the specified action (the draw's results are about to
+     * be applied by that action).
+     * @param playerId the player who drew destiny
+     * @param action the action drawing destiny
+     */
+    public void destinyJustDrawnDuringAction(String playerId, com.gempukku.swccgo.logic.timing.Action action) {
+        _lastDestinyDrawPlayer = playerId;
+        _lastDestinyDrawRootAction = rootAction(action);
+    }
+
+    /**
+     * Determines if the most recent destiny draw was drawn by the specified player during the same top-level action as
+     * the specified action (for example "opponent's just drawn destiny result about to make your starship 'hit' or lost").
+     * @param playerId the player
+     * @param action the action (or sub-action) causing the result
+     * @return true or false
+     */
+    public boolean isDestinyJustDrawnDuringAction(String playerId, com.gempukku.swccgo.logic.timing.Action action) {
+        return action != null && _lastDestinyDrawRootAction != null && playerId != null
+                && playerId.equals(_lastDestinyDrawPlayer) && _lastDestinyDrawRootAction == rootAction(action);
+    }
+
+    private static com.gempukku.swccgo.logic.timing.Action rootAction(com.gempukku.swccgo.logic.timing.Action action) {
+        com.gempukku.swccgo.logic.timing.Action root = action;
+        while (root instanceof com.gempukku.swccgo.logic.actions.SubAction
+                && ((com.gempukku.swccgo.logic.actions.SubAction) root).getParentAction() != null) {
+            root = ((com.gempukku.swccgo.logic.actions.SubAction) root).getParentAction();
+        }
+        return root;
     }
 
     public DrawDestinyState getTopDrawDestinyState() {

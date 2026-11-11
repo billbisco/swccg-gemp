@@ -16,8 +16,8 @@ public final class SecretPlansRules {
 
     /**
      * Gets the amount of Force the retrieving player must use for Secret Plans.
-     * Tauntaun Bones (V): whenever its owner retrieves Force because a creature has eaten a card (a retrieval from a
-     * creature's game text), they need only use X-2 Force (to a minimum of 1).
+     * Tauntaun Bones (V): whenever its owner retrieves Force because a creature has eaten a card (any card's
+     * retrieval caused by an eating, e.g. Beast-Rider (V), Sarlacc, Dark Waters; not a creature's other retrievals), they need only use X-2 Force (to a minimum of 1).
      * @param game the game
      * @param secretPlans the Secret Plans card
      * @param retrievingPlayer the player retrieving Force
@@ -26,8 +26,7 @@ public final class SecretPlansRules {
      */
     public static float forceToUse(SwccgGame game, PhysicalCard secretPlans, String retrievingPlayer, AboutToRetrieveForceResult result) {
         float x = game.getModifiersQuerying().getVariableValue(game.getGameState(), secretPlans, Variable.X, result.getAmountOfForceToRetrieve());
-        PhysicalCard source = result.getSourceCard();
-        if (source != null && Filters.creature.accepts(game, source)
+        if (result.isBecauseCreatureAteCard()
                 && GameConditions.canSpot(game, secretPlans,
                 Filters.and(Filters.owner(retrievingPlayer), Filters.title("Tauntaun Bones"), Icon.LEGACY_BLOCK_4))) {
             x = Math.max(1, x - 2);

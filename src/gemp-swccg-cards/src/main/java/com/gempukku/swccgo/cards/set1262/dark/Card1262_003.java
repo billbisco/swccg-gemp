@@ -53,9 +53,12 @@ public class Card1262_003 extends AbstractNormalEffect {
         return Filters.Dining_Room;
     }
 
+    /** "Occupy Bespin" (Bill 2026-11-10): the Bespin system, any Bespin cloud sector or any Cloud City site. */
+    private static final Filter BESPIN = Filters.or(Filters.Bespin_system, Filters.Bespin_cloud_sector, Filters.Cloud_City_site);
+
     private static boolean dealConditions(SwccgGame game, PhysicalCard self) {
         return GameConditions.canSpot(game, self, SpotOverride.INCLUDE_EXCLUDED_FROM_BATTLE, Filters.Dark_Deal)
-                && GameConditions.occupies(game, self.getOwner(), SpotOverride.INCLUDE_EXCLUDED_FROM_BATTLE, Filters.Bespin_system);
+                && GameConditions.occupies(game, self.getOwner(), SpotOverride.INCLUDE_EXCLUDED_FROM_BATTLE, BESPIN);
     }
 
     private static Filter yourThisDeal(PhysicalCard self, String title) {
@@ -85,9 +88,9 @@ public class Card1262_003 extends AbstractNormalEffect {
         String opponent = game.getOpponent(self.getOwner());
         PhysicalCard diningRoom = self.getAttachedTo();
 
-        // Dark Deal (here) is canceled if opponent controls this site
+        // Dark Deal (any, wherever deployed: Bill 2026-11-10) is canceled if opponent controls this site
         if (diningRoom != null && GameConditions.controls(game, opponent, diningRoom)) {
-            final PhysicalCard darkDeal = Filters.findFirstActive(game, self, Filters.and(Filters.Dark_Deal, Filters.attachedTo(diningRoom)));
+            final PhysicalCard darkDeal = Filters.findFirstActive(game, self, Filters.Dark_Deal);
             if (darkDeal != null && GameConditions.canBeCanceled(game, darkDeal)) {
                 RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
                 action.setSingletonTrigger(true);

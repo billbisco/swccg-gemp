@@ -113,6 +113,19 @@ public class Card_1262_003_Tests {
         assertTrue(scn.IsAttachedTo(dining, scn.GetDSCard("deal")));
     }
 
+    /** "Dark Deal ... is canceled if opponent controls this site": any Dark Deal, not only one deployed here (Bill 10 Nov). */
+    @Test
+    public void AlteringTheDealCancelsDarkDealElsewhereWhenOpponentControlsThisSite() {
+        var scn = started();
+        var dining = scn.GetDSCard("dining");
+        var cloudcity = scn.GetDSCard("cloudcity");
+        scn.AttachCardsTo(dining, scn.GetDSCard("altering"));
+        scn.AttachCardsTo(cloudcity, scn.GetDSCard("deal"));
+        scn.MoveCardsToLocation(dining, scn.GetLSCard("luke"));
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        assertInZone(Zone.LOST_PILE, scn.GetDSCard("deal"));
+    }
+
     /** This Deal Is Getting Worse All The Time as the Dark Side starting Objective, deploying Cloud City: Dining Room. */
     static final StartingSetup ThisDealObjective = new StartingSetup() {
         @Override
@@ -132,6 +145,11 @@ public class Card_1262_003_Tests {
     };
 
     private VirtualTableScenario thisDeal(boolean altering) {
+        return thisDeal(altering, false);
+    }
+
+    /** atCloudCitySite: Vader occupies Bespin: Cloud City (a Cloud City site) instead of the Bespin system. */
+    private VirtualTableScenario thisDeal(boolean altering, boolean atCloudCitySite) {
         var scn = new VirtualTableScenario(
                 new HashMap<>() {{ put("luke", "1_19"); }},
                 new HashMap<>() {{ put("altering", "1262_3"); put("bespin", "5_164"); put("cloudcity", "5_165"); put("deal", "5_115"); put("dining", "5_168");
@@ -146,8 +164,12 @@ public class Card_1262_003_Tests {
         scn.MoveLocationToTable(scn.GetDSCard("dining"));
         if (altering) scn.AttachCardsTo(scn.GetDSCard("dining"), scn.GetDSCard("altering"));
         scn.AttachCardsTo(scn.GetDSCard("cloudcity"), scn.GetDSCard("deal"));
-        scn.MoveCardsToLocation(scn.GetDSCard("bespin"), scn.GetDSCard("avenger"));
-        scn.BoardAsPilot(scn.GetDSCard("avenger"), scn.GetDSCard("vader"));
+        if (atCloudCitySite) {
+            scn.MoveCardsToLocation(scn.GetDSCard("cloudcity"), scn.GetDSCard("vader"));
+        } else {
+            scn.MoveCardsToLocation(scn.GetDSCard("bespin"), scn.GetDSCard("avenger"));
+            scn.BoardAsPilot(scn.GetDSCard("avenger"), scn.GetDSCard("vader"));
+        }
         scn.SkipToDSTurn(Phase.DEPLOY);
         return scn;
     }
@@ -158,6 +180,13 @@ public class Card_1262_003_Tests {
         var objective = scn.GetDSCard("thisdeal");
         assertTrue(objective.isFlipped());
         assertFalse(GameConditions.canBeFlipped(scn.game(), objective));
+    }
+
+    /** "Occupy Bespin" includes any Cloud City site (and Bespin cloud sectors), not only the Bespin system. */
+    @Test
+    public void AlteringTheDealFlipsThisDealWhenYouOccupyACloudCitySite() {
+        var scn = thisDeal(true, true);
+        assertTrue(scn.GetDSCard("thisdeal").isFlipped());
     }
 
     @Test

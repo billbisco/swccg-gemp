@@ -86,7 +86,7 @@ public class Card1262_020 extends AbstractRepublic {
                     new IntegerAwaitingDecision("Choose amount of Force to retrieve", 0, 4, 4) {
                         @Override
                         public void decisionMade(int amount) {
-                            if (amount > 0) action.appendEffect(new RetrieveForceEffect(action, playerId, amount));
+                            if (amount > 0) action.appendEffect(new RetrieveForceEffect(action, playerId, amount).becauseCreatureAteCard());
                         }
                     }));
             return Collections.singletonList(action);

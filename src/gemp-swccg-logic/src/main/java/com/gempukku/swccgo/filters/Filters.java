@@ -11647,6 +11647,17 @@ public class Filters {
     /**
      * Filter that accepts cards that are Undercover spies.
      */
+    /**
+     * Filter that accepts cards that are not prohibited from being Undercover (for example by Emperor's Sinister Plans:
+     * "spy may not ... be Undercover").
+     */
+    public static final Filter mayBeUndercover = new Filter() {
+        @Override
+        public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard) {
+            return !modifiersQuerying.mayNotBeUndercover(gameState, physicalCard);
+        }
+    };
+
     public static final Filter undercover_spy = new Filter() {
         @Override
         public boolean accepts(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard physicalCard) {

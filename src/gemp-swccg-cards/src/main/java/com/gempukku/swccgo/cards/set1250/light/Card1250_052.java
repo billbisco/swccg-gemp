@@ -67,7 +67,7 @@ public class Card1250_052 extends AbstractRebelRepublic {
     @Override
     protected List<RequiredGameTextTriggerAction> getGameTextLeavesTableRequiredTriggers(SwccgGame game,
             EffectResult effectResult, PhysicalCard self, int gameTextSourceCardId) {
-        if (TriggerConditions.justLostFromLocation(game, effectResult, self, Filters.sameSiteAs(self, Filters.Vader))) {
+        if (justLostFromSameSiteAsVader(game, effectResult, self)) {
             String owner = self.getOwner();
             RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
             action.setText("Place out of play and make opponent lose 4 Force");
@@ -76,5 +76,21 @@ public class Card1250_052 extends AbstractRebelRepublic {
             return List.of(action);
         }
         return null;
+    }
+
+    /**
+     * "If just lost from same site as Vader" (Bill 2026-11-10): Vader was at that site at the moment she was lost, even
+     * only momentarily: Vader still there, or present with her when she was lost (both lost by one action). Not when
+     * Vader had already left or been lost before her.
+     */
+    private static boolean justLostFromSameSiteAsVader(SwccgGame game, EffectResult effectResult, PhysicalCard self) {
+        if (!TriggerConditions.justLostFromLocation(game, effectResult, self, Filters.site))
+            return false;
+        com.gempukku.swccgo.logic.timing.results.LostFromTableResult result = (com.gempukku.swccgo.logic.timing.results.LostFromTableResult) effectResult;
+        PhysicalCard site = result.getFromLocation();
+        if (GameConditions.canSpot(game, self, Filters.and(Filters.Vader, Filters.at(site))))
+            return true;
+        java.util.Collection<PhysicalCard> presentWith = result.getWasPresentWith();
+        return presentWith != null && !Filters.filter(presentWith, game, Filters.Vader).isEmpty();
     }
 }

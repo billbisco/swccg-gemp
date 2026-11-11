@@ -8,6 +8,7 @@ import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.game.state.GameState;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -179,6 +180,24 @@ public class CardsLeavePlayUtils {
                 result.add(card);
             }
         }
+        return result;
+    }
+
+    /**
+     * Of the cards about to leave the table (by any means, not only to the Lost Pile), takes out the ones that go to
+     * Used Pile instead (see cardsToUsedPileBecauseSiteLeavesTable) and removes them from both collections.
+     * Must be called while the cards are still on table.
+     * @param game the game
+     * @param cardsLeavingTable the cards about to leave the table
+     * @param attachedCardsLeavingTable the attached (and other additional) cards about to leave the table
+     * @return the cards that go to Used Pile instead
+     */
+    public static Set<PhysicalCard> takeCardsToUsedPileBecauseSiteLeavesTable(SwccgGame game, Collection<PhysicalCard> cardsLeavingTable, Collection<PhysicalCard> attachedCardsLeavingTable) {
+        List<PhysicalCard> all = new ArrayList<PhysicalCard>(cardsLeavingTable);
+        all.addAll(attachedCardsLeavingTable);
+        Set<PhysicalCard> result = cardsToUsedPileBecauseSiteLeavesTable(game, all);
+        cardsLeavingTable.removeAll(result);
+        attachedCardsLeavingTable.removeAll(result);
         return result;
     }
 }

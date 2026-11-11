@@ -153,7 +153,8 @@ public class Card_1240_052_Tests {
     }
 
     @Test
-    public void ExecutionArenaPitLightSideLosesOneForceDuringOpponentsControlPhaseIfOpponentControlsAdjacentSite() {
+    /** Not initiated during opponent's control phase: the mandatory Force loss happens at the end of that phase. */
+    public void ExecutionArenaPitLightSideLosesOneForceAtEndOfOpponentsControlPhaseIfNotInitiated() {
         var scn = GetScenario();
         var arena = scn.GetDSCard("arena");
         var womp = scn.GetDSCard("womp");
@@ -211,5 +212,46 @@ public class Card_1240_052_Tests {
         Block4DarkTestSupport.advanceUntil(scn, scn::AwaitingLSForceLossPayment, 10);
         assertFalse(scn.AwaitingLSForceLossPayment());
         assertEquals(lifeBefore, scn.GetLSLifeForceRemaining());
+    }
+
+    private static boolean dsHasAction(VirtualTableScenario scn, String text) {
+        return scn.GetAwaitingDecision(scn.DS) != null
+                && scn.GetDSAvailableActions().stream().anyMatch(action -> action.contains(text));
+    }
+
+    /**
+     * "Once during opponent's control phase ... lose 1 Force" is a mandatory action (Advanced Rulebook): the Dark Side
+     * player may initiate it any time during their control phase (it is not forced at the start), and only once.
+     */
+    @Test
+    public void ExecutionArenaPitForceLossMayBeInitiatedAnyTimeDuringTheControlPhaseOnlyOnce() {
+        var scn = GetScenario();
+        var arena = scn.GetDSCard("arena");
+        var dsSite = scn.GetDSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveLocationToTable(arena);
+        scn.MoveCardsToLocation(arena, scn.GetDSCard("womp"));
+        scn.MoveCardsToLocation(dsSite, scn.GetDSCard("trooper"));
+
+        int lifeBefore = scn.GetLSLifeForceRemaining();
+        scn.SkipToPhase(Phase.CONTROL);
+        assertFalse(Block4DarkTestSupport.describe(scn), scn.AwaitingLSForceLossPayment());
+        assertEquals(lifeBefore, scn.GetLSLifeForceRemaining());
+        assertTrue(Block4DarkTestSupport.describe(scn), dsHasAction(scn, "lose 1 Force"));
+        scn.DSUseCardAction(arena, "lose 1 Force");
+        Block4DarkTestSupport.advanceUntil(scn, scn::AwaitingLSForceLossPayment, 10);
+        assertTrue(Block4DarkTestSupport.describe(scn), scn.AwaitingLSForceLossPayment());
+        scn.LSPayRemainingForceLossFromReserveDeck();
+        scn.PassAllResponses();
+        assertEquals(lifeBefore - 1, scn.GetLSLifeForceRemaining());
+
+        if (scn.LSDecisionAvailable("Control action")) scn.LSPass();
+        assertFalse(dsHasAction(scn, "lose 1 Force"));
+        // Already done this phase: no second loss at the end of the phase.
+        Block4DarkTestSupport.advanceUntil(scn, () -> scn.AwaitingLSForceLossPayment()
+                || scn.gameState().getCurrentPhase() != Phase.CONTROL, 20);
+        assertFalse(scn.AwaitingLSForceLossPayment());
+        assertEquals(lifeBefore - 1, scn.GetLSLifeForceRemaining());
     }
 }

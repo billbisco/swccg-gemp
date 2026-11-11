@@ -152,6 +152,20 @@ public class Card_1271_037_Tests {
         assertFalse(s.game().getModifiersQuerying().mayNotBeUndercover(s.gameState(), spy));
     }
 
+    /** "Spy may not ... be Undercover": Undercover may not even target that spy (it would deploy and do nothing). */
+    @Test public void EmperorsSinisterPlansSpyMayNotBeTargetedByUndercover() {
+        var s = ready(true, true);
+        var undercover = s.GetLSCard("undercover");
+        var spy = s.GetLSCard("spy");
+        assertTrue(s.LSDeployAvailable(undercover));
+        assertTrue(com.gempukku.swccgo.filters.Filters.mayBeUndercover.accepts(s.game(), spy));
+        playPlans(s);
+        if (s.LSGetDecision() == null && s.DSGetDecision() != null) s.DSPass();
+        assertFalse(com.gempukku.swccgo.filters.Filters.mayBeUndercover.accepts(s.game(), spy));
+        assertFalse(s.LSDeployAvailable(undercover));
+        assertFalse(spy.isUndercover());
+    }
+
     @Test public void EmperorsSinisterPlansUndercoverStillWorksWithoutIt() {
         var s = ready(true, true);
         var undercover = s.GetLSCard("undercover");

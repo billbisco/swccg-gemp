@@ -2,6 +2,7 @@ package com.gempukku.swccgo.cards.set1240.dark;
 
 import com.gempukku.swccgo.cards.AbstractSite;
 import com.gempukku.swccgo.cards.GameConditions;
+import com.gempukku.swccgo.cards.effects.usage.OncePerPhaseEffect;
 import com.gempukku.swccgo.cards.conditions.AtCondition;
 import com.gempukku.swccgo.cards.effects.CancelForceDrainEffect;
 import com.gempukku.swccgo.common.ExpansionSet;
@@ -114,13 +115,44 @@ public class Card1240_052 extends AbstractSite {
         return modifiers;
     }
 
+    private static final GameTextActionId PIT_FORCE_LOSS = GameTextActionId.OTHER_CARD_ACTION_1;
+
+    /** "If a ferocious creature here ... if opponent controls an adjacent site": opponent = the Dark Side player here. */
+    private static boolean pitForceLossApplies(SwccgGame game, PhysicalCard self, String darkSidePlayer) {
+        return GameConditions.canSpot(game, self, Filters.and(LegacyCreatureFilters.ferocious, Filters.at(self)))
+                && GameConditions.controls(game, darkSidePlayer, Filters.adjacentSite(self));
+    }
+
+    /**
+     * "Once during opponent's control phase ... lose 1 Force" is a mandatory action (Advanced Rulebook, Mandatory
+     * Actions): any time during that phase the owner of the card mandating it (the Dark Side player) may initiate it,
+     * once; if not yet initiated it happens at the end of the phase (as Search And Destroy).
+     */
+    @Override
+    protected List<TopLevelGameTextAction> getGameTextLightSideOpponentsTopLevelActions(String darkSidePlayer, SwccgGame game, PhysicalCard self, int gameTextSourceCardId) {
+        String playerOnLightSideOfLocation = game.getOpponent(darkSidePlayer);
+        if (GameConditions.isOnceDuringYourPhase(game, self, darkSidePlayer, gameTextSourceCardId, PIT_FORCE_LOSS, Phase.CONTROL)
+                && pitForceLossApplies(game, self, darkSidePlayer)) {
+            TopLevelGameTextAction action = new TopLevelGameTextAction(self, darkSidePlayer, gameTextSourceCardId, PIT_FORCE_LOSS);
+            action.setText("Make " + playerOnLightSideOfLocation + " lose 1 Force");
+            action.setActionMsg("Make " + playerOnLightSideOfLocation + " lose 1 Force");
+            action.appendUsage(
+                    new OncePerPhaseEffect(action));
+            action.appendEffect(
+                    new LoseForceEffect(action, playerOnLightSideOfLocation, 1));
+            return Collections.singletonList(action);
+        }
+        return null;
+    }
+
     @Override
     protected List<RequiredGameTextTriggerAction> getGameTextLightSideRequiredAfterTriggers(String playerOnLightSideOfLocation, SwccgGame game, EffectResult effectResult, PhysicalCard self, int gameTextSourceCardId) {
         String opponent = game.getOpponent(playerOnLightSideOfLocation);
-        if (TriggerConditions.isStartOfOpponentsPhase(game, effectResult, Phase.CONTROL, playerOnLightSideOfLocation)
-                && GameConditions.canSpot(game, self, Filters.and(LegacyCreatureFilters.ferocious, Filters.at(self)))
-                && GameConditions.controls(game, opponent, Filters.adjacentSite(self))) {
-            RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId);
+        // End of opponent's control phase: the mandatory Force loss happens now if it was not initiated during the phase.
+        if (TriggerConditions.isEndOfOpponentsPhase(game, effectResult, Phase.CONTROL, playerOnLightSideOfLocation)
+                && GameConditions.isOnceDuringYourPhase(game, self, opponent, gameTextSourceCardId, PIT_FORCE_LOSS, Phase.CONTROL)
+                && pitForceLossApplies(game, self, opponent)) {
+            RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId, PIT_FORCE_LOSS);
             action.setText("Lose 1 Force");
             action.setActionMsg("Make " + playerOnLightSideOfLocation + " lose 1 Force");
             action.appendEffect(

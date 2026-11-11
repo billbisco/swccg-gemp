@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
 public class Card_1262_008_Tests {
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(
-                new HashMap<>() {{ put("luke", "1_19"); put("leia", "1_17"); }},
+                new HashMap<>() {{ put("luke", "1_19"); put("leia", "1_17"); put("approach", "5_42"); }},
                 new HashMap<>() {{ put("drop", "1262_8"); put("p60", "12_115"); put("droideka", "200_80"); put("trooper", "1_194");
                     put("vader", "1_168"); put("card", "1_194"); }},
                 20, 20, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
@@ -152,5 +152,50 @@ public class Card_1262_008_Tests {
         assertEquals(used + 1, scn.GetDSUsedPileCount());
         if (scn.LSAnyDecisionsAvailable()) scn.LSPass();
         assertFalse(scn.DSCardActionAvailable(drop, "Place card from hand in Used Pile"));
+    }
+
+    /**
+     * Light Side responds to the battle with an actual Interrupt that adds one destiny to total power (Dark Approach),
+     * then two more destiny to power are added; returns how many destiny Light Side draws to total power.
+     */
+    private int lightSidePowerDestiniesWithInterrupt(boolean drop) {
+        var scn = scenario();
+        var site = scn.GetLSStartingLocation();
+        var approach = scn.GetLSCard("approach");
+        scn.StartGame();
+        if (drop) scn.MoveCardsToDSSideOfTable(scn.GetDSCard("drop"));
+        scn.MoveCardsToLocation(site, scn.GetDSCard("p60"), scn.GetDSCard("droideka"), scn.GetDSCard("vader"), scn.GetLSCard("luke"));
+        scn.MoveCardsToLSHand(approach);
+        scn.SkipToDSTurn(Phase.BATTLE);
+        scn.DSActivateForceCheat(2);
+        scn.EnsureLSForcePile(6);
+        scn.DSInitiateBattle(site);
+        boolean played = false;
+        for (int i = 0; i < 10 && !played; i++) {
+            boolean available;
+            try {
+                available = scn.LSGetDecision() != null && scn.LSCardPlayAvailable(approach, "Add one destiny");
+            } catch (IllegalStateException notACardActionDecision) {
+                available = false;
+            }
+            if (available) {
+                scn.LSPlayCard(approach, "Add one destiny");
+                scn.PassAllResponses();
+                played = true;
+            } else {
+                scn.PlayerPass(scn.GetDecidingPlayer());
+            }
+        }
+        assertTrue("Dark Approach was played", played);
+        scn.ApplyAdHocModifier(new NumDestinyDrawsToPowerOnlyModifier(scn.GetDSCard("vader"), null, 2, scn.LS));
+        return com.gempukku.swccgo.logic.modifiers.DestinyAddedCapTests.advanceToDamageSegment(scn, false)
+                .getNumDestinyToTotalPowerDrawn(scn.LS);
+    }
+
+    /** "Neither player may add more than two destiny to power": an Interrupt's added destiny counts toward the cap. */
+    @Test
+    public void DropVCapCountsDestinyAddedByAnInterrupt() {
+        assertEquals(3, lightSidePowerDestiniesWithInterrupt(false));
+        assertEquals(2, lightSidePowerDestiniesWithInterrupt(true));
     }
 }

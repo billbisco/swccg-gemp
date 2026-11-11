@@ -36,6 +36,7 @@ public class ReturnCardsToHandFromTableSimultaneouslyEffect extends AbstractSubA
     private Map<PhysicalCard, Collection<PhysicalCard>> _wasPresentWithWhenLostOrForfeited = new HashMap<PhysicalCard, Collection<PhysicalCard>>();
     private Collection<PhysicalCard> _returnedToHand = new ArrayList<PhysicalCard>();
     private Collection<PhysicalCard> _attachedCardsToLeaveTable = new ArrayList<PhysicalCard>();
+    private Collection<PhysicalCard> _toUsedPileBecauseSiteLeftTable = new ArrayList<PhysicalCard>();
     private Collection<PhysicalCard> _releasedCaptives = new ArrayList<PhysicalCard>();
 
     /**
@@ -176,6 +177,19 @@ public class ReturnCardsToHandFromTableSimultaneouslyEffect extends AbstractSubA
                 new PassthruEffect(subAction) {
                     @Override
                     protected void doPlayEffect(SwccgGame game) {
+                        // Sites (and cards there) that go to Used Pile instead when they leave table (Fleet Security Protocols)
+                        _toUsedPileBecauseSiteLeftTable.addAll(CardsLeavePlayUtils.takeCardsToUsedPileBecauseSiteLeavesTable(game, _returnedToHand, _attachedCardsToLeaveTable));
+                        if (!_toUsedPileBecauseSiteLeftTable.isEmpty()) {
+                            for (PhysicalCard card : _toUsedPileBecauseSiteLeftTable) {
+                                card.updateRememberedInPlayCardInfo(game);
+                            }
+                            game.getGameState().removeCardsFromZone(_toUsedPileBecauseSiteLeftTable);
+                            for (PhysicalCard card : _toUsedPileBecauseSiteLeftTable) {
+                                game.getGameState().addCardToTopOfZone(card, Zone.VOID, card.getOwner());
+                            }
+                            game.getGameState().sendMessage(GameUtils.getAppendedNames(_toUsedPileBecauseSiteLeftTable) + " on table placed in Used Pile instead");
+                        }
+
                         if (!_returnedToHand.isEmpty() || !_attachedCardsToLeaveTable.isEmpty()) {
 
                             // Make sure cards remember current information and get location indexes
@@ -254,6 +268,21 @@ public class ReturnCardsToHandFromTableSimultaneouslyEffect extends AbstractSubA
                 }
         );
 
+        // 6b) Place sites (and cards there) that go to Used Pile instead in Used Pile
+        subAction.appendEffect(
+                new PassthruEffect(subAction) {
+                    @Override
+                    protected void doPlayEffect(SwccgGame game) {
+                        if (!_toUsedPileBecauseSiteLeftTable.isEmpty()) {
+                            SubAction putInUsedPileSubAction = new SubAction(subAction);
+                            putInUsedPileSubAction.appendEffect(
+                                    new PutCardsInCardPileEffect(subAction, game, _toUsedPileBecauseSiteLeftTable, Zone.USED_PILE));
+                            subAction.stackSubAction(putInUsedPileSubAction);
+                        }
+                    }
+                }
+        );
+
         // 7) Emit effect results for cards that left table
         subAction.appendEffect(
                 new PassthruEffect(subAction) {
@@ -286,6 +315,19 @@ public class ReturnCardsToHandFromTableSimultaneouslyEffect extends AbstractSubA
                                             new LostCardFromTableResult(subAction, putToPileCard, _wasAttachedToWhenLostOrForfeited.get(putToPileCard), _locationLostOrForfeitedFrom.get(putToPileCard), _wasPresentWithWhenLostOrForfeited.get(putToPileCard)));
                                 }
                             }
+                        }
+                    }
+                }
+        );
+
+        // 8) Emit effect results for sites (and cards there) placed in Used Pile instead
+        subAction.appendEffect(
+                new PassthruEffect(subAction) {
+                    @Override
+                    protected void doPlayEffect(SwccgGame game) {
+                        for (PhysicalCard putToPileCard : _toUsedPileBecauseSiteLeftTable) {
+                            game.getActionsEnvironment().emitEffectResult(
+                                    new PutCardInUsedPileFromTableResult(subAction, putToPileCard));
                         }
                     }
                 }

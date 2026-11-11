@@ -32,6 +32,7 @@ public class Card_1240_090_Tests {
                     put("worrt", "6_48");
                     put("ridge", "3_62");
                     put("jungle", "4_86");
+                    put("beastrider", "1262_20");
                 }},
                 new HashMap<>() {{
                     put("trooper", "1_194");
@@ -175,12 +176,15 @@ public class Card_1240_090_Tests {
         assertEquals(ridge, tauntaun.getAtLocation());
     }
 
-    /** Has a card retrieve 3 Force for Light Side with Secret Plans on table; returns the Secret Plans prompt. */
-    private String secretPlansPromptForRetrievalBy(boolean withBones, String sourceKey) {
-        return secretPlansPromptForRetrievalBy(withBones, sourceKey, "secretplans");
+    /**
+     * Has a card retrieve 3 Force for Light Side with Secret Plans on table; returns the Secret Plans prompt.
+     * becauseEaten marks the retrieval as caused by a creature having eaten a card.
+     */
+    private String secretPlansPromptForRetrievalBy(boolean withBones, String sourceKey, boolean becauseEaten) {
+        return secretPlansPromptForRetrievalBy(withBones, sourceKey, "secretplans", becauseEaten);
     }
 
-    private String secretPlansPromptForRetrievalBy(boolean withBones, String sourceKey, String secretPlansKey) {
+    private String secretPlansPromptForRetrievalBy(boolean withBones, String sourceKey, String secretPlansKey, boolean becauseEaten) {
         var scn = GetScenario();
         var bones = scn.GetLSCard("bones");
         var source = scn.GetLSCard(sourceKey);
@@ -198,8 +202,12 @@ public class Card_1240_090_Tests {
         scn.MoveCardsToTopOfLSLostPile(scn.GetTopOfLSReserveDeck());
         scn.MoveCardsToTopOfLSLostPile(scn.GetTopOfLSReserveDeck());
         scn.MoveCardsToTopOfLSLostPile(scn.GetTopOfLSReserveDeck());
-        scn.LSExecuteAdHocEffect(source, new com.gempukku.swccgo.logic.effects.RetrieveForceEffect(
-                new com.gempukku.swccgo.logic.actions.TopLevelGameTextAction(source, scn.LS, source.getCardId()), scn.LS, 3));
+        var retrieval = new com.gempukku.swccgo.logic.effects.RetrieveForceEffect(
+                new com.gempukku.swccgo.logic.actions.TopLevelGameTextAction(source, scn.LS, source.getCardId()), scn.LS, 3);
+        if (becauseEaten) {
+            retrieval.becauseCreatureAteCard();
+        }
+        scn.LSExecuteAdHocEffect(source, retrieval);
         for (int i = 0; i < 6 && !scn.LSDecisionAvailable("Force to proceed with Force retrieval"); i++) {
             scn.PassAllResponses();
         }
@@ -207,20 +215,83 @@ public class Card_1240_090_Tests {
     }
 
     @Test
-    public void TauntaunBonesVCreatureRetrievalNeedsOnlyXMinus2ForceForSecretPlans() {
-        assertTrue(secretPlansPromptForRetrievalBy(true, "worrt").contains("use 1 Force"));
+    public void TauntaunBonesVRetrievalBecauseACreatureAteACardNeedsOnlyXMinus2ForceForSecretPlans() {
+        assertTrue(secretPlansPromptForRetrievalBy(true, "worrt", true).contains("use 1 Force"));
+        // The cause counts, not whose text retrieves: a non-creature card's retrieval caused by an eating is reduced too.
+        assertTrue(secretPlansPromptForRetrievalBy(true, "tauntaun", true).contains("use 1 Force"));
     }
 
     @Test
-    public void TauntaunBonesVSecretPlansUnchangedWithoutBonesOrForNonCreatureRetrieval() {
-        assertTrue(secretPlansPromptForRetrievalBy(false, "worrt").contains("use 3 Force"));
-        assertTrue(secretPlansPromptForRetrievalBy(true, "tauntaun").contains("use 3 Force"));
+    public void TauntaunBonesVSecretPlansUnchangedWithoutBonesOrForRetrievalNotCausedByEating() {
+        assertTrue(secretPlansPromptForRetrievalBy(false, "worrt", true).contains("use 3 Force"));
+        assertTrue(secretPlansPromptForRetrievalBy(true, "tauntaun", false).contains("use 3 Force"));
+        // A creature's own retrieval that is not caused by an eating is not reduced.
+        assertTrue(secretPlansPromptForRetrievalBy(true, "worrt", false).contains("use 3 Force"));
     }
 
     @Test
     public void TauntaunBonesVReducesEverySecretPlansPrinting() {
-        assertTrue(secretPlansPromptForRetrievalBy(true, "worrt", "secretplansshield").contains("use 1 Force"));
-        assertTrue(secretPlansPromptForRetrievalBy(false, "worrt", "secretplansshield").contains("use 3 Force"));
-        assertTrue(secretPlansPromptForRetrievalBy(true, "worrt", "secretplansse").contains("use 1 Force"));
+        assertTrue(secretPlansPromptForRetrievalBy(true, "worrt", "secretplansshield", true).contains("use 1 Force"));
+        assertTrue(secretPlansPromptForRetrievalBy(false, "worrt", "secretplansshield", true).contains("use 3 Force"));
+        assertTrue(secretPlansPromptForRetrievalBy(true, "worrt", "secretplansse", true).contains("use 1 Force"));
+    }
+
+    /**
+     * An opponent's card is eaten at Beast-Rider (V)'s site and Beast-Rider retrieves 4 Force ("If an opponent's card
+     * here is eaten, you may retrieve up to 4 Force"); returns the Secret Plans prompt.
+     */
+    private String secretPlansPromptForBeastRiderRetrieval(boolean withBones) {
+        var scn = GetScenario();
+        var rider = scn.GetLSCard("beastrider");
+        var worrt = scn.GetLSCard("worrt");
+        var trooper = scn.GetDSCard("trooper");
+        var site = scn.GetLSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, rider, trooper);
+        scn.MoveCardsToDSSideOfTable(scn.GetDSCard("secretplans"));
+        if (withBones) {
+            scn.MoveCardsToLSSideOfTable(scn.GetLSCard("bones"));
+        }
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        scn.EnsureForcePile(scn.LS, 6);
+        for (int i = 0; i < 4; i++) {
+            scn.MoveCardsToTopOfLSLostPile(scn.GetTopOfLSReserveDeck());
+        }
+        var action = new com.gempukku.swccgo.logic.actions.TopLevelGameTextAction(worrt, worrt.getCardId());
+        scn.LSExecuteAdHocEffect(worrt, new com.gempukku.swccgo.logic.effects.TriggeringResultEffect(action,
+                new com.gempukku.swccgo.logic.timing.results.EatenResult(trooper, null, null, 1, false, worrt, site)));
+        var trace = new ArrayList<String>();
+        for (int i = 0; i < 12 && !scn.LSDecisionAvailable("Force to proceed with Force retrieval"); i++) {
+            var decision = scn.GetCurrentDecision();
+            if (decision == null)
+                break;
+            trace.add(scn.GetDecidingPlayer() + ":" + decision.getText());
+            if (scn.LS.equals(scn.GetDecidingPlayer()) && decision.getText().contains("Choose amount of Force to retrieve")) {
+                scn.PlayerDecided(scn.LS, "4");
+                continue;
+            }
+            if (scn.LS.equals(scn.GetDecidingPlayer()) && lsMayUse(scn, rider, "Retrieve up to 4 Force")) {
+                scn.LSUseCardAction(rider, "Retrieve up to 4 Force");
+                continue;
+            }
+            scn.PlayerPass(scn.GetDecidingPlayer());
+        }
+        assertTrue(trace.toString(), scn.LSDecisionAvailable("Force to proceed with Force retrieval"));
+        return scn.LSGetDecision().getText();
+    }
+
+    private static boolean lsMayUse(VirtualTableScenario scn, com.gempukku.swccgo.game.PhysicalCardImpl card, String text) {
+        try {
+            return scn.LSCardActionAvailable(card, text);
+        } catch (IllegalStateException notACardActionDecision) {
+            return false;
+        }
+    }
+
+    @Test
+    public void TauntaunBonesVReducesSecretPlansForBeastRiderRetrievalAfterAnEating() {
+        assertTrue(secretPlansPromptForBeastRiderRetrieval(true).contains("use 2 Force"));
+        assertTrue(secretPlansPromptForBeastRiderRetrieval(false).contains("use 4 Force"));
     }
 }

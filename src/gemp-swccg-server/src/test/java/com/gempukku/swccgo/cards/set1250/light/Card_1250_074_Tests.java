@@ -152,4 +152,31 @@ public class Card_1250_074_Tests {
         assertTrue(wipeOffered(wipeDraw(true, true, false)));
         assertTrue(wipeOffered(wipeDraw(true, true, true)));
     }
+
+    /** Bill 10 Nov: "ignores starship and holosite sites" never affects where Wipe Them Out (V) may deploy. */
+    @Test
+    public void PlatformDoesNotStopWipeDeployingOnAStarshipSite() {
+        var s = new VirtualTableScenario(new HashMap<>() {{
+            put("platform", "1250_74"); put("bay", "9_57"); put("swamp", "4_85");
+        }}, new HashMap<>() {{
+            put("wipe", "1250_25");
+        }}, 35, 35, StartingSetup.DefaultLSSpaceSystem, StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields, StartingSetup.NoDSShields, VirtualTableScenario.Open);
+        s.StartGame();
+        var bay = s.GetLSCard("bay");
+        var swamp = s.GetLSCard("swamp");
+        var wipe = s.GetDSCard("wipe");
+        s.MoveLocationToTable(s.GetLSCard("platform"));
+        s.MoveLocationToTable(bay);
+        s.MoveLocationToTable(swamp);
+        s.game().getModifiersEnvironment().addUntilEndOfGameModifier(
+                new KeywordModifier(null, Filters.samePermanentCardId(swamp), Keyword.HOLOSITE));
+        s.MoveCardsToDSHand(wipe);
+        s.SkipToDSTurn(Phase.DEPLOY);
+        // A holosite is never a deploy target by rule (no "deploy on a holosite" text), with or without the Platform;
+        // the starship site stays a valid target while the Platform makes Wipe's checks ignore it.
+        assertNotNull(wipe.getBlueprint().getPlayCardAction(s.DS, s.game(), wipe, wipe, true, 0, null, null, null,
+                null, null, false, 0, Filters.sameCardId(bay), null));
+    }
 }
