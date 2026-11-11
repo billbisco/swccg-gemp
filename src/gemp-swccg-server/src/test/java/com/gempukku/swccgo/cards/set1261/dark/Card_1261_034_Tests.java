@@ -349,7 +349,7 @@ public class Card_1261_034_Tests {
                 new com.gempukku.swccgo.logic.actions.TopLevelGameTextAction(launch, scn.DS, launch.getCardId()), launch));
         resolveUntil(scn, () -> launch.getZone() != Zone.LOCATIONS && launch.getZone() != Zone.VOID);
         assertEquals(Zone.OUT_OF_PLAY, launch.getZone());
-        assertTrue(inLost(scn.GetDSCard("trooper")));
+        assertFalse(inUsed(scn.GetDSCard("trooper")));
     }
 
     @org.junit.Test
