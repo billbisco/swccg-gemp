@@ -347,10 +347,10 @@ var TournamentResultsUI = Class.extend({
                 player.append($("<a target='_blank'></a>")
                     .attr("href", "/gemp-swccg-server/tournament/" + encodeURIComponent(tournamentId) + "/deck/"
                         + encodeURIComponent(standing.player) + "/html")
-                    .attr("title", "The deck " + standing.player + " played")
-                    .text(standing.player));
+                    .attr("title", "The deck " + playerNameText(standing.player) + " played")
+                    .text(playerNameText(standing.player)));
             } else {
-                player.text(standing.player == null ? "" : standing.player);
+                player.text(standing.player == null ? "" : playerNameText(standing.player));
             }
             return [
                 $("<td></td>").text(String(standing.currentStanding)),

@@ -5,6 +5,7 @@ import com.gempukku.swccgo.game.*;
 import com.gempukku.swccgo.game.formats.SwccgoFormatLibrary;
 import com.gempukku.swccgo.logic.GameUtils;
 import com.gempukku.swccgo.logic.vo.SwccgDeck;
+import com.gempukku.swccgo.service.PlayerNames;
 import org.apache.commons.text.StringEscapeUtils;
 
 import java.util.*;
@@ -113,7 +114,7 @@ public class DeckRenderer {
                 .append("<h2>").append(deck.getSide(_bpLibrary).getHumanReadable()).append(" Side</h2>");
 
         if(author != null) {
-            result.append("<h2>Author: ").append(StringEscapeUtils.escapeHtml3(author)).append("</h2>");
+            result.append("<h2>Author: ").append(StringEscapeUtils.escapeHtml3(PlayerNames.forDisplay(author))).append("</h2>");
         }
 
         DefaultCardCollection deckCards = new DefaultCardCollection();

@@ -1,3 +1,18 @@
+// #249: a player name ready to show. swccg-names.js removes characters a name can never hold (old rows, imports);
+// the name itself when that file isn't loaded. Escape the result as usual.
+function playerNameText(name) {
+    if (typeof SwccgNames !== "undefined")
+        return SwccgNames.display(name, "(unnamed player)");
+    return name == null ? "" : String(name);
+}
+
+// A chat-list entry: the server's role marker (HTML such as "* ", "&beta; ") stays, the name is filtered and escaped.
+function chatListEntryHtml(entry) {
+    var s = entry == null ? "" : String(entry);
+    var m = /^((?:&[a-zA-Z0-9#]+;|[*+]| )*)([\s\S]*)$/.exec(s);
+    return m[1] + $("<div/>").text(playerNameText(m[2])).html();
+}
+
 var ChatBoxUI = Class.extend({
     name:null,
     div:null,
@@ -270,9 +285,9 @@ var ChatBoxUI = Class.extend({
                     if (this.showTimestamps) {
                         var date = new Date(parseInt(message.getAttribute("date")));
                         var dateStr = this.monthNames[date.getMonth()] + " " + date.getDate() + " " + this.formatToTwoDigits(date.getHours()) + ":" + this.formatToTwoDigits(date.getMinutes()) + ":" + this.formatToTwoDigits(date.getSeconds());
-                        this.appendMessage("<div class='timestamp'>[" + dateStr + "]</div> <b>" + from + ":</b> " + text, msgClass);
+                        this.appendMessage("<div class='timestamp'>[" + dateStr + "]</div> <b>" + this.escapeHtml(playerNameText(from)) + ":</b> " + text, msgClass);
                     } else {
-                        this.appendMessage("<b>" + from + ":</b> " + text, msgClass);
+                        this.appendMessage("<b>" + this.escapeHtml(playerNameText(from)) + ":</b> " + text, msgClass);
                     }
                 }
             }
@@ -295,7 +310,7 @@ var ChatBoxUI = Class.extend({
                     var user = users[i];
                     var userName = user.childNodes[0].nodeValue;
                     players.push(userName);
-                    this.chatListDiv.append("<div class='chatUser'>" + userName + "</div>");
+                    this.chatListDiv.append("<div class='chatUser'>" + chatListEntryHtml(userName) + "</div>");
                 }
             }
 

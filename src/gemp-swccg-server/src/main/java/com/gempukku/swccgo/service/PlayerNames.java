@@ -81,6 +81,67 @@ public final class PlayerNames {
         return Player.isBot(name) || PlayNowSide.isSeatName(name);
     }
 
+    /** What {@link #forDisplay} shows when nothing of a name would be left. */
+    public static final String DISPLAY_PLACEHOLDER = "(unnamed player)";
+
+    /**
+     * A stored name as it may be shown on a page (swccg-guild/work#249, t129u): every character a name can never
+     * hold is removed (above U+FFFF, emoji and other symbols, punctuation other than "-" and "_", control and
+     * invisible characters, combining marks with no letter or digit before them); other dashes and spaces show as
+     * "-" and " ". A safety net for old rows, imports or a future bug; stored data is never changed. It never
+     * trims, collapses or cuts and keeps case, so a grandfathered name of letters, digits, spaces, hyphens and
+     * underscores shows exactly as stored. A bot's "~" mark stays. Escape the result for HTML as usual.
+     * Mirrors the sign-in service's names.Display and js/swccg-names.js.
+     */
+    public static String forDisplay(String name) {
+        if (name == null)
+            return DISPLAY_PLACEHOLDER;
+        String prefix = "";
+        if (Player.isBot(name)) {
+            prefix = Player.BOT_NAME_PREFIX;
+            name = name.substring(Player.BOT_NAME_PREFIX.length());
+        }
+        StringBuilder b = new StringBuilder(name.length());
+        boolean base = false;
+        boolean alnum = false;
+        for (int i = 0; i < name.length(); ) {
+            int cp = name.codePointAt(i);
+            i += Character.charCount(cp);
+            int type = Character.getType(cp);
+            if (cp > 0xFFFF || type == Character.SURROGATE) {
+                base = false;
+            } else if (cp == '_' || cp == '-' || cp == ' ') {
+                b.appendCodePoint(cp);
+                base = false;
+            } else if (type == Character.DASH_PUNCTUATION) {
+                b.append('-');
+                base = false;
+            } else if ((Character.isWhitespace(cp) && (cp < 0x1C || cp > 0x1F)) || Character.isSpaceChar(cp) || cp == 0x85) {
+                b.append(' ');
+                base = false;
+            } else if (isInvisible(cp, type)) {
+                // dropped: format, bidi, variation selectors, Hangul fillers, ...
+            } else if (Character.isLetter(cp) || type == Character.DECIMAL_DIGIT_NUMBER) {
+                b.appendCodePoint(cp);
+                base = true;
+                alnum = true;
+            } else if ((type == Character.NON_SPACING_MARK || type == Character.COMBINING_SPACING_MARK) && base) {
+                b.appendCodePoint(cp);
+            }
+        }
+        if (!alnum)
+            return prefix.isEmpty() ? DISPLAY_PLACEHOLDER : prefix + b;
+        return prefix + b;
+    }
+
+    /** Characters that show as nothing: format (Cf), variation selectors and the other default-ignorable ones. */
+    private static boolean isInvisible(int cp, int type) {
+        return type == Character.FORMAT
+                || (cp >= 0xFE00 && cp <= 0xFE0F) || (cp >= 0x180B && cp <= 0x180F)
+                || cp == 0x034F || cp == 0x115F || cp == 0x1160 || cp == 0x17B4 || cp == 0x17B5
+                || cp == 0x3164 || cp == 0xFFA0 || (cp >= 0x2060 && cp <= 0x206F) || (cp >= 0xFFF0 && cp <= 0xFFF8);
+    }
+
     /** Whether a name may be taken as a new name (well formed and not reserved); uniqueness is separate. */
     public static boolean isAllowedNewName(String name) {
         return isWellFormed(name) && !isReserved(name);
