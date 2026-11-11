@@ -233,7 +233,7 @@ public class LegacyVersionsTests {
     }
 
     /** Pre-errata versions of AI printings (docs/legacy-versions.md, "AI printings"). */
-    private static final List<String> AI_VERSIONS = List.of("2240_3", "2240_8ai", "2250_2ai", "2250_44ai", "2250_45ai", "2281_30ai");
+    private static final List<String> AI_VERSIONS = List.of("2240_3", "2250_2ai", "2250_44ai", "2250_45ai", "2281_30ai");
 
     @Test
     public void AiPrintingVersionsAreInThePoolForAnythingGoesOnly() throws DeckInvalidException {

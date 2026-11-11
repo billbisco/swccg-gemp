@@ -45,12 +45,14 @@ import java.util.List;
  * Set: Block 8
  * Type: Objective
  * Title: Wookiee Slaving Operation / Indentured To The Empire
+ * Back text as errata'd by the Competitive Balance Team on 2014-07-23 (PC forum p894811, as posted: "two Kashyyyk
+ * battlegrounds locations"; same play). The original back is 2282_10_BACK.
  */
 public class Card601_029_BACK extends AbstractObjective {
     public Card601_029_BACK() {
         super(Side.DARK, 7, Title.Indentured_To_The_Empire, ExpansionSet.LEGACY, Rarity.V);
         setGameText("While this side up, whenever you 'enslave' a character, opponent must choose to use 2 Force or lose 1 Force. Once per turn, during battle may add or subtract up to X from your just drawn destiny, where X = the number of Kashyyyk locations you control with a slaver. Once per turn, if you just retrieved Force during battle, may take a slaver, starship, or vehicle retrieved into hand.\n" +
-                "Flip this card if opponent controls two Kashyyyk battlegrounds.");
+                "Flip this card if opponent controls two Kashyyyk battlegrounds locations.");
         addIcons(Icon.CLOUD_CITY, Icon.LEGACY_BLOCK_8);
         setAsLegacy(true);
     }

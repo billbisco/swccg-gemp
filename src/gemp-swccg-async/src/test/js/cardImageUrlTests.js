@@ -549,3 +549,15 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('2240_79'), 'https://swccg
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_36'), 'https://swccg.com/cards/legacy/VirtualBlock6-Dark/large/protocolfailure.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_85'), 'https://swccg.com/cards/legacy/VirtualBlock6-Light/large/returnofthejedi.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2262_1'), 'https://swccg.com/cards/legacy/VirtualBlock6-Dark/large/4lomwithconcussionrifle.gif');
+// Batch B39: rescinded errata, Communing reconstructed original, "&"-title originals, Rogue Insertion original art, Wookiee Slaving Operation 2014 errata
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2272_1018'), 'https://wiki.swccg.com/images/5/52/VB7-03-Tarfful_Wookiee_Insurgent-PC-E2-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2250_68'), 'https://wiki.swccg.com/images/a/aa/VB5-68-Wookiee_Guide-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2273_33'), 'https://wiki.swccg.com/images/2/28/VB7-00-Communing-original-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2240_26'), 'https://wiki.swccg.com/images/e/e6/VB4-25E-He_Is_Not_Ready.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2240_81'), 'https://wiki.swccg.com/images/3/3a/VB4-83E-Eject_Eject.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1240_26'), 'https://wiki.swccg.com/images/a/ab/VL-history-1240-26-front-master.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2272_23'), 'https://wiki.swccg.com/images/a/a8/VB7-04-Rogue_Insertion-original-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_29_BACK'), 'https://wiki.swccg.com/images/b/b6/VB8-07-Indentured_To_The_Empire-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1282_10_BACK'), 'https://wiki.swccg.com/images/b/b6/VB8-07-Indentured_To_The_Empire-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2282_10'), 'https://swccg.com/cards/legacy/VirtualBlock8-Dark/large/wookieeslavingoperation.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2282_10_BACK'), 'https://swccg.com/cards/legacy/VirtualBlock8-Dark/large/indenturedtotheempire.gif');
