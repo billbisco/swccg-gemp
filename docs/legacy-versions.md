@@ -25,6 +25,10 @@ The **Legacy** format always uses the latest text of every card.
 - **No change, no errata (Bill, 2026-11-08):** a text that differs only in icon notation (the 2012–13 PC website card
   list spells out or drops icons: "[Pilot] 2", ▼/▲, Immune to Alter) is not a version. The 54 ids that existed only
   because of such texts are aliased in `blueprintMapping.txt` (`RemovedLegacyVersionIdsIconLossTests`).
+- **Every publication is a version (Bill, 2026-11-11):** a text that a later document printed again word for word is still a
+  version of its own, in date order. E.g. Katana: original `2240_60` (2009 release sheet), PC-E1 `2240_1060` (2012 card
+  list), PC-E2 = the 2013 Master List, which repeats the original words, = the current card `1240_60`. So a version may
+  have the current card's exact text when another version of the card differs (`LegacyVersionsTests.republishedLater`).
 - **Retired version ids:** if a version id that was already released stops being a version (its text became the
   current card's), keep it as an alias of the current card in `blueprintMapping.txt` (after `# END legacy`) so saved
   decks still load, e.g. `2220_161,1220_161`. The version pool skips aliased ids.

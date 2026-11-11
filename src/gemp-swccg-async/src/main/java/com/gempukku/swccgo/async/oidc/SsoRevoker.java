@@ -71,7 +71,7 @@ public final class SsoRevoker implements AdminService.RevocationListener {
             _random.nextBytes(n);
             String nonce = Base64.getUrlEncoder().withoutPadding().encodeToString(n);
             String sig = _keys.sign(KEY_ID, InternalAuthKeysV2.requestCanonical(KEY_ID, ts, nonce, "POST", uri.getPath(), body));
-            HttpRequest req = HttpRequest.newBuilder(uri).timeout(Duration.ofSeconds(5))
+            HttpRequest req = HttpRequest.newBuilder(InternalUrl.reachable(uri)).timeout(Duration.ofSeconds(5))
                     .header("Content-Type", "application/json")
                     .header("X-Gemp-Key-Id", KEY_ID).header("X-Gemp-Timestamp", ts)
                     .header("X-Gemp-Nonce", nonce).header("X-Gemp-Signature", sig)

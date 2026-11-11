@@ -222,16 +222,19 @@ public class ChatRequestHandler extends SwccgoServerRequestHandler implements Ur
     private class CaseInsensitiveStringComparator implements Comparator<String> {
         @Override
         public int compare(String o1, String o2) {
-            //put users with specific roles at the top of the list
-            if(o1.contains(" ")&&!o2.contains(" ")) {
+            //put users with specific roles at the top of the list.  A role is a marker in front of the name; a
+            //space alone is not one, because names may contain spaces (swccg-guild/work#249, t122u).
+            boolean role1 = hasRoleMarker(o1);
+            boolean role2 = hasRoleMarker(o2);
+            if(role1&&!role2) {
                 return -1;
             }
-            if(!o1.contains(" ")&&o2.contains(" ")) {
+            if(!role1&&role2) {
                 return 1;
             }
 
             //normal sorting for users without specific roles
-            if(!o1.contains(" ")&&!o2.contains(" ")) {
+            if(!role1&&!role2) {
                 return o1.toLowerCase().compareTo(o2.toLowerCase());
             }
 
@@ -241,6 +244,12 @@ public class ChatRequestHandler extends SwccgoServerRequestHandler implements Ur
 
             return oneWithSubstitutions.toLowerCase().compareTo(twoWithSubstitutions.toLowerCase());
         }
+    }
+
+    /** Whether a chat-list entry starts with a role marker added by {@link #formatPlayerNameForChatList}. */
+    static boolean hasRoleMarker(String formatted) {
+        return formatted.startsWith("*") || formatted.startsWith("+") || formatted.startsWith("&beta;")
+                || formatted.startsWith("&#231;");
     }
 
     private String formatPlayerNameForChatList(String userInRoom) {

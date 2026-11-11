@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS `player_password_reset` (
   `player_id` INT(11) NOT NULL,
   `code_hash` CHAR(64) CHARACTER SET 'ascii' COLLATE 'ascii_bin' NOT NULL,
   `expires_at` BIGINT NOT NULL,
-  `created_by` VARCHAR(10) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NULL DEFAULT NULL,
+  `created_by` VARCHAR(32) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NULL DEFAULT NULL,
   `created_at` BIGINT NOT NULL,
   PRIMARY KEY (`player_id`)
 ) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8 COLLATE = utf8_bin;
