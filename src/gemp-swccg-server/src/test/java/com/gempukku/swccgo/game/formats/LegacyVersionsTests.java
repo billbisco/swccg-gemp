@@ -86,7 +86,9 @@ public class LegacyVersionsTests {
                             || !printedText(version).equals(printedText(current))
                             || !iconCounts(version).equals(iconCounts(current))
                             || version.getPrintedTitle() != null
-                            || backSideDiffers(id, info.currentPrintingId()));
+                            || backSideDiffers(id, info.currentPrintingId())
+                            // Bill 2026-11-11: every publication is a version; the current Master List text repeats these word for word (batch R8)
+                            || com.gempukku.swccgo.cards.LegacyBatchR8B1B6VersionsTests.REPEATED_BY_CURRENT.contains(id));
             assertTrue(id + ": label shown in full name",
                     info.label().isEmpty() ? !GameUtils.getFullName(version).contains("[")
                             : GameUtils.getFullName(version).endsWith(" [" + info.label() + "]"));

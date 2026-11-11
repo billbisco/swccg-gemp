@@ -16,7 +16,7 @@ public class Card_1220_058_Tests {
                 com.gempukku.swccgo.framework.StartingSetup.NoDSShields,
                 com.gempukku.swccgo.framework.VirtualTableScenario.Open);
         var card = scn.GetDSCard("latest").getBlueprint();
-        org.junit.Assert.assertEquals("If opponent just initiated battle, you may immediately fire one non-lightsaber, non-Permanent weapon present in that battle once (for free), adding 2 to each of its destiny draws. That weapon may fire again this battle.",
+        org.junit.Assert.assertEquals("If opponent just initiated battle, immediately fire a non-lightsaber, non-[Permanent Weapon] weapon present (for free and each weapon destiny is +2). That weapon may fire again this battle.",
                 card.getGameText());
         org.junit.Assert.assertNull(card.getLegacyVersion());
         org.junit.Assert.assertFalse(card.getGameText().contains("each weapon destiny is +2"));

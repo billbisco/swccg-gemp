@@ -92,7 +92,7 @@ public class Card_1230_075_Tests {
     @Test
     public void GameTextIsOfficialText() {
         var scn = GetScenario();
-        assertEquals("Adds 2 to power of anything he pilots. Deploys -2 to a forest. His weapon destiny draws are +1. At same site, opponent must first use 1 Force to fire a weapon. During opponent's draw phase, if alone on Endor, may retrieve 1 Force. Immune to attrition < 5.",
+        assertEquals("Adds 2 to power of anything he pilots. Deploys -2 to a forest. Luke's weapon destiny draws are +1. At same site, opponent must first use 1 Force to fire a weapon. During opponent's draw phase, if alone on Endor, may retrieve 1 Force. Immune to attrition < 5.",
                 scn.GetLSCard("lukeScout").getBlueprint().getGameText());
     }
 

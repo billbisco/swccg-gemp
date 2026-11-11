@@ -37,7 +37,7 @@ public class Card1250_009 extends AbstractRepublic {
         super(Side.DARK, 1, 3, 4, 3, 6, "Keder The Black", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_5, Rarity.V);
         setVirtualSuffix(true);
         setLore("A highly paid assassin and spy, Keder has infiltrated the Senate disguised as a Coruscant Guard. The identity of his target and his employer remains a mystery to all but him.");
-        setGameText("While at Senate: Sidious is politics +3; 'senators on Squabling Delegates is treated as 'Coruscant Guards;' and may lose 1 Force to place Keder and an opponent's [Coruscant] Political Effect (or [Coruscant] senator here) in owner's Lost Pile.");
+        setGameText("While at Senate: Sidious is politics +3; 'senators' on Squabbling Delegates is treated as 'Coruscant Guards;' and may lose 1 Force to place Keder and an opponent's [Coruscant] Political Effect (or [Coruscant] senator here) in owner's Lost Pile.");
         addIcons(Icon.CORUSCANT, Icon.EPISODE_I, Icon.WARRIOR);
         addKeywords(Keyword.SPY, Keyword.CORUSCANT_GUARD, Keyword.ASSASSIN);
     }

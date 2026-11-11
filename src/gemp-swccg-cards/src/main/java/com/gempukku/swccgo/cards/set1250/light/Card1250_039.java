@@ -31,7 +31,7 @@ public class Card1250_039 extends AbstractJediMaster {
     public Card1250_039() {
         super(Side.LIGHT, 2, 3, 4, 7, 6, "Jedi Advisor", Uniqueness.RESTRICTED_3, ExpansionSet.VIRTUAL_BLOCK_5, Rarity.V);
         setLore("Female. Jedi Council Member.");
-        setGameText("Never deploys, except to Coruscant. While Yoda here, Force retrieval from your [Virtual Block 5] objective cannot be cancelled (except by Secret Plans). Unless Inner Strength on table, your duel destiny and lightsaber combat totals are cumulatively +1.");
+        setGameText("Never deploys, except to Coruscant. While Yoda here, Force retrieval from your [Virtual Block 5] objective cannot be canceled (except by Secret Plans). Unless Inner Strength on table, your duel destiny and lightsaber combat totals are cumulatively +1.");
         addIcons(Icon.SPECIAL_EDITION, Icon.EPISODE_I);
         addKeywords(Keyword.FEMALE, Keyword.JEDI_COUNCIL_MEMBER);
     }

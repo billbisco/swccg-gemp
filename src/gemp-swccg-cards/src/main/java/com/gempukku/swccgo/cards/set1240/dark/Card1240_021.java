@@ -40,7 +40,7 @@ public class Card1240_021 extends AbstractPoliticalEffect {
         super(Side.DARK, 2, "Blown Clear", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_4, Rarity.V);
         setVirtualSuffix(true);
         setLore("Vader was nearly killed when Han damaged his TIE fighter during a surprise attack in the Death Star trench.");
-        setGameText("Deploy on table. May place an Imperial Council Member here from hand. Once per turn, if an admiral or logistics agenda here, may subtract X from a starship's forfeit and immunity to attrition for remainder of turn, where X = total influence at Conference Room.");
+        setGameText("Deploy on table. May place an Imperial Council Member here from hand. Once per turn, if a logistics agenda or admiral here, may subtract X from a starship's forfeit and immunity to attrition for remainder of turn, where X = total influence at Conference Room.");
         addIcons(Icon.SPECIAL_EDITION);
     }
 

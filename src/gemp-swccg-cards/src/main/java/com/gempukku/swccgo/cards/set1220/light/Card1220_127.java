@@ -33,7 +33,7 @@ public class Card1220_127 extends AbstractNormalEffect {
         super(Side.LIGHT, 3, PlayCardZoneOption.ATTACHED, Title.Leia_Of_Alderaan, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_2, Rarity.V);
         setVirtualSuffix(true);
         setLore("The face that launched a thousand starships.");
-        setGameText("Deploy on Leia. At same location, your unique (•) Rebels are deploy -1 and their immunity to attrition is +1. Dark side Republic characters are deploy +2 and forfeit -2. (Immune to Alter.)");
+        setGameText("Deploy on Leia. At same location, your unique (•) Rebels are deploy -1 and their immunity to attrition is +1. Dark Side Republic characters are deploy +2 and forfeit -2. (Immune to Alter.)");
         addKeywords(Keyword.DEPLOYS_ON_CHARACTERS);
         addIcons(Icon.CLOUD_CITY);
         addImmuneToCardTitle(Title.Alter);

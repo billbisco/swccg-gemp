@@ -41,7 +41,7 @@ public class Card1210_102 extends AbstractRebel {
         super(Side.LIGHT, 2, 2, 2, 2, 4, Title.Jek, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("Piloted Red 6 at Battle of Yavin. Specializes in strafing runs. Served in Tierfon Yellow Aces squadron at Tierfon Rebel Outpost. Free trader from Bestine system.");
-        setGameText("Adds 2 to power of anything he pilots. While piloting Red 6: it is Heroic, immune to attrition < 4, Jek draws one battle destiny if unable to otherwise, and during your control phase, may use 1 Force to retrieve a Rogue squadron pilot or an X-Wing.");
+        setGameText("Adds 2 to power of anything he pilots. While piloting Red 6: it is Heroic, immune to attrition < 4, Jek draws one battle destiny if unable to otherwise, and, during your control phase, may use 1 Force to retrieve a Rogue squadron pilot or an X-wing.");
         addIcons(Icon.PILOT, Icon.WARRIOR);
         addKeyword(Keyword.RED_SQUADRON);
         setMatchingStarshipFilter(Filters.Red_6);

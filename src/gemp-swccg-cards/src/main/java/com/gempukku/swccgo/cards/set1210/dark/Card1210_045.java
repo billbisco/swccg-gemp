@@ -42,7 +42,7 @@ public class Card1210_045 extends AbstractNormalEffect {
         super(Side.DARK, 4, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Maneuver Check", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("'Luke, at that speed will you be able to pull out in time?'");
-        setGameText("Deploy on table. Once per game, if Alderaan 'blown away,' may target a system; unless opponent has a capital (or [Episode I]) starship there, Objectives treat that system as a Subjugated planet. Starships may not move the turn they are deployed (or carried) to Death Star. (Immune to Alter.)");
+        setGameText("Deploy on table. Starships may not move the turn they are deployed (or carried) to Death Star. Once per game, if Alderaan 'blown away,' may target a system. Unless opponent has a capital (or [Episode I]) starship there, Objectives treat target as a Subjugated planet. (Immune to Alter.)");
         addIcons(Icon.A_NEW_HOPE);
         addImmuneToCardTitle(Title.Alter);
     }

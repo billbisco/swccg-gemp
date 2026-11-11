@@ -34,7 +34,7 @@ public class Card_601_211_Tests {
     public void StingerHasTheLatestText() {
         var scn = GetScenario();
         var card = scn.GetDSCard("stinger").getBlueprint();
-        assertEquals("May add 1 pilot. Guri deploys -3 aboard. While Guri piloting, during any control phase may draw top card of Reserve Deck (if Leia or Chewie on table, Force Pile instead) and immune to attrition < 5.",
+        assertEquals("May add 1 pilot. Guri deploys -3 aboard. While Guri piloting, during any control phase may draw top card of Reserve Deck (if Chewie or Leia on table, Force Pile instead) and immune to attrition < 5.",
                 card.getGameText());
         assertNull(card.getLegacyVersion());
         assertFalse(card.getGameText().contains("if Chewie or Leia"));

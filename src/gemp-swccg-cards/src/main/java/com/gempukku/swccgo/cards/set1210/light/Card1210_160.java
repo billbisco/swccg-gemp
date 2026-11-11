@@ -37,7 +37,7 @@ public class Card1210_160 extends AbstractLostInterrupt {
         super(Side.LIGHT, 4, Title.Rebel_Reinforcements, Uniqueness.UNRESTRICTED, ExpansionSet.VIRTUAL_BLOCK_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("Rebels rely on hidden 'cells' of undercover operatives. Striking from hidden bases, troops or starfighters can arrive in a battle zone at any time.");
-        setGameText("Once per game, if opponent has more cards with ability on table than you do, draw destiny and retrieve up to that number of Rebel characters and/or Rebel starships (may take one retrieved card into hand).");
+        setGameText("Once per game, if opponent has more cards with ability on table than you, draw destiny and retrieve up to that number of Rebel characters and/or Rebel starships (may take one retrieved card into hand).");
     }
 
     @Override

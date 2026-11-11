@@ -51,7 +51,7 @@ public class Card_2220_125_Tests {
         assertTrue(card.isLegacy());
         assertEquals("Deploy on non-[Episode I] C-3PO. Once per turn, you may take How Did We Get Into This Mess?, Mantellian Savrip, Thank The Maker, or We're Doomed into hand from Reserve Deck; reshuffle. If C-3PO present at a battleground, Savrip is immune to Alter. Thank The Maker is a Used Interrupt and treat '5' in its game text as '3'.",
                 card.getGameText());
-        assertNotEquals(current.getGameText(), card.getGameText());
+        assertEquals(current.getGameText(), card.getGameText()); // the Master List (2013-04-27, the current text) repeats it (batch R8)
         var version = card.getLegacyVersion();
         assertEquals("1220_125", version.currentPrintingId());
         assertEquals("", version.label());

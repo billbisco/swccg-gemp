@@ -34,7 +34,7 @@ public class Card601_152 extends AbstractAlien {
         super(Side.DARK, 2, 3, 1, 4, 2, "Prophetess", Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
         setVirtualSuffix(true);
         setLore("Renowned female psychic. Predictor of doom. Agent for Governor Aryon of Tatooine. Tailed Jabba and his thugs to Docking Bay 94 when they confronted Han Solo.");
-        setGameText("Deploy -1 and forfeit +3 at a site. Once per turn, may peek at top card of opponent's Reserve Deck or Used Pile; may then shuffle that Reserve Deck or Used Pile. Immune to attrition < 3.");
+        setGameText("Deploys -1 and forfeit +3 at a site. Once per turn, may peek at top card of opponent's Reserve Deck or Used Pile; may then shuffle that Reserve Deck or Used Pile. Immune to attrition < 3.");
         addKeywords(Keyword.FEMALE);
         addIcons(Icon.LEGACY_BLOCK_1);
         setAsLegacy(true);

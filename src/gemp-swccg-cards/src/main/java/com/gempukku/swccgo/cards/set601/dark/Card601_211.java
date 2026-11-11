@@ -38,7 +38,7 @@ public class Card601_211 extends AbstractStarfighter {
         super(Side.DARK, 3, 2, 3, null, 4, 5, 4, "Stinger", Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
         setVirtualSuffix(true);
         setLore("Constructed by a secretive Surronian hive craftguild. Equipped with H2-1 hyperdrive system and emergency braking jets. Guri's personal starship. Gift from Prince Xizor.");
-        setGameText("May add 1 pilot. Guri deploys -3 aboard. While Guri piloting, during any control phase may draw top card of Reserve Deck (if Leia or Chewie on table, Force Pile instead) and immune to attrition < 5.");
+        setGameText("May add 1 pilot. Guri deploys -3 aboard. While Guri piloting, during any control phase may draw top card of Reserve Deck (if Chewie or Leia on table, Force Pile instead) and immune to attrition < 5.");
         addIcons(Icon.REFLECTIONS_II, Icon.INDEPENDENT, Icon.NAV_COMPUTER, Icon.SCOMP_LINK, Icon.LEGACY_BLOCK_4);
         addModelType(ModelType.SURRONIAN_CONQUEROR);
         setPilotCapacity(1);

@@ -39,7 +39,7 @@ public class Card1220_150 extends AbstractUsedInterrupt {
         super(Side.LIGHT, 5, Title.NOOOOOOOOOOOO, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_2, Rarity.V);
         setVirtualSuffix(true);
         setLore("Sometimes, the truth isn't very pretty.");
-        setGameText("Cancel Broken Concentration, The Circle Is Now Complete, or a duel initiated during a battle. (Immune to Young Fool.) OR During any draw phase, place a card from hand under your Used Pile to take any one card into hand from Force Pile; reshuffle.");
+        setGameText("Cancel Broken Concentration, The Circle Is Now Complete, or a duel initiated during battle. (Immune to Young Fool.) OR During any draw phase, place a card from hand under your Used Pile to take any one card into hand from Force Pile; reshuffle.");
         addIcons(Icon.CLOUD_CITY);
     }
 

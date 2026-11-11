@@ -38,7 +38,7 @@ public class Card1210_124 extends AbstractNormalEffect {
         super(Side.LIGHT, 4, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Faithful Service", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("Unlike the Empire, the Alliance treats their droids with respect. Many droids volunteered to share the risk of battle and aid the Rebellion's assault on the Death Star.");
-        setGameText("Deploy on table. Your unique (•) [Hoth], [Endor], and [Death Star II] non-pilot warriors of destiny > 1 are troopers. Your troopers have armor = 4. When opponent is about to remove their last card from Life Force, you may first place all your troopers in Used Pile (last card must still be removed). (Immune to Alter.)");
+        setGameText("Deploy on table. If opponent is about to remove their last card from Life Force, you may first place all your troopers in Used Pile (last card must still be removed). Your troopers are armor = 4. Your unique (•) [Hoth], [Endor], and [Death Star II] non-pilot warriors of destiny > 1 are troopers. (Immune to Alter.)");
         addIcons(Icon.PREMIUM);
         addImmuneToCardTitle(Title.Alter);
     }

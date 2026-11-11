@@ -35,7 +35,7 @@ public class Card601_163 extends AbstractJediMaster {
         super(Side.LIGHT, 1, 7, 6, 7, 8, "Mace Windu", Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
         setVirtualSuffix(true);
         setLore("Senior Jedi Council member who maintains rigorous adherence to the Code. Sent Qui-Gon to Naboo to accompany the Queen and learn more about the mysterious 'dark warrior'.");
-        setGameText("Mace's game text may not be canceled (except at Senate) and he may fire one weapon twice per battle. Boba Fett may not add battle destiny draws here. Immune to attrition.");
+        setGameText("Mace's game text may not be canceled (except at Senate). During battle, Mace may fire one weapon twice. Boba Fett may not add battle destiny draws here. Immune to attrition.");
         addPersona(Persona.MACE);
         addIcons(Icon.CORUSCANT, Icon.EPISODE_I, Icon.WARRIOR, Icon.LEGACY_BLOCK_5);
         addKeywords(Keyword.JEDI_COUNCIL_MEMBER);
