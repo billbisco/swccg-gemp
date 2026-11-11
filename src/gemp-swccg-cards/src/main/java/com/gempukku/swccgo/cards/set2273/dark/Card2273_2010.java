@@ -13,7 +13,7 @@ import java.time.LocalDate;
 public class Card2273_2010 extends Card1273_010 {
     public Card2273_2010() {
         super();
-        setLegacyVersion(new LegacyVersion("1273_10", "PC-E3",
+        setLegacyVersion(new LegacyVersion("1273_10", "PC-E4",
                 "PC card image (image server folder Virtual7-Dark, file dated 2013-02-25)", LocalDate.of(2013, 2, 25), LocalDate.of(2013, 4, 27)));
     }
 }

@@ -14,6 +14,6 @@ public class Card2261_1093 extends Card1261_093 {
     public Card2261_1093() {
         super();
         setLegacyVersion(new LegacyVersion("1261_93", "PC-E1",
-                "PC forum p636351 (2011-07-14): retitled Armed And Dangerous & Krayt Dragon Howl", LocalDate.of(2011, 7, 14), LocalDate.of(2013, 2, 25)));
+                "PC forum p636351 (2011-07-14): retitled Armed And Dangerous & Krayt Dragon Howl", LocalDate.of(2011, 7, 14), LocalDate.of(2012, 7, 21)));
     }
 }
