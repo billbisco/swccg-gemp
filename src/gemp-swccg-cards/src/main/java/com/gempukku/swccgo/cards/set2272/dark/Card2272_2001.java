@@ -1,0 +1,23 @@
+package com.gempukku.swccgo.cards.set2272.dark;
+
+import com.gempukku.swccgo.cards.set601.dark.Card601_084;
+import com.gempukku.swccgo.common.LegacyVersion;
+
+import java.time.LocalDate;
+
+/**
+ * Set: Virtual Block 7.2
+ * Type: Character
+ * Title: •General Nevar
+ * Original version of 1272_1 (Batch R8-U5, Bill 2026-11-11: every publication is a version; PC card
+ * images are versions at their proven date): Virtual Block 7.2 release sheet (2010-12-15). Order so far: original sheet (2010-12-15); the current card is the
+ * Virtual Cards Master List (2013-04-27). Same words and play as the current card (a word-for-word repeat).
+ * Anything Goes only (docs/legacy-versions.md).
+ */
+public class Card2272_2001 extends Card601_084 {
+    public Card2272_2001() {
+        super();
+        setLegacyVersion(new LegacyVersion("1272_1", "",
+                "Virtual Block 7.2 release sheet (2010-12-15)", LocalDate.of(2010, 12, 15), LocalDate.of(2013, 2, 25)));
+    }
+}
