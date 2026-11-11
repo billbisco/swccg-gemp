@@ -46,7 +46,7 @@ public class Card1230_078 extends AbstractRebel {
         super(Side.LIGHT, 1, 0, 3, 4, 7, Title.Princess_Leia_Organa, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_3, Rarity.V);
         setVirtualSuffix(true);
         setLore("Captured by Jabba. Princess Leia provided a distraction for his henchbeings. Waiting for the first chance to escape. Really made Jabba's tail wiggle.");
-        setGameText("* Deploys free only as an escorted captive of Jabba or a bounty hunter. Your Strangle destiny draws are +1. 'Escort alone' on Strangle is treated as 'escort'. When released, escort is lost and you may retrieve any three cards (except Strangle).");
+        setGameText("* Deploys free only as an escorted captive of Jabba or a bounty hunter. Your Strangle destiny draws are +1. 'Escort alone' on Strangle is treated as 'escort.' When released, escort is lost and you may retrieve any three cards (except Strangle).");
         addIcons(Icon.PILOT, Icon.WARRIOR, Icon.JABBAS_PALACE);
         addKeywords(Keyword.FEMALE);
         setSpecies(Species.ALDERAANIAN);
