@@ -204,4 +204,29 @@ class SsoAuthServiceTest {
         call(KEY, SsoAuthService.PASSWORD, "{\"id\":10,\"password\":\"weak\",\"client_ip\":\"" + IP + "\",\"end_sessions\":true}", NOW);
         assertEquals(1, ended.size(), "a refused password ends nothing");
     }
+
+    @Test
+    void closeDeactivatesAndEndsSessions() throws Exception {
+        java.util.List<String> ended = new java.util.ArrayList<>();
+        service.setSessionEnder(ended::add);
+        when(auth.closeAccount(11)).thenReturn(player(11, "Finn", "u"));
+        JSONObject r = json(call(KEY, SsoAuthService.CLOSE, "{\"id\":11,\"client_ip\":\"" + IP + "\"}", NOW));
+        assertEquals(true, r.get("ok"));
+        assertEquals(11L, ((JSONObject) r.get("user")).get("id"));
+        assertEquals(java.util.List.of("Finn"), ended);
+        when(auth.closeAccount(12)).thenReturn(null);
+        assertEquals("not_found", json(call(KEY, SsoAuthService.CLOSE, "{\"id\":12}", NOW)).get("error"));
+        assertEquals(1, ended.size(), "nothing ended for an unknown player");
+    }
+
+    @Test
+    void closeEmptyBodyIsSignedBadRequest() throws Exception {
+        // swccg-login probes for the call with {}: a signed 400 means "supported".
+        WikiAuthService.Result r = call(KEY, SsoAuthService.CLOSE, "{}", NOW);
+        assertEquals(400, r.status);
+        assertTrue(r.signature != null);
+        verify(auth, never()).closeAccount(anyInt());
+        // Unknown paths stay unsigned 404s (rename is not served until game history is on ids).
+        assertEquals(404, call(KEY, "/internal/v2/rename", "{}", NOW).status);
+    }
 }
