@@ -162,7 +162,12 @@ class InMemoryPlayerDAO implements PlayerDAO {
 
     @Override
     public boolean setPlayerFlag(String playerName, Player.Type flag, boolean status) {
-        return getPlayer(playerName, true) != null;
+        Player p = getPlayer(playerName, true);
+        if (p == null)
+            return false;
+        String type = p.getType().replace(flag.getValue(), "");
+        replace(p, p.getPassword(), status ? type + flag.getValue() : type);
+        return true;
     }
 
     @Override

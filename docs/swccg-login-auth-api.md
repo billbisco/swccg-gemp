@@ -39,6 +39,7 @@ swccg-login `internal/gemp`).
 | `/internal/v2/players` | `{username,client_ip}` (account with no usable password, for social sign-up) | `{ok:true,user:{id,name}}` |
 | `/internal/v2/status` | `{id}` | `{ok:true,user:{id,name}}` |
 | `/internal/v2/password` | `{id,password,client_ip,end_sessions?}`. Sets a new password by player id for swccg-login's self-service reset, after the player has proved a confirmed email. It burns any admin one-time code. With `end_sessions:true` it also logs the player out of every GEMP session (classic and swccg.com); games and tables are untouched, and the player signs in again to rejoin. **Off unless `GEMP_INTERNAL_AUTH_V2_SET_PASSWORD=true`** (otherwise 404). Errors: `weak_password`, `not_found`. Limit: 5 per account per hour. | `{ok:true,user:{id,name},sessions_ended}` |
+| `/internal/v2/close` | `{id,client_ip?}`. A member closes their own account from swccg-login's account page (swccg-guild/work#261). GEMP deactivates the player (nothing is deleted; an admin can reactivate) and logs them out of every GEMP session. Bots can't be closed. Closing twice is fine. Errors: `not_found`. An empty body answers a signed 400, which swccg-login uses to see that the call exists. | `{ok:true,user:{id,name}}` |
 
 Errors: `{ok:false,error}` with `invalid_credentials`, `banned`, `inactive`,
 `not_found`, `name_taken`, `name_invalid`, `signup_closed`, `rate_limited`,

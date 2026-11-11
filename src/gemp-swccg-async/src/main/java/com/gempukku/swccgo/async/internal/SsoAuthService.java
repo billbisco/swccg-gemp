@@ -19,7 +19,8 @@ import java.util.regex.Pattern;
 /**
  * GEMP-AUTH-V2 for swccg-login (docs/swccg-login-auth-api.md): POST /internal/v2/verify,
  * /internal/v2/register, /internal/v2/players, /internal/v2/status and, only when switched on
- * (GEMP_INTERNAL_AUTH_V2_SET_PASSWORD=true), /internal/v2/password.
+ * (GEMP_INTERNAL_AUTH_V2_SET_PASSWORD=true), /internal/v2/password, and /internal/v2/close (a
+ * member's self-serve close from swccg-login's account page: deactivate, never delete).
  *
  * Same order of checks as {@link WikiAuthService}: path, method, size, key id + signature,
  * timestamp skew, nonce replay, rate limits, then GEMP. Answers never carry an admin flag or any
@@ -32,7 +33,9 @@ public class SsoAuthService {
     public static final String STATUS = "/internal/v2/status";
     /** Set a new password by player id (swccg-login's self-service reset). Off unless switched on. */
     public static final String PASSWORD = "/internal/v2/password";
-    public static final Set<String> PATHS = Set.of(VERIFY, REGISTER, PLAYERS, STATUS, PASSWORD);
+    /** Self-serve close by player id (#261): deactivates the player and ends their GEMP sessions. */
+    public static final String CLOSE = "/internal/v2/close";
+    public static final Set<String> PATHS = Set.of(VERIFY, REGISTER, PLAYERS, STATUS, PASSWORD, CLOSE);
 
     private static final Pattern NONCE = Pattern.compile("^[A-Za-z0-9_-]{16,64}$");
     private static final Pattern IP = Pattern.compile("^[0-9A-Fa-f:.]{2,45}$");
@@ -110,6 +113,7 @@ public class SsoAuthService {
                 case REGISTER: return register(json, true, keyId, nonce, nowMillis);
                 case PLAYERS: return register(json, false, keyId, nonce, nowMillis);
                 case PASSWORD: return setPassword(json, keyId, nonce, nowMillis);
+                case CLOSE: return close(json, keyId, nonce);
                 default: return status(json, keyId, nonce);
             }
         } catch (Exception e) {
@@ -212,6 +216,22 @@ public class SsoAuthService {
         JSONObject ok = okUser(p);
         ok.put("sessions_ended", ended);
         return result(200, ok, keyId, nonce);
+    }
+
+    private WikiAuthService.Result close(JSONObject json, String keyId, String nonce) throws Exception {
+        Object id = json.get("id");
+        String clientIp = asString(json.get("client_ip"));
+        if (!(id instanceof Long) || (Long) id <= 0 || (Long) id > Integer.MAX_VALUE
+                || (clientIp != null && !clientIp.isEmpty() && !validIp(clientIp)))
+            return result(400, error("bad_request"), keyId, nonce);
+        Player p = _authService.closeAccount(((Long) id).intValue());
+        if (p == null)
+            return result(200, error("not_found"), keyId, nonce);
+        java.util.function.Consumer<String> ender = _sessionEnder;
+        if (ender != null)
+            ender.accept(p.getName());
+        LOG.info("sso-auth: close id=" + id + " key=" + keyId);
+        return result(200, okUser(p), keyId, nonce);
     }
 
     private WikiAuthService.Result status(JSONObject json, String keyId, String nonce) {

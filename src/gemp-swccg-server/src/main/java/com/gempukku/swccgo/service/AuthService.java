@@ -335,6 +335,22 @@ public class AuthService {
     }
 
     /**
+     * swccg-login self-serve close (#261): deactivates the player by id. Nothing is deleted; decks,
+     * games and the name stay, and an admin can reactivate the player. Bots can't be closed.
+     * @return the player, or null if there is no such player (or it is a bot)
+     */
+    public Player closeAccount(int playerId) throws SQLException {
+        Player player = _playerDAO.getPlayer(playerId);
+        if (player == null || player.getId() != playerId || Player.isBot(player.getName()))
+            return null;
+        if (!player.hasType(Player.Type.DEACTIVATED)
+                && !_playerDAO.setPlayerFlag(player.getName(), Player.Type.DEACTIVATED, true))
+            return null;
+        _resetTickets.values().removeIf(t -> t.playerId == playerId);
+        return player;
+    }
+
+    /**
      * Whether an account may sign in right now (ban, temporary ban, deactivation), by id.
      * No password is checked: swccg-login calls this for passkey, social and silent sign-ins.
      * Status INVALID means no such account.

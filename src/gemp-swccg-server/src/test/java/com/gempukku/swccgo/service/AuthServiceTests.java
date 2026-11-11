@@ -161,6 +161,17 @@ public class AuthServiceTests {
     }
 
     @Test
+    public void closeAccountDeactivatesWithoutDeleting() throws Exception {
+        Player bill = dao.addWithStoredHash("Bill", hasher.hash("rightpass"), "u", null);
+        assertNull(auth.closeAccount(bill.getId() + 1000), "no such player");
+        assertNotNull(auth.closeAccount(bill.getId()));
+        assertEquals(AuthService.Status.DEACTIVATED, auth.accountStatus(bill.getId()).getStatus());
+        assertEquals(AuthService.Status.DEACTIVATED, auth.verifyCredentials("Bill", "rightpass", IP).getStatus());
+        assertNotNull(dao.getPlayer(bill.getId()), "the row stays");
+        assertNotNull(auth.closeAccount(bill.getId()), "closing twice is fine");
+    }
+
+    @Test
     public void resetAccountCannotBeClaimedWithoutTheCode() throws Exception {
         dao.addWithStoredHash("Bill", hasher.hash("oldpassword"), "u", null);
         auth.issueResetCode("Bill", "AdminAl");
