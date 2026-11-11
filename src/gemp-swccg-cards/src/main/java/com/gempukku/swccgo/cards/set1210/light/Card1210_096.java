@@ -37,7 +37,7 @@ public class Card1210_096 extends AbstractDroid {
     public Card1210_096() {
         super(Side.LIGHT, 4, 1, 2, 3, "IL-19", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_1, Rarity.V);
         setLore("Spy.");
-        setGameText("While at a non-Hoth site, adds one [Light Side Force]. If just forfeited, may use 1 Force to place this droid in Used Pile.");
+        setGameText("While at a non-Hoth site, adds one [Light Side Force]. If just forfeited, may use 1 Force to place IL-19 in Used Pile.");
         addIcons(Icon.A_NEW_HOPE);
         addKeywords(Keyword.SPY);
     }

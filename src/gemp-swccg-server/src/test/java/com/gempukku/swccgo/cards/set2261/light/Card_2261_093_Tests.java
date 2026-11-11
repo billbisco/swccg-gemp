@@ -1,5 +1,8 @@
 package com.gempukku.swccgo.cards.set2261.light;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertEquals;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import org.junit.Test;
@@ -8,7 +11,6 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.gempukku.swccgo.cards.LegacyVersionAssertions.assertLegacyVersion;
 
 /** Armed And Dangerous & Krayt Dragon Howl original version of 1261_93. */
 public class Card_2261_093_Tests {
@@ -21,9 +23,19 @@ public class Card_2261_093_Tests {
 
     @Test
     public void IdentityAndVersionInfo() {
+        // Title-order version (batch B41): same game text as the current card, printed title "Krayt Dragon Howl & Armed And Dangerous (V)".
         var scn = scenario();
-        assertLegacyVersion(scn.GetLSCard("v").getBlueprint(), scn.GetLSCard("current").getBlueprint(), "1261_93", "",
-                LocalDate.of(2009, 9, 4), LocalDate.of(2012, 7, 21),
-                "USED: Cancel Disarmed or Stunning Leader. OR If a battle was just initiated, ▼ (or deploy from hand) a character weapon on your participating character. LOST: Use 1 Force to ▼ (or retrieve) non-[Reflections 3] Obi-Wan. OR If opponent just initiated a battle against non-[Reflections 3] Obi-Wan alone at a site, his forfeit cannot be reduced.");
+        var version = scn.GetLSCard("v").getBlueprint();
+        var current = scn.GetLSCard("current").getBlueprint();
+        assertEquals(current.getGameText(), version.getGameText());
+        assertEquals("Krayt Dragon Howl & Armed And Dangerous", version.getPrintedTitle());
+        assertNull(current.getLegacyVersion());
+        var info = version.getLegacyVersion();
+        assertEquals("1261_93", info.currentPrintingId());
+        assertEquals("", info.label());
+        assertEquals(LocalDate.of(2009, 9, 4), info.printedOn());
+        assertEquals(LocalDate.of(2011, 7, 14), info.supersededOn());
+        assertEquals(current.getTitle(), version.getTitle());
+        assertTrue(version.isLegacy());
     }
 }

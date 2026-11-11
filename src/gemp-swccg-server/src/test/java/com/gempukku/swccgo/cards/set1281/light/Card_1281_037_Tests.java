@@ -396,9 +396,9 @@ public class Card_1281_037_Tests {
     }
 
     @Test
-    public void ScoundrelsLuckHasTheSheetAndMasterListText() {
+    public void ScoundrelsLuckHasThePcCardImageText() {
         var card = GetScenario().GetLSCard("luck").getBlueprint();
-        assertEquals("Deploy on Infiltration with three [Scoundrel] cards from Reserve Deck face down under here. Once during your turn, at any time, may deploy a [Scoundrel] Effect from here. If a [Scoundrel] Effect just left table, stack it under here. At the start of your turn, stack all [Scoundrel] Effects under here (even if inactive). Once per turn, may place any card in Lost Pile out of play to deploy a character weapon (except a grenade) from Lost Pile. While two non-droid scoundrels present at battlegrounds, Their Fire Has Gone Out Of The Universe flips and may not flip back. (Immune to Alter.)",
+        assertEquals("Deploy on Infiltration with three [Scoundrel] cards from Reserve Deck face down under here. Once during your turn, at any time, may deploy a [Scoundrel] Effect from here. If a [Scoundrel] Effect just left table, stack it under here. At the start of your turn, stack all [Scoundrel] Effects under here. Once per turn, may place any card in Lost Pile out of play to deploy a character weapon (except a grenade) from Lost Pile. While two non-droid scoundrels present at battlegrounds, Their Fire Has Gone Out Of The Universe flips and may not flip back. (Immune to Alter.)",
                 card.getGameText());
     }
 
@@ -426,10 +426,12 @@ public class Card_1281_037_Tests {
     }
 
     @Test
-    public void ScoundrelsLuckStacksInactiveScoundrelEffectsAtStartOfTurn() {
-        //test1: Bravado on a missing (inactive) Lando is inactive
-        //test2: it is stacked here at the start of your turn anyway ("(even if inactive)")
-        assertTrue(inactiveScoundrelEffectStackedAtStartOfTurn("1281_37"));
+    public void ScoundrelsLuckDoesNotStackInactiveScoundrelEffectsAtStartOfTurn() {
+        // current text = PC card image (2013-05-07, latest; batch B41 rework): no "(even if inactive)", so
+        // Bravado on a missing (inactive) Lando stays where it is; the sheet / Master List versions stack it (2281_1037, 2281_37)
+        assertFalse(inactiveScoundrelEffectStackedAtStartOfTurn("1281_37"));
+        removeInfiltrationStub();
+        assertTrue(inactiveScoundrelEffectStackedAtStartOfTurn("2281_1037"));
     }
 
     @Test

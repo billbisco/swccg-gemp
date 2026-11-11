@@ -96,10 +96,11 @@ public class Card_1230_116_Tests {
     public void MonCalamariStarCruiserHasTheLatestText() {
         var scn = GetScenario();
         var card = scn.GetLSCard("cruiser").getBlueprint();
-        assertEquals("For each Imperial starship on table, deploys -1 (to a minimum of 3). May add 5 pilots, 6 passengers, 1 vehicle, and 3 starfighters. Permanent pilot provides ability of 2.",
+        assertEquals("Deploys -1 (to a minimum of 3) for each Imperial starship on table. May add 5 pilots, 6 passengers, 1 vehicle, and 3 starfighters. Permanent pilot provides ability of 2.",
                 card.getGameText());
         assertNull(card.getLegacyVersion());
         // the sheet wording is the original version 2230_116
-        assertFalse(card.getGameText().startsWith("Deploys -1"));
+        // batch R8: the current text is the Master List wording again
+        assertTrue(card.getGameText().startsWith("Deploys -1"));
     }
 }

@@ -57,7 +57,7 @@ public class Card_2281_044_Tests {
                     put("ingenuity", "1281_36");
                     put("rest", "1281_39");
                     put("street", "1281_40");
-                    put("charts", "1281_32");
+                    put("charts", "2281_2032"); // optional-steal card-list version (the current card steals automatically, batch B41)
                     put("han", "1281_27");
                     put("kyle", "1281_28");
                     put("leia", "1_17");

@@ -51,7 +51,7 @@ public class Card_2220_058_Tests {
         assertTrue(card.isLegacy());
         assertEquals("If opponent just initiated battle, immediately fire a non-lightsaber, non-[Permanent Weapon] weapon present (for free and each weapon destiny is +2). That weapon may fire again this battle.",
                 card.getGameText());
-        assertNotEquals(current.getGameText(), card.getGameText());
+        assertEquals(current.getGameText(), card.getGameText()); // the Master List (2013-04-27, the current text) repeats it (batch R8)
         var version = card.getLegacyVersion();
         assertEquals("1220_58", version.currentPrintingId());
         assertEquals("", version.label());

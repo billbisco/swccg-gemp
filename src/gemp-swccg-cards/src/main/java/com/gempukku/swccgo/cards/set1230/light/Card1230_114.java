@@ -39,7 +39,7 @@ public class Card1230_114 extends AbstractStarfighter {
         super(Side.LIGHT, 3, 2, 2, null, 2, 3, 4, Title.Tydirium, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_3, Rarity.V);
         setVirtualSuffix(true);
         setLore("Stolen Imperial Lambda-class shuttle. Supposedly carried parts and technical crew. Delivered General Solo's crack team of Rebel scouts to the forest moon of Endor.");
-        setGameText("May deploy (with a pilot) without presence or Force icons. May add 2 pilots and 6 passengers. May forfeit a scout aboard to cancel all remaining battle damage against you.");
+        setGameText("May deploy (with a pilot) without presence or Force icons. May add 2 pilots and 6 passengers. May forfeit a scout aboard to cancel all remaining battle damage against you here.");
         addIcons(Icon.ENDOR, Icon.NAV_COMPUTER, Icon.SCOMP_LINK);
         addModelType(ModelType.LAMBDA_CLASS_SHUTTLE);
         setPilotCapacity(2);

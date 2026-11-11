@@ -200,10 +200,11 @@ public class Card_1230_114_Tests {
     public void TydiriumHasTheLatestText() {
         var scn = GetScenario();
         var card = scn.GetLSCard("tydirium").getBlueprint();
-        assertEquals("May deploy (with a pilot) without presence or Force icons. May add 2 pilots and 6 passengers. May forfeit a scout aboard to cancel all remaining battle damage against you.",
+        assertEquals("May deploy (with a pilot) without presence or Force icons. May add 2 pilots and 6 passengers. May forfeit a scout aboard to cancel all remaining battle damage against you here.",
                 card.getGameText());
         assertNull(card.getLegacyVersion());
         // the sheet wording is the original version 2230_114
-        assertFalse(card.getGameText().contains("against you here"));
+        // batch R8: the current text is the Master List wording again
+        assertTrue(card.getGameText().contains("against you here"));
     }
 }

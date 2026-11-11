@@ -51,7 +51,7 @@ public class Card_2210_055_Tests {
         assertTrue(card.isLegacy());
         assertEquals("If you just initiated battle where you have at least two characters (one a trooper and the other a leader), add two battle destiny. Opponent takes no battle damage this battle. OR ▼ one Dewback",
                 card.getGameText());
-        assertNotEquals(current.getGameText(), card.getGameText());
+        assertEquals(current.getGameText(), card.getGameText()); // the Master List (2013-04-27, the current text) repeats it (batch R8)
         var version = card.getLegacyVersion();
         assertEquals("1210_55", version.currentPrintingId());
         assertEquals("", version.label());

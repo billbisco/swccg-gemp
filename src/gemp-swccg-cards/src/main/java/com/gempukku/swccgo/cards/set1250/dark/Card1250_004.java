@@ -38,7 +38,7 @@ public class Card1250_004 extends AbstractRepublic {
         super(Side.DARK, 3, 3, 3, 2, 4, Title.Coruscant_Guard, Uniqueness.UNRESTRICTED, ExpansionSet.VIRTUAL_BLOCK_5, Rarity.V);
         setVirtualSuffix(true);
         setLore("Coruscant Guards are an elite force whose assignments include the protection of important political figures, as well as the policing of Coruscant's higher profile city districts.");
-        setGameText("Heroic. Deploys -1 to Senate. While at Senate, Sidious is cumulatively Politics +2, and, during your control phase, may place this character in Used Pile to take [Virtual Block 5] Expand the Empire into hand from Reserve Deck; reshuffle, or take any one card into hand from Force Pile; reshuffle.");
+        setGameText("Heroic. Deploys -1 to Senate. While at Senate, Sidious is cumulatively politics +2, and, during your control phase, may place this character in Used Pile to take [Virtual Block 5] Expand The Empire into hand from Reserve Deck; reshuffle, or take any one card into hand from Force Pile; reshuffle.");
         addIcons(Icon.WARRIOR, Icon.EPISODE_I, Icon.CORUSCANT);
         addKeywords(Keyword.CORUSCANT_GUARD, Keyword.HEROIC);
     }

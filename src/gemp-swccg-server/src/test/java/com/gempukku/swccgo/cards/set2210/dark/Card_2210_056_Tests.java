@@ -51,7 +51,7 @@ public class Card_2210_056_Tests {
         assertTrue(card.isLegacy());
         assertEquals("USED: If you just hit a target with a non-lightsaber, non-[Permanent Weapon] weapon, place target (and all cards on it) in owner's Used Pile. LOST: Cancel Heroic (and any immunity to attrition) on a character or starship this turn.",
                 card.getGameText());
-        assertNotEquals(current.getGameText(), card.getGameText());
+        assertEquals(current.getGameText(), card.getGameText()); // the Master List (2013-04-27, the current text) repeats it (batch R8)
         var version = card.getLegacyVersion();
         assertEquals("1210_56", version.currentPrintingId());
         assertEquals("", version.label());

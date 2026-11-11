@@ -39,6 +39,8 @@ swccg-login `internal/gemp`).
 | `/internal/v2/players` | `{username,client_ip}` (account with no usable password, for social sign-up) | `{ok:true,user:{id,name}}` |
 | `/internal/v2/status` | `{id}` | `{ok:true,user:{id,name}}` |
 | `/internal/v2/password` | `{id,password,client_ip,end_sessions?}`. Sets a new password by player id for swccg-login's self-service reset, after the player has proved a confirmed email. It burns any admin one-time code. With `end_sessions:true` it also logs the player out of every GEMP session (classic and swccg.com); games and tables are untouched, and the player signs in again to rejoin. **Off unless `GEMP_INTERNAL_AUTH_V2_SET_PASSWORD=true`** (otherwise 404). Errors: `weak_password`, `not_found`. Limit: 5 per account per hour. | `{ok:true,user:{id,name},sessions_ended}` |
+| `/internal/v2/close` | `{id,client_ip?}`. A member closes their own account from swccg-login's account page (swccg-guild/work#261). GEMP deactivates the player (nothing is deleted; an admin can reactivate) and logs them out of every GEMP session. Bots can't be closed. Closing twice is fine. Errors: `not_found`. An empty body answers a signed 400, which swccg-login uses to see that the call exists. | `{ok:true,user:{id,name}}` |
+| `/internal/v2/rename` | `{id,username,client_ip?}`. Renames a player from swccg-login's account page or an approved rename request (swccg-guild/work#261). Same name rules as signup; a change of case to one's own name is allowed. Refused while the player is at a table, waiting or playing (`busy`). League and tournament entries and results, transfers and saved Play-now games move to the new name; game history keeps the name that was at the table and is tied to the player by `winner_id` / `loser_id` (#264). Ends the player's GEMP sessions under the old name. Errors: `name_invalid`, `name_taken`, `busy`, `deactivated`, `not_found`, `throttled` (5 per hour per player). An empty body answers a signed 400. | `{ok:true,user:{id,name}}` |
 
 Errors: `{ok:false,error}` with `invalid_credentials`, `banned`, `inactive`,
 `not_found`, `name_taken`, `name_invalid`, `signup_closed`, `rate_limited`,
@@ -47,6 +49,24 @@ Errors: `{ok:false,error}` with `invalid_credentials`, `banned`, `inactive`,
 Rate limits (in-memory): 1200/min overall, 30 per 5 min per client IP, 10 failures
 per 15 min per username, 5 sign-ups per hour per IP. Sign-ups honour the
 “new account registration” setting.
+
+**Play's own classic signup (GEMP → swccg-login, #261).** When `SWCCG_LOGIN_REVOKE_URL`
+and `SWCCG_LOGIN_REVOKE_SECRET` are set, Play's classic signup asks swccg-login first:
+a signed GEMP-AUTH-V2 `POST /internal/v1/name-check` `{name}` (same listener and key id
+`gemp` as revoke; the URL is the revoke URL's host with that path). A reserved name,
+a name on its 90-day hold after a rename or close, or a name swccg-login has issued is
+refused; so is any answer that is unsigned, not 200, or late (fail closed, "try again
+in a few minutes"). The guest seat names "Light Side", "Light_Side", "Dark Side" and
+"Dark_Side" (any case) are refused on Play even without swccg-login. A space and an
+underscore are different names (2026-11-11): "Luke Sky" and "Luke_Sky" are two accounts.
+
+**Name rule on Play (2026-11-11, t122u).** New names (classic signup, `/internal/v2/register`,
+`/internal/v2/players`, `/internal/v2/rename`) follow `PlayerNames`: 1–32 characters; letters and digits
+from any writing system, space, `-`, `_`; no space or `_` at either end or two in a row. Play stores
+names as 3-byte UTF-8, so characters outside the Basic Multilingual Plane are `name_invalid`.
+`player.name`, `tournament_player.player` and `player_password_reset.created_by` are 32 characters
+(`db-scripts/update_full_names.sql`). Existing names are grandfathered; sign-in is unchanged. Classic name + password
+login is unchanged.
 
 ## 2. OIDC client (GEMP → swccg-login)
 

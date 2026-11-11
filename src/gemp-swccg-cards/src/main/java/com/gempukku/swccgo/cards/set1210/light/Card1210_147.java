@@ -40,7 +40,7 @@ public class Card1210_147 extends AbstractUsedOrLostInterrupt {
         super(Side.LIGHT, 4, Title.Beru_Stew, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("Moisture farmers grow enough food to sustain Tatooine's population. Beru Lars has devised many dishes using herbs and roots naturally found in Tatooine's desert.");
-        setGameText("USED: Activate 1 Force (2 if a Lars on table). OR During battle at a farm, add the destiny number of your device on this farm to your total power. LOST: During battle at a farm, after battle destinies are drawn, place a 'crop' out of play to make attrition against you = 0.");
+        setGameText("USED: Activate 1 Force (2 if a Lars on table). OR During battle at a farm, add the destiny number of your device on this farm to your total power. LOST: During battle at a farm, after battle destiny is drawn, place a 'crop' out of play to make attrition against you = 0.");
     }
 
     @Override

@@ -35,7 +35,8 @@ public class Card1240_055 extends AbstractSite {
         setLocationLightSideGameText("If you occupy, may use 3 Force to place a 'spice' card out of play.");
         addIcon(Icon.LIGHT_FORCE, 1);
         addIcon(Icon.DARK_FORCE, 2);
-        addIcons(Icon.TATOOINE, Icon.EPISODE_I, Icon.EXTERIOR_SITE, Icon.PLANET);
+        // PC-E1 (PC forum p637956, 2011-07-25): the slip covers the Episode I icon; "This location is NOT an \"Episode I\" location."
+        addIcons(Icon.TATOOINE, Icon.EXTERIOR_SITE, Icon.PLANET);
     }
 
     @Override

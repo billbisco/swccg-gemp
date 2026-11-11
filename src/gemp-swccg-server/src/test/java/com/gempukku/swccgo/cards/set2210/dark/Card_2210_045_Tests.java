@@ -51,7 +51,7 @@ public class Card_2210_045_Tests {
         assertTrue(card.isLegacy());
         assertEquals("Deploy on table. Starships may not move the turn they are deployed (or carried) to Death Star. Once per game, if Alderaan 'blown away,' may target a system. Unless opponent has a capital (or [Episode I]) starship there, Objectives treat target as a Subjugated planet. (Immune to Alter.)",
                 card.getGameText());
-        assertNotEquals(current.getGameText(), card.getGameText());
+        assertEquals(current.getGameText(), card.getGameText()); // the Master List (2013-04-27, the current text) repeats it (batch R8)
         var version = card.getLegacyVersion();
         assertEquals("1210_45", version.currentPrintingId());
         assertEquals("", version.label());

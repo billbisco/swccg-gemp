@@ -21,14 +21,18 @@ import com.gempukku.swccgo.logic.modifiers.Modifier;
 import java.util.Arrays;
 import java.util.List;
 
-/** Virtual Block 6.1, final official text. The conversion printing shares this implementation. */
+/** Virtual Block 6.1, final official text. The conversion printing shares this implementation. * Text (both printings, 1261_21 and 1261_24, which share this class): the Virtual Cards Master List (official text as of
+ * 2013-04-27) and the Virtual Shields sheet (2013-05-21), "Subjugated planet", word for word the first sheet text; it is a
+ * version of its own after the PC website card list's "Subjugated Planet" (Bill 2026-11-11). Versions: 2261_21 / 2261_1021
+ * (Reflections III), 2261_1024 / 2261_24 / 2261_2024 (Death Star II) (legacy batch B41).
+ */
 public class Card1261_021 extends AbstractDefensiveShield {
     public Card1261_021() {
         super(Side.DARK, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.Leave_Them_To_Me,
                 ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("'I will deal with them myself.'");
-        setGameText("Plays on table. At opponent's Dantooine and Subjugated Planet sites, your Imperials are deploy -2 and your Force drains may not be modified or canceled by opponent. Your game text at opponent's <>Swamp and <>Jungle is canceled. Your characters present at opponent's <>Forest are immune to attrition.");
+        setGameText("Plays on table. At opponent's Dantooine and Subjugated planet sites, your Imperials are deploy -2 and your Force drains may not be modified or canceled by opponent. Your game text at opponent's <>Swamp and <>Jungle is canceled. Your characters present at opponent's <>Forest are immune to attrition.");
         addIcons(Icon.REFLECTIONS_III);
     }
 

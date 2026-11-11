@@ -36,7 +36,7 @@ public class Card1210_026 extends AbstractAlien {
         super(Side.DARK, 3, 2, 2, 1, 4, "Ur'Ru'r", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("Fierce Tusken Raider. Ransacks homes and moisture farms on the borders of Mos Espa.");
-        setGameText("Deploys only on Tatooine. During your deploy phase, if with URoRRuR'R'R, may deploy a weapon with 'Tusken' in lore here from Reserve Deck; reshuffle; your weapon destiny draws for such weapons are +2. During your deploy phase, may move Ur'Ru'r as a regular move.");
+        setGameText("Deploys only on Tatooine. During your deploy phase, if with URoRRuR'R'R, may deploy a weapon with 'Tusken' in lore here from Reserve Deck; reshuffle; your weapon destiny draws for such weapons are +2. During your deploy phase, Ur'Ru'r may make a regular move.");
         addIcons(Icon.WARRIOR, Icon.SPECIAL_EDITION);
         setSpecies(Species.TUSKEN_RAIDER);
     }

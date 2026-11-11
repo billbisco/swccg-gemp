@@ -51,7 +51,7 @@ public class Card_2210_147_Tests {
         assertTrue(card.isLegacy());
         assertEquals("USED: Activate 1 Force (2 if a Lars on table). OR During battle at a farm, add the destiny number of your device on this farm to your total power. LOST: During battle at a farm, after battle destiny is drawn, place a 'crop' out of play to make attrition against you = 0.",
                 card.getGameText());
-        assertNotEquals(current.getGameText(), card.getGameText());
+        assertEquals(current.getGameText(), card.getGameText()); // the Master List (2013-04-27, the current text) repeats it (batch R8)
         var version = card.getLegacyVersion();
         assertEquals("1210_147", version.currentPrintingId());
         assertEquals("", version.label());

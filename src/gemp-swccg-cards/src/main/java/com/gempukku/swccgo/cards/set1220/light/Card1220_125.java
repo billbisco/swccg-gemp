@@ -40,7 +40,7 @@ public class Card1220_125 extends AbstractNormalEffect {
         super(Side.LIGHT, 6, PlayCardZoneOption.ATTACHED, Title.Hopping_Mad, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_2, Rarity.V);
         setVirtualSuffix(true);
         setLore("'I'm standing here in pieces and you're having delusions of grandeur!'");
-        setGameText("Deploy on non-[Episode I] C-3PO. Once per turn, you may take How Did We Get Into This Mess?, Thank The Maker, We're Doomed, or Mantellian Savrip into hand from Reserve Deck; reshuffle. If C-3PO present at a battleground, Savrip is immune to Alter. Thank The Maker is a Used Interrupt and treat '5' in its game text as '3'.");
+        setGameText("Deploy on non-[Episode I] C-3PO. Once per turn, you may take How Did We Get Into This Mess?, Mantellian Savrip, Thank The Maker, or We're Doomed into hand from Reserve Deck; reshuffle. If C-3PO present at a battleground, Savrip is immune to Alter. Thank The Maker is a Used Interrupt and treat '5' in its game text as '3'.");
         addKeywords(Keyword.DEPLOYS_ON_CHARACTERS);
         addIcons(Icon.CLOUD_CITY);
     }

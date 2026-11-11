@@ -32,15 +32,21 @@ public final class GameHistoryQuery {
         _parameters = Collections.unmodifiableList(parameters);
     }
 
-    public static GameHistoryQuery forPlayer(String playerName, GameHistoryFilter filter) {
+    /**
+     * @param playerId the player's account id; rows are matched on winner_id / loser_id (swccg-guild/work#264), so a
+     *                 player's games follow the account after a rename. The opponent filter still matches the name
+     *                 shown at the table.
+     */
+    public static GameHistoryQuery forPlayer(int playerId, GameHistoryFilter filter) {
+        Integer player = playerId;
         if (filter == null)
             filter = GameHistoryFilter.NONE;
         List<Object> params = new ArrayList<>();
         List<String> conditions = new ArrayList<>();
 
-        conditions.add("(winner = ? OR loser = ?)");
-        params.add(playerName);
-        params.add(playerName);
+        conditions.add("(winner_id = ? OR loser_id = ?)");
+        params.add(player);
+        params.add(player);
 
         if (filter.format() != null) {
             conditions.add("format_name = ?");
@@ -50,10 +56,10 @@ public final class GameHistoryQuery {
             String opponent = filter.opponent().toLowerCase(Locale.ROOT);
             String value = filter.opponentExact() ? opponent : escapeLike(opponent) + "%";
             String match = filter.opponentExact() ? "= ?" : "LIKE ? ESCAPE '!'";
-            conditions.add("((winner = ? AND LOWER(loser) " + match + ") OR (loser = ? AND LOWER(winner) " + match + "))");
-            params.add(playerName);
+            conditions.add("((winner_id = ? AND LOWER(loser) " + match + ") OR (loser_id = ? AND LOWER(winner) " + match + "))");
+            params.add(player);
             params.add(value);
-            params.add(playerName);
+            params.add(player);
             params.add(value);
         }
         if (filter.casualOnly()) {
@@ -65,15 +71,15 @@ public final class GameHistoryQuery {
         if (filter.side() != null) {
             // the player's side: the winner's side when they won, the other one when they lost
             String other = GameHistoryFilter.DARK.equals(filter.side()) ? GameHistoryFilter.LIGHT : GameHistoryFilter.DARK;
-            conditions.add("((winner = ? AND winner_side = ?) OR (loser = ? AND winner_side = ?))");
-            params.add(playerName);
+            conditions.add("((winner_id = ? AND winner_side = ?) OR (loser_id = ? AND winner_side = ?))");
+            params.add(player);
             params.add(filter.side());
-            params.add(playerName);
+            params.add(player);
             params.add(other);
         }
         if (filter.result() != null) {
-            conditions.add(GameHistoryFilter.WON.equals(filter.result()) ? "winner = ?" : "loser = ?");
-            params.add(playerName);
+            conditions.add(GameHistoryFilter.WON.equals(filter.result()) ? "winner_id = ?" : "loser_id = ?");
+            params.add(player);
         }
         if (filter.from() != null) {
             conditions.add("end_date >= ?");
@@ -104,18 +110,18 @@ public final class GameHistoryQuery {
         return _parameters;
     }
 
-    /** The formats the player has games in, most played first.  Binds the player name twice. */
+    /** The formats the player has games in, most played first.  Binds the player id twice. */
     public static String formatsSql() {
-        return "SELECT format_name FROM game_history WHERE (winner = ? OR loser = ?) AND format_name IS NOT NULL"
+        return "SELECT format_name FROM game_history WHERE (winner_id = ? OR loser_id = ?) AND format_name IS NOT NULL"
                 + " GROUP BY format_name ORDER BY COUNT(*) DESC, format_name";
     }
 
     /**
      * The leagues and tournaments (not casual or playtesting) the player has games in, most recent first.  Binds the
-     * player name twice and then the limit.
+     * player id twice and then the limit.
      */
     public static String eventsSql() {
-        return "SELECT tournament FROM game_history WHERE (winner = ? OR loser = ?) AND tournament IS NOT NULL"
+        return "SELECT tournament FROM game_history WHERE (winner_id = ? OR loser_id = ?) AND tournament IS NOT NULL"
                 + " AND tournament NOT LIKE 'Casual%' AND tournament NOT LIKE 'Playtesting%'"
                 + " GROUP BY tournament ORDER BY MAX(end_date) DESC LIMIT ?";
     }

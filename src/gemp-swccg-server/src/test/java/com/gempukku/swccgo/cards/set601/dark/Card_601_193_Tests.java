@@ -34,7 +34,7 @@ public class Card_601_193_Tests {
     public void KuatDriveYardsHasTheLatestText() {
         var scn = GetScenario();
         var card = scn.GetDSCard("kdy").getBlueprint();
-        assertEquals("Deploy on table. Unique (•) Imperial-Class Star Destroyers draw one battle destiny if not able to otherwise and are immune to attrition < 4. During your deploy phase, may use 2 Force to [download] a battleground system. We're In Attack Position Now is canceled. (Immune to Alter.)",
+        assertEquals("Deploy on table. Unique (•) Imperial-class Star Destroyers draw one battle destiny if not able to otherwise and are immune to attrition < 4. During your deploy phase, may use 2 Force to [download] a battleground system. We're In Attack Position Now is canceled. (Immune to Alter.)",
                 card.getGameText());
         assertNull(card.getLegacyVersion());
         assertFalse(card.getGameText().contains("if unable to otherwise"));

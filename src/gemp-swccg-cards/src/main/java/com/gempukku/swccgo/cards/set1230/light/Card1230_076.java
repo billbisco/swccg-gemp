@@ -45,7 +45,7 @@ public class Card1230_076 extends AbstractRebel {
         super(Side.LIGHT, 1, 5, 5, 5, 7, Title.Master_Luke, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_3, Rarity.V);
         setVirtualSuffix(true);
         setLore("Until being reunited with Yoda, Luke suspected that he had completed his training. Has a strong influence on the weak minded.");
-        setGameText("Adds 2 to power of anything he pilots. During battle, may use 2 Force to place an opponent's alien (except Jabba or a Rep) present with Luke in owner's Force Pile (opponent may use or lose 3 Force instead). Immune to attrition < 4 (< 7 if with an alien leader).");
+        setGameText("Adds 2 to power of anything he pilots. During battle, may use 2 Force to place an opponent's alien (except Jabba or a Rep) present with Luke on owner's Force Pile (opponent may use or lose 3 Force instead). Immune to attrition < 4 (< 7 if with an alien leader).");
         addPersona(Persona.LUKE);
         addIcons(Icon.PILOT, Icon.WARRIOR, Icon.PREMIUM);
     }

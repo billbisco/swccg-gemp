@@ -51,7 +51,7 @@ public class Card_2210_160_Tests {
         assertTrue(card.isLegacy());
         assertEquals("Once per game, if opponent has more cards with ability on table than you, draw destiny and retrieve up to that number of Rebel characters and/or Rebel starships (may take one retrieved card into hand).",
                 card.getGameText());
-        assertNotEquals(current.getGameText(), card.getGameText());
+        assertEquals(current.getGameText(), card.getGameText()); // the Master List (2013-04-27, the current text) repeats it (batch R8)
         var version = card.getLegacyVersion();
         assertEquals("1210_160", version.currentPrintingId());
         assertEquals("", version.label());

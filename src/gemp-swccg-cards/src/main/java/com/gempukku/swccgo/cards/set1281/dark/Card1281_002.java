@@ -39,7 +39,7 @@ public class Card1281_002 extends AbstractAlien {
     public Card1281_002() {
         super(Side.DARK, 2, 4, 2, 4, 4, "Bane Malar, Spice Addict", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_1, Rarity.V);
         setLore("Black Sun agent, assassin and bounty hunter.");
-        setGameText("Adds 2 to the power of anything he pilots. Once per turn, may 'mindscan' by placing a card from hand on your Used Pile; choose: Until end of turn Malar is power +2 and may fire a weapon twice per battle. OR Peek at the top X cards of your Force Pile where X = number of characters here.");
+        setGameText("Adds 2 to the power of anything he pilots. Once per turn, may 'mindscan' by placing a card from hand on your Used Pile; choose: until end of turn Malar is power +2 and may fire a weapon twice per battle. OR Peek at the top X cards of your Force Pile where X = number of characters here.");
         addIcons(Icon.PILOT, Icon.WARRIOR);
         addKeywords(Keyword.BLACK_SUN_AGENT, Keyword.ASSASSIN, Keyword.BOUNTY_HUNTER);
     }

@@ -51,7 +51,7 @@ public class Card_2210_015_Tests {
         assertTrue(card.isLegacy());
         assertEquals("During battle, may add 1 to your total attrition against opponent for each opponent's character present. May not deploy to or board starfighters or enclosed vehicles.",
                 card.getGameText());
-        assertNotEquals(current.getGameText(), card.getGameText());
+        assertEquals(current.getGameText(), card.getGameText()); // the Master List (2013-04-27, the current text) repeats it (batch R8)
         var version = card.getLegacyVersion();
         assertEquals("1210_15", version.currentPrintingId());
         assertEquals("", version.label());

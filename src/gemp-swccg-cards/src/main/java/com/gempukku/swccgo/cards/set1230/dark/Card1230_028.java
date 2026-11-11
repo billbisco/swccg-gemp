@@ -37,7 +37,7 @@ public class Card1230_028 extends AbstractNormalEffect {
         super(Side.DARK, 4, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.Empires_New_Order, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_3, Rarity.V);
         setVirtualSuffix(true);
         setLore("Palpatine's cruel vision of his Empire included the enslavement and subjugation of entire species.");
-        setGameText("Deploy on table. Whenever an opponent's alien is just lost, they lose 1 Force. While all of your ability on table is provided by Imperials and Imperial starship pilots, your admirals, generals, moffs, and Emperor are deploy -1 and are forfeit +1. Aliens are deploy +1 and forfeit -1.");
+        setGameText("Deploy on table. Whenever an opponent's alien is just lost, they lose 1 Force. While all of your ability on table is provided by Imperials and Imperial starship pilots, Emperor, your admirals, generals, and moffs are deploy -1 and are forfeit +1. Aliens are deploy +1 and forfeit -1.");
         addIcons(Icon.ENDOR);
     }
 

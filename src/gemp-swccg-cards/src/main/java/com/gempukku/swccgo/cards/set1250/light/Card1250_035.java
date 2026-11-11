@@ -36,7 +36,7 @@ public class Card1250_035 extends AbstractRepublic {
     public Card1250_035() {
         super(Side.LIGHT, 3, 2, 1, 2, 4, "Clone Pilot", Uniqueness.UNRESTRICTED, ExpansionSet.VIRTUAL_BLOCK_5, Rarity.V);
         setArmor(3);
-        setGameText("Adds 2 to power of anything he pilots. While piloting a [Republic] starship at a battleground, forfeit +1 and your Force drains are +1 here. Anything he pilots is maneuver +1 and immune to attrition < 3 (< 5 if all your pilot characters here are clones and/or Jedi).");
+        setGameText("[Pilot] 2. While piloting a [Republic] starship at a battleground, forfeit +1 and your Force drains are +1 here. Anything he pilots is manuever +1 and immune to attrition < 3 (< 5 if all your pilot characters here are clones and/or Jedi).");
         addIcons(Icon.PILOT, Icon.EPISODE_I);
         addKeyword(Keyword.CLONE_TROOPER);
     }

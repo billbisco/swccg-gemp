@@ -33,7 +33,10 @@ import java.util.List;
  * Type: Interrupt
  * Subtype: Used Or Lost
  * Title: Away Put Your Weapon
- * Original version of 1220_139 (Virtual Block 2 release sheet, Dec 2009): "up to five weapons (may take one retrieved card into hand)"; same play. Anything Goes only (docs/legacy-versions.md).
+ * PC-E2 version of 1220_139 (Virtual Block 2 release sheet, official text 2009-12-07): "up to five weapons (may take one retrieved card into hand)"; same play.
+ * Batch S1 (Bill 2026-11-11, H1): the September 2009 first printing is lost; the PC card image wording (slip 140E, PC-E1, 2220_1139)
+ * is the 9 September 2009 errata, this sheet text is PC-E2 and the PC card list text (the current card) is PC-E3.
+ * Anything Goes only (docs/legacy-versions.md).
  */
 public class Card2220_139 extends AbstractUsedOrLostInterrupt {
     public Card2220_139() {
@@ -41,8 +44,8 @@ public class Card2220_139 extends AbstractUsedOrLostInterrupt {
         setVirtualSuffix(true);
         setLore("'I mean you no harm.'");
         setGameText("USED: An opponent's just drawn [Permanent Weapon] weapon destiny is -3. (Immune to Sense.) LOST: Once per game, retrieve up to five weapons (may take one retrieved card into hand).");
-        setLegacyVersion(new LegacyVersion("1220_139", "",
-                "Virtual Block 2 release sheet (2009-12-07), card #139; superseded by the PC card list text (by 2012-07-21)", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21)));
+        setLegacyVersion(new LegacyVersion("1220_139", "PC-E2",
+                "Virtual Block 2 release sheet (2009-12-07), card #139E; superseded by the PC card list text (by 2012-07-21)", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21)));
         addIcons(Icon.DAGOBAH);
     }
 

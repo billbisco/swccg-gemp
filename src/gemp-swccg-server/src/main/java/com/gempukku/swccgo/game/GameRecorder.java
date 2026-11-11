@@ -2,6 +2,7 @@ package com.gempukku.swccgo.game;
 
 import com.gempukku.swccgo.common.ApplicationConfiguration;
 import com.gempukku.swccgo.common.Side;
+import com.gempukku.swccgo.db.PlayerDAO;
 import com.gempukku.swccgo.game.state.EventSerializer;
 import com.gempukku.swccgo.game.state.GameCommunicationChannel;
 import com.gempukku.swccgo.game.state.GameEvent;
@@ -30,11 +31,25 @@ public class GameRecorder {
 
     private GameHistoryService _gameHistoryService;
     private SoloDraftDefinitions _soloDraftDefinitions;
+    private final PlayerDAO _playerDAO;
+    private final File _replayRoot;
 
     public GameRecorder(GameHistoryService gameHistoryService,
                         SoloDraftDefinitions soloDraftDefinitions) {
+        this(gameHistoryService, soloDraftDefinitions, null, null);
+    }
+
+    /**
+     * @param playerDAO  when set, replays of players with an account are filed under {@code replays/<account id>/}
+     *                   (swccg-guild/work#264), so a rename never loses them; others (bots, guests) stay under the name
+     * @param replayRoot the replays folder; null means {@code <application.root>/replays}
+     */
+    public GameRecorder(GameHistoryService gameHistoryService, SoloDraftDefinitions soloDraftDefinitions,
+                        PlayerDAO playerDAO, File replayRoot) {
         _gameHistoryService = gameHistoryService;
         _soloDraftDefinitions = soloDraftDefinitions;
+        _playerDAO = playerDAO;
+        _replayRoot = replayRoot;
     }
 
     private String randomUid() {
@@ -47,11 +62,46 @@ public class GameRecorder {
         return new String(chars);
     }
 
+    /**
+     * @param playerId the name in the replay link: the viewer's current name (the history page) or the name shown at
+     *                 the table. Looked up, in order, under the current account's id, under the id of whoever sat at
+     *                 the table with that name in that game, then under the name (bots, guests, not yet moved).
+     */
     public InputStream getRecordedGame(String playerId, String gameId) throws IOException {
-        final File file = getRecordingFile(playerId, gameId);
-        if (!file.exists() || !file.isFile())
+        File file = findRecordingFile(playerId, gameId);
+        if (file == null)
             return null;
         return new InflaterInputStream(new FileInputStream(file));
+    }
+
+    File findRecordingFile(String name, String gameId) {
+        Integer current = accountId(name);
+        if (current != null) {
+            File file = getRecordingFile(String.valueOf(current), gameId);
+            if (file.isFile())
+                return file;
+        }
+        Integer owner = _gameHistoryService != null ? _gameHistoryService.getRecordingOwnerId(name, gameId) : null;
+        if (owner != null) {
+            File file = getRecordingFile(String.valueOf(owner), gameId);
+            if (file.isFile())
+                return file;
+        }
+        File legacy = getRecordingFile(name, gameId);
+        return legacy.isFile() ? legacy : null;
+    }
+
+    private Integer accountId(String name) {
+        if (_playerDAO == null || name == null)
+            return null;
+        Player player = _playerDAO.getPlayer(name, true);
+        return player != null && name.equals(player.getName()) ? player.getId() : null;
+    }
+
+    /** The replay folder for a seat: the account id when the name belongs to an account, else the name itself. */
+    String folderFor(String name) {
+        Integer id = accountId(name);
+        return id != null ? String.valueOf(id) : name;
     }
 
     public GameRecordingInProgress recordGame(SwccgGameMediator swccgoGame, final String formatName, final String tournament, final Map<String, String> deckNames) {
@@ -101,7 +151,8 @@ public class GameRecorder {
     }
 
     private File getRecordingFile(String playerId, String gameId) {
-        File gameReplayFolder = new File(ApplicationConfiguration.getProperty("application.root"), "replays");
+        File gameReplayFolder = _replayRoot != null ? _replayRoot
+                : new File(ApplicationConfiguration.getProperty("application.root"), "replays");
         File playerReplayFolder = new File(gameReplayFolder, playerId);
         return new File(playerReplayFolder, gameId + ".xml.gz");
     }
@@ -118,12 +169,13 @@ public class GameRecorder {
         Map<String, String> result = new HashMap<String, String>();
         for (Map.Entry<String, GameCommunicationChannel> playerRecordings : gameProgress.entrySet()) {
             String playerId = playerRecordings.getKey();
+            String folder = folderFor(playerId);
 
-            String gameRecordingId = getRecordingId(playerId);
+            String gameRecordingId = getRecordingId(folder);
             final List<GameEvent> gameEvents = playerRecordings.getValue().consumeGameEvents();
 
             try {
-                OutputStream replayStream = getRecordingWriteStream(playerId, gameRecordingId);
+                OutputStream replayStream = getRecordingWriteStream(folder, gameRecordingId);
                 try {
                     DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
                     DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();

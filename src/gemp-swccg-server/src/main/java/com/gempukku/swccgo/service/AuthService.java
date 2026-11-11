@@ -334,6 +334,58 @@ public class AuthService {
         return _playerDAO.getPlayer(login);
     }
 
+    /** The player with this id (deactivated included), or null. */
+    public Player getPlayer(int playerId) {
+        return _playerDAO.getPlayer(playerId);
+    }
+
+    /**
+     * swccg-login rename (#261, #264): renames the player by id. Bots and deactivated players can't be renamed.
+     * Game history keeps the name that was at the table; see {@link PlayerDAO#renamePlayer}.
+     * @return the renamed player, or a {@link RenameRefused} with the reason
+     */
+    public Player renameAccount(int playerId, String newName) throws SQLException, RenameRefused {
+        Player player = _playerDAO.getPlayer(playerId);
+        if (player == null || player.getId() != playerId || Player.isBot(player.getName()))
+            throw new RenameRefused("not_found");
+        if (player.hasType(Player.Type.DEACTIVATED))
+            throw new RenameRefused("deactivated");
+        String refused = _playerDAO.renamePlayer(playerId, newName);
+        if (refused != null)
+            throw new RenameRefused(refused);
+        Player renamed = _playerDAO.getPlayer(playerId);
+        if (renamed == null)
+            throw new RenameRefused("not_found");
+        return renamed;
+    }
+
+    /** Why a rename was refused: one of the swccg-login error codes (not_found, deactivated, name_invalid, name_taken). */
+    public static class RenameRefused extends Exception {
+        public RenameRefused(String code) {
+            super(code);
+        }
+
+        public String code() {
+            return getMessage();
+        }
+    }
+
+    /**
+     * swccg-login self-serve close (#261): deactivates the player by id. Nothing is deleted; decks,
+     * games and the name stay, and an admin can reactivate the player. Bots can't be closed.
+     * @return the player, or null if there is no such player (or it is a bot)
+     */
+    public Player closeAccount(int playerId) throws SQLException {
+        Player player = _playerDAO.getPlayer(playerId);
+        if (player == null || player.getId() != playerId || Player.isBot(player.getName()))
+            return null;
+        if (!player.hasType(Player.Type.DEACTIVATED)
+                && !_playerDAO.setPlayerFlag(player.getName(), Player.Type.DEACTIVATED, true))
+            return null;
+        _resetTickets.values().removeIf(t -> t.playerId == playerId);
+        return player;
+    }
+
     /**
      * Whether an account may sign in right now (ban, temporary ban, deactivation), by id.
      * No password is checked: swccg-login calls this for passkey, social and silent sign-ins.

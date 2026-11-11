@@ -33,7 +33,7 @@ public class Card1230_116 extends AbstractCapitalStarship {
         super(Side.LIGHT, 1, 8, 7, 5, null, 3, 9, "Mon Calamari Star Cruiser", Uniqueness.UNRESTRICTED, ExpansionSet.VIRTUAL_BLOCK_3, Rarity.V);
         setVirtualSuffix(true);
         setLore("Mon Cal MC80 cruiser. Originally a civilian ship. Converted to military use following the liberation of Mon Calamari from the Empire.");
-        setGameText("For each Imperial starship on table, deploys -1 (to a minimum of 3). May add 5 pilots, 6 passengers, 1 vehicle, and 3 starfighters. Permanent pilot provides ability of 2.");
+        setGameText("Deploys -1 (to a minimum of 3) for each Imperial starship on table. May add 5 pilots, 6 passengers, 1 vehicle, and 3 starfighters. Permanent pilot provides ability of 2.");
         addIcons(Icon.DEATH_STAR_II, Icon.PILOT, Icon.NAV_COMPUTER, Icon.SCOMP_LINK);
         addModelType(ModelType.MON_CALAMARI_STAR_CRUISER);
         setPilotCapacity(5);
