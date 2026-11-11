@@ -83,7 +83,7 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('1220_83'), 'https://wiki.
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1220_92'), 'https://wiki.swccg.com/images/c/c4/VB2-92-Jeroen_Webb-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1220_93'), 'https://wiki.swccg.com/images/8/80/VB2-93-Kebyc-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1220_125'), 'https://wiki.swccg.com/images/2/20/VB2-125-Hopping_Mad-PC-E1-cardmaker.png');
-assert.strictEqual(defaults.CardUnderTest.getImageUrl('1220_139'), 'https://wiki.swccg.com/images/3/3b/VB2-139E-Away_Put_Your_Weapon-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1220_139'), 'https://wiki.swccg.com/images/3/3e/VB2-139E-Away_Put_Your_Weapon-PC-E3-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1220_145'), 'https://wiki.swccg.com/images/f/f8/VB2-145-Impressive_Most_Impressive-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_167'), 'https://wiki.swccg.com/images/f/f8/VB2-145-Impressive_Most_Impressive-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2220_1064'), 'https://wiki.swccg.com/images/e/ee/VB2-64-Release_Your_Anger-PC-E1-cardmaker.png');
@@ -121,23 +121,21 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('1271_46'), 'https://wiki.
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1272_7'), 'https://wiki.swccg.com/images/2/26/VB7-04-Where_Are_You_Taking_Them-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1273_15'), 'https://wiki.swccg.com/images/a/ad/VB7-p3-93-Evacuate-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1273_23'), 'https://wiki.swccg.com/images/1/18/VB7-03-Captain_Antilles-PC-E1-cardmaker.png');
-assert.strictEqual(defaults.CardUnderTest.getImageUrl('2271_1002'), 'https://wiki.swccg.com/images/9/9a/VB7-01-Darth_Vader_More_Machine_Than_Man-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2271_1002'), 'https://wiki.swccg.com/images/1/1c/VB7-01-Darth_Vader_More_Machine_Than_Man-PC-E2-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2271_17'), 'https://wiki.swccg.com/images/6/6a/VB7-00-Vaders_Mask-original-cardmaker.png');
-assert.strictEqual(defaults.CardUnderTest.getImageUrl('2271_1039'), 'https://wiki.swccg.com/images/f/f3/VB7-03-Luke_Trust_Me-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2271_1039'), 'https://wiki.swccg.com/images/5/54/VB7-03-Luke_Trust_Me-PC-E2-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2271_40'), 'https://wiki.swccg.com/images/8/8f/VB7-04-Massassi_Base_Sentry-original-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2271_2040'), 'https://wiki.swccg.com/images/6/6a/VB7-04-Massassi_Base_Sentry-PC-E2-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2271_1046'), 'https://wiki.swccg.com/images/a/ac/VB7-00-Restore_Freedom_To_The_Galaxy-original-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2271_46'), 'https://swccg.com/cards/legacy/VirtualBlock7-Light/large/restorefreedomtothegalaxy.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2271_2046'), 'https://wiki.swccg.com/images/4/4d/VB7-00-Restore_Freedom_To_The_Galaxy-PC-E2-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2273_1010'), 'https://wiki.swccg.com/images/0/00/VB7-00-Kessel_Surveillance_System-PC-E1-cardmaker.png');
-assert.strictEqual(defaults.CardUnderTest.getImageUrl('1271_2'), 'https://swccg.com/cards/legacy/VirtualBlock7-Dark/large/darthvadermoremachinethanman.gif');
-assert.strictEqual(defaults.CardUnderTest.getImageUrl('1271_39'), 'https://swccg.com/cards/legacy/VirtualBlock7-Light/large/luketrustme.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1273_10'), 'https://swccg.com/cards/legacy/VirtualBlock7-Dark/large/kesselsurveillancesystem.gif');
 // Batch B08 (Virtual Block 5): current cards and PC-E1 version cards show the image of their own text
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_2'), 'https://wiki.swccg.com/images/0/07/VB5-02-Aurra_Sing-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_14'), 'https://wiki.swccg.com/images/5/5e/VB5-18-Expand_The_Empire-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_22'), 'https://wiki.swccg.com/images/1/1f/VB5-25-With_Thunderous_Applause-PC-E2-cardmaker.png');
-assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_33'), 'https://wiki.swccg.com/images/f/f7/VB5-33E-Lets_Go_Left-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_33'), 'https://wiki.swccg.com/images/9/93/VB5-33E-Lets_Go_Left-PC-E3-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_34'), 'https://wiki.swccg.com/images/6/68/VB5-35-Bail_Organa-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_35'), 'https://wiki.swccg.com/images/5/54/VB5-37-Clone_Pilot-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_45'), 'https://wiki.swccg.com/images/8/85/VB5-44E-Mace_Windu-PC-E1-cardmaker.png');
@@ -146,8 +144,7 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_65'), 'https://wiki.
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_80'), 'https://wiki.swccg.com/images/9/96/VB5-81-Bravo_Fighter-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_175'), 'https://wiki.swccg.com/images/9/96/VB5-81-Bravo_Fighter-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2250_1022'), 'https://wiki.swccg.com/images/b/b9/VB5-25-With_Thunderous_Applause-PC-E1-cardmaker.png');
-assert.strictEqual(defaults.CardUnderTest.getImageUrl('2250_1044'), 'https://wiki.swccg.com/images/b/b8/VB5-45-Master_Qui_Gon-PC-E1-cardmaker.png');
-assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_44'), 'https://swccg.com/cards/legacy/VirtualBlock5-Light/large/masterquigon.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2250_1044'), 'https://wiki.swccg.com/images/7/72/VB5-45-Master_Qui_Gon-PC-E2-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2250_44'), 'https://wiki.swccg.com/images/2/2e/VB5-45-Master_Qui_Gon.png');
 // Batch B07 (Virtual Block 3-4): current cards show the CardMaker image of their PC-E1 text; originals keep their slips
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1230_114'), 'https://wiki.swccg.com/images/7/70/VB3-117-Tydirium-PC-E1-cardmaker.png');
@@ -194,8 +191,7 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_279'), 'https://wiki.
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_37'), 'https://swccg.com/cards/legacy/VirtualBlock8-Light/large/scoundrelsluck.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2273_1027'), 'https://wiki.swccg.com/images/0/03/VB7-01-Master_Kenobi-original-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2273_27'), 'https://wiki.swccg.com/images/f/fe/VB7-01-Master_Kenobi.png');
-assert.strictEqual(defaults.CardUnderTest.getImageUrl('2273_2027'), 'https://wiki.swccg.com/images/2/2c/VB7-01-Master_Kenobi-PC-E2-cardmaker.png');
-assert.strictEqual(defaults.CardUnderTest.getImageUrl('1273_27'), 'https://swccg.com/cards/legacy/VirtualBlock7-Light/large/masterkenobi.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2273_2027'), 'https://wiki.swccg.com/images/4/44/VB7-01-Master_Kenobi-PC-E3-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2273_1033'), 'https://wiki.swccg.com/images/d/da/VB7-00-Communing-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1273_33'), 'https://swccg.com/cards/legacy/VirtualBlock7-Light/large/communing.gif');
 // Batch B10 (Virtual Block 6): current cards show the CardMaker image of their latest text; 2261_87 the first-copy slip (original), 2261_1087 the PC image (PC-E1)
@@ -231,8 +227,7 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_52'), 'https://wiki.s
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_80'), 'https://wiki.swccg.com/images/6/6b/VB6-79-Jabba_This_Is_Your_Last_Chance-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_1010'), 'https://wiki.swccg.com/images/6/65/VB6-10-Darth_Vader_Betrayer_Of_The_Jedi-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_34'), 'https://wiki.swccg.com/images/4/4a/VB6-34-Fleet_Security_Protocols-original-cardmaker.png');
-assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_1065'), 'https://wiki.swccg.com/images/f/f6/VB6-63-BoShek_Brash_Smuggler-PC-E1-cardmaker.png');
-assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_65'), 'https://swccg.com/cards/legacy/VirtualBlock6-Light/large/boshekbrashsmuggler.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_1065'), 'https://wiki.swccg.com/images/b/ba/VB6-63-BoShek_Brash_Smuggler-PC-E2-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_65'), 'https://wiki.swccg.com/images/f/fd/VB6-63-BoShek_Brash_Smuggler.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_1034'), 'https://swccg.com/cards/legacy/VirtualBlock6-Dark/large/fleetsecurityprotocols.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_10'), 'https://wiki.swccg.com/images/7/79/VB6-10-Darth_Vader_Betrayer_Of_The_Jedi.png');
@@ -584,3 +579,29 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('1282_10_BACK'), 'https://
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2282_10'), 'https://swccg.com/cards/legacy/VirtualBlock8-Dark/large/wookieeslavingoperation.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2282_10_BACK'), 'https://swccg.com/cards/legacy/VirtualBlock8-Dark/large/indenturedtotheempire.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2271_2038'), 'https://wiki.swccg.com/images/4/41/VB7-03-Field_Dressing-original-cardmaker.png');
+// Batch S1 (Bill 2026-11-11): H1 PC-E1 versions and current images
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_76'), 'https://wiki.swccg.com/images/9/95/VB5-75E-Kashyyyk.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2250_76'), 'https://swccg.com/cards/legacy/VirtualBlock5-Light/large/kashyyyk.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1230_23'), 'https://wiki.swccg.com/images/d/dd/VB3-23E-Aratech_Corporation.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_191'), 'https://wiki.swccg.com/images/d/dd/VB3-23E-Aratech_Corporation.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2230_23'), 'https://swccg.com/cards/legacy/VirtualBlock3-Dark/large/aratechcorporation.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2220_1139'), 'https://swccg.com/cards/legacy/VirtualBlock2-Light/large/awayputyourweapon.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2250_1033'), 'https://swccg.com/cards/legacy/VirtualBlock5-Light/large/letsgoleft.gif');
+// Batch S1 five families
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2271_2002'), 'https://wiki.swccg.com/images/c/c1/VL-history-1271-2-front-master.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2271_2039'), 'https://wiki.swccg.com/images/6/6e/VL-history-1271-39-front-master.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_2065'), 'https://wiki.swccg.com/images/5/59/VL-history-1261-65-front-master.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2250_2044'), 'https://wiki.swccg.com/images/d/db/VL-history-1250-44-front-master.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2250_3044'), 'https://swccg.com/cards/legacy/VirtualBlock5-Light/large/masterquigon.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_44'), 'https://wiki.swccg.com/images/d/db/VL-history-1250-44-front-master.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2273_3027'), 'https://wiki.swccg.com/images/0/0a/VL-history-1273-27-front-master.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2273_4027'), 'https://swccg.com/cards/legacy/VirtualBlock7-Light/large/masterkenobi.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1273_27'), 'https://wiki.swccg.com/images/0/0a/VL-history-1273-27-front-master.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_54'), 'https://wiki.swccg.com/images/0/0a/VL-history-1273-27-front-master.png');
+// Batch S1: PC card images as versions; current cards show their Master List slips
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2271_3002'), 'https://swccg.com/cards/legacy/VirtualBlock7-Dark/large/darthvadermoremachinethanman.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2271_3039'), 'https://swccg.com/cards/legacy/VirtualBlock7-Light/large/luketrustme.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_3065'), 'https://swccg.com/cards/legacy/VirtualBlock6-Light/large/boshekbrashsmuggler.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1271_2'), 'https://wiki.swccg.com/images/c/c1/VL-history-1271-2-front-master.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1271_39'), 'https://wiki.swccg.com/images/6/6e/VL-history-1271-39-front-master.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_65'), 'https://wiki.swccg.com/images/5/59/VL-history-1261-65-front-master.png');

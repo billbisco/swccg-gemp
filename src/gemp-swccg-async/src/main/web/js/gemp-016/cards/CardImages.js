@@ -6841,7 +6841,7 @@ const fixedImages = {
 "1220_92":"https://wiki.swccg.com/images/c/c4/VB2-92-Jeroen_Webb-PC-E1-cardmaker.png",
 "1220_93":"https://wiki.swccg.com/images/8/80/VB2-93-Kebyc-PC-E1-cardmaker.png",
 "1220_125":"https://wiki.swccg.com/images/2/20/VB2-125-Hopping_Mad-PC-E1-cardmaker.png",
-"1220_139":"https://wiki.swccg.com/images/3/3b/VB2-139E-Away_Put_Your_Weapon-PC-E1-cardmaker.png",
+"1220_139":"https://wiki.swccg.com/images/3/3e/VB2-139E-Away_Put_Your_Weapon-PC-E3-cardmaker.png",
 "1220_145":"https://wiki.swccg.com/images/f/f8/VB2-145-Impressive_Most_Impressive-PC-E1-cardmaker.png",
 "601_167":"https://wiki.swccg.com/images/f/f8/VB2-145-Impressive_Most_Impressive-PC-E1-cardmaker.png",
 "1210_36":"https://wiki.swccg.com/images/3/33/VB1-36-Forced_Servitude-PC-E1-cardmaker.png",
@@ -6860,7 +6860,7 @@ const fixedImages = {
 "1250_2":"https://wiki.swccg.com/images/0/07/VB5-02-Aurra_Sing-PC-E1-cardmaker.png",
 "1250_14":"https://wiki.swccg.com/images/5/5e/VB5-18-Expand_The_Empire-PC-E1-cardmaker.png",
 "1250_22":"https://wiki.swccg.com/images/1/1f/VB5-25-With_Thunderous_Applause-PC-E2-cardmaker.png",
-"1250_33":"https://wiki.swccg.com/images/f/f7/VB5-33E-Lets_Go_Left-PC-E1-cardmaker.png",
+"1250_33":"https://wiki.swccg.com/images/9/93/VB5-33E-Lets_Go_Left-PC-E3-cardmaker.png",
 "1250_34":"https://wiki.swccg.com/images/6/68/VB5-35-Bail_Organa-PC-E1-cardmaker.png",
 "1250_35":"https://wiki.swccg.com/images/5/54/VB5-37-Clone_Pilot-PC-E1-cardmaker.png",
 "1250_45":"https://wiki.swccg.com/images/8/85/VB5-44E-Mace_Windu-PC-E1-cardmaker.png",
@@ -6937,7 +6937,7 @@ const fixedImages = {
 // Batch B09 version cards: 2261_1010 Darth Vader, Betrayer Of The Jedi PC-E1 (card list) and 2261_1065 BoShek, Brash Smuggler PC-E1 show CardMaker recreations; 2261_34 Fleet Security Protocols original: the slip and PC image both print PC-E1 (2261_1034), so it shows a CardMaker recreation of the first-sheet text.
 "2261_1010":"https://wiki.swccg.com/images/6/65/VB6-10-Darth_Vader_Betrayer_Of_The_Jedi-PC-E1-cardmaker.png",
 "2261_34":"https://wiki.swccg.com/images/4/4a/VB6-34-Fleet_Security_Protocols-original-cardmaker.png",
-"2261_1065":"https://wiki.swccg.com/images/f/f6/VB6-63-BoShek_Brash_Smuggler-PC-E1-cardmaker.png",
+"2261_1065":"https://wiki.swccg.com/images/b/ba/VB6-63-BoShek_Brash_Smuggler-PC-E2-cardmaker.png",
 // Batch B16 (Virtual Blocks 5-6): current cards whose image showed an older text get the image of their latest text (1250_45ai = AI printing of 601_163; 1261_33 Dark Waters shows its PC-E2 card-list text, its PC card image prints PC-E1 and stays on 2261_1033).
 "1250_18":"https://wiki.swccg.com/images/7/78/VB5-15-An_Enemy_Of_The_Republic-PC-E1-cardmaker.png",
 "1250_45ai":"https://wiki.swccg.com/images/1/14/VB5-44EAI-Mace_Windu_AI-PC-E1-cardmaker.png",
@@ -7063,9 +7063,9 @@ const fixedImages = {
 "2271_34":"https://wiki.swccg.com/images/7/7c/VB7-01-Princess_Leia_Lost_Scion.png",
 "2271_40":"https://wiki.swccg.com/images/8/8f/VB7-04-Massassi_Base_Sentry-original-cardmaker.png",
 "2271_41":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/ohhesnotdeadnotyet.gif",
-"2271_1002":"https://wiki.swccg.com/images/9/9a/VB7-01-Darth_Vader_More_Machine_Than_Man-PC-E1-cardmaker.png",
+"2271_1002":"https://wiki.swccg.com/images/1/1c/VB7-01-Darth_Vader_More_Machine_Than_Man-PC-E2-cardmaker.png",
 "2271_1038":"https://wiki.swccg.com/images/3/3b/VB7-03-Field_Dressing-PC-E1-cardmaker.png",
-"2271_1039":"https://wiki.swccg.com/images/f/f3/VB7-03-Luke_Trust_Me-PC-E1-cardmaker.png",
+"2271_1039":"https://wiki.swccg.com/images/5/54/VB7-03-Luke_Trust_Me-PC-E2-cardmaker.png",
 "2271_1040":"https://wiki.swccg.com/images/7/72/VB7-04-Massassi_Base_Sentry.png",
 "2271_1046":"https://wiki.swccg.com/images/a/ac/VB7-00-Restore_Freedom_To_The_Galaxy-original-cardmaker.png",
 "2271_2040":"https://wiki.swccg.com/images/6/6a/VB7-04-Massassi_Base_Sentry-PC-E2-cardmaker.png",
@@ -7087,7 +7087,7 @@ const fixedImages = {
 "2273_34":"https://wiki.swccg.com/images/d/dc/VB7-04-Use_The_Force.png",
 "2273_41":"https://wiki.swccg.com/images/e/e8/VB7-p7-122-Coruscant_Special_Edition.png",
 "2273_1027":"https://wiki.swccg.com/images/0/03/VB7-01-Master_Kenobi-original-cardmaker.png",
-"2273_2027":"https://wiki.swccg.com/images/2/2c/VB7-01-Master_Kenobi-PC-E2-cardmaker.png",
+"2273_2027":"https://wiki.swccg.com/images/4/44/VB7-01-Master_Kenobi-PC-E3-cardmaker.png",
 "2273_1033":"https://wiki.swccg.com/images/d/da/VB7-00-Communing-PC-E1-cardmaker.png",
 "2273_1010":"https://wiki.swccg.com/images/0/00/VB7-00-Kessel_Surveillance_System-PC-E1-cardmaker.png",
 // Batch B03: Through The Force Things You Will See (V) PC-E1 (2012 card list text), CardMaker recreation; 2220_156 keeps the slip, 1220_156 the PC image (PC-E2).
@@ -7222,7 +7222,7 @@ const fixedImages = {
 "2250_33":"https://wiki.swccg.com/images/5/5a/VB5-33E-Lets_Go_Left.png",
 "2250_35":"https://wiki.swccg.com/images/1/14/VB5-37-Clone_Pilot.png",
 "2250_41":"https://wiki.swccg.com/images/7/75/VB5-41-Jedi_Survivor.png",
-"2250_1044":"https://wiki.swccg.com/images/b/b8/VB5-45-Master_Qui_Gon-PC-E1-cardmaker.png",
+"2250_1044":"https://wiki.swccg.com/images/7/72/VB5-45-Master_Qui_Gon-PC-E2-cardmaker.png",
 "2250_45":"https://wiki.swccg.com/images/a/a3/VB5-44E-Mace_Windu.png",
 "2250_55":"https://wiki.swccg.com/images/7/78/VB5-56E-Yoda_Great_Warrior.png",
 "2250_65":"https://wiki.swccg.com/images/4/4a/VB5-65-Ambush.png",
@@ -7393,4 +7393,37 @@ const fixedImages = {
 "2282_10":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Dark/large/wookieeslavingoperation.gif",
 "2282_10_BACK":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Dark/large/indenturedtotheempire.gif",
 "2271_2038":"https://wiki.swccg.com/images/4/41/VB7-03-Field_Dressing-original-cardmaker.png",
+
+// Batch S1 (Bill 2026-11-11, H1): Away Put Your Weapon (V), Let's Go Left (V), Kashyyyk (V), Aratech Corporation (V): the PC card image
+// wording is the 9 September 2009 errata (PC-E1, new 22xx versions show the PC card images); the 7 December 2009 sheet text is PC-E2
+// (current for Kashyyyk and Aratech: the release-sheet slip); the card-list text is PC-E3 (renamed CardMaker files). Five swap families:
+// the card-list CardMaker files were renamed to their new codes (Vader, Qui-Gon, Luke, BoShek PC-E2; Kenobi PC-E3).
+"1250_76":"https://wiki.swccg.com/images/9/95/VB5-75E-Kashyyyk.png",
+"2250_76":"https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/kashyyyk.gif",
+"1230_23":"https://wiki.swccg.com/images/d/dd/VB3-23E-Aratech_Corporation.png",
+"601_191":"https://wiki.swccg.com/images/d/dd/VB3-23E-Aratech_Corporation.png",
+"2230_23":"https://res.starwarsccg.org/cards/legacy/VirtualBlock3-Dark/large/aratechcorporation.gif",
+"2220_1139":"https://res.starwarsccg.org/cards/legacy/VirtualBlock2-Light/large/awayputyourweapon.gif",
+"2250_1033":"https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/letsgoleft.gif",
+// Batch S1 five families (Bill 2026-11-11 07:34: every published text is a version): the forum errata versions show the Master List slip
+// (same words); the PC card images that differ from the Master List (Qui-Gon comma, Kenobi capital O) are versions of their own; the
+// current Master Qui-Gon (V) and Master Kenobi show their Master List slips (PC-E4 / PC-E5).
+"2271_2002":"https://wiki.swccg.com/images/c/c1/VL-history-1271-2-front-master.png",
+"2271_2039":"https://wiki.swccg.com/images/6/6e/VL-history-1271-39-front-master.png",
+"2261_2065":"https://wiki.swccg.com/images/5/59/VL-history-1261-65-front-master.png",
+"2250_2044":"https://wiki.swccg.com/images/d/db/VL-history-1250-44-front-master.png",
+"2250_3044":"https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/masterquigon.gif",
+"1250_44":"https://wiki.swccg.com/images/d/db/VL-history-1250-44-front-master.png",
+"2273_3027":"https://wiki.swccg.com/images/0/0a/VL-history-1273-27-front-master.png",
+"2273_4027":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/masterkenobi.gif",
+"1273_27":"https://wiki.swccg.com/images/0/0a/VL-history-1273-27-front-master.png",
+"601_54":"https://wiki.swccg.com/images/0/0a/VL-history-1273-27-front-master.png",
+// Batch S1 (Bill 2026-11-11 09:14): the PC card images of Darth Vader MMTM, Luke Trust Me and BoShek are versions of their own (PC-E3,
+// 25 Feb 2013); the current cards (Master List, PC-E4) show their Master List slips.
+"2271_3002":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Dark/large/darthvadermoremachinethanman.gif",
+"2271_3039":"https://res.starwarsccg.org/cards/legacy/VirtualBlock7-Light/large/luketrustme.gif",
+"2261_3065":"https://res.starwarsccg.org/cards/legacy/VirtualBlock6-Light/large/boshekbrashsmuggler.gif",
+"1271_2":"https://wiki.swccg.com/images/c/c1/VL-history-1271-2-front-master.png",
+"1271_39":"https://wiki.swccg.com/images/6/6e/VL-history-1271-39-front-master.png",
+"1261_65":"https://wiki.swccg.com/images/5/59/VL-history-1261-65-front-master.png",
 };
