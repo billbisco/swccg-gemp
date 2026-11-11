@@ -41,4 +41,36 @@ public class PlayerNamesTests {
         for (String n : new String[]{"Light Side 2", "Light", "Dark", "Luke Sky", "Padmin"})
             assertFalse(PlayerNames.isReserved(n), n);
     }
+
+    /** The output filter (#249, t129u): what a name can never hold goes; grandfathered names show as stored. */
+    @Test
+    public void forDisplay() {
+        String[][] cases = {
+                {"Luke Skywalker", "Luke Skywalker"},
+                {"luke_sky-walker 2", "luke_sky-walker 2"},
+                {" Luke  Sky__walker_ ", " Luke  Sky__walker_ "},   // spacing is never tidied for display
+                {"Zoë Ångström", "Zoë Ångström"},
+                {"Zoe\u0308", "Zoe\u0308"},
+                {"\u0308Zoe", "Zoe"},
+                {"Владимир", "Владимир"}, {"李小龍", "李小龍"}, {"محمد", "محمد"},
+                {"Han\uD83D\uDE00Solo", "HanSolo"},
+                {"T\uD835\uDC00x", "Tx"},
+                {"<b>Leia</b>", "bLeiab"},
+                {"Leia\"'&#;:/@[]{}|", "Leia"},
+                {"Rey\u200B\u202E\uFE0F\u00AD", "Rey"},
+                {"Obi\u2013Wan\u00A0Kenobi", "Obi-Wan Kenobi"},
+                {"Bad\u0000\u001b[31mName", "Bad31mName"},
+                {"Snow\u2603man\u2122", "Snowman"},
+                {"~OzzelBot", "~OzzelBot"}, {"~Rando_Cal", "~Rando_Cal"},
+                {"Light Side", "Light Side"},
+                {"\uD83D\uDE00\uD83D\uDE00", PlayerNames.DISPLAY_PLACEHOLDER},
+                {" _-", PlayerNames.DISPLAY_PLACEHOLDER},
+                {"", PlayerNames.DISPLAY_PLACEHOLDER},
+                {null, PlayerNames.DISPLAY_PLACEHOLDER},
+        };
+        for (String[] c : cases)
+            assertEquals(c[1], PlayerNames.forDisplay(c[0]), String.valueOf(c[0]));
+        for (String n : new String[]{"R", "Luke Sky", "Luke_Sky", "José Núñez", "김민준", "Ana María de la Cruz Solo Organa"})
+            assertEquals(n, PlayerNames.forDisplay(n), "every well-formed name shows unchanged");
+    }
 }

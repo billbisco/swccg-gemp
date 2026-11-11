@@ -79,7 +79,9 @@ var PlayerPicker = Class.extend({
             });
         };
         widget._renderItem = function (ul, item) {
-            return $("<li></li>").append($("<div></div>").text(item.label)).appendTo(ul);
+            // #249: the label shows the name through the display filter; the value picked stays the stored name
+            var label = typeof playerNameText === "function" ? playerNameText(item.label) : item.label;
+            return $("<li></li>").append($("<div></div>").text(label)).appendTo(ul);
         };
 
         this.toggle.bind("mousedown", function () {

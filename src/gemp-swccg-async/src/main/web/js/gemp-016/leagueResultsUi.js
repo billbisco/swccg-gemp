@@ -221,8 +221,8 @@ var LeagueResultsUI = Class.extend({
                 for (var k = 0; k < matches.length; k++) {
                     var match = matches[k];
                     matchGroup.append($("<tr></tr>")
-                        .append($("<td></td>").text(match.getAttribute("winner")))
-                        .append($("<td></td>").text(match.getAttribute("loser"))));
+                        .append($("<td></td>").text(playerNameText(match.getAttribute("winner"))))
+                        .append($("<td></td>").text(playerNameText(match.getAttribute("loser")))));
                 }
 
                 matchResults.append(matchGroup);
@@ -622,7 +622,7 @@ var LeagueResultsUI = Class.extend({
 
         var cells = function (standing) {
             var out = [];
-            var values = [standing.currentStanding, standing.player, standing.points, standing.gamesPlayed, standing.wins,
+            var values = [standing.currentStanding, standing.player == null ? null : playerNameText(standing.player), standing.points, standing.gamesPlayed, standing.wins,
                 standing.losses, standing.opponentWinPerc];
             for (var v = 0; v < values.length; v++)
                 out.push($("<td></td>").text(values[v] == null ? "" : String(values[v])));

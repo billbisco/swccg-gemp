@@ -45,7 +45,8 @@
     <script type="text/javascript" src="js/gemp-016/inheritance.js"></script>
     <script type="text/javascript" src="js/gemp-016/common.js"></script>
     <script type="text/javascript" src="js/gemp-016/logging.js"></script>
-    <script type="text/javascript" src="js/gemp-016/chat.js"></script>
+    <script type="text/javascript" src="js/swccg-names.js?v=20261111-nf"></script>
+    <script type="text/javascript" src="js/gemp-016/chat.js?v=20261111-nf"></script>
     <script type="text/javascript" src="js/gemp-016/communication.js?v=20261021b"></script>
     <script type="text/javascript" src="js/gemp-016/deliveryService.js?v=20261006h"></script>
     <script type="text/javascript" src="js/gemp-016/commonUi.js"></script>
@@ -57,17 +58,17 @@
     <script type="text/javascript" src="js/gemp-016/cards/PackImages.js"></script>
 
     <script type="text/javascript" src="js/gemp-016/gameOptionsForm.js?v=20261103-135"></script>
-    <script type="text/javascript" src="js/gemp-016/hallUi.js"></script>
-    <script type="text/javascript" src="js/gemp-016/leagueResultsUi.js"></script>
-    <script type="text/javascript" src="js/gemp-016/tournamentResultsUi.js"></script>
+    <script type="text/javascript" src="js/gemp-016/hallUi.js?v=20261111-nf"></script>
+    <script type="text/javascript" src="js/gemp-016/leagueResultsUi.js?v=20261111-nf"></script>
+    <script type="text/javascript" src="js/gemp-016/tournamentResultsUi.js?v=20261111-nf"></script>
     <script type="text/javascript" src="js/gemp-016/statsUi.js"></script>
     <script type="text/javascript" src="js/gemp-016/playerStatsUi.js"></script>
-    <script type="text/javascript" src="js/gemp-016/gameHistoryUi.js"></script>
+    <script type="text/javascript" src="js/gemp-016/gameHistoryUi.js?v=20261111-nf"></script>
     <script type="text/javascript" src="js/gemp-016/deckBuildingUi.js"></script>
-    <script type="text/javascript" src="js/gemp-016/gameUi.js"></script>
+    <script type="text/javascript" src="js/gemp-016/gameUi.js?v=20261111-nf"></script>
     <script type="text/javascript" src="js/gemp-016/gameAnimations.js"></script>
     <script type="text/javascript" src="js/gemp-016/merchantUi.js"></script>
-    <script type="text/javascript" src="js/swccg-login-box.js?v=20261111a"></script>
+    <script type="text/javascript" src="js/swccg-login-box.js?v=20261111-nf"></script>
 
     <script type="text/javascript">
         jQuery.fn.center = function () {
@@ -149,6 +150,13 @@
                         $("#registerButton").button().click(register);
                         // This page runs jQuery 1.6, which has no .on(); bind() covers typing and paste.
                         $("#login, #password").bind("input keyup change", showPasswordNameNote);
+                        // #249: the name box drops characters a name can never hold as they are typed or pasted
+                        // (the server still refuses them). Not when the box only carries an old name for a reset.
+                        if (window.SwccgNames)
+                            SwccgNames.attach(document.getElementById("login"), {
+                                note: document.getElementById("loginNameNote"),
+                                active: function () { return $("#registerButton").text().indexOf("Update Password") < 0; }
+                            });
                     });
         }
 
@@ -313,6 +321,7 @@
               <input id="sbox-name" name="name" type="text" autocomplete="username webauthn"
                      autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="40" required>
               <p class="sbox-hint sbox-name-hint" hidden>Up to 32 letters, digits, spaces, - or _. Other players see it.</p>
+              <p class="sbox-hint sbox-name-note" id="sbox-name-note" hidden></p>
             </div>
             <div class="sbox-field">
               <label for="sbox-password">Password</label>

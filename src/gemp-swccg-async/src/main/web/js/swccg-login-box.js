@@ -102,6 +102,11 @@
     this.pkForm = $(root, "form.sbox-pk-form");
     this.err = $(root, ".sbox-error");
     this.name = $(root, "input[name=name]");
+    var box = this;
+    this.nameFilter = window.SwccgNames ? window.SwccgNames.attach(this.name, {
+      note: $(root, ".sbox-name-note"),
+      active: function () { return box.mode && box.mode.value === "signup"; }
+    }) : null;
     this.password = $(root, "input[name=password]");
     this.confirmRow = $(root, ".sbox-confirm");
     this.confirm = $(root, "input[name=confirm]");
@@ -211,6 +216,12 @@
     this.setBusy(null, false);
     this.clearError();
     this.mode.value = signup ? "signup" : "signin";
+    // #249: in signup mode the name box drops characters a name can never hold as they are typed or pasted, and
+    // takes at most 32; signing in takes any existing name as typed.
+    this.name.setAttribute("maxlength", signup ? "32" : "40");
+    if (this.nameFilter) {
+      if (signup) this.nameFilter.clean(); else this.nameFilter.reset();
+    }
     this.confirmRow.hidden = !signup;
     this.confirm.required = signup;
     this.password.setAttribute("autocomplete", signup ? "new-password" : "current-password");

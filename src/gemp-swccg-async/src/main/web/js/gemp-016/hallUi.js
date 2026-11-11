@@ -3903,6 +3903,16 @@ var GempSwccgHallUI = Class.extend({
         return $("<td></td>").text(text == null ? "" : text);
     },
 
+    // A comma-separated list of player names from the server, each ready to show (#249).
+    playerListText: function(list) {
+        if (!list)
+            return "";
+        var parts = String(list).split(", ");
+        for (var i = 0; i < parts.length; i++)
+            parts[i] = playerNameText(parts[i]);
+        return parts.join(", ");
+    },
+
     animateRowUpdate: function(rowSelector) {
         $(rowSelector, this.tablesDiv)
             .css({borderTopColor:"#000000", borderLeftColor:"#000000", borderBottomColor:"#000000", borderRightColor:"#000000"})
@@ -4045,7 +4055,7 @@ var GempSwccgHallUI = Class.extend({
             this.renderTableAge(ageSpan);
         }
         row.append(statusCell);
-        row.append(this.cell(playersStr));
+        row.append(this.cell(this.playerListText(playersStr)));
 
         var lastField = $("<td></td>");
         if (joinable && !joined) {
@@ -4521,7 +4531,7 @@ var GempSwccgHallUI = Class.extend({
                     for (var playerI = 0; playerI < players.length; playerI++) {
                         if (playerI > 0)
                             playersStr += ", ";
-                        playersStr += players[playerI];
+                        playersStr += playerNameText(players[playerI]);
                     }
                     row.append(this.cell(playersStr));
 
@@ -4576,7 +4586,7 @@ var GempSwccgHallUI = Class.extend({
                         }
                     } else if (status == "FINISHED") {
                         if (winner != null) {
-                            lastField.text(winner);
+                            lastField.text(playerNameText(winner));
                         }
                         if (gameId)
                             this.closeReadyModal("game:" + gameId);

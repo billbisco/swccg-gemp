@@ -511,7 +511,7 @@ var GameHistoryUI = Class.extend({
                 render: function (row) {
                     if (!row.opponent)
                         return "—";
-                    return that.filterLink(row.opponent, {opponent: row.opponent, opponentExact: true});
+                    return that.filterLink(playerNameText(row.opponent), {opponent: row.opponent, opponentExact: true});
                 }},
             {key: "format", title: "Format", className: "gh-format gh-left",
                 render: function (row) {

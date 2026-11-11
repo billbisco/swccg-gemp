@@ -17,6 +17,7 @@ import com.gempukku.swccgo.tournament.ConstructedPlayerStanding;
 import com.gempukku.swccgo.tournament.PlayerMadeQueue;
 import com.gempukku.swccgo.tournament.Tournament;
 import com.gempukku.swccgo.tournament.TournamentService;
+import com.gempukku.swccgo.service.PlayerNames;
 import org.apache.commons.text.StringEscapeUtils;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpRequest;
@@ -217,7 +218,7 @@ public class TournamentRequestHandler extends SwccgoServerRequestHandler impleme
         StringBuilder result = new StringBuilder();
         result.append("<html><body>");
         result.append("<h1>" + StringEscapeUtils.escapeHtml3(deck.getDeckName()) + "</h1>");
-        result.append("<h2>by " + playerName + "</h2>");
+        result.append("<h2>by " + StringEscapeUtils.escapeHtml3(PlayerNames.forDisplay(playerName)) + "</h2>");
         DefaultCardCollection deckCards = new DefaultCardCollection();
         for (String card : deck.getCards())
             deckCards.addItem(_library.getBaseBlueprintId(card), 1);

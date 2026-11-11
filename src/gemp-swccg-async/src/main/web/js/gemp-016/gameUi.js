@@ -289,7 +289,7 @@ var GempSwccgGameUI = Class.extend({
                 autoOpen: false,
                 closeOnEscape: true,
                 resizable: true,
-                title: "Out of play - " + this.allPlayerIds[i],
+                title: "Out of play - " + playerNameText(this.allPlayerIds[i]),
                 minHeight: 80,
                 minWidth: 200,
                 width: 600,
@@ -487,7 +487,7 @@ var GempSwccgGameUI = Class.extend({
                 politicsTotalClass = "lightPoliticsTotal"
             }
 
-            this.gameStateElem.append("<div class='player'>" + (i + 1) + ". " + this.allPlayerIds[i] + "<div id='clock" + i + "' class='clock'></div><div class='phase'></div>"
+            this.gameStateElem.append("<div class='player'>" + (i + 1) + ". " + $("<div/>").text(playerNameText(this.allPlayerIds[i])).html() + "<div id='clock" + i + "' class='clock'></div><div class='phase'></div>"
                 + "<div class='playerStats'><div id='hand" + i + "' class='" + handClass + "'></div><div id='sabaccHand" + i + "' class='" + sabaccHandClass + "'></div><div id='showStats" + i + "' class='showStats'></div><div id='outOfPlay" + i + "' class='" + outOfPlayClass + "'></div><div id='forceGeneration" + i + "' class='" + forceGenerationClass + "'></div><div id='politicsTotal" + i + "' class='" + politicsTotalClass + "'></div><div id='raceTotal" + i + "' class='" + raceTotalClass + "'></div></div></div>");
         }
         this.gameStateElem.append("<div id='clock-1' class='decisionClock'></div>");
@@ -1361,7 +1361,7 @@ var GempSwccgGameUI = Class.extend({
             var val = "";
             if (!this.replayMode) {
                 for (var i = 0; i < players.length; i++)
-                    val += players[i] + "<br/>";
+                    val += chatListEntryHtml(players[i]) + "<br/>";
                 $("a[href='#playersInRoomBox']").html("Players(" + players.length + ")");
                 $("#playersInRoomBox").html(val);
             }
