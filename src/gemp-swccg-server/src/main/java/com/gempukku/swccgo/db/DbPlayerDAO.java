@@ -478,25 +478,12 @@ public class DbPlayerDAO implements PlayerDAO {
      * @throws LoginInvalidException an invalid login exception
      */
     private boolean validateNewUser(String playerName) throws SQLException, LoginInvalidException, RegisterNotAllowedException {
-        final String validLoginChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_";
-
-        if (playerName.length() < 2 || playerName.length() > 10) {
+        // The site's name rule (1-32 characters, spaces allowed; swccg-guild/work#249, t122u).
+        if (!com.gempukku.swccgo.service.PlayerNames.isWellFormed(playerName)) {
             throw new LoginInvalidException();
         }
-
-        for (int i = 0; i < playerName.length(); i++) {
-            char c = playerName.charAt(i);
-            if (!validLoginChars.contains("" + c)) {
-                throw new LoginInvalidException();
-            }
-        }
-
-        String lowerCase = playerName.toLowerCase();
-        if (lowerCase.startsWith("admin") || lowerCase.startsWith("guest") || lowerCase.startsWith("system") || lowerCase.startsWith("bye")) {
-            return false;
-        }
-        // Guest seat ids in Play now games ("Light Side", "Dark Side"; "Light_Side" is the same name).
-        if (com.gempukku.swccgo.guest.PlayNowSide.isSeatName(playerName)) {
+        // Reserved prefixes, bots, and the guest seat names in both spellings.
+        if (com.gempukku.swccgo.service.PlayerNames.isReserved(playerName)) {
             return false;
         }
 
@@ -593,16 +580,7 @@ public class DbPlayerDAO implements PlayerDAO {
 
     @Override
     public synchronized String renamePlayer(int playerId, String newName) throws SQLException {
-        if (newName == null || newName.length() < 2 || newName.length() > 10)
-            return "name_invalid";
-        for (int i = 0; i < newName.length(); i++) {
-            char c = newName.charAt(i);
-            if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '-' || c == '_'))
-                return "name_invalid";
-        }
-        String lower = newName.toLowerCase(Locale.ROOT);
-        if (lower.startsWith("admin") || lower.startsWith("guest") || lower.startsWith("system") || lower.startsWith("bye")
-                || Player.isBot(newName) || com.gempukku.swccgo.guest.PlayNowSide.isSeatName(newName))
+        if (!com.gempukku.swccgo.service.PlayerNames.isAllowedNewName(newName))
             return "name_invalid";
         try (Connection conn = _dbAccess.getDataSource().getConnection()) {
             boolean autoCommit = conn.getAutoCommit();

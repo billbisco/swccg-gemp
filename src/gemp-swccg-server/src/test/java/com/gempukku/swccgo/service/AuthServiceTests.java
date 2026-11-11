@@ -185,7 +185,7 @@ public class AuthServiceTests {
         assertEquals("name_taken", assertThrows(AuthService.RenameRefused.class, () -> auth.renameAccount(bill.getId(), "han")).code()); //test2
         assertEquals("BILLY", auth.renameAccount(bill.getId(), "BILLY").getName()); //test2
         assertEquals("name_invalid", assertThrows(AuthService.RenameRefused.class, () -> auth.renameAccount(bill.getId(), "admin1")).code()); //test3
-        assertEquals("name_invalid", assertThrows(AuthService.RenameRefused.class, () -> auth.renameAccount(bill.getId(), "a b")).code()); //test3
+        assertEquals("name_invalid", assertThrows(AuthService.RenameRefused.class, () -> auth.renameAccount(bill.getId(), "a  b")).code()); //test3
         auth.closeAccount(bill.getId());
         assertEquals("deactivated", assertThrows(AuthService.RenameRefused.class, () -> auth.renameAccount(bill.getId(), "Billy2")).code()); //test4
         assertEquals("not_found", assertThrows(AuthService.RenameRefused.class, () -> auth.renameAccount(bill.getId() + 1000, "Billy2")).code()); //test4
@@ -218,6 +218,29 @@ public class AuthServiceTests {
         assertEquals(AuthService.Status.INVALID, auth.verifyCredentials("Luke_Sky", "spacepass1", IP).getStatus()); //test2
         assertEquals("name_taken", assertThrows(AuthService.RenameRefused.class,
                 () -> auth.renameAccount(spaced.getId(), "luke_sky")).code()); //test1
+    }
+
+    @Test
+    public void fullNamesWithSpacesCanBeCreatedStoredAndUsedToSignIn() throws Exception {
+        //test1: a name with a space is kept as typed (t122u), up to 32 characters, and signs in
+        //test2: "Luke Sky" and "Luke_Sky" stay two names; case is still ignored
+        //test3: rename to a name with a space works; the old 2-10 ASCII cap is gone
+        //test4: existing names without spaces still sign in
+        Player old = dao.addWithStoredHash("Han", hasher.hash("oldaccount1"), "u", null);
+        assertTrue(auth.register("Luke Sky", "spacepass1", "203.0.113.21")); //test1
+        assertEquals("Luke Sky", auth.verifyCredentials("Luke Sky", "spacepass1", IP).getCanonicalName()); //test1
+        assertEquals(AuthService.Status.OK, auth.verifyCredentials("luke sky", "spacepass1", IP).getStatus()); //test1
+        assertTrue(auth.register("Luke_Sky", "underpass1", "203.0.113.22")); //test2
+        assertThrows(LoginInvalidException.class, () -> auth.register("LUKE SKY", "x".repeat(12), "203.0.113.23")); //test2
+        assertTrue(auth.register("Ana María de la Cruz Solo Organa", "longpass12", "203.0.113.24")); //test1: 32 characters
+        assertThrows(LoginInvalidException.class, () -> auth.register("Ana María de la Cruz Solo Organa2", "longpass12", "203.0.113.25")); //test1: 33
+        assertTrue(auth.register("R", "onecharname", "203.0.113.26")); //test1: 1 character
+        assertEquals("Obi Wan Kenobi", auth.renameAccount(old.getId(), "Obi Wan Kenobi").getName()); //test3
+        assertEquals(AuthService.Status.OK, auth.verifyCredentials("Obi Wan Kenobi", "oldaccount1", IP).getStatus()); //test3
+        assertEquals(AuthService.Status.OK, auth.verifyCredentials("Luke_Sky", "underpass1", IP).getStatus()); //test4
+        for (String seat : new String[]{"Light Side", "Light_Side", "Dark Side", "Dark_Side", "LIGHT SIDE"})
+            assertFalse(auth.register(seat, "longenough", "203.0.113.27"), seat);
+        assertTrue(auth.register("Light Side 2", "longenough", "203.0.113.28"));
     }
 
     @Test

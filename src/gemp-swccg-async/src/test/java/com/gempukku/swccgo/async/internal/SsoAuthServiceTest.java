@@ -136,10 +136,20 @@ class SsoAuthServiceTest {
     }
 
     @Test
+    void playersKeepsSpacesInFullNames() throws Exception {
+        // t122u: a full name with a space reaches Play as typed, not as "Luke_Sky"
+        when(auth.createPlayerWithoutPassword("Luke Sky", IP)).thenReturn(player(9, "Luke Sky", "u"));
+        JSONObject r = json(call(KEY, SsoAuthService.PLAYERS, "{\"username\":\"Luke Sky\",\"client_ip\":\"" + IP + "\"}", NOW));
+        assertEquals(true, r.get("ok"));
+        assertEquals("Luke Sky", ((JSONObject) r.get("user")).get("name"));
+        verify(auth).createPlayerWithoutPassword("Luke Sky", IP);
+    }
+
+    @Test
     void registerErrors() throws Exception {
         when(auth.registerAndGet(eq("Taken"), anyString(), anyString())).thenThrow(new LoginInvalidException());
         assertEquals("name_taken", json(call(KEY, SsoAuthService.REGISTER, "{\"username\":\"Taken\",\"password\":\"p\",\"client_ip\":\"" + IP + "\"}", NOW)).get("error"));
-        assertEquals("name_invalid", json(call(KEY, SsoAuthService.REGISTER, "{\"username\":\"a b\",\"password\":\"p\",\"client_ip\":\"" + IP + "\"}", NOW)).get("error"));
+        assertEquals("name_invalid", json(call(KEY, SsoAuthService.REGISTER, "{\"username\":\"a  b\",\"password\":\"p\",\"client_ip\":\"" + IP + "\"}", NOW)).get("error"));
         assertEquals("name_invalid", json(call(KEY, SsoAuthService.REGISTER, "{\"username\":\"~Bot\",\"password\":\"p\",\"client_ip\":\"" + IP + "\"}", NOW)).get("error"));
         when(settings.newAccountRegistrationEnabled()).thenReturn(false);
         assertEquals("signup_closed", json(call(KEY, SsoAuthService.REGISTER, "{\"username\":\"New1\",\"password\":\"p\",\"client_ip\":\"" + IP + "\"}", NOW)).get("error"));
@@ -252,7 +262,7 @@ class SsoAuthServiceTest {
         //test3: Play's own refusals pass through with their code
         //test4: an empty body is a signed 400, so swccg-login shows the feature
         service.setRenameHooks(name -> name.equals("Rey"), null);
-        assertEquals("name_invalid", json(call(KEY, SsoAuthService.RENAME, "{\"id\":11,\"username\":\"has space\"}", NOW)).get("error")); //test1
+        assertEquals("name_invalid", json(call(KEY, SsoAuthService.RENAME, "{\"id\":11,\"username\":\"has  two spaces\"}", NOW)).get("error")); //test1
         verify(auth, never()).renameAccount(anyInt(), org.mockito.ArgumentMatchers.anyString()); //test1
         when(auth.getPlayer(12)).thenReturn(player(12, "Rey", "u"));
         assertEquals("busy", json(call(KEY, SsoAuthService.RENAME, "{\"id\":12,\"username\":\"Rey2\"}", NOW)).get("error")); //test2
