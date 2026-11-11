@@ -13,7 +13,7 @@ import static com.gempukku.swccgo.cards.set2271.VersionAsserts.assertSameUniqueC
 import static com.gempukku.swccgo.cards.set2271.VersionAsserts.assertVersion;
 import static org.junit.Assert.*;
 
-/** Luke, Trust Me PC-E1 (PC website card list, "Epic Even" as printed there), a version of 1271_39: same play as the current card. */
+/** Luke, Trust Me PC-E2 (PC website card list, "Epic Even" as printed there), a version of 1271_39: same play as the current card. */
 public class Card_2271_1039_Tests {
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>() {{
@@ -28,7 +28,7 @@ public class Card_2271_1039_Tests {
     @Test
     public void ErrataLukeTrustMeIsTheCurrentCardWithItsOwnText() {
         assertVersion(VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("2271_1039"),
-                VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("1271_39"), "1271_39", "PC-E1",
+                VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("1271_39"), "1271_39", "PC-E2",
                 LocalDate.of(2012, 7, 21), LocalDate.of(2013, 4, 27),
                 "If you have no Epic Events on table (and did not play an Epic Even at the start of the game), deploy on table. Once per game, may take a [Setup] card into hand from Reserve Deck; reshuffle. May place this Effect in Used Pile to take an Immediate Effect into hand from Reserve Deck; reshuffle. May place this Effect in Lost Pile to cancel a Force drain. (Immune to Alter.)");
     }

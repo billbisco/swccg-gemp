@@ -54,7 +54,7 @@ public class Card_2220_139_Tests {
         assertNotEquals(current.getGameText(), card.getGameText());
         var version = card.getLegacyVersion();
         assertEquals("1220_139", version.currentPrintingId());
-        assertEquals("", version.label());
+        assertEquals("PC-E2", version.label());
         assertEquals(LocalDate.of(2009, 12, 7), version.printedOn());
         assertEquals(LocalDate.of(2012, 7, 21), version.supersededOn());
         assertEquals(GameUtils.getFullName(current), GameUtils.getFullName(card));

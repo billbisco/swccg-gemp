@@ -13,7 +13,7 @@ import static com.gempukku.swccgo.cards.set2271.VersionAsserts.assertSameUniqueC
 import static com.gempukku.swccgo.cards.set2271.VersionAsserts.assertVersion;
 import static org.junit.Assert.*;
 
-/** Darth Vader, More Machine Than Man as on the PC card list (PC-E1, by 2012-07-21), a version of 1271_2: same play as the current card, sentence order only. */
+/** Darth Vader, More Machine Than Man as on the PC card list (PC-E2, by 2012-07-21; Batch S1 date order), a version of 1271_2: same play as the current card, sentence order only. */
 public class Card_2271_1002_Tests {
     private VirtualTableScenario scenario() {
         return new VirtualTableScenario(new HashMap<>() {{
@@ -29,7 +29,7 @@ public class Card_2271_1002_Tests {
     @Test
     public void CardListVaderIsTheCurrentCardWithItsOwnText() {
         assertVersion(VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("2271_1002"),
-                VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("1271_2"), "1271_2", "PC-E1",
+                VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("1271_2"), "1271_2", "PC-E2",
                 LocalDate.of(2012, 7, 21), LocalDate.of(2013, 4, 27),
                 "Adds 3 to power of anything he pilots. [Vader] cards never deploy unless Rise Of The Dark Lord on table. Once per turn, if at a site you control, may apply his ability to draw battle destiny elsewhere. Immune to Clash Of Sabers and attrition < 5. May not be Disarmed.");
     }
