@@ -129,7 +129,7 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('2271_2040'), 'https://wik
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2271_1046'), 'https://wiki.swccg.com/images/a/ac/VB7-00-Restore_Freedom_To_The_Galaxy-original-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2271_46'), 'https://swccg.com/cards/legacy/VirtualBlock7-Light/large/restorefreedomtothegalaxy.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2271_2046'), 'https://wiki.swccg.com/images/4/4d/VB7-00-Restore_Freedom_To_The_Galaxy-PC-E2-cardmaker.png');
-assert.strictEqual(defaults.CardUnderTest.getImageUrl('2273_1010'), 'https://wiki.swccg.com/images/0/0c/VB7-00-Kessel_Surveillance_System-PC-E2-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2273_1010'), 'https://wiki.swccg.com/images/0/0d/VB7-00-Kessel_Surveillance_System-PC-E3-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1273_10'), 'https://wiki.swccg.com/images/5/57/VL-history-1273-10-front-master.png');
 // Batch B08 (Virtual Block 5): current cards and PC-E1 version cards show the image of their own text
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_2'), 'https://wiki.swccg.com/images/0/07/VB5-02-Aurra_Sing-PC-E1-cardmaker.png');
@@ -238,7 +238,7 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_45ai'), 'https://wik
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2250_45ai'), 'https://swccg.com/cards/legacy/VirtualBlock5-Light/large/macewinduai.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2250_44ai'), 'https://wiki.swccg.com/images/a/ad/VB5-45AI-Master_Qui_Gon_AI-original-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_33'), 'https://wiki.swccg.com/images/3/35/VL-history-1261-33-front-master.png');
-assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_1033'), 'https://swccg.com/cards/legacy/VirtualBlock6-Dark/large/darkwaters&kraytdragonbones.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_1033'), 'https://wiki.swccg.com/images/7/71/VB6-32-Dark_Waters_Krayt_Dragon_Bones-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_33'), 'https://wiki.swccg.com/images/c/cd/VB6-32-Dark_Waters_Krayt_Dragon_Bones.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_42'), 'https://wiki.swccg.com/images/9/94/VB6-45-Lone_Pilot-original-sheet.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_1042'), 'https://wiki.swccg.com/images/c/c2/VB6-45-Lone_Pilot.png');
@@ -580,7 +580,7 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('2282_10_BACK'), 'https://
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2271_2038'), 'https://wiki.swccg.com/images/4/41/VB7-03-Field_Dressing-original-cardmaker.png');
 // Batch B41: every published text is a version (Luke's Blaster Pistol, Dark Waters, Phylo, Mos Eisley, AT-RT, Aggressive Negotiations, Rycar, titles, Kessel, KSS, INC, Scoundrel's Luck, Geonosis, I'm Sorry, Leave Them To Me, Armed And Dangerous)
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2220_2169'), 'https://wiki.swccg.com/images/5/57/VB2-169-Luke_s_Blaster_Pistol-PC-E1-cardmaker.png');
-assert.strictEqual(defaults.CardUnderTest.getImageUrl('2220_3169'), 'https://swccg.com/cards/legacy/VirtualBlock2-Light/large/lukesblasterpistol.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2220_3169'), 'https://wiki.swccg.com/images/5/58/VB2-169-Luke_s_Blaster_Pistol-PC-E2-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2220_1169'), 'https://wiki.swccg.com/images/3/35/VB2-169-Luke_s_Blaster_Pistol-PC-E3-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_33'), 'https://wiki.swccg.com/images/3/35/VL-history-1261-33-front-master.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_2033'), 'https://wiki.swccg.com/images/d/d4/VB6-32-Dark_Waters_Krayt_Dragon_Bones-PC-E2-cardmaker.png');
@@ -598,10 +598,10 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('2291_69'), 'https://wiki.
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2291_69_BACK'), 'https://wiki.swccg.com/images/a/ab/VB9-07-Republic_At_War_Aggressive_Negotiations.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1291_69_BACK'), 'https://wiki.swccg.com/images/1/1e/VB9-07-Republic_At_War_Aggressive_Negotiations-PC-E3-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2210_136'), 'https://wiki.swccg.com/images/c/c1/VB1-137-Rycar_Ryjerd.png');
-assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_136'), 'https://wiki.swccg.com/images/5/58/VB1-137-Rycar_Ryjerd-PC-E3-cardmaker.png');
-assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_101'), 'https://wiki.swccg.com/images/5/58/VB1-137-Rycar_Ryjerd-PC-E3-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1210_136'), 'https://wiki.swccg.com/images/a/a7/VB1-137-Rycar_Ryjerd-PC-E4-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_101'), 'https://wiki.swccg.com/images/a/a7/VB1-137-Rycar_Ryjerd-PC-E4-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2282_23'), 'https://wiki.swccg.com/images/9/98/VB8-03-Found_Someone_You_Have_Higher_Ground.png');
-assert.strictEqual(defaults.CardUnderTest.getImageUrl('1282_23'), 'https://wiki.swccg.com/images/8/83/VB8-03-Found_Someone_You_Have_Higher_Ground-PC-E3-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('1282_23'), 'https://wiki.swccg.com/images/b/b4/VB8-03-Found_Someone_You_Have_Higher_Ground-PC-E4-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2291_9'), 'https://wiki.swccg.com/images/2/21/VB9-04-Begin_Landing_Your_Troops_The_Dark_Path.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1291_9'), 'https://wiki.swccg.com/images/0/06/VB9-04-Begin_Landing_Your_Troops_The_Dark_Path-PC-E3-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2240_55'), 'https://wiki.swccg.com/images/b/b8/VB4-54-Kessel_Spice_Mines_Extraction_Facility.png');
@@ -609,17 +609,17 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('1240_55'), 'https://wiki.
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2291_1019'), 'https://wiki.swccg.com/images/d/d2/VB9-p4-20-Geonosis_Separatist_Council_Room.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1291_19'), 'https://wiki.swccg.com/images/6/67/VB9-p4-20-Geonosis_Separatist_Council_Room-PC-E3-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2273_2010'), 'https://swccg.com/cards/legacy/VirtualBlock7-Dark/large/kesselsurveillancesystem.gif');
-assert.strictEqual(defaults.CardUnderTest.getImageUrl('2273_1010'), 'https://wiki.swccg.com/images/0/0c/VB7-00-Kessel_Surveillance_System-PC-E2-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2273_1010'), 'https://wiki.swccg.com/images/0/0d/VB7-00-Kessel_Surveillance_System-PC-E3-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_32'), 'https://wiki.swccg.com/images/4/45/VL-history-1281-32-front-master.png');
-assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_1032'), 'https://wiki.swccg.com/images/0/01/VB8-03-Imperial_Navigation_Charts.png');
-assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_2032'), 'https://wiki.swccg.com/images/5/54/VB8-03-Imperial_Navigation_Charts-PC-E2-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_1032'), 'https://wiki.swccg.com/images/4/49/VB8-03-Imperial_Navigation_Charts-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_2032'), 'https://wiki.swccg.com/images/c/c8/VB8-03-Imperial_Navigation_Charts-PC-E3-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1281_32'), 'https://swccg.com/cards/legacy/VirtualBlock8-Light/large/imperialnavigationcharts.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('601_111'), 'https://swccg.com/cards/legacy/VirtualBlock8-Light/large/imperialnavigationcharts.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_1037'), 'https://wiki.swccg.com/images/5/57/VB8-03-Scoundrels_Luck.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_2037'), 'https://swccg.com/cards/legacy/VirtualBlock8-Light/large/scoundrelsluck.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2220_2036'), 'https://wiki.swccg.com/images/a/aa/VB2-36-I_m_Sorry-PC-E3-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1220_36'), 'https://wiki.swccg.com/images/2/24/VL-history-1220-36-front-master.png');
-assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_1024'), 'https://swccg.com/cards/legacy/VirtualBlockDS-Dark/large/leavethemtomev.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_1024'), 'https://wiki.swccg.com/images/2/25/VB6-23-Leave_Them_To_Me_Death_Star_II-original-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_2024'), 'https://wiki.swccg.com/images/0/04/VB6-23-Leave_Them_To_Me_Death_Star_II-PC-E2-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_21'), 'https://wiki.swccg.com/images/0/0e/VB6-22-Leave_Them_To_Me_Reflections_III.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_1021'), 'https://wiki.swccg.com/images/b/be/VB6-22-Leave_Them_To_Me_Reflections_III-PC-E1-cardmaker.png');
@@ -651,7 +651,7 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_24'), 'https://wiki.
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_3024'), 'https://swccg.com/cards/legacy/VirtualBlockDS-Dark/large/leavethemtomev.gif');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1261_21'), 'https://wiki.swccg.com/images/7/7a/VL-history-1261-21-front-master.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_2021'), 'https://swccg.com/cards/legacy/VirtualBlockDS-Dark/large/leavethemtome.gif');
-assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_1093'), 'https://wiki.swccg.com/images/c/cd/VB6-91-Armed_And_Dangerous_Krayt_Dragon_Howl.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_1093'), 'https://wiki.swccg.com/images/7/76/VB6-91-Armed_And_Dangerous_Krayt_Dragon_Howl-PC-E1-cardmaker.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_2093'), 'https://swccg.com/cards/legacy/VirtualBlock6-Light/large/armedanddangerous&kraytdragonhowl.gif');
 // Batch S1 (Bill 2026-11-11): H1 PC-E1 versions and current images
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('1250_76'), 'https://wiki.swccg.com/images/9/95/VB5-75E-Kashyyyk.png');
@@ -1132,3 +1132,11 @@ assert.strictEqual(defaults.CardUnderTest.getImageUrl('2282_2003'), 'https://wik
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2282_2015'), 'https://wiki.swccg.com/images/6/69/VL-history-1282-15-front-master.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2282_2020'), 'https://wiki.swccg.com/images/f/f1/VL-history-1282-20-front-master.png');
 assert.strictEqual(defaults.CardUnderTest.getImageUrl('2282_2026'), 'https://wiki.swccg.com/images/a/ac/VL-history-1282-26-front-master.png');
+// Batch B41b
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2261_3093'), 'https://wiki.swccg.com/images/f/f6/VB6-91-Armed_And_Dangerous_Krayt_Dragon_Howl-PC-E2-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2273_10'), 'https://wiki.swccg.com/images/0/00/VB7-00-Kessel_Surveillance_System-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2273_3010'), 'https://wiki.swccg.com/images/a/a1/VB7-00-Kessel_Surveillance_System.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_3032'), 'https://wiki.swccg.com/images/0/01/VB8-03-Imperial_Navigation_Charts.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2281_3037'), 'https://wiki.swccg.com/images/5/57/VB8-03-Scoundrels_Luck.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2210_3136'), 'https://wiki.swccg.com/images/e/e2/VB1-137-Rycar_Ryjerd-PC-E1-cardmaker.png');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('2282_3023'), 'https://wiki.swccg.com/images/4/4b/VB8-03-Found_Someone_You_Have_Higher_Ground-PC-E1-cardmaker.png');

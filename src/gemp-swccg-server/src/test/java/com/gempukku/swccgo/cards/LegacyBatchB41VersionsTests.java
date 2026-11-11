@@ -63,27 +63,27 @@ public class LegacyBatchB41VersionsTests {
             Map.entry("2291_1069_BACK", new String[]{"1291_69_BACK", "PC-E1", "2014-02-03", "2014-02-18", null}),
             Map.entry("2291_2069", new String[]{"1291_69", "PC-E2", "2014-02-18", "2014-08-08", null}),
             Map.entry("2291_2069_BACK", new String[]{"1291_69_BACK", "PC-E2", "2014-02-18", "2014-08-08", null}),
-            Map.entry("2210_136", new String[]{"1210_136", "", "2009-12-07", "2013-02-25", null}),
-            Map.entry("2210_1136", new String[]{"1210_136", "PC-E1", "2013-02-25", "2013-04-27", null}),
-            Map.entry("2210_2136", new String[]{"1210_136", "PC-E2", "2013-04-27", "2014-03-27", null}),
-            Map.entry("2282_23", new String[]{"1282_23", "", "2012-09-14", "2013-04-27", "Found Someone You Have & Higher Ground"}),
-            Map.entry("2282_1023", new String[]{"1282_23", "PC-E1", "2013-04-27", "2013-05-07", "Found Someone You Have & Higher Ground"}),
-            Map.entry("2282_2023", new String[]{"1282_23", "PC-E2", "2013-05-07", "2014-05-02", "Found Someone You Have & Higher Ground"}),
+            Map.entry("2210_136", new String[]{"1210_136", "", "2009-12-07", "2012-07-21", null}),
+            Map.entry("2210_1136", new String[]{"1210_136", "PC-E2", "2013-02-25", "2013-04-27", null}),
+            Map.entry("2210_2136", new String[]{"1210_136", "PC-E3", "2013-04-27", "2014-03-27", null}),
+            Map.entry("2282_23", new String[]{"1282_23", "", "2012-09-14", "2012-12-12", "Found Someone You Have & Higher Ground"}),
+            Map.entry("2282_1023", new String[]{"1282_23", "PC-E2", "2013-04-27", "2013-05-07", "Found Someone You Have & Higher Ground"}),
+            Map.entry("2282_2023", new String[]{"1282_23", "PC-E3", "2013-05-07", "2014-05-02", "Found Someone You Have & Higher Ground"}),
             Map.entry("2291_9", new String[]{"1291_9", "", "2014-01-10", "2014-02-03", "Begin Landing Your Troops & The Dark Path"}),
             Map.entry("2291_1009", new String[]{"1291_9", "PC-E1", "2014-02-03", "2014-02-18", "Begin Landing Your Troops & The Dark Path"}),
             Map.entry("2291_2009", new String[]{"1291_9", "PC-E2", "2014-02-18", "2014-05-02", "Begin Landing Your Troops & The Dark Path"}),
             Map.entry("2291_1019", new String[]{"1291_19", "", "2014-01-10", "2014-02-03", null}),
             Map.entry("2291_2019", new String[]{"1291_19", "PC-E1", "2014-02-03", "2014-02-18", null}),
             Map.entry("2291_3019", new String[]{"1291_19", "PC-E2", "2014-02-18", "2014-07-09", null}),
-            Map.entry("2273_10", new String[]{"1273_10", "PC-E1", "2011-07-14", "2012-07-21", null}),
-            Map.entry("2273_1010", new String[]{"1273_10", "PC-E2", "2012-07-21", "2013-02-25", null}),
-            Map.entry("2273_2010", new String[]{"1273_10", "PC-E3", "2013-02-25", "2013-04-27", null}),
-            Map.entry("2281_1032", new String[]{"1281_32", "PC-E1", "2012-07-13", "2012-07-21", null}),
-            Map.entry("2281_2032", new String[]{"1281_32", "PC-E2", "2012-07-21", "2013-04-27", null}),
-            Map.entry("2281_32", new String[]{"1281_32", "PC-E3", "2013-04-27", "2013-05-07", null}),
-            Map.entry("2281_1037", new String[]{"1281_37", "PC-E1", "2012-07-13", "2012-07-21", null}),
-            Map.entry("2281_2037", new String[]{"1281_37", "PC-E2", "2012-07-21", "2013-04-27", null}),
-            Map.entry("2281_37", new String[]{"1281_37", "PC-E3", "2013-04-27", "2013-05-07", null}),
+            Map.entry("2273_10", new String[]{"1273_10", "PC-E1", "2011-07-14", "2011-07-25", null}),
+            Map.entry("2273_1010", new String[]{"1273_10", "PC-E3", "2012-07-21", "2013-02-25", null}),
+            Map.entry("2273_2010", new String[]{"1273_10", "PC-E4", "2013-02-25", "2013-04-27", null}),
+            Map.entry("2281_1032", new String[]{"1281_32", "PC-E1", "2012-07-13", "2012-07-18", null}),
+            Map.entry("2281_2032", new String[]{"1281_32", "PC-E3", "2012-07-21", "2013-04-27", null}),
+            Map.entry("2281_32", new String[]{"1281_32", "PC-E4", "2013-04-27", "2013-05-07", null}),
+            Map.entry("2281_1037", new String[]{"1281_37", "PC-E1", "2012-07-13", "2012-07-18", null}),
+            Map.entry("2281_2037", new String[]{"1281_37", "PC-E3", "2012-07-21", "2013-04-27", null}),
+            Map.entry("2281_37", new String[]{"1281_37", "PC-E4", "2013-04-27", "2013-05-07", null}),
             Map.entry("2220_36", new String[]{"1220_36", "", "2009-12-07", "2012-07-21", null}),
             Map.entry("2220_1036", new String[]{"1220_36", "PC-E1", "2012-07-21", "2013-02-25", null}),
             Map.entry("2220_3036", new String[]{"1220_36", "PC-E2", "2013-02-25", "2013-10-09", null}),
@@ -96,8 +96,14 @@ public class LegacyBatchB41VersionsTests {
             Map.entry("2261_1021", new String[]{"1261_21", "PC-E1", "2012-07-21", "2013-02-25", null}),
             Map.entry("2261_2021", new String[]{"1261_21", "PC-E2", "2013-02-25", "2013-04-27", null}),
             Map.entry("2261_93", new String[]{"1261_93", "", "2009-09-04", "2011-07-14", "Krayt Dragon Howl & Armed And Dangerous"}),
-            Map.entry("2261_1093", new String[]{"1261_93", "PC-E1", "2011-07-14", "2013-02-25", null}),
-            Map.entry("2261_2093", new String[]{"1261_93", "PC-E2", "2013-02-25", "2013-04-27", null}));
+            Map.entry("2261_1093", new String[]{"1261_93", "PC-E1", "2011-07-14", "2012-07-21", null}),
+            Map.entry("2261_2093", new String[]{"1261_93", "PC-E3", "2013-02-25", "2013-04-27", null}),
+            Map.entry("2273_3010", new String[]{"1273_10", "PC-E2", "2011-07-25", "2012-07-21", null}),
+            Map.entry("2281_3032", new String[]{"1281_32", "PC-E2", "2012-07-18", "2012-07-21", null}),
+            Map.entry("2281_3037", new String[]{"1281_37", "PC-E2", "2012-07-18", "2012-07-21", null}),
+            Map.entry("2210_3136", new String[]{"1210_136", "PC-E1", "2012-07-21", "2013-02-25", null}),
+            Map.entry("2282_3023", new String[]{"1282_23", "PC-E1", "2012-12-12", "2013-04-27", "Found Someone You Have & Higher Ground"}),
+            Map.entry("2261_3093", new String[]{"1261_93", "PC-E2", "2012-07-21", "2013-02-25", null}));
 
     private static SwccgCardBlueprintLibrary library;
 
@@ -108,7 +114,7 @@ public class LegacyBatchB41VersionsTests {
 
     @Test
     public void OlderVersionsAreTheirOwnCards() {
-        assertEquals(65, VERSIONS.size());
+        assertEquals(71, VERSIONS.size());
         VERSIONS.forEach((id, v) -> {
             SwccgCardBlueprint card = library.getSwccgoCardBlueprint(id);
             assertNotNull(id, card);
