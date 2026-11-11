@@ -59,7 +59,7 @@ public final class SiteNameCheck {
         HttpClient http = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(3))
                 .followRedirects(HttpClient.Redirect.NEVER).build();
         return new SiteNameCheck(uri, secret, (u, headers, body) -> {
-            HttpRequest.Builder b = HttpRequest.newBuilder(u).timeout(Duration.ofSeconds(5))
+            HttpRequest.Builder b = HttpRequest.newBuilder(InternalUrl.reachable(u)).timeout(Duration.ofSeconds(5))
                     .POST(HttpRequest.BodyPublishers.ofByteArray(body));
             headers.forEach(b::header);
             HttpResponse<byte[]> r = http.send(b.build(), HttpResponse.BodyHandlers.ofByteArray());
