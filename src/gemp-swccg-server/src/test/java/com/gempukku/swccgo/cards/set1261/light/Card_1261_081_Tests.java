@@ -214,26 +214,26 @@ public class Card_1261_081_Tests {
         scn.LSUseCardAction(scn.GetLSCard("incom"), "Retrieve"); scn.PassAllResponses();
         scn.LSChooseCard(scn.GetLSCard("xwing")); scn.PassAllResponses(); assertInZone(Zone.USED_PILE, scn.GetLSCard("xwing"));
     }
-    @Test public void IncomKoensayrNoLongerCancelsEchoBaseOperations() {
-        // PC card list (PC-E1, the latest text) drops "Echo Base Operations is canceled."
+    @Test public void IncomKoensayrCancelsEchoBaseOperationsAgain() {
+        // Master List (2013, current): "Echo Base Operations is canceled." (the card list, 2261_1081, drops it)
         var scn = started(false); var ebo = scn.GetLSCard("ebo"); scn.AttachCardsTo(scn.GetLSCard("generators"), ebo);
         scn.SkipToLSTurn(Phase.DEPLOY); scn.LSDeployCard(scn.GetLSCard("incom"));
         scn.LSChooseCard(scn.GetLSCard("warRoom")); scn.PassAllResponses();
-        assertEquals(scn.GetLSCard("generators"), ebo.getAttachedTo());
-        assertFalse(scn.GetLSCard("incom").getBlueprint().getGameText().contains("Echo Base Operations"));
+        assertNotEquals(scn.GetLSCard("generators"), ebo.getAttachedTo());
+        assertTrue(scn.GetLSCard("incom").getBlueprint().getGameText().contains("Echo Base Operations is canceled."));
     }
 
     @org.junit.Test
     public void CurrentTextIsTheLatestVersion() {
-        // PC card list (PC-E1, by 2012-07-21) is the latest text (Bill option b); it has no Echo Base Operations clause.
+        // Master List (2013, PC-E3) is the latest text: "Echo Base Operations is canceled." (Bill 2026-11-11).
         var scn = new com.gempukku.swccgo.framework.VirtualTableScenario(new java.util.HashMap<>(java.util.Map.of("c", "1261_81")), new java.util.HashMap<>(), 10, 10,
                 com.gempukku.swccgo.framework.StartingSetup.DefaultLSGroundLocation, com.gempukku.swccgo.framework.StartingSetup.DefaultDSGroundLocation,
                 com.gempukku.swccgo.framework.StartingSetup.NoLSStartingInterrupts, com.gempukku.swccgo.framework.StartingSetup.NoDSStartingInterrupts,
                 com.gempukku.swccgo.framework.StartingSetup.NoLSShields, com.gempukku.swccgo.framework.StartingSetup.NoDSShields,
                 com.gempukku.swccgo.framework.VirtualTableScenario.Open);
         var text = scn.GetLSCard("c").getBlueprint().getGameText();
-        org.junit.Assert.assertEquals("Deploy on a Rebel Base war room. Your ability-1 permanent pilots aboard T-47s, X-wings, Y-wings, and Z-95s (except squadrons) are replaced by ability-2 permanent pilots who add 1 to power. During your control phase, may retrieve one Y-wing or Z-95. Suspended if opponent controls this site. (Immune to Alter.)", text);
-        org.junit.Assert.assertFalse(text.contains("Echo Base Operations is canceled"));
+        org.junit.Assert.assertEquals("Deploy on a Rebel Base war room. Echo Base Operations is canceled. Your ability-1 permanent pilots aboard T-47s, X-wings, Y-wings, and Z-95s (except squadrons) are replaced by ability-2 permanent pilots who add 1 to power. During your control phase, may retrieve one Y-wing or Z-95. Suspended if opponent controls this site. (Immune to Alter.)", text);
+        org.junit.Assert.assertTrue(text.contains("Echo Base Operations is canceled"));
         org.junit.Assert.assertNull(scn.GetLSCard("c").getBlueprint().getLegacyVersion());
     }
 }

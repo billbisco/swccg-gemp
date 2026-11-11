@@ -23,13 +23,14 @@ import java.util.List;
  * Type: Character
  * Subtype: Alien
  * Title: Kebyc
+ * Text: PC-E3, the Virtual Cards Master List (2013-04-27; the PC card image, PC-E2, came first), which repeats the 2009 release-sheet words ("You generate +1 Force"); the PC website card-list text (PC-E1, 2012, "activate") is version 2220_1093 (Bill 2026-11-11: every publication is a version).
  */
 public class Card1220_093 extends AbstractAlien {
     public Card1220_093() {
         super(Side.LIGHT, 3, 3, 1, 2, 5, "Kebyc", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_2, Rarity.V);
         setVirtualSuffix(true);
         setLore("Senior accountant for the Cloud City Miner's Guild. Administrates the annual dues and fights corruption among her fellow guild members.");
-        setGameText("Deploys free to Cloud City. You activate +1 Force for every Cloud City site you occupy. Your aliens are deploy -1 here. Opponent's aliens are deploy +1 here.");
+        setGameText("Deploys free to Cloud City. You generate +1 Force for every Cloud City site you occupy. Your aliens are deploy -1 here. Opponent's aliens are deploy +1 here.");
         addIcons(Icon.CLOUD_CITY);
     }
 

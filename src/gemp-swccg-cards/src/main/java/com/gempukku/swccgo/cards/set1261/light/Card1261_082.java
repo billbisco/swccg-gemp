@@ -33,7 +33,10 @@ import com.gempukku.swccgo.logic.effects.choose.DeployCardFromReserveDeckSimulta
 import java.util.Collections;
 import java.util.List;
 
-/** Maneuvering Flaps & Nick Of Time, final Legacy Light master p26. */
+/** Maneuvering Flaps & Nick Of Time, final Legacy Light master p26.
+ * Text: PC-E3, the Virtual Cards Master List (2013-04-27; the PC card image, PC-E2, came first), which repeats the release-sheet words ("May not be suspended."); the
+ * PC website card list text (PC-E1, 2012) is version 2261_1082 (Bill 2026-11-11: every publication is a version).
+ */
 public class Card1261_082 extends AbstractNormalEffect {
     private static final Filter UNPILOTED_COMBAT_VEHICLE = Filters.and(Filters.unpiloted, Filters.combat_vehicle);
     private static final Filter PILOT_CHARACTER = Filters.and(Filters.character, Filters.pilot);
@@ -45,7 +48,7 @@ public class Card1261_082 extends AbstractNormalEffect {
                 Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
         setTitleComponents(new TitleComponent(Title.Maneuvering_Flaps, Uniqueness.UNIQUE),
                 new TitleComponent("Nick Of Time", Uniqueness.UNIQUE));
-        setGameText("Deploy on table. Your vehicles with a pilot character or gunner aboard are not hit when 'thrown.' During your deploy phase, may reveal an unpiloted combat vehicle from hand to take its matching pilot character (or vice versa) from Reserve Deck and deploy both simultaneously; reshuffle. Whenever you play Desperate Tactics, Lucky Shot, On Target, Rapid Fire, or Steady Aim, may draw top card from Reserve Deck. (Immune to Alter.)");
+        setGameText("Deploy on table. Your vehicles with a pilot character or gunner aboard are not hit when 'thrown.' During your deploy phase, may reveal an unpiloted combat vehicle from hand to ▲ its matching pilot character (or vice versa) and deploy both simultaneously. Whenever you play Desperate Tactics, Lucky Shot, On Target, Rapid Fire, or Steady Aim, may draw top card from Reserve Deck. May not be suspended. (Immune to Alter.)");
         addIcons(Icon.SPECIAL_EDITION);
         addImmuneToCardTitle(Title.Alter);
     }
@@ -88,9 +91,9 @@ public class Card1261_082 extends AbstractNormalEffect {
         return null;
     }
 
-    /** The PC card list text (PC-E1, the latest) has no "May not be suspended." (2261_82, the sheet text, has it). */
+    /** Master List (PC-E3, current) and the sheet: "May not be suspended." (the card list, 2261_1082, has no such line). */
     protected boolean mayNotBeSuspended() {
-        return false;
+        return true;
     }
 
     @Override

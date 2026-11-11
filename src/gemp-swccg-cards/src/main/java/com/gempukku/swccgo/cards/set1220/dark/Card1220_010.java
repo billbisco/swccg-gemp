@@ -18,6 +18,7 @@ import com.gempukku.swccgo.logic.modifiers.CancelsGameTextModifier;
 import com.gempukku.swccgo.logic.modifiers.DeploysFreeAboardModifier;
 import com.gempukku.swccgo.logic.modifiers.DrawsBattleDestinyIfUnableToOtherwiseModifier;
 import com.gempukku.swccgo.logic.modifiers.ImmuneToTitleModifier;
+import com.gempukku.swccgo.logic.modifiers.MayNotBeAttackedModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 
 import java.util.LinkedList;
@@ -28,13 +29,14 @@ import java.util.List;
  * Type: Character
  * Subtype: Alien
  * Title: Dengar
+ * Text: PC-E3, the Virtual Cards Master List (2013-04-27; the PC card image, PC-E2, came first), which repeats the 2009 release-sheet words ("May not be attacked."); the PC website card-list text (PC-E1, 2012) is version 2220_1010 (Bill 2026-11-11: every publication is a version).
  */
 public class Card1220_010 extends AbstractAlien {
     public Card1220_010() {
         super(Side.DARK, 1, 3, 2, 2, 6, "Dengar", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_2, Rarity.V);
         setVirtualSuffix(true);
         setLore("Corellian bounty hunter. Assassin trained by the Empire. Has reflexenhancing cyber implants. Gravely injured during a swoop race in the crystal swamp of Agrilat. Blames Han Solo.");
-        setGameText("Adds 2 to power of anything he pilots. Deploys free aboard Punishing One, and while piloting it, draws one battle destiny if unable to otherwise. At same site, Han's game text is canceled. Immune to Fallen Portal.");
+        setGameText("Adds 2 to power of anything he pilots. Deploys free aboard Punishing One, and while piloting it, draws one battle destiny if unable to otherwise. At same site, Han's game text is canceled. May not be attacked. Immune to Fallen Portal.");
         addPersona(Persona.DENGAR);
         addIcons(Icon.PILOT, Icon.WARRIOR, Icon.DAGOBAH);
         addKeywords(Keyword.BOUNTY_HUNTER);
@@ -54,6 +56,7 @@ public class Card1220_010 extends AbstractAlien {
         modifiers.add(new AddsPowerToPilotedBySelfModifier(self, 2));
         modifiers.add(new DrawsBattleDestinyIfUnableToOtherwiseModifier(self, new PilotingCondition(self, Filters.Punishing_One), 1));
         modifiers.add(new CancelsGameTextModifier(self, Filters.and(Filters.Han, Filters.atSameSite(self))));
+        modifiers.add(new MayNotBeAttackedModifier(self));
         modifiers.add(new ImmuneToTitleModifier(self, Title.Fallen_Portal));
         return modifiers;
     }

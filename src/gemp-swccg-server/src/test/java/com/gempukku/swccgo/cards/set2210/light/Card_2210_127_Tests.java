@@ -53,7 +53,8 @@ public class Card_2210_127_Tests {
         assertTrue(card.isLegacy());
         assertEquals("If Obi-Wan is out of play (and not on table), use 1 Force to deploy on table. During battle, may use 1 Force to add 5 to your total power there for remainder of turn. Once per turn, if Luke a captive, may activate 1 Force. (Immune to Control.)",
                 card.getGameText());
-        assertNotEquals(current.getGameText(), card.getGameText());
+        // The current card (Master List, 2013) repeats these words (Bill 2026-11-11).
+        assertEquals(current.getGameText(), card.getGameText());
         var version = card.getLegacyVersion();
         assertEquals("1210_127", version.currentPrintingId());
         assertEquals("", version.label());
@@ -78,7 +79,7 @@ public class Card_2210_127_Tests {
             scn.SkipToLSTurn(Phase.DEPLOY);
             scn.EnsureLSForcePile(4);
             assertEquals("other Obi-Wan on table=" + otherOnTable, !otherOnTable, scn.LSCardPlayAvailable(version));
-            assertTrue(scn.LSCardPlayAvailable(current));
+            assertEquals("current (Master List) has the same condition", !otherOnTable, scn.LSCardPlayAvailable(current));
         }
     }
 

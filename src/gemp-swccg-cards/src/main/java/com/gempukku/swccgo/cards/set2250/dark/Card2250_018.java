@@ -28,35 +28,4 @@ public class Card2250_018 extends Card1250_018 {
         setLegacyVersion(new LegacyVersion("1250_18", "",
                 "Virtual Block 5 release sheet (2009-12-07), card #15", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21)));
     }
-
-    @Override
-    protected List<RequiredGameTextTriggerAction> getGameTextRequiredAfterTriggers(SwccgGame game, EffectResult result,
-                                                                                   PhysicalCard self, int sourceId) {
-        var bearer = self.getAttachedTo();
-        if (bearer != null && TriggerConditions.battleInitiated(game, result)) {
-            if (!Filters.at(Filters.Galactic_Senate).accepts(game, bearer)) return null;
-            var action = relocateToAnyParticipatingCharacter(game, self, sourceId);
-            return action == null ? null : List.of(action);
-        }
-        return super.getGameTextRequiredAfterTriggers(game, result, self, sourceId);
-    }
-
-    private RequiredGameTextTriggerAction relocateToAnyParticipatingCharacter(SwccgGame game, PhysicalCard self, int sourceId) {
-        String opponent = game.getOpponent(self.getOwner());
-        var battle = game.getGameState().getBattleState();
-        if (battle == null) return null;
-        var targets = Filters.filter(battle.getCardsParticipating(opponent), game,
-                Filters.and(Filters.character, Filters.your(opponent)));
-        if (targets.isEmpty()) return null;
-
-        var action = new RequiredGameTextTriggerAction(self, sourceId);
-        action.setText("Relocate to a participating character");
-        action.appendEffect(new ChooseCardOnTableEffect(action, opponent, "Choose your participating character", targets) {
-            @Override
-            protected void cardSelected(PhysicalCard target) {
-                action.appendEffect(new AttachCardFromTableEffect(action, self, target));
-            }
-        });
-        return action;
-    }
 }

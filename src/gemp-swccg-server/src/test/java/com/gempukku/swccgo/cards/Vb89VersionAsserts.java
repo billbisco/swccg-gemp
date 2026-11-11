@@ -73,7 +73,8 @@ public final class Vb89VersionAsserts {
         assertEquals(current.getPersonas(), version.getPersonas());
         assertEquals(current.getSide(), version.getSide());
         assertEquals(current.getCardCategory(), version.getCardCategory());
-        assertNotEquals(current.getGameText(), version.getGameText());
+        if (!LegacyRepeatedTexts.isRepeatedByCurrent(version.getLegacyVersion()))
+            assertNotEquals(current.getGameText(), version.getGameText());
     }
 
     /**

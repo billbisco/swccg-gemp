@@ -22,20 +22,28 @@ import com.gempukku.swccgo.logic.timing.Action;
 
 import java.util.LinkedList;
 import java.util.List;
+import com.gempukku.swccgo.filters.Filter;
 
 /**
  * Set: Virtual Block 3
  * Type: Interrupt
  * Subtype: Used
  * Title: Scout Recon
+ * Text: PC-E3, the Virtual Cards Master List (2013-04-27; the PC card image, PC-E2, came first), which repeats the 2009 release-sheet words; the PC website
+ * card-list text (PC-E1, 2012, the +3 only at a site) is version 2230_1047 (Bill 2026-11-11).
  */
 public class Card1230_047 extends AbstractUsedInterrupt {
     public Card1230_047() {
         super(Side.DARK, 6, Title.Scout_Recon, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_3, Rarity.V);
         setVirtualSuffix(true);
         setLore("Familiarity with native terrain is essential to a scout garrison. Imperial command can also put this type of information to effective use.");
-        setGameText("Find one of your missing characters. OR if your scout is in a battle, activate X Force, where X = the number of scouts you have in that battle. OR add 3 to your total battle destiny during a battle at a site where you have an Imperial and opponent has an alien.");
+        setGameText("Find one of your missing characters. OR During battle, activate 1 Force for each of your scouts participating. OR During battle, if your Imperial with opponent's alien, your total battle destiny is +3.");
         addIcons(Icon.ENDOR);
+    }
+
+    /** Master List (PC-E3) and the 2009 sheet: "During battle, if your Imperial with opponent's alien" at any battle location (the card list, 2230_1047, needs a site). */
+    protected Filter battleDestinyBonusLocation() {
+        return Filters.location;
     }
 
     @Override
@@ -75,7 +83,7 @@ public class Card1230_047 extends AbstractUsedInterrupt {
             }
         }
 
-        if (GameConditions.isDuringBattleAt(game, Filters.site)
+        if (GameConditions.isDuringBattleAt(game, battleDestinyBonusLocation())
                 && GameConditions.isDuringBattleWithParticipant(game, Filters.and(Filters.your(self), Filters.Imperial))
                 && GameConditions.isDuringBattleWithParticipant(game, Filters.and(Filters.opponents(self), Filters.alien))) {
             final PlayInterruptAction action = new PlayInterruptAction(game, self);

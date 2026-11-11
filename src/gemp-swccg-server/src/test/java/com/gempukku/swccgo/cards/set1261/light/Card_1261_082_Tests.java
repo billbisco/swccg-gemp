@@ -41,8 +41,8 @@ public class Card_1261_082_Tests {
     @Test public void exactLegacyComboRetainsBothTitlesAndOneDestiny() {
         var scn = fixture(); var card = scn.GetLSCard("flaps"); var b = card.getBlueprint();
         assertEquals("Maneuvering Flaps & Nick Of Time", b.getTitle());
-        assertEquals("Deploy on table. Your vehicles with a pilot character or gunner aboard are not hit when 'thrown.' During your deploy phase, may reveal an unpiloted combat vehicle from hand to take its matching pilot character (or vice versa) from Reserve Deck and deploy both simultaneously; reshuffle. Whenever you play Desperate Tactics, Lucky Shot, On Target, Rapid Fire, or Steady Aim, may draw top card from Reserve Deck. (Immune to Alter.)", b.getGameText());
-        assertFalse(b.getGameText().contains("May not be suspended"));
+        assertEquals("Deploy on table. Your vehicles with a pilot character or gunner aboard are not hit when 'thrown.' During your deploy phase, may reveal an unpiloted combat vehicle from hand to ▲ its matching pilot character (or vice versa) and deploy both simultaneously. Whenever you play Desperate Tactics, Lucky Shot, On Target, Rapid Fire, or Steady Aim, may draw top card from Reserve Deck. May not be suspended. (Immune to Alter.)", b.getGameText());
+        assertTrue(b.getGameText().contains("May not be suspended"));
         assertTrue(Filters.Maneuvering_Flaps.accepts(scn.game(), card));
         assertTrue(Filters.title("Nick Of Time").accepts(scn.game(), card));
         assertEquals(1, b.getDestiny(), scn.epsilon);
@@ -111,14 +111,14 @@ public class Card_1261_082_Tests {
         assertFalse(flaps.isSuspended());
     }
 
-    @Test public void flapsMayNowBeSuspendedLikeAnotherEffect() {
-        // PC card list (PC-E1, the latest text) has no "May not be suspended."
+    @Test public void flapsMayNotBeSuspendedPerTheMasterList() {
+        // Master List (2013, current): "May not be suspended." (the card list, 2261_1082, has no such line)
         var scn = fixture(); scn.StartGame();
         var flaps = scn.GetLSCard("flaps"); var ordinary = scn.GetLSCard("controlEffect");
         scn.MoveCardsToLSHand(flaps); scn.SkipToLSTurn(Phase.DEPLOY);
         scn.LSPlayCard(flaps); scn.PassAllResponses();
         assertEquals(Zone.SIDE_OF_TABLE, flaps.getZone());
-        assertFalse(flaps.getBlueprint().getGameText().contains("May not be suspended."));
+        assertTrue(flaps.getBlueprint().getGameText().contains("May not be suspended."));
         scn.MoveCardsToLSSideOfTable(ordinary);
         scn.SkipToDSTurn(Phase.CONTROL);
         var action = new TopLevelGameTextAction(scn.GetDSStartingLocation(), scn.DS, scn.GetDSStartingLocation().getCardId());
@@ -127,8 +127,8 @@ public class Card_1261_082_Tests {
         scn.carryOutEffectInPhaseActionByPlayer(scn.DS, action);
         scn.PassAllResponses();
         assertFalse(scn.IsCardActive(ordinary));
-        assertFalse(scn.IsCardActive(flaps));
-        assertTrue(flaps.isSuspended());
+        assertTrue(scn.IsCardActive(flaps));
+        assertFalse(flaps.isSuspended());
     }
 
     // ---- "Your vehicles with a pilot character or gunner aboard are not hit when 'thrown.'" ----

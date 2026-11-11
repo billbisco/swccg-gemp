@@ -40,7 +40,8 @@ public final class VersionAsserts {
     public static void assertVersion(SwccgCardBlueprint version, SwccgCardBlueprint current, String currentPrintingId,
                                      String label, LocalDate printedOn, LocalDate supersededOn, String gameText) {
         assertEquals(gameText, version.getGameText());
-        assertFalse(gameText.equals(current.getGameText()));
+        if (!com.gempukku.swccgo.cards.LegacyRepeatedTexts.isRepeatedByCurrent(version.getLegacyVersion()))
+            assertFalse(gameText.equals(current.getGameText()));
         assertIdentity(version, current, currentPrintingId, label, printedOn, supersededOn, true, current.getCardSubtype());
     }
 
@@ -49,7 +50,8 @@ public final class VersionAsserts {
                                      String label, LocalDate printedOn, LocalDate supersededOn, String gameText,
                                      CardSubtype versionSubtype) {
         assertEquals(gameText, version.getGameText());
-        assertFalse(gameText.equals(current.getGameText()));
+        if (!com.gempukku.swccgo.cards.LegacyRepeatedTexts.isRepeatedByCurrent(version.getLegacyVersion()))
+            assertFalse(gameText.equals(current.getGameText()));
         assertIdentity(version, current, currentPrintingId, label, printedOn, supersededOn, true, versionSubtype);
     }
 
@@ -62,7 +64,8 @@ public final class VersionAsserts {
                                              String label, LocalDate printedOn, LocalDate supersededOn, String gameText,
                                              String versionLore, Keyword... currentOnlyKeywords) {
         assertEquals(gameText, version.getGameText());
-        assertFalse(gameText.equals(current.getGameText()));
+        if (!com.gempukku.swccgo.cards.LegacyRepeatedTexts.isRepeatedByCurrent(version.getLegacyVersion()))
+            assertFalse(gameText.equals(current.getGameText()));
         assertEquals(versionLore, version.getLore());
         assertIdentity(version, current, currentPrintingId, label, printedOn, supersededOn, true, current.getCardSubtype(), false, currentOnlyKeywords);
     }

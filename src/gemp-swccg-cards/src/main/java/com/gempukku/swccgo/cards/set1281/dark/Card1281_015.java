@@ -28,22 +28,25 @@ import java.util.List;
  * Set: Virtual Block 8.1
  * Type: Effect
  * Title: Well Guarded (V)
+ * Text: PC-E3, the Players Committee card image (folder upload date 2013-05-07, after the Master List), which prints
+ * the Master List (PC-E2, 2281_2015) and release-sheet words ("Your non-unique aliens"); the
+ * PC website card list text (PC-E1, 2012) is version 2281_1015 (Bill 2026-11-11: every publication is a version).
  */
 public class Card1281_015 extends AbstractNormalEffect {
     public Card1281_015() {
         super(Side.DARK, 6, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.Well_Guarded, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("Most of Jabba's guards had been sold to the Hutt and were too scared (or too dumb) to leave. Jabba assigned his best guards to watch over his most prized possessions.");
-        setGameText("Deploy on table. Non-unique aliens are immune to Grimtaash (While you have < 13 cards in hand) , The Camp, and deployment conditions on Watch Your Step. During battle with two non-unique aliens of your Rep's species, your aliens there may not have their forfeit reduced. (Immune to Alter.)");
+        setGameText("Deploy on table. Your non-unique aliens are immune to Grimtaash (while you have < 13 cards in hand), The Camp, and deployment costs on Watch Your Step. During battle with two non-unique aliens of your Rep's species, your aliens there may not have their forfeit reduced. (Immune to Alter.)");
         addImmuneToCardTitle(Title.Alter);
     }
 
     /**
-     * The aliens immune to Grimtaash, The Camp and Watch Your Step: non-unique aliens (any player's; the PC card list
-     * text says "Non-unique aliens", the release sheet said "Your non-unique aliens").
+     * The aliens immune to Grimtaash, The Camp and Watch Your Step: the Master List (PC-E2) and release sheet say "Your
+     * non-unique aliens" (the card list, 2281_1015, says "Non-unique aliens", any player's).
      */
     protected Filter immuneAliens(String playerId) {
-        return Filters.and(Filters.non_unique, Filters.alien);
+        return Filters.and(Filters.owner(playerId), Filters.non_unique, Filters.alien);
     }
 
     @Override

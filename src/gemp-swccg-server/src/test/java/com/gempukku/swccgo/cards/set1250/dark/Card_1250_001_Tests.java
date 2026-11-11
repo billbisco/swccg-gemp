@@ -89,7 +89,7 @@ public class Card_1250_001_Tests {
         assertEquals(forceBefore - (int) original + 1, scn.GetDSForcePileCount());
     }
 
-    @Test public void NothingCanGetThroughOurShieldDiscountsEitherSideWithControlAndCapitalOnly() {
+    @Test public void NothingCanGetThroughOurShieldDiscountsBothPlayersWithControlAndCapitalOnly() {
         var scn = scenario(true);
         var system = scn.GetDSCard("system");
         var site = scn.GetDSStartingLocation();
@@ -106,7 +106,7 @@ public class Card_1250_001_Tests {
         float unrelatedBase = deployCost(scn, trooper, scn.GetLSStartingLocation());
         scn.MoveCardsToLocation(system, capital);
         assertEquals(darkBase - 1, deployCost(scn, trooper, site), scn.epsilon);
-        assertEquals(lightBase, deployCost(scn, rebel, site), scn.epsilon);
+        assertEquals(lightBase - 1, deployCost(scn, rebel, site), scn.epsilon); // Master List: both players' characters
         assertEquals(presenceBase, deployCost(scn, presence, site), scn.epsilon);
         assertEquals(shipBase, deployCost(scn, ship, system), scn.epsilon);
         assertEquals(unrelatedBase, deployCost(scn, trooper, scn.GetLSStartingLocation()), scn.epsilon);
@@ -115,7 +115,7 @@ public class Card_1250_001_Tests {
         assertEquals(lightBase, deployCost(scn, rebel, site), scn.epsilon);
         scn.MoveCardsToDSHand(capital);
         assertEquals(lightBase - 1, deployCost(scn, rebel, site), scn.epsilon);
-        assertEquals(darkBase, deployCost(scn, trooper, site), scn.epsilon);
+        assertEquals(darkBase - 1, deployCost(scn, trooper, site), scn.epsilon);
         scn.MoveCardsToLSHand(lightCapital);
         scn.MoveCardsToLocation(system, scn.GetDSCard("obsidian1"), scn.GetDSCard("obsidian2"),
                 scn.GetDSCard("shuttle"));

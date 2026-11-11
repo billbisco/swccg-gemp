@@ -43,6 +43,9 @@ import java.util.List;
  * Type: Weapon
  * Subtype: Character
  * Title: Assassin's Blaster Rifle
+ * Text: PC-E3, the Players Committee card image assassinsblasterrifle.gif (folder upload date 2013-05-07, after the
+ * Master List; Bill 2026-11-11: the server date places the image), which prints the card-list words. Older texts:
+ * original 2282_11 (sheet), PC-E1 2282_1011 (card list), PC-E2 2282_2011 (Master List, = sheet words).
  */
 public class Card1282_011 extends AbstractCharacterWeapon {
     public Card1282_011() {

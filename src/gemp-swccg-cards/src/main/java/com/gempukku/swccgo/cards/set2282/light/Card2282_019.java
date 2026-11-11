@@ -20,10 +20,4 @@ public class Card2282_019 extends Card1282_019 {
         setGameText("May be stacked on I Know That Laugh from hand, using 2 Force. While stacked on I Know That Laugh, stack face-up and during any battle may draw destiny. If destiny < number of your aliens in battle, reset a participating character's forfeit to 0.");
         setLegacyVersion(new LegacyVersion("1282_19", "", "Virtual Block 8.2 release sheet (2012-09-14)", LocalDate.of(2012, 9, 14), LocalDate.of(2012, 12, 12)));
     }
-
-    /** The release sheet says "reset a participating character's forfeit to 0": any participating character. */
-    @Override
-    protected Filter forfeitTargetFilter() {
-        return Filters.and(Filters.character, Filters.participatingInBattle);
-    }
 }
