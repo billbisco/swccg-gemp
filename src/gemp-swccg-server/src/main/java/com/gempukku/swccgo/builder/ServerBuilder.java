@@ -77,7 +77,8 @@ public class ServerBuilder {
 
         objectMap.put(GameRecorder.class,
                 new GameRecorder(
-                        extract(objectMap, GameHistoryService.class), extract(objectMap, SoloDraftDefinitions.class)));
+                        extract(objectMap, GameHistoryService.class), extract(objectMap, SoloDraftDefinitions.class),
+                        extract(objectMap, PlayerDAO.class), null));
 
         objectMap.put(LeagueService.class,
                 new LeagueService(

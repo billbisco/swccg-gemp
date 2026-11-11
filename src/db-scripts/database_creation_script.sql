@@ -80,9 +80,13 @@ CREATE  TABLE IF NOT EXISTS `gemp-swccg`.`game_history` (
   `winner_side` VARCHAR(45) CHARACTER SET 'utf8' COLLATE 'utf8_bin' NULL DEFAULT NULL ,
   `dark_deck_string` TEXT CHARACTER SET 'utf8' COLLATE 'utf8_bin' ,
   `light_deck_string` TEXT CHARACTER SET 'utf8' COLLATE 'utf8_bin' ,
+  `winner_id` INT(11) NULL ,
+  `loser_id` INT(11) NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `game_history_winner` (`winner`) ,
-  INDEX `game_history_loser` (`loser`) )
+  INDEX `game_history_loser` (`loser`) ,
+  INDEX `game_history_winner_id` (`winner_id`) ,
+  INDEX `game_history_loser_id` (`loser_id`) )
 ENGINE = InnoDB
 AUTO_INCREMENT = 71300
 DEFAULT CHARACTER SET = utf8

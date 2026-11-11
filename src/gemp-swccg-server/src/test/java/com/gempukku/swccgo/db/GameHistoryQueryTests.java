@@ -15,94 +15,94 @@ public class GameHistoryQueryTests {
 
     @Test
     public void GameHistoryQueryWithoutFilterMatchesBothSeats() {
-        GameHistoryQuery query = GameHistoryQuery.forPlayer("Bill", GameHistoryFilter.NONE);
+        GameHistoryQuery query = GameHistoryQuery.forPlayer(3812, GameHistoryFilter.NONE);
 
-        assertEquals("(winner = ? OR loser = ?)", query.where());
-        assertEquals(List.of("Bill", "Bill"), query.parameters());
+        assertEquals("(winner_id = ? OR loser_id = ?)", query.where());
+        assertEquals(List.of(3812, 3812), query.parameters());
     }
 
     @Test
     public void GameHistoryQueryNullFilterIsNoFilter() {
-        assertEquals(GameHistoryQuery.forPlayer("Bill", GameHistoryFilter.NONE).where(),
-                GameHistoryQuery.forPlayer("Bill", null).where());
+        assertEquals(GameHistoryQuery.forPlayer(3812, GameHistoryFilter.NONE).where(),
+                GameHistoryQuery.forPlayer(3812, null).where());
     }
 
     @Test
     public void GameHistoryQueryFormatIsExactMatch() {
-        GameHistoryQuery query = GameHistoryQuery.forPlayer("Bill", filter("Open", null, false, null, null, null, null, null));
+        GameHistoryQuery query = GameHistoryQuery.forPlayer(3812, filter("Open", null, false, null, null, null, null, null));
 
-        assertEquals("(winner = ? OR loser = ?) AND format_name = ?", query.where());
-        assertEquals(List.of("Bill", "Bill", "Open"), query.parameters());
+        assertEquals("(winner_id = ? OR loser_id = ?) AND format_name = ?", query.where());
+        assertEquals(List.of(3812, 3812, "Open"), query.parameters());
     }
 
     @Test
     public void GameHistoryQueryOpponentPrefixIgnoresCaseAndEscapesWildcards() {
         //test1: the opponent is matched in the other seat only, as a lower-cased prefix
         //test2: the player's own % and _ are escaped, not wildcards
-        GameHistoryQuery query = GameHistoryQuery.forPlayer("Bill", filter(null, "Jo_n%", false, null, null, null, null, null));
+        GameHistoryQuery query = GameHistoryQuery.forPlayer(3812, filter(null, "Jo_n%", false, null, null, null, null, null));
 
-        assertTrue(query.where().contains("((winner = ? AND LOWER(loser) LIKE ? ESCAPE '!') OR (loser = ? AND LOWER(winner) LIKE ? ESCAPE '!'))")); //test1
-        assertEquals(List.of("Bill", "Bill", "Bill", "jo!_n!%%", "Bill", "jo!_n!%%"), query.parameters()); //test2
+        assertTrue(query.where().contains("((winner_id = ? AND LOWER(loser) LIKE ? ESCAPE '!') OR (loser_id = ? AND LOWER(winner) LIKE ? ESCAPE '!'))")); //test1
+        assertEquals(List.of(3812, 3812, 3812, "jo!_n!%%", 3812, "jo!_n!%%"), query.parameters()); //test2
     }
 
     @Test
     public void GameHistoryQueryOpponentExactUsesEquality() {
-        GameHistoryQuery query = GameHistoryQuery.forPlayer("Bill", filter(null, "Vader", true, null, null, null, null, null));
+        GameHistoryQuery query = GameHistoryQuery.forPlayer(3812, filter(null, "Vader", true, null, null, null, null, null));
 
-        assertTrue(query.where().contains("((winner = ? AND LOWER(loser) = ?) OR (loser = ? AND LOWER(winner) = ?))"));
-        assertEquals(List.of("Bill", "Bill", "Bill", "vader", "Bill", "vader"), query.parameters());
+        assertTrue(query.where().contains("((winner_id = ? AND LOWER(loser) = ?) OR (loser_id = ? AND LOWER(winner) = ?))"));
+        assertEquals(List.of(3812, 3812, 3812, "vader", 3812, "vader"), query.parameters());
     }
 
     @Test
     public void GameHistoryQueryCasualEventMatchesCasualAndPrivateCasual() {
         //test1: casual selects untagged games and "Casual" / "Casual (Private)"
         //test2: no value is bound for it
-        GameHistoryQuery query = GameHistoryQuery.forPlayer("Bill", filter(null, null, false, "casual", null, null, null, null));
+        GameHistoryQuery query = GameHistoryQuery.forPlayer(3812, filter(null, null, false, "casual", null, null, null, null));
 
         assertTrue(query.where().endsWith("AND (tournament IS NULL OR tournament LIKE 'Casual%')")); //test1
-        assertEquals(List.of("Bill", "Bill"), query.parameters()); //test2
+        assertEquals(List.of(3812, 3812), query.parameters()); //test2
     }
 
     @Test
     public void GameHistoryQueryEventIsLowerCasedPrefix() {
-        GameHistoryQuery query = GameHistoryQuery.forPlayer("Bill", filter(null, null, false, "Hoth League", null, null, null, null));
+        GameHistoryQuery query = GameHistoryQuery.forPlayer(3812, filter(null, null, false, "Hoth League", null, null, null, null));
 
         assertTrue(query.where().endsWith("AND LOWER(tournament) LIKE ? ESCAPE '!'"));
-        assertEquals(List.of("Bill", "Bill", "hoth league%"), query.parameters());
+        assertEquals(List.of(3812, 3812, "hoth league%"), query.parameters());
     }
 
     @Test
     public void GameHistoryQueryDarkSideMeansWonAsDarkOrLostToLight() {
-        GameHistoryQuery query = GameHistoryQuery.forPlayer("Bill", filter(null, null, false, null, "Dark", null, null, null));
+        GameHistoryQuery query = GameHistoryQuery.forPlayer(3812, filter(null, null, false, null, "Dark", null, null, null));
 
-        assertTrue(query.where().endsWith("AND ((winner = ? AND winner_side = ?) OR (loser = ? AND winner_side = ?))"));
-        assertEquals(List.of("Bill", "Bill", "Bill", "Dark", "Bill", "Light"), query.parameters());
+        assertTrue(query.where().endsWith("AND ((winner_id = ? AND winner_side = ?) OR (loser_id = ? AND winner_side = ?))"));
+        assertEquals(List.of(3812, 3812, 3812, "Dark", 3812, "Light"), query.parameters());
     }
 
     @Test
     public void GameHistoryQueryLightSideMeansWonAsLightOrLostToDark() {
-        GameHistoryQuery query = GameHistoryQuery.forPlayer("Bill", filter(null, null, false, null, "Light", null, null, null));
+        GameHistoryQuery query = GameHistoryQuery.forPlayer(3812, filter(null, null, false, null, "Light", null, null, null));
 
-        assertEquals(List.of("Bill", "Bill", "Bill", "Light", "Bill", "Dark"), query.parameters());
+        assertEquals(List.of(3812, 3812, 3812, "Light", 3812, "Dark"), query.parameters());
     }
 
     @Test
     public void GameHistoryQueryResultPicksTheSeat() {
         //test1: W keeps games the player won
         //test2: L keeps games the player lost
-        GameHistoryQuery won = GameHistoryQuery.forPlayer("Bill", filter(null, null, false, null, null, "W", null, null));
-        GameHistoryQuery lost = GameHistoryQuery.forPlayer("Bill", filter(null, null, false, null, null, "L", null, null));
+        GameHistoryQuery won = GameHistoryQuery.forPlayer(3812, filter(null, null, false, null, null, "W", null, null));
+        GameHistoryQuery lost = GameHistoryQuery.forPlayer(3812, filter(null, null, false, null, null, "L", null, null));
 
-        assertTrue(won.where().endsWith("AND winner = ?")); //test1
-        assertTrue(lost.where().endsWith("AND loser = ?")); //test2
-        assertEquals(List.of("Bill", "Bill", "Bill"), won.parameters()); //test1
+        assertTrue(won.where().endsWith("AND winner_id = ?")); //test1
+        assertTrue(lost.where().endsWith("AND loser_id = ?")); //test2
+        assertEquals(List.of(3812, 3812, 3812), won.parameters()); //test1
     }
 
     @Test
     public void GameHistoryQueryDayRangeIsInclusiveInUtcMillis() {
         //test1: from binds midnight UTC of the first day
         //test2: to binds midnight UTC of the day after the last day (exclusive bound)
-        GameHistoryQuery query = GameHistoryQuery.forPlayer("Bill", filter(null, null, false, null, null, null,
+        GameHistoryQuery query = GameHistoryQuery.forPlayer(3812, filter(null, null, false, null, null, null,
                 LocalDate.of(2026, 10, 1), LocalDate.of(2026, 10, 3)));
 
         assertTrue(query.where().endsWith("AND end_date >= ? AND end_date < ?"));
@@ -112,7 +112,7 @@ public class GameHistoryQueryTests {
 
     @Test
     public void GameHistoryQueryPlayerValuesNeverReachTheSqlText() {
-        GameHistoryQuery query = GameHistoryQuery.forPlayer("Bill'; DROP TABLE game_history; --",
+        GameHistoryQuery query = GameHistoryQuery.forPlayer(3812,
                 filter("x' OR '1'='1", "y' OR 1=1 --", false, "z')--", "Dark", "W", null, null));
 
         assertFalse(query.selectSql().contains("DROP"));
@@ -122,8 +122,22 @@ public class GameHistoryQueryTests {
     }
 
     @Test
+    public void GameHistoryQueryMatchesTheAccountIdNotTheName() {
+        //test1: a player's games are found by account id, so they follow the account after a rename (#264 AC1)
+        //test2: the formats and events lists bind the id too
+        //test3: the opponent filter still matches the name shown at the table (#264 AC2)
+        GameHistoryQuery query = GameHistoryQuery.forPlayer(3812, GameHistoryFilter.NONE);
+        assertEquals(List.of(3812, 3812), query.parameters()); //test1
+        assertFalse(query.where().contains("winner =")); //test1
+        assertTrue(GameHistoryQuery.formatsSql().contains("(winner_id = ? OR loser_id = ?)")); //test2
+        assertTrue(GameHistoryQuery.eventsSql().contains("(winner_id = ? OR loser_id = ?)")); //test2
+        assertTrue(GameHistoryQuery.forPlayer(3812, filter(null, "Vader", true, null, null, null, null, null))
+                .where().contains("LOWER(loser) = ?")); //test3
+    }
+
+    @Test
     public void GameHistoryQueryPagesNewestFirst() {
-        GameHistoryQuery query = GameHistoryQuery.forPlayer("Bill", GameHistoryFilter.NONE);
+        GameHistoryQuery query = GameHistoryQuery.forPlayer(3812, GameHistoryFilter.NONE);
 
         assertTrue(query.selectSql().endsWith("ORDER BY end_date DESC, id DESC LIMIT ?, ?"));
         assertTrue(query.countSql().startsWith("SELECT COUNT(*) FROM game_history WHERE "));
