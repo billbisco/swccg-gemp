@@ -35,12 +35,15 @@ import java.util.List;
  * Set: Virtual Block 8.1
  * Type: Effect
  * Title: Scoundrel's Ingenuity
+ * Every publication is a version (Bill, 2026-11-11): the Virtual Cards Master List (2013-04-27, PC-E2) repeats the
+ * release-sheet wording word for word (2281_36) and is the current text; the PC website card-list text
+ * (PC-E1) is 2281_1036. Same play.
  */
 public class Card1281_036 extends AbstractNormalEffect {
     public Card1281_036() {
         super(Side.LIGHT, 0, PlayCardZoneOption.ATTACHED, "Scoundrel's Ingenuity", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_1, Rarity.V);
         setLore("");
-        setGameText("Deploy from under Scoundrel's Luck on a scoundrel. Scoundrel is power +2 and adds 1 to his total weapon destiny. During your control phase, may draw destiny. If destiny > 3, your Force drains at same and related locations are +1 for remainder of turn.");
+        setGameText("Deploy from under Scoundrel's Luck on a scoundrel. Scoundrel is power +2 and his total weapon destiny is +1. During your control phase, may draw destiny. If destiny > 3, your Force drains at same and related locations are +1 for remainder of turn.");
         addIcons(Icon.SCOUNDREL);
         addKeywords(Keyword.DEPLOYS_ON_CHARACTERS);
     }

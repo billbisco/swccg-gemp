@@ -32,13 +32,16 @@ import java.util.List;
  * Set: Virtual Block 7.2
  * Type: Effect
  * Title: The Camp (V)
+ * Every publication is a version (Bill, 2026-11-11): the Virtual Cards Master List (2013-04-27, PC-E2) repeats the
+ * release-sheet wording word for word (2272_26) and is the current text; the PC website card-list text
+ * (PC-E1) is 2272_1026. Same play.
  */
 public class Card1272_026 extends AbstractNormalEffect {
     public Card1272_026() {
         super(Side.LIGHT, 5, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.The_Camp, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_2, Rarity.V);
         setVirtualSuffix(true);
         setLore("An isolated camp protected by Obi-Wan and Captain Panaka was established at the Queen's starship while Qui-Gon searched for a way to repair the leaking hyperdrive.");
-        setGameText("Unless your [Reflections 2] objective on table, deploy on table. If [Permanent Weapon] Maul in battle at a site, and you have no unique (•) characters of ability > 3 (except Luke of ability = 4) there, lightsabers there may not be 'swung' twice. Once per game, may take one K'lor'slug or a [Setup] card into hand from Reserve Deck; reshuffle. (Immune to Alter.)");
+        setGameText("Unless your [Reflections 2] objective on table, deploy on table. If [Permanent Weapon] Maul in battle at a site, and you have no unique (•) character of ability > 3 (except Luke of ability = 4) there, lightsabers there may not be 'swung' twice. Once per game, may take one K'lor'slug or a [Setup] card into hand from Reserve Deck; reshuffle. (Immune to Alter.)");
         addIcons(Icon.EPISODE_I, Icon.TATOOINE);
         addImmuneToCardTitle(Title.Alter);
     }

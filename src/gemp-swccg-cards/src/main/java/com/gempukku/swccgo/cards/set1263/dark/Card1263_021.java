@@ -23,7 +23,7 @@ public class Card1263_021 extends AbstractCombatVehicle {
     public Card1263_021() {
         super(Side.DARK, 2, 3, 4, 4, null, 2, 5, "Droid Walker", Uniqueness.UNRESTRICTED, ExpansionSet.VIRTUAL_BLOCK_6_3, Rarity.V);
         setLore("Enclosed.");
-        setGameText("Deploys -1 to same site as your MTT. AT-AT Cannon may deploy aboard, and targets it hits cannot be used to satisfy attrition. Unless alone, draws one battle destiny if not able to otherwise.");
+        setGameText("Deploys -1 to same site as your MTT. AT-AT Cannon may deploy aboard, and targets it hits may not be used to satisfy attrition. Unless alone, draws one battle destiny if not able to otherwise.");
         addIcons(Icon.EPISODE_I, Icon.PILOT, Icon.PRESENCE, Icon.A_NEW_HOPE, Icon.LEGACY_BLOCK_6);
         addKeyword(Keyword.ENCLOSED);
     }

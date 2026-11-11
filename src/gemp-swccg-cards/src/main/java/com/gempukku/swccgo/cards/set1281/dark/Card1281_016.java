@@ -32,13 +32,16 @@ import java.util.List;
  * Type: Interrupt
  * Subtype: Used Or Lost
  * Title: Abyssin Ornament (V)
+ * Every publication is a version (Bill, 2026-11-11): the Virtual Cards Master List (2013-04-27, PC-E2) repeats the
+ * release-sheet wording word for word (2281_16) and is the current text; the PC website card-list text
+ * (PC-E1) is 2281_1016. Same play.
  */
 public class Card1281_016 extends AbstractUsedOrLostInterrupt {
     public Card1281_016() {
         super(Side.DARK, 5, Title.Abyssin_Ornament, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("The Abyssins are known for their regenerative abilities. Jabba keeps several statue heads of Abyssin creatures on his repulsor sled.");
-        setGameText("USED: Cancel an attempt to target your non-droid assassin (or a starship piloted by one) with a weapon. LOST: Use 1 Force to take a just lost non-droid assassin into hand.");
+        setGameText("USED: Cancel an attempt to target your non-droid assassin (or a starship piloted by a non-droid assassin) with a weapon. LOST: Use 1 Force to take a just-lost non-droid assassin into hand.");
     }
 
     private static Filter nonDroidAssassin() {

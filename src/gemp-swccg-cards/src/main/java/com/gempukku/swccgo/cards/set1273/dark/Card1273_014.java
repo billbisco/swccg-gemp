@@ -38,13 +38,16 @@ import java.util.List;
  * Type: Interrupt
  * Subtype: Used
  * Title: A Dark Time For The Rebellion (V)
+ * Every publication is a version (Bill, 2026-11-11): the Virtual Cards Master List (2013-04-27, PC-E2) repeats the
+ * release-sheet wording word for word (2273_14) and is the current text; the PC website card-list text
+ * (PC-E1) is 2273_1014. Same play.
  */
 public class Card1273_014 extends AbstractUsedInterrupt {
     public Card1273_014() {
         super(Side.DARK, 4, "A Dark Time For The Rebellion", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_3, Rarity.V);
         setVirtualSuffix(true);
         setLore("Absolute control wielded by the Emperor enables the Imperial forces to dominate planetary systems before the Rebel Alliance can gain a foothold.");
-        setGameText("If opponent went first this game, retrieve 1 force when you play this Interrupt. Add or subtract 1 from opponent's just drwn destiny. OR Activate up to 2 Force. Or take Control into hand from Reserve Deck; reshuffle. OR Until end of turn, battle destiny draws may not be modified or canceled (unless being redrawn).");
+        setGameText("If opponent went first this game, retrieve 1 Force when you play this Interrupt. Add or subtract 1 from opponent's just drawn destiny. OR Activate up to 2 Force. OR ▲ Control. OR Until end of turn, battle destiny draws may not be modified or canceled (unless being redrawn).");
     }
 
     @Override

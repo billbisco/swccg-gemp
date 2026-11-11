@@ -198,7 +198,7 @@ public class Card_1273_030_Tests {
     @Test
     public void WesJansonShowsTheLatestText() {
         String t = com.gempukku.swccgo.framework.VirtualTableScenario._cardLibrary.getSwccgoCardBlueprint("1273_30").getGameText();
-        org.junit.Assert.assertEquals("Adds 2 to the power of anything he pilots. Once per turn may deploy from Reserve Deck (or deploy from hand) Disrupter Pistol for free on Wes; reshuffle. May fire Disruptor Pistol for 1 Force. Power and Forfeit +1 when with Hobbie or Wedge. If about to leave table place cards aboard Wes in owner's Used Pile.", t);
+        org.junit.Assert.assertEquals("[Pilot] 2. Once per turn, may [download] (or deploy from hand) Disruptor Pistol for free on Wes. May fire Disruptor Pistol for 1 Force. Power and forfeit +1 while with Hobbie or Wedge. If about to leave table, place cards on Wes in owner's Used Pile.", t);
         org.junit.Assert.assertFalse(t.contains("while with Hobbie"));
         org.junit.Assert.assertFalse(t.contains("place cards on Wes"));
     }

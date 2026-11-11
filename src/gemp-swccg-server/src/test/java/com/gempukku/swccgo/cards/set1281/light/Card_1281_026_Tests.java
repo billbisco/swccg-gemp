@@ -175,6 +175,6 @@ public class Card_1281_026_Tests {
     @Test
     public void ChewbaccaWalkingCarpetCurrentCardIsTheLatestText() {
         assertCurrentCard("1281_26", "Chewbacca, Walking Carpet",
-                "Adds 2 to the power of anything he pilots. Adds 2 to maneuver of any starfighter he pilots. Your total ability here may not be reduced. Once per game, may lose 1 force to deploy a droid from Lost Pile. During battle, target a just hit character. Target's forfeit is restored to normal.");
+                "[Pilot] 2. Adds 2 to maneuver of any starfighter he pilots. Your total ability here may not be reduced. Once per game, may lose 1 Force to deploy a droid from Lost Pile. During battle, may target a just-hit character. Target's forfeit is restored to normal.");
     }
 }

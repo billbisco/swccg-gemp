@@ -20,7 +20,7 @@ public class Card1261_016 extends AbstractImperial {
                 ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("Former member of the Imperial infantry. Specializes in boarding and taking control of enemy ships. Native of Vogel 7. Hasn't had a date in years.");
-        setGameText("Opponent's characters are deploy +1 to same mobile site. At battlegrounds where you have a unique (•) and non-unique Imperial present (and no other bonus to your Force drain), your Force drains are +1. Tactical Support is a Used Interrupt.");
+        setGameText("Opponent's characters are deploy +1 to same mobile site. At battlegrounds where you have a unique (•) and non-unique Imperial present (and no other Force drain bonus), your Force drains are +1. Tactical Support is a Used Interrupt.");
         addIcons(Icon.CLOUD_CITY, Icon.WARRIOR);
     }
 

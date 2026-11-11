@@ -36,7 +36,7 @@ public class Card1261_105 extends AbstractUsedInterrupt {
     public Card1261_105() {
         super(Side.LIGHT, 4, "Odin Nesloor & First Aid", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
         setTitleComponents(new TitleComponent(Title.Odin_Nesloor, Uniqueness.UNIQUE), new TitleComponent(Title.First_Aid, Uniqueness.UNIQUE));
-        setGameText("If your character's forfeit was just reduced to 0, use 1 Force (free if forfeit reduced by a [Permanent Weapon] weapon) to restore it to normal. (Immune to Sense.) OR Cancel an attempt to 'operate' on a character; character is protected from any further attempts until start of opponent's next turn. OR During your move phase, target any or all of your characters at one site to 'transport' (relocate) to an exterior or battleground site. Draw destiny. Use that much Force to 'transport,' or place Interrupt in Lost Pile.");
+        setGameText("If your character's forfeit was just reduced to 0, use 1 Force (free if reduced by a [Permanent Weapon] weapon) to restore it to normal. (Immune to Sense.) OR Cancel an attempt to 'operate' on a character (who is also protected from any further attempts until start of opponent's next turn). OR During your move phase, target any or all of your characters at one site to 'transport' (relocate) to an exterior or battleground site. Draw destiny. Use that much Force to 'transport,' or place this Interrupt in Lost Pile.");
         addIcons(Icon.SPECIAL_EDITION, Icon.EPISODE_I);
     }
 

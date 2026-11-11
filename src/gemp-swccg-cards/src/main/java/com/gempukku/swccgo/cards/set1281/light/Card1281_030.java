@@ -32,6 +32,9 @@ import java.util.List;
  * Type: Character
  * Subtype: Republic
  * Title: Supreme Chancellor Valorum (V)
+ * Every publication is a version (Bill, 2026-11-11): the Virtual Cards Master List (2013-04-27, PC-E2) repeats the
+ * release-sheet wording word for word (2281_30) and is the current text; the PC website card-list text
+ * (PC-E1) is 2281_1030. Same play.
  */
 public class Card1281_030 extends AbstractRepublic {
     public Card1281_030() {
@@ -39,7 +42,7 @@ public class Card1281_030 extends AbstractRepublic {
         setVirtualSuffix(true);
         setPolitics(3);
         setLore("Although Finis Valorum maintains the Galactic Senate's ultimate title, his real power is mired by endless bureaucracy, petty corruption, and incessant plotting.");
-        setGameText("Agendas: order. May be targeted by Might Of The Republic. Your characters with politics (except Wedge and senators) are deploy -1 and gain [Republic] here. During your turn, may use 1 Force to take into hand a card with 'Valorum', 'governor' or 'political' in lore from Reserve Deck; reshuffle.");
+        setGameText("Agenda: order. May be targeted by Might Of The Republic. Your characters with politics (except Wedge and senators) are deploy -1 (and gain [Republic]) here. During your turn, may use 1 Force to ▲ a card with 'governor,' 'political,' or 'Valorum' in lore.");
         addIcons(Icon.EPISODE_I);
     }
 

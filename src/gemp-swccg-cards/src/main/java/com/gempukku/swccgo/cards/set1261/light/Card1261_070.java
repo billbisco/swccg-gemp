@@ -24,7 +24,7 @@ public class Card1261_070 extends AbstractRebel {
     public Card1261_070() {
         super(Side.LIGHT, 1, 5, 5, 6, 9, "Obi-Wan, Crazy Wizard", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
         setLore("\"That old man's just a crazy wizard.\" Obi-Wan lived in Tatooine's deserts for years... ready for the right moment to act.");
-        setGameText("Old Ben is a Used Interrupt and may target this site even if not a Tatooine site. Dark Jedi may not 'swing' lightsabers more than once per battle here. When leaving table, place all your cards on Obi-Wan in Used Pile. Immune to attrition < 5.");
+        setGameText("Old Ben is a Used Interrupt and may target this site like a Tatooine site. Dark Jedi may not 'swing' lightsabers more than once per battle here. When leaving table, place all your cards on Obi-Wan in Used Pile. Immune to attrition < 5.");
         addPersona(Persona.OBIWAN);
         addIcons(Icon.WARRIOR);
     }

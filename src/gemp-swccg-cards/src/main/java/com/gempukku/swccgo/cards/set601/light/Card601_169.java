@@ -35,13 +35,16 @@ import java.util.List;
  * Type: Interrupt
  * Subtype: Lost
  * Title: I've Decided To Go Back (V)
+ * Every publication is a version (Bill, 2026-11-11): the Virtual Cards Master List (2013-04-27, PC-E2) repeats the
+ * release-sheet wording word for word (2261_96) and is the current text; the PC website card-list text
+ * (PC-E1) is 2261_1096. Same play.
  */
 public class Card601_169 extends AbstractLostInterrupt {
     public Card601_169() {
         super(Side.LIGHT, 4, "I've Decided To Go Back", Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
         setVirtualSuffix(true);
         setLore("'This is your arena. I feel I must return to mine.'");
-        setGameText("Use 1 Force to deploy (or retrieve) non-[Virtual] Amidala, Panaka, or Ric Olie from Reserve Deck; reshuffle.  OR  If your ability = 3 character defending a battle alone at a site (except Senate), character is power +2, adds one destiny to power and may draw one battle destiny if not able to otherwise. (Immune to Sense.)");
+        setGameText("Use 1 Force to ▼ (or retrieve) Panaka, Ric Olie, or non-[Virtual] Amidala. OR If your ability = 3 character defending a battle alone at a site (except Senate), character is power +2, adds one destiny to power, and may draw one battle destiny if unable to otherwise. (Immune to Sense.)");
         addIcons(Icon.CORUSCANT, Icon.EPISODE_I, Icon.LEGACY_BLOCK_6);
         setAsLegacy(true);
     }

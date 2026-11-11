@@ -42,7 +42,7 @@ public class Card1271_019 extends AbstractEpicEventDeployable {
 
     public Card1271_019() {
         super(Side.DARK, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Rise Of The Dark Lord", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_1, Rarity.V);
-        setGameText("Deploy on table (deploys only at start of game) with three different [Vader] Effects from your Reserve Deck face down under here. Once per turn, may deploy a [Vader] Effect from here (never from elsewhere). Limit one [Vader] Effect on table and, when lost, stack it under here. You may cancel your [Vader] Effect at any time. Twisted And Evil: Dark Jedi Presence, Jedi Presence, Revenge Of The Sith and Sith Tests are canceled. When using The Empire's Back to deploy Vader from Reserve Deck, it is a Used Interrupt. If you just drew a [Vader] card for destiny, may take it into hand.");
+        setGameText("Deploy on table (only at start of game) with three different [Vader] Effects from Reserve Deck face down under here. Once per turn, may deploy a [Vader] Effect from here (never from elsewhere). Limit one [Vader] Effect on table and, when lost, stack it under here. You may cancel your [Vader] Effect at any time. Twisted And Evil: Dark Jedi Presence, Jedi Presence, Revenge Of The Sith and Sith Tests are canceled. When using The Empire's Back to deploy Vader, it is a Used Interrupt. If you just drew a [Vader] card for destiny, may take it into hand.");
         addIcons(Icon.SETUP, Icon.CLOUD_CITY);
     }
 

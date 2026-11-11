@@ -29,11 +29,14 @@ import java.util.List;
  * Type: Starship
  * Subtype: Capital
  * Title: Alderaan Consular Ship
+ * Every publication is a version (Bill, 2026-11-11): the Virtual Cards Master List (2013-04-27, PC-E2) repeats the
+ * release-sheet wording word for word (2250_79) and is the current text; the PC website card-list text
+ * (PC-E1) is 2250_1079. Same play.
  */
 public class Card1250_079 extends AbstractCapitalStarship {
     public Card1250_079() {
         super(Side.LIGHT, 2, 4, 5, 5, null, 3, 8, "Alderaan Consular Ship", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_5, Rarity.V);
-        setGameText("May add 3 pilots and 4 passengers. Permanent pilot provides ability of 2. Opponent must use +2 Force to initiate a battle here. Once per game, may deploy a senator aboard from Reserve Deck; reshuffle.");
+        setGameText("May add 3 pilots and 4 passengers. Permanent pilot provides ability of 2. Opponent must use +2 Force to initiate battle here. Once per game, may deploy a senator aboard from Reserve Deck; reshuffle.");
         addIcons(Icon.DEATH_STAR_II, Icon.EPISODE_I, Icon.REPUBLIC, Icon.PILOT, Icon.NAV_COMPUTER, Icon.SCOMP_LINK);
         addModelType(ModelType.CORELLIAN_CORVETTE);
         setPilotCapacity(3);

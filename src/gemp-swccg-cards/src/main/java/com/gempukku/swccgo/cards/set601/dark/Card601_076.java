@@ -42,13 +42,16 @@ import java.util.List;
  * Set: Block 7
  * Type: Effect
  * Title: Combat Response (V)
+ * Every publication is a version (Bill, 2026-11-11): the Virtual Cards Master List (2013-04-27, PC-E2) repeats the
+ * release-sheet wording word for word (2271_9) and is the current text; the PC website card-list text
+ * (PC-E1) is 2271_1009. Same play.
  */
 public class Card601_076 extends AbstractNormalEffect {
     public Card601_076() {
         super(Side.DARK, 5, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.Combat_Response, Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
         setVirtualSuffix(true);
         setLore("Being stationed at Endor during the construction of the second Death Star allows Imperial pilots time to train in the latest starfighter combat techniques.");
-        setGameText("Deploy on table. Tallon Roll is canceled. Once per turn, may reveal an unpiloted starfighter from hand to take its matching pilot character into hand from Reserve Deck (or vice versa) and deploy both simultaneously; reshuffle. Your unique (•) TIEs (except Scythe Squadron TIEs) at systems may use 1 Force to relocate (as a regular move) to a system within 3 parsecs. (Immune to Alter.)");
+        setGameText("Deploy on table. Tallon Roll is canceled. Once per turn, may reveal an unpiloted starfighter from hand to [upload] its matching pilot character (or vice versa) and deploy both simultaneously. Your unique (•) TIEs (except Scythe Squadron TIEs) at systems may use 1 Force to relocate (as a regular move) to system within 3 parsecs. [Immune to Alter]");
         addIcons(Icon.DEATH_STAR_II, Icon.LEGACY_BLOCK_7);
         addImmuneToCardTitle(Title.Alter);
         setAsLegacy(true);

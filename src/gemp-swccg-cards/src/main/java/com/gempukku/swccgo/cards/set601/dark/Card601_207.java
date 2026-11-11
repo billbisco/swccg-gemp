@@ -37,12 +37,15 @@ import java.util.List;
  * Type: Starship
  * Subtype: Starfighter
  * Title: Colonel Jendon In Onyx 1
+ * Every publication is a version (Bill, 2026-11-11): the Virtual Cards Master List (2013-04-27, PC-E2) repeats the
+ * release-sheet wording word for word (2263_17) and is the current text; the PC website card-list text
+ * (PC-E1) is 2263_1017. Same play.
  */
 public class Card601_207 extends AbstractStarfighter {
     public Card601_207() {
         super(Side.DARK, 2, 4, 5, null, 5, 3, 6, "Colonel Jendon In Onyx 1", Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
         setLore("Designed to emulate Rebel starfighter advantages. Production began shortly before the Battle of Endor. Armed with laser cannons, ion cannons and missile launchers.");
-        setGameText("May deploy as a 'react.' Permanent pilot is •Jendon, who provides ability of 2. When deployed, may [download] a weapon on Onyx 1. Adds one battle destiny if with Onyx 2. Immune to attrition < 4.");
+        setGameText("May deploy as a 'react.' Permanent pilot is •Jendon who provides ability of 2. When deployed, may [download] a weapon on Onyx 1. Adds one battle destiny if with Onyx 2. Immune to attrition < 4.");
         addPersona(Persona.ONYX_1);
         addIcons(Icon.DEATH_STAR_II, Icon.PILOT, Icon.NAV_COMPUTER, Icon.LEGACY_BLOCK_6);
         addKeywords(Keyword.ONYX_SQUADRON);

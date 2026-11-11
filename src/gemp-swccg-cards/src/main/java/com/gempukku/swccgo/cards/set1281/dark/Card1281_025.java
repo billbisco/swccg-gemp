@@ -35,13 +35,16 @@ import java.util.List;
  * Type: Weapon
  * Subtype: Character
  * Title: Mara Jade's Lightsaber (V)
+ * Every publication is a version (Bill, 2026-11-11): the Virtual Cards Master List (2013-04-27, PC-E2) repeats the
+ * release-sheet wording word for word (2281_25) and is the current text; the PC website card-list text
+ * (PC-E1) is 2281_1025. Same play.
  */
 public class Card1281_025 extends AbstractCharacterWeapon {
     public Card1281_025() {
         super(Side.DARK, 1, "Mara Jade's Lightsaber", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("As part of her training to become the Emperor's hand, Mara Jade learned from Palpatine himself how to effectively fight with a lightsaber.");
-        setGameText("Deploy on Mara Jade. May add 1 to Force drain where present. During battle, Mara may use a blaster and this weapon. May target a character or creature for free. Draw two destiny. Target hit, and forfeit = 0, if total destiny > defense value.");
+        setGameText("Deploy on Mara Jade. May add 1 to Force drain where present. During battle, Mara may use a blaster and this weapon. May target a character or creature for free. Draw two destiny. Target hit, and its forfeit = 0, if total destiny > defense value.");
         addPersona(Persona.MARA_JADES_LIGHTSABER);
         addKeywords(Keyword.LIGHTSABER);
         setMatchingCharacterFilter(Filters.Mara_Jade);

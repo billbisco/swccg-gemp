@@ -33,12 +33,15 @@ import java.util.List;
  * Set: Virtual Block 8.1
  * Type: Effect
  * Title: Scoundrel's Charm
+ * Every publication is a version (Bill, 2026-11-11): the Virtual Cards Master List (2013-04-27, PC-E2) repeats the
+ * release-sheet wording word for word (2281_35) and is the current text; the PC website card-list text
+ * (PC-E1) is 2281_1035. Same play.
  */
 public class Card1281_035 extends AbstractNormalEffect {
     public Card1281_035() {
         super(Side.LIGHT, 0, PlayCardZoneOption.ATTACHED, "Scoundrel's Charm", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_8_1, Rarity.V);
         setLore("Sarcastic. Sardonic. Irreverent. Impertinent. Exasperating. Disrespectful. Outrageous and charming. Han was a scoundrel but Leia began to realize that she loved him.");
-        setGameText("Deploy from under Scoundrel's Luck on a scoundrel. Once per turn, may peek at the top 3 cards of your Force pile and take one into hand; reshuffle. Once per turn, may use 1 Force to add or subtract 1 from an opponent's just-drawn destiny.");
+        setGameText("Deploy from under Scoundrel's Luck on a scoundrel. Once per turn, may peek at the top three cards of your Force Pile and take one into hand; reshuffle. Once per turn, may use 1 Force to add or subtract 1 from opponent's just-drawn destiny.");
         addIcons(Icon.SCOUNDREL);
         addKeywords(Keyword.DEPLOYS_ON_CHARACTERS);
     }

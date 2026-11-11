@@ -167,6 +167,6 @@ public class Card_1281_008_Tests {
     @Test
     public void JetPackCurrentCardIsTheLatestText() {
         assertCurrentCard("1281_8", "Jet Pack",
-                "Use 2 Force to deploy on your alien warrior (free Jodo Kast or any Fett). Character 'flies' (landspeed = 3 and maneuver = 6), may fire weapons for free, and may move as a 'react' for +1 Force.");
+                "Use 2 Force to deploy on your alien warrior (free on Jodo Kast or any Fett). Character 'flies' (landspeed = 3 and maneuver = 6), may fire weapons for free, and may move as a 'react' for +1 Force.");
     }
 }

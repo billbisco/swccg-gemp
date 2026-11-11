@@ -39,12 +39,15 @@ import java.util.List;
  * Type: Character
  * Subtype: Rebel
  * Title: Luke Skywalker, Strong In The Force
+ * Every publication is a version (Bill, 2026-11-11): the Virtual Cards Master List (2013-04-27, PC-E2) repeats the
+ * release-sheet wording word for word (2261_71) and is the current text; the PC website card-list text
+ * (PC-E1) is 2261_1071. Same play.
  */
 public class Card601_052 extends AbstractRebel {
     public Card601_052() {
         super(Side.LIGHT, 1, 5, 5, 5, 8, "Luke Skywalker, Strong In The Force", Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
         setLore("Luke's experience on Dagobah gave him great skill in using the Force. Vader had to keep his focus on Luke at all times, or face the consequences.");
-        setGameText("Adds 3 to power of anything he pilots.  While piloting Red 5 or Rogue 1 (or armed with Luke's Lightsaber), may add one destiny to total power or attrition, and I Have You Now is canceled.  When Luke leaves table, place all your cards on him in Used Pile.  Immune to attrition < 4.");
+        setGameText("[Pilot] 3. While piloting Red 5 or Rogue 1 (or armed with Luke's Lightsaber), may add one destiny to total power or attrition, and I Have You Now is canceled. When leaving table, place all your cards on Luke in Used Pile. Immune to attrition < 4.");
         addIcons(Icon.PILOT, Icon.WARRIOR, Icon.LEGACY_BLOCK_6, Icon.TATOOINE);
         addPersona(Persona.LUKE);
         addKeywords(Keyword.RED_SQUADRON, Keyword.ROGUE_SQUADRON);

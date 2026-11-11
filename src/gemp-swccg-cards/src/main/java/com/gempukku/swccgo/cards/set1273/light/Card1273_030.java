@@ -43,12 +43,15 @@ import java.util.List;
  * Type: Character
  * Subtype: Rebel
  * Title: Wes Janson, Rogue Veteran
+ * Every publication is a version (Bill, 2026-11-11): the Virtual Cards Master List (2013-04-27, PC-E2) repeats the
+ * release-sheet wording word for word (2273_30) and is the current text; the PC website card-list text
+ * (PC-E1) is 2273_1030. Same play.
  */
 public class Card1273_030 extends AbstractRebel {
     public Card1273_030() {
         super(Side.LIGHT, 2, 2, 2, 2, 4, "Wes Janson, Rogue Veteran", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_7_3, Rarity.V);
         setLore("Served for many years as a gunner with friend Jek Porkins in the Tierfon Yellow Aces. Expert marksmanship helped the Alliance earn some of its earliest victories.");
-        setGameText("Adds 2 to the power of anything he pilots. Once per turn may deploy from Reserve Deck (or deploy from hand) Disrupter Pistol for free on Wes; reshuffle. May fire Disruptor Pistol for 1 Force. Power and Forfeit +1 when with Hobbie or Wedge. If about to leave table place cards aboard Wes in owner's Used Pile.");
+        setGameText("[Pilot] 2. Once per turn, may [download] (or deploy from hand) Disruptor Pistol for free on Wes. May fire Disruptor Pistol for 1 Force. Power and forfeit +1 while with Hobbie or Wedge. If about to leave table, place cards on Wes in owner's Used Pile.");
         addPersona(Persona.WES);
         addIcons(Icon.PILOT, Icon.WARRIOR);
         addKeywords(Keyword.ROGUE_SQUADRON, Keyword.GUNNER);

@@ -213,6 +213,6 @@ public class Card_1281_004_Tests {
     @Test
     public void BosskWithMortarGunCurrentCardIsTheLatestText() {
         assertCurrentCard("1281_4", "Bossk With Mortar Gun",
-                "Adds 2 to the power of anything he pilots. May not be targeted by weapons unless your other slavers present are each 'hit'. Permanent weapon is •Bossk's Mortar Gun (may target a character for free. Draw destiny. Target hit and forfeit =0, if destiny matches target's destiny number).");
+                "Adds 2 to the power of anything he pilots. May not be targeted by weapons unless your other slavers present are each 'hit.' Permanent weapon is •Bossk's Mortar Gun (may target a character for free; draw destiny; target hit, and its forfeit = 0, if destiny = target's destiny number).");
     }
 }
