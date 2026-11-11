@@ -48,13 +48,13 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-/** Original Communing (Virtual Block 7.3, first printing 2011-06-03; the PC website card list kept this text), a version of 1273_33: no "I Can't Believe He's Gone is canceled" and no once-per-turn look at top cards; replaced by the 2011-06-23 CBT errata (PC-E1). Anything Goes only (docs/legacy-versions.md). */
+/** Original Communing (Virtual Block 7.3, official text as of 2011-06-03), a version of 1273_33, RECONSTRUCTED (Bill, 2026-11-10): no copy of the first printing survives; the PC news post "5 immediate changes from the CBT" (2011-06-23) gives the PC-E1 errata text and says the errata added "I Can't Believe He's Gone is canceled", so the original is PC-E1 (2273_1033) without that sentence. Replaced by the 2011-06-22/23 CBT errata (PC-E1). Anything Goes only (docs/legacy-versions.md). */
 public class Card2273_033 extends AbstractEpicEventDeployable {
     public Card2273_033() {
         super(Side.LIGHT, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.Communing, Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
-        setGameText("If your starting location has exactly 2 [Light Side Force], play instead of a starting interrupt. [download] two always [Immune to Alter] Effects. Deploy on table; [upload] and stack a Jedi here (that Jedi is 'communing'). Luminous Beings: Whenever a Jedi is lost (or placed out of play) from table, may stack it here. Jedi stacked here are considered out of play. You generate +1 Force for each card stacked here.");
+        setGameText("If your starting location has exactly two [Light Side], play instead of a Starting Interrupt. [download] two always [Immune to Alter] Effects. Deploy on table; [upload] and stack a Jedi here. Luminous Beings: Whenever a Jedi is lost (or placed out of play) from table, may stack it here. Jedi stacked here are 'communing' and considered out of play. You generate +1 Force for each card stacked here. Once per turn, if two cards here, may use 1 Force to look at top card of Reserve Deck, Force Pile, and/or Used Pile; return one card to each deck or pile.");
         setLegacyVersion(new LegacyVersion("1273_33", "",
-                "Virtual Block 7.3, first printing (2011-06-03; text as kept on the PC website card list)", LocalDate.of(2011, 6, 3), LocalDate.of(2011, 6, 22)));
+                "Virtual Block 7.3, first printing (2011-06-03), reconstructed: the PC-E1 text of the PC news post \"5 immediate changes from the CBT\" (2011-06-23) without \"I Can't Believe He's Gone is canceled.\"", LocalDate.of(2011, 6, 3), LocalDate.of(2011, 6, 22)));
         addIcons(Icon.SPECIAL_EDITION, Icon.LEGACY_BLOCK_7);
         setAsLegacy(true);
     }
@@ -68,6 +68,34 @@ public class Card2273_033 extends AbstractEpicEventDeployable {
         return modifiers;
     }
 
+    @Override
+    protected List<TopLevelGameTextAction> getGameTextTopLevelActions(final String playerId, final SwccgGame game, final PhysicalCard self, int gameTextSourceCardId) {
+        List<TopLevelGameTextAction> actions = new LinkedList<>();
+
+        GameTextActionId gameTextActionId = GameTextActionId.OTHER_CARD_ACTION_1;
+        if (GameConditions.hasStackedCards(game, self, 2)
+                && GameConditions.isOncePerTurn(game, self, playerId, gameTextSourceCardId, gameTextActionId)
+                && GameConditions.canUseForce(game, playerId, 1)
+
+                //TODO need to allow "or" for this part which would mean these two conditions are unnecessary
+                && GameConditions.hasReserveDeck(game, playerId)
+                && GameConditions.numCardsInForcePile(game, playerId) >= 2
+        ) {
+            final TopLevelGameTextAction action = new TopLevelGameTextAction(self, playerId, gameTextSourceCardId, gameTextActionId);
+            action.setText("Look at top cards and replace");
+            // Update usage limit(s)
+            action.appendUsage(
+                    new OncePerTurnEffect(action));
+            action.appendCost(
+                    new UseForceEffect(action, playerId, 1));
+            // Perform result(s)
+            action.appendEffect(
+                    new PeekAtTopCardOfForcePileAndReserveDeckAndUsedPileAndReturnOneCardToEachEffect(action, playerId));
+            actions.add(action);
+        }
+
+        return actions;
+    }
 
     @Override
     protected List<OptionalGameTextTriggerAction> getGameTextOptionalAfterTriggers(final String playerId, SwccgGame game, final EffectResult effectResult, final PhysicalCard self, int gameTextSourceCardId) {
@@ -103,10 +131,6 @@ public class Card2273_033 extends AbstractEpicEventDeployable {
         }
         return actions;
     }
-
-
-
-
 
     @Override
     public boolean playableAsStartingInterrupt(SwccgGame game, PhysicalCard self) {

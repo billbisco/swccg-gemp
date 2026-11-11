@@ -6964,7 +6964,7 @@ const fixedImages = {
 "1240_27":"https://wiki.swccg.com/images/1/12/VB4-26-Imperial_Propaganda-PC-E1-cardmaker.png",
 "601_88":"https://wiki.swccg.com/images/1/12/VB4-26-Imperial_Propaganda-PC-E1-cardmaker.png",
 
-// Batch B19 (Virtual Blocks 7-8): current cards whose generated image shows an older text get the image of their latest text: 1273_41 Coruscant (V) the Master List slip (PC-E2; its PC card image prints a third wording, held for Bill),
+// Batch B19 (Virtual Blocks 7-8): current cards whose generated image shows an older text get the image of their latest text: 1273_41 Coruscant (V) the Master List slip (PC-E2; its PC card image shows the Light Side only — no third wording, B39 / R6),
 // 1281_1 / 1281_4 / 1281_5 (= 601_17) CardMaker recreations of the card-list text (PC-E1). 1273_17, 1273_20, 1273_36, 1274_4, 1274_11 and 1274_18 keep their PC card image, which shows the latest text.
 "1273_41":"https://wiki.swccg.com/images/4/4d/VL-history-1273-41-front-master.png",
 "1281_1":"https://wiki.swccg.com/images/6/69/VB8-01-Aurra_Sing_Deadly_Assassin-PC-E1-cardmaker.png",
@@ -7015,7 +7015,6 @@ const fixedImages = {
 "2240_68":"https://wiki.swccg.com/images/7/73/VB4-70-LE_BO2D9_Leebo.png",
 "2230_102":"https://wiki.swccg.com/images/8/89/VB3-103-Diversionary_Tactics.png",
 "2261_33":"https://wiki.swccg.com/images/c/cd/VB6-32-Dark_Waters_Krayt_Dragon_Bones.png",
-"2272_23":"https://wiki.swccg.com/images/a/a0/VB7-04-Rogue_Insertion.png",
 "2230_7":"https://wiki.swccg.com/images/7/75/VB3-07E-Hermi_Odle.png",
 "2230_47":"https://wiki.swccg.com/images/a/a0/VB3-48-Scout_Recon.png",
 "2230_109":"https://wiki.swccg.com/images/3/36/VB3-110-Rebel_Leadership.png",
@@ -7337,9 +7336,8 @@ const fixedImages = {
 "2220_1169":"https://wiki.swccg.com/images/5/57/VB2-169-Luke_s_Blaster_Pistol-PC-E1-cardmaker.png",
 "2220_161":"https://res.starwarsccg.org/cards/legacy/VirtualBlock2-Light/large/hothechomedlab.gif",
 // AI printings' pre-errata versions (docs/legacy-versions.md, "AI printings"): the AI image showing that text;
-// 2240_8ai reuses the current AI image (it shows the current text) until a CardMaker image exists; 2250_44ai shows a CardMaker recreation of the original AI text (batch B16).
+// 2240_8ai was retired in batch B39 (one Galen AI version; alias in blueprintMapping); 2250_44ai shows a CardMaker recreation of the original AI text (batch B16).
 "2240_3":"https://wiki.swccg.com/images/f/f9/VB4-02AI-Juno_Eclipse_Black_Leader_AI.png",
-"2240_8ai":"https://res.starwarsccg.org/cards/legacy/VirtualBlock4-Dark/large/galenmarekstarkillerai.gif",
 "2250_2ai":"https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Dark/large/aurrasingai.gif",
 "2250_44ai":"https://wiki.swccg.com/images/a/ad/VB5-45AI-Master_Qui_Gon_AI-original-cardmaker.png",
 "2250_45ai":"https://res.starwarsccg.org/cards/legacy/VirtualBlock5-Light/large/macewinduai.gif",
@@ -7358,4 +7356,20 @@ const fixedImages = {
 "1281_29":"https://wiki.swccg.com/images/1/18/VB8-p5-30-Het_Nkik-PC-E2-cardmaker.png",
 "2281_1029":"https://wiki.swccg.com/images/b/bf/VB8-p5-30-Het_Nkik-PC-E1-cardmaker.png",
 
+// Batch B39 (Bill 2026-11-10): rescinded errata (Tarfful 2272_1018, Wookiee Guide 2250_68), Communing reconstructed original
+// (2273_33), He Is Not Ready / Eject! Eject! "&"-title originals (release-sheet slips) and current He Is Not Ready (Master
+// List slip), Rogue Insertion original with the Warrior's Courage art (2272_23), Wookiee Slaving Operation 2014 errata
+// (current back = CardMaker recreation; originals 2282_10 / _BACK = PC card images).
+"2272_1018":"https://wiki.swccg.com/images/5/52/VB7-03-Tarfful_Wookiee_Insurgent-PC-E2-cardmaker.png",
+"2250_68":"https://wiki.swccg.com/images/a/aa/VB5-68-Wookiee_Guide-PC-E1-cardmaker.png",
+"2273_33":"https://wiki.swccg.com/images/2/28/VB7-00-Communing-original-cardmaker.png",
+"2240_26":"https://wiki.swccg.com/images/e/e6/VB4-25E-He_Is_Not_Ready.png",
+"2240_81":"https://wiki.swccg.com/images/3/3a/VB4-83E-Eject_Eject.png",
+"1240_26":"https://wiki.swccg.com/images/a/ab/VL-history-1240-26-front-master.png",
+"2272_23":"https://wiki.swccg.com/images/a/a8/VB7-04-Rogue_Insertion-original-cardmaker.png",
+"601_29_BACK":"https://wiki.swccg.com/images/b/b6/VB8-07-Indentured_To_The_Empire-PC-E1-cardmaker.png",
+"1282_10_BACK":"https://wiki.swccg.com/images/b/b6/VB8-07-Indentured_To_The_Empire-PC-E1-cardmaker.png",
+"2282_10":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Dark/large/wookieeslavingoperation.gif",
+"2282_10_BACK":"https://res.starwarsccg.org/cards/legacy/VirtualBlock8-Dark/large/indenturedtotheempire.gif",
+"2271_2038":"https://wiki.swccg.com/images/4/41/VB7-03-Field_Dressing-original-cardmaker.png",
 };
