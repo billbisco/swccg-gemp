@@ -86,11 +86,29 @@ public class LegacyVersionsTests {
                             || !printedText(version).equals(printedText(current))
                             || !iconCounts(version).equals(iconCounts(current))
                             || version.getPrintedTitle() != null
-                            || backSideDiffers(id, info.currentPrintingId()));
+                            || backSideDiffers(id, info.currentPrintingId())
+                            || republishedLater(versions, id, info.currentPrintingId()));
             assertTrue(id + ": label shown in full name",
                     info.label().isEmpty() ? !GameUtils.getFullName(version).contains("[")
                             : GameUtils.getFullName(version).endsWith(" [" + info.label() + "]"));
         }
+    }
+
+    /**
+     * Every publication is a version (Bill, 2026-11-11): an older text that a later document printed again word for word
+     * (e.g. the release-sheet original that the 2013 Master List repeats after the 2012 card list changed it) is the
+     * same text as its current card. It is still a version, as long as another version of the same card differs.
+     */
+    private boolean republishedLater(List<String> versions, String versionId, String currentId) {
+        SwccgCardBlueprint current = library.getSwccgoCardBlueprint(currentId);
+        for (String other : versions) {
+            if (other.equals(versionId) || !currentId.equals(LegacyVersion.currentPrintingIdOf(other)))
+                continue;
+            SwccgCardBlueprint sibling = library.getSwccgoCardBlueprint(other);
+            if (differsInGameTextOrPrintedData(current, sibling) || !printedText(sibling).equals(printedText(current)))
+                return library.getSwccgoCardBlueprint(versionId).getLegacyVersion().supersededOn() != null;
+        }
+        return false;
     }
 
     /** A two-sided version whose front is unchanged differs on its back (Wookiee Slaving Operation, 2014 errata to the 7 side; batch B39). */
