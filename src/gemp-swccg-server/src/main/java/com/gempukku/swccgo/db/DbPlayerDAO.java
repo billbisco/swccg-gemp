@@ -495,6 +495,10 @@ public class DbPlayerDAO implements PlayerDAO {
         if (lowerCase.startsWith("admin") || lowerCase.startsWith("guest") || lowerCase.startsWith("system") || lowerCase.startsWith("bye")) {
             return false;
         }
+        // Guest seat ids in Play now games ("Light Side", "Dark Side"; "Light_Side" is the same name).
+        if (com.gempukku.swccgo.guest.PlayNowSide.isSeatName(playerName)) {
+            return false;
+        }
 
         // Names are unique ignoring case, so "Bill" cannot be registered next to "bill".
         if (isNameTakenIgnoringCase(playerName))
@@ -598,7 +602,7 @@ public class DbPlayerDAO implements PlayerDAO {
         }
         String lower = newName.toLowerCase(Locale.ROOT);
         if (lower.startsWith("admin") || lower.startsWith("guest") || lower.startsWith("system") || lower.startsWith("bye")
-                || Player.isBot(newName))
+                || Player.isBot(newName) || com.gempukku.swccgo.guest.PlayNowSide.isSeatName(newName))
             return "name_invalid";
         try (Connection conn = _dbAccess.getDataSource().getConnection()) {
             boolean autoCommit = conn.getAutoCommit();

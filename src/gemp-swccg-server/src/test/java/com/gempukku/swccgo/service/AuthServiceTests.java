@@ -192,6 +192,20 @@ public class AuthServiceTests {
     }
 
     @Test
+    public void guestSeatNamesCannotBeRegisteredOrRenamedTo() throws Exception {
+        //test1: "Light Side"/"Dark Side" are guest seat ids in Play now games; "Light_Side" is the same name
+        //test2: a name that only starts like one is fine
+        //test3: classic name + password login for an existing account still works
+        Player bill = dao.addWithStoredHash("Bill", hasher.hash("rightpass"), "u", null);
+        assertFalse(auth.register("Light_Side", "longenough", IP)); //test1
+        assertFalse(auth.register("dark_side", "longenough", IP)); //test1
+        assertEquals("name_invalid", assertThrows(AuthService.RenameRefused.class, () -> auth.renameAccount(bill.getId(), "LIGHT_SIDE")).code()); //test1
+        assertTrue(auth.register("Light_Sid2", "longenough", IP)); //test2
+        assertEquals(AuthService.Status.OK, auth.verifyCredentials("Bill", "rightpass", IP).getStatus()); //test3
+        assertEquals(AuthService.Status.OK, auth.verifyCredentials("Light_Sid2", "longenough", IP).getStatus()); //test3
+    }
+
+    @Test
     public void resetAccountCannotBeClaimedWithoutTheCode() throws Exception {
         dao.addWithStoredHash("Bill", hasher.hash("oldpassword"), "u", null);
         auth.issueResetCode("Bill", "AdminAl");
