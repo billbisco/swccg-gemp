@@ -23,7 +23,7 @@ public class Card_2250_055_Tests {
     public void IdentityAndVersionInfo() {
         var scn = scenario();
         assertLegacyVersion(scn.GetLSCard("v").getBlueprint(), scn.GetLSCard("current").getBlueprint(), "1250_55", "",
-                LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21),
+                LocalDate.of(2009, 12, 7), LocalDate.of(2009, 12, 9),
                 "Deploys only to battlegrounds. Power +3 while defending a battle. You may not deploy [Episode I] Jedi. While with a Wookiee, adds one battle destiny. Once per game, may lose 2 Force from Force Pile to cancel a non-[Immune to Sense] Interrupt. Immune to attrition.");
     }
 }

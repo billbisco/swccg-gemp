@@ -11,16 +11,16 @@ import java.time.LocalDate;
  * Subtype: Used
  * Title: Levitation Attack
  *
- * PC-E2 version of 1220_62: the PC card image (levitationattack.gif), dated by its server upload (2013-02-25, a
- * bulk upload; the image may be older). It prints the card-list wording (icons drawn). The Master List of
- * 2013-04-27 (the current card) follows it (Bill 2026-11-11: a PC card image is its own version, placed at its
- * upload date; batch R8). Same play. Anything Goes only (docs/legacy-versions.md).
+ * PC-E1 version of 1220_62: the PC card image (levitationattack.gif, slip 65E), the same image as in
+ * swccgvkit-legacy svn r1 (2009-12-09). The PC card list stamps the card "Errata Text - September 9th, 2009", so
+ * this wording is that errata of 2009-09-09 (H1 pattern; the September 2009 first printing is lost). Prints
+ * "During a battle". Same play. Anything Goes only (docs/legacy-versions.md).
  */
 public class Card2220_2062 extends Card1220_062 {
     public Card2220_2062() {
         super();
         setGameText("Deploy (or retrieve) a device (for free) from Reserve Deck; reshuffle. (Immune to Sense.) OR Cancel Sabotage targeting a device. OR During a battle, place your weapon or device present in Used Pile to add 2 to your total power (3 if Vader present).");
-        setLegacyVersion(new LegacyVersion("1220_62", "PC-E2",
-                "PC card image (server upload 2013-02-25); superseded by the Master List text (2013-04-27)", LocalDate.of(2013, 2, 25), LocalDate.of(2013, 4, 27)));
+        setLegacyVersion(new LegacyVersion("1220_62", "PC-E1",
+                "PC card image (slip 65E; in swccgvkit-legacy svn r1, 2009-12-09), the 2009-09-09 errata", LocalDate.of(2009, 9, 9), LocalDate.of(2009, 12, 7)));
     }
 }
