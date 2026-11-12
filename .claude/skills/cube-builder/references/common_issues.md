@@ -23,7 +23,7 @@ grep -A 2 "set501" src/gemp-swccg-server/src/main/java/com/gempukku/swccgo/util/
 # Should show: .filter(p -> !p.toString().contains("/set501/")...
 
 # 2. Regenerate card database
-./bin/gemp export-cards src/gemp-swccg-cards/src/main/resources/card_blueprint_database.json
+bin/regen-blueprint-db   # fresh local copy; never commit it (the workflow does, swccg-guild/work#284)
 
 # 3. Verify exclusion worked
 grep -c '"cardId": "501_' src/gemp-swccg-cards/src/main/resources/card_blueprint_database.json
@@ -404,7 +404,7 @@ ls -lh src/gemp-swccg-cards/src/main/resources/card_blueprint_database.json
 
 # If database is suspiciously large (>5MB), may contain duplicates
 # Regenerate it:
-./bin/gemp export-cards src/gemp-swccg-cards/src/main/resources/card_blueprint_database.json
+bin/regen-blueprint-db   # fresh local copy; never commit it (the workflow does, swccg-guild/work#284)
 ```
 
 Normal times:

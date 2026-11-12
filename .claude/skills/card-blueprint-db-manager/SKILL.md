@@ -5,6 +5,18 @@ description: This skill should be used when you need to create filtered subsets 
 
 # Card Blueprint Database Manager
 
+> **The three committed files are generated (swccg-guild/work#284).** `card_blueprint_database.json`,
+> `_light.json` and `_dark.json` are built from the Java card classes by `bin/regen-blueprint-db`
+> (`CardDataExporter --resources`). The `regen-blueprint-db` GitHub workflow is their only writer: it
+> regenerates and commits them on master after each merge. Never edit, commit or write filtered output over
+> them in a PR. To fix a card's text, fix its Java class; the files follow after the merge. The committed `_light` / `_dark` files are filtered **by side only**
+> (Defensive Shields included). The shield-free subsets below are scratch files: set
+> `BPDB="${TMPDIR:-/tmp}/blueprint-db"; mkdir -p "$BPDB"` first.
+>
+> The database now holds every printing (Reflections Gold, Legacy and Virtual reprints), so a card name often
+> matches several IDs and the mapper takes the first one. Always review `multiple_matches` and
+> `virtual_fallback` in the `_log.json` before using a mapping.
+
 ## Overview
 
 The card blueprint database (`card_blueprint_database.json`) contains all SWCCG card data with slugified names for mapping. However, slug collisions occur when:
@@ -51,7 +63,7 @@ Create a light side only database:
 ```bash
 jq '[.[] | select(.side == "LIGHT" and .cardCategory != "DEFENSIVE_SHIELD")]' \
   src/gemp-swccg-cards/src/main/resources/card_blueprint_database.json \
-  > src/gemp-swccg-cards/src/main/resources/card_blueprint_database_light.json
+  > "$BPDB/card_blueprint_database_light.json"
 ```
 
 ### Filter by Dark Side (Exclude Defensive Shields)
@@ -61,7 +73,7 @@ Create a dark side only database:
 ```bash
 jq '[.[] | select(.side == "DARK" and .cardCategory != "DEFENSIVE_SHIELD")]' \
   src/gemp-swccg-cards/src/main/resources/card_blueprint_database.json \
-  > src/gemp-swccg-cards/src/main/resources/card_blueprint_database_dark.json
+  > "$BPDB/card_blueprint_database_dark.json"
 ```
 
 ### Filter Excluding All Defensive Shields
@@ -71,7 +83,7 @@ Create database without any defensive shields:
 ```bash
 jq '[.[] | select(.cardCategory != "DEFENSIVE_SHIELD")]' \
   src/gemp-swccg-cards/src/main/resources/card_blueprint_database.json \
-  > src/gemp-swccg-cards/src/main/resources/card_blueprint_database_no_shields.json
+  > "$BPDB/card_blueprint_database_no_shields.json"
 ```
 
 ### Verify Filtering Results
@@ -83,14 +95,14 @@ Check card counts after filtering:
 jq 'length' src/gemp-swccg-cards/src/main/resources/card_blueprint_database.json
 
 # Light side count
-jq 'length' src/gemp-swccg-cards/src/main/resources/card_blueprint_database_light.json
+jq 'length' "$BPDB/card_blueprint_database_light.json"
 
 # Dark side count
-jq 'length' src/gemp-swccg-cards/src/main/resources/card_blueprint_database_dark.json
+jq 'length' "$BPDB/card_blueprint_database_dark.json"
 
 # Verify no defensive shields
 jq '[.[] | select(.cardCategory == "DEFENSIVE_SHIELD")] | length' \
-  src/gemp-swccg-cards/src/main/resources/card_blueprint_database_light.json
+  "$BPDB/card_blueprint_database_light.json"
 # Should output: 0
 ```
 
@@ -114,12 +126,12 @@ When building cubes with slug collisions, modify the `map_card_names_to_ids` scr
 # Light side database (no defensive shields)
 jq '[.[] | select(.side == "LIGHT" and .cardCategory != "DEFENSIVE_SHIELD")]' \
   src/gemp-swccg-cards/src/main/resources/card_blueprint_database.json \
-  > src/gemp-swccg-cards/src/main/resources/card_blueprint_database_light.json
+  > "$BPDB/card_blueprint_database_light.json"
 
 # Dark side database (no defensive shields)
 jq '[.[] | select(.side == "DARK" and .cardCategory != "DEFENSIVE_SHIELD")]' \
   src/gemp-swccg-cards/src/main/resources/card_blueprint_database.json \
-  > src/gemp-swccg-cards/src/main/resources/card_blueprint_database_dark.json
+  > "$BPDB/card_blueprint_database_dark.json"
 ```
 
 **Step 2: Modify map_card_names_to_ids script to accept database path**
@@ -130,7 +142,7 @@ The script needs to accept an optional third parameter for the database path:
 ./bin/map_card_names_to_ids \
   $CUBE_DIR/cube_worlds_lightside.csv \
   $CUBE_DIR/cube_worlds_lightside_mapped.json \
-  src/gemp-swccg-cards/src/main/resources/card_blueprint_database_light.json
+  "$BPDB/card_blueprint_database_light.json"
 ```
 
 **Step 3: Map with appropriate database**
@@ -142,13 +154,13 @@ CUBE_DIR="src/gemp-swccg-server/src/main/resources/draft/cube_building/worlds_20
 ./bin/map_card_names_to_ids \
   $CUBE_DIR/cube_worlds_lightside.csv \
   $CUBE_DIR/cube_worlds_lightside_mapped.json \
-  src/gemp-swccg-cards/src/main/resources/card_blueprint_database_light.json
+  "$BPDB/card_blueprint_database_light.json"
 
 # Map dark side with dark database
 ./bin/map_card_names_to_ids \
   $CUBE_DIR/cube_worlds_darkside.csv \
   $CUBE_DIR/cube_worlds_darkside_mapped.json \
-  src/gemp-swccg-cards/src/main/resources/card_blueprint_database_dark.json
+  "$BPDB/card_blueprint_database_dark.json"
 
 # Default cards can use either (or no-shields version if needed)
 ./bin/map_card_names_to_ids \
@@ -159,24 +171,24 @@ CUBE_DIR="src/gemp-swccg-server/src/main/resources/draft/cube_building/worlds_20
 ## Complete Cube Building Example with Filtering
 
 ```bash
-# 1. Regenerate main card database
-./bin/gemp export-cards src/gemp-swccg-cards/src/main/resources/card_blueprint_database.json
+# 1. Get fresh card database files locally (do not commit them; the workflow does)
+bin/regen-blueprint-db
 
 # 2. Create filtered databases
 jq '[.[] | select(.side == "LIGHT" and .cardCategory != "DEFENSIVE_SHIELD")]' \
   src/gemp-swccg-cards/src/main/resources/card_blueprint_database.json \
-  > src/gemp-swccg-cards/src/main/resources/card_blueprint_database_light.json
+  > "$BPDB/card_blueprint_database_light.json"
 
 jq '[.[] | select(.side == "DARK" and .cardCategory != "DEFENSIVE_SHIELD")]' \
   src/gemp-swccg-cards/src/main/resources/card_blueprint_database.json \
-  > src/gemp-swccg-cards/src/main/resources/card_blueprint_database_dark.json
+  > "$BPDB/card_blueprint_database_dark.json"
 
 # 3. Verify filtering worked
 echo "Light side cards (no shields):"
-jq 'length' src/gemp-swccg-cards/src/main/resources/card_blueprint_database_light.json
+jq 'length' "$BPDB/card_blueprint_database_light.json"
 
 echo "Dark side cards (no shields):"
-jq 'length' src/gemp-swccg-cards/src/main/resources/card_blueprint_database_dark.json
+jq 'length' "$BPDB/card_blueprint_database_dark.json"
 
 # 4. Map cards with filtered databases
 CUBE_DIR="src/gemp-swccg-server/src/main/resources/draft/cube_building/worlds_2025"
@@ -184,12 +196,12 @@ CUBE_DIR="src/gemp-swccg-server/src/main/resources/draft/cube_building/worlds_20
 ./bin/map_card_names_to_ids \
   $CUBE_DIR/cube_worlds_lightside.csv \
   $CUBE_DIR/cube_worlds_lightside_mapped.json \
-  src/gemp-swccg-cards/src/main/resources/card_blueprint_database_light.json
+  "$BPDB/card_blueprint_database_light.json"
 
 ./bin/map_card_names_to_ids \
   $CUBE_DIR/cube_worlds_darkside.csv \
   $CUBE_DIR/cube_worlds_darkside_mapped.json \
-  src/gemp-swccg-cards/src/main/resources/card_blueprint_database_dark.json
+  "$BPDB/card_blueprint_database_dark.json"
 
 ./bin/map_card_names_to_ids \
   $CUBE_DIR/default_cards.csv \
@@ -265,9 +277,7 @@ jq '.[] | select(.slug == "duplicate-slug-here")' card_blueprint_database_light.
 After successfully building the cube, you can optionally remove the temporary filtered databases:
 
 ```bash
-rm src/gemp-swccg-cards/src/main/resources/card_blueprint_database_light.json
-rm src/gemp-swccg-cards/src/main/resources/card_blueprint_database_dark.json
-rm src/gemp-swccg-cards/src/main/resources/card_blueprint_database_no_shields.json
+rm -r "$BPDB"   # scratch subsets only; never delete the committed files
 ```
 
 However, keeping them can speed up future cube builds with the same filtering requirements.
