@@ -233,3 +233,11 @@ title rules see one card. Deck counts (restricted list) and bans count it as the
 Done: `2_45o`, `2_45d` (Blast The Door, Kid!). As printed, `2_45o` excludes only the leaders and characters of
 ability > 2 in the battle when it resolves; the 2002 Glossary Supplement added that ones introduced later are excluded
 too, which `2_45d` and the bare `2_45` do.
+
+Done (TS-LATE, Reflections II through Theed Palace and the premium sets; tests
+`cards/set106/Card_106_TextStates_Tests.java`, `cards/textstates/LateSetsTextStatesTests.java`): printed (`o`) states
+`106_1o` Arleil Schous and `106_11o` Chall Bekan (add 2 to power of starships they pilot only), `106_7o`, `106_10o`,
+`106_13o`, `106_15o`, `110_7o`, `11_71o`, `11_88o`, `11_25o`, `14_66o`, `10_15o` (wording only),
+`12_37o`, `12_128o`, `12_131o` (no Grabber icon), `13_29o` Leia, Rebel Princess (non-alien must be present),
+`13_62o` Conduct Your Search (takes a 'door' card into hand once per turn) and `13_92o` Thok & Thug (any battle
+opponent initiates; adds to his own power).

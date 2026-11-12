@@ -456,7 +456,7 @@
       "ALIEN"
     ],
     "lore": "Infamous bounty hunter. Hired to help Jabba intimidate debtors and smugglers. Crack shot. Mandalorian armor and jet pack provide protection and flight capability.",
-    "gameText": "Adds 2 to power and 1 to maneuver of anything he pilots. May deploy -1 as a 'react' to same site as a gangster or smuggler. When firing weapons, any 'hit' characters are forfeit = 0. May 'fly' (landspeed = 3). Immune to attrition < 3.",
+    "gameText": "Adds 2 to power and 1 to maneuver of any starship he pilots. May deploy -1 as a 'react' to same site as a gangster or smuggler. When firing weapons, any 'hit' characters are forfeit = 0. May 'fly' (landspeed = 3). Immune to attrition < 3.",
     "deployCost": 5,
     "destiny": 1,
     "power": 3,
@@ -945,7 +945,7 @@
     ],
     "cardSubtype": "NORMAL",
     "lore": "'There's too many of them!'",
-    "gameText": "Deploy on any Star Destroyer if at least 5 Executor sites on table. Your TIEs are deploy -1, forfeit +2 and destiny +2. At systems where you have a TIE, your Imperial capital starships are deploy -3 and your battle destiny draws are +1 each. (If on Executor, immune to Alter.)",
+    "gameText": "Deploy on a Star Destroyer if at least five Executor sites on table. Your TIEs are deploy -1, forfeit +2 and destiny +2. At systems where you have a TIE, your Imperial capital starships are deploy -3 and your battle destiny draws are +1 each. (If on Executor, immune to Alter.)",
     "destiny": 5,
     "icons": [
       {
@@ -972,7 +972,7 @@
       "CREATURE"
     ],
     "lore": "Very patient predator in the Dune Sea. Tentacles can grab prey up to four meters away. Digests victims for 1000 years. Often fed prisoners by Jabba the Hutt.",
-    "gameText": "* Ferocity = 4 + destiny. Habitat: Great Pit Of Carkoon. If Sarlacc eats a captive, may retrieve 1 Force for each of your aliens here. Anything eaten by Sarlacc is placed out of play.",
+    "gameText": "*Ferocity = 4 + destiny. Habitat: Great Pit Of Carkoon. If Sarlacc eats a captive, may retrieve 1 Force for each of your aliens here. Anything eaten by Sarlacc is placed out of play.",
     "deployCost": 4,
     "destiny": 2,
     "forfeit": 0,

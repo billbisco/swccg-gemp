@@ -32,12 +32,14 @@ import java.util.List;
  * Type: Character
  * Subtype: Rebel
  * Title: Mon Mothma
+ * <p>
+ * Text as printed on the white-border Second Anthology preview card (July 1998), which differs from the later Endor printing (Bill 2026-11-12; wiki: Second Anthology). The deploy ability keeps the once-per-deploy-phase limit of the earlier implementation.
  */
 public class Card107_002 extends AbstractRebel {
     public Card107_002() {
         super(Side.LIGHT, 1, 5, 2, 3, 8, "Mon Mothma", Uniqueness.UNIQUE, ExpansionSet.SECOND_ANTHOLOGY, Rarity.PV);
-        setLore("Native of Chandrila. Leader of the Alliance. A former member of the Imperial Senate where she was a formidable opponent of then-Senator Palpatine. Friend of Bail Organa.");
-        setGameText("While at your war room, subtracts 1 from each opponent's battle destiny at all system locations and adds 2 to forfeit of all non-unique Rebels. Once during each of your deploy phases, may deploy one non-unique Rebel from Reserve Deck; reshuffle.");
+        setLore("Native of Chandrila. Leader of the Alliance. A former member of the Imperial Senate where she was a formidable opponent to then-Senator Palpatine. Friend of Bail Organa.");
+        setGameText("While at your war room, subtracts 1 from each opponent's battle destiny at all system locations and adds 2 to forfeit of all non-unique Rebels. During your deploy phase, may deploy one non-unique Rebel from Reserve Deck and reshuffle.");
         addPersona(Persona.MON_MOTHMA);
         addIcons(Icon.ENDOR);
         addKeywords(Keyword.FEMALE, Keyword.LEADER, Keyword.SENATOR);
