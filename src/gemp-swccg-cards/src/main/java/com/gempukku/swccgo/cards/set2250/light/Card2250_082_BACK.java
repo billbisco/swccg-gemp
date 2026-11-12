@@ -14,7 +14,7 @@ import java.time.LocalDate;
  */
 public class Card2250_082_BACK extends Card1250_082_BACK {
     public Card2250_082_BACK() {
-        setLegacyVersion(new LegacyVersion("1250_82", "",
+        setLegacyVersion(new LegacyVersion("1250_82_BACK", "",
                 "Virtual Block 5 release sheet (2009-12-07), card #79; superseded by the PC forum errata (2012-08-04)", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 8, 4)));
     }
 }

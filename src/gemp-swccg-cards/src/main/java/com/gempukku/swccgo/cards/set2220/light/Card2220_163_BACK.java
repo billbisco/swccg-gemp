@@ -47,7 +47,7 @@ public class Card2220_163_BACK extends AbstractObjective {
         super(Side.LIGHT, 7, Title.Liberation, ExpansionSet.VIRTUAL_BLOCK_2, Rarity.V);
         setVirtualSuffix(true);
         setGameText("While this side up, Wedge may not cancel battle destiny draws on Hoth. During your control phase: opponent loses 1 Force for each battleground marker site you control with both a T-47 and a Rebel, and you may use 2 Force to take any one card into hand from Reserve Deck; reshuffle. Whenever you must lose Force (except from your card, battle damage, or a Force drain at a battleground), reduce the loss (to a minimum of 1) by the number of Hoth locations you occupy. Flip this card if you do not control two exterior Hoth sites. Place out of play if Main Power Generators 'blown away.'");
-        setLegacyVersion(new LegacyVersion("1220_163", "",
+        setLegacyVersion(new LegacyVersion("1220_163_BACK", "",
                 "Virtual Block 2 release sheet (2009-12-07), card #164", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 11, 19)));
         addIcons(Icon.SPECIAL_EDITION);
     }

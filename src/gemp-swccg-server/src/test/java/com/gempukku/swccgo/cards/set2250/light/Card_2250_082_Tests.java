@@ -57,7 +57,7 @@ public class Card_2250_082_Tests {
         var back = objective.getOtherSideBlueprint();
         assertEquals(Title.Duel_Of_The_Fates, back.getTitle());
         assertEquals(s.GetLSCard("current").getOtherSideBlueprint().getGameText(), back.getGameText());
-        assertEquals("1250_82", back.getLegacyVersion().currentPrintingId());
+        assertEquals("1250_82_BACK", back.getLegacyVersion().currentPrintingId());
     }
 
     private void checkNewRepublic(String objectiveId, boolean mayDeploy) {
@@ -95,6 +95,6 @@ public class Card_2250_082_Tests {
         var objective = s.GetLSCard("objective");
         assertTrue(objective.isFlipped());
         assertEquals(Title.Duel_Of_The_Fates, objective.getBlueprint().getTitle());
-        assertEquals("1250_82", objective.getBlueprint().getLegacyVersion().currentPrintingId());
+        assertEquals("1250_82_BACK", objective.getBlueprint().getLegacyVersion().currentPrintingId());
     }
 }
