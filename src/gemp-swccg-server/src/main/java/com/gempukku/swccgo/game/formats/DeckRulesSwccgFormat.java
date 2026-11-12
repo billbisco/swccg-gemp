@@ -31,6 +31,9 @@ public class DeckRulesSwccgFormat implements SwccgFormat {
 
     public DeckRules getDeckRules() { return _rules; }
 
+    /** The format these rules are added to (the library format, or it at a chosen deck size). */
+    SwccgFormat getInner() { return _inner; }
+
     @Override
     public void validateDeck(SwccgDeck deck) throws DeckInvalidException {
         if (_inner instanceof DeckSizeSwccgFormat)
