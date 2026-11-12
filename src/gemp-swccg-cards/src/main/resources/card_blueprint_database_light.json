@@ -62081,7 +62081,7 @@
       "ALIEN"
     ],
     "lore": "A female Quor'sav, a warm-blooded, avian/monotreme species. 3.5 meters tall. Over-protective mother. Freelance pilot. Has custom-built ship with tall corridors. Lays eggs.",
-    "gameText": "When in a battle, if both players draw only one battle destiny and yours is higher, reduces opponent's destiny to zero. Landspeed = 3. Adds 2 to power of anything she pilots. May not deploy to or board starfighters or enclosed vehicles.",
+    "gameText": "When in a battle, if both players draw only one battle destiny and yours is higher, reduces opponent's total battle destiny to zero. Landspeed = 3. Adds 2 to power of anything she pilots. May not be aboard starfighters or enclosed vehicles.",
     "deployCost": 0.0,
     "destiny": 2.0,
     "credits": 0,
@@ -64364,7 +64364,7 @@
     ],
     "cardSubtype": "UTINNI",
     "lore": "Luke and Han took the armor suits from fallen stormtroopers and used them as both protection and disguise to penetrate the detention cell block aboard the Death Star.",
-    "gameText": "Deploy on a Death Star site where a stormtrooper was just lost. Target one of your characters not on Death Star. When target reaches Utinni Effect, relocate to target. Target is now 'disguised:' gains spy skill, power and forfeit +2, and armor = 5.",
+    "gameText": "Deploy on a Death Star site where a stormtrooper was just lost. Target one of your characters not on Death Star. When target reaches this card, relocate to target. Target is now 'disguised:' gains spy skill, power and forfeit +2, and armor = 5.",
     "destiny": 5.0,
     "credits": 0,
     "icons": [
@@ -120102,7 +120102,7 @@
     "cardTypes": [
       "EPIC_EVENT"
     ],
-    "gameText": "Deploy on Death Star: Trench. During your move phase, you may make an Attack Run as follows: Enter Trench: Move up to 3 of your starfighters into trench (for free). Dark Side may immediately follow with up to 3 TIEs (for free). Provide Cover: Identify your lead starfighter (Proton Torpedoes* required) and wingmen (if any). Turbolaser Batteries and TIEs with weapons may now target your starfighters (wingmen first, then lead if no wingmen remaining). Hit starfighters are immediately lost. It's Away!: Draw two destiny. Pull Up!: All starfighters now move to Death Star system (for free). If (total destiny + X + Y - Z) > 15, Death Star is 'blown away.' X = ability of lead pilot or 3 if Targeting Computer is present. Y = total sites at largest Rebel Base (Yavin 4 or Hoth). Z = highest ability of TIE pilots in trench. *Your Proton Torpedoes are immune to Overload.",
+    "gameText": "Deploy on Death Star: Trench. During your move phase, you may make an Attack Run as follows: Enter Trench: Move up to 3 of your starfighters into trench (for free). Dark Side may immediately follow with up to 3 TIEs (for free). Provide Cover: Identify your lead starfighter (Proton Torpedoes * required) and wingmen (if any). Turbolaser Batteries and TIEs with weapons may now target your starfighters (wingmen first, then lead if no wingmen remaining). Hit starfighters are immediately lost. It's Away!: Draw two destiny. Pull Up!: All starfighters now move to Death Star system (for free). If (total destiny + X + Y - Z) > 15, Death Star is \"blown away.\" X = ability of lead pilot (or 3 if Targeting Computer aboard) just before Pull Up! Y = total sites at largest Rebel Base (Yavin 4 or Hoth). Z = highest ability of opponent's TIE pilots in trench just before Pull Up! *Your Proton Torpedoes are immune to Overload.",
     "deployCost": 0.0,
     "destiny": 0.0,
     "credits": 0,
@@ -154056,7 +154056,7 @@
     ],
     "cardSubtype": "NORMAL",
     "lore": "When a Jedi dies, the spirit spreads through the Force and touches the living.",
-    "gameText": "Deploy on table. Once per turn, may take The Force Is Strong With This One or [Death Star II] Anakin Skywalker into hand from Reserve Deck: reshuffle. May use 2 Force to cancel Dark Jedi Presence or You Are Beaten (unless canceling Uncontrollable Fury). (Immune to Alter.)",
+    "gameText": "Deploy on table. Once per turn, may take one The Force Is Strong With This One or [Death Star II] Anakin Skywalker into hand from Reserve Deck, reshuffle. May use 2 Force to cancel You Are Beaten (unless canceling Uncontrollable Fury) or Dark Jedi Presence. (Immune to Alter.)",
     "destiny": 5.0,
     "credits": 0,
     "icons": [
@@ -155748,8 +155748,7 @@
       }
     ],
     "keywords": [
-      "MEDIUM_TRANSPORT",
-      "SHIP_DOCKING_CAPABILITY"
+      "MEDIUM_TRANSPORT"
     ],
     "modelTypes": [
       "TRANSPORT"

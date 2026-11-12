@@ -58714,7 +58714,7 @@
       "IMPERIAL"
     ],
     "lore": "Aide to Grand Moff Tarkin. Rarely underestimates enemies. Learned cunning and patience hunting big game as a youth.",
-    "gameText": "Adds 2 to power of anything he pilots. Power +1 if at same site as Tarkin. If a battle was just initiated at a system where Bast is present with your non-droid character aboard a starship, may 'evacuate' (relocate) both to a related site.",
+    "gameText": "Adds 2 to power of anything he pilots. Power +1 at same site as Tarkin. If a battle was just initiated at a system where Bast is present with your non-droid character, may 'evacuate' (relocate) both to a related site.",
     "deployCost": 2.0,
     "destiny": 2.0,
     "credits": 0,
@@ -60585,7 +60585,7 @@
     ],
     "cardSubtype": "NORMAL",
     "lore": "After surviving Tarkin's extortion, kidnapping, threats of execution and the assault of the Interrogator droid, Princess Leia was asleep when her rescuers came.",
-    "gameText": "Deploy on a site under 'nighttime conditions.' One at a time, target each non-droid character here and draw destiny. If destiny > ability, character 'sleeps' (power, forfeit and ability = 0, 'game text' is canceled, and may not pilot, drive, or move). At the end of your next turn, lose effect and restore targets (if on table) to normal.",
+    "gameText": "Deploy on a site under \"nighttime conditions.\" One at a time, target each non-droid character here and draw destiny. If destiny > ability, character 'sleeps' until end of your next turn (power, forfeit, and ability = 0, game text is canceled, and may not pilot, drive, or move). At the end of your next turn, lose Effect.",
     "destiny": 4.0,
     "credits": 0,
     "icons": [
@@ -64443,7 +64443,7 @@
     ],
     "cardSubtype": "AUTOMATED",
     "lore": "Military version of a 'remote.' Programmed to stalk specific targets or secondary targets. Heat and light sensors track with fatal accuracy. Can stow away on starships.",
-    "gameText": "Use 1 Force to deploy on opponent's side at any unoccupied site. Moves during your control phase, like a character, at normal use of the Force. When at same location as Luke of ability < 4 or pilot of ability < 3, choose one to be immediately lost. Seeker also lost.",
+    "gameText": "Deploys for 1 Force to an unoccupied site. Deploys and moves like an undercover spy. When present with Luke of ability < 4 or pilot of ability < 3, choose one to be immediately lost (treat as an \"all cards\" situation). Seeker is also lost.",
     "destiny": 3.0,
     "credits": 0,
     "icons": [
