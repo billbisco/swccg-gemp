@@ -7,9 +7,9 @@ description: This skill should be used when you need to create filtered subsets 
 
 > **The three committed files are generated (swccg-guild/work#284).** `card_blueprint_database.json`,
 > `_light.json` and `_dark.json` are built from the Java card classes by `bin/regen-blueprint-db`
-> (`CardDataExporter --resources`); CI (`CardBlueprintDatabaseUpToDateTests`) fails if they differ from a
-> fresh export. Never edit them by hand or write filtered output over them. To fix a card's text, fix its
-> Java class and regenerate. The committed `_light` / `_dark` files are filtered **by side only**
+> (`CardDataExporter --resources`). The `regen-blueprint-db` GitHub workflow is their only writer: it
+> regenerates and commits them on master after each merge. Never edit, commit or write filtered output over
+> them in a PR. To fix a card's text, fix its Java class; the files follow after the merge. The committed `_light` / `_dark` files are filtered **by side only**
 > (Defensive Shields included). The shield-free subsets below are scratch files: set
 > `BPDB="${TMPDIR:-/tmp}/blueprint-db"; mkdir -p "$BPDB"` first.
 >
@@ -171,7 +171,7 @@ CUBE_DIR="src/gemp-swccg-server/src/main/resources/draft/cube_building/worlds_20
 ## Complete Cube Building Example with Filtering
 
 ```bash
-# 1. Regenerate the committed card database files (only if card classes changed)
+# 1. Get fresh card database files locally (do not commit them; the workflow does)
 bin/regen-blueprint-db
 
 # 2. Create filtered databases

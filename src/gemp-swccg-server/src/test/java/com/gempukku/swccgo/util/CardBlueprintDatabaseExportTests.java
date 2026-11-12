@@ -5,7 +5,6 @@ import org.junit.Test;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -15,26 +14,10 @@ import static org.junit.Assert.*;
 
 /**
  * The card blueprint database files are generated from the Java card classes (swccg-guild/work#284).
- * These tests fail when the committed files no longer match a fresh export, so a card change or a
- * Players Committee sync can't leave them stale or overwrite our cards.
+ * The regen-blueprint-db workflow rewrites them on master after each merge, so PRs never carry them.
+ * These tests keep the export stable (byte-identical every run) so the workflow's diffs stay clean.
  */
-public class CardBlueprintDatabaseUpToDateTests {
-
-    private static Path resourcesDir() {
-        // Maven runs tests from src/gemp-swccg-server
-        Path dir = Paths.get(System.getProperty("user.dir"), "..", CardDataExporter.DEFAULT_RESOURCES_DIR).normalize();
-        assertTrue("Could not find " + dir, Files.isDirectory(dir));
-        return dir;
-    }
-
-    @Test
-    public void CommittedDatabaseFilesMatchAFreshExport() throws Exception {
-        Map<String, String> rendered = CardDataExporter.renderDatabaseFiles(new CardDataExporter().exportAllCards());
-        List<String> stale = CardDataExporter.staleDatabaseFiles(rendered, resourcesDir());
-        assertTrue("These card database files are out of date with the card classes: " + stale
-                + ". Do not edit them by hand. Run " + CardDataExporter.REGENERATE_COMMAND
-                + " and commit the result.", stale.isEmpty());
-    }
+public class CardBlueprintDatabaseExportTests {
 
     @Test
     public void ExportIsTheSameEveryRun() throws Exception {
