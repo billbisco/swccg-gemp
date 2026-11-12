@@ -36,7 +36,7 @@ import java.util.List;
 public class Card2_135 extends AbstractUsedOrLostInterrupt {
     public Card2_135() {
         super(Side.DARK, 2, Title.Monnok, Uniqueness.UNRESTRICTED, ExpansionSet.A_NEW_HOPE, Rarity.C2);
-        setLore("Dejarik creature. Savage predator from remote deserts of Soccorro. Respected and honored by Soccorran hunters, considered 'good luck' by superstitious smugglers.");
+        setLore("Dejarik creature. Savage predator from remote deserts of Soccorro. Respected and honored by Soccorran hunters; considered 'good luck' by superstitious smugglers.");
         setGameText("USED: If opponent has 13 or more cards in hand, place all but 8 (random selection) in Used Pile. LOST: Use 4 Force to reveal opponent's hand. All cards opponent has two or more of in hand are lost.");
         addIcons(Icon.A_NEW_HOPE);
         addKeywords(Keyword.DEJARIK);
