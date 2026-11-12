@@ -41,6 +41,7 @@ import java.util.List;
 public class Card207_002 extends AbstractRebel {
     public Card207_002() {
         super(Side.LIGHT, 2, 4, 4, 4, 5, Title.Chirrut, Uniqueness.UNIQUE, ExpansionSet.SET_7, Rarity.V);
+        setDisplayTitle("Chirrut Îmwe"); // printed spelling (Bill 2026-11-12); rules use the title above
         setGameText("If a battle was just initiated here, may peek at the top card of any Reserve Deck; return it or place it on top of owner's Force Pile. If just lost, may [upload] or retrieve Baze. Once per game, you may re-circulate.");
         addIcons(Icon.WARRIOR, Icon.VIRTUAL_SET_7);
     }

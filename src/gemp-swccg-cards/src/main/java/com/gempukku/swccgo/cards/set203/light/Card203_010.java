@@ -34,6 +34,7 @@ import java.util.List;
 public class Card203_010 extends AbstractRepublic {
     public Card203_010() {
         super(Side.LIGHT, 3, 4, 3, 4, 7, Title.Padme, Uniqueness.UNIQUE, ExpansionSet.SET_3, Rarity.V);
+        setDisplayTitle("Padmé Naberrie"); // printed spelling (Bill 2026-11-12); rules use the title above
         setVirtualSuffix(true);
         setLore("Queen Amidala posed as one of her own handmaidens for added safety as well as to keep an eye on her Jedi protectors. Was to be protected by the Jedi at all times.");
         setGameText("Cancels Vader's game text here. If with a Skywalker, may add one destiny to attrition. Immune to attrition < 3.");

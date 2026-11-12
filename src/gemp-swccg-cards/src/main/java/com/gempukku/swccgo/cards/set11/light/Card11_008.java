@@ -39,6 +39,7 @@ import java.util.List;
 public class Card11_008 extends AbstractRepublic {
     public Card11_008() {
         super(Side.LIGHT, 3, 2, 3, 3, 5, Title.Padme, Uniqueness.UNIQUE, ExpansionSet.TATOOINE, Rarity.R);
+        setDisplayTitle("Padmé Naberrie"); // printed spelling (Bill 2026-11-12); rules use the title above
         setLore("Queen Amidala posed as one of her own handmaidens for added safety as well as to keep an eye on her Jedi protectors. Was to be protected by the Jedi at all times.");
         setGameText("Twice per game may deploy Qui-Gon or Obi-Wan here from Reserve Deck; reshuffle. While present with your Jedi at a site, opponent may not target Amidala with weapons.");
         addPersona(Persona.AMIDALA);

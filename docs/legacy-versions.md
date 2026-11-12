@@ -103,9 +103,22 @@ setDisplayTitle("Cyborg Commander, Hunter Of Jedi");
   whose Master List heading has no "(V)" does not call `setVirtualSuffix(true)` (e.g. Admiral Motti, Battlestation
   Coordinator). Checked by `LegacyVInTitleTests`.
   Only the versions printed before the rename get it (the Master List renames are 2013-04-27); a later version printed
-  under the current name has none. `setDisplayTitle` throws unless `setLegacyVersion` was called first.
+  under the current name has none. On a version, call `setDisplayTitle` after `setLegacyVersion`.
 - Names inside game text (Black Leader, Fallen Jedi, Cyborg Commander in other cards' text) are text, not titles.
 - Checked by `LegacyVersionDisplayTitleTests`.
+
+### Accented printed titles (Bill, 2026-11-12)
+
+Any card may have a Display Title, not only a Legacy version. Cards whose face prints accents keep the plain title for
+every rule and show the printed spelling: `setDisplayTitle("Padmé Naberrie")` right after `super(...)`. Without
+`setLegacyVersion` the Display Title is only the printed spelling of the title, so the full name still gets " (V)"
+when the card has it ("•Padmé Naberrie (V)"). Cards: 11_8, 11_9, 203_10, 203_36, 1111_13, 601_55 (= 1250_48,
+1250_48ai) Padmé Naberrie; 1116_4, 1250_52 Senator Padmé Amidala; 12_24 Ric Olié; 14_29 Ric Olié, Bravo Leader;
+12_25 Sabé; 12_26 Saché; 12_33, 201_7 Yané; 200_11, 601_223 (= 1291_40) Dormé; 207_2 Chirrut Îmwe; 209_40 Vaneé.
+
+Name search (deck builder `name:` filter, `SortAndFilterCards.nameContains`): case-insensitive; a word typed without
+accents ignores accents in card names ("padme" finds Padmé), a word typed with an accent matches only that accent
+("Padmé" finds Padmé, not a plain "Padme"). Checked by `AccentedDisplayTitleTests`.
 
 ## Display
 

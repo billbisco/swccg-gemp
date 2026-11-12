@@ -3055,19 +3055,22 @@ public abstract class AbstractSwccgCardBlueprint implements SwccgCardBlueprint {
     }
 
     /**
-     * Sets the Display Title of a pre-errata Legacy version that was printed under an older name: the wording on its
-     * face. Display only (Bill, 2026-11-11): {@link #getTitle()} stays the card's title (its label, "(V)" included for
-     * a Virtual card), so uniqueness, persona, title matching and deck limits are unchanged.
-     * Call it after {@link #setLegacyVersion(LegacyVersion)} (docs/legacy-versions.md, "Display Title").
-     * The Display Title is shown as given: it includes "(V)" exactly when the release sheet printed it (Bill, 2026-11-10),
-     * and no " (V)" suffix is added to it.
+     * Sets the card's Display Title: the wording on its face where it differs from {@link #getTitle()}. Display only
+     * (Bill, 2026-11-11): {@link #getTitle()} stays the card's title (its label, "(V)" included for a Virtual card), so
+     * uniqueness, persona, title matching and deck limits are unchanged (docs/legacy-versions.md, "Display Title").
+     * <ul>
+     * <li>A pre-errata Legacy version printed under an older name: call it after
+     * {@link #setLegacyVersion(LegacyVersion)}. That Display Title is the whole printed title, shown as given: it includes
+     * "(V)" exactly when the release sheet printed it (Bill, 2026-11-10), and no " (V)" suffix is added to it.</li>
+     * <li>Any other card (Bill, 2026-11-12): the printed spelling of its title, e.g. the accents of "Padmé Naberrie",
+     * "Ric Olié", "Chirrut Îmwe". The " (V)" suffix is still added when the card has one. Name search folds accents
+     * ({@code SortAndFilterCards}): "Padme" finds "Padmé", while a query typed with "é" only matches "é".</li>
+     * </ul>
      * @param displayTitle the title as printed on the face, without uniqueness dots (e.g. "Cyborg Commander, Hunter Of Jedi")
      */
     protected void setDisplayTitle(String displayTitle) {
-        if (_legacyVersion == null)
-            throw new IllegalStateException("A display title is only for pre-errata Legacy versions; call setLegacyVersion first");
         _displayTitle = (displayTitle == null || displayTitle.isEmpty() || displayTitle.equals(getTitle())) ? null : displayTitle;
-        _displayTitleComplete = _displayTitle != null;
+        _displayTitleComplete = _displayTitle != null && _legacyVersion != null;
     }
 
     /**

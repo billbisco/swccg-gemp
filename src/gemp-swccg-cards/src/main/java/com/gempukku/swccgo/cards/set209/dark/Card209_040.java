@@ -32,6 +32,7 @@ import java.util.List;
 public class Card209_040 extends AbstractImperial {
     public Card209_040() {
         super(Side.DARK, 2, 4, 2, 4, 4, "Vanee", Uniqueness.UNIQUE, ExpansionSet.SET_9, Rarity.V);
+        setDisplayTitle("Vaneé"); // printed spelling (Bill 2026-11-12); rules use the title above
         setLore("");
         setGameText("Deploys -2 to Holotheatre, Meditation Chamber, or a Vader's Castle site. Once during your turn, may activate 1 Force. Once per game, may [upload] a card with 'Vader' in title.");
         addPersona(Persona.VANEE);

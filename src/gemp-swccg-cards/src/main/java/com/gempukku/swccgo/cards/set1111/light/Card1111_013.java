@@ -39,6 +39,7 @@ import java.util.List;
 public class Card1111_013 extends AbstractRepublic {
     public Card1111_013() {
         super(Side.LIGHT, 3, 4, 3, 4, 6, Title.Padme, Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_ORIGINAL_SET_11, Rarity.V);
+        setDisplayTitle("Padmé Naberrie"); // printed spelling (Bill 2026-11-12); rules use the title above
         setLore("Queen Amidala posed as one of her own handmaidens for added safety as well as to keep an eye on her Jedi protectors. Was to be protected by the Jedi at all times.");
         setGameText("Adds 1 to power of anything she pilots. During opponent's control phase, may use 2 Force to take one Leia or non-Jedi Luke into hand from Reserve Deck; reshuffle. At end of opponent's turn, opponent loses 1 Force for each Skywalker occupying a battleground (-1 Force if Vader on table).");
         addIcons(Icon.PILOT, Icon.WARRIOR, Icon.TATOOINE, Icon.EPISODE_I);
