@@ -150,10 +150,15 @@ public class Card_1261_032_Tests {
         scn.PrepareLSDestiny(7);
         scn.PassResponses("Fire ");
         scn.PassDestinyDrawResponses();
-        scn.PassResponses("ABOUT_TO_BE_HIT");
-        assertTrue(escort.isHit());
+        // Human Shield's PC errata (Advanced Rulebook 2023 Appendix A): it plays when the escort is about to be 'hit'
+        // and the captive is 'hit' instead, so the escort is never 'hit'.
         boolean playable = scn.DSPlayUsedInterruptAvailable(shield);
+        if (!playable && scn.LSDecisionAvailable("")) {
+            scn.LSPass();
+            playable = scn.DSPlayUsedInterruptAvailable(shield);
+        }
         if (playable) {
+            assertFalse(escort.isHit());
             scn.DSPlayUsedInterrupt(shield);
             scn.DSChooseCard(chewie);
             scn.PassCardPlayResponses();
@@ -161,6 +166,11 @@ public class Card_1261_032_Tests {
             assertFalse(escort.isHit());
             // A captive that is 'hit' is lost.
             assertTrue(chewie.isHit() || scn.GetLSLostPile().contains(chewie));
+        }
+        else {
+            scn.PassResponses("ABOUT_TO_BE_HIT");
+            assertTrue(escort.isHit());
+            assertFalse(scn.DSPlayUsedInterruptAvailable(shield));
         }
         return playable;
     }
