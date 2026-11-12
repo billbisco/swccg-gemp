@@ -32,6 +32,7 @@ import java.util.List;
 public class Card14_029 extends AbstractRepublic {
     public Card14_029() {
         super(Side.LIGHT, 2, 3, 3, 3, 6, "Ric Olie, Bravo Leader", Uniqueness.UNIQUE, ExpansionSet.THEED_PALACE, Rarity.R);
+        setDisplayTitle("Ric Olié, Bravo Leader"); // printed spelling (Bill 2026-11-12); rules use the title above
         setLore("Leader of Bravo Squadron's attack on the Trade Federation Droid Control Ship at the Battle of Naboo. With the assistance of Anakin Skywalker, his squadron succeeded.");
         setGameText("Adds 3 to power of anything he pilots. While piloting during a battle at a system where you have two piloted Bravo Squadron starfighters, adds two battle destiny.");
         addPersona(Persona.RIC);

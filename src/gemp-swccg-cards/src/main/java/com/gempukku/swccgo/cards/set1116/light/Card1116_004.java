@@ -25,6 +25,7 @@ import java.util.List;
 public class Card1116_004 extends AbstractRebel {
     public Card1116_004() {
         super(Side.LIGHT, 1, 3, 3, 4, 7, "Senator Padme Amidala", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_ORIGINAL_SET_16, Rarity.V);
+        setDisplayTitle("Senator Padmé Amidala"); // printed spelling (Bill 2026-11-12); rules use the title above
         setPolitics(4);
         setGameText("Agendas: justice, rebellion. Once per turn, if at Senate with Bail, may lose 1 Force to deploy a unique, non-[Maintenance] Rebel of ability < 4 from Lost Pile. If just lost from same site as Vader, place her out of play; opponent loses 4 Force.");
         addIcons(Icon.CORUSCANT, Icon.WARRIOR);

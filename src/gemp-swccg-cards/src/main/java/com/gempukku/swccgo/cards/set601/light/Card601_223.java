@@ -44,6 +44,7 @@ import java.util.Map;
 public class Card601_223 extends AbstractRepublic {
     public Card601_223() {
         super(Side.LIGHT, 4, 2, 2, 2, 3, "Dorme", Uniqueness.UNIQUE, ExpansionSet.LEGACY, Rarity.V);
+        setDisplayTitle("Dormé"); // printed spelling (Bill 2026-11-12); rules use the title above
         setLore("Spy and handmaiden.");
         setGameText("Once per turn, if Amidala at another location, may activate 1 Force. During your move phase, may target an opponent's Undercover spy here and draw two destiny. Choose one (take the other into hand). Target 'breaks cover' if destiny +1 > ability.");
         addIcons(Icon.EPISODE_I, Icon.LEGACY_BLOCK_9);

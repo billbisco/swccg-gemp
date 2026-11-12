@@ -37,6 +37,7 @@ import java.util.List;
 public class Card12_025 extends AbstractRepublic {
     public Card12_025() {
         super(Side.LIGHT, 3, 2, 1, 2, 2, "Sabe", Uniqueness.UNIQUE, ExpansionSet.CORUSCANT, Rarity.R);
+        setDisplayTitle("Sabé"); // printed spelling (Bill 2026-11-12); rules use the title above
         setLore("Female chosen as a handmaiden by Panaka due to her resemblance to Amidala. Trained to play the role of the Queen whenever it is considered that Amidala may be at risk.");
         setGameText("While at same site as Amidala, Sabe is power +2 and Amidala is immune to attrition. When at a site, during your deploy phase may place Sabe out of play to deploy Amidala to that site (for free) from your Reserve Deck (reshuffle) or Lost Pile.");
         addIcons(Icon.CORUSCANT, Icon.EPISODE_I);

@@ -37,6 +37,7 @@ import java.util.List;
 public class Card12_033 extends AbstractRepublic {
     public Card12_033() {
         super(Side.LIGHT, 3, 2, 1, 2, 2, "Yane", Uniqueness.UNIQUE, ExpansionSet.CORUSCANT, Rarity.U);
+        setDisplayTitle("Yané"); // printed spelling (Bill 2026-11-12); rules use the title above
         setLore("The youngest handmaiden, Yane stayed behind on Naboo while Amidala pleaded her case to the Galactic Senate. Musician.");
         setGameText("While at a Theed Palace site or same site as Amidala, opponent's Republic characters are deploy +1 here and Yane is forfeit +3. If just lost during a battle, may use 2 Force to place Yane in Used Pile.");
         addIcons(Icon.CORUSCANT, Icon.EPISODE_I);
