@@ -1843,7 +1843,8 @@ public interface SwccgCardBlueprint {
      * Rule (Bill, 2026-11-11): the title is the card's label, "(V)" included for a Virtual card ("Bail Organa (V)"),
      * even when the face prints something else ("Bail Organa"); the face's wording is the Display Title. Examples: a
      * pre-errata Legacy version printed under an older name ("Cyborg Commander, Hunter Of Jedi" for a version of
-     * Grievous, Hunter Of Jedi) or a card printed on more than one base ("Fanfare (Tatooine)").
+     * Grievous, Hunter Of Jedi), a card printed on more than one base ("Fanfare (Tatooine)"), or a card whose face
+     * prints accents ("Padmé Naberrie" for Padme Naberrie; Bill, 2026-11-12).
      * <p>
      * Display only (game log, card info, deck lists, deck builder). "(V)" never changes the game title: Virtual cards
      * have the same title as the original card, so Hunt Down and Hunt Down (V) are both Hunt Down. Every rule
@@ -1859,8 +1860,8 @@ public interface SwccgCardBlueprint {
     /**
      * Determines if {@link #getDisplayTitle()} is the whole title as printed, "(V)" included only when the face printed
      * it (Bill, 2026-11-10: "(V)" in a Virtual card's shown name follows the face), so no " (V)" suffix is added
-     * to it for display. False for a base-printing display title ({@code setBasePrintingDisplayTitle}), which is shown
-     * with the suffix. Display only.
+     * to it for display. False for a base-printing display title ({@code setBasePrintingDisplayTitle}) or an accented
+     * spelling on a card that is not a Legacy version, which are shown with the suffix. Display only.
      * @return true if the Display Title already says whether the face printed "(V)"
      */
     default boolean isDisplayTitleComplete() {

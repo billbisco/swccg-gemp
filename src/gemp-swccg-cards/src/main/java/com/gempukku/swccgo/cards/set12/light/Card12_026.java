@@ -38,6 +38,7 @@ import java.util.List;
 public class Card12_026 extends AbstractRepublic {
     public Card12_026() {
         super(Side.LIGHT, 3, 2, 1, 2, 2, "Sache", Uniqueness.UNIQUE, ExpansionSet.CORUSCANT, Rarity.U);
+        setDisplayTitle("Saché"); // printed spelling (Bill 2026-11-12); rules use the title above
         setLore("Handmaiden chosen by Captain Panaka for her strength and loyalty to Naboo. Willing to protect the Queen, even with her life.");
         setGameText("While at same site as Amidala, Sache is power +2 and Amidala is defense value +2. If just lost during a battle, may use 2 Force to take Sache into hand.");
         addIcons(Icon.CORUSCANT, Icon.EPISODE_I);

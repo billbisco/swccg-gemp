@@ -37,6 +37,7 @@ import java.util.List;
 public class Card201_007 extends AbstractRepublic {
     public Card201_007() {
         super(Side.LIGHT, 3, 2, 2, 2, 3, "Yane", Uniqueness.UNIQUE, ExpansionSet.SET_1, Rarity.V);
+        setDisplayTitle("Yané"); // printed spelling (Bill 2026-11-12); rules use the title above
         setVirtualSuffix(true);
         setLore("The youngest handmaiden, Yane stayed behind on Naboo while Amidala pleaded her case to the Galactic Senate. Musician.");
         setGameText("Whenever opponent deploys a character to same or adjacent site, may activate 1 Force. While with Amidala, forfeit +1, and once per turn may peek at the top card of your Force Pile and Reserve Deck; return one card to each deck or pile.");

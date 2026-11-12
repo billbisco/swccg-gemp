@@ -6,7 +6,9 @@ import com.gempukku.swccgo.game.formats.SwccgoFormatLibrary;
 import com.gempukku.swccgo.logic.GameUtils;
 import com.gempukku.util.MultipleComparator;
 
+import java.text.Normalizer;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class SortAndFilterCards {
     public <T extends CardItem> List<T> process(String filter, Collection<T> items, SwccgCardBlueprintLibrary cardLibrary, SwccgoFormatLibrary formatLibrary, Map<String, SetRarity> rarities) {
@@ -686,20 +688,46 @@ public class SortAndFilterCards {
         if (blueprint == null)
             return false;
 
-        // A pre-errata Legacy version printed under an older name is found by either name (docs/legacy-versions.md)
+        // A card with a Display Title (a Legacy version printed under an older name, or a printed accented spelling)
+        // is found by either name (docs/legacy-versions.md)
         return containsAllWords(GameUtils.getFullName(blueprint), words)
                 || (blueprint.getDisplayTitle() != null && containsAllWords(GameUtils.getRulesFullName(blueprint), words));
     }
 
     private static boolean containsAllWords(String name, List<String> words) {
-        String lowerName = name.toLowerCase();
         for (String word : words) {
-            if (!lowerName.contains(word.toLowerCase())) {
+            if (!nameContains(name, word)) {
                 return false;
             }
         }
         return true;
     }
+
+    /**
+     * Determines if a card name contains a word typed in the name search (Bill, 2026-11-12). Case-insensitive. A word
+     * typed without accents ignores accents in the name, so "padme" finds "Padmé Naberrie". A word typed with an accented
+     * letter matches only that accented letter, so "Padmé" finds "Padmé Naberrie" but not "Padme Naberrie".
+     * @param name the card name
+     * @param word the word typed
+     * @return true or false
+     */
+    public static boolean nameContains(String name, String word) {
+        String lowerName = Normalizer.normalize(name, Normalizer.Form.NFC).toLowerCase(Locale.ROOT);
+        String lowerWord = Normalizer.normalize(word, Normalizer.Form.NFC).toLowerCase(Locale.ROOT);
+        String foldedWord = foldAccents(lowerWord);
+        if (!foldedWord.equals(lowerWord))
+            return lowerName.contains(lowerWord);
+        return foldAccents(lowerName).contains(foldedWord);
+    }
+
+    /**
+     * Removes accents (Unicode NFD combining marks): "Padmé" → "Padme", "Îmwe" → "Imwe".
+     */
+    private static String foldAccents(String text) {
+        return COMBINING_MARKS.matcher(Normalizer.normalize(text, Normalizer.Form.NFD)).replaceAll("");
+    }
+
+    private static final Pattern COMBINING_MARKS = Pattern.compile("\\p{M}+");
 
     /**
      * Determines if the card contains all the specified words in its lore.
