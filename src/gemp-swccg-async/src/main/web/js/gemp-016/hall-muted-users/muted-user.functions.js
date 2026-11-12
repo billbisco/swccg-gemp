@@ -6,7 +6,8 @@ const MUTED_USERS = "mutedUsers";
 //     reason: string;
 // }
 
-const USER_NAME_REGEX = new RegExp(/<b>(\S*):<\/b>/);
+// The sender's name as chat.js writes it: "<b>" + escaped name + ":</b>" (names may hold spaces since #249).
+const USER_NAME_REGEX = new RegExp(/<b>([^<]*):<\/b>/);
 
 function getIsMuteEnabled() {
     return window.localStorage.getItem(IS_MUTE_ENABLED) ?? false;
@@ -45,7 +46,9 @@ function getUserNameFromMessage(message) {
     if (matches === null) {
         return '';
     }
-    return matches[1];
+    const div = document.createElement("div");
+    div.innerHTML = matches[1];   // only entities can be in it: no "<"
+    return div.textContent;
 }
 
 function checkIfMessageShouldBeMuted(message) {

@@ -14,6 +14,7 @@ import com.gempukku.swccgo.game.ChatCommunicationChannel;
 import com.gempukku.swccgo.game.Player;
 import com.gempukku.swccgo.guest.GuestSeatPlayer;
 import com.gempukku.swccgo.guest.PlayNowGames;
+import com.gempukku.swccgo.service.PlayerCard;
 import org.apache.commons.text.StringEscapeUtils;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpRequest;
@@ -190,7 +191,7 @@ public class ChatRequestHandler extends SwccgoServerRequestHandler implements Ur
         return kept;
     }
 
-    private void serializeChatRoomData(String room, List<ChatMessage> chatMessages, Collection<String> usersInRoom, Document doc) {
+    void serializeChatRoomData(String room, List<ChatMessage> chatMessages, Collection<String> usersInRoom, Document doc) {
         Element chatElem = doc.createElement("chat");
         chatElem.setAttribute("roomName", room);
         doc.appendChild(chatElem);
@@ -204,19 +205,33 @@ public class ChatRequestHandler extends SwccgoServerRequestHandler implements Ur
             chatElem.appendChild(message);
         }
 
-        Set<String> users = new TreeSet<String>(new CaseInsensitiveStringComparator());
+        Map<String, String> users = new TreeMap<String, String>(new CaseInsensitiveStringComparator());
         for (String userInRoom : usersInRoom) {
             String formattedName = formatPlayerNameForChatList(userInRoom);
             if (!formattedName.isEmpty()) {
-                users.add(formattedName);
+                users.put(formattedName, userInRoom);
             }
         }
 
-        for (String userInRoom : users) {
+        for (Map.Entry<String, String> entry : users.entrySet()) {
             Element user = doc.createElement("user");
-            user.appendChild(doc.createTextNode(userInRoom));
+            user.appendChild(doc.createTextNode(entry.getKey()));
+            setPlayerCard(user, entry.getValue());
             chatElem.appendChild(user);
         }
+    }
+
+    /**
+     * The player menu's facts for a chat-list entry (swccg-guild/work#264, AC6): the name as stored, what it is
+     * (player, guest or bot) and, for an account, its player id. Nothing private.
+     */
+    private void setPlayerCard(Element user, String name) {
+        user.setAttribute("name", name);
+        String kind = PlayerCard.kind(name);
+        user.setAttribute("kind", kind);
+        Integer id = PlayerCard.playerId(_playerDao, name);
+        if (id != null)
+            user.setAttribute("playerId", String.valueOf(id));
     }
 
     private class CaseInsensitiveStringComparator implements Comparator<String> {

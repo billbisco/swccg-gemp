@@ -2,6 +2,7 @@ package com.gempukku.swccgo.async.handler;
 
 import com.alibaba.fastjson.JSON;
 import com.gempukku.swccgo.async.HttpProcessingException;
+import com.gempukku.swccgo.service.PlayerCard;
 import com.gempukku.swccgo.async.ResponseWriter;
 import com.gempukku.swccgo.db.GameHistoryFilter;
 import com.gempukku.swccgo.db.vo.GameHistoryEntry;
@@ -112,6 +113,10 @@ public class GameHistoryRequestHandler extends SwccgoServerRequestHandler implem
             boolean won = me.equals(gameHistoryEntry.getWinner());
             historyEntry.setAttribute("result", won ? GameHistoryFilter.WON : GameHistoryFilter.LOST);
             historyEntry.setAttribute("opponent", won ? gameHistoryEntry.getLoser() : gameHistoryEntry.getWinner());
+            // #264 AC6: the opponent's player id for the player menu (null for bots and guests)
+            Integer opponentId = won ? gameHistoryEntry.getLoserId() : gameHistoryEntry.getWinnerId();
+            if (opponentId != null && PlayerCard.PLAYER.equals(PlayerCard.kind(won ? gameHistoryEntry.getLoser() : gameHistoryEntry.getWinner())))
+                historyEntry.setAttribute("opponentPlayerId", String.valueOf(opponentId));
             String mySide = gameHistoryEntry.getSideOf(me);
             if (mySide != null)
                 historyEntry.setAttribute("mySide", mySide);

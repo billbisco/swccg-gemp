@@ -293,6 +293,10 @@ var ChatBoxUI = Class.extend({
             }
 
             var users = root.getElementsByTagName("user");
+            // #264 AC6: what the player menu shows for each entry (name, player/guest/bot, Player ID)
+            var infos = new Array();
+            for (var i = 0; i < users.length; i++)
+                infos.push(typeof PlayerMenu !== "undefined" ? PlayerMenu.infoFromUser(users[i]) : null);
             if (this.playerListener != null) {
                 var players = new Array();
                 for (var i = 0; i < users.length; i++) {
@@ -300,17 +304,18 @@ var ChatBoxUI = Class.extend({
                     var userName = user.childNodes[0].nodeValue;
                     players.push(userName);
                 }
-                this.playerListener(players);
+                this.playerListener(players, infos);
             }
 
             if (this.chatListDiv != null) {
                 this.chatListDiv.html("");
-                var players = new Array();
                 for (var i = 0; i < users.length; i++) {
                     var user = users[i];
                     var userName = user.childNodes[0].nodeValue;
-                    players.push(userName);
-                    this.chatListDiv.append("<div class='chatUser'>" + chatListEntryHtml(userName) + "</div>");
+                    var entry = $("<div class='chatUser'></div>").html(chatListEntryHtml(userName));
+                    if (infos[i])
+                        PlayerMenu.bind(entry[0], this.menuInfo(infos[i]), this.menuActions(infos[i]));
+                    this.chatListDiv.append(entry);
                 }
             }
 
@@ -321,6 +326,23 @@ var ChatBoxUI = Class.extend({
                     that.updateChatMessages();
                 }, that.chatUpdateInterval);
         }
+    },
+
+    menuInfo:function (info) {
+        return function () { return info; };
+    },
+
+    // The hall chat's actions for a name in the user list: mute or unmute (the hall's own mute list, as on the
+    // account page). Game chat has no mute, so the game's Players tab shows only the name and id.
+    menuActions:function (info) {
+        var that = this;
+        return function () {
+            if (!that.isHallMuteActive || info.kind === "bot" || typeof isUserMuted !== "function")
+                return [];
+            if (isUserMuted(info.name))
+                return [{label: "Unmute in hall chat", run: function () { removeMutedUser(info.name); }}];
+            return [{label: "Mute in hall chat", run: function () { addMutedUser({name: info.name, reason: ""}); }}];
+        };
     },
 
     updateChatMessages:function () {

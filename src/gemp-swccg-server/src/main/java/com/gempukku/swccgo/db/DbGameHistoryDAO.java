@@ -424,6 +424,11 @@ public class DbGameHistoryDAO implements GameHistoryDAO {
         }
     }
 
+    private static Integer intOrNull(ResultSet rs, int column) throws SQLException {
+        int value = rs.getInt(column);
+        return rs.wasNull() ? null : value;
+    }
+
     @Override
     public List<GameHistoryEntry> getGameHistoryForPlayer(Player player, GameHistoryFilter filter, int start, int count) {
         GameHistoryQuery query = GameHistoryQuery.forPlayer(player.getId(), filter);
@@ -438,7 +443,8 @@ public class DbGameHistoryDAO implements GameHistoryDAO {
                     result.add(new GameHistoryEntry(rs.getString(1), rs.getString(3), rs.getString(5), rs.getString(2),
                             rs.getString(4), rs.getString(6), rs.getString(7), rs.getString(8), rs.getString(9),
                             rs.getString(10), rs.getString(11), rs.getString(12), new Date(rs.getLong(13)),
-                            new Date(rs.getLong(14)), rs.getString(15), rs.getString(16)));
+                            new Date(rs.getLong(14)), rs.getString(15), rs.getString(16))
+                            .withPlayerIds(intOrNull(rs, 17), intOrNull(rs, 18)));
                 }
                 return result;
             }

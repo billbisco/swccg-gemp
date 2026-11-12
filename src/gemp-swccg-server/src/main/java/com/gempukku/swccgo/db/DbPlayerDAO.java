@@ -197,6 +197,19 @@ public class DbPlayerDAO implements PlayerDAO {
     }
 
     @Override
+    public synchronized boolean claimFirstPlaySession(String playerName, String remoteAddr, int maxAgeSeconds) throws SQLException {
+        try (Connection conn = _dbAccess.getDataSource().getConnection()) {
+            try (PreparedStatement statement = conn.prepareStatement("update player set last_ip=? where name=? and last_ip is null"
+                    + " and account_creation_date >= NOW() - INTERVAL ? SECOND")) {
+                statement.setString(1, remoteAddr);
+                statement.setString(2, playerName);
+                statement.setInt(3, maxAgeSeconds);
+                return (statement.executeUpdate() == 1);
+            }
+        }
+    }
+
+    @Override
     public synchronized boolean updateLastReward(Player player, Integer previousReward, int currentReward) throws SQLException {
         try (Connection conn = _dbAccess.getDataSource().getConnection()) {
             try (PreparedStatement statement = conn.prepareStatement(

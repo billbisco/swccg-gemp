@@ -19,7 +19,7 @@ import java.util.Locale;
 public final class GameHistoryQuery {
     static final String COLUMNS = "winner, loser, win_reason, lose_reason, win_recording_id, lose_recording_id, format_name, "
             + "tournament, winner_deck_name, winner_deck_archetype, loser_deck_name, loser_deck_archetype, start_date, end_date, "
-            + "winner_side, league_type";
+            + "winner_side, league_type, winner_id, loser_id";
     /** Casual games: no event, or "Casual" / "Casual (Private)" (the same split My Stats uses). */
     static final String CASUAL_CONDITION = "(tournament IS NULL OR tournament LIKE 'Casual%')";
     static final char LIKE_ESCAPE = '!';

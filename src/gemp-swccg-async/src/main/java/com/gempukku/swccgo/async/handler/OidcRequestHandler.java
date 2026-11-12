@@ -6,6 +6,7 @@ import com.gempukku.swccgo.async.oidc.JwtVerifier;
 import com.gempukku.swccgo.async.oidc.OidcClient;
 import com.gempukku.swccgo.async.oidc.PendingStarts;
 import com.gempukku.swccgo.game.Player;
+import com.gempukku.swccgo.hall.HallServer;
 import com.gempukku.swccgo.service.AuthService;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpMethod;
@@ -49,7 +50,13 @@ public class OidcRequestHandler extends SwccgoServerRequestHandler implements Ur
     private static final int MAX_PENDING = 20_000;
     private static final int MAX_PENDING_PER_IP = 20;
 
+    /** A new account's first Play session counts as signing up only within this long of its creation. */
+    static final int FIRST_SESSION_MAX_AGE_SECONDS = 24 * 60 * 60;
+    /** Query parameter the hall reads to show RegisterRequestHandler.SIGNUP_ADOPT_FAILED_NOTICE. */
+    static final String ADOPT_FAILED_PARAM = "guest_notice=adopt_failed";
+
     private final OidcClient _client;
+    private final HallServer _hallServer;
     private final PendingStarts<Pending> _pending = new PendingStarts<>(MAX_PENDING, MAX_PENDING_PER_IP, PENDING_TTL_MS);
     private final Map<String, Long> _seenJti = new ConcurrentHashMap<>();
 
@@ -66,6 +73,7 @@ public class OidcRequestHandler extends SwccgoServerRequestHandler implements Ur
     public OidcRequestHandler(Map<Type, Object> context, OidcClient client) {
         super(context);
         _client = client;
+        _hallServer = extractObject(context, HallServer.class);
     }
 
     @Override
@@ -167,10 +175,30 @@ public class OidcRequestHandler extends SwccgoServerRequestHandler implements Ur
         AuthService.AuthResult status = _authService.accountStatus(playerId);
         if (status.getStatus() != AuthService.Status.OK || status.getPlayer() == null || Player.isBot(status.getPlayer().getName()))
             throw new HttpProcessingException(403);
-        String name = status.getPlayer().getName();
+        completeSignIn(request, rw, remoteIp, status.getPlayer().getName(), playerId);
+    }
+
+    /** The verified player signs in: a GEMP session, a new account's guest games, and back to Play. */
+    void completeSignIn(HttpRequest request, ResponseWriter rw, String remoteIp, String name, int playerId) throws Exception {
+        // #264 R6/AC3 (Bill 2026-11-11, t135u): a membership just made through the sign-in service (Google, Discord
+        // or a password signup in the sign-in box) takes this browser's guest Play now games on its first Play
+        // session, as a classic signup does. Only that first session of a new account; an existing account
+        // signing in never takes them. Only this browser's guest cookie's games move; never another account's.
+        boolean firstSession = getGuestId(request) != null && _hallServer != null
+                && _playerDao.claimFirstPlaySession(name, remoteIp, FIRST_SESSION_MAX_AGE_SECONDS);
         Map<String, String> h = logUserReturningHeaders(remoteIp, name);
+        String after = _client.config().afterLoginUrl;
+        if (firstSession) {
+            h = adoptGuestGamesSafely(_hallServer, request, name, h, RegisterRequestHandler.SIGNUP_ADOPT_FAILED_NOTICE);
+            if (h.containsKey(GUEST_NOTICE_HEADER)) {   // a redirect can't carry the notice header: the hall shows it
+                h = new HashMap<>(h);
+                h.remove(GUEST_NOTICE_HEADER);
+                after = after + (after.contains("?") ? "&" : "?") + ADOPT_FAILED_PARAM;
+            }
+            LOG.info("swccg-login: first Play session of new player id " + playerId + "; guest games offered");
+        }
         LOG.info("swccg-login: signed in player id " + playerId);
-        redirect(rw, _client.config().afterLoginUrl, h);
+        redirect(rw, after, h);
     }
 
     private void backchannel(HttpRequest request, ResponseWriter rw) throws Exception {
