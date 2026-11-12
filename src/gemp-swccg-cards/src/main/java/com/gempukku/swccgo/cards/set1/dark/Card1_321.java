@@ -21,7 +21,7 @@ public class Card1_321 extends AbstractSeeker {
     public Card1_321() {
         super(Side.DARK, 3, "Luke Seeker", Uniqueness.UNRESTRICTED, ExpansionSet.PREMIERE, Rarity.R2);
         setLore("Military version of a 'remote.' Programmed to stalk specific targets or secondary targets. Heat and light sensors track with fatal accuracy. Can stow away on starships.");
-        setGameText("Use 1 Force to deploy on opponent's side at any unoccupied site. Moves during your control phase, like a character, at normal use of the Force. When at same location as Luke of ability < 4 or pilot of ability < 3, choose one to be immediately lost. Seeker also lost.");
+        setGameText("Deploys for 1 Force to an unoccupied site. Deploys and moves like an undercover spy. When present with Luke of ability < 4 or pilot of ability < 3, choose one to be immediately lost (treat as an \"all cards\" situation). Seeker is also lost.");
     }
 
     @Override

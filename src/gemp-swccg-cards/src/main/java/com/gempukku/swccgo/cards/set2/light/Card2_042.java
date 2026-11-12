@@ -48,7 +48,7 @@ import java.util.List;
 public class Card2_042 extends AbstractEpicEventDeployable {
     public Card2_042() {
         super(Side.LIGHT, PlayCardZoneOption.ATTACHED, Title.Attack_Run, Uniqueness.UNIQUE, ExpansionSet.A_NEW_HOPE, Rarity.R2);
-        setGameText("Deploy on Death Star: Trench. During your move phase, you may make an Attack Run as follows: Enter Trench: Move up to 3 of your starfighters into trench (for free). Dark Side may immediately follow with up to 3 TIEs (for free). Provide Cover: Identify your lead starfighter (Proton Torpedoes* required) and wingmen (if any). Turbolaser Batteries and TIEs with weapons may now target your starfighters (wingmen first, then lead if no wingmen remaining). Hit starfighters are immediately lost. It's Away!: Draw two destiny. Pull Up!: All starfighters now move to Death Star system (for free). If (total destiny + X + Y - Z) > 15, Death Star is 'blown away.' X = ability of lead pilot or 3 if Targeting Computer is present. Y = total sites at largest Rebel Base (Yavin 4 or Hoth). Z = highest ability of TIE pilots in trench. *Your Proton Torpedoes are immune to Overload.");
+        setGameText("Deploy on Death Star: Trench. During your move phase, you may make an Attack Run as follows: Enter Trench: Move up to 3 of your starfighters into trench (for free). Dark Side may immediately follow with up to 3 TIEs (for free). Provide Cover: Identify your lead starfighter (Proton Torpedoes * required) and wingmen (if any). Turbolaser Batteries and TIEs with weapons may now target your starfighters (wingmen first, then lead if no wingmen remaining). Hit starfighters are immediately lost. It's Away!: Draw two destiny. Pull Up!: All starfighters now move to Death Star system (for free). If (total destiny + X + Y - Z) > 15, Death Star is \"blown away.\" X = ability of lead pilot (or 3 if Targeting Computer aboard) just before Pull Up! Y = total sites at largest Rebel Base (Yavin 4 or Hoth). Z = highest ability of opponent's TIE pilots in trench just before Pull Up! *Your Proton Torpedoes are immune to Overload.");
         addIcons(Icon.A_NEW_HOPE);
     }
 
@@ -118,21 +118,14 @@ public class Card2_042 extends AbstractEpicEventDeployable {
                                                                                 new PassthruEffect(action) {
                                                                                     @Override
                                                                                     protected void doPlayEffect(SwccgGame game) {
-                                                                                        final float valueForX;
-                                                                                        if (Filters.hasAttached(Filters.Targeting_Computer).accepts(game, leadStarfighter))
-                                                                                            valueForX = 3;
-                                                                                        else
-                                                                                            valueForX = modifiersQuerying.getVariableValue(gameState, self, Variable.X, modifiersQuerying.getHighestAbilityPiloting(gameState, self, leadStarfighter, false, false));
+                                                                                        // X and Z are taken just before Pull Up! (PC errata)
+                                                                                        final float valueForX = calculateValueForX(game, self, leadStarfighter);
 
                                                                                         int hothSites = Filters.countTopLocationsOnTable(game, Filters.and(Filters.Hoth_site, Filters.notIgnoredDuringEpicEventCalculation(true)));
                                                                                         int yavin4Sites = Filters.countTopLocationsOnTable(game, Filters.and(Filters.Yavin_4_site, Filters.notIgnoredDuringEpicEventCalculation(true)));
                                                                                         final float valueForY = modifiersQuerying.getVariableValue(gameState, self, Variable.Y, Math.max(hothSites, yavin4Sites));
 
-                                                                                        float highestAbility = 0;
-                                                                                        for (PhysicalCard tieInTrench : Filters.filterActive(game, self, Filters.and(Filters.TIE, Filters.at(Filters.Death_Star_Trench)))) {
-                                                                                            highestAbility = Math.max(highestAbility, modifiersQuerying.getHighestAbilityPiloting(gameState, self, tieInTrench, false, false));
-                                                                                        }
-                                                                                        final float valueForZ = modifiersQuerying.getVariableValue(gameState, self, Variable.Z, highestAbility);
+                                                                                        final float valueForZ = calculateValueForZ(game, self);
 
                                                                                         final float total = modifiersQuerying.getEpicEventCalculationTotal(gameState, self, (totalDestiny != null ? totalDestiny : 0) + valueForX + valueForY - valueForZ);
 
@@ -203,5 +196,48 @@ public class Card2_042 extends AbstractEpicEventDeployable {
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new ImmuneToTitleModifier(self, Filters.and(Filters.your(self), Filters.Proton_Torpedoes), Title.Overload));
         return modifiers;
+    }
+
+    /**
+     * X = ability of lead pilot (or 3 if Targeting Computer aboard) just before Pull Up! (PC errata, Advanced Rulebook
+     * 2023 Appendix A p. 104).
+     * @param game the game
+     * @param self this card
+     * @param leadStarfighter the lead starfighter
+     * @return the value for X
+     */
+    public float calculateValueForX(SwccgGame game, PhysicalCard self, PhysicalCard leadStarfighter) {
+        GameState gameState = game.getGameState();
+        ModifiersQuerying modifiersQuerying = game.getModifiersQuerying();
+        if (Filters.hasAttached(Filters.Targeting_Computer).accepts(game, leadStarfighter))
+            return 3;
+        return modifiersQuerying.getVariableValue(gameState, self, Variable.X, modifiersQuerying.getHighestAbilityPiloting(gameState, self, leadStarfighter, false, false));
+    }
+
+    /**
+     * Z = highest ability of opponent's TIE pilots in trench just before Pull Up! (PC errata, Advanced Rulebook 2023
+     * Appendix A p. 104).
+     * @param game the game
+     * @param self this card
+     * @return the value for Z
+     */
+    public float calculateValueForZ(SwccgGame game, PhysicalCard self) {
+        GameState gameState = game.getGameState();
+        ModifiersQuerying modifiersQuerying = game.getModifiersQuerying();
+        float highestAbility = 0;
+        for (PhysicalCard tieInTrench : Filters.filterActive(game, self, Filters.and(getTiesCountedForZ(self), Filters.at(Filters.Death_Star_Trench)))) {
+            highestAbility = Math.max(highestAbility, modifiersQuerying.getHighestAbilityPiloting(gameState, self, tieInTrench, false, false));
+        }
+        return modifiersQuerying.getVariableValue(gameState, self, Variable.Z, highestAbility);
+    }
+
+    /**
+     * The TIEs whose pilots count for Z: opponent's TIEs (PC errata). The Decipher text state (d) overrides this: its
+     * "TIE pilots in trench" counts every TIE there.
+     * @param self this card
+     * @return the filter
+     */
+    protected Filter getTiesCountedForZ(PhysicalCard self) {
+        return Filters.and(Filters.opponents(self), Filters.TIE);
     }
 }

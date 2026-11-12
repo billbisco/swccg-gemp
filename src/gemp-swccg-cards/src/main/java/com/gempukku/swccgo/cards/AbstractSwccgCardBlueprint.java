@@ -346,6 +346,14 @@ public abstract class AbstractSwccgCardBlueprint implements SwccgCardBlueprint {
         _keywords.add(keyword);
     }
 
+    /**
+     * Removes the specified keyword (e.g. a capital starship whose errata removed its ship-docking capability).
+     * @param keyword the keyword
+     */
+    protected final void removeKeyword(Keyword keyword) {
+        _keywords.remove(keyword);
+    }
+
     @Override
     public boolean hasIcon(Icon icon) {
         return _icons.containsKey(icon) && _icons.get(icon) > 0;

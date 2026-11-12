@@ -64,7 +64,7 @@ public class Card1_059 extends AbstractEffect {
     public Card1_059() {
         super(Side.LIGHT, 5f, PlayCardZoneOption.ATTACHED, Title.Plastoid_Armor, Uniqueness.UNIQUE, ExpansionSet.PREMIERE, Rarity.U2);
         setLore("Luke and Han took the armor suits from fallen stormtroopers and used them as both protection and disguise to penetrate the detention cell block aboard the Death Star.");
-        setGameText("Deploy on a Death Star site where a stormtrooper was just lost. Target one of your characters not on Death Star. When target reaches Utinni Effect, relocate to target. Target is now 'disguised:' gains spy skill, power and forfeit +2, and armor = 5.");
+        setGameText("Deploy on a Death Star site where a stormtrooper was just lost. Target one of your characters not on Death Star. When target reaches this card, relocate to target. Target is now 'disguised:' gains spy skill, power and forfeit +2, and armor = 5.");
         setCardSubtype(CardSubtype.UTINNI);
     }
 

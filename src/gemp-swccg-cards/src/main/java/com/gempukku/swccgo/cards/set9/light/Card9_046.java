@@ -36,7 +36,7 @@ public class Card9_046 extends AbstractNormalEffect {
     public Card9_046() {
         super(Side.LIGHT, 5, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Twilight Is Upon Me", Uniqueness.UNIQUE, ExpansionSet.DEATH_STAR_II, Rarity.R);
         setLore("When a Jedi dies, the spirit spreads through the Force and touches the living.");
-        setGameText("Deploy on table. Once per turn, may take The Force Is Strong With This One or [Death Star II] Anakin Skywalker into hand from Reserve Deck: reshuffle. May use 2 Force to cancel Dark Jedi Presence or You Are Beaten (unless canceling Uncontrollable Fury). (Immune to Alter.)");
+        setGameText("Deploy on table. Once per turn, may take one The Force Is Strong With This One or [Death Star II] Anakin Skywalker into hand from Reserve Deck, reshuffle. May use 2 Force to cancel You Are Beaten (unless canceling Uncontrollable Fury) or Dark Jedi Presence. (Immune to Alter.)");
         addIcons(Icon.DEATH_STAR_II);
         addImmuneToCardTitle(Title.Alter);
     }

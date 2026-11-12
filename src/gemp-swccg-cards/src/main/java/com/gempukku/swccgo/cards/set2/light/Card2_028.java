@@ -21,6 +21,7 @@ import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.GameUtils;
 import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
 import com.gempukku.swccgo.logic.effects.CancelCardOnTableEffect;
+import com.gempukku.swccgo.logic.effects.ModifyForfeitUntilEndOfTurnEffect;
 import com.gempukku.swccgo.logic.effects.ModifyPowerUntilEndOfTurnEffect;
 import com.gempukku.swccgo.logic.effects.RespondableEffect;
 import com.gempukku.swccgo.logic.effects.TargetCardOnTableEffect;
@@ -117,7 +118,7 @@ public class Card2_028 extends AbstractDevice {
                                             protected void performActionResults(Action targetingAction) {
                                                 // Perform result(s)
                                                 action2.appendEffect(
-                                                        new ModifyPowerUntilEndOfTurnEffect(action2, character, 1));
+                                                        new ModifyForfeitUntilEndOfTurnEffect(action2, character, 1));
                                             }
                                         }
                                 );

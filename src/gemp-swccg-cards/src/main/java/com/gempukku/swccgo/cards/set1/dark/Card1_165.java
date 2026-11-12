@@ -42,7 +42,7 @@ public class Card1_165 extends AbstractImperial {
     public Card1_165() {
         super(Side.DARK, 2, 2, 2, 2, 3, Title.Chief_Bast, Uniqueness.UNIQUE, ExpansionSet.PREMIERE, Rarity.U1);
         setLore("Aide to Grand Moff Tarkin. Rarely underestimates enemies. Learned cunning and patience hunting big game as a youth.");
-        setGameText("Adds 2 to power of anything he pilots. Power +1 if at same site as Tarkin. If a battle was just initiated at a system where Bast is present with your non-droid character aboard a starship, may 'evacuate' (relocate) both to a related site.");
+        setGameText("Adds 2 to power of anything he pilots. Power +1 at same site as Tarkin. If a battle was just initiated at a system where Bast is present with your non-droid character, may 'evacuate' (relocate) both to a related site.");
         addIcons(Icon.PILOT);
     }
 
@@ -56,14 +56,16 @@ public class Card1_165 extends AbstractImperial {
 
     @Override
     protected List<OptionalGameTextTriggerAction> getGameTextOptionalAfterTriggers(final String playerId, final SwccgGame game, EffectResult effectResult, final PhysicalCard self, int gameTextSourceCardId) {
-        Filter relatedSitesFilter = Filters.and(Filters.relatedSite(self), Filters.locationCanBeRelocatedTo(self, 0));
-        Filter otherCharacterFilter = Filters.and(Filters.your(self), Filters.non_droid_character, Filters.presentWith(self), Filters.canBeRelocatedToLocation(relatedSitesFilter, 0));
+        // 'Evacuate' relocates Bast and the character from aboard the starship (allowSameLocation, as Escape Pod does);
+        // without it relocation never starts from aboard a starship.
+        Filter relatedSitesFilter = Filters.and(Filters.relatedSite(self), Filters.locationCanBeRelocatedTo(self, false, false, false, 0, false, true));
+        Filter otherCharacterFilter = Filters.and(Filters.your(self), Filters.non_droid_character, Filters.presentWith(self), Filters.canBeRelocatedToLocation(relatedSitesFilter, false, false, false, 0, false, true));
 
         // Check condition(s)
         if (TriggerConditions.battleInitiatedAt(game, effectResult, Filters.sameSystem(self))
                 && GameConditions.isAboardAnyStarship(game, self)
                 && GameConditions.canTarget(game, self, otherCharacterFilter)
-                && GameConditions.canUseForceToRelocateCard(game, self, 0, relatedSitesFilter)) {
+                && Filters.canBeRelocatedToLocation(relatedSitesFilter, false, false, false, 0, false, true).accepts(game, self)) {
 
             final OptionalGameTextTriggerAction action = new OptionalGameTextTriggerAction(self, gameTextSourceCardId);
             action.setText("'Evacuate' to related site");
@@ -72,7 +74,7 @@ public class Card1_165 extends AbstractImperial {
                     new ChooseCardOnTableEffect(action, playerId, "Choose site to 'evacuate' to", relatedSitesFilter) {
                         @Override
                         protected void cardSelected(final PhysicalCard siteToRelocateTo) {
-                            Filter otherCharacterFilter2 = Filters.and(Filters.your(self), Filters.non_droid_character, Filters.presentWith(self), Filters.canBeRelocatedToLocation(siteToRelocateTo, 0));
+                            Filter otherCharacterFilter2 = Filters.and(Filters.your(self), Filters.non_droid_character, Filters.presentWith(self), Filters.canBeRelocatedToLocation(siteToRelocateTo, false, false, false, 0, false, true));
                             action.appendTargeting(
                                     new TargetCardOnTableEffect(action, playerId, "Choose character to 'evacuate' with", otherCharacterFilter2) {
                                         @Override
