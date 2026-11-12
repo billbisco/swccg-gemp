@@ -32,7 +32,7 @@ import java.util.List;
 public class Card9_003 extends AbstractAdmiralsOrder {
     public Card9_003() {
         super(Side.LIGHT, "Concentrate All Fire", ExpansionSet.DEATH_STAR_II, Rarity.R);
-        setGameText("Each starfighter that fires a weapon in battle is power +3 for the remainder of battle. Once per turn you may cancel and redraw your starship weapon destiny just drawn. At sites related to systems you occupy, your characters who have immunity to attrition each add 2 to immunity and 1 to each of that character's weapon destiny draws.");
+        setGameText("Each starfighter that fires a weapon in battle is power +3 for remainder of battle. Once per turn, you may cancel and redraw your starship weapon destiny just drawn. At sites related to systems you occupy, your characters who have immunity to attrition each add 2 to immunity and 1 to each of that character's weapon destiny draws.");
         addIcons(Icon.DEATH_STAR_II);
     }
 
