@@ -2,10 +2,12 @@ package com.gempukku.swccgo.cards.set5;
 
 import com.gempukku.swccgo.common.Phase;
 import com.gempukku.swccgo.common.TextState;
+import com.gempukku.swccgo.common.Zone;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import com.gempukku.swccgo.game.SwccgCardBlueprint;
 import com.gempukku.swccgo.logic.GameUtils;
+import com.gempukku.swccgo.logic.modifiers.IgnoresLocationDeploymentRestrictionsWhenDeployingToLocationModifier;
 import org.junit.Test;
 
 import java.time.LocalDate;
@@ -420,7 +422,7 @@ public class Card_5_TextStates_Printed_Tests {
         scn.StartGame();
         scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("mine"));
         scn.MoveCardsToDSHand(effect);
-        scn.EnsureDSForcePile(10);
+        scn.EnsureDSForcePile(5);
         scn.SkipToDSTurn(Phase.DEPLOY);
         return scn.DSCardPlayAvailable(effect);
     }
@@ -449,15 +451,24 @@ public class Card_5_TextStates_Printed_Tests {
         var console = scn.GetDSCard("console");
         var chamber = scn.GetDSCard("chamber");
         var ugnaught1 = scn.GetDSCard("ugnaught1");
+        var ugnaught2 = scn.GetDSCard("ugnaught2");
         scn.StartGame();
         scn.MoveLocationToTable(chamber);
         scn.AttachCardsTo(chamber, console);
-        scn.MoveCardsToTopOfDSReserveDeck(ugnaught1, scn.GetDSCard("ugnaught2"));
         scn.EnsureDSForcePile(5);
         scn.SkipToDSTurn(Phase.CONTROL);
+        scn.MoveCardsToTopOfDSReserveDeck(ugnaught1, ugnaught2);
         scn.DSUseCardAction(console, "Take card into hand");
-        scn.DSChooseCard(ugnaught1);
-        assertTrue(scn.GetDSHandCount() > 0);
+        scn.PassCardAndForceUseResponses();
+        if (scn.DSHasCardChoiceAvailable(ugnaught1)) {
+            scn.DSChooseCard(ugnaught1);
+        } else {
+            scn.DSChooseCardIDFromSelection(ugnaught1);
+        }
+        scn.PassAllResponses();
+        assertTrue(ugnaught1.getZone() == Zone.HAND || ugnaught2.getZone() == Zone.HAND);
+        while (!scn.DSAnyDecisionsAvailable() && scn.LSAnyDecisionsAvailable())
+            scn.LSPass();
         return scn.DSCardActionAvailable(console, "Take card into hand");
     }
 

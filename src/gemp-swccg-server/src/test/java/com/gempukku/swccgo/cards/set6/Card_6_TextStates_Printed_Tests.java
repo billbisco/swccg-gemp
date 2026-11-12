@@ -2,10 +2,12 @@ package com.gempukku.swccgo.cards.set6;
 
 import com.gempukku.swccgo.common.Phase;
 import com.gempukku.swccgo.common.TextState;
+import com.gempukku.swccgo.common.Zone;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import com.gempukku.swccgo.game.SwccgCardBlueprint;
 import com.gempukku.swccgo.logic.GameUtils;
+import com.gempukku.swccgo.logic.modifiers.IgnoresLocationDeploymentRestrictionsWhenDeployingToLocationModifier;
 import org.junit.Test;
 
 import java.time.LocalDate;
@@ -351,6 +353,51 @@ public class Card_6_TextStates_Printed_Tests {
         assertNull(bare.getTextState());
         assertTrue(bare.getClass().isInstance(printed));
     }
+    @Test
+    public void CaneAdissPrintedHasThePrintedTextAndStats() {
+        var scn = cardScenario("6_142o", "6_142", false);
+        var printed = scn.GetDSCard("state").getBlueprint();
+        var bare = scn.GetDSCard("bare").getBlueprint();
+        assertSameCard(printed, bare);
+        assertEquals("If opponent just initiated a Force drain at a non-shielded planet location, deploy on that location. Your cards may deploy here regardless of presence and location deployment restrictions. (Immune to Control.)", printed.getGameText());
+        assertNotEquals(printed.getGameText(), bare.getGameText());
+        TextState state = printed.getTextState();
+        assertEquals("6_142", state.currentId());
+        assertEquals("Printed", state.label());
+        assertEquals(LocalDate.of(1998, 5, 1), state.printedOn());
+        assertEquals(bare.getTitle() + " [Printed]", GameUtils.getFullName(printed));
+        assertNull(bare.getTextState());
+        assertTrue(bare.getClass().isInstance(printed));
+    }
+    /** As printed, Cane Adiss lets any of your cards (here an Effect) deploy at its location regardless of restrictions. */
+    @Test
+    public void CaneAdissPrintedCoversAllYourCards() {
+        assertTrue(caneAdissCoversAnEffect("6_142o"));
+        assertFalse(caneAdissCoversAnEffect("6_142"));
+    }
+
+    private static boolean caneAdissCoversAnEffect(String caneId) {
+        var scn = new VirtualTableScenario(
+                new HashMap<String, String>() {{
+                    put("filler", "1_28");
+                }},
+                new HashMap<String, String>() {{
+                    put("cane", caneId);
+                    put("effect", "1_208"); // A Disturbance In The Force, an Effect
+                }}, 10, 10,
+                StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields, StartingSetup.NoDSShields, "anything_goes");
+        var cane = scn.GetDSCard("cane");
+        var effect = scn.GetDSCard("effect");
+        scn.StartGame();
+        scn.AttachCardsTo(scn.GetDSStartingLocation(), cane);
+        scn.MoveCardsToDSHand(effect);
+        return cane.getBlueprint().getWhileInPlayModifiers(scn.game(), cane).stream()
+                .filter(modifier -> modifier instanceof IgnoresLocationDeploymentRestrictionsWhenDeployingToLocationModifier)
+                .anyMatch(modifier -> modifier.affectsCard(scn.gameState(), scn.game().getModifiersQuerying(), effect));
+    }
+
     /** As printed, Hutt Bounty deploys on any smuggler, gambler or thief, so Dark Side may put it on its own Lando (a gambler). */
     @Test
     public void HuttBountyPrintedMayDeployOnYourOwnGambler() {
@@ -375,7 +422,7 @@ public class Card_6_TextStates_Printed_Tests {
         scn.StartGame();
         scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetDSCard("mine"));
         scn.MoveCardsToDSHand(effect);
-        scn.EnsureDSForcePile(10);
+        scn.EnsureDSForcePile(5);
         scn.SkipToDSTurn(Phase.DEPLOY);
         return scn.DSCardPlayAvailable(effect);
     }

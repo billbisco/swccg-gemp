@@ -6667,6 +6667,7 @@ const fixedImages = {
 "5_113o":"https://wiki.swccg.com/images/c/c9/CC-D-bounty-decipher-archive.gif",
 "6_144o":"https://wiki.swccg.com/images/0/09/JabbasPalace-D-huttbounty-decipher-archive.gif",
 "5_125o":"https://wiki.swccg.com/images/8/89/CloudCity-D-vadersbounty-decipher-archive.gif",
+"6_142o":"https://wiki.swccg.com/images/f/fe/JP-D-caneadiss-decipher-archive.gif",
 // Batch B36 (source research R2-R4): Imperial Occupation (V) PC-E1 (CBT errata of 2012-09-21, replaced 2012-11-19) shows the E-marked PC card image of the 0 side, which prints that text; its 7 side shows the PC card image of Imperial Control (the 2012-09-21 back text, unchanged since). 2220_72_BACK (original back) now shows its release-sheet slip ("At marker sites, AT-ATs move for free"), edited in place below.
 "2220_1072":"https://wiki.swccg.com/images/9/93/VB2-D-imperialoccupation-pre.gif",
 "2220_1072_BACK":"https://res.starwarsccg.org/cards/legacy/VirtualBlock2-Dark/large/imperialcontrol.gif",
