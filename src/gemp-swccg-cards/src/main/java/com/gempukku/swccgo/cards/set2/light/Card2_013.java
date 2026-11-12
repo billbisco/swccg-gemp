@@ -38,7 +38,7 @@ public class Card2_013 extends AbstractAlien {
     public Card2_013() {
         super(Side.LIGHT, 3, 2, 2, 1, 3, "Nalan Cheel", Uniqueness.UNIQUE, ExpansionSet.A_NEW_HOPE, Rarity.U2);
         setLore("Male Bith musician. Though he enjoys playing his Bandfill in Figrin D'an's band, he misses the bubbling pink swamps of his homeworld, Clak'dor VII.");
-        setGameText("After using Bith Shuffle, peek at top X cards of pile or deck just shuffled, where X = number of other musicians at same site. May reshuffle without peeking.");
+        setGameText("After using Bith Shuffle, peek at top X cards of pile or deck just shuffled, where X = number of other musicians at same site. May re-shuffle without peeking.");
         addIcons(Icon.A_NEW_HOPE);
         addKeywords(Keyword.MUSICIAN);
         setSpecies(Species.BITH);

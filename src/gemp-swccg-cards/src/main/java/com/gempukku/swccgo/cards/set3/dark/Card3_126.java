@@ -39,7 +39,7 @@ public class Card3_126 extends AbstractLostInterrupt {
     public Card3_126() {
         super(Side.DARK, 4, Title.He_Hasnt_Come_Back_Yet, Uniqueness.UNRESTRICTED, ExpansionSet.HOTH, Rarity.C2);
         setLore("'Princess Leia is wondering about Master Luke...She doesn't know where he is.' 'I don't know where he is.' 'Nobody knows where he is.'");
-        setGameText("During your control phase, target any character alone at one of your exterior planet sites (except a docking bay). Draw destiny. Target is missing if destiny + 3 > ability.");
+        setGameText("During your control phase, target any character alone at one of your exterior planet sites (except a docking bay). Draw destiny. Target is missing if destiny +3 > ability.");
         addIcons(Icon.HOTH);
     }
 
