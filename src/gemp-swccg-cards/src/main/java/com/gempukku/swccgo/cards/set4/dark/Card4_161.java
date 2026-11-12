@@ -33,7 +33,7 @@ public class Card4_161 extends AbstractUniqueStarshipSite {
     public Card4_161() {
         super(Side.DARK, Title.Holotheatre, Persona.EXECUTOR, ExpansionSet.DAGOBAH, Rarity.R);
         setLocationDarkSideGameText("If Vader or Emperor on table, your Force generation is +1 here (+2 if both).");
-        setLocationLightSideGameText("If you control, Force drain +1 here.");
+        setLocationLightSideGameText("Force drain +1 here.");
         addIcon(Icon.DARK_FORCE, 1);
         addIcons(Icon.DAGOBAH, Icon.INTERIOR_SITE, Icon.STARSHIP_SITE, Icon.MOBILE, Icon.SCOMP_LINK);
     }

@@ -33,15 +33,15 @@ public class Card2_100 extends AbstractDroid {
     public Card2_100() {
         super(Side.DARK, 2, 2, 1, 3, "R3-T6 (Arthree-Teesix)", Uniqueness.UNIQUE, ExpansionSet.A_NEW_HOPE, Rarity.R1);
         setLore("R3 units have larger memory and more advanced circuitry than their R1 predecessors, allowing for more efficient astrogation plots. R3-T6 served on the Death Star.");
-        setGameText("While aboard a capital starship, adds 1 to power and 2 to hyperspeed, and that starship is immune to attrition < 4. While at Death Star: Central Core, hyperspeed of Death Star system = 2.");
+        setGameText("While aboard your capital starship, adds 1 to power and 2 to hyperspeed, and that starship is immune to attrition < 4. While at Death Star: Central Core, hyperspeed of Death Star system = 2.");
         addModelType(ModelType.ASTROMECH);
         addIcons(Icon.A_NEW_HOPE);
     }
 
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
-        Condition aboardCapitalStarship = new AboardCondition(self, Filters.capital_starship);
-        Filter capitalStarshipAboard = Filters.and(Filters.capital_starship, Filters.hasAboard(self));
+        Condition aboardCapitalStarship = new AboardCondition(self, Filters.and(Filters.your(self), Filters.capital_starship));
+        Filter capitalStarshipAboard = Filters.and(Filters.your(self), Filters.capital_starship, Filters.hasAboard(self));
 
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new PowerModifier(self, capitalStarshipAboard, aboardCapitalStarship, 1));

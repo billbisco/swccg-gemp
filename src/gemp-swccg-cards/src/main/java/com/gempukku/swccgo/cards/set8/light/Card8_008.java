@@ -38,7 +38,7 @@ public class Card8_008 extends AbstractRebel {
     public Card8_008() {
         super(Side.LIGHT, 1, 7, 4, 5, 8, "Daughter Of Skywalker", Uniqueness.UNIQUE, ExpansionSet.ENDOR, Rarity.R);
         setLore("Scout. Leader. Made friends with Wicket. Negotiated an alliance with the Ewoks. Leia found out the truth about her father from Luke in the Ewok village.");
-        setGameText("Deploys -3 on Tydirium, Endor or Dagobah. May be deployed instead of Luke by Mind What You Have Learned (that card then targets Leia instead of Luke for remainder of game). While at any exterior site, adds one Light side icon. Immune to attrition < 4.");
+        setGameText("Deploys -3 on Tydirium, Endor or Dagobah. May be targeted instead of Luke by Mind What You Have Learned (that card then targets Leia instead of Luke for remainder of game). While at any exterior site, adds one [Light side] icon. Immune to attrition < 4.");
         addPersona(Persona.LEIA);
         addIcons(Icon.ENDOR, Icon.PILOT, Icon.WARRIOR);
         addKeywords(Keyword.SCOUT, Keyword.LEADER, Keyword.FEMALE);

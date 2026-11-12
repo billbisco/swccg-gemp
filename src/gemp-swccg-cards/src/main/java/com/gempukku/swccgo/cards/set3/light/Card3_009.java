@@ -39,7 +39,7 @@ public class Card3_009 extends AbstractDroid {
     public Card3_009() {
         super(Side.LIGHT, 2, 2, 0, 3, "FX-7 (Effex-Seven)", Uniqueness.UNRESTRICTED, ExpansionSet.HOTH, Rarity.C2);
         setLore("Model nicknamed 'Fixit' by Rebels at Echo Base. Though obsolete in advanced hospitals, FX-7 droids still operate at many Rebel outposts as assistant surgeons.");
-        setGameText("Once per turn, one of your 'hit' non-droid characters at same or adjacent site may go to your Used Pile rather than your Lost Pile. Cumulatively subtracts 2 from X on your Bacta Tank.");
+        setGameText("Once per turn, one of your 'hit' non-droid characters at same or adjacent site may be placed in your Used Pile instead of Lost Pile when forfeited. Cumulatively subtracts 2 from X on your Bacta Tank.");
         addIcons(Icon.HOTH);
         addModelType(ModelType.MEDICAL);
     }

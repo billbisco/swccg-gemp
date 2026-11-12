@@ -42,7 +42,7 @@ public class Card3_081 extends AbstractAutomatedWeapon {
     public Card3_081() {
         super(Side.LIGHT, 3, PlayCardZoneOption.ATTACHED, "Vehicle Mine", Uniqueness.UNRESTRICTED, ExpansionSet.HOTH, Rarity.C2);
         setLore("Mine controlled by microcircuitry calibrated to ignore infantry and creatures. Explodes only when triggered by metallic vehicles.");
-        setGameText("Deploy at same exterior site as your mining droid. 'Explodes' if starfighter (use 5 as defense value) or non-creature vehicle deploys or moves to or across same site.  Draw destiny.  Target lost if destiny +2 > defense value.  Vehicle Mine also lost.");
+        setGameText("Deploy at same exterior site as your mining droid. 'Explodes' if starfighter (use 5 as defense value) or non-creature vehicle deploys or moves to or across same site. Draw destiny. Target lost if destiny +2 > defense value. Vehicle Mine is also lost.");
         addIcons(Icon.HOTH);
         addKeywords(Keyword.MINE);
     }

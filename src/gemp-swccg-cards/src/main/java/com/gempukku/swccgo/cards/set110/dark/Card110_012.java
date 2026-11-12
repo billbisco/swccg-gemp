@@ -36,7 +36,7 @@ public class Card110_012 extends AbstractStarfighter {
     public Card110_012() {
         super(Side.DARK, 1, 6, 2, null, 3, 5, 5, "Zuckuss In Mist Hunter", Uniqueness.UNIQUE, ExpansionSet.ENHANCED_JABBAS_PALACE, Rarity.PM);
         setLore("Zuckuss is a dangerous adversary, especially when aboard his own starship. Mystical omens enable the Gand to predict enemy maneuvers in starship combat.");
-        setGameText("May add 1 pilot and 3 passengers. Permanent pilot is •Zuckuss, who provides ability of 4 and adds 2 to power. Unless opponent has total ability > 6 piloting here, opponent's total battle destiny here = zero.");
+        setGameText("May add 1 pilot and 3 passengers. Permanent pilot is •Zuckuss, who provides ability of 4 and adds 2 to power. Unless opponent has ability > 6 piloting here, reset opponent's total battle destiny here to 0.");
         addPersonas(Persona.MIST_HUNTER);
         addIcons(Icon.PREMIUM, Icon.INDEPENDENT, Icon.PILOT, Icon.NAV_COMPUTER, Icon.SCOMP_LINK);
         addModelType(ModelType.BYBLOS_G1A_TRANSPORT);

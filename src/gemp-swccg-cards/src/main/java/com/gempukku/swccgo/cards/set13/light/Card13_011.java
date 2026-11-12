@@ -13,6 +13,7 @@ import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
+import com.gempukku.swccgo.game.state.WhileInPlayData;
 import com.gempukku.swccgo.logic.GameUtils;
 import com.gempukku.swccgo.logic.TriggerConditions;
 import com.gempukku.swccgo.logic.actions.CancelCardActionBuilder;
@@ -23,6 +24,7 @@ import com.gempukku.swccgo.logic.effects.choose.ExchangeDestinyCardWithStackedCa
 import com.gempukku.swccgo.logic.effects.choose.StackCardFromHandEffect;
 import com.gempukku.swccgo.logic.timing.Effect;
 import com.gempukku.swccgo.logic.timing.EffectResult;
+import com.gempukku.swccgo.logic.timing.PassthruEffect;
 import com.gempukku.swccgo.logic.timing.results.DestinyDrawnResult;
 
 import java.util.Collections;
@@ -38,7 +40,7 @@ public class Card13_011 extends AbstractNormalEffect {
     public Card13_011() {
         super(Side.LIGHT, 4, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.Colo_Claw_Fish, Uniqueness.UNIQUE, ExpansionSet.REFLECTIONS_III, Rarity.PM);
         setLore("The colo claw fish's front end is dominated by a large snout covered with two large eyes that can see deep into the murky depths. Able to survive due to its exceptional vision.");
-        setGameText("Deploy on table. Cancels Opee Sea Killer. While no card here, you may place a card from hand face-up here. If you just drew weapon or battle destiny, you may exchange it for card here, which then counts as that destiny draw. (Immune to Alter.)");
+        setGameText("Deploy on table. Cancels Opee Sea Killer. While no card here, you may place a card from hand face-up here. If you just drew weapon or battle destiny (limit once per destiny draw), you may exchange it for card here, which then counts as that destiny draw. (Immune to Alter.)");
         addIcons(Icon.REFLECTIONS_III, Icon.EPISODE_I);
         addImmuneToCardTitle(Title.Alter);
     }
@@ -101,17 +103,45 @@ public class Card13_011 extends AbstractNormalEffect {
         if ((TriggerConditions.isBattleDestinyJustDrawnBy(game, effectResult, playerId)
                 || TriggerConditions.isWeaponDestinyJustDrawnBy(game, effectResult, playerId))
                 && GameConditions.canExchangeDestinyCard(game, playerId)
-                && GameConditions.hasStackedCards(game, self)) {
+                && GameConditions.hasStackedCards(game, self)
+                && !(limitedToOncePerDestinyDraw() && isExchangedForDestinyDraw(self, effectResult))) {
             PhysicalCard stackedCard = game.getGameState().getStackedCards(self).get(0);
 
             final OptionalGameTextTriggerAction action = new OptionalGameTextTriggerAction(self, gameTextSourceCardId, gameTextActionId);
             action.setText("Exchange destiny card");
             action.setActionMsg("Exchange just drawn destiny card, " + GameUtils.getCardLink(((DestinyDrawnResult) effectResult).getCard()) + ", with " + GameUtils.getCardLink(stackedCard));
             // Perform result(s)
+            if (limitedToOncePerDestinyDraw()) {
+                action.appendEffect(
+                        new PassthruEffect(action) {
+                            @Override
+                            protected void doPlayEffect(SwccgGame game) {
+                                self.setWhileInPlayData(new WhileInPlayData(destinyDrawKey(effectResult)));
+                            }
+                        });
+            }
             action.appendEffect(
                     new ExchangeDestinyCardWithStackedCardEffect(action, stackedCard));
             return Collections.singletonList(action);
         }
         return null;
+    }
+
+    /**
+     * PC errata (Advanced Rulebook 2023 Appendix A): "(limit once per destiny draw)". The card just exchanged into the
+     * draw is stacked here, so without the limit the same draw could be exchanged again. The key is the identity of
+     * the destiny draw's result, which stays the same through the exchange.
+     */
+    protected boolean limitedToOncePerDestinyDraw() {
+        return true;
+    }
+
+    private static int destinyDrawKey(EffectResult effectResult) {
+        return System.identityHashCode(effectResult);
+    }
+
+    private static boolean isExchangedForDestinyDraw(PhysicalCard self, EffectResult effectResult) {
+        WhileInPlayData data = self.getWhileInPlayData();
+        return data != null && data.getIntValue() == destinyDrawKey(effectResult);
     }
 }

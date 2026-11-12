@@ -38,7 +38,7 @@ public class Card3_108 extends AbstractImmediateEffect {
     public Card3_108() {
         super(Side.DARK, 7, PlayCardZoneOption.ATTACHED, Title.Mournful_Roar, Uniqueness.UNIQUE, ExpansionSet.HOTH, Rarity.R1);
         setLore("With the thought of losing Han, Chewbacca let out an anguished, sorrowful, lamenting, mournful, angst-ridden, tormented, agonizing roar.");
-        setGameText("Deploy on Chewie if Han was just lost or just became missing. Opponent cannot play Let The Wookiee Win or Wookiee Roar. Opponent must also lose 1 Force at end of every player's turn. If Han on table, Effect canceled.");
+        setGameText("Deploy on Chewie if Han was just lost or just became missing. Opponent cannot play Let The Wookiee Win or Wookiee Roar. Opponent must also lose 1 Force at end of every player's turn. If Han on table, Immediate Effect canceled.");
         addIcons(Icon.HOTH);
     }
 

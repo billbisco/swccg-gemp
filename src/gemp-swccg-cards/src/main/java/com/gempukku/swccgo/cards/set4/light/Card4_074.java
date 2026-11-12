@@ -32,7 +32,7 @@ public class Card4_074 extends AbstractLostInterrupt {
     public Card4_074() {
         super(Side.LIGHT, 2, Title.You_Do_Have_Your_Moments, Uniqueness.UNIQUE, ExpansionSet.DAGOBAH, Rarity.U);
         setLore("Sarcastic. Sardonic. Irreverent. Impertinent. Exasperating. Disrespectful. Outrageous and charming. Han was a scoundrel but Leia began to realize that she loved him.");
-        setGameText("During a battle, before any cards have been forfeited, cause all attrition for both sides to be reduced to zero.");
+        setGameText("At the start of the damage segment during a battle, before any cards have been forfeited, cause all attrition for both sides to be reduced to zero.");
         addIcons(Icon.DAGOBAH);
     }
 

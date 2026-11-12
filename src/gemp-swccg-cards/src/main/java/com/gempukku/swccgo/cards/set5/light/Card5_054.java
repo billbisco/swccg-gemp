@@ -35,7 +35,7 @@ public class Card5_054 extends AbstractLostInterrupt {
     public Card5_054() {
         super(Side.LIGHT, 6, Title.Into_The_Ventilation_Shaft_Lefty, Uniqueness.UNRESTRICTED, ExpansionSet.CLOUD_CITY, Rarity.R);
         setLore("'Aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa...'");
-        setGameText("Relocate one of your characters from a Cloud City site to Weather Vane. May be played even after a battle has just been initiated.");
+        setGameText("Relocate one of your characters from a Cloud City site to Weather Vane (if 'hit,' character is first restored to normal). May be played even after a battle has just been initiated.");
         addIcons(Icon.CLOUD_CITY);
     }
 
@@ -75,7 +75,7 @@ public class Card5_054 extends AbstractLostInterrupt {
                                                 final PhysicalCard finalCharacter = action.getPrimaryTargetCard(targetGroupId);
 
                                                 // Perform result(s)
-                                                if (Filters.hit.accepts(game, finalCharacter)) {
+                                                if (restoresHitCharacterToNormal() && Filters.hit.accepts(game, finalCharacter)) {
                                                     action.appendEffect(new RestoreCardToNormalEffect(action, finalCharacter));
                                                 }
                                                 action.appendEffect(
@@ -90,5 +90,10 @@ public class Card5_054 extends AbstractLostInterrupt {
             }
         }
         return null;
+    }
+
+    /** PC errata (Advanced Rulebook 2023 Appendix A): "(if 'hit,' character is first restored to normal)"; not printed. */
+    protected boolean restoresHitCharacterToNormal() {
+        return true;
     }
 }

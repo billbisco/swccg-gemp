@@ -49,7 +49,7 @@ public class Card7_216 extends AbstractLocationDevice {
     public Card7_216() {
         super(Side.DARK, 4, Title.Floating_Refinery, Uniqueness.RESTRICTED_2, ExpansionSet.SPECIAL_EDITION, Rarity.C);
         setLore("Refines Tibanna gas at mines like those at Cloud City. Also used for moisture collection on dry planets.");
-        setGameText("Deploy on a cloud sector (limit one per sector). Force you activate may be drawn into hand (one per turn for each of your Floating Refineries on table). Each cloud sector or gas miner drawn in this way may be revealed to retrieve 1 Force.");
+        setGameText("Deploy on a cloud sector (limit one per sector). Force you activate may be drawn into hand (one per turn for each of your Floating Refineries on table). Each cloud sector or gas miner drawn in this way by this device may be revealed to retrieve 1 Force.");
         addIcons(Icon.SPECIAL_EDITION);
         addKeywords(Keyword.REFINERY);
     }

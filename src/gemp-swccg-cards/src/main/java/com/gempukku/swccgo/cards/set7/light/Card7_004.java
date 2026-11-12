@@ -38,7 +38,7 @@ public class Card7_004 extends AbstractRebel {
     public Card7_004() {
         super(Side.LIGHT, 1, 5, 5, 6, 9, "Ben Kenobi", Uniqueness.UNIQUE, ExpansionSet.SPECIAL_EDITION, Rarity.R);
         setLore("Served Bail Organa during the Clone Wars. Saved Anakin's lightsaber until he was able to give it to Luke. Hasn't gone by the name Obi-Wan for a long time.");
-        setGameText("Deploys only on Tatooine. When in a duel, adds 2 to your total. Once per turn, if a battle just ended, may 'revive' (place here from Lost Pile) your character forfeited from same site this turn. Immune to attrition < 5.");
+        setGameText("Deploys only on Tatooine. When in a duel, adds 2 to your total. Once per turn, if a battle just ended here, may 'revive' (place here from Lost Pile) your character forfeited from same site this turn. Immune to attrition < 5.");
         addPersona(Persona.OBIWAN);
         addIcons(Icon.SPECIAL_EDITION, Icon.WARRIOR);
     }

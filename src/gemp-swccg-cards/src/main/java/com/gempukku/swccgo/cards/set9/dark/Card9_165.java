@@ -10,6 +10,7 @@ import com.gempukku.swccgo.common.ModelType;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Uniqueness;
+import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
@@ -35,7 +36,7 @@ public class Card9_165 extends AbstractStarfighter {
     public Card9_165() {
         super(Side.DARK, 3, 2, 3, null, 4, null, 3, "Saber 4", Uniqueness.UNIQUE, ExpansionSet.DEATH_STAR_II, Rarity.U);
         setLore("TIE interceptor often assigned to fly in a reserve position during battle. The bloodstripe of the 181st denotes the 10 kills scored by DS-181-4.");
-        setGameText("May deploy with a pilot as a 'react' to a battle initiated against a TIE (for free if TIE is in Saber Squadron). May add 1 pilot. Immune to attrition < 4 when DS-181-4 piloting.");
+        setGameText("May deploy with a pilot as a 'react' to a battle where you have a TIE (for free if TIE is in Saber Squadron). May add 1 pilot. Immune to attrition < 4 when DS-181-4 piloting.");
         addIcons(Icon.DEATH_STAR_II);
         addKeywords(Keyword.SABER_SQUADRON, Keyword.NO_HYPERDRIVE);
         addModelType(ModelType.TIE_INTERCEPTOR);
@@ -45,8 +46,8 @@ public class Card9_165 extends AbstractStarfighter {
 
     @Override
     protected List<Modifier> getGameTextAlwaysOnModifiers(SwccgGame game, final PhysicalCard self) {
-        Condition yourTieDefendingBattle = new DuringBattleWithParticipantCondition(Filters.and(Filters.your(self), Filters.TIE, Filters.defendingBattle));
-        Condition yourSaberSquadronTieDefendingBattle = new DuringBattleWithParticipantCondition(Filters.and(Filters.your(self), Filters.TIE, Filters.Saber_Squadron, Filters.defendingBattle));
+        Condition yourTieDefendingBattle = new DuringBattleWithParticipantCondition(Filters.and(Filters.your(self), Filters.TIE, reactToBattleTIEFilter()));
+        Condition yourSaberSquadronTieDefendingBattle = new DuringBattleWithParticipantCondition(Filters.and(Filters.your(self), Filters.TIE, Filters.Saber_Squadron, reactToBattleTIEFilter()));
 
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new MayDeployAsReactToBattleModifier(self, new AndCondition(yourTieDefendingBattle, new NotCondition(yourSaberSquadronTieDefendingBattle))));
@@ -59,5 +60,13 @@ public class Card9_165 extends AbstractStarfighter {
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new ImmuneToAttritionLessThanModifier(self, new HasPilotingCondition(self, Filters.DS_181_4), 4));
         return modifiers;
+    }
+
+    /**
+     * PC errata (Advanced Rulebook 2023 Appendix A): a 'react' to "a battle where you have a TIE" (printed: "a battle
+     * initiated against a TIE", i.e. your TIE defending).
+     */
+    protected Filter reactToBattleTIEFilter() {
+        return Filters.participatingInBattle;
     }
 }

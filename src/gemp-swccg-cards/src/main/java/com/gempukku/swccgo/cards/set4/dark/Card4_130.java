@@ -42,7 +42,7 @@ public class Card4_130 extends AbstractMobileEffect {
     public Card4_130() {
         super(Side.DARK, 4, Title.Rogue_Asteroid, Uniqueness.DIAMOND_1, ExpansionSet.DAGOBAH, Rarity.C);
         setLore("'We're gonna get pulverized if we stay out here much longer.'");
-        setGameText("Deploy on an asteroid sector and specify starting direction. Every move phase, moves to next adjacent asteroid sector (reversing direction as necessary). Where present, adds 2 to asteroid destiny. May be targeted by starship weapons (armor = 3).");
+        setGameText("Deploy on an asteroid sector and specify starting direction. Every move phase, moves to next adjacent asteroid sector (reversing direction as necessary). Where present, adds 2 to asteroid destiny. May be targeted by starship weapons (defense value = 3).");
         addIcons(Icon.DAGOBAH);
     }
 

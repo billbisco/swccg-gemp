@@ -9,7 +9,8 @@ import java.time.LocalDate;
  * Text state: o (as printed; docs/legacy-versions.md "Text states")
  * <p>
  * Printed text from wiki.swccg.com [[Human Shield]] (Decipher archive scan); superseded by the Players Committee errata (Advanced Rulebook Appendix A); supersededOn is an upper bound, the exact PC errata date is not on the wiki.
- * The printed wording differs from the current text only in wording, not in how GEMP plays it, so this state reuses the current card's game text code and differs only in its text and text-state information.
+ * The bare card (Card5_145) plays the PC errata's USED clause when an opponent's weapon is about to 'hit' the Imperial;
+ * this state plays it after the 'hit', as printed. The LOST clause plays the same in both.
  */
 public class Card5_145o extends Card5_145 {
     public Card5_145o() {
@@ -18,5 +19,11 @@ public class Card5_145o extends Card5_145 {
         setTextState(new TextState("5_145", "Printed",
                 "Cloud City printing (Decipher, November 1997)",
                 LocalDate.of(1997, 11, 1), LocalDate.of(2023, 1, 1)));
+    }
+
+    /** As printed, USED: after the Imperial was just 'hit', the captive is 'hit' instead (the Imperial is restored to normal). */
+    @Override
+    protected boolean playsWhenAboutToBeHit() {
+        return false;
     }
 }

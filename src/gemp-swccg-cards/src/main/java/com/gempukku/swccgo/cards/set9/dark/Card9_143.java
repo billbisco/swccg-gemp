@@ -43,7 +43,7 @@ public class Card9_143 extends AbstractSector {
     public Card9_143() {
         super(Side.DARK, Title.Capacitors, Title.Death_Star_II, Uniqueness.UNIQUE, ExpansionSet.DEATH_STAR_II, Rarity.C);
         setLocationDarkSideGameText("Deploys only if Coolant Shaft on table. While That Thing's Operational on table, you may add one battle destiny during battles at Death Star II system and system it orbits.");
-        setLocationLightSideGameText("When your starship moves from here, draw movement destiny. Add maneuver. If total destiny < 2, starship is lost.");
+        setLocationLightSideGameText("When your starship moves from here, draw movement destiny. Add maneuver (if any). If total destiny < 2, starship is lost.");
         addIcon(Icon.DARK_FORCE, 1);
         addIcons(Icon.DEATH_STAR_II, Icon.MOBILE);
     }

@@ -36,7 +36,7 @@ public class Card3_060 extends AbstractSite {
     public Card3_060() {
         super(Side.LIGHT, Title.Echo_Med_Lab, Title.Hoth, Uniqueness.UNIQUE, ExpansionSet.HOTH, Rarity.C2);
         setLocationDarkSideGameText("If you control, with an Imperial present, Force drain +1 here.");
-        setLocationLightSideGameText("Once per turn, one of your medical droids is deploy -2.");
+        setLocationLightSideGameText("Once per turn, when you deploy a medical droid, it is deploy -2.");
         addIcon(Icon.LIGHT_FORCE, 1);
         addIcons(Icon.HOTH, Icon.UNDERGROUND, Icon.INTERIOR_SITE, Icon.PLANET, Icon.SCOMP_LINK);
     }
