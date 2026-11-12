@@ -433,6 +433,18 @@ public class SwccgGameMediator {
                 }
             }
 
+            // Older text state of a printing (docs/legacy-versions.md, "Text states"): say which text this copy has
+            com.gempukku.swccgo.common.TextState textState = card.getBlueprint().getTextState();
+            if (textState != null) {
+                sb.append("<div>").append("Text: ").append(textState.label())
+                        .append(" (").append(textState.source()).append("; Anything Goes only)").append("</div>");
+                String displayTitle = card.getBlueprint().getDisplayTitle();
+                if (displayTitle != null) {
+                    sb.append("<div>").append("Printed as ").append(displayTitle).append("; the same card as ")
+                            .append(card.getBlueprint().getTitle()).append(" for every rule").append("</div>");
+                }
+            }
+
             // Show special card indicators
             if (card.isBluffCard()) {
                 sb.append("<div>").append("Bluff card").append("</div>");

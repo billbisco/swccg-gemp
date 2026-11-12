@@ -73,7 +73,8 @@ public class GameUtils {
         return (blueprint.hasAlternateImageSuffix() ? " (AI)" : "")
                 + (blueprint.hasVirtualSuffix() && !(showingDisplayTitle && blueprint.isDisplayTitleComplete()) ? " (V)" : "")
                 + (blueprint.getLegacyVersion() != null && !blueprint.getLegacyVersion().label().isEmpty()
-                    ? " [" + blueprint.getLegacyVersion().label() + "]" : "");
+                    ? " [" + blueprint.getLegacyVersion().label() + "]" : "")
+                + (blueprint.getTextState() != null ? " [" + blueprint.getTextState().label() + "]" : "");
     }
 
     /**

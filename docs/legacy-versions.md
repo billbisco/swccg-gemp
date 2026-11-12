@@ -149,3 +149,74 @@ PC-E1 → `VB1-123-Faithful_Service-PC-E1-cardmaker.png`; its original version `
    automatically (same title/uniqueness/persona/etc., differs in game text or printed stats/icons, label in full name); add the id to
    `PILOT_VERSIONS` there only if you want the explicit format/deck-builder checks.
 6. Nothing else: formats, card pool and the set filter pick the new class up by id.
+
+# Text states of one printing (Decipher-era errata)
+
+The same idea for any printing, not only Legacy sheets: an older **text state** of a card is its own blueprint, playable
+in **Anything Goes only**. Id design: ai-team-skills `shared/swccg-card-identity/SKILL.md`, "Text states of one
+printing (errata)".
+
+## Ids
+
+| Id | Text | Example |
+|---|---|---|
+| bare `<set>_<n>` | the card's current text (unchanged) | `2_45` Blast The Door, Kid! |
+| `<set>_<n>o` | as first published (print) | `2_45o` (A New Hope, 1997) |
+| `<set>_<n>d` | Decipher's last word (1998 Glossary / 2002 Supplement) | `2_45d` (Glossary 2.0, Nov 1998) |
+| `<set>_<n>o1` … `o9` | intermediate revisions in date order, only when a printing has more than three states | |
+
+- The state letter is part of the blueprint id. An AI printing keeps `ai` before it (`1250_45aio`); a back side keeps
+  `_BACK` after it (`7_100d_BACK`).
+- **Loader:** `SwccgCardBlueprintLibrary` resolves `2_45d` to class `cards/set2/light/Card2_045d.java`
+  (`TextState.paddedCardNumber`). A state whose text equals another id may instead be an alias line in
+  `blueprintMapping.txt` (`2_45o,2_45`); an aliased id is not listed in the card pool. An id with a state letter and no
+  class or alias is an unknown card (it no longer crashes the loader).
+- `TextState.currentIdOf("2_45d")` → `"2_45"`; `TextState.textStateIdOf("2_45", "o")` → `"2_45o"`.
+
+## Same card
+
+A text state keeps the bare card's title, uniqueness, persona, side, type, set and rarity, so uniqueness, persona and
+title rules see one card. Deck counts (restricted list) and bans count it as the bare card
+(`DefaultSwccgFormat.sameCardBlueprintId`), and banning the bare card bans its text states.
+
+## Metadata and display
+
+`setTextState(new TextState(currentId, label, source, printedOn, supersededOn))` in the constructor.
+
+- **Label:** `Printed` for `o`; `<Issuer>-E<n>` for an errata (`D-E1` = Decipher's first errata, as for Legacy
+  versions). The full name shows it: `Blast The Door, Kid! [D-E1]`. In-game card info adds
+  `Text: D-E1 (<source>; Anything Goes only)`.
+- `printedOn` / `supersededOn`: dates for the period-accurate formats (swccg-guild/work#225); use an upper bound and
+  say so when the exact date is unknown.
+- `setDisplayTitle(...)` works for a text state printed under another name, as for Legacy versions.
+
+## Formats and deck builder
+
+- A format allows text states with `"textStates": true` in `swccgFormats.json`. Only Anything Goes has it; every other
+  format rejects a text state ("Deck contains an older text of a card …"), even when it lists the card's set.
+- Card pool: the ids in `gemp-swccg-cards/src/main/resources/textStates.txt` (`TextStateCardPool`) are in the default
+  collection and in Anything Goes format searches. Deck builder set filter: "Older card texts (printed / Decipher
+  errata)" (`set:text_states`).
+- Not built yet: a format **text era** that rewrites bare ids to the state in force on a date (identity skill,
+  swccg-guild/work#11), and a deck-load rewrite of states to bare for "latest" formats.
+
+## Checklist: add a text state
+
+1. Find the text and its source on the wiki (the card's article and its `(Errata)` article: `card_uid`, game text,
+   errata history, image).
+2. Pick the id: bare id + `o`, `d` or `o<n>`.
+3. Add `cards/set<N>/<side>/Card<N>_<NNN><state>.java`: copy (or extend) the bare class, set the state's game text and
+   behaviour, keep title/uniqueness/persona/set/rarity, and call `setTextState(...)`. If the state plays exactly as
+   another class, extend it and change only the text and the text state (e.g. `Card2_045d extends Card2_045`).
+4. List the id in `textStates.txt` (`TextStatesTests.EveryTextStateClassIsListedForTheCardPool` checks it).
+5. Image: add `"<id>":"<url>"` to `CardImages.js` after `// END legacy` (the wiki file that shows that text, from
+   `https://wiki.swccg.com/api.php?action=query&prop=imageinfo&iiprop=url&format=json&titles=File:<file>`). Run
+   `dupcheck.py` and `node src/test/js/cardImageUrlTests.js`.
+6. Tests: a card test with the exact text, stats and text-state info, a gameplay test for each clause that plays
+   differently from the bare card, and a check that the bare card is unchanged (e.g.
+   `cards/set2/light/Card_2_045_TextStates_Tests.java`). `TextStatesTests` checks every listed state is the same card
+   as its bare printing.
+
+Done: `2_45o`, `2_45d` (Blast The Door, Kid!). As printed, `2_45o` excludes only the leaders and characters of
+ability > 2 in the battle when it resolves; the 2002 Glossary Supplement added that ones introduced later are excluded
+too, which `2_45d` and the bare `2_45` do.

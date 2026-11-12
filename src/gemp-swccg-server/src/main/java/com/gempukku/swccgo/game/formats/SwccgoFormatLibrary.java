@@ -70,6 +70,7 @@ public class SwccgoFormatLibrary {
                     if (skipFormatPool != null && skipFormatPool)
                         format.setSkipFormatPool(true);
                     format.setMultipleObjectives(Boolean.TRUE.equals(formatDef.get("multipleObjectives")));
+                    format.setTextStates(Boolean.TRUE.equals(formatDef.get("textStates")));
 
                     Long minDeckSize = (Long) formatDef.get("minDeckSize");
                     Long maxDeckSize = (Long) formatDef.get("maxDeckSize");

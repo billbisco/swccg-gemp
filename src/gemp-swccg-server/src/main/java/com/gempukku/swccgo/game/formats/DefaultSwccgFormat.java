@@ -26,6 +26,8 @@ public class DefaultSwccgFormat implements SwccgFormat {
     private int _maxDeckSize = 60;
     private int _maxDeckSizeOption = com.gempukku.swccgo.game.DeckSize.MAX_SUPPORTED;
     private boolean _skipFormatPool;
+    // Older text states of printings (2_45o, 2_45d; docs/legacy-versions.md "Text states") are legal here
+    private boolean _textStates;
     // swccg-guild/work#141: Anything Goes decks may hold several Objectives; the player chooses one at game start
     private boolean _multipleObjectives;
     private int _defaultGameTimerMinutes = 60;
@@ -178,6 +180,15 @@ public class DefaultSwccgFormat implements SwccgFormat {
         _requiredDeckSize = maxDeckSize;
     }
 
+    /** Allows older text states of printings (e.g. 2_45o, 2_45d); Anything Goes only (docs/legacy-versions.md). */
+    protected void setTextStates(boolean textStates) {
+        _textStates = textStates;
+    }
+
+    public boolean allowsTextStates() {
+        return _textStates;
+    }
+
     protected void setSkipFormatPool(boolean skipFormatPool) {
         _skipFormatPool = skipFormatPool;
     }
@@ -277,6 +288,10 @@ public class DefaultSwccgFormat implements SwccgFormat {
         if (blueprint.getCardCategory() == CardCategory.GAME_AID)
             throw new DeckInvalidException("Deck contains card type, from card <span class=\"validate-invalid-card-type\">" + fullName + "</span>, not permitted in this format.");
 
+        // An older text state (2_45o, 2_45d) is legal only where the format allows text states (docs/legacy-versions.md)
+        if (TextState.isTextStateBlueprint(blueprintId) && !_textStates)
+            throw new DeckInvalidException("Deck contains an older text of a card, <span class=\"validate-invalid-card-set\">" + fullName + "</span>, not permitted in this format.");
+
         if (_validCards.contains(blueprintId) || _validCards.contains(listedBlueprintId))
             return;
 
@@ -323,6 +338,9 @@ public class DefaultSwccgFormat implements SwccgFormat {
      */
     String sameCardBlueprintId(String blueprintId) {
         String current = LegacyVersion.currentPrintingIdOf(blueprintId);
+        // An older text state (2_45d) counts as its bare printing (2_45)
+        if (current == null)
+            current = TextState.currentIdOf(blueprintId);
         String printing = current != null ? current : _library.stripBlueprintModifiers(blueprintId);
         // An AI printing (with or without a class of its own) counts as its base printing
         String base = _library.getBaseBlueprintId(printing);
@@ -335,6 +353,7 @@ public class DefaultSwccgFormat implements SwccgFormat {
         sb.append(_code).append('|')
                 .append(_minDeckSize).append('|').append(_maxDeckSize).append('|')
                 .append(_skipFormatPool).append('|')
+                .append(_textStates ? "textStates|" : "")
                 .append(_multipleObjectives ? "multipleObjectives|" : "")
                 .append(_downloadBattlegroundRule).append('|')
                 .append(_loreHeroicRule).append('|')
@@ -605,6 +624,7 @@ public class DefaultSwccgFormat implements SwccgFormat {
         addCardsToDefaultCollection(_library, CardCounts.DREAM_CARD_SETS_CARD_COUNTS, 401, _allCardBlueprints);
         addCardsToDefaultCollection(_library, CardCounts.PLAYTESTING_SETS_CARD_COUNTS, 501, _allCardBlueprints);
         LegacyCardPool.appendValidBlueprints(_library, this, _allCardBlueprints);
+        com.gempukku.swccgo.collection.TextStateCardPool.appendValidBlueprints(_library, this, _allCardBlueprints);
 
         return _allCardBlueprints;
     }
