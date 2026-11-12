@@ -70,6 +70,15 @@ public class FourTwentyTests {
     }
 
     @Test
+    public void DefensiveShieldsAreJudgedByTheirDestiny() {
+        // Bill (12 Nov): Defensive Shields have a destiny number; most are 0
+        assertNull("destiny-0 shield", FourTwenty.violation(card("13_51"))); // A Useless Gesture
+        // the few shields with another destiny are refused like any other card
+        assertTrue(FourTwenty.violation(card("1103_42")).contains("printed destiny 3")); // Reactor Terminal (V), destiny 3
+        assertTrue(FourTwenty.violation(card("1200_16")).contains("printed destiny 5")); // After Her! (V), destiny 5
+    }
+
+    @Test
     public void ObjectivesUnprintedNonnumericAndOtherNumbersAreRefused() {
         assertEquals("Objectives are not permitted", FourTwenty.violation(card("9_151")));      // Bring Him Before Me (destiny 0)
         assertTrue(FourTwenty.violation(card("1_194")).contains("printed destiny 1 is not 0, 2 or 4")); // Stormtrooper
@@ -79,8 +88,6 @@ public class FourTwentyTests {
         assertTrue(FourTwenty.violation(card("2_2")).contains("π"));                          // Brainiac: pi
         assertTrue(FourTwenty.violation(card("213_10")).contains("0.5"));                     // Maul: destiny 0.5
         assertTrue(FourTwenty.violation(card("217_2")).contains("4.5"));                      // BB-9E: destiny 4.5
-        // Defensive Shields print no destiny number; the engine's 0 does not count
-        assertTrue(FourTwenty.violation(card("13_51")).contains("no printed destiny"));
     }
 
     @Test
@@ -115,11 +122,9 @@ public class FourTwentyTests {
     @Test
     public void OutsideDeckCardsAreCheckedToo() {
         SwccgDeck withShield = deck("13_69"); // Fear Is My Ally (Starting Effect, destiny 0)
-        withShield.addCardOutsideDeck("13_51"); // A Useless Gesture (Defensive Shield)
-        String refused = error(table("open", ON), withShield);
-        assertNotNull(refused);
-        assertTrue(refused, refused.contains("A Useless Gesture") && refused.contains("no printed destiny"));
-        assertNull("the format alone allows it", error(table("open", Map.of()), withShield));
+        withShield.addCardOutsideDeck("13_51"); // A Useless Gesture (Defensive Shield, destiny 0)
+        assertNull("a deck with destiny-0 shields passes 420", error(table("open", ON), withShield));
+        assertNull(error(table("open", Map.of()), withShield));
 
         SwccgDeck goodOutside = deck("13_69");
         goodOutside.addCardOutsideDeck("1_188"); // destiny 0
