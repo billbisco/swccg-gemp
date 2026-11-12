@@ -63,7 +63,7 @@ import java.util.List;
 public class Card8_043 extends AbstractEpicEventDeployable {
     public Card8_043() {
         super(Side.LIGHT, PlayCardZoneOption.ATTACHED, Title.Deactivate_The_Shield_Generator, Uniqueness.UNRESTRICTED, ExpansionSet.ENDOR, Rarity.R);
-        setGameText("Deploy on Bunker. During your control phase, if you control Bunker with a Rebel, attempt to 'blow away' Bunker as follows: Charges! Come On, Come On!: Draw two destiny. Add 3 to total for each Explosive Charge on Bunker. Move! Move! Move!: If total destiny > 12, your characters here may relocate to Back Door for free, Bunker and Landing Platform (if on table) are 'blown away,' opponent loses 8 Force and this card is lost.");
+        setGameText("Deploy on Bunker. Once during your control phase, if you control Bunker with a Rebel, you may attempt to 'blow away' Bunker as follows: Charges! Come On, Come On!: Draw two destiny. Add 3 to total for each Explosive Charge on Bunker. Move! Move! Move!: If total destiny > 12, your characters here may relocate to Back Door for free, Bunker and Landing Platform (if on table) are 'blown away,' opponent loses 8 Force and this card is lost.");
         addIcons(Icon.ENDOR);
     }
 

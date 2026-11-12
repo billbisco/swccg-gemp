@@ -39,7 +39,7 @@ public class Card4_092 extends AbstractAlien {
     public Card4_092() {
         super(Side.DARK, 1, 4, 4, 2, 3, "Bossk", Uniqueness.UNIQUE, ExpansionSet.DAGOBAH, Rarity.R);
         setLore("Male Trandoshan bounty hunter. Strong but clumsy. Extremely proud and arrogant. Suffered a humiliating defeat at the hands of Chewbacca and his partner Han Solo.");
-        setGameText("Adds 2 to power of anything he pilots. When piloting Hound's Tooth, draws one battle destiny if not able to otherwise. Adds 1 to attrition against opponent in battles at same site. While present, may reduce Chewie's forfeit to zero while here.");
+        setGameText("Adds 2 to power of anything he pilots. When piloting Hound's Tooth, draws one battle destiny if not able to otherwise. Adds 1 to attrition against opponent in battles at same site. While present, may reduce Chewie's forfeit to zero here.");
         addPersona(Persona.BOSSK);
         addIcons(Icon.DAGOBAH, Icon.PILOT, Icon.WARRIOR);
         setSpecies(Species.TRANDOSHAN);

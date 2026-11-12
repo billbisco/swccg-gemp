@@ -132,6 +132,9 @@ public class FireWeaponActionBuilder {
     private List<Boolean> _targetFilterValid = new ArrayList<Boolean>();
     private Filter _targetedAsCharacter;
     private Float _defenseValueAsCharacter;
+    private boolean _characterDefenseValueIsAbility;
+    private boolean _ionHitLosesAllWeaponsAboard;
+    private boolean _hitsCardsAtSiteNotOnlyPresent;
 
     private Map<TargetingReason, Filterable> _targetFiltersMap = new HashMap<TargetingReason, Filterable>();
 
@@ -582,6 +585,60 @@ public class FireWeaponActionBuilder {
      * Sets that the weapon can be fired twice per battle.
      * @return the builder
      */
+    /**
+     * Printed (pre-Glossary) weapon text: "Character hit if destiny &gt; ability." A character target is compared to its
+     * ability instead of its defense value (ability or armor, whichever is higher). Other targets (vehicles, starships,
+     * creatures, cards given a defense value by game text) still use their defense value ("maneuver or armor"). Used by
+     * printed text states (docs/legacy-versions.md "Text states").
+     * @return this builder
+     */
+    public FireWeaponActionBuilder characterDefenseValueIsAbility() {
+        _characterDefenseValueIsAbility = true;
+        return this;
+    }
+
+    /**
+     * Printed ion cannon text: "all weapons aboard target are lost" (any weapon on the target or on a card aboard it),
+     * instead of "all starship weapons deployed on target".
+     * @return this builder
+     */
+    public FireWeaponActionBuilder ionHitLosesAllWeaponsAboard() {
+        _ionHitLosesAllWeaponsAboard = true;
+        return this;
+    }
+
+    /**
+     * Printed Concussion Grenade text: cards "at that site" are affected (also cards aboard vehicles and starships
+     * there), instead of only cards "present at that site".
+     * @return this builder
+     */
+    public FireWeaponActionBuilder hitsCardsAtSiteNotOnlyPresent() {
+        _hitsCardsAtSiteNotOnlyPresent = true;
+        return this;
+    }
+
+    /**
+     * Gets the value a weapon destiny is compared to for the card fired at: its defense value, or its ability if
+     * {@link #characterDefenseValueIsAbility()} was set and the card is a character.
+     */
+    private float targetDefenseValue(SwccgGame game, PhysicalCard cardFiredAt) {
+        if (_characterDefenseValueIsAbility && Filters.character.accepts(game, cardFiredAt)) {
+            return game.getModifiersQuerying().getAbility(game.getGameState(), cardFiredAt);
+        }
+        return game.getModifiersQuerying().getDefenseValue(game.getGameState(), cardFiredAt);
+    }
+
+    /**
+     * Gets the weapons lost when an ion cannon hits the card.
+     */
+    private Collection<PhysicalCard> weaponsLostByIonHit(SwccgGame game, PhysicalCard cardFiredAt) {
+        if (_ionHitLosesAllWeaponsAboard) {
+            return Filters.filterAllOnTable(game, Filters.and(Filters.weapon,
+                    Filters.or(Filters.attachedTo(cardFiredAt), Filters.attachedTo(Filters.aboardOrAboardCargoOf(cardFiredAt)))));
+        }
+        return Filters.filterAllOnTable(game, Filters.and(Filters.starship_weapon, Filters.attachedTo(cardFiredAt)));
+    }
+
     public FireWeaponActionBuilder twicePerBattle() {
         _numTimesAllowedToFirePerBattle = 2;
         return this;
@@ -1398,7 +1455,7 @@ public class FireWeaponActionBuilder {
                                                                 } else if (alternateDefenseValueFilter.accepts(game, cardFiredAt)) {
                                                                     valueToCompare += alternateDefenseValue;
                                                                 } else {
-                                                                    valueToCompare += game.getModifiersQuerying().getDefenseValue(game.getGameState(), cardFiredAt);
+                                                                    valueToCompare += targetDefenseValue(game, cardFiredAt);
                                                                 }
                                                             } else {
                                                                 throw new UnsupportedOperationException("Invalid statistic " + (statistic != null ? statistic.getHumanReadable() : null));
@@ -1550,7 +1607,7 @@ public class FireWeaponActionBuilder {
                                                                 } else if (alternateDefenseValueFilter.accepts(game, cardFiredAt)) {
                                                                     valueToCompare += alternateDefenseValue;
                                                                 } else {
-                                                                    valueToCompare += game.getModifiersQuerying().getDefenseValue(game.getGameState(), cardFiredAt);
+                                                                    valueToCompare += targetDefenseValue(game, cardFiredAt);
                                                                 }
                                                             } else {
                                                                 throw new UnsupportedOperationException("Invalid statistic " + (statistic != null ? statistic.getHumanReadable() : null));
@@ -1688,7 +1745,7 @@ public class FireWeaponActionBuilder {
                                                             valueToCompare = _defenseValueAsCharacter;
                                                         }
                                                         else {
-                                                            valueToCompare = modifiersQuerying.getDefenseValue(game.getGameState(), cardFiredAt);
+                                                            valueToCompare = targetDefenseValue(game, cardFiredAt);
                                                         }
                                                         gameState.sendMessage("Defense value: " + GuiUtils.formatAsString(valueToCompare));
 
@@ -1773,7 +1830,7 @@ public class FireWeaponActionBuilder {
                                                             valueToCompare = _defenseValueAsCharacter;
                                                         }
                                                         else {
-                                                            valueToCompare = game.getModifiersQuerying().getDefenseValue(game.getGameState(), cardFiredAt);
+                                                            valueToCompare = targetDefenseValue(game, cardFiredAt);
                                                         }
                                                         gameState.sendMessage("Defense value: " + GuiUtils.formatAsString(valueToCompare));
 
@@ -1869,7 +1926,7 @@ public class FireWeaponActionBuilder {
                                                             valueToCompare = _defenseValueAsCharacter;
                                                         }
                                                         else {
-                                                            valueToCompare = game.getModifiersQuerying().getDefenseValue(game.getGameState(), cardFiredAt);
+                                                            valueToCompare = targetDefenseValue(game, cardFiredAt);
                                                         }
                                                         gameState.sendMessage("Defense value: " + GuiUtils.formatAsString(valueToCompare));
 
@@ -2145,7 +2202,7 @@ public class FireWeaponActionBuilder {
                                                                 valueToCompare = _defenseValueAsCharacter;
                                                             }
                                                             else {
-                                                                valueToCompare = modifiersQuerying.getDefenseValue(game.getGameState(), cardFiredAt);
+                                                                valueToCompare = targetDefenseValue(game, cardFiredAt);
                                                             }
                                                             gameState.sendMessage("Defense value: " + GuiUtils.formatAsString(valueToCompare));
                                                         }
@@ -2157,7 +2214,7 @@ public class FireWeaponActionBuilder {
                                                             gameState.sendMessage("Result: Succeeded");
                                                             action.appendEffect(
                                                                     new IonizeStarshipEffect(action, cardFiredAt, action.getCardFiringWeapon(), false, true, true));
-                                                            Collection<PhysicalCard> starshipWeapons = Filters.filterAllOnTable(game, Filters.and(Filters.starship_weapon, Filters.attachedTo(cardFiredAt)));
+                                                            Collection<PhysicalCard> starshipWeapons = weaponsLostByIonHit(game, cardFiredAt);
                                                             if (!starshipWeapons.isEmpty()) {
                                                                 action.appendEffect(
                                                                         new LoseCardsFromTableEffect(action, starshipWeapons, true));
@@ -2261,7 +2318,7 @@ public class FireWeaponActionBuilder {
                                                                 valueToCompare = _defenseValueAsCharacter;
                                                             }
                                                             else {
-                                                                valueToCompare = modifiersQuerying.getDefenseValue(game.getGameState(), cardFiredAt);
+                                                                valueToCompare = targetDefenseValue(game, cardFiredAt);
                                                             }
                                                             gameState.sendMessage("Defense value: " + GuiUtils.formatAsString(valueToCompare));
                                                         }
@@ -2416,7 +2473,7 @@ public class FireWeaponActionBuilder {
                                                                 valueToCompare = _defenseValueAsCharacter;
                                                             }
                                                             else {
-                                                                valueToCompare = modifiersQuerying.getDefenseValue(game.getGameState(), cardFiredAt);
+                                                                valueToCompare = targetDefenseValue(game, cardFiredAt);
                                                             }
                                                             gameState.sendMessage("Defense value: " + GuiUtils.formatAsString(valueToCompare));
                                                         }
@@ -2657,7 +2714,7 @@ public class FireWeaponActionBuilder {
                                                                 valueToCompare = _defenseValueAsCharacter;
                                                             }
                                                             else {
-                                                                valueToCompare = modifiersQuerying.getDefenseValue(game.getGameState(), cardFiredAt);
+                                                                valueToCompare = targetDefenseValue(game, cardFiredAt);
                                                             }
                                                             gameState.sendMessage("Defense value: " + GuiUtils.formatAsString(valueToCompare));
                                                         }
@@ -2766,7 +2823,7 @@ public class FireWeaponActionBuilder {
                                                                 valueToCompare = _defenseValueAsCharacter;
                                                             }
                                                             else {
-                                                                valueToCompare = modifiersQuerying.getDefenseValue(game.getGameState(), cardFiredAt);
+                                                                valueToCompare = targetDefenseValue(game, cardFiredAt);
                                                             }
                                                             gameState.sendMessage("Defense value: " + GuiUtils.formatAsString(valueToCompare));
                                                         }
@@ -2863,7 +2920,7 @@ public class FireWeaponActionBuilder {
                                                                 valueToCompare = _defenseValueAsCharacter;
                                                             }
                                                             else {
-                                                                valueToCompare = modifiersQuerying.getDefenseValue(game.getGameState(), cardFiredAt);
+                                                                valueToCompare = targetDefenseValue(game, cardFiredAt);
                                                             }
                                                             gameState.sendMessage("Defense value: " + GuiUtils.formatAsString(valueToCompare));
                                                         }
@@ -2964,7 +3021,7 @@ public class FireWeaponActionBuilder {
                                                                 valueToCompare = _defenseValueAsCharacter;
                                                             }
                                                             else {
-                                                                valueToCompare = modifiersQuerying.getDefenseValue(game.getGameState(), cardFiredAt);
+                                                                valueToCompare = targetDefenseValue(game, cardFiredAt);
                                                             }
                                                             gameState.sendMessage("Defense value: " + GuiUtils.formatAsString(valueToCompare));
                                                         }
@@ -3121,7 +3178,7 @@ public class FireWeaponActionBuilder {
                                                                 valueToCompare = _defenseValueAsCharacter;
                                                             }
                                                             else {
-                                                                valueToCompare = modifiersQuerying.getDefenseValue(game.getGameState(), cardFiredAt);
+                                                                valueToCompare = targetDefenseValue(game, cardFiredAt);
                                                             }
                                                             gameState.sendMessage("Defense value: " + GuiUtils.formatAsString(valueToCompare));
                                                         }
@@ -3277,7 +3334,7 @@ public class FireWeaponActionBuilder {
                                                             valueToCompare = _defenseValueAsCharacter;
                                                         }
                                                         else {
-                                                            valueToCompare = modifiersQuerying.getDefenseValue(game.getGameState(), cardFiredAt);
+                                                            valueToCompare = targetDefenseValue(game, cardFiredAt);
                                                         }
                                                         gameState.sendMessage("Defense value: " + GuiUtils.formatAsString(valueToCompare));
 
@@ -3373,7 +3430,7 @@ public class FireWeaponActionBuilder {
                                                                 valueToCompare = _defenseValueAsCharacter;
                                                             }
                                                             else {
-                                                                valueToCompare = modifiersQuerying.getDefenseValue(game.getGameState(), cardFiredAt);
+                                                                valueToCompare = targetDefenseValue(game, cardFiredAt);
                                                             }
                                                             gameState.sendMessage("Defense value: " + GuiUtils.formatAsString(valueToCompare));
                                                         }
@@ -3698,7 +3755,7 @@ public class FireWeaponActionBuilder {
                                                             valueToCompare = _defenseValueAsCharacter;
                                                         }
                                                         else {
-                                                            valueToCompare = modifiersQuerying.getDefenseValue(game.getGameState(), cardFiredAt);
+                                                            valueToCompare = targetDefenseValue(game, cardFiredAt);
                                                         }
                                                         gameState.sendMessage("Defense value: " + GuiUtils.formatAsString(valueToCompare));
 
@@ -3780,7 +3837,7 @@ public class FireWeaponActionBuilder {
                                                             valueToCompare = _defenseValueAsCharacter;
                                                         }
                                                         else {
-                                                            valueToCompare = modifiersQuerying.getDefenseValue(game.getGameState(), cardFiredAt);
+                                                            valueToCompare = targetDefenseValue(game, cardFiredAt);
                                                         }
                                                         gameState.sendMessage("Defense value: " + GuiUtils.formatAsString(valueToCompare));
 
@@ -3950,7 +4007,7 @@ public class FireWeaponActionBuilder {
                                                             valueToCompare = _defenseValueAsCharacter;
                                                         }
                                                         else {
-                                                            valueToCompare = modifiersQuerying.getDefenseValue(game.getGameState(), cardFiredAt);
+                                                            valueToCompare = targetDefenseValue(game, cardFiredAt);
                                                         }
                                                         gameState.sendMessage("Defense value: " + GuiUtils.formatAsString(valueToCompare));
 
@@ -4033,7 +4090,7 @@ public class FireWeaponActionBuilder {
                                                             valueToCompare = _defenseValueAsCharacter;
                                                         }
                                                         else {
-                                                            valueToCompare = modifiersQuerying.getDefenseValue(game.getGameState(), cardFiredAt);
+                                                            valueToCompare = targetDefenseValue(game, cardFiredAt);
                                                         }
                                                         gameState.sendMessage("Defense value: " + GuiUtils.formatAsString(valueToCompare));
 
@@ -4225,7 +4282,7 @@ public class FireWeaponActionBuilder {
                                                             valueToCompare = _defenseValueAsCharacter;
                                                         }
                                                         else {
-                                                            valueToCompare = modifiersQuerying.getDefenseValue(game.getGameState(), cardFiredAt);
+                                                            valueToCompare = targetDefenseValue(game, cardFiredAt);
                                                         }
                                                         gameState.sendMessage("Defense value: " + GuiUtils.formatAsString(valueToCompare));
 
@@ -4316,7 +4373,7 @@ public class FireWeaponActionBuilder {
                                                                 valueToCompare = _defenseValueAsCharacter;
                                                             }
                                                             else {
-                                                                valueToCompare = modifiersQuerying.getDefenseValue(game.getGameState(), cardFiredAt);
+                                                                valueToCompare = targetDefenseValue(game, cardFiredAt);
                                                             }
                                                             gameState.sendMessage("Defense value: " + GuiUtils.formatAsString(valueToCompare));
                                                         }
@@ -4413,7 +4470,7 @@ public class FireWeaponActionBuilder {
                                                                 valueToCompare = _defenseValueAsCharacter;
                                                             }
                                                             else {
-                                                                valueToCompare = modifiersQuerying.getDefenseValue(game.getGameState(), cardFiredAt);
+                                                                valueToCompare = targetDefenseValue(game, cardFiredAt);
                                                             }
                                                             gameState.sendMessage("Defense value: " + GuiUtils.formatAsString(valueToCompare));
                                                         }
@@ -4505,7 +4562,7 @@ public class FireWeaponActionBuilder {
                                                             valueToCompare = _defenseValueAsCharacter;
                                                         }
                                                         else {
-                                                            valueToCompare = modifiersQuerying.getDefenseValue(game.getGameState(), cardFiredAt);
+                                                            valueToCompare = targetDefenseValue(game, cardFiredAt);
                                                         }
                                                         gameState.sendMessage("Defense value: " + GuiUtils.formatAsString(valueToCompare));
 
@@ -4592,7 +4649,7 @@ public class FireWeaponActionBuilder {
                                                             valueToCompare = _defenseValueAsCharacter;
                                                         }
                                                         else {
-                                                            valueToCompare = modifiersQuerying.getDefenseValue(game.getGameState(), cardFiredAt);
+                                                            valueToCompare = targetDefenseValue(game, cardFiredAt);
                                                         }
                                                         gameState.sendMessage("Defense value: " + GuiUtils.formatAsString(valueToCompare));
 
@@ -4677,7 +4734,7 @@ public class FireWeaponActionBuilder {
                                                             valueToCompare = _defenseValueAsCharacter;
                                                         }
                                                         else {
-                                                            valueToCompare = modifiersQuerying.getDefenseValue(game.getGameState(), cardFiredAt);
+                                                            valueToCompare = targetDefenseValue(game, cardFiredAt);
                                                         }
                                                         gameState.sendMessage("Defense value: " + GuiUtils.formatAsString(valueToCompare));
 
@@ -4762,7 +4819,7 @@ public class FireWeaponActionBuilder {
                                                             valueToCompare = _defenseValueAsCharacter;
                                                         }
                                                         else {
-                                                            valueToCompare = modifiersQuerying.getDefenseValue(game.getGameState(), cardFiredAt);
+                                                            valueToCompare = targetDefenseValue(game, cardFiredAt);
                                                         }
                                                         gameState.sendMessage("Defense value: " + GuiUtils.formatAsString(valueToCompare));
 
@@ -4955,7 +5012,7 @@ public class FireWeaponActionBuilder {
                         if (_targetedAsCharacter != null && _targetedAsCharacter.accepts(game, cardFiredAt)) {
                             valueToCompare = _defenseValueAsCharacter;
                         } else {
-                            valueToCompare = game.getModifiersQuerying().getDefenseValue(game.getGameState(), cardFiredAt);
+                            valueToCompare = targetDefenseValue(game, cardFiredAt);
                         }
                         gameState.sendMessage("Defense value: " + GuiUtils.formatAsString(valueToCompare));
 
@@ -5034,7 +5091,7 @@ public class FireWeaponActionBuilder {
                                                             valueToCompare = _defenseValueAsCharacter;
                                                         }
                                                         else {
-                                                            valueToCompare = modifiersQuerying.getDefenseValue(game.getGameState(), cardFiredAt);
+                                                            valueToCompare = targetDefenseValue(game, cardFiredAt);
                                                         }
                                                         gameState.sendMessage("Defense value: " + GuiUtils.formatAsString(valueToCompare));
 
@@ -5132,7 +5189,7 @@ public class FireWeaponActionBuilder {
                                                         }
 
                                                         final Collection<PhysicalCard> cards = Filters.filterAllOnTable(game,
-                                                                Filters.and(Filters.or(Filters.character, Filters.weapon, Filters.device), Filters.present(siteSelected), Filters.canBeTargetedBy(action.getWeaponToFire())));
+                                                                Filters.and(Filters.or(Filters.character, Filters.weapon, Filters.device), _hitsCardsAtSiteNotOnlyPresent ? Filters.at(siteSelected) : Filters.present(siteSelected), Filters.canBeTargetedBy(action.getWeaponToFire())));
                                                         if (!cards.isEmpty()) {
                                                             action.appendEffect(
                                                                     new RefreshPrintedDestinyValuesEffect(action, cards) {
@@ -5407,7 +5464,7 @@ public class FireWeaponActionBuilder {
                                                                 valueToCompare = _defenseValueAsCharacter;
                                                             }
                                                             else {
-                                                                valueToCompare = modifiersQuerying.getDefenseValue(game.getGameState(), cardFiredAt);
+                                                                valueToCompare = targetDefenseValue(game, cardFiredAt);
                                                             }
                                                         }
                                                         gameState.sendMessage("Defense value: " + GuiUtils.formatAsString(valueToCompare));
@@ -5521,7 +5578,7 @@ public class FireWeaponActionBuilder {
                                                                 valueToCompare = _defenseValueAsCharacter;
                                                             }
                                                             else {
-                                                                valueToCompare = modifiersQuerying.getDefenseValue(game.getGameState(), cardFiredAt);
+                                                                valueToCompare = targetDefenseValue(game, cardFiredAt);
                                                             }
                                                             gameState.sendMessage("Defense value: " + GuiUtils.formatAsString(valueToCompare));
 
@@ -5616,7 +5673,7 @@ public class FireWeaponActionBuilder {
                                                             valueToCompare = _defenseValueAsCharacter;
                                                         }
                                                         else {
-                                                            valueToCompare = modifiersQuerying.getDefenseValue(game.getGameState(), cardFiredAt);
+                                                            valueToCompare = targetDefenseValue(game, cardFiredAt);
                                                         }
                                                         gameState.sendMessage("Defense value: " + GuiUtils.formatAsString(valueToCompare));
 
@@ -5848,7 +5905,7 @@ public class FireWeaponActionBuilder {
                                                                                 } else if (alternateDefenseValueFilter.accepts(game, cardFiredAt)) {
                                                                                     valueToCompare += alternateDefenseValue;
                                                                                 } else {
-                                                                                    valueToCompare += game.getModifiersQuerying().getDefenseValue(game.getGameState(), cardFiredAt);
+                                                                                    valueToCompare += targetDefenseValue(game, cardFiredAt);
                                                                                 }
                                                                             } else {
                                                                                 throw new UnsupportedOperationException("Invalid statistic " + (statistic != null ? statistic.getHumanReadable() : null));
@@ -5965,7 +6022,7 @@ public class FireWeaponActionBuilder {
                                                                             valueToCompare = _defenseValueAsCharacter;
                                                                         }
                                                                         else {
-                                                                            valueToCompare = modifiersQuerying.getDefenseValue(game.getGameState(), cardFiredAt);
+                                                                            valueToCompare = targetDefenseValue(game, cardFiredAt);
                                                                         }
                                                                         gameState.sendMessage("Defense value: " + GuiUtils.formatAsString(valueToCompare));
 
@@ -6049,7 +6106,7 @@ public class FireWeaponActionBuilder {
                                                             gameState.sendMessage("Result: Succeeded");
                                                             action.appendEffect(
                                                                     new IonizeStarshipEffect(action, cardFiredAt, action._weaponToFire, true, false, true));
-                                                            Collection<PhysicalCard> starshipWeapons = Filters.filterAllOnTable(game, Filters.and(Filters.starship_weapon, Filters.attachedTo(cardFiredAt)));
+                                                            Collection<PhysicalCard> starshipWeapons = weaponsLostByIonHit(game, cardFiredAt);
                                                             if (!starshipWeapons.isEmpty()) {
                                                                 action.appendEffect(
                                                                         new LoseCardsFromTableEffect(action, starshipWeapons, true));
@@ -6336,7 +6393,7 @@ public class FireWeaponActionBuilder {
                                                         if (_targetedAsCharacter != null && _targetedAsCharacter.accepts(game, cardFiredAt)) {
                                                             valueToCompare = _defenseValueAsCharacter;
                                                         } else {
-                                                            valueToCompare = modifiersQuerying.getDefenseValue(game.getGameState(), cardFiredAt);
+                                                            valueToCompare = targetDefenseValue(game, cardFiredAt);
                                                         }
                                                         gameState.sendMessage("Defense value: " + GuiUtils.formatAsString(valueToCompare));
 
@@ -6429,7 +6486,7 @@ public class FireWeaponActionBuilder {
                                                         if (_targetedAsCharacter != null && _targetedAsCharacter.accepts(game, cardFiredAt)) {
                                                             valueToCompare = _defenseValueAsCharacter;
                                                         } else {
-                                                            valueToCompare = modifiersQuerying.getDefenseValue(game.getGameState(), cardFiredAt);
+                                                            valueToCompare = targetDefenseValue(game, cardFiredAt);
                                                         }
                                                         gameState.sendMessage("Defense value: " + GuiUtils.formatAsString(valueToCompare));
 
@@ -6512,7 +6569,7 @@ public class FireWeaponActionBuilder {
                                                         if (_targetedAsCharacter != null && _targetedAsCharacter.accepts(game, cardFiredAt)) {
                                                             valueToCompare = _defenseValueAsCharacter;
                                                         } else {
-                                                            valueToCompare = game.getModifiersQuerying().getDefenseValue(game.getGameState(), cardFiredAt);
+                                                            valueToCompare = targetDefenseValue(game, cardFiredAt);
                                                         }
                                                         gameState.sendMessage("Defense value: " + GuiUtils.formatAsString(valueToCompare));
 
@@ -6597,7 +6654,7 @@ public class FireWeaponActionBuilder {
                                                             valueToCompare = _defenseValueAsCharacter;
                                                         }
                                                         else {
-                                                            valueToCompare = game.getModifiersQuerying().getDefenseValue(game.getGameState(), cardFiredAt);
+                                                            valueToCompare = targetDefenseValue(game, cardFiredAt);
                                                         }
                                                         gameState.sendMessage("Defense value: " + GuiUtils.formatAsString(valueToCompare));
 
@@ -6748,7 +6805,7 @@ public class FireWeaponActionBuilder {
                                                             valueToCompare = _defenseValueAsCharacter;
                                                         }
                                                         else {
-                                                            valueToCompare = game.getModifiersQuerying().getDefenseValue(game.getGameState(), cardFiredAt);
+                                                            valueToCompare = targetDefenseValue(game, cardFiredAt);
                                                         }
                                                         gameState.sendMessage("Defense value: " + GuiUtils.formatAsString(valueToCompare));
 
@@ -6834,7 +6891,7 @@ public class FireWeaponActionBuilder {
                                                         if (_targetedAsCharacter != null && _targetedAsCharacter.accepts(game, cardFiredAt)) {
                                                             valueToCompare = _defenseValueAsCharacter;
                                                         } else {
-                                                            valueToCompare = modifiersQuerying.getDefenseValue(game.getGameState(), cardFiredAt);
+                                                            valueToCompare = targetDefenseValue(game, cardFiredAt);
                                                         }
                                                         gameState.sendMessage("Defense value: " + GuiUtils.formatAsString(valueToCompare));
 
@@ -6923,7 +6980,7 @@ public class FireWeaponActionBuilder {
                                                             valueToCompare = _defenseValueAsCharacter;
                                                         }
                                                         else {
-                                                            valueToCompare = modifiersQuerying.getDefenseValue(game.getGameState(), cardFiredAt);
+                                                            valueToCompare = targetDefenseValue(game, cardFiredAt);
                                                         }
                                                         gameState.sendMessage("Defense value: " + GuiUtils.formatAsString(valueToCompare));
 
@@ -7006,7 +7063,7 @@ public class FireWeaponActionBuilder {
                                                             valueToCompare = _defenseValueAsCharacter;
                                                         }
                                                         else {
-                                                            valueToCompare = modifiersQuerying.getDefenseValue(game.getGameState(), cardFiredAt);
+                                                            valueToCompare = targetDefenseValue(game, cardFiredAt);
                                                         }
                                                         gameState.sendMessage("Defense value: " + GuiUtils.formatAsString(valueToCompare));
 
@@ -7097,7 +7154,7 @@ public class FireWeaponActionBuilder {
                                                             valueToCompare = _defenseValueAsCharacter;
                                                         }
                                                         else {
-                                                            valueToCompare = modifiersQuerying.getDefenseValue(game.getGameState(), cardFiredAt);
+                                                            valueToCompare = targetDefenseValue(game, cardFiredAt);
                                                         }
                                                         gameState.sendMessage("Defense value: " + GuiUtils.formatAsString(valueToCompare));
 
@@ -7180,7 +7237,7 @@ public class FireWeaponActionBuilder {
                                                             valueToCompare = _defenseValueAsCharacter;
                                                         }
                                                         else {
-                                                            valueToCompare = modifiersQuerying.getDefenseValue(game.getGameState(), cardFiredAt);
+                                                            valueToCompare = targetDefenseValue(game, cardFiredAt);
                                                         }
                                                         gameState.sendMessage("Defense value: " + GuiUtils.formatAsString(valueToCompare));
 
@@ -7263,7 +7320,7 @@ public class FireWeaponActionBuilder {
                                                         if (_targetedAsCharacter != null && _targetedAsCharacter.accepts(game, cardFiredAt)) {
                                                             valueToCompare = _defenseValueAsCharacter;
                                                         } else {
-                                                            valueToCompare = modifiersQuerying.getDefenseValue(game.getGameState(), cardFiredAt);
+                                                            valueToCompare = targetDefenseValue(game, cardFiredAt);
                                                         }
                                                         gameState.sendMessage("Defense value: " + GuiUtils.formatAsString(valueToCompare));
 
@@ -7362,7 +7419,7 @@ public class FireWeaponActionBuilder {
                                                                 if (_targetedAsCharacter != null && _targetedAsCharacter.accepts(game, cardFiredAt)) {
                                                                     valueToCompare += _defenseValueAsCharacter;
                                                                 } else {
-                                                                    valueToCompare += game.getModifiersQuerying().getDefenseValue(game.getGameState(), cardFiredAt);
+                                                                    valueToCompare += targetDefenseValue(game, cardFiredAt);
                                                                 }
                                                             } else {
                                                                 throw new UnsupportedOperationException("Invalid statistic " + (statistic != null ? statistic.getHumanReadable() : null));
@@ -7457,7 +7514,7 @@ public class FireWeaponActionBuilder {
                                                             valueToCompare = _defenseValueAsCharacter;
                                                         }
                                                         else {
-                                                            valueToCompare = modifiersQuerying.getDefenseValue(game.getGameState(), cardFiredAt);
+                                                            valueToCompare = targetDefenseValue(game, cardFiredAt);
                                                         }
                                                         gameState.sendMessage("Defense value: " + GuiUtils.formatAsString(valueToCompare));
 

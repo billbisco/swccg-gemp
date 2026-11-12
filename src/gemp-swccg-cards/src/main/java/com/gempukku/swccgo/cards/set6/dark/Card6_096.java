@@ -41,7 +41,7 @@ public class Card6_096 extends AbstractAlien {
     public Card6_096() {
         super(Side.DARK, 2, 5, 4, 1, 3, Title.Barada, Uniqueness.UNIQUE, ExpansionSet.JABBAS_PALACE, Rarity.R);
         setLore("Male Klatooinian in charge of Jabba's repulsorpool. Sold onto slavery and won by Jabba in sabacc. Responsible for maintenance and supplies for Jabba's vehicles.");
-        setGameText("Deploys only to a Jabba's Palace site. Power = 0 at any location other than a Tatooine site. Power +2 at any Jabba's Palace site while Jabba is on the table. Your transport vehicles lost from same site may go to your Used Pile rather than your Lost Pile.");
+        setGameText("Deploys only to a Jabba's Palace site. Power = 0 at any location other than a Tatooine site. Power +2 at any Jabba's Palace site, while Jabba on table. Your transport vehicles just lost from same site may be placed in your Used Pile.");
         addIcons(Icon.JABBAS_PALACE, Icon.WARRIOR);
         setSpecies(Species.KLATOOINIAN);
     }

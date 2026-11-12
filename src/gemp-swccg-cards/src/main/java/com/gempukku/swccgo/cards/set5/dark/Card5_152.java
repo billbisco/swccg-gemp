@@ -37,7 +37,7 @@ public class Card5_152 extends AbstractLostInterrupt {
     public Card5_152() {
         super(Side.DARK, 3, "Shattered Hope", Uniqueness.UNIQUE, ExpansionSet.CLOUD_CITY, Rarity.U);
         setLore("Using the power of the dark side, Vader caused Luke to lose his confidence and question his sense of direction.");
-        setGameText("At the end of a battle that you won at an interior site where you have a character of ability > 3 present, relocate one opponent's character present to an adjacent site. (If on Cloud City, character may be relocated to Weather Vane instead.)");
+        setGameText("If a battle you won just ended at an interior site and you have a character of ability > 3 present there, relocate one opponent's character present to an adjacent site. (If on Cloud City, may relocate that character to Weather Vane instead.)");
         addIcons(Icon.CLOUD_CITY);
     }
 

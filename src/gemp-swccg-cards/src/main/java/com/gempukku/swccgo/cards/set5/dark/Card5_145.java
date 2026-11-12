@@ -26,6 +26,8 @@ import com.gempukku.swccgo.logic.effects.TargetCardsOnTableEffect;
 import com.gempukku.swccgo.logic.modifiers.ModifyGameTextType;
 import com.gempukku.swccgo.logic.timing.Action;
 import com.gempukku.swccgo.logic.timing.EffectResult;
+import com.gempukku.swccgo.logic.timing.PassthruEffect;
+import com.gempukku.swccgo.logic.timing.results.AboutToBeHitResult;
 import com.gempukku.swccgo.logic.timing.results.HitResult;
 
 import java.util.Collection;
@@ -42,7 +44,7 @@ public class Card5_145 extends AbstractUsedOrLostInterrupt {
     public Card5_145() {
         super(Side.DARK, 5, "Human Shield", Uniqueness.UNRESTRICTED, ExpansionSet.CLOUD_CITY, Rarity.C);
         setLore("A shining example of Imperial honor and bravery.");
-        setGameText("USED: If an opponent's weapon just 'hit' an Imperial present with a captive being escorted, the captive is 'hit' instead. LOST: During a battle at site, you may forfeit any or all captives present.");
+        setGameText("USED: If an opponent's weapon is about to 'hit' an Imperial present with a captive being escorted, the captive is 'hit' instead. LOST: During the damage segment of a battle at a site, you may forfeit any captives present (once per battle per captive).");
         addIcons(Icon.CLOUD_CITY);
     }
 
@@ -55,8 +57,11 @@ public class Card5_145 extends AbstractUsedOrLostInterrupt {
                 ? Filters.or(Filters.Imperial, Filters.bounty_hunter) : Filters.Imperial;
         Filter impPresentWithCaptive = Filters.and(imperial, Filters.presentInBattle, Filters.escorting(Filters.any));
         // Check condition(s)
-        if (TriggerConditions.justHitBy(game, effectResult, impPresentWithCaptive, Filters.and(Filters.opponents(playerId), Filters.weapon))) {
-            final PhysicalCard cardHit = ((HitResult) effectResult).getCardHit();
+        final boolean aboutToBeHit = playsWhenAboutToBeHit();
+        Filter opponentsWeapon = Filters.and(Filters.opponents(playerId), Filters.weapon);
+        if (aboutToBeHit ? TriggerConditions.isAboutToBeHitBy(game, effectResult, impPresentWithCaptive, opponentsWeapon)
+                : TriggerConditions.justHitBy(game, effectResult, impPresentWithCaptive, opponentsWeapon)) {
+            final PhysicalCard cardHit = aboutToBeHit ? ((AboutToBeHitResult) effectResult).getCardToBeHit() : ((HitResult) effectResult).getCardHit();
             Collection<PhysicalCard> validCaptives = Filters.filter(game.getGameState().getCaptivesOfEscort(cardHit), game, Filters.canBeTargetedBy(self, TargetingReason.TO_BE_HIT));
             if(!validCaptives.isEmpty()){
                 final PlayInterruptAction action = new PlayInterruptAction(game, self, CardSubtype.USED);
@@ -77,11 +82,25 @@ public class Card5_145 extends AbstractUsedOrLostInterrupt {
                                                 PhysicalCard captiveToHit = targetingAction.getPrimaryTargetCard(targetGroupId);
 
                                                 // Perform result(s)
-                                                action.appendEffect(
-                                                        new HitCardEffect(action, captiveToHit, self));
-                                                action.appendEffect(
-                                                        new RestoreCardToNormalEffect(action, cardHit)
-                                                );
+                                                if (aboutToBeHit) {
+                                                    // PC errata: the Imperial is not 'hit'; the captive is 'hit' instead
+                                                    action.appendEffect(
+                                                            new PassthruEffect(action) {
+                                                                @Override
+                                                                protected void doPlayEffect(SwccgGame game) {
+                                                                    ((AboutToBeHitResult) effectResult).getPreventableCardEffect().preventEffectOnCard(cardHit);
+                                                                }
+                                                            });
+                                                    action.appendEffect(
+                                                            new HitCardEffect(action, captiveToHit, self));
+                                                }
+                                                else {
+                                                    action.appendEffect(
+                                                            new HitCardEffect(action, captiveToHit, self));
+                                                    action.appendEffect(
+                                                            new RestoreCardToNormalEffect(action, cardHit)
+                                                    );
+                                                }
                                             }
                                         });
                             }
@@ -130,5 +149,13 @@ public class Card5_145 extends AbstractUsedOrLostInterrupt {
             actions.add(action);
         }
         return actions;
+    }
+
+    /**
+     * PC errata (Advanced Rulebook 2023 Appendix A), USED: "If an opponent's weapon is about to 'hit' an Imperial ..."
+     * (printed: "just 'hit'", after which the Imperial is restored to normal).
+     */
+    protected boolean playsWhenAboutToBeHit() {
+        return true;
     }
 }

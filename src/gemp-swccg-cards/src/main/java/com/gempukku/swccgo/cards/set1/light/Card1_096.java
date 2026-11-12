@@ -33,7 +33,7 @@ public class Card1_096 extends AbstractUsedInterrupt {
     public Card1_096() {
         super(Side.LIGHT, 3, "Move Along...", Uniqueness.UNRESTRICTED, ExpansionSet.PREMIERE, Rarity.R1);
         setLore("Obi-Wan used Jedi 'affect mind' power to convince stormtroopers, 'These aren't the droids you're looking for.'");
-        setGameText("Use 1 Force to temporarily suspend a battle just initiated at a site where one of your Jedi is present. Draw destiny. That number of opponent's characters with ability = 1 (your choice) must move away (for free), or are lost. Battle continues.");
+        setGameText("If a battle was just initiated at a site where your Jedi is present, use 1 Force to draw destiny; that number of opponent's characters with ability = 1 (your choice) must each move away (for free), or be lost.");
     }
 
     @Override

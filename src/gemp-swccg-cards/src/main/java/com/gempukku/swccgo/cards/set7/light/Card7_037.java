@@ -8,6 +8,7 @@ import com.gempukku.swccgo.common.ModelType;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Uniqueness;
+import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
@@ -31,7 +32,7 @@ public class Card7_037 extends AbstractDroid {
     public Card7_037() {
         super(Side.LIGHT, 4, 2, 1, 3, "R3-T2 (Arthree-Teetoo)", Uniqueness.UNIQUE, ExpansionSet.SPECIAL_EDITION, Rarity.R);
         setLore("Expanded memory capacity. Escaped from pirates based in Mos Eisley. Programmed with the ability to both enhance and sabotage hyperdrive systems.");
-        setGameText("While aboard a capital starship, adds 1 to power and 2 to hyperspeed, and that starship is immune to attrition < 4. While at Central Core, Death Star requires +2 to move.");
+        setGameText("While aboard your capital starship, adds 1 to power and 2 to hyperspeed, and that starship is immune to attrition < 4. While at Death Star: Central Core, Death Star requires +2 Force to move.");
         addIcons(Icon.SPECIAL_EDITION, Icon.NAV_COMPUTER);
         addModelType(ModelType.ASTROMECH);
     }
@@ -39,10 +40,15 @@ public class Card7_037 extends AbstractDroid {
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
         List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new PowerModifier(self, Filters.and(Filters.capital_starship, Filters.hasAboard(self)), 1));
-        modifiers.add(new HyperspeedModifier(self, Filters.and(Filters.capital_starship, Filters.hasAboard(self)), 2));
-        modifiers.add(new ImmuneToAttritionLessThanModifier(self, Filters.and(Filters.capital_starship, Filters.hasAboard(self)), 4));
+        modifiers.add(new PowerModifier(self, Filters.and(capitalStarshipFilter(self), Filters.hasAboard(self)), 1));
+        modifiers.add(new HyperspeedModifier(self, Filters.and(capitalStarshipFilter(self), Filters.hasAboard(self)), 2));
+        modifiers.add(new ImmuneToAttritionLessThanModifier(self, Filters.and(capitalStarshipFilter(self), Filters.hasAboard(self)), 4));
         modifiers.add(new MoveCostModifier(self, Filters.Death_Star_system, new AtCondition(self, Filters.Death_Star_Central_Core), 2));
         return modifiers;
+    }
+
+    /** PC errata (Advanced Rulebook 2023 Appendix A): "aboard your capital starship" (printed: "a capital starship"). */
+    protected Filter capitalStarshipFilter(PhysicalCard self) {
+        return Filters.and(Filters.your(self), Filters.capital_starship);
     }
 }

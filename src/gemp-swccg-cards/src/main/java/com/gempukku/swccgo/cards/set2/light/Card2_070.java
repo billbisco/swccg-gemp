@@ -30,7 +30,7 @@ public class Card2_070 extends AbstractStarfighter {
     public Card2_070() {
         super(Side.LIGHT, 2, 2, 3, null, 4, 5, 5, "Red 2", Uniqueness.UNIQUE, ExpansionSet.A_NEW_HOPE, Rarity.R1);
         setLore("Wedge's X-wing at Battle of Yavin. Wedge had to nurse the fighter home after a hit in the Death Star trench destroyed its micro-maneuvering controls.");
-        setGameText("May add 1 pilot and 1 astromech. Immune to attrition < 3 if Wedge piloting. Must have pilot aboard to use power, maneuver or hyperspeed.");
+        setGameText("May add 1 pilot and 1 astromech. Immune to attrition < 3 if Wedge piloting.");
         addPersona(Persona.RED_2);
         addIcons(Icon.A_NEW_HOPE, Icon.NAV_COMPUTER, Icon.SCOMP_LINK);
         addModelType(ModelType.X_WING);

@@ -48,7 +48,7 @@ public class Card2_125 extends AbstractUtinniEffect {
     public Card2_125() {
         super(Side.DARK, 4, PlayCardZoneOption.ATTACHED, Title.Spice_Mines_Of_Kessel, Uniqueness.UNIQUE, ExpansionSet.A_NEW_HOPE, Rarity.R1);
         setLore("Captives sent to the Kessel spice mines spend the rest of their lives digging for glitterstim, a spice sold throughout the galaxy by smugglers and crime lords.");
-        setGameText("Deploy on Kessel (may not be moved). Target one captive and one trooper to escort captive. When targets reach Utinni Effect, retrieve Force equal to captive's forfeit (captive and Utinni Effect lost).");
+        setGameText("Deploy on Kessel system (may not be moved). Target one captive and one trooper to escort captive. When targets reach Utinni Effect, retrieve Force equal to captive's forfeit (captive and Utinni Effect lost). If trooper lost en route, captive released.");
         addIcons(Icon.A_NEW_HOPE);
         addKeywords(Keyword.UTINNI_EFFECT_THAT_RETRIEVES_FORCE);
     }

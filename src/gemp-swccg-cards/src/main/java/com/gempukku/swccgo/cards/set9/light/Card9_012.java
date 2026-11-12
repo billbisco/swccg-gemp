@@ -34,7 +34,7 @@ public class Card9_012 extends AbstractRebel {
     public Card9_012() {
         super(Side.LIGHT, 2, 3, 2, 3, 5, "First Officer Thaneespi", Uniqueness.UNIQUE, ExpansionSet.DEATH_STAR_II, Rarity.R);
         setLore("Mon Calamari deck officer. Brilliant tactical analyst. One of several brave leaders of Mon Calamari refugees from Imperial invasion of her planet.");
-        setGameText("Deploys -2 to Home One. Adds 3 to power of any capital starship she pilots. When piloting a Star Cruiser with another Mon Calamari pilot aboard, unless opponent has total ability > 6 piloting here, opponent's total battle destiny here = zero.");
+        setGameText("Deploys -2 to Home One. Adds 3 to power of any capital starship she pilots. When piloting a Star Cruiser with another Mon Calamari pilot aboard, unless opponent has total ability > 6 piloting here, reset opponent's total battle destiny here to 0.");
         addIcons(Icon.DEATH_STAR_II, Icon.PILOT);
         addKeywords(Keyword.LEADER, Keyword.FEMALE);
         setSpecies(Species.MON_CALAMARI);

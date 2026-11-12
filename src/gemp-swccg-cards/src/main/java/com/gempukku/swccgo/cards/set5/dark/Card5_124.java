@@ -46,7 +46,7 @@ public class Card5_124 extends AbstractUtinniEffect {
     public Card5_124() {
         super(Side.DARK, 6, PlayCardZoneOption.ATTACHED, "The Emperor's Prize", Uniqueness.UNIQUE, ExpansionSet.CLOUD_CITY, Rarity.R);
         setLore("Vader thought that by capturing Luke, he would crush the Alliance's last hope. But, there was another...");
-        setGameText("If Luke was just 'frozen,' deploy on Emperor or Detention Block Corridor. Target Luke and Vader. When reached by targets, place Utinni Effect on Luke and opponent must lose half of Life Force (round down). If Luke released, lose Utinni Effect. (Immune to Alter.)");
+        setGameText("If Luke was just 'frozen,' deploy on Emperor or Detention Block Corridor. Target Luke and Vader. When reached by targets, place Utinni Effect on Luke and opponent must lose Force (from Life Force) equal to half their Life Force (round down). If Luke released, lose Utinni Effect. (Immune to Alter.)");
         addIcons(Icon.CLOUD_CITY);
         addImmuneToCardTitle(Title.Alter);
     }

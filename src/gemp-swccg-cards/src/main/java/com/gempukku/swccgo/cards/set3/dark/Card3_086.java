@@ -35,7 +35,7 @@ public class Card3_086 extends AbstractDroid {
     public Card3_086() {
         super(Side.DARK, 2, 2, 1, 3, "FX-10 (Effex-ten)", Uniqueness.UNRESTRICTED, ExpansionSet.HOTH, Rarity.C2);
         setLore("Standard medical droid used by Imperial field units. Enhanced programming allows FX-10 to treat a wide variety of battle wounds.");
-        setGameText("Once per turn, one of your 'hit' non-droid characters at same or adjacent site may go to your Used Pile rather than your Lost Pile.");
+        setGameText("Once per turn, one of your 'hit' non-droid characters at same or adjacent site may be placed in your Used Pile instead of Lost Pile when forfeited.");
         addIcons(Icon.HOTH);
         addModelType(ModelType.MEDICAL);
     }

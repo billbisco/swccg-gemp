@@ -40,7 +40,7 @@ public class Card5_135 extends AbstractLostInterrupt {
     public Card5_135() {
         super(Side.DARK, 2, Title.Dark_Strike, Uniqueness.UNIQUE, ExpansionSet.CLOUD_CITY, Rarity.C);
         setLore("Many have experienced the awesome power of the Dark Lord in battle. Few have lived to tell about it.");
-        setGameText("If you just targeted with a lightsaber, add 3 to your weapon destiny. OR Cancel Swing-And-A-Miss. OR Lose 1 Force to cause one opponent's character just 'hit' to be immediately placed in Lost Pile.");
+        setGameText("If you just targeted with a lightsaber, add 3 to your total weapon destiny. OR Cancel Swing-And-A-Miss. OR Lose 1 Force to cause one opponent's just 'hit' character to be immediately placed in Lost Pile.");
         addIcons(Icon.CLOUD_CITY);
     }
 

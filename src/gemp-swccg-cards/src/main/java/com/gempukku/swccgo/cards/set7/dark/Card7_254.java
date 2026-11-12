@@ -38,7 +38,7 @@ public class Card7_254 extends AbstractUsedInterrupt {
     public Card7_254() {
         super(Side.DARK, 6, "In Range", Uniqueness.UNIQUE, ExpansionSet.SPECIAL_EDITION, Rarity.C);
         setLore("'They'll be in range of our tractor beam in moments, my lord.' 'Good. Prepare the boarding party and set your weapons for stun.'");
-        setGameText("If you have a Star Destroyer in a battle, during the weapons segment use its tractor beam for free. Add 2 to tractor beam destiny if targeting a unique (*) starship. If not captured, target is power and maneuver -3 for remainder of turn.");
+        setGameText("If you have a Star Destroyer in a battle, during the weapons segment use its tractor beam for free. Add 2 to tractor beam destiny if targeting a unique (•) starship. If not captured, target is power -3 and maneuver -3 (if possible) for remainder of battle.");
         addIcons(Icon.SPECIAL_EDITION);
     }
 

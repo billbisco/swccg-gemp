@@ -28,7 +28,7 @@ import java.util.List;
 public class Card13_057 extends AbstractUniqueStarshipSite {
     public Card13_057() {
         super(Side.DARK, "Blockade Flagship: Hallway", Persona.BLOCKADE_FLAGSHIP, ExpansionSet.REFLECTIONS_III, Rarity.PM);
-        setLocationDarkSideGameText("If you occupy, Force generation +1 here, and opponent's characters may not move from here.");
+        setLocationDarkSideGameText("If you occupy, your Force generation is +1 here, and opponent's characters may not move from here.");
         setLocationLightSideGameText("Your Jedi deploy +2 here.");
         addIcon(Icon.DARK_FORCE, 1);
         addIcon(Icon.LIGHT_FORCE, 1);

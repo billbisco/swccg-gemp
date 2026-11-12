@@ -35,7 +35,7 @@ public class Card4_057 extends AbstractLostInterrupt {
     public Card4_057() {
         super(Side.LIGHT, 4, "Moving To Attack Position", Uniqueness.UNIQUE, ExpansionSet.DAGOBAH, Rarity.C);
         setLore("Sometimes the best defense is an insane offense.");
-        setGameText("Target one starfighter participating in a battle at a system or sector. For remainder of turn, starfighter may not move, is immune to attrition and, if piloted by any Corellian, is power +2.");
+        setGameText("Target one starfighter participating in a battle at a system or sector. For remainder of turn, starfighter may not move, is immune to attrition and, if piloted by a Corellian, is power +2.");
         addIcons(Icon.DAGOBAH);
     }
 

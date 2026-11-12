@@ -44,7 +44,7 @@ public class Card2_032 extends AbstractNormalEffect {
     public Card2_032() {
         super(Side.LIGHT, 4, PlayCardZoneOption.ATTACHED, "Eject! Eject!", Uniqueness.UNRESTRICTED, ExpansionSet.A_NEW_HOPE, Rarity.C2);
         setLore("The Guiderhouser ejection seat has saved many pilots from their exploding starships. However, system malfunctions have sometimes caused spontaneous ejection.");
-        setGameText("Use 1 Force to target a starfighter having one or more permanent pilots. Draw destiny. If destiny > 2, deploy on starfighter to remove all permanent pilots (otherwise, Effect is lost). May add 1 pilot for each permanent pilot removed. (Immune to Alter.)");
+        setGameText("Use 1 Force to target a starfighter having one or more permanent pilots. Draw destiny. If destiny > 2, deploy on starfighter to remove all permanent pilots (otherwise, Effect is lost). May add one pilot for each permanent pilot removed. (Immune to Alter.)");
         addIcons(Icon.A_NEW_HOPE);
         addImmuneToCardTitle(Title.Alter);
     }

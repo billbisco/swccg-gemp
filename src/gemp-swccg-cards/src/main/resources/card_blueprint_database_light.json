@@ -2084,7 +2084,7 @@
       "INTERRUPT"
     ],
     "cardSubtype": "USED_OR_LOST",
-    "gameText": "USED: Target your highest-ability character and one just-played Interrupt. Draw destiny. If destiny < ability of target character, cancel target Interrupt. LOST: Use 3 Force. Each player counts cards in hand, then places entire hand and Used Pile onto Reserve Deck; reshuffle. Each player then draws from Reserve Deck the counted number of cards to create a new hand.",
+    "gameText": "USED: Target your highest-ability character and one just-played Interrupt. Draw destiny. If destiny < ability of target character, cancel target Interrupt. LOST: Use 3 Force. Each player places hand onto Reserve Deck (if possible), then places Used Pile onto Reserve Deck; reshuffle. Each player then draws cards from Reserve Deck equal to the number of cards just placed from hand onto Reserve Deck (if any).",
     "destiny": 3,
     "icons": [
       {
@@ -2288,7 +2288,7 @@
       "INTERRUPT"
     ],
     "cardSubtype": "USED_OR_LOST",
-    "gameText": "USED: During opponent's turn, take up to 4 cards from your hand and place them on top of your Force Pile. LOST: During a battle, before any cards have been forfeited, cause all attrition for both sides to be reduced to 0.",
+    "gameText": "USED: During opponent's turn, take up to four cards from your hand and place them on top of your Force Pile. LOST: At the start of the damage segment during a battle, before any cards have been forfeited, cause all attrition for both sides to be reduced to zero.",
     "destiny": 2,
     "icons": [
       {
@@ -2519,7 +2519,7 @@
       "INTERRUPT"
     ],
     "cardSubtype": "USED_OR_LOST",
-    "gameText": "USED: If opponent just initiated a battle at a system or sector where you have a starship with maneuver > 3, use 1 Force to add one battle destiny. LOST: If you just forfeited all your cards that participated in a battle you lost, cancel all remaining battle damage. (Immune to Sense.)",
+    "gameText": "USED: If opponent just initiated a battle at a system or sector where you have a starship with maneuver > 3, use 1 Force to add one battle destiny. LOST: During the damage segment of a battle you lost, if you have no cards left that can be forfeited, cancel all remaining battle damage. (Immune to Sense.)",
     "destiny": 2,
     "icons": [
       {
@@ -2980,7 +2980,7 @@
     "cardTypes": [
       "OBJECTIVE"
     ],
-    "gameText": "Deploy Hutt Trade Route and a Jabba's Palace site. May deploy Yarna d'al' Gargan. Reveal one unique (•) alien from your deck whose lore specifies its species. This card is your Rep. For remainder of game, your Rep is a leader. Yarna d'al' Gargan is immune to Alter. You may not deploy 'insert' cards or operatives. While a rancor is at Rancor Pit, Trap Door is immune to Bo Shuda. Flip this card if you occupy two battleground sites (must occupy a third with a non-unique alien of your Rep's species if a non-Tatooine location is on table).",
+    "gameText": "Deploy Hutt Trade Route and a Jabba's Palace site. May deploy Yarna d'al' Gargan. Reveal one unique (•) alien with a defined species from your deck. This card is your Rep. For remainder of game, your Rep is a leader. Yarna d'al' Gargan is immune to Alter. You may not deploy 'insert' cards or operatives. While a rancor is at Rancor Pit, Trap Door is immune to Bo Shuda. Flip this card if you occupy two battleground sites (must occupy a third with a non-unique alien of your Rep's species if a non-Tatooine location is on table).",
     "destiny": 0,
     "icons": [
       {
@@ -9010,7 +9010,7 @@
     ],
     "cardSubtype": "NORMAL",
     "lore": "The colo claw fish's front end is dominated by a large snout covered with two large eyes that can see deep into the murky depths. Able to survive due to its exceptional vision.",
-    "gameText": "Deploy on table. Cancels Opee Sea Killer. While no card here, you may place a card from hand face-up here. If you just drew weapon or battle destiny, you may exchange it for card here, which then counts as that destiny draw. (Immune to Alter.)",
+    "gameText": "Deploy on table. Cancels Opee Sea Killer. While no card here, you may place a card from hand face-up here. If you just drew weapon or battle destiny (limit once per destiny draw), you may exchange it for card here, which then counts as that destiny draw. (Immune to Alter.)",
     "destiny": 4,
     "icons": [
       {
@@ -9794,8 +9794,8 @@
       "LOCATION"
     ],
     "cardSubtype": "SITE",
-    "locationDarkSideGameText": "Any characters of ability < 5 'hit' here (and all cards on them) are placed in owner's Used Pile.",
-    "locationLightSideGameText": "Any characters of ability < 5 'hit' here (and all cards on them) are placed in owner's Used Pile.",
+    "locationDarkSideGameText": "Any characters of ability < 5 about to be 'hit' here (and all cards on them) are placed in owner's Used Pile.",
+    "locationLightSideGameText": "Any characters of ability < 5 about to be 'hit' here (and all cards on them) are placed in owner's Used Pile.",
     "deployCost": 0,
     "destiny": 0,
     "icons": [
@@ -13174,7 +13174,7 @@
     ],
     "cardSubtype": "VEHICLE",
     "lore": "Launched from fambaa-mounted catapults. Gungan 'energy balls' are used to disable a variety of mechanized threats. Effectiveness is enhanced by the skill of the user.",
-    "gameText": "Deploy on your Fambaa. Twice during battle may draw destiny. If destiny < total number of opponent's characters and vehicles present, one of them is lost (opponent's choice).",
+    "gameText": "Deploy on your Fambaa. Twice per battle may draw destiny. If destiny < total number of opponent's characters and vehicles present, one of them is lost (opponent's choice).",
     "destiny": 4,
     "icons": [
       {
@@ -16649,7 +16649,7 @@
     ],
     "cardSubtype": "NORMAL",
     "lore": "'What was that?' The Jedi power known as 'affect mind' is often used to create minor distractions, allowing Jedi to elude enemies rather than engage them in battle.",
-    "gameText": "Use 1 Force to deploy on one of your Jedi. Unless a Dark Jedi is also present, opponent's total ability at same location is reduced by 2.",
+    "gameText": "Use 1 Force to deploy on one of your Jedi. While present at a site, unless a Dark Jedi is also present, opponent's total ability at same location is reduced by 2.",
     "destiny": 5,
     "icons": [
       {
@@ -16973,7 +16973,7 @@
     ],
     "cardSubtype": "NORMAL",
     "lore": "A Jedi learns not only to wield a lightsaber, but how to channel the Force to increase skill and control the lightsaber's damage.",
-    "gameText": "Deploy on any character with ability > 2 and a lightsaber. That character is power +3 in battles or may add 1 to Force drain where present. Effect is lost if character loses lightsaber.",
+    "gameText": "Deploy on your character with ability > 2 and a lightsaber. That character is power +3 in battles or may add 1 to Force drain where present. Effect is lost if character loses lightsaber.",
     "destiny": 4,
     "icons": [
       {
@@ -17242,7 +17242,7 @@
     ],
     "cardSubtype": "NORMAL",
     "lore": "A Bimm trader and smuggler of starship weapons. Trusts no one. Does business with anyone. Teaches smuggler apprentices. Has mastered Jawa language.",
-    "gameText": "Deploy on any non-smuggler to give that character smuggler skill. OR Deploy on any smuggler. That character is power +1. (Immune to Alter.)",
+    "gameText": "Deploy on your non-smuggler to give that character smuggler skill. OR Deploy on your smuggler. That character is power +1. (Immune to Alter.)",
     "destiny": 4,
     "icons": [
       {
@@ -17269,7 +17269,7 @@
     ],
     "cardSubtype": "NORMAL",
     "lore": "Saurin female from planet Durkteel. Bodyguard of Hrchek, a Saurin droid trader. Sai'torr will teach battle skills to those who prove themselves worthy.",
-    "gameText": "Deploy on any non-warrior character (except droids) to give that character [Warrior] skill. OR Deploy on any warrior. That character is power +1. (Immune to Alter.)",
+    "gameText": "Deploy on your non-warrior character (except droids) to give that character [Warrior] skill. OR Deploy on your warrior. That character is power +1. (Immune to Alter.)",
     "destiny": 4,
     "icons": [
       {
@@ -18137,7 +18137,7 @@
     ],
     "cardSubtype": "USED",
     "lore": "Obi-Wan used Jedi 'affect mind' power to convince stormtroopers, 'These aren't the droids you're looking for.'",
-    "gameText": "Use 1 Force to temporarily suspend a battle just initiated at a site where one of your Jedi is present. Draw destiny. That number of opponent's characters with ability = 1 (your choice) must move away (for free), or are lost. Battle continues.",
+    "gameText": "If a battle was just initiated at a site where your Jedi is present, use 1 Force to draw destiny; that number of opponent's characters with ability = 1 (your choice) must each move away (for free), or be lost.",
     "destiny": 3,
     "icons": [
       {
@@ -44328,7 +44328,7 @@
     ],
     "cardSubtype": "NORMAL",
     "lore": "The huge strain on the little-tested power generator matrix of the superlaser's fusion reactor can require full recharging before the system can be used again.",
-    "gameText": "Deploy on a superlaser. May not fire at a planet unless 8 cards stacked here. If fewer than 8 cards stacked here, opponent may stack top card of Force Pile here. If just fired at a system, Effect is canceled. If Effect canceled, cards stacked here are placed in Used Pile.",
+    "gameText": "Deploy on a superlaser. May not fire at a planet unless 8 cards stacked here. If fewer than 8 cards stacked here, opponent may stack top card of Force Pile here. If just fired at a planet, Effect is canceled. If Effect canceled, cards stacked here are placed in Used Pile.",
     "destiny": 5,
     "icons": [
       {
@@ -44356,7 +44356,7 @@
     ],
     "cardSubtype": "NORMAL",
     "lore": "The Guiderhouser ejection seat has saved many pilots from their exploding starships. However, system malfunctions have sometimes caused spontaneous ejection.",
-    "gameText": "Use 1 Force to target a starfighter having one or more permanent pilots. Draw destiny. If destiny > 2, deploy on starfighter to remove all permanent pilots (otherwise, Effect is lost). May add 1 pilot for each permanent pilot removed. (Immune to Alter.)",
+    "gameText": "Use 1 Force to target a starfighter having one or more permanent pilots. Draw destiny. If destiny > 2, deploy on starfighter to remove all permanent pilots (otherwise, Effect is lost). May add one pilot for each permanent pilot removed. (Immune to Alter.)",
     "destiny": 4,
     "icons": [
       {
@@ -44565,7 +44565,7 @@
     ],
     "cardSubtype": "UTINNI",
     "lore": "'You would prefer another target? A military target? Then name the system!'",
-    "gameText": "Once per game, use 2 Force to deploy on Dantooine. Target Death Star. Opponent may not play Commence Primary Ignition until target reaches Dantooine, canceling Utinni Effect.",
+    "gameText": "Once per game, use 2 Force to deploy on Dantooine system. Target Death Star. Opponent may not play Commence Primary Ignition until target reaches Dantooine, canceling Utinni Effect.",
     "destiny": 5,
     "icons": [
       {
@@ -44776,7 +44776,7 @@
     ],
     "cardSubtype": "LOST",
     "lore": "When Vader turned his attention to the escaping Rebels, Han immediately offered Luke some sage advice.",
-    "gameText": "If a battle was just initiated at an interior site, use 1 Force to exclude from that battle all characters of ability > 2 and all leaders (on both sides).",
+    "gameText": "If a battle was just initiated at an interior site, use 1 Force; for remainder of battle all characters of ability > 2 and all leaders (on both sides) are simultaneously excluded from that battle.",
     "destiny": 4,
     "icons": [
       {
@@ -45678,7 +45678,7 @@
     ],
     "cardSubtype": "STARFIGHTER",
     "lore": "Wedge's X-wing at Battle of Yavin. Wedge had to nurse the fighter home after a hit in the Death Star trench destroyed its micro-maneuvering controls.",
-    "gameText": "May add 1 pilot and 1 astromech. Immune to attrition < 3 if Wedge piloting. Must have pilot aboard to use power, maneuver or hyperspeed.",
+    "gameText": "May add 1 pilot and 1 astromech. Immune to attrition < 3 if Wedge piloting.",
     "deployCost": 2,
     "destiny": 2,
     "power": 3,
@@ -45730,7 +45730,7 @@
     ],
     "cardSubtype": "STARFIGHTER",
     "lore": "Luke's Incom T-65 X-wing at the Battle of Yavin. Instrumentation similarities between Red 5 and the T-16 skyhopper allowed Luke to play a pivotal role in the conflict.",
-    "gameText": "May add 1 pilot and 1 astromech. Immune to attrition < 4 if Luke piloting. Must have pilot aboard to use power, maneuver or hyperspeed. When firing in an Attack Run, adds 1 to total.",
+    "gameText": "May add 1 pilot and 1 astromech. Immune to attrition < 4 if Luke piloting. When firing in an Attack Run, adds 1 to total.",
     "deployCost": 3,
     "destiny": 2,
     "power": 3,
@@ -46504,7 +46504,7 @@
       "DROID"
     ],
     "lore": "Made by Genetech. Unusually independent for a droid. Forced to serve a Moff on Firro, but was liberated by Tiree. Now dedicated to serving the Alliance.",
-    "gameText": "Once per turn, one of your non-droid characters lost from same site may go to your Used Pile rather than your Lost Pile. Subtracts 2 from X on your Bacta Tank.",
+    "gameText": "Once per turn, one of your non-droid characters just lost from same site may be placed in your Used Pile. Subtracts 2 from X on your Bacta Tank.",
     "deployCost": 2,
     "destiny": 1,
     "power": 0,
@@ -47433,7 +47433,7 @@
     ],
     "cardSubtype": "NORMAL",
     "lore": "Medical wonder invented centuries ago by the Vratix insectoid species. Gelatinous red bacta is suspended in a synthetic solution to create a healing bacterial medium.",
-    "gameText": "Use 4 Force to deploy on your side of table. A non-droid character you just lost may be placed here instead of Lost Pile. Holds 1 'patient' at a time. During your deploy phase, may use X Force to bring 'patient' to hand, where X = deploy cost of 'patient.'",
+    "gameText": "Use 4 Force to deploy on your side of table. A non-droid character you just lost may be placed here. Holds 1 'patient' at a time. During your deploy phase, may use X Force to bring 'patient' to hand, where X = deploy cost of 'patient.'",
     "destiny": 3,
     "icons": [
       {
@@ -48412,7 +48412,7 @@
     ],
     "cardSubtype": "SITE",
     "locationDarkSideGameText": "If you control, with an Imperial present, Force drain +1 here.",
-    "locationLightSideGameText": "Once per turn, one of your medical droids is deploy -2.",
+    "locationLightSideGameText": "Once per turn, when you deploy a medical droid, it is deploy -2.",
     "deployCost": 0,
     "destiny": 0,
     "icons": [
@@ -49245,7 +49245,7 @@
     ],
     "cardSubtype": "AUTOMATED",
     "lore": "Mine controlled by microcircuitry calibrated to ignore infantry and creatures. Explodes only when triggered by metallic vehicles.",
-    "gameText": "Deploy at same exterior site as your mining droid. 'Explodes' if starfighter (use 5 as defense value) or non-creature vehicle deploys or moves to or across same site.  Draw destiny.  Target lost if destiny +2 > defense value.  Vehicle Mine also lost.",
+    "gameText": "Deploy at same exterior site as your mining droid. 'Explodes' if starfighter (use 5 as defense value) or non-creature vehicle deploys or moves to or across same site. Draw destiny. Target lost if destiny +2 > defense value. Vehicle Mine is also lost.",
     "destiny": 3,
     "icons": [
       {
@@ -49275,7 +49275,7 @@
       "DROID"
     ],
     "lore": "Model nicknamed 'Fixit' by Rebels at Echo Base. Though obsolete in advanced hospitals, FX-7 droids still operate at many Rebel outposts as assistant surgeons.",
-    "gameText": "Once per turn, one of your 'hit' non-droid characters at same or adjacent site may go to your Used Pile rather than your Lost Pile. Cumulatively subtracts 2 from X on your Bacta Tank.",
+    "gameText": "Once per turn, one of your 'hit' non-droid characters at same or adjacent site may be placed in your Used Pile instead of Lost Pile when forfeited. Cumulatively subtracts 2 from X on your Bacta Tank.",
     "deployCost": 2,
     "destiny": 2,
     "power": 0,
@@ -49619,7 +49619,7 @@
     ],
     "cardSubtype": "IMMEDIATE",
     "lore": "To recover from the strenuous Jedi training routine and revitalize the mind and body, an apprentice must rest to be calm and at peace.",
-    "gameText": "Deploy on an apprentice at the beginning of your turn. Apprentice 'rests' (may not attempt Jedi Tests) until end of your next turn; then relocate Immediate Effect to Jedi Test. When attempting this test, that apprentice adds 3 to training destiny. (Immune to Control.)",
+    "gameText": "Deploy on any apprentice at the beginning of your turn. Apprentice 'rests' (may not attempt Jedi Tests) until end of your next turn, then relocate Immediate Effect to Jedi Test. When attempting this test, that apprentice adds 3 to training destiny. (Immune to Control.)",
     "destiny": 3,
     "icons": [
       {
@@ -50066,7 +50066,7 @@
     ],
     "cardSubtype": "NORMAL",
     "lore": "It was hard to imagine the enormous losses the Alliance suffered during the Battle of Hoth. Leia contemplated what she could do to help the Rebellion recover.",
-    "gameText": "Deploy on Leia. Once during each of your control phases, you may use 3 Force to retrieve one card from your Lost Pile. Also, when an apprentice, adds 1 to her training destiny.",
+    "gameText": "Deploy on Leia. Once during each of your control phases, you may use 3 Force to retrieve 1 Force. Also, when an apprentice, adds 1 to her training destiny.",
     "destiny": 3,
     "icons": [
       {
@@ -50125,7 +50125,7 @@
     ],
     "cardSubtype": "MOBILE",
     "lore": "'Considering the amount of damage we've sustained, they must have been destroyed.'",
-    "gameText": "Deploy on an asteroid sector and specify starting direction. Every move phase, moves to next adjacent asteroid sector (reversing direction as necessary). Where present, adds 2 to asteroid destiny. May be targeted by starship weapons (armor = 3).",
+    "gameText": "Deploy on an asteroid sector and specify starting direction. Every move phase, moves to next adjacent asteroid sector (reversing direction as necessary). Where present, adds 2 to asteroid destiny. May be targeted by starship weapons (defense value = 3).",
     "destiny": 4,
     "icons": [
       {
@@ -50781,7 +50781,7 @@
     ],
     "cardSubtype": "LOST",
     "lore": "Sometimes the best defense is an insane offense.",
-    "gameText": "Target one starfighter participating in a battle at a system or sector. For remainder of turn, starfighter may not move, is immune to attrition and, if piloted by any Corellian, is power +2.",
+    "gameText": "Target one starfighter participating in a battle at a system or sector. For remainder of turn, starfighter may not move, is immune to attrition and, if piloted by a Corellian, is power +2.",
     "destiny": 4,
     "icons": [
       {
@@ -50809,7 +50809,7 @@
     ],
     "cardSubtype": "LOST",
     "lore": "In combat, a bold and unexpected move can change the entire situation.",
-    "gameText": "Use 3 Force. Each player counts cards in hand, then places entire hand and Used Pile onto Reserve Deck. Shuffle, cut and replace. Each player then draws from Reserve Deck the counted number of cards to create a new hand.",
+    "gameText": "Use 3 Force. Each player places hand onto Reserve Deck (if possible), then places Used Pile onto Reserve Deck; reshuffle. Each player then draws cards from Reserve Deck equal to the number of cards just placed from hand onto Reserve Deck (if any).",
     "destiny": 3,
     "icons": [
       {
@@ -51249,7 +51249,7 @@
     ],
     "cardSubtype": "LOST",
     "lore": "Sarcastic. Sardonic. Irreverent. Impertinent. Exasperating. Disrespectful. Outrageous and charming. Han was a scoundrel but Leia began to realize that she loved him.",
-    "gameText": "During a battle, before any cards have been forfeited, cause all attrition for both sides to be reduced to zero.",
+    "gameText": "At the start of the damage segment during a battle, before any cards have been forfeited, cause all attrition for both sides to be reduced to zero.",
     "destiny": 2,
     "icons": [
       {
@@ -51335,7 +51335,7 @@
     "cardTypes": [
       "JEDI_TEST"
     ],
-    "gameText": "Deploy on a Dagobah site. Target a mentor here. Also, target or deploy (regardless of location deployment restrictions) an apprentice here. Attempt when targets are present at the beginning of your control phase. Draw training destiny. If destiny + apprentice's ability > 12, test completed: Place on apprentice. All opponent's Force drain bonuses are canceled. (Mentor: one of your characters of ability > 2. Apprentice: one of your non-droid, non-Jedi characters of lesser ability than mentor. Each time you complete any Jedi Test, you may exchange one card in hand for one Jedi Test in your Lost Pile.)",
+    "gameText": "Deploy on a Dagobah site. Target a mentor here. Also, target or deploy (regardless of location deployment restrictions) an apprentice here. Attempt when targets are present at the beginning of your control phase. Draw training destiny. If destiny + apprentice's ability > 12, test completed: Place on apprentice. All opponent's Force drain bonuses are canceled. Mentor: Your character of ability > 2. Apprentice: Your non-droid, non-Jedi character of lesser ability than mentor. Each time you complete any Jedi Test, you may exchange one card in hand for one Jedi Test in your Lost Pile.",
     "deployCost": 0,
     "destiny": 1,
     "icons": [
@@ -52192,7 +52192,7 @@
     ],
     "cardSubtype": "NORMAL",
     "lore": "Symbol for the Cloud City Miner's Guild (not affiliated with the Galactic Miner's Guild). Named after the beldons, giant creatures who generate Tibanna gas.",
-    "gameText": "Deploy on Cloud City. Your Tibanna Gas Miners deploy free to Cloud City sites and double the Force they activate.",
+    "gameText": "Deploy on Bespin: Cloud City. Your Tibanna Gas Miners deploy free to Cloud City sites and double the Force they activate.",
     "destiny": 6,
     "icons": [
       {
@@ -52399,7 +52399,7 @@
     ],
     "cardSubtype": "NORMAL",
     "lore": "After pursuit, asteroids, a slug, Jedi training, capture, torture, escape, a duel, losing Han and losing a hand, Luke and Leia finally made it to the Alliance's rendezvous point.",
-    "gameText": "Deploy on Rendezvous Point, Hoth, Yavin 4, Alderaan or Sullust. Your starships deploy -2 and your pilots deploy -1 here. When battling here, you may add one battle destiny. Effect canceled if opponent controls this system. (Immune to Alter.)",
+    "gameText": "Deploy on one of the following systems: Rendezvous Point, Hoth, Yavin 4, Alderaan, or Sullust. Your starships deploy -2 and your pilots deploy -1 here. When battling here, you may add one battle destiny. Effect canceled if opponent controls this system. (Immune to Alter.)",
     "destiny": 3,
     "icons": [
       {
@@ -52763,7 +52763,7 @@
     ],
     "cardSubtype": "USED_OR_LOST",
     "lore": "Some people think that hokey religions and ancient weapons are no match for a good blaster at your side.",
-    "gameText": "USED: If you just targeted with a blaster, add 3 to your weapon destiny. LOST: Lose 1 Force to cause one opponent's character just 'hit' to be immediately placed in Lost Pile. OR Cancel Levitation Attack.",
+    "gameText": "USED: If you just targeted with a blaster, add 3 to your total weapon destiny. LOST: Lose 1 Force to cause one opponent's just 'hit' character to be immediately placed in Lost Pile. OR Cancel Levitation Attack.",
     "destiny": 2,
     "icons": [
       {
@@ -52902,7 +52902,7 @@
       "ALIEN"
     ],
     "lore": "Senior accountant for the Cloud City Miner's Guild. Administrates the annual dues and fights corruption among her fellow guild members.",
-    "gameText": "When at a site and opponent is losing Force from Force drains at cloud sectors on same planet, lost Force must come from Reserve Deck, if possible.",
+    "gameText": "When at a site and opponent is losing Force from Force drains at related cloud sectors, lost Force must come from Reserve Deck if possible.",
     "deployCost": 3,
     "destiny": 3,
     "power": 1,
@@ -53351,7 +53351,7 @@
     ],
     "cardSubtype": "LOST",
     "lore": "'Aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa...'",
-    "gameText": "Relocate one of your characters from a Cloud City site to Weather Vane. May be played even after a battle has just been initiated.",
+    "gameText": "Relocate one of your characters from a Cloud City site to Weather Vane (if 'hit,' character is first restored to normal). May be played even after a battle has just been initiated.",
     "destiny": 6,
     "icons": [
       {
@@ -54150,8 +54150,8 @@
       "LOCATION"
     ],
     "cardSubtype": "SITE",
-    "locationDarkSideGameText": "If Weather Vane on table, characters 'hit' here are instead immediately relocated there.",
-    "locationLightSideGameText": "If Weather Vane on table, characters 'hit' here are instead immediately relocated there.",
+    "locationDarkSideGameText": "If Weather Vane on table, characters about to be 'hit' here are relocated there.",
+    "locationLightSideGameText": "If Weather Vane on table, characters about to be 'hit' here are relocated there.",
     "deployCost": 0,
     "destiny": 0,
     "icons": [
@@ -61497,7 +61497,7 @@
       "DROID"
     ],
     "lore": "Expanded memory capacity. Escaped from pirates based in Mos Eisley. Programmed with the ability to both enhance and sabotage hyperdrive systems.",
-    "gameText": "While aboard a capital starship, adds 1 to power and 2 to hyperspeed, and that starship is immune to attrition < 4. While at Central Core, Death Star requires +2 to move.",
+    "gameText": "While aboard your capital starship, adds 1 to power and 2 to hyperspeed, and that starship is immune to attrition < 4. While at Death Star: Central Core, Death Star requires +2 Force to move.",
     "deployCost": 2,
     "destiny": 4,
     "power": 1,
@@ -61618,7 +61618,7 @@
       "REBEL"
     ],
     "lore": "Served Bail Organa during the Clone Wars. Saved Anakin's lightsaber until he was able to give it to Luke. Hasn't gone by the name Obi-Wan for a long time.",
-    "gameText": "Deploys only on Tatooine. When in a duel, adds 2 to your total. Once per turn, if a battle just ended, may 'revive' (place here from Lost Pile) your character forfeited from same site this turn. Immune to attrition < 5.",
+    "gameText": "Deploys only on Tatooine. When in a duel, adds 2 to your total. Once per turn, if a battle just ended here, may 'revive' (place here from Lost Pile) your character forfeited from same site this turn. Immune to attrition < 5.",
     "deployCost": 5,
     "destiny": 1,
     "power": 5,
@@ -65039,7 +65039,7 @@
     "cardTypes": [
       "EPIC_EVENT"
     ],
-    "gameText": "Deploy on Bunker. During your control phase, if you control Bunker with a Rebel, attempt to 'blow away' Bunker as follows: Charges! Come On, Come On!: Draw two destiny. Add 3 to total for each Explosive Charge on Bunker. Move! Move! Move!: If total destiny > 12, your characters here may relocate to Back Door for free, Bunker and Landing Platform (if on table) are 'blown away,' opponent loses 8 Force and this card is lost.",
+    "gameText": "Deploy on Bunker. Once during your control phase, if you control Bunker with a Rebel, you may attempt to 'blow away' Bunker as follows: Charges! Come On, Come On!: Draw two destiny. Add 3 to total for each Explosive Charge on Bunker. Move! Move! Move!: If total destiny > 12, your characters here may relocate to Back Door for free, Bunker and Landing Platform (if on table) are 'blown away,' opponent loses 8 Force and this card is lost.",
     "deployCost": 0,
     "destiny": 0,
     "icons": [
@@ -65248,7 +65248,7 @@
     ],
     "cardSubtype": "USED",
     "lore": "Lieutenant Page effectively deployed his detachment of Rebel commandos during the attack at the control bunker.",
-    "gameText": "During a battle, if you have weapons at both sites adjacent to that battle, add 3 to your total power and add one battle destiny. OR For remainder of turn, your scout at an exterior site is power +1 and adds 1 to each of that character's weapon destiny draws.",
+    "gameText": "During a battle, if you have weapons at at least 2 sites adjacent to that battle, add 3 to your total power and add one battle destiny. OR For remainder of turn, your scout at an exterior site is power +1 and adds 1 to each of that character's weapon destiny draws.",
     "destiny": 5,
     "icons": [
       {
@@ -66342,7 +66342,7 @@
       "REBEL"
     ],
     "lore": "Scout. Leader. Made friends with Wicket. Negotiated an alliance with the Ewoks. Leia found out the truth about her father from Luke in the Ewok village.",
-    "gameText": "Deploys -3 on Tydirium, Endor or Dagobah. May be deployed instead of Luke by Mind What You Have Learned (that card then targets Leia instead of Luke for remainder of game). While at any exterior site, adds one Light side icon. Immune to attrition < 4.",
+    "gameText": "Deploys -3 on Tydirium, Endor or Dagobah. May be targeted instead of Luke by Mind What You Have Learned (that card then targets Leia instead of Luke for remainder of game). While at any exterior site, adds one [Light side] icon. Immune to attrition < 4.",
     "deployCost": 7,
     "destiny": 1,
     "power": 4,
@@ -66931,7 +66931,7 @@
       "REBEL"
     ],
     "lore": "Mon Calamari deck officer. Brilliant tactical analyst. One of several brave leaders of Mon Calamari refugees from Imperial invasion of her planet.",
-    "gameText": "Deploys -2 to Home One. Adds 3 to power of any capital starship she pilots. When piloting a Star Cruiser with another Mon Calamari pilot aboard, unless opponent has total ability > 6 piloting here, opponent's total battle destiny here = zero.",
+    "gameText": "Deploys -2 to Home One. Adds 3 to power of any capital starship she pilots. When piloting a Star Cruiser with another Mon Calamari pilot aboard, unless opponent has total ability > 6 piloting here, reset opponent's total battle destiny here to 0.",
     "deployCost": 3,
     "destiny": 2,
     "power": 2,
@@ -68283,7 +68283,7 @@
     ],
     "cardSubtype": "NORMAL",
     "lore": "When a Jedi dies, the spirit spreads through the Force and touches the living.",
-    "gameText": "Deploy on table. Once per turn, may take The Force Is Strong With This One or Anakin Skywalker into hand from Reserve Deck: reshuffle. May use 2 Force to cancel Dark Jedi Presence or You Are Beaten (unless canceling Uncontrollable Fury). (Immune to Alter.)",
+    "gameText": "Deploy on table. Once per turn, may take The Force Is Strong With This One or [Death Star II] Anakin Skywalker into hand from Reserve Deck: reshuffle. May use 2 Force to cancel Dark Jedi Presence or You Are Beaten (unless canceling Uncontrollable Fury). (Immune to Alter.)",
     "destiny": 5,
     "icons": [
       {
@@ -69702,7 +69702,7 @@
     ],
     "cardSubtype": "CAPITAL",
     "lore": "Medium transport with boosted hyperdrive. Armor and capacity diminished. Crew trained for reconnaissance and swift intergalactic transport.",
-    "gameText": "Deploys and moves like a starfighter. May add 1 pilot and 6 passengers. Has ship-docking capability. Permanent pilot provides ability of 2. May use Covert Landing like a shuttle or starfighter.",
+    "gameText": "Deploys and moves like a starfighter. May add 1 pilot and 6 passengers. Permanent pilot provides ability of 2. May use Covert Landing like a shuttle or starfighter (even while landed).",
     "deployCost": 3,
     "destiny": 3,
     "power": 1,

@@ -43,7 +43,7 @@ public class Card13_075 extends AbstractCharacterWeapon {
         super(Side.DARK, 1, "Maul's Double-Bladed Lightsaber", Uniqueness.UNIQUE, ExpansionSet.REFLECTIONS_III, Rarity.PM);
         setAsHorizontal(true);
         setLore("Maul's double-bladed lightsaber is two lightsabers fused into one that requires years of training to wield properly. Like its mysterious owner, this weapon hasn't been seen for a millennia.");
-        setGameText("Deploy on Maul. Adds 1 to Maul's lightsaber combat total. May lose 1 Force to add 2 to Force drain where present. Twice per battle, may target a character. Draw two destiny. Target hit, and its forfeit = 0, if total > defense value. May not be stolen.");
+        setGameText("Deploy on Maul. Adds 1 to Maul's lightsaber combat total. May lose 1 Force to add 2 to Force drain where present. Twice per battle, may target a character. Draw two destiny. Target hit, and its forfeit = 0, if total > defense value. While on Maul, may not be stolen.");
         addPersona(Persona.MAULS_DOUBLE_BLADED_LIGHTSABER);
         addIcons(Icon.REFLECTIONS_III, Icon.EPISODE_I);
         addKeywords(Keyword.LIGHTSABER);
@@ -64,7 +64,7 @@ public class Card13_075 extends AbstractCharacterWeapon {
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new LightsaberCombatTotalModifier(self, Filters.Maul, 1));
-        modifiers.add(new MayNotBeStolenModifier(self));
+        modifiers.add(new MayNotBeStolenModifier(self, Filters.and(self, Filters.attachedTo(Filters.Maul))));
         return modifiers;
     }
 

@@ -36,7 +36,7 @@ public class Card14_115 extends AbstractStarfighter {
     public Card14_115() {
         super(Side.DARK, 2, 1, 2, null, 2, null, 3, "DFS Squadron Starfighter", Uniqueness.RESTRICTED_3, ExpansionSet.THEED_PALACE, Rarity.C);
         setLore("Starfighters assigned to DFS Squadron are provided with advanced targeting routines to assist them in protecting Trade Federation command ships.");
-        setGameText("Deploys -1 to Naboo or same system as your battleship. While at same system as your battleship, may deploy Droid Starfighter Laser Cannons aboard from Reserve Deck; reshuffle.");
+        setGameText("Deploys -1 to Naboo or same system as your battleship. While at same system as your battleship, during your deploy phase, may deploy one Droid Starfighter Laser Cannons aboard from Reserve Deck; reshuffle.");
         addIcons(Icon.THEED_PALACE, Icon.EPISODE_I, Icon.TRADE_FEDERATION, Icon.PILOT, Icon.PRESENCE);
         addKeywords(Keyword.DFS_SQUADRON, Keyword.NO_HYPERDRIVE);
         addModelType(ModelType.DROID_STARFIGHTER);
