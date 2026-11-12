@@ -40,8 +40,8 @@ public class Card221_005 extends AbstractNormalEffect {
         super(Side.LIGHT, 5, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.I_Cant_Believe_Hes_Gone, Uniqueness.UNIQUE, ExpansionSet.SET_21, Rarity.V);
         setVirtualSuffix(true);
         setLore("Even though Luke felt the pain of losing his mentor, Obi-Wan continued to give him strength and guidance through the Force.");
-        setGameText("If Obi-Wan 'communing,' deploy on table. If a Rebel in battle, may activate 1 Force or add 1 to a just drawn battle destiny. " +
-                "Once per game, may either take Old Ben into hand from Reserve Deck (reshuffle) OR retrieve Old Ben from Lost Pile. [Immune to Alter.]");
+        setGameText("If Obi-Wan 'communing,' deploy on table. Once per battle involving a Rebel, may activate 1 Force or add 1 to a just drawn battle destiny. " +
+                "Once per game, may [upload] (or retrieve) Old Ben. [Immune to Alter.]");
         addIcons(Icon.TATOOINE, Icon.VIRTUAL_SET_21);
         addImmuneToCardTitle(Title.Alter);
     }

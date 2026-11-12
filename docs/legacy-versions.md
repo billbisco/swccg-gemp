@@ -249,6 +249,12 @@ Done (TS-LATE, Reflections II through Theed Palace and the premium sets; tests
 `13_62o` Conduct Your Search (takes a 'door' card into hand once per turn) and `13_92o` Thok & Thug (any battle
 opponent initiates; adds to his own power).
 
+Done (Virtual Modern, PC card images; tests `cards/set201/dark/Card_201_030_Tests.java`): Imperial Enforcement
+`201_30o` (original PC image, 12 July 2020; the E1-marked image of 3 October 2022 prints the same words) and `201_30o1`
+(PC-E2 image, 12 December 2022: the redraw has no "during battle"); bare `201_30` = the 20 December 2022 image ("Once
+per turn during battle"). Bill (12 Nov 2026): the wording on the PC card image takes precedence over the PC card data;
+other Virtual Modern bare texts fixed to their current image are checked in `cards/VirtualImageWordingTests.java`.
+
 ### Printed weapons (o)
 
 Decipher's printed weapons (1995–1998) say "Character hit if destiny > ability. Vehicle hit if destiny > maneuver or

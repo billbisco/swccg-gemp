@@ -40,7 +40,7 @@ public class Card207_025 extends AbstractNormalEffect {
         super(Side.DARK, 4, PlayCardZoneOption.ATTACHED, Title.Establish_Secret_Base, Uniqueness.UNIQUE, ExpansionSet.SET_7, Rarity.V);
         setVirtualSuffix(true);
         setLore("The Empire's remote bases develop new technology and hide sensitive projects from potential Rebel saboteurs.");
-        setGameText("Deploy on Bunker if you control that site. Your Force generation at Endor system may not be canceled. Once per turn, may [download] an Endor site. Place Effect in Used Pile if opponent controls Bunker. (Immune to Alter.)");
+        setGameText("Deploy on Bunker if you control that site. Your Force generation at Endor system may not be canceled. Once per turn, may [download] an Endor site. Place Effect in Used Pile if opponent controls this site. (Immune to Alter.)");
         addIcons(Icon.ENDOR, Icon.VIRTUAL_SET_7);
         addImmuneToCardTitle(Title.Alter);
     }

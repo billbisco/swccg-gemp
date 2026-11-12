@@ -34,8 +34,8 @@ import java.util.List;
 public class Card216_004 extends AbstractSite {
     public Card216_004() {
         super(Side.DARK, Title.Coruscant_The_Works, Title.Coruscant, Uniqueness.UNIQUE, ExpansionSet.SET_16, Rarity.V);
-        setLocationDarkSideGameText("May [download] non-[Theed Palace] Sidious here.");
-        setLocationLightSideGameText("If opponent's [Special Edition] objective on table, gains one [Light Side] icon and Force drain +2 here.");
+        setLocationDarkSideGameText("May [download] non-[Theed Palace] Sidious here. If your [Special Edition] objective on table, gains one [Light Side] icon and opponent's Force drains are +2 here.");
+        setLocationLightSideGameText("");
         addIcon(Icon.DARK_FORCE, 2);
         addIcon(Icon.LIGHT_FORCE, 0);
         addIcons(Icon.EXTERIOR_SITE, Icon.PLANET, Icon.EPISODE_I, Icon.VIRTUAL_SET_16);

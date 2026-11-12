@@ -39,7 +39,7 @@ public class Card223_025 extends AbstractLostInterrupt {
     public Card223_025() {
         super(Side.DARK, 3, "The Empire's Back", Uniqueness.UNRESTRICTED, ExpansionSet.SET_23, Rarity.V);
         setLore("No star system will dare oppose the Emperor now.");
-        setGameText(" If two Imperials (or two Black Sun agents) in battle, re-circulate and shuffle your Reserve Deck. OR Once per game, if Emperor or Tarkin on table, Allegations Of Corruption stacks opponent's just played Interrupt; this does not count towards that card's once per game limit.");
+        setGameText("If two Imperials (or two Black Sun agents) in battle, re-circulate and shuffle your Reserve Deck. OR Once per game, if Emperor or Tarkin on table, Allegations Of Corruption stacks opponent's just played Interrupt; this does not count toward that card's once per game limit.");
         addIcons(Icon.VIRTUAL_SET_23);
         setVirtualSuffix(true);
     }

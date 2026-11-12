@@ -43,7 +43,7 @@ public class Card223_047 extends AbstractUsedInterrupt {
     public Card223_047() {
         super(Side.LIGHT, 3, Title.Scomp_Link_Access, Uniqueness.UNRESTRICTED, ExpansionSet.SET_23, Rarity.V);
         setVirtualSuffix(true);
-        setGameText("Once per game, 'BEEP-BOOP' (your [Grabber] card stacks a just played opponent's Interrupt; this does not count towards any [Grabber] card's once per game limit). OR Once per game, 'WHAAAAOW!' (lose your droid at a Scomp link to cancel a battle just initiated at same or related interior site).");
+        setGameText("Once per game, 'BEEP-BOOP' (your [Grabber] card stacks a just played opponent's Interrupt; this does not count toward any [Grabber] card's once per game limit). OR Once per game, 'WHAAAAOW!' (lose your droid at a Scomp link to cancel a battle just initiated at same or related interior site).");
         addIcons(Icon.VIRTUAL_SET_23);
     }
 

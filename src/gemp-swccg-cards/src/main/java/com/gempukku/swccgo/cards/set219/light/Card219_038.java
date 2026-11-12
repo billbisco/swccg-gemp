@@ -28,7 +28,7 @@ import com.gempukku.swccgo.logic.modifiers.DeployCostToLocationModifier;
 import com.gempukku.swccgo.logic.modifiers.IconModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
-import com.gempukku.swccgo.logic.modifiers.MovesFreeToLocationModifier;
+import com.gempukku.swccgo.logic.modifiers.ShuttlesFreeToLocationModifier;
 import com.gempukku.swccgo.logic.timing.StandardEffect;
 
 import java.util.ArrayList;
@@ -48,7 +48,7 @@ public class Card219_038 extends AbstractSystem {
     public Card219_038() {
         super(Side.LIGHT, Title.Lothal, 6, ExpansionSet.SET_19, Rarity.V);
         setLocationLightSideGameText("Once per game, may simultaneously deploy Ghost and Hera here from hand and/or Reserve Deck; reshuffle.");
-        setLocationDarkSideGameText("Thrawn and Pryce deploy -1 (and move for free) to here. While Lothal converted, gains one [Dark Side] icon.");
+        setLocationDarkSideGameText("Thrawn and Pryce deploy -1 (and shuttle for free) to here. While Lothal converted, gains one [Dark Side] icon.");
         addIcon(Icon.LIGHT_FORCE, 2);
         addIcon(Icon.DARK_FORCE, 1);
         addIcons(Icon.PLANET, Icon.VIRTUAL_SET_19);
@@ -205,7 +205,7 @@ public class Card219_038 extends AbstractSystem {
         List<Modifier> modifiers = new LinkedList<>();
         Filter ThrawnOrPryce = Filters.or(Filters.Thrawn, Filters.Pryce);
         modifiers.add(new DeployCostToLocationModifier(self, ThrawnOrPryce, -1, self));
-        modifiers.add(new MovesFreeToLocationModifier(self, ThrawnOrPryce, self));
+        modifiers.add(new ShuttlesFreeToLocationModifier(self, ThrawnOrPryce, self));
         modifiers.add(new IconModifier(self, isLothalConverted, Icon.DARK_FORCE, 1));
         return modifiers;
     }

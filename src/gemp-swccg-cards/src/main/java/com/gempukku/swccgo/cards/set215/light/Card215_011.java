@@ -45,7 +45,7 @@ public class Card215_011 extends AbstractRebel {
     public Card215_011() {
         super(Side.LIGHT, 1, 4, 4, 3, 6, "Han Solo, Optimistic General", Uniqueness.UNIQUE, ExpansionSet.SET_15, Rarity.V);
         setLore("Leader. Scout.");
-        setGameText("[Pilot] 3. Cancels Kylo's game text here. When deployed, may reveal the top two cards of your Reserve Deck; take one into hand. Draws one battle destiny if unable to otherwise. During battle with Chewie or [Endor] Leia, may add one destiny to total power.");
+        setGameText("[Pilot] 3. When deployed, may reveal the top two cards of your Reserve Deck; take one into hand. Cancels Kylo's game text here. Draws one battle destiny if unable to otherwise. During battle with Chewie or [Endor] Leia, may add one destiny to total power.");
         addPersona(Persona.HAN);
         setSpecies(Species.CORELLIAN);
         addIcons(Icon.WARRIOR, Icon.PILOT, Icon.ENDOR, Icon.VIRTUAL_SET_15);

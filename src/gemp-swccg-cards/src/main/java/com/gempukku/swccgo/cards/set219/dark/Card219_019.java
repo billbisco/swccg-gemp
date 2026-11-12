@@ -35,7 +35,7 @@ public class Card219_019 extends AbstractDarkJediMasterImperial {
     public Card219_019() {
         super(Side.DARK, 6, 5, 4, 7, 9, "The Emperor, Relentless", Uniqueness.UNIQUE, ExpansionSet.SET_19, Rarity.V);
         setLore("Leader. Secretive manipulator of the galaxy. Played Darth Vader and Prince Xizor off against one another in his relentless pursuit of 'young Skywalker.'");
-        setGameText("Never deploys or moves (even if carried) to a site opponent occupies. Players do not retrieve Force for initiating a battle. If Agents Of The Black Sun on table, your total battle destiny where you have a Black Sun agent is +1. Immune to attrition.");
+        setGameText("Never deploys or moves (even if carried) to a site opponent occupies. Players do not retrieve Force for initiating a battle. While Agents Of Black Sun on table, your total battle destiny is +1 where you have a Black Sun agent. Immune to attrition.");
         addPersona(Persona.SIDIOUS);
         addIcons(Icon.REFLECTIONS_II, Icon.DEATH_STAR_II, Icon.VIRTUAL_SET_19);
         addKeywords(Keyword.LEADER);

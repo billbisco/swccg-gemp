@@ -39,7 +39,7 @@ public class Card227_012 extends AbstractAlien {
     public Card227_012() {
         super(Side.DARK, 3, 2, 2, 2, 4, "Run'heb Voend", Uniqueness.UNIQUE, ExpansionSet.SET_27, Rarity.V);
         setLore("Jawa mechanic.");
-        setGameText("Once per game, may [DOWNLOAD] a Sandcrawler here. While driving a Sandcrawler it moves for free, may not be targeted by weapons and adds one battle destiny. Once during your turn, may select a player to activate 1 Force.");
+        setGameText("Once per game, may [download] a sandcrawler here. While driving a sandcrawler, it moves for free, may not be targeted by weapons, and Run'heb adds one battle destiny. Once during your turn, may choose a player to activate 1 Force.");
         setSpecies(Species.JAWA);
         addIcons(Icon.VIRTUAL_SET_27);
     }

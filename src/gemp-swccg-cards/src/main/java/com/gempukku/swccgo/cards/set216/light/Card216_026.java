@@ -34,8 +34,8 @@ public class Card216_026 extends AbstractSite {
     public Card216_026() {
         super(Side.LIGHT, Title.Yodas_Hut, Title.Dagobah, Uniqueness.UNIQUE, ExpansionSet.SET_16, Rarity.V);
         setVirtualSuffix(true);
-        setLocationDarkSideGameText("If Yoda here or [Set 16] Yoda 'communing,' once per turn, may subtract 2 from attrition against you.");
-        setLocationLightSideGameText("If Yoda here or [Set 16] Yoda 'communing,' Broken Concentration is canceled.");
+        setLocationDarkSideGameText("");
+        setLocationLightSideGameText("If Yoda here or [Set 16] Yoda 'communing,' Broken Concentration is canceled and, once per turn, you may subtract 2 from attrition against you.");
         addIcon(Icon.LIGHT_FORCE, 2);
         addIcons(Icon.DAGOBAH, Icon.EXTERIOR_SITE, Icon.PLANET, Icon.VIRTUAL_SET_16);
     }

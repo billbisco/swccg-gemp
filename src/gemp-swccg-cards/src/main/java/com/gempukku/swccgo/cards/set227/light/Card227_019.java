@@ -45,7 +45,7 @@ public class Card227_019 extends AbstractNormalEffect {
     public Card227_019() {
         super(Side.LIGHT, 1, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Do, Or Do Not & Wise Advice", Uniqueness.UNIQUE, ExpansionSet.SET_27, Rarity.V);
         addComboCardTitles(Title.Do_Or_Do_Not, Title.Wise_Advice);
-        setGameText("Deploy on table. Sense and Alter are Lost Interrupts. When any player makes a destiny draw for Sense or Alter, and that destiny draw is successful, that player loses 2 Force (may not be reduced). May [download] Bog Clearing. [Dagobah] Luke is a Padawan. Once per game, during a battle involving [Dagobah] Luke, may lose 1 Force to cancel a non-[Sense] Interrupt. Yoda and Padawans are immune to Imperial Barrier and Stunning Leader and may move free using landspeed. While she is alone, Jedi Ahsoka’s gametext is canceled. [Immune to Alter.]");
+        setGameText("Deploy on table. Sense and Alter are Lost Interrupts. When any player makes a destiny draw for Sense or Alter, and that destiny draw is successful, that player loses 2 Force (may not be reduced). May [download] Bog Clearing. [Dagobah] Luke is a Padawan. Once per game, if [Dagobah] Luke in battle, may lose 1 Force to cancel a non-[Sense] Interrupt. Yoda and Padawans are immune to Imperial Barrier and Stunning Leader and may move for free using landspeed. While alone, Jedi Ahsoka's game text is canceled. [Immune to Alter.]");
         addIcons(Icon.REFLECTIONS_III, Icon.VIRTUAL_SET_27);
         addImmuneToCardTitle(Title.Alter);
         setVirtualSuffix(true);
