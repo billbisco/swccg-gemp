@@ -32,7 +32,7 @@ public class Card2210_030 extends AbstractNormalEffect {
     public Card2210_030() {
         super(Side.DARK, 3, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "A Disturbance In The Force", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_BLOCK_1, Rarity.V);
         setVirtualSuffix(true);
-        setLore("The destruction of Alderaan caused a great disturbance in the Force '...as if millions of voices suddenly cried out in terror and were suddenly silenced.'");
+        setLore("The destruction of Alderaan caused a great disturbance in the Force, '. . . as if millions of voices suddenly cried out in terror and were suddenly silenced.'");
         setGameText("Deploy on table. Whenever you verify opponent's Reserve Deck, may place a card there with 'podracer' in game text out of play or retrieve 1 Force.");
         setLegacyVersion(new LegacyVersion("1210_30", "",
                 "Virtual Block 1 release sheet (2009-12-07), card #30; superseded by the PC card list text (by 2012-07-21)", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21)));

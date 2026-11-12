@@ -29,7 +29,7 @@ public class Card1103_001 extends AbstractNormalEffect {
     public Card1103_001() {
         super(Side.LIGHT, 3, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "A Tremor In The Force", Uniqueness.UNIQUE, ExpansionSet.VIRTUAL_ORIGINAL_SET_3, Rarity.V);
         setVirtualSuffix(true);
-        setLore("'Stand By...'");
+        setLore("'Stand by . . .'");
         setGameText("Deploy on table. Whenever you verify opponent's Reserve Deck, may place a card there with 'podracer' in game text out of play or retrieve 1 Force.");
     }
 

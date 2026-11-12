@@ -41,7 +41,7 @@ import java.util.List;
 public class Card2_054 extends AbstractUsedInterrupt {
     public Card2_054() {
         super(Side.LIGHT, 5, Title.Out_Of_Commission, Uniqueness.UNRESTRICTED, ExpansionSet.A_NEW_HOPE, Rarity.U2);
-        setLore("'I hope that old man got the tractor beam out of commission or this is gonna be a real short trip.'");
+        setLore("'I hope that old man got that tractor beam out of commission or this is gonna be a real short trip.'");
         setGameText("During your control phase, use 2 Force to release a starship held by any Tractor Beam. (Not effective on Death Star Tractor Beam if Central Core in play.) OR Randomly select one card from opponent's Lost Pile or Blaster Rack and place out of play.");
         addIcons(Icon.A_NEW_HOPE);
     }

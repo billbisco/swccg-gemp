@@ -42,13 +42,13 @@ import java.util.List;
  * Set: Reflections II
  * Type: Interrupt
  * Subtype: Used Or Lost
- * Title: Out Of Commission & Transmission Terminated
+ * Title: Out of Commission & Transmission Terminated
  */
 public class Card10_016 extends AbstractUsedOrLostInterrupt {
     public Card10_016() {
-        super(Side.LIGHT, 5, "Out Of Commission & Transmission Terminated", Uniqueness.UNRESTRICTED, ExpansionSet.REFLECTIONS_II, Rarity.PM);
+        super(Side.LIGHT, 5, "Out of Commission & Transmission Terminated", Uniqueness.UNRESTRICTED, ExpansionSet.REFLECTIONS_II, Rarity.PM);
         addComboCardTitles(Title.Out_Of_Commission, Title.Transmission_Terminated);
-        setGameText("USED: Use 1 Force to randomly place one card in opponents Lost Pile out of play. LOST: Cancel one hologram. OR Use 4 Force. Draw destiny. Add 1 to destiny for each asteroid sector on table. If total destiny > 3, Imperial Holotable site is 'blown away' (opponent loses 4 Force).");
+        setGameText("USED: Use 1 Force to randomly place one card in opponent's Lost Pile out of play. LOST: Cancel one hologram. OR Use 4 Force. Draw destiny. Add 1 to destiny for each asteroid sector on table. If total destiny > 3, Imperial Holotable site is 'blown away' (opponent loses 4 Force).");
         addIcons(Icon.REFLECTIONS_II);
     }
 

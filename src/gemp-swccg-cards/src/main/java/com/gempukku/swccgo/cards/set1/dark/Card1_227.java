@@ -28,7 +28,7 @@ import java.util.List;
 public class Card1_227 extends AbstractNormalEffect {
     public Card1_227() {
         super(Side.DARK, 2, PlayCardZoneOption.ATTACHED, Title.Presence_Of_The_Force, Uniqueness.RESTRICTED_2, ExpansionSet.PREMIERE, Rarity.R1);
-        setLore("A location is affected by the history of the events which occur there. The Force '...binds the galaxy together' and has an ebb and flow.");
+        setLore("A location is affected by the history of the events which occur there. The Force '. . . binds the galaxy together' and has an ebb and flow.");
         setGameText("Deploy on any location to add one [Dark Side Force] and one [Light Side Force].");
         addKeywords(Keyword.DEPLOYS_ON_LOCATION);
     }

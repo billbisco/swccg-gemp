@@ -27,8 +27,8 @@ import com.gempukku.swccgo.logic.modifiers.SpecialFlagModifier;
 public class Card1_042 extends AbstractNormalEffect {
     public Card1_042() {
         super(Side.LIGHT, 3, PlayCardZoneOption.OPPONENTS_RESERVE_DECK, "A Tremor In The Force", Uniqueness.UNIQUE, ExpansionSet.PREMIERE, Rarity.U1);
-        setLore("'Stand By...'");
-        setGameText("Once per game, during your deploy phase, 'insert' (face down) into opponent's Reserve Deck; reshuffle. When effect reaches top it is immediately lost, but opponent may not activate any more Force that turn. (Immune to Alter.)");
+        setLore("'Stand by . . .'");
+        setGameText("Once per game, during your deploy phase, 'insert' (face down) into opponent's Reserve Deck; reshuffle. When Effect reaches top it is immediately lost, but opponent may not activate any more Force that turn. (Immune to Alter.)");
         addImmuneToCardTitle(Title.Alter);
     }
 
